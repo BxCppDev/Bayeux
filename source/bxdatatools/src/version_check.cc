@@ -1,14 +1,14 @@
-// -*- mode: c++; -*-
 // version_check.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/version_check.h>
 
-// Standard Library
+// Standard Library:
 #include <sstream>
 #include <stdexcept>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 // Wrap Boost's tokenizer header
 // This header, causes "unused parameter" warnings from its
 // static void assign(Iterator b, Iterator e, Token &t)
@@ -29,7 +29,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-// This Project
+// This Project:
 #include <datatools/version_id.h>
 #include <datatools/exception.h>
 
@@ -113,4 +113,3 @@ bool validate_version(const std::string& label_, const version_id& vid_,
 }
 
 } // namespace datatools
-

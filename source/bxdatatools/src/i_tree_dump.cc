@@ -1,15 +1,11 @@
-/* i_tree_dump.cc */
-// Ourselves
+// i_tree_dump.cc
+
+// Ourselves:
 #include <datatools/i_tree_dump.h>
 
-// Standard Library
+// Standard Library:
 #include <iomanip>
 #include <sstream>
-
-// Third Party
-// - A
-
-// This Project
 
 namespace datatools {
 
@@ -135,5 +131,3 @@ std::ostream& operator<<(std::ostream& out,
 
 
 } // end of namespace datatools
-
-/* end of i_tree_dump.cc */

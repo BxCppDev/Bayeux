@@ -1,17 +1,14 @@
-// -*- mode: c++; -*-
 // version_id.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/version_id.h>
 
-// Standard Library
+// Standard Library:
 #include <cctype>
 #include <sstream>
 #include <stdexcept>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/exception.h>
 
 namespace datatools {
@@ -24,10 +21,6 @@ const int32_t version_id::MAX_RC_NUM   =   9999;
 const int32_t version_id::ALPHA_NUM    = -10003;
 const int32_t version_id::BETA_NUM     = -10002;
 const int32_t version_id::RC_BASE_NUM  = -10001;
-
-// const std::string version_id::ALPHA_TAG = "alpha";
-// const std::string version_id::BETA_TAG  = "beta";
-// const std::string version_id::RELEASE_CANDIDATE_PREFIX_TAG = "rc";
 
 const std::string & version_id::tags::alpha()
 {
@@ -775,5 +768,3 @@ bool version_id::are_orderable(const version_id& vid0,
 }
 
 } // namespace datatools
-
-// end of version_id.cc

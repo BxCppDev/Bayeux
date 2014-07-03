@@ -1,12 +1,13 @@
-/* kernel.cc */
-// Ourselves
+// kernel.cc
+
+// Ourselves:
 #include <datatools/kernel.h>
 
-// Third Party
+// Third Party:
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
-// This project
+// This project:
 #include <datatools/library_info.h>
 #include <datatools/exception.h>
 #include <datatools/version.h>

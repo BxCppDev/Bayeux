@@ -1,32 +1,25 @@
-// -*- mode: c++; -*-
 // integer_range.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/integer_range.h>
 
-// Standard Library
+// Standard Library:
 #include <sstream>
 #include <stdexcept>
 #include <limits>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/exception.h>
-
-using namespace std;
 
 namespace datatools {
 
-// Ctor:
 integer_range::integer_range() {
   this->reset();
 }
 
 
-// Ctor:
 integer_range::integer_range(value_type from, value_type to,
-                              int from_policy, int to_policy) {
+                             int from_policy, int to_policy) {
   this->set(from, to, from_policy, to_policy);
 }
 
@@ -49,7 +42,7 @@ void integer_range::reset_lower() {
 
 
 void integer_range::reset_upper() {
-  upper_      = numeric_limits<value_type>::max();
+  upper_      = std::numeric_limits<value_type>::max();
   upper_flag_ = range_bound_undefined;
 }
 
@@ -350,5 +343,3 @@ std::ostream& operator<<(std::ostream& out, const integer_range& a_range) {
 }
 
 } // namespace datatools
-
-// end of integer_range.cc

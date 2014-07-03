@@ -18,13 +18,13 @@
 // You should have received a copy of the GNU General Public License
 // along with datatools.  If not, see <http://www.gnu.org/licenses/>.
 
-// Ourselves
+// Ourselves:
 #include "datatools/logger.h"
 
-// Standard Library
+// Standard Library:
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include "boost/assign.hpp"
 #include "boost/algorithm/string.hpp"
 // Clang doesn't like bimap's use of BOOST_PP...
@@ -41,7 +41,7 @@
 #pragma clang diagnostic pop
 #endif
 
-// This Project
+// This Project:
 #include "datatools/exception.h"
 #include "datatools/properties.h"
 #include <datatools/object_configuration_description.h>

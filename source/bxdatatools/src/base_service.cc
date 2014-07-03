@@ -1,4 +1,4 @@
-/// \file datatools/base_service.cc
+// datatools/base_service.cc
 /*
  * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -18,16 +18,15 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-// Ourselves
+
+// Ourselves:
 #include <datatools/base_service.h>
 
-// Standard Library
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 
-// Third Party
-
-// Datatools
+// This project:
 #include <datatools/service_tools.h>
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>

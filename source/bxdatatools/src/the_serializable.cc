@@ -1,15 +1,16 @@
-// -*- mode: c++; -*-  
-/* the_serializable.cc  
- */ 
+// the_serializable.cc
 
+// Ourselves:
 #include <datatools/the_serializable.h>
 
-// Load the link guard definition :
-#include <datatools/detail/bio_link_guard.h>
-
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <boost/scoped_ptr.hpp>
+
+// This Project:
+// Load the link guard definition :
+#include <datatools/detail/bio_link_guard.h>
 
 // Load the link guard implementation :
 namespace datatools {
@@ -57,5 +58,3 @@ namespace serialization {
 } // end namespace serialization
 } // end namespace detail
 } // end namespace datatools
-
-// end of the_serializable.cc

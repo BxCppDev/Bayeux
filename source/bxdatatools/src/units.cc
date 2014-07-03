@@ -1,16 +1,15 @@
-// -*- mode: c++ ; -*-
 /* units.cc
  *
  * All units from "include/CLHEP/Units/SystemOfUnits.h"
  *
  */
-// Ourselves
+
+// Ourselves:
 #include <datatools/units.h>
 
-// Standard Library
+// Standard Library:
 #include <cmath>
 #include <cstdlib>
-
 #include <iostream>
 #include <iomanip>
 #include <limits>
@@ -19,11 +18,11 @@
 #include <stdexcept>
 #include <algorithm>
 
-// Third Party
-// - A
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
-// This Project
+// This Project:
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 

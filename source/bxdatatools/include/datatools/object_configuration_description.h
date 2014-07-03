@@ -55,12 +55,13 @@ class configuration_property_description
 {
 public:
 
-  static const bool SCALAR;        // = false;
-  static const bool ARRAY;         // = true;
-  static const bool IMPLICIT_UNIT; // = false;
-  static const bool EXPLICIT_UNIT; // = true;
-  static const bool MUTABLE;       // = false;
-  static const bool CONST;         // = true;
+  // Some constants
+  static const bool SCALAR = false;
+  static const bool ARRAY = true;
+  static const bool IMPLICIT_UNIT = false;
+  static const bool EXPLICIT_UNIT = true;
+  static const bool MUTABLE = false;
+  static const bool CONST = true;
 
   /// \brief Dependency type
   enum dependency_type {

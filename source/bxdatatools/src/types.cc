@@ -1,6 +1,6 @@
 // types.cc
 
-// Ourselves
+// Ourselves:
 #include <datatools/types.h>
 
 // Third party:

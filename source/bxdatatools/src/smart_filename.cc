@@ -20,10 +20,11 @@
  *
  *
  */
-// Ourselves
+
+// Ourselves:
 #include <datatools/smart_filename.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -31,20 +32,18 @@
 #include <sstream>
 #include <stdexcept>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #define BOOST_FILESYSTEM_VERSION 3
 #include <boost/filesystem.hpp>
 
-// This Project
+// This Project:
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
 namespace datatools {
-
-using namespace std;
 
 const std::string & smart_filename::labels::mode_single()
 {
@@ -179,7 +178,7 @@ const std::string& smart_filename::get_filename(int a_index) const {
       && (a_index >= (int)list_.size())) {
     smart_filename* mutable_this = const_cast<smart_filename*>(this);
     for (int i = list_.size(); i <= a_index; ++i) {
-      string filename;
+      std::string filename;
       int file_number = incremental_starting_index_ +  incremental_increment_ * a_index;
       this->build_incremental_filename(file_number, filename);
       mutable_this->add_list(filename);
@@ -210,7 +209,7 @@ void smart_filename::set_mode(int a_new_value) {
 }
 
 
-void smart_filename::set(const string& a_new_value) {
+void smart_filename::set(const std::string& a_new_value) {
   DT_THROW_IF (!this->is_single(),std::logic_error,"Not using 'single' mode !");
   list_.clear();
   this->add_list(a_new_value);
@@ -244,27 +243,27 @@ void smart_filename::set_list_allow_duplication(bool a_new_value) {
 }
 
 
-void smart_filename::add_list(const string& a_filename) {
-  DT_THROW_IF (a_filename.empty(),logic_error,"Missing filename !");
+void smart_filename::add_list(const std::string& a_filename) {
+  DT_THROW_IF (a_filename.empty(),std::logic_error,"Missing filename !");
   DT_THROW_IF (this->is_single() && (list_.size() > 0),
-               logic_error,
+               std::logic_error,
                "Cannot add a filename ('single' mode) !");
-  string filename = a_filename;
+  std::string filename = a_filename;
   if (this->is_expand_path()) {
     datatools::fetch_path_with_env(filename);
   }
   if ((list_.size() > 0) && !list_allow_duplication_) {
     DT_THROW_IF (std::find(list_.begin(), list_.end(), filename) != list_.end(),
-                 logic_error,
+                 std::logic_error,
                  "Duplication error: filename '" << filename << "' is already in the list !");
   }
   list_.push_back(filename);
 }
 
 
-void smart_filename::add(const string& a_filename) {
+void smart_filename::add(const std::string& a_filename) {
   DT_THROW_IF (!this->is_list(),
-               logic_error,
+               std::logic_error,
                "Not using 'list' mode !");
   this->add_list(a_filename);
 }
@@ -290,7 +289,7 @@ smart_filename::~smart_filename() {
 
 // static
 void smart_filename::make_single(smart_filename& a_smart_filename,
-                                 const string& a_filename,
+                                 const std::string& a_filename,
                                  bool a_expand_path) {
   a_smart_filename.reset();
   a_smart_filename.ranged_ = true;
@@ -312,7 +311,7 @@ void smart_filename::make_list(smart_filename& a_smart_filename,
 
 
 void smart_filename::make_list(smart_filename& a_smart_filename,
-                               const string& a_list_filename,
+                               const std::string& a_list_filename,
                                bool a_allow_duplication,
                                bool a_expand_path) {
   a_smart_filename.reset();
@@ -320,26 +319,26 @@ void smart_filename::make_list(smart_filename& a_smart_filename,
   a_smart_filename.set_mode(MODE_LIST);
   a_smart_filename.set_list_allow_duplication(a_allow_duplication);
   a_smart_filename.expand_path_ = a_expand_path;
-  string list_filename = a_list_filename;
+  std::string list_filename = a_list_filename;
   datatools::fetch_path_with_env(list_filename);
   DT_THROW_IF (!boost::filesystem::exists(list_filename),
-               logic_error,
+               std::logic_error,
                "File '" << a_list_filename << "' does not exists !");
   DT_THROW_IF (boost::filesystem::is_directory(list_filename),
-               logic_error,
+               std::logic_error,
                "Path '" << list_filename << "' is a directory !");
-  ostringstream message;
+  std::ostringstream message;
   message << "datatools::smart_filename::make_list: "
           << "Reading file '"
           << list_filename << "'...";
   DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,message.str());
-  ifstream inlist(list_filename.c_str());
+  std::ifstream inlist(list_filename.c_str());
   while (inlist) {
-    string line;
+    std::string line;
     getline(inlist, line);
     if (!line.empty()) {
-      istringstream iss(line);
-      string word;
+      std::istringstream iss(line);
+      std::string word;
       iss >> word;
       // skipping blank lines :
       if (!word.empty()) {
@@ -358,12 +357,12 @@ void smart_filename::make_list(smart_filename& a_smart_filename,
 
 
 void smart_filename::make_unranged_incremental(smart_filename& a_smart_filename,
-                                                const string& a_path,
-                                                const string& a_prefix,
-                                                const string& a_extension,
+                                                const std::string& a_path,
+                                                const std::string& a_prefix,
+                                                const std::string& a_extension,
                                                 int a_starting_index,
                                                 int a_increment_index,
-                                                const string & a_suffix,
+                                                const std::string & a_suffix,
                                                 int a_incremental_index_ndigit,
                                                 bool a_expand_path) {
   make_incremental(a_smart_filename, a_path, a_prefix, a_extension,
@@ -374,13 +373,13 @@ void smart_filename::make_unranged_incremental(smart_filename& a_smart_filename,
 
 
 void smart_filename::make_incremental(smart_filename & a_smart_filename,
-                                      const string & a_path,
-                                      const string & a_prefix,
-                                      const string & a_extension,
+                                      const std::string & a_path,
+                                      const std::string & a_prefix,
+                                      const std::string & a_extension,
                                       int a_stopping_index,
                                       int a_starting_index,
                                       int a_increment_index,
-                                      const string & a_suffix,
+                                      const std::string & a_suffix,
                                       int a_incremental_index_ndigit,
                                       bool a_expand_path) {
   a_smart_filename.reset();
@@ -388,15 +387,15 @@ void smart_filename::make_incremental(smart_filename & a_smart_filename,
   a_smart_filename.ranged_ = false;
   a_smart_filename.expand_path_ = a_expand_path;
   DT_THROW_IF (a_prefix.empty(),
-               logic_error,
+               std::logic_error,
                "Missing prefix !");
   a_smart_filename.incremental_path_ = a_path;
   a_smart_filename.incremental_prefix_ = a_prefix;
   a_smart_filename.incremental_extension_ = a_extension;
   a_smart_filename.incremental_suffix_ = a_suffix;
   a_smart_filename.incremental_index_ndigit_ = a_incremental_index_ndigit;
-  DT_THROW_IF (a_increment_index == 0,logic_error,"Invalid null increment !");
-  string path;
+  DT_THROW_IF (a_increment_index == 0,std::logic_error,"Invalid null increment !");
+  std::string path;
   if (!a_path.empty()) {
     path = a_smart_filename.incremental_path_;
     if (a_smart_filename.is_expand_path()) {
@@ -424,7 +423,7 @@ void smart_filename::make_incremental(smart_filename & a_smart_filename,
     if (a_smart_filename.incremental_stopping_index_
         < a_smart_filename.incremental_starting_index_) {
       DT_THROW_IF (a_smart_filename.incremental_increment_ >= 0,
-                   logic_error,
+                   std::logic_error,
                    "Invalid increment rule (start="
                    << a_smart_filename.incremental_starting_index_
                    << ",stop="
@@ -454,7 +453,7 @@ void smart_filename::make_incremental(smart_filename & a_smart_filename,
 void smart_filename::build_incremental_filename(
     int increment_index_,
     std::string& filename_) const {
-  ostringstream filename_ss;
+  std::ostringstream filename_ss;
   if (!incremental_path_.empty()) {
     filename_ss << incremental_path_;
     if (incremental_path_[incremental_path_.length() - 1] != '/') {
@@ -481,11 +480,11 @@ void smart_filename::build_incremental_filename(
 
 
 void smart_filename::print_list_of_filenames(std::ostream& /*a_out*/) const {
-  DT_THROW_IF (!this->is_initialized(),logic_error,"Smart file is not initialized !");
+  DT_THROW_IF (!this->is_initialized(),std::logic_error,"Smart file is not initialized !");
 }
 
 
-void smart_filename::store_list_of_filenames(const string& a_list_filename,
+void smart_filename::store_list_of_filenames(const std::string& a_list_filename,
                                              bool a_append) const {
   std::ofstream fout;
   std::string list_filename = a_list_filename;
@@ -564,7 +563,7 @@ void smart_filename::initialize(const properties& a_config) {
       std::string list_file = a_config.fetch_string("list.file");
       smart_filename::make_list(*this, list_file, allow_duplicate, expand_path);
     } else {
-      std::vector<string> list_vec;
+      std::vector<std::string> list_vec;
       DT_THROW_IF (!a_config.has_key("list.filenames"), std::logic_error, "Missing 'list.filenames' key !");
       smart_filename::make_list(*this, allow_duplicate, expand_path);
       a_config.fetch("list.filenames", list_vec);
@@ -601,7 +600,7 @@ void smart_filename::initialize(const properties& a_config) {
     } else {
       // 2012-05-02 FM : allow unranged list of incremented filenames.
       // DT_THROW_IF (incremental_increment > 0,
-      //              logic_error,
+      //              std::logic_error,
       //              " Missing 'incremental.stop' key !");
     }
     if (a_config.has_key("incremental.start")) {

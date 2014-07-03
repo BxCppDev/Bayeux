@@ -1,23 +1,23 @@
-/* library_loader.cc
- */
-// Ourselves
+// library_loader.cc
+
+// Ourselves:
 #include <datatools/library_loader.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// This Project
+// This Project:
 #include <datatools/detail/DynamicLoader.h>
 #include <datatools/utils.h>
 #include <datatools/handle.h>

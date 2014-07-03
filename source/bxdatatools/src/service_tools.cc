@@ -18,16 +18,15 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-// Ourselves
+
+// Ourselves:
 #include <datatools/service_tools.h>
 
-// Standard Library
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 
-// Third Party
-
-// Datatools
+// This project:
 #include <datatools/base_service.h>
 #include <datatools/exception.h>
 
@@ -270,4 +269,3 @@ void service_entry::tree_dump(std::ostream& out,
 }
 
 }  // end of namespace datatools
-

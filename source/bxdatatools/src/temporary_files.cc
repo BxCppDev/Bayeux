@@ -1,20 +1,19 @@
-// -*- mode: c++; -*-
 // temporary_files.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/temporary_files.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <unistd.h>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 
-// Third Party
-// - A
+// Third Party:
 #include <boost/filesystem.hpp>
 
-// This Project
+// This Project:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/exception.h>
@@ -260,5 +259,3 @@ void temp_file::set_defaults() {
 }
 
 } // namespace datatools
-
-// end of temporary_files.cc

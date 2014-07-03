@@ -1,18 +1,15 @@
-// -*- mode: c++; -*-
 // real_range.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/real_range.h>
 
-// Standard Library
+// Standard Library:
 #include <cmath>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/exception.h>
 
 namespace datatools {
@@ -304,4 +301,3 @@ std::ostream& operator<<(std::ostream& a_out, const real_range& a_range) {
 }
 
 } // namespace datatools
-

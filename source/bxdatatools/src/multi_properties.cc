@@ -1,13 +1,14 @@
 // multi_properties.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/multi_properties.h>
 
-// Standard Library
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
 
-// This Project
+// This Project:
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/ioutils.h>

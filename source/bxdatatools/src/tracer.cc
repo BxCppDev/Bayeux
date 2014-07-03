@@ -1,20 +1,20 @@
-// -*- mode: c++; -*-
 // ioutils.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/tracer.h>
 
-// Standard Library
+// Standard Library:
 #include <sstream>
 #include <map>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 
-// This Project
+// This Project:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
@@ -202,4 +202,3 @@ namespace datatools {
   }
 
 } // namespace datatools
-

@@ -1,5 +1,6 @@
-/* _datatools.cc */
-// Ourselves
+// _datatools.cc
+
+// Ourselves:
 #include <datatools/datatools.h>
 
 // This package:

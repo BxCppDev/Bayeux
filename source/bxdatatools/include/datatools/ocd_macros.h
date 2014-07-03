@@ -29,6 +29,10 @@
 // This project:
 #include <datatools/detail/ocd_utils.h>
 
+/// Declare the OCD support for a given class
+/**
+ *  \arg ClassName the class full name (including namespaces)
+ */
 #define DOCD_CLASS_DECLARATION(ClassName)                               \
   namespace datatools {                                                 \
     namespace detail {                                                  \
@@ -46,6 +50,11 @@
       }}}                                                               \
   /**/
 
+/// Open the OCD implementation block
+/**
+ *  \arg ClassType the class type
+ *  \arg OcdId the OCD data structure to be filled
+ */
 #define DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(ClassType,OcdId)                \
   namespace datatools {                                                 \
   namespace detail {                                                    \
@@ -53,10 +62,16 @@
   template<> void implement_load< ClassType >(::datatools::object_configuration_description & OcdId) { \
   /**/
 
+/// Close the OCD implementation block
 #define DOCD_CLASS_IMPLEMENT_LOAD_END()         \
   }}}}                                          \
   /**/
 
+/// Instantiate a specialization of the OCD system factory register manager for a given class
+/**
+ *  \arg ClassType the class type
+ *  \arg ClassId the class registration Id (unique string)
+ */
 #define DOCD_CLASS_SYSTEM_REGISTRATION(ClassType,ClassId)               \
   namespace datatools {                                                 \
     namespace detail {                                                  \
@@ -73,5 +88,18 @@
 #define DOCD_GET_SYSTEM_REGISTRATION()                                  \
   ::datatools::detail::ocd::ocd_registration::get_system_registration() \
   /**/
+
+/*
+          _ocd_sfr(){                                                   \
+            _reg_.reset(new system_factory_registrar< ClassType >(ClassId)); \
+          }                                                             \
+          ~_ocd_sfr(){                                                  \
+            _reg_.reset();                                              \
+          }                                                             \
+        private:                                                        \
+          boost::scoped_ptr<base_system_factory_registrar> _reg_;       \
+          static _ocd_sfr< ClassType > _instance;                       \
+
+*/
 
 #endif // DATATOOLS_OCD_MACROS_H

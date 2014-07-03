@@ -1,18 +1,68 @@
-// -*- mode: c++; -*-
 // ocd_utils.cc
 
+// Ourselves:
 #include <datatools/detail/ocd_utils.h>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
+// This project:
 #include <datatools/exception.h>
 
 namespace datatools {
 namespace detail {
 namespace ocd {
 
+  ocd_registration::entry_type::entry_type()
+  {
+    link = 0;
+  }
+
+  ocd_registration::entry_type::~entry_type()
+  {
+    if (handle) {
+      handle.reset();
+    }
+  }
+
+  bool ocd_registration::entry_type::has_ocd() const
+  {
+    if (link) {
+      return true;
+    } else if (handle) {
+      return true;
+    }
+    return false;
+  }
+
+  const object_configuration_description & ocd_registration::entry_type::get() const
+  {
+    if (link) {
+      return *link;
+    } else if (handle) {
+      return *handle;
+    } else {
+      DT_THROW_IF(true, std::logic_error, "No handle to any OCD data!");
+    }
+  }
+
+  bool ocd_registration::is_system() const
+  {
+    return this == &get_system_registration();
+  }
+
   ocd_registration::ocd_registration(bool preload_system_registration_)
   {
+    _logging_ = ::datatools::logger::PRIO_FATAL;
+    char * docd_logging = getenv("DATATOOLS_OCD_DEVEL_LOGGING");
+    if (docd_logging) {
+      std::string ocd_logging_label = docd_logging;
+      _logging_ = ::datatools::logger::get_priority(ocd_logging_label);
+      if (_logging_ == ::datatools::logger::PRIO_UNDEFINED) {
+        _logging_ = ::datatools::logger::PRIO_FATAL;
+      }
+    }
     if (preload_system_registration_) {
       _preload_system_registration();
     }
@@ -27,7 +77,10 @@ namespace ocd {
 
   void ocd_registration::_preload_system_registration()
   {
-    _dict_ = get_system_registration()._dict_;
+    // 2014-07-03, FM: do not process for it is rather dangerous without care:
+    // The line below is invalid now: we should here populate the _dict_
+    // with some link and not a hard copy of the system's _dict_.
+    // _dict_ = get_system_registration()._dict_;
     return;
   }
 
@@ -43,7 +96,11 @@ namespace ocd {
     DT_THROW_IF (found == _dict_.end(),
                  std::logic_error,
                  "No OCD for class with ID '" << class_id_ << "' !");
-    return *found->second.handle.get();
+    const entry_type & eocd = found->second;
+    if (eocd.link) {
+      return *eocd.link;
+    }
+    return *eocd.handle;
   }
 
   void ocd_registration::compute_ids(std::vector<std::string> & list_) const
@@ -85,9 +142,9 @@ namespace ocd {
   // static
   ocd_registration & ocd_registration::grab_system_registration()
   {
-    static boost::scoped_ptr<ocd_registration> _ocd_registration(0);
-    if (_ocd_registration.get() == 0) {
-      _ocd_registration.reset(new ocd_registration);
+    static boost::scoped_ptr<ocd_registration> _ocd_registration;
+    if (!_ocd_registration) {
+      _ocd_registration.reset(new ocd_registration(false));
     }
     return *_ocd_registration.get();
   }
@@ -99,9 +156,6 @@ namespace ocd {
     return const_cast<ocd_registration &>(grab_system_registration());
   }
 
-
 } // namespace ocd
 } // namespace detail
 } // namespace datatools
-
-// end of ocd_utils.cc

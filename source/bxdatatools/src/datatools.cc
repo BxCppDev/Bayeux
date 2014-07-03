@@ -1,8 +1,9 @@
-/* i_named.cc */
-// Ourselves
+// datatools.cc
+
+// Ourselves:
 #include <datatools/datatools.h>
 
-// This project
+// This project:
 #include <datatools/kernel.h>
 
 namespace datatools {

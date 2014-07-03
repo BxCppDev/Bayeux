@@ -1,9 +1,9 @@
-// -*- mode: c++; -*-
 // utils.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/utils.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <cmath>
 #include <unistd.h>
@@ -16,14 +16,13 @@
 #include <stdexcept>
 #include <vector>
 
-// Third Party
-// - Boost
-//#include <boost/tokenizer.hpp>
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-// This Project
+// This Project:
 #include <datatools/ioutils.h>
 #include <datatools/library_info.h>
 #include <datatools/properties.h>

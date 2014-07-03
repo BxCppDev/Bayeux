@@ -1,7 +1,7 @@
-/* datatools/_init_fini.cc
- */
-// Third party
-// - Boost
+// datatools/_init_fini.cc
+
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
 // This package:
@@ -33,5 +33,3 @@ static void datatools_finalizer()
   //DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
   return;
 }
-
-// end of datatools/_init_fini.cc

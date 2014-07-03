@@ -1,19 +1,18 @@
-// -*- mode: c++; -*-
-/* library_info.cc
- */
-// Ourselves
+// library_info.cc
+
+// Ourselves:
 #include <datatools/library_info.h>
 
-// Standard Library
+// Standard Library:
 #include <sstream>
 #include <stdexcept>
 #include <cstdlib>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
-// Datatools
+// This project:
 #include <datatools/exception.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
@@ -585,5 +584,3 @@ namespace datatools {
   }
 
 } // end of namespace datatools
-
-// end of library_info.cc

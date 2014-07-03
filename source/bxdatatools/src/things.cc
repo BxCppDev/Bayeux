@@ -18,14 +18,19 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-// Ourselves
-#include <datatools/things.h>
-#include <datatools/factory.h>
-#include <datatools/factory_macros.h>
 
+// Ourselves:
+#include <datatools/things.h>
+
+// Third Party:
 #if DATATOOLS_WITH_REFLECTION == 1
+// - CAMP:
 #include <camp/detail/typeid.hpp>
 #endif // DATATOOLS_WITH_REFLECTION
+
+// This Project:
+#include <datatools/factory.h>
+#include <datatools/factory_macros.h>
 
 //----------------------------------------------------------------------
 // things class

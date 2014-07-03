@@ -18,16 +18,15 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-// Ourselves
+
+// Ourselves:
 #include <datatools/service_manager.h>
 
-// Standard Library
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 
-// Third Party
-
-// Datatools
+// This Project:
 #include <datatools/base_service.h>
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
@@ -724,5 +723,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::service_manager,ocd_)
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
 DOCD_CLASS_SYSTEM_REGISTRATION(datatools::service_manager,"datatools::service_manager")
-
-// end of service_manager.cc

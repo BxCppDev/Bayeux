@@ -1,6 +1,6 @@
 // version.cc - Implementation of datatools version struct
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 //
 // This file is part of datatools.
@@ -18,16 +18,11 @@
 // You should have received a copy of the GNU General Public License
 // along with datatools.  If not, see <http://www.gnu.org/licenses/>.
 
-// Ourselves
+// Ourselves:
 #include "datatools/version.h"
 
-// Standard Library
+// Standard Library:
 #include <sstream>
-
-// Third Party
-// - A
-
-// This Project
 
 namespace datatools {
 int version::get_major() {
@@ -83,4 +78,3 @@ bool version::has_feature(const std::string&) {
   return false;
 }
 } // namespace datatools
-

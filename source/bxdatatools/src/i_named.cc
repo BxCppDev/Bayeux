@@ -1,5 +1,6 @@
-/* i_named.cc */
-// Ourselves
+// i_named.cc
+
+// Ourselves:
 #include <datatools/i_named.h>
 
 namespace datatools {
@@ -32,4 +33,3 @@ bool i_named::is_anonymous(const i_named& a_named) {
 }
 
 } // end of namespace datatools
-

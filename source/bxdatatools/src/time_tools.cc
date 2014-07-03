@@ -1,14 +1,13 @@
-// -*- mode: c++; -*-
 // time_tools.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/time_tools.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <cmath>
 #include <sys/time.h>
 #include <unistd.h>
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,10 +15,7 @@
 #include <stdexcept>
 #include <limits>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/clhep_units.h>
 #include <datatools/units.h>
 #include <datatools/utils.h>

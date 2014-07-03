@@ -1,9 +1,9 @@
-/// \file datatools/properties.cc
+// datatools/properties.cc
 
-// Ourselves
+// Ourselves:
 #include <datatools/properties.h>
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -12,15 +12,15 @@
 #include <algorithm>
 #include <list>
 
-// Third Party
-// - A
+// Third Party:
+// - Boost:
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string.hpp>
 //#include <boost/archive/polymorphic_oarchive.hpp>
 //#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// This Project
+// This Project:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>

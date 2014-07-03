@@ -1,17 +1,17 @@
-// -*- mode: c++ ; -*-
 // test_OCD.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <datatools/datatools_config.h>
 #include <datatools/object_configuration_description.h>
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
-
 
 using namespace std;
 
@@ -487,5 +487,3 @@ int main (int /*argc_*/, char ** /*argv_*/)
     }
   return (error_code);
 }
-
-// end of test_OCD.cxx

@@ -1,19 +1,18 @@
-// -*- mode: c++; -*-
-/* ocd_driver.cc
- */
-// Ourselves
+// ocd_driver.cc
+
+// Ourselves:
 #include <datatools/ocd_driver.h>
 
-// Standard Library
+// Standard Library:
 #include <sstream>
 #include <fstream>
 #include <stdexcept>
 
-// Third Party
+// Third Party:
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
-// Datatools
+// This project:
 #include <datatools/exception.h>
 #include <datatools/library_loader.h>
 #include <datatools/logger.h>
@@ -303,5 +302,3 @@ int ocd_driver::_run_validate(const std::string & class_id_,
 }
 
 } // end of namespace datatools
-
-// end of ocd_driver.cc

@@ -1,16 +1,13 @@
-// -*- mode: c++; -*-
-/* event_id.cc
- */
-// Ourselves
+// event_id.cc
+
+// Ourselves:
 #include <datatools/event_id.h>
 
-// Standard Library
+// Standard Library:
 #include <sstream>
 #include <stdexcept>
 
-// Third Party
-
-// Datatools
+// This project:
 #include <datatools/exception.h>
 
 // Special backward compatibility support for serialization :
@@ -213,5 +210,3 @@ void event_id::dump() const {
 }
 
 } // end of namespace datatools
-
-// end of event_id.cc

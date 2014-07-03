@@ -1,19 +1,18 @@
-// -*- mode: c++; -*-
 // object_configuration_description.cc
 
 // Ourselves:
 #include <datatools/object_configuration_description.h>
 
-// Standard library
+// Standard library:
 #include <limits>
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// This project
+// This project:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
@@ -22,12 +21,12 @@
 
 namespace datatools {
 
-   const bool configuration_property_description::SCALAR = false;
-   const bool configuration_property_description::ARRAY  = true;
-   const bool configuration_property_description::IMPLICIT_UNIT = false;
-   const bool configuration_property_description::EXPLICIT_UNIT = true;
-   const bool configuration_property_description::MUTABLE = false;
-   const bool configuration_property_description::CONST = true;
+   // const bool configuration_property_description::SCALAR = false;
+   // const bool configuration_property_description::ARRAY  = true;
+   // const bool configuration_property_description::IMPLICIT_UNIT = false;
+   // const bool configuration_property_description::EXPLICIT_UNIT = true;
+   // const bool configuration_property_description::MUTABLE = false;
+   // const bool configuration_property_description::CONST = true;
 
   bool configuration_property_description::dependency_entry::dynamic() const
   {
@@ -91,7 +90,7 @@ namespace datatools {
 
   configuration_property_description::dependency_entry::~dependency_entry()
   {
-    reset();
+    //reset();
     return;
   }
 
@@ -1858,8 +1857,4 @@ namespace datatools {
     return;
   }
 
-  /*******************************************************************************/
-
 } // namespace datatools
-
-// end of object_configuration_description.cc

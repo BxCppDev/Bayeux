@@ -1,19 +1,20 @@
 // ioutils.cc
-// Ourselves
+
+// Ourselves:
 #include <datatools/ioutils.h>
 
-// Standard Library
+// Standard Library:
 #include <sstream>
 #include <vector>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-// This Project
+// This Project:
 #include <datatools/utils.h>
 
 namespace datatools {
