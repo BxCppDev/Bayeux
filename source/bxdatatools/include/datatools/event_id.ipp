@@ -6,8 +6,6 @@
 // Ourselves:
 #include <datatools/event_id.h>
 
-// Standard Library
-
 // Third Party:
 // - Boost:
 #include <boost/serialization/nvp.hpp>
