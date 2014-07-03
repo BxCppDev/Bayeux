@@ -66,20 +66,22 @@ namespace mygsl {
     /// An alias for the embedded seed dictionnary container class
     typedef std::map<std::string, int32_t> dict_type;
 
+    /// \deprecated constant
     static const std::string INIT_SEED_FROM_ENV_NAME;
 
-    enum init_seed_from_type
-      {
-        INIT_SEED_FROM_UNDEFINED    = 0,
-        INIT_SEED_FROM_CURRENT_TIME = datatools::bit_mask::bit00,
-        INIT_SEED_FROM_CURRENT_PID  = datatools::bit_mask::bit01,
-        INIT_SEED_FROM_CURRENT_TIME_AND_PID = INIT_SEED_FROM_CURRENT_TIME | INIT_SEED_FROM_CURRENT_PID ,
-        INIT_SEED_FROM_URANDOM = datatools::bit_mask::bit02,
-        //INIT_SEED_FROM_RANDOM_DEVICE = datatools::bit_mask::bit03
-        INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_URANDOM,
-      };
+    /// The name of some environment variable to set the *entropy strategy*
+    static const std::string & init_seed_from_env_name();
 
-  public:
+    /// \brief The entropy strategy used to choose a seed for randomization of seeds
+    enum init_seed_from_type {
+      INIT_SEED_FROM_UNDEFINED    = 0,
+      INIT_SEED_FROM_CURRENT_TIME = datatools::bit_mask::bit00,
+      INIT_SEED_FROM_CURRENT_PID  = datatools::bit_mask::bit01,
+      INIT_SEED_FROM_CURRENT_TIME_AND_PID = INIT_SEED_FROM_CURRENT_TIME | INIT_SEED_FROM_CURRENT_PID ,
+      INIT_SEED_FROM_URANDOM = datatools::bit_mask::bit02,
+      //INIT_SEED_FROM_RANDOM_DEVICE = datatools::bit_mask::bit03
+      INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_URANDOM,
+    };
 
     /// Return true if the seed has a valid value
     static bool seed_is_valid (int);
@@ -129,25 +131,11 @@ namespace mygsl {
     /// Check if some seeds are 'invalid' :
     bool has_invalid_seeds () const;
 
-  protected:
-
-    void _ensure_different_seeds (mygsl::rng * random_ = 0);
-
-    int32_t _set_seed_for_seeds ();
-
-  private:
-
-    void _set_init_seed_flags_ ();
-
-  public:
-
     /// Returns the number of PRNG's seed values storedin the manager
     size_t size () const;
 
     /// Check if the manager is empty
     bool empty () const;
-
-  public:
 
     /// Default constructor:
     seed_manager ();
@@ -155,11 +143,11 @@ namespace mygsl {
     /// Destructor:
     virtual ~seed_manager ();
 
+    /// Set the entropy strategy flags
     void set_init_seed_flags (uint32_t);
 
+    /// Return the entropy strategy flags
     uint32_t get_init_seed_flags () const;
-
-  public:
 
     /// Basic print
     void dump (std::ostream &) const;
@@ -169,6 +157,16 @@ namespace mygsl {
 
     /// Load the seeds informations froma stream
     friend std::istream & operator>> (std::istream &, seed_manager &);
+
+  protected:
+
+    void _ensure_different_seeds (mygsl::rng * random_ = 0);
+
+    int32_t _set_seed_for_seeds ();
+
+  private:
+
+    void _set_init_seed_flags_ ();
 
   private:
 

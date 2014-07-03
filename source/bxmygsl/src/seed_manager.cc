@@ -64,6 +64,13 @@ namespace mygsl {
 
   const std::string seed_manager::INIT_SEED_FROM_ENV_NAME = "MYGSL_SEED_MANAGER_INIT_SEED_FROM";
 
+  // static
+  const std::string & seed_manager::init_seed_from_env_name()
+  {
+    static std::string _name("MYGSL_SEED_MANAGER_INIT_SEED_FROM");
+    return _name;
+  }
+
   datatools::logger::priority seed_manager::get_logging_priority () const
   {
     return _logging_priority_;
@@ -107,7 +114,7 @@ namespace mygsl {
     if (_init_seed_flags_ == INIT_SEED_FROM_UNDEFINED)
       {
         std::string init_seed_from_env;
-        char * dummy = getenv(INIT_SEED_FROM_ENV_NAME.c_str ());
+        char * dummy = getenv(init_seed_from_env_name().c_str());
         if (dummy != 0)
           {
             init_seed_from_env = dummy;
@@ -126,7 +133,7 @@ namespace mygsl {
             else
               {
                 DT_LOG_WARNING(get_logging_priority (),
-                               "Invalid value ('" << init_seed_from_env << "') for the '" << INIT_SEED_FROM_ENV_NAME << "' environment variable !");
+                               "Invalid value ('" << init_seed_from_env << "') for the '" << init_seed_from_env_name() << "' environment variable !");
               }
           }
       }
