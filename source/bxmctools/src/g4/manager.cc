@@ -1070,6 +1070,28 @@ namespace mctools {
 
       // Begin of property parsing:
 
+      // 2014-07-04 XG : Get initialization method for seeds. If seeds are equal
+      // to 0 then their values may be initialized through 3 differents methods:
+      // - 'current_time' i.e. getting seed value from time in seconds,
+      // - 'current_pid'  i.e. getting seed value from the program PID,
+      // - 'urandom' the default one that set a seed value from /dev/urandom
+      // posix generator.
+      if (manager_config.has_key("init_seed_method")) {
+        const std::string method_name = manager_config.fetch_string("init_seed_method");
+        uint32_t flag = mygsl::seed_manager::INIT_SEED_FROM_UNDEFINED;
+        if (method_name == "current_time") {
+          flag = mygsl::seed_manager::INIT_SEED_FROM_CURRENT_TIME;
+        } else if (method_name == "current_pid") {
+          flag = mygsl::seed_manager::INIT_SEED_FROM_CURRENT_PID;
+        } else if (method_name == "urandom") {
+          flag = mygsl::seed_manager::INIT_SEED_FROM_URANDOM;
+        } else {
+          DT_THROW_IF(true, std::logic_error, "Initialization method '" << method_name << "' is unkown or not supported !");
+        }
+        DT_LOG_DEBUG(_logprio(), "Initialization of PRNG seeds is based on '" << method_name << "' method");
+        _seed_manager_.set_init_seed_flags(flag);
+      }
+
       // 2011-02-26 FM : only search for the 'number_of_events' property
       // if '_number_of_events' has not been set yet :
       if (_number_of_events_ == manager::constants::instance().NO_LIMIT) {
