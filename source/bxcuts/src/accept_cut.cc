@@ -9,8 +9,6 @@
 
 namespace cuts {
 
-  using namespace std;
-
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(accept_cut, "cuts::accept_cut");
 
