@@ -1,17 +1,21 @@
-// -*- mode: c++; -*-
-/* blur_spot.cc
- */
+// blur_spot.cc
 
+// Ourselves:
 #include <geomtools/blur_spot.h>
 
+// Standard library:
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
-#include <geomtools/i_object_3d.h>
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 #include <datatools/exception.h>
+
+// This project:
+#include <geomtools/i_object_3d.h>
 
 namespace geomtools {
 
@@ -22,42 +26,36 @@ namespace geomtools {
   const double blur_spot::DEFAULT_VALUE  = 0.0;
   const double blur_spot::DEFAULT_NSIGMA = 2.0;
 
-  bool blur_spot::is_valid () const
+  bool blur_spot::is_valid() const
   {
+    if (! this->base_hit::is_valid()) return false;
     if ( _blur_dimension_ == DIMENSION_INVALID) return false;
     if ( ! _placement_.is_valid ()) return false;
-    if (is_dimension_one ())
-      {
-        return datatools::is_valid (_z_error_);
-      }
-    else if (is_dimension_two ())
-      {
-        return datatools::is_valid (_x_error_)
-          && datatools::is_valid (_y_error_);
-      }
-    else //if (is_dimension_three ())
-      {
-        return datatools::is_valid (_x_error_)
-          && datatools::is_valid (_y_error_)
-          && datatools::is_valid (_z_error_);
-      }
-    // return true;
+    if (is_dimension_one ()) {
+      return datatools::is_valid (_z_error_);
+    } else if (is_dimension_two ()) {
+      return datatools::is_valid (_x_error_)
+        && datatools::is_valid (_y_error_);
+    }
+    return datatools::is_valid (_x_error_)
+      && datatools::is_valid (_y_error_)
+      && datatools::is_valid (_z_error_);
   }
 
   void blur_spot::reset ()
   {
-    _placement_.reset ();
-    _auxiliaries_.clear ();
-    datatools::invalidate (_x_error_);
-    datatools::invalidate (_y_error_);
-    datatools::invalidate (_z_error_);
+    this->blur_spot::invalidate();
     return;
   }
 
   void blur_spot::invalidate ()
   {
-    reset ();
+    invalidate_placement();
+    datatools::invalidate (_x_error_);
+    datatools::invalidate (_y_error_);
+    datatools::invalidate (_z_error_);
     _blur_dimension_ = DIMENSION_INVALID;
+    this->base_hit::invalidate();
     return;
   }
 
@@ -68,14 +66,11 @@ namespace geomtools {
 
   void blur_spot::set_tolerance (double tolerance_)
   {
-    if (tolerance_ > DEFAULT_VALUE)
-      {
-        _tolerance_ = tolerance_;
-      }
-    else
-      {
-        _tolerance_ = constants::DEFAULT_TOLERANCE;
-      }
+    if (tolerance_ > DEFAULT_VALUE) {
+      _tolerance_ = tolerance_;
+    } else {
+      _tolerance_ = constants::DEFAULT_TOLERANCE;
+    }
     return;
   }
 
@@ -102,18 +97,15 @@ namespace geomtools {
   // Set the intrinsic dimension of the object :
   void blur_spot::set_blur_dimension (int blur_dimension_)
   {
-    if (blur_dimension_ == DIMENSION_INVALID)
-      {
-        reset ();
-        _blur_dimension_ = DIMENSION_INVALID;
-      }
-    else
-      {
-        DT_THROW_IF (blur_dimension_ < DIMENSION_ZERO || blur_dimension_ > DIMENSION_THREE,
-                     std::range_error,
-                     "Invalid blur dimension (" << blur_dimension_ << ") !");
-        _blur_dimension_ = blur_dimension_;
-      }
+    if (blur_dimension_ == DIMENSION_INVALID) {
+      reset ();
+      _blur_dimension_ = DIMENSION_INVALID;
+    } else {
+      DT_THROW_IF (blur_dimension_ < DIMENSION_ZERO || blur_dimension_ > DIMENSION_THREE,
+                   std::range_error,
+                   "Invalid blur dimension (" << blur_dimension_ << ") !");
+      _blur_dimension_ = blur_dimension_;
+    }
     return;
   }
 
@@ -127,9 +119,9 @@ namespace geomtools {
   {
     _blur_dimension_ = DIMENSION_INVALID;
     _tolerance_ = constants::DEFAULT_TOLERANCE;
-    datatools::invalidate (_x_error_);
-    datatools::invalidate (_y_error_);
-    datatools::invalidate (_z_error_);
+    datatools::invalidate(_x_error_);
+    datatools::invalidate(_y_error_);
+    datatools::invalidate(_z_error_);
     return;
   }
 
@@ -138,15 +130,14 @@ namespace geomtools {
                         double tolerance_)
   {
     _blur_dimension_ = DIMENSION_INVALID;
-    if (blur_dimension_ != DIMENSION_INVALID)
-      {
-        set_blur_dimension (blur_dimension_);
-      }
+    if (blur_dimension_ != DIMENSION_INVALID) {
+      set_blur_dimension(blur_dimension_);
+    }
     _tolerance_ = constants::DEFAULT_TOLERANCE;
     set_tolerance (tolerance_);
-    datatools::invalidate (_x_error_);
-    datatools::invalidate (_y_error_);
-    datatools::invalidate (_z_error_);
+    datatools::invalidate(_x_error_);
+    datatools::invalidate(_y_error_);
+    datatools::invalidate(_z_error_);
     return;
   }
 
@@ -157,17 +148,27 @@ namespace geomtools {
 
   void blur_spot::set_position (const vector_3d & position_)
   {
-    _placement_.set_translation (position_);
+    _store_set(STORE_PLACEMENT);
+    _placement_.set_translation(position_);
     return;
   }
 
   void blur_spot::set_placement (const placement & placement_)
   {
+    _store_set(STORE_PLACEMENT);
     _placement_ = placement_;
+  }
+
+  void blur_spot::invalidate_placement()
+  {
+    _placement_.reset();
+    _store_unset(STORE_PLACEMENT);
+    return;
   }
 
   placement & blur_spot::grab_placement ()
   {
+    _store_set(STORE_PLACEMENT);
     return _placement_;
   }
 
@@ -191,30 +192,14 @@ namespace geomtools {
     return _placement_.get_inverse_rotation ();
   }
 
-  void blur_spot::set_auxiliaries (const datatools::properties & aux_)
-  {
-    _auxiliaries_ = aux_;
-  }
-
-  datatools::properties & blur_spot::grab_auxiliaries ()
-  {
-    return _auxiliaries_;
-  }
-
-  const datatools::properties & blur_spot::get_auxiliaries () const
-  {
-    return _auxiliaries_;
-  }
-
   bool blur_spot::_match_0d (const vector_3d & position_,
                              double tolerance_) const
   {
     // Default tolerance :
     double tolerance = _tolerance_;
-    if (tolerance_ > DEFAULT_VALUE)
-      {
-        tolerance = tolerance_;
-      }
+    if (tolerance_ > DEFAULT_VALUE) {
+      tolerance = tolerance_;
+    }
     vector_3d distance = position_ - _placement_.get_translation ();
     //clog << "DEVEL: geomtools: blur_spot::_match_0d: distance=" << distance.mag () / << endl;
     bool near = distance.mag () < tolerance;
@@ -230,50 +215,40 @@ namespace geomtools {
   {
     vector_3d local_pos;
     _placement_.mother_to_child (position_, local_pos);
-    if (mode_ == MODE_INTERVAL)
-      {
-        // clog << "DEVEL: geomtools: blur_spot::_match_1d: MODE_INTERVAL"<< endl;
-        // Default tolerance :
-        double tolerance_rho = _tolerance_;
-        if (nsigma1_or_tolerance_ > DEFAULT_VALUE)
-          {
-            tolerance_rho = nsigma1_or_tolerance_;
-          }
-        if (local_pos.perp() > tolerance_rho)
-          {
-            return false;
-          }
-        if (std::abs(local_pos.z ()) > _z_error_)
-          {
-            return false;
-          }
-        return true;
+    if (mode_ == MODE_INTERVAL) {
+      // clog << "DEVEL: geomtools: blur_spot::_match_1d: MODE_INTERVAL"<< endl;
+      // Default tolerance :
+      double tolerance_rho = _tolerance_;
+      if (nsigma1_or_tolerance_ > DEFAULT_VALUE) {
+        tolerance_rho = nsigma1_or_tolerance_;
       }
-    else if (mode_ == MODE_GAUSSIAN)
-      {
-        //clog << "DEVEL: geomtools: blur_spot::_match_1d: MODE_GAUSSIAN"<< endl;
-        // Default N sigma along Z axis :
-        double nsigma_z = DEFAULT_NSIGMA;
-        if (nsigma1_or_tolerance_ > DEFAULT_VALUE)
-          {
-            nsigma_z = nsigma1_or_tolerance_;
-          }
-        // Default tolerance :
-        double tolerance_rho = _tolerance_;
-        if (nsigma2_or_tolerance_ > DEFAULT_VALUE)
-          {
-            tolerance_rho = nsigma2_or_tolerance_;
-          }
-        if (local_pos.perp() > tolerance_rho)
-          {
-            return false;
-          }
-        if (std::abs(local_pos.z ()) > nsigma_z * _z_error_)
-          {
-            return false;
-          }
-        return true;
+      if (local_pos.perp() > tolerance_rho) {
+        return false;
       }
+      if (std::abs(local_pos.z ()) > _z_error_) {
+        return false;
+      }
+      return true;
+    } else if (mode_ == MODE_GAUSSIAN) {
+      //clog << "DEVEL: geomtools: blur_spot::_match_1d: MODE_GAUSSIAN"<< endl;
+      // Default N sigma along Z axis :
+      double nsigma_z = DEFAULT_NSIGMA;
+      if (nsigma1_or_tolerance_ > DEFAULT_VALUE) {
+        nsigma_z = nsigma1_or_tolerance_;
+      }
+      // Default tolerance :
+      double tolerance_rho = _tolerance_;
+      if (nsigma2_or_tolerance_ > DEFAULT_VALUE) {
+        tolerance_rho = nsigma2_or_tolerance_;
+      }
+      if (local_pos.perp() > tolerance_rho) {
+        return false;
+      }
+      if (std::abs(local_pos.z ()) > nsigma_z * _z_error_) {
+        return false;
+      }
+      return true;
+    }
     return false;
   }
 
@@ -285,29 +260,27 @@ namespace geomtools {
   {
     vector_3d local_pos;
     _placement_.mother_to_child (position_, local_pos);
-    if (mode_ == MODE_INTERVAL)
-      {
-        // Default tolerance :
-        double tolerance_z = _tolerance_;
-        if (nsigma1_or_tolerance_ > DEFAULT_VALUE)
-          {
-            tolerance_z = nsigma1_or_tolerance_;
-          }
-        if (std::abs(local_pos.z ()) > tolerance_z)
-          {
-            return false;
-          }
-        if (std::abs(local_pos.x ()) > _x_error_)
-          {
-            return false;
-          }
-        if (std::abs(local_pos.y ()) > _y_error_)
-          {
-            return false;
-          }
-        return true;
-      }
-    else if (mode_ == MODE_GAUSSIAN)
+    if (mode_ == MODE_INTERVAL) {
+      // Default tolerance :
+      double tolerance_z = _tolerance_;
+      if (nsigma1_or_tolerance_ > DEFAULT_VALUE)
+        {
+          tolerance_z = nsigma1_or_tolerance_;
+        }
+      if (std::abs(local_pos.z ()) > tolerance_z)
+        {
+          return false;
+        }
+      if (std::abs(local_pos.x ()) > _x_error_)
+        {
+          return false;
+        }
+      if (std::abs(local_pos.y ()) > _y_error_)
+        {
+          return false;
+        }
+      return true;
+    } else if (mode_ == MODE_GAUSSIAN)
       {
         // Default N sigma along X axis :
         double nsigma_x = DEFAULT_NSIGMA;
@@ -352,56 +325,53 @@ namespace geomtools {
   {
     vector_3d local_pos;
     _placement_.mother_to_child (position_, local_pos);
-    if (mode_ == MODE_INTERVAL)
-      {
-        if (std::abs(local_pos.x ()) > (_x_error_))
-          {
-            return false;
-          }
-        if (std::abs(local_pos.y ()) > (_y_error_))
-          {
-            return false;
-          }
-        if (std::abs(local_pos.z ()) > (_z_error_))
-          {
-            return false;
-          }
-        return true;
-      }
-    else if (mode_ == MODE_GAUSSIAN)
-      {
-        // Default N sigma along X axis :
-        double nsigma_x = DEFAULT_NSIGMA;
-        if (nsigma1_or_tolerance_ > DEFAULT_VALUE)
-          {
-            nsigma_x = nsigma1_or_tolerance_;
-          }
-        // Default N sigma along Y axis :
-        double nsigma_y = DEFAULT_NSIGMA;
-        if (nsigma2_or_tolerance_ > DEFAULT_VALUE)
-          {
-            nsigma_y = nsigma2_or_tolerance_;
-          }
-        // Default N sigma along Z axis :
-        double nsigma_z = DEFAULT_NSIGMA;
-        if (nsigma3_or_tolerance_ > DEFAULT_VALUE)
-          {
-            nsigma_z = nsigma3_or_tolerance_;
-          }
-        if (std::abs(local_pos.x ()) > nsigma_x * _x_error_)
-          {
-            return false;
-          }
-        if (std::abs(local_pos.y ()) > nsigma_y * _y_error_)
-          {
-            return false;
-          }
-        if (std::abs(local_pos.z ()) > nsigma_z * _z_error_)
-          {
-            return false;
-          }
-        return true;
-      }
+    if (mode_ == MODE_INTERVAL) {
+      if (std::abs(local_pos.x ()) > (_x_error_))
+        {
+          return false;
+        }
+      if (std::abs(local_pos.y ()) > (_y_error_))
+        {
+          return false;
+        }
+      if (std::abs(local_pos.z ()) > (_z_error_))
+        {
+          return false;
+        }
+      return true;
+    } else if (mode_ == MODE_GAUSSIAN) {
+      // Default N sigma along X axis :
+      double nsigma_x = DEFAULT_NSIGMA;
+      if (nsigma1_or_tolerance_ > DEFAULT_VALUE)
+        {
+          nsigma_x = nsigma1_or_tolerance_;
+        }
+      // Default N sigma along Y axis :
+      double nsigma_y = DEFAULT_NSIGMA;
+      if (nsigma2_or_tolerance_ > DEFAULT_VALUE)
+        {
+          nsigma_y = nsigma2_or_tolerance_;
+        }
+      // Default N sigma along Z axis :
+      double nsigma_z = DEFAULT_NSIGMA;
+      if (nsigma3_or_tolerance_ > DEFAULT_VALUE)
+        {
+          nsigma_z = nsigma3_or_tolerance_;
+        }
+      if (std::abs(local_pos.x ()) > nsigma_x * _x_error_)
+        {
+          return false;
+        }
+      if (std::abs(local_pos.y ()) > nsigma_y * _y_error_)
+        {
+          return false;
+        }
+      if (std::abs(local_pos.z ()) > nsigma_z * _z_error_)
+        {
+          return false;
+        }
+      return true;
+    }
     return false;
   }
 
@@ -613,18 +583,11 @@ namespace geomtools {
                              const string & indent_,
                              bool inherit_) const
   {
-    string indent;
-    if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ())
-      {
-        out_ << indent << title_ << std::endl;
-      }
+    this->base_hit::tree_dump(out_, title_, indent_, true);
+    string indent = indent_;
 
     out_ << indent << i_tree_dumpable::tag << "Dimension : "
          << (int) _blur_dimension_  << endl;
-
-    out_ << indent << i_tree_dumpable::tag << "Tolerance : "
-         << _tolerance_ / CLHEP::mm  << " mm" << endl;
 
     out_ << indent << i_tree_dumpable::tag << "Placement : "  << endl;
     {
@@ -647,13 +610,8 @@ namespace geomtools {
              << _z_error_  / CLHEP::mm << " mm"  << endl;
       }
 
-    out_ << indent << i_tree_dumpable::inherit_tag (inherit_)
-         << "Auxiliary properties : "  << endl;
-    {
-      ostringstream indent_oss;
-      indent_oss << i_tree_dumpable::last_skip_tag;
-      _auxiliaries_.tree_dump (out_, "", indent_oss.str ());
-    }
+    out_ << indent << i_tree_dumpable::inherit_tag(inherit_) << "Tolerance : "
+         << _tolerance_ / CLHEP::mm  << " mm" << endl;
 
     return;
   }
@@ -673,28 +631,28 @@ namespace geomtools {
       << std::endl;
     */
     if (is_dimension_zero()) {
-      }
+    }
     if (is_dimension_one()) {
-        dz = _z_error_;
-      }
+      dz = _z_error_;
+    }
     if (is_dimension_two())  {
-        dx = _x_error_;
-        dy = _x_error_;
-      }
+      dx = _x_error_;
+      dy = _x_error_;
+    }
     if (is_dimension_three()) {
-        dx = _x_error_;
-        dy = _x_error_;
-        dz = _z_error_;
-      }
+      dx = _x_error_;
+      dy = _x_error_;
+      dz = _z_error_;
+    }
     vector_3d vertexes[3][2];
     for (int i = 0; i < 3; i++) {
-        vertexes[i][0].set((i == 0) ? -dx : 0,
-                           (i == 1) ? -dy : 0,
-                           (i == 2) ? -dz : 0);
-        vertexes[i][1].set((i == 0) ? +dx : 0,
-                           (i == 1) ? +dy : 0,
-                           (i == 2) ? +dz : 0);
-      }
+      vertexes[i][0].set((i == 0) ? -dx : 0,
+                         (i == 1) ? -dy : 0,
+                         (i == 2) ? -dz : 0);
+      vertexes[i][1].set((i == 0) ? +dx : 0,
+                         (i == 1) ? +dy : 0,
+                         (i == 2) ? +dz : 0);
+    }
 
     {
       for (int i = 0; i < 3; i++) {
@@ -709,13 +667,13 @@ namespace geomtools {
         p_.child_to_mother (v1, v);
         pl.add (v);
         if (i == 0) {
-            // Workaround to avoid automatic Gnuplot data mesh display mode :
-            // add the middle point of the X segment.
-            vector_3d v0 = 0.5*(vertexes[i][0]+vertexes[i][1]);
-            _placement_.child_to_mother (v0, v1);
-            p_.child_to_mother (v1, v);
-            pl.add (v);
-          }
+          // Workaround to avoid automatic Gnuplot data mesh display mode :
+          // add the middle point of the X segment.
+          vector_3d v0 = 0.5*(vertexes[i][0]+vertexes[i][1]);
+          _placement_.child_to_mother (v0, v1);
+          p_.child_to_mother (v1, v);
+          pl.add (v);
+        }
         _placement_.child_to_mother (vertexes[i][1], v1);
         p_.child_to_mother (v1, v);
         pl.add (v);
@@ -723,6 +681,28 @@ namespace geomtools {
     }
 
     if (is_dimension_two() || is_dimension_three()) {
+      {
+        polyline_3d xpl;
+        lpl_.push_back (xpl);
+      }
+      polyline_3d & pl = lpl_.back ();
+      pl.set_closed (true);
+      vector_3d v1, v;
+      _placement_.child_to_mother (vertexes[0][0], v1);
+      p_.child_to_mother (v1, v);
+      pl.add (v);
+      _placement_.child_to_mother (vertexes[1][0], v1);
+      p_.child_to_mother (v1, v);
+      pl.add (v);
+      _placement_.child_to_mother (vertexes[0][1], v1);
+      p_.child_to_mother (v1, v);
+      pl.add (v);
+      _placement_.child_to_mother (vertexes[1][1], v1);
+      p_.child_to_mother (v1, v);
+      pl.add (v);
+    }
+    if (is_dimension_three()) {
+      for (int j = 0; j < 2; j++) {
         {
           polyline_3d xpl;
           lpl_.push_back (xpl);
@@ -730,45 +710,21 @@ namespace geomtools {
         polyline_3d & pl = lpl_.back ();
         pl.set_closed (true);
         vector_3d v1, v;
-        _placement_.child_to_mother (vertexes[0][0], v1);
+        _placement_.child_to_mother (vertexes[j][0], v1);
         p_.child_to_mother (v1, v);
         pl.add (v);
-        _placement_.child_to_mother (vertexes[1][0], v1);
+        _placement_.child_to_mother (vertexes[2][0], v1);
         p_.child_to_mother (v1, v);
         pl.add (v);
-        _placement_.child_to_mother (vertexes[0][1], v1);
+        _placement_.child_to_mother (vertexes[j][1], v1);
         p_.child_to_mother (v1, v);
         pl.add (v);
-        _placement_.child_to_mother (vertexes[1][1], v1);
+        _placement_.child_to_mother (vertexes[2][1], v1);
         p_.child_to_mother (v1, v);
         pl.add (v);
       }
-    if (is_dimension_three()) {
-        for (int j = 0; j < 2; j++) {
-          {
-            polyline_3d xpl;
-            lpl_.push_back (xpl);
-          }
-          polyline_3d & pl = lpl_.back ();
-          pl.set_closed (true);
-          vector_3d v1, v;
-          _placement_.child_to_mother (vertexes[j][0], v1);
-          p_.child_to_mother (v1, v);
-          pl.add (v);
-          _placement_.child_to_mother (vertexes[2][0], v1);
-          p_.child_to_mother (v1, v);
-          pl.add (v);
-          _placement_.child_to_mother (vertexes[j][1], v1);
-          p_.child_to_mother (v1, v);
-          pl.add (v);
-          _placement_.child_to_mother (vertexes[2][1], v1);
-          p_.child_to_mother (v1, v);
-          pl.add (v);
-        }
-      }
+    }
     return;
   }
 
 } // end of namespace geomtools
-
-// end of blur_spot.cc

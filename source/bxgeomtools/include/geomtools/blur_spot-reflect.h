@@ -17,12 +17,8 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::blur_spot, /*tag_*/)
       {
-//                              std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-//                                                                      << "geomtools::blur_spot" << std::endl;
-
         DR_CLASS_DECLARE (::geomtools::blur_spot)
-          .DR_CLASS_BASE(::datatools::i_serializable)
-          .DR_CLASS_BASE(::datatools::i_tree_dumpable)
+          .DR_CLASS_BASE(::geomtools::base_hit)
           .DR_CLASS_CONSTRUCTOR()
           .DR_CLASS_CONSTRUCTOR2(uint8_t, double)
 
@@ -47,9 +43,6 @@ namespace datatools {
           .DR_CLASS_PROPERTY_GETTER_SETTER("position",
                                            ::geomtools::blur_spot::get_position,
                                            ::geomtools::blur_spot::set_position)
-          .DR_CLASS_PROPERTY_GETTER_SETTER("auxiliaries",
-                                           ::geomtools::blur_spot::get_auxiliaries,
-                                           ::geomtools::blur_spot::set_auxiliaries)
           .DR_CLASS_PROPERTY_GETTER("rotation",
                                     ::geomtools::blur_spot::get_rotation)
           .DR_CLASS_PROPERTY_GETTER("inverse_rotation",
