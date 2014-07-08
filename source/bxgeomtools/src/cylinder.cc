@@ -242,7 +242,7 @@ namespace geomtools {
     double r = hypot(a_position.x(), a_position.y());
     if ( (r >= (_radius_ + hskin)) ||
          ( std::abs(a_position.z()) >= (0.5 * _z_ + hskin) ) ) return true;
-    return true;
+    return false;
   }
 
   vector_3d
