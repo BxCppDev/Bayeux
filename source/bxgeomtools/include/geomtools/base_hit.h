@@ -118,7 +118,7 @@ namespace geomtools {
     /// Reset the internals of the hit, making it invalid
     virtual void clear ();
 
-    /*** measurement ***/
+    /*  measurement */
 
     /// Generic abstract interface for a measurement on a hit
     class i_measurement
@@ -136,7 +136,7 @@ namespace geomtools {
     /// Apply a measurement on the current hit
     base_hit & measure (i_measurement &);
 
-    /*** interface i_tree_dumpable ***/
+    /* interface i_tree_dumpable */
 
     /// Smart print
     virtual void tree_dump (std::ostream & a_out    = std::clog,
@@ -147,7 +147,7 @@ namespace geomtools {
     /// Smart print (default behaviour)
     void dump () const;
 
-    /*** predicates ***/
+    /* predicates */
 
     /// Predicate that checks if the auxiliaries container stores some specific flag
     class has_flag_predicate : public datatools::i_predicate<base_hit>
@@ -307,6 +307,15 @@ namespace geomtools {
     };
 
   protected:
+
+    /// Set the bits from a mask
+    void _store_set(uint32_t bit_mask_);
+
+    /// Unset the bits from a mask
+    void _store_unset(uint32_t bit_mask_);
+
+    /// Check the bits from a mask
+    bool _store_check(uint32_t bit_mask_) const;
 
     /** The \a store field records the usage status of
      * the each data field members.
