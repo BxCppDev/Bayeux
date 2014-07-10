@@ -347,8 +347,8 @@ if(Bayeux_WITH_EXAMPLES)
   foreach(_m ${Bayeux_SUBMODULES})
     foreach(_example ${${_m}_MODULE_EXAMPLES})
       install(DIRECTORY ${_example}/
-        PATTERN ".svn" EXCLUDE
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${Bayeux_EXAMPLE_DIR}/${_m}
+        PATTERN ".svn" EXCLUDE
 	      )
     endforeach()
   endforeach()
