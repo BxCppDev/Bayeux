@@ -2191,6 +2191,7 @@ namespace datatools {
   {
     std::string eol = "\n";
     if (!a_comment.empty()) eol += a_comment;
+    out << eol;
 
     bool real_with_unit = false;
     if (a_data.is_real()) {
@@ -2255,7 +2256,7 @@ namespace datatools {
       }
     }
 
-    // Values (s):
+    // Values:
     // For scalar or vector/array :
     for (int i = 0; i < size; i++) {
       out << ' ';
@@ -2281,7 +2282,7 @@ namespace datatools {
         }
       }
     }
-    out << "\n";
+    out << eol;
 
     if (real_with_unit) {
       out << "#@disable_real_with_unit" << "\n";

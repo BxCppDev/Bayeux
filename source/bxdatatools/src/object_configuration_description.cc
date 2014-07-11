@@ -1707,10 +1707,12 @@ namespace datatools {
 
     out_ << '\n';
     out_ << "# Lines starting with '" << prop_comment_prefix
-         << "' indicate optional properties\n"
-         << "# that may be activated under specific conditions.\n";
-    out_ << "# Lines starting with '" << "#@" << "' are special directives.\n";
-    out_ << "# Lines starting with '" << '#' << "' are simple comments.\n";
+         << "' indicate commented out\n"
+         << "# optional properties that may be activated under             \n"
+         << "# specific conditions.                                        \n";
+    out_ << "# Lines starting with '" << "#@" << "' are special directives \n";
+    out_ << "# that may be interpreted by parsers as useful metadata.      \n";
+    out_ << "# Lines starting with a lone '" << '#' << "' are simple comments. \n";
     out_ << '\n';
 
     for (size_t i = 0; i < _configuration_properties_infos_.size(); i++) {
@@ -1747,7 +1749,7 @@ namespace datatools {
         }
 
         if (more and ! (sgo_flags_ & sgo_no_add_infos)) {
-          out_ << "#\n# Additional informations : " << '\n';
+          out_ << "\n# Additional informations : " << '\n';
           if (cpd.has_complex_triggering_conditions()) {
             out_ << "#   " << "This property has complex triggering conditions.\n";
           }
@@ -1824,7 +1826,7 @@ namespace datatools {
                 // Append long description as a trailing comment block :
                 if (! (sgo_flags_ & sgo_no_add_infos)) {
                   if (temp_cpd.has_long_description()) {
-                    out_ << "#\n# Additional informations : " << '\n';
+                    out_ << "\n# Additional informations : " << '\n';
                     datatools::print_multi_lines(out_,temp_cpd.get_long_description(), "#   ");
                   } // end of trailing comment block.
                 }
