@@ -1,14 +1,15 @@
-// -*- mode: c++ ; -*-
-/* multi_and_cut.cc
- */
+// multi_and_cut.cc
 
+// Ourselves:
 #include <cuts/multi_and_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <algorithm>
 #include <vector>
 
+// Third party:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -56,5 +57,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of multi_and_cut.cc

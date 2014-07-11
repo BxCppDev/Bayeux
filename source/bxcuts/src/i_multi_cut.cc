@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* i_multi_cut.cc
- */
+// i_multi_cut.cc
 
+// Ourselves:
 #include <cuts/i_multi_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -125,5 +127,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of i_multi_cut.cc

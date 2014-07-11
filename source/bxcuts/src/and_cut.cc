@@ -1,18 +1,18 @@
-// -*- mode: c++ ; -*-
-/* and_cut.cc
- */
+// and_cut.cc
 
+// Ourselves:
 #include <cuts/and_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
 namespace cuts {
-
-  using namespace std;
 
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(and_cut, "cuts::and_cut");
@@ -50,5 +50,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of and_cut.cc

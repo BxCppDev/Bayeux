@@ -19,18 +19,24 @@
  *
  */
 
+// Ourselves:
+#include <cuts/cut_manager.h>
+
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
-#include <cuts/cut_manager.h>
-#include <cuts/i_cut.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
+
+// This project:
+#include <cuts/i_cut.h>
 
 namespace cuts {
 
@@ -186,7 +192,7 @@ namespace cuts {
     }
 
     if (a_config.has_flag ("factory.verbose")) {
-     _flags_ |= FACTORY_VERBOSE;
+      _flags_ |= FACTORY_VERBOSE;
     }
 
     if (a_config.has_flag ("factory.no_preload")) {
@@ -583,7 +589,19 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
   ocd_.set_class_name ("cuts::cut_manager");
   ocd_.set_class_description ("A cut manager");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation("The ``cut_manager`` object is responsible of a repository      \n"
+                               "of cuts on arbitrary data. It embeds a factory of cuts that    \n"
+                               "allows it to dynamically instantiate cut objects on user       \n"
+                               "request. The manager is also responsible of the initialization \n"
+                               "of such cut objects as well as their destruction at the end of \n"
+                               "their life cycle. It makes possible to combined cut objets     \n"
+                               "within cut objects of higher level (AND, OR...) and more       \n"
+                               "generally to build complex cut objects that use more basic     \n"
+                               "cut objects.                                                   \n"
+                               "The cut classes that can be used within a cut manager must     \n"
+                               "inherit the ``cuts::i_cut`` mother interface and use the       \n"
+                               "cut factory registration system provided by the library.       \n"
+                               );
 
   datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "");
 
@@ -593,9 +611,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_terse_description("Flag to activate print report")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("This flag activates the report of cut efficiencies showing       \n"
                             "how much events have been selected/rejected for each active cut. \n"
                             )
+      .add_example("Activate the printing of the report: :: \n"
+                   "                                        \n"
+                   "  print_report : boolean = 1            \n"
+                   "                                        \n"
+                   )
       ;
 
   }
@@ -606,9 +630,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_terse_description("Verbosity flag dedicated to the embeded cut factory")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
-      .set_long_description("This flag activates verbose printing for the embeded  \n"
+      .set_default_value_boolean(false)
+      .set_long_description("This flag activates verbose printing for the embedded \n"
                             "*cut factory*.                                        \n"
                             )
+      .add_example("Activate the factory verbosity: ::      \n"
+                   "                                        \n"
+                   "  factory.verbose : boolean = 1         \n"
+                   "                                        \n"
+                   )
       ;
 
   }
@@ -619,10 +649,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_terse_description("Flag to inhibit the preloading of system cut factory")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("When set, this flag inhibits the automatic loading of    \n"
                             "cut factories registered in the system cut registration. \n"
                             "Not recommanded for standard usage.                      \n"
                             )
+      .add_example("Do not preload registered cut factories \n"
+                   "from the system repository: ::          \n"
+                   "                                        \n"
+                   "  factory.no_preload : boolean = 1      \n"
+                   "                                        \n"
+                   )
       ;
   }
 
@@ -632,11 +669,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_terse_description("Flag to automaticaly initialize cut objects at load")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
+      .set_default_value_boolean(false)
       .set_long_description("When set, this flag triggers the automatic initialization of a   \n"
                             "cut while it is loaded. The default behaviour consists in        \n"
                             "initializing a cut if and only if it is effectively used.        \n"
                             "Not recommanded for standard usage.                              \n"
                             )
+      .add_example("Do not initialized cut objects at load time: :: \n"
+                   "                                                \n"
+                   "  factory.initialization_at_load : boolean = 0  \n"
+                   "                                                \n"
+                   )
       ;
   }
 
@@ -648,13 +691,23 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_mandatory(false)
       .set_path(true)
       .set_complex_triggering_conditions(true)
-      .set_long_description("This property indicated the name of the configuration file   \n"
-                            "for the service manager made accessible to the cuts objects. \n"
-                            "It is only used if no external service manager has been      \n"
-                            "defined through the                                          \n"
-                            "``cuts::cut_manager::set_service_manager(...)`` method.      \n"
-                            );
-   }
+      .set_long_description("This property indicates the name of the configuration file     \n"
+                            "for the service manager made accessible to the cuts objects.   \n"
+                            "It is only used if no external service manager has been        \n"
+                            "defined through the ``cuts::cut_manager::set_service_manager`` \n"
+                            "method.                                                        \n"
+                            "The filename may contains some environment variables.          \n"
+                            "The service manager is implemented as a ``datatools::service_manager`` \n"
+                            "object.                                                        \n"
+                            )
+      .add_example("Specify the configuration file of the service manager: :: \n"
+                   "                                                          \n"
+                   "  service_manager.configuration : string as path = \\     \n"
+                   "       \"${MY_CONFIG_DIR}/services/manager.conf\"         \n"
+                   "                                                          \n"
+                   )
+      ;
+  }
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -665,21 +718,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
       .set_mandatory(false)
       .set_path(true)
       .set_complex_triggering_conditions(true)
-      .set_long_description("This property indicated the name of the configuration files       \n"
+      .set_long_description("This property indicates the names of the configuration files      \n"
                             "that stored the rules to instantiate cuts objects.                \n"
-                            "The filenames may contains some environment variables.            \n"
+                            "The filenames may contain some environment variables.             \n"
                             "Each file must use the format of the ``datatools::multi_properties``\n"
                             "class.                                                            \n"
-                            "                                                                  \n"
-                            "Example::                                                         \n"
-                            "                                                                  \n"
-                            "   cuts.configuration_files : string[3] a path = \\               \n"
-                            "     \"${CUTS_CONFIG_DIR}/energy_cuts.conf\" \\                   \n"
-                            "     \"${CUTS_CONFIG_DIR}/track_cuts.conf\"  \\                   \n"
-                            "     \"${CUTS_CONFIG_DIR}/topology_cuts.conf\"                    \n"
-                            "                                                                  \n"
-                           );
-   }
+                            )
+      .add_example ("Use 3 different cut definition files : ::                         \n"
+                    "                                                                  \n"
+                    "   cuts.configuration_files : string[3] a path = \\               \n"
+                    "     \"${MY_CONFIG_DIR}/cuts/energy_cuts.conf\" \\                \n"
+                    "     \"${MY_CONFIG_DIR}/cuts/track_cuts.conf\"  \\                \n"
+                    "     \"${MY_CONFIG_DIR}/cuts/topology_cuts.conf\"                 \n"
+                    "                                                                  \n"
+                    );
+  }
 
   ocd_.set_configuration_hints ("Here is a typical configuration::                                 \n"
                                 "                                                                  \n"
@@ -688,13 +741,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                                 "   factory.no_preload : boolean = 0                               \n"
                                 "   factory.initialization_at_load : boolean = 0                   \n"
                                 "   service_manager.configuration : string as path = \\            \n"
-                                "     \"${CUTS_CONFIG_DIR}/srvcmgr.conf\"                          \n"
+                                "     \"${MY_CONFIG_DIR}/services/srvcmgr.conf\"                   \n"
                                 "   cuts.configuration_files : string[3] a path = \\               \n"
-                                "     \"${CUTS_CONFIG_DIR}/energy_cuts.conf\" \\                   \n"
-                                "     \"${CUTS_CONFIG_DIR}/track_cuts.conf\"  \\                   \n"
-                                "     \"${CUTS_CONFIG_DIR}/topology_cuts.conf\"                    \n"
+                                "     \"${MY_CONFIG_DIR}/cuts/energy_cuts.conf\" \\                \n"
+                                "     \"${MY_CONFIG_DIR}/cuts/track_cuts.conf\"  \\                \n"
+                                "     \"${MY_CONFIG_DIR}/cuts/topology_cuts.conf\"                 \n"
                                 "                                                                  \n"
-                               );
+                                );
 
   ocd_.set_validation_support(true);
   ocd_.lock();
@@ -704,7 +757,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_END()
 
 DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::cut_manager,"cuts::cut_manager")
 
-// end of cut_manager.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

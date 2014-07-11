@@ -1,18 +1,18 @@
-// -*- mode: c++ ; -*-
-/* xnor_cut.cc
- */
+// xnor_cut.cc
 
+// Ourselves:
 #include <cuts/xnor_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
 namespace cuts {
-
-  using namespace std;
 
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(xnor_cut, "cuts::xnor_cut");
@@ -45,5 +45,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of xnor_cut.cc

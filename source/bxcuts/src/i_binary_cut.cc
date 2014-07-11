@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* i_binary_cut.cc
- */
+// i_binary_cut.cc
 
+// Ourselves:
 #include <cuts/i_binary_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -156,5 +158,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of i_binary_cut.cc

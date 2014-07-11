@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* or_cut.cc
- */
+// or_cut.cc
 
+// Ourselves:
 #include <cuts/or_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -15,14 +17,12 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(or_cut, "cuts::or_cut");
 
-  // ctor:
   or_cut::or_cut(datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)
   {
     return;
   }
 
-  // dtor:
   or_cut::~or_cut()
   {
     if (is_initialized()) {
@@ -45,5 +45,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of or_cut.cc

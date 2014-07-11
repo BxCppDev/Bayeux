@@ -19,11 +19,15 @@
  *
  */
 
+// Ourselves:
+#include <cuts/i_cut.h>
+
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
-#include <cuts/i_cut.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
@@ -361,7 +365,6 @@ namespace cuts {
 
 }  // end of namespace cuts
 
-// end of i_cut.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

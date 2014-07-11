@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* nand_cut.cc
- */
+// nand_cut.cc
 
+// Ourselves:
 #include <cuts/nand_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -15,14 +17,12 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(nand_cut, "cuts::nand_cut");
 
-  // ctor:
   nand_cut::nand_cut(datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)
   {
     return;
   }
 
-  // dtor:
   nand_cut::~nand_cut()
   {
     if (is_initialized()) {
@@ -45,5 +45,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of nand_cut.cc

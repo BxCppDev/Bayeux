@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* accept_cut.cc
- */
+// accept_cut.cc
 
+// Ourselves:
 #include <cuts/accept_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
@@ -12,14 +12,12 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(accept_cut, "cuts::accept_cut");
 
-  // ctor:
   accept_cut::accept_cut(datatools::logger::priority a_logger_priority)
     : i_cut(a_logger_priority)
   {
     return;
   }
 
-  // dtor:
   accept_cut::~accept_cut()
   {
     if (is_initialized()) {
@@ -53,5 +51,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of accept_cut.cc

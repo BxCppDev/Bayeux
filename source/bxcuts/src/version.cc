@@ -18,16 +18,11 @@
 // You should have received a copy of the GNU General Public License
 // along with cuts.  If not, see <http://www.gnu.org/licenses/>.
 
-// Ourselves
+// Ourselves:
 #include "cuts/version.h"
 
-// Standard Library
+// Standard Library:
 #include <sstream>
-
-// Third Party
-// - A
-
-// This Project
 
 namespace cuts {
 int version::get_major() {
@@ -83,4 +78,3 @@ bool version::has_feature(const std::string&) {
   return false;
 }
 } // namespace cuts
-

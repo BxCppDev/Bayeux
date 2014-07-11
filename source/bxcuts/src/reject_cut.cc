@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* reject_cut.cc
- */
+// reject_cut.cc
 
+// Ourselves:
 #include <cuts/reject_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace cuts {
@@ -53,5 +55,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of reject_cut.cc

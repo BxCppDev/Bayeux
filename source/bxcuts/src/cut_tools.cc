@@ -19,13 +19,19 @@
  *
  */
 
+// Ourselves:
+#include <cuts/cut_tools.h>
+
+// Standard library:
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
-#include <cuts/cut_tools.h>
+// This project:
 #include <cuts/i_cut.h>
 #include <cuts/cut_manager.h>
 
@@ -240,7 +246,6 @@ namespace cuts {
 
 }  // end of namespace cuts
 
-// end of cuts_tools.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

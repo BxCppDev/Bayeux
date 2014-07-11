@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* xor_cut.cc
- */
+// xor_cut.cc
 
+// Ourselves:
 #include <cuts/xor_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -15,14 +17,12 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(xor_cut, "cuts::xor_cut");
 
-  // ctor:
   xor_cut::xor_cut(datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)
   {
     return;
   }
 
-  // dtor:
   xor_cut::~xor_cut()
   {
     if (is_initialized()) {
@@ -45,5 +45,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of xor_cut.cc

@@ -1,14 +1,16 @@
-// -*- mode: c++ ; -*-
-/* multi_xor_cut.cc
- */
+// multi_xor_cut.cc
 
+// Ourselves:
 #include <cuts/multi_xor_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <algorithm>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -69,5 +71,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of multi_xor_cut.cc

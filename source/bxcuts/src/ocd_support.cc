@@ -1,7 +1,6 @@
-// -*- mode: c++ ; -*-
-/* ocd_support.cc
- */
+// ocd_support.cc
 
+// Ourselves:
 #include <cuts/ocd_support.h>
 
 /****************************************************************/
@@ -11,13 +10,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::accept_cut,ocd_)
   ocd_.set_class_name ("cuts::accept_cut");
   ocd_.set_class_description ("A cut that always accepts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("Whatever user data is transmitted to ``cuts::accept_cut`` cut object, \n"
+                                "it is always accepted.                                              \n"
+                                "This cut class has no specific configuration parameters.            \n"
+                                );
 
 
-  ocd_.set_configuration_hints ("There is no configuration properties associated to this cut.    \n"
-                                "A ``cuts::accept_cut`` object can be setup with the following syntax\n"
-                                "in a ``datatools::multi_properties`` configuration file :         \n"
-                                "\nExample::                                                       \n"
+  ocd_.set_configuration_hints ("A ``cuts::accept_cut`` object can be setup with the following syntax\n"
+                                "in a ``datatools::multi_properties`` configuration file :           \n"
+                                "\nExample::                                                         \n"
                                 "                                                                \n"
                                 "    #@key_label   \"name\"                                      \n"
                                 "    #@meta_label  \"type\"                                      \n"
@@ -40,13 +41,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::reject_cut,ocd_)
   ocd_.set_class_name ("cuts::reject_cut");
   ocd_.set_class_description ("A cut that always rejects");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("Whatever user data is transmitted to ``cuts::reject_cut`` cut object, \n"
+                                "it is always rejected.                                                \n"
+                                "This cut class has no specific configuration parameters.              \n"
+                                );
 
 
-  ocd_.set_configuration_hints ("There is no configuration properties associated to this cut.    \n"
-                                "A ``cuts::reject_cut`` object can be setup with the following syntax\n"
-                                "in a ``datatools::multi_properties`` configuration file :         \n"
-                                "\nExample::                                                       \n"
+  ocd_.set_configuration_hints ("A ``cuts::reject_cut`` object can be setup with the following syntax\n"
+                                "in a ``datatools::multi_properties`` configuration file :           \n"
+                                "\nExample::                                                         \n"
                                 "                                                                \n"
                                 "    #@key_label   \"name\"                                      \n"
                                 "    #@meta_label  \"type\"                                      \n"
@@ -70,7 +73,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
   ocd_.set_class_name ("cuts::random_cut");
   ocd_.set_class_description ("A cut that randomly accepts using some given probability");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("Whatever user data is transmitted to ``cuts::random_cut`` cut object,  \n"
+                                "it is randomly accepted with a given probability.                      \n"
+                                "This cut may be provided a pseudo-random event number generator (PRNG) \n"
+                                "and given seed.                                                        \n"
+                                );
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -78,12 +85,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
       .set_terse_description("The seed of the internal PRNG")
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
+      .set_default_value_integer(0)
       .set_long_description("The seed used to initialize the internal PRNG. \n"
                             "It must be a positive integer.                 \n"
-                            "Default value is 0.                            \n"
-                            "\nExample::                                    \n"
-                            "    seed : integer = 314159                    \n"
                             )
+      .add_example("Set an arbitrary seed: ::              \n"
+                   "                                       \n"
+                   "  seed : integer = 314159              \n"
+                   )
       ;
   }
 
@@ -93,20 +102,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
       .set_terse_description("The acceptance probability")
       .set_traits(datatools::TYPE_REAL)
       .set_mandatory(false)
-      .set_long_description("The acceptance probability used to acc initialize the internal PRNG. \n"
+      .set_default_value_real(0.5)
+      .set_long_description("The acceptance probability used to accept the user data. \n"
                             "It must be a real between 0 and 1.         \n"
-                            "Default value is 0.5.                      \n"
-                            "\nExample for 13% acceptance::             \n"
-                            "                                           \n"
-                            "    accept_probability : real = 0.13       \n"
-                            "                                           \n"
                             )
+      .add_example("Set an arbitrary 13 % acceptance: ::     \n"
+                   "                                         \n"
+                   "  accept_probability : real = 0.13       \n"
+                   "                                         \n"
+                   )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::random_cut`` object can be setup with the following syntax   \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::random_cut`` object can be setup with the following syntax \n"
+                                "in a ``datatools::multi_properties`` configuration file :            \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -134,7 +144,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
   ocd_.set_class_name ("cuts::not_cut");
   ocd_.set_class_description ("A negation cut");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("Whatever user data is transmitted to ``cuts::not_cut`` cut object, \n"
+                                "the cut always negates the result of the cut it references.        \n"
+                                "This cut must be given another cut of which the result is negated. \n"
+                                );
 
 
   {
@@ -143,10 +156,18 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
       .set_terse_description("The name of a cut to be negated")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of a cut to be negated is extracted from      \n"
-                            "an external dictionnary of predefined cuts. This is    \n"
-                            "typically done in a cut manager.                       \n"
+      .set_long_description("The name of a cut to be negated is extracted from    \n"
+                            "an external dictionary of predefined cuts. This is   \n"
+                            "typically done from within a cut manager (see the    \n"
+                            "``cuts::cut_manager`` class), used as a repository of\n"
+                            "many cut objects.                                    \n"
                             )
+      .add_example("Negates a range cut on hit multiplicity: ::  \n"
+                   "                                             \n"
+                   " cut : string = \"nhits_from_3_to_5\"        \n"
+                   "                                             \n"
+                   )
+
       ;
   }
 
@@ -186,7 +207,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
                                 "                                                                     \n"
                                 "This is equivalent to a cut that selects data with energy            \n"
                                 "lower than 3 MeV .                                                   \n"
-                                "Here, the ``my::energy_cut`` class is supposed to be provided          \n"
+                                "Here, the ``my::energy_cut`` class is supposed to be provided        \n"
                                 "and registered by some user library.                                 \n"
                                 );
 
@@ -206,19 +227,28 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
   ocd_.set_class_name ("cuts::and_cut");
   ocd_.set_class_description ("A logical AND cut combining two cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
-
-
+  ocd_.set_class_documentation ("This cut perform a logical AND of two other cuts objects.  \n"
+                                "This cut must be given two other cuts of which the result  \n"
+                                "is combined.                                               \n"
+                                );
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
       .set_terse_description("The name of the first cut")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of the first cut to be combined with a second cut    \n"
-                            "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+      .set_long_description("The name of the first cut to be combined with a second cut   \n"
+                            "is extracted from an external dictionary of predefined cuts. \n"
+                            "This is typically done within a cut manager.                 \n"
                             )
+      .add_example("Request the first cut to select events with  \n"
+                   "more than 2 calorimeter hits: ::             \n"
+                   "                                             \n"
+                   " cut_1 : string = \"ncalohits>2\"            \n"
+                   "                                             \n"
+                   "where the ``\"ncalohits>2\"`` cut object is  \n"
+                   "available from the external dictionary.      \n"
+                   )
       ;
   }
 
@@ -228,16 +258,24 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of the second cut to be combined with a second cut   \n"
-                            "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+      .set_long_description("The name of the second cut to be combined with the first cut \n"
+                            "is extracted from an external dictionary of predefined cuts. \n"
+                            "This is typically done within a cut manager.                 \n"
                             )
-      ;
+      .add_example("Request the second cut to select events with \n"
+                   "more than 10 tracker hits: ::                \n"
+                   "                                             \n"
+                   " cut_2 : string = \"ntrackerhits>10\"        \n"
+                   "                                             \n"
+                   "where the ``\"ntrackerhits>10\"`` cut object is  \n"
+                   "available from the external dictionary.      \n"
+                   )
+       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::and_cut`` object can be setup with the following syntax      \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::and_cut`` object can be setup with the following syntax    \n"
+                                "in a ``datatools::multi_properties`` configuration file :            \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -275,7 +313,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
   ocd_.set_class_name ("cuts::or_cut");
   ocd_.set_class_description ("A logical OR cut combining two cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical OR of two other cuts objects.   \n"
+                                "This cut must be given two other cuts of which the result  \n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -286,8 +327,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
       .set_mandatory(true)
       .set_long_description("The name of the first cut to be combined with a second cut    \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
+      .add_example("Request the first cut to select events with  \n"
+                   "more than 2 calorimeter hits: ::             \n"
+                   "                                             \n"
+                   " cut_1 : string = \"ncalohits>2\"            \n"
+                   "                                             \n"
+                   "where the ``\"ncalohits>2\"`` cut object is  \n"
+                   "available from the external dictionary.      \n"
+                   )
       ;
   }
 
@@ -297,16 +346,24 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of the second cut to be combined with a second cut   \n"
+      .set_long_description("The name of the second cut to be combined with the first cut  \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
+      .add_example("Request the second cut to select events with \n"
+                   "more than 1 muon veto hit: ::                \n"
+                   "                                             \n"
+                   " cut_2 : string = \"nmuveto>1\"              \n"
+                   "                                             \n"
+                   "where the ``\"nmuveto>1\"`` cut object is    \n"
+                   "available from the external dictionary.      \n"
+                   )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::or_cut`` object can be setup with the following syntax       \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::or_cut`` object can be setup with the following syntax     \n"
+                                "in a ``datatools::multi_properties`` configuration file :            \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -322,7 +379,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
                                 "    cut_1       : string = \"lower_energy\"                          \n"
                                 "    cut_2       : string = \"high_energy\"                           \n"
                                 "                                                                     \n"
-                                "Here, the ``my::energy_cut`` class is supposed to be provided and      \n"
+                                "Here, the ``my::energy_cut`` class is supposed to be provided and    \n"
                                 "registered by some user library.                                     \n"
                                 );
 
@@ -342,7 +399,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
   ocd_.set_class_name ("cuts::xor_cut");
   ocd_.set_class_description ("A logical XOR cut combining two cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical XOR of two other cuts objects.  \n"
+                                "This cut must be given two other cuts of which the result  \n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -353,7 +413,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
       .set_mandatory(true)
       .set_long_description("The name of the first cut to be combined with a second cut    \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
       ;
   }
@@ -364,16 +424,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of the second cut to be combined with a second cut   \n"
+      .set_long_description("The name of the second cut to be combined with the first cut  \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::xor_cut`` object can be setup with the following syntax      \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::xor_cut`` object can be setup with the following syntax    \n"
+                                "in a ``datatools::multi_properties`` configuration file :            \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -396,8 +456,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
                                 "    cut_1       : string = \"out_energy_roi\"                        \n"
                                 "    cut_2       : string = \"ntracks!=2\"                            \n"
                                 "                                                                     \n"
-                                "Here, the ``my::energy_cut`` and ``my::track_cut`` classes are supposed  \n"
-                                "to be provided and registered by some user library.                  \n"
+                                "Here, the ``my::energy_cut`` and ``my::track_cut`` classes are       \n"
+                                "supposed to be provided and registered by some user library.         \n"
                                 );
 
   ocd_.set_validation_support(true);
@@ -416,7 +476,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
   ocd_.set_class_name ("cuts::nand_cut");
   ocd_.set_class_description ("A logical NAND cut combining two cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical NAND of two other cuts objects. \n"
+                                "This cut must be given two other cuts of which the result  \n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -426,8 +489,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_long_description("The name of the first cut to be combined with a second cut    \n"
-                            "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "is extracted from an external dictionary of predefined cuts.  \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
       ;
   }
@@ -438,16 +501,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of the second cut to be combined with a second cut   \n"
-                            "is extracted from an external dictionnary of predefined cuts. \n"
+      .set_long_description("The name of the second cut to be combined with the first cut  \n"
+                            "is extracted from an external dictionary of predefined cuts.  \n"
                             "This is typically done in a cut manager.                      \n"
                             )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::nand_cut`` object can be setup with the following syntax     \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::nand_cut`` object can be setup with the following syntax   \n"
+                                "in a ``datatools::multi_properties`` configuration file :            \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    [name=\"in_energy_roi\" type=\"my::energy_cut\"]                 \n"
                                 "    energy_min  : real as energy = 2.6 MeV                           \n"
@@ -461,8 +524,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
                                 "    cut_1       : string = \"in_energy_roi\"                         \n"
                                 "    cut_2       : string = \"ntracks==2\"                            \n"
                                 "                                                                     \n"
-                                "Here, the ``my::energy_cut`` nand ``my::track_cut`` classes are supposed \n"
-                                "to be provided and registered by some user library.                  \n"
+                                "Here, the ``my::energy_cut`` nand ``my::track_cut`` classes are      \n"
+                                "supposed to be provided and registered by some user library.         \n"
                                 );
 
   ocd_.set_validation_support(true);
@@ -481,7 +544,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
   ocd_.set_class_name ("cuts::nor_cut");
   ocd_.set_class_description ("A logical NOR cut combining two cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical NOR of two other cuts objects.  \n"
+                                "This cut must be given two other cuts of which the result  \n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -492,7 +558,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
       .set_mandatory(true)
       .set_long_description("The name of the first cut to be combined with a second cut    \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
       ;
   }
@@ -503,16 +569,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of the second cut to be combined with a second cut   \n"
+      .set_long_description("The name of the second cut to be combined with the first cut  \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::nor_cut`` object can be setup with the following syntax      \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::nor_cut`` object can be setup with the following syntax    \n"
+                                "in a ``datatools::multi_properties`` configuration file :            \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -529,8 +595,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
                                 "    cut_1       : string = \"in_energy_roi\"                         \n"
                                 "    cut_2       : string = \"ntracks==2\"                            \n"
                                 "                                                                     \n"
-                                "Here, the ``my::energy_cut`` nor ``my::track_cut`` classes are supposed  \n"
-                                "to be provided and registered by some user library.               \n"
+                                "Here, the ``my::energy_cut`` nor ``my::track_cut`` classes are       \n"
+                                "supposed to be provided and registered by some user library.         \n"
                                 );
 
   ocd_.set_validation_support(true);
@@ -550,7 +616,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
   ocd_.set_class_name ("cuts::xnor_cut");
   ocd_.set_class_description ("A logical XNOR cut combining two cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical XNOR of two other cuts objects. \n"
+                                "This cut must be given two other cuts of which the result  \n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -561,7 +630,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
       .set_mandatory(true)
       .set_long_description("The name of the first cut to be combined with a second cut    \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
       ;
   }
@@ -572,16 +641,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
       .set_terse_description("The name of the second cut")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
-      .set_long_description("The name of the second cut to be combined with a second cut   \n"
+      .set_long_description("The name of the second cut to be combined with the first cut  \n"
                             "is extracted from an external dictionnary of predefined cuts. \n"
-                            "This is typically done in a cut manager.                      \n"
+                            "This is typically done within a cut manager.                  \n"
                             )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::xnor_cut`` object can be setup with the following syntax     \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::xnor_cut`` object can be setup with the following syntax   \n"
+                                "in a ``datatools::multi_properties`` configuration file :            \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -598,8 +667,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
                                 "    cut_1       : string = \"in_energy_roi\"                         \n"
                                 "    cut_2       : string = \"ntracks==2\"                            \n"
                                 "                                                                     \n"
-                                "Here, the ``my::energy_cut`` xnor ``my::track_cut`` classes are supposed \n"
-                                "to be provided and registered by some user library.                  \n"
+                                "Here, the ``my::energy_cut`` xnor ``my::track_cut`` classes are      \n"
+                                "supposed  to be provided and registered by some user library.        \n"
                                 );
 
   ocd_.set_validation_support(true);
@@ -618,7 +687,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
   ocd_.set_class_name ("cuts::multi_and_cut");
   ocd_.set_class_description ("A logical AND cut combining several cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical AND of an ordered collection    \n"
+                                "of other cuts objects.                                     \n"
+                                "This cut must be given the list of cuts of which the result\n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -629,20 +702,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(true)
       .set_long_description("The list of all cuts' names to be combined with a logical AND.\n"
-                            "Each cut's name is extracted from an external dictionnary of  \n"
-                            "predefined cuts. This is typically done in a cut manager.     \n"
-                            "\nExample::                                                   \n"
-                            "                                                              \n"
-                            "    cuts : string[3] = \"in_energy_roi\" \"2e\" \"no_alpha\"  \n"
-                            "                                                              \n"
+                            "Each cut's name is extracted from an external dictionary of   \n"
+                            "predefined cuts. This is typically done within a cut manager. \n"
                             "The list of cuts must contains at least one cut name.         \n"
                             )
+      .add_example("Combine 3 cuts: ::                                            \n"
+                   "                                                              \n"
+                   "    cuts : string[3] = \"in_energy_roi\" \"2e\" \"no_alpha\"  \n"
+                   "                                                              \n"
+                   )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::multi_and_cut`` object can be setup with the following syntax\n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::multi_and_cut`` object can be setup with the following     \n"
+                                "syntax in a ``datatools::multi_properties`` configuration file :     \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -664,8 +738,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
                                 "        \"2e\"              \\                                       \n"
                                 "        \"no_alpha\"                                                 \n"
                                 "                                                                     \n"
-                                "Here, the ``my::energy_cut`` and ``my::track_cut`` classes are supposed  \n"
-                                "to be provided and registered by some user library.                  \n"
+                                "Here, the ``my::energy_cut`` and ``my::track_cut`` classes are       \n"
+                                "supposed to be provided and registered by some user library.         \n"
                                 );
 
   ocd_.set_validation_support(true);
@@ -686,7 +760,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
   ocd_.set_class_name ("cuts::multi_or_cut");
   ocd_.set_class_description ("A logical OR cut combining several cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical OR of an ordered collection     \n"
+                                "of other cuts objects.                                     \n"
+                                "This cut must be given the list of cuts of which the result\n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -697,20 +775,21 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(true)
       .set_long_description("The list of all cuts' names to be combined with a logical OR. \n"
-                            "Each cut's name is extracted from an external dictionnary of  \n"
-                            "predefined cuts. This is typically done in a cut manager.     \n"
-                            "\nExample::                                                     \n"
-                            "                                                              \n"
-                            "    cuts : string[3] = \"1e1g\" \"2e1g\" \"1e2g\"             \n"
-                            "                                                              \n"
+                            "Each cut's name is extracted from an external dictionary of   \n"
+                            "predefined cuts. This is typically done within a cut manager. \n"
                             "The list of cuts must contains at least one cut name.         \n"
                             )
+      .add_example("Combine 3 cuts: ::                                            \n"
+                   "                                                              \n"
+                   "    cuts : string[3] = \"1e1g\" \"2e1g\" \"1e2g\"             \n"
+                   "                                                              \n"
+                   )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::multi_or_cut`` object can be setup with the following syntax \n"
-                                "in a ``datatools::multi_properties`` configuration file :              \n"
-                                "\nExample::                                                            \n"
+  ocd_.set_configuration_hints ("A ``cuts::multi_or_cut`` object can be setup with the following      \n"
+                                " syntax in a ``datatools::multi_properties`` configuration file :    \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -742,7 +821,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
                                 "        \"2e1g\"          \\                                         \n"
                                 "        \"1e1g1a\"                                                   \n"
                                 "                                                                     \n"
-                                "Here, the ``my::topology_cut`` class is supposed to be provided        \n"
+                                "Here, the ``my::topology_cut`` class is supposed to be provided      \n"
                                 "and registered by some user library.                                 \n"
                                 );
 
@@ -764,7 +843,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
   ocd_.set_class_name ("cuts::multi_xor_cut");
   ocd_.set_class_description ("A logical XOR cut combining several cuts");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation ("This cut perform a logical XOR of an ordered collection    \n"
+                                "of other cuts objects.                                     \n"
+                                "This cut must be given the list of cuts of which the result\n"
+                                "is combined.                                               \n"
+                                );
 
 
   {
@@ -774,21 +857,22 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
       .set_mandatory(true)
-      .set_long_description("The list of all cuts' names to be combined with a logical XOR. \n"
-                            "Each cut's name is extracted from an external dictionnary of  \n"
+      .set_long_description("The list of all cuts' names to be combined with a logical XOR.\n"
+                            "Each cut's name is extracted from an external dictionary of   \n"
                             "predefined cuts. This is typically done in a cut manager.     \n"
-                            "\nExample::                                                     \n"
-                            "                                                              \n"
-                            "    cuts : string[3] = \"1e1g\" \"2e1g\" \"1e2g\"             \n"
-                            "                                                              \n"
                             "The list of cuts must contains at least one cut name.         \n"
                             )
+      .add_example("\nCombine 3 cuts: ::                                          \n"
+                   "                                                              \n"
+                   "    cuts : string[3] = \"1e1g\" \"2e1g\" \"1e2g\"             \n"
+                   "                                                              \n"
+                   )
       ;
   }
 
-  ocd_.set_configuration_hints ("A ``cuts::multi_xor_cut`` object can be setup with the following syntax \n"
-                                "in a ``datatools::multi_properties`` configuration file :               \n"
-                                "\nExample::                                                           \n"
+  ocd_.set_configuration_hints ("A ``cuts::multi_xor_cut`` object can be setup with the following     \n"
+                                "syntax in a ``datatools::multi_properties`` configuration file :     \n"
+                                "\nExample::                                                          \n"
                                 "                                                                     \n"
                                 "    #@key_label   \"name\"                                           \n"
                                 "    #@meta_label  \"type\"                                           \n"
@@ -808,7 +892,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
                                 "        \"fat\"           \\                                         \n"
                                 "        \"bb_staff\"      \\                                         \n"
                                 "                                                                     \n"
-                                "Here, the ``my::people_cut`` class is supposed to be provided          \n"
+                                "Here, the ``my::people_cut`` class is supposed to be provided        \n"
                                 "and registered by some user library.                                 \n"
                                 );
 
@@ -818,7 +902,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::multi_xor_cut,"cuts::multi_xor_cut")
-
-
-
-// end of ocd_support.cc

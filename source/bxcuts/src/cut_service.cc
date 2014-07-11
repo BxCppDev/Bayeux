@@ -19,14 +19,19 @@
  *
  */
 
+// Ourselves:
 #include <cuts/cut_service.h>
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <cuts/cut_manager.h>
 
 namespace cuts {
@@ -161,25 +166,34 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_service,ocd_)
   ocd_.set_class_name ("cuts::cut_service");
   ocd_.set_class_description ("A cut service");
   ocd_.set_class_library ("cuts");
-  ocd_.set_class_documentation ("not documented yet");
+  ocd_.set_class_documentation("The ``cut_service`` object inherits the ``datatools::base_service``\n"
+                               "interface and is thus usable from a ``datatools::service_manager``\n"
+                               "object.                                                           \n"
+                               "A cut service object embeds a ``cut_manager`` object and makes it \n"
+                               "available through the Bayeux's datatools services support.        \n"
+                               );
 
   ::datatools::base_service::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_manager.config")
-      .set_terse_description("The name of the configuration file for the embeded cut manager")
+      .set_terse_description("The name of the configuration file for the embedded cut manager")
       .set_traits(datatools::TYPE_STRING)
       .set_path(true)
       .set_mandatory(false)
-      .set_long_description("Example::                                                      \n"
-                            "                                                               \n"
-                            "    cut_manager.config : string as path = \"cut_manager.conf\" \n"
-                            "                                                               \n"
-                            "This property is only used if not external  cut manager has    \n"
-                            "been defined through a prior call to the                       \n"
-                            "``cuts::cut_service::set_cut_manager(...)`` method.            \n"
+      .set_long_description("This is the name of the main configuration file for   \n"
+                            "the embedded cut manager.                             \n"
+                            "This property is only used if no external cut manager \n"
+                            "has been defined through a prior call to the          \n"
+                            "``cuts::cut_service::set_cut_manager`` method.        \n"
+                            "The filename may contain some environment variables.  \n"
                             )
+      .add_example("Specify the manager configuration file: ::                     \n"
+                   "                                                               \n"
+                   "    cut_manager.config : string as path = \"cut_manager.conf\" \n"
+                   "                                                               \n"
+                   )
       ;
   }
 
@@ -216,9 +230,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_END()
 
 DOCD_CLASS_SYSTEM_REGISTRATION(::cuts::cut_service,"cuts::cut_service")
 
-
-
-// end of cut_service.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

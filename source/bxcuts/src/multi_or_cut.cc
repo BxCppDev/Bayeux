@@ -1,14 +1,16 @@
-// -*- mode: c++ ; -*-
-/* multi_or_cut.cc
- */
+// multi_or_cut.cc
 
+// Ourselves:
 #include <cuts/multi_or_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <algorithm>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -59,5 +61,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of multi_or_cut.cc

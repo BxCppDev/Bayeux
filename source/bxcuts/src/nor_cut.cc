@@ -1,30 +1,28 @@
-// -*- mode: c++ ; -*-
-/* nor_cut.cc
- */
+// nor_cut.cc
 
+// Ourselves:
 #include <cuts/nor_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
 namespace cuts {
 
-  using namespace std;
-
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(nor_cut, "cuts::nor_cut");
 
-  // ctor:
   nor_cut::nor_cut(datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)
   {
     return;
   }
 
-  // dtor:
   nor_cut::~nor_cut()
   {
     if (is_initialized()) {
@@ -47,5 +45,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of nor_cut.cc

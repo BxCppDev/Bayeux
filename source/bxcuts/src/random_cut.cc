@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* random_cut.cc
- */
+// random_cut.cc
 
+// Ourselves:
 #include <cuts/random_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace cuts {
@@ -14,7 +16,6 @@ namespace cuts {
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(random_cut, "cuts::random_cut");
 
-  // ctor:
   random_cut::random_cut(datatools::logger::priority a_logger_priority)
   : i_cut(a_logger_priority)
   {
@@ -23,7 +24,6 @@ namespace cuts {
     return;
   }
 
-  // dtor:
   random_cut::~random_cut()
   {
     if (is_initialized()) {
@@ -87,5 +87,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of random_cut.cc

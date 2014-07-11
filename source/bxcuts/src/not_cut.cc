@@ -1,12 +1,14 @@
-// -*- mode: c++ ; -*-
-/* not_cut.cc
- */
+// not_cut.cc
 
+// Ourselves:
 #include <cuts/not_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -99,5 +101,3 @@ namespace cuts {
   }
 
 } // end of namespace cuts
-
-// end of not_cut.cc
