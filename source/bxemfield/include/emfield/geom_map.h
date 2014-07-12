@@ -1,5 +1,5 @@
-/// \file emfieldgeom_map.h
-/* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/// \file emfield/geom_map.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-18
  * Last modified: 2013-03-18
  *
