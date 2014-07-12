@@ -1,0 +1,117 @@
+OCD support {#bxocd}
+===========
+
+
+\tableofcontents
+
+Introduction {#bxocd_intro}
+============
+
+Bayeux provides utility and high level classes (managers...)  that can
+be  dynamically  configured  through  some possibly  complex  sets  of
+parameters.  The  Bayeux library  as well  as its  client applications
+rely on a configuration interface based on the `datatools::properties`
+and  `datatools::multi_properties` classes.   Typically, a configurable
+object can be prepared through an interface similar to the following:
+
+~~~~~
+// Instantiate a collection of configuration parameters:
+datatools::properties parameters;
+
+// Load it from an ASCII file:
+parameters.read_configuration("my_manager.conf");
+
+// Instantiate the configurable object:
+my::manager mgr;
+
+// Configure and initialize the object using the above
+// collection of parameters:
+mgr.initialize(parameters);
+
+// Run/use the configured and initialized object:
+mgr.run();
+
+// Reset/terminate the object:
+mgr.reset();
+~~~~~
+
+In order  to help users to  understand how to properly  configure such
+kind   of  object,   Bayeux  implements   the  *Object   Configuration
+Description* (OCD)  interface which proposes an  embedded documentation
+system for these classes.
+
+The  users can  then  use the  Bayeux's OCD  interface  to browse  the
+documentation associated to a class, and possibly validate or generate
+skeleton configuration files for objects of this class.
+
+
+OCD online manual {#bxocd_onlinemanual}
+=================
+
+
+The `bxocd_manual` executable can be used to request OCD documentation
+from the classes provided by any library that uses the OCD interface.
+
+Getting help
+------------
+~~~~~{.bash}
+$ bxocd_manual --help
+...
+~~~~~
+
+Print the list of classes with OCD support
+------------------------------------------
+
+To print the list of all Bayeux's classes with OCD support:
+
+~~~~~
+$ bxocd_manual --action list
+...
+~~~~~
+
+To print  the only the  OCD supported Bayeux's classes  with namespace
+`geomtools`:
+
+~~~~~
+$ bxocd_manual --action list | grep ^geomtools::
+...
+~~~~~
+
+Support for additional libraries
+--------------------------------
+
+List  the classes  with OCD  support from  the Bayeux/mctools'  Geant4
+plugin:
+
+~~~~~
+$ bxocd_manual \
+  --load-dll "Bayeux_mctools_geant4@$(bxquery --libdir)" \
+  --action list | grep ^mctools::g4::
+...
+~~~~~
+
+
+Browse the OCD documentation
+----------------------------
+
+To  generate a reStructuredText formatted  documentation for  a given
+Bayeux's class, convert it in HTML format and browse it:
+
+~~~~~
+$ bxocd_manual  \
+   --action show \
+   --class-id geomtools::box \
+   | pandoc -r rst -w html -o geomtools__box.html
+$ xdg-open geomtools__box.html &
+~~~~~
+
+OCD documentation for Bayeux's classes {#bxocd_bayeuxclasses}
+======================================
+
+@_bxocd_bayeuxclasses_link@
+
+
+Add OCD support to a configurable class {#bxocd_addsupporttoclass}
+=======================================
+
+TODO

@@ -128,7 +128,7 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH        = @Bayeux_BUILDPRODUCT_DIR@/include 
+STRIP_FROM_PATH        = @Bayeux_BUILDPRODUCT_DIR@/include
 
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
@@ -641,7 +641,9 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/doc @Bayeux_BUILDPRODUCT_DIR@/include/bayeux
+INPUT                  = @Bayeux_ABSOLUTE_MARKDOWN_DOCS@ \
+                         @Bayeux_DOCEXPORT_DIR@ \
+                         @PROJECT_SOURCE_DIR@/doc @Bayeux_BUILDPRODUCT_DIR@/include/bayeux
 
 
 # This tag can be used to specify the character encoding of the source files
@@ -660,7 +662,16 @@ INPUT_ENCODING         = UTF-8
 # *.hxx *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.dox *.py
 # *.f90 *.f *.for *.vhd *.vhdl
 
-FILE_PATTERNS          =
+FILE_PATTERNS          = *.c \
+                         *.cc \
+                         *.cxx \
+                         *.cpp \
+                         *.c++ \
+                         *.ipp \
+                         *.h \
+                         *.hh \
+                         *.hpp \
+                         *.md
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.
@@ -674,7 +685,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = @PROJECT_SOURCE_DIR@/doc/Talks
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1235,7 +1246,7 @@ COMPACT_LATEX          = NO
 # by the printer. Possible values are: a4, letter, legal and
 # executive. If left blank a4wide will be used.
 
-PAPER_TYPE             = letter
+PAPER_TYPE             = a4
 
 # The EXTRA_PACKAGES tag can be to specify one or more names of LaTeX
 # packages that should be included in the LaTeX output.
@@ -1663,7 +1674,7 @@ TEMPLATE_RELATIONS     = NO
 INCLUDE_GRAPH          = YES
 
 # If the ENABLE_PREPROCESSING, SEARCH_INCLUDES, INCLUDED_BY_GRAPH, and
-# HAVE_DOT tags are set to YES then doxygen will generate a graph for each
+# HAVE_DOT tags are set to YES thesn doxygen will generate a graph for each
 # documented header file showing the documented files that directly or
 # indirectly include this file.
 

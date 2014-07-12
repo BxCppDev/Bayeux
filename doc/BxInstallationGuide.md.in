@@ -1,0 +1,498 @@
+Installing Bayeux from Source {#bxinstallationguide}
+=============================
+
+\tableofcontents
+
+Introduction {#intro}
+============
+
+This walkthrough is intended to get  you up and running with Bayeux as
+fast  as possible.  It therefore  adopts  a specific  layout of  where
+working copies of sources, builds of these sources and installs of the
+builds. You do not have to follow  this layout, but we recommend it as
+a fast and convenient way  to organise things. We welcome constructive
+comments, criticisms and suggestions for improvement, and these should
+be directed to the Bayeux/SuperNEMO Software Working Group.
+
+
+Preparing Your System for Installation {#bxinstallationguide_preparation}
+======================================
+
+To install the Bayeux stack, you first need the following:
+
+* UNIX Operating System
+  * Linux (Ubuntu, SUSE, RedHat/CentOS/Scientific)
+    * Other distributions should work provided they supply the software requirements listed below
+  * Mac OS X 10.8/9 (Mountain Lion/Mavericks)
+    * Earlier versions should work, but are not tested
+* Several GB of free disk space:
+  * At least 200MB for a source code check out
+  * At least 6.5GB for a first from scratch build
+* Familiarity with the UNIX command line
+* Required Software
+  * Subversion 1.6 or above
+  * CMake 2.8.8 or above
+  * Doxygen 1.8 or above
+  * C/C++ compiler supporting at least the C++03 standard
+    * GCC 4.5 or above, and Clang 3.1 or above are recommended
+    * If available, you should use a C++11 compliant compiler
+      * GCC 4.7 or higher, Clang 3.3 or higher
+      * This is purely for the best forward compatibility, it is not a requirement.
+    * On OS X systems, you should install Xcode from the App Store, and ensure the Command Line Tools are installed
+  * BZip2 Library and Headers
+  * zlib Library and Headers
+  * readline Library and Headers
+
+We recommend that the Required Software are installed via the relevant
+package manager (e.g.  yum, apt on Linux, Homebrew or  MacPorts on Mac
+OS X)  for your system, unless  the version requirement listed  is not
+met.
+
+We expect the  Bayeux stack to compile  and run on most  modern BSD or
+Linux  based   systems  provided  the  listed   Required  Software  is
+installed. Note  however that  this list  is a  work in  progress, and
+sections below  will highlight where  problems may occur  with missing
+software, and how to report and resolve these issues.
+
+
+Getting Bayeux {#bxinstallationguide_getting}
+==============
+
+Bayeux is  developed using  the Subversion  repository hosted  by [LPC
+Caen](https://nemo.lpc-caen.in2p3.fr). Whilst you  need a full account
+to commit to  the repository, we will be using  the provided read-only
+access.
+
+To work with the software, we  recommend using the following layout of
+code in directories:
+
+~~~~~
+BxSoftware/
+|-- lpc-caen.svn
+|-- builds
+|-- installs
+~~~~~
+
+where the `BxSoftware` directory can be located where you wish, though
+it must be on a filesystem with the required free space.
+
+Setting Up a Bayeux Workspace {#bxinstallationguide_workspace}
+-----------------------------
+
+If  you already  have a  workspace  setup, then  you can  skip to  the
+[following section](@ref bxinstallation_checkout). Otherwise to create
+it,  open  a  terminal,  and  choose a  directory  for  your  software
+workspace.   For clarity  in this  guide, because  absolute paths  are
+needed in certain cases, we will use the dummy directory `/Users/ben`,
+but  you   should  choose   your  own   location  (`${HOME}/Software`,
+`/usr/local`...). The first step is to create the directory hierarchy:
+
+~~~~~
+$ cd /Users/ben
+$ mkdir -p BxSoftware/{lpc-caen.svn,builds,installs}
+$ cd BxSoftware
+$ ls
+builds  installs  lpc-caen.svn
+~~~~~
+
+With the directories in place, we can checkout the code. This is done
+via the `svn` command line client, and we be using a "sparse checkout"
+pattern. Whilst this requires a few more steps upfront, it provides
+a very stable and well organised working copy.
+
+Note that in the following, we demonstrate how create a checkout by the
+fastest and easiest means possible. This means that you end up with:
+
+* A read-only repository
+  * You can update, view logs and create diffs and patches
+  * You cannot commit changes
+
+If you already have a developer's account at LPC Caen, then the following
+instructions will also work, simply remove the `--username` and
+`--no-auth-cache` arguments from the svn commands.
+
+~~~~~
+$ pwd
+/path/to/your/chosen/workspace/BxSoftware
+$ svn co https://nemo.lpc-caen.in2p3.fr/svn --username=visitor --no-auth-cache \
+--depth empty lpc-caen.svn
+~~~~~
+
+At this point, you may see a warning about certificates:
+~~~~~
+Error validating server certificate for 'https://nemo.lpc-caen.in2p3.fr:443':
+ - The certificate is not issued by a trusted authority. Use the
+   fingerprint to validate the certificate manually!
+ - The certificate hostname does not match.
+ - The certificate has expired.
+Certificate information:
+ - Hostname: caedev.in2p3.fr
+ - Valid: from Thu, 15 May 2008 11:52:02 GMT until Fri, 15 May 2009 11:52:02 GMT
+ - Issuer: LPC Caen, CNRS, Caen, France, Fr
+ - Fingerprint: ae:89:9e:38:e3:80:a7:a3:b2:1e:df:5e:eb:33:2d:ba:83:be:b7:11
+(R)eject, accept (t)emporarily or accept (p)ermanently? p
+~~~~~
+
+Simply press `t` or `p` to accept the certificate. The process will
+then continue by asking for the password for `visitor`, for which you
+should enter `anonymous` (If you have accessed the LPC repository before,
+you may not see either the certificate check or password prompt).
+
+~~~~~
+Password for 'visitor':
+Checked out revision 15106.
+~~~~~
+
+The revision number you see will vary depending on the current
+state of development.
+If you now list the contents of the `lpc-caen.svn` directory
+it will be empty apart from a `.svn` directory. We now checkout the parts
+we need, specifically the `Cadfael` Software Development Kit (SDK) and
+the `Bayeux` project.
+
+~~~~~
+$ pwd
+/Users/ben/BxSoftware
+$ cd lpc-caen.svn
+$ svn up --set-depth immediates Cadfael Bayeux
+A    Cadfael
+A    Cadfael/trunk
+A    Cadfael/branches
+A    Cadfael/tags
+Updated to revision 15106.
+A    Bayeux
+A    Bayeux/trunk
+A    Bayeux/branches
+A    Bayeux/tags
+Updated to revision 15106.
+~~~~~
+
+As above, the revision number will depend on the current state of development.
+Each LPC project is organised using the standard Subversion directory layout
+of `trunk` for the mainline of development, `branches` for feature
+implementation and bug fixes, and `tags` for releases.
+
+An `ls` of the above directories will show that, again, they are empty.
+However, if you use Subversion's list command, e.g.
+
+~~~~~
+$ svn ls Cadfael/trunk
+CMakeLists.txt
+CadfaelVersion.txt
+License.txt
+NEWS.rst
+README.rst
+cadfael-bootstrap
+cmake/
+docs/
+ports/
+testing/
+~~~~~
+
+you will get a listing of the contents in the upstream repository.
+This is what we mean by a "sparse checkout". Such a working copy allows you
+to query the repository for what is available, and then choose
+the parts you want to checkout. For example, you can get a list of the
+current tags of Falaise by doing
+
+~~~~~
+$ svn ls Bayeux/tags
+Bayeux-0.9.0/
+Bayeux-0.9.1/
+Bayeux-0.9.2/
+Bayeux-0.9.3/
+Bayeux-0.9.4/
+Bayeux-1.0.0/
+~~~~~
+
+Tags are always named using the standard `MAJOR.MINOR.PATCH` convention
+with an optional additional `-STATUSN` flag to indicate development lines.
+
+
+Checking out Cadfael and Bayeux {#bxinstallationguide_checkout}
+-------------------------------
+With the workspace in place, we can checkout the required development
+lines of Cadfael and Bayeux. The version of Bayeux to which this
+documentation refers is @Bayeux_VERSION@, and this requires Cadfael
+version @Cadfael_VERSION@. To check these tags out from scratch we do
+
+~~~~~
+$ svn up --set-depth infinity Cadfael/tags/Cadfael-1.0.1
+A    Cadfael/tags/Cadfael-1.0.1
+A    Cadfael/tags/Cadfael-1.0.1/License.txt
+...
+A    Cadfael/tags/Cadfael-1.0.1/testing/ImportedTargets/CMakeLists.txt
+Updated to revision 15106.
+$ svn ls Bayeux/tags
+...
+$ svn up --set-depth infinity Bayeux/tags/Bayeux-@Bayeux_VERSION@
+~~~~~
+
+The basic source  code working copy is now in  place. For more details
+on   using  Subversion,   we  recommend   the  [Subversion   Red  Bean
+Guide](http://svnbook.red-bean.com/).
+
+Installing the Cadfael SDK {#bxinstallationguide_cadfael}
+==========================
+
+Bayeux   uses  several   third  party   libraries  to   implement  its
+functionality, specifically:
+
+- [Boost C++ Libraries](http://www.boost.org) 1.48.0 and higher
+- [CAMP C++ Reflection Library](https://github.com/tegesoft/camp) 0.7.1 and higher
+- [CLHEP C++ HEP Library](http://proj-clhep.web.cern.ch/proj-clhep/) 2.1.3.1 and higher
+- [GNU Scientific Library](http://www.gnu.org/software/gsl/) 1.15 and higher
+- [ROOT C++ HEP Toolkit](http://root.cern.ch) 5.34.00 and higher
+- [Geant4 C++ Toolkit for Detector Simulations](http://geant4.cern.ch) 9.6.1 and higher
+
+You  can reuse  existing  installations of  these  libraries to  build
+Bayeux, but for the easiest and most robust installation, we recommend
+using  the  `Cadfael`  Software  Development  Kit.  This  bundles  the
+configuration, build and installation of these libraries into a single
+easy to  use toolchain.  If  you have  an existing install  of Cadfael
+that  meets  the  version  requirements  above, you  do  not  need  to
+reinstall it. Otherwise, you should follow the following guide.
+
+Bootstrapping Cadfael {#cadfael_bootstrap}
+---------------------
+
+Cadfael uses  the [CMake](http://www.cmake.org)  tool for  driving the
+configure, build and install of  the above libraries. For convenience,
+a  simple bootstrapping  script,  `cadfael-bootstrap`  is provided  to
+automate  this  process.   If  you  require  more   control  over  the
+configuration,  you  should  consult  the  `README.rst`  file  in  the
+`Cadfael/tags/Cadfael-@Cadfael_VERSION@` directory.
+
+All Bayeux  software requires  builds and installs  to be  in separate
+directories  from source  code. This  is enforced  because builds  can
+generate many local  files which could by accident  get committed back
+to the central  repository. It also allows you  quicker switch between
+builds, or  to cleanly delete a  build if anything goes  wrong without
+risk of deleting any sources.
+
+To bootstrap an install of Cadfael, go into your workspace and run the
+bootstrapping script as follows:
+
+~~~~~
+$ cd /Users/ben/BxSoftware
+$ ./lpc-caen.svn/Cadfael/tags/Cadfael-@Cadfael_VERSION@/cadfael-bootstrap -DCMAKE_INSTALL_PREFIX=$(pwd)/installs/Cadfael \
+-DCADFAEL_BUILD_PREFIX=$(pwd)/builds/Cadfael
+~~~~~
+
+
+This will create a build directory under the `builds` area and install
+Cadfael  into  a  dedicated  root under  `installs`.  Note  that  both
+`CMAKE_INSTALL_PREFIX`  and  `CADFAEL_BUILD_PREFIX` must  be  absolute
+paths,  hence   the  use  of   the  shell  `$(pwd)`.  Note   that  the
+bootstrapping  script  assumes  you   have  a  `cmake`  executable  in
+`/usr/bin`. If that is not the case, you can run the script using your
+install of cmake directly:
+
+~~~~~
+$ cd /Users/ben/BxSoftware
+$ /path/to/your/cmake -P ./lpc-caen.svn/Cadfael/tags/Cadfael-@Cadfael_VERSION@/cadfael-bootstrap \
+-DCMAKE_INSTALL_PREFIX=$(pwd)/installs/Cadfael \
+-DCADFAEL_BUILD_PREFIX=$(pwd)/builds/Cadfael
+~~~~~
+
+Cadfael will  maximally parallelize the  builds for speed, but  it may
+take up  to an  hour or  two on  older machines  with fewer  cores. It
+should  generally complete  in well  under an  hour on  quad core  and
+better   systems.   If   bootstrapping   completes  successfully   the
+`installs/Cadfael`  directory will  be  populated with  a POSIX  style
+layout of the third party software required for Bayeux.
+
+~~~~~
+installs/Cadfael/
+|-- bin
+|-- etc
+|   |-- cmake
+|   |-- daemons
+|   |-- html
+|   |-- plugins
+|   |-- proof
+|   `-- vmc
+|-- include
+|   |-- CLHEP
+|   |-- Geant4
+|   |-- boost
+|   |-- camp
+|   |-- camp-xml
+|   |-- gsl
+|   |-- root
+|   `-- xercesc
+|-- lib
+|   |-- CLHEP-2.1.3.1
+|   |-- Geant4-9.6.1
+|   |-- cmake
+|   |-- pkgconfig
+|   `-- root
+`-- share
+    |-- Geant4-9.6.1
+    |-- aclocal
+    |-- camp
+    |-- doc
+    |-- emacs
+    |-- info
+    |-- man
+    `-- root
+~~~~~
+
+You  do not  require any  environment setup  to use  the applications,
+though you may, at your preference, prepend the `installs/Cadfael/bin`
+path  to   your  UNIX   `PATH`. From a `sh` shell, this may write:
+
+~~~~~
+export PATH=/Users/ben/BxSoftware/Cadfael/bin:${PATH}
+~~~~~
+
+ Once you have  installed Cadfael successfully, you  can safely remove
+the  build  directory  created  by  the  bootstrapping  to  save  disk
+space. As  Cadfael updates are  expected to be  relatively infrequent,
+this "one-shot"  installation is generally  the easiest way  to manage
+the SDK.
+
+Building and Installing Bayeux {#bxinstallationguide_buildinstall}
+==============================
+
+Bayeux  uses the  [CMake](http://www.cmake.org) tool  for driving  the
+configure, build and install of its core library and applications.  As
+with  Cadfael, we  create a  separate build  directory under  `builds`
+first, and install into a directory under `installs`. No bootstrapping
+script is  provided because here you  will want more control  over the
+build process.
+
+To start, go into your BxSoftware workspace and create a build directory:
+
+~~~~~
+$ cd /Users/ben/BxSoftware
+$ ls
+builds  installs  lpc-caen.svn
+$ cd builds
+$ mkdir bayeux-@Bayeux_VERSION@
+$ cd bayeux-@Bayeux_VERSION@
+~~~~~
+
+the naming of the directory is arbitrary, but it's useful to give them
+a name related to the build task.
+
+
+We now run cmake as follows to configure the build to install under our
+workspace area, and to use the libraries provided in our prior install
+of Cadfael:
+
+~~~~~
+$ cmake -DCMAKE_INSTALL_PREFIX=/Users/ben/BxSoftware/installs/bayeux-@Bayeux_VERSION@ \
+ -DCMAKE_PREFIX_PATH=/Users/ben/BxSoftware/installs/Cadfael \
+ ../../lpc-caen.svn/Bayeux/tags/Bayeux-@Bayeux_VERSION@
+...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/ben/BxSoftware/builds/bayeux-@Bayeux_VERSION@
+~~~~~
+
+The `CMAKE_INSTALL_PREFIX` variable tells cmake where to install, and
+`CMAKE_PREFIX_PATH` where to look first for headers, libraries and
+applications. The exact output that follows will depend on the OS you
+are running on, the compiler detected and the exact CMake version (later
+versions are more verbose). The important thing to check is that you see
+the last three lines
+
+~~~~~
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/ben/BxSoftware/builds/bayeux-@Bayeux_VERSION@
+~~~~~
+
+which indicate a successful configuration. This process has generated
+a suitable makefile for building Bayeux, so we now run make to build
+everything:
+
+~~~~~
+$ make -j4
+Scanning dependencies of target ...
+...
+[  0%] Building CXX object ...
+...
+~~~~~
+
+You should select the integer passed to `-j` based on the number of
+cores your system has, e.g. 4 for a quad core system. With parallel builds
+the exact output will vary, but a successful build will generally be
+indicated by the last lines being:
+
+~~~~~
+...
+[100%] Built target ...
+~~~~~
+
+After a successful build, you can install Bayeux to the location you
+passed to `CMAKE_INSTALL_PREFIX` with
+
+~~~~~
+$ make install
+~~~~~
+
+This will install everything required into a POSIX style hierarchy under
+the install prefix:
+
+~~~~~
+installs/bayeux-@Bayeux_VERSION@
+|-- bin
+|-- include
+|   `-- bayeux
+|-- lib64
+|   |-- cmake
+|   `-- Bayeux
+`-- share
+    `-- Bayeux-1.0.0
+~~~~~
+
+
+
+
+Using Bayeux {#bxinstallationguide_using}
+=============
+
+TODO
+
+Troubleshooting {#bxinstallationguide_trouble}
+===============
+
+Whilst this walkthrough guide should cover most uses cases, we cannot
+guarantee that problems will not be encountered. If you do experience
+issues with any of the steps, please contact us, in the first instance
+email your issue to:
+
+* François Mauger (mauger@lpccaen.in2p3.fr)
+
+Please attach as much information as possible (operating system and version,
+compiler and version, CMake version etc) to assist in diagnosing the
+issue.
+
+
+Developing Bayeux {#bxinstallationguide_developing}
+=================
+
+To checkout  the trunk  of Bayeux,  we use the  same procedure  as for
+checking out a release and just change the path slightly:
+
+~~~~~
+$ cd /Users/ben/BxSoftware
+$ ls
+builds  installs  lpc-caen.svn
+$ cd lpc-caen.svn
+$ svn up --set-depth infinity Bayeux/trunk
+...
+$ ls Bayeux/trunk
+cmake       CMakeLists.txt  devel  examples     README.rst
+CMakeFiles  COPYING.txt     doc    LICENSE.txt  source
+$
+~~~~~
+
+This  trunk version  can be  built and  installed just  as the  tagged
+release  versions.   Whilst  the   trunk  aims  for   stability,  full
+functionality cannot be  guaranteed but you are welcome to  try it and
+report  any   issues  you   find.  Contributing  to   Bayeux  requires
+familiarity  with  Subversion,  CMake,  the C++  language  and  modern
+software development practices.

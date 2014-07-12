@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# Post-install script:
+
+bxocd_build_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_DOCUMENTATION_DIR@/API/html"
+bxocd_home_url="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_DOCUMENTATION_DIR@/API/html/index.html"
+bxpandoc_exe="@PANDOC_EXE@"
+bxpandoc_data_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_RESOURCE_DIR@/datatools/OCD/pandoc"
+bxocd_manual_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_manual"
+bxocd_sort_classnames_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_sort_classnames.py"
+bx_lib_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_LIBDIR@"
+bxocd_make_doc_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_make_doc"
+add_opts=
+with_g4=@_bxgeant4@
+export PATH="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_BINDIR@:${PATH}"
+
+add_opts="${add_opts} --load-dll \"Bayeux@${bx_lib_dir}\" "
+add_opts="${add_opts} --namespace datatools "
+add_opts="${add_opts} --namespace brio "
+add_opts="${add_opts} --namespace materials "
+add_opts="${add_opts} --namespace cuts "
+add_opts="${add_opts} --namespace mygsl "
+add_opts="${add_opts} --namespace geomtools "
+add_opts="${add_opts} --namespace genvtx "
+add_opts="${add_opts} --namespace genbb "
+add_opts="${add_opts} --namespace emfield "
+add_opts="${add_opts} --namespace dpp "
+add_opts="${add_opts} --namespace mctools "
+if [ ${with_g4} -eq 1 ]; then
+    add_opts="${add_opts} --load-dll \"Bayeux_mctools_geant4@${bx_lib_dir}\" "
+    add_opts="${add_opts} --namespace mctools::g4 "
+fi
+bxtmp_dir=@CMAKE_BINARY_DIR@/OCD_Temporary
+if [ ! -d ${bxtmp_dir} ]; then
+    mkdir -p ${bxtmp_dir}
+fi
+
+
+cmd=" \
+${bxocd_make_doc_exe}                                  \
+    --build-dir \"${bxocd_build_dir}\"                 \
+    --tmp-dir \"${bxtmp_dir}\"                         \
+    --title \"OCD documentation for Bayeux's classes\" \
+    ${add_opts}                                        \
+    --home-url \"${bxocd_home_url}\"                   \
+    --pandoc-exe \"${bxpandoc_exe}\"                   \
+    --pandoc-data-dir \"${bxpandoc_data_dir}\"         \
+    --ocd-manual-exe \"${bxocd_manual_exe}\"           \
+    --ocd-sort-classnames-exe \"${bxocd_sort_classnames_exe}\" \
+    --doxygen                                          \
+    --project-name Bayeux                              \
+    --project-version @Bayeux_VERSION@                 \
+    --project-brief \"Core Foundation library for SuperNEMO\" \
+"
+cmd_script=`mktemp ${bxtmp_dir}/_bxocd_build.bash.XXXXXX`
+echo $cmd > ${cmd_script}
+bash ${cmd_script}
+rm -f ${cmd_script}
+rm -fr ${bxtmp_dir}
+
+exit 0
