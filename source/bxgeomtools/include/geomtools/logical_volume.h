@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*-
-/// \file geomtools/ logical_volume.h
+/// \file geomtools/logical_volume.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2013-06-26
