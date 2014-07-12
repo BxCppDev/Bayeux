@@ -185,8 +185,20 @@ set(Bayeux_DOCUMENTATION_DIR "${Bayeux_TAG}/Documentation")
 #-----------------------------------------------------------------------
 # Optional for enabling documentation
 #
+set(Bayeux_DOCEXPORT_DIR "${PROJECT_BINARY_DIR}/doc")
 if(NOT DEFINED Bayeux_BUILD_DOCS)
   set(Bayeux_BUILD_DOCS OFF CACHE BOOL "Build Bayeux documentation products")
+endif()
+if(Bayeux_BUILD_DOCS)
+  # - For main HTML docs
+  find_package(Doxygen 1.8 REQUIRED)
+  # - For man pages, pandoc for now
+  #find_package(Pandoc 1.10 REQUIRED)
+  #find_package(<something to compress man?>)
+  find_program(Pandoc_EXECUTABLE pandoc
+    DOC "path to pandoc executable"
+    )
+  set(Pandoc_FOUND ${Pandoc_EXECUTABLE})
 endif()
 
 if(NOT Bayeux_BUILD_DOCS)
