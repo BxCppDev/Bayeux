@@ -2,6 +2,7 @@
 
 debug=0
 trace=0
+verbose=0
 build_dir=
 default_build_dir="__OCD"
 index_html_filename=
@@ -52,12 +53,14 @@ Options:
 
   --help         : Print this help then exit.
 
+  --verbose      : Print verbose messages (default: 0).
+
   --debug        : Print debug messages (default: 0).
 
   --build-dir "BUILD_DIR" : Use the BUILD_DIR as the output directory for HTML files
                             (default: '${default_build_dir}').
 
-  --namespace "NAMESPACE" : Append namespace NAMESPACE in the list of namespaces to be
+  --namespace "NAMESPACE" : Append namespace NAMESPACE in the ordered list of namespaces to be
                             processed (default: empty, means all classes are processed).
 
   --tmp-dir "TMP_DIR" : Use the TMP_DIR as the temporary working directory
@@ -97,13 +100,13 @@ Options:
 
   --ocd-sort-classnames-exe "OCDSORTCLASSNAMESEXE" : Set the Bayeux's OCD sort classnames executable (default: automatic)
 
-  --project-name "PROJNAME" : Set the project name
+  --project-name "PROJNAME" : Set the project name (mandatory)
 
-  --project-version "PROJVER" : Set the project version
+  --project-version "PROJVER" : Set the project version (optional)
 
-  --project-brief "PROJBRIEF" : Set a brief description of the project
+  --project-brief "PROJBRIEF" : Set a brief description of the project (optional)
 
-  --browse       : Browse the generated HTML OCD documentation.
+  --browse       : Browse the generated HTML OCD documentation (default: 0).
 
 EOF
     return
@@ -115,6 +118,8 @@ while [ -n "$1" ]; do
         option="${token}"
 	if [ "${option}" = "--debug" ]; then
 	    debug=1
+	elif [ "${option}" = "--verbose" ]; then
+	    verbose=1
 	elif [ "${option}" = "--help" ]; then
 	    do_help
 	    exit 0
@@ -687,12 +692,16 @@ if [ ${browse} -eq 1 ]; then
     if [ $? -ne 0 ]; then
 	echo "WARNING: bxocd_make_doc: Cannot find the 'xdg-open' executable ! No browsing !" >&2
     else
-	echo "INFO: bxocd_make_doc: Browsing the HTML OCD documentation !" >&2
+	if [ $verbose -eq 1 ]; then
+	    echo "INFO: bxocd_make_doc: Browsing the HTML OCD documentation !" >&2
+	fi
 	xdg-open ${build_dir}/${index_html_filename} &
     fi
 fi
 
-echo "INFO: bxocd_make_doc: Now you can safely copy the content of the " >&2
-echo "                      '${build_dir}' directory in the place of your choice." >&2
+if [ $verbose -eq 1 ]; then
+    echo "INFO: bxocd_make_doc: Now you can safely copy the content of the " >&2
+    echo "                      '${build_dir}' directory in the place of your choice." >&2
+fi
 
 exit 0
