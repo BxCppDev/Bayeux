@@ -252,7 +252,7 @@ namespace geomtools {
       }
     }
 
-    return _gmap_->get_invalid_geom_id ();
+    return _gmap_->get_invalid_geom_id();
   }
 
   void smart_id_locator::dump (ostream & out_) const
