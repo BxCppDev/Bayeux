@@ -128,14 +128,14 @@ void base_service::common_ocd(datatools::object_configuration_description& ocd)
   datatools::logger::declare_ocd_logging_configuration(ocd, "fatal", "");
 
   {
-    datatools::configuration_property_description & cpd = ocd.add_property_info();
+    datatools::configuration_property_description & cpd = ocd.add_configuration_property_info();
     cpd.set_name_pattern("description")
       .set_from("datatools::base_service")
       .set_terse_description("The description of the service")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("A description of the service.")
-      .add_example("Example::                                       \n"
+      .add_example("Set the description of the service::            \n"
                    "                                                \n"
                    "  description : string = \"A database service\" \n"
                    "                                                \n"
@@ -143,14 +143,14 @@ void base_service::common_ocd(datatools::object_configuration_description& ocd)
       ;
   }
   {
-    datatools::configuration_property_description & cpd = ocd.add_property_info();
+    datatools::configuration_property_description & cpd = ocd.add_configuration_property_info();
     cpd.set_name_pattern("name")
       .set_from("dpp::base_service")
       .set_terse_description("The name of the service")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("A name given to the service.")
-      .add_example("Example::                      \n"
+      .add_example("Set the name of the service::  \n"
                    "                               \n"
                    "  name : string = \"database\" \n"
                    "                               \n"
@@ -158,17 +158,17 @@ void base_service::common_ocd(datatools::object_configuration_description& ocd)
       ;
   }
   {
-    datatools::configuration_property_description & cpd = ocd.add_property_info();
+    datatools::configuration_property_description & cpd = ocd.add_configuration_property_info();
     cpd.set_name_pattern("version")
       .set_from("dpp::base_service")
       .set_terse_description("The version of the service")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_long_description("A string version number given to the service.")
-      .add_example("Example::                   \n"
-                   "                            \n"
-                   "  name : string = \"1.0.0\" \n"
-                   "                            \n"
+      .add_example("Set the version of the service:: \n"
+                   "                                 \n"
+                   "  version : string = \"1.0.0\"   \n"
+                   "                                 \n"
                    )
       ;
   }
