@@ -307,8 +307,14 @@ class object_configuration_description
 
   configuration_property_description & add_configuration_property_info();
 
-  /// Obsolete
+  /// \deprecated
   configuration_property_description & add_property_info();
+
+  unsigned int get_number_of_examples() const;
+
+  const std::string & get_example(int) const;
+
+  void add_example(const std::string &example_);
 
   /// Check the validity of a container of properties with respect to the OCD description
   bool validate(const datatools::properties & config_,
@@ -358,6 +364,7 @@ private:
   std::set<std::string> _groups_;                /// The set of groups the class belongs to
   cpd_col_type _configuration_properties_infos_; /// Collection of documented properties
   std::string  _configuration_hints_;            /// Some embeded plain text documentation
+  std::vector<std::string> _examples_;           /// List of examples
   //csd_col_type _configuration_sections_infos_; /// Collection of documented sections
   bool         _validation_support_;             /// Flag to support validation
 

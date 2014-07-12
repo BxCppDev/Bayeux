@@ -1017,6 +1017,23 @@ namespace datatools {
     return *this;
   }
 
+  unsigned int object_configuration_description::get_number_of_examples() const
+  {
+    return _examples_.size();
+  }
+
+  const std::string & object_configuration_description::get_example(int i_) const
+  {
+    return _examples_.at(i_);
+  }
+
+  void
+  object_configuration_description::add_example(const std::string &example_)
+  {
+    _examples_.push_back(example_);
+    return;
+  }
+
   object_configuration_description &
   object_configuration_description::set_validation_support(bool vs_)
   {
@@ -1171,6 +1188,22 @@ namespace datatools {
       out_ << indent_ << "Configuration hints" << std::endl;
       out_ << indent_ << "-------------------" << std::endl;
       print_multi_lines(out_, _configuration_hints_, indent_);
+    }
+
+    if (_examples_.size()) {
+      out_ << indent_ << std::endl;
+      out_ << indent_ << "Examples" << std::endl;
+      out_ << indent_ << "-------------------" << std::endl;
+      for (size_t i = 0; i < _examples_.size(); i++) {
+        out_ << std::endl << indent_ << "***Example ";
+        if (get_number_of_examples() > 1) {
+          out_ << (i + 1);
+        }
+        out_ <<  " :*** "    << std::endl;
+        out_ << indent_ << std::endl;
+        print_multi_lines(out_, _examples_[i], indent_);
+
+      }
     }
 
     return;
