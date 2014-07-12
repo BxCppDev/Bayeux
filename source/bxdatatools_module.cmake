@@ -14,6 +14,7 @@ set(module_include_dir "${module_root_dir}/include")
 set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
 set(module_app_dir     "${module_root_dir}/programs")
+set(module_resource_dir "${module_root_dir}/resources")
 set(module_examples_dir "${module_root_dir}/examples")
 
 foreach(dir root_dir include_dir source_dir test_dir app_dir)
@@ -24,7 +25,7 @@ endforeach()
 # - Versioning
 set(datatools_VERSION_MAJOR 6)
 set(datatools_VERSION_MINOR 0)
-set(datatools_VERSION_PATCH 0)
+set(datatools_VERSION_PATCH 1)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
 # - CAMP Reflection
@@ -301,13 +302,33 @@ set(${module_name}_MODULE_EXAMPLES
   ${module_examples_dir}
   )
 
+# - Resource files
+set(${module_name}_MODULE_RESOURCES
+  ${module_resource_dir}/OCD/pandoc/templates/OCD2DoxygenTemplate.html
+  )
+
+# - Publish resource files
+foreach(_rfin ${${module_name}_MODULE_RESOURCES})
+  string(REGEX REPLACE "\\.in$" "" _rfout "${_rfin}")
+  string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
+  configure_file(${_rfin} ${_rfout} @ONLY)
+endforeach()
+
+# - Examples dir
+set(${module_name}_MODULE_EXAMPLES
+  ${module_examples_dir}
+  )
+
 # - Utility script:
 if (Bayeux_BUILD_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/ocd_make_doc
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxocd_make_doc @ONLY)
+  configure_file(${module_app_dir}/ocd_sort_classnames.py
+    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxocd_sort_classnames.py @ONLY)
 
   install(FILES
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxocd_make_doc
+    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxocd_sort_classnames.py
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS
