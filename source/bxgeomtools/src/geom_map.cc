@@ -180,7 +180,7 @@ namespace geomtools {
   {
     bool devel = false;
     char * dummy = 0;
-    dummy = getenv("geomtools_geom_map_check_inside_devel");
+    dummy = getenv("GEOMTOOLS_GEOM_MAP_CHECK_INSIDE_DEVEL");
     if (dummy != 0) {
       std::string dummys = dummy;
       if (dummys == "1") {
@@ -194,17 +194,30 @@ namespace geomtools {
     const logical_volume & log = ginfo.get_logical ();
     const i_shape_3d & shape = log.get_shape ();
     if (devel) {
-      //if (shape.get_shape_name() != "box") {
-        std::clog << "DEVEL: geomtools::geom_map::check_inside: "
-                  << "ginfo = " << ginfo_.get_geom_id()
-                  << " world_position = " << world_position_ / CLHEP::mm
-                  << " local_position = " << local_position / CLHEP::mm
-                  << " logical_volume = " << log.get_name()
-                  << " shape = '" << shape.get_shape_name() << "' "
-                  << " tolerance = " << tolerance_ / CLHEP::mm << " "
-                  << std::endl;
-      //}
+      std::cerr << "DEVEL: geomtools::geom_map::check_inside: "
+                << "ginfo = " << ginfo_.get_geom_id()
+                << " world_position = " << world_position_ / CLHEP::mm
+                << " local_position = " << local_position / CLHEP::mm
+                << " logical_volume = " << log.get_name()
+                << " shape = '" << shape.get_shape_name() << "' "
+                << " tolerance = " << tolerance_ / CLHEP::mm << " "
+                << std::endl;
     }
+    // if (devel) {
+    //   vector_3d test_vtx(0,0,0);
+    //   bool ok = shape.is_inside(test_vtx, 0.00001 * CLHEP::mm);
+    //   if (! ok) {
+    //     std::cerr << "DEVEL: ********* geomtools::geom_map::check_inside: "
+    //               << "is_inside Bug !!!"
+    //               << std::endl;
+    //   }
+    //   ok = ! shape.is_outside(test_vtx, 0.00001 * CLHEP::mm);
+    //   if (! ok) {
+    //     std::cerr << "DEVEL: ********* geomtools::geom_map::check_inside: "
+    //               << "!is_outside Bug !!!"
+    //               << std::endl;
+    //   }
+    // }
     if (reverse_) {
       if (! shape.is_outside(local_position, tolerance_)) {
         return true;
