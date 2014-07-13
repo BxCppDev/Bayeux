@@ -193,7 +193,7 @@ you will get a listing of the contents in the upstream repository.
 This is what we mean by a "sparse checkout". Such a working copy allows you
 to query the repository for what is available, and then choose
 the parts you want to checkout. For example, you can get a list of the
-current tags of Falaise by doing
+current tags of Bayeux by doing
 
 ~~~~~
 $ svn ls Bayeux/tags
@@ -225,7 +225,7 @@ A    Cadfael/tags/Cadfael-1.0.1/testing/ImportedTargets/CMakeLists.txt
 Updated to revision 15106.
 $ svn ls Bayeux/tags
 ...
-$ svn up --set-depth infinity Bayeux/tags/Bayeux-@Bayeux_VERSION@
+$ svn up --set-depth infinity Bayeux/tags/Bayeux-1.0.0
 ~~~~~
 
 The basic source  code working copy is now in  place. For more details
