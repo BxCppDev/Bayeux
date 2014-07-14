@@ -21,13 +21,6 @@
 
 namespace datatools {
 
-   // const bool configuration_property_description::SCALAR = false;
-   // const bool configuration_property_description::ARRAY  = true;
-   // const bool configuration_property_description::IMPLICIT_UNIT = false;
-   // const bool configuration_property_description::EXPLICIT_UNIT = true;
-   // const bool configuration_property_description::MUTABLE = false;
-   // const bool configuration_property_description::CONST = true;
-
   bool configuration_property_description::dependency_entry::dynamic() const
   {
     return type == DEP_DYNAMIC;
@@ -93,8 +86,6 @@ namespace datatools {
     //reset();
     return;
   }
-
-  /***************************************************************/
 
   bool configuration_property_description::is_const() const
   {
@@ -688,6 +679,29 @@ namespace datatools {
     return _array_;
   }
 
+  configuration_property_description &
+  configuration_property_description::set_deprecated(bool val_, const std::string &info_)
+  {
+    _deprecated_ = val_;
+    if (val_) {
+      _deprecated_info_ = info_;
+    } else {
+      _deprecated_info_.clear();
+    }
+    return *this;
+  }
+
+  bool configuration_property_description::is_deprecated() const
+  {
+    return _deprecated_;
+  }
+
+  const std::string &
+  configuration_property_description::get_deprecated_info() const
+  {
+    return _deprecated_info_;
+  }
+
   void configuration_property_description::print(std::ostream &out_,
                                                  const std::string & indent_) const
   {
@@ -712,6 +726,14 @@ namespace datatools {
 
     if (! _from_.empty()) {
       out_  << indent << "* From : ``" << _from_ << "``" << std::endl;
+    }
+
+    if (is_deprecated()) {
+      out_ << indent << "* Deprecated";
+      if (!_deprecated_info_.empty()) {
+        out_ << " : " << _deprecated_info_;
+      }
+      out_ << std::endl;
     }
 
     if (! _group_.empty()) {
@@ -796,8 +818,7 @@ namespace datatools {
       out_ << std::endl << indent << "  " << " + "
            << "has complex triggering conditions";
       spe_dpcy = true;
-    }
-    else if (has_complex_dependencies()) {
+    } else if (has_complex_dependencies()) {
       out_ << std::endl << indent << "  " << " + "
            << "has complex dependencies";
       spe_dpcy = true;
@@ -890,8 +911,7 @@ namespace datatools {
       out_ << indent_ << "|   |-- " << "Explicit unit : " << _explicit_unit_ << "\n";
       if (is_array()) {
         out_ << indent_ << "|   `-- " << "Unit symbol   : '" << _unit_symbol_ << "'\n";
-      }
-      else {
+      } else {
         out_ << indent_ << "|   `-- " << "Unit label   : '" << _unit_label_ << "'\n";
       }
     }
@@ -918,8 +938,11 @@ namespace datatools {
         out_ << indent_ << "|-- " << "Dependers : " << _dynamic_dependers_.size() << "\n";
         for (size_t i = 0; i < _dynamic_dependers_.size(); i++) {
           out_ << indent_ << "|-- ";
-          if (i == _dynamic_dependers_.size() - 1) out_ << "`-- ";
-          else out_ << "|-- ";
+          if (i == _dynamic_dependers_.size() - 1) {
+            out_ << "`-- ";
+          } else {
+            out_ << "|-- ";
+          }
           const dependency_entry & der = _dynamic_dependers_[i];
           out_ << "Depender : '" << der.name << "'";
           if (! der.has_address()) {
@@ -936,8 +959,11 @@ namespace datatools {
       out_ << indent_ << "|-- " << "Triggering : " << _triggering_.size() << "\n";
       for (size_t i = 0; i < _triggering_.size(); i++) {
         out_ << indent_ << "|-- ";
-        if (i == _triggering_.size() - 1) out_ << "`-- ";
-        else out_ << "|-- ";
+        if (i == _triggering_.size() - 1) {
+          out_ << "`-- ";
+        } else {
+          out_ << "|-- ";
+        }
         const dependency_entry & trig = _triggering_[i];
         out_ << "Triggered : '" << trig.name << "'";
         if (! trig.has_address()) {
@@ -967,8 +993,6 @@ namespace datatools {
     out_ << indent_ << "`-- " << "Mandatory : '" << _mandatory_ << "'\n";
     return;
   }
-
-  /************************************************************************************/
 
   bool object_configuration_description::is_available() const
   {
@@ -1431,8 +1455,7 @@ namespace datatools {
       if (i ==  _configuration_properties_infos_.size() - 1) {
         out_ << "`-- ";
         tag = "    ";
-      }
-      else {
+      } else {
         out_ << "|-- ";
       }
       out_ << "Configuration property #" << i << " : \n";
@@ -1453,33 +1476,37 @@ namespace datatools {
     const std::string & prop_name = cpd_.get_name_pattern();
     // Check if the property is missing :
     if (config_.has_key(prop_name)) {
+      if (cpd_.is_deprecated()) {
+        error_message_ = "Property '" + prop_name + "' is deprecated";
+        if (!cpd_.get_deprecated_info().empty()) {
+          error_message_ += " (" + cpd_.get_deprecated_info() + ")";
+        }
+        error_message_ += "!";
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING, error_message_);
+      }
       // Check type trait :
       if (cpd_.has_type()) {
         if (! _validate_traits(cpd_,config_, error_message_)) {
           return false;
         }
       }
-    }
-    else {
+    } else {
       // Check if the property is missing :
       // If flagged as mandatory :
       if (cpd_.is_mandatory()) {
         if (cpd_.has_complex_triggering_conditions()) {
           // Nothing more can be said here...
-        }
-        else {
+        } else {
           if (! cpd_.is_triggered_by_flag()) {
             error_message_ = "Mandatory property '" + prop_name + "' is missing !";
             return false;
-          }
-          else {
+          } else {
             // If the trigger property is missing, we are in trouble :
             if (config_.has_flag(cpd_.get_triggered_by_flag().get_name())) {
               error_message_ = "Mandatory property '" + prop_name + "' triggered by flag '"
                 + cpd_.get_triggered_by_flag().get_name() + "' is missing !";
               return false;
-            }
-            else {
+            } else {
               // Nothing
             }
           }
@@ -1539,8 +1566,7 @@ namespace datatools {
           return false;
         }
       }
-    }
-    else {
+    } else {
       if (pd.is_vector()) {
         error_message_ = "Invalid scalar traits for property '"
           + cpd_.get_name_pattern() + "' !";
@@ -1568,8 +1594,7 @@ namespace datatools {
         if (! _validate_static(cpd,config_, error_message_)) {
           return false;
         }
-      } // end of static properties
-      else {
+      } else {
         const configuration_property_description::dependency_entry & ddee
           = cpd.get_dynamic_dependee();
         const configuration_property_description & dee_ref = ddee.ref();
@@ -1623,8 +1648,7 @@ namespace datatools {
                              default_value,
                              cpd_.get_terse_description(),
                              cpd_.is_const());
-       }
-       else {
+       } else {
          properties::data::vbool v;
          for (int ia = 0; ia < array_sz; ia++) {
            v.push_back(false);
@@ -1646,8 +1670,7 @@ namespace datatools {
                              default_value,
                              cpd_.get_terse_description(),
                              cpd_.is_const());
-       }
-       else {
+       } else {
          properties::data::vint v;
          for (int ia = 0; ia < array_sz; ia++) {
            v.push_back(ia+1);
@@ -1669,8 +1692,7 @@ namespace datatools {
                           default_value,
                           cpd_.get_terse_description(),
                           cpd_.is_const());
-       }
-       else {
+       } else {
          properties::data::vdouble v;
          for (int ia = 0; ia < array_sz; ia++) {
            v.push_back(ia*1.1);
@@ -1701,8 +1723,7 @@ namespace datatools {
                             default_value,
                             cpd_.get_terse_description(),
                             cpd_.is_const());
-       }
-       else {
+       } else {
          properties::data::vstring v;
          for (int ia = 0; ia < array_sz; ia++) {
            std::ostringstream token_oss;
@@ -1783,6 +1804,13 @@ namespace datatools {
 
         if (more and ! (sgo_flags_ & sgo_no_add_infos)) {
           out_ << "\n# Additional informations : " << '\n';
+          if (cpd.is_deprecated()) {
+            out_ << "#   " << "This property is deprecated";
+            if (!cpd.get_deprecated_info().empty()) {
+              out_ << " (" << cpd.get_deprecated_info() << ")";
+            }
+            out_ << ".\n";
+          }
           if (cpd.has_complex_triggering_conditions()) {
             out_ << "#   " << "This property has complex triggering conditions.\n";
           }
@@ -1793,8 +1821,7 @@ namespace datatools {
             out_ << "#   " << "This property";
             if (cpd.is_mandatory()) {
               out_ << " is expected";
-            }
-            else {
+            } else {
               out_ << " may be set";
             }
             out_ << " if dependee flag property '"
@@ -1806,8 +1833,7 @@ namespace datatools {
             out_ << "#   " << "This property";
             if (cpd.is_mandatory()) {
               out_ << " is expected";
-            }
-            else {
+            } else {
               out_ << " may be set";
             }
             out_ << " if dependee string property '"

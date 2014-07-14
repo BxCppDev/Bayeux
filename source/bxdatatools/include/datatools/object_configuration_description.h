@@ -123,7 +123,10 @@ public:
   configuration_property_description & set_default_value_string(const std::string &);
   configuration_property_description & set_default_array_size(int);
   configuration_property_description & add_example(const std::string &example_);
+  configuration_property_description & set_deprecated(bool, const std::string &info_ = "");
 
+  bool is_deprecated() const;
+  const std::string & get_deprecated_info() const;
   bool is_valid() const;
   bool has_type() const;
   bool has_section() const;
@@ -188,35 +191,37 @@ public:
 
 private:
 
-  std::string  _name_pattern_;         /// The name pattern of the property
-  std::string  _from_;                 /// The name of a class from which the property is declared
-  std::string  _section_;              /// An optional string describing the configuration section
-  std::string  _group_;                /// An optional string describing the group the object belongs too
-  std::string  _terse_description_;    /// Terse description of the property
-  std::string  _long_description_;     /// Detailed description of the property
-  std::vector<std::string> _examples_; /// List of examples
-  int          _type_;          /// property's type (BOOLEAN, INTEGER, REAL, STRING)
-  bool         _const_;         /// Constness of the property's value
-  bool         _path_;          /// Explicit path trait for STRING property
-  bool         _explicit_unit_; /// Explicit unit trait for REAL property
-  std::string  _unit_label_;    /// Explicit unit label for REAL property with 'explicit unit' trait
-  std::string  _unit_symbol_;   /// Explicit unit symbol for REAL property with 'explicit unit' trait
-  bool         _array_;              /// Array trait (any type)
-  int          _array_fixed_size_;   /// Array fixed size (-1 if not fixed)
-  int          _default_array_size_; /// Default array size (-1 if not set)
-  boost::logic::tribool _default_value_boolean_; /// Default boolean value description
-  int          _default_value_integer_;          /// Default integer value description
-  double       _default_value_real_;             /// Default real value description
-  std::string  _default_value_real_unit_;        /// Default real value unit symbol
-  std::string  _default_value_string_;           /// Default string value description
-  bool         _mandatory_;                           /// Flag for a mandatory property
-  bool         _complex_triggering_conditions_;       /// Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
-  bool         _complex_dependencies_;                /// Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism
-  std::vector<dependency_entry> _dynamic_dependers_;  /// List of dynamic properties that depends on this property (static property only)
-  dependency_entry              _dynamic_dependee_;   /// Dependee of this property (dynamic property only)
-  std::vector<dependency_entry> _triggering_;         /// List of properties triggered by this property
-  dependency_entry              _triggered_by_flag_;  /// Flag (BOOLEAN) property this property depends on
-  dependency_entry              _triggered_by_label_; /// Label (STRING) property this property depends on
+  std::string  _name_pattern_;         //!< The name pattern of the property
+  std::string  _from_;                 //!< The name of a class from which the property is declared
+  std::string  _section_;              //!< An optional string describing the configuration section
+  std::string  _group_;                //!< An optional string describing the group the object belongs too
+  std::string  _terse_description_;    //!< Terse description of the property
+  std::string  _long_description_;     //!< Detailed description of the property
+  std::vector<std::string> _examples_; //!< List of examples
+  int          _type_;          //!< property's type (BOOLEAN, INTEGER, REAL, STRING)
+  bool         _const_;         //!< Constness of the property's value
+  bool         _path_;          //!< Explicit path trait for STRING property
+  bool         _explicit_unit_; //!< Explicit unit trait for REAL property
+  std::string  _unit_label_;    //!< Explicit unit label for REAL property with 'explicit unit' trait
+  std::string  _unit_symbol_;   //!< Explicit unit symbol for REAL property with 'explicit unit' trait
+  bool         _array_;              //!< Array trait (any type)
+  int          _array_fixed_size_;   //!< Array fixed size (-1 if not fixed)
+  int          _default_array_size_; //!< Default array size (-1 if not set)
+  boost::logic::tribool _default_value_boolean_; //!< Default boolean value description
+  int          _default_value_integer_;          //!< Default integer value description
+  double       _default_value_real_;             //!< Default real value description
+  std::string  _default_value_real_unit_;        //!< Default real value unit symbol
+  std::string  _default_value_string_;           //!< Default string value description
+  bool         _mandatory_;                           //!< Flag for a mandatory property
+  bool         _complex_triggering_conditions_;       //!< Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
+  bool         _complex_dependencies_;                //!< Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism
+  std::vector<dependency_entry> _dynamic_dependers_;  //!< List of dynamic properties that depends on this property (static property only)
+  dependency_entry              _dynamic_dependee_;   //!< Dependee of this property (dynamic property only)
+  std::vector<dependency_entry> _triggering_;         //!< List of properties triggered by this property
+  dependency_entry              _triggered_by_flag_;  //!< Flag (BOOLEAN) property this property depends on
+  dependency_entry              _triggered_by_label_; //!< Label (STRING) property this property depends on
+  bool _deprecated_;  //!< Deprecated flag
+  std::string _deprecated_info_; //!< Information about deprecation
 
   friend class object_configuration_description;
 };
