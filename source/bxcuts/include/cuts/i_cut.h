@@ -174,7 +174,7 @@ namespace cuts {
     }
 
     /// Clear the referenced user data
-    void reset_user_data ();
+    void reset_user_data();
 
     /// Naked initialization method (default implementation, @see initialize)
     virtual void initialize_simple();
@@ -220,19 +220,31 @@ namespace cuts {
     virtual ~i_cut();
 
     /// Smart print
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+    virtual void tree_dump(std::ostream & a_out         = std::clog,
+                           const std::string & a_title  = "",
+                           const std::string & a_indent = "",
+                           bool a_inherit          = false) const;
 
     /// Print shortcut @see tree_dump()
-    void print (std::ostream & a_out = std::clog) const;
+    void print(std::ostream & a_out = std::clog) const;
 
     /// Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority p);
 
     /// Get the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
+
+    /// Return the number of entries accepted by the cut
+    size_t get_number_of_accepted_entries() const;
+
+    /// Return the number of entries rejected by the cut
+    size_t get_number_of_rejected_entries() const;
+
+    /// Return the total number of entries processed by the cut
+    size_t get_number_of_processed_entries() const;
+
+    /// Reset the embedded counters
+    void reset_counters();
 
   protected:
 
@@ -275,8 +287,8 @@ namespace cuts {
     bool         _initialized_;  //!< The initialization flag
     boost::shared_ptr<i_referenced_data> _user_data_; //!< Internal weak (not managed) handle to user data;
 
-    size_t _number_event_accepted_; //!< Number of events accepted by the cut
-    size_t _number_event_rejected_; //!< Number of events rejected by the cut
+    size_t _number_of_accepted_entries_; //!< Number of entries accepted by the cut
+    size_t _number_of_rejected_entries_; //!< Number of entries rejected by the cut
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut);
@@ -286,14 +298,14 @@ namespace cuts {
 }  // end of namespace cuts
 
 /** Interface macro for automated registration of a cut class in the global register */
-#define CUT_REGISTRATION_INTERFACE(T)                                    \
-  private:                                                               \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut,T); \
+#define CUT_REGISTRATION_INTERFACE(T)                                     \
+  private:                                                                \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut, T); \
   /**/
 
 /** Implementation macro for automated registration of a cut class in the global register */
-#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                                         \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut,T,CutID); \
+#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                                           \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut, T, CutID); \
   /**/
 
 #endif // CUTS_I_CUT_H
