@@ -74,67 +74,90 @@ namespace cuts {
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
 
+    /// Check debug flag
     bool is_debug() const;
 
+    /// Check verbose flag
     bool is_verbose() const;
 
+    /// Check the 'no-preload' flag
     bool is_no_preload() const;
 
+    /// Check the 'initialization_at_load' flag
     bool is_initialization_at_load() const;
 
+    /// Check if print report is available
     bool has_print_report() const;
 
+    /// Check if cut with given name is defined
     bool has(const std::string & a_cut_name) const;
 
+    /// Remove cut with given name
     void remove(const std::string & a_cut_name);
 
+    /// Return a mutable reference to a cut given its name
     i_cut & grab(const std::string & a_cut_name);
 
+    /// Return a non mutable reference to a cut given its name
     const i_cut & get(const std::string & a_cut_name) const;
 
+    /// Return a mutable reference to the embedded dictionary of cuts
     cut_handle_dict_type & get_cuts();
 
+    /// Return a non mutable reference to the embedded dictionary of cuts
     const cut_handle_dict_type & get_cuts() const;
 
+    /// Check initialization flag
     bool is_initialized() const;
 
+    /// Initialization
     void initialize(const datatools::properties & a_setup);
 
+    /// Reset
     void reset();
 
+    /// Default constructor
     cut_manager(uint32_t the_flags = BLANK);
 
+    /// Destructor
     virtual ~cut_manager();
 
+    /// Check availability of the service manager
     bool has_service_manager() const;
 
+    /// Return a non mutable reference to the service manager
     const datatools::service_manager & get_service_manager() const;
 
+    /// Return a mutable reference to the service manager
     datatools::service_manager & grab_service_manager();
 
+    /// Set service manager
     void set_service_manager(datatools::service_manager & a_service_manager);
 
+    /// Install an embedded service manager
     void install_service_manager(const datatools::properties & a_service_manager_configuration);
 
+    /// Smart print
     virtual void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
                            bool a_inherit          = false) const;
 
+    /// Print report
     void print_report(std::ostream & a_out = std::clog) const;
 
+    /// Load a cut
     void load_cut(const std::string & cut_name_,
                   const std::string & cut_id_,
                   const datatools::properties & cut_config_);
 
-    //void create_cut(cut_entry_type & cut_entry_);
-
-    //void initialize_cut(cut_entry_type & cut_entry_);
-
+    /// Load several cuts
     void load_cuts(const datatools::multi_properties & cuts_config_);
 
+    /// Check if a given cut factory is registered
     bool has_cut_type(const std::string & cut_id_) const;
 
+    /// Register a cut factory
     template <class CutClass>
     void register_cut_type(const std::string & cut_id_)
     {
@@ -142,6 +165,7 @@ namespace cuts {
       return;
     }
 
+    /// Unregister a cut factory
     void unregister_cut_type(const std::string & cut_id_);
 
   protected:

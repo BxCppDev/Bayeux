@@ -94,7 +94,6 @@ namespace cuts {
     return _logging_;
   }
 
-  // ctor:
   cut_manager::cut_manager(uint32_t flags_)
   {
     _initialized_           = false;
@@ -139,7 +138,6 @@ namespace cuts {
     return;
   }
 
-  // dtor:
   cut_manager::~cut_manager ()
   {
     if (is_initialized()) {
