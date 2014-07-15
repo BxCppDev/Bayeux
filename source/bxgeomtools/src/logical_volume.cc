@@ -471,7 +471,7 @@ namespace geomtools {
                 }
               } // ! daughter_outside_main_shape
             } // end of loop on all placement
-            // If some 'daughter' bit is alreeady activated, there is
+            // If some 'daughter' bit is already activated, there is
             // no need to continue to traverse the daughter volumes:
             if ((bits & SHAPE_DOMAIN_ON_DAUGHTER_SURFACE)
                 || (bits & SHAPE_DOMAIN_INSIDE_DAUGHTER)) {
