@@ -1,7 +1,6 @@
-// -*- mode: c++ ; -*-
-/* base_physics_constructor.cc
- */
+// base_physics_constructor.cc
 
+// Ourselves:
 #include <mctools/g4/base_physics_constructor.h>
 
 #include <datatools/units.h>
