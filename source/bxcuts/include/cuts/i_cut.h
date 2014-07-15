@@ -284,9 +284,8 @@ namespace cuts {
 
   private:
 
-    bool         _initialized_;  //!< The initialization flag
+    bool _initialized_;  //!< The initialization flag
     boost::shared_ptr<i_referenced_data> _user_data_; //!< Internal weak (not managed) handle to user data;
-
     size_t _number_of_accepted_entries_; //!< Number of entries accepted by the cut
     size_t _number_of_rejected_entries_; //!< Number of entries rejected by the cut
 
