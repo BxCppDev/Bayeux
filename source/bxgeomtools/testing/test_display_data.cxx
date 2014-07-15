@@ -11,6 +11,8 @@
 // Utilities :
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
 
 // Display data model :
 #include <geomtools/display_data.h>
@@ -34,8 +36,6 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-#include <datatools/temporary_files.h>
-#include <datatools/utils.h>
 
 std::string make_name (const std::string & prefix_, unsigned int i_)
 {
