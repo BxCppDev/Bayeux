@@ -1,6 +1,4 @@
-// -*- mode: c++ ; -*-
-/* logical_volume.cc
- */
+// logical_volume.cc
 
 // Ourselves:
 #include <geomtools/logical_volume.h>
@@ -9,6 +7,10 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/exception.h>
 
 // This project:
 #include <geomtools/i_placement.h>
@@ -366,23 +368,98 @@ namespace geomtools {
   logical_volume::locate_result::locate_result()
   {
     reset();
+    return;
   }
 
   void logical_volume::locate_result::reset()
   {
-    shape_domain_flags = SHAPE_DOMAIN_NONE;
-    daughter_name.clear();
-    daughter_physical = 0;
-    daughter_placement_index = -1;
+    _shape_domain_flags_ = SHAPE_DOMAIN_NONE;
+    _daughter_name_.clear();
+    _daughter_physical_ = 0;
+    _daughter_placement_index_ = -1;
+    geomtools::invalidate(_position_in_daughter_);
+    return;
+  }
+
+  void logical_volume::locate_result::set_shape_domain_flags(uint32_t bits_)
+  {
+    _shape_domain_flags_ = bits_;
+    return;
+  }
+
+  void logical_volume::locate_result::set_daughter_name(const std::string & name_)
+  {
+    _daughter_name_ = name_;
+    return;
+  }
+
+  void logical_volume::locate_result::set_daughter(const physical_volume & pv_)
+  {
+    _daughter_physical_ = &pv_;
+    return;
+  }
+
+  void logical_volume::locate_result::set_daughter_placement_index(int index_)
+  {
+    _daughter_placement_index_ = index_;
+    return;
+  }
+
+  void logical_volume::locate_result::set_position_in_daughter(const vector_3d & pos_)
+  {
+    _position_in_daughter_ = pos_;
+    return;
+  }
+
+  uint32_t logical_volume::locate_result::get_shape_domain_flags() const
+  {
+    return _shape_domain_flags_;
+  }
+
+  bool logical_volume::locate_result::has_daughter() const
+  {
+    return _daughter_physical_ != 0;
+  }
+
+  const std::string & logical_volume::locate_result::get_daughter_name() const
+  {
+    return _daughter_name_;
+  }
+
+  bool logical_volume::locate_result::has_daughter_placement_index() const
+  {
+    return _daughter_placement_index_ >= 0;
+  }
+
+  int logical_volume::locate_result::get_daughter_placement_index() const
+  {
+    return _daughter_placement_index_;
+  }
+
+  const physical_volume & logical_volume::locate_result::get_daughter() const
+  {
+    DT_THROW_IF(_daughter_physical_ == 0, std::logic_error, "Missing daughter physical!");
+    return *_daughter_physical_;
+  }
+
+  bool logical_volume::locate_result::has_position_in_daughter() const
+  {
+    return geomtools::is_valid(_position_in_daughter_);
+  }
+
+  const vector_3d & logical_volume::locate_result::get_position_in_daughter() const
+  {
+    return _position_in_daughter_;
   }
 
   void logical_volume::locate_result::dump(std::ostream & out_, const std::string & indent_) const
   {
-    out_ << indent_ << "|-- " << "Shape domain flags : " << shape_domain_flags << std::endl;
-    out_ << indent_ << "|-- " << "Daughter name      : '" << daughter_name << "'" << std::endl;
+    out_ << indent_ << "|-- " << "Shape domain flags : " << _shape_domain_flags_ << std::endl;
+    out_ << indent_ << "|-- " << "Daughter name      : '" << _daughter_name_ << "'" << std::endl;
     out_ << indent_ << "|-- " << "Daughter physical  : '"
-         << (daughter_physical ? daughter_physical->get_name() : "<none>") << "'" << std::endl;
-    out_ << indent_ << "`-- " << "Daughter placement index : " << daughter_placement_index << std::endl;
+         << (_daughter_physical_ ? _daughter_physical_->get_name() : "<none>") << "'" << std::endl;
+    out_ << indent_ << "|-- " << "Daughter placement index : " << _daughter_placement_index_ << std::endl;
+    out_ << indent_ << "`-- " << "Position in daughter : " << _position_in_daughter_ / CLHEP::mm << " mm" << std::endl;
   }
 
   uint32_t logical_volume::locate(const vector_3d & local_position_,
@@ -426,7 +503,7 @@ namespace geomtools {
             const i_placement & daughter_placement = daughter_phys.get_placement();
             DT_LOG_DEBUG(logging, "Placement has " << daughter_placement.get_number_of_items ()
                          << " items.");
-             // Loop on all placements :
+            // Loop on all placements :
             for(size_t item = 0; item < daughter_placement.get_number_of_items (); item++) {
               vector_3d daughter_item_position;
               placement daughter_item_placement;
@@ -453,19 +530,20 @@ namespace geomtools {
                   bits |= SHAPE_DOMAIN_ON_DAUGHTER_SURFACE;
                   DT_LOG_TRACE(logging, "SHAPE_DOMAIN_ON_DAUGHTER_SURFACE: bits =" << bits);
                   if (locate_res_) {
-                    locate_res_->daughter_name = daughter_label;
-                    locate_res_->daughter_physical = &daughter_phys;
-                    locate_res_->daughter_placement_index = item;
+                    locate_res_->set_daughter_name(daughter_label);
+                    locate_res_->set_daughter(daughter_phys);
+                    locate_res_->set_daughter_placement_index(item);
+                    locate_res_->set_position_in_daughter(daughter_item_position);
                   }
-
                   break;
                 } else {
                   bits |= SHAPE_DOMAIN_INSIDE_DAUGHTER;
                   DT_LOG_TRACE(logging, "SHAPE_DOMAIN_INSIDE_DAUGHTER: bits =" << bits);
                   if (locate_res_) {
-                    locate_res_->daughter_name = daughter_label;
-                    locate_res_->daughter_physical = &daughter_phys;
-                    locate_res_->daughter_placement_index = item;
+                    locate_res_->set_daughter_name(daughter_label);
+                    locate_res_->set_daughter(daughter_phys);
+                    locate_res_->set_daughter_placement_index(item);
+                    locate_res_->set_position_in_daughter(daughter_item_position);
                   }
                   break;
                 }
@@ -483,7 +561,7 @@ namespace geomtools {
     }// end of !outside_main_shape
 
     if (locate_res_) {
-      locate_res_->shape_domain_flags = bits;
+      locate_res_->set_shape_domain_flags(bits);
     }
     DT_LOG_TRACE(logging, "Exiting: with bits =" << bits);
     return bits;
@@ -492,8 +570,8 @@ namespace geomtools {
 
   // static
   bool logical_volume::same(const logical_volume & log1_,
-                               const logical_volume & log2_,
-                               uint32_t /*mode_*/)
+                            const logical_volume & log2_,
+                            uint32_t /*mode_*/)
   {
     if (&log1_ == &log2_) return true;
     const i_shape_3d * sh1 = &log1_.get_shape ();
@@ -638,5 +716,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of logical_volume.cc

@@ -1,8 +1,9 @@
-// -*- mode: c++; -*-
-/* address_set.cc
- */
+// address_set.cc
 
+// Ourselves:
 #include <geomtools/address_set.h>
+
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
@@ -344,5 +345,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of address_set.cc

@@ -1,6 +1,4 @@
-// -*- mode: c++ ; -*-
-/* color.cc
- */
+// color.cc
 
 // Ourselves:
 #include <geomtools/color.h>

@@ -1,23 +1,22 @@
-/* gnuplot_drawer.cc
- */
+// gnuplot_drawer.cc
 
-// Ourself:
+// Ourselves:
 #include <geomtools/gnuplot_drawer.h>
 
 // Standard libraries:
 #include <stdexcept>
 #include <cstdlib>
 
-// Third party
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
-
-// Datatools:
+// - Bayeux/datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/utils.h>
 
-// Geomtools:
+// This project:
 #include <geomtools/model_factory.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
@@ -634,12 +633,17 @@ namespace geomtools {
   void gnuplot_drawer::draw (const logical_volume & log_,
                              const placement & p_,
                              int max_display_level_,
-                             const std::string & title_)
+                             const std::string & title_,
+                             bool display_data_)
   {
     const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     int max_display_level = max_display_level_;
     if (max_display_level_ < 0) {
       max_display_level = 0;
+    }
+
+    if (display_data_) {
+      _draw_display_data(p_);
     }
 
     datatools::properties visu_config;
@@ -973,7 +977,7 @@ namespace geomtools {
     return EXIT_SUCCESS;
   }
 
-  void gnuplot_drawer::draw_from_gid (const model_factory & mf_,
+  void gnuplot_drawer::draw_from_gid (const model_factory & /* mf_ */,
                                       const geom_id & gid_,
                                       const mapping & mapping_,
                                       int max_display_level_)
@@ -985,10 +989,10 @@ namespace geomtools {
     const placement & wpl = ginfo.get_world_placement ();
     const logical_volume & log = ginfo.get_logical ();
 
-    bool draw_dd = true;
-    if (draw_dd) {
-      _draw_display_data(mf_, wpl);
-    }
+    // bool draw_dd = true;
+    // if (draw_dd) {
+    //   _draw_display_data(mf_, wpl);
+    // }
     std::ostringstream title_oss;
     title_oss << "Volume " << gid_ << " (instance of logical volume '"
               << log.get_name () << "')";
@@ -1008,7 +1012,6 @@ namespace geomtools {
     const i_model & model = *(found->second);
     const geomtools::logical_volume & log = model.get_logical ();
 
-    bool draw_dd = true;
     std::string world_name;
     if (get_properties().has_key(gnuplot_drawer::world_name_key())
         && get_properties().is_string(gnuplot_drawer::world_name_key())) {
@@ -1017,10 +1020,12 @@ namespace geomtools {
     if (world_name.empty()) {
       world_name = geomtools::model_factory::default_world_label();
     }
+    /*
+    bool draw_dd = true;
     if (draw_dd && (name_ == world_name)) {
       _draw_display_data(mf_, p_);
     }
-
+    */
     draw (log, p_, max_display_level_, log.get_name ());
 
     return;
@@ -1048,6 +1053,41 @@ namespace geomtools {
         geomtools::gnuplot_draw::draw_display_data(colored_out,
                                                    dd_pl.get_translation(),
                                                    dd_pl.get_rotation(),
+                                                   dd,
+                                                   draw_static,
+                                                   draw_frame_index,
+                                                   draw_color,
+                                                   draw_group,
+                                                   draw_name);
+      }
+    }
+    DT_LOG_TRACE (local_priority, "Exiting.");
+    return;
+  }
+
+  void gnuplot_drawer::_draw_display_data(const placement & p_)
+  {
+    const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    DT_LOG_TRACE (local_priority, "Entering...");
+    bool draw_static = true;
+    int draw_frame_index = -1;
+    std::string draw_group;
+    std::string draw_name;
+    for (size_t idd = 0; idd < _display_data_.size(); idd++) {
+      const display_data & dd = _display_data_[idd].get_display_data();
+      const placement & dd_pl = _display_data_[idd].get_placement();
+      placement eff_pl;
+      p_.child_to_mother(dd_pl, eff_pl);
+
+      DT_LOG_TRACE (local_priority, "Display data:");
+      if (local_priority >= datatools::logger::PRIO_TRACE) dd.tree_dump(std::cerr);
+      for (size_t icolor = 0; icolor < dd.get_colors().size(); icolor++) {
+        const std::string & draw_color = dd.get_colors()[icolor];
+        DT_LOG_TRACE (local_priority, "Color = " << draw_color);
+        std::ostringstream & colored_out = _get_stream(draw_color);
+        geomtools::gnuplot_draw::draw_display_data(colored_out,
+                                                   eff_pl.get_translation(),
+                                                   eff_pl.get_rotation(),
                                                    dd,
                                                    draw_static,
                                                    draw_frame_index,

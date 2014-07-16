@@ -1,4 +1,4 @@
-/// \file geomtools/cylinder.cc
+//cylinder.cc
 
 // Standard library:
 #include <string>

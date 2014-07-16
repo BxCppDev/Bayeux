@@ -1,26 +1,23 @@
-// -*- mode: c++ ; -*-
-/* cone.cc
- */
+// cone.cc
 
 // Ourselves:
 #include <geomtools/cone.h>
 
-// Standard library
+// Standard library:
 #include <cmath>
 #include <iostream>
 
-// Third-party
-// - GSL
+// Third-party:
+// - GSL:
 #include <gsl/gsl_math.h>
-
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace geomtools {
 
   // static
   double cone::compute_frustrum_lateral_surface(double z1_, double z2_,
-                                             double r1_, double r2_)
+                                                double r1_, double r2_)
   {
     // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
     double s = 0.0;
@@ -60,5 +57,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-  // end of cone.cc

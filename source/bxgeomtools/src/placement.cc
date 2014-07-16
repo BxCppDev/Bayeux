@@ -311,7 +311,12 @@ namespace geomtools {
     p_ = *this;
   }
 
-  // ctor:
+  void placement::set_identity()
+  {
+    set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    return;
+  }
+
   placement::placement () : i_placement ()
   {
     _rotation_axis_ = ROTATION_AXIS_INVALID;
@@ -320,7 +325,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   placement::placement (const vector_3d & translation_,
                         double phi_,
                         double theta_,
@@ -334,7 +338,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   placement::placement (const vector_3d & translation_,
                         int axis_,
                         double angle_) : i_placement ()

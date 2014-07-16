@@ -4,10 +4,10 @@
 #include <geomtools/cylindric_extrusion_boxed_model.h>
 
 // Third party libraries:
-// - Bayeux:
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
-// - mygsl:
+// - Bayeux/mygsl:
 #include <mygsl/min_max.h>
 
 // This project:

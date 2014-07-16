@@ -1,16 +1,18 @@
-// -*- mode: c++ ; -*-
-/* circle.cc
- */
+// circle.cc
 
+// Ourselves:
 #include <geomtools/circle.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_poly.h>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace geomtools {
@@ -166,5 +168,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of circle.cc

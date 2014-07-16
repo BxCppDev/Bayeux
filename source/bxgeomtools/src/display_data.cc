@@ -1,9 +1,10 @@
-// -*- mode: c++ ; -*-
-/* display_data.cc
- */
+// display_data.cc
 
+// Ourselves:
 #include <geomtools/display_data.h>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace geomtools {
@@ -502,5 +503,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of display_data.cc

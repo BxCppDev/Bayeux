@@ -1,12 +1,13 @@
 // -*- mode: c++ ; -*-
 /// \file geomtools/gnuplot_drawer.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
- * Last modified: 2010-02-20
+ * Last modified: 2014-07-16
  *
  * License:
  *
  * Description:
+ *
  *  Algorithm to recursively draw the geometry using gnuplot.
  *
  * History:
@@ -30,6 +31,7 @@
 
 namespace geomtools {
 
+  // Forward declarations:
   class model_factory;
   class logical_volume;
   class display_data;
@@ -44,7 +46,7 @@ namespace geomtools {
 
     static const int DISPLAY_LEVEL_NO_LIMIT = 1000;
 
-    static int           display_level_no_limit();
+    static int display_level_no_limit();
     static const std::string & view_key();
     static const std::string & view_2d_xy();
     static const std::string & view_2d_xz();
@@ -60,8 +62,10 @@ namespace geomtools {
     static const std::string & force_show_children_property_name();
     static const std::string & world_name_key();
 
+    /// Wait for key stroke in interactive Gnuplot session
     static void wait_for_key ();
 
+    /// \brief Colored stream handle
     struct cstream
     {
       std::string label;
@@ -71,8 +75,11 @@ namespace geomtools {
 
       cstream ();
     };
+
+    /// \brief Dictionary of colored stream handle
     typedef std::map<std::string, cstream> cstreams_col_type;
 
+    /// \brief Storage entry for embedded display data
     class dd_entry
     {
     public:
@@ -84,10 +91,11 @@ namespace geomtools {
       const display_data & get_display_data() const;
       bool is_valid() const;
     private:
-      placement            _pl_;
-      const display_data * _dd_address_;
+      placement            _pl_; //!< The placement of the display data
+      const display_data * _dd_address_; //!< The handle of the display data
     };
 
+    /// \brief Predicate that tests the address of a display data
     class has_dd_addr
     {
     public:
@@ -97,8 +105,10 @@ namespace geomtools {
       const display_data * _dd_address_;
     };
 
+    /// Collection of display data handle
     typedef std::vector<dd_entry> dd_col_type;
 
+    /// \brief Visibility rules for 3D volume rendering
     struct visibility_rules {
       visibility_rules();
       void reset();
@@ -113,83 +123,87 @@ namespace geomtools {
 
   public:
 
+    // Set the Gnuplot output
     void set_output (const std::string & output_);
 
+    // Reset the Gnuplot output
     void reset_output ();
 
+    /// Set Gnuplot terminal and options
     void set_terminal (const std::string & terminal_ = "",
                        const std::string & terminal_options_ = "");
 
+    /// Reset Gnuplot terminal and options
     void reset_terminal ();
 
+    // Set the Gnuplot output medium
     int set_output_medium (const std::string & file_ = "",
                            const std::string & terminal_ = "",
                            const std::string & terminal_options_ = "");
 
+    /// Set the display view
     void set_view (const std::string & view_);
 
+    /// Return the display view
     const std::string & get_view () const;
 
+    /// Set the display mode
     void set_mode (const std::string & mode_);
 
+    /// Return the display mode
     const std::string & get_mode () const;
 
+    /// Set the 'labels' flag
     void set_labels (bool labels_);
 
+    /// Check 'labels' flag
     bool use_labels () const;
 
+    /// Set the 'title' flag
     void set_using_title (bool);
 
+    /// Check 'title' flag
     bool use_title () const;
 
+    /// Check '2D display' flag
     bool is_view_2d () const;
 
+    /// Check '3D display' flag
     bool is_view_3d () const;
 
+    /// Check 'solid display' flag
     bool is_solid () const;
 
+    /// Check 'wired display' flag
     bool is_wired () const;
 
+    /// Check intialization flag
     bool is_initialized () const;
 
     // visibility_rules & grab_vis_rules();
 
     // const visibility_rules & grab_vis_rules() const;
 
+    /// Return a mutable reference to the embedded auxiliary properties
     datatools::properties & grab_properties ();
 
+    /// Return a non mutable reference to the embedded auxiliary properties
     const datatools::properties & get_properties () const;
 
-  protected:
-
-    std::ostringstream & _get_stream (const std::string & section_);
-
-  public:
-
+    /// Constructor
     gnuplot_drawer ();
 
+    /// Destructor
     virtual ~gnuplot_drawer ();
 
+    /// Reset
     void reset ();
 
+    /// Reset colored streams
     void reset_cstreams ();
 
+    /// Basic print
     void print (std::ostream & out_) const;
-
-  private:
-
-    void _draw_ (const logical_volume & log_,
-                 const placement & p_,
-                 int max_display_level_ = 0);
-
-    /*
-    // Future : enrich the interface of the '_draw_' method...
-    void _draw_ (const logical_volume & log_,
-                 const placement & p_,
-                 const visibility_rules & vis_rules_);
-    */
-
-  public:
 
     /// Main display method
     int draw (const manager & mgr_,
@@ -199,7 +213,8 @@ namespace geomtools {
     void draw (const logical_volume & log_,
                const placement & p_,
                int max_display_level_,
-               const std::string & title_);
+               const std::string & title_,
+               bool display_data_ = false);
 
     void draw (const model_factory & mf_,
                const std::string & model_name_,
@@ -229,6 +244,23 @@ namespace geomtools {
 
     void _draw_display_data (const model_factory & mf_,
                              const placement & p_);
+
+    void _draw_display_data(const placement & p_);
+
+    std::ostringstream & _get_stream (const std::string & section_);
+
+  private:
+
+    void _draw_ (const logical_volume & log_,
+                 const placement & p_,
+                 int max_display_level_ = 0);
+
+    /*
+    // Future : enrich the interface of the '_draw_' method...
+    void _draw_ (const logical_volume & log_,
+                 const placement & p_,
+                 const visibility_rules & vis_rules_);
+    */
 
   public:
 

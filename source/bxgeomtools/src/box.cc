@@ -1,4 +1,4 @@
-/** \file geomtools/box.cc */
+// box.cc
 
 // Ourselves:
 #include <geomtools/box.h>
