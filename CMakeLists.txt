@@ -139,7 +139,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_L
 #-----------------------------------------------------------------------
 # Option for building/installing developer tools
 #
-option(Bayeux_BUILD_DEVELOPER_TOOLS "Build/install developer tools" OFF)
+option(Bayeux_BUILD_DEVELOPER_TOOLS "Build/install developer tools" ON)
 mark_as_advanced(Bayeux_BUILD_DEVELOPER_TOOLS)
 
 #-----------------------------------------------------------------------
@@ -152,14 +152,14 @@ mark_as_advanced(BAYEUX_WITH_IMPLICIT_INIT_FINI)
 # Option for enabling Geant4 module
 #
 if(NOT DEFINED Bayeux_WITH_GEANT4)
-  set(Bayeux_WITH_GEANT4 OFF CACHE BOOL "Build Geant4 extension module")
+  set(Bayeux_WITH_GEANT4 ON CACHE BOOL "Build Geant4 extension module")
 endif()
 
 #-----------------------------------------------------------------------
 # Configure testing if required
 #
 if(NOT DEFINED Bayeux_ENABLE_TESTING)
-  set(Bayeux_ENABLE_TESTING OFF CACHE BOOL "Build unit testing system for Bayeux")
+  set(Bayeux_ENABLE_TESTING ON CACHE BOOL "Build unit testing system for Bayeux")
 endif()
 
 if(Bayeux_ENABLE_TESTING)
@@ -187,18 +187,7 @@ set(Bayeux_DOCUMENTATION_DIR "${Bayeux_TAG}/Documentation")
 #
 set(Bayeux_DOCEXPORT_DIR "${PROJECT_BINARY_DIR}/doc")
 if(NOT DEFINED Bayeux_BUILD_DOCS)
-  set(Bayeux_BUILD_DOCS OFF CACHE BOOL "Build Bayeux documentation products")
-endif()
-if(Bayeux_BUILD_DOCS)
-  # - For main HTML docs
-  find_package(Doxygen 1.8 REQUIRED)
-  # - For man pages, pandoc for now
-  #find_package(Pandoc 1.10 REQUIRED)
-  #find_package(<something to compress man?>)
-  find_program(Pandoc_EXECUTABLE pandoc
-    DOC "path to pandoc executable"
-    )
-  set(Pandoc_FOUND ${Pandoc_EXECUTABLE})
+  set(Bayeux_BUILD_DOCS ON CACHE BOOL "Build Bayeux documentation products")
 endif()
 
 if(NOT Bayeux_BUILD_DOCS)
