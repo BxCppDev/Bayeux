@@ -99,7 +99,7 @@ Getting Started {#bxmainpage_gettingstarted}
 ===============
 
 If you're reading this online and  don't yet have Bayeux installed, an
-[Installation  Guide](bxinstallationguide.html) is  available.  Note
+[Installation  Guide](bxinstallationguide.html)  is  available.   Note
 that at present Bayeux is only  supported on POSIX platforms, and even
 here not all variants are guaranteed to work!
 
@@ -148,8 +148,9 @@ available to build client libraries and applications:
 
 User Guides {#bxmainpage_userguides}
 ===========
-Documents detailing the use and design of Bayeux may be found on
-under the [Related Pages](pages.html) tab if you are reading the HTML documentation,
-or in the following sections in the printed manual.
+
+Documents detailing the use and design of Bayeux may be found on under
+the  [Related  Pages](pages.html) tab  if  you  are reading  the  HTML
+documentation, or in the following sections in the printed manual.
 
 TODO

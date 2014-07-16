@@ -24,6 +24,18 @@ if(NOT Bayeux_BUILD_DOCS)
   return()
 endif()
 
+if(Bayeux_BUILD_DOCS)
+  # - For main HTML docs
+  find_package(Doxygen 1.8 REQUIRED)
+  # - For man pages, pandoc for now
+  #find_package(Pandoc 1.10 REQUIRED)
+  #find_package(<something to compress man?>)
+  find_program(Pandoc_EXECUTABLE pandoc
+    DOC "path to pandoc executable"
+    )
+  set(Pandoc_FOUND ${Pandoc_EXECUTABLE})
+endif()
+
 #-----------------------------------------------------------------------
 # Build OCD documentation for Bayeux's classes
 option(Bayeux_BUILDS_OCD_DOCS "Builds OCD documentation" ON)
@@ -40,7 +52,6 @@ if(Bayeux_WITH_GEANT4)
 endif()
 
 if (Bayeux_BUILDS_OCD_DOCS)
-  find_program(PANDOC_EXE pandoc)
   configure_file(BxOCD/bxocd_build.bash.in BxOCD/bxocd_build.bash @ONLY)
   set(_bxocd_bayeuxclasses_link
     "[OCD documentation for Bayeux's classes](__ocd__index.html)")
@@ -49,7 +60,6 @@ endif()
 #-----------------------------------------------------------------------
 # Set up build of documentation
 #
-find_package(Doxygen 1.8.0 REQUIRED)
 
 set(Bayeux_DOXYFILE_IN  bayeux_doxygen.conf.in)
 set(Bayeux_DOXYFILE_OUT ${PROJECT_BINARY_DIR}/doc/bayeux_doxygen.conf)

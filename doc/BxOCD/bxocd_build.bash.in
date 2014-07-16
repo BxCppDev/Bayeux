@@ -3,7 +3,7 @@
 
 bxocd_build_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_DOCUMENTATION_DIR@/API/html"
 bxocd_home_url="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_DOCUMENTATION_DIR@/API/html/index.html"
-bxpandoc_exe="@PANDOC_EXE@"
+bxpandoc_exe="@Pandoc_EXECUTABLE@"
 bxpandoc_data_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_RESOURCE_DIR@/datatools/OCD/pandoc"
 bxocd_manual_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_manual"
 bxocd_sort_classnames_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_sort_classnames.py"
