@@ -460,6 +460,7 @@ things::add_entry_impl (const std::string& a_name,
 
   typedef datatools::factory_register< ::datatools::i_serializable> fr_type;
   const fr_type & FR = DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(::datatools::i_serializable);
+  // FR.tree_dump(std::cerr, "Factory register for serializable: ", "DEVEL: ");
   DT_THROW_IF (! FR.has (a_serial_tag),
                std::logic_error,
                "No class with serial tag '" << a_serial_tag << "' has been registered !");

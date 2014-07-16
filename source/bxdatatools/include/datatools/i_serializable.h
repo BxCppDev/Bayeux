@@ -58,7 +58,7 @@ namespace datatools {
     /// Return the serialization string identifier of the class
     virtual const std::string& get_serial_tag() const = 0;
 
-    ///
+    /// Macro to declare basic support for serialization
     BOOST_SERIALIZATION_BASIC_DECLARATION();
 
     /// Interface of the factory
@@ -167,11 +167,11 @@ namespace datatools {
   namespace datatools {                                                 \
     template <>                                                         \
     const std::string & serial_tag<ClassName> (){                       \
-      static boost::scoped_ptr<std::string> g_serial_tag (0);           \
-      if ( !g_serial_tag){                                              \
-        g_serial_tag.reset(new std::string (ClassSerialTag));           \
+      static boost::scoped_ptr<std::string> _serial_tag (0);            \
+      if ( !_serial_tag){                                               \
+        _serial_tag.reset(new std::string (ClassSerialTag));            \
       }                                                                 \
-      return *g_serial_tag.get();                                       \
+      return *_serial_tag.get();                                        \
     }                                                                   \
   }                                                                     \
   /**/
@@ -206,11 +206,11 @@ namespace datatools {
   namespace datatools {                                                 \
     template <>                                                         \
     const std::string & backward_serial_tag<ClassName> (int /*i*/){         \
-      static boost::scoped_ptr<std::string> g_backward_serial_tag (0);  \
-      if ( !g_backward_serial_tag){                                     \
-        g_backward_serial_tag.reset (new std::string (ClassBackwardSerialTag)); \
+      static boost::scoped_ptr<std::string> _backward_serial_tag (0);  \
+      if ( !_backward_serial_tag){                                     \
+        _backward_serial_tag.reset (new std::string (ClassBackwardSerialTag)); \
       }                                                                 \
-      return *g_backward_serial_tag.get ();                             \
+      return *_backward_serial_tag.get ();                             \
     }                                                                   \
   }                                                                     \
   /**/

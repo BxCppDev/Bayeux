@@ -4,15 +4,16 @@
 
 //----------------------------------------------------------------------
 // class factory_register implementation section
-// TODO : refactor out into -inl.h file
 namespace datatools {
 
+// Constructor:
 template <typename BaseType>
 factory_register<BaseType>::factory_register()
     : label_(),
       verbose_(false),
       registered_() {}
 
+// Constructor:
 template <typename BaseType>
 factory_register<BaseType>::factory_register(const std::string& label,
                                              unsigned int flags)
@@ -28,7 +29,7 @@ factory_register<BaseType>::factory_register(const std::string& label,
 }
 
 
-/// Destructor
+// Destructor:
 template <typename BaseType>
 factory_register<BaseType>::~factory_register() {
   if (this->is_verbose()) {
@@ -57,12 +58,6 @@ void factory_register<BaseType>::set_verbose(bool verbose) {
 
 template <typename BaseType>
 const std::string& factory_register<BaseType>::get_label() const {
-  return label_;
-}
-
-
-template <typename BaseType>
-const std::string& factory_register<BaseType>::label() const {
   return label_;
 }
 
@@ -97,7 +92,7 @@ void factory_register<BaseType>::clear() {
        ++i) {
     if (i->second != 0) {
       if (this->is_verbose()) {
-	DT_LOG_INFORMATION(datatools::logger::PRIO_INFORMATION,"Destroying registered allocator/functor '" << i->first << "'");
+        DT_LOG_INFORMATION(datatools::logger::PRIO_INFORMATION,"Destroying registered allocator/functor '" << i->first << "'");
       }
     }
   }
@@ -118,8 +113,8 @@ typename factory_register<BaseType>::factory_type&
 factory_register<BaseType>::grab(const std::string& id) {
   typename factory_map_type::iterator found = registered_.find(id);
   DT_THROW_IF (found == registered_.end(),
-	       std::logic_error,
-	       "Class ID '" << id << "' is not registered !");
+               std::logic_error,
+               "Class ID '" << id << "' is not registered !");
   return found->second;
 }
 
@@ -129,8 +124,8 @@ const typename factory_register<BaseType>::factory_type&
 factory_register<BaseType>::get(const std::string& id) const {
   typename factory_map_type::const_iterator found = registered_.find(id);
   DT_THROW_IF (found == registered_.end(),
-	       std::logic_error,
-	       "Class ID '" << id << "' is not registered !");
+               std::logic_error,
+               "Class ID '" << id << "' is not registered !");
   return found->second;
 }
 
@@ -140,13 +135,13 @@ void factory_register<BaseType>::registration(const std::string& id,
                                               const factory_type& factory) {
   if (this->is_verbose()) {
     DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-		  "Registration of class with ID '" << id << "'");
+                  "Registration of class with ID '" << id << "'");
   }
 
   typename factory_map_type::const_iterator found = registered_.find(id);
   DT_THROW_IF (found != registered_.end(),
-	       std::logic_error,
-	       "Class ID '" << id << "' is already registered !");
+               std::logic_error,
+               "Class ID '" << id << "' is already registered !");
   registered_[id] = factory;
 }
 
@@ -155,12 +150,12 @@ template <typename BaseType>
 void factory_register<BaseType>::unregistration(const std::string& id) {
   if (this->is_verbose()) {
     DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-		  "Unregistration of class with ID '" << id << "'");
+                  "Unregistration of class with ID '" << id << "'");
   }
   typename factory_map_type::const_iterator found = registered_.find(id);
   DT_THROW_IF (found == registered_.end(),
-	       std::logic_error,
-	       "Class ID '" << id << "' is not registered !");
+               std::logic_error,
+               "Class ID '" << id << "' is not registered !");
   registered_.erase(id);
 }
 
@@ -169,7 +164,7 @@ template <typename BaseType>
 void factory_register<BaseType>::import(const factory_register& other) {
   if (this->is_verbose()) {
     DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-		  "Importing registered factories from register '" << other.label() << "'...");
+                  "Importing registered factories from register '" << other.get_label() << "'...");
   }
   for (typename factory_map_type::const_iterator i = other.registered_.begin();
        i !=  other.registered_.end();
@@ -211,7 +206,7 @@ void factory_register<BaseType>::tree_dump(std::ostream& out,
       << "Verbose : "
       << verbose_ << std::endl;
   out << indent << i_tree_dumpable::inherit_tag(inherit)
-      << "Registered factories : " << std::endl;
+      << "Registered factories : " << registered_.size() << std::endl;
 
   for (typename factory_map_type::const_iterator i = registered_.begin();
        i != registered_.end ();
@@ -233,3 +228,11 @@ void factory_register<BaseType>::tree_dump(std::ostream& out,
 } // namespace datatools
 
 #endif // DATATOOLS_FACTORY_INL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

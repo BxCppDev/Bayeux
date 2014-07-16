@@ -36,7 +36,9 @@ class base_factory_register {
   };
 
  public:
+  /// Constructor
   base_factory_register();
+  /// Destructor
   virtual ~base_factory_register ();
 };
 
@@ -52,7 +54,6 @@ class factory_register
   typedef boost::function<base_type*() >      factory_type;
   typedef std::map<std::string, factory_type> factory_map_type;
 
- public:
   /// Constructor
   factory_register();
 
@@ -71,9 +72,6 @@ class factory_register
   //! Get the label associated to the factory
   const std::string& get_label() const;
 
-  // ^ err, why do you need two methods to do the SAME thing?
-  const std::string& label() const;
-
   //! Set the label associated to the factory
   void set_label(const std::string& label);
 
@@ -83,6 +81,9 @@ class factory_register
   /// Return true if factory with given ID is registered
   bool has(const std::string& id) const;
 
+  /// Return true if factory with given ID is registered with given group
+  bool is_group(const std::string& id) const;
+
   /// Clear all registered factories
   void clear();
 
@@ -90,8 +91,6 @@ class factory_register
   void reset();
 
   /// Return a mutable reference to a factory given by registration ID
-  // TODO : STL practice for const vs non-const is same method name,
-  //        different signature.
   factory_type& grab(const std::string& id);
 
   /// Return a const reference to a factory given by registration ID
@@ -121,9 +120,9 @@ class factory_register
                          bool inherit = false) const;
 
  private:
-  std::string      label_;      /// Label of the factory
-  bool             verbose_;    /// Verbosity flag
-  factory_map_type registered_; /// Dictionary of registered factories
+  std::string      label_;      //!< Label of the factory
+  bool             verbose_;    //!< Verbosity flag
+  factory_map_type registered_; //!< Dictionary of registered factories
 };
 
 } // end of namespace datatools
@@ -147,26 +146,34 @@ namespace datatools {
 template <class BaseType, class DerivedType>
 class _system_factory_registrator {
  public:
+  // Constructor
   _system_factory_registrator(const std::string& type_id) {
     type_id_ = type_id;
     this->_trigger_factory_registration_();
   }
-
+  // Return registered type id
+  const std::string& get_type_id()const
+  {
+    return type_id_;
+  }
+  // Destructor
   ~_system_factory_registrator() {
     this->_trigger_factory_unregistration_();
   }
 
  private:
+  // Factory registration
   void _trigger_factory_registration_() {
     bool fatal = !boost::is_base_of<BaseType, DerivedType>::value;
     DT_THROW_IF (fatal,
-		 std::logic_error,
-		 "Class ID '" << type_id_ << "' cannot be registered in register '"
-		 << BaseType::grab_system_factory_register().label() << "' !");
+     std::logic_error,
+     "Class ID '" << type_id_ << "' cannot be registered in register '"
+     << BaseType::grab_system_factory_register().get_label() << "' !");
     BaseType::grab_system_factory_register().registration(type_id_,
-							  boost::factory<DerivedType*>());
+                boost::factory<DerivedType*>());
   }
 
+  // Factory unregistration
   void _trigger_factory_unregistration_() {
     if (BaseType::grab_system_factory_register().has(type_id_)) {
       BaseType::grab_system_factory_register().unregistration(type_id_);
@@ -174,9 +181,17 @@ class _system_factory_registrator {
   }
 
  private:
-  std::string type_id_;
+  std::string type_id_; //!< The registration type Id of the auto-registered class
 };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_FACTORY_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

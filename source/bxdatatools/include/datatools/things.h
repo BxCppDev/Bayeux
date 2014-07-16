@@ -339,3 +339,11 @@ BOOST_CLASS_EXPORT_KEY2(datatools::things,"datatools::things");
 DR_CLASS_NONCOPYABLE_INIT(::datatools::things);
 
 #endif // DATATOOLS_THINGS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
