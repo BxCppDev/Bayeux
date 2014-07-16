@@ -39,13 +39,15 @@
 #include <vector>
 
 // Third party:
-// - Bayeux/datatools
+// - Boost:
+#include <boost/scoped_ptr.hpp>
+// - Bayeux/datatools:
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
-// - Bayeux/geomtools
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
-// - Bayeux/mygsl
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 #include <mygsl/random_utils.h>
 
@@ -58,13 +60,17 @@ namespace datatools {
   class service_manager;
 }
 
+// namespace cuts {
+//   class cut_manager;
+// }
+
 namespace genvtx {
 
-  /// \brief Vertex generator manager class
-  /** The main vertex generator manager drives the generation of
+  /// \brief Vertex generator manager
+  /** The vertex generator manager object drives the generation of
    *  random vertexes within a given geometry setup.
    *  The geometry setup is described through a dedicated
-   *  external geometry manager, eventually passed through a service
+   *  external geometry manager, possibly passed through a service
    *  manager.
    *  The manager handles its own pseudo-random number generator.
    *  It hosts a special factory that enables to create
@@ -80,110 +86,139 @@ namespace genvtx {
 
   public:
 
-    bool is_initialized () const;
+    /// Check initialization flag
+    bool is_initialized() const;
 
-    bool is_debug () const;
+    /// Check debug flag
+    bool is_debug() const;
 
-    void set_debug (bool);
+    /// Set debug flag
+    void set_debug(bool);
 
-    bool is_debug_vg () const;
+    /// Check debug flag for embedded vertex generators
+    bool is_debug_vg() const;
 
-    void set_debug_vg (bool);
+    /// Set debug flag for embedded vertex generators
+    void set_debug_vg(bool);
 
-    bool is_factory_debug () const;
+    /// Check debug flag for embedded factory of vertex generators
+    bool is_factory_debug() const;
 
-    void set_factory_debug (bool);
+    /// Set debug flag for embedded factory of vertex generators
+    void set_factory_debug(bool);
 
-    void set_service_manager (datatools::service_manager &);
+    /// Set the service manager
+    void set_service_manager(datatools::service_manager &);
 
-    bool has_service_manager () const;
+    /// Check the service manager
+    bool has_service_manager() const;
 
-    const datatools::service_manager & get_service_manager () const;
+    /// Return non mutable reference to the service manager
+    const datatools::service_manager & get_service_manager() const;
 
-    datatools::service_manager & grab_service_manager ();
+    /// Return mutable reference to the service manager
+    datatools::service_manager & grab_service_manager();
 
-    bool has_geometry_manager () const;
+    /// Check the geometry manager
+    bool has_geometry_manager() const;
 
-    void set_geometry_manager (const geomtools::manager &);
+    /// Set the geometry manager
+    void set_geometry_manager(const geomtools::manager &);
 
-    const geomtools::manager & get_geometry_manager () const;
+    /// Return the non mutable reference to the geometry manager
+    const geomtools::manager & get_geometry_manager() const;
 
-    bool has_external_random () const;
+    /// Check the external PRNG
+    bool has_external_random() const;
 
-    void set_external_random (mygsl::rng &);
+    /// Set the external PRNG
+    void set_external_random(mygsl::rng &);
 
-    bool has_random_seed () const;
+    /// Check the seed for embedded PRNG
+    bool has_random_seed() const;
 
-    void set_random_seed (int);
+    /// Set the seed for embedded PRNG
+    void set_random_seed(int);
 
-    int  get_random_seed () const;
+    /// Return the seed for embedded PRNG
+    int  get_random_seed() const;
 
-    void set_rng_id (const std::string & rng_id_);
+    /// Set the embedded PRNG's id
+    void set_rng_id(const std::string & rng_id_);
 
-    const std::string & get_rng_id () const;
+    /// Return the embedded PRNG's id
+    const std::string & get_rng_id() const;
 
-    const mygsl::rng & get_random () const;
+    /// Return the non mutable reference to the embedded PRNG
+    const mygsl::rng & get_random() const;
 
-    mygsl::rng & grab_random ();
+    /// Return the mutable reference to the embedded PRNG
+    mygsl::rng & grab_random();
 
-    bool has_generator_name () const;
+    bool has_generator_name() const;
 
-    void set_generator_name (const std::string & vg_name_);
+    void set_generator_name(const std::string & vg_name_);
 
-    const std::string & get_generator_name () const;
+    const std::string & get_generator_name() const;
 
-    bool has_generator (const std::string &) const;
+    /// Check if a generator with given name is available
+    bool has_generator(const std::string &) const;
 
+    /// Return a mutable reference to a generator addressed by name
     genvtx::vg_handle_type grab_generator(const std::string & vg_name_);
 
     /// Constructor
-    manager (datatools::logger::priority p_ = datatools::logger::PRIO_WARNING,
+    manager(datatools::logger::priority p_ = datatools::logger::PRIO_WARNING,
              bool debug_vg_ = false,
              bool verbose_factory_ = false);
 
     /// Destructor
-    virtual ~manager ();
+    virtual ~manager();
 
     /// Reset
-    void reset ();
+    void reset();
 
     /// Main initialization method
-    void init (const datatools::properties & config_);
+    void init(const datatools::properties & config_);
 
     /// Main initialization method
-    void initialize (const datatools::properties & config_);
+    void initialize(const datatools::properties & config_);
 
-    void load_vg (const std::string & vg_name_,
+    void load_vg(const std::string & vg_name_,
                   const std::string & vg_id_,
                   const datatools::properties & vg_config_);
 
-    virtual void create_vg (genvtx::vg_entry_type & vg_entry_);
+    virtual void create_vg(genvtx::vg_entry_type & vg_entry_);
 
-    virtual void initialize_vg (genvtx::vg_entry_type & vg_entry_);
+    virtual void initialize_vg(genvtx::vg_entry_type & vg_entry_);
 
-    void load_vgs (const datatools::multi_properties & vgs_config_);
+    /// Load definitions of many vertex generators
+    void load_vgs(const datatools::multi_properties & vgs_config_);
 
-    bool has_current_vg () const;
+    /// Check if a current vertex generator is defined
+    bool has_current_vg() const;
 
-    void activate_current_vg (const std::string & vg_name_ = "");
+    /// Activate a given vertex generator as the current one
+    void activate_current_vg(const std::string & vg_name_ = "");
 
-    void desactivate_current_vg ();
+    /// Deactivate the current vertex generator
+    void desactivate_current_vg();
 
     /// Check if manager can fire vertex :
-    bool can_shoot_vertex () const;
+    bool can_shoot_vertex() const;
 
     /// Main public method to randomize a 3D vertex point
-    void shoot_vertex (geomtools::vector_3d & vertex_);
+    void shoot_vertex(geomtools::vector_3d & vertex_);
 
     /// Smart print method
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
-    const genvtx::i_vertex_generator & get (const std::string & vg_name_) const;
+    const genvtx::i_vertex_generator & get(const std::string & vg_name_) const;
 
-    genvtx::i_vertex_generator & grab (const std::string & vg_name_);
+    genvtx::i_vertex_generator & grab(const std::string & vg_name_);
 
     datatools::logger::priority get_logging_priority() const;
 
@@ -195,17 +230,17 @@ namespace genvtx {
 
   protected:
 
-    void _load_vg (const std::string & vg_name_,
+    void _load_vg(const std::string & vg_name_,
                    const std::string & vg_id_,
                    const datatools::properties & vg_config_);
 
-    void _load_vgs (const datatools::multi_properties & vgs_config_);
+    void _load_vgs(const datatools::multi_properties & vgs_config_);
 
-    void _create_vg (genvtx::vg_entry_type & vg_entry_);
+    void _create_vg(genvtx::vg_entry_type & vg_entry_);
 
-    void _initialize_vg (genvtx::vg_entry_type & vg_entry_);
+    void _initialize_vg(genvtx::vg_entry_type & vg_entry_);
 
-    void _reset_vg (genvtx::vg_entry_type & vg_entry_);
+    void _reset_vg(genvtx::vg_entry_type & vg_entry_);
 
   protected:
 
@@ -229,6 +264,7 @@ namespace genvtx {
     genvtx::vg_dict_type         _vg_store_;         //!< Collection of handles to vertex generators
     std::string                  _current_vg_name_;  //!< The name of the current vertex generator
     genvtx::vg_handle_type       _current_vg_;       //!< Handle to the current vertex generator
+    // boost::scoped_ptr<cuts::cut_manager> _vv_manager_;   //!< Manager for vertex validators/cuts
 
   };
 

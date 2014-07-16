@@ -1,5 +1,4 @@
-/* combined_vg.cc
- */
+// combined_vg.cc
 
 // Ourselves:
 #include <genvtx/combined_vg.h>
@@ -9,11 +8,11 @@
 #include <stdexcept>
 
 // Third party:
-// - Bayeux/datatools
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
-// - Bayeux/mygsl
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
 // This project:
@@ -21,7 +20,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(combined_vg,"genvtx::combined_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(combined_vg, "genvtx::combined_vg");
 
   combined_vg::entry_type::entry_type ()
   {
@@ -273,7 +272,7 @@ namespace genvtx {
           the_vg_weight = the_vg_activity_value;
           DT_LOG_TRACE (get_logging_priority(), "Using 'absolute activity' mode...");
         } else {
-          i_vertex_generator & test_vg = vgh.grab();
+          const i_vertex_generator & test_vg = vgh.get();
           const weight_info & the_vg_weight_info = test_vg.get_total_weight ();
           if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
             DT_LOG_TRACE (get_logging_priority(), "Weight info for generator '" << the_vg_name << "' :");
@@ -328,7 +327,7 @@ namespace genvtx {
           the_vg_weight = the_vg_absolute_weight;
         } else if (the_vg_relative_weight > 0.0) {
           DT_LOG_TRACE (get_logging_priority(), "Using 'relative weight' mode...");
-          i_vertex_generator & test_vg = vgh.grab();
+          const i_vertex_generator & test_vg = vgh.get();
           const weight_info & the_vg_weight_info = test_vg.get_total_weight ();
           DT_THROW_IF (the_vg_weight_info.get_type() == weight_info::WEIGHTING_NONE,
                        std::logic_error,
@@ -386,3 +385,141 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
+
+/***************
+ * OCD support *
+ ***************/
+
+// OCD support' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::combined_vg,ocd_)
+{
+  ocd_.set_class_name("genvtx::combined_vg");
+  ocd_.set_class_description("A vertex generator that combines other weighted generators");
+  ocd_.set_class_library("genvtx");
+  ocd_.set_class_documentation("The combined vertex generator implements the combinaison   \n"
+                               "of different vertex generators that each have a given      \n"
+                               "weight, depending on their surface, volume, mass activity  \n"
+                               "or arbitrary absolute activity.                            \n"
+                               "This generator must be given the names of the generators   \n"
+                               "to be combined and some rules to compute the weights       \n"
+                               "associated to these generators.                            \n"
+                               "The generators to be combined are handled by a dictionary  \n"
+                               "of generator, typically managed by a ``genvtx::manager``   \n"
+                               "object.                                                    \n"
+                               );
+
+  ::genvtx::i_vertex_generator::ocd_support(ocd_);
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("generators")
+      .set_terse_description("The list of vertex generators' names to be combined")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(true)
+      .set_long_description("This sets the names of the vertex generators that must be  \n"
+                            "combined. Each name must be found in the dictionary of     \n"
+                            "vertex generators handled by a manager object.             \n"
+                            )
+      .add_example("Combinaison of two generators: ::         \n"
+                   "                                          \n"
+                   " generators : string[2] = \\              \n"
+                   "       \"roof_surface\" \\                \n"
+                   "        \"floor_surface\"                 \n"
+                   "                                          \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("generators.${generators}.activity")
+      .set_terse_description("The activity values associated to each vertex generator to be combined")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .set_long_description("The rules to compute the weights of the vertex      \n"
+                            "generators that must be combined.                   \n"
+                            "Each generator is given an activity value expressed \n"
+                            "in one of the following units:                      \n"
+                            "                                                    \n"
+                            " - absolute activity (example: Bq)                  \n"
+                            " - surface activity (example: Bq/m2)                \n"
+                            " - volume activity (example: uBq/m3)                \n"
+                            " - mass activity (example: mBq/kg)                  \n"
+                            "                                                    \n"
+                            "The rule is parsed and the weight is automatically  \n"
+                            "computed from available geometry and material       \n"
+                            "data associated to the logical volumes associated   \n"
+                            "to the vertex generators. If some of these informations\n"
+                            "are missing, the initialization fails.              \n"
+                            )
+      .add_example("Combinaison of two generators by surface activities: ::      \n"
+                   "                                          \n"
+                   " generators : string[2] = \\              \n"
+                   "       \"roof_surface\" \\                \n"
+                   "       \"floor_surface\"                  \n"
+                   " generators.roof_surface.activity  : string = \"3.2 mBq/m2\" \n"
+                   " generators.floor_surface.activity : string = \"5.5 mBq/m2\" \n"
+                   "                                          \n"
+                   )
+      .add_example("Combinaison of three generators by different activities: ::    \n"
+                   "                                          \n"
+                   " generators : string[3] = \\              \n"
+                   "       \"roof_surface\"   \\              \n"
+                   "       \"room_volume\"                    \n"
+                   "       \"walls\"                          \n"
+                   " generators.roof_surface.activity : string = \"3.2  mBq/m2\"  \n"
+                   " generators.room_volume.activity  : string = \"97.8 uBq/m3\" \n"
+                   " generators.walls.activity        : string = \"53.1 mBq\"    \n"
+                   "                                                             \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("generators.${generators}.relative_weight")
+      .set_terse_description("The relative weights associated to each vertex generator to be combined")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .add_example("Combinaison of two generators by absolute weights::  \n"
+                   "                                                     \n"
+                   "  generators : string[2] = \\                        \n"
+                   "       \"east_wall\"   \\                            \n"
+                   "       \"west_wall\"                                 \n"
+                   "  generators.east_wall.relative_weight : real = 0.2  \n"
+                   "  generators.west_wall.relative_weight : real = 0.8  \n"
+                   "                                                     \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_property_info();
+    cpd.set_name_pattern("generators.${generators}.absolute_weight")
+      .set_terse_description("The absolute weights associated to each vertex generator to be combined")
+      .set_traits(datatools::TYPE_STRING,
+                  datatools::configuration_property_description::ARRAY)
+      .set_mandatory(false)
+      .add_example("Combinaison of two generators by absolute weights::  \n"
+                   "                                                     \n"
+                   "  generators : string[2] = \\                        \n"
+                   "       \"east_wall\"   \\                            \n"
+                   "       \"west_wall\"                                 \n"
+                   "  generators.east_wall.absolute_weight : real = 0.2  \n"
+                   "  generators.west_wall.absolute_weight : real = 0.8  \n"
+                   "                                                     \n"
+                   )
+     ;
+  }
+
+  //ocd_.set_configuration_hints("Nothing special.");
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(genvtx::combined_vg,"genvtx::combined_vg")

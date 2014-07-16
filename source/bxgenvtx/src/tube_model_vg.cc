@@ -30,6 +30,7 @@
 #include <genvtx/utils.h>
 #include <genvtx/tube_model_vg.h>
 #include <genvtx/detail/geom_manager_utils.h>
+#include <genvtx/vertex_validation.h>
 
 namespace genvtx {
 
@@ -262,6 +263,13 @@ namespace genvtx {
       src_vtx = rel_vtx;
     }
     world_plct.child_to_mother (src_vtx, vertex_);
+
+    if (has_vertex_validation()) {
+      // Setup the geometry context for the vertex validation system:
+      _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(src_vtx);
+      _grab_vertex_validation().grab_geometry_context().set_global_candidate_vertex(vertex_);
+      _grab_vertex_validation().grab_geometry_context().set_ginfo(_entries_[index].get_ginfo());
+    }
     return;
   }
 
@@ -419,8 +427,7 @@ namespace genvtx {
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
-    this->::genvtx::i_vertex_generator::_initialize_basics(setup_, service_manager_);
-    this->::genvtx::i_vertex_generator::_initialize_geo_manager(setup_, service_manager_);
+    this->::genvtx::i_vertex_generator::_initialize(setup_, service_manager_);
 
     int mode = utils::MODE_INVALID;
     std::string origin_rules;

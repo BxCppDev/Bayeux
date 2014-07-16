@@ -140,6 +140,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genvtx::cylinder_model_vg)
+
 #endif // GENVTX_CYLINDER_MODEL_VG_H
 
 /*

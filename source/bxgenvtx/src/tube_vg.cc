@@ -1,5 +1,4 @@
-/* tube_vg.cc
- */
+// tube_vg.cc
 
 // Ourselves:
 #include <genvtx/tube_vg.h>
@@ -16,6 +15,11 @@
 #include <datatools/properties.h>
 // - Bayeux/mygsl
 #include <mygsl/rng.h>
+// - Bayeux/geomtools:
+#include <geomtools/logical_volume.h>
+
+// This project:
+#include <genvtx/vertex_validation.h>
 
 namespace genvtx {
 
@@ -83,6 +87,63 @@ namespace genvtx {
     return _tube_;
   }
 
+  bool tube_vg::has_logical() const
+  {
+    return _log_vol_ != 0;
+  }
+
+  void tube_vg::set_logical (const geomtools::logical_volume & lv_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (_tube_ref_ != 0, std::logic_error, "Already has a referenced tube !");
+    DT_THROW_IF (lv_.get_shape().get_shape_name() != "tube", std::logic_error, "Logical volume has a wrong shape !");
+    _log_vol_ = &lv_;
+    _tube_ref_ = dynamic_cast<const geomtools::tube *>(&_log_vol_->get_shape());
+    return;
+  }
+
+  void tube_vg::reset_logical()
+  {
+    _log_vol_ = 0;
+    _tube_ref_ = 0;
+    return;
+  }
+
+  bool tube_vg::has_tube_ref () const
+  {
+    return _tube_ref_ != 0;
+  }
+
+  void tube_vg::set_tube_ref (const geomtools::tube & tube_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (has_logical(), std::logic_error, "Already has a logical volume !");
+    DT_THROW_IF (! tube_.is_valid (), std::logic_error, "Invalid tube !");
+    _tube_ref_ = &tube_;
+    return;
+  }
+
+  const geomtools::tube & tube_vg::get_tube_ref () const
+  {
+    DT_THROW_IF (_tube_ref_ == 0, std::logic_error, "No tube ref !");
+    return *_tube_ref_;
+  }
+
+  bool tube_vg::has_tube_safe () const
+  {
+    if (_tube_.is_valid ()) return true;
+    if (_tube_ref_ != 0 && _tube_ref_->is_valid ()) return true;
+    return false;
+  }
+
+  const geomtools::tube & tube_vg::get_tube_safe () const
+  {
+    if (has_tube_ref ()) {
+      return get_tube_ref ();
+    }
+    return get_tube ();
+  }
+
   bool tube_vg::is_initialized () const
   {
     return _initialized_;
@@ -91,6 +152,8 @@ namespace genvtx {
   tube_vg::tube_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
+    _log_vol_ = 0;
+    _tube_ref_ = 0;
     _tube_.reset ();
     _set_defaults_ ();
     return;
@@ -253,6 +316,11 @@ namespace genvtx {
 
   void tube_vg::_reset_ ()
   {
+    if (has_logical()) {
+      reset_logical();
+    }
+    _tube_.reset();
+    this->i_vertex_generator::_reset();
     _set_defaults_ ();
     return;
   }
@@ -260,6 +328,8 @@ namespace genvtx {
   void tube_vg::_set_defaults_ ()
   {
     _mode_ = MODE_DEFAULT;
+    _log_vol_ = 0;
+    _tube_ref_ = 0;
     _surface_mask_ = geomtools::tube::FACE_ALL;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
@@ -278,10 +348,22 @@ namespace genvtx {
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
     out_ << indent << datatools::i_tree_dumpable::tag;
-    out_ << "Tube : " << _tube_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Mode :        " << _mode_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << std::endl;
+    if (has_logical()) {
+      out_ << "Logical volume : '" << _log_vol_->get_name() << "'" << std::endl;
+    }
+    out_ << indent << datatools::i_tree_dumpable::tag;
+    if (has_tube_ref()) {
+      out_ << "External tube : " << *_tube_ref_ << " [" << _tube_ref_ << ']';
+    } else {
+      out_ << "Embedded tube : " << _tube_;
+    }
+    out_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mode :        " << _mode_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Surface mask: " << _surface_mask_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Skin skip:    " << _skin_skip_ << std::endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Skin thickness: " << _skin_thickness_ << std::endl;
     return;
@@ -358,6 +440,14 @@ namespace genvtx {
     x = r * cos (t);
     y = r * sin (t);
     vertex_.set (x,y, z);
+
+    if (has_vertex_validation()) {
+      // Setup the geometry context for the vertex validation system:
+      DT_THROW_IF(!has_logical(), std::logic_error, "Missing logical volume in '"
+                  << get_name() << "' vertex generator!");
+      _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(vertex_);
+      _grab_vertex_validation().grab_geometry_context().set_logical_volume(*_log_vol_);
+    }
     return;
   }
 

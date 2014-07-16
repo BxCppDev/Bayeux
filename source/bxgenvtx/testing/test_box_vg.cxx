@@ -1,13 +1,18 @@
-// -*- mode: c++ ; -*-
 // test_box_vg.cxx
 
+// Ourselves:
+#include <genvtx/box_vg.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/geomtools:
 #include <geomtools/gnuplot_draw.h>
-#include <genvtx/box_vg.h>
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
 using namespace std;

@@ -21,7 +21,7 @@
 #include <string>
 
 // Third party:
-// - Bayeux/geomtools
+// - Bayeux/geomtools:
 #include <geomtools/id_selector.h>
 
 // This project:
@@ -144,6 +144,12 @@ namespace genvtx {
   };
 
 } // end of namespace genvtx
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genvtx::tube_model_vg)
 
 #endif // GENVTX_TUBE_MODEL_VG_H
 

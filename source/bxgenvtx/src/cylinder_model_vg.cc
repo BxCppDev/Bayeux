@@ -32,6 +32,7 @@
 // This project:
 #include <genvtx/utils.h>
 #include <genvtx/detail/geom_manager_utils.h>
+#include <genvtx/vertex_validation.h>
 
 namespace genvtx {
 
@@ -251,6 +252,13 @@ namespace genvtx {
       src_vtx = rel_vtx;
     }
     world_plct.child_to_mother (src_vtx, vertex_);
+
+    if (has_vertex_validation()) {
+      // Setup the geometry context for the vertex validation system:
+      _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(src_vtx);
+      _grab_vertex_validation().grab_geometry_context().set_global_candidate_vertex(vertex_);
+      _grab_vertex_validation().grab_geometry_context().set_ginfo(_entries_[index].get_ginfo());
+    }
     return;
   }
 
@@ -410,8 +418,7 @@ namespace genvtx {
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
-    this->::genvtx::i_vertex_generator::_initialize_basics(setup_, service_manager_);
-    this->::genvtx::i_vertex_generator::_initialize_geo_manager(setup_, service_manager_);
+    this->::genvtx::i_vertex_generator::_initialize(setup_, service_manager_);
 
     int mode = utils::MODE_INVALID;
     std::string origin_rules;
@@ -520,3 +527,48 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
+
+/***************
+ * OCD support *
+ ***************/
+
+// OCD support' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::cylinder_model_vg,ocd_)
+{
+  ocd_.set_class_name("genvtx::cylinder_model_vg");
+  ocd_.set_class_description("A vertex generator from a cylinder-shaped geometry model");
+  ocd_.set_class_library("genvtx");
+  // ocd_.set_class_documentation("");
+
+  ::genvtx::i_vertex_generator::ocd_support(ocd_);
+
+
+  //ocd_.set_configuration_hints("Nothing special.");
+  ocd_.add_example("From the bulk volume of a collection of cylinder volumes::           \n"
+                   "                                                                     \n"
+                   "  length_unit : string = \"mm\"                                      \n"
+                   "  origin : string = \" category='field_wire' tracker={0,1} wire=* \" \n"
+                   "  mode   : string = \"bulk\"                                         \n"
+                   "  skin_skip      : real = 0 mm                                       \n"
+                   "  skin_thickness : real = 0 mm                                       \n"
+                   "                                                                     \n"
+                   );
+  ocd_.add_example("From some surfaces of a collection of cylinder volumes::             \n"
+                   "                                                                     \n"
+                   "  length_unit : string = \"mm\"                                      \n"
+                   "  origin : string = \" category='field_wire' tracker={0,1} wire=* \" \n"
+                   "  mode : string = \"surface\"                                        \n"
+                   "  mode.surface.side   : boolean = 1                                  \n"
+                   "  mode.surface.bottom : boolean = 0                                  \n"
+                   "  mode.surface.top    : boolean = 0                                  \n"
+                   "  skin_skip           : real = 0 mm                                  \n"
+                   "  skin_thickness      : real = 0 mm                                  \n"
+                   "                                                                     \n"
+                   );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(genvtx::cylinder_model_vg,"genvtx::cylinder_model_vg")

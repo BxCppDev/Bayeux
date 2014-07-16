@@ -32,6 +32,10 @@
 #ifndef GENVTX_VG_MACROS_H
 #define GENVTX_VG_MACROS_H 1
 
+// Third party:
+// - Boost:
+#include <boost/type_traits/integral_constant.hpp>
+
 // This project:
 #include <genvtx/i_vertex_generator.h>
 
@@ -46,6 +50,10 @@
 
 #define GENVTX_VG_REGISTRATION_IMPLEMENT(GENVTX_CLASS_NAME,GENVTX_ID)   \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genvtx::i_vertex_generator,GENVTX_CLASS_NAME,GENVTX_ID); \
+  /**/
+
+#define GENVTX_VG_VALIDATOR_SUPPORT(GENVTX_CLASS_NAME)                  \
+  struct ::genvtx::vertex_generator_validator_support_traits< GENVTX_CLASS_NAME > : public boost::true_type{}; \
   /**/
 
 #endif // GENVTX_VG_MACROS_H

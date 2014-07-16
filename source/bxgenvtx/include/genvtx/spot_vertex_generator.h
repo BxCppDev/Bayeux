@@ -76,6 +76,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genvtx::spot_vertex_generator)
+
 #endif // GENVTX_SPOT_VERTEX_GENERATOR_H
 
 /*

@@ -1,5 +1,4 @@
-/* sphere_vg.cc
- */
+// sphere_vg.cc
 
 // Ourselves:
 #include <genvtx/sphere_vg.h>
@@ -18,6 +17,11 @@
 #include <datatools/exception.h>
 // - Bayeux/mygsl
 #include <mygsl/rng.h>
+// - Bayeux/geomtools:
+#include <geomtools/logical_volume.h>
+
+// This project:
+#include <genvtx/vertex_validation.h>
 
 namespace genvtx {
 
@@ -71,6 +75,30 @@ namespace genvtx {
     set_surface_mask (surface_mask_);
     return;
   }
+
+
+  bool sphere_vg::has_logical() const
+  {
+    return _log_vol_ != 0;
+  }
+
+  void sphere_vg::set_logical (const geomtools::logical_volume & lv_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (_sphere_ref_ != 0, std::logic_error, "Already has a referenced sphere !");
+    DT_THROW_IF (lv_.get_shape().get_shape_name() != "sphere", std::logic_error, "Logical volume has a wrong shape !");
+    _log_vol_ = &lv_;
+    _sphere_ref_ = dynamic_cast<const geomtools::sphere *>(&_log_vol_->get_shape());
+    return;
+  }
+
+  void sphere_vg::reset_logical()
+  {
+    _log_vol_ = 0;
+    _sphere_ref_ = 0;
+    return;
+  }
+
 
   bool sphere_vg::has_sphere_ref () const
   {
@@ -126,6 +154,7 @@ namespace genvtx {
   sphere_vg::sphere_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
+    _log_vol_ = 0;
     _sphere_.reset ();
     _sphere_ref_ = 0;
     _set_defaults_ ();
@@ -280,14 +309,19 @@ namespace genvtx {
 
   void sphere_vg::_reset_()
   {
+    if (has_logical()) {
+      reset_logical();
+    }
+    _sphere_.reset();
+    this->i_vertex_generator::_reset();
     _set_defaults_();
     return;
   }
 
   void sphere_vg::_set_defaults_()
   {
-    _sphere_.reset();
     _sphere_ref_ = 0;
+    _log_vol_ = 0;
     _mode_ = MODE_INVALID;
     _surface_mask_ = 0;
     _skin_skip_ = 0.0;
@@ -305,6 +339,10 @@ namespace genvtx {
     if (! indent_.empty()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
     out_ << indent << datatools::i_tree_dumpable::tag;
+    if (has_logical()) {
+      out_ << "Logical volume : '" << _log_vol_->get_name() << "'" << std::endl;
+    }
+     out_ << indent << datatools::i_tree_dumpable::tag;
     if (has_sphere_ref()) {
       out_ << "External sphere : " << *_sphere_ref_ << " [" << _sphere_ref_ << ']';
     } else {
@@ -411,6 +449,14 @@ namespace genvtx {
                          vertex_);
         //        DT_THROW_IF(true, std::logic_error, "Ranomization of vertex on other surfaces of the sphere in not implemented yet!");
       }
+    }
+
+    if (has_vertex_validation()) {
+      // Setup the geometry context for the vertex validation system:
+      DT_THROW_IF(!has_logical(), std::logic_error, "Missing logical volume in '"
+                  << get_name() << "' vertex generator!");
+      _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(vertex_);
+      _grab_vertex_validation().grab_geometry_context().set_logical_volume(*_log_vol_);
     }
 
     return;

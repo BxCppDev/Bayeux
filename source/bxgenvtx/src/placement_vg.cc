@@ -1,5 +1,4 @@
-/* placement_vg.cc
- */
+// genvtx/placement_vg.cc
 
 // Ourselves:
 #include <genvtx/placement_vg.h>
@@ -11,7 +10,7 @@
 #include <string>
 
 // Third party:
-// - Bayeux/datatools
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
@@ -50,40 +49,32 @@ namespace genvtx {
 
   i_vertex_generator & placement_vg::grab_vg ()
   {
-    if (_vg_ != 0)
-      {
-        return *_vg_;
-      }
-    else if (! _hvg_)
-      {
-        DT_THROW_IF (true, logic_error,"Missing vertex generator !");
-      }
+    if (_vg_ != 0) {
+      return *_vg_;
+    } else if (! _hvg_) {
+      DT_THROW_IF (true, logic_error,"Missing vertex generator !");
+    }
     return _hvg_.grab ();
   }
 
   const i_vertex_generator & placement_vg::get_vg () const
   {
-    if (_vg_ != 0)
-      {
-        return *_vg_;
-      }
-    else if (! _hvg_)
-      {
-        DT_THROW_IF (true, logic_error,"Missing vertex generator !");
-      }
+    if (_vg_ != 0) {
+      return *_vg_;
+    } else if (! _hvg_) {
+      DT_THROW_IF (true, logic_error,"Missing vertex generator !");
+    }
     return _hvg_.get ();
   }
 
   void placement_vg::_clear_vg_ ()
   {
-    if (_vg_ != 0)
-      {
-        if (_owned_)
-          {
-            delete _vg_;
-          }
-        _vg_ = 0;
+    if (_vg_ != 0) {
+      if (_owned_) {
+        delete _vg_;
       }
+      _vg_ = 0;
+    }
     _owned_ = false;
     return;
   }
@@ -141,7 +132,7 @@ namespace genvtx {
     double aunit = 1. * CLHEP::degree;
 
     if (! has_vg ()) {
-        // parameters of the vertex generator :
+      // parameters of the vertex generator :
       std::string vg_name;
 
       if (configuration_.has_key ("vertex_generator.name")) {
@@ -164,47 +155,40 @@ namespace genvtx {
       aunit = datatools::units::get_angle_unit_from (aunit_str);
     }
 
-    if (! get_placement ().is_valid ())
-      {
-        if (configuration_.has_key ("placement.x"))
-          {
-            x = configuration_.fetch_real ("placement.x");
-            if (! configuration_.has_explicit_unit ("placement.x")) x *= lunit;
-          }
-
-        if (configuration_.has_key ("placement.y"))
-          {
-            y = configuration_.fetch_real ("placement.y");
-            if (! configuration_.has_explicit_unit ("placement.y")) y *= lunit;
-          }
-
-        if (configuration_.has_key ("placement.z"))
-          {
-            z = configuration_.fetch_real ("placement.z");
-            if (! configuration_.has_explicit_unit ("placement.z")) z *= lunit;
-          }
-
-        if (configuration_.has_key ("placement.phi"))
-          {
-            phi = configuration_.fetch_real ("placement.phi");
-            if (! configuration_.has_explicit_unit ("placement.phi")) phi *= aunit;
-          }
-
-        if (configuration_.has_key ("placement.theta"))
-          {
-            theta = configuration_.fetch_real ("placement.theta");
-            if (! configuration_.has_explicit_unit ("placement.theta")) theta *= aunit;
-          }
-
-        if (configuration_.has_key ("placement.delta"))
-          {
-            delta = configuration_.fetch_real ("placement.delta");
-            if (! configuration_.has_explicit_unit ("placement.delta")) delta *= aunit;
-          }
-
-        geomtools::placement pl (x, y, z, phi, theta, delta);
-        set_placement (pl);
+    if (! get_placement ().is_valid ()) {
+      if (configuration_.has_key ("placement.x")) {
+        x = configuration_.fetch_real ("placement.x");
+        if (! configuration_.has_explicit_unit ("placement.x")) x *= lunit;
       }
+
+      if (configuration_.has_key ("placement.y")) {
+        y = configuration_.fetch_real ("placement.y");
+        if (! configuration_.has_explicit_unit ("placement.y")) y *= lunit;
+      }
+
+      if (configuration_.has_key ("placement.z")) {
+        z = configuration_.fetch_real ("placement.z");
+        if (! configuration_.has_explicit_unit ("placement.z")) z *= lunit;
+      }
+
+      if (configuration_.has_key ("placement.phi")) {
+        phi = configuration_.fetch_real ("placement.phi");
+        if (! configuration_.has_explicit_unit ("placement.phi")) phi *= aunit;
+      }
+
+      if (configuration_.has_key ("placement.theta")) {
+        theta = configuration_.fetch_real ("placement.theta");
+        if (! configuration_.has_explicit_unit ("placement.theta")) theta *= aunit;
+      }
+
+      if (configuration_.has_key ("placement.delta")) {
+        delta = configuration_.fetch_real ("placement.delta");
+        if (! configuration_.has_explicit_unit ("placement.delta")) delta *= aunit;
+      }
+
+      geomtools::placement pl (x, y, z, phi, theta, delta);
+      set_placement (pl);
+    }
     return;
   }
 

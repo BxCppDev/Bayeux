@@ -17,7 +17,7 @@
 #define GENVTX_PLACEMENT_VG_H 1
 
 // Third party:
-// - Bayeux/geomtools
+// - Bayeux/geomtools:
 #include <geomtools/placement.h>
 
 // This project:

@@ -1,5 +1,4 @@
-/* spot_vertex_generator.cc
- */
+// spot_vertex_generator.cc
 
 // Ourselves:
 #include <genvtx/spot_vertex_generator.h>
@@ -118,3 +117,98 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::spot_vertex_generator,ocd_)
+{
+  ocd_.set_class_name("genvtx::spot_vertex_generator");
+  ocd_.set_class_description("A generator that generates vertexes at an unique given point");
+  ocd_.set_class_library("genvtx");
+  ocd_.set_class_documentation("This generator needs to be given an unique (x,y,z) triplet\n"
+                               "from which it builds non randomized vertexes.             \n"
+                               );
+
+  ::genvtx::i_vertex_generator::ocd_support(ocd_);
+
+  {
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("spot.length_unit")
+      .set_from("genvtx::spot_vertex_generator")
+      .set_terse_description("Set the default length unit used by the spot vertex generator")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(false)
+      .set_default_value_string("mm")
+      .add_example("Set an arbitrary length unit: ::       \n"
+                   "                                       \n"
+                   "  spot.length_unit : string = \"mm\"   \n"
+                   "                                       \n"
+                   );
+
+    ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("spot.x")
+      .set_from("genvtx::spot_vertex_generator")
+      .set_terse_description("Set the X position of the spot vertex")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .add_example("Set an arbitrary X position: ::        \n"
+                   "                                       \n"
+                   "  spot.x : real as length = 0 mm       \n"
+                   "                                       \n"
+                   );
+
+    ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("spot.y")
+      .set_from("genvtx::spot_vertex_generator")
+      .set_terse_description("Set the Y position of the spot vertex")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .add_example("Set an arbitrary Y position: ::        \n"
+                   "                                       \n"
+                   "  spot.y : real as length = 0 mm       \n"
+                   "                                       \n"
+                   );
+
+    ;
+  }
+
+  {
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("spot.z")
+      .set_from("genvtx::spot_vertex_generator")
+      .set_terse_description("Set the Z position of the spot vertex")
+      .set_traits(datatools::TYPE_REAL)
+      .set_mandatory(true)
+      .add_example("Set an arbitrary Z position: ::        \n"
+                   "                                       \n"
+                   "  spot.z : real as length = 0 mm       \n"
+                   "                                       \n"
+                   );
+
+    ;
+  }
+
+  //ocd_.set_configuration_hints ("Nothing special.");
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(genvtx::spot_vertex_generator,"genvtx::spot_vertex_generator")

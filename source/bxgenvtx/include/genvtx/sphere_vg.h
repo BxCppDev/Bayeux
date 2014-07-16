@@ -26,6 +26,11 @@
 // This project:
 #include <genvtx/i_vertex_generator.h>
 
+namespace geomtools {
+  // Forward declaration:
+  class logical_volume;
+}
+
 namespace genvtx {
 
   /// \brief Vertex generator from a sphere
@@ -65,6 +70,15 @@ namespace genvtx {
     bool has_sphere_safe () const;
 
     const geomtools::sphere & get_sphere_safe () const;
+
+    /// Check if a referenced logical is available
+    bool has_logical() const;
+
+    /// Set the reference to an external logical
+    void set_logical(const geomtools::logical_volume &);
+
+    /// Reset the reference to an external logical
+    void reset_logical();
 
     void tree_dump (std::ostream & out_ = std::clog,
                     const std::string & title_ = "",
@@ -107,6 +121,7 @@ namespace genvtx {
   private:
 
     bool                      _initialized_; /// Initialization flag
+    const geomtools::logical_volume * _log_vol_; //!< External logical volume handle
     geomtools::sphere         _sphere_;      /// Embedded sphere object
     const geomtools::sphere * _sphere_ref_;  /// External sphere object handle
 

@@ -31,6 +31,11 @@ namespace datatools {
   class properties;
 }
 
+namespace geomtools {
+  // Forward declaration:
+  class logical_volume;
+}
+
 namespace genvtx {
 
   /// \brief A vertex generator based on the geometry of a 3D tube
@@ -61,6 +66,26 @@ namespace genvtx {
 
     const geomtools::tube & get_tube () const;
 
+    bool has_tube_ref () const;
+
+    void set_tube_ref (const geomtools::tube & tube_);
+
+    const geomtools::tube & get_tube_ref () const;
+
+    bool has_tube_safe() const;
+
+    const geomtools::tube & get_tube_safe () const;
+
+     /// Check logical
+    bool has_logical() const;
+
+     /// Set logical
+    void set_logical(const geomtools::logical_volume &);
+
+     /// Reset logical
+    void reset_logical();
+
+     /// Smart print
     void tree_dump (std::ostream & out_ = std::clog,
                     const std::string & title_ = "",
                     const std::string & indent_ = "",
@@ -99,12 +124,14 @@ namespace genvtx {
   private:
 
     bool            _initialized_; /// Initialization flag
-    geomtools::tube _tube_;
-    int             _mode_;
-    int             _surface_mask_;
-    double          _skin_skip_;
-    double          _skin_thickness_;
-    double          _sum_weight_[4];
+    const geomtools::logical_volume * _log_vol_; //!< External logical volume handle
+    const geomtools::tube * _tube_ref_;  //!< External tube object handle
+    geomtools::tube _tube_; //!< Embedded tube object
+    int             _mode_; //!< Vertex randomization mode (bulk/surface)
+    int             _surface_mask_; //!< Surface mask
+    double          _skin_skip_; //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the tube
+    double          _skin_thickness_; //!< Intrinsic thickness of the surface
+    double          _sum_weight_[4]; //!< Probability weights for surface randomization
 
     /// Registration macro
     /// @arg tube_vg the class to be registered

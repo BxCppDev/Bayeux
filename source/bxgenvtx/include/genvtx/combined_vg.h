@@ -35,19 +35,23 @@ namespace genvtx {
 
   public:
 
+    /// \brief Entry for a vertex generator to be combined
     struct entry_type
     {
-      std::string name;
-      double weight;
-      double cumulated_weight;
-      genvtx::vg_handle_type vg_handle;
+      std::string name; //!< Name of the generator
+      double weight; //!< Weight of the generator (branching ratio)
+      double cumulated_weight; //!< Cumulated weight of the generator
+      genvtx::vg_handle_type vg_handle; //!< Handle to the generator
+      /// Default constructor
       entry_type ();
     };
 
+    /// Add a generator to be combined
     void add_generator (genvtx::vg_handle_type & a_vg,
                         const std::string & a_name,
                         double a_weight = 1.0);
 
+    /// Smart print
     virtual void tree_dump (std::ostream & out_ = std::clog,
                             const std::string & title_ = "",
                             const std::string & indent_ = "",
@@ -76,21 +80,25 @@ namespace genvtx {
     virtual void _shoot_vertex(::mygsl::rng & random_,
                                ::geomtools::vector_3d & vertex_);
 
+    /// Main algorithm
     void _shoot_vertex_combined (mygsl::rng & random_,
                                  geomtools::vector_3d & vertex_);
 
   private:
 
+    /// Private initialization
     void _init_ ();
 
+    /// Private reset
     void _reset_ ();
 
+    /// Set default attributes' values
     void _set_defaults_ ();
 
   private:
 
-    bool _initialized_; /// Initialization flag
-    std::vector<entry_type> _entries_; /// Array of combined vertex generators entries
+    bool _initialized_; //!< Initialization flag
+    std::vector<entry_type> _entries_; //!< Array of combined vertex generators entries
 
     /// Registration macro
     /// @arg combined_vg the class to be registered
@@ -99,6 +107,12 @@ namespace genvtx {
   };
 
 } // end of namespace genvtx
+
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genvtx::combined_vg)
 
 #endif // GENVTX_COMBINED_VG_H
 

@@ -54,6 +54,26 @@ namespace genvtx {
     ginfo = 0;
   }
 
+  double weight_entry_type::get_weight() const
+  {
+    return weight;
+  }
+
+  double weight_entry_type::get_cumulated_weight() const
+  {
+    return cumulated_weight;
+  }
+
+  bool weight_entry_type::has_ginfo() const
+  {
+    return ginfo != 0;
+  }
+
+  const geomtools::geom_info & weight_entry_type::get_ginfo() const
+  {
+    return *ginfo;
+  }
+
   void weight_info::invalidate ()
   {
     value = -1.0;

@@ -1,5 +1,4 @@
-/* sphere_model_vg.cc
- */
+// sphere_model_vg.cc
 
 // Ourselves:
 #include <genvtx/sphere_model_vg.h>
@@ -31,6 +30,7 @@
 // This project:
 #include <genvtx/utils.h>
 #include <genvtx/detail/geom_manager_utils.h>
+#include <genvtx/vertex_validation.h>
 
 namespace genvtx {
 
@@ -289,6 +289,12 @@ namespace genvtx {
       src_vtx = rel_vtx;
     }
     world_plct.child_to_mother (src_vtx, vertex_);
+    if (has_vertex_validation()) {
+      // Setup the geometry context for the vertex validation system:
+      _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(src_vtx);
+      _grab_vertex_validation().grab_geometry_context().set_global_candidate_vertex(vertex_);
+      _grab_vertex_validation().grab_geometry_context().set_ginfo(_entries_[index].get_ginfo());
+    }
     return;
   }
 
@@ -455,8 +461,7 @@ namespace genvtx {
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
-    this->::genvtx::i_vertex_generator::_initialize_basics(setup_, service_manager_);
-    this->::genvtx::i_vertex_generator::_initialize_geo_manager(setup_, service_manager_);
+    this->::genvtx::i_vertex_generator::_initialize(setup_, service_manager_);
 
     int mode = utils::MODE_INVALID;
     std::string origin_rules;
@@ -591,3 +596,51 @@ namespace genvtx {
   }
 
 } // end of namespace genvtx
+
+/***************
+ * OCD support *
+ ***************/
+
+// OCD support' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::sphere_model_vg,ocd_)
+{
+  ocd_.set_class_name("genvtx::sphere_model_vg");
+  ocd_.set_class_description("A vertex generator from a sphere-shaped geometry model");
+  ocd_.set_class_library("genvtx");
+  // ocd_.set_class_documentation("");
+
+  ::genvtx::i_vertex_generator::ocd_support(ocd_);
+
+
+  //ocd_.set_configuration_hints("Nothing special.");
+  ocd_.add_example("From the bulk volume of some spherical volumes::                     \n"
+                   "                                                                     \n"
+                   "  length_unit : string = \"mm\"                                      \n"
+                   "  origin : string = \" category='core_layer' star=0 layer=[0:2] \"   \n"
+                   "  mode   : string = \"bulk\"                                         \n"
+                   "  skin_skip      : real = 0 mm                                       \n"
+                   "  skin_thickness : real = 0 mm                                       \n"
+                   "                                                                     \n"
+                   );
+  ocd_.add_example("From some of the surfaces of one sperical volume::                   \n"
+                   "                                                                     \n"
+                   "  length_unit : string = \"mm\"                                      \n"
+                   "  origin : string = \" category='core_layer' star=0 layer=1 \"       \n"
+                   "  mode : string = \"surface\"                                        \n"
+                   "  mode.surface.inner_side       : boolean = 1                        \n"
+                   "  mode.surface.outer_side       : boolean = 1                        \n"
+                   "  mode.surface.start_phi_side   : boolean = 0                        \n"
+                   "  mode.surface.stop_phi_side    : boolean = 0                        \n"
+                   "  mode.surface.start_theta_side : boolean = 0                        \n"
+                   "  mode.surface.stop_theta_side  : boolean = 0                        \n"
+                   "  skin_skip           : real = 0 mm                                  \n"
+                   "  skin_thickness      : real = 0 mm                                  \n"
+                   "                                                                     \n"
+                   );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(genvtx::sphere_model_vg,"genvtx::sphere_model_vg")

@@ -1,5 +1,4 @@
-/* box_vg.cc
- */
+// box_vg.cc
 
 // Ourselves:
 #include <genvtx/box_vg.h>
@@ -11,11 +10,16 @@
 #include <vector>
 
 // Third party:
-// - Bayeux/datatools
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
-// - Bayeux/mygsl
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
+// - Bayeux/geomtools:
+#include <geomtools/logical_volume.h>
+
+// This project:
+#include <genvtx/vertex_validation.h>
 
 namespace genvtx {
 
@@ -70,6 +74,28 @@ namespace genvtx {
     return;
   }
 
+  bool box_vg::has_logical() const
+  {
+    return _log_vol_ != 0;
+  }
+
+  void box_vg::set_logical (const geomtools::logical_volume & lv_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (_box_ref_ != 0, std::logic_error, "Already has a referenced box !");
+    DT_THROW_IF (lv_.get_shape().get_shape_name() != "box", std::logic_error, "Logical volume has a wrong shape !");
+    _log_vol_ = &lv_;
+    _box_ref_ = dynamic_cast<const geomtools::box *>(&_log_vol_->get_shape());
+    return;
+  }
+
+  void box_vg::reset_logical()
+  {
+    _log_vol_ = 0;
+    _box_ref_ = 0;
+    return;
+  }
+
   bool box_vg::has_box_ref () const
   {
     return _box_ref_ != 0;
@@ -78,15 +104,9 @@ namespace genvtx {
   void box_vg::set_box_ref (const geomtools::box & box_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (has_logical(), std::logic_error, "Already has a logical volume !");
     DT_THROW_IF (! box_.is_valid (), std::logic_error, "Invalid box !");
     _box_ref_ = &box_;
-    return;
-  }
-
-  void box_vg::set_box (const geomtools::box & box_)
-  {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
-    _box_ = box_;
     return;
   }
 
@@ -94,6 +114,14 @@ namespace genvtx {
   {
     DT_THROW_IF (_box_ref_ == 0, std::logic_error, "No box ref !");
     return *_box_ref_;
+  }
+
+  void box_vg::set_box (const geomtools::box & box_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (_box_ref_ != 0, std::logic_error, "Already has a referenced box !");
+    _box_ = box_;
+    return;
   }
 
   const geomtools::box & box_vg::get_box () const
@@ -124,8 +152,9 @@ namespace genvtx {
   box_vg::box_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
-    _box_.reset();
+    _log_vol_ = 0;
     _box_ref_ = 0;
+    _box_.reset();
     _set_defaults_();
     return;
   }
@@ -137,12 +166,16 @@ namespace genvtx {
   }
 
   void box_vg::initialize (const ::datatools::properties & setup_,
-                           ::datatools::service_manager & /*service_manager_*/,
+                           ::datatools::service_manager & service_manager_,
                            ::genvtx::vg_dict_type & /*vgens_*/)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
 
-    // parameters of the box vertex generator:
+    // Initialize from parent class:
+    this->i_vertex_generator::_initialize_basics(setup_, service_manager_);
+    this->i_vertex_generator::_initialize_vertex_validation(setup_, service_manager_);
+
+    // Parameters of the box vertex generator:
     int    mode = MODE_INVALID;
     int    surface_mask = geomtools::box::FACE_NONE;
     double skin_skip = 0.0;
@@ -302,14 +335,19 @@ namespace genvtx {
 
   void box_vg::_reset_ ()
   {
-    _set_defaults_ ();
+    if (has_logical()) {
+      reset_logical();
+    }
+    _box_.reset ();
+    this->i_vertex_generator::_reset();
+    _set_defaults_();
     return;
   }
 
   void box_vg::_set_defaults_ ()
   {
-    _box_.reset ();
     _box_ref_ = 0;
+    _log_vol_ = 0;
     _mode_ = MODE_INVALID;
     _surface_mask_ = geomtools::box::FACE_ALL;
     _skin_skip_ = 0.0;
@@ -329,15 +367,22 @@ namespace genvtx {
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
     out_ << indent << datatools::i_tree_dumpable::tag;
+    if (has_logical()) {
+      out_ << "Logical volume : '" << _log_vol_->get_name() << "'" << std::endl;
+    }
+    out_ << indent << datatools::i_tree_dumpable::tag;
     if (has_box_ref ()) {
       out_ << "External box : " << *_box_ref_ << " [" << _box_ref_ << ']';
     } else {
       out_ << "Embedded box : " << _box_;
     }
     out_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Mode :        " << _mode_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mode :        " << _mode_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Surface mask: " << _surface_mask_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Skin skip:    " << _skin_skip_ << std::endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Skin thickness: " << _skin_thickness_ << std::endl;
     return;
@@ -397,6 +442,14 @@ namespace genvtx {
       }
     }
     vertex_.set (x, y, z);
+
+    if (has_vertex_validation()) {
+      // Setup the geometry context for the vertex validation system:
+      DT_THROW_IF(!has_logical(), std::logic_error, "Missing logical volume in '" << get_name() << "' vertex generator!");
+      _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(vertex_);
+      _grab_vertex_validation().grab_geometry_context().set_logical_volume(*_log_vol_);
+    }
+
     return;
   }
 

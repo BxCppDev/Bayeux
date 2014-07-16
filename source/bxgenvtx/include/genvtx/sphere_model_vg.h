@@ -157,6 +157,12 @@ namespace genvtx {
 
 } // end of namespace genvtx
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genvtx::sphere_model_vg)
+
 #endif // GENVTX_SPHERE_MODEL_VG_H
 
 /*

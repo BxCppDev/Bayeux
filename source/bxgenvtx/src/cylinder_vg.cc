@@ -1,5 +1,4 @@
-/* cylinder_vg.cc
- */
+// cylinder_vg.cc
 
 // Ourselves:
 #include <genvtx/cylinder_vg.h>
@@ -15,6 +14,11 @@
 #include <datatools/exception.h>
 // - Bayeux/mygsl
 #include <mygsl/rng.h>
+// - Bayeux/geomtools:
+#include <geomtools/logical_volume.h>
+
+// This project:
+#include <genvtx/vertex_validation.h>
 
 namespace genvtx {
 
@@ -69,9 +73,32 @@ namespace genvtx {
     return;
   }
 
+  bool cylinder_vg::has_logical() const
+  {
+    return _log_vol_ != 0;
+  }
+
+  void cylinder_vg::set_logical (const geomtools::logical_volume & lv_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (_cylinder_ref_ != 0, std::logic_error, "Already has a referenced cylinder !");
+    DT_THROW_IF (lv_.get_shape().get_shape_name() != "cylinder", std::logic_error, "Logical volume has a wrong shape !");
+    _log_vol_ = &lv_;
+    _cylinder_ref_ = dynamic_cast<const geomtools::cylinder *>(&_log_vol_->get_shape());
+    return;
+  }
+
+  void cylinder_vg::reset_logical()
+  {
+    _log_vol_ = 0;
+    _cylinder_ref_ = 0;
+    return;
+  }
+
   void cylinder_vg::set_cylinder (const geomtools::cylinder & cylinder_)
   {
     DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (_cylinder_ref_ != 0, std::logic_error, "Already has a referenced cylinder !");
     _cylinder_ = cylinder_;
     return;
   }
@@ -79,6 +106,41 @@ namespace genvtx {
   const geomtools::cylinder & cylinder_vg::get_cylinder () const
   {
     return _cylinder_;
+  }
+
+  bool cylinder_vg::has_cylinder_ref () const
+  {
+    return _cylinder_ref_ != 0;
+  }
+
+  void cylinder_vg::set_cylinder_ref (const geomtools::cylinder & cylinder_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+    DT_THROW_IF (has_logical(), std::logic_error, "Already has a logical volume !");
+    DT_THROW_IF (! cylinder_.is_valid (), std::logic_error, "Invalid cylinder !");
+    _cylinder_ref_ = &cylinder_;
+    return;
+  }
+
+  const geomtools::cylinder & cylinder_vg::get_cylinder_ref () const
+  {
+    DT_THROW_IF (_cylinder_ref_ == 0, std::logic_error, "No cylinder ref !");
+    return *_cylinder_ref_;
+  }
+
+  bool cylinder_vg::has_cylinder_safe () const
+  {
+    if (_cylinder_.is_valid ()) return true;
+    if (_cylinder_ref_ != 0 && _cylinder_ref_->is_valid ()) return true;
+    return false;
+  }
+
+  const geomtools::cylinder & cylinder_vg::get_cylinder_safe () const
+  {
+    if (has_cylinder_ref ()) {
+      return get_cylinder_ref ();
+    }
+    return get_cylinder ();
   }
 
   bool cylinder_vg::is_initialized () const
@@ -89,6 +151,8 @@ namespace genvtx {
   cylinder_vg::cylinder_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
+    _log_vol_ = 0;
+    _cylinder_ref_ = 0;
     _cylinder_.reset ();
     _set_defaults_ ();
     return;
@@ -240,13 +304,19 @@ namespace genvtx {
 
   void cylinder_vg::_reset_()
   {
+    if (has_logical()) {
+      reset_logical();
+    }
+    _cylinder_.reset();
+    this->i_vertex_generator::_reset();
     _set_defaults_();
     return;
   }
 
   void cylinder_vg::_set_defaults_()
   {
-    _cylinder_.reset();
+    _cylinder_ref_ = 0;
+    _log_vol_ = 0;
     _mode_ = MODE_INVALID;
     _surface_mask_ = geomtools::cylinder::FACE_ALL;
     _skin_skip_ = 0.0;
@@ -263,14 +333,27 @@ namespace genvtx {
                                bool inherit_) const
   {
     std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    i_vertex_generator::tree_dump (out_, title_, indent_, true);
+    if (! indent_.empty()) indent = indent_;
+    i_vertex_generator::tree_dump(out_, title_, indent_, true);
     out_ << indent << datatools::i_tree_dumpable::tag;
-    out_ << "Cylinder : " << _cylinder_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Mode :        " << _mode_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Surface mask: " << _surface_mask_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Skin skip:    " << _skin_skip_ << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+    if (has_logical()) {
+      out_ << "Logical volume : '" << _log_vol_->get_name() << "'" << std::endl;
+    }
+    out_ << indent << datatools::i_tree_dumpable::tag;
+    if (has_cylinder_ref()) {
+      out_ << "External cylinder : " << *_cylinder_ref_ << " [" << _cylinder_ref_ << ']';
+    } else {
+      out_ << "Embedded cylinder : " << _cylinder_;
+    }
+    out_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Mode :        " << _mode_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Surface mask: " << _surface_mask_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Skin skip:    " << _skin_skip_ << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
          << "Skin thickness: " << _skin_thickness_ << std::endl;
     return;
   }
@@ -278,16 +361,20 @@ namespace genvtx {
   void cylinder_vg::_shoot_vertex(::mygsl::rng & random_,
                                   ::geomtools::vector_3d & vertex_)
   {
-    DT_THROW_IF (! is_initialized (), std::logic_error, "Not initialized !");
-    geomtools::invalidate (vertex_);
+    DT_THROW_IF(! is_initialized(), std::logic_error, "Not initialized !");
+    geomtools::invalidate(vertex_);
     double r = 0.0;
     double t_max = 2. * M_PI;
-    double t = random_.uniform () * t_max;
+    double t = random_.uniform() * t_max;
     double x = 0.0, y = 0.0, z = 0.0;
+    const geomtools::cylinder * the_cylinder = &_cylinder_;
+    if (has_cylinder_ref()) {
+      the_cylinder = _cylinder_ref_;
+    }
     if (_mode_ == MODE_BULK) {
-      double r_max = _cylinder_.get_r () - 0.5 * _skin_thickness_;
+      double r_max = the_cylinder->get_r () - 0.5 * _skin_thickness_;
       r = std::sqrt (random_.uniform ()) * r_max;
-      z = (random_.uniform () - 0.5) * (_cylinder_.get_z () - _skin_thickness_);
+      z = (random_.uniform () - 0.5) * (the_cylinder->get_z () - _skin_thickness_);
     }
 
     if (_mode_ == MODE_SURFACE) {
@@ -300,27 +387,34 @@ namespace genvtx {
       }
 
       if (r0 < _sum_weight_[0]) {
-        double r_min  = _cylinder_.get_r ()
+        double r_min  = the_cylinder->get_r ()
           + _skin_skip_
           - 0.5 * _skin_thickness_;
         double r_max  = r_min + _skin_thickness_;
         double r_min2 = r_min * r_min;
         double r_max2 = r_max * r_max;
         r = (std::sqrt (r_min2 + random_.uniform () * (r_max2 - r_min2)));
-        z = +(random_.uniform () - 0.5) * (_cylinder_.get_z ());
+        z = +(random_.uniform () - 0.5) * (the_cylinder->get_z ());
       } else if (r0 < _sum_weight_[1]) {
-        double r_max = _cylinder_.get_r ();
+        double r_max = the_cylinder->get_r ();
         r = std::sqrt (random_.uniform ()) * r_max;
-        z = -(_cylinder_.get_half_z () + _skin_skip_ + delta_thick);
+        z = -(the_cylinder->get_half_z () + _skin_skip_ + delta_thick);
       } else if (r0 < _sum_weight_[2]) {
-        double r_max = _cylinder_.get_r ();
+        double r_max = the_cylinder->get_r ();
         r = std::sqrt (random_.uniform ()) * r_max;
-        z = +(_cylinder_.get_half_z () + _skin_skip_ + delta_thick);
+        z = +(the_cylinder->get_half_z () + _skin_skip_ + delta_thick);
       }
     }
     x = r * std::cos(t);
     y = r * std::sin(t);
     vertex_.set(x,y, z);
+
+    if (has_vertex_validation()) {
+      // Setup the geometry context for the vertex validation system:
+      DT_THROW_IF(!has_logical(), std::logic_error, "Missing logical volume in '" << get_name() << "' vertex generator!");
+      _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(vertex_);
+      _grab_vertex_validation().grab_geometry_context().set_logical_volume(*_log_vol_);
+    }
     return;
   }
 
