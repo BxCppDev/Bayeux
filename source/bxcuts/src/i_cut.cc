@@ -304,8 +304,10 @@ namespace cuts {
 
   void i_cut::reset_user_data ()
   {
-    DT_LOG_TRACE(_logging, "Cut named '" << (has_name()? get_name() : "?") << "' resets user data.");
-    _user_data_.reset();
+    if (_user_data_) {
+      DT_LOG_TRACE(_logging, "Cut named '" << (has_name()? get_name() : "?") << "' resets user data.");
+      _user_data_.reset();
+    }
     return;
   }
 
