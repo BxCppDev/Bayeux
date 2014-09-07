@@ -1,11 +1,9 @@
-// -*- mode: c++ ; -*-
-/* material.cc
- */
+// material.cc
 
-#include <sstream>
-
+// Ourselves:
 #include <geomtools/material.h>
 
+// Standard library
 #include <sstream>
 
 namespace geomtools {
@@ -73,47 +71,45 @@ namespace geomtools {
     return token;
   }
 
-  string material::make_key (const string & key_)
+  string material::make_key(const string & key_)
   {
     ostringstream key_oss;
     key_oss << material::material_prefix() << key_;
-    return key_oss.str ();
+    return key_oss.str();
   }
 
-  void material::extract (const datatools::properties & source_,
-                          datatools::properties & target_)
+  void material::extract(const datatools::properties & source_,
+                         datatools::properties & target_)
   {
-    source_.export_starting_with (target_, material::material_prefix());
+    source_.export_starting_with(target_, material::material_prefix());
     return;
   }
 
-  bool material::has_flag (const datatools::properties & config_,
-                              const string & flag_)
+  bool material::has_flag(const datatools::properties & config_,
+                          const string & flag_)
   {
-    return (config_.has_flag (material::make_key (flag_)));
+    return(config_.has_flag(material::make_key(flag_)));
   }
 
-  bool material::has_key (const datatools::properties & config_,
-                             const string & key_)
+  bool material::has_key(const datatools::properties & config_,
+                         const string & key_)
   {
-    return (config_.has_key (make_key (key_)));
+    return(config_.has_key(make_key(key_)));
   }
 
-  bool material::is_gas (const datatools::properties & config_)
+  bool material::is_gas(const datatools::properties & config_)
   {
-    return material::has_flag (config_, material::material_gas_flag());
+    return material::has_flag(config_, material::material_gas_flag());
   }
 
-  bool material::is_liquid (const datatools::properties & config_)
+  bool material::is_liquid(const datatools::properties & config_)
   {
-    return material::has_flag (config_, material::material_liquid_flag());
+    return material::has_flag(config_, material::material_liquid_flag());
   }
 
-  bool material::is_solid (const datatools::properties & config_)
+  bool material::is_solid(const datatools::properties & config_)
   {
-    return material::has_flag (config_, material::material_solid_flag());
+    return material::has_flag(config_, material::material_solid_flag());
   }
 
 } // end of namespace geomtools
-
-// end of material.cc

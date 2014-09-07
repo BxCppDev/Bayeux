@@ -38,10 +38,14 @@ namespace geomtools {
   {
   public:
 
+    /// Return the default world label used for the top-level logical volume
     static const std::string & default_world_label();
 
+    /// Validate a name for logical volume with respect to forseen GDML export
+    static bool validate_name_for_gdml(const std::string & candidate_);
+
     /// Check if the factory is locked
-    bool is_locked () const;
+    bool is_locked() const;
 
     /// Get the logging priority
     datatools::logger::priority get_logging_priority() const;
@@ -50,44 +54,44 @@ namespace geomtools {
     void set_logging_priority(datatools::logger::priority);
 
     /// Check the logging debug flag
-    bool is_debug () const;
+    bool is_debug() const;
 
     /// Check the logging trace flag
-    bool is_trace () const;
+    bool is_trace() const;
 
     /// Set the logging debug flag
-    void set_debug (bool);
+    void set_debug(bool);
 
     /// Get a non-mutable collection of geometry models
-    const models_col_type & get_models () const;
+    const models_col_type & get_models() const;
 
     /// Get a non-mutable collection of geometry logicals associated to models
-    const logical_volume::dict_type & get_logicals () const;
+    const logical_volume::dict_type & get_logicals() const;
 
     /// Constructor
-    explicit model_factory (datatools::logger::priority lp_ =
+    explicit model_factory(datatools::logger::priority lp_ =
                             datatools::logger::PRIO_WARNING);
 
     /// Constructor
-    model_factory (bool debug_, bool core_factory_verbose_ = false);
+    model_factory(bool debug_, bool core_factory_verbose_ = false);
 
     /// Destructor
-    virtual ~model_factory ();
+    virtual ~model_factory();
 
     /// Load a geometry models definition file
-    void load (const std::string & mprop_file_);
+    void load(const std::string & mprop_file_);
 
     /// Loading a file that contains a list of geometry models definition filenames :
-    void load_geom_list (const std::string & geom_list_file_);
+    void load_geom_list(const std::string & geom_list_file_);
 
     /// Lock the geometry model factory
-    void lock ();
+    void lock();
 
     /// Unlock the geometry model factory
-    void unlock ();
+    void unlock();
 
     /// Reset the factory
-    void reset ();
+    void reset();
 
     /// Add a property prefix to be preserved in logicals
     void add_property_prefix(const std::string & prefix_);
@@ -96,7 +100,7 @@ namespace geomtools {
     const std::vector<std::string> & get_property_prefixes() const;
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
@@ -114,26 +118,26 @@ namespace geomtools {
   private:
 
     /// Basic construction of the model factory
-    void _basic_construct_ ();
+    void _basic_construct_();
 
     /// Lock the geometry model factory
-    void _lock_ ();
+    void _lock_();
 
     /// Unlock the geometry model factory
-    void _unlock_ ();
+    void _unlock_();
 
     /// Construct the virtual geometry hierarchy
-    void _construct_ ();
+    void _construct_();
 
   private:
 
-    i_model::factory_register_type _factory_register_;
-    bool                        _locked_;
-    datatools::logger::priority _logging_priority_; //!< Logging priority threshold
-    datatools::multi_properties _mp_;
-    models_col_type             _models_;
-    logical_volume::dict_type   _logicals_;
-    std::vector<std::string>    _property_prefixes_;
+    i_model::factory_register_type _factory_register_; //!< Register of model factories
+    bool                        _locked_;              //!< Lock flag
+    datatools::logger::priority _logging_priority_;    //!< Logging priority threshold
+    datatools::multi_properties _mp_;                  //!< Multi-container of parameters
+    models_col_type             _models_;              //!< Dictionary of geometry models
+    logical_volume::dict_type   _logicals_;            //!< Dictionary of geometry logical volumes
+    std::vector<std::string>    _property_prefixes_;   //!< List of proprety prefixes to be preserved in logical volumes
 
   };
 

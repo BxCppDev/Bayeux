@@ -1,18 +1,21 @@
-// -*- mode: c++ ; -*-
-/* model_factory.cc
- */
+// model_factory.cc
 
+// Ourselves:
 #include <geomtools/model_factory.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
 #include <string>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/detail/model_tools.h>
 #include <geomtools/i_model.h>
 #include <geomtools/logical_volume.h>
@@ -31,6 +34,27 @@ namespace geomtools {
       label = "world";
     }
     return label;
+  }
+
+  // static
+  bool model_factory::validate_name_for_gdml(const std::string & candidate_)
+  {
+    /* Using underscore in a name is not allowed due
+     * because of GDML/XML restriction on the possible names
+     * for logical and physical volumes.
+     * Also note that the "0x" pattern is arbitrarily (and stupidely)
+     * cut from names by the Geant4/GDML interface.
+     * See the G4GDMLRead::Strip, G4GDMLRead::StripName and G4GDMLRead::StripNames
+     * methods.
+     *
+     * Examples:
+     * a)  "scintillator:block" will be rejected by the GDML restrictions.
+     * b)  "block_30x32x15cm3" will be cut as "block_3") by the Geant4/GDML stripping action, which
+     *     doesn't match the original name in geomtools.
+     */
+    if (candidate_.find(":") != std::string::npos) return false;
+    if (candidate_.find("0x") != std::string::npos) return false;
+    return true;
   }
 
   bool model_factory::is_locked () const
@@ -216,10 +240,11 @@ namespace geomtools {
     }
     _models_.clear ();
     _mp_.reset ();
+    _property_prefixes_.clear ();
     return;
   }
 
-  /// Add a property prefix to be preserved in logicals
+  // Add a property prefix to be preserved in logicals
   void model_factory::add_property_prefix(const std::string & prefix_)
   {
     DT_THROW_IF(prefix_.empty(),
@@ -244,6 +269,8 @@ namespace geomtools {
       const datatools::multi_properties::entry * ptr_entry = *i;
       const datatools::multi_properties::entry & e = *ptr_entry;
       string model_name = e.get_key ();
+      DT_THROW_IF(!validate_name_for_gdml(model_name), std::logic_error,
+                  "Geometry model name '" << model_name << "' is not supported for GDML export in Geant4 !");
       string model_type = e.get_meta ();
       // if (! _factory_register_.has(model_type)) {
       //   DT_LOG_TRACE(_logging_priority_,
@@ -632,5 +659,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::model_factory,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::model_factory,"geomtools::model_factory")
-
-// end of model_factory.cc

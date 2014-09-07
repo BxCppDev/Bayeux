@@ -20,8 +20,10 @@
  *
  */
 
+// Ourselves:
 #include <geomtools/manager.h>
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
@@ -32,6 +34,8 @@
 #include <list>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
@@ -39,6 +43,7 @@
 #include <datatools/version_check.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <geomtools/visibility.h>
 #include <geomtools/sensitive.h>
 #include <geomtools/material.h>

@@ -1,20 +1,25 @@
-// -*- mode: c++ ; -*-
-/* gdml_export.cc
- */
+// gdml_export.cc
 
+// Ourselves:
+#include <geomtools/gdml_export.h>
+
+// Standard library:
 #include <iomanip>
 #include <stdexcept>
 #include <algorithm>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+// - Bayeux/materials:
+#include <materials/material.h>
 
+// This project:
 #include <geomtools/geomtools_config.h>
-#include <geomtools/gdml_export.h>
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
 #include <geomtools/intersection_3d.h>
-
 #include <geomtools/detail/model_tools.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/gdml_writer.h>
@@ -54,7 +59,6 @@ namespace geomtools {
     return unit;
   }
 
-
   datatools::logger::priority gdml_export::get_logging_priority () const
   {
     return _logging_priority_;
@@ -76,7 +80,6 @@ namespace geomtools {
     _support_auxiliary_ = s_;
     return;
   }
-
 
   bool gdml_export::is_replica_supported () const
   {
@@ -229,15 +232,18 @@ namespace geomtools {
       _writer_.add_material (material::material_ref_default(),
                              1.0,
                              1. * CLHEP::g / CLHEP::cm3,
-                             1.00);
+                             1.00,
+                             gdml_writer::state_convert(::materials::material::STATE_SOLID));
       _writer_.add_material (material::material_ref_unknown(),
                              1.0,
                              1. * CLHEP::g / CLHEP::cm3,
-                             1.00);
+                             1.00,
+                             gdml_writer::state_convert(::materials::material::STATE_SOLID));
       _writer_.add_material (material::material_ref_vacuum(),
                              1.0,
                              1.e-15 * CLHEP::g / CLHEP::cm3,
-                             1.00);
+                             1.00,
+                             gdml_writer::state_convert(::materials::material::STATE_GAS));
     }
 
     _writer_.add_setup ("Setup", top_model.get_logical ().get_name ());
@@ -580,5 +586,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of gdml_export.cc

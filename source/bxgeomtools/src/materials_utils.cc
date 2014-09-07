@@ -71,7 +71,10 @@ namespace geomtools {
         gw_.add_material(material_name,
                          a_mat.get_mean_z(),
                          a_mat.get_density(),
-                         a_mat.get_mean_a());
+                         a_mat.get_mean_a(),
+                         gdml_writer::state_convert(a_mat.get_state()),
+                         a_mat.get_temperature(),
+                         a_mat.get_pressure());
       }
 
       // Composite by number of atoms:
@@ -93,7 +96,10 @@ namespace geomtools {
         gw_.add_material(material_name,
                          formula,
                          a_mat.get_density(),
-                         natoms_map);
+                         natoms_map,
+                         gdml_writer::state_convert(a_mat.get_state()),
+                         a_mat.get_temperature(),
+                         a_mat.get_pressure());
       }
 
       // Composite by fraction mass:
@@ -117,7 +123,10 @@ namespace geomtools {
         gw_.add_material(material_name,
                          formula,
                          a_mat.get_density(),
-                         fractions_map);
+                         fractions_map,
+                         gdml_writer::state_convert(a_mat.get_state()),
+                         a_mat.get_temperature(),
+                         a_mat.get_pressure());
       }
     } // end of loop on materials
 
