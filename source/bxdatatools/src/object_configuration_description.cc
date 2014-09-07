@@ -742,7 +742,7 @@ namespace datatools {
 
     out_ << indent << "* Type: ";
     if (! has_type()) {
-      out_ << "undefined : ";
+      out_ << "undefined";
     } else {
       out_ << "``";
       out_ << ::datatools::get_label_from_type(_type_);
@@ -770,8 +770,9 @@ namespace datatools {
       */
       //out_ << ") : ";
       out_ << "``";
-      out_ << std::endl;
     }
+    out_ << std::endl;
+
     out_ << indent << "* Default value : ";
     if (has_default_value()) {
       if (is_boolean()) {

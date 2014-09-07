@@ -116,7 +116,7 @@ namespace datatools {
       /// Remove all auxiliary properties
       void reset_auxiliaries();
 
-      /// Chekc the debug status
+      /// Check the debug status
       bool is_debug() const;
 
       /// Set the logging priority threshold
@@ -145,11 +145,11 @@ namespace datatools {
 
   private:
 
-      std::string _name_; /// Name
-      std::string _display_name_; /// Display name
-      std::string _terse_description_; /// Description
-      logger::priority _logging_priority_; /// Logging priority threshold
-      datatools::properties _auxiliaries_; /// Container of auxiliary properties
+      std::string _name_; //!< Name
+      std::string _display_name_; //!< Display name
+      std::string _terse_description_; //!< Description
+      logger::priority _logging_priority_; //!< Logging priority threshold
+      datatools::properties _auxiliaries_; //!< Container of auxiliary properties
 
       //! Serialization interface
       DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(enriched_base);

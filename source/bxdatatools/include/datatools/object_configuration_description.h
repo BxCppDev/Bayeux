@@ -1,6 +1,8 @@
-// -*- mode: c++; -*-
 /// \file datatools/object_configuration_description.h
-/*
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Creation date : 2013-01-01
+ * Last modified : 2013-01-01
+ *
  * Description :
  *
  *  Classes describing configuration properties for complex objects
@@ -361,17 +363,17 @@ private:
 
 private:
 
-  bool         _locked_;                         /// Lock flag
-  std::string  _class_name_;                     /// The name of the class to be documented
-  std::string  _class_description_;              /// An optional description string
-  std::string  _class_documentation_;            /// An optional documentation string
-  std::string  _class_library_;                  /// An optional string describing the library the class belongs to
-  std::set<std::string> _groups_;                /// The set of groups the class belongs to
-  cpd_col_type _configuration_properties_infos_; /// Collection of documented properties
-  std::string  _configuration_hints_;            /// Some embeded plain text documentation
-  std::vector<std::string> _examples_;           /// List of examples
-  //csd_col_type _configuration_sections_infos_; /// Collection of documented sections
-  bool         _validation_support_;             /// Flag to support validation
+  bool         _locked_;                         //!< Lock flag
+  std::string  _class_name_;                     //!< The name of the class to be documented
+  std::string  _class_description_;              //!< An optional description string
+  std::string  _class_documentation_;            //!< An optional documentation string
+  std::string  _class_library_;                  //!< An optional string describing the library the class belongs to
+  std::set<std::string> _groups_;                //!< The set of groups the class belongs to
+  cpd_col_type _configuration_properties_infos_; //!< Collection of documented properties
+  std::string  _configuration_hints_;            //!< Some embeded plain text documentation
+  std::vector<std::string> _examples_;           //!< List of examples
+  //csd_col_type _configuration_sections_infos_; //!< Collection of documented sections
+  bool         _validation_support_;             //!< Flag to support validation
 
 
 };
@@ -379,3 +381,11 @@ private:
 } // namespace datatools
 
 #endif // DATATOOLS_OBJECT_CONFIGURATION_DESCRIPTION_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

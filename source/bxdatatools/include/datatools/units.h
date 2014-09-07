@@ -154,8 +154,8 @@ class units {
    *   double unit_value;
    *   string unit_label;
    *   bool ok = datatools::units::find_unit("cm", unit_value, unit_label);
-   *   cout << "Unit label = '" << unit_label << "'\n";
    *   cout << "Unit value = " << unit_value << "\n";
+   *   cout << "Unit label = '" << unit_label << "'\n";
    *   \endcode
    *
    */
@@ -186,6 +186,26 @@ class units {
                                    double& value,
                                    std::string& unit_label,
                                    double default_unit_ = std::numeric_limits<double>::quiet_NaN());
+
+  //! Parse a value from a string taking into account the unit symbol, set the value, the unit symbol and unit label.
+  /**
+   * \b Example:
+   *
+   *   \code
+   *   double value;
+   *   string unit_symbol;
+   *   string unit_label;
+   *   bool ok = datatools::units::find_value_with_unit("2.54 cm", value, unit_symbol, unit_label);
+   *   \endcode
+   *   This will output:
+   *     value       = 25.4  because native unit for length is "mm"
+   *     unit_symbol = "cm"
+   *     unit_label  = "length"
+   */
+  static bool parse_value_with_unit(const std::string& word,
+                                    double& value,
+                                    std::string& unit_symbol,
+                                    std::string& unit_label);
 
 };
 

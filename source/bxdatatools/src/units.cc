@@ -473,6 +473,38 @@ double units::get_unit(const std::string& unit_str) {
   return unit_val;
 }
 
+// static
+bool units::parse_value_with_unit(const std::string& word,
+                                  double& value,
+                                  std::string& unit_symbol,
+                                  std::string& unit_label)
+{
+  value = std::numeric_limits<double>::quiet_NaN();
+  unit_label = "";
+  double val;
+  std::istringstream iss(word);
+  iss >> val;
+  if (!iss) {
+    // std::ostringstream message;
+    // message << "datatools::units::find_value_with_unit: Format error while reading a double value !";
+    return false;
+  }
+  iss >> std::ws;
+  if (!iss.eof()) {
+    std::string ustr;
+    iss >> ustr;
+    if (ustr.empty()) return false;
+    double any_unit_value;
+    std::string any_unit_label;
+    bool res = find_unit(ustr, any_unit_value, any_unit_label);
+    if (!res) return false;
+    val *= any_unit_value;
+    unit_symbol = ustr;
+    unit_label = any_unit_label;
+  }
+  value = val;
+  return true;
+}
 
 bool units::find_value_with_unit(const std::string& word,
                                  double& value,
@@ -515,7 +547,7 @@ double units::get_value_with_unit(const std::string& word) {
   std::string unit_label;
   DT_THROW_IF (!find_value_with_unit(word, unit_value, unit_label),
                std::logic_error,
-               "Cannot parse a value with its units from '" << word << "' !");
+               "Cannot parse a value from '" << word << "' with its units from '" << word << "' !");
   return unit_value;
 }
 

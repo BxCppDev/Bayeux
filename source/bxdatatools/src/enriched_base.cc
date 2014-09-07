@@ -268,42 +268,45 @@ namespace datatools {
     {
       configuration_property_description & cpd = ocd_.add_configuration_property_info();
       cpd.set_name_pattern("name")
+        .set_from("datatools::enriched_base")
         .set_terse_description("Set the name of the object")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
-        .set_long_description("Example::                                 \n"
-                              "                                          \n"
-                              "  name : string = \"foo_id\"              \n"
-                              "                                          \n"
-                              )
+        .add_example("Set a dummy name::             \n"
+                     "                               \n"
+                     "  name : string = \"foo_id\"   \n"
+                     "                               \n"
+                     )
         ;
     }
 
     {
       configuration_property_description & cpd = ocd_.add_configuration_property_info();
       cpd.set_name_pattern("display_name")
+        .set_from("datatools::enriched_base")
         .set_terse_description("Set the display name of the object")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
-        .set_long_description("Example::                                 \n"
-                              "                                          \n"
-                              "  display name : string = \"Foo's ID\"    \n"
-                              "                                          \n"
-                              )
+        .add_example("Set a dummy display name::                \n"
+                     "                                          \n"
+                     "  display name : string = \"Foo's ID\"    \n"
+                     "                                          \n"
+                     )
         ;
     }
 
     {
       configuration_property_description & cpd = ocd_.add_configuration_property_info();
       cpd.set_name_pattern("description")
+        .set_from("datatools::enriched_base")
         .set_terse_description("Set the description of the object")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
-        .set_long_description("Example::                                 \n"
-                              "                                          \n"
-                              "  description : string = \"A dummy object\"\n"
-                              "                                          \n"
-                              )
+        .add_example("Set a terse description string::            \n"
+                     "                                            \n"
+                     "  description : string = \"A dummy object\" \n"
+                     "                                            \n"
+                     )
         ;
     }
 

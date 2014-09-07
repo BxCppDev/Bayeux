@@ -124,20 +124,28 @@ int main (/*int argc_, char ** argv_*/)
       {
         double unit_value;
         string unit_label;
-        if (datatools::units::find_unit ("mBq/m3", unit_value, unit_label))
+        string unit_str = "mBq/m3";
+        if (datatools::units::find_unit (unit_str, unit_value, unit_label))
           {
-            clog << "Unit label = '" << unit_label << "'\n";
-            clog << "Unit value = " << unit_value << "\n";
+            clog << "Unit = '" << unit_str << "'\n";
+            clog << "  Unit label = '" << unit_label << "'\n";
+            clog << "  Unit value = " << unit_value << "\n";
           }
       }
 
       {
         double mass_activity_value;
         string unit_label;
-        if (datatools::units::find_value_with_unit ("10 uBq/kg", mass_activity_value, unit_label))
+        string value_str = "10 uBq/kg";
+        if (datatools::units::find_value_with_unit (value_str, mass_activity_value, unit_label))
           {
-            clog << "Mass activity value = " << mass_activity_value << "\n";
-            clog << "Unit label = '" << unit_label << "'\n";
+            clog << "Value string = '" << value_str << "'\n";
+            clog << "  Mass activity value = " << mass_activity_value << "\n";
+            clog << "  Unit label = '" << unit_label << "'\n";
+            std::string dus = datatools::units::get_default_unit_symbol_from_label(unit_label);
+            clog << "  Value = "
+                 << mass_activity_value / datatools::units::get_unit(dus)
+                 << " " << dus << "\n";
           }
         double mass_value;
         if (datatools::units::find_value_with_unit ("2 kg", mass_value, unit_label))

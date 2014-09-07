@@ -2,11 +2,11 @@
 /// \file datatools/integer_range.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-09-22
- * Last modified: 2013-04-22
+ * Last modified: 2014-08-31
  *
  * License:
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,112 +47,169 @@
 
 namespace datatools {
 
-//! \brief A class representing an interval of integral values.
-class integer_range {
- public:
-  typedef int32_t value_type;
+  //! \brief A class representing an interval of integer values.
+  class integer_range {
+  public:
 
- public:
-  /// Default constructor
-  integer_range();
+    // Intrinsic integer is 32 bits:
+    typedef int32_t value_type;
 
-  // Constructor
-  integer_range(value_type from, value_type to,
-                int from_policy = range_bound_included,
-                int to_policy = range_bound_included);
+    /// Default constructor
+    integer_range();
 
-  /// Check the validity of the interval
-  bool is_valid() const;
+    /// Constructor
+    integer_range(value_type from, value_type to,
+                  range_bound_info_type from_policy = range_bound_included,
+                  range_bound_info_type to_policy   = range_bound_included);
 
-  /// Invalidate the interval
-  void invalidate();
+    /// Check the validity of the interval
+    bool is_valid() const;
 
-  /// Reset lower bound
-  void reset_lower();
+    /// Invalidate the interval
+    void invalidate();
 
-  /// Reset upper bound
-  void reset_upper();
+    /// Reset lower bound
+    void reset_lower();
 
-  /// Reset the interval
-  void reset();
+    /// Reset upper bound
+    void reset_upper();
 
-  /// Set the lower bound
-  void set_lower(value_type from, int policy = range_bound_included);
+    /// Reset the interval
+    void reset();
 
-  /// Set the upper bound
-  void set_upper(value_type to, int policy = range_bound_included);
+    /// Set the lower bound
+    void set_lower(value_type from, range_bound_info_type policy = range_bound_included);
 
-  /// Set the bounds
-  void set(value_type from, value_type to,
-           int from_policy = range_bound_included,
-           int to_policy = range_bound_included);
+    /// Set the upper bound
+    void set_upper(value_type to, range_bound_info_type policy = range_bound_included);
 
-  bool is_lower_bounded() const;
+    /// Set the bounds
+    void set(value_type from, value_type to,
+             range_bound_info_type from_policy = range_bound_included,
+             range_bound_info_type to_policy = range_bound_included);
 
-  bool is_upper_bounded() const;
+    /// Check if lower bound is defined
+    bool is_lower_bounded() const;
 
-  bool is_bounded() const;
+    /// Check if upper bound is defined
+    bool is_upper_bounded() const;
 
-  bool is_lower_included() const;
+    /// Check if the intervalis half-bounded
+    bool is_half_bounded() const;
 
-  bool is_upper_included() const;
+    /// Check if both bounds are defined
+    bool is_bounded() const;
 
-  value_type get_lower_bound() const;
+    /// Check if the interval is degenerated (one unique value)
+    bool is_singleton() const;
 
-  value_type get_upper_bound() const;
+    /// Check if lower bound is included
+    bool is_lower_included() const;
 
-  uint64_t count() const;
+    /// Check if upper bound is included
+    bool is_upper_included() const;
 
-  bool is_empty() const;
+    /// Return lower bound
+    value_type get_lower_bound() const;
 
-  // Collections of 'make-methods' :
+    /// Return upper bound
+    value_type get_upper_bound() const;
 
-  // "];["
-  void make_empty();
+    /// Return the number of values in the interval
+    uint64_t count() const;
 
-  // "[min_int;max_int]"
-  void make_full();
+    /// Check if interval is empty
+    bool is_empty() const;
 
-  // "[0;max_int]"
-  void make_full_positive();
+    // Collections of 'make-methods' :
 
-  // "[min_int;0]"
-  void make_full_negative();
+    /// Build an empty interval
+    // "(0,0)"
+    void make_empty();
 
-  // "[lower;[" or "]lower;[
-  void make_upper_unbounded(value_type from, bool inclusive = true);
+    /// Build a fully bounded interval
+    // "[min_int,max_int]"
+    void make_full();
 
-  // "];upper]" or "];upper["
-  void make_lower_unbounded(value_type to, bool inclusive = true);
+    /// Build a fully bounded positive interval starting at 0
+    // "[0,max_int]"
+    void make_full_positive();
 
-  // "]lower;upper]" or "]lower;upper["
-  // "[lower;upper]" or "[lower;upper["
-  void make_bounded(value_type from, value_type to,
-                    bool lower_included = true,
-                    bool upper_included = true);
+    /// Build a fully bounded  negative interval ending at 0
+    // "[min_int,0]"
+    void make_full_negative();
 
-  bool has(value_type value) const;
+    /// Build a half bounded interval with no upper bound
+    // "[lower,)" or "(lower,)
+    void make_upper_unbounded(value_type from, bool inclusive = true);
 
-  void dump(std::ostream& out = std::clog) const;
+    /// Build a half bounded interval with no lower bound
+    // "(,upper]" or "(,upper)"
+    void make_lower_unbounded(value_type to, bool inclusive = true);
 
-  friend std::ostream& operator<<(std::ostream& out,
-                                  const integer_range& a_range);
+    /// Build a fully bounded interval with specific lower and upper bounds
+    // "(lower,upper]" or "(lower,upper)"
+    // "[lower,upper]" or "[lower,upper)"
+    void make_bounded(value_type from, value_type to,
+                      bool lower_included = true,
+                      bool upper_included = true);
 
-  value_type begin() const;
+    /// Check if a value belongs to the interval
+    bool has(value_type value) const;
 
-  value_type end() const;
+    /// Check if an integer interval belongs to the interval
+    bool has(const integer_range & ir) const;
 
-  value_type first() const;
+    /// Basic print
+    void dump(std::ostream& out = std::clog) const;
 
-  value_type last() const;
+    /// Print operator
+    friend std::ostream& operator<<(std::ostream& out,
+                                    const integer_range& a_range);
 
- private:
-  int8_t     lower_flag_;
-  value_type lower_;
-  int8_t     upper_flag_;
-  value_type upper_;
-};
+    /// Input operator
+    friend std::istream& operator>>(std::istream& in,
+                                    integer_range& a_range);
 
+    /// Return the first value from the fully bounded interval
+    value_type begin() const;
+
+    /// Return the past-the-end value (not belonging) from the fully bounded interval
+    value_type end() const;
+
+    /// Return the first value belonging to the half lower bounded interval
+    value_type first() const;
+
+    /// Return the last value belonging to the half upper bounded interval
+    value_type last() const;
+
+    /// Compare intervals
+    int compare(const integer_range& a_range) const;
+
+    /// Comparison operator
+    bool operator<(const integer_range& a_range) const;
+
+    /// Comparison operator
+    bool operator>(const integer_range& a_range) const;
+
+    /// Comparison operator
+    bool operator==(const integer_range& a_range) const;
+
+    /// Build the associated canonical interval (with bounds flagged as included)
+    void make_canonical(integer_range& a_range) const;
+
+    /// Check intersect with another interval and build the resulting intersection interval
+    bool intersect(const integer_range& a_range, integer_range& a_inter) const;
+
+    /// Check intersect with another interval
+    bool intersect(const integer_range& a_range) const;
+
+  private:
+    range_bound_info_type lower_flag_; //!< The flag associated to the lower bound
+    value_type            lower_;      //!< The lower bound
+    range_bound_info_type upper_flag_; //!< The flag associated to the upper bound
+    value_type            upper_;      //!< The upper bound
+  };
 
 } // end of namespace datatools
 
