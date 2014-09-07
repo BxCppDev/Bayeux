@@ -104,11 +104,11 @@ namespace materials {
 
   private:
 
-    bool             _owned_;       /// Flag indicating if the pointer to the element or material instance should be deleted
-    const element *  _elt_ptr_;     /// Pointer to the element instance
-    const material * _mat_ptr_;     /// Pointer to the material instance
-    double           _weight_;      /// Weight
-    int              _nb_of_atoms_; /// Number of atoms
+    bool             _owned_;       //!< Flag indicating if the pointer to the element or material instance should be deleted
+    const element *  _elt_ptr_;     //!< Pointer to the element instance
+    const material * _mat_ptr_;     //!< Pointer to the material instance
+    double           _weight_;      //!< Weight
+    int              _nb_of_atoms_; //!< Number of atoms
 
   };
 
@@ -121,25 +121,38 @@ namespace materials {
 
   public:
 
+    /// \brief State of the material
+    enum state_type {
+      STATE_UNKNOWN = 0, //!< Unknown state
+      STATE_GAS     = 1, //!< Gas
+      STATE_LIQUID  = 2, //!< Liquid
+      STATE_SOLID   = 3  //!< Solid
+    };
+
+    /// Return label associated to a state value
+    static std::string state_to_label(state_type);
+
+    /// Return state value associated to a label
+    static state_type label_to_state(const std::string &);
+
     /// \brief Define the proportion units :
     /*! KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
      */
-    enum proportion_unit_type
-      {
-        KP_UNDEFINED    = -1, /// Undefined
-        KP_ATOM         =  0, /// Proportion by number of atoms
-        NUMBER_OF_ATOMS =  0, /// Proportion by number of atoms
-        KP_MASS         =  1, /// Proportion by fraction of mass
-        FRACTION_MASS   =  1, /// Proportion by fraction of mass
-        KP_ZA           =  2, /// Proportion by mean Z, A
-        MEAN_ZA         =  2  /// Proportion by mean Z, A
-      };
+    enum proportion_unit_type {
+      KP_UNDEFINED    = -1, //!< Undefined
+      KP_ATOM         =  0, //!< Proportion by number of atoms
+      NUMBER_OF_ATOMS =  0, //!< Proportion by number of atoms
+      KP_MASS         =  1, //!< Proportion by fraction of mass
+      FRACTION_MASS   =  1, //!< Proportion by fraction of mass
+      KP_ZA           =  2, //!< Proportion by mean Z, A
+      MEAN_ZA         =  2  //!< Proportion by mean Z, A
+    };
 
     /// \brief Build flags
     enum build_flag_type {
-      BF_MASS_DATA  = datatools::bit_mask::bit00, /// Extract mass excess and mass from tabulated isotopes
-      BF_LOCK       = datatools::bit_mask::bit31  /// Lock after building
-     };
+      BF_MASS_DATA  = datatools::bit_mask::bit00, //!< Extract mass excess and mass from tabulated isotopes
+      BF_LOCK       = datatools::bit_mask::bit31  //!< Lock after building
+    };
 
     /// Default density unit
     static double g_per_cm3();
@@ -189,11 +202,41 @@ namespace materials {
     /// Set the mean Z and A
     void set_mean_z_a(double z_, double a_);
 
+    /// Check state
+    bool has_state() const;
+
+    /// Set the state
+    void set_state(state_type state_);
+
+    /// Return the state
+    state_type get_state() const;
+
+    /// Check density
+    bool has_density() const;
+
     /// Return the density of the material
     double get_density() const;
 
     /// Set the density of the material
     void set_density(double);
+
+    /// Check if pressure is defined
+    bool has_pressure() const;
+
+    /// Set the pressure of the material
+    void set_pressure(double);
+
+    /// Return the pressure of the material
+    double get_pressure() const;
+
+    /// Check if temperature is defined
+    bool has_temperature() const;
+
+    /// Set the temperature of the material
+    void set_temperature(double);
+
+    /// Return the pressure of the material
+    double get_temperature() const;
 
     ///  Add an element with weight in KP_MASS proportion unit
     void add_element_by_mass(const element & elt_ref_ , double weight_  , bool owned_ = false);
@@ -261,14 +304,17 @@ namespace materials {
 
   private:
 
-    bool        _locked_;  /// boolean flag : true when composition is validated & derived properties are computed
-    std::string _name_;    /// Name
-    double      _density_; /// Density
-    double      _mean_z_;  /// Mean atomic number
-    double      _mean_a_;  /// Mean mass number in g/mol
-    datatools::properties _properties_;      /// Auxiliary properties
-    proportion_unit_type  _proportion_unit_; /// KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
-    composition_map_type  _composition_;     /// Composition of the material [std::map<string, compound_entry>]
+    bool        _locked_;  //!< boolean flag : true when composition is validated & derived properties are computed
+    std::string _name_;    //!< Name
+    double      _density_; //!< Density
+    state_type  _state_; //!< State
+    double      _pressure_; //!< Pressure
+    double      _temperature_; //!< Temperature
+    double      _mean_z_;  //!< Mean atomic number
+    double      _mean_a_;  //!< Mean mass number in g/mol
+    datatools::properties _properties_;      //!< Auxiliary properties
+    proportion_unit_type  _proportion_unit_; //!< KP_ATOM (number of atoms by molecule) or KP_MASS (% mass)
+    composition_map_type  _composition_;     //!< Composition of the material [std::map<string, compound_entry>]
 
   };
 

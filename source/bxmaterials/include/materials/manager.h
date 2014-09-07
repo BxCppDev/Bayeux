@@ -50,6 +50,9 @@ namespace materials {
   {
   public:
 
+    /// Validate a name for isotope, element or material with respect to forseen GDML export
+    static bool validate_name_for_gdml(const std::string & candidate_);
+
     /// Check initialization flag
     bool is_initialized () const;
 

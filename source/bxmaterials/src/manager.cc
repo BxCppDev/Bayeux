@@ -7,7 +7,8 @@
 #include <stdexcept>
 #include <sstream>
 
-// Datatools:
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 
@@ -19,6 +20,43 @@
 #include <materials/factory.h>
 
 namespace materials {
+
+  // static
+  bool manager::validate_name_for_gdml(const std::string & candidate_)
+  {
+    /* Using some 'column' (:)  in a name is not allowed due
+     * because of GDML/XML restriction on the possible names
+     * for isotopes, elements and materials. So here, as '::'
+     * underscore is used to defined a namespace-like scope for
+     * names, we allow double column ('::') in names but it will
+     * be transformed in '__' before to be used in GDML. However
+     * this approach has consequences:
+     *
+     * Examples:
+     * a)  "aaaa::bbbb" will be transformed in "aaaa__bbbb" in GDML
+     *     then converted back to "aaaa::bbbb" in the Geant4 engine.
+     * b)  "aaaa__bbbb" will be preserved as is ("aaaa__bbbb") in GDML
+     *     but converted back to "aaaa::bbbb" in the Geant4 engine, which
+     *     doesn't match the original name.
+     * c)  "aaaa_::bbbb" will be preserved as is ("aaaa___bbbb") in GDML
+     *     but converted back to "aaaa::_bbbb" in the Geant4 engine, which
+     *     doesn't match the original names.
+     *
+     * Also note that Geant4 GDML reader does not handle properly names
+     * with the '0x' tag in it (it cuts the original names).
+     *
+     * d) "water10xenon2" will be cut as "water1", possible colliding
+     *     with another name being "water1" name or "water30xenon2".
+     *
+     */
+    std::cerr << "DEVEL: candidate='" << candidate_ << "'" << std::endl;
+    if (candidate_.find("__") != std::string::npos) return false;
+    if (candidate_.find(":::") != std::string::npos) return false;
+    if (candidate_.find("_:") != std::string::npos) return false;
+    if (candidate_.find("0x") != std::string::npos) return false;
+    // if (candidate_.find(":_")!= std::string::npos) return false;
+    return true;
+  }
 
   bool manager::is_initialized () const
   {
@@ -243,6 +281,10 @@ namespace materials {
 
       DT_LOG_DEBUG(_logging_priority_, "Load name = '" << name << "'");
       DT_LOG_DEBUG(_logging_priority_, "Load type = '" << type << "'");
+
+      DT_THROW_IF (!manager::validate_name_for_gdml(name), std::logic_error,
+                   "Proposed name '" << name << "' is not supported for GDML export !");
+
       if (type == "isotope") {
         DT_THROW_IF (_isotopes_.find (name) != _isotopes_.end (),
                      std::logic_error,

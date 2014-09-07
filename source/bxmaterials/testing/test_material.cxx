@@ -6,6 +6,10 @@
 #include <string>
 #include <exception>
 
+// Third Party:
+// - Bayeux/datatools:
+#include <datatools/clhep_units.h>
+
 // This project:
 #include <materials/isotope.h>
 #include <materials/element.h>
@@ -75,8 +79,9 @@ int main (int /* argc */, char ** /* argv_ */)
     // Add locked elements by number of atoms:
     mat_H2O.add_element_by_nb_of_atoms(elt_H, 2);
     mat_H2O.add_element_by_nb_of_atoms(elt_O, 1);
-    mat_H2O.grab_properties().store("state", "liquid");
+    mat_H2O.set_state(materials::material::STATE_LIQUID);
     mat_H2O.set_density(1.0 * materials::material::g_per_cm3());
+    mat_H2O.set_temperature(300.0 * CLHEP::kelvin);
     // Lock it !
     mat_H2O.build(materials::element::BF_LOCK);
     mat_H2O.tree_dump(std::clog, "First material (H2O) : ");
@@ -87,7 +92,7 @@ int main (int /* argc */, char ** /* argv_ */)
     // Add locked compounds by fraction mass:
     mat_borated_water.add_element_by_mass(elt_B, boron_mass_concentration);
     mat_borated_water.add_material_by_mass(mat_H2O, 1. - boron_mass_concentration);
-    mat_borated_water.grab_properties().store("state", "liquid");
+    mat_borated_water.set_state(materials::material::STATE_LIQUID);
     mat_borated_water.set_density(1.16 * materials::material::g_per_cm3());
     mat_borated_water.build(materials::material::BF_LOCK);
     mat_borated_water.tree_dump(std::clog, "2nd material Borated water : ");
@@ -95,9 +100,10 @@ int main (int /* argc */, char ** /* argv_ */)
     materials::material mat_diamond;
     mat_diamond.set_name("Diamond");
     // Defined by mean Z and A:
+    mat_diamond.set_state(materials::material::STATE_SOLID);
     mat_diamond.set_mean_z_a(6.0, 12.0);
     mat_diamond.set_density(3.517 * materials::material::g_per_cm3());
-    mat_diamond.grab_properties().store("state", "solid");
+    mat_diamond.set_pressure(1.0 * CLHEP::bar);
     mat_diamond.build(materials::material::BF_LOCK);
     mat_diamond.tree_dump(std::clog, "3rd material Diamond : ");
 

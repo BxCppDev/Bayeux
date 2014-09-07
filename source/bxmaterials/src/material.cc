@@ -25,6 +25,27 @@
 
 namespace materials {
 
+  // static
+  std::string material::state_to_label(state_type state_)
+  {
+    switch(state_) {
+    case STATE_GAS    : return "gas";
+    case STATE_LIQUID : return "liquid";
+    case STATE_SOLID  : return "solid";
+    default: break;
+    }
+    return "";
+  }
+
+  // static
+  material::state_type material::label_to_state(const std::string & label_)
+  {
+    if (label_ == state_to_label(STATE_GAS)) return STATE_GAS;
+    if (label_ == state_to_label(STATE_LIQUID)) return STATE_LIQUID;
+    if (label_ == state_to_label(STATE_SOLID)) return STATE_SOLID;
+    return STATE_UNKNOWN;
+  }
+
   double material::g_per_cm3()
   {
     return CLHEP::g / CLHEP::cm3;
@@ -169,9 +190,11 @@ namespace materials {
 
   void material::_set_defaults()
   {
-    _locked_ = false;
     _name_   = "";
     datatools::invalidate(_density_);
+    _state_ = STATE_UNKNOWN;
+    datatools::invalidate(_pressure_);
+    datatools::invalidate(_temperature_);
     datatools::invalidate(_mean_z_);
     datatools::invalidate(_mean_a_);
     _proportion_unit_ = KP_UNDEFINED;
@@ -200,28 +223,24 @@ namespace materials {
 
   material::material()
   {
-    _name_ = "";
-    _proportion_unit_ = KP_UNDEFINED;
     _locked_ = false;
-    _density_ = -1.0 * g_per_cm3();
-    _mean_z_ = -1.0;
-    _mean_a_ = -1.0;
+    _set_defaults();
     return;
   }
 
   material::material(const std::string & name_)
   {
-    set_name(name_);
-    _density_ = -1.0 * g_per_cm3();
     _locked_ = false;
+    _set_defaults();
+    set_name(name_);
     return;
   }
 
   material::material(const char * name_)
   {
-    set_name(std::string(name_));
-    _density_ = -1.0 * g_per_cm3();
     _locked_ = false;
+    _set_defaults();
+    set_name(std::string(name_));
     return;
   }
 
@@ -249,9 +268,11 @@ namespace materials {
 
   void material::_set_mean_z_(double z_)
   {
-    DT_THROW_IF (z_ <= 0.0,
-                 std::logic_error,
-                 "Invalid value for mean atomic number !");
+    if (datatools::is_valid(z_)) {
+      DT_THROW_IF (z_ <= 0.0,
+                   std::logic_error,
+                   "Invalid value for mean atomic number !");
+    }
     _mean_z_ = z_;
     return;
   }
@@ -263,9 +284,11 @@ namespace materials {
 
   void  material::_set_mean_a_(double a_)
   {
-    DT_THROW_IF (a_ <= 0.0,
-                 std::logic_error,
-                 "Invalid value for mean mass number !");
+    if (datatools::is_valid(a_)) {
+      DT_THROW_IF (a_ <= 0.0,
+                   std::logic_error,
+                   "Invalid value for mean mass number !");
+    }
     _mean_a_ = a_;
     return;
   }
@@ -285,6 +308,27 @@ namespace materials {
     return;
   }
 
+  bool material::has_state() const
+  {
+    return _state_ != STATE_UNKNOWN;
+  }
+
+  void material::set_state(state_type state_)
+  {
+    _state_ = state_;
+    return;
+  }
+
+  material::state_type material::get_state() const
+  {
+    return _state_;
+  }
+
+  bool material::has_density() const
+  {
+    return datatools::is_valid(_density_);
+  }
+
   double material::get_density() const
   {
     return _density_;
@@ -292,10 +336,54 @@ namespace materials {
 
   void material::set_density(double density_)
   {
-    DT_THROW_IF (density_ <= 0.0,
-                 std::logic_error,
-                 "Invalid value for density !");
+    if (datatools::is_valid(density_)) {
+      DT_THROW_IF (density_ <= 0.0,
+                   std::logic_error,
+                   "Invalid value for density !");
+    }
     _density_ = density_;
+    return;
+  }
+
+  bool material::has_pressure() const
+  {
+    return datatools::is_valid(_pressure_);
+  }
+
+  double material::get_pressure() const
+  {
+    return _pressure_;
+  }
+
+  void material::set_pressure(double pressure_)
+  {
+    if (datatools::is_valid(pressure_)) {
+      DT_THROW_IF (pressure_ <= 0.0,
+                   std::logic_error,
+                   "Invalid value for pressure !");
+    }
+    _pressure_ = pressure_;
+    return;
+  }
+
+  bool material::has_temperature() const
+  {
+    return datatools::is_valid(_temperature_);
+  }
+
+  double material::get_temperature() const
+  {
+    return _temperature_;
+  }
+
+  void material::set_temperature(double temperature_)
+  {
+    if (datatools::is_valid(temperature_)) {
+      DT_THROW_IF (temperature_ <= 0.0,
+                   std::logic_error,
+                   "Invalid value for temperature !");
+    }
+    _temperature_ = temperature_;
     return;
   }
 
@@ -453,14 +541,14 @@ namespace materials {
     //devel = true;
     if (devel) std::cerr << "DEVEL: material::build: Entering..." << std::endl;
     DT_THROW_IF (is_locked(),std::logic_error, "Operation not allowed ! Object is locked !");
-    DT_THROW_IF (_density_ <= 0.0, std::logic_error, "Invalid density !");
+    DT_THROW_IF (! datatools::is_valid(_density_), std::logic_error, "Invalid density !");
     if (is_composed_by_mean_z_a()) {
       if (devel) std::cerr << "DEVEL: material::build: by mean Z/A..." << std::endl;
-      DT_THROW_IF (_mean_z_ < 0.0, std::logic_error, "Invalid mean atomic number (Z) !");
-      DT_THROW_IF (_mean_a_ < 0.0, std::logic_error, "Invalid mean mass number (A) !");
+      DT_THROW_IF (! datatools::is_valid(_mean_z_), std::logic_error, "Invalid mean atomic number (Z) !");
+      DT_THROW_IF (! datatools::is_valid(_mean_a_), std::logic_error, "Invalid mean mass number (A) !");
     } else {
       if (devel) std::cerr << "DEVEL: material::build: by composition: " << _composition_.size () << std::endl;
-      DT_THROW_IF(_composition_.size() <= 0,
+      DT_THROW_IF(_composition_.size() == 0,
                   std::logic_error,
                   "Missing compound(s) in the current material ! Not implemented yet !");
       if (is_composed_by_fraction_mass()) {
@@ -561,10 +649,25 @@ namespace materials {
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Name         : \"" << get_name() <<"\"" << std::endl;
+         << "Name         : '" << get_name() << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Density      : " << get_density() / g_per_cm3() << " g/cm3" << std::endl;
+
+    if (has_state()) {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "State        : '" << state_to_label(get_state()) << "'" << std::endl;
+    }
+
+    if (has_pressure()) {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Pressure     : " << get_pressure() / CLHEP::pascal << " Pa" << std::endl;
+    }
+
+    if (has_temperature()) {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Temperature  : " << get_temperature() / CLHEP::kelvin << " K" << std::endl;
+    }
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Composition  : ";
@@ -613,9 +716,9 @@ namespace materials {
             out_ << indent << datatools::i_tree_dumpable::skip_tag << atag;
             if (entry.is_valid()) {
               if (entry.has_element()) {
-                out_  << "Element '" << entry.get_element().get_name ();
+                out_  << "Element  : '" << entry.get_element().get_name ();
               } else if (entry.has_material()) {
-                out_  << "Material '" << entry.get_material().get_name ();
+                out_  << "Material : '" << entry.get_material().get_name ();
               }
               out_ << "'" << " : " << entry.get_weight() << " "
                    << (entry.is_owned()? "(owned)": "(not owned)");

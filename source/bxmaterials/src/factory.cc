@@ -162,13 +162,15 @@ namespace materials {
     //cerr << "DEVEL: factory::create_material: 1 g=" << CLHEP::g << endl;
     //cerr << "DEVEL: factory::create_material: 1 cm3=" << CLHEP::cm3 << endl;
     std::string formula;
-    double temperature = -1.0;
+    double temperature;
+    datatools::invalidate(temperature);
     double temperature_unit = CLHEP::kelvin;
-    double pressure = -1.0;
+    double pressure;
+    datatools::invalidate(pressure);
     double pressure_unit = CLHEP::bar;
     double molar_volume_unit = CLHEP::cm3/CLHEP::mole;
     double molar_concentration_unit = CLHEP::mole/CLHEP::cm3;
-    std::string state = "";
+    std::string state_label = "";
 
     std::vector<std::string> composition_names;
     std::vector<int>    composition_nb_of_atoms;
@@ -276,7 +278,7 @@ namespace materials {
     }
 
     if (config_.has_key("state")) {
-      state = config_.fetch_string("state");
+      state_label = config_.fetch_string("state");
     }
 
     if (build_mode == BM_COMPOSITION) {
@@ -589,16 +591,22 @@ namespace materials {
         matl->grab_properties().store("formula", formula);
       }
 
-      if (! state.empty()) {
-        matl->grab_properties().store("state", state);
+      if (! state_label.empty()) {
+        material::state_type state = material::label_to_state(state_label);
+        DT_THROW_IF (state == material::STATE_UNKNOWN, std::logic_error,
+                     "Invalid state label '" << state_label << "'!");
+        matl->set_state(state);
+        //matl->grab_properties().store("state", state_label);
       }
 
-      if (temperature > 0.0) {
-        matl->grab_properties().store("temperature", temperature);
+      if (datatools::is_valid(temperature)) {
+        matl->set_temperature(temperature);
+        //matl->grab_properties().store("temperature", temperature);
       }
 
-      if (pressure > 0.0) {
-        matl->grab_properties().store("pressure", pressure);
+      if (datatools::is_valid(pressure)) {
+        matl->set_pressure(pressure);
+        //matl->grab_properties().store("pressure", pressure);
       }
 
       if (has_manager()) {
@@ -929,5 +937,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::material,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::materials::material,"materials::material")
-
-// end of factory.cc
