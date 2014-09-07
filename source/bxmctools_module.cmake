@@ -146,6 +146,7 @@ if(Bayeux_WITH_GEANT4)
     ${module_include_dir}/${module_name}/g4/detector_construction.h
     ${module_include_dir}/${module_name}/g4/stepping_action.h
     ${module_include_dir}/${module_name}/g4/sensitive_hit_collection.h
+    ${module_include_dir}/${module_name}/g4/neutrons_physics_constructor.h
 
     ${module_source_dir}/g4/manager_parameters.cc
     ${module_source_dir}/g4/particles_physics_constructor.cc
@@ -171,6 +172,7 @@ if(Bayeux_WITH_GEANT4)
     ${module_source_dir}/g4/primary_generator.cc
     ${module_source_dir}/g4/simulation_module.cc
     ${module_source_dir}/g4/magnetic_field.cc
+    ${module_source_dir}/g4/neutrons_physics_constructor.cc
     )
 
     # - Applications
