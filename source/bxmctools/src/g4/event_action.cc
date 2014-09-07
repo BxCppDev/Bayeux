@@ -1,22 +1,16 @@
-// -*- mode: c++ ; -*-
-/* event_action.cc
- */
 
+// event_action.cc
+
+// Ourselves:
 #include <mctools/g4/event_action.h>
 
-#include <datatools/ioutils.h>
-#include <datatools/properties.ipp>
+// Standard library:
 #include <cstdlib>
 
-#include <mctools/simulated_data.ipp>
-
-#include <mctools/g4/run_action.h>
-#include <mctools/g4/detector_construction.h>
-#include <mctools/g4/simulation_ctrl.h>
-
+// Third party:
+// - Boost:
 #include <boost/algorithm/string/predicate.hpp>
-
-// G4 stuff:
+// - Geant4:
 #include <globals.hh>
 #include <G4ParticleTable.hh>
 #include <G4RunManager.hh>
@@ -26,7 +20,15 @@
 #include <G4Trajectory.hh>
 #include <G4VVisManager.hh>
 #include <G4ios.hh>
+// - Bayeux/datatools:
+#include <datatools/ioutils.h>
+#include <datatools/properties.ipp>
 
+// This project:
+#include <mctools/simulated_data.ipp>
+#include <mctools/g4/run_action.h>
+#include <mctools/g4/detector_construction.h>
+#include <mctools/g4/simulation_ctrl.h>
 #include <mctools/g4/run_action.h>
 #include <mctools/g4/detector_construction.h>
 #include <mctools/g4/sensitive_detector.h>
@@ -183,8 +185,14 @@ namespace mctools {
         }
       }
 
-      if (_run_action_->get_manager ().using_time_stat ()) {
-        _run_action_->grab_manager ().grab_CT_map ()["EA"].start ();
+      // In case the manager record the track history of some previous event,
+      // we clean it:
+      if (_run_action_->get_manager().has_track_history()) {
+        _run_action_->grab_manager().grab_track_history().reset();
+      }
+
+      if (_run_action_->get_manager().using_time_stat ()) {
+        _run_action_->grab_manager().grab_CT_map()["EA"].start();
       }
 
       DT_LOG_TRACE(_logprio(), "Exiting.");

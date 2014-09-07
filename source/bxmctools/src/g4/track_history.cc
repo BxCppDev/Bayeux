@@ -7,11 +7,13 @@
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - bayeux/datatools:
+#include <datatools/exception.h>
+
 namespace mctools {
 
   namespace g4 {
-
-    const int track_history::track_info::TRACK_ID_UNSET = 0;
 
     int track_history::track_info::get_id () const
     {
@@ -105,39 +107,22 @@ namespace mctools {
 
     const track_history::track_info & track_history::get_track_info (const int id_) const
     {
-      if (! has_track_info (id_))
-        {
-          std::ostringstream message;
-          message << "mctools::g4::track_history::get_track_info: "
-                  << "No track with id " << id_ << " has been stored!";
-          throw std::logic_error (message.str ());
-        }
-
+      DT_THROW_IF (! has_track_info(id_), std::logic_error,
+                   "No track with id " << id_ << " has been stored!");
       return _track_infos_.at (id_);
     }
 
     track_history::track_info & track_history::grab_track_info (const int id_)
     {
-      if (! has_track_info (id_))
-        {
-          std::ostringstream message;
-          message << "mctools::g4::track_history::grab_track_info: "
-                  << "No track with id " << id_ << " has been stored!";
-          throw std::logic_error (message.str ());
-        }
-
+      DT_THROW_IF (! has_track_info(id_), std::logic_error,
+                   "No track with id " << id_ << " has been stored!");
       return _track_infos_[id_];
     }
 
     void track_history::add_track_info (const int id_, const track_info & tinfo_)
     {
-      if (has_track_info (id_))
-        {
-          std::ostringstream message;
-          message << "mctools::g4::track_history::grab_track_info: "
-                  << "A track with id '" << id_ << "' already exist!";
-          throw std::logic_error (message.str ());
-        }
+      DT_THROW_IF (has_track_info(id_), std::logic_error,
+                   "A track with id '" << id_ << "' already exist!");
       _track_infos_[id_] = tinfo_;
     }
 
@@ -148,13 +133,13 @@ namespace mctools {
 
     track_history::~track_history ()
     {
-      reset ();
+      reset();
       return;
     }
 
-    void track_history::reset ()
+    void track_history::reset()
     {
-      _track_infos_.clear ();
+      _track_infos_.clear();
       return;
     }
 

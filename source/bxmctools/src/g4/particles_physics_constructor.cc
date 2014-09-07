@@ -416,6 +416,9 @@ namespace mctools {
       return;
     }
 
+    // Extracted from:
+    // G4IonConstructor ion_constructor;
+    // ion_constructor.ConstructParticle();
     void particles_physics_constructor::_ConstructIons ()
     {
       if (_use_light_nuclei_) {
@@ -441,9 +444,6 @@ namespace mctools {
         G4GenericIon::GenericIonDefinition();
       }
 
-      // Extracted from:
-      // G4IonConstructor ion_constructor;
-      // ion_constructor.ConstructParticle();
 
       return;
     }

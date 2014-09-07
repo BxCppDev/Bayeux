@@ -51,7 +51,8 @@ namespace mctools {
       {
       public:
 
-        static const int TRACK_ID_UNSET;
+        /// Undefined Id for a track (parent track Id is 0 for a primary track)
+        static const int TRACK_ID_UNSET = 0;
 
       public:
 
@@ -88,16 +89,17 @@ namespace mctools {
 
       private:
 
-        int         _id_;                   /// G4 particle id
-        int         _parent_id_;            /// G4 parent id (if any)
-        std::string _particle_name_;        /// G4 particle name
-        std::string _creator_process_name_; /// G4 creation process name
-        std::string _creator_sensitive_category_; /// SNG4 sensitive category
+        int         _id_;                   //!< G4 particle id
+        int         _parent_id_;            //!< G4 parent id (if any)
+        std::string _particle_name_;        //!< G4 particle name
+        std::string _creator_process_name_; //!< G4 creation process name
+        std::string _creator_sensitive_category_; //!< SNG4 sensitive category
 
       };
 
     public:
 
+      /// Dictionary type of track info
       typedef std::map<int, track_info> track_info_dict_type;
 
       const track_info_dict_type & get_track_infos () const;
@@ -123,7 +125,7 @@ namespace mctools {
 
     private:
 
-      track_info_dict_type _track_infos_; /// Dictionary of track informations
+      track_info_dict_type _track_infos_; //!< Dictionary of track informations
 
     };
 

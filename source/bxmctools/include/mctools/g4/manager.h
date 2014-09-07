@@ -568,36 +568,36 @@ namespace mctools {
 
 #ifdef G4VIS_USE
       // G4 visualization, if you choose to have it!
-      G4VisManager * _g4_vis_manager_; /// Geant4 visualization manager
+      G4VisManager * _g4_vis_manager_; //!< Geant4 visualization manager
 #endif // G4VIS_USE
 
 
       // A PRNG seed manager :
-      mygsl::prng_seed_manager  _seed_manager_; /// PRNGs' seed manager
+      mygsl::prng_seed_manager  _seed_manager_; //!< PRNGs' seed manager
 
       // A PRNG state manager :
-      mygsl::prng_state_manager _prng_state_manager_; /// Manager for PRNGs' internal states
-      int                       _prng_state_save_modulo_; /// Event number modulo to backup PRNGs' internal states
+      mygsl::prng_state_manager _prng_state_manager_; //!< Manager for PRNGs' internal states
+      int                       _prng_state_save_modulo_; //!< Event number modulo to backup PRNGs' internal states
 
       // Track historical infos :
-      bool          _use_track_history_; /// Flag to activate track history
-      track_history _track_history_; /// Track history data structure
+      bool          _use_track_history_; //!< Flag to activate track history
+      track_history _track_history_; //!< Track history data structure
 
       // User:
-      std::string _input_prng_seeds_file_; /// Input filename for loading of PRNG seeds
-      std::string _output_prng_seeds_file_; /// Output filename for storage of PRNG seeds
-      std::string _input_prng_states_file_; /// Input filename for loading of PRNG internal states
-      std::string _output_prng_states_file_; /// Output filename for storage of PRNG internal states
-      std::string _output_data_file_; /// Output data filename
-      uint32_t    _number_of_events_; /// Number of events to be processed
-      int         _number_of_events_modulo_; /// Event number modulo for progression print
-      std::string _g4_macro_; /// Geant4 macro to be processed
-      int         _g4_tracking_verbosity_; /// Geant 4 tracking verbosity
-      bool        _forbid_private_hits_; /// Flag to disable the storage of MC true hits from 'private' collection of hits
-      bool        _dont_save_no_sensitive_hit_events_; /// Flag to store MC true hits from 'non-sensitive' volumes
-      bool        _use_run_header_footer_; /// Store run header/footer in output file
-      bool        _use_time_stat_; /// Flag to activate CPU time statistics
-      CT_map      _CTs_; /// CPU time statistics
+      std::string _input_prng_seeds_file_; //!< Input filename for loading of PRNG seeds
+      std::string _output_prng_seeds_file_; //!< Output filename for storage of PRNG seeds
+      std::string _input_prng_states_file_; //!< Input filename for loading of PRNG internal states
+      std::string _output_prng_states_file_; //!< Output filename for storage of PRNG internal states
+      std::string _output_data_file_; //!< Output data filename
+      uint32_t    _number_of_events_; //!< Number of events to be processed
+      int         _number_of_events_modulo_; //!< Event number modulo for progression print
+      std::string _g4_macro_; //!< Geant4 macro to be processed
+      int         _g4_tracking_verbosity_; //!< Geant 4 tracking verbosity
+      bool        _forbid_private_hits_; //!< Flag to disable the storage of MC true hits from 'private' collection of hits
+      bool        _dont_save_no_sensitive_hit_events_; //!< Flag to store MC true hits from 'non-sensitive' volumes
+      bool        _use_run_header_footer_; //!< Store run header/footer in output file
+      bool        _use_time_stat_; //!< Flag to activate CPU time statistics
+      CT_map      _CTs_;           //!< CPU time statistics
 
     };
 
