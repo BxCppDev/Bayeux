@@ -185,6 +185,7 @@ namespace mctools {
         }
       }
 
+      // BUGFIX: FM+AC 2014-09-05:
       // In case the manager record the track history of some previous event,
       // we clean it:
       if (_run_action_->get_manager().has_track_history()) {
