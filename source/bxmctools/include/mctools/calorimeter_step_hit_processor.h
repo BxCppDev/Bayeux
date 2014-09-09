@@ -73,16 +73,16 @@ namespace mctools {
     virtual ~calorimeter_step_hit_processor();
 
     /// Main setup routine
-    virtual void initialize (const ::datatools::properties & config_,
-                             ::datatools::service_manager & service_mgr_);
+    virtual void initialize(const ::datatools::properties & config_,
+                            ::datatools::service_manager & service_mgr_);
 
     /// Main processing routine :
-    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                          ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                         ::mctools::simulated_data::hit_handle_collection_type & the_handle_hits);
 
     /// Main processing routine :
-    virtual void process (const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
-                          ::mctools::simulated_data::hit_collection_type & the_plain_hits);
+    virtual void process(const ::mctools::base_step_hit_processor::step_hit_ptr_collection_type & the_base_step_hits,
+                         ::mctools::simulated_data::hit_collection_type & the_plain_hits);
 
     /** Check if a step hit in a candidate for clusterization within
      * the proposed scintillation hit
