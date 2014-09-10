@@ -49,7 +49,6 @@ namespace materials {
      *     with another name being "water1" name or "water30xenon2".
      *
      */
-    std::cerr << "DEVEL: candidate='" << candidate_ << "'" << std::endl;
     if (candidate_.find("__") != std::string::npos) return false;
     if (candidate_.find(":::") != std::string::npos) return false;
     if (candidate_.find("_:") != std::string::npos) return false;
