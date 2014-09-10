@@ -562,7 +562,13 @@ namespace geomtools {
                      << " name=" << '"' << to_html(name_) << '"'
                      << " Z=" << '"';
     materials_stream.precision(15);
-    materials_stream << atomic_number_ << '"' << " >" << endl;
+    materials_stream << atomic_number_ << '"';
+
+    if (!state_label_.empty()) {
+      materials_stream << " state=" << '"' << state_label_ << '"';
+    }
+
+    materials_stream << " >" << endl;
 
     materials_stream << "  <D"
                      << " value=" << '"';
@@ -574,11 +580,7 @@ namespace geomtools {
 
     //>>> Add additional parameters(state/temperature/pressure):
     // see Geant4 source: ./persistency/gdml/src/G4GDMLReadMaterials.cc
-    if (!state_label_.empty()) {
-      materials_stream << "  <state"
-                       << " value=" << '"' << state_label_ << '"'
-                       << " />" << endl;
-    }
+    /*
     if (datatools::is_valid(temperature_)) {
       materials_stream << "  <T"
                        << " value=" << '"';
@@ -597,6 +599,7 @@ namespace geomtools {
                        << " unit=" << '"' << "Pa" << '"'
                        << " />" << endl;
     }
+    */
     //<<<
 
     materials_stream << "  <atom"
@@ -623,9 +626,17 @@ namespace geomtools {
   {
     ostringstream materials_stream;
     materials_stream << "<material"
-                     << " name=" << '"' << to_html(name_) << '"'
-                     << " formula=" << '"' << formula_ << '"'
-                     << " >" << endl;
+                     << " name=" << '"' << to_html(name_) << '"';
+
+    if (!formula_.empty()) {
+      materials_stream << " formula=" << '"' << formula_ << '"';
+    }
+
+    if (!state_label_.empty()) {
+      materials_stream << " state=" << '"' << state_label_ << '"';
+    }
+
+    materials_stream << " >" << endl;
 
     materials_stream << "  <D"
                      << " value=" << '"';
@@ -637,11 +648,7 @@ namespace geomtools {
 
     //>>> Add additional parameters(state/temperature/pressure):
     // see Geant4 source: ./persistency/gdml/src/G4GDMLReadMaterials.cc
-    if (!state_label_.empty()) {
-      materials_stream << "  <state"
-                       << " value=" << '"' << state_label_ << '"'
-                       << " />" << endl;
-    }
+    /*
     if (datatools::is_valid(temperature_)) {
       materials_stream << "  <T"
                        << " value=" << '"';
@@ -660,6 +667,7 @@ namespace geomtools {
                        << " unit=" << '"' << "Pa" << '"'
                        << " />" << endl;
     }
+    */
     //<<<
 
     double s = 0.0;
@@ -700,9 +708,17 @@ namespace geomtools {
   {
     ostringstream materials_stream;
     materials_stream << "<material"
-                     << " name=" << '"' << to_html(name_) << '"'
-                     << " formula=" << '"' << formula_ << '"'
-                     << " >" << endl;
+                     << " name=" << '"' << to_html(name_) << '"';
+
+    if (!formula_.empty()) {
+      materials_stream << " formula=" << '"' << formula_ << '"';
+    }
+
+    if (!state_label_.empty()) {
+      materials_stream << " state=" << '"' << state_label_ << '"';
+    }
+
+    materials_stream << " >" << endl;
 
     materials_stream << "  <D"
                      << " value=" << '"';
@@ -714,11 +730,7 @@ namespace geomtools {
 
     //>>> Add additional parameters(state/temperature/pressure):
     // see Geant4 source: ./persistency/gdml/src/G4GDMLReadMaterials.cc
-    if (!state_label_.empty()) {
-      materials_stream << "  <state"
-                       << " value=" << '"' << state_label_ << '"'
-                       << " />" << endl;
-    }
+    /*
     if (datatools::is_valid(temperature_)) {
       materials_stream << "  <T"
                        << " value=" << '"';
@@ -737,6 +749,7 @@ namespace geomtools {
                        << " unit=" << '"' << "Pa" << '"'
                        << " />" << endl;
     }
+    */
     //<<<
 
     for(map<string, size_t>::const_iterator i = composites_.begin();
