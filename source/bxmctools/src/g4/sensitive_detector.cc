@@ -669,8 +669,8 @@ namespace mctools {
       DT_LOG_TRACE(_logprio(),"Hit count = " << _used_hits_count_);
 
       const double energy_deposit = step_->GetTotalEnergyDeposit();
-      bool quit = true;
       if (energy_deposit <= 1.e-10 * CLHEP::keV){
+        bool quit = true;
         if (step_->GetTrack()->GetDefinition() == G4Gamma::GammaDefinition()) {
           if (_track_gamma_) quit = false;
         } else if (step_->GetTrack()->GetDefinition() == G4Neutron::NeutronDefinition()) {
@@ -680,7 +680,11 @@ namespace mctools {
         } else if (!_drop_zero_energy_deposit_steps_) {
           quit = false;
         }
-
+        if (quit) {
+          // We decide not to process this hit further because it is not interesting
+          DT_LOG_TRACE(_logprio(),"Exiting.");
+          return false;
+        }
       }
 
       if (_manager_->using_time_stat()) {
@@ -775,12 +779,6 @@ namespace mctools {
         } // _record_delta_ray_from_alpha_
 
       } // if (_using_track_infos)
-
-      if (quit) {
-        // We decide not to process this hit further because it is not interesting
-        DT_LOG_TRACE(_logprio(),"Exiting.");
-        return false;
-      }
 
       if (_used_hits_count_ ==(int) _hits_buffer_.size()) {
         //unsigned int osize = _hits_buffer.size();
