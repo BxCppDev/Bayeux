@@ -121,11 +121,11 @@ namespace genvtx {
 
     private:
 
-      const geomtools::geom_info * _ginfo_; //!< Handle to a geometry information
-      const geomtools::geom_id * _gid_; //!< Handle to a geometry Id
-      const geomtools::logical_volume * _log_volume_; //!< Handle to a logical volume
-      const geomtools::vector_3d * _local_candidate_vertex_; //!< Handle to the candidate vertex to be validated in the logical volume's frame
+      const geomtools::geom_info * _ginfo_;                   //!< Handle to a geometry information
+      const geomtools::geom_id * _gid_;                       //!< Handle to a geometry Id
+      const geomtools::logical_volume * _log_volume_;         //!< Handle to a logical volume
       const geomtools::vector_3d * _global_candidate_vertex_; //!< Handle to the candidate vertex to be validated in the global frame
+      geomtools::vector_3d _local_candidate_vertex_;          //!< Candidate vertex to be validated in the logical volume's frame
     };
 
     /// The default maximum number of tries

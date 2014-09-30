@@ -44,8 +44,8 @@ namespace genvtx {
     _ginfo_ = 0;
     _gid_ = 0;
     _log_volume_ = 0;
-    _local_candidate_vertex_ = 0;
     _global_candidate_vertex_ = 0;
+    geomtools::invalidate(_local_candidate_vertex_);
     return;
   }
 
@@ -54,8 +54,8 @@ namespace genvtx {
     _ginfo_ = 0;
     _gid_ = 0;
     _log_volume_ = 0;
-    _local_candidate_vertex_ = 0;
     _global_candidate_vertex_ = 0;
+    geomtools::invalidate(_local_candidate_vertex_);
     return;
   }
 
@@ -76,7 +76,7 @@ namespace genvtx {
 
   bool vertex_validation::geometry_context::has_local_candidate_vertex() const
   {
-    return _local_candidate_vertex_ != 0;
+    return geomtools::is_valid(_local_candidate_vertex_);
   }
 
   bool vertex_validation::geometry_context::has_global_candidate_vertex() const
@@ -134,7 +134,7 @@ namespace genvtx {
 
   void vertex_validation::geometry_context::set_local_candidate_vertex(const geomtools::vector_3d & vtx_)
   {
-    _local_candidate_vertex_ = &vtx_;
+    _local_candidate_vertex_ = vtx_;
     return;
   }
 
@@ -143,7 +143,7 @@ namespace genvtx {
   {
     DT_THROW_IF(!has_local_candidate_vertex(), std::runtime_error,
                 "Missing local candidate vertex!");
-    return *_local_candidate_vertex_;
+    return _local_candidate_vertex_;
   }
 
   void vertex_validation::geometry_context::set_global_candidate_vertex(const geomtools::vector_3d & vtx_)
