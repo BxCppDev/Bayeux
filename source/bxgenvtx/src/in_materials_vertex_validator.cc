@@ -88,8 +88,8 @@ namespace genvtx {
   }
 
   void in_materials_vertex_validator::initialize(const datatools::properties & config_,
-                                                     datatools::service_manager &,
-                                                     cuts::cut_handle_dict_type &)
+                                                 datatools::service_manager &,
+                                                 cuts::cut_handle_dict_type &)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -144,6 +144,7 @@ namespace genvtx {
         = this->get_user_data<vertex_validation::geometry_context>();
       const geomtools::logical_volume & logvol = gc.get_logical_volume();
       const geomtools::vector_3d & vtx = gc.get_local_candidate_vertex();
+      DT_LOG_TRACE(get_logging_priority(), "Local candidate vertex = " << vtx);
       int current_depth = 0;
       const geomtools::logical_volume * current_logvol = &logvol;
       geomtools::vector_3d current_vtx = vtx;
@@ -171,6 +172,8 @@ namespace genvtx {
             only_parent = false;
             // status = cuts::SELECTION_REJECTED;
           }
+          DT_LOG_TRACE(get_logging_priority(),
+                       "Checking material '" << current_logvol->get_material_ref() << "' ...");
           if (only_parent) {
             status = cuts::SELECTION_ACCEPTED;
             if (! has_material(current_logvol->get_material_ref())) {
