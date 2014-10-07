@@ -9,8 +9,7 @@ endif()
 include_directories(${Bayeux_INCLUDE_DIRS})
 
 add_executable(bxmctoolsg4 bxmctoolsg4.cc)
-target_link_libraries(bxmctoolsg4 ${Bayeux_LIBRARIES} ${Bayeux_MCTOOLS_GEANT4_LIBRARY})
+target_link_libraries(bxmctoolsg4 ${Bayeux_MCTOOLS_GEANT4_LIBRARY} ${Bayeux_LIBRARIES})
 
 enable_testing()
 add_test(runcheck bxmctoolsg4)
-
