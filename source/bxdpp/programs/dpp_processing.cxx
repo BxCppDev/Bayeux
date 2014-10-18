@@ -65,13 +65,13 @@ const std::string ui::APP_NAME = "bxdpp_processing";
 
 int main (int argc_, char ** argv_)
 {
+  int error_code = EXIT_SUCCESS;
 #if DPP_STANDALONE == 1
   DATATOOLS_INIT_MAIN(argc_, argv_);
 #else
   BAYEUX_INIT_MAIN(argc_, argv_);
 #endif // DPP_STANDALONE == 1
 
-  int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   namespace po = boost::program_options;
   po::options_description opts ("Allowed options");
