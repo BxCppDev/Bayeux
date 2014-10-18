@@ -5,13 +5,17 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
 #include <fstream>
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
+// - Bayeux/datatools:
 #include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
@@ -32,7 +36,20 @@ int main(int /* argc_ */ , char ** /* argv_ */)
       srand48(seed48);
 
       mygsl::histogram_2d h(xbins, 0.0, 1.0, ybins, 0.0, 1.0);
+      /*
+Gnuplot:
 
+ set size square
+ set title "test_histogram_2d"
+ set xrange [0:1]
+ set yrange [0:1]
+ set samples 10,10
+ set pm3d map
+ set palette defined (0 "white", 0.01 "blue", 0.02 "green", 0.04 "red")
+ splot 'test_histogram_2d.data' u (0.5*(($1)+($2))):(0.5*(($3)+($4))):5 notitle
+ splot 'test_histogram_2d.data' u 1:3:5 notitle
+
+       */
       {
         std::clog << "NOTICE: h fill" << std::endl;
 
@@ -108,5 +125,3 @@ int main(int /* argc_ */ , char ** /* argv_ */)
     }
   return (EXIT_SUCCESS);
 }
-
-// end of test_histogram_2d.cxx

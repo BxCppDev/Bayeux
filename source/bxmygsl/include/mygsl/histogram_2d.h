@@ -193,7 +193,9 @@ namespace mygsl {
 
     void from_stream (std::istream &);
 
-    void print (std::ostream & , int precision_ = 9) const;
+    void print (std::ostream & ,
+                int precision_ = 9,
+                bool x_skip_line_ = true) const;
 
     void dump (std::ostream & , int precision_ = 9) const;
 

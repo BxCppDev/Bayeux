@@ -746,7 +746,7 @@ namespace mygsl {
     return;
   }
 
-  void histogram_2d::print (std::ostream & out_ , int precision_) const
+  void histogram_2d::print (std::ostream & out_ , int precision_, bool x_skip_line_) const
   {
     out_.precision (precision_);
     out_ << "#@mygsl::histogram_2d::nxbins=" << _h_->nx << std::endl;
@@ -767,7 +767,11 @@ namespace mygsl {
               << _h_->bin[i * _h_->ny + j]
               << std::endl;
       }
+      if (x_skip_line_) {
+        out_ << std::endl;
+      }
     }
+    out_ << std::endl;
     return;
   }
 
