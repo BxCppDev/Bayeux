@@ -219,7 +219,7 @@ namespace geomtools {
     datatools::properties _parameters_;   //!< The collection of auxiliary parameters
     bool                  _own_shape_;    //!< Shape owner flag
     const i_shape_3d *    _shape_;        //!< Shape handle
-    physicals_col_type    _physicals_;    //!< Dictionnary of daughter volumes
+    physicals_col_type    _physicals_;    //!< Dictionary of daughter volumes
     bool                  _abstract_;     //!< Abstract flag
 
     // Experimental:
