@@ -168,7 +168,9 @@ namespace mygsl {
         unsigned int useed = 0;
         FILE *urandom;
         urandom = fopen (dev_urandom.c_str (), "r");
-        fread (&useed, sizeof (useed), 1, urandom);
+        size_t sz = fread (&useed, sizeof(useed), 1, urandom);
+        DT_THROW_IF(sz != 1, std::runtime_error,
+                    "fread returned unexpected number of items (sz=" << sz << " != " << 1 << ") !");
         seed += (int32_t) useed & 0x7FFFFFFF;
         fclose (urandom);
         DT_LOG_TRACE (get_logging_priority (), "seed=" << seed << " (from '/dev/urandom')");
