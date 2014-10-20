@@ -1,10 +1,11 @@
 /// \file genbb_help/single_particle_generator.h
-/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :  Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *              Arnaud Chapon <chapon@lpccaen.in2p3.fr>
  * Creation date: 2010-10-03
- * Last modified: 2013-02-26
+ * Last modified: 2014-10-20
  *
  * License:
- * Copyright 2007-2013 F. Mauger
+ * Copyright 2007-2014 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,8 @@ namespace genbb {
       MODE_MONOKINETIC     =  0,
       MODE_GAUSSIAN_ENERGY =  1,
       MODE_ENERGY_RANGE    =  2,
-      MODE_SPECTRUM        =  3,
+      MODE_MULTI_RAYS      =  3,
+      MODE_SPECTRUM        =  4,
       MODE_DEFAULT         =  MODE_MONOKINETIC
     };
 
@@ -79,10 +81,16 @@ namespace genbb {
     };
 
     struct ion_data_type {
-      int Z; /// Atomic number
-      int A; /// Number of nucleons
-      double Estar; /// Excitation energy
-      int Q; /// Ion charge
+      int Z; //!< Atomic number
+      int A; //!< Number of nucleons
+      double Estar; //!< Excitation energy
+      int Q; //!< Ion charge
+    };
+
+    struct multi_rays_record_type {
+      double energy;      //!< Monokinetic energy of the ray
+      double probability; //!< Probability of the ray
+      double cumul_probability; //!< Cumulative probability
     };
 
   public:
@@ -113,6 +121,12 @@ namespace genbb {
 
     int get_mode() const;
     void set_mode(int);
+    bool is_mode_valid() const;
+    bool is_mode_monokinetic() const;
+    bool is_mode_gaussian_energy() const;
+    bool is_mode_energy_range() const;
+    bool is_mode_multi_rays() const;
+    bool is_mode_spectrum() const;
 
     double get_mean_energy() const;
     double get_sigma_energy() const;
@@ -121,6 +135,11 @@ namespace genbb {
     double get_min_energy() const;
     double get_max_energy() const;
     void set_energy_range(double min_, double max_);
+
+    // void set_energy_list(const std::vector<double> en_);
+    // void set_probability_list(const std::vector<double> prob_);
+    void add_multi_ray(double energy_, double prob_);
+
 
     void set_energy_spectrum_filename(const std::string & filename_);
 
@@ -183,6 +202,8 @@ namespace genbb {
     double _sigma_energy_;
     double _min_energy_;
     double _max_energy_;
+
+    std::vector<multi_rays_record_type> _multi_rays_records_; //!< Records for the multi-ray mode
 
     int    _spectrum_mode_;
     std::string _spectrum_interpolation_name_;

@@ -63,7 +63,7 @@ namespace genbb {
 
   void single_particle_generator::set_randomized_direction (bool rd_)
   {
-    DT_THROW_IF(_initialized_,logic_error, "Operation prohibited ! Object is locked/initialized !");
+    DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Object is locked/initialized !");
     if (rd_) {
       _direction_mode_ = DIRECTION_RANDOMIZED;
     } else {
@@ -239,9 +239,34 @@ namespace genbb {
     return;
   }
 
-  double single_particle_generator::get_mean_energy () const
+  bool single_particle_generator::is_mode_valid() const
   {
-    return _mean_energy_;
+    return _mode_ != MODE_INVALID;
+  }
+
+  bool single_particle_generator::is_mode_monokinetic() const
+  {
+    return _mode_ == MODE_MONOKINETIC;
+  }
+
+  bool single_particle_generator::is_mode_gaussian_energy() const
+  {
+    return _mode_ == MODE_GAUSSIAN_ENERGY;
+  }
+
+  bool single_particle_generator::is_mode_energy_range() const
+  {
+    return _mode_ == MODE_ENERGY_RANGE;
+  }
+
+  bool single_particle_generator::is_mode_multi_rays() const
+  {
+    return _mode_ == MODE_MULTI_RAYS;
+  }
+
+  bool single_particle_generator::is_mode_spectrum() const
+  {
+    return _mode_ == MODE_SPECTRUM;
   }
 
   void single_particle_generator::set_mean_energy (double mean_, double sigma_)
@@ -254,15 +279,14 @@ namespace genbb {
     return;
   }
 
+  double single_particle_generator::get_mean_energy () const
+  {
+    return _mean_energy_;
+  }
+
   double single_particle_generator::get_sigma_energy () const
   {
     return _sigma_energy_;
-  }
-
-  double
-  single_particle_generator::get_min_energy () const
-  {
-    return _min_energy_;
   }
 
   void single_particle_generator::set_energy_range (double min_, double max_)
@@ -275,10 +299,60 @@ namespace genbb {
     return;
   }
 
+  double single_particle_generator::get_min_energy () const
+  {
+    return _min_energy_;
+  }
+
   double single_particle_generator::get_max_energy () const
   {
     return _max_energy_;
   }
+
+
+  void single_particle_generator::add_multi_ray(double energy_, double prob_)
+  {
+    DT_THROW_IF(_initialized_,logic_error, "Operation prohibited ! Object is locked/initialized !");
+    if (!is_mode_valid()) {
+      set_mode(MODE_MULTI_RAYS);
+    }
+    DT_THROW_IF(!datatools::is_valid(energy_) || energy_ <= 0.0,
+                std::logic_error, "Invalid multi-rays energy !");
+    DT_THROW_IF( !datatools::is_valid(prob_) || prob_ <= 0.0,
+                std::logic_error, "Invalid multi-rays probability !");
+    for (int i = 0; i < _multi_rays_records_.size(); i++) {
+      const multi_rays_record_type & rec = _multi_rays_records_[i];
+      DT_THROW_IF (rec.energy == energy_, std::logic_error,
+                   "Duplicated ray with energy '" << energy_ / CLHEP::keV << "'!");
+    }
+    multi_rays_record_type record;
+    record.energy = energy_;
+    record.probability = prob_;
+    record.cumul_probability = 0.0;
+    _multi_rays_records_.push_back(record);
+    return;
+  }
+
+  // void single_particle_generator::set_energy_list (const std::vector<double> en_)
+  // {
+  //   DT_THROW_IF(_initialized_,logic_error, "Operation prohibited ! Object is locked/initialized !");
+  //   _multi_rays_energies_ = en_;
+  //   std::vector<double>::const_iterator it = en_.begin();
+  //   double min = *it, max = *it;
+  //   while (it < en_.end()) {
+  //     if (*it < min) _min_energy_ = *it;
+  //     else if (*it > max) _max_energy_ = *it;
+  //     it++;
+  //   }
+  //   return;
+  // }
+
+  // void single_particle_generator::set_probability_list (const std::vector<double> prob_)
+  // {
+  //   DT_THROW_IF(_initialized_,logic_error, "Operation prohibited ! Object is locked/initialized !");
+  //   _multi_rays_probabilities_ = prob_;
+  //   return;
+  // }
 
   void single_particle_generator::set_energy_spectrum_filename (const string & filename_)
   {
@@ -306,6 +380,7 @@ namespace genbb {
     _cone_min_angle_ = 0.0 * CLHEP::degree;
     _cone_axis_.set(0.0, 0.0, 1.0);
     _energy_spectrum_filename_.clear();
+    _multi_rays_records_.clear();
     _seed_ = 0;
     return;
   }
@@ -466,6 +541,8 @@ namespace genbb {
       set_mode (MODE_ENERGY_RANGE);
     } else if (mode_str == "monokinetic") {
       set_mode (MODE_MONOKINETIC);
+    } else if (mode_str == "multi_rays") {
+      set_mode (MODE_MULTI_RAYS);
     } else if (mode_str == "spectrum") {
       set_mode (MODE_SPECTRUM);
       _spectrum_mode_ = SPECTRUM_MODE_TABFUNC;
@@ -524,6 +601,48 @@ namespace genbb {
       set_energy_range (min_energy, max_energy);
     }
 
+    if (_mode_ == MODE_MULTI_RAYS) {
+      DT_THROW_IF (! config_.has_key ("multi_rays.energies"), logic_error, "Missing 'multi_rays.energies' property !");
+      DT_THROW_IF (! config_.has_key ("multi_rays.probabilities"), logic_error, "Missing 'multi_rays.probabilities' property !");
+
+      std::vector<double> en;
+      std::vector<double> prob;
+      if (config_.has_key ("multi_rays.energies")) {
+        config_.fetch ("multi_rays.energies", en);
+        if (!config_.has_explicit_unit("multi_rays.energies")) {
+          for (int i = 0; i < en.size(); i++) {
+            en[i] *= energy_unit;
+          }
+        }
+      }
+      if (config_.has_key ("multi_rays.energies")) {
+        config_.fetch ("multi_rays.probabilities", prob);
+      }
+
+      DT_THROW_IF (en.size() != prob.size(), logic_error, "Size of 'multi_rays.energies' and 'multi_rays.probabilities' properties are differents !");
+
+      for (int i = 0; i < (int) en.size(); i++) {
+        add_multi_ray(en[i], prob[i]);
+      }
+
+      // Probability normalization:
+      double prob_sum = 0.0;
+      for (int i = 0; i < (int) _multi_rays_records_.size(); i++) {
+        const multi_rays_record_type & rec = _multi_rays_records_[i];
+        prob_sum += rec.probability;
+      }
+      for (int i = 0; i < (int) _multi_rays_records_.size(); i++) {
+        multi_rays_record_type & rec = _multi_rays_records_[i];
+        rec.probability /= prob_sum;
+        if (i == 0) {
+          rec.cumul_probability = rec.probability;
+        } else {
+          rec.cumul_probability = _multi_rays_records_[i-1].cumul_probability  + rec.probability;
+        }
+      }
+
+    }
+
     if (_mode_ == MODE_SPECTRUM) {
       if (config_.has_key ("spectrum.data_file")) {
         string spectrum_filename = config_.fetch_string ("spectrum.data_file");
@@ -563,7 +682,8 @@ namespace genbb {
     DT_THROW_IF (! _initialized_, logic_error, "Generator is not locked/initialized !");
     event_.reset ();
 
-    double kinetic_energy = -1.0;
+    double kinetic_energy;
+    datatools::invalidate(kinetic_energy);
     double mass = _particle_mass_;
     if (_mode_ == MODE_MONOKINETIC) {
       kinetic_energy = _mean_energy_;
@@ -577,6 +697,20 @@ namespace genbb {
 
     if (_mode_ == MODE_ENERGY_RANGE) {
       kinetic_energy = grab_random().flat(_min_energy_, _max_energy_);
+    }
+
+    if (_mode_ == MODE_MULTI_RAYS) {
+      double prob = grab_random().flat(0., 1.0);
+      for (size_t i = 0; i < _multi_rays_records_.size(); i++) {
+        const multi_rays_record_type & rec = _multi_rays_records_[i];
+        if (prob <= rec.cumul_probability) {
+          kinetic_energy = rec.energy;
+          break;
+        }
+      }
+      if (!datatools::is_valid(kinetic_energy)) {
+        kinetic_energy = _multi_rays_records_.back().energy;
+      }
     }
 
     if (_mode_ == MODE_SPECTRUM) {
