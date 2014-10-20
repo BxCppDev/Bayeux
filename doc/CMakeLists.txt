@@ -36,10 +36,6 @@ if(Bayeux_BUILD_DOCS)
   set(Pandoc_FOUND ${Pandoc_EXECUTABLE})
 endif()
 
-#-----------------------------------------------------------------------
-# Build OCD documentation for Bayeux's classes
-option(Bayeux_BUILDS_OCD_DOCS "Builds OCD documentation" ON)
-
 # Default
 set(_bxocd_bayeuxclasses_link
   "OCD documentation for Bayeux's classes in not available.")
@@ -51,7 +47,7 @@ if(Bayeux_WITH_GEANT4)
   set(_bxgeant4 1)
 endif()
 
-if (Bayeux_BUILDS_OCD_DOCS)
+if (Bayeux_BUILD_OCD_DOCS)
   configure_file(BxOCD/bxocd_build.bash.in BxOCD/bxocd_build.bash @ONLY)
   set(_bxocd_bayeuxclasses_link
     "[OCD documentation for Bayeux's classes](__ocd__index.html)")
