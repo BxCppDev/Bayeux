@@ -120,7 +120,7 @@ int main(int argc_, char * argv_[])
        "Print 1 if Bayeux was installed with examples, \n"
        "else print 0. \n"
        )
-      ("has-geant4",
+      ("has-geant4-module",
        bpo::value<bool>()
        ->zero_tokens(),
        "Print 1 if Bayeux was built with Geant4 \n"
@@ -212,10 +212,10 @@ int main(int argc_, char * argv_[])
           std::cout << modules[i] << std::endl;
         }
       }
-    } else if (vm.count("has-geant4")) {
-      bool has_geant4 = vm["has-geant4"].as<bool>();
+    } else if (vm.count("has-geant4-module")) {
+      bool has_geant4 = vm["has-geant4-module"].as<bool>();
       if (has_geant4) {
-        std::cout << BAYEUX_WITH_GEANT4 << std::endl;
+        std::cout << BAYEUX_WITH_GEANT4_MODULE << std::endl;
       }
     } else if (vm.count("description")) {
       std::string module_name = vm["description"].as<std::string>();

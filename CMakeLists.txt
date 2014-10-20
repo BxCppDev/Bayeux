@@ -95,7 +95,6 @@ elseif(CMAKE_CXX_COMPILER MATCHES "icpc.*|icc.*")
 endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Bayeux_CXX_FLAGS}")
 
-
 # - SVN Versioning, if available
 set(Bayeux_VERSION_REVISION 0)
 
@@ -130,7 +129,7 @@ if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
 endif()
 
 file(RELATIVE_PATH Bayeux_BINDIR_TO_RESOURCEDIR "${CMAKE_INSTALL_FULL_BINDIR}"  "${CMAKE_INSTALL_FULL_DATAROOTDIR}/Bayeux-${Bayeux_VERSION}")
-file(RELATIVE_PATH Bayeux_CMAKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}/Bayeux-${Bayeux_VERSION}"  "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+file(RELATIVE_PATH Bayeux_CMKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}/Bayeux-${Bayeux_VERSION}"  "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}")
@@ -145,22 +144,43 @@ mark_as_advanced(Bayeux_BUILD_DEVELOPER_TOOLS)
 #-----------------------------------------------------------------------
 # Use implicit Bayeux init/fini instruction
 #
-option(BAYEUX_WITH_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
-mark_as_advanced(BAYEUX_WITH_IMPLICIT_INIT_FINI)
+option(Bayeux_BUILD_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
+mark_as_advanced(Bayeux_BUILD_IMPLICIT_INIT_FINI)
+
+if (Bayeux_BUILD_IMPLICIT_INIT_FINI)
+  set(BAYEUX_WITH_IMPLICIT_INIT_FINI 1)
+else()
+  set(BAYEUX_WITH_IMPLICIT_INIT_FINI 0)
+endif()
 
 #-----------------------------------------------------------------------
 # Option for enabling Geant4 module
 #
-if(NOT DEFINED Bayeux_WITH_GEANT4)
-  set(Bayeux_WITH_GEANT4 ON CACHE BOOL "Build Geant4 extension module")
+option(Bayeux_BUILD_GEANT4_MODULE "Build Geant4 Monte-Carlo module (mctools/g4)" ON)
+mark_as_advanced(Bayeux_BUILD_GEANT4_MODULE)
+
+if (Bayeux_BUILD_GEANT4_MODULE)
+  set(BAYEUX_WITH_GEANT4_MODULE 1)
+else()
+  set(BAYEUX_WITH_GEANT4_MODULE 0)
+endif()
+
+#-----------------------------------------------------------------------
+# Option for enabling Qt GUI components
+#
+option(Bayeux_BUILD_QT_GUI "Build Qt-based GUI components" OFF)
+mark_as_advanced(Bayeux_BUILD_QT_GUI)
+if (Bayeux_BUILD_QT_GUI)
+  set(BAYEUX_WITH_QT_GUI 1)
+else()
+  set(BAYEUX_WITH_QT_GUI 0)
 endif()
 
 #-----------------------------------------------------------------------
 # Configure testing if required
 #
-if(NOT DEFINED Bayeux_ENABLE_TESTING)
-  set(Bayeux_ENABLE_TESTING ON CACHE BOOL "Build unit testing system for Bayeux")
-endif()
+option(Bayeux_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)
+mark_as_advanced(Bayeux_ENABLE_TESTING)
 
 if(Bayeux_ENABLE_TESTING)
   enable_testing()
@@ -186,26 +206,40 @@ set(Bayeux_DOCUMENTATION_DIR "${Bayeux_TAG}/Documentation")
 # Optional for enabling documentation
 #
 set(Bayeux_DOCEXPORT_DIR "${PROJECT_BINARY_DIR}/doc")
-if(NOT DEFINED Bayeux_BUILD_DOCS)
-  set(Bayeux_BUILD_DOCS ON CACHE BOOL "Build Bayeux documentation products")
+
+option(Bayeux_BUILD_DOCS "Build Bayeux documentation products" ON)
+mark_as_advanced(Bayeux_BUILD_DOCS)
+
+if(Bayeux_BUILD_DOCS)
+  set(BAYEUX_WITH_DOCS 1)
+else()
+  set(BAYEUX_WITH_DOCS 0)
 endif()
 
-if(NOT Bayeux_BUILD_DOCS)
-  set(BAYEUX_WITH_DOCS 0)
-else()
-  set(BAYEUX_WITH_DOCS 1)
+if (Bayeux_BUILD_DOCS)
+  #-----------------------------------------------------------------------
+  # Build OCD documentation for Bayeux's classes
+  option(Bayeux_BUILD_OCD_DOCS "Build OCD documentation" ON)
+  mark_as_advanced(Bayeux_BUILD_OCD_DOCS)
+
+  if(Bayeux_BUILD_OCD_DOCS)
+    set(BAYEUX_WITH_OCD_DOCS 1)
+  else()
+    set(BAYEUX_WITH_OCD_DOCS 0)
+  endif()
+
 endif()
 
 #-----------------------------------------------------------------------
 # Optional for installing examples
 #
-if(NOT DEFINED Bayeux_WITH_EXAMPLES)
-  set(Bayeux_WITH_EXAMPLES ON CACHE BOOL "Install Bayeux with examples")
-endif()
-if(NOT Bayeux_WITH_EXAMPLES)
-  set(BAYEUX_WITH_EXAMPLES 0)
-else()
+option(Bayeux_WITH_EXAMPLES "Install Bayeux with examples" ON)
+mark_as_advanced(Bayeux_WITH_EXAMPLES)
+
+if(Bayeux_WITH_EXAMPLES)
   set(BAYEUX_WITH_EXAMPLES 1)
+else()
+  set(BAYEUX_WITH_EXAMPLES 0)
 endif()
 
 #-----------------------------------------------------------------------

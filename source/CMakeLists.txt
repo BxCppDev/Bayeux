@@ -40,11 +40,14 @@ find_package(GSL 1.15 QUIET NO_MODULE)
 # - ROOT
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
 
+if (Bayeux_BUILD_QT_GUI)
+  find_package(Qt4 REQUIRED)
+endif()
+
 # - Geant4 if building the MCTools extension library
 # We do this here because we may need to configure files in MCTools
 # using the results of the search
-set(BAYEUX_WITH_GEANT4 0)
-if(Bayeux_WITH_GEANT4)
+if(Bayeux_BUILD_GEANT4_MODULE)
   find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
   if(Geant4_DATASETS)
     set(MCTOOLS_G4_DATA_ASSIGNMENTS)
@@ -55,7 +58,6 @@ if(Bayeux_WITH_GEANT4)
   endif()
   # Also need Boost.Thread, ugh
   find_package(Boost REQUIRED thread)
-  set(BAYEUX_WITH_GEANT4 1)
 endif()
 
 # - Core Includes for Bayeux + Third Party
@@ -66,6 +68,11 @@ include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${GSL_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
 include_directories(${CAMP_INCLUDE_DIRS})
+
+if (Qt4_FOUND)
+  include(${QT_USE_FILE})
+  add_definitions(${QT_DEFINITIONS})
+endif()
 
 # - The LPC Modules
 # The processing order should be from least to most dependent
@@ -145,6 +152,9 @@ target_link_libraries(Bayeux ${CAMP_LIBRARIES})
 target_link_libraries(Bayeux ${GSL_LIBRARIES})
 target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
 target_link_libraries(Bayeux ${ROOT_LIBRARIES})
+if (Bayeux_BUILD_QT_GUI)
+  target_link_libraries(Bayeux ${QT_LIBRARIES})
+endif()
 
 # - Set RPATH as needed
 set_target_properties(Bayeux PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
@@ -173,7 +183,7 @@ set(Bayeux_ADDON_TARGETS)
 #-----------------------------------------------------------------------
 # - Build/Link the geant4 extension module, if required
 #
-if(Bayeux_WITH_GEANT4)
+if(Bayeux_BUILD_GEANT4_MODULE)
   include_directories(${Geant4_INCLUDE_DIRS})
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   # Hack - strip "-D" flag as we should only supply the def names
@@ -236,7 +246,7 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
       )
   endif()
 
-  if(Bayeux_WITH_GEANT4)
+  if(Bayeux_BUILD_GEANT4_MODULE)
     list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
     if (_g4app_found GREATER -1)
       target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
