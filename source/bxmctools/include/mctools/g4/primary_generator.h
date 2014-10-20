@@ -97,15 +97,15 @@ namespace mctools {
 
     private:
 
-      bool                 _initialized_; /// Initialization flag
-      run_action        *  _run_action_; /// The Geant4 run action
-      event_action      *  _event_action_; /// The Geant4 event action
-      ::genvtx::i_vertex_generator * _vertex_generator_; /// The external vertex generator
-      ::genbb::i_genbb  *  _event_generator_; /// The external event generator
-      G4ParticleGun *      _particle_gun_; /// The Geant4 particle gun
-      geomtools::vector_3d _current_vertex_; /// The current generated vertex
-      size_t               _event_counter_; /// The event counter
-      std::map<std::string, std::string> _particle_names_map_; /// A dictionary of particle names
+      bool                 _initialized_; //!< Initialization flag
+      run_action        *  _run_action_; //!< The Geant4 run action
+      event_action      *  _event_action_; //!< The Geant4 event action
+      ::genvtx::i_vertex_generator * _vertex_generator_; //!< The external vertex generator
+      ::genbb::i_genbb  *  _event_generator_; //!< The external event generator
+      G4ParticleGun *      _particle_gun_; //!< The Geant4 particle gun
+      geomtools::vector_3d _current_vertex_; //!< The current generated vertex
+      size_t               _event_counter_; //!< The event counter
+      std::map<std::string, std::string> _particle_names_map_; //!< A dictionary of particle names
 
     };
 

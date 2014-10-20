@@ -72,6 +72,8 @@ namespace mctools {
     static const std::string STEP_LENGTH;
     static const std::string ENTERING_VOLUME_FLAG;
     static const std::string LEAVING_VOLUME_FLAG;
+    static const std::string ENTERING_KINETIC_ENERGY_KEY;
+    static const std::string LEAVING_KINETIC_ENERGY_KEY;
   };
 
   class event_utils

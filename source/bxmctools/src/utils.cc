@@ -48,6 +48,8 @@ namespace mctools {
   const std::string track_utils::STEP_LENGTH               = "track.step_length";
   const std::string track_utils::ENTERING_VOLUME_FLAG      = "track.entering_volume";
   const std::string track_utils::LEAVING_VOLUME_FLAG       = "track.leaving_volume";
+  const std::string track_utils::ENTERING_KINETIC_ENERGY_KEY = "track.entering_kinetic_energy";
+  const std::string track_utils::LEAVING_KINETIC_ENERGY_KEY  = "track.leaving_kinetic_energy";
 
   // Specific to simulated data :
   const std::string event_utils::EVENT_GENBB_WEIGHT = "event.genbb_weight";
