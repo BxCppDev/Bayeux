@@ -42,6 +42,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/base_step_hit_processor.h
   ${module_include_dir}/${module_name}/step_hit_processor_factory.h
   ${module_include_dir}/${module_name}/calorimeter_step_hit_processor.h
+  ${module_include_dir}/${module_name}/fluence_step_hit_processor.h
   ${module_include_dir}/${module_name}/simulated_data_reader.h
   ${module_include_dir}/${module_name}/simulated_data_input_module.h
   ${module_include_dir}/${module_name}/base_step_hit.ipp
@@ -66,6 +67,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/base_step_hit_processor.cc
   ${module_source_dir}/step_hit_processor_factory.cc
   ${module_source_dir}/calorimeter_step_hit_processor.cc
+  ${module_source_dir}/fluence_step_hit_processor.cc
   ${module_source_dir}/utils.cc
   ${module_source_dir}/simulated_data.cc
   ${module_source_dir}/simulated_data_reader.cc
@@ -103,7 +105,7 @@ set(${module_name}_MODULE_TESTS
 # headers... Though these two headers are the only real public interface,
 # they #include other headers, so these also need to be present...
 #
-if(Bayeux_WITH_GEANT4)
+if(Bayeux_BUILD_GEANT4_MODULE)
   set(${module_name}_GEANT4_HEADERS
     ${module_include_dir}/${module_name}/g4/manager_parameters.h
     ${module_include_dir}/${module_name}/g4/manager.h
@@ -188,7 +190,7 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 if (Bayeux_BUILD_DEVELOPER_TOOLS)
-  if(Bayeux_WITH_GEANT4)
+  if(Bayeux_BUILD_GEANT4_MODULE)
 
     # - Utility script:
     configure_file(${module_app_dir}/g4/mctools_g4_mkskelcfg.in
