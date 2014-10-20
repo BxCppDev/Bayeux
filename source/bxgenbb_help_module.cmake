@@ -441,6 +441,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_single_particle_generator_2.cxx
   ${module_test_dir}/test_single_particle_generator_3.cxx
   ${module_test_dir}/test_single_particle_generator_4.cxx
+  ${module_test_dir}/test_single_particle_generator_5.cxx
   ${module_test_dir}/test_single_particle_generator.cxx
   ${module_test_dir}/test_from_to_file_generator.cxx
   #${module_test_dir}/test_fermi_function.cxx
