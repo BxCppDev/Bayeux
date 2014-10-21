@@ -190,7 +190,6 @@ int example_mygsl()
   std::clog << "mygsl version is: "
             << mygsl::version::get_version() << std::endl;
 
-
   {
     std::clog << "mygsl::histogram object manipulation example: " << std::endl;
     mygsl::histogram h(15, -1.0, 2.0, mygsl::BIN_MODE_LINEAR);
@@ -206,7 +205,6 @@ int example_mygsl()
     h.print_ascii(std::cout);
     h.reset();
   }
-
 
   return 0;
 }

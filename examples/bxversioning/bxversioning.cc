@@ -8,8 +8,7 @@
 
 int main(int argc, const char *argv[])
 {
-  std::cout << "[bxversionining] Bayeux version string = " 
+  std::cout << "[bxversioning] Bayeux version string = "
             << bayeux::version::get_version() << std::endl;
   return 0;
 }
-
