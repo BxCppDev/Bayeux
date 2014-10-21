@@ -125,20 +125,20 @@ namespace datatools {
         theta_1_method_type theta_1_method = &::geomtools::vector_3d::theta;
         //std::cerr << "******** DEVEL: theta_1_method=" << &theta_1_method << '\n';
 
-        typedef double (::geomtools::vector_3d::*theta_2_method_type)(const geomtools::vector_3d &) const;
+        // typedef double (::geomtools::vector_3d::*theta_2_method_type)(const geomtools::vector_3d &) const;
         //theta_2_method_type theta_2_method = &::geomtools::vector_3d::theta;
         //std::cerr << "******** DEVEL: theta_2_method=" << &theta_2_method << '\n';
 
         typedef double (::geomtools::vector_3d::*perp_1_method_type)() const;
         perp_1_method_type perp_1_method = &::geomtools::vector_3d::perp;
 
-        typedef double (::geomtools::vector_3d::*perp_2_method_type)(const geomtools::vector_3d &) const;
+        // typedef double (::geomtools::vector_3d::*perp_2_method_type)(const geomtools::vector_3d &) const;
         //perp_2_method_type perp_2_method = &::geomtools::vector_3d::perp;
 
         typedef double (::geomtools::vector_3d::*perp2_1_method_type)() const;
         perp2_1_method_type perp2_1_method = &::geomtools::vector_3d::perp2;
 
-        typedef double (::geomtools::vector_3d::*perp2_2_method_type)(const geomtools::vector_3d &) const;
+        // typedef double (::geomtools::vector_3d::*perp2_2_method_type)(const geomtools::vector_3d &) const;
         //perp2_2_method_type perp2_2_method = &::geomtools::vector_3d::perp2;
 
         // Declare and populate the reflection metaclass for the 'geomtools::vector_3d' class:
