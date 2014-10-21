@@ -2,8 +2,8 @@
 Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
-:Authors: Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    2014-06-03
+:Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
+:Date:    2014-10-21
 
 .. contents::
    :depth: 3
@@ -21,13 +21,11 @@ into several specialized submodules:
 
 -  cuts :       Generic tools for making arbitrary data selections.
 
--  materials :  Description of isotopes, elements and materials plus tools
-	        for input to simulation applications (i.e. GDML/Geant4).
+-  materials :  Description of isotopes, elements and materials plus tools for input to simulation applications (i.e. GDML/Geant4).
 
 -  mygsl :      C++ wrapper and extensions to the GNU Scientific Library.
 
--  geomtools :  Generic tools for working with experiment geometries and
-                provide input to simulation tools (i.e. GDML/Geant4).
+-  geomtools :  Generic tools for working with experiment geometries and provide input to simulation tools (i.e. GDML/Geant4).
 
 -  emfield :    Electromagnetic field modelling and management.
 
@@ -35,14 +33,11 @@ into several specialized submodules:
 
 -  dpp :        A basic data processing pipeline API.
 
--  genbb_help : C++ wrapper and extensions to the Decay0/GENBB program
-                by Vladimir Tretyak, for input to simulation applications.
+-  genbb_help : C++ wrapper and extensions to the Decay0/GENBB program by Vladimir Tretyak, for input to simulation applications.
 
--  genvtx :     Vertex random generator tools for input to
-                simulation applications.
+-  genvtx :     Vertex random generator tools for input to simulation applications.
 
--  mctools :    Utilities for particle and nuclear physics simulation with
-                a Geant4 interface.
+-  mctools :    Utilities for particle and nuclear physics simulation with a Geant4 interface.
 
 
 
@@ -70,7 +65,18 @@ Getting Help
 
 If you have problems, questions, ideas or suggestions on Bayeux or any
 of its submodules, please contact the SuperNEMO Software Working Group
-via the main development website https://nemo.lpc-caen.in2p3.fr/.
+via  the  main   development  website  https://nemo.lpc-caen.in2p3.fr/
+(protected access, only available to authorized collaborators).
+
+You may ask to be registered in one of the protected Bayeux  users diffusion
+lists:
+
+ * ``bayeux-users-l@in2p3.fr`` : general,
+ * ``bayeux-geometry-l@in2p3.fr`` : dedicated to geometry modelling,
+ * ``bayeux-simulation-l@in2p3.fr`` : dedicated to simulation and the Geant4 module.
+
+Please contact the Bayeux team at bayeux@lpccaen.in2p3.fr.
+
 
 
 Getting Bayeux
@@ -78,6 +84,32 @@ Getting Bayeux
 
 You can obtain the Bayeux source code from the main LPC Caen Subversion
 repository.
+
+For example, to download Bayeux version 1.0.0, you may use:
+
+.. code:: sh
+
+    $ cd ${HOME}
+    $ mkdir -p ${HOME}/Software/Bayeux/Source
+    $ cd ${HOME}/Software/Bayeux/Source
+    $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/tags/Bayeux-1.0.0 Bayeux-1.0.0
+
+The ``${HOME}/Software/Bayeux/Source/Bayeux-1.0.0`` source directory is thus created.
+
+If you want to download the development version (possibly unstable), use:
+
+.. code:: sh
+
+    $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/trunk Bayeux-trunk
+
+The ``${HOME}/Software/Bayeux/Source/Bayeux-trunk`` source directory is thus created.
+
+You can now  create a dedicated directory to  build Bayeux 1.0.0 (or *trunk*)
+following  the   guidelines  in   the  *Installing Bayeux*  section
+below.  Note that  different  versions of  Bayeux  may have slightly different
+build/installation   procedures,   so   you   should   read   carefully   the
+``README.rst`` file supplied with the source code.
+
 
 Preparing Your System for Bayeux Installation
 ==============================================
@@ -97,7 +129,7 @@ distributions  derived from  Fedora(RedHat)  and  Debian provided  the
 software listed below is installed. However, we can only fully support
 and test the following at present:
 
--  Ubuntu 12.04LTS: http://www.ubuntu.com
+-  Ubuntu 12.04LTS and 14.04LTS: http://www.ubuntu.com
 -  Scientific Linux 5/6: http://www.scientificlinux.org
 
 If you have problems on systems other than these, please contact us,
