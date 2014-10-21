@@ -44,9 +44,9 @@ endif()
 #-----------------------------------------------------------------------
 # MCTools/Geant4 testc
 # - Requires support for internal dependencies in ExternalProject
-if(CMAKE_VERSION VERSION_GREATER 2.8.10.99 AND Bayeux_WITH_GEANT4)
+if(CMAKE_VERSION VERSION_GREATER 2.8.10.99 AND Bayeux_BUILD_GEANT4_MODULE)
   ExternalProject_Add(Bayeux_MCToolsGeant4Check
-    DEPENDS Bayeux Bayeux
+    DEPENDS Bayeux Bayeux_mctools_geant4
     LIST_SEPARATOR @
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxmctools_geant4
     DOWNLOAD_COMMAND ""
@@ -76,4 +76,3 @@ if(CMAKE_VERSION VERSION_GREATER 2.8.10.99)
     INSTALL_COMMAND   ""
     )
 endif()
-
