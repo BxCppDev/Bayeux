@@ -59,7 +59,7 @@ void serialize(Archive& ar, const unsigned int file_version);    \
  * \endcode
  */
 #define BOOST_SERIALIZATION_BASIC_DECLARATION()		\
-  private:                                              \
+  protected:                                            \
   friend class boost::serialization::access;            \
   BOOST_SERIALIZATION_SERIALIZE_DECLARATION()           \
   /**/
