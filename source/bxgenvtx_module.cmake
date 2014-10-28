@@ -51,6 +51,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/cylinder_model_vg.h
   ${module_include_dir}/${module_name}/tube_model_vg.h
   ${module_include_dir}/${module_name}/sphere_model_vg.h
+  ${module_include_dir}/${module_name}/polycone_model_vg.h
   ${module_include_dir}/${module_name}/genvtx_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/genvtx_driver.h
@@ -83,6 +84,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/cylinder_model_vg.cc
   ${module_source_dir}/tube_model_vg.cc
   ${module_source_dir}/sphere_model_vg.cc
+  ${module_source_dir}/polycone_model_vg.cc
   ${module_source_dir}/geom_manager_utils.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/genvtx_driver.cc
