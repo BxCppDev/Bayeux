@@ -509,9 +509,9 @@ namespace genvtx {
   }
 
   void tube_model_vg::tree_dump (std::ostream & out_,
-                                     const std::string & title_,
-                                     const std::string & indent_,
-                                     bool inherit_) const
+                                 const std::string & title_,
+                                 const std::string & indent_,
+                                 bool inherit_) const
   {
     namespace du = datatools;
     std::string indent;

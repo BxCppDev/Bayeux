@@ -113,13 +113,11 @@ namespace genvtx {
                   std::logic_error,
                   "No valid polycone !");
       _active_frustra_.assign(_polycone_.number_of_frustra(), false);
-      // std::cerr << "*** DEVEL *** assign _active_frustra_ array..." << std::endl;
     }
     DT_THROW_IF(index_ >= _active_frustra_.size(),
                  std::range_error,
                 "Invalid frustrum index (" << index_ << ") !");
-    // std::cerr << "*** DEVEL *** _active_frustra_[" << index_ << "] = "
-    //          << active_ << std::endl;
+    DT_LOG_TRACE(get_logging_priority(), "_active_frustra_[" << index_ << "] = " << active_);
     _active_frustra_[index_] = active_;
     return;
   }
@@ -267,7 +265,6 @@ namespace genvtx {
       }
     }
 
-
     if (treat_mode) set_mode(mode);
     if (treat_skin_skip) set_skin_skip(skin_skip);
     if (treat_skin_thickness) set_skin_thickness(skin_thickness);
@@ -309,9 +306,7 @@ namespace genvtx {
 
   void polycone_vg::_init_ ()
   {
-    if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: Entering..." << std::endl;
-    }
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     _volume_inner_frustra_.assign(_active_frustra_.size(), 0.0);
     _volume_frustra_.assign(_active_frustra_.size(), 0.0);
     _surface_inner_frustra_.assign(_active_frustra_.size(), 0.0);
@@ -337,13 +332,11 @@ namespace genvtx {
           double v_inner = geomtools::cone::compute_frustrum_volume(z0, z1, rmin0, rmin1);
           double s_outer = geomtools::cone::compute_frustrum_lateral_surface(z0, z1, rmax0, rmax1);
           double s_inner = geomtools::cone::compute_frustrum_lateral_surface(z0, z1, rmin0, rmin1);
-          if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-            std::cerr << "*** DEVEL *** polycone_vg::_init_: frustrum_index =" << frustrum_index << std::endl;
-            std::cerr << "*** DEVEL *** polycone_vg::_init_:   v_outer =" << v_outer << std::endl;
-            std::cerr << "*** DEVEL *** polycone_vg::_init_:   v_inner =" << v_inner << std::endl;
-            std::cerr << "*** DEVEL *** polycone_vg::_init_:   s_outer =" << s_outer << std::endl;
-            std::cerr << "*** DEVEL *** polycone_vg::_init_:   s_inner =" << s_inner << std::endl;
-          }
+          DT_LOG_TRACE(get_logging_priority(), "frustrum_index =" << frustrum_index );
+          DT_LOG_TRACE(get_logging_priority(), "  v_outer =" << v_outer);
+          DT_LOG_TRACE(get_logging_priority(), "  v_inner =" << v_inner);
+          DT_LOG_TRACE(get_logging_priority(), "  s_outer =" << s_outer);
+          DT_LOG_TRACE(get_logging_priority(), "  s_inner =" << s_inner);
           if (_mode_ == MODE_BULK) {
             if (_bulk_mask_ & BULK_CAVITY) {
               _volume_inner_frustra_[frustrum_index] = v_inner;
@@ -373,27 +366,15 @@ namespace genvtx {
         rmin0 = rmin1;
       } // while
     }
-    if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: total_inner_surface = "
-                << total_inner_surface << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: total_outer_surface = "
-                << total_outer_surface << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: total_inner_volume = "
-                << total_inner_volume << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: total_volume = "
-                << total_volume << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: polycone inner side surface = "
-                << _polycone_.get_parameter("surface.inner_side") << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: polycone outer side surface = "
-                << _polycone_.get_parameter("surface.outer_side") << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: polycone bottom surface = "
-                << _polycone_.get_parameter("surface.bottom") << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: polycone top surface = "
-                << _polycone_.get_parameter("surface.top") << std::endl;
-      std::cerr << "*** DEVEL *** polycone_vg::_init_: polycone volume = "
-                << _polycone_.get_parameter("volume") << std::endl;
-    }
-
+    DT_LOG_TRACE(get_logging_priority(), "total_inner_surface = " << total_inner_surface);
+    DT_LOG_TRACE(get_logging_priority(), "total_outer_surface = " << total_outer_surface);
+    DT_LOG_TRACE(get_logging_priority(), "total_inner_volume = " << total_inner_volume);
+    DT_LOG_TRACE(get_logging_priority(), "total_volume = " << total_volume);
+    DT_LOG_TRACE(get_logging_priority(), "polycone inner side surface = " << _polycone_.get_parameter("surface.inner_side"));
+    DT_LOG_TRACE(get_logging_priority(), "polycone outer side surface = " << _polycone_.get_parameter("surface.outer_side"));
+    DT_LOG_TRACE(get_logging_priority(), "polycone bottom surface = " << _polycone_.get_parameter("surface.bottom"));
+    DT_LOG_TRACE(get_logging_priority(), "polycone top surface = " << _polycone_.get_parameter("surface.top"));
+    DT_LOG_TRACE(get_logging_priority(), "polycone volume = " << _polycone_.get_parameter("volume"));
     if (_mode_ == MODE_SURFACE) {
       DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
       if (_surface_mask_ & geomtools::polycone::FACE_INNER_SIDE) {
@@ -462,9 +443,7 @@ namespace genvtx {
       }
     }
 
-    if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-    std::cerr << "*** DEVEL *** polycone_vg::_init_: Exiting." << std::endl;
-    }
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
