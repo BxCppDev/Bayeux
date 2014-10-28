@@ -109,9 +109,7 @@ namespace genvtx {
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Already initialized !");
     if (! _active_frustra_.size()) {
-      DT_THROW_IF(! _polycone_.is_valid(),
-                  std::logic_error,
-                  "No valid polycone !");
+      DT_THROW_IF(! _polycone_.is_valid(), std::logic_error, "No valid polycone !");
       _active_frustra_.assign(_polycone_.number_of_frustra(), false);
     }
     DT_THROW_IF(index_ >= _active_frustra_.size(),
@@ -119,6 +117,19 @@ namespace genvtx {
                 "Invalid frustrum index (" << index_ << ") !");
     DT_LOG_TRACE(get_logging_priority(), "_active_frustra_[" << index_ << "] = " << active_);
     _active_frustra_[index_] = active_;
+    return;
+  }
+
+  void polycone_vg::set_active_all_frustrum()
+  {
+    DT_THROW_IF(is_initialized(), std::logic_error, "Already initialized !");
+    if (! _active_frustra_.size()) {
+      DT_THROW_IF(! _polycone_.is_valid(), std::logic_error, "No valid polycone !");
+      _active_frustra_.assign(_polycone_.number_of_frustra(), false);
+    }
+    for (size_t ifrustrum = 0; ifrustrum < _active_frustra_.size(); ifrustrum++) {
+      set_active_frustrum(ifrustrum, true);
+    }
     return;
   }
 
@@ -282,14 +293,23 @@ namespace genvtx {
       _active_frustra_.assign(_polycone_.number_of_frustra(), false);
     }
 
-    // Check fustrum activation:
-    for (size_t ifrustrum = 0; ifrustrum < _active_frustra_.size(); ifrustrum++) {
-      std::ostringstream frustrum_label;
-      frustrum_label << "polycone.frustrum." << ifrustrum;
-      if (setup_.has_flag(frustrum_label.str())) {
-        _active_frustra_[ifrustrum] = true;
+    if (setup_.has_flag("polycone.all_frustrum")) {
+      set_active_all_frustrum();
+    } else {
+      // Check fustrum activation:
+      for (size_t ifrustrum = 0; ifrustrum < _active_frustra_.size(); ifrustrum++) {
+        std::ostringstream frustrum_label;
+        frustrum_label << "polycone.frustrum." << ifrustrum;
+        if (setup_.has_flag(frustrum_label.str())) {
+          set_active_frustrum(ifrustrum, true);
+        }
       }
     }
+
+    // Check activation of frustrum
+    DT_THROW_IF(std::find(_active_frustra_.begin(),
+                          _active_frustra_.end(), true) == _active_frustra_.end(),
+                std::logic_error, "No polycone frustrum has been activated !");
 
     _init_ ();
     _initialized_ = true;

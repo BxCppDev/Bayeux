@@ -50,34 +50,36 @@ namespace genvtx {
       BULK_ALL      = (BULK_BODY | BULK_CAVITY)
     };
 
-    int get_mode () const;
+    int get_mode() const;
 
-    void set_mode (int mode_);
+    void set_mode(int mode_);
 
-    void set_surface_mask (int surface_mask_);
+    void set_surface_mask(int surface_mask_);
 
-    void set_bulk_mask (int bulk_mask_);
+    void set_bulk_mask(int bulk_mask_);
 
-    void set_angles (double theta_min_, double theta_max_);
+    void set_angles(double theta_min_, double theta_max_);
 
-    void set_skin_skip (double skin_skip_);
+    void set_skin_skip(double skin_skip_);
 
-    void set_skin_thickness (double skin_thickness_);
+    void set_skin_thickness(double skin_thickness_);
 
-    void set_bulk (int bulk_mask_, double skin_thickness_);
+    void set_bulk(int bulk_mask_, double skin_thickness_);
 
-    void set_surface (int surface_mask_);
+    void set_surface(int surface_mask_);
 
     void set_active_frustrum(size_t index_, bool active_);
 
-    void set_polycone (const geomtools::polycone & polycone_);
+    void set_active_all_frustrum();
 
-    const geomtools::polycone & get_polycone () const;
+    void set_polycone(const geomtools::polycone & polycone_);
 
-    void tree_dump (std::ostream & out_ = std::clog,
-                    const std::string & title_ = "",
-                    const std::string & indent_ = "",
-                    bool inherit_ = false) const;
+    const geomtools::polycone & get_polycone() const;
+
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_ = "",
+                   const std::string & indent_ = "",
+                   bool inherit_ = false) const;
 
 
     /// Constructor
@@ -104,11 +106,11 @@ namespace genvtx {
 
   private:
 
-    void _init_ ();
+    void _init_();
 
-    void _reset_ ();
+    void _reset_();
 
-    void _set_defaults_ ();
+    void _set_defaults_();
 
   private:
 
