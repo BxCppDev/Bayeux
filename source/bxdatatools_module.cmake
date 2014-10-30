@@ -203,7 +203,9 @@ bx${module_name}/resource.cc
 bx${module_name}/_datatools.cc
   )
 
-
+set(DATATOOLS_WITH_QT_GUI 0)
+if (Bayeux_BUILD_QT_GUI)
+  set(DATATOOLS_WITH_QT_GUI 1)
   # - QT4 moc headers
   set(${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED
     ${module_include_dir}/${module_name}/qt/led.h
