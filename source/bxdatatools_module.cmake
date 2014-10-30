@@ -40,6 +40,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/bit_mask.h
   ${module_include_dir}/${module_name}/caster_utils.h
   ${module_include_dir}/${module_name}/clhep_units.h
+  ${module_include_dir}/${module_name}/command_utils.h
   ${module_include_dir}/${module_name}/datatools.h
   ${module_include_dir}/${module_name}/datatools_config.h.in
   ${module_include_dir}/${module_name}/detail/api.h
@@ -152,6 +153,7 @@ configure_file(${module_source_dir}/resource.cc.in
 
 set(${module_name}_MODULE_SOURCES
 ${module_source_dir}/base_service.cc
+${module_source_dir}/command_utils.cc
 ${module_source_dir}/datatools.cc
 ${module_source_dir}/DynamicLoader.cc
 ${module_source_dir}/enriched_base.cc
