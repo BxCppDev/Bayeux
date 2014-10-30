@@ -8,10 +8,9 @@
 #include <materials/materials_config.h>
 #include <materials/version.h>
 
-using namespace std;
-
 int main (/*int argc_, char ** argv_*/)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
