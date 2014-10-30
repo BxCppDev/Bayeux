@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*-
 // test_kernel.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>

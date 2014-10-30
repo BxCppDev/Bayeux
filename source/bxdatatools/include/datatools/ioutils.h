@@ -115,19 +115,34 @@ struct io {
 
   };
 
-  /// Utility to parse boolean token
+  /// Parse a boolean
   static bool read_boolean(std::istream&, bool&);
 
-  /// Utility to parse quoted string token
+  /// Write a boolean
+  static void write_boolean(std::ostream& a_out, bool a_bool);
+
+  /// Parse an integer
+  static bool read_integer(std::istream&, int&);
+
+  /// Write an integer
+  static void write_integer(std::ostream& a_out, int a_integer);
+
+  /// Parse a quoted string
   static bool read_quoted_string(std::istream&, std::string&);
 
-  /// \brief Read a double value from an ASCII stream
+  /// Write a quoted string
+  static void write_quoted_string(std::ostream& a_out, const std::string& a_str);
+
+  /// Read a double value from an ASCII stream
   static bool read_real_number(std::istream & in_, double & val_, bool & normal_);
 
-  /// \brief Write a double value in an ASCII stream
+  /// Write a double value in an ASCII stream with unit support
   static void write_real_number(std::ostream & out_,
-                                const double & val_,
-                                int precision_ = REAL_PRECISION);
+                                double val_,
+                                int precision_ = REAL_PRECISION,
+                                const std::string& unit_symbol_ = "",
+                                const std::string& unit_label_ = "",
+                                double unit_value_ = 1.0);
 
   bool is_colored() const;
 

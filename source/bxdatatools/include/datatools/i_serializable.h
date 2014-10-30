@@ -151,11 +151,8 @@ namespace datatools {
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag) \
   const std::string ClassName::SERIAL_TAG = ClassSerialTag;             \
   const std::string& ClassName::serial_tag() {                          \
-    static std::string stag;                                            \
-    if (stag.empty()) {                                                 \
-      stag = ClassSerialTag;                                            \
-    }                                                                   \
-    return stag;                                                        \
+    static const std::string _stag(ClassSerialTag);                      \
+    return _stag;                                                        \
   }                                                                     \
   const std::string& ClassName::get_serial_tag() const {                \
     return ClassName::serial_tag();                                     \
@@ -427,10 +424,9 @@ namespace datatools {
                         typename boost::disable_if< has_bsts<T> >::type* dummy = 0) {
     if(!dummy) dummy=0;
     if (stag_ == T::serial_tag()) return true;
-    if (! alt_tag_.empty())
-      {
-        if (stag_ == alt_tag_) return true;
-      }
+    if (! alt_tag_.empty()){
+      if (stag_ == alt_tag_) return true;
+    }
     return false;
   }
 

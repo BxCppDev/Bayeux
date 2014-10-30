@@ -16,8 +16,6 @@
 // - Boost:
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string.hpp>
-//#include <boost/archive/polymorphic_oarchive.hpp>
-//#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/scoped_ptr.hpp>
 
 // This Project:
@@ -25,6 +23,10 @@
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/logger.h>
+#include <datatools/kernel.h>
+#include <datatools/configuration/variant_registry.h>
+#include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/io.h>
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
@@ -630,7 +632,7 @@ namespace datatools {
   {
     static std::string chars;
     if (chars.empty()) {
-      chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+      chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_./";
     }
     return chars;
   }
@@ -1470,6 +1472,17 @@ namespace datatools {
   }
 
 
+  void properties::store_real_with_explicit_unit(const std::string& prop_key, double value,
+                                                 const std::string& desc, bool lock) {
+    this->store(prop_key, value, desc, lock);
+    this->set_explicit_unit(prop_key, true);
+  }
+
+  void properties::store_with_explicit_unit(const std::string& prop_key, double value,
+                                            const std::string& desc, bool lock) {
+    this->store_real_with_explicit_unit(prop_key, value, desc, lock);
+  }
+
   void properties::store_string(const std::string& prop_key,
                                 const std::string& value,
                                 const std::string& desc,
@@ -1808,6 +1821,19 @@ namespace datatools {
     return;
   }
 
+  void properties::update_with_explicit_unit(const std::string& prop_key, double value) {
+    update_real_with_explicit_unit(prop_key, value);
+  }
+
+  void properties::update_real_with_explicit_unit(const std::string& prop_key, double value) {
+    if (this->has_key(prop_key)) {
+      this->change(prop_key, value);
+    } else {
+      this->store(prop_key, value);
+    }
+    this->set_explicit_unit(prop_key, true);
+    return;
+  }
 
   void properties::update(const std::string& prop_key, const std::string& value) {
     if (this->has_key(prop_key)) {
@@ -1816,7 +1842,6 @@ namespace datatools {
       this->store(prop_key, value);
     }
   }
-
 
   void properties::update(const std::string& prop_key, const char* value) {
     std::string tmp = "";
@@ -2364,10 +2389,11 @@ namespace datatools {
   const int properties::config::MODE_DEFAULT       = MODE_HEADER_FOOTER;
   const int properties::config::mode_header_footer = MODE_HEADER_FOOTER;
   const int properties::config::mode_bare          = MODE_BARE;
-  const bool properties::config::write_private_also = false;
-  const bool properties::config::write_public_only  = true;
+  const bool properties::config::write_private_also   = false;
+  const bool properties::config::write_public_only    = true;
   const bool properties::config::without_smart_modulo = false;
-  const bool properties::config::with_smart_modulo  = true;
+  const bool properties::config::with_smart_modulo    = true;
+  const bool properties::config::allow_variant        = true;
 
   properties::config::config(bool a_use_smart_modulo,
                              int a_mode,
@@ -2400,7 +2426,27 @@ namespace datatools {
     bool line_goon = false;
     // 2013-04-05 FM : default is to allow unit directives for real numbers
     bool enable_real_with_unit = true;
-    // std::list<std::string> variant_blocks;
+    bool enable_variants = true;
+    // std::list<std::string> variant_if_blocks;
+
+    /* The variant only directive must be placed before the property line:
+     *
+     *  Examples:
+     *
+     *  #@variant_only trigger:trigger_mode/multiplicity_mode
+     *  #@description The multiplicity threshold of the trigger system (when the trigger runs multiplicity mode)
+     *  trigger.multiplicity.threshold : integer = 3
+     *
+     *  #@variant_only !trigger:trigger_mode/multiplicity_mode
+     *  #@description The ADC threshold of the trigger system (when the trigger runs NO multiplicity mode)
+     *  trigger.adc.threshold : real = 15 mV
+     *
+     */
+    std::string variant_only;
+    // The variant preprocessor:
+    // for now this preprocessor uses the datatools' kernel variant repository,
+    // if it has been instanciated and properly feed by user (at application startup for example):
+    configuration::variant_preprocessor vpp(configuration::variant_preprocessor::FLAG_DEVEL);
 
     while (a_in) {
       DT_LOG_NOTICE (logging, "Loop on input stream...");
@@ -2484,11 +2530,22 @@ namespace datatools {
               logging = datatools::logger::PRIO_NOTICE;
             } else if (token == "@mute_parsing") {
               logging = datatools::logger::PRIO_WARNING;
-            /*
+            } else if (token == "@enable_variants") {
+              enable_variants = true;
+            } else if (token == "@disable_variants") {
+              enable_variants = false;
             } else if (token.substr(0, 9) == "@variant_") {
 
+              if (token == "@variant_only") {
+                DT_THROW_IF(!enable_variants, std::logic_error, "Variants are not supported!");
+                std::string variant_path_rule;
+                iss >> std::ws >> variant_path_rule;
+                variant_only = variant_path_rule;
+                DT_LOG_NOTICE (logging, "Next parameter is active only with variant '" << variant_only << "'.");
+              }
+              /*
               if (token == "@variant_if") {
-                std::string variant_name;
+                std::string variant_path;
                 iss >> std::ws >> variant_name;
                 variant_blocks.push_front(variant_name);
                 DT_LOG_NOTICE (logging, "Current variant is '" << variant_blocks.front() << "'");
@@ -2503,7 +2560,7 @@ namespace datatools {
                 DT_LOG_NOTICE (logging, "Current variant is '"
                                << variant_blocks.front() << "' (was '" << variant_name << "')");;
               }
-            */
+              */
             } else if (parsing) {
 
               // Maybe we should ensure only one '@config' directive
@@ -2692,7 +2749,7 @@ namespace datatools {
               }
             }
 
-            /// 2013-03-07 FM : add support for embeded unit directives in real property :
+            /// 2013-03-07 FM : add support for embedded unit directives in real property :
             std::string requested_unit_label;
             std::string requested_unit_symbol;
             double      requested_unit;
@@ -2795,15 +2852,61 @@ namespace datatools {
                                  properties::data::defaults::string_value());
               }
             }
-            std::istringstream iss(property_value_str);
+
+            /// Special devel print:
+            bool variant_devel = true;
+            variant_devel = false;
+
+            bool variant_only_found = false;
+            /* The variant_only_reverse flag reverses the condition:
+             *
+             *  Example:
+             *
+             *  #@variant_only !trigger:trigger_mode/multiplicity_mode
+             *  #@description The ADC threshold of the trigger system (when the trigger runs NO multiplicity mode)
+             *  trigger.adc.threshold : real = 15 mV
+             *
+             */
+            bool variant_only_reverse = false;
+            // Process the variant_only directive if it exists:
+            if (!variant_only.empty()) {
+              command::returned_info cri = vpp.resolve_variant(variant_only,
+                                                               variant_only_found,
+                                                               variant_only_reverse);
+              DT_THROW_IF(cri.is_failure(), std::logic_error,
+                          "Cannot preprocess variant only directive from '" << variant_only << "' : " << cri.get_error_message());
+              if (variant_devel) std::cerr << "DEVEL: " << "VPP ==> variant_only_found='" << variant_only_found << "'" << std::endl;
+              if (variant_devel) std::cerr << "DEVEL: " << "VPP ==> variant_only_reverse='" << variant_only_reverse << "'" << std::endl;
+            }
+
+            std::string pv_str = property_value_str;
+            boost::trim(pv_str);
+            if (variant_devel) std::cerr << "DEVEL: " << "pv_str='" << pv_str << "'" << std::endl;
+            if (variant_devel) std::cerr << "DEVEL: " << "pv_str='" << pv_str << "'" << std::endl;
+            std::string effective_property_values_line = property_value_str;
+            {
+              std::string effective_line;
+              command::returned_info cri = vpp.preprocess(pv_str, effective_line);
+              DT_THROW_IF(cri.is_failure(), std::logic_error,
+                          "Cannot preprocess variant in '" << pv_str << "' : " << cri.get_error_message());
+              if (variant_devel) std::cerr << "DEVEL: " << "VPP ==> effective_line='" << effective_line << "'" << std::endl;
+              effective_property_values_line = effective_line;
+            }
+            /*
+            if (scalar) {
+            */
+
+            if (variant_devel) std::cerr << "DEVEL: " << "--> effective_property_values_line='" << effective_property_values_line << "'" << std::endl;
+            std::istringstream iss(effective_property_values_line);
             /***************
              *   BOOLEAN   *
              ***************/
             if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+              if (variant_devel) std::cerr << "DEVEL: boolean: effective_property_values_line='" << effective_property_values_line << "'" << std::endl;
               if (scalar) {
                 DT_THROW_IF (!io::read_boolean(iss, a_boolean),
                              std::logic_error,
-                             "Cannot read boolean value for key '"
+                             "Cannot read boolean value from '" << effective_property_values_line << "' for key '"
                              << prop_key << "' at line '" << line << "' !");
                 // iss >> a_boolean;
                 // DT_THROW_IF (!iss,
@@ -2811,12 +2914,12 @@ namespace datatools {
                 //              "Cannot read boolean value for key '"
                              // << prop_key << "' at line '" << line << "' !");
               } else {
-                for (int i = 0; i < vsize; ++i) {
+               for (int i = 0; i < vsize; ++i) {
                   bool b;
                   DT_THROW_IF (!io::read_boolean(iss, b),
                                std::logic_error,
                                "Cannot read vector boolean value for key '"
-                             << prop_key << "' at line '" << line << "' !");
+                               << prop_key << "' at line '" << line << "' !");
                   // iss >> b;
                   // DT_THROW_IF (!iss,
                   //              std::logic_error,
@@ -2934,6 +3037,12 @@ namespace datatools {
             }
 
             bool store_it = true;
+            if (! variant_only.empty()) {
+              store_it = variant_only_found;
+              if (variant_only_reverse) {
+                store_it = !variant_only_found;
+              }
+            }
             if (store_it) {
               // scalar :
               if (type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar) {
@@ -2970,16 +3079,20 @@ namespace datatools {
               if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
                 a_props.set_explicit_unit(prop_key, true);
               }
-              prop_description = "";
+              prop_description.clear();
             } // if (store_it)
 
+            // Clear current requested variant only :
+            if (! variant_only.empty()) {
+              variant_only.clear();
+            }
+            variant_only_reverse = false;
           }
         } // !skip_line && parsing
       } // if (! line_goon)
     } // while (*_in)
     return;
   }
-
 
 
   std::string properties::build_property_key(const std::string& prefix,

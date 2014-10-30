@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // test_datatools.cxx
 
 // - Ourselves
@@ -28,5 +27,3 @@ int main (/* int argc_, char ** argv_ */) {
 
   return EXIT_SUCCESS;
 }
-
-// end of test_datatools.cxx

@@ -178,7 +178,7 @@ namespace datatools {
     if (! title_.empty()) out_ << indent << title_ << std::endl;
 
     out_ << indent << i_tree_dumpable::tag
-         << "Name : ";
+         << "Name              : ";
     if (! _name_.empty()) {
       out_ << "'" << _name_ << "'";
     } else {
@@ -187,7 +187,7 @@ namespace datatools {
     out_ << std::endl;
 
     out_ << indent << i_tree_dumpable::tag
-         << "Display name : ";
+         << "Display name      : ";
     if (! _display_name_.empty()) {
       out_ << "'" << _display_name_ << "'";
     } else {
@@ -209,7 +209,7 @@ namespace datatools {
          << logger::get_priority_label(_logging_priority_) << "'" << std::endl;
 
     out_ << indent << i_tree_dumpable::inherit_tag(inherit_)
-         << "Auxiliaries : ";
+         << "Auxiliaries       : ";
     if (! has_auxiliaries()) {
       out_ << "<none>";
     }

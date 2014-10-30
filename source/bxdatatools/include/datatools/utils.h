@@ -14,61 +14,94 @@
 
 namespace datatools {
 
+/// \brief Return codes
 enum return_code_type {
   SUCCESS = EXIT_SUCCESS,
   ERROR   = EXIT_FAILURE,
   FAILURE = EXIT_FAILURE
 };
 
-// Invalidate a float (using NaN):
+/// \brief Comparison results for ordered objects
+enum compare_result_type {
+  COMPARE_UNDEFINED = -2, //!< Comparison cannot be performed
+  COMPARE_LESS      = -1, //!< Less than
+  COMPARE_EQUAL     =  0, //!< Equal to
+  COMPARE_GREATER   =  1  //!< Greater than
+};
+
+/* Single precision utility functions */
+
+/// Invalidate a float (using NaN):
 void invalidate(float& value);
 
-// Check if a float is valid (not a NaN):
+/// Check if a float is valid (not a NaN):
 bool is_valid(float value);
 
-// Set a float to +infinity:
+/// Check if a float is infinity (+/-inf):
+bool is_infinity(float value);
+
+/// Check if a float is plus infinity (+inf):
+bool is_plus_infinity(float value);
+
+/// Check if a float is minus infinity (-inf):
+bool is_minus_infinity(float value);
+
+/// Set a float to +infinity:
 void plus_infinity(float& value);
 
-// Set a float to -infinity:
+/// Set a float to -infinity:
 void minus_infinity(float& value);
 
-// Set a float to +infinity:
+/// Set a float to +infinity:
 void infinity(float& value);
 
-// Invalidate a double (using NaN):
+/* Double precision utility functions */
+
+/// Invalidate a double (using NaN):
 void invalidate(double& value);
 
-// Check if a double is valid (not a NaN):
+/// Check if a double is valid (not a NaN):
 bool is_valid(double value);
 
-// Check if a double is infinity (+/-inf):
+/// Check if a double is infinity (+/-inf):
 bool is_infinity(double value);
 
-// Check if a double is normal (not a NaN and not inf):
+/// Check if a double is plus infinity (+inf):
+bool is_plus_infinity(double value);
+
+/// Check if a double is minus infinity (-inf):
+bool is_minus_infinity(double value);
+
+/// Check if a double is normal (not a NaN and not inf):
 bool is_normal(double value);
 
-// Set a double to +infinity:
+/// Set a double to +infinity:
 void plus_infinity(double& value);
 
-// Set a double to -infinity:
+/// Set a double to -infinity:
 void minus_infinity(double& value);
 
-// Set a double to +infinity:
+/// Set a double to +infinity:
 void infinity(double& value);
 
-// Check if a string is quoted
+/// Compare two real numbers given explicit absolute and/or relative tolerances
+compare_result_type compare_real(double x1_, double x2_, double abs_eps_ = 0.0, double rel_eps_ = 0.0);
+
+/* String utility functions */
+
+/// Check if a string is quoted
 bool is_quoted(const std::string & text_, char q_ = '"');
 
-// Add quotes to a string
+/// Add quotes to a string
 void add_quotes(const std::string & from_, std::string & to_, char q_ = '"');
 
-// Add quotes to a string
+/// Add quotes to a string
 void add_quotes(std::string & text_, char q_ = '"');
 
-// Remove quotes from a string
+/// Remove quotes from a string
 void remove_quotes(const std::string & from_, std::string & to_, char q_ = '"');
 
-// Remove quotes from a string
+/// Remove quotes from a string
 void remove_quotes(std::string & text_, char q_ = '"');
 
 /* Functions to expand string as path */
@@ -146,12 +179,13 @@ std::string expand_path(const std::string& path_str);
  *  'a_words'.
  *
  * The Boost library provides some powerful alternative through
- * the tokenizer class and split string algorithm.
+ * the tokenizer class and split string algorithms.
  *
  */
 void split_string(const std::string& word, const std::string& separators,
                   std::list<std::string>& words);
 
+/* Bit manipulation utility template functions */
 
 template<typename Integral>
 void set_bit(Integral& number, int pos) {

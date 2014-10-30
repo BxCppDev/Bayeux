@@ -16,6 +16,7 @@
 
 // This Project:
 #include <datatools/utils.h>
+#include <datatools/units.h>
 
 namespace datatools {
 
@@ -74,6 +75,17 @@ const std::string & io::constants::minus_infinity_real_repr()
   return value;
 }
 
+  void io::write_boolean(std::ostream& a_out,
+                         bool a_bool)
+  {
+    if (a_bool) {
+      a_out << "1";
+    } else {
+      a_out << "0";
+    }
+    return;
+  }
+
   bool io::read_boolean(std::istream& a_in,
                         bool& a_bool)
   {
@@ -98,8 +110,36 @@ const std::string & io::constants::minus_infinity_real_repr()
     return false;
   }
 
-  bool io::read_quoted_string(std::istream& a_in,
-                              std::string& a_str) {
+  bool io::read_integer(std::istream& a_in, int& a_integer)
+  {
+    a_in >> std::ws;
+    std::string token;
+    a_in >> token;
+    if (token.empty()) {
+      return false;
+    }
+    std::istringstream iss(token);
+    iss >> a_integer;
+    if (!iss) {
+      return false;
+    }
+    return false;
+  }
+
+  void io::write_integer(std::ostream& a_out, int a_integer)
+  {
+    a_out << std::dec << a_integer;
+    return;
+  }
+
+  void io::write_quoted_string(std::ostream& a_out, const std::string& a_str)
+  {
+    a_out << '"' << a_str << '"';
+    return;
+  }
+
+  bool io::read_quoted_string(std::istream& a_in, std::string& a_str)
+  {
     std::string chain = "";
     a_in >> std::ws;
     if (!a_in) {
@@ -148,12 +188,56 @@ const std::string & io::constants::minus_infinity_real_repr()
   }
 
 // static
-void io::write_real_number(std::ostream & out_, const double & val_, int precision_)
+void io::write_real_number(std::ostream & out_,
+                           double val_,
+                           int precision_,
+                           const std::string& unit_symbol_,
+                           const std::string& unit_label_,
+                           double unit_value_)
 {
+  // std::cerr << "DEVEL: io::write_real_number: unit_symbol_ = '" << unit_symbol_ << "'" << std::endl;
+  // std::cerr << "DEVEL: io::write_real_number: unit_label_  = '" << unit_label_ << "'" << std::endl;
   if (datatools::is_normal(val_)) {
+    double      the_unit_value = 1.0;
+    std::string the_unit_symbol;
+    std::string the_unit_label;
+
+    if (!unit_symbol_.empty()) {
+      bool ok = units::find_unit(unit_symbol_, the_unit_value, the_unit_label);
+      if (ok) {
+        // Unit is recognized :
+        DT_THROW_IF(!unit_label_.empty() && the_unit_label != unit_label_,
+                    std::logic_error,
+                    "Unit '" << unit_symbol_
+                    << "' is not compatible with unit label '" << unit_label_ << "'!");
+        the_unit_symbol = unit_symbol_;
+      } else {
+        // Unit is not recognized :
+        if (unit_value_ > 0.0) {
+          // But at least we provide a unit value (for unregistered units)
+          the_unit_symbol = unit_symbol_;
+          the_unit_value = unit_value_;
+        } else {
+          DT_THROW_IF(true, std::logic_error,
+                      "Unit symbol '" << unit_symbol_ << "' is not recognized!");
+        }
+      }
+    } else {
+      if (!unit_label_.empty()) {
+        DT_THROW_IF(! units::is_unit_label_valid(unit_label_),
+                    std::logic_error,
+                    "Unit label '" << unit_label_ << "' is not recognized!");
+        the_unit_symbol = units::get_default_unit_symbol_from_label(unit_label_);
+        std::string ul;
+        units::find_unit(the_unit_symbol, the_unit_value, ul);
+      }
+    }
     int oldprec = out_.precision();
     out_.precision(precision_);
-    out_ << val_;
+    out_ << (val_ / the_unit_value);
+    if (! the_unit_symbol.empty()) {
+      out_ << ' ' << the_unit_symbol;
+    }
     out_.precision(oldprec);
   } else if (datatools::is_infinity(val_)) {
     if (val_ > 0) out_ << io::constants::plus_infinity_real_repr();

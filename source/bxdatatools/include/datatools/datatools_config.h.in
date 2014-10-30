@@ -20,4 +20,9 @@
 //! Evaluates to true if datatools was built with automated init/fini operation at DLL loading
 #cmakedefine01 DATATOOLS_WITH_IMPLICIT_INIT_FINI
 
+//! Evaluates to true if datatools was built with Qt-based GUI components
+#cmakedefine01 DATATOOLS_WITH_QT_GUI
+
+#define DATATOOLS_ENV_RESOURCE_DIR "DATATOOLS_RESOURCE_DIR"
+
 #endif // DATATOOLS_DATATOOLS_CONFIG_H

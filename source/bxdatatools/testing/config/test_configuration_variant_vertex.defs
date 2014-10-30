@@ -1,0 +1,40 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of definitions for configuration items
+#@key_label   "name"
+#@meta_label  "type"
+
+
+##################################################
+[name="vertex_generator_name.PM" type="parameter"]
+display_name              : string = "Vertex generator name"
+description               : string = "The name of the vertex geenrator"
+type                      : string = "string"
+mutability                : string = "variable"
+variable.mode             : string = "enumeration"
+string.enumerated.size    : integer = 4
+string.enumerated_0.value : string = "source_foil_bulk"
+string.enumerated_1.value : string = "source_foil_surface"
+string.enumerated_2.value : string = "field_wires_surface"
+string.enumerated_3.value : string = "gas"
+string.default            : string = "source_foil_bulk"
+
+
+############################################
+[name="vertex_generation.VM" type="variant"]
+display_name    : string = "Vertex generation"
+description     : string = "The generation of vertice"
+parameters : string[3] = \
+  "logging" \
+  "vertex_generator" \
+  "number_of_shots"
+
+parameters.logging.model                : string = "logging_priority.PM"
+parameters.logging.description          : string = "Logging priority"
+
+parameters.vertex_generator.model       : string = "vertex_generator_name.PM"
+parameters.vertex_generator.description : string = "The name of the vertex generator"
+
+parameters.number_of_shots.model        : string = "multiplicity_1_9.PM"
+parameters.number_of_shots.description  : string = "The number of shots"

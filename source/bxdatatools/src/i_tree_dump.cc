@@ -9,62 +9,63 @@
 
 namespace datatools {
 
+i_tree_dumpable::i_tree_dumpable()
+{
+}
+
+i_tree_dumpable::~i_tree_dumpable()
+{
+  return;
+}
+
 const std::string & i_tree_dumpable::tags::item()
 {
-  static std::string value;
-  if (value.empty()) {
-    value = "|-- ";
-  }
+  static const std::string value("|-- ");
   return value;
 }
 
 const std::string & i_tree_dumpable::tags::last_item()
 {
-  static std::string value;
-  if (value.empty()) {
-    value = "`-- ";
-  }
+  static const std::string value("`-- ");
   return value;
 }
 
 const std::string & i_tree_dumpable::tags::skip_item()
 {
-  static std::string value;
-  if (value.empty()) {
-    value = "|   ";
-  }
+  static const std::string value("|   ");
   return value;
 }
 
 const std::string & i_tree_dumpable::tags::last_skip_item()
 {
-  static std::string value;
-  if (value.empty()) {
-    value = "    ";
-  }
+  static const std::string value("    ");
   return value;
 }
 
 
-std::ostream & i_tree_dumpable::last_skip_tag(std::ostream& out) {
+std::ostream & i_tree_dumpable::last_skip_tag(std::ostream& out)
+{
   out << tags::last_skip_item();
   return out;
 }
 
 
-std::ostream & i_tree_dumpable::skip_tag(std::ostream& out) {
+std::ostream & i_tree_dumpable::skip_tag(std::ostream& out)
+{
   out << tags::skip_item();
   return out;
 }
 
 
-std::ostream & i_tree_dumpable::last_tag(std::ostream& out) {
+std::ostream & i_tree_dumpable::last_tag(std::ostream& out)
+{
   out << tags::last_item();
   return out;
 }
 
 
-std::ostream & i_tree_dumpable::tag(std::ostream& out) {
+std::ostream & i_tree_dumpable::tag(std::ostream& out)
+{
   out << tags::item();
   return out;
 }
@@ -98,11 +99,14 @@ void i_tree_dumpable::smart_print (int out_type,
 // inherit_tag inner class
 
 i_tree_dumpable::inherit_tag::inherit_tag(bool inherit)
-    : inherit_(inherit) {}
+    : inherit_(inherit)
+{
+}
 
 
 std::ostream& operator<<(std::ostream& out,
-                         const i_tree_dumpable::inherit_tag& last_tag) {
+                         const i_tree_dumpable::inherit_tag& last_tag)
+{
   if (last_tag.inherit_) {
     out << i_tree_dumpable::tag;
   } else {
@@ -116,11 +120,14 @@ std::ostream& operator<<(std::ostream& out,
 // inherit_skip_tag class
 
 i_tree_dumpable::inherit_skip_tag::inherit_skip_tag(bool inherit)
-    : inherit_ (inherit) {}
+    : inherit_ (inherit)
+{
+}
 
 
 std::ostream& operator<<(std::ostream& out,
-                         const i_tree_dumpable::inherit_skip_tag& last_tag) {
+                         const i_tree_dumpable::inherit_skip_tag& last_tag)
+{
   if (last_tag.inherit_) {
     out << i_tree_dumpable::skip_tag;
   } else {
@@ -128,6 +135,5 @@ std::ostream& operator<<(std::ostream& out,
   }
   return out;
 }
-
 
 } // end of namespace datatools

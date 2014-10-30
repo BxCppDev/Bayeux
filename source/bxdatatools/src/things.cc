@@ -526,7 +526,7 @@ void things::tree_dump(std::ostream& a_out, const std::string& a_title,
 
   if (things_.size() == 0) {
     a_out << indent << i_tree_dumpable::inherit_tag(a_inherit)
-          << "<no property>" << std::endl;
+          << "<no entry>" << std::endl;
   } else {
     for (dict_type::const_iterator i = things_.begin();
          i != things_.end();

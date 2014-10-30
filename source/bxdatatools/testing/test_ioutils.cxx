@@ -8,6 +8,7 @@
 
 // This project:
 #include <datatools/ioutils.h>
+#include <datatools/clhep_units.h>
 
 int main (int argc_ , char ** argv_)
 {
@@ -65,6 +66,17 @@ int main (int argc_ , char ** argv_)
     value = 55;
     std::cout << "value (dec) = " << value << std::endl;
     std::cout << "value (bin) = " << datatools::io::to_binary (value) << std::endl;
+
+    {
+      std::cout << "Test write_real_number: value=";
+      datatools::io::write_real_number(std::cout,
+                                       0.142 * CLHEP::m,
+                                       15,
+                                       "mm",
+                                       "length");
+      std::cout << std::endl;
+    }
+
   }
   catch ( std::exception & x) {
     std::cerr << "error: " << x.what() << std::endl;

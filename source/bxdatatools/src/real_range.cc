@@ -20,356 +20,411 @@
 
 namespace datatools {
 
-  // static
-  const double real_range::default_precision()
+  void real_range::_set_defaults()
   {
-    static const double _eps(5.e-15);
-    return _eps;
+    unit_label_.clear();
+    preferred_unit_.clear();
+    lower_         = std::numeric_limits<double>::quiet_NaN();
+    lower_flag_    = range_bound_undefined;
+    upper_         = std::numeric_limits<double>::quiet_NaN();
+    upper_flag_    = range_bound_undefined;
+    return;
   }
 
-  // Ctor:
-  real_range::real_range() {
-    abs_precision_ = std::numeric_limits<double>::quiet_NaN();
-    this->reset();
+  real_range::real_range()
+  {
+    _set_defaults();
+    return;
   }
 
-
-  // Ctor:
-  real_range::real_range(double from, double to,
-                         range_bound_info_type from_policy,
-                         range_bound_info_type to_policy) {
-    abs_precision_ = std::numeric_limits<double>::quiet_NaN();
-    this->set(from, to, from_policy, to_policy);
+  real_range::real_range(double a_from, double a_to,
+                         range_bound_info_type a_from_policy,
+                         range_bound_info_type a_to_policy)
+  {
+    _set_defaults();
+    this->set(a_from, a_to, a_from_policy, a_to_policy);
+    return;
   }
 
-
-  bool real_range::is_valid() const {
+  bool real_range::is_valid() const
+  {
     return (lower_flag_ != range_bound_undefined)
       && (upper_flag_ != range_bound_undefined);
   }
 
-
-  void real_range::invalidate() {
+  void real_range::invalidate()
+  {
     this->reset();
+    return;
   }
 
+  void real_range::reset()
+  {
+    _set_defaults();
+    return;
+  }
 
-  void real_range::reset_lower() {
-    lower_      = -std::numeric_limits<double>::max();
+  void real_range::reset_lower()
+  {
+    lower_      = std::numeric_limits<double>::quiet_NaN();
     lower_flag_ = range_bound_undefined;
+    return;
   }
 
-
-  void real_range::reset_upper() {
-    upper_      = std::numeric_limits<double>::max();
+  void real_range::reset_upper()
+  {
+    upper_      = std::numeric_limits<double>::quiet_NaN();
     upper_flag_ = range_bound_undefined;
+    return;
   }
 
-
-  void real_range::reset() {
-    this->reset_lower();
-    this->reset_upper();
-    this->reset_unit_label();
-    this->reset_preferred_unit();
-    this->reset_abs_precision();
-  }
-
-
-  void real_range::set_lower(double from, range_bound_info_type policy) {
-    if (policy == range_bound_unbounded) {
+  void real_range::set_lower(double a_from, range_bound_info_type a_policy)
+  {
+    DT_THROW_IF(!datatools::is_valid(a_from), std::logic_error, "Invalid lower bound !");
+    DT_THROW_IF(a_policy == range_bound_undefined, std::logic_error, "Invalid lower bound policy !");
+    if (a_policy == range_bound_unbounded) {
       // "(,..."
       lower_      = -std::numeric_limits<double>::infinity();
-      lower_flag_ = policy;
-    } else if (policy == range_bound_included || policy == range_bound_excluded) {
-      // "[value,..." || "(value,..."
-      lower_      = from;
-      lower_flag_ = policy;
+      lower_flag_ = range_bound_unbounded;
     } else {
-      DT_THROW_IF(true, std::logic_error, "Invalid lower bound policy !");
-    }
-    if (!has_abs_precision()) {
-      set_abs_precision(0.0);
+      if (datatools::is_valid(upper_)) {
+        DT_THROW_IF(a_from > upper_, std::logic_error, "Invalid lower/upper bounds !");
+      }
+      // "[value,..." || "(value,..."
+      lower_      = a_from;
+      lower_flag_ = a_policy;
     }
     return;
   }
 
-
-  void real_range::set_upper(double value, range_bound_info_type policy) {
-    if (policy == range_bound_unbounded) {
+  void real_range::set_upper(double a_to, range_bound_info_type a_policy)
+  {
+    DT_THROW_IF(!datatools::is_valid(a_to), std::logic_error, "Invalid upper bound !");
+    DT_THROW_IF(a_policy == range_bound_undefined, std::logic_error, "Invalid upper bound policy !");
+    if (a_policy == range_bound_unbounded) {
       // "...,...)"
       upper_      = +std::numeric_limits<double>::infinity();
-      upper_flag_ = policy;
-    } else if (policy == range_bound_included || policy == range_bound_excluded) {
-      // "...,value]" || "...,value)"
-      upper_      = value;
-      upper_flag_ = policy;
+      upper_flag_ = a_policy;
     } else {
-      DT_THROW_IF(true, std::logic_error, "Invalid upper bound policy !");
+      // "...,a_to]" || "...,a_to)"
+      if (datatools::is_valid(lower_)) {
+        DT_THROW_IF(a_to < lower_, std::logic_error, "Invalid lower/upper bounds !");
+      }
+      upper_      = a_to;
+      upper_flag_ = a_policy;
     }
-    if (!has_abs_precision()) {
-      set_abs_precision(0.0);
-    }
+     return;
   }
 
-
-  void real_range::set(double from, double to,
-                       range_bound_info_type from_policy,
-                       range_bound_info_type to_policy) {
-    this->set_lower(from, from_policy);
-    this->set_upper(to, to_policy);
-    if (!has_abs_precision()) {
-      set_abs_precision(compute_precision(lower_, upper_));
-    }
-    if (!has_abs_precision()) {
-      set_abs_precision(0.0);
-    }
-  }
-
-  void real_range::set_abs_precision(double abseps_)
+  void real_range::set(double a_from, double a_to,
+                       range_bound_info_type a_from_policy,
+                       range_bound_info_type a_to_policy)
   {
-    if (abs_precision_ <= 0.0) {
-      abs_precision_ = compute_precision(lower_, upper_);
-    } else {
-      abs_precision_ = abseps_;
-    }
+    reset_lower();
+    reset_upper();
+    this->set_lower(a_from, a_from_policy);
+    this->set_upper(a_to, a_to_policy);
     return;
   }
 
-  bool real_range::has_abs_precision() const
+  bool real_range::is_lower_bounded() const
   {
-    return datatools::is_valid(abs_precision_);
+    return lower_flag_ > 0;
   }
 
-  void real_range::reset_abs_precision()
+  bool real_range::is_upper_bounded() const
   {
-    datatools::invalidate(abs_precision_);
-    return;
+    return upper_flag_ > 0;
   }
 
-  double real_range::get_abs_precision() const
+  bool real_range::is_half_bounded() const
   {
-    return abs_precision_;
-  }
-
-  bool real_range::is_lower_bounded() const {
-    return lower_flag_ > 0 ;
-  }
-
-  bool real_range::is_upper_bounded() const {
-    return upper_flag_ > 0 ;
-  }
-
-  bool real_range::is_half_bounded() const {
     return
       (this->is_lower_bounded() && !this->is_upper_bounded()) ||
       (!this->is_lower_bounded() && this->is_upper_bounded());
   }
 
-
-  bool real_range::is_bounded() const {
+  bool real_range::is_bounded() const
+  {
     return this->is_lower_bounded() && this->is_upper_bounded();
   }
 
-
-  double real_range::get_lower() const {
+  double real_range::get_lower() const
+  {
     DT_THROW_IF (!this->is_lower_bounded(),std::logic_error,"No lower bound !");
     return lower_;
   }
 
-
-  double real_range::get_upper() const {
+  double real_range::get_upper() const
+  {
     DT_THROW_IF (!this->is_upper_bounded(),std::logic_error,"No upper bound !");
     return upper_;
   }
 
-  double real_range::width() const
+  double real_range::_effective_tolerance(double a_tolerance) const
   {
-    DT_THROW_IF (!this->is_bounded(),std::logic_error,"Unbounded interval !");
-    double w = upper_ - lower_;
-    if (!is_lower_included()) {
-      w -= abs_precision_;
+    double eps = 0.0;
+    if (datatools::is_valid(a_tolerance) && a_tolerance >= 0.0) {
+      eps = a_tolerance;
     }
-    if (!is_upper_included()) {
-      w -= abs_precision_;
-    }
-    if (w < - 1e-7 * abs_precision_) {
-      datatools::invalidate(w);
-    } else if (w < abs_precision_ * std::numeric_limits<double>::epsilon()) {
-      w = 0.0;
+    return 0.5 * eps;
+  }
+
+  double real_range::width(double a_tolerance) const
+  {
+    DT_THROW_IF (!this->is_bounded(),std::logic_error, "Unbounded interval !");
+    double w = last(a_tolerance) - first(a_tolerance);
+    if (datatools::is_valid(w)) {
+      double eps = _effective_tolerance(a_tolerance);
+      if (w < -eps) {
+        datatools::invalidate(w);
+      } else if (w < eps) {
+        w = 0.0;
+      }
     }
     return w;
   }
 
-  bool real_range::is_singleton() const
+  bool real_range::is_singleton(double a_tolerance) const
   {
-    return is_bounded() && (width() == 0.0);
+    if (is_bounded()) {
+      double w = width(a_tolerance);
+      if (datatools::is_valid(w) && w == 0.0) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  double real_range::singleton() const
+  double real_range::singleton(double a_tolerance) const
   {
-    DT_THROW_IF (!this->is_singleton(),std::logic_error,"Not a singleton !");
-    return 0.5 * (first() + last());
+    DT_THROW_IF (!this->is_singleton(a_tolerance),std::logic_error,"Not a singleton !");
+    if (this->is_lower_included() && !this->is_upper_included()) {
+      return first(a_tolerance);
+    }
+    if (this->is_upper_included() && !this->is_lower_included()) {
+      return last(a_tolerance);
+    }
+    return 0.5 * (first(a_tolerance) + last(a_tolerance));
   }
 
-  bool real_range::is_empty() const {
-    return ! datatools::is_valid(this->width());
+  bool real_range::is_empty(double a_tolerance) const
+  {
+    return ! datatools::is_valid(this->width(a_tolerance));
   }
 
-  bool real_range::is_lower_included() const {
+  bool real_range::is_lower_included() const
+  {
     DT_THROW_IF (!this->is_lower_bounded(),std::logic_error,"No lower bound !");
     return (lower_flag_ == range_bound_included);
   }
 
-
-  bool real_range::is_upper_included() const {
+  bool real_range::is_upper_included() const
+  {
     DT_THROW_IF (!this->is_upper_bounded(),std::logic_error,"No upper bound !");
     return (upper_flag_ == range_bound_included);
   }
 
+  void real_range::make_singleton(double a_value)
+  {
+    this->set(a_value, a_value, range_bound_included, range_bound_included);
+    return;
+  }
 
-  void real_range::make_empty() {
+  void real_range::make_empty()
+  {
     this->set(0, 0, range_bound_excluded, range_bound_excluded);
+    return;
   }
 
-
-  void real_range::make_full() {
-    this->set(-std::numeric_limits<double>::max(),
-              std::numeric_limits<double>::max(),
-              range_bound_included,
-              range_bound_included);
+  void real_range::make_positive_unbounded() {
+    make_upper_unbounded(0, true);
+    return;
   }
 
-
-  void real_range::make_full_positive() {
-    this->set(0,
-              std::numeric_limits<double>::max(),
-              range_bound_included,
-              range_bound_included);
+  void real_range::make_negative_unbounded() {
+    make_lower_unbounded(0, true);
+    return;
   }
 
-
-  void real_range::make_full_negative() {
-    this->set(-std::numeric_limits<double>::max(),
-              0,
-              range_bound_included,
-              range_bound_included);
-  }
-
-
-  void real_range::make_upper_unbounded(double from, bool inclusive) {
-    this->set(from,
+  void real_range::make_upper_unbounded(double a_from, bool inclusive) {
+    this->set(a_from,
               +std::numeric_limits<double>::infinity(),
               inclusive ? range_bound_included : range_bound_excluded ,
               range_bound_unbounded);
+    return;
   }
 
-
-  void real_range::make_lower_unbounded(double to, bool inclusive) {
+  void real_range::make_lower_unbounded(double to, bool inclusive)
+  {
     this->set(-std::numeric_limits<double>::infinity(),
               to,
               range_bound_unbounded,
               inclusive ? range_bound_included : range_bound_excluded);
+    return;
   }
 
-
-  void real_range::make_bounded(double from, double to,
-                                bool lower_included, bool upper_included) {
-    this->set(from,
-              to,
-              lower_included ? range_bound_included : range_bound_excluded,
-              upper_included ? range_bound_included : range_bound_excluded);
+  void real_range::make_unbounded()
+  {
+    this->set(-std::numeric_limits<double>::infinity(),
+              +std::numeric_limits<double>::infinity(),
+              range_bound_unbounded,
+              range_bound_unbounded);
+    return;
   }
 
+  void real_range::make_bounded(double a_from, double a_to,
+                                bool a_lower_included, bool a_upper_included)
+  {
+    DT_THROW_IF(!datatools::is_valid(a_from), std::logic_error,
+                "Invalid lower bound !");
+    DT_THROW_IF(!datatools::is_valid(a_to), std::logic_error,
+                "Invalid lower bound !");
+    DT_THROW_IF(a_from > a_to, std::logic_error,
+                "Invalid lower and upper bounds !");
+    this->set(a_from,
+              a_to,
+              a_lower_included ? range_bound_included : range_bound_excluded,
+              a_upper_included ? range_bound_included : range_bound_excluded);
+    return;
+  }
 
-  double real_range::compute_precision(double a_lower, double a_upper) {
-    double eps;
+  double real_range::compute_tolerance(double a_lower, double a_upper, double a_relative_tolerance) {
+    double abs_eps = std::numeric_limits<double>::quiet_NaN();
+    double rel_eps = a_relative_tolerance;
+    if (!::datatools::is_valid(rel_eps) || rel_eps <= 0.0) {
+      rel_eps = 1.5 * std::numeric_limits<double>::epsilon();
+    }
     double l_eps = std::numeric_limits<double>::quiet_NaN();
     double u_eps = std::numeric_limits<double>::quiet_NaN();
-    if (datatools::is_valid(a_lower)) {
+
+    if (::datatools::is_valid(a_lower) && !::datatools::is_infinity(a_lower)) {
       double scale = std::abs(a_lower);
-      l_eps = default_precision() * scale;
+      l_eps = rel_eps * scale;
     }
 
-    if (datatools::is_valid(a_upper)) {
+    if (::datatools::is_valid(a_upper) && !::datatools::is_infinity(a_upper)) {
       double scale = std::abs(a_upper);
-      u_eps = default_precision() * scale;
+      u_eps = rel_eps * scale;
     }
 
-    if (datatools::is_valid(l_eps) && datatools::is_valid(u_eps)) {
-      eps = std::max(l_eps, u_eps);
-    } else if (datatools::is_valid(l_eps)) {
-      eps = l_eps;
-    } else if (datatools::is_valid(u_eps)) {
-      eps = u_eps;
-    } else {
-      eps = default_precision();
+    if (::datatools::is_valid(l_eps) && ::datatools::is_valid(u_eps)) {
+      abs_eps = std::max(l_eps, u_eps);
+    } else if (::datatools::is_valid(l_eps)) {
+      abs_eps = l_eps;
+    } else if (::datatools::is_valid(u_eps)) {
+      abs_eps = u_eps;
     }
 
-    return eps;
+    return abs_eps;
   }
 
-  bool real_range::has(const real_range & rr) const
+  bool real_range::has(const real_range & rr, double a_tolerance) const
   {
+    // std::cerr << "DEVEL: real_range::has: Entering..." << std::endl;
+    // std::cerr << "DEVEL: real_range::has:   this = " << *this << std::endl;
+    // std::cerr << "DEVEL: real_range::has:   rr   = " << rr << std::endl;
     if (!rr.is_lower_bounded()) {
       if (this->is_lower_bounded()) {
         return false;
       }
     } else {
-      int first = rr.first();
-      if (!this->has(first)) return false;
+      double a_first = rr.first(0.0);
+      // std::cerr << "DEVEL: real_range::has: first=" << first << std::endl;
+      if (!this->has(a_first, a_tolerance)) return false;
     }
     if (!rr.is_upper_bounded()) {
       if (this->is_upper_bounded()) {
         return false;
       }
     } else {
-      int last = rr.last();
-      if (!this->has(last)) return false;
+      double a_last = rr.last(0.0);
+      // std::cerr << "DEVEL: real_range::has: last=" << last << std::endl;
+      if (!this->has(a_last, a_tolerance)) return false;
     }
-    return false;
+    return true;
   }
 
-
-  bool real_range::has(double value) const {
-    double eps = abs_precision_;
+  bool real_range::has(double a_value, double a_tolerance) const
+  {
+    double eps = _effective_tolerance(a_tolerance);
+    // std::cerr.precision(15);
 
     if (this->is_lower_bounded()) {
+      // std::cerr << "DEVEL: real_range::has: is_lower_bounded=" << 1 << std::endl;
+      // std::cerr << "DEVEL: real_range::has:   value=" << a_value << std::endl;
       if (this->is_lower_included()) {
-        if (value < (lower_ - eps)) return false;
+        // std::cerr << "DEVEL: real_range::has:   l = " << lower_ << std::endl;
+        if (a_value < lower_) return false;
       } else {
-        if (value < (lower_ + eps)) return false;
+        // std::cerr << "DEVEL: real_range::has:   l+e = " << (lower_ + eps) << std::endl;
+        if (a_value < (lower_ + eps)) return false;
       }
     }
 
     if (this->is_upper_bounded()) {
+      // std::cerr << "DEVEL: real_range::has: is_upper_bounded=" << 1 << std::endl;
+      // std::cerr << "DEVEL: real_range::has:   value=" << a_value << std::endl;
       if (this->is_upper_included()) {
-        if (value > (upper_ + eps)) return false;
+        // std::cerr << "DEVEL: real_range::has:   u = " << upper_ << std::endl;
+        if (a_value > upper_) return false;
       } else {
-        if (value > (upper_ - eps)) return false;
+        // std::cerr << "DEVEL: real_range::has:   u-e = " << (upper_ - eps) << std::endl;
+        if (a_value > (upper_ - eps)) return false;
       }
     }
     return true;
   }
 
 
-  double real_range::first() const {
+  double real_range::first(double a_tolerance) const
+  {
     DT_THROW_IF (!this->is_lower_bounded(),
                  std::logic_error,
                  "Not lower bounded !");
     double the_first = lower_;
-    if (!this->is_lower_included()) {
-      the_first += abs_precision_;
+    if (! this->is_lower_included()) {
+      // We shift on the right by some epsilon:
+      double eps = _effective_tolerance(a_tolerance);
+      the_first += eps;
+      if (this->is_upper_bounded()) {
+        // We check if the 'first' value is still inside the range (upper side):
+        if (is_upper_included() && the_first > upper_) {
+          // We cannot go behond the upper bound:
+          the_first = upper_;
+        }
+        if (! is_upper_included() && the_first >= upper_) {
+          // // We go only half the range:
+          // the_first = lower_ + 0.5 * (upper_ - lower_);
+          datatools::invalidate(the_first);
+        }
+      }
     }
     return the_first;
   }
 
-  double real_range::last() const {
+  double real_range::last(double a_tolerance) const
+  {
     DT_THROW_IF (!this->is_upper_bounded(),
                  std::logic_error,
                  "Not upper bounded !");
     double the_last = upper_;
-    if (!this->is_upper_included()) {
-      the_last -= abs_precision_;
+    if (! this->is_upper_included()) {
+      // We shift on the left by some epsilon:
+      double eps = _effective_tolerance(a_tolerance);
+      the_last -= eps;
+      if (this->is_lower_bounded()) {
+        // We check if the 'last' value is still inside the range (lower side):
+        if (is_lower_included() && the_last < lower_) {
+          // We cannot go behond the lower bound:
+          the_last = lower_;
+        }
+        if (! is_lower_included() && the_last <= lower_) {
+          // // We go only half the range:
+          // the_last = upper_ - 0.5 * (upper_ - lower_);
+          datatools::invalidate(the_last);
+        }
+      }
     }
     return the_last;
   }
@@ -385,19 +440,19 @@ namespace datatools {
     return;
   }
 
-  void real_range::set_preferred_unit(const std::string & pus_)
+  void real_range::set_preferred_unit(const std::string & a_pus)
   {
     double uv;
     std::string ul;
-    DT_THROW_IF(!units::find_unit(pus_, uv, ul), std::logic_error,
-                "Preferred unit '" << pus_ << "' is not supported!");
+    DT_THROW_IF(!units::find_unit(a_pus, uv, ul), std::logic_error,
+                "Preferred unit '" << a_pus << "' is not supported!");
     if (has_unit_label()) {
       DT_THROW_IF(ul != unit_label_, std::logic_error,
-                  "Preferred unit '"<< pus_ << "' is not compatible with '" << unit_label_ << "' !");
+                  "Preferred unit '"<< a_pus << "' is not compatible with '" << unit_label_ << "' !");
     } else {
       set_unit_label(ul);
     }
-    preferred_unit_ = pus_;
+    preferred_unit_ = a_pus;
     return;
   }
 
@@ -417,21 +472,21 @@ namespace datatools {
     return;
   }
 
-  void real_range::set_unit_label(const std::string & ul_)
+  void real_range::set_unit_label(const std::string & a_ul)
   {
     if (has_preferred_unit()) {
       double uv;
       std::string ul;
       DT_THROW_IF(units::find_unit(preferred_unit_, uv, ul), std::logic_error,
                   "Preferred unit '" << preferred_unit_ << "' is not supported!");
-      DT_THROW_IF(ul != ul_, std::logic_error,
-                  "Unit label '" << ul_ << "' is not compatible with preferred unit '"
+      DT_THROW_IF(ul != a_ul, std::logic_error,
+                  "Unit label '" << a_ul << "' is not compatible with preferred unit '"
                   << preferred_unit_ << "' is not supported!");
     } else {
-      // std::string dus = unit::get_default_unit_symbol_from_label(ul_);
+      // std::string dus = unit::get_default_unit_symbol_from_label(a_ul);
       // set_preferred_unit(dus);
     }
-    unit_label_ = ul_;
+    unit_label_ = a_ul;
     return;
   }
 
@@ -440,7 +495,7 @@ namespace datatools {
     return unit_label_;
   }
 
-  void real_range::dump(std::ostream& a_out) const {
+  void real_range::dump(std::ostream& a_out, double a_tolerance) const {
     a_out << "real_range: " << std::endl;
     a_out << "|-- " << "Unit label     = '" << this->unit_label_ << "'" << std::endl;
     a_out << "|-- " << "Preferred unit = '" << this->preferred_unit_ << "'" << std::endl;
@@ -451,24 +506,31 @@ namespace datatools {
       if (this->is_lower_bounded()) {
         a_out << "|   " << "|-- " << "Lower bound    = " << lower_ << std::endl;
         a_out << "|   " << "|-- " << "Lower included = " << this->is_lower_included() << std::endl;
-        a_out << "|   " << "`-- " << "First          = " << this->first() << std::endl;
+        a_out.precision(15);
+        a_out << "|   " << "`-- " << "First          = " << this->first(a_tolerance) << std::endl;
       }
       a_out << "|-- " << "Upper bounded  = " << this->is_upper_bounded() << std::endl;
       if (this->is_upper_bounded()) {
         a_out << "|   " << "|-- " << "Upper bound    = " << upper_ << std::endl;
         a_out << "|   " << "|-- " << "Upper included = " << this->is_upper_included() << std::endl;
-        a_out << "|   " << "`-- " << "Last           = " << this->last() << std::endl;
+        a_out.precision(15);
+        a_out << "|   " << "`-- " << "Last           = " << this->last(a_tolerance) << std::endl;
       }
       a_out << "|-- " << "Bounded        = " << this->is_bounded() << std::endl;
       if (this->is_bounded()) {
-        a_out << "|   " << "|-- " << "Width          = " << this->width() << std::endl;
-        a_out << "|   " << "|-- " << "Empty          = " << this->is_empty() << std::endl;
-        a_out << "|   " << "`-- " << "Singleton      = " << this->is_singleton() << std::endl;
+        a_out.precision(15);
+        a_out << "|   " << "|-- " << "Width          = " << this->width(a_tolerance) << std::endl;
+        a_out << "|   " << "|-- " << "Empty          = " << this->is_empty(a_tolerance) << std::endl;
+        a_out << "|   " << "`-- " << "Singleton      = " << this->is_singleton(a_tolerance) << std::endl;
+        if (is_singleton(a_tolerance)) {
+          a_out << "|   " << "    " << "`-- " << "Singleton value = " << this->singleton(a_tolerance) << std::endl;
+        }
       }
     } else {
-      a_out << "|   " << "|-- " << "[invalid]" << std::endl;
+      a_out << "|-- " << "[invalid]" << std::endl;
     }
     a_out << "`-- " << "Rendering      = '" << *this << "'" << std::endl;
+    return;
   }
 
 
@@ -518,7 +580,7 @@ namespace datatools {
   }
 
   // friend
-  std::istream& operator>>(std::istream& in, real_range& a_range)
+  std::istream& operator>>(std::istream& a_in, real_range& a_range)
   {
     range_bound_info_type     lf = range_bound_undefined;
     double l; // lower value
@@ -530,9 +592,9 @@ namespace datatools {
     std::string u_unit_label;
     a_range.invalidate();
     char open = 0;
-    in.get(open);
-    if (!in) {
-      return in;
+    a_in.get(open);
+    if (!a_in) {
+      return a_in;
     }
     // Parse the open character : '[' or '('
     if (open == range_tools::token_open_included) {
@@ -540,18 +602,18 @@ namespace datatools {
      } else if (open == range_tools::token_open_excluded) {
       lf = range_bound_excluded;
     } else {
-      std::cerr << "DEVEL: " << "bad open!" << std::endl;
-      in.setstate(std::ios::failbit);
-      return in;
+      // std::cerr << "DEVEL: " << "bad open!" << std::endl;
+      a_in.setstate(std::ios::failbit);
+      return a_in;
     }
-    std::cerr << "DEVEL: " << "open='" << open << "'" << std::endl;
-    std::cerr << "DEVEL: " << "lf='" << lf << "'" << std::endl;
+    // std::cerr << "DEVEL: " << "open='" << open << "'" << std::endl;
+    // std::cerr << "DEVEL: " << "lf='" << lf << "'" << std::endl;
     std::string word;
-    while(!in.eof()) {
+    while(!a_in.eof()) {
       char dummy = 0;
-      in.get(dummy);
-      if (!in) {
-        return in;
+      a_in.get(dummy);
+      if (!a_in) {
+        return a_in;
       }
       // Parse the close character : ']' or ')'
       if (dummy == range_tools::token_close_included || dummy == range_tools::token_close_excluded) {
@@ -562,20 +624,20 @@ namespace datatools {
         }
       }
       if (uf != range_bound_undefined) {
-        std::cerr << "DEVEL: " << "close='" << dummy << "'" << std::endl;
-        std::cerr << "DEVEL: " << "uf='" << uf << "'" << std::endl;
+        // std::cerr << "DEVEL: " << "close='" << dummy << "'" << std::endl;
+        // std::cerr << "DEVEL: " << "uf='" << uf << "'" << std::endl;
         break;
       } else {
         word.push_back(dummy);
       }
     }
-    std::cerr << "DEVEL: " << "word='" << word << "'" << std::endl;
+    // std::cerr << "DEVEL: " << "word='" << word << "'" << std::endl;
     if (word.length() == 1 &&  word[0] == range_tools::token_invalid) {
       if (lf == range_bound_excluded && uf == range_bound_excluded) {
-        return in;
+        return a_in;
       } else {
-        in.setstate(std::ios::failbit);
-        return in;
+        a_in.setstate(std::ios::failbit);
+        return a_in;
       }
     }
     std::vector<std::string> tokens;
@@ -585,69 +647,68 @@ namespace datatools {
     }
     boost::split(tokens, word, boost::is_any_of(separators));
     if (tokens.size() != 2) {
-      in.setstate(std::ios::failbit);
-      return in;
+      a_in.setstate(std::ios::failbit);
+      return a_in;
     }
     std::string ls = tokens[0];
     std::string us = tokens[1];
     boost::trim(ls);
     boost::trim(us);
-    std::cerr << "DEVEL: " << "ls='" << ls << "'" << std::endl;
-    std::cerr << "DEVEL: " << "us='" << us << "'" << std::endl;
+    // std::cerr << "DEVEL: " << "ls='" << ls << "'" << std::endl;
+    // std::cerr << "DEVEL: " << "us='" << us << "'" << std::endl;
     if (ls.empty()) {
       if (lf == range_bound_excluded) {
         lf = range_bound_unbounded;
       } else {
-        in.setstate(std::ios::failbit);
-        return in;
+        a_in.setstate(std::ios::failbit);
+        return a_in;
       }
     } else {
       bool l_ok = units::parse_value_with_unit(ls, l, l_unit_symbol, l_unit_label);
       if (! l_ok) {
         // Cannot parse real value from ls
-        in.setstate(std::ios::failbit);
-        return in;
+        a_in.setstate(std::ios::failbit);
+        return a_in;
       }
-      std::cerr << "DEVEL: " << "l='" << l << "'" << std::endl;
+      // std::cerr << "DEVEL: " << "l='" << l << "'" << std::endl;
     }
     if (us.empty()) {
       if (uf == range_bound_excluded) {
         uf = range_bound_unbounded;
       } else {
-        in.setstate(std::ios::failbit);
-        return in;
+        a_in.setstate(std::ios::failbit);
+        return a_in;
       }
     } else {
       bool u_ok = units::parse_value_with_unit(us, u, u_unit_symbol, u_unit_label);
       if (! u_ok) {
         // Cannot parse real value from us
-        in.setstate(std::ios::failbit);
-        return in;
+        a_in.setstate(std::ios::failbit);
+        return a_in;
       }
-      std::cerr << "DEVEL: " << "u='" << u << "'" << std::endl;
+      // std::cerr << "DEVEL: " << "u='" << u << "'" << std::endl;
     }
     if (l_unit_label.empty() && !u_unit_label.empty()) {
       // Lower bound does not have explicit unit !
-      in.setstate(std::ios::badbit);
-      return in;
+      a_in.setstate(std::ios::badbit);
+      return a_in;
     }
     if (!l_unit_label.empty() && u_unit_label.empty()) {
       // Upper bound does not have explicit unit !
-      in.setstate(std::ios::badbit);
-      return in;
+      a_in.setstate(std::ios::badbit);
+      return a_in;
     }
     if (!l_unit_label.empty() && !u_unit_label.empty() && (l_unit_label != u_unit_label)) {
       // Bounds do not have the same unit label !
-      in.setstate(std::ios::badbit);
-      return in;
+      a_in.setstate(std::ios::badbit);
+      return a_in;
     }
     if ((lf != range_bound_unbounded) && (uf != range_bound_unbounded)) {
       if (l > u) {
-        in.setstate(std::ios::badbit);
-        return in;
+        a_in.setstate(std::ios::badbit);
+        return a_in;
       }
     }
-    a_range.set(l, u, lf, uf);
     if (! l_unit_label.empty()) {
       a_range.set_unit_label(l_unit_label);
     } else  if (! u_unit_label.empty()) {
@@ -658,7 +719,146 @@ namespace datatools {
     } else if (! u_unit_symbol.empty()) {
       a_range.set_preferred_unit(u_unit_symbol);
     }
-    return in;
+    a_range.set(l, u, lf, uf);
+    return a_in;
+  }
+
+  int real_range::compare(const real_range & a_range) const
+  {
+    DT_THROW_IF(!is_valid(), std::logic_error, "Invalid real range!");
+    DT_THROW_IF(!a_range.is_valid(), std::logic_error, "Invalid real range!");
+    // std::cerr << "DEVEL: real_range::compare: "
+    //           << " this=" << *this << "    other=" << a_range
+    //           << std::endl;
+    double res = -2;
+    if (is_lower_bounded()) {
+      // #1 ---[f1 ;  ? ]------------>
+      double f1 = first();
+      if (!a_range.is_lower_bounded()) {
+        // #1 ---[f1 ; ? ]------------>
+        // #2 (   ; ? ]--------------->
+        res = +1;
+      }  else {
+        // #2 ---[f2 ; ? ]------------>
+        double f2 = a_range.first();
+        if (f1 < f2) {
+          // #1 ---[f1 ; ? ]------------>
+          // #2 -----[f2 ; ? ]---------->
+          res = -1;
+        } else if (f1 > f2) {
+          // #1 -----[f1 ; ? ]---------->
+          // #2 ---[f2 ; ? ]------------>
+          res = +1;
+        } else {
+          // f1==f2
+          // #1 ---[f1 ; ? ]------------>
+          // #2 ---[f2 ; ? ]------------>
+          if (is_upper_bounded()) {
+            // #1 ---[f1 ; l1]------------>
+            double l1 = last();
+            if (! a_range.is_upper_bounded()) {
+              // #1 ---[f1 ; l1]------------>
+              // #2 ---[f2 ;               )>
+              res = -1;
+            } else {
+              // #2 ---[f2 ; l2]------------>
+              double l2 = a_range.last();
+              if (l1 < l2) {
+                // #1 ---[f1 ; l1]------------>
+                // #2 ---[f2 ;   l2]---------->
+                res = -1;
+              } else if (l1 > l2) {
+                // #1 ---[f1 ;   l1]---------->
+                // #2 ---[f2 ; l2]------------>
+                res = +1;
+              } else {
+                // #1 ---[f1 ; l1]------------>
+                // #2 ---[f2 ; l2]------------>
+                res = 0;
+              }
+            }
+          } else {
+            // #1 ---[f1 ;                   ]>
+            if (! a_range.is_upper_bounded()) {
+              // #1 ---[f1 ;                   ]>
+              // #2 ---[f2 ;                   ]>
+              res = 0;
+            } else {
+              double l2 = a_range.last();
+              // #1 ---[f1 ;                   ]>
+              // #2 ---[f2 ; l2]---------------]>
+              res = +1;
+            }
+          }
+        }
+      }
+    } else {
+      // #1 (   ; ? ]--------------->
+      if (a_range.is_lower_bounded()) {
+        // #1 (   ; ? ]--------------->
+        // #2 ---[f2 ; ? ]------------>
+        res = -1;
+      } else {
+        // #1 (   ; ? ]--------------->
+        // #2 (   ; ? ]--------------->
+        if (is_upper_bounded()) {
+          // #1 (   ; l1]--------------->
+          double l1 = last();
+          if (! a_range.is_upper_bounded()) {
+            // #1 (   ; l1]--------------->
+            // #2 (   ;                  )>
+            res = -1;
+          } else {
+            double l2 = a_range.last();
+            // #2 (   ; l2]--------------->
+            if (l1 < l2) {
+              // #1 (   ; l1]--------------->
+              // #2 (   ;   l2]------------->
+              res = -1;
+            } else if (l1 > l2) {
+              // #1 (   ;   l1]------------->
+              // #2 (   ; l2]--------------->
+              res = +1;
+            } else {
+              // #1 (   ; l1]--------------->
+              // #2 (   ; l2]--------------->
+              res = 0;
+            }
+          }
+        } else {
+          // #1 (         ;            [>
+          // #2 (   ; ? ]--------------->
+          if (a_range.is_upper_bounded()) {
+            // #1 (         ;            [>
+            // #2 (   ; l2 ]-------------->
+            res = +1;
+          } else {
+            // #1 (         ;            [>
+            // #2 (         ;            [>
+            res = 0;
+          }
+        }
+      }
+    }
+    // std::cerr << "DEVEL: real_range::compare: "
+    //           << " res=" << res
+    //           << std::endl;
+    return res;
+  }
+
+  bool real_range::operator<(const real_range& a_range) const
+  {
+    return compare(a_range) == -1;
+  }
+
+  bool real_range::operator>(const real_range& a_range) const
+  {
+    return compare(a_range) == +1;
+  }
+
+  bool real_range::operator==(const real_range& a_range) const
+  {
+    return compare(a_range) == 0;
   }
 
 } // namespace datatools

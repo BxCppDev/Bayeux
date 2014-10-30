@@ -47,9 +47,6 @@ namespace datatools {
   class real_range {
   public:
 
-    /// Default relative precision
-    static const double default_precision();
-
     /// Default constructor
     real_range();
 
@@ -80,21 +77,10 @@ namespace datatools {
     void set_upper(double to, range_bound_info_type policy = range_bound_included);
 
     /// Set the bounds
-    void set(double from, double to,
+    void set(double from,
+             double to,
              range_bound_info_type from_policy = range_bound_included,
-             range_bound_info_type to_policy = range_bound_included);
-
-    /// Check if the absolute precision is defined
-    bool has_abs_precision() const;
-
-    /// Set the absolute precision
-    void set_abs_precision(double);
-
-    /// Reset the absolute precision
-    void reset_abs_precision();
-
-    /// Return the absolute precision
-    double get_abs_precision() const;
+             range_bound_info_type to_policy   = range_bound_included);
 
     /// Check if lower bound is defined
     bool is_lower_bounded() const;
@@ -121,34 +107,34 @@ namespace datatools {
     double get_upper() const;
 
     /// Return the width of the interval
-    double width() const;
+    double width(double tolerance = -1.0) const;
 
     /// Check if interval is empty
-    bool is_empty() const;
+    bool is_empty(double tolerance = -1.0) const;
 
     /// Check if the interval is degenerated (one unique value)
-    bool is_singleton() const;
+    bool is_singleton(double tolerance = -1.0) const;
 
     /// Return the singleton value
-    double singleton() const;
+    double singleton(double tolerance = -1.0) const;
 
     // Collections of 'make-methods' :
+
+    /// Build a singleton
+    // "[2,2]"
+    void make_singleton(double);
 
     /// Build an empty interval
     // "(0,0)"
     void make_empty();
 
-    /// Build a fully bounded interval
-    // "[min_real,max_real]"
-    void make_full();
-
     /// Build a fully bounded positive interval starting at 0
-    // "[0,max_real]"
-    void make_full_positive();
+    // "[0,)"
+    void make_positive_unbounded();
 
     /// Build a fully bounded  negative interval ending at 0
-    // "[min_real,0]"
-    void make_full_negative();
+    // "(,0]"
+    void make_negative_unbounded();
 
     /// Build a half bounded interval with no upper bound
     // "[lower,)" or "(lower,[
@@ -158,6 +144,10 @@ namespace datatools {
     // "(,upper]" or "(,upper)"
     void make_lower_unbounded(double to, bool inclusive = true);
 
+    /// Build a full unbounded interval with no lower or upper bounds
+    // "(,)"
+    void make_unbounded();
+
     /// Build a fully bounded interval with specific lower and upper bounds
     // "(lower,upper]" or "(lower,upper)"
     // "[lower,upper]" or "[lower,upper)"
@@ -166,19 +156,19 @@ namespace datatools {
                       bool upper_included = true);
 
     /// Check if a value belongs to the interval
-    bool has(double value) const;
+    bool has(double value, double a_tolerance = -1.0) const;
 
     /// Check if an real interval belongs to the interval
-    bool has(const real_range & rr) const;
+    bool has(const real_range & rr, double a_tolerance = -1.0) const;
 
     /// Basic print
-    void dump(std::ostream& a_out = std::clog) const;
+    void dump(std::ostream& a_out = std::clog, double a_tolerance = -1.0) const;
 
     /// Return the first value belonging to the half lower bounded interval
-    double first() const;
+    double first(double a_tolerance = -1.0) const;
 
     /// Return the last value belonging to the half upper bounded interval
-    double last() const;
+    double last(double a_tolerance = -1.0) const;
 
     /// Check if unit label is set
     bool has_unit_label() const;
@@ -204,9 +194,6 @@ namespace datatools {
     /// Reset the preferred unit symbol
     const std::string & get_preferred_unit() const;
 
-    /// Parser
-    // void from_string(const std::string & str, );
-
     /// Print operator
     friend std::ostream& operator<<(std::ostream& a_out,
                                     const real_range& a_range);
@@ -215,17 +202,38 @@ namespace datatools {
     friend std::istream& operator>>(std::istream& a_in,
                                     real_range& a_range);
 
-    /// Compute the absolute precision associated to bounds
-    static double compute_precision(double a_lower, double a_upper);
+    /// Given a relative tolerance, compute the absolute tolerance associated to bounds
+    static double compute_tolerance(double a_lower, double a_upper,
+                                    double a_relative_tolerance = -1.0);
+
+    /// Compare intervals
+    int compare(const real_range& a_range) const;
+
+    /// Comparison operator
+    bool operator<(const real_range& a_range) const;
+
+    /// Comparison operator
+    bool operator>(const real_range& a_range) const;
+
+    /// Comparison operator
+    bool operator==(const real_range& a_range) const;
+
+  protected:
+
+    /// Return an effective absolute tolerance
+    double _effective_tolerance(double a_tolerance) const;
+
+    /// Set default attribute values
+    void _set_defaults();
 
   private:
-    std::string            unit_label_; //!< Unit label
+
+    std::string            unit_label_;     //!< Unit label
     std::string            preferred_unit_; //!< Symbol of the preferred unit
-    double                 abs_precision_; //!< Absolute precision
-    range_bound_info_type  lower_flag_; //!< The flag associated to the lower bound
-    double                 lower_; //!< The lower bound
-    range_bound_info_type  upper_flag_; //!< The flag associated to the upper bound
-    double                 upper_; //!< The upper bound
+    range_bound_info_type  lower_flag_;     //!< The flag associated to the lower bound
+    double                 lower_;          //!< The lower bound
+    range_bound_info_type  upper_flag_;     //!< The flag associated to the upper bound
+    double                 upper_;          //!< The upper bound
   };
 
 } // end of namespace datatools

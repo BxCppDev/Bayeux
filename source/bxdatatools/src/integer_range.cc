@@ -249,7 +249,7 @@ namespace datatools {
       int last = ir.last();
       if (!this->has(last)) return false;
     }
-    return false;
+    return true;
   }
 
   bool integer_range::has(value_type value) const {

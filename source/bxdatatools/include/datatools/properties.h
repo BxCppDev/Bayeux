@@ -76,33 +76,33 @@ class properties :
   //! \brief Internal data stored within the dictionary of the properties class.
   class data {
    public:
-    static const int  ERROR_SUCCESS; // = 0;
-    static const int  ERROR_FAILURE; //  = 1;
-    static const int  ERROR_BADTYPE; //  = 2;
-    static const int  ERROR_RANGE; //  = 3;
-    static const int  ERROR_LOCK; //  = 4;
+    static const int  ERROR_SUCCESS; // = 0
+    static const int  ERROR_FAILURE; //  = 1
+    static const int  ERROR_BADTYPE; //  = 2
+    static const int  ERROR_RANGE;   //  = 3
+    static const int  ERROR_LOCK;    //  = 4
 
-    static const char MASK_TYPE; // = 0x7;
-    static const char MASK_EXPLICIT_PATH; // = 0x10;
-    static const char MASK_EXPLICIT_UNIT; // = 0x20;
-    static const char MASK_LOCK; // = 0x40;
-    static const char MASK_VECTOR; // = 0x80;
+    static const char MASK_TYPE;          // = 0x7
+    static const char MASK_EXPLICIT_PATH; // = 0x10 for real parameters
+    static const char MASK_EXPLICIT_UNIT; // = 0x20 for string parameters
+    static const char MASK_LOCK;          // = 0x40
+    static const char MASK_VECTOR;        // = 0x80
 
-    static const char TYPE_NONE; // = 0x0;
-    static const char TYPE_BOOLEAN; // = 0x1;
-    static const char TYPE_INTEGER; // = 0x2;
-    static const char TYPE_REAL; // = 0x3;
-    static const char TYPE_STRING; // = 0x4;
+    static const char TYPE_NONE;    // = 0x0
+    static const char TYPE_BOOLEAN; // = 0x1
+    static const char TYPE_INTEGER; // = 0x2
+    static const char TYPE_REAL;    // = 0x3
+    static const char TYPE_STRING;  // = 0x4
 
-    static const char TYPE_BOOLEAN_SYMBOL; // = 'B';
-    static const char TYPE_INTEGER_SYMBOL; // = 'I';
-    static const char TYPE_REAL_SYMBOL; // = 'R';
-    static const char TYPE_STRING_SYMBOL; // = 'S';
+    static const char TYPE_BOOLEAN_SYMBOL; // = 'B'
+    static const char TYPE_INTEGER_SYMBOL; // = 'I'
+    static const char TYPE_REAL_SYMBOL;    // = 'R'
+    static const char TYPE_STRING_SYMBOL;  // = 'S'
 
-    static const char STRING_FORBIDDEN_CHAR; // = '"';
+    static const char STRING_FORBIDDEN_CHAR; // = '"'
 
-    static const int  SCALAR_DEF; // = -1;
-    static const int  SCALAR_SIZE; // =  1;
+    static const int  SCALAR_DEF;  // = -1
+    static const int  SCALAR_SIZE; // =  1
 
     struct defaults {
       static bool boolean_value();
@@ -359,8 +359,10 @@ class properties :
     static const bool write_public_only; //    = true;
     static const bool without_smart_modulo; // = false;
     static const bool with_smart_modulo; //    = true;
+    static const bool allow_variant; //    = true;
 
    public:
+
     // Constructor
     config(bool a_use_smart_modulo = false,
            int a_mode = 1, // MODE_DEFAULT
@@ -694,6 +696,24 @@ class properties :
   void store_real(const std::string& prop_key, double a_value,
                   const std::string& a_desc = "", bool a_lock = false);
 
+  //! Store a real property with a given key/name and value with the explicit unit flag
+  /**
+   *   \code
+   *   datatools::properties config;
+   *   config.store_real("box.zoom_factor", 2.5);
+   *   config.store_real("box.efficiency", 0.17);
+   *   config.store_real_with_explicit_unit("box.width", 3.4 * CLHEP::cm);
+   *   config.store_real_with_explicit_unit("box.height", 5.2 * CLHEP::mm);
+   *   \endcode
+   */
+  void store_real_with_explicit_unit(const std::string& prop_key, double a_value,
+                                     const std::string& desc = "", bool a_lock = false);
+
+  //! Store a real property with a given key/name and value with the explicit unit flag
+  /// @see store_real_with_explicit_unit
+  void store_with_explicit_unit(const std::string& prop_key, double a_value,
+                                const std::string& desc = "", bool a_lock = false);
+
   //! Set flag for explicit unit for a real property with a given key/name
   void set_explicit_unit(const std::string& prop_key, bool a_explicit_unit = true);
 
@@ -828,6 +848,12 @@ class properties :
 
   //! Update a real flag with a given key/name and value
   void update_real(const std::string& key, double value);
+
+  //! Update a real flag with a given key/name and value
+  void update_real_with_explicit_unit(const std::string& key, double value);
+
+  //! Update a real flag with a given key/name and value
+  void update_with_explicit_unit(const std::string& key, double value);
 
   //! Update a string flag with a given key/name and value
   void update(const std::string& key, const std::string& value);

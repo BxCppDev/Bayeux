@@ -31,7 +31,11 @@ class i_tree_dumpable {
     OSTREAM_CLOG=3
   };
 
- public:
+  /// Constructor
+  i_tree_dumpable();
+
+  /// Destructor
+  virtual ~i_tree_dumpable();
 
   static std::ostream & last_skip_tag(std::ostream& out);
 
@@ -48,16 +52,16 @@ class i_tree_dumpable {
                           bool inherit = false) const = 0;
 
   void tree_dump (int out_type = OSTREAM_CLOG,
-		  const std::string& title  = "",
-		  const std::string& indent = "",
-		  bool inherit = false) const;
+                  const std::string& title  = "",
+                  const std::string& indent = "",
+                  bool inherit = false) const;
 
   void tree_print (int out_type = OSTREAM_CLOG,
-		   const std::string& title= "") const;
+                   const std::string& title= "") const;
 
   void smart_print (int out_type = OSTREAM_CLOG,
-		    const std::string& title = "",
-		    const std::string& indent = "") const;
+                    const std::string& title = "",
+                    const std::string& indent = "") const;
 
   /// Output stream manipulator
   class inherit_tag {
@@ -92,3 +96,11 @@ class i_tree_dumpable {
 DR_CLASS_INIT(::datatools::i_tree_dumpable);
 
 #endif // DATATOOLS_I_TREE_DUMP_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
