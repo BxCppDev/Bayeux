@@ -66,8 +66,8 @@ list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 include(SVNUtilities)
 
 # - Versioning
-set(Bayeux_VERSION_MAJOR 1)
-set(Bayeux_VERSION_MINOR 1)
+set(Bayeux_VERSION_MAJOR 2)
+set(Bayeux_VERSION_MINOR 0)
 set(Bayeux_VERSION_PATCH 0)
 set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
 
