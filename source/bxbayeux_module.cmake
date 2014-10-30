@@ -2,10 +2,17 @@
 #
 # To configure the module headers, the variable
 # MODULE_HEADER_ROOT must be set before including this file
+# MODULE_RESOURCE_ROOT must be set before including this file
+# MODULE_EXAMPLE_ROOT must be set before including this file
 
-if(NOT MODULE_HEADER_ROOT)
-  message(FATAL_ERROR "MODULE_HEADER_ROOT not specified")
-endif()
+# if(NOT MODULE_HEADER_ROOT)
+#   message(FATAL_ERROR "MODULE_HEADER_ROOT not specified")
+# endif()
+foreach(_modulevar MODULE_HEADER_ROOT MODULE_RESOURCE_ROOT)
+  if(NOT ${_modulevar})
+    message(FATAL_ERROR "${_modulevar} not specified")
+  endif()
+endforeach()
 
 # - Module
 set(module_name bayeux)
@@ -14,8 +21,9 @@ set(module_include_dir "${module_root_dir}/include")
 set(module_source_dir  "${module_root_dir}/src")
 set(module_test_dir    "${module_root_dir}/testing")
 set(module_app_dir     "${module_root_dir}/programs")
+set(module_resource_dir "${module_root_dir}/resources")
 
-foreach(dir root_dir include_dir source_dir test_dir)
+foreach(dir root_dir include_dir source_dir test_dir app_dir resource_dir)
   set(${module_name}_${dir} ${module_${dir}})
 endforeach()
 
@@ -61,6 +69,11 @@ set(${module_name}_MODULE_SOURCES
 
 set(${module_name}_ENDING_MODULE_SOURCES )
 
+set(BAYEUX_WITH_QT_GUI 0)
+if (Bayeux_BUILD_QT_GUI)
+  set(BAYEUX_WITH_QT_GUI 1)
+endif()
+
 # - Publish headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")
@@ -83,7 +96,21 @@ set(${module_name}_MODULE_APPS
   ${module_app_dir}/query.cxx
   )
 
+# - Resource files
+set(${module_name}_MODULE_RESOURCES )
+
+# - Publish resource files
+foreach(_rfin ${${module_name}_MODULE_RESOURCES})
+  string(REGEX REPLACE "\\.in$" "" _rfout "${_rfin}")
+  string(REGEX REPLACE "^${module_resource_dir}" "${MODULE_RESOURCE_ROOT}" _rfout "${_rfout}")
+  configure_file(${_rfin} ${_rfout} @ONLY)
+endforeach()
+
+# - Unit tests
+# set(Bayeux_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
+# set(${module_name}_TEST_ENVIRONMENT ${Bayeux_TEST_ENVIRONMENT})
+set(${module_name}_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS
-${module_test_dir}/test_bayeux.cxx
+  ${module_test_dir}/test_bayeux.cxx
 )
