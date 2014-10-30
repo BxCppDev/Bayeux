@@ -2,11 +2,12 @@
 #include <iostream>
 
 // This project:
+#include <bayeux/bayeux_config.h>
 #include <bayeux/bayeux.h>
 #include <bayeux/reloc.h>
 #include <bayeux/version.h>
 
-int main(void)
+int main(int argc_, char * argv_[])
 {
   BAYEUX_INIT();
   std::clog << "Hello, Bayeux !\n";
@@ -18,6 +19,7 @@ int main(void)
   std::clog << "  Resource directory : " << bayeux::get_resource_dir() << std::endl;
   std::clog << "  Documentation dir. : " << bayeux::get_doc_dir() << std::endl;
   // std::clog << "  Example directory  : " << bayeux::get_example_dir() << std::endl;
+
   BAYEUX_FINI();
   return 0;
 }
