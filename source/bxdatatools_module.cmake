@@ -89,6 +89,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/real_range.h
   ${module_include_dir}/${module_name}/reflection_guard.h
   ${module_include_dir}/${module_name}/reflection_macros.h
+  ${module_include_dir}/${module_name}/resource.h
   ${module_include_dir}/${module_name}/safe_serial.h
   ${module_include_dir}/${module_name}/serialization_macros.h
   ${module_include_dir}/${module_name}/service_manager.h
@@ -111,10 +112,17 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_check.h
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/version_id.h
-  #${module_include_dir}/${module_name}/configuration_utils.h
-  #${module_include_dir}/${module_name}/configuration_parameter.h
-  #${module_include_dir}/${module_name}/configuration_variant.h
-  #${module_include_dir}/${module_name}/configuration_variant_manager.h
+  ${module_include_dir}/${module_name}/configuration/i_occurence.h
+  ${module_include_dir}/${module_name}/configuration/io.h
+  ${module_include_dir}/${module_name}/configuration/parameter_model.h
+  ${module_include_dir}/${module_name}/configuration/parameter_physical.h
+  ${module_include_dir}/${module_name}/configuration/utils.h
+  ${module_include_dir}/${module_name}/configuration/variant_registry_manager.h
+  ${module_include_dir}/${module_name}/configuration/variant_model.h
+  ${module_include_dir}/${module_name}/configuration/variant_physical.h
+  ${module_include_dir}/${module_name}/configuration/variant_record.h
+  ${module_include_dir}/${module_name}/configuration/variant_registry.h
+  ${module_include_dir}/${module_name}/configuration/variant_repository.h
 
   ${module_include_dir}/${module_name}/i_serializable-reflect.h
   ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
@@ -135,6 +143,10 @@ set(${module_name}_MODULE_HEADERS
 configure_file(${module_source_dir}/_datatools.cc.in
                bx${module_name}/_datatools.cc
               )
+
+# - configure resources
+configure_file(${module_source_dir}/resource.cc.in
+               bx${module_name}/resource.cc)
 
 # ls -1 bxdatatools/src/*.cc | sed -e 's@bxdatatools/src@${module_source_dir}@g'  | grep -v _init_fini | grep -v the_introspectable
 
@@ -175,14 +187,58 @@ ${module_source_dir}/utils.cc
 ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
-#${module_source_dir}/configuration_utils.cc
-#${module_source_dir}/configuration_parameter.cc
-#${module_source_dir}/configuration_variant.cc
-#${module_source_dir}/configuration_variant_manager.cc
+${module_source_dir}/configuration/i_occurence.cc
+${module_source_dir}/configuration/io.cc
+${module_source_dir}/configuration/parameter_model.cc
+${module_source_dir}/configuration/parameter_physical.cc
+${module_source_dir}/configuration/utils.cc
+${module_source_dir}/configuration/variant_registry_manager.cc
+${module_source_dir}/configuration/variant_model.cc
+${module_source_dir}/configuration/variant_physical.cc
+${module_source_dir}/configuration/variant_record.cc
+${module_source_dir}/configuration/variant_registry.cc
+${module_source_dir}/configuration/variant_repository.cc
 #${module_source_dir}/the_introspectable.cc
+bx${module_name}/resource.cc
 bx${module_name}/_datatools.cc
   )
 
+
+  # - QT4 moc headers
+  set(${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED
+    ${module_include_dir}/${module_name}/qt/led.h
+    ${module_include_dir}/${module_name}/configuration/ui/parameter_item_delegate.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_registry_dialog.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_registry_tree_model.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_registry_viewer.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_repository_dialog.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_repository_viewer.h
+    )
+  # message(STATUS "To be mocced = '${${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED}'")
+  QT4_WRAP_CPP(${module_name}_MODULE_HEADERS_QT_MOC
+    ${${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED}
+    )
+  # message(STATUS "Mocced = '${${module_name}_MODULE_HEADERS_QT_MOC}'")
+  list(APPEND ${module_name}_MODULE_SOURCES
+    ${module_source_dir}/qt/led.cc
+    ${module_source_dir}/configuration/ui/parameter_item_delegate.cc
+    ${module_source_dir}/configuration/ui/variant_registry_dialog.cc
+    ${module_source_dir}/configuration/ui/variant_registry_tree_model.cc
+    ${module_source_dir}/configuration/ui/variant_registry_viewer.cc
+    ${module_source_dir}/configuration/ui/variant_repository_dialog.cc
+    ${module_source_dir}/configuration/ui/variant_repository_viewer.cc
+    ${${module_name}_MODULE_HEADERS_QT_MOC}
+    )
+  list(APPEND ${module_name}_MODULE_HEADERS
+    ${module_include_dir}/${module_name}/qt/led.h
+    ${module_include_dir}/${module_name}/configuration/ui/parameter_item_delegate.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_registry_dialog.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_registry_tree_model.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_registry_viewer.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_repository_dialog.h
+    ${module_include_dir}/${module_name}/configuration/ui/variant_repository_viewer.h
+    )
+endif()
 
 # - Reflection component - still optional, so factor out and allow for
 #   inclusion later
@@ -219,7 +275,7 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
 endforeach()
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_TESTING_DIR=${module_test_dir}")
+set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_RESOURCE_DIR=${module_resource_dir};DATATOOLS_TESTING_DIR=${module_test_dir}")
 
 # ls -1 bxdatatools/testing/*.cxx | sed -e 's@bxdatatools/testing@${module_test_dir}@g'
 
@@ -287,9 +343,10 @@ ${module_test_dir}/test_utils.cxx
 ${module_test_dir}/test_version_check.cxx
 ${module_test_dir}/test_version.cxx
 ${module_test_dir}/test_version_id.cxx
-#${module_test_dir}/test_configuration_parameter.cxx
-#${module_test_dir}/test_configuration_variant.cxx
-
+${module_test_dir}/test_configuration_parameter_model.cxx
+${module_test_dir}/test_configuration_variant_model.cxx
+${module_test_dir}/test_configuration_variant_api_0.cxx
+${module_test_dir}/test_backward_things.cxx
 )
 
 # - Applications
@@ -306,6 +363,52 @@ set(${module_name}_MODULE_EXAMPLES
 set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/OCD/pandoc/templates/OCD2DoxygenTemplate.html
   )
+
+if (Bayeux_BUILD_QT_GUI)
+
+  # - Special test program(s)
+  list(APPEND ${module_name}_MODULE_TESTS
+   ${module_test_dir}/test_qt_led.cxx
+  )
+
+  # - Special resource files
+  list(APPEND ${module_name}_MODULE_RESOURCES
+  ${module_resource_dir}/qt/led/circle_black.svg
+  ${module_resource_dir}/qt/led/circle_blue.svg
+  ${module_resource_dir}/qt/led/circle_green.svg
+  ${module_resource_dir}/qt/led/circle_grey.svg
+  ${module_resource_dir}/qt/led/circle_orange.svg
+  ${module_resource_dir}/qt/led/circle_purple.svg
+  ${module_resource_dir}/qt/led/circle_red.svg
+  ${module_resource_dir}/qt/led/circle_yellow.svg
+  ${module_resource_dir}/qt/led/led_triangular_1_green.svg
+  ${module_resource_dir}/qt/led/led_triangular_1_grey.svg
+  ${module_resource_dir}/qt/led/led_triangular_1_red.svg
+  ${module_resource_dir}/qt/led/rect_green.svg
+  ${module_resource_dir}/qt/led/rect_grey.svg
+  ${module_resource_dir}/qt/led/round_blue.svg
+  ${module_resource_dir}/qt/led/round_green.svg
+  ${module_resource_dir}/qt/led/round_grey.svg
+  ${module_resource_dir}/qt/led/round_orange.svg
+  ${module_resource_dir}/qt/led/round_purple.svg
+  ${module_resource_dir}/qt/led/round_red.svg
+  ${module_resource_dir}/qt/led/round_yellow.svg
+  ${module_resource_dir}/qt/led/square_blue.svg
+  ${module_resource_dir}/qt/led/square_green.svg
+  ${module_resource_dir}/qt/led/square_grey.svg
+  ${module_resource_dir}/qt/led/square_orange.svg
+  ${module_resource_dir}/qt/led/square_purple.svg
+  ${module_resource_dir}/qt/led/square_red.svg
+  ${module_resource_dir}/qt/led/square_yellow.svg
+  ${module_resource_dir}/qt/led/triang_blue.svg
+  ${module_resource_dir}/qt/led/triang_green.svg
+  ${module_resource_dir}/qt/led/triang_grey.svg
+  ${module_resource_dir}/qt/led/triang_orange.svg
+  ${module_resource_dir}/qt/led/triang_purple.svg
+  ${module_resource_dir}/qt/led/triang_red.svg
+  ${module_resource_dir}/qt/led/triang_yellow.svg
+  )
+endif()
 
 # - Publish resource files
 foreach(_rfin ${${module_name}_MODULE_RESOURCES})

@@ -41,7 +41,7 @@ find_package(GSL 1.15 QUIET NO_MODULE)
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
 
 if (Bayeux_BUILD_QT_GUI)
-  find_package(Qt4 REQUIRED)
+  find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
 endif()
 
 # - Geant4 if building the MCTools extension library
@@ -96,22 +96,25 @@ set(Bayeux_SUBMODULES
   mctools
 )
 
+# - Base build dir for resource and example files
+set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_RESOURCE_DIR}")
+set(MODULE_EXAMPLE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_EXAMPLE_DIR}")
+
 # - Configure Bayeux submodule first
-set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include")
+set(MODULE_HEADER_ROOT    "${Bayeux_BUILDPRODUCT_DIR}/include")
+set(MODULE_RESOURCE_ROOT  "${MODULE_RESOURCE_ROOT_BASE}/bayeux")
+set(MODULE_EXAMPLE_ROOT   "${MODULE_EXAMPLE_ROOT_BASE}/bayeux")
 include(bxbayeux_module.cmake)
 set(Bayeux_HEADERS ${bayeux_MODULE_HEADERS})
 set(Bayeux_SOURCES ${bayeux_MODULE_SOURCES})
 set(Bayeux_TESTS)
-set(Bayeux_RESOURCES)
+set(Bayeux_RESOURCES ${bayeux_MODULE_RESOURCES})
 list(APPEND Bayeux_APPS ${bayeux_MODULE_APPS})
 
-set(MODULE_HEADER_ROOT "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
-set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_RESOURCE_DIR}")
-set(MODULE_EXAMPLE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_EXAMPLE_DIR}")
-
 foreach(_m ${Bayeux_SUBMODULES})
+  set(MODULE_HEADER_ROOT   "${Bayeux_BUILDPRODUCT_DIR}/include/bayeux")
   set(MODULE_RESOURCE_ROOT "${MODULE_RESOURCE_ROOT_BASE}/${_m}")
-  set(MODULE_EXAMPLE_ROOT "${MODULE_EXAMPLE_ROOT_BASE}/${_m}")
+  set(MODULE_EXAMPLE_ROOT  "${MODULE_EXAMPLE_ROOT_BASE}/${_m}")
   include(bx${_m}_module.cmake)
   list(APPEND Bayeux_HEADERS ${${_m}_MODULE_HEADERS})
   list(APPEND Bayeux_SOURCES ${${_m}_MODULE_SOURCES})
