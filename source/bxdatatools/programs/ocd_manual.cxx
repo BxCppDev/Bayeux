@@ -19,7 +19,7 @@
 #if DATATOOLS_STANDALONE == 0
 // - bayeux:
 #include <bayeux/bayeux.h>
-#endif // DATATOOLS_STANDALONE == 1
+#endif // DATATOOLS_STANDALONE == 0
 
 // - datatools
 #include <datatools/logger.h>
