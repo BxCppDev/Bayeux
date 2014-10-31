@@ -19,6 +19,11 @@
 #include <datatools/kernel.h>
 #include <datatools/properties.h>
 
+#if DATATOOLS_STANDALONE == 0
+// - bayeux:
+#include <bayeux/bayeux.h>
+#endif // DATATOOLS_STANDALONE == 0
+
 #if DATATOOLS_WITH_QT_GUI == 1
 
 // Third party:
