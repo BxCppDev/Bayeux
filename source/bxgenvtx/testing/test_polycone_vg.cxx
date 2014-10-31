@@ -107,6 +107,7 @@ int main (int argc_, char ** argv_)
       vg.set_surface_mask(surface_mask);
       vg.set_skin_skip(0.0);
       vg.set_skin_thickness(0.0);
+      vg.set_active_all_frustrum();
       vg.initialize_simple();
       vg.tree_dump(clog, "Polycone vertex generator 1 : ");
       size_t nshoots = 10000;

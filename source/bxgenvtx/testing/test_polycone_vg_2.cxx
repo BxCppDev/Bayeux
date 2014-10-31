@@ -218,7 +218,7 @@ int main (int argc_, char ** argv_)
         vg.set_logging_priority(datatools::logger::PRIO_TRACE);
       }
       vg.set_polycone(P);
-       vg.set_active_frustrum(26, true);
+      vg.set_active_frustrum(26, true);
       vg.set_active_frustrum(25, true);
       vg.set_mode(genvtx::polycone_vg::MODE_BULK);
       int bulk_mask = 0;
@@ -251,6 +251,7 @@ int main (int argc_, char ** argv_)
       vg.set_bulk_mask(bulk_mask);
       vg.set_skin_skip(0.0);
       vg.set_skin_thickness(0.0);
+      vg.set_active_all_frustrum();
       vg.initialize_simple();
       vg.tree_dump(clog, "Polycone vertex generator 4 : ");
       size_t nshoots = 30000;
@@ -396,6 +397,7 @@ int main (int argc_, char ** argv_)
       vg.set_surface_mask(surface_mask);
       vg.set_skin_skip(1.0);
       vg.set_skin_thickness(2.0);
+      vg.set_active_all_frustrum();
       vg.initialize_simple();
       vg.tree_dump(clog, "Sugar : ");
       size_t nshoots = 5000;
