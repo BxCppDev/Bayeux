@@ -24,7 +24,8 @@
 #include <iostream>
 
 // Ourselves
-#include "bayeux/bayeux.h"
+#include <bayeux/bayeux_config.h>
+#include <bayeux/bayeux.h>
 
 // This project
 #include <datatools/datatools.h>
@@ -38,10 +39,15 @@ namespace bayeux {
 
   void initialize(int argc_, char * argv_[])
   {
+    DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
     static bool _init = false;
     if (! _init) {
+
       // Wrap datatools kernel initialization:
-      ::datatools::initialize(argc_,argv_);
+      ::datatools::initialize(argc_, argv_);
+
+      // Special initialization code:
+      ::bayeux::_special_initialize_impl();
 
       // Tests :
       // datatools::kernel & krnl = datatools::kernel::instance();
@@ -51,8 +57,6 @@ namespace bayeux {
       //   lib_info_reg.tree_dump(std::cerr, "bayeux::initialize: Before special initialize", "DEVEL: ");
       // }
 
-      // Special initialization code:
-      ::bayeux::_special_initialize_impl();
       _init = true;
     } else {
 #if BAYEUX_WITH_IMPLICIT_INIT_FINI == 0
@@ -60,13 +64,16 @@ namespace bayeux {
                      "Attempt to initialize the already initialized Bayeux library !");
 #endif
     }
+    DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
   }
 
   void terminate()
   {
+    DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
     static bool _terminate = false;
     if (!_terminate) {
+
       // Special termination code:
       ::bayeux::_special_terminate_impl();
 
@@ -79,7 +86,45 @@ namespace bayeux {
                      "Attempt to terminate the already terminated Bayeux library !");
 #endif
     }
+    DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
   }
+
+  namespace detail {
+
+    sys::sys()
+    {
+      _logging_ = datatools::logger::PRIO_FATAL;
+      {
+        char * e = getenv("BAYEUX_SYS_DEVEL");
+        if (e) {
+          _logging_ = datatools::logger::PRIO_TRACE;
+        }
+      }
+      return;
+    }
+
+    sys::~sys()
+    {
+      _logging_ = datatools::logger::PRIO_FATAL;
+      return;
+    }
+
+    datatools::logger::priority sys::get_logging() const
+    {
+      return _logging_;
+    }
+
+    // static
+    const sys & sys::const_instance()
+    {
+      static boost::scoped_ptr<sys> _sys(new sys);
+#ifdef BAYEUX_SYS_DEVEL
+      _sys->_logging_ = datatools::logger::PRIO_TRACE;
+#endif // BAYEUX_SYS_DEVEL
+      return *_sys;
+    }
+
+  } // end of namespace detail
 
 } // namespace bayeux

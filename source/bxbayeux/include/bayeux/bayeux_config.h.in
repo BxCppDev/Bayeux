@@ -45,4 +45,7 @@
 
 #define BAYEUX_SUBMODULES "@Bayeux_SUBMODULES@"
 
+//! Defined if the BAYEUX_SYS_DEVEL is set
+#cmakedefine BAYEUX_SYS_DEVEL
+
 #endif // BAYEUX_BAYEUX_CONFIG_H

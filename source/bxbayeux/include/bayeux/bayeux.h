@@ -29,8 +29,12 @@
 // Standard Library:
 #include <string>
 
+// Third Party:
+// - Boost:
+#include <boost/noncopyable.hpp>
+
 // This project:
-//#include <bayeux/bayeux_config.h>
+#include <datatools/logger.h>
 
 /// Top-level namespace of the Bayeux library
 namespace bayeux {
@@ -44,6 +48,30 @@ namespace bayeux {
   void _special_initialize_impl();
 
   void _special_terminate_impl();
+  // Detail namespace of the Bayeux/datatools module library
+  namespace detail {
+
+    /// \brief System class for developpers:
+    struct sys : private boost::noncopyable
+    {
+      /// Default constructor
+      sys();
+
+      /// Destructor
+      virtual ~sys();
+
+      /// Return the logging priority
+      datatools::logger::priority get_logging() const;
+
+      /// Access to the 'sys' singleton (read-only)
+      static const sys & const_instance();
+
+    private:
+
+      datatools::logger::priority _logging_; //!< Logging priority threshold
+
+    };
+  } // end of namespace detail
 
 }
 
