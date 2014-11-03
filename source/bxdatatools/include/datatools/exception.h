@@ -6,7 +6,7 @@
 //!          thrown from.
 //!
 //!          To help developers throwing exceptions in this fashion,
-//!          datatools supplies a macro to assist in simplifying this
+//!          datatools supplies some macros to assist in simplifying this
 //!          work, and making the intent clearer in code.
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
@@ -80,6 +80,49 @@
     s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
     throw ExceptionType(s.str()); \
   } \
+}
+
+
+/*! Throw ExceptionType with Message
+    This macro is intended to simplify the common use case of throwing
+    exceptions, with the exception
+    holding a string message indicating where and why the exception was
+    thrown. This macro takes two arguments as follows
+
+    @param ExceptionType Typename of object to throw, the type must take
+                         a string as its constructor argument
+    @param Message       Message to supply to ExceptionType, this must
+                         take the form of a string or output stream
+                         sequence
+
+    The Message is formatted as
+
+    @code
+      [SIGNATURE:LINENUMBER: Message]
+    @endcode
+
+    where SIGNATURE is the signature of the function from which the
+    exception is thrown, and LINENUMBER is the line number where the
+    throw occured.
+
+    In the simplest case it may be used as
+
+    @code
+    DT_THROW(std::domain_error, "parameter i is negative");
+    @endcode
+
+    If Message is composed from several streamable objects, it can
+    be composed using the streaming operator:
+
+    @code
+    DT_THROW(std::domain_error, "parameter i(" << i << ") is negative");
+    @endcode
+*/
+#define DT_THROW(ExceptionType, Message) \
+{ \
+  std::stringstream s;							\
+  s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
+  throw ExceptionType(s.str());						\
 }
 
 #endif // DATATOOLS_EXCEPTION_H

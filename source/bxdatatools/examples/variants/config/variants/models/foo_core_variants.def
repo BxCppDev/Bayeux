@@ -1,0 +1,182 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The definitions for core variants
+#@key_label   "name"
+#@meta_label  "type"
+
+
+########################################
+[name="operator_id.PM" type="parameter"]
+
+#@config A parameter model describing the  operator identifier
+
+#@description The display name of this parameter model
+display_name              : string = "Operator"
+
+#@description A short description of the parameter model
+terse_description         : string = "The operator"
+
+#@description The type of the parameter model
+type                      : string = "string"
+
+#@description The mutability of the parameter model
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter model
+variable.mode             : string = "enumeration"
+
+#@description The number of supported values
+string.enumerated.size    : integer = 3
+
+# The list of supported values:
+string.enumerated_0.value : string = "John Doe"
+string.enumerated_1.value : string = "King Arthur"
+string.enumerated_2.value : string = "Visitor"
+
+#@description The default value
+string.default            : string = "John Doe"
+
+
+########################################
+[name="url.PM" type="parameter"]
+
+#@config A parameter model describing an URL
+
+#@description The display name of this parameter model
+display_name              : string = "URL"
+
+#@description A short description of the parameter model
+terse_description         : string = "The URL"
+
+#@description The type of the parameter model
+type                      : string = "string"
+
+#@description The mutability of the parameter model
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter model
+variable.mode             : string = "free"
+
+#@description The default value
+string.default            : string = "http://foo.org/help/"
+
+
+####################################
+[name="manpage.PM" type="parameter"]
+
+#@config A parameter model describing a manpage
+
+#@description The display name of this parameter model
+display_name              : string = "Manpage"
+
+#@description A short description of the parameter model
+terse_description         : string = "The application manpage source file"
+
+#@description The type of the parameter model
+type                      : string = "string"
+
+#@description The path flag
+path                      : boolean = 1
+
+#@description The path I/O mode
+path.io                   : string  = "input"
+
+#@description The mutability of the parameter model
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter model
+variable.mode             : string = "free"
+
+#@description The default value
+string.default            : string = "/usr/share/man/en_GB/man1/foo.1.gz"
+
+
+####################################
+[name="full_help.VM" type="variant"]
+
+#@config A parameter describing the logging priority of some components
+
+#@description The display name of this variant model
+display_name              : string = "Full help"
+
+#@description A short description of this variant model
+terse_description         : string = "The help mode"
+
+#@description The list of variant parameters
+parameters : string[2] = "url" "manpage"
+
+parameters.url.model           : string = "url.PM"
+parameters.url.description     : string = "The URL of the online help"
+
+parameters.manpage.model       : string = "manpage.PM"
+parameters.manpage.description : string = "The manpage on the system help"
+
+
+######################################
+[name="help_mode.PM" type="parameter"]
+
+#@config A parameter describing the logging priority of some components
+
+#@description The display name of this parameter
+display_name              : string = "Help mode"
+
+#@description A short description of the parameter
+terse_description         : string = "The help mode"
+
+#@description The type of the parameter
+type                      : string = "string"
+
+#@description The mutability of the parameter
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode             : string = "enumeration"
+
+#@description The number of supported values
+string.enumerated.size    : integer = 2
+
+# The list of supported values:
+string.enumerated_0.value : string = "OnlyTooltips"
+string.enumerated_1.value : string = "FullHelp"
+
+#@description The default value
+string.default            : string = "OnlyTooltips"
+
+#@description The list of variants
+variants : string[1] = "is_full_help"
+
+variants.is_full_help.model       : string = "full_help.VM"
+variants.is_full_help.description : string = "Set of parameters in 'full help' mode"
+
+string.enumerated_1.variant : string = "is_full_help"
+
+
+###############################
+[name="core.VM" type="variant"]
+
+#@config A variant model describing the parameters for the core application
+
+#@description The display name of this variant
+display_name      : string = "Core setup"
+
+#@description A short description of the variant
+terse_description : string = "The configuration parameters for the core application"
+
+#@description The list of variant parameters
+parameters : string[4] = "logging" "operator" "help" "gui"
+
+parameters.logging.model        : string = "logging_priority.PM"
+parameters.logging.description  : string = "The logging priority"
+
+parameters.operator.model       : string = "operator_id.PM"
+parameters.operator.description : string = "The operator identifier"
+
+parameters.help.model           : string = "help_mode.PM"
+parameters.help.description     : string = "The help mode"
+
+parameters.gui.model            : string = "off_on.PM"
+parameters.gui.description      : string = "The GUI activation flag"
+
+
+# end

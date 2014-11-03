@@ -164,9 +164,17 @@ namespace datatools {
         _logging_ = datatools::logger::PRIO_FATAL;
         _repository_ = 0;
         _read_only_ = true;
+
         _repository_name_title_label_ = new QLabel(this);
         _repository_name_title_label_->setText("Configuration repository:");
         _repository_name_display_label_ = new QLabel(this);
+        _repository_org_title_label_ = new QLabel(this);
+        _repository_org_title_label_->setText("Organization:");
+        _repository_org_display_label_ = new QLabel(this);
+        _repository_app_title_label_ = new QLabel(this);
+        _repository_app_title_label_->setText("Application:");
+        _repository_app_display_label_ = new QLabel(this);
+
         _accomplished_label_ = new QLabel(this);
         _accomplished_led_ = new datatools::qt::led(this);
         _read_only_cb_ = new QCheckBox("Read-only", this);
@@ -194,6 +202,12 @@ namespace datatools {
 
       void variant_repository_viewer::set_repository(variant_repository & repository_)
       {
+        DT_THROW_IF(!repository_.is_initialized(),
+                    std::logic_error,
+                    "Repository '" << repository_.get_name() << "' is not initialized!");
+        DT_THROW_IF(!repository_.is_locked(),
+                    std::logic_error,
+                    "Repository '" << repository_.get_name() << "' is not locked!");
         _repository_ = &repository_;
         _construct();
         return;
@@ -256,6 +270,20 @@ namespace datatools {
           _repository_name_display_label_->setToolTip(QString::fromStdString(_repository_->get_terse_description()));
         }
 
+        if (_repository_->has_organization()) {
+          _repository_org_display_label_->setTextFormat(Qt::PlainText);
+          _repository_org_display_label_->setStyleSheet("QLabel { background-color : white; }");
+          _repository_org_display_label_->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
+          _repository_org_display_label_->setText(QString::fromStdString(_repository_->get_organization()));
+        }
+
+        if (_repository_->has_application()) {
+          _repository_app_display_label_->setTextFormat(Qt::PlainText);
+          _repository_app_display_label_->setStyleSheet("QLabel { background-color : white; }");
+          _repository_app_display_label_->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
+          _repository_app_display_label_->setText(QString::fromStdString(_repository_->get_application()));
+        }
+
         _accomplished_label_->setText("Accomplished:");
         _accomplished_led_->set_shape(datatools::qt::led::Square);
         _accomplished_led_->set_on_color(datatools::qt::led::Green);
@@ -274,6 +302,12 @@ namespace datatools {
         top_layout->addWidget(_accomplished_label_);
         top_layout->addWidget(_accomplished_led_);
         top_layout->addWidget(_read_only_cb_);
+
+        QHBoxLayout * top_layout2 = new QHBoxLayout;
+        top_layout2->addWidget(_repository_org_title_label_);
+        top_layout2->addWidget(_repository_org_display_label_);
+        top_layout2->addWidget(_repository_app_title_label_);
+        top_layout2->addWidget(_repository_app_display_label_);
 
         // For each registry in the repository:
         for (variant_repository::registry_dict_type::iterator i
@@ -321,6 +355,7 @@ namespace datatools {
         // Main:
         QVBoxLayout * main_layout = new QVBoxLayout;
         main_layout->addLayout(top_layout);
+        main_layout->addLayout(top_layout2);
         main_layout->addWidget(_registry_tabs_);
 
         slot_update_leds();

@@ -41,7 +41,6 @@ namespace datatools {
 
     bool validate_item_name(const std::string & candidate_)
     {
-      // std::cerr << "DEVEL: validate_item_name: Entering..." << std::endl;
       if (candidate_.find("/") != std::string::npos ) {
         return false;
       }

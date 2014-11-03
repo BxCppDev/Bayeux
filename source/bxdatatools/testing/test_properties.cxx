@@ -1,14 +1,20 @@
 // test_properties.cxx
 
+// Ourselves:
+#include <datatools/properties.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
+#include <cmath>
 
-#include <datatools/properties.h>
+// This project:
 #include <datatools/io_factory.h>
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
+#include <datatools/clhep_units.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
@@ -131,23 +137,40 @@ int main(int argc_, char ** argv_)
       clog << "ERROR: " << x.what () << endl;
     }
 
-    my_dict.store ("weight", 23.4);
+    my_dict.store_with_explicit_unit ("weight", 23.4 * CLHEP::kg);
+    my_dict.set_unit_symbol("weight", "kg");
+
+    my_dict.store ("pi", 3.14159 );
+
+    my_dict.store ("dummy", 6);
+
     my_dict.store ("male", true);
-    vector<double> vals;
-    vals.push_back (1.0);
-    vals.push_back (2.0);
-    vals.push_back (3.0);
-    my_dict.store ("position", vals, "the position of an object (mm)");
+
+    vector<double> coeffs;
+    coeffs.push_back (1.0);
+    coeffs.push_back (2.0);
+    coeffs.push_back (3.0);
+    my_dict.store ("coeffs", coeffs, "undimensioned coefficients");
     my_dict.dump (clog);
     clog << endl;
 
-    my_dict.change ("position", 3.14, 1);
+    vector<double> vals;
+    vals.push_back (1.0 * CLHEP::cm);
+    vals.push_back (2.0 * CLHEP::cm);
+    vals.push_back (3.0 * CLHEP::cm);
+    my_dict.store ("position", vals, "the position of an object");
+    my_dict.set_explicit_unit("position", true);
+    my_dict.set_unit_symbol("position", "cm");
+    my_dict.dump (clog);
+    clog << endl;
+
+    my_dict.change ("position", 3.14 * CLHEP::m , 1);
     my_dict.change ("age", 77);
     my_dict.lock ("age");
     my_dict.change ("male", false);
     my_dict.update ("phantom", 4);
 
-    my_dict.erase ("weight");
+    my_dict.erase ("dummy");
     my_dict.dump (clog);
     bool male;
     my_dict.fetch ("male", male);
@@ -158,14 +181,15 @@ int main(int argc_, char ** argv_)
     clog << endl;
 
     vector<double> vals2;
-    double s = 3.14159;
+    double s = M_PI;
     for (int i = 1; i < 13; i++) {
       s /= i;
-      vals2.push_back (s);
+      vals2.push_back (s * CLHEP::radian);
     }
     my_dict.change ("position", vals2);
-    if (debug) my_dict.tree_dump (clog,
-                                  "datatools::properties","DEBUG: ");
+    my_dict.set_explicit_unit("position", true);
+    my_dict.set_unit_symbol("position", "degree");
+    if (debug) my_dict.tree_dump (clog, "datatools::properties", "DEBUG: ***** ");
     clog << endl;
 
     vector<bool> bits;
@@ -216,37 +240,37 @@ int main(int argc_, char ** argv_)
     clog << "serialize: reading from '" << filename << "'..."
          << endl;
     {
-      datatools::data_reader reader (filename);
-      if (reader.has_record_tag ()) {
-        if (reader.get_record_tag () == datatools::properties::SERIAL_TAG) {
+      datatools::data_reader reader(filename);
+      if (reader.has_record_tag()) {
+        if (reader.get_record_tag() == datatools::properties::SERIAL_TAG) {
           datatools::properties a_dict;
-          reader.load (a_dict);
+          reader.load(a_dict);
           my_dict = a_dict;
         } else {
-          clog << "Record tag : '"<< reader.get_record_tag () << "'" << endl;
+          clog << "Record tag : '"<< reader.get_record_tag() << "'" << endl;
         }
       }
     }
 
     clog << "serialize: reading done." << endl;
     clog << endl;
-    my_dict.tree_dump (clog, "Dict after reading:");
+    my_dict.tree_dump(clog, "Dict after reading:");
 
     clog << "========================================" << endl;
 
     string filename_cfg = "test_properties.conf";
 
-    datatools::properties::write_config (filename_cfg, my_dict);
-    datatools::properties::write_config ("", my_dict);
-    my_dict.clear ();
-    my_dict.dump (clog);
+    datatools::properties::write_config(filename_cfg, my_dict);
+    datatools::properties::write_config("", my_dict);
+    my_dict.clear();
+    my_dict.tree_dump(clog, "Cleared dict:");
     clog << endl;
 
     clog << "========================================" << endl;
 
-    datatools::properties::read_config (filename_cfg, my_dict);
+    datatools::properties::read_config(filename_cfg, my_dict);
 
-    my_dict.dump (clog);
+    my_dict.tree_dump(clog, "Loaded dict:");
     clog << endl;
 
     clog << "========================================" << endl;
@@ -254,17 +278,17 @@ int main(int argc_, char ** argv_)
     clog << "Enter a list of double-quoted strings (ex: \"my\" \"favorite\" \"color\" \"is\" \"blue\"): "
          << endl;
     string as;
-    std::istringstream sin("\"my\" \"favorite\" \"color\" \"is\" \"blue\"");
-    getline(sin, as);
+    std::istringstream s_in("\"my\" \"favorite\" \"color\" \"is\" \"blue\"");
+    getline(s_in, as);
 
     string s2;
     istringstream iss (as);
 
     do {
       iss >> ws;
-      if (iss.eof ()) break;
+      if (iss.eof()) break;
       s2 = "";
-      if (datatools::io::read_quoted_string (iss, s2)) {
+      if (datatools::io::read_quoted_string(iss, s2)) {
         clog << "String = '" << s2 << "'" << endl;
       } else {
         clog << "Cannot parse quoted string from '" << as

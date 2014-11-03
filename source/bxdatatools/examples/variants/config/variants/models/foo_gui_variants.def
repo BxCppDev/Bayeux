@@ -1,0 +1,208 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The definitions for GUI variants
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###############################
+[name="rgba.VM" type="variant"]
+
+#@config A parameter describing the RGBA color mode
+
+#@description The display name of this variant model
+display_name              : string = "RGBA"
+
+#@description A short description of this variant model
+terse_description         : string = "The RGBA color mode"
+
+
+###############################
+[name="ymck.VM" type="variant"]
+
+#@config A parameter describing the YMCK color mode
+
+#@description The display name of this variant model
+display_name              : string = "YMCK"
+
+#@description A short description of this variant model
+terse_description         : string = "The YMCK color mode"
+
+
+#######################################
+[name="palette_id.PM" type="parameter"]
+
+#@config A parameter model describing the palette identifier
+
+#@description The display name of this variant
+display_name       : string = "Palette Id"
+
+#@description A short description of the variant
+terse_description  : string = "The palette identifier"
+
+#@description The type of the parameter
+type               : string = "integer"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "interval"
+
+#@description The domain of supported values
+integer.domain     : string = "[0, 8)"
+
+#@description The default palette identifier
+integer.default    : integer = 0
+
+#@description The variants associated to supported values
+variants : string[2] = "rgba" "ymck"
+
+variants.rgba.model       : string = "rgba.VM"
+variants.rgba.description : string = "Set of parameters of the 'rgba' color mode"
+
+variants.ymck.model       : string = "ymck.VM"
+variants.ymck.description : string = "Set of parameters of the 'ymck' color mode"
+
+#@description The integer subranges
+integer.ranges  :  string[3] = "A" "B" "C"
+
+# Description of subranges and their associated variants
+integer.ranges.A.range    : string = "[0, 3)"
+integer.ranges.A.variant  : string = "rgba"
+
+integer.ranges.B.range    : string = "[3, 6)"
+integer.ranges.B.variant  : string = "ymck"
+
+integer.ranges.C.range    : string = "[6, 8)"
+integer.ranges.C.variant  : string = "rgba"
+
+
+####################################
+[name="bw_mode.PM" type="parameter"]
+
+#@config A parameter model describing the black & white mode
+
+#@description The display name of this variant
+display_name       : string = "Black & white mode"
+
+#@description A short description of the variant
+terse_description  : string = "The black & white mode"
+
+#@description The type of the parameter
+type               : string = "string"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "enumeration"
+
+#@description The number of supported values
+string.enumerated.size    : integer = 2
+
+# The list of supported values:
+string.enumerated_0.value : string = "B/W"
+string.enumerated_1.value : string = "Gray scale"
+
+#@description The default value
+string.default            : string = "B/W"
+
+
+#######################################
+[name="with_colors.VM" type="variant"]
+
+#@config A variant model describing the parameters for GUI color support
+
+#@description The display name of this variant
+display_name       : string = "Colors setup"
+
+#@description A short description of the variant
+terse_description  : string = "The configuration parameters for the GUI color support"
+
+#@description The list of variant parameters
+parameters         : string[1] = "palette"
+
+parameters.palette.model            : string = "palette_id.PM"
+parameters.palette.description      : string = "The identifier of the color palette"
+
+
+######################################
+[name="black_white.VM" type="variant"]
+
+#@config A variant model describing the parameters for GUI color support
+
+#@description The display name of this variant
+display_name       : string = "Black & white setup"
+
+#@description A short description of the variant
+terse_description  : string = "The configuration parameters for the B/W support"
+
+#@description The list of variant parameters
+parameters         : string[1] = "mode"
+
+parameters.mode.model       : string = "bw_mode.PM"
+parameters.mode.description : string = "The B/W mode"
+
+
+#########################################
+[name="color_switch.PM" type="parameter"]
+
+#@config A parameter model describing the color activation
+
+#@description The display name of this variant
+display_name       : string = "Color"
+
+#@description A short description of the variant
+terse_description  : string = "The color switch"
+
+#@description The type of the parameter
+type               : string = "boolean"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The default value
+boolean.default    : boolean = 0
+
+#@description The variants associated to supported values
+variants : string[2] = "colored" "uncolored"
+
+variants.colored.model       : string = "with_colors.VM"
+variants.colored.description : string = "Set of parameters for the colored mode"
+
+variants.uncolored.model       : string = "black_white.VM"
+variants.uncolored.description : string = "Set of parameters for the uncolored mode"
+
+#@description Variant associations
+boolean.variant.false : string = "uncolored"
+boolean.variant.true  : string = "colored"
+
+
+##############################
+[name="gui.VM" type="variant"]
+
+#@config A variant model describing the parameters for the GUI
+
+#@description The display name of this variant
+display_name       : string = "GUI setup"
+
+#@description A short description of the variant
+terse_description  : string = "The configuration parameters for the GUI"
+
+#@description The list of variant parameters
+parameters         : string[3] = "logging" "color" "antialiasing"
+
+parameters.logging.model       : string = "logging_priority.PM"
+parameters.logging.description : string = "The logging priority"
+
+parameters.color.model         : string = "color_switch.PM"
+parameters.color.description   : string = "The activation flag of color"
+
+parameters.antialiasing.model       : string = "on_off.PM"
+parameters.antialiasing.description : string = "The anti-aliasing switch"
+
+
+
+# end

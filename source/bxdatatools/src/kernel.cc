@@ -1,5 +1,10 @@
 // kernel.cc
 
+// Standard Library:
+#include <cstdlib>
+#include <fstream>
+#include <algorithm>
+
 // Ourselves:
 #include <datatools/kernel.h>
 
@@ -10,12 +15,16 @@
 // This project:
 #include <datatools/library_info.h>
 #include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/io.h>
 #include <datatools/exception.h>
 #include <datatools/version.h>
 #include <datatools/command_utils.h>
+#include <datatools/utils.h>
 
 #if DATATOOLS_WITH_QT_GUI == 1
-// #include <datatools/configuration/ui/variant_repository_dialog.h>
+#include <QStyleFactory>
+#include <QApplication>
+#include <datatools/configuration/ui/variant_repository_dialog.h>
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
 namespace datatools {
@@ -27,7 +36,18 @@ namespace datatools {
   void kernel::_construct_()
   {
     _initialized_ = false;
-    _logging_ = datatools::logger::PRIO_WARNING;
+    _logging_ = datatools::logger::PRIO_FATAL;
+    {
+      char * e = getenv("DATATOOLS_KERNEL_LOGGING");
+      if (e) {
+        std::string dklogging = e;
+        datatools::logger::priority p = datatools::logger::get_priority(_params_.logging_label);
+        if (p != datatools::logger::PRIO_UNDEFINED) {
+          // Set the kernel logging priority threshold:
+           _logging_ = p;
+        }
+      }
+    }
     DT_THROW_IF(_instance_, std::runtime_error,
                 "An instance of the datatools kernel already exists !");
     _activate_library_info_register_ = true;
@@ -71,6 +91,7 @@ namespace datatools {
     namespace po = boost::program_options;
 
     opts_.add_options()
+
       ("datatools::help",
        po::value<bool>(&params_.help)
        ->zero_tokens()
@@ -79,6 +100,7 @@ namespace datatools {
        "Example :                                                   \n"
        "  --datatools::help                                           "
        )
+
       ("datatools::splash",
        po::value<bool>(&params_.splash)
        ->zero_tokens()
@@ -87,20 +109,15 @@ namespace datatools {
        "Example :                                                   \n"
        "  --datatools::splash                                         "
        )
+
       ("datatools::logging",
        po::value<std::string>(&params_.logging_label)
        ->default_value("warning"),
        "Set the datatools kernel's logging priority threshold.  \n"
        "Example :                                               \n"
-       "  --datatools::logging \"trace\"                          "
+       "  --datatools::logging=\"trace\"                          "
        )
-      ("datatools::libinfo::logging",
-       po::value<std::string>(&params_.library_info_logging_label)
-       ->default_value("warning"),
-       "Set the datatools kernel's library info logging priority threshold.  \n"
-       "Example :                                                            \n"
-       "  --datatools::libinfo::logging \"trace\"                              "
-       )
+
       ("datatools::nolibinfo",
        po::value<bool>(&params_.inhibit_library_info_register)
        ->zero_tokens()
@@ -109,13 +126,13 @@ namespace datatools {
        "Example :                                                       \n"
        "  --datatools::nolibinfo                                          "
        )
-      ("datatools::novariant",
-       po::value<bool>(&params_.inhibit_variant_repository)
-       ->zero_tokens()
-       ->default_value(false),
-       "Inhibit the use of the configuration variant repository.  \n"
-       "Example :                                                 \n"
-       "  --datatools::novariant                                    "
+
+      ("datatools::libinfo::logging",
+       po::value<std::string>(&params_.library_info_logging_label)
+       ->default_value("warning"),
+       "Set the datatools kernel's library info logging priority threshold.  \n"
+       "Example :                                                            \n"
+       "  --datatools::libinfo::logging=\"trace\"                              "
        )
 
       ("datatools::resource-path",
@@ -125,36 +142,61 @@ namespace datatools {
        "  Register the \"path1/subdir1\" path as the root directory of       \n"
        "  the \"foo\" library and the \"path2/subdir2\" path as the          \n"
        "  root directory of the \"bar\" software module:                     \n"
-       "    --datatools::resource-path \"foo@path1/subdir1\"                 \n"
-       "    --datatools::resource-path \"bar@path2/subdir2\"                   "
+       "    --datatools::resource-path=\"foo@path1/subdir1\"                 \n"
+       "    --datatools::resource-path=\"bar@path2/subdir2\"                   "
+       )
+
+      ("datatools::novariant",
+       po::value<bool>(&params_.inhibit_variant_repository)
+       ->zero_tokens()
+       ->default_value(false),
+       "Inhibit the use of the configuration variant repository.  \n"
+       "Example :                                                 \n"
+       "  --datatools::novariant                                    "
        )
 
       ("datatools::variant-config",
-       po::value< std::vector<std::string> >(&params_.variant_configs),
-       "Register a configuration variant registry associated to some         \n"
-       "some application scope.                                              \n"
+       po::value< std::string >(&params_.variant_config),
+       "The system variant repository configuration filename.                 \n"
        "Example :                                                            \n"
-       "  Register the \"foo@config/variants.conf\" file to initialize a     \n"
-       "  registry of configuration variants for the \"foo\" application:    \n"
-       "    --datatools::variant-config \"foo@config/variants.conf\"         \n"
+       "  Register the \"config/variance.conf\" file to initialize the       \n"
+       "  repository for some application:                                   \n"
+       "    --datatools::variant-config=\"config/variance.conf\"             \n"
+       )
+
+      ("datatools::variant-registry-config",
+       po::value< std::vector<std::string> >(&params_.variant_registry_configs),
+       "Register a configuration variant registry in the system variant      \n"
+       "repository.                                                          \n"
+       "Example :                                                            \n"
+       "  Register the \"config/registry.conf\" file to initialize a         \n"
+       "  registry of configuration variants for some \"foo\" application:   \n"
+       "    --datatools::variant-registry-config=\"foo@config/registry.conf\"\n"
+       "  or                                                                 \n"
+       "    --datatools::variant-registry-config=\"config/registry.conf\"    \n"
+       "  if the file contains the registry name 'foo'.                        "
        )
 
       ("datatools::variant-load",
        po::value<std::string>(&params_.variant_load),
-       "Load the values of the variant parameters from a file:               \n"
+       "Load the values of the variant parameters from a file.               \n"
        "Example :                                                            \n"
-       "  Load parameters from the \"foo@config/variants.values\" file       \n"
-       "  registry of configuration variant for the \"foo\" application:     \n"
-       "    --datatools::variant-load \"foo@config/variants.values\"         \n"
+       "  Load parameters' values from the \"config/saved_variants.rep\" file\n"
+       "    --datatools::variant-load=\"config/saved_variants.rep\"            "
        )
 
-      ("datatools::variant-store",
-       po::value<std::string>(&params_.variant_store),
-       "Load the values of the variant parameters from a file:               \n"
-       "Example :                                                            \n"
-       "  Load parameters from the \"foo@config/variants.values\" file       \n"
-       "  registry of configuration variant for the \"foo\" application:     \n"
-       "    --datatools::variant-load \"foo@config/variants.values\"         \n"
+      ("datatools::variant-set",
+       po::value< std::vector<std::string> >(&params_.variant_sets),
+       "Set the values of a set of configuration variant parameters associated  \n"
+       "to some registry.                                                       \n"
+       "Example :                                                               \n"
+       "  Set the \"foo:detector0=1\" flag and the associated                   \n"
+       "  \"foo:detector0/if_detector/material\" and                            \n"
+       "  \"foo:detector0/if_detector/width\" parameters                        \n"
+       "  in the proper variant registry:                                       \n"
+       "    --datatools::variant-set=\"foo:detector0=1\"                        \n"
+       "    --datatools::variant-set=\"foo:detector0/if_detector/material=Silicium\" \n"
+       "    --datatools::variant-set=\"foo:detector0/if_detector/width=3 cm\"        \n"
        )
 
 #if DATATOOLS_WITH_QT_GUI == 1
@@ -163,27 +205,74 @@ namespace datatools {
        ->zero_tokens()
        ->default_value(false),
        "Display the variant GUI dialog:                                     \n"
-       "Example :                                                            \n"
-        "   --datatools::variant-gui                                         \n"
+       "Example :                                                           \n"
+       "   --datatools::variant-gui                                           "
        )
- #endif // DATATOOLS_WITH_QT_GUI == 1
 
-      ("datatools::variant-set",
-       po::value< std::vector<std::string> >(&params_.variant_sets),
-       "Set the values of a set of configuration variant parameters associated  \n"
-       "to some application/library.                                            \n"
-       "Example :                                                               \n"
-       "  Set the \"foo:detector0=1\" flag and the \"foo:detector0/width=3 cm\" \n"
-       "  in the proper variant registry:                                       \n"
-       "    --datatools::variant-set=\"foo:detector0=1\"                        \n"
-       "    --datatools::variant-set=\"foo:detector0/width=3 cm\"               \n"
-       "    --datatools::variant-set=\"foo:detector0/material=Silicium\"        \n"
+      ("datatools::variant-gui-style",
+       po::value<std::string>(&params_.variant_gui_style),
+       "Set the style of variant GUI dialog:                                \n"
+       "Example :                                                           \n"
+       "   --datatools::variant-gui-style=\"plastique\"                       "
+       )
+       //      ->default_value(std::string("plastique")),
+#endif // DATATOOLS_WITH_QT_GUI == 1
+
+      ("datatools::variant-store",
+       po::value<std::string>(&params_.variant_store),
+       "Store the values of the variant parameters in a file:                \n"
+       "Example :                                                            \n"
+       "  Store parameters' values from the \"var/backup_variants.rep\" file \n"
+       "    --datatools::variant-store=\"var/backup_variants.rep\"             "
        )
 
       ;
 
     return;
   }
+
+  void kernel::param_type::print(std::ostream & out_,
+                                 const std::string & title_,
+                                 const std::string & indent_)
+  {
+    if (!title_.empty()) {
+      out_ << indent_ << title_ << std::endl;
+    }
+
+    out_ << indent_ << "Help: " << help << std::endl;
+
+    out_ << indent_ << "Logging label: '" << logging_label << "'" << std::endl;
+
+    out_ << indent_ << "Library info logging label: '" << library_info_logging_label << "'"  << std::endl;
+
+    out_ << indent_ << "Inhibit library info register: " << inhibit_library_info_register << std::endl;
+
+    out_ << indent_ << "Inhibit variant repository: " << inhibit_variant_repository << std::endl;
+
+    out_ << indent_ << "Unrecognized args: '" << unrecognized_args.size() << "'"  << std::endl;
+
+    out_ << indent_ << "Resource paths: '" << resource_paths.size() << "'"  << std::endl;
+
+    out_ << indent_ << "Variant config: '" << variant_config << "'" << std::endl;
+
+    out_ << indent_ << "Variant registry configs: " << variant_registry_configs.size() << std::endl;
+
+    out_ << indent_ << "Variant load: '" << variant_load << "'"  << std::endl;
+
+    out_ << indent_ << "Variant store: '" << variant_store << "'"  << std::endl;
+
+    out_ << indent_ << "Variant sets: " << variant_sets.size() << std::endl;
+
+    out_ << indent_ << "Splash: " << splash << std::endl;
+
+#if DATATOOLS_WITH_QT_GUI == 1
+    out_ << indent_ << "Variant GUI: " << variant_gui << std::endl;
+    out_ << indent_ << "Variant GUI style: '" << variant_gui_style << "'" << std::endl;
+#endif // DATATOOLS_WITH_QT_GUI == 1
+
+    return;
+  }
+
 
   kernel::param_type::param_type()
   {
@@ -194,13 +283,21 @@ namespace datatools {
   void kernel::param_type::reset()
   {
     help = false;
-    logging_label = "warning";
-    library_info_logging_label = "warning";
+    logging_label = "fatal";
+    library_info_logging_label = "fatal";
     inhibit_library_info_register = false;
     inhibit_variant_repository = false;
+    unrecognized_args.clear();
+    resource_paths.clear();
+    variant_config.clear();
+    variant_registry_configs.clear();
+    variant_load.clear();
+    variant_sets.clear();
+    variant_store.clear();
     splash = false;
 #if DATATOOLS_WITH_QT_GUI == 1
     variant_gui = false;
+    variant_gui_style = "plastique";
 #endif // DATATOOLS_WITH_QT_GUI == 1
     return;
   }
@@ -240,28 +337,84 @@ namespace datatools {
     return;
   }
 
-  void kernel::_initialize(const param_type & params_)
+  void kernel::_initialize()
   {
-    if (params_.inhibit_library_info_register) {
+    DT_LOG_TRACE_ENTERING(_logging_);
+
+    // Set the kernel logging priority threshold:
+    this->_logging_ = datatools::logger::get_priority(_params_.logging_label);
+
+    if (_params_.inhibit_library_info_register) {
+      DT_LOG_TRACE(_logging_, "Inhibit the library info register...");
       this->_activate_library_info_register_ = false;
     }
-    if (params_.inhibit_variant_repository) {
+
+    if (_params_.inhibit_variant_repository) {
+      DT_LOG_TRACE(_logging_, "Inhibit the variant repository...");
       this->_activate_variant_repository_ = false;
     }
 
-    // Set the kernel logging priority threshold:
-    this->_logging_ = datatools::logger::get_priority(params_.logging_label);
+    // Splash some fancy screen:
+    if (_params_.splash) {
+      kernel::print_splash(std::clog);
+    }
+
+    _initialize_library_info_register_();
+
+    _initialize_configuration_variant_repository_();
+
+    DT_LOG_TRACE_EXITING(_logging_);
+    return;
+  }
+
+  void kernel::_shutdown()
+  {
+    DT_LOG_TRACE_ENTERING(_logging_);
+    // Terminate internals:
+    if (_variant_repository_) {
+      _variant_repository_.reset(0);
+    }
+    DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now destroyed.");
+
+    if (_library_info_register_) {
+      _library_info_register_.reset(0);
+    }
+    DT_LOG_TRACE(_logging_, "Kernel's library info registered is now destroyed.");
+
+    // Revert to default idle status:
+    _activate_variant_repository_ = true;
+    _activate_library_info_register_ = true;
+    _application_name_.clear();
+
+    DT_LOG_TRACE_EXITING(_logging_);
+    return;
+  }
+
+  void kernel::_initialize_library_info_register_()
+  {
+    DT_LOG_TRACE_ENTERING(_logging_);
+    DT_LOG_INFORMATION(_logging_, "Initializing kernel's library info register...");
 
     // Instantiate the kernel library information register:
     if (this->_activate_library_info_register_) {
       _library_info_register_.reset(new library_info);
-      _library_info_register_->set_logging(datatools::logger::get_priority(params_.library_info_logging_label));
+      _library_info_register_->set_logging(datatools::logger::get_priority(_params_.library_info_logging_label));
       _library_info_register_->initialize();
-      DT_LOG_TRACE(_logging_, "Kernel's library info registered is now created.");
+      DT_LOG_TRACE(_logging_, "Kernel's library info register is now created.");
+      if (_logging_ == logger::PRIO_TRACE) {
+        _library_info_register_->tree_dump(std::cerr, "Kernel's library info register:", "TRACE: ");
+      }
     } else {
-      DT_LOG_TRACE(_logging_, "Kernel's library info registered is not created.");
+      DT_LOG_TRACE(_logging_, "Kernel's library info register is not created.");
     }
+    DT_LOG_TRACE_EXITING(_logging_);
+    return;
+  }
 
+  void kernel::_initialize_configuration_variant_repository_()
+  {
+    DT_LOG_TRACE_ENTERING(_logging_);
+    DT_LOG_INFORMATION(_logging_, "Initializing kernel's configuration variant repository...");
     // Instantiate the kernel variant repository:
     if (this->_activate_variant_repository_) {
       _variant_repository_.reset(new configuration::variant_repository);
@@ -269,20 +422,31 @@ namespace datatools {
       _variant_repository_->set_display_name("Bayeux System Repository");
       _variant_repository_->set_terse_description("The Bayeux/datatools' kernel configuration variant repository");
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now created.");
+      if (_logging_ == logger::PRIO_TRACE) {
+        _variant_repository_->tree_dump(std::cerr, "Kernel's configuration variant repository:", "TRACE: ");
+      }
     } else {
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is not created.");
     }
 
-    // Splash some fancy screen:
-    if (params_.splash) {
-      kernel::print_splash(std::clog);
-    }
+    DT_LOG_TRACE_EXITING(_logging_);
+    return;
+  }
+
+  void kernel::register_resource_paths()
+  {
+    DT_LOG_TRACE_ENTERING(_logging_);
+    DT_LOG_INFORMATION(_logging_, "Registration of resource paths...");
 
     if (_library_info_register_) {
+      DT_LOG_TRACE(_logging_, "Number of resource paths = " << _params_.resource_paths.size());
+      if (_logging_ == datatools::logger::PRIO_TRACE) {
+        _params_.print(std::cerr, "Kernel's setup parameters: ", "TRACE: ");
+      }
       // Parse some special directives to load arbitrary resource path associated
       // to some library or some software component identified by their names:
-      for (size_t i = 0; i < params_.resource_paths.size(); i++) {
-        std::string resource_path_registration = params_.resource_paths[i];
+      for (size_t i = 0; i < _params_.resource_paths.size(); i++) {
+        std::string resource_path_registration = _params_.resource_paths[i];
         DT_LOG_TRACE(_logging_, "Resource path registration : '"
                      << resource_path_registration << "'");
         // format is :
@@ -309,93 +473,191 @@ namespace datatools {
       if (_logging_ >= datatools::logger::PRIO_TRACE) {
         _library_info_register_->tree_dump(std::cerr, "Library information register: ");
       }
+      _params_.resource_paths.clear();
     } // _library_info_register_
+    else {
+      DT_LOG_TRACE(_logging_, "No kernel's library info register is available!");
+    }
+    DT_LOG_TRACE_EXITING(_logging_);
+    return;
+  }
 
+  void kernel::register_configuration_variant_registries()
+  {
+    DT_LOG_TRACE_ENTERING(_logging_);
     if (_variant_repository_) {
-      // Parse some special directives to load the definitions of configuration
-      // variant registry from a file:
-      for (size_t i = 0; i < params_.variant_configs.size(); i++) {
-        std::string variant_config_registration = params_.variant_configs[i];
-        DT_LOG_TRACE(_logging_, "Variants' configuration : '"
-                     << variant_config_registration << "'");
-        // format is :
-        //   "foo@path1/subdir/file.conf"
-        size_t apos = variant_config_registration.find('@');
-        DT_THROW_IF(apos == variant_config_registration.npos,
-                    std::logic_error,
-                    "Invalid syntax in variant manager configuration file ('"
-                    << variant_config_registration << "' !");
-        std::string variant_name = variant_config_registration.substr(0, apos);
-        std::string variant_mgr_config_file = variant_config_registration.substr(apos + 1);
-        DT_LOG_TRACE(_logging_, "Variant " << variant_name << "' configuration file '"
-                     << variant_mgr_config_file << "' registration...");
-        DT_THROW_IF(_variant_repository_->has_registry(variant_name),
-                    std::logic_error,
-                    "Variant registry '"<< variant_name << "'is already registered !");
-        _variant_repository_->registration_embedded(variant_name, variant_mgr_config_file);
+
+      bool rep_locked = false;
+      // Initialize the system variant repository from a configuration file:
+      if (! _params_.variant_config.empty()) {
+        std::string config_filename =_params_.variant_config;
+        datatools::fetch_path_with_env(config_filename);
+        datatools::properties config;
+        config.read_configuration(config_filename);
+        _variant_repository_->initialize(config);
+        if (_logging_ >= datatools::logger::PRIO_TRACE) {
+          _variant_repository_->tree_dump(std::cerr, "Configuration Variant Repository: ", "TRACE: ");
+        }
+        rep_locked = _variant_repository_->is_locked();
       }
-      if (_logging_ >= datatools::logger::PRIO_TRACE) {
-        _variant_repository_->tree_dump(std::cerr, "Configuration variant repository: ");
+
+      if (_params_.variant_registry_configs.size()) {
+        if (rep_locked) {
+          // Unlock to add more registries:
+           _variant_repository_->unlock();
+        }
+        // Parse some special directives to load the definitions of configuration
+        // variant registry from a file:
+
+        for (size_t i = 0; i < _params_.variant_registry_configs.size(); i++) {
+          std::string variant_config_registration = _params_.variant_registry_configs[i];
+          DT_LOG_TRACE(_logging_, "Variants' configuration : '"
+                       << variant_config_registration << "'");
+          // format is :
+          //   "path1/subdir/file.conf"
+          // or:
+          //   "foo@path1/subdir/file.conf"
+          std::string variant_name;
+          std::string variant_mgr_config_file;
+          size_t apos = variant_config_registration.find('@');
+          if (apos != std::string::npos) {
+            variant_name = variant_config_registration.substr(0, apos);
+            variant_mgr_config_file = variant_config_registration.substr(apos + 1);
+          } else {
+            variant_mgr_config_file = variant_config_registration;
+          }
+          datatools::fetch_path_with_env(variant_mgr_config_file);
+          DT_LOG_TRACE(_logging_, "Variant " << variant_name << "' configuration file '"
+                       << variant_mgr_config_file << "' registration...");
+          DT_THROW_IF(_variant_repository_->has_registry(variant_name),
+                      std::logic_error,
+                      "Variant registry '" << variant_name << "'is already registered !");
+          _variant_repository_->registration_embedded(variant_mgr_config_file, "", variant_name);
+        }
+        if (rep_locked) {
+          // Relock to add more registries:
+          _variant_repository_->lock();
+        }
+        if (_logging_ >= datatools::logger::PRIO_TRACE) {
+          _variant_repository_->tree_dump(std::cerr, "Configuration Variant Repository: ", "TRACE: ");
+        }
+      }
+
+      if (! _params_.variant_load.empty()) {
+        // Load the variant setup from a file:
+        std::string variant_load = _params_.variant_load;
+        datatools::fetch_path_with_env(variant_load);
+        std::ifstream load_file;
+        load_file.open(variant_load.c_str());
+        DT_THROW_IF(!load_file, std::runtime_error,
+                    "Cannot open configuration variant file '" << variant_load << "'!");
+        unsigned int ioflags = 0;
+        datatools::configuration::ascii_io repository_io(ioflags);
+        int error = repository_io.load_repository(load_file, *_variant_repository_);
+        DT_THROW_IF(error != 0, std::runtime_error,
+                    "Failed to load repository from file '" << variant_load << "'!");
+        DT_LOG_NOTICE(_logging_, "Variant repository was loaded from configuration file '"
+                      << variant_load << "'.");
       }
 
       // Parse the directives that set values of specific configuration variant parameters
       // in a given variant registry:
-      for (size_t i = 0; i < params_.variant_sets.size(); i++) {
-        std::string variant_set = params_.variant_sets[i];
-        DT_LOG_TRACE(_logging_, "Variant parameter set : '"
-                     << variant_set << "'");
-        // format is :
-        //   "foo:param0/var0/key0=value"
-        size_t apos = variant_set.find(':');
-        DT_THROW_IF(apos == variant_set.npos,
-                    std::logic_error,
-                    "Invalid syntax in variant set directive ('"
-                    << variant_set << "' !");
-        std::string variant_registry_key = variant_set.substr(0, apos);
-        std::string variant_param_set = variant_set.substr(apos + 1);
-        apos = variant_param_set.find('=');
-        std::string variant_param_key;
-        std::string variant_param_value_str;
-        if (apos == variant_param_set.npos) {
-          variant_param_key = variant_param_set;
-          variant_param_value_str="1";
-        } else {
-          variant_param_key = variant_param_set.substr(0, apos);
-          variant_param_value_str = variant_param_set.substr(apos + 1);
+
+      if (_params_.variant_sets.size() > 1) {
+        // Reorder the variant sets directives:
+        std::vector<std::string> variant_sets = _params_.variant_sets;
+        std::sort(variant_sets.begin(), variant_sets.end());
+
+        // Process all variant sets directives:
+        for (size_t i = 0; i < variant_sets.size(); i++) {
+          std::string variant_set = variant_sets[i];
+          DT_LOG_TRACE(_logging_, "Variant parameter set : '" << variant_set << "'");
+          // Format is : "foo:param0/var0/key0=value"
+          size_t apos = variant_set.find(':');
+          DT_THROW_IF(apos == variant_set.npos, std::logic_error,
+                      "Invalid syntax in variant set directive ('" << variant_set << "' !");
+          std::string variant_registry_key = variant_set.substr(0, apos);
+          std::string variant_param_set    = variant_set.substr(apos + 1);
+          apos = variant_param_set.find('=');
+          std::string variant_param_key;
+          std::string variant_param_value_str;
+          if (apos == variant_param_set.npos) {
+            // Assume a boolean parameter:
+            variant_param_key       = variant_param_set;
+            variant_param_value_str = "1";
+          } else {
+            variant_param_key       = variant_param_set.substr(0, apos);
+            variant_param_value_str = variant_param_set.substr(apos + 1);
+          }
+          command::returned_info cri =
+            _variant_repository_->cmd_set_parameter(variant_registry_key,
+                                                    variant_param_key,
+                                                    variant_param_value_str);
+          DT_THROW_IF(cri.is_failure(),
+                      std::logic_error,
+                      cri.get_error_message());
         }
-        command::returned_info cri =
-          _variant_repository_->cmd_set_parameter(variant_registry_key,
-                                                  variant_param_key,
-                                                  variant_param_value_str);
-        DT_THROW_IF(cri.is_failure(),
-                    std::logic_error,
-                    cri.get_error_message());
       }
 
 #if DATATOOLS_WITH_QT_GUI == 1
-      if (params_.variant_gui) {
-        std::clog << "DEVEL: " << "Variant GUI dialog should start here !!!!" << std::endl;
+      if (_params_.variant_gui) {
+        QApplication::setStyle(QStyleFactory::create(QString::fromStdString(_params_.variant_gui_style)));
+        int argc = 1;
+        const char * argv[] = { "Bayeux - Configuration Variant Repository Dialog" };
+        QApplication app(argc, (char**) argv);
+        datatools::configuration::ui::variant_repository_dialog vrep_dialog(*_variant_repository_);
+        vrep_dialog.show();
+        int ret = app.exec();
       }
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
+      if (! _params_.variant_store.empty()) {
+        // Store the variant setup in a file:
+        std::string variant_store = _params_.variant_store;
+        datatools::fetch_path_with_env(variant_store);
+        std::ofstream store_file;
+        store_file.open(variant_store.c_str());
+        DT_THROW_IF(!store_file, std::runtime_error,
+                    "Cannot open configuration variant file '" << variant_store << "'!");
+        unsigned int ioflags = 0;
+        datatools::configuration::ascii_io repository_io(ioflags);
+        repository_io.store_repository(store_file, *_variant_repository_);
+        DT_LOG_NOTICE(_logging_, "Variant repository was stored in configuration file '"
+                      << variant_store << "'.");
+      }
 
+      // Clear processed variant related parameters:
+      _params_.variant_config.clear();
+      _params_.variant_registry_configs.clear();
+      _params_.variant_load.clear();
+      _params_.variant_sets.clear();
+      _params_.variant_gui = false;
+      _params_.variant_gui_style.clear();
+      _params_.variant_store.clear();
+
+    } else {
+      DT_LOG_TRACE(_logging_, "No variant repository in the kernel.");
     } // _variant_repository_
 
+    DT_LOG_TRACE_EXITING(_logging_);
     return;
   }
 
   void kernel::initialize(int argc_, char * argv_[])
   {
+    DT_LOG_TRACE_ENTERING(_logging_);
+    if (_initialized_) return;
+
     // Fetch the application name:
     if ( argc_ >= 1 ) {
       _application_name_= argv_[0];
     }
+    _params_.reset();
 
     // Parse command line options:
     namespace po = boost::program_options;
-    param_type params;
     po::options_description opts("datatools' kernel options ");
-    build_opt_desc(opts, params);
+    build_opt_desc(opts, _params_);
     po::positional_options_description args;
     po::variables_map vm;
     po::parsed_options parsed =
@@ -404,46 +666,31 @@ namespace datatools {
       //.positional(args) // This crashes so we don't use it here !
       .allow_unregistered()
       .run();
-    params.unrecognized_args = po::collect_unrecognized(parsed.options,
-                                                        po::include_positional);
+    _params_.unrecognized_args = po::collect_unrecognized(parsed.options,
+                                                          po::include_positional);
     po::store(parsed, vm);
     po::notify(vm);
-    if (params.help) {
+    if (_params_.help) {
       print_opt_desc(opts, std::cout);
     }
 
     // Initialize internals:
-    _initialize(params);
+    _initialize();
 
     _initialized_ = true;
-    DT_LOG_TRACE(_logging_, "Kernel is instantiated and initialized.");
+    DT_LOG_TRACE_EXITING(_logging_);
     return;
   }
 
   void kernel::shutdown()
   {
+    DT_LOG_TRACE_ENTERING(_logging_);
     if (! _initialized_) return;
     _initialized_ = false;
-
-    // Terminate internals:
-    if (_library_info_register_) {
-      _library_info_register_->reset();
-      _library_info_register_.reset(0);
-    }
-    DT_LOG_TRACE(_logging_, "Kernel's library info registered is now destroyed.");
-
-    if (_variant_repository_) {
-      _variant_repository_->reset();
-      _variant_repository_.reset(0);
-    }
-    DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now destroyed.");
-
-    // Revert to default idle status:
-    _activate_library_info_register_ = true;
-    _activate_variant_repository_ = true;
-    _application_name_.clear();
-
+    _shutdown();
+    _params_.reset();
     DT_LOG_TRACE(_logging_, "Kernel has shutdown.");
+    DT_LOG_TRACE_EXITING(_logging_);
     return;
   }
 
@@ -548,6 +795,49 @@ namespace datatools {
     out_ << indent << i_tree_dumpable::inherit_tag(inherit_)
          << "Kernel instance at : " << _instance_ << std::endl;
 
+    return;
+  }
+
+  void kernel::import_configuration_repository(configuration::variant_repository & rep_)
+  {
+    DT_THROW_IF(!has_variant_repository(), std::logic_error,
+                "The datatools kernel has no configuration variant repository !");
+    DT_THROW_IF(&rep_ == &grab_variant_repository(), std::logic_error,
+                "The datatools kernel cannot import registries from itself !");
+    if (grab_variant_repository().is_initialized()) {
+      grab_variant_repository().reset();
+    }
+    grab_variant_repository().set_organization(rep_.get_organization());
+    grab_variant_repository().set_application(rep_.get_application());
+    import_configuration_registry(rep_);
+    grab_variant_repository().lock();
+    grab_variant_repository().initialize_simple();
+    return;
+  }
+
+  void kernel::import_configuration_registry(configuration::variant_repository & rep_,
+                                             const std::string & registry_name_)
+  {
+    DT_THROW_IF(!has_variant_repository(), std::logic_error,
+                "The datatools kernel has no configuration variant repository !");
+    DT_THROW_IF(&rep_ == &grab_variant_repository(), std::logic_error,
+                "The datatools kernel cannot import registries from itself !");
+    for (configuration::variant_repository::registry_dict_type::iterator i
+           = rep_.grab_registries().begin();
+         i != rep_.grab_registries().end();
+         i++) {
+      const std::string & reg_name = i->first;
+      configuration::variant_registry & reg = i->second.grab_registry();
+      bool import_it = false;
+      if (registry_name_.empty()) {
+        import_it = true;
+      } else if (registry_name_ == reg_name) {
+        import_it = true;
+      }
+      if (import_it) {
+        grab_variant_repository().registration_external(reg);
+      }
+    }
     return;
   }
 

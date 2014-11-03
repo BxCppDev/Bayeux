@@ -34,10 +34,6 @@
 #include <QVBoxLayout>
 #include <QStyleFactory>
 
-// This project:
-#include <datatools/datatools_config.h>
-#include <datatools/datatools.h>
-#include <bayeux/bayeux.h>
 #include <datatools/configuration/ui/variant_registry_tree_model.h>
 #include <datatools/configuration/ui/variant_registry_dialog.h>
 #include <datatools/configuration/ui/variant_repository_viewer.h>

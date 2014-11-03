@@ -123,7 +123,7 @@ const std::string & io::constants::minus_infinity_real_repr()
     if (!iss) {
       return false;
     }
-    return false;
+    return true;
   }
 
   void io::write_integer(std::ostream& a_out, int a_integer)

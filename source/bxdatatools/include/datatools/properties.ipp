@@ -24,7 +24,7 @@
 namespace datatools {
 
 /// Boost serialization template method
-DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties::data, archive, /*version*/)
+DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties::data, archive, version)
 {
   archive & boost::serialization::make_nvp("description", _description_);
   archive & boost::serialization::make_nvp("flags",       _flags_);
@@ -41,13 +41,23 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties::data, archive, /*
   if (this->is_string()) {
     archive & boost::serialization::make_nvp("string_values", _string_values_);
   }
+  if (version >= 2) {
+    if (has_unit_symbol()) {
+      archive & boost::serialization::make_nvp("unit_symbol",     _unit_symbol_);
+    }
+    /*  } else {
+    _flags_ &= ~properties::data::MASK_UNIT_SYMBOL;
+    _unit_symbol_.clear();
+    */
+  }
+  return;
 }
 
 
 /// Boost serialization template method
 DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties, archive, version)
 {
-  if (version ==1 ) {
+  if (version == 1 ) {
     /* from version 1 we inherit explicitely from the
      * 'datatools::serialization::i_serializable' abstract class
      */
@@ -63,6 +73,7 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties, archive, version)
 } // end of namespace datatools
 
 #include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(datatools::properties::data, 2)
 BOOST_CLASS_VERSION(datatools::properties, 2)
 
 #endif // DATATOOLS_PROPERTIES_IPP

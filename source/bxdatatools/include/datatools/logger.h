@@ -201,6 +201,19 @@ struct logger {
   }\
 }
 
+//! Log an entering message if Priority is greater or equal to PRIO_TRACE
+#define DT_LOG_TRACE_ENTERING(Priority)		\
+{						\
+  DT_LOG_TRACE(Priority, "Entering...");	\
+}
+
+//! Log an exiting message if Priority is greater or equal to PRIO_TRACE
+#define DT_LOG_TRACE_EXITING(Priority)		\
+{						\
+  DT_LOG_TRACE(Priority, "Exiting.");		\
+}
+
+
 //----------------------------------------------------------------------
 // OLD STYLE DEPRECATED MACROS.
 // To actually produce a compiler warning on clang or gcc:

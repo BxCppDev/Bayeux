@@ -625,6 +625,7 @@ namespace datatools {
         std::istringstream value_iss(format_);
         if (get_parameter_model().is_boolean()) {
           bool value;
+          cri.set_error_code(command::CEC_PARSING_FAILURE);
           DT_THROW_IF(!io::read_boolean(value_iss, value),
                       std::logic_error,
                       "Invalid format for boolean record '" << _path_ << "'!");
@@ -634,7 +635,7 @@ namespace datatools {
           int value;
           DT_THROW_IF(!io::read_integer(value_iss, value),
                       std::logic_error,
-                      "Invalid format for integer record '" << _path_ << "'!");
+                      "Invalid format '" << format_ << "' for integer record '" << _path_ << "'!");
           cri = set_integer_value(value);
         }
         if (get_parameter_model().is_real()) {
@@ -662,7 +663,6 @@ namespace datatools {
                       "Invalid format for string record '" << _path_ << "'!");
           cri = set_string_value(value);
         }
-
         cri.set_error_code(command::CEC_SUCCESS);
       }
       catch (std::exception & x) {

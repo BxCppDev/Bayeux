@@ -46,10 +46,14 @@
 
 namespace datatools {
 
+  // Forward declaration:
   class library_info;
 
   namespace configuration {
+
+    // Forward declaration:
     class variant_repository;
+
   }
 
   /// \brief The datatools kernel singleton with embedded resources and components.
@@ -62,6 +66,22 @@ namespace datatools {
 
     /// \brief The set of configuration parameters for the datatools' kernel
     struct param_type {
+
+    public:
+
+      /// Constructor
+      param_type();
+
+      /// Reset
+      void reset();
+
+      /// Printt
+      void print(std::ostream & out_,
+                 const std::string & title_ = "",
+                 const std::string & indent_ = "");
+
+    public:
+
       bool                     help; //!< Flag to print the help about datatools' command line options
       std::string              logging_label; //!< Logging priority label
       std::string              library_info_logging_label; //!< Logging priority label for the embedded library information registry
@@ -69,7 +89,8 @@ namespace datatools {
       bool                     inhibit_variant_repository; //!< Flag to inhibit the use of the variant repository
       std::vector<std::string> unrecognized_args; //!< List of unrecognized arguments
       std::vector<std::string> resource_paths; //!< List of resource paths directives
-      std::vector<std::string> variant_configs; //!< List of configuration files for the variant
+      std::string              variant_config;  //!< The configuration file for the system variant repository
+      std::vector<std::string> variant_registry_configs; //!< List of configuration files for the variant registries to be embedded in the system variant repository
       std::string              variant_load; //!< Path to the file from which one loads the values of the variant parameters
       std::string              variant_store; //!< Path to the file where one stores the values of the variant parameters
       std::vector<std::string> variant_sets; //!< List of directives to set the values of the variant parameters
@@ -77,11 +98,9 @@ namespace datatools {
       bool                     splash; //!< Flag to display the datatools splash screen
 #if DATATOOLS_WITH_QT_GUI == 1
       bool                     variant_gui; //!< Flag to run the variant GUI
+      std::string              variant_gui_style; //!< Qt style
 #endif // DATATOOLS_WITH_QT_GUI == 1
-      /// Constructor
-      param_type();
-      /// Reset
-      void reset();
+
     };
 
     /// Default constructor
@@ -161,15 +180,39 @@ namespace datatools {
                    const std::string& indent_ = "",
                    bool inherit_ = false) const;
 
+    /// Registration of resource paths
+    void register_resource_paths();
+
+    /// Registration of configuration variant registries
+    void register_configuration_variant_registries();
+
+    /// Import some (or all) configuration variant registry from a repository
+    void import_configuration_registry(configuration::variant_repository & rep_,
+                                       const std::string & registry_name_ = "");
+
+    /// Import a configuration variant repository
+    void import_configuration_repository(configuration::variant_repository & rep_);
+
   protected:
 
     /// Initialization
-    void _initialize(const param_type & params_);
+    void _initialize();
+
+    /// Shutdown
+    void _shutdown();
 
   private:
 
     /// Basic construction
     void _construct_();
+
+    /// Initialization of library info register
+    void _initialize_library_info_register_();
+
+    /// Initialization of configuration variants
+    void _initialize_configuration_variant_repository_();
+
+  private:
 
     bool             _initialized_; //!< Initialization flag
     logger::priority _logging_;     //!< Logging priority
@@ -178,6 +221,7 @@ namespace datatools {
     boost::scoped_ptr<library_info> _library_info_register_; //!< Library/component information register
     boost::scoped_ptr<configuration::variant_repository> _variant_repository_; //!< Variant repository
     std::string     _application_name_; //!< The name of the current application
+    param_type      _params_;           //!< Setup parameters
     static kernel * _instance_;         //!< Singleton handle
 
   };

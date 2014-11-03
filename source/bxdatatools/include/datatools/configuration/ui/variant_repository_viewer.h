@@ -212,6 +212,10 @@ namespace datatools {
         model_dict_type _models_;                    //!< Dictionary of registry tree models
         QLabel *      _repository_name_title_label_; //!< Label for the title of the repository name
         QLabel *      _repository_name_display_label_; //!< Display the repository name
+        QLabel *      _repository_org_title_label_; //!< Label for the title of the organization name
+        QLabel *      _repository_org_display_label_; //!< Display the organization name
+        QLabel *      _repository_app_title_label_; //!< Label for the title of the application name
+        QLabel *      _repository_app_display_label_; //!< Display the application name
         QLabel *      _accomplished_label_;      //!< Label for accomplished status
         datatools::qt::led * _accomplished_led_; //!< LED for accomplished status
         QCheckBox *   _read_only_cb_;            //!< Check box for the read-only lock

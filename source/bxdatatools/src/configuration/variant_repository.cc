@@ -23,6 +23,7 @@
 #include <datatools/configuration/variant_repository.h>
 
 // This project (Bayeux/datatools):
+#include <datatools/exception.h>
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/variant_registry_manager.h>
 
@@ -98,11 +99,16 @@ namespace datatools {
 
     variant_repository::variant_repository()
     {
+      _initialized_ = false;
+      _locked_ = false;
       return;
     }
 
     variant_repository::~variant_repository()
     {
+      if (is_initialized()) {
+        reset();
+      }
       return;
     }
 
@@ -160,14 +166,138 @@ namespace datatools {
       return _registries_;
     }
 
+    bool variant_repository::has_organization() const
+    {
+      return ! _organization_.empty();
+    }
+
+    const std::string & variant_repository::get_organization() const
+    {
+      return _organization_;
+    }
+
+    void variant_repository::set_organization(const std::string & o_)
+    {
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
+      DT_THROW_IF(o_.find("/") != std::string::npos, std::logic_error,
+                  "Organization name cannot contains the '/' character!");
+      _organization_ = o_;
+      return;
+    }
+
+    bool variant_repository::has_application() const
+    {
+      return ! _application_.empty();
+    }
+
+    const std::string & variant_repository::get_application() const
+    {
+      return _application_;
+    }
+
+    void variant_repository::set_application(const std::string & a_)
+    {
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
+      DT_THROW_IF(a_.find("/") != std::string::npos, std::logic_error,
+                  "Application name cannot contains the '/' character!");
+      _application_ = a_;
+      return;
+    }
+
+    bool variant_repository::is_initialized() const
+    {
+      return _initialized_;
+    }
+
+    void variant_repository::initialize_simple()
+    {
+      datatools::properties dummy;
+      initialize(dummy);
+    }
+
+    void variant_repository::initialize(const datatools::properties & config_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Repository is already initialized!");
+
+      bool requested_lock = false;
+
+      this->enriched_base::initialize(config_, false);
+
+      // Parse configuration parameters:
+      if (!has_organization()) {
+        if (config_.has_key("organization")) {
+          const std::string & org = config_.fetch_string("organization");
+          set_organization(org);
+        }
+      }
+
+      if (!has_application()) {
+        if (config_.has_key("application")) {
+          const std::string & app = config_.fetch_string("application");
+          set_application(app);
+        }
+      }
+
+      if (config_.has_flag("lock")) {
+        requested_lock = true;
+      }
+
+      std::vector<std::string> registry_config_filenames;
+      if (config_.has_key("registries.config")) {
+        config_.fetch("registries.config", registry_config_filenames);
+      }
+
+      // Configure:
+      for (int i = 0; i < registry_config_filenames.size(); i++) {
+        std::string variant_config_registration = registry_config_filenames[i];
+        DT_LOG_TRACE(get_logging_priority(),
+                     "Variants' configuration : '" << variant_config_registration << "'");
+        // Format is :
+        //   "path1/subdir/file.conf"
+        // or:
+        //   "foo@path1/subdir/file.conf"
+        std::string variant_name;
+        std::string variant_mgr_config_file;
+        size_t apos = variant_config_registration.find('@');
+        if (apos != std::string::npos) {
+          variant_name = variant_config_registration.substr(0, apos);
+          variant_mgr_config_file = variant_config_registration.substr(apos + 1);
+        } else {
+          variant_mgr_config_file = variant_config_registration;
+        }
+        datatools::fetch_path_with_env(variant_mgr_config_file);
+
+        std::string reg_filename = registry_config_filenames[i];
+        datatools::fetch_path_with_env(reg_filename);
+        DT_LOG_TRACE(get_logging_priority(),
+                     "Variant " << variant_name << "' configuration file '"
+                     << variant_mgr_config_file << "' registration...");
+        registration_embedded(variant_mgr_config_file, "", variant_name);
+      }
+
+      if (requested_lock) {
+        lock();
+      }
+      _initialized_ = true;
+      return;
+    }
+
     void variant_repository::reset()
     {
+      DT_THROW_IF(! is_initialized(), std::logic_error, "Repository is not initialized!");
+      _initialized_ = false;
+      if (is_locked()) {
+        unlock();
+      }
       _registries_.clear();
+      _application_.clear();
+      _organization_.clear();
       return;
     }
 
     void variant_repository::unregistration(const std::string & registry_key_)
     {
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       DT_THROW_IF(!has_registry(registry_key_), std::logic_error,
                   "Repository does not host a registry named '" << registry_key_ << "'!");
       registry_dict_type::iterator found = _registries_.find(registry_key_);
@@ -178,6 +308,7 @@ namespace datatools {
     void variant_repository::registration_external(variant_registry & external_registry_,
                                                    const std::string & registry_key_)
     {
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       std::string registry_name = registry_key_;
       if (registry_name.empty()) {
         if (external_registry_.has_name()) {
@@ -200,7 +331,8 @@ namespace datatools {
                                                    const std::string & registry_display_name_,
                                                    const std::string & registry_terse_description_)
     {
-      // std::cerr << "DEVEL: Registration of variant : '" << registry_key_ << "'" << std::endl;
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
+     // std::cerr << "DEVEL: Registration of variant : '" << registry_key_ << "'" << std::endl;
       // std::cerr << "DEVEL: Manager configuration file is : '" << registry_manager_config_ << "'" << std::endl;
 
       // Create a registry factory/manager:
@@ -257,6 +389,23 @@ namespace datatools {
         }
       }
       return true;
+    }
+
+    bool variant_repository::is_locked() const
+    {
+      return _locked_;
+    }
+
+    void variant_repository::lock()
+    {
+      _locked_ = true;
+      return;
+    }
+
+    void variant_repository::unlock()
+    {
+      _locked_ = false;
+      return;
     }
 
     command::returned_info
@@ -326,6 +475,30 @@ namespace datatools {
                                        bool inherit_) const
     {
       this-> enriched_base::tree_dump(out_, title_, indent_, true);
+
+      out_ << indent_ << i_tree_dumpable::tag << "Organization: ";
+      if (has_organization()) {
+        out_ << "'" << get_organization() << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag << "Application: ";
+      if (has_application()) {
+        out_ << "'" << get_application() << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag << "Locked: ";
+      if (is_locked()) {
+        out_ << "yes";
+      } else {
+        out_ << "no";
+      }
+      out_ << std::endl;
 
       out_ << indent_ << i_tree_dumpable::tag << "Registries: " << std::endl;
       for (registry_dict_type::const_iterator i = _registries_.begin();

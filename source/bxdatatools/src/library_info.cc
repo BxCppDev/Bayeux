@@ -32,7 +32,9 @@ namespace datatools {
   // Destructor
   library_info::~library_info()
   {
-    this->clear();
+    if (is_initialized()) {
+      reset();
+    }
     return;
   }
 

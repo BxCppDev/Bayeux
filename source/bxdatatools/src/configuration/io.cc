@@ -161,10 +161,15 @@ namespace datatools {
             DT_LOG_TRACE(_logging_, "path = '" << path << "'");
             DT_LOG_TRACE(_logging_, "value_str = '" << value_str << "'");
             command::returned_info cri;
-            if (value_str ==  unset_label()) {
+            if (value_str == unset_label()) {
               cri = vrec_.unset_value();
             } else {
               cri = vrec_.string_to_value(value_str);
+              DT_THROW_IF (! cri.is_success(),
+                           std::logic_error,
+                           "Failed to convert variant parameter '" << vrec_.get_name()
+                           << "' from '" << value_str << "' : "
+                           << cri.get_error_message());
             }
             if (cri.is_success()) {
               for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();

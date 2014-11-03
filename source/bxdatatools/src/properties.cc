@@ -54,33 +54,33 @@ namespace datatools {
   //----------------------------------------------------------------------
   // properties::data class implementation
   //
-  const int  properties::data::ERROR_SUCCESS = 0;
-  const int  properties::data::ERROR_FAILURE = 1;
-  const int  properties::data::ERROR_BADTYPE = 2;
-  const int  properties::data::ERROR_RANGE   = 3;
-  const int  properties::data::ERROR_LOCK    = 4;
+  // const int  properties::data::ERROR_SUCCESS = 0;
+  // const int  properties::data::ERROR_FAILURE = 1;
+  // const int  properties::data::ERROR_BADTYPE = 2;
+  // const int  properties::data::ERROR_RANGE   = 3;
+  // const int  properties::data::ERROR_LOCK    = 4;
 
-  const char properties::data::MASK_TYPE    = 0x7;
-  const char properties::data::MASK_EXPLICIT_PATH = 0x10;
-  const char properties::data::MASK_EXPLICIT_UNIT = 0x20;
-  const char properties::data::MASK_LOCK    = 0x40;
-  const char properties::data::MASK_VECTOR  = 0x80;
+  // const char properties::data::MASK_TYPE          = 0x7;
+  // const char properties::data::MASK_EXPLICIT_PATH = 0x10;
+  // const char properties::data::MASK_EXPLICIT_UNIT = 0x20;
+  // const char properties::data::MASK_LOCK          = 0x40;
+  // const char properties::data::MASK_VECTOR        = 0x80;
 
-  const char properties::data::TYPE_NONE    = 0x0;
-  const char properties::data::TYPE_BOOLEAN = 0x1;
-  const char properties::data::TYPE_INTEGER = 0x2;
-  const char properties::data::TYPE_REAL    = 0x3;
-  const char properties::data::TYPE_STRING  = 0x4;
+  // const char properties::data::TYPE_NONE    = 0x0;
+  // const char properties::data::TYPE_BOOLEAN = 0x1;
+  // const char properties::data::TYPE_INTEGER = 0x2;
+  // const char properties::data::TYPE_REAL    = 0x3;
+  // const char properties::data::TYPE_STRING  = 0x4;
 
-  const char properties::data::TYPE_BOOLEAN_SYMBOL = 'B';
-  const char properties::data::TYPE_INTEGER_SYMBOL = 'I';
-  const char properties::data::TYPE_REAL_SYMBOL    = 'R';
-  const char properties::data::TYPE_STRING_SYMBOL  = 'S';
+  // const char properties::data::TYPE_BOOLEAN_SYMBOL = 'B';
+  // const char properties::data::TYPE_INTEGER_SYMBOL = 'I';
+  // const char properties::data::TYPE_REAL_SYMBOL    = 'R';
+  // const char properties::data::TYPE_STRING_SYMBOL  = 'S';
 
-  const char properties::data::STRING_FORBIDDEN_CHAR = '"';
+  // const char properties::data::STRING_FORBIDDEN_CHAR = '"';
 
-  const int  properties::data::SCALAR_DEF  = -1;
-  const int  properties::data::SCALAR_SIZE =  1;
+  // const int  properties::data::SCALAR_DEF  = -1;
+  // const int  properties::data::SCALAR_SIZE =  1;
 
   bool properties::data::defaults::boolean_value() {
     return false;
@@ -167,6 +167,32 @@ namespace datatools {
     return _description_;
   }
 
+  void properties::data::clear_unit_symbol_()
+  {
+    _flags_ &= ~MASK_UNIT_SYMBOL;
+    _unit_symbol_.clear();
+    return;
+  }
+
+  bool properties::data::has_unit_symbol() const
+  {
+    return _flags_ & MASK_UNIT_SYMBOL;
+  }
+
+  int properties::data::set_unit_symbol(const std::string& a_symbol) {
+    if (!this->is_real()) return ERROR_BADTYPE;
+    if (a_symbol.empty()) {
+      clear_unit_symbol_();
+    } else {
+      _flags_ |= MASK_UNIT_SYMBOL;
+      _unit_symbol_ = a_symbol;
+    }
+    return ERROR_SUCCESS;
+  }
+
+  const std::string& properties::data::get_unit_symbol() const {
+    return _unit_symbol_;
+  }
 
   int properties::data::integer(int a_size) {
     this->clear_values_();
@@ -390,9 +416,20 @@ namespace datatools {
     if (this->is_locked()) return ERROR_LOCK;
 
     if (!this->index_is_valid(a_index)) return ERROR_RANGE;
-    set_explicit_unit(a_explicit_unit);
+    if (!has_explicit_unit()) {
+      if (a_explicit_unit) {
+        set_explicit_unit(a_explicit_unit);
+      }
+    }
     _real_values_[a_index] = a_value;
     return ERROR_SUCCESS;
+  }
+
+
+  int properties::data::set_value_with_unit(double a_value, int a_index, const std::string & a_unit_symbol)
+  {
+    set_unit_symbol(a_unit_symbol);
+    return set_value(a_value, a_index, !a_unit_symbol.empty());
   }
 
 
@@ -409,6 +446,9 @@ namespace datatools {
 
   int properties::data::set_explicit_unit(bool xu_)
   {
+    DT_THROW_IF (!this->is_real(),
+                 std::logic_error,
+                 "Not a real type!");
     if (! xu_) {
       _flags_ &= ~MASK_EXPLICIT_UNIT;
     } else {
@@ -428,7 +468,11 @@ namespace datatools {
      */
     if (this->has_forbidden_char(a_value)) return ERROR_FAILURE;
     _string_values_[a_index] = a_value;
-    set_explicit_path(a_explicit_path);
+    if (!is_explicit_path()) {
+      if (a_explicit_path) {
+        set_explicit_path(a_explicit_path);
+      }
+    }
     return ERROR_SUCCESS;
   }
 
@@ -549,6 +593,9 @@ namespace datatools {
       if (this->is_string())  a_out << this->get_string_value(i);
     }
     a_out << ':' << this->get_description();
+    if (has_unit_symbol()) {
+      a_out << ':' << this->get_unit_symbol();
+    }
     a_out << ']';
   }
 
@@ -559,12 +606,17 @@ namespace datatools {
                                    bool a_inherit) const {
     std::string indent;
     if (! a_indent.empty()) indent = a_indent;
+
     if (! a_title.empty()) a_out << indent << a_title << std::endl;
 
     if (!_description_.empty()) {
       a_out << indent << i_tree_dumpable::tag
             << "Description  : " << this->get_description() << std::endl;
     }
+
+    double unit_value = 1.0;
+    std::string unit_symbol;
+    std::string unit_label;
 
     a_out << indent << i_tree_dumpable::tag
           << "Type  : " ;
@@ -575,14 +627,22 @@ namespace datatools {
     } else {
       a_out << " (scalar)";
     }
-    if (this->is_real() && has_explicit_unit())
-      {
-        a_out << " [explicit unit]";
+    if (this->is_real() && has_explicit_unit()) {
+      a_out << " [explicit unit";
+      if (has_unit_symbol()) {
+        unit_symbol = get_unit_symbol();
+        a_out << "='" << unit_symbol << "'";
+        if (!units::find_unit(unit_symbol, unit_value, unit_label)) {
+          a_out << "<invalid unit symbol '" << unit_symbol << "'>";
+          unit_value = 1.0;
+        }
       }
-    if (this->is_string() && is_explicit_path())
-      {
-        a_out << " [explicit path]";
-      }
+      a_out << "]";
+    }
+
+    if (this->is_string() && is_explicit_path()) {
+      a_out << " [explicit path]";
+    }
     //a_out << ' ' << std::hex << (int) _flags_ << std::dec;
     a_out << std::endl;
 
@@ -605,9 +665,12 @@ namespace datatools {
           a_out << std::dec << this->get_integer_value(i) << std::endl;
         }
         if (this->is_real()) {
-          datatools::io::write_real_number(a_out,
-                                           this->get_real_value(i),
-                                           datatools::io::REAL_PRECISION);
+          double val = this->get_real_value(i);
+          val /= unit_value;
+          datatools::io::write_real_number(a_out, val, datatools::io::REAL_PRECISION);
+          if (! unit_symbol.empty()) {
+            a_out << " " << unit_symbol;
+          }
           a_out << std::endl;
         }
         if (this->is_string()) {
@@ -632,7 +695,8 @@ namespace datatools {
   {
     static std::string chars;
     if (chars.empty()) {
-      chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_./";
+      //chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_./";
+      chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
     }
     return chars;
   }
@@ -1326,6 +1390,38 @@ namespace datatools {
   }
 
 
+  bool properties::has_unit_symbol(const std::string& prop_key) const
+  {
+    const data *data_ptr = 0;
+    this->_check_key_(prop_key, &data_ptr);
+    DT_THROW_IF (! data_ptr->is_real(),
+                 std::logic_error,
+                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    return data_ptr->has_unit_symbol();
+  }
+
+  const std::string & properties::get_unit_symbol(const std::string& prop_key) const
+  {
+    const data *data_ptr = 0;
+    this->_check_key_(prop_key, &data_ptr);
+    DT_THROW_IF (! data_ptr->is_real(),
+                 std::logic_error,
+                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    return data_ptr->get_unit_symbol();
+  }
+
+  void properties::set_unit_symbol(const std::string& prop_key, const std::string& unit_symbol)
+  {
+    data *data_ptr = 0;
+    this->_check_key_(prop_key, &data_ptr);
+    DT_THROW_IF (! data_ptr->is_real(),
+                 std::logic_error,
+                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    DT_THROW_IF (data_ptr->set_unit_symbol(unit_symbol) != data::ERROR_SUCCESS,
+                 std::logic_error, "Setting unit symbol fails !");
+    return;
+  }
+
 
   bool properties::has_explicit_unit(const std::string& prop_key) const
   {
@@ -1347,6 +1443,7 @@ namespace datatools {
                  "Property '" << prop_key << "' is not of string type in properties described by '" << get_description() << "' !");
     DT_THROW_IF (data_ptr->set_explicit_path(a_explicit_path) != data::ERROR_SUCCESS,
                  std::logic_error, "Setting explicit path fails !");
+    return;
   }
 
 
@@ -1359,6 +1456,7 @@ namespace datatools {
                  "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
     DT_THROW_IF (data_ptr->set_explicit_unit(a_explicit_unit) != data::ERROR_SUCCESS,
                  std::logic_error, "Setting explicit unit fails !");
+    return;
   }
 
   void properties::store(const std::string& key, const std::string& value,
@@ -1369,12 +1467,14 @@ namespace datatools {
     a_data.set_description(description);
     _props_[key] = a_data;
     if (lock) _props_[key].lock();
+    return;
   }
 
 
   void properties::store(const std::string& prop_key, const char* value,
                          const std::string& description, bool lock) {
     this->store(prop_key, std::string(value), description, lock);
+    return;
   }
 
 
@@ -1390,6 +1490,7 @@ namespace datatools {
       _props_[prop_key].set_value(values[i], i);
     }
     if (lock) _props_[prop_key].lock();
+    return;
   }
 
 
@@ -1405,6 +1506,7 @@ namespace datatools {
       _props_[prop_key].set_value(values[i], i);
     }
     if (lock) _props_[prop_key].lock();
+    return;
   }
 
 
@@ -2209,7 +2311,7 @@ namespace datatools {
 
   void properties::config::write_data(std::ostream& out,
                                       const std::string & a_prop_key,
-                                      const properties::data& a_data,
+                                      const properties::data & a_data,
                                       const std::string & a_unit_symbol,
                                       const std::string & a_unit_label,
                                       const std::string & a_comment)
@@ -2219,9 +2321,34 @@ namespace datatools {
     out << eol;
 
     bool real_with_unit = false;
+    std::string unit_symbol;
+    std::string unit_label;
+    double      unit_value = 1.0;
     if (a_data.is_real()) {
-      if (! a_unit_symbol.empty() || ! a_unit_label.empty()) {
+      if (a_data.has_unit_symbol()) {
         real_with_unit = true;
+        unit_symbol = a_data.get_unit_symbol();
+      }
+      /*
+      else if (! a_unit_symbol.empty() || ! a_unit_label.empty()) {
+        real_with_unit = true;
+        if (! a_unit_symbol.empty()) {
+          unit_symbol = a_unit_symbol;
+        } else if (! a_unit_label.empty()) {
+          unit_symbol = units::get_default_unit_symbol_from_label(a_unit_label);
+          unit_label = a_unit_label;
+        }
+      }
+      */
+      if (!unit_symbol.empty()) {
+        std::string unit_label2;
+        DT_THROW_IF(!units::find_unit(unit_symbol, unit_value, unit_label2),
+                    std::logic_error,
+                    "Invalid unit symbol '" << unit_symbol << "'!");
+        // DT_THROW_IF(unit_label2 != unit_label,
+        //             std::logic_error,
+        //             "No match between unit symbol '" << unit_symbol << "' and unit label '"
+        //             << a_unit_label << "'!");
       }
     }
     if (real_with_unit) {
@@ -2250,14 +2377,14 @@ namespace datatools {
     if (a_data.is_real()) {
       // Vectors of real with the same explicit unit sybol applied to all items :
       if (a_data.is_vector()) {
-        if (! a_unit_symbol.empty()) {
-          out << " in " << a_unit_symbol << ' ';
+        if (! unit_symbol.empty()) {
+          out << " in " << unit_symbol << ' ';
         }
       }
       // Scalar real with the explicit unit label applied to all items :
       else {
-        if (! a_unit_label.empty()) {
-          out << " as " << a_unit_label << ' ';
+        if (! unit_label.empty()) {
+          out << " as " << unit_label << ' ';
         }
       }
     }
@@ -2285,20 +2412,21 @@ namespace datatools {
     // For scalar or vector/array :
     for (int i = 0; i < size; i++) {
       out << ' ';
-      if (a_data.is_boolean()) out << a_data.get_boolean_value(i);
+      if (a_data.is_boolean()) datatools::io::write_boolean(out, a_data.get_boolean_value(i));
 
-      if (a_data.is_integer()) out << a_data.get_integer_value(i);
+      if (a_data.is_integer()) datatools::io::write_integer(out, a_data.get_integer_value(i));
 
       if (a_data.is_real()) {
         double val = a_data.get_real_value(i);
+        val /= unit_value;
         datatools::io::write_real_number(out, val, datatools::io::REAL_PRECISION);
-        if (a_data.is_scalar() && ! a_unit_symbol.empty()) {
-          out << ' ' << a_unit_symbol;
+        if (a_data.is_scalar() && ! unit_symbol.empty()) {
+          out << ' ' << unit_symbol;
         }
       }
 
       if (a_data.is_string()) {
-        out << '"' << a_data.get_string_value(i) << '"';
+        datatools::io::write_quoted_string(out, a_data.get_string_value(i));
       }
 
       if (_use_smart_modulo_) {
@@ -2446,7 +2574,10 @@ namespace datatools {
     // The variant preprocessor:
     // for now this preprocessor uses the datatools' kernel variant repository,
     // if it has been instanciated and properly feed by user (at application startup for example):
-    configuration::variant_preprocessor vpp;//(configuration::variant_preprocessor::FLAG_DEVEL);
+
+    unsigned int vpp_flags = 0;
+    // vpp_flags |= configuration::variant_preprocessor::FLAG_DEVEL;
+    configuration::variant_preprocessor vpp(vpp_flags);
 
     while (a_in) {
       DT_LOG_NOTICE (logging, "Loop on input stream...");
@@ -2752,8 +2883,8 @@ namespace datatools {
             /// 2013-03-07 FM : add support for embedded unit directives in real property :
             std::string requested_unit_label;
             std::string requested_unit_symbol;
-            double      requested_unit;
-            datatools::invalidate(requested_unit);
+            double      requested_unit_value;
+            datatools::invalidate(requested_unit_value);
             if (type == properties::data::TYPE_REAL_SYMBOL) {
               std::string token;
               type_ss >> std::ws >> token >> std::ws;
@@ -2780,22 +2911,22 @@ namespace datatools {
                                std::logic_error,
                                "Missing unit symbol (ex: 'in millimeter') for real value with key '"
                                << prop_key << "' at line '" << line << "' !");
-                  // For vectors of real:
                   if (! scalar) {
+                    // For vectors of real:
                     DT_THROW_IF (!units::find_unit(requested_unit_symbol,
-                                                   requested_unit, requested_unit_label),
+                                                   requested_unit_value,
+                                                   requested_unit_label),
                                  std::logic_error,
                                  "Invalid unit symbol '" << requested_unit_symbol << "' for real value with key '"
                                  << prop_key << "' at line '" << line << "' !");
                     DT_LOG_NOTICE(logging, "Unit symbol '" << requested_unit_symbol << "' is valid !");
                   } else {
-                    DT_THROW_IF (true,
-                                 std::logic_error,
-                                 "Directive 'in " << requested_unit_symbol
-                                 << "' is not supported for scalar real value with key '"
-                                 << prop_key
-                                 << "' at line '"
-                                 << line << "' !");
+                    DT_THROW (std::logic_error,
+                              "Directive 'in " << requested_unit_symbol
+                              << "' is not supported for scalar real value with key '"
+                              << prop_key
+                              << "' at line '"
+                              << line << "' !");
                   }
                 } else {
                   DT_THROW_IF (true,
@@ -2957,10 +3088,13 @@ namespace datatools {
              *    REAL    *
              **************/
             bool with_explicit_unit = false;
+            std::string unit_symbol;
+            double      unit_value = 1.0;
+            std::string unit_label;
             if (type == properties::data::TYPE_REAL_SYMBOL) {
-              // Scalar real :
               if (scalar) {
-                // Special mode to accept unit symbol after the real value :
+               // Scalar real :
+               // Special mode to accept unit symbol after the real value :
                 bool normal_value = true;
                 DT_THROW_IF (! datatools::io::read_real_number(iss, a_real, normal_value),
                              std::logic_error,
@@ -2976,8 +3110,6 @@ namespace datatools {
                                  "Trailing token '" << unit_word << "' is not allowed for real value with key '"
                                  << prop_key << "' at line '" << line
                                  << "'; you should activate the 'real with unit' feature to support this syntax !");
-                    double      unit_value;
-                    std::string unit_label;
                     bool found_unit = datatools::units::find_unit(unit_word,
                                                                   unit_value,
                                                                   unit_label);
@@ -2996,9 +3128,11 @@ namespace datatools {
                                  << prop_key << "' at line '" << line << "' !");
                     a_real *= unit_value;
                     with_explicit_unit = true;
+                    unit_symbol = unit_word;
                   }
                 }
               } else {
+                // Vector real:
                 for (int i = 0; i < vsize; ++i) {
                   double x;
                   bool normal_value;
@@ -3006,14 +3140,18 @@ namespace datatools {
                                std::logic_error,
                                "Cannot read vector real value for key '"
                                << prop_key << "' at line '" << line << "' !");
-                  if (enable_real_with_unit && datatools::is_valid(requested_unit)) {
-                    x *= requested_unit;
+                  if (enable_real_with_unit && datatools::is_valid(requested_unit_value)) {
+                    x *= requested_unit_value;
                     with_explicit_unit = true;
-                  }
+                    unit_symbol = requested_unit_symbol;
+                 }
                   v_reals[i] = x;
                 }
+                // if (requested_unit_symbol.empty()) {
+                //   with_explicit_unit = true;
+                // }
               }
-            }
+            } // Real
 
             /**************
              *   STRING   *
@@ -3078,6 +3216,9 @@ namespace datatools {
               }
               if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
                 a_props.set_explicit_unit(prop_key, true);
+              }
+              if (type == properties::data::TYPE_REAL_SYMBOL && !unit_symbol.empty()) {
+                a_props.set_unit_symbol(prop_key, unit_symbol);
               }
               prop_description.clear();
             } // if (store_it)

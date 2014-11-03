@@ -76,33 +76,34 @@ class properties :
   //! \brief Internal data stored within the dictionary of the properties class.
   class data {
    public:
-    static const int  ERROR_SUCCESS; // = 0
-    static const int  ERROR_FAILURE; //  = 1
-    static const int  ERROR_BADTYPE; //  = 2
-    static const int  ERROR_RANGE;   //  = 3
-    static const int  ERROR_LOCK;    //  = 4
+    static const int  ERROR_SUCCESS = 0;
+    static const int  ERROR_FAILURE = 1;
+    static const int  ERROR_BADTYPE = 2;
+    static const int  ERROR_RANGE   = 3;
+    static const int  ERROR_LOCK    = 4;
 
-    static const char MASK_TYPE;          // = 0x7
-    static const char MASK_EXPLICIT_PATH; // = 0x10 for real parameters
-    static const char MASK_EXPLICIT_UNIT; // = 0x20 for string parameters
-    static const char MASK_LOCK;          // = 0x40
-    static const char MASK_VECTOR;        // = 0x80
+    static const char MASK_TYPE          = 0x7;   // = 00000111
+    static const char MASK_UNIT_SYMBOL   = 0x8;   // = 00001000 for real parameters
+    static const char MASK_EXPLICIT_PATH = 0x10;  // = 00010000 for string parameters
+    static const char MASK_EXPLICIT_UNIT = 0x20;  // = 00100000 for real parameters
+    static const char MASK_LOCK          = 0x40;  // = 01000000
+    static const char MASK_VECTOR        = 0x80;  // = 10000000
 
-    static const char TYPE_NONE;    // = 0x0
-    static const char TYPE_BOOLEAN; // = 0x1
-    static const char TYPE_INTEGER; // = 0x2
-    static const char TYPE_REAL;    // = 0x3
-    static const char TYPE_STRING;  // = 0x4
+    static const char TYPE_NONE    = 0x0; // = 000
+    static const char TYPE_BOOLEAN = 0x1; // = 001
+    static const char TYPE_INTEGER = 0x2; // = 010
+    static const char TYPE_REAL    = 0x3; // = 011
+    static const char TYPE_STRING  = 0x4; // = 100
 
-    static const char TYPE_BOOLEAN_SYMBOL; // = 'B'
-    static const char TYPE_INTEGER_SYMBOL; // = 'I'
-    static const char TYPE_REAL_SYMBOL;    // = 'R'
-    static const char TYPE_STRING_SYMBOL;  // = 'S'
+    static const char TYPE_BOOLEAN_SYMBOL = 'B';
+    static const char TYPE_INTEGER_SYMBOL = 'I';
+    static const char TYPE_REAL_SYMBOL    = 'R';
+    static const char TYPE_STRING_SYMBOL  = 'S';
 
-    static const char STRING_FORBIDDEN_CHAR; // = '"'
+    static const char STRING_FORBIDDEN_CHAR = '"';
 
-    static const int  SCALAR_DEF;  // = -1
-    static const int  SCALAR_SIZE; // =  1
+    static const int  SCALAR_DEF  = -1;
+    static const int  SCALAR_SIZE =  1;
 
     struct defaults {
       static bool boolean_value();
@@ -147,6 +148,12 @@ class properties :
     /// Get the description string associated to the stored data
     const std::string& get_description() const;
 
+    /// Set the unit symbol associated to the stored real data
+    int set_unit_symbol(const std::string&);
+
+    /// Get the unit symbol associated to the stored real data
+    const std::string& get_unit_symbol() const;
+
     /// Check if the data type is valid
     bool has_type() const;
 
@@ -176,6 +183,9 @@ class properties :
 
     /// Check if the data is locked (cannot be modified)
     bool is_locked() const;
+
+    /// Check if the data has an unit symbol
+    bool has_unit_symbol() const;
 
     /// Check if the (real only) data has been initialized with explicit unit
     bool has_explicit_unit() const;
@@ -237,6 +247,9 @@ class properties :
     /// Set the real value at a given rank
     int set_value(double, int = 0, bool a_explicit_unit = false);
 
+    /// Set the real value at a given rank
+    int set_value_with_unit(double, int = 0, const std::string & a_unit_symbol = "");
+
     /// Set the explicit unit flag
     int set_explicit_unit(bool);
 
@@ -288,27 +301,31 @@ class properties :
    private:
     void clear_values_();
 
+    void clear_unit_symbol_();
+
     int init_values_(char a_type = TYPE_INTEGER_SYMBOL,
                      int a_size = SCALAR_DEF);
 
     BOOST_SERIALIZATION_BASIC_DECLARATION();
 
    private:
-    std::string _description_;
+    std::string _description_; //!< Description of the property
     /** 8-bits description flags :
-    * Format is : VLUP0TTT
+    * Format is : VLUPSTTT
     *  V   == vector bit
     *  L   == lock bit
     *  U   == explicit unit bit (real)
     *  P   == path bit (string)
-    *  0   == unused
+    *  S   == unit symbol (real)
     *  TTT == type bits
     */
-    uint8_t     _flags_;
-    vbool       _boolean_values_;
-    vint        _integer_values_;
-    vdouble     _real_values_;
-    vstring     _string_values_;
+    uint8_t     _flags_;          //!< Traits
+    vbool       _boolean_values_; //!< Stored boolean values
+    vint        _integer_values_; //!< Stored integer values
+    vdouble     _real_values_;    //!< Stored real values
+    vstring     _string_values_;  //!< Stored string values
+    std::string _unit_symbol_;    //!< Preferred unit symbol for real properties
+
   }; //----- end of data inner class
 
 
@@ -405,7 +422,7 @@ class properties :
     void read_(std::istream& a_in, properties& a_prop);
 
    private:
-    bool   _debug_;
+    bool   _debug_; //!< Debug flag
     int    _mode_;
     bool   _use_smart_modulo_;
     bool   _write_public_only_;
@@ -719,6 +736,15 @@ class properties :
 
   //! Check flag for explicit unit for a real property with a given key/name
   bool has_explicit_unit(const std::string& prop_key) const;
+
+  //! Set the unit symbol for a real property with a given key/name
+  void set_unit_symbol(const std::string& prop_key, const std::string& unit_symbol = "");
+
+  //! Check flag for unit symbol for a real property with a given key/name
+  bool has_unit_symbol(const std::string& prop_key) const;
+
+  //! Return the unit symbol for a real property with a given key/name
+  const std::string & get_unit_symbol(const std::string& prop_key) const;
 
   //! Set flag for explicit path for a string property with a given key/name
   void set_explicit_path(const std::string& prop_key, bool a_explicit_path = true);

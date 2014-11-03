@@ -12,6 +12,7 @@ namespace datatools {
 
   void _special_initialize_impl()
   {
+    DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
 #if DATATOOLS_STANDALONE == 1
     DT_THROW_IF(!datatools::kernel::is_instantiated(),
                 std::runtime_error,
@@ -72,15 +73,21 @@ namespace datatools {
                      "Status of the library info register: " );
         lib_info_reg.tree_dump(std::cerr);
       }
+
+      krnl.register_resource_paths();
+      krnl.register_configuration_variant_registries();
+
     }
 #else // DATATOOLS_STANDALONE == 1
     // Nothing to do in bundle mode
 #endif // DATATOOLS_STANDALONE == 0
+    DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
   }
 
   void _special_terminate_impl()
   {
+    DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
 #if DATATOOLS_STANDALONE == 1
     if (datatools::kernel::is_instantiated()) {
       datatools::kernel & krnl = datatools::kernel::instance();
@@ -105,6 +112,7 @@ namespace datatools {
 #else // DATATOOLS_STANDALONE == 1
     // Nothing to do in bundle mode
 #endif // DATATOOLS_STANDALONE == 1
+    DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
   }
 

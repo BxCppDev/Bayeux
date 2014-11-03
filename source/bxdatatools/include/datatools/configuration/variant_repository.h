@@ -85,8 +85,35 @@ namespace datatools {
       /// Destructor
       ~variant_repository();
 
+      /// Check the name of the organization
+      bool has_organization() const;
+
+      /// Return the name of the organization
+      const std::string & get_organization() const;
+
+      /// Set the name of the organization
+      void set_organization(const std::string &);
+
+      /// Check the name of the application
+      bool has_application() const;
+
+      /// Return the name of the application
+      const std::string & get_application() const;
+
+      /// Set the name of the application
+      void set_application(const std::string &);
+
+      /// Initialize from a properties container
+      void initialize(const datatools::properties & config_);
+
+      /// Basic initialize
+      void initialize_simple();
+
       /// Reset
       void reset();
+
+      /// Check the initialization flag
+      bool is_initialized() const;
 
       /// Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -123,10 +150,17 @@ namespace datatools {
       /// Unregistration
       void unregistration(const std::string & registry_name_);
 
-      // Registration from manager config file
-
       /// Check if all registries are accomplished
       bool is_accomplished() const;
+
+      /// Check if the repository is locked
+      bool is_locked() const;
+
+      /// Lock the repository
+      void lock();
+
+      /// Unlock the repository
+      void unlock();
 
       /// Set the value of a variant parameter
       command::returned_info
@@ -152,7 +186,11 @@ namespace datatools {
 
     private:
 
-      registry_dict_type _registries_; //!<  Dictionary of configuration variant registries
+      bool               _initialized_;  //!< Initialization flag
+      std::string        _organization_; //!< The name of the organization
+      std::string        _application_;  //!< The name of the application
+      bool               _locked_;       //!< Lock flag
+      registry_dict_type _registries_;   //!< Dictionary of configuration variant registries
 
     };
 
