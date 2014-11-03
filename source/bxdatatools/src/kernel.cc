@@ -631,8 +631,10 @@ namespace datatools {
       _params_.variant_registry_configs.clear();
       _params_.variant_load.clear();
       _params_.variant_sets.clear();
+#if DATATOOLS_WITH_QT_GUI == 1
       _params_.variant_gui = false;
       _params_.variant_gui_style.clear();
+#endif // DATATOOLS_WITH_QT_GUI == 1
       _params_.variant_store.clear();
 
     } else {
