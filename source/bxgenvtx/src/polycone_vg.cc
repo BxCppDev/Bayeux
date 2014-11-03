@@ -1,5 +1,4 @@
-/* polycone_vg.cc
- */
+/* polycone_vg.cc */
 
 // Ourselves
 #include <genvtx/polycone_vg.h>

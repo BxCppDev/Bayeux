@@ -1,27 +1,32 @@
-// -*- mode: c++ ; -*-
 // test_polycone_vg.cxx
 
+// Ourselves:
+#include <genvtx/polycone_vg.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/temporary_files.h>
+// - Bayeux/geomtools:
+#include <geomtools/geomtools_config.h>
 #include <geomtools/gnuplot_draw.h>
-#include <genvtx/polycone_vg.h>
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
-#include <geomtools/geomtools_config.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-using namespace std;
-
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test program for class 'polycone_vg'!" << endl;
@@ -109,6 +114,7 @@ int main (int argc_, char ** argv_)
       vg.set_skin_thickness(0.0);
       vg.set_active_all_frustrum();
       vg.initialize_simple();
+      std::cerr << "*** DEVEL *** initialize_simple done." << std::endl;
       vg.tree_dump(clog, "Polycone vertex generator 1 : ");
       size_t nshoots = 10000;
       geomtools::vector_3d vertex;
