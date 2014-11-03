@@ -366,7 +366,7 @@ namespace datatools {
                                                                  bool & variant_reverse_) const
     {
       command::returned_info cri(command::CEC_SUCCESS);
-      if (_devel_) std::cerr << "DEVEL: " << "variant_preprocessor::resolve_variant: " << "Entering..." << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
 
       // Initialize output:
       variant_active_ = false;
@@ -399,16 +399,12 @@ namespace datatools {
         }
         has_variant_default = true;
       }
-      if (_devel_) std::cerr << "DEVEL: " << "VPP: "
-                             << "variant_desc = '" << variant_desc << "'"
-                             << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc = '" << variant_desc << "'");
       if (variant_desc[0] == '!') {
         variant_reverse = true;
         variant_desc = variant_desc.substr(1);
         // Should we trim 'variant_desc' ?
-        if (_devel_) std::cerr << "DEVEL: " << "VPP: "
-                               << "variant_desc (reverse) = '" << variant_desc_ << "'"
-                               << std::endl;
+        if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc (reverse) = '" << variant_desc_ << "'");
       }
       std::vector<std::string> variant_tokens2;
       boost::split(variant_tokens2, variant_desc, boost::is_any_of(":"));
@@ -424,10 +420,10 @@ namespace datatools {
                                   "Missing variant only path from '" << variant_desc_ << "' !");
         return cri;
       }
-      if (_devel_) std::cerr << "DEVEL: " << "VPP: " << "variant_registry_name = '" << variant_registry_name << "'" << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name = '" << variant_registry_name << "'");
 
       std::string variant_path = variant_tokens2[1];
-      if (_devel_) std::cerr << "DEVEL: " << "VPP: " << "variant_path = '" << variant_path << "'" << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_path = '" << variant_path << "'");
       // Search for registrated variant parameter in the associated variant repository:
       bool variant_active = false;
       if (has_repository()) {
@@ -437,9 +433,9 @@ namespace datatools {
                                                                variant_active);
         if (cri.is_success()) {
           variant_found = true;
-          if (_devel_) std::cerr << "DEVEL: " << "VPP: " << "Found variant only from '" << variant_desc_ << "'" << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found variant only from '" << variant_desc_ << "'");
         } else {
-          if (_devel_) std::cerr << "DEVEL: " << "VPP: " << "Cannot found variant only from '" << variant_desc_ << "'" << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Cannot found variant only from '" << variant_desc_ << "'");
           variant_found = false;
           // DT_THROW_IF(true, std::logic_error,
           //          "Cannot resolve configuration variant '" << variant_desc
@@ -459,31 +455,19 @@ namespace datatools {
         variant_active = variant_default;
       }
       if (_devel_) {
-        std::cerr << "DEVEL: " << "VPP: "
-                  << "variant_registry_name = '" << variant_registry_name << "'"
-                  << std::endl;
-        std::cerr << "DEVEL: " << "VPP: "
-                  << "variant_path          = '" << variant_path << "'"
-                  << std::endl;
-        std::cerr << "DEVEL: " << "VPP: "
-                  << "variant_found         = " << variant_found << ""
-                  << std::endl;
-        std::cerr << "DEVEL: " << "VPP: "
-                  << "has_variant_default   = " << has_variant_default << ""
-                  << std::endl;
-        std::cerr << "DEVEL: " << "VPP: "
-                  << "variant_default       = " << variant_default << ""
-                  << std::endl;
-        std::cerr << "DEVEL: " << "VPP: "
-                  << "variant_reverse       = " << variant_reverse << ""
-                  << std::endl;
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name = '" << variant_registry_name << "'");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_path          = '" << variant_path << "'");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_found         = '" << variant_found << "'");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "has_variant_default   = '" << has_variant_default << "'");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_default       = '" << variant_default << "'");
+        DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_reverse       = '" << variant_reverse << "'");
       }
       if (cri.is_success()) {
         // Validate output:
         variant_active_  = variant_active;
         variant_reverse_ = variant_reverse;
       }
-      if (_devel_) std::cerr << "DEVEL: " << "variant_preprocessor::resolve_variant: " << "Exiting." << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
 
@@ -492,7 +476,7 @@ namespace datatools {
     {
       static const std::string variant_default_sep = "|";
       command::returned_info cri(command::CEC_SUCCESS);
-      if (_devel_) std::cerr << "DEVEL: " << "variant_preprocessor::preprocess_parameter: " << "Entering..." << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering");
       parameter_effective_token_.clear();
 
       // Working string:
@@ -521,8 +505,8 @@ namespace datatools {
                    << parameter_token_ << "' !");
       std::string variant_registry_name = variant_path_tokens[0];
       std::string variant_parameter_path = variant_path_tokens[1];
-      if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "variant_registry_name  = '" << variant_registry_name << "'" << std::endl;
-      if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "variant_parameter_path = '" << variant_parameter_path << "'" << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name  = '" << variant_registry_name << "'");
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_parameter_path = '" << variant_parameter_path << "'");
       bool variant_parameter_found = false;
       std::string variant_parameter_value;
       // Search for registrated variant parameter in the associated variant repository:
@@ -533,8 +517,8 @@ namespace datatools {
         if (cri2.is_success()) {
           effective_property_value_str = variant_parameter_value;
           variant_parameter_found = true;
-          if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "Found value for variant parameter '" << variant_path << "' = '"
-                                 << variant_parameter_value << "'" << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found value for variant parameter '" << variant_path << "' = '"
+                                    << variant_parameter_value << "'");
         } else {
           // DT_LOG_WARNING(logging, "Bayeux/datatools kernel's variant repository could not provide the value of "
           //                << "parameter '" << variant_path << "' : " << cri.get_error_message());
@@ -546,21 +530,21 @@ namespace datatools {
                                     "No available default value for variant parameter '" << variant_path << "' !");
         } else {
           effective_property_value_str = variant_def_value;
-          if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "Use default value for variant parameter '" << variant_path << "' = '"
-                                 << effective_property_value_str << "'" << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Use default value for variant parameter '" << variant_path << "' = '"
+                                    << effective_property_value_str << "'");
         }
       }
       if (cri.is_success()) {
         parameter_effective_token_ = effective_property_value_str;
       }
-      if (_devel_) std::cerr << "DEVEL: " << "variant_preprocessor::preprocess_parameter: " << "Exiting." << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
 
     command::returned_info variant_preprocessor::preprocess(const std::string & source_, std::string & target_) const
     {
       command::returned_info cri(command::CEC_SUCCESS);
-      if (_devel_) std::cerr << "DEVEL: " << "variant_preprocessor::preprocess: " << "Entering..." << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE,  "Entering...");
       target_.clear();
       std::size_t pos = 0;
       std::string line = source_;
@@ -569,43 +553,43 @@ namespace datatools {
       static const std::string variant_close_tag = ")";
 
       while (pos != std::string::npos) {
-        if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "line = '" << line << "'" << std::endl;
+        if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "line = '" << line << "'");
         std::size_t found = line.find(variant_open_tag, pos);
-        if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "open tag found=" << found << std::endl;
+        if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "open tag found=" << found);
         if (found == std::string::npos) {
           target_out << line;
           break;
-          if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "pos=" << pos << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "pos=" << pos);
         } else {
           target_out << line.substr(pos, found);
           line = line.substr(found);
-          if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "line = '" << line << "'" << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "line = '" << line << "'");
           std::size_t found2 = line.find(variant_close_tag, 0);
-          if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "close tag found2 = " << found2 << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "close tag found2 = " << found2);
           if (found2 == std::string::npos) {
             DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARSING_FAILURE, "Cannot find variant close tag in '" << line << "' !");
             break;
           }
           std::string parameter_token = line.substr(variant_open_tag.length(), found2 - variant_open_tag.length());
-          if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "parameter_token = '" << parameter_token << "'" << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "parameter_token = '" << parameter_token << "'");
           std::string parameter_effective_token;
           cri = preprocess_parameter(parameter_token, parameter_effective_token);
           if (cri.is_failure()) {
             break;
           }
-          if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "parameter_effective_token = '" << parameter_effective_token << "'" << std::endl;
+          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "parameter_effective_token = '" << parameter_effective_token << "'")
           target_out << parameter_effective_token;
           line = line.substr(found2 + 1);
         }
         pos = 0;
       }
-      if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "while end" << std::endl;
-      if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "pos=" << pos << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "while end");
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "pos=" << pos);
       if (cri.is_success()) {
         target_ = target_out.str();
       }
-      if (_devel_) std::cerr << "DEVEL: " << "VVP: " << "target_='" <<target_ << "'" << std::endl;
-      if (_devel_) std::cerr << "DEVEL: " << "variant_preprocessor::preprocess: " << "Exiting." << std::endl;
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "target_='" <<target_ << "'");
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
 

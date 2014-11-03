@@ -2446,7 +2446,7 @@ namespace datatools {
     // The variant preprocessor:
     // for now this preprocessor uses the datatools' kernel variant repository,
     // if it has been instanciated and properly feed by user (at application startup for example):
-    configuration::variant_preprocessor vpp(configuration::variant_preprocessor::FLAG_DEVEL);
+    configuration::variant_preprocessor vpp;//(configuration::variant_preprocessor::FLAG_DEVEL);
 
     while (a_in) {
       DT_LOG_NOTICE (logging, "Loop on input stream...");
