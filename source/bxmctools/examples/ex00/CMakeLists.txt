@@ -41,8 +41,8 @@ install( FILES
 add_executable(ex00_run_sim_module ex00_run_sim_module.cxx)
 
 target_link_libraries(ex00_run_sim_module
-  ${_libs}
   ${Bayeux_MCTOOLS_GEANT4_LIBRARY}
+  ${_libs}
   ${Boost_LIBRARIES} )
 
 install ( FILES
