@@ -13,15 +13,15 @@
  *
  */
 
+#ifndef EMFIELD_LINEAR_COMBINATION_FIELD_H
+#define EMFIELD_LINEAR_COMBINATION_FIELD_H 1
+
 // Standard library:
 #include <vector>
 #include <map>
 
 // This project:
 #include <emfield/base_electromagnetic_field.h>
-
-#ifndef EMFIELD_LINEAR_COMBINATION_FIELD_H
-#define EMFIELD_LINEAR_COMBINATION_FIELD_H 1
 
 namespace emfield {
 

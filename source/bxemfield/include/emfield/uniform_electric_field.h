@@ -13,11 +13,11 @@
  *
  */
 
-// This project:
-#include <emfield/base_electromagnetic_field.h>
-
 #ifndef EMFIELD_UNIFORM_ELECTRIC_FIELD_H
 #define EMFIELD_UNIFORM_ELECTRIC_FIELD_H 1
+
+// This project:
+#include <emfield/base_electromagnetic_field.h>
 
 namespace emfield {
 

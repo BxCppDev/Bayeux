@@ -13,15 +13,15 @@
  *
  */
 
+#ifndef EMFIELD_PLACEMENT_FIELD_H
+#define EMFIELD_PLACEMENT_FIELD_H 1
+
 // Third party:
 // - Bayeux/geomtools:
 #include <geomtools/placement.h>
 
 // This project:
 #include <emfield/base_electromagnetic_field.h>
-
-#ifndef EMFIELD_PLACEMENT_FIELD_H
-#define EMFIELD_PLACEMENT_FIELD_H 1
 
 namespace emfield {
 

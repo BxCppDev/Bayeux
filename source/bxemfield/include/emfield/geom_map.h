@@ -13,6 +13,9 @@
  *
  */
 
+#ifndef EMFIELD_GEOM_MAP_H
+#define EMFIELD_GEOM_MAP_H
+
 // Standard library:
 #include <iostream>
 #include <string>
@@ -26,9 +29,6 @@
 
 // This project:
 #include <emfield/base_electromagnetic_field.h>
-
-#ifndef EMFIELD_GEOM_MAP_H
-#define EMFIELD_GEOM_MAP_H
 
 namespace datatools {
   class properties;

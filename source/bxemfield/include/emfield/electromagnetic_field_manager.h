@@ -13,6 +13,9 @@
  *
  */
 
+#ifndef EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H
+#define EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H 1
+
 // Standard library:
 #include <iostream>
 #include <string>
@@ -27,9 +30,6 @@
 
 // This project:
 #include <emfield/base_electromagnetic_field.h>
-
-#ifndef EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H
-#define EMFIELD_ELECTROMAGNETIC_FIELD_MANAGER_H 1
 
 namespace datatools {
   class service_manager;

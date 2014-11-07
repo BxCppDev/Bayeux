@@ -13,6 +13,9 @@
  *
  */
 
+#ifndef EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H
+#define EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H 1
+
 // Standard library:
 #include <iostream>
 #include <string>
@@ -28,9 +31,6 @@
 #include <datatools/i_tree_dump.h>
 // - Bayeux/geomtoolsdatatools:
 #include <geomtools/utils.h>
-
-#ifndef EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H
-#define EMFIELD_BASE_ELECTROMAGNETIC_FIELD_H 1
 
 namespace datatools {
     class properties;
