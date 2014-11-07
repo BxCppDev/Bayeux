@@ -702,8 +702,8 @@ namespace geomtools {
                                  double density_,
                                  const map<string, size_t> & composites_,
                                  const std::string & state_label_,
-                                 double temperature_,
-                                 double pressure_
+                                 double /*temperature_*/,
+                                 double /*pressure_*/
                                  )
   {
     ostringstream materials_stream;
