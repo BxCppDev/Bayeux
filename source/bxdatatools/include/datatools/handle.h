@@ -88,7 +88,7 @@ class handle {
  public:
   typedef T value_type;
   typedef value_type & reference_type;
-  typedef const reference_type const_reference_type;
+  // typedef const reference_type const_reference_type;
 
  public:
   typedef handle_predicate<T> predicate_type;
