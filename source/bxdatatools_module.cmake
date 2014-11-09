@@ -113,7 +113,10 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_check.h
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/version_id.h
-  ${module_include_dir}/${module_name}/configuration/i_occurence.h
+  ${module_include_dir}/${module_name}/configuration/i_occurrence.h
+  ${module_include_dir}/${module_name}/configuration/single_occurrence.h
+  ${module_include_dir}/${module_name}/configuration/array_occurrence.h
+  ${module_include_dir}/${module_name}/configuration/occurrence_factory.h
   ${module_include_dir}/${module_name}/configuration/io.h
   ${module_include_dir}/${module_name}/configuration/parameter_model.h
   ${module_include_dir}/${module_name}/configuration/parameter_physical.h
@@ -189,7 +192,10 @@ ${module_source_dir}/utils.cc
 ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
-${module_source_dir}/configuration/i_occurence.cc
+${module_source_dir}/configuration/i_occurrence.cc
+${module_source_dir}/configuration/single_occurrence.cc
+${module_source_dir}/configuration/array_occurrence.cc
+${module_source_dir}/configuration/occurrence_factory.cc
 ${module_source_dir}/configuration/io.cc
 ${module_source_dir}/configuration/parameter_model.cc
 ${module_source_dir}/configuration/parameter_physical.cc
