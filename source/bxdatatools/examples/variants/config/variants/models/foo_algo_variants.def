@@ -23,7 +23,7 @@ type               : string = "real"
 #@description The unit dimension label
 real.unit_label    : string = "time"
 
-#@description The sproferred unit symbol
+#@description The preferred unit symbol
 real.preferred_unit : string = "second"
 
 #@description The mutability of the parameter
@@ -93,6 +93,30 @@ integer.domain     : string = "[1, 100000]"
 integer.default    : integer = 10
 
 
+###########################################
+[name="volume_tracker.PM" type="parameter"]
+
+#@config A parameter model describing the volume tracker (constant)
+
+#@description The display name of this variant
+display_name       : string = "Volume tracker"
+
+#@description A short description of the variant
+terse_description  : string = "The volume tracker"
+
+#@description The type of the parameter
+type               : string = "real"
+
+#@description The mutability of the parameter
+mutability         : string = "fixed"
+
+#@description The fixed value
+real.fixed         : real = 15 m3
+
+#@description The preferred unit symbol
+real.preferred_unit : string = "m3"
+
+
 ###############################
 [name="algo.VM" type="variant"]
 
@@ -105,7 +129,7 @@ display_name       : string = "GUI setup"
 terse_description  : string = "The configuration parameters for the GUI"
 
 #@description The list of variant parameters
-parameters         : string[3] = "max_time" "accuracy" "nevents"
+parameters         : string[4] = "max_time" "accuracy" "nevents" "vt"
 
 parameters.max_time.model       : string = "computing_time.PM"
 parameters.max_time.description : string = "The maximum computing time"
@@ -115,5 +139,8 @@ parameters.accuracy.description : string = "The computing accuracy order"
 
 parameters.nevents.model        : string = "event_multiplicity.PM"
 parameters.nevents.description  : string = "The number of events to be processed"
+
+parameters.vt.model        : string = "volume_tracker.PM"
+parameters.vt.description  : string = "Volume tracker"
 
 # end

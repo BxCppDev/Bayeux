@@ -60,11 +60,11 @@
 
 #include "application.hpp"
 
+void test0();
+
 void test1();
 
 void test2();
-
-void test3();
 
 int main(int argc_, char ** argv_)
 {
@@ -79,6 +79,7 @@ int main(int argc_, char ** argv_)
 
     bool help = false;
     bool use_variants = false;
+    int variants_test = 1;
 
     // Define command line options:
     namespace po = boost::program_options;
@@ -103,6 +104,14 @@ int main(int argc_, char ** argv_)
        "Example :                                                   \n"
        "  --with-variants                                             "
        )
+
+      ("variants-test",
+       po::value<int>(&variants_test)
+       ->default_value(1),
+       "Select the configuration variant test.                      \n"
+       "Example :                                                   \n"
+       "  --with-variants --variants-test 2                           "
+       )
       ;
 
     // Parse command line options:
@@ -126,10 +135,13 @@ int main(int argc_, char ** argv_)
     // Run:
 
     if (!use_variants) {
-      test1();
+      test0();
     } else {
-      test2();
-      // test2();
+      if (variants_test == 2) {
+        test2();
+      } else if (variants_test == 1) {
+        test1();
+      }
     }
 
   }
@@ -149,9 +161,9 @@ int main(int argc_, char ** argv_)
   return (error_code);
 }
 
-void test1()
+void test0()
 {
-  std::clog << "\ntest1:\n";
+  std::clog << "\ntest0: Do not use the configuration variants mechanism...\n";
   std::string app_config_filename = "${FOO_CONFIG_DIR}/foo.conf";
   datatools::fetch_path_with_env(app_config_filename);
   datatools::properties app_config;
@@ -161,17 +173,19 @@ void test1()
   app.initialize(app_config);
   app.print();
   app.run();
+  std::clog << "test0: End.\n";
   return;
 }
 
-void test2()
+void test1()
 {
-  std::clog << "\ntest2:\n";
+  std::clog << "\ntest1: Use the configuration variants mechanism...\n";
 
   // Declare a variant repository:
   datatools::configuration::variant_repository foo_rep;
 
   {
+    std::clog << "test1: Setup a configuration variants repository...\n";
     // Process the configuration of the variant repository:
     std::string foo_rep_config_filename = "${FOO_CONFIG_DIR}/variants/foo_variance.conf";
     datatools::fetch_path_with_env(foo_rep_config_filename);
@@ -184,6 +198,7 @@ void test2()
 
 #if DATATOOLS_WITH_QT_GUI == 1
     {
+      std::clog << "test1: Run a GUI...\n";
       // Launch a Qt based dialog for the variant repository:
       // QApplication::setStyle(QStyleFactory::create(QString::fromStdString("plastique")));
       int argc = 1;
@@ -197,10 +212,12 @@ void test2()
 
     // Import all registries in the kernel system configuration repository
     // and make it globaly visible :
+    std::clog << "test1: Make the variant repository available from the Bayeux/datatools' kernel...\n";
     datatools::kernel::instance().import_configuration_repository(foo_rep);
   }
 
   {
+    std::clog << "test1: Setup the application with variant parameters...\n";
     std::string app_config_filename = "${FOO_CONFIG_DIR}/foo_with_variants.conf";
     datatools::fetch_path_with_env(app_config_filename);
     datatools::properties app_config;
@@ -212,12 +229,13 @@ void test2()
     app.run();
   }
 
-  return;
+   std::clog << "test1: End.\n";
+   return;
 }
 
-void test3()
+void test2()
 {
-  std::clog << "\ntest3:\n";
+  std::clog << "\ntest2:\n";
   std::string app_config_filename = "${FOO_CONFIG_DIR}/foo_with_variants.conf";
   datatools::fetch_path_with_env(app_config_filename);
   datatools::properties app_config;
@@ -227,6 +245,7 @@ void test3()
   app.initialize(app_config);
   app.print();
   app.run();
+  std::clog << "test2: End.\n";
   return;
 }
 

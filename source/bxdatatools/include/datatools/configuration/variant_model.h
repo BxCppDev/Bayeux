@@ -85,7 +85,8 @@ namespace datatools {
       /// Add a new parameter
       void add_parameter(const std::string &    parameter_name_,
                          const pm_handle_type & parameter_model_handle_,
-                         const std::string &    description_ = "");
+                         const std::string &    description_ = "",
+                         const std::string &    occurence_def_ = "");
 
       /// Remove parameter
       void remove_parameter(const std::string & parameter_name_);

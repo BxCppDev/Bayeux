@@ -1,0 +1,14 @@
+[algo]
+accuracy = 6
+max_time = 8 second
+nevents = 95
+[core]
+gui = 1
+help = "OnlyTooltips"
+logging = "notice"
+operator = "King Arthur"
+[gui]
+antialiasing = 1
+color = 0
+color/uncolored/mode = "Gray scale"
+logging = "trace"

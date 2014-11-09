@@ -458,6 +458,7 @@ void test1(bool debug_, bool gui_)
       dkvr.registration_embedded("${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_registry_manager_3.conf");
       if (debug_) dkvr.tree_dump(std::clog, "Datatools' kernel variant repository (with 'math'): ");
       std::clog << std::endl << std::endl;
+      dkvr.lock();
 
       {
         // Parse a property file:

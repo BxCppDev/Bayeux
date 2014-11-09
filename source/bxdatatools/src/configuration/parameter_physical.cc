@@ -22,8 +22,15 @@
 // Ourselves:
 #include <datatools/configuration/parameter_physical.h>
 
+// // Third party:
+// // - Boost:
+// #include <boost/algorithm/string/predicate.hpp>
+// #include <boost/lexical_cast.hpp>
+
 // This project:
 #include <datatools/configuration/parameter_model.h>
+#include <datatools/configuration/i_occurrence.h>
+#include <datatools/configuration/occurrence_factory.h>
 
 namespace datatools {
 
@@ -36,6 +43,13 @@ namespace datatools {
 
     parameter_physical::~parameter_physical()
     {
+      return;
+    }
+
+    void parameter_physical::reset()
+    {
+      _model_.reset();
+      _occurrence_.reset();
       return;
     }
 
@@ -59,6 +73,23 @@ namespace datatools {
       return _model_;
     }
 
+    bool parameter_physical::has_occurrence() const
+    {
+      return _occurrence_;
+    }
+
+    const i_occurrence & parameter_physical::get_occurrence() const
+    {
+      return *_occurrence_;
+    }
+
+    void parameter_physical::install_occurrence(const std::string & occurrence_def_)
+    {
+      i_occurrence * occ = occurrence_factory::create(occurrence_def_);
+      _occurrence_.reset(occ);
+      return;
+    }
+
     void parameter_physical::tree_dump(std::ostream & out_,
                                        const std::string & title_,
                                        const std::string & indent_,
@@ -66,7 +97,7 @@ namespace datatools {
     {
       this->enriched_base::tree_dump(out_, title_, indent_, true);
 
-      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_)
+      out_ << indent_ << i_tree_dumpable::tag
            << "Parameter model : ";
       if (_model_) {
         out_ << get_model().get_name();
@@ -74,6 +105,16 @@ namespace datatools {
         out_ << "<none>";
       }
       out_ << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_)
+           << "Occurrence : ";
+      if (has_occurrence()) {
+        out_ << &*_occurrence_;
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
       return;
     }
 

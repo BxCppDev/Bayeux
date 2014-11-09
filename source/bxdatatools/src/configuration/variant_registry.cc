@@ -35,6 +35,7 @@
 #include <datatools/configuration/parameter_physical.h>
 #include <datatools/configuration/variant_registry_manager.h>
 #include <datatools/configuration/variant_record.h>
+#include <datatools/configuration/i_occurrence.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/command_utils.h>
@@ -500,51 +501,64 @@ namespace datatools {
             param_path_prefix = parent_variant_record_->get_path() + '/';
           }
         }
-        std::string param_path = param_path_prefix + param_name;
-        if (devel) std::cerr << "DEVEL: add param record '" << param_path << "' " << std::endl;
-        variant_record & param_rec = add_record(param_path);
-        param_rec.set_name(pe.get_name());
-        param_rec.set_terse_description(pe.get_terse_description());
-        if (parent_variant_record_ != 0) {
-          param_rec.set_parent(*parent_variant_record_, param_name);
-        }
-        param_rec.set_parameter_model(pe.get_model());
-        if (pe.get_model().is_variable()) {
-          if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                    << "variable param_rec = " << param_rec.get_path()
-                    << std::endl;
-          // Variable parameter:
-          if (pe.get_model().has_default_value()) {
-            param_rec.set_default_value();
-            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                      << "set_default_value() done."
-                      << std::endl;
-          } else {
-            param_rec.unset_value();
-            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                      << "unset_value() done."
-                      << std::endl;
+        const i_occurrence & occ = pe.get_occurrence();
+        for (int j = 0; j < (int) occ.get_number_of_occurrences(); j++) {
+          std::vector<uint32_t> indexes;
+          occ.compute_index_path(indexes, j);
+          std::ostringstream param_name_full_oss;
+          param_name_full_oss << param_name;
+          for (int k = 0; k < (int) indexes.size(); k++) {
+            param_name_full_oss << '[' << indexes[k] << ']';
           }
-          if (devel) param_rec.tree_dump(std::cerr, "Variable parameter record: ", "DEVEL: ");
-        } else {
-          // Fixed parameter:
-          DT_THROW_IF (!pe.get_model().has_fixed_value(), std::logic_error,
-                       "Fixed parameter model '" << pe.get_model().get_name() << "' has no fixed value!");
-          if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                    << "fixed param_rec = " << param_rec.get_path()
-                    << std::endl;
-          param_rec.set_fixed_value();
-          if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                    << "param_rec.set_fixed_value() done."
-                    << std::endl;
-         if (devel)  param_rec.tree_dump(std::cerr, "Fixed parameter record: ", "DEVEL: ");
-        }
-        //
-        _build_variant_records_from_parameter(pe.get_model(), &param_rec);
-        if (parent_variant_record_ && parent_variant_record_->is_active()) { // == 0) {
-          param_rec.set_active(true);
-        } else {
-          // XXX param_rec.set_active(true);
+          std::string param_name_full = param_name_full_oss.str();
+          std::ostringstream param_path_oss;
+          param_path_oss << param_path_prefix << param_name_full;
+          std::string param_path = param_path_oss.str();
+          if (devel) std::cerr << "DEVEL: add param record '" << param_path << "' " << std::endl;
+          variant_record & param_rec = add_record(param_path);
+          param_rec.set_name(pe.get_name());
+          param_rec.set_terse_description(pe.get_terse_description());
+          if (parent_variant_record_ != 0) {
+            param_rec.set_parent(*parent_variant_record_, param_name_full);
+          }
+          param_rec.set_parameter_model(pe.get_model());
+          if (pe.get_model().is_variable()) {
+            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
+                                 << "variable param_rec = " << param_rec.get_path()
+                                 << std::endl;
+            // Variable parameter:
+            if (pe.get_model().has_default_value()) {
+              param_rec.set_default_value();
+              if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
+                                   << "set_default_value() done."
+                                   << std::endl;
+            } else {
+              param_rec.unset_value();
+              if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
+                                   << "unset_value() done."
+                                   << std::endl;
+            }
+            if (devel) param_rec.tree_dump(std::cerr, "Variable parameter record: ", "DEVEL: ");
+          } else {
+            // Fixed parameter:
+            DT_THROW_IF (!pe.get_model().has_fixed_value(), std::logic_error,
+                         "Fixed parameter model '" << pe.get_model().get_name() << "' has no fixed value!");
+            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
+                                 << "fixed param_rec = " << param_rec.get_path()
+                                 << std::endl;
+            param_rec.set_fixed_value();
+            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
+                                 << "param_rec.set_fixed_value() done."
+                                 << std::endl;
+            if (devel)  param_rec.tree_dump(std::cerr, "Fixed parameter record: ", "DEVEL: ");
+          }
+          //
+          _build_variant_records_from_parameter(pe.get_model(), &param_rec);
+          if (parent_variant_record_ && parent_variant_record_->is_active()) { // == 0) {
+            param_rec.set_active(true);
+          } else {
+            // XXX param_rec.set_active(true);
+          }
         }
       }
       return;

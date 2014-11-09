@@ -180,7 +180,7 @@ namespace datatools {
     {
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       DT_THROW_IF(o_.find("/") != std::string::npos, std::logic_error,
-                  "Organization name cannot contains the '/' character!");
+                  "Organization name cannot contain the '/' character!");
       _organization_ = o_;
       return;
     }
@@ -215,13 +215,9 @@ namespace datatools {
       initialize(dummy);
     }
 
-    void variant_repository::initialize(const datatools::properties & config_)
+    void variant_repository::load_registries(const datatools::properties & config_)
     {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Repository is already initialized!");
-
-      bool requested_lock = false;
-
-      this->enriched_base::initialize(config_, false);
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
 
       // Parse configuration parameters:
       if (!has_organization()) {
@@ -236,10 +232,6 @@ namespace datatools {
           const std::string & app = config_.fetch_string("application");
           set_application(app);
         }
-      }
-
-      if (config_.has_flag("lock")) {
-        requested_lock = true;
       }
 
       std::vector<std::string> registry_config_filenames;
@@ -275,9 +267,27 @@ namespace datatools {
         registration_embedded(variant_mgr_config_file, "", variant_name);
       }
 
+     return;
+    }
+
+    void variant_repository::initialize(const datatools::properties & config_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Repository '" << get_name() << "' is already initialized!");
+
+      bool requested_lock = false;
+
+      this->enriched_base::initialize(config_, false);
+
+      load_registries(config_);
+
+      if (config_.has_flag("lock")) {
+        requested_lock = true;
+      }
+
       if (requested_lock) {
         lock();
       }
+
       _initialized_ = true;
       return;
     }
@@ -289,9 +299,36 @@ namespace datatools {
       if (is_locked()) {
         unlock();
       }
-      _registries_.clear();
+      clear_registries();
       _application_.clear();
       _organization_.clear();
+      return;
+    }
+
+    void variant_repository::clear_registries()
+    {
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
+      _registries_.clear();
+      return;
+    }
+
+    void variant_repository::external_registries_unregistration()
+    {
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
+      //_registries_.clear();
+      std::vector<std::string> external_registry_keys;
+      for (registry_dict_type::const_iterator i = _registries_.begin();
+           i != _registries_.end();
+           i++) {
+        if (i->second.is_external()) {
+          external_registry_keys.push_back(i->first);
+        }
+      }
+      for (std::vector<std::string>::const_iterator j = external_registry_keys.begin();
+           j != external_registry_keys.end();
+           j++) {
+        _registries_.erase(*j);
+      }
       return;
     }
 

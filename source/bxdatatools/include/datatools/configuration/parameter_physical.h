@@ -35,6 +35,9 @@
 // Standard library:
 #include <string>
 
+// Third party:
+#include <boost/shared_ptr.hpp>
+
 // This project (Bayeux/datatools)
 #include <datatools/i_tree_dump.h>
 #include <datatools/configuration/utils.h>
@@ -46,6 +49,7 @@ namespace datatools {
 
     // Forward declaration:
     class parameter_model;
+    class i_occurrence;
 
     /// \brief Physical parameter physical
     class parameter_physical : public datatools::enriched_base
@@ -57,6 +61,9 @@ namespace datatools {
 
       /// Destructeur
       ~parameter_physical();
+
+      /// Reset
+      void reset();
 
       /// Set the physical
       void set(const std::string & name_,
@@ -75,10 +82,19 @@ namespace datatools {
                              const std::string& indent_ = "",
                              bool inherit_ = false) const;
 
+      /// Check occurrence
+      bool has_occurrence() const;
+
+      /// Return the occurrence of the parameter
+      const i_occurrence & get_occurrence() const;
+
+      /// Install an occurrence object
+      void install_occurrence(const std::string & occurrence_def_);
+
     private:
 
       pm_handle_type _model_; //!< Model of the parameter
-      // i_occurence  * _occurence_;   //!< Occurence
+      boost::shared_ptr<i_occurrence> _occurrence_; //!< Occurrence
 
     };
 

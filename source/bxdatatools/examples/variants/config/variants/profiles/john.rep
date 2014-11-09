@@ -1,0 +1,14 @@
+[algo]
+accuracy = 3
+max_time = 6.5 second
+nevents = 100
+[core]
+gui = 0
+help = "OnlyTooltips"
+logging = "error"
+operator = "John Doe"
+[gui]
+antialiasing = 1
+color = 0
+color/uncolored/mode = "Gray scale"
+logging = "information"

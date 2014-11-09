@@ -419,8 +419,10 @@ namespace datatools {
     if (this->_activate_variant_repository_) {
       _variant_repository_.reset(new configuration::variant_repository);
       _variant_repository_->set_name("__system__");
-      _variant_repository_->set_display_name("Bayeux System Repository");
+      _variant_repository_->set_display_name("System Repository");
       _variant_repository_->set_terse_description("The Bayeux/datatools' kernel configuration variant repository");
+      _variant_repository_->initialize_simple();
+
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now created.");
       if (_logging_ == logger::PRIO_TRACE) {
         _variant_repository_->tree_dump(std::cerr, "Kernel's configuration variant repository:", "TRACE: ");
@@ -494,7 +496,10 @@ namespace datatools {
         datatools::fetch_path_with_env(config_filename);
         datatools::properties config;
         config.read_configuration(config_filename);
-        _variant_repository_->initialize(config);
+        _variant_repository_->set_organization("");
+        _variant_repository_->set_application("");
+        _variant_repository_->unlock();
+        _variant_repository_->load_registries(config);
         if (_logging_ >= datatools::logger::PRIO_TRACE) {
           _variant_repository_->tree_dump(std::cerr, "Configuration Variant Repository: ", "TRACE: ");
         }
@@ -605,9 +610,16 @@ namespace datatools {
         int argc = 1;
         const char * argv[] = { "Bayeux - Configuration Variant Repository Dialog" };
         QApplication app(argc, (char**) argv);
+        bool save_locked = _variant_repository_->is_locked();
+        if (!save_locked) {
+          _variant_repository_->lock();
+        }
         datatools::configuration::ui::variant_repository_dialog vrep_dialog(*_variant_repository_);
         vrep_dialog.show();
         int ret = app.exec();
+        if (!save_locked) {
+          _variant_repository_->unlock();
+        }
       }
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
@@ -806,14 +818,35 @@ namespace datatools {
                 "The datatools kernel has no configuration variant repository !");
     DT_THROW_IF(&rep_ == &grab_variant_repository(), std::logic_error,
                 "The datatools kernel cannot import registries from itself !");
-    if (grab_variant_repository().is_initialized()) {
-      grab_variant_repository().reset();
+    if (grab_variant_repository().is_locked()) {
+      grab_variant_repository().unlock();
     }
     grab_variant_repository().set_organization(rep_.get_organization());
     grab_variant_repository().set_application(rep_.get_application());
     import_configuration_registry(rep_);
     grab_variant_repository().lock();
-    grab_variant_repository().initialize_simple();
+    return;
+  }
+
+  void kernel::clear_configuration_repository()
+  {
+    DT_THROW_IF(!has_variant_repository(), std::logic_error,
+                "The datatools kernel has no configuration variant repository !");
+    if (grab_variant_repository().is_locked()) {
+      grab_variant_repository().unlock();
+    }
+    grab_variant_repository().clear_registries();
+    return;
+  }
+
+  void kernel::clear_imported_configuration_repository()
+  {
+    DT_THROW_IF(!has_variant_repository(), std::logic_error,
+                "The datatools kernel has no configuration variant repository !");
+    if (grab_variant_repository().is_locked()) {
+      grab_variant_repository().unlock();
+    }
+    grab_variant_repository().external_registries_unregistration();
     return;
   }
 

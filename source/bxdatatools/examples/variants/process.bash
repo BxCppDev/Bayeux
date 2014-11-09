@@ -42,10 +42,6 @@ fi
 cd ${opwd}
 
 export FOO_CONFIG_DIR=./config
-export FOO_VAR_DIR=./var
-
-test -d ${FOO_VAR_DIR} && rm -fr ${FOO_VAR_DIR}
-mkdir ${FOO_VAR_DIR}
 
 echo "INFO: Example the program ex_variants without variants..." 1>&2
 ./ex_variants
@@ -57,43 +53,47 @@ else
     # my_exit 0
 fi
 
-echo "INFO: Example the program ex_variants with variants..." 1>&2
-./ex_variants --with-variants
+echo "INFO: Example the program ex_variants with variants (1)..." 1>&2
+./ex_variants --with-variants --variants-test 1
 if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex_variants with variants failed !" 1>&2
     my_exit 1
 else
-    echo "INFO: Example program ex_variants with variants is ok !" 1>&2
-    my_exit 0
+    echo "INFO: Example program ex_variants with variants (1) is ok !" 1>&2
+    # my_exit 0
 fi
 
-echo "INFO: Example the program ex_variants with variants..." 1>&2
-# Ask the datatools kernel to setup the variant repository in its
-# system repository, then launch the GUI to (re)configure some of
-# the variant parameters, then save the variants in a file:
-./ex_variants \
-    --datatools::logging="trace" \
-    --datatools::variant-config="${FOO_CONFIG_DIR}/foo_variance.conf" \
+echo "INFO: Example the program ex_variants with variants (2)..." 1>&2
+# Ask the datatools kernel to :
+# - setup its system repository from a variant repository
+#   configuration file (foo_variance.conf),
+# - load variant parameters default values from a file (default.rep)
+# - set some of the variant parameters from the command line ("algo:accuracy=4"...)
+# - launch a GUI dialog box to enable the (re)configuration of some of the variant parameters,
+# - save the variant parameters values in a file (my_profile.rep)
+#
+./ex_variants --with-variants --variants-test 2 \
+    --datatools::logging="fatal" \
+    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variance.conf" \
+    --datatools::variant-load="${FOO_CONFIG_DIR}/variants/profiles/default.rep" \
+    --datatools::variant-set="algo:accuracy=4" \
+    --datatools::variant-set="algo:max_time=3 s" \
+    --datatools::variant-set="algo:nevents=5" \
+    --datatools::variant-set="core:gui=true" \
+    --datatools::variant-set="core:operator=John Doe" \
+    --datatools::variant-set="core:logging=warning" \
+    --datatools::variant-set="gui:antialiasing=false" \
     --datatools::variant-gui \
-    --datatools::variant-store="${FOO_VAR_DIR}/foo_variants.rep"
+    --datatools::variant-store="${FOO_CONFIG_DIR}/variants/profiles/my_profile.rep"
 if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex_variants failed !" 1>&2
     my_exit 1
 else
-    echo "INFO: Example program ex_variants is ok !" 1>&2
+    echo "INFO: Example program ex_variants (2) is ok !" 1>&2
     # my_exit 0
 fi
 
-    # --datatools::variant-registry-config="${FOO_CONFIG_DIR}/foo_core_registry.conf" \
-    #--datatools::variant-registry-config="${FOO_CONFIG_DIR}/foo_gui_registry.conf" \ #
-
-if [ $? -ne 0 ]; then
-    echo "ERROR: Example program ex_variants failed !" 1>&2
-    my_exit 1
-fi
-
-#rm -f ex_variants
-rm -fr ${FOO_VAR_DIR}
+rm -f ex_variants
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 

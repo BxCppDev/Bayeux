@@ -193,6 +193,12 @@ namespace datatools {
     /// Import a configuration variant repository
     void import_configuration_repository(configuration::variant_repository & rep_);
 
+    /// Clear the configuration variant repository
+    void clear_configuration_repository();
+
+    /// Clear all imported registries from the configuration variant repository
+    void clear_imported_configuration_repository();
+
   protected:
 
     /// Initialization

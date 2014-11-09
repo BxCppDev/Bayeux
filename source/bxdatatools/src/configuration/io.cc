@@ -85,7 +85,7 @@ namespace datatools {
       DT_LOG_TRACE(_logging_, "Entering...");
       if (vrec_.is_active()) {
 
-        if (vrec_.is_parameter()) {
+        if (vrec_.is_parameter() && vrec_.get_parameter_model().is_variable()) {
           std::string value_str;
           command::returned_info cri = vrec_.value_to_string(value_str);
           out_ << vrec_.get_path();
@@ -130,7 +130,7 @@ namespace datatools {
       // print(std::cerr);
       if (vrec_.is_active()) {
 
-        if (vrec_.is_parameter()) {
+        if (vrec_.is_parameter() && vrec_.get_parameter_model().is_variable()) {
           std::string line;
           do {
             line.clear();

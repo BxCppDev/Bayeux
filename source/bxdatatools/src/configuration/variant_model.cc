@@ -102,7 +102,8 @@ namespace datatools {
 
     void variant_model::add_parameter(const std::string & parameter_name_,
                                       const pm_handle_type & parameter_model_handle_,
-                                      const std::string & description_ )
+                                      const std::string & description_,
+                                      const std::string & occurrence_def_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Configuration variant model '" << get_name() << "' is locked !");
@@ -120,8 +121,9 @@ namespace datatools {
         parameter_physical dummy;
         _parameters_[parameter_name_] = dummy;
       }
-      parameter_physical & pe = _parameters_.find(parameter_name_)->second;
-      pe.set(parameter_name_, description_, parameter_model_handle_);
+      parameter_physical & pp = _parameters_.find(parameter_name_)->second;
+      pp.set(parameter_name_, description_, parameter_model_handle_);
+      pp.install_occurrence(occurrence_def_);
       return;
     }
 
@@ -184,13 +186,17 @@ namespace datatools {
       enriched_base::initialize(config_);
 
       // Daughter parameters:
-      /* Example with 2 embedded parameters using the same parameter model:
+      /* Example with 3 embedded parameters using the same parameter model:
        *
-       *  parameters : string[2] = "length" "width"
+       *  parameters : string[3] = "length" "width" "boxes"
        *  parameters.length.model       : string = "distance.PM"
        *  parameters.length.description : string = "Length of the plate"
+       *  parameters.length.occurence   : string = "single"
        *  parameters.width.model        : string = "distance.PM"
        *  parameters.width.description  : string = "Width of the plate"
+       *  parameters.boxes.model        : string = "distance.PM"
+       *  parameters.boxes.description  : string = "Width of the plate"
+       *  parameters.boxes.occurence    : string = "array size=4 start_id=0"
        *
        */
       if (config_.has_key("parameters")) {
@@ -217,7 +223,16 @@ namespace datatools {
           if (config_.has_key(par_desc_ss.str())) {
             par_desc = config_.fetch_string(par_desc_ss.str());
           }
-          add_parameter(par_name, par_item.get_parameter_handle(), par_desc);
+          std::ostringstream par_occ_ss;
+          par_occ_ss << "parameters." << par_name << ".occurrence";
+          std::string par_occ_def;
+          if (config_.has_key(par_occ_ss.str())) {
+            par_occ_def = config_.fetch_string(par_occ_ss.str());
+          }
+          if (par_occ_def.empty()) {
+            par_occ_def = "single";
+          }
+          add_parameter(par_name, par_item.get_parameter_handle(), par_desc, par_occ_def);
         }
       }
 

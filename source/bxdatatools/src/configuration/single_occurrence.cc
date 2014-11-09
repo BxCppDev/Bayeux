@@ -1,4 +1,4 @@
-// datatools/configuration/i_occurence.cc
+// datatools/configuration/single_occurrence.cc
 /*
  * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -20,7 +20,7 @@
  */
 
 // Ourselves:
-#include <datatools/configuration/i_occurence.h>
+#include <datatools/configuration/single_occurrence.h>
 
 // Standard library:
 #include <string>
@@ -33,64 +33,59 @@ namespace datatools {
 
   namespace configuration {
 
-    // Abstract mother occurence class:
-    i_occurence::i_occurence()
+    void single_occurrence::set_id(int id_)
+    {
+      _id_ = id_;
+      return;
+    }
+
+    int single_occurrence::get_id() const
+    {
+      return _id_;
+    }
+
+    single_occurrence::single_occurrence()
+    {
+      _id_ = INVALID_ID;
+      return;
+    }
+
+    single_occurrence::~single_occurrence()
     {
       return;
     }
 
-    i_occurence::~i_occurence()
-    {
-      return;
-    }
-
-    bool i_occurence::is_multiple() const
-    {
-      return get_number_of_occurences() > 1;
-    }
-
-    occurence i_occurence::get_occurence_by_rank(int rank_) const
-    {
-      occurence occ;
-      compute_occurence(rank_, occ);
-      return occ;
-    }
-
-    // Concrete single occurence class:
-
-    occurence::occurence()
-    {
-      return;
-    }
-
-    occurence::~occurence()
-    {
-      return;
-    }
-
-    size_t occurence::get_dimension() const
+    size_t single_occurrence::get_dimension() const
     {
       return 0;
     }
 
-    size_t occurence::get_number_of_occurences() const
+    size_t single_occurrence::get_number_of_occurrences() const
     {
       return 1;
     }
 
-    void occurence::compute_occurence(int rank_, occurence & occ_) const
+    void single_occurrence::compute_occurrence(int rank_, single_occurrence & occ_) const
     {
-      DT_THROW_IF(rank_ != 0, std::logic_error, "Invalid rank '" << rank_ << "' !");
+      DT_THROW_IF(rank_ != 0, std::range_error, "Invalid rank '" << rank_ << "' !");
       occ_ = *this;
+      occ_.set_id(SINGLE_ID);
       return;
     }
 
-    size_t occurence::compute_index_path(std::vector<uint32_t> & path_, int rank_) const
+    size_t single_occurrence::compute_index_path(std::vector<uint32_t> & path_, int rank_) const
     {
-      DT_THROW_IF(rank_ != 0, std::logic_error, "Invalid rank '" << rank_ << "' !");
+      DT_THROW_IF(rank_ != 0, std::range_error, "Invalid rank '" << rank_ << "' !");
       path_.clear();
-      path_.push_back(0);
+      // path_.push_back(0);
       return path_.size();
+    }
+
+    std::string single_occurrence::to_string() const
+    {
+      std::ostringstream oss;
+      oss << "single";
+      return oss.str();
     }
 
   }  // end of namespace configuration

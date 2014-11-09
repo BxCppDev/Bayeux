@@ -1,4 +1,4 @@
-/// \file datatools/configuration/i_occurence.h
+/// \file datatools/configuration/array_occurrence.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-05-11
  * Last modified : 2014-08-10
@@ -28,84 +28,65 @@
  *
  */
 
-#ifndef DATATOOLS_CONFIGURATION_I_OCCURENCE_H
-#define DATATOOLS_CONFIGURATION_I_OCCURENCE_H
+#ifndef DATATOOLS_CONFIGURATION_ARRAY_OCCURRENCE_H
+#define DATATOOLS_CONFIGURATION_ARRAY_OCCURRENCE_H
 
-// Standard library:
-#include <vector>
-
-// Third party:
-// - Boost:
-#include <boost/cstdint.hpp>
+// This project (Bayeux/datatools):
+#include <datatools/configuration/i_occurrence.h>
 
 namespace datatools {
 
   namespace configuration {
 
-    // Forward declaration:
-    class occurence;
-
-    /// \brief Abstract interface for all occurrence objects
-    class i_occurence
+    /// \brief Single occurrence
+    class array_occurrence : public i_occurrence
     {
     public:
 
-      /// Constructor
-      i_occurence();
+      /// Set the size of the array
+      void set_size(unsigned int sz_);
 
-      /// Destructor
-      virtual ~i_occurence();
+      /// Return the size of the array
+      unsigned int get_size() const;
 
-      /// Return the dimension
-      virtual size_t get_dimension() const = 0;
+      /// Set the starting id
+      void set_start_id(int sid_);
 
-      /// Return the number of occurences
-      virtual size_t get_number_of_occurences() const = 0;
-
-      /// Compute the occurence associated to a given rank
-      virtual void compute_occurence(int rank_, occurence & occ_) const = 0;
-
-      /// Check if occurence is multiple
-      bool is_multiple() const;
-
-      /// Compute the occurence associated to a given rank
-      occurence get_occurence_by_rank(int rank_) const;
-
-      /// Compute a multidimensional index path from a rank
-      virtual size_t compute_index_path(std::vector<uint32_t> & path_, int rank_) const = 0;
-
-    };
-
-    /// \brief Single occurence
-    class occurence : public i_occurence
-    {
-    public:
+      /// Get the starting id
+      int get_start_id() const;
 
       /// Constructor
-      occurence();
+      array_occurrence();
 
       /// Destructor
-      virtual ~occurence();
+      virtual ~array_occurrence();
 
       /// Return the dimension
       virtual size_t get_dimension() const;
 
-      /// Return the number of occurences
-      virtual size_t get_number_of_occurences() const;
+      /// Return the number of occurrences
+      virtual size_t get_number_of_occurrences() const;
 
-      /// Compute the occurence associated to a given rank
-      virtual void compute_occurence(int rank_, occurence & occ_) const;
+      /// Compute the occurrence associated to a given rank
+      virtual void compute_occurrence(int rank_, single_occurrence & occ_) const;
 
       /// Compute a multidimensional index path from a rank
       virtual size_t compute_index_path(std::vector<uint32_t> & path_, int rank_) const;
 
+      /// Convert to a string
+      virtual std::string to_string() const;
+
+    private:
+
+      unsigned int _size_;     //!< Number of occurrences
+      int          _start_id_; //!< Starting id
     };
 
   }  // end of namespace configuration
 
 }  // end of namespace datatools
 
-#endif // DATATOOLS_CONFIGURATION_I_OCCURENCE_H
+#endif // DATATOOLS_CONFIGURATION_ARRAY_OCCURRENCE_H
 
 /*
 ** Local Variables: --

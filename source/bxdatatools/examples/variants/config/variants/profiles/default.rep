@@ -1,0 +1,14 @@
+[algo]
+accuracy = 2
+max_time = 5 second
+nevents = 10
+[core]
+gui = 0
+help = "OnlyTooltips"
+logging = "fatal"
+operator = "Visitor"
+[gui]
+antialiasing = 1
+color = 1
+color/colored/palette = 1
+logging = "fatal"

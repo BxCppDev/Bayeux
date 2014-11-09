@@ -257,7 +257,7 @@ string.default  : string = "Hello, World!"
 [name="geometry.VM" type="variant"]
 display_name    : string = "Geometry setup"
 description     : string = "The parameters of the geometry"
-parameters : string[10] = \
+parameters : string[11] = \
   "has_detector_0" \
   "has_detector_1" \
   "logging" \
@@ -267,7 +267,8 @@ parameters : string[10] = \
   "words" \
   "value" \
   "number"\
-  "number2"
+  "number2" \
+  "params"
 
 parameters.has_detector_0.model        : string = "detector_flag.PM"
 parameters.has_detector_0.description  : string = "Geometry contains the detector 0"
@@ -294,9 +295,13 @@ parameters.value.model                 : string = "free_length.PM"
 parameters.value.description           : string = "A length"
 
 parameters.config.model                : string = "config.PM"
-parameters.config.description          : string = "The  configuration file"
+parameters.config.description          : string = "The configuration file"
 
 parameters.words.model                 : string = "free_string.PM"
 parameters.words.description           : string = "Some words"
+
+parameters.params.model                : string = "free_length.PM"
+parameters.params.description          : string = "A parameter"
+parameters.params.occurrence           : string = "array size=4 start_with=0"
 
 # end

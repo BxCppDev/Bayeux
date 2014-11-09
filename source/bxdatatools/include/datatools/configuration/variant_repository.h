@@ -106,6 +106,9 @@ namespace datatools {
       /// Initialize from a properties container
       void initialize(const datatools::properties & config_);
 
+      /// Load embedded registries from a properties container
+      void load_registries(const datatools::properties & config_);
+
       /// Basic initialize
       void initialize_simple();
 
@@ -147,8 +150,14 @@ namespace datatools {
       void registration_external(variant_registry & external_registry_,
                                  const std::string & registry_name_ = "");
 
-      /// Unregistration
+      /// Unregistration of some specific registry
       void unregistration(const std::string & registry_name_);
+
+      /// Clear registries
+      void clear_registries();
+
+      /// Unregistration of external registries
+      void external_registries_unregistration();
 
       /// Check if all registries are accomplished
       bool is_accomplished() const;
