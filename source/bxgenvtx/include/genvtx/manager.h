@@ -95,18 +95,6 @@ namespace genvtx {
     /// Set debug flag
     void set_debug(bool);
 
-    /// Check debug flag for embedded vertex generators
-    bool is_debug_vg() const;
-
-    /// Set debug flag for embedded vertex generators
-    void set_debug_vg(bool);
-
-    /// Check debug flag for embedded factory of vertex generators
-    bool is_factory_debug() const;
-
-    /// Set debug flag for embedded factory of vertex generators
-    void set_factory_debug(bool);
-
     /// Set the service manager
     void set_service_manager(datatools::service_manager &);
 
@@ -168,9 +156,7 @@ namespace genvtx {
     genvtx::vg_handle_type grab_generator(const std::string & vg_name_);
 
     /// Constructor
-    manager(datatools::logger::priority p_ = datatools::logger::PRIO_WARNING,
-             bool debug_vg_ = false,
-             bool verbose_factory_ = false);
+    manager(datatools::logger::priority p_ = datatools::logger::PRIO_WARNING);
 
     /// Destructor
     virtual ~manager();

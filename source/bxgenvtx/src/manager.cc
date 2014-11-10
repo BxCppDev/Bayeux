@@ -77,28 +77,6 @@ namespace genvtx {
     return;
   }
 
-  bool manager::is_debug_vg() const
-  {
-    return _debug_vg_;
-  }
-
-  void manager::set_debug_vg(bool new_value_)
-  {
-    _debug_vg_ = new_value_;
-    return;
-  }
-
-  bool manager::is_factory_debug() const
-  {
-    return _factory_debug_;
-  }
-
-  void manager::set_factory_debug(bool new_value_)
-  {
-    _factory_debug_ = new_value_;
-    return;
-  }
-
   const std::string & manager::get_generator_name() const
   {
     return _current_vg_name_;
@@ -241,8 +219,7 @@ namespace genvtx {
   }
 
   // Constructor :
-  manager::manager(datatools::logger::priority p_,
-                    bool debug_vg_, bool verbose_factory_)
+  manager::manager(datatools::logger::priority p_)
   {
     _logging_priority = p_;
     _initialized_ = false;
@@ -252,12 +229,9 @@ namespace genvtx {
     _service_manager_  = 0;
     _geometry_manager_ = 0;
     _external_random_  = 0;
-
-    _debug_vg_ = debug_vg_;
     _current_vg_name_ = "";
 
     _factory_preload_ = true;
-    _factory_debug_   = verbose_factory_;
 
     return;
   }
@@ -295,12 +269,13 @@ namespace genvtx {
       set_logging_priority(lp);
     }
 
-    if (config_.has_flag("debug_vg")) {
-      set_debug_vg(true);
-    }
-
-    if (config_.has_flag("factory.debug")) {
-      set_factory_debug(true);
+    if (config_.has_key("factory.logging.priority")) {
+      std::string prio_label = config_.fetch_string("factory.logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      _factory_register_.set_logging_priority(p);
     }
 
     if (config_.has_flag("factory.no_preload")) {
@@ -325,7 +300,6 @@ namespace genvtx {
     }
 
     _factory_register_.set_label("genvtx::manager/factory");
-    _factory_register_.set_verbose(_factory_debug_);
     if (_factory_preload_) {
       _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(::genvtx::i_vertex_generator));
     }
@@ -431,7 +405,7 @@ namespace genvtx {
                    <<  vg_entry_.get_vg_name()
                    << "'...");
       genvtx::i_vertex_generator & the_vg = vg_entry_.grab_vg();
-      if (is_debug_vg()) {
+      if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
         the_vg.set_debug(true);
       }
       if (has_geometry_manager()) {
@@ -749,20 +723,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
                                                        "fatal",
                                                        "",
                                                        "genvtx::manager");
-
-
-  {
-    configuration_property_description & cpd = ocd_.add_property_info();
-    cpd.set_name_pattern("debug_vg")
-      .set_terse_description("Flag to activate debugging output for vertex generators")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_long_description("This flag activates debugging output dedicated to \n"
-                            "vertex generators.                                \n"
-                            "It is not recommended for a production run.       \n"
-                            )
-      ;
-  }
 
   {
     configuration_property_description & cpd = ocd_.add_property_info();
