@@ -74,12 +74,6 @@ namespace mctools {
     /// Check the initialization flag
     bool is_initialized () const;
 
-    /// Check the debug flag
-    bool is_debug () const;
-
-    /// Set the debug flag
-    void set_debug (bool);
-
     /// Returns the description
     const std::string & get_description () const;
 
@@ -135,7 +129,7 @@ namespace mctools {
     void reset ();
 
     /// Constructor
-    step_hit_processor_factory (bool debug_ = false);
+    step_hit_processor_factory (datatools::logger::priority logging_ = datatools::logger::PRIO_WARNING);
 
     /// Destructor
     virtual ~step_hit_processor_factory ();

@@ -742,8 +742,8 @@ namespace mctools {
 
         // Set the 'major_track' flag :
         // MOD: FM+AC 2014-09-05: accept neutral particles as "major" tracks(gamma, neutron...):
-        const bool has_charge =(step_->GetTrack()->GetDynamicParticle()->GetCharge() != 0.0);
-        /* if (has_charge) { */
+        // const bool has_charge =(step_->GetTrack()->GetDynamicParticle()->GetCharge() != 0.0);
+        // if (has_charge) {
           if (primary_track) {
             major_track = true;
           }
@@ -751,7 +751,7 @@ namespace mctools {
           if (kinetic_energy >= _major_track_minimum_energy_) {
             major_track = true;
           }
-        /* } */
+          // }
 
         if (_record_delta_ray_from_alpha_) {
           /* Identify a delta-ray generated along

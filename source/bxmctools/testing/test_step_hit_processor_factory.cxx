@@ -95,12 +95,11 @@ int main(int argc_, char ** argv_)
     output_profiles.insert("source_details");
     // output_profiles.insert("scin_details");
 
-    mctools::step_hit_processor_factory SHPF (debug);
+    mctools::step_hit_processor_factory SHPF;
+    if (debug) SHPF.set_logging_priority(datatools::logger::PRIO_DEBUG);
     if (debug) {
       std::clog << "DEBUG: Factory is instantiated." << std::endl;
     }
-    SHPF.set_debug(debug);
-    SHPF.set_debug(true);
     SHPF.set_output_profiles(output_profiles);
     SHPF.set_description ("A list of MC step hit processors");
     SHPF.set_geometry_manager(gmgr); // pass the address of the geom manager.

@@ -184,7 +184,7 @@ namespace mctools {
       loggable_support::_initialize_logging_support(config_);
 
       _factory_register_.set_label ("mctools::g4::physics_list/factory");
-      _factory_register_.set_verbose (_logprio() == datatools::logger::PRIO_DEBUG);
+      _factory_register_.set_logging_priority (_logprio());
       _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (mctools::g4::base_physics_constructor));
 
       DT_LOG_DEBUG(_logprio(), "Physics list configuration : ");

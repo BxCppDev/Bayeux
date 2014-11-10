@@ -68,18 +68,6 @@ namespace mctools {
     _logging_priority_ = p;
   }
 
-  bool step_hit_processor_factory::is_debug () const
-  {
-    return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
-  }
-
-  void step_hit_processor_factory::set_debug (bool d_)
-  {
-    if (d_) _logging_priority_ = datatools::logger::PRIO_DEBUG;
-    else _logging_priority_ = datatools::logger::PRIO_FATAL;
-    return;
-  }
-
   const std::string & step_hit_processor_factory::get_description () const
   {
     return _description_;
@@ -268,8 +256,13 @@ namespace mctools {
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Factory is already initialized !");
 
-    if (config_.has_flag("debug")) {
-      set_debug(true);
+    if (config_.has_flag("logging.priority")) {
+      std::string prio_label = config_.fetch_string("logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      set_logging_priority(p);
     }
 
     if (config_.has_flag("instantiate_at_loading")) {
@@ -340,13 +333,12 @@ namespace mctools {
   }
 
   // Constructor :
-  step_hit_processor_factory::step_hit_processor_factory (bool debug_)
+  step_hit_processor_factory::step_hit_processor_factory (datatools::logger::priority logging_)
   {
     _initialized_ = false;
-    _logging_priority_ = datatools::logger::PRIO_FATAL;
-    set_debug(debug_);
+    _logging_priority_ = logging_;
     _factory_register_.set_label ("mctools::base_step_hit_processor/factory");
-    _factory_register_.set_verbose (is_debug());
+    _factory_register_.set_logging_priority (logging_);
     _instantiate_at_loading_ = false;
     _external_prng_ = 0;
     bool preload = true;
@@ -551,7 +543,7 @@ namespace mctools {
   void step_hit_processor_factory::load(const datatools::multi_properties & mprop_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    if (is_debug ()) {
+    if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
         DT_LOG_DEBUG (get_logging_priority (), "Step hit processors factory rules:");
         mprop_.tree_dump (std::clog);
       }

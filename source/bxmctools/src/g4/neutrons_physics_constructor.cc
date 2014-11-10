@@ -216,7 +216,7 @@ namespace mctools {
     void neutrons_physics_constructor::tree_dump (std::ostream & out_,
                                                   const std::string & title_,
                                                   const std::string & indent_,
-                                                  bool inherit_) const
+                                                  bool /*inherit_*/) const
     {
       this->base_physics_constructor::tree_dump(out_, title_, indent_, true);
       std::string indent;

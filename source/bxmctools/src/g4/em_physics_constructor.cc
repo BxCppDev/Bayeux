@@ -641,7 +641,7 @@ namespace mctools {
       this->em_physics_constructor::_ConstructEMProcess();
 
       if (_em_fluorescence_ || _em_auger_ || _em_pixe_ || _em_regions_deexcitation_.size() > 0) {
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Activating EM deexcitation...");
+        DT_LOG_NOTICE(_logprio(), "Activating EM deexcitation...");
         this->em_physics_constructor::_ConstructEMDeexcitation();
       }
 
@@ -702,7 +702,7 @@ namespace mctools {
         DT_THROW_IF(a_region == 0, std::logic_error,
                     "Cannot find region named '" << region_name
                     << "' to apply de-excitation processes !");
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Activating EM deexcitation for region '" << region_name << "' :"
+        DT_LOG_NOTICE(_logprio(), "Activating EM deexcitation for region '" << region_name << "' :"
                       << " Fluorescence=" << rd.fluorescence
                       << " Auger=" << rd.auger
                       << " PIXE=" << rd.pixe
