@@ -61,11 +61,11 @@ namespace cuts {
   {
   public:
 
+    /// Factory flags
     enum ctor_flag_type {
-      BLANK             = 0,
-      FACTORY_VERBOSE   = datatools::bit_mask::bit00,
-      FACTORY_NOPRELOAD = datatools::bit_mask::bit01,
-      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit02
+      BLANK                          = 0,
+      FACTORY_NOPRELOAD              = datatools::bit_mask::bit00,
+      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01
     };
 
     /// Set logging priority
@@ -73,12 +73,6 @@ namespace cuts {
 
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
-
-    /// Check debug flag
-    bool is_debug() const;
-
-    /// Check verbose flag
-    bool is_verbose() const;
 
     /// Check the 'no-preload' flag
     bool is_no_preload() const;

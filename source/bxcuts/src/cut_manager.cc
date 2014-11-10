@@ -40,46 +40,36 @@
 
 namespace cuts {
 
-  bool cut_manager::is_debug () const
-  {
-    return _logging_ >= datatools::logger::PRIO_DEBUG;
-  }
-
-  bool cut_manager::is_verbose () const
-  {
-    return _logging_ >= datatools::logger::PRIO_NOTICE;
-  }
-
-  bool cut_manager::is_no_preload () const
+  bool cut_manager::is_no_preload() const
   {
     return _flags_ & FACTORY_NOPRELOAD;
   }
 
-  bool cut_manager::is_initialization_at_load () const
+  bool cut_manager::is_initialization_at_load() const
   {
     return _flags_ & FACTORY_INITIALIZATION_AT_LOAD;
   }
 
-  bool cut_manager::has_print_report () const
+  bool cut_manager::has_print_report() const
   {
     return _print_report_;
   }
 
-  void cut_manager::_preload_global_dict ()
+  void cut_manager::_preload_global_dict()
   {
     DT_LOG_TRACE(_logging_, "Entering...");
-    _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (cuts::i_cut));
+    _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(cuts::i_cut));
     return;
   }
 
-  bool cut_manager::has_cut_type (const std::string & cut_id_) const
+  bool cut_manager::has_cut_type(const std::string & cut_id_) const
   {
-    return _factory_register_.has (cut_id_);
+    return _factory_register_.has(cut_id_);
   }
 
-  void cut_manager::unregister_cut_type (const std::string & cut_id_)
+  void cut_manager::unregister_cut_type(const std::string & cut_id_)
   {
-    _factory_register_.unregistration (cut_id_);
+    _factory_register_.unregistration(cut_id_);
     return;
   }
 
@@ -105,13 +95,13 @@ namespace cuts {
     return;
   }
 
-  bool cut_manager::has_service_manager () const
+  bool cut_manager::has_service_manager() const
   {
     return _service_manager_ != 0;
   }
 
   const datatools::service_manager &
-  cut_manager::get_service_manager () const
+  cut_manager::get_service_manager() const
   {
     DT_THROW_IF(! has_service_manager(),
                 std::logic_error,
@@ -120,7 +110,7 @@ namespace cuts {
   }
 
   datatools::service_manager &
-  cut_manager::grab_service_manager ()
+  cut_manager::grab_service_manager()
   {
     DT_THROW_IF(! has_service_manager(),
                 std::logic_error,
@@ -128,7 +118,7 @@ namespace cuts {
     return *_service_manager_;
   }
 
-  void cut_manager::set_service_manager (datatools::service_manager & service_manager_)
+  void cut_manager::set_service_manager(datatools::service_manager & service_manager_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -138,7 +128,7 @@ namespace cuts {
     return;
   }
 
-  cut_manager::~cut_manager ()
+  cut_manager::~cut_manager()
   {
     if (is_initialized()) {
       cut_manager::reset();
@@ -146,7 +136,7 @@ namespace cuts {
     return;
   }
 
-  void cut_manager::install_service_manager (const datatools::properties & service_manager_configuration_)
+  void cut_manager::install_service_manager(const datatools::properties & service_manager_configuration_)
   {
     DT_LOG_DEBUG(_logging_,"Entering...");
     DT_THROW_IF(is_initialized(),
@@ -157,18 +147,18 @@ namespace cuts {
                 "Cut manager has already an embedded service manager !");
     _service_manager_ = new datatools::service_manager;
     DT_LOG_NOTICE(_logging_,"Initializing the embedded service manager...");
-    _service_manager_->initialize (service_manager_configuration_);
+    _service_manager_->initialize(service_manager_configuration_);
     _service_manager_owner_ = true;
     DT_LOG_DEBUG(_logging_,"Exiting.");
     return;
   }
 
-  bool cut_manager::is_initialized () const
+  bool cut_manager::is_initialized() const
   {
     return _initialized_;
   }
 
-  void cut_manager::initialize (const datatools::properties & a_config)
+  void cut_manager::initialize(const datatools::properties & a_config)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -185,20 +175,25 @@ namespace cuts {
       set_logging_priority(p);
     }
 
-    if (a_config.has_flag ("print_report")) {
-      _print_report_ = true;
+    if (a_config.has_key("factory.logging.priority")) {
+      std::string prio_label = a_config.fetch_string("factory.logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      _factory_register_.set_logging_priority(p);
     }
 
-    if (a_config.has_flag ("factory.verbose")) {
-      _flags_ |= FACTORY_VERBOSE;
-    }
-
-    if (a_config.has_flag ("factory.no_preload")) {
+    if (a_config.has_flag("factory.no_preload")) {
       _flags_ |= FACTORY_NOPRELOAD;
     }
 
-    if (a_config.has_flag ("factory.initialization_at_load")) {
+    if (a_config.has_flag("factory.initialization_at_load")) {
       _flags_ |= FACTORY_INITIALIZATION_AT_LOAD;
+    }
+
+    if (a_config.has_flag("print_report")) {
+      _print_report_ = true;
     }
 
     // Embed a  service manager :
@@ -224,7 +219,6 @@ namespace cuts {
     // Instantiate a cut factory :
     {
       _factory_register_.set_label("cuts::i_cut/cut_factory");
-      _factory_register_.set_verbose(_flags_ & FACTORY_VERBOSE);
       if (! is_no_preload()) {
         _preload_global_dict();
       }
@@ -241,107 +235,107 @@ namespace cuts {
 
     // Load and create the data processing cuts :
     std::vector<std::string> cuts_configurations;
-    if (a_config.has_key ("cuts.configuration_files")){
-      a_config.fetch ("cuts.configuration_files", cuts_configurations);
+    if (a_config.has_key("cuts.configuration_files")){
+      a_config.fetch("cuts.configuration_files", cuts_configurations);
     }
-    for (size_t i = 0; i < cuts_configurations.size (); ++i) {
+    for (size_t i = 0; i < cuts_configurations.size(); ++i) {
       std::string filename = cuts_configurations[i];
-      datatools::fetch_path_with_env (filename);
+      datatools::fetch_path_with_env(filename);
       datatools::multi_properties configs;
       DT_LOG_NOTICE(_logging_, "Loading cuts from file '"
                     << filename << "'...");
-      configs.read (filename);
-      _load_cuts (configs);
+      configs.read(filename);
+      _load_cuts(configs);
     }
 
     _initialized_ = true;
     return;
   }
 
-  // void cut_manager::create_cut (cut_entry_type & cut_entry_)
+  // void cut_manager::create_cut(cut_entry_type & cut_entry_)
   // {
-  //   if (! cut_entry_.is_created ()) {
-  //     this->_create_cut (cut_entry_);
+  //   if (! cut_entry_.is_created()) {
+  //     this->_create_cut(cut_entry_);
   //   }
   //   return;
   // }
 
-  void cut_manager::_create_cut (cut_entry_type & cut_entry_)
+  void cut_manager::_create_cut(cut_entry_type & cut_entry_)
   {
-    if (cut_entry_.is_created ()) {
+    if (cut_entry_.is_created()) {
       return;
     }
     DT_LOG_DEBUG(_logging_,
                  "Creating cut named '"
-                 <<  cut_entry_.get_cut_name ()
+                 <<  cut_entry_.get_cut_name()
                  << "'...");
     // search for the cut's label in the factory dictionary:
-    DT_THROW_IF(! _factory_register_.has(cut_entry_.get_cut_id ()),
+    DT_THROW_IF(! _factory_register_.has(cut_entry_.get_cut_id()),
                 std::logic_error,
                 "Cannot find cut factory with ID '"
-                << cut_entry_.get_cut_id () << "' for cut named '"
-                << cut_entry_.get_cut_name () << "' !");
+                << cut_entry_.get_cut_id() << "' for cut named '"
+                << cut_entry_.get_cut_name() << "' !");
     const i_cut::factory_register_type::factory_type & the_factory
-      = _factory_register_.get (cut_entry_.get_cut_id ());
+      = _factory_register_.get(cut_entry_.get_cut_id());
 
-    i_cut * ptr = the_factory ();
-    cut_entry_.set_ptr (ptr);
-    cut_entry_.set_created ();
+    i_cut * ptr = the_factory();
+    cut_entry_.set_ptr(ptr);
+    cut_entry_.set_created();
     // Propagate the cut name :
-    ptr->set_name(cut_entry_.get_cut_name ());
-    _ordered_cuts_.push_back(cut_entry_.get_cut_name ());
+    ptr->set_name(cut_entry_.get_cut_name());
+    _ordered_cuts_.push_back(cut_entry_.get_cut_name());
     DT_LOG_NOTICE(_logging_, "Cut named '" << cut_entry_.get_cut_name() << "' has been created !");
     return;
   }
 
-  // void cut_manager::initialize_cut (cut_entry_type & cut_entry_)
+  // void cut_manager::initialize_cut(cut_entry_type & cut_entry_)
   // {
-  //   if (! cut_entry_.is_initialized ()) {
-  //     _initialize_cut (cut_entry_);
+  //   if (! cut_entry_.is_initialized()) {
+  //     _initialize_cut(cut_entry_);
   //   }
   //   return;
   // }
 
-  void cut_manager::_initialize_cut (cut_entry_type & cut_entry_)
+  void cut_manager::_initialize_cut(cut_entry_type & cut_entry_)
   {
     // If not created, first do it :
-    if (! cut_entry_.is_created ()) {
-      _create_cut (cut_entry_);
+    if (! cut_entry_.is_created()) {
+      _create_cut(cut_entry_);
     }
 
     // If not initialized, do it :
-    if (! cut_entry_.is_initialized ()) {
+    if (! cut_entry_.is_initialized()) {
       DT_LOG_DEBUG(_logging_,
                    "Initializing cut named '"
-                   <<  cut_entry_.get_cut_name ()
+                   <<  cut_entry_.get_cut_name()
                    << "'...");
-      i_cut & the_cut = cut_entry_.grab_cut ();
-      if (has_service_manager ()) {
-        the_cut.initialize (cut_entry_.get_cut_config (),
-                            grab_service_manager (),
+      i_cut & the_cut = cut_entry_.grab_cut();
+      if (has_service_manager()) {
+        the_cut.initialize(cut_entry_.get_cut_config(),
+                            grab_service_manager(),
                             _cuts_);
       } else {
         DT_LOG_NOTICE(_logging_, "Attempt to initializing cut named '"
-                      <<  cut_entry_.get_cut_name ()
+                      <<  cut_entry_.get_cut_name()
                       << "' without service support...");
-        the_cut.initialize_without_service (cut_entry_.get_cut_config (), _cuts_);
+        the_cut.initialize_without_service(cut_entry_.get_cut_config(), _cuts_);
       }
-      cut_entry_.set_initialized ();
+      cut_entry_.set_initialized();
     }
     return;
   }
 
-  void cut_manager::_reset_cut (cut_entry_type & cut_entry_)
+  void cut_manager::_reset_cut(cut_entry_type & cut_entry_)
   {
-    if (cut_entry_.is_initialized ()) {
-      i_cut & the_cut = cut_entry_.grab_cut ();
-      the_cut.reset ();
-      cut_entry_.set_uninitialized ();
+    if (cut_entry_.is_initialized()) {
+      i_cut & the_cut = cut_entry_.grab_cut();
+      the_cut.reset();
+      cut_entry_.set_uninitialized();
     }
     return;
   }
 
-  void cut_manager::_load_cut (const std::string & cut_name_,
+  void cut_manager::_load_cut(const std::string & cut_name_,
                                const std::string & cut_id_,
                                const datatools::properties & cut_config_)
   {
@@ -362,58 +356,56 @@ namespace cuts {
     the_cut_entry.set_manager(*this);
     the_cut_entry.set_cut_id(cut_id_);
     the_cut_entry.set_cut_config(cut_config_);
-    the_cut_entry.set_blank ();
+    the_cut_entry.set_blank();
     bool force_initialization_at_load = false;
-    if (cut_config_.has_flag ("force_initialization_at_load")) {
+    if (cut_config_.has_flag("force_initialization_at_load")) {
       force_initialization_at_load = true;
     }
-    if (force_initialization_at_load || is_initialization_at_load ()) {
-      _initialize_cut (the_cut_entry);
+    if (force_initialization_at_load || is_initialization_at_load()) {
+      _initialize_cut(the_cut_entry);
     }
 
     DT_LOG_TRACE(_logging_, "Exiting.");
     return;
   }
 
-  void cut_manager::load_cut (const std::string & cut_name_,
+  void cut_manager::load_cut(const std::string & cut_name_,
                               const std::string & cut_id_,
                               const datatools::properties & cut_config_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
                 "Cut manager is already initialized !");
-    _load_cut (cut_name_, cut_id_, cut_config_);
+    _load_cut(cut_name_, cut_id_, cut_config_);
     return;
   }
 
 
-  void cut_manager::_load_cuts (const datatools::multi_properties & config_)
+  void cut_manager::_load_cuts(const datatools::multi_properties & config_)
   {
-    using namespace datatools;
-    DT_LOG_DEBUG(_logging_, "Cut manager configuration parameters : ");
-    if (is_debug()) {
-      config_.tree_dump (std::clog, "");
+    if (_logging_ >= datatools::logger::PRIO_DEBUG) {
+      DT_LOG_DEBUG(_logging_, "Cut manager configuration parameters : ");
+      config_.tree_dump(std::clog, "");
     }
-    const multi_properties::entries_ordered_col_type & oe = config_.ordered_entries ();
-    for (multi_properties::entries_ordered_col_type::const_iterator i = oe.begin ();
-         i != oe.end ();
-         ++i) {
-      const multi_properties::entry & the_entry = **i;
-      const std::string & cut_name = the_entry.get_key ();
+    const datatools::multi_properties::entries_ordered_col_type & oe = config_.ordered_entries();
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator
+           i = oe.begin(); i != oe.end(); ++i) {
+      const datatools::multi_properties::entry & the_entry = **i;
+      const std::string & cut_name = the_entry.get_key();
       DT_LOG_NOTICE(_logging_, "Loading cuts '" << cut_name << "'...");
-      DT_THROW_IF(has (cut_name),
+      DT_THROW_IF(has(cut_name),
                   std::logic_error,
                   "Cut manager already has a cut named '" << cut_name << "' !");
-      const std::string & cut_id = the_entry.get_meta ();
-      const properties & cut_config = the_entry.get_properties ();
-      _load_cut (cut_name, cut_id, cut_config);
+      const std::string & cut_id = the_entry.get_meta();
+      const datatools::properties & cut_config = the_entry.get_properties();
+      _load_cut(cut_name, cut_id, cut_config);
     }
     return;
   }
 
-  void cut_manager::reset ()
+  void cut_manager::reset()
   {
-    DT_THROW_IF(! is_initialized (),
+    DT_THROW_IF(! is_initialized(),
                 std::logic_error,
                 "Cut manager is not initialized !");
 
@@ -438,51 +430,51 @@ namespace cuts {
     return;
   }
 
-  bool cut_manager::has (const std::string & cut_name_) const
+  bool cut_manager::has(const std::string & cut_name_) const
   {
-    return _cuts_.find (cut_name_) != _cuts_.end ();
+    return _cuts_.find(cut_name_) != _cuts_.end();
   }
 
-  void cut_manager::remove (const std::string & cut_name_)
+  void cut_manager::remove(const std::string & cut_name_)
   {
-    _cuts_.erase (cut_name_);
+    _cuts_.erase(cut_name_);
     return;
   }
 
   i_cut &
-  cut_manager::grab (const std::string & cut_name_)
+  cut_manager::grab(const std::string & cut_name_)
   {
-    cut_handle_dict_type::iterator found = _cuts_.find (cut_name_);
-    DT_THROW_IF(found == _cuts_.end (),
+    cut_handle_dict_type::iterator found = _cuts_.find(cut_name_);
+    DT_THROW_IF(found == _cuts_.end(),
                 std::domain_error,
                 "No cut named '" << cut_name_ << "' !");
-    if (! found->second.is_initialized ()) {
-      _initialize_cut (found->second);
+    if (! found->second.is_initialized()) {
+      _initialize_cut(found->second);
     }
-    return found->second.grab_cut ();
+    return found->second.grab_cut();
   }
 
   const i_cut &
-  cut_manager::get (const std::string & cut_name_) const
+  cut_manager::get(const std::string & cut_name_) const
   {
-    cut_manager * mutable_this = const_cast<cut_manager*> (this);
-    return const_cast<i_cut &> (mutable_this->grab (cut_name_));
+    cut_manager * mutable_this = const_cast<cut_manager*>(this);
+    return const_cast<i_cut &>(mutable_this->grab(cut_name_));
   }
 
-  cut_handle_dict_type & cut_manager::get_cuts ()
-  {
-    return _cuts_;
-  }
-
-  const cut_handle_dict_type & cut_manager::get_cuts () const
+  cut_handle_dict_type & cut_manager::get_cuts()
   {
     return _cuts_;
   }
 
-  void cut_manager::tree_dump (std::ostream      & out_,
-                               const std::string & title_,
-                               const std::string & indent_,
-                               bool inherit_) const
+  const cut_handle_dict_type & cut_manager::get_cuts() const
+  {
+    return _cuts_;
+  }
+
+  void cut_manager::tree_dump(std::ostream      & out_,
+                              const std::string & title_,
+                              const std::string & indent_,
+                              bool inherit_) const
   {
     std::string indent;
     if (! indent.empty()) {
@@ -493,7 +485,7 @@ namespace cuts {
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Initialized       : " << is_initialized () << std::endl;
+         << "Initialized       : " << is_initialized() << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Flags             : " << _flags_ << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
@@ -501,19 +493,19 @@ namespace cuts {
     {
       std::ostringstream indent_oss;
       indent_oss << indent << datatools::i_tree_dumpable::skip_tag;
-      _factory_register_.print (out_, indent_oss.str ());
+      _factory_register_.print(out_, indent_oss.str());
     }
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Cuts : ";
-      size_t sz = _cuts_.size ();
+      size_t sz = _cuts_.size();
       if (sz == 0) {
         out_ << "<none>";
       }
       out_ << std::endl;
-      for (cut_handle_dict_type::const_iterator i = _cuts_.begin ();
-           i != _cuts_.end ();
+      for (cut_handle_dict_type::const_iterator i = _cuts_.begin();
+           i != _cuts_.end();
            i++) {
         const std::string & the_cut_name = i->first;
         const cut_entry_type & the_cut_entry = i->second;
@@ -523,7 +515,7 @@ namespace cuts {
         indent_oss << indent << datatools::i_tree_dumpable::skip_tag;
         cut_handle_dict_type::const_iterator j = i;
         j++;
-        if (j == _cuts_.end ()) {
+        if (j == _cuts_.end()) {
           out_ << datatools::i_tree_dumpable::last_tag;
           indent_oss << datatools::i_tree_dumpable::last_skip_tag;
         } else {
@@ -531,21 +523,21 @@ namespace cuts {
           indent_oss << datatools::i_tree_dumpable::skip_tag;
         }
         out_ << "Cut : '" << the_cut_name << "'" << std::endl;
-        the_cut_entry.tree_dump (out_, "", indent_oss.str ());
+        the_cut_entry.tree_dump(out_, "", indent_oss.str());
       }
     }
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Service manager   :" ;
-    if (has_service_manager ()) {
+    if (has_service_manager()) {
       out_ << " @ " << _service_manager_ << std::endl;
       std::ostringstream indent_ss;
       indent_ss << indent << datatools::i_tree_dumpable::skip_tag;
-      _service_manager_->tree_dump (std::clog, "", indent_ss.str ());
+      _service_manager_->tree_dump(std::clog, "", indent_ss.str());
     } else {
       out_ << " <none>" << std::endl;
     }
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
          << "Owns service manager  : " << _service_manager_owner_ << std::endl;
 
     return;
@@ -555,13 +547,13 @@ namespace cuts {
   {
     out_ << "List of created cuts (by order of appeareance) :" << std::endl;
     for (ordered_cut_list_type::const_iterator
-           i = _ordered_cuts_.begin ();
-         i != _ordered_cuts_.end ();
+           i = _ordered_cuts_.begin();
+         i != _ordered_cuts_.end();
          i++) {
       const std::string & the_cut_name = *i;
       std::ostringstream indent_oss;
       ordered_cut_list_type::const_iterator j = i;
-      if (++j == _ordered_cuts_.end ()) {
+      if (++j == _ordered_cuts_.end()) {
         out_ << datatools::i_tree_dumpable::last_tag;
         indent_oss << datatools::i_tree_dumpable::last_skip_tag;
       } else {
@@ -569,7 +561,7 @@ namespace cuts {
         indent_oss << datatools::i_tree_dumpable::skip_tag;
       }
       out_ << "Cut '" << the_cut_name << "' status report : " << std::endl;
-      _cuts_.at(the_cut_name).get_cut().tree_dump (out_, "", indent_oss.str());
+      _cuts_.at(the_cut_name).get_cut().tree_dump(out_, "", indent_oss.str());
     }
     return;
   }
@@ -584,9 +576,9 @@ namespace cuts {
 // OCD support for class '::cuts::cut_manager' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
 {
-  ocd_.set_class_name ("cuts::cut_manager");
-  ocd_.set_class_description ("A cut manager");
-  ocd_.set_class_library ("cuts");
+  ocd_.set_class_name("cuts::cut_manager");
+  ocd_.set_class_description("A cut manager");
+  ocd_.set_class_library("cuts");
   ocd_.set_class_documentation("The ``cut_manager`` object is responsible of a repository      \n"
                                "of cuts on arbitrary data. It embeds a factory of cuts that    \n"
                                "allows it to dynamically instantiate cut objects on user       \n"
@@ -722,7 +714,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                             "Each file must use the format of the ``datatools::multi_properties``\n"
                             "class.                                                            \n"
                             )
-      .add_example ("Use 3 different cut definition files : ::                         \n"
+      .add_example("Use 3 different cut definition files : ::                         \n"
                     "                                                                  \n"
                     "   cuts.configuration_files : string[3] a path = \\               \n"
                     "     \"${MY_CONFIG_DIR}/cuts/energy_cuts.conf\" \\                \n"
@@ -732,7 +724,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::cut_manager,ocd_)
                     );
   }
 
-  ocd_.set_configuration_hints ("Here is a typical configuration::                                 \n"
+  ocd_.set_configuration_hints("Here is a typical configuration::                                 \n"
                                 "                                                                  \n"
                                 "   logging.priority   : string = \"warning\"                      \n"
                                 "   factory.verbose    : boolean = 0                               \n"
