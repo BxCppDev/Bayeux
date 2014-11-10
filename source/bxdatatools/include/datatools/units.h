@@ -82,7 +82,7 @@ namespace datatools {
     /// double kg = get_unit_in_dimension_from("kg", "mass");   // success
     /// \endcode
     double get_unit_in_dimension_from(const std::string& unit_id_,
-                                     const std::string& unit_dimension_label_);
+                                      const std::string& unit_dimension_label_);
 
     //! Get the length unit value from a string.
     /// @param unit_id_ the name or the symbol of the unit

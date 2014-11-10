@@ -555,7 +555,7 @@ namespace datatools {
               // #2 ---[f2 ;                   ]>
               return 0;
             } else {
-              int l2 = a_range.last();
+              // int l2 = a_range.last();
               // #1 ---[f1 ;                   ]>
               // #2 ---[f2 ; l2]---------------]>
               return +1;

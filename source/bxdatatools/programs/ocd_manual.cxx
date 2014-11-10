@@ -79,6 +79,7 @@ int main(int argc_, char ** argv_)
     po::notify(vm);
 
     // Fetch the opts/args :
+    // Fetch the opts/args :
     if (vm.count("help")) {
       if (vm["help"].as<bool>()) {
         datatools::ui::print_usage(opts, std::cout);
@@ -86,7 +87,15 @@ int main(int argc_, char ** argv_)
       }
     }
 
-    if (params.debug) params.print(std::cerr);
+    if (vm.count("logging-priority")) {
+      const std::string logging_label = vm["logging-priority"].as<std::string>();
+      params.logging = datatools::logger::get_priority(logging_label);
+      DT_THROW_IF(params.logging == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority label '" << logging_label << "' !");
+    }
+
+    if (params.logging >= datatools::logger::PRIO_DEBUG) params.print(std::clog);
 
     datatools::ocd_driver ocdd;
     ocdd.initialize(params);
@@ -95,11 +104,11 @@ int main(int argc_, char ** argv_)
 
   }
   catch (std::exception & x) {
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what ());
+    DT_LOG_FATAL(params.logging, x.what ());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
+    DT_LOG_FATAL(params.logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
 
@@ -120,15 +129,14 @@ namespace datatools {
     opts_.add_options()
 
       ("help,h",
-       po::value<bool>() ->zero_tokens()
+       po::value<bool>()
+       ->zero_tokens()
        ->default_value(false),
        "produce help message")
 
-      ("debug,d",
-       po::value<bool>(&params_.debug)
-       ->zero_tokens()
-       ->default_value(false),
-       "produce debug logging")
+      ("logging-priority,P",
+       po::value<std::string>()->default_value("notice"),
+       "set the logging priority threshold")
 
       ("dlls-config,L",
        po::value<std::string>(&params_.dll_loader_config),

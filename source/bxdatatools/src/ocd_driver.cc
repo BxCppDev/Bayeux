@@ -23,7 +23,7 @@ namespace datatools {
 
 void ocd_driver_params::reset()
 {
-  debug = false;
+  logging = datatools::logger::PRIO_NOTICE;
   interactive = false;
   dlls.clear();
   dll_loader_config.clear();
@@ -37,31 +37,31 @@ void ocd_driver_params::reset()
 
 ocd_driver_params::ocd_driver_params()
 {
-  debug = false;
   interactive = false;
   return;
 }
 
 void ocd_driver_params::print(std::ostream & out_) const
 {
-  out_ << "OCD manual configuration parameters : " << '\n';
-  out_ << "  Debug             = " << debug << '\n';
-  out_ << "  Interactive       = " << interactive << '\n';
-  out_ << "  DLL loader config = '" << dll_loader_config << "'" << '\n';
+  out_ << "OCD manual configuration parameters : " << std::endl;
+  out_ << "  Interactive       = " << interactive << std::endl;
+  out_ << "  Logging priority  = "
+       << datatools::logger::get_priority_label(logging) << std::endl;
+  out_ << "  DLL loader config = '" << dll_loader_config << "'" << std::endl;
   out_ << "  DLLs = ";
   BOOST_FOREACH (const std::string & dll_name, this->dlls) {
     out_ << " '" << dll_name << "'";
   }
   out_ << std::endl;
-  out_ << "  Action      = '" << action << "'" << '\n';
+  out_ << "  Action      = '" << action << "'" << std::endl;
   out_ << "  Action options = ";
   BOOST_FOREACH (const std::string & action_opt, this->action_options) {
     out_ << " '" << action_opt << "'";
   }
   out_ << std::endl;
-  out_ << "  Class ID    = '" << class_id << "'" << '\n';
-  out_ << "  Input path  = '" << input_path << "'" << '\n';
-  out_ << "  Output path = '" << output_path << "'" << '\n';
+  out_ << "  Class ID    = '" << class_id << "'" << std::endl;
+  out_ << "  Input path  = '" << input_path << "'" << std::endl;
+  out_ << "  Output path = '" << output_path << "'" << std::endl;
   return;
 }
 
@@ -90,9 +90,7 @@ void ocd_driver::initialize(const ocd_driver_params & params_)
 
   datatools::library_loader dll_loader(_params_.dll_loader_config);
   BOOST_FOREACH (const std::string & dll_name, _params_.dlls) {
-    if (_params_.debug) {
-      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Loading DLL '" << dll_name << "'...");
-    }
+    DT_LOG_DEBUG(_params_.logging, "Loading DLL '" << dll_name << "'...");
     DT_THROW_IF (dll_loader.load (dll_name) != EXIT_SUCCESS,
                  std::logic_error,
                  "Loading DLL '" << dll_name << "' failed !");
@@ -125,7 +123,7 @@ int ocd_driver::run()
 
 void ocd_driver::_run_interactive()
 {
-  DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Not implemented yet !");
+  DT_LOG_WARNING(_params_.logging, "Not implemented yet !");
   return;
 }
 
@@ -142,7 +140,7 @@ int ocd_driver::_run_action()
   } else if (_params_.action == "validate") {
     error_code = _run_validate(_params_.class_id, _params_.input_path);
   } else {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+    DT_LOG_ERROR(_params_.logging,
                  "Unknown action '" << _params_.action  << "' !");
     error_code = EXIT_FAILURE;
   }
@@ -158,7 +156,7 @@ int ocd_driver::_run_list(std::ostream & out_, std::ostream & log_)
   //ocd_system_reg.smart_dump(std::cerr, "The OCD system registation : ", "DEVEL: ");
   std::vector<std::string> ids;
   ocd_system_reg.compute_ids(ids);
-  log_ << "List of registered class IDs : " << '\n';
+  log_ << "List of registered class IDs : " << std::endl;
   BOOST_FOREACH (const std::string & id, ids) {
     out_ << id << std::endl;
   }
@@ -173,12 +171,10 @@ int ocd_driver::_run_show(const std::string & class_id_, std::ostream & out_)
   //ocd_system_reg.smart_dump(std::cerr, "The OCD system registation : ", "DEVEL: ");
 
   if (class_id_.empty()) {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                   "Missing class ID !");
+    DT_LOG_ERROR(_params_.logging, "Missing class ID !");
     error_code = EXIT_FAILURE;
   } else if (! ocd_system_reg.has_id(class_id_)) {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                 "Class ID '" << class_id_
+    DT_LOG_ERROR(_params_.logging, "Class ID '" << class_id_
                  << "' is not registered in the datatools' OCD system register !");
     error_code = EXIT_FAILURE;
   } else {
@@ -206,11 +202,10 @@ int ocd_driver::_run_generate_skeleton(const std::string & class_id_,
 {
   int error_code = EXIT_SUCCESS;
   if (class_id_.empty()) {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Missing class ID !");
+    DT_LOG_ERROR(_params_.logging, "Missing class ID !");
     error_code = EXIT_FAILURE;
   } else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                 "Class ID '" << class_id_
+    DT_LOG_ERROR(_params_.logging, "Class ID '" << class_id_
                  << "' is not registered in the datatools' OCD system register !");
     error_code = EXIT_FAILURE;
   } else {
@@ -233,15 +228,13 @@ int ocd_driver::_run_generate_skeleton(const std::string & class_id_,
       std::string skeleton_path = skeleton_path_;
       datatools::fetch_path_with_env(skeleton_path);
       if (boost::filesystem::exists(skeleton_path)) {
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                     "File '" << skeleton_path << "' already exists ! "
+        DT_LOG_ERROR(_params_.logging, "File '" << skeleton_path << "' already exists ! "
                      << "Overwriting is not allowed !");
         error_code = EXIT_FAILURE;
       } else {
         std::ofstream fout(skeleton_path.c_str());
         if (!fout) {
-          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                       "Cannot open file '" << skeleton_path << "' !");
+          DT_LOG_ERROR(_params_.logging, "Cannot open file '" << skeleton_path << "' !");
           error_code = EXIT_FAILURE;
         }
         OCD.generate_sample_configuration(fout, "", sgo_flags);
@@ -257,23 +250,20 @@ int ocd_driver::_run_validate(const std::string & class_id_,
 {
   int error_code = EXIT_SUCCESS;
   if (class_id_.empty()) {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Missing class ID !");
+    DT_LOG_ERROR(_params_.logging, "Missing class ID !");
     error_code = EXIT_FAILURE;
   }else if (! datatools::detail::ocd::ocd_registration::get_system_registration().has_id(class_id_)){
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                 "Class ID '" << class_id_
+    DT_LOG_ERROR(_params_.logging, "Class ID '" << class_id_
                  << "' is not registered in the datatools' OCD system register !");
     error_code = EXIT_FAILURE;
   } else if (setup_path_.empty()) {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                 "Input filename is missing !");
+    DT_LOG_ERROR(_params_.logging, "Input filename is missing !");
     error_code = EXIT_FAILURE;
   } else {
     std::string setup_path = setup_path_;
     datatools::fetch_path_with_env(setup_path);
     if (! boost::filesystem::exists(setup_path)) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                   "File '" << setup_path << "' does not exist !");
+      DT_LOG_ERROR(_params_.logging, "File '" << setup_path << "' does not exist !");
       error_code = EXIT_FAILURE;
     } else {
       datatools::properties setup;
@@ -281,18 +271,18 @@ int ocd_driver::_run_validate(const std::string & class_id_,
       const datatools::object_configuration_description & OCD
         = datatools::detail::ocd::ocd_registration::get_system_registration().get(class_id_);
       if (! OCD.has_validation_support()) {
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Class '" << class_id_ << "' has no validation support !");
+        DT_LOG_ERROR(_params_.logging,"Class '" << class_id_ << "' has no validation support !");
         error_code = EXIT_FAILURE;
       } else {
         std::string error_message;
         if (! OCD.validate(setup, error_message)) {
-          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+          DT_LOG_ERROR(_params_.logging,
                        "Cannot validate setup file '" << setup_path << "' for class '"
                        << class_id_ << "' ! Reason is '" << error_message << "' !");
           error_code = EXIT_FAILURE;
         } else {
-          std::clog << "File '" << setup_path << "' is validated for class '"
-                    << class_id_ << "'." << '\n';
+          DT_LOG_NOTICE(_params_.logging, "File '" << setup_path << "' is validated for class '"
+                        << class_id_ << "'.");
         }
       }
     }

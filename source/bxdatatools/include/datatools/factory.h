@@ -63,11 +63,11 @@ class factory_register
   /// Destructor
   virtual ~factory_register();
 
-  //! Check if verbosity flag is activated
-  bool is_verbose() const;
+  //! Returns logging priority
+  datatools::logger::priority get_logging_priority() const;
 
-  //! Set verbosity flag
-  void set_verbose(bool verbose);
+  //! Set logging priority
+  void set_logging_priority(datatools::logger::priority logging);
 
   //! Get the label associated to the factory
   const std::string& get_label() const;
@@ -120,9 +120,9 @@ class factory_register
                          bool inherit = false) const;
 
  private:
-  std::string      label_;      //!< Label of the factory
-  bool             verbose_;    //!< Verbosity flag
-  factory_map_type registered_; //!< Dictionary of registered factories
+  std::string      label_;              //!< Label of the factory
+  datatools::logger::priority logging_; //!< Verbosity flag
+  factory_map_type registered_;         //!< Dictionary of registered factories
 };
 
 } // end of namespace datatools

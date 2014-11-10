@@ -9,6 +9,9 @@
 #include <vector>
 #include <iostream>
 
+// This project
+#include <datatools/logger.h>
+
 namespace datatools {
 
 class properties;
@@ -28,7 +31,7 @@ public:
 
 public:
 
-  bool debug; /// Debug flag
+  datatools::logger::priority logging; /// Logging priority
   bool interactive; /// Interactive flag
   std::vector<std::string> dlls; /// List of DLLs to be loaded
   std::string dll_loader_config; /// Configuration file of the DLL loader
