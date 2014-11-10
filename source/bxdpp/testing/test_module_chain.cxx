@@ -200,7 +200,6 @@ int main (int argc_, char ** argv_)
 
       // Module manager :
       uint32_t flags = dpp::module_manager::BLANK;
-      if (debug) flags |= dpp::module_manager::FACTORY_DEBUG;
       dpp::module_manager MM (flags);
 
       std::cerr << "****** DEVEL ***** Go* " << std::endl;

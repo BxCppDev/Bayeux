@@ -54,18 +54,9 @@ namespace dpp {
 
     enum ctor_flag_type {
       BLANK             = 0,
-      FACTORY_DEBUG     = datatools::bit_mask::bit00,
-      FACTORY_NOPRELOAD = datatools::bit_mask::bit01,
-      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit02,
+      FACTORY_NOPRELOAD = datatools::bit_mask::bit00,
+      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01,
     };
-
-    bool is_debug () const;
-
-    void set_debug (bool debug_);
-
-    bool is_verbose () const;
-
-    void set_verbose (bool verbose_);
 
     bool is_no_preload () const;
 

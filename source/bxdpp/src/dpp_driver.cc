@@ -241,14 +241,8 @@ namespace dpp {
       DT_LOG_INFORMATION(_logging_, "Using data processing module '" << module_name << "'.");
     }
 
-    // Module manager constructor flags:
-    uint32_t flags = dpp::module_manager::BLANK;
-    if (_logging_ >= datatools::logger::PRIO_DEBUG) {
-      flags |= dpp::module_manager::FACTORY_DEBUG;
-    }
-
     if (! _params_.module_manager_config_file.empty ()) {
-      _module_mgr_.reset (new dpp::module_manager(flags));
+      _module_mgr_.reset (new dpp::module_manager);
       std::string MM_config_file = _params_.module_manager_config_file;
       datatools::fetch_path_with_env(MM_config_file);
       DT_LOG_NOTICE(_logging_, "Manager config. file : '" << MM_config_file << "'");

@@ -149,11 +149,13 @@ int main (int argc_, char ** argv_)
                 << "'" << output_file << "'" << std::endl;
 
       uint32_t flags = dpp::module_manager::BLANK;
-      if (debug)
-        {
-          flags |= dpp::module_manager::FACTORY_DEBUG;
-        }
       dpp::module_manager MM (flags);
+      if (verbose) {
+        MM.set_logging_priority(datatools::logger::PRIO_NOTICE);
+      }
+      if (debug) {
+        MM.set_logging_priority(datatools::logger::PRIO_DEBUG);
+      }
 
       // load properties from the configuration file:
       std::string MM_config_file = "${DPP_TESTING_DIR}/config/test_module_manager.conf";
@@ -167,8 +169,6 @@ int main (int argc_, char ** argv_)
 
       datatools::properties MM_config;
       datatools::properties::read_config (MM_config_file, MM_config);
-      MM.set_debug(debug);
-      MM.set_verbose(verbose);
       MM.initialize (MM_config);
       MM.tree_dump (std::clog, "Module manager (initialized) : ");
 

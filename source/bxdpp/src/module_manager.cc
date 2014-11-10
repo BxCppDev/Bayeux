@@ -45,16 +45,6 @@ namespace dpp {
     _logging_priority_ = p_;
   }
 
-  bool module_manager::is_debug () const
-  {
-    return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
-  }
-
-  bool module_manager::is_verbose () const
-  {
-    return _logging_priority_ >= datatools::logger::PRIO_NOTICE;
-   }
-
   bool module_manager::is_no_preload () const
   {
     return _flags_ & FACTORY_NOPRELOAD;
@@ -91,26 +81,6 @@ namespace dpp {
     return;
   }
 
-  void module_manager::set_debug (bool debug_)
-  {
-    if (debug_) {
-      set_logging_priority(datatools::logger::PRIO_DEBUG);
-    } else {
-      set_logging_priority(datatools::logger::PRIO_WARNING);
-    }
-    return;
-  }
-
-  void module_manager::set_verbose (bool verbose_)
-  {
-   if (verbose_) {
-      set_logging_priority(datatools::logger::PRIO_NOTICE);
-    } else {
-      set_logging_priority(datatools::logger::PRIO_WARNING);
-    }
-    return;
-  }
-
   // ctor:
   module_manager::module_manager (uint32_t flags_)
   {
@@ -119,7 +89,6 @@ namespace dpp {
     _flags_                 = flags_;
     _service_manager_owner_ = false;
     _service_manager_       = 0;
-    //std::cerr << "****** DEVEL ***** module_manager::module_manager " << std::endl;
     return;
   }
 
@@ -208,8 +177,13 @@ namespace dpp {
                 "Invalid logging priority !");
     set_logging_priority(p);
 
-    if (setup_.has_flag ("factory.debug")) {
-      _flags_ |= FACTORY_DEBUG;
+    if (setup_.has_key("factory.logging.priority")) {
+      std::string prio_label = setup_.fetch_string("factory.logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::domain_error,
+                  "Unknow logging priority ``" << prio_label << "`` !");
+      _factory_register_.set_logging_priority(p);
     }
 
     if (setup_.has_flag ("factory.no_preload")) {
@@ -243,7 +217,6 @@ namespace dpp {
     // Instantiate a module factory :
     {
       _factory_register_.set_label ("dpp::base_module/module_factory");
-      _factory_register_.set_verbose (_flags_ & FACTORY_DEBUG);
       if (! is_no_preload ())  {
         _preload_global_dict ();
       }
