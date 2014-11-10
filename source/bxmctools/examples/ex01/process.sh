@@ -160,7 +160,7 @@ if [ $do_simulation -eq 1 ]; then
 	--output-prng-seeds-file "prng_seeds.save" \
 	--output-prng-states-file "prng_states.save" \
 	--output-data-file "mctools_ex01_${eg_name}_${vg_name}.xml" \
-	--g4-macro "${CONFIG_DIR}/geant4_visualization.macro"
+	--g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.macro"
     if [ $? -ne 0 ]; then
 	echo "ERROR: g4_production failed !" 1>&2
 	exit 1
