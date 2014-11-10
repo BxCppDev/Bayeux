@@ -29,7 +29,7 @@
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/i_tree_dump.h>
-// - Bayeux/geomtoolsdatatools:
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 
 namespace datatools {
