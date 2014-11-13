@@ -8,6 +8,7 @@
 #                            for Bayeux. Empty if docs were not built
 #  Bayeux_DOXYGEN_TAGFILE  - path to Doxygen tagfile for Bayeux's docs
 #                            Empty if docs were not built
+#  Bayeux_HAS_QT       - compile definitions needed to use Bayeux
 #
 
 #----------------------------------------------------------------------
@@ -39,6 +40,7 @@ mark_as_advanced(Bayeux_INCLUDE_DIR)
 set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux")
 
 set(Bayeux_DEFINITIONS)
+set(Bayeux_HAS_QT @Bayeux_BUILD_QT_GUI@)
 
 #-----------------------------------------------------------------------
 # Handle paths/targets for third party deps here...
@@ -86,6 +88,11 @@ find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
 # - NB, nothing for Geant4 yet because it's not an interface of
 # the plugin
 
+# - Qt4
+if (Bayeux_HAS_QT)
+find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
+endif()
+
 #-----------------------------------------------------------------------
 # Append third party include directories to Bayeux's so exposed
 # headers are visible
@@ -96,6 +103,12 @@ list(APPEND Bayeux_INCLUDE_DIRS
   ${GSL_INCLUDE_DIRS}
   ${ROOT_INCLUDE_DIRS}
   )
+
+# Qt support
+if (Bayeux_HAS_QT)
+  include(${QT_USE_FILE})
+  list(APPEND Bayeux_DEFINITIONS ${QT_DEFINITIONS})
+endif()
 
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets.
