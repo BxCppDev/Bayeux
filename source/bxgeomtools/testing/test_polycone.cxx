@@ -1,10 +1,17 @@
 // test_polycone.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
+
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/polycone.h>
 #include <geomtools/gnuplot_draw.h>
@@ -12,13 +19,10 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-#include <datatools/temporary_files.h>
-#include <datatools/utils.h>
-
-using namespace std;
 
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test program for class 'polycone'!" << endl;
@@ -64,6 +68,7 @@ int main (int argc_, char ** argv_)
       double pmt_length  = 240. * CLHEP::mm;
 
       geomtools::polycone my_polycone;
+      // clog << "my_polycone is constructed!" << endl;
 
       double a = pmt_front_a;
       double b = pmt_radius;
@@ -177,7 +182,6 @@ int main (int argc_, char ** argv_)
       }
 
       tmp_file.out() << endl << endl;
-
     }
 
 
