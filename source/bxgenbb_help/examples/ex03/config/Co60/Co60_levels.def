@@ -1,0 +1,31 @@
+#@description A list of nuclear levels for Co60
+#@key_label   "name"
+#@meta_label  "type"
+
+
+############################
+[name="Co60_0" type="level"]
+#@config Fundamental level of Co60
+Z      : integer = 27
+A      : integer = 60
+spin   : string  = "5"
+parity : string  = "+"
+stable : boolean = 0
+fundamental : boolean = 1
+half_life : real as time = 1925.28 days
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[2] = "Beta0" "Beta1"
+
+decay_table.Beta0.decay           : string = "Co60_0-Ni60_2505"
+decay_table.Beta0.branching_ratio : real   = 99.88
+
+decay_table.Beta1.decay           : string = "Co60_0-Ni60_1332"
+decay_table.Beta1.branching_ratio : real   =  0.12
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

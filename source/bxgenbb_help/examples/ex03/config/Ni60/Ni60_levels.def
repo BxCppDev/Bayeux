@@ -1,0 +1,88 @@
+#@description A list of nuclear levels for Ni60
+#@key_label   "name"
+#@meta_label  "type"
+
+
+############################
+[name="Ni60_0" type="level"]
+#@config Fundamental level of Ni60
+Z      : integer = 28
+A      : integer = 60
+spin   : string  = "0"
+parity : string  = "+"
+fundamental : boolean = true
+stable : boolean = true
+
+
+###############################
+[name="Ni60_1332" type="level"]
+#@config Excited level (index 1) of Ni60
+Z      : integer = 28
+A      : integer = 60
+spin   : string  = "2"
+parity : string  = "+"
+energy : real as energy  = 1332.514 keV
+half_life : real as time = 0.735 ps
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[1] = "Gamma0"
+
+decay_table.Gamma0.decay           : string = "Ni60_1332-Ni60_0"
+decay_table.Gamma0.branching_ratio : real = 100.0
+
+
+###############################
+[name="Ni60_2158" type="level"]
+#@config Excited level (index 2) of Ni60
+Z      : integer = 28
+A      : integer = 60
+spin   : string  = "2"
+parity : string  = "+"
+energy : real as energy  = 2158.632 keV
+half_life : real as time = 0.59 ps
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[2] = "Gamma0" "Gamma1"
+
+decay_table.Gamma0.decay           : string = "Ni60_2158-Ni60_1332"
+decay_table.Gamma0.branching_ratio : real   = 100.0
+
+decay_table.Gamma1.decay           : string = "Ni60_2158-Ni60_0"
+decay_table.Gamma1.branching_ratio : real   =  17.6
+
+
+###############################
+[name="Ni60_2505" type="level"]
+#@config Excited level (index 4) of Ni60
+Z      : integer = 28
+A      : integer = 60
+spin   : string  = "4"
+parity : string  = "+"
+energy : real as energy  = 2505.753 keV
+half_life : real as time = 3.3 ps
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[3] = "Gamma0" "Gamma1" "Gamma2"
+
+decay_table.Gamma0.decay           : string = "Ni60_2505-Ni60_2284"
+decay_table.Gamma0.branching_ratio : real   =  0.0076
+
+decay_table.Gamma1.decay           : string = "Ni60_2505-Ni60_1332"
+decay_table.Gamma1.branching_ratio : real   = 100.0
+
+decay_table.Gamma2.decay           : string = "Ni60_2505-Ni60_0"
+decay_table.Gamma2.branching_ratio : real   = 2.0e-6
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

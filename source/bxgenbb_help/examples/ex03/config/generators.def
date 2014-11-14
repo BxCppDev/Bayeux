@@ -1,0 +1,28 @@
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of particle generators
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###################################################
+[name="Co60" type="genbb::nuclear_decay_generator"]
+#@config The decay of Co60
+
+#@description Definition files for levels and decays
+manager.definition_files : string[4] as path = \
+  "config/Co60/Co60_decays.def" \
+  "config/Co60/Co60_levels.def" \
+  "config/Ni60/Ni60_decays.def" \
+  "config/Ni60/Ni60_levels.def"
+
+#@description Generation of levels decay tables (default=true)
+manager.decay_tables : boolean = true
+
+#@description The top decaying level
+decaying.level : string = "Co60_0"
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

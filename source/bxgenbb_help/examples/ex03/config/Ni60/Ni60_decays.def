@@ -1,0 +1,50 @@
+#@description A list of nuclear decays/transitions from Ni-60 levels
+#@key_label   "name"
+#@meta_label  "type"
+
+
+######################################################
+[name="Ni60_1332-Ni60_0" type="decay"]
+decay_id      : string = "genbb::nuclear_transition"
+level_initial : string = "Ni60_1332"
+level_final   : string = "Ni60_0"
+
+
+######################################################
+[name="Ni60_2158-Ni60_1332" type="decay"]
+decay_id      : string = "genbb::nuclear_transition"
+level_initial : string = "Ni60_2158"
+level_final   : string = "Ni60_1332"
+
+
+######################################################
+[name="Ni60_2158-Ni60_0" type="decay"]
+decay_id      : string = "genbb::nuclear_transition"
+level_initial : string = "Ni60_2158"
+level_final   : string = "Ni60_0"
+
+
+######################################################
+[name="Ni60_2505-Ni60_2158" type="decay"]
+decay_id      : string = "genbb::nuclear_transition"
+level_initial : string = "Ni60_2505"
+level_final   : string = "Ni60_2158"
+
+
+######################################################
+[name="Ni60_2505-Ni60_1332" type="decay"]
+decay_id      : string = "genbb::nuclear_transition"
+level_initial : string = "Ni60_2505"
+level_final   : string = "Ni60_1332"
+
+
+######################################################
+[name="Ni60_2505-Ni60_0" type="decay"]
+decay_id      : string = "genbb::nuclear_transition"
+level_initial : string = "Ni60_2505"
+level_final   : string = "Ni60_0"
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --
