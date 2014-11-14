@@ -1,4 +1,4 @@
-/// \file genbb_help/from_file_generator.h
+/// \file genbb_help/nuclear_decay_generator.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-06-18
  * Last modified: 2014-06-18
@@ -31,30 +31,34 @@
  *
  */
 
-#ifndef GENBB_HELP_FROM_FILE_GENERATOR_H
-#define GENBB_HELP_FROM_FILE_GENERATOR_H 1
+#ifndef GENBB_HELP_NUCLEAR_DECAY_GENERATOR_H
+#define GENBB_HELP_NUCLEAR_DECAY_GENERATOR_H 1
+
+// Third party:
+// - Boost:
+#include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <genbb_help/i_genbb.h>
+// #include <genbb_help/nuclear_decay_manager.h>
+// #include <genbb_help/nuclear_level.h>
 
 namespace genbb {
 
-  /// \brief A generator that loads primary events from a file
-  class from_file_generator : public i_genbb
+  // Forward declaration:
+  class nuclear_level;
+  class nuclear_decay_manager;
+
+  /// \brief A generator that shoot nuclear decays
+  class nuclear_decay_generator : public i_genbb
   {
   public:
 
-    // Forward PIMPL declaration
-    struct pimpl_imp;
-
-    /// Set the label of the primary event bank
-    void set_primary_event_bank_label(const std::string &);
-
     /// Default constructor
-    from_file_generator();
+    nuclear_decay_generator();
 
     /// Destructor
-    virtual ~from_file_generator();
+    virtual ~nuclear_decay_generator();
 
     /// Main initialization interface method
     virtual void initialize(const datatools::properties & setup_,
@@ -70,18 +74,32 @@ namespace genbb {
     /// Check initialization status
     virtual bool is_initialized() const;
 
+    /// Return the Local PRNG's seed
+    unsigned long get_seed() const;
+
+    /// Accept external PRNG
+    virtual bool can_external_random() const;
+
+    /// Return the active PRNG
+    const mygsl::rng & get_random() const;
+
+    /// Return the active PRNG
+    mygsl::rng & grab_random();
+
   protected:
 
-    virtual void _load_next(primary_event & event_,
-                            bool compute_classification_ = true);
+    /// Generate the next event:
+    virtual void _load_next(primary_event & event_, bool compute_classification_);
 
   private:
 
-    bool        _initialized_; /// Initialization flag
-    std::string _PE_label_;    /// Label of the "primary event" bank
-    boost::scoped_ptr<pimpl_imp> _pimpl_; /// PIMPL smart pointer
+    bool        _initialized_; //!< Initialization flag
+    boost::scoped_ptr<nuclear_decay_manager> _ndm_; //!< Handle to the nuclear decay manager
+    const nuclear_level * _decaying_level_; //!< Handle to the nuclear decaying level
+    unsigned long _seed_;   //!< Local PRNG's seed
+    boost::scoped_ptr<mygsl::rng> _random_; //!< Local PRNG
 
-    GENBB_PG_REGISTRATION_INTERFACE(from_file_generator);
+    GENBB_PG_REGISTRATION_INTERFACE(nuclear_decay_generator);
 
   };
 
@@ -91,9 +109,9 @@ namespace genbb {
  * OCD support *
  ***************/
 #include <datatools/ocd_macros.h>
-DOCD_CLASS_DECLARATION(genbb::from_file_generator)
+DOCD_CLASS_DECLARATION(genbb::nuclear_decay_generator)
 
-#endif // GENBB_HELP_FROM_FILE_GENERATOR_H
+#endif // GENBB_HELP_NUCLEAR_DECAY_GENERATOR_H
 
 // Local Variables: --
 // mode: c++ --

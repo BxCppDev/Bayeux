@@ -48,7 +48,7 @@ namespace genbb {
         decay0_electron(prng,event,Egamma-EbindeM,tclev,thlev,tdlev);
         // decay0_gamma(prng,event,EbindeM,tdlev,0.,tdlev); // for real time
         decay0_gamma(prng,event,EbindeM,0.,0.,tdlev); //  for time shift
-        if (debug) std::cerr << "genbb::decay0::decay0_nucltransKLM: " << "eK+gamma" << std::endl;
+        if (debug) std::cerr << "genbb::decay0::decay0_nucltransKLM: " << "eM+gamma" << std::endl;
       } else {
         decay0_pair(prng,event,Egamma-2.*emass,tclev,thlev,tdlev);
         if (debug) std::cerr << "genbb::decay0::decay0_nucltransKLM: " << "pair" << std::endl;

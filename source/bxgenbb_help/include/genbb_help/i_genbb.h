@@ -72,77 +72,77 @@ namespace genbb {
     void reset_name();
 
     /// Constructor
-    i_genbb ();
+    i_genbb();
 
     /// Destructor
-    virtual ~i_genbb ();
+    virtual ~i_genbb();
 
     /// Load a new 'primary_event' object
-    virtual void load_next (primary_event & event_,
-                            bool compute_classification_ = true);
+    virtual void load_next(primary_event & event_,
+                           bool compute_classification_ = true);
 
     /// Check if the generator accepts an external PRNG
-    virtual bool can_external_random () const;
+    virtual bool can_external_random() const;
 
     /// Check if the generator uses an external PRNG
-    virtual bool has_external_random () const;
+    virtual bool has_external_random() const;
 
     /// Set an external PRNG
-    virtual void set_external_random (mygsl::rng &);
+    virtual void set_external_random(mygsl::rng &);
 
     /// Reset an external PRNG
-    virtual void reset_external_random ();
+    virtual void reset_external_random();
 
     /// Return a mutable reference to the external PRNG
-    mygsl::rng & grab_external_random ();
+    mygsl::rng & grab_external_random();
 
     /// Return a non-mutable reference to the external PRNG
-    const mygsl::rng & get_external_random () const;
+    const mygsl::rng & get_external_random() const;
 
     /// Simple initialization (no external resource)
-    virtual void initialize_simple ();
+    virtual void initialize_simple();
 
     /// Initialization from a container of properties
-    virtual void initialize_standalone (const datatools::properties & setup_);
+    virtual void initialize_standalone(const datatools::properties & setup_);
 
     /// Initialization from a container of properties and a service manager
-    virtual void initialize_with_service_only (const datatools::properties & setup_,
-                                               datatools::service_manager & service_manager_);
+    virtual void initialize_with_service_only(const datatools::properties & setup_,
+                                              datatools::service_manager & service_manager_);
 
     /// Initialization from a container of properties, a service manager and a dictionnary of vertex generators
-    virtual void initialize_with_dictionary_only (const datatools::properties & setup_,
-                                                  detail::pg_dict_type & dictionary_);
+    virtual void initialize_with_dictionary_only(const datatools::properties & setup_,
+                                                 detail::pg_dict_type & dictionary_);
 
     /// Check initialization status
-    virtual bool is_initialized () const = 0;
+    virtual bool is_initialized() const = 0;
 
     /// Main initialization interface method
-    virtual void initialize (const datatools::properties & setup_,
-                             datatools::service_manager & service_manager_,
-                             detail::pg_dict_type & dictionary_) = 0;
+    virtual void initialize(const datatools::properties & setup_,
+                            datatools::service_manager & service_manager_,
+                            detail::pg_dict_type & dictionary_) = 0;
 
     /// Reset method
-    virtual void reset () = 0;
+    virtual void reset() = 0;
 
     /// Returns true if the generator can provide one more generated event
-    virtual bool has_next () = 0;
+    virtual bool has_next() = 0;
 
     datatools::logger::priority get_logging_priority() const;
 
     void set_logging_priority(datatools::logger::priority p);
 
-    bool is_debug () const;
+    bool is_debug() const;
 
-    virtual void tree_dump (std::ostream& out = std::clog,
-                            const std::string& title  = "",
-                            const std::string& indent = "",
-                            bool inherit = false) const;
+    virtual void tree_dump(std::ostream& out = std::clog,
+                           const std::string& title  = "",
+                           const std::string& indent = "",
+                           bool inherit = false) const;
 
   protected:
 
     /// Protected abstract interface to be invoked by the public 'load_next' method
-    virtual void _load_next (primary_event & event_,
-                             bool compute_classification_) = 0;
+    virtual void _load_next(primary_event & event_,
+                            bool compute_classification_) = 0;
 
     void _initialize_base(const datatools::properties & setup_);
 
@@ -152,8 +152,8 @@ namespace genbb {
 
   private:
 
-    std::string  _name_; /// The name of the event generator
-    mygsl::rng * _external_random_; /// Handle to an external PRNG
+    std::string  _name_; //!< The name of the event generator
+    mygsl::rng * _external_random_; //!< Handle to an external PRNG
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_genbb);

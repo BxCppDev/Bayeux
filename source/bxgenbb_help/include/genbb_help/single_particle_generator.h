@@ -37,6 +37,8 @@
 #include <string>
 
 // Third party:
+// - Boost:
+#include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/units.h>
@@ -192,16 +194,16 @@ namespace genbb {
 
   private:
 
-    bool   _initialized_;
-    int    _particle_type_;
-    std::string _particle_name_;
-    boost::scoped_ptr<ion_data_type> _ion_data_;
-    double _particle_mass_;
-    int    _mode_;
-    double _mean_energy_;
-    double _sigma_energy_;
-    double _min_energy_;
-    double _max_energy_;
+    bool   _initialized_;        //!< Initialization flag
+    int    _particle_type_;      //!< Generated particle type
+    std::string _particle_name_; //!< Generated particle name
+    boost::scoped_ptr<ion_data_type> _ion_data_; //!< Ion data
+    double _particle_mass_; //!< Particle mass
+    int    _mode_;          //!< Mode
+    double _mean_energy_;   //!< Mean energy
+    double _sigma_energy_;  //!< Energy sigma
+    double _min_energy_;    //!< Minimum energy
+    double _max_energy_;    //!< Maximum energy
 
     std::vector<multi_rays_record_type> _multi_rays_records_; //!< Records for the multi-ray mode
 
@@ -218,7 +220,7 @@ namespace genbb {
     double        _cone_min_angle_; //!< Minimum angle of the cone of emission along the main emission axis
     geomtools::vector_3d _cone_axis_;
     unsigned long _seed_;   //!< Local PRNG's seed
-    mygsl::rng    _random_; //!< Local PRNG
+    boost::scoped_ptr<mygsl::rng> _random_; //!< Local PRNG
 
     GENBB_PG_REGISTRATION_INTERFACE(single_particle_generator);
 

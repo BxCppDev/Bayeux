@@ -323,14 +323,14 @@ namespace genbb {
 
   private:
 
-    int32_t              _type_;     /// Extended Geant3 type of the particle (using historical Geant3 particle Ids + additional codes)
-    int32_t              _pdg_code_; /// Standard PDG code of the particle (NOT USED YET)
-    std::string          _particle_label_; /// String identifier of the particle in case it is not supported by the table of Geant3 codes (type) or PDG standards
-    double               _mass_;     /// The mass in CLHEP energy unit
-    double               _time_;     /// The mass in CLHEP time unit
-    geomtools::vector_3d _momentum_; /// The mass in CLHEP momentum unit
-    geomtools::vector_3d _vertex_;   /// The mass in CLHEP position unit
-    datatools::properties _auxiliaries_; /// Auxiliary properties
+    int32_t              _type_;     //!< Extended Geant3 type of the particle (using historical Geant3 particle Ids + additional codes)
+    int32_t              _pdg_code_; //!< Standard PDG code of the particle (NOT USED YET)
+    std::string          _particle_label_; //!< String identifier of the particle in case it is not supported by the table of Geant3 codes (type) or PDG standards
+    double               _mass_;     //!< The mass in CLHEP energy unit
+    double               _time_;     //!< The mass in CLHEP time unit
+    geomtools::vector_3d _momentum_; //!< The mass in CLHEP momentum unit
+    geomtools::vector_3d _vertex_;   //!< The mass in CLHEP position unit
+    datatools::properties _auxiliaries_; //!< Auxiliary properties
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_particle)

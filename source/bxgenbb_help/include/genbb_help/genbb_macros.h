@@ -13,6 +13,7 @@
 
 // This project:
 #include <genbb_help/i_genbb.h>
+#include <genbb_help/base_decay_driver.h>
 
 #define GENBB_PG_CLASS_DECLARE(T)              \
   class T : public ::genbb::i_genbb \
@@ -121,6 +122,17 @@ public:                                         \
 
 #define GENBB_PG_REGISTRATION_IMPLEMENT(GENBB_CLASS_NAME,GENBB_ID)   \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::i_genbb,GENBB_CLASS_NAME,GENBB_ID); \
+  /**/
+
+/** Registration */
+
+#define GENBB_BDD_REGISTRATION_INTERFACE(GENBB_CLASS_NAME)             \
+  private:                                                              \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::base_decay_driver,GENBB_CLASS_NAME); \
+  /**/
+
+#define GENBB_BDD_REGISTRATION_IMPLEMENT(GENBB_CLASS_NAME,GENBB_ID)   \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::base_decay_driver,GENBB_CLASS_NAME,GENBB_ID); \
   /**/
 
 

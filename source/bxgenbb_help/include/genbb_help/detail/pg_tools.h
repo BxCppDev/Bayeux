@@ -1,24 +1,27 @@
-// -*- mode: c++ ; -*- 
+// -*- mode: c++ ; -*-
 /* pg_tools.h
  * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-02-25
  * Last modified: 2013-02-25
  *
- * License: 
- * 
- * Description: 
- * 
- * History: 
- * 
+ * License:
+ *
+ * Description:
+ *
+ * History:
+ *
  */
 
-#ifndef GENBB_DETAIL_PG_TOOLS_H_
-#define GENBB_DETAIL_PG_TOOLS_H_ 1
+#ifndef GENBB_DETAIL_PG_TOOLS_H
+#define GENBB_DETAIL_PG_TOOLS_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/handle.h>
 #include <datatools/bit_mask.h>
 #include <datatools/properties.h>
@@ -46,7 +49,7 @@ namespace genbb {
 
   namespace detail {
 
-    class pg_entry_type 
+    class pg_entry_type
     {
     public:
 
@@ -78,23 +81,23 @@ namespace genbb {
       const std::string & get_id () const;
 
       void set_id (const std::string &);
-        
+
       bool has_manager () const;
 
       void set_manager (manager &);
 
       void reset_manager ();
- 
+
       const manager & get_manager() const;
- 
+
       manager & grab_manager();
 
       void set_blank ();
-         
+
       void set_created ();
-     
+
       void set_initialized ();
-       
+
       void set_uninitialized ();
 
       bool is_created () const;
@@ -108,7 +111,7 @@ namespace genbb {
       bool has () const;
 
       const i_genbb & get () const;
- 
+
       i_genbb & grab ();
 
       const pg_handle_type & get_handle () const;
@@ -117,7 +120,7 @@ namespace genbb {
 
       pg_handle_type & grab_initialized_handle ();
 
-      virtual void tree_dump (std::ostream & out_         = std::clog, 
+      virtual void tree_dump (std::ostream & out_         = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
                               bool inherit_               = false) const;
@@ -127,7 +130,7 @@ namespace genbb {
 
       std::string           _name_;    //!< The name of the PG
       std::string           _id_;      //!< The ID (type) of the PG
-      datatools::properties _config_;  //!< The configuration of the PG 
+      datatools::properties _config_;  //!< The configuration of the PG
       uint32_t              _status_;  //!< The status of the PG
       pg_handle_type        _handle_;  //!< The handle for the allocated PG
       manager             * _manager_; //!< Particle generator manager
@@ -136,10 +139,10 @@ namespace genbb {
 
     typedef std::map<std::string, pg_entry_type> pg_dict_type;
 
-    void create(pg_entry_type & entry_, 
+    void create(pg_entry_type & entry_,
                 datatools::factory_register<i_genbb> * factory_,
                 mygsl::rng * external_random_);
-    
+
     void initialize(pg_entry_type & entry_,
                     datatools::service_manager * service_manager_,
                     detail::pg_dict_type * dictionary_,
@@ -152,6 +155,4 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // GENBB_DETAIL_PG_TOOLS_H_
-
-// end of pg_tools.h
+#endif // GENBB_DETAIL_PG_TOOLS_H

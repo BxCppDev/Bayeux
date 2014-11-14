@@ -405,7 +405,7 @@ namespace genbb {
     if (has_external_random ()) {
       return get_external_random ();
     }
-    return _random_;
+    return *_random_;
   }
 
   mygsl::rng & single_particle_generator::grab_random ()
@@ -413,7 +413,7 @@ namespace genbb {
     if (has_external_random ()) {
       return grab_external_random ();
     }
-    return _random_;
+    return *_random_;
   }
 
   void single_particle_generator::_at_reset_()
@@ -423,7 +423,10 @@ namespace genbb {
     }
     _vnm_.reset();
     _energy_spectrum_.reset();
-    if (_random_.is_initialized()) {
+    if (_random_) {
+      if (_random_->is_initialized()) {
+        _random_->reset();
+      }
       _random_.reset();
     }
     _set_defaults();
@@ -984,9 +987,11 @@ namespace genbb {
       }
     }
 
-    if (! has_external_random ()) {
-      _random_.init ("taus2", _seed_);
+    if (! has_external_random()) {
+      _random_.reset(new mygsl::rng);
+      _random_->init ("taus2", _seed_);
     }
+
     return;
   }
 

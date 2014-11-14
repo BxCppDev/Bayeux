@@ -100,6 +100,9 @@ namespace genbb {
     /// Add a primary particle
     void add_particle(const primary_particle &);
 
+    /// Add a primary particle
+    primary_particle & add_particle();
+
     /// Return the number of primary particles
     unsigned int get_number_of_particles() const;
 
@@ -156,7 +159,7 @@ namespace genbb {
 
     /// Smart print
     virtual void
-    tree_dump(std::ostream      & out_    = std::clog,
+    tree_dump(std::ostream       & out_    = std::clog,
                const std::string & title_  = "",
                const std::string & indent_ = "",
                bool inherit_               = false) const;
@@ -177,12 +180,12 @@ namespace genbb {
 
   private:
 
-    double                _time_;           /// The generation time
-    particles_col_type    _particles_;      /// The list of primary particles
-    std::string           _label_;          /// A label associated to the generated event
-    std::string           _classification_; /// A classification string id
-    double                _genbb_weight_;   /// The weight of the generated event with respect to a reference sample
-    datatools::properties _auxiliaries_;    /// Auxiliary properties
+    double                _time_;           //!< The generation time
+    particles_col_type    _particles_;      //!< The list of primary particles
+    std::string           _label_;          //!< A label associated to the generated event
+    std::string           _classification_; //!< A classification string id
+    double                _genbb_weight_;   //!< The weight of the generated event with respect to a reference sample
+    datatools::properties _auxiliaries_;    //!< Auxiliary properties
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_event)

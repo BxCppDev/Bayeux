@@ -151,6 +151,13 @@ namespace genbb {
     return;
   }
 
+  primary_particle & primary_event::add_particle()
+  {
+    primary_particle dummy;
+    _particles_.push_back(dummy);
+    return _particles_.back();
+  }
+
   unsigned int primary_event::get_number_of_particles() const
   {
     return _particles_.size();
