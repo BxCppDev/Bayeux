@@ -48,6 +48,7 @@ if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex03 failed !" 1>&2
     my_exit 1
 fi
+
 genbb_inspector_bin="bxgenbb_inspector"
 
 which ${genbb_inspector_bin} > /dev/null 2>&1
@@ -71,7 +72,7 @@ ${genbb_inspector_bin} \
     --action shoot \
     --generator "Co60" \
     --prng-seed 314159 \
-    --number-of-events 55 \
+    --number-of-events 10000 \
     --output-file "histos_Co60.root"
 if [ $? -ne 0 ]; then
     echo "ERROR: Shoot events failed !" 1>&2
@@ -79,7 +80,7 @@ if [ $? -ne 0 ]; then
 fi
 
 rm -f ./ex03
-rm -f ./histos_Co60.root
+# rm -f ./histos_Co60.root
 rm -fr ${build_dir}
 
 cd ${opwd}

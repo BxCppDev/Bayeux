@@ -73,7 +73,7 @@ half_life : real as time = 3.3 ps
 decay_table.branching_ratio_unit : string = "%"
 decay_table.channels : string[3] = "Gamma0" "Gamma1" "Gamma2"
 
-decay_table.Gamma0.decay           : string = "Ni60_2505-Ni60_2284"
+decay_table.Gamma0.decay           : string = "Ni60_2505-Ni60_2158"
 decay_table.Gamma0.branching_ratio : real   =  0.0076
 
 decay_table.Gamma1.decay           : string = "Ni60_2505-Ni60_1332"

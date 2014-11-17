@@ -12,7 +12,7 @@ spin   : string  = "5"
 parity : string  = "+"
 stable : boolean = 0
 fundamental : boolean = 1
-half_life : real as time = 1925.28 days
+half_life : real as time = 1925.28 day
 
 ###############
 # Decay table #
