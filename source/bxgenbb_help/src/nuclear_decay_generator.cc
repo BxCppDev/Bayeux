@@ -75,15 +75,15 @@ namespace genbb {
       } else {
         setup_.export_and_rename_starting_with(ndm_config, "manager.", "");
       }
-      // ndm_config.tree_dump(std::clog, "Nuclear decay manager configuration: ");
-
+      if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+        ndm_config.tree_dump(std::cerr, "Nuclear decay manager configuration: ", "TRACE: ");
+      }
       _ndm_.reset(new nuclear_decay_manager);
       nuclear_decay_manager & ndm = *_ndm_;
       ndm.initialize(ndm_config);
       if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-        ndm.tree_dump(std::clog, "Nuclear decay manager: ", "TRACE: ");
+        ndm.tree_dump(std::cerr, "Nuclear decay manager: ", "TRACE: ");
       }
-
     }
 
     if (! _decaying_level_) {
@@ -94,6 +94,9 @@ namespace genbb {
                     std::logic_error,
                     "Cannot find level '" << dl << "' in the dictionary of levels!");
         _decaying_level_ = &levels.find(dl)->second.get();
+        if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+          _decaying_level_->tree_dump(std::cerr, "Decaying level: ", "TRACE: ");
+        }
       }
     }
 

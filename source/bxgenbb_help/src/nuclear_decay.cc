@@ -32,7 +32,6 @@
 // This project:
 #include <genbb_help/nuclear_level.h>
 #include <genbb_help/beta_decay.h>
-#include <genbb_help/gamma_transition.h>
 
 namespace genbb {
 
@@ -71,8 +70,22 @@ namespace genbb {
 
     // config_.tree_dump(std::cerr, "NC config_:", "DEVEL: ");
 
+    _logging_ = datatools::logger::extract_logging_configuration(config_,
+                                                                 datatools::logger::PRIO_FATAL,
+                                                                 true);
+
     // Fetch parameters:
     if (levels_) {
+
+      DT_LOG_TRACE(_logging_, "Number of levels : " << levels_->size());
+      for (std::map<std::string, nuclear_level::handle_type>::const_iterator i =
+             levels_->begin();
+           i != levels_->end();
+           i++) {
+        DT_LOG_TRACE(_logging_, "Level : '" << i->first << "'");
+        // const nuclear_level & lvl = i->second.get();
+      }
+
       if (_level_initial_ == 0) {
         if (config_.has_key("level_initial")) {
           const std::string & level_initial_label = config_.fetch_string("level_initial");
@@ -130,7 +143,6 @@ namespace genbb {
     _decay_id_.clear();
     _level_initial_ = 0;
     _level_final_ = 0;
-    //_external_decay_driver_ = 0;
     return;
   }
 

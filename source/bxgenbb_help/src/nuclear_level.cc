@@ -163,7 +163,8 @@ namespace genbb {
 
   void nuclear_level::decay_channel::set_cumul_prob(double cbr_)
   {
-    DT_THROW_IF(cbr_ < 0.0 || cbr_ > 1.0, std::logic_error, "Invalid cumulative branching ratio !");
+    DT_THROW_IF(cbr_ < 0.0, std::logic_error, "Invalid cumulative branching ratio !");
+    DT_THROW_IF(cbr_ > 1.0, std::logic_error, "Invalid cumulative branching ratio !");
     _cumul_prob_ = cbr_;
     return;
   }
@@ -596,14 +597,18 @@ namespace genbb {
   void nuclear_level::_compute_decay_weights()
   {
     double wsum = 0.0;
+    std::vector<double> weights;
+    weights.assign(_decay_channels_.size(), 0.0);
     for (int i = 0; i < (int) _decay_channels_.size(); i++) {
       decay_channel & channel = _decay_channels_[i];
       wsum += channel.get_branching_ratio();
-      channel.set_cumul_prob(wsum);
+      // Record the non-normalized cumulative probability:
+      weights[i] = wsum;
     }
     for (int i = 0; i < (int) _decay_channels_.size(); i++) {
       decay_channel & channel = _decay_channels_[i];
-      channel.set_cumul_prob(channel.get_cumul_prob() / wsum);
+      // Now we store the normalized probability:
+      channel.set_cumul_prob(weights[i] / wsum);
     }
     return;
   }
@@ -722,10 +727,10 @@ namespace genbb {
       _auxiliaries_.tree_dump(out_, "", indent_oss.str());
     }
 
-    out_ << i_tree_dumpable::tag
+    out_ << indent_ << i_tree_dumpable::tag
          << "Valid     : " << is_valid() << std::endl;
 
-    out_ << i_tree_dumpable::inherit_tag(inherit_)
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
          << "Initialized : " << is_initialized() << std::endl;
 
     return;

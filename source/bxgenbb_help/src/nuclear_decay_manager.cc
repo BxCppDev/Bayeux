@@ -175,10 +175,18 @@ namespace genbb {
                                                                  datatools::logger::PRIO_FATAL,
                                                                  true);
 
+    if (_logging_ >= datatools::logger::PRIO_TRACE) {
+      config_.tree_dump(std::cerr, "Nuclear decay manager configuration: ", "TRACE: ");
+    }
     if (config_.has_key("definition_files")) {
       std::vector<std::string> filenames;
       config_.fetch("definition_files", filenames);
       for (int i = 0; i < (int) filenames.size(); i++) {
+        DT_LOG_TRACE(_logging_, "Loading file '" << filenames[i] << "'");
+        // std::cerr << "DEVEL: "
+        //           << "nuclear_decay_manager::initialize: "
+        //           << "Loading file '" << filenames[i] << "'"
+        //           << std::endl;
         load(filenames[i]);
       }
     }

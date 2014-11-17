@@ -599,9 +599,9 @@ namespace genbb {
     // }
     if (p < _cumul_g_) {
       // Fire a gamma ray:
-      std::cerr << "DEVEL: nuclear_transition::fire_event_kinematics: "
-                << "Fire a gamma ray..."
-                << std::endl;
+      // std::cerr << "DEVEL: nuclear_transition::fire_event_kinematics: "
+      //           << "Fire a gamma ray..."
+      //           << std::endl;
       mode_ = MODE_GAMMA;
       eg_ = _energy_;
       double cost =  prng_.flat(-1.0, +1.0);
