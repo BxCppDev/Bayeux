@@ -485,14 +485,27 @@ set(${module_name}_MODULE_APPS
 
 # - Resource files
 set(${module_name}_MODULE_RESOURCES
+  ${module_resource_dir}/manager/config/pro-1.0/README.rst
   ${module_resource_dir}/manager/config/pro-1.0/misc.conf
   ${module_resource_dir}/manager/config/pro-1.0/calibrations.conf
   ${module_resource_dir}/manager/config/pro-1.0/manager.conf
   ${module_resource_dir}/manager/config/pro-1.0/backgrounds.conf
   ${module_resource_dir}/manager/config/pro-1.0/dbd.conf
+  ${module_resource_dir}/inspector/config/le_nuphy-1.0/README.rst
   ${module_resource_dir}/inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf
   ${module_resource_dir}/inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf
-  ${module_resource_dir}/inspector/config/le_nuphy-1.0/README.rst
+  ${module_resource_dir}/generators/Co60/README.rst
+  ${module_resource_dir}/generators/Co60/manager.conf
+  ${module_resource_dir}/generators/Co60/generators.def
+  ${module_resource_dir}/generators/Co60/data/Co60/Co60_levels.def
+  ${module_resource_dir}/generators/Co60/data/Co60/Co60_decays.def
+  ${module_resource_dir}/generators/Co60/data/Co60/Co60_level_scheme.jpeg
+  ${module_resource_dir}/generators/Co60/data/Co60/Co60_decay_scheme.jpeg
+  ${module_resource_dir}/generators/Co60/data/Co60/Co60_levels.jpeg
+  ${module_resource_dir}/generators/Co60/data/Ni60/Ni60_levels.def
+  ${module_resource_dir}/generators/Co60/data/Ni60/Ni60_decays.def
+  ${module_resource_dir}/generators/Co60/data/Ni60/Ni60_level_scheme.jpeg
+  ${module_resource_dir}/generators/Co60/data/Ni60/Ni60_levels.jpeg
   )
 
 # - Publish resource files
