@@ -69,17 +69,6 @@ namespace genbb {
     return _mode_ == MODE_ACTIVITY;
   }
 
-  bool combined_particle_generator::is_debug () const
-  {
-    return _debug_;
-  }
-
-  void combined_particle_generator::set_debug (bool new_value_)
-  {
-    _debug_ = new_value_;
-    return;
-  }
-
   bool combined_particle_generator::can_external_random () const
   {
     return true;
@@ -87,7 +76,6 @@ namespace genbb {
 
   combined_particle_generator::combined_particle_generator () : i_genbb ()
   {
-    _debug_ = false;
     _initialized_ = false;
     _mode_ = MODE_PLAIN_PROBABILITY;
     _seed_ = 0;
@@ -318,7 +306,7 @@ namespace genbb {
   void combined_particle_generator::_at_init_ ()
   {
     if (! has_external_random ()) {
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+      DT_LOG_NOTICE(get_logging_priority(),
                     "Initializing embeded PRNG...");
       _random_.init ("taus2", _seed_);
     }

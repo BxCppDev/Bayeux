@@ -70,10 +70,6 @@ namespace genbb {
         MODE_ACTIVITY          = 1
       };
 
-    bool is_debug () const;
-
-    void set_debug (bool);
-
     void set_mode(int mode_);
 
     bool is_mode_plain_probability () const;
