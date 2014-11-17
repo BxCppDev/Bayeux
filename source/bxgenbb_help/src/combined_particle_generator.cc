@@ -387,3 +387,73 @@ namespace genbb {
   }
 
 } // end of namespace genbb
+
+/***************
+ * OCD support *
+ ***************/
+
+#include <datatools/ocd_macros.h>
+
+// OCD support for class '::genbb::combined_particle_generator' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::combined_particle_generator,ocd_)
+{
+  ocd_.set_class_name ("genbb::combined_particle_generator");
+  ocd_.set_class_description ("A combined particle generator");
+  ocd_.set_class_library("genbb_help");
+  ocd_.set_class_documentation("The ``genbb::combined_particle_generator`` enables to        \n"
+                               "randomize the initial kinematics of a primary event          \n"
+                               "from a weighted combination of external particle generators. \n"
+                               "It can be typically initialized from an ASCII configuration  \n"
+                               "file. The generator can be given an external PRNG provided   \n"
+                               "by the user, a manager or use its own embedded PRNG.         \n"
+                              );
+
+  ocd_.set_configuration_hints ("Here are some typical configurations:                       \n"
+                                "                                                            \n"
+                                "***Example 1***                                             \n"
+                                "                                                            \n"
+                                "Combination of 3 generators with plain probability          \n"
+                                "weight::                                                    \n"
+                                "                                                            \n"
+                                "  seed : integer = 12345                                    \n"
+                                "  mode : string = \"plain_probability\"                     \n"
+                                "  generators.labels : string[3] = \\                        \n"
+                                "    \"decay0\" \\                                           \n"
+                                "    \"decay1\" \\                                           \n"
+                                "    \"decay2\"                                              \n"
+                                "  generators.decay0.name        : string = \"Bi214\"        \n"
+                                "  generators.decay1.name        : string = \"Tl208\"        \n"
+                                "  generators.decay2.name        : string = \"Co60\"         \n"
+                                "  generators.decay0.probability : real = 10 %               \n"
+                                "  generators.decay1.probability : real = 60 %               \n"
+                                "  generators.decay2.probability : real = 30 %               \n"
+                                "                                                            \n"
+                                "                                                            \n"
+                                "***Example 2**                                              \n"
+                                "                                                            \n"
+                                "Combination of 3 generators with weights given by           \n"
+                                "activity::                                                  \n"
+                                "                                                            \n"
+                                "  seed : integer = 12345                                    \n"
+                                "  mode : string = \"activity\"                              \n"
+                                "  generators.labels : string[3] = \\                        \n"
+                                "    \"decay0\" \\                                           \n"
+                                "    \"decay1\" \\                                           \n"
+                                "    \"decay2\"                                              \n"
+                                "  generators.decay0.name     : string = \"Bi214\"           \n"
+                                "  generators.decay1.name     : string = \"Tl208\"           \n"
+                                "  generators.decay2.name     : string = \"Co60\"            \n"
+                                "  generators.decay0.activity : real = 10 mBq                \n"
+                                "  generators.decay1.activity : real = 60 mBq                \n"
+                                "  generators.decay2.activity : real = 30 mBq                \n"
+                                "                                                            \n"
+                                );
+
+  ocd_.set_validation_support(false);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+
+DOCD_CLASS_SYSTEM_REGISTRATION(genbb::combined_particle_generator,
+                               "genbb::combined_particle_generator")

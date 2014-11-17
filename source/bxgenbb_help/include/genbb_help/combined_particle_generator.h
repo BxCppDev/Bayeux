@@ -131,6 +131,12 @@ namespace genbb {
 
 } // end of namespace genbb
 
+/***************
+ * OCD support *
+ ***************/
+#include <datatools/ocd_macros.h>
+DOCD_CLASS_DECLARATION(genbb::combined_particle_generator)
+
 #endif // GENBB_HELP_COMBINED_PARTICLE_GENERATOR_H
 
 // Local Variables: --
