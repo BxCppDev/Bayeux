@@ -115,7 +115,6 @@ namespace genbb {
 
   private:
 
-    bool   _debug_;
     bool   _initialized_;
     int    _mode_;
     unsigned long _seed_;   //!< Local PRNG's seed
