@@ -1366,7 +1366,7 @@ namespace datatools {
     void registry::register_standard_units()
     {
       // Length [L]:
-      registration(unit("meter",       "m",  "length;[L]",             CLHEP::meter, true));
+      registration(unit("meter",       "m",  "length;[L]",         CLHEP::meter, true));
       registration(unit("angstrom",   "AA",  "length",             CLHEP::angstrom));
       registration(unit("femtometer", "fm",
                         /**/       "fermi",  "length",             CLHEP::fermi));
@@ -1402,7 +1402,7 @@ namespace datatools {
                         /**/            "NM", "length",  nautical_mile));
 
       // Mass [M]:
-      registration(unit("kilogram",  "kg",     "mass;[M]",        CLHEP::kilogram, true));
+      registration(unit("kilogram",  "kg",     "mass;[M]",    CLHEP::kilogram, true));
       registration(unit("decagram", "dag",     "mass", 0.01 * CLHEP::kilogram));
       registration(unit("hectogram", "hg",     "mass",  0.1 * CLHEP::kilogram));
       registration(unit("ton",        "t",     "mass", 1e+3 * CLHEP::kilogram));
@@ -1417,7 +1417,7 @@ namespace datatools {
       registration(unit("dalton", "u", "Da",   "mass",        1.660538921e-27 * CLHEP::kilogram));
 
       // Time [T]:
-      registration(unit("second",       "s",  "time;[T]",         CLHEP::second, true));
+      registration(unit("second",       "s",  "time;[T]",     CLHEP::second, true));
       registration(unit("millisecond", "ms",  "time",         CLHEP::millisecond));
       registration(unit("microsecond", "us",  "time",         CLHEP::microsecond));
       registration(unit("nanosecond",  "ns",  "time",         CLHEP::nanosecond));
@@ -1427,11 +1427,15 @@ namespace datatools {
       registration(unit("minute",      "min", "time",  minute));
       const double hour   = 3600 * CLHEP::second;
       registration(unit("hour",        "h",   "time",  hour));
+      const double day   = 24 * hour;
+      registration(unit("day",         "d",   "time",  day));
+      const double week  = 7 * day;
+      registration(unit("week",               "time",  week));
 
       // https://en.wikipedia.org/wiki/SI_electromagnetism_units
 
       // Electric current [I] (A = W/V = C/s) :
-      registration(unit("ampere",       "A",    "electric_current;[I]",          CLHEP::ampere, true));
+      registration(unit("ampere",       "A",    "electric_current;[I]",      CLHEP::ampere, true));
       registration(unit("milliampere", "mA",    "electric_current", 1.e-3  * CLHEP::ampere));
       registration(unit("microampere", "uA",    "electric_current", 1.e-6  * CLHEP::ampere));
       registration(unit("nanoampere",  "nA",    "electric_current", 1.e-9  * CLHEP::ampere));
@@ -1472,7 +1476,7 @@ namespace datatools {
                         CLHEP::lumen * CLHEP::second / CLHEP::meter3, true));
 
       // Surface/area:
-      registration(unit("meter2",       "m2", "surface;[L2]",           CLHEP::meter2, true));
+      registration(unit("meter2",       "m2", "surface;[L2]",      CLHEP::meter2, true));
       registration(unit("centimeter2", "cm2", "surface",           CLHEP::centimeter2));
       registration(unit("millimeter2", "mm2", "surface",           CLHEP::millimeter2));
       registration(unit("micrometer2", "um2", "surface",   1.e-6 * CLHEP::millimeter2));
@@ -1487,11 +1491,11 @@ namespace datatools {
 
 
       // Surface density:
-      registration(unit("kg/m2",         "surface_density;[M][L-2]",       CLHEP::kg / CLHEP::meter2, true));
-      registration(unit("g/cm2",         "surface_density",       CLHEP::gram / CLHEP::centimeter2));
+      registration(unit("kg/m2",         "surface_density;[M][L-2]", CLHEP::kg / CLHEP::meter2, true));
+      registration(unit("g/cm2",         "surface_density",          CLHEP::gram / CLHEP::centimeter2));
 
       // Cross-section:
-      registration(unit("barn",          "b", "cross_section;[L2]",           CLHEP::barn, true));
+      registration(unit("barn",          "b", "cross_section;[L2]",      CLHEP::barn, true));
       registration(unit("megabarn",     "Mb", "cross_section",  1.e+6  * CLHEP::barn));
       registration(unit("kilobarn",     "kb", "cross_section",  1.e+3  * CLHEP::barn));
       registration(unit("millibarn",    "mb", "cross_section",  1.e-3  * CLHEP::barn));
@@ -1501,11 +1505,11 @@ namespace datatools {
       registration(unit("femtobarn",    "fb", "cross_section",  1.e-15 * CLHEP::barn));
 
       // Volume:
-      registration(unit("meter3",       "m3",     "volume;[L3]",                       CLHEP::meter3, true));
-      registration(unit("centimeter3", "cm3",     "volume",                       CLHEP::centimeter3));
-      registration(unit("decimeter3",  "dm3",     "volume",                1.e3 * CLHEP::centimeter3));
-      registration(unit("millimeter3", "mm3",     "volume",                       CLHEP::millimeter3));
-      registration(unit("kilometer3",  "km3",     "volume",                       CLHEP::kilometer3));
+      registration(unit("meter3",       "m3",     "volume;[L3]",             CLHEP::meter3, true));
+      registration(unit("centimeter3", "cm3",     "volume",                  CLHEP::centimeter3));
+      registration(unit("decimeter3",  "dm3",     "volume",           1.e3 * CLHEP::centimeter3));
+      registration(unit("millimeter3", "mm3",     "volume",                  CLHEP::millimeter3));
+      registration(unit("kilometer3",  "km3",     "volume",                  CLHEP::kilometer3));
       const double litre = 1.e3 * CLHEP::centimeter3;
       const double millilitre = 1.e-3 * litre;
       registration(unit("litre",        "l",
@@ -1538,7 +1542,7 @@ namespace datatools {
 
 
       // Angle/plane angle:
-      registration(unit("radian",         "rad", "angle;[1]",            CLHEP::radian, true));
+      registration(unit("radian",         "rad", "angle;[1]",        CLHEP::radian, true));
       registration(unit("milliradian",   "mrad", "angle",            CLHEP::milliradian));
       registration(unit("microradian",   "urad", "angle",     1e-3 * CLHEP::milliradian));
       registration(unit("degree",         "deg", "angle",            CLHEP::degree));
@@ -1552,7 +1556,7 @@ namespace datatools {
       registration(unit("turn",          "turn", "angle", 2 * M_PI * CLHEP::radian));
 
       // Solid angle:
-      registration(unit("steradian",       "sr",  "solid_angle;[1]",         CLHEP::steradian, true));
+      registration(unit("steradian",       "sr",  "solid_angle;[1]",     CLHEP::steradian, true));
       registration(unit("decasteradian", "dasr",  "solid_angle",   10. * CLHEP::steradian));
       registration(unit("decisteradian",  "dsr",  "solid_angle",   0.1 * CLHEP::steradian));
       registration(unit("centisteradian", "csr",  "solid_angle",  1e-2 * CLHEP::steradian));
@@ -1563,7 +1567,7 @@ namespace datatools {
       registration(unit("femtosteradian", "fsr",  "solid_angle", 1e-15 * CLHEP::steradian));
 
       // Energy:
-      registration(unit("joule",               "J", "energy;[M][L2][T-2]",      CLHEP::joule, true));
+      registration(unit("joule",               "J", "energy;[M][L2][T-2]", CLHEP::joule, true));
       registration(unit("nanoelectronvolt",  "neV", "energy",  1e-9 * CLHEP::electronvolt));
       registration(unit("microelectronvolt", "ueV", "energy",  1e-6 * CLHEP::electronvolt));
       registration(unit("millielectronvolt", "meV", "energy",  1e-3 * CLHEP::electronvolt));
@@ -1605,7 +1609,7 @@ namespace datatools {
       registration(unit("cmHg",       "pressure", cmHg));
 
       // Density/volumetric mass density:
-      registration(unit("kg/m3",             "density;[M][L-3]",         CLHEP::kilogram / CLHEP::m3, true));
+      registration(unit("kg/m3",             "density;[M][L-3]", CLHEP::kilogram / CLHEP::m3, true));
       registration(unit("kg/L",    "kg/l",
                         /**/     "kg/dm3",   "density",         CLHEP::kilogram / litre));
       registration(unit("g/mL",    "g/mL",   "density",         CLHEP::gram / millilitre));
@@ -1614,7 +1618,7 @@ namespace datatools {
       registration(unit("mg/cm3",            "density",         CLHEP::milligram / CLHEP::cm3));
 
       // Frequency:
-      registration(unit("hertz",        "Hz",   "frequency;[T-1]",          CLHEP::hertz, true));
+      registration(unit("hertz",        "Hz",   "frequency;[T-1]",    CLHEP::hertz, true));
       registration(unit("millihertz",  "mHz",   "frequency",  1.e-3 * CLHEP::hertz));
       registration(unit("kilohertz",   "kHz",   "frequency",          CLHEP::kilohertz));
       registration(unit("megahertz",   "MHz",   "frequency",          CLHEP::megahertz));
@@ -1624,7 +1628,7 @@ namespace datatools {
       registration(unit("rad/s",       "angular_frequency;[T-1]",   CLHEP::radian / CLHEP::second, true));
 
       // Activity:
-      registration(unit("becquerel",       "Bq",    "activity;[T-1]",          CLHEP::becquerel, true));
+      registration(unit("becquerel",       "Bq",    "activity;[T-1]",    CLHEP::becquerel, true));
       registration(unit("millibecquerel", "mBq",    "activity", 1.e-3  * CLHEP::becquerel));
       registration(unit("microbecquerel", "uBq",    "activity", 1.e-6  * CLHEP::becquerel));
       registration(unit("kilobecquerel",  "kBq",    "activity", 1.e+3  * CLHEP::becquerel));
@@ -1643,7 +1647,7 @@ namespace datatools {
       // Volume activity:
       const double Bq_per_m3 = CLHEP::becquerel / CLHEP::m3;
       const double dpm_per_m3 = dpm / CLHEP::m3;
-      registration(unit("Bq/m3",     "volume_activity;[L-3][T-1]",         Bq_per_m3, true));
+      registration(unit("Bq/m3",     "volume_activity;[L-3][T-1]", Bq_per_m3, true));
       registration(unit("mBq/m3",    "volume_activity", 1.e-3 * Bq_per_m3));
       registration(unit("uBq/m3",    "volume_activity", 1.e-6 * Bq_per_m3));
       registration(unit("kBq/m3",    "volume_activity", 1.e+3 * Bq_per_m3));
@@ -1654,7 +1658,7 @@ namespace datatools {
       // Surface activity:
       const double Bq_per_m2 = CLHEP::becquerel / CLHEP::m2;
       const double dpm_per_m2 = dpm / CLHEP::m2;
-      registration(unit("Bq/m2",     "surface_activity;[L-2][T-1]",         Bq_per_m2, true));
+      registration(unit("Bq/m2",     "surface_activity;[L-2][T-1]", Bq_per_m2, true));
       registration(unit("mBq/m2",    "surface_activity", 1.e-3 * Bq_per_m2));
       registration(unit("uBq/m2",    "surface_activity", 1.e-6 * Bq_per_m2));
       registration(unit("kBq/m2",    "surface_activity", 1.e+3 * Bq_per_m2));
@@ -1665,7 +1669,7 @@ namespace datatools {
       // Mass activity:
       const double Bq_per_kg = CLHEP::becquerel / CLHEP::kg;
       const double dpm_per_kg = dpm / CLHEP::kg;
-      registration(unit("Bq/kg",     "mass_activity;[M-1][T-1]",         Bq_per_kg, true));
+      registration(unit("Bq/kg",     "mass_activity;[M-1][T-1]", Bq_per_kg, true));
       registration(unit("mBq/kg",    "mass_activity", 1.e-3 * Bq_per_kg));
       registration(unit("uBq/kg",    "mass_activity", 1.e-6 * Bq_per_kg));
       registration(unit("kBq/kg",    "mass_activity", 1.e+3 * Bq_per_kg));
@@ -1682,7 +1686,7 @@ namespace datatools {
 
       // Equivalent dose [L^2][T^-2]:
       const double sievert = 1.0 * CLHEP::gray;
-      registration(unit("sievert",       "Sv", "equivalent_dose;[L2][T-2]",          sievert, true));
+      registration(unit("sievert",       "Sv", "equivalent_dose;[L2][T-2]", sievert, true));
       registration(unit("millisievert", "mSv", "equivalent_dose",  1.e-3 * sievert));
       registration(unit("microsievert", "uSv", "equivalent_dose",  1.e-6 * sievert));
       registration(unit("rem",                 "equivalent_dose", 0.01 * sievert));
