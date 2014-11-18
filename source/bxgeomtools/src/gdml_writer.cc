@@ -553,8 +553,8 @@ namespace geomtools {
                                  double density_,
                                  double a_,
                                  const std::string & state_label_,
-                                 double temperature_,
-                                 double pressure_
+                                 double /*temperature_*/,
+                                 double /*pressure_*/
                                  )
   {
     ostringstream materials_stream;
@@ -620,8 +620,8 @@ namespace geomtools {
                                  double density_,
                                  const map<string, double> & fractions_,
                                  const std::string & state_label_,
-                                 double temperature_,
-                                 double pressure_
+                                 double /*temperature_*/,
+                                 double /*pressure_*/
                                  )
   {
     ostringstream materials_stream;
