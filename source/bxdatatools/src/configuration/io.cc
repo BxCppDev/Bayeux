@@ -232,7 +232,6 @@ namespace datatools {
       for (variant_registry::record_dict_type::iterator i = vreg_.grab_records().begin();
            i != vreg_.grab_records().end();
            i++) {
-        const std::string & path = i->first;
         variant_record & rec = i->second;
         if (!rec.has_parent()) {
           top_records.push_back(&rec);
