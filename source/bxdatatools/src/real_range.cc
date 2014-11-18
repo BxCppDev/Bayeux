@@ -784,7 +784,7 @@ namespace datatools {
               // #2 ---[f2 ;                   ]>
               res = 0;
             } else {
-              double l2 = a_range.last();
+              // double l2 = a_range.last();
               // #1 ---[f1 ;                   ]>
               // #2 ---[f2 ; l2]---------------]>
               res = +1;
