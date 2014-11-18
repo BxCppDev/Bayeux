@@ -469,13 +469,13 @@ namespace genbb {
                                          double & phir_) const
   {
     // Alpha
-    double ea = _tbd_.daughter1().w(); // (_M_ * _M_ - _m2_ * _m2_ + _m1_ * _m1_) / (2 * _M_);
+    // double ea = _tbd_.daughter1().w(); // (_M_ * _M_ - _m2_ * _m2_ + _m1_ * _m1_) / (2 * _M_);
     ka_ = _tbd_.daughter1().k();
     double costa =  prng_.flat(-1.0, +1.0);
     double sinta = std::sqrt(1 - costa * costa);
     thetaa_ = std::atan2(sinta, costa);
     phia_ = prng_.flat(0.0, 2 * M_PI);
-    double er = _tbd_.daughter2().w(); // (_M_ * _M_ - _m2_ * _m2_ + _m1_ * _m1_) / (2 * _M_);
+    // double er = _tbd_.daughter2().w(); // (_M_ * _M_ - _m2_ * _m2_ + _m1_ * _m1_) / (2 * _M_);
     kr_ = _tbd_.daughter2().k();
     // double er = (_M_ * _M_ - _m1_ * _m1_ + _m2_ * _m2_) / (2 * _M_);
     // kr_ = er - _m2_;

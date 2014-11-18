@@ -188,7 +188,7 @@ namespace genbb {
 
       double prob_level = grab_random().flat(0.0, 1.0);
       const nuclear_decay * current_decay = 0;
-      for (int ichannel = 0;
+      for (size_t ichannel = 0;
            ichannel < current_level->get_number_of_decay_channels();
            ichannel++) {
         const nuclear_level::decay_channel & channel

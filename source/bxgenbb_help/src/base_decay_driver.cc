@@ -38,6 +38,7 @@ namespace genbb {
   void base_decay_driver::_set_default()
   {
     _logging_ = datatools::logger::PRIO_FATAL;
+    _decay_   = 0;
     return;
   }
 

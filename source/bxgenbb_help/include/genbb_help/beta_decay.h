@@ -275,7 +275,6 @@ namespace genbb {
 
   private:
 
-    bool _initialized_;       //!< Initialization flag
     decay_type _type_;        //!< Type of the beta decay
     double _q_beta_;          //!< Effective Qbeta
     double _ke_cut_;          //!< Cut on beta low kinetic energy

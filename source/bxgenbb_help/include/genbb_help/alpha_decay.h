@@ -181,7 +181,6 @@ namespace genbb {
 
   private:
 
-    bool _initialized_;       //!< Initialization flag
     double _q_alpha_;         //!< Effective Q alpha
     int    _A_;               //!< A of the parent nucleus
     int    _Z_;               //!< Z of the parent nucleus

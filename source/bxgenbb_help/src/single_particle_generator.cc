@@ -320,7 +320,7 @@ namespace genbb {
                 std::logic_error, "Invalid multi-rays energy !");
     DT_THROW_IF( !datatools::is_valid(prob_) || prob_ <= 0.0,
                 std::logic_error, "Invalid multi-rays probability !");
-    for (int i = 0; i < _multi_rays_records_.size(); i++) {
+    for (size_t i = 0; i < _multi_rays_records_.size(); i++) {
       const multi_rays_record_type & rec = _multi_rays_records_[i];
       DT_THROW_IF (rec.energy == energy_, std::logic_error,
                    "Duplicated ray with energy '" << energy_ / CLHEP::keV << "'!");
@@ -613,7 +613,7 @@ namespace genbb {
       if (config_.has_key ("multi_rays.energies")) {
         config_.fetch ("multi_rays.energies", en);
         if (!config_.has_explicit_unit("multi_rays.energies")) {
-          for (int i = 0; i < en.size(); i++) {
+          for (size_t i = 0; i < en.size(); i++) {
             en[i] *= energy_unit;
           }
         }
