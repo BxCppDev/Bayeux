@@ -2312,8 +2312,8 @@ namespace datatools {
   void properties::config::write_data(std::ostream& out,
                                       const std::string & a_prop_key,
                                       const properties::data & a_data,
-                                      const std::string & a_unit_symbol,
-                                      const std::string & a_unit_label,
+                                      const std::string & /*a_unit_symbol*/,
+                                      const std::string & /*a_unit_label*/,
                                       const std::string & a_comment)
   {
     std::string eol = "\n";
