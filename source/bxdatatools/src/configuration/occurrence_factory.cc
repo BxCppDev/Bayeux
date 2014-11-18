@@ -52,7 +52,7 @@ namespace datatools {
 
       std::vector<std::string> tokens;
       boost::split(tokens, def_, boost::is_any_of("\t "));
-      for (int i = 0; i < tokens.size(); i++) {
+      for (size_t i = 0; i < tokens.size(); i++) {
         const std::string & token = tokens[i];
         if (token.empty()) {
           continue;

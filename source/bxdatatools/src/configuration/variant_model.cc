@@ -272,8 +272,6 @@ namespace datatools {
            i++) {
         parameter_dict_type::const_iterator j = i;
         j++;
-        const std::string & param_name = i->first;
-        const parameter_model & param = i->second.get_model();
         std::ostringstream indent_2;
         out_ << indent_ << i_tree_dumpable::skip_tag;
         indent_2 << indent_ << i_tree_dumpable::skip_tag ;
@@ -289,8 +287,10 @@ namespace datatools {
           out_ << " : " << i->second.get_terse_description();
         }
         out_ << std::endl;
+        // const std::string & param_name = i->first;
         // out_ << "Parameter '" << param_name << "' with model: ";
         // out_ << std::endl;
+        // const parameter_model & param = i->second.get_model();
         // param.tree_dump(out_, "", indent_2.str(), false);
       }
 

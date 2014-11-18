@@ -277,7 +277,7 @@ namespace datatools {
           DT_THROW_IF(! _mp_.has_section(_top_variant_name_), std::logic_error,
                       "No definition for configuration item named '" << _top_variant_name_ << "' !");
           const datatools::multi_properties::entry & top_variant_entry = _mp_.get(_top_variant_name_);
-          const std::string & top_variant_name  = top_variant_entry.get_key();
+          // const std::string & top_variant_name  = top_variant_entry.get_key();
           const std::string & top_variant_type = top_variant_entry.get_meta();
           DT_THROW_IF(top_variant_type != item::label_from_model_type(item::MODEL_VARIANT),
                       std::logic_error,

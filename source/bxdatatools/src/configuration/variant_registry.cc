@@ -139,9 +139,9 @@ namespace datatools {
            << (unset_params.size() == 0)
            << std::endl;
       if (unset_params.size()) {
-        for (int i = 0; i < (int) unset_params.size(); i++) {
+        for (size_t i = 0; i < unset_params.size(); i++) {
           out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_);
-          int j = i;
+          size_t j = i;
           if (++j == unset_params.size()) {
             out_ << i_tree_dumpable::last_tag;
           } else {

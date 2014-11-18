@@ -181,7 +181,6 @@ namespace datatools {
 
     void variant_record::set_active(bool active_)
     {
-      bool changed = false;
       if (_active_ != active_) {
         _active_ = active_;
         _update();

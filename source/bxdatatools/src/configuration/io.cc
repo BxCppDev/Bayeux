@@ -211,14 +211,13 @@ namespace datatools {
       for (variant_registry::record_dict_type::const_iterator i = vreg_.get_records().begin();
            i != vreg_.get_records().end();
            i++) {
-        const std::string & path = i->first;
         const variant_record & rec = i->second;
         if (!rec.has_parent()) {
           top_records.push_back(&rec);
         }
       }
 
-      for (int i = 0; i < top_records.size(); i++) {
+      for (size_t i = 0; i < top_records.size(); i++) {
         DT_LOG_TRACE(_logging_, "Top record = '" << top_records[i]->get_path() << "'");
         store_record(out_, *top_records[i]);
       }
@@ -239,7 +238,7 @@ namespace datatools {
           top_records.push_back(&rec);
         }
       }
-      for (int i = 0; i < top_records.size(); i++) {
+      for (size_t i = 0; i < top_records.size(); i++) {
         DT_LOG_TRACE(_logging_, "Top record = '" << top_records[i]->get_path() << "'");
         int error = load_record(in_, *top_records[i]);
         if (error) {

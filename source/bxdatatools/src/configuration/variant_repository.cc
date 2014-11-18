@@ -240,7 +240,7 @@ namespace datatools {
       }
 
       // Configure:
-      for (int i = 0; i < registry_config_filenames.size(); i++) {
+      for (size_t i = 0; i < registry_config_filenames.size(); i++) {
         std::string variant_config_registration = registry_config_filenames[i];
         DT_LOG_TRACE(get_logging_priority(),
                      "Variants' configuration : '" << variant_config_registration << "'");

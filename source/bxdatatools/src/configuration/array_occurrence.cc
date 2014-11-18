@@ -76,7 +76,7 @@ namespace datatools {
 
     void array_occurrence::compute_occurrence(int rank_, single_occurrence & occ_) const
     {
-      DT_THROW_IF(rank_ < 0 || rank_ >= _size_,
+      DT_THROW_IF(rank_ < 0 || rank_ >= (int)_size_,
                   std::range_error, "Invalid rank '" << rank_ << "' !");
       int sid = 0;
       if (_start_id_ != INVALID_ID) {
@@ -89,7 +89,7 @@ namespace datatools {
     size_t array_occurrence::compute_index_path(std::vector<uint32_t> & path_,
                                                int rank_) const
     {
-      DT_THROW_IF(rank_ < 0 || rank_ >= _size_,
+      DT_THROW_IF(rank_ < 0 || rank_ >= (int)_size_,
                   std::range_error, "Invalid rank '" << rank_ << "' !");
       path_.clear();
       int sid = 0;
