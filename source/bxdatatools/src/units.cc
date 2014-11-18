@@ -703,6 +703,7 @@ namespace datatools {
       case BD_TEMPERATURE        : return "theta";
       case BD_AMOUNT             : return "N";
       case BD_LUMINOUS_INTENSITY : return "J";
+      default                    : break;
       }
       return "";
     }
@@ -718,6 +719,7 @@ namespace datatools {
       case BD_TEMPERATURE        : return "temperature";
       case BD_AMOUNT             : return "amount";
       case BD_LUMINOUS_INTENSITY : return "luminous_intensity";
+      default                    : break;
       }
       return "";
     }
