@@ -89,6 +89,7 @@ void test2(bool draw_)
   bool trace = false;
 
   geomtools::box b(10.0 * CLHEP::mm, 6.0 * CLHEP::mm, 1.0 * CLHEP::mm);
+  b.lock();
   geomtools::logical_volume BoxLV;
   BoxLV.set_name("BoxLV");
   BoxLV.set_shape(b);
@@ -96,6 +97,7 @@ void test2(bool draw_)
   BoxLV.grab_parameters().store("visibility.color", "green");
 
   geomtools::cylinder       cyl_hole(0.75 * CLHEP::mm, 1.0 * CLHEP::mm);
+  cyl_hole.lock();
   geomtools::logical_volume HoleLV;
   HoleLV.set_name("HoleLV");
   HoleLV.set_shape(cyl_hole);
@@ -103,6 +105,7 @@ void test2(bool draw_)
   HoleLV.grab_parameters().store("visibility.color", "orange");
 
   geomtools::box       box_hole(1.75 * CLHEP::mm, 2.0 * CLHEP::mm, 1.0 * CLHEP::mm);
+  box_hole.lock();
   geomtools::logical_volume HoleLV2;
   HoleLV2.set_name("HoleLV2");
   HoleLV2.set_shape(box_hole);
@@ -240,6 +243,7 @@ void test3(bool draw_)
   bool trace = false;
 
   geomtools::box b(10.0 * CLHEP::mm, 6.0 * CLHEP::mm, 1.0 * CLHEP::mm);
+  b.lock();
   geomtools::logical_volume BoxLV;
   BoxLV.set_name("BoxLV");
   BoxLV.set_shape(b);
@@ -247,6 +251,7 @@ void test3(bool draw_)
   BoxLV.grab_parameters().store("visibility.color", "green");
 
   geomtools::cylinder       cyl_hole(0.75 * CLHEP::mm, 1.0 * CLHEP::mm);
+  cyl_hole.lock();
   geomtools::logical_volume HoleLV;
   HoleLV.set_name("HoleLV");
   HoleLV.set_shape(cyl_hole);
@@ -254,6 +259,7 @@ void test3(bool draw_)
   HoleLV.grab_parameters().store("visibility.color", "orange");
 
   geomtools::cylinder       cyl_block(0.5 * CLHEP::mm, 1.0 * CLHEP::mm);
+  cyl_block.lock();
   geomtools::logical_volume BlockLV;
   BlockLV.set_name("BlockLV");
   BlockLV.set_shape(cyl_block);
@@ -261,6 +267,7 @@ void test3(bool draw_)
   BlockLV.grab_parameters().store("visibility.color", "red");
 
   geomtools::box rod(0.75 * CLHEP::mm, 0.75 * CLHEP::mm, 1.0 * CLHEP::mm);
+  rod.lock();
   geomtools::logical_volume RodLV;
   RodLV.set_name("PipeLV");
   RodLV.set_shape(rod);
@@ -272,6 +279,7 @@ void test3(bool draw_)
   rod_PV.set_placement(rod_PLCT);
 
   geomtools::cylinder       tube_pipe(0.80 * CLHEP::mm, 1.0 * CLHEP::mm);
+  tube_pipe.lock();
   geomtools::logical_volume PipeLV;
   PipeLV.set_name("PipeLV");
   PipeLV.set_shape(tube_pipe);
@@ -280,12 +288,14 @@ void test3(bool draw_)
   PipeLV.grab_parameters().store("visibility.color", "yellow");
 
   geomtools::physical_volume pipe_PV;
+  pipe_PV.lock();
   geomtools::placement       pipe_PLCT;
   pipe_PLCT.set_translation(-0.1 * CLHEP::mm, 0.5 * CLHEP::mm, 0.0 * CLHEP::mm);
   pipe_PV.set_logical(PipeLV);
   pipe_PV.set_placement(pipe_PLCT);
 
   geomtools::box       box_hole(2.75 * CLHEP::mm, 3.5 * CLHEP::mm, 1.0 * CLHEP::mm);
+  box_hole.lock();
   geomtools::logical_volume HoleLV2;
   HoleLV2.set_name("HoleLV2");
   HoleLV2.set_shape(box_hole);
