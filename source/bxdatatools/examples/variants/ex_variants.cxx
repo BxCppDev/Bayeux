@@ -57,7 +57,6 @@
 #include <datatools/configuration/ui/variant_repository_dialog.h>
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
-
 #include "application.hpp"
 
 void test0();
@@ -146,11 +145,11 @@ int main(int argc_, char ** argv_)
 
   }
   catch (std::exception & x) {
-    datatools_fatal(logging, x.what());
+    DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    datatools_fatal(logging, "unexpected error !");
+    DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
 #if DATATOOLS_STANDALONE == 1
@@ -211,13 +210,13 @@ void test1()
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
     // Import all registries in the kernel system configuration repository
-    // and make it globaly visible :
+    // and make it globally visible :
     std::clog << "test1: Make the variant repository available from the Bayeux/datatools' kernel...\n";
-    datatools::kernel::instance().import_configuration_repository(foo_rep);
+    foo_rep.system_export();
   }
 
   {
-    std::clog << "test1: Setup the application with variant parameters...\n";
+    std::clog << "test1: Setup the application with variant parameters fetched from the Bayeux/datatools' kernel...\n";
     std::string app_config_filename = "${FOO_CONFIG_DIR}/foo_with_variants.conf";
     datatools::fetch_path_with_env(app_config_filename);
     datatools::properties app_config;
@@ -228,9 +227,13 @@ void test1()
     app.print();
     app.run();
   }
+  // Discard all registries in the repository from the kernel system configuration repository,
+  // making them not globally visible anymore:
+  std::clog << "test1: Remove the variant repository stuff from the Bayeux/datatools' kernel...\n";
+  foo_rep.system_discard();
 
-   std::clog << "test1: End.\n";
-   return;
+  std::clog << "test1: End.\n";
+  return;
 }
 
 void test2()

@@ -850,6 +850,23 @@ namespace datatools {
     return;
   }
 
+  bool kernel::has_external_configuration_registry(const std::string & registry_name_) const
+  {
+    return get_variant_repository().has_registry(registry_name_)
+      && get_variant_repository().get_registries().find(registry_name_)->second.is_external();
+  }
+
+  void kernel::clear_configuration_registry(const std::string & registry_name_)
+  {
+    configuration::variant_repository::registry_dict_type::iterator found =
+      grab_variant_repository().grab_registries().find(registry_name_);
+    DT_THROW_IF(found == grab_variant_repository().grab_registries().end(),
+                std::logic_error,
+                "No configuration registry named '" << registry_name_ << "'!");
+    grab_variant_repository().grab_registries().erase(found);
+    return;
+  }
+
   void kernel::import_configuration_registry(configuration::variant_repository & rep_,
                                              const std::string & registry_name_)
   {

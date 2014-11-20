@@ -23,6 +23,7 @@
 #include <datatools/configuration/variant_repository.h>
 
 // This project (Bayeux/datatools):
+#include <datatools/kernel.h>
 #include <datatools/exception.h>
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/variant_registry_manager.h>
@@ -570,6 +571,32 @@ namespace datatools {
 
       return;
     }
+
+    void variant_repository::system_export(uint32_t /* flags_ */)
+    {
+      DT_THROW_IF(! datatools::kernel::is_instantiated(), std::logic_error,
+                  "Kernel is not instantiated!");
+      datatools::kernel & krnl = kernel::instance();
+      krnl.import_configuration_repository(*this);
+      return;
+    }
+
+    void variant_repository::system_discard() const
+    {
+      DT_THROW_IF(! datatools::kernel::is_instantiated(), std::logic_error,
+                  "Kernel is not instantiated!");
+      datatools::kernel & krnl = kernel::instance();
+      for (registry_dict_type::const_iterator i = _registries_.begin();
+           i != _registries_.end();
+           i++) {
+        const std::string & registry_name = i->first;
+        if (krnl.has_external_configuration_registry(registry_name)) {
+          krnl.clear_configuration_registry(registry_name);
+        }
+      }
+      return;
+    }
+
 
   }  // end of namespace configuration
 

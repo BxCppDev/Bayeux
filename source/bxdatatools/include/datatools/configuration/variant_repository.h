@@ -189,6 +189,12 @@ namespace datatools {
                             const std::string & variant_path_,
                              bool & active_) const;
 
+      /// Export to the system variant repository
+      void system_export(uint32_t flags_ = 0);
+
+      /// Discard from the system variant repository
+      void system_discard() const;
+
     protected:
 
       registry_entry & _add_entry(const std::string & registry_name_);
