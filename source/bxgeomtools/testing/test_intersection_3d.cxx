@@ -63,6 +63,8 @@ int main (int argc_, char ** argv_)
             3.0 * CLHEP::mm);
     placement p2 (vector_3d (2, 2, 2),
                   M_PI / 2., 0.0, 0.0);
+    b1.lock();
+    b2.lock();
 
     intersection_3d inter1;
     inter1.set_shape1 (b1, p1);

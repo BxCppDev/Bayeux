@@ -1,23 +1,22 @@
-// -*- mode: c++ ; -*- 
-/* geomtools_test_model_2
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* geomtools_test_model_2.h
+ * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
  * Last modified: 2010-02-24
- * 
- * License: 
- * 
- * Description: 
+ *
+ * License:
+ *
+ * Description:
  *   Factory for geometry models
- * 
- * History: 
- * 
+ *
+ * History:
+ *
  */
 
 #ifndef GEOMTOOLS_TEST_TEST_MODEL_2_H_
 #define GEOMTOOLS_TEST_TEST_MODEL_2_H_ 1
 
 #include <iostream>
-#include <string> 
+#include <string>
 #include <exception>
 
 #include <geomtools/i_model.h>
@@ -31,52 +30,48 @@
 
 namespace geomtools {
 
-  using namespace std;
-
-  // define a geometry model with a single box: 
-  class test_model_2 : public geomtools::i_model 
+  /// \brief Define a geometry model with a single box that contains 2 other boxes
+  class test_model_2 : public geomtools::i_model
     {
 
-    public: 
+    public:
 
       const geomtools::box & get_solid () const;
-  
+
       test_model_2 ();
-  
+
       virtual ~test_model_2 ();
 
       virtual string get_model_id () const;
- 
-      virtual void tree_dump (ostream & out_         = clog, 
-                              const string & title_  = "", 
-                              const string & indent_ = "", 
+
+      virtual void tree_dump (std::ostream & out_         = clog,
+                              const std::string & title_  = "",
+                              const std::string & indent_ = "",
                               bool inherit_          = false) const;
 
     protected:
-  
-      virtual void _at_construct (const string & name_,
+
+      virtual void _at_construct (const std::string & name_,
                                   const datatools::properties & config_,
                                   models_col_type * models_ = 0);
      private:
 
-      double                      __distance;
-      double                      __phi;
-      double                      __theta;
-      const test_model_1 *        __sub1_model;
-      const test_model_1 *        __sub2_model;
-      geomtools::placement        __sub1_placement;
-      geomtools::placement        __sub2_placement;
-      geomtools::physical_volume  __sub1_phys;
-      geomtools::physical_volume  __sub2_phys;
-      geomtools::box              __solid;
+      double                      _distance_;
+      double                      _phi_;
+      double                      _theta_;
+      const test_model_1 *        _sub1_model_;
+      const test_model_1 *        _sub2_model_;
+      geomtools::placement        _sub1_placement_;
+      geomtools::placement        _sub2_placement_;
+      geomtools::physical_volume  _sub1_phys_;
+      geomtools::physical_volume  _sub2_phys_;
+      geomtools::box              _solid_;
 
-      // registration interface :
+      // Registration interface :
       GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(test_model_2);
-   
+
     };
 
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_TEST_TEST_MODEL_2_H_
-
-// end of geomtools_test_model_2.h

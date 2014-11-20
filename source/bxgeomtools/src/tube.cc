@@ -18,6 +18,9 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(tube, "geomtools::tube");
+
   using namespace std;
 
   const std::string & tube::tube_label()
@@ -119,11 +122,55 @@ namespace geomtools {
     return;
   }
 
+  void tube::set (double ir_, double or_, double z_, double start_phi_, double delta_phi_)
+  {
+    set_radii (ir_ ,or_);
+    set_z (z_);
+    set_phi(start_phi_, delta_phi_);
+    return;
+  }
+
   void tube::set_half (double ir_, double or_, double hz_)
   {
     set_radii (ir_, or_);
     set_half_z (hz_);
     return;
+  }
+
+  void tube::set_phi(double start_phi_, double delta_phi_)
+  {
+    DT_THROW_IF(start_phi_ < 0.0,
+                std::domain_error,
+                "Start phi is negative !");
+    DT_THROW_IF(start_phi_ >= 2 * M_PI,
+                std::domain_error,
+                "Start phi is too large (> 2 pi) !");
+    DT_THROW_IF(delta_phi_ > 2 * M_PI,
+                std::domain_error,
+                "Delta phi is too large (> 2 pi)!");
+    DT_THROW_IF(delta_phi_ < 0,
+                std::domain_error,
+                "Delta phi is negative (< 0)!");
+    _start_phi_ = start_phi_;
+    _delta_phi_ = delta_phi_;
+    return;
+  }
+
+  double tube::get_start_phi() const
+  {
+    return _start_phi_;
+  }
+
+  double tube::get_delta_phi() const
+  {
+    return _delta_phi_;
+  }
+
+  bool tube::has_partial_phi() const
+  {
+    if (_delta_phi_ == 2 * M_PI) return false;
+    if (_start_phi_ > 0.0) return true;
+    return false;
   }
 
   tube::tube ()
@@ -134,7 +181,15 @@ namespace geomtools {
 
   tube::tube (double ir_, double or_, double z_)
   {
+    reset ();
     set (ir_, or_, z_);
+    return;
+  }
+
+  tube::tube (double ir_, double or_, double z_, double start_phi_, double delta_phi_)
+  {
+    reset ();
+    set (ir_, or_, z_, start_phi_, delta_phi_);
     return;
   }
 
@@ -162,24 +217,36 @@ namespace geomtools {
       {
         s += M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_);
       }
+    if (has_partial_phi())
+      {
+        s *= ( _delta_phi_ - _start_phi_ ) / (2. * M_PI);
+      }
     return s;
   }
 
   double tube::get_volume (uint32_t /*flags*/) const
   {
-    return M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_ ) * _z_;
+    return M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_ )
+      * _z_ * ( _delta_phi_ - _start_phi_ ) / (2.0 * M_PI);
   }
 
   bool tube::is_valid () const
   {
-    return ((_inner_r_ > 0.0) && (_outer_r_ > _inner_r_) && _z_ > 0.0);
+    return ((_inner_r_ >= 0.0) && (_outer_r_ > _inner_r_) && _z_ > 0.0);
   }
 
   void tube::reset ()
   {
-    _inner_r_ = -1.0;
-    _outer_r_ = -1.0;
-    _z_       = -1.0;
+    unlock();
+
+    _inner_r_   = -1.0;
+    _outer_r_   = -1.0;
+    _z_         = -1.0;
+    _start_phi_ = 0.0;
+    _delta_phi_ = 2.*M_PI;
+
+    this->i_shape_3d::reset();
+    return;
   }
 
   std::string tube::get_shape_name () const
@@ -189,6 +256,7 @@ namespace geomtools {
 
   bool tube::is_inside ( const vector_3d & point_ , double skin_ ) const
   {
+    DT_THROW_IF(has_partial_phi(), std::runtime_error, "Not implemented for tubes with partial phi !");
     double skin = get_skin (skin_);
     double hskin = 0.5 * skin;
     double r = hypot(point_.x(), point_.y());
@@ -208,6 +276,7 @@ namespace geomtools {
          || (r <= (_inner_r_ - hskin))
          || (std::abs(point_.z()) >= (0.5 * _z_ + hskin))
          ) return true;
+    DT_THROW_IF(has_partial_phi(), std::runtime_error, "Not implemented for tubes with partial phi !");
     return false;
   }
 
@@ -249,6 +318,8 @@ namespace geomtools {
                             int mask_,
                             double skin_) const
   {
+    DT_THROW_IF(has_partial_phi(), std::runtime_error, "Not implemented for tubes with partial phi !");
+
     double skin = get_skin ();
     if (skin_ > USING_PROPER_SKIN) skin = skin_;
 
@@ -294,7 +365,9 @@ namespace geomtools {
     out_ << '{' << tube::tube_label() << ' '
          << t_._inner_r_ << ' '
          << t_._outer_r_ << ' '
-         << t_._z_ << '}';
+         << t_._z_ << ' '
+         << t_._start_phi_ << ' '
+         << t_._delta_phi_ << '}';
     return out_;
   }
 
@@ -322,6 +395,13 @@ namespace geomtools {
         in_.clear (std::ios_base::failbit);
         return in_;
       }
+    double start_phi, delta_phi;
+    in_ >> start_phi >> delta_phi;
+    if (! in_)
+      {
+        in_.clear (std::ios_base::failbit);
+        return in_;
+      }
     c = 0;
     in_.get (c);
     if (c != '}')
@@ -343,9 +423,10 @@ namespace geomtools {
 
   void tube::compute_inner_cylinder (cylinder & ic_)
   {
-    ic_.reset ();
+    ic_.reset();
     DT_THROW_IF (! is_valid (),logic_error, "Tube is not valid !");
-    ic_.set (get_inner_r (), get_z ());
+    ic_.set(get_inner_r (), get_z ());
+    ic_.lock();
     return;
   }
 
@@ -354,6 +435,13 @@ namespace geomtools {
     oc_.reset ();
     DT_THROW_IF (! is_valid (),logic_error, "Tube is not valid !");
     oc_.set (get_outer_r (), get_z ());
+    oc_.lock();
+    return;
+  }
+
+  void tube::_build_bounding_data()
+  {
+    _grab_bounding_data().make_cylinder(get_outer_r(), -0.5 * get_z(), +0.5 * get_z());
     return;
   }
 
@@ -372,8 +460,12 @@ namespace geomtools {
     out_ << indent << datatools::i_tree_dumpable::tag
          << "R(external) : " << get_outer_r () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Start phi : " << _start_phi_ / CLHEP::degree << " degree" << endl;
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Delta phi : " << _delta_phi_ / CLHEP::degree << " degree" << endl;
     return;
   }
 
@@ -436,20 +528,23 @@ namespace geomtools {
     return;
   }
 
-  void tube::initialize(const datatools::properties & config_)
+  void tube::initialize(const datatools::properties & config_,
+                        const handle_dict_type * objects_)
   {
     reset();
+    this->i_shape_3d::initialize(config_, objects_);
+
     double lunit = CLHEP::mm;
     if (config_.has_key("length_unit")) {
       const std::string lunit_str = config_.fetch_string("length_unit");
       lunit = datatools::units::get_length_unit_from(lunit_str);
     }
 
-    // double aunit = CLHEP::degree;
-    // if (config_.has_key("angle_unit")) {
-    //   const std::string aunit_str = config_.fetch_string("angle_unit");
-    //   aunit = datatools::units::get_angle_unit_from(aunit_str);
-    // }
+    double aunit = CLHEP::degree;
+    if (config_.has_key("angle_unit")) {
+      const std::string aunit_str = config_.fetch_string("angle_unit");
+      aunit = datatools::units::get_angle_unit_from(aunit_str);
+    }
 
     double inner_r;
     datatools::invalidate (inner_r);
@@ -504,9 +599,30 @@ namespace geomtools {
       z *= lunit;
     }
 
+    double start_phi = 0.0;
+    double delta_phi = M_PI * CLHEP::radian;
+    bool not_full_phi = false;
+    if (config_.has_key ("start_phi")) {
+      start_phi = config_.fetch_real ("start_phi");
+      if (! config_.has_explicit_unit ("start_phi")) {
+        start_phi *= aunit;
+      }
+      not_full_phi = true;
+    }
+    if (config_.has_key ("delta_phi")) {
+      delta_phi = config_.fetch_real ("delta_phi");
+      if (! config_.has_explicit_unit ("delta_phi")) {
+        delta_phi *= aunit;
+      }
+      not_full_phi = true;
+    }
     set_radii(inner_r, outer_r);
     set_z(z);
+    if (not_full_phi) {
+      set_phi(start_phi, delta_phi);
+    }
 
+    lock();
     return;
   }
 
@@ -650,6 +766,40 @@ namespace geomtools {
                      "                               \n"
                      "  z : real as length = 5.0 mm  \n"
                      "                               \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("start_phi")
+        .set_from("geomtools::tube")
+        .set_terse_description("The starting phi angle")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_default_value_real(0.0)
+        .add_example("Set the starting phi angle::              \n"
+                     "                                          \n"
+                     "  start_phi : real as angle = 30.0 degree \n"
+                     "                                          \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("delta_phi")
+        .set_from("geomtools::tube")
+        .set_terse_description("The delta phi angle")
+        .set_traits(datatools::TYPE_REAL)
+        .set_mandatory(false)
+        .set_default_value_real(2 * M_PI * CLHEP::radian)
+        .add_example("Set the delta phi angle::                 \n"
+                     "                                          \n"
+                     "  delta_phi : real as angle = 60.0 degree \n"
+                     "                                          \n"
                      )
         ;
     }

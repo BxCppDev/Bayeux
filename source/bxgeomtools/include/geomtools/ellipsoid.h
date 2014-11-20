@@ -1,20 +1,20 @@
 // -*- mode: c++; -*-
-/// \file geomtools/sphere.h
-/* Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: 2006-11-28
- * Last modified: 2014-04-08
+/// \file geomtools/ellipsoid.h
+/* Author(s):     A. Chapon <chapon@lpccaen.in2p3.fr>
+ * Creation date: 2014-11-18
+ * Last modified: 2014-11-18
  *
  * License:
  *
  * Description:
- *   3D sphere description
+ *   3D ellipsoid description
  *
  * History:
  *
  */
 
-#ifndef GEOMTOOLS_SPHERE_H
-#define GEOMTOOLS_SPHERE_H 1
+#ifndef GEOMTOOLS_ELLIPSOID_H
+#define GEOMTOOLS_ELLIPSOID_H 1
 
 // Standard library:
 #include <string>
@@ -35,25 +35,20 @@ namespace datatools {
 
 namespace geomtools {
 
-  class sphere : public i_shape_3d, public i_stackable
+  /// \brief The 3D shape model for an ellipsoid
+  class ellipsoid : public i_shape_3d, public i_stackable
   {
   public:
 
     enum faces_mask_type {
-      FACE_NONE             = geomtools::FACE_NONE,
-      FACE_SIDE             = datatools::bit_mask::bit00,
-      FACE_OUTER_SIDE       = FACE_SIDE,
-      FACE_INNER_SIDE       = datatools::bit_mask::bit01,
-      FACE_START_THETA_SIDE = datatools::bit_mask::bit02,
-      FACE_STOP_THETA_SIDE  = datatools::bit_mask::bit03,
-      FACE_START_PHI_SIDE   = datatools::bit_mask::bit04,
-      FACE_STOP_PHI_SIDE    = datatools::bit_mask::bit05,
-      FACE_ALL    = FACE_OUTER_SIDE | FACE_INNER_SIDE
-      | FACE_START_THETA_SIDE | FACE_STOP_THETA_SIDE
-      | FACE_START_PHI_SIDE | FACE_STOP_PHI_SIDE
+      FACE_NONE   = geomtools::FACE_NONE,
+      FACE_SIDE   = datatools::bit_mask::bit00,
+      FACE_TOP    = datatools::bit_mask::bit01,
+      FACE_BOTTOM = datatools::bit_mask::bit02,
+      FACE_ALL    = FACE_SIDE | FACE_TOP | FACE_BOTTOM
     };
 
-    static const std::string & sphere_label();
+    static const std::string & ellipsoid_label();
 
     double get_xmin() const;
 
@@ -67,61 +62,43 @@ namespace geomtools {
 
     double get_zmax() const;
 
-    double get_r() const;
+    double get_x_radius() const;
 
-    double get_r_max() const;
+    void set_x_radius(double);
 
-    double get_radius() const;
+    double get_y_radius() const;
 
-    bool has_r_min() const;
+    void set_y_radius(double);
 
-    double get_r_min() const;
+    double get_z_radius() const;
 
-    void set_r(double);
+    void set_z_radius(double);
 
-    void set_r_max(double);
+    double get_bottom_z_cut() const;
 
-    void set_radius(double);
+    void set_bottom_z_cut(double);
 
-    void set_r_min(double);
+    double get_top_z_cut() const;
 
-    void reset_r_max();
+    void set_top_z_cut(double);
 
-    void reset_r_min();
+    void set(double rx_, double ry_, double rz_);
 
-    void set(double rmax_);
-
-    void set(double rmin_, double rmax_);
-
-    void set_phi(double start_phi_, double delta_phi_);
-
-    double get_start_phi() const;
-
-    double get_delta_phi() const;
-
-    bool has_partial_phi() const;
-
-    void set_theta(double start_theta_, double delta_theta_);
-
-    double get_start_theta() const;
-
-    double get_delta_theta() const;
-
-    bool has_partial_theta() const;
-
-    bool is_orb() const;
+    void set(double rx_, double ry_, double rz_,
+             double zm_, double zp_);
 
     /// Constructor
-    sphere();
+    ellipsoid();
 
     /// Constructor
-    sphere(double radius_);
+    ellipsoid(double rx_, double ry_, double rz_);
 
     /// Constructor
-    sphere(double radius_min_, double radius_max_);
+    ellipsoid(double rx_, double ry_, double rz_,
+              double zm_, double zp_);
 
     /// Destructor
-    virtual ~sphere();
+    virtual ~ellipsoid();
 
     /// Return the name of the shape
     virtual std::string get_shape_name() const;
@@ -129,13 +106,14 @@ namespace geomtools {
     /// Return the value of some parameter
     virtual double get_parameter(const std::string &) const;
 
-    /// Check the validity of the sphere
+    /// Check the validity of the ellipsoid
     bool is_valid() const;
 
-    /// Initialize the sphere from properties
-    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    /// Initialize the ellipsoid from properties
+    virtual void initialize(const datatools::properties &,
+                            const handle_dict_type * = 0);
 
-    /// Reset the sphere
+    /// Reset the ellipsoid
     virtual void reset();
 
     virtual double get_surface(uint32_t mask_ = FACE_ALL_BITS) const;
@@ -160,10 +138,10 @@ namespace geomtools {
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     friend std::ostream &
-    operator<<(std::ostream &, const sphere &);
+    operator<<(std::ostream &, const ellipsoid &);
 
     friend std::istream &
-    operator>>(std::istream &, sphere &);
+    operator>>(std::istream &, ellipsoid &);
 
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
@@ -182,22 +160,21 @@ namespace geomtools {
 
   private:
 
-    double _r_;           /// Outer radius
-    double _r_min_;       /// Inner radius
-    double _start_phi_;   /// Start phi angle
-    double _delta_phi_;   /// Delta phi angle
-    double _start_theta_; /// Start theta angle
-    double _delta_theta_; /// Delta theta angle
+    double _x_radius_;     //!< x radius
+    double _y_radius_;     //!< y radius
+    double _z_radius_;     //!< z radius
+    double _bottom_z_cut_; //!< lower cut plane level / z
+    double _top_z_cut_;    //!< upper cut plane level / z
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(sphere);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(ellipsoid);
 
   };
 
 } // end of namespace geomtools
 
 /// OCD support declaration
-// @arg geomtools::sphere the name the class
-DOCD_CLASS_DECLARATION(geomtools::sphere)
+// @arg geomtools::ellipsoid the name the class
+DOCD_CLASS_DECLARATION(geomtools::ellipsoid)
 
-#endif // GEOMTOOLS_SPHERE_H
+#endif // GEOMTOOLS_ELLIPSOID_H

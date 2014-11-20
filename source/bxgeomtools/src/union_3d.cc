@@ -12,7 +12,13 @@
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This project:
+#include <geomtools/box.h>
+
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(union_3d, "geomtools::union_3d");
 
   const std::string & union_3d::union_3d_label()
   {
@@ -50,7 +56,7 @@ namespace geomtools {
     const vector_3d pos1 = p1.mother_to_child(position_);
     const vector_3d pos2 = p2.mother_to_child(position_);
     if (    sh3d1.is_inside(pos1, skin_)
-         || sh3d2.is_inside(pos2, skin_) ) {
+            || sh3d2.is_inside(pos2, skin_) ) {
       return true;
     }
     return false;
@@ -138,11 +144,10 @@ namespace geomtools {
     const shape_type & sh1 = get_shape1 ();
     const shape_type & sh2 = get_shape2 ();
     DT_LOG_TRACE (local_priority, "Shape 1 & 2");
-    if (local_priority >= datatools::logger::PRIO_TRACE)
-      {
-        sh1.dump (std::cerr);
-        sh2.dump (std::cerr);
-      }
+    if (local_priority >= datatools::logger::PRIO_TRACE) {
+      sh1.dump(std::cerr);
+      sh2.dump(std::cerr);
+    }
     const placement & p1 = sh1.get_placement ();
     const placement & p2 = sh2.get_placement ();
     const i_shape_3d & sh3d1 = sh1.get_shape ();
@@ -164,8 +169,7 @@ namespace geomtools {
     // normalize direction (mother ref):
     const vector_3d direction = direction_.unit ();
 
-    for (unsigned int ishape = 0; ishape < (int) NSHAPES; ishape++)
-      {
+    for (unsigned int ishape = 0; ishape < (int) NSHAPES; ishape++) {
         DT_LOG_TRACE (local_priority, "ishape #" << ishape);
         invalidate (intercepts[ishape]);
         intercept_ok[ishape] = false;
@@ -183,8 +187,7 @@ namespace geomtools {
         invalidate (last_intercept_i);
         size_t counter = 0;
         size_t max_counter = 1000;
-        do
-          {
+        do {
             DT_LOG_TRACE (local_priority, "ishape #" << ishape << " new loop ");
             vector_3d child_from_i = pi->mother_to_child (from_i);
             intercept_t child_intercept_i;
@@ -195,13 +198,10 @@ namespace geomtools {
             DT_LOG_TRACE (local_priority, "ishape #" << ishape << " from_i=" << from_i);
             DT_LOG_TRACE (local_priority, "ishape #" << ishape << " child_from_i=" << child_from_i);
 
-            if (! intercept_ok[ishape])
-              {
+            if (! intercept_ok[ishape]) {
                 DT_LOG_TRACE (local_priority, "ishape #" << ishape << " no intercept");
                 break;
-              }
-            else
-              {
+              } else {
                 intercepts[ishape] =
                   pi->child_to_mother (child_intercept_i.get_impact ());
                 intercept_faces[ishape] = child_intercept_i.get_face ();
@@ -209,27 +209,22 @@ namespace geomtools {
                 DT_LOG_TRACE (local_priority, "ishape #" << ishape << " intercept=" << intercepts[ishape]);
                 DT_LOG_TRACE (local_priority, "ishape #" << ishape << " intercept face=" << intercept_faces[ishape]);
                 vector_3d test_inside_j = pj->mother_to_child (intercepts[ishape]);
-                if (! shj->is_inside (test_inside_j))
-                  {
-                    DT_LOG_TRACE (local_priority, "ishape #" << ishape << " intercept is valid!");
-                    break;
-                  }
-                else
-                  {
-                    DT_LOG_TRACE (local_priority, "ishape #" << ishape << " intercept is invalid! continue...");
+                if (! shj->is_inside (test_inside_j)) {
+                  DT_LOG_TRACE (local_priority, "ishape #" << ishape << " intercept is valid!");
+                  break;
+                } else {
+                  DT_LOG_TRACE (local_priority, "ishape #" << ishape << " intercept is invalid! continue...");
                     // compare this new candidate intercept with
                     // former candidate if any:
                     bool safety_skip = false;
-                    if (is_valid (last_intercept_i))
-                      {
-                        const double last_dist = (intercepts[ishape] - last_intercept_i).mag ();
-                        if (last_dist < skin)
-                          {
-                            DT_LOG_TRACE (local_priority, "ishape #" << ishape <<
-                                          " successive intercepts are very close (tolerance)!");
-                            safety_skip = true;
-                          }
+                    if (is_valid (last_intercept_i)) {
+                      const double last_dist = (intercepts[ishape] - last_intercept_i).mag ();
+                      if (last_dist < skin) {
+                        DT_LOG_TRACE (local_priority, "ishape #" << ishape <<
+                                      " successive intercepts are very close (tolerance)!");
+                        safety_skip = true;
                       }
+                    }
                     // restart search from the last rejected candidate
                     // intercept:
                     last_intercept_i = intercepts[ishape];
@@ -239,15 +234,14 @@ namespace geomtools {
                     if (skin_step <= 0.0) skin_step = i_shape_3d::DEFAULT_SKIN;
                     from_i = intercepts[ishape] + skin_step * direction;
                     // experimental:
-                    if (safety_skip)
-                      {
-                        geomtools::vector_3d orth_dir;
-                        geomtools::randomize_orthogonal_direction (geomtools::random_tools::random_flat,
-                                                                   direction,
-                                                                   orth_dir);
+                    if (safety_skip) {
+                      geomtools::vector_3d orth_dir;
+                      geomtools::randomize_orthogonal_direction (geomtools::random_tools::random_flat,
+                                                                 direction,
+                                                                 orth_dir);
 
-                        from_i += 0.5 * skin_step * orth_dir;
-                      }
+                      from_i += 0.5 * skin_step * orth_dir;
+                    }
                     DT_LOG_TRACE (local_priority, "ishape #" << ishape << " direction=" << direction);
                     DT_LOG_TRACE (local_priority, "ishape #" << ishape  << " new from_i=" << from_i);
                     invalidate (intercepts[ishape]);
@@ -256,11 +250,10 @@ namespace geomtools {
                   }
               }
             counter++;
-            if (counter > max_counter)
-              {
-                DT_LOG_CRITICAL (datatools::logger::PRIO_CRITICAL, "ishape=" << ishape << " stop 'infinite' loop.");
-                DT_THROW_IF (true, std::runtime_error, "I suspect infinite loop while searching for the intercept point !");
-              }
+            if (counter > max_counter) {
+              DT_LOG_CRITICAL (datatools::logger::PRIO_CRITICAL, "ishape=" << ishape << " stop 'infinite' loop.");
+              DT_THROW_IF (true, std::runtime_error, "I suspect infinite loop while searching for the intercept point !");
+            }
           } while (1);
         DT_LOG_TRACE (local_priority, "ishape #" << ishape << " intercept find loops stopped.");
       }
@@ -268,30 +261,62 @@ namespace geomtools {
     DT_LOG_TRACE (local_priority, "ok2=" << intercept_ok[1]);
 
     intercept_.reset ();
-    if (intercept_ok[0] && ! intercept_ok[1])
-      {
+    if (intercept_ok[0] && ! intercept_ok[1]) {
+      intercept_.set (0,intercept_faces[0], intercepts[0]);
+    } else if (intercept_ok[1] && ! intercept_ok[0]) {
+      intercept_.set (1,intercept_faces[1], intercepts[1]);
+    }
+    if (intercept_ok[0] && intercept_ok[1]) {
+      const vector_3d intercept1 = intercepts[0];
+      const double dist1 = (intercept1 - from_).mag ();
+      const vector_3d intercept2 = intercepts[1];
+      const double dist2 = (intercept2 - from_).mag ();
+      if (dist1 < dist2) {
         intercept_.set (0,intercept_faces[0], intercepts[0]);
-      }
-    else if (intercept_ok[1] && ! intercept_ok[0])
-      {
+      } else {
         intercept_.set (1,intercept_faces[1], intercepts[1]);
       }
-    if (intercept_ok[0] && intercept_ok[1])
-      {
-        const vector_3d intercept1 = intercepts[0];
-        const double dist1 = (intercept1 - from_).mag ();
-        const vector_3d intercept2 = intercepts[1];
-        const double dist2 = (intercept2 - from_).mag ();
-        if (dist1 < dist2)
-          {
-            intercept_.set (0,intercept_faces[0], intercepts[0]);
-          }
-        else
-          {
-            intercept_.set (1,intercept_faces[1], intercepts[1]);
-          }
-      }
+    }
     return intercept_.is_ok ();
+  }
+
+  void union_3d::_build_bounding_data()
+  {
+    // std::cerr << "DEVEL: union_3d::_build_bounding_data: "
+    //           << "Entering..."
+    //           << std::endl;
+    if (get_shape1().get_shape().has_bounding_data()
+        && get_shape2().get_shape().has_bounding_data() ) {
+      const placement & pl1 = get_shape1().get_placement();
+      const placement & pl2 = get_shape2().get_placement();
+      box bb1;
+      placement bbpl1;
+      get_shape1().get_shape().get_bounding_data().compute_bounding_box(bb1, bbpl1);
+      std::vector<vector_3d> vv1;
+      bb1.compute_transformed_vertexes(bbpl1, vv1);
+      box bb2;
+      placement bbpl2;
+      get_shape2().get_shape().get_bounding_data().compute_bounding_box(bb2, bbpl2);
+      std::vector<vector_3d> vv2;
+      bb2.compute_transformed_vertexes(bbpl2, vv2);
+      std::vector<vector_3d> points;
+      points.reserve(vv1.size() + vv2.size());
+      for (int i = 0; i < (int) vv1.size(); i++) {
+        vector_3d vtx;
+        pl1.child_to_mother(vv1[i], vtx);
+        points.push_back(vtx);
+      }
+      for (int i = 0; i < (int) vv2.size(); i++) {
+        vector_3d vtx;
+        pl2.child_to_mother(vv2[i], vtx);
+        points.push_back(vtx);
+      }
+      _grab_bounding_data().make_box_from_points(points);
+    }
+    // std::cerr << "DEVEL: union_3d::_build_bounding_data: "
+    //           << "Exiting."
+    //           << std::endl;
+    return;
   }
 
 } // end of namespace geomtools

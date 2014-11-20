@@ -50,6 +50,13 @@ namespace geomtools {
                                   intercept_t & intercept_,
                                   double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
+  protected:
+
+    virtual void _build_bounding_data();
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(subtraction_3d);
+
   };
 
 } // end of namespace geomtools

@@ -1,19 +1,18 @@
-// -*- mode: c++ ; -*-
-/* geomtools_test_model_2.cc
- */
+// geomtools_test_model_2.cc
 
+// Ourselves:
 #include <geomtools_test_model_2.h>
 
 namespace geomtools {
 
   using namespace std;
 
-  // registration :
+  // Registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_model_2,"geomtools::test::test_model_2");
 
   const geomtools::box & test_model_2::get_solid () const
   {
-    return __solid;
+    return _solid_;
   }
 
   string test_model_2::get_model_id () const
@@ -21,11 +20,10 @@ namespace geomtools {
     return "geomtools::test::test_model_2";
   }
 
-    // ctor:
   test_model_2::test_model_2 () : geomtools::i_model ()
   {
-    __sub1_model = 0;
-    __sub2_model = 0;
+    _sub1_model_ = 0;
+    _sub2_model_ = 0;
     return;
   }
 
@@ -126,18 +124,15 @@ namespace geomtools {
     // Sub1:
     {
       models_col_type::const_iterator found = models_->find (sub1_model_name);
-      if (found != models_->end ())
-        {
-          __sub1_model = (dynamic_cast<const test_model_1 *> (found->second));
-        }
-      else
-        {
-          ostringstream message;
-          message << "test_model_2::_at_construct: "
-                  << "Cannot find model with name '"
-                  << sub1_model_name << "' !";
-          throw runtime_error (message.str ());
-        }
+      if (found != models_->end ()) {
+          _sub1_model_ = (dynamic_cast<const test_model_1 *> (found->second));
+      } else {
+        ostringstream message;
+        message << "test_model_2::_at_construct: "
+                << "Cannot find model with name '"
+                << sub1_model_name << "' !";
+        throw runtime_error (message.str ());
+      }
     }
 
     // Sub2:
@@ -145,7 +140,7 @@ namespace geomtools {
       models_col_type::const_iterator found = models_->find (sub2_model_name);
       if (found != models_->end ())
         {
-          __sub2_model = (dynamic_cast<const test_model_1 *> (found->second));
+          _sub2_model_ = (dynamic_cast<const test_model_1 *> (found->second));
         }
       else
         {
@@ -157,50 +152,51 @@ namespace geomtools {
         }
     }
 
-    __distance = distance;
-    __phi = phi;
-    __theta = theta;
+    _distance_ = distance;
+    _phi_ = phi;
+    _theta_ = theta;
 
     vector_3d sub1_pos;
-    double r1 = 0.5 * distance + __sub1_model->get_solid ().get_half_z ();
+    double r1 = 0.5 * distance + _sub1_model_->get_solid ().get_half_z ();
     create_spherical (sub1_pos, r1, phi, theta);
-    __sub1_placement.set_translation (sub1_pos);
-    __sub1_placement.set_orientation (phi, theta + M_PI, 0.0);
+    _sub1_placement_.set_translation (sub1_pos);
+    _sub1_placement_.set_orientation (phi, theta + M_PI, 0.0);
 
     vector_3d sub2_pos;
-    double r2 = 0.5 * distance + __sub2_model->get_solid ().get_half_z ();
+    double r2 = 0.5 * distance + _sub2_model_->get_solid ().get_half_z ();
     create_spherical (sub2_pos, r2, phi, theta + M_PI);
-    __sub2_placement.set_translation (sub2_pos);
-    __sub2_placement.set_orientation (phi, theta, 0.0);
+    _sub2_placement_.set_translation (sub2_pos);
+    _sub2_placement_.set_orientation (phi, theta, 0.0);
 
-    __solid.reset ();
+    _solid_.reset ();
     double size =
       distance
-      + 2 * __sub1_model->get_solid ().get_x ()
-      + 2 * __sub2_model->get_solid ().get_x ();
-    __solid.set_x (size);
-    __solid.set_y (size);
-    __solid.set_z (size);
-    if (!__solid.is_valid ())
+      + 2 * _sub1_model_->get_solid ().get_x ()
+      + 2 * _sub2_model_->get_solid ().get_x ();
+    _solid_.set_x (size);
+    _solid_.set_y (size);
+    _solid_.set_z (size);
+    _solid_.lock(); // Mandatory
+    if (!_solid_.is_valid ())
       {
         throw runtime_error ("test_model_2::_at_construct: Invalid solid !");
       }
 
     // initialize the 'logical_volume' of this model:
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
-    grab_logical ().set_shape (__solid);
+    grab_logical ().set_shape (_solid_);
     grab_logical ().set_material_ref (material);
 
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Install physicals..." << endl;
-    __sub1_phys.set_name (i_model::make_physical_volume_name ("sub1"));
-    __sub1_phys.set_placement (__sub1_placement);
-    __sub1_phys.set_logical (__sub1_model->get_logical ());
-    __sub1_phys.set_mother (_logical);
+    _sub1_phys_.set_name (i_model::make_physical_volume_name ("sub1"));
+    _sub1_phys_.set_placement (_sub1_placement_);
+    _sub1_phys_.set_logical (_sub1_model_->get_logical ());
+    _sub1_phys_.set_mother (_logical);
 
-    __sub2_phys.set_name (i_model::make_physical_volume_name ("sub2"));
-    __sub2_phys.set_placement (__sub2_placement);
-    __sub2_phys.set_logical (__sub2_model->get_logical ());
-    __sub2_phys.set_mother (_logical);
+    _sub2_phys_.set_name (i_model::make_physical_volume_name ("sub2"));
+    _sub2_phys_.set_placement (_sub2_placement_);
+    _sub2_phys_.set_logical (_sub2_model_->get_logical ());
+    _sub2_phys_.set_mother (_logical);
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Physicals are installed. " << endl;
 
     if (devel) clog << "DEVEL: test_model_2::_at_construct: Exiting." << endl;
@@ -219,7 +215,7 @@ namespace geomtools {
 
       {
         // Sub-model #1:
-        if (__sub1_model)
+        if (_sub1_model_)
           {
             out_ << indent << datatools::i_tree_dumpable::tag
                  << "Sub model 1 : " << endl;
@@ -227,7 +223,7 @@ namespace geomtools {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << datatools::i_tree_dumpable::skip_tag;
-              __sub1_model->tree_dump (out_, "", indent_oss.str ());
+              _sub1_model_->tree_dump (out_, "", indent_oss.str ());
             }
           }
         else
@@ -239,7 +235,7 @@ namespace geomtools {
 
       {
         // Sub-model #2:
-        if (__sub2_model)
+        if (_sub2_model_)
           {
             out_ << indent << datatools::i_tree_dumpable::tag
                  << "Sub model 2 : " << endl;
@@ -247,7 +243,7 @@ namespace geomtools {
               ostringstream indent_oss;
               indent_oss << indent;
               indent_oss << datatools::i_tree_dumpable::skip_tag;
-              __sub2_model->tree_dump (out_, "", indent_oss.str ());
+              _sub2_model_->tree_dump (out_, "", indent_oss.str ());
             }
           }
         else
@@ -264,7 +260,7 @@ namespace geomtools {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
-          __sub1_placement.tree_dump (out_, "", indent_oss.str ());
+          _sub1_placement_.tree_dump (out_, "", indent_oss.str ());
         }
       }
 
@@ -275,7 +271,7 @@ namespace geomtools {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
-          __sub2_placement.tree_dump (out_, "", indent_oss.str ());
+          _sub2_placement_.tree_dump (out_, "", indent_oss.str ());
         }
       }
 
@@ -286,7 +282,7 @@ namespace geomtools {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
-          __sub1_phys.tree_dump (out_, "", indent_oss.str ());
+          _sub1_phys_.tree_dump (out_, "", indent_oss.str ());
         }
       }
 
@@ -297,7 +293,7 @@ namespace geomtools {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
-          __sub2_phys.tree_dump (out_, "", indent_oss.str ());
+          _sub2_phys_.tree_dump (out_, "", indent_oss.str ());
         }
       }
 
@@ -308,7 +304,7 @@ namespace geomtools {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-          __solid.tree_dump (out_, "", indent_oss.str ());
+          _solid_.tree_dump (out_, "", indent_oss.str ());
         }
       }
 

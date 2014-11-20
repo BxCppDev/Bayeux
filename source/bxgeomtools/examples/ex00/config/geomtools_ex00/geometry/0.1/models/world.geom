@@ -42,13 +42,13 @@ material.ref : string = "vacuum"
 ###################
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[21] = \
+internal_item.labels : string[22] = \
   "BoxA" "BoxB" "BoxC" "BoxD" "BoxE" \
   "ManyBoxes" "CircleBoxes" \
   "WallBricks" \
   "CylA" "CylB" "CylC" "CylD" "CylE" "CylF" \
   "CylCol0" "CylCol1a" "CylCol2a" "CylSubGrid" \
-  "DetStack0" "DetStack1" "SpecialStack"
+  "DetStack0" "DetStack1" "SpecialStack" "AnotherStack"
 
 #@description The model of the "BoxA" daughter volume
 internal_item.model.BoxA       : string  = "blue_box0.model"
@@ -162,19 +162,25 @@ internal_item.placement.CylSubGrid  : string  = "10 45 20 (cm)"
 internal_item.model.DetStack0      : string  = "detector_stack.model"
 
 #@description The placement of the "DetStack0" daughter volume
-internal_item.placement.DetStack0  : string  = "35 -20 -20 (cm) / x -90 (degree)"
+internal_item.placement.DetStack0  : string  = "35 -20 10 (cm) / x -90 (degree)"
 
 #@description The model of the "DetStack1" daughter volume
 internal_item.model.DetStack1      : string  = "detector_stack.model"
 
 #@description The placement of the "DetStack1" daughter volume
-internal_item.placement.DetStack1  : string  = "35 +20 -20 (cm) / x 90 (degree)"
+internal_item.placement.DetStack1  : string  = "35 +20 10 (cm) / x 90 (degree)"
 
 #@description The model of the "SpecialStack" daughter volume
 internal_item.model.SpecialStack      : string  = "stack_with_insertion.model"
 
 #@description The placement of the "SpecialStack" daughter volume
-internal_item.placement.SpecialStack  : string  = "35 +10 +20 (cm) / x 90 (degree)"
+internal_item.placement.SpecialStack  : string  = "35 +10 +35 (cm) / x 90 (degree)"
+
+#@description The model of the "AnotherStack" daughter volume
+internal_item.model.AnotherStack      : string  = "another_stack.model"
+
+#@description The placement of the "SpecialStack" daughter volume
+internal_item.placement.AnotherStack  : string  = "35 +10 -15 (cm) / x 90 (degree)"
 
 
 ###########

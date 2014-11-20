@@ -19,9 +19,12 @@
 #include <geomtools/i_object_3d.h>
 #include <geomtools/placement.h>
 #include <geomtools/box.h>
+#include <geomtools/extruded_box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/sphere.h>
+#include <geomtools/ellipsoid.h>
 #include <geomtools/tube.h>
+#include <geomtools/elliptical_tube.h>
 #include <geomtools/line_3d.h>
 #include <geomtools/helix_3d.h>
 #include <geomtools/polyline_3d.h>
@@ -806,6 +809,71 @@ namespace geomtools {
   }
 
   void
+  gnuplot_draw::draw_extruded_box(std::ostream & out_,
+				  const vector_3d & pos_,
+				  const rotation_3d & rot_,
+				  const extruded_box & b_,
+				  int tube_axis_,
+				  size_t n_tube_sampling_)
+  {
+    draw_extruded_box(out_, pos_, rot_,
+		      b_.get_x(),
+		      b_.get_y(),
+		      b_.get_z(),
+		      b_.get_thickness(),
+		      b_.has_top(),
+		      b_.has_bottom(),
+		      tube_axis_,
+		      n_tube_sampling_);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_extruded_box(std::ostream & out_,
+				  const vector_3d & position_,
+				  const rotation_3d & rotation_,
+				  double length_,
+				  double width_,
+				  double height_,
+				  double thickness_,
+				  bool has_top_, bool has_bottom_,
+				  int tube_axis_,
+				  size_t n_tube_sampling_)
+  {
+    draw_box (out_, position_, rotation_,
+	      length_, width_, height_,
+	      tube_axis_,
+	      n_tube_sampling_);
+    if (has_top_ && has_bottom_) {
+      draw_box (out_, position_, rotation_,
+		length_-2.*thickness_, width_-2.*thickness_, height_-2.*thickness_,
+		tube_axis_,
+		n_tube_sampling_);
+    }
+    else if (!has_top_ && !has_bottom_) {
+      draw_box (out_, position_, rotation_,
+		length_-2.*thickness_, width_-2.*thickness_, height_,
+		tube_axis_,
+		n_tube_sampling_);
+    }
+    else if (has_top_ && !has_bottom_) {
+      vector_3d pos (position_.x(), position_.y(), position_.z()-thickness_/2.);
+      draw_box (out_, pos, rotation_,
+		length_-2.*thickness_, width_-2.*thickness_, height_-thickness_,
+		tube_axis_,
+		n_tube_sampling_);
+    }
+    else if (!has_top_ && has_bottom_) {
+      vector_3d pos (position_.x(), position_.y(), position_.z()+thickness_/2.);
+      draw_box (out_, pos, rotation_,
+		length_-2.*thickness_, width_-2.*thickness_, height_-thickness_,
+		tube_axis_,
+		n_tube_sampling_);
+    }
+    return;
+  }
+
+  void
   gnuplot_draw::draw_cylinder(std::ostream & out_,
                                const vector_3d & pos_,
                                const rotation_3d & rot_,
@@ -877,28 +945,33 @@ namespace geomtools {
                            size_t arc_sampling_)
   {
     draw_tube(out_, position_, rotation_,
-               t_.get_inner_r(),
-               t_.get_outer_r(),
-               t_.get_z(), arc_sampling_);
+	      t_.get_inner_r(),
+	      t_.get_outer_r(),
+	      t_.get_start_phi(),
+	      t_.get_delta_phi(),
+	      t_.get_z(), arc_sampling_);
   }
 
   void
   gnuplot_draw::draw_tube(std::ostream & out_,
-                           const vector_3d & position_,
-                           const rotation_3d & rotation_,
-                           double inner_radius_,
-                           double outer_radius_,
-                           double height_,
-                           size_t arc_sampling_)
+			  const vector_3d & position_,
+			  const rotation_3d & rotation_,
+			  double inner_radius_,
+			  double outer_radius_,
+			  double start_phi_,
+			  double delta_phi_,
+			  double height_,
+			  size_t arc_sampling_)
   {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
 
     size_t sample = arc_sampling_;
     if (sample == DEFAULT_SAMPLING) {
-      sample = 36;
+      sample = (size_t) (18.00001 * delta_phi_ / M_PI);
     }
-    sample = std::max(12U, (unsigned int)  sample);
+    sample = std::max(3U, (unsigned int) sample);
+    double dphi = delta_phi_ * CLHEP::radian / sample;
 
     double dangle = 2 * M_PI * CLHEP::radian / sample;
     polyline_type polyline_top_i;
@@ -912,19 +985,19 @@ namespace geomtools {
     for(size_t i = 0; i <= sample ; ++i) {
       vector_3d P_i, Q_i;
       vector_3d P_o, Q_o;
-      double angle = i * dangle;
-      P_i.set(inner_radius_ * std::cos(angle),
-               inner_radius_ * std::sin(angle),
-               0.5 * height_);
-      Q_i.set(inner_radius_ * std::cos(angle),
-               inner_radius_ * std::sin(angle),
-               -0.5 * height_);
-      P_o.set(outer_radius_ * std::cos(angle),
-               outer_radius_ * std::sin(angle),
-               0.5 * height_);
-      Q_o.set(outer_radius_ * std::cos(angle),
-               outer_radius_ * std::sin(angle),
-               -0.5 * height_);
+      double phi = start_phi_ + i * dphi;
+      P_i.set(inner_radius_ * std::cos(phi),
+	      inner_radius_ * std::sin(phi),
+	      0.5 * height_);
+      Q_i.set(inner_radius_ * std::cos(phi),
+	      inner_radius_ * std::sin(phi),
+	      -0.5 * height_);
+      P_o.set(outer_radius_ * std::cos(phi),
+	      outer_radius_ * std::sin(phi),
+	      0.5 * height_);
+      Q_o.set(outer_radius_ * std::cos(phi),
+	      outer_radius_ * std::sin(phi),
+	      -0.5 * height_);
       vector_3d P2_i(P_i);
       P2_i.transform(inverse_rotation);
       P2_i += position_;
@@ -968,6 +1041,81 @@ namespace geomtools {
     basic_draw_polyline(out_, polyline_bottom_i);
     basic_draw_polyline(out_, polyline_top_o);
     basic_draw_polyline(out_, polyline_bottom_o);
+
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_elliptical_tube(std::ostream & out_,
+				     const vector_3d & position_,
+				     const rotation_3d & rotation_,
+				     const elliptical_tube & t_,
+				     size_t arc_sampling_)
+  {
+    draw_elliptical_tube(out_, position_, rotation_,
+			 t_.get_x_radius(),
+			 t_.get_y_radius(),
+			 t_.get_z(), arc_sampling_);
+  }
+
+  void
+  gnuplot_draw::draw_elliptical_tube(std::ostream & out_,
+				     const vector_3d & position_,
+				     const rotation_3d & rotation_,
+				     double x_radius_,
+				     double y_radius_,
+				     double height_,
+				     size_t arc_sampling_)
+  {
+    rotation_3d inverse_rotation(rotation_);
+    inverse_rotation.invert();
+
+    size_t sample = arc_sampling_;
+    if (sample == DEFAULT_SAMPLING) {
+      sample = 36;
+    }
+    sample = std::max(12U, (unsigned int)  sample);
+
+    double dangle = 2 * M_PI * CLHEP::radian / sample;
+    polyline_type polyline_top;
+    polyline_type polyline_bottom;
+    polyline_type polyline_segment;
+    polyline_type polyline_endcap_top;
+    polyline_type polyline_endcap_bottom;
+    for(size_t i = 0; i <= sample ; ++i) {
+      vector_3d P, Q;
+      double angle = i * dangle;
+      P.set(x_radius_ * std::cos(angle),
+	    y_radius_ * std::sin(angle),
+	    0.5 * height_);
+      Q.set(x_radius_ * std::cos(angle),
+	    y_radius_ * std::sin(angle),
+	    -0.5 * height_);
+      vector_3d P2(P);
+      P2.transform(inverse_rotation);
+      P2 += position_;
+      polyline_top.push_back(P2);
+      vector_3d Q2(Q);
+      Q2.transform(inverse_rotation);
+      Q2 += position_;
+
+      polyline_bottom.push_back(Q2);
+      polyline_segment.clear();
+      polyline_segment.push_back(P2);
+      polyline_segment.push_back(Q2);
+      basic_draw_polyline(out_, polyline_segment);
+
+      polyline_endcap_top.clear();
+      polyline_endcap_top.push_back(P2);
+      basic_draw_polyline(out_, polyline_endcap_top);
+
+      polyline_endcap_bottom.clear();
+      polyline_endcap_bottom.push_back(Q2);
+      basic_draw_polyline(out_, polyline_endcap_bottom);
+
+    }
+    basic_draw_polyline(out_, polyline_top);
+    basic_draw_polyline(out_, polyline_bottom);
 
     return;
   }
@@ -1386,6 +1534,109 @@ namespace geomtools {
     return;
   }
 
+  void
+  gnuplot_draw::draw_ellipsoid(std::ostream & out_,
+			       const vector_3d & position_,
+			       const rotation_3d & rotation_,
+			       const ellipsoid & e_,
+			       size_t arc_sampling_,
+			       size_t z_sampling_)
+  {
+    draw_ellipsoid(out_, position_, rotation_,
+		   e_.get_x_radius(),
+		   e_.get_y_radius(),
+		   e_.get_z_radius(),
+		   e_.get_top_z_cut(),
+		   e_.get_bottom_z_cut(),
+		   arc_sampling_, z_sampling_);
+  }
+
+  void
+  gnuplot_draw::draw_ellipsoid(std::ostream & out_,
+			       const vector_3d & position_,
+			       const rotation_3d & rotation_,
+			       double x_radius_,
+			       double y_radius_,
+			       double z_radius_,
+			       double top_z_cut_,
+			       double bottom_z_cut_,
+			       size_t arc_sampling_,
+			       size_t z_sampling_)
+  {
+    rotation_3d inverse_rotation(rotation_);
+    inverse_rotation.invert();
+    
+    size_t phi_sample = arc_sampling_;
+    phi_sample = std::max(12U, (unsigned int) phi_sample);
+    
+    size_t z_sample = z_sampling_;
+    z_sample = std::max(4U, (unsigned int) z_sample);
+    
+    double dphi   = 2. * M_PI * CLHEP::radian / phi_sample;
+    double zmin   = -z_radius_+bottom_z_cut_;
+    double zmax   = z_radius_-top_z_cut_;
+    double dz     = (zmax-zmin) / z_sample;
+    double factor = 0.25;
+
+    // draw meridians:
+    {
+      for(size_t i = 0; i <= phi_sample; ++i) {
+        polyline_type polyline_meridian;
+        double phi = i * dphi;
+        double z = zmin;
+        for(size_t j = 0; j < z_sample + 3; j++) {
+	  vector_3d P;
+	  double local_a = std::sqrt(x_radius_*x_radius_*(1-z/z_radius_*z/z_radius_));
+	  double local_b = std::sqrt(y_radius_*y_radius_*(1-z/z_radius_*z/z_radius_));
+	  P.set(local_a * std::cos(phi),
+		local_b * std::sin(phi), z);
+	  P.transform(inverse_rotation);
+          P += position_;
+	  polyline_meridian.push_back(P);
+
+	  basic_draw_polyline(out_, polyline_meridian);
+	  // increment z:
+	  if(j == 0) z += factor * dz;
+	  else if(j == 1) z +=(1 - factor) * dz;
+	  else if(j == z_sample) z +=(1 - factor) * dz;
+	  else if(j == z_sample + 1) z += factor * dz;
+	  else if(j == z_sample + 2) z = z_radius_;
+	  else if(j == z_sample + 3) z = z_radius_ - 0.5 * factor;
+	  else z += dz;
+	}
+      }
+    }
+
+    // draw parallels:
+    {
+      double z = zmin;
+      for(size_t j = 0; j < z_sample + 3; j++) {
+        polyline_type polyline_parallel;
+        if (z > zmax) z = zmax;
+        for(size_t i = 0; i <= phi_sample; ++i) {
+	  vector_3d P;
+	  double phi = i * dphi;
+	  double local_a = std::sqrt(x_radius_*x_radius_*(1-z/z_radius_*z/z_radius_));
+	  double local_b = std::sqrt(y_radius_*y_radius_*(1-z/z_radius_*z/z_radius_));
+	  P.set(local_a * std::cos(phi),
+		local_b * std::sin(phi), z);
+	  P.transform(inverse_rotation);
+          P += position_;
+	  polyline_parallel.push_back(P);
+	}
+	basic_draw_polyline(out_, polyline_parallel);
+        // increment z:
+        if(j == 1) z += (1-factor) * dz;
+        else if(j == z_sample) z += (1-factor) * dz;
+        else if(j == z_sample + 1) z += factor * dz;
+        else if(j == z_sample + 2) z = z_radius_;
+        else if(j == z_sample + 3) z = z_radius_ - 0.5 * factor;
+        else z += dz;
+      }
+    }
+    return;
+  }  
+  
   void
   gnuplot_draw::draw_right_circular_conical_frustrum(std::ostream & out_,
                                                       const vector_3d & position_,
@@ -2100,6 +2351,12 @@ namespace geomtools {
       return;
     }
 
+    if(shape_name == "extruded_box") {
+      const extruded_box & b = dynamic_cast<const extruded_box &>(o_);
+      draw_extruded_box(out_, pos, rot, b);
+      return;
+    }
+
     if(shape_name == "cylinder") {
       const cylinder & c = dynamic_cast<const cylinder &>(o_);
       if(! mode_wired_cylinder) {
@@ -2121,6 +2378,24 @@ namespace geomtools {
         line_3d l(first, last);
         draw_segment(out_, pos, rot, l);
       }
+      return;
+    }
+
+    if(shape_name == "elliptical_tube") {
+      const elliptical_tube & t = dynamic_cast<const elliptical_tube &>(o_);
+      if(! mode_wired_cylinder) {
+        draw_elliptical_tube(out_, pos, rot, t);
+      } else {
+        vector_3d first(0, 0, -t.get_half_z()), last(0, 0, +t.get_half_z());
+        line_3d l(first, last);
+        draw_segment(out_, pos, rot, l);
+      }
+      return;
+    }
+
+    if(shape_name == "ellipsoid") {
+      const ellipsoid & e = dynamic_cast<const ellipsoid &>(o_);
+      draw_ellipsoid(out_, pos, rot, e);
       return;
     }
 

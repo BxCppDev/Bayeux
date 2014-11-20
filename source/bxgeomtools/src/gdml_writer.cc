@@ -787,6 +787,14 @@ namespace geomtools {
       {
         return true;
       }
+    if (solid_type_ == "ellipsoid")
+      {
+        return true;
+      }
+    if (solid_type_ == "eltube" || solid_type_ == "elliptical_tube")
+      {
+        return true;
+      }
     if (solid_type_ == "sphere")
       {
         return true;
@@ -843,7 +851,7 @@ namespace geomtools {
       {
         return true;
       }
-    if (solid_type_ == "eltube")
+    if (solid_type_ == "eltube" || solid_type_ == "elliptical_tube" )
       {
         return true;
       }
@@ -1093,6 +1101,76 @@ namespace geomtools {
     _get_stream(solids_section()) << solids_stream.str();
   }
 
+  void gdml_writer::add_gdml_elliptical_tube(const string & name_,
+					     double rx_, double ry_, double z_,
+					     const string & lunit_str_,
+					     const string & aunit_str_)
+  {
+    double lunit = datatools::units::get_length_unit_from(lunit_str_);
+    double aunit = datatools::units::get_angle_unit_from(aunit_str_);
+
+    ostringstream solids_stream;
+    solids_stream << "<" <<  "eltube"
+                  << " name=" << '"' << to_html(name_) << '"';
+
+    solids_stream << " dx=" << '"';
+    solids_stream.precision(15);
+    solids_stream << rx_ / lunit << '"';
+    
+    solids_stream << " dy=" << '"';
+    solids_stream.precision(15);
+    solids_stream << ry_ / lunit << '"';
+
+    solids_stream << " dz=" << '"';
+    solids_stream.precision(15);
+    solids_stream << z_/2. / lunit << '"';
+
+    solids_stream << " lunit=" << '"' << lunit_str_ << '"';
+    solids_stream << " aunit=" << '"' << aunit_str_ << '"';
+
+    solids_stream << " />" << endl << endl;
+    _get_stream(solids_section()) << solids_stream.str();
+  }
+
+  void gdml_writer::add_gdml_ellipsoid(const string & name_,
+				       double rx_, double ry_, double rz_,
+				       double bottom_z_, double top_z_,
+				       const string & lunit_str_,
+				       const string & aunit_str_)
+  {
+    double lunit = datatools::units::get_length_unit_from(lunit_str_);
+    double aunit = datatools::units::get_angle_unit_from(aunit_str_);
+
+    ostringstream solids_stream;
+    solids_stream << "<" <<  "ellipsoid"
+                  << " name=" << '"' << to_html(name_) << '"';
+
+    solids_stream << " ax=" << '"';
+    solids_stream.precision(15);
+    solids_stream << rx_ / lunit << '"';
+    
+    solids_stream << " by=" << '"';
+    solids_stream.precision(15);
+    solids_stream << ry_ / lunit << '"';
+
+    solids_stream << " cz=" << '"';
+    solids_stream.precision(15);
+    solids_stream << rz_ / lunit << '"';
+
+    solids_stream << " zcut1=" << '"';
+    solids_stream.precision(15);
+    solids_stream << (-rz_+bottom_z_) / lunit << '"';
+
+    solids_stream << " zcut2=" << '"';
+    solids_stream.precision(15);
+    solids_stream << (rz_-top_z_) / lunit << '"';
+
+    solids_stream << " lunit=" << '"' << lunit_str_ << '"';
+
+    solids_stream << " />" << endl << endl;
+    _get_stream(solids_section()) << solids_stream.str();
+  }
+
   /*
    * <polycone name = "thepolycone"
    startphi="1" deltaphi="4" aunit="rad" lunit= "mm">
@@ -1300,6 +1378,34 @@ namespace geomtools {
                   2. * M_PI * CLHEP::radian,
                   lunit_str_,
                   aunit_str_);
+  }
+
+  void gdml_writer::add_elliptical_tube(const string & name_,
+					const elliptical_tube & t_,
+					const string & lunit_str_,
+					const string & aunit_str_)
+  {
+    add_gdml_elliptical_tube(name_,
+			     t_.get_x_radius(),
+			     t_.get_y_radius(),
+			     t_.get_z(),
+			     lunit_str_,
+			     aunit_str_);
+  }
+
+  void gdml_writer::add_ellipsoid(const string & name_,
+				  const ellipsoid & e_,
+				  const string & lunit_str_,
+				  const string & aunit_str_)
+  {
+    add_gdml_ellipsoid(name_,
+		       e_.get_x_radius(),
+		       e_.get_y_radius(),
+		       e_.get_z_radius(),
+		       e_.get_bottom_z_cut(),
+		       e_.get_top_z_cut(),
+		       lunit_str_,
+		       aunit_str_);
   }
 
   void gdml_writer::add_orb(const string & name_,

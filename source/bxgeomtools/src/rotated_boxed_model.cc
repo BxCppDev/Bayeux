@@ -291,15 +291,17 @@ namespace geomtools {
         z = gzmax - gzmin;
       }
     }
-    _boxed_placement_.set_orientation (rotation_axis, rotation_angle);
-    _solid_.set_x (x);
-    _solid_.set_y (y);
-    _solid_.set_z (z);
+    _boxed_placement_.set_orientation(rotation_axis, rotation_angle);
+    _solid_.set_x(x);
+    _solid_.set_y(y);
+    _solid_.set_z(z);
+    _solid_.lock();
+
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid !");
 
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
-    grab_logical ().set_shape (_solid_);
-    grab_logical ().set_material_ref (material_name);
+    grab_logical().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical().set_shape (_solid_);
+    grab_logical().set_material_ref (material_name);
     // >>> Special treatment:
     // 2013-06-27 FM: add support for effective geometry informations:
     // Set effective shape:

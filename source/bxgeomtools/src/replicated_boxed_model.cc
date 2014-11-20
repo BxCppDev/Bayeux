@@ -165,10 +165,11 @@ namespace geomtools {
       }
     _boxed_replica_placement_.set_number_of_items (get_number_of_items ());
 
-    _solid_.reset ();
-    _solid_.set_x (_x_);
-    _solid_.set_y (_y_);
-    _solid_.set_z (_z_);
+    _solid_.reset();
+    _solid_.set_x(_x_);
+    _solid_.set_y(_y_);
+    _solid_.set_z(_z_);
+    _solid_.lock();
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in replicated boxed model '" << name_ << "' !");
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));

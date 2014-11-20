@@ -1,5 +1,10 @@
 // tessellation.cc
 
+/*
+http://www.blackpawn.com/texts/pointinpoly/default.html
+http://realtimecollisiondetection.net/books/rtcd/
+*/
+
 // Ourselves:
 #include <geomtools/tessellation.h>
 
@@ -8,19 +13,25 @@
 #include <fstream>
 #include <cmath>
 #include <stdexcept>
+#include <fstream>
+#include <string>
 
 // Third party:
+// - Boost:
+#include <boost/spirit/include/support_istream_iterator.hpp>
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/utils.h>
 #include <geomtools/box.h>
+#include <geomtools/stl_tools.h>
 
 namespace geomtools {
 
-  /*** facet_vertex ***/
+  /* facet_vertex */
 
   bool facet_vertex::is_valid () const
   {
@@ -98,7 +109,7 @@ namespace geomtools {
     return out_;
   }
 
-  /*** facet34 ***/
+  /* facet34 */
 
   uint32_t facet34::get_number_of_vertices () const
   {
@@ -641,7 +652,7 @@ namespace geomtools {
     return;
   }
 
-  /*** facet3 ***/
+  /* facet3 */
   /*
   size_t facet3::get_number_of_vertices () const
   {
@@ -712,7 +723,7 @@ namespace geomtools {
   }
   */
 
-  /*** facet4 ***/
+  /* facet4 */
 
   /*
   bool facet4::_is_valid_ () const
@@ -799,7 +810,7 @@ namespace geomtools {
   }
   */
 
-  /*** facet_segment ***/
+  /* facet_segment */
 
   bool facet_segment::is_valid () const
   {
@@ -905,7 +916,7 @@ namespace geomtools {
     return;
   }
 
-  /*** tessellated_solid ***/
+  /* tessellated_solid */
 
   const std::string & tessellated_solid::tessellated_label()
   {
@@ -914,11 +925,6 @@ namespace geomtools {
       label = "tessellated";
     }
     return label;
-  }
-
-  bool tessellated_solid::is_locked () const
-  {
-    return _locked_;
   }
 
   bool tessellated_solid::is_consistent () const
@@ -1106,17 +1112,28 @@ namespace geomtools {
     return;
   }
 
-  void tessellated_solid::lock ()
+  void tessellated_solid::_at_lock()
   {
-    DT_THROW_IF (! _check_ (), std::logic_error, "Solid is not validated !");
-    compute_facet_segments ();
-    _locked_ = true;
+    this->i_shape_3d::_at_lock();
+    compute_facet_segments();
     return;
   }
 
-  void tessellated_solid::unlock ()
+  void tessellated_solid::_at_unlock()
   {
-    _locked_ = false;
+    _facet_segments_.clear();
+    this->i_shape_3d::_at_unlock();
+    return;
+  }
+
+  void tessellated_solid::_build_bounding_data()
+  {
+    if (!_xrange_.is_valid() || !_yrange_.is_valid() || !_zrange_.is_valid()) {
+      compute_bounding_box();
+      _grab_bounding_data().make_box(_xrange_.get_min(), _xrange_.get_max(),
+                                     _yrange_.get_min(), _yrange_.get_max(),
+                                     _zrange_.get_min(), _zrange_.get_max());
+    }
     return;
   }
 
@@ -1127,7 +1144,6 @@ namespace geomtools {
 
   tessellated_solid::tessellated_solid ()
   {
-    _locked_     = false;
     _consistent_ = false;
     return;
   }
@@ -1201,29 +1217,29 @@ namespace geomtools {
     return _zrange_;
   }
 
-  // virtual
-  void tessellated_solid::compute_bounding_box(box & bb_)
-  {
-    this->i_object_3d::compute_bounding_box(bb_);
-    if (_xrange_.is_valid() && _yrange_.is_valid() && _zrange_.is_valid()) {
-      double x = std::abs(_xrange_.get_min());
-      if (std::abs(_xrange_.get_max()) > x) {
-        x = std::abs(_xrange_.get_max());
-      }
-      double y = std::abs(_yrange_.get_min());
-      if (std::abs(_yrange_.get_max()) > y) {
-        y = std::abs(_yrange_.get_max());
-      }
-      double z = std::abs(_zrange_.get_min());
-      if (std::abs(_zrange_.get_max()) > z) {
-        z = std::abs(_zrange_.get_max());
-      }
-      bb_.set_x(2 * x);
-      bb_.set_y(2 * y);
-      bb_.set_z(2 * z);
-    }
-    return;
-  }
+  // // virtual
+  // void tessellated_solid::compute_bounding_box(box & bb_)
+  // {
+  //   this->i_object_3d::compute_bounding_box(bb_);
+  //   if (_xrange_.is_valid() && _yrange_.is_valid() && _zrange_.is_valid()) {
+  //     double x = std::abs(_xrange_.get_min());
+  //     if (std::abs(_xrange_.get_max()) > x) {
+  //       x = std::abs(_xrange_.get_max());
+  //     }
+  //     double y = std::abs(_yrange_.get_min());
+  //     if (std::abs(_yrange_.get_max()) > y) {
+  //       y = std::abs(_yrange_.get_max());
+  //     }
+  //     double z = std::abs(_zrange_.get_min());
+  //     if (std::abs(_zrange_.get_max()) > z) {
+  //       z = std::abs(_zrange_.get_max());
+  //     }
+  //     bb_.set_x(2 * x);
+  //     bb_.set_y(2 * y);
+  //     bb_.set_z(2 * z);
+  //   }
+  //   return;
+  // }
 
   void tessellated_solid::compute_bounding_box()
   {
@@ -1503,110 +1519,90 @@ namespace geomtools {
     return tessellated_solid::tessellated_label();
   }
 
-  /*
-    void tessellated_solid::initialize (const std::string & filename_)
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(tessellated_solid,
+                                             "geomtools::tessellated_solid");
+
+
+  void tessellated_solid::initialize_from_stl(const std::string & filename_,
+                                              double length_unit_)
+  {
+    std::ifstream fin(filename_.c_str(), std::ios::binary);
+    std::string solid_token;
     {
-    ifstream ifs;
-    std::string filename = filename_;
-    ifs.open (filename.c_str ());
-    if (! ifs)
-    {
-    ostringstream message;
-    message << "tessellated_solid::initialize: "
-    << "Cannot open data file '"
-    << filename << "' !";
-    thr ow std::logic_error (message.str ());
+      fin.seekg(0, std::ios::end);
+      std::streampos length = fin.tellg();
+      fin.seekg(0, std::ios::beg);
+      std::cerr << "length : " << length << '\n';
+      solid_token.reserve(length);
+      fin.seekg(0, std::ios::beg);
+      solid_token.assign((std::istreambuf_iterator<char>(fin)),
+                       (std::istreambuf_iterator<char>()));
     }
-    size_t count = 0;
-    double length_unit = CLHEP::mm;
-    double z_factor = 1.0;
-    double r_factor = 1.0;
-    size_t point_counter = 0;
-    while (! ifs.eof ())
-    {
-    std::string line;
-    getline (ifs, line);
-    std::cerr << "DEVEL: tessellated_solid::initialize: "
-    << "line = '" << line << "'" << std::endl;
-    count++;
-    {
-    istringstream iss (line);
-    std::string  word;
-    iss >> word;
-    if (word.empty ()) continue;
-    if (word[0] == '#')
-    {
-    if (word.size () >= 2)
-    {
-    if (word == "#@length_unit")
-    {
-    std::string unit_str;
-    iss >> unit_str;
-    if (! iss)
-    {
-    ostringstream message;
-    message << "tessellated_solid::initialize: "
-    << "Invalid format for the length unit directive in data file '"
-    << filename << "' at line " << count << " !";
-    th row runtime_error (message.str ());
-    }
-    length_unit = datatools::units::get_length_unit_from (unit_str);
-    }
-    }
-    continue;
-    }
-    }
-    {
-    istringstream iss (line);
-    std::string token;
-    iss >> token;
-    if (token == "point")
-    {
-    }
-    }
+
+    using boost::spirit::ascii::space;
+    typedef std::string::const_iterator iterator_type;
+    typedef geomtools::stl::solid_parser<iterator_type> solid_parser_type;
+
+    iterator_type solid_iter = solid_token.begin();
+    iterator_type solid_end  = solid_token.end();
+    solid_parser_type     sld_grammar;
+    geomtools::stl::solid sld;
+    bool result = boost::spirit::qi::phrase_parse(solid_iter,
+                                                  solid_end,
+                                                  sld_grammar,
+                                                  boost::spirit::ascii::space,
+                                                  sld);
+    if (result && solid_iter == solid_end) {
+      geomtools::stl::stl_to_geomtools_converter stl2gt;
+      stl2gt.set_length_unit(length_unit_);
+      stl2gt.set_fix_attempt(true);
+      stl2gt.set_check_normal(true);
+      stl2gt.convert(sld, *this);
+      this->lock();
+    } else {
+      DT_THROW(std::logic_error, "STL parsing from file '" << filename_ << "' failed!");
     }
     return;
+  }
+
+  void tessellated_solid::initialize(const datatools::properties & config_,
+                                     const handle_dict_type * objects_)
+  {
+    reset();
+    this->i_shape_3d::initialize(config_, objects_);
+
+    double default_length_unit = CLHEP::mm;
+    if (config_.has_key ("length_unit")) {
+      const std::string length_unit_str = config_.fetch_string("length_unit");
+      default_length_unit = datatools::units::get_length_unit_from(length_unit_str);
     }
-  */
+
+    if (config_.has_key("stl_file")) {
+      std::string stl_filename = config_.fetch_string("stl_file");
+      datatools::fetch_path_with_env(stl_filename);
+      initialize_from_stl(stl_filename, default_length_unit);
+    }
+
+    lock();
+    return;
+  }
+
+  void tessellated_solid::reset ()
+  {
+    unlock();
+
+    _vertices_.clear();
+    _facets_.clear();
+    _xrange_.reset();
+    _yrange_.reset();
+    _zrange_.reset();
+    _facet_segments_.clear();
+    _consistent_ = false;
+
+    this->i_shape_3d::reset();
+    return;
+  }
 
 } // end of namespace geomtools
-
-/**
-http://www.blackpawn.com/texts/pointinpoly/default.html
-
-function SameSide(p1,p2, a,b)
-    cp1 = CrossProduct(b-a, p1-a)
-    cp2 = CrossProduct(b-a, p2-a)
-    if DotProduct(cp1, cp2) >= 0 then return true
-    else return false
-
-function PointInTriangle(p, a,b,c)
-    if SameSide(p,a, b,c) and SameSide(p,b, a,c)
-        and SameSide(p,c, a,b) then return true
-    else return false
-
-
-
-/// P projection of the point on the plane ABC
-// Compute vectors
-v0 = C - A
-v1 = B - A
-v2 = P - A
-
-// Compute dot products
-dot00 = dot(v0, v0)
-dot01 = dot(v0, v1)
-dot02 = dot(v0, v2)
-dot11 = dot(v1, v1)
-dot12 = dot(v1, v2)
-
-// Compute barycentric coordinates
-invDenom = 1 / (dot00 * dot11 - dot01 * dot01)
-u = (dot11 * dot02 - dot01 * dot12) * invDenom
-v = (dot00 * dot12 - dot01 * dot02) * invDenom
-
-// Check if point is in triangle
-return (u >= 0) && (v >= 0) && (u + v < 1)
-
-
-**/

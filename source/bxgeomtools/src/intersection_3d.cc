@@ -7,7 +7,13 @@
 #include <stdexcept>
 #include <sstream>
 
+// This project:
+#include <geomtools/box.h>
+
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(intersection_3d, "geomtools::intersection_3d");
 
   // static
   const std::string & intersection_3d::intersection_3d_label()
@@ -290,6 +296,36 @@ namespace geomtools {
           }
       }
     return intercept_.is_ok ();
+  }
+
+  void intersection_3d::_build_bounding_data()
+  {
+    std::cerr << "DEVEL: intersection_3d::_build_bounding_data: "
+              << "Entering..."
+              << std::endl;
+
+    if (get_shape1().get_shape().has_bounding_data()) {
+      // Default use shape 1's bounding data:
+      const placement & pl1 = get_shape1().get_placement();
+      box bb1;
+      placement bbpl1;
+      get_shape1().get_shape().get_bounding_data().compute_bounding_box(bb1, bbpl1);
+      std::vector<vector_3d> vv1;
+      bb1.compute_transformed_vertexes(bbpl1, vv1);
+      std::vector<vector_3d> points;
+      points.reserve(vv1.size());
+      for (int i = 0; i < (int) vv1.size(); i++) {
+        vector_3d vtx;
+        pl1.child_to_mother(vv1[i], vtx);
+        points.push_back(vtx);
+      }
+      _grab_bounding_data().make_box_from_points(points);
+    }
+
+    std::cerr << "DEVEL: intersection_3d::_build_bounding_data: "
+              << "Exiting."
+              << std::endl;
+    return;
   }
 
 } // end of namespace geomtools

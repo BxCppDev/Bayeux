@@ -31,10 +31,11 @@
 
 namespace geomtools {
 
+  // Forward declarations:
   class facet34;
   class box;
 
-  /// A vertex (corner) of a triangle or quadrangle facet in a tessellated solid
+  /// \brief A vertex (corner) of a triangle or quadrangle facet in a tessellated solid
   struct facet_vertex
   {
     vector_3d position; /// Position of the vertex
@@ -67,7 +68,7 @@ namespace geomtools {
 
   };
 
-  /// A Triangle or convex quadrangle facet of a tessellated solid
+  /// \brief A triangle or convex quadrangle facet of a tessellated solid
   class facet34
   {
 
@@ -176,9 +177,7 @@ namespace geomtools {
 
   };
 
-
-  /*** facet_segment ***/
-
+  /// \brief A segment associated to a facet
   class facet_segment
   {
   public :
@@ -209,21 +208,20 @@ namespace geomtools {
     void dump(std::ostream & out_) const;
   };
 
-  /*** tessellated_solid ***/
-
+  /// \brief Tesselated solid made of facets
   class tessellated_solid : public i_shape_3d
   {
   public:
 
-    static const uint32_t FACE_ALL   = FACE_ALL_BITS;
-    static const int INVALID_VERTEX  = -1;
-    static const int MAX_VERTEX      = 0x0FFFFFFF;
+    static const uint32_t FACE_ALL  = FACE_ALL_BITS;
+    static const int INVALID_VERTEX = -1;
+    static const int MAX_VERTEX     = 0x0FFFFFFF;
 
     /// Return the identifier label for the class
     static const std::string & tessellated_label();
 
-    typedef std::map<unsigned int, facet_vertex> vertices_col_type;
-    typedef std::map<unsigned int, facet34> facets_col_type;
+    typedef std::map<unsigned int, facet_vertex>  vertices_col_type;
+    typedef std::map<unsigned int, facet34>       facets_col_type;
     typedef std::map<unsigned int, facet_segment> facet_segments_col_type;
 
     /// Return the identifier/name of the shape
@@ -231,15 +229,14 @@ namespace geomtools {
 
     static bool validate_index(int);
 
+    /// Check the consistent flag
     bool is_consistent() const;
-
-    bool is_locked() const;
 
     /// Default constructor
     tessellated_solid();
 
-   /// Destructor
-     virtual ~tessellated_solid();
+    /// Destructor
+    virtual ~tessellated_solid();
 
     const vertices_col_type & vertices() const;
 
@@ -268,12 +265,6 @@ namespace geomtools {
                      int ivtx0_, int ivtx1_, int ivtx2_, int ivtx3_);
 
     void remove_facet(unsigned int facet_key_);
-
-    void lock();
-
-    void unlock();
-
-    virtual void compute_bounding_box(box & bb_);
 
     void compute_bounding_box();
 
@@ -304,13 +295,33 @@ namespace geomtools {
                                  intercept_t & intercept_,
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
+    /// Initialize from properties
+    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    virtual void reset();
+
+    /// Initialize from STL file
+    void initialize_from_stl(const std::string & filename_,
+                             double length_unit_);
+
+  protected:
+
+    /// Executed at lock stage
+    virtual void _at_lock();
+
+    /// Executed at unlock stage
+    virtual void _at_unlock();
+
+    /// Build the bounding data
+    virtual void _build_bounding_data();
+
   private:
 
     bool _check_();
 
   private:
 
-    bool              _locked_;
     bool              _consistent_;
     vertices_col_type _vertices_;
     facets_col_type   _facets_;
@@ -318,6 +329,9 @@ namespace geomtools {
     mygsl::min_max    _yrange_;
     mygsl::min_max    _zrange_;
     facet_segments_col_type _facet_segments_;
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tessellated_solid);
 
   };
 

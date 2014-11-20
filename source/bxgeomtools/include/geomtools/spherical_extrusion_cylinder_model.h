@@ -69,7 +69,7 @@ namespace geomtools {
                                 geomtools::models_col_type * models_ = 0);
   private:
 
-    std::string               _material_;
+    std::string               _material_; //!< Material name
     geomtools::sphere         _extrusion_;
     geomtools::cylinder       _mother_;
     geomtools::subtraction_3d _solid_;

@@ -110,10 +110,10 @@ namespace geomtools {
     void init ();
 
     /// Initialize the cylinder from properties
-    void initialize(const datatools::properties &);
+    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
 
     /// Reset the cylinder
-    void reset ();
+    virtual void reset ();
 
     virtual double get_surface (uint32_t a_mask = FACE_ALL_BITS) const;
 
@@ -154,10 +154,17 @@ namespace geomtools {
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
 
+  protected:
+
+    virtual void _build_bounding_data();
+
   private:
 
     double _z_;      //<! Height
     double _radius_; //<! Radius
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(cylinder);
 
   };
 

@@ -29,6 +29,7 @@
 
 namespace geomtools {
 
+  /// \brief Abstract base stackable object
   class i_stackable
   {
 
@@ -40,15 +41,16 @@ namespace geomtools {
     bool has_ymax() const;
     bool has_zmin() const;
     bool has_zmax() const;
-    virtual double get_xmin () const = 0;
-    virtual double get_xmax () const = 0;
-    virtual double get_ymin () const = 0;
-    virtual double get_ymax () const = 0;
-    virtual double get_zmin () const = 0;
-    virtual double get_zmax () const = 0;
+    virtual double get_xmin() const = 0;
+    virtual double get_xmax() const = 0;
+    virtual double get_ymin() const = 0;
+    virtual double get_ymax() const = 0;
+    virtual double get_zmin() const = 0;
+    virtual double get_zmax() const = 0;
 
   };
 
+  /// \brief Static methods and constants to handle stackable data/information
   class stackable
   {
   public:
@@ -63,122 +65,146 @@ namespace geomtools {
     static const std::string STACKABLE_PLAY_PROPERTY;
     static const std::string STACKABLE_LIMITS_PROPERTY;
 
-    static std::string make_key (const std::string & flag_);
+    static std::string make_key(const std::string & flag_);
 
-    static void extract (const datatools::properties & source_,
-                         datatools::properties & target_);
+    static void extract(const datatools::properties & source_,
+                        datatools::properties & target_);
 
-    static bool has_xmin (const datatools::properties & source_);
+    static bool has_xmin(const datatools::properties & source_);
 
-    static bool has_xmax (const datatools::properties & source_);
+    static bool has_xmax(const datatools::properties & source_);
 
-    static bool has_ymin (const datatools::properties & source_);
+    static bool has_ymin(const datatools::properties & source_);
 
-    static bool has_ymax (const datatools::properties & source_);
+    static bool has_ymax(const datatools::properties & source_);
 
-    static bool has_zmin (const datatools::properties & source_);
+    static bool has_zmin(const datatools::properties & source_);
 
-    static bool has_zmax (const datatools::properties & source_);
+    static bool has_zmax(const datatools::properties & source_);
 
-    static double get_xmin (const datatools::properties & source_,
-                            double length_unit_ = -1.0);
+    static double get_xmin(const datatools::properties & source_,
+                           double length_unit_ = -1.0);
 
-    static double get_xmax (const datatools::properties & source_,
-                            double length_unit_ = -1.0);
+    static double get_xmax(const datatools::properties & source_,
+                           double length_unit_ = -1.0);
 
-    static double get_ymin (const datatools::properties & source_,
-                            double length_unit_ = -1.0);
+    static double get_ymin(const datatools::properties & source_,
+                           double length_unit_ = -1.0);
 
-    static double get_ymax (const datatools::properties & source_,
-                            double length_unit_ = -1.0);
+    static double get_ymax(const datatools::properties & source_,
+                           double length_unit_ = -1.0);
 
-    static double get_zmin (const datatools::properties & source_,
-                            double length_unit_ = -1.0);
+    static double get_zmin(const datatools::properties & source_,
+                           double length_unit_ = -1.0);
 
-    static double get_zmax (const datatools::properties & source_,
-                            double length_unit_ = -1.0);
+    static double get_zmax(const datatools::properties & source_,
+                           double length_unit_ = -1.0);
 
-    static void set_xmin (datatools::properties & target_,
-                          double xmin_);
+    static void set_xmin(datatools::properties & target_,
+                         double xmin_);
 
-    static void set_xmax (datatools::properties & target_,
-                          double xmax_);
+    static void set_xmax(datatools::properties & target_,
+                         double xmax_);
 
-    static void set_ymin (datatools::properties & target_,
-                          double ymin_);
+    static void set_ymin(datatools::properties & target_,
+                         double ymin_);
 
-    static void set_ymax (datatools::properties & target_,
-                          double ymax_);
+    static void set_ymax(datatools::properties & target_,
+                         double ymax_);
 
-    static void set_zmin (datatools::properties & target_,
-                          double zmin_);
+    static void set_zmin(datatools::properties & target_,
+                         double zmin_);
 
-    static void set_zmax (datatools::properties & target_,
-                          double zmax_);
+    static void set_zmax(datatools::properties & target_,
+                         double zmax_);
 
-    static void unset_xmin (datatools::properties & target_);
+    static void unset_xmin(datatools::properties & target_);
 
-    static void unset_xmax (datatools::properties & target_);
+    static void unset_xmax(datatools::properties & target_);
 
-    static void unset_ymin (datatools::properties & target_);
+    static void unset_ymin(datatools::properties & target_);
 
-    static void unset_ymax (datatools::properties & target_);
+    static void unset_ymax(datatools::properties & target_);
 
-    static void unset_zmin (datatools::properties & target__);
+    static void unset_zmin(datatools::properties & target__);
 
-    static void unset_zmax (datatools::properties & target_);
+    static void unset_zmax(datatools::properties & target_);
 
-    static void unset (datatools::properties & target_);
+    static void unset(datatools::properties & target_);
 
-    static void set (datatools::properties & target_,
-                     const i_stackable & sd_);
+    static void set(datatools::properties & target_,
+                    const i_stackable & sd_);
 
   };
 
+  /// \brief Data for stacking along X, Y and/or Z axis
   class stackable_data : public i_stackable,
                          public datatools::i_tree_dumpable
   {
   public:
 
-    bool is_valid_x () const;
+    /// Check the validity of stacking information along the X axis
+    bool is_valid_x() const;
 
-    bool is_valid_y () const;
+    /// Check the validity of stacking information along the Y axis
+    bool is_valid_y() const;
 
-    bool is_valid_z () const;
+    /// Check the validity of stacking information along the Z axis
+    bool is_valid_z() const;
 
-    bool is_valid () const;
+    /// Check the validity of stacking information
+    bool is_valid() const;
 
-    bool is_valid_weak () const;
+    /// Check the validity of stacking information
+    bool is_valid_weak() const;
 
-    void invalidate ();
+    /// Invalidate
+    void invalidate();
 
-    stackable_data ();
+    /// Constructor
+    stackable_data();
+
+    /// Destructor
     virtual ~stackable_data();
 
-    virtual double get_xmin () const {return xmin;}
-    virtual double get_xmax () const {return xmax;}
-    virtual double get_ymin () const {return ymin;}
-    virtual double get_ymax () const {return ymax;}
-    virtual double get_zmin () const {return zmin;}
-    virtual double get_zmax () const {return zmax;}
+    /// Return the minimum X
+    virtual double get_xmin() const {return xmin;}
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+    /// Return the maximum X
+    virtual double get_xmax() const {return xmax;}
 
-    void dump (std::ostream & out_ = std::clog) const;
+    /// Return the minimum Y
+    virtual double get_ymin() const {return ymin;}
 
-    bool initialize (const datatools::properties & config_);
+    /// Return the maximum Y
+    virtual double get_ymax() const {return ymax;}
+
+    /// Return the minimum Z
+    virtual double get_zmin() const {return zmin;}
+
+    /// Return the maximum Z
+    virtual double get_zmax() const {return zmax;}
+
+    /// Smart print
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_          = false) const;
+
+    /// Print
+    void dump(std::ostream & out_ = std::clog) const;
+
+    /// Initialization
+    bool initialize(const datatools::properties & config_);
 
   public:
 
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
-    double zmin;
-    double zmax;
+    double xmin; //!< Minimum X
+    double xmax; //!< Maximum X
+    double ymin; //!< Minimum Y
+    double ymax; //!< Maximum Y
+    double zmin; //!< Minimum Z
+    double zmax; //!< Maximum Z
 
   };
 

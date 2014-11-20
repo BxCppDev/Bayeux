@@ -156,10 +156,12 @@ namespace geomtools {
       _world_z_ = world_z;
     }
 
-    _solid_.reset ();
-    _solid_.set_x (_world_x_);
-    _solid_.set_y (_world_y_);
-    _solid_.set_z (_world_z_);
+    _solid_.reset();
+    _solid_.set_x(_world_x_);
+    _solid_.set_y(_world_y_);
+    _solid_.set_z(_world_z_);
+    _solid_.lock();
+
     DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid !");
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));

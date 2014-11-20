@@ -116,13 +116,21 @@ namespace geomtools {
 
   bool i_shape_3d::is_stackable(const i_shape_3d & a_shape)
   {
-    if (a_shape.has_stackable_data ()) {
-      if (a_shape.get_stackable_data ().is_valid ()) {
+    if (a_shape.has_stackable_data()) {
+      if (a_shape.get_stackable_data().is_valid()) {
         return true;
+      } else {
+        DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                       "Stackable data is invalid for shape '"
+                       << a_shape.get_shape_name() << "'!");
       }
+    } else {
+      // DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+      //                "No stackable data in shape '"
+      //                << a_shape.get_shape_name() << "'!");
     }
     const i_stackable * the_stackable
-      = dynamic_cast<const i_stackable *> (&a_shape);
+      = dynamic_cast<const i_stackable *>(&a_shape);
     if (the_stackable != 0) {
       return true;
     }
@@ -131,8 +139,8 @@ namespace geomtools {
 
   bool i_shape_3d::is_xmin_stackable(const i_shape_3d & a_shape)
   {
-    if (is_stackable (a_shape)) return true;
-    if (stackable::has_xmin (a_shape.get_properties ())) return true;
+    if (is_stackable(a_shape)) return true;
+    if (stackable::has_xmin(a_shape.get_properties())) return true;
     return false;
   }
 
@@ -172,7 +180,7 @@ namespace geomtools {
   }
 
   bool i_shape_3d::pickup_stackable_with_properties(const i_shape_3d & a_shape,
-                                                     stackable_data & a_stackable_data)
+                                                    stackable_data & a_stackable_data)
   {
     bool ok = false;
     ok = i_shape_3d::pickup_stackable (a_shape, a_stackable_data);
@@ -299,6 +307,7 @@ namespace geomtools {
 
   i_shape_3d::i_shape_3d() : i_object_3d()
   {
+    _locked_ = false;
     _owns_stackable_data_ = false;
     _stackable_data_ = 0;
     return;
@@ -306,6 +315,7 @@ namespace geomtools {
 
   i_shape_3d::i_shape_3d(double a_skin) : i_object_3d(a_skin)
   {
+    _locked_ = false;
     _owns_stackable_data_ = false;
     _stackable_data_ = 0;
     return;
@@ -317,17 +327,67 @@ namespace geomtools {
     return;
   }
 
-  void i_shape_3d::initialize(const datatools::properties & config_)
+  void i_shape_3d::initialize(const datatools::properties & config_,
+                              const handle_dict_type * /* objects_ */)
   {
     this->i_object_3d::initialize(config_);
     return;
   }
 
+  void i_shape_3d::_initialize_bounding_data(const datatools::properties & config_)
+  {
+    if (config_.has_flag("enforce_bounding_data")) {
+      datatools::properties bounding_data_config;
+      config_.export_and_rename_starting_with(bounding_data_config,
+                                              "bounding_data.",
+                                              "");
+      _bounding_data_.parse_bounding_data(bounding_data_config);
+    }
+
+    DT_THROW_IF(!_bounding_data_.is_valid(), std::logic_error,
+                "Invalid bounding data for shape of type '" << get_shape_name() << "'!");
+    return;
+  }
+
   void i_shape_3d::reset()
   {
+    if (is_locked()) {
+      unlock();
+    }
     reset_stackable_data();
     this->i_object_3d::reset();
     return;
+  }
+
+  bool i_shape_3d::has_bounding_data() const
+  {
+    return _bounding_data_.is_valid();
+  }
+
+  void i_shape_3d::reset_bounding_data()
+  {
+    // DT_THROW_IF(is_locked(), std::logic_error,
+    //             "Shape '" << get_shape_name() << "' is locked!");
+    _bounding_data_.reset();
+    return;
+  }
+
+  const bounding_data & i_shape_3d::get_bounding_data() const
+  {
+    return _bounding_data_;
+  }
+
+  void i_shape_3d::set_bounding_data(const bounding_data & bd_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error,
+                "Shape '" << get_shape_name() << "' is locked!");
+    _bounding_data_ = bd_;
+    return;
+  }
+
+  bounding_data & i_shape_3d::_grab_bounding_data()
+  {
+    return _bounding_data_;
   }
 
   shape_domain_flags_type i_shape_3d::where_is(const vector_3d & position_, double a_skin) const
@@ -377,10 +437,20 @@ namespace geomtools {
     string indent;
     if (! a_indent.empty ()) indent = a_indent;
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
-    if (i_shape_3d::is_stackable (*this)) {
+
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Bounding data: "
+          << (has_bounding_data() ? "yes" : "no")
+          << std::endl;
+    std::ostringstream indent2_oss;
+    indent2_oss << indent << datatools::i_tree_dumpable::skip_tag;
+    _bounding_data_.tree_dump(a_out, "", indent2_oss.str());
+
+
+    if (i_shape_3d::is_stackable(*this)) {
       stackable_data SD;
-      i_shape_3d::pickup_stackable (*this, SD);
-      a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+      i_shape_3d::pickup_stackable(*this, SD);
+      a_out << indent << datatools::i_tree_dumpable::tag
             << "Stackable data : ";
       if (_stackable_data_ != 0) {
         a_out << "[plugged]";
@@ -390,13 +460,55 @@ namespace geomtools {
       a_out << endl;
       ostringstream indent_oss;
       indent_oss << indent;
-      indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (a_inherit);
+      indent_oss << datatools::i_tree_dumpable::skip_tag;
       SD.tree_dump (a_out, "", indent_oss.str ());
     }
     /*
       a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
       << "Stackable_data : " << (_stackable_data_ != 0? "Yes": "No") << endl;
     */
+
+   a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+      << "Locked : " << (_locked_? "Yes": "No") << endl;
+
+    return;
+  }
+
+  bool i_shape_3d::is_locked() const
+  {
+    return _locked_;
+  }
+
+  void i_shape_3d::lock()
+  {
+    if (is_locked()) return;
+    _at_lock();
+    _locked_ = true;
+    return;
+  }
+
+  void i_shape_3d::unlock()
+  {
+    if (!is_locked()) return;
+    _locked_ = false;
+    _at_unlock();
+    return;
+  }
+
+  void i_shape_3d::_at_lock()
+  {
+    _build_bounding_data();
+    return;
+  }
+
+  void i_shape_3d::_at_unlock()
+  {
+    _bounding_data_.reset();
+    return;
+  }
+
+  void i_shape_3d::_build_bounding_data()
+  {
     return;
   }
 

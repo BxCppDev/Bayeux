@@ -218,6 +218,8 @@ namespace geomtools {
       DT_THROW_IF (true, std::logic_error, "Shape '" << get_shape_name () << "' is not supported in simple shaped model '" << name_ << "' !");
     }
 
+    _solid_->lock();
+
     // Set the envelope solid shape:
     grab_logical ().set_shape (*_solid_);
 
@@ -225,36 +227,10 @@ namespace geomtools {
     return;
   }
 
-  /***********************************************************/
-
   void simple_shaped_model::_construct_box (const std::string & name_,
                                             const datatools::properties & config_,
                                             models_col_type * /*models_*/)
   {
-    /*
-      double lunit = CLHEP::mm;
-      if (config_.has_key ("length_unit")) {
-      const std::string lunit_str = config_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
-      }
-
-      DT_THROW_IF (! config_.has_key ("x"), std::logic_error, "Missing box 'x' property in simple shaped (box) model '" << name_ << "' !");
-      double x = config_.fetch_real ("x");
-      if (! config_.has_explicit_unit ("x")) {
-      x *= lunit;
-      }
-      DT_THROW_IF (! config_.has_key ("y"), std::logic_error, "Missing box 'y' property in simple shaped (box) model '" << name_ << "' !");
-      double y = config_.fetch_real ("y");
-      if (! config_.has_explicit_unit ("y")) {
-      y *= lunit;
-      }
-      DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing box 'z' property in simple shaped (box) model '" << name_ << "' !");
-      double z = config_.fetch_real ("z");
-      if (! config_.has_explicit_unit ("z")) {
-      z *= lunit;
-      }
-    */
-
     // Build the box:
     _box_ = new box;
     try {
@@ -272,56 +248,10 @@ namespace geomtools {
     return;
   }
 
-  /***********************************************************/
-
   void simple_shaped_model::_construct_cylinder (const std::string & name_,
                                                  const datatools::properties & config_,
                                                  models_col_type * /*models_*/)
   {
-
-    /*
-    double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit")) {
-      const std::string lunit_str = config_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
-    }
-
-    // double aunit = CLHEP::degree;
-    // if (config_.has_key ("angle_unit")) {
-    //   const std::string aunit_str = config_.fetch_string ("angle_unit");
-    //   aunit = datatools::units::get_angle_unit_from (aunit_str);
-    // }
-
-    double r;
-    datatools::invalidate (r);
-    if (config_.has_key ("r")) {
-      r = config_.fetch_real ("r");
-      if (! config_.has_explicit_unit ("r")) {
-        r *= lunit;
-      }
-    } else if (config_.has_key ("radius")) {
-      r = config_.fetch_real ("radius");
-      if (! config_.has_explicit_unit ("radius")) {
-        r *= lunit;
-      }
-    } else if (config_.has_key ("diameter")) {
-      r = 0.5 * config_.fetch_real ("diameter");
-      if (! config_.has_explicit_unit ("diameter")) {
-        r *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (r), std::logic_error, "Missing cylinder 'r' or 'diameter' property in simple shaped (cylinder) model '" << name_ << "' !");
-
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing cylinder 'z' property in simple shaped (cylinder) model '" << name_ << "' !");
-    double z = config_.fetch_real ("z");
-    if (! config_.has_explicit_unit ("z")) {
-      z *= lunit;
-    }
-
-    // build the cylinder:
-    _cylinder_ = new cylinder (r, z);
-    */
-
     // Build the cylinder:
     _cylinder_ = new cylinder;
     try {
@@ -339,84 +269,10 @@ namespace geomtools {
     return;
   }
 
-  /***********************************************************/
-
   void simple_shaped_model::_construct_sphere (const std::string & name_,
                                                const datatools::properties & config_,
                                                models_col_type* /*models_*/)
   {
-    /*
-      double lunit = CLHEP::mm;
-      if (config_.has_key ("length_unit")) {
-      const std::string lunit_str = config_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
-      }
-
-      double aunit = CLHEP::degree;
-      if (config_.has_key ("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string ("angle_unit");
-      aunit = datatools::units::get_angle_unit_from (aunit_str);
-      }
-
-      double rmin, rmax;
-      rmin = 0.0;
-      if (config_.has_key ("rmax")) {
-      rmax = config_.fetch_real ("rmax");
-      if (! config_.has_explicit_unit ("rmax")) {
-      rmax *= lunit;
-      }
-      } else {
-      DT_THROW_IF (! config_.has_key ("r"), std::logic_error,
-      "Missing sphere 'r' property in simple shaped (sphere) model '" << name_ << "' !");
-      rmax = config_.fetch_real ("r");
-      if (! config_.has_explicit_unit ("r")) {
-      rmax *= lunit;
-      }
-      }
-      if (config_.has_key ("rmin")) {
-      rmin = config_.fetch_real ("rmin");
-      if (! config_.has_explicit_unit ("rmin")) {
-      rmin *= lunit;
-      }
-      }
-
-      double theta_min = 0.0;
-      double delta_theta = 2 * M_PI * CLHEP::radian;
-      bool not_full_theta = false;
-      if (config_.has_key ("theta_min")) {
-      theta_min = config_.fetch_real ("theta_min");
-      if (! config_.has_explicit_unit ("theta_min")) {
-      theta_min *= aunit;
-      }
-      not_full_theta = true;
-      }
-      if (config_.has_key ("delta_theta")) {
-      delta_theta = config_.fetch_real ("delta_theta");
-      if (! config_.has_explicit_unit ("delta_theta")) {
-      delta_theta *= aunit;
-      }
-      not_full_theta = true;
-      }
-
-      double phi_min = 0.0;
-      double delta_phi = M_PI * CLHEP::radian;
-      bool not_full_phi = false;
-      if (config_.has_key ("phi_min")) {
-      phi_min = config_.fetch_real ("phi_min");
-      if (! config_.has_explicit_unit ("phi_min")) {
-      phi_min *= aunit;
-      }
-      not_full_phi = true;
-      }
-      if (config_.has_key ("delta_phi")) {
-      delta_phi = config_.fetch_real ("delta_phi");
-      if (! config_.has_explicit_unit ("delta_phi")) {
-      delta_phi *= aunit;
-      }
-      not_full_phi = true;
-      }
-    */
-
     // Build the sphere:
     _sphere_ = new sphere;
     try {
@@ -426,18 +282,6 @@ namespace geomtools {
       delete _sphere_;
       throw error;
     }
-    /*
-      if (rmin > 0.0) {
-      _sphere_->set_r_min(rmin);
-      }
-      _sphere_->set_r_max(rmax);
-      if (not_full_theta) {
-      _sphere_->set_theta(theta_min, delta_theta);
-      }
-      if (not_full_phi) {
-      _sphere_->set_phi(phi_min, delta_phi);
-      }
-    */
     DT_THROW_IF (! _sphere_->is_valid(), std::logic_error,
                  "Invalid sphere parameters in simple shaped (sphere) model '" << name_ << "' !");
     _solid_ = _sphere_;
@@ -446,75 +290,10 @@ namespace geomtools {
     return;
   }
 
-  /***********************************************************/
-
   void simple_shaped_model::_construct_tube (const std::string & name_,
                                              const datatools::properties & config_,
                                              models_col_type* /*models_*/)
   {
-    /*
-    double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit")) {
-      const std::string lunit_str = config_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
-    }
-
-    double inner_r;
-    datatools::invalidate (inner_r);
-    if (config_.has_key ("inner_r")) {
-      inner_r = config_.fetch_real ("inner_r");
-      if (! config_.has_explicit_unit ("inner_r")) {
-        inner_r *= lunit;
-      }
-    } else if (config_.has_key ("inner_radius")) {
-      inner_r = config_.fetch_real ("inner_radius");
-      if (! config_.has_explicit_unit ("inner_radius")) {
-        inner_r *= lunit;
-      }
-    } else if (config_.has_key ("inner_diameter")) {
-      inner_r = 0.5 * config_.fetch_real ("inner_diameter");
-      if (! config_.has_explicit_unit ("inner_diameter")) {
-        inner_r *= lunit;
-      }
-    }
-    if (! datatools::is_valid (inner_r)) {
-      DT_LOG_WARNING (get_logging_priority (),
-                      "Missing tube 'inner_r' property ! Using 0-default inner radius in simple shaped (tube) model '" << name_ << "' !");
-      inner_r = 0.0;
-    }
-
-    double outer_r;
-    datatools::invalidate (outer_r);
-    if (config_.has_key ("outer_r")) {
-      outer_r = config_.fetch_real ("outer_r");
-      if (! config_.has_explicit_unit ("outer_r")) {
-        outer_r *= lunit;
-      }
-    } else if (config_.has_key ("outer_radius")) {
-      outer_r = config_.fetch_real ("outer_radius");
-      if (! config_.has_explicit_unit ("outer_radius")) {
-        outer_r *= lunit;
-      }
-    } else if (config_.has_key ("outer_diameter")) {
-      outer_r = 0.5 * config_.fetch_real ("outer_diameter");
-      if (! config_.has_explicit_unit ("outer_diameter")) {
-        outer_r *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (outer_r), std::logic_error,
-                 "Missing tube 'outer_r' property in simple shaped (tube) model '" << name_ << "' !");
-
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error,
-                 "Missing tube 'z' property in simple shaped (tube) model '" << name_ << "' !");
-    double z = config_.fetch_real ("z");
-    if (! config_.has_explicit_unit ("z")) {
-      z *= lunit;
-    }
-
-    // Build the tube:
-    _tube_ = new tube (inner_r, outer_r, z);
-    */
-
     // Build the tube:
     _tube_ = new tube;
     try {
@@ -612,8 +391,6 @@ namespace geomtools {
 
     return;
   }
-
-  /*****************************************************/
 
   void simple_shaped_model::_construct_polycone (const std::string & name_,
                                                  const datatools::properties & config_,
@@ -715,8 +492,6 @@ namespace geomtools {
   }
 
 
-  /*****************************************************/
-
   void simple_shaped_model::_construct_polyhedra (const std::string & name_,
                                                   const datatools::properties & config_,
                                                   models_col_type* /*models_*/)
@@ -814,8 +589,6 @@ namespace geomtools {
 
     return;
   }
-
-  /*******************************************/
 
   void simple_shaped_model::_pre_construct (datatools::properties & setup_,
                                             models_col_type * models_)
@@ -938,8 +711,6 @@ namespace geomtools {
 
     return;
   }
-
-  /*******************************************/
 
   void simple_shaped_model::tree_dump (std::ostream & out_,
                                        const std::string & title_ ,

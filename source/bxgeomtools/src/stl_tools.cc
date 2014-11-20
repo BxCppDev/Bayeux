@@ -1,23 +1,26 @@
-// -*- mode: c++ ; -*-
-/* stl_tools.cc
- */
+// stl_tools.cc
 
+// Ourselves:
 #include <geomtools/stl_tools.h>
 
+// Standard library:
 #include <stdexcept>
 #include <cstdlib>
 #include <algorithm>
 #include <fstream>
 #include <limits>
 
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <geomtools/tessellation.h>
 
 namespace geomtools {
+
   namespace stl {
 
     // Vertex :
@@ -78,14 +81,14 @@ namespace geomtools {
 
     solid::solid ()
     {
-      facets.reserve (100);
+      facets.reserve(100);
       return;
     }
 
     std::ostream & operator<<(std::ostream & out_, const solid & sld_)
     {
       out_ << "geomtools::stl::solid{name='" << sld_.name << "'"
-           << ";#facets="  << sld_.facets.size()
+           << ";number_of_facets="  << sld_.facets.size()
            << ";dummy_name='" << sld_.name << "'}";
       return out_;
     }
@@ -301,18 +304,18 @@ namespace geomtools {
             }
           }
 
-          ts_.add_facet (ifacet, ivertices[0], ivertices[1], ivertices[2]);
+          ts_.add_facet(ifacet, ivertices[0], ivertices[1], ivertices[2]);
         }
       // if (is_debug()) std::clog << "DEBUG: geomtools::stl::stl_to_geomtools_converter::convert: "
       //                           << "Number of vertices = " << vertices.size()
       //                           << std::endl;
 
       if (_fix_attempt_) {
-        fix_broken_facets (ts_, is_debug());
+        fix_broken_facets(ts_, is_debug());
       }
 
       if (_lock_ts_) {
-        ts_.lock ();
+        ts_.lock();
       }
 
       return EXIT_SUCCESS;
@@ -321,5 +324,3 @@ namespace geomtools {
   } // end of namespace stl
 
 } // end of namespace geomtools
-
-// end of stl_tools.cc

@@ -40,6 +40,12 @@ namespace geomtools {
     return polycone_label();
   }
 
+  void polycone::_build_bounding_data()
+  {
+    _grab_bounding_data().make_cylinder(_r_max_, get_zmin(), get_zmax());
+    return;
+  }
+
   double polycone::get_xmin () const
   {
     return -_r_max_;
@@ -122,6 +128,7 @@ namespace geomtools {
       }
     }
     ip_._compute_all_ ();
+    ip_.lock();
     return;
   }
 
@@ -136,6 +143,7 @@ namespace geomtools {
       op_.add (z, 0.0, rmax, false);
     }
     op_._compute_all_ ();
+    op_.lock();
     return;
   }
 
@@ -363,8 +371,12 @@ namespace geomtools {
     return;
   }
 
-  void polycone::initialize (const datatools::properties & setup_)
+  void polycone::initialize (const datatools::properties & setup_,
+                             const handle_dict_type * objects_)
   {
+    reset();
+    this->i_shape_3d::initialize(setup_, objects_);
+
     double lunit = CLHEP::mm;
     if (setup_.has_key ("length_unit")) {
       const std::string lunit_str = setup_.fetch_string ("length_unit");
@@ -457,6 +469,7 @@ namespace geomtools {
       DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
     }
 
+    lock();
     return;
   }
 
@@ -670,6 +683,8 @@ namespace geomtools {
 
   void polycone::reset ()
   {
+    unlock();
+
     _points_.clear ();
     _top_surface_        = std::numeric_limits<double>::quiet_NaN();
     _bottom_surface_     = std::numeric_limits<double>::quiet_NaN();
@@ -680,6 +695,8 @@ namespace geomtools {
     _volume_             = std::numeric_limits<double>::quiet_NaN();
     _z_min_ = _z_max_ = _r_max_ = std::numeric_limits<double>::quiet_NaN();
     _extruded_ = false;
+
+    this->i_shape_3d::reset();
     return;
   }
 

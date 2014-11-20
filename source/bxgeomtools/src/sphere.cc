@@ -19,6 +19,9 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(sphere, "geomtools::sphere");
+
   using namespace std;
 
   const std::string & sphere::sphere_label()
@@ -28,6 +31,12 @@ namespace geomtools {
       label = "sphere";
     }
     return label;
+  }
+
+  void sphere::_build_bounding_data()
+  {
+    _grab_bounding_data().make_cylinder(_r_, get_zmin(), get_zmax());
+    return;
   }
 
   double sphere::get_xmin () const
@@ -160,13 +169,13 @@ namespace geomtools {
   {
     DT_THROW_IF(start_phi_ < 0.0,
                 std::domain_error,
-                "Start theta is negative !");
+                "Start phi is negative !");
     DT_THROW_IF(start_phi_ >= 2 * M_PI,
                 std::domain_error,
-                "Start theta is too large (> 2 pi) !");
+                "Start phi is too large (> 2 pi) !");
     DT_THROW_IF(delta_phi_ > 2 * M_PI,
                 std::domain_error,
-                "Delta theta is too large (> 2 pi)!");
+                "Delta phi is too large (> 2 pi)!");
     DT_THROW_IF(delta_phi_ < 0,
                 std::domain_error,
                 "Delta phi is negative (< 0)!");
@@ -250,9 +259,12 @@ namespace geomtools {
   {
   }
 
-  void sphere::initialize(const datatools::properties & config_)
+  void sphere::initialize(const datatools::properties & config_,
+                          const handle_dict_type * objects_)
   {
     reset();
+    this->i_shape_3d::initialize(config_, objects_);
+
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
@@ -288,7 +300,7 @@ namespace geomtools {
     }
 
     double start_theta = 0.0;
-    double delta_theta = 2 * M_PI * CLHEP::radian;
+    double delta_theta = M_PI * CLHEP::radian;
     bool not_full_theta = false;
     if (config_.has_key ("start_theta")) {
       start_theta = config_.fetch_real ("start_theta");
@@ -306,7 +318,7 @@ namespace geomtools {
     }
 
     double start_phi = 0.0;
-    double delta_phi = M_PI * CLHEP::radian;
+    double delta_phi = 2 * M_PI * CLHEP::radian;
     bool not_full_phi = false;
     if (config_.has_key ("start_phi")) {
       start_phi = config_.fetch_real ("start_phi");
@@ -332,6 +344,8 @@ namespace geomtools {
     if (not_full_phi) {
       set_phi(start_phi, delta_phi);
     }
+
+    lock();
     return;
   }
 
@@ -391,20 +405,27 @@ namespace geomtools {
   void
   sphere::reset ()
   {
+    unlock();
+
     _set_default();
+
+    this->i_shape_3d::reset();
+    return;
   }
 
   bool sphere::has_partial_phi() const
   {
-    if (_delta_phi_ == 2 * M_PI) return false;
-    if (_start_phi_ > 0.0) return true;
+    if (_start_phi_ != 0. || _delta_phi_ != 2 * M_PI) {
+      return true;
+    }
     return false;
   }
 
   bool sphere::has_partial_theta() const
   {
-    if (_delta_theta_ == M_PI) return false;
-    if (_start_theta_ > 0.0) return true;
+    if (_start_theta_ != 0. || _delta_theta_ != M_PI) {
+      return true;
+    }
     return false;
   }
 
@@ -735,9 +756,12 @@ namespace geomtools {
   operator<< (std::ostream & out_, const sphere & s_)
   {
     out_ << '{' << sphere::sphere_label() << ' '
-         << s_._r_
-         << ' ' << s_._r_min_
-         << '}';
+         << s_._r_ << ' '
+             << s_._r_min_ << ' '
+         << s_._start_phi_ << ' '
+         << s_._delta_phi_ << ' '
+         << s_._start_theta_ << ' '
+         << s_._delta_theta_ << '}';
     return out_;
   }
 
@@ -764,6 +788,20 @@ namespace geomtools {
       in_.clear (std::ios_base::failbit);
       return in_;
     }
+    double start_phi, delta_phi;
+    in_ >> start_phi >> delta_phi;
+    if (! in_)
+      {
+        in_.clear (std::ios_base::failbit);
+        return in_;
+      }
+    double start_theta, delta_theta;
+    in_ >> start_theta >> delta_theta;
+    if (! in_)
+      {
+        in_.clear (std::ios_base::failbit);
+        return in_;
+      }
     c = 0;
     in_.get (c);
     if (c != '}')  {
@@ -805,6 +843,7 @@ namespace geomtools {
 
     return;
   }
+
 
   // static
   void sphere::init_ocd(datatools::object_configuration_description & ocd_)

@@ -46,10 +46,17 @@ namespace geomtools {
 
     virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
 
-    virtual  bool find_intercept (const vector_3d & from_,
+    virtual bool find_intercept (const vector_3d & from_,
                                   const vector_3d & direction_,
                                   intercept_t & intercept_,
                                   double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+  protected:
+
+    virtual void _build_bounding_data();
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(union_3d);
 
   };
 

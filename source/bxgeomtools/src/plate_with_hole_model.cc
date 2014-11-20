@@ -178,6 +178,8 @@ namespace geomtools {
     _mother_.set_x (_x_);
     _mother_.set_y (_y_);
     _mother_.set_z (_z_);
+    _mother_.lock();
+
     DT_THROW_IF (! _mother_.is_valid (),
                  std::logic_error,
                  "Invalid dimension(s) for the mother box in plate with hole model '" << name_ << "' !");
@@ -186,6 +188,7 @@ namespace geomtools {
     if (datatools::is_valid (_r_hole_)) {
       _cyl_hole_.set_r (_r_hole_);
       _cyl_hole_.set_z (_z_hole_);
+      _cyl_hole_.lock();
       _solid_.set_shapes (_mother_,
                           _cyl_hole_,
                           hole_placement);
@@ -193,6 +196,7 @@ namespace geomtools {
       _box_hole_.set_x (_x_hole_);
       _box_hole_.set_y (_y_hole_);
       _box_hole_.set_z (_z_hole_);
+      _box_hole_.lock();
       _solid_.set_shapes (_mother_,
                           _box_hole_,
                           hole_placement);
@@ -213,6 +217,7 @@ namespace geomtools {
     }
 
     _solid_.set_user_draw ((void *) &plate_with_hole_model::gnuplot_draw_user_function);
+    _solid_.lock();
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
     grab_logical ().set_shape (_solid_);

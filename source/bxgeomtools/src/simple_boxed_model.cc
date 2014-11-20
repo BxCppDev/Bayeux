@@ -132,10 +132,11 @@ namespace geomtools {
     set_y (y);
     set_z (z);
 
-    _solid_.reset ();
-    _solid_.set_x (get_x ());
-    _solid_.set_y (get_y ());
-    _solid_.set_z (get_z ());
+    _solid_.reset();
+    _solid_.set_x(get_x ());
+    _solid_.set_y(get_y ());
+    _solid_.set_z(get_z ());
+    _solid_.lock();
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid box dimensions in simple boxed model '" << name_ << "' !");
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
@@ -184,5 +185,3 @@ namespace geomtools {
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_boxed_model,"geomtools::simple_boxed_model");
 
 } // end of namespace geomtools
-
-// end of simple_boxed_model.cc

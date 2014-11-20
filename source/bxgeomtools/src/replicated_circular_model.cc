@@ -251,6 +251,7 @@ namespace geomtools {
     // Mother tube:
     _solid_.reset();
     _solid_.set(mother_r_min, mother_r_max, mother_z);
+    _solid_.lock();
     DT_THROW_IF(! _solid_.is_valid(), std::logic_error,
                 "Invalid mother tube solid in replicated circular model '" << name_ << "' !");
 

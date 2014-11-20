@@ -1,4 +1,4 @@
-//cylinder.cc
+// cylinder.cc
 
 // Standard library:
 #include <string>
@@ -13,6 +13,9 @@
 #include <geomtools/cylinder.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(cylinder, "geomtools::cylinder");
 
   using namespace std;
 
@@ -218,8 +221,12 @@ namespace geomtools {
   void
   cylinder::reset ()
   {
+    unlock();
+
     _radius_ = -1.0;
     _z_ = -1.0;
+
+    this->i_shape_3d::reset();
     return;
   }
 
@@ -575,9 +582,12 @@ namespace geomtools {
     return;
   }
 
-  void cylinder::initialize(const datatools::properties & config_)
+  void cylinder::initialize(const datatools::properties & config_,
+                            const handle_dict_type * objects_)
   {
     reset();
+    this->i_shape_3d::initialize(config_, objects_);
+
     double lunit = CLHEP::mm;
     if (config_.has_key("length_unit")) {
       const std::string lunit_str = config_.fetch_string("length_unit");
@@ -613,6 +623,13 @@ namespace geomtools {
     set_r(r);
     set_z(z);
 
+    lock();
+    return;
+  }
+
+  void cylinder::_build_bounding_data()
+  {
+    _grab_bounding_data().make_cylinder(get_r(), -0.5 * get_z(), +0.5 * get_z());
     return;
   }
 

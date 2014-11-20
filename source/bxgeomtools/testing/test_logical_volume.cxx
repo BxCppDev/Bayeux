@@ -49,6 +49,7 @@ int main (int argc_, char ** argv_)
     srand48(seed48);
 
     geomtools::box world_box (1.0 * CLHEP::m, 1.0 * CLHEP::m, 1.0 * CLHEP::m);
+    world_box.lock();
 
     geomtools::logical_volume world_log ("world", world_box);
     world_log.grab_parameters ().store ("material.ref", "vacuum");
@@ -56,6 +57,8 @@ int main (int argc_, char ** argv_)
     world_log.tree_dump (cout, "World");
 
     geomtools::box vessel_box (0.9 * CLHEP::m, 0.9 * CLHEP::m, 0.9 * CLHEP::m);
+    vessel_box.lock();
+
     geomtools::logical_volume vessel_log ("vessel.log", vessel_box);
     vessel_log.grab_parameters ().store ("material.ref", "inox");
     vessel_log.grab_parameters ().store ("visualization.visible", true);
@@ -69,6 +72,7 @@ int main (int argc_, char ** argv_)
     vessel_phys.tree_dump(cout, "Vessel in world physical: ");
 
     geomtools::box gas_box (0.89 * CLHEP::m, 0.89 * CLHEP::m, 0.89 * CLHEP::m);
+    gas_box.lock();
     geomtools::logical_volume gas_log ("gas.log", gas_box);
     gas_log.grab_parameters ().store ("material.ref", "air");
     gas_log.grab_parameters ().store ("visualization.visible", true);
@@ -83,6 +87,7 @@ int main (int argc_, char ** argv_)
     double r_source = 0.25 * CLHEP::m;
     double z_source = 0.15 * CLHEP::m;
     geomtools::cylinder source_cyl (r_source, z_source);
+    source_cyl.lock();
     geomtools::logical_volume source_log ("source.log", source_cyl);
     source_log.grab_parameters ().store ("material.ref", "mylar");
     source_log.grab_parameters ().store ("visualization.visible", true);
@@ -94,6 +99,7 @@ int main (int argc_, char ** argv_)
                                             source_placement);
 
     geomtools::cylinder source_hole_cyl (0.04 * CLHEP::m, z_source);
+    source_hole_cyl.lock();
     geomtools::logical_volume source_hole_log ("source_hole.log", source_hole_cyl);
     source_hole_log.grab_parameters ().store ("material.ref", "air");
     source_hole_log.grab_parameters ().store ("visualization.visible", true);

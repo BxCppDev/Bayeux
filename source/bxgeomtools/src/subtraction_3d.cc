@@ -14,6 +14,9 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(subtraction_3d, "geomtools::subtraction_3d");
+
   const std::string & subtraction_3d::subtraction_3d_label()
   {
     static std::string label;
@@ -58,7 +61,7 @@ namespace geomtools {
   }
 
   bool subtraction_3d::is_outside (const vector_3d & position_,
-                             double skin_) const
+                                   double skin_) const
   {
     if (is_inside(position_, skin_)) {
       return false;
@@ -306,6 +309,17 @@ namespace geomtools {
           }
       }
     return intercept_.is_ok ();
+  }
+
+  void subtraction_3d::_build_bounding_data()
+  {
+    if (get_shape1().get_shape().has_bounding_data()) {
+      const placement & pl1 = get_shape1().get_placement();
+      if (pl1.is_identity()) {
+        _grab_bounding_data() = get_shape1().get_shape().get_bounding_data();
+      }
+    }
+    return;
   }
 
 } // end of namespace geomtools

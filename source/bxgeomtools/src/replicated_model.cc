@@ -301,6 +301,7 @@ namespace geomtools {
     _solid_.set_x(_x_);
     _solid_.set_y(_y_);
     _solid_.set_z(_z_);
+    _solid_.lock();
     DT_THROW_IF (! _solid_.is_valid(), std::logic_error, "Invalid solid in replicated model '" << name_ << "' !");
 
     grab_logical().set_name(i_model::make_logical_volume_name(name_));

@@ -468,10 +468,11 @@ namespace geomtools {
     }
 
     // define the enclosing solid box:
-    _solid_.reset ();
-    _solid_.set_x (dim_x);
-    _solid_.set_y (dim_y);
-    _solid_.set_z (dim_z);
+    _solid_.reset();
+    _solid_.set_x(dim_x);
+    _solid_.set_y(dim_y);
+    _solid_.set_z(dim_z);
+    _solid_.lock();
     DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in surrounded boxed model '" << name_ << "' !");
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));

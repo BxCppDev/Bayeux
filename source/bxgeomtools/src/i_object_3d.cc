@@ -10,6 +10,43 @@
 
 namespace geomtools {
 
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_object_3d, "geomtools::i_object_3d/__system__");
+
+  i_object_3d::object_entry::object_entry()
+  {
+    status = 0;
+    return;
+  }
+
+  i_object_3d::object_entry::~object_entry()
+  {
+    reset();
+    return;
+  }
+
+  void i_object_3d::object_entry::reset()
+  {
+    config.clear();
+    hobject.reset();
+    status = 0;
+    return;
+  }
+
+  uint32_t i_object_3d::object_entry::get_status() const
+  {
+    return status;
+  }
+
+  bool i_object_3d::object_entry::has_object() const
+  {
+    return hobject.has_data();
+  }
+
+  const i_object_3d & i_object_3d::object_entry::get_object() const
+  {
+    return hobject.get();
+  }
+
   datatools::logger::priority i_object_3d::get_logging() const
   {
     return _logging;
@@ -18,12 +55,6 @@ namespace geomtools {
   void i_object_3d::set_logging(datatools::logger::priority l_)
   {
     _logging = l_;
-    return;
-  }
-
-  void i_object_3d::compute_bounding_box(box & bb_)
-  {
-    bb_.reset ();
     return;
   }
 
@@ -55,12 +86,22 @@ namespace geomtools {
 
   datatools::properties & i_object_3d::grab_properties ()
   {
-    return _properties_;
+    return _auxiliaries_;
   }
 
   const datatools::properties & i_object_3d::get_properties () const
   {
-    return _properties_;
+    return _auxiliaries_;
+  }
+
+  datatools::properties & i_object_3d::grab_auxiliaries ()
+  {
+    return _auxiliaries_;
+  }
+
+  const datatools::properties & i_object_3d::get_auxiliaries () const
+  {
+    return _auxiliaries_;
   }
 
   bool i_object_3d::is_composite () const
@@ -116,7 +157,7 @@ namespace geomtools {
     return;
   }
 
-  void i_object_3d::initialize(const datatools::properties & config_)
+  void i_object_3d::initialize(const datatools::properties & config_, const handle_dict_type * /* objects_ */)
   {
     datatools::logger::priority p =
       datatools::logger::extract_logging_configuration(config_,
@@ -154,22 +195,22 @@ namespace geomtools {
       set_angular_tolerance(ta);
     }
 
-    config_.export_starting_with(_properties_, "aux.");
+    config_.export_starting_with(_auxiliaries_, "aux.");
 
     return;
   }
 
   void i_object_3d::reset ()
   {
-    _properties_.clear();
+    _auxiliaries_.clear();
     this->i_object_3d::set_defaults();
     return;
   }
 
   void i_object_3d::tree_dump(std::ostream & out_,
-                               const std::string & title_,
-                               const std::string & indent_,
-                               bool inherit_) const
+                              const std::string & title_,
+                              const std::string & indent_,
+                              bool inherit_) const
   {
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
@@ -191,7 +232,7 @@ namespace geomtools {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Auxiliary properties : ";
-      if ( _properties_.size () == 0) {
+      if ( _auxiliaries_.size () == 0) {
         out_ << "<empty>";
       }
       out_ << std::endl;
@@ -199,7 +240,7 @@ namespace geomtools {
         std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _properties_.tree_dump (out_,"",indent_oss.str ());
+        _auxiliaries_.tree_dump (out_,"",indent_oss.str ());
       }
     }
 

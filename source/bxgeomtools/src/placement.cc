@@ -1,6 +1,4 @@
-// -*- mode: c++; -*-
-/* placement.cc
- */
+// placement.cc
 
 #include <geomtools/placement.h>
 
@@ -11,6 +9,9 @@
 
 #include <datatools/units.h>
 #include <datatools/utils.h>
+
+// This project:
+#include <geomtools/utils.h>
 
 namespace geomtools {
 
@@ -305,10 +306,30 @@ namespace geomtools {
     return map_.size ();
   }
 
-  void placement::get_placement (int item_, placement & p_) const
+  void placement::get_placement(int item_, placement & p_) const
   {
     DT_THROW_IF (item_ != 0, std::logic_error, "Invalid item index '" << item_ << "' !");
     p_ = *this;
+  }
+
+  bool placement::is_identity() const
+  {
+    if (! ::geomtools::is_valid(_translation_)) {
+      return false;
+    }
+    if (_translation_.mag() > 0.0) {
+      return false;
+    }
+    if (_rotation_axis_ != ROTATION_AXIS_INVALID) {
+      if (_rotation_angle_ != 0.0) {
+        return false;
+      }
+    } else {
+      if (_phi_ != 0.0) return false;
+      if (_theta_ != 0.0) return false;
+      if (_delta_ != 0.0) return false;
+    }
+    return true;
   }
 
   void placement::set_identity()

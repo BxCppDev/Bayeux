@@ -28,7 +28,6 @@ namespace geomtools {
   const double stacked_model::DEFAULT_MECHANICS_PLAY = 0.0 * CLHEP::mm;
   const double stacked_model::DEFAULT_NUMERICS_PLAY  = 0.0 * CLHEP::mm;
 
-
   bool stacked_model::is_box_solid() const
   {
     return true;
@@ -268,54 +267,45 @@ namespace geomtools {
 
     /*** Length unit ***/
     double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit"))
-      {
-        const std::string length_unit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (length_unit_str);
-      }
+    if (config_.has_key ("length_unit")) {
+      const std::string length_unit_str = config_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (length_unit_str);
+    }
 
     /*** Position play ***/
-    if (config_.has_key ("mechanics_play"))
-      {
-        double mechanics_play = config_.fetch_real ("mechanics_play");
-        if (! config_.has_explicit_unit ("mechanics_play")) mechanics_play *= lunit;
-        DT_THROW_IF (mechanics_play < 0.0,
-                     std::logic_error,
-                     "Mechanics play '" <<  mechanics_play / CLHEP::mm << "' mm cannot be negative !");
-        _mechanics_play_ = mechanics_play;
-      }
+    if (config_.has_key ("mechanics_play")) {
+      double mechanics_play = config_.fetch_real ("mechanics_play");
+      if (! config_.has_explicit_unit ("mechanics_play")) mechanics_play *= lunit;
+      DT_THROW_IF (mechanics_play < 0.0,
+                   std::logic_error,
+                   "Mechanics play '" <<  mechanics_play / CLHEP::mm << "' mm cannot be negative !");
+      _mechanics_play_ = mechanics_play;
+    }
 
-    if (config_.has_key ("numerics_play"))
-      {
-        double numerics_play = config_.fetch_real ("numerics_play");
-        if (! config_.has_explicit_unit ("numerics_play")) numerics_play *= lunit;
-        DT_THROW_IF (numerics_play < 0.0,
-                     std::logic_error,
-                     "Numerics play '" <<  numerics_play / CLHEP::mm << "' mm cannot be negative in stacked model '" << name_ << "' !");
-        _numerics_play_ = numerics_play;
-      }
+    if (config_.has_key ("numerics_play")) {
+      double numerics_play = config_.fetch_real ("numerics_play");
+      if (! config_.has_explicit_unit ("numerics_play")) numerics_play *= lunit;
+      DT_THROW_IF (numerics_play < 0.0,
+                   std::logic_error,
+                   "Numerics play '" <<  numerics_play / CLHEP::mm << "' mm cannot be negative in stacked model '" << name_ << "' !");
+      _numerics_play_ = numerics_play;
+    }
 
     /*** Stacking axis ***/
     DT_THROW_IF (!config_.has_key ("stacked.axis"), std::logic_error, "Missing 'stacked.axis' property in stacked model '" << name_ << "' !");
     const std::string stacking_axis_label = config_.fetch_string ("stacked.axis");
     int stacking_axis;
-    if (stacking_axis_label == "x")
-      {
-        stacking_axis = STACKING_ALONG_X;
-      }
-    else if (stacking_axis_label == "y")
-      {
-        stacking_axis = STACKING_ALONG_Y;
-      }
-    else if (stacking_axis_label == "z")
-      {
-        stacking_axis = STACKING_ALONG_Z;
-      }
-    else
-      {
-        DT_THROW_IF (true, std::logic_error, "Unknown axis label '" << stacking_axis_label << "' in stacked model '" << name_ << "' !");
-      }
+    if (stacking_axis_label == "x") {
+      stacking_axis = STACKING_ALONG_X;
+    } else if (stacking_axis_label == "y") {
+      stacking_axis = STACKING_ALONG_Y;
+    } else if (stacking_axis_label == "z") {
+      stacking_axis = STACKING_ALONG_Z;
+    } else {
+      DT_THROW_IF (true, std::logic_error, "Unknown axis label '" << stacking_axis_label << "' in stacked model '" << name_ << "' !");
+    }
     set_stacking_axis (stacking_axis);
+    // std::cerr << "DEVEL: stacked_model::_at_construct: stacking axis = " << stacking_axis_label << std::endl;
 
     /*** number of stacked stacked models ***/
     DT_THROW_IF (! config_.has_key ("stacked.number_of_items"),
@@ -327,338 +317,462 @@ namespace geomtools {
     DT_THROW_IF (! models_, std::logic_error, "Missing logicals dictionary in stacked model '" << name_ << "' !");
 
     /*** loop over models to be stacked ***/
-    for (size_t i = 0; i < number_of_items; i++)
-      {
-        std::ostringstream stacked_item_prop;
-        stacked_item_prop << STACKED_MODEL_PROPERTY_PREFIX << i;
-        DT_THROW_IF (! config_.has_key (stacked_item_prop.str ()),
-                     std::logic_error,
-                     "Missing '" << stacked_item_prop.str () << "' property in stacked model '" << name_ << "' !");
-        const std::string stacked_model_name = config_.fetch_string (stacked_item_prop.str ());
+    for (size_t i = 0; i < number_of_items; i++) {
+      std::ostringstream stacked_item_prop;
+      stacked_item_prop << STACKED_MODEL_PROPERTY_PREFIX << i;
+      DT_THROW_IF(! config_.has_key(stacked_item_prop.str()),
+                   std::logic_error,
+                   "Missing '" << stacked_item_prop.str() << "' property in stacked model '" << name_ << "' !");
+      const std::string stacked_model_name = config_.fetch_string(stacked_item_prop.str());
 
-        // attempt to extract a user defined label:
-        std::ostringstream label_item_prop;
-        label_item_prop << STACKED_LABEL_PROPERTY_PREFIX  << i;
-        std::string label_name;
-        if (config_.has_key (label_item_prop.str ()))
-          {
-            label_name = config_.fetch_string (label_item_prop.str ());
-          }
-
-        models_col_type::const_iterator found = models_->find (stacked_model_name);
-        DT_THROW_IF (found == models_->end (),
-                     std::logic_error,
-                     "Cannot find model with name '" << stacked_model_name << "' in stacked model '" << name_ << "' !");
-        // check if the model is stackable:
-        DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
-                     std::logic_error,
-                     "The embedded model '" << found->second->get_name () << "' is not stackable in stacked model '" << name_ << "' !");
-        add_stacked_model (i, *(found->second), label_name);
+      // attempt to extract a user defined label:
+      std::ostringstream label_item_prop;
+      label_item_prop << STACKED_LABEL_PROPERTY_PREFIX  << i;
+      std::string label_name;
+      if (config_.has_key(label_item_prop.str())) {
+        label_name = config_.fetch_string(label_item_prop.str());
       }
+
+      models_col_type::const_iterator found = models_->find(stacked_model_name);
+      DT_THROW_IF(found == models_->end(),
+                   std::logic_error,
+                   "Cannot find model with name '" << stacked_model_name << "' in stacked model '" << name_ << "' !");
+      // check if the model is stackable:
+      DT_THROW_IF(! i_shape_3d::is_stackable(found->second->get_logical().get_shape()),
+                   std::logic_error,
+                   "The embedded model '" << found->second->get_name() << "' is not stackable in stacked model '" << name_ << "' !");
+      add_stacked_model(i, *(found->second), label_name);
+    }
 
     /*** compute main box dimensions ***/
-    mygsl::min_max mmx;
-    mygsl::min_max mmy;
-    mygsl::min_max mmz;
-    double stacked_x = 0.0;
-    double stacked_y = 0.0;
-    double stacked_z = 0.0;
-    for (stacked_dict_type::const_iterator i = _stacked_models_.begin ();
+    // mygsl::min_max mmx;
+    // mygsl::min_max mmy;
+    // mygsl::min_max mmz;
+    // double stacked_x = 0.0;
+    // double stacked_y = 0.0;
+    // double stacked_z = 0.0;
+
+    /*
+      Example 1:
+      ----------
+
+       <----> <-----> <-------> bounding box
+       b-  b+ b-   b+ b-     b+
+       <----> <-----> <-------> stackable data
+       s-  s+ s-   s+ s-     s+
+             +-------+
+             |       |
+      +------+       +---------+
+   - -|- - - | - - - | - - - - |- - - -> z
+      +------+       +---------+
+             |       |
+             +-------+
+
+      Example 2:
+      ----------
+
+             s- s+
+       <----> <> <-------> stackable data
+       s-  s+    s-     s+
+             +-------+
+             |  +----+
+      +------+  +---------+
+   - -|- - - | -|- - - - -|- - - -> z
+      +------+  +---------+
+             |  +----+
+             +-------+
+                b-        b+
+                 <------->
+       <----> <----->           bounding box
+       b-  b+ b-   b+
+
+      Example 3:
+      ----------
+
+             s- s+
+       <----> <> <-------> stackable data
+       s-  s+    s-     s+
+             +-----------------+
+             |  +--------------+
+      +------+  +---------+    :
+   - -|- - - | -|- - - - -|- - : - -> z
+      +------+  +---------+    :
+             |  +--------------+
+             +-----------------+
+               b-         b+
+                 <------->
+       <----> <---------------> bounding box
+       b-  b+ b-              b+
+
+     */
+
+    for (stacked_dict_type::const_iterator i = _stacked_models_.begin();
+         i != _stacked_models_.end();
+         i++) {
+      const int index = i->first;
+      const stacked_item & bi = i->second;
+      const i_model * stacked_model = bi.model;
+      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      // Bounding box:
+      DT_THROW_IF(! the_shape.has_bounding_data(),
+                  std::logic_error,
+                  "Cannot find bounding data in shape '" << the_shape.get_shape_name()
+                  << "' in stacked model '" << name_ << "' !");
+      // Try to get a stackable data from the shape:
+      stackable_data the_SD;
+      DT_THROW_IF(! i_shape_3d::pickup_stackable(the_shape, the_SD),
+                   std::logic_error,
+                   "Cannot stack non-stackable model of shape '" << the_shape.get_shape_name()
+                   << "' in stacked model '" << name_ << "' !");
+      DT_LOG_TRACE(get_logging_priority(),
+                    "Dump stackable data for '" << stacked_model->get_name() <<
+                    "' from '" << name_ << "'...");
+      if(get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+        the_SD.tree_dump(std::cerr);
+      }
+
+      // Parse special stacking position directives:
+      double gmin, gmax;
+      datatools::invalidate(gmin);
+      datatools::invalidate(gmax);
+      {
+        std::string stacked_model_name;
+        std::string label_name;
+        std::ostringstream stacked_min_prop;
+        stacked_min_prop << "stacked.limit_min_" << index;
+        if (config_.has_key(stacked_min_prop.str())) {
+          gmin = config_.fetch_real(stacked_min_prop.str());
+          if (! config_.has_explicit_unit(stacked_min_prop.str())) gmin *= lunit;
+          stacked_item & mod_bi = const_cast <stacked_item &>(bi);
+          mod_bi.limit_min = gmin;
+        }
+      }
+      {
+        std::string stacked_model_name;
+        std::string label_name;
+        std::ostringstream stacked_max_prop;
+        stacked_max_prop << "stacked.limit_max_" << index;
+        if (config_.has_key(stacked_max_prop.str())) {
+          gmax = config_.fetch_real(stacked_max_prop.str());
+          if (! config_.has_explicit_unit(stacked_max_prop.str())) gmax *= lunit;
+            stacked_item & mod_bi = const_cast <stacked_item &>(bi);
+            mod_bi.limit_max = gmax;
+        }
+      }
+      /*
+
+      double gxmin = the_SD.get_xmin();
+      double gymin = the_SD.get_ymin();
+      double gzmin = the_SD.get_zmin();
+      double gxmax = the_SD.get_xmax();
+      double gymax = the_SD.get_ymax();
+      double gzmax = the_SD.get_zmax();
+      if (bi.has_limit_min()) {
+        if (is_stacking_along_x()) {
+          gxmin = bi.get_limit_min();
+        } else if (is_stacking_along_y()) {
+          gymin = bi.get_limit_min();
+        } else if (is_stacking_along_z()) {
+          gzmin = bi.get_limit_min();
+        }
+      }
+      if (bi.has_limit_max()) {
+        if (is_stacking_along_x()) {
+          gxmax = bi.get_limit_max();
+        } else if (is_stacking_along_y()) {
+          gymax = bi.get_limit_max();
+        } else if (is_stacking_along_z()) {
+          gzmax = bi.get_limit_max();
+        }
+      }
+
+      // Compute the effective dimensions of the stacked item within the stack:
+      const double full_x = gxmax - gxmin;
+      const double full_y = gymax - gymin;
+      const double full_z = gzmax - gzmin;
+
+      // Not sure of that:
+      mmx.add(full_x);
+      mmy.add(full_y);
+      mmz.add(full_z);
+
+      if (is_stacking_along_x()) {
+        stacked_x += full_x;
+      } else if (is_stacking_along_y()) {
+        stacked_y += full_y;
+      } else if (is_stacking_along_z()) {
+        stacked_z += full_z;
+      }
+      */
+    }
+
+    /*
+    if (is_stacking_along_x ()) {
+      stacked_y = mmy.get_max ();
+      stacked_z = mmz.get_max ();
+    } else if (is_stacking_along_y ()) {
+      stacked_x = mmx.get_max ();
+      stacked_z = mmz.get_max ();
+    } else if (is_stacking_along_z ()) {
+      stacked_x = mmx.get_max ();
+      stacked_y = mmy.get_max ();
+    }
+    */
+
+    // Compute the positions:
+    // Preliminary records of the positions:
+    std::vector<double> stacked_positions;
+    std::vector<double> stacked_widths;
+    stacked_positions.assign(_stacked_models_.size(), std::numeric_limits<double>::quiet_NaN());
+    stacked_widths.assign(_stacked_models_.size(), std::numeric_limits<double>::quiet_NaN());
+    // Starting position:
+    double pos = 0.0;
+    for (stacked_dict_type::iterator i = _stacked_models_.begin ();
          i != _stacked_models_.end ();
          i++) {
-        const int index = i->first;
-        const stacked_item & bi = i->second;
-        const i_model * stacked_model = bi.model;
-
-        const i_shape_3d & the_shape = stacked_model->get_logical ().get_shape ();
-
-        // try to get a stackable data from the shape:
-        stackable_data the_SD;
-        DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
-                     std::logic_error,
-                     "Cannot stack non-stackable model of shape '" << the_shape.get_shape_name () << "' in stacked model '" << name_ << "' !");
-
-        DT_LOG_TRACE (get_logging_priority (),
-                      "Dump stackable data for '" << stacked_model->get_name () <<
-                      "' from '" << name_ << "'...");
-        if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
-            the_SD.tree_dump (std::cerr);
-          }
-
-        // Parse special stacking position directives:
-        double gmin, gmax;
-        datatools::invalidate (gmin);
-        datatools::invalidate (gmax);
-        {
-          std::string stacked_model_name;
-          std::string label_name;
-          std::ostringstream stacked_min_prop;
-          stacked_min_prop << "stacked.limit_min_" << index;
-          if (config_.has_key (stacked_min_prop.str ()))
-            {
-              gmin = config_.fetch_real (stacked_min_prop.str ());
-              if (! config_.has_explicit_unit (stacked_min_prop.str ())) gmin *= lunit;
-              stacked_item & mod_bi = const_cast <stacked_item &> (bi);
-              mod_bi.limit_min = gmin;
-            }
+      const int index = i->first;
+      stacked_item & bi = i->second;
+      const i_model * stacked_model = bi.model;
+      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      stackable_data the_SD;
+      DT_THROW_IF (! i_shape_3d::pickup_stackable(the_shape, the_SD),
+                   std::logic_error,
+                   "Cannot stack '"
+                   << the_shape.get_shape_name() << "' shape in stacked model '"
+                   << name_ << "' !");
+      double gxmin = the_SD.get_xmin();
+      double gymin = the_SD.get_ymin();
+      double gzmin = the_SD.get_zmin();
+      double gxmax = the_SD.get_xmax();
+      double gymax = the_SD.get_ymax();
+      double gzmax = the_SD.get_zmax();
+      // Eventually extract specific stacking limits:
+      if (bi.has_limit_min ()) {
+        if (is_stacking_along_x ()) {
+          gxmin = bi.get_limit_min ();
+        } else if (is_stacking_along_y ()) {
+          gymin = bi.get_limit_min ();
+        } else if (is_stacking_along_z ()) {
+          gzmin = bi.get_limit_min ();
         }
-        {
-          std::string stacked_model_name;
-          std::string label_name;
-          std::ostringstream stacked_max_prop;
-          stacked_max_prop << "stacked.limit_max_" << index;
-          if (config_.has_key (stacked_max_prop.str ()))
-            {
-              gmax = config_.fetch_real (stacked_max_prop.str ());
-              if (! config_.has_explicit_unit (stacked_max_prop.str ())) gmax *= lunit;
-              stacked_item & mod_bi = const_cast <stacked_item &> (bi);
-              mod_bi.limit_max = gmax;
-            }
+      }
+      if (bi.has_limit_max ()) {
+        if (is_stacking_along_x ()) {
+          gxmax = bi.get_limit_max ();
+        } else if (is_stacking_along_y ()) {
+          gymax = bi.get_limit_max ();
+        } else if (is_stacking_along_z ()) {
+          gzmax = bi.get_limit_max ();
         }
-
-        double gxmin = the_SD.get_xmin ();
-        double gymin = the_SD.get_ymin ();
-        double gzmin = the_SD.get_zmin ();
-        double gxmax = the_SD.get_xmax ();
-        double gymax = the_SD.get_ymax ();
-        double gzmax = the_SD.get_zmax ();
-        if (bi.has_limit_min ())
-          {
-            if (is_stacking_along_x ())
-              {
-                gxmin = bi.get_limit_min ();
-              }
-            else if (is_stacking_along_y ())
-              {
-                gymin = bi.get_limit_min ();
-              }
-            else if (is_stacking_along_z ())
-              {
-                gzmin = bi.get_limit_min ();
-              }
-          }
-        if (bi.has_limit_max ())
-          {
-            if (is_stacking_along_x ())
-              {
-                gxmax = bi.get_limit_max ();
-              }
-            else if (is_stacking_along_y ())
-              {
-                gymax = bi.get_limit_max ();
-              }
-            else if (is_stacking_along_z ())
-              {
-                gzmax = bi.get_limit_max ();
-              }
-          }
-
-        // Compute the effective dimensions of the stacked item within the stack:
-        const double full_x = gxmax - gxmin;
-        const double full_y = gymax - gymin;
-        const double full_z = gzmax - gzmin;
-
-        // Not sure of that:
-        mmx.add (full_x);
-        mmy.add (full_y);
-        mmz.add (full_z);
-
-        if (is_stacking_along_x ())
-          {
-            stacked_x += full_x;
-          }
-        else if (is_stacking_along_y ())
-          {
-            stacked_y += full_y;
-          }
-        else if (is_stacking_along_z ())
-          {
-            stacked_z += full_z;
-          }
       }
+      if (is_stacking_along_x ()) {
+        stacked_positions[index] = pos - gxmin;
+        stacked_widths[index] = gxmax - gxmin;
+        pos += stacked_widths[index];
+      } else if (is_stacking_along_y ()) {
+        stacked_positions[index] = pos - gymin;
+        stacked_widths[index] = gymax - gymin;
+        pos += stacked_widths[index];
+      } else if (is_stacking_along_z ()) {
+        stacked_positions[index] = pos - gzmin;
+        stacked_widths[index] = gzmax - gzmin;
+        pos += stacked_widths[index];
+      }
+    } // for
 
-    if (is_stacking_along_x ())
-      {
-        stacked_y = mmy.get_max ();
-        stacked_z = mmz.get_max ();
+    // Compute mother box:
+    mygsl::min_max bbmmx;
+    mygsl::min_max bbmmy;
+    mygsl::min_max bbmmz;
+    for (stacked_dict_type::const_iterator i = _stacked_models_.begin();
+         i != _stacked_models_.end();
+         i++) {
+      const int index = i->first;
+      const stacked_item & bi = i->second;
+      const i_model * stacked_model = bi.model;
+      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      box bbi;
+      placement pl_bbi;
+      the_shape.get_bounding_data().compute_bounding_box(bbi, pl_bbi);
+      std::vector<vector_3d> vvi;
+      bbi.compute_transformed_vertexes(pl_bbi, vvi);
+      placement p;
+      double xi(0.0), yi(0.0), zi(0.0);
+      if (is_stacking_along_x()) {
+        xi = stacked_positions[index];
       }
-    else if (is_stacking_along_y ())
-      {
-        stacked_x = mmx.get_max ();
-        stacked_z = mmz.get_max ();
+      if (is_stacking_along_y()) {
+        yi = stacked_positions[index];
       }
-    else if (is_stacking_along_z ())
-      {
-        stacked_x = mmx.get_max ();
-        stacked_y = mmy.get_max ();
+      if (is_stacking_along_z()) {
+        zi = stacked_positions[index];
       }
+      p.set(xi, yi, zi, 0.0, 0.0, 0.0);
+      for (int j = 0; j < (int) vvi.size(); j++) {
+        vector_3d vtx;
+        p.child_to_mother(vvi[j], vtx);
+        // std::cerr << "DEVEL: stacked_model::_at_construct: vvi[j] = " << vvi[j] << std::endl;
+        // std::cerr << "DEVEL: stacked_model::_at_construct: vtx = " << vtx << std::endl;
+        bbmmx.add(vtx.x());
+        bbmmy.add(vtx.y());
+        bbmmz.add(vtx.z());
+      }
+    } // for
+
+    /*
+    bbmmx.tree_dump(std::cerr, "BB mmx: ", "DEVEL: " );
+    bbmmy.tree_dump(std::cerr, "BB mmy: ", "DEVEL: " );
+    bbmmz.tree_dump(std::cerr, "BB mmz: ", "DEVEL: " );
+    */
+
+    double stacked_x = bbmmx.get_max() - bbmmx.get_min();
+    double stacked_y = bbmmy.get_max() - bbmmy.get_min();
+    double stacked_z = bbmmz.get_max() - bbmmz.get_min();
+    double stack_length;
+    datatools::invalidate(stack_length);
+    if (is_stacking_along_x()) {
+      stack_length = stacked_x;
+    } else if (is_stacking_along_y()) {
+      stack_length = stacked_y;
+    } else if (is_stacking_along_z()) {
+      stack_length = stacked_z;
+    }
+
+    /*
+    std::cerr << "DEVEL: stacked_model::_at_construct: TEST 1 : name='"
+              << get_name() << "'" << std::endl;
+    */
+    double delta_stack;
+    datatools::invalidate(delta_stack);
+    {
+      int min_index = -1;
+      // Compute the index of the stacked volume that has a bounding box
+      // at the left (negative) extremity of the stacking axis:
+      if (is_stacking_along_x()) {
+        min_index = bbmmx.get_min_index() / 8; // We have 8 vertexes per bounding box
+      } else if (is_stacking_along_y()) {
+        min_index = bbmmy.get_min_index() / 8;
+      } else if (is_stacking_along_z()) {
+        min_index = bbmmz.get_min_index() / 8;
+      }
+      // std::cerr << "DEVEL: stacked_model::_at_construct: min_index=" << min_index << std::endl;
+      const stacked_item & bi = _stacked_models_.find(min_index)->second;
+      const i_model * stacked_model = bi.model;
+      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      // Bounding data:
+      double min_pos = stacked_positions[min_index];
+      const bounding_data & bd = the_shape.get_bounding_data();
+      double dist_min;
+      datatools::invalidate(dist_min);
+      if (is_stacking_along_x()) {
+        dist_min = bd.get_xmin();
+      } else if (is_stacking_along_y()) {
+        dist_min = bd.get_ymin();
+      } else if (is_stacking_along_z()) {
+        dist_min = bd.get_zmin();
+      }
+      delta_stack = -0.5 * stack_length - dist_min - min_pos;
+    }
+    // std::cerr << "DEVEL: stacked_model::_at_construct: delta_stack = " << delta_stack << std::endl;
 
     double dim_x = stacked_x;
     double dim_y = stacked_y;
     double dim_z = stacked_z;
+    /*
+    std::cerr << "DEVEL: stacked_model::_at_construct: dim_x = " << dim_x << std::endl;
+    std::cerr << "DEVEL: stacked_model::_at_construct: dim_y = " << dim_y << std::endl;
+    std::cerr << "DEVEL: stacked_model::_at_construct: dim_z = " << dim_z << std::endl;
+    */
+    if (config_.has_key("x")) {
+      double x = config_.fetch_real("x");
+      if(! config_.has_explicit_unit("x")) x *= lunit;
+      DT_THROW_IF(x < stacked_x,
+                  std::logic_error,
+                  "Enforced X dimension '" << x / CLHEP::mm << "' mm (<" << stacked_x / CLHEP::mm << ") " <<
+                  "is too small for stacked components to fit in stacked model '" << name_ << "' !");
+      dim_x = x;
+    }
 
-    if (config_.has_key ("x"))
-      {
-        double x = config_.fetch_real ("x");
-        if (! config_.has_explicit_unit ("x")) x *= lunit;
-        DT_THROW_IF (x < stacked_x,
-                     std::logic_error,
-                     "Enforced X dimension '" << x / CLHEP::mm << "' mm (<" << stacked_x / CLHEP::mm << ") " <<
-                     "is too small for stacked components to fit in stacked model '" << name_ << "' !");
-        dim_x = x;
+    if(config_.has_key("y")) {
+      double y = config_.fetch_real("y");
+      if(! config_.has_explicit_unit("y")) y *= lunit;
+      DT_THROW_IF(y < stacked_y,
+                  std::logic_error,
+                  "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << stacked_y / CLHEP::mm << ") " <<
+                  "is too small for stacked components to fit in stacked model '" << name_ << "' !");
+      dim_y = y;
+    }
+
+    if(config_.has_key("z")){
+      double z = config_.fetch_real("z");
+      if(! config_.has_explicit_unit("z")) z *= lunit;
+      DT_THROW_IF(z < stacked_z,
+                  std::logic_error,
+                  "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << stacked_z / CLHEP::mm << ") " <<
+                  "is too small for stacked components to fit in stacked model '" << name_ << "' !");
+      dim_z = z;
+    }
+
+    /*
+    if (_mechanics_play_ > 0.0) {
+      dim_x += _mechanics_play_;
+      dim_y += _mechanics_play_;
+      dim_z += _mechanics_play_;
+    }
+    if (_numerics_play_ > 0.0) {
+      dim_x += _numerics_play_;
+      dim_y += _numerics_play_;
+      dim_z += _numerics_play_;
+    }
+    */
+
+    for (stacked_dict_type::iterator i = _stacked_models_.begin();
+         i != _stacked_models_.end();
+         i++) {
+      const int index = i->first;
+      stacked_item & bi = i->second;
+      const i_model * stacked_model = bi.model;
+      double xi, yi, zi;
+      xi = yi = zi = 0.0;
+      if (is_stacking_along_x()) {
+        xi = stacked_positions[index] + delta_stack;
+      } else if (is_stacking_along_y()) {
+        yi = stacked_positions[index] + delta_stack;
+      } else if (is_stacking_along_z()) {
+        zi = stacked_positions[index] + delta_stack;
       }
+      bi.placmt.set(xi, yi, zi, 0.0, 0.0, 0.0);
+      bi.phys.set_name(i_model::make_physical_volume_name(bi.label));
+      bi.phys.set_placement(bi.placmt);
+      bi.phys.set_logical(bi.model->get_logical());
+      bi.phys.set_mother(_logical);
+    } // for
 
-    if (config_.has_key ("y"))
-      {
-        double y = config_.fetch_real ("y");
-        if (! config_.has_explicit_unit ("y")) y *= lunit;
-        DT_THROW_IF (y < stacked_y,
-                     std::logic_error,
-                     "Enforced Y dimension '" << y / CLHEP::mm << "' mm (<" << stacked_y / CLHEP::mm << ") " <<
-                     "is too small for stacked components to fit in stacked model '" << name_ << "' !");
-        dim_y = y;
-      }
+    _solid_.reset();
+    _solid_.set_x(dim_x);
+    _solid_.set_y(dim_y);
+    _solid_.set_z(dim_z);
+    _solid_.lock();
+    DT_THROW_IF (! _solid_.is_valid (), std::logic_error,
+                 "Invalid solid in stacked model '" << name_ << "' !");
 
-    if (config_.has_key ("z"))
-      {
-        double z = config_.fetch_real ("z");
-        if (! config_.has_explicit_unit ("z")) z *= lunit;
-        DT_THROW_IF (z < stacked_z,
-                     std::logic_error,
-                     "Enforced Z dimension '" << z / CLHEP::mm << "' mm (<" << stacked_z / CLHEP::mm << ") " <<
-                     "is too small for stacked components to fit in stacked model '" << name_ << "' !");
-        dim_z = z;
-      }
-
-    if (_mechanics_play_ > 0.0)
-      {
-        dim_x += _mechanics_play_;
-        dim_y += _mechanics_play_;
-        dim_z += _mechanics_play_;
-      }
-    if (_numerics_play_ > 0.0)
-      {
-        dim_x += _numerics_play_;
-        dim_y += _numerics_play_;
-        dim_z += _numerics_play_;
-      }
-    _solid_.reset ();
-    _solid_.set_x (dim_x);
-    _solid_.set_y (dim_y);
-    _solid_.set_z (dim_z);
-    DT_THROW_IF (! _solid_.is_valid (), std::logic_error, "Invalid solid in stacked model '" << name_ << "' !");
-
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
-    grab_logical ().set_shape (_solid_);
-    grab_logical ().set_material_ref (material_name);
-
-    // starting position:
-    double pos = 0.0;
-    if (is_stacking_along_x ())
-      {
-        pos = -0.5 * stacked_x;
-      }
-    else if (is_stacking_along_y ())
-      {
-        pos = -0.5 * stacked_y;
-      }
-    else if (is_stacking_along_z ())
-      {
-        pos = -0.5 * stacked_z;
-      }
-
-    for (stacked_dict_type::iterator i = _stacked_models_.begin ();
-         i != _stacked_models_.end ();
-         i++)
-      {
-        stacked_item & bi = i->second;
-        const i_model * stacked_model = bi.model;
-        double xi, yi, zi;
-        xi = yi = zi = 0.0;
-
-        const i_shape_3d & the_shape = stacked_model->get_logical ().get_shape ();
-        stackable_data the_SD;
-        DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
-                     std::logic_error,
-                     "Cannot stack '"
-                     << the_shape.get_shape_name () << "' shape in stacked model '" << name_ << "' !");
-
-        double gxmin = the_SD.get_xmin ();
-        double gymin = the_SD.get_ymin ();
-        double gzmin = the_SD.get_zmin ();
-        double gxmax = the_SD.get_xmax ();
-        double gymax = the_SD.get_ymax ();
-        double gzmax = the_SD.get_zmax ();
-
-        // Eventually extract specific stacking limits:
-        if (bi.has_limit_min ())
-          {
-            if (is_stacking_along_x ())
-              {
-                gxmin = bi.get_limit_min ();
-              }
-            else if (is_stacking_along_y ())
-              {
-                gymin = bi.get_limit_min ();
-              }
-            else if (is_stacking_along_z ())
-              {
-                gzmin = bi.get_limit_min ();
-              }
-          }
-        if (bi.has_limit_max ())
-          {
-            if (is_stacking_along_x ())
-              {
-                gxmax = bi.get_limit_max ();
-              }
-            else if (is_stacking_along_y ())
-              {
-                gymax = bi.get_limit_max ();
-              }
-            else if (is_stacking_along_z ())
-              {
-                gzmax = bi.get_limit_max ();
-              }
-          }
-
-        if (is_stacking_along_x ())
-          {
-            xi = pos - gxmin;
-            pos += gxmax - gxmin;
-          }
-        else if (is_stacking_along_y ())
-          {
-            yi = pos - gymin;
-            pos += gymax - gymin;
-          }
-        else if (is_stacking_along_z ())
-          {
-            zi = pos - gzmin;
-            pos += gzmax - gzmin;
-          }
-        //double stacked_rotation_angle;
-        bi.placmt.set (xi, yi, zi, 0.0, 0.0, 0.0);
-        bi.phys.set_name (i_model::make_physical_volume_name (bi.label));
-        bi.phys.set_placement (bi.placmt);
-        bi.phys.set_logical (bi.model->get_logical ());
-        bi.phys.set_mother (_logical);
-      } // for
+    grab_logical().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical().set_shape (_solid_);
+    grab_logical().set_material_ref (material_name);
 
     // 2011-12-05 FM : add support for additional internal objects :
-    if (_internals_.get_number_of_items () == 0)
-      {
-        DT_LOG_TRACE (get_logging_priority (), "Process MWIM");
-        _internals_.plug_internal_models (config_,
-                                          grab_logical (),
-                                          models_);
-      }
+    if (_internals_.get_number_of_items() == 0) {
+      DT_LOG_TRACE(get_logging_priority(), "Process MWIM");
+      _internals_.plug_internal_models(config_,
+                                        grab_logical(),
+                                        models_);
+    }
 
-    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
-  void stacked_model::tree_dump (std::ostream & out_,
+  void stacked_model::tree_dump(std::ostream & out_,
                                  const std::string & title_ ,
                                  const std::string & indent_,
                                  bool inherit_) const

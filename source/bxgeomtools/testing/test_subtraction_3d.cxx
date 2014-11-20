@@ -56,19 +56,28 @@ main (int argc_, char ** argv_)
     box b1 (4.0 * CLHEP::mm,
             4.0 * CLHEP::mm,
             4.0 * CLHEP::mm);
+    b1.lock();
+
     placement p1 (vector_3d (0, 0, 0),
                   0, 0, 0);
 
     box b2 (2.0 * CLHEP::mm,
             2.0 * CLHEP::mm,
             2.0 * CLHEP::mm);
+    b2.lock();
     placement p2 (vector_3d (2, 2, 2),
                   M_PI / 3., M_PI / 3., M_PI / 6.);
 
     subtraction_3d sub1;
     sub1.set_shape1 (b1, p1);
     sub1.set_shape2 (b2, p2);
+    sub1.lock();
+
     sub1.dump (std::clog);
+
+    box sbb;
+    placement sbbp;
+    sub1.get_bounding_data().compute_bounding_box(sbb, sbbp);
 
     geomtools::vector_3d pos (4.0 * CLHEP::mm,
                               3.0 * CLHEP::mm,
@@ -177,6 +186,17 @@ main (int argc_, char ** argv_)
     tmp_file.out() << std::endl << std::endl;
 
 
+      sbb.tree_dump(std::clog, "Subtraction BB: ", "NOTICE: " );
+      sbbp.tree_dump(std::clog, "Subtraction BB placement: ", "NOTICE: " );
+      tmp_file.out() <<"# Bounding box:" << std::endl;
+      geomtools::gnuplot_draw::draw_box(tmp_file.out(),
+                                        sbbp.get_translation (),
+                                        sbbp.get_rotation (),
+                                        sbb.get_x (),
+                                        sbb.get_y (),
+                                        sbb.get_z ());
+      tmp_file.out() << std::endl << std::endl;
+
     if (draw) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       Gnuplot g1;
@@ -193,6 +213,7 @@ main (int argc_, char ** argv_)
         plot_cmd << ", '' index 1 title 'Source' with points pt 6 ps 1 ";
         plot_cmd << ", '' index 2 title 'Impact' with points pt 6 ps 1 ";
         plot_cmd << ", '' index 3 title 'Track' with lines ";
+        plot_cmd << ", '' index 5 title 'BB' with lines lt 7";
         g1.cmd (plot_cmd.str ());
         g1.showonscreen (); // window output
         geomtools::gnuplot_drawer::wait_for_key ();

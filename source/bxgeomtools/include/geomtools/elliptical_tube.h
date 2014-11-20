@@ -1,20 +1,20 @@
 // -*- mode: c++; -*-
-/// \file geomtools/tube.h
-/* Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: 2006-11-28
- * Last modified: 2014-11-19
+/// \file geomtools/elliptical_tube.h
+/* Author(s):     A. Chapon <chapon@lpccaen.in2p3.fr>
+ * Creation date: 2014-11-17
+ * Last modified: 2014-11-17
  *
  * License:
  *
  * Description:
- *   3D tube description
+ *   3D elliptical_tube description
  *
  * History:
  *
  */
 
-#ifndef GEOMTOOLS_TUBE_H
-#define GEOMTOOLS_TUBE_H 1
+#ifndef GEOMTOOLS_ELLIPTICAL_TUBE_H
+#define GEOMTOOLS_ELLIPTICAL_TUBE_H 1
 
 // Standard library:
 #include <iostream>
@@ -39,26 +39,24 @@ namespace geomtools {
   // Forward class declaration:
   class cylinder;
 
-  /// \brief The 3D shape model for a tube
-  class tube : public i_shape_3d, public i_stackable
+  /// \brief The 3D shape model for an elliptical_tube
+  class elliptical_tube : public i_shape_3d, public i_stackable
   {
   public:
     enum faces_mask_type
       {
-        FACE_NONE       = geomtools::FACE_NONE,
-        FACE_OUTER_SIDE = datatools::bit_mask::bit00,
-        FACE_BOTTOM     = datatools::bit_mask::bit01,
-        FACE_TOP        = datatools::bit_mask::bit02,
-        FACE_INNER_SIDE = datatools::bit_mask::bit03,
-        FACE_ALL        = (FACE_OUTER_SIDE
-                           | FACE_BOTTOM
-                           | FACE_TOP
-                           | FACE_INNER_SIDE)
+        FACE_NONE   = geomtools::FACE_NONE,
+        FACE_SIDE   = datatools::bit_mask::bit00,
+        FACE_BOTTOM = datatools::bit_mask::bit01,
+        FACE_TOP    = datatools::bit_mask::bit02,
+        FACE_ALL    = (FACE_SIDE
+                       | FACE_BOTTOM
+                       | FACE_TOP)
       };
 
   public:
 
-    static const std::string & tube_label();
+    static const std::string & elliptical_tube_label();
 
   public:
 
@@ -82,56 +80,38 @@ namespace geomtools {
 
     void set_half_z (double);
 
-    double get_inner_r () const;
+    double get_x_radius () const;
 
-    void set_radii (double inner_r_, double outer_r_);
+    void set_x_radius (double);
 
-    double get_outer_r () const;
+    double get_y_radius () const;
 
-    void set (double inner_r_, double outer_r_, double z_);
+    void set_y_radius (double);
 
-    void set_half (double inner_r_, double outer_r_, double half_z_);
-
-    void set (double inner_r_, double outer_r_, double z_, double start_phi_, double delta_phi_);
-
-    void set_phi(double start_phi_, double delta_phi_);
-
-    double get_start_phi() const;
-
-    double get_delta_phi() const;
-
-    bool has_partial_phi() const;
-
-    void compute_inner_cylinder (cylinder & ic_);
-
-    void compute_outer_cylinder (cylinder & oc_);
+    void set (double xr_, double yr_, double z_);
 
   public:
 
     /// Default constructor
-    tube();
+    elliptical_tube();
 
     /// Constructor
-    tube (double inner_radius_, double outer_radius_, double z_);
+    elliptical_tube (double xr_, double yr_, double z_);
 
-     /// Constructor
-    tube (double inner_radius_, double outer_radius_, double z_, double start_phi_, double delta_phi_);
-
-   /// Destructor
-    virtual ~tube ();
+    /// Destructor
+    virtual ~elliptical_tube ();
 
     virtual std::string get_shape_name () const;
 
     virtual double get_parameter (const std::string &) const;
 
-    bool is_extruded () const;
-
     bool is_valid () const;
 
-    /// Initialize the cylinder from properties
-    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    /// Initialize from properties
+    virtual void initialize(const datatools::properties &,
+                            const handle_dict_type *);
 
-    /// Reset the cylinder
+    /// Reset
     virtual void reset();
 
     virtual double get_surface (uint32_t mask_ = FACE_ALL_BITS) const;
@@ -156,12 +136,11 @@ namespace geomtools {
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     friend std::ostream &
-    operator<< (std::ostream &, const tube &);
+    operator<< (std::ostream &, const elliptical_tube &);
 
     friend std::istream &
-    operator>> (std::istream &, tube &);
+    operator>> (std::istream &, elliptical_tube &);
 
-    /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
@@ -176,24 +155,26 @@ namespace geomtools {
 
   protected:
 
-     virtual void _build_bounding_data();
+    /// Set default attributes
+    void _set_default();
+
+    virtual void _build_bounding_data();
 
   private:
 
-    double _z_;         //!< Length of the tube along the Z axis
-    double _inner_r_;   //!< Inner radius
-    double _outer_r_;   //!< Outer radius
-    double _start_phi_; //<! Start phi angle
-    double _delta_phi_; //<! Delta phi angle
+    double _z_;
+    double _x_radius_;
+    double _y_radius_;
+
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tube);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_tube);
 
   };
 
 } // end of namespace geomtools
 
 /// OCD support declaration
-// @arg geomtools::tube the name the class
-DOCD_CLASS_DECLARATION(geomtools::tube)
+// @arg geomtools::elliptical_tube the name the class
+DOCD_CLASS_DECLARATION(geomtools::elliptical_tube)
 
-#endif // GEOMTOOLS_TUBE_H
+#endif // GEOMTOOLS_ELLIPTICAL_TUBE_H

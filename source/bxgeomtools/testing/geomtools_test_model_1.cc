@@ -13,7 +13,7 @@ namespace geomtools {
 
   const geomtools::box & test_model_1::get_solid () const
   {
-    return __solid;
+    return _solid_;
   }
 
   string test_model_1::get_model_id () const
@@ -62,21 +62,22 @@ namespace geomtools {
         ostringstream message;
         message << "test_model_1::_at_construct: "
                 << "Missing 'material.ref' property !";
-        throw runtime_error (message.str ());
+        throw std::runtime_error (message.str ());
       }
 
-    __solid.reset ();
-    __solid.set_x (width);
-    __solid.set_y (width);
-    __solid.set_z (height);
-    if (! __solid.is_valid ())
+    _solid_.reset ();
+    _solid_.set_x (width);
+    _solid_.set_y (width);
+    _solid_.set_z (height);
+    _solid_.lock(); // Mandatory
+    if (! _solid_.is_valid ())
       {
         throw runtime_error ("test_model_1::_at_construct: Invalid solid !");
       }
 
     // initialize the 'logical_volume' of this model:
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
-    grab_logical ().set_shape (__solid);
+    grab_logical ().set_shape (_solid_);
     grab_logical ().set_material_ref (material);
 
     if (devel) clog << "DEVEL: test_model_1::_at_construct: Exiting." << endl;
@@ -99,7 +100,7 @@ namespace geomtools {
           ostringstream indent_oss;
           indent_oss << indent;
           indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-          __solid.tree_dump (out_, "", indent_oss.str ());
+          _solid_.tree_dump (out_, "", indent_oss.str ());
         }
       }
 
@@ -107,5 +108,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of geomtools_test_model_1.cc

@@ -25,17 +25,18 @@
 
 namespace geomtools {
 
-  /// \brief Bas eclass for binary composite shapes:
+  /// \brief Base class for binary composite shapes
   class i_composite_shape_3d : public i_shape_3d
   {
 
   public:
 
+    /// \brief Record for a composite shape
     class shape_type : public datatools::i_tree_dumpable
     {
-      bool         _delete_; /// Flag to delete the handled shape
-      i_shape_3d * _shape_;  /// Handle to the component shape
-      placement    _placement_; /// Placement of the component shape
+      bool         _delete_;    //!< Flag to delete the handled shape
+      i_shape_3d * _shape_;     //!< Handle to the component shape
+      placement    _placement_; //!< Placement of the component shape
 
     private:
 
@@ -60,11 +61,11 @@ namespace geomtools {
 
       const i_shape_3d & get_shape () const;
 
-      i_shape_3d & get_shape ();
+      i_shape_3d & grab_shape ();
 
       const placement & get_placement () const;
 
-      placement & get_placement ();
+      placement & grab_placement ();
 
       // Factory methods:
 
@@ -92,7 +93,6 @@ namespace geomtools {
       COMPONENT_SHAPE_SECOND = datatools::bit_mask::bit01,
       COMPONENT_SHAPE_ALL    = COMPONENT_SHAPE_FIRST | COMPONENT_SHAPE_SECOND
     };
-
 
     bool is_composite () const;
 
@@ -123,7 +123,14 @@ namespace geomtools {
     virtual void tree_dump (std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+                            bool inherit_               = false) const;
+
+    /// Initialize from properties
+    virtual void initialize(const datatools::properties &,
+                            const handle_dict_type *);
+
+    /// Reset
+    virtual void reset();
 
   private:
 

@@ -125,6 +125,7 @@ namespace geomtools {
     _solid_.set_x (x);
     _solid_.set_y (y);
     _solid_.set_z (z);
+    _solid_.lock ();
     DT_THROW_IF (!_solid_.is_valid (), std::logic_error, "Invalid solid in multiple items model '" << name_ << "' !");
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));

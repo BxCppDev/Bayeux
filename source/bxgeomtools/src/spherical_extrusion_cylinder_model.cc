@@ -105,9 +105,11 @@ namespace geomtools {
 
     _mother_.set_r (_r_);
     _mother_.set_z (_z_);
+    _mother_.lock();
     DT_THROW_IF (! _mother_.is_valid (), std::logic_error,  "Invalid dimension(s) for the mother cylinder in spherical extrusion cylinder model '" << name_ << "' !");
 
     _extrusion_.set (_r_sphere_);
+    _extrusion_.lock();
 
     const double a = std::sqrt (_r_sphere_ * _r_sphere_
                                 - _r_extrusion_ * _r_extrusion_);
@@ -154,6 +156,7 @@ namespace geomtools {
     }
 
     _solid_.set_user_draw ((void *) &spherical_extrusion_cylinder_model::gnuplot_draw_user_function);
+    _solid_.lock();
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
     grab_logical ().set_shape (_solid_);

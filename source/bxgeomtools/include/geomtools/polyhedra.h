@@ -137,13 +137,13 @@ namespace geomtools {
 
     bool is_valid () const;
 
-    void reset ();
-
     void add (double z_, double rmax_, bool compute_ = true);
 
     void add (double z_, double rmin_, double rmax_, bool compute_ = true);
 
-    void initialize (const datatools::properties & setup_);
+    virtual void initialize (const datatools::properties & setup_, const handle_dict_type * = 0);
+
+    virtual void reset ();
 
     void initialize (const std::string & filename_,
                      int mode_ = RMIN_RMAX);
@@ -186,6 +186,10 @@ namespace geomtools {
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
+
+  protected:
+
+    virtual void _build_bounding_data();
 
   private:
 

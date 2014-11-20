@@ -114,6 +114,9 @@ namespace geomtools {
     virtual size_t compute_index_map (std::vector<uint32_t> & map_,
                                       int item_) const;
 
+    /// Check if the placement is identity
+    bool is_identity() const;
+
     /// Set identity
     void set_identity ();
 

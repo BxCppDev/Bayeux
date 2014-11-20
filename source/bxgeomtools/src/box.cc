@@ -3,13 +3,17 @@
 // Ourselves:
 #include <geomtools/box.h>
 
-// Standard library:
+// This party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 #include <datatools/units.h>
 #include <datatools/properties.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(box, "geomtools::box");
 
   const std::string & box::box_label()
   {
@@ -18,6 +22,14 @@ namespace geomtools {
       label = "box";
     }
     return label;
+  }
+
+  void box::_build_bounding_data()
+  {
+    _grab_bounding_data().make_box(get_xmin(), get_xmax(),
+                                   get_ymin(), get_ymax(),
+                                   get_zmin(), get_zmax());
+    return;
   }
 
   double box::get_xmin() const
@@ -236,12 +248,17 @@ namespace geomtools {
   bool
   box::is_valid() const
   {
-    return(_x_ > 0.0 && _y_ > 0.0 && _z_ > 0.0);
+    return datatools::is_valid(_x_)
+      && datatools::is_valid(_y_)
+      && datatools::is_valid(_z_);
   }
 
-  void box::initialize(const datatools::properties & config_)
+  void box::initialize(const datatools::properties & config_,
+                       const handle_dict_type * objects_)
   {
     reset();
+    this->i_shape_3d::initialize(config_, objects_);
+
     double lunit = CLHEP::mm;
     if (config_.has_key("length_unit")) {
       const std::string lunit_str = config_.fetch_string("length_unit");
@@ -266,16 +283,27 @@ namespace geomtools {
 
     set(x, y, z);
 
+    lock();
+    return;
+  }
+
+  void box::_set_default()
+  {
+    datatools::invalidate(_x_);
+    datatools::invalidate(_y_);
+    datatools::invalidate(_z_);
     return;
   }
 
   void
   box::reset()
   {
-    _x_ = -1.0;
-    _y_ = -1.0;
-    _z_ = -1.0;
-    i_object_3d::reset();
+    unlock();
+
+    _set_default();
+
+    this->i_shape_3d::reset();
+    return;
   }
 
   bool
@@ -469,7 +497,7 @@ namespace geomtools {
   {
     std::string indent;
     if (! a_indent.empty()) indent = a_indent;
-    i_object_3d::tree_dump(a_out, a_title, a_indent, true);
+    i_shape_3d::tree_dump(a_out, a_title, a_indent, true);
 
     a_out << indent << datatools::i_tree_dumpable::tag
           << "X : " << get_x() / CLHEP::mm << " mm" << std::endl;
@@ -522,6 +550,42 @@ namespace geomtools {
           pl.add(v);
         }
       }
+    }
+    return;
+  }
+
+  void box::compute_vertexes(std::vector<vector_3d> & vv_) const
+  {
+    DT_THROW_IF(!is_valid(), std::logic_error, "Invalid box!");
+    vv_.clear();
+    vv_.reserve(8);
+    double dx = 0.5 * get_x();
+    double dy = 0.5 * get_y();
+    double dz = 0.5 * get_z();
+    for (int i = 0; i < 2; i++) {
+      vector_3d vertex[4];
+      vertex[0].set( dx,  dy, (-1 + 2 * i) * dz);
+      vertex[1].set(-dx,  dy, (-1 + 2 * i) * dz);
+      vertex[2].set(-dx, -dy, (-1 + 2 * i) * dz);
+      vertex[3].set( dx, -dy, (-1 + 2 * i) * dz);
+      for (int j = 0; j < 4; j++) {
+        vv_.push_back(vertex[j]);
+      }
+    }
+    return;
+  }
+
+  void box::compute_transformed_vertexes(const placement & p_,
+                                         std::vector<vector_3d> & vv_) const
+  {
+    vv_.clear();
+    std::vector<vector_3d> vv;
+    compute_vertexes(vv);
+    vv_.reserve(vv.size());
+    for (int i = 0; i < (int) vv.size(); i++) {
+      vector_3d vtx;
+      p_.child_to_mother(vv[i], vtx);
+      vv_.push_back(vtx);
     }
     return;
   }
@@ -601,6 +665,8 @@ namespace geomtools {
 
     return;
   }
+
+
 
 } // end of namespace geomtools
 

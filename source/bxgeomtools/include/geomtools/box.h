@@ -16,6 +16,9 @@
 #ifndef GEOMTOOLS_BOX_H
 #define GEOMTOOLS_BOX_H 1
 
+// Standard library:
+#include <vector>
+
 // Third party:
 // - Boost:
 #include <boost/cstdint.hpp>
@@ -47,25 +50,22 @@ namespace geomtools {
     /// Return the box shape label
     static const std::string & box_label();
 
-    ///  \brief Masks used for the 6 faces of the box
-    enum faces_mask_type
-      {
-        FACE_NONE   = geomtools::FACE_NONE,
-        FACE_BACK   = 0x1,
-        FACE_FRONT  = 0x2,
-        FACE_LEFT   = 0x4,
-        FACE_RIGHT  = 0x8,
-        FACE_BOTTOM = 0x10,
-        FACE_TOP    = 0x20,
-        FACE_ALL    = (FACE_BACK
-                       | FACE_FRONT
-                       | FACE_LEFT
-                       | FACE_RIGHT
-                       | FACE_BOTTOM
-                       | FACE_TOP)
-      };
-
-  public:
+    /// \brief Masks used for the 6 faces of the box
+    enum faces_mask_type {
+      FACE_NONE   = geomtools::FACE_NONE,
+      FACE_BACK   = 0x1,
+      FACE_FRONT  = 0x2,
+      FACE_LEFT   = 0x4,
+      FACE_RIGHT  = 0x8,
+      FACE_BOTTOM = 0x10,
+      FACE_TOP    = 0x20,
+      FACE_ALL    = (FACE_BACK
+                     | FACE_FRONT
+                     | FACE_LEFT
+                     | FACE_RIGHT
+                     | FACE_BOTTOM
+                     | FACE_TOP)
+    };
 
     /// Return the min X coordinates (bounding box)
     double get_xmin() const;
@@ -127,8 +127,6 @@ namespace geomtools {
     /// Set the halves of all dimensions
     void set_half(double, double, double);
 
-  public:
-
     /// Default constructor
     box();
 
@@ -145,10 +143,10 @@ namespace geomtools {
     bool is_valid() const;
 
     /// Initialize the box from properties
-    void initialize(const datatools::properties &);
+    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
 
     /// Reset
-    void reset();
+    virtual void reset();
 
     /// Return the value of some parameter given by name
     double get_parameter(const std::string &) const;
@@ -199,14 +197,30 @@ namespace geomtools {
                                 const placement &,
                                 uint32_t options_ = 0) const;
 
+    /// Compute the positions of the 8 vertexes of the box
+    void compute_vertexes(std::vector<vector_3d> & vv_) const;
+
+    /// Compute the positions of the 8 vertexes in a given transformation
+    void compute_transformed_vertexes(const placement & p_, std::vector<vector_3d> & vv_) const;
+
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
+
+  protected:
+
+    /// Set default attributes
+    void _set_default();
+
+    virtual void _build_bounding_data();
 
   private:
 
     double _x_; //!< Width (in arbitrary units)
     double _y_; //!< Length (in arbitrary units)
     double _z_; //!< Height (in arbitrary units)
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(box);
 
   };
 

@@ -61,7 +61,8 @@ namespace geomtools {
     {
       double x, y, z;
 
-      vertex ();
+      /// Default constructor
+      vertex();
 
       friend std::ostream & operator<<(std::ostream & out_,
                                        const vertex & vtx_);
@@ -82,10 +83,11 @@ namespace geomtools {
     /// \brief A STL facet
     struct facet
     {
-      double nx, ny, nz;
-      std::vector<vertex> vertices;
+      double nx, ny, nz; //!< Coordinates of the normal to the facet
+      std::vector<vertex> vertices; //!< Array of vertices
 
-      facet ();
+      /// Default constructor
+      facet();
 
       friend std::ostream & operator<<(std::ostream & out_,
                                        const facet & fct_);
@@ -100,11 +102,13 @@ namespace geomtools {
     /// \brief A STL solid
     struct solid
     {
-      std::string name;
-      std::vector<facet> facets;
-      std::string dummy_name;
+      std::string name; //!< Name of the solid
+      std::vector<facet> facets; //!< Array of facets
+      std::string dummy_name; //!< Dummy name
 
-      solid ();
+      /// Default constructor
+      solid();
+
       friend std::ostream & operator<<( std::ostream & out_, const solid & sld_);
 
     };
@@ -303,8 +307,8 @@ namespace geomtools {
      *  STL solid converter  *
      *************************/
 
-    /** Converter from the STL ASCII format (from CATIA software)
-     *  to geomtools model for tessellated solid (class tessellated_solid).
+    /// \brief Converter from the STL ASCII format (from CATIA software)
+    /** Converter from STL ASCII format to geomtools model for tessellated solid (class tessellated_solid).
      */
     class stl_to_geomtools_converter
     {
@@ -330,6 +334,7 @@ namespace geomtools {
 
       void set_length_unit (double u_);
 
+      /// Default constructor
       stl_to_geomtools_converter ();
 
       int convert (const solid & solid_, tessellated_solid & ts_);
@@ -338,11 +343,11 @@ namespace geomtools {
 
     private:
 
-      bool _debug_;  /// Debug flag
-      bool _check_normal_; /// Flag to check to facet normal relative to the 3 vertices
-      bool _fix_attempt_; /// Flag to fix possible broken vertices and facets
-      bool _lock_ts_; /// Flag to lock the target tessellated_solid
-      double _length_unit_; /// CLHEP length unit (mm)
+      bool _debug_;         //!< Debug flag
+      bool _check_normal_;  //!< Flag to check to facet normal relative to the 3 vertices
+      bool _fix_attempt_;   //!< Flag to fix possible broken vertices and facets
+      bool _lock_ts_;       //!< Flag to lock the target tessellated_solid
+      double _length_unit_; //!< CLHEP length unit (mm)
 
     };
 

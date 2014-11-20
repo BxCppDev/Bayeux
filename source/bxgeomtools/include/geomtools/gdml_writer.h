@@ -37,7 +37,9 @@
 #include <geomtools/box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
+#include <geomtools/elliptical_tube.h>
 #include <geomtools/sphere.h>
+#include <geomtools/ellipsoid.h>
 #include <geomtools/polycone.h>
 #include <geomtools/polyhedra.h>
 
@@ -110,8 +112,6 @@ namespace geomtools {
     /// Return output stream associated to a GDML section
     const std::ostringstream & get_stream(const std::string & section_) const;
 
-  public:
-
     /// Attach an external output stream dedicated to GDML description of materials
     void attach_external_materials(const std::ostringstream & oss_);
 
@@ -136,7 +136,7 @@ namespace geomtools {
     /// Reset
     void reset();
 
-    /*************** Defines section *******************/
+    /* ************** Defines section ****************** */
 
     void add_constant(const std::string & name_,
                       double value_);
@@ -171,12 +171,12 @@ namespace geomtools {
                       double angle_,
                       const std::string & unit_str_);
 
-    // rotation using GDML convention through XYZ Euler angles:
+    // Rotation using GDML convention through XYZ Euler angles:
     void add_rotation(const std::string & name_,
                       const rotation_3d & rot_,
                       const std::string & unit_str_);
 
-    /************* Materials section *******************/
+    /* ************ Materials section ****************** */
 
     void add_isotope(const std::string & name_,
                      size_t atomic_number_,
@@ -243,7 +243,7 @@ namespace geomtools {
                       double pressure_ = std::numeric_limits<double>::quiet_NaN()
                       );
 
-    /**************** Solids section *******************/
+    /* *************** Solids section ****************** */
 
     /// Check if a solid type given by name is valid
     static bool solid_type_is_valid(const std::string & solid_type_);
@@ -266,6 +266,17 @@ namespace geomtools {
                        double start_phi_, double delta_phi_,
                        const std::string & lunit_str_ = "mm",
                        const std::string & aunit_str_ = "radian");
+
+    void add_gdml_elliptical_tube(const std::string & name_,
+                                  double rx_, double ry, double z_,
+                                  const std::string & lunit_str_ = "mm",
+                                  const std::string & aunit_str_ = "radian");
+
+    void add_gdml_ellipsoid(const std::string & name_,
+                            double rx_, double ry, double rz_,
+                            double bottom_z_, double top_z_,
+                            const std::string & lunit_str_ = "mm",
+                            const std::string & aunit_str_ = "radian");
 
     void add_gdml_orb(const std::string & name_,
                       double r_,
@@ -330,6 +341,16 @@ namespace geomtools {
                   const std::string & lunit_str_ = "mm",
                   const std::string & aunit_str_ = "radian");
 
+    void add_ellipsoid(const std::string & name_,
+                       const ellipsoid & e_,
+                       const std::string & lunit_str_ = "mm",
+                       const std::string & aunit_str_ = "radian");
+
+    void add_elliptical_tube(const std::string & name_,
+                             const elliptical_tube & t_,
+                             const std::string & lunit_str_ = "mm",
+                             const std::string & aunit_str_ = "radian");
+
     void add_orb(const std::string & name_,
                  const sphere & s_,
                  const std::string & lunit_str_ = "mm",
@@ -350,7 +371,7 @@ namespace geomtools {
                        const std::string & lunit_str_ = "mm",
                        const std::string & aunit_str_ = "radian");
 
-    /**************** Structures section *******************/
+    /* *************** Structures section ****************** */
 
     /// \brief Description of a physical volume
     class physvol
@@ -365,7 +386,6 @@ namespace geomtools {
               const std::string & rotationref_ = "",
               const std::string & scaleref_ = "");
     };
-
 
     /// \brief Description of a replica volume
     class replicavol
@@ -417,7 +437,7 @@ namespace geomtools {
                             const std::string & lunit_str_ = "mm",
                             const std::string & aunit_str_ = "radian");
 
-    /**************** Setups section *******************/
+    /* *************** Setups section ****************** */
 
     void add_setup(const std::string & name_,
                    const std::string & world_ref_,
@@ -425,7 +445,7 @@ namespace geomtools {
 
 
 
-    /**************** Header/Section  *******************/
+    /* *************** Header/Section  ****************** */
 
     void xml_header(std::ostream &,
                     const std::string & xml_version_ = "",
@@ -444,7 +464,7 @@ namespace geomtools {
                           const std::string & section_);
 
 
-    /**************** Utilities *******************/
+    /* *************** Utilities ****************** */
 
     /// Write the full GDML description in an output stream
     void full_write(std::ostream & out_,

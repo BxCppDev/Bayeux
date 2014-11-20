@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /* i_stackable.cc
  */
 
@@ -13,16 +12,16 @@ namespace geomtools {
 
   using namespace std;
 
-  const string stackable::STACKABLE_PREFIX = "stackable.";
-  const string stackable::STACKABLE_LENGTH_UNIT_PROPERTY = "length_unit";
-  const string stackable::STACKABLE_XMIN_PROPERTY = "xmin";
-  const string stackable::STACKABLE_XMAX_PROPERTY = "xmax";
-  const string stackable::STACKABLE_YMIN_PROPERTY = "ymin";
-  const string stackable::STACKABLE_YMAX_PROPERTY = "ymax";
-  const string stackable::STACKABLE_ZMIN_PROPERTY = "zmin";
-  const string stackable::STACKABLE_ZMAX_PROPERTY = "zmax";
-  const string stackable::STACKABLE_PLAY_PROPERTY = "play";
-  const string stackable::STACKABLE_LIMITS_PROPERTY = "limits";
+  const std::string stackable::STACKABLE_PREFIX = "stackable.";
+  const std::string stackable::STACKABLE_LENGTH_UNIT_PROPERTY = "length_unit";
+  const std::string stackable::STACKABLE_XMIN_PROPERTY = "xmin";
+  const std::string stackable::STACKABLE_XMAX_PROPERTY = "xmax";
+  const std::string stackable::STACKABLE_YMIN_PROPERTY = "ymin";
+  const std::string stackable::STACKABLE_YMAX_PROPERTY = "ymax";
+  const std::string stackable::STACKABLE_ZMIN_PROPERTY = "zmin";
+  const std::string stackable::STACKABLE_ZMAX_PROPERTY = "zmax";
+  const std::string stackable::STACKABLE_PLAY_PROPERTY = "play";
+  const std::string stackable::STACKABLE_LIMITS_PROPERTY = "limits";
 
   bool i_stackable::has_xmin() const
   {
@@ -54,9 +53,9 @@ namespace geomtools {
     return datatools::is_valid(get_zmax ());
   }
 
-  string stackable::make_key (const string & key_)
+  std::string stackable::make_key (const string & key_)
   {
-    ostringstream key_oss;
+    std::ostringstream key_oss;
     key_oss << stackable::STACKABLE_PREFIX << key_;
     return key_oss.str ();
   }
@@ -265,15 +264,15 @@ namespace geomtools {
   {
     double lunit = CLHEP::mm;
 
-    string length_unit_key = stackable::make_key (stackable::STACKABLE_LENGTH_UNIT_PROPERTY);
+    std::string length_unit_key = stackable::make_key (stackable::STACKABLE_LENGTH_UNIT_PROPERTY);
     if (config_.has_key (length_unit_key)) {
-      string length_unit_str = config_.fetch_string (length_unit_key);
+      std::string length_unit_str = config_.fetch_string (length_unit_key);
       lunit = datatools::units::get_length_unit_from (length_unit_str);
     }
 
-    static const string stackable_limits_key = stackable::make_key (stackable::STACKABLE_LIMITS_PROPERTY);
+    static const std::string stackable_limits_key = stackable::make_key (stackable::STACKABLE_LIMITS_PROPERTY);
     if (config_.has_key (stackable_limits_key)) {
-      vector<double> limits;
+      std::vector<double> limits;
       config_.fetch (stackable_limits_key, limits);
       DT_THROW_IF (limits.size () != 6, std::logic_error,
                    "Stacking limits vector should provide 6 dimensions !");
@@ -293,37 +292,37 @@ namespace geomtools {
       zmax = limits[5];
     }
     else {
-      string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
+      std::string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
       if (config_.has_key (xmin_key)) {
         xmin = config_.fetch_real (xmin_key);
         if (! config_.has_explicit_unit (xmin_key)) xmin *= lunit;
       }
 
-      string xmax_key = stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY);
+      std::string xmax_key = stackable::make_key (stackable::STACKABLE_XMAX_PROPERTY);
       if (config_.has_key (xmax_key)) {
         xmax = config_.fetch_real (xmax_key);
         if (! config_.has_explicit_unit (xmax_key)) xmax *= lunit;
       }
 
-      string ymin_key = stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY);
+      std::string ymin_key = stackable::make_key (stackable::STACKABLE_YMIN_PROPERTY);
       if (config_.has_key (ymin_key)) {
         ymin = config_.fetch_real (ymin_key);
         if (! config_.has_explicit_unit (ymin_key)) ymin *= lunit;
       }
 
-      string ymax_key = stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY);
+      std::string ymax_key = stackable::make_key (stackable::STACKABLE_YMAX_PROPERTY);
       if (config_.has_key (ymax_key)) {
         ymax = config_.fetch_real (ymax_key);
         if (! config_.has_explicit_unit (ymax_key)) ymax *= lunit;
       }
 
-      string zmin_key = stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY);
+      std::string zmin_key = stackable::make_key (stackable::STACKABLE_ZMIN_PROPERTY);
       if (config_.has_key (zmin_key)) {
         zmin = config_.fetch_real (zmin_key);
         if (! config_.has_explicit_unit (zmin_key)) zmin *= lunit;
       }
 
-      string zmax_key = stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY);
+      std::string zmax_key = stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY);
       if (config_.has_key (zmax_key)) {
         zmax = config_.fetch_real (zmax_key);
         if (! config_.has_explicit_unit (zmax_key)) zmax *= lunit;
@@ -383,39 +382,37 @@ namespace geomtools {
   stackable_data::~stackable_data() {
   }
 
-  void stackable_data::tree_dump (ostream & out_,
-                                  const string & title_,
-                                  const string & indent_,
+  void stackable_data::tree_dump (std::ostream & out_,
+                                  const std::string & title_,
+                                  const std::string & indent_,
                                   bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) {
       out_ << indent << title_ << endl;
     }
-    out_ << indent << datatools::i_tree_dumpable::tag << "xmin = " << xmin / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "xmax = " << xmax / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "ymin = " << ymin / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "ymax = " << ymax / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "zmin = " << zmin / CLHEP::mm << " mm" << endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "xmin = " << xmin / CLHEP::mm << " mm" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "xmax = " << xmax / CLHEP::mm << " mm" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "ymin = " << ymin / CLHEP::mm << " mm" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "ymax = " << ymax / CLHEP::mm << " mm" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "zmin = " << zmin / CLHEP::mm << " mm" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "zmax = " << zmax / CLHEP::mm << " mm" << endl;
+         << "zmax = " << zmax / CLHEP::mm << " mm" << std::endl;
     return;
   }
 
-  void stackable_data::dump (ostream & out_) const
+  void stackable_data::dump (std::ostream & out_) const
   {
     tree_dump (out_, "geomtools::stackable_data: ");
 
-    out_ << "|-- " << "xmin = " << xmin / CLHEP::mm << " mm" << endl;
-    out_ << "|-- " << "xmax = " << xmax / CLHEP::mm << " mm" << endl;
-    out_ << "|-- " << "ymin = " << ymin / CLHEP::mm << " mm" << endl;
-    out_ << "|-- " << "ymax = " << ymax / CLHEP::mm << " mm" << endl;
-    out_ << "|-- " << "zmin = " << zmin / CLHEP::mm << " mm" << endl;
-    out_ << "`-- " << "zmax = " << zmax / CLHEP::mm << " mm" << endl;
+    out_ << "|-- " << "xmin = " << xmin / CLHEP::mm << " mm" << std::endl;
+    out_ << "|-- " << "xmax = " << xmax / CLHEP::mm << " mm" << std::endl;
+    out_ << "|-- " << "ymin = " << ymin / CLHEP::mm << " mm" << std::endl;
+    out_ << "|-- " << "ymax = " << ymax / CLHEP::mm << " mm" << std::endl;
+    out_ << "|-- " << "zmin = " << zmin / CLHEP::mm << " mm" << std::endl;
+    out_ << "`-- " << "zmax = " << zmax / CLHEP::mm << " mm" << std::endl;
     return;
   }
 
 } // end of namespace geomtools
-
-// end of i_stackable.cc

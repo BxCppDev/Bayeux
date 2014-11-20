@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
 /// \file geomtools/stacked_model.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
  * Last modified: 2010-10-16
  *
@@ -82,7 +82,7 @@ namespace geomtools {
     };
 
     typedef std::map<int, stacked_item> stacked_dict_type;
-    typedef std::map<std::string, int> labels_dict_type;
+    typedef std::map<std::string, int>  labels_dict_type;
 
   public:
 
@@ -149,17 +149,17 @@ namespace geomtools {
 
   private:
 
-    std::string       _material_name_;
-    int               _stacking_axis_;
-    stacked_dict_type _stacked_models_;
-    labels_dict_type  _labels_;
-    geomtools::box    _solid_;
+    std::string       _material_name_; //!< Name of the material
+    int               _stacking_axis_; //!< Stacking axis
+    stacked_dict_type _stacked_models_; //!< Dictionary of stacked models
+    labels_dict_type  _labels_; //!< Label associated to the stacked models
+    geomtools::box    _solid_; //!< Mother solid (box)
     //geomtools::cylinder _cyl_solid_;
-    double            _numerics_play_;
-    double            _mechanics_play_;
+    double            _numerics_play_; //!< Numeric play
+    double            _mechanics_play_; //!< Mechanics play
 
     // 2011-12-05 FM : add support for additional internal objects :
-    MWIM              _internals_; /// Internal/daughter volumes
+    MWIM              _internals_; //!< Internal/daughter volumes
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(stacked_model);

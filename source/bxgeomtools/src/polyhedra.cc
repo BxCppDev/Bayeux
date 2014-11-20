@@ -32,6 +32,12 @@ namespace geomtools {
     return label;
   }
 
+  void polyhedra::_build_bounding_data()
+  {
+    _grab_bounding_data().make_cylinder(_xy_max_, get_zmin(), get_zmax());
+    return;
+  }
+
   double polyhedra::get_xmin() const
   {
     return -_xy_max_;
@@ -120,8 +126,12 @@ namespace geomtools {
     return;
   }
 
-  void polyhedra::initialize(const datatools::properties & setup_)
+  void polyhedra::initialize(const datatools::properties & setup_,
+                             const handle_dict_type * objects_)
   {
+    reset();
+    this->i_shape_3d::initialize(setup_, objects_);
+
     double lunit = CLHEP::mm;
     if (setup_.has_key ("length_unit")) {
       const std::string lunit_str = setup_.fetch_string ("length_unit");
@@ -206,6 +216,7 @@ namespace geomtools {
       DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
     }
 
+    lock();
     return;
   }
 
@@ -387,6 +398,8 @@ namespace geomtools {
 
   void polyhedra::reset ()
   {
+    unlock();
+
     _n_sides_ = 0;
     _points_.clear ();
     _top_surface_        = std::numeric_limits<double>::quiet_NaN();
@@ -398,6 +411,8 @@ namespace geomtools {
     _volume_             = std::numeric_limits<double>::quiet_NaN();
     _z_min_ = _z_max_ = _r_max_ = _xy_max_ = std::numeric_limits<double>::quiet_NaN();
     _extruded_ = false;
+
+    this->i_shape_3d::reset();
     return;
   }
 

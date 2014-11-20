@@ -112,6 +112,9 @@ namespace geomtools {
     bool preload = true;
     if (preload) {
       _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::geomtools::i_model));
+      if (_logging_priority_ >= datatools::logger::PRIO_INFORMATION) {
+        _factory_register_.tree_dump(std::cerr, "Geometry model factory: ", "INFO: ");
+      }
     }
   }
 

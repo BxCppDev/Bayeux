@@ -102,6 +102,10 @@ namespace geomtools {
 
   void logical_volume::set_shape (const i_shape_3d & shape_)
   {
+    DT_THROW_IF(! shape_.is_locked(),
+                std::logic_error,
+                "Shape '" << shape_.get_shape_name() << "' in logical volume '"
+                << _name_ << "' is not locked!");
     _clear_shape_ ();
     _own_shape_ = false;
     _shape_ = &shape_;
@@ -110,6 +114,10 @@ namespace geomtools {
 
   void logical_volume::set_shape (const i_shape_3d * shape_)
   {
+    DT_THROW_IF(! shape_->is_locked(),
+                std::logic_error,
+                "Shape '" << shape_->get_shape_name() << "' in logical volume '"
+                << _name_ << "' is not locked!");
     _clear_shape_ ();
     if (shape_ != 0) {
       _own_shape_ = true;
