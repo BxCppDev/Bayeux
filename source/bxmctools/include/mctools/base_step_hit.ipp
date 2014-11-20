@@ -20,7 +20,7 @@ namespace mctools {
 
   template<class Archive>
   void base_step_hit::serialize (Archive            & ar,
-                                 const unsigned int   /*version*/)
+                                 const unsigned int  version)
   {
     // inherit from the 'base_hit' mother class:
     ar & boost::serialization::make_nvp("geomtools__base_hit",
@@ -61,10 +61,19 @@ namespace mctools {
       {
         ar & boost::serialization::make_nvp ("particle_name",  _particle_name_);
       }
+
+    if (version>=1) {
+      if (_store & STORE_BIASING_WEIGHT) {
+        ar & boost::serialization::make_nvp ("biasing_weight",  _biasing_weight_);
+      }
+    }
     return;
   }
 
 } // end of namespace mctools
+
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(mctools::base_step_hit, 1)
 
 #endif // MCTOOLS_BASE_STEP_HIT_IPP
 

@@ -58,6 +58,7 @@ namespace mctools {
       STORE_MOMENTUM_STOP  = datatools::bit_mask::bit08,
       STORE_ENERGY_DEPOSIT = datatools::bit_mask::bit09,
       STORE_PARTICLE_NAME  = datatools::bit_mask::bit10,
+      STORE_BIASING_WEIGHT = datatools::bit_mask::bit20
     };
 
   public:
@@ -151,6 +152,18 @@ namespace mctools {
     /// Reset/invalidate the particle name associated to the hit
     void invalidate_particle_name ();
 
+    /// Check if a biasing weight is associated to the hit
+    bool has_biasing_weight() const;
+
+    /// Set the current biasing  weight of the particle track
+    void set_biasing_weight(double);
+
+    /// Return the current biasing  weight of the particle track
+    double get_biasing_weight() const;
+
+    /// Reset/invalidate the current biasing weight
+    void invalidate_biasing_weight();
+
     /// Check if the hit has a valid internal structure
     /** We consider a base step hit valid if:
      * - a valid hit ID is set
@@ -188,14 +201,15 @@ namespace mctools {
 
     // Attributes :
 
-    geomtools::vector_3d         _position_start_; /// Start position : beginning of the tiny track segment (step)
-    geomtools::vector_3d         _position_stop_;  /// Stop position  : end of the tiny track segment (step)
-    double                       _time_start_;     /// Start time at start position
-    double                       _time_stop_;      /// Stop time at stop position
-    geomtools::vector_3d         _momentum_start_; /// Momentum at start position
-    geomtools::vector_3d         _momentum_stop_;  /// Momentum at stop position
-    double                       _energy_deposit_; /// Energy deposit along the track segment (step)
-    std::string                  _particle_name_;  /// Name of the particle associated to the hit
+    geomtools::vector_3d         _position_start_; //!< Start position : beginning of the tiny track segment (step)
+    geomtools::vector_3d         _position_stop_;  //!< Stop position  : end of the tiny track segment (step)
+    double                       _time_start_;     //!< Start time at start position
+    double                       _time_stop_;      //!< Stop time at stop position
+    geomtools::vector_3d         _momentum_start_; //!< Momentum at start position
+    geomtools::vector_3d         _momentum_stop_;  //!< Momentum at stop position
+    double                       _energy_deposit_; //!< Energy deposit along the track segment (step)
+    std::string                  _particle_name_;  //!< Name of the particle associated to the hit
+    double                       _biasing_weight_; //!< The biasing weight of the particle track
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 

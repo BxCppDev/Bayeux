@@ -203,6 +203,31 @@ namespace mctools {
     return;
   }
 
+  bool base_step_hit::has_biasing_weight() const
+  {
+    return (_store & STORE_BIASING_WEIGHT) && datatools::is_valid(_biasing_weight_);
+  }
+
+  void base_step_hit::set_biasing_weight(double bw_)
+  {
+    DT_THROW_IF(bw_ < 0.0, std::range_error, "Invalid biasing weight value ('" << bw_ << "')!");
+    _store |= STORE_BIASING_WEIGHT;
+    _biasing_weight_ = bw_;
+    return;
+  }
+
+  double base_step_hit::get_biasing_weight() const
+  {
+    return _biasing_weight_;
+  }
+
+  void base_step_hit::invalidate_biasing_weight ()
+  {
+    datatools::invalidate (_biasing_weight_);
+    _store &= ~STORE_BIASING_WEIGHT;
+    return;
+  }
+
   // ctor:
   base_step_hit::base_step_hit () : geomtools::base_hit ()
   {
@@ -256,6 +281,7 @@ namespace mctools {
     invalidate_momentum_stop ();
     invalidate_energy_deposit ();
     invalidate_particle_name ();
+    invalidate_biasing_weight ();
     geomtools::base_hit::reset ();
     return;
   }
