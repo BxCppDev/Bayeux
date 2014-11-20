@@ -8,7 +8,6 @@ foreach(_modulevar MODULE_HEADER_ROOT MODULE_RESOURCE_ROOT)
     message(FATAL_ERROR "${_modulevar} not specified")
   endif()
 endforeach()
-
 # - Module
 set(module_name geomtools)
 set(module_root_dir     "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
@@ -68,6 +67,10 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/disk.h
   ${module_include_dir}/${module_name}/display_data.h
   ${module_include_dir}/${module_name}/display_data.ipp
+  ${module_include_dir}/${module_name}/ellipsoid.h
+  ${module_include_dir}/${module_name}/elliptical_tube.h
+  ${module_include_dir}/${module_name}/extruded_box.h
+  ${module_include_dir}/${module_name}/extruded_box_model.h
   ${module_include_dir}/${module_name}/gdml_export.h
   ${module_include_dir}/${module_name}/gdml_writer.h
   ${module_include_dir}/${module_name}/geometry_service.h
@@ -99,6 +102,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_shape_2d.h
   ${module_include_dir}/${module_name}/i_shape_3d.h
   ${module_include_dir}/${module_name}/i_stackable.h
+  ${module_include_dir}/${module_name}/bounding_data.h
   ${module_include_dir}/${module_name}/i_wires_3d_rendering.h
   ${module_include_dir}/${module_name}/line_3d.h
   ${module_include_dir}/${module_name}/line_3d.ipp
@@ -183,6 +187,10 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/base_hit.cc
   ${module_source_dir}/blur_spot.cc
   ${module_source_dir}/address_set.cc
+  ${module_source_dir}/extruded_box.cc
+  ${module_source_dir}/extruded_box_model.cc
+  ${module_source_dir}/ellipsoid.cc
+  ${module_source_dir}/elliptical_tube.cc
   ${module_source_dir}/gdml_export.cc
   ${module_source_dir}/gdml_writer.cc
   ${module_source_dir}/geom_id.cc
@@ -195,6 +203,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/intersection.cc
   ${module_source_dir}/i_placement.cc
   ${module_source_dir}/i_stackable.cc
+  ${module_source_dir}/bounding_data.cc
   ${module_source_dir}/logical_volume.cc
   ${module_source_dir}/materials_plugin.cc
   ${module_source_dir}/materials_utils.cc
@@ -338,6 +347,8 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_utils_2.cxx
   ${module_test_dir}/test_utils.cxx
   ${module_test_dir}/test_reflection_0.cxx
+  ${module_test_dir}/test_extruded_box.cxx
+  ${module_test_dir}/test_elliptical_tube.cxx
   )
 
 # - Applications
