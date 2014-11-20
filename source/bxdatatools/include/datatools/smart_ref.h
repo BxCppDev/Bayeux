@@ -115,8 +115,8 @@ class smart_ref {
 
  private:
 
-  pointer_type          ref_; /// Handle to the target object
-  datatools::properties properties_; /// Container of auxiliary properties
+  pointer_type          ref_; //!< Handle to the target object
+  datatools::properties properties_; //!< Container of auxiliary properties
 
   friend class boost::serialization::access;
 
