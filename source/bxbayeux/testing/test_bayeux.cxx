@@ -7,7 +7,7 @@
 #include <bayeux/reloc.h>
 #include <bayeux/version.h>
 
-int main(int argc_, char * argv_[])
+int main(int /*argc_*/, char** /*argv_*/)
 {
   BAYEUX_INIT();
   std::clog << "Hello, Bayeux !\n";
@@ -18,8 +18,7 @@ int main(int argc_, char * argv_[])
   std::clog << "  Data directory     : " << bayeux::get_data_dir() << std::endl;
   std::clog << "  Resource directory : " << bayeux::get_resource_dir() << std::endl;
   std::clog << "  Documentation dir. : " << bayeux::get_doc_dir() << std::endl;
-  // std::clog << "  Example directory  : " << bayeux::get_example_dir() << std::endl;
-
+ 
   BAYEUX_FINI();
   return 0;
 }
