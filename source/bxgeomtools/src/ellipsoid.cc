@@ -286,7 +286,7 @@ namespace geomtools {
   }
 
   double
-  ellipsoid::get_surface (uint32_t mask_) const
+  ellipsoid::get_surface (uint32_t /*mask_*/) const
   {
     double s = 0.0;
     DT_THROW_IF(true, std::runtime_error, "Not implemented !");
@@ -319,14 +319,14 @@ namespace geomtools {
   }
 
   bool
-  ellipsoid::is_inside (const vector_3d & point_, double skin_) const
+  ellipsoid::is_inside (const vector_3d & /*point_*/, double /*skin_*/) const
   {
     DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     return false;
   }
 
   bool
-  ellipsoid::is_outside (const vector_3d & point_, double skin_) const
+  ellipsoid::is_outside (const vector_3d & /*point_*/, double /*skin_*/) const
   {
     DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     return false;
@@ -346,7 +346,7 @@ namespace geomtools {
   }
 
   vector_3d
-  ellipsoid::get_normal_on_surface (const vector_3d & position_) const
+  ellipsoid::get_normal_on_surface (const vector_3d & /*position_*/) const
   {
     vector_3d normal;
     invalidate (normal);
@@ -355,19 +355,19 @@ namespace geomtools {
   }
 
   bool
-  ellipsoid::is_on_surface (const vector_3d & point_,
-                            int mask_,
-                            double skin_) const
+  ellipsoid::is_on_surface (const vector_3d & /*point_*/,
+                            int /*mask_*/,
+                            double /*skin_*/) const
   {
     DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     return false;
   }
 
   bool
-  ellipsoid::find_intercept (const vector_3d & from_,
-                             const vector_3d & direction_,
+  ellipsoid::find_intercept (const vector_3d & /*from_*/,
+                             const vector_3d & /*direction_*/,
                              intercept_t & intercept_,
-                             double skin_) const
+                             double /*skin_*/) const
   {
     DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     intercept_.reset ();

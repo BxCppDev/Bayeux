@@ -731,7 +731,7 @@ namespace geomtools {
          i++) {
       const int index = i->first;
       stacked_item & bi = i->second;
-      const i_model * stacked_model = bi.model;
+      //const i_model * stacked_model = bi.model;
       double xi, yi, zi;
       xi = yi = zi = 0.0;
       if (is_stacking_along_x()) {

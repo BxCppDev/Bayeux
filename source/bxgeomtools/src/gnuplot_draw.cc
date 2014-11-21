@@ -973,7 +973,7 @@ namespace geomtools {
     sample = std::max(3U, (unsigned int) sample);
     double dphi = delta_phi_ * CLHEP::radian / sample;
 
-    double dangle = 2 * M_PI * CLHEP::radian / sample;
+    //double dangle = 2 * M_PI * CLHEP::radian / sample;
     polyline_type polyline_top_i;
     polyline_type polyline_bottom_i;
     polyline_type polyline_segment_i;

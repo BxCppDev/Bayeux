@@ -1107,7 +1107,7 @@ namespace geomtools {
 					     const string & aunit_str_)
   {
     double lunit = datatools::units::get_length_unit_from(lunit_str_);
-    double aunit = datatools::units::get_angle_unit_from(aunit_str_);
+    //double aunit = datatools::units::get_angle_unit_from(aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "eltube"
@@ -1136,10 +1136,10 @@ namespace geomtools {
 				       double rx_, double ry_, double rz_,
 				       double bottom_z_, double top_z_,
 				       const string & lunit_str_,
-				       const string & aunit_str_)
+				       const string & /*aunit_str_*/)
   {
     double lunit = datatools::units::get_length_unit_from(lunit_str_);
-    double aunit = datatools::units::get_angle_unit_from(aunit_str_);
+    //double aunit = datatools::units::get_angle_unit_from(aunit_str_);
 
     ostringstream solids_stream;
     solids_stream << "<" <<  "ellipsoid"
