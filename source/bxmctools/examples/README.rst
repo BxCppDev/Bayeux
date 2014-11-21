@@ -1,6 +1,6 @@
-================
-mctools examples
-================
+=======================
+Bayeux/mctools examples
+=======================
 
 List of examples :
 
@@ -9,7 +9,4 @@ List of examples :
    event and vertex generation and Monte-Carlo *true* hits processing.
  * ``ex01`` : This example illustrates how to build a full Geant4
    based Monte-Carlo simulation setup with a more complex geometry setup
-   than in ``ex01``.
-
-
-
+   than in ``ex00``.

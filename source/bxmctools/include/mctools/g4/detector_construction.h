@@ -23,6 +23,8 @@
 #include <vector>
 
 // Third party:
+// - Boost :
+#include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools :
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
@@ -53,9 +55,11 @@ namespace mctools {
 
   namespace g4 {
 
+    // Forward declarations:
     class manager;
     class sensitive_detector;
     class magnetic_field;
+    class biasing_manager;
 
     /// \brief The detector construction Geant4 interface class
     class detector_construction : public G4VUserDetectorConstruction,
@@ -78,7 +82,6 @@ namespace mctools {
 
       /// Check initialization flag
       bool is_initialized () const;
-
 
       /// Return a non-mutable reference to the simulation manager
       const manager & get_manager () const;
@@ -106,6 +109,9 @@ namespace mctools {
 
       /// Main initialization method
       void initialize (const datatools::properties & config_);
+
+      /// Main reset method
+      void reset();
 
       /// Return a non-mutable reference to the collection of embeded sensitive detectors
       const sensitive_detector_dict_type & get_sensitive_detectors () const;
@@ -146,6 +152,9 @@ namespace mctools {
       /** Construct regions */
       void _construct_regions ();
 
+      /** Construct biasing */
+      void _construct_biasing ();
+
       /** Setup magnetic field */
       void _construct_magnetic_field ();
 
@@ -159,6 +168,10 @@ namespace mctools {
 
       /** Hidden construction method */
       virtual G4VPhysicalVolume * _g4_construct ();
+
+    protected:
+
+      void _set_default();
 
     private:
 
@@ -208,6 +221,10 @@ namespace mctools {
       // Step hit processor factory stuff (from mctools::core::step_hit_processor_factory) :
       datatools::properties _SHPF_config_;
       SHPF_type             _SHPF_;
+
+      bool   _using_biasing_; //!< Flag to use the Geant4 biasing system
+      datatools::properties _biasing_config_; //!< Configuration properties for the biasing manager
+      boost::scoped_ptr<biasing_manager> _biasing_manager_;
 
     };
 

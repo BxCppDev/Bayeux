@@ -208,6 +208,7 @@ int main(int argc_, char ** argv_)
       DT_LOG_NOTICE(logging, "Simulation manager is terminated.");
     } // Destructor is invoked here.
 
+    DT_LOG_TRACE(logging, "The end.");
   }
   catch (std::exception & x) {
     DT_LOG_FATAL(logging, x.what());

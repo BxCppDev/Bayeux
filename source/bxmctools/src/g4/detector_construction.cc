@@ -46,6 +46,7 @@
 #include <mctools/g4/sensitive_detector.h>
 #include <mctools/g4/magnetic_field.h>
 #include <mctools/g4/manager.h>
+#include <mctools/g4/biasing_manager.h>
 
 namespace mctools {
 
@@ -85,12 +86,11 @@ namespace mctools {
       return *_geom_manager_;
     }
 
-    detector_construction::detector_construction(manager & g4_mgr_)
+    void detector_construction::_set_default()
     {
-      _initialized_ = false;
       _abort_on_error_ = true;
 
-      _g4_manager_ = &g4_mgr_;
+      _g4_manager_ = 0;
       _geom_manager_ = 0;
       _materials_geom_plugin_name_ = "";
 
@@ -105,15 +105,60 @@ namespace mctools {
       _using_regions_             = true;
       _using_sensitive_detectors_ = true;
       _using_mag_field_           = true;
+      _using_biasing_             = false;
       _mag_field_manager_         = 0;
       _miss_distance_unit_        = CLHEP::mm;
       _general_miss_distance_     = DEFAULT_MISS_DISTANCE;
+      _SD_params_.set_key_label("name");
       _SD_params_.set_meta_label("type");
+      _SD_params_.set_description("Sensitive detectors' configuration (mctools::g4::detector_construction)");
+     return;
+    }
+
+    detector_construction::detector_construction(manager & g4_mgr_)
+    {
+      _initialized_ = false;
+      _set_default();
+      _g4_manager_ = &g4_mgr_;
       return;
     }
 
     detector_construction::~detector_construction()
     {
+      if (is_initialized()) {
+        reset();
+      }
+
+      return;
+    }
+
+    bool detector_construction::is_initialized() const
+    {
+      return _initialized_;
+    }
+
+
+    bool detector_construction::has_geometry_manager() const
+    {
+      return _geom_manager_ != 0;
+    }
+
+
+    void detector_construction::set_geometry_manager(const geomtools::manager & gm_)
+    {
+      DT_THROW_IF (is_initialized(), std::logic_error, "Operation prohibited !");
+      _geom_manager_ = &gm_;
+      return;
+    }
+
+    void detector_construction::reset()
+    {
+      DT_THROW_IF (!is_initialized(), std::logic_error, "Not initialized !");
+      _initialized_ = false;
+
+      if (_biasing_manager_) {
+        _biasing_manager_.reset();
+      }
 
       // Clear visualization attributes:
       _vis_attributes_.clear();
@@ -135,26 +180,10 @@ namespace mctools {
         }
       }
       _user_limits_col_.clear();
+      _SD_params_.reset();
 
-      return;
-    }
+      _set_default();
 
-    bool detector_construction::is_initialized() const
-    {
-      return _initialized_;
-    }
-
-
-    bool detector_construction::has_geometry_manager() const
-    {
-      return _geom_manager_ != 0;
-    }
-
-
-    void detector_construction::set_geometry_manager(const geomtools::manager & gm_)
-    {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Operation prohibited !");
-      _geom_manager_ = &gm_;
       return;
     }
 
@@ -423,6 +452,23 @@ namespace mctools {
         }
       }
 
+
+      /******************
+       *                *
+       *    Biasing     *
+       *                *
+       ******************/
+
+      if (config_.has_key("using_biasing")) {
+        _using_biasing_ = config_.fetch_boolean("using_biasing");
+      }
+
+      if (_using_biasing_) {
+        config_.export_and_rename_starting_with(_biasing_config_, "biasing.", "");
+        DT_THROW_IF(_biasing_config_.empty (), std::logic_error,
+                    "Missing property '" << "biasing" << "' !");
+      }
+
       _initialized_ = true;
       return;
     }
@@ -504,6 +550,12 @@ namespace mctools {
         _set_user_limits();
       }
 
+      // Automaticaly construct the biasing algos :
+      if (_using_biasing_) {
+        DT_LOG_DEBUG(_logprio(), "Construct the biasing algorithms.");
+        _construct_biasing();
+      }
+
       DT_LOG_TRACE(_logprio(), "Exiting.");
       return world_physical_volume;
     }
@@ -527,6 +579,14 @@ namespace mctools {
     {
       DT_THROW_IF (_mag_field_manager_ == 0, std::logic_error, "No magnetic field manager is defined !");
       return *_mag_field_manager_;
+    }
+
+    void detector_construction::_construct_biasing()
+    {
+      _biasing_manager_.reset(new biasing_manager);
+      _biasing_manager_->set_detector_construction(*this);
+      _biasing_manager_->initialize(_biasing_config_);
+      return;
     }
 
     void detector_construction::_construct_magnetic_field()

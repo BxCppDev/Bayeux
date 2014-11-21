@@ -106,21 +106,21 @@ namespace mctools {
 
       // 2012-04-24 : limit the maximum alowed number of events:
       // http://hypernews.slac.stanford.edu/HyperNews/geant4/get/particles/528/1.html
-      static const uint32_t NUMBER_OF_EVENTS_UPPER_LIMIT   = 1000000000; /// Maximum number of events to be processed
-      static const uint32_t NUMBER_OF_EVENTS_LOWER_LIMIT   = 1;          /// Minimum number of events to be processed
-      static const uint32_t NUMBER_OF_EVENTS_WARNING_LIMIT = 1000000;    /// Number of events that triggers an alarm
-      static const std::string DEFAULT_PRNG_ID; /// Default safe PRNG identifier (see mygsl::rng class)
+      static const uint32_t NUMBER_OF_EVENTS_UPPER_LIMIT   = 1000000000; //!< Maximum number of events to be processed
+      static const uint32_t NUMBER_OF_EVENTS_LOWER_LIMIT   = 1;          //!< Minimum number of events to be processed
+      static const uint32_t NUMBER_OF_EVENTS_WARNING_LIMIT = 1000000;    //!< Number of events that triggers an alarm
+      static const std::string DEFAULT_PRNG_ID; //!< Default safe PRNG identifier (see mygsl::rng class)
 
       /// \brief A set of constants used by the Geant4 manager
       struct constants
       {
-        uint32_t    NO_LIMIT; /// Constant for unlimited number of simulated events
-        std::string G4_MANAGER_LABEL; /// Label associated to the Geant4 manager's PRNG
-        std::string VERTEX_GENERATOR_LABEL; /// Label associated to the vertex generator's PRNG
-        std::string EVENT_GENERATOR_LABEL; /// Label associated to the event generator's PRNG
-        std::string SHPF_LABEL; /// Label associated to the Step Hit Processor Factory's PRNG
-        int32_t     DEFAULT_PRNG_STATES_SAVE_MODULO; /// Default PRNG internal state backup rate
-        std::string DEFAULT_PRNG_STATES_FILE; /// Default PRNG internal state back filename
+        uint32_t    NO_LIMIT; //!< Constant for unlimited number of simulated events
+        std::string G4_MANAGER_LABEL; //!< Label associated to the Geant4 manager's PRNG
+        std::string VERTEX_GENERATOR_LABEL; //!< Label associated to the vertex generator's PRNG
+        std::string EVENT_GENERATOR_LABEL; //!< Label associated to the event generator's PRNG
+        std::string SHPF_LABEL; //!< Label associated to the Step Hit Processor Factory's PRNG
+        int32_t     DEFAULT_PRNG_STATES_SAVE_MODULO; //!< Default PRNG internal state backup rate
+        std::string DEFAULT_PRNG_STATES_FILE; //!< Default PRNG internal state back filename
 
         constants ();
 
@@ -504,57 +504,57 @@ namespace mctools {
     private:
 
       // Controls:
-      bool _initialized_; /// Initializion flag
+      bool _initialized_; //!< Initializion flag
 
       // Configuration:
-      const datatools::multi_properties * _multi_config_;   /// Setup parameters
+      const datatools::multi_properties * _multi_config_;   //!< Setup parameters
 
       // User interface mode:
-      bool _interactive_; /// Flag for interactive session
-      bool _g4_visualization_; /// Flag to activate Geant4 visualization
+      bool _interactive_; //!< Flag for interactive session
+      bool _g4_visualization_; //!< Flag to activate Geant4 visualization
       bool _use_event_number_as_seed_; // not used
 
-      std::string       _simulation_ctrl_label_; /// Label for simulation thread control
-      simulation_ctrl * _simulation_ctrl_; /// Simulation thread control instance
+      std::string       _simulation_ctrl_label_; //!< Label for simulation thread control
+      simulation_ctrl * _simulation_ctrl_; //!< Simulation thread control instance
 
-      std::map<std::string,std::string> _supported_output_profile_ids_; /// Supported simulation output profiles
-      std::string           _output_profiles_activation_rule_; /// Activation rule for output profiles
-      std::set<std::string> _activated_output_profile_ids_;    /// Activated simulation output profile Ids
+      std::map<std::string,std::string> _supported_output_profile_ids_; //!< Supported simulation output profiles
+      std::string           _output_profiles_activation_rule_; //!< Activation rule for output profiles
+      std::set<std::string> _activated_output_profile_ids_;    //!< Activated simulation output profile Ids
 
       // Service manager :
-      datatools::service_manager * _service_manager_; /// Service manager
+      datatools::service_manager * _service_manager_; //!< Service manager
 
       // Geometry manager :
-      const geomtools::manager  *  _external_geom_manager_; /// External geometry manager
-      geomtools::manager           _geom_manager_; /// Embeded geometry manager
+      const geomtools::manager  *  _external_geom_manager_; //!< External geometry manager
+      geomtools::manager           _geom_manager_; //!< Embeded geometry manager
 
       // Vertex generation manager :
-      int                          _vg_prng_seed_; /// Seed for the embeded PRNG for vertex generation
-      mygsl::rng                   _vg_prng_; /// Embeded PRNG for vertex generation
-      genvtx::manager              _vg_manager_; /// Vertex generator manager
-      std::string                  _vg_name_; /// Name of the active vertex generator
-      genvtx::i_vertex_generator * _vertex_generator_; /// Active vertex generator
+      int                          _vg_prng_seed_; //!< Seed for the embeded PRNG for vertex generation
+      mygsl::rng                   _vg_prng_; //!< Embeded PRNG for vertex generation
+      genvtx::manager              _vg_manager_; //!< Vertex generator manager
+      std::string                  _vg_name_; //!< Name of the active vertex generator
+      genvtx::i_vertex_generator * _vertex_generator_; //!< Active vertex generator
 
       // Event generation manager :
-      int              _eg_prng_seed_; /// Seed for the embeded PRNG for event generation
-      mygsl::rng       _eg_prng_; /// Embeded PRNG for event generation
-      genbb::manager   _eg_manager_; /// Event generator manager
-      std::string      _eg_name_; /// Name of the active event generator
-      genbb::i_genbb * _event_generator_; /// Active event generator
+      int              _eg_prng_seed_; //!< Seed for the embeded PRNG for event generation
+      mygsl::rng       _eg_prng_; //!< Embeded PRNG for event generation
+      genbb::manager   _eg_manager_; //!< Event generator manager
+      std::string      _eg_name_; //!< Name of the active event generator
+      genbb::i_genbb * _event_generator_; //!< Active event generator
 
       // Step hit processor factory PRNG :
-      int              _shpf_prng_seed_; /// Seed for the embeded PRNG for step hit processor factories
-      mygsl::rng       _shpf_prng_;      /// Embeded PRNG for step hit processor factory
+      int              _shpf_prng_seed_; //!< Seed for the embeded PRNG for step hit processor factories
+      mygsl::rng       _shpf_prng_;      //!< Embeded PRNG for step hit processor factory
 
       // Main Geant4 PRNG :
-      int         _mgr_prng_seed_; /// Initial seed of the embeded PRNG
-      mygsl::rng  _mgr_prng_; /// Embeded PRNG as the Geant4 main PRNG
-      g4_prng     _g4_prng_; /// PRNG using the Geant4 interface
+      int         _mgr_prng_seed_; //!< Initial seed of the embeded PRNG
+      mygsl::rng  _mgr_prng_; //!< Embeded PRNG as the Geant4 main PRNG
+      g4_prng     _g4_prng_; //!< PRNG using the Geant4 interface
 
       // G4 objects:
-      G4VSteppingVerbose * _g4_stepping_verbosity_; /// Geant4 stepping verbosity instance
-      G4RunManager       * _g4_run_manager_;  /// Geant4 run manager
-      G4UImanager        * _g4_UI_; /// Geant4 UI manager
+      G4VSteppingVerbose * _g4_stepping_verbosity_; //!< Geant4 stepping verbosity instance
+      G4RunManager       * _g4_run_manager_;  //!< Geant4 run manager
+      G4UImanager        * _g4_UI_; //!< Geant4 UI manager
 
       // User specified G4 interfaces :
       mctools::g4::detector_construction * _user_detector_construction_;

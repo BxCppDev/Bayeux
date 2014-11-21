@@ -7,27 +7,31 @@ Introduction
 
  * Description:
 
-   This  example illustrates  how to  use the Bayeux/mctools Geant4 engine (from the ``Bayeux_mctools_geant4`` library)
-   to simulate monokinetic 1 MeV electrons emitted from a source and track them in a virtual geometry.
+   This  example  illustrates how  to  use  the Bayeux/mctools  Geant4
+   engine  (from the  ``Bayeux_mctools_geant4``  library) to  simulate
+   monokinetic 1 MeV electrons emitted from a source and track them in
+   a virtual geometry.
 
-   It is first shown how to use the ``bxgeomtools_inspector`` utility
-   to visualize the setup and generate a GDML file usable by Geant4
+   It is first shown how  to use the ``bxgeomtools_inspector`` utility
+   to visualize  the setup and generate  a GDML file usable  by Geant4
    and browsable by ROOT.
 
-   The event and vertex generators are also tested in a standalone mode
-   thanks to the ``bxgenbb_inspector`` and ``bxgenvtx_production`` programs
-   respectively.
+   The event  and vertex  generators are also  tested in  a standalone
+   mode      thanks     to      the     ``bxgenbb_inspector``      and
+   ``bxgenvtx_production`` programs respectively.
 
-   The ``bxg4_production`` program is used to run a Geant4 based
-   Monte-Carlo simulation and produce an output simulated data file both in interactive mode
-   with Geant4 visualization and non-interactive mode.
+   The  ``bxg4_production`` program  is  used to  run  a Geant4  based
+   Monte-Carlo simulation  and produce  an output simulated  data file
+   both   in   interactive   mode  with   Geant4   visualization   and
+   non-interactive mode.
 
-   A sample program is provided to print and display the output simulated data file
-   which contains plain object records of the ``mctools::simulated_data`` class.
+   A  sample program  is  provided  to print  and  display the  output
+   simulated  data file  which contains  plain object  records of  the
+   ``mctools::simulated_data`` class.
 
-   Finally the ``bxdpp_processing`` program is used to run the Geant4 simulation
-   through a data processing pipeline, using the dedicated data processing
-   module class ``mctools::g4::simulation_module``.
+   Finally the ``bxdpp_processing`` program is  used to run the Geant4
+   simulation through a data  processing pipeline, using the dedicated
+   data processing module class ``mctools::g4::simulation_module``.
 
  * Source files :
 
@@ -165,7 +169,7 @@ Quick start
          geomtools> help
          geomtools> display -3d world
          geomtools> display [1000:0]
-         geomtools> display [2020:0.0]
+         geomtools> display [2020:0]
          geomtools> export_gdml
          geomtools> quit
 
@@ -215,13 +219,16 @@ Quick start
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
                   --action "list"
          List of particle generators: :
+         |-- C12_monokinetic_125MeV         : genbb::single_particle_generator (not initialized)
+         |-- Li6_monokinetic_100MeV         : genbb::single_particle_generator (not initialized)
          |-- electron_1MeV                  : genbb::single_particle_generator (not initialized)
          |-- electron_1MeV_cone             : genbb::single_particle_generator (not initialized)
          |-- electron_1MeV_gaussian_100keV  : genbb::single_particle_generator (not initialized)
          |-- electron_2MeV                  : genbb::single_particle_generator (not initialized)
          |-- electron_3MeV                  : genbb::single_particle_generator (not initialized)
          |-- electron_50-2000keV_flat       : genbb::single_particle_generator (not initialized)
-         `-- electron_pdf                   : genbb::single_particle_generator (not initialized)
+         |-- electron_pdf                   : genbb::single_particle_generator (not initialized)
+         `-- save                           : genbb::save_to_file_wrapper (not initialized)
 
     b. Shoot some primary events from one event generator: ::
 
@@ -463,7 +470,7 @@ Quick start
     b. Run the Geant4 simulation in non-interactive mode::
 
          $ bxg4_production \
-                --logging-priority "warning" \
+                --logging-priority "trace" \
                 --number-of-events 100 \
                 --number-of-events-modulo 0 \
                 --batch \

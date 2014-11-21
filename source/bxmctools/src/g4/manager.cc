@@ -1626,6 +1626,7 @@ namespace mctools {
 
     void manager::_at_reset()
     {
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): Entering..." << std::endl;
       if (_use_time_stat_) {
         for (CT_map::iterator i = _CTs_.begin();
              i != _CTs_.end();
@@ -1634,6 +1635,7 @@ namespace mctools {
           i->second.reset();
         }
       }
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 1..." << std::endl;
 
 #ifdef G4VIS_USE
       if (_g4_vis_manager_) {
@@ -1641,32 +1643,40 @@ namespace mctools {
         _g4_vis_manager_ = 0;
       }
 #endif
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 1 bis..." << std::endl;
       if (_g4_run_manager_) {
         delete _g4_run_manager_;
         _g4_run_manager_ = 0;
       }
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 1 ter..." << std::endl;
       if (_g4_stepping_verbosity_) {
         delete _g4_stepping_verbosity_;
         _g4_stepping_verbosity_ = 0;
       }
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 1 Q..." << std::endl;
 
       if (has_event_generator()) {
         _event_generator_ = 0;
       }
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 1 P..." << std::endl;
 
       if (has_vertex_generator()) {
         _vertex_generator_ = 0;
       }
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 1 S..." << std::endl;
 
       _vg_prng_.reset();
       _eg_prng_.reset();
       _shpf_prng_.reset();
       _mgr_prng_.reset();
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 2..." << std::endl;
 
       reset_simulation_ctrl();
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): TEST 3..." << std::endl;
 
       _track_history_.reset();
-      //_init_defaults();
+      // std::cerr << "DEVEL: g4::manager::_at_reset(): Exiting." << std::endl;
+
       return;
     }
 
