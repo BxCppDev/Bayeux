@@ -226,6 +226,7 @@ int example_geomtools()
   {
     std::clog << "geomtools::box object manipulation example: " << std::endl;
     geomtools::box b(3.0*CLHEP::cm, 2.0*CLHEP::cm, 0.5*CLHEP::cm);
+    b.lock();
     b.tree_dump(std::clog, "A 3D-box:");
     std::clog << "Surface is: "
               << b.get_surface()/CLHEP::mm2 << " mm2" << std::endl;
