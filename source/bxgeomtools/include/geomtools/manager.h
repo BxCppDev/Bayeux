@@ -227,7 +227,7 @@ namespace geomtools {
       uint32_t           _status_;      //!< Status of the plugin
       plugin_handle_type _handle_;      //!< Handle to the plugin
 
-      friend class manager;
+      // friend class manager;
     };
 
     /// Check the debug flag
