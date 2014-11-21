@@ -237,6 +237,7 @@ void test2()
 
   try {
     double yy = datatools::units::get_length_unit_from("kg");
+    yy = 0;
   } catch (std::exception & error) {
     std::cerr << "As expected: " << error.what() << std::endl;
   }
