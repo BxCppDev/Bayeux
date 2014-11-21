@@ -46,7 +46,7 @@ namespace mctools {
       return _initialized_;
     }
 
-    void biasing_manager::initialize(const datatools::properties & config_)
+    void biasing_manager::initialize(const datatools::properties & /*config_*/)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Biasing manager is already initialized!");
