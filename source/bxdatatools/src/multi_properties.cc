@@ -172,7 +172,7 @@ void multi_properties::set_key_label(const std::string& a_key_label) {
                "Empty key is not allowed !");
   DT_THROW_IF (size(),
                std::logic_error,
-               "Changing key label is not allowed !");
+               "Changing key label from '" << key_label_ << "' to '" << a_key_label << "' is not allowed in multi-properties '" << description_ << "'!");
   key_label_ = a_key_label;
 }
 
@@ -185,7 +185,7 @@ const std::string & multi_properties::get_key_label() const {
 void multi_properties::set_meta_label(const std::string& a_meta_label) {
   DT_THROW_IF (this->size(),
                std::logic_error,
-               "Changing meta label is not allowed !");
+               "Changing meta label from '" << meta_label_ << "' to '" << a_meta_label << "' is not allowed in multi-properties '" << description_ << "'!");
   meta_label_ = a_meta_label;
 }
 
