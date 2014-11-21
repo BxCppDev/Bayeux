@@ -343,6 +343,7 @@ int example_genvtx()
     std::clog << "genvtx::box_vg object manipulation example: "
               << std::endl;
     geomtools::box b(3.0*CLHEP::cm, 2.0*CLHEP::cm, 1.0*CLHEP::cm);
+    b.lock();
     b.tree_dump(std::clog, "A 3D-box:");
 
     genvtx::box_vg bvg;
