@@ -182,6 +182,7 @@ namespace geomtools {
 
   box::~box()
   {
+    return;
   }
 
   std::string
