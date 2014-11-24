@@ -159,9 +159,8 @@ namespace mctools {
       return _writer_;
     }
 
-    run_action::run_action (manager & a_mgr)
+    void run_action::_set_default()
     {
-      _initialized_                           = false;
       _use_run_header_footer_                 = false;
       _number_of_processed_events_            = 0;
       _number_of_events_modulo_               = NUMBER_OF_EVENTS_MODULO_NONE;
@@ -172,9 +171,17 @@ namespace mctools {
       _output_file_format_                    = "ascii";
       _output_file_compression_               = "gzip";
       _output_file_                           = "";
-      _manager_                               = &a_mgr;
+      _manager_                               = 0;
       _brio_general_info_store_label_         = io_utils::GENERAL_INFO_STORE;
       _brio_plain_simulated_data_store_label_ = io_utils::PLAIN_SIMULATED_DATA_STORE;
+      return;
+    }
+
+    run_action::run_action(manager & a_mgr)
+    {
+      _initialized_ = false;
+      _set_default();
+      _manager_ = &a_mgr;
       return;
     }
 
@@ -185,7 +192,7 @@ namespace mctools {
 
     void run_action::initialize (const datatools::properties & a_config)
     {
-      // fetch parameters...
+      // Fetch parameters:
       loggable_support::_initialize_logging_support(a_config);
 
       if (a_config.has_flag ("file.using_run_header_footer")) {

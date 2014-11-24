@@ -1,5 +1,8 @@
 // primary_generator.cc
 
+// - This project:
+#include <mctools/g4/primary_generator.h>
+
 // Standard library:
 #include <iostream>
 #include <sstream>
@@ -39,11 +42,11 @@
 #include <G4Positron.hh>
 #include <G4Alpha.hh>
 
-// - This project:
-#include <mctools/g4/primary_generator.h>
+// This project:
 #include <mctools/g4/manager.h>
 #include <mctools/g4/run_action.h>
 #include <mctools/g4/event_action.h>
+#include <mctools/biasing/primary_event_bias.h>
 
 namespace mctools {
 
@@ -195,13 +198,27 @@ namespace mctools {
         }
       }
 
-      // checks:
+      // Checks:
       if (_run_action_ == 0) {
         G4Exception ("mctools::g4::primary_generator::initialize",
                      "InitializationError",
                      RunMustBeAborted,
                      "Missing run action !");
       }
+
+      // Activate primary event biasing:
+      if (config_.has_key("using_bias")) {
+        bool use_bias = config_.fetch_boolean("using_bias");
+        if (use_bias) {
+          datatools::properties bias_config;
+          config_.export_and_rename_starting_with(bias_config, "bias.", "");
+          _bias_.reset(new mctools::biasing::primary_event_bias);
+          _bias_->set_geometry_manager(_run_action_->get_manager().get_geom_manager());
+          _bias_->initialize(bias_config);
+        }
+      }
+
+      // Checks:
       if (_event_action_ == 0) {
         G4Exception("mctools::g4::primary_generator::initialize",
                     "InitializationError",
@@ -220,6 +237,7 @@ namespace mctools {
       _check();
       const int n_particle = 1;
       _particle_gun_ = new G4ParticleGun(n_particle);
+
       _initialized_ = true;
       return;
     }
@@ -232,7 +250,14 @@ namespace mctools {
                     FatalException,
                     "Primary generator is not initialized!");
       }
-      // destroy the gun:
+      if (_bias_) {
+        if (_bias_->is_initialized()) {
+          _bias_->reset();
+        }
+        _bias_.reset();
+      }
+
+      // Destroy the gun:
       if (_particle_gun_ != 0) {
         delete _particle_gun_;
         _particle_gun_ = 0;
@@ -241,7 +266,7 @@ namespace mctools {
       _event_action_ = 0;
       _event_generator_ = 0;
       _vertex_generator_ = 0;
-      _set_defaults ();
+      _set_defaults();
       _initialized_ = false;
       return;
     }
@@ -323,6 +348,16 @@ namespace mctools {
       }
       current_generated_event.set_time(0.0 * CLHEP::ns);
 
+      // Here the bias object could run
+      int bias_result = 0;
+      if (_bias_) {
+        mctools::biasing::primary_event_bias::biasing_info bi;
+        _bias_->process(current_generated_event, bi);
+        if (bi.is_killed()) {
+          G4RunManager::GetRunManager()->AbortEvent();
+        }
+      }
+
       // Should we check the validity of the primary event here ?
 
       double event_time = current_generated_event.get_time();
@@ -343,6 +378,9 @@ namespace mctools {
            i != current_generated_event.grab_particles().end();
            i++, particle_counter++) {
         const ::genbb::primary_particle & genbb_particle = *i;
+        if (genbb_particle.get_auxiliaries().has_flag(mctools::biasing::primary_event_bias::dont_track_this_particle_flag())) {
+          continue;
+        }
         const std::string genbb_particle_label = genbb_particle.get_particle_label();
 
         /* Note:
@@ -357,9 +395,9 @@ namespace mctools {
 
         double particle_mass;
         datatools::invalidate(particle_mass);
-         if (genbb_particle.mass_is_known()) {
-            particle_mass = genbb_particle.get_mass();
-          }
+        if (genbb_particle.mass_is_known()) {
+          particle_mass = genbb_particle.get_mass();
+        }
 
         if (genbb_particle.has_pdg_code()) {
           // Support for particle PDG encoding: NOT USABLE YET FOR NOW BECAUSE THIS INTERFACE
@@ -458,7 +496,7 @@ namespace mctools {
                          << " and PDG charge = " << g4_particle->GetPDGCharge()
                          << " (GENBB charge set in the gun = " << _particle_gun_->GetParticleCharge() / CLHEP::eplus << " e)"
                          );
-            } else {
+          } else {
             // Fetch the G4 particle name from the traditional GENBB particle:
             g4_particle_name = get_g4_particle_name_from_genbb_particle(genbb_particle);
             if (g4_particle_name[0] == '?') {
@@ -469,7 +507,7 @@ namespace mctools {
               G4Exception ("mctools::g4::primary_generator::_generate_event",
                            "InvalidArgument",
                            RunMustBeAborted,
-                           message.str ().c_str());
+                           message.str().c_str());
             }
             // Make it a G4 particle:
             g4_particle = particle_table->FindParticle(g4_particle_name);
@@ -480,7 +518,7 @@ namespace mctools {
               G4Exception ("mctools::g4::primary_generator::_generate_event",
                            "InvalidArgument",
                            RunMustBeAborted,
-                           message.str ().c_str());
+                           message.str().c_str());
             }
             _particle_gun_->SetParticleDefinition(g4_particle);
             g4_particle_name = g4_particle->GetParticleName();
@@ -490,7 +528,7 @@ namespace mctools {
           }
         }
 
-        // Plug in G4:
+        // Plug the primary particle's vertex in the G4 particle gun:
         if (geomtools::is_valid(_current_vertex_)) {
           // All particles originate from an unique vertex provided by the vertex generator:
           _particle_gun_->SetParticlePosition(_current_vertex_);
@@ -530,11 +568,11 @@ namespace mctools {
 
         // _particle_gun_->SetParticleMomentum(momentum);
         // Get back to kinetic energy calculation since Geant4 does the same
-        // calculation. This following command sequence is the only one that
+        // calculation. The following command sequence is the only one that
         // does not generate any message output from Geant4 (when setting
         // ParticleMomentum, the kinetic energy is recalculated and dump message
         // and by setting ParticleEnergy, the momentum is recalculated and then
-        // dump message again)
+        // dump message again).
         // Extract momentum from the GENBB particle:
         G4ThreeVector momentum(genbb_particle.get_momentum().x(),
                                genbb_particle.get_momentum().y(),
@@ -620,12 +658,12 @@ namespace mctools {
       if (p_.is_nucleus()) {
         // What to do here ? shoud we support it from this method
         // return "ElA[E*]"; // G4 syntax seems to be : He6[0.0]
-        return "?"; // FOR NOW THUS METHOD DOES NOT WORK FOR NUCLEI
+        return "?"; // FOR NOW THIS METHOD DOES NOT WORK FOR NUCLEI
       }
       if (p_.is_ion()) {
         // What to do here ? shoud we support it from this method
         // return "ElA[E*]"; //  G4 syntax seems to be : He6[0.0] but there is no way to set the ion charge
-        return "?"; // FOR NOW THUS METHOD DOES NOT WORK FOR ION
+        return "?"; // FOR NOW THIS METHOD DOES NOT WORK FOR ION
       }
 
       // If no GENBB supported particle is found, we try to decode
@@ -723,7 +761,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::primary_generator,ocd_)
   // Additionnal configuration hints :
   ocd_.set_configuration_hints("Typical configuration is::                                             \n"
                                "                                                                       \n"
-                               " #@description Event action logging priority                           \n"
+                               " #@description Set the logging priority                           \n"
                                " logging.priority : string = \"warning\"                               \n"
                                "                                                                       \n"
                                );
@@ -738,5 +776,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::primary_generator,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
-// Registration macro for class 'mctools::g4::primary_generator' :
-DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::primary_generator,"mctools::g4::primary_generator")
+// Registration macro :
+DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::primary_generator,
+                               "mctools::g4::primary_generator")

@@ -56,6 +56,7 @@
 #include <genbb_help/manager.h>
 
 // This project:
+#include <mctools/mctools_config.h>
 #include <mctools/g4/loggable_support.h>
 
 namespace genvtx {
@@ -67,7 +68,6 @@ namespace genbb {
   class i_genbb;
 }
 
-#include <mctools/mctools_config.h>
 #include <mctools/g4/g4_prng.h>
 #include <mctools/g4/track_history.h>
 
@@ -124,7 +124,7 @@ namespace mctools {
 
         constants ();
 
-        static const constants & instance ();
+        static const constants & instance();
       };
 
       typedef datatools::computing_time      CT_type;

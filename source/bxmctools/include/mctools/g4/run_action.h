@@ -37,8 +37,10 @@ namespace mctools {
 
   namespace g4 {
 
+    // Forward declaration
     class manager;
 
+    /// \brief The Geant4 run action
     class run_action : public G4UserRunAction,
                        public loggable_support
     {
@@ -102,9 +104,11 @@ namespace mctools {
 
     protected:
 
-      virtual void _build_run_header ();
+      virtual void _build_run_header();
 
-      virtual void _build_run_footer ();
+      virtual void _build_run_footer();
+
+      virtual void _set_default();
 
     private:
 

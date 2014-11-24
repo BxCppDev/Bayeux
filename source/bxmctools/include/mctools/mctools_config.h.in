@@ -22,10 +22,18 @@
 #cmakedefine01 MCTOOLS_WITH_G4_G4VIS_USE
 
 #if MCTOOLS_WITH_G4_G4VIS_USE == 1
+#ifndef G4VIS_USE
 #cmakedefine G4VIS_USE
+#endif
+#ifndef G4VIS_USE_OPENGLX
 #cmakedefine G4VIS_USE_OPENGLX
-#cmakedefine G4VIS_USE_OPENGLXM
-#cmakedefine G4VIS_USE_OPENGLQT
+#endif
+// #ifndef G4VIS_USE_OPENGLXM
+// #cmakedefine G4VIS_USE_OPENGLXM
+// #endif
+// #ifndef G4VIS_USE_OPENGLQT
+// #cmakedefine G4VIS_USE_OPENGLQT
+// #endif
 #endif
 
 #endif // MCTOOLS_MCTOOLS_CONFIG_H
