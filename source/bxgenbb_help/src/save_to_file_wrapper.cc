@@ -41,8 +41,8 @@ namespace genbb {
   {
     pimpl_imp();
     ~pimpl_imp();
-    dpp::output_module outmod; /// Output module
-    datatools::things record; /// Working event record
+    dpp::output_module outmod; //!< Output module
+    datatools::things record;  //!< Working event record
   };
 
   // static

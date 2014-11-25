@@ -84,10 +84,10 @@ namespace genbb {
 
   private:
 
-    bool        _initialized_; /// Initialization flag
-    i_genbb *   _pg_;          /// Handle to a particle generator
-    std::string _PE_label_;    /// Label of the "primary event" bank
-    boost::scoped_ptr<pimpl_imp> _pimpl_; /// PIMPL smart pointer
+    bool        _initialized_; //!< Initialization flag
+    i_genbb *   _pg_;          //!< Handle to a particle generator
+    std::string _PE_label_;    //!< Label of the "primary event" bank
+    boost::scoped_ptr<pimpl_imp> _pimpl_; //!< PIMPL smart pointer
 
     GENBB_PG_REGISTRATION_INTERFACE(save_to_file_wrapper);
 

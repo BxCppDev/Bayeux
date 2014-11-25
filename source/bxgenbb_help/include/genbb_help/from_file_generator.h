@@ -77,9 +77,9 @@ namespace genbb {
 
   private:
 
-    bool        _initialized_; /// Initialization flag
-    std::string _PE_label_;    /// Label of the "primary event" bank
-    boost::scoped_ptr<pimpl_imp> _pimpl_; /// PIMPL smart pointer
+    bool        _initialized_; //!< Initialization flag
+    std::string _PE_label_;    //!< Label of the "primary event" bank
+    boost::scoped_ptr<pimpl_imp> _pimpl_; //!< PIMPL smart pointer
 
     GENBB_PG_REGISTRATION_INTERFACE(from_file_generator);
 
