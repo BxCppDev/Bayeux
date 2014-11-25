@@ -74,11 +74,6 @@ properties& multi_properties::entry::grab_properties() {
 }
 
 
-properties& multi_properties::entry::get_properties() {
-  return properties_;
-}
-
-
 const std::string& multi_properties::entry::get_key() const {
   return key_;
 }
@@ -409,10 +404,6 @@ const multi_properties::entry& multi_properties::get(
   return found->second;
 }
 
-multi_properties::entry& multi_properties::get(const std::string& a_key) {
-  return grab(a_key);
-}
-
 multi_properties::entry& multi_properties::grab(const std::string& a_key) {
   entries_col_type::iterator found = entries_.find(a_key);
   DT_THROW_IF (found == entries_.end(),
@@ -431,13 +422,8 @@ const properties& multi_properties::get_section(
 }
 
 
-properties& multi_properties::get_section(const std::string& a_key) {
-  return this->get(a_key).get_properties();
-}
-
-
 properties& multi_properties::grab_section(const std::string& a_key) {
-  return this->get(a_key).get_properties();
+  return this->grab(a_key).grab_properties();
 }
 
 
@@ -491,7 +477,7 @@ properties& multi_properties::add_impl2(const std::string& a_key,
   }
   entries_[a_key] = entry(a_key, a_meta);
   ordered_entries_.push_back(&entries_[a_key]);
-  return entries_[a_key].get_properties ();
+  return entries_[a_key].grab_properties ();
 }
 
 
@@ -504,7 +490,7 @@ void multi_properties::add(const std::string& a_key,
 void multi_properties::add(const std::string& a_key,
                            const properties& a_props) {
   this->add_impl(a_key);
-  entries_[a_key].get_properties() = a_props;
+  entries_[a_key].grab_properties() = a_props;
 }
 
 
@@ -512,7 +498,7 @@ void multi_properties::add(const std::string& a_key,
                            const std::string& a_meta,
                            const properties& a_props) {
   this->add_impl(a_key, a_meta);
-  entries_[a_key].get_properties() = a_props;
+  entries_[a_key].grab_properties() = a_props;
 }
 
 
@@ -821,10 +807,10 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
 
         if (load_it) {
           this->add(current_key, current_meta);
-          multi_properties::entry& e = this->get(current_key);
+          multi_properties::entry& e = this->grab(current_key);
           properties::config pcr;
           std::istringstream block_iss(current_block_oss.str());
-          pcr.read(block_iss, e.get_properties());
+          pcr.read(block_iss, e.grab_properties());
           current_block_oss.str("");
         }
       }

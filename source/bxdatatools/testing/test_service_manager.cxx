@@ -216,16 +216,16 @@ int main (int argc_, char ** argv_)
         // Create a multi_property container:
         datatools::multi_properties SM_services_config;
         SM_services_config.add ("test_1", "test_service");
-        SM_services_config.get_section ("test_1").store ("label", "test_service_1::label");
+        SM_services_config.grab_section ("test_1").store ("label", "test_service_1::label");
 
         SM_services_config.add ("test_2", "test_service");
-        SM_services_config.get_section ("test_2").store ("label", "test_service_2::label");
+        SM_services_config.grab_section ("test_2").store ("label", "test_service_2::label");
         vector<string> strict_dependencies;
         strict_dependencies.push_back ("test_1");
-        SM_services_config.get_section ("test_2").store ("dependencies.strict", strict_dependencies);
+        SM_services_config.grab_section ("test_2").store ("dependencies.strict", strict_dependencies);
 
         SM_services_config.add ("foo", "datatools::dummy_service");
-        SM_services_config.get_section ("foo").store ("label", "King Arthur");
+        SM_services_config.grab_section ("foo").store ("label", "King Arthur");
 
         if (debug) clog << datatools::io::debug << "Load embedded services' configuration..." << endl;
         // Load it !
@@ -250,7 +250,7 @@ int main (int argc_, char ** argv_)
         if (SM.has ("test_2") && SM.is_a<test_service> ("test_2"))
           {
             // Access to a service by mutable reference through its name and class :
-            test_service & TS =  SM.get<test_service> ("test_2");
+            test_service & TS =  SM.grab<test_service> ("test_2");
             TS.set_label ("new");
             clog << "Test service 'test_2' has new label '" << TS.get_label () << "'" << endl;
           }

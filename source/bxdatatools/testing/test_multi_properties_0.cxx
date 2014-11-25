@@ -14,11 +14,11 @@ int main (// int argc_ , char ** argv_
     // Add a new bag (*properties*) named 'display' within the bag of bags:
     my_bag_of_bags.add ("display", "display_type");
     // Retrieve a hook to the bag hosted by our *bag of bags*:
-    datatools::multi_properties::entry & e1 = my_bag_of_bags.get ("display");
+    datatools::multi_properties::entry & e1 = my_bag_of_bags.grab("display");
     // Add properties within this bag:
-    e1.get_properties ().store_flag ("debug");
-    e1.get_properties ().store ("colour", "blue");
-    e1.get_properties ().store ("depth", 1.234);
+    e1.grab_properties ().store_flag ("debug");
+    e1.grab_properties ().store ("colour", "blue");
+    e1.grab_properties ().store ("depth", 1.234);
 
     if (my_bag_of_bags.get_section ("display").has_key ("colour")) {
       clog << "Display section has colour : "
@@ -28,29 +28,29 @@ int main (// int argc_ , char ** argv_
 
     // Add a new 'water' bag;
     my_bag_of_bags.add ("water", "material_type");
-    datatools::multi_properties::entry & e2 = my_bag_of_bags.get ("water");
-    e2.get_properties ().store_flag ("liquid");
-    e2.get_properties ().store ("density", 1.0);
-    e2.get_properties ().store ("temperature", 300.0);
-    e2.get_properties ().store ("pressure", 1.0);
-    e2.get_properties ().store ("temperature.unit", "kelvin");
-    e2.get_properties ().store ("pressure.unit", "bar");
+    datatools::multi_properties::entry & e2 = my_bag_of_bags.grab("water");
+    e2.grab_properties ().store_flag ("liquid");
+    e2.grab_properties ().store ("density", 1.0);
+    e2.grab_properties ().store ("temperature", 300.0);
+    e2.grab_properties ().store ("pressure", 1.0);
+    e2.grab_properties ().store ("temperature.unit", "kelvin");
+    e2.grab_properties ().store ("pressure.unit", "bar");
 
     // Add a new 'particle' bag;
     my_bag_of_bags.add ("shape", "shape_type");
-    datatools::multi_properties::entry & e3 = my_bag_of_bags.get ("shape");
-    e3.get_properties ().store_flag ("visible");
-    e3.get_properties ().store ("type", "box");
-    e3.get_properties ().store ("material", "water");
-    e3.get_properties ().store ("length", 0.12);
-    e3.get_properties ().store ("width", 0.04);
-    e3.get_properties ().store ("depth", 0.06);
+    datatools::multi_properties::entry & e3 = my_bag_of_bags.grab("shape");
+    e3.grab_properties ().store_flag ("visible");
+    e3.grab_properties ().store ("type", "box");
+    e3.grab_properties ().store ("material", "water");
+    e3.grab_properties ().store ("length", 0.12);
+    e3.grab_properties ().store ("width", 0.04);
+    e3.grab_properties ().store ("depth", 0.06);
 
     // Remove a bag from the bag of bags;
     clog << "Remove section 'display'" << endl;
     my_bag_of_bags.remove ("display");
 
-    my_bag_of_bags.get_section ("shape").store ("author", "Pablo Picasso");
+    my_bag_of_bags.grab_section ("shape").store ("author", "Pablo Picasso");
 
     // Save in ASCII file:
     my_bag_of_bags.write ("my_bag_of_bags.conf",

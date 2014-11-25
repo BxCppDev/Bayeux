@@ -139,9 +139,6 @@ class multi_properties :
     /// Return a mutable reference to the collection of properties
     properties& grab_properties();
 
-    /// \deprecated Return a mutable reference to the collection of properties
-    properties& get_properties();
-
     /// Return the primary key
     const std::string& get_key() const;
 
@@ -261,9 +258,6 @@ private:
   /// Return a const reference to the stored entry
   const entry& get(const std::string& a_key) const;
 
-  /// \deprecated Return a mutable reference to the stored entry
-  entry& get(const std::string& a_key);
-
   /// Return a mutable reference to the stored entry
   entry& grab(const std::string& a_key);
 
@@ -299,9 +293,6 @@ private:
 
   /// Return the const reference to the properties store in a section
   const properties& get_section_const(const std::string& a_key) const;
-
-  /// \deprecated Return the mutable reference to the properties store in a section
-  properties& get_section(const std::string& a_key);
 
   /// Return the mutable reference to the properties store in a section
   properties& grab_section(const std::string& a_key);

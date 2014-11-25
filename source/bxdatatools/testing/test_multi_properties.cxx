@@ -1,13 +1,16 @@
-// -*- mode: c++; -*-
 // test_multi_properties.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 #include <vector>
 
+// Ourselves:
 #include <datatools/multi_properties.h>
+
+// This project:
 #include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
@@ -17,19 +20,17 @@ int main (int argc_ , char ** argv_)
 {
   using namespace std;
   int error_code = EXIT_SUCCESS;
-  try
-    {
+  try {
       clog << "Test of the 'multi_properties' class..." << endl;
       bool debug = false;
 
       int iarg = 1;
-      while (iarg < argc_)
-        {
-          string arg = argv_[iarg];
+      while (iarg < argc_) {
+        string arg = argv_[iarg];
 
-          if (arg == "-d" || arg == "--debug") debug = true;
-          iarg++;
-        }
+        if (arg == "-d" || arg == "--debug") debug = true;
+        iarg++;
+      }
 
       {
         clog << endl << "Write test:" << endl;
@@ -37,37 +38,37 @@ int main (int argc_ , char ** argv_)
         mp.set_debug (debug);
 
         mp.add ("object_1", "type_1");
-        datatools::multi_properties::entry & e1 = mp.get ("object_1");
-        e1.get_properties ().store ("debug", true);
-        e1.get_properties ().store ("colour", "blue");
-        e1.get_properties ().store ("depth", 1.234);
+        datatools::multi_properties::entry & e1 = mp.grab ("object_1");
+        e1.grab_properties ().store ("debug", true);
+        e1.grab_properties ().store ("colour", "blue");
+        e1.grab_properties ().store ("depth", 1.234);
 
         mp.add ("object_2", "type_2");
-        datatools::multi_properties::entry & e2 = mp.get ("object_2");
-        e2.get_properties ().store ("debug", false);
-        e2.get_properties ().store ("temperature", 300.0);
+        datatools::multi_properties::entry & e2 = mp.grab ("object_2");
+        e2.grab_properties ().store ("debug", false);
+        e2.grab_properties ().store ("temperature", 300.0);
 
         mp.add ("object_3", "type_1");
-        datatools::multi_properties::entry & e3 = mp.get ("object_3");
-        e3.get_properties ().store ("test", true);
-        e3.get_properties ().store ("mass", 15.0);
-        e3.get_properties ().store ("length", 0.12);
-        e3.get_properties ().store ("width", 0.04);
-        e3.get_properties ().store ("depth", 0.06);
+        datatools::multi_properties::entry & e3 = mp.grab ("object_3");
+        e3.grab_properties ().store ("test", true);
+        e3.grab_properties ().store ("mass", 15.0);
+        e3.grab_properties ().store ("length", 0.12);
+        e3.grab_properties ().store ("width", 0.04);
+        e3.grab_properties ().store ("depth", 0.06);
 
         mp.add (datatools::properties::make_private_key ("object_4"), "type_3");
         datatools::multi_properties::entry & e4
-          = mp.get (datatools::properties::make_private_key ("object_4"));
-        e4.get_properties ().store ("secret", true);
-        e4.get_properties ().store ("password", "********");
-        e4.get_properties ().store ("code", 1234567);
+          = mp.grab (datatools::properties::make_private_key ("object_4"));
+        e4.grab_properties ().store ("secret", true);
+        e4.grab_properties ().store ("password", "********");
+        e4.grab_properties ().store ("code", 1234567);
 
         mp.add ("object_3a", "type_1");
-        datatools::multi_properties::entry & e3a = mp.get ("object_3a");
-        e3a.get_properties ().store ("to_be_removed", true);
+        datatools::multi_properties::entry & e3a = mp.grab ("object_3a");
+        e3a.grab_properties ().store ("to_be_removed", true);
         mp.add ("object_3b", "type_1");
-        datatools::multi_properties::entry & e3b = mp.get ("object_3b");
-        e3b.get_properties ().store ("to_be_removed", true);
+        datatools::multi_properties::entry & e3b = mp.grab ("object_3b");
+        e3b.grab_properties ().store ("to_be_removed", true);
 
         mp.dump (clog);
 
