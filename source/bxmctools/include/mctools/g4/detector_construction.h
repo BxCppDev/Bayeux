@@ -113,7 +113,7 @@ namespace mctools {
       /// Main reset method
       void reset();
 
-      /// Return a non-mutable reference to the collection of embeded sensitive detectors
+      /// Return a non-mutable reference to the collection of embedded sensitive detectors
       const sensitive_detector_dict_type & get_sensitive_detectors () const;
 
       /// Return a mutable reference to the embeded step hit processor factory
@@ -175,22 +175,22 @@ namespace mctools {
 
     private:
 
-      bool _initialized_;                        /// Initialization flag
-      bool _abort_on_error_;                     /// Flag to force abortion on error while building the geometry setup
+      bool _initialized_;                        //!< Initialization flag
+      bool _abort_on_error_;                     //!< Flag to force abortion on error while building the geometry setup
 
       //! Main Geant4 manager:
-      manager * _g4_manager_;                    /// Handle to the Geant4 simulation manager
+      manager * _g4_manager_;                    //!< Handle to the Geant4 simulation manager
 
       //! Geometry manager:
-      const geomtools::manager * _geom_manager_; /// Reference to the geometry manager
+      const geomtools::manager * _geom_manager_; //!< Reference to the geometry manager
 
       //! Magnetic field manager:
-      bool   _using_mag_field_;                  /// Flag to use the Geant4 magnetic field system
-      std::string _emfield_geom_plugin_name_;    /// The name of the EM field manager geometry plugin
-      const emfield::electromagnetic_field_manager * _mag_field_manager_; /// Reference to the EM field manager
-      double _miss_distance_unit_;               /// Default miss distance length unit
-      double _general_miss_distance_;            /// Default general miss distance
-      datatools::properties _mag_field_aux_;     /// Auxiliary properties related to magnetic field
+      bool   _using_mag_field_;                  //!< Flag to use the Geant4 magnetic field system
+      std::string _emfield_geom_plugin_name_;    //!< The name of the EM field manager geometry plugin
+      const emfield::electromagnetic_field_manager * _mag_field_manager_; //!< Reference to the EM field manager
+      double _miss_distance_unit_;               //!< Default miss distance length unit
+      double _general_miss_distance_;            //!< Default general miss distance
+      datatools::properties _mag_field_aux_;     //!< Auxiliary properties related to magnetic field
 
       //! User limits:
       bool                      _using_user_limits_;

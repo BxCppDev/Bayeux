@@ -301,18 +301,24 @@ visibility.hidden : boolean = 0
 #@description The recommended color for the display
 visibility.color  : string  = "blue"
 
-#####################
-# Sensitive volumes #
-#####################
+####################
+# Sensitive volume #
+####################
 
 #@description The 'sensitive' category attached to this detector volume
 sensitive.category : string  = "scin_SD"
 
 # Note:
+# This property is not mandatory and should have no effect if no
+# sensitive category with the requested name is provided by the simulation
+# engine.
+# It is possible to associate a sensitive detector (ala Geant4) to
+# the logical volume in this geometry model from the configuration of
+# the simulation.
 # We recommend that you name any sensitive category with the
 # "_SD" suffix. This is to ease the reading of other configuration
-# files at the simulation level (step hit processors). Also note
-# that if you prefix the sensitive category name with two underscores
+# files at the simulation level (sensitive detectors and step hit processors).
+# Also note that if you prefix the sensitive category name with two underscores
 # (example: "__test_SD"), then the sensitive category is considered as
 # "private" (non official) and may be processed in some special way by
 # the simulation engine.
@@ -321,7 +327,7 @@ sensitive.category : string  = "scin_SD"
 ##################################################################################
 [name="wrapped_scintillator_block.model" type="geomtools::surrounded_boxed_model"]
 
-#@config The configuration parameters for the wrapped scintillatorblock
+#@config The configuration parameters for the wrapped scintillator block
 
 ############
 # Geometry #

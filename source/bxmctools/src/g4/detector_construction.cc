@@ -243,6 +243,16 @@ namespace mctools {
        *                       *
        *************************/
 
+      if (config_.has_key("sensitive.definitions")) {
+        std::vector<std::string> sd_defs;
+        config_.fetch("sensitive.definitions", sd_defs);
+        for (int i = 0; i < (int) sd_defs.size(); i++) {
+          std::string sd_def = sd_defs[i];
+          datatools::fetch_path_with_env(sd_def);
+          _SD_params_.read(sd_def);
+        }
+      }
+
       if (config_.has_key("sensitive.detectors")) {
         std::vector<std::string> list_of_sensitive_detectors;
         config_.fetch("sensitive.detectors", list_of_sensitive_detectors);
@@ -259,10 +269,10 @@ namespace mctools {
           // prefix starting only with 'sensitive.'
           const std::string key_oss     = "sensitive." + SD_category;
           const std::string new_key_oss = "sensitive";
-          config_.export_and_rename_starting_with(_SD_params_.get(SD_category).get_properties(),
+          config_.export_and_rename_starting_with(_SD_params_.grab(SD_category).grab_properties(),
                                                   key_oss,
                                                   new_key_oss);
-        }
+        } // for
 
         DT_LOG_NOTICE(_logprio(),"Info for sensitive detectors : ");
         for (std::vector<std::string>::const_iterator i = list_of_sensitive_detectors.begin();
@@ -709,9 +719,12 @@ namespace mctools {
       G4SDManager * SDman = G4SDManager::GetSDMpointer();
       G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
 
-      /**************************************************************************
-       * Setup the "offical" sensitive categories from the model factory itself *
-       **************************************************************************/
+      /*********************************************
+       * Setup the "offical" sensitive categories  *
+       *********************************************/
+
+      /// The association between logical volumes and sensitive category
+      std::map<std::string, std::string> lv_sd_associations;
 
       // Loop on sensitive logical volumes :
       for (geomtools::logical_volume::dict_type::const_iterator ilogical
@@ -720,21 +733,100 @@ namespace mctools {
            ++ilogical) {
         // Get a reference to the associated logical volume :
         const geomtools::logical_volume & log = *(ilogical->second);
+        // Search a "sensitive.category" from the geometry definition of the volume:
+        if (geomtools::sensitive::is_sensitive(log.get_parameters())) {
+          DT_LOG_DEBUG(_logprio(),"Logical volume '" << log.get_name() << "' is sensitive !");
+          lv_sd_associations[log.get_name()] = geomtools::sensitive::get_sensitive_category(log.get_parameters());
+        }
+      }
 
-        // Check if it is tagged as a 'sensitive' detector :
-        if (! geomtools::sensitive::is_sensitive(log.get_parameters())) {
+      // Loop on the definitions of official sensitive categories:
+      for (datatools::multi_properties::entries_col_type::const_iterator i = _SD_params_.entries().begin();
+            i != _SD_params_.entries().end();
+           i++) {
+        const std::string & sensitive_category_name = i->first;
+        const datatools::multi_properties::entry e  = i->second;
+        const datatools::properties & sd_config = e.get_properties();
+        if (sd_config.has_key("sensitive.volumes")) {
+          std::vector<std::string> lv_names;
+          sd_config.fetch("sensitive.volumes", lv_names);
+          for (int j = 0; j < (int) lv_names.size(); j++) {
+            const std::string & lv_name = lv_names[j];
+            // Check if the logical volume association matches the proper SD configuration
+            DT_THROW_IF(lv_sd_associations.find(lv_name) != lv_sd_associations.end()
+                        && lv_sd_associations[lv_name] != sensitive_category_name,
+                        std::logic_error,
+                        "Logical volume '" << lv_name << "' is already associated to category '"
+                        << lv_sd_associations[lv_name] << "'!");
+            lv_sd_associations[lv_name] = sensitive_category_name;
+          }
+        }
+      }
+
+      // Here the 'lv_sd_associations' dictionary should describe all
+      // official "logical_volume->sensitive category" associations...
+
+      // Check that defined associations are valid:
+      for (std::map<std::string, std::string>::const_iterator i = lv_sd_associations.begin();
+           i != lv_sd_associations.end();
+           i++) {
+        const std::string & lv_name = i->first;
+        const std::string & sd_name = i->second;
+        std::cerr << "DEVEL: "
+                  << "detector_construction::_construct_sensitive_detectors: "
+                  << "Logical='" << lv_name << "' Sensitive='" << sd_name << "'"
+                  << std::endl;
+        // We throw if some logical volumes do not exist and thus cannot be associated to
+        // a given requested sensitive category (error in some confguration file):
+        DT_THROW_IF(_geom_manager_->get_factory().get_logicals().find(lv_name) ==
+                    _geom_manager_->get_factory().get_logicals().end(),
+                    std::logic_error,
+                    "Logical volume '" << lv_name << "' does not exists (supposed to be associated to sensitive category '"
+                    << sd_name << "'!");
+        // DT_THROW_IF(! _SD_params_.has_key(sd_name),
+        //             std::logic_error,
+        //             "Sensitive category '" << sd_name << "' does not exists (supposed to be associated to logical volume '"
+        //             << lv_name << "'!");
+        if (! _SD_params_.has_key(sd_name)) {
+          // Is some logical volume cannot find its associated sensitive category, we only warn:
+          DT_LOG_WARNING(_logprio(),
+                         "Sensitive category '" << sd_name << "' does not exists but is supposed to be associated to logical volume '"
+                         << lv_name << "'! Ignoring this association !");
+        }
+      }
+
+      // Loop on logical volumes, processing only ones associated to some sensitive category:
+      for (geomtools::logical_volume::dict_type::const_iterator ilogical
+             = _geom_manager_->get_factory().get_logicals().begin();
+           ilogical != _geom_manager_->get_factory().get_logicals().end();
+           ++ilogical) {
+        // Get a reference to the associated logical volume :
+        const geomtools::logical_volume & log = *(ilogical->second);
+
+        // Search for an association with a sensitive category:
+        if (lv_sd_associations.find(log.get_name()) == lv_sd_associations.end()) {
           DT_LOG_DEBUG(_logprio(),"Logical volume '" << log.get_name() << "' is not sensitive !");
           continue;
         }
 
+        // // Check if it is tagged as a 'sensitive' detector :
+        // if (! geomtools::sensitive::is_sensitive(log.get_parameters())) {
+        //   DT_LOG_DEBUG(_logprio(),"Logical volume '" << log.get_name() << "' is not sensitive !");
+        //   continue;
+        // }
+
         // Get the 'sensitive category' for this detector :
-        std::string sensitive_category
-          = geomtools::sensitive::get_sensitive_category(log.get_parameters());
-        if (sensitive_category.empty()) {
-          DT_LOG_WARNING(_logprio(),"Empty sensitive category name ! Ignore !");
-          continue;
-        }
-        DT_LOG_NOTICE(_logprio(),"Logical volume '" << log.get_name() << "' is sensitive with category '"
+        std::string sensitive_category = lv_sd_associations[log.get_name()];
+
+        // // Get the 'sensitive category' for this detector :
+        // std::string sensitive_category
+        //   = geomtools::sensitive::get_sensitive_category(log.get_parameters());
+        // if (sensitive_category.empty()) {
+        //   DT_LOG_WARNING(_logprio(),"Empty sensitive category name ! Ignore !");
+        //   continue;
+        // }
+
+        DT_LOG_NOTICE(_logprio(), "Logical volume '" << log.get_name() << "' is sensitive with category '"
                       << sensitive_category << "' !");
 
         // Pickup the corresponding G4 logical volume :
@@ -742,8 +834,9 @@ namespace mctools {
         G4String log_name = log.get_name().c_str();
         g4_log = g4_LV_store->GetVolume(log_name, false);
         if (g4_log == 0) {
-          DT_LOG_NOTICE(_logprio(),"Logical volume '" << log.get_name()
-                        << "' is not used in G4LogicalVolumeStore !");
+          DT_LOG_WARNING(_logprio(), "Logical volume '" << log.get_name()
+                         << "' is not used in G4LogicalVolumeStore ! "
+                         << "Ignore this association with sensitive category '" << sensitive_category << "'!");
           continue;
         }
         sensitive_detector * SD = 0;
@@ -775,7 +868,7 @@ namespace mctools {
         _sensitive_detectors_[sensitive_category]->attach_logical_volume(log.get_name());
 
         if (! already_present) {
-          // setup special behaviour of the new sensitive detector:
+          // Setup special behaviour of the new sensitive detector:
           if (_SD_params_.has_key(sensitive_category)) {
             const datatools::properties & this_SD_params
               = _SD_params_.get(sensitive_category).get_properties();
@@ -808,7 +901,9 @@ namespace mctools {
       _SHPF_.set_output_profiles(_g4_manager_->get_activated_output_profile_ids());
 
       std::vector<std::string> config_files;
-      if (_SHPF_config_.has_key("configs")) {
+      if (_SHPF_config_.has_key("definitions")) {
+        _SHPF_config_.fetch("definitions", config_files);
+      } else if (_SHPF_config_.has_key("configs")) {
         _SHPF_config_.fetch("configs", config_files);
       } else if (_SHPF_config_.has_key("config")) {
         std::string config_file = _SHPF_config_.fetch_string("config");

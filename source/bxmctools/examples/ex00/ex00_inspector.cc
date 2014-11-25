@@ -78,6 +78,7 @@ namespace mctools {
       geomtools::display_data dd;
 
       if (sd_.has_vertex()) {
+        // std::cerr << "DEVEL: simulated_data_inspector::display: " << "sd_.has_vertex()" << '\n';
         // Build the display informations about the vertex (if any) :
         double vertex_dim = 1.0 * CLHEP::mm;
         geomtools::blur_spot vertex_spot(3, 0.25 * CLHEP::mm);
@@ -95,6 +96,7 @@ namespace mctools {
       }
 
       if (sd_.has_step_hits("__visu.tracks")) {
+        // std::cerr << "DEVEL: simulated_data_inspector::display: " << "sd_.has_step_hits(\"__visu.tracks\")" << '\n';
         // Build the display informations about the "__visu.tracks" MC hits (if any) :
         int nsteps = sd_.get_number_of_step_hits("__visu.tracks");
         for (int i = 0; i < nsteps; i++) {
@@ -129,6 +131,7 @@ namespace mctools {
       }
 
       if (sd_.has_step_hits("scin")) {
+        // std::cerr << "DEVEL: simulated_data_inspector::display: " << "sd_.has_step_hits(\"scin\")" << '\n';
         // Build the display informations about the "scin" MC hits (if any) :
         int nsteps = sd_.get_number_of_step_hits("scin");
         for (int i = 0; i < nsteps; i++) {
@@ -164,6 +167,9 @@ namespace mctools {
           scin_hit_sprite.generate_wires(scin_hit_DI.paths, scin_hit_plcmt);
         }
       }
+
+      // std::cerr << "DEVEL: simulated_data_inspector::display: " << "DD:" << '\n';
+      // dd.tree_dump(std::cerr, "DD:", "DEVEL: ");
 
       std::string visu_object_name;
       std::string view_label = geomtools::gnuplot_drawer::view_3d();

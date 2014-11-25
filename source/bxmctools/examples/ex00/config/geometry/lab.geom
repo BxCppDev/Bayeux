@@ -36,6 +36,13 @@ z   : real as length  = 50 um
 #@description The name of the material
 material.ref      : string  = "copper"
 
+####################
+# Sensitive volume #
+####################
+
+#@description The 'sensitive' category attached to this detector volume
+sensitive.category : string = "absorber_SD"
+
 #########################
 # Visibility parameters #
 #########################
@@ -126,6 +133,13 @@ z  : real as length =  100. mm
 #@description The name of the material
 material.ref : string  = "lead"
 
+####################
+# Sensitive volume #
+####################
+
+#@description The 'sensitive' category attached to this detector volume
+sensitive.category : string = "shield_SD"
+
 #########################
 # Visibility parameters #
 #########################
@@ -167,6 +181,13 @@ z           : real = 450.0
 
 #@description The name of the material that fills the lab atmosphere
 material.ref : string = "lab_medium"
+
+####################
+# Sensitive volume #
+####################
+
+#@description The 'sensitive' category attached to this detector volume
+sensitive.category : string = "lab_SD"
 
 #########################
 # Visibility parameters #

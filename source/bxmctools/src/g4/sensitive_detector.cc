@@ -279,6 +279,16 @@ namespace mctools {
     {
       _initialize_logging_support(config_);
 
+      // Association with some logical volumes in the geometry:
+      std::vector<std::string> logical_volumes;
+      if (config_.has_key("sensitive.volumes")) {
+        config_.fetch("sensitive.volumes", logical_volumes);
+        for (int i = 0; i < (int) logical_volumes.size(); i++) {
+          const std::string & lvname = logical_volumes[i];
+          attach_logical_volume(lvname);
+        }
+      }
+
       {
         // Record track id
         const std::string trkid_key = geomtools::sensitive::make_key(sensitive_utils::SENSITIVE_RECORD_TRACK_ID);

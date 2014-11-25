@@ -63,7 +63,6 @@ fi
 cd ..
 ls -l
 
-
 echo -e "\nDefine the CONFIG_DIR environment variable..." 1>&2
 export CONFIG_DIR="./config"
 
@@ -156,7 +155,6 @@ if [ $do_simulation -eq 1 ]; then
 	exit 1
     fi
 
-
     echo -e "\nSet LD_LIBRARY_PATH..." 1>&2
     export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 
@@ -184,14 +182,15 @@ if [ $do_simulation -eq 1 ]; then
 	--event-generator-seed 0 \
 	--shpf-seed 0 \
 	--g4-manager-seed 0 \
-	--output-profiles " calo + calo_details " \
+	--output-profiles " calo + all_details " \
         --output-prng-seeds-file "prng_seeds.save" \
         --output-prng-states-file "prng_states.save" \
         --output-data-file "mctools_ex00_${eg_name}_${vg_name}.data.gz"
     if [ $? -ne 0 ]; then
-	echo "ERROR: g4_production failed !" 1>&2
+	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
+    exit 0
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
@@ -216,7 +215,7 @@ if [ $do_simulation -eq 1 ]; then
 	--module ${sim_module} \
 	--output-file "mctools_ex00_${sim_module}.dpp.brio"
     if [ $? -ne 0 ]; then
-	echo "ERROR: dpp_processing failed !" 1>&2
+	echo "ERROR: bxdpp_processing failed !" 1>&2
 	exit 1
     fi
 

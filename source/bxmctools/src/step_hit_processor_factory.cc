@@ -604,9 +604,9 @@ namespace mctools {
       j++;
       a_out << indent << datatools::i_tree_dumpable::skip_tag;
       if (j == _output_profiles_.end()) {
-        a_out << indent << datatools::i_tree_dumpable::last_tag;
+        a_out << datatools::i_tree_dumpable::last_tag;
       } else {
-        a_out << indent << datatools::i_tree_dumpable::tag;
+        a_out << datatools::i_tree_dumpable::tag;
       }
       a_out << "Output profile : '" << *i << "'" << std::endl;
     }
