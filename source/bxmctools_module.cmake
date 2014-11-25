@@ -33,6 +33,26 @@ set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools
 # - Boost I/O, CAMP Reflection
 set(MCTOOLS_WITH_BIO 1)
 set(MCTOOLS_WITH_REFLECTION 1)
+set(MCTOOLS_WITH_G4 0)
+if(Bayeux_BUILD_GEANT4_MODULE)
+  set(MCTOOLS_WITH_G4 1)
+  option(MCTOOLS_WITH_G4_G4VIS_USE "Build the Geant4 visualization interface" ON)
+endif()
+
+if(MCTOOLS_WITH_G4)
+  set(G4VIS_NONE)
+  if(MCTOOLS_WITH_G4_G4VIS_USE)
+    unset(G4VIS_NONE)
+    # set(G4VIS_USE 1)
+    # if (Geant4_qt_FOUND)
+    #   set(G4VIS_USE_OPENGLQT 1)
+    # endif()
+    # if (Geant4_vis_opengl_x11_FOUND)
+    #   set(G4VIS_USE_OPENGLX 1)
+    #   set(G4VIS_USE_OPENGLXM 1)
+    # endif()
+  endif()
+endif()
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
@@ -60,6 +80,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/detail/step_hit_processor_macros.h
   ${module_include_dir}/${module_name}/mctools.h
+  ${module_include_dir}/${module_name}/biasing/point_of_interest.h
+  ${module_include_dir}/${module_name}/biasing/primary_event_bias.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -75,6 +97,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/mctools.cc
+  ${module_source_dir}/biasing/point_of_interest.cc
+  ${module_source_dir}/biasing/primary_event_bias.cc
   )
 
 # - Published headers
