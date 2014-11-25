@@ -46,7 +46,7 @@ mode.surface.right  : boolean = 0
 ######################################################
 [name="board_pcb_bulk.vg" type="genvtx::box_model_vg"]
 
-#@config Vertex generation from the bulk of the board with ID=6
+#@config Vertex generation from the bulk of the board PCB with ID=6
 
 #@description Debug flag
 debug  : boolean = 0
@@ -184,7 +184,7 @@ mode   : string  = "bulk"
 ################################################################
 [name="dummy_inner_surface.vg" type="genvtx::sphere_model_vg"]
 
-#@config Vertex generation from the bulk of all balls
+#@config Vertex generation from the inner surface of all balls
 
 # #@description Debug flag
 # debug  : boolean = 0
@@ -213,7 +213,7 @@ skin_skip : real as length = 2 mm
 ################################################################
 [name="dummy_some_surfaces.vg" type="genvtx::sphere_model_vg"]
 
-#@config Vertex generation from the bulk of all balls
+#@config Vertex generation from some surface of all balls
 
 # #@description Debug flag
 # debug  : boolean = 0

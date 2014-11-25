@@ -230,7 +230,7 @@ void test2(bool draw_)
     GD.add_display_data(DD, DD_placement);
     GD.set_view (geomtools::gnuplot_drawer::view_3d());
     GD.set_mode (geomtools::gnuplot_drawer::mode_wired());
-    GD.draw(BoxLV, identity, 4, "Vertex validation test (no daughter/only daughter) ", true);
+    GD.draw_logical(BoxLV, identity, 4, "Vertex validation test (no daughter/only daughter) ", true);
   }
 
   return;
@@ -435,7 +435,7 @@ void test3(bool draw_)
     GD.add_display_data(DD, DD_placement);
     GD.set_view (geomtools::gnuplot_drawer::view_3d());
     GD.set_mode (geomtools::gnuplot_drawer::mode_wired());
-    GD.draw(BoxLV, identity, 4, "Vertex validation test (in metals/not in metals) ", true);
+    GD.draw_logical(BoxLV, identity, 4, "Vertex validation test (in metals/not in metals) ", true);
   }
 
   return;

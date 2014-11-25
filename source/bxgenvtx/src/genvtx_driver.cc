@@ -293,6 +293,7 @@ namespace genvtx {
       geomtools::placement dd_pl;
       dd_pl.set_translation (0.0, 0.0*CLHEP::cm, 0.0);
       GPD.add_display_data (dd, dd_pl);
+      GPD.set_drawing_display_data (true);
       GPD.set_view (geomtools::gnuplot_drawer::view_3d());
       GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
       int visu_depth = 100;
