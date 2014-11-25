@@ -246,10 +246,10 @@ int main (int argc_, char ** argv_)
       GPD.set_mode (visu_drawer_mode);
       GPD.set_view (visu_drawer_view);
       GPD.set_labels (visu_drawer_labels);
-      GPD.draw (world_log,
-                world_placement,
-                geomtools::gnuplot_drawer::display_level_no_limit(),
-                "world");
+      GPD.draw_logical(world_log,
+                       world_placement,
+                       geomtools::gnuplot_drawer::display_level_no_limit(),
+                       "world");
 
 
 

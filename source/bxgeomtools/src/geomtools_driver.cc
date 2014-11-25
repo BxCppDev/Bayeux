@@ -915,13 +915,14 @@ namespace geomtools {
       std::clog << "`-- Show labels    : " << _params_.visu_drawer_labels << std::endl;
     }
     geomtools::gnuplot_drawer GPD;
-    GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
+    GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
     GPD.set_view (_params_.visu_drawer_view);
     if (! output.empty() || ! terminal.empty()) {
       GPD.set_output_medium (output, terminal, terminal_options);
     }
     GPD.set_using_title (using_title);
-    GPD.set_labels (_params_.visu_drawer_labels);
+    GPD.set_drawing_display_data (true);
+    GPD.set_labels(_params_.visu_drawer_labels);
     if (_params_.logging >= datatools::logger::PRIO_DEBUG) {
       GPD.print(std::clog);
     }
@@ -942,10 +943,10 @@ namespace geomtools {
       try {
         geomtools::placement root_plcmt;
         root_plcmt.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
-        GPD.draw (*_geo_factory_ref_,
-                  visu_object_name,
-                  root_plcmt,
-                  geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+        GPD.draw_model(*_geo_factory_ref_,
+                       visu_object_name,
+                       root_plcmt,
+                       geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
         _params_.visu_object_name = visu_object_name;
       }
       catch (std::exception & error) {

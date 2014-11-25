@@ -252,6 +252,17 @@ namespace geomtools {
     return;
   }
 
+  void gnuplot_drawer::set_drawing_display_data(bool ddd_)
+  {
+    _drawing_display_data_ = ddd_;
+    return;
+  }
+
+  bool gnuplot_drawer::is_drawing_display_data() const
+  {
+    return _drawing_display_data_;
+  }
+
   void gnuplot_drawer::set_view (const std::string & view_)
   {
     _view_ = view_;
@@ -378,6 +389,7 @@ namespace geomtools {
     _xrange_.set_axis ('x');
     _yrange_.set_axis ('y');
     _zrange_.set_axis ('z');
+    _drawing_display_data_ = true;
     reset_output ();
     reset_terminal ();
     return;
@@ -545,9 +557,9 @@ namespace geomtools {
               mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
             }
             gnuplot_draw::draw(colored_oss,
-                                p_,
-                                log.get_shape(),
-                                mode);
+                               p_,
+                               log.get_shape(),
+                               mode);
           }
         }
       }
@@ -629,12 +641,21 @@ namespace geomtools {
   }
 
   /****************************************************/
+  // void gnuplot_drawer::draw(const logical_volume & log_,
+  //                           const placement & p_,
+  //                           int max_display_level_,
+  //                           const std::string & title_,
+  //                           bool /* display_data_ */)
+  // {
+  //   draw_logical(log_, p_, max_display_level_, title_);
+  //   return;
+  // }
 
-  void gnuplot_drawer::draw (const logical_volume & log_,
-                             const placement & p_,
-                             int max_display_level_,
-                             const std::string & title_,
-                             bool display_data_)
+  void gnuplot_drawer::draw_logical (const logical_volume & log_,
+                                     const placement & p_,
+                                     int max_display_level_,
+                                     const std::string & title_,
+                                     bool drawing_display_data_)
   {
     const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     int max_display_level = max_display_level_;
@@ -642,7 +663,7 @@ namespace geomtools {
       max_display_level = 0;
     }
 
-    if (display_data_) {
+    if (drawing_display_data_) {
       _draw_display_data(p_);
     }
 
@@ -902,10 +923,10 @@ namespace geomtools {
 
   /****************************************************/
 
-  void gnuplot_drawer::draw_logical (const model_factory & mf_,
-                                     const std::string & logical_name_,
-                                     const placement & p_,
-                                     int max_display_level_)
+  void gnuplot_drawer::draw_logical(const model_factory & mf_,
+                                    const std::string & logical_name_,
+                                    const placement & p_,
+                                    int max_display_level_)
   {
     geomtools::logical_volume::dict_type::const_iterator found;
     found = mf_.get_logicals ().find (logical_name_);
@@ -915,7 +936,7 @@ namespace geomtools {
     const geomtools::logical_volume & log = *(found->second);
     std::ostringstream title_oss;
     title_oss << "Logical volume '" << log.get_name () << "'";
-    draw (log, p_, max_display_level_, title_oss.str());
+    draw_logical(log, p_, max_display_level_, title_oss.str(), false);
     return;
   }
 
@@ -941,10 +962,10 @@ namespace geomtools {
                      "Cannot find geometry volume with GID='" << visu_gid << "' in mapping dictionnary !");
         return EXIT_FAILURE;
       }
-      draw_from_gid (geo_mgr_.get_factory(),
-                     visu_gid,
-                     geo_mgr_.get_mapping(),
-                     max_display_level_);
+      draw_physical_from_gid (geo_mgr_.get_factory(),
+                              visu_gid,
+                              geo_mgr_.get_mapping(),
+                              max_display_level_);
     } else {
       //DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,"Label '" << what << "' is not a GID !");
       // Try to draw logical:
@@ -953,10 +974,11 @@ namespace geomtools {
       logical_volume::dict_type::const_iterator log_found = logs.find(visu_log_name);
       if (log_found != logs.end ()) {
         geomtools::placement visu_placement;
-        draw (*log_found->second,
-              visu_placement,
-              max_display_level_,
-              "");
+        draw_logical(*log_found->second,
+                     visu_placement,
+                     max_display_level_,
+                     "",
+                     false);
       } else {
         // Try to draw model:
         geomtools::placement visu_placement;
@@ -968,19 +990,19 @@ namespace geomtools {
                        << "' in the geometry model factory !");
           return EXIT_FAILURE;
         }
-        draw (geo_mgr_.get_factory (),
-              visu_model_name,
-              visu_placement,
-              max_display_level_);
+        draw_model(geo_mgr_.get_factory(),
+                   visu_model_name,
+                   visu_placement,
+                   max_display_level_);
       }
     }
     return EXIT_SUCCESS;
   }
 
-  void gnuplot_drawer::draw_from_gid (const model_factory & /* mf_ */,
-                                      const geom_id & gid_,
-                                      const mapping & mapping_,
-                                      int max_display_level_)
+  void gnuplot_drawer::draw_physical_from_gid (const model_factory & mf_,
+                                               const geom_id & gid_,
+                                               const mapping & mapping_,
+                                               int max_display_level_)
   {
     DT_THROW_IF (! mapping_.validate_id(gid_),
                  std::logic_error,
@@ -989,28 +1011,27 @@ namespace geomtools {
     const placement & wpl = ginfo.get_world_placement ();
     const logical_volume & log = ginfo.get_logical ();
 
-    // bool draw_dd = true;
-    // if (draw_dd) {
-    //   _draw_display_data(mf_, wpl);
-    // }
+    if (_drawing_display_data_) {
+      _draw_display_data(mf_, wpl);
+    }
     std::ostringstream title_oss;
     title_oss << "Volume " << gid_ << " (instance of logical volume '"
               << log.get_name () << "')";
-    draw (log, wpl, max_display_level_, title_oss.str());
+    draw_logical(log, wpl, max_display_level_, title_oss.str(), false);
     return;
   }
 
-  void gnuplot_drawer::draw (const model_factory & mf_,
-                             const std::string & name_,
-                             const placement & p_,
-                             int max_display_level_)
+  void gnuplot_drawer::draw_model(const model_factory & mf_,
+                                  const std::string & name_,
+                                  const placement & p_,
+                                  int max_display_level_)
   {
-    models_col_type::const_iterator found = mf_.get_models ().find (name_);
-    DT_THROW_IF (found ==  mf_.get_models ().end (),
+    models_col_type::const_iterator found = mf_.get_models().find(name_);
+    DT_THROW_IF(found ==  mf_.get_models().end(),
                  std::logic_error,
                  "Cannot find geometry model with name '" << name_ << "' !");
     const i_model & model = *(found->second);
-    const geomtools::logical_volume & log = model.get_logical ();
+    const geomtools::logical_volume & log = model.get_logical();
 
     std::string world_name;
     if (get_properties().has_key(gnuplot_drawer::world_name_key())
@@ -1020,13 +1041,10 @@ namespace geomtools {
     if (world_name.empty()) {
       world_name = geomtools::model_factory::default_world_label();
     }
-    /*
-    bool draw_dd = true;
-    if (draw_dd && (name_ == world_name)) {
+    if (_drawing_display_data_ && (name_ == world_name)) {
       _draw_display_data(mf_, p_);
     }
-    */
-    draw (log, p_, max_display_level_, log.get_name ());
+    draw_logical(log, p_, max_display_level_, log.get_name(), false);
 
     return;
   }

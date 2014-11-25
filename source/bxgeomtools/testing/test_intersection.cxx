@@ -1,20 +1,23 @@
-// -*- mode: c++ ; -*-
 // test_intersection.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Ourselves:
 #include <geomtools/intersection.h>
+
+// This project:
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/circle.h>
 #include <geomtools/line_3d.h>
 
-using namespace std;
 
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
@@ -187,5 +190,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_circle.cxx

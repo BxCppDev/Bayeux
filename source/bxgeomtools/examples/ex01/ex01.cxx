@@ -1,12 +1,12 @@
 // This project:
 #include <geomtools/geomtools.h>
 
-// Standard library
+// Standard library:
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 
-// Third party
+// Third party:
 #if GEOMTOOLS_STANDALONE == 0
 // - bayeux:
 #include <bayeux/bayeux.h>
@@ -68,7 +68,6 @@ int main(int argc_, char ** argv_)
     int view_code = GPD.draw (GM,
                               "world",
                               geomtools::gnuplot_drawer::display_level_no_limit());
-
   }
   catch(std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL,x.what());

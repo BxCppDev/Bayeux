@@ -38,10 +38,9 @@
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-using namespace std;
-
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
 
   try
@@ -122,10 +121,10 @@ int main (int argc_, char ** argv_)
                 GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
                 GPD.set_view (visu_drawer_view);
                 GPD.set_labels (visu_drawer_labels);
-                GPD.draw (geom_mgr.get_factory(),
-                          visu_model_name,
-                          p,
-                          geomtools::gnuplot_drawer::display_level_no_limit());
+                GPD.draw_model (geom_mgr.get_factory(),
+                                visu_model_name,
+                                p,
+                                geomtools::gnuplot_drawer::display_level_no_limit());
               }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
           }
@@ -152,12 +151,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_service_manager.cxx
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/

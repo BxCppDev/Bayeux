@@ -1,13 +1,16 @@
-// -*- mode: c++ ; -*-
 // test_model_factory.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/model_factory.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
@@ -21,10 +24,9 @@
 #include <geomtools_test_model_2.cc>
 #include <geomtools_test_world_model.cc>
 
-using namespace std;
-
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
@@ -172,12 +174,12 @@ int main (int argc_, char ** argv_)
       if (draw)
         {
           geomtools::gnuplot_drawer GPD;
-          GPD.set_view (drawer_view);
-          GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
-          GPD.draw (factory,
-                    model_name,
-                    p,
-                    geomtools::gnuplot_drawer::display_level_no_limit());
+          GPD.set_view(drawer_view);
+          GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
+          GPD.draw_model(factory,
+                         model_name,
+                         p,
+                         geomtools::gnuplot_drawer::display_level_no_limit());
         }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
@@ -243,5 +245,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_model_factory.cxx

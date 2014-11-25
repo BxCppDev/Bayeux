@@ -91,7 +91,7 @@ namespace geomtools {
       const display_data & get_display_data() const;
       bool is_valid() const;
     private:
-      placement            _pl_; //!< The placement of the display data
+      placement            _pl_;         //!< The placement of the display data
       const display_data * _dd_address_; //!< The handle of the display data
     };
 
@@ -102,7 +102,7 @@ namespace geomtools {
       has_dd_addr(const display_data &);
       bool operator()(const dd_entry & dde_) const;
     private:
-      const display_data * _dd_address_;
+      const display_data * _dd_address_; //!< The address of the display data to be checked
     };
 
     /// Collection of display data handle
@@ -190,7 +190,7 @@ namespace geomtools {
     /// Return a non mutable reference to the embedded auxiliary properties
     const datatools::properties & get_properties () const;
 
-    /// Constructor
+    /// Default constructor
     gnuplot_drawer ();
 
     /// Destructor
@@ -210,26 +210,47 @@ namespace geomtools {
               const std::string & what_ = "",
               int max_display_level_ = 0);
 
-    void draw (const logical_volume & log_,
-               const placement & p_,
-               int max_display_level_,
-               const std::string & title_,
-               bool display_data_ = false);
+    /// Draw a logical volume in its own reference frame
+    void draw_logical (const logical_volume & log_,
+                       const placement & p_,
+                       int max_display_level_,
+                       const std::string & title_,
+                       bool drawing_display_data_ = false);
 
-    void draw (const model_factory & mf_,
-               const std::string & model_name_,
-               const placement & p_,
-               int max_display_level_);
+    // /// \deprecated Use draw_logical
+    // void draw (const logical_volume & log_,
+    //            const placement & p_,
+    //            int max_display_level_,
+    //            const std::string & title_,
+    //            bool display_data_ = false);
 
-    void draw_from_gid (const model_factory & mf_,
-                        const geom_id & gid_,
-                        const mapping & mapping_,
-                        int max_display_level_);
+    /// Draw a geometry model its own reference frame
+    void draw_model (const model_factory & mf_,
+                     const std::string & model_name_,
+                     const placement & p_,
+                     int max_display_level_);
+
+    // // \deprecated Use draw_model
+    // void draw (const model_factory & mf_,
+    //            const std::string & model_name_,
+    //            const placement & p_,
+    //            int max_display_level_);
+
+    void draw_physical_from_gid (const model_factory & mf_,
+                                 const geom_id & gid_,
+                                 const mapping & mapping_,
+                                 int max_display_level_);
 
     void draw_logical (const model_factory & mf_,
                        const std::string & logical_name_,
                        const placement & p_,
                        int max_display_level_);
+
+    /// Set the flag to draw embedded display data
+    void set_drawing_display_data(bool);
+
+    /// Return the flag to draw embedded display data
+    bool is_drawing_display_data() const;
 
     /// Add a display data object in the scene to be drawn
     void add_display_data(const display_data & dd_);
@@ -242,12 +263,12 @@ namespace geomtools {
 
   protected:
 
-    void _draw_display_data (const model_factory & mf_,
-                             const placement & p_);
+    void _draw_display_data(const model_factory & mf_,
+                            const placement & p_);
 
     void _draw_display_data(const placement & p_);
 
-    std::ostringstream & _get_stream (const std::string & section_);
+    std::ostringstream & _get_stream(const std::string & section_);
 
   private:
 
@@ -288,6 +309,7 @@ namespace geomtools {
     range _yrange_;
     range _zrange_;
     //visibility_rules _vis_rules_;
+    bool        _drawing_display_data_;
     dd_col_type _display_data_;
     std::string _terminal_;
     std::string _terminal_options_;
