@@ -418,7 +418,7 @@ namespace genvtx {
     _box_vg_.set_skin_skip(_skin_skip_);
     _box_vg_.set_skin_thickness(_skin_thickness_);
     _box_vg_.initialize_simple ();
-    //_box_vg_.tree_dump(std::cerr, "Box VG: ", "***** DEVEL ***** ");
+    // _box_vg_.tree_dump(std::cerr, "Box VG: ", "***** DEVEL ***** ");
     double weight = 0.0;
     if (is_mode_surface ()) {
       weight = box_shape.get_surface (surface_mask);
@@ -504,30 +504,24 @@ namespace genvtx {
     if (mode_str == "surface") mode = utils::MODE_SURFACE;
 
     if (mode == utils::MODE_SURFACE) {
-      if (setup_.has_key ("mode.surface.back"))
-        {
-          surface_back = setup_.fetch_boolean ("mode.surface.back");
-        }
-      if (setup_.has_key ("mode.surface.front"))
-        {
-          surface_front = setup_.fetch_boolean ("mode.surface.front");
-        }
-      if (setup_.has_key ("mode.surface.bottom"))
-        {
+      if (setup_.has_key ("mode.surface.back")) {
+        surface_back = setup_.fetch_boolean ("mode.surface.back");
+      }
+      if (setup_.has_key ("mode.surface.front")) {
+        surface_front = setup_.fetch_boolean ("mode.surface.front");
+      }
+      if (setup_.has_key ("mode.surface.bottom")) {
           surface_bottom = setup_.fetch_boolean ("mode.surface.bottom");
-        }
-      if (setup_.has_key ("mode.surface.top"))
-        {
-          surface_top = setup_.fetch_boolean ("mode.surface.top");
-        }
-      if (setup_.has_key ("mode.surface.left"))
-        {
-          surface_left = setup_.fetch_boolean ("mode.surface.left");
-        }
-      if (setup_.has_key ("mode.surface.right"))
-        {
-          surface_right = setup_.fetch_boolean ("mode.surface.right");
-        }
+      }
+      if (setup_.has_key ("mode.surface.top")) {
+        surface_top = setup_.fetch_boolean ("mode.surface.top");
+      }
+      if (setup_.has_key ("mode.surface.left")) {
+        surface_left = setup_.fetch_boolean ("mode.surface.left");
+      }
+      if (setup_.has_key ("mode.surface.right")) {
+        surface_right = setup_.fetch_boolean ("mode.surface.right");
+      }
       bool surface_all =
         surface_back || surface_front ||
         surface_bottom || surface_top ||
@@ -558,7 +552,7 @@ namespace genvtx {
       set_surface_left   (surface_left);
       set_surface_right  (surface_right);
     }
-    //this->tree_dump(std::cerr, "Box model VG:", "***** DEVEL ***** ");
+    // this->tree_dump(std::cerr, "Box model VG:", "***** DEVEL ***** ");
 
     _init_ ();
     _initialized_ = true;

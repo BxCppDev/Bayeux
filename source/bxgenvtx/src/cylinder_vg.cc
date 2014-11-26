@@ -286,11 +286,11 @@ namespace genvtx {
   {
     if (_mode_ == MODE_SURFACE) {
       DT_THROW_IF(_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
-      const double s = _cylinder_.get_surface(_surface_mask_);
+      const double s = get_cylinder_safe().get_surface(_surface_mask_);
       DT_LOG_DEBUG(get_logging_priority(), "Total surface = " << s);
-      _sum_weight_[0] = _cylinder_.get_surface(_surface_mask_ & geomtools::cylinder::FACE_SIDE);
-      _sum_weight_[1] = _cylinder_.get_surface(_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
-      _sum_weight_[2] = _cylinder_.get_surface(_surface_mask_ & geomtools::cylinder::FACE_TOP);
+      _sum_weight_[0] = get_cylinder_safe().get_surface(_surface_mask_ & geomtools::cylinder::FACE_SIDE);
+      _sum_weight_[1] = get_cylinder_safe().get_surface(_surface_mask_ & geomtools::cylinder::FACE_BOTTOM);
+      _sum_weight_[2] = get_cylinder_safe().get_surface(_surface_mask_ & geomtools::cylinder::FACE_TOP);
       for (size_t i = 0; i < 3; i++) {
         _sum_weight_[i] /= s;
         if (i > 0) {

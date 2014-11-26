@@ -295,17 +295,17 @@ namespace genvtx {
   {
     if (_mode_ == MODE_SURFACE) {
       DT_THROW_IF (_surface_mask_ == 0, std::logic_error, "Surface mask is zero !");
-      //std::cerr << "DEVEL *** Surface mask = " << _surface_mask_ << std::endl;
-      const double s = _box_.get_surface (_surface_mask_);
-      DT_LOG_DEBUG (get_logging_priority (), "Total surface = " << s);
+      // std::cerr << "DEVEL *** Surface mask = " << _surface_mask_ << std::endl;
+      const double s = get_box_safe().get_surface(_surface_mask_);
+      DT_LOG_DEBUG (get_logging_priority(), "Total surface = " << s);
       /*
       std::cerr << "DEVEL *** Total surface s = " << s << std::endl;
-      std::cerr << "DEVEL *** Surface back   = " <<  _box_.get_parameter("surface.back") << std::endl;
-      std::cerr << "DEVEL *** Surface front  = " <<  _box_.get_parameter("surface.front") << std::endl;
-      std::cerr << "DEVEL *** Surface left   = " <<  _box_.get_parameter("surface.left") << std::endl;
-      std::cerr << "DEVEL *** Surface right  = " <<  _box_.get_parameter("surface.right") << std::endl;
-      std::cerr << "DEVEL *** Surface bottom = " <<  _box_.get_parameter("surface.bottom") << std::endl;
-      std::cerr << "DEVEL *** Surface top    = " <<  _box_.get_parameter("surface.top") << std::endl;
+      std::cerr << "DEVEL *** Surface back   = " <<  get_box_safe().get_parameter("surface.back") << std::endl;
+      std::cerr << "DEVEL *** Surface front  = " <<  get_box_safe().get_parameter("surface.front") << std::endl;
+      std::cerr << "DEVEL *** Surface left   = " <<  get_box_safe().get_parameter("surface.left") << std::endl;
+      std::cerr << "DEVEL *** Surface right  = " <<  get_box_safe().get_parameter("surface.right") << std::endl;
+      std::cerr << "DEVEL *** Surface bottom = " <<  get_box_safe().get_parameter("surface.bottom") << std::endl;
+      std::cerr << "DEVEL *** Surface top    = " <<  get_box_safe().get_parameter("surface.top") << std::endl;
 
       std::cerr << "DEVEL *** Surface mask&back   = " << (int) (_surface_mask_ & geomtools::box::FACE_BACK) << std::endl;
       std::cerr << "DEVEL *** Surface mask&front  = " << (int) (_surface_mask_ & geomtools::box::FACE_FRONT) << std::endl;
@@ -314,14 +314,14 @@ namespace genvtx {
       std::cerr << "DEVEL *** Surface mask&bottom  = " << (int) (_surface_mask_ & geomtools::box::FACE_BOTTOM) << std::endl;
       std::cerr << "DEVEL *** Surface mask&top  = " << (int) (_surface_mask_ & geomtools::box::FACE_TOP) << std::endl;
       */
-      _sum_weight_[0] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_BACK);
-      _sum_weight_[1] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_FRONT);
-      _sum_weight_[2] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_LEFT);
-      _sum_weight_[3] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_RIGHT);
-      _sum_weight_[4] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_BOTTOM);
-      _sum_weight_[5] = _box_.get_surface(_surface_mask_ & geomtools::box::FACE_TOP);
+      _sum_weight_[0] = get_box_safe().get_surface(_surface_mask_ & geomtools::box::FACE_BACK);
+      _sum_weight_[1] = get_box_safe().get_surface(_surface_mask_ & geomtools::box::FACE_FRONT);
+      _sum_weight_[2] = get_box_safe().get_surface(_surface_mask_ & geomtools::box::FACE_LEFT);
+      _sum_weight_[3] = get_box_safe().get_surface(_surface_mask_ & geomtools::box::FACE_RIGHT);
+      _sum_weight_[4] = get_box_safe().get_surface(_surface_mask_ & geomtools::box::FACE_BOTTOM);
+      _sum_weight_[5] = get_box_safe().get_surface(_surface_mask_ & geomtools::box::FACE_TOP);
       for (int i = 0; i < 6; i++) {
-        //std::cerr << "DEVEL *** Surface absolute weight [" << i << "] = " << _sum_weight_[i] << std::endl;
+        // std::cerr << "DEVEL *** Surface absolute weight [" << i << "] = " << _sum_weight_[i] << std::endl;
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
@@ -338,7 +338,9 @@ namespace genvtx {
     if (has_logical()) {
       reset_logical();
     }
-    _box_.reset ();
+    if (_box_.is_valid ()) {
+      _box_.reset ();
+    }
     this->i_vertex_generator::_reset();
     _set_defaults_();
     return;
@@ -366,8 +368,8 @@ namespace genvtx {
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_vertex_generator::tree_dump (out_, title_, indent_, true);
-    out_ << indent << datatools::i_tree_dumpable::tag;
     if (has_logical()) {
+      out_ << indent << datatools::i_tree_dumpable::tag;
       out_ << "Logical volume : '" << _log_vol_->get_name() << "'" << std::endl;
     }
     out_ << indent << datatools::i_tree_dumpable::tag;
