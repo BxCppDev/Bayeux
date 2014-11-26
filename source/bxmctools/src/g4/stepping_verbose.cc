@@ -1,10 +1,10 @@
-// -*- mode: c++ ; -*-
-/* stepping_verbose.cc
- */
+// stepping_verbose.cc
 
+// Ourselves:
 #include <mctools/g4/stepping_verbose.h>
 
-// G4 stuff:
+// Third party:
+// - Geant4:
 #include "G4SteppingManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4VTouchable.hh"
@@ -180,5 +180,3 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
-
-// end of stepping_verbose.cc

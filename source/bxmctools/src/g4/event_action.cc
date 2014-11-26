@@ -1,4 +1,3 @@
-
 // event_action.cc
 
 // Ourselves:
@@ -486,6 +485,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::event_action' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::event_action,"mctools::g4::event_action")
-
-
-// end of event_action.cc

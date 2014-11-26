@@ -1,4 +1,4 @@
-/// track_history.cc
+// track_history.cc
 
 // Ourselves:
 #include <mctools/g4/track_history.h>

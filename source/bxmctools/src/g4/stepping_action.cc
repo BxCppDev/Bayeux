@@ -1,17 +1,19 @@
-// -*- mode: c++ ; -*-
-/* stepping_action.cc
- */
+// stepping_action.cc
 
+// Ourselves:
+#include <mctools/g4/stepping_action.h>
+
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 
-#include <mctools/g4/stepping_action.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
-
+// - Geant4:
 #include <globals.hh>
 #include "G4SteppingManager.hh"
 #include "G4UnitsTable.hh"
@@ -214,5 +216,3 @@ clog << datatools::io::devel << "stepping_action::_stepping_action_base: "
 G4int some_copy_number = pre_step_touchable_handle->GetCopyNumber (1);
 }
 */
-
-// end of stepping_action.cc

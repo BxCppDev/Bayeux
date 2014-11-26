@@ -1,26 +1,31 @@
 /* simulation_module.cc */
 
+// Ourselves:
 #include <mctools/g4/simulation_module.h>
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/geometry_service.h>
-
+// - Bayeux/mctools:
 #include <mctools/simulated_data.h>
 #include <mctools/utils.h>
 
+// This project:
 #include <mctools/g4/manager.h>
 #include <mctools/g4/event_action.h>
 #include <mctools/g4/simulation_ctrl.h>
@@ -489,7 +494,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::g4::simulation_module,ocd_)
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::mctools::g4::simulation_module,"mctools::g4::simulation_module")
 
-// end of simulation_module.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

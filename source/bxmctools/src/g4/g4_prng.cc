@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /* g4_prng.cc
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -114,7 +113,6 @@ namespace mctools {
 
 }  // end of namespace mctools
 
-// end of g4_prng.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

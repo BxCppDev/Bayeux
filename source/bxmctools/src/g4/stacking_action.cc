@@ -1,20 +1,18 @@
-// -*- mode: c++ ; -*-
-/* stacking_action.cc
- */
+// stacking_action.cc
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string/replace.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
-
-#include <mctools/g4/stacking_action.h>
-
-// G4 stuff:
+// - Geant4:
 #include <globals.hh>
 #include <G4TransportationManager.hh>
 #include <G4Track.hh>
@@ -22,6 +20,9 @@
 #include <G4ThreeVector.hh>
 #include <G4Navigator.hh>
 #include <G4LogicalVolumeStore.hh>
+
+// This project:
+#include <mctools/g4/stacking_action.h>
 
 namespace mctools {
 
@@ -327,5 +328,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::manager' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::stacking_action,"mctools::g4::stacking_action")
-
-// end of stacking_action.cc

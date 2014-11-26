@@ -1,14 +1,20 @@
-/* simulation_ctrl.cc */
+// simulation_ctrl.cc
 
 // http://drdobbs.com/cpp/184401518
+
+// Ourselves:
 #include <mctools/g4/simulation_ctrl.h>
 
+// Standard library:
 #include <cstdlib>
 
+// Third party:
+// - Boost:
 #include <boost/bind.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This project:
 #include <mctools/g4/manager.h>
 
 namespace mctools {
@@ -110,7 +116,6 @@ namespace mctools {
 
 }  // end of namespace mctools
 
-// end of simulation_ctrl.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

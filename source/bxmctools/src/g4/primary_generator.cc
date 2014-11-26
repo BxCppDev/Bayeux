@@ -1,6 +1,6 @@
 // primary_generator.cc
 
-// - This project:
+// Ourselves:
 #include <mctools/g4/primary_generator.h>
 
 // Standard library:

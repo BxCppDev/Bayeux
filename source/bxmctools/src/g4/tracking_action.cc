@@ -1,16 +1,17 @@
-// -*- mode: c++ ; -*-
-/* tracking_action.cc
- */
+// tracking_action.cc
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
-
+// - Bayeux/mctools:
 #include <mctools/g4/tracking_action.h>
-
+// - Geant4:
 #include <globals.hh>
 #include <G4VPhysicalVolume.hh>
 #include <G4TrackingManager.hh>
@@ -22,33 +23,31 @@ namespace mctools {
 
   namespace g4 {
 
-    // ctor:
-    tracking_action::tracking_action ()
+    tracking_action::tracking_action()
     {
       return;
     }
 
-    // dtor:
-    tracking_action::~tracking_action ()
+    tracking_action::~tracking_action()
     {
       return;
     }
 
-    void tracking_action::initialize (const datatools::properties & config_)
+    void tracking_action::initialize(const datatools::properties & config_)
     {
-      // parsing configuration properties...
+      // Parsing configuration properties:
       loggable_support::_initialize_logging_support(config_);
       return;
     }
 
-    void tracking_action::PreUserTrackingAction (const G4Track * /*track_*/)
+    void tracking_action::PreUserTrackingAction(const G4Track * /*track_*/)
     {
       /*
-      G4int track_id     = track_->GetTrackID ();
-      G4int mother_id    = track_->GetParentID ();
-      G4String part_name = track_->GetDefinition ()->GetParticleName ();
-      std::string volume = track_->GetVolume ()->GetName ();
-      CLHEP::Hep3Vector position = track_->GetPosition ();
+        G4int track_id     = track_->GetTrackID();
+        G4int mother_id    = track_->GetParentID();
+        G4String part_name = track_->GetDefinition()->GetParticleName();
+        std::string volume = track_->GetVolume()->GetName();
+        CLHEP::Hep3Vector position = track_->GetPosition();
       */
 
       return;
@@ -56,8 +55,8 @@ namespace mctools {
 
     void tracking_action::PostUserTrackingAction(const G4Track* /*track_*/)
     {
-      //G4int             track_id = track_->GetTrackID ();
-      //CLHEP::Hep3Vector position = track_->GetPosition ();
+      //G4int             track_id = track_->GetTrackID();
+      //CLHEP::Hep3Vector position = track_->GetPosition();
 
       return;
     }
@@ -69,20 +68,20 @@ namespace mctools {
 /** Opening macro for implementation
  *  This macro must be used outside of any namespace.
  */
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::tracking_action,ocd_)
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::tracking_action, ocd_)
 {
   // The class name :
-  ocd_.set_class_name ("mctools::g4::tracking_action");
+  ocd_.set_class_name("mctools::g4::tracking_action");
 
   // The class terse description :
-  ocd_.set_class_description ("The Geant4 simulation optional tracking action");
+  ocd_.set_class_description("The Geant4 simulation optional tracking action");
 
   // The library the class belongs to :
-  ocd_.set_class_library ("mctools_g4");
+  ocd_.set_class_library("mctools_geant4");
 
   // The class detailed documentation :
-  ocd_.set_class_documentation ("This is Geant4 simulation engine embedded tracking action.      \n"
-                                );
+  ocd_.set_class_documentation("This is Geant4 simulation engine embedded tracking action.\n"
+                               );
 
   {
     // Description of the 'logging.priority' configuration property :
@@ -114,11 +113,11 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::tracking_action,ocd_)
   }
 
   // Additionnal configuration hints :
-  ocd_.set_configuration_hints("Typical configuration is::                                             \n"
-                               "                                                                       \n"
-                               " #@description Stacking action logging priority                        \n"
-                               " logging.priority : string = \"warning\"                               \n"
-                               "                                                                       \n"
+  ocd_.set_configuration_hints("Typical configuration is::                          \n"
+                               "                                                    \n"
+                               " #@description Stacking action logging priority     \n"
+                               " logging.priority : string = \"warning\"            \n"
+                               "                                                    \n"
                                );
 
   ocd_.set_validation_support(true);
@@ -133,5 +132,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
 
 // Registration macro for class 'mctools::g4::manager' :
 DOCD_CLASS_SYSTEM_REGISTRATION(mctools::g4::tracking_action,"mctools::g4::tracking_action")
-
-// end of tracking_action.cc

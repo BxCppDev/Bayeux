@@ -1,26 +1,28 @@
-// -*- mode: c++ ; -*-
-/* magnetic_field.cc
- */
+// magnetic_field.cc
 
+// Ourselves:
 #include <mctools/g4/magnetic_field.h>
 
+// Standard library:
 #include <string>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
 #include <datatools/properties.h>
 #include <datatools/exception.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 #include <geomtools/manager.h>
-
+// - Bayeux/emfield:
 #include <emfield/base_electromagnetic_field.h>
 #include <emfield/electromagnetic_field_manager.h>
 #include <emfield/emfield_geom_plugin.h>
-
+// - Geant4:
 #include <globals.hh>
 
 namespace mctools {
@@ -288,5 +290,3 @@ namespace mctools {
   } // end of namespace g4
 
 } // end of namespace mctools
-
-// end of magnetic_field.cc
