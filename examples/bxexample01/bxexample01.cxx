@@ -244,7 +244,7 @@ int example_geomtools()
     box_log.tree_dump(std::clog, "Logical associated to the 3D-box:");
     geomtools::gnuplot_drawer drawer;
     geomtools::placement box_loc;
-    if (params().interactive) drawer.draw (box_log, box_loc, 100, "Display a 3D-box");
+    if (params().interactive) drawer.draw_logical(box_log, box_loc, 100, "Display a 3D-box");
 
     b.reset();
   }
