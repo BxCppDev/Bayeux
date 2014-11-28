@@ -216,6 +216,15 @@ namespace genbb {
     /// Check if the particle is an alpha
     bool is_alpha() const;
 
+    /// Check if the particle is a deuteron
+    bool is_deuteron() const;
+
+    /// Check if the particle is a tritium
+    bool is_tritium() const;
+
+    /// Check if the particle is a proton
+    bool is_proton() const;
+
     /// Check if the particle is a neutron
     bool is_neutron() const;
 
@@ -224,6 +233,15 @@ namespace genbb {
 
     /// Check if the particle is minus-
     bool is_muon_minus() const;
+
+    /// Check if the particle is pion+
+    bool is_pion_plus() const;
+
+    /// Check if the particle is pion-
+    bool is_pion_minus() const;
+
+    /// Check if the particle is pion0
+    bool is_pion_zero() const;
 
     /// Check if the particle is an nucleus (not the light ones: D, T, He3, He4)
     bool is_nucleus() const;

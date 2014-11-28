@@ -428,9 +428,24 @@ namespace genbb {
     return _type_ == ALPHA;
   }
 
+  bool primary_particle::is_deuteron() const
+  {
+    return _type_ == DEUTERON;
+  }
+
+  bool primary_particle::is_tritium() const
+  {
+    return _type_ == TRITIUM;
+  }
+
   bool primary_particle::is_neutron() const
   {
     return _type_ == NEUTRON;
+  }
+
+  bool primary_particle::is_proton() const
+  {
+    return _type_ == PROTON;
   }
 
   bool primary_particle::is_muon_plus() const
@@ -456,6 +471,21 @@ namespace genbb {
   bool primary_particle::is_nucleus() const
   {
     return _type_ == NUCLEUS;
+  }
+
+  bool primary_particle::is_pion_plus() const
+  {
+    return _type_ == PION_PLUS;
+  }
+
+  bool primary_particle::is_pion_minus() const
+  {
+    return _type_ == PION_MINUS;
+  }
+
+  bool primary_particle::is_pion_zero() const
+  {
+    return _type_ == PION_0;
   }
 
   double primary_particle::get_time() const
