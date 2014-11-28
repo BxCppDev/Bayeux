@@ -41,6 +41,7 @@
 // This project (Bayeux/datatools):
 #include <datatools/handle.h>
 #include <datatools/properties.h>
+#include <datatools/command_utils.h>
 
 namespace datatools {
 
@@ -216,10 +217,39 @@ namespace datatools {
 
     };
 
-    /// \brief
+    /// \brief Unused type
     typedef boost::variant<bool, int, double, std::string> parameter_value_type;
 
-    // bool parse_variant(std::istream & in_, parameter_value_type & pv_);
+    /// \brief A triplet of character strings representing a variant parameter set directive
+    /** Typical format is:
+     *  \code
+     *   "{registry-name}:{path/to/the/variant/parameter}={value expression}"
+     *  \endcode
+     *
+     * The datatools kernel accept special command line options that automatically set
+     * the values of some variant parameters. Example:
+     * \code
+     * myapp \
+     *   --datatools::variant-config="myapp/variance.conf" \
+     *   --datatools::variant-set="myapp:foo=1" \
+     *   --datatools::variant-set="myapp:foo/small_value/algo=rk4" \
+     *   --datatools::variant-set="myapp:foo/small_value/epsilon=0.01 mm"
+     *   ...
+     * \endcode
+     */
+    struct variant_parameter_set_type {
+      std::string registry_key;    //!< The registration key of the variant registry the parameter belongs to
+      std::string param_key;       //!< The full path of the variant parameter of which the value should be modify
+      std::string param_value_str; //!< The string to be parsed into the new value of the variant parameter
+      variant_parameter_set_type();
+      void reset();
+      command::returned_info parse(const std::string & variant_set_);
+    };
+
+    /// \brief Comparator functor used to sort variant parameters by registry and path
+    struct variant_parameter_set_comparator {
+      bool operator()(const std::string & vs1_, const std::string & vs2_) const;
+    };
 
   }  // end of namespace configuration
 

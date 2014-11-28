@@ -28,12 +28,15 @@
 // Third party
 // - Boost:
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 // This project:
 #include <datatools/exception.h>
 #include <datatools/multi_properties.h>
 #include <datatools/configuration/parameter_model.h>
 #include <datatools/configuration/variant_model.h>
+#include <datatools/command_utils.h>
 
 namespace datatools {
 
@@ -506,13 +509,102 @@ namespace datatools {
       return;
     }
 
-    /*
-    bool parse_variant(std::istream & in_, parameter_value_type & pv_)
+    variant_parameter_set_type::variant_parameter_set_type()
     {
-      // in_ >> ;
+      return;
+    }
+
+    void variant_parameter_set_type::reset()
+    {
+      registry_key.clear();
+      param_key.clear();
+      param_value_str.clear();
+      return;
+    }
+
+    command::returned_info
+    variant_parameter_set_type::parse(const std::string & variant_set_)
+    {
+      command::returned_info cri;
+      size_t apos = variant_set_.find(':');
+      if (apos == variant_set_.npos) {
+        DT_COMMAND_RETURNED_ERROR(cri,
+                                  command::CEC_COMMAND_INVALID_SYNTAX,
+                                  "Invalid syntax in variant set directive ('" << variant_set_ << "' !");
+      }
+      std::string variant_registry_key = variant_set_.substr(0, apos);
+      std::string variant_param_set    = variant_set_.substr(apos + 1);
+      apos = variant_param_set.find('=');
+      std::string variant_param_key;
+      std::string variant_param_value_str;
+      if (apos == variant_param_set.npos) {
+        // Assume a boolean parameter:
+        variant_param_key       = variant_param_set;
+        variant_param_value_str = "true";
+      } else {
+        variant_param_key       = variant_param_set.substr(0, apos);
+        variant_param_value_str = variant_param_set.substr(apos + 1);
+      }
+      registry_key    = variant_registry_key;
+      param_key       = variant_param_key;
+      param_value_str = variant_param_value_str;
+      return cri;
+    }
+
+    bool variant_parameter_set_comparator::operator()(const std::string & vs1_, const std::string & vs2_) const
+    {
+      variant_parameter_set_type vps1;
+      variant_parameter_set_type vps2;
+
+      command::returned_info cri = vps1.parse(vs1_);
+      DT_THROW_IF(cri.is_failure(), std::logic_error,
+                  cri.get_error_message());
+      cri = vps1.parse(vs2_);
+      DT_THROW_IF(cri.is_failure(), std::logic_error,
+                  cri.get_error_message());
+
+      if (vps1.registry_key < vps2.registry_key) {
+        return true;
+      } else if (vps1.registry_key > vps2.registry_key) {
+        return false;
+      } else {
+        std::vector<std::string> path_tokens_1;
+        std::vector<std::string> path_tokens_2;
+        boost::split(path_tokens_1, vps1.param_key, boost::algorithm::is_any_of("/"));
+        boost::split(path_tokens_2, vps2.param_key, boost::algorithm::is_any_of("/"));
+        int i = 0;
+        // Comparison rules:
+        //
+        //  foo/bar  -> foo + bar (2)
+        //  bar/foo  -> bar + foo (1)
+        //
+        //
+        //  foo/bar  -> foo + bar (1)
+        //  foo/foo  -> foo + foo (2)
+        //
+        while (1) {
+          if (i >= path_tokens_1.size() || i >= path_tokens_2.size()) {
+            break;
+          }
+          const std::string & tok_1 = path_tokens_1[i];
+          const std::string & tok_2 = path_tokens_2[i];
+          if (tok_1 < tok_2) {
+            return true;
+          } else if (tok_1 > tok_2) {
+            return false;
+          } else {
+            if (path_tokens_1.size() < path_tokens_2.size()) {
+              return true;
+            } else if (path_tokens_1.size() > path_tokens_2.size()) {
+              return false;
+            } else {
+              i++;
+            }
+          }
+        }
+      }
       return false;
     }
-    */
 
   }  // end of namespace configuration
 

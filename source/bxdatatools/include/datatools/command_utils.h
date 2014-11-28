@@ -48,6 +48,7 @@ namespace datatools {
       CEC_COMMAND_INVALID              = 20, //!< Invalid command (unrecognized command name)
       CEC_COMMAND_NO_PRIVILEDGE        = 21, //!< Invalid command priviledge
       CEC_COMMAND_INVALID_CONTEXT      = 22, //!< Invalid command context
+      CEC_COMMAND_INVALID_SYNTAX       = 23, //!< Invalid command syntax
       CEC_PARAMETER_INVALID_NUMBER     = 30, //!< Invalid parameter error
       CEC_PARAMETER_INVALID_KEY        = 31, //!< Invalid parameter key
       CEC_PARAMETER_NO_PRIVILEDGE      = 32, //!< Invalid parameter context
@@ -55,7 +56,7 @@ namespace datatools {
       CEC_PARAMETER_INVALID_TYPE       = 34, //!< Invalid parameter type
       CEC_PARAMETER_UNSET_VALUE        = 35, //!< Unset value
       CEC_PARAMETER_INVALID_VALUE      = 36, //!< Invalid parameter value
-      CEC_PARAMETER_INVALID_UNIT       = 37,  //!< Invalid parameter unit (for real numbers)
+      CEC_PARAMETER_INVALID_UNIT       = 37, //!< Invalid parameter unit (for real numbers)
     };
 
     /// \brief Command returned information

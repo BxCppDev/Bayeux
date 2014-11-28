@@ -247,10 +247,16 @@ namespace datatools {
                      "Variants' configuration : '" << variant_config_registration << "'");
         // Format is :
         //   "path1/subdir/file.conf"
-        // or:
-        //   "foo@path1/subdir/file.conf"
+        //   "${SOME_ENV_PATH}/path1/subdir/file.conf"
+        //   "@some-label:path1/subdir/file.conf"
         std::string variant_name;
         std::string variant_mgr_config_file;
+        /*
+        // or:
+        //   "foo@path1/subdir/file.conf"
+        // This syntax is buggy because it prevents for
+        // using the following syntax :
+        //  "@foo-label:resource-path-to-some-file"
         size_t apos = variant_config_registration.find('@');
         if (apos != std::string::npos) {
           variant_name = variant_config_registration.substr(0, apos);
@@ -258,17 +264,19 @@ namespace datatools {
         } else {
           variant_mgr_config_file = variant_config_registration;
         }
+        */
+        variant_mgr_config_file = variant_config_registration;
         datatools::fetch_path_with_env(variant_mgr_config_file);
 
-        std::string reg_filename = registry_config_filenames[i];
-        datatools::fetch_path_with_env(reg_filename);
+        // std::string reg_filename = registry_config_filenames[i];
+        // datatools::fetch_path_with_env(reg_filename);
         DT_LOG_TRACE(get_logging_priority(),
                      "Variant " << variant_name << "' configuration file '"
                      << variant_mgr_config_file << "' registration...");
         registration_embedded(variant_mgr_config_file, "", variant_name);
       }
 
-     return;
+      return;
     }
 
     void variant_repository::initialize(const datatools::properties & config_)

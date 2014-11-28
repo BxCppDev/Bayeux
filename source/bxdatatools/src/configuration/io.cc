@@ -591,7 +591,8 @@ namespace datatools {
       if (cri.is_success()) {
         target_ = target_out.str();
       }
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "target_='" <<target_ << "'");
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "target_ = '" << target_ << "'");
+      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "cri = '" << cri  << "'");
       if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }

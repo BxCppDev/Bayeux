@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <fstream>
 #include <algorithm>
+#include <map>
+#include <string>
 
 // Ourselves:
 #include <datatools/kernel.h>
@@ -16,6 +18,7 @@
 #include <datatools/library_info.h>
 #include <datatools/configuration/variant_repository.h>
 #include <datatools/configuration/io.h>
+#include <datatools/configuration/utils.h>
 #include <datatools/exception.h>
 #include <datatools/version.h>
 #include <datatools/command_utils.h>
@@ -495,10 +498,13 @@ namespace datatools {
         std::string config_filename =_params_.variant_config;
         datatools::fetch_path_with_env(config_filename);
         datatools::properties config;
+        DT_LOG_TRACE(_logging_, "Variant configuration file '"
+                     << config_filename << "'...");
         config.read_configuration(config_filename);
         _variant_repository_->set_organization("");
         _variant_repository_->set_application("");
         _variant_repository_->unlock();
+        DT_LOG_TRACE(_logging_, "About to load registries...");
         _variant_repository_->load_registries(config);
         if (_logging_ >= datatools::logger::PRIO_TRACE) {
           _variant_repository_->tree_dump(std::cerr, "Configuration Variant Repository: ", "TRACE: ");
@@ -568,36 +574,53 @@ namespace datatools {
       // Parse the directives that set values of specific configuration variant parameters
       // in a given variant registry:
 
-      if (_params_.variant_sets.size() > 1) {
-        // Reorder the variant sets directives:
+      if (_params_.variant_sets.size()) {
+        // Reorder the variant sets directives to garantee the dependencies
+        // between active parameters.
+        // Example: given the following unordered list of variant set directives:
+        //
+        //  foo:value/case_small/color/case_red/bar=false
+        //  foo:value/case_small/color=red
+        //  foo:value=1
+        //  foo:value/case_small/count/case_zero/dummy=3
+        //  foo:value/case_small/count=10
+        //
+        // We need to make sure that the following order is used:
+        //
+        //  foo:value=1
+        //  foo:value/case_small/color=red
+        //  foo:value/case_small/count=10
+        //  foo:value/case_small/color/case_red/bar=false
+        //  foo:value/case_small/count/case_non_zero/dummy=3
+        //
+        // This is because the foo registry respect the dependencies
+        // while setting values. Here, the "foo:value/case_small/color"
+        // variant parameter can only be set after the "foo:value" has been set to "1",
+        // triggering the "foo:value/case_small" variant that in turns publishes the
+        // "foo:value/case_small/color" and "foo:value/case_small/count" parameters.
+        //
         std::vector<std::string> variant_sets = _params_.variant_sets;
-        std::sort(variant_sets.begin(), variant_sets.end());
 
-        // Process all variant sets directives:
+        configuration::variant_parameter_set_comparator comp;
+        std::sort(variant_sets.begin(), variant_sets.end(), comp);
+        for (size_t i = 0; i < variant_sets.size(); i++) {
+          DT_LOG_TRACE(_logging_, "Ordered variant parameter set : '" << variant_sets[i] << "'");
+        }
+
+        // Process all ordered variant sets directives:
         for (size_t i = 0; i < variant_sets.size(); i++) {
           std::string variant_set = variant_sets[i];
           DT_LOG_TRACE(_logging_, "Variant parameter set : '" << variant_set << "'");
+          configuration::variant_parameter_set_type vps;
           // Format is : "foo:param0/var0/key0=value"
-          size_t apos = variant_set.find(':');
-          DT_THROW_IF(apos == variant_set.npos, std::logic_error,
-                      "Invalid syntax in variant set directive ('" << variant_set << "' !");
-          std::string variant_registry_key = variant_set.substr(0, apos);
-          std::string variant_param_set    = variant_set.substr(apos + 1);
-          apos = variant_param_set.find('=');
-          std::string variant_param_key;
-          std::string variant_param_value_str;
-          if (apos == variant_param_set.npos) {
-            // Assume a boolean parameter:
-            variant_param_key       = variant_param_set;
-            variant_param_value_str = "1";
-          } else {
-            variant_param_key       = variant_param_set.substr(0, apos);
-            variant_param_value_str = variant_param_set.substr(apos + 1);
-          }
+          vps.parse(variant_set);
+          DT_LOG_TRACE(_logging_, "vps.registry_key    : '" << vps.registry_key << "'");
+          DT_LOG_TRACE(_logging_, "vps.param_key       : '" << vps.param_key << "'");
+          DT_LOG_TRACE(_logging_, "vps.param_value_str : '" << vps.param_value_str << "'");
           command::returned_info cri =
-            _variant_repository_->cmd_set_parameter(variant_registry_key,
-                                                    variant_param_key,
-                                                    variant_param_value_str);
+            _variant_repository_->cmd_set_parameter(vps.registry_key,
+                                                    vps.param_key,
+                                                    vps.param_value_str);
           DT_THROW_IF(cri.is_failure(),
                       std::logic_error,
                       cri.get_error_message());
