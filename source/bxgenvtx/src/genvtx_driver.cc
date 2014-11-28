@@ -16,6 +16,7 @@
 #include <datatools/properties.h>
 #include <datatools/clhep_units.h>
 #include <datatools/library_loader.h>
+#include <datatools/configuration/io.h>
 
 // - mygsl:
 #include <mygsl/rng.h>
@@ -208,28 +209,42 @@ namespace genvtx {
       }
     }
 
+    unsigned int vpp_flags = 0;
+    // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_DEVEL;
+    datatools::configuration::variant_preprocessor vpp(vpp_flags);
+    std::string effective_generator = _params_.generator_name;
+
     if (_action_ & genvtx_driver::ACTION_SHOW ||
         _action_ & genvtx_driver::ACTION_SHOOT) {
       DT_THROW_IF(_params_.generator_name.empty(),
                   std::logic_error,
                   "Missing vertex generator name !");
-      DT_THROW_IF(! _vtx_mgr_->has_generator(_params_.generator_name),
+      effective_generator = _params_.generator_name;
+      datatools::command::returned_info cri =
+        vpp.preprocess(_params_.generator_name, effective_generator);
+      DT_THROW_IF(! cri.is_success(),  std::logic_error,
+                  "Failed preprocessing of generator directive '" << _params_.generator_name  << "' : "
+                  << cri.get_error_message());
+      datatools::remove_quotes(effective_generator, '"');
+
+      DT_THROW_IF(! _vtx_mgr_->has_generator(effective_generator),
                   std::logic_error,
-                  "Cannot find vertex generator with name '" << _params_.generator_name << "' !");
+                  "Cannot find vertex generator with name '" << effective_generator << "' !");
     }
 
     if (_action_ & genvtx_driver::ACTION_SHOW) {
-      genvtx::vg_handle_type vgh = _vtx_mgr_->grab_generator(_params_.generator_name);
+      genvtx::vg_handle_type vgh = _vtx_mgr_->grab_generator(effective_generator);
       const genvtx::i_vertex_generator & vh = vgh.get();
       std::ostringstream title;
-      title << "Vertex generator '" << _params_.generator_name << "' :";
+      title << "Vertex generator '" << effective_generator << "' :";
       vh.tree_dump(std::cout, title.str());
     }
 
     if (_action_ & genvtx_driver::ACTION_SHOOT) {
-      if (! _params_.generator_name.empty()) {
-        _vtx_mgr_->activate_current_vg(_params_.generator_name);
+      if (! effective_generator.empty()) {
+        _vtx_mgr_->activate_current_vg(effective_generator);
       }
+
       DT_THROW_IF(_params_.nshoots < 1, std::logic_error, "Number of random vertices is invalid !");
       DT_LOG_DEBUG(_logging_, "Number of random vertices is : " << _params_.nshoots);
 
@@ -271,7 +286,7 @@ namespace genvtx {
                                     "magenta");
             geomtools::placement vertex_plcmt;
             vertex_plcmt.set_translation(vertex_pos);
-            vertex_spot.generate_wires (vertex_spot_DI.paths, vertex_plcmt);
+            vertex_spot.generate_wires(vertex_spot_DI.paths, vertex_plcmt);
           }
         }
         vtx_counter++;
