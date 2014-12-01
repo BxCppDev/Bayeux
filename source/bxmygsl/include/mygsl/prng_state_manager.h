@@ -51,14 +51,14 @@ namespace mygsl {
   {
   public:
 
-    /** Internal record that store the internal state of a PRNG
+    /** \brief Internal record that store the internal state of a PRNG
      */
     class record
     {
     public:
 
       /// Default size of a buffer used to store PRNG's internal state
-      static const size_t DEFAULT_BUFFER_SIZE;
+      static const size_t DEFAULT_BUFFER_SIZE = 65536;
 
       /// Default constructor
       record ();
@@ -78,8 +78,9 @@ namespace mygsl {
 
   public:
 
-    static const int    INVALID_COUNTER_VALUE; //!< Constant that represents an invalid value for a counter
-    static const std::string DEFAULT_FILENAME; //!< Default backup filename
+    static const int INVALID_COUNTER_VALUE = -1; //!< Constant that represents an invalid value for a counter
+
+    const std::string & default_filename();
 
     /// Check if a backup filename is associated to the manager
     bool has_filename () const;
@@ -88,7 +89,7 @@ namespace mygsl {
     const std::string & get_filename () const;
 
     /// Set the backup filename associated to the manager
-    void set_filename (const std::string & = DEFAULT_FILENAME);
+    void set_filename (const std::string & = "");
 
     /// Reset the backup filename associated to the manager
     void reset_filename();
@@ -158,8 +159,10 @@ namespace mygsl {
     /// Basic print
     void dump (std::ostream & out_ = std::clog) const;
 
+    /// Check error status
     bool error() const;
 
+    /// Reset error
     void reset_error();
 
   private:
@@ -167,7 +170,8 @@ namespace mygsl {
     void _force_error(int e) const;
 
   private:
-    int          _error_code_;
+
+    int          _error_code_; //!< Current error code
     std::string  _filename_; //!< The name of the file to store the PRNG internal states
     int32_t      _counter_;  //!< A user counter
     dict_type    _dict_;     //!< The dictionary of PRNG internal states

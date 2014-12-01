@@ -36,11 +36,9 @@ namespace mygsl {
 
   using namespace std;
 
-  const size_t prng_state_manager::record::DEFAULT_BUFFER_SIZE = 65536;
-
   prng_state_manager::record::record ()
   {
-    state_buffer.reserve (DEFAULT_BUFFER_SIZE);
+    state_buffer.reserve(DEFAULT_BUFFER_SIZE);
     return;
   }
 
@@ -51,8 +49,11 @@ namespace mygsl {
 
   /*************************************/
 
-  const int    prng_state_manager::INVALID_COUNTER_VALUE = -1;
-  const string prng_state_manager::DEFAULT_FILENAME = "prng_states.data";
+  const std::string & prng_state_manager::default_filename()
+  {
+    static const std::string f("prng_states.data");
+    return f;
+  }
 
   bool prng_state_manager::has_counter () const
   {
@@ -94,14 +95,18 @@ namespace mygsl {
     return ! _filename_.empty ();
   }
 
-  const string & prng_state_manager::get_filename () const
+  const string & prng_state_manager::get_filename() const
   {
     return _filename_;
   }
 
-  void prng_state_manager::set_filename (const string & fn_)
+  void prng_state_manager::set_filename(const string & fn_)
   {
-    _filename_ = fn_;
+    if (fn_.empty()) {
+      _filename_ = default_filename();
+    } else {
+      _filename_ = fn_;
+    }
     return;
   }
 
@@ -232,8 +237,8 @@ namespace mygsl {
   {
     if (has_filename ()) {
       if (! error()) {
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Attempt to store the PRNG state records in file '"
-                      << _filename_ << "' !");
+        // DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Attempt to store the PRNG state records in file '"
+        //               << _filename_ << "' !");
         store ();
         DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Automated storage of the PRNG state records in file '"
                       << _filename_ << "' !");
