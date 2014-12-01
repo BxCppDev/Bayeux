@@ -1,7 +1,6 @@
-// -*- mode: c++ ; -*-
 // genvtx_production.cxx
 
-// Ourselves
+// Ourselves:
 #include <genvtx/genvtx_config.h>
 
 // Standard libraries:
@@ -10,20 +9,23 @@
 #include <string>
 #include <exception>
 
-// Third Party
+// Third Party:
 // - Boost:
 #include <boost/program_options.hpp>
 #if GENVTX_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-// - materials:
+#include <datatools/ioutils.h>
+#include <datatools/units.h>
+#include <datatools/configuration/io.h>
+// - Bayeux/materials:
 #include <materials/materials.h>
-// - genvtx:
+// - Bayeux/genvtx:
 #include <genvtx/genvtx_driver.h>
 
 namespace genvtx {
@@ -31,6 +33,7 @@ namespace genvtx {
   /// \brief Command line interface class
   struct cli : public genvtx_driver::ui_access {
 
+    /// Constructor:
     cli(genvtx_driver &);
 
     static void print_help(boost::program_options::options_description &,
@@ -46,11 +49,13 @@ namespace genvtx {
                                   genvtx_driver_params &);
 
     // Command line interface:
+
     int command_initialize(const std::vector<std::string> & argv_);
 
     int command_run(const std::vector<std::string> & argv_);
 
     int command_reset(const std::vector<std::string> & argv_);
+
   };
 
 } // namespace genvtx
@@ -71,11 +76,19 @@ int main(int argc_, char ** argv_)
     bool run_session = true;
     genvtx::genvtx_driver_params params;
 
+    // Preprocessor for command line arguments:
+    unsigned int vpp_flags = 0;
+    // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_TRACE;
+    vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_REMOVE_QUOTES;
+    datatools::configuration::variant_preprocessor vpp(vpp_flags);
+    std::vector<std::string> preprocessed_arguments;
+    vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
+
     genvtx::cli::build_general_opts(opts, params);
     po::positional_options_description args;
     po::variables_map vm;
     po::parsed_options parsed =
-      po::command_line_parser(argc_, argv_)
+      po::command_line_parser(preprocessed_arguments)
       .options(opts)
       .allow_unregistered()
       .run();
@@ -145,7 +158,7 @@ namespace genvtx {
   }
 
   void cli::print_help(boost::program_options::options_description & opts_,
-                       std::ostream & out)
+                       std::ostream & out_)
   {
     boost::program_options::options_description driver_init_opts;
     boost::program_options::options_description driver_action_opts;
@@ -164,43 +177,43 @@ namespace genvtx {
     const std::string APP_NAME = "bxgenvtx_production";
 #endif // GEOMTOOLS_STANDALONE == 1
 
-    out << "Usage : " << APP_NAME << " [OPTION]...                                   \n";
-    out << "                                                                            \n";
-    out << "  Inspect and generate vertices from a vertex generator                     \n";
-    out << "  managed by a vertex generator manager associated to a                     \n";
-    out << "  geometry manager.                                                         \n";
-    out << "                                                                            \n";
-    out << driver_all_opts << std::endl;
-    out << "                                                                            \n";
-    out << "Example:                                                                    \n";
-    out << "                                                                            \n";
-    out << "  List the available vertex generators:                                     \n";
-    out << "                                                                            \n";
-    out << "     " << APP_NAME << " \\                                                   \n";
-    out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
-    out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
-    out << "       --list                                                               \n";
-    out << "                                                                            \n";
-    out << "  Show a given vertex generator:                                            \n";
-    out << "                                                                            \n";
-    out << "     " << APP_NAME << " \\                                                   \n";
-    out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
-    out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
-    out << "       --show --vertex-generator \"scintillator_block.vg\"                  \n";
-    out << "                                                                            \n";
-    out << "  Generate some vertices, store then in a file and display:                 \n";
-    out << "                                                                            \n";
-    out << "     " << APP_NAME << " \\                                                   \n";
-    out << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
-    out << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
-    out << "       --shoot \\                                                           \n";
-    out << "       --prng-seed 314159 \\                                                \n";
-    out << "       --number-of-vertices 10000 \\                                        \n";
-    out << "       --vertex-generator \"scintillator_block.vg\" \\                      \n";
-    out << "       --output-file \"vertices.data\"    \\                                \n";
-    out << "       --visu                                                               \n";
-    out << "                                                                            \n";
-    out << "                                                                            \n";
+    out_ << "Usage : " << APP_NAME << " [OPTION]...                                   \n";
+    out_ << "                                                                            \n";
+    out_ << "  Inspect and generate vertices from a vertex generator                     \n";
+    out_ << "  managed by a vertex generator manager associated to a                     \n";
+    out_ << "  geometry manager.                                                         \n";
+    out_ << "                                                                            \n";
+    out_ << driver_all_opts << std::endl;
+    out_ << "                                                                            \n";
+    out_ << "Example:                                                                    \n";
+    out_ << "                                                                            \n";
+    out_ << "  List the available vertex generators:                                     \n";
+    out_ << "                                                                            \n";
+    out_ << "     " << APP_NAME << " \\                                                   \n";
+    out_ << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
+    out_ << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
+    out_ << "       --list                                                               \n";
+    out_ << "                                                                            \n";
+    out_ << "  Show a given vertex generator:                                            \n";
+    out_ << "                                                                            \n";
+    out_ << "     " << APP_NAME << " \\                                                   \n";
+    out_ << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
+    out_ << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
+    out_ << "       --show --vertex-generator \"scintillator_block.vg\"                  \n";
+    out_ << "                                                                            \n";
+    out_ << "  Generate some vertices, store then in a file and display:                 \n";
+    out_ << "                                                                            \n";
+    out_ << "     " << APP_NAME << " \\                                                   \n";
+    out_ << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
+    out_ << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
+    out_ << "       --shoot \\                                                           \n";
+    out_ << "       --prng-seed 314159 \\                                                \n";
+    out_ << "       --number-of-vertices 10000 \\                                        \n";
+    out_ << "       --vertex-generator \"scintillator_block.vg\" \\                      \n";
+    out_ << "       --output-file \"vertices.data\"    \\                                \n";
+    out_ << "       --visu                                                               \n";
+    out_ << "                                                                            \n";
+    out_ << "                                                                            \n";
     return;
   }
 
@@ -365,6 +378,14 @@ namespace genvtx {
        "Example :                            \n"
        "  --visu-spot-zoom 3.0                 "
        )
+      ("visu-spot-size",
+       po::value<std::string>()
+       ,
+       "Set the size (in mm) of the randomly \n"
+       "generated vertices to be displayed.  \n"
+       "Example :                            \n"
+       "  --visu-spot-size \"3.0 mm\"          "
+       )
       ;
     return;
   }
@@ -397,6 +418,23 @@ namespace genvtx {
                                    po::include_positional);
       po::store(parsed, vm);
       po::notify(vm);
+
+      if (vm.count("visu-spot-size")) {
+        std::string spot_size_str = vm["visu-spot-size"].as<std::string>();
+        std::istringstream iss(spot_size_str);
+        double spot_size;
+        std::string unit_symbol;
+        std::string unit_label;
+        DT_THROW_IF(!datatools::units::parse_value_with_unit(spot_size_str,
+                                                             spot_size,
+                                                             unit_symbol,
+                                                             unit_label),
+                    std::logic_error,
+                    "Invalid format for vertex spot size!");
+        DT_THROW_IF(unit_label != "length",  std::logic_error,
+                    "Not a length unit for vertex spot size!");
+        this->params().visu_spot_size = spot_size;
+      }
 
       if (this->params().help) {
         std::clog << "Usage:" << std::endl;
@@ -492,7 +530,7 @@ namespace genvtx {
 
       driver().run();
     }
-    catch (std::exception& error) {
+    catch (std::exception & error) {
       DT_LOG_ERROR(driver().get_logging(), error.what());
       return EXIT_FAILURE;
     }
@@ -504,5 +542,3 @@ namespace genvtx {
   }
 
 } // namespace genvtx
-
-// end of genvtx_production.cxx

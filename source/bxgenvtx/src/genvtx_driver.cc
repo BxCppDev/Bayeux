@@ -1,27 +1,22 @@
-/* genvtx_driver.cc
- */
+// genvtx_driver.cc
 
 // Ourselves:
 #include <genvtx/genvtx_driver.h>
 
-// Third Party
+// Third Party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
 #include <boost/foreach.hpp>
-
-// Bayeux:
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 #include <datatools/properties.h>
 #include <datatools/clhep_units.h>
 #include <datatools/library_loader.h>
 #include <datatools/configuration/io.h>
-
-// - mygsl:
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
-
-// - geomtools:
+// - Bayeux/geomtools:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/display_data.h>
 #include <geomtools/box.h>
@@ -30,12 +25,11 @@
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gnuplot_draw.h>
 
-// - genvtx:
+// This project:
 #include <genvtx/genvtx_config.h>
 #include <genvtx/version.h>
 #include <genvtx/manager.h>
 #include <genvtx/genvtx_driver.h>
-
 
 namespace genvtx {
 
@@ -209,40 +203,27 @@ namespace genvtx {
       }
     }
 
-    unsigned int vpp_flags = 0;
-    // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_DEVEL;
-    datatools::configuration::variant_preprocessor vpp(vpp_flags);
-    std::string effective_generator = _params_.generator_name;
-
     if (_action_ & genvtx_driver::ACTION_SHOW ||
         _action_ & genvtx_driver::ACTION_SHOOT) {
       DT_THROW_IF(_params_.generator_name.empty(),
                   std::logic_error,
                   "Missing vertex generator name !");
-      effective_generator = _params_.generator_name;
-      datatools::command::returned_info cri =
-        vpp.preprocess(_params_.generator_name, effective_generator);
-      DT_THROW_IF(! cri.is_success(),  std::logic_error,
-                  "Failed preprocessing of generator directive '" << _params_.generator_name  << "' : "
-                  << cri.get_error_message());
-      datatools::remove_quotes(effective_generator, '"');
-
-      DT_THROW_IF(! _vtx_mgr_->has_generator(effective_generator),
+      DT_THROW_IF(! _vtx_mgr_->has_generator(_params_.generator_name),
                   std::logic_error,
-                  "Cannot find vertex generator with name '" << effective_generator << "' !");
+                  "Cannot find vertex generator with name '" << _params_.generator_name << "' !");
     }
 
     if (_action_ & genvtx_driver::ACTION_SHOW) {
-      genvtx::vg_handle_type vgh = _vtx_mgr_->grab_generator(effective_generator);
+      genvtx::vg_handle_type vgh = _vtx_mgr_->grab_generator(_params_.generator_name);
       const genvtx::i_vertex_generator & vh = vgh.get();
       std::ostringstream title;
-      title << "Vertex generator '" << effective_generator << "' :";
+      title << "Vertex generator '" << _params_.generator_name << "' :";
       vh.tree_dump(std::cout, title.str());
     }
 
     if (_action_ & genvtx_driver::ACTION_SHOOT) {
-      if (! effective_generator.empty()) {
-        _vtx_mgr_->activate_current_vg(effective_generator);
+      if (! _params_.generator_name.empty()) {
+        _vtx_mgr_->activate_current_vg(_params_.generator_name);
       }
 
       DT_THROW_IF(_params_.nshoots < 1, std::logic_error, "Number of random vertices is invalid !");
