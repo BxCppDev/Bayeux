@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /* \file genbb_inspector.cxx
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-04-20
@@ -22,7 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Ourselves
+// Ourselves:
 #include <genbb_help/genbb_help.h>
 
 // Standard libraries:
@@ -34,8 +33,8 @@
 #include <algorithm>
 #include <numeric>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/program_options.hpp>
 
 #if defined(__clang__)
@@ -53,7 +52,7 @@
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/fusion/include/vector.hpp>
 #include <boost/fusion/include/at_c.hpp>
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/datatools_config.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
@@ -66,14 +65,14 @@
 #include <datatools/logger.h>
 #include <datatools/kernel.h>
 #include <datatools/configuration/io.h>
-// - mygsl:
+// -  Bayeux/mygsl:
 #include <mygsl/histogram_pool.h>
 #include <mygsl/histogram_1d.h>
 #include <mygsl/histogram_2d.h>
-// - dpp:
+// - Bayeux/ dpp:
 #include <dpp/histogram_service.h>
 #if GENBB_HELP_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
 
@@ -1361,14 +1360,18 @@ int main (int argc_, char ** argv_)
 
       ; // end of options description
 
-    // Describe command line arguments :
-    //args.add ("generator", 1); // NOT USED
+    // Preprocessor for command line arguments:
+    unsigned int vpp_flags = 0;
+    // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_TRACE;
+    vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_REMOVE_QUOTES;
+    datatools::configuration::variant_preprocessor vpp(vpp_flags);
+    std::vector<std::string> preprocessed_arguments;
+    vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
 
     po::variables_map vm;
     po::parsed_options parsed =
-      po::command_line_parser(argc_, argv_)
+      po::command_line_parser(preprocessed_arguments)
       .options(opts)
-      //.positional(args) // NOT USED
       .allow_unregistered()
       .run();
     params.unrecognized_options = po::collect_unrecognized(parsed.options,
