@@ -13,6 +13,7 @@
 // Third Party:
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/thread.hpp>
 
 // This project:
 #include <datatools/library_info.h>
@@ -203,6 +204,17 @@ namespace datatools {
        )
 
 #if DATATOOLS_WITH_QT_GUI == 1
+      ("datatools::inhibit-gui",
+       po::value<bool>(&params_.inhibit_gui)
+       ->zero_tokens()
+       ->default_value(false),
+       "Inhibit GUI:                                                        \n"
+       "Example :                                                           \n"
+       "   --datatools::inhibit-gui                                           "
+       )
+#endif // DATATOOLS_WITH_QT_GUI == 1
+
+#if DATATOOLS_WITH_QT_GUI == 1
       ("datatools::variant-gui",
        po::value<bool>(&params_.variant_gui)
        ->zero_tokens()
@@ -299,6 +311,7 @@ namespace datatools {
     variant_store.clear();
     splash = false;
 #if DATATOOLS_WITH_QT_GUI == 1
+    inhibit_gui = false;
     variant_gui = false;
     variant_gui_style = "plastique";
 #endif // DATATOOLS_WITH_QT_GUI == 1
@@ -487,6 +500,55 @@ namespace datatools {
     return;
   }
 
+#if DATATOOLS_WITH_QT_GUI == 1
+  struct run_variant_repository_gui
+  {
+    /// Constructor
+    run_variant_repository_gui(::datatools::configuration::variant_repository & vrep_,
+                               const std::string & gui_style_ = "plastique")
+      : _vrep_(&vrep_), _gui_style_(gui_style_)
+    {
+      return;
+    }
+    /// Running method
+    void operator()()
+    {
+      // See also: http://qt-project.org/wiki/boost_thread_qt_application
+      // std::cerr << "DEVEL: run_variant_repository_gui::operator(): Entering..." << std::endl;
+
+      QApplication * dtk_app = 0;
+      bool master_qApp = false;
+      if (! qApp) {
+        master_qApp = true;
+        QApplication::setStyle(QStyleFactory::create(QString::fromStdString(_gui_style_)));
+        int argc = 1;
+        const char * argv[] = { "Bayeux - Configuration Variant Repository Dialog" };
+        dtk_app = new QApplication(argc, (char**) argv);
+        DT_THROW_IF(!qApp, std::runtime_error,
+                     "Cannot initialize Qt!");
+      } else {
+        std::cerr << "DEVEL: run_variant_repository_gui::operator(): "
+                  << "Qt already initialized..."
+                  << std::endl;
+      }
+      if (qApp) {
+        datatools::configuration::ui::variant_repository_dialog * vrep_dialog
+          = new datatools::configuration::ui::variant_repository_dialog(*_vrep_);
+        vrep_dialog->setAttribute(Qt::WA_DeleteOnClose);
+        vrep_dialog->show();
+        int ret = qApp->exec();
+      }
+      if (master_qApp) {
+        // delete dtk_app;
+      }
+      std::cerr << "DEVEL: run_variant_repository_gui::operator(): Exiting." << std::endl;
+      return;
+    }
+    ::datatools::configuration::variant_repository * _vrep_; //!< Handle to the variant repository
+    std::string _gui_style_;
+  };
+#endif // DATATOOLS_WITH_QT_GUI == 1
+
   void kernel::register_configuration_variant_registries()
   {
     DT_LOG_TRACE_ENTERING(_logging_);
@@ -626,22 +688,26 @@ namespace datatools {
                       cri.get_error_message());
         }
       }
+#if DATATOOLS_WITH_QT_GUI == 1
+        if (!_params_.inhibit_gui) {
+          //
+        }
+#endif // DATATOOLS_WITH_QT_GUI == 1
 
 #if DATATOOLS_WITH_QT_GUI == 1
       if (_params_.variant_gui) {
-        QApplication::setStyle(QStyleFactory::create(QString::fromStdString(_params_.variant_gui_style)));
-        int argc = 1;
-        const char * argv[] = { "Bayeux - Configuration Variant Repository Dialog" };
-        QApplication app(argc, (char**) argv);
-        bool save_locked = _variant_repository_->is_locked();
-        if (!save_locked) {
-          _variant_repository_->lock();
-        }
-        datatools::configuration::ui::variant_repository_dialog vrep_dialog(*_variant_repository_);
-        vrep_dialog.show();
-        int ret = app.exec();
-        if (!save_locked) {
-          _variant_repository_->unlock();
+        if (_params_.inhibit_gui) {
+          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "GUI is inhibited!");
+        } else {
+          bool save_locked = _variant_repository_->is_locked();
+          if (!save_locked) {
+            _variant_repository_->lock();
+          }
+          run_variant_repository_gui RVRG(*_variant_repository_, _params_.variant_gui_style);
+          RVRG();
+          if (!save_locked) {
+            _variant_repository_->unlock();
+          }
         }
       }
 #endif // DATATOOLS_WITH_QT_GUI == 1

@@ -34,6 +34,7 @@
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/variant_repository.h>
 #include <datatools/ioutils.h>
+#include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/kernel.h>
 
@@ -326,12 +327,38 @@ namespace datatools {
 
     variant_preprocessor::variant_preprocessor(unsigned int flags_)
     {
-      _devel_ = false;
-      if (flags_ & FLAG_DEVEL) {
-        _devel_ = true;
-      }
+      _trace_ = false;
+      _remove_quotes_ = false;
       _repository_ = 0;
+      if (flags_ & FLAG_TRACE) {
+        set_trace(true);
+      }
+      if (flags_ & FLAG_REMOVE_QUOTES) {
+        set_remove_quotes(true);
+      }
       _set_default_kernel_repository();
+      return;
+    }
+
+    bool variant_preprocessor::is_trace() const
+    {
+      return _trace_;
+    }
+
+    void variant_preprocessor::set_trace(bool trace_)
+    {
+      _trace_ = trace_;
+      return;
+    }
+
+    bool variant_preprocessor::is_remove_quotes() const
+    {
+      return _remove_quotes_;
+    }
+
+    void variant_preprocessor::set_remove_quotes(bool rq_)
+    {
+      _remove_quotes_ = rq_;
       return;
     }
 
@@ -369,7 +396,7 @@ namespace datatools {
                                                                  bool & variant_reverse_) const
     {
       command::returned_info cri(command::CEC_SUCCESS);
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering...");
 
       // Initialize output:
       variant_active_ = false;
@@ -402,12 +429,12 @@ namespace datatools {
         }
         has_variant_default = true;
       }
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc = '" << variant_desc << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc = '" << variant_desc << "'");
       if (variant_desc[0] == '!') {
         variant_reverse = true;
         variant_desc = variant_desc.substr(1);
         // Should we trim 'variant_desc' ?
-        if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc (reverse) = '" << variant_desc_ << "'");
+        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc (reverse) = '" << variant_desc_ << "'");
       }
       std::vector<std::string> variant_tokens2;
       boost::split(variant_tokens2, variant_desc, boost::is_any_of(":"));
@@ -423,10 +450,10 @@ namespace datatools {
                                   "Missing variant only path from '" << variant_desc_ << "' !");
         return cri;
       }
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name = '" << variant_registry_name << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name = '" << variant_registry_name << "'");
 
       std::string variant_path = variant_tokens2[1];
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_path = '" << variant_path << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_path = '" << variant_path << "'");
       // Search for registrated variant parameter in the associated variant repository:
       bool variant_active = false;
       if (has_repository()) {
@@ -436,9 +463,9 @@ namespace datatools {
                                                                variant_active);
         if (cri.is_success()) {
           variant_found = true;
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found variant only from '" << variant_desc_ << "'");
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found variant only from '" << variant_desc_ << "'");
         } else {
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Cannot found variant only from '" << variant_desc_ << "'");
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Cannot found variant only from '" << variant_desc_ << "'");
           variant_found = false;
           // DT_THROW_IF(true, std::logic_error,
           //          "Cannot resolve configuration variant '" << variant_desc
@@ -457,7 +484,7 @@ namespace datatools {
         }
         variant_active = variant_default;
       }
-      if (_devel_) {
+      if (_trace_) {
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name = '" << variant_registry_name << "'");
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_path          = '" << variant_path << "'");
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_found         = '" << variant_found << "'");
@@ -470,7 +497,7 @@ namespace datatools {
         variant_active_  = variant_active;
         variant_reverse_ = variant_reverse;
       }
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
 
@@ -479,7 +506,7 @@ namespace datatools {
     {
       static const std::string variant_default_sep = "|";
       command::returned_info cri(command::CEC_SUCCESS);
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering");
       parameter_effective_token_.clear();
 
       // Working string:
@@ -508,8 +535,8 @@ namespace datatools {
                    << parameter_token_ << "' !");
       std::string variant_registry_name = variant_path_tokens[0];
       std::string variant_parameter_path = variant_path_tokens[1];
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name  = '" << variant_registry_name << "'");
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_parameter_path = '" << variant_parameter_path << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name  = '" << variant_registry_name << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_parameter_path = '" << variant_parameter_path << "'");
       bool variant_parameter_found = false;
       std::string variant_parameter_value;
       // Search for registrated variant parameter in the associated variant repository:
@@ -520,7 +547,7 @@ namespace datatools {
         if (cri2.is_success()) {
           effective_property_value_str = variant_parameter_value;
           variant_parameter_found = true;
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found value for variant parameter '" << variant_path << "' = '"
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found value for variant parameter '" << variant_path << "' = '"
                                     << variant_parameter_value << "'");
         } else {
           // DT_LOG_WARNING(logging, "Bayeux/datatools kernel's variant repository could not provide the value of "
@@ -533,21 +560,125 @@ namespace datatools {
                                     "No available default value for variant parameter '" << variant_path << "' !");
         } else {
           effective_property_value_str = variant_def_value;
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Use default value for variant parameter '" << variant_path << "' = '"
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Use default value for variant parameter '" << variant_path << "' = '"
                                     << effective_property_value_str << "'");
         }
       }
       if (cri.is_success()) {
         parameter_effective_token_ = effective_property_value_str;
+        if (is_remove_quotes()) {
+          if (datatools::is_quoted(parameter_effective_token_, '"')) {
+            datatools::remove_quotes(parameter_effective_token_, '"');
+          } else if (datatools::is_quoted(parameter_effective_token_, '\'')) {
+            datatools::remove_quotes(parameter_effective_token_, '\'');
+          }
+        }
       }
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
 
-    command::returned_info variant_preprocessor::preprocess(const std::string & source_, std::string & target_) const
+
+    std::string
+    variant_preprocessor::preprocess_string(const std::string & source_) const
+    {
+      std::string token;
+      command::returned_info cri = preprocess(source_, token);
+      DT_THROW_IF(cri.is_failure(),
+                  std::logic_error,
+                  "String variant preprocessing failed: "
+                  << cri.get_error_message());
+      datatools::remove_quotes(token, '"');
+      return token;
+    }
+
+    bool
+    variant_preprocessor::preprocess_boolean(const std::string & source_) const
+    {
+      bool value;
+      std::string bstr;
+      command::returned_info cri = preprocess(source_, bstr);
+      DT_THROW_IF(cri.is_failure(),
+                  std::logic_error,
+                  "String variant preprocessing failed: "
+                  << cri.get_error_message());
+      std::istringstream iss(bstr);
+      DT_THROW_IF(!io::read_boolean(iss, value), std::logic_error,
+                  "Cannot preprocess boolean variant parameter!");
+      return value;
+    }
+
+    int
+    variant_preprocessor::preprocess_integer(const std::string & source_) const
+    {
+      int value;
+      std::string istr;
+      command::returned_info cri = preprocess(source_, istr);
+      DT_THROW_IF(cri.is_failure(),
+                  std::logic_error,
+                  "String variant preprocessing failed: "
+                  << cri.get_error_message());
+      std::istringstream iss(istr);
+      DT_THROW_IF(!io::read_integer(iss, value), std::logic_error,
+                  "Cannot preprocess integer variant parameter!");
+      return value;
+    }
+
+    double
+    variant_preprocessor::preprocess_real(const std::string & source_) const
+    {
+      double value;
+      std::string rstr;
+      command::returned_info cri = preprocess(source_, rstr);
+      DT_THROW_IF(cri.is_failure(),
+                  std::logic_error,
+                  "String variant preprocessing failed: "
+                  << cri.get_error_message());
+      std::istringstream iss(rstr);
+      bool normal;
+      DT_THROW_IF(!io::read_real_number(iss, value, normal), std::logic_error,
+                  "Cannot preprocess integer variant parameter!");
+      return value;
+    }
+
+    void variant_preprocessor::preprocess_args_options(const std::vector<std::string> & args_,
+                                                       std::vector<std::string> & preprocessed_args_)
+    {
+      for (int i = 0; i < (int) args_.size(); i++) {
+        const std::string & arg = args_[i];
+        std::string target;
+        command::returned_info cri = preprocess(arg, target);
+        DT_THROW_IF(cri.is_failure(),
+                    std::logic_error,
+                    "Variant preprocessing of '" << arg << "' failed: "
+                    << cri.get_error_message());
+        if (datatools::is_quoted(target, '"')) {
+          datatools::remove_quotes(target, '"');
+        }
+        preprocessed_args_.push_back(target);
+        if (is_trace()) {
+          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                       "target = '" << target << "'");
+        }
+      }
+      return;
+    }
+
+    void variant_preprocessor::preprocess_args_options(int argc_, char ** argv_,
+                                                       std::vector<std::string> & preprocessed_args_)
+    {
+      std::string app_name;
+      std::vector<std::string> args;
+      datatools::io::convert_command_line_args(argc_, argv_, app_name, args);
+      preprocess_args_options(args, preprocessed_args_);
+      return;
+    }
+
+    command::returned_info
+    variant_preprocessor::preprocess(const std::string & source_, std::string & target_) const
     {
       command::returned_info cri(command::CEC_SUCCESS);
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE,  "Entering...");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE,  "Entering...");
       target_.clear();
       std::size_t pos = 0;
       std::string line = source_;
@@ -556,44 +687,44 @@ namespace datatools {
       static const std::string variant_close_tag = ")";
 
       while (pos != std::string::npos) {
-        if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "line = '" << line << "'");
+        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "line = '" << line << "'");
         std::size_t found = line.find(variant_open_tag, pos);
-        if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "open tag found=" << found);
+        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "open tag found=" << found);
         if (found == std::string::npos) {
           target_out << line;
           break;
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "pos=" << pos);
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "pos=" << pos);
         } else {
           target_out << line.substr(pos, found);
           line = line.substr(found);
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "line = '" << line << "'");
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "line = '" << line << "'");
           std::size_t found2 = line.find(variant_close_tag, 0);
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "close tag found2 = " << found2);
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "close tag found2 = " << found2);
           if (found2 == std::string::npos) {
             DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARSING_FAILURE, "Cannot find variant close tag in '" << line << "' !");
             break;
           }
           std::string parameter_token = line.substr(variant_open_tag.length(), found2 - variant_open_tag.length());
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "parameter_token = '" << parameter_token << "'");
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "parameter_token = '" << parameter_token << "'");
           std::string parameter_effective_token;
           cri = preprocess_parameter(parameter_token, parameter_effective_token);
           if (cri.is_failure()) {
             break;
           }
-          if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "parameter_effective_token = '" << parameter_effective_token << "'")
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "parameter_effective_token = '" << parameter_effective_token << "'")
           target_out << parameter_effective_token;
           line = line.substr(found2 + 1);
         }
         pos = 0;
       }
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "while end");
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "pos=" << pos);
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "while end");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "pos=" << pos);
       if (cri.is_success()) {
         target_ = target_out.str();
       }
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "target_ = '" << target_ << "'");
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "cri = '" << cri  << "'");
-      if (_devel_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "target_ = '" << target_ << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "cri = '" << cri  << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
 

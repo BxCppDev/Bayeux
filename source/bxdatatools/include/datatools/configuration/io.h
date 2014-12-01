@@ -1,7 +1,7 @@
 /// \file datatools/configuration/io.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-09-29
- * Last modified : 2014-09-29
+ * Last modified : 2014-11-29
  *
  * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -37,6 +37,7 @@
 // This project (Bayeux/datatools):
 #include <datatools/bit_mask.h>
 #include <datatools/logger.h>
+#include <datatools/bit_mask.h>
 #include <datatools/command_utils.h>
 
 namespace datatools {
@@ -95,8 +96,8 @@ namespace datatools {
 
     private:
 
-      bool _with_description_; //!< Flag to print description meta comment
-      bool _with_title_;       //!< Flag to print a title comment
+      bool _with_description_;    //!< Flag to print description meta comment
+      bool _with_title_;          //!< Flag to print a title comment
       logger::priority _logging_; //!< Logging priority
 
     };
@@ -106,9 +107,23 @@ namespace datatools {
     {
     public:
 
+      /// \brief Construction flags
       enum flag_type {
-        FLAG_DEVEL = 1 //!< Devel flag
+        FLAG_TRACE         = datatools::bit_mask::bit00, //!< Flag to print trace messages
+        FLAG_REMOVE_QUOTES = datatools::bit_mask::bit01  //!< Flag to remove quotes around string parameters
       };
+
+      /// Check the trace flag
+      bool is_trace() const;
+
+      /// Set the trace flag
+      void set_trace(bool);
+
+      /// Check the remove quotes flag
+      bool is_remove_quotes() const;
+
+      /// Set the remove quotes flag
+      void set_remove_quotes(bool);
 
       /// Default constructor
       variant_preprocessor(unsigned int flags_ = 0);
@@ -126,10 +141,35 @@ namespace datatools {
       command::returned_info preprocess(const std::string & source_,
                                         std::string & target_) const;
 
+      /// Process a source string into a target string
+      std::string preprocess_string(const std::string & source_) const;
+
+      /// Process a source string into a target boolean
+      bool preprocess_boolean(const std::string & source_) const;
+
+      /// Process a source string into a target integer
+      int preprocess_integer(const std::string & source_) const;
+
+      /// Process a source string into a target double
+      double preprocess_real(const std::string & source_) const;
+
+      /// Process a list of arguments and options
+      /** The 'argc_' and 'argv_' parameters should be the same as passed to 'main'.
+       */
+      void preprocess_args_options(int argc_, char ** argv_,
+                                   std::vector<std::string> & preprocessed_args_);
+
+      /// Process a list of arguments and options
+      /** The 'args_' parameter should not include program name.
+       */
+      void preprocess_args_options(const std::vector<std::string> & args_,
+                                   std::vector<std::string> & preprocessed_args_);
+
+      /// Process a source string into a target string as a variant parameter
       command::returned_info preprocess_parameter(const std::string & parameter_token_,
                                                   std::string & parameter_effective_token_) const;
 
-      /*! Parse a string and check if a given variant is activate
+      /*! Parse a string and check if a given configuration variant is activate
 
         @param variant_desc_    The string to be parsed
         @param variant_active_  The flag that checks if the variant is activated
@@ -170,11 +210,13 @@ namespace datatools {
 
     private:
 
+      /// Install the kernel repository as the default one referenced by the preprocessor
       void _set_default_kernel_repository();
 
     private:
 
-      bool _devel_; //!< Devel flag
+      bool _trace_; //!< Trace flag
+      bool _remove_quotes_; //!< Flag to remove quotes around string parameters
       const variant_repository * _repository_; //!< Variant configuration repository handle
 
     };

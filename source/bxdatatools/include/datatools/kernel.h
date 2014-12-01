@@ -56,7 +56,7 @@ namespace datatools {
 
   }
 
-  /// \brief The datatools kernel singleton with embedded resources and components.
+  /// \brief The datatools kernel singleton with embedded resources and components
   class kernel :
     private boost::noncopyable,
     public ::datatools::i_tree_dumpable
@@ -64,7 +64,7 @@ namespace datatools {
 
   public:
 
-    /// \brief The set of configuration parameters for the datatools' kernel
+    /// \brief The set of configuration parameters for the datatools kernel
     struct param_type {
 
     public:
@@ -75,7 +75,7 @@ namespace datatools {
       /// Reset
       void reset();
 
-      /// Printt
+      /// Print
       void print(std::ostream & out_,
                  const std::string & title_ = "",
                  const std::string & indent_ = "");
@@ -97,6 +97,7 @@ namespace datatools {
 
       bool                     splash; //!< Flag to display the datatools splash screen
 #if DATATOOLS_WITH_QT_GUI == 1
+      bool                     inhibit_gui; //!< Flag to inhibit GUI
       bool                     variant_gui; //!< Flag to run the variant GUI
       std::string              variant_gui_style; //!< Qt style
 #endif // DATATOOLS_WITH_QT_GUI == 1

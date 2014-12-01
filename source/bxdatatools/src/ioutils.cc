@@ -17,6 +17,7 @@
 // This Project:
 #include <datatools/utils.h>
 #include <datatools/units.h>
+#include <datatools/exception.h>
 
 namespace datatools {
 
@@ -26,7 +27,7 @@ namespace datatools {
   {
     if (text_.empty()) return;
     std::vector<std::string> lines;
-    boost::split(lines,text_,boost::is_any_of("\n"));
+    boost::split(lines,text_, boost::is_any_of("\n"));
     for (size_t il = 0; il < lines.size(); il++) {
       out_ << indent_ << lines[il];
       //if (il != lines.size() - 1)
@@ -35,45 +36,57 @@ namespace datatools {
     return;
   }
 
-
-// static
-io & io::instance()
-{
-  static boost::scoped_ptr<io> _io;
-  if (!_io) {
-    _io.reset(new io);
+  // static
+  io & io::instance()
+  {
+    static boost::scoped_ptr<io> _io;
+    if (!_io) {
+      _io.reset(new io);
+    }
+    return *_io;
   }
-  return *_io;
-}
 
-// static
-io::indenter & io::indent()
-{
-  static boost::scoped_ptr<indenter> _indenter;
-  if (!_indenter) {
-    _indenter.reset(new indenter);
+  // static
+  io::indenter & io::indent()
+  {
+    static boost::scoped_ptr<indenter> _indenter;
+    if (!_indenter) {
+      _indenter.reset(new indenter);
+    }
+    return *_indenter;
   }
-  return *_indenter;
-}
 
+  void io::convert_command_line_args(int argc_,
+                                     char ** argv_,
+                                     std::string & app_name_,
+                                     std::vector<std::string> & args_)
+  {
+    DT_THROW_IF(argc_ < 1, std::logic_error, "Negative number of arguments!");
+    DT_THROW_IF(! argv_, std::logic_error, "Missing array of arguments!");
+    app_name_ = argv_[0];
+    for (int i = 1; i < argc_; i++) {
+      args_.push_back(argv_[i]);
+    }
+    return;
+  }
 
-const std::string & io::constants::nan_real_repr()
-{
-  static std::string value("nan");
-  return value;
-}
+  const std::string & io::constants::nan_real_repr()
+  {
+    static std::string value("nan");
+    return value;
+  }
 
-const std::string & io::constants::plus_infinity_real_repr()
-{
-  static std::string value("inf");
-  return value;
-}
+  const std::string & io::constants::plus_infinity_real_repr()
+  {
+    static std::string value("inf");
+    return value;
+  }
 
-const std::string & io::constants::minus_infinity_real_repr()
-{
-  static std::string value("-inf");
-  return value;
-}
+  const std::string & io::constants::minus_infinity_real_repr()
+  {
+    static std::string value("-inf");
+    return value;
+  }
 
   void io::write_boolean(std::ostream& a_out,
                          bool a_bool)
@@ -102,8 +115,8 @@ const std::string & io::constants::minus_infinity_real_repr()
       a_bool = false;
       return true;
     } else if (token == "1"
-        || token == "TRUE" || token == "T"
-        || token == "YES" || token == "Y") {
+               || token == "TRUE" || token == "T"
+               || token == "YES" || token == "Y") {
       a_bool = true;
       return true;
     }
@@ -187,328 +200,298 @@ const std::string & io::constants::minus_infinity_real_repr()
     return true;
   }
 
-// static
-void io::write_real_number(std::ostream & out_,
-                           double val_,
-                           int precision_,
-                           const std::string& unit_symbol_,
-                           const std::string& unit_label_,
-                           double unit_value_)
-{
-  // std::cerr << "DEVEL: io::write_real_number: unit_symbol_ = '" << unit_symbol_ << "'" << std::endl;
-  // std::cerr << "DEVEL: io::write_real_number: unit_label_  = '" << unit_label_ << "'" << std::endl;
-  if (datatools::is_normal(val_)) {
-    double      the_unit_value = 1.0;
-    std::string the_unit_symbol;
-    std::string the_unit_label;
+  // static
+  void io::write_real_number(std::ostream & out_,
+                             double val_,
+                             int precision_,
+                             const std::string& unit_symbol_,
+                             const std::string& unit_label_,
+                             double unit_value_)
+  {
+    // std::cerr << "DEVEL: io::write_real_number: unit_symbol_ = '" << unit_symbol_ << "'" << std::endl;
+    // std::cerr << "DEVEL: io::write_real_number: unit_label_  = '" << unit_label_ << "'" << std::endl;
+    if (datatools::is_normal(val_)) {
+      double      the_unit_value = 1.0;
+      std::string the_unit_symbol;
+      std::string the_unit_label;
 
-    if (!unit_symbol_.empty()) {
-      bool ok = units::find_unit(unit_symbol_, the_unit_value, the_unit_label);
-      if (ok) {
-        // Unit is recognized :
-        DT_THROW_IF(!unit_label_.empty() && the_unit_label != unit_label_,
-                    std::logic_error,
-                    "Unit '" << unit_symbol_
-                    << "' is not compatible with unit label '" << unit_label_ << "'!");
-        the_unit_symbol = unit_symbol_;
-      } else {
-        // Unit is not recognized :
-        if (unit_value_ > 0.0) {
-          // But at least we provide a unit value (for unregistered units)
+      if (!unit_symbol_.empty()) {
+        bool ok = units::find_unit(unit_symbol_, the_unit_value, the_unit_label);
+        if (ok) {
+          // Unit is recognized :
+          DT_THROW_IF(!unit_label_.empty() && the_unit_label != unit_label_,
+                      std::logic_error,
+                      "Unit '" << unit_symbol_
+                      << "' is not compatible with unit label '" << unit_label_ << "'!");
           the_unit_symbol = unit_symbol_;
-          the_unit_value = unit_value_;
         } else {
-          DT_THROW_IF(true, std::logic_error,
-                      "Unit symbol '" << unit_symbol_ << "' is not recognized!");
+          // Unit is not recognized :
+          if (unit_value_ > 0.0) {
+            // But at least we provide a unit value (for unregistered units)
+            the_unit_symbol = unit_symbol_;
+            the_unit_value = unit_value_;
+          } else {
+            DT_THROW_IF(true, std::logic_error,
+                        "Unit symbol '" << unit_symbol_ << "' is not recognized!");
+          }
+        }
+      } else {
+        if (!unit_label_.empty()) {
+          DT_THROW_IF(! units::is_unit_label_valid(unit_label_),
+                      std::logic_error,
+                      "Unit label '" << unit_label_ << "' is not recognized!");
+          the_unit_symbol = units::get_default_unit_symbol_from_label(unit_label_);
+          std::string ul;
+          units::find_unit(the_unit_symbol, the_unit_value, ul);
         }
       }
-    } else {
-      if (!unit_label_.empty()) {
-        DT_THROW_IF(! units::is_unit_label_valid(unit_label_),
-                    std::logic_error,
-                    "Unit label '" << unit_label_ << "' is not recognized!");
-        the_unit_symbol = units::get_default_unit_symbol_from_label(unit_label_);
-        std::string ul;
-        units::find_unit(the_unit_symbol, the_unit_value, ul);
+      int oldprec = out_.precision();
+      out_.precision(precision_);
+      out_ << (val_ / the_unit_value);
+      if (! the_unit_symbol.empty()) {
+        out_ << ' ' << the_unit_symbol;
       }
+      out_.precision(oldprec);
+    } else if (datatools::is_infinity(val_)) {
+      if (val_ > 0) out_ << io::constants::plus_infinity_real_repr();
+      else out_ << io::constants::minus_infinity_real_repr();
+    } else {
+      out_ << io::constants::nan_real_repr();
     }
-    int oldprec = out_.precision();
-    out_.precision(precision_);
-    out_ << (val_ / the_unit_value);
-    if (! the_unit_symbol.empty()) {
-      out_ << ' ' << the_unit_symbol;
-    }
-    out_.precision(oldprec);
-  } else if (datatools::is_infinity(val_)) {
-    if (val_ > 0) out_ << io::constants::plus_infinity_real_repr();
-    else out_ << io::constants::minus_infinity_real_repr();
-  } else {
-    out_ << io::constants::nan_real_repr();
+    return;
   }
-  return;
-}
 
-// static
-bool io::read_real_number(std::istream & in_, double & val_, bool & normal_)
-{
-  normal_ = false;
-  std::string real_token;
-  in_ >> real_token;
-  if (!in_) {
-    return false;
-  }
-  if (real_token == io::constants::plus_infinity_real_repr()) {
-    datatools::plus_infinity(val_);
-  }
-  else if (real_token == io::constants::minus_infinity_real_repr()) {
-    datatools::minus_infinity(val_);
-  }
-  else if (real_token == io::constants::nan_real_repr()) {
-    datatools::invalidate(val_);
-  }
-  else {
-    std::istringstream iss(real_token);
-    iss >> val_;
-    if (! iss) {
+  // static
+  bool io::read_real_number(std::istream & in_, double & val_, bool & normal_)
+  {
+    normal_ = false;
+    std::string real_token;
+    in_ >> real_token;
+    if (!in_) {
       return false;
     }
-    normal_ = true;
+    if (real_token == io::constants::plus_infinity_real_repr()) {
+      datatools::plus_infinity(val_);
+    }
+    else if (real_token == io::constants::minus_infinity_real_repr()) {
+      datatools::minus_infinity(val_);
+    }
+    else if (real_token == io::constants::nan_real_repr()) {
+      datatools::invalidate(val_);
+    }
+    else {
+      std::istringstream iss(real_token);
+      iss >> val_;
+      if (! iss) {
+        return false;
+      }
+      normal_ = true;
+    }
+    return true;
   }
-  return true;
-}
 
-size_t io::indenter::get_width() const {
-  return width_;
-}
-
-
-size_t io::indenter::get_level() const {
-  return level_;
-}
-
-
-io::indenter::indenter() {
-  width_ = 4;
-  level_ = 0;
-}
-
-
-io::indenter& io::indenter::operator()(size_t l) {
-  this->level_ = l;
-  return *this;
-}
-
-
-std::ostream& io::indenter::operator()(std::ostream& out) const {
-  out << *this;
-  return out;
-}
-
-
-io::indenter& io::indenter::operator++(int) {
-  level_++;
-  return *this;
-}
-
-
-io::indenter & io::indenter::operator--(int) {
-  if (level_ > 0) level_--;
-  return *this;
-}
-
-
-std::ostream& operator<<(std::ostream& out, const io::indenter& indent) {
-  for (size_t i = 0; i < (indent.width_ * indent.level_); ++i) {
-    out << ' ';
+  size_t io::indenter::get_width() const {
+    return width_;
   }
-  return out;
-}
 
+  size_t io::indenter::get_level() const {
+    return level_;
+  }
 
-std::ostream& io::ostream_width(std::ostream& os, const int& n) {
-  os.width((int)n);
-  return os;
-}
+  io::indenter::indenter() {
+    width_ = 4;
+    level_ = 0;
+  }
 
+  io::indenter& io::indenter::operator()(size_t l) {
+    this->level_ = l;
+    return *this;
+  }
 
-ostream_manipulator<int> io::width(const int& n) {
-  return ostream_manipulator<int>(&io::ostream_width, n);
-}
+  std::ostream& io::indenter::operator()(std::ostream& out) const {
+    out << *this;
+    return out;
+  }
 
+  io::indenter& io::indenter::operator++(int) {
+    level_++;
+    return *this;
+  }
 
-std::ostream& io::ostream_precision(std::ostream& os, const int& n) {
-  os.precision((int)n);
-  return os;
-}
+  io::indenter & io::indenter::operator--(int) {
+    if (level_ > 0) level_--;
+    return *this;
+  }
 
+  std::ostream& operator<<(std::ostream& out, const io::indenter& indent) {
+    for (size_t i = 0; i < (indent.width_ * indent.level_); ++i) {
+      out << ' ';
+    }
+    return out;
+  }
 
-ostream_manipulator<int> io::precision(const int& n) {
-  return ostream_manipulator<int>(&io::ostream_precision, n);
-}
+  std::ostream& io::ostream_width(std::ostream& os, const int& n) {
+    os.width((int)n);
+    return os;
+  }
 
+  ostream_manipulator<int> io::width(const int& n) {
+    return ostream_manipulator<int>(&io::ostream_width, n);
+  }
 
-bool io::is_colored() const {
-  return _colored_stream_;
-}
+  std::ostream& io::ostream_precision(std::ostream& os, const int& n) {
+    os.precision((int)n);
+    return os;
+  }
 
+  ostream_manipulator<int> io::precision(const int& n) {
+    return ostream_manipulator<int>(&io::ostream_precision, n);
+  }
 
-void io::set_colored(bool c) {
-  if (_colored_stream_ && c) return;
-  if (!_colored_stream_ && !c) return;
-  if (c) {
-    _colored_stream_ = true;
-  } else {
+  bool io::is_colored() const {
+    return _colored_stream_;
+  }
+
+  void io::set_colored(bool c) {
+    if (_colored_stream_ && c) return;
+    if (!_colored_stream_ && !c) return;
+    if (c) {
+      _colored_stream_ = true;
+    } else {
+      _colored_stream_ = false;
+    }
+    return;
+  }
+
+  io::io()
+  {
     _colored_stream_ = false;
+    return;
   }
-  return;
-}
 
-io::io()
-{
-  _colored_stream_ = false;
-  return;
-}
-
-io::~io()
-{
-  if (is_colored()) {
-    set_colored(false);
+  io::~io()
+  {
+    if (is_colored()) {
+      set_colored(false);
+    }
+    return;
   }
-  return;
-}
 
-std::ostream& io::normal(std::ostream& out) {
-  if (io::instance().is_colored()) {
+  std::ostream& io::normal(std::ostream& out) {
+    if (io::instance().is_colored()) {
+    }
+    return out;
   }
-  return out;
-}
 
-
-std::ostream& io::reverse(std::ostream& out) {
-  if (io::instance().is_colored()) {
+  std::ostream& io::reverse(std::ostream& out) {
+    if (io::instance().is_colored()) {
+    }
+    return out;
   }
-  return out;
-}
 
-
-std::ostream& io::bold(std::ostream& out) {
-  if (io::instance().is_colored()) {
+  std::ostream& io::bold(std::ostream& out) {
+    if (io::instance().is_colored()) {
+    }
+    return out;
   }
-  return out;
-}
 
-
-std::ostream& io::underline(std::ostream& out) {
-  if (io::instance().is_colored()) {
+  std::ostream& io::underline(std::ostream& out) {
+    if (io::instance().is_colored()) {
+    }
+    return out;
   }
-  return out;
-}
 
-std::ostream& io::red(std::ostream& out) {
-  if (io::instance().is_colored()) {
+  std::ostream& io::red(std::ostream& out) {
+    if (io::instance().is_colored()) {
+    }
+    return out;
   }
-  return out;
-}
 
-
-std::ostream& io::green(std::ostream& out) {
-  if (io::instance().is_colored()) {
+  std::ostream& io::green(std::ostream& out) {
+    if (io::instance().is_colored()) {
+    }
+    return out;
   }
-  return out;
-}
 
-
-std::ostream& io::debug(std::ostream& out) {
-  out << "DEBUG: ";
-  return out;
-}
-
-
-std::ostream& io::devel(std::ostream& out) {
-  out << "DEVEL: ";
-  return out;
-}
-
-
-std::ostream& io::notice(std::ostream& out) {
-  out << "NOTICE: ";
-  return out;
-}
-
-
-std::ostream& io::warning(std::ostream& out) {
-  out << "WARNING: ";
-  return out;
-}
-
-std::ostream& io::error(std::ostream& out) {
-  out << "ERROR: ";
-  return out;
-}
-
-
-std::ostream& io::verbose(std::ostream& out) {
-  out << "VERBOSE: ";
-  return out;
-}
-
-
-std::ostream& io::tab(std::ostream& out) {
-  out << '\t';
-  return out;
-}
-
-
-std::ostream& io::vtab(std::ostream& out) {
-  out << '\v';
-  return out;
-}
-
-
-std::ostream& io::page_break(std::ostream& out) {
-  out << '\f';
-  return out;
-}
-
-
-std::ostream& io::left(std::ostream& out) {
-  out.setf(std::ios::left, std::ios::adjustfield);
-  return out;
-}
-
-
-std::ostream& io::right(std::ostream& out) {
-  out.setf(std::ios::right, std::ios::adjustfield);
-  return out;
-}
-
-
-std::ostream& io::internal(std::ostream& out) {
-  out.setf(std::ios::internal, std::ios::adjustfield);
-  return out;
-}
-
-
-std::ostream& io::showbase(std::ostream& out) {
-  out.setf(std::ios::showbase);
-  return out;
-}
-
-
-std::string io::to_binary(const uint32_t& val, bool show_all) {
-  std::ostringstream oss;
-  size_t nbits = sizeof(val) * 8;
-  oss << '(';
-  bool start = false;
-  for (int i = (nbits - 1); i >= 0; i--) {
-    bool abit;
-    abit = (val >> i) & 0x1;
-    if (!start & abit) start = true;
-    if (!show_all && !abit && !start) continue;
-    oss << abit;
+  std::ostream& io::debug(std::ostream& out) {
+    out << "DEBUG: ";
+    return out;
   }
-  oss << ')';
-  return oss.str();
-}
+
+  std::ostream& io::devel(std::ostream& out) {
+    out << "DEVEL: ";
+    return out;
+  }
+
+  std::ostream& io::notice(std::ostream& out) {
+    out << "NOTICE: ";
+    return out;
+  }
+
+  std::ostream& io::warning(std::ostream& out) {
+    out << "WARNING: ";
+    return out;
+  }
+
+  std::ostream& io::error(std::ostream& out) {
+    out << "ERROR: ";
+    return out;
+  }
+
+  std::ostream& io::verbose(std::ostream& out) {
+    out << "VERBOSE: ";
+    return out;
+  }
+
+  std::ostream& io::tab(std::ostream& out) {
+    out << '\t';
+    return out;
+  }
+
+  std::ostream& io::vtab(std::ostream& out) {
+    out << '\v';
+    return out;
+  }
+
+  std::ostream& io::page_break(std::ostream& out) {
+    out << '\f';
+    return out;
+  }
+
+  std::ostream& io::left(std::ostream& out) {
+    out.setf(std::ios::left, std::ios::adjustfield);
+    return out;
+  }
+
+  std::ostream& io::right(std::ostream& out) {
+    out.setf(std::ios::right, std::ios::adjustfield);
+    return out;
+  }
+
+  std::ostream& io::internal(std::ostream& out) {
+    out.setf(std::ios::internal, std::ios::adjustfield);
+    return out;
+  }
+
+  std::ostream& io::showbase(std::ostream& out) {
+    out.setf(std::ios::showbase);
+    return out;
+  }
+
+  std::string io::to_binary(const uint32_t& val, bool show_all) {
+    std::ostringstream oss;
+    size_t nbits = sizeof(val) * 8;
+    oss << '(';
+    bool start = false;
+    for (int i = (nbits - 1); i >= 0; i--) {
+      bool abit;
+      abit = (val >> i) & 0x1;
+      if (!start & abit) start = true;
+      if (!show_all && !abit && !start) continue;
+      oss << abit;
+    }
+    oss << ')';
+    return oss.str();
+  }
 
 } // namespace datatools
