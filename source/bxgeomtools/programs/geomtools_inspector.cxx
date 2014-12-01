@@ -1,6 +1,6 @@
 // geomtools_inspector.cxx
 
-// Ourselves
+// Ourselves:
 #include <geomtools/geomtools.h>
 
 // Standard libraries:
@@ -10,33 +10,31 @@
 #include <exception>
 #include <vector>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
 #if GEOMTOOLS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
-
 #if GEOMTOOLS_WITH_READLINE == 1
 #include <readline/readline.h>
 #include <readline/history.h>
-//#include <curses.h>
-//#include <term.h>
+// #include <curses.h>
+// #include <term.h>
 #endif // GEOMTOOLS_WITH_READLINE
-
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/datatools.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/kernel.h>
-
-// - materials:
+#include <datatools/configuration/io.h>
+// - Bayeux/materials:
 #include <materials/materials.h>
 
-// - geomtools:
+// This project:
 #include <geomtools/version.h>
 #include <geomtools/geomtools_driver.h>
 
@@ -119,14 +117,20 @@ int main(int argc_, char ** argv_)
        )
       ;
 
+    // Preprocessor for command line arguments:
+    unsigned int vpp_flags = 0;
+    // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_TRACE;
+    vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_REMOVE_QUOTES;
+    datatools::configuration::variant_preprocessor vpp(vpp_flags);
+    std::vector<std::string> preprocessed_arguments;
+    vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
+
     po::positional_options_description args;
-    //args.add("manager-config", -1);
 
     po::variables_map vm;
     po::parsed_options parsed =
-      po::command_line_parser(argc_, argv_)
+      po::command_line_parser(preprocessed_arguments)
       .options(opts)
-      //.positional(args) // Not used here.
       .allow_unregistered()
       .run();
     GDP_argv = po::collect_unrecognized(parsed.options,
@@ -139,7 +143,7 @@ int main(int argc_, char ** argv_)
 
 #if GEOMTOOLS_WITH_READLINE == 1
     //if (! without_readline) {
-      using_history (); // use readline library
+      using_history(); // use readline library
       if (boost::filesystem::exists(history_filename)) {
         int error = read_history(history_filename.c_str());
         if (error) {
@@ -404,8 +408,9 @@ void print_splash(std::ostream & out_)
        << "\tG E O M T O O L S    I N S P E C T O R         \n"
        << "\tVersion " << GEOMTOOLS_LIB_VERSION << "        \n"
        << "                                                 \n"
-       << "\tCopyright (C) 2009-2013                        \n"
-       << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon and Ben Morgan \n"
+       << "\tCopyright (C) 2009-2014                        \n"
+       << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon, \n"
+       << "\tBen Morgan and Arnaud Chapon                   \n"
        << "                                                 \n"
        << "\timmediate help: type \"help\"                  \n"
        << "\tquit:           type \"quit\"                  \n";

@@ -3,17 +3,17 @@
 // Ourselves:
 #include <geomtools/geomtools_driver.h>
 
-// Standard Library
+// Standard Library:
 
-// Third party
+// Third party:
+// - Boost:
 #include <boost/foreach.hpp>
-
-// Datatools
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/library_loader.h>
 #include <datatools/exception.h>
 
-// Geomtools
+// This project:
 #include <geomtools/model_factory.h>
 #include <geomtools/manager.h>
 #include <geomtools/id_mgr.h>
@@ -27,10 +27,10 @@
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-//#if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
-//#include <TGeoManager.h>
-//#include <TBrowser.h>
-//#endif // GEOMTOOLS_WITH_ROOT_DISPLAY
+// #if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
+// #include <TGeoManager.h>
+// #include <TBrowser.h>
+// #endif // GEOMTOOLS_WITH_ROOT_DISPLAY
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 std::string get_drawer_view (const std::string & option_);
