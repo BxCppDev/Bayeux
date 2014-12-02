@@ -24,6 +24,7 @@
 
 // Standard library:
 #include <sstream>
+#include <set>
 
 // This project:
 #include <datatools/exception.h>
@@ -55,14 +56,15 @@ namespace datatools {
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is not initialized!");
       _initialized_ = false;
-      _set_default();
+      _ranked_parameters_.clear();
+      _parameters_.clear();
       this->enriched_base::clear();
+      _set_default();
       return;
     }
 
     void variant_model::_set_default()
     {
-      _parameters_.clear();
       return;
     }
 
@@ -80,6 +82,33 @@ namespace datatools {
     const std::string & variant_model::get_documentation() const
     {
       return _documentation_;
+    }
+
+    bool variant_model::is_ranked_parameter(const std::string & parameter_name_) const
+    {
+      if (_ranked_parameters_.find(parameter_name_) != _ranked_parameters_.end()) {
+        return true;
+      }
+      return false;
+    }
+
+    void variant_model::set_parameter_rank(const std::string & parameter_name_, int rank_)
+    {
+      DT_THROW_IF(!has_parameter(parameter_name_), std::logic_error,
+                  "No parameter with name '" << parameter_name_ << "'!");
+      DT_THROW_IF(rank_ <0, std::domain_error,
+                  "Invalid rank for parameter named '" << parameter_name_ << "'!");
+      _ranked_parameters_[parameter_name_] = rank_;
+      return;
+    }
+
+    int variant_model::get_parameter_rank(const std::string & parameter_name_) const
+    {
+      ranked_parameter_dict_type::const_iterator found = _ranked_parameters_.find(parameter_name_);
+      if (found != _ranked_parameters_.end()) {
+        return found->second;
+      }
+      return -1;
     }
 
     bool variant_model::has_parameter(const std::string & parameter_name_) const
@@ -201,8 +230,10 @@ namespace datatools {
        */
       if (config_.has_key("parameters")) {
         std::vector<std::string> par_names;
+        std::set<int> ranks;
         config_.fetch("parameters", par_names);
         for (int i = 0; i < (int) par_names.size(); i++) {
+          int par_rank = i;
           const std::string & par_name = par_names[i];
           DT_THROW_IF(has_parameter(par_name), std::logic_error,
                       "Parameter '" << par_name << "' is already used!");
@@ -232,12 +263,29 @@ namespace datatools {
           if (par_occ_def.empty()) {
             par_occ_def = "single";
           }
+          std::ostringstream par_rank_ss;
+          par_rank_ss << "parameters." << par_name << ".rank";
+          if (config_.has_key(par_rank_ss.str())) {
+            par_rank = config_.fetch_integer(par_rank_ss.str());
+          }
+          DT_THROW_IF (par_rank < 0, std::logic_error, "Invalid rank for parameter '" << par_name << "'!");
+          DT_THROW_IF (ranks.count(par_rank) > 0, std::logic_error, "Rank '" << par_rank << "' for parameter '" << par_name << "' is already used!");
+
           add_parameter(par_name, par_item.get_parameter_handle(), par_desc, par_occ_def);
+          if (par_rank >= 0) {
+            set_parameter_rank(par_name, par_rank);
+          }
+          ranks.insert(par_rank);
         }
       }
 
       _initialized_ = true;
       return;
+    }
+
+    const variant_model::ranked_parameter_dict_type & variant_model::get_ranked_parameters() const
+    {
+      return _ranked_parameters_;
     }
 
     const variant_model::parameter_dict_type & variant_model::get_parameters() const

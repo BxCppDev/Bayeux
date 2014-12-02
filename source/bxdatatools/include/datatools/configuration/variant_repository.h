@@ -68,7 +68,11 @@ namespace datatools {
         bool is_embedded() const;
         bool is_valid() const;
         void set_external_registry(variant_registry &);
+        void set_rank(int);
+        int get_rank() const;
+        bool has_rank() const;
       private:
+        int _rank_;
         boost::shared_ptr<variant_registry_manager> _embedded_manager_; //!< Embedded registry factory/manager
         boost::shared_ptr<variant_registry> _embedded_registry_; //!< Embedded registry
         variant_registry                  * _external_registry_; //!< Handle to an external registry

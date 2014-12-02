@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <map>
 #include <string>
+#include <cstring>
+#include <clocale>
 
 // Ourselves:
 #include <datatools/kernel.h>
@@ -24,10 +26,12 @@
 #include <datatools/version.h>
 #include <datatools/command_utils.h>
 #include <datatools/utils.h>
+#include <datatools/logger.h>
 
 #if DATATOOLS_WITH_QT_GUI == 1
 #include <QStyleFactory>
 #include <QApplication>
+#include <datatools/qt/interface.h>
 #include <datatools/configuration/ui/variant_repository_dialog.h>
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
@@ -36,10 +40,43 @@ namespace datatools {
   // static
   kernel * kernel::_instance_ = 0;
 
-  // basic construction
-  void kernel::_construct_()
+#if DATATOOLS_WITH_QT_GUI == 1
+  // static
+  bool kernel::is_qt_gui_activated() const
   {
-    _initialized_ = false;
+    return _activate_qt_gui_;
+  }
+#endif // DATATOOLS_WITH_QT_GUI == 1
+
+  int kernel::get_argc() const
+  {
+    return _argc_;
+  }
+
+  char ** kernel::get_argv() const
+  {
+    return _argv_;
+  }
+
+  char * kernel::get_argv(int i_) const
+  {
+    DT_THROW_IF(i_ < 0 || i_ >= _argc_, std::range_error,
+                "Invalid command line argument index!");
+    return _argv_[i_];
+  }
+
+  bool kernel::is_library_info_register_activated() const
+  {
+    return _activate_library_info_register_;
+  }
+
+  bool kernel::is_variant_repository_activated() const
+  {
+    return _activate_variant_repository_;
+  }
+
+  void kernel::_set_defaults()
+  {
     _logging_ = datatools::logger::PRIO_FATAL;
     {
       char * e = getenv("DATATOOLS_KERNEL_LOGGING");
@@ -48,14 +85,49 @@ namespace datatools {
         datatools::logger::priority p = datatools::logger::get_priority(_params_.logging_label);
         if (p != datatools::logger::PRIO_UNDEFINED) {
           // Set the kernel logging priority threshold:
-           _logging_ = p;
+          _logging_ = p;
         }
       }
     }
-    DT_THROW_IF(_instance_, std::runtime_error,
-                "An instance of the datatools kernel already exists !");
+
+    _locale_category_ = "";
+    {
+      std::string lc;
+      char * e = getenv("DATATOOLS_KERNEL_LC");
+      if (e) {
+        lc = e;
+      }
+      if (lc.empty()) {
+        lc  = "C";
+      }
+      set_locale_category(lc);
+    }
+
+    _argc_ = 0;
+    _argv_ = NULL;
+    _activate_variant_repository_ = true;
+    _activate_library_info_register_ = true;
+#if DATATOOLS_WITH_QT_GUI == 1
+    _activate_qt_gui_ = true;
+    {
+      char * e = getenv("DATATOOLS_KERNEL_NO_QT_GUI");
+      if (e) {
+        std::string dknoqtgui = e;
+        _activate_qt_gui_ = false;
+      }
+    }
+#endif // DATATOOLS_WITH_QT_GUI == 1
     _activate_library_info_register_ = true;
     _activate_variant_repository_ = true;
+    return;
+  }
+
+  // basic construction
+  void kernel::_construct_()
+  {
+    _set_defaults();
+    DT_THROW_IF(_instance_, std::runtime_error,
+                "An instance of the datatools kernel already exists !");
     DT_LOG_TRACE(_logging_, "Kernel is now constructed.");
     _instance_ = this;
     return;
@@ -63,12 +135,14 @@ namespace datatools {
 
   kernel::kernel()
   {
+    _initialized_ = false;
     _construct_();
     return;
   }
 
   kernel::kernel(int argc_, char * argv_[])
   {
+    _initialized_ = false;
     _construct_();
     initialize(argc_, argv_);
     return;
@@ -112,6 +186,13 @@ namespace datatools {
        "Print splash screen at datatools kernel loading.            \n"
        "Example :                                                   \n"
        "  --datatools::splash                                         "
+       )
+
+      ("datatools::locale-category",
+       po::value<std::string>(&params_.locale_category),
+       "Set the datatools kernel's local category.              \n"
+       "Example :                                               \n"
+       "  --datatools::locale-category=\"C\"                      "
        )
 
       ("datatools::logging",
@@ -204,31 +285,31 @@ namespace datatools {
        )
 
 #if DATATOOLS_WITH_QT_GUI == 1
-      ("datatools::inhibit-gui",
-       po::value<bool>(&params_.inhibit_gui)
+      ("datatools::inhibit-qt-gui",
+       po::value<bool>(&params_.inhibit_qt_gui)
        ->zero_tokens()
        ->default_value(false),
-       "Inhibit GUI:                                                        \n"
+       "Inhibit Qt GUI:                                                     \n"
        "Example :                                                           \n"
-       "   --datatools::inhibit-gui                                           "
+       "   --datatools::inhibit-qt-gui                                        "
        )
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
 #if DATATOOLS_WITH_QT_GUI == 1
-      ("datatools::variant-gui",
-       po::value<bool>(&params_.variant_gui)
+      ("datatools::variant-qt-gui",
+       po::value<bool>(&params_.variant_qt_gui)
        ->zero_tokens()
        ->default_value(false),
-       "Display the variant GUI dialog:                                     \n"
+       "Display the variant Qt GUI dialog:                                  \n"
        "Example :                                                           \n"
-       "   --datatools::variant-gui                                           "
+       "   --datatools::variant-qt-gui                                        "
        )
 
-      ("datatools::variant-gui-style",
-       po::value<std::string>(&params_.variant_gui_style),
-       "Set the style of variant GUI dialog:                                \n"
+      ("datatools::variant-qt-gui-style",
+       po::value<std::string>(&params_.variant_qt_gui_style),
+       "Set the style of variant Qt GUI dialog:                             \n"
        "Example :                                                           \n"
-       "   --datatools::variant-gui-style=\"plastique\"                       "
+       "   --datatools::variant-qt-gui-style=\"plastique\"                    "
        )
        //      ->default_value(std::string("plastique")),
 #endif // DATATOOLS_WITH_QT_GUI == 1
@@ -264,7 +345,9 @@ namespace datatools {
 
     out_ << indent_ << "Inhibit variant repository: " << inhibit_variant_repository << std::endl;
 
-    out_ << indent_ << "Unrecognized args: '" << unrecognized_args.size() << "'"  << std::endl;
+#if DATATOOLS_WITH_QT_GUI == 1
+    out_ << indent_ << "Inhibit Qt GUI: " << inhibit_qt_gui << std::endl;
+#endif // DATATOOLS_WITH_QT_GUI == 1
 
     out_ << indent_ << "Resource paths: '" << resource_paths.size() << "'"  << std::endl;
 
@@ -281,8 +364,8 @@ namespace datatools {
     out_ << indent_ << "Splash: " << splash << std::endl;
 
 #if DATATOOLS_WITH_QT_GUI == 1
-    out_ << indent_ << "Variant GUI: " << variant_gui << std::endl;
-    out_ << indent_ << "Variant GUI style: '" << variant_gui_style << "'" << std::endl;
+    out_ << indent_ << "Variant Qt GUI: " << variant_qt_gui << std::endl;
+    out_ << indent_ << "Variant Qt GUI style: '" << variant_qt_gui_style << "'" << std::endl;
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
     return;
@@ -299,6 +382,7 @@ namespace datatools {
   {
     help = false;
     logging_label = "fatal";
+    locale_category.clear();
     library_info_logging_label = "fatal";
     inhibit_library_info_register = false;
     inhibit_variant_repository = false;
@@ -311,9 +395,9 @@ namespace datatools {
     variant_store.clear();
     splash = false;
 #if DATATOOLS_WITH_QT_GUI == 1
-    inhibit_gui = false;
-    variant_gui = false;
-    variant_gui_style = "plastique";
+    inhibit_qt_gui = false;
+    variant_qt_gui = false;
+    variant_qt_gui_style = "plastique";
 #endif // DATATOOLS_WITH_QT_GUI == 1
     return;
   }
@@ -340,9 +424,9 @@ namespace datatools {
     out_ << "\n";
     const datatools::kernel & kern = datatools::kernel::const_instance();
     out_ << "   Library info register : " << (kern.has_library_info_register()?
-                                              "activated" : "NA") << "\n";
+                                              "activated" : "no") << "\n";
     out_ << "   Configuration variant repository : " << (kern.has_variant_repository()?
-                                              "activated" : "NA") << "\n";
+                                              "activated" : "no") << "\n";
     if (kern.has_library_info_register()) {
       // On board registered libraries...
     }
@@ -353,9 +437,39 @@ namespace datatools {
     return;
   }
 
+  bool kernel::has_locale_category() const
+  {
+    return !_locale_category_.empty();
+  }
+
+  const std::string & kernel::get_locale_category() const
+  {
+    return _locale_category_;
+  }
+
+  void kernel::set_locale_category(const std::string & lc_)
+  {
+    _locale_category_ = lc_;
+    if (! _locale_category_.empty()) {
+      // See also: http://bastian.rieck.ru/blog/posts/2013/qapplication_and_the_locale/
+      std::setlocale(LC_ALL, _locale_category_.c_str());
+      std::setlocale(LC_NUMERIC, _locale_category_.c_str());
+      setenv("LANG", _locale_category_.c_str(), 1);
+      setenv("LC_NUMERIC", _locale_category_.c_str(), 1);
+      setenv("LC_ALL", _locale_category_.c_str(), 1);
+    } else {
+      std::setlocale(LC_ALL, "");
+    }
+    return;
+  }
+
   void kernel::_initialize()
   {
     DT_LOG_TRACE_ENTERING(_logging_);
+
+    if (! _params_.locale_category.empty()) {
+      set_locale_category(_params_.locale_category);
+    }
 
     // Set the kernel logging priority threshold:
     this->_logging_ = datatools::logger::get_priority(_params_.logging_label);
@@ -369,6 +483,13 @@ namespace datatools {
       DT_LOG_TRACE(_logging_, "Inhibit the variant repository...");
       this->_activate_variant_repository_ = false;
     }
+
+#if DATATOOLS_WITH_QT_GUI == 1
+    if (_params_.inhibit_qt_gui) {
+      DT_LOG_TRACE(_logging_, "Inhibit the Qt based GUI...");
+      this->_activate_qt_gui_ = false;
+    }
+#endif // DATATOOLS_WITH_QT_GUI == 1
 
     // Splash some fancy screen:
     if (_params_.splash) {
@@ -395,12 +516,25 @@ namespace datatools {
     if (_library_info_register_) {
       _library_info_register_.reset(0);
     }
-    DT_LOG_TRACE(_logging_, "Kernel's library info registered is now destroyed.");
+    DT_LOG_TRACE(_logging_, "Kernel's library info register is now destroyed.");
+
+    _unrecognized_args_.clear();
+    for (int i = 0; i < _argc_; i++) {
+      if (_argv_[i]) {
+        free(_argv_[i]);
+      }
+    }
+    if (_argv_) {
+      free(_argv_);
+    }
+    _application_name_.clear();
+    _locale_category_.clear();
+
+    // // Restore the local environment:
+    // set_locale_category("");
 
     // Revert to default idle status:
-    _activate_variant_repository_ = true;
-    _activate_library_info_register_ = true;
-    _application_name_.clear();
+    _set_defaults();
 
     DT_LOG_TRACE_EXITING(_logging_);
     return;
@@ -514,34 +648,33 @@ namespace datatools {
     void operator()()
     {
       // See also: http://qt-project.org/wiki/boost_thread_qt_application
-      // std::cerr << "DEVEL: run_variant_repository_gui::operator(): Entering..." << std::endl;
+      //DT_LOG_TRACE_ENTERING(_logging_);
 
-      QApplication * dtk_app = 0;
-      bool master_qApp = false;
-      if (! qApp) {
-        master_qApp = true;
-        QApplication::setStyle(QStyleFactory::create(QString::fromStdString(_gui_style_)));
-        int argc = 1;
-        const char * argv[] = { "Bayeux - Configuration Variant Repository Dialog" };
-        dtk_app = new QApplication(argc, (char**) argv);
-        DT_THROW_IF(!qApp, std::runtime_error,
-                     "Cannot initialize Qt!");
-      } else {
-        std::cerr << "DEVEL: run_variant_repository_gui::operator(): "
-                  << "Qt already initialized..."
-                  << std::endl;
+      datatools::qt::interface::instance();
+      // QApplication::setStyle(QStyleFactory::create(QString::fromStdString(_gui_style_)));
+      const kernel & krnl = kernel::const_instance();
+      datatools::qt::interface & iqt = datatools::qt::interface::instance(krnl.get_argc(),
+                                                                          krnl.get_argv(),
+                                                                          krnl.get_application_name().c_str());
+      DT_THROW_IF(!iqt.is_initialized(),
+                  std::runtime_error,
+                  "Qt is not initialized!");
+      if (krnl.has_locale_category()) {
+        std::setlocale(LC_NUMERIC, krnl.get_locale_category().c_str());
       }
-      if (qApp) {
-        datatools::configuration::ui::variant_repository_dialog * vrep_dialog
-          = new datatools::configuration::ui::variant_repository_dialog(*_vrep_);
-        vrep_dialog->setAttribute(Qt::WA_DeleteOnClose);
-        vrep_dialog->show();
-        int ret = qApp->exec();
-      }
-      if (master_qApp) {
-        // delete dtk_app;
-      }
-      std::cerr << "DEVEL: run_variant_repository_gui::operator(): Exiting." << std::endl;
+      DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Qt is initialized...");
+      datatools::configuration::ui::variant_repository_dialog * vrep_dialog
+        = new datatools::configuration::ui::variant_repository_dialog(*_vrep_);
+      //vrep_dialog->setAttribute(Qt::WA_DeleteOnClose);
+      int ret = vrep_dialog->exec();
+      // if (ret == QDialog::Accepted) {
+      //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Accepted");
+      // } else  {
+      //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Rejected");
+      // }
+      // DT_LOG_TRACE_EXITING(_logging_);
+      //vrep_dialog->close();
+      delete vrep_dialog;
       return;
     }
     ::datatools::configuration::variant_repository * _vrep_; //!< Handle to the variant repository
@@ -689,25 +822,25 @@ namespace datatools {
         }
       }
 #if DATATOOLS_WITH_QT_GUI == 1
-        if (!_params_.inhibit_gui) {
+        if (!_params_.inhibit_qt_gui) {
           //
         }
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
 #if DATATOOLS_WITH_QT_GUI == 1
-      if (_params_.variant_gui) {
-        if (_params_.inhibit_gui) {
-          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "GUI is inhibited!");
-        } else {
+      if (_params_.variant_qt_gui) {
+        if (_activate_qt_gui_) {
           bool save_locked = _variant_repository_->is_locked();
           if (!save_locked) {
             _variant_repository_->lock();
           }
-          run_variant_repository_gui RVRG(*_variant_repository_, _params_.variant_gui_style);
+          run_variant_repository_gui RVRG(*_variant_repository_, _params_.variant_qt_gui_style);
           RVRG();
           if (!save_locked) {
             _variant_repository_->unlock();
           }
+        } else{
+          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "GUI is inhibited!");
         }
       }
 #endif // DATATOOLS_WITH_QT_GUI == 1
@@ -733,8 +866,9 @@ namespace datatools {
       _params_.variant_load.clear();
       _params_.variant_sets.clear();
 #if DATATOOLS_WITH_QT_GUI == 1
-      _params_.variant_gui = false;
-      _params_.variant_gui_style.clear();
+      _params_.inhibit_qt_gui = false;
+      _params_.variant_qt_gui = false;
+      _params_.variant_qt_gui_style.clear();
 #endif // DATATOOLS_WITH_QT_GUI == 1
       _params_.variant_store.clear();
 
@@ -751,6 +885,15 @@ namespace datatools {
     DT_LOG_TRACE_ENTERING(_logging_);
     if (_initialized_) return;
 
+    // Local copy of the command line arguments:
+    _argc_ = argc_;
+    _argv_ = (char **) malloc( (argc_ + 1) * sizeof(char *));
+    for (int i = 0; i < argc_; i++) {
+      _argv_[i] = (char *) malloc((std::strlen(argv_[i]) + 2) * sizeof(char));
+      std::strcpy(_argv_[i], argv_[i]);
+    }
+    _argv_[argc_] = '\0';
+
     // Fetch the application name:
     if ( argc_ >= 1 ) {
       _application_name_= argv_[0];
@@ -766,11 +909,10 @@ namespace datatools {
     po::parsed_options parsed =
       po::command_line_parser(argc_, argv_)
       .options(opts) // Only options to be parsed.
-      //.positional(args) // This crashes so we don't use it here !
       .allow_unregistered()
       .run();
-    _params_.unrecognized_args = po::collect_unrecognized(parsed.options,
-                                                          po::include_positional);
+    _unrecognized_args_ = po::collect_unrecognized(parsed.options,
+                                                   po::include_positional);
     po::store(parsed, vm);
     po::notify(vm);
     if (_params_.help) {
@@ -781,6 +923,9 @@ namespace datatools {
     _initialize();
 
     _initialized_ = true;
+    if (_logging_ == datatools::logger::PRIO_TRACE) {
+      this->tree_dump(std::cerr, "Kernel: ", "trace: ");
+    }
     DT_LOG_TRACE_EXITING(_logging_);
     return;
   }
@@ -870,16 +1015,36 @@ namespace datatools {
          << "Initialized   : " << _initialized_ << std::endl;
 
     out_ << indent << i_tree_dumpable::tag
-         << "Application   : '" << _application_name_ << "'" << std::endl;
-
-    out_ << indent << i_tree_dumpable::tag
          << "Logging   : '"
          << datatools::logger::get_priority_label(_logging_) << "'"
          << std::endl;
 
     out_ << indent << i_tree_dumpable::tag
-         << "Library info register : '"
-         << (_activate_library_info_register_? "activated" : "not activated") << "'" <<std::endl;
+         << "Locale category : '" << _locale_category_ << "'" << std::endl;
+
+    out_ << indent << i_tree_dumpable::tag
+         << "Application name  : '" << _application_name_ << "'" << std::endl;
+
+   out_ << indent << i_tree_dumpable::tag
+        << "Command line argument count : " << _argc_  << std::endl;
+
+   out_ << indent << i_tree_dumpable::tag
+        << "Command line arguments : ";
+   if (_argc_ == 0) out_ << "<none>";
+   out_ << std::endl;
+   for (int i = 0; i < _argc_; i++) {
+     out_ << indent << i_tree_dumpable::skip_tag;
+     if (i < _argc_ - 1) {
+       out_ << i_tree_dumpable::tag;
+     } else {
+       out_ << i_tree_dumpable::last_tag;
+     }
+     out_ << "Argument #" << i << " : '" << _argv_[i] << "'" << std::endl;
+   }
+
+    out_ << indent << i_tree_dumpable::tag
+         << "Library info register : "
+         << (_activate_library_info_register_ ? "<activated>" : "<not activated>") << std::endl;
     if (has_library_info_register()) {
       std::ostringstream indent2;
       indent2 << indent << i_tree_dumpable::skip_tag;
@@ -887,16 +1052,22 @@ namespace datatools {
     }
 
     out_ << indent << i_tree_dumpable::tag
-         << "Configuration variant repository : '"
-         << (_activate_variant_repository_? "activated" : "not activated") << "'" <<std::endl;
+         << "Configuration variant repository : "
+         << (_activate_variant_repository_ ? "<activated>" : "<not activated>") << std::endl;
     if (has_variant_repository()) {
       std::ostringstream indent2;
       indent2 << indent << i_tree_dumpable::skip_tag;
       get_variant_repository().tree_dump(out_, "", indent2.str());
     }
 
+#if DATATOOLS_WITH_QT_GUI == 1
+    out_ << indent << i_tree_dumpable::tag
+         << "Qt GUI : "
+         << (_activate_qt_gui_ ? "<activated>" : "<not activated>") << std::endl;
+#endif // DATATOOLS_WITH_QT_GUI == 1
+
     out_ << indent << i_tree_dumpable::inherit_tag(inherit_)
-         << "Kernel instance at : " << _instance_ << std::endl;
+         << "Kernel singleton instance at : " << _instance_ << std::endl;
 
     return;
   }

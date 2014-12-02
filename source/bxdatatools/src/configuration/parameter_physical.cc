@@ -46,6 +46,7 @@ namespace datatools {
       return;
     }
 
+
     void parameter_physical::reset()
     {
       _model_.reset();

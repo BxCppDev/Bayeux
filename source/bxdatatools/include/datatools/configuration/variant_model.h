@@ -63,6 +63,7 @@ namespace datatools {
 
       /// Dictionary of parameter physicals
       typedef std::map<std::string, parameter_physical> parameter_dict_type;
+      typedef std::map<std::string, int> ranked_parameter_dict_type;
 
       /// Default constructor
       variant_model();
@@ -90,6 +91,15 @@ namespace datatools {
 
       /// Remove parameter
       void remove_parameter(const std::string & parameter_name_);
+
+      // Check ranked parameter
+      bool is_ranked_parameter(const std::string & parameter_name_) const;
+
+      /// Return the rank of a parameter
+      int get_parameter_rank(const std::string & parameter_name_) const;
+
+      /// Set the rank of a parameter
+      void set_parameter_rank(const std::string & parameter_name_, int rank_);
 
       /// Return a description string associated to a given parameter
       const std::string & get_parameter_description(const std::string & parameter_name_) const;
@@ -127,6 +137,9 @@ namespace datatools {
       /// Return the dictionary of children parameters
       const parameter_dict_type & get_parameters() const;
 
+      /// Return the dictionary of ranked parameters
+      const ranked_parameter_dict_type & get_ranked_parameters() const;
+
       /// OCD support
       static void init_ocd(datatools::object_configuration_description &);
 
@@ -140,6 +153,7 @@ namespace datatools {
       bool                _initialized_;   //!< Initialization flag
       std::string         _documentation_; //!< Documentation
       parameter_dict_type _parameters_;    //!< Dictionary of children parameters
+      ranked_parameter_dict_type _ranked_parameters_; //!< Ranked dictionary of parameters
 
     };
 

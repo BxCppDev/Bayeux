@@ -29,6 +29,7 @@
 
 // This project:
 #include <datatools/exception.h>
+#include <datatools/logger.h>
 #include <datatools/configuration/io.h>
 #include <datatools/configuration/ui/variant_repository_viewer.h>
 #include <datatools/configuration/variant_repository.h>
@@ -81,6 +82,7 @@ namespace datatools {
 
       variant_repository_dialog::~variant_repository_dialog()
       {
+        DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Destruction.");
         return;
       }
 

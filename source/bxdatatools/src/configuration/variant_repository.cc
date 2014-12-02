@@ -49,6 +49,7 @@ namespace datatools {
 
     variant_repository::registry_entry::registry_entry()
     {
+      _rank_ = -1;
       _external_registry_ = 0;
       return;
     }
@@ -95,7 +96,24 @@ namespace datatools {
       if (_embedded_manager_) {
         _embedded_manager_.reset();
       }
+      _rank_ = -1;
       return;
+    }
+
+    void variant_repository::registry_entry::set_rank(int rank_)
+    {
+      _rank_ = rank_;
+      return;
+    }
+
+    int variant_repository::registry_entry::get_rank() const
+    {
+      return _rank_;
+    }
+
+    bool variant_repository::registry_entry::has_rank() const
+    {
+      return _rank_ >= 0;
     }
 
     variant_repository::variant_repository()
