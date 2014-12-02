@@ -572,7 +572,6 @@ namespace datatools {
         std::vector<std::string> path_tokens_2;
         boost::split(path_tokens_1, vps1.param_key, boost::algorithm::is_any_of("/"));
         boost::split(path_tokens_2, vps2.param_key, boost::algorithm::is_any_of("/"));
-        int i = 0;
         // Comparison rules:
         //
         //  foo/bar  -> foo + bar (2)
@@ -582,6 +581,7 @@ namespace datatools {
         //  foo/bar  -> foo + bar (1)
         //  foo/foo  -> foo + foo (2)
         //
+        size_t i = 0;
         while (1) {
           if (i >= path_tokens_1.size() || i >= path_tokens_2.size()) {
             break;
