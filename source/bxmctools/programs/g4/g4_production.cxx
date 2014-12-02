@@ -1,4 +1,4 @@
-/// \file mctools/g4_production.cxx
+/// \file g4_production.cxx
 /* Description :
  *
  *   The main mctools Geant4 simulation program.
@@ -21,13 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
-// Ourselves
+// Ourselves:
 #include <mctools/mctools.h>
 
-// Standard library
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -35,8 +34,8 @@
 #include <exception>
 #include <vector>
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/foreach.hpp>
 #include <boost/program_options.hpp>
 
@@ -44,7 +43,7 @@
 // - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
-// - Bayeux/datatools
+// - Bayeux/datatools:
 #include <datatools/datatools.h>
 #include <datatools/datatools_config.h>
 #include <datatools/utils.h>
@@ -54,14 +53,20 @@
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/kernel.h>
-// - Bayeux/mygsl
+#include <datatools/configuration/io.h>
+// - Bayeux/mygsl:
 #include <mygsl/random_utils.h>
-// - Bayeux/geomtools
+// - Bayeux/geomtools:
 #include <geomtools/geomtools.h>
-// - Bayeux/mctools
+// - Bayeux/mctools:
 #include <mctools/version.h>
 #include <mctools/g4/manager.h>
 #include <mctools/g4/manager_parameters.h>
+
+#if DATATOOLS_WITH_QT_GUI == 1
+#include <QStyleFactory>
+#include <QApplication>
+#endif // DATATOOLS_WITH_QT_GUI == 1
 
 // For Boost I/O :
 // Some pre-processor guard about Boost I/O usage and linkage :
@@ -70,7 +75,7 @@
 #include <genbb_help/bio_guard.h>
 #include <mctools/bio_guard.h>
 
-// User interface for this app:
+/// \brief User interface of the (bx)g4_production application:
 struct ui {
 
   static
@@ -90,40 +95,57 @@ struct ui {
                     mctools::g4::manager_parameters & params_);
 
   static
-  void print_examples(std::ostream      & a_out   = std::clog,
-                      const std::string & a_name  = "g4_production",
-                      const std::string & a_title = "");
+  void print_examples(std::ostream      & out_   = std::clog,
+                      const std::string & name_  = "bxg4_production",
+                      const std::string & title_ = "");
 
 };
 
 int main(int argc_, char ** argv_)
 {
+  int error_code = EXIT_SUCCESS;
+  datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+// #if DATATOOLS_WITH_QT_GUI == 1
+//   std::cerr << "DEVEL: Setup QApplication..." << std::endl;
+//   QApplication::setStyle(QStyleFactory::create(QString::fromStdString("plastique")));
+//   QApplication * app = new QApplication(argc_, argv_);
+// #endif
 #if MCTOOLS_STANDALONE == 1
   MCTOOLS_INIT_MAIN(argc_, argv_);
 #else
   BAYEUX_INIT_MAIN(argc_, argv_);
 #endif
-
-  int error_code = EXIT_SUCCESS;
-  datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
-
+  // app->exec();
+  // std::cerr << "DEVEL: Setup QApplication done." << std::endl;
+// #if DATATOOLS_WITH_QT_GUI == 1
+//   if (app) {
+//     delete app;
+//   }
+// #endif
   try {
-    // DT_LOG_NOTICE(logging, "mctools Geant4 program for simulation production.");
 
     // Configuration parameters for the G4 manager:
     mctools::g4::manager_parameters params;
     params.set_defaults();
 
+    // Preprocessor for command line arguments:
+    unsigned int vpp_flags = 0;
+    // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_TRACE;
+    vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_REMOVE_QUOTES;
+    datatools::configuration::variant_preprocessor vpp(vpp_flags);
+    std::vector<std::string> preprocessed_arguments;
+    vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
+
     // Shortcut for Boost/program_options namespace :
     namespace po = boost::program_options;
 
-    // Describe command line switches(-X, --XXX...) :
+    // Describe command line switches :
     po::options_description opts("Allowed options");
     ui::build_opts(opts, params);
 
     po::variables_map vm;
     po::parsed_options parsed =
-      po::command_line_parser(argc_, argv_)
+      po::command_line_parser(preprocessed_arguments)
       .options(opts)
       .allow_unregistered()
       .run();
@@ -204,7 +226,9 @@ int main(int argc_, char ** argv_)
 
       // Explicitely terminate the simulation manager:
       DT_LOG_NOTICE(logging, "Terminate the simulation manager...");
-      sim_manager.reset();
+      if (sim_manager.is_initialized()) {
+        sim_manager.reset();
+      }
       DT_LOG_NOTICE(logging, "Simulation manager is terminated.");
     } // Destructor is invoked here.
 
@@ -448,6 +472,7 @@ void ui::process_opts( const boost::program_options::variables_map & vm_,
                        const boost::program_options::options_description & /*opts_*/,
                        mctools::g4::manager_parameters & params_)
 {
+
   // Fetch the opts/args :
 
   if (vm_.count("batch")) {
