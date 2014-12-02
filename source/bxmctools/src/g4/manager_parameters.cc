@@ -12,6 +12,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+// #include <datatools/configuration/io.h>
 // - Bayeux/mygsl:
 #include <mygsl/random_utils.h>
 
@@ -101,8 +102,8 @@ namespace mctools {
     void manager_parameters::setup(const manager_parameters & a_params,
                                    manager & a_manager)
     {
-      /*** Setup ***/
 
+      // Setup:
       DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.vg_seed),
                   std::logic_error,
                   "Invalid vertex generator seed value !");
