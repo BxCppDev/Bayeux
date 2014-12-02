@@ -45,112 +45,112 @@ namespace dpp {
     return label;
   }
 
-  void if_module::set_cut_service_label (const std::string & label_)
+  void if_module::set_cut_service_label(const std::string & label_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is initialized !");
+                "If module '" << get_name() << "' is initialized !");
     _cut_service_label_ = label_;
     return;
   }
 
-  const std::string & if_module::get_cut_service_label () const
+  const std::string & if_module::get_cut_service_label() const
   {
     return _cut_service_label_;
   }
 
-  void if_module::set_condition_cut (const std::string & label_,
-                                     const cuts::cut_handle_type & condition_cut_)
+  void if_module::set_condition_cut(const std::string & label_,
+                                    const cuts::cut_handle_type & condition_cut_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is initialized !");
+                "If module '" << get_name() << "' is initialized !");
     _condition_cut_.label  = label_;
     _condition_cut_.handle = condition_cut_;
     return;
   }
 
-  bool if_module::has_then_status () const
+  bool if_module::has_then_status() const
   {
     return ! (_then_status_ & PROCESS_INVALID);
   }
 
-  bool if_module::has_else_status () const
+  bool if_module::has_else_status() const
   {
     return ! (_else_status_ & PROCESS_INVALID);
   }
 
   void if_module::set_then_status(process_status status_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is initialized !");
+                "If module '" << get_name() << "' is initialized !");
     const process_status status = status_;
     DT_THROW_IF(status != PROCESS_INVALID
                 && status != PROCESS_CONTINUE
                 && status != PROCESS_STOP,
                 std::logic_error,
-                "If module '" << get_name () << "' has invalid *then status* " << status_ << " !");
+                "If module '" << get_name() << "' has invalid *then status* " << status_ << " !");
     _then_status_ = status_;
-    if (! has_else_status () && ! _else_module_.handle) {
+    if (! has_else_status() && ! _else_module_.handle) {
       _else_status_ = PROCESS_STOP;
     }
     return;
   }
 
-  void if_module::set_else_status (process_status status_)
+  void if_module::set_else_status(process_status status_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is initialized !");
+                "If module '" << get_name() << "' is initialized !");
     const process_status status = status_;
     DT_THROW_IF(status != PROCESS_INVALID
                 && status != PROCESS_CONTINUE
                 && status != PROCESS_STOP,
                 std::logic_error,
-                "If module '" << get_name () << "' has invalid *else status* " << status_ << " !");
+                "If module '" << get_name() << "' has invalid *else status* " << status_ << " !");
     _else_status_ = status_;
-    if (! has_then_status () && ! _then_module_.handle) {
+    if (! has_then_status() && ! _then_module_.handle) {
       _then_status_ = PROCESS_STOP;
     }
     return;
   }
 
-  bool if_module::has_then_module () const
+  bool if_module::has_then_module() const
   {
     return _then_module_.handle;
   }
 
-  bool if_module::has_else_module () const
+  bool if_module::has_else_module() const
   {
     return _else_module_.handle;
   }
 
-  void if_module::set_then_module (const module_entry & then_module_)
+  void if_module::set_then_module(const module_entry & then_module_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is initialized !");
+                "If module '" << get_name() << "' is initialized !");
     _then_module_ = then_module_;
-    if (has_then_status ()) {
+    if (has_then_status()) {
       _then_status_ = PROCESS_INVALID;
     }
     return;
   }
 
-  void if_module::set_else_module (const module_entry & else_module_)
+  void if_module::set_else_module(const module_entry & else_module_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is initialized !");
+                "If module '" << get_name() << "' is initialized !");
     _else_module_ = else_module_;
-    if (has_else_status ()) {
+    if (has_else_status()) {
       _else_status_ = PROCESS_INVALID;
     }
     return;
   }
 
-  void if_module::_set_defaults ()
+  void if_module::_set_defaults()
   {
     _cut_service_label_ = "";
     _then_status_ = PROCESS_INVALID;
@@ -164,7 +164,7 @@ namespace dpp {
   if_module::if_module(datatools::logger::priority logging_priority_)
     : base_module(logging_priority_)
   {
-    _set_defaults ();
+    _set_defaults();
     return;
   }
 
@@ -179,132 +179,132 @@ namespace dpp {
                              datatools::service_manager & a_service_manager,
                              dpp::module_handle_dict_type & a_module_dict)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is already initialized ! ");
+                "If module '" << get_name() << "' is already initialized ! ");
     _common_initialize(a_config);
 
-    if (_cut_service_label_.empty ()) {
-      if (a_config.has_key ("cut_service.label")) {
-        std::string label = a_config.fetch_string ("cut_service.label");
-        set_cut_service_label (label);
+    if (_cut_service_label_.empty()) {
+      if (a_config.has_key("cut_service.label")) {
+        std::string label = a_config.fetch_string("cut_service.label");
+        set_cut_service_label(label);
       }
     }
 
     if (! _condition_cut_.handle) {
-      if (_cut_service_label_.empty ()) {
-        set_cut_service_label (default_cut_service_label());
+      if (_cut_service_label_.empty()) {
+        set_cut_service_label(default_cut_service_label());
       }
 
-      bool check = a_service_manager.has (_cut_service_label_)
-        && a_service_manager.is_a<cuts::cut_service> (_cut_service_label_);
+      bool check = a_service_manager.has(_cut_service_label_)
+        && a_service_manager.is_a<cuts::cut_service>(_cut_service_label_);
       DT_THROW_IF(! check,
-                std::logic_error,
-                "If module '" << get_name () << "' can't find any service with label '" << _cut_service_label_
+                  std::logic_error,
+                  "If module '" << get_name() << "' can't find any service with label '" << _cut_service_label_
                   << "' from the service manager ! ");
       cuts::cut_service & the_cut_service
-        = a_service_manager.grab<cuts::cut_service> (_cut_service_label_);
+        = a_service_manager.grab<cuts::cut_service>(_cut_service_label_);
       cuts::cut_manager & the_cut_manager = the_cut_service.grab_cut_manager ();
-      DT_THROW_IF(! a_config.has_key ("condition_cut"),
+      DT_THROW_IF(! a_config.has_key("condition_cut"),
                   std::logic_error,
                   "Missing 'condition_cut' property ! ");
-      std::string cut_name = a_config.fetch_string ("condition_cut");
+      std::string cut_name = a_config.fetch_string("condition_cut");
       cuts::cut_handle_dict_type::iterator found
-        = the_cut_manager.get_cuts ().find (cut_name);
-      DT_THROW_IF(found == the_cut_manager.get_cuts ().end (),
+        = the_cut_manager.get_cuts().find(cut_name);
+      DT_THROW_IF(found == the_cut_manager.get_cuts().end(),
                   std::logic_error,
-                  "If module '" << get_name () << "' can't find any cut named '" << cut_name
+                  "If module '" << get_name() << "' can't find any cut named '" << cut_name
                   << "' from the cut manager ! ");
       _condition_cut_.label  = found->first;
-      _condition_cut_.handle = found->second.grab_initialized_cut_handle ();
+      _condition_cut_.handle = found->second.grab_initialized_cut_handle();
     }
 
     // 2012 FM: add support for enforced 'then/else status' (without associated modules) :
-    if (! has_then_status ()) {
+    if (! has_then_status()) {
       if (a_config.has_key("then_status"))  {
-        std::string then_status = a_config.fetch_string ("then_status");
+        std::string then_status = a_config.fetch_string("then_status");
         if (then_status == "continue") {
-          set_then_status (PROCESS_CONTINUE);
+          set_then_status(PROCESS_CONTINUE);
         } else if (then_status == "stop") {
-          set_then_status (PROCESS_STOP);
+          set_then_status(PROCESS_STOP);
         }
-        DT_THROW_IF(! has_then_status (),
+        DT_THROW_IF(! has_then_status(),
                     std::logic_error,
-                    "If module '" << get_name () << "' has invalid value \'"
+                    "If module '" << get_name() << "' has invalid value '"
                     << then_status << "' for the 'then_status' property ! ");
       }
     }
 
-    if (! has_else_status ()) {
-      if (a_config.has_key ("else_status")) {
-        std::string else_status = a_config.fetch_string ("else_status");
+    if (! has_else_status()) {
+      if (a_config.has_key("else_status")) {
+        std::string else_status = a_config.fetch_string("else_status");
         if (else_status == "continue") {
-          set_else_status (PROCESS_CONTINUE);
+          set_else_status(PROCESS_CONTINUE);
         } else if (else_status == "stop") {
-          set_else_status (PROCESS_STOP);
+          set_else_status(PROCESS_STOP);
         }
-        DT_THROW_IF(! has_else_status (),
+        DT_THROW_IF(! has_else_status(),
                     std::logic_error,
-                    "If module '" << get_name () << "' has invalid value \'"
+                    "If module '" << get_name() << "' has invalid value '"
                     << else_status << "' for the 'else_status' property ! ");
       }
     }
 
     // If no then_status is defined, try to associate a processing module :
-    if (! has_then_status ()) {
+    if (! has_then_status()) {
       if (! _then_module_.handle) {
-        DT_THROW_IF(! a_config.has_key ("then_module"),
+        DT_THROW_IF(! a_config.has_key("then_module"),
                     std::logic_error,
                     "Missing 'then_module' property !");
-        std::string module_name = a_config.fetch_string ("then_module");
+        std::string module_name = a_config.fetch_string("then_module");
         module_handle_dict_type::iterator found
-          = a_module_dict.find (module_name);
+          = a_module_dict.find(module_name);
 
-        DT_THROW_IF(found == a_module_dict.end (),
+        DT_THROW_IF(found == a_module_dict.end(),
                     std::logic_error,
-                    "If module '" << get_name () << "' can't find any module named '" << module_name
+                    "If module '" << get_name() << "' can't find any module named '" << module_name
                     << "' from the external dictionnary ! ");
         _then_module_.label = found->first;
-        _then_module_.handle = found->second.grab_initialized_module_handle ();
+        _then_module_.handle = found->second.grab_initialized_module_handle();
       }
     }
 
     // If no else_status is defined, try to associate a processing module :
-    if (! has_else_status ()) {
+    if (! has_else_status()) {
       if (! _else_module_.handle) {
-        DT_THROW_IF(! a_config.has_key ("else_module"),
+        DT_THROW_IF(! a_config.has_key("else_module"),
                     std::logic_error,
                     "Missing 'else_module' property !");
-        std::string module_name = a_config.fetch_string ("else_module");
+        std::string module_name = a_config.fetch_string("else_module");
         module_handle_dict_type::iterator found
-          = a_module_dict.find (module_name);
+          = a_module_dict.find(module_name);
 
-        DT_THROW_IF(found == a_module_dict.end (),
+        DT_THROW_IF(found == a_module_dict.end(),
                     std::logic_error,
-                    "If module '" << get_name () << "' can't find any module named '" << module_name
+                    "If module '" << get_name() << "' can't find any module named '" << module_name
                     << "' from the external dictionnary ! ");
         _else_module_.label = found->first;
-        _else_module_.handle = found->second.grab_initialized_module_handle ();
+        _else_module_.handle = found->second.grab_initialized_module_handle();
       }
     }
 
-    _set_initialized (true);
+    _set_initialized(true);
     return;
   }
 
   // Reset :
   void if_module::reset()
   {
-    DT_THROW_IF(! is_initialized (),
+    DT_THROW_IF(! is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is not initialized !");
-    _set_initialized (false);
+                "If module '" << get_name() << "' is not initialized !");
+    _set_initialized(false);
     // Reset handles :
-    _condition_cut_.handle.reset ();
-    _then_module_.handle.reset ();
-    _else_module_.handle.reset ();
+    _condition_cut_.handle.reset();
+    _then_module_.handle.reset();
+    _else_module_.handle.reset();
     // Restore default values :
-    _set_defaults ();
+    _set_defaults();
     return;
   }
 
@@ -312,19 +312,19 @@ namespace dpp {
   base_module::process_status
   if_module::process(::datatools::things & the_data_record)
   {
-    DT_THROW_IF(! is_initialized (),
+    DT_THROW_IF(! is_initialized(),
                 std::logic_error,
-                "If module '" << get_name () << "' is not initialized !");
-    this->reset_last_error_message ();
+                "If module '" << get_name() << "' is not initialized !");
+    this->reset_last_error_message();
     process_status status = PROCESS_ERROR;
-    cuts::i_cut & the_cut = _condition_cut_.handle.grab ();
+    cuts::i_cut & the_cut = _condition_cut_.handle.grab();
     // Prepare the user data to be checked by the active 'cut':
     the_cut.set_user_data<datatools::things>(the_data_record);
     // Apply the cut algorithm:
     DT_LOG_DEBUG(_logging, "Checking cut '" << _condition_cut_.label << "'...");
-    int cut_status = the_cut.process ();
+    int cut_status = the_cut.process();
     // Detach user data.
-    the_cut.reset_user_data ();
+    the_cut.reset_user_data();
     // Check the cut's returned value:
     if (cut_status == cuts::SELECTION_INAPPLICABLE) {
       DT_LOG_DEBUG(_logging, "Cut '" << _condition_cut_.label << "' was inapplicable.");
@@ -340,10 +340,10 @@ namespace dpp {
           status = PROCESS_STOP;
         }
       } else {
-        base_module & the_then_module = _then_module_.handle.grab ();
+        base_module & the_then_module = _then_module_.handle.grab();
         DT_LOG_DEBUG(_logging, "Applying module '" << _then_module_.label << "'...");
-        the_then_module.reset_last_error_message ();
-        status = the_then_module.process (the_data_record);
+        the_then_module.reset_last_error_message();
+        status = the_then_module.process(the_data_record);
       }
       return status;
     } else {
@@ -358,22 +358,22 @@ namespace dpp {
         }
       } else {
         if (_else_module_.handle) {
-          base_module & the_else_module = _else_module_.handle.grab ();
+          base_module & the_else_module = _else_module_.handle.grab();
           DT_LOG_DEBUG(_logging, "Applying module '" << _else_module_.label << "'...");
-          the_else_module.reset_last_error_message ();
-          status = the_else_module.process (the_data_record);
+          the_else_module.reset_last_error_message();
+          status = the_else_module.process(the_data_record);
         }
       }
     }
     return status;
   }
 
-  void if_module::tree_dump (std::ostream      & out_,
-                             const std::string & title_,
-                             const std::string & indent_,
-                             bool inherit_) const
+  void if_module::tree_dump(std::ostream      & out_,
+                            const std::string & title_,
+                            const std::string & indent_,
+                            bool inherit_) const
   {
-    this->base_module::tree_dump (out_, title_, indent_, true);
+    this->base_module::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Cut service label : '" << _cut_service_label_ << "'" << std::endl;
@@ -390,7 +390,7 @@ namespace dpp {
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Else status       : '" << _else_status_ << "'" << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag (inherit_)
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
          << "Else module       : '" << _else_module_.label << "'" <<std:: endl;
 
     return;
