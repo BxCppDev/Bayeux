@@ -568,7 +568,7 @@ namespace mctools {
 
       _use_track_history_ = false;
 
-      // - Data Libs
+      // - Data Libs:
       geant4_data_library dl;
       dl.configure_data();
 
@@ -1571,16 +1571,21 @@ namespace mctools {
 
       // Detector construction:
       _init_detector_construction ();
+      // std::cerr << "DEVEL: Detector construction done.\n";
 
       // Physics list:
       _init_physics_list ();
+      // std::cerr << "DEVEL: Physics list done.\n";
 
 #ifdef G4VIS_USE
       // G4 visualization:
       _g4_vis_manager_ = 0;
       if (has_g4_visualization()) {
+        // std::cerr << "DEVEL: _g4_vis_manager_\n";
         _g4_vis_manager_ = new G4VisExecutive;
         _g4_vis_manager_->Initialize();
+
+        // std::cerr << "DEVEL: Visualization manager done.\n";
       }
 #endif
 
@@ -1588,30 +1593,40 @@ namespace mctools {
 
       // Run action:
       _init_run_action ();
+      // std::cerr << "DEVEL: Run action done.\n";
 
       // Event action:
       _init_event_action ();
+      // std::cerr << "DEVEL: Event action done.\n";
 
       // Primary generator:
       _init_primary_generator_action ();
+      // std::cerr << "DEVEL: Primary generator done.\n";
 
       // Tracking action:
       _init_tracking_action ();
+      // std::cerr << "DEVEL: Tracking action done.\n";
 
       // Stepping action:
       bool use_stepping_action = false;
       if (use_stepping_action) {
         _init_stepping_action ();
+        // std::cerr << "DEVEL: Stepping action done.\n";
       }
 
       // Stacking action:
       _init_stacking_action ();
+      // std::cerr << "DEVEL: Stacking action done.\n";
 
       // G4 kernel initialization:
       DT_LOG_NOTICE(_logprio(), "G4 kernel initialization...");
+      // std::cerr << "DEVEL: G4 kernel initialization...\n";
+      // _g4_run_manager_->SetVerboseLevel(2);
       _g4_run_manager_->Initialize();
+      // std::cerr << "DEVEL: G4 kernel initialization done.\n";
 
       _g4_UI_ = G4UImanager::GetUIpointer();
+      // std::cerr << "DEVEL: G4UImanager done.\n";
 
       /*****************
        * FINAL ACTIONS *
@@ -1619,6 +1634,7 @@ namespace mctools {
 
       // init the dictionary of PRNG internal state records :
       _init_prngs_states();
+      // std::cerr << "DEVEL: PRNG internal states done.\n";
 
       return;
     } // end of manager::_at_init()
