@@ -231,6 +231,7 @@ if (Bayeux_BUILD_QT_GUI)
   # message(STATUS "Mocced = '${${module_name}_MODULE_HEADERS_QT_MOC}'")
   list(APPEND ${module_name}_MODULE_SOURCES
     ${module_source_dir}/qt/led.cc
+    ${module_source_dir}/qt/interface.cc
     ${module_source_dir}/configuration/ui/parameter_item_delegate.cc
     ${module_source_dir}/configuration/ui/variant_registry_dialog.cc
     ${module_source_dir}/configuration/ui/variant_registry_tree_model.cc
@@ -241,6 +242,7 @@ if (Bayeux_BUILD_QT_GUI)
     )
   list(APPEND ${module_name}_MODULE_HEADERS
     ${module_include_dir}/${module_name}/qt/led.h
+    ${module_include_dir}/${module_name}/qt/interface.h
     ${module_include_dir}/${module_name}/configuration/ui/parameter_item_delegate.h
     ${module_include_dir}/${module_name}/configuration/ui/variant_registry_dialog.h
     ${module_include_dir}/${module_name}/configuration/ui/variant_registry_tree_model.h
