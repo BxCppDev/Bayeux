@@ -3,6 +3,9 @@
 // Ourselves:
 #include <mctools/g4/detector_construction.h>
 
+// Standard library:
+#include <clocale>
+
 // Third party:
 // - Boost:
 #include <boost/algorithm/string/predicate.hpp>
@@ -511,12 +514,15 @@ namespace mctools {
 
       // Automaticaly construct the geometry tree:
       G4VPhysicalVolume * world_physical_volume = 0;
+      std::setlocale(LC_NUMERIC, "C");
       G4GDMLParser parser;
       parser.SetStripFlag(false);
       if (_generate_gdml_file_) {
         write_tmp_gdml_file();
         parser.Read(_gdml_filename_, _gdml_validation_);
-      } else parser.Read("test_manager.gdml");
+      } else {
+        parser.Read("test_manager.gdml");
+      }
       world_physical_volume = parser.GetWorldVolume();
 
       if (is_debug()) {
@@ -772,10 +778,10 @@ namespace mctools {
            i++) {
         const std::string & lv_name = i->first;
         const std::string & sd_name = i->second;
-        std::cerr << "DEVEL: "
-                  << "detector_construction::_construct_sensitive_detectors: "
-                  << "Logical='" << lv_name << "' Sensitive='" << sd_name << "'"
-                  << std::endl;
+        // std::cerr << "DEVEL: "
+        //           << "detector_construction::_construct_sensitive_detectors: "
+        //           << "Logical='" << lv_name << "' Sensitive='" << sd_name << "'"
+        //           << std::endl;
         // We throw if some logical volumes do not exist and thus cannot be associated to
         // a given requested sensitive category (error in some confguration file):
         DT_THROW_IF(_geom_manager_->get_factory().get_logicals().find(lv_name) ==
