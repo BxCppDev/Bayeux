@@ -349,7 +349,7 @@ namespace mctools {
       current_generated_event.set_time(0.0 * CLHEP::ns);
 
       // Here the bias object could run
-      int bias_result = 0;
+      // int bias_result = 0;
       if (_bias_) {
         mctools::biasing::primary_event_bias::biasing_info bi;
         _bias_->process(current_generated_event, bi);

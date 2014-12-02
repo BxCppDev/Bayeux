@@ -307,7 +307,7 @@ namespace mctools {
       return;
     }
 
-    void primary_event_bias::set_master_particle_by_pdg_code(int code_)
+    void primary_event_bias::set_master_particle_by_pdg_code(int /*code_*/)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Operation prohibited ! Object is already initialized !");
@@ -422,7 +422,7 @@ namespace mctools {
       }
 
       if (_master_particle_rank_ >= 0) {
-        if (_master_particle_rank_ < master_candidates.size()) {
+        if (_master_particle_rank_ < (int)master_candidates.size()) {
           master_particle = master_candidates[_master_particle_rank_];
         }
       }
