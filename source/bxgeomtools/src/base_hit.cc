@@ -10,8 +10,8 @@
 
 namespace geomtools {
 
-  // serial tag for datatools::serialization::i_serializable interface :
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_hit, "snemo::core::model::base_hit")
+  // Serial tag for datatools serializatable interface :
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_hit, "geomtools::base_hit")
 
   base_hit & base_hit::i_measurement::operator()(base_hit & a_hit)
   {
