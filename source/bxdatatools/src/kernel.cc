@@ -486,8 +486,10 @@ namespace datatools {
 
 #if DATATOOLS_WITH_QT_GUI == 1
     if (_params_.inhibit_qt_gui) {
-      DT_LOG_TRACE(_logging_, "Inhibit the Qt based GUI...");
+      DT_LOG_TRACE(_logging_, "Inhibit the Qt based GUI.");
       this->_activate_qt_gui_ = false;
+    } else {
+      DT_LOG_TRACE(_logging_, "The Qt based GUI is activated.");
     }
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
@@ -663,18 +665,23 @@ namespace datatools {
         std::setlocale(LC_NUMERIC, krnl.get_locale_category().c_str());
       }
       DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Qt is initialized...");
+      datatools::configuration::ui::variant_repository_dialog vrep_dialog(*_vrep_);
+      int ret = vrep_dialog.exec();
+      /*
       datatools::configuration::ui::variant_repository_dialog * vrep_dialog
         = new datatools::configuration::ui::variant_repository_dialog(*_vrep_);
-      //vrep_dialog->setAttribute(Qt::WA_DeleteOnClose);
+      vrep_dialog->setAttribute(Qt::WA_DeleteOnClose);
       int ret = vrep_dialog->exec();
       // if (ret == QDialog::Accepted) {
       //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Accepted");
       // } else  {
       //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Rejected");
       // }
-      // DT_LOG_TRACE_EXITING(_logging_);
-      //vrep_dialog->close();
-      delete vrep_dialog;
+      vrep_dialog->close();
+      // Questionnable !
+      //delete vrep_dialog;
+      */
+      // DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
       return;
     }
     ::datatools::configuration::variant_repository * _vrep_; //!< Handle to the variant repository
@@ -829,6 +836,7 @@ namespace datatools {
 
 #if DATATOOLS_WITH_QT_GUI == 1
       if (_params_.variant_qt_gui) {
+        DT_LOG_TRACE(_logging_, "Running Qt-based GUI for variant...");
         if (_activate_qt_gui_) {
           bool save_locked = _variant_repository_->is_locked();
           if (!save_locked) {

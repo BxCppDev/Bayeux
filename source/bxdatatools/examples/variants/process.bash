@@ -43,27 +43,27 @@ cd ${opwd}
 
 export FOO_CONFIG_DIR=./config
 
-echo "INFO: Example the program ex_variants without variants..." 1>&2
+echo "INFO: The example program ex_variants without variants..." 1>&2
 ./ex_variants
 if [ $? -ne 0 ]; then
-    echo "ERROR: Example program ex_variants without variants failed !" 1>&2
+    echo "ERROR: The example program ex_variants without variants failed !" 1>&2
     my_exit 1
 else
-    echo "INFO: Example program ex_variants without variants is ok !" 1>&2
+    echo "INFO: The example program ex_variants without variants is ok !" 1>&2
     # my_exit 0
 fi
 
-echo "INFO: Example the program ex_variants with variants (1)..." 1>&2
+echo "INFO: The example program ex_variants with variants (1)..." 1>&2
 ./ex_variants --with-variants --variants-test 1
 if [ $? -ne 0 ]; then
-    echo "ERROR: Example program ex_variants with variants failed !" 1>&2
+    echo "ERROR: The example program ex_variants with variants failed !" 1>&2
     my_exit 1
 else
-    echo "INFO: Example program ex_variants with variants (1) is ok !" 1>&2
+    echo "INFO: The example program ex_variants with variants (1) is ok !" 1>&2
     # my_exit 0
 fi
 
-echo "INFO: Example the program ex_variants with variants (2)..." 1>&2
+echo "INFO: The example program ex_variants with variants (2)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
 #   configuration file (foo_variance.conf),
@@ -83,13 +83,13 @@ echo "INFO: Example the program ex_variants with variants (2)..." 1>&2
     --datatools::variant-set="core:operator=John Doe" \
     --datatools::variant-set="core:logging=warning" \
     --datatools::variant-set="gui:antialiasing=false" \
-    --datatools::variant-gui \
+    --datatools::variant-qt-gui \
     --datatools::variant-store="${FOO_CONFIG_DIR}/variants/profiles/my_profile.rep"
 if [ $? -ne 0 ]; then
-    echo "ERROR: Example program ex_variants failed !" 1>&2
+    echo "ERROR: The example program ex_variants failed !" 1>&2
     my_exit 1
 else
-    echo "INFO: Example program ex_variants (2) is ok !" 1>&2
+    echo "INFO: The example program ex_variants (2) is ok !" 1>&2
     # my_exit 0
 fi
 

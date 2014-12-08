@@ -54,6 +54,7 @@
 #if DATATOOLS_WITH_QT_GUI == 1
 #include <QStyleFactory>
 #include <QApplication>
+#include <datatools/qt/interface.h>
 #include <datatools/configuration/ui/variant_repository_dialog.h>
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
@@ -133,13 +134,13 @@ int main(int argc_, char ** argv_)
 
     // Run:
 
-    if (!use_variants) {
+    if (! use_variants) {
       test0();
     } else {
-      if (variants_test == 2) {
-        test2();
-      } else if (variants_test == 1) {
+      if (variants_test == 1) {
         test1();
+      } else if (variants_test == 2) {
+        test2();
       }
     }
 
@@ -199,13 +200,22 @@ void test1()
     {
       std::clog << "test1: Run a GUI...\n";
       // Launch a Qt based dialog for the variant repository:
-      // QApplication::setStyle(QStyleFactory::create(QString::fromStdString("plastique")));
-      int argc = 1;
-      const char * argv[] = { "Bayeux - Configuration Variant Repository Dialog" };
-      QApplication qapp(argc, (char**) argv);
+      const datatools::kernel & krnl = datatools::kernel::const_instance();
+      datatools::qt::interface & iqt = datatools::qt::interface::instance(krnl.get_argc(),
+                                                                          krnl.get_argv(),
+                                                                          krnl.get_application_name().c_str());
+      // datatools::configuration::ui::variant_repository_dialog * vrep_dialog
+      //   = new datatools::configuration::ui::variant_repository_dialog(foo_rep);
+      // vrep_dialog->setAttribute(Qt::WA_DeleteOnClose);
+      // int ret = vrep_dialog->exec();
+      // // if (ret == QDialog::Accepted) {
+      // //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Accepted");
+      // // } else  {
+      // //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Rejected");
+      // // }
+      // vrep_dialog->close();
       datatools::configuration::ui::variant_repository_dialog vrep_dialog(foo_rep);
-      vrep_dialog.show();
-      int ret = qapp.exec();
+      int ret = vrep_dialog.exec();
     }
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
@@ -238,7 +248,7 @@ void test1()
 
 void test2()
 {
-  std::clog << "\ntest2:\n";
+  std::clog << "test2: Setup the application with variant parameters fetched from the Bayeux/datatools' kernel...\n";
   std::string app_config_filename = "${FOO_CONFIG_DIR}/foo_with_variants.conf";
   datatools::fetch_path_with_env(app_config_filename);
   datatools::properties app_config;
