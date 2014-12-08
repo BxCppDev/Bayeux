@@ -8,7 +8,9 @@
 
 // This project:
 #include <datatools/datatools_config.h>
+#ifndef Q_MOC_RUN
 #include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
 
 namespace datatools {
 
@@ -86,14 +88,18 @@ class i_tree_dumpable {
     bool inherit_;
   };
 
+#ifndef Q_MOC_RUN
   DR_CLASS_RTTI();
+#endif // Q_MOC_RUN
 
 };
 
 } // end of namespace datatools
 
+#ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::i_tree_dumpable' class:
 DR_CLASS_INIT(::datatools::i_tree_dumpable);
+#endif // Q_MOC_RUN
 
 #endif // DATATOOLS_I_TREE_DUMP_H
 

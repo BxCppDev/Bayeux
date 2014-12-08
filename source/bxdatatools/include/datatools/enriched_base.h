@@ -41,8 +41,10 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 #include <datatools/properties.h>
-#include <datatools/reflection_macros.h>
 #include <datatools/object_configuration_description.h>
+#ifndef Q_MOC_RUN
+#include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
 
 namespace datatools {
 
@@ -154,8 +156,10 @@ namespace datatools {
       //! Serialization interface
       DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(enriched_base);
 
+#ifndef Q_MOC_RUN
       //! Reflection interface
       DR_CLASS_RTTI();
+#endif // Q_MOC_RUN
 
     };
 
@@ -163,7 +167,10 @@ namespace datatools {
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::enriched_base, "datatools::enriched_base");
+
+#ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::enriched_base' class:
 DR_CLASS_INIT(::datatools::enriched_base);
+#endif // Q_MOC_RUN
 
 #endif // DATATOOLS_ENRICHED_BASE_H

@@ -54,7 +54,9 @@
 #include <datatools/i_cloneable.h>
 #include <datatools/bit_mask.h>
 #include <datatools/exception.h>
+#ifndef Q_MOC_RUN
 #include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
 
 namespace datatools {
 
@@ -1046,8 +1048,10 @@ class properties :
   DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(properties);
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
+#ifndef Q_MOC_RUN
   //! Reflection interface
   DR_CLASS_RTTI();
+#endif // Q_MOC_RUN
 
 };
 
@@ -1102,7 +1106,9 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::propert
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties");
 
+#ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::properties' class:
 DR_CLASS_INIT(::datatools::properties);
+#endif // Q_MOC_RUN
 
 #endif // DATATOOLS_UTILS_PROPERTIES_H

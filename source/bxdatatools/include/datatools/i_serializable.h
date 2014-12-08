@@ -39,7 +39,9 @@
 #include <datatools/serialization_macros.h>
 #include <datatools/factory_macros.h>
 #include <datatools/utils.h>
+#ifndef Q_MOC_RUN
 #include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
 
 // Main namespace of the datatools library
 namespace datatools {
@@ -64,16 +66,18 @@ namespace datatools {
     /// Interface of the factory
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_serializable);
 
+#ifndef Q_MOC_RUN
     DR_CLASS_RTTI();
+#endif // Q_MOC_RUN
 
   };
 
 } // end of namespace datatools
 
+#ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::i_serializable' class.
 DR_CLASS_INIT(::datatools::i_serializable);
-
-
+#endif // Q_MOC_RUN
 
 /******************
  * Helpful macros *
@@ -104,13 +108,13 @@ namespace datatools {
   const std::string & serial_tag ();
 }
 
-/// Template support for serializable type (backward compatibility support)
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
-
 namespace datatools {
   template <class T>
   const std::string & backward_serial_tag (int i = 0);
 }
+
+/// Template support for serializable type (backward compatibility support)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 
 #define DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(ClassName)   \
   namespace datatools {                                                 \
