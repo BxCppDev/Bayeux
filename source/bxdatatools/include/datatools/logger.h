@@ -62,7 +62,9 @@
 #include "boost/current_function.hpp"
 
 // This project:
+#ifndef Q_MOC_RUN
 #include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
 
 namespace datatools {
 
@@ -223,8 +225,10 @@ namespace datatools {
   }
 
 
+#ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::logger::priority' enum:
 DR_TYPE_INIT(::datatools::logger); // mandatory to access the embedded enum
 DR_TYPE_INIT(::datatools::logger::priority);
+#endif // Q_MOC_RUN
 
 #endif // DATATOOLS_LOGGER_H
