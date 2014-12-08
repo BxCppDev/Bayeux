@@ -35,9 +35,6 @@
 #include <string>
 #include <map>
 
-// Third party:
-#include <boost/variant.hpp>
-
 // This project (Bayeux/datatools):
 #include <datatools/handle.h>
 #include <datatools/properties.h>
@@ -216,9 +213,6 @@ namespace datatools {
       vm_handle_type _variant_handle_;   //!< Handle to an instantiated variant model
 
     };
-
-    /// \brief Unused type
-    typedef boost::variant<bool, int, double, std::string> parameter_value_type;
 
     /// \brief A triplet of character strings representing a variant parameter set directive
     /** Typical format is:

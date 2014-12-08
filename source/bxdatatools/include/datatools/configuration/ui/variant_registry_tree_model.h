@@ -43,7 +43,6 @@
 // This project
 #include <datatools/logger.h>
 #include <datatools/i_tree_dump.h>
-#include <datatools/configuration/variant_registry.h>
 
 namespace datatools {
 
