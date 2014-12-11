@@ -121,12 +121,8 @@ namespace genbb {
 
       primary_particle part;
       double pmass = decay0_particle_mass (np);
-      if (std::isnan(pmass)) {
-        std::ostringstream message;
-        message << "genbb::decay0::decay0_particle: "
-                << "Unknown mass for particle with ID=" << np << " !";
-        throw std::logic_error(message.str());
-      }
+      DT_THROW_IF(std::isnan(pmass), std::logic_error,
+                  "Unknown mass for particle with ID=" << np << " !");
       double phi=phi1+(phi2-phi1)*prng_();
       double ctet1=1.;
       if (teta1 != 0.) ctet1=std::cos(teta1);
