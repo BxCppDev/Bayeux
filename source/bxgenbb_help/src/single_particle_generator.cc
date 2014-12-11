@@ -618,7 +618,7 @@ namespace genbb {
           }
         }
       }
-      if (config_.has_key ("multi_rays.energies")) {
+      if (config_.has_key ("multi_rays.probabilities")) {
         config_.fetch ("multi_rays.probabilities", prob);
       }
 
