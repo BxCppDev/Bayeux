@@ -634,6 +634,12 @@ namespace mctools {
       return;
     }
 
+    void particles_physics_constructor::_ConstructUserLimits ()
+    {
+
+      return;
+    }
+
   } // end of namespace g4
 
 } // end of namespace mctools

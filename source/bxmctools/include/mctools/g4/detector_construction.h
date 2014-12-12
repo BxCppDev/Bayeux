@@ -59,6 +59,7 @@ namespace mctools {
     class manager;
     class sensitive_detector;
     class magnetic_field;
+    class electromagnetic_field;
     class biasing_manager;
 
     /// \brief The detector construction Geant4 interface class
@@ -106,6 +107,15 @@ namespace mctools {
 
       /// Return a non-mutable reference to the magnetic field manager
       const emfield::electromagnetic_field_manager & get_mag_field_manager () const;
+
+      /// Check for a referenced electromagnetic field manager
+      bool has_em_field_manager () const;
+
+      /// Set the reference to a electromagnetic field manager
+      void set_em_field_manager (const emfield::electromagnetic_field_manager &);
+
+      /// Return a non-mutable reference to the electromagnetic field manager
+      const emfield::electromagnetic_field_manager & get_em_field_manager () const;
 
       /// Main initialization method
       void initialize (const datatools::properties & config_);
@@ -155,8 +165,8 @@ namespace mctools {
       /** Construct biasing */
       void _construct_biasing ();
 
-      /** Setup magnetic field */
-      void _construct_magnetic_field ();
+      /** Setup electromagnetic field */
+      void _construct_electromagnetic_field ();
 
       /** This method automatically setup G4 visualization attributes
        * from the main geometry model.
@@ -185,12 +195,12 @@ namespace mctools {
       const geomtools::manager * _geom_manager_; //!< Reference to the geometry manager
 
       //! Magnetic field manager:
-      bool   _using_mag_field_;                  //!< Flag to use the Geant4 magnetic field system
+      bool   _using_em_field_;                   //!< Flag to use the Geant4 EM field system
       std::string _emfield_geom_plugin_name_;    //!< The name of the EM field manager geometry plugin
-      const emfield::electromagnetic_field_manager * _mag_field_manager_; //!< Reference to the EM field manager
+      const emfield::electromagnetic_field_manager * _em_field_manager_; //!< Reference to the EM field manager
+      datatools::properties _em_field_aux_;      //!< Auxiliary properties related to EM field
       double _miss_distance_unit_;               //!< Default miss distance length unit
       double _general_miss_distance_;            //!< Default general miss distance
-      datatools::properties _mag_field_aux_;     //!< Auxiliary properties related to magnetic field
 
       //! User limits:
       bool                      _using_user_limits_;

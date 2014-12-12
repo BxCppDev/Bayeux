@@ -108,6 +108,8 @@ namespace mctools {
       bool        _em_gamma_compton_scattering_;
       bool        _em_gamma_conversion_;
       bool        _em_gamma_conversion_to_muons_;
+      bool        _em_gamma_step_limiter_;
+      bool        _em_gamma_user_special_cuts_;
       bool        _em_electron_ionisation_;
       bool        _em_electron_bremsstrahlung_;
       bool        _em_electron_multiple_scattering_;
@@ -115,6 +117,7 @@ namespace mctools {
       double      _em_electron_ms_range_factor_;
       bool        _em_positron_annihilation_;
       bool        _em_electron_step_limiter_;
+      bool        _em_electron_user_special_cuts_;
       // Atomic deexcitation:
       bool        _em_fluorescence_;
       bool        _em_auger_;
@@ -125,11 +128,13 @@ namespace mctools {
       bool        _em_ion_ionisation_;
       bool        _em_ion_multiple_scattering_;
       bool        _em_ion_step_limiter_;
+      bool        _em_ion_user_special_cuts_;
       bool        _em_muon_multiple_scattering_;
       bool        _em_muon_ionisation_;
       bool        _em_muon_bremsstrahlung_;
       bool        _em_muon_pair_production_;
       bool        _em_muon_step_limiter_;
+      bool        _em_muon_user_special_cuts_;
 
       DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (base_physics_constructor,
                                                             em_physics_constructor);

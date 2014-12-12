@@ -67,15 +67,21 @@ namespace mctools {
 
       const std::string & get_name() const;
 
-      void set_mag_field_check_pos_time(bool);
+      void set_field_check_pos_time(bool);
 
-      bool is_mag_field_check_pos_time() const;
+      bool is_field_check_pos_time() const;
 
       bool has_mag_field() const;
 
+      bool has_field() const;
+
       void set_mag_field (const emfield::base_electromagnetic_field &);
 
+      void set_field (const emfield::base_electromagnetic_field &);
+
       const emfield::base_electromagnetic_field & get_mag_field() const;
+
+      const emfield::base_electromagnetic_field & get_field() const;
 
       magnetic_field ();
 
@@ -95,9 +101,9 @@ namespace mctools {
 
       bool                                           _initialized_;
       std::string                                    _name_;
-      const emfield::base_electromagnetic_field    * _mag_field_;
-      bool                                           _mag_field_check_pos_time_;
-      geomtools::vector_3d                           _standalone_constant_mag_field_;
+      const emfield::base_electromagnetic_field    * _field_;
+      bool                                           _field_check_pos_time_;
+      geomtools::vector_3d                           _standalone_constant_field_;
 
       friend class detector_construction;
 

@@ -33,7 +33,7 @@
 #include <emfield/emfield_geom_plugin.h>
 #include <emfield/geom_map.h>
 
-// G4 stuff
+// G4 stuff:
 #include <globals.hh>
 #include <G4FieldManager.hh>
 #include <G4ChordFinder.hh>
@@ -44,10 +44,12 @@
 #include <G4Color.hh>
 #include <G4VisAttributes.hh>
 #include <G4UserLimits.hh>
+#include <G4RegionStore.hh>
 
 // This project:
 #include <mctools/g4/sensitive_detector.h>
 #include <mctools/g4/magnetic_field.h>
+// #include <mctools/g4/electromagnetic_field.h>
 #include <mctools/g4/manager.h>
 #include <mctools/g4/biasing_manager.h>
 
@@ -107,9 +109,9 @@ namespace mctools {
       _using_user_limits_         = true;
       _using_regions_             = true;
       _using_sensitive_detectors_ = true;
-      _using_mag_field_           = true;
+      _using_em_field_            = true;
       _using_biasing_             = false;
-      _mag_field_manager_         = 0;
+      _em_field_manager_         = 0;
       _miss_distance_unit_        = CLHEP::mm;
       _general_miss_distance_     = DEFAULT_MISS_DISTANCE;
       _SD_params_.set_key_label("name");
@@ -131,7 +133,6 @@ namespace mctools {
       if (is_initialized()) {
         reset();
       }
-
       return;
     }
 
@@ -140,12 +141,10 @@ namespace mctools {
       return _initialized_;
     }
 
-
     bool detector_construction::has_geometry_manager() const
     {
       return _geom_manager_ != 0;
     }
-
 
     void detector_construction::set_geometry_manager(const geomtools::manager & gm_)
     {
@@ -411,58 +410,74 @@ namespace mctools {
        *                       *
        *************************/
 
-      if (config_.has_key("using_magnetic_field")) {
-        _using_mag_field_ = config_.fetch_boolean("using_magnetic_field");
+      if (config_.has_key("using_electromagnetic_field")) {
+        _using_em_field_ = config_.fetch_boolean("using_electromagnetic_field");
+      } else if (config_.has_key("using_magnetic_field")) {
+        // Obsolete:
+        _using_em_field_ = config_.fetch_boolean("using_magnetic_field");
       }
 
-      if (_using_mag_field_) {
-        DT_LOG_NOTICE(_logprio(), "Using magnetic field...");
+      if (_using_em_field_) {
+        DT_LOG_NOTICE(_logprio(), "Using electromagnetic field...");
 
-        if (config_.has_key("magnetic_field.plugin_name")) {
+        if (config_.has_key("electromagnetic_field.plugin_name")) {
+          std::string fpn = config_.fetch_string("electromagnetic_field.plugin_name");
+          set_emfield_geom_plugin_name(fpn);
+        } else if (config_.has_key("magnetic_field.plugin_name")) {
           std::string fpn = config_.fetch_string("magnetic_field.plugin_name");
           set_emfield_geom_plugin_name(fpn);
         }
 
-        if (config_.has_key("magnetic_field.miss_distance.unit")) {
+        if (config_.has_key("electromagnetic_field.miss_distance.unit")) {
+          std::string md_unit_str = config_.fetch_string("electromagnetic_field.miss_distance.unit");
+          _miss_distance_unit_ = datatools::units::get_length_unit_from(md_unit_str);
+        } else if (config_.has_key("magnetic_field.miss_distance.unit")) {
           std::string md_unit_str = config_.fetch_string("magnetic_field.miss_distance.unit");
           _miss_distance_unit_ = datatools::units::get_length_unit_from(md_unit_str);
         }
 
-        if (config_.has_key("magnetic_field.miss_distance")) {
+        if (config_.has_key("electromagnetic_field.miss_distance")) {
+          _general_miss_distance_ = config_.fetch_real("electromagnetic_field.miss_distance");
+          if (! config_.has_explicit_unit("electromagnetic_field.miss_distance")) {
+            _general_miss_distance_ *= _miss_distance_unit_;
+          }
+        } else if (config_.has_key("magnetic_field.miss_distance")) {
           _general_miss_distance_ = config_.fetch_real("magnetic_field.miss_distance");
           if (! config_.has_explicit_unit("magnetic_field.miss_distance")) {
             _general_miss_distance_ *= _miss_distance_unit_;
           }
+        }
 
-          const geomtools::manager & geo_mgr = get_geometry_manager();
-          std::string emfield_geom_plugin_name = _emfield_geom_plugin_name_;
-          if (_emfield_geom_plugin_name_.empty()) {
-            // We try to find a emfield plugin associated to the manager :
-            typedef geomtools::manager::plugins_dict_type dict_type;
-            const dict_type & plugins = geo_mgr.get_plugins();
-            for (dict_type::const_iterator ip = plugins.begin();
-                 ip != plugins.end();
-                 ip++) {
-              const std::string & plugin_name = ip->first;
-              if (geo_mgr.is_plugin_a<emfield::emfield_geom_plugin>(plugin_name)) {
-                emfield_geom_plugin_name = plugin_name;
-                break;
-              }
+        const geomtools::manager & geo_mgr = get_geometry_manager();
+        std::string emfield_geom_plugin_name = _emfield_geom_plugin_name_;
+        if (_emfield_geom_plugin_name_.empty()) {
+          // We try to find a emfield plugin associated to the manager :
+          typedef geomtools::manager::plugins_dict_type dict_type;
+          const dict_type & plugins = geo_mgr.get_plugins();
+          for (dict_type::const_iterator ip = plugins.begin();
+               ip != plugins.end();
+               ip++) {
+            const std::string & plugin_name = ip->first;
+            if (geo_mgr.is_plugin_a<emfield::emfield_geom_plugin>(plugin_name)) {
+              emfield_geom_plugin_name = plugin_name;
+              break;
             }
           }
-          // Access to a given plugin by name and type :
-          if (geo_mgr.has_plugin(emfield_geom_plugin_name)
-              && geo_mgr.is_plugin_a<emfield::emfield_geom_plugin>(emfield_geom_plugin_name)) {
-            DT_LOG_NOTICE(_logprio(), "Found EM field geometry plugin named '"
-                          << emfield_geom_plugin_name << "'");
-            const emfield::emfield_geom_plugin & fgp
-              = geo_mgr.get_plugin<emfield::emfield_geom_plugin>(emfield_geom_plugin_name);
-            const emfield::electromagnetic_field_manager & emf_mgr = fgp.get_manager();
-            set_mag_field_manager(emf_mgr);
-          }
-
-          config_.export_and_rename_starting_with(_mag_field_aux_, "magnetic_field.", "");
         }
+        // Access to a given plugin by name and type :
+        if (geo_mgr.has_plugin(emfield_geom_plugin_name)
+            && geo_mgr.is_plugin_a<emfield::emfield_geom_plugin>(emfield_geom_plugin_name)) {
+          DT_LOG_NOTICE(_logprio(), "Found EM field geometry plugin named '"
+                        << emfield_geom_plugin_name << "'");
+          const emfield::emfield_geom_plugin & fgp
+            = geo_mgr.get_plugin<emfield::emfield_geom_plugin>(emfield_geom_plugin_name);
+          const emfield::electromagnetic_field_manager & emf_mgr = fgp.get_manager();
+          emf_mgr.tree_dump(std::cerr, "EM field manager: ", "DEVEL: ");
+          set_em_field_manager(emf_mgr);
+        }
+
+        config_.export_and_rename_starting_with(_em_field_aux_, "electromagnetic_field.", "");
+        config_.export_and_rename_starting_with(_em_field_aux_, "magnetic_field.", ""); // to be obsoletes
       }
 
 
@@ -540,36 +555,48 @@ namespace mctools {
       if (_using_regions_) {
         DT_LOG_DEBUG(_logprio(), "Construct regions.");
         _construct_regions();
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not construct any regions.");
       }
 
       // Automaticaly construct sensitive detectors:
       if (_using_sensitive_detectors_) {
         DT_LOG_DEBUG(_logprio(), "Construct sensitive detectors.");
         _construct_sensitive_detectors();
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not construct any sensitive detectors.");
       }
 
-      // Automaticaly construct the magnetic field :
-      if (_using_mag_field_) {
-        DT_LOG_DEBUG(_logprio(), "Construct the magnetic field.");
-        _construct_magnetic_field();
+      // Automaticaly construct the electromagnetic field :
+      if (_using_em_field_) {
+        DT_LOG_DEBUG(_logprio(), "Construct the electromagnetic field(s).");
+        _construct_electromagnetic_field();
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not construct any electromagnetic field(s).");
       }
 
       // Automaticaly set the visibility attributes:
       if (_using_vis_attributes_) {
         DT_LOG_DEBUG(_logprio(), "Set the visualization attributes.");
         _set_visualization_attributes();
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not use any visualization attributes.");
       }
 
       // Automaticaly set the user limits:
       if (_using_user_limits_) {
         DT_LOG_DEBUG(_logprio(), "Using the user limits(max step).");
         _set_user_limits();
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not construct any user limits.");
       }
 
       // Automaticaly construct the biasing algos :
       if (_using_biasing_) {
         DT_LOG_DEBUG(_logprio(), "Construct the biasing algorithms.");
         _construct_biasing();
+      } else {
+        DT_LOG_DEBUG(_logprio(), "Do not use any biasing algorithms.");
       }
 
       DT_LOG_TRACE(_logprio(), "Exiting.");
@@ -577,24 +604,41 @@ namespace mctools {
     }
 
 
-    bool detector_construction::has_mag_field_manager() const
+    bool detector_construction::has_em_field_manager() const
     {
-      return _mag_field_manager_ != 0;
+      return _em_field_manager_ != 0;
     }
 
 
+    bool detector_construction::has_mag_field_manager() const
+    {
+      return has_em_field_manager();
+    }
+
     void detector_construction::set_mag_field_manager(const emfield::electromagnetic_field_manager &emf_mgr_)
     {
+      set_em_field_manager(emf_mgr_);
+      return;
+    }
+
+    void detector_construction::set_em_field_manager(const emfield::electromagnetic_field_manager &emf_mgr_)
+    {
       DT_THROW_IF (_initialized_, std::logic_error, "Already initialized !");
-      _mag_field_manager_ = &emf_mgr_;
+      _em_field_manager_ = &emf_mgr_;
       return;
     }
 
     const emfield::electromagnetic_field_manager &
     detector_construction::get_mag_field_manager() const
     {
-      DT_THROW_IF (_mag_field_manager_ == 0, std::logic_error, "No magnetic field manager is defined !");
-      return *_mag_field_manager_;
+      return get_em_field_manager();
+    }
+
+    const emfield::electromagnetic_field_manager &
+    detector_construction::get_em_field_manager() const
+    {
+      DT_THROW_IF (_em_field_manager_ == 0, std::logic_error, "No electromagnetic field manager is defined !");
+      return *_em_field_manager_;
     }
 
     void detector_construction::_construct_biasing()
@@ -605,40 +649,32 @@ namespace mctools {
       return;
     }
 
-    void detector_construction::_construct_magnetic_field()
+    void detector_construction::_construct_electromagnetic_field()
     {
       datatools::logger::priority logging = _logprio();
-      DT_LOG_TRACE(logging,"Entering...");
+      DT_LOG_TRACE(logging, "Entering...");
+      DT_LOG_TRACE(logging, "Has EM field manager : " << has_em_field_manager());
+      DT_LOG_TRACE(logging, "Has EM field geom map : " << (has_em_field_manager() && _em_field_manager_->has_geom_map()));
 
-      // if (! _mag_field_->is_active())
-      //   {
-      //     return;
-      //     /*
-      //     std::clog << datatools::io::debug
-      //          << "mctools::g4::detector_construction::_construct_magnetic_field: "
-      //          << "Magnetic field is active." << std::endl;
-      //     G4FieldManager * detector_field_mgr
-      //       = G4TransportationManager::GetTransportationManager()->GetFieldManager();
-      //     detector_field_mgr->SetDetectorField(_mag_field);
-      //     detector_field_mgr->CreateChordFinder(_mag_field);
-      //     detector_field_mgr->GetChordFinder()->SetDeltaChord(_miss_distance);
-      //     */
-      //   }
+      if (has_em_field_manager() && _em_field_manager_->has_geom_map()) {
+        DT_LOG_NOTICE(logging, "Processing geometry/EM field map...");
 
-      if (has_mag_field_manager() && _mag_field_manager_->has_geom_map()) {
-        DT_LOG_NOTICE(logging,"Processing geometry/EM field map...");
+        // 2014-12-12, FM: To be clarified: only one syntax should be available:
+        // std::vector<std::string> associations;
+        // if (_em_field_aux_.has_key("associations.labels")) {
+        //   _em_field_aux_.fetch("associations.labels", associations);
+        // } else if (_em_field_aux_.has_key("associations")) {
+        //   _em_field_aux_.fetch("associations", associations);
+        // }
 
-        std::vector<std::string> associations;
-        if (_mag_field_aux_.has_key("associations")) {
-          _mag_field_aux_.fetch("associations", associations);
-        }
         G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
-        const emfield::geom_map & geomap = _mag_field_manager_->get_geom_map();
+        const emfield::geom_map & geomap = _em_field_manager_->get_geom_map();
 
         typedef emfield::geom_map::association_dict_type gma_type;
         typedef emfield::geom_map::association_entry gma_entry_type;
         const gma_type & mfamap = geomap.get_associations();
 
+        /*
         for (size_t i = 0; i < associations.size(); i++) {
           const std::string & association_name = associations[i];
           gma_type::const_iterator found_association = mfamap.find(association_name);
@@ -651,7 +687,12 @@ namespace mctools {
             }
             continue;
           }
-          const gma_entry_type & gefa = found_association->second;
+        */
+        for (gma_type::const_iterator i = mfamap.begin();
+             i != mfamap.end();
+             i++) {
+          const std::string & association_name = i->first;
+          const gma_entry_type & gefa = i->second;
           if (! gefa.has_logvol()) {
             std::ostringstream message;
             message << "Missing G4 logical volume for geom/field association '" << association_name << "' !";
@@ -660,7 +701,7 @@ namespace mctools {
             }
             continue;
           }
-          G4String g4_log_name =  gefa.logvol->get_name().c_str();
+          G4String g4_log_name = gefa.get_logical_volume_name().c_str();
           G4LogicalVolume * g4_module_log = g4_LV_store->GetVolume(g4_log_name, false);
           if (g4_module_log == 0) {
             std::ostringstream message;
@@ -671,40 +712,45 @@ namespace mctools {
             DT_LOG_WARNING(logging, message.str());
             continue;
           } else {
-            DT_LOG_TRACE(logging," -> G4 logical volume '" << g4_log_name << "' has a magnetic field.");
+            DT_LOG_NOTICE(logging," -> G4 logical volume '" << g4_log_name << "' has an electromagnetic field labelled '"
+                          << gefa.get_field_name() << "'.");
           }
 
-          magnetic_field * mag_field = new magnetic_field;
-          mag_field->loggable_support::_initialize_logging_support(_mag_field_aux_);
+          magnetic_field * em_field = new magnetic_field;
+          em_field->loggable_support::_initialize_logging_support(_em_field_aux_);
+          // electromagnetic_field * em_field = new electromagnetic_field;
+          // em_field->loggable_support::_initialize_logging_support(_em_field_aux_);
           DT_THROW_IF (gefa.field == 0, std::logic_error,
                        "Missing field for geometry/association '" << association_name << "' !");
           DT_THROW_IF (! gefa.field->is_magnetic_field(), std::logic_error,
-                       "Field '" << association_name << "' is not a magnetic field !");
+                       "Field '" << association_name << "' is not a electromagnetic field !");
 
           // Check position/time :
           bool cpt = false;
           std::string cpt_key = "check_pos_time." + association_name;
-          if (_mag_field_aux_.has_key(cpt_key)) {
-            cpt = _mag_field_aux_.fetch_boolean(cpt_key);
+          if (_em_field_aux_.has_key(cpt_key)) {
+            cpt = _em_field_aux_.fetch_boolean(cpt_key);
           }
-          mag_field->set_name(association_name);
-          mag_field->set_mag_field(*gefa.field);
-          mag_field->set_mag_field_check_pos_time(cpt);
-          mag_field->initialize();
+          em_field->set_name(association_name);
+          em_field->set_field(*gefa.field);
+          em_field->set_field_check_pos_time(cpt);
+          em_field->initialize();
 
           // Use the default miss distance :
           double miss_distance = _general_miss_distance_;
           std::string md_log_key = "miss_distance." + association_name;
-          if (_mag_field_aux_.has_key(md_log_key)) {
-            miss_distance = _mag_field_aux_.fetch_real(md_log_key);
-            if (! _mag_field_aux_.has_explicit_unit(md_log_key)) {
+          if (_em_field_aux_.has_key(md_log_key)) {
+            miss_distance = _em_field_aux_.fetch_real(md_log_key);
+            if (! _em_field_aux_.has_explicit_unit(md_log_key)) {
               miss_distance *= _miss_distance_unit_;
             }
           }
 
-          G4FieldManager * detector_field_mgr = new G4FieldManager(mag_field);
-          detector_field_mgr->CreateChordFinder(mag_field);
-          detector_field_mgr->GetChordFinder()->SetDeltaChord(miss_distance);
+          G4FieldManager * detector_field_mgr = new G4FieldManager(em_field);
+          if (em_field->get_field().is_magnetic_field()) {
+            detector_field_mgr->CreateChordFinder(em_field);
+            detector_field_mgr->GetChordFinder()->SetDeltaChord(miss_distance);
+          }
           g4_module_log->SetFieldManager(detector_field_mgr, true);
           DT_LOG_NOTICE(logging,
                         "G4 logical volume '" << g4_log_name
@@ -930,8 +976,8 @@ namespace mctools {
       }
       _SHPF_.initialize();
       DT_LOG_NOTICE(_logprio(), "SHPF: The step hit processors have been loaded from the SHPF.");
-      if (_logprio() >= datatools::logger::PRIO_NOTICE) {
-        _SHPF_.tree_dump(std::clog, "SHPF: ", "notice: ");
+      if (_logprio() >= datatools::logger::PRIO_DEBUG) {
+        _SHPF_.tree_dump(std::clog, "SHPF: ", "debug: ");
       }
 
       /*****************************************************************
@@ -1194,7 +1240,7 @@ namespace mctools {
           const std::string & sensitive_category = iSD->first;
           sensitive_detector * SD = iSD->second;
           DT_LOG_NOTICE(_logprio(),"Sensitive detector '" << sensitive_category << "' : ");
-          SD->tree_dump(std::clog, "");
+          SD->tree_dump(std::clog, "", "notice: ");
         }
       }
 
@@ -1299,54 +1345,139 @@ namespace mctools {
 
     void detector_construction::_set_user_limits()
     {
-      DT_LOG_TRACE(_logprio(),  "Entering...");
-      G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
+      DT_LOG_TRACE(_logprio(), "Entering...");
 
       std::vector<std::string> log_volumes;
       if (_limits_config_.has_key("limits.list_of_volumes")) {
         _limits_config_.fetch("limits.list_of_volumes", log_volumes);
       }
-      if (log_volumes.size() == 0) {
-        return;
+
+      // Not used yet:
+      std::vector<std::string> regions;
+      if (_limits_config_.has_key("limits.list_of_regions")) {
+        _limits_config_.fetch("limits.list_of_regions", regions);
       }
-      // const geomtools::models_col_type & models_dict
-      //   = _geom_manager_->get_factory().get_models();
+
+      std::map<std::string, std::string> targets;
+      for (unsigned int i = 0; i < regions.size(); ++i) {
+        const std::string & region_name = regions[i];
+        targets[region_name] = "region";
+      }
       for (unsigned int i = 0; i < log_volumes.size(); ++i) {
         const std::string & log_name = log_volumes[i];
-        geomtools::logical_volume::dict_type::const_iterator found
-          = _geom_manager_->get_factory().get_logicals().find(log_name);
-        //geomtools::models_col_type::const_iterator found = models_dict.find(model_name);
-        if (found == _geom_manager_->get_factory().get_logicals().end()) {
-          //DT_LOG_WARNING(_logprio(), "Cannot find logical volume '" << log_name << "' !");
-          DT_THROW_IF(true, std::logic_error,
-                      "Cannot find logical volume '" << log_name << "' for user limits !");
-          continue;
-        }
+        targets[log_name] = "logical_volume";
+      }
 
-        //string log_name = geomtools::i_model::make_logical_volume_name(model_name);
-        G4String g4_log_name = log_name.c_str();
-        G4LogicalVolume * g4_module_log = g4_LV_store->GetVolume(g4_log_name, false);
-        if (g4_module_log == 0) {
-          //DT_LOG_WARNING(_logprio(), "Missing G4 logical volume with name '" << g4_log_name << "' !");
-          DT_THROW_IF(true, std::logic_error,
-                      "Missing G4 logical volume with name '"
-                      << g4_log_name << "' for user limits !");
-          continue;
-        }
-
-        // search for maximum step length:
-        double max_step = DBL_MAX;
-        std::ostringstream prop_name;
-        prop_name << "limits.max_step." << log_name;
-        if (_limits_config_.has_key(prop_name.str())) {
-          max_step = _limits_config_.fetch_real(prop_name.str());
-          if (! _limits_config_.has_explicit_unit(prop_name.str())) {
-            max_step *= CLHEP::mm;
+      // Loop on regions and logical volumes:
+      for (std::map<std::string, std::string>::const_iterator i = targets.begin();
+           i != targets.end();
+           i++) {
+        G4Region * g4_region = 0;
+        G4LogicalVolume * g4_logical = 0;
+        const std::string & target_name = i->first;
+        if (i->second == "logical_volume") {
+          /*
+          geomtools::logical_volume::dict_type::const_iterator found
+            = _geom_manager_->get_factory().get_logicals().find(target_name);
+          if (found == _geom_manager_->get_factory().get_logicals().end()) {
+            DT_THROW_IF(true, std::logic_error,
+                        "Cannot find logical volume '" << target_name << "' for user limits !");
           }
-          G4UserLimits * g4_user_limits = new G4UserLimits(max_step);
+          */
+          g4_logical = G4LogicalVolumeStore::GetInstance()->GetVolume(target_name.c_str(), false);
+          DT_THROW_IF(g4_logical == 0, std::logic_error,
+                      "Missing G4 logical volume with name '"
+                      << target_name << "' for user limits !");
+        } else if (i->second == "region") {
+          g4_region = G4RegionStore::GetInstance ()->GetRegion(target_name.c_str());
+          DT_THROW_IF(g4_region == 0, std::logic_error,
+                      "Cannot find region named '" << target_name << "' !");
+        }
+
+        // Search for maximum step length:
+        double max_step = DBL_MAX;
+        double max_track_length = DBL_MAX;
+        double max_track_time = DBL_MAX;
+        double min_track_ekin = 0.;
+        double min_track_range = 0.;
+        bool   ulimits_used = false;
+        double default_length_unit = CLHEP::mm;
+        double default_time_unit = CLHEP::nanosecond;
+        double default_energy_unit = CLHEP::keV;
+        {
+          std::ostringstream prop_name;
+          prop_name << "limits.max_step." << target_name;
+          if (_limits_config_.has_key(prop_name.str())) {
+            max_step = _limits_config_.fetch_real(prop_name.str());
+            if (! _limits_config_.has_explicit_unit(prop_name.str())) {
+              max_step *= default_length_unit;
+            }
+            ulimits_used = true;
+          }
+        }
+        {
+          std::ostringstream prop_name;
+          prop_name << "limits.max_track_length." << target_name;
+          if (_limits_config_.has_key(prop_name.str())) {
+            max_track_length = _limits_config_.fetch_real(prop_name.str());
+            if (! _limits_config_.has_explicit_unit(prop_name.str())) {
+              max_track_length *= default_length_unit;
+            }
+            ulimits_used = true;
+          }
+        }
+        {
+          std::ostringstream prop_name;
+          prop_name << "limits.max_track_time." << target_name;
+          if (_limits_config_.has_key(prop_name.str())) {
+            max_track_time = _limits_config_.fetch_real(prop_name.str());
+            if (! _limits_config_.has_explicit_unit(prop_name.str())) {
+              max_track_time *= default_time_unit;
+            }
+            ulimits_used = true;
+          }
+        }
+        {
+          std::ostringstream prop_name;
+          prop_name << "limits.min_track_ekin." << target_name;
+          if (_limits_config_.has_key(prop_name.str())) {
+            min_track_ekin = _limits_config_.fetch_real(prop_name.str());
+            if (! _limits_config_.has_explicit_unit(prop_name.str())) {
+              min_track_ekin *= default_energy_unit;
+            }
+          }
+        }
+        {
+          std::ostringstream prop_name;
+          prop_name << "limits.min_track_range." << target_name;
+          if (_limits_config_.has_key(prop_name.str())) {
+            min_track_range = _limits_config_.fetch_real(prop_name.str());
+            if (! _limits_config_.has_explicit_unit(prop_name.str())) {
+              min_track_range *= default_length_unit;
+            }
+            ulimits_used = true;
+          }
+        }
+        if (ulimits_used) {
+          // 2014-12-12, FM:
+          // max_step implies G4StepLimiter pseudo process to be associated to the particle.
+          // Other params imply G4UserSpecialCuts pseudo process to be associated to the
+          // particle (not implemented yet).
+          G4UserLimits * g4_user_limits = new G4UserLimits(max_step,
+                                                           max_track_length,
+                                                           max_track_time,
+                                                           min_track_ekin,
+                                                           min_track_range);
           _user_limits_col_.push_back(g4_user_limits);
-          g4_module_log->SetUserLimits(g4_user_limits);
-          DT_LOG_NOTICE(_logprio(), "Installing user limits for G4 logical volume with name '" << g4_log_name << "' with max step = " << max_step / CLHEP::mm << " mm");
+          if (g4_logical) {
+            g4_logical->SetUserLimits(g4_user_limits);
+            DT_LOG_NOTICE(_logprio(), "Installing user limits for G4 logical volume named '"
+                          << target_name << "' with max step = " << max_step / CLHEP::mm << " mm");
+          } else if (g4_region) {
+            g4_region->SetUserLimits(g4_user_limits);
+            DT_LOG_NOTICE(_logprio(), "Installing user limits for G4 region named '"
+                          << target_name << "' with max step = " << max_step / CLHEP::mm << " mm");
+          }
         }
 
       }
@@ -1642,8 +1773,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::detector_construction,ocd_)
                    )
       ;
   }
-
-  //hit_processor_factory.config
 
 
   /*************************

@@ -1,7 +1,7 @@
 /// \file mctools/g4/particles_physics_constructor.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-07-04
- * Last modified: 2013-07-04
+ * Last modified: 2014-12-12
  *
  * License:
  *
@@ -48,11 +48,12 @@ namespace mctools {
     protected:
 
       // these methods construct particles
-      void _ConstructBosons ();
-      void _ConstructLeptons ();
-      void _ConstructMesons ();
-      void _ConstructBaryons ();
-      void _ConstructIons ();
+      void _ConstructBosons();
+      void _ConstructLeptons();
+      void _ConstructMesons();
+      void _ConstructBaryons();
+      void _ConstructIons();
+      void _ConstructUserLimits();
 
       void _set_defaults();
 

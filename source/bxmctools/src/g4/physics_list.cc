@@ -32,6 +32,7 @@
 #include <G4ProductionCuts.hh>
 #include <G4RegionStore.hh>
 #include <G4PhysListFactory.hh>
+#include <G4StepLimiterBuilder.hh>
 
 namespace mctools {
 
@@ -122,6 +123,9 @@ namespace mctools {
 
     physics_list::~physics_list ()
     {
+      if (_geant4_physics_list_) {
+        _geant4_physics_list_.reset();
+      }
       return;
     }
 
@@ -137,8 +141,6 @@ namespace mctools {
       _production_cuts_values_.electron = _production_cuts_default_value_;
       _production_cuts_values_.positron = _production_cuts_default_value_;
       _production_cuts_values_.gamma    = _production_cuts_default_value_;
-      _geant4_physics_list_name_.clear();
-      _geant4_physics_list_.reset(0);
 
       return;
     }
@@ -564,7 +566,6 @@ namespace mctools {
       }
       _set_defaults ();
 
-
       DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
@@ -589,6 +590,7 @@ namespace mctools {
 
       if (has_geant4_physics_list()) {
         grab_geant4_physics_list().ConstructProcess();
+        grab_geant4_physics_list().RegisterPhysics(new G4StepLimiterBuilder());
       } else {
         this->G4VModularPhysicsList::ConstructProcess();
       }

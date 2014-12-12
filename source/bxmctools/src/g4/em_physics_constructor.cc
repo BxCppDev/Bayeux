@@ -76,6 +76,7 @@
 #include "G4UAtomicDeexcitation.hh"
 #include <G4RegionStore.hh>
 #include <G4StepLimiter.hh>
+#include <G4UserSpecialCuts.hh>
 
 namespace mctools {
 
@@ -224,6 +225,11 @@ namespace mctools {
         _em_gamma_conversion_to_muons_ = config_.fetch_boolean ("em.gamma.conversion_to_muons");
       }
       DT_LOG_DEBUG(_logprio(), "Gamma conversion to muons process set to: " << _em_gamma_conversion_to_muons_);
+
+      if (config_.has_key ("em.gamma.step_limiter")) {
+        _em_gamma_step_limiter_ = config_.fetch_boolean ("em.gamma.step_limiter");
+      }
+      DT_LOG_DEBUG(_logprio(),"Gamma step limiter set to: " << _em_gamma_step_limiter_);
 
       // Electrons/positrons :
       if (config_.has_key ("em.electron.ionisation")) {
@@ -416,6 +422,8 @@ namespace mctools {
       _em_gamma_compton_scattering_     = true;
       _em_gamma_conversion_             = true;
       _em_gamma_conversion_to_muons_    = false;
+      _em_gamma_step_limiter_           = false;
+      _em_gamma_user_special_cuts_      = false;
 
       // electron/positron:
       _em_electron_ionisation_          = true;
@@ -424,6 +432,8 @@ namespace mctools {
       _em_electron_ms_use_distance_to_boundary_  = true;
       _em_electron_ms_range_factor_              = 0.005;
       _em_positron_annihilation_        = true;
+      _em_electron_step_limiter_        = true;
+      _em_electron_user_special_cuts_   = false;
 
       // atomic deexcitation
       _em_fluorescence_                 = false;
@@ -437,6 +447,7 @@ namespace mctools {
       _em_ion_multiple_scattering_      = true;
       _em_ion_ionisation_               = true;
       _em_ion_step_limiter_             = false;
+      _em_ion_user_special_cuts_        = false;
 
       // muon:
       _em_muon_multiple_scattering_     = true;
@@ -444,6 +455,7 @@ namespace mctools {
       _em_muon_bremsstrahlung_          = true;
       _em_muon_pair_production_         = true;
       _em_muon_step_limiter_            = false;
+      _em_muon_user_special_cuts_       = false;
 
       return;
     }
@@ -499,6 +511,14 @@ namespace mctools {
            << "Gamma conversion to muons    : "
            << (_em_gamma_conversion_to_muons_ ? "Yes" : "No") << std::endl;
 
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Gamma step limiter : "
+           << (_em_gamma_step_limiter_ ? "Yes" : "No") << std::endl;
+
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Gamma user special cuts : "
+           << (_em_gamma_user_special_cuts_ ? "Yes" : "No") << std::endl;
+
       // Electron/positron:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron ionisation : "
@@ -527,6 +547,10 @@ namespace mctools {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Electron/positron step limiter : "
            << (_em_electron_step_limiter_ ? "Yes" : "No") << std::endl;
+
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Electron/positron user special cuts : "
+           << (_em_electron_user_special_cuts_ ? "Yes" : "No") << std::endl;
 
       // Atomic deexcitation:
       out_ << indent << datatools::i_tree_dumpable::tag
@@ -595,6 +619,10 @@ namespace mctools {
            << "Ion step limiter : "
            << (_em_ion_step_limiter_ ? "Yes" : "No") << std::endl;
 
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Ion user special cuts : "
+           << (_em_ion_user_special_cuts_ ? "Yes" : "No") << std::endl;
+
       // Muon:
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon ionisation : "
@@ -612,9 +640,13 @@ namespace mctools {
            << "Muon multiple scattering : "
            << (_em_muon_multiple_scattering_ ? "Yes" : "No") << std::endl;
 
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon step limiter : "
            << (_em_muon_step_limiter_ ? "Yes" : "No") << std::endl;
+
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Muon user special cuts : "
+           << (_em_muon_user_special_cuts_ ? "Yes" : "No") << std::endl;
 
       return;
     }
@@ -690,14 +722,6 @@ namespace mctools {
            i++) {
         const std::string & region_name = i->first;
         const region_deexcitation_type & rd = i->second;
-        /*
-          std::cerr << "Regions are:";
-          for ( std::vector<G4Region *>::const_iterator i = G4RegionStore::GetInstance ()->begin();
-          i != G4RegionStore::GetInstance ()->end(); i++ ) {
-          std::cerr << " '" << (*i)->GetName () << "'";
-          }
-          std::cerr << std::endl;
-        */
         G4Region * a_region = G4RegionStore::GetInstance ()->GetRegion (region_name);
         DT_THROW_IF(a_region == 0, std::logic_error,
                     "Cannot find region named '" << region_name
@@ -735,6 +759,8 @@ namespace mctools {
           /***********
            *  Gamma  *
            ***********/
+          int process_rank = 0;
+
           G4RayleighScattering * the_rayleigh_scattering = 0;
           if (_em_gamma_rayleigh_scattering_) {
             the_rayleigh_scattering = new G4RayleighScattering();
@@ -828,6 +854,11 @@ namespace mctools {
             pmanager->AddDiscreteProcess (the_gamma_conversion_to_muons);
           }
 
+          if (_em_gamma_step_limiter_) {
+            ++process_rank;
+            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
+          }
+
           //pmanager->AddProcess (new G4StepLimiter (), -1, -1, 4);
 
         } else if (particle_name == "e-" || particle_name == "e+") {
@@ -843,7 +874,7 @@ namespace mctools {
             the_electron_multiple_scattering->SetRangeFactor(_em_electron_ms_range_factor_);
             //??? the_electron_multiple_scattering->SetStepLimitType (fUseDistanceToBoundary);
             ++process_rank;
-            pmanager->AddProcess (the_electron_multiple_scattering, -1, process_rank, process_rank);
+            pmanager->AddProcess(the_electron_multiple_scattering, -1, process_rank, process_rank);
           }
 
           if (_em_electron_ionisation_) {
@@ -903,7 +934,7 @@ namespace mctools {
               the_positron_annihilation->SetEmModel(the_penelope_annihilation_model);
             }
             ++process_rank;
-            pmanager->AddProcess (the_positron_annihilation,  0,-1, process_rank);
+            pmanager->AddProcess(the_positron_annihilation, 0, -1, process_rank);
           }
 
           if (_em_electron_step_limiter_) {
@@ -951,8 +982,11 @@ namespace mctools {
           pmanager->AddProcess (new G4MuBremsstrahlung,     -1, process_rank, process_rank);
           ++process_rank;
           pmanager->AddProcess (new G4MuPairProduction,     -1, process_rank, process_rank);
-          // ++process_rank;
-          // pmanager->AddProcess (new G4StepLimiter,          -1, -1, process_rank);
+
+          if (_em_muon_step_limiter_) {
+            ++process_rank;
+            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
+          }
           // ++process_rank;
           // pmanager->AddProcess (new G4UserSpecialCuts,      -1, -1, process_rank);
         } else {
@@ -985,7 +1019,7 @@ namespace mctools {
 /** Opening macro for implementation
  *  This macro must be used outside of any namespace.
  */
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
 {
   // The class name :
   ocd_.set_class_name ("mctools::g4::em_physics_constructor");
@@ -998,7 +1032,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor,ocd_)
 
   // The class detailed documentation :
   ocd_.set_class_documentation ("The Geant4 simulation manager class embedded \n"
-                                "electro-magnetic physics list.               \n"
+                                "electromagnetic physics list.                \n"
                                 );
 
 

@@ -190,7 +190,6 @@ if [ $do_simulation -eq 1 ]; then
 	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
-    exit 0
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \

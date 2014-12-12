@@ -45,15 +45,15 @@ namespace mctools {
       return _name_;
     }
 
-    void magnetic_field::set_mag_field_check_pos_time(bool c_)
+    void magnetic_field::set_field_check_pos_time(bool c_)
     {
-      _mag_field_check_pos_time_ = c_;
+      _field_check_pos_time_ = c_;
       return;
     }
 
-    bool magnetic_field::is_mag_field_check_pos_time() const
+    bool magnetic_field::is_field_check_pos_time() const
     {
-      return _mag_field_check_pos_time_;
+      return _field_check_pos_time_;
     }
 
     bool magnetic_field::is_initialized() const
@@ -61,22 +61,40 @@ namespace mctools {
       return _initialized_;
     }
 
+    bool magnetic_field::has_field() const
+    {
+      return _field_ != 0;
+    }
+
     bool magnetic_field::has_mag_field() const
     {
-      return _mag_field_ != 0;
+      return _field_ != 0;
     }
 
     void magnetic_field::set_mag_field(const emfield::base_electromagnetic_field & mf_)
     {
-      _mag_field_ = &mf_;
+      _field_ = &mf_;
       return;
+    }
+
+    void magnetic_field::set_field(const emfield::base_electromagnetic_field & mf_)
+    {
+      _field_ = &mf_;
+      return;
+    }
+
+    const emfield::base_electromagnetic_field &
+    magnetic_field::get_field() const
+    {
+      DT_THROW_IF (! has_field(), std::logic_error, "No field !");
+      return *_field_;
     }
 
     const emfield::base_electromagnetic_field &
     magnetic_field::get_mag_field() const
     {
       DT_THROW_IF (! has_mag_field(), std::logic_error, "No magnetic field !");
-      return *_mag_field_;
+      return *_field_;
     }
 
     bool magnetic_field::is_active() const
@@ -86,9 +104,9 @@ namespace mctools {
     magnetic_field::magnetic_field()
     {
       _initialized_ = false;
-      _mag_field_ = 0;
-      _mag_field_check_pos_time_ = 0;
-      geomtools::invalidate(_standalone_constant_mag_field_);
+      _field_ = 0;
+      _field_check_pos_time_ = 0;
+      geomtools::invalidate(_standalone_constant_field_);
       return;
     }
 
@@ -117,7 +135,7 @@ namespace mctools {
         }
       }
 
-      if (! has_mag_field()) {
+      if (! has_field()) {
         double magnetic_field_unit = CLHEP::tesla;
 
         int mode = 0;
@@ -140,15 +158,15 @@ namespace mctools {
             magnetic_field_unit = datatools::units::get_magnetic_field_unit_from(mfu);
           }
 
-          if (! geomtools::is_valid(_standalone_constant_mag_field_)) {
+          if (! geomtools::is_valid(_standalone_constant_field_)) {
             if (config_.has_key("standalone_constant_mag_field")) {
               std::vector<double> smg;
               config_.fetch("standalone_constant_mag_field", smg);
               DT_THROW_IF (smg.size() != 3, std::logic_error,
                            "Invalid dimension for vector of constant magnetic field coordinates in Geant4 magnetic field '" << get_name() << "' !");
-              _standalone_constant_mag_field_.set(smg[0], smg[1], smg[2]);
+              _standalone_constant_field_.set(smg[0], smg[1], smg[2]);
               if (! config_.has_explicit_unit("standalone_constant_mag_field")) {
-                _standalone_constant_mag_field_ *= magnetic_field_unit;
+                _standalone_constant_field_ *= magnetic_field_unit;
                 DT_LOG_NOTICE(_logprio(), "Forcing unit for standalone constant magnetic field in Geant4 magnetic field '" << get_name() << "'...");
               }
             }
@@ -224,7 +242,7 @@ namespace mctools {
       }
 
       if (config_.has_flag("magnetic_field.check_pos_time")) {
-        _mag_field_check_pos_time_ = true;
+        _field_check_pos_time_ = true;
       }
 
       _initialized_ = true;
@@ -236,37 +254,42 @@ namespace mctools {
                                        double * b_field_) const
     {
       DT_LOG_TRACE(_logprio(), "Entering GetFieldValue for Geant4 magnetic field '" << get_name() << "'...");
+      // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Entering GetFieldValue for Geant4 magnetic field '" << get_name() << "'...");
       DT_THROW_IF (! _initialized_, std::logic_error,
                    "Geant4 magnetic field '" << get_name() << "' is not initialized !");
       b_field_[0] = 0.0;
       b_field_[1] = 0.0;
       b_field_[2] = 0.0;
-      if (_mag_field_ != 0) {
+      if (_field_ != 0) {
         DT_LOG_TRACE(_logprio(), "Compute magnetic field for Geant4 magnetic field '" << get_name() << "'...");
+        // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Compute magnetic field for Geant4 magnetic field '" << get_name() << "'...");
         geomtools::vector_3d pos(position_[0], position_[1], position_[2]);
         double time = position_[3];
         geomtools::vector_3d the_b_field;
-        if (_mag_field_check_pos_time_) {
-          DT_THROW_IF(! _mag_field_->position_and_time_are_valid(pos, time),
+        if (_field_check_pos_time_) {
+          DT_THROW_IF(! _field_->position_and_time_are_valid(pos, time),
                       std::logic_error,
                       "Position and time at "
                       << pos / CLHEP::mm << " [mm] / " << time / CLHEP::nanosecond << " [ns] "
                       << " are not valid for magnetic field named '" << _name_
                       << "' !");
         }
-        int status = _mag_field_->compute_magnetic_field(pos, time, the_b_field);
+        int status = _field_->compute_magnetic_field(pos, time, the_b_field);
         DT_THROW_IF (status != 0,  std::logic_error,
                      "Magnetic field named '" << _name_
                      << "' cannot compute magnetic field value at "
                      << pos / CLHEP::mm << " [mm] / " << time / CLHEP::nanosecond << " [ns] !");
         DT_LOG_TRACE(_logprio(), "Geant4 magnetic field '" << get_name() << "' is : " << the_b_field / CLHEP::gauss << " gauss");
+        // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS,
+        //              "Geant4 magnetic field '" << get_name()
+        //              << "' is : " << the_b_field / CLHEP::gauss << " gauss");
         b_field_[0] = the_b_field.x();
         b_field_[1] = the_b_field.y();
         b_field_[2] = the_b_field.z();
-      } else if (geomtools::is_valid(_standalone_constant_mag_field_)) {
-        b_field_[0] = _standalone_constant_mag_field_.x();
-        b_field_[1] = _standalone_constant_mag_field_.y();
-        b_field_[2] = _standalone_constant_mag_field_.z();
+      } else if (geomtools::is_valid(_standalone_constant_field_)) {
+        b_field_[0] = _standalone_constant_field_.x();
+        b_field_[1] = _standalone_constant_field_.y();
+        b_field_[2] = _standalone_constant_field_.z();
       }
       DT_LOG_TRACE(_logprio(), "Exiting GetFieldValue for Geant4 magnetic field '" << get_name() << "'.");
       return;
@@ -276,14 +299,14 @@ namespace mctools {
     {
       out_ << "magnetic_field:" << std::endl;
       out_ << "|-- Name                   : '" << _name_ << "'" << std::endl;
-      if (geomtools::is_valid(_standalone_constant_mag_field_)) {
+      if (geomtools::is_valid(_standalone_constant_field_)) {
         out_ << "|-- Standalone constant magnetic field : "
-             << _standalone_constant_mag_field_ / CLHEP::gauss
+             << _standalone_constant_field_ / CLHEP::gauss
              << " gauss" << std::endl;
       } else {
-        out_ << "|-- Magnetic field         : " << _mag_field_ << std::endl;
+        out_ << "|-- Magnetic field         : " << _field_ << std::endl;
       }
-      out_ << "`-- Check field pos/time   : " << _mag_field_check_pos_time_ << std::endl;
+      out_ << "`-- Check field pos/time   : " << _field_check_pos_time_ << std::endl;
       return;
     }
 
