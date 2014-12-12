@@ -235,7 +235,7 @@ namespace emfield {
   void base_electromagnetic_field::_terminate_ ()
   {
     _initialized_ = false;
-    _set_defaults_ ();
+    _set_defaults_();
     return;
   }
 
@@ -244,10 +244,10 @@ namespace emfield {
   base_electromagnetic_field::base_electromagnetic_field (uint32_t flags_)
   {
     _initialized_ = false;
-    _set_defaults_ ();
+    _set_defaults_();
 
     // Special values :
-    if (flags_ & DEBUG) set_debug (true);
+    if (flags_ & DEBUG) set_debug(true);
     _electric_field_ = flags_ & ELECTRIC_FIELD;
     _magnetic_field_ = flags_ & MAGNETIC_FIELD;
     _electric_field_can_be_combined_ = flags_ & ELECTRIC_FIELD_CAN_BE_COMBINED;
@@ -261,7 +261,7 @@ namespace emfield {
   // Destructor :
   base_electromagnetic_field::~base_electromagnetic_field ()
   {
-    DT_THROW_IF (is_initialized (),
+    DT_THROW_IF (is_initialized(),
                  std::logic_error,
                  "EM field still has its 'initialized' flag on !" <<
                  "The '::reset' method has not been invoked from the daughter class' destructor !" <<
@@ -273,7 +273,7 @@ namespace emfield {
   bool base_electromagnetic_field::position_and_time_are_valid (const geomtools::vector_3d & position_,
                                                                 double time_) const
   {
-    return geomtools::is_valid (position_) && datatools::is_valid (time_);
+    return geomtools::is_valid(position_) && datatools::is_valid(time_);
   }
 
 
@@ -282,55 +282,47 @@ namespace emfield {
                                                                  geomtools::vector_3d & electric_field_,
                                                                  geomtools::vector_3d & magnetic_field_) const
   {
-    geomtools::invalidate (electric_field_);
-    geomtools::invalidate (magnetic_field_);
-    if (! is_initialized ())
-      {
-        return STATUS_NOT_INITIALIZED;
-      }
-    if (! is_error ())
-      {
-        return STATUS_ERROR;
-      }
-    if (! is_electric_field ())
-      {
-        return STATUS_NO_ELECTRIC_FIELD;
-      }
+    geomtools::invalidate(electric_field_);
+    geomtools::invalidate(magnetic_field_);
+    if (! is_initialized()) {
+      return STATUS_NOT_INITIALIZED;
+    }
+    if (is_error ()) {
+      return STATUS_ERROR;
+    }
+    if (! is_electric_field()) {
+      return STATUS_NO_ELECTRIC_FIELD;
+    }
 
-    int se = compute_electric_field (position_, time_, electric_field_);
+    int se = compute_electric_field(position_, time_, electric_field_);
     if (se != STATUS_SUCCESS) return se;
 
-    if (! is_magnetic_field ())
-      {
-        return STATUS_NO_MAGNETIC_FIELD;
-      }
+    if (! is_magnetic_field()) {
+      return STATUS_NO_MAGNETIC_FIELD;
+    }
 
-    int sb = compute_magnetic_field (position_, time_, magnetic_field_);
+    int sb = compute_magnetic_field(position_, time_, magnetic_field_);
     return sb;
   }
 
 
-  int base_electromagnetic_field::compute_electric_field (const geomtools::vector_3d & position_,
-                                                          double time_,
-                                                          geomtools::vector_3d & electric_field_) const
+  int base_electromagnetic_field::compute_electric_field(const geomtools::vector_3d & position_,
+                                                         double time_,
+                                                         geomtools::vector_3d & electric_field_) const
   {
     geomtools::invalidate (electric_field_);
-    if (! is_initialized ())
-      {
+    if (! is_initialized ()) {
         return STATUS_NOT_INITIALIZED;
       }
-    if (! is_error ())
-      {
-        return STATUS_ERROR;
-      }
-    if (! is_electric_field ())
-      {
-        return STATUS_NO_ELECTRIC_FIELD;
-      }
-    if (! position_and_time_are_valid (position_, time_))
-      {
-        return STATUS_INVALID_POSITION_TIME;
-      }
+    if (is_error ()) {
+      return STATUS_ERROR;
+    }
+    if (! is_electric_field ()) {
+      return STATUS_NO_ELECTRIC_FIELD;
+    }
+    if (! position_and_time_are_valid (position_, time_)) {
+      return STATUS_INVALID_POSITION_TIME;
+    }
     electric_field_.set (0., 0., 0.);
     return STATUS_SUCCESS;
   }

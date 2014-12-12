@@ -1,8 +1,9 @@
-// -*- mode: c++ ; -*-
-/* uniform_magnetic_field.cc
- */
+// uniform_magnetic_field.cc
 
+// Ourselves:
 #include <emfield/uniform_magnetic_field.h>
+
+// Standard library:
 #include <datatools/properties.h>
 #include <datatools/units.h>
 #include <datatools/utils.h>
@@ -41,12 +42,15 @@ namespace emfield {
     return;
   }
 
-  EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(uniform_magnetic_field,
-                                        /*position_*/,
-                                        /*time_*/,
-                                        electric_field_)
+  // EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(uniform_magnetic_field,
+  //                                       /*position_*/,
+  //                                       /*time_*/,
+  //                                       electric_field_)
+  int uniform_magnetic_field::compute_electric_field (const geomtools::vector_3d & /* position_ */,
+                                                      double /* time_ */,
+                                                      geomtools::vector_3d & electric_field_) const
   {
-    geomtools::invalidate (electric_field_);
+    geomtools::invalidate(electric_field_);
     return STATUS_ERROR;
   }
 
@@ -63,9 +67,9 @@ namespace emfield {
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Cannot reset the magnetic field !");
 
-     geomtools::invalidate (_uniform_magnetic_field_);
-
     _set_initialized (false);
+
+     geomtools::invalidate(_uniform_magnetic_field_);
     return;
   }
 
@@ -136,10 +140,8 @@ namespace emfield {
 
     _uniform_magnetic_field_ *= b_unit;
 
-    _set_initialized (true);
+    _set_initialized(true);
     return;
   }
 
 } // end of namespace emfield
-
-// end of uniform_magnetic_field.cc

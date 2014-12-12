@@ -147,31 +147,31 @@ namespace emfield {
 
   protected:
 
-    void _set_initialized (bool initialized_);
+    void _set_initialized(bool initialized_);
 
-    void _set_error (bool error_);
+    void _set_error(bool error_);
 
-    void _set_electric_field (bool = true);
+    void _set_electric_field(bool = true);
 
-    void _set_magnetic_field (bool = true);
+    void _set_magnetic_field(bool = true);
 
-    void _set_electric_field_can_be_combined (bool = true);
+    void _set_electric_field_can_be_combined(bool = true);
 
-    void _set_magnetic_field_can_be_combined (bool = true);
+    void _set_magnetic_field_can_be_combined(bool = true);
 
-    void _set_electric_field_is_time_dependent (bool = true);
+    void _set_electric_field_is_time_dependent(bool = true);
 
-    void _set_magnetic_field_is_time_dependent (bool = true);
+    void _set_magnetic_field_is_time_dependent(bool = true);
 
-    void _parse_basic_parameters (const datatools::properties & setup_,
-                                  datatools::service_manager & service_manager_,
-                                  field_dict_type & dictionary_);
+    void _parse_basic_parameters(const datatools::properties & setup_,
+                                 datatools::service_manager & service_manager_,
+                                 field_dict_type & dictionary_);
 
   private:
 
-    void _set_defaults_ ();
+    void _set_defaults_();
 
-    void _terminate_ ();
+    void _terminate_();
 
   private:
 

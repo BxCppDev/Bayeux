@@ -130,7 +130,7 @@
 #define EMFIELD_DEFAULT_DESTRUCTOR_IMPLEMENT(T) \
   EMFIELD_DESTRUCTOR_IMPLEMENT_HEAD (T)         \
   {                                             \
-    if (is_initialized ()) reset ();            \
+    if (is_initialized()) reset();              \
     return;                                     \
   }                                             \
   /**/
