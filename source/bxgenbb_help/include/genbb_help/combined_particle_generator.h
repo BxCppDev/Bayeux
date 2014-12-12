@@ -70,13 +70,17 @@ namespace genbb {
 
     /// Generation mode
     enum mode_type {
-      MODE_PLAIN_PROBABILITY = 0,
-      MODE_ACTIVITY          = 1,
-      MODE_TIMING            = 2
+      MODE_UNDEFINED         = 0,
+      MODE_PLAIN_PROBABILITY = 1,
+      MODE_ACTIVITY          = 2,
+      MODE_TIME              = 3
     };
 
     /// Set the generation mode
     void set_mode(int mode_);
+
+    /// Check if generation mode is based on time generation
+    bool is_mode_time() const;
 
     /// Check if generation mode is based on plain probability
     bool is_mode_plain_probability() const;

@@ -57,6 +57,11 @@ namespace genbb {
     return;
   }
 
+  bool combined_particle_generator::is_mode_time() const
+  {
+    return _mode_ == MODE_TIME;
+  }
+
   bool combined_particle_generator::is_mode_plain_probability() const
   {
     return _mode_ == MODE_PLAIN_PROBABILITY;
@@ -75,7 +80,7 @@ namespace genbb {
   combined_particle_generator::combined_particle_generator() : i_genbb()
   {
     _initialized_ = false;
-    _mode_ = MODE_PLAIN_PROBABILITY;
+    _mode_ = MODE_UNDEFINED;
     _seed_ = 0;
     return;
   }
@@ -138,17 +143,16 @@ namespace genbb {
       }
     }
 
-    if (config_.has_key("mode")) {
-      std::string mode_str = config_.fetch_string("mode");
-      if (mode_str == "plain_probability") {
-        set_mode(MODE_PLAIN_PROBABILITY);
-      } else if (mode_str == "activity") {
-        set_mode(MODE_ACTIVITY);
-      } else if (mode_str == "timing") {
-        set_mode(MODE_TIMING);
-      } else {
-        DT_THROW_IF(true, std::logic_error,"Unknown mode '" << mode_str << "' !");
-      }
+    DT_THROW_IF(! config_.has_key("mode"), std::logic_error, "Missing generation mode !");
+    const std::string mode_str = config_.fetch_string("mode");
+    if (mode_str == "plain_probability") {
+      set_mode(MODE_PLAIN_PROBABILITY);
+    } else if (mode_str == "activity") {
+      set_mode(MODE_ACTIVITY);
+    } else if (mode_str == "time") {
+      set_mode(MODE_TIME);
+    } else {
+      DT_THROW_IF(true, std::logic_error, "Unknown mode '" << mode_str << "' !");
     }
 
     double activity_unit = 1. * CLHEP::becquerel;
@@ -156,6 +160,14 @@ namespace genbb {
       if (config_.has_key("activity_unit")) {
         std::string activity_unit_str = config_.fetch_string("activity_unit");
         activity_unit = datatools::units::get_activity_unit_from(activity_unit_str);
+      }
+    }
+
+    double time_unit = 1. * CLHEP::ns;
+    if (is_mode_time()) {
+      if (config_.has_key("time_unit")) {
+        std::string time_unit_str = config_.fetch_string("time_unit");
+        time_unit = datatools::units::get_time_unit_from(time_unit_str);
       }
     }
 
@@ -183,6 +195,7 @@ namespace genbb {
         }
         entry_type & pge = _generators_info_.back();
         pge.label = pg_label;
+        pge.time = 0.0 * CLHEP::ns;
         pge.name = pg_name;
         pge.prob = 0.0;
         pge.cumul_prob = 0.0;
@@ -203,12 +216,27 @@ namespace genbb {
           //pet.tree_dump(std::cerr, "genbb::combined_particle_generator::initialize: PET: ", "DEVEL: ");
         pge.pg = &(pet.grab());
 
+        // Extract time associated to the PG contribution :
+        if (is_mode_time()) {
+          // Timing mode :
+          std::ostringstream time_prop_key_oss;
+          time_prop_key_oss << "generators." << pg_label << ".time";
+          const std::string time_prop_key = time_prop_key_oss.str();
+          DT_THROW_IF(! config_.has_key(time_prop_key),
+                       std::logic_error,
+                       "Missing time property '" << time_prop_key << "' for particle generator with label '"
+                       << pg_label << "' !");
+          double pg_time = config_.fetch_real(time_prop_key);
+          if (! config_.has_explicit_unit(time_prop_key)) pg_time *= time_unit;
+          pge.time = pg_time;
+        }
+
         // Extract probability associated to the PG contribution :
         if (is_mode_plain_probability()) {
           // Plain probability mode :
           std::ostringstream prob_prop_key_oss;
           prob_prop_key_oss << "generators." << pg_label << ".probability";
-          std::string prob_prop_key = prob_prop_key_oss.str();
+          const std::string prob_prop_key = prob_prop_key_oss.str();
           DT_THROW_IF(! config_.has_key(prob_prop_key),
                        std::logic_error,
                        "Missing probability property '" << prob_prop_key << "' for particle generator with label '"
@@ -272,33 +300,52 @@ namespace genbb {
   }
 
   void combined_particle_generator::_load_next(primary_event & event_,
-                                                bool compute_classification_)
+                                               bool compute_classification_)
   {
     DT_LOG_TRACE(get_logging_priority(),"Entering...");
     DT_THROW_IF(! _initialized_, std::logic_error,
                  "Generator is notlocked/initialized !");
     event_.reset();
 
-    double prob = grab_random().flat(0.0, 1.0);
-    //std::cerr << "DEVEL: " << "prob=" << prob << '\n';
-    int pg_index = -1;
-    for (size_t i = 0; i < _generators_info_.size(); i++) {
-      if (prob < _generators_info_[i].cumul_prob) {
-        pg_index = i;
-        //std::cerr << "DEVEL: " << "  pg_index=" << pg_index << '\n';
-        break;
+    if (is_mode_time()) {
+      for (size_t ig = 0; ig < _generators_info_.size(); ++ig) {
+        DT_LOG_TRACE(get_logging_priority(), "Generating '" << _generators_info_[ig].name << "'");
+        primary_event an_event;
+        _generators_info_[ig].pg->load_next(an_event, false);
+        for (size_t ip = 0; ip < an_event.get_number_of_particles(); ++ip) {
+          primary_particle & pp = an_event.grab_particle(ip);
+          pp.shift_time(_generators_info_[ig].time);
+          event_.add_particle(pp);
+        }
       }
+      event_.set_label(i_genbb::get_name());
     }
-    if (pg_index < 0) pg_index = _generators_info_.size() - 1;
-    DT_THROW_IF(!_generators_info_[pg_index].pg->has_next(),
-                 std::logic_error,
-                 "Particle generator '"
-                 << _generators_info_[pg_index].name << "' has no more event !");
-    _generators_info_[pg_index].pg->load_next(event_,compute_classification_);
-    std::ostringstream label_oss;
-    label_oss << _generators_info_[pg_index].name;
-    event_.set_label(label_oss.str());
 
+    if (is_mode_plain_probability()) {
+      const double prob = grab_random().flat(0.0, 1.0);
+      //std::cerr << "DEVEL: " << "prob=" << prob << '\n';
+      int pg_index = -1;
+      for (size_t i = 0; i < _generators_info_.size(); i++) {
+        if (prob < _generators_info_[i].cumul_prob) {
+          pg_index = i;
+          //std::cerr << "DEVEL: " << "  pg_index=" << pg_index << '\n';
+          break;
+        }
+      }
+      if (pg_index < 0) pg_index = _generators_info_.size() - 1;
+      DT_THROW_IF(!_generators_info_[pg_index].pg->has_next(),
+                  std::logic_error,
+                  "Particle generator '"
+                  << _generators_info_[pg_index].name << "' has no more event !");
+      _generators_info_[pg_index].pg->load_next(event_,compute_classification_);
+      std::ostringstream label_oss;
+      label_oss << _generators_info_[pg_index].name;
+      event_.set_label(label_oss.str());
+    }
+
+    if (compute_classification_) {
+      event_.compute_classification();
+    }
     DT_LOG_TRACE(get_logging_priority(),"Exiting.");
     return;
   }
