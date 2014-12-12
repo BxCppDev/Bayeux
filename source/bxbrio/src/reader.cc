@@ -251,7 +251,7 @@ void reader::_at_open(const std::string& filename_) {
   } // while
   // If the conventional automatic store is found, make it the current selected one:
   if (_store_infos.size() >= 1 && _automatic_store_ != 0) {
-      _current_store = _automatic_store_;
+    _current_store = _automatic_store_;
   }
   DT_LOG_TRACE(this->get_logging_priority(),"Exiting." );
 }
