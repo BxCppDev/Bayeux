@@ -1,7 +1,7 @@
 /// \file genbb_help/combined_particle_generator.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-03
- * Last modified: 2013-02-26
+ * Last modified: 2014-12-12
  *
  * License:
  * Copyright 2007-2013 F. Mauger
@@ -54,72 +54,89 @@ namespace genbb {
   {
   public:
 
+    /// Particle generator entry
     struct entry_type
     {
       std::string label;    /// Label
       std::string name;     /// Name
+      double    time;       /// Time
       double    prob;       /// Probability
       double    cumul_prob; /// Cumulated probability
       i_genbb * pg;         /// Reference to a particle generator
     };
+
+    /// Collection of particle generator entry type
     typedef std::vector<entry_type> pg_col_type;
 
-    enum mode_type
-      {
-        MODE_PLAIN_PROBABILITY = 0,
-        MODE_ACTIVITY          = 1
-      };
+    /// Generation mode
+    enum mode_type {
+      MODE_PLAIN_PROBABILITY = 0,
+      MODE_ACTIVITY          = 1,
+      MODE_TIMING            = 2
+    };
 
+    /// Set the generation mode
     void set_mode(int mode_);
 
-    bool is_mode_plain_probability () const;
+    /// Check if generation mode is based on plain probability
+    bool is_mode_plain_probability() const;
 
-    bool is_mode_activity () const;
+    /// Check if generation mode is based on activity
+    bool is_mode_activity() const;
 
-    virtual bool can_external_random () const;
+    /// Check existence of external random
+    virtual bool can_external_random() const;
 
-    const mygsl::rng & get_random () const;
+    /// Return a non-mutable random generator
+    const mygsl::rng & get_random() const;
 
-    mygsl::rng & grab_random ();
+    /// Return a mutable random generator
+    mygsl::rng & grab_random();
 
     /// Constructor
-    combined_particle_generator ();
+    combined_particle_generator();
 
     /// Destructor
-    virtual ~combined_particle_generator ();
+    virtual ~combined_particle_generator();
 
     /// Main initialization interface method
-    virtual void initialize (const datatools::properties & setup_,
-                             datatools::service_manager & service_manager_,
-                             detail::pg_dict_type & dictionary_);
+    virtual void initialize(const datatools::properties & setup_,
+                            datatools::service_manager & service_manager_,
+                            detail::pg_dict_type & dictionary_);
 
-    virtual void reset ();
+    /// Reset
+    virtual void reset();
 
-    virtual bool has_next ();
+    /// Check next generation event
+    virtual bool has_next();
 
     /// Check initialization status
-    virtual bool is_initialized () const;
+    virtual bool is_initialized() const;
 
+    /// Smart dump
     void dump(std::ostream & out_, const std::string & title_, const std::string & indent_ = "") const;
 
   protected:
 
-    virtual void _load_next (primary_event & event_,
-                             bool compute_classification_ = true);
+    /// Main generation function
+    virtual void _load_next(primary_event & event_,
+                            bool compute_classification_ = true);
 
   private:
 
-    void _at_init_ ();
+    /// Internal initialization method
+    void _at_init_();
 
-    void _at_reset_ ();
+    /// Internal reset method
+    void _at_reset_();
 
   private:
 
-    bool   _initialized_;
-    int    _mode_;
-    unsigned long _seed_;   //!< Local PRNG's seed
-    mygsl::rng    _random_; //!< Local PRNG
-    pg_col_type   _generators_info_;
+    bool   _initialized_;            //!< Initialization flag
+    int    _mode_;                   //!< Generation mode
+    unsigned long _seed_;            //!< Local PRNG's seed
+    mygsl::rng    _random_;          //!< Local PRNG
+    pg_col_type   _generators_info_; //!< Particle generators
     GENBB_PG_REGISTRATION_INTERFACE(combined_particle_generator);
 
   };
