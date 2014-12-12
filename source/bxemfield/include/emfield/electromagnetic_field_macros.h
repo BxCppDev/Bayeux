@@ -1,4 +1,4 @@
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-04-24
  * Last modified : 2013-02-24
  *

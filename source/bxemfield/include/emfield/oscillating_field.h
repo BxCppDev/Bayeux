@@ -48,9 +48,9 @@ namespace emfield {
 
   private:
 
-    base_electromagnetic_field::handle_type _field_;
-    double _frequency_;
-    double _phase_;
+    base_electromagnetic_field::handle_type _field_; //!< Handle to the field to be oscillating
+    double _frequency_; //!< Oscillation frequency
+    double _phase_; //!< Phase
 
     // Macro to automate the registration of the EM field :
     EMFIELD_REGISTRATION_INTERFACE(oscillating_field);

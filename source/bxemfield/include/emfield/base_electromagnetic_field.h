@@ -96,45 +96,56 @@ namespace emfield {
 
     bool magnetic_field_is_time_dependent () const;
 
+    /// Constructor
     base_electromagnetic_field (uint32_t flags_ = 0);
 
+    /// Destructor
     virtual ~base_electromagnetic_field ();
 
+    /// Compute the coordinates of the electric and magnetic fields at given position and time
     virtual int compute_electromagnetic_field (const geomtools::vector_3d & position_,
                                                double time_,
                                                geomtools::vector_3d & electric_field_,
                                                geomtools::vector_3d & magnetic_field_) const;
 
+    /// Compute the coordinates of the electric or magnetic field at given position and time
     virtual int compute_field (char what_,
                                const geomtools::vector_3d & position_,
                                double time_,
                                geomtools::vector_3d & field_) const;
 
+    /// Naked initialization
     virtual void initialize_simple ();
 
+    /// Standalone initialization, no external resources are needed, only a set of parameters
     virtual void initialize_standalone (const datatools::properties & setup_);
 
+    /// Initialization using a set of parameters and a service manager
     virtual void initialize_with_service_only (const datatools::properties & setup_,
                                                datatools::service_manager & service_manager_);
 
+    /// Initialization using a set of parameters and an external dictionary of EM fields
     virtual void initialize_with_dictionary_only (const datatools::properties & setup_,
                                                   field_dict_type & dictionary_);
 
-    /*** Minimal interface ***/
-
+    /// Main initialization
     virtual void initialize (const datatools::properties & setup_,
                              datatools::service_manager & service_manager_,
                              field_dict_type & dictionary_) = 0;
 
+    /// Reset the field
     virtual void reset () = 0;
 
+    /// Check if position and tile are valid for this field
     virtual bool position_and_time_are_valid (const geomtools::vector_3d & position_,
                                               double time_) const;
 
+    /// Compute the coordinates of the electric field at given position and time
     virtual int compute_electric_field (const geomtools::vector_3d & position_,
                                         double time_,
                                         geomtools::vector_3d & electric_field_) const;
 
+    /// Compute the coordinates of the magnetic field at given position and time
     virtual int compute_magnetic_field (const geomtools::vector_3d & position_,
                                         double time_,
                                         geomtools::vector_3d & magnetic_field_) const;
@@ -169,23 +180,23 @@ namespace emfield {
 
   private:
 
+    /// Set default attributes values
     void _set_defaults_();
 
+    /// Terminate action
     void _terminate_();
 
   private:
 
-    datatools::logger::priority _logging_priority_; /// Logging priority threshold
-
-    bool     _initialized_;    /// Initialization flag
-    bool     _error_;          /// Error flag
-    bool     _electric_field_; /// Field can provide a value for the electric field
-    bool     _magnetic_field_; /// Field can provide a value for the magnetic field
-
-    bool     _electric_field_can_be_combined_;
-    bool     _magnetic_field_can_be_combined_;
-    bool     _electric_field_is_time_dependent_;
-    bool     _magnetic_field_is_time_dependent_;
+    datatools::logger::priority _logging_priority_; //!< Logging priority threshold
+    bool     _initialized_;    //!< Initialization flag
+    bool     _error_;          //!< Error flag
+    bool     _electric_field_; //!< Field can provide a value for the electric field
+    bool     _magnetic_field_; //!< Field can provide a value for the magnetic field
+    bool     _electric_field_can_be_combined_;   //!< Flag to allow the combinaison of the electric field with other fields
+    bool     _magnetic_field_can_be_combined_;   //!< Flag to allow the combinaison of the magnetic field with other fields
+    bool     _electric_field_is_time_dependent_; //!< Flag that indicated that the electric field is timedependent
+    bool     _magnetic_field_is_time_dependent_; //!< Flag that indicated that the magnetic field is timedependent
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_electromagnetic_field);

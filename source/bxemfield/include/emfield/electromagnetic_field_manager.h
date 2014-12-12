@@ -114,15 +114,15 @@ namespace emfield {
 
   private:
 
-    datatools::logger::priority _logging_priority_;       /// Logging priority threshold
-    bool _initialized_;                                   /// Initialization flag
-    bool _factory_preload_;                               /// Flag to preload the system factory
-    base_electromagnetic_field::factory_register_type _factory_register_; /// The factory register for EM field types
-    datatools::service_manager * _service_manager_;       /// Service manager
-    const geomtools::manager *   _geom_manager_;          /// Geometry manager
-    datatools::multi_properties  _field_definitions_;     /// Parameters for fields
-    base_electromagnetic_field::field_dict_type _fields_; /// Dictionnary of fields
-    boost::scoped_ptr<geom_map> _geom_map_;               /// Geometry/EM field associations map (what field and where ?)
+    datatools::logger::priority _logging_priority_;       //!< Logging priority threshold
+    bool _initialized_;                                   //!< Initialization flag
+    bool _factory_preload_;                               //!< Flag to preload the system factory
+    base_electromagnetic_field::factory_register_type _factory_register_; //!< The factory register for EM field types
+    datatools::service_manager * _service_manager_;       //!< Service manager
+    const geomtools::manager *   _geom_manager_;          //!< Geometry manager
+    datatools::multi_properties  _field_definitions_;     //!< Parameters for fields
+    base_electromagnetic_field::field_dict_type _fields_; //!< Dictionnary of fields
+    boost::scoped_ptr<geom_map> _geom_map_;               //!< Geometry/EM field associations map (what field is activated and where ?)
 
   };
 

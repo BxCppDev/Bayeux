@@ -1,6 +1,5 @@
 /// \file emfield/emfield_geom_plugin.h
-/* emfield.h
- * Author(s):  François Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s):     François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-02-23
  * Last modified: 2013-02-23
  *

@@ -1,8 +1,10 @@
-// -*- mode: c++ ; -*-
-/* placement_field.cc
- */
+// placement_field.cc
 
+// Ourselves:
 #include <emfield/placement_field.h>
+
+// Third party:
+// - Bayeux:
 #include <datatools/properties.h>
 #include <datatools/units.h>
 #include <datatools/utils.h>
@@ -194,5 +196,3 @@ namespace emfield {
   }
 
 } // end of namespace emfield
-
-// end of placement_field.cc

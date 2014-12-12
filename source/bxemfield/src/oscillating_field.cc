@@ -1,14 +1,18 @@
-// -*- mode: c++ ; -*-
-/* oscillating_field.cc
- */
+// oscillating_field.cc
 
+// Ourselves:
 #include <emfield/oscillating_field.h>
+
+// Standard library:
+#include <cmath>
+
+// Third party:
+// - Bayeux:
 #include <datatools/properties.h>
 #include <datatools/units.h>
 #include <datatools/utils.h>
 #include <datatools/service_manager.h>
 #include <geomtools/utils.h>
-#include <cmath>
 
 namespace emfield {
 
@@ -181,5 +185,3 @@ namespace emfield {
   }
 
 } // end of namespace emfield
-
-// end of oscillating_field.cc

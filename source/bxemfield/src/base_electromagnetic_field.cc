@@ -1,8 +1,10 @@
-// -*- mode: c++ ; -*-
-/* base_electromagnetic_field.cc
- */
+// base_electromagnetic_field.cc
 
+// Ourselves:
 #include <emfield/base_electromagnetic_field.h>
+
+// Third party:
+// - Bayeux:
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/utils.h>
@@ -11,7 +13,8 @@
 namespace emfield {
 
   // Factory stuff :
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_electromagnetic_field,"emfield::base_electromagnetic_field/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_electromagnetic_field,
+                                                   "emfield::base_electromagnetic_field/__system__");
 
   void base_electromagnetic_field::tree_dump (std::ostream & out_,
                                               const std::string & title_,
@@ -415,5 +418,3 @@ namespace emfield {
   }
 
 } // end of namespace emfield
-
-// end of base_electromagnetic_field.cc

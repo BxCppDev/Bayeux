@@ -1,18 +1,21 @@
-// -*- mode: c++ ; -*-
-/* geom_map.cc
- */
+// geom_map.cc
 
+// Ourselves:
+#include <emfield/geom_map.h>
+
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
-#include <emfield/geom_map.h>
-#include <emfield/electromagnetic_field_manager.h>
-
+// Third party:
+// - Bayeux:
+#include <datatools/properties.h>
+#include <datatools/units.h>
 #include <geomtools/manager.h>
 #include <geomtools/logical_volume.h>
 
-#include <datatools/properties.h>
-#include <datatools/units.h>
+// This project:
+#include <emfield/electromagnetic_field_manager.h>
 
 namespace emfield {
 
@@ -139,7 +142,9 @@ namespace emfield {
                        "Add the EM association entry '" <<  association_label << "' with EM field '" << field_name << "' associated "
                        << "to the logical volume '" << volume_name << "'.");
       }
-
+    if (_associations_map_.size() == 0) {
+      DT_LOG_WARNING (datatools::logger::PRIO_ALWAYS, "No geometry volume/EM field association is defined! This may not be what you expect!");
+    }
     return;
   }
 
@@ -280,5 +285,3 @@ namespace emfield {
   }
 
 } // end of namespace emfield
-
-// end of geom_map.cc

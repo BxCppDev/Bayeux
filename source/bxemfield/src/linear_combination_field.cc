@@ -1,18 +1,23 @@
-// -*- mode: c++ ; -*-
-/* linear_combination_field.cc
- */
+// linear_combination_field.cc
 
+
+// Ourselves:
 #include <emfield/linear_combination_field.h>
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
+
+// Third party:
+// - Bayeux:
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 
 namespace emfield {
 
   // Registration instantiation macro :
-  EMFIELD_REGISTRATION_IMPLEMENT(linear_combination_field, "emfield::linear_combination_field");
+  EMFIELD_REGISTRATION_IMPLEMENT(linear_combination_field,
+                                 "emfield::linear_combination_field");
 
   linear_combination_field::combined_field_entry::combined_field_entry ()
   {
@@ -214,5 +219,3 @@ namespace emfield {
   }
 
 } // end of namespace emfield
-
-// end of linear_combination_field.h

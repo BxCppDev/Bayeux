@@ -117,11 +117,11 @@ namespace emfield {
 
   private:
 
-    datatools::logger::priority           _logging_priority_; /// Logging priority threshold
-    bool                                  _initialized_;      /// Initialization flag
-    const geomtools::manager *            _geom_manager_;     /// The geometry manager
-    const electromagnetic_field_manager * _fields_manager_;   /// The EM fields manager
-    association_dict_type                 _associations_map_; /// Dictionnary of "logical volumes/EM field" associations
+    datatools::logger::priority           _logging_priority_; //!< Logging priority threshold
+    bool                                  _initialized_;      //!< Initialization flag
+    const geomtools::manager *            _geom_manager_;     //!< The geometry manager
+    const electromagnetic_field_manager * _fields_manager_;   //!< The EM fields manager
+    association_dict_type                 _associations_map_; //!< Dictionnary of "logical volumes/EM field" associations
 
   };
 

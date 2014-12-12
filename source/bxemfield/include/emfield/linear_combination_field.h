@@ -33,9 +33,9 @@ namespace emfield {
     /// \brief Internal class for linear_combination_field
     struct combined_field_entry
     {
-      std::string                             label;
-      base_electromagnetic_field::handle_type field_handle;
-      double                                  weight;
+      std::string                             label;        //!< Label of the field
+      base_electromagnetic_field::handle_type field_handle; //!< Handle to the field
+      double                                  weight;       //!< Weight associated to the field
       combined_field_entry ();
       ~combined_field_entry ();
     };
@@ -51,7 +51,7 @@ namespace emfield {
 
   private:
 
-    combined_field_dict_type _combined_fields_; /// Dictionnary of combined fields
+    combined_field_dict_type _combined_fields_; //!< Dictionnary of combined fields
 
     // Macro to automate the registration of the EM field :
     EMFIELD_REGISTRATION_INTERFACE(linear_combination_field);

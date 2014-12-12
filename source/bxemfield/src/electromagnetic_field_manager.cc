@@ -1,17 +1,19 @@
-// -*- mode: c++ ; -*-
-/* electromagnetic_field_manager.cc
- */
+// electromagnetic_field_manager.cc
 
+// Ourselves:
 #include <emfield/electromagnetic_field_manager.h>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/utils.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 #include <geomtools/geometry_service.h>
 #include <geomtools/manager.h>
 
+// Ths project:
 #include <emfield/geom_map.h>
 
 namespace emfield {
@@ -196,10 +198,9 @@ namespace emfield {
 
   electromagnetic_field_manager::~electromagnetic_field_manager ()
   {
-    if (is_initialized ())
-      {
-        reset ();
-      }
+    if (is_initialized()) {
+      reset();
+    }
     return;
   }
 
@@ -213,12 +214,14 @@ namespace emfield {
     datatools::logger::priority lp = datatools::logger::extract_logging_configuration (setup_);
     set_logging_priority(lp);
 
-    if (setup_.has_key ("field_definitions_filenames")) {
-      std::vector<std::string> field_definitions_filenames;
-      setup_.fetch ("field_definitions_filenames", field_definitions_filenames);
-      for (unsigned int i = 0; i < field_definitions_filenames.size (); i++) {
-        load (field_definitions_filenames[i]);
-      }
+    std::vector<std::string> field_definitions_filenames;
+    if (setup_.has_key("field_definitions_filenames")) {
+      setup_.fetch("field_definitions_filenames", field_definitions_filenames);
+    } /* else if (setup_.has_key("field_definitions")) {
+      setup_.fetch("field_definitions", field_definitions_filenames);
+      }*/
+    for (unsigned int i = 0; i < field_definitions_filenames.size(); i++) {
+      load(field_definitions_filenames[i]);
     }
 
     bool needs_service_manager = false;
@@ -260,9 +263,11 @@ namespace emfield {
         std::string geomap_config_file = setup_.fetch_string("geom_map_config");
         datatools::fetch_path_with_env(geomap_config_file);
         datatools::properties::read_config(geomap_config_file, geomap_config);
-      }
-      else {
+      } else {
         setup_.export_and_rename_starting_with(geomap_config, "geom_map.", "");
+      }
+      if (is_debug()) {
+        geomap_config.tree_dump(std::cerr, "EM fiels/Geometry map config: ", "DEVEL: ");
       }
       _construct_geomap_(geomap_config);
     }
@@ -318,17 +323,6 @@ namespace emfield {
     DT_THROW_IF (found == _fields_.end (), std::logic_error, "Cannot find EM field named '" << field_name_ << "' !");
     return found->second.get ();
   }
-
-  /*
-    geom_map & electromagnetic_field_manager::grab_geom_map()
-    {
-    if (!has_geom_map())
-    {
-    throw std::logic_error("emfield::electromagnetic_field_manager::grab_geom_map: No geom map is available !");
-    }
-    return *_geom_map_.get();
-    }
-  */
 
   const geom_map & electromagnetic_field_manager::get_geom_map() const
   {
@@ -429,5 +423,3 @@ namespace emfield {
   }
 
 } // end of namespace emfield
-
-// end of electromagnetic_field_manager.cc
