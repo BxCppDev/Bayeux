@@ -45,7 +45,12 @@ namespace emfield {
     geomtools::manager::base_plugin::_basic_initialize(config_);
 
     datatools::properties mgr_config;
-    if (config_.has_key("manager.config")) {
+    if (config_.has_key("manager_config")) {
+      std::string mgr_config_file = config_.fetch_string("manager_config");
+      datatools::fetch_path_with_env(mgr_config_file);
+      datatools::properties::read_config(mgr_config_file, mgr_config);
+    } else if (config_.has_key("manager.config")) {
+      // obsolete:
       std::string mgr_config_file = config_.fetch_string("manager.config");
       datatools::fetch_path_with_env(mgr_config_file);
       datatools::properties::read_config(mgr_config_file, mgr_config);

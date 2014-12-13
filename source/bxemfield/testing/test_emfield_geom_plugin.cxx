@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*-
 // test_emfield_geom_plugin.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -8,15 +8,18 @@
 #include <string>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/display_data.h>
 #include <geomtools/blur_spot.h>
 
+// This project:
 #include <emfield/emfield_config.h>
 #include <emfield/electromagnetic_field_manager.h>
 #include <emfield/emfield_geom_plugin.h>
@@ -112,7 +115,6 @@ int main (int argc_, char ** argv_)
     if (EMFmgr_ref == 0) {
       throw std::logic_error("No field manager was extracted from the geometry manager's collection of plugins !");
     }
-
 
     // This is the EM fields manager :
     const emfield::electromagnetic_field_manager & EMFmgr = *EMFmgr_ref;
