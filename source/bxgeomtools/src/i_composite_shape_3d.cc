@@ -317,17 +317,17 @@ namespace geomtools {
     reset();
     this->i_shape_3d::initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
-    }
+    // double lunit = CLHEP::mm;
+    // if (config_.has_key("length_unit")) {
+    //   const std::string lunit_str = config_.fetch_string("length_unit");
+    //   lunit = datatools::units::get_length_unit_from(lunit_str);
+    // }
 
-    double aunit = CLHEP::radian;
-    if (config_.has_key("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string("angle_unit");
-      aunit = datatools::units::get_length_unit_from(aunit_str);
-    }
+    // double aunit = CLHEP::radian;
+    // if (config_.has_key("angle_unit")) {
+    //   const std::string aunit_str = config_.fetch_string("angle_unit");
+    //   aunit = datatools::units::get_length_unit_from(aunit_str);
+    // }
 
     if (! _shape1_.is_valid() || ! _shape1_.is_valid()) {
       DT_THROW_IF(!objects_,

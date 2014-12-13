@@ -200,8 +200,8 @@ namespace geomtools {
     bb_.reset();
     p_.reset();
     DT_THROW_IF(!is_valid(), std::logic_error, "Bounding data is not valid!");
-    double dx, dy, dz;
-    double x0, y0, z0;
+    double dx = 0.0, dy = 0.0, dz = 0.0;
+    double x0 = 0.0, y0 = 0.0, z0 = 0.0;
     if (is_box()) {
       dx = get_xmax() - get_xmin();
       dy = get_ymax() - get_ymin();
