@@ -472,7 +472,9 @@ namespace mctools {
           const emfield::emfield_geom_plugin & fgp
             = geo_mgr.get_plugin<emfield::emfield_geom_plugin>(emfield_geom_plugin_name);
           const emfield::electromagnetic_field_manager & emf_mgr = fgp.get_manager();
-          emf_mgr.tree_dump(std::cerr, "EM field manager: ", "DEVEL: ");
+          if (_logprio() >= datatools::logger::PRIO_TRACE) {
+            emf_mgr.tree_dump(std::clog, "EM field manager: ", "DEVEL: ");
+          }
           set_em_field_manager(emf_mgr);
         }
 
