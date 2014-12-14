@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // ocd_manual.cxx
 
 // This project
@@ -12,7 +11,6 @@
 #include <vector>
 
 // Third Party
-
 // - Boost
 #include <boost/program_options.hpp>
 
@@ -78,7 +76,6 @@ int main(int argc_, char ** argv_)
     po::store(parsed, vm);
     po::notify(vm);
 
-    // Fetch the opts/args :
     // Fetch the opts/args :
     if (vm.count("help")) {
       if (vm["help"].as<bool>()) {
@@ -254,5 +251,3 @@ namespace datatools {
   }
 
 }
-
-// end of ocd_manual.cxx

@@ -87,11 +87,10 @@ bool ocd_driver::is_initialized() const
 void ocd_driver::initialize(const ocd_driver_params & params_)
 {
   _params_ = params_;
-
-  datatools::library_loader dll_loader(_params_.dll_loader_config);
+  _dll_loader_.reset(new datatools::library_loader(_params_.dll_loader_config));
   BOOST_FOREACH (const std::string & dll_name, _params_.dlls) {
     DT_LOG_DEBUG(_params_.logging, "Loading DLL '" << dll_name << "'...");
-    DT_THROW_IF (dll_loader.load (dll_name) != EXIT_SUCCESS,
+    DT_THROW_IF (_dll_loader_->load (dll_name) != EXIT_SUCCESS,
                  std::logic_error,
                  "Loading DLL '" << dll_name << "' failed !");
   }
@@ -103,6 +102,7 @@ void ocd_driver::initialize(const ocd_driver_params & params_)
 void ocd_driver::reset()
 {
   _initialized_ = false;
+  _dll_loader_.reset();
   _params_.reset();
   return;
 }
