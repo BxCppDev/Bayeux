@@ -37,12 +37,21 @@ mgr.reset();
 
 In order  to help users to  understand how to properly  configure such
 kind   of  object,   Bayeux  implements   the  *Object   Configuration
-Description* (OCD)  interface which proposes an  embedded documentation
-system for these classes.
+Description* (OCD) interface which  proposes an embedded documentation
+system  for these  classes.   The  OCD interface  provides  an API  to
+describe the parameters that are  used to configure an instance of
+a given class.  This description consists in detailing the name, type,
+mutability, default value (if any) of each configuration parameter and
+possibly  other constraints.   This is  done programmatically  using a
+companion object of the class  that is automatically registered in the
+library using some dedicated macros. This gives to the class some kind
+of limited  introspection system,  at least in  the context  of object
+initialization.
 
 The  users can  then  use the  Bayeux's OCD  interface  to browse  the
-documentation associated to a class, and possibly validate or generate
-skeleton configuration files for objects of this class.
+documentation  associated to  the  configuration of  instances of  the
+class, and possibly validate  or generate skeleton configuration files
+for objects of this class.
 
 
 OCD online manual {#bxocd_onlinemanual}
@@ -69,7 +78,7 @@ $ bxocd_manual --action list
 ...
 ~~~~~
 
-To print  the only the  OCD supported Bayeux's classes  with namespace
+To print  the only OCD supported Bayeux's classes  with namespace
 `geomtools`:
 
 ~~~~~
@@ -114,4 +123,8 @@ OCD documentation for Bayeux's classes {#bxocd_bayeuxclasses}
 Add OCD support to a configurable class {#bxocd_addsupporttoclass}
 =======================================
 
-TODO
+The Bayeux OCD tutorial, available from the Bayeux source directory,
+illustrates how to add OCD support to a class.
+
+The Bayeux/datatools library also provides a example dedicated to the OCD support, it
+is available from the Bayeux source directory.
