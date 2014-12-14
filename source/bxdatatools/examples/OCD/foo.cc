@@ -30,13 +30,13 @@ void foo::set_logging_priority(const datatools::logger::priority & p_) {
 }
 
 void foo::initialize(const datatools::properties & config_) {
-  if (_logging_) datatools_trace(_logging_level_, "Entering initialization...");
+  if (_logging_) DT_LOG_TRACE(_logging_level_, "Entering initialization...");
 
   double length_unit = CLHEP::cm; // implicit length unit
   double weight_unit = CLHEP::g; // implicit weight unit
   bool hello = false;
 
-  if (_logging_) datatools_notice(_logging_level_, "Parsing configuration parameters...");
+  if (_logging_) DT_LOG_NOTICE(_logging_level_, "Parsing configuration parameters...");
 
   // Parse 'logging' :
   const std::string logging_key = "logging";
@@ -144,28 +144,28 @@ void foo::initialize(const datatools::properties & config_) {
   if (config_.has_key(secret_key)) {
     secret = config_.fetch_integer(secret_key);
     if (secret > 3) {
-      if (_logging_) datatools_warning(_logging_level_,
-                                       "Ha ! Ha ! You have found how to use my secret property !");
+      if (_logging_) DT_LOG_WARNING(_logging_level_,
+                                    "Ha ! Ha ! You have found how to use my secret property !");
       hello = true;
     }
   }
 
   // Initialization :
-  if (_logging_) datatools_notice(_logging_level_, "Processing initialization operations...");
+  if (_logging_) DT_LOG_NOTICE(_logging_level_, "Processing initialization operations...");
   if (hello) {
     std::clog << "                                       \n"
               << "     Welcome to the OCD system !       \n"
               << "                                       \n";
   }
 
-  if (_logging_) datatools_notice(_logging_level_, "Initialization is done.");
+  if (_logging_) DT_LOG_NOTICE(_logging_level_, "Initialization is done.");
 
   initialized = true;
-  if (_logging_) datatools_trace(_logging_level_, "Exiting initialization.");
+  if (_logging_) DT_LOG_TRACE(_logging_level_, "Exiting initialization.");
 }
 
 void foo::reset() {
-  if (_logging_) datatools_trace(_logging_level_, "Entering reset...");
+  if (_logging_) DT_LOG_TRACE(_logging_level_, "Entering reset...");
   initialized = false;
   name.clear();
   what.clear();
@@ -174,7 +174,7 @@ void foo::reset() {
   dummy = 0;
   datatools::invalidate(width);
   datatools::invalidate(weight);
-  if (_logging_) datatools_trace(_logging_level_, "Exiting reset.");
+  if (_logging_) DT_LOG_TRACE(_logging_level_, "Exiting reset.");
   _logging_ = false;
   _logging_level_ = datatools::logger::PRIO_FATAL;
 }
@@ -236,7 +236,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   ocd_.set_class_library ("datatools_ex_OCD");
 
   // The class detailed documentation :
-  ocd_.set_class_documentation ("A example class of configurable object with OCD support");
+  ocd_.set_class_documentation ("An example class of configurable object with OCD support");
 
   {
     // Description of the 'logging' configuration property :

@@ -56,23 +56,40 @@ ls -l ./lib/
 ls -l ./ex_OCD
 
 echo "Run the example program : " 1>&2
-LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} ./ex_OCD
+LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} ./ex_OCD -v -d
 if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex_OCD failed !" 1>&2
     my_exit 1
+else
+    echo "INFO: Example program ex_OCD passed!" 1>&2
 fi
+
+# Special debug printing:
+# export DATATOOLS_OCD_DEVEL_LOGGING="trace"
 
 LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
     bxocd_manual --load-dll "datatools_ex_OCD" \
     --class-id "foo"            \
     --action show > foo_ocd.rst
+if [ $? -ne 0 ]; then
+    echo "ERROR: bxocd_manual failed !" 1>&2
+    my_exit 1
+else
+    echo "INFO: bxocd_manual passed!" 1>&2
+fi
 
 which pandoc > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     pandoc -r rst -w html foo_ocd.rst > foo_ocd.html
+    which xdg-open > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+	xdg-open file://$(pwd)/foo_ocd.html &
+    else
+	echo "WARNING: Could not find xdg-open!" 1>&2
+    fi
+else
+    echo "WARNING: Could not find pandoc!" 1>&2
 fi
-
-### firefox file://$(pwd)/foo_ocd.html &
 
 if [ ${clean} -eq 1 ]; then
     rm -f foo_ocd.html

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* ex_OCD.cxx
  *
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -65,7 +64,7 @@ int main (int argc_, char ** argv_)
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
   try {
-    datatools_information(logging, "datatools example program : ex_OCD");
+    DT_LOG_INFORMATION(logging, "datatools example program : ex_OCD");
 
     int iarg = 1;
     while (iarg < argc_) {
@@ -77,11 +76,11 @@ int main (int argc_, char ** argv_)
         } else if ((option == "-v") || (option == "--verbose")) {
           logging = datatools::logger::PRIO_INFORMATION;
         } else  {
-          datatools_warning(logging, "Ignoring option '" << option << "' !");
+          DT_LOG_WARNING(logging, "Ignoring option '" << option << "' !");
         }
       } else {
         std::string argument = token;
-        datatools_warning(logging, "Ignoring argument '" << argument << "' !");
+        DT_LOG_WARNING(logging, "Ignoring argument '" << argument << "' !");
       }
       iarg++;
     }
@@ -94,7 +93,7 @@ int main (int argc_, char ** argv_)
       std::clog << std::endl;
       datatools::object_configuration_description OCD;
       if (datatools::load_ocd<foo>(OCD)) {
-        datatools_information(logging, "Found OCD support for the 'foo' class.");
+        DT_LOG_INFORMATION(logging, "Found OCD support for the 'foo' class.");
         if (logging >= datatools::logger::PRIO_DEBUG) OCD.dump(std::clog, "OCD for the foo class : ");
         // Store the documentation about the 'foo' class in a RST file :
         std::ofstream ocd_rst("ex_OCD.foo.doc.rst");
@@ -110,14 +109,14 @@ int main (int argc_, char ** argv_)
         if (OCD.has_validation_support()) {
           std::string message;
           if (OCD.validate(foo_config, message)) {
-            datatools_information(logging,
-                                  "The property file '" << foo_config_file << "' is valid !");
+            DT_LOG_INFORMATION(logging,
+                               "The property file '" << foo_config_file << "' is valid !");
           } else {
-            datatools_warning(logging,
-                              "The property file '" << foo_config_file
-                              << "' does not conform the OCD rules ! ");
-            datatools_warning(logging,
-                              "Message is : " << message);
+            DT_LOG_WARNING(logging,
+                           "The property file '" << foo_config_file
+                           << "' does not conform the OCD rules ! ");
+            DT_LOG_WARNING(logging,
+                           "Message is : " << message);
           }
         }
 
@@ -140,7 +139,7 @@ int main (int argc_, char ** argv_)
       std::clog << std::endl;
       datatools::object_configuration_description OCD;
       if (datatools::load_ocd<datatools::service_manager>(OCD)) {
-        datatools_information(logging,
+        DT_LOG_INFORMATION(logging,
                               "Found OCD support for the 'datatools::service_manager' class.");
 
         // Print the documentation in a ReST file :
@@ -153,14 +152,14 @@ int main (int argc_, char ** argv_)
       }
     }
 
-    datatools_information(logging, "The end.");
+    DT_LOG_INFORMATION(logging, "The end.");
   }
   catch (std::exception & x) {
-    datatools_fatal(logging, x.what());
+    DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    datatools_fatal(logging, "unexpected error !");
+    DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
 
@@ -171,5 +170,3 @@ int main (int argc_, char ** argv_)
 #endif // DATATOOLS_STANDALONE == 1
   return (error_code);
 }
-
-// end of ex_OCD.cxx
