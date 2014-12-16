@@ -57,9 +57,9 @@ endif()
 # Set up build of documentation
 #
 
-set(Bayeux_DOXYFILE_IN  bayeux_doxygen.conf.in)
+set(Bayeux_DOXYFILE_IN bayeux_doxygen.conf.in)
 set(Bayeux_DOXYFILE_OUT ${PROJECT_BINARY_DIR}/doc/bayeux_doxygen.conf)
-set(Bayeux_DOXYGEN_OUTPUT_DIR  ${Bayeux_BUILDPRODUCT_DIR}/share/${Bayeux_DOCUMENTATION_DIR}/API)
+set(Bayeux_DOXYGEN_OUTPUT_DIR ${Bayeux_BUILDPRODUCT_DIR}/share/${Bayeux_DOCUMENTATION_DIR}/API)
 set(Bayeux_DOXYGEN_OUTPUT_FILE ${Bayeux_DOXYGEN_OUTPUT_DIR}/html/index.html)
 set(Bayeux_DOXYGEN_OUTPUT_IMAGE_DIR ${Bayeux_DOXYGEN_OUTPUT_DIR}/html/images)
 
