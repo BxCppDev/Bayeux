@@ -62,8 +62,8 @@ namespace datatools {
 
 //! \brief A dictionary of arbitrary properties.
 /**
- *  The properties class provides a container that holds
- *  many different data of different types (bool, int, double, string
+ *  The properties class provides a serializable container that holds
+ *  many different data of different types (bool, int, double, string)
  *  as well as arrays (std::vector) of these build-in types.
  *
  */
