@@ -2083,6 +2083,16 @@ namespace datatools {
   }
 
 
+  double properties::fetch_dimensionless_real(const std::string& prop_key,
+                                              int index) const {
+    double value;
+    this->fetch(prop_key, value, index);
+    DT_THROW_IF(has_explicit_unit(prop_key),
+                std::logic_error,
+                "Property '" << prop_key << "' is not dimensionless!");
+    return value;
+  }
+
   double properties::fetch_real(const std::string& prop_key, int index) const {
     double value;
     this->fetch(prop_key, value, index);

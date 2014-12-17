@@ -12,6 +12,10 @@
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/ioutils.h>
+#include <datatools/kernel.h>
+#include <datatools/configuration/variant_registry.h>
+#include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/io.h>
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_properties,
@@ -579,6 +583,12 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
   std::string current_key = "";
   std::string current_meta = "";
 
+  /// Special devel print:
+  bool variant_devel = false;
+  unsigned int vpp_flags = 0;
+  // vpp_flags |= configuration::variant_preprocessor::FLAG_DEVEL;
+  // configuration::variant_preprocessor vpp(vpp_flags);
+
   while (in_) {
     std::string line_get;
     std::getline(in_,line_get);
@@ -604,6 +614,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
     bool process_block = false;
     std::string new_key = "";
     std::string new_meta = "";
+    std::string variant_only;
 
     if (!line_goon) {
       bool skip_line = false;
@@ -626,6 +637,14 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
           iss >> std::ws;
           std::string token;
           iss >> token;
+
+          if (token == "@variant_log=devel") {
+            variant_devel = true;
+          }
+
+          if (token == "@variant_log=mute") {
+            variant_devel = false;
+          }
 
           if (token == "@description" && mprop_description.empty()) {
           //if (token == "@description") {
@@ -807,7 +826,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
 
         if (load_it) {
           this->add(current_key, current_meta);
-          multi_properties::entry& e = this->grab(current_key);
+          multi_properties::entry & e = this->grab(current_key);
           properties::config pcr;
           std::istringstream block_iss(current_block_oss.str());
           pcr.read(block_iss, e.grab_properties());

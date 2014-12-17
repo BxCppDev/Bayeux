@@ -953,6 +953,9 @@ class properties :
   //! Fetch the real value stored with a given key/name and index
   double fetch_real(const std::string& name, int index = 0) const;
 
+  //! Fetch the dimensionless real value stored with a given key/name and index
+  double fetch_dimensionless_real(const std::string& name, int index = 0) const;
+
   //! Fetch the real scalar value stored with a given key/name
   double fetch_real_scalar(const std::string& name) const;
 
