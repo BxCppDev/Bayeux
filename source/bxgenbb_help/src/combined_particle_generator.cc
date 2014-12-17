@@ -268,25 +268,27 @@ namespace genbb {
           //pet.tree_dump(std::cerr, "genbb::combined_particle_generator::initialize: PET: ", "DEVEL: ");
         pge.pg = &(pet.grab());
 
+        // Define base key for property
+        const std::string base_key = "generators." + pg_label;
+
         // Extract time associated to the PG contribution :
         if (is_mode_time()) {
           time_delay_type time_mode = TIME_DELAY_UNDEFINED;
           {
             // Fetch time delay mode :
-            std::ostringstream time_mode_prop_key_oss;
-            time_mode_prop_key_oss << "generators." << pg_label << ".time_mode";
-            const std::string time_mode_prop_key = time_mode_prop_key_oss.str();
+            const std::string time_mode_prop_key = base_key + ".time_mode";
             DT_THROW_IF(! config_.has_key(time_mode_prop_key),
                         std::logic_error,
                         "Missing time mode property '" << time_mode_prop_key << "' for particle generator with label '"
                         << pg_label << "' !");
-            if (time_mode_prop_key == "fixed") {
+            const std::string time_mode_prop = config_.fetch_string(time_mode_prop_key);
+            if (time_mode_prop == "fixed") {
               time_mode = TIME_DELAY_FIXED;
-            } else if (time_mode_prop_key == "decay") {
+            } else if (time_mode_prop == "decay") {
               time_mode = TIME_DELAY_DECAY;
-            } else if (time_mode_prop_key == "range") {
+            } else if (time_mode_prop == "range") {
               time_mode = TIME_DELAY_RANGE;
-            } else if (time_mode_prop_key == "gaussian") {
+            } else if (time_mode_prop == "gaussian") {
               time_mode = TIME_DELAY_GAUSSIAN;
             }
           }
@@ -295,137 +297,93 @@ namespace genbb {
           }
           pge.time_mode = time_mode;
 
-          double time = -1.0;
+          double time; datatools::invalidate(time);
           if (pge.time_mode == TIME_DELAY_FIXED) {
             // Fetch fixed time
-            std::ostringstream time_prop_key_oss;
-            time_prop_key_oss << "generators." << pg_label << ".fixed_time";
-            const std::string time_prop_key = time_prop_key_oss.str();
+            const std::string time_prop_key = base_key + ".fixed_time";
             DT_THROW_IF(! config_.has_key(time_prop_key),
                         std::logic_error,
                         "Missing time property '" << time_prop_key << "' for particle generator with label '"
                         << pg_label << "' !");
             time = config_.fetch_real(time_prop_key);
-            DT_THROW_IF (time <= 0.0,
-                         std::domain_error,
-                         "Invalid fixed time delay for particle generator with label '"
-                         << pg_label << "' !");
+            DT_THROW_IF(time < 0.0,
+                        std::domain_error,
+                        "Invalid fixed time delay for particle generator with label '"
+                        << pg_label << "' !");
             if (! config_.has_explicit_unit(time_prop_key)) time *= time_unit;
           }
 
           if (pge.time_mode == TIME_DELAY_DECAY) {
-            if (time < 0) {
-              // Fetch mean lifetime
-              std::ostringstream time_prop_key_oss;
-              time_prop_key_oss << "generators." << pg_label << ".mean_lifetime";
-              const std::string time_prop_key = time_prop_key_oss.str();
-              if (config_.has_key(time_prop_key)) {
-                time = config_.fetch_real(time_prop_key);
-                DT_THROW_IF (time <= 0.0,
-                             std::domain_error,
-                             "Invalid decay mean lifetime for particle generator with label '"
-                             << pg_label << "' !");
-                if (! config_.has_explicit_unit(time_prop_key)) time *= time_unit;
-              }
+            std::string time_prop_key;
+            if (config_.has_key(time_prop_key = base_key + ".mean_lifetime")) {
+              time = config_.fetch_real(time_prop_key);
+              if (! config_.has_explicit_unit(time_prop_key)) time *= time_unit;
+            } else if (config_.has_key(time_prop_key = base_key + ".half_life")) {
+              time = config_.fetch_real(time_prop_key);
+              if (! config_.has_explicit_unit(time_prop_key)) time *= time_unit;
+              time /= std::log(2);
             }
-            if (time < 0) {
-              // Fetch half-life
-              std::ostringstream time_prop_key_oss;
-              time_prop_key_oss << "generators." << pg_label << ".half_life";
-              const std::string time_prop_key = time_prop_key_oss.str();
-              if (config_.has_key(time_prop_key)) {
-                time = config_.fetch_real(time_prop_key);
-                DT_THROW_IF (time <= 0.0,
-                             std::domain_error,
-                             "Invalid decay mean lifetime for particle generator with label '"
-                             << pg_label << "' !");
-                if (! config_.has_explicit_unit(time_prop_key)) time *= time_unit;
-                time /= std::log(2);
-              }
-            }
-            DT_THROW_IF (time < 0, std::logic_error,
+            DT_THROW_IF (!datatools::is_valid(time), std::logic_error,
                          "Missing decay mean lifetime/half-life property for particle generator with label '"
                          << pg_label << "' !" );
+            DT_THROW_IF (time <= 0.0,
+                         std::domain_error,
+                         "Invalid decay mean lifetime for particle generator with label '"
+                         << pg_label << "' !");
           }
           pge.time = time;
         }
 
         if (pge.time_mode == TIME_DELAY_RANGE) {
-          double min_time = -1;
-          double max_time = -1;
-          if (min_time < 0) {
-            // Fetch min delay time
-            std::ostringstream time_prop_key_oss;
-            time_prop_key_oss << "generators." << pg_label << ".min_time";
-            const std::string time_prop_key = time_prop_key_oss.str();
-            if (config_.has_key(time_prop_key)) {
-              min_time = config_.fetch_real(time_prop_key);
-              DT_THROW_IF (min_time <= 0.0,
-                           std::domain_error,
-                           "Invalid min decay time property for particle generator with label '"
-                           << pg_label << "' !");
-              if (! config_.has_explicit_unit(time_prop_key)) min_time *= time_unit;
-            }
+          std::string time_prop_key;
+          // Fetch min delay time
+          double min_time = 0.0;
+          if (config_.has_key(time_prop_key = base_key + ".min_time")) {
+            min_time = config_.fetch_real(time_prop_key);
+            DT_THROW_IF(min_time < 0.0,
+                        std::domain_error,
+                        "Invalid min delay time property for particle generator with label '"
+                        << pg_label << "' !");
+            if (! config_.has_explicit_unit(time_prop_key)) min_time *= time_unit;
           }
-          if (min_time < 0) {
-            // Default to 0
-            min_time = 0.0;
-          }
-          if (max_time < 0) {
-            // Fetch max delay time
-            std::ostringstream time_prop_key_oss;
-            time_prop_key_oss << "generators." << pg_label << ".max_time";
-            const std::string time_prop_key = time_prop_key_oss.str();
-            DT_THROW_IF (!config_.has_key(time_prop_key),
-                         std::logic_error,
-                         "Missing max decay time property for particle generator with label '"
-                         << pg_label << "' !" );
-            max_time = config_.fetch_real(time_prop_key);
-            if (! config_.has_explicit_unit(time_prop_key)) max_time *= time_unit;
-            DT_THROW_IF (max_time <= min_time,
-                         std::domain_error,
-                         "Invalid max decay time for particle generator with label '"
-                         << pg_label << "' !");
-          }
+          // Fetch max delay time
+          DT_THROW_IF(!config_.has_key(time_prop_key = base_key + ".max_time"),
+                      std::logic_error,
+                      "Missing max delay time property for particle generator with label '"
+                      << pg_label << "' !" );
+          double max_time = config_.fetch_real(time_prop_key);
+          if (! config_.has_explicit_unit(time_prop_key)) max_time *= time_unit;
+          DT_THROW_IF(max_time <= min_time,
+                      std::domain_error,
+                      "Invalid max delay time for particle generator with label '"
+                      << pg_label << "' !");
           pge.time = 0.5 * (min_time + max_time);
-          pge.time_width = 0.5 * (max_time - min_time);
+          pge.time_width = max_time - min_time;
         }
 
         if (pge.time_mode == TIME_DELAY_GAUSSIAN) {
-          double mean_time = -1;
-          double sigma_time = -1;
-          if (mean_time < 0) {
-            // Fetch mean time
-            std::ostringstream time_prop_key_oss;
-            time_prop_key_oss << "generators." << pg_label << ".mean_time";
-            const std::string time_prop_key = time_prop_key_oss.str();
-            DT_THROW_IF (!config_.has_key(time_prop_key),
-                         std::logic_error,
-                         "Missing mean decay time property for particle generator with label '"
-                         << pg_label << "' !" );
-            mean_time = config_.fetch_real(time_prop_key);
-            if (! config_.has_explicit_unit(time_prop_key)) mean_time *= time_unit;
-            DT_THROW_IF (mean_time <= 0.0,
-                         std::domain_error,
-                         "Invalid mean decay time for particle generator with label '"
-                         << pg_label << "' !");
-          }
-          if (sigma_time < 0) {
-            // Fetch sigma time
-            std::ostringstream time_prop_key_oss;
-            time_prop_key_oss << "generators." << pg_label << ".sigma_time";
-            const std::string time_prop_key = time_prop_key_oss.str();
-            DT_THROW_IF (!config_.has_key(time_prop_key),
-                         std::logic_error,
-                         "Missing sigma decay time property for particle generator with label '"
-                         << pg_label << "' !" );
-            sigma_time = config_.fetch_real(time_prop_key);
-            if (! config_.has_explicit_unit(time_prop_key)) sigma_time *= time_unit;
-            DT_THROW_IF (sigma_time <= 0.0,
-                         std::domain_error,
-                         "Invalid sigma decay time for particle generator with label '"
-                         << pg_label << "' !");
-          }
+          std::string time_prop_key;
+          // Fetch mean time
+          DT_THROW_IF(!config_.has_key(time_prop_key = base_key + ".mean_time"),
+                      std::logic_error,
+                      "Missing mean delay time property for particle generator with label '"
+                      << pg_label << "' !" );
+          double mean_time = config_.fetch_real(time_prop_key);
+          if (! config_.has_explicit_unit(time_prop_key)) mean_time *= time_unit;
+          DT_THROW_IF(mean_time < 0.0,
+                      std::domain_error,
+                      "Invalid mean delay time for particle generator with label '"
+                       << pg_label << "' !");
+          DT_THROW_IF(!config_.has_key(time_prop_key = base_key + ".sigma_time"),
+                      std::logic_error,
+                      "Missing sigma delay time property for particle generator with label '"
+                      << pg_label << "' !" );
+          double sigma_time = config_.fetch_real(time_prop_key);
+          if (! config_.has_explicit_unit(time_prop_key)) sigma_time *= time_unit;
+          DT_THROW_IF(sigma_time <= 0.0,
+                      std::domain_error,
+                      "Invalid sigma delay time for particle generator with label '"
+                      << pg_label << "' !");
           pge.time = mean_time;
           pge.time_width = sigma_time;
         } // if (is_mode_time())
@@ -433,35 +391,31 @@ namespace genbb {
         // Extract probability associated to the PG contribution :
         if (is_mode_plain_probability()) {
           // Plain probability mode :
-          std::ostringstream prob_prop_key_oss;
-          prob_prop_key_oss << "generators." << pg_label << ".probability";
-          const std::string prob_prop_key = prob_prop_key_oss.str();
+          const std::string prob_prop_key = base_key + ".probability";
           DT_THROW_IF(! config_.has_key(prob_prop_key),
-                       std::logic_error,
-                       "Missing probability property '" << prob_prop_key << "' for particle generator with label '"
-                       << pg_label << "' !");
-          double pg_prob =  config_.fetch_real(prob_prop_key);
+                      std::logic_error,
+                      "Missing probability property '" << prob_prop_key << "' for particle generator with label '"
+                      << pg_label << "' !");
+          double pg_prob = config_.fetch_real(prob_prop_key);
           DT_THROW_IF(pg_prob < 0.0,
-                       std::logic_error,
-                       "Invalid probability value for particle generator with label '"
-                       << pg_label << "' (" << pg_prob << ") !");
+                      std::logic_error,
+                      "Invalid probability value for particle generator with label '"
+                      << pg_label << "' (" << pg_prob << ") !");
           pge.prob = pg_prob;
         } // if (is_mode_plain_probability())
 
-       if (is_mode_activity()) {
+        if (is_mode_activity()) {
           // Activity mode :
-          std::ostringstream act_prop_key_oss;
-          act_prop_key_oss << "generators." << pg_label << ".activity";
-          std::string act_prop_key = act_prop_key_oss.str();
+          const std::string act_prop_key = base_key + ".activity";
           DT_THROW_IF(! config_.has_key(act_prop_key),
-                       std::logic_error,
-                       "Missing activity property '" << act_prop_key << "' for particle generator '"
-                       << pg_name << "' !");
-          double pg_act =  config_.fetch_real(act_prop_key);
+                      std::logic_error,
+                      "Missing activity property '" << act_prop_key << "' for particle generator '"
+                      << pg_name << "' !");
+          double pg_act = config_.fetch_real(act_prop_key);
           if (! config_.has_explicit_unit(act_prop_key)) pg_act *= activity_unit;
           DT_THROW_IF(pg_act < 0.0, std::logic_error,
-                       "Invalid activity value for particle generator '"
-                       << pg_label << "' (" << pg_act << ") !");
+                      "Invalid activity value for particle generator '"
+                      << pg_label << "' (" << pg_act << ") !");
           pge.prob = pg_act;
         } // if (is_mode_activity())
       }
@@ -490,13 +444,14 @@ namespace genbb {
       for (size_t ig = 0; ig < _generators_info_.size(); ++ig) {
         // Compute a random delay time for the new event in the cascade:
         double time_delay;
+        datatools::invalidate(time_delay);
         if (_generators_info_[ig].time_mode == TIME_DELAY_FIXED) {
           time_delay = _generators_info_[ig].time;
         } else if (_generators_info_[ig].time_mode == TIME_DELAY_DECAY) {
           time_delay = grab_random().exponential(1.0/_generators_info_[ig].time);
         } else if (_generators_info_[ig].time_mode == TIME_DELAY_RANGE) {
-          double tmin = _generators_info_[ig].time - 0.5 * _generators_info_[ig].time_width;
-          double tmax = tmin + _generators_info_[ig].time_width;
+          const double tmin = _generators_info_[ig].time - 0.5 * _generators_info_[ig].time_width;
+          const double tmax = tmin + _generators_info_[ig].time_width;
           time_delay = grab_random().flat(tmin, tmax);
         } else if (_generators_info_[ig].time_mode == TIME_DELAY_GAUSSIAN) {
           time_delay = -1.0;
@@ -505,9 +460,10 @@ namespace genbb {
             time_delay = grab_random().gaussian(_generators_info_[ig].time, _generators_info_[ig].time_width);
             count++;
             DT_THROW_IF(count > 1000, std::logic_error,
-                        "Von-Newmann loop overflow for generator '" << _generators_info_[ig].name << "'");
+                        "Von-Neumann loop overflow for generator '" << _generators_info_[ig].name << "'");
           }
         }
+        DT_THROW_IF(! datatools::is_valid(time_delay), std::logic_error, "Time delay is still invalid !");
         total_delay_time += time_delay;
         DT_LOG_TRACE(get_logging_priority(), "Generating '" << _generators_info_[ig].name << "'");
         primary_event an_event;
