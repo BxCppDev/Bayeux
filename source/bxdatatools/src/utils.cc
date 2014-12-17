@@ -36,6 +36,11 @@ void invalidate(float& x) {
   x = std::numeric_limits<float>::quiet_NaN();
 }
 
+float invalid_real_single()
+{
+  return std::numeric_limits<float>::quiet_NaN();
+}
+
 bool is_valid(float x) {
   return x == x;
 }
@@ -70,6 +75,16 @@ void infinity(float& x) {
 
 void invalidate(double& x) {
   x = std::numeric_limits<double>::quiet_NaN();
+}
+
+double invalid_real()
+{
+  return std::numeric_limits<double>::quiet_NaN();
+}
+
+double invalid_real_double()
+{
+  return std::numeric_limits<double>::quiet_NaN();
 }
 
 bool is_valid(double x) {
@@ -269,7 +284,7 @@ const std::string & get_global_path()
   return _gp::global_path(_gp::ACTION_GET);
 }
 
-/**************************************************/
+/// \brief A path parser enabling environment variable as well as datatools kernel's library info
 class fetch_path_processor {
  public:
 
