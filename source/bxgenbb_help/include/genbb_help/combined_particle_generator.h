@@ -1,10 +1,11 @@
 /// \file genbb_help/combined_particle_generator.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
+ *                Xavier Garrido <garrido@lal.in2p3.fr>
  * Creation date: 2010-10-03
  * Last modified: 2014-12-12
  *
  * License:
- * Copyright 2007-2013 F. Mauger
+ * Copyright 2007-2014 F. Mauger, Xavier Garrido
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,15 +55,31 @@ namespace genbb {
   {
   public:
 
+    /// Time delay mode
+    enum time_delay_type {
+      TIME_DELAY_UNDEFINED  = 0, //!< Undefined time delay mode
+      TIME_DELAY_FIXED      = 1, //!< Fixed time delay
+      TIME_DELAY_DECAY      = 2, //!< Random exponential time delay
+      TIME_DELAY_RANGE      = 3, //!< Random ranged time delay
+      TIME_DELAY_GAUSSIAN   = 4, //!< Gaussian ranged time delay
+      TIME_DELAY_DEFAULT    = TIME_DELAY_FIXED
+    };
+
     /// Particle generator entry
     struct entry_type
     {
-      std::string label;    /// Label
-      std::string name;     /// Name
-      double    time;       /// Time
-      double    prob;       /// Probability
-      double    cumul_prob; /// Cumulated probability
-      i_genbb * pg;         /// Reference to a particle generator
+      /// Constructor
+      entry_type();
+      /// Check validity
+      bool is_valid() const;
+      std::string label;    //!< Label
+      std::string name;     //!< Name
+      double    prob;       //!< Probability
+      double    cumul_prob; //!< Cumulated probability
+      time_delay_type time_mode; //!< Time delay mode
+      double    time;       //!< Time delay constant
+      double    time_width; //!< Time delay constant (only range or gaussian)
+      i_genbb * pg;         //!< Reference to a particle generator
     };
 
     /// Collection of particle generator entry type
