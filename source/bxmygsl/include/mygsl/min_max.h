@@ -37,6 +37,12 @@ namespace mygsl {
     /// Return the median value
     double get_median() const;
 
+    /// Return the width value
+    double get_width() const;
+
+    /// Return the half width value
+    double get_half_width() const;
+
     /// Return the index of the minimum value
     int get_min_index() const;
 
