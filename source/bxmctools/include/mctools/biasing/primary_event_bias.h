@@ -1,7 +1,7 @@
 /// \file mctools/biasing/primary_event_bias.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-11-21
- * Last modified: 2014-11-24
+ * Last modified: 2014-12-17
  *
  * License:
  *
@@ -18,14 +18,19 @@
 
 // Standard library:
 #include <string>
+#include <map>
+#include <set>
 
 // Third party:
 // - Bayeux/datatools :
 #include <datatools/bit_mask.h>
 #include <datatools/properties.h>
+#include <datatools/i_tree_dump.h>
+// - Bayeux/geomtools :
+#include <geomtools/utils.h>
 
 // This project:
-// #include <mctools/biasing/point_of_interest.h>
+#include <mctools/biasing/point_of_interest.h>
 
 namespace genbb {
   // Forward declarations:
@@ -46,12 +51,21 @@ namespace mctools {
     class primary_generator;
 
     /// \brief Biasing algorithm used at primary event generation
-    class primary_event_bias
+    class primary_event_bias : public datatools::i_tree_dumpable
     {
     public:
 
-      /// Return the property flag to kill the event
-      static const std::string & kill_this_event_flag();
+      /// Return the label for a killed event (not tracked at all)
+      static const std::string & killed_event_label();
+
+      /// Return the label for a truncated event (some particles are not tracked)
+      static const std::string & truncated_event_label();
+
+      /// Return the label for a normal event (all particles are tracked)
+      static const std::string & normal_event_label();
+
+      /// Return the property key for a normal event
+      static const std::string & biased_event_status_key();
 
       /// Return the property flag to tag the master particle
       static const std::string & master_particle_flag();
@@ -63,17 +77,17 @@ namespace mctools {
       enum bias_mode_type {
         BIAS_UNDEFINED            = 0, //!< Undefined bias
         BIAS_NONE                 = 1, //!< No bias
-        BIAS_ONLY_MASTER_PARTICLE = 2, //!< Bias based  on some criteria applied only on the master particle in the event
-        BIAS_ALL_PARTICLES        = 3  //!< Bias based on some criteria applied to all particles in the event
+        BIAS_ONLY_MASTER_PARTICLE = 2, //!< Bias based on some criteria applied only to the master particle in the event
+        BIAS_ALL_PARTICLES        = 3, //!< Bias based on some criteria applied to all candidate particles in the event
+        BIAS_DEFAULT              = BIAS_ONLY_MASTER_PARTICLE //!< Default bias mode
       };
 
       /// \brief Status of a biased primary event
       enum biased_event_status {
-        BES_UNDEFINED = 0, //!< Normal status (event is preserved as is)
-        BES_NORMAL    = 1, //!< Normal status (event is preserved as is)
-        BES_KILLED    = 2, //!< Event should be killed (not tracked)
-        BES_WEIGHTED  = 3, //!< Event should be tracked but is given a biasing weight
-        BES_TRANSFORMED = 4, //!< Event should be partially tracked but has been transformed
+        BES_UNDEFINED   = 0, //!< Undefined status
+        BES_NORMAL      = 1, //!< Normal status (event is preserved as is and tracked)
+        BES_TRUNCATED   = 2, //!< Normal status (event is preserved but some particles are not tracked)
+        BES_KILLED      = 3, //!< Event should be killed (not tracked at all)
       };
 
       /// \brief Biasing information associated to a biased primary event
@@ -83,29 +97,40 @@ namespace mctools {
         biasing_info();
         /// Reset
         void reset();
-        /// Check unbiased status
-        bool is_unbiased() const;
-        /// Check biased status
-        bool is_biased() const;
+
+        /// Check normal status
+        bool is_normal() const;
+
+        /// Check truncated status
+        bool is_truncated() const;
+
         /// Check killed status
         bool is_killed() const;
-        /// Check weigthed status
-        bool is_weighted() const;
+
         /// Set the status
         void set_status(biased_event_status);
+
         /// Return the status
         biased_event_status get_status() const;
-        /// Set the weight
-        void set_weight(double);
-        /// Return the weight
-        double get_weight() const;
+
       public:
         biased_event_status _status_; //!< Biasing status associated to the event
-        double _weight_; //!< Weight associated to the event
       };
 
-      // /// \brief Dictionary of points of interest
-      // std::map<std::string, point_of_interest> poi_dict_type;
+      /// \brief Dictionary of points of interest
+      struct poi_entry_type
+      {
+        point_of_interest poi; //!< Point of interest
+        // std::list<point_of_interest> associated_pois; //!< Associated points of interest
+      };
+
+      static const int DEFAULT_PARTICLE_RANK =  0;
+      static const int INVALID_PARTICLE_RANK = -1;
+      static const int ANY_PARTICLE_RANK     = 0x7FFFFFFF;
+
+      /// \brief Dictionary of points of interest
+      // typedef std::map<std::string, point_of_interest> poi_dict_type;
+      typedef std::map<std::string, poi_entry_type> poi_dict_type;
 
       /// Default constructor
       primary_event_bias();
@@ -118,6 +143,9 @@ namespace mctools {
 
       /// Check initialization flag
       bool is_initialized() const;
+
+      /// Initialization
+      void initialize_simple();
 
       /// Initialization
       void initialize(const datatools::properties & config_);
@@ -140,23 +168,26 @@ namespace mctools {
       /// Check mode for using all particles
       bool is_using_all_particles() const;
 
-      /// Set the identifier of the master particle
-      void set_master_particle_by_label(const std::string &);
+      /// Add the identifier of the master particle
+      void add_particle_by_label(const std::string &);
 
-      /// Set the identifier of the master particle
-      void set_master_particle_by_type(int id_);
+      /// Add the identifier of the master particle
+      void add_particle_by_type(int id_);
 
-      /// Set the identifier of the master particle
-      void set_master_particle_by_pdg_code(int code_);
+      // /// Add the identifier of the master particle
+      // void add_particle_by_pdg_code(int code_);
 
       /// Set the minimum kinetic energy of the master particle
-      void set_master_particle_minimum_energy(double kemin_);
+      void set_particle_minimum_energy(double kemin_);
+
+      /// Set the maximum kinetic energy of the master particle
+      void set_particle_maximum_energy(double kemax_);
 
       /// Set the rank of the master particle
       void set_master_particle_rank(int rank_);
 
       /// Set the track only flag of the master particle
-      void set_master_particle_track_only(bool);
+      void set_track_only_master_particle(bool);
 
       /// Set the total minimum kinetic energy
       void set_total_minimum_energy(double);
@@ -164,43 +195,73 @@ namespace mctools {
       /// Set the total maximum kinetic energy
       void set_total_maximum_energy(double);
 
+      /// Set the mapping name
+      void set_mapping_name(const std::string &);
+
+      /// Return the mapping name
+      const std::string & get_mapping_name() const;
+
       /// Set the logging priority threshold
       void set_logging(datatools::logger::priority);
 
       /// Return the logging priority threshold
       datatools::logger::priority get_logging() const;
 
-      // /// Add a target
-      // void add_target(const std::string & target_name_,
-      //                 const geomtools::vector_3 & p_,
-      //                 double radius_,
-      //                 bool avoid_ = false);
+      /// Add a point of interest
+      void add_point_of_interest(const std::string & poi_name_, const point_of_interest & poi_);
+
+      /// Check point of interest
+      bool has_point_of_interest(const std::string & poi_name_) const;
+
+      /// Return a non mutable reference to a point of interest
+      const poi_entry_type & get_point_of_interest(const std::string & poi_name_) const;
+
+      /// Return a mutable reference to a point of interest
+      poi_entry_type & grab_point_of_interest(const std::string & poi_name_);
 
       /// Bias the primary event
-      void process(genbb::primary_event &, biasing_info &);
+      void process(const geomtools::vector_3d & vertex_,
+                   genbb::primary_event & event_,
+                   biasing_info & info_);
+
+      /// Smart print
+      virtual void tree_dump(std::ostream & out_         = std::clog,
+                             const std::string & title_  = "",
+                             const std::string & indent_ = "",
+                             bool inherit_               = false) const;
+
+      /// Draw
+      void draw(const geomtools::vector_3d & vertex_,
+                genbb::primary_event & event_) const;
 
     protected:
 
       /// Set default attribute values
       void _set_default();
 
-      /// Select the primary particle
-      genbb::primary_particle * _select_master_particle(genbb::primary_event &) const;
+      /// Build the list of candidate primary particles
+      void _make_candidate_particles(genbb::primary_event &,
+                                     std::vector<genbb::primary_particle *> &) const;
 
+      /// Validate a particle with respect to its direction and the list of PoIs
+      bool _validate_particle_direction(const genbb::primary_particle &,
+                                        const geomtools::vector_3d &) const;
 
     private:
 
-      bool                          _initialized_; //!< Initialization flag
-      datatools::logger::priority   _logging_;     //!< Logging priority threshold
-      const geomtools::manager    * _geom_mgr_;    //!< Handle to the external geometry manager
+      bool                          _initialized_;      //!< Initialization flag
+      datatools::logger::priority   _logging_;          //!< Logging priority threshold
+      const geomtools::manager    * _geom_mgr_;         //!< Handle to the external geometry manager
+      std::string         _mapping_name_;               //!< Mapping name for POI definition
       bias_mode_type      _bias_mode_;                  //!< Biasing mode
-      int                 _master_particle_type_;       //!< Identifier of the master particle
-      double              _master_particle_min_energy_; //!< The minimum energy of the master particle from the list of candidate particles
+      std::set<int>       _particle_types_;             //!< Types of the candidate particles
+      double              _particle_min_energy_;        //!< The minimum energy of the particle from the list of candidate particles
+      double              _particle_max_energy_;        //!< The maximum energy of the particle from the list of candidate particles
+      double              _total_min_energy_;           //!< The minimum total kinetic energy from the list of candidate particles
+      double              _total_max_energy_;           //!< The maximum total kinetic energy from the list of candidate particles
       int                 _master_particle_rank_;       //!< Rank of the master particle from the list of candidate particles
-      bool                _master_particle_track_only_; //!< Flag to track only the master particle and discard other ones
-      double              _total_min_energy_;           //!< The minimum total kinetic energy
-      double              _total_max_energy_;           //!< The maximum total kinetic energy
-      // poi_dict_type    _pois_;                 //!< Dictionary of points of interest
+      bool                _track_only_master_particle_; //!< Flag to track only the master particle and do not track other ones
+      poi_dict_type       _pois_;                       //!< Dictionary of points of interest
 
     };
 

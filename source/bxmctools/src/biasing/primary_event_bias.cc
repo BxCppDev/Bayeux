@@ -8,8 +8,19 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/exception.h>
+#include <datatools/temporary_files.h>
 // - Bayeux/geomtools:
 #include <geomtools/manager.h>
+#include <geomtools/utils.h>
+#include <geomtools/geomtools_config.h>
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+#include <geomtools/gnuplot_draw.h>
+#include <geomtools/gnuplot_drawer.h>
+#include <geomtools/gnuplot_i.h>
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+#include <geomtools/sphere.h>
+#include <geomtools/line_3d.h>
+#include <geomtools/placement.h>
 // - Bayeux/genbb_help:
 #include <genbb_help/primary_event.h>
 #include <genbb_help/primary_particle.h>
@@ -22,37 +33,56 @@ namespace mctools {
   namespace biasing {
 
     // static
-    const std::string & primary_event_bias::kill_this_event_flag()
+    const std::string & primary_event_bias::biased_event_status_key()
     {
-      static const std::string _f("biasing.kill_this_event");
-      return _f;
+      static const std::string _k("primary_biasing.event.status");
+      return _k;
+    }
+
+    // static
+    const std::string & primary_event_bias::normal_event_label()
+    {
+      static const std::string _lbl("normal");
+      return _lbl;
+    }
+
+    // static
+    const std::string & primary_event_bias::killed_event_label()
+    {
+      static const std::string _lbl("killed");
+      return _lbl;
+    }
+
+    // static
+    const std::string & primary_event_bias::truncated_event_label()
+    {
+      static const std::string _lbl("truncated");
+      return _lbl;
     }
 
     // static
     const std::string & primary_event_bias::master_particle_flag()
     {
-      static const std::string _f("biasing.master_particle");
-      return _f;
+      static const std::string _lbl("master");
+      return _lbl;
     }
 
     // static
     const std::string & primary_event_bias::dont_track_this_particle_flag()
     {
-      static const std::string _f("biasing.dont_track_this_particle");
-      return _f;
+      static const std::string _flag("primary_biasing.particle.dont_track");
+      return _flag;
     }
 
     primary_event_bias::biasing_info::biasing_info()
     {
       _status_ = BES_UNDEFINED;
-      datatools::invalidate(_weight_);
       return;
     }
 
     void primary_event_bias::biasing_info::reset()
     {
       _status_ = BES_UNDEFINED;
-      datatools::invalidate(_weight_);
       return;
     }
 
@@ -69,14 +99,14 @@ namespace mctools {
       return _status_;
     }
 
-    bool primary_event_bias::biasing_info::is_unbiased() const
+    bool primary_event_bias::biasing_info::is_normal() const
     {
       return _status_ == BES_NORMAL;
     }
 
-    bool primary_event_bias::biasing_info::is_biased() const
+    bool primary_event_bias::biasing_info::is_truncated() const
     {
-      return _status_ != BES_NORMAL;
+      return _status_ == BES_TRUNCATED;
     }
 
     bool primary_event_bias::biasing_info::is_killed() const
@@ -84,38 +114,15 @@ namespace mctools {
       return _status_ == BES_KILLED;
     }
 
-    bool primary_event_bias::biasing_info::is_weighted() const
-    {
-      return _status_ == BES_WEIGHTED;
-    }
-
-    void primary_event_bias::biasing_info::set_weight(double w_)
-    {
-      if (! datatools::is_valid(w_)) {
-        datatools::invalidate(_weight_);
-        _status_ = BES_UNDEFINED;
-      } else {
-        DT_THROW_IF(w_ < 0.0, std::range_error, "Invalid biasing weight!");
-        _weight_ = w_;
-        _status_ = BES_WEIGHTED;
-      }
-      return;
-    }
-
-    double primary_event_bias::biasing_info::get_weight() const
-    {
-      return _weight_;
-    }
-
     void primary_event_bias::_set_default()
     {
       _logging_ = datatools::logger::PRIO_FATAL;
       _geom_mgr_ = 0;
       _bias_mode_ = BIAS_NONE;
-      _master_particle_type_ = genbb::primary_particle::PARTICLE_UNKNOWN;
-      datatools::invalidate(_master_particle_min_energy_);
-      _master_particle_rank_ = -1;
-      _master_particle_track_only_ = false;
+      datatools::invalidate(_particle_min_energy_);
+      datatools::invalidate(_particle_max_energy_);
+      _master_particle_rank_ = INVALID_PARTICLE_RANK;
+      _track_only_master_particle_ = false;
       datatools::invalidate(_total_min_energy_);
       datatools::invalidate(_total_max_energy_);
       return;
@@ -143,9 +150,27 @@ namespace mctools {
       return;
     }
 
+    void primary_event_bias::set_mapping_name(const std::string & mn_)
+    {
+      _mapping_name_ = mn_;
+      return;
+    }
+
+    const std::string & primary_event_bias::get_mapping_name() const
+    {
+      return _mapping_name_;
+    }
+
     bool primary_event_bias::is_initialized() const
     {
       return _initialized_;
+    }
+
+    void primary_event_bias::initialize_simple()
+    {
+      datatools::properties dummy;
+      initialize(dummy);
+      return;
     }
 
     void primary_event_bias::initialize(const datatools::properties & config_)
@@ -153,17 +178,22 @@ namespace mctools {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Operation prohibited ! Object is already initialized !");
 
+      // if (_logging_ == datatools::logger::PRIO_UNDEFINED)
       {
         datatools::logger::priority p =
           datatools::logger::extract_logging_configuration(config_,
-                                                           datatools::logger::PRIO_FATAL,
+                                                           _logging_,
                                                            true);
         if (p > datatools::logger::PRIO_UNDEFINED) {
           set_logging(p);
         }
       }
+      if (_logging_ == datatools::logger::PRIO_UNDEFINED) {
+        _logging_ = datatools::logger::PRIO_FATAL;
+      }
 
       double default_energy_unit = CLHEP::keV;
+      double default_length_unit = CLHEP::millimeter;
 
       if (config_.has_key("mode")) {
         const std::string & bm_label = config_.fetch_string("mode");
@@ -171,8 +201,8 @@ namespace mctools {
           set_bias_mode(BIAS_NONE);
         } else if (bm_label == "master") {
           set_bias_mode(BIAS_ONLY_MASTER_PARTICLE);
-        } else if (bm_label == "all") {
-          set_bias_mode(BIAS_ALL_PARTICLES);
+          // } else if (bm_label == "all") {
+          //   set_bias_mode(BIAS_ALL_PARTICLES);
         } else {
           DT_THROW(std::logic_error, "Invalid bias mode '" << bm_label << "'!");
         }
@@ -182,20 +212,65 @@ namespace mctools {
         set_bias_mode(BIAS_NONE);
       }
 
+      // Candidate particles criteria:
+      if (config_.has_key("particle.labels")) {
+        std::vector<std::string> part_labels;
+        config_.fetch("particle.labels", part_labels);
+        for (int i = 0; i < (int) part_labels.size(); i++) {
+          add_particle_by_label(part_labels[i]);
+        }
+      }
+
+      if (config_.has_key("particle.min_energy")) {
+        double min_ke = config_.fetch_real("particle.min_energy");
+        if (! config_.has_explicit_unit("particle.min_energy")) {
+          min_ke *= default_energy_unit;
+        }
+        set_particle_minimum_energy(min_ke);
+      }
+
+      if (config_.has_key("particle.max_energy")) {
+        double max_ke = config_.fetch_real("particle.max_energy");
+        if (! config_.has_explicit_unit("particle.max_energy")) {
+          max_ke *= default_energy_unit;
+        }
+        set_particle_maximum_energy(max_ke);
+      }
+
+      if (datatools::is_valid(_particle_min_energy_) &&
+          datatools::is_valid(_particle_max_energy_) ) {
+        DT_THROW_IF(_particle_min_energy_ >= _particle_max_energy_,
+                    std::range_error,
+                    "Invalid master particle min energy !");
+      }
+
+      if (config_.has_key("total_min_energy")) {
+        double min_ke = config_.fetch_real("total_min_energy");
+        if (! config_.has_explicit_unit("total_min_energy")) {
+          min_ke *= default_energy_unit;
+        }
+        set_total_minimum_energy(min_ke);
+      }
+
+      if (config_.has_key("total_max_energy")) {
+        double max_ke = config_.fetch_real("total_max_energy");
+        if (! config_.has_explicit_unit("total_max_energy")) {
+          max_ke *= default_energy_unit;
+        }
+        set_total_maximum_energy(max_ke);
+      }
+
+      // if (! datatools::is_valid(_total_min_energy_)) {
+      //   set_total_minimum_energy(0.0);
+      // }
+
+      if (datatools::is_valid(_total_max_energy_) && datatools::is_valid(_total_min_energy_)) {
+        DT_THROW_IF(_total_max_energy_ < _total_min_energy_,
+                    std::domain_error,
+                    "Invalid min/max total kinetic energy!");
+      }
+
       if (is_using_master_particle()) {
-
-        if (config_.has_key("master_particle.type")) {
-          std::string label = config_.fetch_string("master_particle.type");
-          set_master_particle_by_label(label);
-        }
-
-        if (config_.has_key("master_particle.min_energy")) {
-          double min_ke = config_.fetch_real("master_particle.min_energy");
-          if (! config_.has_explicit_unit("master_particle.min_energy")) {
-            min_ke *= default_energy_unit;
-          }
-          set_master_particle_minimum_energy(min_ke);
-        }
 
         if (config_.has_key("master_particle.rank")) {
           int rank = config_.fetch_integer("master_particle.rank");
@@ -203,45 +278,48 @@ namespace mctools {
         }
 
         if (config_.has_key("master_particle.track_only")) {
-          set_master_particle_track_only(config_.fetch_boolean("master_particle.track_only"));
+          set_track_only_master_particle(config_.fetch_boolean("master_particle.track_only"));
         }
 
         // Force master particle rank:
-        if (_master_particle_rank_ < 0) {
-          _master_particle_rank_ = 0;
+        if (_master_particle_rank_ == INVALID_PARTICLE_RANK) {
+          _master_particle_rank_ = DEFAULT_PARTICLE_RANK;
         }
 
-      } // is_using_master_particle(
+      } // is_using_master_particle
 
-      if (is_using_all_particles()) {
+      /*
+        if (is_using_all_particles()) {
 
-        if (config_.has_key("total_min_energy")) {
-          double min_ke = config_.fetch_real("total_min_energy");
-          if (! config_.has_explicit_unit("total_min_energy")) {
-            min_ke *= default_energy_unit;
-          }
-          set_total_minimum_energy(min_ke);
+        } // is_using_all_particles
+      */
+
+      std::vector<std::string> poi_names;
+      /* Syntax:
+       *
+       *  points_of_interest : string[2] = "detector0" "detector1"
+       *  points_of_interest.detector0.position     : string = " 1.2 3.4 4.5 mm"
+       *  points_of_interest.detector0.radius       : real as length = 20 cm
+       *  points_of_interest.detector0.attractivity : string = "attractive"
+       *  points_of_interest.detector1.position     : string = " -1.2 -3.4 4.5 mm"
+       *  points_of_interest.detector1.radius       : real as length = 40 cm
+       *  points_of_interest.detector1.attractivity : string = "repulsive"
+       *
+       */
+      if (config_.has_key("points_of_interest")) {
+        config_.fetch("points_of_interest", poi_names);
+        for (int i = 0; i < (int) poi_names.size(); i++) {
+          const std::string & poi_name = poi_names[i];
+          point_of_interest poi;
+          poi.set_name(poi_name);
+          datatools::properties poi_config;
+          std::ostringstream poi_config_prefix_oss;
+          poi_config_prefix_oss << "points_of_interest." << poi_name << '.';
+          config_.export_and_rename_starting_with(poi_config, poi_config_prefix_oss.str(), "");
+          poi.initialize(poi_config, _geom_mgr_);
+          add_point_of_interest(poi_name, poi);
         }
-
-        if (config_.has_key("total_max_energy")) {
-          double max_ke = config_.fetch_real("total_max_energy");
-          if (! config_.has_explicit_unit("total_max_energy")) {
-            max_ke *= default_energy_unit;
-          }
-          set_total_maximum_energy(max_ke);
-        }
-
-        if (! datatools::is_valid(_total_min_energy_)) {
-          _total_min_energy_ = 0.0;
-        }
-
-        if (datatools::is_valid(_total_max_energy_)) {
-          DT_THROW_IF(_total_max_energy_ < _total_min_energy_,
-                      std::domain_error,
-                      "Invalid min/max total kinetic energy!");
-        }
-
-      } // is_using_all_particles()
+      }
 
       _initialized_ = true;
       return;
@@ -251,6 +329,10 @@ namespace mctools {
     {
       DT_THROW_IF(!is_initialized(), std::logic_error, "Operation prohibited ! Object is not initialized !");
       _initialized_ = false;
+      _mapping_name_.clear();
+      _pois_.clear();
+      _geom_mgr_ = 0;
+      _particle_types_.clear();
       _set_default();
       return;
     }
@@ -283,7 +365,7 @@ namespace mctools {
       return _bias_mode_ == BIAS_ALL_PARTICLES;
     }
 
-    void primary_event_bias::set_master_particle_by_label(const std::string & label_)
+    void primary_event_bias::add_particle_by_label(const std::string & label_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Operation prohibited ! Object is already initialized !");
@@ -291,11 +373,11 @@ namespace mctools {
       DT_THROW_IF(type == genbb::primary_particle::PARTICLE_UNKNOWN,
                   std::logic_error,
                   "Unknown particle label '" << label_ << "'!");
-      _master_particle_type_ = type;
+      _particle_types_.insert(type);
       return;
     }
 
-    void primary_event_bias::set_master_particle_by_type(int type_)
+    void primary_event_bias::add_particle_by_type(int type_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Operation prohibited ! Object is already initialized !");
@@ -303,26 +385,37 @@ namespace mctools {
       DT_THROW_IF(label.empty(),
                   std::logic_error,
                   "Unknown particle type '" << type_ << "'!");
-      _master_particle_type_ = type_;
+      _particle_types_.insert(type_);
       return;
     }
 
-    void primary_event_bias::set_master_particle_by_pdg_code(int /*code_*/)
-    {
-      DT_THROW_IF(is_initialized(), std::logic_error,
-                  "Operation prohibited ! Object is already initialized !");
-      DT_THROW(std::logic_error, "Particle PDG code not supported yet!");
-      _master_particle_type_ = genbb::primary_particle::PARTICLE_UNKNOWN;
-      return;
-    }
 
-    void primary_event_bias::set_master_particle_minimum_energy(double kemin_)
+    // void primary_event_bias::add_particle_by_pdg_code(int /*code_*/)
+    // {
+    //   DT_THROW_IF(is_initialized(), std::logic_error,
+    //               "Operation prohibited ! Object is already initialized !");
+    //   DT_THROW(std::logic_error, "Particle PDG code not supported yet!");
+    //   // _particle_types_.insert(XXX);
+    //   return;
+    // }
+
+    void primary_event_bias::set_particle_minimum_energy(double kemin_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Operation prohibited ! Object is already initialized !");
       DT_THROW_IF(kemin_ < 0.0, std::range_error,
                   "Invalid minimum kinetic energy !");
-      _master_particle_min_energy_ = kemin_;
+      _particle_min_energy_ = kemin_;
+      return;
+    }
+
+    void primary_event_bias::set_particle_maximum_energy(double kemax_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Operation prohibited ! Object is already initialized !");
+      DT_THROW_IF(kemax_ < 0.0, std::range_error,
+                  "Invalid maximum kinetic energy !");
+      _particle_max_energy_ = kemax_;
       return;
     }
 
@@ -330,17 +423,17 @@ namespace mctools {
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Operation prohibited ! Object is already initialized !");
-      if (rank_ < -1) {
-        _master_particle_rank_ = -1;
+      if (rank_ < 0) {
+        _master_particle_rank_ = INVALID_PARTICLE_RANK;
       } else {
         _master_particle_rank_ = rank_;
       }
       return;
     }
 
-    void primary_event_bias::set_master_particle_track_only(bool to_)
+    void primary_event_bias::set_track_only_master_particle(bool to_)
     {
-      _master_particle_track_only_ = to_;
+      _track_only_master_particle_ = to_;
       return;
     }
 
@@ -375,25 +468,10 @@ namespace mctools {
       return _logging_;
     }
 
-    /*
-      void primary_event_bias::add_target(const std::string & target_name_,
-      const geomtools::vector_3 & p_,
-      double radius_,
-      bool avoid_)
-      {
-      // {
-      //        target_type tt;
-      //        _targets_.push_back(tt);
-      // }
-      // target_type & tgt = _targets_.
-      return;
-      }
-    */
-
-    genbb::primary_particle * primary_event_bias::_select_master_particle(genbb::primary_event & event_) const
+    void primary_event_bias::_make_candidate_particles(genbb::primary_event & event_,
+                                                       std::vector<genbb::primary_particle *> & candidates_) const
     {
-      genbb::primary_particle * master_particle = 0;
-      std::vector<genbb::primary_particle *> master_candidates;
+      DT_LOG_TRACE_ENTERING(_logging_);
       for (genbb::primary_event::particles_col_type::iterator i =
              event_.grab_particles().begin();
            i != event_.grab_particles().end();
@@ -401,65 +479,259 @@ namespace mctools {
         genbb::primary_particle & part = *i;
         bool candidate = true;
 
-        // Check particle type:
-        if (candidate && _master_particle_type_ !=
-            genbb::primary_particle::PARTICLE_UNKNOWN) {
-          if (part.get_type() != _master_particle_type_) {
+        // Only consider particles of some specific types:
+        if (candidate && _particle_types_.size()) {
+          if (_particle_types_.count(part.get_type()) == 0) {
+            DT_LOG_TRACE(_logging_, "Particle of type '" << part.get_type() << "' is not used!");
             candidate = false;
           }
         }
 
-        // Check particle minimum kinetic energy:
-        if (candidate && datatools::is_valid(_master_particle_min_energy_)) {
-          if (part.get_kinetic_energy() < _master_particle_min_energy_) {
+        // Only consider particles with minimum kinetic energy:
+        if (candidate && datatools::is_valid(_particle_min_energy_)) {
+          if (part.get_kinetic_energy() < _particle_min_energy_) {
+            DT_LOG_TRACE(_logging_, "Particle of kinetic energy '" << part.get_kinetic_energy() << "' is not used (too low)!");
+            candidate = false;
+          }
+        }
+
+        // Only consider particles with maximum kinetic energy:
+        if (candidate && datatools::is_valid(_particle_max_energy_)) {
+          if (part.get_kinetic_energy() > _particle_max_energy_) {
+            DT_LOG_TRACE(_logging_, "Particle of kinetic energy '" << part.get_kinetic_energy() << "' is not used (too large)!");
             candidate = false;
           }
         }
 
         if (candidate) {
-          master_candidates.push_back(&part);
+          // Tag the particle as a valid candidate:
+          candidates_.push_back(&part);
+          DT_LOG_TRACE(_logging_, "Tag this particle as a candidate for biasing...");
         }
-      }
-
-      if (_master_particle_rank_ >= 0) {
-        if (_master_particle_rank_ < (int)master_candidates.size()) {
-          master_particle = master_candidates[_master_particle_rank_];
-        }
-      }
-      return master_particle;
+      } // for
+      DT_LOG_TRACE(_logging_, "Number of candidate particles: " << candidates_.size());
+      DT_LOG_TRACE_EXITING(_logging_);
+      return;
     }
 
-    void primary_event_bias::process(genbb::primary_event & event_, biasing_info & bi_)
+    void primary_event_bias::add_point_of_interest(const std::string & poi_name_,
+                                                   const point_of_interest & poi_)
     {
+      DT_THROW_IF(_pois_.find(poi_name_) != _pois_.end(),
+                  std::logic_error,
+                  "Bias already has a point of interest registered with name '" << poi_name_ << "'!");
+      {
+        poi_entry_type dummy;
+        dummy.poi = poi_;
+        if (dummy.poi.get_name().empty()) {
+          dummy.poi.set_name(poi_name_);
+        }
+        _pois_[poi_name_] = dummy;
+      }
+      return;
+    }
+
+    bool primary_event_bias::has_point_of_interest(const std::string & poi_name_) const
+    {
+      return _pois_.find(poi_name_) != _pois_.end();
+    }
+
+    const primary_event_bias::poi_entry_type &
+    primary_event_bias::get_point_of_interest(const std::string & poi_name_) const
+    {
+      poi_dict_type::const_iterator found = _pois_.find(poi_name_);
+      DT_THROW_IF(found == _pois_.end(), std::logic_error,
+                  "Cannot find POI with name '" << poi_name_ << "'!");
+      return found->second;
+    }
+
+    primary_event_bias::poi_entry_type &
+    primary_event_bias::grab_point_of_interest(const std::string & poi_name_)
+    {
+      poi_dict_type::iterator found = _pois_.find(poi_name_);
+      DT_THROW_IF(found == _pois_.end(), std::logic_error,
+                  "Cannot find POI with name '" << poi_name_ << "'!");
+      return found->second;
+    }
+
+    bool primary_event_bias::_validate_particle_direction(const genbb::primary_particle & part_,
+                                                          const geomtools::vector_3d & vtx_) const
+    {
+      DT_LOG_TRACE_ENTERING(_logging_);
+      if (_pois_.size() == 0) {
+        // Default to true if no PoIs are available:
+        DT_LOG_TRACE(_logging_, "Particle is validate because no PoI is defined!");
+        DT_LOG_TRACE_EXITING(_logging_);
+        return true;
+      }
+
+      const geomtools::vector_3d * vtx = 0;
+      if (geomtools::is_valid(vtx_)) {
+        vtx = &vtx_;
+      } else if (part_.has_vertex()) {
+        vtx = &part_.get_vertex();
+      } else {
+        DT_THROW(std::logic_error, "No available vertex associated to the particle!");
+      }
+
+      // First check if the particle hits a repulsive PoI:
+      int repulsive_counter = 0;
+      int hit_repulsive_counter = 0;
+      for (poi_dict_type::const_iterator i = _pois_.begin();
+           i != _pois_.end();
+           i++) {
+        const poi_entry_type & pe = i->second;
+        if (! pe.poi.is_repulsive()) {
+          continue;
+        }
+        DT_LOG_TRACE(_logging_, "Checking particle direction w.r.t the '" << i->first << "' repulsive PoI...");
+        repulsive_counter++;
+        if (pe.poi.hit(*vtx, part_.get_momentum())) {
+          hit_repulsive_counter++;
+        } else {
+          DT_LOG_TRACE(_logging_, "Particle does not hit repulsive PoI '" << i->first << "'!");
+        }
+      }
+      DT_LOG_TRACE(_logging_, "Number of repulsive PoIs = " << repulsive_counter);
+      if (repulsive_counter > 0) {
+        // If some repulsive PoIs exist and at least one is hit,
+        // then the particle is not validated:
+        if (hit_repulsive_counter > 0) {
+          DT_LOG_TRACE(_logging_, "Not validated because the particle hits a repulsive PoI!");
+          DT_LOG_TRACE_EXITING(_logging_);
+          return false;
+        }
+      }
+
+      // Second check if the particle hits an attractive PoI:
+      int attractive_counter = 0;
+      int hit_attractive_counter = 0;
+      for (poi_dict_type::const_iterator i = _pois_.begin();
+           i != _pois_.end();
+           i++) {
+        const poi_entry_type & pe = i->second;
+        if (! pe.poi.is_attractive()) {
+          continue;
+        }
+        DT_LOG_TRACE(_logging_, "Checking particle direction w.r.t the '" << i->first << "' attractive PoI...");
+        attractive_counter++;
+        if (pe.poi.hit(*vtx, part_.get_momentum())) {
+          hit_attractive_counter++;
+        } else {
+          DT_LOG_TRACE(_logging_, "Particle does not hit attractive PoI '" << i->first << "'!");
+        }
+      }
+      DT_LOG_TRACE(_logging_, "Number of attractive PoIs = " << attractive_counter);
+      if (attractive_counter > 0) {
+        // If some attractive PoI exist and none is hit,
+        // then the particle is not validated:
+        if (hit_attractive_counter == 0) {
+          DT_LOG_TRACE(_logging_, "Not validated because the particle does not hit any attractive PoI!");
+          DT_LOG_TRACE_EXITING(_logging_);
+          return false;
+        }
+      }
+
+      // Otherwise, always accept the particle, whatever its direction is.
+      DT_LOG_TRACE(_logging_, "Validated because the particle has a good direction!");
+      DT_LOG_TRACE_EXITING(_logging_);
+      return true;
+    }
+
+
+
+    void primary_event_bias::process(const geomtools::vector_3d & vertex_,
+                                     genbb::primary_event & event_,
+                                     biasing_info & bi_)
+    {
+      DT_LOG_TRACE_ENTERING(_logging_);
       DT_THROW_IF(!is_initialized(), std::logic_error, "Object is not initialized !");
 
       bi_.reset();
 
       if (is_using_no_bias()) {
         // No biasing is applied:
+        event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
         bi_.set_status(BES_NORMAL);
-        bi_.set_weight(1.0);
         return;
       } // is_using_no_bias()
 
-      // Pointer to the master particle:
-      genbb::primary_particle * master_particle = 0;
+      // Build the list of candidate particles:
+      std::vector<genbb::primary_particle *> candidate_particles;
+      _make_candidate_particles(event_, candidate_particles);
+      if (candidate_particles.size() == 0) {
+        // No candidate particles are considered:
+        event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
+        bi_.set_status(BES_KILLED);
+        DT_LOG_TRACE(_logging_, "No candidate particles!");
+        return;
+      }
+
+      // Compute the total kinetic energy from candidate particles:
+      double ekin_sum = -1.0;
+      for (int i = 0; i < (int) candidate_particles.size(); i++) {
+        if (ekin_sum < 0) {
+          ekin_sum = 0.0;
+        }
+        const genbb::primary_particle & part = *candidate_particles[i];
+        double ekin = part.get_kinetic_energy();
+        ekin_sum += ekin;
+      }
+
+      if (datatools::is_valid(_total_min_energy_)) {
+        if (ekin_sum < _total_min_energy_) {
+          // Not enough total kinetic energy from candidate particles:
+          event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
+          bi_.set_status(BES_KILLED);
+          DT_LOG_TRACE(_logging_, "Not enough energy from candidate particles!");
+          return;
+        }
+      }
+
+      if (datatools::is_valid(_total_max_energy_)) {
+        if (ekin_sum > _total_max_energy_) {
+          // Too much total kinetic energy from candidate particles:
+          event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
+          bi_.set_status(BES_KILLED);
+          DT_LOG_TRACE(_logging_, "Too much energy from candidate particles!");
+          return;
+        }
+      }
 
       if (is_using_master_particle()) {
-
-        // Pick-up the "master" particle:
-        master_particle = _select_master_particle(event_);
-
-        // Apply criteria only on the master particle if it exists:
+        DT_LOG_TRACE(_logging_, "Entering master particle mode...");
+        genbb::primary_particle * master_particle = 0;
+        // Determine the master particle:
+        for (int i = 0; i < (int) candidate_particles.size(); i++) {
+          const genbb::primary_particle & part = *candidate_particles[i];
+          if (_master_particle_rank_ >= 0 && _master_particle_rank_ != ANY_PARTICLE_RANK) {
+            if (_master_particle_rank_ < (int) candidate_particles.size()) {
+              master_particle = candidate_particles[_master_particle_rank_];
+            }
+          }
+        }
         if (! master_particle) {
-          event_.grab_auxiliaries().store_flag(kill_this_event_flag());
+          // Could not find the master particle with given criteria:
+          event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
           bi_.set_status(BES_KILLED);
+          DT_LOG_TRACE(_logging_, "No master particle was found!");
+          return;
+        }
+        bool checked = true;
+
+        // Check master momentum versus attractive/repulsive PoIs...
+        checked = _validate_particle_direction(*master_particle, vertex_);
+        if (! checked) {
+          event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
+          bi_.set_status(BES_KILLED);
+          DT_LOG_TRACE(_logging_, "Invalid master particle direction!");
           return;
         } else {
+          DT_LOG_TRACE(_logging_, "The master particle has a valid direction w.r.t. the distribution of PoIs");
           master_particle->grab_auxiliaries().store_flag(master_particle_flag());
-
-          if (_master_particle_track_only_) {
-            // Tag the non-master particles:
+          if (_track_only_master_particle_) {
+            int not_tracked_counter = 0;
+            // Tag the non-master particles not to be tracked:
             for (genbb::primary_event::particles_col_type::iterator i =
                    event_.grab_particles().begin();
                  i != event_.grab_particles().end();
@@ -467,46 +739,335 @@ namespace mctools {
               genbb::primary_particle & part = *i;
               if (&part != master_particle) {
                 part.grab_auxiliaries().store_flag(dont_track_this_particle_flag());
+                not_tracked_counter++;
               }
             }
+            if (not_tracked_counter > 0) {
+              event_.grab_auxiliaries().store(biased_event_status_key(), truncated_event_label());
+              bi_.set_status(BES_TRUNCATED);
+              DT_LOG_TRACE(_logging_, "Validation of the event (truncated).");
+            } else {
+              event_.grab_auxiliaries().store(biased_event_status_key(), normal_event_label());
+              bi_.set_status(BES_NORMAL);
+              DT_LOG_TRACE(_logging_, "Validation of the event.");
+            }
+            return;
+          } else {
+            event_.grab_auxiliaries().store(biased_event_status_key(), normal_event_label());
+            bi_.set_status(BES_NORMAL);
+            DT_LOG_TRACE(_logging_, "Validation of the event.");
+            return;
           }
-          bi_.set_status(BES_TRANSFORMED);
-          return;
         }
-
-        return;
+        DT_LOG_TRACE(_logging_, "Exiting master particle mode.");
       } // is_using_master_particle()
 
-      // Apply criteria on the full set of particles:
+      // Apply criteria on the full set of candidate particles:
       if (is_using_all_particles()) {
+        DT_LOG_TRACE(_logging_, "Entering all particles mode...");
+        bool checked = true;
+        for (int i = 0; i < (int) candidate_particles.size(); i++) {
+          const genbb::primary_particle & part = *candidate_particles[i];
 
-        // Compute the total energy:
-        double kesum = 0.0;
-        for (genbb::primary_event::particles_col_type::const_iterator i =
-               event_.get_particles().begin();
-             i != event_.get_particles().end();
-             i++) {
-          const genbb::primary_particle & part = *i;
-          kesum += part.get_kinetic_energy();
+          // Check momentum versus attractive/repulsive PoIs...
+
         }
 
-        bool ok = true;
-        if (datatools::is_valid(_total_min_energy_)) {
-          if (kesum < _total_min_energy_) {
-            ok = false;
-          }
-        }
-        if (datatools::is_valid(_total_max_energy_)) {
-          if (kesum > _total_max_energy_) {
-            ok = false;
-          }
-        }
-        if (!ok) {
-          event_.grab_auxiliaries().store_flag(kill_this_event_flag());
-          bi_.set_status(BES_KILLED);
+        if (checked) {
+          event_.grab_auxiliaries().store(biased_event_status_key(), normal_event_label());
+          bi_.set_status(BES_NORMAL);
           return;
         }
+
+        DT_LOG_TRACE(_logging_, "Exiting all particles mode.");
       } // is_using_all_particles()
+
+      DT_LOG_TRACE_EXITING(_logging_);
+      return;
+    }
+
+    void primary_event_bias::draw(const geomtools::vector_3d & vertex_,
+                                  genbb::primary_event & event_) const
+    {
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+      datatools::temp_file ftmp;
+      ftmp.set_remove_at_destroy(true);
+      ftmp.create("/tmp", "temp_");
+      geomtools::rotation_3d irot;
+      geomtools::create_rotation(irot, 0,0,0);
+
+      int plot_index = 0;
+      mygsl::min_max xmm;
+      mygsl::min_max ymm;
+      mygsl::min_max zmm;
+      mygsl::min_max rmm;
+      xmm.add(vertex_.x());
+      ymm.add(vertex_.y());
+      zmm.add(vertex_.z());
+
+      std::map<std::string, int> plot_indexes;
+      {
+        int count = 0;
+        for (poi_dict_type::const_iterator i = _pois_.begin();
+             i != _pois_.end();
+             i++) {
+          const poi_entry_type & pe = i->second;
+          xmm.add(pe.poi.get_position().x());
+          ymm.add(pe.poi.get_position().y());
+          zmm.add(pe.poi.get_position().z());
+          rmm.add(pe.poi.get_radius());
+          if (pe.poi.is_attractive()) {
+            if (count == 0) {
+              ftmp.out() << "#@Attractive_PoIs:" << std::endl;
+            }
+            geomtools::gnuplot_draw::draw_sphere(ftmp.out(), pe.poi.get_position(), irot, pe.poi.get_radius());
+            count++;
+          }
+        }
+        if (count) {
+          plot_indexes["Attractive_PoIs"] = plot_index++;
+        }
+        ftmp.out() << std::endl;
+      }
+
+      {
+        int count = 0;
+        for (poi_dict_type::const_iterator i = _pois_.begin();
+             i != _pois_.end();
+             i++) {
+          const poi_entry_type & pe = i->second;
+          if (pe.poi.is_repulsive()) {
+            if (count == 0) {
+              ftmp.out() << "#@Repulsive_PoIs:" << std::endl;
+            }
+            geomtools::gnuplot_draw::draw_sphere(ftmp.out(), pe.poi.get_position(), irot, pe.poi.get_radius());
+            count++;
+          }
+        }
+        if (count) {
+          plot_indexes["Repulsive_PoIs"] = plot_index++;
+        }
+        ftmp.out() << std::endl;
+      }
+
+      {
+        int count = 0;
+        if (geomtools::is_valid(vertex_)) {
+          if (count == 0) {
+            ftmp.out() << "#@Vertex:" << std::endl;
+          }
+          geomtools::gnuplot_draw::basic_draw_point(ftmp.out(), vertex_);
+          count++;
+        } else {
+          for (genbb::primary_event::particles_col_type::const_iterator i =
+                 event_.grab_particles().begin();
+               i != event_.grab_particles().end();
+               i++) {
+            const genbb::primary_particle & part = *i;
+            if (part.has_vertex()) {
+              xmm.add(part.get_vertex().x());
+              ymm.add(part.get_vertex().y());
+              zmm.add(part.get_vertex().z());
+              if (count == 0) {
+                ftmp.out() << "#@Vertex:" << std::endl;
+              }
+              geomtools::gnuplot_draw::basic_draw_point(ftmp.out(), part.get_vertex());
+              count++;
+            }
+          }
+        }
+        if (count) {
+          plot_indexes["Vertex"] = plot_index++;
+        }
+        ftmp.out() << std::endl;
+        ftmp.out() << std::endl;
+      }
+
+      double dx = xmm.get_max() - xmm.get_min();
+      double dy = ymm.get_max() - ymm.get_min();
+      double dz = zmm.get_max() - zmm.get_min();
+      mygsl::min_max smm;
+      smm.add(dx);
+      smm.add(dy);
+      smm.add(dz);
+      double scale = smm.get_max();
+      DT_LOG_TRACE(_logging_, "Plot scale = " << scale / CLHEP::mm << " mm");
+
+      {
+        int count = 0;
+        for (genbb::primary_event::particles_col_type::const_iterator i =
+               event_.grab_particles().begin();
+             i != event_.grab_particles().end();
+             i++) {
+          const genbb::primary_particle & part = *i;
+          geomtools::vector_3d vtx = vertex_;
+          if (! geomtools::is_valid(vtx)) {
+            if (part.has_vertex()) vtx = part.get_vertex();
+          }
+          if (geomtools::is_valid(vtx)) {
+            if (count == 0) {
+              ftmp.out() << "#@Primaries:" << std::endl;
+            }
+            geomtools::vector_3d dir = part.get_momentum().unit();
+            geomtools::vector_3d end_traj = vtx + dir * 2 * scale;
+            geomtools::gnuplot_draw::draw_line(ftmp.out(), vtx, end_traj);
+            count++;
+          }
+        }
+        if (count) {
+          plot_indexes["Primaries"] = plot_index++;
+        }
+        ftmp.out() << std::endl;
+      }
+
+      DT_LOG_TRACE(_logging_, "Plot indexes: ");
+      for (std::map<std::string, int>::const_iterator i = plot_indexes.begin();
+           i != plot_indexes.end();
+           i++) {
+        DT_LOG_TRACE(_logging_, "  ==> Plot '" << i->first << "' at index " <<  i->second);
+      }
+      DT_LOG_TRACE(_logging_, "");
+
+      Gnuplot g1;
+      g1.cmd("set title 'mctools::biasing::primary_event_bias::draw' ");
+      g1.cmd("set grid");
+      g1.cmd("set size ratio -1");
+      g1.cmd("set view equal xyz");
+      g1.set_xlabel("x").set_ylabel("y").set_zlabel("z");
+      DT_LOG_TRACE(_logging_, "  X min = " << xmm.get_min() / CLHEP::mm << " mm");
+      DT_LOG_TRACE(_logging_, "  X max = " << xmm.get_max() / CLHEP::mm << " mm");
+      DT_LOG_TRACE(_logging_, "  Y min = " << ymm.get_min() / CLHEP::mm << " mm");
+      DT_LOG_TRACE(_logging_, "  Y max = " << ymm.get_max() / CLHEP::mm << " mm");
+      DT_LOG_TRACE(_logging_, "  Z min = " << zmm.get_min() / CLHEP::mm << " mm");
+      DT_LOG_TRACE(_logging_, "  Z max = " << zmm.get_max() / CLHEP::mm << " mm");
+      DT_LOG_TRACE(_logging_, "  R max = " << rmm.get_max() / CLHEP::mm << " mm");
+      double safe =  1.5 * rmm.get_max();
+      g1.set_xrange(xmm.get_min() - safe, xmm.get_max() + safe);
+      g1.set_yrange(ymm.get_min() - safe, ymm.get_max() + safe);
+      g1.set_zrange(zmm.get_min() - safe, zmm.get_max() + safe);
+      {
+        std::ostringstream plot_cmd;
+        for (std::map<std::string, int>::const_iterator i = plot_indexes.begin();
+            i != plot_indexes.end();
+            i++) {
+          DT_LOG_TRACE(_logging_, "Plot '" << i->first << "' at index " <<  i->second);
+          if (i == plot_indexes.begin()) {
+            plot_cmd << "splot ";
+          } else {
+            plot_cmd << ", ";
+          }
+          plot_cmd << " '" << ftmp.get_filename() << "' index " << i->second
+                   << " title '" << i->first << "' with ";
+          if (i->first == "Vertex") {
+            plot_cmd << "point lt 5 pt 6 ps 1.0 ";
+          } else if (i->first == "Primaries") {
+            plot_cmd << "lines lt 3 lw 1.5 ";
+          } else if (i->first == "Attractive_PoIs") {
+            plot_cmd << "lines lt 2 lw 0.5 ";
+          } else if (i->first == "Repulsive_PoIs") {
+            plot_cmd << "lines lt 1 lw 0.5 ";
+          } else {
+            plot_cmd << "lines lt 0 ";
+          }
+        } // for
+        DT_LOG_TRACE(_logging_, "plot_cmd = '" << plot_cmd.str() << "'");
+        g1.cmd(plot_cmd.str());
+        g1.showonscreen(); // window output
+        geomtools::gnuplot_drawer::wait_for_key();
+        usleep(200);
+      }
+#endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+      return;
+    }
+
+    void primary_event_bias::tree_dump(std::ostream & out_,
+                                       const std::string & title_,
+                                       const std::string & indent_,
+                                       bool inherit_) const
+    {
+      if (! title_.empty()) {
+        out_ << indent_ << title_ << std::endl;
+      }
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Initialized : " << _initialized_ << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Logging : " << _logging_ << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Geometry manager : " << _geom_mgr_ << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Mapping plugin name : '" << _mapping_name_ << "'" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Bias mode : '" << _bias_mode_ << "'" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Particle types : " << _particle_types_.size() << std::endl;
+      for (std::set<int>::const_iterator i = _particle_types_.begin();
+          i != _particle_types_.end();
+          i++) {
+        std::set<int>::const_iterator j = i;
+        out_ << indent_ << datatools::i_tree_dumpable::skip_tag;
+        if (++j == _particle_types_.end()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+        }
+        out_ << "Type : " << *i << " : '" << genbb::primary_particle::particle_label_from_type(*i) << "'";
+        out_ << std::endl;
+      }
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Particle min energy : "
+           << _particle_min_energy_ / CLHEP::keV
+           << " keV" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Particle max energy : "
+           << _particle_max_energy_ / CLHEP::keV
+           << " keV" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Total min energy : "
+           << _total_min_energy_ / CLHEP::keV
+           << " keV" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Total max energy : "
+           << _total_max_energy_ / CLHEP::keV
+           << " keV" << std::endl;
+
+      if (is_using_master_particle()) {
+
+        out_ << indent_ << datatools::i_tree_dumpable::tag
+             << "Master particle rank : " << _master_particle_rank_ << std::endl;
+
+        out_ << indent_ << datatools::i_tree_dumpable::tag
+             << "Track only master particle : " << _track_only_master_particle_ << std::endl;
+      }
+
+      if (is_using_all_particles()) {
+        // XXX
+      }
+
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Points of interest : "
+           << _pois_.size() << std::endl;
+      for (poi_dict_type::const_iterator i = _pois_.begin();
+           i != _pois_.end();
+           i++) {
+        poi_dict_type::const_iterator j = i;
+        out_ << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+        if (++j == _pois_.end()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+        }
+        out_ << "POI '" << i->first << "'";
+        out_ << std::endl;
+      }
 
       return;
     }
