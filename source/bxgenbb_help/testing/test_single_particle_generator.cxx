@@ -72,6 +72,7 @@ int main (int argc_, char ** argv_)
     // Build a configuration properties container:
     datatools::properties config;
     if (debug) config.store_flag ("debug");
+    config.store ("assign_generation_ids", true);
 
     /* The seed of the random number generator */
     config.store ("seed", 314159);

@@ -64,14 +64,17 @@ namespace genbb {
   {
   public:
 
+    /// Invalid generation Id
+    static const int INVALID_GENERATION_ID = -1;
+
     /// \brief Extended Geant3 particle
     // Using GEANT3 definition from:
     //   http://wwwasdoc.web.cern.ch/wwwasdoc/geant_html3/node72.html#SECTION024000000000000000000000
     //   http://www.star.bnl.gov/public/comp/simu/gstar/Manual/particle_id.html
     enum particle_type {
-      UNDEF              = -1, /// Obsolete code
-      PARTICLE_UNDEFINED = -1,
-      PARTICLE_UNKNOWN = 0,  /// A valid particle but unknown from the genbb library
+      UNDEF              = -1, //!< @deprecated Undefined particle type
+      PARTICLE_UNDEFINED = -1, //!< Undefined particle type
+      PARTICLE_UNKNOWN = 0,  //!< A valid particle but unknown from the genbb library
       GAMMA      = 1,
       POSITRON   = 2,
       ELECTRON   = 3,
@@ -112,8 +115,8 @@ namespace genbb {
       HE3        = 49,
       CERENKOV   = 50,
       // Additional codes:
-      NUCLEUS    = 1000000000, // Fully ionized ion (naked nucleus)
-      ION        = 1100000000  // An ion/atom with arbitrary ionization state
+      NUCLEUS    = 1000000000, //!< Fully ionized ion (naked nucleus)
+      ION        = 1100000000  //!< An ion/atom with arbitrary ionization state
     };
 
     /// Invalid PDG particle code
@@ -134,6 +137,18 @@ namespace genbb {
 
     /// Reset the full data structure of the particle
     void reset();
+
+    /// Check if the particle has an unique generation Id
+    bool has_generation_id() const;
+
+    /// Set the unique generation Id
+    void set_generation_id(int);
+
+    /// Reset the unique generation Id
+    void reset_generation_id();
+
+    /// Return the unique generation Id
+    int get_generation_id() const;
 
     /// Check if the extended Geant3 type of the particle is defined
     bool has_type() const;
@@ -306,7 +321,7 @@ namespace genbb {
     /// Return a mutable reference to the auxiliary properties
     datatools::properties & grab_auxiliaries();
 
-    /// Constructor
+    /// Default constructor
     primary_particle();
 
     /// Constructor
@@ -341,14 +356,15 @@ namespace genbb {
 
   private:
 
-    int32_t              _type_;     //!< Extended Geant3 type of the particle (using historical Geant3 particle Ids + additional codes)
-    int32_t              _pdg_code_; //!< Standard PDG code of the particle (NOT USED YET)
+    int                  _generation_id_;  //!< The unique generation Id
+    int32_t              _type_;           //!< Extended Geant3 type of the particle (using historical Geant3 particle Ids + additional codes)
+    int32_t              _pdg_code_;       //!< Standard PDG code of the particle (NOT USED YET)
     std::string          _particle_label_; //!< String identifier of the particle in case it is not supported by the table of Geant3 codes (type) or PDG standards
-    double               _mass_;     //!< The mass in CLHEP energy unit
-    double               _time_;     //!< The mass in CLHEP time unit
-    geomtools::vector_3d _momentum_; //!< The mass in CLHEP momentum unit
-    geomtools::vector_3d _vertex_;   //!< The mass in CLHEP position unit
-    datatools::properties _auxiliaries_; //!< Auxiliary properties
+    double               _mass_;           //!< The mass in CLHEP explicit energy unit
+    double               _time_;           //!< The time in CLHEP explicit time unit
+    geomtools::vector_3d _momentum_;       //!< The momentum in CLHEP explicit momentum unit
+    geomtools::vector_3d _vertex_;         //!< The vertex in CLHEP position unit
+    datatools::properties _auxiliaries_;   //!< Auxiliary properties
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(primary_particle)

@@ -1,7 +1,6 @@
-// -*- mode: c++; -*-
 // i_genbb.cc
 /*
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2014 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Publi * License as published by
@@ -74,15 +73,14 @@ namespace genbb {
     _logging_priority = p;
   }
 
-  // Constructor
   i_genbb::i_genbb ()
   {
     _logging_priority = datatools::logger::PRIO_FATAL;
     _external_random_ = 0;
+    _assign_generation_ids_ = false;
     return;
   }
 
-  /// Destructor
   i_genbb::~i_genbb ()
   {
     return;
@@ -92,6 +90,9 @@ namespace genbb {
                            bool compute_classification_)
   {
     _load_next (event_, compute_classification_);
+    if (_assign_generation_ids_) {
+      event_.assign_generation_ids();
+    }
     return;
   }
 
@@ -119,13 +120,11 @@ namespace genbb {
     return;
   }
 
-
   mygsl::rng & i_genbb::grab_external_random ()
   {
     DT_THROW_IF (! has_external_random (), std::logic_error, "No available external PRNG !");
     return *_external_random_;
   }
-
 
   const mygsl::rng & i_genbb::get_external_random () const
   {
@@ -182,7 +181,23 @@ namespace genbb {
       }
     }
 
+    if (setup_.has_key("assign_generation_ids")) {
+      bool value = setup_.fetch_boolean("assign_generation_ids");
+      set_assign_generation_ids(value);
+    }
+
     return;
+  }
+
+  void i_genbb::set_assign_generation_ids(bool value_)
+  {
+    _assign_generation_ids_ = value_;
+    return;
+  }
+
+  bool i_genbb::is_assign_generation_ids() const
+  {
+    return _assign_generation_ids_;
   }
 
   void i_genbb::tree_dump (std::ostream& a_out,
@@ -203,6 +218,9 @@ namespace genbb {
           << std::endl;
 
     a_out << indent << datatools::i_tree_dumpable::tag
+          << "Assign generation Ids : '" << _assign_generation_ids_ << "'" << std::endl;
+
+    a_out << indent << datatools::i_tree_dumpable::tag
           << "Can use external PRNG : " << can_external_random ()  << std::endl;
 
     a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
@@ -211,6 +229,36 @@ namespace genbb {
     return;
   }
 
-} // end of namespace genbb
+  // static
+  void i_genbb::base_initialize_ocd(datatools::object_configuration_description & ocd_)
+  {
+    datatools::logger::declare_ocd_logging_configuration(ocd_,
+                                                         "fatal",
+                                                         "",
+                                                         "genbb::i_genbb");
 
-// end of i_genbb.cc
+    {
+      datatools::configuration_property_description & cpd
+        = ocd_.add_property_info();
+      cpd.set_name_pattern("assign_generation_ids")
+        .set_from("genvtx::i_genbb")
+        .set_terse_description("Set the flag to assign generation ids to primary particles")
+        .set_traits(datatools::TYPE_BOOLEAN)
+        .set_mandatory(false)
+        .set_default_value_boolean(false)
+        .set_long_description("The flag to assign generation ids to primary particles \n"
+                              "Particles are given unique Ids from 0 to N-1 where N-1 \n"
+                              "is the total number of primary particles in the event. \n"
+                              )
+        .add_example("Activate the assignment of unique generation ids:    \n"
+                     "                                                     \n"
+                     "  assign_generation_ids : boolean = true             \n"
+                     "                                                     \n"
+                     )
+        ;
+    }
+
+    return;
+  }
+
+} // end of namespace genbb

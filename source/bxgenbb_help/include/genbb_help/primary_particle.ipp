@@ -21,7 +21,7 @@ namespace genbb {
 
   /// Boost serialization template method
   template<class Archive>
-  void primary_particle::serialize (Archive            & ar_,
+  void primary_particle::serialize(Archive            & ar_,
                                     const unsigned int   version_)
   {
     if (Archive::is_saving::value) {
@@ -32,6 +32,15 @@ namespace genbb {
 
     if (version_ >= 1) {
       ar_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
+    }
+
+    // Generation Id:
+    if (version_ >= 4) {
+      ar_ & boost::serialization::make_nvp("generation_id", _generation_id_);
+    } else {
+      if (Archive::is_loading::value) {
+        _generation_id_ = primary_particle::INVALID_GENERATION_ID;
+      }
     }
 
     // Type:
@@ -92,7 +101,7 @@ namespace genbb {
 } // end of namespace genbb
 
 #include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(genbb::primary_particle, 3)
+BOOST_CLASS_VERSION(genbb::primary_particle, 4)
 
 #endif // GENBB_HELP_PRIMARY_PARTICLE_IPP
 

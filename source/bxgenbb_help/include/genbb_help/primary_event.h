@@ -65,9 +65,6 @@ namespace genbb {
     /// Collection of primary particles
     typedef std::list<primary_particle> particles_col_type;
 
-    // Backward comp. (obsolete)
-    typedef particles_col_type particles_col_t;
-
   public:
 
     /// Check the validity of the primary event
@@ -151,7 +148,7 @@ namespace genbb {
     /// Shift the time of the particles by a delay
     void shift_particles_time(double delta_time_, int from_ = 0);
 
-    /// Constructor
+    /// Default constructor
     primary_event();
 
     /// Destructor
@@ -172,6 +169,12 @@ namespace genbb {
     void dump(std::ostream & a_out,
                const std::string & a_title,
                const std::string & a_indent) const;
+
+    /// Assign generation Ids to all particle
+    void assign_generation_ids();
+
+    /// Remove generation Ids from all particle
+    void remove_generation_ids();
 
   protected:
 

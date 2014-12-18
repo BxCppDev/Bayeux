@@ -556,6 +556,7 @@ namespace genbb {
 
   void primary_particle::_set_defaults()
   {
+    _generation_id_ = INVALID_GENERATION_ID; // No unique Id is set
     _type_ = PARTICLE_UNDEFINED;   // No Geant3 particule type is defined
     _pdg_code_ = 0;                // No PDG particule code is defined
     datatools::invalidate(_mass_); // Mass is not known
@@ -646,6 +647,32 @@ namespace genbb {
     default: break;
     }
     return q;
+  }
+
+  bool primary_particle::has_generation_id() const
+  {
+    return _generation_id_ > INVALID_GENERATION_ID;
+  }
+
+  void primary_particle::reset_generation_id()
+  {
+    _generation_id_ = INVALID_GENERATION_ID;
+    return;
+  }
+
+  void primary_particle::set_generation_id(int gen_id_)
+  {
+    if (gen_id_ < 0) {
+      _generation_id_ = INVALID_GENERATION_ID;
+    } else {
+      _generation_id_ = gen_id_;
+    }
+    return;
+  }
+
+  int primary_particle::get_generation_id() const
+  {
+    return _generation_id_;
   }
 
   bool primary_particle::mass_is_known() const
@@ -739,6 +766,15 @@ namespace genbb {
     if (! title_.empty()) {
       out_ << indent << title_ << std::endl;
     }
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Generation Id  : ";
+    if (has_generation_id()) {
+      out_ << _generation_id_;
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Type           : ";

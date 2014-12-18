@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // primary_event.cc
 /*
  * Copyright 2007-2014 F. Mauger
@@ -254,6 +253,29 @@ namespace genbb {
           << n_alpha << 'a'
           << n_others << 'X';
     set_classification(cl_ss.str());
+    return;
+  }
+
+  void primary_event::assign_generation_ids()
+  {
+    int gen_id = 0;
+    for (particles_col_type::iterator it = _particles_.begin();
+         it != _particles_.end();
+         it++) {
+      primary_particle & part = *it;
+      part.set_generation_id(gen_id);
+      gen_id++;
+    }
+    return;
+  }
+
+  void primary_event::remove_generation_ids()
+  {
+    for (particles_col_type::iterator it = _particles_.begin();
+         it != _particles_.end();
+         it++) {
+      it->reset_generation_id();
+    }
     return;
   }
 

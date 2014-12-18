@@ -639,6 +639,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::combined_particle_generator,ocd_)
                                "                                                                    \n"
                               );
 
+  ::genbb::i_genbb::base_initialize_ocd(ocd_);
+
   ocd_.set_configuration_hints("Here are some typical configurations:                        \n"
                                 "                                                            \n"
                                 "***Example 1***                                             \n"
@@ -646,6 +648,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::combined_particle_generator,ocd_)
                                 "Combination of 3 generators with plain probability          \n"
                                 "weight::                                                    \n"
                                 "                                                            \n"
+                                "  logging.priority : string = \"fatal\"                     \n"
+                                "  assign_generation_ids : boolean = true                    \n"
                                 "  seed : integer = 12345                                    \n"
                                 "  mode : string = \"plain_probability\"                     \n"
                                 "  generators.labels : string[3] = \\                        \n"

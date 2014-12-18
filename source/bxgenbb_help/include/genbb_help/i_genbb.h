@@ -1,10 +1,10 @@
 /// \file genbb_help/i_genbb.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-28
- * Last modified: 2011-02-13
+ * Last modified: 2014-12-18
  *
  * License:
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2014 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,21 +41,24 @@
 #include <genbb_help/detail/pg_tools.h>
 
 namespace datatools {
+  // Forward declarations:
   class properties;
   class service_manager;
+  class object_configuration_description;
 }
 
 namespace mygsl {
+  // Forward declaration:
   class rng;
 }
 
 namespace genbb {
 
+  // Forward declaration:
   class primary_event;
 
   /// \brief GENBB particle generator abstract base class
-  class i_genbb :
-    public datatools::i_tree_dumpable
+  class i_genbb : public datatools::i_tree_dumpable
   {
   public:
 
@@ -127,16 +130,29 @@ namespace genbb {
     /// Returns true if the generator can provide one more generated event
     virtual bool has_next() = 0;
 
+    /// Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
 
+    /// Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority p);
 
+    /// Check the debug logging
     bool is_debug() const;
 
+    /// Set the flag to assign unique generation Ids to primary particles
+    void set_assign_generation_ids(bool);
+
+    /// Check the flag to assign unique generation Ids to primary particles
+    bool is_assign_generation_ids() const;
+
+    /// Smart print
     virtual void tree_dump(std::ostream& out = std::clog,
                            const std::string& title  = "",
                            const std::string& indent = "",
                            bool inherit = false) const;
+
+    /// OCD interface
+    static void base_initialize_ocd(datatools::object_configuration_description &);
 
   protected:
 
@@ -144,6 +160,7 @@ namespace genbb {
     virtual void _load_next(primary_event & event_,
                             bool compute_classification_) = 0;
 
+    /// Base initialization
     void _initialize_base(const datatools::properties & setup_);
 
   protected:
@@ -154,6 +171,7 @@ namespace genbb {
 
     std::string  _name_; //!< The name of the event generator
     mygsl::rng * _external_random_; //!< Handle to an external PRNG
+    bool _assign_generation_ids_; //!< Flag to assign unique generation Ids to primary particles
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_genbb);

@@ -87,10 +87,10 @@ namespace genbb {
 
     /// Generation mode
     enum mode_type {
-      MODE_UNDEFINED         = 0,
-      MODE_PLAIN_PROBABILITY = 1,
-      MODE_ACTIVITY          = 2,
-      MODE_TIME              = 3
+      MODE_UNDEFINED         = 0, //!< Undefined mode
+      MODE_PLAIN_PROBABILITY = 1, //!< Branching ratios given by probability
+      MODE_ACTIVITY          = 2, //!< Branching ratios given by absolute activity
+      MODE_TIME              = 3  //!< Cascade of events from a time sequence
     };
 
     /// Set the generation mode

@@ -684,7 +684,7 @@ namespace genbb {
     }
 
     if (_mode_ == MODE_GAUSSIAN_ENERGY) {
-      while (kinetic_energy <= 0.0) {
+      while (! datatools::is_valid(kinetic_energy) || kinetic_energy <= 0.0) {
         kinetic_energy = grab_random().gaussian(_mean_energy_, _sigma_energy_);
       }
     }

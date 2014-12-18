@@ -149,7 +149,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
     }
 
     int count = 0;
-    for (genbb::primary_event::particles_col_t::const_iterator
+    for (genbb::primary_event::particles_col_type::const_iterator
            it = my_event.get_particles().begin();
          it != my_event.get_particles().end();
          it++) {
@@ -169,7 +169,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
     my_event.rotate(phi, theta, psi);
 
     count = 0;
-    for (genbb::primary_event::particles_col_t::const_iterator
+    for (genbb::primary_event::particles_col_type::const_iterator
            it = my_event.get_particles().begin();
          it !=my_event.get_particles().end();
          it++) {

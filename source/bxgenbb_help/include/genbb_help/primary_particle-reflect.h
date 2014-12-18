@@ -21,6 +21,9 @@ namespace datatools {
             .DR_CLASS_BASE(::datatools::i_tree_dumpable)
             .DR_CLASS_CONSTRUCTOR()
             .DR_CLASS_CONSTRUCTOR3(int,double,::geomtools::vector_3d)
+            .DR_CLASS_PROPERTY_GETTER_SETTER("generation_id",
+                                             ::genbb::primary_particle::get_generation_id,
+                                             ::genbb::primary_particle::set_generation_id)
             .DR_CLASS_PROPERTY_GETTER_SETTER("type",
                                              ::genbb::primary_particle::get_type,
                                              ::genbb::primary_particle::set_type)
