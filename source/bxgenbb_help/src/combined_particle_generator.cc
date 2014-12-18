@@ -468,6 +468,7 @@ namespace genbb {
         DT_LOG_TRACE(get_logging_priority(), "Generating '" << _generators_info_[ig].name << "'");
         primary_event an_event;
         _generators_info_[ig].pg->load_next(an_event, false);
+        an_event.remove_generation_ids();
         for (size_t ip = 0; ip < an_event.get_number_of_particles(); ++ip) {
           primary_particle & pp = an_event.grab_particle(ip);
           pp.shift_time(total_delay_time);
@@ -475,6 +476,7 @@ namespace genbb {
         }
       }
       event_.set_label(i_genbb::get_name());
+
     }
 
     if (is_mode_plain_probability() || is_mode_activity()) {
