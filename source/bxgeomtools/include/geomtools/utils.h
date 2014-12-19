@@ -33,16 +33,16 @@
 
 namespace geomtools {
 
-  /// \brief Check if an angle is inside an angular interval
+  //! \brief Check if an angle is inside an angular interval
   bool angle_is_in(double angle_,
                    double start_angle_, double delta_angle_,
                    double angular_tolerance_ = 0.0,
                    bool bounds_excluded_ = false);
 
-  /// Alias for a list of 2D vertice as a 2D-polyline
+  //! Alias for a list of 2D vertice as a 2D-polyline
   typedef std::list<vector_2d> basic_polyline_2d;
 
-  /// Alias for a list of 3D vertice as a 3D-polyline
+  //! Alias for a list of 3D vertice as a 3D-polyline
   typedef std::list<vector_3d> basic_polyline_3d;
 
   void print_xy (std::ostream & out_,
@@ -71,7 +71,23 @@ namespace geomtools {
 
   void print_xyz_stderr (const vector_3d & p_);
 
-  /******/
+  //! \brief Parse a vector 3D object from an input stream
+  //!
+  //! Supported format is:
+  //! \code
+  //! x y z [(length unit)]
+  //! \endcode
+  //! where x, y and z are the cartesian coordinates in an arbitrary reference frame and the \a lenght \a unit
+  //! is passed optionally as a character string representing the unit symbol.
+  //! Examples:
+  //! \code
+  //!   1.2 3.4 5.6
+  //!   1.2 3.4 5.6 (mm)
+  //! \endcode
+  bool parse(std::istream & in_, vector_3d & position_, bool nothing_more_ = false);
+
+  //! \brief Parse a vector 3D object from an input string
+  bool parse(const std::string & token_, vector_3d & position_);
 
   void print_xy (std::ostream & out_,
                  const basic_polyline_2d & p_,
@@ -103,7 +119,6 @@ namespace geomtools {
     HORIZONTAL = 1
   };
 
-
   //! Direction flags
   enum direction_flags_type {
     DIRECTION_NONE   = 0x0,
@@ -115,6 +130,7 @@ namespace geomtools {
     DIRECTION_TOP    = datatools::bit_mask::bit05  // +z
   };
 
+  //! Direction type
   enum direction_type {
     BACK   = 0, // -x
     FRONT  = 1, // +x
@@ -259,8 +275,6 @@ namespace geomtools {
   //   extract_euler_angle ()  {}
   // };
 
-  /********************/
-
   //! Special rotation angle values
   enum special_rotation_angle_type
     {
@@ -279,6 +293,7 @@ namespace geomtools {
 
   std::string get_special_rotation_angle_label (int);
 
+  //! Axis type
   enum axis_type {
     AXIS_INVALID = -1,
     AXIS_X = 0,
@@ -286,6 +301,7 @@ namespace geomtools {
     AXIS_Z = 2
   };
 
+  //! Rotation axis type
   enum rotation_axis_type {
     ROTATION_AXIS_INVALID = -1,
     ROTATION_AXIS_X = AXIS_X,
@@ -314,97 +330,130 @@ namespace geomtools {
   void create_rotation_from (rotation_3d & rot_,
                              const std::string &);
 
-  void reset (rotation_3d & rot_);
+  //! Invalidate a rotation 3D object
+  void reset(rotation_3d & rot_);
 
+  //! Invalidate a rotation 3D object
   void reset_rotation_3d (rotation_3d & rot_);
 
+  //! Smart print for rotation 3D object
   void tree_dump (const rotation_3d & rot_,
                   std::ostream & out_,
                   const std::string & title_ = "",
                   const std::string & indent_ = "");
 
+  //! Invalidate a rotation 3D object
   void invalidate (rotation_3d & rot_);
 
+  //! Rectify a rotation 3D object
   void rectify (rotation_3d & rot_);
 
+  //! Invalidate a rotation 3D object
   void invalidate_rotation_3d (rotation_3d & rot_);
 
-  bool is_valid (const rotation_3d & rot_);
+  //! Check if a rotation 3D object is valid
+  bool is_valid(const rotation_3d & rot_);
 
-  bool is_valid_rotation_3d (const rotation_3d & rot_);
+  //! Check if a rotation 3D object is valid
+  bool is_valid_rotation_3d(const rotation_3d & rot_);
 
-  void create (vector_3d &,
-               double x_,
-               double y_,
-               double z_);
+  //! Create/set coordinates of a vector 3D object (cartesian)
+  void create(vector_3d &,
+              double x_,
+              double y_,
+              double z_);
 
+  //! Create/set coordinates of a vector 3D object (cartesian)
   void create_xyz (vector_3d &,
                    double x_,
                    double y_,
                    double z_);
 
+  //! Create/set coordinates of a vector 3D object (polar)
   void create_polar (vector_3d &,
                      double r_,
                      double theta_,
                      double z_);
 
+  //! Create/set coordinates of a vector 3D object (spherical)
   void create_spherical (vector_3d &,
                          double r_,
                          double phi_,
                          double theta_);
 
+  //! Set coordinates of a vector 3D object (cartesian)
   void set (vector_3d & vec_, double x_, double y_, double z_);
 
+  //! Set coordinates of a vector 3D object (spherical)
   void set_r_theta_phi (vector_3d & vec_, double r_, double theta_, double phi_);
 
+  //! Set coordinates of a vector 3D object (polar)
   void set_rho_phi_z (vector_3d & vec_, double rho_, double phi_, double z_);
 
+  //! Invalidate a vector 3D object
   void invalidate (vector_3d & vec_);
 
+  //! Invalidate a vector 3D object
   void invalidate_vector_3d (vector_3d & vec_);
 
+  //! Check if a vector 3D object is valid
   bool is_valid (const vector_3d & vec_);
 
+  //! Check if a vector 3D object is valid
   bool is_valid_vector_3d (const vector_3d & vec_);
 
+  //! Check if two vector 3D objects are close to each other given a tolerance
   bool are_near (const vector_3d & vec1_,
                  const vector_3d & vec2_,
                  double tolerance_ = constants::DEFAULT_TOLERANCE);
 
+  //! Check if two vector 3D objects are close to each other given a tolerance
   bool are_near_vector_3d (const vector_3d & vec1_,
                            const vector_3d & vec2_,
                            double tolerance_);
 
+  //! Set coordinates of a vector 2D object (cartesian)
   void set (vector_2d & vec_, double x_, double y_);
 
+  //! Set coordinates of a vector 2D object (polar)
   void set_r_phi (vector_2d & vec_, double r_, double phi_);
 
+  //! Invalidate a vector 2D object
   void invalidate (vector_2d & vec_);
 
+  //! Invalidate a vector 2D object
   void invalidate_vector_2d (vector_2d & vec_);
 
+  //! Check if a vector 2D object is valid
   bool is_valid (const vector_2d & vec_);
 
+  //! Check if a vector 2D object is valid
   bool is_valid_vector_2d (const vector_2d & vec_);
 
-
+  //! Convert a vector 2D object to a vector 3D object (export x and y coordinates, setting z to zero)
   void vector_2d_to_vector_3d (const vector_2d & v2d_, vector_3d & v3d_);
 
+  //! Convert a vector 3D object to a vector 2D object (export only x and y coordinates)
   void vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_);
 
+  //! Create a vector 3D object from spherical angular coordinates (magnitude is set to 1)
   void make_phi_theta (vector_3d & vec_, double phi_, double theta_);
 
-  /* the 'ran_func' (functor) must have the following operator
-   * defined:
-   *   double operator() (double);
-   * it returns a uniform deviated random number in the [0,1) range
-   * like 'drand48' does.
-   */
+
+  //! \brief Isotropically randomize the direction of an unit vector
+  //!
+  //! @arg ran_ a function or object-function (functor) with the following operator defined:
+  //! \code
+  //!   double operator()();
+  //! \endcode
+  //! that must return an uniform deviated random number in the [0,1) range
+  //! like drand48 does.
+  //! @arg ran_dir_ the unit vector to be randomized
   template <class ran_func>
   void randomize_direction (ran_func & ran_, vector_3d & ran_dir_)
   {
-    double phi = 2. * M_PI * ran_ ();
-    double cos_theta = -1 + 2 * ran_ ();
+    double phi = 2. * M_PI * ran_();
+    double cos_theta = -1 + 2 * ran_();
     double sin_theta = sqrt (1. - cos_theta * cos_theta);
     double x = sin_theta * cos (phi);
     double y = sin_theta * sin (phi);
@@ -413,6 +462,15 @@ namespace geomtools {
   }
 
 
+  //! \brief Isotropically randomize the direction of an unit vector
+  //!
+  //! @arg ran_ a function or object-function (functor) with the following operator defined:
+  //! \code
+  //!   double operator()();
+  //! \endcode
+  //! that must return an uniform deviated random number in the [0,1) range
+  //! like drand48 does.
+  //! @return the unit vector to be randomized
   template <class ran_func>
   vector_3d randomize_direction (ran_func & ran_)
   {
@@ -422,39 +480,47 @@ namespace geomtools {
   }
 
 
-  /** The 'ran_func' (functor) must have the following operator
-   * defined:
-   *
-   *   double operator() (double);
-   *
-   * This operator must returns a uniform deviated pseudo-random number
-   * in the [0,1) range like 'drand48' does.
-   */
+  //! \brief Isotropically randomize the direction of an unit vector orthogonal to a given direction
+  //!
+  //! @arg ran_ a function or object-function (functor) with the following operator defined:
+  //! \code
+  //!   double operator()();
+  //! \endcode
+  //! that must return an uniform deviated random number in the [0,1) range
+  //! like drand48 does.
+  //! @arg dir_ the direction the randomized unit vector must be orthogonal to
+  //! @arg ran_dir_ the unit vector to be randomized
   template <class ran_func>
   void randomize_orthogonal_direction (ran_func & ran_,
                                        const vector_3d & dir_,
                                        vector_3d & ran_dir_)
   {
-    double theta = 2. * M_PI * ran_ ();
-    double dx = cos (theta);
-    double dy = sin (theta);
+    double theta = 2. * M_PI * ran_();
+    double dx = cos(theta);
+    double dy = sin(theta);
     double dz = 0.0;
-    double dir_theta = dir_.theta ();
-    double dir_phi = dir_.phi ();
-    // std::clog << "theta (dir) = "
-    //      << 180.* dir_theta / M_PI << "°" << std::endl;
-    // std::clog << "phi (dir) = "
-    //      << 180.* dir_phi / M_PI << "°"  << std::endl;
+    double dir_theta = dir_.theta();
+    double dir_phi = dir_.phi();
     rotation_3d dir_rot;
-    create_rotation_3d (dir_rot, dir_phi, dir_theta, 0.0);
+    create_rotation_3d(dir_rot, dir_phi, dir_theta, 0.0);
     rotation_3d dir_inverse_rot;
-    dir_inverse_rot = dir_rot.inverse ();
-    vector_3d v (dx, dy, dz);
-    ran_dir_ = v.transform (dir_inverse_rot);
+    dir_inverse_rot = dir_rot.inverse();
+    vector_3d v(dx, dy, dz);
+    ran_dir_ = v.transform(dir_inverse_rot);
     return;
   }
 
 
+  //! \brief Isotropically randomize the direction of an unit vector orthogonal to a given direction
+  //!
+  //! @arg ran_ a function or object-function (functor) with the following operator defined:
+  //! \code
+  //!   double operator()();
+  //! \endcode
+  //! that must return an uniform deviated random number in the [0,1) range
+  //! like drand48 does.
+  //! @arg dir_ the direction the randomized unit vector must be orthogonal to
+  //! @return the unit vector to be randomized
   template <class ran_func>
   vector_3d randomize_orthogonal_direction (ran_func & ran_,
                                             const vector_3d & ref_dir_)
@@ -464,22 +530,34 @@ namespace geomtools {
     return dir;
   }
 
-
+  //! Compute the barycenter of a collection of 3D points
+  //! @arg points_ the input collection of 3D points
+  //! @arg barycenter_ the output computed barycenter
   void compute_barycenter (const std::vector<vector_3d> & points_,
                            vector_3d & barycenter_);
 
+  //! Compute the barycenter of a collection of 3D points
+  //! @arg points_ the input collection of 3D points
+  //! @return the computed barycenter
   vector_3d compute_barycenter (const std::vector<vector_3d> & points_);
 
+  //! Compute the weighted barycenter of a collection of 3D points
+  //! @arg points_ the input collection of 3D points
+  //! @arg weights_ the input collection of weights associated to 3D points
+  //! @arg weighted_barycenter_ the output computed weighted barycenter
   void compute_weighted_barycenter (const std::vector<vector_3d> & points_,
                                     const std::vector<double> & weights_,
                                     vector_3d & weighted_barycenter_);
 
+  //! Compute the weighted barycenter of a collection of 3D points
+  //! @arg points_ the input collection of 3D points
+  //! @arg weights_ the input collection of weights associated to 3D points
+  //! @return the computed weighted  barycenter
   vector_3d compute_weighted_barycenter (const std::vector<vector_3d> & points_,
                                          const std::vector<double> & weights_);
 
 
-  /** Wrapper for rotation object
-   */
+  //! Wrapper for rotation object
   class rotation_wrapper_t : public rotation_3d
   {
   public:
@@ -491,9 +569,7 @@ namespace geomtools {
                      mzx_, mzy_, mzz_) {}
   };
 
-  /** Class intercept_t hosts the paramater of the intercept
-   *  of a curve on a surfaceof a shape.
-   */
+  //! The intercept_t class hosts the parameters of the intercept of a curve on the surface of a shape.
   class intercept_t
   {
   public:
@@ -567,15 +643,13 @@ namespace geomtools {
 
   private:
 
-    int32_t   _shape_index_; /** The index of the sub-shape
-                              *  for composite shapes only.
-                              *  Default is 0.
-                              */
+    int32_t   _shape_index_; //! The index of the sub-shape for composite shapes only (default is 0)
     int32_t   _face_;   //! The index of the impact face on the shape
     vector_3d _impact_; //! The impact point on the surface
 
   };
 
+  //! I/O constants for the serialization of vector (2D/3D) and rotation objects
   struct io
   {
     static const std::string & vector_2d_serial_tag();
@@ -616,16 +690,19 @@ namespace boost {
 
   namespace serialization {
 
+    //! Boost serialization save method for vector 2D objects
     template<class Archive>
     void save (Archive & a_ar ,
                const geomtools::vector_2d & v_,
                const unsigned int a_version);
 
+    //! Boost serialization load method for vector 2D objects
     template<class Archive>
     void load (Archive & a_ar ,
                geomtools::vector_2d & v_,
                const unsigned int a_version);
 
+    //! Boost serialization general method for vector 2D objects
     template<class Archive>
     void serialize (Archive & a_ar,
                     geomtools::vector_2d  & v_,
@@ -641,16 +718,19 @@ namespace boost {
 
   namespace serialization {
 
+    //! Boost serialization save method for vector 3D objects
     template<class Archive>
     void save (Archive & a_ar ,
                const geomtools::rotation_3d & r_,
                const unsigned int a_version);
 
+    //! Boost serialization load method for vector 3D objects
     template<class Archive>
     void load (Archive & a_ar ,
                geomtools::rotation_3d & a_rotation,
                const unsigned int a_version);
 
+    //! Boost serialization general method for vector 3D objects
     template<class Archive>
     void serialize (Archive & a_ar,
                     geomtools::rotation_3d  & a_rotation,

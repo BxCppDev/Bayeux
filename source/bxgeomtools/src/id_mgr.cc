@@ -1,12 +1,11 @@
-// -*- mode: c++ ; -*-
-/* id_mgr.cc
- */
+// id_mgr.cc
 
+// Ourselves:
 #include <geomtools/id_mgr.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
-
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -14,8 +13,10 @@
 #include <map>
 #include <vector>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace geomtools {
@@ -877,49 +878,50 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::id_mgr,ocd_)
                                "defined through its 'type' (associated to the geometry category the  \n"
                                "volume belongs to) and its 'addresses' which consists in a list of   \n"
                                "integers that is built automatically by a 'mapping' object.          \n"
-                               "The syntax uses the following format:                               \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"STRING\" type=\"POSITIVE INTEGER\"]                 \n"
-                               "  | PROPERTY DEFINITION 1                                           \n"
-                               "  | (PROPERTY DEFINITION 2)                                         \n"
-                               "  |                                                                 \n"
-                               "The 'category' key is an unique human friendly character string     \n"
-                               "that identifies unambiguously a given geometry category. It is      \n"
-                               "associated to a 'type' which is an unique positive integer.         \n"
-                               "The 'type' of a geometry category is used within geometry ID objects\n"
-                               "('geomtools::geom_id' class) for efficient storage and manipulation \n"
-                               "of GIDs.                                                            \n"
-                               "Example :                                                           \n"
-                               "  |                                                                 \n"
-                               "  | #@description List of geometry ID categories/types              \n"
-                               "  | #@key_label   \"category\"                                      \n"
-                               "  | #@meta_label  \"type\"                                          \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"world\" type=\"0\"]                                 \n"
-                               "  | addresses : string[1] = \"universe\"                            \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"experimental_area.gc\" type=\"100\"]                \n"
-                               "  | addresses : string[1] = \"hall\"                                \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"vacuum_chamber.gc\" type=\"200\"]                   \n"
-                               "  | addresses : string[1] = \"vessel\"                              \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"phoswich_detector.gc\" type=\"300\"]                \n"
-                               "  | addresses : string[1] = \"sensor\"                              \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"scintillator.gc\" type=\"310\"]                     \n"
-                               "  | extends : string = \"detector.gc\"                              \n"
-                               "  | by      : string[1] = \"plate\"                                 \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"light_guide.gc\" type=\"320\"]                      \n"
-                               "  | inherits : string = \"detector.gc\"                             \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"pmt.gc\" type=\"330\"]                              \n"
-                               "  | inherits : string = \"detector.gc\"                             \n"
-                               "  |                                                                 \n"
-                               "  | [category=\"calibration_source.gc\" type=\"400\"]               \n"
-                               "  | inherits : string = \"vacuum_chamber.gc\"                       \n"
-                               "  |                                                                 \n"
+                               "The syntax uses the following format: ::                             \n"
+                               "                                                                     \n"
+                               "   [category=\"STRING\" type=\"POSITIVE INTEGER\"]                   \n"
+                               "   PROPERTY DEFINITION 1                                             \n"
+                               "   (PROPERTY DEFINITION 2)                                           \n"
+                               "                                                                     \n"
+                               "The 'category' key is an unique human friendly character string      \n"
+                               "that identifies unambiguously a given geometry category. It is       \n"
+                               "associated to a 'type' which is an unique positive integer.          \n"
+                               "The 'type' of a geometry category is used within geometry ID objects \n"
+                               "('geomtools::geom_id' class) for efficient storage and manipulation  \n"
+                               "of GIDs.                                                             \n"
+                               "                                                                   \n"
+                               "Example : ::                                                       \n"
+                               "                                                                   \n"
+                               "   #@description List of geometry ID categories/types              \n"
+                               "   #@key_label   \"category\"                                      \n"
+                               "   #@meta_label  \"type\"                                          \n"
+                               "                                                                   \n"
+                               "   [category=\"world\" type=\"0\"]                                 \n"
+                               "   addresses : string[1] = \"universe\"                            \n"
+                               "                                                                   \n"
+                               "   [category=\"experimental_area.gc\" type=\"100\"]                \n"
+                               "   addresses : string[1] = \"hall\"                                \n"
+                               "                                                                   \n"
+                               "   [category=\"vacuum_chamber.gc\" type=\"200\"]                   \n"
+                               "   addresses : string[1] = \"vessel\"                              \n"
+                               "                                                                   \n"
+                               "   [category=\"phoswich_detector.gc\" type=\"300\"]                \n"
+                               "   addresses : string[1] = \"sensor\"                              \n"
+                               "                                                                   \n"
+                               "   [category=\"scintillator.gc\" type=\"310\"]                     \n"
+                               "   extends : string = \"detector.gc\"                              \n"
+                               "   by      : string[1] = \"plate\"                                 \n"
+                               "                                                                   \n"
+                               "   [category=\"light_guide.gc\" type=\"320\"]                      \n"
+                               "   inherits : string = \"detector.gc\"                             \n"
+                               "                                                                   \n"
+                               "   [category=\"pmt.gc\" type=\"330\"]                              \n"
+                               "   inherits : string = \"detector.gc\"                             \n"
+                               "                                                                   \n"
+                               "   [category=\"calibration_source.gc\" type=\"400\"]               \n"
+                               "   inherits : string = \"vacuum_chamber.gc\"                       \n"
+                               "                                                                   \n"
                                );
 
   ocd_.set_validation_support(true);
@@ -928,5 +930,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::id_mgr,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::id_mgr,"geomtools::id_mgr")
-
-// end of id_mgr.cc

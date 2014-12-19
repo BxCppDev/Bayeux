@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // test_gnuplot_draw.cxx
 
 #include <cstdlib>
@@ -223,5 +222,3 @@ int main (int argc_, char ** argv_)
     }
   return error_code;
 }
-
-// end of test_gnuplot_draw.cxx

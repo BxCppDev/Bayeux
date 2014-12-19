@@ -105,7 +105,7 @@ namespace geomtools {
     virtual bool is_on_curve(const vector_3d & position_,
                              double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    /// Return the direction ar some position in on the line
+    /// Return the direction at some position in on the line
     virtual vector_3d get_direction_on_curve(const vector_3d & position_) const;
 
     /// Compute a collection of vertexes representing the line
@@ -119,8 +119,8 @@ namespace geomtools {
 
   private:
 
-    vector_3d _first_; /// Start point of the segment
-    vector_3d _last_;  /// Stop point of the segment
+    vector_3d _first_; //!< Start point of the segment
+    vector_3d _last_;  //!< Stop point of the segment
 
     // Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION();

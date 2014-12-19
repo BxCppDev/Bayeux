@@ -13,6 +13,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/exception.h>
+#include <datatools/units.h>
 
 namespace geomtools {
 
@@ -213,29 +214,29 @@ namespace geomtools {
 
   void make_phi_theta (vector_3d & vec_, double phi_, double theta_)
   {
-    double sin_theta = sin (theta_);
-    double x = sin_theta * cos (phi_);
-    double y = sin_theta * sin (phi_);
-    double z = cos (theta_);
-    vec_.set (x, y, z);
+    double sin_theta = std::sin(theta_);
+    double x = sin_theta * std::cos(phi_);
+    double y = sin_theta * std::sin(phi_);
+    double z = std::cos(theta_);
+    vec_.set(x, y, z);
     return;
   }
 
-  string to_xyz (const vector_3d & p_)
+  std::string to_xyz (const vector_3d & p_)
   {
-    ostringstream out;
+    std::ostringstream out;
     out << p_.x () << ' ' <<  p_.y () << ' ' << p_.z ();
     return out.str ();
   }
 
-  string vector_3d_to_xyz (const vector_3d & p_)
+  std::string vector_3d_to_xyz (const vector_3d & p_)
   {
-    ostringstream out;
+    std::ostringstream out;
     out << p_.x () << ' ' <<  p_.y () << ' ' << p_.z ();
     return out.str ();
   }
 
-  void print_xyz (ostream & out_,
+  void print_xyz (std::ostream & out_,
                   const vector_3d & p_,
                   bool endl_)
   {
@@ -244,7 +245,7 @@ namespace geomtools {
     return;
   }
 
-  void print (ostream & out_, const vector_3d & p_)
+  void print (std::ostream & out_, const vector_3d & p_)
   {
     out_ << p_;
     return;
@@ -361,6 +362,53 @@ namespace geomtools {
   {
     return are_near (vec1_, vec2_, tolerance_);
   }
+
+  bool parse(const std::string & token_, vector_3d & position_)
+  {
+    std::istringstream iss(token_);
+    bool ok = parse(iss, position_, true);
+    return ok;
+  }
+
+  bool parse(std::istream & in_, vector_3d & position_, bool nothing_more_)
+  {
+    invalidate_vector_3d(position_);
+    double x(0.0), y(0.0), z(0.0);
+    double length_unit = CLHEP::mm;
+    in_ >> std::ws;
+    in_ >> x >> y >> z >> std::ws;
+    if (!in_) {
+      return false;
+    }
+    // Extract length unit:
+    if (! in_.eof ()) {
+      char open = in_.peek();
+      if (open == '(') {
+        std::string length_unit_str;
+        in_.get();
+        std::getline(in_, length_unit_str, ')');
+        if (! in_) {
+          return false;
+        }
+        length_unit = datatools::units::get_length_unit_from(length_unit_str);
+      }
+      in_ >> ws;
+    }
+    x *= length_unit;
+    y *= length_unit;
+    z *= length_unit;
+    if (nothing_more_) {
+      // Check if the stream is empty as we want no more token
+      std::string token;
+      in_ >> token;
+      if (token.length() > 0) {
+        return false;
+      }
+    }
+    position_.set(x, y, z);
+    return true;
+  }
+
 
   void print_xy (ostream & out_,
                  const basic_polyline_2d & p_,
