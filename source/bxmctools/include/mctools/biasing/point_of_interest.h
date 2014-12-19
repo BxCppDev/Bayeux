@@ -24,6 +24,8 @@
 #include <datatools/i_tree_dump.h>
 // - Bayeux/geomtools:
 #include <geomtools/utils.h>
+// #include <geomtools/placement.h>
+// #include <geomtools/blur_spot.h>
 
 namespace datatools {
   // Forward declaration:
@@ -140,6 +142,8 @@ namespace mctools {
     private:
 
       std::string          _name_;         //!< Name of the point of interest
+      // geomtools::placement _placement_; //!< Placement of the spot
+      // geomtools::blur_spot _spot_;      //!< Spot
       geomtools::vector_3d _position_;     //!< Position of the point of interest in some reference frame (generally the world volume)
       double               _radius_;       //!< Radius of the attractivity influence
       double               _attractivity_; //!< Attractivity of the point of interest

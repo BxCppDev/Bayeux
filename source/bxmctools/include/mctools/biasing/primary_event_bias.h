@@ -117,6 +117,24 @@ namespace mctools {
         biased_event_status _status_; //!< Biasing status associated to the event
       };
 
+      //! Record counters
+      struct stat_record
+      {
+        stat_record();
+        void reset();
+      public:
+        int total_counts;
+        int killed_counts;
+        int truncated_counts;
+        int normal_counts;
+      };
+
+      /// Return the embedded statistics record
+      const stat_record & get_stats() const;
+
+      /// Reset the embedded statistics record
+      void reset_stats();
+
       /// \brief Dictionary of points of interest
       struct poi_entry_type
       {
@@ -262,6 +280,7 @@ namespace mctools {
       int                 _master_particle_rank_;       //!< Rank of the master particle from the list of candidate particles
       bool                _track_only_master_particle_; //!< Flag to track only the master particle and do not track other ones
       poi_dict_type       _pois_;                       //!< Dictionary of points of interest
+      stat_record         _stats_;                      //!< Statistics record
 
     };
 

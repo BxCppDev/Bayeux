@@ -74,6 +74,36 @@ namespace mctools {
       return _flag;
     }
 
+    primary_event_bias::stat_record::stat_record()
+    {
+      total_counts = 0;
+      killed_counts = 0;
+      truncated_counts = 0;
+      normal_counts = 0;
+      return;
+    }
+
+    void primary_event_bias::stat_record::reset()
+    {
+      total_counts = 0;
+      killed_counts = 0;
+      truncated_counts = 0;
+      normal_counts = 0;
+      return;
+    }
+
+    const primary_event_bias::stat_record & primary_event_bias::get_stats() const
+    {
+      return _stats_;
+    }
+
+
+    void primary_event_bias::reset_stats()
+    {
+      _stats_.reset();
+      return;
+    }
+
     primary_event_bias::biasing_info::biasing_info()
     {
       _status_ = BES_UNDEFINED;
@@ -116,7 +146,6 @@ namespace mctools {
 
     void primary_event_bias::_set_default()
     {
-      _logging_ = datatools::logger::PRIO_FATAL;
       _geom_mgr_ = 0;
       _bias_mode_ = BIAS_NONE;
       datatools::invalidate(_particle_min_energy_);
@@ -131,15 +160,18 @@ namespace mctools {
     primary_event_bias::primary_event_bias()
     {
       _initialized_ = false;
+      _logging_ = datatools::logger::PRIO_FATAL;
       _set_default();
       return;
     }
 
     primary_event_bias::~primary_event_bias()
     {
+      DT_LOG_TRACE_ENTERING(_logging_);
       if (is_initialized()) {
         reset();
       }
+      DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
 
@@ -300,10 +332,10 @@ namespace mctools {
        *  points_of_interest : string[2] = "detector0" "detector1"
        *  points_of_interest.detector0.position     : string = " 1.2 3.4 4.5 mm"
        *  points_of_interest.detector0.radius       : real as length = 20 cm
-       *  points_of_interest.detector0.attractivity : string = "attractive"
+       *  points_of_interest.detector0.attractivity_label : string = "attractive"
        *  points_of_interest.detector1.position     : string = " -1.2 -3.4 4.5 mm"
        *  points_of_interest.detector1.radius       : real as length = 40 cm
-       *  points_of_interest.detector1.attractivity : string = "repulsive"
+       *  points_of_interest.detector1.attractivity_label : string = "repulsive"
        *
        */
       if (config_.has_key("points_of_interest")) {
@@ -328,11 +360,16 @@ namespace mctools {
     void primary_event_bias::reset()
     {
       DT_THROW_IF(!is_initialized(), std::logic_error, "Operation prohibited ! Object is not initialized !");
+      DT_LOG_TRACE(_logging_, "Total processed events = " << _stats_.total_counts);
+      DT_LOG_TRACE(_logging_, " - killed events       = " << _stats_.killed_counts);
+      DT_LOG_TRACE(_logging_, " - truncated events    = " << _stats_.truncated_counts);
+      DT_LOG_TRACE(_logging_, " - normal events       = " << _stats_.normal_counts);
       _initialized_ = false;
       _mapping_name_.clear();
       _pois_.clear();
       _geom_mgr_ = 0;
       _particle_types_.clear();
+      reset_stats();
       _set_default();
       return;
     }
@@ -638,8 +675,6 @@ namespace mctools {
       return true;
     }
 
-
-
     void primary_event_bias::process(const geomtools::vector_3d & vertex_,
                                      genbb::primary_event & event_,
                                      biasing_info & bi_)
@@ -648,11 +683,13 @@ namespace mctools {
       DT_THROW_IF(!is_initialized(), std::logic_error, "Object is not initialized !");
 
       bi_.reset();
-
+      _stats_.total_counts++;
       if (is_using_no_bias()) {
         // No biasing is applied:
         event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
         bi_.set_status(BES_NORMAL);
+        _stats_.normal_counts++;
+        DT_LOG_TRACE_EXITING(_logging_);
         return;
       } // is_using_no_bias()
 
@@ -663,7 +700,9 @@ namespace mctools {
         // No candidate particles are considered:
         event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
         bi_.set_status(BES_KILLED);
+        _stats_.killed_counts++;
         DT_LOG_TRACE(_logging_, "No candidate particles!");
+        DT_LOG_TRACE_EXITING(_logging_);
         return;
       }
 
@@ -683,7 +722,9 @@ namespace mctools {
           // Not enough total kinetic energy from candidate particles:
           event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
           bi_.set_status(BES_KILLED);
+          _stats_.killed_counts++;
           DT_LOG_TRACE(_logging_, "Not enough energy from candidate particles!");
+          DT_LOG_TRACE_EXITING(_logging_);
           return;
         }
       }
@@ -693,7 +734,9 @@ namespace mctools {
           // Too much total kinetic energy from candidate particles:
           event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
           bi_.set_status(BES_KILLED);
+          _stats_.killed_counts++;
           DT_LOG_TRACE(_logging_, "Too much energy from candidate particles!");
+          DT_LOG_TRACE_EXITING(_logging_);
           return;
         }
       }
@@ -714,7 +757,9 @@ namespace mctools {
           // Could not find the master particle with given criteria:
           event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
           bi_.set_status(BES_KILLED);
+          _stats_.killed_counts++;
           DT_LOG_TRACE(_logging_, "No master particle was found!");
+          DT_LOG_TRACE_EXITING(_logging_);
           return;
         }
         bool checked = true;
@@ -724,7 +769,9 @@ namespace mctools {
         if (! checked) {
           event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
           bi_.set_status(BES_KILLED);
+          _stats_.killed_counts++;
           DT_LOG_TRACE(_logging_, "Invalid master particle direction!");
+          DT_LOG_TRACE_EXITING(_logging_);
           return;
         } else {
           DT_LOG_TRACE(_logging_, "The master particle has a valid direction w.r.t. the distribution of PoIs");
@@ -745,23 +792,29 @@ namespace mctools {
             if (not_tracked_counter > 0) {
               event_.grab_auxiliaries().store(biased_event_status_key(), truncated_event_label());
               bi_.set_status(BES_TRUNCATED);
+              _stats_.truncated_counts++;
               DT_LOG_TRACE(_logging_, "Validation of the event (truncated).");
             } else {
               event_.grab_auxiliaries().store(biased_event_status_key(), normal_event_label());
               bi_.set_status(BES_NORMAL);
+              _stats_.normal_counts++;
               DT_LOG_TRACE(_logging_, "Validation of the event.");
             }
+            DT_LOG_TRACE_EXITING(_logging_);
             return;
           } else {
             event_.grab_auxiliaries().store(biased_event_status_key(), normal_event_label());
             bi_.set_status(BES_NORMAL);
+            _stats_.normal_counts++;
             DT_LOG_TRACE(_logging_, "Validation of the event.");
+            DT_LOG_TRACE_EXITING(_logging_);
             return;
           }
         }
         DT_LOG_TRACE(_logging_, "Exiting master particle mode.");
       } // is_using_master_particle()
 
+      /*
       // Apply criteria on the full set of candidate particles:
       if (is_using_all_particles()) {
         DT_LOG_TRACE(_logging_, "Entering all particles mode...");
@@ -776,11 +829,13 @@ namespace mctools {
         if (checked) {
           event_.grab_auxiliaries().store(biased_event_status_key(), normal_event_label());
           bi_.set_status(BES_NORMAL);
+          _stats_.normal_counts++;
           return;
         }
 
         DT_LOG_TRACE(_logging_, "Exiting all particles mode.");
       } // is_using_all_particles()
+      */
 
       DT_LOG_TRACE_EXITING(_logging_);
       return;

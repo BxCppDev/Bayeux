@@ -1,7 +1,7 @@
 /// \file mctools/g4/event_action.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-10
- * Last modified: 2013-03-09
+ * Last modified: 2014-12-18
  *
  * License:
  *
@@ -25,8 +25,8 @@
 #include <mctools/base_step_hit_processor.h>
 #include <mctools/g4/loggable_support.h>
 
-
 namespace datatools {
+  // Forward declaration:
   class properties;
 }
 
@@ -34,9 +34,11 @@ namespace mctools {
 
   namespace g4 {
 
+    // Forward declarations:
     class run_action;
     class detector_construction;
 
+    /// \brief Geant4 event action interface class
     class event_action : public G4UserEventAction,
                          public loggable_support
     {
@@ -44,53 +46,84 @@ namespace mctools {
 
       typedef ::mctools::simulated_data sim_data_type;
 
-      bool is_initialized () const;
+      /// Check initialization flag
+      bool is_initialized() const;
 
-      bool is_aborted_event () const;
+      /// Check aborted event flag
+      bool is_aborted_event() const;
 
-      void set_aborted_event (bool = true);
+      /// Set aborted event flag
+      void set_aborted_event(bool = true);
 
-      void set_external_event_data (sim_data_type & a_external_event_data);
+      /// Check akilled event flag
+      bool is_killed_event() const;
 
-      const sim_data_type & get_event_data () const;
+      /// Set killed event flag
+      void set_killed_event(bool = true);
 
-      sim_data_type & grab_event_data ();
+      /// Set external event data
+      void set_external_event_data(sim_data_type & a_external_event_data);
 
-      const run_action & get_run_action () const;
+      /// Return non mutable event data
+      const sim_data_type & get_event_data() const;
 
-      run_action & grab_run_action ();
+      /// Return mutable event data
+      sim_data_type & grab_event_data();
+
+      /// Return non mutable run action
+      const run_action & get_run_action() const;
+
+      /// Return mutable run action
+      run_action & grab_run_action();
 
       /// Constructor
-      event_action (run_action & a_run_action, const detector_construction & a_dctor);
+      event_action(run_action & a_run_action, const detector_construction & a_dctor);
 
       /// Destructor
-      virtual ~event_action ();
+      virtual ~event_action();
 
-      void initialize (const ::datatools::properties & a_config);
+      /// Initialization from a set of configuration parameters
+      void initialize(const ::datatools::properties & a_config);
 
-      void reset ();
+      /// Reset
+      void reset();
 
       // Geant4 interface :
 
-      void BeginOfEventAction (const G4Event*);
+      void BeginOfEventAction(const G4Event *);
 
-      void EndOfEventAction (const G4Event*);
-
-    private:
-
-      void _at_init_ ();
-
-      void _at_reset_ ();
+      void EndOfEventAction(const G4Event *);
 
     private:
 
-      bool                          _initialized_;
-      const detector_construction * _detector_construction_;
-      run_action *                  _run_action_;
-      sim_data_type                 _event_data_;
-      sim_data_type               * _external_event_data_;
-      bool                          _aborted_event_;
-      ::mctools::base_step_hit_processor::step_hit_ptr_collection_type _phits_;
+      /// Action performed at initialization
+      void _at_init_();
+
+      /// Action performed at reset
+      void _at_reset_();
+
+      /// Action performed at end of event
+      void _process_sensitive_hits_(const G4Event * event_, bool & save_this_event_);
+
+      /// Action performed at end of event
+      void _save_data_();
+
+      /// Action performed at end of event
+      void _clear_hits_collections_(const G4Event *);
+
+      /// Action performed at end of event for multithreaded run
+      void _mt_control_();
+
+    private:
+
+      bool                          _initialized_; //!< Initialization flag
+      const detector_construction * _detector_construction_; //!< Handle to the G4 detector construction
+      run_action *                  _run_action_; //!< Handle to the G4 run action
+      sim_data_type                 _event_data_; //!< Embedded simulated event model
+      sim_data_type               * _external_event_data_; //!< Handle to an external simulated event model
+      bool                          _aborted_event_; //!< Flag to abort the current event
+      bool                          _killed_event_; //!< Flag to kill the current event
+      ::mctools::base_step_hit_processor::step_hit_ptr_collection_type _phits_; //!< Collection of step hit processors
 
     };
 
@@ -102,7 +135,7 @@ namespace mctools {
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(mctools::g4::event_action)
 
-#endif // MCTOOLS_G4d_EVENT_ACTION_H
+#endif // MCTOOLS_G4_EVENT_ACTION_H
 
 /*
 ** Local Variables: --

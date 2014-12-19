@@ -2,6 +2,8 @@
 
 do_clean=1
 do_simulation=1
+do_pre=1
+do_cone=0
 only_build=0
 while [ -n "$1" ]; do
     token="$1"
@@ -15,6 +17,14 @@ while [ -n "$1" ]; do
 	do_simulation=0
     elif [ "x${token}" == "x--only-build" -o "x${token}" == "x-o" ]; then
 	only_build=1
+    elif [ "x${token}" == "x--pre" -o "x${token}" == "x-p" ]; then
+	do_pre=1
+    elif [ "x${token}" == "x--no-pre" -o "x${token}" == "x-P" ]; then
+	do_pre=0
+    elif [ "x${token}" == "x--cone" ]; then
+	do_cone=1
+    elif [ "x${token}" == "x--no-cone" ]; then
+	do_cone=0
     fi
     shift 1
 done
@@ -66,73 +76,78 @@ ls -l
 echo -e "\nDefine the CONFIG_DIR environment variable..." 1>&2
 export CONFIG_DIR="./config"
 
-echo -e "\nCheck the geometry..." 1>&2
-echo "q" | bxgeomtools_inspector \
-    --manager-config ${CONFIG_DIR}/geometry/manager.conf \
-    --without-visu
-if [ $? -ne 0 ]; then
-    echo "ERROR: geomtools_inspector failed !" 1>&2
-    exit 1
-fi
-
-echo -e "\nList the event generators..." 1>&2
-bxgenbb_inspector \
-    --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
-    --action "list"
-if [ $? -ne 0 ]; then
-    echo "ERROR: genbb_inspector failed !" 1>&2
-    exit 1
-fi
-
 eg_name="electron_1MeV"
 vg_name="source_bulk.vg"
 
-echo -e "\nShoot some random events..." 1>&2
-bxgenbb_inspector \
-    --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
-    --action "shoot" \
-    --generator "${eg_name}" \
-    --prng-seed 314159 \
-    --number-of-events 1000 \
-    --output-file "histos_${eg_name}.root"
-if [ $? -ne 0 ]; then
-    echo "ERROR: genbb_inspector failed !" 1>&2
-    exit 1
-fi
+if [ ${do_pre} -eq 1 ]; then
+    echo -e "\nCheck the geometry..." 1>&2
+    echo "q" | bxgeomtools_inspector \
+	--manager-config ${CONFIG_DIR}/geometry/manager.conf \
+	--without-visu
+    if [ $? -ne 0 ]; then
+	echo "ERROR: geomtools_inspector failed !" 1>&2
+	exit 1
+    fi
 
-echo -e "\nList the vertex generators..." 1>&2
-bxgenvtx_production \
-    --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
-    --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
-    --list
-if [ $? -ne 0 ]; then
-    echo "ERROR: genvtx_production failed !" 1>&2
-    exit 1
-fi
+    echo -e "\nList the event generators..." 1>&2
+    bxgenbb_inspector \
+	--configuration "${CONFIG_DIR}/event_generator/manager.conf" \
+	--action "list"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: genbb_inspector failed !" 1>&2
+	exit 1
+    fi
 
-echo -e "\nShoot some random vertexes..." 1>&2
-bxgenvtx_production \
-    --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
-    --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
-    --shoot \
-    --number-of-vertices 10000 \
-    --prng-seed 314159 \
-    --vertex-generator ${vg_name} \
-    --output-file "mctools_ex00_vertices_${vg_name}.txt"
-if [ $? -ne 0 ]; then
-    echo "ERROR: genvtx_production failed !" 1>&2
-    exit 1
+    echo -e "\nShoot some random events..." 1>&2
+    bxgenbb_inspector \
+	--configuration "${CONFIG_DIR}/event_generator/manager.conf" \
+	--action "shoot" \
+	--generator "${eg_name}" \
+	--prng-seed 314159 \
+	--number-of-events 1000 \
+	--output-file "histos_${eg_name}.root"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: genbb_inspector failed !" 1>&2
+	exit 1
+    fi
+
+    echo -e "\nList the vertex generators..." 1>&2
+    bxgenvtx_production \
+	--geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+	--vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
+	--list
+    if [ $? -ne 0 ]; then
+	echo "ERROR: genvtx_production failed !" 1>&2
+	exit 1
+    fi
+
+    echo -e "\nShoot some random vertexes..." 1>&2
+    bxgenvtx_production \
+	--geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
+	--vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
+	--shoot \
+	--number-of-vertices 10000 \
+	--prng-seed 314159 \
+	--vertex-generator ${vg_name} \
+	--output-file "mctools_ex00_vertices_${vg_name}.txt"
+    if [ $? -ne 0 ]; then
+	echo "ERROR: genvtx_production failed !" 1>&2
+	exit 1
+    fi
+
 fi
 
 #################### SIMULATIONS ####################
 if [ $do_simulation -eq 1 ]; then
 
-    # eg_name="electron_1MeV"
-    eg_name="electron_1MeV_cone"
+    eg_name="electron_1MeV"
+    if [ $do_cone -eq 1 ]; then
+	 eg_name="electron_1MeV_cone"
+    fi
     vg_name="source_bulk.vg"
 
     echo -e "\nRun the Geant4 simulation interactively..." 1>&2
-    echo -e "/run/beamOn 5\nexit" | \
+    echo -e "/run/beamOn 20\nexit" | \
 	bxg4_production \
 	--logging-priority "warning" \
 	--number-of-events-modulo 1 \

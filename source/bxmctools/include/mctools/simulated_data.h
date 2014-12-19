@@ -51,9 +51,9 @@ namespace mctools {
     /// Type of the memory layout of the collection of MC hits
     enum collection_type
       {
-        INVALID_HIT_COLLECTION_TYPE = -1,
-        PLAIN_HIT_COLLECTION_TYPE   =  0,
-        HANDLE_HIT_COLLECTION_TYPE  =  1,
+        INVALID_HIT_COLLECTION_TYPE = -1, //!< Invalid type of hit collection
+        PLAIN_HIT_COLLECTION_TYPE   =  0, //!< @deprecated Plain hit collection
+        HANDLE_HIT_COLLECTION_TYPE  =  1, //!< Hit handle collection
       };
 
     /// Categories of MC hits

@@ -286,6 +286,8 @@ namespace mctools {
       // clog << "DEVEL: primary_generator::GeneratePrimaries: "
       //      << "Clear event data..." << endl;
       _event_action_->grab_event_data().clear();
+      _event_action_->set_aborted_event(false);
+      _event_action_->set_killed_event(false);
 
       // Generate the vertex:
       geomtools::invalidate(_current_vertex_);
@@ -307,8 +309,8 @@ namespace mctools {
         DT_LOG_ERROR(_logprio(),
                      "No more generated vertex from the vertex generator after "
                      << _event_counter_ << " generated events !");
-        G4RunManager::GetRunManager()->AbortRun();
         _event_action_->set_aborted_event(true);
+        G4RunManager::GetRunManager()->AbortRun();
         return;
       }
       if (mgr.using_time_stat()) {
@@ -319,7 +321,7 @@ namespace mctools {
         mgr.grab_CT_map()["VG"].stop();
       }
 
-      // save current event vertex:
+      // Save current event vertex:
       _event_action_->grab_event_data().set_vertex(_current_vertex_);
       return;
     }
@@ -348,28 +350,27 @@ namespace mctools {
       }
       current_generated_event.set_time(0.0 * CLHEP::ns);
 
-      // Here the bias object could run
-      // int bias_result = 0;
       if (_bias_) {
+        // Here the bias object is processing the primary event:
         mctools::biasing::primary_event_bias::biasing_info bi;
-        _bias_->process(current_generated_event, bi);
+        _bias_->process(_current_vertex_, current_generated_event, bi);
         if (bi.is_killed()) {
-          G4RunManager::GetRunManager()->AbortEvent();
+          DT_LOG_TRACE(_logprio(), "Event is killed by the primary event biasing algorithm!");
+          _event_action_->set_killed_event(true);
         }
       }
 
       // Should we check the validity of the primary event here ?
 
+      if (_event_action_->is_aborted_event()) {
+        return;
+      }
+
+      // Process the primary event:
+      // about to insert primary particles in the G4 particle gun.
       double event_time = current_generated_event.get_time();
 
       G4ParticleTable * particle_table = G4ParticleTable::GetParticleTable();
-
-      // Use the recently randomized vertex:
-      /*
-        G4ThreeVector vertex (_current_vertex_.x (),
-        _current_vertex_.y (),
-        _current_vertex_.z ());
-      */
 
       // Loop on particles:
       size_t particle_counter = 0;
@@ -379,6 +380,7 @@ namespace mctools {
            i++, particle_counter++) {
         const ::genbb::primary_particle & genbb_particle = *i;
         if (genbb_particle.get_auxiliaries().has_flag(mctools::biasing::primary_event_bias::dont_track_this_particle_flag())) {
+          // After some 'primary event bias', we don't track this primary particle:
           continue;
         }
         const std::string genbb_particle_label = genbb_particle.get_particle_label();

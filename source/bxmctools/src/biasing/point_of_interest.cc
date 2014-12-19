@@ -241,8 +241,8 @@ namespace mctools {
       }
 
       if (! datatools::is_valid(_attractivity_)) {
-        if (config_.has_key("attractivity.label")) {
-          std::string attractivity_str = config_.fetch_string("attractivity.label");
+        if (config_.has_key("attractivity_label")) {
+          std::string attractivity_str = config_.fetch_string("attractivity_label");
           if (attractivity_str == "attractive") {
             set_attractivity(+1.0);
           } else if (attractivity_str == "repulsive") {
@@ -253,15 +253,19 @@ namespace mctools {
         }
       }
 
-      if (config_.has_key("attractivity")) {
-        double attractivity = config_.fetch_real("attractivity");
-        if (has_attractivity()) {
-          DT_THROW_IF (attractivity * _attractivity_ < 0.0,
-                       std::logic_error,
-                       "Incompatible attractivity value with former attractivity status!");
+      if (! datatools::is_valid(_attractivity_)) {
+        if (config_.has_key("attractivity")) {
+          double attractivity = config_.fetch_real("attractivity");
+          if (has_attractivity()) {
+            DT_THROW_IF (attractivity * _attractivity_ < 0.0,
+                         std::logic_error,
+                         "Incompatible attractivity value with former attractivity status!");
+          }
+          set_attractivity(attractivity);
         }
-        set_attractivity(attractivity);
       }
+
+      DT_THROW_IF(! has_attractivity(), std::logic_error, "Missing attractivity for PoI '" << _name_ << "'!");
 
       return;
     }

@@ -32,6 +32,7 @@
 #include <mctools/g4/detector_construction.h>
 #include <mctools/g4/sensitive_detector.h>
 #include <mctools/g4/manager.h>
+#include <mctools/biasing/primary_event_bias.h>
 
 namespace mctools {
 
@@ -70,7 +71,6 @@ namespace mctools {
       return _initialized_;
     }
 
-    // ctor:
     event_action::event_action (run_action & run_action_,
                                 const detector_construction & dctor_)
     {
@@ -78,11 +78,11 @@ namespace mctools {
       _run_action_            = &run_action_;
       _detector_construction_ = &dctor_;
       _aborted_event_         = false;
+      _killed_event_          = false;
       _external_event_data_   = 0;
       return;
     }
 
-    // dtor:
     event_action::~event_action ()
     {
       if (is_initialized ()) {
@@ -131,7 +131,7 @@ namespace mctools {
       }
       // end of fetching.
 
-      _at_init_ ();
+      _at_init_();
 
       _initialized_ = true;
       return;
@@ -148,9 +148,21 @@ namespace mctools {
       return;
     }
 
+    bool event_action::is_killed_event () const
+    {
+      return _killed_event_;
+    }
+
+    void event_action::set_killed_event (bool k_)
+    {
+      _killed_event_ = k_;
+      return;
+    }
+
     void event_action::BeginOfEventAction (const G4Event * event_)
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
+
       G4int event_id = event_->GetEventID ();
       DT_LOG_DEBUG(_logprio(), "Event #" << event_id << " starts.");
       if (_run_action_->has_number_of_events_modulo ()) {
@@ -159,9 +171,10 @@ namespace mctools {
           DT_LOG_NOTICE(_logprio(), "Event #" << event_id);
         }
       }
-      if (is_aborted_event ()) {
-        G4RunManager::GetRunManager ()->AbortEvent ();
+      if (is_aborted_event()) {
+        G4RunManager::GetRunManager()->AbortEvent();
         DT_LOG_WARNING(_logprio(), "Event #" << event_id << " is aborted. Exiting.");
+        DT_LOG_TRACE_EXITING(_logprio());
         return;
       }
 
@@ -174,12 +187,12 @@ namespace mctools {
 
       bool record_prng_states = true;
       if (record_prng_states) {
-        const manager & const_mgr = _run_action_->get_manager ();
-        if (const_mgr.has_prng_state_save_modulo ()) {
+        const manager & const_mgr = _run_action_->get_manager();
+        if (const_mgr.has_prng_state_save_modulo()) {
           DT_LOG_DEBUG(_logprio(), "Record PRNG states for event #" << event_id);
-          if ((event_id % const_mgr.get_prng_state_save_modulo ()) == 0) {
-            manager * mgr = const_cast<manager *> (&const_mgr);
-            mgr->record_current_prng_states ();
+          if ((event_id % const_mgr.get_prng_state_save_modulo()) == 0) {
+            manager * mgr = const_cast<manager *>(&const_mgr);
+            mgr->record_current_prng_states();
           }
         }
       }
@@ -191,52 +204,188 @@ namespace mctools {
         _run_action_->grab_manager().grab_track_history().reset();
       }
 
-      if (_run_action_->get_manager().using_time_stat ()) {
+      if (_run_action_->get_manager().using_time_stat()) {
         _run_action_->grab_manager().grab_CT_map()["EA"].start();
       }
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
     void event_action::EndOfEventAction (const G4Event * event_)
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
 
-      if (_run_action_->get_manager ().using_time_stat ()) {
-        _run_action_->grab_manager ().grab_CT_map ()["EA"].stop ();
+      if (_run_action_->get_manager().using_time_stat()) {
+        _run_action_->grab_manager().grab_CT_map()["EA"].stop();
       }
 
-      G4int event_id = event_->GetEventID ();
+      G4int event_id = event_->GetEventID();
 
-      if (is_aborted_event ()) {
-        DT_LOG_WARNING(_logprio(),  "Event is aborted. Exiting...");
+      if (is_aborted_event()) {
+        DT_LOG_ERROR(_logprio(), "Event #" << event_id << " is aborted.");
         return;
       }
-      DT_LOG_DEBUG(_logprio(),  "# Event " << event_id);
-      bool draw_trajectory = _run_action_->get_manager ().is_interactive ();
-      if (draw_trajectory) {
-        // get number of stored trajectories:
-        G4TrajectoryContainer * trajectory_col
-          = event_->GetTrajectoryContainer ();
-        int n_trajectories = 0;
-        if (trajectory_col) n_trajectories = trajectory_col->entries ();
 
-        // extract the trajectories and draw them:
-        if (G4VVisManager::GetConcreteInstance ()) {
-          for (int i = 0; i < n_trajectories; i++) {
-            G4Trajectory* trj
-              = (G4Trajectory*) ((*(event_->GetTrajectoryContainer ()))[i]);
-            trj->DrawTrajectory ();
+      if (is_killed_event()) {
+        DT_LOG_DEBUG(_logprio(), "Event #" << event_id << " is killed and thus not tracked!");
+        // grab_event_data().grab_properties().store_flag(mctools::biasing::primary_event_bias::biased_event_status_key(),
+        //                                                mctools::biasing::primary_event_bias::killed_event_label());
+      }
+
+      if (! is_killed_event()) {
+        bool draw_trajectory = _run_action_->get_manager().is_interactive();
+        if (draw_trajectory) {
+          // get number of stored trajectories:
+          G4TrajectoryContainer * trajectory_col
+            = event_->GetTrajectoryContainer();
+          int n_trajectories = 0;
+          if (trajectory_col) n_trajectories = trajectory_col->entries();
+
+          // extract the trajectories and draw them:
+          if (G4VVisManager::GetConcreteInstance()) {
+            for (int i = 0; i < n_trajectories; i++) {
+              G4Trajectory* trj
+                = (G4Trajectory*) ((*(event_->GetTrajectoryContainer()))[i]);
+              trj->DrawTrajectory();
+            }
           }
         }
       }
 
+      // Flag to discard events without sensitive hits:
+      bool save_this_event = ! _run_action_->get_manager().dont_save_no_sensitive_hit_events();
+
+      if (! is_killed_event()) {
+        _process_sensitive_hits_(event_, save_this_event);
+      }
+
+      DT_LOG_DEBUG(_logprio(), "Event data #" << event_id);
+      if (is_debug()) {
+        get_event_data().tree_dump(std::clog);
+      }
+
+      _run_action_->increment_number_of_processed_events();
+
+      // Save output simulated data:
+      if (_run_action_->save_data() && save_this_event) {
+        _save_data_();
+      }
+
+      // Clear the working sensitive hit collections:
+      _clear_hits_collections_(event_);
+
+      // Multi-thread control:
+      _mt_control_();
+
+      DT_LOG_TRACE_EXITING(_logprio());
+      return;
+    } // EndOfEventAction
+
+    void event_action::_mt_control_()
+    {
+      bool must_abort_run = false;
+
+      // External threaded run control :
+      if (_run_action_->get_manager ().has_simulation_ctrl()) {
+        DT_LOG_TRACE(_logprio(), "Using external run control...");
+        simulation_ctrl & SimCtrl = _run_action_->grab_manager ().grab_simulation_ctrl();
+        {
+          DT_LOG_TRACE(_logprio(), "Acquire the event control lock...");
+          boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
+          DT_LOG_TRACE(_logprio(), "Wait for event control to be available again...");
+          while (SimCtrl.event_availability_status != simulation_ctrl::AVAILABLE_FOR_G4) {
+            DT_LOG_TRACE(_logprio(), "Not yet...");
+            SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
+          }
+          DT_LOG_TRACE(_logprio(), "Ok let's go on...");
+          if (SimCtrl.event_availability_status == simulation_ctrl::ABORT) {
+            must_abort_run = true;
+          }
+          SimCtrl.event_availability_status = simulation_ctrl::NOT_AVAILABLE_FOR_G4;
+          SimCtrl.counts++;
+          DT_LOG_TRACE(_logprio(), "Notify the external simulation run manager...");
+          SimCtrl.event_available_condition->notify_one ();
+        }
+
+        // Wait for the release of the event control by the external process :
+        {
+          DT_LOG_TRACE(_logprio(), "Wait for the release of the event control by the external process...");
+          boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
+          while (SimCtrl.event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4) {
+            DT_LOG_TRACE(_logprio(), "Not yet...");
+            SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
+          }
+          DT_LOG_TRACE(_logprio(), "Ok ! The event control is released by the external process...");
+          if (SimCtrl.event_availability_status == simulation_ctrl::ABORT) {
+            DT_LOG_WARNING(_logprio(),
+                           "Detected an 'Abort' request from the external process...");
+            must_abort_run = true;
+          }
+        }
+
+        if (SimCtrl.is_stop_requested ()) {
+          DT_LOG_TRACE(_logprio(), "is_stop_requested..." );
+          must_abort_run = true;
+        }
+
+        if (SimCtrl.max_counts > 0 && (SimCtrl.counts > SimCtrl.max_counts)) {
+          DT_LOG_TRACE(_logprio(), "Max counts was reached.");
+          must_abort_run = true;
+        }
+      }
+
+      // Abort run condition :
+      if (must_abort_run) {
+        G4RunManager::GetRunManager()->AbortRun();
+      }
+      return;
+    }
+
+    void event_action::_save_data_()
+    {
+      if (_run_action_->get_manager().using_time_stat()) {
+        _run_action_->grab_manager().grab_CT_map()["IO"].start();
+      }
+      // Store the event if run_action has an initialized writer:
+      if (_run_action_->get_brio_writer().is_opened()) {
+        // first check 'brio::writer' :
+        _run_action_->grab_brio_writer().store(get_event_data());
+      } else if (_run_action_->get_writer().is_initialized()) {
+        // then check 'datatools::serialization::data_writer' :
+        _run_action_->grab_writer().store(get_event_data());
+      }
+      if (_run_action_->get_manager().using_time_stat()) {
+        _run_action_->grab_manager().grab_CT_map()["IO"].stop();
+      }
+      _run_action_->increment_number_of_saved_events();
+      return;
+    }
+
+    void event_action::_clear_hits_collections_(const G4Event* event_)
+    {
+      // Detach the hits collections from this event :
+      G4HCofThisEvent * HCE = event_->GetHCofThisEvent();
+      for (int i = 0; i < (int) HCE->GetCapacity(); i++) {
+        G4VHitsCollection * hcol = HCE->GetHC(i);
+        if (hcol != 0) {
+          // clog << datatools::io::devel
+          //           << "event_action::EndOfEventAction: Detach '"
+          //           << hcol->GetName () << "' hits collection"
+          //           << endl;
+          HCE->AddHitsCollection(i, 0);
+        }
+      }
+      return;
+    }
+
+    void event_action::_process_sensitive_hits_(const G4Event* event_, bool & save_this_event_)
+    {
+      // Process the list of sensitive hits:
       if (_run_action_->get_manager ().using_time_stat ()) {
         _run_action_->grab_manager ().grab_CT_map ()["HP"].start ();
       }
 
-      // Process the list of sensitive hits:
       G4HCofThisEvent * HCE = event_->GetHCofThisEvent ();
 
       DT_LOG_DEBUG(_logprio(), "List of sensitive hit collections : ");
@@ -248,10 +397,22 @@ namespace mctools {
         }
       }
 
-      // Flag to discard events without sensitive hits:
-      bool save_this_event = ! _run_action_->get_manager ().dont_save_no_sensitive_hit_events ();
+      // Process the list of sensitive hits:
+      if (_run_action_->get_manager ().using_time_stat ()) {
+        _run_action_->grab_manager ().grab_CT_map ()["HP"].start ();
+      }
+
+      DT_LOG_DEBUG(_logprio(), "List of sensitive hit collections : ");
+      for (int i = 0; i < (int) HCE->GetCapacity (); i++ ) {
+        G4VHitsCollection * hc = HCE->GetHC (i);
+        if (hc != 0) {
+          DT_LOG_DEBUG(_logprio(), "Hit collection '" << hc->GetName()
+                       << "' for sensitive detector '" << hc->GetSDname()<< "' @ " << hc);
+        }
+      }
 
       // Loop on the dictionnary of sensitive detectors:
+      int public_sensitive_category_counter = 0;
       for (detector_construction::sensitive_detector_dict_type::const_iterator iSD
              = _detector_construction_->get_sensitive_detectors ().begin ();
            iSD != _detector_construction_->get_sensitive_detectors ().end ();
@@ -277,12 +438,9 @@ namespace mctools {
          * 'official' MC hit categories should never starts with '_' and should
          * be associated to some sensitive detector.
          */
-        const bool is_private_category = boost::starts_with (sensitive_category, "__");
+        const bool is_private_category = boost::starts_with(sensitive_category, "__");
         if (! is_private_category) {
-          // keep event with 'physical' sensitive hits (not visual
-          // ones)
-          DT_LOG_DEBUG(_logprio(), "Saving current event with 'physical' sensitive hits");
-          save_this_event = true;
+          public_sensitive_category_counter++;
         }
 
         sensitive_hit_collection * SHC
@@ -324,122 +482,20 @@ namespace mctools {
           // category/detector: step hits are dropped.
         }
       }
-      if (_run_action_->get_manager ().using_time_stat ())  {
-        _run_action_->grab_manager ().grab_CT_map ()["HP"].stop ();
+
+
+      // One tags events with 'physical' sensitive hits (not visual ones)
+      if (public_sensitive_category_counter > 0) {
+        DT_LOG_DEBUG(_logprio(), "Tagging current event with 'physical' sensitive hits categories to be saved...");
+        save_this_event_ = true;
       }
 
-      DT_LOG_DEBUG(_logprio(), "Event data: ");
-      if (is_debug()) {
-        get_event_data ().tree_dump (std::clog);
-        //get_event_data ().get_primary_event ().dump (clog, "Primary event (genbb format): ");
+      if (_run_action_->get_manager().using_time_stat ())  {
+        _run_action_->grab_manager().grab_CT_map ()["HP"].stop ();
       }
 
-      _run_action_->increment_number_of_processed_events ();
-      if (_run_action_->save_data () && save_this_event) {
-        if (_run_action_->get_manager ().using_time_stat ()) {
-          _run_action_->grab_manager ().grab_CT_map ()["IO"].start ();
-        }
-        // Store the event if run_action has an initialized writer:
-        if (_run_action_->get_brio_writer ().is_opened ()) {
-          // first check 'brio::writer' :
-          _run_action_->grab_brio_writer ().store (get_event_data ());
-        } else if (_run_action_->get_writer ().is_initialized ()) {
-          // then check 'datatools::serialization::data_writer' :
-          _run_action_->grab_writer ().store (get_event_data ());
-        }
-        if (_run_action_->get_manager ().using_time_stat ()) {
-          _run_action_->grab_manager ().grab_CT_map ()["IO"].stop ();
-        }
-        _run_action_->increment_number_of_saved_events ();
-      }
-
-      // Detach the hits collections from this event :
-      for (int i = 0; i < (int) HCE->GetCapacity (); i++ )
-        {
-          G4VHitsCollection * hcol = HCE->GetHC (i);
-          if (hcol != 0) {
-            // clog << datatools::io::devel
-            //           << "event_action::EndOfEventAction: Detach '"
-            //           << hcol->GetName () << "' hits collection"
-            //           << endl;
-            HCE->AddHitsCollection (i, 0);
-          }
-        }
-
-      // clog << datatools::io::devel << "event_action::EndOfEventAction: "
-      //           << "List of sensitive hit collections:";
-      // for (size_t i = 0; i < HCE->GetCapacity (); i++ )
-      //        {
-      //          clog << " " << HCE->GetHC (i);
-      //        }
-      // clog << endl;
-
-      DT_LOG_DEBUG(_logprio(), "Check point for Event #" << event_id);
-
-      // Debugging...
-      bool must_abort_run = false;
-
-      /*************************************************************/
-      // External threaded run control :
-      if (_run_action_->get_manager ().has_simulation_ctrl ())
-        {
-          DT_LOG_TRACE(_logprio(), "Using external run control...");
-          simulation_ctrl & SimCtrl = _run_action_->grab_manager ().grab_simulation_ctrl ();
-          {
-            DT_LOG_TRACE(_logprio(), "Acquire the event control lock...");
-            boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
-            DT_LOG_TRACE(_logprio(), "Wait for event control to be available again...");
-            while (SimCtrl.event_availability_status != simulation_ctrl::AVAILABLE_FOR_G4) {
-              DT_LOG_TRACE(_logprio(), "Not yet...");
-              SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
-            }
-            DT_LOG_TRACE(_logprio(), "Ok let's go on...");
-            if (SimCtrl.event_availability_status == simulation_ctrl::ABORT)
-              {
-                must_abort_run = true;
-              }
-            SimCtrl.event_availability_status = simulation_ctrl::NOT_AVAILABLE_FOR_G4;
-            SimCtrl.counts++;
-            DT_LOG_TRACE(_logprio(), "Notify the external simulation run manager...");
-            SimCtrl.event_available_condition->notify_one ();
-          }
-
-          // Wait for the release of the event control by the external process :
-          {
-            DT_LOG_TRACE(_logprio(), "Wait for the release of the event control by the external process...");
-            boost::mutex::scoped_lock lock (*SimCtrl.event_mutex);
-            while (SimCtrl.event_availability_status == simulation_ctrl::NOT_AVAILABLE_FOR_G4) {
-              DT_LOG_TRACE(_logprio(), "Not yet...");
-              SimCtrl.event_available_condition->wait (*SimCtrl.event_mutex);
-            }
-            DT_LOG_TRACE(_logprio(), "Ok ! The event control is released by the external process...");
-            if (SimCtrl.event_availability_status == simulation_ctrl::ABORT) {
-              DT_LOG_WARNING(_logprio(),
-                             "Detected an 'Abort' request from the external process...");
-              must_abort_run = true;
-            }
-          }
-
-          if (SimCtrl.is_stop_requested ()) {
-            DT_LOG_TRACE(_logprio(), "is_stop_requested..." );
-            must_abort_run = true;
-          }
-
-          if (SimCtrl.max_counts > 0 && (SimCtrl.counts > SimCtrl.max_counts)) {
-            DT_LOG_TRACE(_logprio(), "Max counts was reached.");
-            must_abort_run = true;
-          }
-        }
-      /*************************************************************/
-
-      // Abort run condition :
-      if (must_abort_run) {
-        G4RunManager::GetRunManager ()->AbortRun ();
-      }
-
-      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
-    } // EndOfEventAction
+    }
 
   } // end of namespace g4
 

@@ -1,12 +1,16 @@
 // test_g4_prng.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
+// This project:
 #include <mctools/g4/g4_prng.h>
 
 int main(int argc_, char ** argv_)
@@ -99,7 +103,6 @@ int main(int argc_, char ** argv_)
   return(error_code);
 }
 
-// end of test_g4_prng.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

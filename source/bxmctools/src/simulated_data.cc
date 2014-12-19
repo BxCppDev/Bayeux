@@ -575,7 +575,7 @@ namespace mctools {
       a_out << indent << datatools::i_tree_dumpable::tag
             << "Collections of step hit handles : ";
       if (_step_hits_dict_.size () == 0) {
-        a_out << "None";
+        a_out << "<none>";
       }
       a_out << std::endl;
       for (step_hits_dict_type::const_iterator i = _step_hits_dict_.begin ();
@@ -602,7 +602,7 @@ namespace mctools {
         a_out << indent << datatools::i_tree_dumpable::tag
               << "Collections of plain step hits : ";
         if (_plain_step_hits_dict_.size () == 0) {
-          a_out << "None";
+          a_out << "<none>";
         }
         a_out << std::endl;
         for (plain_step_hits_dict_type::const_iterator i = _plain_step_hits_dict_.begin ();
