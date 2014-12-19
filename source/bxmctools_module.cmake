@@ -120,6 +120,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_step_hit_processor_factory.cxx
   ${module_test_dir}/test_simulated_data_input_module_1.cxx
   ${module_test_dir}/test_simulated_data_input_module_2.cxx
+  ${module_test_dir}/test_biasing_primary_event_bias.cxx
   )
 
 #-----------------------------------------------------------------------
