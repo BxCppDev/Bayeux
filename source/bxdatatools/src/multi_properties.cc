@@ -584,8 +584,8 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
   std::string current_meta = "";
 
   /// Special devel print:
-  bool variant_devel = false;
-  unsigned int vpp_flags = 0;
+  // bool variant_devel = false;
+  // unsigned int vpp_flags = 0;
   // vpp_flags |= configuration::variant_preprocessor::FLAG_DEVEL;
   // configuration::variant_preprocessor vpp(vpp_flags);
 
@@ -638,13 +638,13 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
           std::string token;
           iss >> token;
 
-          if (token == "@variant_log=devel") {
-            variant_devel = true;
-          }
+          // if (token == "@variant_log=devel") {
+          //   variant_devel = true;
+          // }
 
-          if (token == "@variant_log=mute") {
-            variant_devel = false;
-          }
+          // if (token == "@variant_log=mute") {
+          //   variant_devel = false;
+          // }
 
           if (token == "@description" && mprop_description.empty()) {
           //if (token == "@description") {
