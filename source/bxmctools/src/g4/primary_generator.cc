@@ -375,8 +375,8 @@ namespace mctools {
       // Loop on particles:
       size_t particle_counter = 0;
       for (::genbb::primary_event::particles_col_type::const_iterator i
-             = current_generated_event.grab_particles().begin();
-           i != current_generated_event.grab_particles().end();
+             = current_generated_event.get_particles().begin();
+           i != current_generated_event.get_particles().end();
            i++, particle_counter++) {
         const ::genbb::primary_particle & genbb_particle = *i;
         if (genbb_particle.get_auxiliaries().has_flag(mctools::biasing::primary_event_bias::dont_track_this_particle_flag())) {
@@ -395,8 +395,7 @@ namespace mctools {
         G4String g4_particle_name; // = get_g4_particle_name_from_genbb_particle(genbb_particle);
         G4ParticleDefinition * g4_particle = 0;
 
-        double particle_mass;
-        datatools::invalidate(particle_mass);
+        double particle_mass = datatools::invalid_real();
         if (genbb_particle.mass_is_known()) {
           particle_mass = genbb_particle.get_mass();
         }
