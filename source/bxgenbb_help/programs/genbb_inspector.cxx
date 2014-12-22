@@ -43,6 +43,7 @@
 #endif
 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic pop
@@ -64,12 +65,14 @@
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/kernel.h>
+#include <datatools/io_factory.h>
 #include <datatools/configuration/io.h>
 // -  Bayeux/mygsl:
 #include <mygsl/histogram_pool.h>
 #include <mygsl/histogram_1d.h>
 #include <mygsl/histogram_2d.h>
 // - Bayeux/ dpp:
+#include <dpp/output_module.h>
 #include <dpp/histogram_service.h>
 #if GENBB_HELP_STANDALONE == 0
 // - Bayeux:
@@ -105,7 +108,10 @@ namespace genbb {
     std::string action;                            //!< Action to be performed
     std::string list_print_mode;                   //!< Print list mode ("tree", "raw");
     std::string generator;                         //!< Particle generator name
-    std::vector<std::string> output_paths;
+    std::string output_mode;                       //!< Output mode
+    std::string output_bank_label;                 //!< Bank label for 'bank' mode
+    int         output_bank_max_records;            //!< Mas number of records per file for 'bank' mode
+    std::vector<std::string> output_paths;         //!< List of output files
     int number_of_events;                          //!< Number of generated events
     int print_modulo;                              //!< Modulo print period for generated events
     int prng_seed;                                 //!< PRNG seed
@@ -132,6 +138,9 @@ namespace genbb {
     out_ << "|-- action             = " << action << std::endl;
     out_ << "|-- list_print_mode    = " << list_print_mode << std::endl;
     out_ << "|-- generator          = " << generator << std::endl;
+    out_ << "|-- output_mode        = " << output_mode << std::endl;
+    out_ << "|-- output_bank_label  = " << output_bank_label << std::endl;
+    out_ << "|-- output_bank_max_records  = " << output_bank_max_records << std::endl;
     out_ << "|-- output_paths       = " << output_paths.size() << std::endl;
     out_ << "|-- number_of_events   = " << number_of_events << std::endl;
     out_ << "|-- print_modulo       = " << print_modulo << std::endl;
@@ -156,6 +165,9 @@ namespace genbb {
     action.clear();
     list_print_mode.clear();
     unrecognized_options.clear();
+    output_mode.clear();
+    output_bank_label = "genbb.PE";
+    output_bank_max_records = 100000;
     output_paths.clear();
     number_of_events = -1;
     print_modulo = 10;
@@ -379,8 +391,8 @@ namespace genbb {
   double inspector_data::get_cos_theta(const std::string & type1_, int i1_,
                                        const std::string & type2_, int i2_) const
   {
-    const geomtools::vector_3d *p1 = 0;
-    const geomtools::vector_3d *p2 = 0;
+    const geomtools::vector_3d * p1 = 0;
+    const geomtools::vector_3d * p2 = 0;
     double cost12 = std::numeric_limits<double>::quiet_NaN();
     int i1max = -1;
     int i2max = -1;
@@ -851,6 +863,9 @@ namespace genbb {
     void _run_interactive();
     void _run_batch();
     void _inspect(const genbb::primary_event &);
+    void _inspect_plain_writer_mode(const genbb::primary_event &);
+    void _inspect_bank_writer_mode(const genbb::primary_event &);
+    void _inspect_histograms_mode(const genbb::primary_event &);
 
   private:
     bool _initialized_;
@@ -860,7 +875,10 @@ namespace genbb {
     mygsl::rng _prng_;
     genbb::manager _manager_;
     genbb::i_genbb * _generator_;
-    dpp::histogram_service _histos_service_;
+
+    boost::scoped_ptr<datatools::data_writer> _plain_writer_;
+    boost::scoped_ptr<dpp::output_module>     _bank_writer_;
+    boost::scoped_ptr<dpp::histogram_service> _histos_service_;
     mygsl::histogram_pool * _histos_;
     std::string _title_prefix_;
     std::string _name_suffix_;
@@ -1305,7 +1323,7 @@ int main (int argc_, char ** argv_)
        "Examples :                                     \n"
        " --action \"list\" --list-print-mode \"tree\"  \n"
        " --action \"list\" --list-print-mode \"raw\"     "
-        )
+       )
 
       ("generator,g",
        po::value<std::string> (&params.generator),
@@ -1317,6 +1335,31 @@ int main (int argc_, char ** argv_)
       ("histo-def,H",
        po::value<std::vector<std::string> > (),
        "set the name of an histogram definition input filename."
+       )
+
+      ("output-mode,m",
+       po::value<std::string> (&params.output_mode),
+       "set the genbb manager output mode.      \n"
+       "Example :                               \n"
+       " --output-mode \"histograms\"           \n"
+       "or :                                    \n"
+       " --output-mode \"plain\"                \n"
+       "or :                                    \n"
+       " --output-mode \"bank\"                   "
+       )
+
+      ("output-bank-label,l",
+       po::value<std::string> (&params.output_bank_label),
+       "set the bank label in 'bank' output mode.\n"
+       "Example :                                \n"
+       " --output-bank-label \"PE\"                "
+       )
+
+      ("output-bank-max-records,x",
+       po::value<int> (&params.output_bank_max_records),
+       "set the maximum records per file in 'bank' output mode.\n"
+       "Example :                                              \n"
+       " --output-bank-max-records 100                           "
        )
 
       ("output-file,o",
@@ -1419,7 +1462,7 @@ int main (int argc_, char ** argv_)
 
   }
   catch (std::exception & x) {
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what ());
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
@@ -1439,9 +1482,9 @@ void usage (const boost::program_options::options_description & options_,
             std::ostream & out_)
 {
 #if GENBB_HELP_STANDALONE == 1
-    const std::string APP_NAME = "genbb_inspector";
+  const std::string APP_NAME = "genbb_inspector";
 #else
-    const std::string APP_NAME = "bxgenbb_inspector";
+  const std::string APP_NAME = "bxgenbb_inspector";
 #endif // GENBB_HELP_STANDALONE == 1
   out_ << "\n " << APP_NAME << " -- Inspector for GENBB primary event generators" << std::endl;
   out_ << std::endl;
@@ -1591,70 +1634,95 @@ namespace genbb {
                    << effective_generator << "' does not exist !");
       _generator_ = &_manager_.grab(effective_generator);
 
-      // Histograms :
-      std::vector<std::string> pool_histo_setups;
-      if (_params_.histos_definitions.size() == 0) {
-        if (_params_.prompt) {
-          if (std::find(_params_.histo_groups.begin(),
-                        _params_.histo_groups.end(),
-                        "prompt") == _params_.histo_groups.end()) {
-            _params_.histo_groups.push_back("prompt");
-          }
-
-          std::ostringstream filename;
-          filename << genbb::get_resource_dir() << '/'
-                   << "inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf";
-          _params_.histos_definitions.push_back(filename.str());
-          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                        "Using default definition file for histograms : '" << filename.str() << "'");
-        }
-        if (_params_.delayed) {
-          if (std::find(_params_.histo_groups.begin(),
-                        _params_.histo_groups.end(),
-                        "delayed") == _params_.histo_groups.end()) {
-            _params_.histo_groups.push_back("delayed");
-          }
-          std::ostringstream filename;
-          filename << genbb::get_resource_dir() << '/'
-                   << "inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf";
-          _params_.histos_definitions.push_back(filename.str());
-          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                        "Using default definition file for histograms : '" << filename.str() << "'");
-        }
-      }
-      for (int i = 0; i < (int) _params_.histos_definitions.size(); i++) {
-        std::string hconfig = _params_.histos_definitions[i];
-        datatools::fetch_path_with_env(hconfig);
-        pool_histo_setups.push_back(hconfig);
-      }
-      if (pool_histo_setups.size()) {
-        datatools::properties hs_config;
-        if (_params_.debug) {
-          hs_config.store_string("logging.priority", "debug");
-        }
-        std::ostringstream hpdesc_oss;
-        hpdesc_oss << "GENBB inspector histograms";
-        if (!_params_.title_prefix.empty()) {
-          hpdesc_oss << " -- " << _params_.title_prefix;
-        }
-        hs_config.store_string("pool.description", hpdesc_oss.str());
-        hs_config.store("pool.histo.setups", pool_histo_setups);
-        hs_config.store_flag("root_export.stats");
-        hs_config.store("root_export.title_prefix", _title_prefix_);
-        hs_config.store("root_export.name_suffix", _name_suffix_);
-        hs_config.store("output_files", _params_.output_paths);
-        std::vector<std::string> pool_export_prefixes;
-        pool_export_prefixes.push_back("value.");
-        hs_config.store("pool.histo.export_prefixes", pool_export_prefixes);
-        //std::cerr << "DEVEL: initializing HS...\n";
-        //hs_config.tree_dump(std::cerr, "Histogram service config : ", "DEVEL: ");
-        //_histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
-        //for (int i = 0; i < 10000; i++) std::cerr << std::flush;
-        _histos_service_.initialize_standalone(hs_config);
-        _histos_ = &_histos_service_.grab_pool();
+      if (_params_.output_mode.empty()) {
+        // Default values:
+        _params_.output_mode = "histograms";
       }
 
-    }
+      if (_params_.output_mode == "plain") {
+        // Save data in plain format :
+        DT_THROW_IF(_params_.output_paths.size() != 1,
+                    std::logic_error,
+                    "No unique output data path is provided!");
+        std::string output_data_filename = _params_.output_paths[0];
+        datatools::fetch_path_with_env(output_data_filename);
+        datatools::data_writer * writer = new datatools::data_writer;
+        writer->init(output_data_filename, datatools::using_multi_archives);
+        _plain_writer_.reset(writer);
+      } else if (_params_.output_mode == "bank") {
+        // Save data in bank format:
+        dpp::output_module * writer = new dpp::output_module;
+        writer->set_list_of_output_files(_params_.output_paths);
+        writer->set_limits(_params_.number_of_events,
+                           _params_.output_bank_max_records);
+        writer->initialize_simple();
+        _bank_writer_.reset(writer);
+      } else if (_params_.output_mode == "histograms") {
+        // Histograms :
+        std::vector<std::string> pool_histo_setups;
+        if (_params_.histos_definitions.size() == 0) {
+          if (_params_.prompt) {
+            if (std::find(_params_.histo_groups.begin(),
+                          _params_.histo_groups.end(),
+                          "prompt") == _params_.histo_groups.end()) {
+              _params_.histo_groups.push_back("prompt");
+            }
+
+            std::ostringstream filename;
+            filename << genbb::get_resource_dir() << '/'
+                     << "inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf";
+            _params_.histos_definitions.push_back(filename.str());
+            DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                          "Using default definition file for histograms : '" << filename.str() << "'");
+          }
+          if (_params_.delayed) {
+            if (std::find(_params_.histo_groups.begin(),
+                          _params_.histo_groups.end(),
+                          "delayed") == _params_.histo_groups.end()) {
+              _params_.histo_groups.push_back("delayed");
+            }
+            std::ostringstream filename;
+            filename << genbb::get_resource_dir() << '/'
+                     << "inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf";
+            _params_.histos_definitions.push_back(filename.str());
+            DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
+                          "Using default definition file for histograms : '" << filename.str() << "'");
+          }
+        }
+        for (int i = 0; i < (int) _params_.histos_definitions.size(); i++) {
+          std::string hconfig = _params_.histos_definitions[i];
+          datatools::fetch_path_with_env(hconfig);
+          pool_histo_setups.push_back(hconfig);
+        }
+        if (pool_histo_setups.size()) {
+          datatools::properties hs_config;
+          if (_params_.debug) {
+            hs_config.store_string("logging.priority", "debug");
+          }
+          std::ostringstream hpdesc_oss;
+          hpdesc_oss << "GENBB inspector histograms";
+          if (!_params_.title_prefix.empty()) {
+            hpdesc_oss << " -- " << _params_.title_prefix;
+          }
+          hs_config.store_string("pool.description", hpdesc_oss.str());
+          hs_config.store("pool.histo.setups", pool_histo_setups);
+          hs_config.store_flag("root_export.stats");
+          hs_config.store("root_export.title_prefix", _title_prefix_);
+          hs_config.store("root_export.name_suffix", _name_suffix_);
+          hs_config.store("output_files", _params_.output_paths);
+          std::vector<std::string> pool_export_prefixes;
+          pool_export_prefixes.push_back("value.");
+          hs_config.store("pool.histo.export_prefixes", pool_export_prefixes);
+          //std::cerr << "DEVEL: initializing HS...\n";
+          //hs_config.tree_dump(std::cerr, "Histogram service config : ", "DEVEL: ");
+          //_histos_service_.tree_dump(std::cerr, "Histogram service: ", "DEVEL: ");
+          //for (int i = 0; i < 10000; i++) std::cerr << std::flush;
+          _histos_service_.reset(new dpp::histogram_service);
+          _histos_service_->initialize_standalone(hs_config);
+          _histos_ = &_histos_service_->grab_pool();
+        }
+      } // mode: "histograms"
+    } // shoot
     _initialized_  = true;
     return;
   }
@@ -1664,7 +1732,24 @@ namespace genbb {
     DT_THROW_IF (!_initialized_, std::logic_error, "Not initialized !");
     _initialized_  = false;
     _histos_ = 0;
-    if (_histos_service_.is_initialized()) _histos_service_.reset();
+    if (_plain_writer_) {
+      if (_plain_writer_->is_initialized()) {
+        _plain_writer_->reset();
+      }
+      _plain_writer_.reset();
+    }
+    if (_bank_writer_) {
+      if (_bank_writer_->is_initialized()) {
+        _bank_writer_->reset();
+      }
+      _bank_writer_.reset();
+    }
+    if (_histos_service_) {
+      if (_histos_service_->is_initialized()) {
+        _histos_service_->reset();
+      }
+      _histos_service_.reset();
+    }
     _generator_ = 0;
     if (_manager_.is_initialized()) _manager_.reset();
     _params_.reset();
@@ -1728,6 +1813,37 @@ namespace genbb {
   }
 
   void inspector::_inspect(const genbb::primary_event & event_)
+  {
+    if (_plain_writer_) {
+      _inspect_plain_writer_mode(event_);
+    } else if (_bank_writer_) {
+      _inspect_bank_writer_mode(event_);
+    } else if (_histos_service_) {
+      _inspect_histograms_mode(event_);
+    }
+    return;
+  }
+
+  void inspector::_inspect_plain_writer_mode(const genbb::primary_event & event_)
+  {
+    _plain_writer_->store(event_);
+    return;
+  }
+
+  void inspector::_inspect_bank_writer_mode(const genbb::primary_event & event_)
+  {
+    datatools::things record;
+    genbb::primary_event & PE = record.add<genbb::primary_event>(_params_.output_bank_label);
+    PE = event_;
+    int status = _bank_writer_->process(record);
+    if (status != dpp::base_module::PROCESS_OK) {
+      DT_THROW_IF(true, std::logic_error,
+                  "An error occured while saving the primary event !");
+    }
+    return;
+  }
+
+  void inspector::_inspect_histograms_mode(const genbb::primary_event & event_)
   {
     static const std::string time_range_label[2] = { "prompt", "delayed" };
     inspector_data timing_data[2];
@@ -2092,5 +2208,3 @@ namespace genbb {
   }
 
 }
-
-// end of genbb_inspector.cxx

@@ -42,8 +42,8 @@ namespace genbb {
   {
     pimpl_imp();
     ~pimpl_imp();
-    dpp::input_module inmod;  /// Input module
-    datatools::things record; /// Working event record
+    dpp::input_module inmod;  //!< Input module
+    datatools::things record; //!< Working event record
   };
 
   from_file_generator::pimpl_imp::pimpl_imp()
