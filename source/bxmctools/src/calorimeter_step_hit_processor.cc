@@ -522,12 +522,12 @@ namespace mctools {
         current_scintillation_cluster->set_hit_id(scintillation_hit_count);
         current_scintillation_cluster->set_geom_id(gid);
 
-        // store primary particle information
-        const bool is_primary_particle
-          = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
-        if (is_primary_particle) {
-          current_scintillation_cluster->grab_auxiliaries().store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
-        }
+        // // store primary particle information
+        // const bool is_primary_particle
+        //   = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
+        // if (is_primary_particle) {
+        //   current_scintillation_cluster->grab_auxiliaries().store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
+        // }
 
         if (hit_particle_name == "gamma") {
           // for gamma, only interaction point makes sense(ie. photoelectric effect)
