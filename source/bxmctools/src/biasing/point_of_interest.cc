@@ -134,7 +134,6 @@ namespace mctools {
     {
       geomtools::vector_3d position;
       double radius;
-      double attractivity;
       double default_length_unit = CLHEP::mm;
 
       if (_name_.empty()) {
@@ -149,8 +148,8 @@ namespace mctools {
           DT_THROW_IF(!geomtools::parse(position_str, position), std::logic_error,
                       "Cannot parse the point of interest's position from '"
                       << position_str << "'!");
+	  set_position(position);
         }
-        set_position(position);
       }
 
       if (geomgr_) {
@@ -185,7 +184,7 @@ namespace mctools {
           }
 
           if (! poi_gid.is_valid()) {
-            if (config_.has_key("geometry.gid")) {
+            if (config_.has_key("geometry.id")) {
               std::string geom_id_str = config_.fetch_string("geometry.id");
               std::istringstream gid_iss(geom_id_str);
               geomtools::geom_id gid;
@@ -225,21 +224,21 @@ namespace mctools {
               }
             }
           }
+	  else DT_THROW_IF (true, std::logic_error,
+			    "Invalid POI_GID ('" << poi_gid << "'). Abort!");
         }
       }
 
-      if (! datatools::is_valid(_radius_)) {
-        if (config_.has_key("radius")) {
-          radius = config_.fetch_real("radius");
-          DT_THROW_IF(radius <= 0.0, std::domain_error,
-                      "Point of interest cannot have negative radius!");
-          if (! config_.has_explicit_unit("radius")) {
-            radius *= default_length_unit;
-          }
-        }
-        set_radius(radius);
+      if (config_.has_key("radius")) {
+	radius = config_.fetch_real("radius");
+	DT_THROW_IF(radius <= 0.0, std::domain_error,
+		    "Point of interest cannot have negative radius!");
+	if (! config_.has_explicit_unit("radius")) {
+	  radius *= default_length_unit;
+	}
+	set_radius(radius);
       }
-
+      
       if (! datatools::is_valid(_attractivity_)) {
         if (config_.has_key("attractivity_label")) {
           std::string attractivity_str = config_.fetch_string("attractivity_label");
@@ -252,19 +251,17 @@ namespace mctools {
           }
         }
       }
-
-      if (! datatools::is_valid(_attractivity_)) {
-        if (config_.has_key("attractivity")) {
-          double attractivity = config_.fetch_real("attractivity");
-          if (has_attractivity()) {
-            DT_THROW_IF (attractivity * _attractivity_ < 0.0,
-                         std::logic_error,
-                         "Incompatible attractivity value with former attractivity status!");
-          }
-          set_attractivity(attractivity);
-        }
+      
+      if (config_.has_key("attractivity")) {
+	double attractivity = config_.fetch_real("attractivity");
+	if (has_attractivity()) {
+	  DT_THROW_IF (attractivity * _attractivity_ < 0.0,
+		       std::logic_error,
+		       "Incompatible attractivity value with former attractivity status!");
+	}
+	set_attractivity(attractivity);
       }
-
+      
       DT_THROW_IF(! has_attractivity(), std::logic_error, "Missing attractivity for PoI '" << _name_ << "'!");
 
       return;
@@ -307,24 +304,24 @@ namespace mctools {
       }
       geomtools::vector_3d L = S + 2 * dist * direction_.unit();
       geomtools::line_3d SL(source_, L);
-        /*
-         *                   _.-"""""-._ PoI
-         *                 .'           `.
-         *                / ->            \
-         *       S       |  PS     P       |
-         *        + - - -|- - - ->+        |
-         *         \     |   ..""  \ R     |
-         *     -->  \   ..\"" rho   \     /
-         *     dir   +""   `._       \ _.'
-         *            \       `-.....-'
-         *             \
-         *              \
-         *               \
-         *                \
-         *                 \
-         *                  \
-         *                   + L
-         */
+      /*
+       *                   _.-"""""-._ PoI
+       *                 .'           `.
+       *                / ->            \
+       *       S       |  PS     P       |
+       *        + - - -|- - - ->+        |
+       *         \     |   ..""  \ R     |
+       *     -->  \   ..\"" rho   \     /
+       *     dir   +""   `._       \ _.'
+       *            \       `-.....-'
+       *             \
+       *              \
+       *               \
+       *                \
+       *                 \
+       *                  \
+       *                   + L
+       */
       double rho = SL.get_distance_to_line(P);
       if (rho < _radius_) {
         return true;
