@@ -365,6 +365,9 @@ namespace mctools {
       if (_event_action_->is_aborted_event()) {
         return;
       }
+      if (_event_action_->is_killed_event()) {
+        return;
+      }
 
       // Process the primary event:
       // about to insert primary particles in the G4 particle gun.
