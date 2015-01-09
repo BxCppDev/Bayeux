@@ -49,10 +49,10 @@ namespace genbb {
     void reset();
     /// Check validity
     bool is_valid() const;
-    int Z;        /// Atomic number
-    int A;        /// Number of nucleons
-    double Estar; /// Excitation energy
-    int Q;        /// Ion charge
+    int Z;        //!< Atomic number
+    int A;        //!< Number of nucleons
+    double Estar; //!< Excitation energy
+    int Q;        //!< Ion charge
   };
 
   ion_data_type::ion_data_type()
@@ -85,8 +85,8 @@ namespace genbb {
     ion_parser(what_type what_, bool pm_ = false);
     bool parse(const std::string & label_, ion_data_type & data_) const;
   private:
-    what_type _what_;           /// Ion or nucleus
-    bool      _print_messages_; /// Flag to print message
+    what_type _what_;           //!< Ion or nucleus
+    bool      _print_messages_; //!< Flag to print message
   };
 
   ion_parser::ion_parser(what_type what_, bool pm_) : _what_(what_), _print_messages_(pm_)
@@ -510,7 +510,6 @@ namespace genbb {
     return;
   }
 
-
   void primary_particle::set_momentum(const geomtools::vector_3d & v_)
   {
     _momentum_ = v_;
@@ -525,6 +524,15 @@ namespace genbb {
   geomtools::vector_3d & primary_particle::grab_momentum()
   {
     return _momentum_;
+  }
+
+  void primary_particle::compute_four_momentum(CLHEP::HepLorentzVector & q_) const
+  {
+    q_.setT(get_total_energy());
+    q_.setX(_momentum_.x());
+    q_.setY(_momentum_.y());
+    q_.setZ(_momentum_.z());
+    return;
   }
 
   void primary_particle::set_vertex(const geomtools::vector_3d & m_)

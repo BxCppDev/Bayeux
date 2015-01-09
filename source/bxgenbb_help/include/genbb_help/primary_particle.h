@@ -44,6 +44,8 @@
 // Third party:
 // - Boost:
 #include <boost/cstdint.hpp>
+// - CLHEP:
+#include <CLHEP/Vector/LorentzVector.h>
 // - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/utils.h>
@@ -74,7 +76,7 @@ namespace genbb {
     enum particle_type {
       UNDEF              = -1, //!< @deprecated Undefined particle type
       PARTICLE_UNDEFINED = -1, //!< Undefined particle type
-      PARTICLE_UNKNOWN = 0,  //!< A valid particle but unknown from the genbb library
+      PARTICLE_UNKNOWN   = 0,  //!< A valid particle but unknown from the genbb library
       GAMMA      = 1,
       POSITRON   = 2,
       ELECTRON   = 3,
@@ -272,6 +274,9 @@ namespace genbb {
 
     /// Return the mutable momentum of the particle
     geomtools::vector_3d & grab_momentum();
+
+    /// Compute the associated 4-vector
+    void compute_four_momentum(CLHEP::HepLorentzVector &) const;
 
     /// Set the vertex of the particle
     void set_vertex(const geomtools::vector_3d & v_);
