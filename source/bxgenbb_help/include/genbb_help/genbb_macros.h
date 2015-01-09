@@ -111,7 +111,7 @@ public:                                         \
   GENBB_PG_INTERFACE ();                                 \
   /**/
 
-/*** Macros for interface/implementation of static creator methods in EM field classes ***/
+/* Macros for interface/implementation of static creator methods in particle generator classes */
 
 /** Registration */
 
@@ -124,6 +124,8 @@ public:                                         \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::i_genbb,GENBB_CLASS_NAME,GENBB_ID); \
   /**/
 
+/* Macros for interface/implementation of static creator methods in decay driver classes */
+
 /** Registration */
 
 #define GENBB_BDD_REGISTRATION_INTERFACE(GENBB_CLASS_NAME)             \
@@ -133,6 +135,19 @@ public:                                         \
 
 #define GENBB_BDD_REGISTRATION_IMPLEMENT(GENBB_CLASS_NAME,GENBB_ID)   \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::base_decay_driver,GENBB_CLASS_NAME,GENBB_ID); \
+  /**/
+
+/* Macros for interface/implementation of static creator methods in Lorentz Boost generator classes */
+
+/** Registration */
+
+#define GENBB_LBG_REGISTRATION_INTERFACE(GENBB_CLASS_NAME)             \
+  private:                                                              \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::i_lorentz_boost_generator,GENBB_CLASS_NAME); \
+  /**/
+
+#define GENBB_LBG_REGISTRATION_IMPLEMENT(GENBB_CLASS_NAME,GENBB_ID)   \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::i_lorentz_boost_generator,GENBB_CLASS_NAME,GENBB_ID); \
   /**/
 
 
