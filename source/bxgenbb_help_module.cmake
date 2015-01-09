@@ -47,6 +47,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/primary_particle.h
   ${module_include_dir}/${module_name}/single_particle_generator.h
   ${module_include_dir}/${module_name}/save_to_file_wrapper.h
+  ${module_include_dir}/${module_name}/lorentz_boost_wrapper.h
   ${module_include_dir}/${module_name}/from_file_generator.h
   ${module_include_dir}/${module_name}/fermi_function.h
   ${module_include_dir}/${module_name}/nuclear_level.h
@@ -253,6 +254,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/single_particle_generator.cc
   ${module_source_dir}/combined_particle_generator.cc
   ${module_source_dir}/save_to_file_wrapper.cc
+  ${module_source_dir}/lorentz_boost_wrapper.cc
   ${module_source_dir}/from_file_generator.cc
   ${module_source_dir}/fermi_function.cc
   ${module_source_dir}/nuclear_level.cc
@@ -452,6 +454,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_single_particle_generator_4.cxx
   ${module_test_dir}/test_single_particle_generator_5.cxx
   ${module_test_dir}/test_single_particle_generator.cxx
+  ${module_test_dir}/test_lorentz_boost_wrapper.cxx
   ${module_test_dir}/test_from_to_file_generator.cxx
   ${module_test_dir}/test_fermi_function_2.cxx
   ${module_test_dir}/test_nuclear_level.cxx
