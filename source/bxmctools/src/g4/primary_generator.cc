@@ -353,10 +353,16 @@ namespace mctools {
       if (_bias_) {
         // Here the bias object is processing the primary event:
         mctools::biasing::primary_event_bias::biasing_info bi;
+        if (mgr.using_time_stat()) {
+          mgr.grab_CT_map()["BPE"].start();
+        }
         _bias_->process(_current_vertex_, current_generated_event, bi);
         if (bi.is_killed()) {
           DT_LOG_TRACE(_logprio(), "Event is killed by the primary event biasing algorithm!");
           _event_action_->set_killed_event(true);
+        }
+        if (mgr.using_time_stat()) {
+          mgr.grab_CT_map()["BPE"].stop();
         }
       }
 
@@ -365,6 +371,7 @@ namespace mctools {
       if (_event_action_->is_aborted_event()) {
         return;
       }
+
       if (_event_action_->is_killed_event()) {
         return;
       }
