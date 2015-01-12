@@ -26,6 +26,7 @@
 #include <genbb_help/lorentz_boost_wrapper.h>
 #include <genbb_help/primary_event.h>
 
+/// \brief A generator of Lorentz boost along a chosen arbitrary axis and fixed position
 struct lbs : public genbb::i_lorentz_boost_generator
 {
   virtual bool has_next()
@@ -38,6 +39,13 @@ struct lbs : public genbb::i_lorentz_boost_generator
   {
     speed_= _vbeta_ * CLHEP::c_light;
     geomtools::invalidate(vtx_);
+    vtx_.set(0.0, 0.0, 1.0 * CLHEP::mm);
+    return;
+  }
+
+  virtual void add_metadata(genbb::primary_event & pe_)
+  {
+    pe_.grab_auxiliaries().store_flag("lbs.test");
     return;
   }
 
@@ -105,7 +113,7 @@ int main(int argc_, char ** argv_)
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "Test program for class 'lorentz_boost_wrapper'!" << std::endl;
+    std::clog << "Test program for class 'genbb::lorentz_boost_wrapper'!" << std::endl;
 
     bool debug = false;
     int  many = 1;

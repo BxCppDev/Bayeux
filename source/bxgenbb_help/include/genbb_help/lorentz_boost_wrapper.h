@@ -51,6 +51,9 @@ namespace datatools {
 
 namespace genbb {
 
+  // Forward declaration:
+  class primary_event;
+
   /// \brief Abstract mother class to fetch Lorentz Boost data
   class i_lorentz_boost_generator
   {
@@ -67,6 +70,9 @@ namespace genbb {
     /// Generate Lorentz Boost information
     virtual void generate(geomtools::vector_3d & speed_, geomtools::vector_3d & vtx_) = 0;
 
+    /// Add metadata
+    virtual void add_metadata(primary_event & pe_);
+
     /// Check initialization status
     virtual bool is_initialized() const = 0;
 
@@ -80,8 +86,8 @@ namespace genbb {
     void initialize_simple();
 
     /// Factory method
-    static i_lorentz_boost_generator * create(const std::string & id_,
-                                              const datatools::properties &);
+    static i_lorentz_boost_generator * create(const std::string & class_id_,
+                                              const datatools::properties & config_);
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_lorentz_boost_generator);
@@ -132,9 +138,9 @@ namespace genbb {
   private:
 
     bool        _initialized_; //!< Initialization flag
-    i_genbb *   _pg_;          //!< Handle to a primaery particle generator
+    i_genbb *   _pg_;          //!< Handle to a primary particle generator
     i_lorentz_boost_generator * _lbg_; //!< Handle to a generator of Lorentz boost
-    bool _lbg_owned_; //!< Flag to own the hanlde to the generator of Lorentz boost
+    bool _lbg_owned_; //!< Flag to own the handle to the generator of Lorentz boost
     GENBB_PG_REGISTRATION_INTERFACE(lorentz_boost_wrapper);
 
   };

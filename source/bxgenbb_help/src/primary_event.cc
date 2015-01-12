@@ -176,7 +176,40 @@ namespace genbb {
       count++;
     }
     return *i;
- }
+  }
+
+  const primary_particle * primary_event::get_particle_of_type(int type_, int occurence_) const
+  {
+    DT_THROW_IF(type_ == primary_particle::PARTICLE_UNDEFINED,
+                std::logic_error,
+                "Invalid particle type !");
+    const primary_particle * part = 0;
+    int occ = 0;
+    particles_col_type::const_iterator i = _particles_.begin();
+    for (particles_col_type::const_iterator i = _particles_.begin();
+         i != _particles_.end();
+         i++) {
+      const primary_particle & pp = *i;
+      if (pp.has_type()) {
+        bool type_ok = false;
+        if (type_ == primary_particle::ION && pp.is_ion()) {
+          type_ok = true;
+        } else if (type_ == primary_particle::NUCLEUS && pp.is_nucleus()) {
+          type_ok = true;
+        } else if (type_ == pp.get_type()) {
+          type_ok = true;
+        }
+        if (type_ok) {
+          if (occ == occurence_) {
+            part = &pp;
+            break;
+          }
+          occ++;
+        }
+      } // if (pp.has_type())
+    }
+    return part;
+  }
 
   primary_particle & primary_event::grab_particle(int index_)
   {

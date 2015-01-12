@@ -49,6 +49,11 @@ namespace genbb {
     return;
   }
 
+  void i_lorentz_boost_generator::add_metadata(primary_event & pe_)
+  {
+    return;
+  }
+
   void i_lorentz_boost_generator::initialize_simple()
   {
     datatools::properties dummy;
@@ -236,14 +241,13 @@ namespace genbb {
            i++) {
         primary_particle & part = *i;
         if (geomtools::is_valid(vertex)) {
-          // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: assign the vertex to the particle..." << std::endl;
           part.set_vertex(vertex);
         }
         if (geomtools::is_valid(speed)) {
           // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: old p=" << part.get_momentum() / CLHEP::MeV << std::endl;
           // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: apply Lorentz Boost Transformation to the particle momentum..." << std::endl;
           CLHEP::HepLorentzVector q4;
-          /// Compute the associated 4-vector
+          // Compute the associated 4-vector
           part.compute_four_momentum(q4);
           CLHEP::HepLorentzVector q4_2 = CLHEP::boostOf(q4, speed / CLHEP::c_light);
           part.set_momentum(q4_2.vect());
@@ -252,6 +256,7 @@ namespace genbb {
           // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: new p=" << part.get_momentum() / CLHEP::MeV << std::endl;
         }
       }
+      _lbg_->add_metadata(event_);
     }
 
     DT_LOG_TRACE(_logging_priority, "Exiting.");
