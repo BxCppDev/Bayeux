@@ -69,7 +69,7 @@ namespace mctools {
      *              `-.....-'
      *  \endcode
      *
-     *  \TODO Use a 2D/3D oriented blur_spot for better flexibility
+     *  TO DO: Use a 2D/3D oriented blur_spot for better flexibility
      *
      */
     class point_of_interest : public datatools::i_tree_dumpable
