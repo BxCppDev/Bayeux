@@ -15,11 +15,12 @@ namespace datatools {
   class properties;
 }
 
-//! \mainpage This is the tutorial for adding OCD support to a class
-//! This tutorial illustrates the programming techniques used to add \a object \a configuration \a description (OCD)
-//! to a class, using dedicated macros available from the Bayeux/datatools library.
+//! This is a tutorial for adding OCD support to a class
 //!
-//! A simple class my::algo is provided with the my::algo::initialize method
+//! This tutorial illustrates the programming techniques used to add \a object \a configuration \a description (OCD)
+//! support to a class, using dedicated macros available from the Bayeux/datatools library.
+//!
+//! A simple class my::algo is provided with its my::algo::initialize method
 //! which is dedicated to the initialization of any instance of type my::algo
 //! through a container of configuration parameters (see the \b datatools::properties class
 //! from the Bayeux/datatools library). In this example, only four parameters of various type
@@ -28,7 +29,7 @@ namespace datatools {
 //!  - \b max_nloops : a positive integer (with default value set to \a 100),
 //!  - \b epsilon : a positive dimensionless real number (without default value),
 //!  - \b output_filename : the name of an optional output data file (with default value
-//!       set to the \a empty \a string).
+//!       set to the \a empty string).
 //!
 //! The process implies adding specific code at two levels:
 //!  1. From the header file my/algo.h (declaration of the class):
