@@ -917,6 +917,21 @@ namespace datatools {
     }
   }
 
+  void properties::export_all_adding_prefix(properties & a_props,
+                                            const std::string & prefix) const {
+    DT_THROW_IF (this == &a_props,
+                 std::logic_error,
+                 "Self export is not allowed !");
+    keys_col_type ks;
+    this->keys(ks);
+    for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
+      properties& ptmp = const_cast<properties&>(*this);
+      std::ostringstream new_key_oss;
+      new_key_oss << prefix << *i;
+      a_props._props_[new_key_oss.str()] = ptmp._props_[*i];
+    }
+  }
+
   void properties::export_starting_with(properties & a_props,
                                         const std::string& prefix) const {
     DT_THROW_IF (this == &a_props,

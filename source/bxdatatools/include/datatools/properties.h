@@ -2,11 +2,11 @@
 /// \file datatools/properties.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
- * Last modified: 2014-06-24
+ * Last modified: 2015-01-16
  *
  * License:
  *
- * Copyright (C) 2011-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -630,6 +630,9 @@ class properties :
 
   //! Export all properties into another properties container
   void export_all(properties& a_props) const;
+
+  //! Export all properties into another properties container adding a prefix
+  void export_all_adding_prefix(properties& a_props, const std::string & prefix) const;
 
   //! Export all properties with key/name starting with a given prefix to another properties container
   void export_starting_with(properties& a_props,
