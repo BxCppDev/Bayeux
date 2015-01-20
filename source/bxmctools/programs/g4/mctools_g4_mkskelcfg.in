@@ -18,7 +18,7 @@ function splash()
         Version ${mctools_version}
         Bayeux version @Bayeux_VERSION@
 
-        Copyright (C) 2013
+        Copyright (C) 2013-2015
         Francois Mauger, Xavier Garrido and Ben Morgan
 
         command line help: type "${this_bxapp} --help"
@@ -71,6 +71,49 @@ Usage:
                                       Default value is: '${default_skeleton_profile}'.
                                       Example:
                                         --skeleton-profile "${default_skeleton_profile}"
+
+Example:
+
+   From a directory considered as the storage of the
+   resources and configuration files in the "mylib"
+   user library, one runs:
+
+   ${this_bxapp} --config-base-dir config \\
+                 --setup-label projectA \\
+                 --setup-version 0.1 \\
+                 --registered-module mylib
+
+   This creates a directory hosting all configuration files
+   needed for the simulation of a project labelled "projectA".
+   The files are organized by topics and associated versions
+   within dedicated subdirectories:
+
+   config/
+   \`-- projectA
+       |-- geometry
+       |   \`-- 0.1
+       |       |-- models
+       |       \`-- plugins
+       \`-- simulation
+           |-- geant4_control
+           |   \`-- 0.1
+           |-- primary_events
+           |   \`-- 0.1
+           \`-- vertexes
+               \`-- 0.1
+
+   The "mylib" library registration tag must then be used to
+   define the path where the resources/config files are stored.
+   The "--datatools::resource-path=XXX" option available from
+   bxg4_production can be used:
+
+      bxg4_production \\
+        --datatools::resource-path="mylib@parent/directory/of/the/resources/dir" \\
+        --config @mylib:config/projectA/simulation/geant4_control/0.1/manager.conf \\
+        --batch \\
+        --number-of-events 10 \\
+        --vertex-generator-name="source0_bulk.vg" \\
+        --event-generator-name="Co60"
 
 EOF
     return
@@ -551,9 +594,6 @@ regions.source.volumes   : string[1] = "source.model.log"
 #@description Physics list logging priority (default: "warning")
 logging.priority : string = "debug"
 
-#@description Physics list logging debug flag (shortcut)
-### logging.debug : boolean = 1
-
           #######################
           # Geant4 physics list #
           #######################
@@ -789,9 +829,6 @@ EOF
 # Basic configuration parameters #
 ##################################
 
-#@description Debug flag
-debug                 : boolean = 0
-
 #@description The name of the sensitive MC hits the processor must process to fill the output hit category
 sensitive.category    : string = "detector_SD"
 
@@ -827,9 +864,6 @@ cluster.space_range   : real as length = 10.0 mm
 # Basic configuration parameters #
 ##################################
 
-#@description Debug flag
-debug              : boolean = 0
-
 #@description The name of the target collection of MC hits
 hit.category       : string  = "__visu.tracks"
 
@@ -845,9 +879,6 @@ sensitive.category : string  = "detector_SD"
 ##################################
 # Basic configuration parameters #
 ##################################
-
-#@description Debug flag
-debug              : boolean = 0
 
 #@description The name of the target collection of MC hits
 hit.category       : string  = "__visu.tracks"
