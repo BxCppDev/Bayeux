@@ -228,7 +228,7 @@ namespace datatools {
     if (clear_) this->clear();
 
     // Parse logging priority:
-    logger::priority prio = logger::extract_logging_configuration(config_, logger::PRIO_FATAL, true);
+    logger::priority prio = logger::extract_logging_configuration(config_, _logging_priority_, true);
     if (prio != logger::PRIO_UNDEFINED) {
       set_logging_priority(prio);
     }
