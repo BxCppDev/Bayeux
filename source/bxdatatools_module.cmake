@@ -225,8 +225,18 @@ if (Bayeux_BUILD_QT_GUI)
     ${module_include_dir}/${module_name}/configuration/ui/variant_repository_viewer.h
     )
   # message(STATUS "To be mocced = '${${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED}'")
+
+  # Qt MOC bug on SL 5.3
+  # Some specific code from Boost is broken while compiled by Qt MOC. It seems possible
+  # to use some guards to workaround this issue:
+  # See https://bugreports.qt-project.org/browse/QTBUG-22829
+  # #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
+  # #include <boost/lexical_cast.hpp>
+  # #endif
+
   QT4_WRAP_CPP(${module_name}_MODULE_HEADERS_QT_MOC
     ${${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED}
+    # OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED ### This option does not work
     )
   # message(STATUS "Mocced = '${${module_name}_MODULE_HEADERS_QT_MOC}'")
   list(APPEND ${module_name}_MODULE_SOURCES
