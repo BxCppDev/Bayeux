@@ -49,7 +49,7 @@ namespace genbb {
     return;
   }
 
-  void i_lorentz_boost_generator::add_metadata(primary_event & pe_)
+  void i_lorentz_boost_generator::add_metadata(primary_event & /*pe_*/)
   {
     return;
   }
