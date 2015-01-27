@@ -225,7 +225,6 @@ namespace mctools {
       }
 
       double default_energy_unit = CLHEP::keV;
-      double default_length_unit = CLHEP::millimeter;
 
       if (config_.has_key("mode")) {
         const std::string & bm_label = config_.fetch_string("mode");
