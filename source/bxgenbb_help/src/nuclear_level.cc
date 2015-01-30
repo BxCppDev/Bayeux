@@ -491,7 +491,6 @@ namespace genbb {
     return datatools::is_valid(_spin_);
   }
 
-
   bool nuclear_level::parity_is_known() const
   {
     return _parity_ != PARITY_INVALID && _parity_ != PARITY_UNKNOWN;
