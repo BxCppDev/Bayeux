@@ -406,12 +406,24 @@ namespace geomtools {
       }
     }
 
-    if (mmx0.get_min () < x0) x0 = mmx0.get_min ();
-    if (mmx1.get_max () > x1) x1 = mmx1.get_max ();
-    if (mmy0.get_min () < y0) y0 = mmy0.get_min ();
-    if (mmy1.get_max () > y1) y1 = mmy1.get_max ();
-    if (mmz0.get_min () < z0) z0 = mmz0.get_min ();
-    if (mmz1.get_max () > z1) z1 = mmz1.get_max ();
+    if (mmx0.is_valid()) {
+      if (mmx0.get_min () < x0) x0 = mmx0.get_min ();
+    }
+    if (mmx1.is_valid()) {
+      if (mmx1.get_max () > x1) x1 = mmx1.get_max ();
+    }
+    if (mmy0.is_valid()) {
+      if (mmy0.get_min () < y0) y0 = mmy0.get_min ();
+    }
+    if (mmy1.is_valid()) {
+      if (mmy1.get_max () > y1) y1 = mmy1.get_max ();
+    }
+    if (mmz0.is_valid()) {
+      if (mmz0.get_min () < z0) z0 = mmz0.get_min ();
+    }
+    if (mmz1.is_valid()) {
+      if (mmz1.get_max () > z1) z1 = mmz1.get_max ();
+    }
     double surrounded_x = 0;
     double surrounded_y = 0;
     double surrounded_z = 0;
