@@ -195,16 +195,16 @@ class service_manager : public datatools::i_tree_dumpable {
 
  private:
 
-  datatools::logger::priority _logging_priority; /// Logging priority threshold
-  bool         initialized_; /// Initialization flag
-  std::string  name_; /// Manager's name
-  std::string  description_; /// Manager's description
-  bool         preload_; /// Factory preload flag
-  bool         force_initialization_at_load_; /// Flag for triggering service  initialization at load (rather than first use)
+  datatools::logger::priority _logging_priority; //!< Logging priority threshold
+  bool         initialized_; //!< Initialization flag
+  std::string  name_; //!< Manager's name
+  std::string  description_; //!< Manager's description
+  bool         preload_; //!< Factory preload flag
+  bool         force_initialization_at_load_; //!< Flag for triggering service  initialization at load (rather than first use)
 
 // 2012-04-09 FM : support for datatools::factory system :
   base_service::factory_register_type  factory_register_;
-  service_dict_type                    services_; /// Dictionary of services
+  service_dict_type                    services_; //!< Dictionary of services
 };
 
 }  // end of namespace datatools

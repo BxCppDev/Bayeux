@@ -154,6 +154,10 @@ void multi_properties::set_debug(bool a_debug) {
   return;
 }
 
+  bool multi_properties::has_description() const
+  {
+    return !description_.empty();
+  }
 
 const std::string & multi_properties::get_description() const {
   return description_;
@@ -420,8 +424,7 @@ const properties& multi_properties::get_section_const(const std::string& a_key) 
   return get_section(a_key);
 }
 
-const properties& multi_properties::get_section(
-    const std::string& a_key) const {
+const properties& multi_properties::get_section(const std::string& a_key) const {
   return this->get(a_key).get_properties();
 }
 
@@ -524,7 +527,9 @@ void multi_properties::write(const std::string& a_filename,
     fout << "# List of multi-properties (datatools::multi_properties):" << std::endl;
     fout << std::endl;
   }
-  fout << "#@description " << this->get_description() << std::endl;
+  if (this->has_description()) {
+    fout << "#@description " << this->get_description() << std::endl;
+  }
   fout << "#@key_label   " << '"' << this->get_key_label() << '"'
        << std::endl;
   fout << "#@meta_label  " << '"' << this->get_meta_label()<< '"'
@@ -573,6 +578,7 @@ void multi_properties::read(const std::string& a_filename,
 
 
 void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
+  bool devel = false; // Debug stuff
   std::string line_in;
   std::string mprop_description;
   std::string mprop_key_label;
@@ -590,6 +596,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
   // configuration::variant_preprocessor vpp(vpp_flags);
 
   while (in_) {
+    bool append_block_line = true;
     std::string line_get;
     std::getline(in_,line_get);
     bool line_continue = false;
@@ -611,6 +618,7 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
     // Check if line should go on:
     if (line_continue) line_goon = true;
 
+    bool blocks_started = false;
     bool process_block = false;
     std::string new_key = "";
     std::string new_meta = "";
@@ -647,14 +655,6 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
           // }
 
           if (token == "@description" && mprop_description.empty()) {
-          //if (token == "@description") {
-            /*
-            if (!mprop_description.empty()) {
-              DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                             "Duplicated '@description' directive for container described by '"
-                             << mprop_description << "' !");
-            }
-            */
             iss >> std::ws;
             std::string desc;
             std::getline(iss, desc);
@@ -662,17 +662,8 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
               mprop_description = desc;
               this->set_description(mprop_description);
             }
-          }
-
-          if (token == "@key_label" && mprop_key_label.empty()) {
-            /*
-          if (token == "@key_label") {
-            if (!mprop_key_label.empty()) {
-              DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                             "Duplicated '@key_label' directive for container described by '"
-                             << mprop_description << "' !");
-            }
-            */
+            append_block_line = false;
+          } else if (token == "@key_label" && mprop_key_label.empty()) {
             iss >> std::ws;
             std::string key_label;
             DT_THROW_IF (!io::read_quoted_string(iss, key_label),
@@ -693,17 +684,8 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                              << key_label_ << "' !");
               }
             }
-          }
-
-          if (token == "@meta_label" && mprop_meta_label.empty()) {
-            /*
-          if (token == "@meta_label") {
-            if (!mprop_meta_label.empty()) {
-              DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                             "Duplicated '@meta_label' directive for container described by '"
-                             << mprop_description << "' !");
-            }
-            */
+            append_block_line = false;
+          } else if (token == "@meta_label" && mprop_meta_label.empty()) {
             iss >> std::ws;
             std::string meta_label;
             DT_THROW_IF (!io::read_quoted_string(iss, meta_label),
@@ -729,17 +711,31 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
                              << meta_label_ << "' !");
               }
             }
+            append_block_line = false;
           }
           skip_line = true;
           {
             std::istringstream iss(line);
             std::string check;
             iss >> check;
-            if (check.length() > 2 && check.substr(0,2) == "#@") skip_line = false;
+            if (check.length() > 2 && check.substr(0,2) == "#@") {
+              skip_line = false;
+            }
+          }
+          if (devel) {
+            if (skip_line) {
+              std::cerr << "DEVEL: " << "SKIP LINE      = '" << line << "'" << std::endl;
+            } else {
+              std::cerr << "DEVEL: " << "DONT SKIP LINE = '" << line << "'" << std::endl;
+            }
           }
         }
       } // if ( ! skip_line )
 
+      if (devel) {
+        std::cerr << "DEVEL: " << "line='" << line << "'" << std::endl;
+        std::cerr << "DEVEL: " << "append_block_line=" << append_block_line << std::endl;
+      }
       // Parse line:
       if (!skip_line)  {
         std::istringstream iss(line);
@@ -747,6 +743,9 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
         iss >> c >> std::ws;
         // Search for 'key/meta' line:
         if (c == '[') {
+          if (! blocks_started) {
+            blocks_started = true;
+          }
           // Parse 'key/meta' line:
           iss >> std::ws;
           std::string key_label;
@@ -805,7 +804,9 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
           process_block = true;
         } else {
           // Append line to the current block stream:
-          current_block_oss << line << std::endl;
+          if (append_block_line) {
+            current_block_oss << line << std::endl;
+          }
         }
       } // !skip_line
 
@@ -816,6 +817,14 @@ void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
     if (in_.eof()) process_block = true;
 
     if (process_block) {
+
+      if (devel) {
+        std::cerr << "**************************************" << std::endl;
+        std::cerr << " BLOCK                                " << std::endl;
+        std::cerr << "**************************************" << std::endl;
+        std::cerr << current_block_oss.str() << std::endl;
+        std::cerr << "**************************************" << std::endl;
+      }
       if (!current_key.empty()) {
         bool load_it = true;
         if (a_skip_private) {

@@ -161,9 +161,9 @@ class multi_properties :
                            bool a_inherit = false) const;
 
    private:
-    std::string key_;   /// Primary key of the section
-    std::string meta_;  /// Meta information text of the section
-    properties properties_; /// Container of properties stored in the section
+    std::string key_;       //!< Primary key of the section
+    std::string meta_;      //!< Meta information text of the section
+    properties properties_; //!< Container of properties stored in the section
 
     BOOST_SERIALIZATION_BASIC_DECLARATION();
 
@@ -222,6 +222,9 @@ private:
   /// Set the description
   void set_description(const std::string& a_description);
 
+  /// Check if a description is available
+  bool has_description() const;
+
   /// Get the description
   const std::string& get_description() const;
 
@@ -241,7 +244,7 @@ private:
   uint32_t size() const;
 
   /// Check if the collection of entries is empty
-  bool empty () const;
+  bool empty() const;
 
   /// Reset
   void reset();
@@ -268,19 +271,19 @@ private:
   bool has_key_with_meta(const std::string& a_key, const std::string& a_meta) const;
 
   //! Returns the ith key
-  const std::string & key (int) const;
+  const std::string & key(int) const;
 
   //! Returns the ith ordered key
-  const std::string & ordered_key (int) const;
+  const std::string & ordered_key(int) const;
 
   /// Return an array of keys
-  std::vector<std::string> keys () const;
+  std::vector<std::string> keys() const;
 
   /// Build an array of keys
   void keys(std::vector<std::string>&k) const;
 
   /// Return an array of orderered keys
-  std::vector<std::string> ordered_keys () const;
+  std::vector<std::string> ordered_keys() const;
 
   /// Build an array of orderered keys
   void ordered_keys(std::vector<std::string>&k) const;
@@ -351,12 +354,12 @@ private:
   void read_impl(std::istream& a_in, bool a_skip_private);
 
  private:
-  bool                  debug_;       /// Debug flag
-  std::string           description_; /// Description of the container
-  std::string           key_label_;   /// The key label used by the container
-  std::string           meta_label_;  /// The meta label used by the container
-  entries_col_type      entries_;     /// List of stored properties objects (unordered)
-  entries_ordered_col_type ordered_entries_; /// List of ordered properties objects
+  bool                  debug_;       //!< Debug flag
+  std::string           description_; //!< Description of the container
+  std::string           key_label_;   //!< The key label used by the container
+  std::string           meta_label_;  //!< The meta label used by the container
+  entries_col_type      entries_;     //!< List of stored properties objects (unordered)
+  entries_ordered_col_type ordered_entries_; //!< List of ordered properties objects
 
   //! Cloneable interface
   DATATOOLS_CLONEABLE_DECLARATION(multi_properties);

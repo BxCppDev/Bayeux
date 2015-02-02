@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/properties.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
@@ -1118,3 +1117,11 @@ DR_CLASS_INIT(::datatools::properties);
 #endif // Q_MOC_RUN
 
 #endif // DATATOOLS_UTILS_PROPERTIES_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

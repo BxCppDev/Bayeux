@@ -260,6 +260,33 @@ namespace datatools {
     return;
   }
 
+  void enriched_base::export_to_config(datatools::properties & config_,
+                                       uint32_t flags_,
+                                       const std::string & prefix_) const
+  {
+    if (flags_ & EXPORT_CONFIG_CLEAR) {
+      config_.clear();
+    }
+    if (flags_ & EXPORT_CONFIG_NAME) {
+      config_.store_string(prefix_ + "name", get_name(), "Name");
+    }
+    if (flags_ & EXPORT_CONFIG_DISPLAY_NAME) {
+      config_.store_string(prefix_ + "display_name", get_display_name(), "Display name");
+    }
+    if (flags_ & EXPORT_CONFIG_TERSE_DESCRIPTION) {
+      config_.store_string(prefix_ + "terse_description", get_terse_description(), "Short description");
+    }
+    if (flags_ & EXPORT_CONFIG_LOGGING_PRIORITY) {
+      config_.store_string(prefix_ + "logging.priority",
+                           datatools::logger::get_priority_label(get_logging_priority()),
+                           "Logging priority threshold");
+    }
+    if (flags_ & EXPORT_CONFIG_AUXILIARIES) {
+      get_auxiliaries().export_all_adding_prefix(config_, prefix_ + "aux.");
+    }
+    return;
+  }
+
   // static
   void enriched_base::init_ocd(datatools::object_configuration_description & ocd_)
   {

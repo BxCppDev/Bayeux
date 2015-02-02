@@ -37,6 +37,7 @@
 
 // This project:
 #include <datatools/datatools_config.h>
+#include <datatools/bit_mask.h>
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
@@ -141,6 +142,26 @@ namespace datatools {
 
       /// Initialization from a container of properties
       void initialize(const datatools::properties & config_, bool clear_ = false);
+
+      //! \brief Flags for export to a container of properties
+      enum export_config_flags {
+	EXPORT_CONFIG_CLEAR             = bit_mask::bit00,
+	EXPORT_CONFIG_NAME              = bit_mask::bit01,
+	EXPORT_CONFIG_DISPLAY_NAME      = bit_mask::bit02,
+	EXPORT_CONFIG_TERSE_DESCRIPTION = bit_mask::bit03,
+	EXPORT_CONFIG_LOGGING_PRIORITY  = bit_mask::bit04,
+	EXPORT_CONFIG_AUXILIARIES       = bit_mask::bit05,
+	EXPORT_CONFIG_DEFAULT =
+	  EXPORT_CONFIG_CLEAR |
+	  EXPORT_CONFIG_DISPLAY_NAME |
+	  EXPORT_CONFIG_TERSE_DESCRIPTION |
+	  EXPORT_CONFIG_AUXILIARIES
+      };
+
+      /// Export to a container of properties
+      void export_to_config(datatools::properties & config_,
+			    uint32_t flags_ = EXPORT_CONFIG_DEFAULT,
+			    const std::string & prefix_ = "") const;
 
       /// OCD support
       static void init_ocd(datatools::object_configuration_description &);
