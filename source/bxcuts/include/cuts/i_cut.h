@@ -188,19 +188,40 @@ namespace cuts {
                                               datatools::service_manager & a_service_manager);
 
     /// Initialization method through a container of configuration properties
-    /// and a dictionnary of cuts (default implementation, @see initialize)
+    /// and a dictionary of cuts (default implementation, @see initialize)
     virtual void initialize_without_service(const datatools::properties & a_config,
-                                            cut_handle_dict_type & a_cut_dictionnary);
+                                            cut_handle_dict_type & a_cut_dictionary);
 
-    /** The main initialization method (post-construction):
+    /** The main initialization method (post-construction)
+     *
      * @param a_config the container of configuration parameters
-     * @param a_cut_dictionnary a dictionnary of existing 'cuts' which can be used
+     * @param a_cut_dictionary a dictionary of existing 'cuts' which can be used
      *        to build the current cut (used in the framework of a factory)
      * @param a_service_manager a manager for external services
      */
     virtual void initialize(const datatools::properties & a_config,
                             datatools::service_manager & a_service_manager,
-                            cut_handle_dict_type & a_cut_dictionnary) = 0;
+                            cut_handle_dict_type & a_cut_dictionary) = 0;
+
+
+    //! \brief Flags for export to a container of properties
+    enum export_config_flags {
+      EXPORT_CONFIG_CLEAR             = datatools::bit_mask::bit00,
+      EXPORT_CONFIG_NAME              = datatools::bit_mask::bit01,
+      EXPORT_CONFIG_DESCRIPTION       = datatools::bit_mask::bit03,
+      EXPORT_CONFIG_VERSION           = datatools::bit_mask::bit04,
+      EXPORT_CONFIG_LOGGING_PRIORITY  = datatools::bit_mask::bit04,
+      EXPORT_CONFIG_DEFAULT =
+      EXPORT_CONFIG_CLEAR |
+      EXPORT_CONFIG_DESCRIPTION |
+      EXPORT_CONFIG_VERSION
+    };
+
+    /** Export to a container of properties
+     */
+    virtual void export_to_config(datatools::properties & config_,
+                                  uint32_t flags_ = EXPORT_CONFIG_DEFAULT,
+                                  const std::string & prefix_ = "") const;
 
     /** The main cut processing method
      * @return the selection status
@@ -277,6 +298,7 @@ namespace cuts {
 
   protected:
 
+    // Configuration parameters:
     datatools::logger::priority _logging; //!< Logging priority threshold
     std::string  _name;          //!< The name of the cut
     std::string  _description;   //!< The description of the cut
@@ -284,10 +306,18 @@ namespace cuts {
 
   private:
 
-    bool _initialized_;  //!< The initialization flag
+    // Status:
+    bool _initialized_; //!< The initialization flag
+
+    // Working data:
     boost::shared_ptr<i_referenced_data> _user_data_; //!< Internal weak (not managed) handle to user data;
     size_t _number_of_accepted_entries_; //!< Number of entries accepted by the cut
     size_t _number_of_rejected_entries_; //!< Number of entries rejected by the cut
+
+  public:
+
+    /// Return the unique type identifier associated to the class of the cut object
+    virtual std::string get_type_id() const = 0;
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut);
@@ -297,13 +327,16 @@ namespace cuts {
 }  // end of namespace cuts
 
 /** Interface macro for automated registration of a cut class in the global register */
-#define CUT_REGISTRATION_INTERFACE(T)                                     \
+#define CUT_REGISTRATION_INTERFACE(T)           \
+  public:                                       \
+  virtual std::string get_type_id() const; \
   private:                                                                \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut, T); \
   /**/
 
 /** Implementation macro for automated registration of a cut class in the global register */
-#define CUT_REGISTRATION_IMPLEMENT(T,CutID)                                           \
+#define CUT_REGISTRATION_IMPLEMENT(T,CutID)               \
+  std::string T::get_type_id() const { return CutID; } \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut, T, CutID); \
   /**/
 

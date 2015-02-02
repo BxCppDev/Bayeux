@@ -1,21 +1,20 @@
-// -*- mode: c++ ; -*-
 // test_cuts.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <cuts/cuts_config.h>
 #include <cuts/version.h>
 
-using namespace std;
-
 int main (int /*argc_*/, char ** /*argv_*/)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
-  try
-    {
+  try {
       clog << "Test program for the 'cuts' program library." << endl;
 
       /*
@@ -58,17 +57,13 @@ int main (int /*argc_*/, char ** /*argv_*/)
 
       clog << "The end." << endl;
     }
-  catch (exception & x)
-    {
+  catch (exception & x) {
       cerr << "error: " << x.what () << endl;
       error_code = EXIT_FAILURE;
     }
-  catch (...)
-    {
+  catch (...) {
       cerr << "error: " << "unexpected error !" << endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
-
-// end of test_cuts.cxx

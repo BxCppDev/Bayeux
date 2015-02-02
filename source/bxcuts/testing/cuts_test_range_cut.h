@@ -72,6 +72,12 @@ namespace cuts {
       virtual void initialize (const datatools::properties &,
                                datatools::service_manager &,
                                cuts::cut_handle_dict_type &);
+
+      /// Export to a container of properties
+      virtual void export_to_config(datatools::properties & config_,
+                                    uint32_t flags_ = i_cut::EXPORT_CONFIG_DEFAULT,
+                                    const std::string & prefix_ = "") const;
+
       // CUT_RESET_DECLARE();
       virtual void reset ();
 

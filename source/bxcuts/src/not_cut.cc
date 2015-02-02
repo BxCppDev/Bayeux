@@ -100,4 +100,13 @@ namespace cuts {
     return;
   }
 
+  void not_cut::export_to_config(datatools::properties & config_,
+                                 uint32_t flags_,
+                                 const std::string & prefix_) const
+  {
+    this->cuts::i_cut::export_to_config(config_,flags_, prefix_);
+    config_.store_string(prefix_ + "cut", _handle.get().get_name(), "Cut to be complemented");
+    return;
+  }
+
 } // end of namespace cuts

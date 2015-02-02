@@ -154,6 +154,23 @@ namespace cuts {
       return;
     }
 
+    void sphere_cut::export_to_config(datatools::properties & config_,
+                                     uint32_t flags_,
+                                     const std::string & prefix_) const
+    {
+      this->cuts::i_cut::export_to_config(config_,flags_, prefix_);
+
+      std::vector<double> center;
+      center.push_back(_x0_);
+      center.push_back(_y0_);
+      center.push_back(_z0_);
+      config_.store(prefix_ + "center", center, "The center of the sphere");
+      config_.store(prefix_ + "radius", _radius_, "The radius of the sphere");
+      config_.store(prefix_ + "reversed", _reversed_, "Reversed flag");
+
+      return;
+    }
+
   } // end of namespace test
 
 } // end of namespace cuts

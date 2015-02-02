@@ -87,6 +87,21 @@ namespace cuts {
     return;
   }
 
+  void i_multi_cut::export_to_config(datatools::properties & config_,
+                                 uint32_t flags_,
+                                 const std::string & prefix_) const
+  {
+    this->cuts::i_cut::export_to_config(config_,flags_, prefix_);
+    std::vector<std::string> cuts_names;
+    for (cuts_col_type::const_iterator i = _cuts.begin();
+         i != _cuts.end();
+         i++) {
+      cuts_names.push_back(i->get().get_name());
+    }
+    config_.store(prefix_ + "cuts", cuts_names, "Cuts to be combined");
+    return;
+  }
+
   void i_multi_cut::reset()
   {
     _set_initialized(false);

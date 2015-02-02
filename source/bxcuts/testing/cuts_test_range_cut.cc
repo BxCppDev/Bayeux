@@ -183,6 +183,28 @@ namespace cuts {
       return;
     }
 
+    void range_cut::export_to_config(datatools::properties & config_,
+                                     uint32_t flags_,
+                                     const std::string & prefix_) const
+    {
+      this->cuts::i_cut::export_to_config(config_,flags_, prefix_);
+
+      std::string mode_str = "black";
+      if (_mode_ == MODE_X) {
+        mode_str = "x";
+      } else if (_mode_ == MODE_Y) {
+        mode_str = "y";
+      } else if (_mode_ == MODE_Z) {
+        mode_str = "z";
+      }
+      config_.store(prefix_ + "mode", mode_str, "The range mode");
+      config_.store(prefix_ + "min", _min_, "The minimum value");
+      config_.store(prefix_ + "max", _max_, "The maximum value");
+      config_.store(prefix_ + "reversed", _reversed_, "Reversed flag");
+
+      return;
+    }
+
   } // end of namespace test
 
 } // end of namespace cuts

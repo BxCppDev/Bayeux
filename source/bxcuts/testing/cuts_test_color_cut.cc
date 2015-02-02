@@ -112,6 +112,26 @@ namespace cuts {
       return;
     }
 
+    void color_cut::export_to_config(datatools::properties & config_,
+                                     uint32_t flags_,
+                                     const std::string & prefix_) const
+    {
+      this->cuts::i_cut::export_to_config(config_,flags_, prefix_);
+
+      std::string color_str = "black";
+      if (_color_ == data::BLACK) {
+        color_str = "black";
+      } else if (_color_ == data::RED) {
+        color_str = "red";
+      } else if (_color_ == data::GREEN) {
+        color_str = "green";
+      } else if (_color_ == data::BLUE) {
+        color_str = "blue";
+      }
+      config_.store(prefix_ + "color", color_str, "The requested color for the selected points");
+      return;
+    }
+
   } // end of namespace test
 
 } // end of namespace cuts

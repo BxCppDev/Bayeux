@@ -65,7 +65,7 @@ namespace cuts {
 
   void cut_entry_type::set_ptr (i_cut * ptr_)
   {
-    _cut_handle_.reset (ptr_);
+    _cut_handle_.reset(ptr_);
     return;
   }
 

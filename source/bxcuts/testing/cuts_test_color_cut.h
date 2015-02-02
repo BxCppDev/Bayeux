@@ -1,5 +1,5 @@
 // -*- mode: c++ ; -*-
-/* cuts_test_color_cut_h
+/* \file cuts_test_color_cut_h
  * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-20
  * Last modified: 2010-09-20
@@ -46,6 +46,11 @@ namespace cuts {
                               datatools::service_manager &,
                               cuts::cut_handle_dict_type &);
 
+      /// Export to a container of properties
+      virtual void export_to_config(datatools::properties & config_,
+                                    uint32_t flags_ = i_cut::EXPORT_CONFIG_DEFAULT,
+                                    const std::string & prefix_ = "") const;
+
       /// Reset
       virtual void reset();
 
@@ -67,5 +72,3 @@ namespace cuts {
 } // end of namespace cuts
 
 #endif // __cuts__test__color_cut_h
-
-// end of cuts_test_color_cut_h

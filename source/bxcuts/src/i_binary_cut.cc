@@ -85,6 +85,18 @@ namespace cuts {
     return;
   }
 
+  void i_binary_cut::export_to_config(datatools::properties & config_,
+                                      uint32_t flags_,
+                                      const std::string & prefix_) const
+  {
+    this->cuts::i_cut::export_to_config(config_,flags_, prefix_);
+    config_.store_string(prefix_ + "cut1", _handle_1.get().get_name(), "First cut to be combined");
+    config_.store_string(prefix_ + "cut2", _handle_2.get().get_name(), "Second cut to be combined");
+
+    return;
+  }
+
+
   void i_binary_cut::reset()
   {
     _set_initialized(false);

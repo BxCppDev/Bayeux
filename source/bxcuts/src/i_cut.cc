@@ -238,7 +238,7 @@ namespace cuts {
     // Logging priority:
     datatools::logger::priority lp
       = datatools::logger::extract_logging_configuration(a_config,
-                                                         datatools::logger::PRIO_FATAL);
+                                                         _logging);
     DT_THROW_IF(lp ==  datatools::logger::PRIO_UNDEFINED,
                 std::logic_error,
                 "Invalid logging priority !");
@@ -290,10 +290,37 @@ namespace cuts {
   }
 
   void i_cut::initialize_without_service (const datatools::properties & a_config,
-                                          cut_handle_dict_type & a_cut_dictionnary)
+                                          cut_handle_dict_type & a_cut_dictionary)
   {
     datatools::service_manager dummy_service_manager;
-    initialize (a_config, dummy_service_manager, a_cut_dictionnary);
+    initialize (a_config, dummy_service_manager, a_cut_dictionary);
+    return;
+  }
+
+  void i_cut::export_to_config(datatools::properties & config_,
+                               uint32_t flags_,
+                               const std::string & prefix_) const
+  {
+    DT_THROW_IF(!is_initialized(), std::logic_error,
+                "Cut '" << get_name() << "' is not initialized!") ;
+
+    if (flags_ & EXPORT_CONFIG_CLEAR) {
+      config_.clear();
+    }
+    if (flags_ & EXPORT_CONFIG_NAME) {
+      config_.store_string(prefix_ + "cut.name", get_name(), "Name");
+    }
+    if (flags_ & EXPORT_CONFIG_DESCRIPTION) {
+      config_.store_string(prefix_ + "cut.description", get_description(), "Description");
+    }
+    if (flags_ & EXPORT_CONFIG_VERSION) {
+      config_.store_string(prefix_ + "cut.version", get_name(), "Version");
+    }
+    if (flags_ & EXPORT_CONFIG_LOGGING_PRIORITY) {
+      config_.store_string(prefix_ + "logging.priority",
+                           datatools::logger::get_priority_label(get_logging_priority()),
+                           "Logging priority threshold");
+    }
     return;
   }
 

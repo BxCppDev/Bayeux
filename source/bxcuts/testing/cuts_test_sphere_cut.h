@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef __cuts__test__sphere_cut_h
-#define __cuts__test__sphere_cut_h 1
+#ifndef CUTS_TEST_SPHERE_CUT_H
+#define CUTS_TEST_SPHERE_CUT_H 1
 
 #include <iostream>
 
@@ -44,23 +44,27 @@ namespace cuts {
     public:
 
       sphere_cut(datatools::logger::priority a_logging_priority =
-            datatools::logger::PRIO_FATAL);
+                 datatools::logger::PRIO_FATAL);
 
       virtual ~sphere_cut();
 
-          /// Initialization
-    virtual void initialize(const datatools::properties &,
-                            datatools::service_manager &,
-                            cuts::cut_handle_dict_type &);
+      /// Initialization
+      virtual void initialize(const datatools::properties &,
+                              datatools::service_manager &,
+                              cuts::cut_handle_dict_type &);
 
-    /// Reset
-    virtual void reset();
+      /// Export to a container of properties
+      virtual void export_to_config(datatools::properties & config_,
+                                    uint32_t flags_ = i_cut::EXPORT_CONFIG_DEFAULT,
+                                    const std::string & prefix_ = "") const;
 
-  protected :
+      /// Reset
+      virtual void reset();
 
-    /// Selection
-    virtual int _accept();
+    protected :
 
+      /// Selection
+      virtual int _accept();
 
     private:
 
@@ -79,6 +83,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__test__sphere_cut_h
-
-// end of cuts_test_sphere_cut_hh
+#endif // CUTS_TEST_SPHERE_CUT_H
