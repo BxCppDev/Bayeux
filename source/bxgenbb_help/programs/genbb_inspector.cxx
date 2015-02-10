@@ -1508,14 +1508,14 @@ void usage (const boost::program_options::options_description & options_,
   out_ << "    --configuration \""
        << "@genbb_help:manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
-  out_ << "    --action \"list\"  \\\n";
+  out_ << "    --action \"list\"  \n";
   out_ << "" << std::endl;
 
   out_ << "  " << APP_NAME << " \\\n";
   out_ << "    --load-dll \"foo\" \\\n";
   out_ << "    --datatools::resource_path \"foo@${FOO_INSTALLATION_DIR}/share/foo-1.0.0/resources\" \\\n";
   out_ << "    --configuration \"@foo:config/event_generation/1.0/manager.conf\" \\\n";
-  out_ << "    --action \"list\"  \\\n";
+  out_ << "    --action \"list\"  \n";
   out_ << "" << std::endl;
 
   out_ << "  " << APP_NAME << "  \\\n";
