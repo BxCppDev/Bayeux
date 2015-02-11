@@ -1116,6 +1116,11 @@ BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties");
 DR_CLASS_INIT(::datatools::properties);
 #endif // Q_MOC_RUN
 
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(datatools::properties::data, 2)
+BOOST_CLASS_VERSION(datatools::properties, 2)
+
 #endif // DATATOOLS_UTILS_PROPERTIES_H
 
 /*

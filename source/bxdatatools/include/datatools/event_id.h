@@ -224,4 +224,8 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::event_i
 // Activate reflection layer for the 'datatools::event_id' class:
 DR_CLASS_INIT(::datatools::event_id);
 
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(datatools::event_id, 1)
+
 #endif // DATATOOLS_EVENT_ID_H

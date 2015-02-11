@@ -52,7 +52,4 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties, archive, ve
 
 } // end of namespace datatools
 
-#include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(datatools::multi_properties, 2)
-
 #endif // DATATOOLS_MULTI_PROPERTIES_IPP

@@ -194,4 +194,8 @@ BOOST_CLASS_EXPORT_KEY2(datatools::enriched_base, "datatools::enriched_base");
 DR_CLASS_INIT(::datatools::enriched_base);
 #endif // Q_MOC_RUN
 
+// Explicit class version:
+// #include <boost/serialization/version.hpp>
+// BOOST_CLASS_VERSION(datatools::enriched_base, 0)
+
 #endif // DATATOOLS_ENRICHED_BASE_H

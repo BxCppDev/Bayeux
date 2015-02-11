@@ -31,7 +31,4 @@ namespace datatools {
   }
 } // end of namespace datatools
 
-// #include <boost/serialization/version.hpp>
-// BOOST_CLASS_VERSION(datatools::enriched_base, 0)
-
 #endif // DATATOOLS_ENRICHED_BASE_IPP

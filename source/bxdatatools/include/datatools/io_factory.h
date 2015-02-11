@@ -296,7 +296,7 @@ class io_factory : public datatools::i_tree_dumpable {
       DT_LOG_WARNING(get_logging_priority(),
                      "Cannot load data from archive: "
                      << "unexpected exception" << "!");
-      DT_THROW_IF(true,std::logic_error,"Internal exception!");
+      DT_THROW(std::runtime_error, "Internal exception!");
     }
 
     if (! *in_fs_) {
@@ -470,7 +470,7 @@ static const bool no_append_mode          = false;
  *
  * int main()
  * {
- *   datatools::data_reader reader ("test.xml");
+ *   datatools::data_reader reader ("test.xml", datatools::using_multi_archives);
  *   datatools::properties setup;
  *   if (reader.has_record_tag () &&
  *       reader.record_tag_is (datatools::properties::SERIAL_TAG))
@@ -672,7 +672,7 @@ class data_reader {
  *
  * int main()
  * {
- *   datatools::data_writer writer ("test.xml");
+ *   datatools::data_writer writer ("test.xml", datatools::using_multi_archives);
  *   datatools::properties setup;
  *   writer.store (setup);
  *   return 0;

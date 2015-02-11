@@ -258,16 +258,16 @@ class things :
   /// Instantiate and add an object of given type id with given name, description and constness flag
   datatools::i_serializable &
   add_entry(const std::string& a_name,
-	    const std::string& a_serial_tag,
-	    const std::string& a_description = "",
-	    bool a_const = false);
+      const std::string& a_serial_tag,
+      const std::string& a_description = "",
+      bool a_const = false);
 
   /// Instantiate and add an object of given type id with given name, description and constness flag (implementation)
   datatools::i_serializable &
   add_entry_impl(const std::string& a_name,
-		 const std::string& a_serial_tag,
-		 const std::string& a_description,
-		 bool a_const);
+     const std::string& a_serial_tag,
+     const std::string& a_description,
+     bool a_const);
 
   /// Check if a stored object with given name has a type with given type id
   bool entry_is_a(const std::string& a_name, const std::string&) const;
@@ -302,9 +302,9 @@ class things :
 
   /// Implementation for adding a object in the container with a given name
   void add_impl(const std::string& a_name,
-		datatools::i_serializable* a_obj,
-		const std::string& a_desc = "",
-		bool a_const = false);
+    datatools::i_serializable* a_obj,
+    const std::string& a_desc = "",
+    bool a_const = false);
 
  private:
 
@@ -337,6 +337,10 @@ BOOST_CLASS_EXPORT_KEY2(datatools::things,"datatools::things");
 
 // Activate reflection layer for the 'datatools::things' class:
 DR_CLASS_NONCOPYABLE_INIT(::datatools::things);
+
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(datatools::things, 1)
 
 #endif // DATATOOLS_THINGS_H
 

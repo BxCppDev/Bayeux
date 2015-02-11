@@ -390,4 +390,8 @@ BOOST_CLASS_EXPORT_KEY2(datatools::multi_properties, "datatools::multi_propertie
 DR_CLASS_INIT(::datatools::multi_properties);
 #endif // Q_MOC_RUN
 
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(datatools::multi_properties, 2)
+
 #endif // DATATOOLS_MULTI_PROPERTIES_H

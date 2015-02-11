@@ -72,8 +72,4 @@ DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties, archive, version)
 
 } // end of namespace datatools
 
-#include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(datatools::properties::data, 2)
-BOOST_CLASS_VERSION(datatools::properties, 2)
-
 #endif // DATATOOLS_PROPERTIES_IPP

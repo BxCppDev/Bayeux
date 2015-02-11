@@ -79,6 +79,10 @@ namespace datatools {
 DR_CLASS_INIT(::datatools::i_serializable);
 #endif // Q_MOC_RUN
 
+// Explicit class version:
+// #include <boost/serialization/version.hpp>
+// BOOST_CLASS_VERSION(datatools::i_serializable, 0)
+
 /******************
  * Helpful macros *
  ******************/
