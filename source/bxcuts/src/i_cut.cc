@@ -326,7 +326,7 @@ namespace cuts {
 
   bool i_cut::has_user_data () const
   {
-    return _user_data_;
+    return _user_data_.get() != 0;
   }
 
   void i_cut::reset_user_data ()
