@@ -15,7 +15,6 @@
 
 namespace mygsl {
 
-  using namespace std;
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(datapoint,"mygsl::datapoint")
 
@@ -23,7 +22,7 @@ namespace mygsl {
   {
     _x_ = 0.0;
     _y_ = 0.0;
-    _sigma_y_ = numeric_limits<double>::quiet_NaN ();
+    _sigma_y_ = std::numeric_limits<double>::quiet_NaN ();
     return;
   }
 
@@ -54,7 +53,7 @@ namespace mygsl {
 
   bool datapoint::has_sigma_y () const
   {
-    return ! isnan (_sigma_y_);
+    return ! std::isnan (_sigma_y_);
   }
 
   bool datapoint::is_weighted () const
@@ -67,7 +66,7 @@ namespace mygsl {
     return _sigma_y_;
   }
 
-  ostream & operator<< (ostream & out_, const datapoint & p_)
+  std::ostream & operator<< (std::ostream & out_, const datapoint & p_)
   {
     out_ << odouble (p_._x_ ) << ' '
          << odouble (p_._y_ ) << ' '
@@ -75,10 +74,10 @@ namespace mygsl {
     return out_;
   }
 
-  istream & operator>> (istream & in_ , datapoint & p_)
+  std::istream & operator>> (std::istream & in_ , datapoint & p_)
   {
-    in_ >> idouble (p_._x_ ) >> ws
-        >> idouble (p_._y_ ) >> ws
+    in_ >> idouble (p_._x_ ) >> std::ws
+        >> idouble (p_._y_ ) >> std::ws
         >> idouble (p_._sigma_y_);
     return in_;
   }
