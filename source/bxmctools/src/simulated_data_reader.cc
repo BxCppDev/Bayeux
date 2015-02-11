@@ -138,7 +138,7 @@ namespace mctools {
 
   bool simulated_data_reader::has_run_header() const
   {
-    return _run_header_;
+    return _run_header_.get() != 0;
   }
 
   const datatools::properties & simulated_data_reader::get_run_header() const
@@ -149,7 +149,7 @@ namespace mctools {
 
   bool simulated_data_reader::has_run_footer() const
   {
-    return _run_footer_;
+    return _run_footer_.get() != 0;
   }
 
   const datatools::properties & simulated_data_reader::get_run_footer() const
