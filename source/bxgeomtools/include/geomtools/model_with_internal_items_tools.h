@@ -95,6 +95,7 @@ namespace geomtools {
 
   };
 
+  // Type alias:
   typedef model_with_internal_items_tools MWIM;
 
 } // end of namespace geomtools

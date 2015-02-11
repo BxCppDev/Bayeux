@@ -1,11 +1,12 @@
-// -*- mode: c++; -*-
 // test_cylinder.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/gnuplot_draw.h>
@@ -13,6 +14,9 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
+
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/temporary_files.h>
 #include <datatools/utils.h>
 

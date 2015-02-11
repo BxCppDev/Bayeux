@@ -12,6 +12,9 @@
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This project:
+#include <geomtools/box.h>
+
 namespace geomtools {
 
   // Registration :
@@ -315,9 +318,24 @@ namespace geomtools {
   {
     if (get_shape1().get_shape().has_bounding_data()) {
       const placement & pl1 = get_shape1().get_placement();
+      box bb1;
+      placement bbpl1;
+      get_shape1().get_shape().get_bounding_data().compute_bounding_box(bb1, bbpl1);
+      std::vector<vector_3d> vv1;
+      bb1.compute_transformed_vertexes(bbpl1, vv1);
+      std::vector<vector_3d> points;
+      points.reserve(vv1.size());
+      for (int i = 0; i < (int) vv1.size(); i++) {
+        vector_3d vtx;
+        pl1.child_to_mother(vv1[i], vtx);
+        points.push_back(vtx);
+      }
+      _grab_bounding_data().make_box_from_points(points);
+      /*
       if (pl1.is_identity()) {
         _grab_bounding_data() = get_shape1().get_shape().get_bounding_data();
       }
+      */
     }
     return;
   }

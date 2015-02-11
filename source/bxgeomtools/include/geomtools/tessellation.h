@@ -38,32 +38,41 @@ namespace geomtools {
   /// \brief A vertex (corner) of a triangle or quadrangle facet in a tessellated solid
   struct facet_vertex
   {
-    vector_3d position; /// Position of the vertex
-    std::map<int32_t, int32_t> ref_facets; /// Collection of facets the vertex
-                                           /// belongs this is a map indexed
-                                           /// by the unique integer key of the
-                                           /// facet and storing the rank of the
-                                           /// vertex in the facet (using
-                                           /// counterclockwise order)
+    vector_3d position; //!< Position of the vertex
+    std::map<int32_t, int32_t> ref_facets; //!< Collection of facets the vertex
+                                           //!< belongs this is a map indexed
+                                           //!< by the unique integer key of the
+                                           //!< facet and storing the rank of the
+                                           //!< vertex in the facet (using
+                                           //!< counterclockwise order)
 
   public:
 
+    /// Check validity
     bool is_valid() const;
 
+    /// Default constructor
     facet_vertex();
 
+    /// Constructor
     facet_vertex(double x_, double y_, double z_);
 
+    /// Print in 'x,y,z[,color]' format (ASCII)
     void print_xyz(std::ostream & out_, int color_ = 0) const;
 
+    /// Simple print
     void print(std::ostream & out_) const;
 
+    /// Add the reference of a facet the vertex is associated to
     void add_ref_facet(int facet_index_, int facet_node_);
 
+    /// Return the position
     const vector_3d & get_position() const;
 
+    /// Reset
     void reset();
 
+    /// Print
     friend std::ostream & operator<<(std::ostream &, const facet_vertex &);
 
   };
@@ -166,14 +175,14 @@ namespace geomtools {
 
   private:
 
-    uint32_t             _number_of_vertices_; /// 3 (triangle) or 4 (quadrangle)
-    const facet_vertex * _vertices_[4]; /// Addresses to the vertices
-    int32_t              _vertices_keys_[4]; /// Key of the vertices
-    geomtools::vector_3d _normal_; /// Normal vector to the surface (counterclockwise)
-    double               _surface_tri_; /// Surface of the triangle or first triangle of the quadrangle
-    double               _surface_tri_bis_; /// Surface of the second triangle of the quadrangle
-    double               _internal_angles_[4]; /// Internal angles per vertex
-    int32_t              _category_; /// Auxiliary integer property
+    uint32_t             _number_of_vertices_; //!< 3 (triangle) or 4 (quadrangle)
+    const facet_vertex * _vertices_[4];        //!< Addresses to the vertices
+    int32_t              _vertices_keys_[4];   //!< Key of the vertices
+    geomtools::vector_3d _normal_;             //!< Normal vector to the surface (counterclockwise)
+    double               _surface_tri_;        //!< Surface of the triangle or first triangle of the quadrangle
+    double               _surface_tri_bis_;    //!< Surface of the second triangle of the quadrangle
+    double               _internal_angles_[4]; //!< Internal angles per vertex
+    int32_t              _category_;           //!< Auxiliary integer property
 
   };
 

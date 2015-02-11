@@ -26,6 +26,9 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(polycone, "geomtools::polycone");
+
   const std::string & polycone::polycone_label()
   {
     static std::string label;

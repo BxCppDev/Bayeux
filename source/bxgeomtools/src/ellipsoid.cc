@@ -126,7 +126,9 @@ namespace geomtools {
 
   void ellipsoid::set_bottom_z_cut(double cut_)
   {
+    DT_THROW_IF(cut_ < 0.0, std::logic_error, "Invalid bottom Z cut!");
     _bottom_z_cut_ = cut_;
+    return;
   }
 
   double ellipsoid::get_top_z_cut() const
@@ -136,7 +138,9 @@ namespace geomtools {
 
   void ellipsoid::set_top_z_cut(double cut_)
   {
-    _top_z_cut_ = cut_;
+   DT_THROW_IF(cut_ < 0.0, std::logic_error, "Invalid top Z cut!");
+   _top_z_cut_ = cut_;
+   return;
   }
 
   void
@@ -282,6 +286,7 @@ namespace geomtools {
     }
 
     set(x_radius, y_radius, z_radius, bottom_z, top_z);
+    lock();
     return;
   }
 
@@ -340,7 +345,7 @@ namespace geomtools {
     if  (flag_ == "z_radius")     return get_z_radius();
     if  (flag_ == "bottom_z_cut") return get_bottom_z_cut();
     if  (flag_ == "top_z_cut")    return get_top_z_cut();
-    if  (flag_ == "surface")      return get_surface (FACE_ALL);
+    if  (flag_ == "surface")      return get_surface(FACE_ALL);
     if  (flag_ == "volume")       return get_volume();
     DT_THROW_IF(true, std::logic_error,"Unknown flag '" << flag_ << "' !");
   }
@@ -370,7 +375,7 @@ namespace geomtools {
                              double /*skin_*/) const
   {
     DT_THROW_IF(true, std::runtime_error, "Not implemented !");
-    intercept_.reset ();
+    intercept_.reset();
     return intercept_.is_ok();
   }
 

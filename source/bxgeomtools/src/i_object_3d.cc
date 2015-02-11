@@ -1,20 +1,25 @@
 /** \file geomtools/i_object_3d.cc */
 
 // Ourselves:
-#include <geomtools/box.h>
+#include <geomtools/i_object_3d.h>
 
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/units.h>
 
+// This project:
+#include <geomtools/i_wires_drawer.h>
+
 namespace geomtools {
 
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_object_3d, "geomtools::i_object_3d/__system__");
 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_object_3d,"geomtools::i_object_3d");
+
   i_object_3d::object_entry::object_entry()
   {
-    status = 0;
+    _status_ = 0;
     return;
   }
 
@@ -26,48 +31,85 @@ namespace geomtools {
 
   void i_object_3d::object_entry::reset()
   {
-    config.clear();
-    hobject.reset();
-    status = 0;
+    _config_.clear();
+    _name_.clear();
+    _type_id_.clear();
+    _hobject_.reset();
+    _status_ = 0;
+    return;
+  }
+
+  void i_object_3d::object_entry::set_name(const std::string & name_)
+  {
+    _name_ = name_;
+    return;
+  }
+
+  const std::string & i_object_3d::object_entry::get_name() const
+  {
+    return _name_;
+  }
+
+  void i_object_3d::object_entry::set_type_id(const std::string & type_id_)
+  {
+    _type_id_ = type_id_;
+    return;
+  }
+
+  const std::string & i_object_3d::object_entry::get_type_id() const
+  {
+    return _type_id_;
+  }
+
+  void i_object_3d::object_entry::set_status(uint32_t s_)
+  {
+    _status_ = s_;
     return;
   }
 
   uint32_t i_object_3d::object_entry::get_status() const
   {
-    return status;
+    return _status_;
+  }
+
+  const datatools::properties & i_object_3d::object_entry::get_config() const
+  {
+    return _config_;
+  }
+
+  datatools::properties & i_object_3d::object_entry::grab_config()
+  {
+    return _config_;
   }
 
   bool i_object_3d::object_entry::has_object() const
   {
-    return hobject.has_data();
+    return _hobject_.has_data();
   }
 
   const i_object_3d & i_object_3d::object_entry::get_object() const
   {
-    return hobject.get();
+    return _hobject_.get();
   }
 
-  datatools::logger::priority i_object_3d::get_logging() const
+  void i_object_3d::object_entry::set_object(i_object_3d * obj_)
   {
-    return _logging;
-  }
-
-  void i_object_3d::set_logging(datatools::logger::priority l_)
-  {
-    _logging = l_;
+    _hobject_.reset(obj_);
     return;
   }
 
-  double i_object_3d::get_tolerance() const
-  {
-    return _tolerance_;
-  }
+  /* i_object_3d */
 
   void i_object_3d::set_tolerance (double tolerance_)
   {
     DT_THROW_IF (tolerance_ <= 0.0, std::logic_error, "Tolerance value '" << tolerance_ << "' must be positive !");
     _tolerance_ = tolerance_;
     return;
+  }
+
+  double i_object_3d::get_tolerance() const
+  {
+    return _tolerance_;
   }
 
   void i_object_3d::set_angular_tolerance (double angular_tolerance_)
@@ -82,26 +124,6 @@ namespace geomtools {
   double i_object_3d::get_angular_tolerance() const
   {
     return _angular_tolerance_;
-  }
-
-  datatools::properties & i_object_3d::grab_properties ()
-  {
-    return _auxiliaries_;
-  }
-
-  const datatools::properties & i_object_3d::get_properties () const
-  {
-    return _auxiliaries_;
-  }
-
-  datatools::properties & i_object_3d::grab_auxiliaries ()
-  {
-    return _auxiliaries_;
-  }
-
-  const datatools::properties & i_object_3d::get_auxiliaries () const
-  {
-    return _auxiliaries_;
   }
 
   bool i_object_3d::is_composite () const
@@ -127,26 +149,51 @@ namespace geomtools {
 
   void i_object_3d::set_defaults()
   {
-    _logging = datatools::logger::PRIO_FATAL;
     _tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE;
     _angular_tolerance_ = GEOMTOOLS_DEFAULT_ANGULAR_TOLERANCE;
     _user_draw_ = 0;
-     return;
+    _wires_drawer_ = 0;
+    return;
+  }
+
+  bool i_object_3d::has_wires_drawer() const
+  {
+    return _wires_drawer_ != 0;
+  }
+
+  void i_object_3d::set_wires_drawer(i_wires_drawer & wires_drawer_)
+  {
+    _wires_drawer_ = &wires_drawer_;
+    return;
+  }
+
+  i_wires_drawer & i_object_3d::grab_wires_drawer()
+  {
+    DT_THROW_IF(!has_wires_drawer(), std::logic_error,
+                "Missing shape wires drawer!");
+    return *_wires_drawer_;
+  }
+
+  const i_wires_drawer & i_object_3d::get_wires_drawer() const
+  {
+    DT_THROW_IF(!has_wires_drawer(), std::logic_error,
+                "Missing shape wires drawer!");
+    return *_wires_drawer_;
   }
 
   i_object_3d::i_object_3d ()
   {
-    this->i_object_3d::set_defaults();
+    set_defaults();
     return;
   }
 
   i_object_3d::i_object_3d (double tolerance_)
   {
-    this->i_object_3d::set_defaults();
+    set_defaults();
     if (tolerance_ <= 0.0) {
       _tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE;
     } else {
-      set_tolerance (tolerance_);
+      set_tolerance(tolerance_);
     }
     return;
   }
@@ -157,26 +204,19 @@ namespace geomtools {
     return;
   }
 
-  void i_object_3d::initialize(const datatools::properties & config_, const handle_dict_type * /* objects_ */)
+  void i_object_3d::initialize(const datatools::properties & config_,
+                               const handle_dict_type * /* objects_ */)
   {
-    datatools::logger::priority p =
-      datatools::logger::extract_logging_configuration(config_,
-                                                       datatools::logger::PRIO_FATAL,
-                                                       true);
-    if (p != datatools::logger::PRIO_UNDEFINED) {
-      set_logging(p);
-    }
-
     double tlunit = CLHEP::micrometer;
-    if (config_.has_key ("tolerance.length_unit")) {
-      const std::string tolerance_length_unit_str = config_.fetch_string ("tolerance.length_unit");
-      tlunit = datatools::units::get_length_unit_from (tolerance_length_unit_str);
+    if (config_.has_key("tolerance.length_unit")) {
+      const std::string tolerance_length_unit_str = config_.fetch_string("tolerance.length_unit");
+      tlunit = datatools::units::get_length_unit_from(tolerance_length_unit_str);
     }
 
     double taunit = CLHEP::degree;
-    if (config_.has_key ("tolerance.angle_unit")) {
-      const std::string tolerance_angle_unit_str = config_.fetch_string ("tolerance.angle_unit");
-      taunit = datatools::units::get_angle_unit_from (tolerance_angle_unit_str);
+    if (config_.has_key("tolerance.angle_unit")) {
+      const std::string tolerance_angle_unit_str = config_.fetch_string("tolerance.angle_unit");
+      taunit = datatools::units::get_angle_unit_from(tolerance_angle_unit_str);
     }
 
     if (config_.has_key("tolerance.length")) {
@@ -195,14 +235,11 @@ namespace geomtools {
       set_angular_tolerance(ta);
     }
 
-    config_.export_starting_with(_auxiliaries_, "aux.");
-
     return;
   }
 
   void i_object_3d::reset ()
   {
-    _auxiliaries_.clear();
     this->i_object_3d::set_defaults();
     return;
   }
@@ -212,47 +249,31 @@ namespace geomtools {
                               const std::string & indent_,
                               bool inherit_) const
   {
-    std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) {
-      out_ << indent << title_ << std::endl;
+    if (! title_.empty()) {
+      out_ << indent_ << title_ << std::endl;
     }
-    out_ << indent << datatools::i_tree_dumpable::tag
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Shape name : \"" << get_shape_name () << "\"" << std::endl;
-
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Logging priority : \"" << datatools::logger::get_priority_label(get_logging()) << "\"" << std::endl;
-
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Tolerance  = " << _tolerance_ / CLHEP::mm << " mm" << std::endl;
-
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Angular tolerance  = " << _angular_tolerance_ / CLHEP::radian << " radian" << std::endl;
-
     {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Auxiliary properties : ";
-      if ( _auxiliaries_.size () == 0) {
-        out_ << "<empty>";
-      }
-      out_ << std::endl;
-      {
-        std::ostringstream indent_oss;
-        indent_oss << indent;
-        indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _auxiliaries_.tree_dump (out_,"",indent_oss.str ());
-      }
-    }
-
-    {
-      out_ << indent << datatools::i_tree_dumpable::tag
+      out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Dimensionality : " << get_dimensional() <<  std::endl;
     }
 
-    {
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << "User draw : " << (has_user_draw() ? "Yes": "No") << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Tolerance  = " << _tolerance_ / CLHEP::mm << " mm" << std::endl;
 
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Angular tolerance  = " << _angular_tolerance_ / CLHEP::radian << " radian" << std::endl;
+
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Wires drawer : " << (has_wires_drawer() ? "Yes": "No") << std::endl;
+    }
+
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "User draw : " << (has_user_draw() ? "Yes": "No") << std::endl;
     }
 
     return;
@@ -261,8 +282,6 @@ namespace geomtools {
   // static
   void i_object_3d::init_ocd(datatools::object_configuration_description & ocd_)
   {
-
-    datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "");
 
     {
       datatools::configuration_property_description & cpd
@@ -336,15 +355,13 @@ namespace geomtools {
         ;
     }
 
-    /// "aux.*"
-
     return;
   }
 
   /* Object 3D getter interface */
 
   const i_object_3d *
-  i_object_3d::i_getter::get (const std::string & name_)
+  i_object_3d::i_getter::get(const std::string & name_)
   {
     datatools::properties params;
     return get(name_, params);

@@ -474,8 +474,7 @@ namespace geomtools {
       z *= lunit;
     }
     set(x_radius, y_radius, z);
-
-    this->i_shape_3d::reset();
+    lock();
     return;
   }
 

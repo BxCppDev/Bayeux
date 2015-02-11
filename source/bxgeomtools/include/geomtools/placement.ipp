@@ -29,16 +29,13 @@ namespace geomtools {
     ar_ & BOOST_SERIALIZATION_BASE_OBJECT_NVP (i_placement);
     ar_ & boost::serialization::make_nvp ("translation",    _translation_);
     ar_ & boost::serialization::make_nvp ("rotation_axis",  _rotation_axis_);
-    if (is_simple_rotation ())
-      {
+    if (is_simple_rotation()) {
         ar_ & boost::serialization::make_nvp ("rotation_angle", _rotation_angle_);
-      }
-    else
-      {
-        ar_ & boost::serialization::make_nvp ("phi",   _phi_);
-        ar_ & boost::serialization::make_nvp ("theta", _theta_);
-        ar_ & boost::serialization::make_nvp ("delta", _delta_);
-      }
+    } else {
+      ar_ & boost::serialization::make_nvp ("phi",   _phi_);
+      ar_ & boost::serialization::make_nvp ("theta", _theta_);
+      ar_ & boost::serialization::make_nvp ("delta", _delta_);
+    }
     ar_ & boost::serialization::make_nvp ("rotation", _rotation_);
     ar_ & boost::serialization::make_nvp ("inverse_rotation", _inverse_rotation_);
     return;

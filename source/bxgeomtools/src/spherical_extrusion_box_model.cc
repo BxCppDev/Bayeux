@@ -15,6 +15,9 @@
 #include <datatools/utils.h>
 #include <datatools/units.h>
 
+// This project:
+#include <geomtools/gnuplot_draw.h>
+
 namespace geomtools {
 
   // registration :
@@ -35,20 +38,19 @@ namespace geomtools {
     return _solid_;
   }
 
-  // ctor:
-  spherical_extrusion_box_model::spherical_extrusion_box_model () : i_model ("spherical_extrusion_box_model")
+  spherical_extrusion_box_model::spherical_extrusion_box_model () : i_model("spherical_extrusion_box_model")
   {
     _material_ = "";
     _bottom_ = false;
-    datatools::invalidate (_x_);
-    datatools::invalidate (_y_);
-    datatools::invalidate (_z_);
-    datatools::invalidate (_r_extrusion_);
-    datatools::invalidate (_r_sphere_);
+    datatools::invalidate(_x_);
+    datatools::invalidate(_y_);
+    datatools::invalidate(_z_);
+    datatools::invalidate(_r_extrusion_);
+    datatools::invalidate(_r_sphere_);
+    datatools::invalidate(_h_);
     return;
   }
 
-  // dtor:
   spherical_extrusion_box_model::~spherical_extrusion_box_model ()
   {
     return;
@@ -59,7 +61,6 @@ namespace geomtools {
                                                      geomtools::models_col_type * /*models_*/)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    //set_name (name_);
 
     /*** parse properties ***/
 
@@ -124,7 +125,7 @@ namespace geomtools {
                                 - _r_extrusion_ * _r_extrusion_);
     const double c = _r_sphere_ - a;
     DT_THROW_IF (c > _z_, std::logic_error, "Mother box is not long enough (Z ) to host the extrusion in spherical extrusion box model '" << name_ << "' !");
-    const double h = _z_ - c;
+    _h_ = _z_ - c;
     double zsphere = 0.5 * _z_ + a;
     if (_bottom_) zsphere *= -1;
     DT_LOG_TRACE (get_logging_priority (), "x       =" << x / CLHEP::mm << " mm");
@@ -132,15 +133,12 @@ namespace geomtools {
     DT_LOG_TRACE (get_logging_priority (), "z       =" << z / CLHEP::mm << " mm");
     DT_LOG_TRACE (get_logging_priority (), "re      =" << re / CLHEP::mm << " mm");
     DT_LOG_TRACE (get_logging_priority (), "rs      =" << rs / CLHEP::mm << " mm");
-    DT_LOG_TRACE (get_logging_priority (), "h       =" << h / CLHEP::mm << " mm");
+    DT_LOG_TRACE (get_logging_priority (), "h       =" << _h_ / CLHEP::mm << " mm");
     DT_LOG_TRACE (get_logging_priority (), "zsphere =" << zsphere / CLHEP::mm << " mm");
 
     const geomtools::placement sphere_extrusion_placement (0, 0, zsphere, 0, 0, 0);
     _solid_.set_shapes (_mother_, _extrusion_, sphere_extrusion_placement);
-    _solid_.grab_properties ().store ("h", h);
-    if (_bottom_) {
-      _solid_.grab_properties ().store_flag ("bottom");
-    }
+
     // Install proposed 'stackable data' pointer in the shape:
     {
       geomtools::stackable_data * sd_ptr = new geomtools::stackable_data;
@@ -156,13 +154,15 @@ namespace geomtools {
         sd_ptr->zmax = +0.5 * z;
       }
       _solid_.set_stackable_data (sd_ptr);
-      DT_LOG_TRACE (get_logging_priority (), "Stackabel data:");
+      DT_LOG_TRACE (get_logging_priority (), "Stackable data:");
       if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
         sd_ptr->tree_dump (std::cerr);
       }
     }
 
-    _solid_.set_user_draw ((void *) &spherical_extrusion_box_model::gnuplot_draw_user_function);
+    // Install a dedicated drawer:
+    _drawer_.reset(new wires_drawer(*this, _h_, _bottom_));
+    _solid_.set_wires_drawer(*_drawer_);
     _solid_.lock();
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
@@ -172,8 +172,6 @@ namespace geomtools {
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
-
-  /*** dump ***/
 
   void spherical_extrusion_box_model::tree_dump (std::ostream & out_,
                                                  const std::string & title_,
@@ -229,50 +227,55 @@ namespace geomtools {
     return;
   }
 
-  void spherical_extrusion_box_model::gnuplot_draw_user_function (std::ostream & out_,
-                                                                  const geomtools::vector_3d & position_,
-                                                                  const geomtools::rotation_3d & rotation_,
-                                                                  const geomtools::i_object_3d & obj_,
-                                                                  void *)
+  spherical_extrusion_box_model::wires_drawer::wires_drawer(const spherical_extrusion_box_model & model_,
+                                                            double h_,
+                                                            bool bottom_)
+  {
+    _model_ = &model_;
+    _h_ = h_;
+    _bottom_ = bottom_;
+    return;
+  }
+
+  spherical_extrusion_box_model::wires_drawer::~wires_drawer()
+  {
+    return;
+  }
+
+  void spherical_extrusion_box_model::wires_drawer::generate_wires(std::ostream & out_,
+                                                                   const geomtools::vector_3d & position_,
+                                                                   const geomtools::rotation_3d & rotation_)
   {
     datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
-    const geomtools::subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
-    DT_THROW_IF (solid == 0, std::logic_error,
-                 "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !");
-    const geomtools::i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
-    const geomtools::i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
+    const geomtools::subtraction_3d & solid = _model_->get_solid();
+    const geomtools::i_composite_shape_3d::shape_type & s1 = solid.get_shape1 ();
+    const geomtools::i_composite_shape_3d::shape_type & s2 = solid.get_shape2 ();
     const geomtools::i_shape_3d & sh1 = s1.get_shape ();
     const geomtools::i_shape_3d & sh2 = s2.get_shape ();
 
     // extract useful stuff (shapes and properties):
     const geomtools::box & mother_box = dynamic_cast<const geomtools::box &> (sh1);
     const geomtools::sphere & extrusion_sphere = dynamic_cast<const geomtools::sphere &> (sh2);
-    bool bottom = false;
-    if (solid->get_properties ().has_flag ("bottom"))
-      {
-        bottom = true;
-      }
-    DT_THROW_IF (! solid->get_properties ().has_key ("h"), std::logic_error, "Missing 'h' property in the shape !");
-    const double h = solid->get_properties ().fetch_real ("h");
+    bool bottom = _bottom_;
+    const double h = _h_;
 
     const bool draw_mother = true;
-    if (draw_mother)
-      {
-        // draw first shape:
-        geomtools::placement mother_world_placement;
-        mother_world_placement.set_translation (position_);
-        mother_world_placement.set_orientation (rotation_);
+    if (draw_mother) {
+      // draw first shape:
+      geomtools::placement mother_world_placement;
+      mother_world_placement.set_translation (position_);
+      mother_world_placement.set_orientation (rotation_);
 
-        geomtools::placement world_item_placement;
-        mother_world_placement.child_to_mother (s1.get_placement (),
-                                                world_item_placement);
-        const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation ();
-        const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-        geomtools::gnuplot_draw::draw_box (out_,
-                                           sh1_pos,
-                                           sh1_rot,
-                                           mother_box);
-      }
+      geomtools::placement world_item_placement;
+      mother_world_placement.child_to_mother (s1.get_placement (),
+                                              world_item_placement);
+      const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation ();
+      const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation ();
+      geomtools::gnuplot_draw::draw_box (out_,
+                                         sh1_pos,
+                                         sh1_rot,
+                                         mother_box);
+    }
 
     const double zcyl = mother_box.get_z ();
     const double c = zcyl - h;

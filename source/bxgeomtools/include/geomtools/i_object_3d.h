@@ -26,10 +26,10 @@
 
 // Third party:
 // - Bayeux/datatools:
-#include <datatools/i_tree_dump.h>
-#include <datatools/logger.h>
 #include <datatools/ocd_macros.h>
 #include <datatools/handle.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/i_serializable.h>
 
 // This project:
 #include <geomtools/utils.h>
@@ -43,32 +43,37 @@ namespace geomtools {
 
   // Forward declaration:
   class box;
+  class i_wires_drawer;
 
   /// \brief Mother abstract class for all 3D object classes
-  class i_object_3d : public datatools::i_tree_dumpable
+  class i_object_3d :
+    DATATOOLS_SERIALIZABLE_CLASS ,
+    public datatools::i_tree_dumpable
   {
   public:
 
     /// \brief Known dimensions
     enum dimensional_type {
-      DIMENSIONAL_0 = 0, // No dimension object (example: a vertex)
-      DIMENSIONAL_1 = 1, // One dimension object (example: a segment)
-      DIMENSIONAL_2 = 2, // Two dimension object (example: a rectangle)
-      DIMENSIONAL_3 = 3  // Three dimension object (example: a box)
+      DIMENSIONAL_0 = 0, //!< No dimension object (example: a vertex)
+      DIMENSIONAL_1 = 1, //!< One dimension object (example: a segment)
+      DIMENSIONAL_2 = 2, //!< Two dimension object (example: a rectangle)
+      DIMENSIONAL_3 = 3  //!< Three dimension object (example: a box)
     };
 
     /// \brief Surface bits
     enum surface_bits {
-      NO_SURFACES  = 0,            // No surface/side/facet
-      ALL_SURFACES = FACE_ALL_BITS // All surfaces/sides/facets
+      NO_SURFACES  = 0,            //!< No surface/side/facet
+      ALL_SURFACES = FACE_ALL_BITS //!< All surfaces/sides/facets
     };
 
     /// A handle to a 3D object
     typedef datatools::handle<i_object_3d> handle_type;
 
     /// \brief An entry that stores a 3D object
-    struct object_entry
+    class object_entry
     {
+    public:
+
       /// Default constructor
       object_entry();
 
@@ -78,35 +83,72 @@ namespace geomtools {
       /// Reset
       void reset();
 
+      /// Set the name
+      void set_name(const std::string &);
+
+      /// Return the name of the object
+      const std::string & get_name() const;
+
+      /// Set the type identifier of the object
+      void set_type_id(const std::string & type_id_);
+
+      /// Return the type identifier of the object
+      const std::string & get_type_id() const;
+
+      /// Set status
+      void set_status(uint32_t);
+
+      /// Return status
       uint32_t get_status() const;
 
+      /// Return the reference to the configuration
+      const datatools::properties & get_config() const;
+
+      /// Return the reference to the configuration
+      datatools::properties & grab_config();
+
+      /// Check object
       bool has_object() const;
 
+      /// Return the reference to the object
       const i_object_3d & get_object() const;
 
-      uint32_t              status;  //!< Status of the entry
-      datatools::properties config;  //!< Configuration of the entry
-      handle_type           hobject; //!< Handle to the 3D-object (is created)
+      /// Set object handle
+      void set_object(i_object_3d *);
+
+    private:
+
+      std::string           _name_;    //!< Object name
+      std::string           _type_id_; //!< Object type identifier
+      uint32_t              _status_;  //!< Status of the entry
+      datatools::properties _config_;  //!< Configuration of the entry
+      handle_type           _hobject_; //!< Handle to the 3D-object (if created)
 
     };
 
     /// Dictionary of handle of 3D object entries
     typedef std::map<std::string, object_entry> handle_dict_type;
 
-    /// Return the logging priority threshold
-    datatools::logger::priority get_logging() const;
-
-    /// Set the logging priority threshold
-    void set_logging(datatools::logger::priority);
-
-    /// Check is a user draw function is available
+    /// @deprecated Check is a user draw function is available
     bool has_user_draw() const;
 
-    /// Set a user draw function
+    /// @deprecated Set a user draw function
     void set_user_draw(void * user_draw_);
 
-    /// Get the address of a draw function
+    /// @deprecated Get the address of a draw function
     void * get_user_draw() const;
+
+    /// Check is a wires drawer is available
+    bool has_wires_drawer() const;
+
+    /// Set a wires drawer
+    void set_wires_drawer(i_wires_drawer & wires_drawer_);
+
+    /// Return a wires drawer
+    i_wires_drawer & grab_wires_drawer();
+
+    /// Return a wires drawer
+    const i_wires_drawer & get_wires_drawer() const;
 
     /// Return the dimension of the object
     virtual int get_dimensional() const = 0;
@@ -122,18 +164,6 @@ namespace geomtools {
 
     /// Set the angular tolerance
     void set_angular_tolerance(double tolerance_);
-
-    /// @deprecated Use grab_properties()
-    datatools::properties & grab_properties();
-
-    /// @deprecated Use get_properties()
-    const datatools::properties & get_properties() const;
-
-    /// Return mutable auxiliary properties
-    datatools::properties & grab_auxiliaries();
-
-    /// Return const auxiliary properties
-    const datatools::properties & get_auxiliaries() const;
 
     /// Return the name of the shape
     virtual std::string get_shape_name() const = 0;
@@ -170,14 +200,18 @@ namespace geomtools {
     /// Set default values for attributes
     void set_defaults();
 
-    datatools::logger::priority _logging;      //!< Logging priprity threshold
-
   private:
 
-    double                _tolerance_;         //!< Length tolerance to check surface/curve belonging
-    double                _angular_tolerance_; //!< Angular tolerance to check surface/curve belonging
-    datatools::properties _auxiliaries_;       //!< List of internal auxiliary properties
-    void *                _user_draw_;         //!< An address that may point to some drawing function (may be used by the gnuplot renderer)
+    // Parameters:
+    double _tolerance_;         //!< Length tolerance to check surface/curve belonging
+    double _angular_tolerance_; //!< Angular tolerance to check surface/curve belonging
+
+    // Work:
+    void * _user_draw_;         //!< @deprecated An address that may point to some drawing function (may be used by the gnuplot renderer)
+    i_wires_drawer * _wires_drawer_; //!< The handle on an external wires drawer object (may be used by the gnuplot renderer)
+
+    // Serialization interface
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_object_3d);
@@ -208,5 +242,11 @@ namespace geomtools {
 #define GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ModelClassName,ModelClassId) \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::i_object_3d,ModelClassName,ModelClassId); \
   /**/
+
+/*
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::i_object_3d, 0)
+*/
 
 #endif // GEOMTOOLS_I_OBJECT_3D_H

@@ -228,8 +228,9 @@ namespace geomtools {
     }
 
     DT_THROW_IF (! factory_.is_locked (), std::logic_error, "Factory is not locked !");
-
     _factory_ = &factory_;
+
+    // Find the 'mother' model:
     models_col_type::const_iterator found
       = _factory_->get_models ().find (mother_);
     DT_THROW_IF (found == _factory_->get_models ().end (), std::logic_error,

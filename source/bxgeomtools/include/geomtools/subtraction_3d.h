@@ -21,6 +21,7 @@
 
 namespace geomtools {
 
+  //! \brief Subtraction of two 3D shapes
   class subtraction_3d : public i_composite_shape_3d
   {
   public:

@@ -3,10 +3,13 @@
 // Ourselves:
 #include <geomtools/i_shape_2d.h>
 
-/// - Bayeux/datatools
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 
 namespace geomtools {
+
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_2d,"geomtools::i_shape_2d");
 
   using namespace std;
 

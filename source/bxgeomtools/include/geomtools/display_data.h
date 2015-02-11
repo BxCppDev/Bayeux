@@ -183,4 +183,9 @@ namespace geomtools {
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::display_data, "geomtools::display_data")
 
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::display_data::display_item, 1)
+BOOST_CLASS_VERSION(geomtools::display_data, 1)
+
 #endif // GEOMTOOLS_DISPLAY_DATA_H

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* manager.cc
  *
  * Copyright 2007-2013 F. Mauger
@@ -403,6 +402,16 @@ namespace geomtools {
     return _initialized_;
   }
 
+  const geomtools::shape_factory & manager::get_shape_factory () const
+  {
+    return _shape_factory_;
+  }
+
+  geomtools::shape_factory & manager::grab_shape_factory ()
+  {
+    return _shape_factory_;
+  }
+
   const geomtools::model_factory & manager::get_factory () const
   {
     return _factory_;
@@ -461,11 +470,6 @@ namespace geomtools {
     return _mapping_;
   }
 
-  // geomtools::mapping & manager::grab_mapping ()
-  // {
-  //   return _mapping_;
-  // }
-
   void manager::set_mapping_requested (bool a_)
   {
     _mapping_requested_ = a_;
@@ -493,7 +497,7 @@ namespace geomtools {
     return;
   }
 
-  void manager::set_services (datatools::service_dict_type & services_)
+  void manager::set_services(datatools::service_dict_type & services_)
   {
     DT_THROW_IF (_initialized_,
                  std::logic_error,
@@ -508,7 +512,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   manager::manager ()
   {
     _logging            = datatools::logger::PRIO_WARNING;
@@ -521,31 +524,30 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
-  manager::~manager ()
+  manager::~manager()
   {
     if (_initialized_) {
       reset();
     }
-    clear_plugins ();
-    reset_services ();
+    clear_plugins();
+    reset_services();
     return;
   }
 
   void manager::init (const datatools::properties & config_)
   {
-    this->initialize (config_);
+    this->initialize(config_);
     return;
   }
 
   void manager::initialize (const datatools::properties & config_)
   {
-    DT_THROW_IF (_initialized_,
-                 std::logic_error,
-                 "Geometry manager is already initialized !");
-    _pre_init (config_);
-    _at_init_ (config_);
-    _post_init (config_);
+    DT_THROW_IF(_initialized_,
+                std::logic_error,
+                "Geometry manager is already initialized !");
+    _pre_init(config_);
+    _at_init_(config_);
+    _post_init(config_);
     _initialized_ = true;
     return;
   }
@@ -555,8 +557,9 @@ namespace geomtools {
     DT_THROW_IF (! _initialized_,
                  std::logic_error,
                  "Geometry manager is not initialized ! Cannot reset !");
-    _factory_.reset ();
-    _id_manager_.reset ();
+    _factory_.reset();
+    _shape_factory_.reset();
+    _id_manager_.reset();
     _initialized_ = false;
     return;
   }
@@ -592,7 +595,7 @@ namespace geomtools {
     std::string factory_geom_list;
     std::vector<std::string> factory_geom_files;
     std::vector<std::string> factory_preserved_property_prefixes;
-    std::string categories_list;
+    std::vector<std::string> categories_lists;
 
     if (setup_label.empty()) {
       DT_THROW_IF (! config_.has_key ("setup_label"),
@@ -642,8 +645,18 @@ namespace geomtools {
     }
 
     if (config_.has_key ("id_mgr.categories_list")) {
-      categories_list = config_.fetch_string ("id_mgr.categories_list");
+      std::string categories_list = config_.fetch_string("id_mgr.categories_list");
+      categories_lists.push_back(categories_list);
+    } else if (config_.has_key ("id_mgr.categories_lists")) {
+      config_.fetch("id_mgr.categories_lists", categories_lists);
     }
+
+    // Initialize the shape factory:
+    datatools::properties shape_factory_config;
+    config_.export_and_rename_starting_with(shape_factory_config,
+                                            "shape_factory.",
+                                            "");
+    _shape_factory_.initialize(shape_factory_config);
 
     if (config_.has_key ("factory.logging.priority")) {
       const std::string factory_priority = config_.fetch_string ("factory.logging.priority");
@@ -653,6 +666,9 @@ namespace geomtools {
                    "Invalid logging priority label '" << factory_priority << "' !");
       _factory_.set_logging_priority (lp);
     }
+
+    // Pass the shape factory to the model factory:
+    _factory_.set_shape_factory(_shape_factory_);
 
     if (config_.has_key ("factory.geom_list")) {
       factory_geom_list = config_.fetch_string ("factory.geom_list");
@@ -673,6 +689,22 @@ namespace geomtools {
 
     if (config_.has_flag ("build_mapping")) {
       set_mapping_requested (true);
+    }
+
+    if (is_mapping_requested()) {
+      if (config_.has_key ("external_mapping_rules")) {
+        // List of files where to find external mapping rules associated to geometry models:
+        std::vector<std::string> mapping_rules_files;
+        config_.fetch("external_mapping_rules", mapping_rules_files);
+        _external_mapping_rules_.set_key_label("model");
+        _external_mapping_rules_.set_meta_label("policy");
+        for (size_t i = 0; i < mapping_rules_files.size(); i++) {
+          std::string mrfile = mapping_rules_files[i];
+          datatools::fetch_path_with_env(mrfile);
+          _external_mapping_rules_.read(mrfile);
+        }
+        // _external_mapping_rules_.tree_dump(std::cerr, "Mapping rules: ", "DEVEL: ");
+      }
     }
 
     DT_LOG_DEBUG(_logging, "Properties are parsed...");
@@ -728,12 +760,12 @@ namespace geomtools {
     }
 
     if (! factory_geom_list.empty ()) {
-      _factory_.load_geom_list (factory_geom_list);
+      _factory_.load_geom_list(factory_geom_list);
     }
 
     for (std::vector<std::string>::const_iterator i
-           = factory_geom_files.begin ();
-         i != factory_geom_files.end ();
+           = factory_geom_files.begin();
+         i != factory_geom_files.end();
          i++) {
       std::string geom_filename = *i;
       datatools::fetch_path_with_env (geom_filename);
@@ -744,27 +776,82 @@ namespace geomtools {
                     "Models were loaded from file '" << geom_filename << "'.");
     }
 
-    _factory_.lock ();
-    DT_THROW_IF(_factory_.get_models().size() == 0,
-                std::logic_error,
-                "No geometry model was constructed for the geometry setup '"
-                << _setup_label_ << "' !");
-    DT_LOG_DEBUG(_logging,"Geometry manager's model factory : ");
-    if (_factory_.get_logging_priority () == datatools::logger::PRIO_DEBUG)
-      {
+    if (is_mapping_requested()) {
+      // Push external mapping rules in geometry models configuration section:
+      if (! _external_mapping_rules_.empty()) {
+        DT_LOG_NOTICE(_logging, "Loading external mapping rules...");
+        std::vector<std::string> model_names;
+        _external_mapping_rules_.keys(model_names);
+        datatools::multi_properties & factory_mp = _factory_.grab_mp();
+        for (int i = 0; i < (int) model_names.size(); i++) {
+          const std::string & model_name = model_names[i];
+          const datatools::multi_properties::entry & model_mapping_entry = _external_mapping_rules_.get(model_name);
+          std::string model_mapping_policy = model_mapping_entry.get_meta();
+          if (model_mapping_policy == "merge") {
+             DT_THROW(std::logic_error, "Policy ('" << model_mapping_policy << "') for external mapping rules is not supported yet!");
+          } else if (model_mapping_policy == "ignore") {
+             DT_THROW(std::logic_error, "Policy ('" << model_mapping_policy << "') for external mapping rules is not supported yet!");
+          } else if (model_mapping_policy == "supersede") {
+          } else if (model_mapping_policy.empty()) {
+            // Default value:
+            model_mapping_policy = "supersede";
+          } else {
+            DT_THROW(std::logic_error, "Unknown policy ('" << model_mapping_policy << "') for external mapping rules!");
+          }
+          const datatools::properties & model_mapping_rules = _external_mapping_rules_.get_section(model_name);
+          // model_mapping_rules.tree_dump(std::cerr,
+          //                               std::string("External mapping rules for geometry model '") + model_name + "': ",
+          //                               "DEVEL: ");
+          if (factory_mp.has_section(model_name)) {
+            datatools::properties & factory_model_section = factory_mp.grab_section(model_name);
+            if (model_mapping_policy == "supersede") {
+              // First delete former 'mapping' properties:
+              factory_model_section.erase_all_starting_with(mapping::constants::instance().MAPPING_PREFIX);
+            }
+            // Then install the ones for external mapping rules:
+            model_mapping_rules.export_starting_with(factory_model_section,
+                                                     mapping::constants::instance().MAPPING_PREFIX);
+            /*
+            // What to do with "ignore" and "merge" policy:
+            if (model_mapping_policy == "ignore") {
+              model_mapping_rules.export_starting_with(factory_model_section,
+              mapping::constants::instance().MAPPING_PREFIX);
+            }
+            if (model_mapping_policy == "merge") {
+            }
+            */
+            DT_LOG_NOTICE(_logging, "Geometry model '" << model_name << "' is now enriched with external mapping rules...");
+          } else {
+            DT_LOG_WARNING(_logging, "Ignoring external mapping rule for non-existing model '" << model_name << "'!");
+          }
+        }
+      }
+    }
+
+    {
+      // Build the geometry models:
+      _factory_.lock();
+      DT_THROW_IF(_factory_.get_models().size() == 0,
+                  std::logic_error,
+                  "No geometry model was constructed for the geometry setup '"
+                  << _setup_label_ << "' !");
+      DT_LOG_DEBUG(_logging,"Geometry manager's model factory : ");
+      if (_factory_.get_logging_priority () == datatools::logger::PRIO_DEBUG) {
         DT_LOG_DEBUG (datatools::logger::PRIO_DEBUG,
                       "Geometry model factory:");
         _factory_.tree_dump(std::clog);
       }
+    }
 
     /*********************************************
      * Initialization of the geometry ID manager *
      *********************************************/
     DT_LOG_NOTICE(_logging, "Initialization of the geometry ID manager...");
 
-    if (! categories_list.empty()) {
-      datatools::fetch_path_with_env (categories_list);
-      _id_manager_.load (categories_list);
+    for (int i = 0; i < categories_lists.size(); i++) {
+      std::string categories_list = categories_lists[i];
+      datatools::fetch_path_with_env(categories_list);
+      _id_manager_.load(categories_list);
     }
     if (_id_manager_.get_logging_priority () == datatools::logger::PRIO_DEBUG) {
       DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,
@@ -811,11 +898,11 @@ namespace geomtools {
   {
     if (! is_mapping_available ()) {
       set_mapping_requested (true);
-      _mapping_.set_id_manager (_id_manager_);
+      _mapping_.set_id_manager(_id_manager_);
       DT_LOG_NOTICE(_logging, "Configuring mapping...");
-      _mapping_.initialize (mapping_config_);
+      _mapping_.initialize(mapping_config_);
       DT_LOG_NOTICE(_logging, "Building general mapping... please wait...");
-      _mapping_.build_from (_factory_, _world_name_);
+      _mapping_.build_from(_factory_, _world_name_);
       DT_LOG_NOTICE(_logging, "General mapping has been built.");
     }
     return;
@@ -1081,7 +1168,17 @@ namespace geomtools {
         << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-          << "Model factory : "
+         << "Shape factory : "
+         << " " << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::skip_tag
+         << datatools::i_tree_dumpable::last_tag
+         << "Number of shapes  : "
+         << _shape_factory_.get_shapes().size()
+         << " " << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Model factory : "
          << " " << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::skip_tag
@@ -1709,6 +1806,31 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("id_mgr.categories_list")
+      .set_terse_description("A unique configuration file that defines geometry categories")
+      .set_traits(datatools::TYPE_STRING)
+      .set_path(true)
+      .set_mandatory(false)
+      .set_deprecated(false, "See the 'id_mgr.categories_lists' configuration property")
+      .set_long_description(
+                            "A unique filename from where the geometry categories         \n"
+                            "used by the geometry ID manager are defined.                 \n"
+                            "                                                             \n"
+                            "The target file must use the format of the                   \n"
+                            "``datatools::multi_properties`` class.                       \n"
+                            "See OCD support for ``geomtools::id_mgr`` for further        \n"
+                            "informations about the configuration of geometry categories. \n"
+                            )
+      .add_example("Use a single file to describe the geometry categories::      \n"
+                   "                                                             \n"
+                   "    id_mgr.categories_list : string as path = \\             \n"
+                   "      \"${CONFIG_REPOSITORY_DIR}/geom/geom_categories.lis\"  \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("id_mgr.categories_lists")
       .set_terse_description("A list of configuration files that define geometry categories")
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
@@ -1726,14 +1848,14 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                             "See OCD support for ``geomtools::id_mgr`` for further        \n"
                             "informations about the configuration of geometry categories. \n"
                             )
-      .add_example("Use a single file to describe the geometry categories::      \n"
-                   "                                                             \n"
-                   "    id_mgr.categories_list : string[1] as path = \\          \n"
-                   "      \"${CONFIG_REPOSITORY_DIR}/geom/geom_categories.lis\"  \n"
+      .add_example("Use two files to describe the geometry categories::                \n"
+                   "                                                                   \n"
+                   "    id_mgr.categories_lists : string[2] as path = \\               \n"
+                   "      \"${CONFIG_REPOSITORY_DIR}/geom/tracker_categories.lis\" \\  \n"
+                   "      \"${CONFIG_REPOSITORY_DIR}/geom/calorimeter_categories.lis\" \n"
                    )
       ;
   }
-
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -1748,7 +1870,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                             "Each *geometry information* object describes an unique geometry      \n"
                             "volume (placement, shape, auxiliary properties...), being            \n"
                             "unambiguously associated to an unique key : the *geometry ID*        \n"
-                            "(GID, ``geomtools::geom_id`` class).                                 \n"
+                            "(GID, see the ``geomtools::geom_id`` class).                         \n"
                             "                                                                     \n"
                             "All properties starting with the ``\"mapping.\"`` prefix are then    \n"
                             "transmitted to initialize the embedded 'mapping' object.             \n"
@@ -1814,8 +1936,26 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
 
   ocd_.set_configuration_hints("A geometry manager is configured through a configuration file that  \n"
                                "uses the format of 'datatools::properties' setup file.              \n"
-                               "Example : to be done.                                               \n"
-                               );
+                               "Example: ::         .                                               \n"
+                               "  logging.priority : string = \"warning\"                           \n"
+                               "  setup_label : string = \"Foo\"                                    \n"
+                               "  setup_version : string = \"1.2\"                                  \n"
+                               "  setup_description : string = \\                                   \n"
+                               "     \"The virtual geometry setup of the Foo experiment\"           \n"
+                               "  factory.geom_files : string[4] as path = \\                       \n"
+                               "    \"@foo:config/models/optical_modules.geom\" \\                 \n"
+                               "    \"@foo:config/models/detector.geom\" \\                        \n"
+                               "    \"@foo:config/models/support.geom\" \\                         \n"
+                               "    \"@foo:config/models/lab.geom\"                                \n"
+                               "  id_mgr.categories_lists : string[2] as path = \\                 \n"
+                               "    \"@foo:config/om_categories.lis\" \\                           \n"
+                               "    \"@foo:config/env_categories.lis\"                             \n"
+                               "  build_mapping : boolean = 1                                      \n"
+                               "  plugins.configuration_files : string[2] as path = \\             \n"
+                               "    \"@foo:config/plugins/material.conf\"  \\                      \n"
+                               "    \"@foo:config/plugins/magfields.conf\"                         \n"
+                               "                                                                   \n"
+                              );
 
   ocd_.set_validation_support(true);
   ocd_.lock();
@@ -1823,5 +1963,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(::geomtools::manager,"geomtools::manager")
-
-// end of manager.cc

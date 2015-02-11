@@ -24,9 +24,7 @@
 namespace geomtools {
 
   /// \brief A sequence of connected linear segments (3D)
-  class polyline_3d :
-    public i_shape_1d,
-    DATATOOLS_SERIALIZABLE_CLASS
+  class polyline_3d : public i_shape_1d
   {
   public:
 
@@ -41,8 +39,6 @@ namespace geomtools {
 
     /// A sequence of vertexes
     typedef basic_polyline_3d point_col;
-
-  public:
 
     /// Return the name of the shape
     virtual std::string get_shape_name() const;
@@ -92,8 +88,6 @@ namespace geomtools {
     // inefficient algorithm:
     basic_polyline_3d make_vertex_collection() const;
 
-  public:
-
     /// Check if a point belongs to the polyline
     virtual bool is_on_curve(const vector_3d & position_,
                              double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -103,10 +97,10 @@ namespace geomtools {
 
   private:
 
-    bool      _closed_; /// Flag to close the polyline
-    point_col _points_; /// Sequence of points/vertexes
+    bool      _closed_; //!< Flag to close the polyline
+    point_col _points_; //!< Sequence of points/vertexes
 
-    //// interface i_serializable */
+    //! Serialization support
     DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
@@ -115,5 +109,9 @@ namespace geomtools {
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::polyline_3d, "geomtools::polyline_3d")
+
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::polyline_3d, 2)
 
 #endif // GEOMTOOLS_POLYLINE_3D_H

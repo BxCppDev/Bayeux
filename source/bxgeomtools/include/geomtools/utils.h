@@ -160,6 +160,7 @@ namespace geomtools {
     FACE_ALL_BITS = 0xFFFFFFFF
   };
 
+  //! Flags determining the position of a point with respect to a 3D shape
   enum shape_domain_flags_type {
     SHAPE_DOMAIN_NONE                = 0x0,
     SHAPE_DOMAIN_INSIDE              = datatools::bit_mask::bit00,
@@ -169,6 +170,7 @@ namespace geomtools {
     SHAPE_DOMAIN_ON_DAUGHTER_SURFACE = datatools::bit_mask::bit04
   };
 
+  std::string shape_domain_flag_label(shape_domain_flags_type flag_);
 
   //! Some constants
   struct constants {
@@ -648,6 +650,9 @@ namespace geomtools {
     vector_3d _impact_; //! The impact point on the surface
 
   };
+
+  // Favoured class name:
+  typedef intercept_t intercept_data_type;
 
   //! I/O constants for the serialization of vector (2D/3D) and rotation objects
   struct io

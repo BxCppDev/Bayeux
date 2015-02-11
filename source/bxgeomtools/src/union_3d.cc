@@ -14,6 +14,7 @@
 
 // This project:
 #include <geomtools/box.h>
+#include <geomtools/gnuplot_draw.h>
 
 namespace geomtools {
 
@@ -282,11 +283,8 @@ namespace geomtools {
 
   void union_3d::_build_bounding_data()
   {
-    // std::cerr << "DEVEL: union_3d::_build_bounding_data: "
-    //           << "Entering..."
-    //           << std::endl;
     if (get_shape1().get_shape().has_bounding_data()
-        && get_shape2().get_shape().has_bounding_data() ) {
+        && get_shape2().get_shape().has_bounding_data()) {
       const placement & pl1 = get_shape1().get_placement();
       const placement & pl2 = get_shape2().get_placement();
       box bb1;
@@ -313,10 +311,25 @@ namespace geomtools {
       }
       _grab_bounding_data().make_box_from_points(points);
     }
-    // std::cerr << "DEVEL: union_3d::_build_bounding_data: "
-    //           << "Exiting."
-    //           << std::endl;
     return;
   }
+
+
+  // void union_3d::generate_wires(std::list<polyline_3d> & lpl_,
+  //                            const placement & p_,
+  //                            uint32_t /*options_*/) const
+  // {
+  //   const i_shape_3d & sh1 = get_shape1().get_shape();
+  //   const i_shape_3d & sh2 = get_shape2().get_shape();
+  //   std::list<polyline_3d> shpl1;
+  //   sh1.generate_wires(shpl1, p_, 0);
+  //   for (std::list<polyline_3d>::const_iterator ipl = shpl1.begin();
+  //     ipl != shpl1.end();
+  //     ipl++) {
+  //     const polyline_3d & pl1 = *ipl;
+  //   }
+  //   return;
+  // }
+
 
 } // end of namespace geomtools

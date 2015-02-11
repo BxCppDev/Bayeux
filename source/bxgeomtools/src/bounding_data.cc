@@ -50,6 +50,28 @@ namespace geomtools {
     return true;
   }
 
+  double bounding_data::get_min_dimension() const
+  {
+    double min_dim;
+    datatools::invalidate(min_dim);
+    if (!is_valid()) {
+      return min_dim;
+    }
+    mygsl::min_max mm;
+    if (is_box()) {
+      mm.add(std::abs(_xmax_ - _xmin_));
+      mm.add(std::abs(_ymax_ - _ymin_));
+      mm.add(std::abs(_zmax_ - _zmin_));
+      min_dim = mm.get_min();
+    }
+    if (is_cylinder()) {
+      mm.add(2 * _rmax_);
+      mm.add(std::abs(_zmax_ - _zmin_));
+      min_dim = mm.get_min();
+    }
+    return min_dim;
+  }
+
   bool bounding_data::is_box() const
   {
     return _type_ == BD_BOX;

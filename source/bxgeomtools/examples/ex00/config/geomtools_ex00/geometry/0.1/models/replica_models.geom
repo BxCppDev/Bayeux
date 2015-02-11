@@ -41,12 +41,12 @@ replicated.step : real as length = 10 cm
 #@description The name of the material that fills the mother volume that hosts replicated volumes
 material.ref : string = "vacuum"
 
-###########
-# Mapping #
-###########
+# ###########
+# # Mapping #
+# ###########
 
-#@description The mapping directives for the "aligned_boxes" daughter volume
-mapping.daughter_id.aligned_boxes : string  = "[box.gc:position+5]"
+# #@description The mapping directives for the "aligned_boxes" daughter volume
+# mapping.daughter_id.aligned_boxes : string  = "[box.gc:position+5]"
 
 ##############
 # Visibility #
@@ -133,19 +133,18 @@ internal_item.model.SpecialBox1     : string  = "green_box0.model"
 #@description The placement of the "SpecialBox1" daughter volume
 internal_item.placement.SpecialBox1 : string  = "+200 0 0 (mm) / z 90 (degree)"
 
+# ###########
+# # Mapping #
+# ###########
 
-###########
-# Mapping #
-###########
+# #@description The mapping directives for the "go_round_boxes" daughter volumes
+# mapping.daughter_id.go_round_boxes : string  = "[box.gc:position+9]"
 
-#@description The mapping directives for the "go_round_boxes" daughter volumes
-mapping.daughter_id.go_round_boxes : string  = "[box.gc:position+9]"
+# #@description The mapping directives for the "SpecialBox0" daughter volume
+# mapping.daughter_id.SpecialBox0 : string  = "[box.gc:position=18]"
 
-#@description The mapping directives for the "SpecialBox0" daughter volume
-mapping.daughter_id.SpecialBox0 : string  = "[box.gc:position=18]"
-
-#@description The mapping directives for the "SpecialBox1" daughter volume
-mapping.daughter_id.SpecialBox1 : string  = "[box.gc:position=19]"
+# #@description The mapping directives for the "SpecialBox1" daughter volume
+# mapping.daughter_id.SpecialBox1 : string  = "[box.gc:position=19]"
 
 ##############
 # Visibility #
@@ -230,14 +229,14 @@ internal_item.placement.AdditionalBox1 : string  = "0 +150 +80 (mm) / z 90 (degr
 # Mapping #
 ###########
 
-#@description The mapping directives for the "grid" daughter volume
-mapping.daughter_id.grid : string  = "[brick.gc:column+0,row+0]"
+# #@description The mapping directives for the "grid" daughter volume
+# mapping.daughter_id.grid : string  = "[brick.gc:column+0,row+0]"
 
-#@description The mapping directives for the "AdditionalBox0" daughter volume
-mapping.daughter_id.AdditionalBox0 : string  = "[box.gc:position=20]"
+# #@description The mapping directives for the "AdditionalBox0" daughter volume
+# mapping.daughter_id.AdditionalBox0 : string  = "[box.gc:position=20]"
 
-#@description The mapping directives for the "AdditionalBox1" daughter volume
-mapping.daughter_id.AdditionalBox1 : string  = "[box.gc:position=21]"
+# #@description The mapping directives for the "AdditionalBox1" daughter volume
+# mapping.daughter_id.AdditionalBox1 : string  = "[box.gc:position=21]"
 
 
 ######################################################################
@@ -278,8 +277,8 @@ material.ref : string = "vacuum"
 # Mapping #
 ###########
 
-#@description The mapping directives for the "aligned_cylinders" daughter volume
-mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+1]"
+# #@description The mapping directives for the "aligned_cylinders" daughter volume
+# mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+1]"
 
 ##############
 # Visibility #
@@ -330,8 +329,8 @@ material.ref : string = "vacuum"
 # Mapping #
 ###########
 
-#@description The mapping directives for the "aligned_cylinders" daughter volume
-mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+2]"
+# #@description The mapping directives for the "aligned_cylinders" daughter volume
+# mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+2]"
 
 ##############
 # Visibility #
@@ -382,8 +381,8 @@ material.ref : string = "vacuum"
 # Mapping #
 ###########
 
-#@description The mapping directives for the "aligned_cylinders" daughter volume
-mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+3]"
+# #@description The mapping directives for the "aligned_cylinders" daughter volume
+# mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+3]"
 
 ##############
 # Visibility #
@@ -450,5 +449,5 @@ visibility.hidden : boolean = 0
 # Mapping #
 ###########
 
-#@description The mapping directives for the "grid" daughter volume
-mapping.daughter_id.grid  : string = "[any_node.gc:column+1,row+5]"
+# #@description The mapping directives for the "grid" daughter volume
+# mapping.daughter_id.grid  : string = "[any_node.gc:column+1,row+5]"

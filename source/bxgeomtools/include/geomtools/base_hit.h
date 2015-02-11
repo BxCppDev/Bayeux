@@ -346,4 +346,8 @@ namespace geomtools {
 // Activate reflection layer for the geomtools::base_hit class :
 DR_CLASS_INIT(::geomtools::base_hit);
 
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::base_hit, 1)
+
 #endif // GEOMTOOLS_BASE_HIT_H

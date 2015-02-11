@@ -58,8 +58,17 @@ namespace geomtools {
     /// Return the tangent direction at some position on the 1D shape's path
     virtual vector_3d get_direction_on_curve(const vector_3d & position_) const = 0;
 
+    // Serialization interface
+    DATATOOLS_SERIALIZATION_DECLARATION();
+
   };
 
 } // end of namespace geomtools
+
+/*
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::i_shape_1d, 0)
+*/
 
 #endif // GEOMTOOLS_I_SHAPE_1D_H

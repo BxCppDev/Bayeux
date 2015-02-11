@@ -2,7 +2,7 @@
 /// \file geomtools/gdml_writer.h
 /* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
- * Last modified: 2010-02-14
+ * Last modified: 2015-02-04
  *
  * License:
  *
@@ -42,6 +42,7 @@
 #include <geomtools/ellipsoid.h>
 #include <geomtools/polycone.h>
 #include <geomtools/polyhedra.h>
+#include <geomtools/tessellation.h>
 
 namespace geomtools {
 
@@ -175,6 +176,9 @@ namespace geomtools {
     void add_rotation(const std::string & name_,
                       const rotation_3d & rot_,
                       const std::string & unit_str_);
+
+    void add_scale(const std::string & name_,
+                   double x_, double y_, double z_);
 
     /* ************ Materials section ****************** */
 
@@ -370,6 +374,10 @@ namespace geomtools {
                        const polyhedra & s_,
                        const std::string & lunit_str_ = "mm",
                        const std::string & aunit_str_ = "radian");
+
+    void add_tessellated(const std::string & name_,
+                         const tessellated_solid & ts_,
+                         const std::string & lunit_str_ = "mm");
 
     /* *************** Structures section ****************** */
 

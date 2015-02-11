@@ -42,13 +42,14 @@ material.ref : string = "vacuum"
 ###################
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[22] = \
+internal_item.labels : string[28] = \
   "BoxA" "BoxB" "BoxC" "BoxD" "BoxE" \
   "ManyBoxes" "CircleBoxes" \
   "WallBricks" \
   "CylA" "CylB" "CylC" "CylD" "CylE" "CylF" \
   "CylCol0" "CylCol1a" "CylCol2a" "CylSubGrid" \
-  "DetStack0" "DetStack1" "SpecialStack" "AnotherStack"
+  "DetStack0" "DetStack1" "SpecialStack" "AnotherStack" \
+  "Foo1" "Foo2" "Bar1" "Dummy1" "Tessella1" "Tessella2"
 
 #@description The model of the "BoxA" daughter volume
 internal_item.model.BoxA       : string  = "blue_box0.model"
@@ -182,6 +183,41 @@ internal_item.model.AnotherStack      : string  = "another_stack.model"
 #@description The placement of the "SpecialStack" daughter volume
 internal_item.placement.AnotherStack  : string  = "35 +10 -15 (cm) / x 90 (degree)"
 
+#@description The model of the "Foo1" daughter volume
+internal_item.model.Foo1      : string  = "foo.model"
+
+#@description The placement of the "Foo1" daughter volume
+internal_item.placement.Foo1  : string  = "0 0 0 (cm)"
+
+#@description The model of the "Foo2" daughter volume
+internal_item.model.Foo2      : string  = "foo.model"
+
+#@description The placement of the "Foo2" daughter volume
+internal_item.placement.Foo2  : string  = "0 0 10 (cm)"
+
+#@description The model of the "Bar1" daughter volume
+internal_item.model.Bar1      : string  = "bar.model"
+
+#@description The placement of the "Foo1" daughter volume
+internal_item.placement.Bar1  : string  = "0 0 -10 (cm)"
+
+#@description The model of the "Dummy1" daughter volume
+internal_item.model.Dummy1      : string  = "dummy.model"
+
+#@description The placement of the "Dummy1" daughter volume
+internal_item.placement.Dummy1  : string  = "0 10 -10 (cm)"
+
+#@description The model of the "Tessella1" daughter volume
+internal_item.model.Tessella1      : string  = "tessella.model"
+
+#@description The placement of the "Tessella1" daughter volume
+internal_item.placement.Tessella1  : string  = "0 -10 -10 (cm)"
+
+#@description The model of the "Tessella2" daughter volume
+internal_item.model.Tessella2      : string  = "tessella2.model"
+
+#@description The placement of the "Tessella2" daughter volume
+internal_item.placement.Tessella2  : string  = "-10 0 -10 (cm)"
 
 ###########
 # Mapping #
@@ -194,60 +230,66 @@ internal_item.placement.AnotherStack  : string  = "35 +10 -15 (cm) / x 90 (degre
 # daughter "BoxA") and runs up to 17 (to last box in the "CircleBoxes"
 # replica model.
 
-#@description The mapping directives for the "BoxA" daughter volume
-mapping.daughter_id.BoxA : string  = "[box.gc:position=0]"
+# #@description The mapping directives for the "BoxA" daughter volume
+# mapping.daughter_id.BoxA : string  = "[box.gc:position=0]"
 
-#@description The mapping directives for the "BoxB" daughter volume
-mapping.daughter_id.BoxB : string  = "[box.gc:position=1]"
+# #@description The mapping directives for the "BoxB" daughter volume
+# mapping.daughter_id.BoxB : string  = "[box.gc:position=1]"
 
-#@description The mapping directives for the "BoxC" daughter volume
-mapping.daughter_id.BoxC : string  = "[box.gc:position=2]"
+# #@description The mapping directives for the "BoxC" daughter volume
+# mapping.daughter_id.BoxC : string  = "[box.gc:position=2]"
 
-#@description The mapping directives for the "BoxD" daughter volume
-mapping.daughter_id.BoxD : string  = "[box.gc:position=3]"
+# #@description The mapping directives for the "BoxD" daughter volume
+# mapping.daughter_id.BoxD : string  = "[box.gc:position=3]"
 
-#@description The mapping directives for the "BoxE" daughter volume
-mapping.daughter_id.BoxE : string  = "[box.gc:position=4]"
+# #@description The mapping directives for the "BoxE" daughter volume
+# mapping.daughter_id.BoxE : string  = "[box.gc:position=4]"
 
-# #@description The mapping directives for the "ManyBoxes" daughter volume
-# mapping.daughter_id.ManyBoxes : string  = "[box.gc:position+5]"
+# # #@description The mapping directives for the "ManyBoxes" daughter volume
+# # mapping.daughter_id.ManyBoxes : string  = "[box.gc:position+5]"
 
-# #@description The mapping directives for the "CircleBoxes" daughter volume
-# mapping.daughter_id.CircleBoxes : string  = "[box.gc:position+9]"
+# # #@description The mapping directives for the "CircleBoxes" daughter volume
+# # mapping.daughter_id.CircleBoxes : string  = "[box.gc:position+9]"
 
-#@description The mapping directives for the "CylA" daughter volume
-mapping.daughter_id.CylA : string  = "[any_node.gc:column=0,row=0]"
+# #@description The mapping directives for the "CylA" daughter volume
+# mapping.daughter_id.CylA : string  = "[any_node.gc:column=0,row=0]"
 
-#@description The mapping directives for the "CylB" daughter volume
-mapping.daughter_id.CylB : string  = "[any_node.gc:column=1,row=0]"
+# #@description The mapping directives for the "CylB" daughter volume
+# mapping.daughter_id.CylB : string  = "[any_node.gc:column=1,row=0]"
 
-#@description The mapping directives for the "CylC" daughter volume
-mapping.daughter_id.CylC : string  = "[any_node.gc:column=2,row=0]"
+# #@description The mapping directives for the "CylC" daughter volume
+# mapping.daughter_id.CylC : string  = "[any_node.gc:column=2,row=0]"
 
-#@description The mapping directives for the "CylD" daughter volume
-mapping.daughter_id.CylD : string  = "[any_node.gc:column=1,row=1]"
+# #@description The mapping directives for the "CylD" daughter volume
+# mapping.daughter_id.CylD : string  = "[any_node.gc:column=1,row=1]"
 
-#@description The mapping directives for the "CylE" daughter volume
-mapping.daughter_id.CylE : string  = "[any_node.gc:column=2,row=1]"
+# #@description The mapping directives for the "CylE" daughter volume
+# mapping.daughter_id.CylE : string  = "[any_node.gc:column=2,row=1]"
 
-#@description The mapping directives for the "CylF" daughter volume
-mapping.daughter_id.CylF : string  = "[any_node.gc:column=2,row=2]"
+# #@description The mapping directives for the "CylF" daughter volume
+# mapping.daughter_id.CylF : string  = "[any_node.gc:column=2,row=2]"
 
-#@description The mapping directives for the "CylCol0" daughter volume
-mapping.daughter_id.CylCol0  : string = "[any_column.gc:column=0]"
+# #@description The mapping directives for the "CylCol0" daughter volume
+# mapping.daughter_id.CylCol0  : string = "[any_column.gc:column=0]"
 
-#@description The mapping directives for the "CylCol1a" daughter volume
-mapping.daughter_id.CylCol1a : string = "[any_column.gc:column=1]"
+# #@description The mapping directives for the "CylCol1a" daughter volume
+# mapping.daughter_id.CylCol1a : string = "[any_column.gc:column=1]"
 
-#@description The mapping directives for the "CylCol2a" daughter volume
-mapping.daughter_id.CylCol2a : string = "[any_column.gc:column=2]"
+# #@description The mapping directives for the "CylCol2a" daughter volume
+# mapping.daughter_id.CylCol2a : string = "[any_column.gc:column=2]"
 
-#@description The mapping directives for the "DetStack0" daughter volume
-mapping.daughter_id.DetStack0 : string = "[detector.gc:unit=0]"
+# #@description The mapping directives for the "DetStack0" daughter volume
+# mapping.daughter_id.DetStack0 : string = "[detector.gc:unit=0]"
 
-#@description The mapping directives for the "DetStack1" daughter volume
-mapping.daughter_id.DetStack1 : string = "[detector.gc:unit=1]"
+# #@description The mapping directives for the "DetStack1" daughter volume
+# mapping.daughter_id.DetStack1 : string = "[detector.gc:unit=1]"
 
+
+# #@description The mapping directives for the "Tessella1" daughter volume
+# mapping.daughter_id.Tessella1 : string = "[object.gc:item=0]"
+
+# #@description The mapping directives for the "Tessella2" daughter volume
+# mapping.daughter_id.Tessella2 : string = "[object.gc:item=1]"
 
 ##############
 # Visibility #

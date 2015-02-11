@@ -81,9 +81,11 @@ namespace geomtools {
     /// Initialize a 'stackable_data' instance from stackable data attached to the 3D-shape
     static bool pickup_stackable(const i_shape_3d &, stackable_data &);
 
+    /*
     /// Initialize a 'stackable_data' instance from properties embedded in the shape itself
     static bool pickup_stackable_with_properties(const i_shape_3d & a_shape,
                                                  stackable_data & a_stackable_data);
+    */
 
     /// Return the stackable data associated to the shape
     const stackable_data & get_stackable_data() const;
@@ -186,6 +188,9 @@ namespace geomtools {
     /// Set the bounding data
     void set_bounding_data(const bounding_data &);
 
+    /// Build default bounding data
+    void build_default_bounding_data();
+
     /// Find intercept of a segment on the surface of the solid
     virtual bool find_intercept(const vector_3d & a_from,
                                 const vector_3d & a_direction,
@@ -255,9 +260,19 @@ namespace geomtools {
     bool                   _owns_stackable_data_; //!< Ownership flag for stackable data
     const stackable_data * _stackable_data_;      //!< Handle to stackable data
     bounding_data          _bounding_data_;       //!< Bounding data
+    double                 _volume_;
+
+    // Serialization interface
+    DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
 
 } // end of namespace geomtools
+
+/*
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::i_shape_3d, 0)
+*/
 
 #endif // GEOMTOOLS_I_SHAPE_3D_H

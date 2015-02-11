@@ -26,6 +26,10 @@
 #include <sstream>
 #include <string>
 
+// Third party:
+// - Boost:
+#include <boost/scoped_ptr.hpp>
+
 // This project:
 #include <geomtools/i_model.h>
 #include <geomtools/box.h>
@@ -34,7 +38,7 @@
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
 #include <geomtools/logical_volume.h>
-#include <geomtools/gnuplot_draw.h>
+#include <geomtools/i_wires_drawer.h>
 
 namespace geomtools {
 
@@ -66,12 +70,21 @@ namespace geomtools {
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
-    /// Special Gnuplot rendering
-    static void gnuplot_draw_user_function (std::ostream &,
-                                            const geomtools::vector_3d &,
-                                            const geomtools::rotation_3d &,
-                                            const geomtools::i_object_3d &,
-                                            void * = 0);
+    /// \brief  Special Gnuplot rendering
+    struct wires_drawer : public i_wires_drawer
+    {
+      wires_drawer(const plate_with_hole_model & model_,
+                   double x_pos_hole_, double y_pos_hole_);
+      virtual ~wires_drawer();
+      virtual void generate_wires(std::ostream & out_,
+                                  const geomtools::vector_3d & position_,
+                                  const geomtools::rotation_3d & rotation_);
+    private:
+      const plate_with_hole_model * _model_;
+      double _x_pos_hole_;
+      double _y_pos_hole_;
+    };
+
   protected:
 
     /// Construction
@@ -86,9 +99,9 @@ namespace geomtools {
     geomtools::box            _box_hole_;
     geomtools::cylinder       _cyl_hole_;
     geomtools::subtraction_3d _solid_;
-    double                    _x_; /// X box
-    double                    _y_; /// Y box
-    double                    _z_; /// Z box
+    double                    _x_; //!< X box
+    double                    _y_; //!< Y box
+    double                    _z_; //!< Z box
 
     double                    _r_hole_;
     double                    _x_hole_;
@@ -96,6 +109,8 @@ namespace geomtools {
     double                    _z_hole_;
     double                    _x_pos_hole_;
     double                    _y_pos_hole_;
+
+    boost::scoped_ptr<wires_drawer> _drawer_;
 
   private:
 

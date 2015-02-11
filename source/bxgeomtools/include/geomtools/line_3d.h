@@ -36,9 +36,7 @@ namespace geomtools {
   class placement;
 
   /// \brief An line/segment (1D shape) in a 3D space
-  class line_3d :
-    public i_shape_1d,
-    DATATOOLS_SERIALIZABLE_CLASS
+  class line_3d : public i_shape_1d
   {
   public:
 
@@ -131,5 +129,9 @@ namespace geomtools {
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::line_3d, "geomtools::line_3d")
+
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::line_3d, 2)
 
 #endif // GEOMTOOLS_LINE_3D_H

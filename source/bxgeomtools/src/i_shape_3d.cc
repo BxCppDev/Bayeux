@@ -13,6 +13,8 @@
 
 namespace geomtools {
 
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_3d, "geomtools::i_shape_3d");
+
   using namespace std;
 
   const double i_shape_3d::DEFAULT_SKIN      = GEOMTOOLS_DEFAULT_TOLERANCE;
@@ -63,49 +65,57 @@ namespace geomtools {
 
   bool i_shape_3d::has_volume(uint32_t flags_) const
   {
-    if (get_properties().has_key(volume_key())) {
-      double v = get_properties().fetch_real(volume_key());
-      if (! get_properties().has_explicit_unit(volume_key())) {
+    /*
+    if (get_auxiliaries().has_key(volume_key())) {
+      double v = get_auxiliaries().fetch_real(volume_key());
+      if (! get_auxiliaries().has_explicit_unit(volume_key())) {
         // v *= 1.0; // No default volume unit;
       }
       return datatools::is_valid(v);
     }
+    */
     return datatools::is_valid(get_volume(flags_));
   }
 
   double i_shape_3d::get_volume(uint32_t /*flags_*/) const
   {
-    if (get_properties().has_key(volume_key())) {
-      double v = get_properties().fetch_real(volume_key());
-      if (! get_properties().has_explicit_unit(volume_key())) {
+    /*
+    if (get_auxiliaries().has_key(volume_key())) {
+      double v = get_auxiliaries().fetch_real(volume_key());
+      if (! get_auxiliaries().has_explicit_unit(volume_key())) {
         // v *= 1.0; // No default volume unit;
       }
       return v;
     }
+    */
     return std::numeric_limits<double>::quiet_NaN();
   }
 
   bool i_shape_3d::has_surface(uint32_t flags_) const
   {
-    if (get_properties().has_key(surface_key())) {
-      double v = get_properties().fetch_real(surface_key());
-      if (! get_properties().has_explicit_unit(surface_key())) {
+    /*
+    if (get_auxiliaries().has_key(surface_key())) {
+      double v = get_auxiliaries().fetch_real(surface_key());
+      if (! get_auxiliaries().has_explicit_unit(surface_key())) {
         //v *= 1.0; // No default surface unit;
       }
       return datatools::is_valid(v);
     }
+    */
     return datatools::is_valid(get_surface(flags_));
   }
 
   double i_shape_3d::get_surface(uint32_t /*flags_*/) const
   {
-    if (get_properties().has_key(surface_key())) {
-      double v = get_properties().fetch_real(surface_key());
-      if (! get_properties().has_explicit_unit(surface_key())) {
+    /*
+    if (get_auxiliaries().has_key(surface_key())) {
+      double v = get_auxiliaries().fetch_real(surface_key());
+      if (! get_auxiliaries().has_explicit_unit(surface_key())) {
         // v *= 1.0; // No default surface unit;
       }
       return v;
     }
+    */
     return std::numeric_limits<double>::quiet_NaN();
   }
 
@@ -140,75 +150,77 @@ namespace geomtools {
   bool i_shape_3d::is_xmin_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable(a_shape)) return true;
-    if (stackable::has_xmin(a_shape.get_properties())) return true;
+    // if (stackable::has_xmin(a_shape.get_auxiliaries())) return true;
     return false;
   }
 
   bool i_shape_3d::is_xmax_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_xmax (a_shape.get_properties ())) return true;
+    // if (stackable::has_xmax (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_ymin_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_ymin (a_shape.get_properties ())) return true;
+    // if (stackable::has_ymin (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_ymax_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_ymax (a_shape.get_properties ())) return true;
+    // if (stackable::has_ymax (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_zmin_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_zmin (a_shape.get_properties ())) return true;
+    // if (stackable::has_zmin (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_zmax_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    if (stackable::has_zmax (a_shape.get_properties ())) return true;
+    // if (stackable::has_zmax (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
+  /*
   bool i_shape_3d::pickup_stackable_with_properties(const i_shape_3d & a_shape,
                                                     stackable_data & a_stackable_data)
   {
     bool ok = false;
     ok = i_shape_3d::pickup_stackable (a_shape, a_stackable_data);
     if (ok) {
-      if (stackable::has_xmin (a_shape.get_properties ())) {
-        a_stackable_data.xmin = stackable::get_xmin (a_shape.get_properties (), -1.0);
+      if (stackable::has_xmin (a_shape.get_auxiliaries ())) {
+        a_stackable_data.xmin = stackable::get_xmin (a_shape.get_auxiliaries (), -1.0);
       }
-      if (stackable::has_xmax (a_shape.get_properties ())) {
-        a_stackable_data.xmax = stackable::get_xmax (a_shape.get_properties (), -1.0);
+      if (stackable::has_xmax (a_shape.get_auxiliaries ())) {
+        a_stackable_data.xmax = stackable::get_xmax (a_shape.get_auxiliaries (), -1.0);
       }
-      if (stackable::has_ymin (a_shape.get_properties ())) {
-        a_stackable_data.ymin = stackable::get_ymin (a_shape.get_properties (), -1.0);
+      if (stackable::has_ymin (a_shape.get_auxiliaries ())) {
+        a_stackable_data.ymin = stackable::get_ymin (a_shape.get_auxiliaries (), -1.0);
       }
-      if (stackable::has_ymax (a_shape.get_properties ())) {
-        a_stackable_data.ymax = stackable::get_ymax (a_shape.get_properties (), -1.0);
+      if (stackable::has_ymax (a_shape.get_auxiliaries ())) {
+        a_stackable_data.ymax = stackable::get_ymax (a_shape.get_auxiliaries (), -1.0);
       }
-      if (stackable::has_zmin (a_shape.get_properties ())) {
-        a_stackable_data.zmin = stackable::get_zmin (a_shape.get_properties (), -1.0);
+      if (stackable::has_zmin (a_shape.get_auxiliaries ())) {
+        a_stackable_data.zmin = stackable::get_zmin (a_shape.get_auxiliaries (), -1.0);
       }
-      if (stackable::has_zmax (a_shape.get_properties ())) {
-        a_stackable_data.zmax = stackable::get_zmax (a_shape.get_properties (), -1.0);
+      if (stackable::has_zmax (a_shape.get_auxiliaries ())) {
+        a_stackable_data.zmax = stackable::get_zmax (a_shape.get_auxiliaries (), -1.0);
       }
     }
     return ok;
   }
+  */
 
   bool i_shape_3d::pickup_stackable(const i_shape_3d & a_shape,
-                                     stackable_data & a_stackable_data)
+                                    stackable_data & a_stackable_data)
   {
     a_stackable_data.invalidate();
     bool ok = false;
@@ -331,6 +343,7 @@ namespace geomtools {
                               const handle_dict_type * /* objects_ */)
   {
     this->i_object_3d::initialize(config_);
+    _initialize_bounding_data(config_);
     return;
   }
 
@@ -342,10 +355,9 @@ namespace geomtools {
                                               "bounding_data.",
                                               "");
       _bounding_data_.parse_bounding_data(bounding_data_config);
+      DT_THROW_IF(!_bounding_data_.is_valid(), std::logic_error,
+                  "Invalid bounding data for shape of type '" << get_shape_name() << "'!");
     }
-
-    DT_THROW_IF(!_bounding_data_.is_valid(), std::logic_error,
-                "Invalid bounding data for shape of type '" << get_shape_name() << "'!");
     return;
   }
 
@@ -393,10 +405,10 @@ namespace geomtools {
   shape_domain_flags_type i_shape_3d::where_is(const vector_3d & position_, double a_skin) const
   {
     try {
-      if (is_inside(position_, a_skin)) {
-        return SHAPE_DOMAIN_INSIDE;
-      } else if (is_on_surface(position_, FACE_ALL_BITS, a_skin)) {
+      if (is_on_surface(position_, FACE_ALL_BITS, a_skin)) {
         return SHAPE_DOMAIN_ON_SURFACE;
+      } else if (is_inside(position_, a_skin)) {
+        return SHAPE_DOMAIN_INSIDE;
       } else {
         return SHAPE_DOMAIN_OUTSIDE;
       }
@@ -504,6 +516,12 @@ namespace geomtools {
   void i_shape_3d::_at_unlock()
   {
     _bounding_data_.reset();
+    return;
+  }
+
+  void i_shape_3d::build_default_bounding_data()
+  {
+    _build_bounding_data();
     return;
   }
 

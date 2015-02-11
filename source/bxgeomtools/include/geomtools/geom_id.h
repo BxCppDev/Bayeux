@@ -216,4 +216,8 @@ BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
 // Activate reflection layer for the geomtools::geom_id class :
 DR_CLASS_INIT(::geomtools::geom_id);
 
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::geom_id, 1)
+
 #endif // GEOMTOOLS_GEOM_ID_H

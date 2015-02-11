@@ -64,17 +64,10 @@ namespace geomtools {
                            const std::string & indent_ = "",
                            bool inherit_          = false) const;
 
-    /// Gnuplot draw function
-    static void gnuplot_draw_user_function(std::ostream &,
-                                           const geomtools::vector_3d &,
-                                           const geomtools::rotation_3d &,
-                                           const geomtools::i_object_3d &,
-                                           void * = 0);
-
     /// Return the embedded extruded box
     const geomtools::extruded_box & get_extruded_box() const;
 
-  protected:
+   protected:
 
     /// Executed at construct
     virtual void _at_construct(const std::string & name_,
@@ -86,9 +79,11 @@ namespace geomtools {
     std::string               _material_name_;  //!< Name of the material
     geomtools::extruded_box   _extruded_box_;   //!< Extruded box
 
-    geomtools::box            _mother_box_;      //!< Mother box
+    geomtools::box            _mother_box_;      //!< Reference box
     geomtools::box            _daughter_box_;    //!< Daughter box
     geomtools::subtraction_3d _subtraction_box_; //!< Extruded box
+
+    boost::scoped_ptr<extruded_box::wires_drawer> _drawer_;
 
     // Registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(extruded_box_model);

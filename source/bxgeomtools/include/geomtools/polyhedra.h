@@ -208,6 +208,9 @@ namespace geomtools {
     double  _xy_max_;
     bool    _extruded_;
 
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(polyhedra);
+
   };
 
 } // end of namespace geomtools

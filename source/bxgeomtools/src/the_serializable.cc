@@ -1,15 +1,16 @@
-// -*- mode: c++; -*-
-/* the_serializable.cc
- */
+// the_serializable.cc
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
+// This project:
 // Load the Boost/Serialization instantiation and registration code :
 #include <geomtools/the_serializable.h>
-
 // Load the link guard definition :
 #include <geomtools/detail/bio_link_guard.h>
 
@@ -41,5 +42,3 @@ namespace geomtools {
     } // end namespace serialization
   } // end namespace detail
 } // end namespace geomtools
-
-// end of the_serializable.cc

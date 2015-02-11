@@ -1,22 +1,28 @@
 // test_subtraction_3d.cxx
 
+// Ourselves:
+#include <geomtools/subtraction_3d.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
+
+// This project:
 #include <geomtools/box.h>
-#include <geomtools/subtraction_3d.h>
 #include <geomtools/gnuplot_draw.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-#include <datatools/temporary_files.h>
-#include <datatools/utils.h>
 
-int
-main (int argc_, char ** argv_)
+int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try {
@@ -186,16 +192,16 @@ main (int argc_, char ** argv_)
     tmp_file.out() << std::endl << std::endl;
 
 
-      sbb.tree_dump(std::clog, "Subtraction BB: ", "NOTICE: " );
-      sbbp.tree_dump(std::clog, "Subtraction BB placement: ", "NOTICE: " );
-      tmp_file.out() <<"# Bounding box:" << std::endl;
-      geomtools::gnuplot_draw::draw_box(tmp_file.out(),
-                                        sbbp.get_translation (),
-                                        sbbp.get_rotation (),
-                                        sbb.get_x (),
-                                        sbb.get_y (),
-                                        sbb.get_z ());
-      tmp_file.out() << std::endl << std::endl;
+    sbb.tree_dump(std::clog, "Subtraction BB: ", "NOTICE: " );
+    sbbp.tree_dump(std::clog, "Subtraction BB placement: ", "NOTICE: " );
+    tmp_file.out() <<"# Bounding box:" << std::endl;
+    geomtools::gnuplot_draw::draw_box(tmp_file.out(),
+                                      sbbp.get_translation (),
+                                      sbbp.get_rotation (),
+                                      sbb.get_x (),
+                                      sbb.get_y (),
+                                      sbb.get_z ());
+    tmp_file.out() << std::endl << std::endl;
 
     if (draw) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1

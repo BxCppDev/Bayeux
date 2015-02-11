@@ -1,0 +1,45 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The definitions of 3D solid shapes used in the geometry
+
+#@key_label   "name"
+#@meta_label  "type"
+
+# We define here several 3D solid shapes (box, cylinder...)
+# with arbitrary dimensions.
+
+[name="Cube1" type="geomtools::box"]
+
+x : real as length = 3.0 cm
+y : real as length = 3.0 cm
+z : real as length = 3.0 cm
+
+[name="ThinBox1" type="geomtools::box"]
+
+x : real as length = 5.5 cm
+y : real as length = 6.0 cm
+z : real as length = 0.5 cm
+
+[name="El1" type="geomtools::ellipsoid"]
+
+x_radius : real as length = 3.0 cm
+y_radius : real as length = 1.0 cm
+z_radius : real as length = 1.5 cm
+bottom_z_cut : real as length = 1.0 cm
+
+[name="Elt1" type="geomtools::elliptical_tube"]
+
+x_radius : real as length = 3.0 cm
+y_radius : real as length = 1.0 cm
+z : real as length = 1.5 cm
+
+[name="Ts1" type="geomtools::tessellated_solid"]
+
+length_unit_value : real as length = 5.0 mm
+stl_file : string as path = "${SETUP_CONFIG_DIR}/config/geomtools_ex00/geometry/0.1/models/box_with_cylindric_extrusion.stl"
+
+[name="Ts2" type="geomtools::tessellated_solid"]
+
+length_unit_value : real as length = 2.5 mm
+stl_file : string as path = "${SETUP_CONFIG_DIR}/config/geomtools_ex00/geometry/0.1/models/complex_shape.stl"

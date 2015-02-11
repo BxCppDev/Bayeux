@@ -1,4 +1,4 @@
-/** \file geomtools/intersection_3d.cc */
+/// \file geomtools/intersection_3d.cc
 
 // Ourselves:
 #include <geomtools/intersection_3d.h>
@@ -6,6 +6,10 @@
 // Standard library:
 #include <stdexcept>
 #include <sstream>
+
+// Third party:
+// - Bayeux/mygsl:
+#include <mygsl/min_max.h>
 
 // This project:
 #include <geomtools/box.h>
@@ -49,8 +53,8 @@ namespace geomtools {
     const i_shape_3d & sh3d2 = sh2.get_shape ();
     const vector_3d pos1 = p1.mother_to_child (position_);
     const vector_3d pos2 = p2.mother_to_child (position_);
-    if (    sh3d1.is_inside (pos1, skin_)
-            && sh3d2.is_inside (pos2, skin_) ) {
+    if (sh3d1.is_inside (pos1, skin_)
+        && sh3d2.is_inside (pos2, skin_) ) {
       return true;
     }
     return false;
@@ -249,7 +253,6 @@ namespace geomtools {
                         geomtools::randomize_orthogonal_direction (geomtools::random_tools::random_flat,
                                                                    direction,
                                                                    orth_dir);
-
                         from_i += 0.5 * skin_step * orth_dir;
                       }
                     DT_LOG_TRACE (local_priority, "ishape #" << ishape << " direction=" << direction);
@@ -300,31 +303,57 @@ namespace geomtools {
 
   void intersection_3d::_build_bounding_data()
   {
-    std::cerr << "DEVEL: intersection_3d::_build_bounding_data: "
-              << "Entering..."
-              << std::endl;
+    if (get_shape1().get_shape().has_bounding_data()
+        && get_shape2().get_shape().has_bounding_data()) {
 
-    if (get_shape1().get_shape().has_bounding_data()) {
-      // Default use shape 1's bounding data:
+      // Shape 1:
       const placement & pl1 = get_shape1().get_placement();
       box bb1;
       placement bbpl1;
       get_shape1().get_shape().get_bounding_data().compute_bounding_box(bb1, bbpl1);
       std::vector<vector_3d> vv1;
       bb1.compute_transformed_vertexes(bbpl1, vv1);
-      std::vector<vector_3d> points;
-      points.reserve(vv1.size());
+      std::vector<vector_3d> points1;
+      points1.reserve(vv1.size());
       for (int i = 0; i < (int) vv1.size(); i++) {
         vector_3d vtx;
         pl1.child_to_mother(vv1[i], vtx);
-        points.push_back(vtx);
+        points1.push_back(vtx);
       }
-      _grab_bounding_data().make_box_from_points(points);
-    }
+      bounding_data bd1;
+      bd1.make_box_from_points(points1);
+      double xmin = bd1.get_xmin();
+      double xmax = bd1.get_xmax();
+      double ymin = bd1.get_ymin();
+      double ymax = bd1.get_ymax();
+      double zmin = bd1.get_zmin();
+      double zmax = bd1.get_zmax();
 
-    std::cerr << "DEVEL: intersection_3d::_build_bounding_data: "
-              << "Exiting."
-              << std::endl;
+      // Shape 2:
+      const placement & pl2 = get_shape2().get_placement();
+      box bb2;
+      placement bbpl2;
+      get_shape2().get_shape().get_bounding_data().compute_bounding_box(bb2, bbpl2);
+      std::vector<vector_3d> vv2;
+      bb2.compute_transformed_vertexes(bbpl2, vv2);
+      std::vector<vector_3d> points2;
+      points2.reserve(vv2.size());
+      for (int i = 0; i < (int) vv2.size(); i++) {
+        vector_3d vtx;
+        pl2.child_to_mother(vv2[i], vtx);
+        points2.push_back(vtx);
+      }
+      bounding_data bd2;
+      bd2.make_box_from_points(points2);
+      if (xmin < bd2.get_xmin()) xmin = bd2.get_xmin();
+      if (xmax > bd2.get_xmax()) xmax = bd2.get_xmax();
+      if (ymin < bd2.get_ymin()) ymin = bd2.get_ymin();
+      if (ymax > bd2.get_ymax()) ymax = bd2.get_ymax();
+      if (zmin < bd2.get_zmin()) zmin = bd2.get_zmin();
+      if (zmax > bd2.get_zmax()) zmax = bd2.get_zmax();
+
+      _grab_bounding_data().make_box(xmin, xmax, ymin, ymax, zmin, zmax);
+    }
     return;
   }
 

@@ -14,6 +14,7 @@
 // This project:
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/tessellation.h>
+#include <geomtools/gdml_writer.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
@@ -227,6 +228,67 @@ void test5(bool draw_)
       geomtools::gnuplot_drawer::wait_for_key();
       usleep(200);
     }
+
+    geomtools::gdml_writer writer;
+    // Defines:
+    writer.add_position ("null.pos",
+                         0. * CLHEP::mm,
+                         0. * CLHEP::mm,
+                         0. * CLHEP::mm,
+                         "mm");
+    // Materials:
+    writer.add_element("Hydrogen", 1, "H",  1);
+    writer.add_element("Carbon",   6, "C", 12);
+    writer.add_element("Nitrogen", 7, "N", 14);
+    writer.add_element("Oxygen",   8, "O", 16);
+
+    std::map<std::string, double> Air_map;
+    Air_map["Oxygen"]   = 0.3;
+    Air_map["Nitrogen"] = 0.7;
+    writer.add_material("Air",
+                        "air",
+                        1.29 * CLHEP::mg / CLHEP::cm3,
+                        Air_map);
+    writer.add_material("Aluminium",
+                        13.0,
+                        2.70 * CLHEP::g / CLHEP::cm3,
+                        26.98);
+
+    // Solids:
+    writer.add_gdml_box("lab.solid",
+                        15.0 * CLHEP::mm, 15.0 * CLHEP::mm, 15.0 * CLHEP::mm,
+                        "mm");
+    // writer.add_tessellated("tessella.solid", TS1, "mm");
+    writer.add_gdml_box("tessella.solid",
+                        5.0 * CLHEP::mm, 5.0 * CLHEP::mm, 5.0 * CLHEP::mm,
+                        "mm");
+
+    // Structures:
+    writer.add_volume("dummy.log",
+                      "Aluminium",
+                      "tessella.solid");
+
+    std::list<geomtools::gdml_writer::physvol> world_physvols;
+    world_physvols.push_back(geomtools::gdml_writer::physvol("dummy.log", "null.pos"));
+    writer.add_volume("world.log",
+                      "Air",
+                      "lab.solid",
+                      world_physvols);
+
+    // Setup:
+    writer.add_setup("Setup", "world.log");
+
+    writer.dump(std::clog);
+
+    std::string gdml_file = "test_tessellated_solid_1.gdml";
+    writer.save_file(gdml_file,
+                     geomtools::gdml_writer::default_xml_version(),
+                     geomtools::gdml_writer::default_xml_encoding(),
+                     geomtools::gdml_writer::default_gdml_schema(),
+                     geomtools::gdml_writer::default_xsi()
+                     );
+
+
 
   }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY

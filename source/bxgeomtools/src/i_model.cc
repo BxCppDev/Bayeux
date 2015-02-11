@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // i_model.cc
 
 // Ourselves:
@@ -17,6 +16,7 @@
 #include <geomtools/material.h>
 #include <geomtools/visibility.h>
 #include <geomtools/mapping_utils.h>
+#include <geomtools/shape_factory.h>
 
 namespace geomtools {
 
@@ -185,7 +185,6 @@ namespace geomtools {
     return _parameters_;
   }
 
-  // ctor:
   i_model::i_model (const std::string & /*dummy_*/)
   {
     _constructed_     = false;
@@ -194,11 +193,37 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   i_model::~i_model ()
   {
     _parameters_.clear ();
     return;
+  }
+
+  bool i_model::has_shape_factory() const
+  {
+    return _shape_factory_ != 0;
+  }
+
+  void i_model::set_shape_factory(shape_factory & sf_)
+  {
+    _shape_factory_ = &sf_;
+    return;
+  }
+
+  shape_factory & i_model::grab_shape_factory()
+  {
+    DT_THROW_IF(!has_shape_factory(),
+                std::logic_error,
+                "No referenced shape factory!");
+    return *_shape_factory_;
+  }
+
+  const shape_factory & i_model::get_shape_factory() const
+  {
+    DT_THROW_IF(!has_shape_factory(),
+                std::logic_error,
+                "No referenced shape factory!");
+    return *_shape_factory_;
   }
 
   const geomtools::logical_volume & i_model::get_logical () const
@@ -216,13 +241,13 @@ namespace geomtools {
     {
       // Logging priority:
       datatools::logger::priority lp
-        = datatools::logger::extract_logging_configuration (setup_,
-                                                            datatools::logger::PRIO_WARNING);
+        = datatools::logger::extract_logging_configuration(setup_, _logging_priority);
       DT_THROW_IF(lp == datatools::logger::PRIO_UNDEFINED,
                   std::logic_error,
                   "Invalid logging priority level for geometry model '" << _name_ << "' !");
-      set_logging_priority (lp);
+      set_logging_priority(lp);
     }
+    return;
   }
 
   void i_model::_pre_construct (datatools::properties & setup_, models_col_type * /*models_*/)
@@ -269,8 +294,7 @@ namespace geomtools {
                            const std::vector<std::string> & properties_prefixes_,
                            models_col_type * models_)
   {
-    DT_THROW_IF (is_constructed (),
-                 std::logic_error,
+    DT_THROW_IF (is_constructed (), std::logic_error,
                  "Model '" << name_ << "' has been already constructed !");
     datatools::properties & setup = const_cast<datatools::properties &> (setup_);
     // Set the name of the model as soon as possible:
@@ -319,6 +343,15 @@ namespace geomtools {
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Logging     : \""
          << datatools::logger::get_priority_label(_logging_priority) << "\"" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Shape factory : ";
+    if (has_shape_factory()) {
+      out_ << "<yes>";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Constructed : " << _constructed_ << std::endl;

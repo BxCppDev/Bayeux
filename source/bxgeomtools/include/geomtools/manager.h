@@ -52,6 +52,7 @@
 #include <datatools/logger.h>
 
 // This project:
+#include <geomtools/shape_factory.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/id_mgr.h>
 #include <geomtools/mapping.h>
@@ -100,8 +101,6 @@ namespace geomtools {
       /// Initialize the plugin using a list of properties and a list of other plugins
       virtual int initialize_simple(const datatools::properties & config_,
                                     const plugins_dict_type & plugins_);
-
-      /* abstract interface */
 
       /// Main initialization method from a list of properties, a list of other plugins and a list of services
       virtual int initialize(const datatools::properties & config_,
@@ -154,9 +153,9 @@ namespace geomtools {
 
       /// \brief Status of a plugin entry
       enum status_type {
-        STATUS_BLANK             = 0x0, /// Not created not initialized
-        STATUS_CREATED           = 0x1, /// Created
-        STATUS_INITIALIZED       = 0x2, /// Initialized
+        STATUS_BLANK        = 0x0, //!< Not created not initialized
+        STATUS_CREATED      = 0x1, //!< Created
+        STATUS_INITIALIZED  = 0x2, //!< Initialized
       };
 
       /// Set the name of the plugin
@@ -287,6 +286,12 @@ namespace geomtools {
     /// Build the mapping
     void build_mapping(const datatools::properties & config_);
 
+    /// Return a reference to the non mutable factory of shapes
+    const geomtools::shape_factory & get_shape_factory() const;
+
+    /// Return a reference to the mutable factory of shapes
+    geomtools::shape_factory & grab_shape_factory();
+
     /// Return a reference to the non mutable factory of geometry models
     const geomtools::model_factory & get_factory() const;
 
@@ -360,6 +365,8 @@ namespace geomtools {
     /// Unregister a plugin type
     void unregister_plugin_type(const std::string& plugin_id);
 
+    /* Main interface */
+
     /// Default constructor
     manager();
 
@@ -375,17 +382,22 @@ namespace geomtools {
     /// Reset the geometry manager
     void reset();
 
+    /// Smart print
     virtual void tree_dump(std::ostream &      out_ = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool                inherit_ = false) const;
 
+    //! Return a reference to the plugin factory register
     const base_plugin::factory_register_type & get_plugins_factory_register();
 
+    //! Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority a_logging_priority);
 
+    //! Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
 
+    //! Print the list of geometry identifiers (GIDs) from a manager and given specific rules
     static int print_list_of_gids(const geomtools::manager & mgr_,
                                   std::ostream & out_ = std::clog,
                                   const std::string & rules_ = "");
@@ -410,8 +422,6 @@ namespace geomtools {
 
   private:
 
-    //void _set_plugins_factory_preload_(bool preload);
-
     /// Core initialization private method (wrapped by 'initialize')
     virtual void _at_init_(const datatools::properties & config_);
 
@@ -420,7 +430,7 @@ namespace geomtools {
 
   protected:
 
-    datatools::logger::priority _logging;
+    datatools::logger::priority _logging; //!< Logging priority threshold
 
   private:
 
@@ -429,15 +439,18 @@ namespace geomtools {
     std::string              _setup_version_;     //!< the version tag of the geometry setup
     std::string              _setup_description_; //!< the description of the geometry setup
 
-    datatools::service_dict_type * _services_;    //!< Handle to a dictionnary of services
+    datatools::service_dict_type * _services_;    //!< Handle to a dictionary of services
 
+    geomtools::shape_factory _shape_factory_;     //!< the factory for 3D shapes
     geomtools::model_factory _factory_;           //!< the factory for geometry models
     geomtools::id_mgr        _id_manager_;        //!< the manager for geometry IDs
     bool                     _mapping_requested_; //!< flag for building mapping
     geomtools::mapping       _mapping_;           //!< the mapping manager
+    datatools::multi_properties _external_mapping_rules_; //!< Mapping rules associated to geometry models
+
     std::string              _world_name_;        //!< the name of the 'world' model
 
-    bool                                _plugins_factory_preload_;  //!< Flagfor preloading of plugins system factory
+    bool                                _plugins_factory_preload_;  //!< Flag for preloading of plugins system factory
     bool                                _plugins_force_initialization_at_load_; //!< Flag to enforce initialization of plugins at load
     base_plugin::factory_register_type  _plugins_factory_register_; //!< Plugins registration
     plugins_dict_type                   _plugins_;                  //!< Plugins dictionary

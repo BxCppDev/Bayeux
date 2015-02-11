@@ -35,9 +35,7 @@
 namespace geomtools {
 
   /// \brief An helix (1D shape) in a 3D space
-  class helix_3d :
-    public i_shape_1d,
-    DATATOOLS_SERIALIZABLE_CLASS
+  class helix_3d : public i_shape_1d
   {
   public:
 
@@ -189,15 +187,20 @@ namespace geomtools {
     /// Return the direction ar some position in on the curve
     virtual vector_3d get_direction_on_curve(const vector_3d & position_) const;
 
+  protected:
+
+    /// Set the default attributes values
+    void _set_defaults();
+
   private:
 
-    double    _radius_; /// The radius of the helix
-    vector_3d _center_; /// The center of the helix
-    double    _step_;   /// The pitch of the helix
-    double    _t1_;     /// The start angle divided by (2 pi)
-    double    _t2_;     /// The stop angle divided by (2 pi)
+    double    _radius_; //!< The radius of the helix
+    vector_3d _center_; //!< The center of the helix
+    double    _step_;   //!< The pitch of the helix
+    double    _t1_;     //!< The start angle divided by (2 pi)
+    double    _t2_;     //!< The stop angle divided by (2 pi)
 
-    // Serialization interface
+    // Serialization interface:
     DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
@@ -206,5 +209,9 @@ namespace geomtools {
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(geomtools::helix_3d, "geomtools::helix_3d")
+
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::helix_3d, 2)
 
 #endif // GEOMTOOLS_HELIX_3D_H

@@ -3,6 +3,9 @@
 // Ourselves:
 #include <geomtools/extruded_box_model.h>
 
+// Standard library:
+#include <list>
+
 // Third party libraries:
 // - Bayeux/datatools:
 #include <datatools/units.h>
@@ -19,7 +22,7 @@
 
 namespace geomtools {
 
-  // registration :
+  // Registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(extruded_box_model, "geomtools::extruded_box_model");
 
   const geomtools::i_shape_3d & extruded_box_model::get_solid() const
@@ -101,15 +104,19 @@ namespace geomtools {
     bool has_top    = true;
     bool has_bottom = true;
 
-    if(config_.has_flag("remove_top"))
+    if (config_.has_flag("remove_top")) {
       has_top = false;
-    if(config_.has_key("has_top"))
+    }
+    if (config_.has_key("has_top")) {
       has_top = config_.fetch_boolean("has_top");
+    }
 
-    if(config_.has_flag("remove_bottom"))
+    if (config_.has_flag("remove_bottom")) {
       has_bottom = false;
-    if(config_.has_key("has_bottom"))
+    }
+    if (config_.has_key("has_bottom")) {
       has_bottom = config_.fetch_boolean("has_bottom");
+    }
 
     _extruded_box_.set(x, y, z, thickness);
     _extruded_box_.set_top(has_top);
@@ -220,8 +227,11 @@ namespace geomtools {
         sd_ptr->tree_dump(std::cerr);
       }
     }
-    _subtraction_box_.set_user_draw((void *) &extruded_box_model::gnuplot_draw_user_function);
+    // _subtraction_box_.set_user_draw((void *) &extruded_box_model::gnuplot_draw_user_function);
 
+    // Install a dedicated drawer:
+    _drawer_.reset(new extruded_box::wires_drawer(_extruded_box_));
+    _subtraction_box_.set_wires_drawer(*_drawer_);
     _subtraction_box_.lock();
 
     grab_logical().set_name(i_model::make_logical_volume_name(name_));
@@ -259,18 +269,16 @@ namespace geomtools {
     return;
   }
 
+  /*
   void extruded_box_model::gnuplot_draw_user_function(std::ostream & out_,
                                                       const geomtools::vector_3d & position_,
                                                       const geomtools::rotation_3d & rotation_,
                                                       const geomtools::i_object_3d & obj_,
                                                       void *)
   {
-    const geomtools::subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
-    DT_THROW_IF(solid == 0, std::logic_error,
-                "3D-object of '" << obj_.get_shape_name()
-                << "' shape type has not the right type !");
-    const geomtools::i_composite_shape_3d::shape_type & s1 = solid->get_shape1();
-    const geomtools::i_composite_shape_3d::shape_type & s2 = solid->get_shape2();
+   const geomtools::subtraction_3d & solid = _model_->get_solid();
+    const geomtools::i_composite_shape_3d::shape_type & s1 = solid.get_shape1();
+    const geomtools::i_composite_shape_3d::shape_type & s2 = solid.get_shape2();
     const geomtools::i_shape_3d & sh1 = s1.get_shape();
     const geomtools::i_shape_3d & sh2 = s2.get_shape();
 
@@ -305,8 +313,10 @@ namespace geomtools {
       const geomtools::rotation_3d & sh2_rot = world_item_placement.get_rotation();
       geomtools::gnuplot_draw::draw_box(out_, sh2_pos, sh2_rot, daughter_box);
     }
+
     return;
   }
+    */
 
 } // end of namespace geomtools
 

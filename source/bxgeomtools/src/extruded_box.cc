@@ -9,7 +9,13 @@
 #include <datatools/units.h>
 #include <datatools/properties.h>
 
+// This project:
+#include <geomtools/gnuplot_draw.h>
+
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(extruded_box, "geomtools::extruded_box");
 
   const std::string & extruded_box::extruded_box_label()
   {
@@ -398,23 +404,23 @@ namespace geomtools {
       lunit = datatools::units::get_length_unit_from(lunit_str);
     }
 
-    DT_THROW_IF (! config_.has_key("x"), std::logic_error, "Missing extruded_box 'x' property !");
+    DT_THROW_IF (! config_.has_key("x"), std::logic_error, "Missing extruded box 'x' property !");
     double x = config_.fetch_real("x");
     if (! config_.has_explicit_unit("x")) {
       x *= lunit;
     }
-    DT_THROW_IF (! config_.has_key("y"), std::logic_error, "Missing extruded_box 'y' property !");
+    DT_THROW_IF (! config_.has_key("y"), std::logic_error, "Missing extruded box 'y' property !");
     double y = config_.fetch_real("y");
     if (! config_.has_explicit_unit("y")) {
       y *= lunit;
     }
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing extruded_box 'z' property !");
+    DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing extruded box 'z' property !");
     double z = config_.fetch_real("z");
     if (! config_.has_explicit_unit("z")) {
       z *= lunit;
     }
 
-    DT_THROW_IF (! config_.has_key("thickness"), std::logic_error, "Missing extruded_box 'thickness' property !");
+    DT_THROW_IF (! config_.has_key("thickness"), std::logic_error, "Missing extruded box 'thickness' property !");
     double thickness = config_.fetch_real("thickness");
     if (! config_.has_explicit_unit("thickness")) {
       thickness *= lunit;
@@ -906,6 +912,35 @@ namespace geomtools {
           pl.add(v);
         }
       }
+    }
+    return;
+  }
+
+  extruded_box::wires_drawer::wires_drawer(const extruded_box & eb_)
+  {
+    DT_THROW_IF(!eb_.is_locked(), std::logic_error, "Extruded box is not locked!");
+    _exbox_ = &eb_;
+    return;
+  }
+
+  extruded_box::wires_drawer::~wires_drawer()
+  {
+    return;
+  }
+
+  void extruded_box::wires_drawer::generate_wires(std::ostream & out_,
+                                                  const geomtools::vector_3d & position_,
+                                                  const geomtools::rotation_3d & rotation_)
+  {
+    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
+    if (!_wires_ptr_) {
+      _wires_ptr_.reset(new std::list<polyline_3d>);
+      _exbox_->generate_wires_self(*_wires_ptr_);
+    }
+    for (std::list<polyline_3d>::const_iterator i = _wires_ptr_->begin();
+         i != _wires_ptr_->end();
+         i++) {
+      geomtools::gnuplot_draw::draw_polyline(out_, position_, rotation_, *i);
     }
     return;
   }

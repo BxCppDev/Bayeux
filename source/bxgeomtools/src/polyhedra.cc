@@ -23,6 +23,9 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(polyhedra, "geomtools::polyhedra");
+
   const std::string & polyhedra::polyhedra_label()
   {
     static std::string label;

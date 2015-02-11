@@ -416,6 +416,30 @@ namespace geomtools {
     _get_stream(define_section()) << endl;
   }
 
+  void gdml_writer::add_scale(const std::string & name_,
+                              double x_, double y_, double z_)
+  {
+    _get_stream(define_section()) << "<scale"
+                                  << " name=" << '"' << to_html(name_)
+                                  << '"';
+
+    _get_stream(define_section()) << " " << "x" << "=" << '"';
+    _get_stream(define_section()).precision(15);
+    _get_stream(define_section()) << x_ << '"';
+
+    _get_stream(define_section()) << " " << "y" << "=" << '"';
+    _get_stream(define_section()).precision(15);
+    _get_stream(define_section()) << y_ << '"';
+
+    _get_stream(define_section()) << " " << "z" << "=" << '"';
+    _get_stream(define_section()).precision(15);
+    _get_stream(define_section()) << z_ << '"';
+
+    _get_stream(define_section()) << " />" << endl;
+
+    return;
+  }
+
   /*** Materials ***/
 
   void gdml_writer::add_isotope(const string & name_,
@@ -807,6 +831,10 @@ namespace geomtools {
       {
         return true;
       }
+    if (solid_type_ == "tessellated")
+      {
+        return true;
+      }
 
     // combination:
     if (solid_type_ == "union_3d")
@@ -1102,9 +1130,9 @@ namespace geomtools {
   }
 
   void gdml_writer::add_gdml_elliptical_tube(const string & name_,
-					     double rx_, double ry_, double z_,
-					     const string & lunit_str_,
-					     const string & aunit_str_)
+                                             double rx_, double ry_, double z_,
+                                             const string & lunit_str_,
+                                             const string & aunit_str_)
   {
     double lunit = datatools::units::get_length_unit_from(lunit_str_);
     //double aunit = datatools::units::get_angle_unit_from(aunit_str_);
@@ -1116,7 +1144,7 @@ namespace geomtools {
     solids_stream << " dx=" << '"';
     solids_stream.precision(15);
     solids_stream << rx_ / lunit << '"';
-    
+
     solids_stream << " dy=" << '"';
     solids_stream.precision(15);
     solids_stream << ry_ / lunit << '"';
@@ -1133,10 +1161,10 @@ namespace geomtools {
   }
 
   void gdml_writer::add_gdml_ellipsoid(const string & name_,
-				       double rx_, double ry_, double rz_,
-				       double bottom_z_, double top_z_,
-				       const string & lunit_str_,
-				       const string & /*aunit_str_*/)
+                                       double rx_, double ry_, double rz_,
+                                       double bottom_z_, double top_z_,
+                                       const string & lunit_str_,
+                                       const string & /*aunit_str_*/)
   {
     double lunit = datatools::units::get_length_unit_from(lunit_str_);
     //double aunit = datatools::units::get_angle_unit_from(aunit_str_);
@@ -1148,7 +1176,7 @@ namespace geomtools {
     solids_stream << " ax=" << '"';
     solids_stream.precision(15);
     solids_stream << rx_ / lunit << '"';
-    
+
     solids_stream << " by=" << '"';
     solids_stream.precision(15);
     solids_stream << ry_ / lunit << '"';
@@ -1381,31 +1409,31 @@ namespace geomtools {
   }
 
   void gdml_writer::add_elliptical_tube(const string & name_,
-					const elliptical_tube & t_,
-					const string & lunit_str_,
-					const string & aunit_str_)
+                                        const elliptical_tube & t_,
+                                        const string & lunit_str_,
+                                        const string & aunit_str_)
   {
     add_gdml_elliptical_tube(name_,
-			     t_.get_x_radius(),
-			     t_.get_y_radius(),
-			     t_.get_z(),
-			     lunit_str_,
-			     aunit_str_);
+                             t_.get_x_radius(),
+                             t_.get_y_radius(),
+                             t_.get_z(),
+                             lunit_str_,
+                             aunit_str_);
   }
 
   void gdml_writer::add_ellipsoid(const string & name_,
-				  const ellipsoid & e_,
-				  const string & lunit_str_,
-				  const string & aunit_str_)
+                                  const ellipsoid & e_,
+                                  const string & lunit_str_,
+                                  const string & aunit_str_)
   {
     add_gdml_ellipsoid(name_,
-		       e_.get_x_radius(),
-		       e_.get_y_radius(),
-		       e_.get_z_radius(),
-		       e_.get_bottom_z_cut(),
-		       e_.get_top_z_cut(),
-		       lunit_str_,
-		       aunit_str_);
+                       e_.get_x_radius(),
+                       e_.get_y_radius(),
+                       e_.get_z_radius(),
+                       e_.get_bottom_z_cut(),
+                       e_.get_top_z_cut(),
+                       lunit_str_,
+                       aunit_str_);
   }
 
   void gdml_writer::add_orb(const string & name_,
@@ -1488,6 +1516,58 @@ namespace geomtools {
                        lunit_str_,
                        aunit_str_);
     return;
+  }
+
+  void gdml_writer::add_tessellated(const string & name_,
+                                    const tessellated_solid & t_,
+                                    const string & lunit_str_)
+  {
+    double lunit = datatools::units::get_length_unit_from(lunit_str_);
+
+    // Registration of vertices:
+    for (tessellated_solid::vertices_col_type::const_iterator i
+           = t_.vertices().begin();
+         i != t_.vertices().end();
+         i++) {
+      std::ostringstream vtx_key_oss;
+      vtx_key_oss << name_<< ".vtx_" << i->first;
+      add_position(vtx_key_oss.str(), i->second.get_position(), lunit_str_);
+    }
+
+    // Open the solid:
+    std::ostringstream solids_stream;
+    solids_stream << "<" <<  "tessellated"
+                  << " name=" << '"' << to_html(name_) << '"';
+    solids_stream << " >" << std::endl << std::endl;
+
+    // Registration of facets:
+     for (tessellated_solid::facets_col_type::const_iterator i
+            = t_.facets().begin();
+          i != t_.facets().end();
+          i++) {
+       unsigned int facet_index = i->first;
+       const facet34 & facet = i->second;
+
+       solids_stream << "<";
+       if (facet.is_triangle()) {
+         solids_stream << "triangular";
+       } else {
+         solids_stream << "quadrangular";
+       }
+       solids_stream << " ";
+       for (int i = 0; i < (int) facet.get_number_of_vertices(); i++) {
+         int32_t vtx_key = facet.get_vertex_key(i);
+         solids_stream << "vertex" << (i+1) << "=\"" << name_ << ".vtx_" << vtx_key << "\" ";
+       }
+       solids_stream << "type=\"" << "ABSOLUTE" << "\"";
+       solids_stream << " />" << std::endl;
+
+     }
+     // Close the solid:
+     solids_stream << "</tessellated>" << std::endl << std::endl;
+
+     _get_stream(solids_section()) << solids_stream.str();
+     return;
   }
 
   /*** Structure ***/

@@ -239,6 +239,9 @@ namespace geomtools {
     double  _r_max_;
     bool    _extruded_;
 
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(polycone);
+
   };
 
 } // end of namespace geomtools

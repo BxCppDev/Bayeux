@@ -83,8 +83,17 @@ namespace geomtools {
                                  intercept_t & intercept_,
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
+    // Serialization interface
+    DATATOOLS_SERIALIZATION_DECLARATION();
+
   };
 
 } // end of namespace geomtools
+
+/*
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::i_shape_2d, 0)
+*/
 
 #endif // GEOMTOOLS_I_SHAPE_2D_H

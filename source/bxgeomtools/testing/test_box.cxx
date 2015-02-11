@@ -1,11 +1,12 @@
-// -*- mode: c++; -*-
 // test_box.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
+// This project:
 #include <geomtools/geomtools_config.h>
 #include <geomtools/box.h>
 #include <geomtools/gnuplot_draw.h>
@@ -13,6 +14,9 @@
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
+
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/temporary_files.h>
 #include <datatools/utils.h>
 
@@ -69,9 +73,9 @@ int main (int argc_, char ** argv_)
       geomtools::box my_box (2.0 * CLHEP::m,
                              3.0 * CLHEP::m,
                              0.5 * CLHEP::m);
-      my_box.grab_properties ().store ("color", "red");
-      my_box.grab_properties ().store ("material", "paper");
-      my_box.grab_properties ().store ("temperature", 300.* CLHEP::kelvin);
+      // my_box.grab_auxiliaries ().store ("color", "red");
+      // my_box.grab_auxiliaries ().store ("material", "paper");
+      // my_box.grab_auxiliaries ().store ("temperature", 300.* CLHEP::kelvin);
       my_box.tree_dump (clog, "my_box", "test 1: ");
       clog << "test 1: Box #1  = " << my_box << " " << endl;
 

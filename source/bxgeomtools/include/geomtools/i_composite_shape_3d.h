@@ -36,12 +36,13 @@ namespace geomtools {
     {
       bool         _delete_;    //!< Flag to delete the handled shape
       i_shape_3d * _shape_;     //!< Handle to the component shape
+      std::string  _shape_ref_; //!< Reference name of the external shape
       placement    _placement_; //!< Placement of the component shape
 
     private:
 
       // forbid implementation of:
-      shape_type (const shape_type &);
+      shape_type(const shape_type &);
 
       shape_type & operator=(const shape_type &);
 
@@ -49,41 +50,50 @@ namespace geomtools {
 
       void copy(shape_type &);
 
-      void reset ();
+      void reset();
 
-      bool is_valid () const;
+      bool is_valid() const;
 
-      shape_type ();
+      shape_type();
 
-      virtual ~shape_type ();
+      virtual ~shape_type();
 
-      bool is_delete () const;
+      bool is_delete() const;
 
-      const i_shape_3d & get_shape () const;
+      void set_shape_ref(const std::string &);
 
-      i_shape_3d & grab_shape ();
+      const std::string & get_shape_ref() const;
 
-      const placement & get_placement () const;
+      const i_shape_3d & get_shape() const;
 
-      placement & grab_placement ();
+      i_shape_3d & grab_shape();
+
+      const placement & get_placement() const;
+
+      placement & grab_placement();
 
       // Factory methods:
 
-      static void make_shape (i_shape_3d &,
+      static void make_shape(i_shape_3d &,
+                             const placement &,
+                             shape_type &);
+
+      static void make_shape(i_shape_3d &,
+                             const placement &,
+                             const std::string & shape_ref_,
+                             shape_type &);
+
+      static void make_shape(i_shape_3d *,
                               const placement &,
                               shape_type &);
 
-      static void make_shape (i_shape_3d *,
-                              const placement &,
-                              shape_type &);
 
-
-      virtual void tree_dump (std::ostream & out_         = std::clog,
+      virtual void tree_dump(std::ostream & out_         = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
                               bool inherit_          = false) const;
 
-      void dump (std::ostream & out_ = std::clog) const;
+      void dump(std::ostream & out_ = std::clog) const;
 
     };
 
@@ -94,33 +104,36 @@ namespace geomtools {
       COMPONENT_SHAPE_ALL    = COMPONENT_SHAPE_FIRST | COMPONENT_SHAPE_SECOND
     };
 
-    bool is_composite () const;
+    bool is_composite() const;
 
-    i_composite_shape_3d (double skin_ = GEOMTOOLS_DEFAULT_TOLERANCE);
+    i_composite_shape_3d(double skin_ = GEOMTOOLS_DEFAULT_TOLERANCE);
 
-    virtual ~i_composite_shape_3d ();
+    virtual ~i_composite_shape_3d();
 
-    void set_shape1 (i_shape_3d &, const placement &);
+    void set_shape1(i_shape_3d &, const placement &, const std::string & shref_ = "");
 
-    void set_shape2 (i_shape_3d &, const placement &);
+    void set_shape2(i_shape_3d &, const placement &, const std::string & shref_ = "");
 
-    void set_shapes (i_shape_3d &, i_shape_3d &, const placement &);
+    void set_shapes(i_shape_3d &, i_shape_3d &, const placement &,
+                    const std::string & sh1ref_ = "", const std::string & sh2ref_ = "");
 
-    void set_shape1 (i_shape_3d *, const placement &);
+    void set_shape1(i_shape_3d *, const placement &);
 
-    void set_shape2 (i_shape_3d *, const placement &);
+    void set_shape2(i_shape_3d *, const placement &);
 
-    void set_shapes (i_shape_3d *, i_shape_3d *, const placement &);
+    void set_shapes(i_shape_3d *, i_shape_3d *, const placement &);
 
-    const shape_type & get_shape1 () const;
+    const shape_type & get_shape1() const;
 
-    const shape_type & get_shape2 () const;
+    const shape_type & get_shape2() const;
 
-    const shape_type & get_shape (int i_) const;
+    const shape_type & get_shape(int i_) const;
 
-    void dump (std::ostream & out_ = std::clog) const;
+    /// Dump
+    void dump(std::ostream & out_ = std::clog) const;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    /// Smart print
+    virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
@@ -134,8 +147,8 @@ namespace geomtools {
 
   private:
 
-    shape_type _shape1_;
-    shape_type _shape2_;
+    shape_type _shape1_; //!< First shape
+    shape_type _shape2_; //!< Second shape
 
   };
 

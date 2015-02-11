@@ -19,6 +19,16 @@ namespace geomtools {
 
   using namespace std;
 
+  std::string shape_domain_flag_label(shape_domain_flags_type flag_)
+  {
+    if (flag_ == SHAPE_DOMAIN_INSIDE) return std::string("inside");
+    if (flag_ == SHAPE_DOMAIN_OUTSIDE) return std::string("outside");
+    if (flag_ == SHAPE_DOMAIN_ON_SURFACE) return std::string("on_surface");
+    if (flag_ == SHAPE_DOMAIN_INSIDE_DAUGHTER) return std::string("inside_daughter");
+    if (flag_ == SHAPE_DOMAIN_ON_DAUGHTER_SURFACE) return std::string("on_daughter_surface");
+    return std::string("");
+  }
+
   bool angle_is_in(double angle_,
                    double start_angle_, double delta_angle_,
                    double angular_tolerance_,

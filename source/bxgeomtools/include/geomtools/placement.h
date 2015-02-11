@@ -276,4 +276,10 @@ namespace geomtools {
 // Activate reflection layer :
 DR_CLASS_INIT(::geomtools::placement);
 
+/*
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::placement, 0)
+*/
+
 #endif // GEOMTOOLS_PLACEMENT_H

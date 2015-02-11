@@ -69,8 +69,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-// 2014-07-03 FM: Now inherits from geomtools::base_hit :
-#include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(geomtools::blur_spot, 1)
-
 #endif // GEOMTOOLS_BLUR_SPOT_IPP

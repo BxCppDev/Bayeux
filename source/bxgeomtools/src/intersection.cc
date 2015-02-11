@@ -1,15 +1,17 @@
-// -*- mode: c++; -*- 
-/* intersection.cc
- */
+/// intersection.cc
 
+// Ourselves:
 #include <geomtools/intersection.h>
 
+// Standard library:
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 
 namespace geomtools {
@@ -17,7 +19,7 @@ namespace geomtools {
   namespace intersection {
 
 
-    using namespace std;  
+    using namespace std;
 
     /**
      * Some useful formulae at:
@@ -25,7 +27,7 @@ namespace geomtools {
      *  http://local.wasp.uwa.edu.au/~pbourke/geometry/sphereline/
      *
      */
-    bool find_intersection_line_circle_2d (const vector_2d & line_origin_, 
+    bool find_intersection_line_circle_2d (const vector_2d & line_origin_,
                                            const vector_2d & line_direction_,
                                            const vector_2d & circle_origin_,
                                            double circle_radius_,
@@ -41,7 +43,7 @@ namespace geomtools {
       const vector_2d & P1 = line_origin_;
       const vector_2d & P2 = line_origin_ + line_direction_;
       const vector_2d & P3 = circle_origin_;
-      
+
       double x1 = P1.x ();
       double x2 = P2.x ();
       double x3 = P3.x ();
@@ -53,15 +55,15 @@ namespace geomtools {
       double b = 2 * ((x2 - x1) * (x1 - x3) + (y2 - y1) * (y1 - y3));
       double c = x3 * x3 + y3 * y3 + x1 * x1 + y1 * y1
         -2 * (x3 * x1 + y3 * y1) - r * r;
-        
+
       double delta = b * b - 4 * a * c;
 
-      double t1 = -b / (2 * a); 
+      double t1 = -b / (2 * a);
       if (abs (delta) < 1.e-16)
         {
           nsols_ = 1;
           u1_ = t1;
-        } 
+        }
       else if (delta > 1.e-16)
         {
           nsols_ = 2;
@@ -75,7 +77,7 @@ namespace geomtools {
     }
 
 
-    bool find_intersection_line_circle_2d (const vector_2d & line_origin_, 
+    bool find_intersection_line_circle_2d (const vector_2d & line_origin_,
                                            const vector_2d & line_direction_,
                                            const vector_2d & circle_origin_,
                                            double circle_radius_,
@@ -108,8 +110,8 @@ namespace geomtools {
       // return success flag:
       return nsols_ > 0;
     }
-    
-    bool find_intersection_segment_disk_2d (const vector_2d & segment_first_, 
+
+    bool find_intersection_segment_disk_2d (const vector_2d & segment_first_,
                                             const vector_2d & segment_last_,
                                             const vector_2d & disk_origin_,
                                             double disk_radius_,
@@ -117,7 +119,7 @@ namespace geomtools {
                                             vector_2d & last_)
     {
       vector_2d segment_direction = (segment_last_ - segment_first_).unit ();
-      
+
       // local solutions:
       size_t nsols = 0;
       double u1, u2;
@@ -152,25 +154,25 @@ namespace geomtools {
       else if (nsols == 2)
         {
           // segment's line is crossing the disk:
-          
-          // reordering solutions u1 and u2: 
+
+          // reordering solutions u1 and u2:
           if (u1 > u2) swap (u1, u2);
-          
+
           if ((u1 < umin) && (u2 < umin))
             {
-              // both intersections are outside/before the segment 
+              // both intersections are outside/before the segment
               // => no solution
               return false;
             }
           else if ((u1 > umax) && (u2 > umax))
             {
-              // both intersections are outside/after the segment 
+              // both intersections are outside/after the segment
               //=> no solution
               return false;
             }
           else if ((u1 <= umin) &&  (u2 >= umax))
             {
-              // segment is fully contained within the disk 
+              // segment is fully contained within the disk
               // => intersecting segment is the segment itself
               first_ = segment_first_;
               last_ = segment_last_;
@@ -186,7 +188,7 @@ namespace geomtools {
             }
           else if ((u1 <= umax) && (u1 >= umin) && (u2 > umax))
             {
-              // segment is partially contained within the disk 
+              // segment is partially contained within the disk
               // => intersecting segment is:
               first_ = segment_first_ + u1 * segment_direction;
               last_ = segment_last_;
@@ -194,7 +196,7 @@ namespace geomtools {
             }
           else if ((u2 <= umax) && (u2 >= umin) && (u1 < umin))
             {
-              // segment is partially contained within the disk 
+              // segment is partially contained within the disk
               // => intersecting segment is:
               first_= segment_first_;
               last_ = segment_first_ + u2 * segment_direction;
@@ -203,9 +205,7 @@ namespace geomtools {
         }
         return false;
      }
-      
-  } // end of namespace intersection
-    
-} // end of namespace geomtools
 
-// end of intersection.cc
+  } // end of namespace intersection
+
+} // end of namespace geomtools

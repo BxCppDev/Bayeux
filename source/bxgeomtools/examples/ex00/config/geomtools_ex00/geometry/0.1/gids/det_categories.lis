@@ -5,18 +5,6 @@
 #@key_label   "category"
 #@meta_label  "type"
 
-###########################
-[category="world" type="0"]
-
-#@config The mandatory geometry category of the top-level world volume
-
-#@description The GID address of the world volume is characterized by its 'world' number
-addresses : string[1] = "world"
-
-# This is mandatory in the library, by convention :
-#  the category name is : 'world'
-#  the type Id is: 0
-
 
 ##############################
 [category="box.gc" type="100"]

@@ -28,8 +28,14 @@
 #include <geomtools/i_stackable.h>
 #include <geomtools/utils.h>
 #include <geomtools/mapping_utils.h>
+#include <geomtools/shape_factory.h>
 
 namespace geomtools {
+
+  simple_shaped_model::shape_build_mode_type simple_shaped_model::get_shape_build_mode() const
+  {
+    return _sbm_;
+  }
 
   bool simple_shaped_model::is_filled () const
   {
@@ -91,9 +97,9 @@ namespace geomtools {
     return *_solid_;
   }
 
-  const std::string & simple_shaped_model::get_shape_name () const
+  const std::string & simple_shaped_model::get_shape_type_id () const
   {
-    return _shape_name_;
+    return _shape_type_id_;
   }
 
   const std::string & simple_shaped_model::get_material_name () const
@@ -113,31 +119,45 @@ namespace geomtools {
 
   simple_shaped_model::simple_shaped_model () : i_model ()
   {
+    _sbm_                    = SBM_INVALID;
     _box_                    = 0;
     _cylinder_               = 0;
     _tube_                   = 0;
     _sphere_                 = 0;
     _polycone_               = 0;
+    _polyhedra_              = 0;
     _solid_                  = 0;
     _inner_shape_            = 0;
     _outer_shape_            = 0;
-    _shape_name_             = ""; // no defined shape
-    _material_name_          = ""; //material::material_ref_unknown();
+    _shape_type_id_          = ""; // no defined shape
+    _material_name_          = ""; // material::material_ref_unknown();
     _filled_mode_            = filled_utils::FILLED_NONE;
-    _filled_material_name_   = ""; //material::material_ref_unknown();
+    _filled_material_name_   = ""; // material::material_ref_unknown();
     return;
   }
 
   simple_shaped_model::~simple_shaped_model ()
   {
+    if (_sbm_ == SBM_LEGACY) {
+      if (_inner_shape_ != 0) delete _inner_shape_;
+      if (_outer_shape_ != 0) delete _outer_shape_;
+
+      if (_box_ != 0)         delete _box_;
+      if (_cylinder_ != 0)    delete _cylinder_;
+      if (_tube_ != 0)        delete _tube_;
+      if (_sphere_ != 0)      delete _sphere_;
+      if (_polycone_ != 0)    delete _polycone_;
+      if (_polyhedra_ != 0)   delete _polyhedra_;
+    }
+    _box_         = 0;
+    _cylinder_    = 0;
+    _tube_        = 0;
+    _sphere_      = 0;
+    _polycone_    = 0;
+    _polyhedra_   = 0;
+    _inner_shape_ = 0;
+    _outer_shape_ = 0;
     _solid_ = 0;
-    if (_inner_shape_ != 0) delete _inner_shape_;
-    if (_outer_shape_ != 0) delete _outer_shape_;
-    if (_box_ != 0)         delete _box_;
-    if (_cylinder_ != 0)    delete _cylinder_;
-    if (_tube_ != 0)        delete _tube_;
-    if (_sphere_ != 0)      delete _sphere_;
-    if (_polycone_ != 0)    delete _polycone_;
     return;
   }
 
@@ -150,78 +170,154 @@ namespace geomtools {
     // Initialization:
     _filled_material_name_ = material::material_ref_unknown();
 
-    // Parsing shape:
-    DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error, "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
-    _shape_name_ = config_.fetch_string ("shape_type");
-
-    // Shape fill mode:
-    _filled_mode_ = filled_utils::FILLED_NONE;
-    if (config_.has_key ("filled_mode")) {
-      const std::string filled_mode_label = config_.fetch_string ("filled_mode");
-      _filled_mode_ = filled_utils::get_filled_mode(filled_mode_label);
-      DT_THROW_IF (_filled_mode_ == filled_utils::FILLED_UNDEFINED,
-                   std::logic_error,
-                   "Invalid filled mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << name_ << "' !");
-      // if (is_filled()) {
-      //   DT_LOG_WARNING(get_logging_priority (),
-      //                  "Filled mode '" << filled_utils::get_filled_mode_label(_filled_mode_)
-      //                  << "' is not recommended unless you know what you do !");
-      // }
-    }
-
-    // Label of the shape in 'filled envelope' mode:
-    if (is_filled_by_envelope()){
-      _filled_label_ = _shape_name_ + "_by_envelope";
-      if (config_.has_key("filled_label")) {
-        _filled_label_ = config_.fetch_string("filled_label");
-      }
-      DT_THROW_IF (_filled_label_.empty(),
-                   std::logic_error,
-                   "Invalid filled label '" << _filled_label_ << "' property in simple shaped (tube) model '" << name_ << "' !");
-    }
-
     // Main shape material:
-    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in simple shaped model '" << name_ << "' !");
+    DT_THROW_IF (! config_.has_key ("material.ref"), std::logic_error,
+                 "Missing 'material.ref' property in simple shaped model '" << name_ << "' !");
     _material_name_ = config_.fetch_string ("material.ref");
 
-    // Filling material:
-    if (is_filled()){
-      // Parsing material:
-      DT_THROW_IF (! config_.has_key ("material.filled.ref"),
-                   std::logic_error,
-                   "Missing 'material.filled.ref' property in simple shaped (tube) model '" << name_ << "' !");
-      _filled_material_name_ = config_.fetch_string ("material.filled.ref");
+    if (config_.has_key("shape_build_mode")) {
+      const std::string & sbm_label = config_.fetch_string("shape_build_mode");
+      if (sbm_label == "legacy") {
+        _sbm_ = SBM_LEGACY;
+      } else if (sbm_label == "factory") {
+        _sbm_ = SBM_FACTORY;
+      } else {
+        DT_THROW(std::logic_error,
+                 "Invalid label for shape build mode ('" << sbm_label << "') property in simple shaped model '" << name_ << "' !");
+      }
+    }
+    if (_sbm_ == SBM_INVALID) {
+      // Default shape build mode:
+      _sbm_ = SBM_DEFAULT;
     }
 
     // Set the logical name:
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
+    grab_logical().set_name(i_model::make_logical_volume_name(name_));
 
-    if (get_shape_name () == "box") {
-      // Box case:
-      _construct_box (name_, config_, models_);
-    } else if (get_shape_name () == "cylinder") {
-      // Cylinder case:
-      _construct_cylinder (name_, config_, models_);
-    } else if (get_shape_name () == "sphere") {
-      // Sphere case:
-      _construct_sphere (name_, config_, models_);
-    } else if (get_shape_name () == "tube") {
-      // Tube case:
-      _construct_tube (name_, config_, models_);
-    } else if (get_shape_name () == "polycone") {
-      // Polycone case:
-      _construct_polycone (name_, config_, models_);
-    } else if (get_shape_name () == "polyhedra") {
-      // Polyhedra case:
-      _construct_polyhedra (name_, config_, models_);
+    // Parsing shape:
+
+    if (_sbm_ == SBM_FACTORY) {
+      // Solid built from the referenced shape factory:
+      DT_THROW_IF(!has_shape_factory(), std::logic_error, "Missing shape factory!");
+      /*
+       *  shape_build_mode : string = "factory"
+       *
+       *  shapes.names     : string[2] = "A" "B" "C"
+       *
+       *  shapes.shape_type.A : string = "geomtools::box"
+       *  shapes.params.A.x       : real as length = 3.2 mm
+       *  shapes.params.A.y       : real as length = 1.6 mm
+       *  shapes.params.A.z       : real as length = 0.8 mm
+       *
+       *  shapes.shape_type.B : string = "geomtools::cylinder"
+       *  shapes.params.B.r       : real as length = 0.75 mm
+       *  shapes.params.B.z       : real as length = 0.5 mm
+       *
+       *  shapes.shape_type.C : string = "geomtools::union_3d"
+       *  shapes.params.C.first_shape.name       : string = "A"
+       *  shapes.params.C.second_shape.name      : string = "B"
+       *  shapes.params.C.second_shape.placement : string = "0.0 0.0 0.5 (mm)"
+       *
+       *  shape_ref : string = "C"
+       *
+       */
+      {
+        datatools::properties shapes_defs;
+        config_.export_and_rename_starting_with(shapes_defs, "shapes.", "");
+        grab_shape_factory().parse_shapes(shapes_defs);
+      }
+      if (config_.has_key("shape_ref")) {
+        // Reference
+        std::string shape_ref = config_.fetch_string("shape_ref");
+        DT_THROW_IF(!get_shape_factory().has(shape_ref), std::logic_error,
+                    "Shape factory does not contains a solid named '" << shape_ref
+                    << "' for model '" << name_ << "'!");
+        _solid_ = dynamic_cast<i_shape_3d *>(const_cast<i_object_3d *>(&get_shape_factory().get(shape_ref)));
+      } else {
+        DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error,
+                     "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
+        _shape_type_id_ = config_.fetch_string("shape_type");
+        datatools::properties shape_config;
+        config_.export_and_rename_starting_with(shape_config, "shape.", "");
+        std::ostringstream solid_name_oss;
+        solid_name_oss << name_ << i_model::solid_suffix();
+        i_object_3d & obj3d = grab_shape_factory().create(solid_name_oss.str(), _shape_type_id_, shape_config);
+        // obj3d.set_name(solid_name_oss.str());
+        DT_THROW_IF(obj3d.get_dimensional() != i_object_3d::DIMENSIONAL_3,
+                    std::logic_error,
+                    "Object provided by the shape factory (type='" << _shape_type_id_ << "') is not a 3D-shape!");
+        _solid_ = dynamic_cast<i_shape_3d *>(&obj3d);
+      }
     } else {
-      DT_THROW_IF (true, std::logic_error, "Shape '" << get_shape_name () << "' is not supported in simple shaped model '" << name_ << "' !");
+      // Legacy solid:
+      DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error,
+                   "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
+      _shape_type_id_ = config_.fetch_string ("shape_type");
+
+      // Shape fill mode:
+      _filled_mode_ = filled_utils::FILLED_NONE;
+      if (config_.has_key ("filled_mode")) {
+        const std::string filled_mode_label = config_.fetch_string ("filled_mode");
+        _filled_mode_ = filled_utils::get_filled_mode(filled_mode_label);
+        DT_THROW_IF (_filled_mode_ == filled_utils::FILLED_UNDEFINED,
+                     std::logic_error,
+                     "Invalid filled mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << name_ << "' !");
+        // if (is_filled()) {
+        //   DT_LOG_WARNING(get_logging_priority (),
+        //                  "Filled mode '" << filled_utils::get_filled_mode_label(_filled_mode_)
+        //                  << "' is not recommended unless you know what you do !");
+        // }
+      }
+
+      // Label of the shape in 'filled envelope' mode:
+      if (is_filled_by_envelope()){
+        _filled_label_ = _shape_type_id_ + "_by_envelope";
+        if (config_.has_key("filled_label")) {
+          _filled_label_ = config_.fetch_string("filled_label");
+        }
+        DT_THROW_IF (_filled_label_.empty(),
+                     std::logic_error,
+                     "Invalid filled label '" << _filled_label_ << "' property in simple shaped (tube) model '" << name_ << "' !");
+      }
+
+      // Filling material:
+      if (is_filled()){
+        // Parsing material:
+        DT_THROW_IF (! config_.has_key ("material.filled.ref"),
+                     std::logic_error,
+                     "Missing 'material.filled.ref' property in simple shaped (tube) model '" << name_ << "' !");
+        _filled_material_name_ = config_.fetch_string ("material.filled.ref");
+      }
+
+      if (get_shape_type_id () == "box") {
+        // Box case:
+        _construct_box (name_, config_, models_);
+      } else if (get_shape_type_id () == "cylinder") {
+        // Cylinder case:
+        _construct_cylinder (name_, config_, models_);
+      } else if (get_shape_type_id () == "sphere") {
+        // Sphere case:
+        _construct_sphere (name_, config_, models_);
+      } else if (get_shape_type_id () == "tube") {
+        // Tube case:
+        _construct_tube (name_, config_, models_);
+      } else if (get_shape_type_id () == "polycone") {
+        // Polycone case:
+        _construct_polycone (name_, config_, models_);
+      } else if (get_shape_type_id () == "polyhedra") {
+        // Polyhedra case:
+        _construct_polyhedra (name_, config_, models_);
+      } else {
+        DT_THROW_IF (true, std::logic_error, "Shape '" << get_shape_type_id () << "' is not supported in simple shaped model '" << name_ << "' !");
+      }
     }
 
-    _solid_->lock();
+    if (!_solid_->is_locked()) {
+      _solid_->lock();
+    }
 
     // Set the envelope solid shape:
-    grab_logical ().set_shape (*_solid_);
+    grab_logical().set_shape(*_solid_);
 
     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
@@ -670,9 +766,11 @@ namespace geomtools {
       } // is_filled_by_envelope()
 
     }
+    /*
     if (_solid_) {
-      stackable::extract (setup_, _solid_->grab_properties ());
+      stackable::extract(setup_, _solid_->grab_auxiliaries ());
     }
+    */
     grab_logical ().set_geometry_model(*this);
 
     // Search for internal items to be installed within the logicals :
@@ -721,10 +819,24 @@ namespace geomtools {
     if (! indent_.empty ()) indent = indent_;
     i_model::tree_dump (out_, title_, indent, true);
 
-    // Shape name:
+    // Shape build mode:
     {
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Shape name : '" << get_shape_name () << "'" << std::endl;
+           << "Shape build mode : '";
+      if (get_shape_build_mode() == SBM_LEGACY) {
+        out_ << "legacy";
+      } else if (get_shape_build_mode() == SBM_FACTORY) {
+        out_ << "factory";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << "'" << std::endl;
+    }
+
+    // Shape type ID:
+    {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Shape type ID : '" << get_shape_type_id () << "'" << std::endl;
     }
 
     {
@@ -785,7 +897,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
   ocd_.set_class_library("geomtools");
   ocd_.set_class_description("This very useful geometry model is able to implement \n"
                              "volumes with various simple 3D shapes. The following \n"
-                             "shapes are supported:                                \n"
+                             "shapes are supported in *legacy* mode:                       \n"
                              "                                                             \n"
                              " * Box : see OCD support for class ``geomtool::box``.        \n"
                              " * Cylinder: see OCD support for class ``geomtool::cylinder``\n"
@@ -793,6 +905,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
                              " * Sphere : see OCD support for class ``geomtool::sphere``.  \n"
                              " * Polycone                                          \n"
                              " * Polyhedra                                         \n"
+                             "                                                     \n"
+                             "In *factory* mode, any solid 3D shape registered in  \n"
+                             "shape system factory can be instantiated.            \n"
                              "                                                     \n"
                              "The generated volume can also host daughter volumes, \n"
                              "thanks to the 'internal items' interface.            \n"
@@ -803,12 +918,42 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("shape_build_mode")
+      .set_terse_description("The build mode for the 3D shape implemented within the geometry model")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .set_long_description("This property specifies the solid shape build mode.          \n"
+                            "Allowed values are.                                          \n"
+                            "                                                             \n"
+                            " * ``\"legacy\"`` : use hardcoded method for building solids \n"
+                            " * ``\"factory\"`` : use a factory of registered solids      \n"
+                            "   This mode needs a shape factory to be referenced by the   \n"
+                            "   geometry model.                                           \n"
+                            "                                                             \n"
+                            )
+      .add_example("Use the legacy mode: ::                           \n"
+                   "                                                  \n"
+                   " #@description The shape build mode               \n"
+                   " shape_build_mode : string = \"legacy\"           \n"
+                   "                                                  \n"
+                   )
+      .add_example("Use the factory mode: ::                          \n"
+                   "                                                  \n"
+                   " #@description The shape build mode               \n"
+                   " shape_build_mode : string = \"factory\"          \n"
+                   "                                                  \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("shape_type")
       .set_terse_description("The name of the 3D shape implemented within the geometry model")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(true)
       .set_long_description("This property specifies the type of solid shape.  \n"
-                            "Allowed values are.                               \n"
+                            "For the *legacy* mode, allowed values are:        \n"
                             "                                                  \n"
                             " * ``\"box\"`` : a 3D box                         \n"
                             " * ``\"cylinder\"`` : a cylinder                  \n"
@@ -822,9 +967,19 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
                             "setup the logical volume(s) associated to this    \n"
                             "model. You may read the specific OCD support      \n"
                             "for each shape (if available).                    \n"
-                            )
+                            "                                                  \n"
+                            "For the *legacy* mode, allowed values are:        \n"
+                            "                                                  \n"
+                            " * ``\"geomtools::box\"`` : 3D box                \n"
+                            " * ``\"geomtools::cylinder\"`` : cylinder         \n"
+                            " * any shape type identifier registered in the    \n"
+                            "   shape system factory.                          \n"
+                            "                                                  \n"
+                           )
       .add_example("Use a box: ::                                     \n"
                    "                                                  \n"
+                   " #@description The shape build mode               \n"
+                   " shape_build_mode : string = \"legacy\"           \n"
                    " #@description The box type                       \n"
                    " shape_type  : string = \"box\"                   \n"
                    " #@description The default length unit            \n"
@@ -839,6 +994,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
                    )
       .add_example("Use a cylinder ::                                 \n"
                    "                                                  \n"
+                   " #@description The shape build mode               \n"
+                   " shape_build_mode : string = \"legacy\"           \n"
                    " #@description The box type                       \n"
                    " shape_type  : string = \"cylinder\"              \n"
                    " #@description The default length unit            \n"
@@ -851,6 +1008,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
                    )
       .add_example("Use a spherical section ::                        \n"
                    "                                                  \n"
+                   " #@description The shape build mode               \n"
+                   " shape_build_mode : string = \"legacy\"           \n"
                    " #@description The box type                       \n"
                    " shape_type  : string = \"sphere\"                \n"
                    " #@description The default length unit            \n"
@@ -873,6 +1032,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
                    )
       .add_example("Use a tube with (no filled mode)::                \n"
                    "                                                  \n"
+                   " #@description The shape build mode               \n"
+                   " shape_build_mode : string = \"legacy\"           \n"
                    " #@description The tube type                      \n"
                    " shape_type  : string = \"tube\"                  \n"
                    " #@description The default length unit            \n"
@@ -887,6 +1048,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
                    )
       .add_example("Use a polycone (no filled mode)::                        \n"
                    "                                                         \n"
+                   " #@description The shape build mode                      \n"
+                   " shape_build_mode : string = \"legacy\"                  \n"
                    " #@description The tube type                             \n"
                    " shape_type  : string = \"polycone\"                     \n"
                    " #@description The default length unit                   \n"
@@ -903,6 +1066,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
                    )
       .add_example("Use a polyhedra (no filled mode)::                        \n"
                    "                                                          \n"
+                   " #@description The shape build mode                       \n"
+                   " shape_build_mode : string = \"legacy\"                   \n"
                    " #@description The tube type                              \n"
                    " shape_type  : string = \"polyhedra\"                     \n"
                    " #@description The default length unit                    \n"
@@ -930,7 +1095,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::simple_shaped_model, ocd_)
       .set_mandatory(false)
       .set_long_description("This property specifies the way one must build the    \n"
                             "requested shape when it has a natural excavation/hole \n"
-                            "in it (tube, polycone, polyhedra).                    \n"
+                            "in it (tube, polycone, polyhedra, in the *legacy* mode). \n"
                             "Allowed values are.                                   \n"
                             "                                                                  \n"
                             " * ``\"none\"`` : Nothing special to do (default value).          \n"

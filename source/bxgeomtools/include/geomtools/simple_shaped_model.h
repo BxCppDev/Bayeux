@@ -7,8 +7,10 @@
  * License:
  *
  * Description:
+ *
  *   Model implementing a logical volume with a simple shape
- *   box, cylinder, sphere, tube, polycone, polyhedra
+ *   box, cylinder, sphere, tube, polycone, polyhedra or whatever solid (3D-shape)
+ *   registerable in a shape factory.
  *
  * History:
  *
@@ -29,6 +31,7 @@
 
 namespace geomtools {
 
+  // Forward declarations:
   class box;
   class cylinder;
   class tube;
@@ -43,6 +46,14 @@ namespace geomtools {
   {
   public:
 
+    /// \brief Shape build mode
+    enum shape_build_mode_type {
+      SBM_INVALID = 0, //!< Invalid
+      SBM_LEGACY  = 1, //!< Build shape from hardcoded (legacy)
+      SBM_FACTORY = 2, //!< Build shape from a factory (needs a reference shape factory)
+      SBM_DEFAULT = SBM_LEGACY
+    };
+
     MWIM & grab_internals ();
 
     const MWIM & get_internals () const;
@@ -51,7 +62,9 @@ namespace geomtools {
 
     const std::string & get_filled_material_name () const;
 
-    const std::string & get_shape_name () const;
+    shape_build_mode_type get_shape_build_mode() const;
+
+    const std::string & get_shape_type_id () const;
 
     const geomtools::box & get_box () const;
 
@@ -122,11 +135,12 @@ namespace geomtools {
 
   private:
 
-    std::string _shape_name_;                //!< The name of the shape
+    shape_build_mode_type _sbm_;             //!< The shape build mode
+    std::string _shape_type_id_;             //!< The type identifier of the shape
     std::string _material_name_;             //!< The name of the material the shape is made of
-    filled_utils::filled_type _filled_mode_; //!< The filled mode (for tube, polycone or polyhedra)
-    std::string _filled_material_name_;      //!< The name of the material of the shape cavity (for tube, polycone or polyhedra)
-    std::string _filled_label_;              //!< The label of the shape in enveloppe filled mode
+    filled_utils::filled_type _filled_mode_; //!< The filled mode for tube, polycone or polyhedra (legacy)
+    std::string _filled_material_name_;      //!< The name of the material of the shape cavity for tube, polycone or polyhedra (legacy)
+    std::string _filled_label_;              //!< The label of the shape in enveloppe filled mode (legacy)
 
     // Effective solids:
     geomtools::box *       _box_;
@@ -140,14 +154,14 @@ namespace geomtools {
     geomtools::i_shape_3d * _inner_shape_; //!< For filled tube or polycone or polyhedra
     geomtools::i_shape_3d * _outer_shape_; //!< For mother polycone or polyhedra
 
-    placement               _inner_placement_;
-    logical_volume          _inner_logical_;
-    physical_volume         _inner_phys_;
+    placement               _inner_placement_;  //!< Inner daughter volume placement
+    logical_volume          _inner_logical_;    //!< Inner logical volume
+    physical_volume         _inner_phys_;       //!< Inner physical volume
 
     //logical_volume        * _daughter_owner_logical_; //!< The logical volume that is the top level mother of all daughter volumes implied by this model
 
-    MWIM                    _internals_;        //!< internal items within the shape
-    MWIM                    _filled_internals_; //!< internal items within the cavity (type, polycone, polyhedra)
+    MWIM                    _internals_;        //!< Internal items within the shape
+    MWIM                    _filled_internals_; //!< Internal items within the cavity (type, polycone, polyhedra)
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_shaped_model);

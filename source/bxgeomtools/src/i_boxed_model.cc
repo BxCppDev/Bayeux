@@ -1,9 +1,9 @@
-// -*- mode: c++ ; -*-
-/* i_boxed_model.cc
- */
+// i_boxed_model.cc
 
+// Ourselves:
 #include <geomtools/i_boxed_model.h>
 
+// This project:
 #include <geomtools/box.h>
 
 namespace geomtools {
@@ -19,5 +19,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of i_boxed_model.cc

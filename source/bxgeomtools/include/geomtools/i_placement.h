@@ -90,4 +90,10 @@ namespace geomtools {
 // Activate reflection layer for the geomtools::i_placement class :
 DR_CLASS_INIT(::geomtools::i_placement);
 
+/*
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::i_placement, 0)
+*/
+
 #endif // GEOMTOOLS_I_PLACEMENT_H

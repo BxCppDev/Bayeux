@@ -11,10 +11,16 @@ Files
 
  * ``README.rst`` : This file.
  * ``manager.conf`` : The main configuration file for the geometry manager.
- * ``categories.lis`` : Contains the definition of geometry categories
-   used by the automated numbering scheme for the mapping of geometry volumes
-   through geometry identifiers (GIDs).
  * Folders:
+
+   * ``gids`` : Contains the files that describe geometry categories.
+
+     * ``lab_categories.lis`` : Contains the definition of geometry categories
+       used by the automated numbering scheme for the mapping of geometry volumes
+       through geometry identifiers (GIDs).
+     * ``det_categories.lis`` : Contains the definition of other geometry categories
+       used by the automated numbering scheme for the mapping of geometry volumes
+       through geometry identifiers (GIDs).
 
    * ``models`` : Contains the files that describe geometry models.
 
@@ -37,7 +43,7 @@ Geometry inspector
 
 Run the Bayeux/geomtools inspector program: ::
 
-  $ SETUP_CONFIG_DIR=config \
+  $ cd {ex00 source dir}
+  $ SETUP_CONFIG_DIR=$(pwd) \
     bxgeomtools_inspector \
       --manager-config "config/geomtools_ex00/geometry/0.1/manager.conf"
-

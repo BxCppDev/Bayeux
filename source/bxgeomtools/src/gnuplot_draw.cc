@@ -40,6 +40,8 @@
 #include <geomtools/intersection_3d.h>
 #include <geomtools/display_data.h>
 #include <geomtools/color.h>
+#include <geomtools/i_wires_3d_rendering.h>
+#include <geomtools/i_wires_drawer.h>
 
 namespace geomtools {
 
@@ -576,11 +578,11 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_box(std::ostream & out_,
-                          const vector_3d & pos_,
-                          const rotation_3d & rot_,
-                          const box & b_,
-                          int tube_axis_,
-                          size_t n_tube_sampling_)
+                         const vector_3d & pos_,
+                         const rotation_3d & rot_,
+                         const box & b_,
+                         int tube_axis_,
+                         size_t n_tube_sampling_)
   {
     draw_box(out_, pos_, rot_,
               b_.get_x(),
@@ -593,13 +595,13 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_box(std::ostream & out_,
-                          const vector_3d & position_,
-                          const rotation_3d & rotation_,
-                          double length_,
-                          double width_,
-                          double height_,
-                          int tube_axis_,
-                          size_t n_tube_sampling_)
+                         const vector_3d & position_,
+                         const rotation_3d & rotation_,
+                         double length_,
+                         double width_,
+                         double height_,
+                         int tube_axis_,
+                         size_t n_tube_sampling_)
   {
     /*             ^ y
      *             |
@@ -608,9 +610,6 @@ namespace geomtools {
      *       |     + - - |- - - - >x
      *       |           |
      *       C-----------B
-     *
-     *
-     *
      *
      */
 
@@ -810,65 +809,65 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_extruded_box(std::ostream & out_,
-				  const vector_3d & pos_,
-				  const rotation_3d & rot_,
-				  const extruded_box & b_,
-				  int tube_axis_,
-				  size_t n_tube_sampling_)
+                                  const vector_3d & pos_,
+                                  const rotation_3d & rot_,
+                                  const extruded_box & b_,
+                                  int tube_axis_,
+                                  size_t n_tube_sampling_)
   {
     draw_extruded_box(out_, pos_, rot_,
-		      b_.get_x(),
-		      b_.get_y(),
-		      b_.get_z(),
-		      b_.get_thickness(),
-		      b_.has_top(),
-		      b_.has_bottom(),
-		      tube_axis_,
-		      n_tube_sampling_);
+                      b_.get_x(),
+                      b_.get_y(),
+                      b_.get_z(),
+                      b_.get_thickness(),
+                      b_.has_top(),
+                      b_.has_bottom(),
+                      tube_axis_,
+                      n_tube_sampling_);
     return;
   }
 
   void
   gnuplot_draw::draw_extruded_box(std::ostream & out_,
-				  const vector_3d & position_,
-				  const rotation_3d & rotation_,
-				  double length_,
-				  double width_,
-				  double height_,
-				  double thickness_,
-				  bool has_top_, bool has_bottom_,
-				  int tube_axis_,
-				  size_t n_tube_sampling_)
+                                  const vector_3d & position_,
+                                  const rotation_3d & rotation_,
+                                  double length_,
+                                  double width_,
+                                  double height_,
+                                  double thickness_,
+                                  bool has_top_, bool has_bottom_,
+                                  int tube_axis_,
+                                  size_t n_tube_sampling_)
   {
     draw_box (out_, position_, rotation_,
-	      length_, width_, height_,
-	      tube_axis_,
-	      n_tube_sampling_);
+              length_, width_, height_,
+              tube_axis_,
+              n_tube_sampling_);
     if (has_top_ && has_bottom_) {
       draw_box (out_, position_, rotation_,
-		length_-2.*thickness_, width_-2.*thickness_, height_-2.*thickness_,
-		tube_axis_,
-		n_tube_sampling_);
+                length_-2.*thickness_, width_-2.*thickness_, height_-2.*thickness_,
+                tube_axis_,
+                n_tube_sampling_);
     }
     else if (!has_top_ && !has_bottom_) {
       draw_box (out_, position_, rotation_,
-		length_-2.*thickness_, width_-2.*thickness_, height_,
-		tube_axis_,
-		n_tube_sampling_);
+                length_-2.*thickness_, width_-2.*thickness_, height_,
+                tube_axis_,
+                n_tube_sampling_);
     }
     else if (has_top_ && !has_bottom_) {
       vector_3d pos (position_.x(), position_.y(), position_.z()-thickness_/2.);
       draw_box (out_, pos, rotation_,
-		length_-2.*thickness_, width_-2.*thickness_, height_-thickness_,
-		tube_axis_,
-		n_tube_sampling_);
+                length_-2.*thickness_, width_-2.*thickness_, height_-thickness_,
+                tube_axis_,
+                n_tube_sampling_);
     }
     else if (!has_top_ && has_bottom_) {
       vector_3d pos (position_.x(), position_.y(), position_.z()+thickness_/2.);
       draw_box (out_, pos, rotation_,
-		length_-2.*thickness_, width_-2.*thickness_, height_-thickness_,
-		tube_axis_,
-		n_tube_sampling_);
+                length_-2.*thickness_, width_-2.*thickness_, height_-thickness_,
+                tube_axis_,
+                n_tube_sampling_);
     }
     return;
   }
@@ -939,29 +938,29 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_tube(std::ostream & out_,
-                           const vector_3d & position_,
-                           const rotation_3d & rotation_,
-                           const tube & t_,
-                           size_t arc_sampling_)
+                          const vector_3d & position_,
+                          const rotation_3d & rotation_,
+                          const tube & t_,
+                          size_t arc_sampling_)
   {
     draw_tube(out_, position_, rotation_,
-	      t_.get_inner_r(),
-	      t_.get_outer_r(),
-	      t_.get_start_phi(),
-	      t_.get_delta_phi(),
-	      t_.get_z(), arc_sampling_);
+              t_.get_inner_r(),
+              t_.get_outer_r(),
+              t_.get_start_phi(),
+              t_.get_delta_phi(),
+              t_.get_z(), arc_sampling_);
   }
 
   void
   gnuplot_draw::draw_tube(std::ostream & out_,
-			  const vector_3d & position_,
-			  const rotation_3d & rotation_,
-			  double inner_radius_,
-			  double outer_radius_,
-			  double start_phi_,
-			  double delta_phi_,
-			  double height_,
-			  size_t arc_sampling_)
+                          const vector_3d & position_,
+                          const rotation_3d & rotation_,
+                          double inner_radius_,
+                          double outer_radius_,
+                          double start_phi_,
+                          double delta_phi_,
+                          double height_,
+                          size_t arc_sampling_)
   {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
@@ -987,17 +986,17 @@ namespace geomtools {
       vector_3d P_o, Q_o;
       double phi = start_phi_ + i * dphi;
       P_i.set(inner_radius_ * std::cos(phi),
-	      inner_radius_ * std::sin(phi),
-	      0.5 * height_);
+              inner_radius_ * std::sin(phi),
+              0.5 * height_);
       Q_i.set(inner_radius_ * std::cos(phi),
-	      inner_radius_ * std::sin(phi),
-	      -0.5 * height_);
+              inner_radius_ * std::sin(phi),
+              -0.5 * height_);
       P_o.set(outer_radius_ * std::cos(phi),
-	      outer_radius_ * std::sin(phi),
-	      0.5 * height_);
+              outer_radius_ * std::sin(phi),
+              0.5 * height_);
       Q_o.set(outer_radius_ * std::cos(phi),
-	      outer_radius_ * std::sin(phi),
-	      -0.5 * height_);
+              outer_radius_ * std::sin(phi),
+              -0.5 * height_);
       vector_3d P2_i(P_i);
       P2_i.transform(inverse_rotation);
       P2_i += position_;
@@ -1047,25 +1046,25 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_elliptical_tube(std::ostream & out_,
-				     const vector_3d & position_,
-				     const rotation_3d & rotation_,
-				     const elliptical_tube & t_,
-				     size_t arc_sampling_)
+                                     const vector_3d & position_,
+                                     const rotation_3d & rotation_,
+                                     const elliptical_tube & t_,
+                                     size_t arc_sampling_)
   {
     draw_elliptical_tube(out_, position_, rotation_,
-			 t_.get_x_radius(),
-			 t_.get_y_radius(),
-			 t_.get_z(), arc_sampling_);
+                         t_.get_x_radius(),
+                         t_.get_y_radius(),
+                         t_.get_z(), arc_sampling_);
   }
 
   void
   gnuplot_draw::draw_elliptical_tube(std::ostream & out_,
-				     const vector_3d & position_,
-				     const rotation_3d & rotation_,
-				     double x_radius_,
-				     double y_radius_,
-				     double height_,
-				     size_t arc_sampling_)
+                                     const vector_3d & position_,
+                                     const rotation_3d & rotation_,
+                                     double x_radius_,
+                                     double y_radius_,
+                                     double height_,
+                                     size_t arc_sampling_)
   {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
@@ -1086,11 +1085,11 @@ namespace geomtools {
       vector_3d P, Q;
       double angle = i * dangle;
       P.set(x_radius_ * std::cos(angle),
-	    y_radius_ * std::sin(angle),
-	    0.5 * height_);
+            y_radius_ * std::sin(angle),
+            0.5 * height_);
       Q.set(x_radius_ * std::cos(angle),
-	    y_radius_ * std::sin(angle),
-	    -0.5 * height_);
+            y_radius_ * std::sin(angle),
+            -0.5 * height_);
       vector_3d P2(P);
       P2.transform(inverse_rotation);
       P2 += position_;
@@ -1536,42 +1535,42 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_ellipsoid(std::ostream & out_,
-			       const vector_3d & position_,
-			       const rotation_3d & rotation_,
-			       const ellipsoid & e_,
-			       size_t arc_sampling_,
-			       size_t z_sampling_)
+                               const vector_3d & position_,
+                               const rotation_3d & rotation_,
+                               const ellipsoid & e_,
+                               size_t arc_sampling_,
+                               size_t z_sampling_)
   {
     draw_ellipsoid(out_, position_, rotation_,
-		   e_.get_x_radius(),
-		   e_.get_y_radius(),
-		   e_.get_z_radius(),
-		   e_.get_top_z_cut(),
-		   e_.get_bottom_z_cut(),
-		   arc_sampling_, z_sampling_);
+                   e_.get_x_radius(),
+                   e_.get_y_radius(),
+                   e_.get_z_radius(),
+                   e_.get_top_z_cut(),
+                   e_.get_bottom_z_cut(),
+                   arc_sampling_, z_sampling_);
   }
 
   void
   gnuplot_draw::draw_ellipsoid(std::ostream & out_,
-			       const vector_3d & position_,
-			       const rotation_3d & rotation_,
-			       double x_radius_,
-			       double y_radius_,
-			       double z_radius_,
-			       double top_z_cut_,
-			       double bottom_z_cut_,
-			       size_t arc_sampling_,
-			       size_t z_sampling_)
+                               const vector_3d & position_,
+                               const rotation_3d & rotation_,
+                               double x_radius_,
+                               double y_radius_,
+                               double z_radius_,
+                               double top_z_cut_,
+                               double bottom_z_cut_,
+                               size_t arc_sampling_,
+                               size_t z_sampling_)
   {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
-    
+
     size_t phi_sample = arc_sampling_;
     phi_sample = std::max(12U, (unsigned int) phi_sample);
-    
+
     size_t z_sample = z_sampling_;
     z_sample = std::max(4U, (unsigned int) z_sample);
-    
+
     double dphi   = 2. * M_PI * CLHEP::radian / phi_sample;
     double zmin   = -z_radius_+bottom_z_cut_;
     double zmax   = z_radius_-top_z_cut_;
@@ -1585,25 +1584,25 @@ namespace geomtools {
         double phi = i * dphi;
         double z = zmin;
         for(size_t j = 0; j < z_sample + 3; j++) {
-	  vector_3d P;
-	  double local_a = std::sqrt(x_radius_*x_radius_*(1-z/z_radius_*z/z_radius_));
-	  double local_b = std::sqrt(y_radius_*y_radius_*(1-z/z_radius_*z/z_radius_));
-	  P.set(local_a * std::cos(phi),
-		local_b * std::sin(phi), z);
-	  P.transform(inverse_rotation);
+          vector_3d P;
+          double local_a = std::sqrt(x_radius_*x_radius_*(1-z/z_radius_*z/z_radius_));
+          double local_b = std::sqrt(y_radius_*y_radius_*(1-z/z_radius_*z/z_radius_));
+          P.set(local_a * std::cos(phi),
+                local_b * std::sin(phi), z);
+          P.transform(inverse_rotation);
           P += position_;
-	  polyline_meridian.push_back(P);
+          polyline_meridian.push_back(P);
 
-	  basic_draw_polyline(out_, polyline_meridian);
-	  // increment z:
-	  if(j == 0) z += factor * dz;
-	  else if(j == 1) z +=(1 - factor) * dz;
-	  else if(j == z_sample) z +=(1 - factor) * dz;
-	  else if(j == z_sample + 1) z += factor * dz;
-	  else if(j == z_sample + 2) z = z_radius_;
-	  else if(j == z_sample + 3) z = z_radius_ - 0.5 * factor;
-	  else z += dz;
-	}
+          basic_draw_polyline(out_, polyline_meridian);
+          // increment z:
+          if(j == 0) z += factor * dz;
+          else if(j == 1) z +=(1 - factor) * dz;
+          else if(j == z_sample) z +=(1 - factor) * dz;
+          else if(j == z_sample + 1) z += factor * dz;
+          else if(j == z_sample + 2) z = z_radius_;
+          else if(j == z_sample + 3) z = z_radius_ - 0.5 * factor;
+          else z += dz;
+        }
       }
     }
 
@@ -1614,17 +1613,17 @@ namespace geomtools {
         polyline_type polyline_parallel;
         if (z > zmax) z = zmax;
         for(size_t i = 0; i <= phi_sample; ++i) {
-	  vector_3d P;
-	  double phi = i * dphi;
-	  double local_a = std::sqrt(x_radius_*x_radius_*(1-z/z_radius_*z/z_radius_));
-	  double local_b = std::sqrt(y_radius_*y_radius_*(1-z/z_radius_*z/z_radius_));
-	  P.set(local_a * std::cos(phi),
-		local_b * std::sin(phi), z);
-	  P.transform(inverse_rotation);
+          vector_3d P;
+          double phi = i * dphi;
+          double local_a = std::sqrt(x_radius_*x_radius_*(1-z/z_radius_*z/z_radius_));
+          double local_b = std::sqrt(y_radius_*y_radius_*(1-z/z_radius_*z/z_radius_));
+          P.set(local_a * std::cos(phi),
+                local_b * std::sin(phi), z);
+          P.transform(inverse_rotation);
           P += position_;
-	  polyline_parallel.push_back(P);
-	}
-	basic_draw_polyline(out_, polyline_parallel);
+          polyline_parallel.push_back(P);
+        }
+        basic_draw_polyline(out_, polyline_parallel);
         // increment z:
         if(j == 1) z += (1-factor) * dz;
         else if(j == z_sample) z += (1-factor) * dz;
@@ -1635,8 +1634,8 @@ namespace geomtools {
       }
     }
     return;
-  }  
-  
+  }
+
   void
   gnuplot_draw::draw_right_circular_conical_frustrum(std::ostream & out_,
                                                       const vector_3d & position_,
@@ -2119,11 +2118,13 @@ namespace geomtools {
       P0.transform(inverse_rotation);
       P0 += position_;
       polyline_facet.push_back(P0);
-      if(count == 1) {
-        vector_3d Pmid = 0.5 *(P0+P1);
-        Pmid.transform(inverse_rotation);
-        Pmid += position_;
-        polyline_facet.push_back(Pmid);
+      if (count == 1) {
+        polyline_facet.push_back(P0);
+        // buggy lines below:
+        // vector_3d Pmid = 0.5 *(P0+P1);
+        // Pmid.transform(inverse_rotation);
+        // Pmid += position_;
+        // polyline_facet.push_back(Pmid);
       }
       P1.transform(inverse_rotation);
       P1 += position_;
@@ -2178,6 +2179,87 @@ namespace geomtools {
                                       const rotation_3d & rotation_,
                                       const intersection_3d & i_)
   {
+    // First shape:
+    const i_composite_shape_3d::shape_type & s1 = i_.get_shape1();
+    const i_shape_3d & sh1 = s1.get_shape();
+    const placement & sh1_pl = s1.get_placement();
+
+    // Second shape:
+    const i_composite_shape_3d::shape_type & s2 = i_.get_shape2();
+    const i_shape_3d & sh2 = s2.get_shape();
+    const placement & sh2_pl = s2.get_placement();
+
+    bool can_do_it = false;
+    if (! can_do_it) {
+      double min_dim1;
+      datatools::invalidate(min_dim1);
+      if (sh1.has_bounding_data()) {
+        min_dim1 = sh1.get_bounding_data().get_min_dimension();
+      }
+      double min_dim2;
+      datatools::invalidate(min_dim2);
+      if (sh2.has_bounding_data()) {
+        min_dim2 = sh2.get_bounding_data().get_min_dimension();
+      }
+      double step1 = min_dim1 / 100;
+      double tolerance1 = 0.0;
+      double step2 = min_dim2 / 100;
+      double tolerance2 = 0.0;
+
+      std::list<geomtools::line_3d> composite_wires;
+      geomtools::split_segment_wrt_shape SSS;
+      SSS.configure(sh2, sh2_pl, step2, tolerance2);
+      {
+        std::ostringstream sh1_draw_oss;
+        geomtools::gnuplot_draw::draw(sh1_draw_oss, sh1_pl, sh1);
+        std::istringstream sh1_draw_iss(sh1_draw_oss.str());
+        std::list<geomtools::polyline_3d> sh1_wires;
+        geomtools::parse_wires(sh1_draw_iss, sh1_wires);
+        SSS.add(sh1_wires);
+        SSS.fetch_inside_segments(composite_wires);
+        SSS.fetch_surface_segments(composite_wires);
+        SSS.clear();
+      }
+      SSS.configure(sh1, sh1_pl, step1, tolerance1);
+      {
+        std::ostringstream sh2_draw_oss;
+        geomtools::gnuplot_draw::draw(sh2_draw_oss, sh2_pl, sh2);
+        std::istringstream sh2_draw_iss(sh2_draw_oss.str());
+        std::list<geomtools::polyline_3d> sh2_wires;
+        geomtools::parse_wires(sh2_draw_iss, sh2_wires);
+        SSS.add(sh2_wires);
+        SSS.fetch_inside_segments(composite_wires);
+        SSS.fetch_surface_segments(composite_wires);
+        SSS.clear();
+      }
+      for (std::list<geomtools::line_3d>::const_iterator i = composite_wires.begin();
+           i != composite_wires.end();
+           i++) {
+        geomtools::gnuplot_draw::draw_line(out_,
+                                           position_, rotation_,
+                                           *i, false);
+      }
+      can_do_it = true;
+    }
+
+    if (!can_do_it) {
+      // Fall back to BB drawing:
+      if (i_.has_bounding_data()) {
+        box ubb;
+        placement ubbp;
+        i_.get_bounding_data().compute_bounding_box(ubb, ubbp);
+        std::list<polyline_3d> pls;
+        ubb.generate_wires(pls, ubbp, 0);
+        for (std::list<polyline_3d>::const_iterator i = pls.begin();
+             i != pls.end();
+             i++) {
+          draw_polyline(out_, position_, rotation_, *i);
+        }
+        can_do_it = true;
+      }
+    }
+
+    /*
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
     const i_composite_shape_3d::shape_type & s1 = i_.get_shape1();
@@ -2202,6 +2284,7 @@ namespace geomtools {
                 sh2_pos,
                 sh2_rot,
                 sh2);
+    */
 
     //th row runtime_error("gnuplot_draw::draw_intersection_3d: Not supported yet !");
     return;
@@ -2209,10 +2292,90 @@ namespace geomtools {
 
   void
   gnuplot_draw::draw_union_3d(std::ostream & out_,
-                               const vector_3d & position_,
-                               const rotation_3d & rotation_,
-                               const union_3d & u_)
+                              const vector_3d & position_,
+                              const rotation_3d & rotation_,
+                              const union_3d & u_)
   {
+    // First shape:
+    const i_composite_shape_3d::shape_type & s1 = u_.get_shape1();
+    const i_shape_3d & sh1 = s1.get_shape();
+    const placement & sh1_pl = s1.get_placement();
+
+    // Second shape:
+    const i_composite_shape_3d::shape_type & s2 = u_.get_shape2();
+    const i_shape_3d & sh2 = s2.get_shape();
+    const placement & sh2_pl = s2.get_placement();
+
+    bool can_do_it = false;
+    if (! can_do_it) {
+      double min_dim1;
+      datatools::invalidate(min_dim1);
+      if (sh1.has_bounding_data()) {
+        min_dim1 = sh1.get_bounding_data().get_min_dimension();
+      }
+      double min_dim2;
+      datatools::invalidate(min_dim2);
+      if (sh2.has_bounding_data()) {
+        min_dim2 = sh2.get_bounding_data().get_min_dimension();
+      }
+      double step1 = min_dim1 / 100;
+      double tolerance1 = 0.0;
+      double step2 = min_dim2 / 100;
+      double tolerance2 = 0.0;
+
+      std::list<geomtools::line_3d> composite_wires;
+      geomtools::split_segment_wrt_shape SSS;
+      SSS.configure(sh2, sh2_pl, step2, tolerance2);
+      {
+        std::ostringstream sh1_draw_oss;
+        geomtools::gnuplot_draw::draw(sh1_draw_oss, sh1_pl, sh1);
+        std::istringstream sh1_draw_iss(sh1_draw_oss.str());
+        std::list<geomtools::polyline_3d> sh1_wires;
+        geomtools::parse_wires(sh1_draw_iss, sh1_wires);
+        SSS.add(sh1_wires);
+        SSS.fetch_outside_segments(composite_wires);
+        SSS.clear();
+      }
+      SSS.configure(sh1, sh1_pl, step1, tolerance1);
+      {
+        std::ostringstream sh2_draw_oss;
+        geomtools::gnuplot_draw::draw(sh2_draw_oss, sh2_pl, sh2);
+        std::istringstream sh2_draw_iss(sh2_draw_oss.str());
+        std::list<geomtools::polyline_3d> sh2_wires;
+        geomtools::parse_wires(sh2_draw_iss, sh2_wires);
+        SSS.add(sh2_wires);
+        SSS.fetch_outside_segments(composite_wires);
+        SSS.clear();
+      }
+      for (std::list<geomtools::line_3d>::const_iterator i = composite_wires.begin();
+           i != composite_wires.end();
+           i++) {
+        geomtools::gnuplot_draw::draw_line(out_,
+                                           position_, rotation_,
+                                           *i, false);
+      }
+      can_do_it = true;
+    }
+
+    if (!can_do_it) {
+      // Fall back to BB drawing:
+      if (u_.has_bounding_data()) {
+        box ubb;
+        placement ubbp;
+        u_.get_bounding_data().compute_bounding_box(ubb, ubbp);
+        std::list<polyline_3d> pls;
+        ubb.generate_wires(pls, ubbp, 0);
+        for (std::list<polyline_3d>::const_iterator i = pls.begin();
+             i != pls.end();
+             i++) {
+          draw_polyline(out_, position_, rotation_, *i);
+        }
+        can_do_it = true;
+      }
+    }
+
+    /*
+
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
     const i_composite_shape_3d::shape_type & s1 = u_.get_shape1();
@@ -2236,14 +2399,15 @@ namespace geomtools {
                 sh2_rot,
                 sh2);
     //th row runtime_error("gnuplot_draw::draw_union_3d: Not supported yet !");
+    */
     return;
   }
 
   void
   gnuplot_draw::draw_subtraction_3d(std::ostream & out_,
-                                     const vector_3d & position_,
-                                     const rotation_3d & rotation_,
-                                     const subtraction_3d & s_)
+                                    const vector_3d & position_,
+                                    const rotation_3d & rotation_,
+                                    const subtraction_3d & s_)
   {
     rotation_3d inverse_rotation(rotation_);
     inverse_rotation.invert();
@@ -2291,29 +2455,30 @@ namespace geomtools {
     return;
   }
 
-  void gnuplot_draw::basic_draw(ostream & out_,
-                                 const vector_3d & position_,
-                                 const rotation_3d & rotation_,
-                                 const i_object_3d & o_,
-                                 unsigned long mode_)
+  void gnuplot_draw::basic_draw(std::ostream & out_,
+                                const vector_3d & position_,
+                                const rotation_3d & rotation_,
+                                const i_object_3d & o_,
+                                unsigned long mode_)
   {
     bool mode_wired_cylinder = mode_ & gnuplot_draw::MODE_WIRED_CYLINDER;
     const vector_3d & pos = position_;
     const rotation_3d & rot = rotation_;
-    string shape_name = o_.get_shape_name();
+    std::string shape_name = o_.get_shape_name();
 
-    //std::cerr << "DEVEL: gnuplot_draw::basic_draw: Entering..." << std::endl;
-
-    if(o_.has_user_draw()) {
-      //std::cerr << "DEVEL: gnuplot_draw::basic_draw: has_user_draw..." << std::endl;
+    if(o_.has_wires_drawer()) {
+      // Attempt to use a special wires drawer object:
+      i_wires_drawer & wires_drawer_ptr = const_cast<i_object_3d &>(o_).grab_wires_drawer();
+      wires_drawer_ptr.generate_wires(out_, position_, rotation_);
+      return;
+    } else if(o_.has_user_draw()) {
+      // Attempt to use a special user draw fonction:
       void * user_draw = o_.get_user_draw();
       gnuplot_draw::draw_user_function_type user_draw_f
         = reinterpret_cast<gnuplot_draw::draw_user_function_type>(user_draw);
-     (*user_draw_f)(out_, position_, rotation_, o_, 0);
+      (*user_draw_f)(out_, position_, rotation_, o_, 0);
       return;
     }
-
-    //std::cerr << "DEVEL: gnuplot_draw::basic_draw: Step 1" << std::endl;
 
     if(shape_name == "line_3d")  {
       const line_3d & l = dynamic_cast<const line_3d &>(o_);
@@ -2423,9 +2588,21 @@ namespace geomtools {
       return;
     }
 
+    if(shape_name == "union_3d") {
+      const union_3d & s = dynamic_cast<const union_3d &>(o_);
+      draw_union_3d(out_, pos, rot, s);
+      return;
+    }
+
     if(shape_name == "subtraction_3d") {
       const subtraction_3d & s = dynamic_cast<const subtraction_3d &>(o_);
       draw_subtraction_3d(out_, pos, rot, s);
+      return;
+    }
+
+    if(shape_name == "intersection_3d") {
+      const intersection_3d & s = dynamic_cast<const intersection_3d &>(o_);
+      draw_intersection_3d(out_, pos, rot, s);
       return;
     }
 
@@ -2434,35 +2611,6 @@ namespace geomtools {
                    << shape_name << "' !");
     return;
   }
-
-  /*
-    void gnuplot_draw::draw_display_data(std::ostream & out_,
-    const vector_3d & position_,
-    const rotation_3d & rotation_,
-    const display_data & dd_,
-    const std::string & display_rules_)
-    {
-    bool all_colors = true;
-    bool all_groups = true;
-    bool all_names = true;
-    bool frame = false;
-    int frame_number = -1;
-    std::map<std::string,bool> colors;
-    std::map<std::string,bool> groups;
-    std::map<int,bool>         frames;
-
-    for(std::vector<std::string>::const_iterator icolor
-    = dd_.get_colors().begin();
-    icolor != dd_.get_colors().end();
-    icolor++)
-    {
-    colors[*icolor] = true;
-    }
-
-    return;
-    }
-  */
-
 
   void gnuplot_draw::draw_display_data(std::ostream & out_,
                                         const vector_3d & position_,
@@ -2558,10 +2706,10 @@ namespace geomtools {
     return;
   }
 
-  void gnuplot_draw::draw(ostream & out_,
-                           const i_placement & p_,
-                           const i_object_3d & o_,
-                           unsigned long mode_)
+  void gnuplot_draw::draw(std::ostream & out_,
+                          const i_placement & p_,
+                          const i_object_3d & o_,
+                          unsigned long mode_)
   {
     // multi-placement:
     for(size_t i = 0; i < p_.get_number_of_items(); i++) {
@@ -2574,9 +2722,9 @@ namespace geomtools {
     }
   }
 
-  void gnuplot_draw::draw(ostream & out_,
-                           const i_placement & p_,
-                           const i_object_3d & o_)
+  void gnuplot_draw::draw(std::ostream & out_,
+                          const i_placement & p_,
+                          const i_object_3d & o_)
   {
     gnuplot_draw::draw(out_, p_, o_, gnuplot_draw::MODE_NULL);
   }

@@ -9,6 +9,10 @@
 #include <stdexcept>
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/utils.h>
+
 namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (helix_3d, "geomtools::helix_3d")
@@ -45,7 +49,11 @@ namespace geomtools {
 
   void helix_3d::invalidate ()
   {
+    geomtools::invalidate(_center_);
+    _step_ = std::numeric_limits<double>::quiet_NaN();
+    invalidate_angles();
     _radius_ = std::numeric_limits<double>::quiet_NaN();
+    this->i_object_3d::reset();
     return;
   }
 
@@ -146,13 +154,19 @@ namespace geomtools {
     return l;
   }
 
-  helix_3d::helix_3d() : i_shape_1d()
+  void helix_3d::_set_defaults()
   {
     _radius_ = 1.0;
     _center_.set (0.0, 0.0, 0.0);
     _step_ = 0.0;
     _t1_ = 0.0;
     _t2_ = 1.0;
+    return;
+  }
+
+  helix_3d::helix_3d() : i_shape_1d()
+  {
+    _set_defaults();
     return;
   }
 

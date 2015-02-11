@@ -39,8 +39,8 @@ namespace geomtools {
   // static
   bool model_factory::validate_name_for_gdml(const std::string & candidate_)
   {
-    /* Using underscore in a name is not allowed due
-     * because of GDML/XML restriction on the possible names
+    /* Using colon in a name is not allowed
+     * because of GDML/XML restrictions on the possible names
      * for logical and physical volumes.
      * Also note that the "0x" pattern is arbitrarily (and stupidely)
      * cut from names by the Geant4/GDML interface.
@@ -93,6 +93,33 @@ namespace geomtools {
     return;
   }
 
+  bool model_factory::has_shape_factory() const
+  {
+    return _shape_factory_ != 0;
+  }
+
+  void model_factory::set_shape_factory(shape_factory & sf_)
+  {
+    _shape_factory_ = &sf_;
+    return;
+  }
+
+  shape_factory & model_factory::grab_shape_factory()
+  {
+    DT_THROW_IF(!has_shape_factory(),
+                std::logic_error,
+                "No referenced shape factory!");
+    return *_shape_factory_;
+  }
+
+  const shape_factory & model_factory::get_shape_factory() const
+  {
+    DT_THROW_IF(!has_shape_factory(),
+                std::logic_error,
+                "No referenced shape factory!");
+    return *_shape_factory_;
+  }
+
   const models_col_type & model_factory::get_models () const
   {
     return _models_;
@@ -106,40 +133,41 @@ namespace geomtools {
   void model_factory::_basic_construct_ ()
   {
     _locked_ = false;
-    _mp_.set_key_label ("name");
-    _mp_.set_meta_label ("type");
-    _mp_.set_description ("Geometry models setup");
+    _mp_.set_key_label("name");
+    _mp_.set_meta_label("type");
+    _mp_.set_description("Geometry models setup");
     bool preload = true;
     if (preload) {
-      _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::geomtools::i_model));
+      _factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(::geomtools::i_model));
       if (_logging_priority_ >= datatools::logger::PRIO_INFORMATION) {
         _factory_register_.tree_dump(std::cerr, "Geometry model factory: ", "INFO: ");
       }
     }
-  }
-
-  // Constructor:
-  model_factory::model_factory (datatools::logger::priority lp_)
-  {
-    _logging_priority_ = lp_;
-    _basic_construct_ ();
     return;
   }
 
+  model_factory::model_factory (datatools::logger::priority lp_)
+  {
+    _shape_factory_ = 0;
+    _locked_ = false;
+    _logging_priority_ = lp_;
+    _basic_construct_();
+    return;
+  }
 
-  // Constructor:
   model_factory::model_factory (bool debug_, bool core_factory_verbose_)
-    : _factory_register_ ("geomtools::i_model/model_factory",
+    :  _factory_register_("geomtools::i_model/model_factory",
                           core_factory_verbose_ ? i_model::factory_register_type::verbose : 0)
 
   {
-    _logging_priority_ = datatools::logger::PRIO_WARNING;
+    _shape_factory_ = 0;
+    _locked_ = false;
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
     if (debug_) _logging_priority_ = datatools::logger::PRIO_DEBUG;
-    _basic_construct_ ();
+    _basic_construct_();
     return;
   }
 
-  // Destructor:
   model_factory::~model_factory ()
   {
     if (_locked_) {
@@ -151,19 +179,19 @@ namespace geomtools {
   // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
   void model_factory::load_geom_list (const std::string & geom_list_file_)
   {
-    string geom_lis_filename = geom_list_file_;
+    std::string geom_lis_filename = geom_list_file_;
     datatools::fetch_path_with_env (geom_lis_filename);
 
-    ifstream finlist (geom_lis_filename.c_str ());
+    std::ifstream finlist (geom_lis_filename.c_str ());
     DT_THROW_IF (! finlist, logic_error,
                  "Cannot open file '" << geom_lis_filename << "' !");
     while (finlist) {
-      string line;
+      std::string line;
       std::getline (finlist, line);
       DT_THROW_IF (! finlist, logic_error,
                    "I/O error while reading file '" << geom_lis_filename << "' !");
-      string word;
-      istringstream line_iss (line);
+      std::string word;
+      std::istringstream line_iss (line);
       line_iss >> word;
       if (word.length () < 1) {
         // skip blank line
@@ -172,7 +200,7 @@ namespace geomtools {
       if (word[0] == '#') {
         continue;
       }
-      string geom_filename = word;
+      std::string geom_filename = word;
       datatools::fetch_path_with_env (geom_filename);
       load (geom_filename);
       finlist >> ws;
@@ -180,10 +208,21 @@ namespace geomtools {
         break;
       }
     }
-
+    return;
   }
 
-  void model_factory::load (const string & mprop_file_)
+  const datatools::multi_properties & model_factory::get_mp() const
+  {
+    return _mp_;
+  }
+
+  datatools::multi_properties & model_factory::grab_mp()
+  {
+    DT_THROW_IF (_locked_, logic_error, "Model factory is locked !");
+    return _mp_;
+  }
+
+  void model_factory::load (const std::string & mprop_file_)
   {
     DT_THROW_IF (_locked_, logic_error, "Model factory is locked !");
     _mp_.read (mprop_file_);
@@ -229,12 +268,12 @@ namespace geomtools {
       unlock ();
     }
     // The container of logicals does not have ownership of the pointers :
-    _logicals_.clear ();
+    _logicals_.clear();
     // Memory leak to be fixed:
     for (models_col_type::iterator i = _models_.begin ();
          i != _models_.end();
          i++) {
-      const string & model_name = i->first;
+      const std::string & model_name = i->first;
       i_model * model_ptr = i->second;
       if (model_ptr != 0) {
         DT_LOG_DEBUG(_logging_priority_,"Deleting registered model '" << model_name << "'.");
@@ -244,6 +283,7 @@ namespace geomtools {
     _models_.clear ();
     _mp_.reset ();
     _property_prefixes_.clear ();
+    _shape_factory_ = 0;
     return;
   }
 
@@ -271,10 +311,10 @@ namespace geomtools {
          i++) {
       const datatools::multi_properties::entry * ptr_entry = *i;
       const datatools::multi_properties::entry & e = *ptr_entry;
-      string model_name = e.get_key ();
+      std::string model_name = e.get_key ();
       DT_THROW_IF(!validate_name_for_gdml(model_name), std::logic_error,
                   "Geometry model name '" << model_name << "' is not supported for GDML export in Geant4 !");
-      string model_type = e.get_meta ();
+      std::string model_type = e.get_meta ();
       // if (! _factory_register_.has(model_type)) {
       //   DT_LOG_TRACE(_logging_priority_,
       //                "No registered class with ID '"
@@ -291,16 +331,19 @@ namespace geomtools {
                    "About to create a new model of type \"" << model_type
                    << "\" with name \"" << model_name << "\"...");
       i_model * model = the_factory();
-      model->construct (model_name, e.get_properties (), _property_prefixes_, &_models_);
+      // Plug the shape factory in the model:
+      if (has_shape_factory()) {
+        model->set_shape_factory(grab_shape_factory());
+      }
+      model->construct(model_name, e.get_properties (), _property_prefixes_, &_models_);
       _models_[model_name] = model;
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
-      string log_name = model->get_logical ().get_name ();
+      std::string log_name = model->get_logical ().get_name ();
       if (_logicals_.find(log_name) == _logicals_.end()) {
         _logicals_[log_name] = &(model->get_logical ());
       } else {
         DT_THROW_IF(true, std::runtime_error,
                     "Logical volume '" << log_name << "' is already referenced in the model factory !");
-        //DT_LOG_WARNING
       }
       for (logical_volume::physicals_col_type::const_iterator iphys = model->get_logical ().get_physicals ().begin();
            iphys != model->get_logical ().get_physicals ().end();
@@ -326,12 +369,12 @@ namespace geomtools {
     return _property_prefixes_;
   }
 
-  void model_factory::tree_dump (ostream & out_,
-                                 const string & title_,
-                                 const string & indent_,
+  void model_factory::tree_dump (std::ostream & out_,
+                                 const std::string & title_,
+                                 const std::string & indent_,
                                  bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) {
       out_ << indent << title_ << endl;
@@ -353,7 +396,7 @@ namespace geomtools {
       }
       out_ << endl;
       {
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
         _mp_.tree_dump (out_, "", indent_oss.str ());
@@ -391,9 +434,9 @@ namespace geomtools {
       for (models_col_type::const_iterator i = _models_.begin ();
            i != _models_.end ();
            i++) {
-        const string & key = i->first;
+        const std::string & key = i->first;
         const i_model * a_model = i->second;
-        ostringstream indent_oss;
+        std::ostringstream indent_oss;
         out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         indent_oss << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
         models_col_type::const_iterator j = i;
@@ -638,7 +681,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::model_factory,ocd_)
                                "load the definitions of many 'geometry models' from \n"
                                "ASCII configuration files.                          \n"
                                "A geometry model is a special object that describes \n"
-                               "a geometry volume and itsmain characteristics : shape,\n"
+                               "a geometry volume and its main characteristics : shapes,\n"
                                "materials, daughter volumes with their placements, and\n"
                                "also arbitrary properties that can be used at some point.\n"
                                "A geometry model must fulfil the interface of the \n"

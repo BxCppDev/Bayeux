@@ -246,10 +246,10 @@ namespace geomtools {
                              gdml_writer::state_convert(::materials::material::STATE_GAS));
     }
 
-    _writer_.add_setup ("Setup", top_model.get_logical ().get_name ());
+    _writer_.add_setup("Setup", top_model.get_logical().get_name());
 
-    _writer_.full_write (out_, xml_version, xml_encoding, gdml_schema, xsi);
-    _writer_.reset ();
+    _writer_.full_write(out_, xml_version, xml_encoding, gdml_schema, xsi);
+    _writer_.reset();
 
     return;
   }
@@ -257,7 +257,10 @@ namespace geomtools {
   void gdml_export::_export_gdml_solid (const i_shape_3d & shape_,
                                         const std::string & solid_name_)
   {
-    std::string shape_name = shape_.get_shape_name ();
+    if (_solid_refs_.count(solid_name_) == 1) {
+      return;
+    }
+    std::string shape_name = shape_.get_shape_name();
 
     DT_THROW_IF (! gdml_writer::solid_type_is_valid (shape_name),
                  std::logic_error,
@@ -270,14 +273,19 @@ namespace geomtools {
       /* GDML constraints:
        * One should check if placement of shape 1 in any composite
        * solid is NULL (translation & rotation).
-       *
        */
       if (shape_name == "union_3d") {
-        const union_3d & u = static_cast<const union_3d &> (shape_);
-        std::string shape_ref_1 = solid_name_ + ".union.first_ref";
-        std::string shape_ref_2 = solid_name_ + ".union.second_ref";;
+        const union_3d & u = static_cast<const union_3d &>(shape_);
+        std::string shape_ref_1 = u.get_shape1().get_shape_ref();
+        if (shape_ref_1.empty()) {
+          shape_ref_1 = solid_name_ + ".union.first_ref" + i_model::solid_suffix();
+        }
+        std::string shape_ref_2 = u.get_shape2().get_shape_ref();
+        if (shape_ref_1.empty()) {
+          shape_ref_2 = solid_name_ + ".union.second_ref" + i_model::solid_suffix();
+        }
         std::string pos_ref = solid_name_ + ".union.pos_ref";
-        std::string rot_ref = solid_name_ + ".union.rot_ref";;
+        std::string rot_ref = solid_name_ + ".union.rot_ref";
         // only stores the solid #2 placement:
         _writer_.add_position (pos_ref,
                                u.get_shape2 ().get_placement ().get_translation (),
@@ -295,10 +303,16 @@ namespace geomtools {
                                  rot_ref);
       } else if (shape_name == "subtraction_3d") {
         const subtraction_3d & s = static_cast<const subtraction_3d &> (shape_);
-        std::string shape_ref_1 = solid_name_ + ".subtraction.first_ref";
-        std::string shape_ref_2 = solid_name_ + ".subtraction.second_ref";;
+        std::string shape_ref_1 = s.get_shape1().get_shape_ref();
+        if (shape_ref_1.empty()) {
+          shape_ref_1 = solid_name_ + ".subtraction.first_ref" + i_model::solid_suffix();
+        }
+        std::string shape_ref_2 = s.get_shape2().get_shape_ref();
+        if (shape_ref_1.empty()) {
+          shape_ref_2 = solid_name_ + ".subtraction.second_ref" + i_model::solid_suffix();
+        }
         std::string pos_ref = solid_name_ + ".subtraction.pos_ref";
-        std::string rot_ref = solid_name_ + ".subtraction.rot_ref";;
+        std::string rot_ref = solid_name_ + ".subtraction.rot_ref";
 
         // only stores the solid #2 placement:
         _writer_.add_position (pos_ref,
@@ -317,12 +331,18 @@ namespace geomtools {
                                        rot_ref);
       } else if (shape_name == "intersection_3d") {
         const intersection_3d & i = static_cast<const intersection_3d &> (shape_);
-        std::string shape_ref_1 = solid_name_ + ".intersection.first_ref";
-        std::string shape_ref_2 = solid_name_ + ".intersection.second_ref";;
+        std::string shape_ref_1 = i.get_shape1().get_shape_ref();
+        if (shape_ref_1.empty()) {
+          shape_ref_1 = solid_name_ + ".intersection.first_ref" + i_model::solid_suffix();
+        }
+        std::string shape_ref_2 = i.get_shape2().get_shape_ref();
+        if (shape_ref_1.empty()) {
+          shape_ref_2 = solid_name_ + ".intersection.second_ref" + i_model::solid_suffix();
+        }
         std::string pos_ref = solid_name_ + ".intersection.pos_ref";
-        std::string rot_ref = solid_name_ + ".intersection.rot_ref";;
+        std::string rot_ref = solid_name_ + ".intersection.rot_ref";
 
-        // only stores the solid #2 placement:
+        // Only stores the solid #2 placement:
         _writer_.add_position (pos_ref,
                                i.get_shape2 ().get_placement ().get_translation (),
                                _length_unit_);
@@ -343,31 +363,43 @@ namespace geomtools {
     } else {
       if (shape_name == "box") {
         const box & b = static_cast<const box &> (shape_);
-        _writer_.add_box (solid_name_, b, _length_unit_);
+        _writer_.add_box(solid_name_, b, _length_unit_);
       } else if (shape_name == "cylinder") {
         const cylinder & c = static_cast<const cylinder &> (shape_);
-        _writer_.add_cylinder (solid_name_, c, _length_unit_, _angle_unit_);
+        _writer_.add_cylinder(solid_name_, c, _length_unit_, _angle_unit_);
       } else if (shape_name == "tube") {
         const tube & t = static_cast<const tube &> (shape_);
-        _writer_.add_tube (solid_name_, t, _length_unit_, _angle_unit_);
+        _writer_.add_tube(solid_name_, t, _length_unit_, _angle_unit_);
       } else if (shape_name == "sphere") {
         const sphere & s = static_cast<const sphere &> (shape_);
+        /*
         if (s.is_orb()) {
-          _writer_.add_orb (solid_name_, s, _length_unit_, _angle_unit_);
+          _writer_.add_orb(solid_name_, s, _length_unit_, _angle_unit_);
         } else {
-          _writer_.add_sphere (solid_name_, s, _length_unit_, _angle_unit_);
+          _writer_.add_sphere(solid_name_, s, _length_unit_, _angle_unit_);
         }
+        */
+        _writer_.add_sphere(solid_name_, s, _length_unit_, _angle_unit_);
       } else if (shape_name == "polycone") {
-        const polycone & p = static_cast<const polycone &> (shape_);
-        _writer_.add_polycone (solid_name_, p, _length_unit_, _angle_unit_);
+        const polycone & pc = static_cast<const polycone &> (shape_);
+        _writer_.add_polycone(solid_name_, pc, _length_unit_, _angle_unit_);
       } else if (shape_name == "polyhedra") {
-        const polyhedra & p = static_cast<const polyhedra &> (shape_);
-        _writer_.add_polyhedra (solid_name_, p, _length_unit_, _angle_unit_);
+        const polyhedra & ph = static_cast<const polyhedra &> (shape_);
+        _writer_.add_polyhedra(solid_name_, ph, _length_unit_, _angle_unit_);
+      } else if (shape_name == "ellipsoid") {
+        const ellipsoid & e = static_cast<const ellipsoid &> (shape_);
+        _writer_.add_ellipsoid(solid_name_, e, _length_unit_, _angle_unit_);
+      } else if (shape_name == "elliptical_tube") {
+        const elliptical_tube & et = static_cast<const elliptical_tube &> (shape_);
+        _writer_.add_elliptical_tube(solid_name_, et, _length_unit_, _angle_unit_);
+      } else if (shape_name == "tessellated") {
+        const tessellated_solid & ts = static_cast<const tessellated_solid &> (shape_);
+        _writer_.add_tessellated(solid_name_, ts, _length_unit_);
       } else {
         DT_THROW_IF(true, std::logic_error, "Simple solid type '" << shape_name << "' is not supported !");
       }
     }
-    _solid_refs_.push_back (solid_name_);
+    _solid_refs_.insert(solid_name_);
 
     return;
   }
@@ -377,18 +409,16 @@ namespace geomtools {
     const geomtools::logical_volume & logical = lv_;
     const std::string & log_name = logical.get_name ();
 
-    if (find (_volumes_refs_.begin (),
-              _volumes_refs_.end (),
-              log_name) != _volumes_refs_.end ()) {
-      DT_LOG_TRACE (get_logging_priority (), "Logical '" << log_name << "' is already exported !");
+    if (_volume_refs_.count(log_name) == 1) {
+      DT_LOG_TRACE(get_logging_priority (), "Logical '" << log_name << "' is already exported !");
       return;
     }
 
     // export solid shape:
-    const i_shape_3d & log_solid = logical.get_shape ();
+    const i_shape_3d & log_solid = logical.get_shape();
     std::ostringstream solid_name_oss;
     solid_name_oss << log_name << i_model::solid_suffix();
-    std::string solid_name = solid_name_oss.str ();
+    std::string solid_name = solid_name_oss.str();
     _export_gdml_solid (log_solid, solid_name);
 
     // prepare volume export
@@ -572,7 +602,7 @@ namespace geomtools {
       skip = true;
     } // there are children:
 
-    _volumes_refs_.push_back (log_name);
+    _volume_refs_.insert(log_name);
     return;
   }
 

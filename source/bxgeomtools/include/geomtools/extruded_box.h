@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
 /// \file geomtools/extruded_box.h
 /* Author(s):     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
+ *                François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2015-10-27
  * Last modified: 2015-10-27
  *
@@ -19,6 +20,7 @@
 // Third party:
 // - Boost:
 #include <boost/cstdint.hpp>
+#include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools:
 #include <datatools/object_configuration_description.h>
 
@@ -28,6 +30,7 @@
 #include <geomtools/polyline_3d.h>
 #include <geomtools/placement.h>
 #include <geomtools/i_wires_3d_rendering.h>
+#include <geomtools/i_wires_drawer.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -48,34 +51,33 @@ namespace geomtools {
     static const std::string & extruded_box_label();
 
     ///  \brief Masks used for the 6 faces of the extruded_box
-    enum faces_mask_type
-      {
-        FACE_NONE          = geomtools::FACE_NONE,
-        FACE_BACK          = datatools::bit_mask::bit00,
-        FACE_FRONT         = datatools::bit_mask::bit01,
-        FACE_LEFT          = datatools::bit_mask::bit02,
-        FACE_RIGHT         = datatools::bit_mask::bit03,
-        FACE_BOTTOM        = datatools::bit_mask::bit04,
-        FACE_TOP           = datatools::bit_mask::bit05,
-        FACE_INSIDE_BACK   = datatools::bit_mask::bit06,
-        FACE_INSIDE_FRONT  = datatools::bit_mask::bit07,
-        FACE_INSIDE_LEFT   = datatools::bit_mask::bit08,
-        FACE_INSIDE_RIGHT  = datatools::bit_mask::bit09,
-        FACE_INSIDE_BOTTOM = datatools::bit_mask::bit10,
-        FACE_INSIDE_TOP    = datatools::bit_mask::bit11,
-        FACE_ALL           = (FACE_BACK
-                              | FACE_FRONT
-                              | FACE_LEFT
-                              | FACE_RIGHT
-                              | FACE_BOTTOM
-                              | FACE_TOP
-                              | FACE_INSIDE_BACK
-                              | FACE_INSIDE_FRONT
-                              | FACE_INSIDE_LEFT
-                              | FACE_INSIDE_RIGHT
-                              | FACE_INSIDE_BOTTOM
-                              | FACE_INSIDE_TOP)
-      };
+    enum faces_mask_type {
+      FACE_NONE          = geomtools::FACE_NONE,
+      FACE_BACK          = datatools::bit_mask::bit00,
+      FACE_FRONT         = datatools::bit_mask::bit01,
+      FACE_LEFT          = datatools::bit_mask::bit02,
+      FACE_RIGHT         = datatools::bit_mask::bit03,
+      FACE_BOTTOM        = datatools::bit_mask::bit04,
+      FACE_TOP           = datatools::bit_mask::bit05,
+      FACE_INSIDE_BACK   = datatools::bit_mask::bit06,
+      FACE_INSIDE_FRONT  = datatools::bit_mask::bit07,
+      FACE_INSIDE_LEFT   = datatools::bit_mask::bit08,
+      FACE_INSIDE_RIGHT  = datatools::bit_mask::bit09,
+      FACE_INSIDE_BOTTOM = datatools::bit_mask::bit10,
+      FACE_INSIDE_TOP    = datatools::bit_mask::bit11,
+      FACE_ALL           = (FACE_BACK
+                            | FACE_FRONT
+                            | FACE_LEFT
+                            | FACE_RIGHT
+                            | FACE_BOTTOM
+                            | FACE_TOP
+                            | FACE_INSIDE_BACK
+                            | FACE_INSIDE_FRONT
+                            | FACE_INSIDE_LEFT
+                            | FACE_INSIDE_RIGHT
+                            | FACE_INSIDE_BOTTOM
+                            | FACE_INSIDE_TOP)
+    };
 
   public:
 
@@ -243,6 +245,22 @@ namespace geomtools {
                                 const placement &,
                                 uint32_t options_ = 0) const;
 
+    /// \brief Special Gnuplot rendering
+    struct wires_drawer : public i_wires_drawer
+    {
+      //! Constructor
+      wires_drawer(const extruded_box & eb_);
+      //! Destructor
+      virtual ~wires_drawer();
+      //! Output
+      virtual void generate_wires(std::ostream & out_,
+                                  const geomtools::vector_3d & position_,
+                                  const geomtools::rotation_3d & rotation_);
+    private:
+      const extruded_box * _exbox_; //!< Handle to the target solid
+      boost::scoped_ptr<std::list<polyline_3d> > _wires_ptr_; //!< Local cache
+    };
+
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
 
@@ -259,6 +277,9 @@ namespace geomtools {
     double _thickness_;  //!< Thickness (in arbitrary units)
     bool   _has_top_;    //!< Flag if extruded box has a top
     bool   _has_bottom_; //!< Flag if extruded box has a bottom
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(extruded_box);
 
   };
 

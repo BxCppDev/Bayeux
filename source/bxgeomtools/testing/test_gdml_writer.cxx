@@ -1,11 +1,12 @@
-// -*- mode: c++ ; -*-
 // test_gdml_writer.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <geomtools/utils.h>
 #include <geomtools/gdml_writer.h>
 

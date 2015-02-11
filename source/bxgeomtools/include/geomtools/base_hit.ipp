@@ -45,7 +45,4 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(geomtools::base_hit, 1)
-
 #endif // GEOMTOOOLS_BASE_HIT_IPP

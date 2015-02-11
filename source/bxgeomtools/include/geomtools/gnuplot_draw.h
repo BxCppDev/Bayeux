@@ -31,6 +31,7 @@
 
 namespace geomtools {
 
+  // Forward declaration:
   class i_object_3d;
   class i_placement;
   class placement;
@@ -344,21 +345,21 @@ namespace geomtools {
     /// Draw a extruded box
     static void
     draw_extruded_box (std::ostream &,
-		       const vector_3d &,
-		       const rotation_3d &,
-		       double, double, double, double,
-		       bool, bool, 
-		       int tube_axis_ = AXIS_INVALID,
-		       size_t n_tube_sampling_ = DEFAULT_SAMPLING);
+                       const vector_3d &,
+                       const rotation_3d &,
+                       double, double, double, double,
+                       bool, bool,
+                       int tube_axis_ = AXIS_INVALID,
+                       size_t n_tube_sampling_ = DEFAULT_SAMPLING);
 
     /// Draw a extruded box
     static void
     draw_extruded_box (std::ostream &,
-		       const vector_3d &,
-		       const rotation_3d &,
-		       const extruded_box &,
-		       int tube_axis_ = AXIS_INVALID,
-		       size_t n_tube_sampling_ = DEFAULT_SAMPLING);
+                       const vector_3d &,
+                       const rotation_3d &,
+                       const extruded_box &,
+                       int tube_axis_ = AXIS_INVALID,
+                       size_t n_tube_sampling_ = DEFAULT_SAMPLING);
 
     /// Draw a cylinder
     static void
@@ -400,20 +401,20 @@ namespace geomtools {
     /// Draw an elliptical tube
     static void
     draw_elliptical_tube (std::ostream &,
-			  const vector_3d &,
-			  const rotation_3d &,
-			  double,
-			  double,
-			  double,
-			  size_t = 36);
+                          const vector_3d &,
+                          const rotation_3d &,
+                          double,
+                          double,
+                          double,
+                          size_t = 36);
 
     /// Draw an elliptical tube
     static void
     draw_elliptical_tube (std::ostream &,
-			  const vector_3d &,
-			  const rotation_3d &,
-			  const elliptical_tube &,
-			  size_t = DEFAULT_SAMPLING);
+                          const vector_3d &,
+                          const rotation_3d &,
+                          const elliptical_tube &,
+                          size_t = DEFAULT_SAMPLING);
 
     /// Draw a sphere
     static void
@@ -450,21 +451,21 @@ namespace geomtools {
     /// Draw an ellipsoid
     static void
     draw_ellipsoid (std::ostream &,
-		    const vector_3d &,
-		    const rotation_3d &,
-		    double, double, double,
-		    double, double,
-		    size_t = DEFAULT_SAMPLING,
-		    size_t = 16);
+                    const vector_3d &,
+                    const rotation_3d &,
+                    double, double, double,
+                    double, double,
+                    size_t = DEFAULT_SAMPLING,
+                    size_t = 16);
 
     /// Draw an ellipsoid
     static void
     draw_ellipsoid (std::ostream &,
-		    const vector_3d &,
-		    const rotation_3d &,
-		    const ellipsoid &,
-		    size_t = DEFAULT_SAMPLING,
-		    size_t = 16);
+                    const vector_3d &,
+                    const rotation_3d &,
+                    const ellipsoid &,
+                    size_t = DEFAULT_SAMPLING,
+                    size_t = 16);
 
     /// Draw a polycone sector
     static void

@@ -8,7 +8,7 @@
  *
  * Description:
  *
- *  Bounding data informaInterface for 3D shaped datas
+ *  Bounding data information for 3D shaped datas
  *
  * History:
  *
@@ -95,6 +95,9 @@ namespace geomtools {
 
     /// Return the maximum R
     double get_rmax() const;
+
+    /// Return the minimum dimension
+    double get_min_dimension() const;
 
     /// Compute a bounding box and its placement in the solid reference frame:
     void compute_bounding_box(box & bb_, placement & p_) const;

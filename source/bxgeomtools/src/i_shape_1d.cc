@@ -1,10 +1,11 @@
-// -*- mode: c++; -*-
-/* i_shape_1d.cc
- */
+// i_shape_1d.cc
 
+// Ourselves:
 #include <geomtools/i_shape_1d.h>
 
 namespace geomtools {
+
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_1d,"geomtools::i_shape_1d");
 
   using namespace std;
 
@@ -44,5 +45,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of i_shape_1d.cc

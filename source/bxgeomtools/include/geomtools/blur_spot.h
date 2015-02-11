@@ -318,4 +318,9 @@ namespace geomtools {
 // Activate reflection layer for the blur_spot class :
 DR_CLASS_INIT(::geomtools::blur_spot);
 
+// Class version:
+// 2014-07-03 FM: Now inherits from geomtools::base_hit :
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(geomtools::blur_spot, 1)
+
 #endif // GEOMTOOLS_BLUR_SPOT_H

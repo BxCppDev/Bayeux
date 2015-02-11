@@ -14,6 +14,7 @@
 #include <datatools/exception.h>
 
 // This project:
+#include <geomtools/shape_factory.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/manager.h>
 #include <geomtools/id_mgr.h>
@@ -591,6 +592,20 @@ namespace geomtools {
     }
     return 0;
   }
+
+  /*
+  int geomtools_driver::command_print_list_of_shapes(std::ostream & out_,
+                                                     const std::string & print_shapes_options_) const
+  {
+    if (! is_initialized()) {
+      DT_LOG_ERROR(_params_.logging, "Geometry driver is not initialized !");
+      return 1;
+    }
+    return geomtools::shape_factory::print_list_of_shapes(*_shape_factory_ref_,
+                                                          out_,
+                                                          print_shapes_options_);
+  }
+  */
 
   int geomtools_driver::command_print_list_of_models(std::ostream & out_,
                                                      const std::string & print_models_options_) const

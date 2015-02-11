@@ -1534,7 +1534,7 @@ namespace geomtools {
       fin.seekg(0, std::ios::end);
       std::streampos length = fin.tellg();
       fin.seekg(0, std::ios::beg);
-      std::cerr << "length : " << length << '\n';
+      // std::cerr << "length : " << length << '\n';
       solid_token.reserve(length);
       fin.seekg(0, std::ios::beg);
       solid_token.assign((std::istreambuf_iterator<char>(fin)),
@@ -1573,11 +1573,22 @@ namespace geomtools {
     reset();
     this->i_shape_3d::initialize(config_, objects_);
 
-    double default_length_unit = CLHEP::mm;
+    double default_length_unit = 1.0 * CLHEP::mm;
+    // std::cerr << "DEVEL: default_length_unit [0] = " << default_length_unit << std::endl;
     if (config_.has_key ("length_unit")) {
       const std::string length_unit_str = config_.fetch_string("length_unit");
       default_length_unit = datatools::units::get_length_unit_from(length_unit_str);
     }
+    // std::cerr << "DEVEL: default_length_unit [1] = " << default_length_unit << std::endl;
+
+    if (config_.has_key ("length_unit_value")) {
+      double length_unit_value = config_.fetch_real("length_unit_value");
+      if (! config_.has_explicit_unit("length_unit_value")) {
+        length_unit_value *= default_length_unit;
+      }
+      default_length_unit = length_unit_value;
+    }
+    // std::cerr << "DEVEL: default_length_unit [2] = " << default_length_unit << std::endl;
 
     if (config_.has_key("stl_file")) {
       std::string stl_filename = config_.fetch_string("stl_file");
