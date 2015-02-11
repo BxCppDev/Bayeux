@@ -444,7 +444,7 @@ namespace dpp {
 
   bool input_module::has_metadata_store() const
   {
-    return (_common_);
+    return (_common_.get() != 0);
   }
 
   const datatools::multi_properties & input_module::get_metadata_store() const
