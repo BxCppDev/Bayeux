@@ -254,7 +254,6 @@ void ui::build_opts(boost::program_options::options_description & opts_,
   return;
 }
 
-// end of dpp_processing.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -16,17 +16,21 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <list>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/bio_guard.h>
 
+// This project:
 #include <dpp/input_module.h>
 #include <dpp/output_module.h>
 #include <dpp/simple_brio_data_source.h>

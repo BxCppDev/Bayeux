@@ -19,12 +19,19 @@
  *
  */
 
+// Ourselves:
+#include <dpp/simple_data_sink.h>
+
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
+// 2015-02-11, FM: Mandatory:
+#include <datatools/things.ipp>
 #include <datatools/io_factory.h>
 
 #if DATATOOLS_WITH_BIO == 0
@@ -34,8 +41,8 @@
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 #endif
 
+// This project:
 #include <dpp/dpp_config.h>
-#include <dpp/simple_data_sink.h>
 
 namespace dpp {
 
@@ -221,7 +228,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of simple_data_sink.cc
 /*
 ** Local Variables: --
 ** mode: c++ --
