@@ -508,7 +508,7 @@ namespace genvtx {
          << "Vertex validation support : " << _vertex_validation_support_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Vertex validation : " << _vertex_validation_ << std::endl;
+         << "Vertex validation : " << _vertex_validation_.get() << std::endl;
     if (_vertex_validation_) {
       std::ostringstream indent2_ss;
       indent2_ss << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);

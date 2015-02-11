@@ -404,7 +404,7 @@ namespace genvtx {
       _validator_->tree_dump(out_, "", indent2.str());
     }
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Geometry context : " << _geo_context_ << std::endl;
+         << "Geometry context : " << _geo_context_.get() << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Maximum number of tries : " << _maximum_number_of_tries_ << std::endl;
