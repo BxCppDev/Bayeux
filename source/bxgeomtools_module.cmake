@@ -96,14 +96,19 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/intersection_3d.h
   ${module_include_dir}/${module_name}/intersection.h
   ${module_include_dir}/${module_name}/i_object_3d.h
+  ${module_include_dir}/${module_name}/i_object_3d.ipp
   ${module_include_dir}/${module_name}/i_placement.h
   ${module_include_dir}/${module_name}/i_placement.ipp
   ${module_include_dir}/${module_name}/i_shape_1d.h
+  ${module_include_dir}/${module_name}/i_shape_1d.ipp
   ${module_include_dir}/${module_name}/i_shape_2d.h
+  ${module_include_dir}/${module_name}/i_shape_2d.ipp
   ${module_include_dir}/${module_name}/i_shape_3d.h
+  ${module_include_dir}/${module_name}/i_shape_3d.ipp
   ${module_include_dir}/${module_name}/i_stackable.h
   ${module_include_dir}/${module_name}/bounding_data.h
   ${module_include_dir}/${module_name}/i_wires_3d_rendering.h
+  ${module_include_dir}/${module_name}/i_wires_drawer.h
   ${module_include_dir}/${module_name}/line_3d.h
   ${module_include_dir}/${module_name}/line_3d.ipp
   ${module_include_dir}/${module_name}/logical_volume.h
@@ -140,6 +145,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/replicated_model.h
   ${module_include_dir}/${module_name}/rotated_boxed_model.h
   ${module_include_dir}/${module_name}/sensitive.h
+  ${module_include_dir}/${module_name}/shape_factory.h
   ${module_include_dir}/${module_name}/simple_boxed_model.h
   ${module_include_dir}/${module_name}/simple_shaped_model.h
   ${module_include_dir}/${module_name}/simple_world_model.h
@@ -269,12 +275,15 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/utils.cc
   ${module_source_dir}/gnuplot_draw.cc
   ${module_source_dir}/display_data.cc
+  ${module_source_dir}/shape_factory.cc
   ${module_source_dir}/manager.cc
   ${module_source_dir}/geometry_service.cc
   ${module_source_dir}/ocd_support.cc
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/gnuplot_i.cc
   ${module_source_dir}/gnuplot_drawer.cc
+  ${module_source_dir}/i_wires_3d_rendering.cc
+  ${module_source_dir}/i_wires_drawer.cc
   ${module_source_dir}/geomtools_driver.cc
   ${module_source_dir}/version.cc
   bx${module_name}/resource.cc
@@ -342,6 +351,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_stl_tools.cxx
   ${module_test_dir}/test_subtraction_3d.cxx
   ${module_test_dir}/test_tessellated_solid.cxx
+  ${module_test_dir}/test_shape_factory.cxx
   ${module_test_dir}/test_tube.cxx
   ${module_test_dir}/test_union_3d.cxx
   ${module_test_dir}/test_utils_2.cxx
@@ -349,6 +359,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_reflection_0.cxx
   ${module_test_dir}/test_extruded_box.cxx
   ${module_test_dir}/test_elliptical_tube.cxx
+  ${module_test_dir}/test_wires.cxx
   )
 
 # - Applications
