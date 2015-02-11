@@ -56,9 +56,6 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(mctools::simulated_data, 2)
-
 #endif // MCTOOLS_SIMULATED_DATA_IPP
 
 /*

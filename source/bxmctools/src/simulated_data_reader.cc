@@ -1,21 +1,23 @@
-// -*- mode: c++ ; -*-
-/* simulated_data_reader.cc
- */
+// simulated_data_reader.cc
 
+// Ourselves:
 #include <mctools/simulated_data_reader.h>
 
+// Standard library:
 #include <datatools/exception.h>
 #include <datatools/io_factory.h>
 #include <datatools/properties.h>
 
-#include <brio/reader.h>
-
-#include <mctools/simulated_data.h>
-#include <mctools/utils.h>
-
-// Special serialization code:
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/archives_instantiation.h>
 #include <datatools/properties.ipp>
+// - Bayeux/brio:
+#include <brio/reader.h>
+
+// This project:
+#include <mctools/simulated_data.h>
+#include <mctools/utils.h>
 #include <mctools/simulated_data.ipp>
 
 namespace mctools {

@@ -72,9 +72,6 @@ namespace mctools {
 
 } // end of namespace mctools
 
-#include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(mctools::base_step_hit, 1)
-
 #endif // MCTOOLS_BASE_STEP_HIT_IPP
 
 /*

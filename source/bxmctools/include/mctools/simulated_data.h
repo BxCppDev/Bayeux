@@ -231,6 +231,9 @@ BOOST_CLASS_EXPORT_KEY2(mctools::simulated_data, "mctools::simulated_data")
 DR_CLASS_INIT(::mctools::simulated_data);
 #endif // MCTOOLS_WITH_REFLECTION
 
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(mctools::simulated_data, 2)
+
 #endif // MCTOOLS_SIMULATED_DATA_H
 
 /*

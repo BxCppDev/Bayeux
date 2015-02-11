@@ -227,6 +227,10 @@ namespace mctools {
 DR_CLASS_INIT(::mctools::base_step_hit);
 #endif // MCTOOLS_WITH_REFLECTION
 
+// Class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(mctools::base_step_hit, 1)
+
 #endif // MCTOOLS_BASE_STEP_HIT_H
 
 /*
