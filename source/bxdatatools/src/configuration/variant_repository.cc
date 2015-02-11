@@ -39,7 +39,7 @@ namespace datatools {
 
     bool variant_repository::registry_entry::is_embedded() const
     {
-      return _embedded_registry_;
+      return _embedded_registry_.get() != 0;
     }
 
     bool variant_repository::registry_entry::is_valid() const

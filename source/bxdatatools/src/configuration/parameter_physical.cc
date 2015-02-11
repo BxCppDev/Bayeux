@@ -76,7 +76,7 @@ namespace datatools {
 
     bool parameter_physical::has_occurrence() const
     {
-      return _occurrence_;
+      return _occurrence_.get() != 0;
     }
 
     const i_occurrence & parameter_physical::get_occurrence() const

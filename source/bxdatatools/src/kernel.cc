@@ -972,7 +972,7 @@ namespace datatools {
 
   bool kernel::has_library_info_register() const
   {
-    return _library_info_register_;
+    return _library_info_register_.get() != 0;
   }
 
   library_info & kernel::grab_library_info_register()
@@ -991,7 +991,7 @@ namespace datatools {
 
   bool kernel::has_variant_repository() const
   {
-    return _variant_repository_;
+    return _variant_repository_.get() != 0;
   }
 
   const configuration::variant_repository & kernel::get_variant_repository() const
