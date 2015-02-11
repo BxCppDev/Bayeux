@@ -11,9 +11,10 @@ level_initial : string = "Co60_0"
 level_final   : string = "Ni60_2505"
 
 # Specific configuration properties for the beta decay driver:
+driver.logging.priority : string = "debug"
 driver.type     : string = "beta-"
 driver.coupling : string = "V"
-driver.ke_cut   : real as energy = 10 keV
+driver.ke_cut   : real as energy = 0 keV
 
 
 ######################################
@@ -24,9 +25,10 @@ level_initial : string = "Co60_0"
 level_final   : string = "Ni60_1332"
 
 # Specific configuration properties for the beta decay driver:
+# driver.logging.priority : string = "debug"
 driver.type     : string = "beta-"
 driver.coupling : string = "V"
-driver.ke_cut   : real as energy = 10 keV
+driver.ke_cut   : real as energy = 0 keV
 
 
 # Local Variables: --

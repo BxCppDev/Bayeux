@@ -19,15 +19,20 @@
  *
  */
 
+// Ourselves:
+#include <genbb_help/i_genbb.h>
+
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
-
-#include <genbb_help/i_genbb.h>
+// This project:
 #include <genbb_help/primary_event.h>
 
 namespace genbb {

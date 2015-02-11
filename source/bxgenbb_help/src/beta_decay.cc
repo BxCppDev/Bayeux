@@ -241,6 +241,13 @@ namespace genbb {
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Beta decay transition is already initialized!");
 
+    if (get_logging() == datatools::logger::PRIO_DEBUG) {
+      DT_LOG_DEBUG(get_logging(), "Initial level:");
+      level_initial_.tree_dump(std::cerr, "", "[debug] ");
+      DT_LOG_DEBUG(get_logging(), "Final level:");
+      level_final_.tree_dump(std::cerr, "", "[debug] ");
+    }
+
     DT_THROW_IF(level_initial_.get_A() != level_final_.get_A(),
                 std::logic_error,
                 "Incompatible beta decay A for levels  '" << level_initial_.to_string() << "' and '" <<
@@ -276,7 +283,9 @@ namespace genbb {
     double mass_parent = rec_parent.get_nucleus_mass();
     double mass_daughter = rec_daughter.get_nucleus_mass();
     double energy_parent = level_initial_.get_energy();
+    DT_LOG_DEBUG(get_logging(), "Energy parent= " << energy_parent / CLHEP::keV << " keV");
     double energy_daughter = level_final_.get_energy();
+    DT_LOG_DEBUG(get_logging(), "Energy daughter= " << energy_daughter / CLHEP::keV << " keV");
     set_mass_parent(mass_parent);
     set_energy_parent(energy_parent);
     set_mass_daughter(mass_daughter);
@@ -287,6 +296,7 @@ namespace genbb {
 
   void beta_decay::initialize(const datatools::properties & config_)
   {
+    DT_LOG_DEBUG(get_logging(), "TEST: Entering...");
     DT_THROW_IF(is_initialized(), std::logic_error, "Beta decay is a already initialized!");
 
     this->base_decay_driver::_initialize(config_);
@@ -340,16 +350,19 @@ namespace genbb {
       set_mass_parent(mass_parent);
     }
 
-    double energy_parent = 0.0;
+    DT_LOG_DEBUG(get_logging(), "TEST: Energy parent   = " << _energy_parent_   / CLHEP::keV << " keV");
+    DT_LOG_DEBUG(get_logging(), "TEST: Energy daughter = " << _energy_daughter_ / CLHEP::keV << " keV");
+
     if (!datatools::is_valid(_energy_parent_)) {
+      double energy_parent = 0.0;
       if (config_.has_key("energy_parent")) {
         energy_parent = config_.fetch_real("energy_parent");
         if (! config_.has_explicit_unit("energy_parent")) {
           energy_parent *= default_energy_unit;
         }
       }
+      set_energy_parent(energy_parent);
     }
-    set_energy_parent(energy_parent);
 
     if (!datatools::is_valid(_mass_daughter_)) {
       DT_THROW_IF(! config_.has_key("mass_daughter"), std::logic_error, "Missing 'mass_daughter' property!");
@@ -364,16 +377,16 @@ namespace genbb {
       set_mass_daughter(mass_daughter);
     }
 
-    double energy_daughter = 0.0;
     if (!datatools::is_valid(_energy_daughter_)) {
+      double energy_daughter = 0.0;
       if (config_.has_key("energy_daughter")) {
         energy_daughter = config_.fetch_real("energy_daughter");
         if (! config_.has_explicit_unit("energy_daughter")) {
           energy_daughter *= default_energy_unit;
         }
       }
+      set_energy_daughter(energy_daughter);
     }
-    set_energy_daughter(energy_daughter);
 
     // Q-beta value:
     if (!datatools::is_valid(_q_beta_)) {
@@ -435,14 +448,19 @@ namespace genbb {
     // Hidden initialization
     _init();
 
-    // this->tree_dump(std::cerr, "Beta decay: ", "*** DEVEL: ");
-
+    if (get_logging() == datatools::logger::PRIO_DEBUG) {
+      DT_LOG_DEBUG(get_logging(), "Beta decay: ");
+      this->tree_dump(std::clog, "", "[debug] ");
+      // display_pdf("Beta kinematic limits");
+    }
     _set_initialized(true);
+    DT_LOG_DEBUG(get_logging(), "TEST: Exiting.");
     return;
   }
 
   void beta_decay::_init()
   {
+    DT_LOG_DEBUG(get_logging(), "TEST: Entering...");
     if (_massive_neutrino_) {
       DT_THROW(std::logic_error,
                "Beta decay with massive netrino is not supported yet !");
@@ -459,8 +477,14 @@ namespace genbb {
     }
 
     // Q-beta:
+    DT_LOG_DEBUG(get_logging(), "Mass parent = " << _mass_parent_ / CLHEP::keV << " keV");
+    DT_LOG_DEBUG(get_logging(), "Mass daughter = " << _mass_daughter_ / CLHEP::keV << " keV");
+    DT_LOG_DEBUG(get_logging(), "Energy parent = " << _energy_parent_ / CLHEP::keV << " keV");
+    DT_LOG_DEBUG(get_logging(), "Energy daughter = " << _energy_daughter_ / CLHEP::keV << " keV");
     double delta_mass = (_mass_parent_ + _energy_parent_) - (_mass_daughter_ + _energy_daughter_);
+    DT_LOG_DEBUG(get_logging(), "Delta mass = " << delta_mass / CLHEP::keV << " keV");
     double check_q_beta = delta_mass - CLHEP::electron_mass_c2;
+    DT_LOG_DEBUG(get_logging(), "Checked Q beta = " << check_q_beta / CLHEP::keV << " keV");
     if (datatools::is_valid(_q_beta_)) {
       // Check Q-beta:
       DT_THROW_IF(std::abs(check_q_beta - _q_beta_) > 1. * CLHEP::keV,
@@ -473,12 +497,19 @@ namespace genbb {
       set_q_beta(check_q_beta);
     }
 
+    // XXX TEST
+    // if (get_logging() == datatools::logger::PRIO_DEBUG) {
+    //   // Force arbitrary Q beta:
+    //   _q_beta_ = 3.0 * CLHEP::MeV;
+    //   set_log_filename("/tmp/_genbb.log");
+    // }
+
     if (!datatools::is_valid(_ke_cut_)) {
       if (is_beta_plus()) {
         _ke_cut_ = 0.0;
       } else if (is_beta_minus()) {
         // Force low energy cut for beta- decay:
-        _ke_cut_ = _q_beta_ / 100;
+        _ke_cut_ = _q_beta_ / 500;
         if (_ke_cut_ > 10.0 * CLHEP::keV) {
           _ke_cut_ = 10.0 * CLHEP::keV;
         }
@@ -507,16 +538,18 @@ namespace genbb {
                                  mode_SS,
                                  ke_cut));
 
-    _M_  = _mass_parent_;
+    _M_  = _mass_parent_ + _energy_parent_;
     _m1_ = CLHEP::electron_mass_c2;
     _m2_ = 0.0; // zero neutrino mass
     if (_massive_neutrino_) {
       // Not used yet:
       _m2_ = _neutrino_mass_;
     }
-    _m3_ = _mass_daughter_;
+    _m3_ = _mass_daughter_ + _energy_daughter_;
     _compute_pr_max();
     _compute_limits();
+
+    DT_LOG_DEBUG(get_logging(), "TEST: Exiting.");
     return;
   }
 
@@ -551,7 +584,7 @@ namespace genbb {
   {
     DT_THROW_IF(!datatools::is_valid(q_beta_) || q_beta_ <= 0.0,
                 std::logic_error,
-                "Invalid decaying nucleus' Q beta (" << q_beta_ / CLHEP::keV << " keV)!");
+                "Invalid decaying nucleus Q beta (" << q_beta_ / CLHEP::keV << " keV)!");
     _q_beta_ = q_beta_;
     return;
   }
@@ -630,6 +663,7 @@ namespace genbb {
     DT_THROW_IF(val_ < 0.0,
                 std::logic_error, "Invalid parent nucleus' excitation energy !");
     _energy_parent_ = val_;
+    DT_LOG_DEBUG(get_logging(), "Energy parent set to : " << _energy_parent_ / CLHEP::keV << " keV");
     return;
   }
 
@@ -643,6 +677,7 @@ namespace genbb {
     DT_THROW_IF(val_ < 0.0,
                 std::logic_error, "Invalid daughter nucleus' excitation energy !");
     _energy_daughter_ = val_;
+    DT_LOG_DEBUG(get_logging(), "Energy daughter set to : " << _energy_daughter_ / CLHEP::keV << " keV");
     return;
   }
 
@@ -811,17 +846,20 @@ namespace genbb {
         }
         //std::cerr << "beta_decay::_compute_limits: ke=" << ke << std::endl;
         double prob = pdf_ke_pr(ke, pr);
-        tmp_file.out() << pr << ' ' << ke << ' ' << prob << std::endl;
+        tmp_file.out() << pr / CLHEP::MeV << ' ' << ke / CLHEP::MeV << ' ' << prob << std::endl;
 
         if (ke == ke_max) {
           break;
         }
       } // ike
       if (_log_file_) {
-        *_log_file_ << pr << ' ' << ke_min << ' ' << ke_max << std::endl;
+        *_log_file_ << pr / CLHEP::MeV << ' ' << ke_min / CLHEP::MeV << ' ' << ke_max / CLHEP::MeV << std::endl;
       }
       if (pr == _pr_max_) {
         break;
+      }
+      if (pr > 0.95 * _pr_max_) {
+        dpr = 0.1 * (pr_max - pr_min) / npr;
       }
     } // ipr
 
@@ -836,7 +874,7 @@ namespace genbb {
     g1.cmd("set grid");
     g1.cmd("set key out");
     g1.cmd("set xlabel 'pr (MeV)'");
-    g1.cmd("set ylabel 'ke (ke)'");
+    g1.cmd("set ylabel 'ke (MeV)'");
     g1.cmd("set zlabel 'PDF'");
     g1.cmd("set size ratio -1");
     g1.cmd("set xyplane at 0");
@@ -976,7 +1014,7 @@ namespace genbb {
          << "Prob(max)      : " << _probability_max_ << std::endl;
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Beta generated : " << _beta_generated_ << std::endl;
+         << "Beta generated     : " << _beta_generated_ << std::endl;
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Neutrino generated : " << _neutrino_generated_ << std::endl;

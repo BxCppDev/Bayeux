@@ -1,11 +1,18 @@
+// Standard library:
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/logger.h>
-
+#include <datatools/exception.h>
+#include <datatools/io_factory.h> // Boost serialization file writer
+#include <datatools/utils.h> // Utilities
+// - Bayeux/genbb_help:
 #include <genbb_help/manager.h>
 #include <genbb_help/primary_event.h>
+#include <genbb_help/primary_event.ipp> // Mandatory for BOOST_CLASS_VERSION
 
 int main(int argc_, char ** argv_)
 {
@@ -48,6 +55,11 @@ int main(int argc_, char ** argv_)
 
     genbb::i_genbb & PG = EGM.grab(eg_name);
 
+    // A data writer:
+    std::string plain_input_file = "ex01.xml";
+    datatools::data_writer pe_plain_writer;
+    pe_plain_writer.init_multi(plain_input_file);
+
     int count = 0;
     while (PG.has_next()) {
       genbb::primary_event decay_event;
@@ -56,6 +68,7 @@ int main(int argc_, char ** argv_)
       decay_event.tree_dump (std::clog,
                              "Generated primary event: ",
                              "NOTICE: ");
+      pe_plain_writer.store(decay_event);
       count++;
       if (count >= nevents) break;
     }

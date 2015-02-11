@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // genbb_mgr.cc
 /*
  * Copyright 2007-2013 F. Mauger
@@ -20,8 +19,10 @@
  *
  */
 
+// Ourselves:
 #include <genbb_help/genbb_mgr.h>
 
+// Standard library:
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -29,21 +30,26 @@
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - CLHEP:
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Vector/ThreeVector.h>
-
-#include <datatools/utils.h>
-#include <datatools/exception.h>
-
+// - Boost:
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+// - Bayeux/datatools:
+#include <datatools/utils.h>
+#include <datatools/exception.h>
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
+
+// This project:
 #include <genbb_help/primary_event.h>
 
 // Implementation of serialization method for the 'primary_event'
 // class, implies also <genbb_help/primary_particle.ipp> :
-#include <genbb_help/primary_event.ipp>
+#include <genbb_help/primary_event.ipp> // Mandatory
 
 namespace genbb {
 
@@ -523,5 +529,3 @@ namespace genbb {
   }
 
 } // end of namespace genbb
-
-// end of genbb_mgr.cc

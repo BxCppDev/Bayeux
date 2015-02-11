@@ -158,6 +158,11 @@ namespace genbb {
     base_decay_driver * driver = decay_driver_factory::create(_decay_id_);
     DT_THROW_IF (driver == 0, std::logic_error,
                  "Cannot create decay driver with id '" << _decay_id_ << "'!");
+    datatools::logger::priority logging =
+      datatools::logger::extract_logging_configuration(decay_driver_config,
+                                                       driver->get_logging(),
+                                                       true);
+    driver->set_logging(logging);
     driver->set_levels(*_level_initial_, *_level_final_);
     driver->initialize(decay_driver_config);
     _decay_driver_.reset(driver);

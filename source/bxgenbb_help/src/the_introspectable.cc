@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
-/* the_introspectable.cc
- */
+// the_introspectable.cc
+
 // Third Party
 // - Boost
 #include <boost/scoped_ptr.hpp>
@@ -34,5 +33,3 @@ namespace genbb {
 } // end namespace genbb
 
 #include <genbb_help/the_introspectable.h>
-
-// end of the_introspectable.cc

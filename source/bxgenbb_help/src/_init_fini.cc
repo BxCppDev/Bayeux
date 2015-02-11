@@ -1,6 +1,4 @@
-/* genbb_help/_init_fini.cc
- */
-// Ourselves
+// genbb_help/_init_fini.cc
 
 // This package:
 #include <genbb_help/genbb_help_config.h>
@@ -19,5 +17,3 @@ static void genbb_help_finalizer()
   genbb::terminate();
   return;
 }
-
-// end of genbb_help/_init_fini.cc

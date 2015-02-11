@@ -90,7 +90,7 @@ namespace genbb {
     // Parse logging priority:
     datatools::logger::priority prio =
       datatools::logger::extract_logging_configuration(setup_,
-                                                       datatools::logger::PRIO_FATAL,
+                                                       get_logging(),
                                                        true);
     if (prio != datatools::logger::PRIO_UNDEFINED) {
       set_logging(prio);

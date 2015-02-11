@@ -214,6 +214,10 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_eve
 // Activate reflection layer for the genbb::primary_event class :
 DR_CLASS_INIT(::genbb::primary_event);
 
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(genbb::primary_event, 4)
+
 #endif // GENBB_HELP_PRIMARY_EVENT_H
 
 // Local Variables: --

@@ -17,7 +17,7 @@ int main(int argc_, char ** argv_)
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   try {
     // Number of generated events:
-    int nevents = 10;
+    int nevents = 2;
 
     // Command line arguments parsing:
     if (argc_>1) {

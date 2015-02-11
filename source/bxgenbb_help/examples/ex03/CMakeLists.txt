@@ -25,8 +25,12 @@ add_executable(ex03 ex03.cxx)
 
 target_link_libraries(ex03 ${_libs} )
 
+add_executable(ex03_bank_reader ex03_bank_reader.cxx)
+
+target_link_libraries(ex03_bank_reader ${_libs} )
+
 install ( FILES
-    ${PROJECT_BINARY_DIR}/ex03
+    ${PROJECT_BINARY_DIR}/ex03 ${PROJECT_BINARY_DIR}/ex03_bank_reader
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     PERMISSIONS OWNER_READ OWNER_EXECUTE
     GROUP_READ GROUP_EXECUTE

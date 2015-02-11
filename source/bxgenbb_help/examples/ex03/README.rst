@@ -1,5 +1,5 @@
 ===========================
-geomtools ``examples/ex01``
+geomtools ``examples/ex03``
 ===========================
 
 Introduction
@@ -13,25 +13,23 @@ Introduction
 
  * Source file(s) :
 
-   * ``ex01.cxx`` : the main program.
+   * ``ex03.cxx`` : the main program.
+   * ``ex03_bank_reader.cxx`` : the program to read primary event data
+     from a file (Boost/Serialization-based dpp I/O format).
 
  * Configuration files :
 
-   * ``config/manager.conf`` : the main configuration file of the geometry
-     manager.
-   * Event generators' configuration files :
+   * ``config/manager.conf`` : the main configuration file of the primary particle generator manager.
+   * ``config/generators.def`` : the definitions of some event generators
 
-     * ``config/backgrounds.conf`` : some event generators
-     * ``config/calibrations.conf`` : some event generators
-     * ``config/dbd.conf`` : some event generators
-     * ``config/misc.conf.conf`` : some event generators
-     * ``config/electron_energy_spectrum_0.data`` : data file
-       which contains the tabulated energy spectrum used by
-       a specific electron generator
+     * ``config/Co60/*.def`` : description of the nuclear and levels and associated decays for Co-60
+     * ``config/Ni60/*.def`` : description of the nuclear and levels and associated decays for Ni-60
+
 
  * Built object(s) :
 
-     * ``ex01`` : the example executable linked to the ``Bayeux`` library.
+     * ``ex03`` : the example executable linked to the ``Bayeux`` library.
+     * ``ex03_bank_reader`` : the reader executable linked to the ``Bayeux`` library.
 
  * Build method: CMake.
 
@@ -41,8 +39,8 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex01 /tmp/genbb_help_ex01
-      shell> cd /tmp/genbb_help_ex01
+      shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex03 /tmp/genbb_help_ex03
+      shell> cd /tmp/genbb_help_ex03
 
 3. Build and install the example::
 
@@ -58,13 +56,35 @@ Quick start
 
 4. Run the example::
 
-      shell> ./ex01
+      shell> ./ex03
 
-5. Run the ``bxgenbb_inspector`` ::
+5. Run the ``bxgenbb_inspector`` :
+
+     Print the list of available generators: ::
 
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
                --action list
+
+     Generate 10000 Co60 decay events, build and save histograms
+     in a ROOT file: ::
+
+      shell> bxgenbb_inspector \
+               --configuration config/manager.conf \
+               --action shoot \
+               --generator "Co60" \
+               --prng-seed 314159 \
+               --number-of-events 1000000 \
+               --modulo 1000 \
+               --prompt \
+               --delayed \
+               --prompt-time-limit 1 \
+               --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf" \
+               --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
+               --output-file "histos_Co60.root"
+
+     Generate 10000 Co60 decay events, save them in a data file using
+     the dpp I/O format: ::
 
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
@@ -73,12 +93,13 @@ Quick start
                --prng-seed 314159 \
                --number-of-events 10000 \
                --modulo 1000 \
-               --prompt \
-               --delayed \
-               --prompt-time-limit 1 \
-               --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf" \
-               --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
-               --output-file "histos_Co60.root"
+               --output-mode "bank" \
+               --output-bank-label "PE" \
+               --output-file "Co60_banks.data.gz"
+
+     Read the primary event from the generated file: ::
+
+      shell> ./ex03_bank_reader Co60_banks.data.gz
 
 6. Check the output file:
 
@@ -91,7 +112,7 @@ Quick start
 
 8. Clean::
 
-      shell> rm ex01
+      shell> rm ex03
       shell> rm -fr ./__build
 
 9. Note:

@@ -389,6 +389,10 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_par
 // Activate reflection layer for the genbb::primary_particle class :
 DR_CLASS_INIT(::genbb::primary_particle);
 
+// Explicit class version:
+#include <boost/serialization/version.hpp>
+BOOST_CLASS_VERSION(genbb::primary_particle, 4)
+
 #endif // GENBB_HELP_PRIMARY_PARTICLE_H
 
 // Local Variables: --

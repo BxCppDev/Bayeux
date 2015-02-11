@@ -25,8 +25,12 @@ add_executable(ex01 ex01.cxx)
 
 target_link_libraries(ex01 ${_libs} )
 
+add_executable(ex01_plain_reader ex01_plain_reader.cxx)
+
+target_link_libraries(ex01_plain_reader ${_libs} )
+
 install ( FILES
-    ${PROJECT_BINARY_DIR}/ex01
+    ${PROJECT_BINARY_DIR}/ex01 ${PROJECT_BINARY_DIR}/ex01_plain_reader
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     PERMISSIONS OWNER_READ OWNER_EXECUTE
     GROUP_READ GROUP_EXECUTE

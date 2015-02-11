@@ -82,6 +82,8 @@
 // This project
 #include <genbb_help/manager.h>
 #include <genbb_help/primary_event.h>
+// 2015-02-11, FM: Fix bug : add the .ipp header to use the BOOST_CLASS_VERSION macro
+#include <genbb_help/primary_event.ipp>
 #include <genbb_help/resource.h>
 
 // Some pre-processor linkage guard :

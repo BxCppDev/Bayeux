@@ -1,6 +1,6 @@
-/* genbb_help/_genbb_help.cc
- */
-// Ourselves
+// genbb_help/_genbb_help.cc
+
+// Ourselves:
 #include <genbb_help/genbb_help.h>
 
 // Third-party:
@@ -105,5 +105,3 @@ namespace genbb {
   }
 
 } // end of namespace genbb
-
-// end of genbb_help/_genbb_help.cc

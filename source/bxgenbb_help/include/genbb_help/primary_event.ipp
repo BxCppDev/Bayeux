@@ -81,9 +81,6 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(genbb::primary_event, 4)
-
 #endif // GENBB_HELP_PRIMARY_EVENT_IPP
 
 // Local Variables: --

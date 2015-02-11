@@ -1,15 +1,16 @@
-// -*- mode: c++; -*-  
-/* the_serializable.cc  
- */ 
+// the_serializable.cc
 
+
+// Ourselves:
 #include <genbb_help/the_serializable.h>
 
-// Load the link guard definition :
-#include <genbb_help/detail/bio_link_guard.h>
-
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <boost/scoped_ptr.hpp>
+
+// Load the link guard definition :
+#include <genbb_help/detail/bio_link_guard.h>
 
 // Load the link guard implementation :
 namespace genbb {
@@ -57,5 +58,3 @@ namespace serialization {
 } // end namespace serialization
 } // end namespace detail
 } // end namespace genbb
-
-// end of the_serializable.cc
