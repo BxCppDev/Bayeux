@@ -160,11 +160,11 @@ namespace mygsl {
 
     private:
 
-      bool   _min_included_; /// Flag to include the min bound
-      bool   _max_included_; /// Flag to include the max bound
-      double _min_; /// Min bound
-      double _max_; /// Max bound
-      double _eps_; /// Epsilon
+      bool   _min_included_; //!< Flag to include the min bound
+      bool   _max_included_; //!< Flag to include the max bound
+      double _min_; //!< Min bound
+      double _max_; //!< Max bound
+      double _eps_; //!< Epsilon
 
       DATATOOLS_SERIALIZATION_DECLARATION();
 
