@@ -262,7 +262,7 @@ namespace genbb {
 
   bool nuclear_decay::has_decay_driver() const
   {
-    return _decay_driver_;
+    return _decay_driver_.get() != 0;
   }
 
   base_decay_driver & nuclear_decay::grab_decay_driver()
