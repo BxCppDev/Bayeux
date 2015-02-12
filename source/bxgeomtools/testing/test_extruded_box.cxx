@@ -25,7 +25,6 @@ int main (int argc_, char ** argv_)
   using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
-    bool debug = false;
     bool draw  = false;
     long seed  = 314159;
     bool test1 = true;
@@ -35,7 +34,6 @@ int main (int argc_, char ** argv_)
     while (iarg < argc_) {
       string arg = argv_[iarg];
 
-      if (arg == "-d" || arg == "--debug") debug = true;
       if (arg == "-D" || arg == "--draw") draw = true;
       if (arg == "-1") test1 = false;
       if (arg == "-2") test2 = false;

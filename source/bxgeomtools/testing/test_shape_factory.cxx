@@ -124,7 +124,7 @@ void test0(bool draw_)
     std::map<int, std::string> display_map;
     double r = 6.0 * CLHEP::mm;
     int index = 0;
-    for (int i = 0; i < names.size(); i++) {
+    for (size_t i(0); i < names.size(); ++i) {
       const std::string & name = names[i];
       // if (name != "o106" && name != "o107") {
       //   continue;

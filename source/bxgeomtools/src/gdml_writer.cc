@@ -1522,8 +1522,6 @@ namespace geomtools {
                                     const tessellated_solid & t_,
                                     const string & lunit_str_)
   {
-    double lunit = datatools::units::get_length_unit_from(lunit_str_);
-
     // Registration of vertices:
     for (tessellated_solid::vertices_col_type::const_iterator i
            = t_.vertices().begin();
@@ -1545,7 +1543,6 @@ namespace geomtools {
             = t_.facets().begin();
           i != t_.facets().end();
           i++) {
-       unsigned int facet_index = i->first;
        const facet34 & facet = i->second;
 
        solids_stream << "<";

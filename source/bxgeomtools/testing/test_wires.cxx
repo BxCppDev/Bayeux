@@ -400,8 +400,10 @@ int main(int argc_, char ** argv_)
           index++;
         }
         if (in_count) {
-          plot_cmd << (index?",":"")  << " '" << tmp_file.get_filename()
-                   << "' index " << index++ << " title 'In segments' with lines lt 2 lw 2";
+          plot_cmd << (index?",":"")  << " '" << tmp_file.get_filename();
+          index++;
+
+          plot_cmd << "' index " << index << " title 'In segments' with lines lt 2 lw 2";
         }
         if (surf_count) {
           plot_cmd << (index?",":"") << " '" << tmp_file.get_filename()

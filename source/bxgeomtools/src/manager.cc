@@ -848,7 +848,7 @@ namespace geomtools {
      *********************************************/
     DT_LOG_NOTICE(_logging, "Initialization of the geometry ID manager...");
 
-    for (int i = 0; i < categories_lists.size(); i++) {
+    for (size_t i(0); i < categories_lists.size(); ++i) {
       std::string categories_list = categories_lists[i];
       datatools::fetch_path_with_env(categories_list);
       _id_manager_.load(categories_list);

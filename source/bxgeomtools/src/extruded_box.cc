@@ -932,7 +932,6 @@ namespace geomtools {
                                                   const geomtools::vector_3d & position_,
                                                   const geomtools::rotation_3d & rotation_)
   {
-    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     if (!_wires_ptr_) {
       _wires_ptr_.reset(new std::list<polyline_3d>);
       _exbox_->generate_wires_self(*_wires_ptr_);

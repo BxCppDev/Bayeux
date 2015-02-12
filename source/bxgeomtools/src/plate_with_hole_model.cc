@@ -244,7 +244,6 @@ namespace geomtools {
                                                            const geomtools::vector_3d & position_,
                                                            const geomtools::rotation_3d & rotation_)
   {
-    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     const geomtools::subtraction_3d & solid = _model_->get_solid();
     const geomtools::i_composite_shape_3d::shape_type & s1 = solid.get_shape1();
     const geomtools::i_composite_shape_3d::shape_type & s2 = solid.get_shape2();
