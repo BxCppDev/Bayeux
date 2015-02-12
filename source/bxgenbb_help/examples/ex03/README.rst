@@ -83,7 +83,7 @@ Quick start
                --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
                --output-file "histos_Co60.root"
 
-     Generate 10000 Co60 decay events, save them in a data file using
+     Generate 100 Co60 decay events, save them in a data file using
      the dpp I/O format: ::
 
       shell> bxgenbb_inspector \
@@ -91,7 +91,7 @@ Quick start
                --action shoot \
                --generator "Co60" \
                --prng-seed 314159 \
-               --number-of-events 10000 \
+               --number-of-events 100 \
                --modulo 1000 \
                --output-mode "bank" \
                --output-bank-label "PE" \

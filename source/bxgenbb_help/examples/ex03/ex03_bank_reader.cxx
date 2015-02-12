@@ -30,7 +30,10 @@ int main(int argc_, char ** argv_)
 
     // A data reader:
     dpp::input_module pe_bank_reader;
+    pe_bank_reader.set_name("pe_bank_reader");
+    // pe_bank_reader.set_logging_priority(datatools::logger::PRIO_TRACE);
     pe_bank_reader.set_single_input_file(plain_input_file);
+    pe_bank_reader.set_clear_record(true);
     pe_bank_reader.initialize_simple();
 
     // Working event record data (with primary event bank):
@@ -39,13 +42,21 @@ int main(int argc_, char ** argv_)
     int pe_count = 0;
     double energy_mean = 0.0;
     while (! pe_bank_reader.is_terminated()) {
+      if (pe_count % 10 == 0) {
+        std::clog << "Processing records #" << pe_count << std::endl;
+      }
       dpp::base_module::process_status status = pe_bank_reader.process(ER);
-      const genbb::primary_event & pe = ER.get<genbb::primary_event> ("PE");
+      if (status != dpp::base_module::PROCESS_SUCCESS) {
+        std::clog << "Reader status=" << status << std::endl;
+        break;
+      }
+      const genbb::primary_event & pe = ER.get<genbb::primary_event>("PE");
       energy_mean += pe.get_total_kinetic_energy();
       pe_count++;
+      ER.clear();
     }
     pe_bank_reader.reset();
-    std::clog << "Number of read primary events : " << pe_count << std::endl;
+    std::clog << "Number of processed primary event records: " << pe_count << std::endl;
     std::clog << "Energy mean : " << energy_mean/pe_count/CLHEP::keV << " keV" << std::endl;
 
   }
