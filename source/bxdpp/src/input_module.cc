@@ -161,8 +161,24 @@ namespace dpp {
     return get_common().is_terminated();
   }
 
+  void input_module::set_clear_record(bool cr_)
+  {
+    DT_THROW_IF(is_initialized (),
+                std::logic_error,
+                "Input module '" << get_name () << "' is already initialized !");
+    _clear_record_ = cr_;
+    return;
+  }
+
+  bool input_module::is_clear_record() const
+  {
+    return _clear_record_;
+  }
+
+
   void input_module::_set_defaults()
   {
+    _clear_record_ = false;
     _source_ = 0;
     _metadata_updated_ = false;
     //_metadata_preload_ = true;
@@ -207,7 +223,12 @@ namespace dpp {
                 std::logic_error,
                 "Input module '" << get_name () << "' is already initialized ! ");
 
+    if (a_config.has_key("clear_record")) {
+      set_clear_record(a_config.fetch_boolean("clear_record"));
+    }
+
     _common_initialize(a_config);
+
 
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
@@ -280,6 +301,9 @@ namespace dpp {
                 std::logic_error,
                 "Input module '" << get_name() << "' is not initialized !");
     _metadata_updated_ = false;
+    if (is_clear_record()) {
+      a_data_record.clear();
+    }
     return _load(a_data_record);
   }
 
@@ -352,6 +376,7 @@ namespace dpp {
     if (load_it) {
       // Make sure the input data record is empty:
       if ((a_data_record.size() > 0)) {
+        DT_LOG_TRACE(_logging, "Data record is not empty!");
         load_status = PROCESS_ERROR;
         return load_status;
       }

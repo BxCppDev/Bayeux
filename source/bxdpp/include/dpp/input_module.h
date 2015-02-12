@@ -44,6 +44,7 @@
 
 namespace dpp {
 
+  // Forward declarations:
   class i_data_source;
   class io_common;
 
@@ -113,6 +114,12 @@ namespace dpp {
     /// Check if an embedded metadata store exists
     bool has_metadata_store() const;
 
+    /// Set clear record flag
+    void set_clear_record(bool);
+
+    /// Check the Set clear record flag
+    bool is_clear_record() const;
+
     // /// Set the preload flag
     // void set_preload_metadata(bool);
 
@@ -149,6 +156,7 @@ namespace dpp {
 
   private:
 
+    bool                         _clear_record_; //!< A flag to automatically clear the data record before processing
     boost::scoped_ptr<io_common> _common_; //!< Common data structure
     i_data_source              * _source_; //!< Abstract data reader
     // bool                         _metadata_preload_; //!< Preload metadata before processing data records
