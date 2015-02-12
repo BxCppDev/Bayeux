@@ -21,35 +21,6 @@ int main (/*int argc_, char ** argv_*/)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for class 'datatools::units'!" << endl;
-
-      // bool debug = false;
-      // int iarg = 1;
-      // while (iarg < argc_)
-      //   {
-      //     string token = argv_[iarg];
-      //     if (token[0] == '-')
-      //       {
-      //          string option = token;
-      //          if ((option == "-d") || (option == "--debug"))
-      //            {
-      //              debug = true;
-      //            }
-      //          else
-      //            {
-      //               clog << "warning: ignoring option '" << option << "'!" << endl;
-      //            }
-      //       }
-      //     else
-      //       {
-      //         string argument = token;
-      //         {
-      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
-      //         }
-      //       }
-      //     iarg++;
-      // }
-
       test1();
       test2();
 
@@ -237,7 +208,7 @@ void test2()
 
   try {
     double yy = datatools::units::get_length_unit_from("kg");
-    yy = 0;
+    yy = yy*0;
   } catch (std::exception & error) {
     std::cerr << "As expected: " << error.what() << std::endl;
   }

@@ -138,7 +138,7 @@ void test0(bool debug_)
   return;
 }
 
-void test1(bool debug_, bool gui_)
+void test1(bool debug_, bool /*gui_*/)
 {
   std::clog << "\nTest 1:\n";
 
