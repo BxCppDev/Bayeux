@@ -152,11 +152,11 @@ int main (int argc_, char ** argv_)
               arrow.set_errors(magfield.mag() * b_scale * 2.0 * CLHEP::cm / CLHEP::gauss );
               // Compute placement of the arrow :
               geomtools::placement plcmt;
-              plcmt.set_translation (x, y, z);
-              plcmt.set_orientation (magfield.getPhi(),
-                                     magfield.getTheta(),
-                                     0.0);
-              arrow.generate_wires (DI.paths, plcmt);
+              plcmt.set_translation(x, y, z);
+              plcmt.set_orientation(magfield.getPhi(),
+                                    magfield.getTheta(),
+                                    0.0);
+              arrow.generate_wires(DI.wires, plcmt);
             } // for z
           } // for y
         } // for x

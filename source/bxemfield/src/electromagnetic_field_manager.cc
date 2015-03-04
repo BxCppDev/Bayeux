@@ -208,7 +208,7 @@ namespace emfield {
   {
     DT_THROW_IF (is_initialized (),
                  std::logic_error,
-                 "Cannot reset the service manager ! EM field manager is already initialized !");
+                 "The EM field manager is already initialized !");
 
     // Parse configuration parameters :
     datatools::logger::priority lp = datatools::logger::extract_logging_configuration (setup_);
@@ -225,8 +225,13 @@ namespace emfield {
     }
 
     bool needs_service_manager = false;
-    if (setup_.has_flag ("needs_service_manager")) {
-      needs_service_manager = true;
+    if (setup_.has_key("needs_service_manager")) {
+      needs_service_manager = setup_.fetch_boolean("needs_service_manager");
+    }
+
+    bool needs_geometry_manager = false;
+    if (setup_.has_key("needs_geometry_manager")) {
+      needs_geometry_manager = setup_.fetch_boolean("needs_geometry_manager");
     }
 
     // Checks :
@@ -235,7 +240,7 @@ namespace emfield {
                  "Cannot find mandatory service manager !");
 
     // Search for a handle to a geometry manager from the service manager :
-    if (! has_geometry_manager()) {
+    if (needs_geometry_manager && ! has_geometry_manager()) {
       DT_THROW_IF(! has_service_manager (), std::logic_error, "No service manager is available !");
 
       const std::string geo_service_name = setup_.fetch_string("services.geometry");
@@ -255,7 +260,7 @@ namespace emfield {
     }
 
     // Initialization :
-    _construct_ ();
+    _construct_();
 
     if (setup_.has_flag("build_geom_map")) {
       datatools::properties geomap_config;
@@ -267,7 +272,7 @@ namespace emfield {
         setup_.export_and_rename_starting_with(geomap_config, "geom_map.", "");
       }
       if (is_debug()) {
-        geomap_config.tree_dump(std::cerr, "EM fiels/Geometry map config: ", "DEVEL: ");
+        geomap_config.tree_dump(std::cerr, "EM fields/Geometry map config: ", "DEVEL: ");
       }
       _construct_geomap_(geomap_config);
     }
