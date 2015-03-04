@@ -128,59 +128,57 @@ namespace emfield {
 
   EMFIELD_INITIALIZE_IMPLEMENT_HEAD(oscillating_field,setup_,service_manager_,fields_)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error, "Field is already initialized !");
+    DT_THROW_IF (is_initialized(), std::logic_error, "Field is already initialized !");
 
-    base_electromagnetic_field::_parse_basic_parameters (setup_, service_manager_, fields_);
+    base_electromagnetic_field::_parse_basic_parameters(setup_, service_manager_, fields_);
 
     double phase_unit = CLHEP::degree;
     double frequency_unit = CLHEP::hertz;
 
-    if (setup_.has_key ("phase.unit"))
-      {
-        const std::string phase_unit_str = setup_.fetch_string ("phase.unit");
-        phase_unit = datatools::units::get_angle_unit_from (phase_unit_str);
-      }
+    if (setup_.has_key("phase.unit")) {
+      const std::string phase_unit_str = setup_.fetch_string("phase.unit");
+      phase_unit = datatools::units::get_angle_unit_from(phase_unit_str);
+    }
 
-    if (setup_.has_key ("frequency.unit"))
-      {
-        const std::string frequency_unit_str = setup_.fetch_string ("frequency.unit");
-        frequency_unit = datatools::units::get_frequency_unit_from (frequency_unit_str);
-      }
+    if (setup_.has_key("frequency.unit")) {
+      const std::string frequency_unit_str = setup_.fetch_string("frequency.unit");
+      frequency_unit = datatools::units::get_frequency_unit_from(frequency_unit_str);
+    }
 
     // parameters of the placement field:
     std::string field_name;
-    if (setup_.has_key ("field.name"))
-      {
-        field_name = setup_.fetch_string ("field.name");
-      }
+    if (setup_.has_key("field.name")) {
+      field_name = setup_.fetch_string("field.name");
+    }
 
     double frequency = 0.0;
-    if (setup_.has_key ("frequency"))
-      {
-        frequency = setup_.fetch_real ("frequency");
+    if (setup_.has_key("frequency")) {
+      frequency = setup_.fetch_real("frequency");
+      if (! setup_.has_explicit_unit("frequency")) {
+        frequency *= frequency_unit;
       }
+    }
 
     double phase = 0.0;
-    if (setup_.has_key ("phase"))
-      {
-        phase = setup_.fetch_real ("phase");
+    if (setup_.has_key("phase")) {
+      phase = setup_.fetch_real("phase");
+      if (! setup_.has_explicit_unit("phase")) {
+        phase *= phase_unit;
       }
-
-    frequency *= frequency_unit;
-    phase     *= phase_unit;
+    }
 
     {
       base_electromagnetic_field::field_dict_type::iterator field_found
-        = fields_.find (field_name);
-      DT_THROW_IF (field_found == fields_.end (), std::logic_error, "Cannot find a EM field with name '" << field_name << "' !");
-      set_field (field_found->second);
+        = fields_.find(field_name);
+      DT_THROW_IF(field_found == fields_.end(), std::logic_error, "Cannot find a EM field with name '" << field_name << "' !");
+      set_field(field_found->second);
     }
-    _set_electric_field (_field_.get().is_electric_field ());
-    _set_magnetic_field (_field_.get().is_magnetic_field ());
-    set_frequency (frequency);
-    set_phase (phase);
+    _set_electric_field(_field_.get().is_electric_field ());
+    _set_magnetic_field(_field_.get().is_magnetic_field ());
+    set_frequency(frequency);
+    set_phase(phase);
 
-    _set_initialized (true);
+    _set_initialized(true);
     return;
   }
 
