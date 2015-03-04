@@ -256,7 +256,7 @@ int main (int argc_, char ** argv_)
             {
               std::string datafile = "field2.data";
               std::ofstream fout (datafile.c_str ());
-              std::string field_name = "~E0+~E1"; //"~E1";
+              std::string field_name = "~E0+~E2"; //"~E1";
               if (! EMFmgr.has_field (field_name))
                 {
                   std::ostringstream message;

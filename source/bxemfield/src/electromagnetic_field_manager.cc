@@ -229,7 +229,7 @@ namespace emfield {
       needs_service_manager = setup_.fetch_boolean("needs_service_manager");
     }
 
-    bool needs_geometry_manager = false;
+    bool needs_geometry_manager = true;
     if (setup_.has_key("needs_geometry_manager")) {
       needs_geometry_manager = setup_.fetch_boolean("needs_geometry_manager");
     }
