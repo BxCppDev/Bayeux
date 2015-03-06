@@ -156,7 +156,7 @@ int main (int argc_, char ** argv_)
               plcmt.set_orientation(magfield.getPhi(),
                                     magfield.getTheta(),
                                     0.0);
-              arrow.generate_wires(DI.wires, plcmt);
+              arrow.generate_wires(DI.paths, plcmt);
             } // for z
           } // for y
         } // for x
