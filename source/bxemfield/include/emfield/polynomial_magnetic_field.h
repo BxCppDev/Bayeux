@@ -38,24 +38,22 @@ namespace emfield {
     virtual ~polynomial_magnetic_field();
 
     /// Initialization
-    virtual void initialize(const ::datatools::properties & setup_,
-                            ::datatools::service_manager & service_manager_,
-                            ::emfield::base_electromagnetic_field::field_dict_type & dict_);
+    virtual void initialize(const datatools::properties & setup_,
+                            datatools::service_manager & service_manager_,
+                            emfield::base_electromagnetic_field::field_dict_type & dict_);
 
     /// Reset
     virtual void reset();
 
-    virtual int compute_electric_field(const ::geomtools::vector_3d & position_,
+    virtual int compute_electric_field(const geomtools::vector_3d & position_,
                                        double time_,
-                                       ::geomtools::vector_3d & electric_field_) const;
+                                       geomtools::vector_3d & electric_field_) const;
 
-    virtual int compute_magnetic_field(const ::geomtools::vector_3d & position_,
+    virtual int compute_magnetic_field(const geomtools::vector_3d & position_,
                                        double time_,
-                                       ::geomtools::vector_3d & magnetic_field_) const;
+                                       geomtools::vector_3d & magnetic_field_) const;
 
   private:
-
-    geomtools::vector_3d _uniform_magnetic_field_; //!< The uniform magnetic field
 
     // Macro to automate the registration of the EM field :
     EMFIELD_REGISTRATION_INTERFACE(polynomial_magnetic_field);
