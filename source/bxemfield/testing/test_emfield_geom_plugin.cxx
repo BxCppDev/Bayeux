@@ -157,6 +157,8 @@ int main (int argc_, char ** argv_)
                                     magfield.getTheta(),
                                     0.0);
               arrow.generate_wires(DI.paths, plcmt);
+              // New Bayeux 2.0.0 will use:
+              // arrow.generate_wires(DI.wires, plcmt);
             } // for z
           } // for y
         } // for x
@@ -192,5 +194,3 @@ int main (int argc_, char ** argv_)
   }
   return (error_code);
 }
-
-// end of test_emfield_manager.cxx

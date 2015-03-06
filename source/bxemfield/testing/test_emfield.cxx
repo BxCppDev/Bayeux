@@ -1,18 +1,18 @@
-// -*- mode: c++ ; -*-
 // test_emfield.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <emfield/emfield_config.h>
 #include <emfield/version.h>
 
-using namespace std;
-
 int main (/*int argc_, char ** argv_*/)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
