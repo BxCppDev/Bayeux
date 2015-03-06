@@ -68,5 +68,6 @@ set(${module_name}_TEST_ENVIRONMENT "EMFIELD_TESTING_DIR=${module_test_dir}")
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_emfield.cxx
   ${module_test_dir}/test_emfield_manager.cxx
-  ${module_test_dir}/test_emfield_geom_plugin.cxx
+  # ${module_test_dir}/test_emfield_geom_plugin.cxx
+  ${module_test_dir}/test_oscillating_field.cxx
   )
