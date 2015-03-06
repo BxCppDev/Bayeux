@@ -25,8 +25,9 @@
 
 namespace emfield {
 
-  /** Class representing an uniform (in space) and constant (in time)
-   *  electric field
+  /** \brief Class that recomputes a given field in some arbitrary coordinate system
+   *         using a placement object to operate the transformation with respect to
+   *         the global coordinate system.
    */
   EMFIELD_CLASS_DECLARE(placement_field)
   {
@@ -34,10 +35,13 @@ namespace emfield {
 
     EMFIELD_INTERFACE_CTOR_DTOR(placement_field);
 
+    /// Return the placement
     const geomtools::placement & get_placement() const;
 
+    /// Set the placement
     void set_placement(const geomtools::placement & p_);
 
+    /// Set the referenced field
     void set_field(base_electromagnetic_field::handle_type &);
 
   private:

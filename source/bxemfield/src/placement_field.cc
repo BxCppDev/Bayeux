@@ -4,11 +4,12 @@
 #include <emfield/placement_field.h>
 
 // Third party:
-// - Bayeux:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/units.h>
 #include <datatools/utils.h>
 #include <datatools/service_manager.h>
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 
 namespace emfield {
@@ -118,69 +119,93 @@ namespace emfield {
     double length_unit = CLHEP::millimeter;
     double angle_unit  = CLHEP::degree;
 
-    if (setup_.has_key ("length.unit"))
-      {
-        const std::string length_unit_str = setup_.fetch_string ("length.unit");
-        length_unit = datatools::units::get_length_unit_from (length_unit_str);
+    if (setup_.has_key ("length.unit")) {
+      const std::string length_unit_str = setup_.fetch_string ("length.unit");
+      length_unit = datatools::units::get_length_unit_from (length_unit_str);
+    }
+
+    if (setup_.has_key ("angle.unit")) {
+      const std::string angle_unit_str = setup_.fetch_string ("angle.unit");
+      angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
+    }
+
+    // Parameters of the placement field:
+
+    // Placement:
+    if (! _placement_.is_valid()) {
+      geomtools::placement pl;
+      if (setup_.has_key ("placement")) {
+        std::string placement_rule = setup_.fetch_string("placement");
+        DT_THROW_IF(! geomtools::placement::from_string(placement_rule, pl), std::logic_error,
+                    "Invalid syntax for placement '" << placement_rule << "'!");
+        set_placement(pl);
+      }
+    }
+
+    if (! _placement_.is_valid()) {
+
+      double x = 0.0;
+      if (setup_.has_key ("placement.x")) {
+        x = setup_.fetch_real ("placement.x");
+        if (!setup_.has_explicit_unit("placement.x")) {
+          x *= length_unit;
+        }
       }
 
-    if (setup_.has_key ("angle.unit"))
-      {
-        const std::string angle_unit_str = setup_.fetch_string ("angle.unit");
-        angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
+      double y = 0.0;
+      if (setup_.has_key ("placement.y")) {
+        y = setup_.fetch_real ("placement.y");
+        if (!setup_.has_explicit_unit("placement.y")) {
+          y *= length_unit;
+        }
       }
 
-    // parameters of the placement field:
-    std::string field_name;
-    if (setup_.has_key ("field.name"))
-      {
+      double z = 0.0;
+      if (setup_.has_key ("placement.z")) {
+        z = setup_.fetch_real ("placement.z");
+        if (!setup_.has_explicit_unit("placement.z")) {
+          z *= length_unit;
+        }
+      }
+
+      double phi = 0.0;
+      if (setup_.has_key ("placement.phi")) {
+        phi = setup_.fetch_real ("placement.phi");
+        if (!setup_.has_explicit_unit("placement.phi")) {
+          phi *= angle_unit;
+        }
+      }
+
+      double theta = 0.0;
+      if (setup_.has_key ("placement.theta")) {
+        theta = setup_.fetch_real ("placement.theta");
+        if (!setup_.has_explicit_unit("placement.theta")) {
+          theta *= angle_unit;
+        }
+      }
+
+      double delta = 0.0;
+      if (setup_.has_key ("placement.delta")) {
+        delta = setup_.fetch_real ("placement.delta");
+        if (!setup_.has_explicit_unit("placement.delta")) {
+          delta *= angle_unit;
+        }
+      }
+
+      geomtools::placement pl;
+      pl.set(x, y, z, phi, theta, delta);
+      set_placement(pl);
+    }
+
+    DT_THROW_IF(! _placement_.is_valid(), std::logic_error, "Invalid placement!");
+
+    // Field:
+    if (! _field_.has_data()) {
+      std::string field_name;
+      if (setup_.has_key ("field.name")) {
         field_name = setup_.fetch_string ("field.name");
       }
-
-    double x = 0.0;
-    if (setup_.has_key ("placement.x"))
-      {
-        x = setup_.fetch_real ("placement.x");
-      }
-
-    double y = 0.0;
-    if (setup_.has_key ("placement.y"))
-      {
-        y = setup_.fetch_real ("placement.y");
-      }
-
-    double z = 0.0;
-    if (setup_.has_key ("placement.z"))
-      {
-        z = setup_.fetch_real ("placement.z");
-      }
-
-    double phi = 0.0;
-    if (setup_.has_key ("placement.phi"))
-      {
-        phi = setup_.fetch_real ("placement.phi");
-      }
-
-    double theta = 0.0;
-    if (setup_.has_key ("placement.theta"))
-      {
-        theta = setup_.fetch_real ("placement.theta");
-      }
-
-    double delta = 0.0;
-    if (setup_.has_key ("placement.delta"))
-      {
-        delta = setup_.fetch_real ("placement.delta");
-      }
-
-    x *= length_unit;
-    y *= length_unit;
-    z *= length_unit;
-    phi   *= angle_unit;
-    theta *= angle_unit;
-    delta *= angle_unit;
-
-    {
+      DT_THROW_IF(field_name.empty(), std::logic_error, "Missing field name!");
       base_electromagnetic_field::field_dict_type::iterator field_found
         = fields_.find (field_name);
       DT_THROW_IF (field_found == fields_.end (), std::logic_error, "Cannot find a EM field with name '" << field_name << "' !");
@@ -188,8 +213,6 @@ namespace emfield {
     }
     _set_electric_field (_field_.get().is_electric_field ());
     _set_magnetic_field (_field_.get().is_magnetic_field ());
-    geomtools::placement pl (x, y, z, phi, theta, delta);
-    set_placement (pl);
 
     _set_initialized (true);
     return;
