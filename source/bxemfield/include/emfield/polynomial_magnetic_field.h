@@ -31,6 +31,16 @@ namespace emfield {
   {
   public:
 
+    /// Typedef for polynomial parameters
+    typedef std::vector<double> polynomial_parameters_type;
+
+    /// Internal structure to embed polynomial parameters
+    struct magnetic_field_coordinate {
+      polynomial_parameters_type px;
+      polynomial_parameters_type py;
+      polynomial_parameters_type pz;
+    };
+
     /// Contructor
     polynomial_magnetic_field(uint32_t flags_ = 0);
 
@@ -45,15 +55,22 @@ namespace emfield {
     /// Reset
     virtual void reset();
 
+    /// Main function to compute electric field
     virtual int compute_electric_field(const geomtools::vector_3d & position_,
                                        double time_,
                                        geomtools::vector_3d & electric_field_) const;
 
+    /// Main function to compute magnetic field
     virtual int compute_magnetic_field(const geomtools::vector_3d & position_,
                                        double time_,
                                        geomtools::vector_3d & magnetic_field_) const;
 
   private:
+
+    double _magnetic_field_unit_;  //!< Magnetic field unit
+    magnetic_field_coordinate _bx_;//!< Bx field coordinate
+    magnetic_field_coordinate _by_;//!< By field coordinate
+    magnetic_field_coordinate _bz_;//!< Bz field coordinate
 
     // Macro to automate the registration of the EM field :
     EMFIELD_REGISTRATION_INTERFACE(polynomial_magnetic_field);
