@@ -14,6 +14,17 @@ namespace emfield {
   // Registration instantiation macro :
   EMFIELD_REGISTRATION_IMPLEMENT(polynomial_magnetic_field, "emfield::polynomial_magnetic_field");
 
+  polynomial_magnetic_field::magnetic_field_coordinate::magnetic_field_coordinate()
+  {
+    coordinate_limits_type limits
+      = std::make_pair(-std::numeric_limits<double>::infinity(),
+                       +std::numeric_limits<double>::infinity());
+    xlimits = limits;
+    ylimits = limits;
+    zlimits = limits;
+    return;
+  }
+
   // Constructor :
   polynomial_magnetic_field::polynomial_magnetic_field(uint32_t flags_)
     : emfield::base_electromagnetic_field(flags_)
@@ -48,39 +59,51 @@ namespace emfield {
     DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE POLYNOMIAL MAGNETIC FIELD ***");
     geomtools::invalidate(magnetic_field_);
 
+    const double x = position_.x();
+    const double y = position_.y();
+    const double z = position_.z();
     double bx = 0.0;
     {
       for (size_t i = 0; i < _bx_.px.size(); ++i) {
-        bx += _bx_.px.at(i) * std::pow(position_.x(), i);
+        if (x < _bx_.xlimits.first || x > _bx_.xlimits.second) continue;
+        bx += _bx_.px.at(i) * std::pow(x, i);
       }
       for (size_t i = 0; i < _by_.py.size(); ++i) {
-        bx += _bx_.py.at(i) * std::pow(position_.y(), i);
+        if (y < _bx_.ylimits.first || y > _bx_.ylimits.second) continue;
+        bx += _bx_.py.at(i) * std::pow(y, i);
       }
       for (size_t i = 0; i < _bx_.pz.size(); ++i) {
-        bx += _bx_.pz.at(i) * std::pow(position_.z(), i);
+        if (z < _bx_.zlimits.first || z > _bx_.zlimits.second) continue;
+        bx += _bx_.pz.at(i) * std::pow(z, i);
       }
     }
     double by = 0.0;
     {
       for (size_t i = 0; i < _by_.px.size(); ++i) {
+        if (x < _by_.xlimits.first || x > _by_.xlimits.second) continue;
         by += _by_.px.at(i) * std::pow(position_.x(), i);
       }
       for (size_t i = 0; i < _by_.py.size(); ++i) {
+        if (y < _by_.ylimits.first || y > _by_.ylimits.second) continue;
         by += _by_.py.at(i) * std::pow(position_.y(), i);
       }
       for (size_t i = 0; i < _by_.pz.size(); ++i) {
+        if (z < _by_.zlimits.first || z > _by_.zlimits.second) continue;
         by += _by_.pz.at(i) * std::pow(position_.z(), i);
       }
     }
     double bz = 0.0;
     {
       for (size_t i = 0; i < _bz_.px.size(); ++i) {
+        if (x < _bz_.xlimits.first || x > _bz_.xlimits.second) continue;
         bz += _bz_.px.at(i) * std::pow(position_.x(), i);
       }
       for (size_t i = 0; i < _bz_.py.size(); ++i) {
+        if (y < _bz_.ylimits.first || y > _bz_.ylimits.second) continue;
         bz += _bz_.py.at(i) * std::pow(position_.y(), i);
       }
       for (size_t i = 0; i < _bz_.pz.size(); ++i) {
+        if (z < _bz_.zlimits.first || z > _bz_.zlimits.second) continue;
         bz += _bz_.pz.at(i) * std::pow(position_.z(), i);
       }
     }
@@ -138,17 +161,34 @@ namespace emfield {
                       "Missing polynomial parameters for " << a_field << " field "
                       << "and " << a_coord << " coordinate !");
           polynomial_parameters_type * params = 0;
+          coordinate_limits_type * limits = 0;
           if (a_coord == "x") {
             params = &magfield->px;
+            limits = &magfield->xlimits;
           } else if (a_coord == "y") {
             params = &magfield->py;
+            limits = &magfield->ylimits;
           } else if (a_coord == "z") {
             params = &magfield->pz;
+            limits = &magfield->zlimits;
           }
           setup_.fetch(key_base + ".polynomial_parameters", *params);
           DT_THROW_IF(params->size() != degree, std::logic_error,
                       "Missing parameters (" << degree << " required and only "
                       << params->size() << " set)");
+
+          if (setup_.has_key(key_base + ".limits")) {
+            std::vector<double> the_limits;
+            setup_.fetch(key_base + ".limits", the_limits);
+            DT_LOG_WARNING(get_logging_priority(), "Limits " << a_coord << " = (" << the_limits[0]/CLHEP::mm
+                           << "," << the_limits[1]/CLHEP::mm << ") mm");
+            limits->first = the_limits[0];
+            limits->second = the_limits[1];
+            if (!setup_.has_explicit_unit(key_base + ".limits")) {
+              limits->first *= CLHEP::mm;
+              limits->second *= CLHEP::mm;
+            }
+          }
         }
       }
     }

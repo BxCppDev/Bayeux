@@ -55,12 +55,15 @@ namespace emfield {
   }
 
   EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(uniform_magnetic_field,
-                                        /*position_*/,
+                                        position_,
                                         /*time_*/,
                                         magnetic_field_)
   {
     DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE UNIFORM MAGNETIC FIELD ***");
     magnetic_field_ = _uniform_magnetic_field_;
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Magnetic field values @ " << position_/CLHEP::mm << " mm = "
+                 << magnetic_field_/CLHEP::gauss << " G");
     return STATUS_SUCCESS;
   }
 

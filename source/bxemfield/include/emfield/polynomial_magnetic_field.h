@@ -34,11 +34,20 @@ namespace emfield {
     /// Typedef for polynomial parameters
     typedef std::vector<double> polynomial_parameters_type;
 
+    /// Typedef for space limits
+    typedef std::pair<double,double> coordinate_limits_type;
+
     /// Internal structure to embed polynomial parameters
     struct magnetic_field_coordinate {
+      magnetic_field_coordinate();
+
       polynomial_parameters_type px;
       polynomial_parameters_type py;
       polynomial_parameters_type pz;
+
+      coordinate_limits_type xlimits;
+      coordinate_limits_type ylimits;
+      coordinate_limits_type zlimits;
     };
 
     /// Contructor
