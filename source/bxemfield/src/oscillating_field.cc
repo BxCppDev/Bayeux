@@ -25,7 +25,7 @@ namespace emfield {
     datatools::invalidate(_phase_);
     datatools::invalidate(_pedestal_);
     datatools::invalidate(_scale_);
-    _sin_cos_mode_ == SC_MODE_INVALID;
+    _sin_cos_mode_ = SC_MODE_INVALID;
     return;
   }
 
