@@ -200,6 +200,8 @@ namespace emfield {
 
         std::string combined_field_name = setup_.fetch_string (combined_field_name_key);
         double combined_field_weight = setup_.fetch_real (combined_field_weight_key);
+        bool ef_time_dependent = false;
+        bool mf_time_dependent = false;
         {
           base_electromagnetic_field::field_dict_type::iterator field_found = fields_.find (combined_field_name);
           DT_THROW_IF (field_found == fields_.end (),
@@ -210,8 +212,15 @@ namespace emfield {
                               field_found->second,
                               combined_field_weight,
                               force_combined);
+          ef_time_dependent = field_found->second.get().electric_field_is_time_dependent();
+          mf_time_dependent = field_found->second.get().magnetic_field_is_time_dependent();
         }
-
+        if (ef_time_dependent) {
+          _set_electric_field_is_time_dependent(true);
+        }
+        if (mf_time_dependent) {
+          _set_magnetic_field_is_time_dependent(true);
+        }
       }
 
     _set_initialized (true);

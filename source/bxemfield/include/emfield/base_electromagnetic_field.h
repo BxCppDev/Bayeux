@@ -195,8 +195,8 @@ namespace emfield {
     bool     _magnetic_field_; //!< Field can provide a value for the magnetic field
     bool     _electric_field_can_be_combined_;   //!< Flag to allow the combinaison of the electric field with other fields
     bool     _magnetic_field_can_be_combined_;   //!< Flag to allow the combinaison of the magnetic field with other fields
-    bool     _electric_field_is_time_dependent_; //!< Flag that indicated that the electric field is timedependent
-    bool     _magnetic_field_is_time_dependent_; //!< Flag that indicated that the magnetic field is timedependent
+    bool     _electric_field_is_time_dependent_; //!< Flag that indicates that the electric field is time dependent
+    bool     _magnetic_field_is_time_dependent_; //!< Flag that indicates that the magnetic field is time dependent
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_electromagnetic_field);
