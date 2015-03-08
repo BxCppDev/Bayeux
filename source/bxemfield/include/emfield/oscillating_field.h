@@ -1,7 +1,7 @@
 /// \file emfield/oscillating_field.h
 /* Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-05-22
- * Last modified: 2013-02-24
+ * Last modified: 2015-03-07
  *
  * License:
  *
@@ -79,6 +79,12 @@ namespace emfield {
     void set_pedestal (double);
 
     void set_field (base_electromagnetic_field::handle_type &);
+
+    /// Smart print
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_               = false) const;
 
   protected:
 

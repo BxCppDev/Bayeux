@@ -284,4 +284,34 @@ namespace emfield {
     return;
   }
 
+  // virtual
+  void oscillating_field::tree_dump(std::ostream & out_,
+                                    const std::string & title_,
+                                    const std::string & indent_,
+                                    bool inherit_) const
+  {
+    this->base_electromagnetic_field::tree_dump(out_, title_, indent_, true);
+
+     out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Sine/cosine : " <<  (is_cosine_mode() ? "Cosine" : "Sine") << std::endl;
+
+     out_ << indent_ << datatools::i_tree_dumpable::tag
+          << "Frequency : " << _frequency_ / CLHEP::megahertz << " MHz"
+          << std::endl;
+
+     out_ << indent_ << datatools::i_tree_dumpable::tag
+          << "Phase : " << _phase_ / CLHEP::degree << " degree"
+          << std::endl;
+
+     out_ << indent_ << datatools::i_tree_dumpable::tag
+          << "Pedestal : " << _pedestal_
+          << std::endl;
+
+     out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+          << "Scale factor : " << _scale_
+          << std::endl;
+
+     return;
+  }
+
 } // end of namespace emfield
