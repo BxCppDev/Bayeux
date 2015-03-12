@@ -389,8 +389,8 @@ namespace genbb {
   {
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Alpha decay is already initialized!");
-    DT_THROW_IF(level_initial_.get_A() != level_final_.get_A() - 4
-                || level_initial_.get_Z() != level_final_.get_Z() - 2,
+    DT_THROW_IF(level_final_.get_A() != level_initial_.get_A() - 4
+                || level_final_.get_Z() != level_initial_.get_Z() - 2,
                 std::logic_error,
                 "Unmatching nuclear levels '" << level_initial_.to_string() << "' and '" <<
                 level_final_.to_string() << "'!");

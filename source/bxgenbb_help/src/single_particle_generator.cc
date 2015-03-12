@@ -954,7 +954,7 @@ namespace genbb {
       DT_THROW_IF(! datatools::is_valid(_particle_mass_), std::logic_error,
                   "Particle mass is not defined !");
       DT_THROW_IF(_cone_min_angle_ > _cone_max_angle_, std::out_of_range,
-                  "Invalid  cone angle range (" << _cone_min_angle_ << ">" << _cone_max_angle_ << ") !");
+                  "Invalid cone angle range (" << _cone_min_angle_ << ">" << _cone_max_angle_ << ") !");
     }
 
     DT_THROW_IF(_particle_type_ == primary_particle::PARTICLE_UNDEFINED,
