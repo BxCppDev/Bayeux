@@ -91,6 +91,7 @@ struct bit_mask {
   static const uint32_t nbits29 = 0x1fffffff;
   static const uint32_t nbits30 = 0x3fffffff;
   static const uint32_t nbits31 = 0x7fffffff;
+  static const uint32_t nbits32 = 0xffffffff;
 };
 
 } // end of namespace datatools
