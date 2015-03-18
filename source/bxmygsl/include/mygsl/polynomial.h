@@ -44,43 +44,61 @@ namespace mygsl {
     unsigned int get_degree() const;
 
     unsigned int get_ncoeffs() const;
+
     double get_coeff(unsigned int i_) const;
+
     void set_coeff(unsigned int i_, double c_);
 
 
     void print (std::ostream& out_ = std::clog,
-		int format_ = 0,
-		bool eol_ = false) const;
+                int format_ = 0,
+                bool eol_ = false) const;
+
+    /// Reset the polynomial
+    void reset();
 
     /*
      * L(x) = p0 + p1 * x^1
      *
      */
     static bool solve_linear(double p0_, double p1_, unsigned int& nsols_,
-			     double& x0_);
+                             double& x0_);
 
     /*
      * Q(x) = p0 + p1 * x^1 + p2 * x^2
      *
      */
     static bool solve_quadratic(double p0_, double p1_, double p2_,
-				unsigned int & nsols_, double & x0_, double & x1_);
+                                unsigned int & nsols_, double & x0_, double & x1_);
 
     /*
      * C(x) =  p0 + p1 * x^1 + p2 * x^2 + x^3
      *
      */
     static bool solve_cubic(double p0_, double p1_, double p2_,
-			    unsigned int & nsols_,
-			    double & x0_, double & x1_, double & x2_);
+                            unsigned int & nsols_,
+                            double & x0_, double & x1_, double & x2_);
 
     /*
      * C(x) = p0 + p1 * x^1 + p2 * x^2 + p3 * x^3
      *
      */
     static bool solve_cubic(double p0_, double p1_, double p2_, double p3_,
-			    unsigned int & nsols_,
-			    double & x0_, double & x1_, double & x2_);
+                            unsigned int & nsols_,
+                            double & x0_, double & x1_, double & x2_);
+
+    /** Given three doublets (x1, y1), (x2, y2), (x3, y3), compute the
+     *  coefficients of the polynomial of degree 2 (parabola) that matches
+     *  the points:
+     *
+     *    P(x) = a x^2 + b x + c
+     */
+    static bool compute_parabola(double x1_, double x2_, double x3_,
+                                 double y1_, double y2_, double y3_,
+                                 double & a_, double & b_, double & c_);
+
+    bool make_parabola(double x1_, double x2_, double x3_,
+                       double y1_, double y2_, double y3_);
 
   protected :
 
@@ -104,7 +122,7 @@ namespace mygsl {
     };
 
   private:
-    std::vector<double> _c_; /// Coefficients of the polynomial
+    std::vector<double> _c_; //!< Coefficients of the polynomial
 
     DATATOOLS_SERIALIZATION_DECLARATION();
   };
