@@ -135,9 +135,9 @@ namespace materials {
 
   private:
 
-    bool _owned_;           /// Flag to indicate if the smart_ref object is responsible of the deletion of the instance
-    T *  _ref_;             /// Address of an instance
-    std::string _alias_of_; /// Name of another instance of which the smart_ref is an alias (symbolic link)
+    bool _owned_;           //!< Flag to indicate if the smart_ref object is responsible of the deletion of the instance
+    T *  _ref_;             //!< Address of an instance
+    std::string _alias_of_; //!< Name of another instance of which the smart_ref is an alias (symbolic link)
 
   };
 
