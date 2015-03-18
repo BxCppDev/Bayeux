@@ -24,7 +24,7 @@ namespace materials {
   // static
   bool manager::validate_name_for_gdml(const std::string & candidate_)
   {
-    /* Using some 'column' (:)  in a name is not allowed due
+    /* Using some 'column' (:)  in a name is not allowed
      * because of GDML/XML restriction on the possible names
      * for isotopes, elements and materials. So here, as '::'
      * underscore is used to defined a namespace-like scope for
@@ -139,9 +139,46 @@ namespace materials {
     return _material_exported_prefixes_;
   }
 
+  bool manager::has_isotope(const std::string & entry_name_) const
+  {
+    return _isotopes_.find(entry_name_) != _isotopes_.end();
+  }
+
+  const isotope & manager::get_isotope(const std::string & entry_name_) const
+  {
+    isotope_dict_type::const_iterator found = _isotopes_.find(entry_name_);
+    DT_THROW_IF(found == _isotopes_.end(), std::logic_error,
+                "Cannot find isotope named '" << entry_name_ << "'!");
+    const ::materials::smart_ref<isotope> & sr = found->second;
+    return sr.get_ref();
+  }
+
+  bool manager::has_element(const std::string & entry_name_) const
+  {
+    return _elements_.find(entry_name_) != _elements_.end();
+  }
+
+  const element & manager::get_element(const std::string & entry_name_) const
+  {
+    element_dict_type::const_iterator found = _elements_.find(entry_name_);
+    DT_THROW_IF(found == _elements_.end(), std::logic_error,
+                "Cannot find element named '" << entry_name_ << "'!");
+    const ::materials::smart_ref<element> & sr = found->second;
+    return sr.get_ref();
+  }
+
   bool manager::has_material(const std::string & entry_name_) const
   {
     return _materials_.find(entry_name_) != _materials_.end();
+  }
+
+  const material & manager::get_material(const std::string & entry_name_) const
+  {
+    material_dict_type::const_iterator found = _materials_.find(entry_name_);
+    DT_THROW_IF(found == _materials_.end(), std::logic_error,
+                "Cannot find material named '" << entry_name_ << "'!");
+    const ::materials::smart_ref<material> & sr = found->second;
+    return sr.get_ref();
   }
 
   bool manager::is_alias(const std::string & entry_name_) const
@@ -151,7 +188,7 @@ namespace materials {
 
   std::string manager::alias_of(const std::string & entry_name_) const
   {
-    material_dict_type::const_iterator found    = _materials_.find(entry_name_);
+    material_dict_type::const_iterator found = _materials_.find(entry_name_);
     const ::materials::smart_ref<material> & sr = found->second;
     std::string mat_alias;
     if (sr.is_alias ()) {

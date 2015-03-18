@@ -71,8 +71,23 @@ namespace materials {
     /// Set the alias overloading flag
     void set_alias_allow_overload (bool aao_);
 
+    /// Check if a given isotope is defined
+    bool has_isotope(const std::string & entry_name_) const;
+
+    /// Return a reference to a isotope, given its name
+    const isotope & get_isotope(const std::string & entry_name_) const;
+
+    /// Check if a given element is defined
+    bool has_element(const std::string & entry_name_) const;
+
+    /// Return a reference to a element, given its name
+    const element & get_element(const std::string & entry_name_) const;
+
     /// Check if a given material is defined
     bool has_material(const std::string & entry_name_) const;
+
+    /// Return a reference to a material, given its name
+    const material & get_material(const std::string & entry_name_) const;
 
     /// Check if an alias with given name is defined
     bool is_alias(const std::string & entry_name_) const;
@@ -151,19 +166,19 @@ namespace materials {
 
   private:
 
-    datatools::logger::priority _logging_priority_; /// Logging priority
-    bool                        _locked_;           /// Lock flag
+    datatools::logger::priority _logging_priority_; //!< Logging priority
+    bool                        _locked_;           //!< Lock flag
     // Configuration attributes:
-    bool                   _load_isotope_mass_data_;     /// Flag to load isotope mass data
-    bool                   _load_isotope_decay_data_;    /// Flag to load isotope decay data
-    std::set<std::string>  _material_exported_prefixes_; /// List of property prefixes exported to materials
-    bool                   _alias_allow_overload_;       /// Flag to allow material alias overloading
+    bool                   _load_isotope_mass_data_;     //!< Flag to load isotope mass data
+    bool                   _load_isotope_decay_data_;    //!< Flag to load isotope decay data
+    std::set<std::string>  _material_exported_prefixes_; //!< List of property prefixes exported to materials
+    bool                   _alias_allow_overload_;       //!< Flag to allow material alias overloading
     // Dynamic attributes:
-    boost::scoped_ptr<factory> _creator_; /// Embeded factory
-    isotope_dict_type      _isotopes_; /// Dictionary of isotopes
-    element_dict_type      _elements_; /// Dictionary of elements
-    material_dict_type     _materials_; /// Dictionary of materials
-    std::list<std::string> _ordered_materials_; /// Ordered list of materials by name
+    boost::scoped_ptr<factory> _creator_; //!< Embeded factory
+    isotope_dict_type      _isotopes_; //!< Dictionary of isotopes
+    element_dict_type      _elements_; //!< Dictionary of elements
+    material_dict_type     _materials_; //!< Dictionary of materials
+    std::list<std::string> _ordered_materials_; //!< Ordered list of materials by name
 
   };
 
