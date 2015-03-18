@@ -1033,13 +1033,13 @@ histogram operator* (double a_ ,
   return h;
 }
 
-histogram operator/ (double a_ ,
-                     const histogram & h1_)
-{
-  histogram h (h1_);
-  h.scale (1. / a_);
-  return h;
-}
+// histogram operator/ (double a_ ,
+//                      const histogram & h1_)
+// {
+//   histogram h (h1_);
+//   h.scale (1. / a_);
+//   return h;
+// }
 
 histogram::pdf::pdf ()
 {

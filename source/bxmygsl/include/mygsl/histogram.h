@@ -23,6 +23,7 @@
 
 namespace mygsl {
 
+  // Forward declaration:
   class histogram_2d;
 
   /// \brief One dimensional histogram
@@ -220,8 +221,8 @@ namespace mygsl {
     friend histogram operator* (double ,
                                 const histogram &);
 
-    friend histogram operator/ (double ,
-                                const histogram &);
+    // friend histogram operator/ (double ,
+    //                             const histogram &);
 
     friend histogram operator* (const histogram & ,
                                 double);
