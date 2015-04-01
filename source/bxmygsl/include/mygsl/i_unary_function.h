@@ -36,12 +36,12 @@ namespace mygsl {
 
     /// \brief Options for writing sampled function in an ASCII stream
     enum write_options_type {
-      wo_data_index = 0x1, /// Store as a data index for Gnuplot (2 blank lines at the end)
-      wo_skip_nan   = 0x2, /// Do not print (x,y=f(x)) pairs  if y is a NaN
-      wo_skip_inf   = 0x4, /// Do not print (x,y=f(x)) pairs  if y is a +/-infinity
-      wo_skip_onzd  = 0x8, /// Do not print (x,y=f(x)) pairs if x lies out of the non-zero domain
-      wo_skip_odod  = 0x10, /// Do not print (x,y=f(x)) pairs if x lies out of domain of definition
-      wo_append     = 0x20, /// Append to an existing file
+      wo_data_index = 0x1, //!< Store as a data index for Gnuplot (2 blank lines at the end)
+      wo_skip_nan   = 0x2, //!< Do not print (x,y=f(x)) pairs  if y is a NaN
+      wo_skip_inf   = 0x4, //!< Do not print (x,y=f(x)) pairs  if y is a +/-infinity
+      wo_skip_onzd  = 0x8, //!< Do not print (x,y=f(x)) pairs if x lies out of the non-zero domain
+      wo_skip_odod  = 0x10, //!< Do not print (x,y=f(x)) pairs if x lies out of domain of definition
+      wo_append     = 0x20, //!< Append to an existing file
       wo_default    = 0
     };
 

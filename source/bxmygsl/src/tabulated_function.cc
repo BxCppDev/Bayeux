@@ -1,22 +1,22 @@
-// -*- mode: c++; -*-
-/* tabulated_function.cc
- */
+/// tabulated_function.cc
 
+// Ourselves:
 #include <mygsl/tabulated_function.h>
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 #include <limits>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
 namespace mygsl {
-
-  using namespace std;
 
   const std::string & tabulated_function::linear_interp_name()
   {
@@ -179,17 +179,9 @@ namespace mygsl {
     if (is_table_locked()) unlock_table();
 
     if (!interp_name_.empty()) {
-      // if (g_debug) {
-      //   std::cerr << "DEBUG: mygsl::tabulated_function::lock_table: interpolator name='"
-      //             << interp_name_ << "'" << std::endl;
-      // }
       pImpl->_interpolator_name_ = interp_name_;
     }
     size_t npoints = pImpl->_points_.size();
-    // if (g_debug) {
-    //   std::cerr << "DEBUG: mygsl::tabulated_function::lock_table: npoints='"
-    //             << npoints << "'" << std::endl;
-    // }
 
     if (npoints == 0) return;
 
@@ -200,10 +192,6 @@ namespace mygsl {
                  std::logic_error, "Interpolator '"
                  << pImpl->_interpolator_name_
                  << "' is not supported !");
-    // if (g_debug) {
-    //   std::cerr << "DEBUG: tabulated_function::lock_table: name='"
-    //             << pImpl->_interpolator_name_ << "'" << std::endl;
-    // }
     if (pImpl->_interpolator_name_ == linear_interp_name()) {
       git = gsl_interp_linear;
     }
@@ -227,15 +215,6 @@ namespace mygsl {
     pImpl->_gs_      = gsl_spline_alloc(git, npoints);
     size_t min_size  = gsl_spline_min_size(pImpl->_gs_);
     std::string name = gsl_spline_name(pImpl->_gs_);
-
-    // if (g_debug) {
-    //   std::cerr << "DEBUG: tabulated_function::lock_table: #points="
-    //             << npoints << "" << std::endl;
-    //   std::cerr << "DEBUG: tabulated_function::lock_table: min_size="
-    //             << min_size << "" << std::endl;
-    //   std::cerr << "DEBUG: tabulated_function::lock_table: name='"
-    //             << name << "'" << std::endl;
-    // }
 
     if (npoints < min_size) {
       if (pImpl->_gs_ != 0) gsl_spline_free(pImpl->_gs_);
@@ -300,7 +279,7 @@ namespace mygsl {
 
   void tabulated_function::relock_table(const std::string& interp_name_) {
     if (is_verbose()) {
-      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,"Relock forced !");
+      DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Relock forced !");
     }
     this->unlock_table();
     this->lock_table(interp_name_);
@@ -397,5 +376,3 @@ namespace mygsl {
   }
 
 } // end of namespace mygsl
-
-// end of tabulated_function.cc

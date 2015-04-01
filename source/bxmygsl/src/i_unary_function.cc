@@ -1,14 +1,17 @@
-// -*- mode:c++; -*-
-// i_unary_function.cc
+/// i_unary_function.cc
 
+// Ourselves:
 #include <mygsl/i_unary_function.h>
 
+// Standard library:
 #include <cmath>
 #include <limits>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
 #include <datatools/exception.h>
@@ -33,21 +36,26 @@ namespace mygsl {
     if (_epsilon_ != AUTO_EPSILON) return;
     if (has_non_zero_domain_min() && has_non_zero_domain_max()) {
       double dx = get_non_zero_domain_max() - get_non_zero_domain_min();
-      _epsilon_ = dx / 10000;
-    } else if (!has_non_zero_domain_min() && has_non_zero_domain_max()) {
-      double dx = get_non_zero_domain_max() - get_non_zero_domain_min();
-      _epsilon_ = dx / 10000;
-    } else {
-      _epsilon_ = DEFAULT_EPSILON;
+      _epsilon_ = dx / 100000;
+      return;
     }
-   return;
+    if (!has_non_zero_domain_min() && has_non_zero_domain_max()) {
+      double dx = std::abs(get_non_zero_domain_max());
+      _epsilon_ = dx / 100000;
+      return;
+    }
+    if (has_non_zero_domain_min() && !has_non_zero_domain_max()) {
+      double dx = std::abs(get_non_zero_domain_min());
+      _epsilon_ = dx / 100000;
+      return;
+    }
+    _epsilon_ = DEFAULT_EPSILON;
+    return;
   }
 
   double i_unary_function::get_epsilon() const
   {
     if (_epsilon_ == AUTO_EPSILON) {
-      //i_unary_function * mutable_this = const_cast<i_unary_function *>(this);
-      //mutable_this->_compute_auto_epsilon();
       const_cast<i_unary_function *>(this)->_compute_auto_epsilon();
     }
     return _epsilon_;
@@ -70,7 +78,7 @@ namespace mygsl {
     return false;
   }
 
-  bool i_unary_function::is_in_domain_of_definition(double /*x_*/) const
+  bool i_unary_function::is_in_domain_of_definition(double /* x_ */) const
   {
     return true;
   }
@@ -82,7 +90,9 @@ namespace mygsl {
 
   bool i_unary_function::has_non_zero_domain_min() const
   {
-    return get_non_zero_domain_min() != -std::numeric_limits<double>::infinity();
+    double nzdmin = get_non_zero_domain_min();
+    if (!datatools::is_valid(nzdmin)) return false;
+    return nzdmin != -std::numeric_limits<double>::infinity();
   }
 
   double i_unary_function::get_non_zero_domain_max() const
@@ -92,7 +102,9 @@ namespace mygsl {
 
   bool i_unary_function::has_non_zero_domain_max() const
   {
-    return get_non_zero_domain_max() != +std::numeric_limits<double>::infinity();
+    double nzdmax = get_non_zero_domain_max();
+    if (!datatools::is_valid(nzdmax)) return false;
+    return nzdmax != +std::numeric_limits<double>::infinity();
   }
 
   /// Check if a value is in the non-zero domain
@@ -126,6 +138,8 @@ namespace mygsl {
   {
     if (has_explicit_domain_of_definition()) {
       if (! is_in_domain_of_definition(x_)) {
+        DT_THROW(std::logic_error,
+                 "Argument '" << x_ << "' is not in the function's domain of defintiion!");
         return std::numeric_limits<double>::quiet_NaN();
       }
     }
@@ -140,16 +154,16 @@ namespace mygsl {
 
   /// Write the (x,y=f(x)) value pairs in an ASCII stream :
   void i_unary_function::write_ascii(std::ostream & out_,
-                               double min_, double max_,
-                               unsigned int nsamples_,
-                               int x_precision_,
-                               int fx_precision_,
-                               uint32_t options_) const
+                                     double min_, double max_,
+                                     unsigned int nsamples_,
+                                     int x_precision_,
+                                     int fx_precision_,
+                                     uint32_t options_) const
   {
     int xprecision = x_precision_;
-    if (xprecision <= 0) xprecision=datatools::io::REAL_PRECISION;
+    if (xprecision <= 0) xprecision = datatools::io::REAL_PRECISION;
     int fxprecision = fx_precision_;
-    if (fxprecision <= 0) fxprecision=datatools::io::REAL_PRECISION;
+    if (fxprecision <= 0) fxprecision = datatools::io::REAL_PRECISION;
     DT_THROW_IF (! out_,  std::runtime_error, "Cannot write in the output stream !");
     double dx = (max_ - min_) / nsamples_;
     for (size_t i = 0; i < nsamples_; i++) {
@@ -184,10 +198,10 @@ namespace mygsl {
 
   /// Write the (x,y=f(x)) ASCII :
   void i_unary_function::write_ascii_file(const std::string & filename_,
-                                    double min_, double max_, unsigned int  nsamples_,
-                                    int x_precision_,
-                                    int fx_precision_,
-                                    uint32_t options_) const
+                                          double min_, double max_, unsigned int  nsamples_,
+                                          int x_precision_,
+                                          int fx_precision_,
+                                          uint32_t options_) const
   {
     std::string filename = filename_;
     datatools::fetch_path_with_env(filename);
@@ -195,7 +209,7 @@ namespace mygsl {
     std::ios_base::openmode flags = std::ios_base::out;
     if (options_ & wo_append) flags |= std::ios::app;
     fout.open(filename.c_str(), flags);
-    DT_THROW_IF (! fout,std::runtime_error, "Cannot open output file '" << filename << "' !");
+    DT_THROW_IF (! fout, std::runtime_error, "Cannot open output file '" << filename << "' !");
     write_ascii(fout, min_, max_, nsamples_, x_precision_, fx_precision_, options_);
     fout.close();
     return;
@@ -207,8 +221,6 @@ namespace mygsl {
     const i_unary_function * f = static_cast<const i_unary_function *>(functor_);
     return f->eval(x_);
   }
-
-  /***********************************************************/
 
   void plain_function_wrapper::set_plain_function(const plain_function_type & func_)
   {
@@ -232,9 +244,6 @@ namespace mygsl {
   {
     return (*_plain_function_)(x_);
   }
-
-  /***********************************************************/
-
 
   void function_with_domain::set_domain_of_definition(const interval & domain_)
   {
@@ -288,5 +297,3 @@ namespace mygsl {
 /* mode: c++        */
 /* coding: utf-8    */
 /* End:             */
-
-// end of i_unary_function.cc

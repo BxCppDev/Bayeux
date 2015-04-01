@@ -38,6 +38,7 @@
 
 namespace mygsl {
 
+  /// \brief An interval with real bounds
   class interval :
     DATATOOLS_SERIALIZABLE_CLASS
     {
@@ -62,18 +63,18 @@ namespace mygsl {
 
     public:
 
-      // ctor:
+      /// Default constructor
       interval ();
 
-      // ctor:
+      /// Constructor
       interval (double min_, double max_, double eps_ = AUTO_EPS);
 
-      // ctor:
+      /// Constructor
       interval (double min_, bool min_include_,
                 double max_, bool max_include_,
                 double eps_ = AUTO_EPS);
 
-      // dtor:
+      /// Destructor
       virtual ~interval ();
 
       void remove_min ();
