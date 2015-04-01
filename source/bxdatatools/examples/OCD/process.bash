@@ -84,6 +84,7 @@ if [ $? -eq 0 ]; then
     which xdg-open > /dev/null 2>&1
     if [ $? -eq 0 ]; then
 	xdg-open file://$(pwd)/foo_ocd.html &
+	sleep 3
     else
 	echo "WARNING: Could not find xdg-open!" 1>&2
     fi

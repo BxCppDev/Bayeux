@@ -28,12 +28,14 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <datatools/datatools_config.h>
 #include <datatools/things.h>
 #include <datatools/properties.h>
@@ -58,22 +60,22 @@ int main (int argc_, char ** argv_)
         } else if ((option == "-v") || (option == "--verbose")) {
           logging = datatools::logger::PRIO_INFORMATION;
         } else  {
-          datatools_warning(logging, "Ignoring option '" << option << "' !");
+          DT_LOG_WARNING(logging, "Ignoring option '" << option << "' !");
         }
       } else {
         std::string argument = token;
-        datatools_warning(logging, "Ignoring argument '" << argument << "' !");
+        DT_LOG_WARNING(logging, "Ignoring argument '" << argument << "' !");
       }
       iarg++;
     }
 
-    datatools_information(logging, "datatools example program : ex_things_1");
+    DT_LOG_INFORMATION(logging, "datatools example program : ex_things_1");
 
-    datatools_debug(logging, "Initialize the PRNG");
+    DT_LOG_DEBUG(logging, "Initialize the PRNG");
     srand48(prng_seed);
 
     // Declare a ``datatools::things`` object :
-    datatools_debug(logging, "Declare a data record");
+    DT_LOG_DEBUG(logging, "Declare a data record");
     datatools::things DR;
     DR.set_name("DR");
     DR.set_description("A data record with data banks in it");
@@ -81,7 +83,7 @@ int main (int argc_, char ** argv_)
     // Fill the data record with some data banks :
     {
       // Add a bank named ``EH`` of type ``datatools::properties`` :
-      datatools_debug(logging, "Add the *event header* bank");
+      DT_LOG_DEBUG(logging, "Add the *event header* bank");
       datatools::properties & EH = DR.add<datatools::properties>("EH", "The event header");
       EH.store("run_number", 4);
       EH.store("event_number", 2);
@@ -125,7 +127,7 @@ int main (int argc_, char ** argv_)
     // Extract and manipulate data banks from the data record :
     {
       if (DR.has("EH") && DR.is_a<datatools::properties>("EH")) {
-        datatools_notice(logging, "Found the event header bank.");
+        DT_LOG_NOTICE(logging, "Found the event header bank.");
 
         // Obtain a mutable reference :
         datatools::properties & EH = DR.grab<datatools::properties>("EH");
@@ -137,7 +139,7 @@ int main (int argc_, char ** argv_)
       }
 
       if (DR.has("RD") && DR.is_a<datatools::properties>("RD")) {
-        datatools_notice(logging, "Found the raw data bank.");
+        DT_LOG_NOTICE(logging, "Found the raw data bank.");
 
         // Obtain a mutable reference :
         datatools::properties & RD = DR.grab<datatools::properties>("RD");
@@ -169,7 +171,7 @@ int main (int argc_, char ** argv_)
     // Remove a data bank from the data record :
     {
       if (DR.has("RD")) {
-        datatools_notice(logging, "Remove the raw data bank.");
+        DT_LOG_NOTICE(logging, "Remove the raw data bank.");
         DR.erase("RD");
 
         // Smart print :
@@ -177,17 +179,15 @@ int main (int argc_, char ** argv_)
       }
     }
 
-    datatools_information(logging, "The end.");
+    DT_LOG_INFORMATION(logging, "The end.");
   }
   catch (std::exception & x) {
-    datatools_fatal(logging, x.what());
+    DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    datatools_fatal(logging, "unexpected error !");
+    DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
   return (error_code);
 }
-
-// end of ex_things_1.cxx

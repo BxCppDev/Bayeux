@@ -138,7 +138,11 @@ void test0(bool debug_)
   return;
 }
 
-void test1(bool debug_, bool /*gui_*/)
+void test1(bool debug_, bool
+#if DATATOOLS_WITH_QT_GUI == 1
+           gui_
+#endif // DATATOOLS_WITH_QT_GUI == 1
+)
 {
   std::clog << "\nTest 1:\n";
 

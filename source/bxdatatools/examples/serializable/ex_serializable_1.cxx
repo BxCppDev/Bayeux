@@ -28,6 +28,7 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -37,6 +38,7 @@
 // Code dedicated to the serialization of the ``std::vector`` template class :
 #include <boost/serialization/vector.hpp>
 
+// This project:
 #include <datatools/datatools_config.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
@@ -53,24 +55,24 @@
 void ex_raw_hit_1(datatools::logger::priority logging)
 {
   // Declare a ``raw_hit`` object :
-  datatools_debug(logging, "Declare a raw hit");
+  DT_LOG_DEBUG(logging, "Declare a raw hit");
   raw_hit RH;
 
   // Initialize the hit attributes :
-  datatools_debug(logging, "Initialize the raw hit");
+  DT_LOG_DEBUG(logging, "Initialize the raw hit");
   RH.set_id(34);
   RH.randomize();
 
   // Print it :
-  datatools_notice(logging, "Raw hit : ");
+  DT_LOG_NOTICE(logging, "Raw hit : ");
   RH.dump(std::clog);
 
   // Store the hit in a Boost/archive file (XML format):
-  datatools_debug(logging, "Serialize the raw hit...");
+  DT_LOG_DEBUG(logging, "Serialize the raw hit...");
   datatools::data_writer serializer("raw_hit.xml",
                                     datatools::using_multiple_archives);
   serializer.store(RH);
-  datatools_information(logging, "The hit has been stored in the ``raw_hit.xml`` file.");
+  DT_LOG_INFORMATION(logging, "The hit has been stored in the ``raw_hit.xml`` file.");
 }
 
 
@@ -78,17 +80,17 @@ void ex_raw_hit_1(datatools::logger::priority logging)
 void ex_raw_hit_2(datatools::logger::priority logging)
 {
   // Declare a ``raw_hit`` object :
-  datatools_debug(logging, "Declare a raw hit");
+  DT_LOG_DEBUG(logging, "Declare a raw hit");
   raw_hit RH;
 
   // Load the hit from a Boost/archive file (XML format):
-  datatools_debug(logging, "Deserialize the raw hit...");
+  DT_LOG_DEBUG(logging, "Deserialize the raw hit...");
   datatools::data_reader deserializer("raw_hit.xml",
                                       datatools::using_multiple_archives);
   deserializer.load(RH);
 
   // Print it :
-  datatools_notice(logging, "Deserialized raw hit : ");
+  DT_LOG_NOTICE(logging, "Deserialized raw hit : ");
   RH.dump(std::clog);
 }
 
@@ -96,7 +98,7 @@ void ex_raw_hit_2(datatools::logger::priority logging)
 /// Serialize several ``raw_hit`` instances in a XML file
 void ex_raw_hit_3(datatools::logger::priority logging)
 {
-  datatools_debug(logging, "Create many hits and serialize them");
+  DT_LOG_DEBUG(logging, "Create many hits and serialize them");
 
   // We use here the multi-archive mode to store all the hits.
   // This means that each hit is stored and confined indenpendantly
@@ -112,16 +114,16 @@ void ex_raw_hit_3(datatools::logger::priority logging)
     RH.set_id(hit_id);
     RH.randomize();
 
-    datatools_notice(logging, "Serialized raw hit #" << hit_id);
+    DT_LOG_NOTICE(logging, "Serialized raw hit #" << hit_id);
     RH.dump(std::clog);
 
     serializer.store(RH);
     RH.reset();
   }
-  datatools_information(logging,
+  DT_LOG_INFORMATION(logging,
                         "Number of serialized raw hits is "
                         << number_of_hits);
-  datatools_information(logging,
+  DT_LOG_INFORMATION(logging,
                         "The hits have been stored in the ``raw_hits.xml`` file.");
 }
 
@@ -141,12 +143,12 @@ void ex_raw_hit_4(datatools::logger::priority logging)
                 "Cannot load a raw_hit from the archive !");
     deserializer.load(RH);
 
-    datatools_notice(logging, "Deserialized raw hit #" << number_of_hits);
+    DT_LOG_NOTICE(logging, "Deserialized raw hit #" << number_of_hits);
     RH.dump(std::clog);
 
     number_of_hits++;
   }
-  datatools_information(logging,
+  DT_LOG_INFORMATION(logging,
                         "Number of deserialized raw hits is "
                         << number_of_hits);
 }
@@ -158,7 +160,7 @@ void ex_raw_hit_5(datatools::logger::priority logging)
   typedef datatools::handle<raw_hit> handle_type;
 
   // Declare a collection of  hit handles :
-  datatools_debug(logging, "Create a collection of hit handles");
+  DT_LOG_DEBUG(logging, "Create a collection of hit handles");
   std::vector<handle_type> hits;
   int number_of_hits = 4;
   for (int hit_id = 0; hit_id < number_of_hits; hit_id++) {
@@ -167,14 +169,14 @@ void ex_raw_hit_5(datatools::logger::priority logging)
     RHH.grab().randomize();
     hits.push_back(RHH);
 
-    datatools_notice(logging, "Serialized raw hit #" << hit_id);
+    DT_LOG_NOTICE(logging, "Serialized raw hit #" << hit_id);
     hits.back().get().dump(std::clog);
  }
 
   // Declare a lone hit handle that references the 3rd hit (index==2)
   // in the collection :
   handle_type special_RHH(hits[2]);
-  datatools_notice(logging, "Serialized special raw hit (reference to the 3rd hit in the collection)");
+  DT_LOG_NOTICE(logging, "Serialized special raw hit (reference to the 3rd hit in the collection)");
   special_RHH.get().dump(std::clog);
 
   // We use here a single archive to store all the hits hold
@@ -195,11 +197,11 @@ void ex_raw_hit_5(datatools::logger::priority logging)
   // the corresponding hit :
   serializer.store("hit_handle", special_RHH);
 
-  datatools_information(logging,
+  DT_LOG_INFORMATION(logging,
                         "Number of serialized raw hit handles is "
                         << number_of_hits);
 
-  datatools_information(logging,
+  DT_LOG_INFORMATION(logging,
                         "The hit handles have been stored in the ``raw_hits_h.xml`` file.");
 }
 
@@ -241,10 +243,10 @@ void ex_raw_hit_6(datatools::logger::priority logging)
 
   // Print the deserialized data :
   for (int i = 0; i < hits.size(); i++) {
-    datatools_notice(logging, "Deserialized raw hit #" << i);
+    DT_LOG_NOTICE(logging, "Deserialized raw hit #" << i);
     hits[i].get().dump(std::clog);
   }
-  datatools_notice(logging, "Deserialized special raw hit (reference to the 3rd hit in the collection)");
+  DT_LOG_NOTICE(logging, "Deserialized special raw hit (reference to the 3rd hit in the collection)");
   special_RHH.get().dump(std::clog);
 }
 
@@ -267,22 +269,22 @@ void ex_raw_hit_7(datatools::logger::priority logging)
   RH1.randomize();
 
   // Print the raw hits stored in both banks :
-  datatools_notice(logging, "Raw hit bank: " << "RH0");
+  DT_LOG_NOTICE(logging, "Raw hit bank: " << "RH0");
   DR.get<raw_hit>("RH0").dump(std::clog);
 
-  datatools_notice(logging, "Raw hit bank: " << "RH1");
+  DT_LOG_NOTICE(logging, "Raw hit bank: " << "RH1");
   DR.get<raw_hit>("RH1").dump(std::clog);
 
   // Store the data record in a Boost/archive file (XML format):
-  datatools_debug(logging, "Serialize the data record...");
+  DT_LOG_DEBUG(logging, "Serialize the data record...");
   datatools::data_writer serializer("raw_hit_banks.xml",
                                     datatools::using_single_archive);
   try {
     serializer.store(DR);
-    datatools_information(logging, "The data record has been stored in the ``data_record.xml`` file.");
+    DT_LOG_INFORMATION(logging, "The data record has been stored in the ``data_record.xml`` file.");
   }
   catch(std::exception& x){
-    datatools_error(logging,
+    DT_LOG_ERROR(logging,
                     "As expected, the serialization failed ! Boost report is: " << x.what() << " !\n"
                     << "\tThis is because  the ``raw_data`` class, while  being serializable, has not been  registered\n"
                     << "\tthrough the *Boost serialization export* mechanism ! That means that the ``datatools::things``\n"
@@ -313,26 +315,26 @@ void ex_raw_hit_8(datatools::logger::priority logging)
   RD1.randomize_hits(5);
   RD1.lock("datatools");
 
-  datatools_notice(logging, "The data record with 2 raw data banks: ");
+  DT_LOG_NOTICE(logging, "The data record with 2 raw data banks: ");
   DR.tree_dump(std::clog);
 
   // Print the raw hits stored in both banks :
-  datatools_notice(logging, "Raw data bank: " << "RD0");
+  DT_LOG_NOTICE(logging, "Raw data bank: " << "RD0");
   DR.get<raw_data>("RD0").dump(std::clog);
 
-  datatools_notice(logging, "Raw data bank: " << "RD1");
+  DT_LOG_NOTICE(logging, "Raw data bank: " << "RD1");
   DR.get<raw_data>("RD1").dump(std::clog);
 
   // Store the data record in a Boost/archive file (XML format):
-  datatools_debug(logging, "Serialize the data record...");
+  DT_LOG_DEBUG(logging, "Serialize the data record...");
   datatools::data_writer serializer("raw_data_banks.xml",
                                     datatools::using_single_archive);
   try {
     serializer.store(DR);
-    datatools_information(logging, "The data record has been stored in the ``data_record.xml`` file.");
+    DT_LOG_INFORMATION(logging, "The data record has been stored in the ``data_record.xml`` file.");
   }
   catch(std::exception& x){
-    datatools_error(logging,
+    DT_LOG_ERROR(logging,
                     "Serialization failed ! Boost report is: " << x.what() << " !\n"
                     );
   }
@@ -347,22 +349,22 @@ void ex_raw_hit_9(datatools::logger::priority logging)
   datatools::things DR;
 
   // Load the data record from a Boost/archive file (XML format):
-  datatools_debug(logging, "Deserialize the data record...");
+  DT_LOG_DEBUG(logging, "Deserialize the data record...");
   datatools::data_reader deserializer("raw_data_banks.xml",
                                       datatools::using_single_archive);
 
   try {
     deserializer.load(DR);
-    datatools_information(logging, "The data record has been loaded from the ``data_record.xml`` file.");
+    DT_LOG_INFORMATION(logging, "The data record has been loaded from the ``data_record.xml`` file.");
 
-    datatools_notice(logging, "The data record with 2 raw data banks: ");
+    DT_LOG_NOTICE(logging, "The data record with 2 raw data banks: ");
     DR.tree_dump(std::clog);
 
     // Print the raw hits stored in both banks :
-    datatools_notice(logging, "Raw data bank: " << "RD0");
+    DT_LOG_NOTICE(logging, "Raw data bank: " << "RD0");
     DR.get<raw_data>("RD0").dump(std::clog);
 
-    datatools_notice(logging, "Raw data bank: " << "RD1");
+    DT_LOG_NOTICE(logging, "Raw data bank: " << "RD1");
     DR.get<raw_data>("RD1").dump(std::clog);
 
     // Access the first raw data bank and reset the object :
@@ -383,15 +385,15 @@ void ex_raw_hit_9(datatools::logger::priority logging)
     RD1.grab_hits()[1].grab_auxiliaries().store_flag("golden_hit");
 
     // Print the raw hits stored in both banks :
-    datatools_notice(logging, "Raw data bank after reset: " << "RD0");
+    DT_LOG_NOTICE(logging, "Raw data bank after reset: " << "RD0");
     DR.get<raw_data>("RD0").dump(std::clog);
 
-    datatools_notice(logging, "Raw data bank after manipulation: " << "RD1");
+    DT_LOG_NOTICE(logging, "Raw data bank after manipulation: " << "RD1");
     DR.get<raw_data>("RD1").dump(std::clog);
 
   }
   catch(std::exception& x){
-    datatools_error(logging,
+    DT_LOG_ERROR(logging,
                     "Serialization failed ! Boost report is: " << x.what() << " !\n"
                     );
   }
@@ -415,18 +417,18 @@ int main (int argc_, char ** argv_)
         } else if ((option == "-v") || (option == "--verbose")) {
           logging = datatools::logger::PRIO_INFORMATION;
         } else  {
-          datatools_warning(logging, "Ignoring option '" << option << "' !");
+          DT_LOG_WARNING(logging, "Ignoring option '" << option << "' !");
         }
       } else {
         std::string argument = token;
-        datatools_warning(logging, "Ignoring argument '" << argument << "' !");
+        DT_LOG_WARNING(logging, "Ignoring argument '" << argument << "' !");
       }
       iarg++;
     }
 
-    datatools_information(logging, "Welcome to the datatools example program : ex_serializable_1");
+    DT_LOG_INFORMATION(logging, "Welcome to the datatools example program : ex_serializable_1");
 
-    datatools_debug(logging, "Initialize the PRNG");
+    DT_LOG_DEBUG(logging, "Initialize the PRNG");
     srand48(prng_seed);
 
     ex_raw_hit_1(logging);
@@ -443,17 +445,15 @@ int main (int argc_, char ** argv_)
     ex_raw_hit_8(logging);
     ex_raw_hit_9(logging);
 
-    datatools_information(logging, "The end.");
+    DT_LOG_INFORMATION(logging, "The end.");
   }
   catch (std::exception & x) {
-    datatools_fatal(logging, x.what());
+    DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    datatools_fatal(logging, "unexpected error !");
+    DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
   return (error_code);
 }
-
-// end of ex_serializable_1.cxx

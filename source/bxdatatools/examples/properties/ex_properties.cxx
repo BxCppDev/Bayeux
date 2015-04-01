@@ -28,12 +28,14 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <datatools/datatools_config.h>
 #include <datatools/properties.h>
 #include <datatools/clhep_units.h>
@@ -56,23 +58,23 @@ int main (int argc_, char ** argv_)
         } else if ((option == "-v") || (option == "--verbose")) {
           logging = datatools::logger::PRIO_INFORMATION;
         } else  {
-          datatools_warning(logging, "Ignoring option '" << option << "' !");
+          DT_LOG_WARNING(logging, "Ignoring option '" << option << "' !");
         }
       } else {
         std::string argument = token;
-        datatools_warning(logging, "Ignoring argument '" << argument << "' !");
+        DT_LOG_WARNING(logging, "Ignoring argument '" << argument << "' !");
       }
       iarg++;
     }
 
-    datatools_information(logging, "datatools example program : ex_properties");
+    DT_LOG_INFORMATION(logging, "datatools example program : ex_properties");
 
     // Declare a container of properties :
-    datatools_debug(logging, "Declare a container of properties");
+    DT_LOG_DEBUG(logging, "Declare a container of properties");
     datatools::properties foo_config;
     foo_config.set_description("The configuration parameters for a given task");
 
-    datatools_debug(logging, "Store some properties in it...");
+    DT_LOG_DEBUG(logging, "Store some properties in it...");
 
     // Set the boolean property ``debug`` to true :
     foo_config.store_flag("debug", "The debug flag");
@@ -137,10 +139,10 @@ int main (int argc_, char ** argv_)
     foo_config.tree_dump(std::clog, "The configuration parameters : ");
 
     // Save the setup in ASCII format :
-    datatools_debug(logging, "Save the setup in ASCII format...");
+    DT_LOG_DEBUG(logging, "Save the setup in ASCII format...");
     datatools::properties::write_config("foo.conf", foo_config);
 
-    datatools_debug(logging, "Modify its contents...");
+    DT_LOG_DEBUG(logging, "Modify its contents...");
     // Change some existing values:
     foo_config.change("width", 3.244 * CLHEP::cm);
     foo_config.update("colour", "blue");
@@ -157,7 +159,7 @@ int main (int argc_, char ** argv_)
 
     // Export properties from one container to the other, only if property's name
     // starts with the ``algo.`` prefix :
-    datatools_debug(logging, "Export part of its contents to another instance...");
+    DT_LOG_DEBUG(logging, "Export part of its contents to another instance...");
     foo_config.export_starting_with(algo_config, "algo.");
 
     // Remove all properties if property's name starts with the ``algo.`` prefix :
@@ -172,7 +174,7 @@ int main (int argc_, char ** argv_)
     algo_config.tree_dump(std::clog, "The exported configuration parameters : ");
 
     // Load the backup configuration parameters from a file :
-    datatools_debug(logging, "Load a container of properties from an ASCII formatted file...");
+    DT_LOG_DEBUG(logging, "Load a container of properties from an ASCII formatted file...");
     std::string foo_config_file = "foo.conf";
     datatools::fetch_path_with_env(foo_config_file);
     datatools::properties::read_config(foo_config_file, foo_config);
@@ -181,14 +183,14 @@ int main (int argc_, char ** argv_)
     std::clog << std::endl;
     foo_config.tree_dump(std::clog, "The backup configuration parameters : ");
 
-    datatools_information(logging, "The end.");
+    DT_LOG_INFORMATION(logging, "The end.");
    }
   catch (std::exception & x) {
-    datatools_fatal(logging, x.what());
+    DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    datatools_fatal(logging, "unexpected error !");
+    DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
   return (error_code);
