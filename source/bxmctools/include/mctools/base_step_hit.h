@@ -35,8 +35,8 @@ namespace mctools {
    *   start
    *    o
    *     \
-   *      \
-   *       \    particle track step
+   *      \  particle track step
+   *       \
    *        \
    *         \
    *          o
@@ -50,18 +50,16 @@ namespace mctools {
 
     /// \brief Masks to automatically tag the attributes to be stored
     enum store_mask_type {
-      STORE_POSITION_START = datatools::bit_mask::bit03,
-      STORE_POSITION_STOP  = datatools::bit_mask::bit04,
-      STORE_TIME_START     = datatools::bit_mask::bit05,
-      STORE_TIME_STOP      = datatools::bit_mask::bit06,
-      STORE_MOMENTUM_START = datatools::bit_mask::bit07,
-      STORE_MOMENTUM_STOP  = datatools::bit_mask::bit08,
-      STORE_ENERGY_DEPOSIT = datatools::bit_mask::bit09,
-      STORE_PARTICLE_NAME  = datatools::bit_mask::bit10,
-      STORE_BIASING_WEIGHT = datatools::bit_mask::bit20
+      STORE_POSITION_START = datatools::bit_mask::bit03, //!< Serialization mask for the position start attribute
+      STORE_POSITION_STOP  = datatools::bit_mask::bit04, //!< Serialization mask for the position stop attribute
+      STORE_TIME_START     = datatools::bit_mask::bit05, //!< Serialization mask for the time start attribute
+      STORE_TIME_STOP      = datatools::bit_mask::bit06, //!< Serialization mask for the time stop attribute
+      STORE_MOMENTUM_START = datatools::bit_mask::bit07, //!< Serialization mask for the momentum start attribute
+      STORE_MOMENTUM_STOP  = datatools::bit_mask::bit08, //!< Serialization mask for the momentum stop attribute
+      STORE_ENERGY_DEPOSIT = datatools::bit_mask::bit09, //!< Serialization mask for the energy deposit attribute
+      STORE_PARTICLE_NAME  = datatools::bit_mask::bit10, //!< Serialization mask for the particle name attribute
+      STORE_BIASING_WEIGHT = datatools::bit_mask::bit11  //!< Serialization mask for the biasing weight attribute (BUG 2015-02-26: was datatools::bit_mask::bit20)
     };
-
-  public:
 
     // Extract specific properties from the 'auxiliaries' container:
 
