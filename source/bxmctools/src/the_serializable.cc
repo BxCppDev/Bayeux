@@ -1,6 +1,6 @@
-// -*- mode: c++; -*-  
-/* the_serializable.cc  
- */ 
+// -*- mode: c++; -*-
+/* the_serializable.cc
+ */
 
 #include <cstdlib>
 #include <iostream>
@@ -57,7 +57,5 @@ namespace mctools {
       }
 
     } // end namespace serialization
-  } // end namespace detail 
+  } // end namespace detail
 } // end namespace mctools
-
-// end of the_serializable.cc
