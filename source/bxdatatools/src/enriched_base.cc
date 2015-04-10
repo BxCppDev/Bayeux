@@ -169,6 +169,12 @@ namespace datatools {
     return;
   }
 
+  void enriched_base::reset()
+  {
+    clear();
+    return;
+  }
+
   void enriched_base::tree_dump(std::ostream& out_,
                                 const std::string& title_,
                                 const std::string& indent_,
@@ -324,14 +330,14 @@ namespace datatools {
 
     {
       configuration_property_description & cpd = ocd_.add_configuration_property_info();
-      cpd.set_name_pattern("description")
+      cpd.set_name_pattern("terse_description")
         .set_from("datatools::enriched_base")
-        .set_terse_description("Set the description of the object")
+        .set_terse_description("Set the terse description of the object")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
         .add_example("Set a terse description string::            \n"
                      "                                            \n"
-                     "  description : string = \"A dummy object\" \n"
+                     "  terse_description : string = \"A dummy object\" \n"
                      "                                            \n"
                      )
         ;

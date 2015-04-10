@@ -50,13 +50,19 @@ datatools::logger::priority base_service::get_logging_priority() const
 }
 
 // Constructor
+base_service::base_service()
+{
+  set_logging_priority(datatools::logger::PRIO_FATAL);
+}
+
+// Constructor
 base_service::base_service(const std::string& name,
                            const std::string& description,
                            const std::string& version)
     : name_(name),
       description_(description),
       version_(version) {
-  set_logging_priority(datatools::logger::PRIO_WARNING);
+  set_logging_priority(datatools::logger::PRIO_FATAL);
 }
 
 // Destructor :
@@ -69,6 +75,8 @@ const std::string& base_service::get_name() const {
 
 
 void base_service::set_name(const std::string& name) {
+  DT_THROW_IF(is_initialized(), std::logic_error,
+              "Service is initialized and locked!");
   name_ = name;
 }
 
@@ -84,6 +92,8 @@ const std::string& base_service::get_description() const {
 
 
 void base_service::set_description(const std::string& description) {
+  DT_THROW_IF(is_initialized(), std::logic_error,
+              "Service is initialized and locked!");
   description_ = description;
 }
 
@@ -99,6 +109,8 @@ const std::string& base_service::get_version() const {
 
 
 void base_service::set_version(const std::string& version) {
+  DT_THROW_IF(is_initialized(), std::logic_error,
+              "Service is initialized and locked!");
   version_ = version;
 }
 
@@ -115,12 +127,31 @@ int base_service::initialize_standalone(
   return this->initialize(config, dummy);
 }
 
-void base_service::common_initialize(
-    const datatools::properties& config) {
+  void base_service::common_initialize(const datatools::properties& config) {
+
   // Logging priority:
   datatools::logger::priority lp
     = datatools::logger::extract_logging_configuration (config);
   set_logging_priority(lp);
+
+  if (get_name().empty()) {
+    if (config.has_key("name")) {
+      set_name(config.fetch_string("name"));
+    }
+  }
+
+  if (get_description().empty()) {
+    if (config.has_key("description")) {
+      set_description(config.fetch_string("description"));
+    }
+  }
+
+  if (get_version().empty()) {
+    if (config.has_key("version")) {
+      set_version(config.fetch_string("version"));
+    }
+  }
+
 }
 
 void base_service::common_ocd(datatools::object_configuration_description& ocd)

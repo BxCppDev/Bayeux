@@ -1,9 +1,9 @@
 /// \file datatools/base_service.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-12-13
+ * Last modified : 2015-04-09
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@
 
 namespace datatools {
 
+  // Forward class declaration:
 class properties;
 
 /*! \brief The base service class
@@ -56,12 +57,19 @@ class properties;
  */
 class base_service : public datatools::i_tree_dumpable {
  public:
+
+  /// Default constructor
+  base_service();
+
   /// Constructor
   base_service(const std::string& name, const std::string& description = "",
                const std::string& version = "");
 
   /// Destructor
   virtual ~base_service();
+
+  /// Set the name of the service
+  void set_name(const std::string&);
 
   /// Get the name of the service
   const std::string& get_name() const;
@@ -85,12 +93,10 @@ class base_service : public datatools::i_tree_dumpable {
   void set_version(const std::string& version);
 
   /// Undocumented unused/unimplemented method
-  virtual void fetch_dependencies(
-      service_dependency_dict_type& /*dependencies*/) const;
+  virtual void fetch_dependencies(service_dependency_dict_type& /*dependencies*/) const;
 
   /// Initialize the service using only a list of properties without the needs of other services
-  virtual int initialize_standalone(
-      const datatools::properties& config);
+  virtual int initialize_standalone(const datatools::properties& config);
 
   /// Initialize the service using a list of properties with access to a dictionry of other services
   virtual int initialize(const datatools::properties& config,
@@ -119,21 +125,19 @@ class base_service : public datatools::i_tree_dumpable {
 
  protected:
 
-  /// Set the service's name
-  void set_name(const std::string& name);
-
   /// Common initialization of services
   void common_initialize(const datatools::properties & config);
 
  protected:
 
-  datatools::logger::priority _logging_priority; /// Logging priority threshold
+  datatools::logger::priority _logging_priority; //!< Logging priority threshold
   std::string name_;         //!< The name of the service
   std::string description_;  //!< The description of the service
   std::string version_;      //!< The version of the service
 
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
+
 };
 
 }  // end of namespace datatools
