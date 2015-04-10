@@ -325,7 +325,7 @@ namespace geomtools {
                   "Missing shape type id property ('" << shape_type_id_oss.str()
                   << "' for shape named '" << shape_name << "'!");
       std::string shape_type_id = defs_.fetch_string(shape_type_id_oss.str());
-      i_object_3d & obj3d = create(shape_name, shape_type_id, shape_def);
+      create(shape_name, shape_type_id, shape_def);
     }
 
     return;
