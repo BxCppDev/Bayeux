@@ -119,7 +119,7 @@ namespace datatools {
     double get_pressure_unit_from(const std::string&);
 
     //! Get the magnetic field unit value from a string.
-    double get_get_magnetic_flux_density_unit_from(const std::string&);
+    double get_magnetic_flux_density_unit_from(const std::string&);
 
     //! @deprecated Get the magnetic field unit value from a string.
     double get_magnetic_field_unit_from(const std::string&);
