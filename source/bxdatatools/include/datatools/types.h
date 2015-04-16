@@ -13,7 +13,7 @@
 
 namespace datatools {
 
-  /// \brief Basic type identifier
+  //! \brief Basic type identifier
   // Note (2014/06/23 FM): we should have used the
   // datatools::bit_mask::bitXX values here, with:
   //   TYPE_NONE    = 0x0,
@@ -36,21 +36,20 @@ namespace datatools {
     TYPE_ANY     = TYPE_BOOLEAN | TYPE_INTEGER | TYPE_REAL | TYPE_STRING // This is buggy
   };
 
-  /// \brief Data type
+  //! \brief Data type
   enum data_type
   {
-    DATA_NONE    = 0x0, /// Not defined
-    DATA_SCALAR  = 0x1, /// Data is a scalar
-    DATA_ARRAY   = 0x2, /// Data is an array (or vector)
-    DATA_ANY     = DATA_SCALAR | DATA_ARRAY /// Data can be both
+    DATA_NONE    = 0x0, //!< Not defined
+    DATA_SCALAR  = 0x1, //!< Data is a scalar
+    DATA_ARRAY   = 0x2, //!< Data is an array (or vector)
+    DATA_ANY     = DATA_SCALAR | DATA_ARRAY //!< Data can be both
   };
 
-  /// Return the label associated to a data type
+  //! Return the label associated to a data type
   const std::string get_label_from_type(int type_);
 
-  /// Return the data type associated to a label
+  //! Return the data type associated to a label
   int get_type_from_label(const std::string & label_);
-
 
 } // end of namespace datatools
 
