@@ -10,7 +10,7 @@ namespace datatools {
 template <typename BaseType>
 factory_register<BaseType>::factory_register()
     : label_(),
-      logging_(datatools::logger::PRIO_WARNING),
+      logging_(datatools::logger::PRIO_FATAL),
       registered_() {}
 
 // Constructor:
@@ -18,7 +18,7 @@ template <typename BaseType>
 factory_register<BaseType>::factory_register(const std::string& label,
                                              unsigned int flags)
     : label_(label),
-      logging_(datatools::logger::PRIO_WARNING) {
+      logging_(datatools::logger::PRIO_FATAL) {
   if (flags & verbose) {
     set_logging_priority(datatools::logger::PRIO_INFORMATION);
   }
@@ -96,7 +96,7 @@ template <typename BaseType>
 void factory_register<BaseType>::reset() {
   this->clear();
   label_.clear();
-  logging_ = datatools::logger::PRIO_WARNING;
+  logging_ = datatools::logger::PRIO_FATAL;
 }
 
 
