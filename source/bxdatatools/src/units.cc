@@ -134,7 +134,6 @@ namespace datatools {
       return get_unit_in_dimension_from(unit_id_, "pressure");
     }
 
-
     double get_magnetic_flux_density_unit_from(const std::string & unit_id_) {
      return get_unit_in_dimension_from(unit_id_, "magnetic_flux_density");
     }
@@ -1158,7 +1157,6 @@ namespace datatools {
       bool default_in_dimension = default_in_dimension_;
       the_dimension.add_unit(unit_name, default_in_dimension);
       if (the_unit.has_dimension_meta()) {
-        // XXX
         DT_THROW_IF(!the_dimension.decode_dimensional_powers(the_unit.get_dimension_meta()),
                     std::logic_error,
                     "Invalid unit dimension meta data '" << the_unit.get_dimension_meta() << "'!");
