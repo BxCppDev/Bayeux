@@ -1,9 +1,9 @@
 /// \file cuts/i_cut.h
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-12-14
+ * Last modified : 2015-04-17
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,8 +110,8 @@ namespace cuts {
         _ti = 0;
       }
     protected:
-      const T              * _address;
-      const std::type_info * _ti;
+      const T              * _address; //!< Address of the referenced object
+      const std::type_info * _ti;      //! Reference of the referenced object's type
     };
 
     bool is_debug () const;
@@ -203,18 +203,17 @@ namespace cuts {
                             datatools::service_manager & a_service_manager,
                             cut_handle_dict_type & a_cut_dictionary) = 0;
 
-
     //! \brief Flags for export to a container of properties
     enum export_config_flags {
       EXPORT_CONFIG_CLEAR             = datatools::bit_mask::bit00,
       EXPORT_CONFIG_NAME              = datatools::bit_mask::bit01,
-      EXPORT_CONFIG_DESCRIPTION       = datatools::bit_mask::bit03,
-      EXPORT_CONFIG_VERSION           = datatools::bit_mask::bit04,
+      EXPORT_CONFIG_DESCRIPTION       = datatools::bit_mask::bit02,
+      EXPORT_CONFIG_VERSION           = datatools::bit_mask::bit03,
       EXPORT_CONFIG_LOGGING_PRIORITY  = datatools::bit_mask::bit04,
-      EXPORT_CONFIG_DEFAULT =
-      EXPORT_CONFIG_CLEAR |
-      EXPORT_CONFIG_DESCRIPTION |
-      EXPORT_CONFIG_VERSION
+      EXPORT_CONFIG_DEFAULT           = (EXPORT_CONFIG_CLEAR |
+                                         EXPORT_CONFIG_DESCRIPTION |
+                                         EXPORT_CONFIG_VERSION),
+      EXPORT_CONFIG_LAST              = EXPORT_CONFIG_LOGGING_PRIORITY
     };
 
     /** Export to a container of properties
@@ -310,7 +309,7 @@ namespace cuts {
     bool _initialized_; //!< The initialization flag
 
     // Working data:
-    boost::shared_ptr<i_referenced_data> _user_data_; //!< Internal weak (not managed) handle to user data;
+    boost::shared_ptr<i_referenced_data> _user_data_; //!< Internal weak (not managed) handle to user data
     size_t _number_of_accepted_entries_; //!< Number of entries accepted by the cut
     size_t _number_of_rejected_entries_; //!< Number of entries rejected by the cut
 
