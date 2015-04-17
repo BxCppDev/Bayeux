@@ -1,13 +1,17 @@
 // test_fft_real2.cxx
 
+// Ourselves:
+#include <mygsl/fft_real.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <vector>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
-
-#include <mygsl/fft_real.h>
 
 int main(/*int argc_ , char ** argv_*/)
 {
@@ -95,5 +99,3 @@ int main(/*int argc_ , char ** argv_*/)
 
   return(0);
 }
-
-// end of test_fft_real2.cxx

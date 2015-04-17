@@ -16,12 +16,16 @@
 // - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/utils.h>
+#include <datatools/properties.h>
 
 namespace mygsl {
 
-  using namespace std;
+  // using namespace std;
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(polynomial, "mygsl::polynomial")
+
+  MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(polynomial,
+                                             "mygsl::polynomial");
 
   bool polynomial::is_valid() const {
     return _c_.size() > 0;
@@ -75,7 +79,7 @@ namespace mygsl {
     _c_[2] = c2_;
   }
 
-  polynomial::polynomial(const vector<double>& c_) {
+  polynomial::polynomial(const std::vector<double>& c_) {
     set_coefficients(c_);
   }
 
@@ -92,9 +96,40 @@ namespace mygsl {
     _c_ = c_;
   }
 
+  bool polynomial::is_initialized() const
+  {
+    return this->is_valid();
+  }
+
+  void polynomial::initialize(const datatools::properties & config_,
+                              unary_function_dict_type & /* functors_ */)
+  {
+    // DT_THROW_IF(is_initialized(), std::logic_error,
+    //             "Functor is already initialized!");
+
+    // this->i_unary_function::_base_initialize(config_, functors_);
+
+    if (_c_.size() == 0) {
+      if (config_.has_key("coefficients")) {
+        std::vector<double> coeffs;
+        config_.fetch("coefficients", coeffs);
+        set_coefficients(coeffs);
+      }
+    }
+
+    // Checking...
+    DT_THROW_IF(_c_.size() == 0, std::logic_error,
+                "No coefficients are defined !");
+    return;
+  }
+
   void polynomial::reset()
   {
+    // DT_THROW_IF(!is_initialized(), std::logic_error,
+    //             "Functor is not initialized!");
     _c_.clear();
+
+    // this->i_unary_function::_base_reset(config_, functors_);
     return;
   }
 
@@ -107,9 +142,9 @@ namespace mygsl {
     return gsl_poly_eval(first_arg, sz, x_);
   }
 
-  void polynomial::print(ostream & out_, int format_, bool eol_) const {
-    string prod_sym = "×";
-    string exp_sym  = "^";
+  void polynomial::print(std::ostream & out_, int format_, bool eol_) const {
+    std::string prod_sym = "×";
+    std::string exp_sym  = "^";
     prod_sym = "*";
     exp_sym  = "**";
     if (format_ == 1) {
@@ -127,7 +162,7 @@ namespace mygsl {
           out_ << (_c_[deg] > 0? "": " - ");
           first = false;
         }
-        out_.unsetf(ios::showpos);
+        out_.unsetf(std::ios::showpos);
         // 2011-06-16 FM: add std::abs to remove template ambiguity for some compiler :
         out_ << std::abs(_c_[deg]);
         if (deg >= 1) {
@@ -138,7 +173,7 @@ namespace mygsl {
         }
       }
     }
-    if (eol_) out_ << endl;
+    if (eol_) out_ << std::endl;
   }
 
   bool polynomial::solve_linear(double p0_, double p1_, unsigned int& nsols_,

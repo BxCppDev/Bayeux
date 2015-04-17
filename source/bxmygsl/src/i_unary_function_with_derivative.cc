@@ -1,14 +1,20 @@
 // i_unary_function_with_derivative.cc
 
+// Ourselves:
 #include <mygsl/i_unary_function_with_derivative.h>
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 #include <functional>
 #include <limits>
 
-#include <mygsl/numerical_differentiation.h>
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
+
+// This project:
+#include <mygsl/numerical_differentiation.h>
 
 namespace mygsl {
 
@@ -58,7 +64,9 @@ namespace mygsl {
       bool xmin_ok = true;
       bool xmax_ok = true;
       if (has_explicit_domain_of_definition()) {
-        DT_THROW_IF (! is_in_domain_of_definition (x_), std::domain_error, "Value '" << x_ << "' is out of the domain of definition !");
+        DT_THROW_IF (! is_in_domain_of_definition (x_),
+                     std::domain_error,
+                     "Value '" << x_ << "' is out of the domain of definition !");
         xmin_ok = is_in_domain_of_definition (xmin);
         xmax_ok = is_in_domain_of_definition (xmax);
       }
@@ -81,11 +89,33 @@ namespace mygsl {
     return df;
   }
 
-  /************************************************/
+  // Class unary_function_promoted_with_numeric_derivative:
+
+  MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(unary_function_promoted_with_numeric_derivative,
+                                             "mygsl::unary_function_promoted_with_numeric_derivative");
+
+  bool unary_function_promoted_with_numeric_derivative::has_functor() const
+  {
+    return _functor_ != 0;
+  }
+
+  void unary_function_promoted_with_numeric_derivative::set_functor(const i_unary_function & functor_)
+  {
+    DT_THROW_IF(!functor_.is_initialized(), std::logic_error,
+                "Functor is not initialized!");
+    _functor_ = &functor_;
+    return;
+  }
+
+  unary_function_promoted_with_numeric_derivative::unary_function_promoted_with_numeric_derivative()
+  {
+    _functor_ = 0;
+    return;
+  }
 
   unary_function_promoted_with_numeric_derivative::unary_function_promoted_with_numeric_derivative (const i_unary_function & functor_)
   {
-    _functor_ = &functor_;
+    set_functor(functor_);
     return;
   }
 
@@ -114,6 +144,15 @@ namespace mygsl {
     return _functor_->eval(x_);
   }
 
-} // namespace mygsl
+  bool unary_function_promoted_with_numeric_derivative::is_initialized() const
+  {
+    return _functor_ != 0;
+  }
 
-// end of i_unary_function_with_derivative.cc
+  void unary_function_promoted_with_numeric_derivative::reset()
+  {
+    _functor_ = 0;
+    return;
+  }
+
+} // namespace mygsl

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // test_tabulated_function_2.cxx
 /*
  * Test program for the 'tabulated_function' class
@@ -11,6 +10,10 @@
  *   cos(x) w lines lt 4
  */
 
+// Ourselves:
+#include <mygsl/tabulated_function.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -19,13 +22,12 @@
 #include <cmath>
 #include <vector>
 
-#include <mygsl/tabulated_function.h>
+// This project:
 #include <mygsl/numerical_differentiation.h>
-
-using namespace std;
 
 int main (int /* argc_ */ , char ** /* argv_ */)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
@@ -243,5 +245,3 @@ int main (int /* argc_ */ , char ** /* argv_ */)
     }
   return error_code;
 }
-
-// end of test_tabulated_function_2.cxx

@@ -1,13 +1,15 @@
 // test_i_unary_function.cxx
 
+// Ourselves:
+#include <mygsl/i_unary_function.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cmath>
 #include <exception>
-
-#include <mygsl/i_unary_function.h>
 
 /* A wrapper function for the std::cos function */
 struct Cosine : public mygsl::i_unary_function
@@ -96,5 +98,3 @@ int main(int /* argc_ */, char ** /* argv_ */)
   }
   return (EXIT_SUCCESS);
 }
-
-// end of test_i_unary_function.cxx

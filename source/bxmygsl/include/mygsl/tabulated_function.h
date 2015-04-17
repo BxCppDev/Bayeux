@@ -84,7 +84,7 @@ namespace mygsl {
 
     double x_max() const;
 
-    void reset();
+    void load_from_file(const std::string & filename_, uint32_t options_ = 0);
 
     virtual void tabfunc_load(std::istream& in_, void * context_ = 0);
 
@@ -93,13 +93,30 @@ namespace mygsl {
     void print_points(std::ostream& out_,
                       const std::string& header_comment_ = "",
                       const std::string& footer_comment_ = "") const;
+
+
+    //! Check initialization status
+    virtual bool is_initialized() const;
+
+    //! Initialization from a container of parameters and a dictionary of functors
+    virtual void initialize(const datatools::properties & config_,
+                            unary_function_dict_type & functors_);
+
+    //! Reset the functor
+    void reset();
+
   protected:
 
     virtual double _eval(double x_) const;
 
   private:
+
     struct tabfunc_impl;
     tabfunc_impl *pImpl;
+
+    //! Registration of the functor class
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(tabulated_function);
+
   };
 
 } // end of namespace mygsl

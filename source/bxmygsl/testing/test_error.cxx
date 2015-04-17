@@ -1,11 +1,13 @@
 // test_error.cxx
 
+// Ourselves:
+#include <mygsl/error.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
-
-#include <mygsl/error.h>
 
 int main(/*int argc_ , char ** argv_*/)
 {
@@ -33,5 +35,3 @@ int main(/*int argc_ , char ** argv_*/)
     }
   return (EXIT_SUCCESS);
 }
-
-// end of test_error.cxx

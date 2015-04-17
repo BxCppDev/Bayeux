@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // test_tabulated_function.cxx
 /*
  * Test program for the 'tabulated_function' class
@@ -11,6 +10,10 @@
  *   cos(x) w lines lt 4
  */
 
+// Ourselves:
+#include <mygsl/tabulated_function.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -18,8 +21,6 @@
 #include <stdexcept>
 #include <cmath>
 #include <vector>
-
-#include <mygsl/tabulated_function.h>
 
 int main (int /* argc_ */ , char ** /* argv_ */)
 {
@@ -125,5 +126,3 @@ int main (int /* argc_ */ , char ** /* argv_ */)
     }
   return error_code;
 }
-
-// end of test_tabfunc.cxx

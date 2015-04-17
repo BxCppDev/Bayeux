@@ -15,11 +15,21 @@
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
 #include <datatools/exception.h>
+#include <datatools/properties.h>
 
 namespace mygsl {
 
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_unary_function,
+                                                   "mygsl::i_unary_function/__system__");
+
   const double i_unary_function::DEFAULT_EPSILON = 1.0e-7;
   const double i_unary_function::AUTO_EPSILON    = 0.0;
+
+  void i_unary_function::_set_defaults()
+  {
+    datatools::invalidate(_epsilon_);
+    return;
+  }
 
   void i_unary_function::set_epsilon(double eps_)
   {
@@ -36,17 +46,17 @@ namespace mygsl {
     if (_epsilon_ != AUTO_EPSILON) return;
     if (has_non_zero_domain_min() && has_non_zero_domain_max()) {
       double dx = get_non_zero_domain_max() - get_non_zero_domain_min();
-      _epsilon_ = dx / 100000;
+      _epsilon_ = dx / 1.e7;
       return;
     }
     if (!has_non_zero_domain_min() && has_non_zero_domain_max()) {
       double dx = std::abs(get_non_zero_domain_max());
-      _epsilon_ = dx / 100000;
+      _epsilon_ = dx / 1.e7;
       return;
     }
     if (has_non_zero_domain_min() && !has_non_zero_domain_max()) {
       double dx = std::abs(get_non_zero_domain_min());
-      _epsilon_ = dx / 100000;
+      _epsilon_ = dx / 1.e7;
       return;
     }
     _epsilon_ = DEFAULT_EPSILON;
@@ -63,13 +73,70 @@ namespace mygsl {
 
   i_unary_function::i_unary_function(double epsilon_)
   {
-    _epsilon_ = AUTO_EPSILON;
+    _set_defaults();
     set_epsilon(epsilon_);
     return;
   }
 
   i_unary_function::~i_unary_function ()
   {
+    return;
+  }
+
+  void i_unary_function::_base_initialize(const datatools::properties & config_,
+                                          unary_function_dict_type & functors_)
+  {
+    if (! datatools::is_valid(_epsilon_)) {
+      if (config_.has_key("epsilon")) {
+        double eps = config_.fetch_real("epsilon");
+        DT_THROW_IF(eps < 0.0, std::domain_error, "Invalid value for precision !");
+        set_epsilon(eps);
+      }
+    }
+
+    if (! datatools::is_valid(_epsilon_)) {
+      _epsilon_ = AUTO_EPSILON;
+    }
+
+    return;
+  }
+
+  void i_unary_function::_base_reset()
+  {
+    _set_defaults();
+    return;
+  }
+
+  bool i_unary_function::is_initialized() const
+  {
+    return datatools::is_valid(_epsilon_);
+  }
+
+  void i_unary_function::initialize_simple()
+  {
+    datatools::properties dummy_config;
+    initialize_standalone(dummy_config);
+    return;
+  }
+
+  void i_unary_function::initialize_standalone(const datatools::properties & config_)
+  {
+    unary_function_dict_type dummy_dict;
+    initialize(config_, dummy_dict);
+    return;
+  }
+
+  void i_unary_function::initialize(const datatools::properties & config_,
+                                    unary_function_dict_type & functors_)
+  {
+    _base_initialize(config_, functors_);
+
+    return;
+  }
+
+  void i_unary_function::reset()
+  {
+    _base_reset();
     return;
   }
 
@@ -86,6 +153,7 @@ namespace mygsl {
   double i_unary_function::get_non_zero_domain_min() const
   {
     return -std::numeric_limits<double>::infinity();
+    //return std::numeric_limits<double>::quiet_NaN();
   }
 
   bool i_unary_function::has_non_zero_domain_min() const
@@ -98,6 +166,7 @@ namespace mygsl {
   double i_unary_function::get_non_zero_domain_max() const
   {
     return +std::numeric_limits<double>::infinity();
+    //return std::numeric_limits<double>::quiet_NaN();
   }
 
   bool i_unary_function::has_non_zero_domain_max() const
@@ -107,7 +176,6 @@ namespace mygsl {
     return nzdmax != +std::numeric_limits<double>::infinity();
   }
 
-  /// Check if a value is in the non-zero domain
   bool i_unary_function::is_in_non_zero_domain(double x_) const
   {
     if (x_ < get_non_zero_domain_min()) return false;
@@ -115,25 +183,28 @@ namespace mygsl {
     return true;
   }
 
-  /// Check if a value is in the zero domain
   bool i_unary_function::is_in_zero_domain(double x_) const
   {
     return !is_in_non_zero_domain(x_);
   }
 
-  /// The function evaluation method
+  bool i_unary_function::has_zero_domain() const
+  {
+    if (has_non_zero_domain_min()) return true;
+    if (has_non_zero_domain_max()) return true;
+    return false;
+  }
+
   double i_unary_function::eval_no_check(double x_) const
   {
     return _eval(x_);
   }
 
-  /// The function evaluation method
   double i_unary_function::evaluate(double x_) const
   {
     return this->eval(x_);
   }
 
-  /// The function evaluation method
   double i_unary_function::eval(double x_) const
   {
     if (has_explicit_domain_of_definition()) {
@@ -152,7 +223,6 @@ namespace mygsl {
     return this->eval(x_);
   }
 
-  /// Write the (x,y=f(x)) value pairs in an ASCII stream :
   void i_unary_function::write_ascii(std::ostream & out_,
                                      double min_, double max_,
                                      unsigned int nsamples_,
@@ -196,7 +266,6 @@ namespace mygsl {
     return;
   }
 
-  /// Write the (x,y=f(x)) ASCII :
   void i_unary_function::write_ascii_file(const std::string & filename_,
                                           double min_, double max_, unsigned int  nsamples_,
                                           int x_precision_,
@@ -215,6 +284,45 @@ namespace mygsl {
     return;
   }
 
+  void i_unary_function::tree_dump(std::ostream & out_,
+                                   const std::string & title_,
+                                   const std::string & indent_,
+                                   bool inherit_) const
+  {
+    if (! title_.empty()) out_ << indent_ << title_ << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Epsilon : " << _epsilon_ << std::endl;
+
+    if (is_initialized()) {
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Explicit domain of definition : " << has_explicit_domain_of_definition() << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Non zero domain minimum: ";
+      if (has_non_zero_domain_min()) {
+        out_ << get_non_zero_domain_min();
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Non zero domain maximum: ";
+      if (has_non_zero_domain_max()) {
+        out_ << get_non_zero_domain_max();
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+    }
+
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+         << "Initialized : " << is_initialized() << std::endl;
+
+    return;
+  }
+
   // static
   double i_unary_function::g_function(double x_, void * functor_)
   {
@@ -222,73 +330,22 @@ namespace mygsl {
     return f->eval(x_);
   }
 
-  void plain_function_wrapper::set_plain_function(const plain_function_type & func_)
-  {
-    _plain_function_ = &func_;
-    return;
-  }
+  MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(identity_function,
+                                             "mygsl::identity_function");
 
-  plain_function_wrapper::plain_function_wrapper(const plain_function_type & func_)
-  {
-    set_plain_function(func_);
-    return;
-  }
-
-  plain_function_wrapper::~plain_function_wrapper()
-  {
-    _plain_function_ = 0;
-    return;
-  }
-
-  double plain_function_wrapper::_eval(double x_) const
-  {
-    return (*_plain_function_)(x_);
-  }
-
-  void function_with_domain::set_domain_of_definition(const interval & domain_)
-  {
-    _domain_of_definition_ = domain_;
-    return;
-  }
-
-  const interval & function_with_domain::get_domain_of_definition() const
-  {
-    return _domain_of_definition_;
-  }
-
-  function_with_domain::function_with_domain(const i_unary_function & functor_,
-                                             const interval & domain_)
-  {
-    _functor_ = &functor_;
-    set_domain_of_definition(domain_);
-    return;
-  }
-
-  function_with_domain::function_with_domain(const i_unary_function & functor_)
-  {
-    _functor_ = &functor_;
-    _domain_of_definition_ = interval::make_no_limit ();
-    return;
-  }
-
-  function_with_domain::~function_with_domain()
+  identity_function::identity_function()
   {
     return;
   }
 
-  bool function_with_domain::has_explicit_domain_of_definition() const
+  identity_function::~identity_function()
   {
-    return ! _domain_of_definition_.is_no_limit();
+    return;
   }
 
-  bool function_with_domain::is_in_domain_of_definition(double x_) const
+  double identity_function::_eval(double x_) const
   {
-    return _domain_of_definition_.is_in (x_);
-  }
-
-  double function_with_domain::_eval(double x_) const
-  {
-    return _functor_->eval(x_);
+    return x_;
   }
 
 } // namespace mygsl
