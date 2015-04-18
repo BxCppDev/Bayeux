@@ -56,19 +56,28 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/blur_spot.ipp
   ${module_include_dir}/${module_name}/box.h
   ${module_include_dir}/${module_name}/circle.h
+  ${module_include_dir}/${module_name}/ellipse.h
+  ${module_include_dir}/${module_name}/elliptical_sector.h
+  ${module_include_dir}/${module_name}/elliptical_cylinder_sector.h
+  ${module_include_dir}/${module_name}/ellipsoid_sector.h
+  ${module_include_dir}/${module_name}/ellipsoid.h
   ${module_include_dir}/${module_name}/clhep.h
   ${module_include_dir}/${module_name}/color.h
   ${module_include_dir}/${module_name}/cone.h
+  ${module_include_dir}/${module_name}/right_circular_conical_nappe.h
+  ${module_include_dir}/${module_name}/right_circular_conical_frustrum.h
+  ${module_include_dir}/${module_name}/right_polygonal_frustrum.h
+  ${module_include_dir}/${module_name}/cylindrical_sector.h
   ${module_include_dir}/${module_name}/cylinder.h
   ${module_include_dir}/${module_name}/cylindric_extrusion_boxed_model.h
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/manager-inl.h
   ${module_include_dir}/${module_name}/detail/model_tools.h
   ${module_include_dir}/${module_name}/disk.h
+  ${module_include_dir}/${module_name}/composite_surface.h
   ${module_include_dir}/${module_name}/display_data.h
   ${module_include_dir}/${module_name}/display_data.ipp
-  ${module_include_dir}/${module_name}/ellipsoid.h
-  ${module_include_dir}/${module_name}/elliptical_tube.h
+  ${module_include_dir}/${module_name}/elliptical_cylinder.h
   ${module_include_dir}/${module_name}/extruded_box.h
   ${module_include_dir}/${module_name}/extruded_box_model.h
   ${module_include_dir}/${module_name}/gdml_export.h
@@ -86,7 +95,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/grid_model.h
   ${module_include_dir}/${module_name}/helix_3d.h
   ${module_include_dir}/${module_name}/helix_3d.ipp
-  ${module_include_dir}/${module_name}/hexagon_box.h
+  #${module_include_dir}/${module_name}/hexagon_box.h
   ${module_include_dir}/${module_name}/i_boxed_model.h
   ${module_include_dir}/${module_name}/i_composite_shape_3d.h
   ${module_include_dir}/${module_name}/id_mgr.h
@@ -95,12 +104,14 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_model.h
   ${module_include_dir}/${module_name}/intersection_3d.h
   ${module_include_dir}/${module_name}/intersection.h
+  ${module_include_dir}/${module_name}/i_find_intercept.h
   ${module_include_dir}/${module_name}/i_object_3d.h
   ${module_include_dir}/${module_name}/i_object_3d.ipp
   ${module_include_dir}/${module_name}/i_placement.h
   ${module_include_dir}/${module_name}/i_placement.ipp
   ${module_include_dir}/${module_name}/i_shape_1d.h
   ${module_include_dir}/${module_name}/i_shape_1d.ipp
+  ${module_include_dir}/${module_name}/i_polygon.h
   ${module_include_dir}/${module_name}/i_shape_2d.h
   ${module_include_dir}/${module_name}/i_shape_2d.ipp
   ${module_include_dir}/${module_name}/i_shape_3d.h
@@ -150,6 +161,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/simple_shaped_model.h
   ${module_include_dir}/${module_name}/simple_world_model.h
   ${module_include_dir}/${module_name}/smart_id_locator.h
+  ${module_include_dir}/${module_name}/spherical_sector.h
   ${module_include_dir}/${module_name}/sphere.h
   ${module_include_dir}/${module_name}/spherical_extrusion_box_model.h
   ${module_include_dir}/${module_name}/spherical_extrusion_cylinder_model.h
@@ -158,12 +170,17 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/subtraction_3d.h
   ${module_include_dir}/${module_name}/surrounded_boxed_model.h
   ${module_include_dir}/${module_name}/tessellation.h
+  ${module_include_dir}/${module_name}/triangle.h
+  ${module_include_dir}/${module_name}/quadrangle.h
   ${module_include_dir}/${module_name}/the_serializable.h
   ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/tube.h
   ${module_include_dir}/${module_name}/union_3d.h
   ${module_include_dir}/${module_name}/units.h
   ${module_include_dir}/${module_name}/utils.h
+  ${module_include_dir}/${module_name}/face_identifier.h
+  ${module_include_dir}/${module_name}/face_intercept_info.h
+  ${module_include_dir}/${module_name}/face_info.h
   ${module_include_dir}/${module_name}/utils.ipp
   ${module_include_dir}/${module_name}/visibility.h
   ${module_include_dir}/${module_name}/geomtools_driver.h
@@ -195,14 +212,16 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/address_set.cc
   ${module_source_dir}/extruded_box.cc
   ${module_source_dir}/extruded_box_model.cc
+  ${module_source_dir}/ellipsoid_sector.cc
   ${module_source_dir}/ellipsoid.cc
-  ${module_source_dir}/elliptical_tube.cc
+  ${module_source_dir}/elliptical_cylinder_sector.cc
+  ${module_source_dir}/elliptical_cylinder.cc
   ${module_source_dir}/gdml_export.cc
   ${module_source_dir}/gdml_writer.cc
   ${module_source_dir}/geom_id.cc
   ${module_source_dir}/geom_info.cc
   ${module_source_dir}/geom_map.cc
-  ${module_source_dir}/hexagon_box.cc
+  # ${module_source_dir}/hexagon_box.cc
   ${module_source_dir}/id_mgr.cc
   ${module_source_dir}/id_selector.cc
   ${module_source_dir}/i_locator.cc
@@ -232,8 +251,11 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/line_3d.cc
   ${module_source_dir}/polyline_3d.cc
   ${module_source_dir}/circle.cc
+  ${module_source_dir}/ellipse.cc
+  ${module_source_dir}/elliptical_sector.cc
   ${module_source_dir}/rectangle.cc
   ${module_source_dir}/disk.cc
+  ${module_source_dir}/composite_surface.cc
   ${module_source_dir}/plane.cc
   ${module_source_dir}/plate_with_hole_model.cc
   ${module_source_dir}/spherical_extrusion_cylinder_model.cc
@@ -250,12 +272,19 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/stacked_model.cc
   ${module_source_dir}/i_boxed_model.cc
   ${module_source_dir}/surrounded_boxed_model.cc
+  ${module_source_dir}/cylindrical_sector.cc
   ${module_source_dir}/cylinder.cc
   ${module_source_dir}/box.cc
   ${module_source_dir}/cone.cc
+  ${module_source_dir}/right_circular_conical_nappe.cc
+  ${module_source_dir}/right_circular_conical_frustrum.cc
+  ${module_source_dir}/right_polygonal_frustrum.cc
+  ${module_source_dir}/spherical_sector.cc
   ${module_source_dir}/sphere.cc
   ${module_source_dir}/tube.cc
   ${module_source_dir}/tessellation.cc
+  ${module_source_dir}/triangle.cc
+  ${module_source_dir}/quadrangle.cc
   ${module_source_dir}/stl_tools.cc
   ${module_source_dir}/polycone.cc
   ${module_source_dir}/polyhedra.cc
@@ -265,6 +294,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/i_composite_shape_3d.cc
   ${module_source_dir}/geomtools_config.cc
   ${module_source_dir}/i_model.cc
+  ${module_source_dir}/i_find_intercept.cc
   ${module_source_dir}/i_shape_1d.cc
   ${module_source_dir}/i_shape_2d.cc
   ${module_source_dir}/i_shape_3d.cc
@@ -273,6 +303,9 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/color.cc
   ${module_source_dir}/material.cc
   ${module_source_dir}/utils.cc
+  ${module_source_dir}/face_identifier.cc
+  ${module_source_dir}/face_intercept_info.cc
+  ${module_source_dir}/face_info.cc
   ${module_source_dir}/gnuplot_draw.cc
   ${module_source_dir}/display_data.cc
   ${module_source_dir}/shape_factory.cc
@@ -307,8 +340,20 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_circle.cxx
   ${module_test_dir}/test_color.cxx
   ${module_test_dir}/test_cone.cxx
+  ${module_test_dir}/test_conical_nappe.cxx
+  ${module_test_dir}/test_conical_frustrum.cxx
+  ${module_test_dir}/test_polygonal_frustrum.cxx
   ${module_test_dir}/test_cylinder.cxx
+  ${module_test_dir}/test_cylindrical_sector.cxx
+  ${module_test_dir}/test_composite_surface.cxx
   ${module_test_dir}/test_disk.cxx
+  ${module_test_dir}/test_triangle.cxx
+  ${module_test_dir}/test_quadrangle.cxx
+  ${module_test_dir}/test_ellipse.cxx
+  ${module_test_dir}/test_ellipsoid.cxx
+  ${module_test_dir}/test_ellipsoid_sector.cxx
+  ${module_test_dir}/test_elliptical_cylinder_sector.cxx
+  ${module_test_dir}/test_elliptical_sector.cxx
   ${module_test_dir}/test_display_data.cxx
   ${module_test_dir}/test_gdml_writer.cxx
   ${module_test_dir}/test_geom_id.cxx
@@ -316,13 +361,14 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_gnuplot_draw.cxx
   ${module_test_dir}/test_gnuplot_i.cxx
   ${module_test_dir}/test_helix.cxx
-  ${module_test_dir}/test_hexagon_box.cxx
+  # ${module_test_dir}/test_hexagon_box.cxx
   ${module_test_dir}/test_id_mgr.cxx
   ${module_test_dir}/test_id_selector.cxx
   ${module_test_dir}/test_i_model.cxx
   ${module_test_dir}/test_intersection_3d.cxx
   ${module_test_dir}/test_intersection.cxx
   ${module_test_dir}/test_logical_volume.cxx
+  ${module_test_dir}/test_line_3d.cxx
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/test_model_factory.cxx
   ${module_test_dir}/test_multiple_placement.cxx
@@ -331,7 +377,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_placement_3.cxx
   ${module_test_dir}/test_placement.cxx
   ${module_test_dir}/test_plane.cxx # <- Will fail without gnuplot_i
-  ${module_test_dir}/test_polycone_2.cxx
+  #${module_test_dir}/test_polycone_2.cxx
   ${module_test_dir}/test_polycone.cxx
   ${module_test_dir}/test_polyhedra.cxx
   ${module_test_dir}/test_polyline_3d.cxx
@@ -346,6 +392,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_serializable_3.cxx
   ${module_test_dir}/test_serializable.cxx
   ${module_test_dir}/test_service_manager.cxx
+  ${module_test_dir}/test_spherical_sector.cxx
   ${module_test_dir}/test_sphere.cxx
   ${module_test_dir}/test_sphere_2.cxx
   ${module_test_dir}/test_stl_tools.cxx
@@ -356,10 +403,12 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_union_3d.cxx
   ${module_test_dir}/test_utils_2.cxx
   ${module_test_dir}/test_utils.cxx
+  ${module_test_dir}/test_face_identifier.cxx
   ${module_test_dir}/test_reflection_0.cxx
   ${module_test_dir}/test_extruded_box.cxx
-  ${module_test_dir}/test_elliptical_tube.cxx
+  ${module_test_dir}/test_elliptical_cylinder.cxx
   ${module_test_dir}/test_wires.cxx
+  ${module_test_dir}/test_wires_2.cxx
   )
 
 # - Applications
