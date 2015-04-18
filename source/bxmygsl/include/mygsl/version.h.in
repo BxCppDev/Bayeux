@@ -39,48 +39,48 @@
 #define MYGSL_VERSION_PATCH @mygsl_VERSION_PATCH@
 
 //! Encode mygsl to ordered integer available at compile time
-#define MYGSL_ENCODE_VERSION(major, minor, patch) ( \
-        ((major) * 10000) \
-      + ((minor) *   100) \
-      + ((patch) *     1))
+#define MYGSL_ENCODE_VERSION(major, minor, patch) (                     \
+                                                   ((major) * 10000)    \
+                                                   + ((minor) *   100)  \
+                                                   + ((patch) *     1))
 
 //! Integer encoded mygsl version available at compile time
-#define MYGSL_VERSION MYGSL_ENCODE_VERSION( \
-        MYGSL_VERSION_MAJOR, \
-        MYGSL_VERSION_MINOR, \
-        MYGSL_VERSION_PATCH)
+#define MYGSL_VERSION MYGSL_ENCODE_VERSION(                     \
+                                           MYGSL_VERSION_MAJOR, \
+                                           MYGSL_VERSION_MINOR, \
+                                           MYGSL_VERSION_PATCH)
 
 //! String encoded full version number, e.g. "1.2.3", available at compile time
 #define MYGSL_LIB_VERSION "@mygsl_VERSION@"
 
 //! Check current version >= (major, minor, patch) at compile time
-#define MYGSL_IS_AT_LEAST(major,minor,patch) ( \
-        MYGSL_VERSION >= \
-        MYGSL_ENCODE_VERSION(major,minor,patch))
+#define MYGSL_IS_AT_LEAST(major,minor,patch) (                          \
+                                              MYGSL_VERSION >=          \
+                                              MYGSL_ENCODE_VERSION(major,minor,patch))
 
 //----------------------------------------------------------------------
 // Runtime API
 namespace mygsl {
-//! \brief Describe the mygsl API version and features
-struct version {
-//! Return the major version number of mygsl, e.g., 1 for '1.2.3'
-static int get_major();
+  //! \brief Describe the mygsl API version and features
+  struct version {
+    //! Return the major version number of mygsl, e.g., 1 for '1.2.3'
+    static int get_major();
 
-//! Return the minor version number of mygsl, e.g., 2 for '1.2.3'
-static int get_minor();
+    //! Return the minor version number of mygsl, e.g., 2 for '1.2.3'
+    static int get_minor();
 
-//! Return the patch version number of mygsl, e.g., 3 for '1.2.3'
-static int get_patch();
+    //! Return the patch version number of mygsl, e.g., 3 for '1.2.3'
+    static int get_patch();
 
-//! Return the full version number of mygsl as a string, e.g., '1.2.3'
-static std::string get_version();
+    //! Return the full version number of mygsl as a string, e.g., '1.2.3'
+    static std::string get_version();
 
-//! Return true if the current mygsl version >= (major, minor, patch)
-static bool is_at_least(int major, int minor, int patch);
+    //! Return true if the current mygsl version >= (major, minor, patch)
+    static bool is_at_least(int major, int minor, int patch);
 
-//! Return true if the named feature is available in mygsl
-static bool has_feature(const std::string& feature);
-};
+    //! Return true if the named feature is available in mygsl
+    static bool has_feature(const std::string& feature);
+  };
 } // namespace mygsl
 
 #endif // MYGSL_VERSION_H

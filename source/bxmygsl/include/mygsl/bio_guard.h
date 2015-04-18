@@ -43,19 +43,19 @@
 //#warning This executable must ensure the mygsl Boost/Serialization library is loaded.
 namespace mygsl {
 
-/** \brief Data structure that ensures the invocation of some explicit code
- *         for mygsl_bio DLL liking.
- */
-struct bio_guard {
-  bio_guard() {
-    //mygsl::detail::serialization::dynamic_link_guard& dlg =
-    ::mygsl::detail::serialization::dynamic_link_guard::instance();
-  }
+  /** \brief Data structure that ensures the invocation of some explicit code
+   *         for mygsl_bio DLL liking.
+   */
+  struct bio_guard {
+    bio_guard() {
+      //mygsl::detail::serialization::dynamic_link_guard& dlg =
+      ::mygsl::detail::serialization::dynamic_link_guard::instance();
+    }
 
-  static bio_guard _g_trigger_link_guard_;
-};
+    static bio_guard _g_trigger_link_guard_;
+  };
 
-bio_guard bio_guard::_g_trigger_link_guard_;
+  bio_guard bio_guard::_g_trigger_link_guard_;
 
 } // end namespace mygsl
 #endif // MYGSL_WITH_BIO != 1

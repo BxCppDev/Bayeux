@@ -57,3 +57,8 @@ namespace mygsl {
 }
 
 #endif // MYGSL_ERROR_H
+
+/* Local Variables: */
+/* mode: c++        */
+/* coding: utf-8    */
+/* End:             */
