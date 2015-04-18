@@ -84,7 +84,7 @@ namespace mygsl {
   }
 
   void i_unary_function::_base_initialize(const datatools::properties & config_,
-                                          unary_function_dict_type & functors_)
+                                          unary_function_dict_type & /*functors_*/)
   {
     if (! datatools::is_valid(_epsilon_)) {
       if (config_.has_key("epsilon")) {
