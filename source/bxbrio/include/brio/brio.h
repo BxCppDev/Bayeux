@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file brio/brio.h global header file
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-28
@@ -15,3 +14,11 @@
 #include <brio/reader.h>
 
 #endif // BRIO_BRIO_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -45,6 +45,14 @@ class brio_record : public TObject {
   void reset();
 
   ClassDef(brio_record,1) //Basic BRIO record
-};
+    };
 
 #endif // BRIO_DETAIL_BRIO_RECORD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,13 +1,14 @@
 // -*- mode: c++; -*-
-/**  foo.h
+/** foo.h
  *
  * A serializable sample class
  *
  */
 
-#ifndef FOO_H_
-#define FOO_H_ 1
+#ifndef FOO_H
+#define FOO_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,7 +19,7 @@
 // Interface base class from datatools to support serialization tools:
 #include <datatools/i_serializable.h>
 
-/** A sample serializable class using datatools and/or brio serialization
+/** \brief A sample serializable class using datatools and/or brio serialization
  *  concept.
  */
 class foo : DATATOOLS_SERIALIZABLE_CLASS
@@ -35,6 +36,7 @@ public:
   /// Randomize internal attributes
   void randomize ();
 
+  /// Print
   void dump (std::ostream & a_out = std::clog,
              const std::string & a_title = "") const;
 
@@ -54,11 +56,9 @@ private:
                                    * implies #include <boost/serialization/vector.hpp>
                                    */
 
-  /* interface i_serializable */
+  // interface i_serializable
   DATATOOLS_SERIALIZATION_DECLARATION();
 
 };
 
-#endif // FOO_H_
-
-/* end of foo.h */
+#endif // FOO_H

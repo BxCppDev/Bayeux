@@ -30,57 +30,56 @@
 // This Project
 
 namespace brio {
-int version::get_major() {
-  return static_cast<int>(BRIO_VERSION_MAJOR);
-}
-
-int version::get_minor() {
-  return static_cast<int>(BRIO_VERSION_MINOR);
-}
-
-int version::get_patch() {
-  return static_cast<int>(BRIO_VERSION_PATCH);
-}
-
-std::string version::get_version() {
-  static std::string version("");
-
-  if (version.empty()) {
-    std::ostringstream stream;
-    stream << BRIO_VERSION_MAJOR << "."
-           << BRIO_VERSION_MINOR << "."
-           << BRIO_VERSION_PATCH;
-    version = stream.str();
+  int version::get_major() {
+    return static_cast<int>(BRIO_VERSION_MAJOR);
   }
 
-  return version;
-}
+  int version::get_minor() {
+    return static_cast<int>(BRIO_VERSION_MINOR);
+  }
 
-bool version::is_at_least(int major, int minor, int patch) {
-  if (BRIO_VERSION_MAJOR < major) return false;
-  if (BRIO_VERSION_MAJOR > major) return true;
-  if (BRIO_VERSION_MINOR < minor) return false;
-  if (BRIO_VERSION_MINOR > minor) return true;
-  if (BRIO_VERSION_PATCH < patch) return false;
-  return true;
-}
+  int version::get_patch() {
+    return static_cast<int>(BRIO_VERSION_PATCH);
+  }
 
-bool version::has_feature(const std::string&) {
-  /// - If you want to add features, then the following implementation
-  ///   provides one example based on string features cached in a set.
-  ///
-  /// static std::set<std::string> features;
-  ///
-  /// if (features.empty())
-  /// {
-  ///   // cache the feature list
-  ///   features.insert("FASTAPI");
-  ///   features.insert("THREADSAFE");
-  /// }
-  ///
-  /// return features.find(name) != features.end();
+  std::string version::get_version() {
+    static std::string version("");
 
-  return false;
-}
+    if (version.empty()) {
+      std::ostringstream stream;
+      stream << BRIO_VERSION_MAJOR << "."
+             << BRIO_VERSION_MINOR << "."
+             << BRIO_VERSION_PATCH;
+      version = stream.str();
+    }
+
+    return version;
+  }
+
+  bool version::is_at_least(int major, int minor, int patch) {
+    if (BRIO_VERSION_MAJOR < major) return false;
+    if (BRIO_VERSION_MAJOR > major) return true;
+    if (BRIO_VERSION_MINOR < minor) return false;
+    if (BRIO_VERSION_MINOR > minor) return true;
+    if (BRIO_VERSION_PATCH < patch) return false;
+    return true;
+  }
+
+  bool version::has_feature(const std::string&) {
+    /// - If you want to add features, then the following implementation
+    ///   provides one example based on string features cached in a set.
+    ///
+    /// static std::set<std::string> features;
+    ///
+    /// if (features.empty())
+    /// {
+    ///   // cache the feature list
+    ///   features.insert("FASTAPI");
+    ///   features.insert("THREADSAFE");
+    /// }
+    ///
+    /// return features.find(name) != features.end();
+
+    return false;
+  }
 } // namespace brio
-

@@ -1,9 +1,10 @@
 // -*- mode: c++; -*-
 /// \file foo.ipp
 
-#ifndef FOO_IPP_
-#define FOO_IPP_ 1
+#ifndef FOO_IPP
+#define FOO_IPP 1
 
+// This example:
 #include <foo.h>
 
 // Support for inheritance from an serializable class :
@@ -39,5 +40,4 @@ void foo::serialize (Archive & ar, const unsigned int version)
   return;
 }
 
-#endif // FOO_IPP_
-
+#endif // FOO_IPP

@@ -1,13 +1,13 @@
-// -*- mode: c++ ; -*-
-/* foo.cc
- */
+// foo.cc
 
+// Standard library:
 #include <cstdlib>
+
+// This example:
 #include <foo.h>
 
 DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (foo,"foo")
 
-// ctor:
 foo::foo ()
 {
   // Initialize members with arbitrary values:
@@ -22,7 +22,6 @@ foo::foo ()
   return;
 }
 
-// dtor:
 foo::~foo ()
 {
   return;
@@ -64,5 +63,3 @@ void foo::dump (std::ostream & a_out, const std::string & a_title) const
   a_out << "}" << std::endl;
   return;
 }
-
-// end of foo.cc

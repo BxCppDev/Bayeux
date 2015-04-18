@@ -1,12 +1,17 @@
+// Standard library:
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 
+// This project:
 #include <brio/writer.h>
 #include <brio/reader.h>
 
+// This example:
 #include <foo.h>  // a serializable sample class
 #include <foo.ipp> // Serialization code
 

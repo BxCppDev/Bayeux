@@ -1,24 +1,20 @@
-// -*- mode: c++ ; -*-
-/* utils.cc
- */
-// Ourselves
+// utils.cc
+
+// Ourselves:
 #include <brio/utils.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <string>
 
-// Third Party
-// - ROOT
+// Third Party:
+// - ROOT:
 #include <TTree.h>
-
-// - Boost
+// - Boost:
 #include <boost/filesystem.hpp>
-
-// This Project
 
 namespace brio {
 
@@ -150,6 +146,3 @@ namespace brio {
     return status;
   }
 } // end of namespace brio
-
-// end of utils.cc
-

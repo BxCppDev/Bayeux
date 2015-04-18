@@ -1,12 +1,12 @@
 
-//////////////////////////////////////////////////////////////////////////
-//                                                                      //
-// TArrayCMod                                                           //
-//                                                                      //
-// Array of chars or bytes (8 bits per element)                         //
-// with capacity support                                                //
-//                                                                      //
-//////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+//                                                                       //
+// TArrayCMod                                                            //
+//                                                                       //
+// Array of chars or bytes (8 bits per element)                          //
+// with capacity support                                                 //
+//                                                                       //
+// ////////////////////////////////////////////////////////////////////////
 
 // Ourselves
 #include <brio/detail/TArrayCMod.h>
@@ -50,11 +50,11 @@ void TArrayCMod::Reserve(Int_t n) {
 }
 
 void TArrayCMod::Set(Int_t n) {
-   // Set size of this array to n chars. 
-   if (n < 0) return;
-   Reserve (n);
-   fN = n;
-   memset (fArray, 0, fN * sizeof (Char_t));
+  // Set size of this array to n chars.
+  if (n < 0) return;
+  Reserve (n);
+  fN = n;
+  memset (fArray, 0, fN * sizeof (Char_t));
 }
 
 void TArrayCMod::Streamer(TBuffer &b) {
@@ -69,5 +69,3 @@ void TArrayCMod::Streamer(TBuffer &b) {
     b.WriteFastArray(fArray, fN);
   }
 }
-
-// end of TArrayCMod.cc
