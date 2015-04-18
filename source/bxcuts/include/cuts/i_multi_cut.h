@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file cuts/i_multi_cut.h
 
 /* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -80,3 +79,11 @@ namespace cuts {
 } // end of namespace cuts
 
 #endif // CUTS_I_MULTI_CUT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

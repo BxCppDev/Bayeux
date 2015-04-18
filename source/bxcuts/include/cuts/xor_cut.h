@@ -1,6 +1,5 @@
-// -*- mode: c++ ; -*-
 /// \file cuts/xor_cut.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-18
  * Last modified: 2013-04-22
  *
@@ -48,3 +47,11 @@ namespace cuts {
 } // end of namespace cuts
 
 #endif // CUTS_XOR_CUT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

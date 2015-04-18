@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file cuts/ocd_support.h
 /* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-04-04
@@ -50,3 +49,11 @@ DOCD_CLASS_DECLARATION(cuts::multi_or_cut)
 DOCD_CLASS_DECLARATION(cuts::multi_xor_cut)
 
 #endif // CUTS_OCD_SUPPORT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
