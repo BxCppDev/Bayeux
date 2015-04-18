@@ -545,14 +545,14 @@ namespace datatools {
                                                  bool array_,
                                                  int fixed_size_)
   {
-    DT_THROW_IF (type_ < TYPE_BOOLEAN || type_ > TYPE_ANY,
-                 std::logic_error,
-                 "Invalid type for property with name pattern '" << _name_pattern_ << "' !");
+    DT_THROW_IF((size_t)type_ < TYPE_BOOLEAN || (size_t)type_ > TYPE_ANY,
+                std::logic_error,
+                "Invalid type for property with name pattern '" << _name_pattern_ << "' !");
     _type_ = type_;
     _array_ = array_;
-    DT_THROW_IF (fixed_size_ >= 0 && !_array_,
-                 std::logic_error,
-                 "Invalid array fixed size directive makes no sense for a scalar property !");
+    DT_THROW_IF(fixed_size_ >= 0 && !_array_,
+                std::logic_error,
+                "Invalid array fixed size directive makes no sense for a scalar property !");
     _array_fixed_size_ = fixed_size_;
 
     return *this;
