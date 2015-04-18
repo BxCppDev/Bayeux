@@ -1,20 +1,23 @@
-/* test_serialization_3.cxx */
+// test_serialization_3.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
+#include <boost/serialization/export.hpp>
 
+// This project:
 #include <datatools/serialization_macros.h>
 #include <datatools/archives_instantiation.h>
 #include <datatools/io_factory.h>
 #include <datatools/i_serializable.h>
 #include <datatools/safe_serial.h>
-
-#include <boost/serialization/export.hpp>
 
 using namespace std;
 
@@ -122,7 +125,7 @@ int main (int argc_, char ** argv_)
           {
             if (debug) clog << "DEBUG: Counts = " << i << endl;
             ss_data.make ();
-            ss_data.get ().value = i;
+            ss_data.grab().value = i;
             clog << "Value = '" << ss_data.get ().value << "'" << endl;
             writer.store (ss_data.get ());
           }
@@ -155,7 +158,7 @@ int main (int argc_, char ** argv_)
                 ss_data.make ();
                 if (debug) clog << "DEBUG: loading the new safe record..."
                                 << endl;
-                reader.load (ss_data.get ());
+                reader.load (ss_data.grab());
                 if (debug) clog << "DEBUG: loading done."
                                 << endl;
                 clog << "DEBUG: Value=" << ss_data.get ().value << endl;

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/range_tools.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-09-25
@@ -38,23 +37,31 @@
 
 namespace datatools {
 
-enum range_bound_info_type {
-  range_bound_undefined = -1, //!< Undefined bound status
-  range_bound_unbounded =  0, //!< Bound is not set
-  range_bound_included  =  1, //!< Bound is set and included in the interval
-  range_bound_excluded  =  2  //!< Bound is set and excluded from the interval
-};
+  enum range_bound_info_type {
+    range_bound_undefined = -1, //!< Undefined bound status
+    range_bound_unbounded =  0, //!< Bound is not set
+    range_bound_included  =  1, //!< Bound is set and included in the interval
+    range_bound_excluded  =  2  //!< Bound is set and excluded from the interval
+  };
 
-//! \brief Utility that hosts constants relative to range and interval objects.
- struct range_tools {
-   static const char token_open_included  = '[';
-   static const char token_close_included = ']';
-   static const char token_open_excluded  = '(';
-   static const char token_close_excluded = ')';
-   static const char token_separator      = ',';
-   static const char token_invalid        = '!';
- };
+  //! \brief Utility that hosts constants relative to range and interval objects.
+  struct range_tools {
+    static const char token_open_included  = '[';
+    static const char token_close_included = ']';
+    static const char token_open_excluded  = '(';
+    static const char token_close_excluded = ')';
+    static const char token_separator      = ',';
+    static const char token_invalid        = '!';
+  };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_RANGE_TOOLS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

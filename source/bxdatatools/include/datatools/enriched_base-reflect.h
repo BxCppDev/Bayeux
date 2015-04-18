@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/enriched_base-reflect.h
 #ifndef DATATOOLS_ENRICHED_BASE_REFLECT_H
 #define DATATOOLS_ENRICHED_BASE_REFLECT_H
@@ -88,3 +87,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_ENRICHED_BASE_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,3 +1,4 @@
+/// \file datatools/detail/reflection_version.h
 #ifndef DATATOOLS_DETAIL_REFLECTION_VERSION_H
 #define DATATOOLS_DETAIL_REFLECTION_VERSION_H
 
@@ -68,3 +69,11 @@ namespace datatools {
 } // namespace datatools
 
 #endif // DATATOOLS_DETAIL_REFLECTION_VERSION_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

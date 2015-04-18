@@ -40,3 +40,11 @@
 #include <datatools/enriched_base-reflect.h>
 
 #endif // DATATOOLS_THE_INTROSPECTABLE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

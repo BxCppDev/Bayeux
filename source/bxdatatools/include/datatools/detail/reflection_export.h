@@ -1,8 +1,7 @@
-/* -*- mode: c++; -*- */
-/* reflection_export.h */ 
+/// \file datatools/detail/reflection_export.h
 // This code is derived by from Boost/Serialization export code.
 
-// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com . 
+// (C) Copyright 2002 Robert Ramey - http://www.rrsd.com .
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -14,13 +13,13 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/serialization/singleton.hpp>
 
-namespace datatools {                                              
-  namespace detail {                                     
-    namespace reflection {                                      
+namespace datatools {
+  namespace detail {
+    namespace reflection {
         //! \brief Struct used internally by the reflection mechanism
         template<class T>
         struct guid_initializer
-        {  
+        {
           void export_guid(int tag) const {
             ::datatools::detail::reflection::implement_reflection<T> (tag);
             return;
@@ -36,18 +35,18 @@ namespace datatools {
             return *this;
           }
         };
-        
+
         template<typename T>
         struct init_guid;
-        
+
     } // namespace reflection
   } // namespace detail
 } // namespace datatools
 
 
-namespace datatools {                                              
-  namespace detail {                                                
-    namespace reflection {                                        
+namespace datatools {
+  namespace detail {
+    namespace reflection {
       //! \brief Struct used internally by the reflection mechanism
       template<class T>
       struct guid_defined : boost::mpl::false_ {};
@@ -60,3 +59,11 @@ namespace datatools {
 } /* datatools */
 
 #endif // DATATOOLS_DETAIL_REFLECTION_EXPORT_H_
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

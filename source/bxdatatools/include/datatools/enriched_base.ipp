@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/enriched_base.ipp
 #ifndef DATATOOLS_ENRICHED_BASE_IPP
 #define DATATOOLS_ENRICHED_BASE_IPP
@@ -32,3 +31,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_ENRICHED_BASE_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

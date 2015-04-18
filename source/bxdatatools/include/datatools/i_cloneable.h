@@ -38,60 +38,60 @@
 
 namespace datatools {
 
-class i_serializable; // forward declaration
+  class i_serializable; // forward declaration
 
-//! \brief A pure abstract class (interface) for inherited cloneable classes.
-/**
- * This is a pure abstract class that can be
- *  inherited for class cloning service (only for
- *  copyable objects).
- *
- *  Some macros are provided for declaration and definition
- *  of a clone method within a class. Should be in public scope.
- *
- *  \b Example:
- *
- *  Header file (my_data.h):
- *  @code
- *  #include <datatools/i_cloneable.h>
- *
- *  class my_data : public datatools::i_cloneable {
- *   public:
- *    DATATOOLS_CLONEABLE_DECLARATION(my_data)
- *  };
- *  @endcode
- *
- *  Implementation file (my_data.cc):
- *  @code
- *  #include <my_data.h>
- *
- *  DATATOOLS_CLONEABLE_IMPLEMENTATION(my_data)
- *  @endcode
- *
- * The my_data class must have a copy constructor (or a
- * default copy constructor provided by the compiler).
- *
- */
-class i_cloneable {
- public:
+  //! \brief A pure abstract class (interface) for inherited cloneable classes.
   /**
-   * A pure virtual member.
-   * @return a pointer to a new instance of a cloneable class.
+   * This is a pure abstract class that can be
+   *  inherited for class cloning service (only for
+   *  copyable objects).
+   *
+   *  Some macros are provided for declaration and definition
+   *  of a clone method within a class. Should be in public scope.
+   *
+   *  \b Example:
+   *
+   *  Header file (my_data.h):
+   *  @code
+   *  #include <datatools/i_cloneable.h>
+   *
+   *  class my_data : public datatools::i_cloneable {
+   *   public:
+   *    DATATOOLS_CLONEABLE_DECLARATION(my_data)
+   *  };
+   *  @endcode
+   *
+   *  Implementation file (my_data.cc):
+   *  @code
+   *  #include <my_data.h>
+   *
+   *  DATATOOLS_CLONEABLE_IMPLEMENTATION(my_data)
+   *  @endcode
+   *
+   * The my_data class must have a copy constructor (or a
+   * default copy constructor provided by the compiler).
+   *
    */
-  virtual i_cloneable* clone(void /*something*/) const = 0;
+  class i_cloneable {
+  public:
+    /**
+     * A pure virtual member.
+     * @return a pointer to a new instance of a cloneable class.
+     */
+    virtual i_cloneable* clone(void /*something*/) const = 0;
 
-  /** The virtual destructor
-  */
-  virtual ~i_cloneable() {};
+    /** The virtual destructor
+     */
+    virtual ~i_cloneable() {};
 
- public:
-  /** Templatized static method for cloning copyable objects.
-  */
-  template<class Copyable>
-  static Copyable* clone_it(const Copyable& a_copyable) {
-    return new Copyable (a_copyable);
-  }
-};
+  public:
+    /** Templatized static method for cloning copyable objects.
+     */
+    template<class Copyable>
+      static Copyable* clone_it(const Copyable& a_copyable) {
+      return new Copyable (a_copyable);
+    }
+  };
 
 } // end of namespace datatools
 
@@ -99,15 +99,15 @@ class i_cloneable {
 //----------------------------------------------------------------------
 // i_cloneable macros
 
-#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)			\
-  public:								\
-  virtual Cloneable* clone (void) const;				\
+#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)	\
+  public:						\
+  virtual Cloneable* clone (void) const;		\
   /**/
 
-#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)			\
-  Copyable* Copyable::clone (void) const {				\
-    return datatools::i_cloneable::clone_it (*this);			\
-  }									\
+#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)	\
+  Copyable* Copyable::clone (void) const {		\
+    return datatools::i_cloneable::clone_it (*this);	\
+  }							\
   /**/
 
 #define DATATOOLS_CLONEABLE_TO_SERIALIZABLE_CASTER_DECLARATION(Cloneable) \
@@ -118,5 +118,12 @@ class i_cloneable {
   DATATOOLS_CASTER_IMPLEMENTATION(datatools::i_cloneable,datatools::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
   /**/
 
-
 #endif // DATATOOLS_UTILS_I_CLONEABLE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

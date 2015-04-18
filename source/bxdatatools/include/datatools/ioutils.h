@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/ioutils.h
 #ifndef DATATOOLS_IOUTILS_H
 #define DATATOOLS_IOUTILS_H
@@ -229,3 +228,11 @@ namespace datatools {
 } // namespace datatools
 
 #endif // DATATOOLS_IOUTILS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

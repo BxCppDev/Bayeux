@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/detail/ocd_utils.h
 /*
  * Description :
@@ -259,3 +258,11 @@ namespace datatools {
 } // namespace datatools
 
 #endif // DATATOOLS_DETAIL_OCD_UTILS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

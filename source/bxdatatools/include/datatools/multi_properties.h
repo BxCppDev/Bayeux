@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/multi_properties.h
 /* multi_properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -53,327 +52,327 @@
 
 namespace datatools {
 
-/*! \brief A container of mapped properties objects
- *
- * \code
- * #include <iostream>
- * #include <datatools/multi_properties.h>
- *
- * int main ()
- * {
- *   {
- *     datatools::multi_properties multi_parameters ("name", "type",
- *                                                   "Setup parameters of a networked random numbers server");
- *
- *     // Add a section for parameters dedicated to the network interface :
- *     datatools::properties & server_section = multi_parameters.add_section ("server", "server_type");
- *     server_section.store_flag ("verbose", "Verbose mode");
- *     server_section.store ("max_number_of_connexions", 5, "Maximum number of simultaneous connections");
- *     server_section.store ("port", 3456, "Port number");
- *     server_section.store ("protocol", "UDP", "Current protocol");
- *
- *     // Add a section for parameters dedicated to an embedded pseuso-random number generator :
- *     datatools::properties & prng_section = multi_parameters.add_section ("prng", "prng_type");
- *     prng_section.store ("seed", 314159, "initial PRNG seed");
- *     prng_section.store ("buffer_size", 1000, "Size of the buffer for pre-computed random numbers");
- *
- *     // Store all parameters in a ASCII test file :
- *     multi_parameters.write ("prng_server.conf");
- *   }
- *   {
- *      datatools::multi_properties multi_parameters;
- *      multi_parameters.read ("prng_server.conf");
- *      multi_parameters.tree_dump (std::cout, "PRNG server configuration : ");
- *      // Check if a section with given name exists :
- *      if (multi_parameters.has_section ("server"))
- *        {
- *           const datatools::properties & server_section = multi_parameters.get_section ("server");
- *           // Read a setup parameter from the section :
- *           std::cout << "Port number : " <<  server_section.fetch_integer ("port");
- *        }
- *   }
- *   return 0;
- * }
- * \endcode
- */
-class multi_properties :
+  /*! \brief A container of mapped properties objects
+   *
+   * \code
+   * #include <iostream>
+   * #include <datatools/multi_properties.h>
+   *
+   * int main ()
+   * {
+   *   {
+   *     datatools::multi_properties multi_parameters ("name", "type",
+   *                                                   "Setup parameters of a networked random numbers server");
+   *
+   *     // Add a section for parameters dedicated to the network interface :
+   *     datatools::properties & server_section = multi_parameters.add_section ("server", "server_type");
+   *     server_section.store_flag ("verbose", "Verbose mode");
+   *     server_section.store ("max_number_of_connexions", 5, "Maximum number of simultaneous connections");
+   *     server_section.store ("port", 3456, "Port number");
+   *     server_section.store ("protocol", "UDP", "Current protocol");
+   *
+   *     // Add a section for parameters dedicated to an embedded pseuso-random number generator :
+   *     datatools::properties & prng_section = multi_parameters.add_section ("prng", "prng_type");
+   *     prng_section.store ("seed", 314159, "initial PRNG seed");
+   *     prng_section.store ("buffer_size", 1000, "Size of the buffer for pre-computed random numbers");
+   *
+   *     // Store all parameters in a ASCII test file :
+   *     multi_parameters.write ("prng_server.conf");
+   *   }
+   *   {
+   *      datatools::multi_properties multi_parameters;
+   *      multi_parameters.read ("prng_server.conf");
+   *      multi_parameters.tree_dump (std::cout, "PRNG server configuration : ");
+   *      // Check if a section with given name exists :
+   *      if (multi_parameters.has_section ("server"))
+   *        {
+   *           const datatools::properties & server_section = multi_parameters.get_section ("server");
+   *           // Read a setup parameter from the section :
+   *           std::cout << "Port number : " <<  server_section.fetch_integer ("port");
+   *        }
+   *   }
+   *   return 0;
+   * }
+   * \endcode
+   */
+  class multi_properties :
     DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_clear,
     public datatools::i_tree_dumpable,
     public datatools::i_cloneable {
- public:
+  public:
 
-  static const char OPEN; /// Open section character
-  static const char CLOSE; /// Close section character
-  static const char COMMENT; /// Comment character
-  static const bool with_header_footer; /// Flag to add a header and a footer when writing
-  static const bool without_header_footer; /// Flag to remove header and footer when writing
-  static const bool write_public_only; /// Flag to write only sections with a public key
-  static const bool write_private_also; /// Flag to also write sections with a private key
-  static const bool read_public_only; /// Flag to read only sections with a public key
-  static const bool read_private_also; /// Flag to also read sections with a private key
+    static const char OPEN; /// Open section character
+    static const char CLOSE; /// Close section character
+    static const char COMMENT; /// Comment character
+    static const bool with_header_footer; /// Flag to add a header and a footer when writing
+    static const bool without_header_footer; /// Flag to remove header and footer when writing
+    static const bool write_public_only; /// Flag to write only sections with a public key
+    static const bool write_private_also; /// Flag to also write sections with a private key
+    static const bool read_public_only; /// Flag to read only sections with a public key
+    static const bool read_private_also; /// Flag to also read sections with a private key
 
-  /// \brief Default values
-  struct defaults {
-    /// Default label for primary keys
-    static const std::string & key_label();
-    /// Default label for meta information text
-    static const std::string & meta_label();
-  };
+    /// \brief Default values
+    struct defaults {
+      /// Default label for primary keys
+      static const std::string & key_label();
+      /// Default label for meta information text
+      static const std::string & meta_label();
+    };
 
- public:
-  //! \brief Section entry handle internal data stored within the dictionary of the multi_properties class.
-  class entry : public datatools::i_tree_dumpable {
-   public:
+  public:
+    //! \brief Section entry handle internal data stored within the dictionary of the multi_properties class.
+    class entry : public datatools::i_tree_dumpable {
+    public:
 
-    /// Constructor
-    entry(const std::string& a_key = "",
-          const std::string& a_meta = "");
+      /// Constructor
+      entry(const std::string& a_key = "",
+            const std::string& a_meta = "");
+
+      /// Destructor
+      virtual ~entry();
+
+      /// Return a const reference to the collection of properties
+      const properties& get_properties() const;
+
+      /// Return a mutable reference to the collection of properties
+      properties& grab_properties();
+
+      /// Return the primary key
+      const std::string& get_key() const;
+
+      /// Set the primary key
+      void set_key(const std::string&);
+
+      /// Return the meta information text
+      const std::string& get_meta() const;
+
+      /// Set the meta information text
+      void set_meta(const std::string&);
+
+      /// Check if meta information text is not empty
+      bool has_meta() const;
+
+      /// Smart print
+      virtual void tree_dump(std::ostream& a_out = std::clog,
+                             const std::string& a_title = "",
+                             const std::string& a_oindent = "",
+                             bool a_inherit = false) const;
+
+    private:
+      std::string key_;       //!< Primary key of the section
+      std::string meta_;      //!< Meta information text of the section
+      properties properties_; //!< Container of properties stored in the section
+
+      BOOST_SERIALIZATION_BASIC_DECLARATION();
+
+    }; // multi_properties::entry
+
+
+  public:
+
+    /// Dictionary of section
+    typedef std::map<std::string, entry> entries_col_type;
+
+    /// List of handles on sections
+    typedef std::list<entry*> entries_ordered_col_type;
+
+  private:
+
+    /// Private initialization
+    void _init_ (const std::string& a_key_label,
+                 const std::string& a_meta_label,
+                 const std::string& a_description,
+                 bool a_debug);
+
+    /// Private copy
+    void _copy_impl_(const multi_properties &);
+
+  public:
+
+    /// Default constructor
+    multi_properties();
+
+    /// Constructor specifying key label and meta label
+    multi_properties(const std::string& a_key_label,
+                     const std::string& a_meta_label);
+
+    /// Constructor specifying key label, meta label, description and debug flag
+    multi_properties(const std::string& a_key_label,
+                     const std::string& a_meta_label,
+                     const std::string& a_description,
+                     bool a_debug = false);
 
     /// Destructor
-    virtual ~entry();
+    virtual ~multi_properties();
 
-    /// Return a const reference to the collection of properties
-    const properties& get_properties() const;
+    /// Copy constructor
+    multi_properties(const multi_properties &);
 
-    /// Return a mutable reference to the collection of properties
-    properties& grab_properties();
+    /// Assignment operator
+    multi_properties & operator=(const multi_properties &);
 
-    /// Return the primary key
-    const std::string& get_key() const;
+    /// Check the debug flag
+    bool is_debug() const;
 
-    /// Set the primary key
-    void set_key(const std::string&);
+    /// Set the debug flag
+    void set_debug(bool = true);
 
-    /// Return the meta information text
-    const std::string& get_meta() const;
+    /// Set the description
+    void set_description(const std::string& a_description);
 
-    /// Set the meta information text
-    void set_meta(const std::string&);
+    /// Check if a description is available
+    bool has_description() const;
 
-    /// Check if meta information text is not empty
-    bool has_meta() const;
+    /// Get the description
+    const std::string& get_description() const;
+
+    /// Set the key label
+    void set_key_label(const std::string& a_key_label);
+
+    /// Return the key label
+    const std::string& get_key_label() const;
+
+    /// Set the meta label
+    void set_meta_label(const std::string& a_meta_label);
+
+    /// Return the meta label
+    const std::string& get_meta_label() const;
+
+    /// Return the number of entries
+    uint32_t size() const;
+
+    /// Check if the collection of entries is empty
+    bool empty() const;
+
+    /// Reset
+    void reset();
+
+    /// Clear the dictionary of sections
+    virtual void clear();
+
+    /// Return the const reference to the collection of entries
+    const entries_col_type& entries() const;
+
+    /// Return the const reference to the ordered collection of entries
+    const entries_ordered_col_type& ordered_entries() const;
+
+    /// Return a const reference to the stored entry
+    const entry& get(const std::string& a_key) const;
+
+    /// Return a mutable reference to the stored entry
+    entry& grab(const std::string& a_key);
+
+    /// Check if a section with a given key exists
+    bool has_key(const std::string& a_key) const;
+
+    /// Check if a section with given key and meta exists
+    bool has_key_with_meta(const std::string& a_key, const std::string& a_meta) const;
+
+    //! Returns the ith key
+    const std::string & key(int) const;
+
+    //! Returns the ith ordered key
+    const std::string & ordered_key(int) const;
+
+    /// Return an array of keys
+    std::vector<std::string> keys() const;
+
+    /// Build an array of keys
+    void keys(std::vector<std::string>&k) const;
+
+    /// Return an array of orderered keys
+    std::vector<std::string> ordered_keys() const;
+
+    /// Build an array of orderered keys
+    void ordered_keys(std::vector<std::string>&k) const;
+
+    /// Check if a section exists
+    bool has_section(const std::string& a_key) const;
+
+    /// Return the const reference to the properties store in a section
+    const properties& get_section(const std::string& a_key) const;
+
+    /// Return the const reference to the properties store in a section
+    const properties& get_section_const(const std::string& a_key) const;
+
+    /// Return the mutable reference to the properties store in a section
+    properties& grab_section(const std::string& a_key);
+
+    /// Add a new section with primary key, meta information text and a collection of properties
+    void add(const std::string& a_key,
+             const std::string& a_meta,
+             const properties& a_props);
+
+    /// Add a new section with primary key and a collection of properties
+    void add(const std::string& a_key,
+             const properties& a_props);
+
+    /// Add an empty section with primary key and meta information text
+    void add(const std::string& a_key,
+             const std::string& a_meta = "");
+
+    /// Add a new section with primary key and meta information text and return a mutable reference to the store collection of properties
+    properties& add_section(const std::string& a_key,
+                            const std::string& a_meta = "");
+
+    /// Remove a section
+    void remove(const std::string& a_key);
+
+    /// Write in a file
+    void write(const std::string& a_filename,
+               bool a_header_footer = true,
+               bool a_write_private = false) const;
+
+    /// Read from a file
+    void read(const std::string& a_filename,
+              bool a_skip_private = false);
+
+    /// Default print
+    void dump(std::ostream& a_out = std::clog) const;
 
     /// Smart print
-    virtual void tree_dump(std::ostream& a_out = std::clog,
-                           const std::string& a_title = "",
-                           const std::string& a_oindent = "",
-                           bool a_inherit = false) const;
+    virtual void tree_dump(std::ostream& a_out         = std::clog,
+                           const std::string& a_title  = "",
+                           const std::string& a_indent = "",
+                           bool a_inherit          = false) const;
 
-   private:
-    std::string key_;       //!< Primary key of the section
-    std::string meta_;      //!< Meta information text of the section
-    properties properties_; //!< Container of properties stored in the section
+  private:
+    /// Remove section implementation
+    void remove_impl(const std::string& a_key);
 
-    BOOST_SERIALIZATION_BASIC_DECLARATION();
+    /// Add section implementation
+    void add_impl(const std::string& a_key,
+                  const std::string& a_meta = "");
 
-  }; // multi_properties::entry
-
-
-public:
-
-  /// Dictionary of section
-  typedef std::map<std::string, entry> entries_col_type;
-
-  /// List of handles on sections
-  typedef std::list<entry*> entries_ordered_col_type;
-
-private:
-
-  /// Private initialization
-  void _init_ (const std::string& a_key_label,
-               const std::string& a_meta_label,
-               const std::string& a_description,
-               bool a_debug);
-
-  /// Private copy
-  void _copy_impl_(const multi_properties &);
-
- public:
-
-  /// Default constructor
-  multi_properties();
-
-  /// Constructor specifying key label and meta label
-  multi_properties(const std::string& a_key_label,
-                   const std::string& a_meta_label);
-
-  /// Constructor specifying key label, meta label, description and debug flag
-  multi_properties(const std::string& a_key_label,
-                   const std::string& a_meta_label,
-                   const std::string& a_description,
-                   bool a_debug = false);
-
-  /// Destructor
-  virtual ~multi_properties();
-
-  /// Copy constructor
-  multi_properties(const multi_properties &);
-
-  /// Assignment operator
-  multi_properties & operator=(const multi_properties &);
-
-  /// Check the debug flag
-  bool is_debug() const;
-
-  /// Set the debug flag
-  void set_debug(bool = true);
-
-  /// Set the description
-  void set_description(const std::string& a_description);
-
-  /// Check if a description is available
-  bool has_description() const;
-
-  /// Get the description
-  const std::string& get_description() const;
-
-  /// Set the key label
-  void set_key_label(const std::string& a_key_label);
-
-  /// Return the key label
-  const std::string& get_key_label() const;
-
-  /// Set the meta label
-  void set_meta_label(const std::string& a_meta_label);
-
-  /// Return the meta label
-  const std::string& get_meta_label() const;
-
-  /// Return the number of entries
-  uint32_t size() const;
-
-  /// Check if the collection of entries is empty
-  bool empty() const;
-
-  /// Reset
-  void reset();
-
-  /// Clear the dictionary of sections
-  virtual void clear();
-
-  /// Return the const reference to the collection of entries
-  const entries_col_type& entries() const;
-
-  /// Return the const reference to the ordered collection of entries
-  const entries_ordered_col_type& ordered_entries() const;
-
-  /// Return a const reference to the stored entry
-  const entry& get(const std::string& a_key) const;
-
-  /// Return a mutable reference to the stored entry
-  entry& grab(const std::string& a_key);
-
-  /// Check if a section with a given key exists
-  bool has_key(const std::string& a_key) const;
-
-  /// Check if a section with given key and meta exists
-  bool has_key_with_meta(const std::string& a_key, const std::string& a_meta) const;
-
-  //! Returns the ith key
-  const std::string & key(int) const;
-
-  //! Returns the ith ordered key
-  const std::string & ordered_key(int) const;
-
-  /// Return an array of keys
-  std::vector<std::string> keys() const;
-
-  /// Build an array of keys
-  void keys(std::vector<std::string>&k) const;
-
-  /// Return an array of orderered keys
-  std::vector<std::string> ordered_keys() const;
-
-  /// Build an array of orderered keys
-  void ordered_keys(std::vector<std::string>&k) const;
-
-  /// Check if a section exists
-  bool has_section(const std::string& a_key) const;
-
-  /// Return the const reference to the properties store in a section
-  const properties& get_section(const std::string& a_key) const;
-
-  /// Return the const reference to the properties store in a section
-  const properties& get_section_const(const std::string& a_key) const;
-
-  /// Return the mutable reference to the properties store in a section
-  properties& grab_section(const std::string& a_key);
-
-  /// Add a new section with primary key, meta information text and a collection of properties
-  void add(const std::string& a_key,
-           const std::string& a_meta,
-           const properties& a_props);
-
-  /// Add a new section with primary key and a collection of properties
-  void add(const std::string& a_key,
-           const properties& a_props);
-
-  /// Add an empty section with primary key and meta information text
-  void add(const std::string& a_key,
-           const std::string& a_meta = "");
-
-  /// Add a new section with primary key and meta information text and return a mutable reference to the store collection of properties
-  properties& add_section(const std::string& a_key,
+    /// Add section implementation
+    properties& add_impl2(const std::string& a_key,
                           const std::string& a_meta = "");
 
-  /// Remove a section
-  void remove(const std::string& a_key);
+    /// Read section implementation
+    void read_impl(std::istream& a_in, bool a_skip_private);
 
-  /// Write in a file
-  void write(const std::string& a_filename,
-             bool a_header_footer = true,
-             bool a_write_private = false) const;
+  private:
+    bool                  debug_;       //!< Debug flag
+    std::string           description_; //!< Description of the container
+    std::string           key_label_;   //!< The key label used by the container
+    std::string           meta_label_;  //!< The meta label used by the container
+    entries_col_type      entries_;     //!< List of stored properties objects (unordered)
+    entries_ordered_col_type ordered_entries_; //!< List of ordered properties objects
 
-  /// Read from a file
-  void read(const std::string& a_filename,
-            bool a_skip_private = false);
+    //! Cloneable interface
+    DATATOOLS_CLONEABLE_DECLARATION(multi_properties);
 
-  /// Default print
-  void dump(std::ostream& a_out = std::clog) const;
-
-  /// Smart print
-  virtual void tree_dump(std::ostream& a_out         = std::clog,
-                         const std::string& a_title  = "",
-                         const std::string& a_indent = "",
-                         bool a_inherit          = false) const;
-
- private:
-  /// Remove section implementation
-  void remove_impl(const std::string& a_key);
-
-  /// Add section implementation
-  void add_impl(const std::string& a_key,
-                const std::string& a_meta = "");
-
-  /// Add section implementation
-  properties& add_impl2(const std::string& a_key,
-                        const std::string& a_meta = "");
-
-  /// Read section implementation
-  void read_impl(std::istream& a_in, bool a_skip_private);
-
- private:
-  bool                  debug_;       //!< Debug flag
-  std::string           description_; //!< Description of the container
-  std::string           key_label_;   //!< The key label used by the container
-  std::string           meta_label_;  //!< The meta label used by the container
-  entries_col_type      entries_;     //!< List of stored properties objects (unordered)
-  entries_ordered_col_type ordered_entries_; //!< List of ordered properties objects
-
-  //! Cloneable interface
-  DATATOOLS_CLONEABLE_DECLARATION(multi_properties);
-
-  //! Serialization interface
-  DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(multi_properties);
-  DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
+    //! Serialization interface
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(multi_properties);
+    DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
 
 #ifndef Q_MOC_RUN
-  //! Reflection interface
-  DR_CLASS_RTTI();
+    //! Reflection interface
+    DR_CLASS_RTTI();
 #endif // Q_MOC_RUN
 
-};
+  };
 
 } // end of namespace datatools
 
@@ -395,3 +394,11 @@ DR_CLASS_INIT(::datatools::multi_properties);
 BOOST_CLASS_VERSION(datatools::multi_properties, 2)
 
 #endif // DATATOOLS_MULTI_PROPERTIES_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,4 @@
-/* test_serialization.cxx */
+// test_serialization.cxx
 
 // Standard library:
 #include <cstdlib>
@@ -114,12 +114,12 @@ int main(int argc_, char ** argv_)
         double p = 0.25 + 0.5 * (i % 2);
         if (p < 0.5) {
           ss_data.make();
-          randomize_data(ss_data.get());
+          randomize_data(ss_data.grab());
           ss_data.get().tree_dump(clog, "data_t", "<< ");
           writer.store(ss_data.get());
         } else {
           ss_more_data.make();
-          randomize_more_data(ss_more_data.get());
+          randomize_more_data(ss_more_data.grab());
           ss_more_data.get().tree_dump(clog, "more_data_t", "<< ");
           writer.store(ss_more_data.get());
         }
@@ -150,7 +150,7 @@ int main(int argc_, char ** argv_)
           ss_data.make();
           if (debug) clog << "DEBUG: loading the new safe record..."
                           << endl;
-          reader.load(ss_data.get());
+          reader.load(ss_data.grab());
           if (debug) clog << "DEBUG: loading done."
                           << endl;
           ss_data.get().tree_dump(clog, "data_t", ">> ");
@@ -163,7 +163,7 @@ int main(int argc_, char ** argv_)
           ss_more_data.make();
           if (debug) clog << "DEBUG: loading the new safe record..."
                           << endl;
-          reader.load(ss_more_data.get());
+          reader.load(ss_more_data.grab());
           if (debug) clog << "DEBUG: loading done."
                           << endl;
           ss_more_data.get().tree_dump(clog, "more_data_t", ">> ");

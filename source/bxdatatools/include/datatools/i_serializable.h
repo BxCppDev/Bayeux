@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/i_serializable.h
 /*
  * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -92,7 +91,7 @@ DR_CLASS_INIT(::datatools::i_serializable);
  *  ::datatools::i_serializable interface. This
  *  mechanism enables the serialization through base pointer
  *  with the Boost/Serialization library. It is used by the
- *  'datatools::utils::things' class.
+ *  'datatools::things' class.
  *
  * Example:
  * \code
@@ -132,9 +131,9 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *  declare serial tag support :
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
+ * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
- *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION ()
+ *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
  * };
  * \endcode
  */
@@ -149,18 +148,18 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 /** Macro invoked to implement serial tag support :
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
+ * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
- *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION ()
+ *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
  * };
- * DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (::Foo, "Foo");
+ * DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(::Foo, "Foo");
  * \endcode
  */
 #define DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassSerialTag) \
   const std::string ClassName::SERIAL_TAG = ClassSerialTag;             \
   const std::string& ClassName::serial_tag() {                          \
-    static const std::string _stag(ClassSerialTag);                      \
-    return _stag;                                                        \
+    static const std::string _stag(ClassSerialTag);                     \
+    return _stag;                                                       \
   }                                                                     \
   const std::string& ClassName::get_serial_tag() const {                \
     return ClassName::serial_tag();                                     \
@@ -186,10 +185,10 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *  declare backward compatibility serial tag support :
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
+ * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
- *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION ()
- *   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_DECLARATION ()
+ *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
+ *   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_DECLARATION()
  * };
  * \endcode
  */
@@ -210,12 +209,12 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 #define DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(ClassName,ClassBackwardSerialTag) \
   namespace datatools {                                                 \
     template <>                                                         \
-    const std::string & backward_serial_tag<ClassName> (int /*i*/){         \
-      static boost::scoped_ptr<std::string> _backward_serial_tag (0);  \
-      if ( !_backward_serial_tag){                                     \
+    const std::string & backward_serial_tag<ClassName> (int /*i*/){     \
+      static boost::scoped_ptr<std::string> _backward_serial_tag (0);   \
+      if ( !_backward_serial_tag){                                      \
         _backward_serial_tag.reset (new std::string (ClassBackwardSerialTag)); \
       }                                                                 \
-      return *_backward_serial_tag.get ();                             \
+      return *_backward_serial_tag.get ();                              \
     }                                                                   \
   }                                                                     \
   /**/
@@ -227,7 +226,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS()
+ * class Foo : DATATOOLS_SERIALIZABLE_CLASS
  * {
  *   ...
  * };
@@ -279,7 +278,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  * Example:
  * \code
- *   class Foo : public ::datatools::serialization::i_serializable
+ *   class Foo : public ::datatools::i_serializable
  *   {
  *      DATATOOLS_SERIALIZATION_DECLARATION();
  *   };
@@ -454,3 +453,11 @@ namespace datatools {
 }
 
 #endif // DATATOOLS_I_SERIALIZABLE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

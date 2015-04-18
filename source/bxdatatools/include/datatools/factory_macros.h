@@ -1,4 +1,4 @@
-/* datatools/factory_macros.h */
+/// \file datatools/factory_macros.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  *               : Ben Morgan <Ben.Morgan@warwick.ac.uk>
  * Creation date : 2012-03-19
@@ -75,8 +75,8 @@
   /**/
 
 // Useful macros
-#define DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(BaseType)        \
-  BaseType::grab_system_factory_register()                      \
+#define DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(BaseType)  \
+  BaseType::grab_system_factory_register()                \
   /**/
 
 #define DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(BaseType) \
@@ -85,10 +85,10 @@
 
 /// Interface macro of the automated registration for derived classes
 #define DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(BaseType, DerivedType) \
-  private:                                                                \
-    static ::datatools::_system_factory_registrator< BaseType , DerivedType > _g_system_factory_auto_registration_; \
-  public:                                                                 \
-    static const std::string & system_factory_auto_registration_id();     \
+  private:                                                              \
+  static ::datatools::_system_factory_registrator< BaseType , DerivedType > _g_system_factory_auto_registration_; \
+public:                                                                 \
+ static const std::string & system_factory_auto_registration_id();      \
  /**/
 
 /// Implementation macro of the automated registration for derived classes

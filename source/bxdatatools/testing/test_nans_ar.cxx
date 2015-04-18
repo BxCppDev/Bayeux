@@ -1,17 +1,20 @@
-/* test_nans_ar.cxx */
+// test_nans_ar.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 
+// This project:
 #include <datatools/i_serializable.h>
 #include <datatools/io_factory.h>
 #include <datatools/safe_serial.h>
-
 #include <datatools/i_serializable.ipp>
 
 #if BOOST_VERSION < 103600
@@ -224,12 +227,12 @@ int main (int argc_ , char ** argv_)
         for (int i = 0; i < counts; i++)
           {
             ss_data.make ();
-            if (drand48 () < 0.15) ss_data.get ().nan ();
-            else if (drand48 () < 0.30) ss_data.get ().inf ();
-            else if (drand48 () < 0.45) ss_data.get ().zero ();
+            if (drand48 () < 0.15) ss_data.grab().nan ();
+            else if (drand48 () < 0.30) ss_data.grab().inf ();
+            else if (drand48 () < 0.45) ss_data.grab().zero ();
             clog << ss_data.get () << endl;
             if (debug) ss_data.get ().info ();
-            writer.store (ss_data.get ());
+            writer.store(ss_data.get());
           }
         clog << "NOTICE: writing done." << endl << endl;
       }
@@ -248,10 +251,10 @@ int main (int argc_ , char ** argv_)
                                 << data_t::SERIAL_TAG << endl;
                 if (debug) clog << "DEBUG: making a new safe record..."
                                 << endl;
-                ss_data.make ();
+                ss_data.make();
                 if (debug) clog << "DEBUG: loading the new safe record..."
                                 << endl;
-                reader.load (ss_data.get ());
+                reader.load(ss_data.grab());
                 clog << ss_data.get () << endl;
                 if (debug) clog << "DEBUG: loading done." << endl;
               }

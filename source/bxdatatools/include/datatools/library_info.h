@@ -52,7 +52,7 @@ namespace datatools {
   {
 
   public:
-    /// Library/software component description property keys
+    /// \brief Library/software component description property keys
     struct keys {
       static const std::string & lib_label();
       static const std::string & exec_label();
@@ -83,7 +83,7 @@ namespace datatools {
       static const std::string & env_resource_dir();
       static const std::string & env_plugin_lib_dir();
       static const std::string & env_doc_dir();
-     };
+    };
 
     /// Constructor
     library_info();
@@ -155,12 +155,20 @@ namespace datatools {
 
   private:
 
-    bool                        _initialized_; /// Initialization flag
-    logger::priority            _logging_;     /// Logging priority
-    datatools::multi_properties _db_;          /// Main register
+    bool                        _initialized_; //!< Initialization flag
+    logger::priority            _logging_;     //!< Logging priority
+    datatools::multi_properties _db_;          //!< Main register
 
   };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_LIBRARY_INFO_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -4,7 +4,7 @@
  *
  *  Convenience header for listing headers for supported archives.
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ namespace eos
 /// Top-level namespace of the Boost library
 namespace boost
 {
-  /// Nested namespace of the Boost library (archives)
+  /// Nested namespace of the Boost/archives library
   namespace archive
   {
   }
@@ -73,3 +73,11 @@ namespace boost
 }
 
 #endif // DATATOOLS_ARCHIVES_LIST_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

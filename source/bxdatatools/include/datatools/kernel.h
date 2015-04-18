@@ -188,7 +188,7 @@ namespace datatools {
 #if DATATOOLS_WITH_QT_GUI == 1
     /// Check if the Qt GUI is activated
     bool is_qt_gui_activated() const;
-//    QApplication  * _qapp_; //!< Handle to the Qt application
+    //    QApplication  * _qapp_; //!< Handle to the Qt application
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
     /// Return the command line argument count
@@ -275,7 +275,7 @@ namespace datatools {
     boost::scoped_ptr<configuration::variant_repository> _variant_repository_; //!< Variant repository
 #if DATATOOLS_WITH_QT_GUI == 1
     bool            _activate_qt_gui_;     //!< Flag to activate the Qt GUI
-//    QApplication  * _qapp_; //!< Handle to the Qt application
+    //    QApplication  * _qapp_; //!< Handle to the Qt application
 #endif // DATATOOLS_WITH_QT_GUI == 1
     static kernel * _instance_;         //!< Singleton handle
 

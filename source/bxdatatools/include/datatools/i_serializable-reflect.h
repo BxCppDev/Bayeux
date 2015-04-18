@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/i_serializable-reflect.h
 #ifndef DATATOOLS_I_SERIALIZABLE_REFLECT_H
 #define DATATOOLS_I_SERIALIZABLE_REFLECT_H
@@ -18,14 +17,12 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, /*tag_*/)
       {
-//                              std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-//                                                                      << "datatools::i_serializable" << std::endl;
         DR_CLASS_DECLARE (::datatools::i_serializable)
           /*
-          .DR_CLASS_METHOD_CONST("get_serial_tag",
-                                 ::datatools::i_serializable,
-                                 ::datatools::i_serializable::get_serial_tag,
-                                 const std::string &)
+            .DR_CLASS_METHOD_CONST("get_serial_tag",
+            ::datatools::i_serializable,
+            ::datatools::i_serializable::get_serial_tag,
+            const std::string &)
           */
           ;
         return;
@@ -36,3 +33,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_I_SERIALIZABLE_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

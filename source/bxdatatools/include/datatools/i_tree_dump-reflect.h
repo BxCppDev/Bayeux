@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/event_id-reflect.h
 #ifndef DATATOOLS_I_TREE_DUMP_REFLECT_H
 #define DATATOOLS_I_TREE_DUMP_REFLECT_H
@@ -38,3 +37,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_I_TREE_DUMP_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

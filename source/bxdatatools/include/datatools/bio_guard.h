@@ -2,7 +2,7 @@
 /*
  * Description :
  *
- *  Some useful guard macro related to Boost/Serialisation executable
+ *  Some useful guard code related to Boost/Serialisation executable
  *  building and linkage.
  *
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -42,21 +42,29 @@
 //#warning This executable must ensure the datatools Boost/Serialization library is loaded.
 namespace datatools {
 
-/** \brief Data structure that ensures the invocation of some explicit code
- *         for datatools_bio DLL liking.
- */
-struct bio_guard {
-  bio_guard() {
-    // datatools::detail::serialization::dynamic_link_guard& dlg =
-    ::datatools::detail::serialization::dynamic_link_guard::instance();
-  }
+  /** \brief Data structure that ensures the invocation of some explicit code
+   *         for datatools_bio DLL liking.
+   */
+  struct bio_guard {
+    bio_guard() {
+      // datatools::detail::serialization::dynamic_link_guard& dlg =
+      ::datatools::detail::serialization::dynamic_link_guard::instance();
+    }
 
-  static bio_guard _g_trigger_link_guard_;
-};
+    static bio_guard _g_trigger_link_guard_;
+  };
 
-bio_guard bio_guard::_g_trigger_link_guard_;
+  bio_guard bio_guard::_g_trigger_link_guard_;
 
 } // end namespace datatools
 #endif // DATATOOLS_WITH_BIO != 1
 
 #endif // DATATOOLS_BIO_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -4,16 +4,21 @@
 
 namespace datatools {
 
-//! \brief A pure abstract class (interface) for inherited clearable classes.
-class i_clear {
- public:
-  /**
-   * A pure virtual member.
-   * Clear (reset) the object's internals (typically empty a container).
-   */
-  virtual void clear() = 0;
-};
+  //! \brief A pure abstract class (interface) for inherited clearable classes.
+  class i_clear {
+  public:
+    /// Clear (reset) the object's internals (typically empty a container)
+    virtual void clear() = 0;
+  };
 
 } // end of namespace datatools
 
 #endif // DATATOOLS_I_CLEAR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

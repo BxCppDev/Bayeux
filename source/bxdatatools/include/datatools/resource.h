@@ -54,3 +54,11 @@ namespace datatools {
 } // namespace datatools
 
 #endif // DATATOOLS_RESOURCE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

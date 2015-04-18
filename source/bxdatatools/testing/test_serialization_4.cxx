@@ -1,18 +1,22 @@
-/* test_serialization_4.cxx */
+// test_serialization_4.cxx
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
+#include <boost/serialization/export.hpp>
 #include <boost/filesystem.hpp>
 
+// This project:
 #include <datatools/serialization_macros.h>
 #include <datatools/archives_instantiation.h>
 #include <datatools/io_factory.h>
 #include <datatools/i_serializable.h>
 #include <datatools/safe_serial.h>
 
-#include <boost/serialization/export.hpp>
 
 using namespace std;
 

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/integer_range.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-09-22
@@ -214,3 +213,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_INTEGER_RANGE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

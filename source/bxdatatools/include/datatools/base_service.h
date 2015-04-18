@@ -48,102 +48,102 @@
 namespace datatools {
 
   // Forward class declaration:
-class properties;
+  class properties;
 
-/*! \brief The base service class
- *
- *  The base_service class provides the interface of all
- *  datatools-based service objects.
- */
-class base_service : public datatools::i_tree_dumpable {
- public:
+  /*! \brief The base service class
+   *
+   *  The base_service class provides the interface of all
+   *  datatools-based service objects.
+   */
+  class base_service : public datatools::i_tree_dumpable {
+  public:
 
-  /// Default constructor
-  base_service();
+    /// Default constructor
+    base_service();
 
-  /// Constructor
-  base_service(const std::string& name, const std::string& description = "",
-               const std::string& version = "");
+    /// Constructor
+    base_service(const std::string& name, const std::string& description = "",
+                 const std::string& version = "");
 
-  /// Destructor
-  virtual ~base_service();
+    /// Destructor
+    virtual ~base_service();
 
-  /// Set the name of the service
-  void set_name(const std::string&);
+    /// Set the name of the service
+    void set_name(const std::string&);
 
-  /// Get the name of the service
-  const std::string& get_name() const;
+    /// Get the name of the service
+    const std::string& get_name() const;
 
-  /// Check is the description is not empty
-  bool has_description() const;
+    /// Check is the description is not empty
+    bool has_description() const;
 
-  /// Get the description of the service
-  const std::string& get_description() const;
+    /// Get the description of the service
+    const std::string& get_description() const;
 
-  /// Set the description of the service
-  void set_description(const std::string& description);
+    /// Set the description of the service
+    void set_description(const std::string& description);
 
-  /// Check is the version ID is not empty
-  bool has_version() const;
+    /// Check is the version ID is not empty
+    bool has_version() const;
 
-  /// Get the version ID of the service
-  const std::string& get_version() const;
+    /// Get the version ID of the service
+    const std::string& get_version() const;
 
-  /// Set the version ID of the service
-  void set_version(const std::string& version);
+    /// Set the version ID of the service
+    void set_version(const std::string& version);
 
-  /// Undocumented unused/unimplemented method
-  virtual void fetch_dependencies(service_dependency_dict_type& /*dependencies*/) const;
+    /// Undocumented unused/unimplemented method
+    virtual void fetch_dependencies(service_dependency_dict_type& /*dependencies*/) const;
 
-  /// Initialize the service using only a list of properties without the needs of other services
-  virtual int initialize_standalone(const datatools::properties& config);
+    /// Initialize the service using only a list of properties without the needs of other services
+    virtual int initialize_standalone(const datatools::properties& config);
 
-  /// Initialize the service using a list of properties with access to a dictionry of other services
-  virtual int initialize(const datatools::properties& config,
-                         service_dict_type& service_dict) = 0;
+    /// Initialize the service using a list of properties with access to a dictionry of other services
+    virtual int initialize(const datatools::properties& config,
+                           service_dict_type& service_dict) = 0;
 
-  /// Reset the service
-  virtual int reset() = 0;
+    /// Reset the service
+    virtual int reset() = 0;
 
-  /// Check if service is initialized
-  virtual bool is_initialized() const = 0;
+    /// Check if service is initialized
+    virtual bool is_initialized() const = 0;
 
-  /// Set the logging priority threshold
-  void set_logging_priority(datatools::logger::priority);
+    /// Set the logging priority threshold
+    void set_logging_priority(datatools::logger::priority);
 
-  /// Return the logging priority threshold
-  datatools::logger::priority get_logging_priority() const;
+    /// Return the logging priority threshold
+    datatools::logger::priority get_logging_priority() const;
 
-  /// Basic OCD support shared by all inherited modules
-  static void common_ocd(datatools::object_configuration_description & ocd_);
+    /// Basic OCD support shared by all inherited modules
+    static void common_ocd(datatools::object_configuration_description & ocd_);
 
-  /// Smart print
-  virtual void tree_dump(std::ostream& out = std::clog,
-                         const std::string & title = "",
-                         const std::string & indent = "",
-                         bool inherit = false) const;
+    /// Smart print
+    virtual void tree_dump(std::ostream& out = std::clog,
+                           const std::string & title = "",
+                           const std::string & indent = "",
+                           bool inherit = false) const;
 
- protected:
+  protected:
 
-  /// Common initialization of services
-  void common_initialize(const datatools::properties & config);
+    /// Common initialization of services
+    void common_initialize(const datatools::properties & config);
 
- protected:
+  protected:
 
-  datatools::logger::priority _logging_priority; //!< Logging priority threshold
-  std::string name_;         //!< The name of the service
-  std::string description_;  //!< The description of the service
-  std::string version_;      //!< The version of the service
+    datatools::logger::priority _logging_priority; //!< Logging priority threshold
+    std::string name_;         //!< The name of the service
+    std::string description_;  //!< The description of the service
+    std::string version_;      //!< The version of the service
 
-  // Factory stuff :
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
+    // Factory stuff :
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
 
-};
+  };
 
 }  // end of namespace datatools
 
-#define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)	\
-  private:								\
+#define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)    \
+  private:                                                              \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME); \
   /**/
 
@@ -151,5 +151,12 @@ class base_service : public datatools::i_tree_dumpable {
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::datatools::base_service,SERVICE_CLASS_NAME,SERVICE_ID); \
   /**/
 
-
 #endif // DATATOOLS_BASE_SERVICE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

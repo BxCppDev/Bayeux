@@ -1,7 +1,7 @@
 /// \file datatools/enriched_base.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-09-12
- * Last modified: 2013-11-25
+ * Last modified: 2015-04-18
  *
  * License:
  *

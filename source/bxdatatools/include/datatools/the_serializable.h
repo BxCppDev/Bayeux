@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/the_serializable.h
 
 #ifndef DATATOOLS_THE_SERIALIZABLE_H
@@ -33,7 +32,7 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::properties)
  * datatools::multi_properties        *
  **************************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::multi_properties)
-BOOST_CLASS_EXPORT_IMPLEMENT(datatools::multi_properties)
+  BOOST_CLASS_EXPORT_IMPLEMENT(datatools::multi_properties)
 
 /****************************
  * datatools::things        *
@@ -47,3 +46,11 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::things)
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event_id)
 
 #endif // DATATOOLS_THE_SERIALIZABLE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

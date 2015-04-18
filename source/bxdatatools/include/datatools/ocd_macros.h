@@ -1,4 +1,3 @@
-/* -*- mode: c++; -*- */
 /// \file datatools/ocd_macros.h
 /*
  * Description :
@@ -89,17 +88,12 @@
   ::datatools::detail::ocd::ocd_registration::get_system_registration() \
   /**/
 
-/*
-          _ocd_sfr(){                                                   \
-            _reg_.reset(new system_factory_registrar< ClassType >(ClassId)); \
-          }                                                             \
-          ~_ocd_sfr(){                                                  \
-            _reg_.reset();                                              \
-          }                                                             \
-        private:                                                        \
-          boost::scoped_ptr<base_system_factory_registrar> _reg_;       \
-          static _ocd_sfr< ClassType > _instance;                       \
-
-*/
-
 #endif // DATATOOLS_OCD_MACROS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

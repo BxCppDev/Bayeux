@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file   datatools/datatools.h
 //! \author François Mauger
 //! \brief  Describe the datatools API configuration
@@ -71,3 +70,11 @@ namespace datatools {
   /**/
 
 #endif // DATATOOLS_DATATOOLS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

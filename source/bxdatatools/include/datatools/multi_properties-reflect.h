@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/multi_properties-reflect.h
 
 #ifndef DATATOOLS_MULTI_PROPERTIES_REFLECT_H
@@ -140,3 +139,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_MULTI_PROPERTIES_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

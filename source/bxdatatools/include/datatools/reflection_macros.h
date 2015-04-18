@@ -1,4 +1,3 @@
-/* -*- mode: c++; -*- */
 /// \file datatools/reflection_macros.h
 /*
  * Description :
@@ -56,23 +55,23 @@
 #include <datatools/detail/reflection_version.h>
 
 // Inform Camp that class Type exists :
-#define DR_CLASS_REGISTER(Type) \
-  CAMP_TYPE( Type )             \
+#define DR_CLASS_REGISTER(Type)                 \
+  CAMP_TYPE( Type )                             \
   /**/
 
 // Inform Camp that type Type exists :
-#define DR_TYPE_REGISTER(Type) \
-  CAMP_TYPE( Type )    \
+#define DR_TYPE_REGISTER(Type)                  \
+  CAMP_TYPE( Type )                             \
   /**/
 
 // Inform Camp that non copyable class Type exists :
-#define DR_CLASS_NONCOPYABLE_REGISTER(Type) \
-  CAMP_TYPE_NONCOPYABLE( Type )             \
+#define DR_CLASS_NONCOPYABLE_REGISTER(Type)     \
+  CAMP_TYPE_NONCOPYABLE( Type )                 \
   /**/
 
 // Inform Camp that non copyable type Type exists :
-#define DR_TYPE_NONCOPYABLE_REGISTER(Type) \
-  CAMP_TYPE_NONCOPYABLE( Type )    \
+#define DR_TYPE_NONCOPYABLE_REGISTER(Type)      \
+  CAMP_TYPE_NONCOPYABLE( Type )                 \
   /**/
 
 // Declare Camp RTTI within class declaration :
@@ -89,7 +88,7 @@
       }}}                                                               \
   /**/
 
-#define DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)       \
+#define DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)        \
   DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)             \
   /**/
 
@@ -180,8 +179,8 @@
   /**/
 
 // Declare metadata read-only property for a class :
-#define DR_CLASS_PROPERTY_REFGETTER(PropertyName,RefPropertyGetterId) \
-  property(PropertyName, RefPropertyGetterId)                         \
+#define DR_CLASS_PROPERTY_REFGETTER(PropertyName,RefPropertyGetterId)   \
+  property(PropertyName, RefPropertyGetterId)                           \
   /**/
 
 // Declare metadata read-write property for a class :
@@ -191,7 +190,7 @@
 
 // Declare metadata read-write property for a class :
 #define DR_CLASS_PROPERTY_REFGETTER_REFSETTER(PropertyName,RefPropertyGetterId,RefPropertySetterId) \
-  property(PropertyName, RefPropertyGetterId, RefPropertySetterId)          \
+  property(PropertyName, RefPropertyGetterId, RefPropertySetterId)      \
   /**/
 
 // Declare metadata read-write property for a class :
@@ -228,8 +227,8 @@
   /**/
 
 // Declare metadata property for a class method :
-#define DR_CLASS_VOID_REFMETHOD(MethodName,TypeId,RefMethodId)        \
-  DR_CLASS_REFMETHOD(MethodName,TypeId,RefMethodId,void)              \
+#define DR_CLASS_VOID_REFMETHOD(MethodName,TypeId,RefMethodId)  \
+  DR_CLASS_REFMETHOD(MethodName,TypeId,RefMethodId,void)        \
   /**/
 
 // Declare metadata property for a class method (const) :
@@ -291,7 +290,7 @@
   function(MethodName,                                                  \
            boost::function< ReturnType ( TypeId & , Arg0Type )>         \
            (boost::bind(RefMethodId , _1, _2)))                         \
-  /**/
+    /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_REFMETHOD1(MethodName,TypeId,RefMethodId,Arg0Type) \
@@ -320,7 +319,7 @@
   function(MethodName,                                                  \
            boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type )> \
            (boost::bind(& MethodId , _1, _2, _3)))                      \
-  /**/
+    /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_METHOD2(MethodName,TypeId,MethodId,Arg0Type,Arg1Type) \
@@ -343,19 +342,19 @@
 #define DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type )> \
-           (boost::bind(RefMethodId , _1, _2, _3)))                      \
+           (boost::bind(RefMethodId , _1, _2, _3)))                     \
   /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_REFMETHOD2(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type) \
-  DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type)   \
+  DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type) \
   /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_REFMETHOD2_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type )> \
-           (boost::bind(RefMethodId , _1, _2, _3 )))                     \
+           (boost::bind(RefMethodId , _1, _2, _3 )))                    \
   /**/
 
 // Declare metadata property for a class method (const) :
@@ -396,7 +395,7 @@
 #define DR_CLASS_REFMETHOD3(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type )> \
-           (boost::bind(RefMethodId , _1, _2, _3, _4)))                  \
+           (boost::bind(RefMethodId , _1, _2, _3, _4)))                 \
   /**/
 
 // Declare metadata property for a class method :
@@ -408,8 +407,8 @@
 #define DR_CLASS_REFMETHOD3_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type , Arg2Type )> \
-           (boost::bind(RefMethodId , _1, _2, _3, _4 )))                 \
-  /**/
+           (boost::bind(RefMethodId , _1, _2, _3, _4 )))                \
+    /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_REFMETHOD3_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type) \
@@ -431,7 +430,7 @@
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_METHOD4(MethodName,TypeId,MethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   DR_CLASS_METHOD4(MethodName,TypeId,MethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-  /**/
+    /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_METHOD4_CONST(MethodName,TypeId,MethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
@@ -443,13 +442,13 @@
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_METHOD4_CONST(MethodName,TypeId,MethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   DR_CLASS_METHOD4_CONST(MethodName,TypeId,MethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-  /**/
+    /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_REFMETHOD4(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type , Arg3Type )> \
-           (boost::bind(RefMethodId , _1, _2, _3, _4, _5)))              \
+           (boost::bind(RefMethodId , _1, _2, _3, _4, _5)))             \
   /**/
 
 // Declare metadata property for a class method :
@@ -461,7 +460,7 @@
 #define DR_CLASS_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type , Arg2Type , Arg3Type )> \
-           (boost::bind(RefMethodId , _1, _2, _3, _4, _5 )))             \
+           (boost::bind(RefMethodId , _1, _2, _3, _4, _5 )))            \
   /**/
 
 // Declare metadata property for a class method (const) :
@@ -470,12 +469,12 @@
   /**/
 
 // Declare introspection metadata for an enum :
-#define DR_ENUM_DECLARE2(TypeId,TypeName)      \
-  ::camp::Enum::declare< TypeId >(TypeName)    \
+#define DR_ENUM_DECLARE2(TypeId,TypeName)       \
+  ::camp::Enum::declare< TypeId >(TypeName)     \
   /**/
 
 // Declare introspection metadata for a enum :
-#define DR_ENUM_DECLARE(TypeId)                                        \
+#define DR_ENUM_DECLARE(TypeId)                                         \
   DR_ENUM_DECLARE2( TypeId , ::datatools::detail::reflection::guid< TypeId >() ) \
   /**/
 
@@ -535,13 +534,13 @@
   namespace datatools {                                                 \
     namespace detail {                                                  \
       namespace reflection {                                            \
-          template<>                                                    \
-          struct init_guid< T > {                                       \
-            static guid_initializer< T > const & g;                     \
-          };                                                            \
-          guid_initializer< T > const & init_guid< T >::g =             \
-            ::boost::serialization::singleton< guid_initializer< T > >  \
-            ::get_mutable_instance().export_guid();                     \
+        template<>                                                      \
+        struct init_guid< T > {                                         \
+          static guid_initializer< T > const & g;                       \
+        };                                                              \
+        guid_initializer< T > const & init_guid< T >::g =               \
+          ::boost::serialization::singleton< guid_initializer< T > >    \
+          ::get_mutable_instance().export_guid();                       \
       }}}                                                               \
   /**/
 
@@ -564,8 +563,8 @@
   DR_CLASS_EXPORT_IMPLEMENT (T)                 \
   /**/
 
-#define DR_TYPE_EXPORT(T, K)                \
-  DR_CLASS_EXPORT (T, K)                    \
+#define DR_TYPE_EXPORT(T, K)                    \
+  DR_CLASS_EXPORT (T, K)                        \
   /**/
 
 // specify the current version number for the class
@@ -582,9 +581,17 @@
           BOOST_STATIC_CONSTANT(int, value = version::type::value);     \
           BOOST_MPL_ASSERT((                                            \
                             boost::mpl::less<boost::mpl::int_<N>,       \
-                                             boost::mpl::int_<256> >)); \
-      };                                                                \
+                            boost::mpl::int_<256> >));                  \
+        };                                                              \
       }}}                                                               \
   /**/
 
 #endif // DATATOOLS_REFLECTION_MACROS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

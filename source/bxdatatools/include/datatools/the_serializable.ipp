@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file datatools/the_serializable.ipp
 /*
  * This includes the implementation code
@@ -34,3 +33,11 @@
 #include <datatools/event_id.ipp>
 
 #endif // DATATOOLS_THE_SERIALIZABLE_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

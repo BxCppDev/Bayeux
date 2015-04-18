@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/things.ipp
 
 #ifndef DATATOOLS_THINGS_IPP
@@ -48,3 +47,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_THINGS_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

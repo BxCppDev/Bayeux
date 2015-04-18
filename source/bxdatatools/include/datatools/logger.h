@@ -232,3 +232,11 @@ DR_TYPE_INIT(::datatools::logger::priority);
 #endif // Q_MOC_RUN
 
 #endif // DATATOOLS_LOGGER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

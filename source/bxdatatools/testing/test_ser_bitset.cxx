@@ -1,16 +1,21 @@
-/* test_ser_bitset.cxx */
+// test_ser_bitset.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
-#include <boost/filesystem.hpp>
 
+// Third party:
+// - Boost:
+#include <boost/filesystem.hpp>
+#include <boost/serialization/bitset.hpp>
+
+// This project:
 #include <datatools/io_factory.h>
 #include <datatools/safe_serial.h>
-#include <boost/serialization/bitset.hpp>
 
 using namespace std;
 
@@ -111,7 +116,7 @@ int main (int argc_, char ** argv_)
             bitset_data.make ();
             for (int i = 0; i < (int) BSSZ; i++)
               {
-                bitset_data.get ().set(i, drand48 () < 0.5 ? true: false);
+                bitset_data.grab().set(i, drand48 () < 0.5 ? true: false);
               }
 #if __GNUC__ > 3
             clog << "bitset = " << bitset_data.get ().to_string () << endl;
@@ -138,7 +143,7 @@ int main (int argc_, char ** argv_)
                 bitset_data.make ();
                 if (debug) clog << "DEBUG: loading the new safe bitset..."
                                 << endl;
-                reader.load ("std::bitset", bitset_data.get ());
+                reader.load ("std::bitset", bitset_data.grab());
                 if (debug) clog << "DEBUG: loading done."
                                 << endl;
 #if __GNUC__ > 3

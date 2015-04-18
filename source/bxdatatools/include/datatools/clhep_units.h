@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 //! \file datatools/clhep_units.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2011-03-27
@@ -21,3 +20,11 @@
 #include <CLHEP/Units/PhysicalConstants.h>
 
 #endif // DATATOOLS_CLHEP_UNITS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

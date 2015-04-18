@@ -46,6 +46,8 @@ void test_qt_led(bool gui_)
 {
   if (gui_) {
     int argc = 1;
+    // char qtitle[100];
+    // qtitle = { "test" };
     char * argv[] = { "test" };
 #if DATATOOLS_WITH_QT_GUI == 1
     QApplication app(argc, argv);

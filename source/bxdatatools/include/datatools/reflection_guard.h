@@ -43,20 +43,28 @@
 
 namespace datatools {
 
-/** \brief Data structure that ensures the invocation of some explicit code
- *         for datatools_reflection DLL liking.
- */
-struct reflection_guard {
-  reflection_guard() {
-    //::datatools::detail::reflection::dynamic_link_guard& dlg =
-    ::datatools::detail::reflection::dynamic_link_guard::instance();
-  }
-  static reflection_guard _g_trigger_link_guard_;
-};
+  /** \brief Data structure that ensures the invocation of some explicit code
+   *         for datatools_reflection DLL liking.
+   */
+  struct reflection_guard {
+    reflection_guard() {
+      //::datatools::detail::reflection::dynamic_link_guard& dlg =
+      ::datatools::detail::reflection::dynamic_link_guard::instance();
+    }
+    static reflection_guard _g_trigger_link_guard_;
+  };
 
-reflection_guard reflection_guard::_g_trigger_link_guard_;
+  reflection_guard reflection_guard::_g_trigger_link_guard_;
 
 } // end namespace datatools
 #endif // DATATOOLS_WITH_REFLECTION != 1
 
 #endif // DATATOOLS_REFLECTION_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

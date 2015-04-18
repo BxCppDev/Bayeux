@@ -38,66 +38,64 @@
 
 namespace datatools {
 
-/*!<  \struct i_caster
-  \brief  Templatized abstract interface class with a cast method using covariant return types .
+  /*!<  \struct i_caster
+    \brief  Templatized abstract interface class with a cast method using covariant return types .
   */
-template<typename From, typename ToBase>
-struct i_caster {
-  virtual ToBase* cast(From*) = 0;
-};
+  template<typename From, typename ToBase>
+    struct i_caster {
+      virtual ToBase* cast(From*) = 0;
+    };
 
-/*!<  \struct caster
-  \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type.
+  /*!<  \struct caster
+    \brief  Templatized concrete caster class for casting pointers from a covariant class hierarchy to some other type.
   */
-template <typename From, typename ToBase, typename ToDaughter>
-struct caster : public i_caster<From, ToBase> {
-  virtual ToDaughter* cast(From* ptr) {
-    return reinterpret_cast<ToDaughter*>(ptr);
+  template <typename From, typename ToBase, typename ToDaughter>
+    struct caster : public i_caster<From, ToBase> {
+    virtual ToDaughter* cast(From* ptr) {
+      return reinterpret_cast<ToDaughter*>(ptr);
+    }
+
+    virtual ~caster() {}
+  };
+
+  template<class Base, class Derived>
+    bool is_covariant(const Base& b) {
+    const Base* pb = &b;
+    const Derived* dummy = dynamic_cast<const Derived*>(pb);
+    if (!dummy) {
+      return false;
+    }
+    return true;
   }
-
-  virtual ~caster() {}
-};
-
-
-template<class Base, class Derived>
-bool is_covariant(const Base& b) {
-  const Base* pb = &b;
-  const Derived* dummy = dynamic_cast<const Derived*>(pb);
-  if (!dummy) {
-    return false;
-  }
-  return true;
-}
 
 } // end of namespace datatools
 
-
 /// Macro to declare a caster class
 #define DATATOOLS_CASTER_DECLARATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
- private:                                                              \
+  private:                                                              \
   static boost::scoped_ptr<datatools::caster<From,ToBase,ToDaughter> > CasterId; \
- public:                                                                 \
-  virtual datatools::i_caster<From,ToBase>* CasterGetter() const; \
-/**/
+public:                                                                 \
+ virtual datatools::i_caster<From,ToBase>* CasterGetter() const;        \
+ /**/
 
 /// Macro to implement a caster class
 #define DATATOOLS_CASTER_IMPLEMENTATION(From,ToBase,ToDaughter,CasterId,CasterGetter) \
-    boost::scoped_ptr<datatools::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
-datatools::i_caster<From,ToBase>* ToDaughter::CasterGetter() const { \
-  if (ToDaughter::CasterId.get() == 0) {                            \
-    ToDaughter::CasterId.reset(                                    \
-        new datatools::caster<From,ToBase,ToDaughter>); \
-  }                                                                 \
-  return ToDaughter::CasterId.get();                                 \
-}                                                                     \
-/**/
-
-/*
-//std::clog << "ToDaughter::CasterGetter: "                             \
-//          << "Destroy the caster for type '"                          \
-//          << typeid (ToDaughter).name () << "' with base '"           \
-//          << typeid (ToBase).name () << "' from type '"               \
-//          << typeid (From).name () << "' !" << std::endl;             \
-*/
+  boost::scoped_ptr<datatools::caster<From,ToBase,ToDaughter> > ToDaughter::CasterId; \
+  datatools::i_caster<From,ToBase>* ToDaughter::CasterGetter() const {  \
+    if (ToDaughter::CasterId.get() == 0) {                              \
+      ToDaughter::CasterId.reset(                                       \
+                                 new datatools::caster<From,ToBase,ToDaughter>); \
+    }                                                                   \
+    return ToDaughter::CasterId.get();                                  \
+  }                                                                     \
+  /**/
 
 #endif // DATATOOLS_CASTER_UTILS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

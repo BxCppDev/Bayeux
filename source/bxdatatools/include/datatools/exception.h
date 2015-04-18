@@ -38,91 +38,99 @@
 #include <boost/current_function.hpp>
 
 /*! Throw ExceptionType with Message if the expression Condition is true
-    This macro is intended to simplify the common use case of throwing
-    exceptions when a boolean condition is true, with the exception
-    holding a string message indicating where and why the exception was
-    thrown. This macro takes three arguments as follows
+  This macro is intended to simplify the common use case of throwing
+  exceptions when a boolean condition is true, with the exception
+  holding a string message indicating where and why the exception was
+  thrown. This macro takes three arguments as follows
 
-    @param Condition     Boolean expression
-    @param ExceptionType Typename of object to throw, the type must take
-                         a string as its constructor argument
-    @param Message       Message to supply to ExceptionType, this must
-                         take the form of a string or output stream
-                         sequence
+  @param Condition     Boolean expression
+  @param ExceptionType Typename of object to throw, the type must take
+  a string as its constructor argument
+  @param Message       Message to supply to ExceptionType, this must
+  take the form of a string or output stream
+  sequence
 
-    The Message is formatted as
+  The Message is formatted as
 
-    @code
-      [SIGNATURE:LINENUMBER: Message]
-    @endcode
+  @code
+  [SIGNATURE:LINENUMBER: Message]
+  @endcode
 
-    where SIGNATURE is the signature of the function from which the
-    exception is thrown, and LINENUMBER is the line number where the
-    throw occured.
+  where SIGNATURE is the signature of the function from which the
+  exception is thrown, and LINENUMBER is the line number where the
+  throw occured.
 
-    In the simplest case it may be used as
+  In the simplest case it may be used as
 
-    @code
-    DT_THROW_IF(i < 0, std::logic_error, "parameter i is negative");
-    @endcode
+  @code
+  DT_THROW_IF(i < 0, std::logic_error, "parameter i is negative");
+  @endcode
 
-    If Message is composed from several streamable objects, it can
-    be composed using the streaming operator:
+  If Message is composed from several streamable objects, it can
+  be composed using the streaming operator:
 
-    @code
-    DT_THROW_IF(i < 0, std::logic_error, "parameter i(" << i << ") is negative");
-    @endcode
+  @code
+  DT_THROW_IF(i < 0, std::logic_error, "parameter i(" << i << ") is negative");
+  @endcode
 */
-#define DT_THROW_IF(Condition, ExceptionType, Message) \
-{ \
-  if (Condition) { \
-    std::stringstream s; \
-    s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
-    throw ExceptionType(s.str()); \
-  } \
-}
+#define DT_THROW_IF(Condition, ExceptionType, Message)			\
+  {									\
+    if (Condition) {							\
+      std::stringstream s;						\
+      s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
+      throw ExceptionType(s.str());					\
+    }									\
+  }
 
 
 /*! Throw ExceptionType with Message
-    This macro is intended to simplify the common use case of throwing
-    exceptions, with the exception
-    holding a string message indicating where and why the exception was
-    thrown. This macro takes two arguments as follows
+  This macro is intended to simplify the common use case of throwing
+  exceptions, with the exception
+  holding a string message indicating where and why the exception was
+  thrown. This macro takes two arguments as follows
 
-    @param ExceptionType Typename of object to throw, the type must take
-                         a string as its constructor argument
-    @param Message       Message to supply to ExceptionType, this must
-                         take the form of a string or output stream
-                         sequence
+  @param ExceptionType Typename of object to throw, the type must take
+  a string as its constructor argument
+  @param Message       Message to supply to ExceptionType, this must
+  take the form of a string or output stream
+  sequence
 
-    The Message is formatted as
+  The Message is formatted as
 
-    @code
-      [SIGNATURE:LINENUMBER: Message]
-    @endcode
+  @code
+  [SIGNATURE:LINENUMBER: Message]
+  @endcode
 
-    where SIGNATURE is the signature of the function from which the
-    exception is thrown, and LINENUMBER is the line number where the
-    throw occured.
+  where SIGNATURE is the signature of the function from which the
+  exception is thrown, and LINENUMBER is the line number where the
+  throw occured.
 
-    In the simplest case it may be used as
+  In the simplest case it may be used as
 
-    @code
-    DT_THROW(std::domain_error, "parameter i is negative");
-    @endcode
+  @code
+  DT_THROW(std::domain_error, "parameter i is negative");
+  @endcode
 
-    If Message is composed from several streamable objects, it can
-    be composed using the streaming operator:
+  If Message is composed from several streamable objects, it can
+  be composed using the streaming operator:
 
-    @code
-    DT_THROW(std::domain_error, "parameter i(" << i << ") is negative");
-    @endcode
+  @code
+  DT_THROW(std::domain_error, "parameter i(" << i << ") is negative");
+  @endcode
 */
-#define DT_THROW(ExceptionType, Message) \
-{ \
-  std::stringstream s;							\
-  s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
-  throw ExceptionType(s.str());						\
-}
+#define DT_THROW(ExceptionType, Message)				\
+  {									\
+    std::stringstream s;						\
+    s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
+    throw ExceptionType(s.str());					\
+  }
 
 #endif // DATATOOLS_EXCEPTION_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

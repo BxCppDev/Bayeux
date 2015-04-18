@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file datatools/event_id.ipp
 #ifndef DATATOOLS_EVENT_ID_IPP
 #define DATATOOLS_EVENT_ID_IPP
@@ -28,3 +27,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // DATATOOLS_EVENT_ID_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

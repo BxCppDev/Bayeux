@@ -4,12 +4,12 @@
 //!          symbol visibility and attributes in a plethora of ways.
 //!          Provide portable definitions for use by developers of
 //!          datatools
-//!      
+//!
 //!          At present Clang, Intel, Microsoft and GNU compilers are
-//!          supported. Other compilers are configured to emit a 
+//!          supported. Other compilers are configured to emit a
 //!          warning about lack of support.
 //
-// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com> 
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 //
 // This file is part of datatools.
@@ -27,7 +27,7 @@
 // You should have received a copy of the GNU General Public License
 // along with datatools.  If not, see <http://www.gnu.org/licenses/>.
 
-// - Deprecation attribute - 
+// - Deprecation attribute -
 // NB check non gnu first because __GNUC__ can be defined by compilers
 // suporting the GNU extensions!
 #if defined(__clang__)
@@ -64,3 +64,10 @@
 #warning "No DATATOOLS_DEPRECATION available - check your use of the datatools API"
 #endif
 
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

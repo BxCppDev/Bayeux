@@ -1,9 +1,7 @@
-// -*- mode: c++ ; -*-
 //! \file datatools/units.h
-/* units.h
- * Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-18
- * Last modified: 2014-02-24
+ * Last modified: 2015-04-18
  *
  * License:
  *
@@ -475,7 +473,7 @@ namespace datatools {
 
       /// Add an unit by name
       unit_dimension & add_unit(const std::string & unit_name_,
-                               bool default_unit_ = false);
+                                bool default_unit_ = false);
 
       /// Remove an unit by name
       void remove_unit(const std::string & unit_name_);
@@ -643,3 +641,11 @@ namespace datatools {
 /**/
 
 #endif // DATATOOLS_UNITS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

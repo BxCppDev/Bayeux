@@ -1,5 +1,4 @@
-/* -*- mode: c++; -*- */
-/* datatools::reflection_utils.h */
+/// \file datatools/detail/reflection_utils.h
 /*
  * Description :
  *
@@ -45,3 +44,11 @@ namespace datatools{
 }
 
 #endif // DATATOOLS_DETAIL_REFLECTION_UTILS_H_
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

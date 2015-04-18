@@ -47,110 +47,118 @@
 
 namespace datatools {
 
-/// \brief Base class for all services
-class base_service;
-typedef datatools::handle<base_service> service_handle_type;
+  /// \brief Base class for all services
+  class base_service;
+  typedef datatools::handle<base_service> service_handle_type;
 
-// Constants to measure the level of dependance between services
-enum dependency_level_type {
-  DEPENDENCY_NONE     =  0, //!< The service does not depend on the external service
-  DEPENDENCY_OPTIONAL =  1, //!< The service can work without the external service
-  DEPENDENCY_WEAK     =  2, //!< Not so strong dependency on the external service (however part of the service may be invalidated)
-  DEPENDENCY_STRICT   =  3, //!< Strictly depends on the external service
-  DEPENDENCY_UNKNOWN  = -1
-};
-
-//! \brief Record that stores informations about the dependency between services :
-struct dependency_info_type {
-  std::string id;      //!< ID of the external service
-  std::string version; //!< Version of the external service
-  std::string meta;    //!< Auxiliary information
-  int level;           //!< Level of the dependency (see dependency_level_type enum)
-  dependency_info_type();
-};
-
-// HA! The typedef names are JUST AS LONG!!!!
-typedef std::map<std::string, int> dependency_level_dict_type;
-typedef std::map<std::string, dependency_info_type> service_dependency_dict_type;
-
-class service_manager;
-
-// Record that handles a dynamically allocated service and additional
-// informations :
-
-//! \brief Internal entry for service objects stored in the service manager class
-class service_entry : public datatools::i_tree_dumpable  {
- public:
-  enum status_type {
-    STATUS_BLANK             = 0x0,
-    STATUS_CREATED           = 0x1,
-    STATUS_INITIALIZED       = 0x2,
-    STATUS_BROKEN_DEPENDENCY = 0x4
+  // Constants to measure the level of dependance between services
+  enum dependency_level_type {
+    DEPENDENCY_NONE     =  0, //!< The service does not depend on the external service
+    DEPENDENCY_OPTIONAL =  1, //!< The service can work without the external service
+    DEPENDENCY_WEAK     =  2, //!< Not so strong dependency on the external service (however part of the service may be invalidated)
+    DEPENDENCY_STRICT   =  3, //!< Strictly depends on the external service
+    DEPENDENCY_UNKNOWN  = -1
   };
 
- public:
+  //! \brief Record that stores informations about the dependency between services :
+  struct dependency_info_type {
+    std::string id;      //!< ID of the external service
+    std::string version; //!< Version of the external service
+    std::string meta;    //!< Auxiliary information
+    int level;           //!< Level of the dependency (see dependency_level_type enum)
+    dependency_info_type();
+  };
 
-  const std::string & get_service_name () const;
+  // HA! The typedef names are JUST AS LONG!!!!
+  typedef std::map<std::string, int> dependency_level_dict_type;
+  typedef std::map<std::string, dependency_info_type> service_dependency_dict_type;
 
-  void set_service_name (const std::string &);
+  class service_manager;
 
-  const std::string & get_service_id () const;
+  // Record that handles a dynamically allocated service and additional
+  // informations :
 
-  void set_service_id (const std::string &);
+  //! \brief Internal entry for service objects stored in the service manager class
+  class service_entry : public datatools::i_tree_dumpable  {
+  public:
+    enum status_type {
+      STATUS_BLANK             = 0x0,
+      STATUS_CREATED           = 0x1,
+      STATUS_INITIALIZED       = 0x2,
+      STATUS_BROKEN_DEPENDENCY = 0x4
+    };
 
-  const datatools::properties & get_service_config () const;
+  public:
 
-  datatools::properties & grab_service_config ();
+    const std::string & get_service_name () const;
 
-  void set_service_config (const datatools::properties &);
+    void set_service_name (const std::string &);
 
-  service_entry();
+    const std::string & get_service_id () const;
 
-  bool can_be_dropped() const;
+    void set_service_id (const std::string &);
 
-  uint32_t get_service_status() const;
+    const datatools::properties & get_service_config () const;
 
-  void update_service_status(uint32_t);
+    datatools::properties & grab_service_config ();
 
-  void reset_service_status(uint32_t);
+    void set_service_config (const datatools::properties &);
 
-  bool is_created() const;
+    service_entry();
 
-  bool is_initialized() const;
+    bool can_be_dropped() const;
 
-  bool has_slave(const std::string& name) const;
+    uint32_t get_service_status() const;
 
-  void remove_slave(const std::string& name);
+    void update_service_status(uint32_t);
 
-  virtual void tree_dump(std::ostream& out = std::clog,
-                         const std::string & title  = "",
-                         const std::string & indent = "",
-                         bool inherit = false) const;
+    void reset_service_status(uint32_t);
 
-  const service_handle_type & get_service_handle() const;
+    bool is_created() const;
 
-  service_handle_type & grab_service_handle();
+    bool is_initialized() const;
 
- public: // TO BE CHANGED
- private:
-  // WHY ARE THESE PUBLIC?? service_entry has functionality, it's
-  // not just a bag of data...
-  // Either that, or it should be a pImpl of service_manager
-  //
-  std::string  service_name;    //!< The name of the service
-  std::string  service_id;      //!< The ID (type) of the service
-  datatools::properties service_config;  //!< The configuration of the service
-  uint32_t service_status;  //!< The status of the service
-  service_handle_type service_handle;  //!< The handle for the allocated service
- public:
-  service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
-  dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
+    bool has_slave(const std::string& name) const;
 
-  //friend class service_manager;
-};
+    void remove_slave(const std::string& name);
 
-typedef std::map<std::string, service_entry> service_dict_type;
+    virtual void tree_dump(std::ostream& out = std::clog,
+			   const std::string & title  = "",
+			   const std::string & indent = "",
+			   bool inherit = false) const;
+
+    const service_handle_type & get_service_handle() const;
+
+    service_handle_type & grab_service_handle();
+
+  public: // TO BE CHANGED
+  private:
+    // WHY ARE THESE PUBLIC?? service_entry has functionality, it's
+    // not just a bag of data...
+    // Either that, or it should be a pImpl of service_manager
+    //
+    std::string  service_name;    //!< The name of the service
+    std::string  service_id;      //!< The ID (type) of the service
+    datatools::properties service_config;  //!< The configuration of the service
+    uint32_t service_status;  //!< The status of the service
+    service_handle_type service_handle;  //!< The handle for the allocated service
+  public:
+    service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
+    dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
+
+    //friend class service_manager;
+  };
+
+  typedef std::map<std::string, service_entry> service_dict_type;
 
 }  // end of namespace datatools
 
 #endif // DATATOOLS_SERVICE_TOOLS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
