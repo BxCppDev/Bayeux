@@ -227,10 +227,9 @@ namespace geomtools {
         sd_ptr->tree_dump(std::cerr);
       }
     }
-    // _subtraction_box_.set_user_draw((void *) &extruded_box_model::gnuplot_draw_user_function);
 
-    // Install a dedicated drawer:
-    _drawer_.reset(new extruded_box::wires_drawer(_extruded_box_));
+    // Install a dedicated wires drawer:
+    _drawer_.reset(new wires_drawer(_extruded_box_));
     _subtraction_box_.set_wires_drawer(*_drawer_);
     _subtraction_box_.lock();
 
@@ -269,54 +268,24 @@ namespace geomtools {
     return;
   }
 
-  /*
-  void extruded_box_model::gnuplot_draw_user_function(std::ostream & out_,
-                                                      const geomtools::vector_3d & position_,
-                                                      const geomtools::rotation_3d & rotation_,
-                                                      const geomtools::i_object_3d & obj_,
-                                                      void *)
+  extruded_box_model::wires_drawer::wires_drawer(const extruded_box & eb_)
+    : i_wires_drawer(eb_)
   {
-   const geomtools::subtraction_3d & solid = _model_->get_solid();
-    const geomtools::i_composite_shape_3d::shape_type & s1 = solid.get_shape1();
-    const geomtools::i_composite_shape_3d::shape_type & s2 = solid.get_shape2();
-    const geomtools::i_shape_3d & sh1 = s1.get_shape();
-    const geomtools::i_shape_3d & sh2 = s2.get_shape();
-
-    // Extract useful stuff(shapes and properties):
-    const geomtools::box & mother_box   = dynamic_cast<const geomtools::box &>(sh1);
-    const geomtools::box & daughter_box = dynamic_cast<const geomtools::box &>(sh2);
-
-    // Draw first box(extruded mother):
-    {
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation(position_);
-      mother_world_placement.set_orientation(rotation_);
-
-      geomtools::placement world_item_placement;
-      mother_world_placement.child_to_mother(s1.get_placement(),
-                                             world_item_placement);
-      const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation();
-      const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation();
-      geomtools::gnuplot_draw::draw_box(out_, sh1_pos, sh1_rot, mother_box);
-    }
-
-    // Draw second box(extrusion):
-    {
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation(position_);
-      mother_world_placement.set_orientation(rotation_);
-
-      geomtools::placement world_item_placement;
-      mother_world_placement.child_to_mother(s2.get_placement(),
-                                             world_item_placement);
-      const geomtools::vector_3d   & sh2_pos = world_item_placement.get_translation();
-      const geomtools::rotation_3d & sh2_rot = world_item_placement.get_rotation();
-      geomtools::gnuplot_draw::draw_box(out_, sh2_pos, sh2_rot, daughter_box);
-    }
-
+    DT_THROW_IF(!eb_.is_locked(), std::logic_error, "Extruded box is not locked!");
     return;
   }
-    */
+
+  extruded_box_model::wires_drawer::~wires_drawer()
+  {
+    return;
+  }
+
+  void extruded_box_model::wires_drawer::generate_wires_self(wires_type & wires_,
+                                                             uint32_t options_) const
+  {
+    get().generate_wires_self(wires_, options_);
+    return;
+  }
 
 } // end of namespace geomtools
 

@@ -5,9 +5,8 @@
 
 namespace geomtools {
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_1d,"geomtools::i_shape_1d");
-
-  using namespace std;
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_1d,
+                                                    "geomtools::i_shape_1d");
 
   bool i_shape_1d::has_number_of_paths() const
   {
@@ -29,18 +28,39 @@ namespace geomtools {
     return std::numeric_limits<double>::quiet_NaN();
   }
 
-  int i_shape_1d::get_dimensional () const
+  int i_shape_1d::get_dimensional() const
   {
     return DIMENSIONAL_1;
   }
 
-  i_shape_1d::i_shape_1d (double tolerance_) : i_object_3d (tolerance_)
+  i_shape_1d::i_shape_1d()
+    : i_object_3d()
   {
     return;
   }
 
-  i_shape_1d::~i_shape_1d ()
+  i_shape_1d::i_shape_1d(double tolerance_)
+    : i_object_3d(tolerance_)
   {
+    return;
+  }
+
+  i_shape_1d::i_shape_1d(double tolerance_,
+                         double angular_tolerance_)
+    : i_object_3d(tolerance_, angular_tolerance_)
+  {
+    return;
+  }
+
+  i_shape_1d::~i_shape_1d()
+  {
+    return;
+  }
+
+  // static
+  void i_shape_1d::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+    i_object_3d::init_ocd(ocd_);
     return;
   }
 

@@ -16,12 +16,13 @@
 #include <datatools/units.h>
 
 // This project:
-#include <geomtools/gnuplot_draw.h>
+#include <geomtools/circle.h>
 
 namespace geomtools {
 
-  // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(spherical_extrusion_cylinder_model,"geomtools::spherical_extrusion_cylinder_model");
+  // Registration :
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(spherical_extrusion_cylinder_model,
+                                         "geomtools::spherical_extrusion_cylinder_model");
 
   std::string spherical_extrusion_cylinder_model::get_model_id () const
   {
@@ -38,14 +39,15 @@ namespace geomtools {
     return _solid_;
   }
 
-  spherical_extrusion_cylinder_model::spherical_extrusion_cylinder_model () : i_model ("spherical_extrusion_cylinder_model")
+  spherical_extrusion_cylinder_model::spherical_extrusion_cylinder_model ()
+    : i_model ("spherical_extrusion_cylinder_model")
   {
     _material_ = "";
     _bottom_ = false;
-    datatools::invalidate (_r_);
-    datatools::invalidate (_z_);
-    datatools::invalidate (_r_extrusion_);
-    datatools::invalidate (_r_sphere_);
+    datatools::invalidate(_r_);
+    datatools::invalidate(_z_);
+    datatools::invalidate(_r_extrusion_);
+    datatools::invalidate(_r_sphere_);
     return;
   }
 
@@ -62,14 +64,13 @@ namespace geomtools {
 
     //set_name (name_);
 
-    /*** parse properties ***/
+    // Parse properties:
 
     double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit"))
-      {
-        const std::string lunit_str = config_.fetch_string ("length_unit");
-        lunit = datatools::units::get_length_unit_from (lunit_str);
-      }
+    if (config_.has_key ("length_unit")) {
+      const std::string lunit_str = config_.fetch_string ("length_unit");
+      lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
 
     DT_THROW_IF (!config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in spherical extrusion cylinder model '" << name_ << "' !");
     _material_ = config_.fetch_string ("material.ref");
@@ -131,13 +132,8 @@ namespace geomtools {
     _solid_.set_shapes (_mother_,
                         _extrusion_,
                         sphere_extrusion_placement);
-    // _solid_.grab_auxiliaries ().store ("h", h);
     _h_ = h;
-    /*
-    if (_bottom_) {
-      _solid_.grab_auxiliaries ().store_flag ("bottom");
-    }
-    */
+
     // Install proposed 'stackable data' pointer in the shape:
     {
       geomtools::stackable_data * sd_ptr = new geomtools::stackable_data;
@@ -160,22 +156,20 @@ namespace geomtools {
     }
 
     // Install a dedicated drawer:
-    _drawer_.reset(new wires_drawer(*this, _h_, _bottom_));
+    _drawer_.reset(new wires_drawer(*this));
     _solid_.set_wires_drawer(*_drawer_);
     _solid_.lock();
 
-    grab_logical ().set_name (i_model::make_logical_volume_name (name_));
-    grab_logical ().set_shape (_solid_);
-    grab_logical ().set_material_ref (_material_);
+    grab_logical().set_name(i_model::make_logical_volume_name(name_));
+    grab_logical().set_shape(_solid_);
+    grab_logical().set_material_ref(_material_);
 
-    if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
-      this->tree_dump (std::cerr);
+    if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+      this->tree_dump(std::cerr);
     }
-    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
-
-  /*** dump ***/
 
   void spherical_extrusion_cylinder_model::tree_dump (std::ostream & out_,
                                                       const std::string & title_,
@@ -231,13 +225,9 @@ namespace geomtools {
     return;
   }
 
-  spherical_extrusion_cylinder_model::wires_drawer::wires_drawer(const spherical_extrusion_cylinder_model & model_,
-                                                                 double h_,
-                                                                 bool bottom_)
+  spherical_extrusion_cylinder_model::wires_drawer::wires_drawer(const spherical_extrusion_cylinder_model & model_)
+    : i_wires_drawer(model_)
   {
-    _model_ = &model_;
-    _h_ = h_;
-    _bottom_ = bottom_;
     return;
   }
 
@@ -246,273 +236,98 @@ namespace geomtools {
     return;
   }
 
-  void spherical_extrusion_cylinder_model::wires_drawer::generate_wires(std::ostream & out_,
-                                                                        const geomtools::vector_3d & position_,
-                                                                        const geomtools::rotation_3d & rotation_)
+  void spherical_extrusion_cylinder_model::wires_drawer::generate_wires_self(wires_type & wires_,
+                                                                             uint32_t options_) const
   {
-    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
-    const geomtools::subtraction_3d & solid = _model_->get_solid();
+    // The top level subtraction solid shape:
+    const geomtools::subtraction_3d & solid = get().get_solid();
+
+    // Extract specific rendering options for this model:
+    const bool draw_mother    = ! (options_ & WR_SECM_NO_MOTHER_FACES);
+    const bool draw_extrusion = ! (options_ & WR_SECM_NO_EXTRUSION_FACES);
+
+    uint32_t base_options = options_ & WR_NONE;
+
+    // Extract useful stuff (shapes and properties):
     const geomtools::i_composite_shape_3d::shape_type & s1 = solid.get_shape1();
-    const geomtools::i_composite_shape_3d::shape_type & s2 = solid.get_shape2();
     const geomtools::i_shape_3d & sh1 = s1.get_shape();
+    const geomtools::i_composite_shape_3d::shape_type & s2 = solid.get_shape2();
     const geomtools::i_shape_3d & sh2 = s2.get_shape();
+    const geomtools::cylinder & mother_cylinder  = dynamic_cast<const geomtools::cylinder &>(sh1);
+    const geomtools::sphere &   extrusion_sphere = dynamic_cast<const geomtools::sphere &>(sh2);
 
-    // extract useful stuff (shapes and properties):
-    const geomtools::cylinder & mother_cylinder = dynamic_cast<const geomtools::cylinder &> (sh1);
-    const geomtools::sphere & extrusion_sphere = dynamic_cast<const geomtools::sphere &> (sh2);
-    bool bottom = _bottom_;
-    const double h = _h_;
+    const bool   bottom = get()._bottom_;
+    const double h      = get()._h_;
 
-    const bool draw_mother = true;
     if (draw_mother) {
-      // draw first shape:
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation(position_);
-      mother_world_placement.set_orientation(rotation_);
-
-      geomtools::placement world_item_placement;
-      mother_world_placement.child_to_mother(s1.get_placement(),
-                                              world_item_placement);
-      const vector_3d   & sh1_pos = world_item_placement.get_translation();
-      const rotation_3d & sh1_rot = world_item_placement.get_rotation();
-      geomtools::gnuplot_draw::draw_cylinder(out_,
-                                              sh1_pos,
-                                              sh1_rot,
-                                              mother_cylinder);
+      // Draw mother cylinder shape:
+      uint32_t options = base_options;
+      if (bottom) options |= cylinder::WR_CYL_NO_BOTTOM_FACE;
+      else options |= cylinder::WR_CYL_NO_TOP_FACE;
+      // Extract mother shape:
+      mother_cylinder.generate_wires_self(wires_, options);
     }
 
-    const double zcyl = mother_cylinder.get_z();
-    const double c = zcyl - h;
-    const double rs = extrusion_sphere.get_r();
-    const double a = rs - c;
-    const double re = std::sqrt(rs * rs - a * a);
-    DT_LOG_TRACE (local_priority, "zcyl = " << zcyl);
-    DT_LOG_TRACE (local_priority, "rs   = " << rs);
-    DT_LOG_TRACE (local_priority, "c    = " << c);
-    DT_LOG_TRACE (local_priority, "a    = " << a);
-    DT_LOG_TRACE (local_priority, "h    = " << h);
-
-    const bool draw_extrusion = true;
     if (draw_extrusion) {
-      // draw extrusion limit:
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation(position_);
-      mother_world_placement.set_orientation(rotation_);
+       const double zcyl = mother_cylinder.get_z();
+      const double c = zcyl - h;
+      const double rs = extrusion_sphere.get_r();
+      const double a = rs - c;
+      const double re = std::sqrt(rs * rs - a * a);
 
-      // surface extrusion circle:
+      // Surface extrusion circle:
       {
+        uint32_t options = base_options;
         double z = 0.5 * zcyl;
         if (bottom) z *= -1.0;
-        geomtools::placement c1_plcmt;
-        c1_plcmt.set(0., 0., z, 0. , 0. , 0.);
-        geomtools::placement world_item_placement;
-        mother_world_placement.child_to_mother(c1_plcmt,
-                                                world_item_placement);
-        const geomtools::vector_3d   & sh2_pos = world_item_placement.get_translation();
-        const geomtools::rotation_3d & sh2_rot = world_item_placement.get_rotation();
-        geomtools::gnuplot_draw::draw_circle(out_,
-                                              sh2_pos,
-                                              sh2_rot,
-                                              re);
+        geomtools::placement c1_placement(0., 0., z, 0. , 0. , 0.);
+        circle c1(re);
+        c1.generate_wires(wires_, c1_placement, options);
       }
 
-      // extrusion arcs:
+      // Deep extrusion circles:
       {
+        uint32_t options = base_options;
+        double rfactor[2];
+        rfactor[0]= 0.5;
+        rfactor[1]= 0.25;
+        for (size_t i = 0; i < 2; i++) {
+          const double c2 = rfactor[i] * c;
+          double z = 0.5 * mother_cylinder.get_z() - c + c2;
+          if (bottom) z *= -1.0;
+          const double rs = extrusion_sphere.get_r();
+          const double a2 = rs - c2;
+          const double r2 = std::sqrt(rs *rs - a2 * a2);
+          circle c1(re);
+          geomtools::placement c1_placement(0., 0., z, 0. , 0. , 0.);
+          c1.generate_wires(wires_, c1_placement, options);
+        }
+      }
+
+      // Extrusion arcs:
+      {
+        uint32_t options = base_options;
         const double z = 0.5 * zcyl;
-        geomtools::gnuplot_draw::polyline_type arc1;
-        geomtools::gnuplot_draw::polyline_type arc2;
         const double theta0 = std::asin(re / rs);
-        const size_t nsamples = 20;
-        const double dt = 2 * theta0 / nsamples;
+        circle arc(rs, 2. * M_PI - theta0, 2 * theta0);
         double zs = z - c + rs;
         if (bottom) zs *= -1.0;
-        for (size_t i = 0; i <= nsamples; i++) {
-          const double theta = -theta0 + i * dt;
-          double dz = -rs * std::cos(theta);
-          if (bottom) dz *= -1.0;
-          double dt = rs * std::sin(theta);
-          geomtools::vector_3d P1(dt, 0.0, zs + dz);
-          arc1.push_back(P1);
-          geomtools::vector_3d P2(0.0, dt, zs + dz);
-          arc2.push_back(P2);
+        placement arc1_placement;
+        placement arc2_placement;
+        if (! bottom) {
+          arc1_placement.set(0.0, 0.0, zs,      0.0, M_PI/2.0, 0.0);
+          arc2_placement.set(0.0, 0.0, zs, M_PI/2.0, M_PI/2.0, 0.0);
+        } else {
+          arc1_placement.set(0.0, 0.0, zs,      0.0, -M_PI/2.0, 0.0);
+          arc2_placement.set(0.0, 0.0, zs, M_PI/2.0, -M_PI/2.0, 0.0);
         }
-        geomtools::gnuplot_draw::draw_polyline(out_,
-                                                position_,
-                                                rotation_,
-                                                arc1);
-        geomtools::gnuplot_draw::draw_polyline(out_,
-                                                position_,
-                                                rotation_,
-                                                arc2);
+        arc.generate_wires(wires_, arc1_placement, options);
+        arc.generate_wires(wires_, arc2_placement, options);
       }
 
-      double rfactor[2];
-      rfactor[0]= 0.5;
-      rfactor[1]= 0.25;
-
-      for (size_t i = 0; i < 2; i++) {
-        const double c2 = rfactor[i] * c;
-        double z = 0.5 * mother_cylinder.get_z() - c + c2;
-        if (bottom) z *= -1.0;
-        const double rs = extrusion_sphere.get_r();
-        const double a2 = rs - c2;
-        const double r2 = std::sqrt(rs *rs - a2 * a2);
-
-        geomtools::placement c1_plcmt;
-        c1_plcmt.set(0., 0., z, 0. , 0. , 0.);
-        geomtools::placement world_item_placement;
-        mother_world_placement.child_to_mother(c1_plcmt,
-                                                world_item_placement);
-        const geomtools::vector_3d   & sh2_pos = world_item_placement.get_translation();
-        const geomtools::rotation_3d & sh2_rot = world_item_placement.get_rotation();
-        geomtools::gnuplot_draw::draw_circle(out_,
-                                              sh2_pos,
-                                              sh2_rot,
-                                              r2);
-      }
     }
 
     return;
   }
-
-  /*
-  void spherical_extrusion_cylinder_model::gnuplot_draw_user_function (std::ostream & out_,
-                                                                       const geomtools::vector_3d & position_,
-                                                                       const geomtools::rotation_3d & rotation_,
-                                                                       const geomtools::i_object_3d & obj_,
-                                                                       void *)
-  {
-    datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
-    const geomtools::subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
-    DT_THROW_IF (solid == 0,
-                 std::logic_error,
-                 "3D-object of '" << obj_.get_shape_name () << "' shape type has not the right type !");
-    const geomtools::i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
-    const geomtools::i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
-    const geomtools::i_shape_3d & sh1 = s1.get_shape ();
-    const geomtools::i_shape_3d & sh2 = s2.get_shape ();
-
-    // extract useful stuff (shapes and properties):
-    const geomtools::cylinder & mother_cylinder = dynamic_cast<const geomtools::cylinder &> (sh1);
-    const geomtools::sphere & extrusion_sphere = dynamic_cast<const geomtools::sphere &> (sh2);
-    bool bottom = false;
-    if (solid->get_auxiliaries ().has_flag ("bottom")) {
-      bottom = true;
-    }
-
-    DT_THROW_IF (! solid->get_auxiliaries ().has_key ("h"), std::logic_error, "Missing 'h' property in the shape !");
-    const double h = solid->get_auxiliaries ().fetch_real ("h");
-
-    const bool draw_mother = true;
-    if (draw_mother) {
-      // draw first shape:
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation (position_);
-      mother_world_placement.set_orientation (rotation_);
-
-      geomtools::placement world_item_placement;
-      mother_world_placement.child_to_mother (s1.get_placement (),
-                                              world_item_placement);
-      const vector_3d   & sh1_pos = world_item_placement.get_translation ();
-      const rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-      geomtools::gnuplot_draw::draw_cylinder (out_,
-                                              sh1_pos,
-                                              sh1_rot,
-                                              mother_cylinder);
-    }
-
-    const double zcyl = mother_cylinder.get_z ();
-    const double c = zcyl - h;
-    const double rs = extrusion_sphere.get_r ();
-    const double a = rs - c;
-    const double re = sqrt (rs * rs - a * a);
-    DT_LOG_TRACE (local_priority, "zcyl = " << zcyl);
-    DT_LOG_TRACE (local_priority, "rs   = " << rs);
-    DT_LOG_TRACE (local_priority, "c    = " << c);
-    DT_LOG_TRACE (local_priority, "a    = " << a);
-    DT_LOG_TRACE (local_priority, "h    = " << h);
-
-    const bool draw_extrusion = true;
-    if (draw_extrusion) {
-      // draw extrusion limit:
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation (position_);
-      mother_world_placement.set_orientation (rotation_);
-
-      // surface extrusion circle:
-      {
-        double z = 0.5 * zcyl;
-        if (bottom) z *= -1.0;
-        geomtools::placement c1_plcmt;
-        c1_plcmt.set (0., 0., z, 0. , 0. , 0.);
-        geomtools::placement world_item_placement;
-        mother_world_placement.child_to_mother (c1_plcmt,
-                                                world_item_placement);
-        const geomtools::vector_3d   & sh2_pos = world_item_placement.get_translation ();
-        const geomtools::rotation_3d & sh2_rot = world_item_placement.get_rotation ();
-        geomtools::gnuplot_draw::draw_circle (out_,
-                                              sh2_pos,
-                                              sh2_rot,
-                                              re);
-      }
-
-      // extrusion arcs:
-      {
-        const double z = 0.5 * zcyl;
-        geomtools::gnuplot_draw::polyline_type arc1;
-        geomtools::gnuplot_draw::polyline_type arc2;
-        const double theta0 = asin (re / rs);
-        const size_t nsamples = 20;
-        const double dt = 2 * theta0 / nsamples;
-        double zs = z - c + rs;
-        if (bottom) zs *= -1.0;
-        for (size_t i = 0; i <= nsamples; i++) {
-          const double theta = -theta0 + i * dt;
-          double dz = -rs * cos (theta);
-          if (bottom) dz *= -1.0;
-          double dt = rs * sin (theta);
-          geomtools::vector_3d P1 (dt, 0.0, zs + dz);
-          arc1.push_back (P1);
-          geomtools::vector_3d P2 (0.0, dt, zs + dz);
-          arc2.push_back (P2);
-        }
-        geomtools::gnuplot_draw::draw_polyline (out_,
-                                                position_,
-                                                rotation_,
-                                                arc1);
-        geomtools::gnuplot_draw::draw_polyline (out_,
-                                                position_,
-                                                rotation_,
-                                                arc2);
-      }
-
-      double rfactor[2];
-      rfactor[0]= 0.5;
-      rfactor[1]= 0.25;
-
-      for (size_t i = 0; i < 2; i++) {
-        const double c2 = rfactor[i] * c;
-        double z = 0.5 * mother_cylinder.get_z () - c + c2;
-        if (bottom) z *= -1.0;
-        const double rs = extrusion_sphere.get_r ();
-        const double a2 = rs - c2;
-        const double r2 = sqrt (rs *rs - a2 * a2);
-
-        geomtools::placement c1_plcmt;
-        c1_plcmt.set (0., 0., z, 0. , 0. , 0.);
-        geomtools::placement world_item_placement;
-        mother_world_placement.child_to_mother (c1_plcmt,
-                                                world_item_placement);
-        const geomtools::vector_3d   & sh2_pos = world_item_placement.get_translation ();
-        const geomtools::rotation_3d & sh2_rot = world_item_placement.get_rotation ();
-        geomtools::gnuplot_draw::draw_circle (out_,
-                                              sh2_pos,
-                                              sh2_rot,
-                                              r2);
-      }
-    }
-    return;
-  }
-  */
 
 } // end of namespace geomtools

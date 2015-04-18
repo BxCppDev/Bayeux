@@ -677,7 +677,8 @@ shape_build_mode : string = "factory"
 ############
 
 #@description The shape reference from the factory
-shape_ref : string = "foo_A"
+# shape_ref : string = "foo_A"
+shape_ref : string = "El1"
 
 ############
 # Material #
@@ -748,6 +749,7 @@ shape_build_mode : string = "factory"
 
 #@description The shape type
 shape_ref : string = "Ts1"
+# shape_ref : string = "Elt1"
 
 ############
 # Material #

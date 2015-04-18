@@ -837,6 +837,116 @@ namespace geomtools {
                        _params_.logging);
   }
 
+  /*
+  int geomtools_driver::command_set_rendering_options(const std::vector<std::string> & argv_,
+                                                      std::ostream & out_)
+  {
+    int error_code = 0;
+    if (! is_initialized()) {
+      DT_LOG_ERROR(_params_.logging, "Driver is not initialized !");
+      error_code = 1;
+      return error_code;
+    }
+
+    std::string visu_object_name;
+    bool visible = true;
+    bool w3r_grid = false;
+    std::string  w3r_grid_level = "normal";
+    std::string  w3r_angle_level = "normal";
+    bool w3r_bbox = false;
+    std::string color;
+
+    uint32_t w3d_options = 0;
+
+    while (argcount < argv_.size()) {
+      const std::string & token = argv_[argcount++];
+      if (token.empty()) break;
+      if (token[0] == '-') {
+        std::string option = token;
+        if (option  == "-h" || option  == "--help") {
+          out_ << "   Usage: \n";
+          out_ << "     set_rendering_options [OPTIONS...] [NAME] \n"
+               << "\n";
+          out_ << "   Options: \n";
+          out_ << "     -h | --help       Print this help\n"
+               << "     --invisible       Hide the object\n"
+               << "     --visible         Show the object\n"
+               << "     --no-grid         Inhibit grid wire-based rendering\n"
+               << "     --grid            Enable grid wire-based rendering\n"
+               << "     --grid-low        Use grid wire-based rendering\n"
+               << "     --grid-high       Use grid wire-based rendering\n"
+               << "     --grid-very-high  Use grid wire-based rendering\n"
+               << "     --grid-huge       Use grid wire-based rendering\n"
+               << "     --angle-low       Use low angle sampling\n"
+               << "     --angle-high      Use high angle sampling\n"
+               << "     --angle-very-high Use very high angle sampling\n"
+               << "     --angle-huge      Use huge angle sampling\n"
+               << "     --bbox            Use bounding box\n"
+               << "     --no-bbox         Do not use bounding box\n"
+               << "\n";
+          out_ << "   NAME : The name of the object to be displayed (optional)\n";
+          out_ << "          It can be:                       \n";
+          out_ << "          - the name of a geometry model,  \n";
+          out_ << "          - the name of a logical volume,  \n";
+          out_ << "          - the GID associated to a volume \n";
+          out_ << "            by the active mapping.         \n";
+          out_ << std::flush;
+          return -1;
+        } else if (option  == "--invisible") {
+          visible = false;
+        } else if (option  == "--visible") {
+          visible = true;
+        } else if (option  == "--grid") {
+          w3d_grid = true;
+          w3r_grid_level = argv_[argcount++];
+        } else if (option  == "--no-grid") {
+          w3d_grid = false;
+          w3r_grid_level = "normal";
+        } else if (option  == "--angular-sampling") {
+          w3r_angle_level = argv_[argcount++];
+        } else if (option  == "--no-bbox") {
+          w3r_bbox = false;
+        } else if (option  == "--bbox") {
+          w3r_bbox = true;
+        } else {
+          // Ignore...
+        }
+      } else {
+        std::string argument = token;
+        if (visu_object_name.empty()) {
+          visu_object_name = argument;
+        } else {
+          DT_LOG_ERROR(_params_.logging, "Invalid argument '" << argument << "' !");
+          return -1;
+        }
+      }
+    } // while
+
+    if (visu_object_name.empty()) {
+      if (! _params_.visu_object_name.empty()) {
+        visu_object_name = _params_.visu_object_name;
+      } else {
+        DT_LOG_ERROR(_params_.logging, "Missing object name !");
+      }
+    }
+
+    if (_ropts_.find(visu_object_name) == _ropts_.end()) {
+      {
+        datatools::properties dummy;
+        _ropts_[visu_object_name] = dummy;
+      }
+    }
+    datatools::properties & obj_ropt = _ropts_.find(visu_object_name)->second;
+    obj_ropts.store_boolean("visible", visible);
+    obj_ropts.store_boolean("bbox", w3r_bbox);
+    obj_ropts.store_boolean("grid", w3r_grid);
+    obj_ropts.store_string("grid_level", w3r_grid_level);
+    obj_ropts.store_string("angular_sampling", w3r_angular_sampling);
+
+    return;
+  }
+  */
+
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
   int geomtools_driver::command_gnuplot_display(const std::vector<std::string> & argv_,
                                                 std::ostream & out_)

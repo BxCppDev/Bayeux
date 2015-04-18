@@ -1,5 +1,8 @@
 // cylinder.cc
 
+// Ourselves:
+#include <geomtools/cylinder.h>
+
 // Standard library:
 #include <string>
 
@@ -10,14 +13,17 @@
 #include <datatools/units.h>
 
 // This project:
-#include <geomtools/cylinder.h>
+#include <geomtools/circle.h>
+#include <geomtools/disk.h>
+#include <geomtools/line_3d.h>
+#include <geomtools/cylindrical_sector.h>
+#include <geomtools/placement.h>
+#include <geomtools/i_shape_2d.h>
 
 namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(cylinder, "geomtools::cylinder");
-
-  using namespace std;
 
   const std::string & cylinder::cylinder_label()
   {
@@ -67,7 +73,7 @@ namespace geomtools {
   void
   cylinder::set_r (double a_radius)
   {
-    DT_THROW_IF (a_radius < 0.0,logic_error,
+    DT_THROW_IF (a_radius < 0.0, std::logic_error,
                  "Invalid '" << a_radius << "' R value !");
     _radius_ = a_radius;
     return;
@@ -101,7 +107,7 @@ namespace geomtools {
   void
   cylinder::set_z (double a_z)
   {
-    DT_THROW_IF (a_z < 0.0, logic_error,
+    DT_THROW_IF (a_z < 0.0, std::logic_error,
                  "Invalid '" << a_z << "' Z value !");
     _z_ = a_z;
     return;
@@ -136,16 +142,16 @@ namespace geomtools {
     return;
   }
 
-  // ctor/dtor:
   cylinder::cylinder ()
   {
-    reset ();
+    _set_defaults();
     return;
   }
 
   cylinder::cylinder (double a_radius, double a_z)
   {
-    set (a_radius, a_z);
+    _set_defaults();
+    set(a_radius, a_z);
     return;
   }
 
@@ -154,8 +160,7 @@ namespace geomtools {
     return;
   }
 
-  string
-  cylinder::get_shape_name () const
+  std::string cylinder::get_shape_name () const
   {
     return cylinder_label();
   }
@@ -163,34 +168,33 @@ namespace geomtools {
   double
   cylinder::get_surface (uint32_t a_mask) const
   {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Cylinder is not valid !");
     double s = 0.0;
-    int mask = a_mask;
-    if ((int) a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
+    uint32_t mask = a_mask;
 
-    if (mask & FACE_SIDE)
-      {
-        s += 2 * M_PI * _radius_ * _z_;
-      }
-    if (mask & FACE_BOTTOM)
-      {
-        s += M_PI * _radius_ * _radius_;
-      }
-    if (mask & FACE_TOP)
-      {
-        s += M_PI * _radius_ * _radius_;
-      }
+    if (mask & FACE_SIDE) {
+      s += 2 * M_PI * _radius_ * _z_;
+    }
+    if (mask & FACE_BOTTOM) {
+      s += M_PI * _radius_ * _radius_;
+    }
+    if (mask & FACE_TOP) {
+      s += M_PI * _radius_ * _radius_;
+    }
     return s;
   }
 
   double
   cylinder::get_volume (uint32_t /*flags*/) const
   {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Cylinder is not valid !");
     return M_PI * _radius_ * _radius_ * _z_;
   }
 
   double
-  cylinder::get_parameter ( const string & flag_ ) const
+  cylinder::get_parameter ( const std::string & flag_ ) const
   {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Cylinder is not valid !");
     if ( flag_ == "r" ) return get_r ();
     if ( flag_ == "radius" ) return get_r ();
     if ( flag_ == "diameter" ) return get_diameter ();
@@ -201,16 +205,14 @@ namespace geomtools {
     if ( flag_ == "surface.side" ) return get_surface (FACE_SIDE);
     if ( flag_ == "surface" ) return get_surface (FACE_ALL);
 
-    DT_THROW_IF(true, logic_error, "Unknown flag '" << flag_ << "' !");
+    DT_THROW(std::logic_error, "Unknown flag '" << flag_ << "' !");
   }
-
 
   bool
   cylinder::is_valid () const
   {
-    return (_radius_ > 0.0 && _z_ > 0.0);
+    return (datatools::is_valid(_radius_) && datatools::is_valid(_z_));
   }
-
 
   void
   cylinder::init ()
@@ -218,14 +220,18 @@ namespace geomtools {
     return;
   }
 
+  void cylinder::_set_defaults()
+  {
+    datatools::invalidate(_radius_);
+    datatools::invalidate(_z_);
+    return;
+  }
+
   void
   cylinder::reset ()
   {
     unlock();
-
-    _radius_ = -1.0;
-    _z_ = -1.0;
-
+    _set_defaults();
     this->i_shape_3d::reset();
     return;
   }
@@ -233,191 +239,226 @@ namespace geomtools {
   bool
   cylinder::is_inside(const vector_3d & a_position, double a_skin) const
   {
-    double skin = get_skin (a_skin);
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
+    double skin = get_skin(a_skin);
     double hskin = 0.5 * skin;
     double r = hypot(a_position.x(), a_position.y());
-    if ( (r <= (_radius_ - hskin)) &&
-         ( std::abs(a_position.z()) <= (0.5 * _z_ - hskin) ) ) return true;
+    if ( (r <= (_radius_ - hskin))
+         && ( std::abs(a_position.z()) <= (0.5 * _z_ - hskin) ) ) {
+      return true;
+    }
     return false;
   }
 
   bool
   cylinder::is_outside(const vector_3d & a_position, double a_skin) const
   {
-    double skin = get_skin (a_skin);
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
+    double skin = get_skin(a_skin);
     double hskin = 0.5 * skin;
     double r = hypot(a_position.x(), a_position.y());
-    if ( (r >= (_radius_ + hskin)) ||
-         ( std::abs(a_position.z()) >= (0.5 * _z_ + hskin) ) ) return true;
+    if ( (r >= (_radius_ + hskin))
+        || ( std::abs(a_position.z()) >= (0.5 * _z_ + hskin) ) ) {
+      return true;
+    }
     return false;
   }
 
   vector_3d
-  cylinder::get_normal_on_surface (const vector_3d & a_position) const
+  cylinder::get_normal_on_surface (const vector_3d & a_position,
+                                   const face_identifier & a_surface_bit) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
     vector_3d normal;
     invalidate(normal);
-    if (is_on_surface(a_position, FACE_SIDE)) {
-      double phi = a_position.phi();
-      normal.set(std::cos(phi), std::sin(phi), 0.0);
+    switch(a_surface_bit.get_face_bits()) {
+    case FACE_SIDE:
+      {
+        double phi = a_position.phi();
+        normal.set(std::cos(phi), std::sin(phi), 0.0);
+      }
+      break;
+    case FACE_BOTTOM:
+      normal.set(0.0, 0.0, -1.0);
+      break;
+    case FACE_TOP:
+      normal.set(0.0, 0.0, +1.0);
+      break;
     }
-    else if (is_on_surface(a_position, FACE_BOTTOM)) normal.set(0.0, 0.0, -1.0);
-    else if (is_on_surface(a_position, FACE_TOP)) normal.set(0.0, 0.0, +1.0);
     return normal;
   }
 
-  bool
-  cylinder::is_on_surface (const vector_3d & a_position ,
-                           int    a_mask ,
-                           double a_skin) const
+  face_identifier cylinder::on_surface(const vector_3d & a_position,
+                                       const face_identifier & a_surface_mask,
+                                       double a_skin) const
   {
-    double skin = get_skin (a_skin);
-    int mask = a_mask;
-    if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
+    double skin = get_skin(a_skin);
 
-    double hskin = 0.5 * skin;
-    double r = hypot(a_position.x(), a_position.y());
-
-    if (mask & FACE_BOTTOM) {
-      if ((std::abs(a_position.z() + 0.5 * _z_) < hskin)
-          && (r < (_radius_ + hskin))) return true;
+    face_identifier mask;
+    if (a_surface_mask.is_valid()) {
+      DT_THROW_IF(! a_surface_mask.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = a_surface_mask;
+    } else {
+      mask.set_face_bits_any();
     }
 
-    if (mask & FACE_TOP) {
-      if ((std::abs(a_position.z() - 0.5 * _z_) < hskin)
-          && (r < (_radius_ + hskin))) return true;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(a_position, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
+        }
+      }
     }
 
-    if (mask & FACE_SIDE) {
-      if ((std::abs(a_position.z()) < (0.5 * _z_ + hskin))
-          && (std::abs(r - _radius_) < hskin)) return true;
+    /*
+    if (a_surface_mask.has_face_bit(FACE_SIDE)) {
+      cylindrical_sector side;
+      placement side_placement;
+      compute_side_face(side, side_placement);
+      vector_3d p_side;
+      side_placement.mother_to_child(point_, p_side);
+      if (side.is_on_surface(p_side, skin)) {
+        return face_identifier(FACE_SIDE);
+      }
     }
 
-    return false;
+    if (a_surface_mask.has_face_bit(FACE_TOP)) {
+      disk top;
+      placement top_placement;
+      compute_top_bottom_face(FACE_TOP, top, top_placement);
+      vector_3d p_top;
+      top_placement.mother_to_child(point_, p_top);
+      if (top.is_on_surface(p_top, skin)) {
+        return face_identifier(FACE_TOP);
+      }
+    }
+
+    if (a_surface_mask.has_face_bit(FACE_BOTTOM)) {
+      disk bottom;
+      placement bottom_placement;
+      compute_top_bottom_face(FACE_BOTTOM, bottom, bottom_placement);
+      vector_3d p_bottom;
+      bottom_placement.mother_to_child(point_, p_bottom);
+      if (bottom.is_on_surface(p_bottom, skin)) {
+        return face_identifier(FACE_BOTTOM);
+      }
+    }
+    */
+
+    return face_identifier::face_invalid();
   }
 
   bool
   cylinder::find_intercept (const vector_3d & a_from,
                             const vector_3d & a_direction,
-                            intercept_t & a_intercept,
+                            face_intercept_info & a_intercept,
                             double a_skin) const
   {
-    bool debug = false;
-    //debug = true;
-    const unsigned int NFACES = 3;
-    double t[NFACES];
-    const int CYL_SIDE = 0;
-    const int CYL_BOTTOM = 1;
-    const int CYL_TOP = 2;
-    t[CYL_SIDE] = -1.0; // side
-    t[CYL_BOTTOM] = -1.0; // bottom
-    t[CYL_TOP] = -1.0; // top
-    double a, b, c;
-    double x0 = a_from.x ();
-    double y0 = a_from.y ();
-    double dx = a_direction.x ();
-    double dy = a_direction.y ();
-    a = dx * dx + dy * dy;
-    b = 2. * (dx * x0 + dy * y0);
-    c = x0 * x0 + y0 * y0 - _radius_ * _radius_;
-    double delta = b * b - 4. * a * c;
-    double ts[2];
-    if (debug)
-      {
-        clog << "DEVEL: cylinder::find_intercept: from= "
-             << a_from
-             << endl;
-        clog << "DEVEL: cylinder::find_intercept: direction= "
-             << a_direction
-             << endl;
-        clog << "DEVEL: cylinder::find_intercept: a= "
-             << a
-             << endl;
-        clog << "DEVEL: cylinder::find_intercept: b= "
-             << b
-             << endl;
-        clog << "DEVEL: cylinder::find_intercept: c= "
-             << c
-             << endl;
-        clog << "DEVEL: cylinder::find_intercept: delta= "
-             << delta
-             << endl;
-      }
-    if (delta >= 0.0)
-      {
-        double q = sqrt (delta);
-        double n = a + a;
-        ts[0] = (- b + q) / n;
-        ts[1] = (- b - q) / n;
-      }
-    if (debug)
-      {
-        clog << "DEVEL: cylinder::find_intercept: ts[" << 0 << "]= "
-             << ts[0]
-             << endl;
-        clog << "DEVEL: cylinder::find_intercept: ts[" << 1 << "]= "
-             << ts[1]
-             << endl;
-      }
-    for (int i = 0; i < 2; i++)
-      {
-        double tsi = ts[i];
-        if (isnormal (tsi) && (tsi > 0.0))
-          {
-            if (t[CYL_SIDE] < 0)
-              {
-                t[CYL_SIDE] = tsi;
-              }
-            else
-              {
-                if (tsi < t[CYL_SIDE])
-                  {
-                    t[CYL_SIDE] = tsi;
-                  }
-              }
-          }
-      }
-
-    double z0 = a_from.z ();
-    double dz = a_direction.z ();
-    t[CYL_BOTTOM] = (-0.5 * _z_ - z0) / dz;
-    t[CYL_TOP]    = (+0.5 * _z_ - z0) / dz;
-
-    double t_min = -1.0;
-    int face_min = 0;
-    for (int i = 0; i < (int) NFACES; i++)
-      {
-        double ti = t[i];
-        if (debug)
-          {
-            clog << "DEVEL: cylinder::find_intercept: t[" << i << "]= "
-                 << ti << " t_min=" << t_min
-                 << " face_min=" << face_min
-                 << endl;
-          }
-        if (isnormal (ti) && (ti > 0.0))
-          {
-            int face_bit = (0x1 << i); // face mask
-            vector_3d intercept = a_from + a_direction * ti;
-            if (is_on_surface (intercept, face_bit, a_skin))
-              {
-                if ((t_min < 0.0) || (ti < t_min))
-                  {
-                    t_min = ti;
-                    face_min = face_bit;
-                  }
-              }
-          }
-      }
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
     a_intercept.reset ();
-    if (face_min > 0)
-      {
-        a_intercept.set (0, face_min, a_from + a_direction * t_min);
+
+    double skin = compute_tolerance(a_skin);
+
+    const unsigned int NFACES = 3;
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
+
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
       }
-    return a_intercept.is_ok ();
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(a_from,
+                                                a_direction,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+
+    /*
+    {
+      const int FACE_INDEX = 0;
+      disk bottom_face;
+      placement bottom_face_placement;
+      compute_top_bottom_face(FACE_BOTTOM, bottom_face, bottom_face_placement);
+      if (bottom_face.i_find_intercept::find_intercept(a_from,
+                                                       a_direction,
+                                                       bottom_face_placement,
+                                                       intercepts[FACE_INDEX],
+                                                       skin)) {
+        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
+        candidate_impact_counter++;
+      }
+    }
+
+    {
+      const int FACE_INDEX = 1;
+      disk top_face;
+      placement top_face_placement;
+      compute_top_bottom_face(FACE_TOP, top_face, top_face_placement);
+      if (top_face.i_find_intercept::find_intercept(a_from,
+                                                    a_direction,
+                                                    top_face_placement,
+                                                    intercepts[FACE_INDEX],
+                                                    skin)) {
+        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
+        candidate_impact_counter++;
+      }
+    }
+
+    {
+      const int FACE_INDEX = 2;
+      cylindrical_sector side_face;
+      placement side_face_placement;
+      compute_side_face(side_face, side_face_placement);
+      if (side_face.i_find_intercept::find_intercept(a_from,
+                                                     a_direction,
+                                                     side_face_placement,
+                                                     intercepts[FACE_INDEX],
+                                                     skin)) {
+        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_SIDE);
+        candidate_impact_counter++;
+      }
+    }
+    */
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - a_from).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            a_intercept.set_face_id(intercepts[iface].get_face_id());
+            a_intercept.set_impact(intercepts[iface].get_impact());
+          }
+        }
+      }
+    }
+
+    return a_intercept.is_ok();
   }
 
-  ostream & operator<< (ostream & a_out, const cylinder & a_cylinder)
+  std::ostream & operator<< (std::ostream & a_out, const cylinder & a_cylinder)
   {
     a_out << '{' << cylinder::cylinder_label() << ' '
           << a_cylinder._radius_ << ' '
@@ -425,35 +466,35 @@ namespace geomtools {
     return a_out;
   }
 
-  istream & operator>> ( istream & a_in, cylinder & a_cylinder)
+  std::istream & operator>> ( std::istream & a_in, cylinder & a_cylinder)
   {
     a_cylinder.reset ();
     char c = 0;
     a_in.get (c);
     if (c != '{')
       {
-        a_in.clear (ios_base::failbit);
+        a_in.clear (std::ios_base::failbit);
         return a_in;
       }
-    string name;
+    std::string name;
     a_in >> name;
     if (name != cylinder::cylinder_label())
       {
-        a_in.clear (ios_base::failbit);
+        a_in.clear (std::ios_base::failbit);
         return a_in;
       }
     double r, z;
     a_in >> r >> z;
     if (! a_in)
       {
-        a_in.clear (ios_base::failbit);
+        a_in.clear (std::ios_base::failbit);
         return a_in;
       }
     c = 0;
     a_in.get (c);
     if (c != '}')
       {
-        a_in.clear (ios_base::failbit);
+        a_in.clear (std::ios_base::failbit);
         return a_in;
       }
     try
@@ -463,122 +504,175 @@ namespace geomtools {
     catch (...)
       {
         a_cylinder.reset ();
-        a_in.clear (ios_base::failbit);
+        a_in.clear (std::ios_base::failbit);
       }
     return a_in;
   }
 
-  void cylinder::tree_dump (ostream & a_out,
-                            const string & a_title,
-                            const string & a_indent,
+  void cylinder::tree_dump (std::ostream & a_out,
+                            const std::string & a_title,
+                            const std::string & a_indent,
                             bool a_inherit) const
   {
-    string indent;
-    if (! a_indent.empty ()) indent = a_indent;
-    i_object_3d::tree_dump (a_out, a_title, a_indent, true);
+    i_object_3d::tree_dump(a_out, a_title, a_indent, true);
 
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Radius : " << get_r () / CLHEP::mm << " mm" << endl;
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
+    a_out << a_indent << datatools::i_tree_dumpable::tag
+          << "Radius : " << get_r () / CLHEP::mm << " mm" << std::endl;
+
+    a_out << a_indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+          << "Z : " << get_z () / CLHEP::mm << " mm" << std::endl;
+
     return;
   }
 
-  void cylinder::generate_wires (std::list<polyline_3d> & lpl_,
-                                 const placement & p_,
-                                 uint32_t /*options_*/) const
+  void cylinder::compute_side_face(cylindrical_sector & face_,
+                                   placement & face_placement_) const
   {
-    const int nsamples = 36;
-    for (int j = 0; j < 2; j++)
+    DT_THROW_IF (! is_valid(), std::logic_error, "Cylinder is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    face_.set_radius(get_r());
+    face_.set_z(get_z());
+    face_placement_.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    return;
+  }
+
+  void cylinder::compute_top_bottom_face(faces_mask_type face_id_,
+                                         disk & face_,
+                                         placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Cylinder is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    switch(face_id_) {
+    case FACE_BOTTOM:
+      face_.set_r(get_r());
+      face_placement_.set(0.0, 0.0, -0.5 * _z_,
+                          0.0, 0.0, 0.0);
+      break;
+    case FACE_TOP:
+      face_.set_r(get_r());
+      face_placement_.set(0.0, 0.0, +0.5 * _z_,
+                          0.0, 0.0, 0.0);
+      break;
+    }
+    return;
+  }
+
+
+  unsigned int cylinder::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Cylinder is not valid !");
+    unsigned int nfaces = 0;
+    {
+      // Side face:
       {
-        double z = -0.5 * get_z () + j * get_z ();
-        for (int jj = 0; jj < 3; jj++)
-          {
-            double r = get_r ();
-            r /= (1 + jj);
-            vector_3d vertex[nsamples];
-            for (int i = 0; i < nsamples; i++)
-              {
-                double thetai = i * 2. * M_PI/nsamples;
-                vertex[i].set (r * std::cos (thetai),
-                               r * std::sin (thetai),
-                               z);
-              }
-            {
-              polyline_3d dummy;
-              lpl_.push_back (dummy);
-            }
-            polyline_3d & pl = lpl_.back ();
-            pl.set_closed (true);
-            for (int i = 0; i < 36; i++)
-              {
-                vector_3d v;
-                p_.child_to_mother (vertex[i], v);
-                pl.add (v);
-              }
-          }
-        for (int k = 0; k < 2; k++)
-          {
-            vector_3d vertex[2];
-            vertex[0].set (-(k%2)*get_r (), -((k+1)%2)*get_r (), z);
-            vertex[1].set (+(k%2)*get_r (), +((k+1)%2)*get_r (), z);
-            {
-              polyline_3d dummy;
-              lpl_.push_back (dummy);
-            }
-            polyline_3d & pl = lpl_.back ();
-            pl.set_closed (false);
-            for (int i = 0; i < 2; i++)
-              {
-                vector_3d v;
-                p_.child_to_mother (vertex[i], v);
-                pl.add (v);
-              }
-          }
-      /*
-        vector_3d vertex[nsamples];
-        for (int i = 0; i < nsamples; i++)
-          {
-            double thetai = i * 2. * M_PI/nsamples;
-            vertex[i].set (get_r () * std::cos (thetai),
-                           get_r () * std::sin (thetai),
-                           -0.5 * get_z () + j * get_z ());
-          }
-        {
-          polyline_3d dummy;
-          lpl_.push_back (dummy);
-        }
-        polyline_3d & pl = lpl_.back ();
-        pl.set_closed (true);
-        for (int i = 0; i < 36; i++)
-          {
-            vector_3d v;
-            p_.child_to_mother (vertex[i], v);
-            pl.add (v);
-          }
-        */
+        face_info dummy;
+        faces_.push_back(dummy);
       }
-     for (int i = 0; i < nsamples; i++)
+      face_info & finfo = faces_.back();
+      cylindrical_sector & cs = finfo.add_face<cylindrical_sector>();
+      compute_side_face(cs, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("side");
+      nfaces++;
+    }
+
+    {
+      // Bottom face:
       {
-        vector_3d vertex[2];
-        double thetai = i * 2. * M_PI/nsamples;
-        double x = get_r () * std::cos (thetai);
-        double y = get_r () * std::sin (thetai);
-        vertex[0].set (x, y, -0.5 * get_z ());
-        vertex[1].set (x, y, +0.5 * get_z ());
-        {
-          polyline_3d dummy;
-          lpl_.push_back (dummy);
-          polyline_3d & pl = lpl_.back ();
-          pl.set_closed (false);
-          for (int i = 0; i < 2; i++)
-            {
-              vector_3d v;
-              p_.child_to_mother (vertex[i], v);
-              pl.add (v);
-            }
-        }
+        face_info dummy;
+        faces_.push_back(dummy);
       }
+      face_info & finfo = faces_.back();
+      disk & d = finfo.add_face<disk>();
+      compute_top_bottom_face(FACE_BOTTOM, d, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_BOTTOM);
+      finfo.set_identifier(fid);
+      finfo.set_label("bottom");
+      nfaces++;
+    }
+
+    {
+      // Top face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      disk & d = finfo.add_face<disk>();
+      compute_top_bottom_face(FACE_TOP, d, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_TOP);
+      finfo.set_identifier(fid);
+      finfo.set_label("top");
+      nfaces++;
+    }
+    return nfaces;
+  }
+
+
+  void cylinder::generate_wires_self(wires_type & wires_,
+                                     uint32_t options_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
+    bool debug_explode = options_ & WR_BASE_EXPLODE;
+    bool draw_bottom = !(options_ & WR_CYL_NO_BOTTOM_FACE);
+    bool draw_top    = !(options_ & WR_CYL_NO_TOP_FACE);
+    bool draw_side   = !(options_ & WR_CYL_NO_SIDE_FACE);
+
+    bool draw_boundings = (options_ & WR_BASE_BOUNDINGS);
+
+    if (draw_boundings) {
+      get_bounding_data().generate_wires_self(wires_, 0);
+    }
+
+    // Keep only base rendering bits:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    double factor = 1.0;
+    if (debug_explode) {
+      factor = 1.25;
+    }
+
+    bool edge_top = false;
+    bool edge_bottom = false;
+
+    if (draw_bottom) {
+      disk bottom_face;
+      placement bottom_face_placement;
+      compute_top_bottom_face(FACE_BOTTOM, bottom_face, bottom_face_placement);
+      uint32_t options = base_options;
+      bottom_face.generate_wires(wires_, bottom_face_placement, options);
+      edge_bottom = true;
+    }
+
+    if (draw_top) {
+      disk top_face;
+      placement top_face_placement;
+      compute_top_bottom_face(FACE_TOP, top_face, top_face_placement);
+      uint32_t options = base_options;
+      top_face.generate_wires(wires_, top_face_placement, options);
+      edge_top = true;
+    }
+
+    if (draw_side) {
+      cylindrical_sector side_face;
+      placement side_face_placement;
+      compute_side_face(side_face, side_face_placement);
+      uint32_t options = base_options;
+      if (edge_bottom) {
+        options |= cylindrical_sector::WR_CYLSEC_NO_BOTTOM_EDGE;
+      }
+      if (edge_top) {
+        options |= cylindrical_sector::WR_CYLSEC_NO_TOP_EDGE;
+      }
+      side_face.generate_wires(wires_, side_face_placement, options);
+    }
+
     return;
   }
 

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file geomtools/helix_3d.ipp
 
 #ifndef GEOMTOOLS_HELIX_3D_IPP
@@ -40,7 +39,7 @@ namespace geomtools {
     }
 
     a_ar & boost::serialization::make_nvp("radius", _radius_);
-    if (_radius_ == _radius_) {
+    if (datatools::is_valid(_radius_)) {
       a_ar & boost::serialization::make_nvp("center", _center_);
       a_ar & boost::serialization::make_nvp("step",   _step_);
       a_ar & boost::serialization::make_nvp("t1",     _t1_);
@@ -53,3 +52,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_HELIX_3D_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

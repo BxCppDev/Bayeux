@@ -256,8 +256,10 @@ namespace geomtools {
         sd_ptr->tree_dump (std::cerr);
       }
     }
-    _extruded_solid_.set_user_draw ((void *) &cylindric_extrusion_boxed_model::gnuplot_draw_user_function);
-    //    _solid_ = &_extruded_solid_;
+  // Install a dedicated drawer:
+    _drawer_.reset(new wires_drawer(*this));
+    _extruded_solid_.set_wires_drawer(*_drawer_);
+    _extruded_solid_.lock();
 
     grab_logical ().set_name (i_model::make_logical_volume_name (name_));
     grab_logical ().set_shape (_extruded_solid_);
@@ -312,60 +314,58 @@ namespace geomtools {
     return;
   }
 
-  void cylindric_extrusion_boxed_model::gnuplot_draw_user_function (std::ostream & out_,
-                                                                    const geomtools::vector_3d & position_,
-                                                                    const geomtools::rotation_3d & rotation_,
-                                                                    const geomtools::i_object_3d & obj_,
-                                                                    void *)
+  cylindric_extrusion_boxed_model::wires_drawer::wires_drawer(const cylindric_extrusion_boxed_model & model_)
+    : i_wires_drawer(model_)
   {
-    const geomtools::subtraction_3d * solid = dynamic_cast<const geomtools::subtraction_3d *>(&obj_);
-    DT_THROW_IF (solid == 0,
-                 std::logic_error,
-                 "3D-object of '" << obj_.get_shape_name ()
-                 << "' shape type has not the right type !");
-    const geomtools::i_composite_shape_3d::shape_type & s1 = solid->get_shape1 ();
-    const geomtools::i_composite_shape_3d::shape_type & s2 = solid->get_shape2 ();
-    const geomtools::i_shape_3d & sh1 = s1.get_shape ();
-    const geomtools::i_shape_3d & sh2 = s2.get_shape ();
+    return;
+  }
 
-    // Extract useful stuff (shapes and properties):
-    const geomtools::box & mother_box = dynamic_cast<const geomtools::box &> (sh1);
-    const geomtools::cylinder & extrusion_cylinder = dynamic_cast<const geomtools::cylinder &> (sh2);
+  cylindric_extrusion_boxed_model::wires_drawer::~wires_drawer()
+  {
+    return;
+  }
 
-    // Draw first shape (extruded mother):
-    {
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation (position_);
-      mother_world_placement.set_orientation (rotation_);
+  void cylindric_extrusion_boxed_model::wires_drawer::generate_wires_self(wires_type & wires_,
+                                                                          uint32_t options_) const
+  {
+    // The top level subtraction solid shape:
+    const geomtools::subtraction_3d & solid = get()._extruded_solid_;
 
-      geomtools::placement world_item_placement;
-      mother_world_placement.child_to_mother (s1.get_placement (),
-                                              world_item_placement);
-      const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation ();
-      const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-      geomtools::gnuplot_draw::draw_box (out_,
-                                         sh1_pos,
-                                         sh1_rot,
-                                         mother_box);
+    // Extract specific rendering options for this model:
+    const bool draw_plate = ! (options_ & WR_CEBM_NO_MOTHER_FACES);
+    const bool draw_hole  = ! (options_ & WR_CEBM_NO_EXTRUSION_FACES);
+
+    // Extract base rendering options:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    if (draw_plate) {
+      // Draw mother plate shape:
+      uint32_t options = base_options;
+      options |= box::WR_BOX_NO_BOTTOM_FACE;
+      options |= box::WR_BOX_NO_TOP_FACE;
+      const geomtools::i_composite_shape_3d::shape_type & s1 = solid.get_shape1();
+      const geomtools::i_shape_3d & sh1 = s1.get_shape();
+      // Extract mother plate shape:
+      const geomtools::box & mother_box = dynamic_cast<const geomtools::box &>(sh1);
+      mother_box.generate_wires_self(wires_, options);
     }
 
-    // Draw second shape (extrusion):
-    {
-      const geomtools::cylinder cyl (extrusion_cylinder.get_radius (), mother_box.get_z ());
-      geomtools::placement mother_world_placement;
-      mother_world_placement.set_translation (position_);
-      mother_world_placement.set_orientation (rotation_);
-
-      geomtools::placement world_item_placement;
-      mother_world_placement.child_to_mother (s1.get_placement (),
-                                              world_item_placement);
-      const geomtools::vector_3d   & sh1_pos = world_item_placement.get_translation ();
-      const geomtools::rotation_3d & sh1_rot = world_item_placement.get_rotation ();
-      geomtools::gnuplot_draw::draw_cylinder (out_,
-                                              sh1_pos,
-                                              sh1_rot,
-                                              cyl);
+    if (draw_hole) {
+      const double hole_x_pos = 0.0;
+      const double hole_y_pos = 0.0;
+      const double hole_z_pos = 0.0; // Always ZERO
+      // Draw extrusion shape:
+      geomtools::placement hole_placement(hole_x_pos, hole_y_pos, hole_z_pos, 0., 0. , 0.);
+      // Extract extrusion shape:
+      const geomtools::i_composite_shape_3d::shape_type & s2 = solid.get_shape2();
+      const geomtools::i_shape_3d & sh2 = s2.get_shape();
+      const cylinder & hole_cylinder = dynamic_cast<const geomtools::cylinder &>(sh2);
+      uint32_t options = base_options;
+      options |= cylinder::WR_CYL_NO_BOTTOM_FACE;
+      options |= cylinder::WR_CYL_NO_TOP_FACE;
+      hole_cylinder.generate_wires(wires_, hole_placement, options);
     }
+
     return;
   }
 

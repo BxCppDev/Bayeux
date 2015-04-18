@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/shape_factory.h
 /* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2015-02-03
@@ -129,3 +128,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::shape_factory)
 
 #endif // GEOMTOOLS_SHAPE_FACTORY_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

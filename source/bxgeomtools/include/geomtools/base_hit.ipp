@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/base_hit.ipp
 
 #ifndef GEOMTOOOLS_BASE_HIT_IPP
@@ -46,3 +45,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOOLS_BASE_HIT_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

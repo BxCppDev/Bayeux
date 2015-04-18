@@ -1,12 +1,12 @@
-// -*- mode: c++; -*-
 /// \file geomtools/utils.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2013-09-29
+ * Last modified: 2015-02-18
  *
  * License:
  *
  * Description:
+ *
  *  Utilities.
  *
  * History:
@@ -33,6 +33,12 @@
 
 namespace geomtools {
 
+  //! \brief Check if a position is inside a position interval
+  bool position_is_in(double position_,
+                      double start_position_, double delta_position_,
+                      double tolerance_ = 0.0,
+                      bool bounds_excluded_ = false);
+
   //! \brief Check if an angle is inside an angular interval
   bool angle_is_in(double angle_,
                    double start_angle_, double delta_angle_,
@@ -42,34 +48,45 @@ namespace geomtools {
   //! Alias for a list of 2D vertice as a 2D-polyline
   typedef std::list<vector_2d> basic_polyline_2d;
 
-  //! Alias for a list of 3D vertice as a 3D-polyline
-  typedef std::list<vector_3d> basic_polyline_3d;
+  //! Aliases for a segment made of two 3D vertice
+  typedef std::pair<vector_3d, vector_3d> basic_segment_3d;
+  typedef basic_segment_3d segment_type;
 
-  void print_xy (std::ostream & out_,
-                 const vector_2d & p_,
+  //! Aliases for a list of 3D vertice as a 3D-polyline
+  typedef std::list<vector_3d> basic_polyline_3d;
+  typedef std::list<vector_3d> polyline_type;
+
+  //! Aliases for an ordered collection of 3D vertice
+  typedef std::vector<vector_3d> vertex_col_type;
+
+  //! Alias for a list of 3D-polylines
+  typedef std::list<polyline_type> wires_type;
+
+  void print_xy(std::ostream & out_,
+                const vector_2d & p_,
+                bool endl_ = true);
+
+  std::string to_xy(const vector_2d & p_);
+
+  std::string vector_2d_to_xy(const vector_2d & p_);
+
+  void print_xy_stdout(const vector_2d & p_);
+
+  void print_xy_stderr(const vector_2d & p_);
+
+  void print_xyz(std::ostream & out_,
+                 const vector_3d & p_,
                  bool endl_ = true);
 
-  std::string to_xy (const vector_2d & p_);
+  void print(std::ostream & out_, const vector_3d & p_);
 
-  std::string vector_2d_to_xy (const vector_2d & p_);
+  std::string to_xyz(const vector_3d & p_);
 
-  void print_xy_stdout (const vector_2d & p_);
+  std::string vector_3d_to_xyz(const vector_3d & p_);
 
-  void print_xy_stderr (const vector_2d & p_);
+  void print_xyz_stdout(const vector_3d & p_);
 
-  void print_xyz (std::ostream & out_,
-                  const vector_3d & p_,
-                  bool endl_ = true);
-
-  void print (std::ostream & out_, const vector_3d & p_);
-
-  std::string to_xyz (const vector_3d & p_);
-
-  std::string vector_3d_to_xyz (const vector_3d & p_);
-
-  void print_xyz_stdout (const vector_3d & p_);
-
-  void print_xyz_stderr (const vector_3d & p_);
+  void print_xyz_stderr(const vector_3d & p_);
 
   //! \brief Parse a vector 3D object from an input stream
   //!
@@ -89,29 +106,29 @@ namespace geomtools {
   //! \brief Parse a vector 3D object from an input string
   bool parse(const std::string & token_, vector_3d & position_);
 
-  void print_xy (std::ostream & out_,
-                 const basic_polyline_2d & p_,
+  void print_xy(std::ostream & out_,
+                const basic_polyline_2d & p_,
+                bool endl_ = true);
+
+  std::string to_xy(const basic_polyline_2d & p_);
+
+  std::string basic_polyline_2d_to_xy(const basic_polyline_2d & p_);
+
+  void print_xy_stdout(const basic_polyline_2d & p_);
+
+  void print_xy_stderr(const basic_polyline_2d & p_);
+
+  void print_xyz(std::ostream & out_,
+                 const basic_polyline_3d & p_,
                  bool endl_ = true);
 
-  std::string to_xy (const basic_polyline_2d & p_);
+  std::string to_xyz(const basic_polyline_3d & p_);
 
-  std::string basic_polyline_2d_to_xy (const basic_polyline_2d & p_);
+  std::string basic_polyline_3d_to_xyz(const basic_polyline_3d & p_);
 
-  void print_xy_stdout (const basic_polyline_2d & p_);
+  void print_xyz_stdout(const basic_polyline_3d & p_);
 
-  void print_xy_stderr (const basic_polyline_2d & p_);
-
-  void print_xyz (std::ostream & out_,
-                  const basic_polyline_3d & p_,
-                  bool endl_ = true);
-
-  std::string to_xyz (const basic_polyline_3d & p_);
-
-  std::string basic_polyline_3d_to_xyz (const basic_polyline_3d & p_);
-
-  void print_xyz_stdout (const basic_polyline_3d & p_);
-
-  void print_xyz_stderr (const basic_polyline_3d & p_);
+  void print_xyz_stderr(const basic_polyline_3d & p_);
 
   //! Orientation constants
   enum orientation_type {
@@ -140,25 +157,27 @@ namespace geomtools {
     TOP    = 5  // +z
   };
 
-  enum vertex_1d {
+  enum vertex_1d_type {
     VERTEX_NONE     = 0x0,
-    VERTEX_ALL_BITS = 0xFFFFFFFF
+    VERTEX_ALL_BITS = datatools::bit_mask::nbits31,
+    VERTEX_ALL      = VERTEX_ALL_BITS
   };
 
-  enum path_1d {
-    PATH_NONE = 0x0,
-    PATH_ALL_BITS = 0xFFFFFFFF
+  enum path_1d_type {
+    PATH_NONE     = 0x0,
+    PATH_ALL_BITS = datatools::bit_mask::nbits31,
+    PATH_ALL      = PATH_ALL_BITS
   };
 
-  enum side_2d {
-    SIDE_NONE = 0x0,
-    SIDE_ALL_BITS = 0xFFFFFFFF
+  enum side_2d_type {
+    SIDE_NONE     = 0x0,
+    EDGE_NONE     = SIDE_NONE,
+    SIDE_ALL_BITS = datatools::bit_mask::nbits31,
+    EDGE_ALL_BITS = SIDE_ALL_BITS,
+    SIDE_ALL      = SIDE_ALL_BITS,
+    EDGE_ALL      = SIDE_ALL
   };
-
-  enum face_3d {
-    FACE_NONE = 0x0,
-    FACE_ALL_BITS = 0xFFFFFFFF
-  };
+  typedef side_2d_type edge_2d_type;
 
   //! Flags determining the position of a point with respect to a 3D shape
   enum shape_domain_flags_type {
@@ -180,10 +199,10 @@ namespace geomtools {
     static const double ZERO_TOLERANCE;
     static const double USING_PROPER_TOLERANCE;
 
-    static double get_default_tolerance ();
-    static double get_default_angular_tolerance ();
-    static double get_zero_tolerance ();
-    static double get_proper_tolerance ();
+    static double get_default_tolerance();
+    static double get_default_angular_tolerance();
+    static double get_zero_tolerance();
+    static double get_proper_tolerance();
   };
 
   class filled_utils
@@ -211,147 +230,200 @@ namespace geomtools {
    * "World coordinates system->Local coordinates system":
    */
 
+  /// \brief Type of Euler angles
+  enum euler_angles_type {
+    EULER_ANGLES_INVALID = -1, //!< Invalid Euler angles
+    EULER_ANGLES_ZXZ     =  0, //!< ZXZ classic Euler angles
+    EULER_ANGLES_XYX     =  1, //!< XYX classic Euler angles
+    EULER_ANGLES_YZY     =  2, //!< YZY classic Euler angles
+    EULER_ANGLES_ZYZ     =  3, //!< ZYZ classic Euler angles
+    EULER_ANGLES_XZX     =  4, //!< XZX classic Euler angles
+    EULER_ANGLES_YXY     =  5, //!< YXY classic Euler angles
+    EULER_ANGLES_XYZ     =  6, //!< XYZ Tait-Bryan angles
+    EULER_ANGLES_YZX     =  7, //!< YZX Tait-Bryan angles
+    EULER_ANGLES_ZXY     =  8, //!< ZXY Tait-Bryan angles
+    EULER_ANGLES_XZY     =  9, //!< XZY Tait-Bryan angles
+    EULER_ANGLES_ZYX     = 10, //!< ZYX Tait-Bryan angles
+    EULER_ANGLES_YXZ     = 11  //!< YXZ Tait-Bryan angles
+  };
+
+  //! Create a rotation using Euler angles
+  //!
+  //! @param rot_ the rotation matrix to be initialized
+  //! @param angle0_ the first Euler angle
+  //! @param angle1_ the second Euler angle
+  //! @param angle2_ the third Euler angle
+  //! @param et_     the type of Euler angles
+  void create(rotation_3d & rot_,
+              double angle0_,
+              double angle1_,
+              double angle2_,
+              euler_angles_type et_);
+
   //! Create a rotation using ZYZ Euler angles
-  void create_zyz (rotation_3d & rot_,
-                   double phi_,
-                   double theta_,
-                   double delta_);
+  //!
+  //! @param rot_ the rotation matrix to be initialized
+  //! @param phi_ the azimuthal angle
+  //! @param theta_ the polar/zenith angle
+  //! @param delta_ the tilt angle
+  void create_zyz(rotation_3d & rot_,
+                  double phi_,
+                  double theta_,
+                  double delta_);
 
   //! Create a rotation (default is using ZYZ Euler angles)
-  void create (rotation_3d & rot_,
-               double phi_,
-               double theta_,
-               double delta_);
+  //!
+  //! @param rot_ the rotation matrix to be initialized
+  //! @param phi_ the azimuthal angle
+  //! @param theta_ the polar/zenith angle
+  //! @param delta_ the tilt angle
+  void create(rotation_3d & rot_,
+              double phi_,
+              double theta_,
+              double delta_);
 
   //! Create a rotation using ZXZ Euler angles
-  void create_zxz (rotation_3d & rot_,
-                   double phi_,
-                   double theta_,
-                   double psi_);
+  void create_zxz(rotation_3d & rot_,
+                  double phi_,
+                  double theta_,
+                  double psi_);
 
   //! Create a rotation using XYZ Euler angles
-  void create_xyz (rotation_3d & rot_,
-                   double phi_,
-                   double theta_,
-                   double psi_);
+  void create_xyz(rotation_3d & rot_,
+                  double phi_,
+                  double theta_,
+                  double psi_);
+
+  //! Create a rotation(default is using ZYZ Euler angles)
+  //!
+  //! @param rot_ the rotation matrix to be initialized
+  //! @param phi_ the azimuthal angle
+  //! @param theta_ the polar/zenith angle
+  //! @param delta_ the tilt angle
+  void create_rotation_3d(rotation_3d & rot_,
+                          double phi_,
+                          double theta_,
+                          double delta_);
 
   //! Create a rotation (default is using ZYZ Euler angles)
-  void create_rotation_3d (rotation_3d & rot_,
-                           double phi_,
-                           double theta_,
-                           double delta_);
+  //!
+  //! @param rot_ the rotation matrix to be initialized
+  //! @param phi_ the azimuthal angle
+  //! @param theta_ the polar/zenith angle
+  //! @param delta_ the tilt angle
+  void create_rotation_from_zyz_euler_angles(rotation_3d & rot_,
+                                             double phi_,
+                                             double theta_,
+                                             double delta_);
 
   //! Create a rotation (default is using ZYZ Euler angles)
-  void create_rotation_from_zyz_euler_angles (rotation_3d & rot_,
-                                              double phi_,
-                                              double theta_,
-                                              double delta_);
-
-  //! Create a rotation (default is using ZYZ Euler angles)
-  void create_rotation (rotation_3d & rot_,
-                        double phi_,
-                        double theta_,
-                        double delta_);
+  //!
+  //! @param rot_ the rotation matrix to be initialized
+  //! @param phi_ the azimuthal angle
+  //! @param theta_ the polar/zenith angle
+  //! @param delta_ the tilt angle
+  void create_rotation(rotation_3d & rot_,
+                       double phi_,
+                       double theta_,
+                       double delta_);
 
   //! Check if a rotation is the identity
-  bool is_identity (const rotation_3d & rot_);
+  bool is_identity(const rotation_3d & rot_);
 
   //! Extract the XYZ Euler angles from a rotation
-  void extract_xyz_euler_angle_from_rotation (const rotation_3d & rot_,
-                                              double & a_,
-                                              double & b_,
-                                              double & c_);
-
+  void extract_xyz_euler_angle_from_rotation(const rotation_3d & rot_,
+                                             double & a_,
+                                             double & b_,
+                                             double & c_);
 
   //! Extract the ZYZ Euler angles from a rotation
   // http://www.geometrictools.com/Documentation/EulerAngles.pdf
-  void extract_zyz_euler_angle_from_rotation (const rotation_3d & rot_,
-                                              double & a_,
-                                              double & b_,
-                                              double & c_);
+  void extract_zyz_euler_angle_from_rotation(const rotation_3d & rot_,
+                                             double & a_,
+                                             double & b_,
+                                             double & c_);
 
   // http://www.cgafaq.info/wiki/Euler_angles_from_matrix
   // struct extract_euler_angle
   // {
   //   int i, neg, alt, rev;
-  //   extract_euler_angle ()  {}
+  //   extract_euler_angle()  {}
   // };
 
   //! Special rotation angle values
-  enum special_rotation_angle_type
-    {
-      ROTATION_ANGLE_INVALID = -1,
-      ROTATION_ANGLE_0   = 0,
-      ROTATION_ANGLE_90  = 1,
-      ROTATION_ANGLE_180 = 2,
-      ROTATION_ANGLE_270 = 3
-    };
+  enum special_rotation_angle_type {
+    ROTATION_ANGLE_INVALID = -1, //!< Invalid special rotation angle
+    ROTATION_ANGLE_0   = 0, //!< Null rotation angle
+    ROTATION_ANGLE_90  = 1, //!< 90° rotation angle
+    ROTATION_ANGLE_180 = 2, //!< 180° rotation angle
+    ROTATION_ANGLE_270 = 3  //!< 270° rotation angle
+  };
 
-  bool check_special_rotation_angle (int);
+  bool check_special_rotation_angle(int);
 
-  double get_special_rotation_angle (int);
+  double get_special_rotation_angle(int);
 
-  int get_special_rotation_angle_from_label (const std::string & );
+  int get_special_rotation_angle_from_label(const std::string & );
 
-  std::string get_special_rotation_angle_label (int);
+  std::string get_special_rotation_angle_label(int);
 
   //! Axis type
   enum axis_type {
-    AXIS_INVALID = -1,
-    AXIS_X = 0,
-    AXIS_Y = 1,
-    AXIS_Z = 2
+    AXIS_INVALID = -1, //!< Invalid axis
+    AXIS_X = 0, //!< X axis
+    AXIS_Y = 1, //!< Y axis
+    AXIS_Z = 2  //!< Z axis
   };
 
   //! Rotation axis type
   enum rotation_axis_type {
-    ROTATION_AXIS_INVALID = -1,
-    ROTATION_AXIS_X = AXIS_X,
-    ROTATION_AXIS_Y = AXIS_Y,
-    ROTATION_AXIS_Z = AXIS_Z
+    ROTATION_AXIS_INVALID = -1, //!< Invalid rotation axis
+    ROTATION_AXIS_X = AXIS_X, //!< X rotation axis
+    ROTATION_AXIS_Y = AXIS_Y, //!< Y rotation axis
+    ROTATION_AXIS_Z = AXIS_Z  //!< Z rotation axis
   };
 
-  bool check_rotation_axis (int);
+  bool check_rotation_axis(int);
 
-  int get_rotation_axis_from_label (const std::string & );
+  int get_rotation_axis_from_label(const std::string & );
 
-  std::string get_rotation_label (int);
+  std::string get_rotation_label(int);
 
-  void create_rotation_from_axis (rotation_3d & rot_,
-                                  int axis_,
-                                  double angle_);
+  void create_rotation_from_axis(rotation_3d & rot_,
+                                 int axis_,
+                                 double angle_);
 
-  void create_rotation (rotation_3d & rot_,
-                        int axis_,
-                        double angle_);
+  void create_rotation(rotation_3d & rot_,
+                       int axis_,
+                       double angle_);
 
-  void create_rotation (rotation_3d & rot_,
-                        int axis_,
-                        int special_angle_);
+  void create_rotation(rotation_3d & rot_,
+                       int axis_,
+                       int special_angle_);
 
-  void create_rotation_from (rotation_3d & rot_,
-                             const std::string &);
+  void create_rotation_from(rotation_3d & rot_,
+                            const std::string &);
 
   //! Invalidate a rotation 3D object
   void reset(rotation_3d & rot_);
 
   //! Invalidate a rotation 3D object
-  void reset_rotation_3d (rotation_3d & rot_);
+  void reset_rotation_3d(rotation_3d & rot_);
 
   //! Smart print for rotation 3D object
-  void tree_dump (const rotation_3d & rot_,
-                  std::ostream & out_,
-                  const std::string & title_ = "",
-                  const std::string & indent_ = "");
+  void tree_dump(const rotation_3d & rot_,
+                 std::ostream & out_,
+                 const std::string & title_ = "",
+                 const std::string & indent_ = "");
 
   //! Invalidate a rotation 3D object
-  void invalidate (rotation_3d & rot_);
+  void invalidate(rotation_3d & rot_);
 
   //! Rectify a rotation 3D object
-  void rectify (rotation_3d & rot_);
+  void rectify(rotation_3d & rot_);
 
   //! Invalidate a rotation 3D object
-  void invalidate_rotation_3d (rotation_3d & rot_);
+  void invalidate_rotation_3d(rotation_3d & rot_);
 
   //! Check if a rotation 3D object is valid
   bool is_valid(const rotation_3d & rot_);
@@ -366,81 +438,80 @@ namespace geomtools {
               double z_);
 
   //! Create/set coordinates of a vector 3D object (cartesian)
-  void create_xyz (vector_3d &,
-                   double x_,
-                   double y_,
-                   double z_);
+  void create_xyz(vector_3d &,
+                  double x_,
+                  double y_,
+                  double z_);
 
   //! Create/set coordinates of a vector 3D object (polar)
-  void create_polar (vector_3d &,
-                     double r_,
-                     double theta_,
-                     double z_);
+  void create_polar(vector_3d &,
+                    double r_,
+                    double theta_,
+                    double z_);
 
   //! Create/set coordinates of a vector 3D object (spherical)
-  void create_spherical (vector_3d &,
-                         double r_,
-                         double phi_,
-                         double theta_);
+  void create_spherical(vector_3d &,
+                        double r_,
+                        double phi_,
+                        double theta_);
 
   //! Set coordinates of a vector 3D object (cartesian)
-  void set (vector_3d & vec_, double x_, double y_, double z_);
+  void set(vector_3d & vec_, double x_, double y_, double z_);
 
   //! Set coordinates of a vector 3D object (spherical)
-  void set_r_theta_phi (vector_3d & vec_, double r_, double theta_, double phi_);
+  void set_r_theta_phi(vector_3d & vec_, double r_, double theta_, double phi_);
 
   //! Set coordinates of a vector 3D object (polar)
-  void set_rho_phi_z (vector_3d & vec_, double rho_, double phi_, double z_);
+  void set_rho_phi_z(vector_3d & vec_, double rho_, double phi_, double z_);
 
   //! Invalidate a vector 3D object
-  void invalidate (vector_3d & vec_);
+  void invalidate(vector_3d & vec_);
 
   //! Invalidate a vector 3D object
-  void invalidate_vector_3d (vector_3d & vec_);
+  void invalidate_vector_3d(vector_3d & vec_);
 
   //! Check if a vector 3D object is valid
-  bool is_valid (const vector_3d & vec_);
+  bool is_valid(const vector_3d & vec_);
 
   //! Check if a vector 3D object is valid
-  bool is_valid_vector_3d (const vector_3d & vec_);
+  bool is_valid_vector_3d(const vector_3d & vec_);
 
   //! Check if two vector 3D objects are close to each other given a tolerance
-  bool are_near (const vector_3d & vec1_,
-                 const vector_3d & vec2_,
-                 double tolerance_ = constants::DEFAULT_TOLERANCE);
+  bool are_near(const vector_3d & vec1_,
+                const vector_3d & vec2_,
+                double tolerance_ = constants::DEFAULT_TOLERANCE);
 
   //! Check if two vector 3D objects are close to each other given a tolerance
-  bool are_near_vector_3d (const vector_3d & vec1_,
-                           const vector_3d & vec2_,
-                           double tolerance_);
+  bool are_near_vector_3d(const vector_3d & vec1_,
+                          const vector_3d & vec2_,
+                          double tolerance_);
 
   //! Set coordinates of a vector 2D object (cartesian)
-  void set (vector_2d & vec_, double x_, double y_);
+  void set(vector_2d & vec_, double x_, double y_);
 
   //! Set coordinates of a vector 2D object (polar)
-  void set_r_phi (vector_2d & vec_, double r_, double phi_);
+  void set_r_phi(vector_2d & vec_, double r_, double phi_);
 
   //! Invalidate a vector 2D object
-  void invalidate (vector_2d & vec_);
+  void invalidate(vector_2d & vec_);
 
   //! Invalidate a vector 2D object
-  void invalidate_vector_2d (vector_2d & vec_);
+  void invalidate_vector_2d(vector_2d & vec_);
 
   //! Check if a vector 2D object is valid
-  bool is_valid (const vector_2d & vec_);
+  bool is_valid(const vector_2d & vec_);
 
   //! Check if a vector 2D object is valid
-  bool is_valid_vector_2d (const vector_2d & vec_);
+  bool is_valid_vector_2d(const vector_2d & vec_);
 
   //! Convert a vector 2D object to a vector 3D object (export x and y coordinates, setting z to zero)
-  void vector_2d_to_vector_3d (const vector_2d & v2d_, vector_3d & v3d_);
+  void vector_2d_to_vector_3d(const vector_2d & v2d_, vector_3d & v3d_);
 
   //! Convert a vector 3D object to a vector 2D object (export only x and y coordinates)
-  void vector_3d_to_vector_2d (const vector_3d & v3d_, vector_2d & v2d_);
+  void vector_3d_to_vector_2d(const vector_3d & v3d_, vector_2d & v2d_);
 
   //! Create a vector 3D object from spherical angular coordinates (magnitude is set to 1)
-  void make_phi_theta (vector_3d & vec_, double phi_, double theta_);
-
+  void make_phi_theta(vector_3d & vec_, double phi_, double theta_);
 
   //! \brief Isotropically randomize the direction of an unit vector
   //!
@@ -452,17 +523,16 @@ namespace geomtools {
   //! like drand48 does.
   //! @arg ran_dir_ the unit vector to be randomized
   template <class ran_func>
-  void randomize_direction (ran_func & ran_, vector_3d & ran_dir_)
+  void randomize_direction(ran_func & ran_, vector_3d & ran_dir_)
   {
     double phi = 2. * M_PI * ran_();
     double cos_theta = -1 + 2 * ran_();
-    double sin_theta = sqrt (1. - cos_theta * cos_theta);
-    double x = sin_theta * cos (phi);
-    double y = sin_theta * sin (phi);
+    double sin_theta = std::sqrt(1. - cos_theta * cos_theta);
+    double x = sin_theta * std::cos(phi);
+    double y = sin_theta * std::sin(phi);
     double z = cos_theta;
-    ran_dir_.set (x, y, z);
+    ran_dir_.set(x, y, z);
   }
-
 
   //! \brief Isotropically randomize the direction of an unit vector
   //!
@@ -474,13 +544,12 @@ namespace geomtools {
   //! like drand48 does.
   //! @return the unit vector to be randomized
   template <class ran_func>
-  vector_3d randomize_direction (ran_func & ran_)
+  vector_3d randomize_direction(ran_func & ran_)
   {
     vector_3d dir;
-    randomize_direction (ran_, dir);
+    randomize_direction(ran_, dir);
     return dir;
   }
-
 
   //! \brief Isotropically randomize the direction of an unit vector orthogonal to a given direction
   //!
@@ -493,9 +562,9 @@ namespace geomtools {
   //! @arg dir_ the direction the randomized unit vector must be orthogonal to
   //! @arg ran_dir_ the unit vector to be randomized
   template <class ran_func>
-  void randomize_orthogonal_direction (ran_func & ran_,
-                                       const vector_3d & dir_,
-                                       vector_3d & ran_dir_)
+  void randomize_orthogonal_direction(ran_func & ran_,
+                                      const vector_3d & dir_,
+                                      vector_3d & ran_dir_)
   {
     double theta = 2. * M_PI * ran_();
     double dx = cos(theta);
@@ -512,7 +581,6 @@ namespace geomtools {
     return;
   }
 
-
   //! \brief Isotropically randomize the direction of an unit vector orthogonal to a given direction
   //!
   //! @arg ran_ a function or object-function (functor) with the following operator defined:
@@ -524,137 +592,56 @@ namespace geomtools {
   //! @arg dir_ the direction the randomized unit vector must be orthogonal to
   //! @return the unit vector to be randomized
   template <class ran_func>
-  vector_3d randomize_orthogonal_direction (ran_func & ran_,
-                                            const vector_3d & ref_dir_)
+  vector_3d randomize_orthogonal_direction(ran_func & ran_,
+                                           const vector_3d & ref_dir_)
   {
     vector_3d dir;
-    randomize_direction (ran_, ref_dir_, dir);
+    randomize_direction(ran_, ref_dir_, dir);
     return dir;
   }
 
   //! Compute the barycenter of a collection of 3D points
   //! @arg points_ the input collection of 3D points
   //! @arg barycenter_ the output computed barycenter
-  void compute_barycenter (const std::vector<vector_3d> & points_,
-                           vector_3d & barycenter_);
+  void compute_barycenter(const std::vector<vector_3d> & points_,
+                          vector_3d & barycenter_);
 
   //! Compute the barycenter of a collection of 3D points
   //! @arg points_ the input collection of 3D points
   //! @return the computed barycenter
-  vector_3d compute_barycenter (const std::vector<vector_3d> & points_);
+  vector_3d compute_barycenter(const std::vector<vector_3d> & points_);
 
   //! Compute the weighted barycenter of a collection of 3D points
   //! @arg points_ the input collection of 3D points
   //! @arg weights_ the input collection of weights associated to 3D points
   //! @arg weighted_barycenter_ the output computed weighted barycenter
-  void compute_weighted_barycenter (const std::vector<vector_3d> & points_,
-                                    const std::vector<double> & weights_,
-                                    vector_3d & weighted_barycenter_);
+  void compute_weighted_barycenter(const std::vector<vector_3d> & points_,
+                                   const std::vector<double> & weights_,
+                                   vector_3d & weighted_barycenter_);
 
   //! Compute the weighted barycenter of a collection of 3D points
   //! @arg points_ the input collection of 3D points
   //! @arg weights_ the input collection of weights associated to 3D points
   //! @return the computed weighted  barycenter
-  vector_3d compute_weighted_barycenter (const std::vector<vector_3d> & points_,
-                                         const std::vector<double> & weights_);
-
+  vector_3d compute_weighted_barycenter(const std::vector<vector_3d> & points_,
+                                        const std::vector<double> & weights_);
 
   //! Wrapper for rotation object
-  class rotation_wrapper_t : public rotation_3d
+  class rotation_wrapper_type : public rotation_3d
   {
   public:
-    rotation_wrapper_t (double mxx_, double mxy_, double mxz_,
-                        double myx_, double myy_, double myz_,
-                        double mzx_, double mzy_, double mzz_)
-      : rotation_3d (mxx_, mxy_, mxz_,
-                     myx_, myy_, myz_,
-                     mzx_, mzy_, mzz_) {}
+    rotation_wrapper_type(double mxx_, double mxy_, double mxz_,
+                          double myx_, double myy_, double myz_,
+                          double mzx_, double mzy_, double mzz_)
+      : rotation_3d(mxx_, mxy_, mxz_,
+                    myx_, myy_, myz_,
+                    mzx_, mzy_, mzz_) {}
   };
 
-  //! The intercept_t class hosts the parameters of the intercept of a curve on the surface of a shape.
-  class intercept_t
-  {
-  public:
+  //! Type alias
+  typedef rotation_wrapper_type rotation_wrapper_t;
 
-    int get_shape_index () const
-    {
-      return _shape_index_;
-    }
-
-    void set_shape_index (int si_)
-    {
-      _shape_index_ = si_;
-      return;
-    }
-
-    int get_face () const
-    {
-      return _face_;
-    }
-
-    void set_face (int face_)
-    {
-      _face_ = face_;
-      return;
-    }
-
-    void set_impact (const vector_3d & point_)
-    {
-      _impact_ = point_;
-      return;
-    }
-
-    void set (int shape_index_, int face_, const vector_3d & point_)
-    {
-      set_shape_index (shape_index_);
-      set_face (face_);
-      set_impact (point_);
-      return;
-    }
-
-    const vector_3d & get_impact () const
-    {
-      return _impact_;
-    }
-
-    void reset ()
-    {
-      _shape_index_ = -1;
-      _face_ = FACE_NONE;
-      invalidate (_impact_);
-      return;
-    }
-
-    intercept_t ()
-    {
-      _shape_index_ = -1;
-      _face_ = FACE_NONE;
-      invalidate (_impact_);
-      return;
-    }
-
-    bool is_valid () const
-    {
-      return _shape_index_ >= 0 && _face_ != FACE_NONE;
-    }
-
-    bool is_ok () const
-    {
-      return is_valid ();
-    }
-
-  private:
-
-    int32_t   _shape_index_; //! The index of the sub-shape for composite shapes only (default is 0)
-    int32_t   _face_;   //! The index of the impact face on the shape
-    vector_3d _impact_; //! The impact point on the surface
-
-  };
-
-  // Favoured class name:
-  typedef intercept_t intercept_data_type;
-
-  //! I/O constants for the serialization of vector (2D/3D) and rotation objects
+  //! \brief I/O constants for the serialization of vector(2D/3D) and rotation objects
   struct io
   {
     static const std::string & vector_2d_serial_tag();
@@ -672,19 +659,19 @@ namespace boost {
   namespace serialization {
 
     template<class Archive>
-    void save (Archive & a_ar ,
-               const geomtools::vector_3d & v_,
-               const unsigned int a_version);
+    void save(Archive & a_ar ,
+              const geomtools::vector_3d & v_,
+              const unsigned int a_version);
 
     template<class Archive>
-    void load (Archive & a_ar ,
-               geomtools::vector_3d & v_,
-               const unsigned int a_version);
+    void load(Archive & a_ar ,
+              geomtools::vector_3d & v_,
+              const unsigned int a_version);
 
     template<class Archive>
-    void serialize (Archive & a_ar,
-                    geomtools::vector_3d  & v_,
-                    const unsigned int a_version);
+    void serialize(Archive & a_ar,
+                   geomtools::vector_3d  & v_,
+                   const unsigned int a_version);
 
   } // namespace serialization
 
@@ -697,26 +684,25 @@ namespace boost {
 
     //! Boost serialization save method for vector 2D objects
     template<class Archive>
-    void save (Archive & a_ar ,
-               const geomtools::vector_2d & v_,
-               const unsigned int a_version);
+    void save(Archive & a_ar ,
+              const geomtools::vector_2d & v_,
+              const unsigned int a_version);
 
     //! Boost serialization load method for vector 2D objects
     template<class Archive>
-    void load (Archive & a_ar ,
-               geomtools::vector_2d & v_,
-               const unsigned int a_version);
+    void load(Archive & a_ar ,
+              geomtools::vector_2d & v_,
+              const unsigned int a_version);
 
     //! Boost serialization general method for vector 2D objects
     template<class Archive>
-    void serialize (Archive & a_ar,
-                    geomtools::vector_2d  & v_,
-                    const unsigned int a_version);
+    void serialize(Archive & a_ar,
+                   geomtools::vector_2d  & v_,
+                   const unsigned int a_version);
 
   } // namespace serialization
 
 } // namespace boost
-
 
 //! Serialization stuff for CLHEP 'rotation_3d'
 namespace boost {
@@ -725,21 +711,21 @@ namespace boost {
 
     //! Boost serialization save method for vector 3D objects
     template<class Archive>
-    void save (Archive & a_ar ,
-               const geomtools::rotation_3d & r_,
-               const unsigned int a_version);
+    void save(Archive & a_ar ,
+              const geomtools::rotation_3d & r_,
+              const unsigned int a_version);
 
     //! Boost serialization load method for vector 3D objects
     template<class Archive>
-    void load (Archive & a_ar ,
-               geomtools::rotation_3d & a_rotation,
-               const unsigned int a_version);
+    void load(Archive & a_ar ,
+              geomtools::rotation_3d & a_rotation,
+              const unsigned int a_version);
 
     //! Boost serialization general method for vector 3D objects
     template<class Archive>
-    void serialize (Archive & a_ar,
-                    geomtools::rotation_3d  & a_rotation,
-                    const unsigned int a_version);
+    void serialize(Archive & a_ar,
+                   geomtools::rotation_3d  & a_rotation,
+                   const unsigned int a_version);
 
   } // namespace serialization
 
@@ -752,3 +738,11 @@ DR_TYPE_INIT(::geomtools::axis_type);
 DR_TYPE_INIT(::geomtools::rotation_axis_type);
 
 #endif // GEOMTOOLS_UTILS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

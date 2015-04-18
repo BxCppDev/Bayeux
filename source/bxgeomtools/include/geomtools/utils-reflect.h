@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/utils-reflect.h
 
 #ifndef GEOMTOOLS_UTILS_REFLECT_H
@@ -74,3 +73,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // GEOMTOOLS_UTILS_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

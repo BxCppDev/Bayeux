@@ -41,21 +41,29 @@
 //#warning This executable must ensure the geomtools Boost/Serialization library is loaded.
 namespace geomtools {
 
-/** \brief Data structure that ensures the invocation of some explicit code
- *         for geomtools_bio DLL liking.
- */
-struct bio_guard {
-  bio_guard() {
-    // geomtools::detail::serialization::dynamic_link_guard& dlg
-    ::geomtools::detail::serialization::dynamic_link_guard::instance();
-  }
+  /** \brief Data structure that ensures the invocation of some explicit code
+   *         for geomtools_bio DLL liking.
+   */
+  struct bio_guard {
+    bio_guard() {
+      // geomtools::detail::serialization::dynamic_link_guard& dlg
+      ::geomtools::detail::serialization::dynamic_link_guard::instance();
+    }
 
-  static bio_guard _g_trigger_link_guard_;
-};
+    static bio_guard _g_trigger_link_guard_;
+  };
 
-bio_guard bio_guard::_g_trigger_link_guard_;
+  bio_guard bio_guard::_g_trigger_link_guard_;
 
 } // end namespace geomtools
 #endif // GEOMTOOLS_WITH_BIO != 1
 
 #endif // GEOMTOOLS_BIO_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -28,7 +28,7 @@ y_radius : real as length = 1.0 cm
 z_radius : real as length = 1.5 cm
 bottom_z_cut : real as length = 1.0 cm
 
-[name="Elt1" type="geomtools::elliptical_tube"]
+[name="Elt1" type="geomtools::elliptical_cylinder"]
 
 x_radius : real as length = 3.0 cm
 y_radius : real as length = 1.0 cm

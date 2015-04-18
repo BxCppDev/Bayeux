@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/i_shape_1d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
@@ -19,19 +18,23 @@
 // Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/ocd_macros.h>
+
 // This project:
 #include <geomtools/utils.h>
 #include <geomtools/i_object_3d.h>
 
 namespace geomtools {
 
-  /// \brief The abstract base class for all 1D shapes
+  /// \brief The abstract base class for all 1D curves/shapes
   class i_shape_1d : public i_object_3d
   {
   public:
 
     /// Return the dimension of the object
-    virtual int get_dimensional() const;
+    int get_dimensional() const;
 
     /// Check if the 1D shape knows its number of associated paths
     virtual bool has_number_of_paths() const;
@@ -46,7 +49,13 @@ namespace geomtools {
     virtual double get_length(uint32_t flags_ = PATH_ALL_BITS) const;
 
     /// Default constructor
-    i_shape_1d(double tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE);
+    i_shape_1d();
+
+    /// Constructor
+    i_shape_1d(double tolerance_);
+
+    /// Constructor
+    i_shape_1d(double tolerance_, double angular_tolerance_);
 
     /// Destructor
     virtual ~i_shape_1d();
@@ -57,6 +66,9 @@ namespace geomtools {
 
     /// Return the tangent direction at some position on the 1D shape's path
     virtual vector_3d get_direction_on_curve(const vector_3d & position_) const = 0;
+
+    /// OCD support
+    static void init_ocd(datatools::object_configuration_description &);
 
     // Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION();
@@ -72,3 +84,11 @@ BOOST_CLASS_VERSION(geomtools::i_shape_1d, 0)
 */
 
 #endif // GEOMTOOLS_I_SHAPE_1D_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

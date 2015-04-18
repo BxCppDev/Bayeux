@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/mapping.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-21
@@ -186,3 +185,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::mapping)
 
 #endif // GEOMTOOLS_MAPPING_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/display_data.h
 /* Author (s) : François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-10-19
@@ -46,31 +45,27 @@ namespace geomtools {
   {
   public:
 
-    enum display_type
-      {
-        DISPLAY_STATIC = 0,
-        DISPLAY_FRAMED = 1,
-      };
+    enum display_type {
+      DISPLAY_STATIC = 0,
+      DISPLAY_FRAMED = 1,
+    };
 
+    enum display_style_type {
+      DISPLAY_STYLE_UNDEFINED = -1,
+      DISPLAY_STYLE_WIRES  = 0,
+    };
 
-    enum display_style_type
-      {
-        DISPLAY_STYLE_UNDEFINED = -1,
-        DISPLAY_STYLE_WIRES  = 0,
-      };
-
-    struct label_item
-    {
+    struct label_item {
       geomtools::placement posrot; //!< Placement of the text
       std::string          text;   //!< Text of the label
     };
 
-    struct display_item
-    {
+    struct display_item {
       std::string                       frame_info;
       std::string                       style;
       std::string                       color;
-      std::list<geomtools::polyline_3d> paths;
+      std::list<geomtools::polyline_3d> paths; //!< Obsolete
+      wires_type                        wires;
       //std::list<geomtools::facet_3d>  facets;  //!< Future?
       //std::list<geomtools::vector_3d> markers; //!< Future?
       //std::map<int,label_item>        labels;  //!< Future?
@@ -111,10 +106,9 @@ namespace geomtools {
     /// Constructor
     display_data ();
 
-    // Destructor
+    /// Destructor
     virtual ~display_data ();
 
-    /* interface i_clear */
     virtual void clear ();
 
     const std::vector<std::string> & get_colors () const;
@@ -140,7 +134,6 @@ namespace geomtools {
     datatools::properties & grab_auxiliaries ();
 
 
-    /*** interface i_tree_dumpable ***/
     virtual void tree_dump (std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
@@ -189,3 +182,11 @@ BOOST_CLASS_VERSION(geomtools::display_data::display_item, 1)
 BOOST_CLASS_VERSION(geomtools::display_data, 1)
 
 #endif // GEOMTOOLS_DISPLAY_DATA_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

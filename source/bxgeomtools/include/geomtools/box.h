@@ -1,13 +1,13 @@
-// -*- mode: c++; -*-
 /// \file geomtools/box.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2012-10-24
+ * Last modified: 2015-02-15
  *
  * License:
  *
  * Description:
- *  Interface:
+ *
+ *  Box solid shape
  *
  * History:
  *
@@ -28,9 +28,7 @@
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
-#include <geomtools/polyline_3d.h>
 #include <geomtools/placement.h>
-#include <geomtools/i_wires_3d_rendering.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -39,10 +37,12 @@ namespace datatools {
 
 namespace geomtools {
 
+  // Class forward declarations:
+  class rectangle;
+
   /// \brief The 3D shape model for a box
   class box : public i_shape_3d ,
-              public i_stackable,
-              public i_wires_3d_rendering
+              public i_stackable
   {
 
   public:
@@ -52,13 +52,15 @@ namespace geomtools {
 
     /// \brief Masks used for the 6 faces of the box
     enum faces_mask_type {
-      FACE_NONE   = geomtools::FACE_NONE,
+      FACE_NONE   = face_identifier::FACE_BITS_NONE,
+      _FACE_BEGIN = 0x1,
       FACE_BACK   = 0x1,
       FACE_FRONT  = 0x2,
       FACE_LEFT   = 0x4,
       FACE_RIGHT  = 0x8,
       FACE_BOTTOM = 0x10,
       FACE_TOP    = 0x20,
+      _FACE_END   = 0x40,
       FACE_ALL    = (FACE_BACK
                      | FACE_FRONT
                      | FACE_LEFT
@@ -86,7 +88,7 @@ namespace geomtools {
     double get_zmax() const;
 
     /// Return the X dimension
-    double get_x () const;
+    double get_x() const;
 
     /// Set the X dimension
     void set_x(double);
@@ -152,10 +154,13 @@ namespace geomtools {
     double get_parameter(const std::string &) const;
 
     /// Return the cumulated surface of the box given a list of faces
-    virtual double get_surface(uint32_t a_mask = FACE_ALL_BITS) const;
+    virtual double get_surface(uint32_t a_mask = FACE_ALL) const;
 
     /// Return the volume of the box
     virtual double get_volume(uint32_t flags_ = 0) const;
+
+    /// Return a collection of face info objects
+    virtual unsigned int compute_faces(face_info_collection_type & faces_) const;
 
     /// Check if a point is inside the box
     virtual bool is_inside(const vector_3d &,
@@ -165,14 +170,14 @@ namespace geomtools {
     virtual bool is_outside(const vector_3d &,
                             double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    /// Check if a point is on some surface of the box
-    /// If 'skin' < 0 no skin is taken into account.
-    virtual bool is_on_surface(const vector_3d & ,
-                               int a_mask    = FACE_ALL_BITS ,
-                               double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+    /// Return the surface bit a point belongs to
+    virtual face_identifier on_surface(const vector_3d &,
+                                       const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Return the vector normal to the surface at some position
-    virtual vector_3d get_normal_on_surface(const vector_3d & a_position) const;
+    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const;
 
     /// Print operator
     friend std::ostream & operator<<( std::ostream & , const box & );
@@ -183,7 +188,7 @@ namespace geomtools {
     /// Find the intercept point of a segment with the box
     virtual bool find_intercept(const vector_3d & a_from,
                                 const vector_3d & a_direction,
-                                intercept_t & a_intercept,
+                                face_intercept_info & a_intercept,
                                 double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Smart print
@@ -192,16 +197,37 @@ namespace geomtools {
                            const std::string & a_indent = "",
                            bool a_inherit          = false) const;
 
+    /// \brief 3D rendering options
+    enum box_wires_rendering_option_type {
+      WR_BOX_NO_BACK_FACE   = (WR_BASE_LAST << 1), //!< Do not render the X- (back) face
+      WR_BOX_NO_FRONT_FACE  = (WR_BASE_LAST << 2), //!< Do not render the X+ (front) face
+      WR_BOX_NO_LEFT_FACE   = (WR_BASE_LAST << 3), //!< Do not render the Y- (left) face
+      WR_BOX_NO_RIGHT_FACE  = (WR_BASE_LAST << 4), //!< Do not render the Y+ (right) face
+      WR_BOX_NO_BOTTOM_FACE = (WR_BASE_LAST << 5), //!< Do not render the Z- (bottom) face
+      WR_BOX_NO_TOP_FACE    = (WR_BASE_LAST << 6), //!< Do not render the Z+ (top) face
+      WR_BOX_LAST           = (WR_BOX_NO_TOP_FACE),    //!< Last defined bit
+      WR_BOX_MASK           = (WR_BOX_NO_BACK_FACE
+                               | WR_BOX_NO_FRONT_FACE
+                               | WR_BOX_NO_LEFT_FACE
+                               | WR_BOX_NO_RIGHT_FACE
+                               | WR_BOX_NO_BOTTOM_FACE
+                               | WR_BOX_NO_TOP_FACE)   //!< Rendering options bit mask
+    };
+
     /// Generate a list of polylines representing the contour of the shape (for display clients)
-    virtual void generate_wires(std::list<polyline_3d> &,
-                                const placement &,
-                                uint32_t options_ = 0) const;
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
 
     /// Compute the positions of the 8 vertexes of the box
     void compute_vertexes(std::vector<vector_3d> & vv_) const;
 
     /// Compute the positions of the 8 vertexes in a given transformation
     void compute_transformed_vertexes(const placement & p_, std::vector<vector_3d> & vv_) const;
+
+    /// Compute an arbitrary face
+    void compute_face(faces_mask_type face_id_,
+                      rectangle & face_,
+                      placement & face_placement_) const;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
@@ -211,6 +237,7 @@ namespace geomtools {
     /// Set default attributes
     void _set_default();
 
+    /// Build the bounding data
     virtual void _build_bounding_data();
 
   private:
@@ -231,3 +258,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::box)
 
 #endif // GEOMTOOLS_BOX_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

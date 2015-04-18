@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/gdml_writer.h
 /* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
@@ -34,17 +33,21 @@
 
 // This project:
 #include <geomtools/utils.h>
-#include <geomtools/box.h>
-#include <geomtools/cylinder.h>
-#include <geomtools/tube.h>
-#include <geomtools/elliptical_tube.h>
-#include <geomtools/sphere.h>
-#include <geomtools/ellipsoid.h>
-#include <geomtools/polycone.h>
-#include <geomtools/polyhedra.h>
-#include <geomtools/tessellation.h>
 
 namespace geomtools {
+
+  // Forward class declarations:
+  class box;
+  class right_circular_conical_frustrum;
+  class ellipsoid;
+  class elliptical_cylinder;
+  class sphere;
+  class polycone;
+  class polyhedra;
+  class right_polygonal_frustrum;
+  class tube;
+  class cylinder;
+  class tessellated_solid;
 
   /// \brief GDML writer class used by the geomtools GDML export functionalities
   class gdml_writer
@@ -248,6 +251,7 @@ namespace geomtools {
                       );
 
     /* *************** Solids section ****************** */
+    // GDML USER’S GUIDE Version 2.3 page 14
 
     /// Check if a solid type given by name is valid
     static bool solid_type_is_valid(const std::string & solid_type_);
@@ -255,50 +259,83 @@ namespace geomtools {
     /// Check if a solid type given by name is supported
     static bool solid_type_is_supported(const std::string & solid_type_);
 
-    /*
-      void add_solid(const std::string & name_,
-      const std::string & solid_type_,
-      const datatools::utils::properties & params_);
-    */
-
+    // GDML USER’S GUIDE Version 2.3 page 14
     void add_gdml_box(const std::string & name_,
                       double x_, double y_, double z_,
                       const std::string & lunit_str_ = "mm");
 
-    void add_gdml_tube(const std::string & name_,
-                       double rmin_, double rmax, double z_,
-                       double start_phi_, double delta_phi_,
-                       const std::string & lunit_str_ = "mm",
-                       const std::string & aunit_str_ = "radian");
+    void add_box(const std::string & name_,
+                 const box & b_,
+                 const std::string & lunit_str_ = "mm");
 
-    void add_gdml_elliptical_tube(const std::string & name_,
-                                  double rx_, double ry, double z_,
-                                  const std::string & lunit_str_ = "mm",
-                                  const std::string & aunit_str_ = "radian");
+    // GDML USER’S GUIDE Version 2.3 page 14
+    void add_gdml_cone_segment(const std::string & name_,
+                               double rmin1_, double rmax1_,
+                               double rmin2_, double rmax2_,
+                               double z_,
+                               double startphi_, double deltaphi_,
+                               const std::string & lunit_str_ = "mm",
+                               const std::string & aunit_str_ = "radian");
 
+    void add_cone_segment(const std::string & name_,
+                          const right_circular_conical_frustrum & cf_,
+                          const std::string & lunit_str_ = "mm",
+                          const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 14
     void add_gdml_ellipsoid(const std::string & name_,
                             double rx_, double ry, double rz_,
                             double bottom_z_, double top_z_,
                             const std::string & lunit_str_ = "mm",
                             const std::string & aunit_str_ = "radian");
 
+    void add_ellipsoid(const std::string & name_,
+                       const ellipsoid & e_,
+                       const std::string & lunit_str_ = "mm",
+                       const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 14
+    void add_gdml_elliptical_tube(const std::string & name_,
+                                  double rx_, double ry, double z_,
+                                  const std::string & lunit_str_ = "mm",
+                                  const std::string & aunit_str_ = "radian");
+
+    void add_elliptical_tube(const std::string & name_,
+                             const elliptical_cylinder & t_,
+                             const std::string & lunit_str_ = "mm",
+                             const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 15
     void add_gdml_orb(const std::string & name_,
                       double r_,
                       const std::string & lunit_str_ = "mm");
 
-    void add_gdml_sphere(const std::string & name_,
-                         double rmin_, double rmax,
-                         double start_phi_, double delta_phi_,
-                         double start_theta_, double delta_theta_,
-                         const std::string & lunit_str_ = "mm",
-                         const std::string & aunit_str_ = "radian");
+    void add_orb(const std::string & name_,
+                 const sphere & s_,
+                 const std::string & lunit_str_ = "mm",
+                 const std::string & aunit_str_ = "radian");
 
+    // GDML USER’S GUIDE Version 2.3 page 17
     void add_gdml_polycone(const std::string & name_,
                            std::map<double, std::pair<double, double> > zplanes_,
                            double start_phi_, double delta_phi_,
                            const std::string & lunit_str_ = "mm",
                            const std::string & aunit_str_ = "radian");
 
+    void add_polycone(const std::string & name_,
+                      const polycone & s_,
+                      const std::string & lunit_str_ = "mm",
+                      const std::string & aunit_str_ = "radian");
+
+
+    // GDML USER’S GUIDE Version 2.3 page 17
+    void add_gdml_generic_polycone(const std::string & name_,
+                                   std::map<double, double> rzpoints_,
+                                   double start_phi_, double delta_phi_,
+                                   const std::string & lunit_str_ = "mm",
+                                   const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 19
     void add_gdml_polyhedra(const std::string & name_,
                             size_t num_sides_,
                             std::map<double, std::pair<double, double> > zplanes_,
@@ -306,6 +343,55 @@ namespace geomtools {
                             const std::string & lunit_str_ = "mm",
                             const std::string & aunit_str_ = "radian");
 
+    void add_polyhedra(const std::string & name_,
+                       const polyhedra & s_,
+                       const std::string & lunit_str_ = "mm",
+                       const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 17
+    void add_gdml_generic_polyhedra(const std::string & name_,
+                                    size_t num_sides_,
+                                    std::map<double, double> rzpoints_,
+                                    double start_phi_, double delta_phi_,
+                                    const std::string & lunit_str_ = "mm",
+                                    const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 19
+    void add_gdml_sphere(const std::string & name_,
+                         double rmin_, double rmax,
+                         double start_phi_, double delta_phi_,
+                         double start_theta_, double delta_theta_,
+                         const std::string & lunit_str_ = "mm",
+                         const std::string & aunit_str_ = "radian");
+
+    void add_sphere(const std::string & name_,
+                    const sphere & s_,
+                    const std::string & lunit_str_ = "mm",
+                    const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 22
+    void add_gdml_tube(const std::string & name_,
+                       double rmin_, double rmax, double z_,
+                       double start_phi_, double delta_phi_,
+                       const std::string & lunit_str_ = "mm",
+                       const std::string & aunit_str_ = "radian");
+
+    void add_tube(const std::string & name_,
+                  const tube & t_,
+                  const std::string & lunit_str_ = "mm",
+                  const std::string & aunit_str_ = "radian");
+
+    void add_cylinder(const std::string & name_,
+                      const cylinder & c_,
+                      const std::string & lunit_str_ = "mm",
+                      const std::string & aunit_str_ = "radian");
+
+    // GDML USER’S GUIDE Version 2.3 page 26
+    void add_tessellated(const std::string & name_,
+                         const tessellated_solid & ts_,
+                         const std::string & lunit_str_ = "mm");
+
+    // GDML USER’S GUIDE Version 2.3 page 28
     void add_gdml_boolean(const std::string & name_,
                           const std::string & boolean_type_,
                           const std::string & first_ref_,
@@ -331,55 +417,8 @@ namespace geomtools {
                                const std::string & position_ref_,
                                const std::string & rotation_ref_);
 
-    void add_box(const std::string & name_,
-                 const box & b_,
-                 const std::string & lunit_str_ = "mm");
-
-    void add_cylinder(const std::string & name_,
-                      const cylinder & c_,
-                      const std::string & lunit_str_ = "mm",
-                      const std::string & aunit_str_ = "radian");
-
-    void add_tube(const std::string & name_,
-                  const tube & t_,
-                  const std::string & lunit_str_ = "mm",
-                  const std::string & aunit_str_ = "radian");
-
-    void add_ellipsoid(const std::string & name_,
-                       const ellipsoid & e_,
-                       const std::string & lunit_str_ = "mm",
-                       const std::string & aunit_str_ = "radian");
-
-    void add_elliptical_tube(const std::string & name_,
-                             const elliptical_tube & t_,
-                             const std::string & lunit_str_ = "mm",
-                             const std::string & aunit_str_ = "radian");
-
-    void add_orb(const std::string & name_,
-                 const sphere & s_,
-                 const std::string & lunit_str_ = "mm",
-                 const std::string & aunit_str_ = "radian");
-
-    void add_sphere(const std::string & name_,
-                    const sphere & s_,
-                    const std::string & lunit_str_ = "mm",
-                    const std::string & aunit_str_ = "radian");
-
-    void add_polycone(const std::string & name_,
-                      const polycone & s_,
-                      const std::string & lunit_str_ = "mm",
-                      const std::string & aunit_str_ = "radian");
-
-    void add_polyhedra(const std::string & name_,
-                       const polyhedra & s_,
-                       const std::string & lunit_str_ = "mm",
-                       const std::string & aunit_str_ = "radian");
-
-    void add_tessellated(const std::string & name_,
-                         const tessellated_solid & ts_,
-                         const std::string & lunit_str_ = "mm");
-
     /* *************** Structures section ****************** */
+    // GDML USER’S GUIDE Version 2.3 page 29
 
     /// \brief Description of a physical volume
     class physvol
@@ -520,3 +559,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_GDML_WRITER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /* \file geomtools/bounding_data.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-11-16
@@ -26,6 +25,7 @@
 
 // This project:
 #include <geomtools/utils.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace datatools {
   class properties;
@@ -38,7 +38,9 @@ namespace geomtools {
   class placement;
 
   /// \brief Bounding volume data for i_shape_3d derived solid shapes
-  class bounding_data : public datatools::i_tree_dumpable
+  class bounding_data :
+    public i_wires_3d_rendering,
+    public datatools::i_tree_dumpable
   {
   public:
 
@@ -50,7 +52,7 @@ namespace geomtools {
     };
 
     /// Check validity
-    bool is_valid() const;
+    bool is_valid(bool verbose_ = false) const;
 
     /// Default constructor
     bounding_data();
@@ -99,12 +101,14 @@ namespace geomtools {
     /// Return the minimum dimension
     double get_min_dimension() const;
 
-    /// Compute a bounding box and its placement in the solid reference frame:
-    void compute_bounding_box(box & bb_, placement & p_) const;
+    /// Compute a bounding box and its placement in the solid reference frame
+    void compute_bounding_box(box & bb_, placement & p_, double safe_skin_ = 0.0) const;
 
-    // /// Build a bounding data from the merging of 2 bounding boxes with their own placements
-    // void make_from_bounding_boxes(const box & bb1_, const placement & p1_,
-    //                               const box & bb2_, const placement & p2_);
+    /// Compute the vertexes (corners) of the bounding box in the solid reference frame
+    void compute_bounding_box_vertexes(std::vector<vector_3d> &, double safe_skin_ = 0.0) const;
+
+    /// Compute the face centers (corners) of the bounding box in the solid reference frame
+    void compute_bounding_box_face_centers(std::vector<vector_3d> &, double safe_skin_ = 0.0) const;
 
     /// Build a bounding data from a collection of points
     void make_box_from_points(const std::vector<vector_3d> & points_);
@@ -117,6 +121,9 @@ namespace geomtools {
 
     /// Parse enforced bounding data from a properties container
     void parse_bounding_data(const datatools::properties & config_);
+
+    /// Generate wires associated to the bounding volume
+    void generate_wires_self(wires_type & wires_, uint32_t options_ = 0) const;
 
   private:
 
@@ -134,3 +141,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_BOUNDING_DATA_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

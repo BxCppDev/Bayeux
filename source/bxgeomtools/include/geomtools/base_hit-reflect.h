@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/base_hit-reflect.h
 /* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-31
@@ -101,3 +100,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // GEOMTOOLS_BASE_HIT_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

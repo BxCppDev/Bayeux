@@ -1,13 +1,13 @@
-// -*- mode: c++; -*-
 /// \file geomtools/i_shape_2d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2012-04-10
+ * Last modified: 2015-02-24
  *
  * License:
  *
  * Description:
- *  Interface for 2D shaped volumes
+ *
+ *  Interface for 2D shaped surfaces
  *
  * History:
  *
@@ -19,23 +19,34 @@
 // Standard library:
 #include <string>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/bit_mask.h>
+#include <datatools/handle.h>
+#include <datatools/ocd_macros.h>
+
 // This project:
 #include <geomtools/utils.h>
 #include <geomtools/i_object_3d.h>
+#include <geomtools/i_find_intercept.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
-  /// \brief The abstract base class for all 2D shapes
-  class i_shape_2d : public i_object_3d
+  /// \brief The abstract base class for all 2D shapes/surfaces
+  class i_shape_2d : public i_object_3d,
+                     public i_find_intercept,
+                     public i_wires_3d_rendering
   {
   public:
 
     /// \brief The up/down identifier of the face
-    enum face_type {
-      FACE_NONE = 0x0,
-      FACE_UP   = 0x1,
-      FACE_DOWN = 0x2,
-      FACE_ALL  = FACE_UP | FACE_DOWN
+    enum faces_mask_type {
+      FACE_NONE   = face_identifier::FACE_BITS_NONE, //!< Invalid face
+      FACE_UNIQUE = datatools::bit_mask::bit00, //!< Up face
+      FACE_UP     = FACE_UNIQUE,                //!< Unique face
+      FACE_DOWN   = datatools::bit_mask::bit01, //!< Down face
+      FACE_ALL    = FACE_UNIQUE
     };
 
     /// Special flag representing all pieces composing a 2D shape
@@ -60,33 +71,51 @@ namespace geomtools {
     virtual double get_surface(uint32_t flags_ = ALL_PIECES) const;
 
     /// Return the dimension of the object
-    virtual int get_dimensional() const;
+    int get_dimensional() const;
 
     /// Default constructor
-    i_shape_2d(double tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE);
+    i_shape_2d();
+
+    /// Constructor
+    i_shape_2d(double tolerance_);
+
+    /// Constructor
+    i_shape_2d(double tolerance_, double angular_tolerance_);
 
     /// Destructor
     virtual ~i_shape_2d();
 
     /// Check is a given point belongs to the surface of the 2D shape
+    ///
+    /// @arg position_ The position to be checked
+    /// @arg skin_ The tolerance (effective thickness of the surface)
+    /// @return true if the checked position belongs to the surface
     virtual bool is_on_surface(const vector_3d & position_,
-                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE
-                               ) const = 0;
+                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
     /// Return the normal direction at some position on the 2D shape's path
+    ///
+    /// @arg position_ The position to be checked
+    /// @return the normal 3D vector at the checked position that is assumes
+    ///         belonging to the surface
     virtual vector_3d get_normal_on_surface(const vector_3d & position_,
-                                            bool up_ = true) const = 0;
+                                            bool check_ = false,
+                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
-    /// Find the intercept of a ray with the 2D shape's surfaces
-    virtual bool find_intercept (const vector_3d & from_,
-                                 const vector_3d & direction_,
-                                 intercept_t & intercept_,
-                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
+    /// Document the base object configuration description (OCD) associated to a
+    /// 2D shape.
+    ///
+    /// @arg ocd_ The object configuration description to be documented
+    static void init_ocd(datatools::object_configuration_description & ocd_);
 
     // Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION();
 
   };
+
+  //! Type aliases for a handle to a 2D shape
+  typedef datatools::handle<i_shape_2d> shape_2d_handle_type;
+  typedef shape_2d_handle_type          face_handle_type;
 
 } // end of namespace geomtools
 
@@ -97,3 +126,11 @@ BOOST_CLASS_VERSION(geomtools::i_shape_2d, 0)
 */
 
 #endif // GEOMTOOLS_I_SHAPE_2D_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

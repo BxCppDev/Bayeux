@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/replicated_circular_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-05-15
@@ -102,3 +101,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::replicated_circular_model)
 
 #endif // GEOMTOOLS_REPLICATED_CIRCULAR_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

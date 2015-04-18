@@ -1,8 +1,7 @@
-// -*- mode: c++; -*-
-/* i_shape_3d.h
- * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// \file geomtools/i_shape_3d.h
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2014-11-16
+ * Last modified: 2015-03-22
  *
  * License:
  *
@@ -20,11 +19,21 @@
 // Standard library:
 #include <string>
 
+// Third party:
+// - Boost:
+#include <boost/utility.hpp>
+// - Bayeux/datatools:
+#include <datatools/handle.h>
+#include <datatools/ocd_macros.h>
+
 // This project:
 #include <geomtools/utils.h>
 #include <geomtools/i_object_3d.h>
 #include <geomtools/i_stackable.h>
 #include <geomtools/bounding_data.h>
+#include <geomtools/i_find_intercept.h>
+#include <geomtools/face_info.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -33,10 +42,23 @@ namespace datatools {
 
 namespace geomtools {
 
-  /// \brief Mother abstract class for all solid shapes
-  class i_shape_3d : public i_object_3d
+  // Forward class declaration:
+  class i_shape_2d;
+
+  /// \brief Mother abstract class for all 3D solid shapes
+  class i_shape_3d : public i_object_3d,
+                     public i_wires_3d_rendering,
+                     public i_find_intercept //,
+                     //private boost::noncopyable
   {
   public:
+
+    // /// \brief Basic values and masks used to identify the faces
+    // enum base_faces_mask_type {
+    //   FACE_NONE     = face_identifier::FACE_BITS_NONE,
+    //   FACE_ALL_BITS = face_identifier::FACE_BITS_ANY,
+    //   FACE_ALL      = FACE_ALL_BITS
+    // };
 
     static const double DEFAULT_SKIN;
     static const double ZERO_SKIN;
@@ -82,9 +104,9 @@ namespace geomtools {
     static bool pickup_stackable(const i_shape_3d &, stackable_data &);
 
     /*
-    /// Initialize a 'stackable_data' instance from properties embedded in the shape itself
-    static bool pickup_stackable_with_properties(const i_shape_3d & a_shape,
-                                                 stackable_data & a_stackable_data);
+   /// Initialize a 'stackable_data' instance from properties embedded in the shape itself
+   static bool pickup_stackable_with_properties(const i_shape_3d & a_shape,
+   stackable_data & a_stackable_data);
     */
 
     /// Return the stackable data associated to the shape
@@ -106,7 +128,7 @@ namespace geomtools {
     void reset_stackable_data();
 
     /// Return the dimension (3)
-    virtual int get_dimensional() const;
+    int get_dimensional() const;
 
     /// Return the effective skin tolerance associated to the 3D shape
     double get_skin(double a_skin) const;
@@ -123,6 +145,15 @@ namespace geomtools {
     /// Constructor with skin tolerance
     i_shape_3d(double a_skin);
 
+    /// Constructor
+    i_shape_3d(double a_skin_, double angular_tolerance_);
+
+    /// Copy constructor
+    i_shape_3d(const i_shape_3d &);
+
+    /// Assignment operator
+    i_shape_3d & operator=(const i_shape_3d &);
+
     /// Destructor
     virtual ~i_shape_3d();
 
@@ -134,6 +165,18 @@ namespace geomtools {
 
     /// Check if the solid is composite
     virtual bool is_composite() const;
+
+    /// Check if the face identification scheme is based on face bits
+    virtual bool using_face_id_bits() const;
+
+    /// Check if the face identification scheme is based on face index
+    virtual bool using_face_id_index() const;
+
+    /// Check if the face identification scheme uses part index
+    virtual bool using_face_id_part_index() const;
+
+    /// Build a face identifier any mask
+    virtual void make_any_face(face_identifier &) const;
 
     /// Check if the number of faces is known
     virtual bool has_number_of_faces() const;
@@ -148,33 +191,64 @@ namespace geomtools {
     virtual double get_volume(uint32_t flags_ = 0) const;
 
     /// Check is the surface is known
-    virtual bool has_surface(uint32_t flags_ = FACE_ALL_BITS) const;
+    virtual bool has_surface(uint32_t flags_ = face_identifier::FACE_BITS_ANY) const;
 
     /// Return the surface cumulated by faces
-    virtual double get_surface(uint32_t flags_ = FACE_ALL_BITS) const;
+    virtual double get_surface(uint32_t flags_ = face_identifier::FACE_BITS_ANY) const;
 
-    /// Check is a point is inside the solid
-    virtual bool is_inside(const vector_3d &,
+    /// Check if a point is inside the solid
+    bool check_inside(const vector_3d & position_,
+                      double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Check if a point is outside the solid
+    bool check_outside(const vector_3d & position_,
+                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Check is a point is located on a given surface
+    face_identifier check_surface(const vector_3d & position_,
+                                  const face_identifier & a_surface_mask = face_identifier::FACE_BITS_ANY,
+                                  double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Check if a point is on the surface of the solid
+    bool check_surface(const vector_3d & position_,
+                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Primitive check is a point is inside the solid
+    virtual bool is_inside(const vector_3d & position_,
                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
-    /// Check is a point is on a surface of the solid
-    virtual bool is_on_surface(const vector_3d &,
-                               int a_surface_mask = FACE_ALL_BITS,
-                               double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
-
-    /// Check is a point is outside the solid
+    /// Primitive check is a point is outside the solid
     virtual bool is_outside(const vector_3d &,
-                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+                            double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
-    /// Check is a point is inside the solid at a given tolerance
-    virtual bool is_inside_or_surface(const vector_3d &,
-                                      double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+    /// Primitive check is a point is located on a given surface
+    virtual face_identifier on_surface(const vector_3d & position_,
+                                       const face_identifier & a_surface_mask = face_identifier::FACE_BITS_ANY,
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const = 0;
 
-    /// Localize a point with respect to the shape
-    virtual shape_domain_flags_type where_is(const vector_3d &, double a_skin) const;
+    /// Return the normal at a point of the surface given its surface identifier
+    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const = 0;
 
-    /// Return the normal at a point of the surface
-    virtual vector_3d get_normal_on_surface(const vector_3d & a_position) const = 0;
+    /// Check is a point is on a surface of the solid
+    bool is_on_surface(const vector_3d & position_,
+                       const face_identifier & a_surface_mask = face_identifier::FACE_BITS_ANY,
+                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Localize a point with respect to the solid
+    virtual shape_domain_flags_type where_is(const vector_3d & position_, double a_skin) const;
+
+    /// Return a collection of face info objects
+    virtual unsigned int compute_faces(face_info_collection_type & faces_) const;
+
+    /// Check if the embedded collection of faces has been computed
+    bool has_computed_faces() const;
+
+    /// Return the collection of faces
+    const face_info_collection_type & get_computed_faces() const;
+
+    /// Reset the computed faces
+    void reset_computed_faces();
 
     /// Check the bounding data
     bool has_bounding_data() const;
@@ -190,12 +264,6 @@ namespace geomtools {
 
     /// Build default bounding data
     void build_default_bounding_data();
-
-    /// Find intercept of a segment on the surface of the solid
-    virtual bool find_intercept(const vector_3d & a_from,
-                                const vector_3d & a_direction,
-                                intercept_t & a_intercept,
-                                double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Smart print
     virtual void tree_dump(std::ostream & a_out         = std::clog,
@@ -216,6 +284,9 @@ namespace geomtools {
     void unlock();
 
   protected:
+
+    /// Set default values for attributes
+    void _set_defaults();
 
     /// Executed at lock stage
     virtual void _at_lock();
@@ -248,7 +319,8 @@ namespace geomtools {
      *  bounding_data.zmin : real as length = 7.0 cm
      *  bounding_data.zmax : real as length = 0.4 cm
      *  @endcode
-      */
+     *
+     */
     void _initialize_bounding_data(const datatools::properties & config_);
 
     /// Return the bounding data
@@ -256,11 +328,12 @@ namespace geomtools {
 
   private:
 
+    // Work data:
     bool                   _locked_;              //!< Lock flag
     bool                   _owns_stackable_data_; //!< Ownership flag for stackable data
     const stackable_data * _stackable_data_;      //!< Handle to stackable data
     bounding_data          _bounding_data_;       //!< Bounding data
-    double                 _volume_;
+    datatools::handle<face_info_collection_type> _computed_faces_; //!< Computed faces
 
     // Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION();
@@ -276,3 +349,11 @@ BOOST_CLASS_VERSION(geomtools::i_shape_3d, 0)
 */
 
 #endif // GEOMTOOLS_I_SHAPE_3D_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

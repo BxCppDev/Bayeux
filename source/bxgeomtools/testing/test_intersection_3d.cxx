@@ -47,7 +47,7 @@ int main (int argc_, char ** argv_)
       if (arg == "-c2" || arg == "--center2") center2 = true;
       if (arg == "-s1" || arg == "--surf1") surf_first = true;
       if (arg == "-s2" || arg == "--surf2") surf_second = true;
-      // if (arg == "-B" || arg == "--bulk") bulk = true;
+      if (arg == "-B" || arg == "--bulk") bulk = true;
       if (arg == "-C2") {
         cyl2 = true;
       }
@@ -102,20 +102,24 @@ int main (int argc_, char ** argv_)
                               3.0 * CLHEP::mm,
                               5.0 * CLHEP::mm);
     geomtools::vector_3d dir (-1., -1., -2.);
-    geomtools::intercept_t intercept;
+    geomtools::face_intercept_info intercept;
     std::clog << "test 1: pos=" << pos
               << " dir=" << dir
               << " impact=" << intercept.get_impact ()
               << std::endl;
 
-    if (inter1.find_intercept (pos, dir, intercept)) {
-      std::clog << "test 1: Intercept face=" << intercept.get_face ()
-                << " at impact=" << intercept.get_impact ()
-                << std::endl;
-    } else {
-      std::clog << "test 1: No intercept." << std::endl;
+    {
+      double tolerance = 0.1;
+      if (inter1.find_intercept (pos, dir, intercept, tolerance)) {
+        std::clog << "test 1: Intercept face=" << intercept.get_face_id()
+                  << " at impact=" << intercept.get_impact ()
+                  << std::endl;
+      } else {
+        std::clog << "test 1: No intercept." << std::endl;
+      }
     }
 
+    tmp_file.out() << "# draw box (index 0): " << std::endl;
     geomtools::gnuplot_draw::draw_box (tmp_file.out(),
                                        p1.get_translation (),
                                        p1.get_rotation (),
@@ -123,6 +127,7 @@ int main (int argc_, char ** argv_)
                                        b1.get_y (),
                                        b1.get_z ());
     if (!cyl2) {
+      tmp_file.out() << "# draw box 2 (index 0): " << std::endl;
       geomtools::gnuplot_draw::draw_box (tmp_file.out(),
                                          p2.get_translation (),
                                          p2.get_rotation (),
@@ -130,6 +135,7 @@ int main (int argc_, char ** argv_)
                                          b2.get_y (),
                                          b2.get_z ());
     } else {
+      tmp_file.out() << "# draw cyl 2: (index 0) " << std::endl;
       geomtools::gnuplot_draw::draw_cylinder(tmp_file.out(),
                                              p2.get_translation(),
                                              p2.get_rotation(),
@@ -138,13 +144,16 @@ int main (int argc_, char ** argv_)
     }
     tmp_file.out() << std::endl << std::endl;
 
+    tmp_file.out() << "# draw source (index 1): " << std::endl;
     geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(), pos);
     tmp_file.out() << std::endl << std::endl;
 
+    tmp_file.out() << "# draw intercept (index 2): " << std::endl;
     geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(),
                                                intercept.get_impact ());
     tmp_file.out() << std::endl << std::endl;
 
+    tmp_file.out() << "# draw traj (index 3): " << std::endl;
     geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(), pos);
     std::clog << "test 1: intercept=" << intercept.get_impact () << std::endl;
     if (intercept.is_valid ()) {
@@ -158,6 +167,7 @@ int main (int argc_, char ** argv_)
 
     std::clog << "test 1: End." << std::endl;
 
+    tmp_file.out() << "# draw intercepts (index 4): " << std::endl;
     size_t nshoots = 100000;
     for (int i = 0; i < (int) nshoots; i++) {
       if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
@@ -172,11 +182,12 @@ int main (int argc_, char ** argv_)
       geomtools::vector_3d dir;
       geomtools::randomize_direction (drand48, dir);
 
-      geomtools::intercept_t intercept;
+      geomtools::face_intercept_info intercept;
       // int intercept_face;
-      if (inter1.find_intercept (pos, dir, intercept)) {
+      double tolerance = 0.1;
+      if (inter1.find_intercept (pos, dir, intercept, tolerance)) {
         if (debug) std::clog << "test 1: Intercept face="
-                             << intercept.get_face ()
+                             << intercept.get_face_id ()
                              << " at impact="
                              << intercept.get_impact ()
                              << std::endl;
@@ -188,7 +199,9 @@ int main (int argc_, char ** argv_)
     }
     tmp_file.out() << std::endl << std::endl;
 
+    tmp_file.out() << "# draw locate (index 5): " << std::endl;
     nshoots = 10000000;
+    int count = 0;
     for (int i = 0; i < (int) nshoots; i++) {
       double dim = 6. * CLHEP::mm;
       geomtools::vector_3d position(0, 0, 0);
@@ -196,27 +209,37 @@ int main (int argc_, char ** argv_)
                    dim * (-1 + 2 * drand48()),
                    dim * (-1 + 2 * drand48()));
       double skin = 0.1 * CLHEP::mm;
-      if (surf_first && inter1.is_on_surface(position,
-                                             geomtools::intersection_3d::COMPONENT_SHAPE_FIRST, skin)) {
+      geomtools::face_identifier fid_first;
+      fid_first.prepend_part(geomtools::intersection_3d::FIRST_PART);
+      fid_first.set_face_bits_any();
+      geomtools::face_identifier fid_second;
+      fid_second.prepend_part(geomtools::intersection_3d::SECOND_PART);
+      fid_second.set_face_bits_any();
+      if (surf_first && inter1.is_on_surface(position, fid_first, skin)) {
         tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
                        << 3
                        << std::endl;
-      } else if (surf_second && inter1.is_on_surface(position,
-                                                     geomtools::intersection_3d::COMPONENT_SHAPE_SECOND, skin)) {
+        count++;
+      } else if (surf_second && inter1.is_on_surface(position, fid_second, skin)) {
         tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
                        << 4
                        << std::endl;
-      } else if (bulk && inter1.is_inside(position, skin)) {
+        count++;
+      } else if (bulk && inter1.check_inside(position, skin)) {
         tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
                        << 2
                        << std::endl;
+        count++;
       }
+    }
+    if (!count) {
+      tmp_file.out() << "0 0 0 1" << std::endl;
     }
     tmp_file.out() << std::endl << std::endl;
 
     ibb.tree_dump(std::clog, "Intersection BB: ", "NOTICE: " );
     ibbp.tree_dump(std::clog, "Intersection BB placement: ", "NOTICE: " );
-    tmp_file.out() <<"# Bounding box:" << std::endl;
+    tmp_file.out() <<"# Bounding box (index 6):" << std::endl;
     geomtools::gnuplot_draw::draw_box(tmp_file.out(),
                                       ibbp.get_translation(),
                                       ibbp.get_rotation(),
@@ -225,10 +248,13 @@ int main (int argc_, char ** argv_)
                                       ibb.get_z());
     tmp_file.out() << std::endl << std::endl;
 
-    tmp_file.out() <<"# Intersection:" << std::endl;
+    tmp_file.out() <<"# Intersection (index 7):" << std::endl;
     geomtools::gnuplot_draw::draw(tmp_file.out(),
                                   geomtools::placement(0,0,0,0,0,0),
-                                  inter1);
+                                  inter1,
+                                  geomtools::intersection_3d::WR_NONE
+                                  | geomtools::intersection_3d::WR_COMPOSITE_BOOST_SAMPLING
+                                  );
     tmp_file.out() << std::endl << std::endl;
 
     if (draw) {
@@ -250,7 +276,7 @@ int main (int argc_, char ** argv_)
         plot_cmd << ", '' index 1 title 'Source' with points pt 6 ps 1 ";
         plot_cmd << ", '' index 2 title 'Impact' with points pt 6 ps 1 ";
         plot_cmd << ", '' index 3 title 'Track' with lines ";
-        plot_cmd << ", '' index 5 title 'BB' with lines lt 3 lw 3";
+        plot_cmd << ", '' index 6 title 'BB' with lines lt 3 lw 3";
         g1.cmd (plot_cmd.str ());
         g1.showonscreen (); // window output
         geomtools::gnuplot_drawer::wait_for_key ();
@@ -267,9 +293,19 @@ int main (int argc_, char ** argv_)
       }
       {
         std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename()
+                 << "' index 7 title 'Union' with lines ";
+        plot_cmd << ", '' index 5 title 'Vertexes' with point pt 6 ps 0.35 linecolor variable";
+        g1.cmd(plot_cmd.str());
+        g1.showonscreen(); // window output
+        geomtools::gnuplot_drawer::wait_for_key();
+        usleep(200);
+      }
+      {
+        std::ostringstream plot_cmd;
         plot_cmd << "splot '" << tmp_file.get_filename ()
-                 << "' index 6 title 'Intersection' with lines ";
-        plot_cmd << ", '' index 5 title 'BB' with lines lt 0";
+                 << "' index 7 title 'Intersection' with lines ";
+        plot_cmd << ", '' index 6 title 'BB' with lines lt -1";
         g1.cmd (plot_cmd.str ());
         g1.showonscreen (); // window output
         geomtools::gnuplot_drawer::wait_for_key ();

@@ -9,9 +9,8 @@
 
 namespace geomtools {
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_2d,"geomtools::i_shape_2d");
-
-  using namespace std;
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_2d,
+                                                    "geomtools::i_shape_2d");
 
   bool i_shape_2d::has_number_of_sides() const
   {
@@ -48,13 +47,31 @@ namespace geomtools {
     return DIMENSIONAL_2;
   }
 
+  i_shape_2d::i_shape_2d() : i_object_3d()
+  {
+    return;
+  }
+
   i_shape_2d::i_shape_2d(double skin_) : i_object_3d(skin_)
+  {
+    return;
+  }
+
+  i_shape_2d::i_shape_2d(double skin_, double angular_tolerance_)
+    : i_object_3d(skin_, angular_tolerance_)
   {
     return;
   }
 
   i_shape_2d::~i_shape_2d()
   {
+    return;
+  }
+
+  // static
+  void i_shape_2d::init_ocd(datatools::object_configuration_description & ocd_)
+  {
+    i_object_3d::init_ocd(ocd_);
     return;
   }
 

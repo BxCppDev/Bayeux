@@ -1,6 +1,6 @@
 # - Top level CMakeLists.txt for geomtools project
 #-----------------------------------------------------------------------
-# Copyright (c) 2011-2013, François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright (c) 2011-2015, François Mauger <mauger@lpccaen.in2p3.fr>
 #                          Ben Morgan <Ben.Morgan@warwick.ac.uk>
 
 #-----------------------------------------------------------------------
@@ -31,7 +31,7 @@ if (NOT DEFINED GEOMTOOLS_STANDALONE)
 endif()
 
 # - Versioning
-set(geomtools_VERSION_MAJOR 4)
+set(geomtools_VERSION_MAJOR 5)
 set(geomtools_VERSION_MINOR 0)
 set(geomtools_VERSION_PATCH 0)
 set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_VERSION_PATCH}")

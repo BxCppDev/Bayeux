@@ -12,9 +12,14 @@
 // - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/units.h>
+// - Bayeux/mygsl:
+#include <mygsl/min_max.h>
 
 // This project:
 #include <geomtools/cylinder.h>
+#include <geomtools/rectangle.h>
+#include <geomtools/cylindrical_sector.h>
+#include <geomtools/disk.h>
 
 namespace geomtools {
 
@@ -30,6 +35,214 @@ namespace geomtools {
       label = "tube";
     }
     return label;
+  }
+
+  bool tube::has_inner_face() const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
+    if (has_inner_r()) {
+      return true;
+    }
+    return false;
+  }
+
+  void tube::compute_top_bottom_face(faces_mask_type face_id_,
+                                     disk & face_,
+                                     placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Box is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    switch (face_id_) {
+    case FACE_BOTTOM:
+      face_.set(get_inner_r(), get_outer_r());
+      face_placement_.set(0.0, 0.0, -0.5 * get_z(), 0.0, 0.0, 0.0);
+      break;
+    case FACE_TOP:
+      face_.set(get_inner_r(), get_outer_r());
+      face_placement_.set(0.0, 0.0, +0.5 * get_z(), 0.0, 0.0, 0.0);
+      break;
+    default:
+      DT_THROW(std::logic_error, "Invalid top/bottom mask!");
+    }
+    if (has_partial_phi()) {
+      face_.set_start_angle(get_start_phi());
+      face_.set_delta_angle(get_delta_phi());
+    }
+    return;
+  }
+
+  void tube::compute_side_face(faces_mask_type face_id_,
+                               cylindrical_sector & face_,
+                               placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Box is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    switch (face_id_) {
+    case FACE_OUTER_SIDE:
+      face_.set_radius(get_outer_r());
+      break;
+    case FACE_INNER_SIDE:
+      DT_THROW_IF(!has_inner_r(), std::logic_error,
+                  "No inner side face!");
+      face_.set_radius(get_inner_r());
+      break;
+    default:
+      DT_THROW(std::logic_error, "Invalid side face mask!");
+    }
+    face_.set_z(get_z());
+    if (has_partial_phi()) {
+      face_.set_start_angle(get_start_phi());
+      face_.set_delta_angle(get_delta_phi());
+    }
+    face_placement_.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    return;
+  }
+
+  void tube::compute_start_stop_angle_face(faces_mask_type face_id_,
+                                           rectangle & face_,
+                                           placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Tube is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    DT_THROW_IF (! has_partial_phi(), std::logic_error, "Tube has no partial phi !");
+    double ir = 0.0;
+    if (has_inner_r()) {
+      ir = _inner_r_;
+    }
+    double phi = 0.0;
+    switch (face_id_) {
+    case FACE_START_ANGLE:
+      phi = get_start_phi();
+      break;
+    case FACE_STOP_ANGLE:
+      phi = get_start_phi() + get_delta_phi();
+      break;
+    default:
+      DT_THROW(std::logic_error, "Invalid side face mask!");
+    }
+    face_.set(_z_, _outer_r_ - ir);
+    double r = 0.5 * (_outer_r_ + ir);
+    double x = r * std::cos(phi);
+    double y = r * std::sin(phi);
+    face_placement_.set(x,
+                        y,
+                        0.0,
+                        phi + get_special_rotation_angle(ROTATION_ANGLE_90),
+                        get_special_rotation_angle(ROTATION_ANGLE_90),
+                        0.0
+                        );
+    return;
+  }
+
+  unsigned int tube::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Tube is not valid !");
+    unsigned int nfaces = 0;
+
+    {
+      // Outer side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      cylindrical_sector & cs = finfo.add_face<cylindrical_sector>();
+      compute_side_face(FACE_OUTER_SIDE, cs, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_OUTER_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("outer_side");
+      nfaces++;
+    }
+
+    if (has_inner_r()) {
+      // Inner side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      cylindrical_sector & cs = finfo.add_face<cylindrical_sector>();
+      compute_side_face(FACE_INNER_SIDE, cs, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_INNER_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("inner_side");
+      nfaces++;
+    }
+
+    {
+      // Bottom face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      disk & d = finfo.add_face<disk>();
+      compute_top_bottom_face(FACE_BOTTOM, d, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_BOTTOM);
+      finfo.set_identifier(fid);
+      finfo.set_label("bottom");
+      nfaces++;
+    }
+
+    {
+      // Top face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      disk & d = finfo.add_face<disk>();
+      compute_top_bottom_face(FACE_TOP, d, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_TOP);
+      finfo.set_identifier(fid);
+      finfo.set_label("top");
+      nfaces++;
+    }
+
+    if (has_partial_phi()) {
+
+      {
+        // Start angle face:
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        rectangle & r = finfo.add_face<rectangle>();
+        compute_start_stop_angle_face(FACE_START_ANGLE, r, finfo.grab_positioning());
+        face_identifier fid;
+        fid.set_face_bit(FACE_START_ANGLE);
+        finfo.set_identifier(fid);
+        finfo.set_label("start_angle");
+        nfaces++;
+      }
+
+      {
+        // Stop angle face:
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        rectangle & r = finfo.add_face<rectangle>();
+        compute_start_stop_angle_face(FACE_STOP_ANGLE, r, finfo.grab_positioning());
+        face_identifier fid;
+        fid.set_face_bit(FACE_STOP_ANGLE);
+        finfo.set_identifier(fid);
+        finfo.set_label("stop_angle");
+        nfaces++;
+      }
+
+    }
+
+    return nfaces;
   }
 
   double tube::get_xmin () const
@@ -54,12 +267,12 @@ namespace geomtools {
 
   double tube::get_zmin () const
   {
-    return -0.5*_z_;
+    return -0.5 * _z_;
   }
 
   double tube::get_zmax () const
   {
-    return +0.5*_z_;
+    return +0.5 * _z_;
   }
 
   double tube::get_z () const
@@ -69,7 +282,7 @@ namespace geomtools {
 
   void tube::set_z (double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0,std::logic_error ,
+    DT_THROW_IF (new_value_ < 0.0, std::logic_error ,
                  "Invalid '" << new_value_ << "' Z value !");
     _z_ = new_value_;
     return;
@@ -82,18 +295,41 @@ namespace geomtools {
 
   void tube::set_half_z (double new_value_)
   {
-    set_z (new_value_ + new_value_);
+    set_z(2 * new_value_);
     return;
   }
 
   bool tube::is_extruded () const
   {
-    return _inner_r_ > 0.0;
+    return has_inner_r() && _inner_r_ > 0.0;
+  }
+
+  bool tube::has_inner_r() const
+  {
+    return datatools::is_valid(_inner_r_);
   }
 
   double tube::get_inner_r () const
   {
     return _inner_r_;
+  }
+
+  void tube::set_inner_r(double inner_r_)
+  {
+    DT_THROW_IF (inner_r_ < 0.0, std::domain_error, "Invalid inner radius '" << inner_r_ << "' !");
+    DT_THROW_IF (datatools::is_valid(_outer_r_) && (inner_r_ >= _outer_r_),
+                 std::domain_error, "Invalid inner radius '" << inner_r_ << "' (> outer radius) !");
+    _inner_r_ = inner_r_;
+    return;
+  }
+
+  void tube::set_outer_r(double outer_r_)
+  {
+    DT_THROW_IF (outer_r_ < 0.0, std::logic_error, "Invalid outer radius '" << outer_r_ << "' !");
+    DT_THROW_IF (datatools::is_valid(_inner_r_) && (_inner_r_ >= outer_r_),
+                 std::domain_error, "Invalid outer radius '" << outer_r_ << "' (< inner radius) !");
+    _outer_r_ = outer_r_;
+    return;
   }
 
   double tube::get_outer_r () const
@@ -103,37 +339,39 @@ namespace geomtools {
 
   void tube::set_radii (double inner_r_, double outer_r_)
   {
-    DT_THROW_IF (inner_r_ < 0.0, std::logic_error, "Invalid inner radius '" << inner_r_ << "' !");
-    _inner_r_ = inner_r_;
-    DT_THROW_IF (outer_r_ < 0.0, std::logic_error, "Invalid outer radius '" << outer_r_ << "' !");
-    _outer_r_ = outer_r_;
-    DT_THROW_IF (_outer_r_ <= _inner_r_,
-                 std::logic_error,
-                 "Outer radius '"
-                 << _outer_r_ << "' <= inner radius '"
-                 << _inner_r_ << "'!");
+    datatools::invalidate(inner_r_);
+    set_outer_r(outer_r_);
+    set_inner_r(inner_r_);
     return;
   }
 
-  void tube::set (double ir_, double or_, double z_)
+  void tube::set(double or_, double z_)
   {
-    set_radii (ir_ ,or_);
-    set_z (z_);
+    datatools::invalidate(_inner_r_);
+    set_outer_r(or_);
+    set_z(z_);
     return;
   }
 
-  void tube::set (double ir_, double or_, double z_, double start_phi_, double delta_phi_)
+  void tube::set(double ir_, double or_, double z_)
   {
-    set_radii (ir_ ,or_);
-    set_z (z_);
+    set_radii(ir_ ,or_);
+    set_z(z_);
+    return;
+  }
+
+  void tube::set(double ir_, double or_, double z_, double start_phi_, double delta_phi_)
+  {
+    set_radii(ir_ ,or_);
+    set_z(z_);
     set_phi(start_phi_, delta_phi_);
     return;
   }
 
-  void tube::set_half (double ir_, double or_, double hz_)
+  void tube::set_half(double ir_, double or_, double hz_)
   {
-    set_radii (ir_, or_);
-    set_half_z (hz_);
+    set_radii(ir_, or_);
+    set_half_z(hz_);
     return;
   }
 
@@ -168,14 +406,19 @@ namespace geomtools {
 
   bool tube::has_partial_phi() const
   {
-    if (_delta_phi_ == 2 * M_PI) return false;
-    if (_start_phi_ > 0.0) return true;
-    return false;
+    return (datatools::is_valid(_start_phi_) && datatools::is_valid(_delta_phi_));
   }
 
   tube::tube ()
   {
     reset ();
+    return;
+  }
+
+  tube::tube ( double or_, double z_)
+  {
+    reset ();
+    set (or_, z_);
     return;
   }
 
@@ -193,58 +436,86 @@ namespace geomtools {
     return;
   }
 
-   tube::~tube ()
+  tube::~tube ()
   {
     return;
   }
 
   double tube::get_surface (uint32_t mask_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     double s = 0.0;
-    if (mask_ & FACE_INNER_SIDE)
-      {
-        s += 2.0 * M_PI * _inner_r_ * _z_;
+    double ir = 0.0;
+    if (has_inner_r()) {
+      ir = _inner_r_;
+    }
+    double angle = 2 * M_PI;
+    if (has_partial_phi()) {
+      angle = _delta_phi_;
+    }
+    if (mask_ & FACE_INNER_SIDE) {
+      s += angle * ir * _z_;
+    }
+    if ( mask_ & FACE_OUTER_SIDE ) {
+      s += angle * _outer_r_ * _z_;
+    }
+    if ( mask_ & FACE_BOTTOM ) {
+      s += 0.5 * angle * (_outer_r_ * _outer_r_ - ir * ir);
+    }
+    if ( mask_ & FACE_TOP ) {
+      s += 0.5 * angle * (_outer_r_ * _outer_r_ - ir * ir);
+    }
+    if (has_partial_phi()) {
+      if (mask_ & FACE_START_ANGLE) {
+        s += (_outer_r_ - ir) * _z_;
       }
-    if ( mask_ & FACE_OUTER_SIDE )
-      {
-        s += 2.0 * M_PI * _outer_r_ * _z_;
+      if (mask_ & FACE_STOP_ANGLE) {
+        s += (_outer_r_ - ir) * _z_;
       }
-    if ( mask_ & FACE_BOTTOM )
-      {
-        s += M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_);
-      }
-    if ( mask_ & FACE_TOP )
-      {
-        s += M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_);
-      }
-    if (has_partial_phi())
-      {
-        s *= ( _delta_phi_ - _start_phi_ ) / (2. * M_PI);
-      }
+    }
     return s;
   }
 
-  double tube::get_volume (uint32_t /*flags*/) const
+  double tube::get_volume(uint32_t flags_) const
   {
-    return M_PI * (_outer_r_ * _outer_r_ - _inner_r_ * _inner_r_ )
-      * _z_ * ( _delta_phi_ - _start_phi_ ) / (2.0 * M_PI);
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
+    double angle = 2 * M_PI;
+    if (has_partial_phi()) {
+      angle = _delta_phi_;
+    }
+    double ir = 0.0;
+    if (has_inner_r()) {
+      ir = _inner_r_;
+    }
+    double s = 0.0;
+    if (flags_ & VOLUME_BULK) {
+      s += 0.5 * angle * (_outer_r_ * _outer_r_ - ir * ir);
+    }
+    if (flags_ & VOLUME_CAVITY) {
+      s += 0.5 * angle * (ir * ir);
+    }
+    return s * _z_;
   }
 
   bool tube::is_valid () const
   {
-    return ((_inner_r_ >= 0.0) && (_outer_r_ > _inner_r_) && _z_ > 0.0);
+    return datatools::is_valid(_outer_r_) && datatools::is_valid(_z_);
+  }
+
+  void tube::_set_defaults()
+  {
+    datatools::invalidate(_inner_r_);
+    datatools::invalidate(_outer_r_);
+    datatools::invalidate(_z_);
+    datatools::invalidate(_start_phi_);
+    datatools::invalidate(_delta_phi_);
+    return;
   }
 
   void tube::reset ()
   {
     unlock();
-
-    _inner_r_   = -1.0;
-    _outer_r_   = -1.0;
-    _z_         = -1.0;
-    _start_phi_ = 0.0;
-    _delta_phi_ = 2.*M_PI;
-
+    _set_defaults();
     this->i_shape_3d::reset();
     return;
   }
@@ -256,32 +527,55 @@ namespace geomtools {
 
   bool tube::is_inside ( const vector_3d & point_ , double skin_ ) const
   {
-    DT_THROW_IF(has_partial_phi(), std::runtime_error, "Not implemented for tubes with partial phi !");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     double skin = get_skin (skin_);
+    double angular_tolerance = get_tolerance();
     double hskin = 0.5 * skin;
     double r = hypot(point_.x(), point_.y());
     if ( (r <= (_outer_r_ - hskin))
          && (r >= (_inner_r_ + hskin))
          && (std::abs(point_.z()) <= (0.5 * _z_ - hskin))
-         ) return true;
+         ) {
+      if (has_partial_phi()) {
+        double phi = std::atan2(point_.y(), point_.x());
+        return angle_is_in(phi, _start_phi_, _delta_phi_, angular_tolerance, true);
+      } else {
+        return true;
+      }
+    }
     return false;
   }
 
   bool tube::is_outside ( const vector_3d & point_ , double skin_ ) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     double skin = get_skin (skin_);
+    double angular_tolerance = get_tolerance();
     double hskin = 0.5 * skin;
     double r = hypot(point_.x(), point_.y());
-    if ( (r >= (_outer_r_ + hskin))
-         || (r <= (_inner_r_ - hskin))
-         || (std::abs(point_.z()) >= (0.5 * _z_ + hskin))
-         ) return true;
-    DT_THROW_IF(has_partial_phi(), std::runtime_error, "Not implemented for tubes with partial phi !");
+    if (r >= (_outer_r_ + hskin)) {
+      return true;
+    }
+    if (has_inner_r()) {
+      if (r <= (_inner_r_ - hskin)) {
+        return true;
+      }
+    }
+    if (std::abs(point_.z()) >= (0.5 * _z_ + hskin)) {
+      return true;
+    }
+    if (has_partial_phi()) {
+      double phi = std::atan2(point_.y(), point_.x());
+      if (! angle_is_in(phi, _start_phi_, _delta_phi_, angular_tolerance, true)) {
+        return true;
+      }
+    }
     return false;
   }
 
   double tube::get_parameter ( const std::string & flag_ ) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     if ( flag_ == "inner.r" ) return get_inner_r ();
     if ( flag_ == "outer.r" ) return get_outer_r ();
     if ( flag_ == "z" ) return get_z ();
@@ -294,70 +588,131 @@ namespace geomtools {
     DT_THROW_IF(true, std::runtime_error, "Unknown flag !");
   }
 
-  vector_3d tube::get_normal_on_surface (const vector_3d & position_) const
+  vector_3d
+  tube::get_normal_on_surface (const vector_3d & a_position,
+                               const face_identifier & a_surface_bit) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     vector_3d normal;
-    invalidate (normal);
-    if (is_on_surface (position_, FACE_OUTER_SIDE))
+    geomtools::invalidate(normal);
+    switch(a_surface_bit.get_face_bits()) {
+    case FACE_OUTER_SIDE:
       {
-        double phi = position_.phi ();
-        normal.set (std::cos (phi), std::sin (phi), 0.0);
+        double phi = a_position.phi();
+        normal.set(std::cos(phi), std::sin(phi), 0.0);
       }
-    else if (is_on_surface (position_, FACE_INNER_SIDE))
-      {
-        double phi = position_.phi ();
-        normal.set (std::cos (phi), std::sin (phi), 0.0);
+      break;
+    case FACE_INNER_SIDE:
+      if (has_inner_r()) {
+        double phi = a_position.phi();
+        normal.set(std::cos(phi), std::sin(phi), 0.0);
         normal *= -1.;
       }
-    else if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
-    else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0);
-    return (normal);
+      break;
+    case FACE_BOTTOM:
+      normal.set(0.0, 0.0, -1.0);
+      break;
+    case FACE_TOP:
+      normal.set(0.0, 0.0, +1.0);
+      break;
+    case FACE_START_ANGLE:
+      if (has_partial_phi()) {
+        normal.set(std::sin(get_start_phi()), -std::cos(get_start_phi()), 0.0);
+      }
+      break;
+    case FACE_STOP_ANGLE:
+      if (has_partial_phi()) {
+        normal.set(std::sin(get_start_phi() + get_delta_phi()), -std::cos(get_start_phi() + get_delta_phi()), 0.0);
+      }
+      break;
+    }
+    return normal;
   }
 
-  bool tube::is_on_surface (const vector_3d & point_,
-                            int mask_,
-                            double skin_) const
+  face_identifier tube::on_surface(const vector_3d & position_,
+                                   const face_identifier & surface_mask_,
+                                   double skin_) const
   {
-    DT_THROW_IF(has_partial_phi(), std::runtime_error, "Not implemented for tubes with partial phi !");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
+    double skin = get_skin(skin_);
 
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
+    face_identifier mask;
+    if (surface_mask_.is_valid()) {
+      DT_THROW_IF(! surface_mask_.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = surface_mask_;
+    } else {
+      mask.set_face_bits_any();
+    }
 
-    int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(position_, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
+        }
+      }
+    }
 
-    double r = hypot (point_.x (), point_.y ());
-    if (mask & FACE_BOTTOM)
-      {
-        if ( (std::abs (point_.z () + 0.5 * _z_) < 0.5 * skin)
-             && (r < _outer_r_ && r > _inner_r_)) return true;
-      }
-    if (mask & FACE_TOP)
-      {
-        if ( ( std::abs (point_.z () - 0.5 * _z_) < 0.5 * skin)
-             && (r < _outer_r_ && r > _inner_r_)) return true;
-      }
-    if (mask & FACE_OUTER_SIDE)
-      {
-        if ( (std::abs (point_.z ()) < 0.5 * _z_)
-             && (std::abs (r - _outer_r_) < 0.5 * skin)) return true;
-      }
-    if (mask & FACE_INNER_SIDE)
-      {
-        if ( (std::abs (point_.z ()) < 0.5 * _z_)
-             && (std::abs (r - _inner_r_) < 0.5 * skin)) return true;
-      }
-    return false;
+    return face_identifier::face_invalid();
   }
 
-  bool tube::find_intercept (const vector_3d & /*from_*/,
-                             const vector_3d & /*direction_*/,
-                             intercept_t & intercept_,
-                             double /*skin_*/) const
+  bool tube::find_intercept (const vector_3d & from_,
+                             const vector_3d & direction_,
+                             face_intercept_info & intercept_,
+                             double skin_) const
   {
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     intercept_.reset ();
-    return intercept_.is_ok ();
+    double skin = compute_tolerance(skin_);
+
+    const unsigned int NFACES = 6;
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
+
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
+      }
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            intercept_.set_face_id(intercepts[iface].get_face_id());
+            intercept_.set_impact(intercepts[iface].get_impact());
+          }
+        }
+      }
+    }
+
+    return intercept_.is_ok();
   }
 
   std::ostream & operator<< (std::ostream & out_, const tube & t_)
@@ -432,6 +787,7 @@ namespace geomtools {
 
   void tube::compute_outer_cylinder (cylinder & oc_)
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     oc_.reset ();
     DT_THROW_IF (! is_valid (),logic_error, "Tube is not valid !");
     oc_.set (get_outer_r (), get_z ());
@@ -441,7 +797,52 @@ namespace geomtools {
 
   void tube::_build_bounding_data()
   {
-    _grab_bounding_data().make_cylinder(get_outer_r(), -0.5 * get_z(), +0.5 * get_z());
+    // std::cerr << "DEVEL: tube::_build_bounding_data: "
+    //           << "Entering..." << std::endl;
+    if (! has_partial_phi()) {
+      _grab_bounding_data().make_cylinder(get_outer_r(), -0.5 * get_z(), +0.5 * get_z());
+    } else {
+      mygsl::min_max xrange;
+      mygsl::min_max yrange;
+      double dphi = std::min(0.5 * CLHEP::degree, _delta_phi_ / 100);
+      if (!has_inner_r()) {
+        xrange.add(0.0);
+        yrange.add(0.0);
+      }
+      for (double phi = _start_phi_;
+           phi <  _start_phi_ + _delta_phi_;
+           phi += dphi) {
+        double cp = std::cos(phi);
+        double sp = std::sin(phi);
+        double xo = get_outer_r() * cp;
+        if (xo > get_outer_r() * 0.99) {
+          xo = get_outer_r();
+        }
+        if (xo < - get_outer_r() * 0.99) {
+          xo = -get_outer_r();
+        }
+        double yo = get_outer_r() * sp;
+        if (yo > get_outer_r() * 0.99) {
+          yo = get_outer_r();
+        }
+        if (yo < - get_outer_r() * 0.99) {
+          yo = -get_outer_r();
+        }
+        xrange.add(xo);
+        yrange.add(yo);
+        if (has_inner_r()) {
+          double xi = get_inner_r() * cp;
+          double yi = get_inner_r() * sp;
+          xrange.add(xi);
+          yrange.add(yi);
+        }
+      }
+      _grab_bounding_data().make_box(xrange.get_min(), xrange.get_max(),
+                                     yrange.get_min(), yrange.get_max(),
+                                     get_zmin(), get_zmax());
+    }
+    // std::cerr << "DEVEL: tube::_build_bounding_data: "
+    //           << "Exiting." << std::endl;
     return;
   }
 
@@ -469,62 +870,105 @@ namespace geomtools {
     return;
   }
 
-  void tube::generate_wires (std::list<polyline_3d> & lpl_,
-                             const placement & p_,
-                             uint32_t /*options_*/) const
+  void tube::generate_wires_self(wires_type & wires_,
+                                 uint32_t options_) const
   {
-    const int nsamples = 36;
-    double r[2];
-    r[0]=get_inner_r ();
-    r[1]=get_outer_r ();
-    for (int k = 0; k < 2; k++)
-      {
-        for (int j = 0; j < 2; j++)
-          {
-            vector_3d vertex[nsamples];
-            for (int i = 0; i < nsamples; i++)
-              {
-                double thetai = i * 2. * M_PI/nsamples;
-                vertex[i].set (r[k] * std::cos (thetai),
-                               r[k] * std::sin (thetai),
-                               -0.5 * get_z () + j * get_z ());
-              }
-            {
-              polyline_3d dummy;
-              lpl_.push_back (dummy);
-            }
-            polyline_3d & pl = lpl_.back ();
-            pl.set_closed (true);
-            for (int i = 0; i < 36; i++)
-              {
-                vector_3d v;
-                p_.child_to_mother (vertex[i], v);
-                pl.add (v);
-              }
-          }
+    // std::cerr << "DEVEL: tube::generate_wires_self: " << "Entering..." << std::endl;
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
 
-        for (int i = 0; i < nsamples; i++)
-          {
-            vector_3d vertex[2];
-            double thetai = i * 2. * M_PI/nsamples;
-            double x = r[k] * std::cos (thetai);
-            double y = r[k] * std::sin (thetai);
-            vertex[0].set (x, y, -0.5 * get_z ());
-            vertex[1].set (x, y, +0.5 * get_z ());
-            {
-              polyline_3d dummy;
-              lpl_.push_back (dummy);
-              polyline_3d & pl = lpl_.back ();
-              pl.set_closed (false);
-              for (int i = 0; i < 2; i++)
-                {
-                  vector_3d v;
-                  p_.child_to_mother (vertex[i], v);
-                  pl.add (v);
-                }
-            }
-          }
+    // bool debug_explode    = options_ & WR_BASE_EXPLODE;
+    bool draw_bottom      = !(options_ & WR_TUBE_NO_BOTTOM_FACE);
+    bool draw_top         = !(options_ & WR_TUBE_NO_TOP_FACE);
+    bool draw_inner       = !(options_ & WR_TUBE_NO_INNER_FACE);
+    bool draw_outer       = !(options_ & WR_TUBE_NO_OUTER_FACE);
+    bool draw_start_angle = !(options_ & WR_TUBE_NO_START_ANGLE_FACE);
+    bool draw_stop_angle  = !(options_ & WR_TUBE_NO_STOP_ANGLE_FACE);
+
+    bool draw_boundings   =  (options_ & WR_BASE_BOUNDINGS);
+    if (draw_boundings) {
+      get_bounding_data().generate_wires_self(wires_, 0);
+    }
+
+    // Extract base rendering options:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    // double explode_factor = 1.0;
+    // if (debug_explode) {
+    //   explode_factor = 1.25;
+    // }
+
+    bool edge_top = false;
+    bool edge_bottom = false;
+
+    if (draw_bottom) {
+      disk bottom_face;
+      placement bottom_face_placement;
+      compute_top_bottom_face(FACE_BOTTOM, bottom_face, bottom_face_placement);
+      uint32_t options = base_options;
+      bottom_face.generate_wires(wires_, bottom_face_placement, options);
+      edge_bottom = true;
+    }
+
+    if (draw_top) {
+      disk top_face;
+      placement top_face_placement;
+      compute_top_bottom_face(FACE_TOP, top_face, top_face_placement);
+      uint32_t options = base_options;
+      top_face.generate_wires(wires_, top_face_placement, options);
+      edge_top = true;
+    }
+
+    if (has_partial_phi()) {
+
+      {
+        rectangle start_face;
+        placement start_face_placement;
+        compute_start_stop_angle_face(FACE_START_ANGLE, start_face, start_face_placement);
+        uint32_t options = base_options;
+        start_face.generate_wires(wires_, start_face_placement, options);
       }
+
+      {
+        rectangle stop_face;
+        placement stop_face_placement;
+        compute_start_stop_angle_face(FACE_STOP_ANGLE, stop_face, stop_face_placement);
+        uint32_t options = base_options;
+        stop_face.generate_wires(wires_, stop_face_placement, options);
+      }
+
+    }
+
+    if (has_inner_r()) {
+      if (draw_inner) {
+        cylindrical_sector inner_side_face;
+        placement inner_side_face_placement;
+        compute_side_face(FACE_INNER_SIDE, inner_side_face, inner_side_face_placement);
+        uint32_t options = base_options;
+        if (edge_bottom) {
+          options |= cylindrical_sector::WR_CYLSEC_NO_BOTTOM_EDGE;
+        }
+        if (edge_top) {
+          options |= cylindrical_sector::WR_CYLSEC_NO_TOP_EDGE;
+        }
+        inner_side_face.generate_wires(wires_, inner_side_face_placement, options);
+      }
+    }
+
+    if (draw_outer) {
+      cylindrical_sector outer_side_face;
+      placement outer_side_face_placement;
+      compute_side_face(FACE_OUTER_SIDE, outer_side_face, outer_side_face_placement);
+      uint32_t options = base_options;
+      if (edge_bottom) {
+        options |= cylindrical_sector::WR_CYLSEC_NO_BOTTOM_EDGE;
+      }
+      if (edge_top) {
+        options |= cylindrical_sector::WR_CYLSEC_NO_TOP_EDGE;
+      }
+      outer_side_face.generate_wires(wires_, outer_side_face_placement, options);
+    }
+
+    // std::cerr << "DEVEL: tube::generate_wires_self: " << "Exiting." << std::endl;
     return;
   }
 

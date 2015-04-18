@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/extruded_box_model.h
 /* Author(s) :    Arnaud Chapon <chapon@lpccaen.in2p3.fr>
  * Creation date: 2015-10-27
@@ -32,6 +31,7 @@
 #include <geomtools/logical_volume.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
+#include <geomtools/i_wires_drawer.h>
 
 namespace geomtools {
 
@@ -67,6 +67,21 @@ namespace geomtools {
     /// Return the embedded extruded box
     const geomtools::extruded_box & get_extruded_box() const;
 
+    /// \brief Special 3D rendering
+    struct wires_drawer : public i_wires_drawer<extruded_box>
+    {
+
+      //! Constructor
+      wires_drawer(const extruded_box & eb_);
+
+      //! Destructor
+      virtual ~wires_drawer();
+
+      //! Generate a list of polylines representing the contour of the shape (for display clients)
+      virtual void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const;
+    };
+
    protected:
 
     /// Executed at construct
@@ -76,14 +91,13 @@ namespace geomtools {
 
   private:
 
-    std::string               _material_name_;  //!< Name of the material
-    geomtools::extruded_box   _extruded_box_;   //!< Extruded box
-
+    std::string               _material_name_;   //!< Name of the material
+    geomtools::extruded_box   _extruded_box_;    //!< Extruded box
     geomtools::box            _mother_box_;      //!< Reference box
     geomtools::box            _daughter_box_;    //!< Daughter box
-    geomtools::subtraction_3d _subtraction_box_; //!< Extruded box
+    geomtools::subtraction_3d _subtraction_box_; //!< Top level extruded solid
 
-    boost::scoped_ptr<extruded_box::wires_drawer> _drawer_;
+    boost::scoped_ptr<wires_drawer> _drawer_;
 
     // Registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(extruded_box_model);
@@ -96,3 +110,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::extruded_box_model)
 
 #endif // GEOMTOOLS_EXTRUDED_BOX_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

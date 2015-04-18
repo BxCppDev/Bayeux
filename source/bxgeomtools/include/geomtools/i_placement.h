@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/i_placement.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
@@ -97,3 +96,11 @@ BOOST_CLASS_VERSION(geomtools::i_placement, 0)
 */
 
 #endif // GEOMTOOLS_I_PLACEMENT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

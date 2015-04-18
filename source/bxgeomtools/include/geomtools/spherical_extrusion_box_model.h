@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/spherical_extrusion_box_model.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
- * Last modified: 2015-02-08
+ * Last modified: 2015-02-15
  *
  * License:
  *
@@ -42,33 +41,49 @@ namespace geomtools {
   {
   public:
 
+    //! Return the material label
     const std::string & get_material() const;
 
+    //! Return the top level solid
     const geomtools::subtraction_3d & get_solid() const;
 
-    virtual std::string get_model_id() const;
+    //! Return the model unique identifier
+     virtual std::string get_model_id() const;
 
+    //! Constructor
     spherical_extrusion_box_model();
 
+    //! Destructor
     virtual ~spherical_extrusion_box_model();
 
+    //! Smart print
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool inherit_          = false) const;
 
-    /// \brief Special Gnuplot rendering
-    struct wires_drawer : public i_wires_drawer
+    /// \brief Special wires 3D rendering
+    struct wires_drawer : public i_wires_drawer<spherical_extrusion_box_model>
     {
-      wires_drawer(const spherical_extrusion_box_model & model_, double h_, bool bottom_);
+      //! \brief Rendering options
+      enum wires_rendering_option_type {
+        WR_SEBM_NO_MOTHER_FACES    = (WR_BASE_LAST << 1),           //!< Do not render the mother box solid faces
+        WR_SEBM_NO_EXTRUSION_FACES = (WR_BASE_LAST << 2),           //!< Do not render the extrusion surface
+        WR_SEBM_LAST               = (WR_SEBM_NO_MOTHER_FACES),     //!< Last defined bit
+        WR_SEBM_MASK               = (WR_SEBM_NO_MOTHER_FACES
+                                      | WR_SEBM_NO_EXTRUSION_FACES) //!< Rendering options bit mask
+      };
+
+      //! Constructor
+      wires_drawer(const spherical_extrusion_box_model & model_);
+
+      //! Destructor
       virtual ~wires_drawer();
-      virtual void generate_wires(std::ostream & out_,
-                                  const geomtools::vector_3d & position_,
-                                  const geomtools::rotation_3d & rotation_);
-    private:
-      const spherical_extrusion_box_model * _model_;
-      double _h_;
-      bool _bottom_;
+
+      //! Generate a list of polylines representing the contour of the shape (for display clients)
+      virtual void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const;
+
     };
 
   protected:
@@ -99,3 +114,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_SPHERICAL_EXTRUSION_BOX_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

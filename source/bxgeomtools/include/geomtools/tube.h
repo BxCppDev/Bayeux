@@ -1,8 +1,7 @@
-// -*- mode: c++; -*-
 /// \file geomtools/tube.h
 /* Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2006-11-28
- * Last modified: 2014-11-19
+ * Last modified: 2015-02-22
  *
  * License:
  *
@@ -27,7 +26,6 @@
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
-#include <geomtools/i_wires_3d_rendering.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -36,155 +34,259 @@ namespace datatools {
 
 namespace geomtools {
 
-  // Forward class declaration:
+  // Class forward declarations:
   class cylinder;
+  class disk;
+  class cylindrical_sector;
+  class rectangle;
 
   /// \brief The 3D shape model for a tube
-  class tube : public i_shape_3d, public i_stackable
+  class tube : public i_shape_3d,
+               public i_stackable
   {
   public:
-    enum faces_mask_type
-      {
-        FACE_NONE       = geomtools::FACE_NONE,
-        FACE_OUTER_SIDE = datatools::bit_mask::bit00,
-        FACE_BOTTOM     = datatools::bit_mask::bit01,
-        FACE_TOP        = datatools::bit_mask::bit02,
-        FACE_INNER_SIDE = datatools::bit_mask::bit03,
-        FACE_ALL        = (FACE_OUTER_SIDE
-                           | FACE_BOTTOM
-                           | FACE_TOP
-                           | FACE_INNER_SIDE)
-      };
 
-  public:
+    /// \brief Face flags
+    enum faces_mask_type {
+      FACE_NONE       = face_identifier::FACE_BITS_NONE,
+      FACE_OUTER_SIDE = datatools::bit_mask::bit00,
+      FACE_BOTTOM     = datatools::bit_mask::bit01,
+      FACE_TOP        = datatools::bit_mask::bit02,
+      FACE_INNER_SIDE = datatools::bit_mask::bit03,
+      FACE_START_ANGLE = datatools::bit_mask::bit04,
+      FACE_STOP_ANGLE = datatools::bit_mask::bit05,
+      FACE_ALL        = (FACE_OUTER_SIDE
+                         | FACE_BOTTOM
+                         | FACE_TOP
+                         | FACE_INNER_SIDE
+                         | FACE_START_ANGLE
+                         | FACE_STOP_ANGLE)
+    };
 
+    /// \brief Volume flags
+    enum volumes_mask_type {
+      VOLUME_NONE   = 0,
+      VOLUME_BULK   = datatools::bit_mask::bit00,
+      VOLUME_CAVITY = datatools::bit_mask::bit01
+    };
+
+    /// Return the identifier label for the class
     static const std::string & tube_label();
 
-  public:
+    /// Compute the top or bottom face and placement
+    void compute_top_bottom_face(faces_mask_type face_id_,
+                                 disk & face_,
+                                 placement & face_placement_) const;
 
-    double get_xmin () const;
+    /// Compute the side bottom face and placement
+    void compute_side_face(faces_mask_type face_id_,
+                           cylindrical_sector & face_,
+                           placement & face_placement_) const;
 
-    double get_xmax () const;
+    /// Compute the top or bottom face and placement
+    void compute_start_stop_angle_face(faces_mask_type face_id_,
+                                       rectangle & face_,
+                                       placement & face_placement_) const;
 
-    double get_ymin () const;
+    /// Check for an inner face
+    bool has_inner_face() const;
 
-    double get_ymax () const;
+    /// Return a collection of face info objects
+    virtual unsigned int compute_faces(face_info_collection_type & faces_) const;
 
-    double get_zmin () const;
+    /// Return the minimum X
+    double get_xmin() const;
 
-    double get_zmax () const;
+    /// Return the maximum X
+    double get_xmax() const;
 
-    double get_z () const;
+    /// Return the minimum Y
+    double get_ymin() const;
 
-    void set_z (double);
+    /// Return the maximum Y
+    double get_ymax() const;
 
+    /// Return the minimum Z
+    double get_zmin() const;
+
+    /// Return the maximum Z
+    double get_zmax() const;
+
+    /// Return the Z dimension
+    double get_z() const;
+
+    /// Set the Z dimension
+    void set_z(double);
+
+    /// Return half the Z dimension
     double get_half_z() const;
 
-    void set_half_z (double);
+    /// Set half the Z dimension
+    void set_half_z(double);
 
-    double get_inner_r () const;
+    /// Check the inner radius
+    bool has_inner_r() const;
 
-    void set_radii (double inner_r_, double outer_r_);
+    /// Return the inner radius
+    double get_inner_r() const;
 
-    double get_outer_r () const;
+    /// Set the inner radius
+    void set_inner_r(double);
 
-    void set (double inner_r_, double outer_r_, double z_);
+    /// Set the inner and outer radii
+    void set_radii(double inner_r_, double outer_r_);
 
-    void set_half (double inner_r_, double outer_r_, double half_z_);
+    /// Return the outer radius
+    double get_outer_r() const;
 
-    void set (double inner_r_, double outer_r_, double z_, double start_phi_, double delta_phi_);
+    /// Set the inner radius
+    void set_outer_r(double);
+
+    /// Set the dimensions
+    void set(double outer_r_, double z_);
+
+    /// Set the dimensions
+    void set(double inner_r_, double outer_r_, double z_);
+
+    /// Set the dimensions by halves
+    void set_half(double inner_r_, double outer_r_, double half_z_);
+
+    /// Set the dimensions and angular limits
+    void set(double inner_r_, double outer_r_, double z_, double start_phi_, double delta_phi_);
 
     void set_phi(double start_phi_, double delta_phi_);
 
+    /// Set the starting angle
     double get_start_phi() const;
 
+    /// Set the angular spread
     double get_delta_phi() const;
 
+    /// Check if angle is limited
     bool has_partial_phi() const;
 
-    void compute_inner_cylinder (cylinder & ic_);
+    /// Compute the inner nappe
+    void compute_inner_cylinder(cylinder & ic_);
 
-    void compute_outer_cylinder (cylinder & oc_);
-
-  public:
+    /// Compute the outer nappe
+    void compute_outer_cylinder(cylinder & oc_);
 
     /// Default constructor
     tube();
 
     /// Constructor
-    tube (double inner_radius_, double outer_radius_, double z_);
+    tube(double outer_radius_, double z_);
 
-     /// Constructor
-    tube (double inner_radius_, double outer_radius_, double z_, double start_phi_, double delta_phi_);
+    /// Constructor
+    tube(double inner_radius_, double outer_radius_, double z_);
 
-   /// Destructor
-    virtual ~tube ();
+    /// Constructor
+    tube(double inner_radius_, double outer_radius_, double z_, double start_phi_, double delta_phi_);
 
-    virtual std::string get_shape_name () const;
+    /// Destructor
+    virtual ~tube();
 
-    virtual double get_parameter (const std::string &) const;
+    /// Return the identifier/name of the shape
+    virtual std::string get_shape_name() const;
 
-    bool is_extruded () const;
+    /// Return a parameter given its name
+    virtual double get_parameter(const std::string &) const;
 
-    bool is_valid () const;
+    /// Check if the tube is extruded
+    bool is_extruded() const;
 
-    /// Initialize the cylinder from properties
+    /// Check if the tube is valid
+    bool is_valid() const;
+
+    /// Initialize the tube from properties
     virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
 
-    /// Reset the cylinder
+    /// Reset the tube
     virtual void reset();
 
-    virtual double get_surface (uint32_t mask_ = FACE_ALL_BITS) const;
+    /// Compute the surface
+    virtual double get_surface(uint32_t mask_ = FACE_ALL) const;
 
-    virtual double get_volume (uint32_t flags_ = 0) const;
+    /// Compute the volume
+    virtual double get_volume(uint32_t flags_ = VOLUME_BULK) const;
 
-    virtual bool is_inside (const vector_3d &,
+    /// Check if a point is inside the tube
+    virtual bool is_inside(const vector_3d &,
+                           double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Check if a point is outside the tube
+    virtual bool is_outside(const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual bool is_outside (const vector_3d &,
-                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    /// Return the surface bit a point belongs to
+    virtual face_identifier on_surface(const vector_3d &,
+                                       const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual bool is_on_surface (const vector_3d &,
-                                int mask_    = FACE_ALL,
+    /// Return the vector normal to the surface at some position
+    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const;
+
+    /// Find the intercept point with a face of the tube
+    virtual bool find_intercept(const vector_3d & from_,
+                                const vector_3d & direction_,
+                                face_intercept_info & intercept_,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual vector_3d get_normal_on_surface (const vector_3d & position_) const;
-
-    virtual bool find_intercept (const vector_3d & from_,
-                                 const vector_3d & direction_,
-                                 intercept_t & intercept_,
-                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
-
+    /// Output operator
     friend std::ostream &
-    operator<< (std::ostream &, const tube &);
+    operator<<(std::ostream &, const tube &);
 
+    /// Input operator
     friend std::istream &
-    operator>> (std::istream &, tube &);
+    operator>>(std::istream &, tube &);
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_          = false) const;
 
-    virtual void generate_wires (std::list<polyline_3d> &,
-                                 const placement & ,
-                                 uint32_t options_ = 0) const;
+    /// \brief 3D rendering options
+    enum tube_wires_rendering_option_type {
+      WR_TUBE_NO_BOTTOM_FACE      = (WR_BASE_LAST << 1),           //!< Do not render the bottom face
+      WR_TUBE_NO_TOP_FACE         = (WR_BASE_LAST << 2),           //!< Do not render the top face
+      WR_TUBE_NO_INNER_FACE       = (WR_BASE_LAST << 3),           //!< Do not render the inner face
+      WR_TUBE_NO_OUTER_FACE       = (WR_BASE_LAST << 4),           //!< Do not render the outer face
+      WR_TUBE_NO_START_ANGLE_FACE = (WR_BASE_LAST << 5),           //!< Do not render the start angle face
+      WR_TUBE_NO_STOP_ANGLE_FACE  = (WR_BASE_LAST << 6),           //!< Do not render the stop angle face
+      WR_TUBE_LAST                = (WR_TUBE_NO_STOP_ANGLE_FACE),  //!< Last defined bit
+      WR_TUBE_MASK                = (WR_TUBE_NO_BOTTOM_FACE
+                                     | WR_TUBE_NO_TOP_FACE
+                                     | WR_TUBE_NO_INNER_FACE
+                                     | WR_TUBE_NO_OUTER_FACE
+                                     | WR_TUBE_NO_START_ANGLE_FACE
+                                     | WR_TUBE_NO_STOP_ANGLE_FACE) //!< Rendering options bit mask
+    };
+
+    /// Generate a sequence of polylines for wires 3D rendering
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
 
   protected:
 
-     virtual void _build_bounding_data();
+    /// Set default attributes
+    void _set_defaults();
+
+    /// Build bounding data
+    virtual void _build_bounding_data();
 
   private:
 
     double _z_;         //!< Length of the tube along the Z axis
     double _inner_r_;   //!< Inner radius
     double _outer_r_;   //!< Outer radius
-    double _start_phi_; //<! Start phi angle
-    double _delta_phi_; //<! Delta phi angle
+    double _start_phi_; //!< Start phi angle
+    double _delta_phi_; //!< Delta phi angle
+
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tube);
 
@@ -197,3 +299,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::tube)
 
 #endif // GEOMTOOLS_TUBE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

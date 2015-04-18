@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/i_boxed_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
@@ -40,3 +39,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_I_BOXED_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

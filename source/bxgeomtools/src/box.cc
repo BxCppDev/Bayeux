@@ -3,12 +3,17 @@
 // Ourselves:
 #include <geomtools/box.h>
 
-// This party:
+// Third party:
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 #include <datatools/units.h>
 #include <datatools/properties.h>
+
+// This project:
+#include <geomtools/rectangle.h>
+#include <geomtools/placement.h>
+#include <geomtools/i_shape_2d.h>
 
 namespace geomtools {
 
@@ -196,10 +201,6 @@ namespace geomtools {
   {
     double s = 0.0;
     uint32_t mask = a_mask;
-    //std::cerr << "DEVEL *** box::get_surface : mask  = " <<(uint32_t)(mask) << std::endl;
-    //std::cerr << "DEVEL *** box::get_surface :   ALL_SURFACES  = " <<(uint32_t)(ALL_SURFACES) << std::endl;
-    if (a_mask ==(uint32_t) ALL_SURFACES) mask = FACE_ALL;
-    //std::cerr << "DEVEL *** box::get_surface :   effective mask  = " <<(uint32_t)(mask) << std::endl;
 
     if (mask & FACE_BACK) {
       s += _y_ * _z_;
@@ -307,9 +308,106 @@ namespace geomtools {
     return;
   }
 
+  unsigned int box::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
+    unsigned int nfaces = 0;
+    for (faces_mask_type face_id = _FACE_BEGIN;
+         face_id != _FACE_END;
+         face_id = static_cast<faces_mask_type>(face_id << 1)) {
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      rectangle & rect = finfo.add_face<rectangle>();
+      compute_face(face_id, rect, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(face_id);
+      finfo.set_identifier(fid);
+      switch (face_id) {
+      case FACE_BACK:
+        finfo.set_label("back");
+        break;
+      case FACE_FRONT:
+        finfo.set_label("front");
+        break;
+      case FACE_LEFT:
+        finfo.set_label("left");
+        break;
+      case FACE_RIGHT:
+        finfo.set_label("right");
+        break;
+      case FACE_BOTTOM:
+        finfo.set_label("bottom");
+        break;
+      case FACE_TOP:
+        finfo.set_label("top");
+        break;
+      }
+      nfaces++;
+    }
+    return nfaces;
+  }
+
+  void box::compute_face(faces_mask_type face_id_,
+                         rectangle & face_,
+                         placement & face_placement_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
+    switch(face_id_) {
+    case FACE_BACK:
+      face_.set_x(_z_);
+      face_.set_y(_y_);
+      face_placement_.set(-0.5 * _x_, 0.0, 0.0,
+                          AXIS_Y,
+                          get_special_rotation_angle(ROTATION_ANGLE_270));
+      break;
+    case FACE_FRONT:
+      face_.set_x(_z_);
+      face_.set_y(_y_);
+      face_placement_.set(+0.5 * _x_, 0.0, 0.0,
+                          AXIS_Y,
+                          get_special_rotation_angle(ROTATION_ANGLE_90));
+      break;
+    case FACE_LEFT:
+      face_.set_x(_z_);
+      face_.set_y(_x_);
+      face_placement_.set(0.0, -0.5 * _y_, 0.0,
+                          get_special_rotation_angle(ROTATION_ANGLE_90),
+                          get_special_rotation_angle(ROTATION_ANGLE_270),
+                          0.0);
+      break;
+    case FACE_RIGHT:
+      face_.set_x(_z_);
+      face_.set_y(_x_);
+      face_placement_.set(0.0, +0.5 * _y_, 0.0,
+                          get_special_rotation_angle(ROTATION_ANGLE_90),
+                          get_special_rotation_angle(ROTATION_ANGLE_90),
+                          0.0);
+      break;
+    case FACE_BOTTOM:
+      face_.set_x(_x_);
+      face_.set_y(_y_);
+      face_placement_.set(0.0, 0.0, -0.5 * _z_,
+                          0.0, get_special_rotation_angle(ROTATION_ANGLE_180), 0.0);
+      break;
+    case FACE_TOP:
+      face_.set_x(_x_);
+      face_.set_y(_y_);
+      face_placement_.set(0.0, 0.0, +0.5 * _z_,
+                          0.0, 0.0, 0.0);
+      break;
+    default:
+      DT_THROW(std::logic_error, "Invalid box face bit!");
+    }
+    return;
+  }
+
   bool
   box::is_outside(const vector_3d & a_position, double a_skin) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
     double skin = get_skin(a_skin);
     double hskin = 0.5 * skin;
     if (   (std::abs(a_position.x()) >= (0.5 * _x_ + hskin))
@@ -324,6 +422,7 @@ namespace geomtools {
   bool
   box::is_inside(const vector_3d & a_position, double a_skin) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
     double skin = get_skin(a_skin);
     double hskin = 0.5 * skin;
     if (   (std::abs(a_position.x()) <= (0.5 * _x_ - hskin))
@@ -335,112 +434,143 @@ namespace geomtools {
     return false;
   }
 
-  vector_3d
-  box::get_normal_on_surface(const vector_3d & a_position) const
+  // virtual
+  face_identifier box::on_surface(const vector_3d & a_position,
+                                  const face_identifier & a_surface_mask,
+                                  double a_skin) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
+    double skin = get_skin(a_skin);
+
+    face_identifier mask;
+    if (a_surface_mask.is_valid()) {
+      DT_THROW_IF(! a_surface_mask.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = a_surface_mask;
+    } else {
+      mask.set_face_bits_any();
+    }
+
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(a_position, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
+        }
+      }
+    }
+
+    return face_identifier::face_invalid();
+  }
+
+  vector_3d
+  box::get_normal_on_surface(const vector_3d & a_position,
+                             const face_identifier & a_surface_bit) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
     vector_3d normal;
     geomtools::invalidate(normal);
-    if (is_on_surface(a_position, FACE_BACK)) normal.set(-1.0, 0.0, 0.0);
-    else if (is_on_surface(a_position, FACE_FRONT)) normal.set(+1.0, 0.0, 0.0);
-    else if (is_on_surface(a_position, FACE_LEFT)) normal.set(0.0, -1.0, 0.0);
-    else if (is_on_surface(a_position, FACE_RIGHT)) normal.set(0.0, +1.0, 0.0);
-    else if (is_on_surface(a_position, FACE_BOTTOM)) normal.set(0.0, 0.0, -1.0);
-    else if (is_on_surface(a_position, FACE_TOP)) normal.set(0.0, 0.0, +1.0);
+    switch(a_surface_bit.get_face_bits()) {
+    case FACE_BACK:
+      normal.set(-1.0, 0.0, 0.0);
+      break;
+    case FACE_FRONT:
+      normal.set(+1.0, 0.0, 0.0);
+      break;
+    case FACE_LEFT:
+      normal.set(0.0, -1.0, 0.0);
+      break;
+    case FACE_RIGHT:
+      normal.set(0.0, +1.0, 0.0);
+      break;
+    case FACE_BOTTOM:
+      normal.set(0.0, 0.0, -1.0);
+      break;
+    case FACE_TOP:
+      normal.set(0.0, 0.0, +1.0);
+      break;
+    }
     return(normal);
   }
 
-  bool
-  box::is_on_surface(const vector_3d & a_position ,
-                     int    a_mask ,
-                     double a_skin) const
+  bool box::find_intercept(const vector_3d & from_,
+                           const vector_3d & direction_,
+                           face_intercept_info & intercept_,
+                           double skin_) const
   {
-    double skin = get_skin(a_skin);
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
+    intercept_.reset();
+    double skin = compute_tolerance(skin_);
 
-    int mask = a_mask;
-    if (a_mask == (int) ALL_SURFACES) mask = FACE_ALL;
-
-    double hskin = 0.5 * skin;
-    if (mask & FACE_BACK) {
-      if ((std::abs(a_position.x() + 0.5 * _x_) < hskin)
-          && (std::abs(a_position.y()) < 0.5 * _y_)
-          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
-    }
-    if (mask & FACE_FRONT) {
-      if ((std::abs(a_position.x() - 0.5 * _x_) < hskin)
-          && (std::abs(a_position.y()) < 0.5 * _y_)
-          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
-    }
-    if (mask & FACE_LEFT) {
-      if ((std::abs(a_position.y() + 0.5 * _y_) < hskin)
-          && (std::abs(a_position.x()) < 0.5 * _x_)
-          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
-    }
-    if (mask & FACE_RIGHT) {
-      if ((std::abs(a_position.y() - 0.5 * _y_) < hskin)
-          && (std::abs(a_position.x()) < 0.5 * _x_)
-          && (std::abs(a_position.z()) < 0.5 * _z_)) return true;
-    }
-    if (mask & FACE_BOTTOM) {
-      if ((std::abs(a_position.z() + 0.5 * _z_) < hskin)
-          && (std::abs(a_position.x()) < 0.5 * _x_)
-          && (std::abs(a_position.y()) < 0.5 * _y_)) return true;
-    }
-    if (mask & FACE_TOP) {
-      if ((std::abs(a_position.z() - 0.5 * _z_) < hskin)
-          && (std::abs(a_position.x()) < 0.5 * _x_)
-          && (std::abs(a_position.y()) < 0.5 * _y_)) return true;
-    }
-    return false;
-  }
-
-  bool
-  box::find_intercept(const vector_3d & a_from,
-                      const vector_3d & a_direction,
-                      intercept_t & a_intercept,
-                      double a_skin) const
-  {
-    bool debug = false;
     const unsigned int NFACES = 6;
-    double t[NFACES];
-    t[BACK]   = -(get_half_x() + a_from[vector_3d::X])
-      / a_direction[vector_3d::X];
-    t[FRONT]  = +(get_half_x() - a_from[vector_3d::X])
-      / a_direction[vector_3d::X];
-    t[LEFT]   = -(get_half_y() + a_from[vector_3d::Y])
-      / a_direction[vector_3d::Y];
-    t[RIGHT]  = +(get_half_y() - a_from[vector_3d::Y])
-      / a_direction[vector_3d::Y];
-    t[BOTTOM] = -(get_half_z() + a_from[vector_3d::Z])
-      / a_direction[vector_3d::Z];
-    t[TOP]    = +(get_half_z() - a_from[vector_3d::Z])
-      / a_direction[vector_3d::Z];
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
 
-    double t_min = -1.0;
-    int face_min = 0;
-    for (int i = 0; i <(int) NFACES; i++) {
-      double ti = t[i];
-      if (debug) {
-        std::clog << "DEVEL: box::find_intercept: t[" << i << "]= "
-                  << ti << " t_min=" << t_min
-                  << " face_min=" << face_min
-                  << std::endl;
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
       }
-      if (std::isnormal(ti) &&(ti > 0.0)) {
-        int face_bit =(0x1 << i); // face mask
-        vector_3d intercept = a_from + a_direction * ti;
-        if (is_on_surface(intercept, face_bit, a_skin)) {
-          if ((t_min < 0.0) ||(ti < t_min)) {
-            t_min = ti;
-            face_min = face_bit;
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+
+    /*
+    int face_counter = 0;
+    for (faces_mask_type face_bit = _FACE_BEGIN;
+         face_bit != _FACE_END;
+         face_bit = static_cast<faces_mask_type>(face_bit << 1)) {
+      // std::cerr << "DEVEL: box::find_intercept: face_bit=" << face_bit << std::endl;
+      const int FACE_INDEX = face_counter;
+      rectangle face;
+      placement face_placement;
+      compute_face(face_bit, face, face_placement);
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[FACE_INDEX],
+                                                skin)) {
+        intercepts[FACE_INDEX].grab_face_id().set_face_bit(face_bit);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+    */
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            intercept_.grab_face_id().set_face_bit(intercepts[iface].get_face_id().get_face_bits());
+            intercept_.set_impact(intercepts[iface].get_impact());
           }
         }
       }
     }
-    a_intercept.reset();
-    if (face_min > 0) {
-      a_intercept.set(0, face_min, a_from + a_direction * t_min);
-    }
-    return a_intercept.is_ok();
+
+    return intercept_.is_ok ();
   }
 
   std::ostream &
@@ -509,49 +639,121 @@ namespace geomtools {
     return;
   }
 
-  void box::generate_wires(std::list<polyline_3d> & lpl_,
-                           const placement & p_,
-                           uint32_t /*options_*/) const
+  void box::generate_wires_self(wires_type & wires_,
+                                uint32_t options_) const
   {
-    double dim[3];
-    dim[0] = 0.5*get_x();
-    dim[1] = 0.5*get_y();
-    dim[2] = 0.5*get_z();
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
+    bool debug_explode = options_ & WR_BASE_EXPLODE;
+    bool draw_back   = !(options_ & WR_BOX_NO_BACK_FACE);
+    bool draw_front  = !(options_ & WR_BOX_NO_FRONT_FACE);
+    bool draw_left   = !(options_ & WR_BOX_NO_LEFT_FACE);
+    bool draw_right  = !(options_ & WR_BOX_NO_RIGHT_FACE);
+    bool draw_bottom = !(options_ & WR_BOX_NO_BOTTOM_FACE);
+    bool draw_top    = !(options_ & WR_BOX_NO_TOP_FACE);
 
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 2; j++) {
-        vector_3d vertex[4];
-        if (i ==0) {
-          vertex[0].set((1 - 2 *j) * dim[0],   dim[1],  dim[2]);
-          vertex[1].set((1 - 2 *j) * dim[0],   dim[1], -dim[2]);
-          vertex[2].set((1 - 2 *j) * dim[0],  -dim[1], -dim[2]);
-          vertex[3].set((1 - 2 *j) * dim[0],  -dim[1],  dim[2]);
-        }
-        if (i == 1) {
-          vertex[0].set( dim[0],(1 - 2 *j) * dim[1],   dim[2]);
-          vertex[1].set(-dim[0],(1 - 2 *j) * dim[1],   dim[2]);
-          vertex[2].set(-dim[0],(1 - 2 *j) * dim[1],  -dim[2]);
-          vertex[3].set( dim[0],(1 - 2 *j) * dim[1],  -dim[2]);
-        }
-        if (i == 2) {
-          vertex[0].set( dim[0],  dim[1],(1 - 2 *j) * dim[2]);
-          vertex[1].set(-dim[0],  dim[1],(1 - 2 *j) * dim[2]);
-          vertex[2].set(-dim[0], -dim[1],(1 - 2 *j) * dim[2]);
-          vertex[3].set( dim[0], -dim[1],(1 - 2 *j) * dim[2]);
-        }
-        {
-          polyline_3d dummy;
-          lpl_.push_back(dummy);
-        }
-        polyline_3d & pl = lpl_.back();
-        pl.set_closed(true);
-        for (int i = 0; i < 4; i++) {
-          vector_3d v;
-          p_.child_to_mother(vertex[i], v);
-          pl.add(v);
-        }
-      }
+    // Keep only base rendering bits:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    bool edge00 = false;
+    bool edge01 = false;
+    bool edge02 = false;
+    bool edge03 = false;
+    bool edge04 = false;
+    bool edge05 = false;
+    bool edge06 = false;
+    bool edge07 = false;
+    bool edge08 = false;
+    bool edge09 = false;
+    bool edge10 = false;
+    bool edge11 = false;
+
+    // double explode_factor = 1.0;
+    // if (debug_explode) {
+    //   explode_factor = 1.5;
+    // }
+    if (draw_bottom) {
+      rectangle face;
+      placement face_placement;
+      compute_face(FACE_BOTTOM, face, face_placement);
+      uint32_t options = base_options;
+      edge00 = true;
+      edge02 = true;
+      edge04 = true;
+      edge06 = true;
+      face.generate_wires(wires_, face_placement, options);
     }
+
+    if (draw_top) {
+      rectangle face;
+      placement face_placement;
+      compute_face(FACE_TOP, face, face_placement);
+      uint32_t options = base_options;
+      edge01 = true;
+      edge03 = true;
+      edge05 = true;
+      edge07 = true;
+      face.generate_wires(wires_, face_placement, options);
+    }
+
+    if (draw_back) {
+      rectangle face;
+      placement face_placement;
+      compute_face(FACE_BACK, face, face_placement);
+      uint32_t options = base_options;
+      if (edge00) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      else edge00 = true;
+      if (edge01) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      else edge01 = true;
+      edge08 = true;
+      edge09 = true;
+      face.generate_wires(wires_, face_placement, options);
+    }
+
+    if (draw_front) {
+      rectangle face;
+      placement face_placement;
+      compute_face(FACE_FRONT, face, face_placement);
+      uint32_t options = base_options;
+      if (edge02) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      else edge02 = true;
+      if (edge03) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      else edge03 = true;
+      edge10 = true;
+      edge11 = true;
+      face.generate_wires(wires_, face_placement, options);
+    }
+
+    if (draw_left) {
+      rectangle face;
+      placement face_placement;
+      compute_face(FACE_LEFT, face, face_placement);
+      uint32_t options = base_options;
+      if (edge04) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      else edge04 = true;
+      if (edge05) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      else edge05 = true;
+      if (edge08) options |= rectangle::WR_RECT_NO_YMINUS_SIDE;
+      else edge08 = true;
+      if (edge10) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
+      else edge10 = true;
+      face.generate_wires(wires_, face_placement, options);
+    }
+    if (draw_right) {
+      rectangle face;
+      placement face_placement;
+      compute_face(FACE_RIGHT, face, face_placement);
+      uint32_t options = base_options;
+      if (edge06) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      else edge06 = true;
+      if (edge07) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      else edge07 = true;
+      if (edge09) options |= rectangle::WR_RECT_NO_YMINUS_SIDE;
+      else edge09 = true;
+      if (edge11) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
+      else edge11 = true;
+      face.generate_wires(wires_, face_placement, options);
+    }
+
     return;
   }
 
@@ -584,9 +786,12 @@ namespace geomtools {
     compute_vertexes(vv);
     vv_.reserve(vv.size());
     for (int i = 0; i < (int) vv.size(); i++) {
-      vector_3d vtx;
-      p_.child_to_mother(vv[i], vtx);
-      vv_.push_back(vtx);
+      {
+        vector_3d dummy;
+        vv_.push_back(dummy);
+      }
+      vector_3d & last_vtx = vv_.back();
+      p_.child_to_mother(vv[i], last_vtx);
     }
     return;
   }
@@ -666,8 +871,6 @@ namespace geomtools {
 
     return;
   }
-
-
 
 } // end of namespace geomtools
 

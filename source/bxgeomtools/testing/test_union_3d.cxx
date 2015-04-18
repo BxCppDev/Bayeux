@@ -38,6 +38,7 @@ int main (int argc_, char ** argv_)
     bool surf_first = false;
     bool surf_second = false;
     bool bulk = false;
+    bool cyl1 = false;
     bool cyl2 = false;
     bool tub2 = false;
 
@@ -49,11 +50,12 @@ int main (int argc_, char ** argv_)
       if (arg == "-i" || arg == "--interactive") interactive = true;
       if (arg == "-D" || arg == "--draw") draw = true;
       if (arg == "-z" || arg == "--zero") zero = true;
+      if (arg == "-C1") cyl1 = true;
       if (arg == "-c2" || arg == "--center2") center2 = true;
 
       if (arg == "-s1" || arg == "--surf1") surf_first = true;
       if (arg == "-s2" || arg == "--surf2") surf_second = true;
-      // if (arg == "-B" || arg == "--bulk") bulk = true;
+      if (arg == "-B" || arg == "--bulk") bulk = true;
       if (arg == "-C2") {
         cyl2 = true;
         tub2=false;
@@ -81,6 +83,10 @@ int main (int argc_, char ** argv_)
     placement p1 (vector_3d (0, 0, 0),
                   M_PI / 6.0, 0, 0);
 
+    cylinder c1 (2.0 * CLHEP::mm,
+                 4.0 * CLHEP::mm);
+    c1.lock();
+
     box b2 (2.0 * CLHEP::mm,
             2.0 * CLHEP::mm,
             2.0 * CLHEP::mm);
@@ -107,7 +113,12 @@ int main (int argc_, char ** argv_)
                   M_PI / 3., M_PI / 3., M_PI / 6.);
 
     union_3d u1;
-    u1.set_shape1(b1, p1);
+    if (cyl1) {
+      u1.set_shape1(c1, p1);
+    } else {
+      u1.set_shape1(b1, p1);
+    }
+
     if (tub2) {
       u1.set_shape2(t2, p2);
     } else if (!cyl2) {
@@ -131,25 +142,35 @@ int main (int argc_, char ** argv_)
                               3.0 * CLHEP::mm,
                               6.0 * CLHEP::mm);
     geomtools::vector_3d dir (-1., -1., -1.);
-    geomtools::intercept_t intercept;
+    geomtools::face_intercept_info intercept;
 
+    double tolerance = 0.2;
     if (!tub2) {
-      if (u1.find_intercept (pos, dir, intercept)) {
-        clog << "test 1: Intercept face=" << intercept.get_face ()
+      if (u1.find_intercept (pos, dir, intercept, tolerance)) {
+        clog << "test 1: Intercept face=" << intercept.get_face_id ()
              << " at impact=" << intercept.get_impact ()
-             << endl;
+             << std::endl;
       } else {
         clog << "test 1: No intercept." << std::endl;
       }
     }
 
     tmp_file.out() << "# Volumes (index 0):" << std::endl;
-    geomtools::gnuplot_draw::draw_box(tmp_file.out(),
-                                      p1.get_translation(),
-                                      p1.get_rotation(),
-                                      b1.get_x(),
-                                      b1.get_y(),
-                                      b1.get_z());
+    if (!cyl1) {
+      geomtools::gnuplot_draw::draw_box(tmp_file.out(),
+                                        p1.get_translation(),
+                                        p1.get_rotation(),
+                                        b1.get_x(),
+                                        b1.get_y(),
+                                        b1.get_z());
+    } else {
+      geomtools::gnuplot_draw::draw_cylinder(tmp_file.out(),
+                                             p1.get_translation(),
+                                             p1.get_rotation(),
+                                             c1.get_r(),
+                                             c1.get_z());
+
+    }
     if (tub2) {
       geomtools::gnuplot_draw::draw_tube(tmp_file.out(),
                                          p2.get_translation(),
@@ -172,43 +193,33 @@ int main (int argc_, char ** argv_)
     tmp_file.out() << std::endl;
     // tmp_file.out() << std::endl << std::endl;
 
-    tmp_file.out() << "# From (index 1):" << endl;
+    tmp_file.out() << "# From (index 1):" << std::endl;
     geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), pos);
-    tmp_file.out() << endl << endl;
+    tmp_file.out() << std::endl << std::endl;
 
     if (!tub2) {
-      tmp_file.out() << "# To (index 2):" << endl;
+      tmp_file.out() << "# To (index 2):" << std::endl;
       geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), intercept.get_impact());
-      tmp_file.out() << endl << endl;
+      tmp_file.out() << std::endl << std::endl;
 
-      tmp_file.out() << "# Track (index 3):" << endl;
+      tmp_file.out() << "# Track (index 3):" << std::endl;
       geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), pos);
       geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), intercept.get_impact());
-      tmp_file.out() << endl << endl;
+      tmp_file.out() << std::endl << std::endl;
     } else {
-      tmp_file.out() << "0 0 0 1" << endl;
-      tmp_file.out() << endl << endl;
-      tmp_file.out() << "0 0 0 1" << endl;
-      tmp_file.out() << "0 0 0 1" << endl;
-      tmp_file.out() << endl << endl;
+      tmp_file.out() << "0 0 0 1" << std::endl;
+      tmp_file.out() << std::endl << std::endl;
+      tmp_file.out() << "0 0 0 1" << std::endl;
+      tmp_file.out() << "0 0 0 1" << std::endl;
+      tmp_file.out() << std::endl << std::endl;
     }
 
-    clog << "test 1: End." << endl;
+    clog << "test 1: End." << std::endl;
 
-    tmp_file.out() <<"# Intercept (index 4):" << endl;
+    tmp_file.out() <<"# Intercept (index 4):" << std::endl;
     size_t nshoots = 50000;
     for (int i = 0; i < (int) nshoots; i++) {
-      if ((i%10000) == 0) clog << "Loop #" << i << endl;
-      // clog << "DEVEL: Loop #" << i << endl;
-
-      // special debug activation:
-      // int idevel = -1;
-      // geomtools::union_3d::g_devel = false;
-      // idevel = 1817;
-      // if (i == idevel)
-      //   {
-      //     geomtools::union_3d::g_devel = true;
-      //   }
+      if ((i%10000) == 0) clog << "Loop #" << i << std::endl;
 
       double dim = 6. * CLHEP::mm;
       geomtools::vector_3d pos(0, 0, 0);
@@ -221,31 +232,32 @@ int main (int argc_, char ** argv_)
       geomtools::randomize_direction(drand48, dir);
 
       if (!tub2) {
-        geomtools::intercept_t intercept;
-        if (u1.find_intercept(pos, dir, intercept)) {
+        geomtools::face_intercept_info intercept;
+        double tolerance = 0.2;
+        if (u1.find_intercept(pos, dir, intercept, tolerance)) {
           if (debug) clog << "test 1: Intercept face="
-                          << intercept.get_face()
+                          << intercept.get_face_id()
                           << " at impact="
                           << intercept.get_impact()
-                          << endl;
+                          << std::endl;
           geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(),
                                                     intercept.get_impact(),
                                                     false);
-          int face = intercept.get_face();
+          int face = intercept.get_face_id().get_face_bits();
           tmp_file.out() << ' ' << face;
-          tmp_file.out() << endl;
+          tmp_file.out() << std::endl;
         } else {
-          if (debug) clog << "test 1: No intercept." << endl;
+          if (debug) clog << "test 1: No intercept." << std::endl;
         }
       } else {
         tmp_file.out() << "0 0 0 0" << std::endl;
       }
     }
-    tmp_file.out() << endl << endl;
+    tmp_file.out() << std::endl << std::endl;
 
-    tmp_file.out() <<"# Vertexes (index 5):" << endl;
+    tmp_file.out() <<"# Vertexes (index 5):" << std::endl;
     // nshoots = 10000000;
-    nshoots = 100000;
+    nshoots = 1000000;
     int count = 0;
     for (int i = 0; i < (int) nshoots; i++)  {
       double dim = 6. * CLHEP::mm;
@@ -254,19 +266,23 @@ int main (int argc_, char ** argv_)
                    dim * (-1 + 2 * drand48()),
                    dim * (-1 + 2 * drand48()));
       double skin = 0.1 * CLHEP::mm;
-      if (surf_first && u1.is_on_surface(position,
-                                         geomtools::union_3d::COMPONENT_SHAPE_FIRST, skin)) {
+      geomtools::face_identifier fid_first;
+      fid_first.prepend_part(geomtools::union_3d::FIRST_PART);
+      fid_first.set_face_bits_any();
+      geomtools::face_identifier fid_second;
+      fid_second.prepend_part(geomtools::union_3d::SECOND_PART);
+      fid_second.set_face_bits_any();
+      if (surf_first && u1.is_on_surface(position, fid_first, skin)) {
         tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
                        << 3
                        << std::endl;
         count++;
-      } else if (surf_second && u1.is_on_surface(position,
-                                                 geomtools::union_3d::COMPONENT_SHAPE_SECOND, skin)) {
+      } else if (surf_second && u1.is_on_surface(position, fid_second, skin)) {
         tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
                        << 4
                        << std::endl;
         count++;
-      } else if (bulk && u1.is_inside(position, skin)) {
+      } else if (bulk && u1.check_inside(position, skin)) {
         tmp_file.out() << position.x() << ' ' << position.y() << ' ' << position.z() << ' '
                        << 2
                        << std::endl;
@@ -274,26 +290,29 @@ int main (int argc_, char ** argv_)
       }
     }
     if (!count) {
-      tmp_file.out() << "0 0 0 1" << endl;
+      tmp_file.out() << "0 0 0 1" << std::endl;
     }
-    tmp_file.out() << endl << endl;
+    tmp_file.out() << std::endl << std::endl;
 
     ubb.tree_dump(std::clog, "Union BB: ", "NOTICE: " );
     ubbp.tree_dump(std::clog, "Union BB placement: ", "NOTICE: " );
-    tmp_file.out() <<"# Bounding box (index 6):" << endl;
+    tmp_file.out() <<"# Bounding box (index 6):" << std::endl;
     geomtools::gnuplot_draw::draw_box(tmp_file.out(),
                                       ubbp.get_translation(),
                                       ubbp.get_rotation(),
                                       ubb.get_x(),
                                       ubb.get_y(),
                                       ubb.get_z());
-    tmp_file.out() << endl << endl;
+    tmp_file.out() << std::endl << std::endl;
 
-    tmp_file.out() <<"# Union (index 7):" << endl;
+    tmp_file.out() <<"# Union (index 7):" << std::endl;
     geomtools::gnuplot_draw::draw(tmp_file.out(),
                                   geomtools::placement(0,0,0,0,0,0),
-                                  u1);
-    tmp_file.out() << endl << endl;
+                                  u1,
+                                  geomtools::union_3d::WR_NONE
+                                  | geomtools::union_3d::WR_COMPOSITE_BOOST_SAMPLING
+                                  );
+    tmp_file.out() << std::endl << std::endl;
 
     if (draw) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
@@ -302,6 +321,7 @@ int main (int argc_, char ** argv_)
       g1.cmd("set grid");
       g1.cmd("set size ratio -1");
       g1.cmd("set view equal xyz");
+      // g1.cmd("set surface explicit");
       //g1.cmd("set xyplane at -10");
       g1.set_xlabel("x").set_ylabel("y").set_zlabel("z");
       {
@@ -331,7 +351,7 @@ int main (int argc_, char ** argv_)
         std::ostringstream plot_cmd;
         plot_cmd << "splot '" << tmp_file.get_filename()
                  << "' index 7 title 'Union' with lines ";
-        plot_cmd << ", '' index 5 title 'Vertexes' with point lt 4 pt 6 ps 0.15 ";
+        plot_cmd << ", '' index 5 title 'Vertexes' with point pt 6 ps 0.35 linecolor variable";
         g1.cmd(plot_cmd.str());
         g1.showonscreen(); // window output
         geomtools::gnuplot_drawer::wait_for_key();
@@ -341,7 +361,7 @@ int main (int argc_, char ** argv_)
         std::ostringstream plot_cmd;
         plot_cmd << "splot '" << tmp_file.get_filename()
                  << "' index 7 title 'Union' with lines ";
-        plot_cmd << ", '' index 6 title 'BB' with lines lt 0";
+        plot_cmd << ", '' index 6 title 'BB' with lines lt -1";
         g1.cmd(plot_cmd.str());
         g1.showonscreen(); // window output
         geomtools::gnuplot_drawer::wait_for_key();
@@ -351,12 +371,12 @@ int main (int argc_, char ** argv_)
     }
 
   }
-  catch (exception & x) {
-    cerr << "error: " << x.what() << endl;
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what() << std::endl;
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    cerr << "error: " << "unexpected error!" << endl;
+    std::cerr << "error: " << "unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return error_code;

@@ -10,6 +10,8 @@
 
 // This project:
 #include <geomtools/utils.h>
+#include <geomtools/i_shape_2d.h>
+#include <geomtools/box.h>
 
 namespace geomtools {
 
@@ -120,6 +122,21 @@ namespace geomtools {
   }
 
   bool i_shape_3d::is_composite() const
+  {
+    return false;
+  }
+
+  bool i_shape_3d::using_face_id_bits() const
+  {
+    return true;
+  }
+
+  bool i_shape_3d::using_face_id_index() const
+  {
+    return false;
+  }
+
+  bool i_shape_3d::using_face_id_part_index() const
   {
     return false;
   }
@@ -248,13 +265,7 @@ namespace geomtools {
 
   double i_shape_3d::get_skin(double a_skin) const
   {
-    DT_THROW_IF(std::isinf(a_skin), std::logic_error,
-                "Invalid infinite skin thickness for shape '" << get_shape_name() << "' !");
-    if (a_skin < 0.0 || std::isnan(a_skin)) {
-      return get_tolerance();
-    } else {
-      return a_skin;
-    }
+    return compute_tolerance(a_skin);
   }
 
   double i_shape_3d::get_skin() const
@@ -292,10 +303,10 @@ namespace geomtools {
     if (_stackable_data_ != 0) {
       if (_owns_stackable_data_) {
         delete _stackable_data_;
-        _stackable_data_ = 0;
-        _owns_stackable_data_ = false;
       }
+      _stackable_data_ = 0;
     }
+    _owns_stackable_data_ = false;
     return;
   }
 
@@ -317,7 +328,7 @@ namespace geomtools {
     return;
   }
 
-  i_shape_3d::i_shape_3d() : i_object_3d()
+  void i_shape_3d::_set_defaults()
   {
     _locked_ = false;
     _owns_stackable_data_ = false;
@@ -325,12 +336,40 @@ namespace geomtools {
     return;
   }
 
+  i_shape_3d::i_shape_3d() : i_object_3d()
+  {
+    _set_defaults();
+    return;
+  }
+
   i_shape_3d::i_shape_3d(double a_skin) : i_object_3d(a_skin)
   {
-    _locked_ = false;
-    _owns_stackable_data_ = false;
-    _stackable_data_ = 0;
+    _set_defaults();
     return;
+  }
+
+  i_shape_3d::i_shape_3d(double a_skin,
+                         double angular_tolerance_)
+    : i_object_3d(a_skin, angular_tolerance_)
+  {
+    _set_defaults();
+    return;
+  }
+
+  i_shape_3d::i_shape_3d(const i_shape_3d & src_) : i_object_3d(src_)
+  {
+    _set_defaults();
+    return;
+  }
+
+  i_shape_3d & i_shape_3d::operator=(const i_shape_3d & src_)
+  {
+    if (this == &src_) {
+      return *this;
+    }
+    reset();
+    this->i_object_3d::operator=(src_);
+    return *this;
   }
 
   i_shape_3d::~i_shape_3d ()
@@ -367,6 +406,7 @@ namespace geomtools {
       unlock();
     }
     reset_stackable_data();
+    reset_computed_faces();
     this->i_object_3d::reset();
     return;
   }
@@ -378,14 +418,16 @@ namespace geomtools {
 
   void i_shape_3d::reset_bounding_data()
   {
-    // DT_THROW_IF(is_locked(), std::logic_error,
-    //             "Shape '" << get_shape_name() << "' is locked!");
     _bounding_data_.reset();
     return;
   }
 
   const bounding_data & i_shape_3d::get_bounding_data() const
   {
+    if (!has_bounding_data()) {
+      i_shape_3d * mutable_this = const_cast<i_shape_3d *>(this);
+      mutable_this->_build_bounding_data();
+    }
     return _bounding_data_;
   }
 
@@ -402,22 +444,166 @@ namespace geomtools {
     return _bounding_data_;
   }
 
-  shape_domain_flags_type i_shape_3d::where_is(const vector_3d & position_, double a_skin) const
+  // virtual
+  void i_shape_3d::make_any_face(face_identifier & fid_) const
   {
+    fid_.invalidate();
+    if (using_face_id_bits()) {
+      fid_.set_face_bits_any();
+    }
+    if (using_face_id_index()) {
+      fid_.set_face_index_any();
+    }
+    if (is_composite()) {
+      // Let the FID invalid
+    }
+    return;
+  }
+
+  bool i_shape_3d::check_inside(const vector_3d & position_, double skin_) const
+  {
+    double skin = get_skin(skin_);
+
+    if (has_bounding_data()) {
+      double double_skin = 2 * skin;
+      const bounding_data & bd = get_bounding_data();
+      box bb;
+      placement bb_placement;
+      bd.compute_bounding_box(bb, bb_placement);
+      vector_3d position_in_bb;
+      bb_placement.mother_to_child(position_, position_in_bb);
+      if (bb.is_outside(position_in_bb, double_skin)) {
+        // If the point is outside the BB using a safety skin margin,
+        // then it cannot be inside the solid:
+        return false;
+      }
+    }
+
+    if (is_inside(position_, skin)) {
+      // If the point is detected to be inside the solid through the primitive
+      // is_inside method, then it is accepted:
+      // std::cerr << "DEVEL: i_shape_3d::check_inside: " << "is_inside" << std::endl;
+      return true;
+    }
+
+    if (!is_outside(position_, 0.0)) {
+      face_identifier any_face_id;
+      make_any_face(any_face_id);
+      if (!is_on_surface(position_, any_face_id, skin)) {
+        // std::cerr << "DEVEL: i_shape_3d::check_inside: " << "!is_outside && !is_on_surface" << std::endl;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+
+  bool i_shape_3d::check_outside(const vector_3d & position_, double skin_) const
+  {
+    double skin = get_skin(skin_);
+    if (has_bounding_data()) {
+      double double_skin = 2 * skin;
+      const bounding_data & bd = get_bounding_data();
+      box bb;
+      placement bb_placement;
+      bd.compute_bounding_box(bb, bb_placement);
+      vector_3d position_in_bb;
+      bb_placement.mother_to_child(position_, position_in_bb);
+      if (bb.is_outside(position_in_bb, double_skin)) {
+        // If the point is outside the BB using a safety skin margin,
+        // then it is automatically outside the solid:
+        return true;
+      }
+    }
+
+    // Then invoke the primitive "is_outside" method
+    if (is_outside(position_, skin_)) {
+      return true;
+    }
+
+    if (!is_inside(position_, 0.0)) {
+      face_identifier any_face_id;
+      make_any_face(any_face_id);
+      if (!is_on_surface(position_, any_face_id, skin)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  face_identifier i_shape_3d::check_surface(const vector_3d & position_,
+                                            const face_identifier & surface_mask_,
+                                            double skin_) const
+  {
+    double skin = get_skin(skin_);
+    if (has_bounding_data()) {
+      double double_skin = 2 * skin;
+      const bounding_data & bd = get_bounding_data();
+      box bb;
+      placement bb_placement;
+      bd.compute_bounding_box(bb, bb_placement);
+      vector_3d position_in_bb;
+      bb_placement.mother_to_child(position_, position_in_bb);
+      if (bb.is_outside(position_in_bb, double_skin)) {
+        // If the point is outside the BB using a safety skin margin,
+        // then it cannot be on the surface:
+        return face_identifier::face_invalid();
+      }
+    }
+
+    return on_surface(position_, surface_mask_, skin);
+  }
+
+  bool i_shape_3d::check_surface(const vector_3d & position_, double skin_) const
+  {
+    double skin = get_skin(skin_);
+    if (has_bounding_data()) {
+      double double_skin = 2 * skin;
+      const bounding_data & bd = get_bounding_data();
+      box bb;
+      placement bb_placement;
+      bd.compute_bounding_box(bb, bb_placement);
+      vector_3d position_in_bb;
+      bb_placement.mother_to_child(position_, position_in_bb);
+      if (bb.is_outside(position_in_bb, double_skin)) {
+        // If the point is outside the BB using a safety skin margin,
+        // then it cannot be on the surface:
+        return false;
+      }
+    }
+
+    {
+      face_identifier any_face_id;
+      make_any_face(any_face_id);
+      if (is_on_surface(position_, any_face_id, skin)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  shape_domain_flags_type i_shape_3d::where_is(const vector_3d & position_, double skin_) const
+  {
+    double skin = get_skin(skin_);
     try {
-      if (is_on_surface(position_, FACE_ALL_BITS, a_skin)) {
+      if (check_outside(position_, skin)) {
+        return SHAPE_DOMAIN_OUTSIDE;
+      } else if (check_surface(position_, skin)) {
         return SHAPE_DOMAIN_ON_SURFACE;
-      } else if (is_inside(position_, a_skin)) {
+      } else if (check_inside(position_, skin)) {
         return SHAPE_DOMAIN_INSIDE;
       } else {
-        return SHAPE_DOMAIN_OUTSIDE;
+        DT_THROW(std::logic_error, "Cannot classify position wrt the shape!");
       }
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                    "Cannot determine the domain for position " << position_ << " w/r to shape '"
                    << this->get_shape_name() << "' : "
                    << error.what());
-    } catch(...) {
+    } catch (...) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                    "Cannot determine the domain for position " << position_ << " w/r to shape '"
                    << this->get_shape_name() << "' !");
@@ -425,20 +611,12 @@ namespace geomtools {
     return SHAPE_DOMAIN_NONE;
   }
 
-  bool i_shape_3d::is_outside(const vector_3d & a_position,
-                              double a_skin) const
+  // virtual
+  bool i_shape_3d::is_on_surface(const vector_3d & a_point,
+                                 const face_identifier & a_surface_mask,
+                                 double a_skin) const
   {
-    if (a_skin == get_zero_skin()) {
-      return ! is_inside(a_position, a_skin);
-    }
-    return ! is_inside(a_position, a_skin)
-      && ! is_on_surface(a_position, ALL_SURFACES, a_skin);
-  }
-
-  bool i_shape_3d::is_inside_or_surface (const vector_3d & a_position,
-                                         double a_skin) const
-  {
-    return ! is_outside(a_position, a_skin);
+    return on_surface(a_point, a_surface_mask, a_skin).is_valid();
   }
 
   void i_shape_3d::tree_dump(ostream & a_out,
@@ -446,23 +624,22 @@ namespace geomtools {
                              const string & a_indent,
                              bool a_inherit) const
   {
-    string indent;
-    if (! a_indent.empty ()) indent = a_indent;
     i_object_3d::tree_dump (a_out, a_title, a_indent, true);
 
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Bounding data: "
-          << (has_bounding_data() ? "yes" : "no")
-          << std::endl;
-    std::ostringstream indent2_oss;
-    indent2_oss << indent << datatools::i_tree_dumpable::skip_tag;
-    _bounding_data_.tree_dump(a_out, "", indent2_oss.str());
-
+    {
+      a_out << a_indent << datatools::i_tree_dumpable::tag
+            << "Bounding data: "
+            << (has_bounding_data() ? "<yes>" : "<none>")
+            << std::endl;
+      std::ostringstream indent2_oss;
+      indent2_oss << a_indent << datatools::i_tree_dumpable::skip_tag;
+      _bounding_data_.tree_dump(a_out, "", indent2_oss.str());
+    }
 
     if (i_shape_3d::is_stackable(*this)) {
       stackable_data SD;
       i_shape_3d::pickup_stackable(*this, SD);
-      a_out << indent << datatools::i_tree_dumpable::tag
+      a_out << a_indent << datatools::i_tree_dumpable::tag
             << "Stackable data : ";
       if (_stackable_data_ != 0) {
         a_out << "[plugged]";
@@ -471,17 +648,27 @@ namespace geomtools {
       }
       a_out << endl;
       ostringstream indent_oss;
-      indent_oss << indent;
+      indent_oss << a_indent;
       indent_oss << datatools::i_tree_dumpable::skip_tag;
-      SD.tree_dump (a_out, "", indent_oss.str ());
+      SD.tree_dump(a_out, "", indent_oss.str());
     }
-    /*
-      a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-      << "Stackable_data : " << (_stackable_data_ != 0? "Yes": "No") << endl;
-    */
 
-   a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
-      << "Locked : " << (_locked_? "Yes": "No") << endl;
+    {
+      a_out << a_indent << datatools::i_tree_dumpable::tag
+            << "Computed faces: ";
+      if (!has_computed_faces()) {
+        a_out << "<none>";
+      } else {
+        a_out << _computed_faces_.get().size();
+      }
+      a_out << std::endl;
+      // if (has_computed_faces()) {
+
+      // }
+    }
+
+    a_out << a_indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+      << "Locked : " << (_locked_? "<yes>": "<none>") << endl;
 
     return;
   }
@@ -530,24 +717,40 @@ namespace geomtools {
     return;
   }
 
-  bool i_shape_3d::find_intercept (const vector_3d & /*a_from*/,
-                                   const vector_3d & /*a_direction*/,
-                                   intercept_t & a_intercept,
-                                   double /*a_skin*/) const
+  // virtual
+  unsigned int i_shape_3d::compute_faces(face_info_collection_type & /* faces_ */) const
   {
-    // temporary:
-    // NOT IMPLEMENTED !
-    // default: no intercept on any face of the 3D shape...
-    a_intercept.reset();
-    return a_intercept.is_ok();
+    // Default implementation: do nothing
+    return 0;
+  }
+
+  bool i_shape_3d::has_computed_faces() const
+  {
+    return _computed_faces_.has_data() && _computed_faces_.get().size() > 0;
+  }
+
+  /// Return the collection of faces
+  const face_info_collection_type & i_shape_3d::get_computed_faces() const
+  {
+    if (! _computed_faces_.has_data()) {
+      face_info_collection_type * faces = new face_info_collection_type;
+      compute_faces(*faces);
+      i_shape_3d * mutable_this = const_cast<i_shape_3d *>(this);
+      mutable_this->_computed_faces_.reset(faces);
+    }
+    return _computed_faces_.get();
+  }
+
+  void i_shape_3d::reset_computed_faces()
+  {
+    _computed_faces_.reset();
+    return;
   }
 
   // static
   void i_shape_3d::init_ocd(datatools::object_configuration_description & ocd_)
   {
     i_object_3d::init_ocd(ocd_);
-
-
     return;
   }
 

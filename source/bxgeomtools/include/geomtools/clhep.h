@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/clhep.h
 
 #ifndef GEOMTOOLS_CLHEP_H
@@ -55,3 +54,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_CLHEP_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

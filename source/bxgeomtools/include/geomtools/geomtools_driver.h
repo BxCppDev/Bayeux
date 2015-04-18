@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/geomtools_driver.h
 /* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-08-24
@@ -138,6 +137,10 @@ namespace geomtools {
     /// Print a logical volume given by name
     int command_print_logical(const std::string & logical_name_, std::ostream & out_) const;
 
+    // /// Set the rendering options attached to a logical volume given by name
+    // int command_set_rendering_options(const std::vector<std::string> & argv_,
+    //                                   std::ostream & out_) const;
+
     /// Export to GDML format
     int command_export_gdml(const std::vector<std::string> & argv_,
                             std::ostream & out_ = std::clog) const;
@@ -167,17 +170,26 @@ namespace geomtools {
 
   private:
 
-    bool _initialized_; /// Initialization flag
-    geomtools_driver_params          _params_;   /// Configuration and dynamic parameters
+    bool _initialized_; //!< Initialization flag
+    geomtools_driver_params          _params_;   //!< Configuration and dynamic parameters
 
     // Geometry setup model:
-    boost::scoped_ptr<manager>       _geo_mgr_;         /// Geometry manager handle
-    boost::scoped_ptr<model_factory> _geo_factory_;     /// Geometry model factory handle
-    const model_factory *            _geo_factory_ref_; /// Geometry model factory effective handle
-    bool        _has_world_;          /// Flag for a 'world' top-level volume/model
+    boost::scoped_ptr<manager>       _geo_mgr_;         //!< Geometry manager handle
+    boost::scoped_ptr<model_factory> _geo_factory_;     //!< Geometry model factory handle
+    const model_factory *            _geo_factory_ref_; //!< Geometry model factory effective handle
+    bool        _has_world_;          //!< Flag for a 'world' top-level volume/model
+    // std::map<std::string, datatools::properties> _ropts_, //!< Rendering options associated to displayed objects
 
   };
 
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_GEOMTOOLS_DRIVER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

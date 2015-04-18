@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/the_serializable.ipp
 /*
  * This includes the implementation code
@@ -37,3 +36,11 @@
 #include <geomtools/display_data.ipp>
 
 #endif // GEOMTOOLS_THE_SERIALIZABLE_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

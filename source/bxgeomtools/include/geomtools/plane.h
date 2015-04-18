@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/plane.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-09-27
@@ -28,70 +27,109 @@ namespace geomtools {
   {
   public:
 
+    /// Return the identifier label for the class
     static const std::string & plane_label();
 
-    bool is_valid () const;
+    /// Check if the plane is valid
+    bool is_valid() const;
 
-    void reset ();
+    /// Reset
+    void reset();
 
-    double a () const;
+    /// Return the first parameter
+    double a() const;
 
-    double b () const;
+    /// Return the second parameter
+    double b() const;
 
-    double c () const;
+    /// Return the third parameter
+    double c() const;
 
-    double d () const;
+    /// Return the fourth parameter
+    double d() const;
 
-    geomtools::vector_3d normal () const;
+    /// Return the normal to the plane
+    geomtools::vector_3d normal() const;
 
-    void set (double a_, double b_, double c_, double d_);
+    /// Set the parameters
+    void set(double a_, double b_, double c_, double d_);
 
-    void set (const geomtools::vector_3d & point_,
-              const geomtools::vector_3d & normal_);
+    /// Set the parameters from a point and the normal
+    void set(const geomtools::vector_3d & point_,
+             const geomtools::vector_3d & normal_);
 
-    void set (const geomtools::vector_3d & point_,
-              const geomtools::vector_3d & u1_,
-              const geomtools::vector_3d & u2_);
+    /// Set the parameters from a point and two vectors
+    void set(const geomtools::vector_3d & point_,
+             const geomtools::vector_3d & u1_,
+             const geomtools::vector_3d & u2_);
 
-    plane ();
+    /// Default constructor
+    plane();
 
-    plane (double a_, double b_, double c_, double d_);
+    /// Constructor
+    plane(double a_, double b_, double c_, double d_);
 
-    plane (const geomtools::vector_3d & point_,
-           const geomtools::vector_3d & normal_);
+    /// Constructor from a point and the normal
+    plane(const geomtools::vector_3d & point_,
+          const geomtools::vector_3d & normal_);
 
-    plane (const geomtools::vector_3d & point_,
-           const geomtools::vector_3d & u1_,
-           const geomtools::vector_3d & u2_);
+    /// Constructor from a point and two vectors
+    plane(const geomtools::vector_3d & point_,
+          const geomtools::vector_3d & u1_,
+          const geomtools::vector_3d & u2_);
 
-    double distance (const geomtools::vector_3d & position_) const;
+    /// Compute the distance from a position to the plane
+    double distance(const geomtools::vector_3d & position_) const;
 
-    geomtools::vector_3d orthogonal_projection (const geomtools::vector_3d & position_) const;
+    /// Compute the orthogonal projection from a position
+    geomtools::vector_3d orthogonal_projection(const geomtools::vector_3d & position_) const;
 
-    geomtools::vector_3d projection (const geomtools::vector_3d & position_,
-                                     const geomtools::vector_3d & direction_) const;
+    geomtools::vector_3d projection(const geomtools::vector_3d & position_,
+                                    const geomtools::vector_3d & direction_) const;
 
-    virtual bool is_on_surface (const geomtools::vector_3d & position_,
-                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    virtual bool is_on_surface(const geomtools::vector_3d & position_,
+                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual geomtools::vector_3d get_normal_on_surface (const geomtools::vector_3d & position_,
-                                                        bool up_ = true) const;
+    virtual geomtools::vector_3d
+    get_normal_on_surface(const geomtools::vector_3d & position_,
+                          bool check_ = true,
+                          double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    virtual bool find_intercept (const geomtools::vector_3d & from_,
-                                 const geomtools::vector_3d & direction_,
-                                 geomtools::intercept_t & intercept_,
-                                 double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    virtual bool find_intercept(const geomtools::vector_3d & from_,
+                                const geomtools::vector_3d & direction_,
+                                face_intercept_info & intercept_,
+                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    void print_grid (std::ostream & out_, double padding_ = 1.0, int n1_ = 3, int n2_ = 3) const;
+    void print_grid(std::ostream & out_, double padding_ = 1.0, int n1_ = 3, int n2_ = 3) const;
 
-    virtual std::string get_shape_name () const;
+    virtual std::string get_shape_name() const;
+
+    /// Generate a sequence of polylines for wires 3D rendering
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
+
+  protected:
+
+    /// Set default attributes values
+    void _set_defaults();
 
   private:
 
-    double _a_, _b_, _c_, _d_;
+    double _a_;
+    double _b_;
+    double _c_;
+    double _d_;
 
   };
 
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_PLANE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

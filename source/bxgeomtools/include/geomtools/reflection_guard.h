@@ -43,20 +43,28 @@
 
 namespace geomtools {
 
-/** \brief Data structure that ensures the invocation of some explicit code
- *         for geomtools_reflection DLL liking.
- */
-struct reflection_guard {
-  reflection_guard() {
-    //::geomtools::detail::reflection::dynamic_link_guard& dlg =
-    ::geomtools::detail::reflection::dynamic_link_guard::instance();
-  }
-  static reflection_guard _g_trigger_link_guard_;
-};
+  /** \brief Data structure that ensures the invocation of some explicit code
+   *         for geomtools_reflection DLL liking.
+   */
+  struct reflection_guard {
+    reflection_guard() {
+      //::geomtools::detail::reflection::dynamic_link_guard& dlg =
+      ::geomtools::detail::reflection::dynamic_link_guard::instance();
+    }
+    static reflection_guard _g_trigger_link_guard_;
+  };
 
-reflection_guard reflection_guard::_g_trigger_link_guard_;
+  reflection_guard reflection_guard::_g_trigger_link_guard_;
 
 } // end namespace geomtools
 #endif // GEOMTOOLS_WITH_REFLECTION != 1
 
 #endif // GEOMTOOLS_REFLECTION_GUARD_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

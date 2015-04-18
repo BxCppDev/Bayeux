@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/units.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
@@ -19,3 +18,11 @@
 #include <datatools/units.h>
 
 #endif // GEOMTOOLS_UNITS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

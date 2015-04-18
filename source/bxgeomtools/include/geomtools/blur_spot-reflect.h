@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/blur_spot-reflect.h
 
 #ifndef GEOMTOOLS_BLUR_SPOT_REFLECT_H
@@ -94,3 +93,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // GEOMTOOLS_BLUR_SPOT_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/regular_polygon.h
 /* Author(s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
- * Last modified: 2010-02-14
+ * Last modified: 2015-02-16
  *
  * License:
  *
@@ -22,6 +21,7 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/i_polygon.h>
 
 namespace geomtools {
 
@@ -47,7 +47,8 @@ namespace geomtools {
    *   AB      : side's length
    *   (A0B)   : reference angle
    */
-  class regular_polygon : public i_shape_2d
+  class regular_polygon : public i_shape_2d,
+                          public i_polygon
   {
 
   public:
@@ -58,6 +59,9 @@ namespace geomtools {
       BUILD_BY_RADIUS  = 1,
       BUILD_BY_APOTHEM = 2
     };
+
+    /// The minimum number of sides
+    static const unsigned int MIN_NUMBER_OF_SIDES = 3;
 
     /// Check the validity of the polygon
     bool is_valid() const;
@@ -113,6 +117,9 @@ namespace geomtools {
     /// Destructor
     virtual ~regular_polygon();
 
+    /// Reset
+    void reset();
+
     /// Return the identifier/name of the shape
     virtual std::string get_shape_name() const;
 
@@ -122,12 +129,13 @@ namespace geomtools {
 
     /// Return the normal direction at some position on the 2D shape's path
     virtual vector_3d get_normal_on_surface(const vector_3d & position_,
-                                            bool up_ = true) const;
+                                            bool check_ = true,
+                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Find the intercept of a ray with the 2D shape's surfaces
     virtual bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
-                                intercept_t & intercept_,
+                                face_intercept_info & intercept_,
                                 double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Smart print
@@ -136,12 +144,35 @@ namespace geomtools {
                            const std::string & indent_ = "",
                            bool inherit_= false) const;
 
+    /// \brief 3D rendering options
+    enum rp_wires_rendering_option_type {
+      WR_RP_NO_EXTERNAL_EDGES = (WR_BASE_LAST << 1),       //!< Do not render the external edges
+      WR_RP_LAST              = (WR_RP_NO_EXTERNAL_EDGES), //!< Last defined bit
+      WR_RP_MASK              = (WR_RP_NO_EXTERNAL_EDGES)  //!< Rendering options bit mask
+    };
+
+    /// Generate a sequence of polylines for wires 3D rendering
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
+
+    /// Build an ordered collection of vertexes
+    virtual unsigned int compute_vertexes(vertex_col_type & vertexes_) const;
+
   private:
-    uint32_t _n_sides_; //! The number of sides/vertices of the polygon
-    double   _r_;       //! The radius of the polygon, i.e. the distance from center to vertices (circumradius)
+
+    uint32_t _n_sides_; //!< The number of sides/vertices of the polygon
+    double   _r_;       //!< The radius of the polygon, i.e. the distance from center to vertices (circumradius)
 
   };
 
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_REGULAR_POLYGON_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

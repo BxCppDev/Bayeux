@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/simple_shaped_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-13
@@ -174,3 +173,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::simple_shaped_model)
 
 #endif // GEOMTOOLS_SIMPLE_SHAPED_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -21,30 +21,73 @@
 
 namespace geomtools {
 
-  bool bounding_data::is_valid() const
+  bool bounding_data::is_valid(bool verbose_) const
   {
     if (_type_ == BD_INVALID) {
+      if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD: Invalid type!");
       return false;
     }
 
     if (_type_ == BD_BOX) {
-      if (!datatools::is_valid(_xmin_)) return false;
-      if (!datatools::is_valid(_xmax_)) return false;
-      if (_xmin_ >= _xmax_) return false;
-      if (!datatools::is_valid(_ymin_)) return false;
-      if (!datatools::is_valid(_ymax_)) return false;
-      if (_ymin_ >= _ymax_) return false;
-      if (!datatools::is_valid(_zmin_)) return false;
-      if (!datatools::is_valid(_zmax_)) return false;
-      if (_zmin_ >= _zmax_) return false;
+      if (!datatools::is_valid(_xmin_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid X min!");
+        return false;
+      }
+      if (!datatools::is_valid(_xmax_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid X max!");
+        return false;
+      }
+      if (_xmin_ >= _xmax_) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid X min >= X max!");
+        return false;
+      }
+      if (!datatools::is_valid(_ymin_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid Y min!");
+        return false;
+      }
+      if (!datatools::is_valid(_ymax_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid Y max!");
+        return false;
+      }
+      if (_ymin_ >= _ymax_) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid Y min >= Y max!");
+        return false;
+      }
+      if (!datatools::is_valid(_zmin_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid Z min!");
+        return false;
+      }
+      if (!datatools::is_valid(_zmax_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid Z max!");
+        return false;
+      }
+      if (_zmin_ >= _zmax_) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD box: Invalid Z min >= Z max!");
+        return false;
+      }
     }
 
     if (_type_ == BD_CYLINDER) {
-      if (!datatools::is_valid(_rmax_)) return false;
-      if (_rmax_ <= 0.0) return false;
-      if (!datatools::is_valid(_zmin_)) return false;
-      if (!datatools::is_valid(_zmax_)) return false;
-      if (_zmin_ >= _zmax_) return false;
+      if (!datatools::is_valid(_rmax_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD cylinder: Invalid R max!");
+        return false;
+      }
+      if (_rmax_ <= 0.0) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD cylinder: Negative R max!");
+        return false;
+      }
+      if (!datatools::is_valid(_zmin_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD cylinder: Invalid Z min!");
+        return false;
+      }
+      if (!datatools::is_valid(_zmax_)) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD cylinder: Invalid Z max!");
+        return false;
+      }
+      if (_zmin_ >= _zmax_) {
+        if (verbose_) DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "BD cylinder: Invalid Z min >= Z max!");
+        return false;
+      }
     }
 
     return true;
@@ -186,38 +229,42 @@ namespace geomtools {
     return;
   }
 
-  /*
-    void bounding_data::make_from_bounding_boxes(const box & bb1_,
-    const placement & p1_,
-    const box & bb2_,
-    const placement & p2_)
-    {
-    reset();
-    std::vector<vector_3d> vv1;
-    bb1_.compute_transformed_vertexes(p1_, vv1);
-    std::vector<vector_3d> vv2;
-    bb2_.compute_transformed_vertexes(p2_, vv2);
-    mygsl::min_max mmx;
-    mygsl::min_max mmy;
-    mygsl::min_max mmz;
-    for (int i = 0; i < (int) vv1.size(); i++) {
-    mmx.add(vv1[i].x());
-    mmy.add(vv1[i].y());
-    mmz.add(vv1[i].z());
+  void bounding_data::compute_bounding_box_face_centers(std::vector<vector_3d> & face_centers_, double safe_skin_) const
+  {
+    face_centers_.clear();
+    box bb;
+    placement bbpl;
+    compute_bounding_box(bb, bbpl, safe_skin_);
+    vector_3d fc[6];
+    fc[0].set(-0.5 * bb.get_x(), 0.0, 0.0);
+    fc[1].set(+0.5 * bb.get_x(), 0.0, 0.0);
+    fc[2].set(0.0, -0.5 * bb.get_y(), 0.0);
+    fc[3].set(0.0, +0.5 * bb.get_y(), 0.0);
+    fc[4].set(0.0, 0.0, -0.5 * bb.get_z());
+    fc[5].set(0.0, 0.0, +0.5 * bb.get_z());
+    face_centers_.reserve(6);
+    for (int i = 0; i < 6; i++) {
+      {
+        vector_3d dummy;
+        face_centers_.push_back(dummy);
+      }
+      vector_3d & last_fc = face_centers_.back();
+      bbpl.child_to_mother(fc[i], last_fc);
     }
-    for (int i = 0; i < (int) vv2.size(); i++) {
-    mmx.add(vv2[i].x());
-    mmy.add(vv2[i].y());
-    mmz.add(vv2[i].z());
-    }
-    make_box(mmx.get_min(), mmx.get_max(),
-    mmy.get_min(), mmy.get_max(),
-    mmz.get_min(), mmz.get_max());
     return;
-    }
-  */
+  }
 
-  void bounding_data::compute_bounding_box(box & bb_, placement & p_) const
+  void bounding_data::compute_bounding_box_vertexes(std::vector<vector_3d> & vertexes_, double safe_skin_) const
+  {
+    vertexes_.clear();
+    box bb;
+    placement bbpl;
+    compute_bounding_box(bb, bbpl);
+    bb.compute_transformed_vertexes(bbpl, vertexes_);
+    return;
+  }
+
+  void bounding_data::compute_bounding_box(box & bb_, placement & p_, double safe_skin_) const
   {
     bb_.reset();
     p_.reset();
@@ -240,7 +287,7 @@ namespace geomtools {
       y0 = 0.0;
       z0 = 0.5 * (get_zmax() + get_zmin());
     }
-    bb_.set(dx, dy, dz);
+    bb_.set(dx + 2 * safe_skin_, dy + 2 * safe_skin_, dz + 2 * safe_skin_);
     p_.set(x0, y0, z0, 0.0, 0.0, 0.0);
     return;
   }
@@ -388,5 +435,20 @@ namespace geomtools {
     return;
   }
 
+  void bounding_data::generate_wires_self(wires_type & wires_,
+                                          uint32_t options_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid bounding data!");
+
+    box bb;
+    placement bb_pl;
+    compute_bounding_box(bb, bb_pl);
+
+    if (bb.is_valid()) {
+      uint32_t options = 0;
+      bb.generate_wires(wires_, bb_pl, options);
+    }
+    return;
+  }
 
 } // end of namespace geomtools

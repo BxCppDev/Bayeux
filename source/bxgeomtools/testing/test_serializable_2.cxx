@@ -1,25 +1,26 @@
 // test_serializable_2.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
-
+// Third party:
+// -  Boost:
 #include <boost/scoped_ptr.hpp>
-
-#include <datatools/archives_instantiation.h>
-
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
+// - Bayeux/datatools:
+#include <datatools/archives_instantiation.h>
 #include <datatools/i_serializable.ipp>
-
 // The serializable 'things' container :
 #include <datatools/things.h>
-
 // The serializable 'properties' container :
 #include <datatools/properties.h>
+
+// This project:
 #include <geomtools/geom_id.h>
 #include <geomtools/line_3d.h>
 #include <geomtools/helix_3d.h>
@@ -264,7 +265,12 @@ int main (int argc_, char ** argv_)
             geomtools::line_3d & l1 = bag.add<geomtools::line_3d> ("l1", "A 3D line");
             l1.set_first (geomtools::vector_3d (0.,0.,0.));
             l1.set_last (geomtools::vector_3d (1.,1.,1.));
-            bag.add<geomtools::helix_3d> ("h1", "A 3D helix");
+            geomtools::helix_3d & h1 = bag.add<geomtools::helix_3d> ("h1", "A 3D helix");
+            h1.set_radius(1.0);
+            h1.set_step(1.0);
+            h1.set_t1(0.0);
+            h1.set_t2(1.0);
+            h1.set_center(0.0, 0.0, 0.0);
             bag.add<geomtools::polyline_3d> ("pl1", "A 3D polyline");
           }
 

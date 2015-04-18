@@ -1,4 +1,4 @@
-/** \file geomtools/polycone.cc */
+/// \file geomtools/polycone.cc
 
 // Ourselves:
 #include <geomtools/polycone.h>
@@ -20,9 +20,17 @@
 #include <mygsl/tabulated_function.h>
 #include <mygsl/numerical_differentiation.h>
 #include <mygsl/interval.h>
+#include <mygsl/min_max.h>
 
 // This project:
+#include <geomtools/disk.h>
 #include <geomtools/cone.h>
+#include <geomtools/box.h>
+#include <geomtools/triangle.h>
+#include <geomtools/quadrangle.h>
+#include <geomtools/composite_surface.h>
+#include <geomtools/right_circular_conical_nappe.h>
+#include <geomtools/right_circular_conical_frustrum.h>
 
 namespace geomtools {
 
@@ -45,8 +53,487 @@ namespace geomtools {
 
   void polycone::_build_bounding_data()
   {
-    _grab_bounding_data().make_cylinder(_r_max_, get_zmin(), get_zmax());
+    if (! has_partial_angle()) {
+      _grab_bounding_data().make_cylinder(_r_max_, get_zmin(), get_zmax());
+    } else {
+      mygsl::min_max xrange;
+      mygsl::min_max yrange;
+      mygsl::min_max zrange;
+      for (size_t ifrustrum = 0; ifrustrum < number_of_frustra(); ifrustrum++) {
+        right_circular_conical_frustrum fi;
+        placement fi_placement;
+        compute_frustrum(fi, fi_placement, ifrustrum);
+        const bounding_data & bbi = fi.get_bounding_data();
+        box bb;
+        placement bb_pl;
+        bbi.compute_bounding_box(bb, bb_pl);
+        std::vector<vector_3d> corners;
+        bb.compute_vertexes(corners);
+        for (int i = 0; i < (int) corners.size(); i++) {
+          vector_3d vtx;
+          bb_pl.child_to_mother(corners[i], vtx);
+          vector_3d vtx2;
+          fi_placement.child_to_mother(vtx, vtx2);
+          xrange.add(vtx2.x());
+          yrange.add(vtx2.y());
+          zrange.add(vtx2.z());
+        }
+      }
+      _grab_bounding_data().make_box(xrange.get_min(), xrange.get_max(),
+                                     yrange.get_min(), yrange.get_max(),
+                                     zrange.get_min(), zrange.get_max());
+    }
     return;
+  }
+
+  void polycone::_set_defaults()
+  {
+    _computed_ = false;
+    _has_top_face_    = boost::logic::indeterminate;
+    _has_bottom_face_ = boost::logic::indeterminate;
+    _has_inner_face_  = boost::logic::indeterminate;
+    datatools::invalidate(_top_surface_);
+    datatools::invalidate(_bottom_surface_);
+    datatools::invalidate(_outer_side_surface_);
+    datatools::invalidate(_inner_side_surface_);
+    datatools::invalidate(_start_angle_surface_);
+    datatools::invalidate(_stop_angle_surface_);
+    datatools::invalidate(_outer_volume_);
+    datatools::invalidate(_inner_volume_);
+    datatools::invalidate(_volume_);
+    datatools::invalidate(_z_min_);
+    datatools::invalidate(_z_max_);
+    datatools::invalidate(_r_max_);
+    _extruded_ = false;
+    datatools::invalidate(_start_angle_);
+    datatools::invalidate(_delta_angle_);
+    return;
+  }
+
+  void polycone::compute_frustrum(right_circular_conical_frustrum & f_,
+                                  placement & positioning_,
+                                  int index_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Polycone is not valid !");
+    f_.reset();
+    positioning_.reset();
+    DT_THROW_IF(index_ < 0 || index_ >= number_of_frustra(),
+                std::range_error,
+                "Invalid frustrum index [" << index_ << "]!");
+    frustrum_data fd;
+    get_frustrum_data(index_, fd);
+    double z = fd.z2 - fd.z1;
+    double zpos = 0.5 * (fd.z2 + fd.z1);
+    f_.set_z(z);
+    f_.set_outer_bottom_radius(fd.b1);
+    f_.set_outer_top_radius(fd.b2);
+    if (datatools::is_valid(fd.a1) && fd.a1 >= 0.0) {
+      f_.set_inner_bottom_radius(fd.a1);
+    }
+    if (datatools::is_valid(fd.a2) && fd.a2 >= 0.0) {
+      f_.set_inner_top_radius(fd.a2);
+    }
+    positioning_.set_identity();
+    positioning_.set_translation(0.0, 0.0, zpos);
+    if (has_partial_angle()) {
+      f_.set_start_angle(get_start_angle());
+      f_.set_delta_angle(get_delta_angle());
+    }
+    return;
+  }
+
+  bool polycone::has_top_face() const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    if (_has_top_face_) {
+      return true;
+    } else if (!_has_top_face_) {
+      return false;
+    } else {
+      DT_THROW(std::logic_error, "Polycone is not properly initialized !");
+    }
+  }
+
+  bool polycone::has_bottom_face() const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    if (_has_bottom_face_) {
+      return true;
+    } else if (!_has_bottom_face_) {
+      return false;
+    } else {
+      DT_THROW(std::logic_error, "Polycone is not properly initialized !");
+    }
+  }
+
+  bool polycone::has_inner_face() const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    if (_has_inner_face_) {
+      return true;
+    } else if (!_has_inner_face_) {
+      return false;
+    } else {
+      DT_THROW(std::logic_error, "Polycone is not properly initialized !");
+    }
+  }
+
+  bool polycone::has_angle_faces() const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    return has_partial_angle();
+  }
+
+  void polycone::compute_top_face(disk & disk_, placement & positioning_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    disk_.reset();
+    positioning_.reset();
+    if (has_top_face()) {
+      // std::cerr << "DEVEL: polycone::compute_top_face: " << std::endl;
+      right_circular_conical_frustrum cf;
+      placement cf_placement;
+      compute_frustrum(cf, cf_placement, number_of_frustra() - 1);
+      if (cf.is_valid()) {
+        placement disk_placement;
+        cf.compute_top_face(disk_, disk_placement);
+        double z = cf_placement.get_translation().z();
+        z += disk_placement.get_translation().z();
+        cf_placement.grab_translation().setZ(z);
+        positioning_ = cf_placement;
+      }
+    }
+    return;
+  }
+
+  void polycone::compute_bottom_face(disk & disk_, placement & positioning_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    disk_.reset();
+    positioning_.reset();
+    if (has_bottom_face()) {
+      // std::cerr << "DEVEL: polycone::compute_bottom_face: " << std::endl;
+      right_circular_conical_frustrum cf;
+      placement cf_placement;
+      compute_frustrum(cf, cf_placement, 0);
+      if (cf.is_valid()) {
+        placement disk_placement;
+        cf.compute_bottom_face(disk_, disk_placement);
+        double z = cf_placement.get_translation().z();
+        z += disk_placement.get_translation().z();
+        cf_placement.grab_translation().setZ(z);
+        positioning_ = cf_placement;
+      }
+    }
+    return;
+  }
+
+  void polycone::compute_inner_face(right_circular_conical_nappe & face_,
+                                    placement & positioning_,
+                                    int index_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    face_.reset();
+    positioning_.reset();
+    if (has_inner_face()) {
+      right_circular_conical_frustrum rccf;
+      placement rccf_placement;
+      compute_frustrum(rccf, rccf_placement, index_);
+      if (rccf.has_inner_face()) {
+        rccf.compute_inner_face(face_);
+        positioning_ = rccf_placement;
+      }
+    }
+    return;
+  }
+
+  right_circular_conical_frustrum::ssaf_type
+  polycone::get_start_stop_angle_face_type(int index_) const
+  {
+    right_circular_conical_frustrum::ssaf_type ssaf = right_circular_conical_frustrum::SSAF_INVALID;
+    if (has_partial_angle()) {
+      right_circular_conical_frustrum rccf;
+      placement rccf_placement;
+      compute_frustrum(rccf, rccf_placement, index_);
+      ssaf = rccf.get_start_stop_angle_face_type();
+    }
+    return ssaf;
+  }
+
+  void polycone::compute_start_angle_face(quadrangle & qface_,
+                                          triangle & tface_,
+                                          placement & positioning_,
+                                          int index_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    qface_.reset();
+    tface_.reset();
+    positioning_.reset();
+    if (has_partial_angle()) {
+      right_circular_conical_frustrum rccf;
+      placement rccf_placement;
+      compute_frustrum(rccf, rccf_placement, index_);
+      if (rccf.is_valid()) {
+        placement start_angle_placement;
+        rccf.compute_start_angle_face(qface_, tface_, start_angle_placement);
+        double z = start_angle_placement.get_translation().z();
+        z += rccf_placement.get_translation().z();
+        start_angle_placement.grab_translation().setZ(z);
+        positioning_ = start_angle_placement;
+      }
+    }
+    return;
+  }
+
+  void polycone::compute_stop_angle_face(quadrangle & qface_,
+                                         triangle & tface_,
+                                         placement & positioning_,
+                                         int index_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    qface_.reset();
+    tface_.reset();
+    positioning_.reset();
+    if (has_partial_angle()) {
+      right_circular_conical_frustrum rccf;
+      placement rccf_placement;
+      compute_frustrum(rccf, rccf_placement, index_);
+      if (rccf.is_valid()) {
+        placement stop_angle_placement;
+        rccf.compute_stop_angle_face(qface_, tface_, stop_angle_placement);
+        double z = stop_angle_placement.get_translation().z();
+        z += rccf_placement.get_translation().z();
+        stop_angle_placement.grab_translation().setZ(z);
+        positioning_ = stop_angle_placement;
+      }
+    }
+    return;
+  }
+
+  void polycone::compute_outer_face(right_circular_conical_nappe & face_,
+                                    placement & positioning_,
+                                    int index_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    face_.reset();
+    positioning_.reset();
+    right_circular_conical_frustrum rccf;
+    placement rccf_placement;
+    compute_frustrum(rccf, rccf_placement, index_);
+    rccf.compute_outer_face(face_);
+    positioning_ = rccf_placement;
+    return;
+  }
+
+  void polycone::compute_outer_face(composite_surface & face_,
+                                    placement & positioning_) const
+  {
+    face_.reset();
+    positioning_.reset();
+    // Outer side face:
+    for (int i = 0; i < number_of_frustra(); i++) {
+      geomtools::face_info & finfo = face_.add();
+      right_circular_conical_nappe & rccn = finfo.add_face<right_circular_conical_nappe>();
+      compute_outer_face(rccn, finfo.grab_positioning(), i);
+      if (! rccn.is_valid()) {
+        face_.remove_last();
+      }
+    }
+    return;
+  }
+
+  void polycone::compute_inner_face(composite_surface & face_,
+                                    placement & positioning_) const
+  {
+    face_.reset();
+    positioning_.reset();
+    if (has_inner_face()) {
+      // Inner side face:
+      for (int i = 0; i < number_of_frustra(); i++) {
+        geomtools::face_info & finfo = face_.add();
+        right_circular_conical_nappe & rccn = finfo.add_face<right_circular_conical_nappe>();
+        compute_inner_face(rccn, finfo.grab_positioning(), i);
+        if (! rccn.is_valid()) {
+          face_.remove_last();
+        }
+      }
+    }
+    return;
+  }
+
+  void polycone::compute_start_angle_face(composite_surface & face_,
+                                          placement & positioning_) const
+  {
+    face_.reset();
+    positioning_.reset();
+    if (has_partial_angle()) {
+      // Inner side face:
+      for (int i = 0; i < number_of_frustra(); i++) {
+        geomtools::face_info & finfo = face_.add();
+        if (get_start_stop_angle_face_type(i) == right_circular_conical_frustrum::SSAF_QUADRANGLE) {
+          quadrangle & q = finfo.add_face<quadrangle>();
+          triangle dummy;
+          compute_start_angle_face(q, dummy, finfo.grab_positioning(), i);
+          if (! q.is_valid()) {
+            face_.remove_last();
+          }
+        } else if (get_start_stop_angle_face_type(i) != right_circular_conical_frustrum::SSAF_INVALID) {
+          quadrangle dummy;
+          triangle & t = finfo.add_face<triangle>();
+          compute_start_angle_face(dummy, t, finfo.grab_positioning(), i);
+          if (! t.is_valid()) {
+            face_.remove_last();
+          }
+        }
+      }
+    }
+    return;
+  }
+
+  void polycone::compute_stop_angle_face(composite_surface & face_,
+                                         placement & positioning_) const
+  {
+    face_.reset();
+    positioning_.reset();
+    if (has_partial_angle()) {
+      // Inner side face:
+      for (int i = 0; i < number_of_frustra(); i++) {
+        geomtools::face_info & finfo = face_.add();
+        if (get_start_stop_angle_face_type(i) == right_circular_conical_frustrum::SSAF_QUADRANGLE) {
+          quadrangle & q = finfo.add_face<quadrangle>();
+          triangle dummy;
+          compute_stop_angle_face(q, dummy, finfo.grab_positioning(), i);
+          if (! q.is_valid()) {
+            face_.remove_last();
+          }
+        } else if (get_start_stop_angle_face_type(i) != right_circular_conical_frustrum::SSAF_INVALID) {
+          quadrangle dummy;
+          triangle & t = finfo.add_face<triangle>();
+          compute_stop_angle_face(dummy, t, finfo.grab_positioning(), i);
+          if (! t.is_valid()) {
+            face_.remove_last();
+          }
+        }
+      }
+    }
+    return;
+  }
+
+  // virtual
+  unsigned int polycone::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Polycone is not valid !");
+    unsigned int nfaces = 0;
+
+    if (has_bottom_face()) {
+      // Bottom face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      disk & d = finfo.add_face<disk>();
+      compute_bottom_face(d, finfo.grab_positioning());
+      if (d.is_valid()) {
+        face_identifier fid;
+        fid.set_face_bit(FACE_BOTTOM);
+        finfo.set_identifier(fid);
+        finfo.set_label("bottom");
+        nfaces++;
+      } else {
+        faces_.pop_back();
+      }
+    }
+
+    if (has_top_face()) {
+      // Top face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      disk & d = finfo.add_face<disk>();
+      if (d.is_valid()) {
+        compute_top_face(d, finfo.grab_positioning());
+        face_identifier fid;
+        fid.set_face_bit(FACE_TOP);
+        finfo.set_identifier(fid);
+        finfo.set_label("top");
+        nfaces++;
+      } else {
+        faces_.pop_back();
+      }
+    }
+
+    {
+      // Outer side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_outer_face(cs, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_OUTER_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("outer_side");
+      nfaces++;
+    }
+
+    if (has_inner_face()) {
+      // Inner side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_inner_face(cs, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_INNER_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("inner_side");
+      nfaces++;
+    }
+
+    if (has_partial_angle()) {
+
+      {
+        // Start angle face:
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        composite_surface & cs = finfo.add_face<composite_surface>();
+        compute_start_angle_face(cs, finfo.grab_positioning());
+        face_identifier fid;
+        fid.set_face_bit(FACE_START_ANGLE);
+        finfo.set_identifier(fid);
+        finfo.set_label("start_angle");
+        nfaces++;
+      }
+
+      {
+        // Stop angle face:
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        composite_surface & cs = finfo.add_face<composite_surface>();
+        compute_stop_angle_face(cs, finfo.grab_positioning());
+        face_identifier fid;
+        fid.set_face_bit(FACE_STOP_ANGLE);
+        finfo.set_identifier(fid);
+        finfo.set_label("stop_angle");
+        nfaces++;
+      }
+
+    }
+
+    return nfaces;
   }
 
   double polycone::get_xmin () const
@@ -104,14 +591,12 @@ namespace geomtools {
     return _points_;
   }
 
-  // ctor:
   polycone::polycone ()
   {
-    reset ();
+    _set_defaults ();
     return;
   }
 
-  // dtor:
   polycone::~polycone ()
   {
     return;
@@ -155,11 +640,11 @@ namespace geomtools {
     return _points_.size() - 1;
   }
 
-  void polycone::get_frustrum(size_t index_, frustrum_data & fd_) const
+  void polycone::get_frustrum_data(size_t index_, frustrum_data & fd_) const
   {
     DT_THROW_IF (index_ >= number_of_frustra(),
                  std::range_error,
-                 "Invalid frustrum index (" << index_ << ") !");
+                 "Invalid frustrum index [" << index_ << "] !");
     size_t count = 0;
     for (rz_col_type::const_iterator it = _points_.begin ();
          it != _points_.end ();
@@ -381,9 +866,14 @@ namespace geomtools {
     this->i_shape_3d::initialize(setup_, objects_);
 
     double lunit = CLHEP::mm;
+    double aunit = CLHEP::degree;
     if (setup_.has_key ("length_unit")) {
       const std::string lunit_str = setup_.fetch_string ("length_unit");
       lunit = datatools::units::get_length_unit_from (lunit_str);
+    }
+    if (setup_.has_key ("angle_unit")) {
+      const std::string aunit_str = setup_.fetch_string ("angle_unit");
+      aunit = datatools::units::get_angle_unit_from (aunit_str);
     }
 
     std::string build_mode_label;
@@ -472,7 +962,32 @@ namespace geomtools {
       DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
     }
 
+    if (!has_partial_angle()) {
+      if (setup_.has_key ("start_angle")) {
+        double sangle = setup_.fetch_real("start_angle");
+        if (! setup_.has_explicit_unit("start_angle")) {
+          sangle *= aunit;
+        }
+        DT_THROW_IF(!setup_.has_key ("delta_angle"), std::logic_error, "Missing ''  parameter!");
+        double dangle = setup_.fetch_real("delta_angle");
+        if (! setup_.has_explicit_unit("delta_angle")) {
+          dangle *= aunit;
+        }
+        set_start_angle(sangle);
+        set_delta_angle(dangle);
+      }
+    }
+
     lock();
+    return;
+  }
+
+  void polycone::_at_lock()
+  {
+    this->i_shape_3d::_at_lock();
+    if (!_computed_) {
+      _compute_all_();
+    }
     return;
   }
 
@@ -637,11 +1152,62 @@ namespace geomtools {
     return;
   }
 
-  void polycone::_compute_all_ ()
+  void polycone::_compute_misc_()
   {
-    _compute_surfaces_ ();
-    _compute_volume_ ();
-    _compute_limits_ ();
+    DT_THROW_IF (number_of_frustra() < 1, std::logic_error, "No frustrum !");
+    DT_THROW_IF (_points_.size() < 2, std::logic_error, "No polycone sections !");
+
+    _has_top_face_    = boost::logic::indeterminate;
+    _has_bottom_face_ = boost::logic::indeterminate;
+    _has_inner_face_  = boost::logic::indeterminate;
+
+    {
+      // Check for top face:
+      _has_top_face_ = false;
+      right_circular_conical_frustrum first;
+      placement dummy;
+      compute_frustrum(first, dummy, number_of_frustra() - 1);
+      if (first.has_top_face()) {
+        _has_top_face_ = true;
+      }
+    }
+
+    {
+      // Check for bottom face:
+      _has_bottom_face_ = false;
+      right_circular_conical_frustrum last;
+      placement dummy;
+      compute_frustrum(last, dummy, 0);
+      if (last.has_bottom_face()) {
+        _has_bottom_face_ = true;
+      }
+    }
+
+    {
+      // Check for inner face:
+      _has_inner_face_ = false;
+      for (size_t ifrustrum = 0; ifrustrum < number_of_frustra(); ifrustrum++) {
+        // Check for inner face:
+        right_circular_conical_frustrum fi;
+        placement dummy;
+        compute_frustrum(fi, dummy, ifrustrum);
+        if (fi.has_inner_face()) {
+          _has_inner_face_ = true;
+          break;
+        }
+      }
+    }
+
+    return;
+  }
+
+  void polycone::_compute_all_()
+  {
+    _compute_misc_();
+    _compute_surfaces_();
+    _compute_volume_();
+    _compute_limits_();
+    _computed_ = true;
     return;
   }
 
@@ -658,12 +1224,57 @@ namespace geomtools {
     return;
   }
 
+  bool polycone::has_start_angle() const
+  {
+    return datatools::is_valid(_start_angle_);
+  }
+
+  void polycone::set_start_angle(double new_value_)
+  {
+    DT_THROW_IF (new_value_ < 0.0 || new_value_ >= 2 * M_PI,
+                 std::domain_error,
+                 "Invalid '" << new_value_ << "' start angle value !");
+    _start_angle_ = new_value_;
+    return;
+  }
+
+  double polycone::get_start_angle() const
+  {
+    return _start_angle_;
+  }
+
+  bool polycone::has_delta_angle() const
+  {
+    return datatools::is_valid(_delta_angle_);
+  }
+
+  void polycone::set_delta_angle(double new_value_)
+  {
+    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
+                 std::domain_error,
+                 "Invalid '" << new_value_ << "' delta angle value !");
+    _delta_angle_ = new_value_;
+    return;
+  }
+
+  double polycone::get_delta_angle() const
+  {
+    return _delta_angle_;
+  }
+
+  bool polycone::has_partial_angle() const
+  {
+    if (_delta_angle_ == 2 * M_PI) return false;
+    if (_start_angle_ > 0.0) return true;
+    return false;
+  }
+
   bool polycone::is_extruded () const
   {
     return _extruded_;
   }
 
-  void polycone::add (double z_, double rmin_,  double rmax_, bool compute_)
+  void polycone::add(double z_, double rmin_,  double rmax_, bool compute_)
   {
     DT_THROW_IF (rmin_ < 0.0, std::domain_error, "Invalid negative 'rmin' !");
     DT_THROW_IF (rmax_ < rmin_, std::domain_error,
@@ -674,7 +1285,7 @@ namespace geomtools {
     RMM.rmax = rmax_;
     _points_[z_] = RMM;
     if (_points_.size () > 1) {
-      if (compute_) _compute_all_ ();
+      if (compute_) _compute_all_();
     }
     return;
   }
@@ -689,15 +1300,7 @@ namespace geomtools {
     unlock();
 
     _points_.clear ();
-    _top_surface_        = std::numeric_limits<double>::quiet_NaN();
-    _bottom_surface_     = std::numeric_limits<double>::quiet_NaN();
-    _inner_side_surface_ = std::numeric_limits<double>::quiet_NaN();
-    _outer_side_surface_ = std::numeric_limits<double>::quiet_NaN();
-    _inner_volume_       = std::numeric_limits<double>::quiet_NaN();
-    _outer_volume_       = std::numeric_limits<double>::quiet_NaN();
-    _volume_             = std::numeric_limits<double>::quiet_NaN();
-    _z_min_ = _z_max_ = _r_max_ = std::numeric_limits<double>::quiet_NaN();
-    _extruded_ = false;
+    _set_defaults();
 
     this->i_shape_3d::reset();
     return;
@@ -705,7 +1308,6 @@ namespace geomtools {
 
   void polycone::initialize ()
   {
-    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
     _compute_all_ ();
     return;
   }
@@ -742,15 +1344,15 @@ namespace geomtools {
   {
     if (! is_valid ()) return;
 
-    // bottom surface:
-    {
+    // Bottom surface:
+    if (has_bottom_face()) {
       rz_col_type::const_iterator i = _points_.begin ();
       const double rmin0 = i->second.rmin;
       const double rmax0 = i->second.rmax;
       _bottom_surface_ = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
     }
 
-    // outer side surface:
+    // Outer side surface:
     {
       rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
@@ -775,83 +1377,87 @@ namespace geomtools {
       }
       _outer_side_surface_ = s;
 
-      // top surface:
-      _top_surface_ = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
+      // Top surface:
+      if (has_bottom_face()) {
+        _top_surface_ = M_PI * (rmax0 * rmax0 - rmin0 * rmin0);
+      }
     }
 
-    {
-      // inner side surface:
+    if (has_inner_face()) {
+      // Inner side surface:
       rz_col_type::const_iterator i = _points_.begin ();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
-      // double rmax0 = i->second.rmax;
       double s = 0.0;
       rz_col_type::const_iterator j = i;
       j++;
       while (j != _points_.end ()) {
         const double z1 = j->first;
         const double rmin1 = j->second.rmin;
-        // const double rmax1 = j->second.rmax;
         // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
         const double R1 = rmin0;
         const double R2 = rmin1;
         const double A = cone::compute_frustrum_lateral_surface(z0, z1, R1, R2);
         s += A;
-        // increment:
+        // Increment:
         j++;
         z0 = z1;
         rmin0 = rmin1;
-        // rmax0 = rmax1;
       }
       _inner_side_surface_ = s;
     }
     return;
   }
 
-  void polycone::_compute_volume_ ()
+  void polycone::_compute_volume_()
   {
     if (! is_valid ()) return;
     double vext = 0.0;
     double vint = 0.0;
     // Outer envelope:
     {
-      rz_col_type::const_iterator i = _points_.begin ();
+      rz_col_type::const_iterator i = _points_.begin();
       double z0 = i->first;
       double rmax0 = i->second.rmax;
       rz_col_type::const_iterator j = i;
       j++;
-      while (j != _points_.end ()) {
+      while (j != _points_.end()) {
         const double z1 = j->first;
         const double r1 = j->second.rmax;
         const double R1 = rmax0;
         const double R2 = r1;
         const double V = cone::compute_frustrum_volume(z0,z1,R1,R2);
         vext += V;
-        // increment:
+        // Increment:
         j++;
         z0 = z1;
         rmax0 = r1;
       }
     }
     // Inner envelope:
-    {
-      rz_col_type::const_iterator i = _points_.begin ();
+    if (has_inner_face()) {
+      rz_col_type::const_iterator i = _points_.begin();
       double z0 = i->first;
       double rmin0 = i->second.rmin;
       rz_col_type::const_iterator j = i;
       j++;
-      while (j != _points_.end ()) {
+      while (j != _points_.end()) {
         const double z1 = j->first;
         const double rmin1 = j->second.rmin;
         const double R1 = rmin0;
         const double R2 = rmin1;
         const double V = cone::compute_frustrum_volume(z0,z1,R1,R2);
         vint += V;
-        // increment:
+        // Increment:
         j++;
         z0 = z1;
         rmin0 = rmin1;
       }
+    }
+
+    if (has_partial_angle()) {
+      vext *= (_delta_angle_ / (2 * M_PI));
+      vint *= (_delta_angle_ / (2 * M_PI));
     }
 
     _outer_volume_ = vext;
@@ -860,33 +1466,53 @@ namespace geomtools {
     return;
   }
 
-  double polycone::get_surface (uint32_t mask_) const
+  double polycone::get_surface(uint32_t mask_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
     double s = 0.0;
     int mask = mask_;
-    if ((int) mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
-    if (mask & FACE_INNER_SIDE) {
+
+    if (has_inner_face() && mask & FACE_INNER_SIDE) {
       s += _inner_side_surface_;
     }
+
     if (mask & FACE_OUTER_SIDE) {
       s += _outer_side_surface_;
     }
-    if (mask & FACE_BOTTOM) {
+
+    if (has_bottom_face() && mask & FACE_BOTTOM) {
       s += _bottom_surface_;
     }
-    if (mask & FACE_TOP) {
+
+    if (has_top_face() && mask & FACE_TOP) {
       s += _top_surface_;
     }
+
+    if (has_partial_angle()) {
+      s *= (_delta_angle_ / (2 * M_PI));
+    }
+
+    if (has_angle_faces()) {
+      if (mask & FACE_START_ANGLE) {
+        s += _start_angle_surface_;
+      }
+      if (mask & FACE_STOP_ANGLE) {
+        s += _stop_angle_surface_;
+      }
+    }
+
     return s;
   }
 
   double polycone::get_volume (uint32_t /*flags*/) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
     return _volume_;
   }
 
   double polycone::get_parameter (const std::string & flag_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
     if ( flag_ == "r_max" )              return get_r_max ();
     if ( flag_ == "z_min" )              return get_z_min ();
     if ( flag_ == "z_max" )              return get_z_max ();
@@ -902,8 +1528,28 @@ namespace geomtools {
     DT_THROW_IF (true, std::logic_error, "Unknown parameter '" << flag_ << "' flag !");
   }
 
+  bool polycone::is_outside(const vector_3d & point_, double skin_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
+    unsigned int noutside = 0;
+    double skin = get_skin(skin_);
+    // Scan the conical frustra:
+    for (unsigned int i = 0; i < number_of_frustra(); i++) {
+      right_circular_conical_frustrum rccf;
+      placement rccf_placement;
+      compute_frustrum(rccf, rccf_placement, i);
+      vector_3d pos_c;
+      rccf_placement.mother_to_child(point_, pos_c);
+      if (rccf.is_outside(pos_c, skin)) {
+        noutside++;
+      }
+    }
+    return noutside == number_of_frustra();
+  }
+
   bool polycone::is_inside (const vector_3d & point_, double skin_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
     double skin = get_skin(skin_);
     double hskin = 0.5 * skin;
 
@@ -914,196 +1560,216 @@ namespace geomtools {
     const double r = hypot(point_.x(), point_.y());
     if (r > get_r_max() - hskin) return false;
 
+    bool inside = false;
     // Scan the conical frustra:
-    for (rz_col_type::const_iterator i = _points_.begin();
-         i != _points_.end();
-         i++) {
-      const double z1 = i->first;
-      rz_col_type::const_iterator j = i;
-      j++;
-      if (j == _points_.end()) {
-        break;
-      }
-      const double z2 = j->first;
-      if ((z >= z1) && (z <= z2)) {
-        // We found the right conical frustrum:
-        const double r1max = i->second.rmax;
-        const double r2max = j->second.rmax;
-        const double r1min = i->second.rmin;
-        const double r2min = j->second.rmin;
-        const double alpha_max = std::atan2(r2max - r1max, z2 - z1);
-        const double epsilon_max = hskin / std::cos(alpha_max);
-        const double rsmax = r1max + (r2max - r1max) * (z - z1) / ( z2 - z1);
-        double rmax = rsmax - epsilon_max;
-        double rmin = -1.0;
-        if (r1min + r2min > 0.0) {
-          const double alpha_min = std::atan2(r2min - r1min, z2 - z1);
-          const double epsilon_min = hskin / std::cos(alpha_min);
-          const double rsmin = r1min + (r2min - r1min) * (z - z1) / ( z2 - z1);
-          rmin = rsmin + epsilon_min;
+    for (unsigned int i = 0; i < number_of_frustra(); i++) {
+      right_circular_conical_frustrum rccf;
+      placement rccf_placement;
+      compute_frustrum(rccf, rccf_placement, i);
+      vector_3d pos_c;
+      rccf_placement.mother_to_child(point_, pos_c);
+      if (rccf.is_inside(pos_c, 0.0)) {
+        // std::cerr << "DEVEL: polyhedra::is_inside: " << "in frustrum #" << i << std::endl;
+        face_identifier mask_id;
+        uint32_t face_bits = 0;
+        face_bits |= right_circular_conical_frustrum::FACE_OUTER_SIDE;
+        if (rccf.has_inner_face()) {
+          face_bits |= right_circular_conical_frustrum::FACE_INNER_SIDE;
         }
-        if ( (r <= rmax) && (r >= rmin) ) {
-          return true;
+        if (i == 0 && rccf.has_top_face()) {
+          face_bits |= right_circular_conical_frustrum::FACE_TOP;
+        }
+        if (i == number_of_frustra() - 1 && rccf.has_bottom_face()) {
+          face_bits |= right_circular_conical_frustrum::FACE_BOTTOM;
+        }
+        mask_id.set_face_bits(face_bits);
+        face_identifier surf_id = rccf.on_surface(point_, mask_id, skin);
+        if (! surf_id.is_valid()) {
+          inside = true;
         }
         break;
       }
     }
-    return false;
+
+    // std::cerr << "DEVEL: polycone::is_inside: " << "inside=" << inside << std::endl;
+    return inside;
   }
 
-  vector_3d polycone::get_normal_on_surface (const vector_3d & position_) const
+  vector_3d polycone::get_normal_on_surface (const vector_3d & position_,
+                                             const face_identifier & surface_bit_) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
     vector_3d normal;
-    invalidate (normal);
-    const double x = position_.x ();
-    const double y = position_.y ();
-    const double z = position_.z ();
-    if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
-    else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0);
-    else if (is_on_surface (position_, FACE_OUTER_SIDE)) {
-      for (rz_col_type::const_iterator i = _points_.begin ();
-           i != _points_.end ();
-           i++) {
-        const double z1 = i->first;
-        rz_col_type::const_iterator j = i;
-        j++;
-        if (j == _points_.end ()) {
-          break;
+    invalidate(normal);
+    const double x = position_.x();
+    const double y = position_.y();
+    const double z = position_.z();
+    switch(surface_bit_.get_face_bits()) {
+    case FACE_BOTTOM:
+      if (has_bottom_face()) {
+        normal.set(0.0, 0.0, -1.0);
+      }
+      break;
+    case FACE_TOP:
+      if (has_top_face()) {
+        normal.set(0.0, 0.0, +1.0);
+      }
+      break;
+    case FACE_OUTER_SIDE:
+      for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        right_circular_conical_nappe outer_nappe;
+        placement pl_nappe;
+        compute_outer_face(outer_nappe, pl_nappe, i);
+        vector_3d position_c;
+        pl_nappe.mother_to_child(position_, position_c);
+        vector_3d normal_c;
+        normal_c = outer_nappe.get_normal_on_surface(position_c, false);
+        pl_nappe.child_to_mother_direction(normal_c, normal);
+      }
+      break;
+    case FACE_INNER_SIDE:
+      if (has_inner_face()) {
+        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+          right_circular_conical_nappe inner_nappe;
+          placement pl_nappe;
+          compute_inner_face(inner_nappe, pl_nappe, i);
+          if (inner_nappe.is_valid()) {
+            vector_3d position_c;
+            pl_nappe.mother_to_child(position_, position_c);
+            vector_3d normal_c;
+            normal_c = -inner_nappe.get_normal_on_surface(position_c, false);
+            pl_nappe.child_to_mother_direction(normal_c, normal);
+          }
         }
-        const double z2 = j->first;
-        if ((z >= z1) && (z <= z2)) {
-          const double r1 = i->second.rmax;
-          const double r2 = j->second.rmax;
-          const double alpha = atan2 (r2 - r1, z2 - z1);
-          const double phi = atan2 (y, x);
-          const double theta = alpha + 0.5 * M_PI;
-          make_phi_theta (normal, phi, theta);
-          break;
+        break;
+      }
+    case FACE_START_ANGLE:
+      if (has_partial_angle()) {
+        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+          quadrangle qface;
+          triangle tface;
+          placement pl_face;
+          compute_start_angle_face(qface, tface, pl_face, i);
+          vector_3d position_c;
+          pl_face.mother_to_child(position_, position_c);
+          if (qface.is_valid()) { // && qface.is_on_surface(position_c, skin)) {
+            vector_3d normal_c = qface.get_normal_on_surface(position_c, false);
+            pl_face.child_to_mother_direction(normal_c, normal);
+          } else if (tface.is_valid()) { // && tface.is_on_surface(position_c, skin)) {
+            vector_3d normal_c = tface.get_normal_on_surface(position_c, false);
+            pl_face.child_to_mother_direction(normal_c, normal);
+          }
         }
-      } // for
-    } else if (is_on_surface (position_, FACE_INNER_SIDE)) {
-      //...
+      }
+      break;
+    case FACE_STOP_ANGLE:
+      if (has_partial_angle()) {
+        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+          quadrangle qface;
+          triangle tface;
+          placement pl_face;
+          compute_stop_angle_face(qface, tface, pl_face, i);
+          vector_3d position_c;
+          pl_face.mother_to_child(position_, position_c);
+          if (qface.is_valid()) { // && qface.is_on_surface(position_c, skin)) {
+            vector_3d normal_c = qface.get_normal_on_surface(position_c, false);
+            pl_face.child_to_mother_direction(normal_c, normal);
+          } else if (tface.is_valid()) { // && tface.is_on_surface(position_c, skin)) {
+            vector_3d normal_c = tface.get_normal_on_surface(position_c, false);
+            pl_face.child_to_mother_direction(normal_c, normal);
+          }
+        }
+      }
+      break;
     }
     return normal;
   }
 
-  bool polycone::is_on_surface (const vector_3d & point_ ,
-                                int    mask_ ,
-                                double skin_) const
+  face_identifier polycone::on_surface(const vector_3d & position_,
+                                       const face_identifier & surface_mask_,
+                                       double skin_) const
   {
-    //DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
     double skin = get_skin(skin_);
-    const double hskin = 0.5 * skin;
 
-    int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    face_identifier mask;
+    if (surface_mask_.is_valid()) {
+      DT_THROW_IF(! surface_mask_.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = surface_mask_;
+    } else {
+      mask.set_face_bits_any();
+    }
 
-    const double z = point_.z();
-    const double r = hypot(point_.x(), point_.y());
-
-    if (mask & FACE_BOTTOM) {
-      const double zbottom = _points_.begin()->first;
-      const double rmaxbottom = _points_.begin()->second.rmax;
-      if (rmaxbottom > 0.0) {
-        double rmax = rmaxbottom;
-        double rmin = -1.0;
-        const double rminbottom = _points_.begin()->second.rmin;
-        if (rminbottom > 0.0) {
-          rmin = rminbottom;
-        }
-        if ((std::abs(z - zbottom) < hskin)
-            && (r < rmax) && (r > rmin) ) {
-          return true;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(position_, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
         }
       }
     }
 
-    if (mask & FACE_TOP) {
-      const double ztop = _points_.rbegin()->first;
-      const double rmaxtop = _points_.rbegin()->second.rmax;
-      if (rmaxtop > 0.0) {
-        double rmax = rmaxtop;
-        double rmin = -1.0;
-        const double rmintop = _points_.rbegin()->second.rmin;
-        if (rmintop > 0.0) {
-          rmin = rmintop;
-        }
-        if ((std::abs(z - ztop) < hskin)
-            && (r < rmax) && (r > rmin) ) {
-          return true;
-        }
-      }
-    }
-
-    if (mask & FACE_OUTER_SIDE) {
-      // Scan the conical frustra:
-      for (rz_col_type::const_iterator i = _points_.begin ();
-           i != _points_.end ();
-           i++) {
-        const double z1 = i->first;
-        rz_col_type::const_iterator j = i;
-        j++;
-        if (j == _points_.end ()) {
-          break;
-        }
-        const double z2 = j->first;
-        if ((z >= z1) && (z <= z2)) {
-          // We found the right conical frustrum:
-          const double r1max = i->second.rmax;
-          const double r2max = j->second.rmax;
-          const double alpha_max = std::atan2(r2max - r1max, z2 - z1);
-          const double epsilon_max = hskin / std::cos(alpha_max);
-          const double rsmax = r1max + (r2max - r1max) * (z - z1) / ( z2 - z1);
-          if (std::abs(r - rsmax) < epsilon_max) {
-            return true;
-          }
-          break;
-        }
-      }
-    }
-
-    if (mask & FACE_INNER_SIDE) {
-      // Scan the conical frustra:
-      for (rz_col_type::const_iterator i = _points_.begin ();
-           i != _points_.end ();
-           i++) {
-        const double z1 = i->first;
-        rz_col_type::const_iterator j = i;
-        j++;
-        if (j == _points_.end ()) {
-          break;
-        }
-        const double z2 = j->first;
-        if ((z >= z1) && (z <= z2)) {
-          // We found the right conical frustrum:
-          const double r1min = i->second.rmin;
-          const double r2min = j->second.rmin;
-          //double rmin = -1.0;
-          if (r1min + r2min > 0.0) {
-            const double alpha_min = std::atan2(r2min - r1min, z2 - z1);
-            const double epsilon_min = hskin / std::cos(alpha_min);
-            const double rsmin = r1min + (r2min - r1min) * (z - z1) / ( z2 - z1);
-            //rmin = rsmin + epsilon_min;
-            if (std::abs(r - rsmin) < epsilon_min) {
-              return true;
-            }
-          }
-          break;
-        }
-      }
-    }
-
-    return false;
+    return face_identifier::face_invalid();
   }
 
-  bool polycone::find_intercept (const vector_3d & /*from_*/,
-                                 const vector_3d & /*direction_*/,
-                                 intercept_t & /*intercept_*/,
-                                 double /*skin_*/) const
+  bool polycone::find_intercept (const vector_3d & from_,
+                                 const vector_3d & direction_,
+                                 face_intercept_info & intercept_,
+                                 double skin_) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
-    return false;
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
+    intercept_.reset();
+
+    double skin = compute_tolerance(skin_);
+
+    const unsigned int NFACES = 6;
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
+
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
+      }
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            intercept_.set_face_id(intercepts[iface].get_face_id());
+            intercept_.set_impact(intercepts[iface].get_impact());
+          }
+        }
+      }
+    }
+
+    return intercept_.is_ok();
   }
 
   std::ostream & operator<< (std::ostream & out_, const polycone & p_)
@@ -1170,33 +1836,167 @@ namespace geomtools {
                             const std::string & indent_,
                             bool inherit_) const
   {
-    std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    i_object_3d::tree_dump (out_, title_, indent_, true);
+    i_shape_3d::tree_dump(out_, title_, indent_, true);
 
-    out_ << indent << datatools::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Z(min) : " << get_z_min () / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Z(max) : " << get_z_max () / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "R(max) : " << get_r_max () / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Number of points : " << _points_.size () << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Number of furstra : " << number_of_frustra() << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Volume : " << get_volume () / CLHEP::cm3 << " cm3" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Bottom surface : " << get_surface (FACE_BOTTOM) / CLHEP::cm2 << " cm2" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Top surface : " << get_surface (FACE_TOP) / CLHEP::cm2 << " cm2" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Outer side surface : " << get_surface (FACE_OUTER_SIDE) / CLHEP::cm2 << " cm2" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Inner side surface : " << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+
+    if (has_bottom_face()) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Bottom surface : "
+           << get_surface (FACE_BOTTOM) / CLHEP::cm2 << " cm2" << std::endl;
+    }
+
+    if (has_top_face()) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Top surface : "
+           << get_surface (FACE_TOP) / CLHEP::cm2 << " cm2" << std::endl;
+    }
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Outer side surface : "
+         << get_surface (FACE_OUTER_SIDE) / CLHEP::cm2 << " cm2" << std::endl;
+
+    if (has_inner_face()) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Inner side surface : "
+           << get_surface (FACE_INNER_SIDE) / CLHEP::cm2 << " cm2" << std::endl;
+    }
+
+    if (has_partial_angle()) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Start angle surface : "
+           << get_surface (FACE_START_ANGLE) / CLHEP::cm2 << " cm2" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Stop angle surface : "
+           << get_surface (FACE_STOP_ANGLE) / CLHEP::cm2 << " cm2" << std::endl;
+    }
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Total surface : " << get_surface (FACE_ALL) / CLHEP::cm2 << " cm2" << std::endl;
+
+    return;
+  }
+
+  void polycone::generate_wires_self(wires_type & wires_,
+                                     uint32_t options_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
+    bool devel = false;
+    // devel = true;
+    if (devel) std::cerr << "polycone::generate_wires_self: Entering..." << std::endl;
+
+    // bool debug_explode    = options_ & WR_BASE_EXPLODE;
+    bool draw_bottom      = !(options_ & WR_POLYCONE_NO_BOTTOM_FACE);
+    bool draw_top         = !(options_ & WR_POLYCONE_NO_TOP_FACE);
+    bool draw_inner       = !(options_ & WR_POLYCONE_NO_INNER_FACE);
+    bool draw_outer       = !(options_ & WR_POLYCONE_NO_OUTER_FACE);
+    bool draw_start_angle = !(options_ & WR_POLYCONE_NO_START_ANGLE_FACE);
+    bool draw_stop_angle  = !(options_ & WR_POLYCONE_NO_STOP_ANGLE_FACE);
+    bool draw_boundings    =  (options_ & WR_BASE_BOUNDINGS);
+
+    if (draw_boundings && has_bounding_data()) {
+      if (devel) std::cerr << "polycone::generate_wires_self: draw boundings..." << std::endl;
+      get_bounding_data().generate_wires_self(wires_, 0);
+    }
+
+    // Extract base rendering options:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    if (has_bottom_face() && draw_bottom) {
+      if (devel) std::cerr << "polycone::generate_wires_self: draw bottom..." << std::endl;
+      disk bottom_face;
+      placement bottom_pl;
+      compute_bottom_face(bottom_face, bottom_pl);
+      if (bottom_face.is_valid()) {
+        uint32_t options = base_options;
+        // options |= WR_BASE_GRID;
+        bottom_face.generate_wires(wires_, bottom_pl, options);
+      }
+    }
+
+    if (has_top_face() && draw_top) {
+      if (devel) std::cerr << "polycone::generate_wires_self: draw top..." << std::endl;
+      disk top_face;
+      placement top_pl;
+      compute_top_face(top_face, top_pl);
+      if (top_face.is_valid()) {
+        uint32_t options = base_options;
+        // options |= WR_BASE_GRID;
+        top_face.generate_wires(wires_, top_pl, options);
+      }
+    }
+
+    if (has_inner_face() && draw_inner) {
+      if (devel) std::cerr << "polycone::generate_wires_self: draw inner..." << std::endl;
+      composite_surface inner;
+      placement pl_inner;
+      compute_inner_face(inner, pl_inner);
+      if (inner.is_valid()) {
+        uint32_t options = base_options;
+        inner.generate_wires(wires_, pl_inner, options);
+      }
+    }
+
+    if (draw_outer) {
+      if (devel) std::cerr << "polycone::generate_wires_self: draw outer..." << std::endl;
+      composite_surface outer;
+      placement pl_outer;
+      compute_outer_face(outer, pl_outer);
+      if (outer.is_valid()) {
+        uint32_t options = base_options;
+        outer.generate_wires(wires_, pl_outer, options);
+      }
+    }
+
+    if (has_partial_angle()) {
+
+      if (draw_start_angle) {
+        if (devel) std::cerr << "polycone::generate_wires_self: draw start angle..." << std::endl;
+        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+          quadrangle qface;
+          triangle tface;
+          placement pl_face;
+          compute_start_angle_face(qface, tface, pl_face, i);
+          uint32_t options = base_options;
+          if (qface.is_valid()) qface.generate_wires(wires_, pl_face, options);
+          else if (tface.is_valid()) tface.generate_wires(wires_, pl_face, options);
+        }
+      }
+
+      if (draw_stop_angle) {
+        if (devel) std::cerr << "polycone::generate_wires_self: draw stop angle..." << std::endl;
+        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+          quadrangle qface;
+          triangle tface;
+          placement pl_face;
+          compute_stop_angle_face(qface, tface, pl_face, i);
+          uint32_t options = base_options;
+          if (qface.is_valid()) qface.generate_wires(wires_, pl_face, options);
+          else if (tface.is_valid()) tface.generate_wires(wires_, pl_face, options);
+        }
+      }
+
+    }
+
+    if (devel) std::cerr << "polycone::generate_wires_self: Exiting." << std::endl;
     return;
   }
 
 } // end of namespace geomtools
-
-// end of polycone.cc

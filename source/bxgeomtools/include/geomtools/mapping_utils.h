@@ -1,6 +1,4 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/mapping_utils.h
-
 
 #ifndef GEOMTOOLS_MAPPING_UTILS_H
 #define GEOMTOOLS_MAPPING_UTILS_H 1
@@ -56,3 +54,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_MAPPING_UTILS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

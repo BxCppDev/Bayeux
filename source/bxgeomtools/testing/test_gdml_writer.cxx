@@ -9,14 +9,15 @@
 // This project:
 #include <geomtools/utils.h>
 #include <geomtools/gdml_writer.h>
-
-using namespace std;
+#include <geomtools/box.h>
+#include <geomtools/cylinder.h>
+#include <geomtools/tube.h>
 
 int main (int /* argc_ */, char ** /* argv_ */)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
-  try
-    {
+  try {
       clog << "Test program for class 'gdml_writer'!" << endl;
 
       // bool debug = false;
@@ -94,7 +95,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
                               "U238", 0.1,
                               "U241", 0.2);
         }
-      catch (exception & x)
+      catch (std::exception & x)
         {
           clog << "warning: " << x.what () << endl;
         }
@@ -204,5 +205,3 @@ int main (int /* argc_ */, char ** /* argv_ */)
     }
   return (error_code);
 }
-
-// end of test_gdml_writer.cxx

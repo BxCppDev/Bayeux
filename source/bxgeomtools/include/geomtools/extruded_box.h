@@ -1,9 +1,8 @@
-// -*- mode: c++; -*-
 /// \file geomtools/extruded_box.h
 /* Author(s):     Arnaud Chapon <chapon@lpccaen.in2p3.fr>
  *                François Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date: 2015-10-27
- * Last modified: 2015-10-27
+ * Creation date: 2014-10-27
+ * Last modified: 2015-03-23
  *
  * License:
  *
@@ -27,10 +26,7 @@
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
-#include <geomtools/polyline_3d.h>
 #include <geomtools/placement.h>
-#include <geomtools/i_wires_3d_rendering.h>
-#include <geomtools/i_wires_drawer.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -39,10 +35,13 @@ namespace datatools {
 
 namespace geomtools {
 
+  // Forward class declaration:
+  class box;
+  class composite_surface;
+
   /// \brief The 3D shape model for an extruded box
-  class extruded_box : public i_shape_3d ,
-                       public i_stackable,
-                       public i_wires_3d_rendering
+  class extruded_box : public i_shape_3d,
+                       public i_stackable
   {
 
   public:
@@ -52,7 +51,7 @@ namespace geomtools {
 
     ///  \brief Masks used for the 6 faces of the extruded_box
     enum faces_mask_type {
-      FACE_NONE          = geomtools::FACE_NONE,
+      FACE_NONE          = face_identifier::FACE_BITS_NONE,
       FACE_BACK          = datatools::bit_mask::bit00,
       FACE_FRONT         = datatools::bit_mask::bit01,
       FACE_LEFT          = datatools::bit_mask::bit02,
@@ -79,8 +78,6 @@ namespace geomtools {
                             | FACE_INSIDE_TOP)
     };
 
-  public:
-
     /// Return the min X coordinates (bounding box)
     double get_xmin() const;
 
@@ -100,7 +97,7 @@ namespace geomtools {
     double get_zmax() const;
 
     /// Return the X dimension
-    double get_x () const;
+    double get_x() const;
 
     /// Set the X dimension
     void set_x(double);
@@ -171,8 +168,6 @@ namespace geomtools {
     /// Remove the top of the extruded box
     void remove_top();
 
-  public:
-
     /// Default constructor
     extruded_box();
 
@@ -200,7 +195,7 @@ namespace geomtools {
     double get_parameter(const std::string &) const;
 
     /// Return the cumulated surface of the extruded_box given a list of faces
-    virtual double get_surface(uint32_t mask_ = FACE_ALL_BITS) const;
+    virtual double get_surface(uint32_t mask_ = FACE_ALL) const;
 
     /// Return the volume of the extruded_box
     virtual double get_volume(uint32_t flags_ = 0) const;
@@ -213,14 +208,14 @@ namespace geomtools {
     virtual bool is_outside(const vector_3d &,
                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    /// Check if a point is on some surface of the extruded_box
-    /// If 'skin' < 0 no skin is taken into account.
-    virtual bool is_on_surface(const vector_3d &,
-                               int mask_    = FACE_ALL_BITS,
-                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+    /// Return the surface bit a point belongs to
+    virtual face_identifier on_surface(const vector_3d &,
+                                       const face_identifier & a_surface_mask = face_identifier::face_bits_any(),
+                                       double a_skin = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Return the vector normal to the surface at some position
-    virtual vector_3d get_normal_on_surface(const vector_3d & position_) const;
+    virtual vector_3d get_normal_on_surface(const vector_3d & a_position,
+                                            const face_identifier & a_surface_bit) const;
 
     /// Print operator
     friend std::ostream & operator<<( std::ostream &, const extruded_box & );
@@ -231,7 +226,7 @@ namespace geomtools {
     /// Find the intercept point of a segment with the extruded_box
     virtual bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
-                                intercept_t & intercept_,
+                                face_intercept_info & intercept_,
                                 double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Smart print
@@ -240,26 +235,32 @@ namespace geomtools {
                            const std::string & indent_ = "",
                            bool inherit_               = false) const;
 
-    /// Generate a list of polylines representing the contour of the shape (for display clients)
-    virtual void generate_wires(std::list<polyline_3d> &,
-                                const placement &,
-                                uint32_t options_ = 0) const;
+    /// Return a collection of face info objects
+    virtual unsigned int compute_faces(face_info_collection_type & faces_) const;
 
-    /// \brief Special Gnuplot rendering
-    struct wires_drawer : public i_wires_drawer
-    {
-      //! Constructor
-      wires_drawer(const extruded_box & eb_);
-      //! Destructor
-      virtual ~wires_drawer();
-      //! Output
-      virtual void generate_wires(std::ostream & out_,
-                                  const geomtools::vector_3d & position_,
-                                  const geomtools::rotation_3d & rotation_);
-    private:
-      const extruded_box * _exbox_; //!< Handle to the target solid
-      boost::scoped_ptr<std::list<polyline_3d> > _wires_ptr_; //!< Local cache
+    /// Compute the outer box
+    void compute_outer_box(box & outer_box_) const;
+
+    /// Compute the inner box and its placement
+    void compute_inner_box(box & inner_box_, placement & face_placement_) const;
+
+    /// Compute the top face and placement
+    void compute_extruded_top_bottom_face(faces_mask_type face_id_,
+                                          composite_surface & face_,
+                                          placement & face_placement_) const;
+
+    /// \brief 3D rendering options
+    enum extruded_box_wires_rendering_option_type {
+      WR_EXTRBOX_NO_EXTERNAL_FACES = (WR_BASE_LAST << 1),             //!< Do not render the external faces
+      WR_EXTRBOX_NO_INTERNAL_FACES = (WR_BASE_LAST << 2),             //!< Do not render the internal faces
+      WR_EXTRBOX_LAST              = (WR_EXTRBOX_NO_INTERNAL_FACES),  //!< Last defined bit
+      WR_EXTRBOX_MASK              = (WR_EXTRBOX_NO_EXTERNAL_FACES
+                                      | WR_EXTRBOX_NO_INTERNAL_FACES) //!< Rendering options bit mask
     };
+
+    /// Generate a list of polylines representing the contour of the shape (for display clients)
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
@@ -269,6 +270,9 @@ namespace geomtools {
     /// Set default attributes
     void _set_default();
 
+    /// Build the bounding data
+    virtual void _build_bounding_data();
+
   private:
 
     double _x_;          //!< Width (in arbitrary units)
@@ -277,6 +281,11 @@ namespace geomtools {
     double _thickness_;  //!< Thickness (in arbitrary units)
     bool   _has_top_;    //!< Flag if extruded box has a top
     bool   _has_bottom_; //!< Flag if extruded box has a bottom
+
+    // // Work
+    // datatools::handle<box> _h_outer_box_;
+    // datatools::handle<box> _h_inner_box_;
+    // placement              _inner_box_placement_;
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(extruded_box);
@@ -290,3 +299,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::extruded_box)
 
 #endif // GEOMTOOLS_EXTRUDED_BOX_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

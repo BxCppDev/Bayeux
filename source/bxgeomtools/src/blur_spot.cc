@@ -16,6 +16,7 @@
 
 // This project:
 #include <geomtools/i_object_3d.h>
+#include <geomtools/polyline_3d.h>
 
 namespace geomtools {
 
@@ -616,20 +617,13 @@ namespace geomtools {
     return;
   }
 
-  void blur_spot::generate_wires (std::list<polyline_3d> & lpl_,
-                                  const placement & p_,
-                                  uint32_t /*options_*/) const
+  void blur_spot::generate_wires_self(wires_type & wires_,
+                                      uint32_t /*options_*/) const
   {
     double dx, dy, dz;
     dx = _tolerance_;
     dy = _tolerance_;
     dz = _tolerance_;
-
-    /*
-      std::cerr << "geomtools::blur_spot::generate_wires: "
-      << "tolerance=" << _tolerance_/CLHEP::mm << " mm"
-      << std::endl;
-    */
     if (is_dimension_zero()) {
     }
     if (is_dimension_one()) {
@@ -644,6 +638,7 @@ namespace geomtools {
       dy = _x_error_;
       dz = _z_error_;
     }
+
     vector_3d vertexes[3][2];
     for (int i = 0; i < 3; i++) {
       vertexes[i][0].set((i == 0) ? -dx : 0,
@@ -657,71 +652,63 @@ namespace geomtools {
     {
       for (int i = 0; i < 3; i++) {
         {
-          polyline_3d xpl;
-          lpl_.push_back (xpl);
+          polyline_type xpl;
+          wires_.push_back(xpl);
         }
-        polyline_3d & pl = lpl_.back ();
-        pl.set_closed (false);
-        vector_3d v1, v;
-        _placement_.child_to_mother (vertexes[i][0], v1);
-        p_.child_to_mother (v1, v);
-        pl.add (v);
+        polyline_type & pl = wires_.back();
+        vector_3d v1;
+        _placement_.child_to_mother(vertexes[i][0], v1);
+        pl.push_back(v1);
+        /*
         if (i == 0) {
           // Workaround to avoid automatic Gnuplot data mesh display mode :
           // add the middle point of the X segment.
-          vector_3d v0 = 0.5*(vertexes[i][0]+vertexes[i][1]);
+          vector_3d v0 = 0.5 *(vertexes[i][0]+vertexes[i][1]);
           _placement_.child_to_mother (v0, v1);
-          p_.child_to_mother (v1, v);
-          pl.add (v);
+          pl.add(v1);
         }
-        _placement_.child_to_mother (vertexes[i][1], v1);
-        p_.child_to_mother (v1, v);
-        pl.add (v);
+        */
+        _placement_.child_to_mother(vertexes[i][1], v1);
+        pl.push_back(v1);
       }
     }
 
     if (is_dimension_two() || is_dimension_three()) {
       {
-        polyline_3d xpl;
-        lpl_.push_back (xpl);
+        polyline_type xpl;
+        wires_.push_back(xpl);
       }
-      polyline_3d & pl = lpl_.back ();
-      pl.set_closed (true);
-      vector_3d v1, v;
-      _placement_.child_to_mother (vertexes[0][0], v1);
-      p_.child_to_mother (v1, v);
-      pl.add (v);
-      _placement_.child_to_mother (vertexes[1][0], v1);
-      p_.child_to_mother (v1, v);
-      pl.add (v);
-      _placement_.child_to_mother (vertexes[0][1], v1);
-      p_.child_to_mother (v1, v);
-      pl.add (v);
-      _placement_.child_to_mother (vertexes[1][1], v1);
-      p_.child_to_mother (v1, v);
-      pl.add (v);
+      polyline_type & wire = wires_.back();
+      vector_3d v1;
+      _placement_.child_to_mother(vertexes[0][0], v1);
+      wire.push_back(v1);
+      _placement_.child_to_mother(vertexes[1][0], v1);
+      wire.push_back(v1);
+      _placement_.child_to_mother(vertexes[0][1], v1);
+      wire.push_back(v1);
+      _placement_.child_to_mother(vertexes[1][1], v1);
+      wire.push_back(v1);
+      _placement_.child_to_mother(vertexes[0][0], v1);
+      wire.push_back(v1);
     }
     if (is_dimension_three()) {
       for (int j = 0; j < 2; j++) {
         {
-          polyline_3d xpl;
-          lpl_.push_back (xpl);
+          polyline_type xpl;
+          wires_.push_back(xpl);
         }
-        polyline_3d & pl = lpl_.back ();
-        pl.set_closed (true);
-        vector_3d v1, v;
-        _placement_.child_to_mother (vertexes[j][0], v1);
-        p_.child_to_mother (v1, v);
-        pl.add (v);
-        _placement_.child_to_mother (vertexes[2][0], v1);
-        p_.child_to_mother (v1, v);
-        pl.add (v);
-        _placement_.child_to_mother (vertexes[j][1], v1);
-        p_.child_to_mother (v1, v);
-        pl.add (v);
-        _placement_.child_to_mother (vertexes[2][1], v1);
-        p_.child_to_mother (v1, v);
-        pl.add (v);
+        polyline_type & wire = wires_.back();
+        vector_3d v1;
+        _placement_.child_to_mother(vertexes[j][0], v1);
+        wire.push_back(v1);
+        _placement_.child_to_mother(vertexes[2][0], v1);
+        wire.push_back(v1);
+        _placement_.child_to_mother(vertexes[j][1], v1);
+        wire.push_back(v1);
+        _placement_.child_to_mother(vertexes[2][1], v1);
+        wire.push_back(v1);
+        _placement_.child_to_mother(vertexes[j][0], v1);
+        wire.push_back(v1);
       }
     }
     return;

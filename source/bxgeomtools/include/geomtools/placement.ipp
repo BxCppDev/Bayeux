@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/placement.ipp
 
 #ifndef GEOMTOOLS_PLACEMENT_IPP
@@ -44,3 +43,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_PLACEMENT_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

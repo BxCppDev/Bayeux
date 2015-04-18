@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/cylindric_extrusion_boxed_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
@@ -32,10 +31,12 @@
 #include <geomtools/logical_volume.h>
 #include <geomtools/placement.h>
 #include <geomtools/physical_volume.h>
+#include <geomtools/i_wires_drawer.h>
 
 namespace geomtools {
 
-  /// \brief A geometry model implementing a box with a cylindrical extrusion
+  /// \brief A geometry model implementing a box with a cylindrical extrusion,
+  ///        open on both bottom and top faces of the box
   class cylindric_extrusion_boxed_model : public i_model
   {
   public:
@@ -103,12 +104,30 @@ namespace geomtools {
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
-    /// Gnuplot draw function
-    static void gnuplot_draw_user_function (std::ostream &,
-                                            const geomtools::vector_3d &,
-                                            const geomtools::rotation_3d &,
-                                            const geomtools::i_object_3d &,
-                                            void * = 0);
+
+    /// \brief Special wires 3D rendering
+    struct wires_drawer : public i_wires_drawer<cylindric_extrusion_boxed_model>
+    {
+      //! \brief Rendering options
+      enum wires_rendering_option_type {
+        WR_CEBM_NO_MOTHER_FACES    = (WR_BASE_LAST << 1),           //!< Do not render the mother box solid faces
+        WR_CEBM_NO_EXTRUSION_FACES = (WR_BASE_LAST << 2),           //!< Do not render the extrusion surface
+        WR_CEBM_LAST               = (WR_CEBM_NO_MOTHER_FACES),     //!< Last defined bit
+        WR_CEBM_MASK               = (WR_CEBM_NO_MOTHER_FACES
+                                      | WR_CEBM_NO_EXTRUSION_FACES) //!< Rendering options bit mask
+      };
+
+      //! Constructor
+      wires_drawer(const cylindric_extrusion_boxed_model & model_);
+
+      //! Destructor
+      virtual ~wires_drawer();
+
+      //! Generate a list of polylines representing the contour of the shape (for display clients)
+      virtual void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const;
+
+    };
 
   protected:
 
@@ -119,15 +138,17 @@ namespace geomtools {
 
   private:
 
-    std::string      _material_name_; /// Name of the material
-    double           _mother_x_, _mother_y_, _mother_z_; /// Dimensions of the mother box
-    double           _extrusion_radius_; /// Radius of the cylindric extrusion
-    double           _extrusion_x_; /// X position of the extrusion
-    double           _extrusion_y_; /// Y position of the extrusion
+    std::string      _material_name_; //!< Name of the material
+    double           _mother_x_, _mother_y_, _mother_z_; //!< Dimensions of the mother box
+    double           _extrusion_radius_; //!< Radius of the cylindric extrusion
+    double           _extrusion_x_; //!< X position of the extrusion
+    double           _extrusion_y_; //!< Y position of the extrusion
 
-    geomtools::box            _mother_box_;         /// Mother box
-    geomtools::cylinder       _extrusion_cylinder_; /// Extrusion cylinder
-    geomtools::subtraction_3d _extruded_solid_;     /// Extruded solid
+    geomtools::box            _mother_box_;         //!< Mother box
+    geomtools::cylinder       _extrusion_cylinder_; //!< Extrusion cylinder
+    geomtools::subtraction_3d _extruded_solid_;     //!< Extruded solid
+
+    boost::scoped_ptr<wires_drawer> _drawer_;
 
     // Registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(cylindric_extrusion_boxed_model);
@@ -140,3 +161,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::cylindric_extrusion_boxed_model)
 
 #endif // GEOMTOOLS_CYLINDRIC_EXTRUSION_BOXED_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

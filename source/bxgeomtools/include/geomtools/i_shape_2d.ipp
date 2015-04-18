@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/i_shape_2d.ipp
 
 #ifndef GEOMTOOLS_I_SHAPE_2D_IPP
@@ -29,3 +28,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_I_SHAPE_2D_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

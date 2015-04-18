@@ -305,7 +305,12 @@ int main (int argc_, char ** argv_)
             geomtools::line_3d & l1 = bag.add<geomtools::line_3d> ("l1", "A 3D line");
             l1.set_first (geomtools::vector_3d (0.,0.,0.));
             l1.set_last (geomtools::vector_3d (1.,1.,1.));
-            bag.add<geomtools::helix_3d> ("h1", "A 3D helix");
+            geomtools::helix_3d & h1 = bag.add<geomtools::helix_3d> ("h1", "A 3D helix");
+            h1.set_radius(1.0);
+            h1.set_step(1.0);
+            h1.set_t1(0.0);
+            h1.set_t2(1.0);
+            h1.set_center(0.0, 0.0, 0.0);
             bag.add<geomtools::polyline_3d> ("pl1", "A 3D polyline");
           }
 

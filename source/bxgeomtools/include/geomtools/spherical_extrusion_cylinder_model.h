@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/spherical_extrusion_cylinder_model.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
- * Last modified: 2012-04-04
+ * Last modified: 2015-02-15
  *
  * License:
  *
@@ -38,51 +37,62 @@
 
 namespace geomtools {
 
-  // Forward declaration:
-  class i_wires_drawer;
-
   /// \brief A cylinder volume with a spherical extrusion
   class spherical_extrusion_cylinder_model : public i_model
   {
 
   public:
 
-    const std::string & get_material () const;
+    //! Return the material label
+    const std::string & get_material() const;
 
-    const geomtools::subtraction_3d & get_solid () const;
+    //! Return the top level solid
+    const geomtools::subtraction_3d & get_solid() const;
 
-    virtual std::string get_model_id () const;
+    //! Return the model unique identifier
+    virtual std::string get_model_id() const;
 
     //! Constructor
-    spherical_extrusion_cylinder_model ();
+    spherical_extrusion_cylinder_model();
 
     //! Destructor
-    virtual ~spherical_extrusion_cylinder_model ();
+    virtual ~spherical_extrusion_cylinder_model();
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_          = false) const;
+    //! Smart print
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
-    /// \brief Special Gnuplot rendering
-    struct wires_drawer : public i_wires_drawer
+    /// \brief Special wires 3D rendering
+    struct wires_drawer : public i_wires_drawer<spherical_extrusion_cylinder_model>
     {
-      wires_drawer(const spherical_extrusion_cylinder_model & model_, double h_, bool bottom_);
+      //! \brief Rendering options
+      enum wires_rendering_option_type {
+        WR_SECM_NO_MOTHER_FACES    = (WR_BASE_LAST << 1),           //!< Do not render the mother cylinder solid faces
+        WR_SECM_NO_EXTRUSION_FACES = (WR_BASE_LAST << 2),           //!< Do not render the extrusion surface
+        WR_SECM_LAST               = (WR_SECM_NO_MOTHER_FACES),     //!< Last defined bit
+        WR_SECM_MASK               = (WR_SECM_NO_MOTHER_FACES
+                                      | WR_SECM_NO_EXTRUSION_FACES) //!< Rendering options bit mask
+      };
+
+      //! Constructor
+      wires_drawer(const spherical_extrusion_cylinder_model & model_);
+
+      //! Destructor
       virtual ~wires_drawer();
-      virtual void generate_wires(std::ostream & out_,
-                                  const geomtools::vector_3d & position_,
-                                  const geomtools::rotation_3d & rotation_);
-    private:
-      const spherical_extrusion_cylinder_model * _model_;
-      double _h_;
-      bool _bottom_;
+
+      //! Generate a list of polylines representing the contour of the shape (for display clients)
+      virtual void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const;
+
     };
 
   protected:
 
-    virtual void _at_construct (const std::string & name_,
-                                const datatools::properties & setup_,
-                                geomtools::models_col_type * models_ = 0);
+    virtual void _at_construct(const std::string & name_,
+                               const datatools::properties & setup_,
+                               geomtools::models_col_type * models_ = 0);
   private:
 
     std::string               _material_; //!< Material name
@@ -98,10 +108,18 @@ namespace geomtools {
 
     boost::scoped_ptr<wires_drawer> _drawer_;
 
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE (spherical_extrusion_cylinder_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(spherical_extrusion_cylinder_model);
 
   };
 
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_SPHERICAL_EXTRUSION_CYLINDER_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/polyline_3d.ipp
 
 #ifndef GEOMTOOLS_POLYLINE_3D_IPP
@@ -47,3 +46,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_POLYLINE_3D_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

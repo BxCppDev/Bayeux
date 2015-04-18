@@ -378,7 +378,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   gnuplot_drawer::gnuplot_drawer ()
   {
     _initialized_ = false;
@@ -468,30 +467,6 @@ namespace geomtools {
    return;
   }
 
-  /****************************************************/
-
-  /*
-  void gnuplot_drawer::_draw_ (const logical_volume & log_,
-                               const placement & p_,
-                               int max_display_level_)
-  {
-    visibility_rules vr;
-    vr.active = true;
-    vr.show_volume = true;
-    vr.show_envelope = false;
-    vr.show_daughters = true;
-    vr.daughter_level = max_display_level_;
-    this->_draw_(log_, p_, vr);
-    return;
-  }
-
-  void gnuplot_drawer::_draw_ (const logical_volume & log_,
-                               const placement & p_,
-                               const visibility_rules & vis_rules_)
-  {
-  }
-  */
-
   void gnuplot_drawer::_draw_ (const logical_volume & log_,
                                const placement & p_,
                                int max_display_level_)
@@ -552,14 +527,17 @@ namespace geomtools {
 
           if (color_label != color::transparent()) {
             std::ostringstream & colored_oss = _get_stream (color_label);
-            unsigned long mode = gnuplot_draw::MODE_NULL;
-            if (visibility::is_wired_cylinder(log_visu_config)) {
-              mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
-            }
+            // unsigned long mode = gnuplot_draw::MODE_NULL;
+            // if (visibility::is_wired_cylinder(log_visu_config)) {
+            //   mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
+            // }
+            uint32_t options = 0;
+            // XXX
+
             gnuplot_draw::draw(colored_oss,
                                p_,
                                log.get_shape(),
-                               mode);
+                               options);
           }
         }
       }
@@ -639,17 +617,6 @@ namespace geomtools {
     DT_LOG_TRACE (local_priority, "Exiting.");
     return;
   }
-
-  /****************************************************/
-  // void gnuplot_drawer::draw(const logical_volume & log_,
-  //                           const placement & p_,
-  //                           int max_display_level_,
-  //                           const std::string & title_,
-  //                           bool /* display_data_ */)
-  // {
-  //   draw_logical(log_, p_, max_display_level_, title_);
-  //   return;
-  // }
 
   void gnuplot_drawer::draw_logical (const logical_volume & log_,
                                      const placement & p_,

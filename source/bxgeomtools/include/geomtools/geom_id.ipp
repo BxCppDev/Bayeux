@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/geom_id.ipp
 
 #ifndef GEOMTOOLS_GEOM_ID_IPP
@@ -36,3 +35,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_GEOM_ID_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

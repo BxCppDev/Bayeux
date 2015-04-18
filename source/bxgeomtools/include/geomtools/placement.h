@@ -1,8 +1,7 @@
-// -*- mode: c++; -*-
 /// \file geomtools/placement.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2008-05-23
+ * Last modified: 2015-02-24
  *
  * License:
  *
@@ -28,160 +27,210 @@
 namespace geomtools {
 
   /// \brief The placement for a geometry volume with its translation and rotation
+  ///        with respect to some mother reference frame
   class placement : public i_placement
   {
 
   public:
 
     /// Check validity
-    bool is_valid () const;
+    bool is_valid() const;
 
     /// Invalidate
-    void invalidate ();
+    void invalidate();
 
     /// Return the translation
-    const vector_3d & get_translation () const;
+    const vector_3d & get_translation() const;
+
+    /// Return the mutable translation
+    vector_3d & grab_translation();
 
     /// Set the translation from a (x,y,z) coordinate triplet
-    void set_translation (double, double, double);
+    void set_translation(double, double, double);
 
     /// Set the translation from a (x,y,z) coordinate triplet
-    void set_translation_xyz (double, double, double);
+    void set_translation_xyz(double, double, double);
 
     /// Set the translation
-    void set_translation (const vector_3d &);
+    void set_translation(const vector_3d &);
 
     /// Set the translation
-    void set_translation_v (const vector_3d &);
+    void set_translation_v(const vector_3d &);
+
+    /// Translate the current translation by some shift
+    void translate(const vector_3d &);
+
+    /// Translate the current translation by some shift
+    void translate(double dx_, double dy_, double dz_);
 
     /// Check if the orientation is defined as a simple rotation (X, Y or Z axis)
-    bool is_simple_rotation () const;
+    bool is_simple_rotation() const;
 
     /// Check if the orientation is defined as a X axis rotation
-    bool is_rotation_x () const;
+    bool is_rotation_x() const;
 
     /// Check if the orientation is defined as a Y axis rotation
-    bool is_rotation_y () const;
+    bool is_rotation_y() const;
 
     /// Check if the orientation is defined as a Z axis rotation
-    bool is_rotation_z () const;
+    bool is_rotation_z() const;
 
     /// Return rotation axis
-    int get_rotation_axis () const;
+    int get_rotation_axis() const;
 
     /// Return rotation angle
-    double get_rotation_angle () const;
+    double get_rotation_angle() const;
 
     /// Check if the orientation is defined through ZYZ Euler angles
-    bool is_zyz_rotation () const;
+    bool is_zyz_rotation() const;
 
     /// Return phi Euler angle
-    double get_phi () const;
+    double get_phi() const;
 
     /// Return theta Euler angle
-    double get_theta () const;
+    double get_theta() const;
 
     /// Return delta Euler angle
-    double get_delta () const;
+    double get_delta() const;
 
     /// Chec if Euler angles are defined
-    bool has_angles () const;
+    bool has_angles() const;
 
     /// Return the rotation matrix
-    const rotation_3d & get_rotation () const;
+    const rotation_3d & get_rotation() const;
 
     /// Return the inverse rotation matrix
-    const rotation_3d & get_inverse_rotation () const;
+    const rotation_3d & get_inverse_rotation() const;
 
     // geomtools::i_placement interface:
 
     /// Return the dimension of the(multi-)placement object
-    virtual size_t get_dimension () const;
+    virtual size_t get_dimension() const;
 
     /// Return the number of placement entries associated to this placement object
-    virtual size_t get_number_of_items () const;
+    virtual size_t get_number_of_items() const;
 
     /// Compute the placement at given index
-    virtual void get_placement (int item_, placement & p_) const;
+    virtual void get_placement(int item_, placement & p_) const;
 
     /// Check if placement is a replica
-    virtual bool is_replica () const;
+    virtual bool is_replica() const;
 
     /// Check if the (multi-)placement has only one rotation for all its placement objects
-    virtual bool has_only_one_rotation () const;
+    virtual bool has_only_one_rotation() const;
 
     /// Compute the list of multi-dimension multiplet for placement at given index
-    virtual size_t compute_index_map (std::vector<uint32_t> & map_,
-                                      int item_) const;
+    virtual size_t compute_index_map(std::vector<uint32_t> & map_,
+                                     int item_) const;
 
     /// Check if the placement is identity
     bool is_identity() const;
 
     /// Set identity
-    void set_identity ();
+    void set_identity();
 
     /// Set orientation by axis and angle
-    void set_orientation (int axis_, double angle_);
+    void set_orientation(int axis_, double angle_);
 
     /// Set orientation by axis and angle
-    void set_orientation_axis_angle (int axis_, double angle_);
+    void set_orientation_axis_angle(int axis_, double angle_);
 
     /// Set orientation by ZYZ Euler angles
-    void set_orientation (double phi_, double theta_, double delta_);
+    void set_orientation(double phi_, double theta_, double delta_);
 
     /// Set orientation by ZYZ Euler angles
-    void set_orientation_zyz (double phi_, double theta_, double delta_);
+    void set_orientation_zyz(double phi_, double theta_, double delta_);
+
+    /// Set orientation by arbitrary Euler angles
+    void set_orientation(double angle0_, double angle1_, double angle2_, euler_angles_type euler_angle_);
 
     /// Set translation by (x,y,z) coordinate triplet and orientation by ZYZ Euler angles
-    void set (double x_, double y_, double z_,
-              double phi_, double theta_, double delta_);
+    void set(double x_, double y_, double z_,
+             double phi_, double theta_, double delta_);
+
+    /// Set translation by (x,y,z) coordinate triplet and orientation by Euler angles
+    void set(double x_, double y_, double z_,
+             double angle0_, double angle1_, double angle2_, euler_angles_type euler_angle_);
 
     /// Set translation by (x,y,z) coordinate triplet and orientation by axis and angle
-    void set (double x_, double y_, double z_,
-              int axis_, double angle_);
+    void set(double x_, double y_, double z_,
+             int axis_, double angle_);
 
     /// Set translation by position and orientation ZYZ Euler angles
-    void set (const vector_3d & t_,
-              double phi_, double theta_, double delta_);
+    void set(const vector_3d & t_,
+             double phi_, double theta_, double delta_);
+
+    /// Set translation by position and orientation by Euler angles
+    void set(const vector_3d & t_,
+             double angle0_, double angle1_, double angle2_, euler_angles_type euler_angle_);
+
 
     /// Set translation by position and orientation by axis and angle
-    void set (const vector_3d & t_,
-              int axis_, double angle_);
+    void set(const vector_3d & t_,
+             int axis_, double angle_);
 
     /// Set the rotation (not recommended at all)
-    void set_orientation (const rotation_3d &);
+    void set_orientation(const rotation_3d &);
 
     /// Set the rotation using XYZ Euler angles (experimental)
-    void set_orientation_xyz (double phi_, double theta_, double delta_);
+    void set_orientation_xyz(double phi_, double theta_, double delta_);
 
     /// Constructor
-    placement ();
+    placement();
 
     /// Constructor
-    placement (const vector_3d & translation_,
-               double phi_,
-               double theta_,
-               double delta_);
+    placement(const vector_3d & translation_);
 
     /// Constructor
-    placement (const vector_3d & translation_,
-               int axis_,
-               double angle_);
+    placement(double x_,
+              double y_,
+              double z_);
 
     /// Constructor
-    placement (double x_,
-               double y_,
-               double z_,
-               double phi_,
-               double theta_,
-               double delta_);
+    placement(const vector_3d & translation_,
+              double phi_,
+              double theta_,
+              double delta_);
 
     /// Constructor
-    placement (double x_,
-               double y_,
-               double z_,
-               int    axis_,
-               double angle_);
+    placement(const vector_3d & translation_,
+              int axis_,
+              double angle_);
+
+    /// Constructor
+    placement(double x_,
+              double y_,
+              double z_,
+              double phi_,
+              double theta_,
+              double delta_);
+
+    /// Constructor
+    placement(double x_,
+              double y_,
+              double z_,
+              double angle0_,
+              double angle1_,
+              double angle2_,
+              euler_angles_type euler_angles_);
+
+    /// Constructor
+    placement(const vector_3d & translation_,
+              double angle0_,
+              double angle1_,
+              double angle2_,
+              euler_angles_type euler_angles_);
+
+    /// Constructor
+    placement(double x_,
+              double y_,
+              double z_,
+              int    axis_,
+              double angle_);
+
+    /// Constructor
+    placement(const vector_3d & translation_,
+              const rotation_3d & rotation_);
 
     /// Destructor
     virtual ~placement ();
@@ -244,6 +293,7 @@ namespace geomtools {
     /// Test method
     void test() const;
 
+
   private:
 
     /// Compute internal orientation parameters
@@ -283,3 +333,11 @@ BOOST_CLASS_VERSION(geomtools::placement, 0)
 */
 
 #endif // GEOMTOOLS_PLACEMENT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

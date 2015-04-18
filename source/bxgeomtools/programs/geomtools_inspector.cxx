@@ -298,6 +298,19 @@ int main(int argc_, char ** argv_)
           command_iss >> logical_name >> std::ws;
           GD.command_print_logical(logical_name, std::cout);
           logical_name.clear();
+        // } else if (command == "R" || command == "rendering_options") {
+        //   std::vector<std::string> argv;
+        //   while (command_iss) {
+        //     std::string token;
+        //     command_iss >> token >> std::ws;
+        //     if (token.empty()) break;
+        //     argv.push_back(token);
+        //     if (command_iss.eof()) break;
+        //   } // end of parsing
+        //   int error = GD.command_set_rendering_options(argv);
+        //   if (error > 0) {
+        //     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot set rendering options !");
+        //   }
         } else if (command == "M" || command == "list_of_models") {
           std::string print_models_options;
           std::getline(command_iss, print_models_options);

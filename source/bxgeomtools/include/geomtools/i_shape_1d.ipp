@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/i_shape_1d.ipp
 
 #ifndef GEOMTOOLS_I_SHAPE_1D_IPP

@@ -14,13 +14,16 @@
 // - GSL:
 #include <gsl/gsl_poly.h>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/utils.h>
+
 // This project:
 #include <geomtools/i_shape_2d.h>
 #include <geomtools/utils.h>
+#include <geomtools/triangle.h>
 
 namespace geomtools {
-
-  using namespace std;
 
   const std::string & regular_polygon::regular_polygon_label()
   {
@@ -31,7 +34,7 @@ namespace geomtools {
     return label;
   }
 
-  string regular_polygon::get_shape_name() const
+  std::string regular_polygon::get_shape_name() const
   {
     return regular_polygon_label();
   }
@@ -43,7 +46,7 @@ namespace geomtools {
 
   void regular_polygon::set_n_sides(uint32_t ns_)
   {
-    DT_THROW_IF(ns_ < 3, std::logic_error, "Invalid number of sides !");
+    DT_THROW_IF(ns_ < MIN_NUMBER_OF_SIDES, std::logic_error, "Invalid number of sides [" << ns_ << "]!");
     _n_sides_ = ns_;
     return;
   }
@@ -76,37 +79,62 @@ namespace geomtools {
     return;
   }
 
-
   double regular_polygon::get_apothem() const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     double a = _r_ * std::cos(M_PI / _n_sides_);
     return a;
   }
 
   double regular_polygon::get_side_length() const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     double sl = 2 * _r_ * std::sin(M_PI / _n_sides_);
     return sl;
   }
 
+  // virtual
+  unsigned int regular_polygon::compute_vertexes(vertex_col_type & vertexes_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
+    vertexes_.clear();
+    vertexes_.reserve(_n_sides_);
+    for (unsigned int i = 0; i < _n_sides_; i++) {
+      double x, y;
+      get_vertex(i, x, y);
+      vertexes_.push_back(vector_3d(x, y, 0.0));
+    }
+    return vertexes_.size();
+  }
+
   double regular_polygon::get_perimeter(uint32_t /* flags_ */) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     return get_side_length() * _n_sides_;
   }
 
   double regular_polygon::get_surface(uint32_t /* flags_ */) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     return get_apothem() * get_side_length() * _n_sides_ * 0.5;
   }
 
   bool regular_polygon::is_valid() const
   {
-    return (_r_ > 0.0);
+    return _n_sides_ >= MIN_NUMBER_OF_SIDES && datatools::is_valid(_r_);
+  }
+
+  void regular_polygon::reset()
+  {
+     _n_sides_ = 0;
+     datatools::invalidate(_r_);
+     return;
   }
 
   regular_polygon::regular_polygon()
   {
-    _r_ = -1.0;
+    _n_sides_ = 0;
+    datatools::invalidate(_r_);
     return;
   }
 
@@ -130,13 +158,15 @@ namespace geomtools {
 
   double regular_polygon::get_reference_angle() const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     return 2 * M_PI / _n_sides_;
   }
 
   void regular_polygon::get_vertex(int i_, double & x_, double & y_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     double alpha = get_reference_angle();
-    double theta = (0.5 * alpha) + i_ * alpha;
+    double theta = i_ * alpha;
     x_ = _r_ * std::cos(theta);
     y_ = _r_ * std::sin(theta);
     return;
@@ -144,128 +174,82 @@ namespace geomtools {
 
   void regular_polygon::get_vertex(int n_, vector_3d & vertex_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     double x, y;
     get_vertex(n_, x, y);
     vertex_.set(x, y, 0.0);
     return;
   }
 
-  bool regular_polygon::is_on_surface(const vector_3d & /*position_*/,
-                                      double /*tolerance_*/) const
+  bool regular_polygon::is_on_surface(const vector_3d & position_,
+                                      double tolerance_) const
   {
-    DT_THROW_IF(true, std::logic_error, "Not implemented yet !");
-    /*
-      double tolerance = get_tolerance ();
-      if (tolerance_ > GEOMTOOLS_PROPER_TOLERANCE) tolerance = tolerance_;
-      double z = position_.z ();
-      if (abs (z) > 0.5 * tolerance) return false;
-      double x = position_.x ();
-      double y = position_.y ();
-      double r2 = (_r_ + 0.5 * tolerance) * (_r_ + 0.5 * tolerance);
-      double rho2 = x * x + y * y;
-      if (rho2 > r2)
-      {
-      return false;
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
+    double z_tolerance = compute_tolerance(tolerance_);
+    double half_z_tolerance = 0.5 * z_tolerance;
+    vector_3d v0, v1, v2;
+    v0.set(0.0, 0.0, 0.0);
+    double r = get_radius();
+    v1.set(r, 0.0, 0.0);
+    double theta = 2 * M_PI / get_n_sides();
+    v2.set(r * std::cos(theta), r * std::sin(theta), 0.0);
+    triangle t(v0, v1, v2);
+    for (int i = 0; i < get_n_sides(); i++) {
+      placement p(0.0, 0.0, 0.0, AXIS_Z, i * theta);
+      vector_3d pos_c;
+      p.mother_to_child(position_, pos_c);
+      if (t.is_on_surface(pos_c, z_tolerance)) {
+        return true;
       }
-    */
-    return true;
+    }
+    return false;
   }
 
   vector_3d regular_polygon::get_normal_on_surface(const vector_3d & position_,
-                                                   bool up_) const
+                                                   bool check_,
+                                                   double skin_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     vector_3d normal;
     geomtools::invalidate(normal);
-    if (is_on_surface(position_)) {
-      normal.set(0.0, 0.0, 1.0);
-      if (! up_) normal.setZ(-1.0);
-    }
+    DT_THROW_IF(check_ && !is_on_surface(position_, skin_), std::logic_error,
+                "Position " << position_ << " is not on surface!");
+    normal.set(0.0, 0.0, 1.0);
     return normal;
   }
 
-  bool regular_polygon::find_intercept(const vector_3d & /*from_*/,
-                                       const vector_3d & /*direction_*/,
-                                       intercept_t & intercept_,
-                                       double /*tolerance_*/) const
+  bool regular_polygon::find_intercept(const vector_3d & from_,
+                                       const vector_3d & direction_,
+                                       face_intercept_info & intercept_,
+                                       double tolerance_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     intercept_.reset();
-    DT_THROW_IF(true, std::logic_error, "Not implemented yet !");
-    /*
-      double ux = direction_.x();
-      double uy = direction_.y();
-      double uz = direction_.z();
-      double xf = from_.x();
-      double yf = from_.y();
-      double zf = from_.z();
-      if (uz == 0.0)
-      {
-      intercept_.reset ();
-      if (zf != 0.0)
-      {
-      return intercept_.is_ok ();
+    double tolerance = compute_tolerance(tolerance_);
+    vector_3d v0, v1, v2;
+    v0.set(0.0, 0.0, 0.0);
+    double r = get_radius();
+    v1.set(r, 0.0, 0.0);
+    double theta = 2 * M_PI / get_n_sides();
+    v2.set(r * std::cos(theta), r * std::sin(theta), 0.0);
+    triangle t(v0, v1, v2);
+    for (unsigned int ipart = 0; ipart < get_n_sides(); ipart++) {
+      placement p(0.0, 0.0, 0.0, AXIS_Z, ipart * theta);
+      vector_3d from_c;
+      vector_3d direction_c;
+      p.mother_to_child(from_, from_c);
+      p.mother_to_child_direction(direction_, direction_c);
+      face_intercept_info fii;
+      fii.reset();
+      if (t.find_intercept(from_c, direction_c, fii, tolerance)) {
+        vector_3d impact;
+        p.child_to_mother(fii.get_impact(), impact);
+        // intercept_.grab_face_id().append_part(ipart);
+        intercept_.grab_face_id().set_face_bit(FACE_UNIQUE);
+        intercept_.set_impact(impact);
+        break;
       }
-      double p0;
-      double p1;
-      double p2;
-      double lambda1;
-      double lambda2;
-      p2 = (ux * ux + uy * uy);
-      p1 = -2 * (ux * xf + uy * yf);
-      double r = pow (_r_ + 0.5 * tolerance_, 2);
-      p0 = xf * xf + yf * yf - r * r;
-      size_t nsol = 0;
-      nsol = gsl_poly_solve_quadratic (p2, p1, p0, &lambda1, &lambda2);
-      if (nsol == 1)
-      {
-      double xi = xf + lambda1 * ux;
-      double yi = yf + lambda1 * uy;
-      double zi = zf;
-      intercept_.set (0, 0, vector_3d (xi, yi, zi));
-      }
-      else if (nsol == 2)
-      {
-      double lambda = -1.0;
-      if (lambda1 >= 0.0)
-      {
-      lambda = lambda1;
-      }
-      if ((lambda2 >= 0.0) && (lambda2 < lambda1))
-      {
-      lambda = lambda2;
-      }
-      double xi = xf + lambda * ux;
-      double yi = yf + lambda * uy;
-      double zi = zf;
-      intercept_.set (0, 0, vector_3d (xi, yi, zi));
-      }
-      return intercept_.is_ok ();
-      }
-
-      intercept_.reset ();
-      double lambda = - zf / uz;
-      if (lambda < 0.0)
-      {
-      return intercept_.is_ok ();
-      }
-      double xi, yi, zi;
-      zi = 0.0;
-      xi = xf + lambda * ux;
-      yi = yf + lambda * uy;
-      vector_3d impact (xi, yi, zi);
-      if (! is_on_surface (impact, tolerance_))
-      {
-      intercept_.is_ok ();
-      }
-      else
-      {
-      int face = FACE_UP;
-      if (from_.z ()  < 0.0)
-      {
-      face = FACE_DOWN;
-      }
-      intercept_.set (0, face, vector_3d (xi, yi, zi));
-      }
-    */
+    }
     return intercept_.is_ok();
   }
 
@@ -274,20 +258,67 @@ namespace geomtools {
                                   const std::string & indent_,
                                   bool inherit_) const
   {
-    std::string indent;
-    if (! indent_.empty()) indent = indent_;
     i_object_3d::tree_dump(out_, title_, indent_, true);
 
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Number of sides : " << get_n_sides() << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "R : " << get_r() / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Side length : " << get_side_length() / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Angle : " << get_reference_angle() / CLHEP::degree << " degree" << endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Apothem : " << get_apothem() / CLHEP::mm << " mm" << endl;
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Number of sides : " << get_n_sides() << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "R : " << get_r() / CLHEP::mm << " mm" << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Valid : " << is_valid() << std::endl;
+    if (is_valid()) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << datatools::i_tree_dumpable::tag
+           << "Side length : " << get_side_length() / CLHEP::mm << " mm" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << datatools::i_tree_dumpable::tag
+           << "Angle : " << get_reference_angle() / CLHEP::degree << " degree" << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << datatools::i_tree_dumpable::tag
+           << "Apothem : " << get_apothem() / CLHEP::mm << " mm" << std::endl;
+    }
+    return;
+  }
+
+  void regular_polygon::generate_wires_self(wires_type & wires_,
+                                            uint32_t options_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
+    bool no_external_edges = (options_ & WR_RP_NO_EXTERNAL_EDGES);
+
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    bool with_grid = (base_options & i_wires_3d_rendering::WR_BASE_GRID);
+
+    {
+      vector_3d v0, v1, v2;
+      v0.set(0.0, 0.0, 0.0);
+      double r = get_radius();
+      v1.set(r, 0.0, 0.0);
+      double theta = 2 * M_PI / get_n_sides();
+      v2.set(r * std::cos(theta), r * std::sin(theta), 0.0);
+      triangle t(v0, v1, v2);
+      for (int i = 0; i < get_n_sides(); i++) {
+        placement p(0.0, 0.0, 0.0, AXIS_Z, i * theta);
+        uint32_t sector_options = base_options;
+        if (!with_grid) {
+          sector_options |= geomtools::triangle::WR_TRIANGLE_NO_FIRST_EDGE;
+          sector_options |= geomtools::triangle::WR_TRIANGLE_NO_THIRD_EDGE;
+        }
+        if (no_external_edges) {
+          sector_options |= geomtools::triangle::WR_TRIANGLE_NO_SECOND_EDGE;
+        }
+        t.generate_wires(wires_,
+                         p,
+                         sector_options);
+      }
+
+    }
+
     return;
   }
 

@@ -44,3 +44,11 @@
 #include <geomtools/blur_spot-reflect.h>
 
 #endif // GEOMTOOLS_THE_INTROSPECTABLE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/manager_macros.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-02-21
@@ -100,3 +99,11 @@
   /**/
 
 #endif // GEOMTOOLS_MANAGER_MACROS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

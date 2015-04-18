@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/model_factory.h
 /* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-24
@@ -173,3 +172,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::model_factory)
 
 #endif // GEOMTOOLS_MODEL_FACTORY_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

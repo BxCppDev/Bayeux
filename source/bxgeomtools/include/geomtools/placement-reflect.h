@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/placement-reflect.h
 
 #ifndef GEOMTOOLS_PLACEMENT_REFLECT_H
@@ -103,3 +102,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // GEOMTOOLS_PLACEMENT_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

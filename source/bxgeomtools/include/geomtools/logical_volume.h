@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/logical_volume.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
@@ -239,3 +238,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_LOGICAL_VOLUME_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

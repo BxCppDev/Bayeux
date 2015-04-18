@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/gdml_export.h
 /* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
@@ -126,7 +125,14 @@ namespace geomtools {
 
   };
 
-
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_GDML_EXPORT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

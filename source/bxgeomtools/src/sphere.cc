@@ -1,4 +1,4 @@
-/** geomtools/sphere.cc */
+// geomtools/sphere.cc
 
 // Ourselves:
 #include <geomtools/sphere.h>
@@ -16,6 +16,16 @@
 #include <datatools/exception.h>
 #include <datatools/units.h>
 #include <datatools/properties.h>
+// - Bayeux/mygsl:
+#include <mygsl/min_max.h>
+
+// This project:
+#include <geomtools/utils.h>
+#include <geomtools/circle.h>
+#include <geomtools/disk.h>
+#include <geomtools/cone.h>
+#include <geomtools/spherical_sector.h>
+#include <geomtools/right_circular_conical_nappe.h>
 
 namespace geomtools {
 
@@ -35,7 +45,73 @@ namespace geomtools {
 
   void sphere::_build_bounding_data()
   {
-    _grab_bounding_data().make_cylinder(_r_, get_zmin(), get_zmax());
+    if (! has_partial_phi() && ! has_partial_theta()) {
+      _grab_bounding_data().make_cylinder(_r_, get_zmin(), get_zmax());
+    } else {
+      mygsl::min_max xrange;
+      mygsl::min_max yrange;
+      mygsl::min_max zrange;
+      if (!has_r_min()) {
+        xrange.add(0.0);
+        yrange.add(0.0);
+        zrange.add(0.0);
+      }
+      double theta_start = 0.0;
+      double theta_stop  = M_PI;
+      double phi_start = 0.0;
+      double phi_stop  = 2 * M_PI;
+      if (has_partial_theta()) {
+        theta_start = _start_theta_;
+        theta_stop = theta_start + _delta_theta_;
+      }
+      if (has_partial_phi()) {
+        phi_start = _start_phi_;
+        phi_stop = phi_start + _delta_phi_;
+      }
+      double dtheta = std::min(0.5 * CLHEP::degree, _delta_theta_ / 100);
+      double dphi   = std::min(0.5 * CLHEP::degree, _delta_phi_ / 100);
+      for (double theta = theta_start;
+           theta < theta_stop;
+           theta += dtheta) {
+        double ct = std::cos(theta);
+        double st = std::sin(theta);
+        for (double phi = phi_start;
+             phi < phi_stop;
+             phi += dphi) {
+          double cp = std::cos(phi);
+          double sp = std::sin(phi);
+          double xo = get_r() * st * cp;
+          double yo = get_r() * st * sp;
+          double zo = get_r() * ct;
+          if (xo > get_r() * 0.99) {
+            xo = get_r();
+          }
+          if (xo < - get_r() * 0.99) {
+            xo = -get_r();
+          }
+          if (yo > get_r() * 0.99) {
+            yo = get_r();
+          }
+          if (yo < - get_r() * 0.99) {
+            yo = -get_r();
+          }
+          xrange.add(xo);
+          yrange.add(yo);
+          zrange.add(zo);
+          if (has_r_min()) {
+            double xi = get_r_min() * st * cp;
+            double yi = get_r_min() * st * sp;
+            double zi = get_r_min() * ct;
+            xrange.add(xi);
+            yrange.add(yi);
+            zrange.add(zi);
+          }
+        }
+      }
+      _grab_bounding_data().make_box(xrange.get_min(), xrange.get_max(),
+                                     yrange.get_min(), yrange.get_max(),
+                                     zrange.get_min(), zrange.get_max());
+    }
     return;
   }
 
@@ -61,16 +137,24 @@ namespace geomtools {
 
   double sphere::get_zmin () const
   {
-    return std::min(_r_ * std::cos(_start_theta_ + _delta_theta_),
-                    _r_min_ * std::cos(_start_theta_ + _delta_theta_)
-                    );
+    if (has_partial_theta()) {
+      return std::min(_r_ * std::cos(_start_theta_ + _delta_theta_),
+                      _r_min_ * std::cos(_start_theta_ + _delta_theta_)
+                      );
+    } else {
+      return -_r_;
+    }
   }
 
   double sphere::get_zmax () const
   {
-    return std::max(_r_ * std::cos(_start_theta_),
-                    _r_min_ * std::cos(_start_theta_)
-                    );
+    if (has_partial_theta()) {
+      return std::max(_r_ * std::cos(_start_theta_),
+                      _r_min_ * std::cos(_start_theta_)
+                      );
+    } else {
+      return +_r_;
+    }
   }
 
   double
@@ -229,11 +313,11 @@ namespace geomtools {
   void sphere::_set_default()
   {
     datatools::invalidate(_r_);
-    _r_min_ = 0.0;
-    _start_phi_ = 0.0;
-    _delta_phi_ = 2 * M_PI;
-    _start_theta_ = 0.0;
-    _delta_theta_ = M_PI;
+    datatools::invalidate(_r_min_);
+    datatools::invalidate(_start_phi_);
+    datatools::invalidate(_delta_phi_);
+    datatools::invalidate(_start_theta_);
+    datatools::invalidate(_delta_theta_);
     return;
   }
 
@@ -352,32 +436,46 @@ namespace geomtools {
   double
   sphere::get_surface (uint32_t mask_) const
   {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    double delta_phi = 2 * M_PI;
+    if (has_partial_phi()) {
+      delta_phi = _delta_phi_;
+    }
+    double start_theta = 0.0;
+    double delta_theta = M_PI;
+    if (has_partial_theta()) {
+      start_theta = _start_theta_;
+      delta_theta = _delta_theta_;
+    }
+    double stop_theta = start_theta + delta_theta;
+    double r_min = 0.0;
+    if (has_r_min()) {
+      r_min = _r_min_;
+    }
     double s = 0.0;
     if  (mask_ & FACE_OUTER_SIDE) {
-      s += _delta_phi_
-        * (std::cos(_start_theta_) - std::cos(_start_theta_ + _delta_theta_))
+      s += delta_phi
+        * (std::cos(start_theta) - std::cos(stop_theta))
         * _r_ * _r_;
     }
     if  (mask_ & FACE_INNER_SIDE) {
-      s += _delta_phi_
-        * (std::cos(_start_theta_) - std::cos(_start_theta_ + _delta_theta_))
-        * _r_min_ * _r_min_;
+      s += delta_phi
+        * (std::cos(start_theta) - std::cos(stop_theta))
+        * r_min * r_min;
     }
     if  (mask_ & FACE_START_PHI_SIDE) {
-      s += 0.5 * ( _r_ * _r_ -  _r_min_ * _r_min_)
-        * _delta_theta_;
+      s += 0.5 * ( _r_ * _r_ -  r_min * r_min)
+        * delta_theta;
     }
     if  (mask_ & FACE_STOP_PHI_SIDE) {
-      s += 0.5 * ( _r_ * _r_ -  _r_min_ * _r_min_)
-        * _delta_theta_;
+      s += 0.5 * ( _r_ * _r_ -  r_min * r_min)
+        * delta_theta;
     }
     if  (mask_ & FACE_START_THETA_SIDE) {
-      double theta =  _start_theta_;
-      s += 0.5 * _delta_phi_ * ( _r_ * _r_ - _r_min_ * _r_min_ ) * std::sin(theta);
+      s += 0.5 * delta_phi * ( _r_ * _r_ - r_min * r_min ) * std::sin(start_theta);
     }
     if  (mask_ & FACE_STOP_THETA_SIDE) {
-      double theta =  _start_theta_ + _delta_theta_;
-      s += 0.5 * _delta_phi_ * ( _r_ * _r_ - _r_min_ * _r_min_ ) * std::sin(theta);
+      s += 0.5 * delta_phi * ( _r_ * _r_ - r_min * r_min ) * std::sin(stop_theta);
     }
     return s;
   }
@@ -385,10 +483,26 @@ namespace geomtools {
   double
   sphere::get_volume (uint32_t /*flags*/) const
   {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    double delta_phi = 2 * M_PI;
+    if (has_partial_phi()) {
+      delta_phi = _delta_phi_;
+    }
+    double start_theta = 0.0;
+    double delta_theta = M_PI;
+    if (has_partial_theta()) {
+      start_theta = _start_theta_;
+      delta_theta = _delta_theta_;
+    }
+    double stop_theta = start_theta + delta_theta;
+    double r_min = 0.0;
+    if (has_r_min()) {
+      r_min = _r_min_;
+    }
     double v =
-      _delta_phi_
-      * (std::cos(_start_theta_) - std::cos(_start_theta_ + _delta_theta_))
-      * (gsl_pow_3(_r_) - gsl_pow_3(_r_min_)) / 3.0;
+      delta_phi
+      * (std::cos(start_theta) - std::cos(stop_theta))
+      * (gsl_pow_3(_r_) - gsl_pow_3(r_min)) / 3.0;
     return v;
   }
 
@@ -415,18 +529,12 @@ namespace geomtools {
 
   bool sphere::has_partial_phi() const
   {
-    if (_start_phi_ != 0. || _delta_phi_ != 2 * M_PI) {
-      return true;
-    }
-    return false;
+    return datatools::is_valid(_start_phi_) && datatools::is_valid(_delta_phi_);
   }
 
   bool sphere::has_partial_theta() const
   {
-    if (_start_theta_ != 0. || _delta_theta_ != M_PI) {
-      return true;
-    }
-    return false;
+    return datatools::is_valid(_start_theta_) && datatools::is_valid(_delta_theta_);
   }
 
   bool sphere::is_orb() const
@@ -444,9 +552,384 @@ namespace geomtools {
     return sphere_label();
   }
 
+  void sphere::compute_side_face(faces_mask_type type_,
+                                 spherical_sector & face_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    if (type_ == FACE_INNER_SIDE) {
+      compute_inner_side_face(face_);
+    } else if (type_ == FACE_OUTER_SIDE) {
+      compute_outer_side_face(face_);
+    } else {
+      DT_THROW(std::logic_error, "Invalid face type [" << type_<< "]!");
+    }
+    return;
+  }
+
+  void sphere::compute_inner_side_face(spherical_sector & inner_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    inner_.reset();
+    if (has_r_min()) {
+      inner_.set_radius(_r_min_);
+      if (has_partial_theta()) {
+        inner_.set_start_theta(_start_theta_);
+        inner_.set_delta_theta(_delta_theta_);
+      }
+      if (has_partial_phi()) {
+        inner_.set_start_phi(_start_phi_);
+        inner_.set_delta_phi(_delta_phi_);
+      }
+    }
+    return;
+  }
+
+  void sphere::compute_outer_side_face(spherical_sector & outer_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    outer_.reset();
+    outer_.set_radius(_r_);
+    if (has_partial_theta()) {
+      outer_.set_start_theta(_start_theta_);
+      outer_.set_delta_theta(_delta_theta_);
+    }
+    if (has_partial_phi()) {
+      outer_.set_start_phi(_start_phi_);
+      outer_.set_delta_phi(_delta_phi_);
+    }
+    return;
+  }
+
+  void sphere::compute_start_theta_face(right_circular_conical_nappe & face_,
+                                        disk & dface_,
+                                        placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    face_.reset();
+    dface_.reset();
+    face_placement_.reset();
+    if (has_partial_theta()) {
+      double theta = _start_theta_;
+      if (std::abs(theta - 0.5 * M_PI) < get_angular_tolerance()) {
+        dface_.set_outer_r(_r_);
+        if (has_r_min()) {
+          dface_.set_inner_r(_r_min_);
+        }
+        if (has_partial_phi()) {
+          dface_.set_start_angle(_start_phi_);
+          dface_.set_delta_angle(_delta_phi_);
+        }
+        face_placement_.set(0.0, 0.0, 0.0, 0, 0, 0);
+     } else {
+        double ztop = _r_ * std::cos(theta);
+        double r_min = 0.0;
+        if (has_r_min()) {
+          r_min = _r_min_;
+        }
+        double zbottom = r_min * std::cos(theta);
+        double rtop = _r_ * std::sin(theta);
+        double rbottom = r_min * std::sin(theta);
+        face_.set_top_radius(ztop > zbottom ? rtop : rbottom);
+        face_.set_bottom_radius(ztop > zbottom ? rbottom : rtop);
+        face_.set_z(std::abs(ztop - zbottom));
+        if (has_partial_phi()) {
+          face_.set_start_angle(_start_phi_);
+          face_.set_delta_angle(_delta_phi_);
+        }
+        face_placement_.set(0.0, 0.0, 0.5 * (zbottom + ztop), 0, 0, 0);
+      }
+    }
+    return;
+  }
+
+  void sphere::compute_stop_theta_face(right_circular_conical_nappe & face_,
+                                       disk & dface_,
+                                       placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    face_.reset();
+    dface_.reset();
+    face_placement_.reset();
+    if (has_partial_theta()) {
+      double theta = _start_theta_ + _delta_theta_;
+      if (std::abs(theta - 0.5 * M_PI) < get_angular_tolerance()) {
+        dface_.set_outer_r(_r_);
+        if (has_r_min()) {
+          dface_.set_inner_r(_r_min_);
+        }
+        if (has_partial_phi()) {
+          dface_.set_start_angle(_start_phi_);
+          dface_.set_delta_angle(_delta_phi_);
+        }
+        face_placement_.set(0.0, 0.0, 0.0, 0, 0, 0);
+      } else {
+        double ztop = _r_ * std::cos(theta);
+        double zbottom = 0.0;
+        double r_min = 0.0;
+        if (has_r_min()) {
+          r_min = _r_min_;
+        }
+        zbottom = r_min * std::cos(theta);
+        double rtop = _r_ * std::sin(theta);
+        double rbottom = r_min * std::sin(theta);
+        face_.set_top_radius(ztop > zbottom ? rtop : rbottom);
+        face_.set_bottom_radius(ztop > zbottom ? rbottom : rtop);
+        face_.set_z(std::abs(ztop - zbottom));
+        if (has_partial_phi()) {
+          face_.set_start_angle(_start_phi_);
+          face_.set_delta_angle(_delta_phi_);
+        }
+        face_placement_.set(0.0, 0.0, 0.5 * (zbottom + ztop), 0, 0, 0);
+      }
+    }
+    return;
+  }
+
+  void sphere::compute_start_stop_theta_face(faces_mask_type type_,
+                                             right_circular_conical_nappe & face_,
+                                             disk & dface_,
+                                             placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    if (type_ == FACE_START_THETA_SIDE) {
+      compute_start_theta_face(face_, dface_, face_placement_);
+    } else if (type_ == FACE_STOP_THETA_SIDE) {
+      compute_stop_theta_face(face_, dface_, face_placement_);
+    } else {
+      DT_THROW(std::logic_error, "Invalid face type [" << type_<< "]!");
+    }
+    return;
+  }
+
+
+  void sphere::compute_start_phi_face(disk & face_,
+                                      placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    if (has_partial_phi()) {
+      double start_phi = _start_phi_;
+      double delta_phi = _delta_phi_;
+      double stop_phi = start_phi + delta_phi;
+      face_.set_r(_r_);
+      if (has_r_min()) {
+        face_.set_inner_r(_r_min_);
+      }
+      double start_theta = 0.0;
+      double delta_theta = M_PI;
+      if (has_partial_theta()) {
+        start_theta = _start_theta_;
+        delta_theta = _delta_theta_;
+      }
+      double stop_theta = start_theta + delta_theta;
+      face_.set_start_angle(start_theta);
+      face_.set_delta_angle(delta_theta);
+      face_placement_.set_translation(0.0, 0.0, 0.0);
+      face_placement_.set_orientation(get_special_rotation_angle(ROTATION_ANGLE_270),
+                                      get_special_rotation_angle(ROTATION_ANGLE_270) + start_phi,
+                                      0.0,
+                                      EULER_ANGLES_YXY);
+
+      // face_placement_.set_orientation(start_phi + get_special_rotation_angle(ROTATION_ANGLE_90),
+      //                                      get_special_rotation_angle(ROTATION_ANGLE_90),
+      //                                      0.0
+      //                                      );
+    }
+    return;
+  }
+
+  void sphere::compute_stop_phi_face(disk & face_,
+                                       placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    if (has_partial_phi()) {
+      double start_phi = _start_phi_;
+      double delta_phi = _delta_phi_;
+      double stop_phi = start_phi + delta_phi;
+      face_.set_r(_r_);
+      if (has_r_min()) {
+        face_.set_inner_r(_r_min_);
+      }
+      double start_theta = 0.0;
+      double delta_theta = M_PI;
+      if (has_partial_theta()) {
+        start_theta = _start_theta_;
+        delta_theta = _delta_theta_;
+      }
+      double stop_theta = start_theta + delta_theta;
+      face_.set_start_angle(start_theta);
+      face_.set_delta_angle(delta_theta);
+      face_placement_.set_translation(0.0, 0.0, 0.0);
+      face_placement_.set_orientation(get_special_rotation_angle(ROTATION_ANGLE_270),
+                                      get_special_rotation_angle(ROTATION_ANGLE_270) + stop_phi,
+                                      0.0,
+                                      EULER_ANGLES_YXY);
+      // face_placement_.set_orientation(-ROTATION_ANGLE_90,
+      //                                 0.0, //-ROTATION_ANGLE_90 + stop_phi,
+      //                                 0.0,
+      //                                 EULER_ANGLES_YXY);
+    }
+    return;
+  }
+
+  void sphere::compute_start_stop_phi_face(faces_mask_type type_,
+                                           disk & face_,
+                                           placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    if (type_ == FACE_START_PHI_SIDE) {
+      compute_start_phi_face(face_, face_placement_);
+    } else if (type_ == FACE_STOP_PHI_SIDE) {
+      compute_stop_phi_face(face_, face_placement_);
+    } else {
+      DT_THROW(std::logic_error, "Invalid face type [" << type_<< "]!");
+    }
+    return;
+  }
+
+  // virtual
+  unsigned int sphere::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    unsigned int nfaces = 0;
+
+    {
+      // Outer side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      spherical_sector & ss = finfo.add_face<spherical_sector>();
+      finfo.grab_positioning().set_identity();
+      compute_side_face(FACE_OUTER_SIDE, ss);
+      face_identifier fid;
+      fid.set_face_bit(FACE_OUTER_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("outer_side");
+      nfaces++;
+    }
+
+    if (has_r_min()) {
+      // Inner side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      spherical_sector & ss = finfo.add_face<spherical_sector>();
+      finfo.grab_positioning().set_identity();
+      compute_side_face(FACE_INNER_SIDE, ss);
+      face_identifier fid;
+      fid.set_face_bit(FACE_INNER_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("inner_side");
+      nfaces++;
+    }
+
+    if (has_partial_theta()) {
+
+      {
+        // Start theta face:
+        // std::cerr << "DEVEL: sphere::compute_faces: start theta=" << _start_theta_ / M_PI << " pi" << std::endl;
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        if (std::abs(_start_theta_ - 0.5 * M_PI) < get_angular_tolerance()) {
+          // std::cerr << "DEVEL: sphere::compute_faces: DISK!" << std::endl;
+          right_circular_conical_nappe rccn;
+          disk & d =  finfo.add_face<disk>();
+          compute_start_theta_face(rccn, d, finfo.grab_positioning());
+        } else {
+          // std::cerr << "DEVEL: sphere::compute_faces: RCCN!" << std::endl;
+          right_circular_conical_nappe & rccn = finfo.add_face<right_circular_conical_nappe>();
+          disk d;
+          compute_start_theta_face(rccn, d, finfo.grab_positioning());
+        }
+        face_identifier fid;
+        fid.set_face_bit(FACE_START_THETA_SIDE);
+        finfo.set_identifier(fid);
+        finfo.set_label("start_theta");
+        nfaces++;
+      }
+
+      {
+        // Stop theta face:
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        double stop_theta = _start_theta_ + _delta_theta_;
+        // std::cerr << "DEVEL: sphere::compute_faces: stop theta=" << stop_theta / M_PI << " pi" << std::endl;
+        if (std::abs(stop_theta - 0.5 * M_PI) < get_angular_tolerance()) {
+          // std::cerr << "DEVEL: sphere::compute_faces: DISK!" << std::endl;
+          right_circular_conical_nappe rccn;
+          disk & d =  finfo.add_face<disk>();
+          compute_stop_theta_face(rccn, d, finfo.grab_positioning());
+        } else {
+          // std::cerr << "DEVEL: sphere::compute_faces: RCCN!" << std::endl;
+          right_circular_conical_nappe & rccn = finfo.add_face<right_circular_conical_nappe>();
+          disk d;
+          compute_stop_theta_face(rccn, d, finfo.grab_positioning());
+        }
+        face_identifier fid;
+        fid.set_face_bit(FACE_STOP_THETA_SIDE);
+        finfo.set_identifier(fid);
+        finfo.set_label("stop_theta");
+        nfaces++;
+      }
+
+    }
+
+    if (has_partial_phi()) {
+
+      {
+        // Start phi face:
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        disk & d = finfo.add_face<disk>();
+        compute_start_phi_face(d, finfo.grab_positioning());
+        face_identifier fid;
+        fid.set_face_bit(FACE_START_PHI_SIDE);
+        finfo.set_identifier(fid);
+        finfo.set_label("start_phi");
+        nfaces++;
+      }
+
+      {
+        // Stop phi face:
+        {
+          face_info dummy;
+          faces_.push_back(dummy);
+        }
+        face_info & finfo = faces_.back();
+        disk & d = finfo.add_face<disk>();
+        compute_stop_phi_face(d, finfo.grab_positioning());
+        face_identifier fid;
+        fid.set_face_bit(FACE_STOP_PHI_SIDE);
+        finfo.set_identifier(fid);
+        finfo.set_label("stop_phi");
+        nfaces++;
+      }
+
+    }
+
+    return nfaces;
+  }
+
   bool
   sphere::is_inside (const vector_3d & point_, double skin_) const
   {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
     double skin = get_skin(skin_);
     double hskin = 0.5 * skin;
     double r = point_.mag();
@@ -470,6 +953,7 @@ namespace geomtools {
   bool
   sphere::is_outside (const vector_3d & point_, double skin_) const
   {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
     double skin = get_skin(skin_);
     double hskin = 0.5 * skin;
     double r = point_.mag();
@@ -508,247 +992,362 @@ namespace geomtools {
   }
 
   vector_3d
-  sphere::get_normal_on_surface (const vector_3d & position_) const
+  sphere::get_normal_on_surface (const vector_3d & a_position,
+                                 const face_identifier & a_surface_bit) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid sphere!");
     vector_3d normal;
-    invalidate (normal);
-    if (is_on_surface (position_, FACE_SIDE)) {
-      normal = position_;
-      normal.unit ();
+    invalidate(normal);
+    switch(a_surface_bit.get_face_bits()) {
+    case FACE_OUTER_SIDE :
+      normal = a_position.unit();
+      break;
+    case FACE_INNER_SIDE :
+      if (has_r_min()) {
+        normal = -a_position.unit();
+      }
+      break;
+    case FACE_START_THETA_SIDE :
+      if (has_partial_theta()) {
+        right_circular_conical_nappe face;
+        disk dface;
+        placement face_placement;
+        compute_start_stop_theta_face(FACE_START_THETA_SIDE, face, dface, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        vector_3d p_normal;
+        if (face.is_valid()) {
+          p_normal = face.get_normal_on_surface(p_face);
+        }
+        if (dface.is_valid()) {
+          p_normal = dface.get_normal_on_surface(p_face);
+        }
+        face_placement.child_to_mother_direction(p_normal, normal);
+        normal *= -1.0;
+      }
+      break;
+    case FACE_STOP_THETA_SIDE :
+      if (has_partial_theta()) {
+        right_circular_conical_nappe face;
+        disk dface;
+        placement face_placement;
+        compute_start_stop_theta_face(FACE_STOP_THETA_SIDE, face, dface, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        vector_3d p_normal;
+        if (face.is_valid()) {
+          p_normal = face.get_normal_on_surface(p_face);
+        }
+        if (dface.is_valid()) {
+          p_normal = dface.get_normal_on_surface(p_face);
+        }
+       face_placement.child_to_mother_direction(p_normal, normal);
+      }
+      break;
+    case FACE_START_PHI_SIDE :
+      if (has_partial_phi()) {
+        disk face;
+        placement face_placement;
+        compute_start_stop_phi_face(FACE_START_PHI_SIDE, face, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        vector_3d p_normal = face.get_normal_on_surface(p_face);
+        face_placement.child_to_mother_direction(p_normal, normal);
+        normal *= -1.0;
+      }
+      break;
+    case FACE_STOP_PHI_SIDE :
+      if (has_partial_phi()) {
+        disk face;
+        placement face_placement;
+        compute_start_stop_phi_face(FACE_STOP_PHI_SIDE, face, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        vector_3d p_normal = face.get_normal_on_surface(p_face);
+        face_placement.child_to_mother_direction(p_normal, normal);
+      }
+      break;
     }
-    if (is_on_surface (position_, FACE_INNER_SIDE)) {
-      normal = -position_;
-      normal.unit ();
-    }
-    return (normal);
+    return normal;
   }
 
-  bool
-  sphere::is_on_surface (const vector_3d & point_,
-                         int mask_,
-                         double skin_) const
+
+  face_identifier sphere::on_surface(const vector_3d & a_position,
+                                     const face_identifier & a_surface_mask,
+                                     double a_skin) const
   {
-    // bool debug = false;
-    //debug = true;
-    double skin = get_skin(skin_);
+    DT_THROW_IF(! is_valid(), std::logic_error, "Sphere is not valid!");
+    double skin = compute_tolerance(a_skin);
 
-    int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    face_identifier mask;
+    if (a_surface_mask.is_valid()) {
+      DT_THROW_IF(! a_surface_mask.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = a_surface_mask;
+    } else {
+      mask.set_face_bits_any();
+    }
 
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(a_position, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
+        }
+      }
+    }
+
+    /*
     double hskin = 0.5 * skin;
-    double r     = point_.mag ();
-    double phi   = point_.phi();
-    double theta = point_.theta();
+    double angular_tolerance = get_angular_tolerance();
+    uint32_t mask = a_surface_mask.get_face_bits() & sphere::FACE_ALL;
+
+    double r     = a_position.mag ();
+    double phi   = a_position.phi();
+    double theta = a_position.theta();
     double rho   = r * std::sin(theta);
 
-    // if (debug)
-    //   {
-    //     std::clog << "DEVEL: sphere::is_on_surface: r= "
-    //               << r
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::is_on_surface: R= "
-    //               << _r_
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::is_on_surface: hskin= "
-    //               << hskin
-    //               << std::endl;
-    //   }
-
-
-    if (mask & FACE_SIDE) {
-      if (std::abs(r - _r_) < hskin) {
-        if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)
-            && angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
-          return true;
-        }
+    if (mask & FACE_OUTER_SIDE) {
+      spherical_sector side;
+      placement side_placement;
+      side_placement.set_identity();
+      compute_side_face(FACE_OUTER_SIDE, side);
+      vector_3d p_side;
+      side_placement.mother_to_child(a_position, p_side);
+      if (side.is_on_surface(p_side, skin)) {
+        return face_identifier(FACE_OUTER_SIDE);
       }
     }
 
     if (has_r_min()) {
       if (mask & FACE_INNER_SIDE) {
-        if (std::abs(r - _r_min_) < hskin) {
-          if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)
-              && angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
-            return true;
-          }
+        spherical_sector side;
+        placement side_placement;
+        side_placement.set_identity();
+        compute_side_face(FACE_INNER_SIDE, side);
+        vector_3d p_side;
+        side_placement.mother_to_child(a_position, p_side);
+        if (side.is_on_surface(p_side, skin)) {
+          return face_identifier(FACE_INNER_SIDE);
         }
       }
     }
 
     if (has_partial_phi()) {
+
       if (mask & FACE_START_PHI_SIDE) {
-        if (r <= _r_ && r >= _r_min_) {
-          if (angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
-            double eps_phi = std::atan2(hskin, rho);
-            double phi1 = _start_phi_ - eps_phi;
-            double delta_phi1 = 2  * eps_phi;
-            if (angle_is_in(phi, phi1, delta_phi1, 0.0)) {
-              return true;
-            }
-          }
+        disk face;
+        placement face_placement;
+        compute_start_stop_phi_face(FACE_START_PHI_SIDE, face, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        if (face.is_on_surface(p_face, skin)) {
+          return face_identifier(FACE_START_PHI_SIDE);
         }
       }
 
       if (mask & FACE_STOP_PHI_SIDE) {
-        if (r <= _r_ && r >= _r_min_) {
-          if (angle_is_in(theta, _start_theta_, _delta_theta_, 0.0)) {
-            double eps_phi = std::atan2(hskin, rho);
-            double phi1 = _start_phi_ + _delta_phi_ - eps_phi;
-            double delta_phi1 = 2  * eps_phi;
-            if (angle_is_in(phi, phi1, delta_phi1, 0.0)) {
-              return true;
-            }
-          }
+        disk face;
+        placement face_placement;
+        compute_start_stop_phi_face(FACE_STOP_PHI_SIDE, face, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        if (face.is_on_surface(p_face, skin)) {
+          return face_identifier(FACE_STOP_PHI_SIDE);
         }
       }
+
     }
 
     if (has_partial_theta()) {
+
       if (mask & FACE_START_THETA_SIDE) {
-        if (r <= _r_ && r >= _r_min_) {
-          if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)) {
-            double eps_theta = std::atan2(hskin, r);
-            double theta1 = _start_theta_ - eps_theta;
-            double delta_theta1 = 2  * eps_theta;
-            if (angle_is_in(theta, theta1, delta_theta1, 0.0)) {
-              return true;
-            }
-          }
+        right_circular_conical_nappe face;
+        placement face_placement;
+        compute_start_stop_theta_face(FACE_START_THETA_SIDE, face, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        if (face.is_on_surface(p_face, skin)) {
+          return face_identifier(FACE_START_THETA_SIDE);
         }
       }
 
       if (mask & FACE_STOP_THETA_SIDE) {
-        if (r <= _r_ && r >= _r_min_) {
-          if (angle_is_in(phi, _start_phi_, _delta_phi_, 0.0)) {
-            double eps_theta = std::atan2(hskin, r);
-            double theta1 = _start_theta_ + _delta_theta_ - eps_theta;
-            double delta_theta1 = 2  * eps_theta;
-            if (angle_is_in(theta, theta1, delta_theta1, 0.0)) {
-              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface: On FACE_STOP_THETA_SIDE:"
-              //           << std::endl;
-              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   eps_theta = " << eps_theta / CLHEP::degree << " °"
-              //           << std::endl;
-              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   theta1 = " << theta1 / CLHEP::degree << " °"
-              //           << std::endl;
-              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   theta2 = " << theta2 / CLHEP::degree << " °"
-              //           << std::endl;
-              // std::cerr << "DEVEL: geomtools::sphere::is_on_surface:   theta = "  << theta / CLHEP::degree << " °"
-              //           << std::endl;
-              return true;
-            }
-          }
+        right_circular_conical_nappe face;
+        placement face_placement;
+        compute_start_stop_theta_face(FACE_STOP_THETA_SIDE, face, face_placement);
+        vector_3d p_face;
+        face_placement.mother_to_child(a_position, p_face);
+        if (face.is_on_surface(p_face, skin)) {
+          return face_identifier(FACE_STOP_THETA_SIDE);
         }
       }
-    }
 
-    return false;
+    }
+    */
+
+    return face_identifier(FACE_NONE);
   }
 
   bool
-  sphere::find_intercept (const vector_3d & from_,
-                          const vector_3d & direction_,
-                          intercept_t & intercept_,
-                          double skin_) const
+  sphere::find_intercept(const vector_3d & from_,
+                         const vector_3d & direction_,
+                         face_intercept_info & intercept_,
+                         double skin_) const
   {
-    // bool debug = false;
-    //debug = true;
-    const unsigned int NFACES = 1;
-    double t[NFACES];
-    const int SPH_SIDE = 0;
-    t[SPH_SIDE] = -1.0; // side
-    double a, b, c;
-    double x0 = from_.x ();
-    double y0 = from_.y ();
-    double z0 = from_.z ();
-    double dx = direction_.x ();
-    double dy = direction_.y ();
-    double dz = direction_.z ();
-    a = dx * dx + dy * dy + dz * dz;
-    b = 2. * (dx * x0 + dy * y0 + dz * z0);
-    c = x0 * x0 + y0 * y0 + z0 * z0 - _r_ * _r_;
-    double delta = b * b - 4. * a * c;
-    double ts[2];
-    // if (debug)
-    //   {
-    //     std::clog << "DEVEL: sphere::find_intercept: from= "
-    //               << from_
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::find_intercept: direction= "
-    //               << direction_
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::find_intercept: a= "
-    //               << a
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::find_intercept: b= "
-    //               << b
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::find_intercept: c= "
-    //               << c
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::find_intercept: delta= "
-    //               << delta
-    //               << std::endl;
-    //   }
-    if (delta >= 0.0){
-      double q = std::sqrt (delta);
-      double n = a + a;
-      ts[0] = (- b + q) / n;
-      ts[1] = (- b - q) / n;
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+    intercept_.reset ();
+    double skin = compute_tolerance(skin_);
+
+    const unsigned int NFACES = 6;
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
+
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
+      }
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
     }
-    // if (debug)
-    //   {
-    //     std::clog << "DEVEL: sphere::find_intercept: ts[" << 0 << "]= "
-    //               << ts[0]
-    //               << std::endl;
-    //     std::clog << "DEVEL: sphere::find_intercept: ts[" << 1 << "]= "
-    //               << ts[1]
-    //               << std::endl;
-    //   }
-    for (int i = 0; i < 2; i++) {
-      double tsi = ts[i];
-      if (std::isnormal (tsi) && (tsi > 0.0)) {
-        if (t[SPH_SIDE] < 0) {
-          t[SPH_SIDE] = tsi;
-        } else {
-          if (tsi < t[SPH_SIDE]) {
-            t[SPH_SIDE] = tsi;
+
+    /*
+    {
+      const int FACE_INDEX = 0;
+      spherical_sector face;
+      placement face_placement;
+      face_placement.set_identity();
+      compute_outer_side_face(face);
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[FACE_INDEX],
+                                                skin)) {
+        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_OUTER_SIDE);
+        candidate_impact_counter++;
+      }
+    }
+
+    if (has_r_min()) {
+      const int FACE_INDEX = 1;
+      spherical_sector face;
+      placement face_placement;
+      face_placement.set_identity();
+      compute_inner_side_face(face);
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[FACE_INDEX],
+                                                skin)) {
+        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_INNER_SIDE);
+        candidate_impact_counter++;
+      }
+    }
+
+    if (has_partial_theta()) {
+
+      {
+        const int FACE_INDEX = 2;
+        right_circular_conical_nappe face;
+        placement face_placement;
+        compute_start_theta_face(face, face_placement);
+        if (face.i_find_intercept::find_intercept(from_,
+                                                  direction_,
+                                                  face_placement,
+                                                  intercepts[FACE_INDEX],
+                                                  skin)) {
+          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_THETA_SIDE);
+          candidate_impact_counter++;
+        }
+      }
+
+      {
+        const int FACE_INDEX = 3;
+        right_circular_conical_nappe face;
+        placement face_placement;
+        compute_stop_theta_face(face, face_placement);
+        if (face.i_find_intercept::find_intercept(from_,
+                                                  direction_,
+                                                  face_placement,
+                                                  intercepts[FACE_INDEX],
+                                                  skin)) {
+          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_THETA_SIDE);
+          candidate_impact_counter++;
+        }
+      }
+
+
+    }
+
+    if (has_partial_phi()) {
+
+      {
+        const int FACE_INDEX = 4;
+        disk face;
+        placement face_placement;
+        compute_start_phi_face(face, face_placement);
+        if (face.i_find_intercept::find_intercept(from_,
+                                                  direction_,
+                                                  face_placement,
+                                                  intercepts[FACE_INDEX],
+                                                  skin)) {
+          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_PHI_SIDE);
+          candidate_impact_counter++;
+        }
+      }
+
+      {
+        const int FACE_INDEX = 5;
+        disk face;
+        placement face_placement;
+        compute_stop_phi_face(face, face_placement);
+        if (face.i_find_intercept::find_intercept(from_,
+                                                  direction_,
+                                                  face_placement,
+                                                  intercepts[FACE_INDEX],
+                                                  skin)) {
+          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_PHI_SIDE);
+          candidate_impact_counter++;
+        }
+      }
+
+    }
+    */
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            intercept_.set_face_id(intercepts[iface].get_face_id());
+            intercept_.set_impact(intercepts[iface].get_impact());
           }
         }
       }
     }
 
-    double t_min = -1.0;
-    int face_min = 0;
-    for (int i = 0; i < (int) NFACES; i++) {
-      double ti = t[i];
-      // if (debug)
-      //   {
-      //     std::clog << "DEVEL: sphere::find_intercept: t[" << i << "]= "
-      //               << ti << " t_min=" << t_min
-      //               << " face_min=" << face_min
-      //               << std::endl;
-      //   }
-      if (std::isnormal(ti) && (ti > 0.0)) {
-        int face_bit = (0x1 << i); // face mask
-        vector_3d intercept = from_ + direction_ * ti;
-        if (is_on_surface(intercept, face_bit, skin_))  {
-          if ((t_min < 0.0) || (ti < t_min)) {
-            t_min = ti;
-            face_min = face_bit;
-          }
-        }
-      }
-      // if (debug)
-      //   {
-      //     std::clog << "DEVEL: sphere::find_intercept: t_min=" << t_min
-      //               << " face_min=" << face_min
-      //               << std::endl;
-      //   }
-    }
-    intercept_.reset ();
-    if (face_min > 0) {
-      intercept_.set (0, face_min, from_ + direction_ * t_min);
-    }
     return intercept_.is_ok ();
   }
 
@@ -757,7 +1356,7 @@ namespace geomtools {
   {
     out_ << '{' << sphere::sphere_label() << ' '
          << s_._r_ << ' '
-             << s_._r_min_ << ' '
+         << s_._r_min_ << ' '
          << s_._start_phi_ << ' '
          << s_._delta_phi_ << ' '
          << s_._start_theta_ << ' '
@@ -819,31 +1418,122 @@ namespace geomtools {
     return in_;
   }
 
-  void sphere::tree_dump (ostream & out_,
-                          const string & title_,
-                          const string & indent_,
+  void sphere::tree_dump (std::ostream & out_,
+                          const std::string & title_,
+                          const std::string & indent_,
                           bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty ()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "R : " << _r_ / CLHEP::mm << " mm" << endl;
+         << "R : " << _r_ / CLHEP::mm << " mm" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "R(min) : " << _r_min_ / CLHEP::mm << " mm" << endl;
+         << "R(min) : " << _r_min_ / CLHEP::mm << " mm" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Start phi : " << _start_phi_ / CLHEP::degree << " degree" << endl;
+         << "Start phi : " << _start_phi_ / CLHEP::degree << " degree" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Delta phi : " << _delta_phi_ / CLHEP::degree << " degree" << endl;
+         << "Delta phi : " << _delta_phi_ / CLHEP::degree << " degree" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Start theta : " << _start_theta_ / CLHEP::degree << " degree" << endl;
+         << "Start theta : " << _start_theta_ / CLHEP::degree << " degree" << std::endl;
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Delta theta : " << _delta_theta_ / CLHEP::degree << " degree" << endl;
+         << "Delta theta : " << _delta_theta_ / CLHEP::degree << " degree" << std::endl;
 
     return;
   }
 
+
+  void sphere::generate_wires_self(wires_type & wires_,
+                                   uint32_t options_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
+
+    bool draw_inner_face       = !(options_ & WR_SPHERE_NO_INNER_FACE);
+    bool draw_outer_face       = !(options_ & WR_SPHERE_NO_OUTER_FACE);
+    bool draw_start_theta_face = !(options_ & WR_SPHERE_NO_START_THETA_FACE);
+    bool draw_stop_theta_face  = !(options_ & WR_SPHERE_NO_STOP_THETA_FACE);
+    bool draw_start_phi_face   = !(options_ & WR_SPHERE_NO_START_PHI_FACE);
+    bool draw_stop_phi_face    = !(options_ & WR_SPHERE_NO_STOP_PHI_FACE);
+    bool draw_boundings        =  (options_ & WR_BASE_BOUNDINGS);
+
+    if (draw_boundings) {
+      get_bounding_data().generate_wires_self(wires_, 0);
+    }
+
+    // Extract base rendering options:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    uint32_t nsampling_theta = i_wires_3d_rendering::angular_sampling_from_options(base_options);
+    uint32_t nsampling_phi   = i_wires_3d_rendering::angular_sampling_from_options(base_options);
+
+    if (has_r_min()) {
+
+      if (draw_inner_face) {
+        spherical_sector face;
+        placement face_placement;
+        face_placement.set_identity();
+        compute_inner_side_face(face);
+        uint32_t options = base_options;
+        face.generate_wires(wires_, face_placement, options);
+      }
+
+    }
+
+    if (draw_outer_face) {
+      spherical_sector face;
+      placement face_placement;
+      face_placement.set_identity();
+      compute_outer_side_face(face);
+      uint32_t options = base_options;
+      face.generate_wires(wires_, face_placement, options);
+    }
+
+    if (has_partial_theta()) {
+
+      if (draw_start_theta_face) {
+        right_circular_conical_nappe face;
+        disk dface;
+        placement face_placement;
+        compute_start_theta_face(face, dface, face_placement);
+        uint32_t options = base_options;
+        if (face.is_valid()) face.generate_wires(wires_, face_placement, options);
+        else if (dface.is_valid()) dface.generate_wires(wires_, face_placement, options);
+     }
+
+      if (draw_stop_theta_face) {
+        right_circular_conical_nappe face;
+        disk dface;
+        placement face_placement;
+        compute_stop_theta_face(face, dface, face_placement);
+        uint32_t options = base_options;
+        if (face.is_valid()) face.generate_wires(wires_, face_placement, options);
+        else if (dface.is_valid()) dface.generate_wires(wires_, face_placement, options);
+      }
+    }
+
+    if (has_partial_phi()) {
+
+      if (draw_start_phi_face) {
+        disk face;
+        placement face_placement;
+        compute_start_phi_face(face, face_placement);
+        uint32_t options = base_options;
+        face.generate_wires(wires_, face_placement, options);
+      }
+
+      if (draw_stop_phi_face) {
+        disk face;
+        placement face_placement;
+        compute_stop_phi_face(face, face_placement);
+        uint32_t options = base_options;
+        face.generate_wires(wires_, face_placement, options);
+      }
+
+    }
+
+    return;
+  }
 
   // static
   void sphere::init_ocd(datatools::object_configuration_description & ocd_)

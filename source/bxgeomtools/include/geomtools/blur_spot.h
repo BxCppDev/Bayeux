@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/blur_spot.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-03-22
@@ -219,9 +218,8 @@ namespace geomtools {
                double nsigma3_or_tolerance_ = DEFAULT_VALUE) const;
 
     /// Generate rendering wires
-    virtual void generate_wires(std::list<polyline_3d> &,
-                                const placement &,
-                                uint32_t options_ = 0) const;
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
 
     /// Smart print
     virtual void tree_dump(std::ostream & out_    = std::clog,
@@ -324,3 +322,11 @@ DR_CLASS_INIT(::geomtools::blur_spot);
 BOOST_CLASS_VERSION(geomtools::blur_spot, 1)
 
 #endif // GEOMTOOLS_BLUR_SPOT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

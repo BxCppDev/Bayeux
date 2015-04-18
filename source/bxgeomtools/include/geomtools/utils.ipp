@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file geomtools/utils.ipp
 
 #ifndef GEOMTOOLS_UTILS_IPP
@@ -197,5 +196,12 @@ namespace boost {
 
 } // namespace boost
 
-
 #endif // GEOMTOOLS_UTILS_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

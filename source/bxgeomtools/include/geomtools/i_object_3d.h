@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/i_object_3d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
@@ -33,6 +32,7 @@
 
 // This project:
 #include <geomtools/utils.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -43,11 +43,10 @@ namespace geomtools {
 
   // Forward declaration:
   class box;
-  class i_wires_drawer;
 
   /// \brief Mother abstract class for all 3D object classes
   class i_object_3d :
-    DATATOOLS_SERIALIZABLE_CLASS ,
+    DATATOOLS_SERIALIZABLE_CLASS,
     public datatools::i_tree_dumpable
   {
   public:
@@ -60,11 +59,13 @@ namespace geomtools {
       DIMENSIONAL_3 = 3  //!< Three dimension object (example: a box)
     };
 
+    /*
     /// \brief Surface bits
     enum surface_bits {
-      NO_SURFACES  = 0,            //!< No surface/side/facet
-      ALL_SURFACES = FACE_ALL_BITS //!< All surfaces/sides/facets
+      NO_SURFACES  = ::geomtools::FACE_NONE, //!< No surface/side/facet
+      ALL_SURFACES = ::geomtools::FACE_ALL   //!< All surfaces/sides/facets
     };
+    */
 
     /// A handle to a 3D object
     typedef datatools::handle<i_object_3d> handle_type;
@@ -129,29 +130,35 @@ namespace geomtools {
     /// Dictionary of handle of 3D object entries
     typedef std::map<std::string, object_entry> handle_dict_type;
 
-    /// @deprecated Check is a user draw function is available
-    bool has_user_draw() const;
+    /// Return the dimension of the object
+    virtual int get_dimensional() const = 0;
 
-    /// @deprecated Set a user draw function
-    void set_user_draw(void * user_draw_);
+    /// Return the name of the shape
+    virtual std::string get_shape_name() const = 0;
 
-    /// @deprecated Get the address of a draw function
-    void * get_user_draw() const;
+    /// Check the validity of the object
+    virtual bool is_valid() const = 0;
 
     /// Check is a wires drawer is available
     bool has_wires_drawer() const;
 
     /// Set a wires drawer
-    void set_wires_drawer(i_wires_drawer & wires_drawer_);
+    void set_wires_drawer(i_wires_3d_rendering & wires_drawer_);
+
+    /// Reset the wires drawer
+    void reset_wires_drawer();
 
     /// Return a wires drawer
-    i_wires_drawer & grab_wires_drawer();
+    i_wires_3d_rendering & grab_wires_drawer();
 
     /// Return a wires drawer
-    const i_wires_drawer & get_wires_drawer() const;
+    const i_wires_3d_rendering & get_wires_drawer() const;
 
-    /// Return the dimension of the object
-    virtual int get_dimensional() const = 0;
+    /// Return the distance tolerance
+    double compute_tolerance(double tolerance_) const;
+
+    /// Return the angular tolerance
+    double compute_angular_tolerance(double angular_tolerance_) const;
 
     /// Return the distance tolerance
     double get_tolerance() const;
@@ -165,9 +172,6 @@ namespace geomtools {
     /// Set the angular tolerance
     void set_angular_tolerance(double tolerance_);
 
-    /// Return the name of the shape
-    virtual std::string get_shape_name() const = 0;
-
     /// Check if the object is composite
     virtual bool is_composite() const;
 
@@ -176,6 +180,15 @@ namespace geomtools {
 
     /// Constructor on length tolerance
     i_object_3d(double tolerance_);
+
+    /// Constructor on length tolerance
+    i_object_3d(double tolerance_, double angular_tolerance_);
+
+    /// Copy constructor
+    i_object_3d(const i_object_3d &);
+
+    /// Assignment operator
+    i_object_3d & operator=(const i_object_3d &);
 
     /// Destructor
     virtual ~i_object_3d();
@@ -190,7 +203,7 @@ namespace geomtools {
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
-                           bool inherit_          = false) const;
+                           bool inherit_               = false) const;
 
     /// OCD support
     static void init_ocd(datatools::object_configuration_description &);
@@ -198,7 +211,7 @@ namespace geomtools {
   protected:
 
     /// Set default values for attributes
-    void set_defaults();
+    void _set_defaults();
 
   private:
 
@@ -207,8 +220,7 @@ namespace geomtools {
     double _angular_tolerance_; //!< Angular tolerance to check surface/curve belonging
 
     // Work:
-    void * _user_draw_;         //!< @deprecated An address that may point to some drawing function (may be used by the gnuplot renderer)
-    i_wires_drawer * _wires_drawer_; //!< The handle on an external wires drawer object (may be used by the gnuplot renderer)
+    i_wires_3d_rendering * _wires_drawer_; //!< The handle on an external wires drawer object (may be used by some display tool, i.e. the gnuplot renderer)
 
     // Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION();
@@ -250,3 +262,11 @@ BOOST_CLASS_VERSION(geomtools::i_object_3d, 0)
 */
 
 #endif // GEOMTOOLS_I_OBJECT_3D_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

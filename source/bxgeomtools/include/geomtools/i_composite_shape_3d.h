@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /** \file geomtools/i_composite_shape_3d.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
@@ -34,17 +33,6 @@ namespace geomtools {
     /// \brief Record for a composite shape
     class shape_type : public datatools::i_tree_dumpable
     {
-      bool         _delete_;    //!< Flag to delete the handled shape
-      i_shape_3d * _shape_;     //!< Handle to the component shape
-      std::string  _shape_ref_; //!< Reference name of the external shape
-      placement    _placement_; //!< Placement of the component shape
-
-    private:
-
-      // forbid implementation of:
-      shape_type(const shape_type &);
-
-      shape_type & operator=(const shape_type &);
 
     public:
 
@@ -95,14 +83,50 @@ namespace geomtools {
 
       void dump(std::ostream & out_ = std::clog) const;
 
+    private:
+
+      // forbid implementation of:
+      shape_type(const shape_type &);
+
+      shape_type & operator=(const shape_type &);
+
+    private:
+
+      bool         _delete_;    //!< Flag to delete the handled shape
+      i_shape_3d * _shape_;     //!< Handle to the component shape
+      std::string  _shape_ref_; //!< Reference name of the external shape
+      placement    _placement_; //!< Placement of the component shape
+
     };
 
-    enum component_shape_type {
+    /*
+    /// \brief Masks used for the faces of the two solids
+    enum faces_mask_type {
+      FACE_NONE   = face_identifier::FACE_BITS_NONE,
+      _FACE_BEGIN = datatools::bit_mask::bit00,
+      FACE_FIRST  = datatools::bit_mask::bit00,
+      FACE_SECOND = datatools::bit_mask::bit01,
+      _FACE_END   = datatools::bit_mask::bit02,
+      FACE_ALL    = (FACE_FIRST| FACE_SECOND)
+    };
+    */
+
+    static const uint32_t FIRST_PART  = 0;
+    static const uint32_t SECOND_PART = 1;
+
+    /// \brief Masks used for the two solids
+     enum component_shape_type {
       COMPONENT_SHAPE_NONE   = 0,
       COMPONENT_SHAPE_FIRST  = datatools::bit_mask::bit00,
       COMPONENT_SHAPE_SECOND = datatools::bit_mask::bit01,
       COMPONENT_SHAPE_ALL    = COMPONENT_SHAPE_FIRST | COMPONENT_SHAPE_SECOND
     };
+
+    bool using_face_id_bits() const;
+
+    bool using_face_id_part_index() const;
+
+    bool is_valid() const;
 
     bool is_composite() const;
 
@@ -145,6 +169,20 @@ namespace geomtools {
     /// Reset
     virtual void reset();
 
+    /// \brief 3D rendering options
+    enum composite_wires_rendering_option_type {
+      WR_COMPOSITE_ONLY_BB           = (i_wires_3d_rendering::WR_BASE_LAST << 1),       //!< Only bounding box
+      WR_COMPOSITE_DRAW_FIRST_SOLID  = (i_wires_3d_rendering::WR_BASE_LAST << 2),       //!< Render the first solid
+      WR_COMPOSITE_DRAW_SECOND_SOLID = (i_wires_3d_rendering::WR_BASE_LAST << 3),       //!< Render the second solid
+      WR_COMPOSITE_BOOST_SAMPLING    = (i_wires_3d_rendering::WR_BASE_LAST << 4),       //!< Boost the solids sampling
+      WR_COMPOSITE_LAST              = (WR_COMPOSITE_BOOST_SAMPLING), //!< Last defined bit
+      WR_COMPOSITE_MASK              = (WR_COMPOSITE_ONLY_BB
+                                        | WR_COMPOSITE_DRAW_FIRST_SOLID
+                                        | WR_COMPOSITE_DRAW_SECOND_SOLID
+                                        | WR_COMPOSITE_BOOST_SAMPLING
+                                        )  //!< Rendering options bit mask
+    };
+
   private:
 
     shape_type _shape1_; //!< First shape
@@ -155,3 +193,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_I_COMPOSITE_SHAPE_3D_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,8 +1,7 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/rectangle.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-14
- * Last modified: 2010-02-14
+ * Last modified: 2015-02-15
  *
  * License:
  *
@@ -23,15 +22,13 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
-#include <geomtools/polyline_3d.h>
-#include <geomtools/placement.h>
-#include <geomtools/i_wires_3d_rendering.h>
+#include <geomtools/i_polygon.h>
 
 namespace geomtools {
 
-  /// \brief A rectangle (2D shape) in a 3D space
+  /// \brief A rectangular surface (2D shape)
   class rectangle : public i_shape_2d,
-                    public i_wires_3d_rendering
+                    public i_polygon
   {
 
   public:
@@ -54,6 +51,9 @@ namespace geomtools {
     /// Set the Y dimension
     void set_y(double);
 
+    /// Set the X and Y dimensions
+    void set(double x_, double y_);
+
     /// Return the surface
     virtual double get_surface(uint32_t flags_ = ALL_PIECES) const;
 
@@ -63,6 +63,7 @@ namespace geomtools {
     /// Return the circumference
     double get_circumference() const;
 
+    // Return the diagonal
     double get_diagonal() const;
 
     /// Default constructor
@@ -81,11 +82,12 @@ namespace geomtools {
                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual vector_3d get_normal_on_surface(const vector_3d & position_,
-                                            bool up_ = true) const;
+                                            bool check_ = true,
+                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     virtual bool find_intercept(const vector_3d & from_,
                                 const vector_3d & direction_,
-                                intercept_t & intercept_,
+                                face_intercept_info & intercept_,
                                 double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
     /// Smart print
@@ -94,17 +96,46 @@ namespace geomtools {
                            const std::string & indent_ = "",
                            bool inherit_= false) const;
 
-    virtual void generate_wires(std::list<polyline_3d> &,
-                                const placement & ,
-                                uint32_t options_ = 0) const;
+    /// \brief 3D rendering options
+    enum rectangle_wires_rendering_option_type {
+      WR_RECT_NO_XMINUS_SIDE = (WR_BASE_LAST << 1),      //!< Do not render the X- side
+      WR_RECT_NO_XPLUS_SIDE  = (WR_BASE_LAST << 2),      //!< Do not render the X+ side
+      WR_RECT_NO_YMINUS_SIDE = (WR_BASE_LAST << 3),      //!< Do not render the Y- side
+      WR_RECT_NO_YPLUS_SIDE  = (WR_BASE_LAST << 4),      //!< Do not render the Y+ side
+      WR_RECT_LAST           = (WR_RECT_NO_YPLUS_SIDE),  //!< Last defined bit
+      WR_RECT_MASK           = (WR_RECT_NO_XMINUS_SIDE
+                                | WR_RECT_NO_XPLUS_SIDE
+                                | WR_RECT_NO_YMINUS_SIDE
+                                | WR_RECT_NO_YPLUS_SIDE) //!< Rendering options bit mask
+    };
+
+    /// Generate a sequence of polylines for wires 3D rendering
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
+
+    /// Build an ordered collection of vertexes
+    virtual unsigned int compute_vertexes(vertex_col_type & vertexes_) const;
+
+  protected:
+
+    /// Set default attributes values
+    void _set_defaults();
 
   private:
 
-    double _x_; /// X dimension
-    double _y_; /// Y dimension
+    double _x_; //!< X dimension
+    double _y_; //!< Y dimension
 
   };
 
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_RECTANGLE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

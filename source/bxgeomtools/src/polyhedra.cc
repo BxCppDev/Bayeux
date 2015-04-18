@@ -1,4 +1,4 @@
-/** \file geomtools/polyhedra.cc */
+// \file geomtools/polyhedra.cc
 
 // Ourselves:
 #include <geomtools/polyhedra.h>
@@ -20,6 +20,8 @@
 
 // This project:
 #include <geomtools/regular_polygon.h>
+#include <geomtools/right_polygonal_frustrum.h>
+#include <geomtools/composite_surface.h>
 
 namespace geomtools {
 
@@ -39,6 +41,336 @@ namespace geomtools {
   {
     _grab_bounding_data().make_cylinder(_xy_max_, get_zmin(), get_zmax());
     return;
+  }
+
+  void polyhedra::_set_defaults()
+  {
+    _computed_ = false;
+    _n_sides_  = 0;
+    _has_top_face_    = boost::logic::indeterminate;
+    _has_bottom_face_ = boost::logic::indeterminate;
+    _has_inner_face_  = boost::logic::indeterminate;
+    datatools::invalidate(_top_surface_);
+    datatools::invalidate(_bottom_surface_);
+    datatools::invalidate(_outer_side_surface_);
+    datatools::invalidate(_inner_side_surface_);
+    datatools::invalidate(_outer_volume_);
+    datatools::invalidate(_inner_volume_);
+    datatools::invalidate(_volume_);
+    datatools::invalidate(_z_min_);
+    datatools::invalidate(_z_max_);
+    datatools::invalidate(_r_max_);
+    datatools::invalidate(_xy_max_);
+    _extruded_ = false;
+    return;
+  }
+
+  unsigned int polyhedra::number_of_frustra() const
+  {
+    return _points_.size() - 1;
+  }
+
+  void polyhedra::get_frustrum_data(size_t index_, frustrum_data & fd_) const
+  {
+    DT_THROW_IF (index_ >= number_of_frustra(),
+                 std::range_error,
+                 "Invalid frustrum index [" << index_ << "] !");
+    size_t count = 0;
+    for (rz_col_type::const_iterator it = _points_.begin ();
+         it != _points_.end ();
+         it++) {
+      rz_col_type::const_iterator jt = it;
+      jt++;
+      if (count == index_) {
+        fd_.z1 = it->first;
+        fd_.a1 = it->second.rmin;
+        fd_.b1 = it->second.rmax;
+        fd_.z2 = jt->first;
+        fd_.a2 = jt->second.rmin;
+        fd_.b2 = jt->second.rmax;
+        break;
+      }
+      count++;
+      if (count == _points_.size()) break;
+    }
+
+    return;
+  }
+
+  void polyhedra::compute_frustrum(right_polygonal_frustrum & f_,
+                                   placement & positioning_,
+                                   int index_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Polyhedra is not valid !");
+    f_.reset();
+    positioning_.reset();
+    DT_THROW_IF(index_ < 0 || index_ >= number_of_frustra(),
+                std::range_error,
+                "Invalid frustrum index [" << index_ << "]!");
+    frustrum_data fd;
+    get_frustrum_data(index_, fd);
+    double z = fd.z2 - fd.z1;
+    double zpos = 0.5 * (fd.z2 + fd.z1);
+    f_.set_n_sides(_n_sides_);
+    f_.set_z(z);
+    f_.set_outer_bottom_radius(fd.b1);
+    f_.set_outer_top_radius(fd.b2);
+    if (datatools::is_valid(fd.a1) && fd.a1 >= 0.0) {
+      f_.set_inner_bottom_radius(fd.a1);
+    }
+    if (datatools::is_valid(fd.a2) && fd.a2 >= 0.0) {
+      f_.set_inner_top_radius(fd.a2);
+    }
+    positioning_.set_identity();
+    positioning_.set_translation(0.0, 0.0, zpos);
+    return;
+  }
+
+  void polyhedra::compute_top_face(composite_surface & face_, placement & positioning_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+    face_.reset();
+    positioning_.reset();
+    if (has_top_face()) {
+      right_polygonal_frustrum rpf;
+      placement rpf_placement;
+      compute_frustrum(rpf, rpf_placement, number_of_frustra() - 1);
+      if (rpf.is_valid()) {
+        placement face_placement;
+        rpf.compute_top_face(face_, face_placement);
+        // std::cerr << "DEVEL: polyhedra::compute_top_face: checking cs..." << std::endl;
+        if (face_.is_valid()) {
+          double z = rpf_placement.get_translation().z();
+          z += face_placement.get_translation().z();
+          rpf_placement.grab_translation().setZ(z);
+          positioning_ = rpf_placement;
+        }
+      }
+    }
+    return;
+  }
+
+  void polyhedra::compute_bottom_face(composite_surface & face_, placement & positioning_) const
+  {
+    // std::cerr << "DEVEL: polyhedra::compute_bottom_face: Entering..." << std::endl;
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+    face_.reset();
+    positioning_.reset();
+    if (has_bottom_face()) {
+      // std::cerr << "DEVEL: polyhedra::compute_bottom_face: has_bottom_face..." << std::endl;
+      right_polygonal_frustrum rpf;
+      placement rpf_placement;
+      compute_frustrum(rpf, rpf_placement, 0);
+      if (rpf.is_valid()) {
+        // std::cerr << "DEVEL: polyhedra::compute_bottom_face: fetch first frustrum.." << std::endl;
+        placement face_placement;
+        rpf.compute_bottom_face(face_, face_placement);
+        // std::cerr << "DEVEL: polyhedra::compute_bottom_face: checking cs..." << std::endl;
+        if (face_.is_valid()) {
+          double z = rpf_placement.get_translation().z();
+          z += face_placement.get_translation().z();
+          rpf_placement.grab_translation().setZ(z);
+          positioning_ = rpf_placement;
+        }
+      }
+    }
+    // std::cerr << "DEVEL: polyhedra::compute_bottom_face: Exiting." << std::endl;
+    return;
+  }
+
+  void polyhedra::compute_inner_face(composite_surface & face_,
+                                     placement & positioning_,
+                                     int index_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    face_.reset();
+    positioning_.reset();
+    if (has_inner_face()) {
+      right_polygonal_frustrum rpf;
+      placement rpf_placement;
+      compute_frustrum(rpf, rpf_placement, index_);
+      if (rpf.has_inner_face()) {
+        rpf.compute_inner_face(face_);
+        positioning_ = rpf_placement;
+      }
+    }
+    return;
+  }
+
+  void polyhedra::compute_outer_face(composite_surface & face_,
+                                     placement & positioning_,
+                                     int index_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polycone is not valid !");
+    face_.reset();
+    positioning_.reset();
+    right_polygonal_frustrum rpf;
+    placement rpf_placement;
+    compute_frustrum(rpf, rpf_placement, index_);
+    rpf.compute_outer_face(face_);
+    positioning_ = rpf_placement;
+    return;
+  }
+
+  void polyhedra::compute_outer_face(composite_surface & face_,
+                                     placement & positioning_) const
+  {
+    face_.reset();
+    positioning_.reset();
+    // Outer side face:
+    for (int i = 0; i < number_of_frustra(); i++) {
+      geomtools::face_info & finfo = face_.add();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_outer_face(cs, finfo.grab_positioning(), i);
+      // std::cerr << "DEVEL: polyhedra::compute_outer_face: checking cs..." << std::endl;
+      if (! cs.is_valid()) {
+        face_.remove_last();
+      }
+      // std::cerr << "DEVEL: polyhedra::compute_outer_face: checked cs." << std::endl;
+    }
+    return;
+  }
+
+  void polyhedra::compute_inner_face(composite_surface & face_,
+                                    placement & positioning_) const
+  {
+    face_.reset();
+    positioning_.reset();
+    if (has_inner_face()) {
+      // Inner side face:
+      for (int i = 0; i < number_of_frustra(); i++) {
+        geomtools::face_info & finfo = face_.add();
+        composite_surface & cs = finfo.add_face<composite_surface>();
+        compute_inner_face(cs, finfo.grab_positioning(), i);
+        // std::cerr << "DEVEL: polyhedra::compute_inner_face: checking cs..." << std::endl;
+        if (! cs.is_valid()) {
+          face_.remove_last();
+        }
+        // std::cerr << "DEVEL: polyhedra::compute_inner_face: checked cs." << std::endl;
+      }
+    }
+    return;
+  }
+
+  // virtual
+  unsigned int polyhedra::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Polyhedra is not valid !");
+    unsigned int nfaces = 0;
+
+    if (has_bottom_face()) {
+      // Bottom face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_bottom_face(cs, finfo.grab_positioning());
+      if (cs.is_valid()) {
+        face_identifier fid;
+        fid.set_face_bit(FACE_BOTTOM);
+        finfo.set_identifier(fid);
+        finfo.set_label("bottom");
+        nfaces++;
+      } else {
+        faces_.pop_back();
+      }
+    }
+
+    if (has_top_face()) {
+      // Top face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_top_face(cs, finfo.grab_positioning());
+      if (cs.is_valid()) {
+        face_identifier fid;
+        fid.set_face_bit(FACE_TOP);
+        finfo.set_identifier(fid);
+        finfo.set_label("top");
+        nfaces++;
+      } else {
+        faces_.pop_back();
+      }
+    }
+
+    {
+      // Outer side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_outer_face(cs, finfo.grab_positioning());
+      if (cs.is_valid()) {
+        face_identifier fid;
+        fid.set_face_bit(FACE_OUTER_SIDE);
+        finfo.set_identifier(fid);
+        finfo.set_label("outer_side");
+        nfaces++;
+      }
+    }
+
+    if (has_inner_face()) {
+      // Inner side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_inner_face(cs, finfo.grab_positioning());
+      if (cs.is_valid()) {
+        face_identifier fid;
+        fid.set_face_bit(FACE_INNER_SIDE);
+        finfo.set_identifier(fid);
+        finfo.set_label("inner_side");
+        nfaces++;
+      }
+    }
+
+    return nfaces;
+  }
+
+  bool polyhedra::has_top_face() const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+    if (_has_top_face_) {
+      return true;
+    } else if (!_has_top_face_) {
+      return false;
+    } else {
+      DT_THROW(std::logic_error, "Polyhedra is not properly initialized !");
+    }
+  }
+
+  bool polyhedra::has_bottom_face() const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+    if (_has_bottom_face_) {
+      return true;
+    } else if (!_has_bottom_face_) {
+      return false;
+    } else {
+      DT_THROW(std::logic_error, "Polyhedra is not properly initialized !");
+    }
+  }
+
+  bool polyhedra::has_inner_face() const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+    if (_has_inner_face_) {
+      return true;
+    } else if (!_has_inner_face_) {
+      return false;
+    } else {
+      DT_THROW(std::logic_error, "Polyhedra is not properly initialized !");
+    }
   }
 
   double polyhedra::get_xmin() const
@@ -126,6 +458,14 @@ namespace geomtools {
 
   polyhedra::~polyhedra()
   {
+    return;
+  }
+
+  void polyhedra::_at_lock()
+  {
+    if (!_computed_) {
+      _compute_all_();
+    }
     return;
   }
 
@@ -347,22 +687,65 @@ namespace geomtools {
         } else {
           this->add (tz, tr2, false);
         }
-        // if (datatools::is_valid (r1)) {
-        //   this->add (tz, tr1, tr2, false);
-        // } else {
-        //   this->add (tz, tr2, false);
-        // }
       }
     }
     this->_compute_all_ ();
     return;
   }
 
+  void polyhedra::_compute_misc_()
+  {
+    DT_THROW_IF (_points_.size() < 2, std::logic_error, "No polyhedra sections !");
+    _has_top_face_ = boost::logic::indeterminate;
+    _has_bottom_face_ = boost::logic::indeterminate;
+    _has_inner_face_ = boost::logic::indeterminate;
+
+    {
+      // Check for top face:
+      _has_top_face_ = false;
+      right_polygonal_frustrum last;
+      placement dummy;
+      compute_frustrum(last, dummy, number_of_frustra() - 1);
+      if (last.has_top_face()) {
+        _has_top_face_ = true;
+      }
+    }
+
+    {
+      // Check for bottom face:
+      _has_bottom_face_ = false;
+      right_polygonal_frustrum first;
+      placement dummy;
+      compute_frustrum(first, dummy, 0);
+      if (first.has_bottom_face()) {
+        _has_bottom_face_ = true;
+      }
+    }
+
+    {
+      // Check for inner face:
+      _has_inner_face_ = false;
+      for (size_t ifrustrum = 0; ifrustrum < number_of_frustra(); ifrustrum++) {
+        // Check for inner face:
+        right_polygonal_frustrum fi;
+        placement dummy;
+        compute_frustrum(fi, dummy, ifrustrum);
+        if (fi.has_inner_face()) {
+          _has_inner_face_ = true;
+        }
+      }
+    }
+
+    return;
+  }
+
   void polyhedra::_compute_all_ ()
   {
-    _compute_surfaces_ ();
-    _compute_volume_ ();
-    _compute_limits_ ();
+    _compute_misc_();
+    _compute_surfaces_();
+    _compute_volume_();
+    _compute_limits_();
+    _computed_ = true;
     return;
   }
 
@@ -389,12 +772,12 @@ namespace geomtools {
     RMM.rmax = rmax_;
     _points_[z_] = RMM;
     if (_points_.size () > 1) {
-      if (compute_) _compute_all_ ();
+      if (compute_) _compute_all_();
     }
     return;
   }
 
-  bool polyhedra::is_valid () const
+  bool polyhedra::is_valid() const
   {
     return (_n_sides_ >= 3) && (_points_.size () > 1);
   }
@@ -403,17 +786,8 @@ namespace geomtools {
   {
     unlock();
 
-    _n_sides_ = 0;
     _points_.clear ();
-    _top_surface_        = std::numeric_limits<double>::quiet_NaN();
-    _bottom_surface_     = std::numeric_limits<double>::quiet_NaN();
-    _inner_side_surface_ = std::numeric_limits<double>::quiet_NaN();
-    _outer_side_surface_ = std::numeric_limits<double>::quiet_NaN();
-    _inner_volume_       = std::numeric_limits<double>::quiet_NaN();
-    _outer_volume_       = std::numeric_limits<double>::quiet_NaN();
-    _volume_             = std::numeric_limits<double>::quiet_NaN();
-    _z_min_ = _z_max_ = _r_max_ = _xy_max_ = std::numeric_limits<double>::quiet_NaN();
-    _extruded_ = false;
+    _set_defaults();
 
     this->i_shape_3d::reset();
     return;
@@ -450,11 +824,11 @@ namespace geomtools {
     const double alpha = 2.0 * M_PI / _n_sides_;
     for (size_t i = 0; i < _n_sides_; i++) {
       const double theta = alpha * i;
-      const double xs  = _r_max_ * cos (theta);
-      const double ys  = _r_max_ * sin (theta);
-      const double axs = std::abs (xs);
-      const double ays = std::abs (ys);
-      if (! datatools::is_valid (_xy_max_)) {
+      const double xs  = _r_max_ * std::cos(theta);
+      const double ys  = _r_max_ * std::sin(theta);
+      const double axs = std::abs(xs);
+      const double ays = std::abs(ys);
+      if (! datatools::is_valid(_xy_max_)) {
         _xy_max_ = axs;
       }
       if (axs > _xy_max_) {
@@ -531,17 +905,17 @@ namespace geomtools {
         // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
         const size_t n = _n_sides_;
         const double angle = M_PI / n;
-        const double a1 = 2 * rmax0 * sin (angle);
-        const double a2 = 2 * rmax1 * sin (angle);
+        const double a1 = 2 * rmax0 * std::sin (angle);
+        const double a2 = 2 * rmax1 * std::sin (angle);
         const double a1_2 = a1 * a1;
         const double a2_2 = a2 * a2;
         const double h = std::abs (z1 - z0);
         const double A = 0.25
           * M_PI
           * (
-             (a1_2 + a2_2) / tan (angle)
+             (a1_2 + a2_2) / std::tan (angle)
              +
-             sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
+             std::sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (std::cos (angle) * std::cos (angle))
                    + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
         s += A;
         // increment:
@@ -575,17 +949,17 @@ namespace geomtools {
         // See: http://en.wikipedia.org/wiki/Frustum#Surface_Area
         const size_t n = _n_sides_;
         const double angle = M_PI / n;
-        const double a1 = 2 * rmin0 * sin (angle);
-        const double a2 = 2 * rmin1 * sin (angle);
+        const double a1 = 2 * rmin0 * std::sin (angle);
+        const double a2 = 2 * rmin1 * std::sin (angle);
         const double a1_2 = a1 * a1;
         const double a2_2 = a2 * a2;
         const double h = std::abs (z1 - z0);
         const double A = 0.25
           * M_PI
           * (
-             (a1_2 + a2_2) / tan (angle)
+             (a1_2 + a2_2) / std::tan (angle)
              +
-             sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (cos (angle) * cos (angle))
+             std::sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (std::cos (angle) *std:: cos (angle))
                    + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
         s += A;
         // increment:
@@ -618,10 +992,10 @@ namespace geomtools {
         // See: http://en.wikipedia.org/wiki/Frustum# Volume
         const size_t n = _n_sides_;
         const double angle = M_PI / n;
-        const double a1 = 2 * rmax0 * sin (angle);
-        const double a2 = 2 * rmax1 * sin (angle);
+        const double a1 = 2 * rmax0 * std::sin (angle);
+        const double a2 = 2 * rmax1 * std::sin (angle);
         const double h = std::abs (z1 - z0);
-        const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
+        const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / std::tan (angle) / 12;
         vext += V;
         // increment:
         j++;
@@ -643,10 +1017,10 @@ namespace geomtools {
         // See: http://en.wikipedia.org/wiki/Frustum# Volume
         const size_t n = _n_sides_;
         const double angle = M_PI / n;
-        const double a1 = 2 * rmin0 * sin (angle);
-        const double a2 = 2 * rmin1 * sin (angle);
+        const double a1 = 2 * rmin0 * std::sin (angle);
+        const double a2 = 2 * rmin1 * std::sin (angle);
         const double h = std::abs (z1 - z0);
-        const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / tan (angle) / 12;
+        const double V = n * h * (a1 * a1 + a2 * a2 + a1 * a2) / std::tan (angle) / 12;
         vint += V;
         // increment:
         j++;
@@ -663,6 +1037,7 @@ namespace geomtools {
 
   void polyhedra::compute_inner_polyhedra (polyhedra & ip_)
   {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
     ip_.reset ();
     ip_.set_n_sides (this->get_n_sides ());
     for (polyhedra::rz_col_type::const_iterator i = _points_.begin ();
@@ -675,12 +1050,13 @@ namespace geomtools {
         ip_.add (z, rmax, false);
       }
     }
-    ip_._compute_all_ ();
+    ip_._compute_all_();
     return;
   }
 
-  void polyhedra::compute_outer_polyhedra (polyhedra & op_)
+  void polyhedra::compute_outer_polyhedra(polyhedra & op_)
   {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
     op_.reset ();
     op_.set_n_sides (this->get_n_sides ());
     for (polyhedra::rz_col_type::const_iterator i = _points_.begin ();
@@ -690,38 +1066,45 @@ namespace geomtools {
       const double rmax = i->second.rmax;
       op_.add (z, 0.0, rmax, false);
     }
-    op_._compute_all_ ();
+    op_._compute_all_();
     return;
   }
 
-
   double polyhedra::get_surface (uint32_t mask_) const
   {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
     double s = 0.0;
     int mask = mask_;
-    if ((int) mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
-    if (mask & FACE_INNER_SIDE) {
-      s += _inner_side_surface_;
+    if (has_inner_face()) {
+      if (mask & FACE_INNER_SIDE) {
+        s += _inner_side_surface_;
+      }
     }
     if (mask & FACE_OUTER_SIDE) {
       s += _outer_side_surface_;
     }
-    if (mask & FACE_BOTTOM) {
-      s += _bottom_surface_;
+    if (has_bottom_face()) {
+      if (mask & FACE_BOTTOM) {
+        s += _bottom_surface_;
+      }
     }
-    if (mask & FACE_TOP) {
-      s += _top_surface_;
+    if (has_top_face()) {
+      if (mask & FACE_TOP) {
+        s += _top_surface_;
+      }
     }
     return s;
   }
 
-  double polyhedra::get_volume (uint32_t /*flags*/) const
+  double polyhedra::get_volume(uint32_t /*flags*/) const
   {
-    return _volume_;
+     DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+   return _volume_;
   }
 
   double polyhedra::get_parameter (const std::string & flag_) const
   {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
     if ( flag_ == "n_sides" )            return get_n_sides ();
     if ( flag_ == "r_max" )              return get_r_max ();
     if ( flag_ == "z_min" )              return get_z_min ();
@@ -736,164 +1119,218 @@ namespace geomtools {
     DT_THROW_IF (true, std::logic_error, "Unknown '" << flag_ << " flag!");
   }
 
-  bool polyhedra::is_inside (const vector_3d & point_,
-                             double skin_) const
+  bool polyhedra::is_outside(const vector_3d & point_, double skin_) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polyhedra!");
+    unsigned int noutside = 0;
+    double skin =  get_skin(skin_);
+    // Scan the conical frustra:
+    for (unsigned int i = 0; i < number_of_frustra(); i++) {
+      right_polygonal_frustrum rpf;
+      placement rpf_placement;
+      compute_frustrum(rpf, rpf_placement, i);
+      vector_3d pos_c;
+      rpf_placement.mother_to_child(point_, pos_c);
+      if (rpf.is_outside(pos_c, skin)) {
+        noutside++;
+      }
+    }
+    return noutside == number_of_frustra();
+  }
+
+  bool polyhedra::is_inside (const vector_3d & point_, double skin_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
     double skin = get_skin(skin_);
     double hskin = 0.5 * skin;
 
-    double z = point_.z ();
+    double z = point_.z();
     // Exclude points outside the bounding cylinder:
     if (z > get_z_max() - hskin) return false;
     if (z < get_z_min() + hskin) return false;
     const double r = hypot(point_.x(), point_.y());
     if (r > get_r_max() - hskin) return false;
 
-    /*
-      for (rz_col_type::const_iterator i = _points_.begin ();
-      i != _points_.end ();
-      i++)
-      {
-      double z1 = i->first;
-      rz_col_type::const_iterator j = i;
-      j++;
-      if (j == _points_.end ())
-      {
-      break;
+    bool inside = false;
+    // Scan the conical frustra:
+    for (unsigned int i = 0; i < number_of_frustra(); i++) {
+      right_polygonal_frustrum rpf;
+      placement rpf_placement;
+      compute_frustrum(rpf, rpf_placement, i);
+      vector_3d pos_c;
+      rpf_placement.mother_to_child(point_, pos_c);
+      if (rpf.is_inside(pos_c, 0.0)) {
+        // std::cerr << "DEVEL: polyhedra::is_inside: " << "in frustrum #" << i << std::endl;
+        face_identifier mask_id;
+        uint32_t face_bits = 0;
+        face_bits |= right_polygonal_frustrum::FACE_OUTER_SIDE;
+        if (rpf.has_inner_face()) {
+          face_bits |= right_polygonal_frustrum::FACE_INNER_SIDE;
+        }
+        if (i == 0 && rpf.has_top_face()) {
+          face_bits |= right_polygonal_frustrum::FACE_TOP;
+        }
+        if (i == number_of_frustra() - 1 && rpf.has_bottom_face()) {
+          face_bits |= right_polygonal_frustrum::FACE_BOTTOM;
+        }
+        mask_id.set_face_bits(face_bits);
+        face_identifier surf_id = rpf.on_surface(point_, mask_id, skin);
+        if (! surf_id.is_valid()) {
+          inside = true;
+        }
+        break;
       }
-      double z2 = j->first;
-      if ((z >= z1) && (z <= z2))
-      {
-      double r1 = i->second;
-      double r2 = j->second;
-      double alpha = atan2 (r2 - r1, z2 - z1);
-      double epsilon = skin / cos (alpha);
-      double rs = r1 + (r2 - r1) * (z2 - z1) / ( z - z1);
-      if (r < (rs + 0.5 * epsilon))
-      {
-      return true;
-      }
-      break;
-      }
-      }
-    */
-    return false;
+    }
+
+    return inside;
   }
 
-  vector_3d polyhedra::get_normal_on_surface (const vector_3d & /*position_*/) const
+  vector_3d polyhedra::get_normal_on_surface (const vector_3d & position_,
+                                              const face_identifier & surface_bit_) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
     vector_3d normal;
     invalidate(normal);
-    /*
-      double x = position_.x ();
-      double y = position_.y ();
-      double z = position_.z ();
-      if (is_on_surface (position_, FACE_BOTTOM)) normal.set (0.0, 0.0, -1.0);
-      else if (is_on_surface (position_, FACE_TOP)) normal.set (0.0, 0.0, +1.0);
-      else if (is_on_surface (position_, FACE_SIDE))
-      {
-      for (rz_col_type::const_iterator i = _points_.begin ();
-      i != _points_.end ();
-      i++)
-      {
-      double z1 = i->first;
-      rz_col_type::const_iterator j = i;
-      j++;
-      if (j == _points_.end ())
-      {
+    const double x = position_.x();
+    const double y = position_.y();
+    const double z = position_.z();
+    switch(surface_bit_.get_face_bits()) {
+    case FACE_BOTTOM:
+      if (has_bottom_face()) {
+        normal.set(0.0, 0.0, -1.0);
+      }
       break;
+    case FACE_TOP:
+      if (has_top_face()) {
+        normal.set(0.0, 0.0, +1.0);
       }
-      double z2 = j->first;
-      if ((z >= z1) && (z <= z2))
-      {
-      double r1 = i->second;
-      double r2 = j->second;
-      double alpha = atan2 (r2 - r1, z2 - z1);
-      double phi = atan2 (y, x);
-      double theta = alpha + 0.5 * M_PI;
-      make_phi_theta (normal, phi, theta);
       break;
+    case FACE_OUTER_SIDE:
+      // XXX
+      for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        composite_surface outer;
+        placement pl_outer;
+        compute_outer_face(outer, pl_outer, i);
+        vector_3d position_c;
+        pl_outer.mother_to_child(position_, position_c);
+        vector_3d normal_c;
+        normal_c = outer.get_normal_on_surface(position_c, false);
+        pl_outer.child_to_mother_direction(normal_c, normal);
       }
-      } // for
+      break;
+    case FACE_INNER_SIDE:
+      // XXX
+      if (has_inner_face()) {
+        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+          composite_surface inner;
+          placement pl_inner;
+          compute_inner_face(inner, pl_inner, i);
+          if (inner.is_valid()) {
+            vector_3d position_c;
+            pl_inner.mother_to_child(position_, position_c);
+            vector_3d normal_c;
+            normal_c = -inner.get_normal_on_surface(position_c, false);
+            pl_inner.child_to_mother_direction(normal_c, normal);
+          }
+        }
       }
-    */
+      break;
+    }
     return normal;
   }
 
-  bool polyhedra::is_on_surface (const vector_3d & /*point_*/ ,
-                                 int    /*mask_*/ ,
-                                 double /* skin_ */) const
+  // virtual
+  face_identifier polyhedra::on_surface(const vector_3d & position_,
+                                        const face_identifier & surface_mask_,
+                                        double skin_) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
-    /*
-    double skin = get_skin ();
-    if (skin_ > USING_PROPER_SKIN) skin = skin_;
-      double z = point_.z ();
-      double r = hypot (point_.x (), point_.y ());
-      double hskin = 0.5 * skin;
+    // std::cerr << "DEVEL: polyhedra::on_surface: Entering..." << std::endl;
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polyhedra!");
+    double skin = get_skin(skin_);
 
-      int mask = mask_;
-      if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
+    face_identifier mask;
+    if (surface_mask_.is_valid()) {
+      DT_THROW_IF(! surface_mask_.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = surface_mask_;
+    } else {
+      mask.set_face_bits_any();
+    }
+    // std::cerr << "DEVEL: polyhedra::on_surface: mask=" << mask << std::endl;
 
-      if (mask & FACE_BOTTOM)
-      {
-      double zbottom = _points_.begin ()->first;
-      double rbottom = _points_.begin ()->second;
-      if ((std::abs(z - zbottom) < hskin)
-      && (r < (rbottom + hskin))) return true;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
+        // std::cerr << "DEVEL: polyhedra::on_surface: check face ref='"
+        //           << finfo.get_face_ref().get_shape_name() << "'"
+        //           << " with id=" << finfo.get_identifier() << std::endl;
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(position_, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
+        }
+        // std::cerr << "DEVEL: polyhedra::on_surface: pass face id=" << finfo.get_identifier() << std::endl;
       }
+    }
 
-      if (mask & FACE_TOP)
-      {
-      double ztop = _points_.rbegin ()->first;
-      double rtop = _points_.rbegin ()->second;
-      if ((std::abs(z - ztop) < hskin)
-      && (r < (rtop + hskin))) return true;
-      }
-
-      if (mask & FACE_SIDE)
-      {
-      for (rz_col_type::const_iterator i = _points_.begin ();
-      i != _points_.end ();
-      i++)
-      {
-      double z1 = i->first;
-      rz_col_type::const_iterator j = i;
-      j++;
-      if (j == _points_.end ())
-      {
-      break;
-      }
-      double z2 = j->first;
-
-      if ((z >= z1) && (z <= z2))
-      {
-      double r1 = i->second;
-      double r2 = j->second;
-      double alpha = atan2 (r2 - r1, z2 - z1);
-      double epsilon = skin / cos (alpha);
-      double rs = r1 + (r2 - r1) * (z2 - z1) / ( z - z1);
-      if (std::abs(r - rs) < 0.5 * epsilon)
-      {
-      return true;
-      }
-      break;
-      }
-      }
-      }
-    */
-    return false;
+    return face_identifier::face_invalid();
   }
 
-  bool polyhedra::find_intercept (const vector_3d & /*from_*/,
-                                  const vector_3d & /*direction_*/,
-                                  intercept_t & /*intercept_*/,
-                                  double /*skin_*/) const
+  bool polyhedra::find_intercept (const vector_3d & from_,
+                                  const vector_3d & direction_,
+                                  face_intercept_info & intercept_,
+                                  double skin_) const
   {
-    DT_THROW_IF (true, std::logic_error, "Not implemented yet !");
-    return false;
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polyhedra!");
+    intercept_.reset();
+
+    double skin = compute_tolerance(skin_);
+
+    const unsigned int NFACES = 4;
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
+
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
+      }
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            intercept_.set_face_id(intercepts[iface].get_face_id());
+            intercept_.set_impact(intercepts[iface].get_impact());
+          }
+        }
+      }
+    }
+
+    return intercept_.is_ok();
   }
 
   std::ostream & operator<< (std::ostream & out_, const polyhedra & p_)
@@ -993,6 +1430,79 @@ namespace geomtools {
     return;
   }
 
-} // end of namespace geomtools
+  void polyhedra::generate_wires_self(wires_type & wires_,
+                                      uint32_t options_) const
+  {
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+    bool devel = false;
+    // devel = true;
+    if (devel) std::cerr << "polyhedra::generate_wires_self: Entering..." << std::endl;
 
-// end of polyhedra.cc
+    bool draw_bottom      = !(options_ & WR_POLYHEDRA_NO_BOTTOM_FACE);
+    bool draw_top         = !(options_ & WR_POLYHEDRA_NO_TOP_FACE);
+    bool draw_inner       = !(options_ & WR_POLYHEDRA_NO_INNER_FACE);
+    bool draw_outer       = !(options_ & WR_POLYHEDRA_NO_OUTER_FACE);
+    bool draw_boundings   =  (options_ & WR_BASE_BOUNDINGS);
+
+    // draw_boundings=true;
+    if (draw_boundings && has_bounding_data()) {
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw boundings..." << std::endl;
+      get_bounding_data().generate_wires_self(wires_, 0);
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw done." << std::endl;
+    }
+
+    // Extract base rendering options:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    if (has_bottom_face() && draw_bottom) {
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw bottom..." << std::endl;
+      composite_surface bottom_face;
+      placement bottom_pl;
+      compute_bottom_face(bottom_face, bottom_pl);
+      if (bottom_face.is_valid()) {
+        uint32_t options = base_options;
+        bottom_face.generate_wires(wires_, bottom_pl, options);
+      }
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw bottom done." << std::endl;
+    }
+
+    if (has_top_face() && draw_top) {
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw top..." << std::endl;
+      composite_surface top_face;
+      placement top_pl;
+      compute_top_face(top_face, top_pl);
+      if (top_face.is_valid()) {
+        uint32_t options = base_options;
+        top_face.generate_wires(wires_, top_pl, options);
+      }
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw top done." << std::endl;
+    }
+
+    if (has_inner_face() && draw_inner) {
+      if (devel) std::cerr << "polycone::generate_wires_self: draw inner..." << std::endl;
+      composite_surface inner;
+      placement pl_inner;
+      compute_inner_face(inner, pl_inner);
+      if (inner.is_valid()) {
+        uint32_t options = base_options;
+        inner.generate_wires(wires_, pl_inner, options);
+      }
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw inner done." << std::endl;
+    }
+
+    if (draw_outer) {
+      if (devel) std::cerr << "polycone::generate_wires_self: draw outer..." << std::endl;
+      composite_surface outer;
+      placement pl_outer;
+      compute_outer_face(outer, pl_outer);
+      if (outer.is_valid()) {
+        uint32_t options = base_options;
+        outer.generate_wires(wires_, pl_outer, options);
+      }
+      if (devel) std::cerr << "polyhedra::generate_wires_self: draw outer done." << std::endl;
+    }
+
+    return;
+  }
+
+} // end of namespace geomtools

@@ -14,6 +14,7 @@
 // This project:
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/tessellation.h>
+#include <geomtools/face_identifier.h>
 #include <geomtools/gdml_writer.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
@@ -37,6 +38,7 @@ int main (int argc_, char **argv_)
               << "for class 'tessellated_solid'!" << std::endl;
 
     bool draw = false;
+    bool do_test6 = true;
 
     int iarg = 1;
     while (iarg < argc_) {
@@ -44,8 +46,8 @@ int main (int argc_, char **argv_)
 
       if (arg == "-D" || arg == "--draw") {
         draw = true;
-        // } else if (arg == "-f" || arg == "--filename") {
-        //        fn = argv_[++iarg];
+      } else if (arg == "-6" || arg == "--test6") {
+        do_test6 = false;
       }
 
       iarg++;
@@ -63,7 +65,7 @@ int main (int argc_, char **argv_)
 
     test5(draw);
 
-    test6(draw);
+    if (do_test6) test6(draw);
 
   }
   catch (std::exception & x) {
@@ -80,14 +82,14 @@ int main (int argc_, char **argv_)
 void test0()
 {
   geomtools::vector_3d v0 (0, 0, 0);
-  geomtools::vector_3d v1 (1,0, 0);
+  geomtools::vector_3d v1 (1, 0, 0);
   geomtools::vector_3d v2 (1.0, 1.0, 0);
   geomtools::vector_3d v3 (0, 1, 0);
   bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
   if (!c) {
-    std::clog << "Invalid quadrangle !" << std::endl;
+    std::clog << "test0: Invalid quadrangle !" << std::endl;
   } else {
-    std::clog << "Valid quadrangle !" << std::endl;
+    std::clog << "test0: Valid quadrangle !" << std::endl;
   }
   return;
 }
@@ -95,14 +97,14 @@ void test0()
 void test1()
 {
   geomtools::vector_3d v0 (0, 0, 0);
-  geomtools::vector_3d v1 (1,0, 0);
+  geomtools::vector_3d v1 (1, 0, 0);
   geomtools::vector_3d v2 (0.5, 0.5, 0);
   geomtools::vector_3d v3 (0, 1, 0);
   bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
   if (!c) {
-    std::clog << "Invalid quadrangle !" << std::endl;
+    std::clog << "test1: Invalid quadrangle !" << std::endl;
   } else {
-    std::clog << "Valid quadrangle !" << std::endl;
+    std::clog << "test1: Valid quadrangle !" << std::endl;
   }
   return;
 }
@@ -115,9 +117,9 @@ void test2()
   geomtools::vector_3d v3 (0, 1, 0);
   bool c = geomtools::facet34::check_quadrangle (v0, v1, v2, v3);
   if (!c) {
-    std::clog << "Invalid quadrangle !" << std::endl;
+    std::clog << "test2: Invalid quadrangle !" << std::endl;
   } else {
-    std::clog << "Valid quadrangle !" << std::endl;
+    std::clog << "test2: Valid quadrangle !" << std::endl;
   }
   return;
 }
@@ -129,9 +131,9 @@ void test3()
   geomtools::vector_3d v2 (0.25, 0.25, 0);
   bool c = geomtools::facet34::check_triangle (v0, v1, v2);
   if (!c) {
-    std::clog << "Invalid triangle !" << std::endl;
+    std::clog << "test3: Invalid triangle !" << std::endl;
   } else {
-    std::clog << "Valid triangle !" << std::endl;
+    std::clog << "test3: Valid triangle !" << std::endl;
   }
   return;
 }
@@ -143,9 +145,9 @@ void test4()
   geomtools::vector_3d v2 (2, 0, 0);
   bool c = geomtools::facet34::check_triangle (v0, v1, v2);
   if (!c) {
-    std::clog << "Invalid triangle !" << std::endl;
+    std::clog << "test4: Invalid triangle !" << std::endl;
   } else {
-    std::clog << "Valid triangle !" << std::endl;
+    std::clog << "test4: Valid triangle !" << std::endl;
   }
   return;
 }
@@ -168,7 +170,7 @@ void test5(bool draw_)
   TS1.add_facet3 (ifct++, R, S, T);
   TS1.add_facet3 (ifct++, S, P, T);
   TS1.lock ();
-  TS1.dump (std::clog);
+  TS1.tree_dump (std::clog);
 
   geomtools::tessellated_solid TS2;
   double z0 = 2;
@@ -189,44 +191,102 @@ void test5(bool draw_)
   TS2.add_facet4 (ifct++, D1, A1, A2, D2);
 
   TS2.lock ();
-  TS2.dump (std::clog);
+  TS2.tree_dump (std::clog);
+
+  datatools::temp_file tmp_file;
+  tmp_file.set_remove_at_destroy(true);
+  tmp_file.create("/tmp", "test_tessellated_solid");
+
+  geomtools::placement tessel_placement;
+  tessel_placement.set_identity();
+
+  {
+    tmp_file.out() << "# draw (index 0)" << std::endl;
+    geomtools::gnuplot_draw::draw_tessellated(tmp_file.out(),
+                                              tessel_placement,
+                                              TS1,
+                                              geomtools::i_wires_3d_rendering::WR_NONE
+                                              | geomtools::i_wires_3d_rendering::WR_BASE_BOUNDINGS
+                                              );
+    geomtools::gnuplot_draw::draw_tessellated(tmp_file.out(),
+                                              tessel_placement,
+                                              TS2,
+                                              geomtools::i_wires_3d_rendering::WR_NONE
+                                              | geomtools::i_wires_3d_rendering::WR_BASE_BOUNDINGS
+                                              );
+    tmp_file.out() << std::endl << std::endl;
+  }
+
+  {
+    bool do_bulk = true;
+    bool do_surf = true;
+
+    // do_bulk = false;
+    // do_surf = false;
+
+    int counts = 0;
+    tmp_file.out() << "# locate (index 1)" << std::endl;
+    size_t nshoots = 200000;
+    for (int i = 0; i < (int) nshoots; i++) {
+      double dim = 3. * CLHEP::mm;
+      geomtools::vector_3d position (dim * ( 0 + drand48 ()),
+                                     dim * ( 0 + drand48 ()),
+                                     dim * ( -1 + 2 * drand48 ()));
+      double skin = 0.05 * CLHEP::mm;
+      geomtools::vector_3d position_c;
+      tessel_placement.mother_to_child(position, position_c);
+      if (do_surf && TS1.check_surface(position_c, skin)) {
+        geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 3.0);
+        counts++;
+      } else if (do_surf && TS2.check_surface(position_c, skin)) {
+        geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 2.0);
+        counts++;
+      } else if (do_bulk && TS1.check_inside(position_c, skin)) {
+        geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 4.0);
+        counts++;
+      } else if (do_bulk && TS2.check_inside(position_c, skin)) {
+        geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 5.0);
+        counts++;
+      }
+    }
+    if (counts == 0) {
+      tmp_file.out() << "0 0 0 -1" << std::endl;
+    }
+    tmp_file.out() << std::endl << std::endl;
+  }
+  tmp_file.close();
+  usleep(200);
+
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
   if (draw_) {
-    datatools::temp_file tmp_file;
-    tmp_file.set_remove_at_destroy(true);
-    tmp_file.create("/tmp", "test_tessellated_solid");
-
-    geomtools::vector_3d tessel_pos;
-    geomtools::rotation_3d tessel_rot;
-    geomtools::create_rotation(tessel_rot, 0.0, 0.0, 0.0);
-    geomtools::gnuplot_draw::draw_tessellated(tmp_file.out(), tessel_pos, tessel_rot, TS1);
-    tmp_file.out() << std::endl;
-    geomtools::gnuplot_draw::draw_tessellated(tmp_file.out(), tessel_pos, tessel_rot, TS2);
-    tmp_file.out() << std::endl << std::endl;
-    tmp_file.close();
-    usleep(200);
 
     {
-      Gnuplot g1 ("lines");
+      Gnuplot g1("lines");
       {
         std::ostringstream title;
         title << "set title '";
-        title << "Tessellated solid from CATIA/STL export";
-        // title << " (";
-        // title << TS2.vertices ().size() << " vertices, " << TS2.facets().size() << " facets)";
+        title << "Tessellated solids";
         g1.cmd(title.str());
       }
       g1.cmd("set grid");
       g1.cmd("set size ratio -1");
       g1.cmd("set view equal xyz");
+      g1.cmd("set xrange [-5:+5]");
+      g1.cmd("set yrange [-5:+5]");
+      g1.cmd("set zrange [-5:+5]");
       g1.cmd("set xyplane at -5");
-      g1.set_xrange(-5, +5).set_yrange(-5, +5).set_zrange(-5, +5);
       g1.set_xlabel("x").set_ylabel("y").set_zlabel("z");
 
-      g1.plotfile_xyz(tmp_file.get_filename (), 1, 2, 3, "3D view");
-      g1.showonscreen(); // window output
-      geomtools::gnuplot_drawer::wait_for_key();
-      usleep(200);
+      {
+        std::ostringstream plot_cmd;
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Tessellated solids' with lines ";
+        plot_cmd << ", '' index 1 using 1:2:3:4 title 'Locate' with points pt 6 ps 0.3 linecolor variable ";
+        g1.cmd (plot_cmd.str ());
+        g1.showonscreen (); // window output
+        geomtools::gnuplot_drawer::wait_for_key ();
+        usleep (200);
+      }
+
     }
 
     geomtools::gdml_writer writer;
@@ -258,10 +318,12 @@ void test5(bool draw_)
     writer.add_gdml_box("lab.solid",
                         15.0 * CLHEP::mm, 15.0 * CLHEP::mm, 15.0 * CLHEP::mm,
                         "mm");
-    // writer.add_tessellated("tessella.solid", TS1, "mm");
+    writer.add_tessellated("tessella.solid", TS1, "mm");
+    /*
     writer.add_gdml_box("tessella.solid",
                         5.0 * CLHEP::mm, 5.0 * CLHEP::mm, 5.0 * CLHEP::mm,
                         "mm");
+    */
 
     // Structures:
     writer.add_volume("dummy.log",

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/visibility.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
@@ -93,3 +92,11 @@ namespace geomtools {
 }  // end of namespace geomtools
 
 #endif // GEOMTOOLS_VISIBILITY_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

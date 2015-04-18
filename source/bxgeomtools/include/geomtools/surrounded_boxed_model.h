@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/surrounded_boxed_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
@@ -156,3 +155,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::surrounded_boxed_model)
 
 #endif // GEOMTOOLS_SURROUNDED_BOXED_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

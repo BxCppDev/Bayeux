@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/manager.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-21
@@ -468,3 +467,11 @@ DOCD_CLASS_DECLARATION(geomtools::manager)
 #include <geomtools/detail/manager-inl.h>
 
 #endif // GEOMTOOLS_MANAGER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

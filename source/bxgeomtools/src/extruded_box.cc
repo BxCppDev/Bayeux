@@ -10,7 +10,10 @@
 #include <datatools/properties.h>
 
 // This project:
-#include <geomtools/gnuplot_draw.h>
+#include <geomtools/box.h>
+#include <geomtools/rectangle.h>
+#include <geomtools/quadrangle.h>
+#include <geomtools/composite_surface.h>
 
 namespace geomtools {
 
@@ -24,6 +27,14 @@ namespace geomtools {
       label = "extruded_box";
     }
     return label;
+  }
+
+  void extruded_box::_build_bounding_data()
+  {
+    _grab_bounding_data().make_box(get_xmin(), get_xmax(),
+                                   get_ymin(), get_ymax(),
+                                   get_zmin(), get_zmax());
+    return;
   }
 
   double extruded_box::get_xmin() const
@@ -147,6 +158,12 @@ namespace geomtools {
   extruded_box::set_thickness(double t_)
   {
     DT_THROW_IF (t_ <= 0.0, std::logic_error, "Invalid '" << t_ << "' thickness value !");
+    DT_THROW_IF(datatools::is_valid(_x_) && t_ >= 0.5 * _x_,
+                std::domain_error,
+                "Thickness is too large [" << t_ << "]!");
+    DT_THROW_IF(datatools::is_valid(_y_) && t_ >= 0.5 * _y_,
+                std::domain_error,
+                "Thickness is too large [" << t_ << "]!");
     _thickness_ = t_;
     return;
   }
@@ -249,8 +266,7 @@ namespace geomtools {
     return;
   }
 
-  std::string
-  extruded_box::get_shape_name() const
+  std::string extruded_box::get_shape_name() const
   {
     return extruded_box_label();
   }
@@ -258,9 +274,9 @@ namespace geomtools {
   double
   extruded_box::get_surface(uint32_t mask_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
     double s = 0.0;
     uint32_t mask = mask_;
-    if (mask_ == (uint32_t) ALL_SURFACES) mask = FACE_ALL;
 
     if (mask & FACE_BACK) {
       s += _y_ * _z_;
@@ -297,8 +313,7 @@ namespace geomtools {
       if (mask & FACE_INSIDE_TOP) {
         s += (_x_ - 2 * _thickness_) * (_y_ - 2 * _thickness_);
       }
-    }
-    else {
+    } else {
       if (mask & FACE_INSIDE_BACK) {
         s += (_y_ - 2 * _thickness_) * _thickness_;
       }
@@ -320,8 +335,7 @@ namespace geomtools {
       if (mask & FACE_INSIDE_BOTTOM) {
         s += _x_ * _y_;
       }
-    }
-    else {
+    } else {
       if (mask & FACE_INSIDE_BACK) {
         s += (_y_ - 2 * _thickness_) * _thickness_;
       }
@@ -345,6 +359,7 @@ namespace geomtools {
   double
   extruded_box::get_parameter(const std::string & flag_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
     if (flag_ == "x")          return get_x();
     if (flag_ == "y")          return get_y();
     if (flag_ == "z")          return get_z();
@@ -365,13 +380,13 @@ namespace geomtools {
     if (flag_ == "surface.inside_front")  return get_surface(FACE_INSIDE_FRONT);
     if (flag_ == "surface.inside_left")   return get_surface(FACE_INSIDE_LEFT);
     if (flag_ == "surface.inside_right")  return get_surface(FACE_INSIDE_RIGHT);
-
     DT_THROW_IF (true, std::logic_error, "Unknown flag '" << flag_ << "' !");
   }
 
   double
   extruded_box::get_volume(uint32_t /*flags*/) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
     double v = _x_ * _y_ * _z_;
     double z_int = _z_;
     if (has_top()) z_int -= _thickness_;
@@ -383,13 +398,19 @@ namespace geomtools {
   bool
   extruded_box::is_valid() const
   {
-    return(datatools::is_valid(_x_) && _x_ > 0.0
-           && datatools::is_valid(_y_) && _y_ > 0.0
-           && datatools::is_valid(_z_) && _z_ > 0.0
-           && datatools::is_valid(_thickness_) && _thickness_ > 0.0
-           && _thickness_ < _x_ / 2.0
-           && _thickness_ < _y_ / 2.0
-           && _thickness_ < _z_ / 2.0);
+    if (!datatools::is_valid(_x_)) return false;
+    if (!datatools::is_valid(_y_)) return false;
+    if (!datatools::is_valid(_z_)) return false;
+    if (!datatools::is_valid(_thickness_)) return false;
+    double z_inner = _z_ - 2. * _thickness_;
+    if (!has_bottom()) {
+      z_inner += _thickness_;
+    }
+    if (!has_top()) {
+      z_inner += _thickness_;
+    }
+    if (z_inner <= 0.0) return false;
+    return true;
   }
 
   void extruded_box::initialize(const datatools::properties & config_,
@@ -479,249 +500,194 @@ namespace geomtools {
   bool
   extruded_box::is_outside(const vector_3d & position_, double skin_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
     double skin = get_skin(skin_);
-    double hskin = 0.5 * skin;
-    if ((std::abs(position_.x()) >= (0.5 * _x_ + hskin))
-        || (std::abs(position_.y()) >= (0.5 * _y_ + hskin))
-        || (std::abs(position_.z()) >= (0.5 * _z_ + hskin))) {
+
+    box outer_box;
+    compute_outer_box(outer_box);
+    if (outer_box.is_outside(position_, skin)) {
       return true;
     }
-    if ((std::abs(position_.x()) <= (0.5 * _x_ - _thickness_ - hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - _thickness_ - hskin))
-        && (std::abs(position_.z()) <= (0.5 * _z_ - _thickness_ - hskin))) {
+
+    box inner_box;
+    placement inner_box_placement;
+    compute_inner_box(inner_box, inner_box_placement);
+    vector_3d position_c;
+    inner_box_placement.mother_to_child(position_, position_c);
+    if (inner_box.is_inside(position_c, skin)) {
       return true;
     }
-    if (!has_top() && !has_bottom()
-        && (std::abs(position_.x()) <= (0.5 * _x_ - _thickness_ - hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - _thickness_ - hskin))) {
-      return true;
+
+    if (has_top()) {
+      if (inner_box.is_on_surface(position_c,
+                                  face_identifier(box::FACE_TOP,
+                                                  face_identifier::MODE_FACE_BITS),
+                                  skin)) {
+        return true;
+      }
     }
-    if (!has_top()
-        && (std::abs(position_.x()) <= (0.5 * _x_ - _thickness_ - hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - _thickness_ - hskin))
-        && position_.z() >= (-0.5 * _z_ - _thickness_ - hskin)) {
-      return true;
+
+    if (has_bottom()) {
+      if (inner_box.is_on_surface(position_c,
+                                  face_identifier(box::FACE_BOTTOM,
+                                                  face_identifier::MODE_FACE_BITS),
+                                  skin)) {
+        return true;
+      }
     }
-    if (!has_bottom()
-        && (std::abs(position_.x()) <= (0.5 * _x_ - _thickness_ - hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - _thickness_ - hskin))
-        && position_.z() <= (0.5 * _z_ - _thickness_ - hskin)) {
-      return true;
-    }
+
     return false;
   }
 
   bool
   extruded_box::is_inside(const vector_3d & position_, double skin_) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
     double skin = get_skin(skin_);
-    double hskin = 0.5 * skin;
-    if ((std::abs(position_.x()) <= (0.5 * _x_ - hskin))
-        && (std::abs(position_.x()) >= (0.5 * _x_ - _thickness_ + hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - hskin))
-        && (std::abs(position_.z()) <= (0.5 * _z_ - hskin))) {
+
+    box outer_box;
+    compute_outer_box(outer_box);
+
+    box inner_box;
+    placement inner_box_placement;
+    compute_inner_box(inner_box, inner_box_placement);
+    vector_3d position_c;
+    inner_box_placement.mother_to_child(position_, position_c);
+    if (outer_box.is_inside(position_, skin) && inner_box.is_outside(position_c, skin)) {
       return true;
     }
-    if ((std::abs(position_.x()) <= (0.5 * _x_ - hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - hskin))
-        && (std::abs(position_.y()) >= (0.5 * _y_ - _thickness_ + hskin))
-        && (std::abs(position_.z()) <= (0.5 * _z_ - hskin))) {
-      return true;
-    }
-    if (has_top()
-        && (std::abs(position_.x()) <= (0.5 * _x_ - hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - hskin))
-        && (position_.z() <= (0.5 * _z_ - hskin))
-        && (position_.z() >= (0.5 * _z_ - _thickness_ + hskin))) {
-      return true;
-    }
-    if (has_bottom()
-        && (std::abs(position_.x()) <= (0.5 * _x_ - hskin))
-        && (std::abs(position_.y()) <= (0.5 * _y_ - hskin))
-        && (position_.z() >= (-0.5 * _z_ + hskin))
-        && (position_.z() <= (-0.5 * _z_ - _thickness_ - hskin))) {
-      return true;
-    }
+
     return false;
   }
 
   vector_3d
-  extruded_box::get_normal_on_surface(const vector_3d & position_) const
+  extruded_box::get_normal_on_surface (const vector_3d & a_position,
+                                       const face_identifier & a_surface_bit) const
   {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
     vector_3d normal;
     geomtools::invalidate(normal);
-    if (is_on_surface(position_, FACE_BACK))               normal.set(-1., 0., 0.);
-    else if (is_on_surface(position_, FACE_FRONT))         normal.set(+1., 0., 0.);
-    else if (is_on_surface(position_, FACE_LEFT))          normal.set(0., -1., 0.);
-    else if (is_on_surface(position_, FACE_RIGHT))         normal.set(0., +1., 0.);
-    else if (is_on_surface(position_, FACE_BOTTOM))        normal.set(0., 0., -1.);
-    else if (is_on_surface(position_, FACE_TOP))           normal.set(0., 0., +1.);
-    else if (is_on_surface(position_, FACE_INSIDE_BACK))   normal.set(+1., 0., 0.);
-    else if (is_on_surface(position_, FACE_INSIDE_FRONT))  normal.set(-1., 0., 0.);
-    else if (is_on_surface(position_, FACE_INSIDE_LEFT))   normal.set(0., +1., 0.);
-    else if (is_on_surface(position_, FACE_INSIDE_RIGHT))  normal.set(0., -1., 0.);
-    else if (is_on_surface(position_, FACE_INSIDE_BOTTOM)) normal.set(0., 0., +1.);
-    else if (is_on_surface(position_, FACE_INSIDE_TOP))    normal.set(0., 0., -1.);
+    switch (a_surface_bit.get_face_bits()) {
+    case FACE_BACK:
+      normal.set(-1., 0., 0.);
+      break;
+    case FACE_FRONT:
+      normal.set(+1., 0., 0.);
+      break;
+    case FACE_LEFT:
+      normal.set(0., -1., 0.);
+      break;
+    case FACE_RIGHT:
+      normal.set(0., +1., 0.);
+      break;
+    case FACE_BOTTOM:
+      normal.set(0., 0., -1.);
+      break;
+    case FACE_TOP:
+      normal.set(0., 0., +1.);
+      break;
+    case FACE_INSIDE_BACK:
+      normal.set(+1., 0., 0.);
+      break;
+    case FACE_INSIDE_FRONT:
+      normal.set(-1., 0., 0.);
+      break;
+    case FACE_INSIDE_LEFT:
+      normal.set(0., +1., 0.);
+      break;
+    case FACE_INSIDE_RIGHT:
+      normal.set(0., -1., 0.);
+      break;
+    case FACE_INSIDE_BOTTOM:
+      {
+        if (has_bottom()) {
+          normal.set(0., 0., +1.);
+        }
+      }
+      break;
+    case FACE_INSIDE_TOP:
+      {
+        if (has_top()) {
+          normal.set(0., 0., -1.);
+        }
+      }
+      break;
+    }
     return(normal);
   }
 
-  bool
-  extruded_box::is_on_surface(const vector_3d & position_ ,
-                              int    mask_ ,
-                              double skin_) const
+  face_identifier extruded_box::on_surface(const vector_3d & position_,
+                                           const face_identifier & surface_mask_,
+                                           double skin_) const
   {
-    double skin = get_skin(skin_);
-
-    int mask = mask_;
-    if (mask_ == (int) ALL_SURFACES) mask = FACE_ALL;
-
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+    double skin = compute_tolerance(skin_);
     double hskin = 0.5 * skin;
-
-    // outside faces regardless top or bottom covers
-    if (mask & FACE_BACK) {
-      if ((std::abs(position_.x() + 0.5 * _x_) < hskin)
-          && (std::abs(position_.y()) < 0.5 * _y_)
-          && (std::abs(position_.z()) < 0.5 * _z_)) return true;
-    }
-    if (mask & FACE_FRONT) {
-      if ((std::abs(position_.x() - 0.5 * _x_) < hskin)
-          && (std::abs(position_.y()) < 0.5 * _y_)
-          && (std::abs(position_.z()) < 0.5 * _z_)) return true;
-    }
-    if (mask & FACE_LEFT) {
-      if ((std::abs(position_.y() + 0.5 * _y_) < hskin)
-          && (std::abs(position_.x()) < 0.5 * _x_)
-          && (std::abs(position_.z()) < 0.5 * _z_)) return true;
-    }
-    if (mask & FACE_RIGHT) {
-      if ((std::abs(position_.y() - 0.5 * _y_) < hskin)
-          && (std::abs(position_.x()) < 0.5 * _x_)
-          && (std::abs(position_.z()) < 0.5 * _z_)) return true;
+    face_identifier mask;
+    if (surface_mask_.is_valid()) {
+      DT_THROW_IF(! surface_mask_.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = surface_mask_;
+    } else {
+      mask.set_face_bits_any();
     }
 
-    // inside faces regardless top or bottom covers
-    if (mask & FACE_INSIDE_BACK) {
-      if ((std::abs(position_.x() + 0.5 * _x_ - _thickness_) < hskin)
-          && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)
-          && (std::abs(position_.z()) < 0.5 * _z_ - _thickness_)) return true;
-    }
-    if (mask & FACE_INSIDE_FRONT) {
-      if ((std::abs(position_.x() - 0.5 * _x_ + _thickness_) < hskin)
-          && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)
-          && (std::abs(position_.z()) < 0.5 * _z_ - _thickness_)) return true;
-    }
-    if (mask & FACE_INSIDE_LEFT) {
-      if ((std::abs(position_.y() + 0.5 * _y_ - _thickness_) < hskin)
-          && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-          && (std::abs(position_.z()) < 0.5 * _z_ - _thickness_)) return true;
-    }
-    if (mask & FACE_INSIDE_RIGHT) {
-      if ((std::abs(position_.y() - 0.5 * _y_ + _thickness_) < hskin)
-          && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-          && (std::abs(position_.z()) < 0.5 * _z_ - _thickness_)) return true;
-    }
-
-    // if has top cover
-    if (has_top()) {
-      if (mask & FACE_TOP) {
-        if ((std::abs(position_.z() - 0.5 * _z_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_)
-            && (std::abs(position_.y()) < 0.5 * _y_)) return true;
-      }
-      if (mask & FACE_INSIDE_TOP) {
-        if ((std::abs(position_.z() - 0.5 * _z_ + _thickness_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-            && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)) return true;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit( finfo.get_identifier().get_face_bits() )) {
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(position_, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
+        }
       }
     }
 
-    // if has not top cover
-    else {
-      if (mask & FACE_TOP) {
-        if ((std::abs(position_.z() - 0.5 * _z_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_)
-            && (std::abs(position_.x()) > 0.5 * _x_ - _thickness_)
-            && (std::abs(position_.y()) < 0.5 * _y_)
-            && (std::abs(position_.y()) > 0.5 * _y_ - _thickness_)) return true;
-      }
-      if (mask & FACE_INSIDE_BACK) {
-        if ((std::abs(position_.x() + 0.5 * _x_ - _thickness_) < hskin)
-            && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)
-            && (position_.z() > 0. && position_.z() < 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_INSIDE_FRONT) {
-        if ((std::abs(position_.x() - 0.5 * _x_ + _thickness_) < hskin)
-            && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)
-            && (position_.z() > 0. && position_.z() < 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_INSIDE_LEFT) {
-        if ((std::abs(position_.y() + 0.5 * _y_ - _thickness_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-            && (position_.z() > 0. && position_.z() < 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_INSIDE_RIGHT) {
-        if ((std::abs(position_.y() - 0.5 * _y_ + _thickness_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-            && (position_.z() > 0. && position_.z() < 0.5 * _z_)) return true;
-      }
-    }
-
-    // if has bottom cover
-    if (has_bottom()) {
-      if (mask & FACE_BOTTOM) {
-        if ((std::abs(position_.z() + 0.5 * _z_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_)
-            && (std::abs(position_.y()) < 0.5 * _y_)) return true;
-      }
-      if (mask & FACE_INSIDE_BOTTOM) {
-        if ((std::abs(position_.z() + 0.5 * _z_ - _thickness_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-            && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)) return true;
-      }
-    }
-
-    // if has not bottom cover
-    else {
-      if (mask & FACE_BOTTOM) {
-        if ((std::abs(position_.z() + 0.5 * _z_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_)
-            && (std::abs(position_.x()) > 0.5 * _x_ - _thickness_)
-            && (std::abs(position_.y()) < 0.5 * _y_)
-            && (std::abs(position_.y()) > 0.5 * _y_ - _thickness_)) return true;
-      }
-      if (mask & FACE_INSIDE_BACK) {
-        if ((std::abs(position_.x() + 0.5 * _x_ - _thickness_) < hskin)
-            && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)
-            && (position_.z() < 0. && position_.z() > - 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_INSIDE_FRONT) {
-        if ((std::abs(position_.x() - 0.5 * _x_ + _thickness_) < hskin)
-            && (std::abs(position_.y()) < 0.5 * _y_ - _thickness_)
-            && (position_.z() < 0. && position_.z() > - 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_INSIDE_LEFT) {
-        if ((std::abs(position_.y() + 0.5 * _y_ - _thickness_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-            && (position_.z() < 0. && position_.z() > - 0.5 * _z_)) return true;
-      }
-      if (mask & FACE_INSIDE_RIGHT) {
-        if ((std::abs(position_.y() - 0.5 * _y_ + _thickness_) < hskin)
-            && (std::abs(position_.x()) < 0.5 * _x_ - _thickness_)
-            && (position_.z() < 0. && position_.z() > - 0.5 * _z_)) return true;
-      }
-    }
-    return false;
+    return face_identifier::face_invalid();
   }
 
   bool
   extruded_box::find_intercept(const vector_3d & from_,
                                const vector_3d & direction_,
-                               intercept_t & intercept_,
+                               face_intercept_info & intercept_,
                                double skin_) const
   {
-    DT_THROW_IF(!has_top() || !has_bottom(), std::runtime_error,
-                "Not implemented for extruded box without top or bottom !");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+    intercept_.reset ();
 
+    double skin = compute_tolerance(skin_);
+
+    const unsigned int NFACES = 12;
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
+
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
+      }
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+
+    /*
     bool debug = false;
     const unsigned int NFACES = 12;
     double t[NFACES];
@@ -774,8 +740,25 @@ namespace geomtools {
     }
     intercept_.reset();
     if (face_min > 0) {
-      intercept_.set(0, face_min, from_ + direction_ * t_min);
+      intercept_.grab_face_id().set_face_bit(face_min);
+      intercept_.set_impact(from_ + direction_ * t_min);
     }
+    */
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            intercept_.set_face_id(intercepts[iface].get_face_id());
+            intercept_.set_impact(intercepts[iface].get_impact());
+          }
+        }
+      }
+    }
+
     return intercept_.is_ok();
   }
 
@@ -835,7 +818,7 @@ namespace geomtools {
   {
     std::string indent;
     if (! indent_.empty()) indent = indent_;
-    i_object_3d::tree_dump(out_, title_, indent_, true);
+    i_shape_3d::tree_dump(out_, title_, indent_, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "X          : " << get_x() / CLHEP::mm << " mm" << std::endl;
@@ -852,95 +835,329 @@ namespace geomtools {
     return;
   }
 
-  void extruded_box::generate_wires(std::list<polyline_3d> & lpl_,
-                                    const placement & p_,
-                                    uint32_t /*options_*/) const
+  /// Compute the top/bottom face and placement
+  void extruded_box::compute_extruded_top_bottom_face(faces_mask_type face_id_,
+                                                      composite_surface & face_,
+                                                      placement & face_placement_) const
   {
-    double dim[3];
-    dim[0] = 0.5 * get_x();
-    dim[1] = 0.5 * get_y();
-    dim[2] = 0.5 * get_z();
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+    face_.reset();
+    face_placement_.reset();
+    DT_THROW_IF(face_id_ != FACE_TOP && face_id_ != FACE_BOTTOM,
+                std::logic_error,
+                "Invalid face identifier (" << face_id_ << "]!");
+    if (face_id_ == FACE_TOP && has_top()) {
+      return;
+    }
+    if (face_id_ == FACE_BOTTOM && has_bottom()) {
+      return;
+    }
 
-    for (int i = 0; i < 6; i++) {
-      for (int j = 0; j < 2; j++) {
-        vector_3d vertex[4];
-        if (i == 0) {
-          vertex[0].set((1-2*j) * dim[0],   dim[1],  dim[2]);
-          vertex[1].set((1-2*j) * dim[0],   dim[1], -dim[2]);
-          vertex[2].set((1-2*j) * dim[0],  -dim[1], -dim[2]);
-          vertex[3].set((1-2*j) * dim[0],  -dim[1],  dim[2]);
+    box outer;
+    compute_outer_box(outer);
+    rectangle outer_tb_rect;
+    placement outer_tb_rect_placement;
+    box::faces_mask_type box_face_id = box::FACE_TOP;
+    if (face_id_ == FACE_BOTTOM) {
+      box_face_id = box::FACE_BOTTOM;
+    }
+    outer.compute_face(box_face_id, outer_tb_rect, outer_tb_rect_placement);
+    vertex_col_type outer_tb_col_type;
+    outer_tb_rect.compute_vertexes(outer_tb_col_type);
+    const vector_3d & A = outer_tb_col_type[0];
+    const vector_3d & B = outer_tb_col_type[1];
+    const vector_3d & C = outer_tb_col_type[2];
+    const vector_3d & D = outer_tb_col_type[3];
+
+    box inner;
+    placement inner_placement;
+    compute_inner_box(inner, inner_placement);
+    rectangle inner_tb_rect;
+    placement inner_tb_rect_placement;
+    inner.compute_face(box_face_id, inner_tb_rect, inner_tb_rect_placement);
+    vertex_col_type inner_tb_col_type;
+    inner_tb_rect.compute_vertexes(inner_tb_col_type);
+    const vector_3d & E = inner_tb_col_type[0];
+    const vector_3d & F = inner_tb_col_type[1];
+    const vector_3d & G = inner_tb_col_type[2];
+    const vector_3d & H = inner_tb_col_type[3];
+    /*
+     *
+     *  B +----------------------+ A
+     *    |\                    /|
+     *    | \                  / |
+     *    |  \                /  |
+     *    |   +--------------+   |
+     *    |   |F            E|   |
+     *    |   |              |   |
+     *    |   |G            H|   |
+     *    |   +--------------+   |
+     *    |  /                \  |
+     *    | /                  \ |
+     *    |/                    \|
+     *  C +----------------------+ D
+     *
+     */
+
+
+    {
+      // std::cerr << "DEVEL: extruded_box::compute_extruded_top_bottom_face: FEAB..." << std::endl;
+      geomtools::face_info & finfo = face_.add();
+      geomtools::quadrangle & q = finfo.add_face<geomtools::quadrangle>();
+      q.set_vertexes(F, E, A, B);
+      finfo.set_identity_positioning();
+      finfo.grab_identifier().set_face_index(0);
+      // std::cerr << "DEVEL: extruded_box::compute_extruded_top_bottom_face: FEAB done." << std::endl;
+    }
+    {
+      // std::cerr << "DEVEL: extruded_box::compute_extruded_top_bottom_face: GFBC..." << std::endl;
+      geomtools::face_info & finfo = face_.add();
+      geomtools::quadrangle & q = finfo.add_face<geomtools::quadrangle>();
+      q.set_vertexes(G, F, B, C);
+      finfo.set_identity_positioning();
+      finfo.grab_identifier().set_face_index(1);
+      // std::cerr << "DEVEL: extruded_box::compute_extruded_top_bottom_face: GFBC done." << std::endl;
+    }
+    {
+      geomtools::face_info & finfo = face_.add();
+      geomtools::quadrangle & q = finfo.add_face<geomtools::quadrangle>();
+      q.set_vertexes(H, G, C, D);
+      finfo.set_identity_positioning();
+      finfo.grab_identifier().set_face_index(2);
+    }
+    {
+      geomtools::face_info & finfo = face_.add();
+      geomtools::quadrangle & q = finfo.add_face<geomtools::quadrangle>();
+      q.set_vertexes(E, H, D, A);
+      finfo.set_identity_positioning();
+      finfo.grab_identifier().set_face_index(3);
+    }
+
+    face_placement_ = outer_tb_rect_placement;
+    return;
+  }
+
+  void extruded_box::compute_outer_box(box & outer_box_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+    outer_box_.set(_x_, _y_, _z_);
+    return;
+  }
+
+  void extruded_box::compute_inner_box(box & inner_box_, placement & inner_box_placement_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+    double z_inner = _z_ - 2 * _thickness_;
+    double z_inner_pos = 0.0;
+    if (!has_bottom()) {
+      z_inner += _thickness_;
+      z_inner_pos -= 0.5 * _thickness_;
+    }
+    if (!has_top()) {
+      z_inner += _thickness_;
+      z_inner_pos += 0.5 * _thickness_;
+    }
+    inner_box_.set(_x_ - 2 * _thickness_, _y_ - 2 * _thickness_, z_inner);
+    inner_box_placement_.set(0.0, 0.0, z_inner_pos, 0.0, 0.0, 0.0);
+    return;
+  }
+
+  unsigned int extruded_box::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+    unsigned int nfaces = 0;
+
+    {
+      // Base outer box:
+      box outer;
+      compute_outer_box(outer);
+      for (box::faces_mask_type face_id = box::_FACE_BEGIN;
+           face_id != box::_FACE_END;
+           face_id = static_cast<box::faces_mask_type>(face_id << 1)) {
+        bool do_it = true;
+        if (face_id == box::FACE_BOTTOM && !has_bottom()) {
+          do_it = false;
         }
-        if (i == 1) {
-          vertex[0].set( dim[0],(1-2*j) * dim[1],   dim[2]);
-          vertex[1].set(-dim[0],(1-2*j) * dim[1],   dim[2]);
-          vertex[2].set(-dim[0],(1-2*j) * dim[1],  -dim[2]);
-          vertex[3].set( dim[0],(1-2*j) * dim[1],  -dim[2]);
+        if (face_id == box::FACE_TOP && !has_top()) {
+          do_it = false;
         }
-        if (i == 2) {
-          vertex[0].set( dim[0],  dim[1],(1-2*j) * dim[2]);
-          vertex[1].set(-dim[0],  dim[1],(1-2*j) * dim[2]);
-          vertex[2].set(-dim[0], -dim[1],(1-2*j) * dim[2]);
-          vertex[3].set( dim[0], -dim[1],(1-2*j) * dim[2]);
-        }
-        if (i == 3) {
-          vertex[0].set((1-2*j) * (dim[0]-_thickness_),   (dim[1]-_thickness_),  (dim[2]-_thickness_));
-          vertex[1].set((1-2*j) * (dim[0]-_thickness_),   (dim[1]-_thickness_), -(dim[2]-_thickness_));
-          vertex[2].set((1-2*j) * (dim[0]-_thickness_),  -(dim[1]-_thickness_), -(dim[2]-_thickness_));
-          vertex[3].set((1-2*j) * (dim[0]-_thickness_),  -(dim[1]-_thickness_),  (dim[2]-_thickness_));
-        }
-        if (i == 4) {
-          vertex[0].set( (dim[0]-_thickness_),(1-2*j) * (dim[1]-_thickness_),   (dim[2]-_thickness_));
-          vertex[1].set(-(dim[0]-_thickness_),(1-2*j) * (dim[1]-_thickness_),   (dim[2]-_thickness_));
-          vertex[2].set(-(dim[0]-_thickness_),(1-2*j) * (dim[1]-_thickness_),  -(dim[2]-_thickness_));
-          vertex[3].set( (dim[0]-_thickness_),(1-2*j) * (dim[1]-_thickness_),  -(dim[2]-_thickness_));
-        }
-        if (i == 5) {
-          vertex[0].set( (dim[0]-_thickness_),  (dim[1]-_thickness_),(1-2*j) * (dim[2]-_thickness_));
-          vertex[1].set(-(dim[0]-_thickness_),  (dim[1]-_thickness_),(1-2*j) * (dim[2]-_thickness_));
-          vertex[2].set(-(dim[0]-_thickness_), -(dim[1]-_thickness_),(1-2*j) * (dim[2]-_thickness_));
-          vertex[3].set( (dim[0]-_thickness_), -(dim[1]-_thickness_),(1-2*j) * (dim[2]-_thickness_));
-        }
-        {
-          polyline_3d dummy;
-          lpl_.push_back(dummy);
-        }
-        polyline_3d & pl = lpl_.back();
-        pl.set_closed(true);
-        for (int i = 0; i < 4; i++) {
-          vector_3d v;
-          p_.child_to_mother(vertex[i], v);
-          pl.add(v);
+        if (do_it) {
+          {
+            face_info dummy;
+            faces_.push_back(dummy);
+          }
+          face_info & finfo = faces_.back();
+          rectangle & rect = finfo.add_face<rectangle>();
+          outer.compute_face(face_id,
+                             rect,
+                             finfo.grab_positioning());
+          face_identifier fid;
+          faces_mask_type face_bit = FACE_NONE;
+          if (face_id == box::FACE_BACK) {
+            face_bit = FACE_BACK;
+            finfo.set_label("back");
+          }
+          if (face_id == box::FACE_FRONT) {
+            face_bit = FACE_FRONT;
+            finfo.set_label("front");
+          }
+          if (face_id == box::FACE_LEFT) {
+            face_bit = FACE_LEFT;
+            finfo.set_label("left");
+          }
+          if (face_id == box::FACE_RIGHT) {
+            face_bit = FACE_RIGHT;
+            finfo.set_label("right");
+          }
+          if (face_id == box::FACE_TOP) {
+            face_bit = FACE_TOP;
+            finfo.set_label("top");
+          }
+          if (face_id == box::FACE_BOTTOM) {
+            face_bit = FACE_BOTTOM;
+            finfo.set_label("bottom");
+          }
+          fid.set_face_bit(face_bit);
+          finfo.set_identifier(fid);
+          nfaces++;
         }
       }
     }
-    return;
-  }
 
-  extruded_box::wires_drawer::wires_drawer(const extruded_box & eb_)
-  {
-    DT_THROW_IF(!eb_.is_locked(), std::logic_error, "Extruded box is not locked!");
-    _exbox_ = &eb_;
-    return;
-  }
-
-  extruded_box::wires_drawer::~wires_drawer()
-  {
-    return;
-  }
-
-  void extruded_box::wires_drawer::generate_wires(std::ostream & out_,
-                                                  const geomtools::vector_3d & position_,
-                                                  const geomtools::rotation_3d & rotation_)
-  {
-    if (!_wires_ptr_) {
-      _wires_ptr_.reset(new std::list<polyline_3d>);
-      _exbox_->generate_wires_self(*_wires_ptr_);
+    if (!has_top()){
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_extruded_top_bottom_face(FACE_TOP, cs, finfo.grab_positioning());
+      if (! cs.is_valid()) {
+        faces_.pop_back();
+      } else {
+        face_identifier fid;
+        fid.set_face_bit(FACE_TOP);
+        finfo.set_identifier(fid);
+        finfo.set_label("top");
+        nfaces++;
+      }
     }
-    for (std::list<polyline_3d>::const_iterator i = _wires_ptr_->begin();
-         i != _wires_ptr_->end();
-         i++) {
-      geomtools::gnuplot_draw::draw_polyline(out_, position_, rotation_, *i);
+
+    if (!has_bottom()){
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      composite_surface & cs = finfo.add_face<composite_surface>();
+      compute_extruded_top_bottom_face(FACE_BOTTOM, cs, finfo.grab_positioning());
+      if (! cs.is_valid()) {
+        faces_.pop_back();
+      } else {
+        face_identifier fid;
+        fid.set_face_bit(FACE_BOTTOM);
+        finfo.set_identifier(fid);
+        finfo.set_label("bottom");
+        nfaces++;
+      }
     }
+
+    {
+      box inner;
+      placement inner_placement;
+      compute_inner_box(inner, inner_placement);
+
+      for (box::faces_mask_type face_id = box::_FACE_BEGIN;
+           face_id != box::_FACE_END;
+           face_id = static_cast<box::faces_mask_type>(face_id << 1)) {
+        bool do_it = true;
+        if (face_id == box::FACE_BOTTOM && !has_bottom()) {
+          do_it = false;
+        }
+        if (face_id == box::FACE_TOP && !has_top()) {
+          do_it = false;
+        }
+        if (do_it) {
+          {
+            face_info dummy;
+            faces_.push_back(dummy);
+          }
+          face_info & finfo = faces_.back();
+          rectangle & rect = finfo.add_face<rectangle>();
+          inner.compute_face(face_id,
+                             rect,
+                             finfo.grab_positioning());
+          finfo.grab_positioning().translate(inner_placement.get_translation());
+          face_identifier fid;
+          faces_mask_type face_bit = FACE_NONE;
+          if (face_id == box::FACE_BACK) {
+            face_bit = FACE_INSIDE_BACK;
+            finfo.set_label("inside_back");
+          }
+          if (face_id == box::FACE_FRONT) {
+            face_bit = FACE_INSIDE_FRONT;
+            finfo.set_label("inside_front");
+          }
+          if (face_id == box::FACE_LEFT) {
+            face_bit = FACE_INSIDE_LEFT;
+            finfo.set_label("inside_left");
+          }
+          if (face_id == box::FACE_RIGHT) {
+            face_bit = FACE_INSIDE_RIGHT;
+            finfo.set_label("inside_right");
+          }
+          if (face_id == box::FACE_TOP) {
+            face_bit = FACE_INSIDE_TOP;
+            finfo.set_label("inside_top");
+          }
+          if (face_id == box::FACE_BOTTOM) {
+            face_bit = FACE_INSIDE_BOTTOM;
+            finfo.set_label("inside_bottom");
+          }
+          fid.set_face_bit(face_bit);
+          finfo.set_identifier(fid);
+          nfaces++;
+        }
+      }
+    }
+
+    return nfaces;
+  }
+
+  void extruded_box::generate_wires_self(wires_type & wires_,
+                                         uint32_t options_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
+
+    bool draw_external = !(options_ & WR_EXTRBOX_NO_EXTERNAL_FACES);
+    bool draw_internal = !(options_ & WR_EXTRBOX_NO_INTERNAL_FACES);
+    bool draw_boundings   =  (options_ & WR_BASE_BOUNDINGS);
+
+    if (draw_boundings) {
+      get_bounding_data().generate_wires_self(wires_, 0);
+    }
+
+    // Keep only base rendering bits:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid()) {
+        uint32_t face_bit = finfo.get_identifier().get_face_bits();
+        if (!draw_external && face_bit <= FACE_TOP) {
+          continue;
+        }
+        if (!draw_internal && face_bit >= FACE_TOP) {
+          continue;
+        }
+        uint32_t options = base_options;
+        finfo.get_face_ref().generate_wires(wires_, finfo.get_positioning(), options);
+      }
+    }
+
     return;
   }
 

@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/blur_spot.ipp
 
 #ifndef GEOMTOOLS_BLUR_SPOT_IPP
@@ -70,3 +69,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_BLUR_SPOT_IPP
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

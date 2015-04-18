@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/geomtools.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-28
@@ -143,3 +142,11 @@
 #include <geomtools/gnuplot_i.h>      // On the fly gnuplot rendering utilities
 
 #endif // GEOMTOOLS_GEOMTOOLS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

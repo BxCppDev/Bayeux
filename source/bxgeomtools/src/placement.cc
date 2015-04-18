@@ -1,12 +1,16 @@
 // placement.cc
 
+// Ourselves:
 #include <geomtools/placement.h>
 
+// Standard library:
 #include <iomanip>
 #include <sstream>
 #include <stdexcept>
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/utils.h>
 
@@ -60,28 +64,51 @@ namespace geomtools {
     return _translation_;
   }
 
+  vector_3d &
+  placement::grab_translation ()
+  {
+    return _translation_;
+  }
+
   void
   placement::set_translation (double x_, double y_, double z_)
   {
     set_translation (vector_3d (x_, y_, z_));
+    return;
   }
 
   void
   placement::set_translation_xyz (double x_, double y_, double z_)
   {
     set_translation (vector_3d (x_, y_, z_));
+    return;
   }
 
   void
   placement::set_translation (const vector_3d & new_value_)
   {
     _translation_ = new_value_;
+    return;
   }
 
   void
   placement::set_translation_v (const vector_3d & new_value_)
   {
     _translation_ = new_value_;
+    return;
+  }
+
+  void placement::translate(double dx_, double dy_, double dz_)
+  {
+    translate(vector_3d(dx_, dy_, dz_));
+    return;
+  }
+
+
+  void placement::translate(const vector_3d & shift_)
+  {
+    _translation_ += shift_;
+    return;
   }
 
   const rotation_3d &
@@ -142,16 +169,13 @@ namespace geomtools {
 
   void placement::_compute_orientation_ ()
   {
-    if (is_simple_rotation ())
-      {
-        // X, Y or Z rotations:
-        geomtools::create_rotation_from_axis (_rotation_, _rotation_axis_, _rotation_angle_);
-      }
-    else
-      {
-        // rotation by (Z,Y,Z) Euler angles:
-        geomtools::create_rotation_from_zyz_euler_angles (_rotation_, _phi_, _theta_, _delta_);
-      }
+    if (is_simple_rotation ()) {
+      // X, Y or Z rotations:
+      geomtools::create_rotation_from_axis (_rotation_, _rotation_axis_, _rotation_angle_);
+    } else {
+      // rotation by (Z,Y,Z) Euler angles:
+      geomtools::create_rotation_from_zyz_euler_angles (_rotation_, _phi_, _theta_, _delta_);
+    }
     geomtools::rectify (_rotation_);
     _inverse_rotation_ = _rotation_.inverse ();
     return;
@@ -159,18 +183,15 @@ namespace geomtools {
 
   void placement::_compute_orientation_xyz_ ()
   {
-    if (is_simple_rotation ())
-      {
-        // X, Y or Z rotations:
-        geomtools::create_rotation_from_axis (_rotation_,
-                                              _rotation_axis_,
-                                              _rotation_angle_);
-      }
-    else
-      {
-        // rotation by (X,Y,Z) Euler angles:
-        geomtools::create_xyz (_rotation_, _phi_, _theta_, _delta_);
-      }
+    if (is_simple_rotation ()) {
+      // X, Y or Z rotations:
+      geomtools::create_rotation_from_axis(_rotation_,
+                                           _rotation_axis_,
+                                           _rotation_angle_);
+    } else {
+      // rotation by (X,Y,Z) Euler angles:
+      geomtools::create_xyz(_rotation_, _phi_, _theta_, _delta_);
+    }
     geomtools::rectify (_rotation_);
     _inverse_rotation_ = _rotation_.inverse ();
     return;
@@ -178,10 +199,9 @@ namespace geomtools {
 
   bool placement::has_angles () const
   {
-    if (is_simple_rotation ())
-      {
-        return _rotation_angle_ == _rotation_angle_;
-      }
+    if (is_simple_rotation ()) {
+      return _rotation_angle_ == _rotation_angle_;
+    }
     // else:
     return ((_phi_ == _phi_) && (_theta_ == _theta_) && (_delta_ == _delta_));
   }
@@ -194,11 +214,29 @@ namespace geomtools {
     return;
   }
 
+  void placement::set(double x_, double y_, double z_,
+                      double angle0_, double angle1_, double angle2_,
+                      euler_angles_type euler_angle_)
+  {
+    set_translation (x_, y_, z_);
+    set_orientation (angle0_, angle1_, angle2_, euler_angle_);
+    return;
+  }
+
   void placement::set (const vector_3d & t_,
                        double phi_, double theta_, double delta_)
   {
     set_translation (t_);
     set_orientation (phi_, theta_, delta_);
+    return;
+  }
+
+  void placement::set (const vector_3d & t_,
+                       double angle0_, double angle1_, double angle2_,
+                       euler_angles_type euler_angle_)
+  {
+    set_translation (t_);
+    set_orientation (angle0_, angle1_, angle2_, euler_angle_);
     return;
   }
 
@@ -246,6 +284,23 @@ namespace geomtools {
     return;
   }
 
+  void placement::set_orientation(double angle0_, double angle1_, double angle2_,
+                                  euler_angles_type euler_angle_)
+  {
+    _rotation_axis_ = ROTATION_AXIS_INVALID;
+    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN();
+    _phi_   = std::numeric_limits<double>::quiet_NaN();
+    _theta_ = std::numeric_limits<double>::quiet_NaN();
+    _delta_ = std::numeric_limits<double>::quiet_NaN();
+    create(_rotation_, angle0_, angle1_, angle2_, euler_angle_);
+    _inverse_rotation_ = _rotation_.inverse();
+    // extract_zyz_euler_angle_from_rotation(_rotation_,
+    //                                       _phi_,
+    //                                       _theta_,
+    //                                       _delta_);
+    return;
+  }
+
   void placement::set_orientation_zyz (double phi_, double theta_, double delta_)
   {
     set_orientation(phi_, theta_, delta_);
@@ -255,18 +310,17 @@ namespace geomtools {
   void placement::set_orientation (const rotation_3d & r_)
   {
     _rotation_axis_ = ROTATION_AXIS_INVALID;
-    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN ();
-    _phi_   = std::numeric_limits<double>::quiet_NaN ();
-    _theta_ = std::numeric_limits<double>::quiet_NaN ();
-    _delta_ = std::numeric_limits<double>::quiet_NaN ();
+    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN();
+    _phi_   = std::numeric_limits<double>::quiet_NaN();
+    _theta_ = std::numeric_limits<double>::quiet_NaN();
+    _delta_ = std::numeric_limits<double>::quiet_NaN();
     _rotation_ = r_;
-    //_rotation_.rectify ();
-    rectify (_rotation_);
-    _inverse_rotation_ = _rotation_.inverse ();
-    extract_zyz_euler_angle_from_rotation (_rotation_,
-                                           _phi_,
-                                           _theta_,
-                                           _delta_);
+    rectify(_rotation_);
+    _inverse_rotation_ = _rotation_.inverse();
+    extract_zyz_euler_angle_from_rotation(_rotation_,
+                                          _phi_,
+                                          _theta_,
+                                          _delta_);
     return;
   }
 
@@ -290,7 +344,6 @@ namespace geomtools {
     return _inverse_rotation_;
   }
 
-  // i_placement interface:
   size_t placement::get_number_of_items () const
   {
     return 1;
@@ -340,9 +393,23 @@ namespace geomtools {
 
   placement::placement () : i_placement ()
   {
-    _rotation_axis_ = ROTATION_AXIS_INVALID;
-    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN ();
-    _phi_ = _theta_ = _delta_ = 0.0;
+    set_identity();
+    return;
+  }
+
+  placement::placement (const vector_3d & translation_) : i_placement ()
+  {
+    set_translation(translation_);
+    set_orientation(0.0, 0.0, 0.0);
+    return;
+  }
+
+  placement::placement (double x_,
+                        double y_,
+                        double z_) : i_placement ()
+  {
+    set_translation(x_, y_, z_);
+    set_orientation(0.0, 0.0, 0.0);
     return;
   }
 
@@ -351,9 +418,6 @@ namespace geomtools {
                         double theta_,
                         double delta_) : i_placement ()
   {
-    _rotation_axis_ = ROTATION_AXIS_INVALID;
-    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN ();
-    _phi_ = _theta_ = _delta_ = std::numeric_limits<double>::quiet_NaN ();
     set_translation (translation_);
     set_orientation (phi_, theta_, delta_);
     return;
@@ -363,15 +427,11 @@ namespace geomtools {
                         int axis_,
                         double angle_) : i_placement ()
   {
-    _rotation_axis_ = ROTATION_AXIS_INVALID;
-    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN ();
-    _phi_ = _theta_ = _delta_ = 0.0;
-    set_translation (translation_);
-    set_orientation (axis_, angle_);
+    set_translation(translation_);
+    set_orientation(axis_, angle_);
     return;
   }
 
-  // ctor:
   placement::placement (double x_,
                         double y_,
                         double z_,
@@ -379,30 +439,54 @@ namespace geomtools {
                         double theta_,
                         double delta_) : i_placement ()
   {
-    _rotation_axis_ = ROTATION_AXIS_INVALID;
-    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN ();
-    _phi_ = _theta_ = _delta_ = 0.0;
-    set_translation (x_, y_, z_);
-    set_orientation (phi_, theta_, delta_);
+    set_translation(x_, y_, z_);
+    set_orientation(phi_, theta_, delta_);
     return;
   }
 
-  // ctor:
   placement::placement (double x_,
                         double y_,
                         double z_,
                         int axis_,
                         double angle_) : i_placement ()
   {
-    _rotation_axis_ = ROTATION_AXIS_INVALID;
-    _rotation_angle_ = std::numeric_limits<double>::quiet_NaN ();
-    _phi_ = _theta_ = _delta_ = std::numeric_limits<double>::quiet_NaN ();
-    set_translation (x_, y_, z_);
-    set_orientation (axis_, angle_);
+    set_translation(x_, y_, z_);
+    set_orientation(axis_, angle_);
     return;
   }
 
-  // dtor:
+  placement::placement(const vector_3d & translation_,
+                       const rotation_3d & rotation_)
+  {
+    set_translation(translation_);
+    set_orientation(rotation_);
+    return;
+  }
+
+  placement::placement(double x_,
+                       double y_,
+                       double z_,
+                       double angle0_,
+                       double angle1_,
+                       double angle2_,
+                       euler_angles_type euler_angles_)
+  {
+    set_translation(x_, y_, z_);
+    set_orientation(angle0_, angle1_, angle2_, euler_angles_);
+    return;
+  }
+
+  placement::placement(const vector_3d & translation_,
+                       double angle0_,
+                       double angle1_,
+                       double angle2_,
+                       euler_angles_type euler_angles_)
+  {
+    set_translation(translation_);
+    set_orientation(angle0_, angle1_, angle2_, euler_angles_);
+    return;
+  }
+
   placement::~placement ()
   {
     return;
@@ -410,8 +494,7 @@ namespace geomtools {
 
   void placement::reset ()
   {
-    set_translation (0., 0., 0.);
-    set_orientation (0., 0., 0.);
+    set_identity();
     return;
   }
 

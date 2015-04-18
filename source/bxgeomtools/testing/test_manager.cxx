@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // test_manager.cxx
 /*
  * Copyright 2007-2013 F. Mauger
@@ -20,30 +19,35 @@
  *
  */
 
+// Ourselves:
+#include <geomtools/manager.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Boost:
 #include <boost/shared_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/utils.h>
-
+#include <datatools/exception.h>
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
+// This project:
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gdml_export.h>
 #include <geomtools/visibility.h>
-
-#include <geomtools/manager.h>
 #include <geomtools/manager_macros.h>
 #include <geomtools/mapping.h>
 #include <geomtools/materials_plugin.h>
 #include <geomtools/materials_utils.h>
-
-// For tests:
 #include <geomtools/display_data.h>
+#include <geomtools/box.h>
 #include <geomtools/blur_spot.h>
 
 /* A plugin for the geometry manager which instantiate
@@ -74,6 +78,7 @@ protected:
   void _build_mapping (const datatools::properties & mapping_config_);
 
 private:
+
   bool                _initialized_;
   geomtools::mapping  _mapping_;
 
@@ -83,7 +88,7 @@ private:
 
 GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(test_plugin,"test_plugin");
 
-const geomtools::mapping & test_plugin::get_mapping () const
+const geomtools::mapping & test_plugin::get_mapping() const
 {
   return _mapping_;
 }
@@ -96,10 +101,9 @@ test_plugin::test_plugin()
 
 test_plugin::~test_plugin()
 {
-  if (is_initialized())
-    {
-      reset ();
-    }
+  if (is_initialized()) {
+    reset ();
+  }
   return;
 }
 
@@ -112,18 +116,8 @@ int test_plugin::initialize(const datatools::properties & config_,
                             const geomtools::manager::plugins_dict_type & /* plugins_ */,
                             const datatools::service_dict_type & /* services_ */)
 {
-  if (is_initialized())
-    {
-      std::ostringstream message;
-      message << "test_plugin::initialize: "
-              << "Plugin is already initialized !"
-              << std::endl;
-      throw std::logic_error(message.str());
-    }
-
-  {
-    _build_mapping(config_);
-  }
+  DT_THROW_IF(is_initialized(), std::logic_error, "Plugin is already initialized !");
+  _build_mapping(config_);
   _initialized_ = true;
   return 0;
 }
@@ -147,8 +141,7 @@ int test_plugin::reset()
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  try
-    {
+  try {
       std::clog << "Test program for class 'geomtools::manager' !" << std::endl;
 
       bool   debug = false;
@@ -311,9 +304,9 @@ int main (int argc_, char ** argv_)
       geo_mgr.initialize (manager_config);
       if (dump)
         {
-          geo_mgr.get_factory ().tree_dump (std::clog, "The embeded geometry model factory : ");
-          geo_mgr.get_id_mgr ().tree_dump (std::clog, "The embeded GID manager : ");
-          std::clog << "The embeded GID mapping : " << std::endl;
+          geo_mgr.get_factory ().tree_dump (std::clog, "The embedded geometry model factory : ");
+          geo_mgr.get_id_mgr ().tree_dump (std::clog, "The embedded GID manager : ");
+          std::clog << "The embedded GID mapping : " << std::endl;
           geo_mgr.get_mapping ().dump_dictionnary (std::clog);
         }
       geo_mgr.tree_dump (std::clog, "The geometry manager : ");
@@ -450,12 +443,10 @@ int main (int argc_, char ** argv_)
                     }
                 }
 
-              if (visu_object_name.empty ())
-                {
+              if (visu_object_name.empty ()) {
                   visu_object_name = "world";
                 }
-              if (debug)
-                {
+              if (debug) {
                   std::clog << "DEBUG: " << "visu_object_name : '" << visu_object_name << "'" << std::endl;
                 }
 
@@ -464,8 +455,7 @@ int main (int argc_, char ** argv_)
               geomtools::gnuplot_drawer GPD;
               GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
                                           geo_mgr.get_world_name ());
-              if (add_dd)
-                {
+              if (add_dd) {
                   mygsl::rng prng("taus2", 314159);
 
                   geomtools::placement dd_pl;
@@ -499,7 +489,7 @@ int main (int argc_, char ** argv_)
                                              "magenta");
                     geomtools::placement plcmt;
                     plcmt.set_translation(0.5*(x1+x0), 0.5*(y1+y0), 0.5*(z1+z0));
-                    spot_box.generate_wires (spot_box_DI.paths, plcmt);
+                    spot_box.generate_wires (spot_box_DI.wires, plcmt);
                     dd_ptr.reset(dd);
                     GPD.add_display_data (*dd_ptr.get(), dd_pl);
                   }
@@ -510,8 +500,7 @@ int main (int argc_, char ** argv_)
                     dd_ptrs.push_back(p);
                   }
 
-                  for(int i = 1; i < (int) dd_ptrs.size(); i++)
-                    {
+                  for(int i = 1; i < (int) dd_ptrs.size(); i++) {
                       boost::shared_ptr<geomtools::display_data> & dd_ptr = dd_ptrs[i];
                       geomtools::blur_spot bs(3, 1 *CLHEP::mm);
                       bs.set_errors(1.*CLHEP::cm,1*CLHEP::cm,1.*CLHEP::cm);
@@ -541,16 +530,16 @@ int main (int argc_, char ** argv_)
                                                  std::acos(prng.flat(-1.0, +1.0)),
                                                  0.0);
                         }
-                      bs.generate_wires (spot_DI.paths, plcmt);
+                      bs.generate_wires (spot_DI.wires, plcmt);
                       dd_ptr.reset(dd);
                       {
                         GPD.add_display_data (*dd_ptr.get(), dd_pl);
                       }
                       dd_ptr.get()->tree_dump (std::clog,
                                                dd_name_oss.str(),
-                                               "Embebed display data : ");
+                                               "Embedded display data : ");
                     }
-                  std::clog << "Embeded display data : " << dd_ptrs.size() << std::endl;
+                  std::clog << "Embedded display data : " << dd_ptrs.size() << std::endl;
                 }
               if (force_show)
                 {
@@ -569,21 +558,17 @@ int main (int argc_, char ** argv_)
               int view_code = GPD.draw (geo_mgr,
                                         visu_object_name,
                                         visu_depth);
-              if (view_code != 0)
-                {
+              if (view_code != 0) {
                   std::cerr << "ERROR: " << "Cannot display the object with label '"
                             << visu_object_name << "' !" << std::endl;
                 }
               visu_object_name = "";
-            }
-        } // visu
-      else
-        {
+            } // visu
+        } else {
           std::clog << "NOTICE: " << "No visu..." << std::endl;
         }
 
-      if (gdml)
-        {
+      if (gdml) {
           std::string world_model_name = geo_mgr.get_world_name ();
 
           geomtools::gdml_writer material_writer; // GDML writer for materials
@@ -596,8 +581,7 @@ int main (int argc_, char ** argv_)
           // Access to a given plugin by name and type :
           std::string materials_plugin_name = "materials_driver";
           if (geo_mgr.has_plugin (materials_plugin_name)
-              && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name))
-            {
+              && geo_mgr.is_plugin_a<geomtools::materials_plugin>(materials_plugin_name)) {
               std::clog << "NOTICE: " << "Found materials plugin named '" << materials_plugin_name
                         << "'" << std::endl;
               const geomtools::materials_plugin & mgp
@@ -606,8 +590,7 @@ int main (int argc_, char ** argv_)
               mat_mgr_ref = &mat_mgr;
             }
 
-          if (mat_mgr_ref != 0)
-            {
+          if (mat_mgr_ref != 0) {
               std::clog << "NOTICE: "
                         << "Export GDML materials from the materials driver plugin: "<< std::endl;
               geomtools::export_gdml (*mat_mgr_ref, material_writer);
@@ -630,25 +613,20 @@ int main (int argc_, char ** argv_)
                             geo_mgr.get_factory (),
                             world_model_name);
           std::clog << "NOTICE: " << "GDML file '${GEOMTOOLS_TMP_DIR}/test_manager.gdml' has been generated." << std::endl;
-        } // GDML
-      else
-        {
+          // GDML
+        } else {
           std::clog << "NOTICE: " << "No GDML..." << std::endl;
         }
 
       std::clog << "NOTICE: " << "The end." << std::endl;
     }
-  catch (std::exception & x)
-    {
+  catch (std::exception & x) {
       std::cerr << "ERROR: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
-  catch (...)
-    {
+  catch (...) {
       std::cerr << "ERROR: " << "Unexpected error!" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
 }
-
-// end of test_manager.cxx

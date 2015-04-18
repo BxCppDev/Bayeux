@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/model_with_internal_items_tools.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-10-16
@@ -101,3 +100,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_MODEL_WITH_INTERNAL_ITEMS_TOOLS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

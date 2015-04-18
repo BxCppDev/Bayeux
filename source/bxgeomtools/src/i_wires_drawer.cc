@@ -3,33 +3,57 @@
 // Ourselves:
 #include <geomtools/i_wires_drawer.h>
 
-// Third party:
-// - Boost:
-#include <boost/cstdint.hpp>
-
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/gnuplot_draw.h>
 
 namespace geomtools {
 
-  i_wires_drawer::i_wires_drawer ()
+  /*
+  base_wires_drawer::base_wires_drawer ()
+  {
+    _options_ = 0;
+    return;
+  }
+
+  base_wires_drawer::~base_wires_drawer ()
   {
     return;
   }
 
-  i_wires_drawer::~i_wires_drawer ()
+  void base_wires_drawer::generate_wires_self(std::list<polyline_3d> & wires_,
+                                              uint32_t options_) const
   {
+    if (!has_wires()) {
+    }
     return;
   }
 
-  void i_wires_drawer::generate_wires_self(std::ostream & out_)
+  bool base_wires_drawer::has_wires() const
   {
-    geomtools::vector_3d pos(0., 0., 0.);
-    geomtools::rotation_3d rot;
-    geomtools::create(rot, 0., 0., 0.);
-    generate_wires(out_, pos, rot);
+    return _cached_wires_.get() != 0;
+  }
+
+  void base_wires_drawer::clear_wires()
+  {
+    _cached_wires_.reset();
     return;
   }
+
+  void base_wires_drawer::update_wires()
+  {
+    _cached_wires_.reset(new std::list<polyline_3d>);
+    std::list<polyline_3d> & wires = *_cached_wires_.get();
+    generate_wires_self(wires, _options_);
+    return;
+  }
+
+  const std::list<polyline_3d> & base_wires_drawer::get_wires() const
+  {
+    DT_THROW_IF(!has_wires(), std::logic_error,
+                "Missing cached wires!");
+    return *_cached_wires_.get();
+  }
+*/
 
 } // end of namespace geomtools

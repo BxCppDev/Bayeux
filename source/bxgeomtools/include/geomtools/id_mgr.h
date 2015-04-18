@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/id_mgr.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-14
@@ -275,3 +274,11 @@ namespace geomtools {
 DOCD_CLASS_DECLARATION(geomtools::id_mgr)
 
 #endif // GEOMTOOLS_ID_MGR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/i_locator.h
 /* Author(s):  Francois Mauger <mauger@lpccaen.in2p3.fr>
  *             Xavier Garrido <garrido@lal.in2p3.fr>
@@ -124,3 +123,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_I_LOCATOR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

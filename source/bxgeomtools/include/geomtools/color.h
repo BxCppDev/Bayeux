@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/color.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-23
@@ -94,12 +93,12 @@ namespace geomtools {
 
   public:
 
-    int32_t     code;         /// Color code
-    std::string name;         /// Color name
-    int32_t     red_amount;   /// Red channel (RGB encoding)
-    int32_t     green_amount; /// Green channel (RGB encoding)
-    int32_t     blue_amount;  /// Blue channel (RGB encoding)
-    int32_t     alpha_amount; /// Alpha channel
+    int32_t     code;         //!< Color code
+    std::string name;         //!< Color name
+    int32_t     red_amount;   //!< Red channel (RGB encoding)
+    int32_t     green_amount; //!< Green channel (RGB encoding)
+    int32_t     blue_amount;  //!< Blue channel (RGB encoding)
+    int32_t     alpha_amount; //!< Alpha channel
 
   public:
 
@@ -217,11 +216,11 @@ namespace geomtools {
     private:
 
       /// Attributes:
-      encoding_type    _encoding_;     /// Encoding
-      color::code_type _color_code_;   /// Integer code
-      double           _color_value_;  /// Color map value
-      std::string      _color_name_;   /// Color name
-      double           _transparency_; /// Transparency %
+      encoding_type    _encoding_;     //!< Encoding
+      color::code_type _color_code_;   //!< Integer code
+      double           _color_value_;  //!< Color map value
+      std::string      _color_name_;   //!< Color name
+      double           _transparency_; //!< Transparency %
 
     };
 
@@ -230,3 +229,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_COLOR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

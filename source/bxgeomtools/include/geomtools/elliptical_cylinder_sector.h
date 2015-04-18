@@ -1,0 +1,174 @@
+/// \file geomtools/elliptical_cylinder_sector.h
+/* Author(s):     F.Mauger <mauger@lpccaen.in2p3.fr>
+ * Creation date: 2015-03-02
+ * Last modified: 2015-03-02
+ *
+ * License:
+ *
+ * Description:
+ *
+ *   elliptical cylinder surface sector
+ *
+ * History:
+ *
+ */
+
+#ifndef GEOMTOOLS_ELLIPTICAL_CYLINDER_SECTOR_H
+#define GEOMTOOLS_ELLIPTICAL_CYLINDER_SECTOR_H 1
+
+// Standard library:
+#include <string>
+#include <iostream>
+
+// Third party
+// - Bayeux/datatools:
+#include <datatools/bit_mask.h>
+
+// This project:
+#include <geomtools/i_shape_2d.h>
+
+namespace datatools {
+  // Forward class declaration:
+  class properties;
+}
+
+namespace geomtools {
+
+  /// \brief The 2D shape/surface model for an elliptical cylinder sector
+  class elliptical_cylinder_sector : public i_shape_2d
+  {
+  public:
+
+    /// Return the identifier label for the class
+    static const std::string & elliptical_cylinder_sector_label();
+
+    /// Return the identifier/name of the shape
+    virtual std::string get_shape_name() const;
+
+    double get_x_radius() const;
+
+    void set_x_radius(double);
+
+    double get_y_radius() const;
+
+    void set_y_radius(double);
+
+    double get_z() const;
+
+    void set_z(double);
+
+    void set(double rx_, double ry_, double z_);
+
+    void set(double rx_, double ry_, double z_,
+             double start_angle_, double delta_angle_);
+
+    /// Set angles
+    void set_angle(double start_angle_, double delta_angle_);
+
+    /// Check if the sector has partial angle
+    bool has_partial_angle() const;
+
+    /// Check the start angle
+    bool has_start_angle() const;
+
+    /// Set the start angle
+    void set_start_angle(double);
+
+    /// Return the start angle
+    double get_start_angle() const;
+
+    /// Check the delta angle
+    bool has_delta_angle() const;
+
+    /// Set the delta angle
+    void set_delta_angle(double);
+
+    /// Return the delta angle
+    double get_delta_angle() const;
+
+    /// Constructor
+    elliptical_cylinder_sector();
+
+    /// Constructor
+    elliptical_cylinder_sector(double rx_, double ry_, double z_);
+
+    /// Constructor
+    elliptical_cylinder_sector(double rx_, double ry_, double z_,
+                               double start_angle_, double delta_angle_);
+
+    /// Destructor
+    virtual ~elliptical_cylinder_sector();
+
+    /// Check the validity of the shape
+    bool is_valid() const;
+
+    /// Reset the shape
+    void reset();
+
+    /// Return the surface
+    virtual double get_surface(uint32_t mask_ = i_shape_2d::FACE_ALL) const;
+
+    /// Check if a point is on the surface
+    virtual bool is_on_surface(const vector_3d & ,
+                               double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Return the normal at a given position of the surface
+    virtual vector_3d get_normal_on_surface(const vector_3d & position_,
+                                            bool check_ = true,
+                                            double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Find the intercept point of a segment with the surface
+    virtual bool find_intercept(const vector_3d & from_,
+                                const vector_3d & direction_,
+                                face_intercept_info & intercept_,
+                                double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
+
+    /// Smart print
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
+
+    /// \brief 3D rendering options
+    enum ellcylsec_wires_rendering_option_type {
+      WR_ELLCYLSEC_NO_BOTTOM_EDGE      = (WR_BASE_LAST << 1),        //!< Do not render the bottom edge
+      WR_ELLCYLSEC_NO_TOP_EDGE         = (WR_BASE_LAST << 2),        //!< Do not render the top edge
+      WR_ELLCYLSEC_NO_START_ANGLE_EDGE = (WR_BASE_LAST << 3),        //!< Do not render the start angle edge
+      WR_ELLCYLSEC_NO_STOP_ANGLE_EDGE  = (WR_BASE_LAST << 4),        //!< Do not render the stop angle edge
+      WR_ELLCYLSEC_LAST                = (WR_ELLCYLSEC_NO_STOP_ANGLE_EDGE), //!< Last defined bit
+      WR_ELLCYLSEC_MASK                = (WR_ELLCYLSEC_NO_BOTTOM_EDGE
+                                          | WR_ELLCYLSEC_NO_START_ANGLE_EDGE
+                                          | WR_ELLCYLSEC_NO_STOP_ANGLE_EDGE
+                                          ) //!< Rendering options bit mask
+    };
+
+    /// Generate a sequence of polylines for wires 3D rendering
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
+
+  protected:
+
+    /// Set default attributes
+    void _set_defaults();
+
+  private:
+
+    double _x_radius_;     //!< x radius
+    double _y_radius_;     //!< y radius
+    double _z_;            //!< z
+    double _start_angle_;  //!< Start angle
+    double _delta_angle_;  //!< Delta angle
+
+  };
+
+} // end of namespace geomtools
+
+#endif // GEOMTOOLS_ELLIPTICAL_CYLINDER_SECTOR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

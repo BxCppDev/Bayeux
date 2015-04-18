@@ -262,7 +262,7 @@ visibility.filled.hidden           : boolean = 0
 visibility.filled.hidden_envelop   : boolean = 1
 
 #@description The recommended color for the display (for filled_mode='by_envelope' only)
-visibility.filled.color            : string  = "grey"
+visibility.filled.color            : string  = "blue"
 
 #@description The visibility hidden flag for the daughters volumes (for filled_mode='by_envelope' only)
 visibility.filled.daughters.hidden : boolean = 0
@@ -426,6 +426,7 @@ stacked.model_2   : string  = "rotated_light_guide.model"
 stacked.label_2   : string  = "light_guide"
 
 stacked.model_1   : string  = "PMT.model"
+#stacked.model_1  : string  = "PMT_base.model"
 stacked.label_1   : string  = "PMT"
 
 stacked.model_0   : string  = "PMT_base.model"
@@ -442,7 +443,7 @@ mapping.daughter_id.scintillator_block : string  = "[scin_block.gc]"
 mapping.daughter_id.PMT                : string  = "[pmt.gc]"
 
 
-###################################################################
+#################################################################
 [name="detector_column.model" type="geomtools::replicated_model"]
 
 #@description The name of the material

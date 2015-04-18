@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/regular_linear_placement.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-26
@@ -134,3 +133,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_REGULAR_LINEAR_PLACEMENT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

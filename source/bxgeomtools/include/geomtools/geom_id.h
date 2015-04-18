@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/geom_id.h
 /* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
@@ -59,12 +58,16 @@ namespace geomtools {
     static const char IO_ID_CLOSE;
     static const char IO_ADDRESS_ANY;
 
+    /// Check if the type match a given value
     bool is_type (uint32_t) const;
 
+    /// Return the type
     uint32_t get_type () const;
 
+    /// Set the type
     void set_type (uint32_t);
 
+    /// Set the depth
     void set_depth (uint32_t depth_);
 
     /// Returns the address' depth
@@ -100,6 +103,7 @@ namespace geomtools {
                       uint32_t si8_ = INVALID_ADDRESS,
                       uint32_t si9_ = INVALID_ADDRESS);
 
+    /// Reset the address
     void reset_address ();
 
     /// Default constructor
@@ -197,8 +201,8 @@ namespace geomtools {
 
   private:
 
-    uint32_t              _type_; /// The unique 'type' identifier of the geometry category associated to the GID
-    std::vector<uint32_t> _addresses_; /// The array of addresses
+    uint32_t              _type_;      //!< The unique 'type' identifier of the geometry category associated to the GID
+    std::vector<uint32_t> _addresses_; //!< The array of addresses
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
@@ -221,3 +225,11 @@ DR_CLASS_INIT(::geomtools::geom_id);
 BOOST_CLASS_VERSION(geomtools::geom_id, 1)
 
 #endif // GEOMTOOLS_GEOM_ID_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

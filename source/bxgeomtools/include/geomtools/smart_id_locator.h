@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/smart_id_locator.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-30
@@ -111,19 +110,27 @@ namespace geomtools {
 
   private:
 
-    datatools::logger::priority _logging_priority_; /// Logging priority threshold
-    bool              _initialized_; /// Initialization flag
-    int               _mode_;        /// Running mode
-    uint32_t          _type_;        /// Geometry type associated to a given category
-    id_selector       _idsel_;       /// Geometry ID selector
-    const geom_map *  _gmap_;        /// Geometry map handle
+    datatools::logger::priority _logging_priority_; //!< Logging priority threshold
+    bool              _initialized_; //!< Initialization flag
+    int               _mode_;        //!< Running mode
+    uint32_t          _type_;        //!< Geometry type associated to a given category
+    id_selector       _idsel_;       //!< Geometry ID selector
+    const geom_map *  _gmap_;        //!< Geometry map handle
 
     // Optimization data
-    std::list<const geom_info *> _ginfos_; /// List of handles to precomputed geometry informations
-    const geom_info * _last_found_;        /// Handle to the last found object
+    std::list<const geom_info *> _ginfos_; //!< List of handles to precomputed geometry informations
+    const geom_info * _last_found_;        //!< Handle to the last found object
 
   };
 
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_SMART_ID_LOCATOR_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

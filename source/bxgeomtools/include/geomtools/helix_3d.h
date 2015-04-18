@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/helix_3d.h
 /* Author(s): Francois Mauger <mauger@lpccaen.in2p3.fr>
  *            Arnaud Chapon   <chapon@lpccaen.in2p3.fr>
@@ -31,11 +30,13 @@
 // This project:
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/utils.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 namespace geomtools {
 
   /// \brief An helix (1D shape) in a 3D space
-  class helix_3d : public i_shape_1d
+  class helix_3d : public i_shape_1d,
+                   public i_wires_3d_rendering
   {
   public:
 
@@ -62,6 +63,9 @@ namespace geomtools {
 
     /// Set the center
     void set_center(const vector_3d &);
+
+    /// Set the center
+    void set_center(double x_, double y_, double z_);
 
     /// Return the radius
     double get_radius() const;
@@ -147,6 +151,9 @@ namespace geomtools {
     /// Destructor
     virtual ~helix_3d();
 
+    /// Reset
+    void reset();
+
     /// Smart print
     virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
@@ -187,6 +194,18 @@ namespace geomtools {
     /// Return the direction ar some position in on the curve
     virtual vector_3d get_direction_on_curve(const vector_3d & position_) const;
 
+    /// \brief 3D rendering options
+    enum helix_wires_rendering_option_type {
+      WR_HELIX_NO_ANGULAR_SAMPLE_BOOST = (WR_BASE_LAST << 1),                 //!< Do not boost angular sampling
+      WR_HELIX_LAST                    = (WR_HELIX_NO_ANGULAR_SAMPLE_BOOST),  //!< Last defined bit
+      WR_HELIX_MASK                    = (WR_HELIX_NO_ANGULAR_SAMPLE_BOOST)   //!< Rendering options bit mask
+    };
+
+    /// Generate a sequence of polylines for wires 3D rendering
+    virtual void generate_wires_self(wires_type & wires_,
+                                     uint32_t options_ = 0) const;
+
+
   protected:
 
     /// Set the default attributes values
@@ -215,3 +234,11 @@ BOOST_CLASS_EXPORT_KEY2(geomtools::helix_3d, "geomtools::helix_3d")
 BOOST_CLASS_VERSION(geomtools::helix_3d, 2)
 
 #endif // GEOMTOOLS_HELIX_3D_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

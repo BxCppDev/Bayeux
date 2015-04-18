@@ -1,4 +1,4 @@
-/** geomtools/ellipsoid.cc */
+/// geomtools/ellipsoid.cc
 
 // Ourselves:
 #include <geomtools/ellipsoid.h>
@@ -17,9 +17,13 @@
 #include <datatools/units.h>
 #include <datatools/properties.h>
 
-namespace geomtools {
+// This project:
+#include <geomtools/placement.h>
+#include <geomtools/i_shape_2d.h>
+#include <geomtools/elliptical_sector.h>
+#include <geomtools/ellipsoid_sector.h>
 
-  using namespace std;
+namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ellipsoid, "geomtools::ellipsoid");
@@ -68,13 +72,19 @@ namespace geomtools {
   double
   ellipsoid::get_zmin() const
   {
-    return -(get_z_radius()-get_bottom_z_cut());
+    if (datatools::is_valid(_bottom_z_cut_)) {
+      return _bottom_z_cut_;
+    }
+    return -get_z_radius();
   }
 
   double
   ellipsoid::get_zmax() const
   {
-    return get_z_radius()-get_top_z_cut();
+    if (datatools::is_valid(_top_z_cut_)) {
+      return _top_z_cut_;
+    }
+    return get_z_radius();
   }
 
   double
@@ -89,6 +99,7 @@ namespace geomtools {
     DT_THROW_IF(r_ <= 0.0, std::domain_error,
                 "Invalid radius (" << r_ << ") !");
     _x_radius_ = r_;
+    return;
   }
 
   double
@@ -103,6 +114,7 @@ namespace geomtools {
     DT_THROW_IF(r_ <= 0.0, std::domain_error,
                 "Invalid radius (" << r_ << ") !");
     _y_radius_ = r_;
+    return;
   }
 
   double
@@ -117,6 +129,7 @@ namespace geomtools {
     DT_THROW_IF(r_ <= 0.0, std::domain_error,
                 "Invalid radius (" << r_ << ") !");
     _z_radius_ = r_;
+    return;
   }
 
   double ellipsoid::get_bottom_z_cut() const
@@ -126,7 +139,10 @@ namespace geomtools {
 
   void ellipsoid::set_bottom_z_cut(double cut_)
   {
-    DT_THROW_IF(cut_ < 0.0, std::logic_error, "Invalid bottom Z cut!");
+    DT_THROW_IF(cut_ <= -_z_radius_, std::logic_error, "Invalid bottom Z cut!");
+    if (datatools::is_valid(_top_z_cut_)) {
+      DT_THROW_IF(cut_ >= _top_z_cut_, std::logic_error, "Invalid bottom Z cut (> top Z cut)!");
+    }
     _bottom_z_cut_ = cut_;
     return;
   }
@@ -138,9 +154,12 @@ namespace geomtools {
 
   void ellipsoid::set_top_z_cut(double cut_)
   {
-   DT_THROW_IF(cut_ < 0.0, std::logic_error, "Invalid top Z cut!");
-   _top_z_cut_ = cut_;
-   return;
+    DT_THROW_IF(cut_ >= + _z_radius_, std::logic_error, "Invalid top Z cut!");
+    if (datatools::is_valid(_bottom_z_cut_)) {
+      DT_THROW_IF(cut_ <= _bottom_z_cut_, std::logic_error, "Invalid top Z cut (> bottom Z cut)!");
+    }
+    _top_z_cut_ = cut_;
+    return;
   }
 
   void
@@ -159,13 +178,12 @@ namespace geomtools {
     datatools::invalidate(_x_radius_);
     datatools::invalidate(_y_radius_);
     datatools::invalidate(_z_radius_);
-    _bottom_z_cut_ = 0.;
-    _top_z_cut_ = 0.;
-
+    datatools::invalidate(_bottom_z_cut_);
+    datatools::invalidate(_top_z_cut_);
     return;
   }
 
-  void ellipsoid::set (double rx_, double ry_, double rz_)
+  void ellipsoid::set(double rx_, double ry_, double rz_)
   {
     set_x_radius(rx_);
     set_y_radius(ry_);
@@ -176,11 +194,12 @@ namespace geomtools {
   void ellipsoid::set (double rx_, double ry_, double rz_,
                        double zm_, double zp_)
   {
+    _set_default();
     set_x_radius(rx_);
     set_y_radius(ry_);
     set_z_radius(rz_);
-    set_bottom_z_cut (zm_);
-    set_top_z_cut (zp_);
+    set_bottom_z_cut(zm_);
+    set_top_z_cut(zp_);
     return;
   }
 
@@ -193,26 +212,29 @@ namespace geomtools {
   ellipsoid::ellipsoid (double rx_, double ry_, double rz_)
   {
     _set_default();
-    set (rx_, ry_, rz_);
+    set(rx_, ry_, rz_);
     return;
   }
 
-  ellipsoid::ellipsoid (double rx_, double ry_, double rz_,
-                        double zm_, double zp_)
+  ellipsoid::ellipsoid(double rx_, double ry_, double rz_,
+                       double zm_, double zp_)
   {
     _set_default();
-    set (rx_, ry_, rz_, zm_, zp_);
+    set(rx_, ry_, rz_, zm_, zp_);
     return;
   }
 
   ellipsoid::~ellipsoid()
   {
+    return;
   }
 
   void ellipsoid::initialize(const datatools::properties & config_,
-                             const handle_dict_type *)
+                             const handle_dict_type * objects_)
   {
     reset();
+    this->i_shape_3d::initialize(config_, objects_);
+
     double lunit = CLHEP::mm;
     if (config_.has_key ("length_unit")) {
       const std::string lunit_str = config_.fetch_string ("length_unit");
@@ -268,7 +290,7 @@ namespace geomtools {
                  "Missing elliptical_tube 'z_radius' property !");
 
     double bottom_z;
-    bottom_z = 0.;
+    datatools::invalidate(bottom_z);
     if (config_.has_key ("bottom_z_cut")) {
       bottom_z = config_.fetch_real ("bottom_z_cut");
       if (! config_.has_explicit_unit ("bottom_z_cut")) {
@@ -277,7 +299,7 @@ namespace geomtools {
     }
 
     double top_z;
-    top_z = 0.;
+    datatools::invalidate(top_z);
     if (config_.has_key ("top_z_cut")) {
       top_z = config_.fetch_real ("top_z_cut");
       if (! config_.has_explicit_unit ("top_z_cut")) {
@@ -293,29 +315,28 @@ namespace geomtools {
   double
   ellipsoid::get_surface (uint32_t /*mask_*/) const
   {
-    double s = 0.0;
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
+    double s;
+    datatools::invalidate(s);
+    //    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     return s;
   }
 
   double
   ellipsoid::get_volume (uint32_t /*flags*/) const
   {
-    double v = 0.0;
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
+    double v;
+    datatools::invalidate(v);
+    //    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
     return v;
   }
 
   bool
   ellipsoid::is_valid() const
   {
-    return ( datatools::is_valid(_x_radius_) && (_x_radius_ > 0.0)
-             && datatools::is_valid(_y_radius_) && (_y_radius_ > 0.0)
-             && datatools::is_valid(_z_radius_) && (_z_radius_ > 0.0)
-             && datatools::is_valid(_top_z_cut_) && (_top_z_cut_ >= 0.0)
-             && datatools::is_valid(_bottom_z_cut_) && (_bottom_z_cut_ >= 0.0)
-             && (_top_z_cut_+_bottom_z_cut_ < 2.*_z_radius_) );
-      }
+    return datatools::is_valid(_x_radius_)
+      && datatools::is_valid(_y_radius_)
+      && datatools::is_valid(_z_radius_);
+  }
 
   std::string
   ellipsoid::get_shape_name() const
@@ -324,22 +345,87 @@ namespace geomtools {
   }
 
   bool
-  ellipsoid::is_inside (const vector_3d & /*point_*/, double /*skin_*/) const
+  ellipsoid::is_inside (const vector_3d & point_, double skin_) const
   {
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
+    DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
+    double skin = get_skin(skin_);
+    double angular_tolerance = get_tolerance();
+    double hskin = 0.5 * skin;
+    double z0 = -_z_radius_;
+    double z1 = +_z_radius_;
+    if (datatools::is_valid(_bottom_z_cut_)) {
+      z0 = _bottom_z_cut_;
+    }
+    if (datatools::is_valid(_top_z_cut_)) {
+      z1 = _top_z_cut_;
+    }
+    double z = point_.z();
+    if (z < z0 + hskin) {
+      return false;
+    }
+    if (z > z1 - hskin) {
+      return false;
+    }
+    double x = point_.x();
+    double y = point_.y();
+    double a = _x_radius_ - hskin;
+    double b = _y_radius_ - hskin;
+    double c = _z_radius_ - hskin;
+    double term = gsl_pow_2(x / a) + gsl_pow_2(y / b) + gsl_pow_2(z / c);
+    if (term <= 1.0) {
+      return true;
+    }
+    /*
+      double term = std::sqrt(1 - gsl_pow_2(z/_z_radius_));
+      if (term > 1.e-7) {
+      vector_3d ell_pos(point_.x(), point_.y());
+      elliptical_sector ell_section(_x_radius_ * term - hskin, _y_radius_ * term - hskin);
+      if (ell_section.is_on_surface(ell_pos, 0.0)) {
+      return true;
+      }
+      }
+    */
     return false;
   }
 
   bool
-  ellipsoid::is_outside (const vector_3d & /*point_*/, double /*skin_*/) const
+  ellipsoid::is_outside (const vector_3d & point_, double skin_) const
   {
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
+    DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
+    double skin = get_skin(skin_);
+    double angular_tolerance = get_tolerance();
+    double hskin = 0.5 * skin;
+    double z0 = -_z_radius_;
+    double z1 = +_z_radius_;
+    if (datatools::is_valid(_bottom_z_cut_)) {
+      z0 = _bottom_z_cut_;
+    }
+    if (datatools::is_valid(_top_z_cut_)) {
+      z1 = _top_z_cut_;
+    }
+    double z = point_.z();
+    if (z < z0 - hskin) {
+      return true;
+    }
+    if (z > z1 + hskin) {
+      return true;
+    }
+    double x = point_.x();
+    double y = point_.y();
+    double a = _x_radius_ + hskin;
+    double b = _y_radius_ + hskin;
+    double c = _z_radius_ + hskin;
+    double term = gsl_pow_2(x / a) + gsl_pow_2(y / b) + gsl_pow_2(z / c);
+    if (term >= 1.0) {
+      return true;
+    }
     return false;
   }
 
   double
   ellipsoid::get_parameter (const std::string & flag_) const
   {
+    DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
     if  (flag_ == "x_radius")     return get_x_radius();
     if  (flag_ == "y_radius")     return get_y_radius();
     if  (flag_ == "z_radius")     return get_z_radius();
@@ -347,35 +433,303 @@ namespace geomtools {
     if  (flag_ == "top_z_cut")    return get_top_z_cut();
     if  (flag_ == "surface")      return get_surface(FACE_ALL);
     if  (flag_ == "volume")       return get_volume();
-    DT_THROW_IF(true, std::logic_error,"Unknown flag '" << flag_ << "' !");
+    DT_THROW_IF(true, std::logic_error, "Unknown flag '" << flag_ << "' !");
   }
 
   vector_3d
-  ellipsoid::get_normal_on_surface (const vector_3d & /*position_*/) const
+  ellipsoid::get_normal_on_surface (const vector_3d & a_position,
+                                    const face_identifier & a_surface_bit) const
   {
+    DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
     vector_3d normal;
-    invalidate (normal);
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
-    return (normal);
+    invalidate(normal);
+    switch (a_surface_bit.get_face_bits()) {
+    case FACE_SIDE:
+      normal.set(a_position.x() / _x_radius_,
+                 a_position.y() / _y_radius_,
+                 a_position.z() / _z_radius_);
+      normal /= normal.mag();
+      break;
+    case FACE_BOTTOM:
+      if (datatools::is_valid(_bottom_z_cut_)) normal.set(0.0, 0.0, -1.0);
+      break;
+    case FACE_TOP:
+      if (datatools::is_valid(_top_z_cut_)) normal.set(0.0, 0.0, +1.0);
+      break;
+    }
+    return normal;
+  }
+
+  void ellipsoid::compute_side_face(ellipsoid_sector & face_,
+                                    placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Ellipsoid is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    face_.set_x_radius(_x_radius_);
+    face_.set_y_radius(_y_radius_);
+    face_.set_z_radius(_z_radius_);
+    if (datatools::is_valid(_bottom_z_cut_)) {
+      face_.set_bottom_z_cut(_bottom_z_cut_);
+    }
+    if (datatools::is_valid(_top_z_cut_)) {
+      face_.set_top_z_cut(_top_z_cut_);
+    }
+    face_placement_.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    return;
+  }
+
+  void ellipsoid::compute_top_bottom_face(faces_mask_type face_id_,
+                                          elliptical_sector & face_,
+                                          placement & face_placement_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Ellipsoid is not valid !");
+    face_.reset();
+    face_placement_.reset();
+    switch(face_id_) {
+    case FACE_BOTTOM:
+      if (datatools::is_valid(_bottom_z_cut_)) {
+        double term = std::sqrt(1 - gsl_pow_2(_bottom_z_cut_/ _z_radius_));
+        face_.set_x_radius(_x_radius_ * term);
+        face_.set_y_radius(_y_radius_ * term);
+        face_placement_.set(0.0, 0.0, _bottom_z_cut_, 0.0, 0.0, 0.0);
+      }
+      break;
+    case FACE_TOP:
+      if (datatools::is_valid(_bottom_z_cut_)) {
+        double term = std::sqrt(1 - gsl_pow_2(_top_z_cut_/ _z_radius_));
+        face_.set_x_radius(_x_radius_ * term);
+        face_.set_y_radius(_y_radius_ * term);
+        face_placement_.set(0.0, 0.0, _top_z_cut_, 0.0, 0.0, 0.0);
+      }
+      break;
+    }
+    return;
+  }
+
+  unsigned int ellipsoid::compute_faces(face_info_collection_type & faces_) const
+  {
+    DT_THROW_IF (! is_valid(), std::logic_error, "Ellipsoid is not valid !");
+    unsigned int nfaces = 0;
+    {
+      // Side face:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      ellipsoid_sector & es = finfo.add_face<ellipsoid_sector>();
+      compute_side_face(es, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_SIDE);
+      finfo.set_identifier(fid);
+      finfo.set_label("side");
+      nfaces++;
+    }
+    if (datatools::is_valid(_bottom_z_cut_)) {
+      // Bottom cut:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      elliptical_sector & es = finfo.add_face<elliptical_sector>();
+      compute_top_bottom_face(FACE_BOTTOM, es, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_BOTTOM);
+      finfo.set_identifier(fid);
+      finfo.set_label("bottom");
+      nfaces++;
+    }
+    if (datatools::is_valid(_top_z_cut_)) {
+      // Top cut:
+      {
+        face_info dummy;
+        faces_.push_back(dummy);
+      }
+      face_info & finfo = faces_.back();
+      elliptical_sector & es = finfo.add_face<elliptical_sector>();
+      compute_top_bottom_face(FACE_TOP, es, finfo.grab_positioning());
+      face_identifier fid;
+      fid.set_face_bit(FACE_TOP);
+      finfo.set_identifier(fid);
+      finfo.set_label("top");
+      nfaces++;
+    }
+    return nfaces;
+  }
+
+  face_identifier ellipsoid::on_surface(const vector_3d & a_position,
+                                        const face_identifier & a_surface_mask,
+                                        double a_skin) const
+  {
+    DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
+    double skin = get_skin(a_skin);
+
+    face_identifier mask;
+    if (a_surface_mask.is_valid()) {
+      DT_THROW_IF(! a_surface_mask.is_face_bits_mode(), std::logic_error,
+                  "Face mask uses no face bits!");
+      mask = a_surface_mask;
+    } else {
+      mask.set_face_bits_any();
+    }
+
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
+        vector_3d position_c;
+        finfo.get_positioning().mother_to_child(a_position, position_c);
+        if (finfo.get_face_ref().is_on_surface(position_c, skin)) {
+          return finfo.get_identifier();
+        }
+      }
+    }
+
+    /*
+      if (a_surface_mask.has_face_bit(FACE_SIDE)) {
+      ellipsoid_sector side;
+      placement side_placement;
+      compute_side_face(side, side_placement);
+      vector_3d p_side;
+      side_placement.mother_to_child(a_point, p_side);
+      if (side.is_on_surface(p_side, skin)) {
+      return face_identifier(FACE_SIDE);
+      }
+      }
+
+      if (datatools::is_valid(_top_z_cut_)) {
+      if (a_surface_mask.has_face_bit(FACE_TOP)) {
+      elliptical_sector top;
+      placement top_placement;
+      compute_top_bottom_face(FACE_TOP, top, top_placement);
+      vector_3d p_top;
+      top_placement.mother_to_child(a_point, p_top);
+      if (top.is_on_surface(p_top, skin)) {
+      return face_identifier(FACE_TOP);
+      }
+      }
+      }
+
+      if (datatools::is_valid(_bottom_z_cut_)) {
+      if (a_surface_mask.has_face_bit(FACE_BOTTOM)) {
+      elliptical_sector bottom;
+      placement bottom_placement;
+      compute_top_bottom_face(FACE_BOTTOM, bottom, bottom_placement);
+      vector_3d p_bottom;
+      bottom_placement.mother_to_child(a_point, p_bottom);
+      if (bottom.is_on_surface(p_bottom, skin)) {
+      return face_identifier(FACE_BOTTOM);
+      }
+      }
+      }
+    */
+
+    return face_identifier::face_invalid();
   }
 
   bool
-  ellipsoid::is_on_surface (const vector_3d & /*point_*/,
-                            int /*mask_*/,
-                            double /*skin_*/) const
+  ellipsoid::find_intercept (const vector_3d & from_,
+                             const vector_3d & direction_,
+                             face_intercept_info & intercept_,
+                             double skin_) const
   {
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
-    return false;
-  }
-
-  bool
-  ellipsoid::find_intercept (const vector_3d & /*from_*/,
-                             const vector_3d & /*direction_*/,
-                             intercept_t & intercept_,
-                             double /*skin_*/) const
-  {
-    DT_THROW_IF(true, std::runtime_error, "Not implemented !");
+    DT_THROW_IF(!is_valid(), std::logic_error, "Not valid !");
     intercept_.reset();
+
+    double skin = compute_tolerance(skin_);
+
+    const unsigned int NFACES = 3;
+    face_intercept_info intercepts[NFACES];
+    unsigned int candidate_impact_counter = 0;
+
+    int face_counter = 0;
+    const face_info_collection_type & faces = get_computed_faces();
+    for (face_info_collection_type::const_iterator iface = faces.begin();
+         iface != faces.end();
+         iface++) {
+      const face_info & finfo = *iface;
+      if (!finfo.is_valid()) {
+        continue;
+      }
+      const i_shape_2d & face = finfo.get_face_ref();
+      const placement & face_placement = finfo.get_positioning();
+      const face_identifier & face_id = finfo.get_identifier();
+      if (face.i_find_intercept::find_intercept(from_,
+                                                direction_,
+                                                face_placement,
+                                                intercepts[face_counter],
+                                                skin)) {
+        intercepts[face_counter].set_face_id(face_id);
+        candidate_impact_counter++;
+      }
+      face_counter++;
+    }
+
+    /*
+      {
+      const int FACE_INDEX = 0;
+      ellipsoid_sector side_face;
+      placement side_face_placement;
+      compute_side_face(side_face, side_face_placement);
+      if (side_face.i_find_intercept::find_intercept(from_,
+      direction_,
+      side_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_SIDE);
+      candidate_impact_counter++;
+      }
+      }
+
+      if (datatools::is_valid(_bottom_z_cut_)) {
+      const int FACE_INDEX = 1;
+      elliptical_sector bottom_face;
+      placement bottom_face_placement;
+      compute_top_bottom_face(FACE_BOTTOM, bottom_face, bottom_face_placement);
+      if (bottom_face.i_find_intercept::find_intercept(from_,
+      direction_,
+      bottom_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
+      candidate_impact_counter++;
+      }
+      }
+
+      if (datatools::is_valid(_top_z_cut_)) {
+      const int FACE_INDEX = 2;
+      elliptical_sector top_face;
+      placement top_face_placement;
+      compute_top_bottom_face(FACE_TOP, top_face, top_face_placement);
+      if (top_face.i_find_intercept::find_intercept(from_,
+      direction_,
+      top_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
+      candidate_impact_counter++;
+      }
+      }
+    */
+
+    if (candidate_impact_counter > 0) {
+      double min_length_to_impact = -1.0;
+      for (unsigned int iface = 0; iface < NFACES; iface++) {
+        if (intercepts[iface].is_ok()) {
+          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+            min_length_to_impact = length_to_impact;
+            intercept_.set_face_id(intercepts[iface].get_face_id());
+            intercept_.set_impact(intercepts[iface].get_impact());
+          }
+        }
+      }
+    }
+
     return intercept_.is_ok();
   }
 
@@ -435,26 +789,76 @@ namespace geomtools {
     return in_;
   }
 
-  void ellipsoid::tree_dump (ostream & out_,
-                             const string & title_,
-                             const string & indent_,
+  void ellipsoid::tree_dump (std::ostream & out_,
+                             const std::string & title_,
+                             const std::string & indent_,
                              bool inherit_) const
   {
-    string indent;
+    std::string indent;
     if (! indent_.empty()) indent = indent_;
     i_object_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "X radius : " << get_x_radius () / CLHEP::mm << " mm" << endl;
+         << "X radius : " << get_x_radius () / CLHEP::mm << " mm" << std::endl;
+
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Y radius : " << get_y_radius () / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Z radius : " << get_z_radius () / CLHEP::mm << " mm" << endl;
+         << "Y radius : " << get_y_radius () / CLHEP::mm << " mm" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Z bottom-cut : " << get_bottom_z_cut () / CLHEP::mm << " mm" << endl;
+         << "Z radius : " << get_z_radius () / CLHEP::mm << " mm" << std::endl;
+
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Z top-cut    : " << get_top_z_cut () / CLHEP::mm << " mm" << endl;
+         << "Z bottom-cut : " << get_bottom_z_cut () / CLHEP::mm << " mm" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+         << "Z top-cut    : " << get_top_z_cut () / CLHEP::mm << " mm" << std::endl;
+
+    return;
+  }
+
+  void ellipsoid::generate_wires_self(wires_type & wires_,
+                                      uint32_t options_) const
+  {
+    DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
+    bool draw_side_face   = !(options_ & WR_ELLIPSOID_NO_SIDE_FACE);
+    bool draw_bottom_face = !(options_ & WR_ELLIPSOID_NO_BOTTOM_FACE);
+    bool draw_top_face    = !(options_ & WR_ELLIPSOID_NO_TOP_FACE);
+    bool draw_boundings   =  (options_ & WR_BASE_BOUNDINGS);
+
+    if (draw_boundings) {
+      get_bounding_data().generate_wires_self(wires_, 0);
+    }
+
+    // Extract base rendering options:
+    uint32_t base_options = options_ & WR_BASE_MASK;
+
+    if (draw_side_face) {
+      uint32_t options = base_options;
+      ellipsoid_sector side;
+      placement side_placement;
+      compute_side_face(side, side_placement);
+      side.generate_wires(wires_, side_placement, options);
+    }
+
+    if (datatools::is_valid(_top_z_cut_)) {
+      if (draw_top_face) {
+        uint32_t options = base_options;
+        elliptical_sector top;
+        placement top_placement;
+        compute_top_bottom_face(FACE_TOP, top, top_placement);
+        top.generate_wires(wires_, top_placement, options);
+      }
+    }
+
+    if (datatools::is_valid(_bottom_z_cut_)) {
+      if (draw_bottom_face) {
+        uint32_t options = base_options;
+        elliptical_sector bottom;
+        placement bottom_placement;
+        compute_top_bottom_face(FACE_BOTTOM, bottom, bottom_placement);
+        bottom.generate_wires(wires_, bottom_placement, options);
+      }
+    }
 
     return;
   }
@@ -537,10 +941,10 @@ namespace geomtools {
         = ocd_.add_property_info();
       cpd.set_name_pattern("z_top_cut")
         .set_from("geomtools::ellipsoid")
-        .set_terse_description("The z cut from top")
+        .set_terse_description("The z top cut")
         .set_traits(datatools::TYPE_REAL)
         .set_mandatory(false)
-        .add_example("Set the z cut from top:                   \n"
+        .add_example("Set the z top cut:                        \n"
                      "                                          \n"
                      "  top_z_cut : real as length = 1.0 cm     \n"
                      "                                          \n"
@@ -553,10 +957,10 @@ namespace geomtools {
         = ocd_.add_property_info();
       cpd.set_name_pattern("z_bottom_cut")
         .set_from("geomtools::ellipsoid")
-        .set_terse_description("The z cut from bottom")
+        .set_terse_description("The z bottom cut")
         .set_traits(datatools::TYPE_REAL)
         .set_mandatory(false)
-        .add_example("Set the z cut from bottom:                \n"
+        .add_example("Set the z bottom cut:                    \n"
                      "                                          \n"
                      "  bottom_z_cut : real as length = 1.5 cm  \n"
                      "                                          \n"
@@ -602,7 +1006,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(geomtools::ellipsoid, ocd_)
                                "  y_radius : real as length = 100.0 mm       \n"
                                "  z_radius : real as length = 600.0 mm       \n"
                                "  z_top_cut        : real   =  0.0 cm        \n"
-                               "  z_bototm_cut     : real   = 30.0 cm        \n"
+                               "  z_bottom_cut     : real   = 30.0 cm        \n"
                                "                                             \n"
                                );
 

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/plate_with_hole_model.h
 /* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-04
@@ -70,47 +69,56 @@ namespace geomtools {
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
-    /// \brief  Special Gnuplot rendering
-    struct wires_drawer : public i_wires_drawer
+    /// \brief Special wires 3D rendering
+    struct wires_drawer : public i_wires_drawer<plate_with_hole_model>
     {
-      wires_drawer(const plate_with_hole_model & model_,
-                   double x_pos_hole_, double y_pos_hole_);
+      //! \brief Rendering options
+      enum wires_rendering_option_type {
+        WR_PWHM_NO_PLATE_FACES = (WR_BASE_LAST << 1),      //!< Do not render the mother plate solid faces
+        WR_PWHM_NO_HOLE_FACES  = (WR_BASE_LAST << 2),      //!< Do not render the hole solid faces
+        WR_PWHM_LAST           = (WR_PWHM_NO_HOLE_FACES),  //!< Last defined bit
+        WR_PWHM_MASK           = (WR_PWHM_NO_PLATE_FACES
+                                  | WR_PWHM_NO_HOLE_FACES) //!< Rendering options bit mask
+      };
+
+      //! Constructor
+      wires_drawer(const plate_with_hole_model & model_);
+
+      //! Destructor
       virtual ~wires_drawer();
-      virtual void generate_wires(std::ostream & out_,
-                                  const geomtools::vector_3d & position_,
-                                  const geomtools::rotation_3d & rotation_);
-    private:
-      const plate_with_hole_model * _model_;
-      double _x_pos_hole_;
-      double _y_pos_hole_;
+
+      //! Generate a list of polylines representing the contour of the shape (for display clients)
+      virtual void generate_wires_self(wires_type & wires_,
+                                       uint32_t options_ = 0) const;
+
     };
 
   protected:
 
     /// Construction
-    virtual void _at_construct (const std::string & name_,
-                                const datatools::properties & setup_,
-                                geomtools::models_col_type * models_ = 0);
+    virtual void _at_construct(const std::string & name_,
+                               const datatools::properties & setup_,
+                               geomtools::models_col_type * models_ = 0);
 
   private:
 
-    std::string               _material_;
-    geomtools::box            _mother_;
-    geomtools::box            _box_hole_;
-    geomtools::cylinder       _cyl_hole_;
-    geomtools::subtraction_3d _solid_;
+    std::string               _material_; //!< material reference name
+    geomtools::box            _mother_;   //!< Mother box to be extruded
+    geomtools::box            _box_hole_; //!< Extrusion box volume
+    geomtools::cylinder       _cyl_hole_; //!< Extrusion cylinder volume
+    geomtools::subtraction_3d _solid_;    //!< Top level solid shape
     double                    _x_; //!< X box
     double                    _y_; //!< Y box
     double                    _z_; //!< Z box
 
-    double                    _r_hole_;
-    double                    _x_hole_;
-    double                    _y_hole_;
-    double                    _z_hole_;
-    double                    _x_pos_hole_;
-    double                    _y_pos_hole_;
+    double                    _r_hole_; //!< Radius of the extrusion (cylinder case)
+    double                    _x_hole_; //!< Length of the extrusion (box case)
+    double                    _y_hole_; //!< Width of the extrusion (box case)
+    double                    _z_hole_; //!< Depth of the extrusion
+    double                    _x_pos_hole_; //!< X position of the extrusion w.r.t. to the mother box X-Y face
+    double                    _y_pos_hole_; //!< Y position of the extrusion w.r.t. to the mother box X-Y face
 
-    boost::scoped_ptr<wires_drawer> _drawer_;
+    boost::scoped_ptr<wires_drawer> _drawer_; //!< Special wires 3D renderer
 
   private:
 
@@ -122,3 +130,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_PLATE_WITH_HOLE_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

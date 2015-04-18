@@ -17,9 +17,6 @@
 
 // This project:
 #include <geomtools/geomtools_config.h>
-#include <geomtools/union_3d.h>
-#include <geomtools/subtraction_3d.h>
-#include <geomtools/intersection_3d.h>
 #include <geomtools/detail/model_tools.h>
 #include <geomtools/model_factory.h>
 #include <geomtools/gdml_writer.h>
@@ -30,33 +27,48 @@
 #include <geomtools/placement.h>
 #include <geomtools/regular_linear_placement.h>
 
+#include <geomtools/box.h>
+#include <geomtools/right_circular_conical_frustrum.h>
+#include <geomtools/ellipsoid.h>
+#include <geomtools/elliptical_cylinder.h>
+#include <geomtools/sphere.h>
+#include <geomtools/polycone.h>
+#include <geomtools/polyhedra.h>
+#include <geomtools/right_polygonal_frustrum.h>
+#include <geomtools/cylinder.h>
+#include <geomtools/tube.h>
+#include <geomtools/tessellation.h>
+#include <geomtools/union_3d.h>
+#include <geomtools/subtraction_3d.h>
+#include <geomtools/intersection_3d.h>
+
 namespace geomtools {
 
   const std::string & gdml_export::default_length_unit()
   {
-    static std::string unit;
-    if (unit.empty()) {
-      unit = "mm";
+    static std::string _lunit;
+    if (_lunit.empty()) {
+      _lunit = "mm";
     }
-    return unit;
+    return _lunit;
   }
 
   const std::string & gdml_export::default_angle_unit()
   {
-    static std::string unit;
-    if (unit.empty()) {
-      unit = "deg";
+    static std::string _aunit;
+    if (_aunit.empty()) {
+      _aunit = "deg";
     }
-    return unit;
+    return _aunit;
   }
 
   const std::string & gdml_export::default_density_unit()
   {
-    static std::string unit;
-    if (unit.empty()) {
-      unit = "g/cm3";
+    static std::string _dunit;
+    if (_dunit.empty()) {
+      _dunit = "g/cm3";
     }
-    return unit;
+    return _dunit;
   }
 
   datatools::logger::priority gdml_export::get_logging_priority () const
@@ -113,7 +125,6 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   gdml_export::gdml_export ()
   {
     _logging_priority_          = datatools::logger::PRIO_WARNING;
@@ -128,7 +139,6 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   gdml_export::~gdml_export ()
   {
     return;
@@ -262,9 +272,9 @@ namespace geomtools {
     }
     std::string shape_name = shape_.get_shape_name();
 
-    DT_THROW_IF (! gdml_writer::solid_type_is_valid (shape_name),
-                 std::logic_error,
-                 "Solid type '" << shape_name << "' is not valid !");
+    // DT_THROW_IF (! gdml_writer::solid_type_is_valid (shape_name),
+    //              std::logic_error,
+    //              "Solid type '" << shape_name << "' is not valid !");
     DT_THROW_IF (! gdml_writer::solid_type_is_supported (shape_name),
                  std::logic_error,
                  "Solid type '" << shape_name << "' is not supported !");
@@ -362,41 +372,37 @@ namespace geomtools {
       }
     } else {
       if (shape_name == "box") {
-        const box & b = static_cast<const box &> (shape_);
+        const box & b = dynamic_cast<const box &> (shape_);
         _writer_.add_box(solid_name_, b, _length_unit_);
       } else if (shape_name == "cylinder") {
-        const cylinder & c = static_cast<const cylinder &> (shape_);
+        const cylinder & c = dynamic_cast<const cylinder &> (shape_);
         _writer_.add_cylinder(solid_name_, c, _length_unit_, _angle_unit_);
       } else if (shape_name == "tube") {
-        const tube & t = static_cast<const tube &> (shape_);
+        const tube & t = dynamic_cast<const tube &> (shape_);
         _writer_.add_tube(solid_name_, t, _length_unit_, _angle_unit_);
       } else if (shape_name == "sphere") {
-        const sphere & s = static_cast<const sphere &> (shape_);
-        /*
-        if (s.is_orb()) {
-          _writer_.add_orb(solid_name_, s, _length_unit_, _angle_unit_);
-        } else {
-          _writer_.add_sphere(solid_name_, s, _length_unit_, _angle_unit_);
-        }
-        */
+        const sphere & s = dynamic_cast<const sphere &> (shape_);
         _writer_.add_sphere(solid_name_, s, _length_unit_, _angle_unit_);
+      } else if (shape_name == "right_circular_conical_frustrum") {
+        const right_circular_conical_frustrum & cf= dynamic_cast<const right_circular_conical_frustrum &> (shape_);
+        _writer_.add_cone_segment(solid_name_, cf, _length_unit_, _angle_unit_);
       } else if (shape_name == "polycone") {
-        const polycone & pc = static_cast<const polycone &> (shape_);
+        const polycone & pc = dynamic_cast<const polycone &> (shape_);
         _writer_.add_polycone(solid_name_, pc, _length_unit_, _angle_unit_);
       } else if (shape_name == "polyhedra") {
-        const polyhedra & ph = static_cast<const polyhedra &> (shape_);
+        const polyhedra & ph = dynamic_cast<const polyhedra &> (shape_);
         _writer_.add_polyhedra(solid_name_, ph, _length_unit_, _angle_unit_);
       } else if (shape_name == "ellipsoid") {
-        const ellipsoid & e = static_cast<const ellipsoid &> (shape_);
+        const ellipsoid & e = dynamic_cast<const ellipsoid &> (shape_);
         _writer_.add_ellipsoid(solid_name_, e, _length_unit_, _angle_unit_);
-      } else if (shape_name == "elliptical_tube") {
-        const elliptical_tube & et = static_cast<const elliptical_tube &> (shape_);
+      } else if (shape_name == "elliptical_cylinder") {
+        const elliptical_cylinder & et = dynamic_cast<const elliptical_cylinder &> (shape_);
         _writer_.add_elliptical_tube(solid_name_, et, _length_unit_, _angle_unit_);
       } else if (shape_name == "tessellated") {
-        const tessellated_solid & ts = static_cast<const tessellated_solid &> (shape_);
+        const tessellated_solid & ts = dynamic_cast<const tessellated_solid &> (shape_);
         _writer_.add_tessellated(solid_name_, ts, _length_unit_);
       } else {
-        DT_THROW_IF(true, std::logic_error, "Simple solid type '" << shape_name << "' is not supported !");
+        DT_THROW(std::logic_error, "Simple solid type '" << shape_name << "' is not supported !");
       }
     }
     _solid_refs_.insert(solid_name_);

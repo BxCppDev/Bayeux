@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/i_model.h
 /* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
@@ -204,3 +203,11 @@ namespace geomtools {
 #include <geomtools/model_macros.h>
 
 #endif // GEOMTOOLS_I_MODEL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

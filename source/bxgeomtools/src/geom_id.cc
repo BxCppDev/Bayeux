@@ -18,7 +18,7 @@ namespace geomtools {
   const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
   const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
   const uint32_t geom_id::ANY_ADDRESS           = 0xFFFFFFFE;
-  const uint32_t   geom_id::DEFAULT_ADDRESS_DEPTH = 10;
+  const uint32_t geom_id::DEFAULT_ADDRESS_DEPTH = 10;
   const uint32_t geom_id::UNIVERSE_TYPE         = 0;
   const uint32_t geom_id::WORLD_TYPE            = geom_id::UNIVERSE_TYPE;
 

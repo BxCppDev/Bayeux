@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file geomtools/base_hit.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-16
@@ -47,23 +46,44 @@ namespace geomtools {
     /// Masks to automatically tag the attributes to be stored
     enum store_mask_type {
       STORE_NOTHING     = 0,
-      STORE_HIT_ID      = datatools::bit_mask::bit00,
-      STORE_GEOM_ID     = datatools::bit_mask::bit01,
-      STORE_AUXILIARIES = datatools::bit_mask::bit02,
+      STORE_HIT_ID      = datatools::bit_mask::bit00, //!< Serialization mask for the hit ID attribute
+      STORE_GEOM_ID     = datatools::bit_mask::bit01, //!< Serialization mask for the geometry ID attribute
+      STORE_AUXILIARIES = datatools::bit_mask::bit02, //!< Serialization mask for the auxiliary properties attribute
+      STORE_RESERVED30  = datatools::bit_mask::bit30, //!< Reserved bit (lock)
+      STORE_RESERVED31  = datatools::bit_mask::bit31  //!< Reserved bit (chained)
     };
 
     static const int32_t INVALID_HIT_ID = -1;
 
     /// Check if the hit ID is valid
+    /// @code
+    /// geomtools::base_hit hit0;
+    /// hit0.set_hit_id(34);
+    /// if (hit0.has_hit_id()) {
+    ///   ...
+    /// }
+    /// @endcode
     bool has_hit_id () const;
 
     /// Get the hit ID integer value
+    /// @code
+    /// geomtools::base_hit hit0;
+    /// hit0.set_hit_id(34);
+    /// std::clog << hit0.get_hit_id() << '\n';
+    /// @endcode
     int32_t get_hit_id () const;
 
     /// Set the hit ID integer value
     void set_hit_id (int32_t);
 
     /// Reset the hit ID integer value
+    /// @code
+    /// geomtools::base_hit hit0;
+    /// hit0.set_hit_id(34);
+    /// hit0.invalidate_hit_id();
+    /// if (hit0.has_hit_id()) {
+    ///   ...
+    /// }
     void invalidate_hit_id ();
 
     /// Check if the geometry ID is valid
@@ -351,3 +371,11 @@ DR_CLASS_INIT(::geomtools::base_hit);
 BOOST_CLASS_VERSION(geomtools::base_hit, 1)
 
 #endif // GEOMTOOLS_BASE_HIT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

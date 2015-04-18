@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-
 /// \file geomtools/clhep-reflect.h
 #ifndef GEOMTOOLS_CLHEP_REFLECT_H
 #define GEOMTOOLS_CLHEP_REFLECT_H
@@ -299,3 +297,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #endif // GEOMTOOLS_CLHEP_REFLECT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

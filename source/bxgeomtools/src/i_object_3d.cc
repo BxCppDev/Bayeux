@@ -1,4 +1,4 @@
-/** \file geomtools/i_object_3d.cc */
+/// \file geomtools/i_object_3d.cc
 
 // Ourselves:
 #include <geomtools/i_object_3d.h>
@@ -9,7 +9,8 @@
 #include <datatools/units.h>
 
 // This project:
-#include <geomtools/i_wires_drawer.h>
+#include <geomtools/i_wires_3d_rendering.h>
+#include <geomtools/utils.h>
 
 namespace geomtools {
 
@@ -107,16 +108,45 @@ namespace geomtools {
     return;
   }
 
+  double i_object_3d::compute_tolerance(double tolerance_) const
+  {
+    DT_THROW_IF(std::isinf(tolerance_), std::logic_error,
+                "Invalid infinite tolerance for shape '"
+                << get_shape_name() << "' !");
+    if (tolerance_ == constants::get_zero_tolerance()) {
+      return constants::get_default_tolerance ();
+    } else if (tolerance_ < 0.0 || std::isnan(tolerance_)) {
+      return get_tolerance();
+    } else {
+      return tolerance_;
+    }
+  }
+
+  double i_object_3d::compute_angular_tolerance(double angular_tolerance_) const
+  {
+    DT_THROW_IF(std::isinf(angular_tolerance_), std::logic_error,
+                "Invalid infinite angular tolerance for shape '"
+                << get_shape_name() << "' !");
+    if (angular_tolerance_ == constants::get_zero_tolerance()) {
+      return constants::get_default_angular_tolerance ();
+    } else if (angular_tolerance_ < 0.0 || std::isnan(angular_tolerance_)) {
+      return get_angular_tolerance();
+    } else {
+      return angular_tolerance_;
+    }
+  }
+
   double i_object_3d::get_tolerance() const
   {
     return _tolerance_;
   }
 
-  void i_object_3d::set_angular_tolerance (double angular_tolerance_)
+  void i_object_3d::set_angular_tolerance(double angular_tolerance_)
   {
     DT_THROW_IF (angular_tolerance_ <= 0.0,
                  std::logic_error,
-                 "Angular tolerance value '" << angular_tolerance_ << "' must be positive !");
+                 "Angular tolerance value '"
+                 << angular_tolerance_ << "' must be positive !");
     _angular_tolerance_ = angular_tolerance_;
     return;
   }
@@ -126,32 +156,15 @@ namespace geomtools {
     return _angular_tolerance_;
   }
 
-  bool i_object_3d::is_composite () const
+  bool i_object_3d::is_composite() const
   {
     return false;
   }
 
-  bool i_object_3d::has_user_draw () const
+  void i_object_3d::_set_defaults()
   {
-    return _user_draw_ != 0;
-  }
-
-  void * i_object_3d::get_user_draw () const
-  {
-    return _user_draw_;
-  }
-
-  void i_object_3d::set_user_draw (void * user_draw_)
-  {
-    _user_draw_ = user_draw_;
-    return;
-  }
-
-  void i_object_3d::set_defaults()
-  {
-    _tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE;
-    _angular_tolerance_ = GEOMTOOLS_DEFAULT_ANGULAR_TOLERANCE;
-    _user_draw_ = 0;
+    _tolerance_ = constants::get_default_tolerance();
+    _angular_tolerance_ = constants::get_default_angular_tolerance();
     _wires_drawer_ = 0;
     return;
   }
@@ -161,35 +174,43 @@ namespace geomtools {
     return _wires_drawer_ != 0;
   }
 
-  void i_object_3d::set_wires_drawer(i_wires_drawer & wires_drawer_)
+  void i_object_3d::set_wires_drawer(i_wires_3d_rendering & wires_drawer_)
   {
     _wires_drawer_ = &wires_drawer_;
     return;
   }
 
-  i_wires_drawer & i_object_3d::grab_wires_drawer()
+  void i_object_3d::reset_wires_drawer()
   {
-    DT_THROW_IF(!has_wires_drawer(), std::logic_error,
-                "Missing shape wires drawer!");
-    return *_wires_drawer_;
-  }
-
-  const i_wires_drawer & i_object_3d::get_wires_drawer() const
-  {
-    DT_THROW_IF(!has_wires_drawer(), std::logic_error,
-                "Missing shape wires drawer!");
-    return *_wires_drawer_;
-  }
-
-  i_object_3d::i_object_3d ()
-  {
-    set_defaults();
+    if (_wires_drawer_ != 0) {
+      _wires_drawer_ = 0;
+    }
     return;
   }
 
-  i_object_3d::i_object_3d (double tolerance_)
+  i_wires_3d_rendering & i_object_3d::grab_wires_drawer()
   {
-    set_defaults();
+    DT_THROW_IF(!has_wires_drawer(), std::logic_error,
+                "Missing shape wires drawer!");
+    return *_wires_drawer_;
+  }
+
+  const i_wires_3d_rendering & i_object_3d::get_wires_drawer() const
+  {
+    DT_THROW_IF(!has_wires_drawer(), std::logic_error,
+                "Missing wires 3D drawer!");
+    return *_wires_drawer_;
+  }
+
+  i_object_3d::i_object_3d()
+  {
+    _set_defaults();
+    return;
+  }
+
+  i_object_3d::i_object_3d(double tolerance_)
+  {
+    _set_defaults();
     if (tolerance_ <= 0.0) {
       _tolerance_ = GEOMTOOLS_DEFAULT_TOLERANCE;
     } else {
@@ -198,7 +219,43 @@ namespace geomtools {
     return;
   }
 
-  i_object_3d::~i_object_3d ()
+  i_object_3d::i_object_3d(double tolerance_, double angular_tolerance_)
+  {
+    _set_defaults();
+    if (tolerance_ <= 0.0 || !datatools::is_valid(tolerance_)) {
+      _tolerance_ = constants::get_default_tolerance();
+    } else {
+      set_tolerance(tolerance_);
+    }
+    if (angular_tolerance_ <= 0.0 || !datatools::is_valid(angular_tolerance_)) {
+      _angular_tolerance_ = constants::get_default_angular_tolerance();
+    } else {
+      set_angular_tolerance(angular_tolerance_);
+    }
+    return;
+  }
+
+  i_object_3d::i_object_3d(const i_object_3d & src_)
+  {
+    _set_defaults();
+    _tolerance_ = src_._tolerance_;
+    _angular_tolerance_ = src_._angular_tolerance_;
+    _wires_drawer_ = src_._wires_drawer_;
+    return;
+  }
+
+  i_object_3d & i_object_3d::operator=(const i_object_3d & src_)
+  {
+    if (this == &src_) {
+      return *this;
+    }
+    _tolerance_ = src_._tolerance_;
+    _angular_tolerance_ = src_._angular_tolerance_;
+    _wires_drawer_ = src_._wires_drawer_;
+    return *this;
+  }
+
+  i_object_3d::~i_object_3d()
   {
     this->i_object_3d::reset();
     return;
@@ -238,9 +295,10 @@ namespace geomtools {
     return;
   }
 
-  void i_object_3d::reset ()
+  void i_object_3d::reset()
   {
-    this->i_object_3d::set_defaults();
+    reset_wires_drawer();
+    this->i_object_3d::_set_defaults();
     return;
   }
 
@@ -267,13 +325,8 @@ namespace geomtools {
          << "Angular tolerance  = " << _angular_tolerance_ / CLHEP::radian << " radian" << std::endl;
 
     {
-      out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Wires drawer : " << (has_wires_drawer() ? "Yes": "No") << std::endl;
-    }
-
-    {
       out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << "User draw : " << (has_user_draw() ? "Yes": "No") << std::endl;
+           << "Wires drawer : " << (has_wires_drawer() ? "<yes>": "<none>") << std::endl;
     }
 
     return;

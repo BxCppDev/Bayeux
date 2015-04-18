@@ -1,4 +1,4 @@
-/** utils.cc */
+/// utils.cc
 
 // Ourselves:
 #include <geomtools/utils.h>
@@ -27,6 +27,30 @@ namespace geomtools {
     if (flag_ == SHAPE_DOMAIN_INSIDE_DAUGHTER) return std::string("inside_daughter");
     if (flag_ == SHAPE_DOMAIN_ON_DAUGHTER_SURFACE) return std::string("on_daughter_surface");
     return std::string("");
+  }
+
+  bool position_is_in(double position_,
+                      double start_position_, double delta_position_,
+                      double tolerance_,
+                      bool bounds_excluded_)
+  {
+    DT_THROW_IF(delta_position_ < 0, std::range_error,
+                "Invalid negative delta position!");
+    bool in = false;
+    double stop_position = start_position_ + delta_position_;
+    double p = position_;
+    if (bounds_excluded_) {
+      if (p > (start_position_ - tolerance_)
+          && (p < stop_position + tolerance_)) {
+        in = true;
+      }
+    } else {
+      if (p >= (start_position_ - tolerance_)
+          && (p <= stop_position + tolerance_)) {
+        in = true;
+      }
+    }
+    return in;
   }
 
   bool angle_is_in(double angle_,
@@ -545,11 +569,85 @@ namespace geomtools {
     return is_valid (rot_);
   }
 
+  void create(rotation_3d & rot_,
+              double angle0_,
+              double angle1_,
+              double angle2_,
+              euler_angles_type et_)
+  {
+    rotation_3d r1, r2, r3;
+    switch (et_) {
+    case EULER_ANGLES_ZXZ:
+      r1.rotateZ(-angle0_);
+      r2.rotateX(-angle1_);
+      r3.rotateZ(-angle2_);
+      break;
+    case EULER_ANGLES_XYX:
+      r1.rotateX(-angle0_);
+      r2.rotateY(-angle1_);
+      r3.rotateX(-angle2_);
+      break;
+    case EULER_ANGLES_YZY:
+      r1.rotateY(-angle0_);
+      r2.rotateZ(-angle1_);
+      r3.rotateY(-angle2_);
+      break;
+    case EULER_ANGLES_ZYZ:
+      r1.rotateZ(-angle0_);
+      r2.rotateY(-angle1_);
+      r3.rotateZ(-angle2_);
+      break;
+    case EULER_ANGLES_XZX:
+      r1.rotateX(-angle0_);
+      r2.rotateZ(-angle1_);
+      r3.rotateX(-angle2_);
+      break;
+    case EULER_ANGLES_YXY:
+      r1.rotateY(-angle0_);
+      r2.rotateX(-angle1_);
+      r3.rotateY(-angle2_);
+      break;
+    case EULER_ANGLES_XYZ:
+      r1.rotateX(-angle0_);
+      r2.rotateY(-angle1_);
+      r3.rotateZ(-angle2_);
+      break;
+    case EULER_ANGLES_YZX:
+      r1.rotateY(-angle0_);
+      r2.rotateZ(-angle1_);
+      r3.rotateX(-angle2_);
+      break;
+    case EULER_ANGLES_ZXY:
+      r1.rotateZ(-angle0_);
+      r2.rotateX(-angle1_);
+      r3.rotateY(-angle2_);
+      break;
+    case EULER_ANGLES_XZY:
+      r1.rotateX(-angle0_);
+      r2.rotateZ(-angle1_);
+      r3.rotateY(-angle2_);
+      break;
+    case EULER_ANGLES_ZYX:
+      r1.rotateZ(-angle0_);
+      r2.rotateY(-angle1_);
+      r3.rotateX(-angle2_);
+      break;
+    case EULER_ANGLES_YXZ:
+      r1.rotateY(-angle0_);
+      r2.rotateX(-angle1_);
+      r3.rotateZ(-angle2_);
+      break;
+    }
+    rot_ = r3 * r2 * r1;
+    return;
+  }
+
   void create_zyz (rotation_3d & rot_,
                    double phi_,
                    double theta_,
                    double delta_)
   {
+    // create(rot_, phi, theta_, delta_, EULER_ANGLES_ZYZ);
     rotation_3d r1, r2, r3;
     r1.rotateZ (-phi_);
     r2.rotateY (-theta_);
@@ -572,6 +670,7 @@ namespace geomtools {
                    double theta_,
                    double psi_)
   {
+    // create(rot_, phi, theta_, psi_, EULER_ANGLES_ZXZ);
     rotation_3d r1, r2, r3;
     r1.rotateZ (-phi_);
     r2.rotateX (-theta_);
@@ -585,6 +684,7 @@ namespace geomtools {
                    double theta_,
                    double psi_)
   {
+    // create(rot_, phi, theta_, psi_, EULER_ANGLES_XYZ);
     rotation_3d r1, r2, r3;
     r1.rotateX (-phi_);
     r2.rotateY (-theta_);
@@ -1111,21 +1211,21 @@ namespace geomtools {
     string last_tag  = "`-- ";
     string last_tagc = "    ";
     if (is_valid (rot_)) {
-        out_ << indent << last_tag << "[ ( " <<
-          setw (11) << setprecision (6) << rot_.xx () << "   " <<
-          setw (11) << setprecision (6) << rot_.xy () << "   " <<
-          setw (11) << setprecision (6) << rot_.xz () << ")" << endl;
-        out_ << indent << last_tagc << "  ( " <<
-          setw (11) << setprecision (6) << rot_.yx () << "   " <<
-          setw (11) << setprecision (6) << rot_.yy () << "   " <<
-          setw (11) << setprecision (6) << rot_.yz () << ")" << endl;
-        out_ << indent << last_tagc << "  ( " <<
-          setw (11) << setprecision (6) << rot_.zx () << "   " <<
-          setw (11) << setprecision (6) << rot_.zy () << "   " <<
-          setw (11) << setprecision (6) << rot_.zz () << ") ]" << endl;
-      } else {
-        out_ << indent << last_tag << "[" << "invalid" << "]" << endl;
-      }
+      out_ << indent << last_tag << "[ ( " <<
+        setw (11) << setprecision (6) << rot_.xx () << "   " <<
+        setw (11) << setprecision (6) << rot_.xy () << "   " <<
+        setw (11) << setprecision (6) << rot_.xz () << ")" << endl;
+      out_ << indent << last_tagc << "  ( " <<
+        setw (11) << setprecision (6) << rot_.yx () << "   " <<
+        setw (11) << setprecision (6) << rot_.yy () << "   " <<
+        setw (11) << setprecision (6) << rot_.yz () << ")" << endl;
+      out_ << indent << last_tagc << "  ( " <<
+        setw (11) << setprecision (6) << rot_.zx () << "   " <<
+        setw (11) << setprecision (6) << rot_.zy () << "   " <<
+        setw (11) << setprecision (6) << rot_.zz () << ") ]" << endl;
+    } else {
+      out_ << indent << last_tag << "[" << "invalid" << "]" << endl;
+    }
     return;
   }
 
@@ -1166,11 +1266,12 @@ namespace geomtools {
     return FILLED_UNDEFINED;
   }
 
-  // Function to compute geometric barycenter :
+  // Functions to compute geometric barycenter :
 
   void compute_barycenter (const std::vector<vector_3d> & points_,
                            vector_3d & barycenter_)
   {
+
     if (points_.size () == 0) {
       invalidate (barycenter_);
       return;

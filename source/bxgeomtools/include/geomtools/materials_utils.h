@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file geomtools/materials_utils.h
 /* Author(s):  François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-03-10
@@ -36,3 +35,11 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_MATERIALS_UTILS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

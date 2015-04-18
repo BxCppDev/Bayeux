@@ -227,8 +227,23 @@ namespace geomtools {
     return;
   }
 
+  bool i_composite_shape_3d::is_valid() const
+  {
+    return _shape1_.is_valid() && _shape2_.is_valid();
+  }
+
   bool
   i_composite_shape_3d::is_composite() const
+  {
+    return true;
+  }
+
+  bool i_composite_shape_3d::using_face_id_bits() const
+  {
+    return false;
+  }
+
+  bool i_composite_shape_3d::using_face_id_part_index() const
   {
     return true;
   }
