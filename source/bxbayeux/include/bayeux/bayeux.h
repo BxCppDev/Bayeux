@@ -91,3 +91,11 @@ namespace bayeux {
   /**/
 
 #endif // BAYEUX_BAYEUX_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

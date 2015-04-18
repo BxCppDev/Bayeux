@@ -47,52 +47,59 @@
 #define BAYEUX_VERSION_REVISION @Bayeux_VERSION_REVISION@
 
 //! Encode bayeux to ordered integer available at compile time
-#define BAYEUX_ENCODE_VERSION(major, minor, patch) ( \
-        ((major) * 10000) \
-      + ((minor) *   100) \
-      + ((patch) *     1))
+#define BAYEUX_ENCODE_VERSION(major, minor, patch) (			\
+						    ((major) * 10000)	\
+						    + ((minor) *   100) \
+						    + ((patch) *     1))
 
 //! Integer encoded bayeux version available at compile time
-#define BAYEUX_VERSION BAYEUX_ENCODE_VERSION( \
-        BAYEUX_VERSION_MAJOR, \
-        BAYEUX_VERSION_MINOR, \
-        BAYEUX_VERSION_PATCH)
+#define BAYEUX_VERSION BAYEUX_ENCODE_VERSION(				\
+					     BAYEUX_VERSION_MAJOR,	\
+					     BAYEUX_VERSION_MINOR,	\
+					     BAYEUX_VERSION_PATCH)
 
 //! String encoded full version number, e.g. "1.2.3", available at compile time
 #define BAYEUX_LIB_VERSION "@Bayeux_VERSION_MAJOR@.@Bayeux_VERSION_MINOR@.@Bayeux_VERSION_PATCH@"
 
 //! Check current version >= (major, minor, patch) at compile time
-#define BAYEUX_IS_AT_LEAST(major,minor,patch) ( \
-        BAYEUX_VERSION >= \
-        BAYEUX_ENCODE_VERSION(major,minor,patch))
+#define BAYEUX_IS_AT_LEAST(major,minor,patch) (				\
+					       BAYEUX_VERSION >=	\
+					       BAYEUX_ENCODE_VERSION(major,minor,patch))
 
 //----------------------------------------------------------------------
 // Runtime API
 namespace bayeux {
-//! \brief Describe the bayeux API version and features
-struct version {
-//! Return the major version number of bayeux, e.g., 1 for '1.2.3'
-static int get_major();
+  //! \brief Describe the bayeux API version and features
+  struct version {
+    //! Return the major version number of bayeux, e.g., 1 for '1.2.3'
+    static int get_major();
 
-//! Return the minor version number of bayeux, e.g., 2 for '1.2.3'
-static int get_minor();
+    //! Return the minor version number of bayeux, e.g., 2 for '1.2.3'
+    static int get_minor();
 
-//! Return the patch version number of bayeux, e.g., 3 for '1.2.3'
-static int get_patch();
+    //! Return the patch version number of bayeux, e.g., 3 for '1.2.3'
+    static int get_patch();
 
-//! Return the revision/build number of bayeux, e.g., 1234
-static int get_revision();
+    //! Return the revision/build number of bayeux, e.g., 1234
+    static int get_revision();
 
-//! Return the full version number of bayeux as a string, e.g., '1.2.3'
-static std::string get_version();
+    //! Return the full version number of bayeux as a string, e.g., '1.2.3'
+    static std::string get_version();
 
-//! Return true if the current bayeux version >= (major, minor, patch)
-static bool is_at_least(int major, int minor, int patch);
+    //! Return true if the current bayeux version >= (major, minor, patch)
+    static bool is_at_least(int major, int minor, int patch);
 
-//! Return true if the named feature is available in bayeux
-static bool has_feature(const std::string& feature);
-};
+    //! Return true if the named feature is available in bayeux
+    static bool has_feature(const std::string& feature);
+  };
 } // namespace bayeux
 
 #endif // BAYEUX_VERSION_H
 
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,15 +1,13 @@
-// -*- mode: c++; -*-
-/* the_introspectable.cc
- */
+// the_introspectable.cc
 
-// Ourselves
+// Ourselves:
 #include <bayeux/bayeux_config.h>
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 
-// Third Party
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
 // Load the link guard definition :
@@ -18,27 +16,27 @@
 
 // Load the link guard implementation :
 namespace datatools {
-namespace detail {
-namespace reflection {
-    dynamic_link_guard::dynamic_link_guard()
-    {
-      return;
-    }
-    dynamic_link_guard::~dynamic_link_guard()
-    {
-      return;
-    }
-    dynamic_link_guard& dynamic_link_guard::instance()
-    {
-      static boost::scoped_ptr<dynamic_link_guard> guard (0);
-      if ( guard.get () == 0) {
-        guard.reset (new dynamic_link_guard);
+  namespace detail {
+    namespace reflection {
+      dynamic_link_guard::dynamic_link_guard()
+      {
+        return;
       }
-      return *guard.get ();
-    }
+      dynamic_link_guard::~dynamic_link_guard()
+      {
+        return;
+      }
+      dynamic_link_guard& dynamic_link_guard::instance()
+      {
+        static boost::scoped_ptr<dynamic_link_guard> guard (0);
+        if ( guard.get () == 0) {
+          guard.reset (new dynamic_link_guard);
+        }
+        return *guard.get ();
+      }
 
-} // end namespace reflection
-} // end namespace detail
+    } // end namespace reflection
+  } // end namespace detail
 } // end namespace datatools
 
 
@@ -47,27 +45,27 @@ namespace reflection {
 
 // Load the link guard implementation :
 namespace geomtools {
-namespace detail {
-namespace reflection {
-    dynamic_link_guard::dynamic_link_guard()
-    {
-      return;
-    }
-    dynamic_link_guard::~dynamic_link_guard()
-    {
-      return;
-    }
-    dynamic_link_guard& dynamic_link_guard::instance()
-    {
-      static boost::scoped_ptr<dynamic_link_guard> guard (0);
-      if ( guard.get () == 0) {
-        guard.reset (new dynamic_link_guard);
+  namespace detail {
+    namespace reflection {
+      dynamic_link_guard::dynamic_link_guard()
+      {
+        return;
       }
-      return *guard.get ();
-    }
+      dynamic_link_guard::~dynamic_link_guard()
+      {
+        return;
+      }
+      dynamic_link_guard& dynamic_link_guard::instance()
+      {
+        static boost::scoped_ptr<dynamic_link_guard> guard (0);
+        if ( guard.get () == 0) {
+          guard.reset (new dynamic_link_guard);
+        }
+        return *guard.get ();
+      }
 
-} // end namespace reflection
-} // end namespace detail
+    } // end namespace reflection
+  } // end namespace detail
 } // end namespace geomtools
 
 #include <genbb_help/detail/reflection_link_guard.h>
@@ -75,28 +73,33 @@ namespace reflection {
 
 // Load the link guard implementation :
 namespace genbb {
-namespace detail {
-namespace reflection {
-    dynamic_link_guard::dynamic_link_guard()
-    {
-      return;
-    }
-    dynamic_link_guard::~dynamic_link_guard()
-    {
-      return;
-    }
-    dynamic_link_guard& dynamic_link_guard::instance()
-    {
-      static boost::scoped_ptr<dynamic_link_guard> guard (0);
-      if ( guard.get () == 0) {
-        guard.reset (new dynamic_link_guard);
+  namespace detail {
+    namespace reflection {
+      dynamic_link_guard::dynamic_link_guard()
+      {
+        return;
       }
-      return *guard.get ();
-    }
+      dynamic_link_guard::~dynamic_link_guard()
+      {
+        return;
+      }
+      dynamic_link_guard& dynamic_link_guard::instance()
+      {
+        static boost::scoped_ptr<dynamic_link_guard> guard (0);
+        if ( guard.get () == 0) {
+          guard.reset (new dynamic_link_guard);
+        }
+        return *guard.get ();
+      }
 
-} // end namespace reflection
-} // end namespace detail
+    } // end namespace reflection
+  } // end namespace detail
 } // end namespace genbb
 
-
-// end of the_introspectable.cc
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

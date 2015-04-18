@@ -8,7 +8,7 @@
 //!          Bayeux provides a simple API to get a path to known
 //!          resource files.
 //
-// Copyright (c) 2013 by François Mauger <mauger@lpccaeb.in2p3.fr>
+// Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
 // This file is part of Bayeux.
 //
@@ -25,15 +25,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BAYEUX_RELOC_HPP
-#define BAYEUX_RELOC_HPP
-// Standard Library
+#ifndef BAYEUX_RELOC_H
+#define BAYEUX_RELOC_H
+
+// Standard Library:
 #include <string>
-
-// Third Party
-// - A
-
-// This Project
 
 namespace bayeux {
 
@@ -63,4 +59,12 @@ namespace bayeux {
 
 } // end of namespace bayeux
 
-#endif // BAYEUX_RELOC_HPP
+#endif // BAYEUX_RELOC_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

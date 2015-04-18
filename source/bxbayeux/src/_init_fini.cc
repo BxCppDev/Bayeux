@@ -1,6 +1,6 @@
-/* bayeux/_init_fini.cc
- */
-// Ourselves
+// bayeux/_init_fini.cc
+
+// Ourselves:
 #include <bayeux/bayeux.h>
 
 // This package:
@@ -31,6 +31,3 @@ static void bayeux_finalizer()
   DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
   return;
 }
-
-
-// end of bayeux/_init_fini.cc
