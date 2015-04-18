@@ -38,6 +38,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/datapoint.ipp
   ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/error.h
+  ${module_include_dir}/${module_name}/math.h
   ${module_include_dir}/${module_name}/fft_real.h
   ${module_include_dir}/${module_name}/histogram_1d.h
   ${module_include_dir}/${module_name}/histogram_2d.h
@@ -52,6 +53,16 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/ioutils.h
   ${module_include_dir}/${module_name}/i_unary_function.h
   ${module_include_dir}/${module_name}/i_unary_function_with_derivative.h
+  ${module_include_dir}/${module_name}/i_unary_function_with_parameters.h
+  ${module_include_dir}/${module_name}/composite_function.h
+  ${module_include_dir}/${module_name}/product_function.h
+  ${module_include_dir}/${module_name}/gate_function.h
+  ${module_include_dir}/${module_name}/triangle_function.h
+  ${module_include_dir}/${module_name}/gaussian_function.h
+  ${module_include_dir}/${module_name}/linear_combination_function.h
+  ${module_include_dir}/${module_name}/plain_function_wrapper.h
+  ${module_include_dir}/${module_name}/function_with_domain.h
+  ${module_include_dir}/${module_name}/functor_factory.h
   ${module_include_dir}/${module_name}/linear_regression.h
   ${module_include_dir}/${module_name}/linear_regression.ipp
   ${module_include_dir}/${module_name}/linear_system_solver.h
@@ -67,6 +78,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/one_dimensional_minimization.h
   ${module_include_dir}/${module_name}/one_dimensional_root_finding.h
   ${module_include_dir}/${module_name}/param_entry.h
+  ${module_include_dir}/${module_name}/parameter_store.h
   ${module_include_dir}/${module_name}/permutation.h
   ${module_include_dir}/${module_name}/polynomial.h
   ${module_include_dir}/${module_name}/polynomial.ipp
@@ -86,6 +98,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/constants.cc
   ${module_source_dir}/datapoint.cc
   ${module_source_dir}/error.cc
+  ${module_source_dir}/math.cc
   ${module_source_dir}/fft_real.cc
   ${module_source_dir}/histogram_2d.cc
   ${module_source_dir}/histogram.cc
@@ -94,6 +107,16 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/ioutils.cc
   ${module_source_dir}/i_unary_function.cc
   ${module_source_dir}/i_unary_function_with_derivative.cc
+  ${module_source_dir}/i_unary_function_with_parameters.cc
+  ${module_source_dir}/functor_factory.cc
+  ${module_source_dir}/function_with_domain.cc
+  ${module_source_dir}/plain_function_wrapper.cc
+  ${module_source_dir}/composite_function.cc
+  ${module_source_dir}/product_function.cc
+  ${module_source_dir}/gate_function.cc
+  ${module_source_dir}/gaussian_function.cc
+  ${module_source_dir}/triangle_function.cc
+  ${module_source_dir}/linear_combination_function.cc
   ${module_source_dir}/linear_regression.cc
   ${module_source_dir}/linear_system_solver.cc
   ${module_source_dir}/mean.cc
@@ -108,6 +131,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/one_dimensional_minimization.cc
   ${module_source_dir}/one_dimensional_root_finding.cc
   ${module_source_dir}/param_entry.cc
+  ${module_source_dir}/parameter_store.cc
   ${module_source_dir}/permutation.cc
   ${module_source_dir}/polynomial.cc
   ${module_source_dir}/prng_state_manager.cc
@@ -143,6 +167,14 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_interval.cxx
   ${module_test_dir}/test_ioutils.cxx
   ${module_test_dir}/test_i_unary_function.cxx
+  ${module_test_dir}/test_i_unary_function_with_parameters.cxx
+  ${module_test_dir}/test_functor_factory.cxx
+  ${module_test_dir}/test_composite_function.cxx
+  ${module_test_dir}/test_product_function.cxx
+  ${module_test_dir}/test_gate_function.cxx
+  ${module_test_dir}/test_gaussian_function.cxx
+  ${module_test_dir}/test_triangle_function.cxx
+  ${module_test_dir}/test_linear_combination_function.cxx
   ${module_test_dir}/test_linear_regression.cxx
   ${module_test_dir}/test_linear_system_solver.cxx
   ${module_test_dir}/test_mean.cxx
@@ -164,8 +196,10 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_seed_manager.cxx
   ${module_test_dir}/test_tabulated_function_2.cxx
   ${module_test_dir}/test_tabulated_function_3.cxx
+  ${module_test_dir}/test_tabulated_function_4.cxx
   ${module_test_dir}/test_tabulated_function.cxx
   ${module_test_dir}/test_von_neumann.cxx
+  ${module_test_dir}/test_parameter_store.cxx
   )
 
 # - Examples dir
