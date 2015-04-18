@@ -745,7 +745,6 @@ namespace mctools {
         genbb::primary_particle * master_particle = 0;
         // Determine the master particle:
         for (int i = 0; i < (int) candidate_particles.size(); i++) {
-          const genbb::primary_particle & part = *candidate_particles[i];
           if (_master_particle_rank_ >= 0 && _master_particle_rank_ != ANY_PARTICLE_RANK) {
             if (_master_particle_rank_ < (int) candidate_particles.size()) {
               master_particle = candidate_particles[_master_particle_rank_];
