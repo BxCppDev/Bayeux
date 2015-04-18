@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file materials/isotope.h
 /* Author(s)    : Benoit Guillon  <guillon@lpccaen.in2p3.fr>
  * Creation date: 2010-03-06
@@ -550,25 +549,33 @@ namespace materials {
 
   private :
 
-    bool _locked_;                  /// Lock flag
-    int _z_;                        /// Number of protons   (0<Z<=119)
-    int _a_;                        /// Number of nucleons  (Z<=A<=293)
-    isomeric_level_type _isomeric_; /// Isomeric states I={0,1,2,3} ={' ','M','N','O'} for "long half-life" time excited states
-    std::string _name_;             /// Name of the isotope, which could be used as an string identifier
-    double _mass_;            /// Mass of the nucleus in unit of energy
-    double _mass_excess_;     /// Mass excess in unit of energy
-    double _err_mass_excess_; /// Error on mass excess in unit of energy
-    double _bea_;             /// Binding energy per nucleonin unit of energy
-    double _err_bea_;         /// Error on finding energy per nucleonin unit of energy
-    double _atomic_mass_;     /// Atomic mass in unit of [u (or g/mol)]
-    double _err_atomic_mass_; /// Error on the atomic mass in unit of [u (or g/mol)]
-    double _half_life_;       /// Half life time in unit of time
-    double _err_half_life_;   /// Error on the half life time in unit of time
-    bool   _is_known_;        /// Boolean flag [false by default] = true is (Z,A) values are founded in file mass.mas03
-    datatools::properties _properties_; /// Auxiliary properties
+    bool _locked_;                  //!< Lock flag
+    int _z_;                        //!< Number of protons   (0<Z<=119)
+    int _a_;                        //!< Number of nucleons  (Z<=A<=293)
+    isomeric_level_type _isomeric_; //!< Isomeric states I={0,1,2,3} ={' ','M','N','O'} for "long half-life" time excited states
+    std::string _name_;             //!< Name of the isotope, which could be used as an string identifier
+    double _mass_;            //!< Mass of the nucleus in unit of energy
+    double _mass_excess_;     //!< Mass excess in unit of energy
+    double _err_mass_excess_; //!< Error on mass excess in unit of energy
+    double _bea_;             //!< Binding energy per nucleonin unit of energy
+    double _err_bea_;         //!< Error on finding energy per nucleonin unit of energy
+    double _atomic_mass_;     //!< Atomic mass in unit of [u (or g/mol)]
+    double _err_atomic_mass_; //!< Error on the atomic mass in unit of [u (or g/mol)]
+    double _half_life_;       //!< Half life time in unit of time
+    double _err_half_life_;   //!< Error on the half life time in unit of time
+    bool   _is_known_;        //!< Boolean flag [false by default] = true is (Z,A) values are founded in file mass.mas03
+    datatools::properties _properties_; //!< Auxiliary properties
 
   }; // end of class isotope
 
 } // end of namespace materials
 
 #endif // MATERIALS_ISOTOPE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

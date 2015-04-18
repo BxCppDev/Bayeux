@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 /// \file materials/chemical_symbol.h
 /* Author(s):  Benoit Guillon <guillon@lpccaen.in2p3.fr>
  *             François Mauger <mauger@lpccaen.in2p3.fr>
@@ -65,3 +64,11 @@ namespace materials {
 } // end of namespace materials
 
 #endif // MATERIALS_CHEMICAL_SYMBOL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file materials/manager.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
@@ -191,3 +190,11 @@ namespace materials {
 DOCD_CLASS_DECLARATION(materials::manager)
 
 #endif // MATERIALS_MANAGER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file materials/material.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
@@ -321,3 +320,11 @@ namespace materials {
 } // end of namespace materials
 
 #endif // MATERIALS_MATERIAL_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

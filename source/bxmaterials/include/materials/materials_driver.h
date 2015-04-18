@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file materials/materials_driver.h
 /* Author(s)    : François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-08-23
@@ -96,12 +95,20 @@ namespace materials {
 
   private:
 
-    bool _initialized_;               /// Initialization flag
-    materials_driver_params _params_; /// Configuration parameters
-    boost::scoped_ptr<manager> _mgr_; /// Embeded manager
+    bool _initialized_;               //!< Initialization flag
+    materials_driver_params _params_; //!< Configuration parameters
+    boost::scoped_ptr<manager> _mgr_; //!< Embeded manager
 
   };
 
 } // end of namespace materials
 
 #endif // MATERIALS_MATERIALS_DRIVER_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// materials/detail/tools.h
 /* Author(s)    : Benoit Guillon  <guillon@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
@@ -152,3 +151,11 @@ namespace materials {
 } // end of namespace materials
 
 #endif // MATERIALS_DETAIL_TOOLS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

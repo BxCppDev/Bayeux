@@ -52,3 +52,11 @@ namespace materials {
 } // namespace materials
 
 #endif // MATERIALS_RESOURCE_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file materials/element.h
 /* Author (s) : Benoit Guillon  <guillon@lpccaen.in2p3.fr>
  * Creation date: 2010-03-14
@@ -262,16 +261,24 @@ namespace materials {
 
   private :
 
-    bool                    _locked_;      /// boolean flag
-    std::string             _name_;        /// Name
-    std::string             _symbol_;      /// Chemical symbol of the element
-    int                     _z_;           /// Number of protons of the element
-    isotope_weight_map_type _composition_; /// Isotopic composition of the element [std::map<string,  iso_entry>]
-    double                  _molar_mass_;  /// Molar mass in [g/mol]
-    datatools::properties   _properties_;  /// Auxiliary properties
+    bool                    _locked_;      //!< boolean flag
+    std::string             _name_;        //!< Name
+    std::string             _symbol_;      //!< Chemical symbol of the element
+    int                     _z_;           //!< Number of protons of the element
+    isotope_weight_map_type _composition_; //!< Isotopic composition of the element [std::map<string,  iso_entry>]
+    double                  _molar_mass_;  //!< Molar mass in [g/mol]
+    datatools::properties   _properties_;  //!< Auxiliary properties
 
   }; // end of class element
 
 } // end of namespace materials
 
 #endif // MATERIALS_ELEMENT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

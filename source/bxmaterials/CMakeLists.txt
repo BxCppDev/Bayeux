@@ -31,7 +31,7 @@ if (NOT DEFINED MATERIALS_STANDALONE)
 endif()
 
 # - Versioning
-set(materials_VERSION_MAJOR 5)
+set(materials_VERSION_MAJOR 6)
 set(materials_VERSION_MINOR 0)
 set(materials_VERSION_PATCH 0)
 set(materials_VERSION "${materials_VERSION_MAJOR}.${materials_VERSION_MINOR}.${materials_VERSION_PATCH}")

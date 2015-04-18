@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 //! \file   materials.h
 //! \author François Mauger
 //! \brief  Describe the materials API configuration
@@ -44,3 +43,11 @@ namespace materials {
   /**/
 
 #endif // MATERIALS_MATERIALS_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

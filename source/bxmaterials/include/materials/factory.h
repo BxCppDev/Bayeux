@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// \file materials/factory.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
@@ -75,8 +74,8 @@ namespace materials {
 
   private:
 
-    bool _debug_; /// Debug flag
-    manager * _manager_; /// Handle to a manager
+    bool _debug_; //!< Debug flag
+    manager * _manager_; //!< Handle to a manager
 
   };
 
@@ -91,3 +90,11 @@ DOCD_CLASS_DECLARATION(materials::element)
 DOCD_CLASS_DECLARATION(materials::material)
 
 #endif // MATERIALS_FACTORY_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
