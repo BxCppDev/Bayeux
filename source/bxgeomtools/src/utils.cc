@@ -199,6 +199,12 @@ namespace geomtools {
     return;
   }
 
+  void zero(vector_2d & vec_)
+  {
+    vec_.set(0.0, 0.0);
+    return;
+  }
+
   void invalidate (vector_2d & vec_)
   {
     double qnan = numeric_limits<double>::quiet_NaN();
@@ -357,6 +363,12 @@ namespace geomtools {
   void set_rho_phi_z (vector_3d & vec_, double rho_, double phi_, double z_)
   {
     vec_.setRhoPhiZ (rho_, phi_, z_);
+    return;
+  }
+
+  void zero(vector_3d & vec_)
+  {
+    vec_.set(0.0, 0.0, 0.0);
     return;
   }
 

@@ -933,21 +933,30 @@ namespace geomtools {
     double skin = get_skin(skin_);
     double hskin = 0.5 * skin;
     double r = point_.mag();
-    if ( r <= (_r_ - hskin) ) {
-      if ( r >= (_r_min_ + hskin)) {
-        double theta = point_.theta();
-        double rho   = r * std::sin(theta);
-        double phi = point_.phi();
-        double eps_phi   = std::atan2(hskin, rho);
-        if (angle_is_in(phi, _start_phi_ + eps_phi , _delta_phi_ - 2 * eps_phi, 0.0)) {
-          double eps_theta = std::atan2(hskin, r);
-          if (angle_is_in(theta, _start_theta_ + eps_theta, _delta_theta_ - 2 * eps_theta, 0.0)) {
-            return true;
-          }
-        }
+    if ( r > (_r_ - hskin) ) {
+      return false;
+    }
+    if (has_r_min()) {
+      if ( r < (_r_min_ - hskin) ) {
+        return false;
       }
     }
-    return false;
+    double theta = point_.theta();
+    double rho   = r * std::sin(theta);
+    double phi = point_.phi();
+    double eps_phi = std::atan2(hskin, rho);
+    if (has_partial_phi()) {
+      if (! angle_is_in(phi, _start_phi_ + eps_phi , _delta_phi_ - 2 * eps_phi, 0.0)) {
+        return false;
+      }
+    }
+    if (has_partial_theta()) {
+      double eps_theta = std::atan2(hskin, r);
+      if (!angle_is_in(theta, _start_theta_ + eps_theta, _delta_theta_ - 2 * eps_theta, 0.0)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   bool
@@ -957,15 +966,29 @@ namespace geomtools {
     double skin = get_skin(skin_);
     double hskin = 0.5 * skin;
     double r = point_.mag();
-    if ( r > (_r_ + hskin) ) return true;
-    if ( r < (_r_min_ - hskin) ) return true;
+    if ( r > (_r_ + hskin) ) {
+      return true;
+    }
+    if (has_r_min()) {
+      if ( r < (_r_min_ - hskin) ) {
+        return true;
+      }
+    }
     double theta = point_.theta();
-    double rho = r * std::sin(theta);
+    double rho   = r * std::sin(theta);
     double phi = point_.phi();
-    double eps_phi   = std::atan2(hskin, rho);
-    if (! angle_is_in(phi, _start_phi_, _delta_phi_, eps_phi)) return true;
-    double eps_theta = std::atan2(hskin, r);
-    if (! angle_is_in(theta, _start_theta_, _delta_theta_, eps_theta))  return true;
+    double eps_phi = std::atan2(hskin, rho);
+    if (has_partial_phi()) {
+      if (! angle_is_in(phi, _start_phi_ - eps_phi , _delta_phi_ + 2 * eps_phi, 0.0)) {
+        return true;
+      }
+    }
+    if (has_partial_theta()) {
+      double eps_theta = std::atan2(hskin, r);
+      if (!angle_is_in(theta, _start_theta_ - eps_theta, _delta_theta_ + 2 * eps_theta, 0.0)) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -1102,95 +1125,6 @@ namespace geomtools {
       }
     }
 
-    /*
-    double hskin = 0.5 * skin;
-    double angular_tolerance = get_angular_tolerance();
-    uint32_t mask = a_surface_mask.get_face_bits() & sphere::FACE_ALL;
-
-    double r     = a_position.mag ();
-    double phi   = a_position.phi();
-    double theta = a_position.theta();
-    double rho   = r * std::sin(theta);
-
-    if (mask & FACE_OUTER_SIDE) {
-      spherical_sector side;
-      placement side_placement;
-      side_placement.set_identity();
-      compute_side_face(FACE_OUTER_SIDE, side);
-      vector_3d p_side;
-      side_placement.mother_to_child(a_position, p_side);
-      if (side.is_on_surface(p_side, skin)) {
-        return face_identifier(FACE_OUTER_SIDE);
-      }
-    }
-
-    if (has_r_min()) {
-      if (mask & FACE_INNER_SIDE) {
-        spherical_sector side;
-        placement side_placement;
-        side_placement.set_identity();
-        compute_side_face(FACE_INNER_SIDE, side);
-        vector_3d p_side;
-        side_placement.mother_to_child(a_position, p_side);
-        if (side.is_on_surface(p_side, skin)) {
-          return face_identifier(FACE_INNER_SIDE);
-        }
-      }
-    }
-
-    if (has_partial_phi()) {
-
-      if (mask & FACE_START_PHI_SIDE) {
-        disk face;
-        placement face_placement;
-        compute_start_stop_phi_face(FACE_START_PHI_SIDE, face, face_placement);
-        vector_3d p_face;
-        face_placement.mother_to_child(a_position, p_face);
-        if (face.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_START_PHI_SIDE);
-        }
-      }
-
-      if (mask & FACE_STOP_PHI_SIDE) {
-        disk face;
-        placement face_placement;
-        compute_start_stop_phi_face(FACE_STOP_PHI_SIDE, face, face_placement);
-        vector_3d p_face;
-        face_placement.mother_to_child(a_position, p_face);
-        if (face.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_STOP_PHI_SIDE);
-        }
-      }
-
-    }
-
-    if (has_partial_theta()) {
-
-      if (mask & FACE_START_THETA_SIDE) {
-        right_circular_conical_nappe face;
-        placement face_placement;
-        compute_start_stop_theta_face(FACE_START_THETA_SIDE, face, face_placement);
-        vector_3d p_face;
-        face_placement.mother_to_child(a_position, p_face);
-        if (face.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_START_THETA_SIDE);
-        }
-      }
-
-      if (mask & FACE_STOP_THETA_SIDE) {
-        right_circular_conical_nappe face;
-        placement face_placement;
-        compute_start_stop_theta_face(FACE_STOP_THETA_SIDE, face, face_placement);
-        vector_3d p_face;
-        face_placement.mother_to_child(a_position, p_face);
-        if (face.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_STOP_THETA_SIDE);
-        }
-      }
-
-    }
-    */
-
     return face_identifier(FACE_NONE);
   }
 
@@ -1230,109 +1164,6 @@ namespace geomtools {
       }
       face_counter++;
     }
-
-    /*
-    {
-      const int FACE_INDEX = 0;
-      spherical_sector face;
-      placement face_placement;
-      face_placement.set_identity();
-      compute_outer_side_face(face);
-      if (face.i_find_intercept::find_intercept(from_,
-                                                direction_,
-                                                face_placement,
-                                                intercepts[FACE_INDEX],
-                                                skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_OUTER_SIDE);
-        candidate_impact_counter++;
-      }
-    }
-
-    if (has_r_min()) {
-      const int FACE_INDEX = 1;
-      spherical_sector face;
-      placement face_placement;
-      face_placement.set_identity();
-      compute_inner_side_face(face);
-      if (face.i_find_intercept::find_intercept(from_,
-                                                direction_,
-                                                face_placement,
-                                                intercepts[FACE_INDEX],
-                                                skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_INNER_SIDE);
-        candidate_impact_counter++;
-      }
-    }
-
-    if (has_partial_theta()) {
-
-      {
-        const int FACE_INDEX = 2;
-        right_circular_conical_nappe face;
-        placement face_placement;
-        compute_start_theta_face(face, face_placement);
-        if (face.i_find_intercept::find_intercept(from_,
-                                                  direction_,
-                                                  face_placement,
-                                                  intercepts[FACE_INDEX],
-                                                  skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_THETA_SIDE);
-          candidate_impact_counter++;
-        }
-      }
-
-      {
-        const int FACE_INDEX = 3;
-        right_circular_conical_nappe face;
-        placement face_placement;
-        compute_stop_theta_face(face, face_placement);
-        if (face.i_find_intercept::find_intercept(from_,
-                                                  direction_,
-                                                  face_placement,
-                                                  intercepts[FACE_INDEX],
-                                                  skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_THETA_SIDE);
-          candidate_impact_counter++;
-        }
-      }
-
-
-    }
-
-    if (has_partial_phi()) {
-
-      {
-        const int FACE_INDEX = 4;
-        disk face;
-        placement face_placement;
-        compute_start_phi_face(face, face_placement);
-        if (face.i_find_intercept::find_intercept(from_,
-                                                  direction_,
-                                                  face_placement,
-                                                  intercepts[FACE_INDEX],
-                                                  skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_PHI_SIDE);
-          candidate_impact_counter++;
-        }
-      }
-
-      {
-        const int FACE_INDEX = 5;
-        disk face;
-        placement face_placement;
-        compute_stop_phi_face(face, face_placement);
-        if (face.i_find_intercept::find_intercept(from_,
-                                                  direction_,
-                                                  face_placement,
-                                                  intercepts[FACE_INDEX],
-                                                  skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_PHI_SIDE);
-          candidate_impact_counter++;
-        }
-      }
-
-    }
-    */
 
     if (candidate_impact_counter > 0) {
       double min_length_to_impact = -1.0;

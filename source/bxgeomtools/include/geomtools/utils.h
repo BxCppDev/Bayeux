@@ -464,6 +464,9 @@ namespace geomtools {
   //! Set coordinates of a vector 3D object (polar)
   void set_rho_phi_z(vector_3d & vec_, double rho_, double phi_, double z_);
 
+  //! Zero a vector 3D object
+  void zero(vector_3d & vec_);
+
   //! Invalidate a vector 3D object
   void invalidate(vector_3d & vec_);
 
@@ -491,6 +494,9 @@ namespace geomtools {
 
   //! Set coordinates of a vector 2D object (polar)
   void set_r_phi(vector_2d & vec_, double r_, double phi_);
+
+  //! Zero a vector 2D object
+  void zero(vector_2d & vec_);
 
   //! Invalidate a vector 2D object
   void invalidate(vector_2d & vec_);
