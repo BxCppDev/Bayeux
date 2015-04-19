@@ -20,7 +20,7 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(emfield_VERSION_MAJOR 1)
+set(emfield_VERSION_MAJOR 2)
 set(emfield_VERSION_MINOR 0)
 set(emfield_VERSION_PATCH 0)
 set(emfield_VERSION "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_VERSION_PATCH}")
@@ -33,6 +33,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/electromagnetic_field_manager.h
   ${module_include_dir}/${module_name}/linear_combination_field.h
   ${module_include_dir}/${module_name}/oscillating_field.h
+  ${module_include_dir}/${module_name}/multi_zone_field.h
   ${module_include_dir}/${module_name}/placement_field.h
   ${module_include_dir}/${module_name}/uniform_electric_field.h
   ${module_include_dir}/${module_name}/uniform_magnetic_field.h
@@ -47,6 +48,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/electromagnetic_field_manager.cc
   ${module_source_dir}/linear_combination_field.cc
   ${module_source_dir}/oscillating_field.cc
+  ${module_source_dir}/multi_zone_field.cc
   ${module_source_dir}/placement_field.cc
   ${module_source_dir}/uniform_electric_field.cc
   ${module_source_dir}/uniform_magnetic_field.cc
@@ -69,5 +71,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_emfield.cxx
   ${module_test_dir}/test_emfield_manager.cxx
   # ${module_test_dir}/test_emfield_geom_plugin.cxx
+  ${module_test_dir}/test_uniform_electric_field.cxx
   ${module_test_dir}/test_oscillating_field.cxx
+  ${module_test_dir}/test_multi_zone_field.cxx
   )
