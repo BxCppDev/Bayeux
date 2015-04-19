@@ -421,7 +421,7 @@ void print_splash(std::ostream & out_)
        << "\tG E O M T O O L S    I N S P E C T O R         \n"
        << "\tVersion " << GEOMTOOLS_LIB_VERSION << "        \n"
        << "                                                 \n"
-       << "\tCopyright (C) 2009-2014                        \n"
+       << "\tCopyright (C) 2009-2015                        \n"
        << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon, \n"
        << "\tBen Morgan and Arnaud Chapon                   \n"
        << "                                                 \n"

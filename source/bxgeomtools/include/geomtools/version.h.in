@@ -40,28 +40,29 @@
 #define GEOMTOOLS_VERSION_PATCH @geomtools_VERSION_PATCH@
 
 //! Encode geomtools to ordered integer available at compile time
-#define GEOMTOOLS_ENCODE_VERSION(major, minor, patch) (			\
-						       ((major) * 10000) \
-						       + ((minor) *   100) \
-						       + ((patch) *     1))
+#define GEOMTOOLS_ENCODE_VERSION(major, minor, patch) (     \
+                   ((major) * 10000) \
+                   + ((minor) *   100) \
+                   + ((patch) *     1))
 
 //! Integer encoded geomtools version available at compile time
-#define GEOMTOOLS_VERSION GEOMTOOLS_ENCODE_VERSION(			\
-						   GEOMTOOLS_VERSION_MAJOR, \
-						   GEOMTOOLS_VERSION_MINOR, \
-						   GEOMTOOLS_VERSION_PATCH)
+#define GEOMTOOLS_VERSION GEOMTOOLS_ENCODE_VERSION(     \
+               GEOMTOOLS_VERSION_MAJOR, \
+               GEOMTOOLS_VERSION_MINOR, \
+               GEOMTOOLS_VERSION_PATCH)
 
 //! String encoded full version number, e.g. "1.2.3", available at compile time
 #define GEOMTOOLS_LIB_VERSION "@geomtools_VERSION@"
 
 //! Check current version >= (major, minor, patch) at compile time
-#define GEOMTOOLS_IS_AT_LEAST(major,minor,patch) (			\
-						  GEOMTOOLS_VERSION >=	\
-						  GEOMTOOLS_ENCODE_VERSION(major,minor,patch))
+#define GEOMTOOLS_IS_AT_LEAST(major,minor,patch) (      \
+              GEOMTOOLS_VERSION >=  \
+              GEOMTOOLS_ENCODE_VERSION(major,minor,patch))
 
 //----------------------------------------------------------------------
 // Runtime API
 namespace geomtools {
+
   //! \brief Describe the geomtools API version and features
   struct version {
     //! Return the major version number of geomtools, e.g., 1 for '1.2.3'
@@ -82,6 +83,7 @@ namespace geomtools {
     //! Return true if the named feature is available in geomtools
     static bool has_feature(const std::string& feature);
   };
+
 } // namespace geomtools
 
 #endif // GEOMTOOLS_VERSION_H

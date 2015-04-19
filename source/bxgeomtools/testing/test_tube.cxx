@@ -81,23 +81,24 @@ int main (int argc_, char ** argv_)
     std::clog << "Volume   = " << my_tube.get_volume () / CLHEP::m3 << " m3" << std::endl;
 
     std::clog << "Outer side surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_OUTER_SIDE) / CLHEP::m2
-              << " m2" << std::endl;
+              << my_tube.get_surface (geomtools::tube::FACE_OUTER_SIDE) / CLHEP::mm2
+              << " mm2" << std::endl;
 
     std::clog << "Inner side surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_INNER_SIDE) / CLHEP::m2
-              << " m2" << std::endl;
+              << my_tube.get_surface (geomtools::tube::FACE_INNER_SIDE) / CLHEP::mm2
+              << " mm2" << std::endl;
 
     std::clog << "Top surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_TOP) / CLHEP::m2
-              << " m2" << std::endl;
+              << my_tube.get_surface (geomtools::tube::FACE_TOP) / CLHEP::mm2
+              << " mm2" << std::endl;
 
-    std::clog << "Bottom surface = " << my_tube.get_surface (geomtools::tube::FACE_BOTTOM) / CLHEP::m2
-              << " m2" << std::endl;
+    std::clog << "Bottom surface = " << my_tube.get_surface (geomtools::tube::FACE_BOTTOM) / CLHEP::mm2
+              << " mm2" << std::endl;
 
     std::clog << "Full surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_ALL) / CLHEP::m2
-              << " m²" << std::endl;
+              << my_tube.get_surface (geomtools::tube::FACE_ALL) / CLHEP::mm2
+              << " mm2" << std::endl;
+    my_tube.tree_dump(std::clog, "Tube: ", "INFO: ");
 
     geomtools::placement tube_placement(0.2, 0.15, 0.1, M_PI / 7.0, M_PI / 6.0, 0.0);
     if (do_identity) {

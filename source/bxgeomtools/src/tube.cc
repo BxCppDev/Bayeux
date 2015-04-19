@@ -325,7 +325,7 @@ namespace geomtools {
 
   void tube::set_outer_r(double outer_r_)
   {
-    DT_THROW_IF (outer_r_ < 0.0, std::logic_error, "Invalid outer radius '" << outer_r_ << "' !");
+    DT_THROW_IF (outer_r_ <= 0.0, std::logic_error, "Invalid outer radius '" << outer_r_ << "' !");
     DT_THROW_IF (datatools::is_valid(_inner_r_) && (_inner_r_ >= outer_r_),
                  std::domain_error, "Invalid outer radius '" << outer_r_ << "' (< inner radius) !");
     _outer_r_ = outer_r_;
@@ -339,7 +339,7 @@ namespace geomtools {
 
   void tube::set_radii (double inner_r_, double outer_r_)
   {
-    datatools::invalidate(inner_r_);
+    datatools::invalidate(_inner_r_);
     set_outer_r(outer_r_);
     set_inner_r(inner_r_);
     return;
@@ -453,24 +453,32 @@ namespace geomtools {
     if (has_partial_phi()) {
       angle = _delta_phi_;
     }
+    // std::cerr << "DEVEL: geomtools::tube::get_surface: angle = " << angle << std::endl;
+    // std::cerr << "DEVEL: geomtools::tube::get_surface: ir    = " << ir << std::endl;
     if (mask_ & FACE_INNER_SIDE) {
       s += angle * ir * _z_;
+      // std::cerr << "DEVEL: geomtools::tube::get_surface: s(+FACE_INNER_SIDE) = " << s << std::endl;
     }
     if ( mask_ & FACE_OUTER_SIDE ) {
       s += angle * _outer_r_ * _z_;
+      // std::cerr << "DEVEL: geomtools::tube::get_surface: s(+FACE_OUTER_SIDE) = " << s << std::endl;
     }
     if ( mask_ & FACE_BOTTOM ) {
       s += 0.5 * angle * (_outer_r_ * _outer_r_ - ir * ir);
+      // std::cerr << "DEVEL: geomtools::tube::get_surface: s(+FACE_BOTTOM) = " << s << std::endl;
     }
     if ( mask_ & FACE_TOP ) {
       s += 0.5 * angle * (_outer_r_ * _outer_r_ - ir * ir);
+      // std::cerr << "DEVEL: geomtools::tube::get_surface: s(+FACE_TOP) = " << s << std::endl;
     }
     if (has_partial_phi()) {
       if (mask_ & FACE_START_ANGLE) {
         s += (_outer_r_ - ir) * _z_;
+        // std::cerr << "DEVEL: geomtools::tube::get_surface: s(+FACE_START_ANGLE) = " << s << std::endl;
       }
       if (mask_ & FACE_STOP_ANGLE) {
         s += (_outer_r_ - ir) * _z_;
+        // std::cerr << "DEVEL: geomtools::tube::get_surface: s(+FACE_STOP_ANGLE) = " << s << std::endl;
       }
     }
     return s;
@@ -851,22 +859,23 @@ namespace geomtools {
                         const string & indent_,
                         bool inherit_) const
   {
-    string indent;
-    if (! indent_.empty ()) indent = indent_;
-    i_object_3d::tree_dump (out_, title_, indent_, true);
+    i_shape_3d::tree_dump (out_, title_, indent_, true);
 
-    out_ << indent << datatools::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "R(internal) : " << get_inner_r () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "R(external) : " << get_outer_r () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Start phi : " << _start_phi_ / CLHEP::degree << " degree" << endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
          << "Delta phi : " << _delta_phi_ / CLHEP::degree << " degree" << endl;
+
     return;
   }
 
@@ -975,6 +984,8 @@ namespace geomtools {
   void tube::initialize(const datatools::properties & config_,
                         const handle_dict_type * objects_)
   {
+    bool devel = false;
+    // devel = true;
     reset();
     this->i_shape_3d::initialize(config_, objects_);
 
@@ -983,17 +994,22 @@ namespace geomtools {
       const std::string lunit_str = config_.fetch_string("length_unit");
       lunit = datatools::units::get_length_unit_from(lunit_str);
     }
+    if (devel) std::cerr << "DEVEL: tube::initialize: "
+                         << "lunit = " << lunit / CLHEP::mm << " mm" << std::endl;
 
     double aunit = CLHEP::degree;
     if (config_.has_key("angle_unit")) {
       const std::string aunit_str = config_.fetch_string("angle_unit");
       aunit = datatools::units::get_angle_unit_from(aunit_str);
     }
+    if (devel) std::cerr << "DEVEL: tube::initialize: "
+                         << "aunit = " << aunit / CLHEP::degree << " degree" << std::endl;
 
     double inner_r;
     datatools::invalidate (inner_r);
     if (config_.has_key ("inner_r")) {
       inner_r = config_.fetch_real ("inner_r");
+      if (devel) std::cerr << "DEVEL: geomtools::tube::initialize: inner_r = " << inner_r << std::endl;
       if (! config_.has_explicit_unit ("inner_r")) {
         inner_r *= lunit;
       }
@@ -1013,6 +1029,7 @@ namespace geomtools {
       //                 "Missing tube 'inner_r' property ! Using 0-default inner radius !");
       inner_r = 0.0;
     }
+    if (devel) std::cerr << "DEVEL: geomtools::tube::initialize: FINAL inner_r = " << inner_r << std::endl;
 
     double outer_r;
     datatools::invalidate (outer_r);
@@ -1035,7 +1052,6 @@ namespace geomtools {
     DT_THROW_IF (! datatools::is_valid (outer_r), std::logic_error,
                  "Missing tube 'outer_r' property !");
 
-
     DT_THROW_IF (! config_.has_key("z"), std::logic_error,
                  "Missing tube 'z' property !");
     double z = config_.fetch_real("z");
@@ -1044,7 +1060,7 @@ namespace geomtools {
     }
 
     double start_phi = 0.0;
-    double delta_phi = M_PI * CLHEP::radian;
+    double delta_phi = 2 * M_PI * CLHEP::radian;
     bool not_full_phi = false;
     if (config_.has_key ("start_phi")) {
       start_phi = config_.fetch_real ("start_phi");
@@ -1060,10 +1076,30 @@ namespace geomtools {
       }
       not_full_phi = true;
     }
+    if (devel) {
+      std::cerr << "DEVEL: tube::initialize: "
+                << "inner_r = " << inner_r / CLHEP::mm << " mm" << std::endl;
+      std::cerr << "DEVEL: tube::initialize: "
+                << "outer_r = " << outer_r / CLHEP::mm << " mm" << std::endl;
+      std::cerr << "DEVEL: tube::initialize: "
+                << "z = " << z / CLHEP::mm << " mm" << std::endl;
+      std::cerr << "DEVEL: tube::initialize: "
+                << "start_phi = " << start_phi / CLHEP::degree << " degree" << std::endl;
+      std::cerr << "DEVEL: tube::initialize: "
+                << "delta_phi = " << delta_phi / CLHEP::degree << " degree" << std::endl;
+    }
+
     set_radii(inner_r, outer_r);
     set_z(z);
     if (not_full_phi) {
       set_phi(start_phi, delta_phi);
+    }
+
+    if (devel) {
+      std::cerr << "DEVEL: tube::initialize: "
+                << "inner_r = " << _inner_r_ / CLHEP::mm << " mm" << std::endl;
+      std::cerr << "DEVEL: tube::initialize: "
+                << "outer_r = " << _outer_r_ / CLHEP::mm << " mm" << std::endl;
     }
 
     lock();

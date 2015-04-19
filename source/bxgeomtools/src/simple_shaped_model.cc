@@ -278,6 +278,7 @@ namespace geomtools {
         DT_THROW_IF (_filled_label_.empty(),
                      std::logic_error,
                      "Invalid filled label '" << _filled_label_ << "' property in simple shaped (tube) model '" << name_ << "' !");
+        DT_LOG_DEBUG(get_logging_priority(), "Filled label is '" << _filled_label_ << "'!");
       }
 
       // Filling material:
@@ -394,24 +395,24 @@ namespace geomtools {
     _tube_ = new tube;
     try {
       _tube_->initialize(config_);
+      // _tube_->tree_dump(std::cerr, "simple_shaped_model -- Initialized tube: ", "DEVEL: ");
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
       delete _tube_;
       throw error;
     }
 
-    DT_THROW_IF (! _tube_->is_valid (), std::logic_error,
+    DT_THROW_IF (! _tube_->is_valid(), std::logic_error,
                  "Invalid tube dimensions in simple shaped (tube) model '" << name_ << "' !");
 
     // Use the plain tube as solid envelope of the model:
     if (_filled_mode_ == filled_utils::FILLED_NONE) {
       _solid_ = _tube_;
-      grab_logical().set_material_ref (_material_name_);
+      grab_logical().set_material_ref(_material_name_);
     }
 
-
     DT_THROW_IF(_filled_mode_ == filled_utils::FILLED_BY_EXTRUSION,
-                std::runtime_error,
+                std::logic_error,
                 "No support for tube construction 'by extrusion' in simple shaped (tube) model '" << name_ << "' !");
 
     /*
@@ -462,6 +463,7 @@ namespace geomtools {
 
     // Build the tube as a child of a mother cylinder:
     if (_filled_mode_ == filled_utils::FILLED_BY_ENVELOPE) {
+      // std::cerr << "DEVEL: geomtools::simple_shaped_model::_construct_tube: FILLED_BY_ENVELOPE" << std::endl;
       // Make the envelope a cylinder:
       _cylinder_ = new cylinder;
       _tube_->compute_outer_cylinder(*_cylinder_);
@@ -469,22 +471,23 @@ namespace geomtools {
                    "Invalid 'outer' cylinder dimensions in simple shaped (tube) model '" << name_ << "' !");
       _solid_ = _cylinder_;
       grab_logical().set_material_ref(_filled_material_name_);
-      //grab_logical ().set_effective_shape (*_tube_);
-      //grab_logical ().set_effective_material_ref (_material_name_);
+      //grab_logical().set_effective_shape(*_tube_);
+      //grab_logical().set_effective_material_ref(_material_name_);
       // If the tube is extruded, add the tube within the 'outer' envelope cylinder:
-      _inner_placement_.set (0, 0, 0, 0, 0, 0);
+      _inner_placement_.set(0, 0, 0, 0, 0, 0);
       //const std::string inner_name = "__" + get_logical ().get_name () + "." + _filled_label_;
-      const std::string inner_name = "__" + get_name () + "." + _filled_label_;
-      _inner_logical_.set_name (i_model::make_logical_volume_name (inner_name));
-      _inner_logical_.set_material_ref (_material_name_);
-      _inner_logical_.set_shape (*_tube_);
+      const std::string inner_name = "__" + get_name() + "." + _filled_label_;
+      _inner_logical_.set_name(i_model::make_logical_volume_name(inner_name));
+      _inner_logical_.set_material_ref(_material_name_);
+      _inner_logical_.set_shape(*_tube_);
       _inner_logical_.set_geometry_model(*this);
-      _inner_phys_.set_name (i_model::make_physical_volume_name (_filled_label_));
-      _inner_phys_.set_placement (_inner_placement_);
-      _inner_phys_.set_logical (_inner_logical_);
-      _inner_phys_.set_mother (this->get_logical ());
+      _inner_phys_.set_name(i_model::make_physical_volume_name(_filled_label_));
+      _inner_phys_.set_placement(_inner_placement_);
+      _inner_phys_.set_logical(_inner_logical_);
+      _inner_phys_.set_mother(this->get_logical());
     }
 
+    // _tube_->tree_dump(std::cerr, "simple_shaped_model -- Constructed tube: ", "DEVEL: ");
     return;
   }
 

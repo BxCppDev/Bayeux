@@ -1,5 +1,5 @@
 /// \file geomtools/i_model.h
-/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
  * Last modified: 2015-02-08
  *
