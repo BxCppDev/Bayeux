@@ -24,7 +24,7 @@ endforeach()
 # - Versioning
 set(brio_VERSION_MAJOR 5)
 set(brio_VERSION_MINOR 0)
-set(brio_VERSION_PATCH 0)
+set(brio_VERSION_PATCH 1)
 set(brio_VERSION "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_VERSION_PATCH}")
 
 
