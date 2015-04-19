@@ -158,7 +158,6 @@ namespace emfield {
     return;
   }
 
-
   void base_electromagnetic_field::_set_magnetic_field_can_be_combined(bool efcbc_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Cannot change the magnetic field combination flag !");
@@ -178,21 +177,17 @@ namespace emfield {
     return;
   }
 
-
   bool base_electromagnetic_field::is_electric_field() const
   {
     return _electric_field_;
   }
-
 
   bool base_electromagnetic_field::is_magnetic_field() const
   {
     return _magnetic_field_;
   }
 
-
-  void base_electromagnetic_field::_parse_basic_parameters(
-                                                           const datatools::properties & setup_,
+  void base_electromagnetic_field::_parse_basic_parameters(const datatools::properties & setup_,
                                                            datatools::service_manager & /*service_manager_*/,
                                                            field_dict_type & /*dictionary_*/)
   {
@@ -219,7 +214,7 @@ namespace emfield {
     return;
   }
 
-  void base_electromagnetic_field::_set_defaults_()
+  void base_electromagnetic_field::_set_defaults()
   {
     _logging_priority_ = datatools::logger::PRIO_WARNING;
     _error_ = false;
@@ -232,20 +227,11 @@ namespace emfield {
     return;
   }
 
-  // Reset :
-  void base_electromagnetic_field::_terminate_()
-  {
-    _initialized_ = false;
-    _set_defaults_();
-    return;
-  }
-
-
   // Constructor :
   base_electromagnetic_field::base_electromagnetic_field(uint32_t flags_)
   {
     _initialized_ = false;
-    _set_defaults_();
+    _set_defaults();
 
     // Special values :
     if (flags_ & DEBUG) set_debug(true);
@@ -267,7 +253,6 @@ namespace emfield {
                 "EM field still has its 'initialized' flag on !" <<
                 "The '::reset' method has not been invoked from the daughter class' destructor !" <<
                 "Possible bug !");
-    _terminate_();
     return;
   }
 

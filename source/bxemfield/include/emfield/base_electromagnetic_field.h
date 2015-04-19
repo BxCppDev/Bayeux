@@ -178,13 +178,10 @@ namespace emfield {
                                  datatools::service_manager & service_manager_,
                                  field_dict_type & dictionary_);
 
-  private:
+  protected:
 
     /// Set default attributes values
-    void _set_defaults_();
-
-    /// Terminate action
-    void _terminate_();
+    void _set_defaults();
 
   private:
 
@@ -211,4 +208,6 @@ namespace emfield {
 
 // Local Variables: --
 // mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
 // End: --

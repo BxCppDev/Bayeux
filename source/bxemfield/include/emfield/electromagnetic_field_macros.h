@@ -165,10 +165,8 @@
 
 #endif // EMFIELD_ELECTROMAGNETIC_FIELD_MACROS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

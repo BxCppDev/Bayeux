@@ -21,6 +21,12 @@ namespace emfield {
 
   void oscillating_field::_set_defaults()
   {
+    _set_electric_field(true);
+    _set_electric_field_can_be_combined(false);
+    _set_magnetic_field(false);
+    _set_magnetic_field_can_be_combined(false);
+    _set_electric_field_is_time_dependent(true);
+    _set_magnetic_field_is_time_dependent(true);
     datatools::invalidate(_frequency_);
     datatools::invalidate(_phase_);
     datatools::invalidate(_pedestal_);
@@ -30,20 +36,21 @@ namespace emfield {
   }
 
   // Constructor :
-  EMFIELD_CONSTRUCTOR_IMPLEMENT_HEAD(oscillating_field,flags_)
+  oscillating_field::oscillating_field(uint32_t flags_)
+    : base_electromagnetic_field(flags_)
   {
-    _set_electric_field(true);
-    _set_electric_field_can_be_combined(false);
-    _set_magnetic_field(false);
-    _set_magnetic_field_can_be_combined(false);
-    _set_electric_field_is_time_dependent(true);
-    _set_magnetic_field_is_time_dependent(true);
     _set_defaults();
     return;
   }
 
   // Destructor :
-  EMFIELD_DEFAULT_DESTRUCTOR_IMPLEMENT(oscillating_field);
+  oscillating_field::~oscillating_field()
+  {
+    if (is_initialized()) {
+      reset();
+    }
+    return;
+  }
 
   void oscillating_field::set_sine_cosine_mode(mode_sin_cos_type sc_mode_)
   {
@@ -135,49 +142,43 @@ namespace emfield {
     return _pedestal_ + _scale_ * term;
   }
 
-  EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(oscillating_field,
-                                        position_,
-                                        time_,
-                                        electric_field_)
+  int oscillating_field::compute_electric_field(const ::geomtools::vector_3d & position_,
+                                                double time_,
+                                                ::geomtools::vector_3d & electric_field_) const
   {
     geomtools::invalidate(electric_field_);
-    if (! _field_.get().is_electric_field())
-      {
-        return STATUS_ERROR;
-      }
+    if (! _field_.get().is_electric_field()) {
+      return STATUS_ERROR;
+    }
     int status = _field_.get().compute_electric_field(position_,
                                                         time_,
                                                         electric_field_);
-    if (status != STATUS_SUCCESS)
-      {
-        return status;
-      }
+    if (status != STATUS_SUCCESS) {
+      return status;
+    }
     electric_field_ *= _get_coefficient(time_);
     return STATUS_SUCCESS;
   }
 
-  EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(oscillating_field,
-                                        position_,
-                                        time_,
-                                        magnetic_field_)
+  int oscillating_field::compute_magnetic_field(const ::geomtools::vector_3d & position_,
+                                                double time_,
+                                                ::geomtools::vector_3d & magnetic_field_) const
   {
     geomtools::invalidate(magnetic_field_);
-    if (! _field_.get().is_magnetic_field())
-      {
-        return STATUS_ERROR;
-      }
+    if (! _field_.get().is_magnetic_field()) {
+      return STATUS_ERROR;
+    }
     int status = _field_.get().compute_magnetic_field(position_,
-                                                        time_,
-                                                        magnetic_field_);
-    if (status != STATUS_SUCCESS)
-      {
-        return status;
-      }
+                                                      time_,
+                                                      magnetic_field_);
+    if (status != STATUS_SUCCESS) {
+      return status;
+    }
     magnetic_field_ *= _get_coefficient(time_);
     return STATUS_SUCCESS;
   }
 
-  EMFIELD_RESET_IMPLEMENT_HEAD(oscillating_field)
+  void oscillating_field::reset()
   {
     DT_THROW_IF(! is_initialized(), std::logic_error, "Cannot reset the electromagnetic field !");
 
@@ -188,7 +189,9 @@ namespace emfield {
     return;
   }
 
-  EMFIELD_INITIALIZE_IMPLEMENT_HEAD(oscillating_field,setup_,service_manager_,fields_)
+  void oscillating_field::initialize(const ::datatools::properties & setup_,
+                                     ::datatools::service_manager & service_manager_,
+                                     ::emfield::base_electromagnetic_field::field_dict_type & fields_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Field is already initialized !");
 

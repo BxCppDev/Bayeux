@@ -1,6 +1,5 @@
 // linear_combination_field.cc
 
-
 // Ourselves:
 #include <emfield/linear_combination_field.h>
 
@@ -27,12 +26,13 @@ namespace emfield {
 
   linear_combination_field::combined_field_entry::~combined_field_entry ()
   {
-    field_handle.reset ();
+    field_handle.reset();
     return;
   }
 
   // Constructor :
-  EMFIELD_CONSTRUCTOR_IMPLEMENT_HEAD(linear_combination_field,flags_)
+  linear_combination_field::linear_combination_field(uint32_t flags_)
+    : base_electromagnetic_field(flags_)
   {
     _set_electric_field (true);
     _set_electric_field_can_be_combined (false);
@@ -42,7 +42,13 @@ namespace emfield {
   }
 
   // Destructor :
-  EMFIELD_DEFAULT_DESTRUCTOR_IMPLEMENT(linear_combination_field);
+  linear_combination_field::~linear_combination_field()
+  {
+    if (is_initialized()) {
+      reset();
+    }
+    return;
+  }
 
   void linear_combination_field::add_combined_field (const std::string & label_,
                                                      base_electromagnetic_field::handle_type & field_handle_,
@@ -79,79 +85,72 @@ namespace emfield {
     return;
   }
 
-  EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(linear_combination_field,
-                                        position_,
-                                        time_,
-                                        electric_field_)
+  int linear_combination_field::compute_electric_field(const ::geomtools::vector_3d & position_,
+                                                       double time_,
+                                                       ::geomtools::vector_3d & electric_field_) const
   {
-    geomtools::invalidate (electric_field_);
-    if (! is_electric_field ())
-      {
-        return STATUS_ERROR;
-      }
+    geomtools::invalidate(electric_field_);
+    if (! is_electric_field()) {
+      return STATUS_ERROR;
+    }
     electric_field_.set (0., 0., 0.);
     for (combined_field_dict_type::const_iterator i = _combined_fields_.begin ();
          i != _combined_fields_.end ();
-         i++)
-      {
-        const combined_field_entry & cfe = i->second;
-        const base_electromagnetic_field & emf = cfe.field_handle.get ();
-        if (emf.is_electric_field ())
+         i++) {
+      const combined_field_entry & cfe = i->second;
+      const base_electromagnetic_field & emf = cfe.field_handle.get ();
+      if (emf.is_electric_field ()) {
+        geomtools::vector_3d etmp;
+        int status = emf.compute_electric_field (position_, time_, etmp);
+        if (status != STATUS_SUCCESS)
           {
-            geomtools::vector_3d etmp;
-            int status = emf.compute_electric_field (position_, time_, etmp);
-            if (status != STATUS_SUCCESS)
-              {
-                return status;
-              }
-            electric_field_ += cfe.weight * etmp;
+            return status;
           }
+        electric_field_ += cfe.weight * etmp;
       }
+    }
     return STATUS_SUCCESS;
   }
 
-  EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(linear_combination_field,
-                                        position_,
-                                        time_,
-                                        magnetic_field_)
+  int linear_combination_field::compute_magnetic_field(const ::geomtools::vector_3d & position_,
+                                                       double time_,
+                                                       ::geomtools::vector_3d & magnetic_field_) const
   {
     geomtools::invalidate (magnetic_field_);
-    if (! is_magnetic_field ())
-      {
-        return STATUS_ERROR;
-      }
+    if (! is_magnetic_field ()) {
+      return STATUS_ERROR;
+    }
     magnetic_field_.set (0., 0., 0.);
     for (combined_field_dict_type::const_iterator i = _combined_fields_.begin ();
          i != _combined_fields_.end ();
-         i++)
-      {
-        const combined_field_entry & cfe = i->second;
-        const base_electromagnetic_field & emf = cfe.field_handle.get ();
-        if (emf.is_magnetic_field ())
-          {
-            geomtools::vector_3d btmp;
-            int status = emf.compute_magnetic_field (position_, time_, btmp);
-            if (status != STATUS_SUCCESS)
-              {
-                return status;
-              }
-            magnetic_field_ += cfe.weight * btmp;
-          }
+         i++) {
+      const combined_field_entry & cfe = i->second;
+      const base_electromagnetic_field & emf = cfe.field_handle.get ();
+      if (emf.is_magnetic_field ()) {
+        geomtools::vector_3d btmp;
+        int status = emf.compute_magnetic_field (position_, time_, btmp);
+        if (status != STATUS_SUCCESS) {
+          return status;
+        }
+        magnetic_field_ += cfe.weight * btmp;
       }
+    }
     return STATUS_SUCCESS;
-   }
+  }
 
-  EMFIELD_RESET_IMPLEMENT_HEAD(linear_combination_field)
+  void linear_combination_field::reset()
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Cannot reset the linear combination EM field !");
-
-    _combined_fields_.clear ();
-
-    _set_initialized (false);
+    _set_initialized(false);
+    _combined_fields_.clear();
+    _set_defaults();
+    //    this->base_electromagnetic_field::_set_defaults();
     return;
   }
 
-  EMFIELD_INITIALIZE_IMPLEMENT_HEAD(linear_combination_field,setup_,service_manager_,fields_)
+  void linear_combination_field::initialize(const ::datatools::properties & setup_,
+                                            ::datatools::service_manager & service_manager_,
+                                            ::emfield::base_electromagnetic_field::field_dict_type & fields_)
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Field is already initialized !");
 

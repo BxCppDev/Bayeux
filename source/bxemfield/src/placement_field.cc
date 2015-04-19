@@ -17,100 +17,108 @@ namespace emfield {
   // Registration instantiation macro :
   EMFIELD_REGISTRATION_IMPLEMENT(placement_field, "emfield::placement_field");
 
-  // Constructor :
-  EMFIELD_CONSTRUCTOR_IMPLEMENT_HEAD(placement_field,flags_)
+  void placement_field::_set_defaults()
   {
-    _set_electric_field (true);
-    _set_electric_field_can_be_combined (false);
-    _set_magnetic_field (false);
-    _set_magnetic_field_can_be_combined (false);
+    _set_electric_field(true);
+    _set_electric_field_can_be_combined(false);
+    _set_magnetic_field(false);
+    _set_magnetic_field_can_be_combined(false);
+    return;
+  }
+
+  // Constructor :
+  placement_field::placement_field(uint32_t flags_)
+    : base_electromagnetic_field(flags_)
+  {
+    _set_defaults();
     return;
   }
 
   // Destructor :
-  EMFIELD_DEFAULT_DESTRUCTOR_IMPLEMENT(placement_field);
+  placement_field::~placement_field()
+  {
+    if (is_initialized()) {
+      reset();
+    }
+    return;
+  }
 
-  // Getter :
   const geomtools::placement & placement_field::get_placement () const
   {
     return _placement_;
   }
 
-  // Setter :
   void placement_field::set_placement (const geomtools::placement & p_)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error, "Cannot change the placement value !");
+    DT_THROW_IF(is_initialized(), std::logic_error, "Cannot change the placement value !");
     _placement_ = p_;
     return;
   }
 
   void placement_field::set_field (base_electromagnetic_field::handle_type & f_)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error, "Cannot change the EM field !");
+    DT_THROW_IF(is_initialized(), std::logic_error, "Cannot change the EM field !");
     _field_ = f_;
     return;
   }
 
-  EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(placement_field,
-                                        position_,
-                                        time_,
-                                        electric_field_)
+  int placement_field::compute_electric_field(const ::geomtools::vector_3d & position_,
+                                              double time_,
+                                              ::geomtools::vector_3d & electric_field_) const
   {
-    geomtools::invalidate (electric_field_);
-    if (! _field_.get ().is_electric_field ())
-      {
-        return STATUS_ERROR;
-      }
+    geomtools::invalidate(electric_field_);
+    if (! _field_.get().is_electric_field()) {
+      return STATUS_ERROR;
+    }
     geomtools::vector_3d local_pos;
-    _placement_.mother_to_child (position_, local_pos);
+    _placement_.mother_to_child(position_, local_pos);
     geomtools::vector_3d local_electric_field;
-    int status = _field_.get ().compute_electric_field (local_pos,
-                                                        time_,
-                                                        local_electric_field);
-    if (status != STATUS_SUCCESS)
-      {
-        return status;
-      }
-    _placement_.child_to_mother (local_electric_field, electric_field_);
+    int status = _field_.get().compute_electric_field(local_pos,
+                                                      time_,
+                                                      local_electric_field);
+    if (status != STATUS_SUCCESS) {
+      return status;
+    }
+    _placement_.child_to_mother(local_electric_field, electric_field_);
     return STATUS_SUCCESS;
   }
 
-  EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(placement_field,
-                                        position_,
-                                        time_,
-                                        magnetic_field_)
+  int placement_field::compute_magnetic_field(const ::geomtools::vector_3d & position_,
+                                              double time_,
+                                              ::geomtools::vector_3d & magnetic_field_) const
   {
-    geomtools::invalidate (magnetic_field_);
-    if (! _field_.get ().is_magnetic_field ())
-      {
-        return STATUS_ERROR;
-      }
+    geomtools::invalidate(magnetic_field_);
+    if (! _field_.get().is_magnetic_field()) {
+      return STATUS_ERROR;
+    }
     geomtools::vector_3d local_pos;
-    _placement_.mother_to_child (position_, local_pos);
+    _placement_.mother_to_child(position_, local_pos);
     geomtools::vector_3d local_magnetic_field;
-    int status = _field_.get ().compute_magnetic_field (local_pos,
-                                                        time_,
-                                                         local_magnetic_field);
-    if (status != STATUS_SUCCESS)
-      {
-        return status;
-      }
-    _placement_.child_to_mother (local_magnetic_field, magnetic_field_);
+    int status = _field_.get().compute_magnetic_field(local_pos,
+                                                      time_,
+                                                      local_magnetic_field);
+    if (status != STATUS_SUCCESS) {
+      return status;
+    }
+    _placement_.child_to_mother(local_magnetic_field, magnetic_field_);
     return STATUS_SUCCESS;
   }
 
-  EMFIELD_RESET_IMPLEMENT_HEAD(placement_field)
+  void placement_field::reset()
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Cannot reset the magnetic field !");
+    _set_initialized (false);
 
     _placement_.reset ();
     _field_.reset ();
+    _set_defaults();
 
-    _set_initialized (false);
     return;
   }
 
-  EMFIELD_INITIALIZE_IMPLEMENT_HEAD(placement_field,setup_,service_manager_,fields_)
+  void placement_field::initialize(const ::datatools::properties & setup_,
+                                   ::datatools::service_manager & service_manager_,
+                                   ::emfield::base_electromagnetic_field::field_dict_type & fields_)
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Field is already initialized !");
 

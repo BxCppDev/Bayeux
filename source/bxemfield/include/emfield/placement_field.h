@@ -29,11 +29,33 @@ namespace emfield {
    *         using a placement object to operate the transformation with respect to
    *         the global coordinate system.
    */
-  EMFIELD_CLASS_DECLARE(placement_field)
+  class placement_field : public base_electromagnetic_field
   {
   public:
 
-    EMFIELD_INTERFACE_CTOR_DTOR(placement_field);
+    /// Default constructor
+    placement_field(uint32_t = 0);
+
+    /// Destructor
+    virtual ~placement_field();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                            ::datatools::service_manager &,
+                            ::emfield::base_electromagnetic_field::field_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+    /// Compute electric field
+    virtual int compute_electric_field(const ::geomtools::vector_3d & position_,
+                                       double time_,
+                                       ::geomtools::vector_3d & electric_field_) const;
+
+    /// Compute magnetic field
+    virtual int compute_magnetic_field(const ::geomtools::vector_3d & position_,
+                                       double time_,
+                                       geomtools::vector_3d & magnetic_field_) const;
 
     /// Return the placement
     const geomtools::placement & get_placement() const;
@@ -43,6 +65,10 @@ namespace emfield {
 
     /// Set the referenced field
     void set_field(base_electromagnetic_field::handle_type &);
+
+  protected:
+
+    void _set_defaults();
 
   private:
 
@@ -60,4 +86,6 @@ namespace emfield {
 
 // Local Variables: --
 // mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
 // End: --

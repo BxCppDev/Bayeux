@@ -78,4 +78,6 @@ namespace emfield {
 
 // Local Variables: --
 // mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
 // End: --

@@ -41,7 +41,7 @@ namespace emfield {
    *   - pha : phase (value with angle unit, default: 0.0)
    *
    */
-  EMFIELD_CLASS_DECLARE(oscillating_field)
+  class oscillating_field : public base_electromagnetic_field
   {
   public:
 
@@ -52,7 +52,29 @@ namespace emfield {
       SC_MODE_DEFAULT = SC_MODE_COSINE //!< Default mode
     };
 
-    EMFIELD_INTERFACE_CTOR_DTOR(oscillating_field);
+    /// Default constructor
+    oscillating_field(uint32_t = 0);
+
+    /// Destructor
+    virtual ~oscillating_field();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                            ::datatools::service_manager &,
+                            ::emfield::base_electromagnetic_field::field_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+    /// Compute electric field
+    virtual int compute_electric_field(const ::geomtools::vector_3d & position_,
+                                       double time_,
+                                       ::geomtools::vector_3d & electric_field_) const;
+
+    /// Compute magnetic field
+    virtual int compute_magnetic_field(const ::geomtools::vector_3d & position_,
+                                       double time_,
+                                       geomtools::vector_3d & magnetic_field_) const;
 
     void set_sine_cosine_mode(mode_sin_cos_type);
 
@@ -112,4 +134,6 @@ namespace emfield {
 
 // Local Variables: --
 // mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
 // End: --

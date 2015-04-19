@@ -1,7 +1,7 @@
 /// \file emfield/linear_combination_field.h
-/* Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-26
- * Last modified: 2013-04-24
+ * Last modified: 2015-04-19
  *
  * License:
  *
@@ -26,7 +26,7 @@
 namespace emfield {
 
   /// \brief Class representing linear combination of many EM fields
-  EMFIELD_CLASS_DECLARE(linear_combination_field)
+  class linear_combination_field : public base_electromagnetic_field
   {
   public:
 
@@ -42,8 +42,31 @@ namespace emfield {
 
     typedef std::map<std::string,combined_field_entry> combined_field_dict_type;
 
-    EMFIELD_INTERFACE_CTOR_DTOR(linear_combination_field);
+    /// Default constructor
+    linear_combination_field(uint32_t = 0);
 
+    /// Destructor
+    virtual ~linear_combination_field();
+
+    /// Initialization
+    virtual void initialize(const ::datatools::properties &,
+                            ::datatools::service_manager &,
+                            ::emfield::base_electromagnetic_field::field_dict_type &);
+
+    /// Reset
+    virtual void reset();
+
+    /// Compute electric field
+    virtual int compute_electric_field(const ::geomtools::vector_3d & position_,
+                                       double time_,
+                                       ::geomtools::vector_3d & electric_field_) const;
+
+    /// Compute magnetic field
+    virtual int compute_magnetic_field(const ::geomtools::vector_3d & position_,
+                                       double time_,
+                                       geomtools::vector_3d & magnetic_field_) const;
+
+    /// Add a combined field
     void add_combined_field (const std::string & label_,
                              base_electromagnetic_field::handle_type & field_handle_,
                              double weight_ = 1.0,
@@ -64,4 +87,6 @@ namespace emfield {
 
 // Local Variables: --
 // mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
 // End: --

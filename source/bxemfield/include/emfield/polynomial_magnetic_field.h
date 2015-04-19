@@ -76,10 +76,10 @@ namespace emfield {
 
   private:
 
-    double _magnetic_field_unit_;  //!< Magnetic field unit
-    magnetic_field_coordinate _bx_;//!< Bx field coordinate
-    magnetic_field_coordinate _by_;//!< By field coordinate
-    magnetic_field_coordinate _bz_;//!< Bz field coordinate
+    double _magnetic_field_unit_;   //!< Magnetic field unit
+    magnetic_field_coordinate _bx_; //!< Bx field coordinate
+    magnetic_field_coordinate _by_; //!< By field coordinate
+    magnetic_field_coordinate _bz_; //!< Bz field coordinate
 
     // Macro to automate the registration of the EM field :
     EMFIELD_REGISTRATION_INTERFACE(polynomial_magnetic_field);
@@ -92,4 +92,6 @@ namespace emfield {
 
 // Local Variables: --
 // mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
 // End: --
