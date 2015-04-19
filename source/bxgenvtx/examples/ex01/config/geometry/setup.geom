@@ -1,13 +1,13 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry model of the world (mother-of-all) volume
+#@description The geometry models of the setup
 
 #@key_label  "name"
 #@meta_label "type"
 
 
-##############################################################
+#########################################################
 [name="ball.model" type="geomtools::simple_shaped_model"]
 
 #@config Configuration of the coil made of an iron tube with an air cavity
@@ -52,7 +52,7 @@ visibility.hidden_envelope  : boolean = 0
 visibility.daughters.hidden : boolean = 0
 
 
-##############################################################
+#########################################################
 [name="coil.model" type="geomtools::simple_shaped_model"]
 
 #@config Configuration of the coil made of an iron tube with an air cavity

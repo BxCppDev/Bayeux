@@ -267,7 +267,7 @@ namespace genvtx {
                                     "magenta");
             geomtools::placement vertex_plcmt;
             vertex_plcmt.set_translation(vertex_pos);
-            vertex_spot.generate_wires(vertex_spot_DI.paths, vertex_plcmt);
+            vertex_spot.generate_wires(vertex_spot_DI.wires, vertex_plcmt);
           }
         }
         vtx_counter++;

@@ -151,7 +151,7 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo "NOTICE: Shoot vertexes : " 1>&2
+echo "NOTICE: Shoot vertexes (all PCBs bulk): " 1>&2
 ${genvtx_production_bin} \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
@@ -167,7 +167,23 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo "NOTICE: Shoot vertexes : " 1>&2
+echo "NOTICE: Shoot vertexes (all coils surf) : " 1>&2
+${genvtx_production_bin} \
+    --geometry-manager config/geometry/manager.conf \
+    --vertex-generator-manager config/vertex/manager.conf \
+    --shoot \
+    --number-of-vertices 10000 \
+    --prng-seed 314159 \
+    --vertex-generator "all_coil_body_surf.vg" \
+    --output-file "genvtx_ex01_vertices_1.txt" \
+    --visu \
+    --visu-spot-zoom 0.5
+if [ $? -ne 0 ]; then
+    echo "ERROR: Shoot vertexes failed !" 1>&2
+    my_exit 1
+fi
+
+echo "NOTICE: Shoot vertexes (all coils bulk): " 1>&2
 ${genvtx_production_bin} \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
@@ -183,7 +199,7 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo "NOTICE: Shoot vertexes : " 1>&2
+echo "NOTICE: Shoot vertexes (dummy shape bulk) : " 1>&2
 ${genvtx_production_bin} \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
@@ -199,7 +215,7 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo "NOTICE: Shoot vertexes : " 1>&2
+echo "NOTICE: Shoot vertexes (dummy shape inner surface) : " 1>&2
 ${genvtx_production_bin} \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
@@ -215,7 +231,7 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo "NOTICE: Shoot vertexes : " 1>&2
+echo "NOTICE: Shoot vertexes (dummy shape other surfaces) : " 1>&2
 ${genvtx_production_bin} \
     --geometry-manager config/geometry/manager.conf \
     --vertex-generator-manager config/vertex/manager.conf \
@@ -236,6 +252,7 @@ if [ $clean -eq 1 ]; then
     rm -f ./ex01
     rm -f ./ex01_vertices.data
     rm -f ./genvtx_ex01_vertices.txt
+    rm -f ./genvtx_ex01_vertices_1.txt
     rm -f ./genvtx_ex01_vertices_2.txt
     rm -f ./genvtx_ex01_vertices_3.txt
     rm -f ./genvtx_ex01_vertices_4.txt

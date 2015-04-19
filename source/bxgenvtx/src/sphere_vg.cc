@@ -295,13 +295,13 @@ namespace genvtx {
       _sum_weight_[4] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_START_THETA_SIDE);
       _sum_weight_[5] = the_sphere->get_surface(_surface_mask_ & geomtools::sphere::FACE_STOP_THETA_SIDE);
       for (size_t i = 0; i < 6; i++) {
-        DT_LOG_TRACE (datatools::logger::PRIO_TRACE, "Surface [" << i << "] = " << _sum_weight_[i]);
+        //DT_LOG_TRACE (datatools::logger::PRIO_TRACE, "Surface [" << i << "] = " << _sum_weight_[i]);
         _sum_weight_[i] /= s;
         if (i > 0) {
           _sum_weight_[i] += _sum_weight_[i - 1];
         }
         DT_LOG_TRACE (get_logging_priority(), "Surface weight [" << i << "] = " << _sum_weight_[i]);
-        DT_LOG_TRACE (datatools::logger::PRIO_TRACE, "Surface weight [" << i << "] = " << _sum_weight_[i]);
+        //DT_LOG_TRACE (datatools::logger::PRIO_TRACE, "Surface weight [" << i << "] = " << _sum_weight_[i]);
       }
     }
     return;

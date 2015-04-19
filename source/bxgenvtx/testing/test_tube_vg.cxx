@@ -1,19 +1,23 @@
-// -*- mode: c++ ; -*-
 // test_tube_vg.cxx
 
+// Ourselves:
+#include <genvtx/tube_vg.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/geomtools:
 #include <geomtools/gnuplot_draw.h>
-#include <genvtx/tube_vg.h>
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
-
-using namespace std;
 
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
@@ -99,7 +103,7 @@ int main (int argc_, char ** argv_)
         for (int i = 0; i < (int) nshoots; i++)
           {
             vg.shoot_vertex (random, vertex);
-            geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+            geomtools::gnuplot_draw::basic_draw_point(cout, vertex, true);
           }
         cout << endl << endl;
       }
@@ -117,5 +121,3 @@ int main (int argc_, char ** argv_)
     }
   return (error_code);
 }
-
-// end of test_tube_vg.cxx

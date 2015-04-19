@@ -1,30 +1,38 @@
-// -*- mode: c++ ; -*-
 // test_conical_frustrum_random_tools.cxx
 
+// Ourselves:
+#include <genvtx/conical_frustrum_random_tools.h>
+
+// Standard library:
 #include <cstdlib>
 #include <fstream>
 #include <string>
 #include <exception>
 
-#include <genvtx/genvtx_config.h>
-#include <genvtx/conical_frustrum_random_tools.h>
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/temporary_files.h>
+#include <datatools/utils.h>
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 #include <geomtools/polyline_3d.h>
-#include <mygsl/histogram_1d.h>
-
+#include <geomtools/cone.h>
+#include <geomtools/right_circular_conical_frustrum.h>
 #include <geomtools/geomtools_config.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
-#include <datatools/temporary_files.h>
-#include <datatools/utils.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
+// - Bayeux/mygsl:
+#include <mygsl/histogram_1d.h>
 
-using namespace std;
+// This project:
+#include <genvtx/genvtx_config.h>
 
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test program for the 'genvtx' conical_frustrum_random_tools library." << endl;
@@ -32,27 +40,16 @@ int main (int argc_, char ** argv_)
     // bool debug = false;
     // bool verbose = false;
     bool draw = false;
+    bool do_identity = false;
+    bool do_sector = false;
+
     int iarg = 1;
     while (iarg < argc_) {
-      string token = argv_[iarg];
-      if (token[0] == '-') {
-        string option = token;
-        // if ((option == "-d") || (option == "--debug")) {
-        //   debug = true;
-        // } else if ((option == "-v") || (option == "--verbose")) {
-        //   verbose = true;
-        // } else
-        if ((option == "-D") || (option == "--draw")) {
-          draw = true;
-        } else {
-          clog << "warning: ignoring option '" << option << "'!" << endl;
-        }
-      } else  {
-        string argument = token;
-        {
-          clog << "warning: ignoring argument '" << argument << "'!" << endl;
-        }
-      }
+      std::string arg = argv_[iarg];
+      if (arg == "-D" || arg == "--draw") draw = true;
+      if (arg == "-I" || arg == "--identity") do_identity = true;
+      if (arg == "-S" || arg == "--sector") do_sector = true;
+
       iarg++;
     }
 
@@ -78,9 +75,7 @@ int main (int argc_, char ** argv_)
                                                                     r1, r2, h,
                                                                     thickness,
                                                                     th1, th2);
-        geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(),
-                                                  vertex,
-                                                  true);
+        geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vertex, true);
       }
       tmp_file.out() << endl << endl;
     }
@@ -121,15 +116,14 @@ int main (int argc_, char ** argv_)
       double th1 = 0.35 * M_PI;
       double th2 = 1.55 * M_PI;
 
+      geomtools::right_circular_conical_frustrum rccf(a1, b1, a2, b2, h, th1, th2-th1);
+
       {
-        geomtools::vector_3d pos;
-        geomtools::rotation rot;
-        geomtools::create_rotation (rot, 0.0, 0.0, 0.0);
+        geomtools::placement rccf_placement;
+        rccf_placement.set_identity();
         geomtools::gnuplot_draw::draw_right_circular_conical_frustrum(tmp_file.out(),
-                                                                      pos, rot,
-                                                                      0.0, a1, b1,
-                                                                      h, a2, b2,
-                                                                      th1, th2);
+                                                                      rccf_placement,
+                                                                      rccf);
         tmp_file.out() << endl << endl;
       }
 
@@ -173,34 +167,34 @@ int main (int argc_, char ** argv_)
     if (draw) {
       std::cerr << "NOTICE: Display..." << std::endl;
       {
-        Gnuplot g1 ("dots");
-        g1.cmd ("set grid");
-        g1.cmd ("set title 'test genvtx::conical_frustrum_random_tools'");
-        g1.cmd ("set size ratio -1");
-        g1.cmd ("set view equal xyz");
-        g1.cmd ("set xyplane at -1");
-        g1.set_xrange (-3, +3).set_yrange (-3, +3).set_zrange (-3, +8);
-        g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
+        Gnuplot g1("dots");
+        g1.cmd("set grid");
+        g1.cmd("set title 'test genvtx::conical_frustrum_random_tools'");
+        g1.cmd("set size ratio -1");
+        g1.cmd("set view equal xyz");
+        g1.cmd("set xyplane at -1");
+        g1.set_xrange(-3, +3).set_yrange(-3, +3).set_zrange(-3, +8);
+        g1.set_xlabel("x").set_ylabel("y").set_zlabel("z");
         std::ostringstream plot_cmd;
         plot_cmd << "splot ";
-        plot_cmd << "'" << tmp_file.get_filename ()
+        plot_cmd << "'" << tmp_file.get_filename()
                  << "' index 0 title 'Random vertices (surface)' with dots ";
-        plot_cmd << ", '" << tmp_file.get_filename ()
+        plot_cmd << ", '" << tmp_file.get_filename()
                  << "' index 1 title 'Random vertices (surface)' with dots ";
-        plot_cmd << ", '" << tmp_file.get_filename ()
+        plot_cmd << ", '" << tmp_file.get_filename()
                  << "' index 3 title 'Random vertices (bulk)' with dots ";
-        plot_cmd << ", '" << tmp_file.get_filename ()
+        plot_cmd << ", '" << tmp_file.get_filename()
                  << "' index 2 title 'Frustum' with lines ";
-        g1.cmd (plot_cmd.str ());
-        g1.showonscreen (); // window output
-        geomtools::gnuplot_drawer::wait_for_key ();
-        usleep (200);
+        g1.cmd(plot_cmd.str ());
+        g1.showonscreen(); // window output
+        geomtools::gnuplot_drawer::wait_for_key();
+        usleep(200);
       }
 
       {
          Gnuplot g2;
-         g2.cmd ("set grid");
-         g2.cmd ("set title 'test genvtx::conical_frustrum_random_tools'");
+         g2.cmd("set grid");
+         g2.cmd("set title 'test genvtx::conical_frustrum_random_tools'");
          //g2.set_xrange (-2, +8).set_yrange (-20, 500);
          std::ostringstream plot_cmd;
          plot_cmd << "plot [-1:6][-20:*]";
@@ -208,24 +202,22 @@ int main (int argc_, char ** argv_)
                   << "' index 4 using (0.5*(($1)+($2))):3 title 'Random vertex Z' with histeps ";
          plot_cmd << ", '" << tmp_file.get_filename ()
                   << "' index 5 title 'Theoretical PDF(z)' with lines ";
-          g2.cmd (plot_cmd.str ());
-         g2.showonscreen (); // window output
-         geomtools::gnuplot_drawer::wait_for_key ();
-         usleep (200);
+         g2.cmd(plot_cmd.str ());
+         g2.showonscreen(); // window output
+         geomtools::gnuplot_drawer::wait_for_key();
+         usleep(200);
       }
     }
 
     clog << "The end." << endl;
   }
-  catch (exception & x) {
-    cerr << "error: " << x.what () << endl;
+  catch (std::exception & x) {
+    std::cerr << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
   }
   catch (...) {
-    cerr << "error: " << "unexpected error !" << endl;
+    std::cerr << "error: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return (error_code);
 }
-
-// end of test_ring_random_tools.cxx

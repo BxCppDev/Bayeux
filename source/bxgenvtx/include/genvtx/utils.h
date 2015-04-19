@@ -139,22 +139,6 @@ namespace genvtx {
 
   };
 
-  // /// \brief Default traits for support of vertex generator validator
-  // template <typename Generator>
-  // struct vertex_generator_validator_support_traits : public boost::false_type{};
-
-  // template <typename Generator>
-  // bool check_vertex_generator_validator_support(typename boost::disable_if< vertex_generator_validator_support_traits<Generator> >::type* dummy = 0) {
-  //   if(!dummy) dummy=0;
-  //   if (stag_ == T::serial_tag()) return true;
-  //   if (! alt_tag_.empty())
-  //     {
-  //       if (stag_ == alt_tag_) return true;
-  //     }
-  //   return false;
-  // }
-
-
 } // end of namespace genvtx
 
 #endif // GENVTX_UTILS_H

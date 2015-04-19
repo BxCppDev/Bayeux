@@ -1,23 +1,27 @@
-// -*- mode: c++ ; -*-
 // test_manager.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/clhep_units.h>
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
-#include <genvtx/version.h>
-#include <genvtx/manager.h>
-
 #include <geomtools/geomtools_config.h>
 #include <geomtools/display_data.h>
 #include <geomtools/box.h>
 #include <geomtools/blur_spot.h>
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gnuplot_draw.h>
+
+// This project:
+#include <genvtx/version.h>
+#include <genvtx/manager.h>
 
 int main (int argc_, char ** argv_)
 {
@@ -149,7 +153,7 @@ int main (int argc_, char ** argv_)
                                 "magenta");
         geomtools::placement vertex_plcmt;
         vertex_plcmt.set_translation(vertex_pos);
-        vertex_spot.generate_wires (vertex_spot_DI.paths, vertex_plcmt);
+        vertex_spot.generate_wires (vertex_spot_DI.wires, vertex_plcmt);
       }
       vtx_counter++;
     }
@@ -197,5 +201,3 @@ int main (int argc_, char ** argv_)
   }
   return (error_code);
 }
-
-// end of test_manager.cxx

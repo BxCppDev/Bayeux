@@ -1,19 +1,23 @@
-// -*- mode: c++ ; -*-
 // test_cylinder_vg.cxx
 
+// Ourselves:
+#include <genvtx/cylinder_vg.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/geomtools:
 #include <geomtools/gnuplot_draw.h>
-#include <genvtx/cylinder_vg.h>
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
-
-using namespace std;
 
 int main (int /* argc_ */, char ** /* argv_ */)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {

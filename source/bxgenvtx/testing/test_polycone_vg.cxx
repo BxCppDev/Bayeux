@@ -75,7 +75,7 @@ int main (int argc_, char ** argv_)
 
     datatools::temp_file tmp_file;
     tmp_file.set_remove_at_destroy (true);
-    tmp_file.create ("/tmp", "test_trt_");
+    tmp_file.create ("/tmp", "test_polycone_vg_");
 
     geomtools::polycone P;
     P.add(0.0, 1.0, 1.5);
@@ -85,9 +85,7 @@ int main (int argc_, char ** argv_)
     P.add(6.0, 0.0, 0.0);
 
     {
-      geomtools::vector_3d pos;
-      geomtools::rotation_3d rot;
-      geomtools::gnuplot_draw::draw_polycone(tmp_file.out(), pos, rot, P);
+      geomtools::gnuplot_draw::draw_polycone(tmp_file.out(), P);
       tmp_file.out() << endl << endl;
     }
 
@@ -229,5 +227,3 @@ int main (int argc_, char ** argv_)
   }
   return error_code;
 }
-
-// end of test_polycone_vg.cxx

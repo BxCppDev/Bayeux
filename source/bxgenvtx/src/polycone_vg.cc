@@ -23,7 +23,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(polycone_vg,"genvtx::polycone_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(polycone_vg, "genvtx::polycone_vg");
 
   int polycone_vg::get_mode () const
   {
@@ -599,7 +599,7 @@ namespace genvtx {
           if (r1 <= _volume_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;
-            _polycone_.get_frustrum(i, fd);
+            _polycone_.get_frustrum_data(i, fd);
             geomtools::vector_3d vtx
               = genvtx::right_circular_conical_frustrum::random_volume(random_,
                                                                        fd.a1, fd.b1,
@@ -618,7 +618,7 @@ namespace genvtx {
           if (r1 <= _volume_inner_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;
-            _polycone_.get_frustrum(i, fd);
+            _polycone_.get_frustrum_data(i, fd);
             geomtools::vector_3d vtx
               = genvtx::right_circular_conical_frustrum::random_volume(random_,
                                                                        0.0, fd.a1,
@@ -654,7 +654,7 @@ namespace genvtx {
           if (r1 <= _surface_inner_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found inner frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;
-            _polycone_.get_frustrum(i, fd);
+            _polycone_.get_frustrum_data(i, fd);
             geomtools::vector_3d vtx
               = genvtx::right_circular_conical_frustrum::random_surface(random_,
                                                                         fd.a1, fd.a2,
@@ -674,7 +674,7 @@ namespace genvtx {
           if (r1 <= _surface_outer_frustra_[i]) {
             // std::cerr << "*** DEVEL *** polycone_vg::shoot_vertex:  -> Found outer frustrum " << i << std::endl;
             geomtools::polycone::frustrum_data fd;
-            _polycone_.get_frustrum(i, fd);
+            _polycone_.get_frustrum_data(i, fd);
             geomtools::vector_3d vtx
               = genvtx::right_circular_conical_frustrum::random_surface(random_,
                                                                         fd.b1, fd.b2,

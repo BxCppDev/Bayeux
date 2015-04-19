@@ -1,5 +1,4 @@
-/* tube_model_vg.cc
- */
+// tube_model_vg.cc
 
 // Standard library:
 #include <iostream>
@@ -242,7 +241,9 @@ namespace genvtx {
   {
     double ran_w = random_.uniform ();
     int index = -1;
+    DT_LOG_DEBUG(get_logging_priority(), "_entries_.size = " << _entries_.size ());
     for (size_t i = 0; i < _entries_.size (); i++) {
+      DT_LOG_DEBUG(get_logging_priority(), "_entries_[" << i << "].cumulated_weight = " << _entries_[i].cumulated_weight);
       if (ran_w <= _entries_[i].cumulated_weight) {
         index = i;
         break;
@@ -301,6 +302,7 @@ namespace genvtx {
         e.cumulated_weight = 0.0;
         e.ginfo = ginfo;
         entries.push_back (e);
+        DT_LOG_TRACE(get_logging_priority(), "e.cumulated_weight = " << e.cumulated_weight);
       }
     }
     DT_THROW_IF (entries.size () == 0, std::logic_error,
@@ -319,14 +321,14 @@ namespace genvtx {
         //DT_THROW_IF (src_log != check_src_log,
         DT_THROW_IF (! geomtools::logical_volume::same(*src_log, *check_src_log),
                      std::logic_error,
-                     "Vertex location with different logical geometry volumes are not supported  (different shapes or materials) in vertex generator '" << get_name() << "' !");
+                     "Vertex location with different logical geometry volumes are not supported (different shapes or materials) in vertex generator '" << get_name() << "' !");
       }
     }
 
     // Attempt to extract material info :
     double density = -1.0;
     if (is_mode_bulk ()) {
-       std::string material_name;
+      std::string material_name;
       if (src_log->has_material_ref ()) {
         material_name = src_log->get_material_ref ();
       }
@@ -352,6 +354,7 @@ namespace genvtx {
           }
         }
       }
+      DT_LOG_TRACE(get_logging_priority(), "Material name = '" << material_name << "'");
     }
 
     int surface_mask = 0;
@@ -362,14 +365,18 @@ namespace genvtx {
       if (_surface_bottom_)     surface_mask |= geomtools::tube::FACE_BOTTOM;
       if (_surface_top_)        surface_mask |= geomtools::tube::FACE_TOP;
       _tube_vg_.set_surface_mask (surface_mask);
+      DT_LOG_TRACE(get_logging_priority(), "MODE_SURFACE");
+      DT_LOG_TRACE(get_logging_priority(), "surface_mask=" << surface_mask);
     } else {
       _tube_vg_.set_mode (utils::MODE_BULK);
+      DT_LOG_TRACE(get_logging_priority(), "MODE_BULK");
     }
     const geomtools::i_shape_3d * src_shape_ptr = 0;
     {
       DT_THROW_IF (! src_log->has_shape (), std::logic_error,
                    "Logical '" << src_log->get_name () << "' has " << "no shape !");
       src_shape_ptr = &src_log->get_shape ();
+      // src_shape_ptr->tree_dump(std::cerr, "Source shape: ", "DEVEL: ");
       if (src_log->has_effective_shape ()) {
         src_shape_ptr = &src_log->get_effective_shape ();
       }
@@ -380,15 +387,18 @@ namespace genvtx {
                  "Shape is '" << src_shape.get_shape_name () << "' but "
                  << "only tube shape is supported in vertex generator '" << get_name() << "' !");
     const geomtools::tube & tube_shape = dynamic_cast<const geomtools::tube &>(src_shape);
-    _tube_vg_.set_tube (tube_shape);
+    // tube_shape.tree_dump(std::cerr, "Tube shape: ", "DEVEL: ");
+    _tube_vg_.set_tube(tube_shape);
     _tube_vg_.set_skin_skip(_skin_skip_);
     _tube_vg_.set_skin_thickness(_skin_thickness_);
-    _tube_vg_.initialize_simple ();
+    _tube_vg_.initialize_simple();
     double weight = 0.0;
-    if (is_mode_surface ()) {
+    if (is_mode_surface()) {
       weight = tube_shape.get_surface (surface_mask);
+      DT_LOG_TRACE(get_logging_priority(), "MODE_SURFACE weight=" << weight);
     } else {
       weight = tube_shape.get_volume ();
+      DT_LOG_TRACE(get_logging_priority(), "MODE_BULK weight=" << weight);
     }
     // Compute weight:
     _entries_[0].cumulated_weight = _entries_[0].weight;
@@ -397,6 +407,7 @@ namespace genvtx {
       double cumul = 0.0;
       if (i > 0) cumul = _entries_[i - 1].cumulated_weight;
       _entries_[i].cumulated_weight = cumul + _entries_[i].weight;
+      DT_LOG_TRACE(get_logging_priority(), "_entries_[" << i << "].weight=" << _entries_[i].weight);
     }
 
     // Store the total weight before normalization for alternative use :
@@ -416,7 +427,7 @@ namespace genvtx {
 
     // Normalize weight:
     for (size_t i = 0; i < _entries_.size (); i++) {
-      _entries_[i].cumulated_weight /= _entries_.back ().cumulated_weight;
+      _entries_[i].cumulated_weight /= _entries_.back().cumulated_weight;
     }
     return;
   }

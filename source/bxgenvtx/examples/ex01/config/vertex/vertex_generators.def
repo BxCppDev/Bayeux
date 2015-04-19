@@ -16,7 +16,7 @@
 #@description Debug flag
 debug  : boolean = 0
 
-#@description The rule that describes the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = " category='world' "
 
 #@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
@@ -51,7 +51,7 @@ mode.surface.right  : boolean = 0
 #@description Debug flag
 debug  : boolean = 0
 
-#@description The rule that describes the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = " category='board_pcb.gc' board={6} "
 
 #@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
@@ -71,7 +71,7 @@ materials.plugin_name : string = "materials_driver"
 #@description Debug flag
 debug  : boolean = 0
 
-#@description The rule that describes the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='mezzanine_pcb.gc' board={*} daughter={*}"
 
 #@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
@@ -91,7 +91,7 @@ materials.plugin_name : string = "materials_driver"
 #@description Debug flag
 debug  : boolean = 0
 
-#@description The rule that describes the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='mezzanine_pcb.gc' board={*} daughter={1;2}"
 
 #@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
@@ -111,7 +111,7 @@ materials.plugin_name : string = "materials_driver"
 #@description Debug flag
 debug  : boolean = 0
 
-#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='capacitor.gc' board={*} daughter={*} position={*}"
 
 #@description The mode used for vertex generator from the underlying cylinder model associated to the target logical volume ("surface" or "bulk")
@@ -128,20 +128,43 @@ mode.surface.side  : boolean = 1
 
 #@config Vertex generation from the bulk of all coils
 
-#@description Debug flag
-debug  : boolean = 1
+# #@description Debug flag
+# debug  : boolean = 1
 
-#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='coil_body.gc' board={*} daughter={*}"
 
 #@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
 mode   : string  = "bulk"
 
-#@description Surface mode cylinder inner side face activation
-#mode.surface.inner_side  : boolean = 1
+# #@description Surface mode cylinder inner side face activation
+# mode.surface.inner_side  : boolean = 1
 
-#@description Surface mode cylinder outer side face activation
-#mode.surface.outer_side  : boolean = 0
+# #@description Surface mode cylinder outer side face activation
+# mode.surface.outer_side  : boolean = 0
+
+
+################################################################
+# Generate vertex from the coil's bulk:
+################################################################
+[name="all_coil_body_surf.vg" type="genvtx::tube_model_vg"]
+
+#@config Vertex generation from the surface of all coils
+
+# #@description Debug flag
+# debug  : boolean = 1
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='coil_body.gc' board={*} daughter={*}"
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode cylinder inner side face activation
+mode.surface.inner_side  : boolean = 1
+
+# #@description Surface mode cylinder outer side face activation
+# mode.surface.outer_side  : boolean = 0
 
 
 ##########################################################
@@ -172,7 +195,7 @@ generators.board_pcb_bulk.vg.activity         : string = "0.25 mBq/kg"
 # #@description Debug flag
 # debug  : boolean = 1
 
-#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='dummy.gc' board={*} "
 
 #@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
@@ -189,7 +212,7 @@ mode   : string  = "bulk"
 # #@description Debug flag
 # debug  : boolean = 0
 
-#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='dummy.gc' board={*} "
 
 #@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
@@ -202,10 +225,10 @@ mode.surface.inner_side  : boolean = 1
 mode.surface.outer_side  : boolean = 0
 
 #@description Skin thickness
-skin_thickness : real as length = 4 mm
+skin_thickness : real as length = 1 mm
 
 #@description Skin thickness
-skin_skip : real as length = 2 mm
+skin_skip : real as length = 0.5 mm
 
 
 ################################################################
@@ -218,7 +241,7 @@ skin_skip : real as length = 2 mm
 # #@description Debug flag
 # debug  : boolean = 0
 
-#@description The rule that describe the geometry origin of vertex in term of geometry category and addresses (geom ID)
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
 origin : string  = "category='dummy.gc' board={*} "
 
 #@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")

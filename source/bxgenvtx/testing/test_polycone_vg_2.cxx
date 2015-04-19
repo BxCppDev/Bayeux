@@ -1,29 +1,35 @@
-// -*- mode: c++ ; -*-
 // test_polycone_vg.cxx
 
+// Ourselves:
+#include <genvtx/polycone_vg.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/temporary_files.h>
+// - Bayeux/geomtools:
+#include <geomtools/geomtools_config.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/polycone.h>
 #include <geomtools/tube.h>
-#include <genvtx/polycone_vg.h>
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
-#include <geomtools/geomtools_config.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-using namespace std;
 
 int main (int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test program for class 'polycone_vg'!" << endl;
@@ -110,14 +116,14 @@ int main (int argc_, char ** argv_)
     P.add(150.0, 26.5, 27.5);
 
     {
-      geomtools::vector_3d pos;
-      geomtools::rotation_3d rot;
-      geomtools::gnuplot_draw::draw_polycone_sector(tmp_file.out(), pos, rot, P, 0.0, 2*M_PI, 72);
+      geomtools::gnuplot_draw::draw_polycone(tmp_file.out(), P);
       tmp_file.out() << endl << endl;
       {
         geomtools::tube paille(2.7, 2.8, 150);
+        geomtools::vector_3d pos;
         pos.setX(-10.0);
         pos.setZ(140.0);
+        geomtools::rotation_3d rot;
         geomtools::create_rotation(rot,
                                    0.0 * CLHEP::degree,
                                    -10.0 * CLHEP::degree,
@@ -302,6 +308,8 @@ int main (int argc_, char ** argv_)
       Q.add(-2.5, 27.0);
       Q.add( 2.5, 27.0);
       Q.add( 3.5, 26.0);
+      Q.set_start_angle((2.0-0.45)*M_PI);
+      Q.set_delta_angle(1.45*M_PI);
       Q.tree_dump(clog, "Q polycone : ");
       geomtools::vector_3d pos(27.0, 0.0, 160.0);
       geomtools::rotation_3d rot;
@@ -315,8 +323,8 @@ int main (int argc_, char ** argv_)
                              90.0 * CLHEP::degree,
                              90.0 * CLHEP::degree);
       {
-        geomtools::gnuplot_draw::draw_polycone_sector(tmp_file.out(), pos, rot, Q,
-                                                      -0.45*M_PI, 1.45*M_PI, 26);
+        geomtools::gnuplot_draw::draw_polycone(tmp_file.out(), pos, rot, Q);
+        // -0.45*M_PI, 1.45*M_PI, 26);
         tmp_file.out() << endl << endl;
       }
 

@@ -198,7 +198,7 @@ void test2(bool draw_)
         = DD.add_static_item(vtx_name_ss.str(), "vertex", "blue");
       geomtools::placement plcmt;
       plcmt.set_translation(vtx);
-      vtx_spot.generate_wires(vtx_spot_DI.paths, plcmt);
+      vtx_spot.generate_wires(vtx_spot_DI.wires, plcmt);
     }
   }
   int nvertexes2 = 500;
@@ -215,7 +215,7 @@ void test2(bool draw_)
         = DD.add_static_item(vtx_name_ss.str(), "vertex", "cyan");
       geomtools::placement plcmt;
       plcmt.set_translation(vtx);
-      vtx_spot.generate_wires(vtx_spot_DI.paths, plcmt);
+      vtx_spot.generate_wires(vtx_spot_DI.wires, plcmt);
     }
   }
   BVG.tree_dump(std::clog, "BVG: ");
@@ -403,7 +403,7 @@ void test3(bool draw_)
         = DD.add_static_item(vtx_name_ss.str(), "vertex", "blue");
       geomtools::placement plcmt;
       plcmt.set_translation(vtx);
-      vtx_spot.generate_wires(vtx_spot_DI.paths, plcmt);
+      vtx_spot.generate_wires(vtx_spot_DI.wires, plcmt);
     }
   }
   BVG.tree_dump(std::clog, "BVG: ");
@@ -421,7 +421,7 @@ void test3(bool draw_)
         = DD.add_static_item(vtx_name_ss.str(), "vertex", "cyan");
       geomtools::placement plcmt;
       plcmt.set_translation(vtx);
-      vtx_spot.generate_wires(vtx_spot_DI.paths, plcmt);
+      vtx_spot.generate_wires(vtx_spot_DI.wires, plcmt);
     }
   }
   BVG2.tree_dump(std::clog, "BVG2: ");
