@@ -99,7 +99,6 @@ namespace dpp {
 
 #endif // DPP_UTILS_MODULE_H
 
-
 /*
 ** Local Variables: --
 ** mode: c++ --

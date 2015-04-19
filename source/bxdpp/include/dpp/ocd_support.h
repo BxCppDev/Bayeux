@@ -26,7 +26,6 @@ DOCD_CLASS_DECLARATION(dpp::input_module)
 DOCD_CLASS_DECLARATION(dpp::output_module)
 DOCD_CLASS_DECLARATION(dpp::utils_module)
 
-
 #endif // DPP_OCD_SUPPORT_H
 
 /*
