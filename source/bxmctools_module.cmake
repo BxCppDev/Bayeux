@@ -25,7 +25,7 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(mctools_VERSION_MAJOR 1)
+set(mctools_VERSION_MAJOR 2)
 set(mctools_VERSION_MINOR 0)
 set(mctools_VERSION_PATCH 0)
 set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools_VERSION_PATCH}")
@@ -82,6 +82,9 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/mctools.h
   ${module_include_dir}/${module_name}/biasing/point_of_interest.h
   ${module_include_dir}/${module_name}/biasing/primary_event_bias.h
+  ${module_include_dir}/${module_name}/signal/utils.h
+  ${module_include_dir}/${module_name}/signal/base_signal.h
+  ${module_include_dir}/${module_name}/signal/triangle_signal_shape.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -99,6 +102,9 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/mctools.cc
   ${module_source_dir}/biasing/point_of_interest.cc
   ${module_source_dir}/biasing/primary_event_bias.cc
+  ${module_source_dir}/signal/utils.cc
+  ${module_source_dir}/signal/base_signal.cc
+  ${module_source_dir}/signal/triangle_signal_shape.cc
   )
 
 # - Published headers
@@ -121,6 +127,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_simulated_data_input_module_1.cxx
   ${module_test_dir}/test_simulated_data_input_module_2.cxx
   ${module_test_dir}/test_biasing_primary_event_bias.cxx
+  ${module_test_dir}/test_signal_triangle_signal_shape.cxx
   )
 
 #-----------------------------------------------------------------------
