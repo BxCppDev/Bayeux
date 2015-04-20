@@ -1,4 +1,4 @@
-/* base_step_hit.cc */
+// base_step_hit.cc
 
 // Ourselves:
 #include <mctools/base_step_hit.h>

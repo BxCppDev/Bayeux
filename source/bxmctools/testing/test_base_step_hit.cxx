@@ -1,15 +1,19 @@
-// -*- mode: c++ ; -*-
 // test_base_step_hit.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-
-#include <geomtools/utils.h>
-#include <mctools/base_step_hit.h>
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/io_factory.h>
+// - Bayeux/geomtools:
+#include <geomtools/utils.h>
+
+// This project:
+#include <mctools/base_step_hit.h>
 #include <mctools/base_step_hit.ipp>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
@@ -19,10 +23,9 @@
 #include <genbb_help/bio_guard.h>
 #include <mctools/bio_guard.h>
 
-using namespace std;
-
 int main (int /* argc_ */, char ** /* argv_ */)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
@@ -114,5 +117,3 @@ int main (int /* argc_ */, char ** /* argv_ */)
     }
   return (error_code);
 }
-
-// end of test_base_step_hit.cxx
