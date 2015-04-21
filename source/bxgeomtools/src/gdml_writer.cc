@@ -1244,7 +1244,7 @@ namespace geomtools {
     }
     solids_stream << " deltaphi=" << '"';
     solids_stream.precision(15);
-    solids_stream << startphi / aunit << '"';
+    solids_stream << deltaphi / aunit << '"';
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
