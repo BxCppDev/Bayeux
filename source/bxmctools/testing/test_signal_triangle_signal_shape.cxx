@@ -43,8 +43,8 @@ int main (int argc_, char ** argv_)
     static const double nVs = CLHEP::volt * CLHEP::nanosecond;
     static const double mV  = 1e-3 * CLHEP::volt;
     mygsl::parameter_store ps;
-    int q_idx = ps.add("q", datatools::TYPE_REAL, "Q");
-    int t0_idx = ps.add("t0", datatools::TYPE_REAL, "T0");
+    ps.add("q", datatools::TYPE_REAL, "Q");
+    ps.add("t0", datatools::TYPE_REAL, "T0");
     // Set the values of the parameters in the store:
     ps.grab("q").set_real_value(3.0 * nVs);
     ps.grab("t0").set_real_value(10.0 * CLHEP::ns);
