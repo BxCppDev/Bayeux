@@ -255,19 +255,6 @@ namespace emfield {
 
     base_electromagnetic_field::_parse_basic_parameters(setup_, service_manager_, fields_);
 
-    double length_unit = CLHEP::millimeter;
-    double angle_unit  = CLHEP::degree;
-
-    if (setup_.has_key ("length.unit")) {
-      const std::string length_unit_str = setup_.fetch_string ("length.unit");
-      length_unit = datatools::units::get_length_unit_from (length_unit_str);
-    }
-
-    if (setup_.has_key ("angle.unit")) {
-      const std::string angle_unit_str = setup_.fetch_string ("angle.unit");
-      angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
-    }
-
     if (_zone_fields_.size() == 0) {
       DT_THROW_IF(!setup_.has_key("zones"), std::logic_error,
                   "Missing 'zones' property!");
@@ -341,8 +328,8 @@ namespace emfield {
 
     // Checks:
     {
-      int efield_count = 0;
-      int mfield_count = 0;
+      size_t efield_count = 0;
+      size_t mfield_count = 0;
 
       for (zone_field_dict_type::const_iterator izone = _zone_fields_.begin();
            izone != _zone_fields_.end();
