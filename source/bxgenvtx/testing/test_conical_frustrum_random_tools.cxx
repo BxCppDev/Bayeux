@@ -40,15 +40,15 @@ int main (int argc_, char ** argv_)
     // bool debug = false;
     // bool verbose = false;
     bool draw = false;
-    bool do_identity = false;
-    bool do_sector = false;
+    // bool do_identity = false;
+    // bool do_sector = false;
 
     int iarg = 1;
     while (iarg < argc_) {
       std::string arg = argv_[iarg];
       if (arg == "-D" || arg == "--draw") draw = true;
-      if (arg == "-I" || arg == "--identity") do_identity = true;
-      if (arg == "-S" || arg == "--sector") do_sector = true;
+      // if (arg == "-I" || arg == "--identity") do_identity = true;
+      // if (arg == "-S" || arg == "--sector") do_sector = true;
 
       iarg++;
     }
