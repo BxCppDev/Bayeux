@@ -897,7 +897,7 @@ namespace geomtools {
                                           double rmin1_, double rmax1_,
                                           double rmin2_, double rmax2_,
                                           double z_,
-                                          double startphi_, double deltaphi_,
+                                          double start_phi_, double delta_phi_,
                                           const std::string & lunit_str_,
                                           const std::string & aunit_str_)
   {
@@ -932,17 +932,25 @@ namespace geomtools {
     solids_stream.precision(15);
     solids_stream << z_ / lunit << '"';
 
-    if (datatools::is_valid(startphi_) && startphi_ > 0.0) {
-      solids_stream << " startphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << startphi_ / aunit << '"';
-
-      if (datatools::is_valid(deltaphi_)) {
-        solids_stream << " deltaphi=" << '"';
-        solids_stream.precision(15);
-        solids_stream << deltaphi_ / aunit << '"';
-      }
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
+    if (datatools::is_valid(start_phi_) && start_phi_ >= 0.0) {
+      startphi = start_phi_;
     }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
+
+    if (datatools::is_valid(delta_phi_)) {
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta phi is too large!");
+      deltaphi = delta_phi_;
+    }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltaphi / aunit << '"';
 
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
@@ -1128,17 +1136,25 @@ namespace geomtools {
     solids_stream << "<" <<  "polycone"
                   << " name=" << '"' << to_html(name_) << '"';
 
-    if (datatools::is_valid(start_phi_) && start_phi_ != 0.0) {
-      solids_stream << " startphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << start_phi_ / aunit << '"';
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
+    if (datatools::is_valid(start_phi_) && start_phi_ >= 0.0) {
+      startphi = start_phi_;
     }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
 
     if (datatools::is_valid(delta_phi_)) {
-      solids_stream << " deltaphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << delta_phi_ / aunit << '"';
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta theta is too large!");
+      deltaphi = delta_phi_;
     }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltaphi / aunit << '"';
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
@@ -1210,17 +1226,25 @@ namespace geomtools {
     solids_stream << "<" <<  "genericPolycone"
                   << " name=" << '"' << to_html(name_) << '"';
 
-    if (datatools::is_valid(start_phi_) && start_phi_ != 0.0) {
-      solids_stream << " startphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << start_phi_ / aunit << '"';
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
+    if (datatools::is_valid(start_phi_) && start_phi_ >= 0.0) {
+      startphi = start_phi_;
     }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
 
     if (datatools::is_valid(delta_phi_)) {
-      solids_stream << " deltaphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << delta_phi_ / aunit << '"';
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta theta is too large!");
+      deltaphi = delta_phi_;
     }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
@@ -1267,17 +1291,25 @@ namespace geomtools {
 
     solids_stream << " numsides=" << '"' << num_sides_ << '"';
 
-    if (datatools::is_valid(start_phi_) && start_phi_ != 0.0) {
-      solids_stream << " startphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << start_phi_ / aunit << '"';
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
+    if (datatools::is_valid(start_phi_) && start_phi_ >= 0.0) {
+      startphi = start_phi_;
     }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
 
     if (datatools::is_valid(delta_phi_)) {
-      solids_stream << " deltaphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << delta_phi_ / aunit << '"';
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta theta is too large!");
+      deltaphi = delta_phi_;
     }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltaphi / aunit << '"';
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
@@ -1347,17 +1379,25 @@ namespace geomtools {
 
     solids_stream << " numsides=" << '"' << num_sides_ << '"';
 
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
     if (datatools::is_valid(start_phi_) && start_phi_ != 0.0) {
-      solids_stream << " startphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << start_phi_ / aunit << '"';
+      startphi = start_phi_;
     }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
 
     if (datatools::is_valid(delta_phi_)) {
-      solids_stream << " deltaphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << delta_phi_ / aunit << '"';
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta phi is too large!");
+      deltaphi = delta_phi_;
     }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltaphi / aunit << '"';
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
@@ -1404,29 +1444,45 @@ namespace geomtools {
     solids_stream.precision(15);
     solids_stream << rmax_ / lunit << '"';
 
-    if (datatools::is_valid(start_phi_) && start_phi_ > 0.0) {
-      solids_stream << " startphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << start_phi_ / aunit << '"';
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
+    if (datatools::is_valid(start_phi_) && start_phi_ >= 0.0) {
+      startphi = start_phi_;
     }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
 
     if (datatools::is_valid(delta_phi_)) {
-      solids_stream << " deltaphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << delta_phi_ / aunit << '"';
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta phi is too large!");
+      deltaphi = delta_phi_;
     }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltaphi / aunit << '"';
 
-    if (datatools::is_valid(start_theta_) && start_theta_ > 0.0) {
-      solids_stream << " starttheta=" << '"';
-      solids_stream.precision(15);
-      solids_stream << start_theta_ / aunit << '"';
+    double starttheta = 0.0;
+    double deltatheta = M_PI;
+    if (datatools::is_valid(start_theta_) && start_theta_ >= 0.0) {
+      starttheta = start_theta_;
     }
+    solids_stream << " starttheta=" << '"';
+    solids_stream.precision(15);
+    solids_stream << starttheta / aunit << '"';
 
     if (datatools::is_valid(delta_theta_)) {
-      solids_stream << " deltatheta=" << '"';
-      solids_stream.precision(15);
-      solids_stream << delta_theta_ / aunit << '"';
+      DT_THROW_IF(delta_theta_ == 0.0, std::domain_error,
+                  "Invalid zero delta theta!");
+      DT_THROW_IF(starttheta + delta_theta_ > M_PI, std::domain_error,
+                  "Delta theta is too large!");
+      deltatheta = delta_theta_;
     }
+    solids_stream << " deltatheta=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltatheta / aunit << '"';
 
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
@@ -1488,17 +1544,26 @@ namespace geomtools {
     solids_stream.precision(15);
     solids_stream << z_ / lunit << '"';
 
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
     if (datatools::is_valid(start_phi_) && start_phi_ != 0.0) {
-      solids_stream << " startphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << start_phi_ / aunit << '"';
+      startphi = start_phi_;
     }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
 
     if (datatools::is_valid(delta_phi_)) {
-      solids_stream << " deltaphi=" << '"';
-      solids_stream.precision(15);
-      solids_stream << delta_phi_ / aunit << '"';
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta phi is too large!");
+      deltaphi = delta_phi_;
     }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltaphi / aunit << '"';
+
     solids_stream << " lunit=" << '"' << lunit_str_ << '"';
     solids_stream << " aunit=" << '"' << aunit_str_ << '"';
 
