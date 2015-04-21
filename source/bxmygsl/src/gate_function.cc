@@ -68,7 +68,7 @@ namespace mygsl {
   }
 
   void gate_function::initialize(const datatools::properties & config_,
-                                      unary_function_dict_type & functors_)
+                                 unary_function_dict_type & /*functors_*/)
   {
     // Parse configuration:
     if (!datatools::is_valid(_width_)) {
@@ -143,7 +143,7 @@ namespace mygsl {
     return;
   }
 
-  double gate_function::_eval(double x_) const
+  double gate_function::_eval(double /*x_*/) const
   {
     double res = _amplitude_;
     if (res < _center_ - 0.5 * _width_) {

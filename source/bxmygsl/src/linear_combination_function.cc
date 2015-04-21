@@ -66,8 +66,8 @@ namespace mygsl {
     return _terms_.size() > 0;
   }
 
-  void linear_combination_function::initialize(const datatools::properties & config_,
-                                               unary_function_dict_type & functors_)
+  void linear_combination_function::initialize(const datatools::properties & /*config_*/,
+                                               unary_function_dict_type & /*functors_*/)
   {
     // Parse configuration:
     if (_terms_.size() == 0) {
@@ -124,7 +124,7 @@ namespace mygsl {
 
   void linear_combination_function::change_weight(int term_index_, double weight_)
   {
-    DT_THROW_IF(term_index_ < 0 || term_index_ >= _terms_.size(),
+    DT_THROW_IF(term_index_ < 0 || term_index_ >= (int)_terms_.size(),
                 std::range_error, "Invalid functor term index !");
     DT_THROW_IF(!datatools::is_valid(weight_), std::logic_error, "Invalid functor weight !");
     _terms_[term_index_].weight = weight_;

@@ -41,6 +41,7 @@ int main(/*int argc_ , char ** argv_*/)
 
     lcf.change_weight(-0.75, f0_index);
     lcf.change_weight(+1.25, f1_index);
+    lcf.change_weight(+0.00, f2_index);
 
     {
       double dx = 0.05;

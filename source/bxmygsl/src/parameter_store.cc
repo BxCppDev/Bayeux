@@ -271,7 +271,7 @@ namespace mygsl {
 
   bool parameter_store::index_is_valid(int index_) const
   {
-    if (index_ < 0 && index_ >= _indexed_parameters_.size()) return false;
+    if (index_ < 0 && index_ >= (int)_indexed_parameters_.size()) return false;
     if (_indexed_parameters_[index_] == 0) return false;
     return true;
   }
@@ -284,7 +284,7 @@ namespace mygsl {
   parameter_store::parameter_record & parameter_store::grab(int index_, bool do_check_)
   {
     if (do_check_) {
-      DT_THROW_IF(index_ < 0 && index_ >= _indexed_parameters_.size(), std::range_error,
+      DT_THROW_IF(index_ < 0 && index_ >= (int)_indexed_parameters_.size(), std::range_error,
                   "Invalid parameter storage index [" << index_ << "]!");
     }
     parameter_record * pr = _indexed_parameters_[index_];
@@ -400,7 +400,6 @@ namespace mygsl {
 
   void parameter_store::_update_parameters()
   {
-    int j = 0;
     for (std::list<i_subscriber*>::iterator i = _subscribers_.begin();
          i != _subscribers_.end();
          i++) {

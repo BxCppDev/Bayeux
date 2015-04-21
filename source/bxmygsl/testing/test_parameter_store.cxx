@@ -12,9 +12,9 @@ int main(/* int argc_ , char ** argv_ */)
   try {
 
     mygsl::parameter_store ps;
-    int a_idx = ps.add("a", datatools::TYPE_REAL, "A");
-    int b_idx = ps.add("b", datatools::TYPE_REAL, "B");
-    int n_idx = ps.add("n", datatools::TYPE_INTEGER, "N");
+    ps.add("a", datatools::TYPE_REAL, "A");
+    ps.add("b", datatools::TYPE_REAL, "B");
+    ps.add("n", datatools::TYPE_INTEGER, "N");
     ps.tree_dump(std::clog, "Parameter store: ");
 
     ps.grab("a").set_real_value(2.31);

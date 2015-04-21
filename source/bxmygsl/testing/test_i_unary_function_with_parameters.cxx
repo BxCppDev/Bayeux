@@ -155,11 +155,11 @@ int main(/*int argc_ , char ** argv_*/)
   try {
 
     mygsl::parameter_store ps;
-    int a_idx = ps.add("a", datatools::TYPE_REAL, "A");
-    int p0_idx = ps.add("p0", datatools::TYPE_REAL, "P0");
-    int b_idx = ps.add("b", datatools::TYPE_REAL, "B");
-    int n_idx = ps.add("n", datatools::TYPE_INTEGER, "N");
-    int k_idx = ps.add("k", datatools::TYPE_INTEGER, "K");
+    ps.add("a", datatools::TYPE_REAL, "A");
+    ps.add("p0", datatools::TYPE_REAL, "P0");
+    ps.add("b", datatools::TYPE_REAL, "B");
+    ps.add("n", datatools::TYPE_INTEGER, "N");
+    ps.add("k", datatools::TYPE_INTEGER, "K");
     ps.grab("a").set_real_value(2.31);
     ps.grab("p0").set_real_value(-1.23);
     ps.grab("b").set_real_value(0.42);
