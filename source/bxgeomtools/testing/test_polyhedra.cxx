@@ -31,9 +31,9 @@ int main (int argc_, char ** argv_)
     std::clog << "Test program for class 'polyhedra'!" << std::endl;
 
     bool do_identity   = false; // No placement for the solid
-    bool do_sector     = false; // Angular section
+    // bool do_sector     = false; // Angular section
+    // bool do_no_top     = false; // No top surface
     bool do_hole       = false; // Hole
-    bool do_no_top     = false; // No top surface
     bool do_locate     = true;
     bool locate_outer_side = true;
     bool locate_inner_side = true;
@@ -55,11 +55,11 @@ int main (int argc_, char ** argv_)
       if (arg == "-b" || arg == "--no-bottom") locate_bottom = false;
       if (arg == "-t" || arg == "--no-top")    locate_top = false;
       if (arg == "-B" || arg == "--bulk")      locate_bulk = true;
-      if (arg == "-S" || arg == "--sector")    do_sector = true;
       if (arg == "-H" || arg == "--hole")      do_hole = true;
-      if (arg == "-T" || arg == "--no-top")    do_no_top = true;
       if (arg == "-L" || arg == "--no-locate") do_locate = false;
       if (arg == "-P" || arg == "--no-intercept") do_intercept = false;
+      // if (arg == "-S" || arg == "--sector")    do_sector = true;
+      // if (arg == "-T" || arg == "--no-top")    do_no_top = true;
       if (arg == "-3") nsides = 3;
       if (arg == "-4") nsides = 4;
       if (arg == "-5") nsides = 5;

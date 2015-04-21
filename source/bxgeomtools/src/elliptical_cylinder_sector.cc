@@ -221,7 +221,6 @@ namespace geomtools {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid elliptical cylinder sector!");
     double tolerance = compute_tolerance(tolerance_);
     double angular_tolerance = get_angular_tolerance();
-    double half_tolerance = 0.5 * tolerance;
     if (is_valid()) {
       double z = position_.z();
       if (std::abs(z) > 0.5 * _z_) {
@@ -443,7 +442,7 @@ namespace geomtools {
       if (devel) std::cerr << "DEVEL: elliptical_cylinder_sector::generate_wires_self: nsamples_z=" << nsamples_z << std::endl;
       double dz = (z1 - z0) / (nsamples_z - 1);
       // if (devel) std::cerr << "DEVEL: dz=" << dz / CLHEP::mm << " mm" << std::endl;
-      for (int iz = 0; iz < (int) nsamples_z; iz++) {
+      for (size_t iz = 0; iz < nsamples_z; iz++) {
         if (no_bottom_edge && iz == 0) continue;
         if (no_top_edge && iz == nsamples_z) continue;
         double z = z0 + iz * dz;

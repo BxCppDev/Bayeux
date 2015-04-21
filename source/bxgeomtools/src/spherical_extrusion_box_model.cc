@@ -299,9 +299,9 @@ namespace geomtools {
           const double c2 = rfactor[i] * c;
           double z = 0.5 * mother_box.get_z() - c + c2;
           if (bottom) z *= -1.0;
-          const double rs = extrusion_sphere.get_r();
-          const double a2 = rs - c2;
-          const double r2 = std::sqrt(rs *rs - a2 * a2);
+          // const double rs = extrusion_sphere.get_r();
+          // const double a2 = rs - c2;
+          // const double r2 = std::sqrt(rs *rs - a2 * a2);
           circle c1(re);
           uint32_t options = base_options;
           placement c1_placement(0.0, 0.0, z, 0.0, 0.0, 0.0);

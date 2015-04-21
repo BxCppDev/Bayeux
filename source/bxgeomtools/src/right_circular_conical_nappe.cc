@@ -440,7 +440,7 @@ namespace geomtools {
     if (nsamples_z > 0) {
 
       // Draw parallels:
-      for (int iz = 0; iz < nsamples_z; iz++) {
+      for (size_t iz = 0; iz < nsamples_z; iz++) {
         uint32_t options = base_options;
         if (iz == 0 && no_bottom_edge) continue;
         if (iz == (nsamples_z - 1) && no_top_edge) continue;

@@ -427,7 +427,7 @@ namespace geomtools {
     }
     //std::cerr << "DEVEL: TEST 2" << std::endl;
 
-    for (int ir = 0; ir < nsamples_r; ir++) {
+    for (size_t ir = 0; ir < nsamples_r; ir++) {
       if (has_inner_r()) {
         if (no_int_edge && (ir == 0)) continue;
       } else {
@@ -461,7 +461,7 @@ namespace geomtools {
       if (has_start_angle()) {
         nth_max++;
       }
-      for (int it = 0; it < nth_max; it++) {
+      for (size_t it = 0; it < nth_max; it++) {
         if (has_start_angle()) {
           if (no_start_angle_edge && it == 0) continue;
           if (no_stop_angle_edge && it == (nsamples_th - 1)) continue;
@@ -469,7 +469,7 @@ namespace geomtools {
         double thetai = theta_min + it * dtheta;
         double r_min = rmin;
         if (! has_inner_r() || r_min < 2 * dr) {
-          int nth = nsamples_th;
+          size_t nth = nsamples_th;
           if (nth > angular_sampling(SL_LOW)) {
             int f0 = nth / angular_sampling(SL_LOW);
             //std::cerr << "DEVEL: TEST 5.1: f0=" << f0 << std::endl;

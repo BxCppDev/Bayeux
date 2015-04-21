@@ -521,7 +521,7 @@ namespace geomtools {
       if (devel) std::cerr << "DEVEL: ellipsoid_sector::generate_wires_self: nsamples_z=" << nsamples_z << std::endl;
       double dz = (z1 - z0) / (nsamples_z - 1);
       // if (devel) std::cerr << "DEVEL: dz=" << dz / CLHEP::mm << " mm" << std::endl;
-      for (int iz = 0; iz < (int) nsamples_z; iz++) {
+      for (size_t iz = 0; iz < nsamples_z; iz++) {
         if (no_bottom_edge && iz == 0) continue;
         if (no_top_edge && iz == nsamples_z) continue;
         double z = z0 + iz * dz;

@@ -219,9 +219,7 @@ namespace geomtools {
     }
     double ct = std::cos(theta_);
     double st = std::sin(theta_);
-    double theta = std::atan2(st, ct);
 
-    double angle = theta;
     double a = _x_radius_;
     double b = _y_radius_;
     double a2 = gsl_pow_2(a);
@@ -653,7 +651,7 @@ namespace geomtools {
       t1 = t0 + get_delta_angle();
     }
     double dtheta = (t1 - t0) / nsamples_angle;
-    for (int it = 0; it <= nsamples_angle; it++) {
+    for (size_t it = 0; it <= nsamples_angle; it++) {
       double thetai = t0 + it * dtheta;
       double x, y;
       compute_x_y_from_theta(thetai, x, y);

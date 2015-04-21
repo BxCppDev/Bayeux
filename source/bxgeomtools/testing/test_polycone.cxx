@@ -34,7 +34,7 @@ int main (int argc_, char ** argv_)
     bool do_simple     = true;  // Simple polycone
     bool do_hole       = false; // Extruded polycone
     bool do_sector     = false; // Angular section
-    bool do_no_top     = false; // No top surface
+    // bool do_no_top     = false; // No top surface
     bool do_locate     = true;
     bool locate_outer_side = true;
     bool locate_inner_side = true;
@@ -62,7 +62,7 @@ int main (int argc_, char ** argv_)
       if (arg == "-M" || arg == "--no-simple") do_simple = false;
       if (arg == "-H" || arg == "--hole") do_hole = true;
       if (arg == "-S" || arg == "--sector")    do_sector = true;
-      if (arg == "-T" || arg == "--no-top")    do_no_top = true;
+      // if (arg == "-T" || arg == "--no-top")    do_no_top = true;
       if (arg == "-L" || arg == "--no-locate") do_locate = false;
       if (arg == "-P" || arg == "--no-intercept") do_intercept = false;
 
@@ -190,7 +190,7 @@ int main (int argc_, char ** argv_)
     // Locate points with respect to the volume:
     if (do_locate) {
       tmp_file.out() << "# Locate points (index 1) " << std::endl;
-      bool locate = locate_outer_side | locate_inner_side | locate_bottom | locate_top | locate_start | locate_stop | locate_bulk;
+      //bool locate = locate_outer_side | locate_inner_side | locate_bottom | locate_top | locate_start | locate_stop | locate_bulk;
       size_t nshoots = 1000000;
       size_t counts = 0;
       double dim2 = 0.7 * dim;

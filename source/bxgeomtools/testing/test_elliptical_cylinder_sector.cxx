@@ -31,7 +31,6 @@ int main(int argc_, char ** argv_)
     bool draw = false;
     bool do_sector = false;
     bool do_identity = false;
-    bool do_cut = false;
 
     int iarg = 1;
     while (iarg < argc_) {

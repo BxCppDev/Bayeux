@@ -882,7 +882,6 @@ namespace geomtools {
   void tube::generate_wires_self(wires_type & wires_,
                                  uint32_t options_) const
   {
-    // std::cerr << "DEVEL: tube::generate_wires_self: " << "Entering..." << std::endl;
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
 
     // bool debug_explode    = options_ & WR_BASE_EXPLODE;
@@ -890,8 +889,8 @@ namespace geomtools {
     bool draw_top         = !(options_ & WR_TUBE_NO_TOP_FACE);
     bool draw_inner       = !(options_ & WR_TUBE_NO_INNER_FACE);
     bool draw_outer       = !(options_ & WR_TUBE_NO_OUTER_FACE);
-    bool draw_start_angle = !(options_ & WR_TUBE_NO_START_ANGLE_FACE);
-    bool draw_stop_angle  = !(options_ & WR_TUBE_NO_STOP_ANGLE_FACE);
+    // bool draw_start_angle = !(options_ & WR_TUBE_NO_START_ANGLE_FACE);
+    // bool draw_stop_angle  = !(options_ & WR_TUBE_NO_STOP_ANGLE_FACE);
 
     bool draw_boundings   =  (options_ & WR_BASE_BOUNDINGS);
     if (draw_boundings) {
@@ -977,7 +976,6 @@ namespace geomtools {
       outer_side_face.generate_wires(wires_, outer_side_face_placement, options);
     }
 
-    // std::cerr << "DEVEL: tube::generate_wires_self: " << "Exiting." << std::endl;
     return;
   }
 

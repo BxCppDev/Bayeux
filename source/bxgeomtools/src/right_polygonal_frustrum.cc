@@ -528,7 +528,6 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Frustrum is not valid !");
     face_.reset();
     if (has_top_face()) {
-      double z = get_z();
       double itr = 0.0;
       if (has_inner_top_radius()) {
         itr = get_inner_top_radius();
@@ -593,7 +592,6 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Frustrum is not valid !");
     face_.reset();
     if (has_bottom_face()) {
-      double z = get_z();
       double ibr = 0.0;
       if (has_inner_bottom_radius()) {
         ibr = get_inner_bottom_radius();
@@ -953,14 +951,6 @@ namespace geomtools {
     if (! is_valid()) {
       return v;
     }
-    double ibr = 0.0;
-    double itr = 0.0;
-    if (has_inner_bottom_radius()) {
-      ibr = _inner_bottom_radius_;
-    }
-    if (has_inner_top_radius()) {
-      itr = _inner_top_radius_;
-    }
     double vin = 0.0;
     double vout = 0.0;
     // XXX
@@ -1000,19 +990,12 @@ namespace geomtools {
       lunit = datatools::units::get_length_unit_from(lunit_str);
     }
 
-    double aunit = CLHEP::degree;
-    if (config_.has_key("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string("angle_unit");
-      aunit = datatools::units::get_angle_unit_from(aunit_str);
-    }
-
-
     DT_THROW_IF (! config_.has_key("n_sides"), std::logic_error,
                  "Missing frustrum 'n_sides' property !");
     unsigned int n_sides = 0;
     if (config_.has_key("n_sides")) {
       int ns = config_.fetch_integer("n_sides");
-      DT_THROW_IF (ns < MIN_NUMBER_OF_SIDES, std::logic_error,
+      DT_THROW_IF (ns < (int)MIN_NUMBER_OF_SIDES, std::logic_error,
                    "Invalid number of sides !");
       n_sides = (unsigned int) ns;
     }
@@ -1361,7 +1344,7 @@ namespace geomtools {
                                                      uint32_t options_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid conical frustrum!");
-    bool debug_explode    = options_ & WR_BASE_EXPLODE;
+    // bool debug_explode    = options_ & WR_BASE_EXPLODE;
     bool draw_bottom      = !(options_ & WR_RPF_NO_BOTTOM_FACE);
     bool draw_top         = !(options_ & WR_RPF_NO_TOP_FACE);
     bool draw_inner       = !(options_ & WR_RPF_NO_INNER_FACE);
@@ -1377,13 +1360,10 @@ namespace geomtools {
     // Extract base rendering options:
     uint32_t base_options = options_ & WR_BASE_MASK;
 
-    double explode_factor = 1.0;
-    if (debug_explode) {
-      explode_factor = 1.25;
-    }
-
-    bool edge_top = false;
-    bool edge_bottom = false;
+    // double explode_factor = 1.0;
+    // if (debug_explode) {
+    //   explode_factor = 1.25;
+    // }
 
     if (draw_bottom && has_bottom_face()) {
       composite_surface bottom_face;
@@ -1391,7 +1371,6 @@ namespace geomtools {
       compute_bottom_face(bottom_face, bottom_pl);
       uint32_t options = base_options;
       bottom_face.generate_wires(wires_, bottom_pl, options);
-      edge_bottom = true;
     }
 
     if (draw_top && has_top_face()) {
@@ -1402,7 +1381,6 @@ namespace geomtools {
       //           << "Top face = " << top_face.get_number_of_surfaces() << std::endl;
       uint32_t options = base_options;
       top_face.generate_wires(wires_, top_pl, options);
-      edge_top = true;
     }
 
     if (has_inner_face()) {

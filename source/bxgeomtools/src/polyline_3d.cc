@@ -196,7 +196,7 @@ namespace geomtools {
         if (devel) std::cerr << "DEVEL:   v0 = " << v0 << std::endl;
         if (devel) std::cerr << "DEVEL:   v1 = " << v1 << std::endl;
         line_3d segment(v0, v1);
-        if (segment.is_on_curve(position_, tolerance_)) {
+        if (segment.is_on_curve(position_, tolerance)) {
           on_curve = true;
         }
         i = j;
@@ -207,7 +207,7 @@ namespace geomtools {
       if (is_closed()) {
         j = _points_.begin();
         line_3d segment(*i, *_points_.begin());
-        if (segment.is_on_curve(position_, tolerance_)) {
+        if (segment.is_on_curve(position_, tolerance)) {
           on_curve = true;
         }
       }

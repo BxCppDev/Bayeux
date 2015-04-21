@@ -300,8 +300,8 @@ namespace geomtools {
     return;
   }
 
-  void plane::generate_wires_self(wires_type & wires_,
-                                  uint32_t options_) const
+  void plane::generate_wires_self(wires_type & /*wires_*/,
+                                  uint32_t /*options_*/) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid plane!");
 

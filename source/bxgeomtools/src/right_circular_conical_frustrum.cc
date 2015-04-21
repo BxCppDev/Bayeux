@@ -1003,7 +1003,6 @@ namespace geomtools {
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid conical frustrum!");
     double skin = compute_tolerance(skin_);
-    double angular_tolerance = get_angular_tolerance();
 
     face_identifier mask;
     if (surface_mask_.is_valid()) {
@@ -1373,7 +1372,7 @@ namespace geomtools {
                                                             uint32_t options_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid conical frustrum!");
-    bool debug_explode    = options_ & WR_BASE_EXPLODE;
+    // bool debug_explode    = options_ & WR_BASE_EXPLODE;
     bool draw_bottom      = !(options_ & WR_RCCF_NO_BOTTOM_FACE);
     bool draw_top         = !(options_ & WR_RCCF_NO_TOP_FACE);
     bool draw_inner       = !(options_ & WR_RCCF_NO_INNER_FACE);
@@ -1389,10 +1388,10 @@ namespace geomtools {
     // Extract base rendering options:
     uint32_t base_options = options_ & WR_BASE_MASK;
 
-    double explode_factor = 1.0;
-    if (debug_explode) {
-      explode_factor = 1.25;
-    }
+    // double explode_factor = 1.0;
+    // if (debug_explode) {
+    //   explode_factor = 1.25;
+    // }
 
     bool edge_top = false;
     bool edge_bottom = false;

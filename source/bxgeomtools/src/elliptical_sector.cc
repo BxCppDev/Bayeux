@@ -371,7 +371,7 @@ namespace geomtools {
     double rymax = get_y_radius();
     double drx = (rxmax - rxmin) / (nsamples_r - 1);
     double dry = (rymax - rymin) / (nsamples_r - 1);
-    double dr = std::min(drx, dry);
+    // double dr = std::min(drx, dry);
     double theta_min = 0.0;
     double theta_max = 2 * M_PI;
     if (has_start_angle()) {
@@ -380,7 +380,7 @@ namespace geomtools {
       if (devel) std::cerr << "DEVEL: elliptical_sector::generate_wires_self: theta_min = " << theta_min / CLHEP::degree << std::endl;
       if (devel) std::cerr << "DEVEL: elliptical_sector::generate_wires_self: theta_max = " << theta_max / CLHEP::degree << std::endl;
     }
-    for (int ir = 1; ir < nsamples_r; ir++) {
+    for (size_t ir = 1; ir < nsamples_r; ir++) {
       if (no_ext_edge && (ir == (nsamples_r-1))) continue;
       double rxi = rxmin + ir * drx;
       double ryi = rymin + ir * dry;
@@ -388,7 +388,7 @@ namespace geomtools {
       ellarc.generate_wires_self(wires_, base_options);
     }
 
-    uint32_t nsamples_th = 0;
+    size_t nsamples_th = 0;
     if (has_start_angle()) {
       nsamples_th = 1;
     }
@@ -397,11 +397,11 @@ namespace geomtools {
     }
     if (nsamples_th > 0) {
       double dtheta = (theta_max - theta_min) / (nsamples_th);
-      uint32_t nth_max = nsamples_th;
+      size_t nth_max = nsamples_th;
       if (has_start_angle()) {
         nth_max++;
       }
-      for (int it = 0; it < nth_max; it++) {
+      for (size_t it = 0; it < nth_max; it++) {
         if (has_start_angle()) {
           if (no_start_angle_edge && it == 0) continue;
           if (no_stop_angle_edge && it == (nsamples_th - 1)) continue;
@@ -412,7 +412,7 @@ namespace geomtools {
         if (devel) std::cerr << "DEVEL: elliptical_sector::generate_wires_self:   thetai = "
                              << thetai / CLHEP::degree << " degree" << std::endl;
         {
-          int nth = nsamples_th;
+          size_t nth = nsamples_th;
           int factor = 1;
           // factor = 4;
           if (devel) std::cerr << "DEVEL: elliptical_sector::generate_wires_self:   nth = "

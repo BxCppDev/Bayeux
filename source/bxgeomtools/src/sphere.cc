@@ -710,8 +710,6 @@ namespace geomtools {
     face_placement_.reset();
     if (has_partial_phi()) {
       double start_phi = _start_phi_;
-      double delta_phi = _delta_phi_;
-      double stop_phi = start_phi + delta_phi;
       face_.set_r(_r_);
       if (has_r_min()) {
         face_.set_inner_r(_r_min_);
@@ -722,7 +720,6 @@ namespace geomtools {
         start_theta = _start_theta_;
         delta_theta = _delta_theta_;
       }
-      double stop_theta = start_theta + delta_theta;
       face_.set_start_angle(start_theta);
       face_.set_delta_angle(delta_theta);
       face_placement_.set_translation(0.0, 0.0, 0.0);
@@ -759,7 +756,6 @@ namespace geomtools {
         start_theta = _start_theta_;
         delta_theta = _delta_theta_;
       }
-      double stop_theta = start_theta + delta_theta;
       face_.set_start_angle(start_theta);
       face_.set_delta_angle(delta_theta);
       face_placement_.set_translation(0.0, 0.0, 0.0);
@@ -1295,8 +1291,8 @@ namespace geomtools {
     // Extract base rendering options:
     uint32_t base_options = options_ & WR_BASE_MASK;
 
-    uint32_t nsampling_theta = i_wires_3d_rendering::angular_sampling_from_options(base_options);
-    uint32_t nsampling_phi   = i_wires_3d_rendering::angular_sampling_from_options(base_options);
+    // uint32_t nsampling_theta = i_wires_3d_rendering::angular_sampling_from_options(base_options);
+    // uint32_t nsampling_phi   = i_wires_3d_rendering::angular_sampling_from_options(base_options);
 
     if (has_r_min()) {
 

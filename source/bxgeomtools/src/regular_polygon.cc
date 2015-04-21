@@ -186,7 +186,6 @@ namespace geomtools {
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid regular polygon!");
     double z_tolerance = compute_tolerance(tolerance_);
-    double half_z_tolerance = 0.5 * z_tolerance;
     vector_3d v0, v1, v2;
     v0.set(0.0, 0.0, 0.0);
     double r = get_radius();
@@ -194,7 +193,7 @@ namespace geomtools {
     double theta = 2 * M_PI / get_n_sides();
     v2.set(r * std::cos(theta), r * std::sin(theta), 0.0);
     triangle t(v0, v1, v2);
-    for (int i = 0; i < get_n_sides(); i++) {
+    for (size_t i = 0; i < get_n_sides(); i++) {
       placement p(0.0, 0.0, 0.0, AXIS_Z, i * theta);
       vector_3d pos_c;
       p.mother_to_child(position_, pos_c);
@@ -302,7 +301,7 @@ namespace geomtools {
       double theta = 2 * M_PI / get_n_sides();
       v2.set(r * std::cos(theta), r * std::sin(theta), 0.0);
       triangle t(v0, v1, v2);
-      for (int i = 0; i < get_n_sides(); i++) {
+      for (size_t i = 0; i < get_n_sides(); i++) {
         placement p(0.0, 0.0, 0.0, AXIS_Z, i * theta);
         uint32_t sector_options = base_options;
         if (!with_grid) {

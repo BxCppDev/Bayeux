@@ -850,7 +850,7 @@ namespace geomtools {
     return _supported_solid_types->count(solid_type_) == 1;
   }
 
-  bool gdml_writer::solid_type_is_valid(const std::string & solid_type_)
+  bool gdml_writer::solid_type_is_valid(const std::string & /*solid_type_*/)
   {
     // Not implemented yet
     return true;
@@ -1042,7 +1042,7 @@ namespace geomtools {
   void gdml_writer::add_gdml_elliptical_tube(const std::string & name_,
                                              double dx_, double dy_, double dz_,
                                              const std::string & lunit_str_,
-                                             const std::string & aunit_str_)
+                                             const std::string & /*aunit_str_*/)
   {
     double lunit = datatools::units::get_length_unit_from(lunit_str_);
     //double aunit = datatools::units::get_angle_unit_from(aunit_str_);
@@ -1610,8 +1610,6 @@ namespace geomtools {
                                     const tessellated_solid & t_,
                                     const std::string & lunit_str_)
   {
-    double lunit = datatools::units::get_length_unit_from(lunit_str_);
-
     // Registration of vertices:
     for (tessellated_solid::vertices_col_type::const_iterator i
            = t_.vertices().begin();
@@ -1633,7 +1631,7 @@ namespace geomtools {
            = t_.facets().begin();
          i != t_.facets().end();
          i++) {
-       unsigned int facet_index = i->first;
+       // unsigned int facet_index = i->first;
        const facet34 & facet = i->second;
 
        solids_stream << "<";

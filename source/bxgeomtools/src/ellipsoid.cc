@@ -349,7 +349,6 @@ namespace geomtools {
   {
     DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
     double skin = get_skin(skin_);
-    double angular_tolerance = get_tolerance();
     double hskin = 0.5 * skin;
     double z0 = -_z_radius_;
     double z1 = +_z_radius_;
@@ -393,7 +392,6 @@ namespace geomtools {
   {
     DT_THROW_IF(!is_valid(), std::logic_error, "Ellipsoid is not valid !");
     double skin = get_skin(skin_);
-    double angular_tolerance = get_tolerance();
     double hskin = 0.5 * skin;
     double z0 = -_z_radius_;
     double z1 = +_z_radius_;
@@ -502,6 +500,8 @@ namespace geomtools {
         face_.set_y_radius(_y_radius_ * term);
         face_placement_.set(0.0, 0.0, _top_z_cut_, 0.0, 0.0, 0.0);
       }
+      break;
+    default:
       break;
     }
     return;

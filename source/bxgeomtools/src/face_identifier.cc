@@ -432,7 +432,7 @@ namespace geomtools {
     } else {
       oss << "[";
       if (has_parts()) {
-        for (int ipart = 0; ipart < (int) _parts_.size(); ipart++) {
+        for (size_t ipart = 0; ipart < _parts_.size(); ipart++) {
           uint32_t part = _parts_[ipart];
           if (part == PART_INDEX_NONE) {
             oss << "!";

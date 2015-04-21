@@ -344,6 +344,8 @@ namespace geomtools {
       case FACE_TOP:
         finfo.set_label("top");
         break;
+      default:
+        break;
       }
       nfaces++;
     }
@@ -469,7 +471,7 @@ namespace geomtools {
   }
 
   vector_3d
-  box::get_normal_on_surface(const vector_3d & a_position,
+  box::get_normal_on_surface(const vector_3d & /*a_position*/,
                              const face_identifier & a_surface_bit) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
@@ -643,7 +645,7 @@ namespace geomtools {
                                 uint32_t options_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid box!");
-    bool debug_explode = options_ & WR_BASE_EXPLODE;
+    // bool debug_explode = options_ & WR_BASE_EXPLODE;
     bool draw_back   = !(options_ & WR_BOX_NO_BACK_FACE);
     bool draw_front  = !(options_ & WR_BOX_NO_FRONT_FACE);
     bool draw_left   = !(options_ & WR_BOX_NO_LEFT_FACE);

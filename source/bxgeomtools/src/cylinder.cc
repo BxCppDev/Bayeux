@@ -555,6 +555,8 @@ namespace geomtools {
       face_placement_.set(0.0, 0.0, +0.5 * _z_,
                           0.0, 0.0, 0.0);
       break;
+    default:
+      break;
     }
     return;
   }
@@ -619,7 +621,7 @@ namespace geomtools {
                                      uint32_t options_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid cylinder!");
-    bool debug_explode = options_ & WR_BASE_EXPLODE;
+    // bool debug_explode = options_ & WR_BASE_EXPLODE;
     bool draw_bottom = !(options_ & WR_CYL_NO_BOTTOM_FACE);
     bool draw_top    = !(options_ & WR_CYL_NO_TOP_FACE);
     bool draw_side   = !(options_ & WR_CYL_NO_SIDE_FACE);
@@ -632,11 +634,6 @@ namespace geomtools {
 
     // Keep only base rendering bits:
     uint32_t base_options = options_ & WR_BASE_MASK;
-
-    double factor = 1.0;
-    if (debug_explode) {
-      factor = 1.25;
-    }
 
     bool edge_top = false;
     bool edge_bottom = false;

@@ -297,7 +297,7 @@ namespace geomtools {
       t1 = t0 + get_delta_angle();
     }
     double dtheta = (t1 - t0) / nsamples_angle;
-    for (int it = 0; it <= nsamples_angle; it++) {
+    for (size_t it = 0; it <= nsamples_angle; it++) {
       double thetai = t0 + it * dtheta;
       vector_3d v(get_r() * std::cos(thetai),
                   get_r() * std::sin(thetai),

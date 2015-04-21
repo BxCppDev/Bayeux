@@ -117,7 +117,7 @@ namespace geomtools {
     DT_THROW_IF(! is_valid(), std::logic_error, "Polycone is not valid !");
     f_.reset();
     positioning_.reset();
-    DT_THROW_IF(index_ < 0 || index_ >= number_of_frustra(),
+    DT_THROW_IF(index_ < 0 || index_ >= (int)number_of_frustra(),
                 std::range_error,
                 "Invalid frustrum index [" << index_ << "]!");
     frustrum_data fd;
@@ -331,7 +331,7 @@ namespace geomtools {
     face_.reset();
     positioning_.reset();
     // Outer side face:
-    for (int i = 0; i < number_of_frustra(); i++) {
+    for (size_t i = 0; i < number_of_frustra(); i++) {
       geomtools::face_info & finfo = face_.add();
       right_circular_conical_nappe & rccn = finfo.add_face<right_circular_conical_nappe>();
       compute_outer_face(rccn, finfo.grab_positioning(), i);
@@ -349,7 +349,7 @@ namespace geomtools {
     positioning_.reset();
     if (has_inner_face()) {
       // Inner side face:
-      for (int i = 0; i < number_of_frustra(); i++) {
+      for (size_t i = 0; i < number_of_frustra(); i++) {
         geomtools::face_info & finfo = face_.add();
         right_circular_conical_nappe & rccn = finfo.add_face<right_circular_conical_nappe>();
         compute_inner_face(rccn, finfo.grab_positioning(), i);
@@ -368,7 +368,7 @@ namespace geomtools {
     positioning_.reset();
     if (has_partial_angle()) {
       // Inner side face:
-      for (int i = 0; i < number_of_frustra(); i++) {
+      for (size_t i = 0; i < number_of_frustra(); i++) {
         geomtools::face_info & finfo = face_.add();
         if (get_start_stop_angle_face_type(i) == right_circular_conical_frustrum::SSAF_QUADRANGLE) {
           quadrangle & q = finfo.add_face<quadrangle>();
@@ -397,7 +397,7 @@ namespace geomtools {
     positioning_.reset();
     if (has_partial_angle()) {
       // Inner side face:
-      for (int i = 0; i < number_of_frustra(); i++) {
+      for (size_t i = 0; i < number_of_frustra(); i++) {
         geomtools::face_info & finfo = face_.add();
         if (get_start_stop_angle_face_type(i) == right_circular_conical_frustrum::SSAF_QUADRANGLE) {
           quadrangle & q = finfo.add_face<quadrangle>();
@@ -1601,9 +1601,6 @@ namespace geomtools {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid polycone!");
     vector_3d normal;
     invalidate(normal);
-    const double x = position_.x();
-    const double y = position_.y();
-    const double z = position_.z();
     switch(surface_bit_.get_face_bits()) {
     case FACE_BOTTOM:
       if (has_bottom_face()) {
@@ -1616,7 +1613,7 @@ namespace geomtools {
       }
       break;
     case FACE_OUTER_SIDE:
-      for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+      for (size_t i = 0; i < number_of_frustra(); i++) {
         right_circular_conical_nappe outer_nappe;
         placement pl_nappe;
         compute_outer_face(outer_nappe, pl_nappe, i);
@@ -1629,7 +1626,7 @@ namespace geomtools {
       break;
     case FACE_INNER_SIDE:
       if (has_inner_face()) {
-        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        for (size_t i = 0; i < number_of_frustra(); i++) {
           right_circular_conical_nappe inner_nappe;
           placement pl_nappe;
           compute_inner_face(inner_nappe, pl_nappe, i);
@@ -1645,7 +1642,7 @@ namespace geomtools {
       }
     case FACE_START_ANGLE:
       if (has_partial_angle()) {
-        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        for (size_t i = 0; i < number_of_frustra(); i++) {
           quadrangle qface;
           triangle tface;
           placement pl_face;
@@ -1664,7 +1661,7 @@ namespace geomtools {
       break;
     case FACE_STOP_ANGLE:
       if (has_partial_angle()) {
-        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        for (size_t i = 0; i < number_of_frustra(); i++) {
           quadrangle qface;
           triangle tface;
           placement pl_face;
@@ -1969,7 +1966,7 @@ namespace geomtools {
 
       if (draw_start_angle) {
         if (devel) std::cerr << "polycone::generate_wires_self: draw start angle..." << std::endl;
-        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        for (size_t i = 0; i < number_of_frustra(); i++) {
           quadrangle qface;
           triangle tface;
           placement pl_face;
@@ -1982,7 +1979,7 @@ namespace geomtools {
 
       if (draw_stop_angle) {
         if (devel) std::cerr << "polycone::generate_wires_self: draw stop angle..." << std::endl;
-        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        for (size_t i = 0; i < number_of_frustra(); i++) {
           quadrangle qface;
           triangle tface;
           placement pl_face;

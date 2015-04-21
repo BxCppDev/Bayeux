@@ -561,7 +561,7 @@ namespace geomtools {
   }
 
   vector_3d
-  extruded_box::get_normal_on_surface (const vector_3d & a_position,
+  extruded_box::get_normal_on_surface (const vector_3d & /*a_position*/,
                                        const face_identifier & a_surface_bit) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
@@ -621,8 +621,7 @@ namespace geomtools {
                                            double skin_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid extruded box!");
-    double skin = compute_tolerance(skin_);
-    double hskin = 0.5 * skin;
+    const double skin = compute_tolerance(skin_);
     face_identifier mask;
     if (surface_mask_.is_valid()) {
       DT_THROW_IF(! surface_mask_.is_face_bits_mode(), std::logic_error,

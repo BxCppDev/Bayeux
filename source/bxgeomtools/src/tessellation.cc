@@ -1533,7 +1533,7 @@ namespace geomtools {
     get_bounding_data().compute_bounding_box_face_centers(fcs, 2 * skin);
     vector_3d target;
     double dist_to_target = -1.0;
-    for (int i = 0; (int) i < fcs.size(); i++) {
+    for (size_t i = 0; i < fcs.size(); i++) {
       double dist = (position_ - fcs[i]).mag();
       if (dist_to_target < 0.0 || dist < dist_to_target) {
         dist = dist_to_target;
@@ -1571,7 +1571,7 @@ namespace geomtools {
     get_bounding_data().compute_bounding_box_face_centers(fcs, 2 * skin);
     vector_3d target;
     double dist_to_target = -1.0;
-    for (int i = 0; (int) i < fcs.size(); i++) {
+    for (size_t i = 0; i < fcs.size(); i++) {
       double dist = (position_ - fcs[i]).mag();
       if (dist_to_target < 0.0 || dist < dist_to_target) {
         dist = dist_to_target;
@@ -1635,7 +1635,7 @@ namespace geomtools {
       mask.set_face_index_any();
     }
     unsigned int facet_index;
-    if (_on_facet(position_, facet_index, skin_)) {
+    if (_on_facet(position_, facet_index, skin)) {
        return face_identifier(facet_index, face_identifier::MODE_FACE_INDEX);
     }
     return face_identifier::face_invalid();
@@ -2028,7 +2028,7 @@ namespace geomtools {
     bool all_segments = (options_ & WR_TESSELLA_ALL_SEGMENTS);
 
     // Keep only base rendering bits:
-    uint32_t base_options = options_ & WR_BASE_MASK;
+    // uint32_t base_options = options_ & WR_BASE_MASK;
 
     if (! all_segments) {
       for (facet_segments_col_type::const_iterator iseg = _facet_segments_.begin();

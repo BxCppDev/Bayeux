@@ -71,7 +71,7 @@ namespace geomtools {
   }
 
   // virtual
-  double triangle::get_surface(uint32_t flags_) const
+  double triangle::get_surface(uint32_t /*flags_*/) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid triangle!");
     const geomtools::vector_3d u01 = (get_vertex_1() - get_vertex_0());
@@ -358,7 +358,6 @@ namespace geomtools {
     bool res = p.find_intercept(from_, direction_, intercept_, tolerance);
     if (res) {
       // std::cerr << "triangle::find_intercept: " << "Found an intercept on the plane (v0, v1, v2)" << std::endl;
-      double xI, yI, zI;
       if (!is_on_surface(intercept_.get_impact(), tolerance)) {
         intercept_.reset();
       }
@@ -437,7 +436,6 @@ namespace geomtools {
       segment.push_back(get_vertex_0());
     }
 
-    uint32_t nsamples_r = 1;
     if (base_options & i_wires_3d_rendering::WR_BASE_GRID) {
       vector_3d u0 = get_vertex_1() - get_vertex_0();
       double l0 = u0 .mag();
@@ -448,7 +446,7 @@ namespace geomtools {
       uint32_t nsamples_12 = linear_sampling_from_options(base_options);
       double dl0 = l0 / (nsamples_12 - 1);
       double dl1 = l1 / (nsamples_12 - 1);
-      for (int i = 1; i < nsamples_12 - 1; i++) {
+      for (size_t i = 1; i < nsamples_12 - 1; i++) {
         vector_3d p0 = get_vertex_0() + i * dl0 * u0;
         vector_3d p1 = get_vertex_0() + i * dl1 * u1;
         line_3d l01(p0, p1);
@@ -459,7 +457,7 @@ namespace geomtools {
       double l01 = u01 .mag();
       double dl01 = l01 / (nsamples_12 - 1);
       u01 = u01.unit();
-      for (int i = 1; i < nsamples_12 - 1; i++) {
+      for (size_t i = 1; i < nsamples_12 - 1; i++) {
         vector_3d p0 = get_vertex_0();
         vector_3d p1 = get_vertex_1() + i * dl01 * u01;
         line_3d l01(p0, p1);

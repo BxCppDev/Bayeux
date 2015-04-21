@@ -94,12 +94,12 @@ namespace geomtools {
     return;
   }
 
-  composite_surface::composite_surface(double tolerance_)
+  composite_surface::composite_surface(double /*tolerance_*/)
   {
     return;
   }
 
-  composite_surface::composite_surface(double tolerance_, double angular_tolerance_)
+  composite_surface::composite_surface(double /*tolerance_*/, double /*angular_tolerance_*/)
   {
     return;
   }

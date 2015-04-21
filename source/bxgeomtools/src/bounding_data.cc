@@ -254,7 +254,7 @@ namespace geomtools {
     return;
   }
 
-  void bounding_data::compute_bounding_box_vertexes(std::vector<vector_3d> & vertexes_, double safe_skin_) const
+  void bounding_data::compute_bounding_box_vertexes(std::vector<vector_3d> & vertexes_, double /*safe_skin_*/) const
   {
     vertexes_.clear();
     box bb;
@@ -436,7 +436,7 @@ namespace geomtools {
   }
 
   void bounding_data::generate_wires_self(wires_type & wires_,
-                                          uint32_t options_) const
+                                          uint32_t /*options_*/) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid bounding data!");
 

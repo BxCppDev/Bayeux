@@ -26,7 +26,7 @@ int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try {
-    bool interactive = false;
+    // bool interactive = false;
     bool debug = false;
     bool outer = true;
     bool inner = true;
@@ -45,7 +45,7 @@ int main (int argc_, char ** argv_)
     while (iarg < argc_) {
       std::string arg = argv_[iarg];
 
-      if (arg == "-r" || arg == "--interactive") interactive = true;
+      // if (arg == "-r" || arg == "--interactive") interactive = true;
       if (arg == "-I" || arg == "--identity") do_identity = true;
       if (arg == "-D" || arg == "--draw") draw = true;
       if (arg == "-B" || arg == "--bulk") bulk = true;

@@ -51,6 +51,7 @@ namespace geomtools {
     case SL_VERY_HIGH : return 45;
     case SL_HUGE      : return 135;
     }
+    return 0;
   }
 
   // static
@@ -86,6 +87,7 @@ namespace geomtools {
     case SL_VERY_HIGH : return 128;
     case SL_HUGE      : return 256;
     }
+    return 0;
   }
 
   // static
@@ -170,11 +172,10 @@ namespace geomtools {
 
   void save_wires(std::ostream & out_, const wires_type & wires_, uint32_t /* flags_ */)
   {
-    bool gnuplot_trick = true;
     for (wires_type::const_iterator i = wires_.begin();
          i != wires_.begin();
          i++) {
-      gnuplot_draw::basic_draw_polyline(out_, *i, true);
+      gnuplot_draw::basic_draw_polyline(out_, *i);
     }
     return;
   }

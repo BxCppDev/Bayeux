@@ -103,7 +103,7 @@ int main (int argc_, char ** argv_)
     {
       // Draw vertexes (index 3):
       tmp_file.out() << "# vertexes " << std::endl;
-      for (int i = 0; i < my_regular_polygon.get_n_sides(); i++) {
+      for (size_t i = 0; i < my_regular_polygon.get_n_sides(); i++) {
         geomtools::vector_3d vi;
         my_regular_polygon.get_vertex(i, vi);
         geomtools::gnuplot_draw::draw_vertex(tmp_file.out(),

@@ -73,7 +73,6 @@ int main (int argc_, char ** argv_)
       // z = 2.0;
       geomtools::vector_3d pos(rho * std::cos(theta), rho * std::sin(theta), z);
       geomtools::vector_3d proj;
-      double tolerance = 0.05;
       std::clog << "x_radius = " << my_ellipse.get_x_radius() << std::endl;
       std::clog << "y_radius = " << my_ellipse.get_y_radius() << std::endl;
       std::clog << "rho      = " << rho << std::endl;

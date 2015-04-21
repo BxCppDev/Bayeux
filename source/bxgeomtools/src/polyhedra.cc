@@ -104,7 +104,7 @@ namespace geomtools {
     DT_THROW_IF(! is_valid(), std::logic_error, "Polyhedra is not valid !");
     f_.reset();
     positioning_.reset();
-    DT_THROW_IF(index_ < 0 || index_ >= number_of_frustra(),
+    DT_THROW_IF(index_ < 0 || index_ >= (int)number_of_frustra(),
                 std::range_error,
                 "Invalid frustrum index [" << index_ << "]!");
     frustrum_data fd;
@@ -218,7 +218,7 @@ namespace geomtools {
     face_.reset();
     positioning_.reset();
     // Outer side face:
-    for (int i = 0; i < number_of_frustra(); i++) {
+    for (size_t i = 0; i < number_of_frustra(); i++) {
       geomtools::face_info & finfo = face_.add();
       composite_surface & cs = finfo.add_face<composite_surface>();
       compute_outer_face(cs, finfo.grab_positioning(), i);
@@ -238,7 +238,7 @@ namespace geomtools {
     positioning_.reset();
     if (has_inner_face()) {
       // Inner side face:
-      for (int i = 0; i < number_of_frustra(); i++) {
+      for (size_t i = 0; i < number_of_frustra(); i++) {
         geomtools::face_info & finfo = face_.add();
         composite_surface & cs = finfo.add_face<composite_surface>();
         compute_inner_face(cs, finfo.grab_positioning(), i);
@@ -1191,9 +1191,6 @@ namespace geomtools {
     DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
     vector_3d normal;
     invalidate(normal);
-    const double x = position_.x();
-    const double y = position_.y();
-    const double z = position_.z();
     switch(surface_bit_.get_face_bits()) {
     case FACE_BOTTOM:
       if (has_bottom_face()) {
@@ -1207,7 +1204,7 @@ namespace geomtools {
       break;
     case FACE_OUTER_SIDE:
       // XXX
-      for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+      for (size_t i = 0; i < number_of_frustra(); i++) {
         composite_surface outer;
         placement pl_outer;
         compute_outer_face(outer, pl_outer, i);
@@ -1221,7 +1218,7 @@ namespace geomtools {
     case FACE_INNER_SIDE:
       // XXX
       if (has_inner_face()) {
-        for (unsigned int i = 0; i < (int) number_of_frustra(); i++) {
+        for (size_t i = 0; i < number_of_frustra(); i++) {
           composite_surface inner;
           placement pl_inner;
           compute_inner_face(inner, pl_inner, i);

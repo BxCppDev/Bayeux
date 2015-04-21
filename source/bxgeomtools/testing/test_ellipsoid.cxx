@@ -27,7 +27,6 @@ int main (int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try {
 
-    bool interactive = false;
     bool side   = true;
     bool top    = true;
     bool bottom = true;

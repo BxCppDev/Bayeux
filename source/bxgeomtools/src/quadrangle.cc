@@ -416,7 +416,6 @@ namespace geomtools {
     plane p(get_vertex_0(), get_vertex_1() - get_vertex_0(),  get_vertex_2() - get_vertex_0());
     bool res = p.find_intercept(from_, direction_, intercept_, tolerance_);
     if (res) {
-      double xI, yI, zI;
       if (!is_on_surface(intercept_.get_impact(), tolerance_)) {
         intercept_.reset();
       }
@@ -474,8 +473,6 @@ namespace geomtools {
 
     uint32_t base_options = options_ & WR_BASE_MASK;
 
-    bool do_it = false;
-
     if (!no_first_edge) {
       {
         polyline_type dummy;
@@ -516,7 +513,6 @@ namespace geomtools {
       segment.push_back(get_vertex_0());
     }
 
-    uint32_t nsamples_r = 1;
     if (base_options & i_wires_3d_rendering::WR_BASE_GRID) {
 
       vector_3d u03 = get_vertex_3() - get_vertex_0();
@@ -528,7 +524,7 @@ namespace geomtools {
       uint32_t nsamples_03_12  = linear_sampling_from_options(base_options);
       double dl03 = l03 / (nsamples_03_12 - 1);
       double dl12 = l12 / (nsamples_03_12 - 1);
-      for (int i = 1; i < nsamples_03_12 - 1; i++) {
+      for (size_t i = 1; i < nsamples_03_12 - 1; i++) {
         vector_3d p03 =  get_vertex_0() + i * dl03 * u03;
         vector_3d p12 =  get_vertex_1() + i * dl12 * u12;
         line_3d segment(p03, p12);
@@ -544,7 +540,7 @@ namespace geomtools {
       uint32_t nsamples_01_32  = linear_sampling_from_options(base_options);
       double dl01 = l01 / (nsamples_01_32 - 1);
       double dl32 = l32 / (nsamples_01_32 - 1);
-      for (int i = 1; i < nsamples_01_32 - 1; i++) {
+      for (size_t i = 1; i < nsamples_01_32 - 1; i++) {
         vector_3d p01 =  get_vertex_0() + i * dl01 * u01;
         vector_3d p32 =  get_vertex_3() + i * dl32 * u32;
         line_3d segment(p01, p32);

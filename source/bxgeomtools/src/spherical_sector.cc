@@ -215,13 +215,10 @@ namespace geomtools {
         delta_theta = _delta_theta_;
       }
       double stop_theta = start_theta + delta_theta;
-      double start_phi = 0.0;
       double delta_phi = 2 * M_PI;
       if (has_start_phi()) {
-        start_phi = _start_phi_;
         delta_phi = _delta_phi_;
       }
-      double stop_phi = start_phi + delta_phi;
       s = _radius_ * _radius_ *(delta_phi) *
         (std::cos(start_theta) - std::cos(stop_theta));
     }
@@ -468,7 +465,7 @@ namespace geomtools {
         uint32_t nsamples_z = linear_sampling_from_options(base_options);
         double dz = (z1 - z0) / (nsamples_z - 1);
         std::cerr << "DEVEL: dz=" << dz / CLHEP::mm << " mm" << std::endl;
-        for (int iz = 0; iz <= nsamples_z; iz++) {
+        for (size_t iz = 0; iz <= nsamples_z; iz++) {
           double z = z0 + iz * dz;
           std::cerr << "DEVEL: z=" << z / CLHEP::mm << " mm" << std::endl;
           //        circle arc(_radius_ * std::cos(std::asin(z/_radius_)));

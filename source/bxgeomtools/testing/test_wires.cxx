@@ -408,7 +408,7 @@ int main(int argc_, char ** argv_)
         if (in_count) {
           if (plot_in) {
             plot_cmd << (index?",":"")  << " '" << tmp_file.get_filename()
-                     << "' index " << index++ << " title 'In segments' with lines lt 2 lw 3";
+                     << "' index " << index << " title 'In segments' with lines lt 2 lw 3";
           }
           index++;
         }

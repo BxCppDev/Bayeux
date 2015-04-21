@@ -315,8 +315,6 @@ namespace geomtools {
       return false;
     }
     bool gp_trick_done = false;
-    const vector_3d * first = 0;
-    const vector_3d * second = 0;
     polyline_type::const_iterator i = wire_.begin();
     if (gnuplot_trick_) {
       if (wire_.size() > 1) {
@@ -1414,7 +1412,6 @@ namespace geomtools {
                             uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     s_.generate_wires_self(wires, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
   }
@@ -1426,7 +1423,6 @@ namespace geomtools {
                             uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     s_.generate_wires(wires, p_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
   }
@@ -1439,7 +1435,6 @@ namespace geomtools {
                             uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     s_.generate_wires(wires, pos_, rot_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
   }
@@ -1486,7 +1481,6 @@ namespace geomtools {
                                uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     e_.generate_wires(wires, pl_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
   }
@@ -1499,7 +1493,6 @@ namespace geomtools {
                                uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     e_.generate_wires(wires, pos_, rot_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
   }
@@ -1660,7 +1653,6 @@ namespace geomtools {
                               uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     p_.generate_wires_self(wires, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1673,7 +1665,6 @@ namespace geomtools {
                               uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     p_.generate_wires(wires, pl_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1687,7 +1678,6 @@ namespace geomtools {
                               uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     p_.generate_wires(wires, position_, rotation_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1805,7 +1795,6 @@ namespace geomtools {
                                uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     p_.generate_wires_self(wires, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1818,7 +1807,6 @@ namespace geomtools {
                                uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     p_.generate_wires(wires, pl_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1832,7 +1820,6 @@ namespace geomtools {
                                uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     p_.generate_wires(wires, position_, rotation_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1952,7 +1939,6 @@ namespace geomtools {
                                  uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     ts_.generate_wires_self(wires, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1965,7 +1951,6 @@ namespace geomtools {
                                  uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     ts_.generate_wires(wires, placement_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -1979,7 +1964,6 @@ namespace geomtools {
                                  uint32_t options_)
   {
     wires_type wires;
-    uint32_t options = options_;
     ts_.generate_wires(wires, position_, rotation_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
@@ -2026,7 +2010,6 @@ namespace geomtools {
     basic_draw_polyline(out_, polyline_facet);
     }
 
-    /*
     polyline_type polyline_facet;
     uint32_t last_nvtx = 0;
     for(tessellated_solid::facets_col_type::const_iterator i
@@ -2188,8 +2171,6 @@ namespace geomtools {
                                 const i_object_3d & o_,
                                 uint32_t options_)
   {
-    const vector_3d & pos = position_;
-    const rotation_3d & rot = rotation_;
     placement pl(position_, rotation_);
     basic_draw(out_, pl, o_, options_);
     return;

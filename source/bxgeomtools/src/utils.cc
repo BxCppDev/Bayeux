@@ -649,6 +649,8 @@ namespace geomtools {
       r2.rotateX(-angle1_);
       r3.rotateZ(-angle2_);
       break;
+    default:
+      break;
     }
     rot_ = r3 * r2 * r1;
     return;
