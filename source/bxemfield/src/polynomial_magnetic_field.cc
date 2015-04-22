@@ -56,7 +56,7 @@ namespace emfield {
                                                         double /* time_ */,
                                                         geomtools::vector_3d & magnetic_field_) const
   {
-    DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE POLYNOMIAL MAGNETIC FIELD ***");
+    // DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE POLYNOMIAL MAGNETIC FIELD ***");
     geomtools::invalidate(magnetic_field_);
 
     const double x = position_.x();
