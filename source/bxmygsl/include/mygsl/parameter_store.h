@@ -101,15 +101,15 @@ namespace mygsl {
       //! Value is set
       bool is_value_set() const;
 
-      void set_boolean_value(bool);
+      void set_boolean_value(bool, bool update_ = true);
 
-      void set_integer_value(int);
+      void set_integer_value(int, bool update_ = true);
 
-      void set_real_value(double);
+      void set_real_value(double, bool update_ = true);
 
-      void set_string_value(const std::string &);
+      void set_string_value(const std::string &, bool update_ = true);
 
-      void unset_value();
+      void unset_value(bool update_ = true);
 
       bool to_boolean() const;
 
@@ -135,6 +135,7 @@ namespace mygsl {
 
     //! \brief Subscriber
     struct i_subscriber {
+      /// Action performed when parameters have changed
       virtual void update_parameters() = 0;
     };
 
@@ -182,6 +183,9 @@ namespace mygsl {
     //! Return the index associated to a parameter given its name
     int get_parameter_index(const std::string & parameter_name_) const;
 
+    //! Update
+    void update();
+
     //! Main interface method for smart dump
     virtual void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_  = "",
@@ -199,13 +203,14 @@ namespace mygsl {
 
   protected:
 
+    //! Update parameters action
     void _update_parameters();
 
   private:
 
-    parameter_dict_type        _parameters_; //!< Dictionary of parameters
+    parameter_dict_type        _parameters_;         //!< Dictionary of parameters
     indexed_parameter_col_type _indexed_parameters_; //!< Array of indexed parameters
-    std::list<i_subscriber*>   _subscribers_; //! List of subscribers
+    std::list<i_subscriber*>   _subscribers_;        //! List of subscribers
 
   };
 

@@ -131,43 +131,43 @@ namespace mygsl {
     return _value_set_;
   }
 
-  void parameter_store::parameter_record::set_boolean_value(bool val_)
+  void parameter_store::parameter_record::set_boolean_value(bool val_, bool update_)
   {
     _value_set_ = true;
     _value_ = val_;
-    _parent_->_update_parameters();
+    if (update_) _parent_->_update_parameters();
     return;
   }
 
-  void parameter_store::parameter_record::set_integer_value(int val_)
+  void parameter_store::parameter_record::set_integer_value(int val_, bool update_)
   {
     _value_set_ = true;
     _value_ = val_;
-    _parent_->_update_parameters();
+    if (update_) _parent_->_update_parameters();
     return;
   }
 
-  void parameter_store::parameter_record::set_real_value(double val_)
+  void parameter_store::parameter_record::set_real_value(double val_, bool update_)
   {
     _value_set_ = true;
     _value_ = val_;
-    _parent_->_update_parameters();
+    if (update_) _parent_->_update_parameters();
     return;
   }
 
-  void parameter_store::parameter_record::set_string_value(const std::string & val_)
+  void parameter_store::parameter_record::set_string_value(const std::string & val_, bool update_)
   {
     _value_set_ = true;
     _value_ = val_;
-    _parent_->_update_parameters();
+    if (update_) _parent_->_update_parameters();
     return;
   }
 
-  void parameter_store::parameter_record::unset_value()
+  void parameter_store::parameter_record::unset_value(bool update_)
   {
     _value_set_ = false;
     _value_ = std::numeric_limits<double>::quiet_NaN();
-    _parent_->_update_parameters();
+    if (update_) _parent_->_update_parameters();
     return;
   }
 
@@ -300,6 +300,12 @@ namespace mygsl {
     DT_THROW_IF(found == _parameters_.end(),
                 std::logic_error, "Parameter with name '" << name_ << "' does not exist!");
     return found->second;
+  }
+
+  void parameter_store::update()
+  {
+    _update_parameters();
+    return;
   }
 
   void parameter_store::tree_dump(std::ostream & out_,

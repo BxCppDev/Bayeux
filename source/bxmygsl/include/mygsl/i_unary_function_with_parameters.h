@@ -105,10 +105,10 @@ namespace mygsl {
     //! Evaluation
     double _eval(double x_) const;
 
-    //! Evaluation from parameters
+    //! Evaluation from parameters of the store
     virtual double _eval_from_parameters(double x_) const = 0;
 
-    //! Action to perform when some parameters have changed
+    //! Action to perform when some parameters of the store have changed
     virtual void _at_parameters_change() = 0;
 
   private:
