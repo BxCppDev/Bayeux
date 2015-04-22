@@ -296,7 +296,6 @@ namespace emfield {
     // Initialization :
     _construct_();
 
-    bool build_geom_map = false;
     if (setup_.has_flag("build_geom_map")) {
       datatools::properties geomap_config;
       if (setup_.has_key("geom_map_config")) {
