@@ -133,70 +133,98 @@ namespace emfield {
     return;
   }
 
-  void electromagnetic_field_manager::_construct_ ()
+  void electromagnetic_field_manager::_construct_()
   {
+    // Create a EM field factory:
+    uint32_t factory_flags = 0;
+    if (_factory_verbose_) {
+      factory_flags |= base_electromagnetic_field::factory_register_type::verbose;
+    }
+    _factory_register_.reset(new emfield_factory_type("emfield::base_electromagnetic_field/manager",
+                                                      factory_flags));
+    if (_factory_preload_) {
+      DT_LOG_DEBUG(_logging_priority_, "Importing EM field factories from the system register...");
+      _factory_register_->import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(::emfield::base_electromagnetic_field));
+    }
+
+    // Create EM fields from parameters:
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
            = _field_definitions_.ordered_entries ().begin ();
          i != _field_definitions_.ordered_entries ().end ();
-         i++)
-      {
+         i++) {
         const datatools::multi_properties::entry * ptr_entry = *i;
         const datatools::multi_properties::entry & e = *ptr_entry;
-        std::string field_name = e.get_key ();
-        DT_THROW_IF (_fields_.find (field_name) != _fields_.end (),
+        std::string field_name = e.get_key();
+        DT_THROW_IF(_fields_.find(field_name) != _fields_.end(),
                      std::logic_error,
                      "A field named '" << field_name << "' already exists !");
 
-        const std::string field_type = e.get_meta ();
-        DT_THROW_IF (! _factory_register_.has (field_type),
+        const std::string field_type = e.get_meta();
+        DT_THROW_IF(! _factory_register_->has(field_type),
                      std::logic_error,
                      "No registered EM field class with ID '"
                      << field_type << "' for field named '" << field_name << " !");
         const base_electromagnetic_field::factory_register_type::factory_type & the_factory
-          = _factory_register_.get (field_type);
-        DT_LOG_TRACE (get_logging_priority (),
+          = _factory_register_->get(field_type);
+        DT_LOG_TRACE(get_logging_priority(),
                       "About to create a new field of type \"" << field_type
                       << "\" with name \"" << field_name << "\"...");
 
-        base_electromagnetic_field * ptr_field = the_factory ();
-        if (has_service_manager ())
-          {
-            ptr_field->initialize (e.get_properties (), *_service_manager_, _fields_);
-          }
-        else
-          {
-            ptr_field->initialize_with_dictionary_only (e.get_properties (), _fields_);
-          }
-        base_electromagnetic_field::handle_type new_handle (ptr_field);
+        base_electromagnetic_field * ptr_field = the_factory();
+        ptr_field->set_name(field_name);
+        if (has_service_manager()) {
+          ptr_field->initialize(e.get_properties(), *_service_manager_, _fields_);
+        } else {
+          ptr_field->initialize_with_dictionary_only(e.get_properties(), _fields_);
+        }
+        base_electromagnetic_field::handle_type new_handle(ptr_field);
         _fields_[field_name] = new_handle;
-
       }
-    _field_definitions_.reset ();
+    _field_definitions_.reset();
     return;
   }
 
-  electromagnetic_field_manager::electromagnetic_field_manager (uint32_t flags_)
-    : _factory_register_ ("emfield::base_electromagnetic_field/manager",
-                          flags_ & base_electromagnetic_field::DEBUG ?
-                          base_electromagnetic_field::factory_register_type::verbose : 0)
+  void electromagnetic_field_manager::_set_defaults()
+  {
+    _build_geom_map_ = false;
+    _factory_preload_ = true;
+    _factory_verbose_ = false;
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
+    return;
+  }
 
+  void electromagnetic_field_manager::set_factory_preload(bool fp_)
+  {
+    DT_THROW_IF(is_initialized(), std::logic_error, "Manager is locked!");
+    _factory_preload_ = fp_;
+    return;
+  }
+
+  void electromagnetic_field_manager::set_factory_verbose(bool fv_)
+  {
+    DT_THROW_IF(is_initialized(), std::logic_error, "Manager is locked!");
+    _factory_verbose_ = fv_;
+    return;
+  }
+
+  electromagnetic_field_manager::electromagnetic_field_manager(uint32_t flags_)
   {
     _initialized_ = false;
-    if (flags_ & base_electromagnetic_field::DEBUG) set_debug (true);
-
+    _set_defaults();
     _service_manager_ = 0;
     _geom_manager_    = 0;
-    _factory_preload_ =  true;
-
-    const bool preload = _factory_preload_;
-    if (preload)
-      {
-        _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::emfield::base_electromagnetic_field));
-      }
+    if (flags_ & INIT_DEBUG) {
+      set_debug(true);
+    }
+    if (flags_ & INIT_NO_PRELOAD) {
+      set_factory_preload(false);
+    }
+    _service_manager_ = 0;
+    _geom_manager_    = 0;
     return;
   }
 
-  electromagnetic_field_manager::~electromagnetic_field_manager ()
+  electromagnetic_field_manager::~electromagnetic_field_manager()
   {
     if (is_initialized()) {
       reset();
@@ -204,15 +232,56 @@ namespace emfield {
     return;
   }
 
-  void electromagnetic_field_manager::initialize (const datatools::properties & setup_)
+  void electromagnetic_field_manager::initialize(const datatools::properties & setup_)
   {
-    DT_THROW_IF (is_initialized (),
+    DT_THROW_IF (is_initialized(),
                  std::logic_error,
                  "The EM field manager is already initialized !");
 
     // Parse configuration parameters :
-    datatools::logger::priority lp = datatools::logger::extract_logging_configuration (setup_);
+    datatools::logger::priority lp = datatools::logger::extract_logging_configuration(setup_);
     set_logging_priority(lp);
+
+    bool needs_service_manager = false;
+    if(setup_.has_key("needs_service_manager")) {
+      needs_service_manager = setup_.fetch_boolean("needs_service_manager");
+    }
+
+    bool needs_geometry_manager = true;
+    if (setup_.has_key("needs_geometry_manager")) {
+      needs_geometry_manager = setup_.fetch_boolean("needs_geometry_manager");
+    }
+
+    DT_LOG_DEBUG(_logging_priority_,
+                 "needs_service_manager = " << needs_service_manager);
+
+    DT_LOG_DEBUG(_logging_priority_,
+                 "needs_geometry_manager = " << needs_geometry_manager);
+
+    // Checks :
+    DT_THROW_IF(needs_service_manager && ! has_service_manager(),
+                 std::logic_error,
+                 "Cannot find mandatory service manager !");
+
+    // Search for a handle to a geometry manager from the service manager :
+    if (needs_geometry_manager && ! has_geometry_manager()) {
+      DT_THROW_IF(! has_service_manager(), std::logic_error, "No service manager is available !");
+
+      const std::string geo_service_name = setup_.fetch_string("services.geometry");
+      DT_THROW_IF(! _service_manager_->has(geo_service_name)
+                   || ! _service_manager_->is_a<geomtools::geometry_service>(geo_service_name),
+                   std::logic_error,
+                   "Cannot find a geometry service named '" << geo_service_name << "' "
+                   << "from the service manager !");
+
+      const geomtools::geometry_service & Geo
+        = _service_manager_->get<geomtools::geometry_service>(geo_service_name);
+      const geomtools::manager & geomgr = Geo.get_geom_manager();
+      set_geometry_manager(geomgr);
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "Found geometry manager '" << _geom_manager_->get_setup_label() << "-"
+                   << _geom_manager_->get_setup_version() << "'");
+    }
 
     std::vector<std::string> field_definitions_filenames;
     if (setup_.has_key("field_definitions_filenames")) {
@@ -224,44 +293,10 @@ namespace emfield {
       load(field_definitions_filenames[i]);
     }
 
-    bool needs_service_manager = false;
-    if (setup_.has_key("needs_service_manager")) {
-      needs_service_manager = setup_.fetch_boolean("needs_service_manager");
-    }
-
-    bool needs_geometry_manager = true;
-    if (setup_.has_key("needs_geometry_manager")) {
-      needs_geometry_manager = setup_.fetch_boolean("needs_geometry_manager");
-    }
-
-    // Checks :
-    DT_THROW_IF (needs_service_manager && ! has_service_manager (),
-                 std::logic_error,
-                 "Cannot find mandatory service manager !");
-
-    // Search for a handle to a geometry manager from the service manager :
-    if (needs_geometry_manager && ! has_geometry_manager()) {
-      DT_THROW_IF(! has_service_manager (), std::logic_error, "No service manager is available !");
-
-      const std::string geo_service_name = setup_.fetch_string("services.geometry");
-      DT_THROW_IF (! _service_manager_->has (geo_service_name)
-                   || ! _service_manager_->is_a<geomtools::geometry_service> (geo_service_name),
-                   std::logic_error,
-                   "Cannot find a geometry service named '" << geo_service_name << "' "
-                   << "from the service manager !");
-
-      const geomtools::geometry_service & Geo
-        = _service_manager_->get<geomtools::geometry_service> (geo_service_name);
-      const geomtools::manager & geomgr = Geo.get_geom_manager();
-      set_geometry_manager(geomgr);
-      DT_LOG_DEBUG (get_logging_priority (),
-                    "Found geometry manager '" << _geom_manager_->get_setup_label() << "-"
-                    << _geom_manager_->get_setup_version() << "'");
-    }
-
     // Initialization :
     _construct_();
 
+    bool build_geom_map = false;
     if (setup_.has_flag("build_geom_map")) {
       datatools::properties geomap_config;
       if (setup_.has_key("geom_map_config")) {
@@ -283,12 +318,12 @@ namespace emfield {
 
   void electromagnetic_field_manager::reset ()
   {
-    DT_THROW_IF (! is_initialized (),
+    DT_THROW_IF (! is_initialized(),
                  std::logic_error,
-                 "Cannot reset the service manager ! EM field manager is not initialized !");
-    _set_initialized (false);
-    _fields_.clear ();
-    _field_definitions_.reset ();
+                 "Cannot reset the electromagnetic field manager ! EM field manager is not initialized !");
+    _set_initialized(false);
+    _fields_.clear();
+    _field_definitions_.reset();
     _geom_manager_ = 0;
     if (_geom_map_.get() != 0) {
       if (_geom_map_.get()->is_initialized()) {
@@ -296,7 +331,9 @@ namespace emfield {
       }
       _geom_map_.reset(0);
     }
-    reset_service_manager ();
+    reset_service_manager();
+    _factory_register_.reset(0);
+    _set_defaults();
     return;
   }
 
@@ -335,27 +372,67 @@ namespace emfield {
     return *_geom_map_.get();
   }
 
-  void electromagnetic_field_manager::tree_dump (std::ostream & out_,
+  void electromagnetic_field_manager::tree_dump(std::ostream & out_,
                                                  const std::string & title_,
                                                  const std::string & indent_,
                                                  bool inherit_) const
   {
     std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) {
+    if(! indent_.empty()) indent = indent_;
+    if(! title_.empty()) {
       out_ << indent << title_ << std::endl;
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Initialized  : " <<  (_initialized_? "Yes": "No") << std::endl;
+         << "Initialized  : " << (_initialized_? "Yes": "No") << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Logging priority : " << datatools::logger::get_priority_label (get_logging_priority ()) << std::endl;
+         << "Logging priority : '" << datatools::logger::get_priority_label(get_logging_priority())
+         << "'" << std::endl;
 
-    if (! _initialized_)  {
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Factory verbose : " << _factory_verbose_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Factory preload : " << _factory_preload_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Build geometry/EM-field map : " << _build_geom_map_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Factory register : ";
+    if(!_factory_register_) {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+    if(_factory_register_) {
+      std::ostringstream indent_oss;
+      indent_oss << indent_ << datatools::i_tree_dumpable::skip_tag;
+      _factory_register_->tree_dump(out_, "", indent_oss.str());
+    }
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Service manager : ";
+    if(!_service_manager_) {
+      out_ << "<none>";
+    } else {
+      out_ << "[@" << _service_manager_ << "]";
+    }
+    out_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Geometry manager : ";
+    if(!_geom_manager_) {
+      out_ << "<none>";
+    } else {
+      out_ << "[@" << _geom_manager_ << "]";
+    }
+    out_ << std::endl;
+
+    if(! _initialized_)  {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Field definitions : ";
-      if ( _field_definitions_.entries ().size () == 0) {
+      if( _field_definitions_.entries().size() == 0) {
         out_ << "<empty>";
       }
       out_ << std::endl;
@@ -363,44 +440,32 @@ namespace emfield {
         std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _field_definitions_.tree_dump (out_, "", indent_oss.str ());
+        _field_definitions_.tree_dump(out_, "", indent_oss.str());
       }
-    }
-
-    {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Service manager : "  << has_service_manager()
-           << std::endl;
-    }
-
-    {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Geometry manager : "  << has_geometry_manager()
-           << std::endl;
     }
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "EM fields : ";
-      if ( _fields_.size () == 0) {
+      if( _fields_.size() == 0) {
         out_ << "<empty>";
       }
       else {
-        out_ << "[" << _fields_.size () << "]";
+        out_ << "[" << _fields_.size() << "]";
       }
       out_ << std::endl;
-      for (base_electromagnetic_field::field_dict_type::const_iterator i
-             = _fields_.begin ();
-           i != _fields_.end ();
+      for(base_electromagnetic_field::field_dict_type::const_iterator i
+             = _fields_.begin();
+           i != _fields_.end();
            i++) {
         const std::string & field_name = i->first;
-        const base_electromagnetic_field & a_field = i->second.get ();
+        const base_electromagnetic_field & a_field = i->second.get();
         std::ostringstream indent_oss;
         out_ << indent << datatools::i_tree_dumpable::skip_tag;
         indent_oss << indent << datatools::i_tree_dumpable::skip_tag;
         base_electromagnetic_field::field_dict_type::const_iterator j = i;
         j++;
-        if (j == _fields_.end ()) {
+        if(j == _fields_.end()) {
           out_ << datatools::i_tree_dumpable::last_tag;
           indent_oss << datatools::i_tree_dumpable::last_skip_tag;
         }
@@ -409,16 +474,16 @@ namespace emfield {
           indent_oss << datatools::i_tree_dumpable::skip_tag;
         }
         out_ << "EM field : " << '"' << field_name << '"' << std::endl;
-        a_field.tree_dump (out_, "", indent_oss.str ());
+        a_field.tree_dump(out_, "", indent_oss.str());
       }
     }
 
     {
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Geometry field map : "
            << has_geom_map()
            << std::endl;
-      if (has_geom_map()) {
+      if(has_geom_map()) {
         std::ostringstream indent_oss;
         indent_oss << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
         _geom_map_.get()->tree_dump(out_, "", indent_oss.str(), inherit_);

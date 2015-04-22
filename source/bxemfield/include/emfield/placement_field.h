@@ -66,6 +66,12 @@ namespace emfield {
     /// Set the referenced field
     void set_field(base_electromagnetic_field::handle_type &);
 
+    /// Smart print
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_               = false) const;
+
   protected:
 
     void _set_defaults();

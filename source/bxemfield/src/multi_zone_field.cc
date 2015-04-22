@@ -392,9 +392,14 @@ namespace emfield {
       } else {
         out_ << datatools::i_tree_dumpable::tag;
       }
-      out_ << izone->first << " : ";
+      out_ << "Zone field label '" << izone->first << "' :"
+           << " EM field '" << izone->second._zone_field_->get_name() << "' "
+           << "(class ID='" << izone->second._zone_field_->get_class_id() << "' "
+           << "[@" << izone->second._zone_field_ << "]) with placement = "
+           <<  izone->second._zone_positioning_ << " in shape of type '"
+           <<  izone->second._zone_shape_->get_shape_name() << "'"
+           << "'" << std::endl;
       out_ << std::endl;
-
     }
 
     return;

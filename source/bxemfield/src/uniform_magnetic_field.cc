@@ -14,19 +14,34 @@ namespace emfield {
   // Registration instantiation macro :
   EMFIELD_REGISTRATION_IMPLEMENT(uniform_magnetic_field, "emfield::uniform_magnetic_field");
 
-  // Constructor :
-  EMFIELD_CONSTRUCTOR_IMPLEMENT_HEAD(uniform_magnetic_field,flags_)
+  void uniform_magnetic_field::_set_defaults()
   {
     _set_electric_field(false);
     _set_electric_field_can_be_combined(false);
+    _set_electric_field_is_time_dependent(false);
     _set_magnetic_field(true);
     _set_magnetic_field_can_be_combined(false);
+    _set_magnetic_field_is_time_dependent(false);
     geomtools::invalidate(_uniform_magnetic_field_);
     return;
   }
 
+  // Constructor :
+  uniform_magnetic_field::uniform_magnetic_field(uint32_t flags_)
+    : ::emfield::base_electromagnetic_field(flags_)
+  {
+    _set_defaults();
+    return;
+  }
+
   // Destructor :
-  EMFIELD_DEFAULT_DESTRUCTOR_IMPLEMENT(uniform_magnetic_field);
+  uniform_magnetic_field::~uniform_magnetic_field()
+  {
+    if (is_initialized()) {
+      reset();
+    }
+    return;
+  }
 
   // Getter :
   const geomtools::vector_3d & uniform_magnetic_field::get_uniform_magnetic_field() const
@@ -42,10 +57,6 @@ namespace emfield {
     return;
   }
 
-  // EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(uniform_magnetic_field,
-  //                                       /*position_*/,
-  //                                       /*time_*/,
-  //                                       electric_field_)
   int uniform_magnetic_field::compute_electric_field(const geomtools::vector_3d & /* position_ */,
                                                       double /* time_ */,
                                                       geomtools::vector_3d & electric_field_) const
@@ -54,34 +65,37 @@ namespace emfield {
     return STATUS_ERROR;
   }
 
-  EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(uniform_magnetic_field,
-                                        position_,
-                                        /*time_*/,
-                                        magnetic_field_)
+  int uniform_magnetic_field::compute_magnetic_field(const ::geomtools::vector_3d & /* position_ */,
+                                                     double  /* time_ */,
+                                                     ::geomtools::vector_3d & magnetic_field_) const
   {
     DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE UNIFORM MAGNETIC FIELD ***");
     magnetic_field_ = _uniform_magnetic_field_;
     DT_LOG_DEBUG(get_logging_priority(),
-                 "Magnetic field values @ " << position_/CLHEP::mm << " mm = "
-                 << magnetic_field_/CLHEP::gauss << " G");
+                 "Magnetic field values = "
+                 << magnetic_field_ / CLHEP::gauss << " G");
     return STATUS_SUCCESS;
   }
 
-  EMFIELD_RESET_IMPLEMENT_HEAD(uniform_magnetic_field)
+  void uniform_magnetic_field::reset()
   {
-    DT_THROW_IF(! is_initialized(), std::logic_error, "Cannot reset the magnetic field !");
-
+    DT_THROW_IF(! is_initialized(), std::logic_error, "Cannot reset the uniform magnetic field !");
     _set_initialized(false);
-
-     geomtools::invalidate(_uniform_magnetic_field_);
+    _set_defaults();
+    this->base_electromagnetic_field::_set_defaults();
     return;
   }
 
-  EMFIELD_INITIALIZE_IMPLEMENT_HEAD(uniform_magnetic_field,setup_,service_manager_,fields_)
+  void uniform_magnetic_field::initialize(const ::datatools::properties & setup_,
+                                          ::datatools::service_manager & service_manager_,
+                                          base_electromagnetic_field::field_dict_type & fields_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Field is already initialized !");
 
     base_electromagnetic_field::_parse_basic_parameters(setup_, service_manager_, fields_);
+    _set_electric_field(false);
+    _set_magnetic_field(true);
+    _set_magnetic_field_is_time_dependent(false);
 
     double b_unit = CLHEP::gauss;
     if (setup_.has_key("magnetic_field.unit")) {
@@ -137,6 +151,20 @@ namespace emfield {
     }
 
     _set_initialized(true);
+    return;
+  }
+
+  void uniform_magnetic_field::tree_dump(std::ostream & out_,
+                                         const std::string & title_,
+                                         const std::string & indent_,
+                                         bool inherit_) const
+  {
+    this->base_electromagnetic_field::tree_dump(out_, title_, indent_, true);
+
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Uniform magnetic field  : " << _uniform_magnetic_field_ / (CLHEP::volt/CLHEP::cm) << " V/cm" << std::endl;
+
     return;
   }
 

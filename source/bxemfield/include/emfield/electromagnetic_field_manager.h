@@ -27,6 +27,7 @@
 // - Bayeux/datatools:
 #include <datatools/i_tree_dump.h>
 #include <datatools/multi_properties.h>
+#include <datatools/bit_mask.h>
 
 // This project:
 #include <emfield/base_electromagnetic_field.h>
@@ -44,84 +45,132 @@ namespace emfield {
 
   class geom_map;
 
-  /// \brief Electromagnetic fields manager class
-  class electromagnetic_field_manager :
-    public datatools::i_tree_dumpable
+  /// \brief Electromagnetic field manager
+  class electromagnetic_field_manager : public datatools::i_tree_dumpable
   {
 
   public:
 
-    void set_logging_priority (datatools::logger::priority priority_);
+    /// \brief Initialization flag
+    enum init_flags {
+      INIT_DEBUG      = datatools::bit_mask::bit00,
+      INIT_NO_PRELOAD = datatools::bit_mask::bit01
+    };
 
-    datatools::logger::priority get_logging_priority () const;
+    /// Type alias for the factory
+    typedef base_electromagnetic_field::factory_register_type emfield_factory_type;
 
-    bool is_initialized () const;
+    /// Set the logging priority
+    void set_logging_priority(datatools::logger::priority priority_);
 
-    bool is_debug () const;
+    /// Return the logging priority
+    datatools::logger::priority get_logging_priority() const;
 
-    void set_debug (bool debug_);
+    /// Check initialization status
+    bool is_initialized() const;
 
-    bool has_service_manager () const;
+    /// Check debug status
+    bool is_debug() const;
 
-    void set_service_manager (datatools::service_manager &);
+    /// Set debug status
+    void set_debug(bool debug_);
 
-    void reset_service_manager ();
+    /// Set the factory preload flag
+    void set_factory_preload(bool);
 
+    /// Set the factory verbose flag
+    void set_factory_verbose(bool);
+
+    /// Check if a service manager is referenced
+    bool has_service_manager() const;
+
+    /// Set the reference to a service manager
+    void set_service_manager(datatools::service_manager &);
+
+    /// Reset the reference to a service manager
+    void reset_service_manager();
+
+    /// Check if a geometry manager is referenced
     bool has_geometry_manager() const;
 
-    bool has_geom_map () const;
-
+    /// Set the reference to a geometry manager
     void set_geometry_manager(const geomtools::manager &);
 
+    /// Return a const reference to a geometry manager
     const geomtools::manager & get_geometry_manager() const;
 
-    electromagnetic_field_manager (uint32_t flags_ = 0);
+    /// Check if a geometry/EM-fields association map is defined
+    bool has_geom_map() const;
 
-    virtual ~electromagnetic_field_manager ();
+    /// Default constructor
+    electromagnetic_field_manager(uint32_t flags_ = 0);
 
-    void initialize (const datatools::properties & setup_);
+    /// Destructor
+    virtual ~electromagnetic_field_manager();
 
-    void reset ();
+    /// Initialize the manager
+    void initialize(const datatools::properties & setup_);
 
-    void load (const std::string & field_definitions_filename_);
+    /// Reset the manager
+    void reset();
+
+    /// Load the definitions of some EM fields from a file, given its name
+    void load(const std::string & field_definitions_filename_);
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_               = false) const;
 
+    /// Return the dictionary of created fields
+    const base_electromagnetic_field::field_dict_type & get_fields() const;
 
-    const base_electromagnetic_field::field_dict_type & get_fields () const;
+    /// CHeck if a field exists, given its name
+    bool has_field(const std::string & field_name_) const;
 
-    bool has_field (const std::string & field_name_) const;
+    /// Return a mutable reference to an existing field
+    base_electromagnetic_field & grab_field(const std::string & field_name_);
 
-    base_electromagnetic_field & grab_field (const std::string & field_name_);
+    /// Return a const reference to an existing field
+    const base_electromagnetic_field & get_field(const std::string & field_name_) const;
 
-    const base_electromagnetic_field & get_field (const std::string & field_name_) const;
-
+    /// Return the dictionary of geometry/EM-field associations
     const geom_map & get_geom_map() const;
 
   protected:
 
-    void _set_initialized (bool initialized_);
+    /// Set default attributes' values
+    void _set_defaults();
+
+    /// Set the initialization flag
+    void _set_initialized(bool initialized_);
 
   private:
 
-    void _construct_ ();
+    /// Construct the fields
+    void _construct_();
 
-    void _construct_geomap_ (const datatools::properties & setup_);
+    /// Construct the geometry/EM-field association map
+    void _construct_geomap_(const datatools::properties & setup_);
 
   private:
 
-    datatools::logger::priority _logging_priority_;       //!< Logging priority threshold
+    // Management:
     bool _initialized_;                                   //!< Initialization flag
-    bool _factory_preload_;                               //!< Flag to preload the system factory
-    base_electromagnetic_field::factory_register_type _factory_register_; //!< The factory register for EM field types
+
+    // Parameters:
+    datatools::logger::priority _logging_priority_;       //!< Logging priority threshold
+    bool                        _factory_verbose_;        //!< Flag to activate verbosity of the factory
+    bool                        _factory_preload_;        //!< Flag to preload the system factory
+    bool                        _build_geom_map_;         //!< Flag to build a geometry-volume/EM-field association map
+    datatools::multi_properties _field_definitions_;      //!< Parameters for fields
+
+    // Working data:
+    boost::scoped_ptr<emfield_factory_type> _factory_register_; //!< The factory register for EM field types
     datatools::service_manager * _service_manager_;       //!< Service manager
     const geomtools::manager *   _geom_manager_;          //!< Geometry manager
-    datatools::multi_properties  _field_definitions_;     //!< Parameters for fields
-    base_electromagnetic_field::field_dict_type _fields_; //!< Dictionnary of fields
+    base_electromagnetic_field::field_dict_type _fields_; //!< Dictionary of fields
     boost::scoped_ptr<geom_map> _geom_map_;               //!< Geometry/EM field associations map (what field is activated and where ?)
 
   };

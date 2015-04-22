@@ -74,6 +74,12 @@ namespace emfield {
                                        double time_,
                                        geomtools::vector_3d & magnetic_field_) const;
 
+    /// Smart print
+    virtual void tree_dump (std::ostream & out_         = std::clog,
+                            const std::string & title_  = "",
+                            const std::string & indent_ = "",
+                            bool inherit_               = false) const;
+
   private:
 
     double _magnetic_field_unit_;   //!< Magnetic field unit

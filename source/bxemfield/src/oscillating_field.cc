@@ -21,8 +21,8 @@ namespace emfield {
 
   void oscillating_field::_set_defaults()
   {
-    _set_electric_field(true);
-    _set_electric_field_can_be_combined(false);
+    _set_electric_field(false);
+    _set_electric_field_can_be_combined(true);
     _set_magnetic_field(false);
     _set_magnetic_field_can_be_combined(false);
     _set_electric_field_is_time_dependent(true);
@@ -151,8 +151,8 @@ namespace emfield {
       return STATUS_ERROR;
     }
     int status = _field_.get().compute_electric_field(position_,
-                                                        time_,
-                                                        electric_field_);
+                                                      time_,
+                                                      electric_field_);
     if (status != STATUS_SUCCESS) {
       return status;
     }
@@ -295,26 +295,31 @@ namespace emfield {
   {
     this->base_electromagnetic_field::tree_dump(out_, title_, indent_, true);
 
-     out_ << indent_ << datatools::i_tree_dumpable::tag
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Field : " << "'" << _field_.get().get_name() << "' "
+         << "(class ID='" <<  _field_.get().get_class_id() << "' "
+         << "[@" << &_field_.get() << "])" << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Sine/cosine : " <<  (is_cosine_mode() ? "Cosine" : "Sine") << std::endl;
 
-     out_ << indent_ << datatools::i_tree_dumpable::tag
-          << "Frequency : " << _frequency_ / CLHEP::megahertz << " MHz"
-          << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Frequency : " << _frequency_ / CLHEP::megahertz << " MHz"
+         << std::endl;
 
-     out_ << indent_ << datatools::i_tree_dumpable::tag
-          << "Phase : " << _phase_ / CLHEP::degree << " degree"
-          << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Phase : " << _phase_ / CLHEP::degree << " degree"
+         << std::endl;
 
-     out_ << indent_ << datatools::i_tree_dumpable::tag
-          << "Pedestal : " << _pedestal_
-          << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Pedestal : " << _pedestal_
+         << std::endl;
 
-     out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-          << "Scale factor : " << _scale_
-          << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Scale factor : " << _scale_
+         << std::endl;
 
-     return;
+    return;
   }
 
 } // end of namespace emfield

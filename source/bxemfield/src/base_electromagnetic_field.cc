@@ -4,10 +4,11 @@
 #include <emfield/base_electromagnetic_field.h>
 
 // Third party:
-// - Bayeux:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/service_manager.h>
 #include <datatools/utils.h>
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 
 namespace emfield {
@@ -28,16 +29,25 @@ namespace emfield {
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
+         << "Name  : ";
+    if (_name_.empty()) {
+      out_ << "<none>";
+    } else {
+      out_ << "'" << _name_ << "'";
+    }
+    out_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Class identifier : '" << get_class_id() << "'" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Address : " << "[@" << this << "]" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
          << "Initialized  : " <<  (is_initialized() ? "Yes": "No") << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Logging priority : " << datatools::logger::get_priority_label(get_logging_priority()) << std::endl;
-
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Debug  : " <<  (is_debug() ? "Yes": "No") << std::endl;
-
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Error  : " <<  (is_error() ? "Yes": "No") << std::endl;
+         << "Logging priority : '" << datatools::logger::get_priority_label(get_logging_priority()) << "'" << std::endl;
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
@@ -70,6 +80,17 @@ namespace emfield {
     return;
   }
 
+  void base_electromagnetic_field::set_name(const std::string & name_)
+  {
+    _name_ = name_;
+    return;
+  }
+
+  const std::string & base_electromagnetic_field::get_name() const
+  {
+    return _name_;
+  }
+
   void base_electromagnetic_field::set_logging_priority(datatools::logger::priority priority_)
   {
     _logging_priority_ = priority_;
@@ -89,17 +110,6 @@ namespace emfield {
   void base_electromagnetic_field::_set_initialized(bool initialized_)
   {
     _initialized_ = initialized_;
-    return;
-  }
-
-  bool base_electromagnetic_field::is_error() const
-  {
-    return _error_;
-  }
-
-  void base_electromagnetic_field::_set_error(bool error_)
-  {
-    _error_ = error_;
     return;
   }
 
@@ -137,10 +147,10 @@ namespace emfield {
     return;
   }
 
-  void base_electromagnetic_field::_set_magnetic_field_is_time_dependent(bool /*td_*/)
+  void base_electromagnetic_field::_set_magnetic_field_is_time_dependent(bool td_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Cannot change the magnetic field traits !");
-    _magnetic_field_is_time_dependent_ = true;
+    _magnetic_field_is_time_dependent_ = td_;
     return;
   }
 
@@ -158,10 +168,10 @@ namespace emfield {
     return;
   }
 
-  void base_electromagnetic_field::_set_magnetic_field_can_be_combined(bool efcbc_)
+  void base_electromagnetic_field::_set_magnetic_field_can_be_combined(bool mfcbc_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Cannot change the magnetic field combination flag !");
-    _magnetic_field_can_be_combined_ = efcbc_;
+    _magnetic_field_can_be_combined_ = mfcbc_;
     return;
   }
 
@@ -173,7 +183,7 @@ namespace emfield {
   void base_electromagnetic_field::set_debug(bool debug_)
   {
     if (debug_) set_logging_priority(datatools::logger::PRIO_DEBUG);
-    else        set_logging_priority(datatools::logger::PRIO_WARNING);
+    else        set_logging_priority(datatools::logger::PRIO_FATAL);
     return;
   }
 
@@ -194,6 +204,12 @@ namespace emfield {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
                 "Cannot setup configuration parameters at this stage ! Object is already initialized !");
+
+    if (_name_.empty()) {
+      if (setup_.has_flag("name")) {
+        set_name(setup_.fetch_string("name"));
+      }
+    }
 
     datatools::logger::priority p =
       datatools::logger::extract_logging_configuration(setup_,
@@ -216,8 +232,7 @@ namespace emfield {
 
   void base_electromagnetic_field::_set_defaults()
   {
-    _logging_priority_ = datatools::logger::PRIO_WARNING;
-    _error_ = false;
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
     _electric_field_ = false;
     _magnetic_field_ = false;
     _electric_field_can_be_combined_ = false;
@@ -273,9 +288,7 @@ namespace emfield {
     if (! is_initialized()) {
       return STATUS_NOT_INITIALIZED;
     }
-    if (is_error()) {
-      return STATUS_ERROR;
-    }
+
     if (! is_electric_field()) {
       return STATUS_NO_ELECTRIC_FIELD;
     }
@@ -300,9 +313,7 @@ namespace emfield {
     if (! is_initialized()) {
       return STATUS_NOT_INITIALIZED;
     }
-    if (is_error()) {
-      return STATUS_ERROR;
-    }
+
     if (! is_electric_field()) {
       return STATUS_NO_ELECTRIC_FIELD;
     }
@@ -321,9 +332,6 @@ namespace emfield {
     geomtools::invalidate(magnetic_field_);
     if (! is_initialized()) {
       return STATUS_NOT_INITIALIZED;
-    }
-    if (! is_error()) {
-      return STATUS_ERROR;
     }
     if (! is_magnetic_field()) return STATUS_NO_MAGNETIC_FIELD;
     if (! position_and_time_are_valid(position_, time_)) {

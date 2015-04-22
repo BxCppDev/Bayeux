@@ -15,19 +15,34 @@ namespace emfield {
   // Registration instantiation macro :
   EMFIELD_REGISTRATION_IMPLEMENT(uniform_electric_field, "emfield::uniform_electric_field");
 
-  // Constructor :
-  EMFIELD_CONSTRUCTOR_IMPLEMENT_HEAD(uniform_electric_field,flags_)
+  void uniform_electric_field::_set_defaults()
   {
     _set_electric_field(true);
-    _set_electric_field_can_be_combined(false);
+    _set_electric_field_can_be_combined(true);
+    _set_electric_field_is_time_dependent(false);
     _set_magnetic_field(false);
     _set_magnetic_field_can_be_combined(false);
-    geomtools::invalidate(_uniform_electric_field_);
+    _set_magnetic_field_is_time_dependent(false);
+     geomtools::invalidate(_uniform_electric_field_);
+    return;
+  }
+
+  // Constructor :
+  uniform_electric_field::uniform_electric_field(uint32_t flags_)
+    : ::emfield::base_electromagnetic_field(flags_)
+  {
+    _set_defaults();
     return;
   }
 
   // Destructor :
-  EMFIELD_DEFAULT_DESTRUCTOR_IMPLEMENT(uniform_electric_field);
+  uniform_electric_field::~uniform_electric_field()
+  {
+    if (is_initialized()) {
+      reset();
+    }
+    return;
+  }
 
   // Getter :
   const geomtools::vector_3d & uniform_electric_field::get_uniform_electric_field() const
@@ -43,39 +58,46 @@ namespace emfield {
     return;
   }
 
-  EMFIELD_COMPUTE_EFIELD_IMPLEMENT_HEAD(uniform_electric_field,
-                                        /*position_*/,
-                                        /*time_*/,
-                                        electric_field_)
+  int uniform_electric_field::compute_electric_field(const ::geomtools::vector_3d & /* position_ */,
+                                                     double  /* time_ */,
+                                                     ::geomtools::vector_3d & electric_field_) const
   {
+    DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE UNIFORM ELECTRIC FIELD ***");
     electric_field_ = _uniform_electric_field_;
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Electric field value = "
+                 << electric_field_ / (CLHEP::volt/CLHEP::m) << " V/m");
     return STATUS_SUCCESS;
   }
 
-  EMFIELD_COMPUTE_BFIELD_IMPLEMENT_HEAD(uniform_electric_field,
-                                        /*position_*/,
-                                        /*time_*/,
-                                        magnetic_field_)
+  int uniform_electric_field::compute_magnetic_field(const ::geomtools::vector_3d & /* position_ */,
+                                                     double /* time_ */,
+                                                     ::geomtools::vector_3d & magnetic_field_) const
   {
     geomtools::invalidate(magnetic_field_);
     return STATUS_ERROR;
   }
 
-  EMFIELD_RESET_IMPLEMENT_HEAD(uniform_electric_field)
+  void uniform_electric_field::reset()
   {
-    DT_THROW_IF(! is_initialized(), std::logic_error, "Cannot reset the magnetic field !");
-
-    geomtools::invalidate(_uniform_electric_field_);
-
+    DT_THROW_IF(! is_initialized(), std::logic_error, "Cannot reset the uniform electric field !");
     _set_initialized(false);
+    _set_defaults();
+    this->base_electromagnetic_field::_set_defaults();
     return;
   }
 
-  EMFIELD_INITIALIZE_IMPLEMENT_HEAD(uniform_electric_field,setup_,service_manager_,fields_)
+
+  void uniform_electric_field::initialize(const ::datatools::properties & setup_,
+                                          ::datatools::service_manager & service_manager_,
+                                          base_electromagnetic_field::field_dict_type & fields_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Field is already initialized !");
 
     base_electromagnetic_field::_parse_basic_parameters(setup_, service_manager_, fields_);
+    _set_electric_field(true);
+    _set_electric_field_is_time_dependent(false);
+    _set_magnetic_field(false);
 
     double e_unit = CLHEP::volt / CLHEP::meter;
     if (setup_.has_key("electric_field.unit")) {
@@ -87,7 +109,8 @@ namespace emfield {
       if (setup_.has_key("electric_field.coordinates")) {
         std::vector<double> elecfield_coord;
         setup_.fetch("electric_field.coordinates", elecfield_coord);
-        DT_THROW_IF (elecfield_coord.size() != 3, std::logic_error, "Invalid electric field vector 'electric_field' !");
+        DT_THROW_IF (elecfield_coord.size() != 3, std::logic_error,
+                     "Invalid electric field vector 'electric_field' !");
         _uniform_electric_field_.set(elecfield_coord[0],
                                       elecfield_coord[1],
                                       elecfield_coord[2]);
@@ -127,6 +150,20 @@ namespace emfield {
     }
 
     _set_initialized(true);
+    return;
+  }
+
+  void uniform_electric_field::tree_dump(std::ostream & out_,
+                                         const std::string & title_,
+                                         const std::string & indent_,
+                                         bool inherit_) const
+  {
+    this->base_electromagnetic_field::tree_dump(out_, title_, indent_, true);
+
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Uniform electric field  : " << _uniform_electric_field_ / (CLHEP::volt/CLHEP::cm) << " V/cm" << std::endl;
+
     return;
   }
 

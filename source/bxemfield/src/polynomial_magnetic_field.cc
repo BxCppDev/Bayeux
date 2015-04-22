@@ -197,4 +197,32 @@ namespace emfield {
     return;
   }
 
+  void polynomial_magnetic_field::tree_dump(std::ostream & out_,
+                                         const std::string & title_,
+                                         const std::string & indent_,
+                                         bool inherit_) const
+  {
+    this->base_electromagnetic_field::tree_dump(out_, title_, indent_, true);
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Magnetic field unit : " << _magnetic_field_unit_ / (CLHEP::gauss) << " G" << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Magnetic field X coordinates: "
+         << "<not displayed>"
+         << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Magnetic field Y coordinates: "
+         << "<not displayed>"
+         << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Magnetic field Z coordinates: "
+         << "<not displayed>"
+         << std::endl;
+
+    return;
+  }
+
 } // end of namespace emfield

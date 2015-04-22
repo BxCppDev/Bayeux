@@ -72,6 +72,12 @@ namespace emfield {
                              double weight_ = 1.0,
                              bool force_combined_ = false);
 
+    /// Smart print
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
+
   private:
 
     combined_field_dict_type _combined_fields_; //!< Dictionnary of combined fields

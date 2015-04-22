@@ -226,4 +226,23 @@ namespace emfield {
     return;
   }
 
+  // virtual
+  void placement_field::tree_dump(std::ostream & out_,
+                                  const std::string & title_,
+                                  const std::string & indent_,
+                                  bool inherit_) const
+  {
+    this->base_electromagnetic_field::tree_dump(out_, title_, indent_, true);
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Field : " << "'" << _field_.get().get_name() << "' "
+         << "(class ID='" <<  _field_.get().get_class_id() << "' "
+         << "[@" << &_field_.get() << "])" << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Placement " << _placement_ << std::endl;
+
+    return;
+  }
+
 } // end of namespace emfield
