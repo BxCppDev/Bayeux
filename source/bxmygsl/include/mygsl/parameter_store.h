@@ -129,7 +129,7 @@ namespace mygsl {
       bool        _value_set_;   //!< Flag to check if the value is set
       param_type  _value_;       //!< Current value
 
-      friend parameter_store;
+      friend class parameter_store;
 
     };
 
