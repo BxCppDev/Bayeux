@@ -310,9 +310,9 @@ namespace geomtools {
 
   private:
 
-   // Parameters:
-    size_t   _n_sides_;
-    rz_col_type _points_;
+    // Parameters:
+    size_t      _n_sides_; //!< Number of sides
+    rz_col_type _points_;  //!< Dictionary of points
 
     // Working data:
     bool    _computed_; //!< Flag indicating that internal working data have been computed
