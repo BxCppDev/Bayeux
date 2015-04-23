@@ -23,11 +23,11 @@ Introduction
      manager.
    * Event generators' configuration files :
 
-     * ``config/backgrounds.conf`` : some event generators
-     * ``config/calibrations.conf`` : some event generators
-     * ``config/dbd.conf`` : some event generators
-     * ``config/misc.conf.conf`` : some event generators
-     * ``config/electron_energy_spectrum_0.data`` : data file
+     * ``config/generators/backgrounds.conf`` : some event generators
+     * ``config/generators/calibrations.conf`` : some event generators
+     * ``config/generators/dbd.conf`` : some event generators
+     * ``config/generators/misc.conf.conf`` : some event generators
+     * ``config/generators/electron_energy_spectrum_0.data`` : data file
        which contains the tabulated energy spectrum used by
        a specific electron generator
 
@@ -115,12 +115,12 @@ Quick start
       root [2] .q
 
 
-8. Clean::
+7. Clean::
 
       shell> rm ex01
       shell> rm -fr ./__build
 
-9. Note:
+8. Note:
 
    Run an automated test script: ::
 
