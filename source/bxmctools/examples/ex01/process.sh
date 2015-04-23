@@ -63,7 +63,7 @@ echo "q" | bxgeomtools_inspector \
     --manager-config ${CONFIG_DIR}/geometry/manager.conf \
     --without-visu
 if [ $? -ne 0 ]; then
-    echo "ERROR: geomtools_inspector failed !" 1>&2
+    echo "ERROR: bxgeomtools_inspector failed !" 1>&2
     exit 1
 fi
 
@@ -72,7 +72,7 @@ bxgenbb_inspector \
     --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
     --action "list"
 if [ $? -ne 0 ]; then
-    echo "ERROR: genbb_inspector failed !" 1>&2
+    echo "ERROR: bxgenbb_inspector failed !" 1>&2
     exit 1
 fi
 
@@ -87,7 +87,7 @@ bxgenbb_inspector \
     --number-of-events 1000 \
     --output-file "histos_${eg_name}.root"
 if [ $? -ne 0 ]; then
-    echo "ERROR: genbb_inspector failed !" 1>&2
+    echo "ERROR: bxgenbb_inspector failed !" 1>&2
     exit 1
 fi
 
@@ -97,7 +97,7 @@ bxgenvtx_production \
     --vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
     --list
 if [ $? -ne 0 ]; then
-    echo "ERROR: genvtx_production failed !" 1>&2
+    echo "ERROR: bxgenvtx_production failed !" 1>&2
     exit 1
 fi
 
@@ -162,7 +162,7 @@ if [ $do_simulation -eq 1 ]; then
 	--output-data-file "mctools_ex01_${eg_name}_${vg_name}.xml" \
 	--g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.macro"
     if [ $? -ne 0 ]; then
-	echo "ERROR: g4_production failed !" 1>&2
+	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
 
@@ -198,7 +198,7 @@ if [ $do_simulation -eq 1 ]; then
         --output-prng-states-file "prng_states.save" \
         --output-data-file "mctools_ex01_${eg_name}_${vg_name}.data.gz"
     if [ $? -ne 0 ]; then
-	echo "ERROR: g4_production failed !" 1>&2
+	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
 
@@ -225,7 +225,7 @@ if [ $do_simulation -eq 1 ]; then
 	--module ${sim_module} \
 	--output-file "mctools_ex01_${sim_module}.dpp.brio"
     if [ $? -ne 0 ]; then
-	echo "ERROR: dpp_processing failed !" 1>&2
+	echo "ERROR: bxdpp_processing failed !" 1>&2
 	exit 1
     fi
 
