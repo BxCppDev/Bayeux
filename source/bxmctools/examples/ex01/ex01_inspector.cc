@@ -1,8 +1,10 @@
 // ex01_inspector.cc
 
+// Ourselves;
 #include <ex01_inspector.h>
 
-// Geomtools:
+// Third party:
+// Bayeux/geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_drawer.h>
@@ -10,8 +12,7 @@
 #include <geomtools/line_3d.h>
 #include <geomtools/box.h>
 #include <geomtools/blur_spot.h>
-
-// Mctools:
+// Bayeux/mctools:
 #include <mctools/simulated_data.h>
 
 namespace mctools {
@@ -91,7 +92,7 @@ namespace mctools {
         geomtools::placement vertex_plcmt;
         const geomtools::vector_3d & vertex_pos = sd_.get_vertex ();
         vertex_plcmt.set_translation(vertex_pos);
-        vertex_spot.generate_wires (vertex_spot_DI.paths, vertex_plcmt);
+        vertex_spot.generate_wires (vertex_spot_DI.wires, vertex_plcmt);
       }
 
       if (sd_.has_step_hits("__visu.tracks")) {
@@ -124,7 +125,7 @@ namespace mctools {
                                   step_color);
 
           geomtools::placement visu_step_plcmt;
-          visu_step_segment.generate_wires (visu_step_DI.paths, visu_step_plcmt);
+          visu_step_segment.generate_wires (visu_step_DI.wires, visu_step_plcmt);
         }
       }
 
@@ -158,7 +159,7 @@ namespace mctools {
                                   step_color);
 
           geomtools::placement visu_step_plcmt;
-          visu_step_segment.generate_wires (visu_step_DI.paths, visu_step_plcmt);
+          visu_step_segment.generate_wires (visu_step_DI.wires, visu_step_plcmt);
         }
       }
 
@@ -195,7 +196,7 @@ namespace mctools {
 
           geomtools::placement scin_hit_plcmt;
           scin_hit_plcmt.set_translation(0.5 * (step_stop + step_start));
-          scin_hit_sprite.generate_wires(scin_hit_DI.paths, scin_hit_plcmt);
+          scin_hit_sprite.generate_wires(scin_hit_DI.wires, scin_hit_plcmt);
         }
       }
 
