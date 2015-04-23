@@ -334,12 +334,19 @@ EOF
 
 #@description List of files containing the definition of vertex generators'
 vg_list : string[1] as path = \\
-  "${config_prefix}${setup_base_dir}/generators.def"
+  "${config_prefix}${setup_base_dir}/generators/generators.def"
 
 EOF
 
     #######################################################################
-    cat > ${setup_base_dir}/generators.def <<EOF
+    mkdir -p ${setup_base_dir}/generators
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Directory '${setup_base_dir}/generators' was not created ! Abort !" >&2
+	return 1
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/generators/generators.def <<EOF
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
