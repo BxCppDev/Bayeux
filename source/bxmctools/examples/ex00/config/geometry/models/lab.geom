@@ -79,10 +79,12 @@ sides        : integer = 4
 list_of_z    : real [2] =   -125.     +125.
 
 #@description The list of inner radius coordinates for the shape
-list_of_rmin : real [2] =    51.      51.
+list_of_rmin : real [2] =    72.      72.
+# list_of_rmin : real [2] =    51.      51.
 
 #@description The list of outer radius coordinates for the shape
-list_of_rmax : real [2] =    53.      53.
+list_of_rmax : real [2] =    75.      75.
+# list_of_rmax : real [2] =    53.      53.
 
 #######################
 # Material parameters #
@@ -244,8 +246,6 @@ internal_item.model.brick1     : string  = "shield_brick.model"
 
 #@description The placement of the "brick1" daughter volume
 internal_item.placement.brick1 : string  = "-15 +10 0 (cm) "
-
-
 
 
 ##########################################

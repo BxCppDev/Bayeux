@@ -96,7 +96,6 @@ visibility.daughters.hidden : boolean = 0
 ###########################################################
 [name="source.model" type="geomtools::simple_shaped_model"]
 
-
 ############
 # Geometry #
 ############

@@ -428,7 +428,7 @@ list_of_z    : real [3] =  -40.     +30.     +40.
 list_of_rmin : real [3] =    0.      0.       0.
 
 #@description The list of outer radius coordinates for the shape
-list_of_rmax : real [3] =    20.    50.     50.
+list_of_rmax : real [3] =   28.     71.     71.
 
 #######################
 # Material parameters #
@@ -470,10 +470,10 @@ rotated.axis  : string = "z"
 rotated.angle : real   = 45.0
 
 #@description The X dimension
-x             : real   = 100.0
+x             : real   = 100.5
 
 #@description The Y dimension
-y             : real   = 100.0
+y             : real   = 100.5
 
 #@description The name of the model to be rotated
 rotated.model : string = "light_guide.model"
@@ -596,7 +596,8 @@ material.ref      : string    = "lab_medium"
 visibility.hidden : boolean  = 0
 
 #@description The recommended color for the display
-visibility.color  : string   = "grey"
+# visibility.color  : string   = "grey"
+visibility.color  : string   = "orange"
 
 ##########################################
 # GID mapping of internal/daughter items #
