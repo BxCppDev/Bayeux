@@ -99,7 +99,7 @@ if [ ${do_pre} -eq 1 ]; then
 	--configuration "${CONFIG_DIR}/event_generator/manager.conf" \
 	--action "list"
     if [ $? -ne 0 ]; then
-	echo "ERROR: genbb_inspector failed !" 1>&2
+	echo "ERROR: bxgenbb_inspector failed !" 1>&2
 	exit 1
     fi
 
@@ -112,7 +112,7 @@ if [ ${do_pre} -eq 1 ]; then
 	--number-of-events 1000 \
 	--output-file "histos_${eg_name}.root"
     if [ $? -ne 0 ]; then
-	echo "ERROR: genbb_inspector failed !" 1>&2
+	echo "ERROR: bxgenbb_inspector failed !" 1>&2
 	exit 1
     fi
 
@@ -122,7 +122,7 @@ if [ ${do_pre} -eq 1 ]; then
 	--vertex-generator-manager "${CONFIG_DIR}/vertex_generator/manager.conf" \
 	--list
     if [ $? -ne 0 ]; then
-	echo "ERROR: genvtx_production failed !" 1>&2
+	echo "ERROR: bxgenvtx_production failed !" 1>&2
 	exit 1
     fi
 
@@ -136,7 +136,7 @@ if [ ${do_pre} -eq 1 ]; then
 	--vertex-generator ${vg_name} \
 	--output-file "mctools_ex00_vertices_${vg_name}.txt"
     if [ $? -ne 0 ]; then
-	echo "ERROR: genvtx_production failed !" 1>&2
+	echo "ERROR: bxgenvtx_production failed !" 1>&2
 	exit 1
     fi
 
@@ -176,7 +176,7 @@ if [ $do_simulation -eq 1 ]; then
 	--output-data-file "mctools_ex00_${eg_name}_${vg_name}.xml" \
 	--g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.mac"
     if [ $? -ne 0 ]; then
-	echo "ERROR: g4_production failed !" 1>&2
+	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
 
@@ -251,7 +251,7 @@ if [ $do_simulation -eq 1 ]; then
 
     echo -e "\nRun the standalone simulation module..." 1>&2
     ./ex00_run_sim_module \
-        --number-of-events=2500 \
+        --number-of-events=25 \
 	--geometry-config "${CONFIG_DIR}/geometry/manager.conf" \
 	--simulation-config "${CONFIG_DIR}/simulation/manager.conf" \
 	--output-file "mctools_ex00_ssm.brio"

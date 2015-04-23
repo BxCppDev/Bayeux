@@ -1,5 +1,5 @@
 // ex00_read_plain_simdata.cxx
-/* Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Copyright (C) 2013-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,24 +25,27 @@
 #include <string>
 
 // Third party:
-// - Boost
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
-// - Bayeux
+// - Bayeux:
 #include <bayeux/bayeux.h>
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/library_loader.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
-
+// - Bayeux/mctools:
 #include <mctools/simulated_data.h>
 #include <mctools/simulated_data_reader.h>
 
+// This project:
 #include <ex00_inspector.h>
 
-int main(int argc_, char **argv_) {
+int main(int argc_, char **argv_)
+{
   BAYEUX_INIT_MAIN(argc_, argv_);
 
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;

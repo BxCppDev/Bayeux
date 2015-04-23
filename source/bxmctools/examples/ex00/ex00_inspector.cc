@@ -1,8 +1,10 @@
 // ex00_inspector.cc
 
+// Ourselves:
 #include <ex00_inspector.h>
 
-// Geomtools:
+// Third party:
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_draw.h>
 #include <geomtools/gnuplot_drawer.h>
@@ -10,11 +12,11 @@
 #include <geomtools/line_3d.h>
 #include <geomtools/box.h>
 #include <geomtools/blur_spot.h>
-
-// Mctools:
+// - Bayeux/mctools:
 #include <mctools/simulated_data.h>
 
 namespace mctools {
+
   namespace ex00 {
 
     simulated_data_inspector::simulated_data_inspector()
@@ -23,32 +25,39 @@ namespace mctools {
       _dump_simulated_data_ = false;
       _dump_hits_ = false;
       _with_visualization_ = false;
+      _geometry_manager_ = 0;
+      return;
     }
 
     void simulated_data_inspector::set_dump_simulated_data(bool dsd_)
     {
       _dump_simulated_data_ = dsd_;
+      return;
     }
 
     void simulated_data_inspector::set_dump_hits(bool dh_)
     {
       _dump_hits_ = dh_;
+      return;
     }
 
     void simulated_data_inspector::set_interactive(bool i_)
     {
       _interactive_ = i_;
+      return;
     }
 
     void simulated_data_inspector::set_with_visualization(bool wv_)
     {
       if (wv_) set_interactive(true);
       _with_visualization_ = wv_;
+      return;
     }
 
     void simulated_data_inspector::set_geometry_manager(const geomtools::manager & gm_)
     {
       _geometry_manager_ = &gm_;
+      return;
     }
 
     bool simulated_data_inspector::inspect(const mctools::simulated_data & sd_)
@@ -173,9 +182,9 @@ namespace mctools {
 
       std::string visu_object_name;
       std::string view_label = geomtools::gnuplot_drawer::view_3d();
-      // view_label = geomtools::gnuplot_drawer::view_2d_xy();
       int visu_depth = geomtools::gnuplot_drawer::display_level_no_limit();
       bool loop_stop = false;
+      // Display loop:
       do {
         if (visu_object_name.empty()) {
           visu_object_name = _geometry_manager_->get_world_name ();
@@ -254,4 +263,5 @@ namespace mctools {
     }
 
   }  // namespace ex00
+
 } // namespace mctools

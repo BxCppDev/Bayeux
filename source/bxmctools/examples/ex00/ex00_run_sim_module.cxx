@@ -43,7 +43,8 @@
 // - Bayeux/mctools:
 #include <mctools/g4/simulation_module.h>
 
-int main(int argc_, char **argv_) {
+int main(int argc_, char **argv_)
+{
   BAYEUX_INIT_MAIN(argc_, argv_);
 
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;

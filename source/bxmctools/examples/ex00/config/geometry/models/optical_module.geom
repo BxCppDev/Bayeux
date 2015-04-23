@@ -596,8 +596,8 @@ material.ref      : string    = "lab_medium"
 visibility.hidden : boolean  = 0
 
 #@description The recommended color for the display
-# visibility.color  : string   = "grey"
-visibility.color  : string   = "orange"
+visibility.color  : string   = "grey"
+# visibility.color  : string   = "orange"
 
 ##########################################
 # GID mapping of internal/daughter items #
