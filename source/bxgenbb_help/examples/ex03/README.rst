@@ -110,12 +110,12 @@ Quick start
       root [2] .q
 
 
-8. Clean::
+7. Clean::
 
       shell> rm ex03
       shell> rm -fr ./__build
 
-9. Note:
+8. Note:
 
    Run an automated test script: ::
 

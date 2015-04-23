@@ -80,6 +80,7 @@ if [ $? -ne 0 ]; then
 fi
 
 rm -f ./ex03
+rm -f ./ex03_bank_reader
 # rm -f ./histos_Co60.root
 rm -fr ${build_dir}
 
