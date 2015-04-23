@@ -68,6 +68,9 @@ int main(int argc_, char **argv_) {
       ("output-file,o",
        po::value<std::string>(&output_filename),
        "set the output filename")
+      ("number-of-events,n",
+       po::value<unsigned int>(&number_of_events),
+       "set the number of events")
       ; // end of options description
 
     // Describe command line arguments :
@@ -147,7 +150,7 @@ int main(int argc_, char **argv_) {
         break;
       }
       // Print the event record:
-      event_record.tree_dump(std::clog, "Event: ", "DEBUG: ");
+      // event_record.tree_dump(std::clog, "Event: ", "DEBUG: ");
       if (out_mod) {
         // Save the event record:
         status = out_mod->process(event_record);
