@@ -13,6 +13,8 @@ function my_exit()
     exit $1
 }
 
+export CONFIG_DIR="$(pwd)/config"
+
 build_dir=$(pwd)/__build
 test -d ${build_dir} && rm -fr ${build_dir}
 

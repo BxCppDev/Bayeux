@@ -8,18 +8,16 @@
 
 // Third party:
 #if GEOMTOOLS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
-
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
-
-// - materials:
+// - Bayeux/materials:
 #include <materials/materials.h>
 
-// - geomtools:
+// This project:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_drawer.h>
 
@@ -48,7 +46,8 @@ int main(int argc_, char ** argv_)
 
     // Parse its config file :
     datatools::properties GM_config;
-    std::string GM_config_file = "config/manager.conf";
+    std::string GM_config_file = "${CONFIG_DIR}/manager.conf";
+    datatools::fetch_path_with_env(GM_config_file);
     datatools::properties::read_config(GM_config_file, GM_config);
 
     // Initialize the geometry manager from the configuration parameters :
@@ -62,7 +61,7 @@ int main(int argc_, char ** argv_)
     // A Gnuplot based 3D-renderer :
     geomtools::gnuplot_drawer GPD;
     GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
-                               GM.get_world_name ());
+                               GM.get_world_name());
     GPD.set_view (geomtools::gnuplot_drawer::view_3d());
     GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
     int view_code = GPD.draw (GM,
@@ -70,11 +69,11 @@ int main(int argc_, char ** argv_)
                               geomtools::gnuplot_drawer::display_level_no_limit());
   }
   catch(std::exception & x) {
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL,x.what());
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what());
     error_code = EXIT_FAILURE;
   }
   catch(...) {
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL,"Unexpected error !");
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
 

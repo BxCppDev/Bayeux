@@ -88,13 +88,13 @@ build_mode : string = "points"
 sides        : integer = 4
 
 #@description The list of Z coordinates for the shape
-list_of_z    : real [3] = -80.     +60.     +80.
+list_of_z    : real [3] =  -80.    +60.     +80.
 
 #@description The list of inner radius coordinates for the shape
 list_of_rmin : real [3] =    0.      0.       0.
 
 #@description The list of outer radius coordinates for the shape
-list_of_rmax : real [3] =   60.    150.     150.
+list_of_rmax : real [3] =   85.    212.     212.
 
 #@description The length unit
 length_unit  : string = "mm"
@@ -226,7 +226,7 @@ length_unit : string = "mm"
 build_mode  : string = "datafile"
 
 #@description The file that contains the coordinates of the polycone
-datafile    : string = "config/pmt_hamamatsu_R5912MOD_polycone.data"
+datafile    : string = "${CONFIG_DIR}/models/pmt_hamamatsu_R5912MOD_polycone.data"
 
 #@description The rule to read the file that contains the coordinates of the polycone (default: 'rmin_rmax')
 datafile.columns  : string = "rmin_rmax"

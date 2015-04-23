@@ -1,6 +1,6 @@
-======================
+=============================
 geomtools ``examples/ex01``
-======================
+=============================
 
 Introduction
 ============
@@ -10,7 +10,7 @@ Introduction
    This  example illustrates  how to  use the geometry manager to
    design a virtual geometry hierarchy based on the ``geomtools``
    library.
-   Also it is shown how to use the ``geomtools_inspector`` utility
+   Also it is shown how to use the ``bxgeomtools_inspector`` utility
    to visualize the setup and generate a GDML file usable by Geant4
    and/or browsable by ROOT.
 
@@ -24,35 +24,35 @@ Introduction
      manager.
    * Geometry models files:
 
-     * ``config/world.geom`` : the geometry model that represents
+     * ``config/models/world.geom`` : the geometry model that represents
        the top volume (**"world"**).
-     * ``config/lab.geom`` : the geometry model that represents the
+     * ``config/models/lab.geom`` : the geometry model that represents the
        experimental area where the setup is installed.
-     * ``config/vessel.geom`` : the geometry models that represent the
+     * ``config/models/vessel.geom`` : the geometry models that represent the
        vacuum chamber wherin the detectors and calibration sources are
        installed.
-     * ``config/optical_module.geom``: the geometry models that represent
+     * ``config/models/optical_module.geom``: the geometry models that represent
        the detection module.
-     * ``config/shielding.geom`` : the geometry models that represent
+     * ``config/models/shielding.geom`` : the geometry models that represent
        passive shielding walls on both side of the vessel.
-     * ``config/source.geom`` : the geometry models that represent
+     * ``config/models/source.geom`` : the geometry models that represent
        the calibration source.
-     * ``config/pmt_hamamatsu_R5912MOD_polycone.data`` : the dimensions
+     * ``config/models/pmt_hamamatsu_R5912MOD_polycone.data`` : the dimensions
        and shape of the photomultiplier tube used by the optical module.
 
-   * ``config/categories.lis`` : the file that defines the
+   * ``config/gids/categories.lis`` : the file that defines the
      list of *geometry categories* used to assign *geometry IDs* to the
      volumes in the hierarchy.
    * Geometry plugins:
 
-     * ``config/materials_plugin.conf`` : the file that defines the
+     * ``config/plugins/materials_plugin.conf`` : the file that defines the
        *materials* plugin. At least one material plugin must be provided
        to export the geometry hierarchy in a GDML file.
-     * ``config/mapping_plugins.conf`` : the file that defines some
+     * ``config/plugins/mapping_plugins.conf`` : the file that defines some
        *geometry ID mapping* plugins. Mapping plugins are optional.
        A default *mapping* object is built from the rules exposed in the
-       ``config/categories.lis`` file. Additionnal (and specialized)
-       *mapping* objects may be optionaly provided within plugins.
+       ``config/gids/categories.lis`` file. Additionnal (and specialized)
+       *mapping* objects may be optionally provided within plugins.
 
  * Built object(s) :
 
@@ -71,6 +71,7 @@ Quick start
 
 3. Build and install the example::
 
+      shell> export CONFIG_DIR=$(pwd)/config
       shell> mkdir __build
       shell> cd __build
       shell> cmake \
@@ -88,7 +89,7 @@ Quick start
 5. Run the ``bxgeomtools_inspector`` ::
 
       shell> bxgeomtools_inspector \
-               --manager-config config/manager.conf --visu-view-3d
+               --manager-config ${CONFIG_DIR}/manager.conf --visu-view-3d
 
    It displays views of the setup using the ``geomtools`` Gnuplot viewer.
 
@@ -103,8 +104,6 @@ Quick start
          :scale: 25 %
          :alt: The 3D view of the optical module (file ``images/geomtools_ex01_om_3d.jpg``)
          :align: center
-
-
 
 6. Check the output ``geomtools`` data file:
 
@@ -126,7 +125,7 @@ Quick start
          :alt: The 3D view of the setup (file ``images/geomtools_ex01_setup_root_3d.jpg``)
          :align: center
 
-8. Clean::
+7. Clean::
 
       shell> rm ex01
       shell> rm geomtools-ex01.gdml
