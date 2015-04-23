@@ -383,7 +383,7 @@ factory.geom_files : string[3] as path  = \\
 ### id_mgr.debug : boolean = 0
 
 #@description The configuration file that defines geometry categories
-id_mgr.categories_list : string as path = "${config_prefix}${setup_base_dir}/categories.lis"
+id_mgr.categories_list : string as path = "${config_prefix}${setup_base_dir}/gids/categories.lis"
 
 #@description This flag triggers the generation of a map of geometry IDs
 build_mapping : boolean = 1
@@ -397,7 +397,14 @@ plugins.configuration_files : string[2] as path = \\
 EOF
 
     #######################################################################
-    cat > ${setup_base_dir}/categories.lis <<EOF
+    mkdir -p ${setup_base_dir}/gids
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Directory '${setup_base_dir}/gids' was not created ! Abort !" >&2
+	return 1
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/gids/categories.lis <<EOF
 # -*- mode: conf-unix; -*-
 # List of geometry ID categories/types (datatools::multi_properties):
 
