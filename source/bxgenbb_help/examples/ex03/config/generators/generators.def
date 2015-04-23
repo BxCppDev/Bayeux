@@ -11,10 +11,10 @@
 
 #@description Definition files for levels and decays
 manager.definition_files : string[4] as path = \
-  "config/Co60/Co60_levels.def" \
-  "config/Ni60/Ni60_levels.def" \
-  "config/Co60/Co60_decays.def" \
-  "config/Ni60/Ni60_decays.def"
+  "config/generators/Co60/Co60_levels.def" \
+  "config/generators/Ni60/Ni60_levels.def" \
+  "config/generators/Co60/Co60_decays.def" \
+  "config/generators/Ni60/Ni60_decays.def"
 
 #@description Generation of levels decay tables (default=true)
 manager.decay_tables : boolean = true

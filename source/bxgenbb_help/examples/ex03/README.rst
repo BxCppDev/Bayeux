@@ -20,10 +20,10 @@ Introduction
  * Configuration files :
 
    * ``config/manager.conf`` : the main configuration file of the primary particle generator manager.
-   * ``config/generators.def`` : the definitions of some event generators
+   * ``config/generators/generators.def`` : the definitions of some event generators
 
-     * ``config/Co60/*.def`` : description of the nuclear and levels and associated decays for Co-60
-     * ``config/Ni60/*.def`` : description of the nuclear and levels and associated decays for Ni-60
+     * ``config/generators/Co60/*.def`` : description of the nuclear and levels and associated decays for Co-60
+     * ``config/generators/Ni60/*.def`` : description of the nuclear and levels and associated decays for Ni-60
 
 
  * Built object(s) :

@@ -24,7 +24,7 @@ Introduction
      manager.
    * Event generators' configuration files :
 
-     * ``config/generators.def`` : some event generators.
+     * ``config/generators/generators.def`` : some event generators.
 
  * Built object(s) :
 
