@@ -1673,6 +1673,10 @@ namespace geomtools {
     solids_stream << "<" <<  boolean_type_
                   << " name=" << '"' << to_html(name_) << '"'
                   << " >" << std::endl;
+    DT_THROW_IF (first_ref_.empty(), std::logic_error,
+                 "Missing first reference in boolean '" << name_ << "' of type '" << boolean_type_ << "'!");
+    DT_THROW_IF (second_ref_.empty(), std::logic_error,
+                 "Missing second reference in boolean '" << name_ << "' of type '" << boolean_type_ << "'!");
 
     solids_stream << "  <first ref=" << '"' <<  to_html(first_ref_) << '"' << " />" << std::endl;
     solids_stream << "  <second ref=" << '"' <<  to_html(second_ref_) << '"' << " />" << std::endl;

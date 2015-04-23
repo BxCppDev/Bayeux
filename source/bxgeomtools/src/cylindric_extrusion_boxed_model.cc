@@ -188,6 +188,7 @@ namespace geomtools {
                  "Missing 'material.ref' property in cylindric extrusion boxed model '" << name_ << "' !");
     const std::string material_name = config_.fetch_string ("material.ref");
 
+    // TODO: better check : for now we do not take into account extrusion_x and extrusion_y shifts !!!
     DT_THROW_IF (extrusion_radius >= 0.5 * mother_x, std::logic_error,
                  "Extrusion radius (" << extrusion_radius / CLHEP::mm
                  << " mm) is too large (X-axis) in cylindric extrusion boxed model '"
@@ -256,7 +257,7 @@ namespace geomtools {
         sd_ptr->tree_dump (std::cerr);
       }
     }
-  // Install a dedicated drawer:
+    // Install a dedicated drawer:
     _drawer_.reset(new wires_drawer(*this));
     _extruded_solid_.set_wires_drawer(*_drawer_);
     _extruded_solid_.lock();

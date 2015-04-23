@@ -291,7 +291,7 @@ namespace geomtools {
           shape_ref_1 = solid_name_ + ".union.first_ref" + i_model::solid_suffix();
         }
         std::string shape_ref_2 = u.get_shape2().get_shape_ref();
-        if (shape_ref_1.empty()) {
+        if (shape_ref_2.empty()) {
           shape_ref_2 = solid_name_ + ".union.second_ref" + i_model::solid_suffix();
         }
         std::string pos_ref = solid_name_ + ".union.pos_ref";
@@ -312,13 +312,13 @@ namespace geomtools {
                                  pos_ref,
                                  rot_ref);
       } else if (shape_name == "subtraction_3d") {
-        const subtraction_3d & s = static_cast<const subtraction_3d &> (shape_);
+        const subtraction_3d & s = static_cast<const subtraction_3d &>(shape_);
         std::string shape_ref_1 = s.get_shape1().get_shape_ref();
         if (shape_ref_1.empty()) {
           shape_ref_1 = solid_name_ + ".subtraction.first_ref" + i_model::solid_suffix();
         }
         std::string shape_ref_2 = s.get_shape2().get_shape_ref();
-        if (shape_ref_1.empty()) {
+        if (shape_ref_2.empty()) {
           shape_ref_2 = solid_name_ + ".subtraction.second_ref" + i_model::solid_suffix();
         }
         std::string pos_ref = solid_name_ + ".subtraction.pos_ref";
@@ -346,7 +346,7 @@ namespace geomtools {
           shape_ref_1 = solid_name_ + ".intersection.first_ref" + i_model::solid_suffix();
         }
         std::string shape_ref_2 = i.get_shape2().get_shape_ref();
-        if (shape_ref_1.empty()) {
+        if (shape_ref_2.empty()) {
           shape_ref_2 = solid_name_ + ".intersection.second_ref" + i_model::solid_suffix();
         }
         std::string pos_ref = solid_name_ + ".intersection.pos_ref";
