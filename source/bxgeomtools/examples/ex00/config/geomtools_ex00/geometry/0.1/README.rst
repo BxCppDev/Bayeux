@@ -3,7 +3,7 @@ Virtual geometry setup ``geomtools_ex00`` (version ``0.1``)
 
 This   README   file  has   been   automatically   generated  by   the
 ``bxgeomtools_mkskelcfg`` script to describe a skeleton directory with a
-set of toy geometry configuration  files.  From this sample directory,
+set of geometry configuration  files.  From this sample directory,
 you can now build your own virtual geometry setup.
 
 Files
@@ -44,6 +44,6 @@ Geometry inspector
 Run the Bayeux/geomtools inspector program: ::
 
   $ cd {ex00 source dir}
-  $ SETUP_CONFIG_DIR=$(pwd) \
+  $ SETUP_CONFIG_DIR=$(pwd)/config \
     bxgeomtools_inspector \
-      --manager-config "config/geomtools_ex00/geometry/0.1/manager.conf"
+      --manager-config "${SETUP_CONFIG_DIR}/geomtools_ex00/geometry/0.1/manager.conf"
