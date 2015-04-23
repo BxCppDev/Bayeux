@@ -4,6 +4,7 @@ do_clean=1
 do_simulation=1
 do_pre=1
 do_cone=0
+do_visu=1
 only_build=0
 while [ -n "$1" ]; do
     token="$1"
@@ -25,6 +26,10 @@ while [ -n "$1" ]; do
 	do_cone=1
     elif [ "x${token}" == "x--no-cone" ]; then
 	do_cone=0
+    elif [ "x${token}" == "x--visu" ]; then
+	do_visu=1
+    elif [ "x${token}" == "x--no-visu" ]; then
+	do_visu=0
     fi
     shift 1
 done
@@ -137,6 +142,11 @@ if [ ${do_pre} -eq 1 ]; then
 
 fi
 
+visu_opt=""
+if [ ${do_visu} -eq 1 ]; then
+    visu_opt="--with-visualization"
+fi
+
 #################### SIMULATIONS ####################
 if [ $do_simulation -eq 1 ]; then
 
@@ -176,7 +186,7 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
 	--interactive  \
-	--with-visualization \
+	${visu_opt} \
 	--logging-priority "notice" \
 	--input-file "mctools_ex00_${eg_name}_${vg_name}.xml"
     if [ $? -ne 0 ]; then
@@ -187,8 +197,8 @@ if [ $do_simulation -eq 1 ]; then
     echo -e "\nRun the Geant4 simulation non-interactively..." 1>&2
     bxg4_production \
         --logging-priority "warning" \
-	--number-of-events 100 \
-        --number-of-events-modulo 0 \
+	--number-of-events 35 \
+        --number-of-events-modulo 10 \
         --batch \
         --config "${CONFIG_DIR}/simulation/manager.conf" \
 	--vertex-generator-name ${vg_name} \
@@ -205,11 +215,10 @@ if [ $do_simulation -eq 1 ]; then
 	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
-
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
 	--interactive \
-	--with-visualization \
+	${visu_opt} \
 	--logging-priority "notice" \
 	--input-file "mctools_ex00_${eg_name}_${vg_name}.data.gz"
     if [ $? -ne 0 ]; then
@@ -224,7 +233,7 @@ if [ $do_simulation -eq 1 ]; then
 	--logging-priority "warning" \
 	--dlls-config "${CONFIG_DIR}/pipeline/dlls.conf" \
 	--module-manager-config "${CONFIG_DIR}/pipeline/module_manager.conf" \
-	--max-records 100 \
+	--max-records 15 \
 	--modulo 5 \
 	--module ${sim_module} \
 	--output-file "mctools_ex00_${sim_module}.dpp.brio"
@@ -233,15 +242,16 @@ if [ $do_simulation -eq 1 ]; then
 	exit 1
     fi
 
-    # echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
-    # ./ex00_read_pipeline_simdata \
-    #     --logging-priority "notice" \
-    #     --interactive \
-    # 	  --with-visualization \
-    #     --input-file "mctools_ex00_${sim_module}.dpp.brio"
+    echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
+    ./ex00_read_pipeline_simdata \
+        --logging-priority "notice" \
+        --interactive \
+	${visu_opt} \
+        --input-file "mctools_ex00_${sim_module}.dpp.brio"
 
     echo -e "\nRun the standalone simulation module..." 1>&2
     ./ex00_run_sim_module \
+        --number-of-events=2500 \
 	--geometry-config "${CONFIG_DIR}/geometry/manager.conf" \
 	--simulation-config "${CONFIG_DIR}/simulation/manager.conf" \
 	--output-file "mctools_ex00_ssm.brio"
@@ -254,7 +264,7 @@ if [ $do_simulation -eq 1 ]; then
     ./ex00_read_pipeline_simdata \
         --logging-priority "notice" \
         --interactive \
-   	--with-visualization \
+	${visu_opt} \
         --input-file "mctools_ex00_ssm.brio"
 
 fi
