@@ -42,9 +42,9 @@ Quick start
 
 3. Run the ``bxgeomtools_inspector`` ::
 
-      $ SETUP_CONFIG_DIR=$(pwd) \
-        bxgeomtools_inspector \
-         --manager-config config/geomtools_ex00/geometry/0.1/manager.conf --visu-view-3d
+      $ export SETUP_CONFIG_DIR=$(pwd)/config
+      $ bxgeomtools_inspector \
+         --manager-config ${SETUP_CONFIG_DIR}/geomtools_ex00/geometry/0.1/manager.conf --visu-view-3d
 
    where the ``SETUP_CONFIG_DIR`` environment variable represents the base source directory
    of the ``ex00`` example.
