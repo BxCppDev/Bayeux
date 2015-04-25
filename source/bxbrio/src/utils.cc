@@ -18,6 +18,10 @@
 
 namespace brio {
 
+  // static
+  const int store_info::SUCCESS;
+  const int store_info::ERROR;
+
   const std::string & store_info::constants::brio_file_extension()
   {
     static std::string ext;

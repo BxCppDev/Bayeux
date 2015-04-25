@@ -27,10 +27,11 @@
 // This Project:
 #include <brio/detail/brio_record.h>
 
+// Forward class declaration
 class TTree;
 
 namespace brio {
-  /// A class that contains internal dynamic informations for a given \e store
+  /// A class that contains internal dynamic informations for a given store
   class store_info {
   public:
     struct constants {
@@ -58,8 +59,8 @@ namespace brio {
     static const int SUCCESS = 0;
     static const int ERROR   = 1;
 
-
   public:
+
     store_info();
     virtual ~store_info();
 
