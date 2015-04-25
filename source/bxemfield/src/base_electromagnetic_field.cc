@@ -17,6 +17,10 @@ namespace emfield {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_electromagnetic_field,
                                                    "emfield::base_electromagnetic_field/__system__");
 
+  // static
+  const char base_electromagnetic_field::ELECTRIC_FIELD_LABEL;
+  const char base_electromagnetic_field::MAGNETIC_FIELD_LABEL;
+
   void base_electromagnetic_field::tree_dump(std::ostream & out_,
                                              const std::string & title_,
                                              const std::string & indent_,
