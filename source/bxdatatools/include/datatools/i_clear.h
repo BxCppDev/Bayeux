@@ -7,6 +7,10 @@ namespace datatools {
   //! \brief A pure abstract class (interface) for inherited clearable classes.
   class i_clear {
   public:
+
+    /// Destructor
+    virtual ~i_clear();
+
     /// Clear (reset) the object's internals (typically empty a container)
     virtual void clear() = 0;
   };
