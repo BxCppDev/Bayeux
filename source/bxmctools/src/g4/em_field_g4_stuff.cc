@@ -73,6 +73,10 @@ namespace mctools {
         return "HelixImplicitEuler";
       case STEPPER_HELIX_MIXED_EULER :
         return "HelixMixedEuler";
+      case STEPPER_HELIX_SIMPLE_RUNGE :
+        return "HelixSimpleRunge";
+      default:
+        return "";
       }
       return "";
     }
@@ -163,6 +167,7 @@ namespace mctools {
       DT_THROW_IF(!has_g4_field(), std::logic_error, "No G4 EM field is set!");
       if (_b_field_) return _b_field_->get_name();
       if (_eb_field_) return _eb_field_->get_name();
+      return "";
     }
 
     em_field_g4_stuff::em_field_g4_stuff()
@@ -247,8 +252,8 @@ namespace mctools {
           _min_step_ *= default_length_unit;
         }
       }
-      DT_THROW_IF(force_explicit_parameters && ! datatools::is_valid(_min_step_)
-                  || _min_step_ <= 0.0,
+      DT_THROW_IF(force_explicit_parameters && (! datatools::is_valid(_min_step_)
+                                                || _min_step_ <= 0.0),
                   std::logic_error,
                   "Invalid min step value for field labelled '" << get_g4_field_name() << "'!");
 
@@ -258,8 +263,8 @@ namespace mctools {
           _delta_chord_ *= default_length_unit;
         }
       }
-      DT_THROW_IF(force_explicit_parameters && ! datatools::is_valid(_delta_chord_)
-                  || _delta_chord_ <= 0.0,
+      DT_THROW_IF(force_explicit_parameters && (! datatools::is_valid(_delta_chord_)
+                                                || _delta_chord_ <= 0.0),
                   std::logic_error,
                   "Invalid delta chord value for field labelled '" << get_g4_field_name() << "'!");
 
@@ -269,8 +274,8 @@ namespace mctools {
           _delta_one_step_ *= default_length_unit;
         }
       }
-      DT_THROW_IF(force_explicit_parameters && ! datatools::is_valid(_delta_one_step_)
-                  || _delta_one_step_ <= 0.0,
+      DT_THROW_IF(force_explicit_parameters && (! datatools::is_valid(_delta_one_step_)
+                                                || _delta_one_step_ <= 0.0),
                   std::logic_error,
                   "Invalid delta one step value for field labelled '" << get_g4_field_name() << "'!");
 
@@ -280,24 +285,24 @@ namespace mctools {
           _delta_intersection_ *= default_length_unit;
         }
       }
-      DT_THROW_IF(force_explicit_parameters && ! datatools::is_valid(_delta_intersection_)
-                  || _delta_intersection_ <= 0.0,
+      DT_THROW_IF(force_explicit_parameters && (! datatools::is_valid(_delta_intersection_)
+                                                || _delta_intersection_ <= 0.0),
                   std::logic_error,
                   "Invalid delta intersection value for field labelled '" << get_g4_field_name() << "'!");
 
       if (config_.has_key("eps_min")) {
         _eps_min_ = config_.fetch_dimensionless_real("eps_min");
       }
-      DT_THROW_IF(force_explicit_parameters && ! datatools::is_valid(_eps_min_)
-                  || _eps_min_ <= 0.0,
+      DT_THROW_IF(force_explicit_parameters && (! datatools::is_valid(_eps_min_)
+                                                || _eps_min_ <= 0.0),
                   std::logic_error,
                   "Invalid eps min value for field labelled '" << get_g4_field_name() << "'!");
 
       if (config_.has_key("eps_max")) {
         _eps_max_ = config_.fetch_dimensionless_real("eps_max");
       }
-      DT_THROW_IF(force_explicit_parameters && ! ! datatools::is_valid(_eps_max_)
-                  || _eps_max_ <= 0.0,
+      DT_THROW_IF(force_explicit_parameters && (! datatools::is_valid(_eps_max_)
+                                                || _eps_max_ <= 0.0),
                   std::logic_error,
                   "Invalid eps max value for field labelled '" << get_g4_field_name() << "'!");
 
