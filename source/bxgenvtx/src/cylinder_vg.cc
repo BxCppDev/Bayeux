@@ -24,6 +24,12 @@ namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(cylinder_vg,"genvtx::cylinder_vg");
 
+  // static
+  const int cylinder_vg::MODE_INVALID;
+  const int cylinder_vg::MODE_BULK;
+  const int cylinder_vg::MODE_SURFACE;
+  const int cylinder_vg::MODE_DEFAULT;
+
   int cylinder_vg::get_mode () const
   {
     return _mode_;

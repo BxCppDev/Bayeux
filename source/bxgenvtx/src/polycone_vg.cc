@@ -25,6 +25,12 @@ namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(polycone_vg, "genvtx::polycone_vg");
 
+  // static
+  const int polycone_vg::MODE_INVALID;
+  const int polycone_vg::MODE_BULK;
+  const int polycone_vg::MODE_SURFACE;
+  const int polycone_vg::MODE_DEFAULT;
+
   int polycone_vg::get_mode () const
   {
     return _mode_;

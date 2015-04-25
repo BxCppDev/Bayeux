@@ -25,6 +25,12 @@ namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(tube_vg,"genvtx::tube_vg");
 
+  // static
+  const int tube_vg::MODE_INVALID;
+  const int tube_vg::MODE_BULK;
+  const int tube_vg::MODE_SURFACE;
+  const int tube_vg::MODE_DEFAULT;
+
   int tube_vg::get_mode () const
   {
     return _mode_;

@@ -13,6 +13,12 @@
 
 namespace genvtx {
 
+  // static
+  const int utils::MODE_INVALID;
+  const int utils::MODE_BULK;
+  const int utils::MODE_SURFACE;
+  const int utils::MODE_DEFAULT;
+
   void utils::origin_invalidate (std::string & origin_)
   {
     origin_.clear ();

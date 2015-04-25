@@ -39,6 +39,9 @@ namespace genvtx {
     return *_vv_factory;
   }
 
+  // static
+  const size_t vertex_validation::DEFAULT_MAX_NUMBER_OF_TRIES;
+
   vertex_validation::geometry_context::geometry_context()
   {
     _ginfo_ = 0;

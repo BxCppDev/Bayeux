@@ -27,6 +27,12 @@ namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(sphere_vg,"genvtx::sphere_vg");
 
+  // static
+  const int sphere_vg::MODE_INVALID;
+  const int sphere_vg::MODE_BULK;
+  const int sphere_vg::MODE_SURFACE;
+  const int sphere_vg::MODE_DEFAULT;
+
   int sphere_vg::get_mode () const
   {
     return _mode_;
