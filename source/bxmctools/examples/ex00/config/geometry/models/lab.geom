@@ -75,16 +75,19 @@ build_mode : string = "points"
 #@description The polyhedra number of sides
 sides        : integer = 4
 
+#@description Build by apothem
+build_by_apothem : boolean = true
+
 #@description The list of Z coordinates for the shape
 list_of_z    : real [2] =   -125.     +125.
 
 #@description The list of inner radius coordinates for the shape
-list_of_rmin : real [2] =    72.      72.
-# list_of_rmin : real [2] =    51.      51.
+list_of_rmin : real [2] =    51.      51.
+# list_of_rmin : real [2] =    72.      72.
 
 #@description The list of outer radius coordinates for the shape
-list_of_rmax : real [2] =    75.      75.
-# list_of_rmax : real [2] =    53.      53.
+list_of_rmax : real [2] =    53.      53.
+# list_of_rmax : real [2] =    75.      75.
 
 #######################
 # Material parameters #
