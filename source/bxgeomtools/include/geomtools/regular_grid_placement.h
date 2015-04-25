@@ -43,12 +43,13 @@ namespace geomtools {
     : public i_placement
   {
   public:
-    enum mode_type
-      {
-        MODE_XY = 0,
-        MODE_YZ = 1,
-        MODE_XZ = 2
-      };
+
+    //! \brief Orientation of the grid placement
+    enum mode_type {
+      MODE_XY = 0,
+      MODE_YZ = 1,
+      MODE_XZ = 2
+    };
 
     static const bool CENTERED = true;
     static const bool UNCENTERED = false;

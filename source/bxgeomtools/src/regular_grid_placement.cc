@@ -1,14 +1,18 @@
-// -*- mode: c++; -*-
-/* regular_grid_placement.cc
- */
+// regular_grid_placement.cc
 
+// Ourselves:
 #include <geomtools/regular_grid_placement.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <limits>
 
 namespace geomtools {
+
+  // static
+  const bool regular_grid_placement::CENTERED;
+  const bool regular_grid_placement::UNCENTERED;
 
   size_t regular_grid_placement::get_dimension () const
   {

@@ -29,6 +29,9 @@ namespace geomtools {
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(right_polygonal_frustrum,
                                              "geomtools::right_polygonal_frustrum");
 
+  // static
+  const unsigned int right_polygonal_frustrum::MIN_NUMBER_OF_SIDES;
+
   const std::string & right_polygonal_frustrum::rpf_label()
   {
     static std::string label;

@@ -15,12 +15,12 @@ namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (geom_id,"geomtools::geom_id")
 
-  const uint32_t geom_id::INVALID_TYPE          = 0xFFFFFFFF;
-  const uint32_t geom_id::INVALID_ADDRESS       = 0xFFFFFFFF;
-  const uint32_t geom_id::ANY_ADDRESS           = 0xFFFFFFFE;
-  const uint32_t geom_id::DEFAULT_ADDRESS_DEPTH = 10;
-  const uint32_t geom_id::UNIVERSE_TYPE         = 0;
-  const uint32_t geom_id::WORLD_TYPE            = geom_id::UNIVERSE_TYPE;
+  const uint32_t geom_id::INVALID_TYPE; //           = 0xFFFFFFFF;
+  const uint32_t geom_id::INVALID_ADDRESS; //        = 0xFFFFFFFF;
+  const uint32_t geom_id::ANY_ADDRESS; //            = 0xFFFFFFFE;
+  const uint32_t geom_id::DEFAULT_ADDRESS_DEPTH; //  = 10;
+  const uint32_t geom_id::UNIVERSE_TYPE; //          = 0;
+  const uint32_t geom_id::WORLD_TYPE ; //            = geom_id::UNIVERSE_TYPE;
 
   const char geom_id::IO_ID_OPEN           = '[';
   const char geom_id::IO_TYPE_INVALID      = '?';

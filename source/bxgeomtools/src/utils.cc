@@ -90,6 +90,8 @@ namespace geomtools {
     return in;
   }
 
+  // static
+  const int    constants::NO_INTERCEPT;
   const double constants::DEFAULT_TOLERANCE      = constants::get_default_tolerance ();
   const double constants::DEFAULT_ANGULAR_TOLERANCE = constants::get_default_angular_tolerance ();
   const double constants::ZERO_TOLERANCE         = constants::get_zero_tolerance ();

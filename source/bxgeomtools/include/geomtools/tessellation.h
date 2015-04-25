@@ -296,7 +296,6 @@ namespace geomtools {
   {
   public:
 
-    // static const uint32_t FACE_ALL  = FACE_ALL_BITS;
     static const int INVALID_VERTEX      = -1;
     static const int MAX_VERTEX          = 0x0FFFFFFF;
     static const unsigned int INVALID_FACET_INDEX = 0xFFFFFFFF;

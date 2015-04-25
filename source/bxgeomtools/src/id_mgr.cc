@@ -22,6 +22,9 @@
 namespace geomtools {
 
   // static
+  const uint32_t id_mgr::WORD_TYPE;
+
+  // static
   const std::string & id_mgr::category_key_label()
   {
     static std::string token = "category";

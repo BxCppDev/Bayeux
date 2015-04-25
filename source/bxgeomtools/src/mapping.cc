@@ -16,6 +16,9 @@
 namespace geomtools {
 
   // static
+  const size_t mapping::NO_MAX_DEPTH;
+
+  // static
   const mapping::constants & mapping::constants::instance ()
   {
     static boost::scoped_ptr<mapping::constants> g_global_constants (0);

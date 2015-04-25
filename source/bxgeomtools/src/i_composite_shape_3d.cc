@@ -12,6 +12,10 @@ namespace geomtools {
 
   using namespace std;
 
+  // static
+  const uint32_t i_composite_shape_3d::FIRST_PART;
+  const uint32_t i_composite_shape_3d::SECOND_PART;
+
   void
   i_composite_shape_3d::shape_type::copy(shape_type & sh_)
   {

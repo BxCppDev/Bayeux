@@ -1320,6 +1320,7 @@ namespace geomtools {
         i != zplanes_.end();
         i++) {
         double z = i->first;
+        // rmin and rmax are the apothems of the inner out outer envelopes:
         double rmin = i->second.first;
         double rmax = i->second.second;
         solids_stream << "  " << "<zplane ";
@@ -1348,8 +1349,11 @@ namespace geomtools {
         i++) {
         double z = i->first;
         std::pair<double, double> rminmax;
-        rminmax.first =  i->second.rmin;
-        rminmax.second = i->second.rmax;
+        double apothem_factor = std::cos(M_PI / p_.get_n_sides());
+        // GDML and Geant4 seem to use the apothem (distance from center to
+        // side surfaces) and not the radius, so we translate here:
+        rminmax.first  = i->second.rmin / apothem_factor;
+        rminmax.second = i->second.rmax / apothem_factor;
         zplanes[z] = rminmax;
       }
     add_gdml_polyhedra(name_,

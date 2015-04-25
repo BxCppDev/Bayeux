@@ -10,6 +10,13 @@ namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(polyline_3d, "geomtools::polyline_3d")
 
+  // static
+  const bool polyline_3d::CLOSED;
+  const bool polyline_3d::closed;
+  const bool polyline_3d::OPEN;
+  const bool polyline_3d::open;
+  const bool polyline_3d::DEFAULT_CLOSED;
+
   const std::string & polyline_3d::polyline_3d_label()
   {
     static std::string label;

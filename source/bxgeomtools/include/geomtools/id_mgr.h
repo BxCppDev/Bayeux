@@ -44,7 +44,7 @@ namespace geomtools {
     static const std::string & category_key_label();
     static const std::string & type_meta_label();
     static const std::string & default_world_category();
-    static const int     WORD_TYPE = 0;
+    static const uint32_t      WORD_TYPE = 0;
 
     /** A class that documents the hierarchical relationship
      *  of a geometry category :
@@ -57,7 +57,7 @@ namespace geomtools {
     {
     public:
       std::string category;                /// human readable category label
-      uint32_t         type;                    /// unique integral ID
+      uint32_t    type;                    /// unique integral ID
       std::string inherits;                /// the mother category from which the category is inherited
       std::string extends;                 /// the mother category from which the category is extented
       std::vector<std::string> ancestors;  /// the list of ancestor categories

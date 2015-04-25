@@ -30,8 +30,8 @@ namespace geomtools {
    *       C         B
    *        *-------*
    *       /       / \
-   *      /       /   * M
-   *     /    O  /     \
+   *      /       /  .* M
+   *     /    O  /.    \
    *  D *       * <-r-> *-------------------> y
    *     \      :      / A
    *      \     :     /
@@ -41,17 +41,18 @@ namespace geomtools {
    *            |
    *            V x
    *
-   *   A, B... : vertices
-   *   OA = OB : radius (or circumradius)
-   *   OM      : apothem (http://en.wikipedia.org/wiki/Apothem)
-   *   AB      : side's length
-   *   (A0B)   : reference angle
+   *   A, B... F : vertices
+   *   OA = OB   : radius (or circumradius)
+   *   OM        : apothem (http://en.wikipedia.org/wiki/Apothem)
+   *   AB        : side's length
+   *   (A0B)     : reference angle
    */
   class regular_polygon : public i_shape_2d,
                           public i_polygon
   {
 
   public:
+
     static const std::string & regular_polygon_label();
 
     /// \brief Construction mode

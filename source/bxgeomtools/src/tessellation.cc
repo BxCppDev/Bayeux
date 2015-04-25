@@ -126,6 +126,11 @@ namespace geomtools {
 
   /* facet34 */
 
+
+  // static
+  const unsigned int facet34::MAX_CATEGORY;
+  const int32_t      facet34::INVALID_CATEGORY;
+
   uint32_t facet34::get_number_of_vertices () const
   {
     return _number_of_vertices_;
@@ -851,6 +856,12 @@ namespace geomtools {
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(tessellated_solid,
                                              "geomtools::tessellated_solid");
+
+  // static
+  const int tessellated_solid::INVALID_VERTEX;
+  const int tessellated_solid::MAX_VERTEX;
+  const unsigned int tessellated_solid::INVALID_FACET_INDEX;
+
 
   const std::string & tessellated_solid::tessellated_label()
   {

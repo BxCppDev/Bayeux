@@ -32,6 +32,9 @@
 
 namespace geomtools {
 
+  // static
+  const int gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
+
   gnuplot_drawer::visibility_rules::visibility_rules()
   {
     active = false;

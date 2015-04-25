@@ -12,6 +12,9 @@ namespace geomtools {
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_2d,
                                                     "geomtools::i_shape_2d");
 
+  // static
+  const uint32_t i_shape_2d::ALL_PIECES;
+
   bool i_shape_2d::has_number_of_sides() const
   {
     return get_number_of_sides() > 0;

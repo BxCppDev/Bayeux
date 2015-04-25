@@ -14,6 +14,19 @@
 
 namespace geomtools {
 
+  // static
+  const uint32_t face_identifier::FACE_BITS_NONE;
+  const uint32_t face_identifier::FACE_BITS_ANY;
+  const uint32_t face_identifier::FACE_INDEX_NONE;
+  const uint32_t face_identifier::FACE_INDEX_MIN;
+  const uint32_t face_identifier::FACE_INDEX_MAX;
+  const uint32_t face_identifier::FACE_INDEX_ANY;
+  const uint32_t face_identifier::PART_INDEX_NONE;
+  const uint32_t face_identifier::PART_INDEX_MIN;
+  const uint32_t face_identifier::PART_INDEX_DEFAULT;
+  const uint32_t face_identifier::PART_INDEX_MAX;
+  const uint32_t face_identifier::PART_INDEX_ANY;
+
   void face_identifier::_set_defaults()
   {
     _mode_ = MODE_FACE_INVALID;

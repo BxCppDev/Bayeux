@@ -65,8 +65,9 @@ namespace geomtools {
 
     /*
      * The polyhedra is defined by a list of (z, rmin, rmax) triplets
-     * the radius are the tangential radius (radius of the inscribed
-     * circles) and not the distance from Z-axis to the corners.
+     * the radius are the distance from center to corners (OA, OB...).
+     * Caution: the Geant4 and GDML use the tangential radius (radius of the inscribed
+     * circles == apothem == OT) and not the distance from Z-axis to the corners.
      *
      * Example with a 'n_sides==6' polyhedra:
      *

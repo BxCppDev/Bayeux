@@ -67,6 +67,9 @@ namespace geomtools {
 
   using namespace std;
 
+  // static
+  const uint32_t gnuplot_draw::DEFAULT_OPTIONS;
+
   gnuplot_draw::xyz_range::xyz_range()
   {
     _activated_ = false;

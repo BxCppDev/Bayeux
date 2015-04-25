@@ -13,6 +13,8 @@ namespace geomtools {
   // Serial tag for datatools serializatable interface :
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(base_hit, "geomtools::base_hit")
 
+  const int32_t base_hit::INVALID_HIT_ID;
+
   base_hit & base_hit::i_measurement::operator()(base_hit & a_hit)
   {
     do_measurement(a_hit);

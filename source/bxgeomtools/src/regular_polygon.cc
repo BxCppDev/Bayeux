@@ -265,21 +265,18 @@ namespace geomtools {
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "R : " << get_r() / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Valid : " << is_valid() << std::endl;
     if (is_valid()) {
       out_ << indent_ << datatools::i_tree_dumpable::tag
-           << datatools::i_tree_dumpable::tag
            << "Side length : " << get_side_length() / CLHEP::mm << " mm" << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
-           << datatools::i_tree_dumpable::tag
            << "Angle : " << get_reference_angle() / CLHEP::degree << " degree" << std::endl;
 
-      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << datatools::i_tree_dumpable::tag
+      out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Apothem : " << get_apothem() / CLHEP::mm << " mm" << std::endl;
     }
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Valid : " << is_valid() << std::endl;
     return;
   }
 

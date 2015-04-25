@@ -14,6 +14,9 @@
 namespace geomtools {
 
   // static
+  const int color::COLOR_TEST;
+
+  // static
   const std::string & color::invalid()
   {
     return constants::instance().invalid;
