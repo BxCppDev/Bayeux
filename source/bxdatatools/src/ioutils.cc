@@ -21,6 +21,11 @@
 
 namespace datatools {
 
+  // static
+  const int io::REAL_PRECISION;
+  const int io::REAL8_PRECISION;
+  const int io::REAL4_PRECISION;
+
   void print_multi_lines(std::ostream & out_,
                          const std::string & text_,
                          const std::string & indent_)

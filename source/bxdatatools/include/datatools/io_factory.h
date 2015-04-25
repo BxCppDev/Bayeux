@@ -91,8 +91,7 @@
 
 namespace datatools {
 
-  /*! \brief A generic base reader/writer class based on Boost/Serialization
-   */
+  //! \brief A generic base reader/writer class based on Boost/Serialization
   class io_factory : public datatools::i_tree_dumpable {
   public:
     static const int SUCCESS = 0;
@@ -484,7 +483,7 @@ namespace datatools {
 
   public:
 
-    enum status_t {
+    enum status_type {
       STATUS_OK    = 0,
       STATUS_ERROR = 1
     };

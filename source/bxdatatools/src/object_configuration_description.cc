@@ -21,6 +21,14 @@
 
 namespace datatools {
 
+  // static
+  const bool configuration_property_description::SCALAR;
+  const bool configuration_property_description::ARRAY;
+  const bool configuration_property_description::IMPLICIT_UNIT;
+  const bool configuration_property_description::EXPLICIT_UNIT;
+  const bool configuration_property_description::MUTABLE;
+  const bool configuration_property_description::CONST;
+
   bool configuration_property_description::dependency_entry::dynamic() const
   {
     return type == DEP_DYNAMIC;
