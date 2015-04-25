@@ -164,6 +164,9 @@ if(Bayeux_BUILD_GEANT4_MODULE)
     ${module_include_dir}/${module_name}/g4/simulation_module.h
     ${module_include_dir}/${module_name}/g4/primary_generator.h
     ${module_include_dir}/${module_name}/g4/magnetic_field.h
+    ${module_include_dir}/${module_name}/g4/electromagnetic_field.h
+    ${module_include_dir}/${module_name}/g4/em_field_g4_utils.h
+    ${module_include_dir}/${module_name}/g4/em_field_g4_stuff.h
     ${module_include_dir}/${module_name}/g4/particles_physics_constructor.h
     ${module_include_dir}/${module_name}/g4/physics_list_utils.h
     ${module_include_dir}/${module_name}/g4/tracking_action.h
@@ -207,6 +210,8 @@ if(Bayeux_BUILD_GEANT4_MODULE)
     ${module_source_dir}/g4/primary_generator.cc
     ${module_source_dir}/g4/simulation_module.cc
     ${module_source_dir}/g4/magnetic_field.cc
+    ${module_source_dir}/g4/electromagnetic_field.cc
+    ${module_source_dir}/g4/em_field_g4_stuff.cc
     ${module_source_dir}/g4/neutrons_physics_constructor.cc
     ${module_source_dir}/g4/biasing_manager.cc
     )
