@@ -1,7 +1,7 @@
 /// \file geomtools/i_stackable.h
-/* Author (s) :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
- * Last modified: 2010-04-02
+ * Last modified: 2015-04-25
  *
  * License:
  *
@@ -34,6 +34,7 @@ namespace geomtools {
 
   public:
 
+    virtual ~i_stackable();
     bool has_xmin() const;
     bool has_xmax() const;
     bool has_ymin() const;

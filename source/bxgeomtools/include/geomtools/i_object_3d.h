@@ -1,7 +1,7 @@
 /// \file geomtools/i_object_3d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2014-04-09
+ * Last modified: 2015-04-25
  *
  * License:
  *
@@ -234,6 +234,8 @@ namespace geomtools {
     class i_getter
     {
     public:
+
+      virtual ~i_getter();
 
       virtual const i_object_3d * get(const std::string & name_,
                                       const datatools::properties & params_) = 0;

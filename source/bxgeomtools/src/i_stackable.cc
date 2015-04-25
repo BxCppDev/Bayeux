@@ -23,6 +23,11 @@ namespace geomtools {
   const std::string stackable::STACKABLE_PLAY_PROPERTY = "play";
   const std::string stackable::STACKABLE_LIMITS_PROPERTY = "limits";
 
+  i_stackable::~i_stackable()
+  {
+    return;
+  }
+
   bool i_stackable::has_xmin() const
   {
     return datatools::is_valid(get_xmin ());
@@ -97,8 +102,6 @@ namespace geomtools {
     return source_.has_key (stackable::make_key (stackable::STACKABLE_ZMAX_PROPERTY));
   }
 
-  /****************************/
-
   double stackable::get_xmin (const datatools::properties & source_, double length_unit_)
   {
     static const std::string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
@@ -147,8 +150,6 @@ namespace geomtools {
     return zmax;
   }
 
-  /****************************/
-
   void stackable::set_xmin (datatools::properties & target_,
                             double xmin_)
   {
@@ -196,8 +197,6 @@ namespace geomtools {
                    zmax_);
     return;
   }
-
-  /****************************/
 
   void stackable::unset_xmin (datatools::properties & target_)
   {
@@ -257,8 +256,6 @@ namespace geomtools {
     set_zmax (target_, sd_.get_zmax ());
     return;
   }
-
-  /***********************************************/
 
   bool stackable_data::initialize (const datatools::properties & config_)
   {

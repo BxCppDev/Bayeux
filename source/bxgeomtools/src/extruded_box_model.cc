@@ -269,7 +269,7 @@ namespace geomtools {
   }
 
   extruded_box_model::wires_drawer::wires_drawer(const extruded_box & eb_)
-    : i_wires_drawer(eb_)
+    : i_wires_drawer<extruded_box>(eb_)
   {
     DT_THROW_IF(!eb_.is_locked(), std::logic_error, "Extruded box is not locked!");
     return;

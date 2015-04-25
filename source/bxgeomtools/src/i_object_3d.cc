@@ -413,6 +413,12 @@ namespace geomtools {
 
   /* Object 3D getter interface */
 
+  // virtual
+  i_object_3d::i_getter::~i_getter()
+  {
+    return;
+  }
+
   const i_object_3d *
   i_object_3d::i_getter::get(const std::string & name_)
   {
