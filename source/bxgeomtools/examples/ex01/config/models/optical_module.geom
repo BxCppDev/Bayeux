@@ -87,6 +87,12 @@ build_mode : string = "points"
 #@description The polyhedra number of sides
 sides        : integer = 4
 
+#@description Flag to use the apothem or radius to the corners
+build_by_apothem : boolean = 0
+
+#@description The length unit
+length_unit  : string = "mm"
+
 #@description The list of Z coordinates for the shape
 list_of_z    : real [3] =  -80.    +60.     +80.
 
@@ -95,9 +101,6 @@ list_of_rmin : real [3] =    0.      0.       0.
 
 #@description The list of outer radius coordinates for the shape
 list_of_rmax : real [3] =   85.    212.     212.
-
-#@description The length unit
-length_unit  : string = "mm"
 
 #@description The name of the material
 material.ref : string  = "plexiglass"
