@@ -65,8 +65,8 @@ namespace dpp {
       int         status;
       bool        processed;
 
-      source_record (const std::string & a_label = "");
-      void reset ();
+      source_record(const std::string & a_label = "");
+      void reset();
     };
 
     /// Set logging priority
@@ -77,65 +77,65 @@ namespace dpp {
 
   protected:
 
-    void _set_defaults (datatools::logger::priority a_priority);
+    void _set_defaults(datatools::logger::priority a_priority);
 
-    virtual void _check_next_record () = 0;
+    virtual void _check_next_record() = 0;
 
     // Default failing load method :
-    virtual bool _load_record (datatools::things & a_event_record,
+    virtual bool _load_record(datatools::things & a_event_record,
                                int64_t a_entry);
 
     // Default failing getter method :
-    virtual int64_t _get_number_of_entries () const;
+    virtual int64_t _get_number_of_entries() const;
 
   public:
 
-    virtual bool is_open () const;
+    virtual bool is_open() const;
 
-    virtual bool is_sequential () const;
+    virtual bool is_sequential() const;
 
-    virtual bool is_random () const;
+    virtual bool is_random() const;
 
-    virtual void set (const std::string & a_source_label);
+    virtual void set(const std::string & a_source_label);
 
-    virtual void open () = 0;
+    virtual void open() = 0;
 
-    virtual bool can_load_record (int64_t a_entry);
+    virtual bool can_load_record(int64_t a_entry);
 
-    virtual bool has_next_record () = 0;
+    virtual bool has_next_record() = 0;
 
-    virtual bool load_next_record (datatools::things & a_event_record) = 0;
+    virtual bool load_next_record(datatools::things & a_event_record) = 0;
 
     // Default failing load method :
-    virtual bool has_number_of_entries () const;
+    virtual bool has_number_of_entries() const;
 
-    virtual int64_t get_number_of_entries () const;
+    virtual int64_t get_number_of_entries() const;
 
-    virtual bool load_record (datatools::things & a_event_record, int64_t a_entry);
+    virtual bool load_record(datatools::things & a_event_record, int64_t a_entry);
 
-    virtual int64_t get_number_of_metadata () const = 0;
+    virtual int64_t get_number_of_metadata() const = 0;
 
-    virtual bool load_metadata (datatools::properties & a_metadata, int64_t a_entry) = 0;
+    virtual bool load_metadata(datatools::properties & a_metadata, int64_t a_entry) = 0;
 
-    virtual void close () = 0;
+    virtual void close() = 0;
 
-    virtual void reset () = 0;
-
-    /// Constructor
-    i_data_source (datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
+    virtual void reset() = 0;
 
     /// Constructor
-    i_data_source (const std::string & a_source_label,
+    i_data_source(datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
+
+    /// Constructor
+    i_data_source(const std::string & a_source_label,
                    datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
 
     /// Destructor:
-    virtual ~i_data_source ();
+    virtual ~i_data_source();
 
   protected:
 
-    datatools::logger::priority _logging; /// The logging priority
-    bool          _has_next_record;       /// Next record flag
-    source_record _source_record;         /// Record dynamic informations about the data source
+    datatools::logger::priority _logging; //!< The logging priority
+    bool          _has_next_record;       //!< Next record flag
+    source_record _source_record;         //!< Record dynamic informations about the data source
 
   };
 

@@ -62,8 +62,8 @@ namespace dpp {
       std::string effective_label;
       int         status;
 
-      sink_record (const std::string & a_label = "");
-      void reset ();
+      sink_record(const std::string & a_label = "");
+      void reset();
     };
 
     /// Set logging priority
@@ -72,53 +72,50 @@ namespace dpp {
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
 
-    void set_preserve_existing_sink (bool a_value);
+    void set_preserve_existing_sink(bool a_value);
 
-    bool is_preserve_existing_sink () const;
+    bool is_preserve_existing_sink() const;
 
   protected:
 
-    void set_defaults_ (datatools::logger::priority a_priority);
+    void set_defaults_(datatools::logger::priority a_priority);
 
   public:
 
-    virtual bool is_open () const;
+    virtual bool is_open() const;
 
-    virtual bool is_sequential () const;
+    virtual bool is_sequential() const;
 
-    virtual bool is_random () const;
+    virtual bool is_random() const;
 
-    virtual void set (const std::string & a_sink_label);
+    virtual void set(const std::string & a_sink_label);
 
-    virtual void open () = 0;
+    virtual void open() = 0;
 
-    virtual bool store_next_record (const datatools::things & a_event_record) = 0;
+    virtual bool store_next_record(const datatools::things & a_event_record) = 0;
 
-    virtual bool can_store_meta_data () const = 0;
+    virtual bool can_store_meta_data() const = 0;
 
-    virtual bool store_metadata (const datatools::properties & a_meta_data) = 0;
+    virtual bool store_metadata(const datatools::properties & a_meta_data) = 0;
 
-    virtual void close () = 0;
+    virtual void close() = 0;
 
-    virtual void reset () = 0;
+    virtual void reset() = 0;
 
   public:
 
-    // ctor:
-    i_data_sink (datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
+    i_data_sink(datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
 
-    // ctor:
-    i_data_sink (const std::string & a_sink_label,
+    i_data_sink(const std::string & a_sink_label,
                  datatools::logger::priority a_priority = datatools::logger::PRIO_ERROR);
 
-    // dtor:
-    virtual ~i_data_sink ();
+    virtual ~i_data_sink();
 
   protected:
 
-    datatools::logger::priority _logging; /// The logging priority
-    bool        _preserve_existing_sink;  /// Preserve flag
-    sink_record _sink_record;
+    datatools::logger::priority _logging; //!< The logging priority
+    bool        _preserve_existing_sink;  //!< Preserve flag
+    sink_record _sink_record;             //!< Record dynamic informations about the data sink
 
   };
 

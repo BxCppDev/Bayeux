@@ -29,14 +29,19 @@
 
 namespace dpp {
 
-  i_data_source::source_record::source_record (const std::string & a_label)
+  // static
+  const int64_t i_data_source::UNKNOWN_NUMBER_OF_ENTRIES;
+  const int i_data_source::source_record::STATUS_CLOSED;
+  const int i_data_source::source_record::STATUS_OPENED;
+
+  i_data_source::source_record::source_record(const std::string & a_label)
   {
-    reset ();
+    reset();
     label = a_label;
     return;
   }
 
-  void i_data_source::source_record::reset ()
+  void i_data_source::source_record::reset()
   {
     label           = "";
     effective_label = "";
@@ -56,47 +61,47 @@ namespace dpp {
     return _logging;
   }
 
-  bool i_data_source::is_open () const
+  bool i_data_source::is_open() const
   {
     return _source_record.status == source_record::STATUS_OPENED;
   }
 
-  void i_data_source::set (const std::string & a_source_label)
+  void i_data_source::set(const std::string & a_source_label)
   {
-    DT_THROW_IF (! _source_record.label.empty (),
+    DT_THROW_IF(! _source_record.label.empty(),
                  std::logic_error,
                  "A source labelled '" << _source_record.label
                  << "' is already in use !");
     _source_record.label           = a_source_label;
     std::string effective_label         = a_source_label;
-    datatools::fetch_path_with_env (effective_label);
+    datatools::fetch_path_with_env(effective_label);
     _source_record.effective_label = effective_label;
     _source_record.status          = source_record::STATUS_CLOSED;
     _source_record.processed       = false;
     return;
   }
 
-  bool i_data_source::_load_record (datatools::things & /*a_event_record*/,
+  bool i_data_source::_load_record(datatools::things & /*a_event_record*/,
                                     int64_t /*a_entry*/)
   {
-    DT_LOG_ERROR(get_logging_priority (),
+    DT_LOG_ERROR(get_logging_priority(),
                  "Load by entry number is not supported !");
     return false;
   }
 
-  bool i_data_source::has_number_of_entries () const
+  bool i_data_source::has_number_of_entries() const
   {
-    return get_number_of_entries () > UNKNOWN_NUMBER_OF_ENTRIES;
+    return get_number_of_entries() > UNKNOWN_NUMBER_OF_ENTRIES;
   }
 
-  int64_t i_data_source::_get_number_of_entries () const
+  int64_t i_data_source::_get_number_of_entries() const
   {
     return UNKNOWN_NUMBER_OF_ENTRIES;
   }
 
-  int64_t i_data_source::get_number_of_entries () const
+  int64_t i_data_source::get_number_of_entries() const
   {
-    int noe = _get_number_of_entries ();
+    int noe = _get_number_of_entries();
     if (noe <= UNKNOWN_NUMBER_OF_ENTRIES) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                    "Cannot determine the number of entries !");
@@ -104,74 +109,71 @@ namespace dpp {
     return noe;
   }
 
-  bool i_data_source::can_load_record (int64_t a_entry)
+  bool i_data_source::can_load_record(int64_t a_entry)
   {
-    if (! is_open ()) {
+    if (! is_open()) {
       return false;
     }
-    if (! is_random ()) {
+    if (! is_random()) {
       return false;
     }
-    if (! has_number_of_entries ()) {
+    if (! has_number_of_entries()) {
       return false;
     }
     if (a_entry < 0) return false;
-    if (a_entry >= get_number_of_entries ()) return false;
+    if (a_entry >= get_number_of_entries()) return false;
     return true;
   }
 
-  bool i_data_source::load_record (datatools::things & a_event_record,
+  bool i_data_source::load_record(datatools::things & a_event_record,
                                    int64_t a_entry)
   {
-    if (! can_load_record (a_entry)) {
+    if (! can_load_record(a_entry)) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                    "Cannot access a random entry #" << a_entry << " !");
       return false;
     }
-    return _load_record (a_event_record, a_entry);
+    return _load_record(a_event_record, a_entry);
   }
 
-  void i_data_source::_set_defaults (datatools::logger::priority a_priority)
+  void i_data_source::_set_defaults(datatools::logger::priority a_priority)
   {
     _logging = a_priority;
     _has_next_record = false;
     return;
   }
 
-  bool i_data_source::is_sequential () const
+  bool i_data_source::is_sequential() const
   {
     return true;
   }
 
-  bool i_data_source::is_random () const
+  bool i_data_source::is_random() const
   {
     return false;
   }
 
-  // ctor:
-  i_data_source::i_data_source (datatools::logger::priority a_priority)
+  i_data_source::i_data_source(datatools::logger::priority a_priority)
   {
-    this->_set_defaults (a_priority);
+    this->_set_defaults(a_priority);
     return;
   }
 
-  i_data_source::i_data_source (const std::string & a_source_label,
+  i_data_source::i_data_source(const std::string & a_source_label,
                                 datatools::logger::priority a_priority)
   {
-    this->_set_defaults (a_priority);
-    this->set (a_source_label);
+    this->_set_defaults(a_priority);
+    this->set(a_source_label);
     return;
   }
 
-  // dtor:
-  i_data_source::~i_data_source ()
+  i_data_source::~i_data_source()
   {
     return;
   }
 
 }  // end of namespace dpp
 
-// end of i_data_source.cc
 /*
 ** Local Variables: --
 ** mode: c++ --
