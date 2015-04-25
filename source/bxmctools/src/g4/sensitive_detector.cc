@@ -38,6 +38,8 @@ namespace mctools {
 
   namespace g4 {
 
+    // static
+    const size_t sensitive_detector::DEFAULT_HIT_BUFFER_CAPACITY;
     const double sensitive_detector::DEFAULT_MAJOR_TRACK_MINIMUM_ENERGY = 10. * CLHEP::keV;
 
     bool sensitive_detector::is_drop_zero_energy_deposit_steps() const

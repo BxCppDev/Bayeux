@@ -19,15 +19,21 @@
  *
  */
 
+// Ourselves:
 #include <mctools/g4/g4_prng.h>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/logger.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
 namespace mctools {
 
   namespace g4 {
+
+    const int g4_prng::SEED_INVALID;
+    const int g4_prng::SEED_TIME;
 
     void g4_prng::set_random (mygsl::rng & rng_)
     {
@@ -35,7 +41,6 @@ namespace mctools {
       return;
     }
 
-    // ctor:
     g4_prng::g4_prng () : HepRandomEngine ()
     {
       _random_seed_ = SEED_INVALID;
@@ -50,8 +55,7 @@ namespace mctools {
       return;
     }
 
-    // dtor:
-    g4_prng::~g4_prng ()
+     g4_prng::~g4_prng ()
     {
       return;
     }

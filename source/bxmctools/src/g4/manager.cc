@@ -83,6 +83,10 @@ namespace mctools {
 
   namespace g4 {
 
+    // static
+    const uint32_t manager::NUMBER_OF_EVENTS_UPPER_LIMIT;
+    const uint32_t manager::NUMBER_OF_EVENTS_LOWER_LIMIT;
+    const uint32_t manager::NUMBER_OF_EVENTS_WARNING_LIMIT;
     const std::string manager::DEFAULT_PRNG_ID = "taus2";
 
     // static
@@ -726,7 +730,7 @@ namespace mctools {
       // Setup the output file name for PRNG internal states backup :
       if (has_output_prng_states_file()) {
         DT_LOG_NOTICE(_logprio(), "Setting the file '" << get_output_prng_states_file()
-                      << "'for storing the PRNG internal states...");
+                      << "' for storing the PRNG internal states...");
         _prng_state_manager_.set_filename(get_output_prng_states_file());
       }
 

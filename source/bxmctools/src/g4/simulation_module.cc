@@ -251,6 +251,13 @@ namespace mctools {
         }
       }
 
+      if (_simulation_manager_params_.number_of_events_modulo == 0) {
+        if (config_.has_key("manager.number_of_events_modulo")) {
+          _simulation_manager_params_.number_of_events_modulo
+            = config_.fetch_integer("manager.number_of_events_modulo");
+        }
+      }
+
       // More setup parameters can be added.
 
       if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {

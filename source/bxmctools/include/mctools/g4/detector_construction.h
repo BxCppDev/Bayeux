@@ -61,6 +61,7 @@ namespace mctools {
     class magnetic_field;
     class electromagnetic_field;
     class biasing_manager;
+    class em_field_g4_stuff;
 
     /// \brief The detector construction Geant4 interface class
     class detector_construction : public G4VUserDetectorConstruction,
@@ -168,6 +169,9 @@ namespace mctools {
       /** Setup electromagnetic field */
       void _construct_electromagnetic_field ();
 
+      /** Destroy electromagnetic field */
+      void _destroy_electromagnetic_field ();
+
       /** This method automatically setup G4 visualization attributes
        * from the main geometry model.
        */
@@ -201,6 +205,10 @@ namespace mctools {
       datatools::properties _em_field_aux_;      //!< Auxiliary properties related to EM field
       double _miss_distance_unit_;               //!< Default miss distance length unit
       double _general_miss_distance_;            //!< Default general miss distance
+
+      //! \brief Type alias for dictionary of G4 EM field working data
+      typedef std::map<std::string, em_field_g4_stuff *> em_field_g4_data_type;
+      em_field_g4_data_type _em_field_g4_data_; //!< Dictionary of G4 EM field working data
 
       //! User limits:
       bool                      _using_user_limits_;

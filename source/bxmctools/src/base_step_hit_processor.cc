@@ -20,6 +20,9 @@ namespace mctools {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_step_hit_processor,
                                                    "mctools::base_step_hit_processor/__system__");
 
+  // static
+  const size_t base_step_hit_processor::DEFAULT_POOL_CAPACITY;
+
   datatools::logger::priority base_step_hit_processor::get_logging_priority() const
   {
     return _logging_priority;

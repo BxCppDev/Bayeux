@@ -138,10 +138,9 @@ if [ $do_simulation -eq 1 ]; then
 
     eg_name="Co60"
     vg_name="source_0_bulk.vg"
-    #vg_name="col1_row0_scin_surface.vg"
+    # vg_name="col1_row0_scin_surface.vg"
     # eg_name="electron_1MeV"
     # vg_name="all_scin_bulk.vg"
-
 
     echo -e "\nRun the Geant4 simulation interactively..." 1>&2
     echo -e "/run/beamOn 5\nexit" | \

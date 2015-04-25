@@ -15,6 +15,9 @@ namespace mctools {
 
   namespace g4 {
 
+    // static
+    const int track_history::track_info::TRACK_ID_UNSET;
+
     int track_history::track_info::get_id () const
     {
       return _id_;

@@ -49,9 +49,10 @@
 // This project:
 #include <mctools/g4/sensitive_detector.h>
 #include <mctools/g4/magnetic_field.h>
-// #include <mctools/g4/electromagnetic_field.h>
+#include <mctools/g4/electromagnetic_field.h>
 #include <mctools/g4/manager.h>
 #include <mctools/g4/biasing_manager.h>
+#include <mctools/g4/em_field_g4_stuff.h>
 
 namespace mctools {
 
@@ -155,14 +156,23 @@ namespace mctools {
 
     void detector_construction::reset()
     {
+      DT_LOG_TRACE(_logprio(), "Entering...");
       DT_THROW_IF (!is_initialized(), std::logic_error, "Not initialized !");
       _initialized_ = false;
 
       if (_biasing_manager_) {
+        DT_LOG_TRACE(_logprio(), "Reset biaising manager...");
         _biasing_manager_.reset();
+        DT_LOG_TRACE(_logprio(), "Reset biaising manager... done.");
       }
 
+      // Destroy G4 EM field data
+      DT_LOG_TRACE(_logprio(), "Destroy electromagnetic field support...");
+      _destroy_electromagnetic_field();
+      DT_LOG_TRACE(_logprio(), "Destroy electromagnetic field support... done.");
+
       // Clear visualization attributes:
+      DT_LOG_TRACE(_logprio(), "Clear visualization attributes...");
       _vis_attributes_.clear();
       for (std::map<std::string, G4VisAttributes *>::iterator
              i = _vis_attributes_.begin(); i != _vis_attributes_.end();
@@ -172,8 +182,10 @@ namespace mctools {
           i->second = 0;
         }
       }
+      DT_LOG_TRACE(_logprio(), "Clear visualization attributes... done.");
 
       // Clear user limits:
+      DT_LOG_TRACE(_logprio(), "Clear user limits...");
       for (std::list<G4UserLimits *>::iterator i = _user_limits_col_.begin();
            i != _user_limits_col_.end();
            ++i) {
@@ -183,9 +195,11 @@ namespace mctools {
       }
       _user_limits_col_.clear();
       _SD_params_.reset();
+      DT_LOG_TRACE(_logprio(), "Clear user limits... done.");
 
       _set_default();
 
+      DT_LOG_TRACE(_logprio(), "Exiting.");
       return;
     }
 
@@ -414,6 +428,8 @@ namespace mctools {
         _using_em_field_ = config_.fetch_boolean("using_electromagnetic_field");
       } else if (config_.has_key("using_magnetic_field")) {
         // Obsolete:
+        DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                       "Configuration property 'using_magnetic_field' is obsolete, use 'using_electromagnetic_field'!");
         _using_em_field_ = config_.fetch_boolean("using_magnetic_field");
       }
 
@@ -424,6 +440,10 @@ namespace mctools {
           std::string fpn = config_.fetch_string("electromagnetic_field.plugin_name");
           set_emfield_geom_plugin_name(fpn);
         } else if (config_.has_key("magnetic_field.plugin_name")) {
+          // Obsolete:
+          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                         "Configuration property 'magnetic_field.plugin_name' is obsolete, use 'electromagnetic_field.plugin_name'!");
+          _using_em_field_ = config_.fetch_boolean("using_magnetic_field");
           std::string fpn = config_.fetch_string("magnetic_field.plugin_name");
           set_emfield_geom_plugin_name(fpn);
         }
@@ -432,6 +452,9 @@ namespace mctools {
           std::string md_unit_str = config_.fetch_string("electromagnetic_field.miss_distance.unit");
           _miss_distance_unit_ = datatools::units::get_length_unit_from(md_unit_str);
         } else if (config_.has_key("magnetic_field.miss_distance.unit")) {
+          // Obsolete:
+          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                         "Configuration property 'magnetic_field.miss_distance.unit' is obsolete, use 'electromagnetic_field.miss_distance.unit'!");
           std::string md_unit_str = config_.fetch_string("magnetic_field.miss_distance.unit");
           _miss_distance_unit_ = datatools::units::get_length_unit_from(md_unit_str);
         }
@@ -442,6 +465,9 @@ namespace mctools {
             _general_miss_distance_ *= _miss_distance_unit_;
           }
         } else if (config_.has_key("magnetic_field.miss_distance")) {
+          // Obsolete:
+          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                         "Configuration property 'magnetic_field.miss_distance' is obsolete, use 'electromagnetic_field.miss_distance'!");
           _general_miss_distance_ = config_.fetch_real("magnetic_field.miss_distance");
           if (! config_.has_explicit_unit("magnetic_field.miss_distance")) {
             _general_miss_distance_ *= _miss_distance_unit_;
@@ -479,7 +505,7 @@ namespace mctools {
         }
 
         config_.export_and_rename_starting_with(_em_field_aux_, "electromagnetic_field.", "");
-        config_.export_and_rename_starting_with(_em_field_aux_, "magnetic_field.", ""); // to be obsoletes
+        config_.export_and_rename_starting_with(_em_field_aux_, "magnetic_field.", ""); // to be obsoleted
       }
 
 
@@ -651,6 +677,27 @@ namespace mctools {
       return;
     }
 
+    void detector_construction::_destroy_electromagnetic_field()
+    {
+      for (em_field_g4_data_type::iterator i = _em_field_g4_data_.begin();
+           i != _em_field_g4_data_.end();
+           i++) {
+        DT_LOG_TRACE(_logprio(), "Destroy G4 support for the '"
+                     << i->first << "' geometry/EM-field association...");
+        em_field_g4_stuff * emf_working = i->second;
+        if (emf_working) {
+          if (emf_working->is_initialized()) {
+            emf_working->reset();
+          }
+          delete emf_working;
+        }
+        DT_LOG_TRACE(_logprio(), "Destroy G4 support for the '"
+                     << i->first << "' geometry/EM-field association... done.");
+      }
+      _em_field_g4_data_.clear();
+      return;
+    }
+
     void detector_construction::_construct_electromagnetic_field()
     {
       datatools::logger::priority logging = _logprio();
@@ -659,15 +706,7 @@ namespace mctools {
       DT_LOG_TRACE(logging, "Has EM field geom map : " << (has_em_field_manager() && _em_field_manager_->has_geom_map()));
 
       if (has_em_field_manager() && _em_field_manager_->has_geom_map()) {
-        DT_LOG_NOTICE(logging, "Processing geometry/EM field map...");
-
-        // 2014-12-12, FM: To be clarified: only one syntax should be available:
-        // std::vector<std::string> associations;
-        // if (_em_field_aux_.has_key("associations.labels")) {
-        //   _em_field_aux_.fetch("associations.labels", associations);
-        // } else if (_em_field_aux_.has_key("associations")) {
-        //   _em_field_aux_.fetch("associations", associations);
-        // }
+        DT_LOG_NOTICE(logging, "Processing geometry/EM-field association map...");
 
         G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
         const emfield::geom_map & geomap = _em_field_manager_->get_geom_map();
@@ -675,21 +714,6 @@ namespace mctools {
         typedef emfield::geom_map::association_dict_type gma_type;
         typedef emfield::geom_map::association_entry gma_entry_type;
         const gma_type & mfamap = geomap.get_associations();
-
-        /*
-        for (size_t i = 0; i < associations.size(); i++) {
-          const std::string & association_name = associations[i];
-          gma_type::const_iterator found_association = mfamap.find(association_name);
-          if (found_association == mfamap.end()) {
-            std::ostringstream message;
-            message << "Cannot find association with name '" << association_name << "' "
-                    << "in field geometry map !";
-            if (_abort_on_error_) {
-              DT_THROW_IF(true, std::logic_error, message.str());
-            }
-            continue;
-          }
-        */
         for (gma_type::const_iterator i = mfamap.begin();
              i != mfamap.end();
              i++) {
@@ -697,7 +721,7 @@ namespace mctools {
           const gma_entry_type & gefa = i->second;
           if (! gefa.has_logvol()) {
             std::ostringstream message;
-            message << "Missing G4 logical volume for geom/field association '" << association_name << "' !";
+            message << "Missing G4 logical volume for geom/EM-field association '" << association_name << "' !";
             if (_abort_on_error_) {
               DT_THROW_IF(true, std::logic_error, message.str());
             }
@@ -709,7 +733,7 @@ namespace mctools {
             std::ostringstream message;
             message << "Missing G4 logical volume with name '" << g4_log_name << "' !";
             if (_abort_on_error_) {
-              DT_THROW_IF(true, std::logic_error, message.str());
+              DT_THROW(std::logic_error, message.str());
             }
             DT_LOG_WARNING(logging, message.str());
             continue;
@@ -718,25 +742,44 @@ namespace mctools {
                           << gefa.get_field_name() << "'.");
           }
 
-          magnetic_field * em_field = new magnetic_field;
-          em_field->loggable_support::_initialize_logging_support(_em_field_aux_);
-          // electromagnetic_field * em_field = new electromagnetic_field;
-          // em_field->loggable_support::_initialize_logging_support(_em_field_aux_);
-          DT_THROW_IF (gefa.field == 0, std::logic_error,
-                       "Missing field for geometry/association '" << association_name << "' !");
-          DT_THROW_IF (! gefa.field->is_magnetic_field(), std::logic_error,
-                       "Field '" << association_name << "' is not a electromagnetic field !");
-
-          // Check position/time :
-          bool cpt = false;
-          std::string cpt_key = "check_pos_time." + association_name;
-          if (_em_field_aux_.has_key(cpt_key)) {
-            cpt = _em_field_aux_.fetch_boolean(cpt_key);
+          // Create a new data structure for the hanfdling of G4 EM field associated to this geom:field association...
+          {
+            em_field_g4_stuff * new_emf_working = new em_field_g4_stuff;
+            _em_field_g4_data_[association_name] = new_emf_working;
           }
-          em_field->set_name(association_name);
-          em_field->set_field(*gefa.field);
-          em_field->set_field_check_pos_time(cpt);
-          em_field->initialize();
+          em_field_g4_stuff * emf_working = _em_field_g4_data_.find(association_name)->second;
+          if (! gefa.field->is_magnetic_field() && ! gefa.field->is_electric_field()) {
+            DT_THROW(std::logic_error,
+                     "Field '" << association_name << "' is not an electromagnetic field !");
+          }
+          if (gefa.field->is_magnetic_field() && ! gefa.field->is_electric_field()) {
+            // Magnetic field only:
+            magnetic_field * b_field = new magnetic_field;
+            b_field->set_name(association_name);
+            b_field->set_field(*gefa.field);
+            datatools::properties field_config;
+            _em_field_aux_.export_and_rename_starting_with(field_config,
+                                                           association_name + ".",
+                                                           "");
+            b_field->initialize(field_config);
+            emf_working->set_g4_magnetic_field(b_field);
+            emf_working->initialize(field_config);
+            DT_LOG_NOTICE(_logprio(), "Initializing pure magnetic field with label '" << association_name << "'...");
+          } else {
+            // General case: electromagnetic field
+            electromagnetic_field * eb_field = new electromagnetic_field;
+            eb_field->set_name(association_name);
+            eb_field->set_field(*gefa.field);
+            datatools::properties field_config;
+            _em_field_aux_.export_and_rename_starting_with(field_config,
+                                                           association_name + ".",
+                                                           "");
+            eb_field->initialize(field_config);
+            emf_working->set_g4_electromagnetic_field(eb_field);
+            emf_working->initialize(field_config);
+            DT_LOG_NOTICE(_logprio(), "Initializing general electromagnetic field with label '" << association_name << "'...");
+          }
+          emf_working->set_logging_priority(datatools::logger::PRIO_TRACE);
 
           // Use the default miss distance :
           double miss_distance = _general_miss_distance_;
@@ -748,22 +791,19 @@ namespace mctools {
             }
           }
 
-          G4FieldManager * detector_field_mgr = new G4FieldManager(em_field);
-          if (em_field->get_field().is_magnetic_field()) {
-            detector_field_mgr->CreateChordFinder(em_field);
-            detector_field_mgr->GetChordFinder()->SetDeltaChord(miss_distance);
-          }
-          g4_module_log->SetFieldManager(detector_field_mgr, true);
+          g4_module_log->SetFieldManager(emf_working->grab_field_manager(),
+                                         emf_working->is_propagate_to_daughters());
+
           DT_LOG_NOTICE(logging,
                         "G4 logical volume '" << g4_log_name
-                        << "' has a magnetic field named '" << gefa.get_field_name()
+                        << "' has an electro magnetic field named '" << gefa.get_field_name()
                         << "' !");
           DT_LOG_NOTICE(logging, "Miss distance is " << miss_distance / CLHEP::mm << " mm");
         }
         DT_LOG_NOTICE(logging,"Geometry/EM field map has been processed.");
       }
 
-      DT_LOG_TRACE(logging,"Exiting.");
+      DT_LOG_TRACE(logging, "Exiting.");
       return;
     }
 
@@ -1266,7 +1306,6 @@ namespace mctools {
 
     void detector_construction::write_tmp_gdml_file()
     {
-
       DT_THROW_IF (! _geom_manager_->is_initialized(), std::logic_error,
                    "Geometry manager is not initialized !");
       std::ostringstream tmp_file_template_oss;

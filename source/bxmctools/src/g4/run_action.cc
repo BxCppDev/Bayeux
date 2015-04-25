@@ -44,6 +44,10 @@ namespace mctools {
 
   namespace g4 {
 
+    // static
+    const int run_action::NUMBER_OF_EVENTS_MODULO_NONE;
+    const int run_action::NUMBER_OF_EVENTS_MODULO_DEFAULT;
+
     bool run_action::is_initialized () const
     {
       return _initialized_;

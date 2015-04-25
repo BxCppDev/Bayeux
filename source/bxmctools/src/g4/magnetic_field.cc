@@ -10,6 +10,8 @@
 #include <vector>
 
 // Third party:
+// // - Geant4:
+// #include <globals.hh>
 // - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
@@ -22,8 +24,9 @@
 #include <emfield/base_electromagnetic_field.h>
 #include <emfield/electromagnetic_field_manager.h>
 #include <emfield/emfield_geom_plugin.h>
-// - Geant4:
-#include <globals.hh>
+
+// This project:
+#include <mctools/g4/em_field_g4_utils.h>
 
 namespace mctools {
 
@@ -101,17 +104,27 @@ namespace mctools {
     {
       return has_mag_field();
     }
+
+    void magnetic_field::_set_defaults()
+    {
+      _field_check_pos_time_ = true;
+      geomtools::invalidate(_standalone_constant_field_);
+      return;
+    }
+
     magnetic_field::magnetic_field()
     {
       _initialized_ = false;
       _field_ = 0;
-      _field_check_pos_time_ = 0;
-      geomtools::invalidate(_standalone_constant_field_);
+      _set_defaults();
       return;
     }
 
     magnetic_field::~magnetic_field()
     {
+      if (_initialized_) {
+        reset();
+      }
       return;
     }
 
@@ -249,6 +262,19 @@ namespace mctools {
       return;
     }
 
+    void magnetic_field::reset()
+    {
+      DT_THROW_IF (!_initialized_,std::logic_error,
+                   "Geant4 magnetic field '" << get_name() << "' is not initialized !");
+
+      _initialized_ = false;
+      _name_.clear();
+      _field_ = 0;
+      _set_defaults();
+
+      return;
+    }
+
     // G4 interface:
     void magnetic_field::GetFieldValue(const double position_[4],
                                        double * b_field_) const
@@ -257,14 +283,14 @@ namespace mctools {
       // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Entering GetFieldValue for Geant4 magnetic field '" << get_name() << "'...");
       DT_THROW_IF (! _initialized_, std::logic_error,
                    "Geant4 magnetic field '" << get_name() << "' is not initialized !");
-      b_field_[0] = 0.0;
-      b_field_[1] = 0.0;
-      b_field_[2] = 0.0;
+      b_field_[EMFIELD_BX] = 0.0;
+      b_field_[EMFIELD_BY] = 0.0;
+      b_field_[EMFIELD_BZ] = 0.0;
       if (_field_ != 0) {
         DT_LOG_TRACE(_logprio(), "Compute magnetic field for Geant4 magnetic field '" << get_name() << "'...");
         // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Compute magnetic field for Geant4 magnetic field '" << get_name() << "'...");
-        geomtools::vector_3d pos(position_[0], position_[1], position_[2]);
-        double time = position_[3];
+        geomtools::vector_3d pos(position_[POSTIME_X], position_[POSTIME_Y], position_[POSTIME_Z]);
+        double time = position_[POSTIME_T];
         geomtools::vector_3d the_b_field;
         if (_field_check_pos_time_) {
           DT_THROW_IF(! _field_->position_and_time_are_valid(pos, time),
@@ -283,13 +309,13 @@ namespace mctools {
         // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS,
         //              "Geant4 magnetic field '" << get_name()
         //              << "' is : " << the_b_field / CLHEP::gauss << " gauss");
-        b_field_[0] = the_b_field.x();
-        b_field_[1] = the_b_field.y();
-        b_field_[2] = the_b_field.z();
+        b_field_[EMFIELD_BX] = the_b_field.x();
+        b_field_[EMFIELD_BY] = the_b_field.y();
+        b_field_[EMFIELD_BZ] = the_b_field.z();
       } else if (geomtools::is_valid(_standalone_constant_field_)) {
-        b_field_[0] = _standalone_constant_field_.x();
-        b_field_[1] = _standalone_constant_field_.y();
-        b_field_[2] = _standalone_constant_field_.z();
+        b_field_[EMFIELD_BX] = _standalone_constant_field_.x();
+        b_field_[EMFIELD_BY] = _standalone_constant_field_.y();
+        b_field_[EMFIELD_BZ] = _standalone_constant_field_.z();
       }
       DT_LOG_TRACE(_logprio(), "Exiting GetFieldValue for Geant4 magnetic field '" << get_name() << "'.");
       return;

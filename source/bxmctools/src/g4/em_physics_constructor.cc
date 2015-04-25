@@ -488,7 +488,7 @@ namespace mctools {
 
       // EM model:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Electro-magnetic model       : " << _em_model_ << std::endl;
+           << "Electro-magnetic model       : '" << _em_model_ << "'" << std::endl;
 
       // Gamma:
       out_ << indent << datatools::i_tree_dumpable::tag

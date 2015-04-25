@@ -49,6 +49,7 @@ namespace mctools {
       DT_LOG_TRACE(logging,"handle=" << "<none>");
     }
     handle.reset(0);
+    config.reset();
     DT_LOG_TRACE(logging,"Exiting.");
     return;
   }
@@ -310,7 +311,9 @@ namespace mctools {
 
   void step_hit_processor_factory::reset ()
   {
-    DT_LOG_TRACE(_logging_priority_,"Entering...");
+    datatools::logger::priority logging = _logging_priority_;
+    // logging = datatools::logger::PRIO_TRACE;
+    DT_LOG_TRACE(logging,"Entering...");
     DT_THROW_IF (! is_initialized (), std::logic_error,
                  "Factory is not initialized !");
     _initialized_ = false;
@@ -320,15 +323,17 @@ namespace mctools {
          i != _entries_.end ();
          i++) {
       processor_entry_type & pe = i->second;
-      DT_LOG_TRACE(_logging_priority_,"Cleaning '" << pe.name << "'...");
-      pe.config.clear();
+      DT_LOG_TRACE(logging, "Cleaning '" << pe.name << "'...");
       pe.handle.reset(0);
-      DT_LOG_TRACE(_logging_priority_,"Done.");
+      DT_LOG_TRACE(logging, " --> handle is reset.");
+      pe.config.clear();
+      DT_LOG_TRACE(logging, " --> config is reset.");
+      DT_LOG_TRACE(logging, "Cleaning '" << pe.name << "'... done.");
     }
     _entries_.clear();
     _output_profiles_.clear ();
     _instantiate_at_loading_ = false;
-    DT_LOG_TRACE(_logging_priority_,"Exiting.");
+    DT_LOG_TRACE(logging,"Exiting.");
     return;
   }
 

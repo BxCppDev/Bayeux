@@ -33,6 +33,11 @@ namespace mctools {
   namespace biasing {
 
     // static
+    const int primary_event_bias::DEFAULT_PARTICLE_RANK;
+    const int primary_event_bias::INVALID_PARTICLE_RANK;
+    const int primary_event_bias::ANY_PARTICLE_RANK;
+
+    // static
     const std::string & primary_event_bias::biased_event_status_key()
     {
       static const std::string _k("primary_biasing.event.status");

@@ -367,8 +367,11 @@ Files
 
  * ${_dbq}README.rst${_dbq} : This file.
  * ${_dbq}manager.conf${_dbq} : The main configuration file for the vertex generation manager.
- * ${_dbq}step_hit_processors.conf${_dbq} : Contains the definition of step hit processors.
- * ${_dbq}processes${_dbq} : This folder contains configuration files for physics processes
+ * ${_dbq}hits${_dbq} : This folder contains configuration files for hit generation and processing
+
+   * ${_dbq}step_hit_processors.conf${_dbq} : Contains the definition of step hit processors.
+
+ * ${_dbq}physics${_dbq} : This folder contains configuration files for physics lists
 
    * ${_dbq}particles.conf${_dbq} : Particle definitions
    * ${_dbq}em.conf${_dbq} : Electromagnetic processes
@@ -518,7 +521,7 @@ gdml.schema_location : string = "local"
 ### materials.plugin_name : string = "materials_driver"
 
 #@description Configuration file for the step hit processor factory:
-hit_processor_factory.config : string as path = "${config_prefix}${setup_base_dir}/step_hit_processors.conf"
+hit_processor_factory.config : string as path = "${config_prefix}${setup_base_dir}/hits/step_hit_processors.conf"
 
           #######################
           # Sensitive detectors #
@@ -612,13 +615,13 @@ physics_constructors.names : string[2] = "particles" "em"
 physics_constructors.particles.id     : string = "mctools::g4::particles_physics_constructor"
 
 #@description Configuration file of the physics constructors named 'particles'
-physics_constructors.particles.config : string as path = "${config_prefix}${setup_base_dir}/processes/particles.conf"
+physics_constructors.particles.config : string as path = "${config_prefix}${setup_base_dir}/physics/particles.conf"
 
 #@description Class ID of the physics constructors named 'em'
 physics_constructors.em.id            : string = "mctools::g4::em_physics_constructor"
 
 #@description Configuration file of the physics constructors named 'em'
-physics_constructors.em.config        : string as path = "${config_prefix}${setup_base_dir}/processes/em.conf"
+physics_constructors.em.config        : string as path = "${config_prefix}${setup_base_dir}/physics/em.conf"
 
           ##########################
           # Region production cuts #
@@ -775,14 +778,21 @@ logging.priority : string = "warning"
 EOF
 
     #######################################################################
-    mkdir -p ${setup_base_dir}/processes
+    mkdir -p ${setup_base_dir}/physics
     if [ $? -ne 0 ]; then
-	echo "ERROR: Directory '${setup_base_dir}/processes' was not created ! Abort !" >&2
+	echo "ERROR: Directory '${setup_base_dir}/physics' was not created ! Abort !" >&2
 	return 1
     fi
 
     #######################################################################
-    cat > ${setup_base_dir}/processes/particles.conf <<EOF
+    mkdir -p ${setup_base_dir}/hits
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Directory '${setup_base_dir}/hits' was not created ! Abort !" >&2
+	return 1
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/physics/particles.conf <<EOF
 # -*- mode: conf-unix; -*-
 EOF
     bxocd_manual \
@@ -791,13 +801,13 @@ EOF
         --no-configuration-hints \
 	--load-dll Bayeux_mctools_geant4 \
 	--class-id mctools::g4::particles_physics_constructor \
-	>> ${setup_base_dir}/processes/particles.conf <<EOF
-   cat >> ${setup_base_dir}/processes/particles.conf <<EOF
+	>> ${setup_base_dir}/physics/particles.conf <<EOF
+   cat >> ${setup_base_dir}/physics/particles.conf <<EOF
 # end
 EOF
 
     #######################################################################
-    cat > ${setup_base_dir}/processes/em.conf <<EOF
+    cat > ${setup_base_dir}/physics/em.conf <<EOF
 # -*- mode: conf-unix; -*-
 EOF
     bxocd_manual \
@@ -806,13 +816,13 @@ EOF
         --no-configuration-hints \
 	--load-dll Bayeux_mctools_geant4 \
 	--class-id mctools::g4::em_physics_constructor \
-	>> ${setup_base_dir}/processes/em.conf <<EOF
-   cat >> ${setup_base_dir}/processes/em.conf <<EOF
+	>> ${setup_base_dir}/physics/em.conf <<EOF
+   cat >> ${setup_base_dir}/physics/em.conf <<EOF
 # end
 EOF
 
     #######################################################################
-    cat > ${setup_base_dir}/step_hit_processors.conf <<EOF
+    cat > ${setup_base_dir}/hits/step_hit_processors.conf <<EOF
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 

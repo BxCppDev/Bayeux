@@ -5,7 +5,7 @@
  *
  * Licence :
  *
- * Copyright (C) 2011-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,8 +265,9 @@ void ui::splash(std::ostream & out_)
   out_ << "     Version " << MCTOOLS_LIB_VERSION << "\n";
   out_ << "     " << APP_NAME << "\n";
   out_ << "\n"
-       << "     Copyright (C) 2013\n"
-       << "     Francois Mauger, Xavier Garrido and Ben Morgan\n"
+       << "     Copyright (C) 2011-2015\n"
+       << "     Francois Mauger, Xavier Garrido,\n"
+       << "     Ben Morgan and Arnaud Chapon\n"
        << "\n";
   return;
 }
@@ -279,7 +280,7 @@ void ui::print_usage(const boost::program_options::options_description & opts_,
 #else
   const std::string APP_NAME = "bxg4_production";
 #endif
-  out_ << APP_NAME << " -- A generic GEANT4 simulation program" << std::endl;
+  out_ << APP_NAME << " -- A generic GEANT4 simulation wrapper" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
   out_ << std::endl;
