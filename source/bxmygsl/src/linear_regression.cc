@@ -22,6 +22,9 @@ namespace mygsl {
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(linear_regression::fit_data,
                                                     "mygsl::linear_regression::fit_data")
 
+  // static
+  const unsigned int linear_regression::MINIMUM_NUMBER_OF_DATA_POINTS;
+
   linear_regression::fit_data::fit_data ()
   {
     reset ();

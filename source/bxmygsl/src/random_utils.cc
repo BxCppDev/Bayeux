@@ -26,6 +26,11 @@
 namespace mygsl {
 
   // static
+  const int32_t random_utils::SEED_INVALID;
+  const int32_t random_utils::SEED_TIME;
+  const int32_t random_utils::SEED_MAX;
+
+  // static
   bool random_utils::is_valid_seed(int32_t seed_)
   {
     if (seed_ < SEED_TIME) return false;

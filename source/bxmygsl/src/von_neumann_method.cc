@@ -13,7 +13,11 @@ namespace mygsl {
 
   using namespace std;
 
+  // static
   const double von_neumann_method::AUTO_FMAX = 0.0;
+  const size_t von_neumann_method::DEFAULT_NSAMPLES;
+  const size_t von_neumann_method::DEFAULT_MAX_COUNTS;
+  const size_t von_neumann_method::NO_MAX_COUNTS;
 
   bool von_neumann_method::is_initialized () const
   {
@@ -167,4 +171,3 @@ namespace mygsl {
 }
 
 // end of von_neumann_method.cc
-

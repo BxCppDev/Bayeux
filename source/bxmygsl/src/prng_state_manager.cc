@@ -36,6 +36,10 @@ namespace mygsl {
 
   using namespace std;
 
+  // static
+  const size_t prng_state_manager::record::DEFAULT_BUFFER_SIZE;
+  const int    prng_state_manager::INVALID_COUNTER_VALUE;
+
   prng_state_manager::record::record ()
   {
     state_buffer.reserve(DEFAULT_BUFFER_SIZE);
@@ -46,8 +50,6 @@ namespace mygsl {
   {
     return;
   }
-
-  /*************************************/
 
   const std::string & prng_state_manager::default_filename()
   {
@@ -215,7 +217,6 @@ namespace mygsl {
     return;
   }
 
-  // ctor:
   prng_state_manager::prng_state_manager ()
   {
     _error_code_ = 0;
@@ -223,7 +224,6 @@ namespace mygsl {
     return;
   }
 
-  // ctor:
   prng_state_manager::prng_state_manager (const string & fn_)
   {
     _error_code_ = 0;
@@ -232,7 +232,6 @@ namespace mygsl {
     return;
   }
 
-  // dtor:
   prng_state_manager::~prng_state_manager ()
   {
     if (has_filename ()) {

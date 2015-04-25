@@ -139,7 +139,9 @@ namespace mygsl {
 
   /**********************************************************/
 
-  // ctor:
+  // static
+  const size_t one_dimensional_minimization::DEFAULT_MAX_ITER;
+
   one_dimensional_minimization::one_dimensional_minimization (bool debug_)
   {
     _debug_ = debug_;
@@ -156,7 +158,6 @@ namespace mygsl {
     return;
   }
 
-  // dtor:
   one_dimensional_minimization::~one_dimensional_minimization ()
   {
     if (_fminimizer_ != 0)  {
