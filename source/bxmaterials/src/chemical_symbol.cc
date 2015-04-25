@@ -18,6 +18,9 @@
 namespace materials {
 
   // static
+  const int chemical_symbol::Z_UNDEFINED;
+
+  // static
   const std::vector<std::string> & chemical_symbol::table_of_symbols()
   {
     static boost::scoped_ptr<std::vector<std::string> > _table_of_symbols;

@@ -79,9 +79,9 @@ namespace materials {
 
   private:
 
-    bool            _owned_;   /// Flag indicating if the pointer to the isotope instance should be deleted
-    const isotope * _iso_ptr_; /// Pointer to the isotope instance
-    double          _weight_;  /// Weight
+    bool            _owned_;   //!< Flag indicating if the pointer to the isotope instance should be deleted
+    const isotope * _iso_ptr_; //!< Pointer to the isotope instance
+    double          _weight_;  //!< Weight
 
   };
 
@@ -97,8 +97,8 @@ namespace materials {
 
     /// \brief Build flags
     enum build_flag_type {
-      BF_NIST_COMPOSITION = datatools::bit_mask::bit00, /// Build from the NIST table
-      BF_LOCK            = datatools::bit_mask::bit31 /// Lock after building
+      BF_NIST_COMPOSITION = datatools::bit_mask::bit00, //!< Build from the NIST table
+      BF_LOCK            = datatools::bit_mask::bit31 //!< Lock after building
     };
 
     /// Defaut Constructor

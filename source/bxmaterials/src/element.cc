@@ -22,6 +22,9 @@
 
 namespace materials {
 
+  // static
+  const int element::Z_UNDEFINED;
+
   iso_entry::iso_entry()
   {
     _owned_ = false;
