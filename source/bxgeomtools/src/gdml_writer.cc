@@ -1350,10 +1350,11 @@ namespace geomtools {
         double z = i->first;
         std::pair<double, double> rminmax;
         double apothem_factor = std::cos(M_PI / p_.get_n_sides());
-        // GDML and Geant4 seem to use the apothem (distance from center to
-        // side surfaces) and not the radius, so we translate here:
-        rminmax.first  = i->second.rmin / apothem_factor;
-        rminmax.second = i->second.rmax / apothem_factor;
+        // GDML and Geant4 use the apothem (distance from center to
+        // side surfaces) and not the radius, so we translate here
+        // to fill the zplanes map:
+        rminmax.first  = i->second.rmin * apothem_factor;
+        rminmax.second = i->second.rmax * apothem_factor;
         zplanes[z] = rminmax;
       }
     add_gdml_polyhedra(name_,

@@ -541,6 +541,8 @@ namespace geomtools {
         double a_rmax = rmaxs[i];
         if (build_by_apothem) {
           double apothem_factor = std::cos(M_PI / n_sides);
+          // DT_LOG_NOTICE(0, "build_by_apothem=" << build_by_apothem << " apothem_factor="
+          //            << apothem_factor);
           a_rmin /= apothem_factor;
           a_rmax /= apothem_factor;
         }
