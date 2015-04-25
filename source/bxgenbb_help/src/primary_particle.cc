@@ -41,6 +41,10 @@ namespace genbb {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_particle, "genbb::primary_particle")
 
+  // static
+  const int primary_particle::INVALID_GENERATION_ID;
+  const int32_t primary_particle::PDG_CODE_UNDEFINED;
+
   /// \brief Ion data for parser
   struct ion_data_type {
     /// Default constructor

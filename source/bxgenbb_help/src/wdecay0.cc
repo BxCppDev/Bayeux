@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // wdecay0.cc
 /*
  * Copyright 2013 F. Mauger
@@ -20,18 +19,23 @@
  *
  */
 
+// Ourselves:
 #include <genbb_help/wdecay0.h>
 
+// Standard library:
 #include <stdexcept>
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
 #include <genbb_help/decay0/bb.h>
@@ -40,6 +44,10 @@
 namespace genbb {
 
   GENBB_PG_REGISTRATION_IMPLEMENT(wdecay0,"genbb::wdecay0");
+
+
+  // static
+  const int wdecay0::DBD_MODE_INVALID;
 
   genbb::decay0::bbpars & wdecay0::bb_params()
   {
@@ -714,6 +722,4 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 
-DOCD_CLASS_SYSTEM_REGISTRATION(genbb::wdecay0,"genbb::wdecay0")
-
-// end of wdecay0.cc
+DOCD_CLASS_SYSTEM_REGISTRATION(genbb::wdecay0, "genbb::wdecay0")

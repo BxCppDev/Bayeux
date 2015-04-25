@@ -31,88 +31,90 @@
  *
  */
 
-#ifndef GENBB_HELP_WGENBB_H_
-#define GENBB_HELP_WGENBB_H_ 1
+#ifndef GENBB_HELP_WGENBB_H
+#define GENBB_HELP_WGENBB_H_
 
+// Standard library:
 #include <iostream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
+// This project:
 #include <genbb_help/i_genbb.h>
-
-// 2013-05-07 FM: hide this in the wgenbb.cc file :
-//#include <genbb_help/decay0_fortran/__genbb_help_FC2.h>
 
 namespace genbb {
 
+  /// \brief Wrapper for the legacy GENBB fortran generator (obsolete)
   class wgenbb : public i_genbb
   {
   public:
 
-    enum decay_type
-      {
-        DECAY_TYPE_UNDEFINED  = 0,
-        DECAY_TYPE_DBD        = 1,
-        DECAY_TYPE_BACKGROUND = 2
-      };
+    /// \brief Type of decay
+    enum decay_type {
+      DECAY_TYPE_UNDEFINED  = 0,
+      DECAY_TYPE_DBD        = 1,
+      DECAY_TYPE_BACKGROUND = 2
+    };
 
     static const unsigned int ISOTOPE_NAME_MAXSIZE = 32;
     static const int DBD_MODE_INVALID = -1;
 
   public:
 
-    bool is_debug () const;
+    bool is_debug() const;
 
-    bool use_local_prng () const;
+    bool use_local_prng() const;
 
-    virtual bool can_external_random () const;
+    virtual bool can_external_random() const;
 
-    void set_use_local_prng (bool);
+    void set_use_local_prng(bool);
 
-    const mygsl::rng & get_random () const;
+    const mygsl::rng & get_random() const;
 
-    mygsl::rng & grab_random ();
+    mygsl::rng & grab_random();
 
-    mygsl::rng & get_random ();
+    mygsl::rng & get_random();
 
-    size_t get_event_count () const;
+    size_t get_event_count() const;
 
-    double get_to_all_events () const;
+    double get_to_all_events() const;
 
-    wgenbb ();
+    wgenbb();
 
-    virtual ~wgenbb ();
+    virtual ~wgenbb();
 
-    void dump (std::ostream & = std::clog) const;
+    void dump(std::ostream & = std::clog) const;
 
-    virtual void initialize (const datatools::properties & setup_,
+    virtual void initialize(const datatools::properties & setup_,
                              datatools::service_manager & service_manager_,
                              detail::pg_dict_type & dictionary_);
 
-    virtual void reset ();
+    virtual void reset();
 
-    virtual bool has_next ();
+    virtual bool has_next();
 
-    virtual bool is_initialized () const;
+    virtual bool is_initialized() const;
 
   protected:
 
-    virtual void _load_next (primary_event & event_,
+    virtual void _load_next(primary_event & event_,
                              bool compute_classification_ = true);
 
   private:
 
-    void _init_ ();
+    void _init_();
 
-    void _clean_ ();
+    void _clean_();
 
-    void _set_decay_isotope_ (const std::string & di_);
+    void _set_decay_isotope_(const std::string & di_);
 
   private:
 
-    static int _g_counter_; /// Counter for manual singletonization
+    static int _g_counter_; //!< Counter for manual singletonization
 
     bool   _initialized_;
 
@@ -126,9 +128,9 @@ namespace genbb {
     double _energy_min_;
     double _energy_max_;
 
-    bool          _use_local_prng_; /// Local PRNG flag
-    unsigned long _seed_;           /// PRNG seed (local or global)
-    mygsl::rng    _random_;         /// Local PRNG
+    bool          _use_local_prng_; //!< Local PRNG flag
+    unsigned long _seed_;           //!< PRNG seed (local or global)
+    mygsl::rng    _random_;         //!< Local PRNG
 
     GENBB_PG_REGISTRATION_INTERFACE(wgenbb);
 
@@ -136,6 +138,8 @@ namespace genbb {
 
 } // end of namespace genbb
 
-#endif // GENBB_HELP_WGENBB_H_
+#endif // GENBB_HELP_WGENBB_H
 
-// end of wgenbb.h
+// Local Variables: --
+// mode: c++ --
+// End: --

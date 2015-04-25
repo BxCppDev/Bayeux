@@ -52,6 +52,7 @@ namespace genbb {
   class genbb : public i_genbb
   {
   public:
+
     static const size_t MAX_BUFFER_SIZE     = 100000;
     static const size_t DEFAULT_BUFFER_SIZE = 10000;
     static const size_t TMP_DIR_BUFSZ       = 1024;
@@ -149,7 +150,7 @@ namespace genbb {
     std::ofstream   _genbb_conf_file_;
     unsigned long   _seed_;
     mygsl::rng      _random_;
-    double          _genbb_weight_; /// GENBB event weight (for DBD energy range)
+    double          _genbb_weight_; //!< GENBB event weight (for DBD energy range)
 
     GENBB_PG_REGISTRATION_INTERFACE(genbb);
 

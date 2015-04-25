@@ -1,4 +1,3 @@
-// -*- mode: c++; -*-
 // wgenbb.cc
 /*
  * Copyright 2007-2013 F. Mauger
@@ -20,21 +19,25 @@
  *
  */
 
+// Ourselves:
 #include <genbb_help/wgenbb.h>
 
+// Standard library:
 #include <stdexcept>
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
-
 #include <genbb_help/decay0_fortran/rng.h>
 #include <genbb_help/decay0_fortran/genbb_commons.h>
 
@@ -61,15 +64,16 @@ extern "C"
 }
 extern GENEVENT_DEF genevent_;
 extern ENRANGE_DEF  enrange_;
-// was: extern GENEVENT_DEF genevent;
-// was: extern ENRANGE_DEF  enrange;
-
 
 namespace genbb {
 
   using namespace std;
 
   GENBB_PG_REGISTRATION_IMPLEMENT(wgenbb,"genbb::wgenbb");
+
+  // static
+  const unsigned int wgenbb::ISOTOPE_NAME_MAXSIZE;
+  const int wgenbb::DBD_MODE_INVALID;
 
   int wgenbb::_g_counter_ = 0;
 
@@ -78,7 +82,6 @@ namespace genbb {
     return _initialized_;
   }
 
-  // ctor:
   wgenbb::wgenbb () : i_genbb ()
   {
     DT_THROW_IF (wgenbb::_g_counter_ > 0, logic_error, "Only one instance of wgenbb is allowed !");
@@ -99,7 +102,6 @@ namespace genbb {
     return;
   }
 
-  // dtor:
   wgenbb::~wgenbb ()
   {
     if (_initialized_) {
@@ -473,5 +475,3 @@ namespace genbb {
   }
 
 } // end of namespace genbb
-
-// end of wgenbb.cc

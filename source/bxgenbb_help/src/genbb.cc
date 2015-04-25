@@ -20,6 +20,10 @@
  *
  */
 
+// Ourselves:
+#include <genbb_help/genbb.h>
+
+// Standard library:
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -27,15 +31,17 @@
 #include <sstream>
 #include <cstdlib>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/exception.h>
 
-#include <genbb_help/genbb.h>
+// This project:
 #include <genbb_help/genbb_utils.h>
 #include <genbb_help/primary_event.h>
 
@@ -44,6 +50,11 @@ namespace genbb {
   using namespace std;
 
   GENBB_PG_REGISTRATION_IMPLEMENT(genbb,"genbb::genbb");
+
+  // static
+  const size_t genbb::MAX_BUFFER_SIZE;
+  const size_t genbb::DEFAULT_BUFFER_SIZE;
+  const size_t genbb::TMP_DIR_BUFSZ;
 
   bool genbb::is_initialized () const
   {
