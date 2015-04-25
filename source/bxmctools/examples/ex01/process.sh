@@ -144,7 +144,7 @@ if [ $do_simulation -eq 1 ]; then
 
     echo -e "\nRun the Geant4 simulation interactively..." 1>&2
     echo -e "/run/beamOn 5\nexit" | \
-	bxg4_production \
+ 	bxg4_production \
 	--logging-priority "warning" \
 	--number-of-events-modulo 1 \
 	--interactive \

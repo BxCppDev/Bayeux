@@ -119,13 +119,16 @@ sensitive.category  : string  = "scin_SD"
 ############
 
 #@description The default implicit length unit
-length_unit : string    = "mm"
+length_unit : string = "mm"
 
 #@description The name of the 3D shape
 shape_type : string = "polyhedra"
 
 #@description The polyhedra build mode
 build_mode : string = "points"
+
+#@description The radius or apothem build
+build_by_apothem : boolean = 1
 
 #@description The polyhedra number of sides
 sides        : integer = 4
