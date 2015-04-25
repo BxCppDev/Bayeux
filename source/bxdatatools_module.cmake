@@ -156,12 +156,14 @@ configure_file(${module_source_dir}/resource.cc.in
 
 set(${module_name}_MODULE_SOURCES
 ${module_source_dir}/base_service.cc
+${module_source_dir}/bit_mask.cc
 ${module_source_dir}/command_utils.cc
 ${module_source_dir}/datatools.cc
 ${module_source_dir}/DynamicLoader.cc
 ${module_source_dir}/enriched_base.cc
 ${module_source_dir}/event_id.cc
 ${module_source_dir}/factory.cc
+${module_source_dir}/i_clear.cc
 ${module_source_dir}/i_named.cc
 ${module_source_dir}/integer_range.cc
 ${module_source_dir}/io_factory.cc
@@ -172,11 +174,13 @@ ${module_source_dir}/kernel.cc
 ${module_source_dir}/library_info.cc
 ${module_source_dir}/library_loader.cc
 ${module_source_dir}/logger.cc
+${module_source_dir}/memory_streambuf.cc
 ${module_source_dir}/multi_properties.cc
 ${module_source_dir}/object_configuration_description.cc
 ${module_source_dir}/ocd_driver.cc
 ${module_source_dir}/ocd_utils.cc
 ${module_source_dir}/properties.cc
+${module_source_dir}/range_tools.cc
 ${module_source_dir}/real_range.cc
 ${module_source_dir}/service_manager.cc
 ${module_source_dir}/service_tools.cc
