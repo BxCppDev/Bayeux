@@ -3,9 +3,14 @@
 #ifndef MCTOOLS_EX00_INSPECTOR_H
 #define MCTOOLS_EX00_INSPECTOR_H
 
+// Standard library:
+#include <string>
+#include <vector>
+
 // Third party:
 // - Bayeux/geomtools:
 #include <geomtools/manager.h>
+#include <geomtools/utils.h>
 // - Bayeux/mctools:
 #include <mctools/simulated_data.h>
 
@@ -33,6 +38,9 @@ namespace mctools {
       //! Set the flag for visualization
       void set_with_visualization(bool);
 
+      //! Set the POIs file
+      void set_pois(const std::string & pois_);
+
       //! Set the reference to an external geometry manager
       void set_geometry_manager(const geomtools::manager &);
 
@@ -51,9 +59,10 @@ namespace mctools {
       bool _dump_simulated_data_; //!< Print data flag
       bool _dump_hits_;           //!< Print hits flag
       bool _with_visualization_;  //!< Visualization flag
-
       // External resources:
       const geomtools::manager * _geometry_manager_; //!< Handle to an external geometry manager
+      std::string _pois_;         //!< File with points of interest (POIs)
+      std::vector<geomtools::vector_3d> _poi_positions_; //!< Array of 3D positiosn of POIs
 
     };
 

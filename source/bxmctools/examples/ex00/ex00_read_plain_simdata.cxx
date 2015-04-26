@@ -167,6 +167,7 @@ int main(int argc_, char **argv_)
     mctools::ex00::simulated_data_inspector SDI;
     SDI.set_interactive(interactive);
     SDI.set_with_visualization(visualization);
+    // SDI.set_pois("bad_steps_position.data");
     SDI.set_geometry_manager(geo_mgr);
 
     // The simulated data object to be loaded :

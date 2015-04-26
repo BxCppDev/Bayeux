@@ -54,6 +54,13 @@ namespace mctools {
       return;
     }
 
+    void simulated_data_inspector::set_pois(const std::string & pois_)
+    {
+      std::cerr << "simulated_data_inspector::set_pois: file='" << pois_ << "'" << std::endl;
+      _pois_ = pois_;
+      return;
+    }
+
     void simulated_data_inspector::set_geometry_manager(const geomtools::manager & gm_)
     {
       _geometry_manager_ = &gm_;
@@ -136,6 +143,37 @@ namespace mctools {
 
           geomtools::placement visu_step_plcmt;
           visu_step_segment.generate_wires(visu_step_DI.wires, visu_step_plcmt);
+        }
+      }
+
+      if (!_pois_.empty()) {
+        if (_poi_positions_.empty()) {
+          std::ifstream fpois(_pois_.c_str());
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Open POIs file '" << _pois_ << "'...");
+           int poi_count = 0;
+          while (fpois && !fpois.eof()) {
+            double x, y, z;
+            fpois >> x >> y >> z >> std::ws;
+            _poi_positions_.push_back(geomtools::vector_3d(x, y, z));
+            poi_count++;
+          }
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Loaded POis count = [" << poi_count << "]");
+        }
+        // Display color:
+        std::string poi_color = "orange";
+        double poi_dim = 0.05 * CLHEP::mm;
+        geomtools::box poi_sprite(poi_dim, poi_dim, poi_dim);
+        for (int i = 0; i < (int) _poi_positions_.size(); i++) {
+          // Label:
+          std::ostringstream poi_name_oss;
+          poi_name_oss << "poi_" << i;
+          geomtools::display_data::display_item & poi_DI
+            = dd.add_static_item(poi_name_oss.str(),
+                                 "group::mc::poi",
+                                 poi_color);
+          geomtools::placement poi_plcmt;
+          poi_plcmt.set_translation(_poi_positions_[i]);
+          poi_sprite.generate_wires(poi_DI.wires, poi_plcmt);
         }
       }
 

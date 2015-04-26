@@ -193,6 +193,7 @@ if [ $do_simulation -eq 1 ]; then
 	echo "ERROR: ex00_read_plain_simdata failed !" 1>&2
 	exit 1
     fi
+    exit 0
 
     echo -e "\nRun the Geant4 simulation non-interactively..." 1>&2
     bxg4_production \
