@@ -298,7 +298,7 @@ namespace mctools {
       out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Shape : ";
       if (_shape_) {
-        out_ << "[@" << _shape_ << "]";
+        out_ << "[@" << _shape_.get()  << "]";
       } else {
         out_ << "<none>";
       }
