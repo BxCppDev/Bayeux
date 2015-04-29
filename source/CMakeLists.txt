@@ -79,7 +79,7 @@ endif()
 # - Core Includes for Bayeux + Third Party
 include_directories(${Bayeux_BUILDPRODUCT_DIR}/include)
 include_directories(${Bayeux_BUILDPRODUCT_DIR}/include/bayeux)
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${GSL_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
