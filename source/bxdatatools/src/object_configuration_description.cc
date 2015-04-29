@@ -91,7 +91,6 @@ namespace datatools {
 
   configuration_property_description::dependency_entry::~dependency_entry()
   {
-    //reset();
     return;
   }
 
@@ -222,6 +221,7 @@ namespace datatools {
     _mandatory_ = false;
     _complex_triggering_conditions_ = false;
     _complex_dependencies_ = false;
+    _deprecated_ = false;
     return;
   }
 

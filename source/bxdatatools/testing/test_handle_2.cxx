@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
 // test_handle_2.cxx
-// Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
 
 #include <cstdlib>
 #include <iostream>
@@ -28,7 +27,6 @@
 #endif
 
 #include <datatools/serialization_macros.h>
-
 #include <datatools/handle.h>
 #include <datatools/handle_pool.h>
 #include <datatools/time_tools.h>

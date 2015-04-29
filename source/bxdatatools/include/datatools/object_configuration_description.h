@@ -1,7 +1,7 @@
 /// \file datatools/object_configuration_description.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2013-01-01
- * Last modified : 2013-01-01
+ * Last modified : 2015-04-29
  *
  * Description :
  *
@@ -9,7 +9,7 @@
  *  that uses a deferred initilization mechanism using 'datatools::properties'
  *  container.
  *
- * Copyright (C) 2013-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@
 
 namespace datatools {
 
+  // Forward class declaration:
   class object_configuration_description;
 
   /// \brief An object that describes the way an objet of a given class can be configured from properties.
@@ -67,10 +68,10 @@ namespace datatools {
 
     /// \brief Dependency type
     enum dependency_type {
-      DEP_UNDEFINED = 0, /// undefined dependency
-      DEP_DYNAMIC   = 1, /// Dynamic dependency from another property of which the name is used to build the property's name
-      DEP_BY_FLAG   = 2, /// Dependency from a boolean property (flag) with a specific value (true or false)
-      DEP_BY_LABEL  = 3, /// Dependency from a string property (label) with a specific value
+      DEP_UNDEFINED = 0, ///< undefined dependency
+      DEP_DYNAMIC   = 1, ///< Dynamic dependency from another property of which the name is used to build the property's name
+      DEP_BY_FLAG   = 2, ///< Dependency from a boolean property (flag) with a specific value (true or false)
+      DEP_BY_LABEL  = 3, ///< Dependency from a string property (label) with a specific value
     };
 
     /// \brief Description of a dependency
@@ -88,14 +89,14 @@ namespace datatools {
       dependency_entry();
       ~dependency_entry();
     public:
-      int type; /// The type of dependency (should be a dependency_type ! TO BE FIXED!)
-      std::string name; /// The name of the dependee property
-      bool triggering_status; /// The triggering value of a flag dependee property (DEP_BY_FLAG)
-      std::vector<std::string> triggering_labels; /// The triggering values of a string dependee property (DEP_BY_LABEL)
+      int type; ///< The type of dependency (should be a dependency_type ! TO BE FIXED!)
+      std::string name; ///< The name of the dependee property
+      bool triggering_status; ///< The triggering value of a flag dependee property (DEP_BY_FLAG)
+      std::vector<std::string> triggering_labels; ///< The triggering values of a string dependee property (DEP_BY_LABEL)
       const configuration_property_description * address;
     };
 
-    /// Constructor
+    /// Default constructor
     configuration_property_description();
 
     configuration_property_description & set_name_pattern(const std::string &np_);
@@ -200,30 +201,30 @@ namespace datatools {
     std::string  _terse_description_;    //!< Terse description of the property
     std::string  _long_description_;     //!< Detailed description of the property
     std::vector<std::string> _examples_; //!< List of examples
-    int          _type_;          //!< property's type (BOOLEAN, INTEGER, REAL, STRING)
-    bool         _const_;         //!< Constness of the property's value
-    bool         _path_;          //!< Explicit path trait for STRING property
-    bool         _explicit_unit_; //!< Explicit unit trait for REAL property
-    std::string  _unit_label_;    //!< Explicit unit label for REAL property with 'explicit unit' trait
-    std::string  _unit_symbol_;   //!< Explicit unit symbol for REAL property with 'explicit unit' trait
-    bool         _array_;              //!< Array trait (any type)
-    int          _array_fixed_size_;   //!< Array fixed size (-1 if not fixed)
-    int          _default_array_size_; //!< Default array size (-1 if not set)
-    boost::logic::tribool _default_value_boolean_; //!< Default boolean value description
-    int          _default_value_integer_;          //!< Default integer value description
-    double       _default_value_real_;             //!< Default real value description
-    std::string  _default_value_real_unit_;        //!< Default real value unit symbol
-    std::string  _default_value_string_;           //!< Default string value description
+    int          _type_;                 //!< Property's type (BOOLEAN, INTEGER, REAL, STRING)
+    bool         _const_;                //!< Constness of the property's value
+    bool         _path_;                 //!< Explicit path trait for STRING property
+    bool         _explicit_unit_;        //!< Explicit unit trait for REAL property
+    std::string  _unit_label_;           //!< Explicit unit label for REAL property with 'explicit unit' trait
+    std::string  _unit_symbol_;          //!< Explicit unit symbol for REAL property with 'explicit unit' trait
+    bool         _array_;                //!< Array trait (any type)
+    int          _array_fixed_size_;     //!< Array fixed size (-1 if not fixed)
+    int          _default_array_size_;   //!< Default array size (-1 if not set)
+    boost::logic::tribool _default_value_boolean_;      //!< Default boolean value description
+    int          _default_value_integer_;               //!< Default integer value description
+    double       _default_value_real_;                  //!< Default real value description
+    std::string  _default_value_real_unit_;             //!< Default real value unit symbol
+    std::string  _default_value_string_;                //!< Default string value description
     bool         _mandatory_;                           //!< Flag for a mandatory property
-    bool         _complex_triggering_conditions_;       //!< Flag for complex triggering conditions of the property that cannot be describe through the 'configuration_property_description' mechanism
-    bool         _complex_dependencies_;                //!< Flag for complex dependencies of the property that cannot be describe through the 'configuration_property_description' mechanism
+    bool         _complex_triggering_conditions_;       //!< Flag for complex triggering conditions of the property that cannot be described through the 'configuration_property_description' mechanism
+    bool         _complex_dependencies_;                //!< Flag for complex dependencies of the property that cannot be described through the 'configuration_property_description' mechanism
     std::vector<dependency_entry> _dynamic_dependers_;  //!< List of dynamic properties that depends on this property (static property only)
     dependency_entry              _dynamic_dependee_;   //!< Dependee of this property (dynamic property only)
     std::vector<dependency_entry> _triggering_;         //!< List of properties triggered by this property
     dependency_entry              _triggered_by_flag_;  //!< Flag (BOOLEAN) property this property depends on
     dependency_entry              _triggered_by_label_; //!< Label (STRING) property this property depends on
-    bool _deprecated_;  //!< Deprecated flag
-    std::string _deprecated_info_; //!< Information about deprecation
+    bool                          _deprecated_;         //!< Deprecated flag
+    std::string                   _deprecated_info_;    //!< Information about deprecation
 
     friend class object_configuration_description;
   };
@@ -324,8 +325,7 @@ namespace datatools {
     void add_example(const std::string &example_);
 
     /// Check the validity of a container of properties with respect to the OCD description
-    bool validate(const datatools::properties & config_,
-                  std::string & error_message_) const;
+    bool validate(const datatools::properties & config_, std::string & error_message_) const;
 
     /// Generate a sample configuration stream
     void generate_sample_configuration(std::ostream & out_,
@@ -349,11 +349,11 @@ namespace datatools {
                                    properties & props_) const;
 
     bool _validate_static(const configuration_property_description & cpd_,
-                          const datatools::properties & config_,
+                          const properties & config_,
                           std::string & error_message_) const;
 
     bool _validate_traits(const configuration_property_description & cpd_,
-                          const datatools::properties & config_,
+                          const properties & config_,
                           std::string & error_message_) const;
 
   private:
@@ -374,7 +374,6 @@ namespace datatools {
     std::vector<std::string> _examples_;           //!< List of examples
     //csd_col_type _configuration_sections_infos_; //!< Collection of documented sections
     bool         _validation_support_;             //!< Flag to support validation
-
 
   };
 

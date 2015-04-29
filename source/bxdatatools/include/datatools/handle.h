@@ -44,7 +44,6 @@
 #include <datatools/i_predicate.h>
 #include <datatools/exception.h>
 
-
 namespace datatools {
 
   //! Forward declaration :
@@ -84,7 +83,7 @@ namespace datatools {
    *
    */
   template <typename T>
-    class handle {
+  class handle {
   public:
     typedef T value_type;
     typedef value_type & reference_type;
@@ -92,7 +91,6 @@ namespace datatools {
 
   public:
     typedef handle_predicate<T> predicate_type;
-
 
     //! The default constructor.
     /*!
@@ -126,7 +124,7 @@ namespace datatools {
      * \endcode
      *
      */
-  handle(T* held = 0) : sp_(held) {}
+    handle(T* held = 0) : sp_(held) {}
 
     //! Destructor
     virtual ~handle() {
@@ -173,7 +171,7 @@ namespace datatools {
   private:
     friend class boost::serialization::access;
     template <class Archive>
-      void serialize(Archive& ar, int /*version*/) {
+    void serialize(Archive& ar, int /*version*/) {
       ar & boost::serialization::make_nvp("sp", sp_);
     }
 
@@ -216,27 +214,27 @@ namespace datatools {
    *   values.push_back (handle_type (new double (10.0)));
    *   std::vector<handle_type>::const_iterator it =
    *     std::find_if (values.begin (), values.end (), HP);
-   *   if (it != values.end ()) std::cout << 3Found PI !" << std::endl;
+   *   if (it != values.end ()) std::cout << "Found Pi !" << std::endl;
    *   return 0;
    * }
    * \endcode
    *
    */
   template <typename T>
-    struct handle_predicate : public i_predicate<handle<T> > {
+  struct handle_predicate : public i_predicate<handle<T> > {
   public:
     //! The default constructor.
-  handle_predicate(const i_predicate<T>& predicate,
-                   bool no_data_means_false = true)
-    : predicate_(predicate),
-      no_data_means_false_(no_data_means_false) {}
+    handle_predicate(const i_predicate<T>& predicate,
+                     bool no_data_means_false = true)
+      : predicate_(predicate),
+        no_data_means_false_(no_data_means_false) {}
 
 
     //! Call operator taking handle as input
     bool operator()(const handle<T>& handle) const {
       if (! handle) {
-	if (no_data_means_false_) return false;
-	DT_THROW_IF(true,std::logic_error,"Handle has no data !");
+        if (no_data_means_false_) return false;
+        DT_THROW_IF(true,std::logic_error,"Handle has no data !");
       }
 
       return predicate_(handle.get());
@@ -256,7 +254,7 @@ namespace boost {
     // don't track shared pointers
     //! \brief Struct used internally by the serialization mechanism of handles for memory tracking
     template<class T>
-      struct tracking_level< ::datatools::handle<T> > {
+    struct tracking_level< ::datatools::handle<T> > {
       typedef mpl::integral_c_tag tag;
 #if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))
       typedef BOOST_DEDUCED_TYPENAME mpl::int_< ::boost::serialization::track_never> type;
@@ -273,12 +271,12 @@ namespace boost {
 #define BOOST_SERIALIZATION_DATATOOLS_HANDLE(T)
 #else
 // define macro to let users of these compilers do this
-#define BOOST_SERIALIZATION_DATATOOLS_HANDLE(T)			\
-  BOOST_SERIALIZATION_SHARED_PTR(T)				\
-  BOOST_CLASS_TRACKING(						\
-		       ::datatools::handle< T >,		\
-		       ::boost::serialization::track_never	\
-							 )	\
+#define BOOST_SERIALIZATION_DATATOOLS_HANDLE(T)             \
+  BOOST_SERIALIZATION_SHARED_PTR(T)                         \
+  BOOST_CLASS_TRACKING(                                     \
+                       ::datatools::handle< T >,            \
+                       ::boost::serialization::track_never  \
+                                  )                         \
   /**/
 #endif
 

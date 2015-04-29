@@ -1,6 +1,5 @@
-// -*- mode: c++; -*-
 // test_handle_3.cxx
-// Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
 
 #include <cstdlib>
 #include <iostream>
