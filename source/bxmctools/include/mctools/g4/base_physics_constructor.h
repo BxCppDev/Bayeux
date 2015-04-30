@@ -7,7 +7,7 @@
  *
  * Description:
  *
- *   G4 electro-magnetic physics list
+ *   Base class for physics constructors
  *
  * History:
  *
@@ -36,8 +36,10 @@ namespace mctools {
 
   namespace g4 {
 
+    // Forward class declaration:
     class physics_list;
 
+    /// \brief Base class for G4-based physics constructor with factory registration support
     class base_physics_constructor :
       public G4VPhysicsConstructor,
       public datatools::i_tree_dumpable,
@@ -45,36 +47,52 @@ namespace mctools {
     {
     public:
 
+      /// Check initialization status
       bool is_initialized() const;
 
+      /// Set the name of the physics constructor
       void set_name(const std::string & name_);
 
+      /// Return the name of the physics constructor
       const std::string & get_name() const;
 
+      /// Set the class unique identifier of the physics constructor
       void set_class_id(const std::string & class_id_);
 
+      /// Return the class unique identifier of the physics constructor
       const std::string & get_class_id() const;
 
+      /// Default constructor
       base_physics_constructor();
 
+      /// Desctructor
       virtual ~base_physics_constructor();
 
+      /// Initialization from a set of configuration properties and a dictionary of physics constructors
       virtual void initialize(const datatools::properties & config_,
                               physics_constructor_dict_type & dict_) = 0;
 
+      /// Initialization from a set of configuration properties
       void initialize_standalone(const datatools::properties & config_);
 
+      /// Reset
       virtual void reset() = 0;
 
       // G4 mandatory interface: construct particle and physics
+
+      /// Construct the Geant4 particle list
       virtual void ConstructParticle(); // Default empty implementation
 
+      /// Construct the Geant4 processes list
       virtual void ConstructProcess(); // Default empty implementation
 
+      /// Check if the constructor has a mother physics list
       bool has_mother_physics_list() const;
 
+      /// Return a const reference to the mother physics list (if any)
       const physics_list & get_mother_physics_list() const;
 
+      /// Smart print
       virtual void tree_dump (std::ostream      & out_    = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
@@ -95,7 +113,7 @@ namespace mctools {
       bool        _initialized_; //!< Initialization flag
       physics_list * _mother_physics_list_; //! Reference to the mother physics list
 
-      // Factory stuff :
+      // Factory registration system :
       DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_physics_constructor);
 
       friend class physics_list;
