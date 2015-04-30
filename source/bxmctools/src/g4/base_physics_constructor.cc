@@ -4,10 +4,7 @@
 #include <mctools/g4/base_physics_constructor.h>
 
 // Third party:
-// - Bayuex/datatools:
-#include <datatools/units.h>
-#include <datatools/ioutils.h>
-#include <datatools/clhep_units.h>
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
 
@@ -15,9 +12,9 @@ namespace mctools {
 
   namespace g4 {
 
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_physics_constructor, "mctools::g4::base_physics_constructor/__system__");
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_physics_constructor, "mctools::g4::base_physics_constructor/__system__");
 
-    bool base_physics_constructor::is_initialized () const
+    bool base_physics_constructor::is_initialized() const
     {
       return _initialized_;
     }
@@ -55,15 +52,15 @@ namespace mctools {
       return *_mother_physics_list_;
     }
 
-    base_physics_constructor::base_physics_constructor () :
-      G4VPhysicsConstructor ()
+    base_physics_constructor::base_physics_constructor() :
+      G4VPhysicsConstructor()
     {
       _initialized_= false;
       _mother_physics_list_ = 0;
       return;
     }
 
-    base_physics_constructor::~base_physics_constructor ()
+    base_physics_constructor::~base_physics_constructor()
     {
       if (_initialized_) {
         DT_LOG_WARNING(_logprio(), "Hum! Initialization flag is set at destruction stage ! "
@@ -72,12 +69,12 @@ namespace mctools {
       return;
     }
 
-    void base_physics_constructor::ConstructParticle ()
+    void base_physics_constructor::ConstructParticle()
     {
       return;
     }
 
-    void base_physics_constructor::ConstructProcess ()
+    void base_physics_constructor::ConstructProcess()
     {
       return;
     }
@@ -114,27 +111,32 @@ namespace mctools {
                                              const std::string & indent_,
                                              bool inherit_) const
     {
-      std::string indent;
-      if (! indent_.empty ()) indent = indent_;
-      if (! title_.empty ()) {
-        out_ << indent << title_ << std::endl;
+      if (! title_.empty()) {
+        out_ << indent_ << title_ << std::endl;
       }
 
-      out_ << indent << datatools::i_tree_dumpable::tag
+      out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Name                  : '" << _name_ << "'" << std::endl;
 
-      out_ << indent << datatools::i_tree_dumpable::tag
+      out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Class ID              : '" << _class_id_ << "'" << std::endl;
 
-      out_ << indent << datatools::i_tree_dumpable::tag
+      out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Logging priority      : '"
            << datatools::logger::get_priority_label(_logprio()) << "'" << std::endl;
 
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Mother physics list   : " << (_mother_physics_list_ != 0 ? "Yes": "No") << "" << std::endl;
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Mother physics list   : ";
+      if (_mother_physics_list_) {
+        out_ << "[@" << _mother_physics_list_ << "]";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
 
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Initialized           : " << (is_initialized() ? "Yes": "No") << "" << std::endl;
+
       return;
     }
 
