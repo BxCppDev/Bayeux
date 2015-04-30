@@ -24,6 +24,7 @@ class G4FieldManager;
 class G4PropagatorInField;
 class G4MagIntegratorStepper;
 class G4ChordFinder;
+class G4MagInt_Driver;
 
 // Forward class declarations:
 namespace datatools {
@@ -179,11 +180,12 @@ namespace mctools {
       bool   _spin_;               //!< Spin flag
       bool   _propagate_to_daughters_; //!< Flag to propagate the field to all daughter volumes
 
-      G4EquationOfMotion *     _equation_; //!< Equation of motion
-      G4FieldManager *         _field_manager_; //!< Field manager
-      G4PropagatorInField *    _field_propagator_; //!< Field propagator
-      G4MagIntegratorStepper * _field_stepper_; //!< ODE stepper
-      G4ChordFinder *          _chord_finder_; //!< Chord finder
+      G4EquationOfMotion *     _equation_;           //!< Equation of motion
+      G4FieldManager *         _field_manager_;      //!< Field manager
+      G4PropagatorInField *    _field_propagator_;   //!< Field propagator
+      G4MagIntegratorStepper * _field_stepper_;      //!< ODE stepper
+      G4ChordFinder *          _chord_finder_;       //!< Chord finder
+      G4MagInt_Driver*         _integration_driver_; //!< Integration driver
 
     };
 

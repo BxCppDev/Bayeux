@@ -17,7 +17,7 @@
 // - Bayeux/datatools :
 #include <datatools/properties.h>
 #include <datatools/handle.h>
-// - Boost :
+// - Geant4 :
 #include <G4VPhysicsConstructor.hh>
 #include <G4VModularPhysicsList.hh>
 #include <G4BuilderType.hh>
@@ -26,6 +26,7 @@ namespace mctools {
 
   namespace g4 {
 
+    // Forward class declaration:
     class base_physics_constructor;
 
     std::string get_builder_type_label(G4BuilderType);
@@ -37,28 +38,32 @@ namespace mctools {
 
     public:
 
+      /// \brief Status of the managed physics constructor
       enum status_type {
         STATUS_CREATED     = 0x1,
         STATUS_INITIALIZED = 0x2
       };
 
+      /// Default constructor
       physics_constructor_entry();
 
+      /// Return a const reference to the embedded physics constructor
       const base_physics_constructor & get_physics_constructor() const;
 
+      /// Return a mutable reference to the embedded physics constructor
       base_physics_constructor & grab_physics_constructor();
 
     public:
 
-      std::string           name;
-      std::string           id;
-      datatools::properties config;
-      uint32_t              status;
-      datatools::handle<base_physics_constructor> handle;
+      std::string           name;   //!< Name of the physics constructor
+      std::string           id;     //!< Class ID of the physics constructor
+      datatools::properties config; //!< Configuration container
+      uint32_t              status; //!< Status of the physics constructor
+      datatools::handle<base_physics_constructor> handle; //!< Handle to the instantiated physics constructor
 
     };
 
-    /// \brief Dictionnary of physics constructors
+    /// \brief Type alias for a dictionary of physics constructors
     typedef std::map<std::string, physics_constructor_entry> physics_constructor_dict_type;
 
     /// \brief Physics constructor proxy class with weak referencing
@@ -67,7 +72,7 @@ namespace mctools {
       virtual ~physics_constructor_proxy();
       virtual void ConstructParticle();
       virtual void ConstructProcess();
-      base_physics_constructor * pc;
+      base_physics_constructor * pc; //!< Reference to a mctools physics constructor object
     };
 
     /// \brief Physics list proxy class with weak referencing
@@ -77,7 +82,7 @@ namespace mctools {
       virtual void ConstructParticle();
       virtual void ConstructProcess();
       virtual void SetCuts();
-      G4VModularPhysicsList * pl;
+      G4VModularPhysicsList * pl; //!< Reference to a Geant4 physics list object
     };
 
     /// \brief User limits data class

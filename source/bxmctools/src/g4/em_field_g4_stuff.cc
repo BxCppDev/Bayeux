@@ -11,6 +11,8 @@
 #include <G4MagIntegratorStepper.hh>
 #include <G4ChordFinder.hh>
 #include <G4TransportationManager.hh>
+#include <G4MagIntegratorDriver.hh>
+
 // Steppers:
 #include <G4ExplicitEuler.hh>
 #include <G4ImplicitEuler.hh>
@@ -176,11 +178,12 @@ namespace mctools {
       _set_defaults();
       _b_field_ = 0;
       _eb_field_ = 0;
-      _chord_finder_ = 0;
-      _field_stepper_ = 0;
-      _field_propagator_ = 0;
-      _field_manager_ = 0;
       _equation_ = 0;
+      _field_manager_ = 0;
+      _field_propagator_ = 0;
+      _field_stepper_ = 0;
+      _chord_finder_ = 0;
+      _integration_driver_ = 0;
       return;
     }
 
@@ -221,8 +224,6 @@ namespace mctools {
       if (config_.has_key("force_explicit_parameters")) {
         force_explicit_parameters = config_.fetch_boolean("force_explicit_parameters");
       }
-
-
 
       if (config_.has_key("length_unit")) {
         std::string lu = config_.fetch_string("length_unit");
@@ -352,19 +353,20 @@ namespace mctools {
       // Create a field manager:
       _field_manager_ = new G4FieldManager(); // GetGlobalFieldManager();
 
-      G4TransportationManager * transport_mgr =
-        G4TransportationManager::GetTransportationManager();
-      _field_propagator_ = transport_mgr->GetPropagatorInField();
+      // G4TransportationManager * transport_mgr =
+      //   G4TransportationManager::GetTransportationManager();
+      // _field_propagator_ = transport_mgr->GetPropagatorInField();
 
       if (_eb_field_) {
-        _field_manager_->SetFieldChangesEnergy(true);
         _field_manager_->SetDetectorField(_eb_field_);
+        _field_manager_->SetFieldChangesEnergy(true);
       } else if (_b_field_) {
-        _field_manager_->SetFieldChangesEnergy(false);
         _field_manager_->SetDetectorField(_b_field_);
+        _field_manager_->SetFieldChangesEnergy(false);
       }
 
       bool allocate_stepper = false;
+      // allocate_stepper = true;
       if (allocate_stepper) {
         int ndata = 8;
         switch (_stepper_type_) {
@@ -424,13 +426,19 @@ namespace mctools {
 
       // Set accuracy parameters:
       double delta_chord = 0.25 * CLHEP::mm;
+      double min_step = 0.01 * CLHEP::mm;
+      double delta_one_step = 0.01 * CLHEP::mm;
+      double delta_intersection = 1.0 * CLHEP::micrometer;
+      double eps_max = 0.001;
+      double eps_min = 5e-5;
+
       if (datatools::is_valid(_delta_chord_)) {
         delta_chord = _delta_chord_;
       }
-      double min_step = 0.01 * CLHEP::mm;
       if (datatools::is_valid(_min_step_)) {
         min_step = _min_step_;
       }
+
 
       // Chord finder:
       if (_b_field_) {
@@ -443,26 +451,28 @@ namespace mctools {
                                            min_step,
                                            _field_stepper_);
       }
+      /*
+      _integration_driver_ = new G4MagInt_Driver(min_step,
+                                                 _field_stepper_,
+                                                 _field_stepper_->GetNumberOfVariables());
+      _chord_finder_ = new G4ChordFinder(_integration_driver_);
+      */
       DT_THROW_IF(_chord_finder_ == 0, std::logic_error,
                   "Missing chord finder!");
       _chord_finder_->SetDeltaChord(delta_chord);
       _field_manager_->SetChordFinder(_chord_finder_);
 
-      double delta_one_step = 0.01 * CLHEP::mm;
       if (datatools::is_valid(_delta_one_step_)) {
         delta_one_step = _delta_one_step_;
       }
       _field_manager_->SetAccuraciesWithDeltaOneStep(delta_one_step);
-      double delta_intersection = 1.0 * CLHEP::micrometer;
       if (datatools::is_valid(_delta_intersection_)) {
         delta_intersection = _delta_intersection_;
       }
       _field_manager_->SetDeltaIntersection(delta_intersection);
-      double eps_max = 0.001;
       if (datatools::is_valid(_eps_max_)) {
         eps_max = _eps_max_;
       }
-      double eps_min = 5e-5;
       if (datatools::is_valid(_eps_min_)) {
         eps_min = _eps_min_;
       }
@@ -501,14 +511,6 @@ namespace mctools {
         _field_propagator_ = 0;
         DT_LOG_TRACE(_logprio(), "Null the field propagator... done.");
       }
-      // 4)
-      if (_field_stepper_) {
-        DT_LOG_TRACE(_logprio(), "Deleting the field stepper...");
-        delete _field_stepper_;
-        DT_LOG_TRACE(_logprio(), "Deleting the field stepper... done.");
-        _field_stepper_ = 0;
-        DT_LOG_TRACE(_logprio(), "Null the field stepper... done.");
-      }
       // 5)
       if (_chord_finder_) {
         DT_LOG_TRACE(_logprio(), "Deleting the chord finder...");
@@ -516,6 +518,14 @@ namespace mctools {
         DT_LOG_TRACE(_logprio(), "Deleting the chord finder... done.");
         _chord_finder_ = 0;
         DT_LOG_TRACE(_logprio(), "Null the chord finder... done.");
+      }
+      // 4)
+      if (_field_stepper_) {
+        DT_LOG_TRACE(_logprio(), "Deleting the field stepper...");
+        delete _field_stepper_;
+        DT_LOG_TRACE(_logprio(), "Deleting the field stepper... done.");
+        _field_stepper_ = 0;
+        DT_LOG_TRACE(_logprio(), "Null the field stepper... done.");
       }
       // 6)
       if (_b_field_) {
@@ -525,6 +535,10 @@ namespace mctools {
       if (_eb_field_) {
         _eb_field_ = 0;
         DT_LOG_TRACE(_logprio(), "Null the general EM field... done.");
+      }
+      if (_integration_driver_) {
+        _integration_driver_ = 0;
+        DT_LOG_TRACE(_logprio(), "Null the integration driver... done.");
       }
       _set_defaults();
       DT_LOG_TRACE(_logprio(), "Exiting.");
