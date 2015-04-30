@@ -225,7 +225,6 @@ namespace datatools {
     return;
   }
 
-
   configuration_property_description &
   configuration_property_description::set_from(const std::string &from_)
   {
