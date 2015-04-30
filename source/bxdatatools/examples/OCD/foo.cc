@@ -241,7 +241,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   {
     // Description of the 'logging' configuration property :
     datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
+      = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("logging")
       .set_terse_description("Flag to activate logging")
       .set_traits(datatools::TYPE_BOOLEAN)
@@ -259,7 +259,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   {
     // Description of the 'debug.level' configuration property :
     datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
+      = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("logging.level")
       .set_terse_description("The logging level")
       .set_traits(datatools::TYPE_STRING)
@@ -290,7 +290,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   {
     // Description of the 'name' configuration property :
     datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
+      = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("name")
       .set_terse_description("The name of the foo object")
       .set_traits(datatools::TYPE_STRING)
@@ -310,7 +310,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   {
     // Description of the 'what' configuration property :
     datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
+      = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("what")
       .set_terse_description("The foo object's embedded description string")
       .set_traits(datatools::TYPE_STRING)
@@ -330,7 +330,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
   {
     // Description of the 'tmpfile' configuration property :
     datatools::configuration_property_description & cpd
-      = ocd_.add_property_info();
+      = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("tmpfile")
       .set_terse_description("Some file path associated to the foo object")
       .set_traits(datatools::TYPE_STRING)
@@ -350,7 +350,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of the 'width' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("width")
       .set_terse_description("The width of the foo object")
       .set_traits(datatools::TYPE_REAL)
@@ -368,7 +368,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of the 'length' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("length")
       .set_terse_description("The length of the foo object")
       .set_traits(datatools::TYPE_REAL)
@@ -392,7 +392,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of the 'weight' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("weight")
       .set_terse_description("The weight of the foo object")
       .set_traits(datatools::TYPE_REAL)
@@ -412,7 +412,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of the 'labels' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("labels")
       .set_terse_description("A list of labels")
       .set_traits(datatools::TYPE_STRING,
@@ -431,7 +431,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of some dynamic properties that depend on the "labels" property:
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("objects.${labels}.value")
       .set_terse_description("An integer value associated to the object referenced through its label")
       .set_traits(datatools::TYPE_INTEGER)
@@ -453,7 +453,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of some dynamic properties that depend on the "label" property:
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("objects.${labels}.color")
       .set_terse_description("A color associated to the object referenced through its label")
       .set_traits(datatools::TYPE_STRING)
@@ -474,7 +474,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of the 'dummy' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("dummy")
       .set_terse_description("A complex property")
       .set_traits(datatools::TYPE_INTEGER)
@@ -501,7 +501,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
 
   {
     // Description of the 'secret' configuration property :
-    datatools::configuration_property_description & cpd = ocd_.add_property_info();
+    datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("secret")
       .set_traits(datatools::TYPE_INTEGER)
       .set_terse_description("A property known only by developpers")
