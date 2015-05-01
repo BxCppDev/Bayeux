@@ -36,7 +36,7 @@ namespace datatools {
     };
 
   public:
-    /// Constructor
+    /// Default constructor
     base_factory_register();
     /// Destructor
     virtual ~base_factory_register ();
@@ -106,12 +106,15 @@ namespace datatools {
     void unregistration(const std::string& id);
 
     /// Import registered factories from another factory register
-    /// So, err, copy assignment in other words...
-    /// COMMENT: not a copy, but an append.
-    void import(const factory_register& factory_register);
+    void import(const factory_register & factory_register);
+
+    /// Import only registered factories addressed by their registration names
+    /// from another factory register
+    void import_some(const factory_register & factory_register,
+                     const std::vector<std::string> & imported_factories);
 
     /// Simple print
-    void print(std::ostream& out, const std::string& indent = "") const;
+    void print(std::ostream& out, const std::string & indent = "") const;
 
     /// Smart print
     virtual void tree_dump(std::ostream& out = std::clog,
@@ -179,7 +182,7 @@ namespace datatools {
     }
 
   private:
-    std::string type_id_; //!< The registration type Id of the auto-registered class
+    std::string type_id_; //!< The registration type unique identifier of the auto-registered class
   };
 
 } // end of namespace datatools

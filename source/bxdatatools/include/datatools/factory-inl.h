@@ -68,8 +68,7 @@ namespace datatools {
 
 
   template <typename BaseType>
-  void factory_register<BaseType>::list_of_factories(
-                                                     std::vector<std::string>& ids) const {
+  void factory_register<BaseType>::list_of_factories(std::vector<std::string>& ids) const {
     for (typename factory_map_type::const_iterator i = registered_.begin();
          i != registered_.end();
          ++i) {
@@ -157,6 +156,22 @@ namespace datatools {
          ++i) {
       const factory_type& the_out_factory = i->second;
       this->registration(i->first, the_out_factory);
+    }
+    DT_LOG_NOTICE(logging_, "Done.");
+  }
+
+  template <typename BaseType>
+  void factory_register<BaseType>::import_some(const factory_register& other,
+                                               const std::vector<std::string> & imported_factories) {
+    DT_LOG_NOTICE(logging_, "Importing registered factories from register '" << other.get_label() << "'...");
+
+    for (typename factory_map_type::const_iterator i = other.registered_.begin();
+         i !=  other.registered_.end();
+         ++i) {
+      if (std::find(imported_factories.begin(), imported_factories.end(), i->first) != imported_factories.end()) {
+        const factory_type& the_out_factory = i->second;
+        this->registration(i->first, the_out_factory);
+      }
     }
     DT_LOG_NOTICE(logging_, "Done.");
   }
