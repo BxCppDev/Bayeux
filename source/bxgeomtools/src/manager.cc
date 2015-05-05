@@ -722,7 +722,7 @@ namespace geomtools {
     /************************************************
      * Initialization of the geometry model factory *
      ************************************************/
-    DT_LOG_NOTICE(_logging, "Initialization of the geometry  model factory...");
+    DT_LOG_NOTICE(_logging, "Initialization of the geometry model factory...");
 
     /* Property prefixes to be preserved in logical volumes */
     std::vector<std::string> default_factory_preserved_property_prefixes;
@@ -854,8 +854,7 @@ namespace geomtools {
       _id_manager_.load(categories_list);
     }
     if (_id_manager_.get_logging_priority () == datatools::logger::PRIO_DEBUG) {
-      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,
-                   "Geometry manager's ID manager:");
+      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Geometry manager's ID manager:");
       _id_manager_.tree_dump (std::clog);
     }
 
