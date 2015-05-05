@@ -469,7 +469,7 @@ th row logic_error(message.str());
     {
       datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
       cpd.set_name_pattern("private_pool_capacity")
-        .set_terse_description("Activate the use of a private pool of preallocated hits")
+        .set_terse_description("Set the capacity of the private pool of preallocated hits")
         .set_from("mctools::base_step_hit_processor")
         .set_traits(datatools::TYPE_INTEGER)
         .set_mandatory(false)
@@ -686,8 +686,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::push_all_step_hit_processor,ocd_)
                                 "                                                                          \n"
                                 "Keep in mind that, depending of your setup, the *push all* processor is   \n"
                                 "generally expensive in term of CPU usage and storage because it tracks    \n"
-                                "and stores many truth hits (delt-rays, secondary particles...).           \n"
-                                "As an alterbative, consider to use your own step hit processor            \n"
+                                "and stores many truth hits (delta-rays, secondary particles...).           \n"
+                                "As an alternative, consider to use your own step hit processor            \n"
                                 "as a backend processing of truth hits in order to produce a reduced sets  \n"
                                 "of output hits from which your digitization algorithm will be able to     \n"
                                 "extract and use valuable informations.                                    \n"
@@ -725,7 +725,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::push_all_step_hit_processor,ocd_)
       .set_default_value_boolean(false)
       .add_example("Do not flag the hits::                       \n"
                    "                                             \n"
-                   "  record_mc_step_hit_processor : boolean = 1 \n"
+                   "  record_mc_step_hit_processor : boolean = 0 \n"
                    "                                             \n"
                    )
       ;

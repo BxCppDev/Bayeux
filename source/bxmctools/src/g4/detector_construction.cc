@@ -1530,6 +1530,16 @@ namespace mctools {
     void detector_construction::_construct_regions()
     {
       G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
+
+      // {
+      //   for (std::vector<G4LogicalVolume*>::const_iterator i = g4_LV_store->begin();
+      //        i != g4_LV_store->end();
+      //        i++) {
+      //     std::cerr << "DEVEL: detector_construction::_construct_regions: "
+      //               << "Logical volume '" << (*i)->GetName() << "'" << std::endl;
+      //   }
+      // }
+
       for (region_infos_dict_type::const_iterator i = _region_infos_.begin();
            i != _region_infos_.end();
            ++i) {
@@ -1549,9 +1559,9 @@ namespace mctools {
             // DT_LOG_WARNING(_logprio(),"No logical volume named '"
             //                << logical_volume_name << "' to be added in the '"
             //                << the_region_name << "' region !");
-            DT_THROW_IF(true,std::logic_error, "No logical volume named '"
-                        << logical_volume_name << "' to be added in the '"
-                        << the_region_name << "' region !");
+            DT_THROW(std::logic_error, "No logical volume named '"
+                     << logical_volume_name << "' to be added in the '"
+                     << the_region_name << "' region !");
           }
         }
       }

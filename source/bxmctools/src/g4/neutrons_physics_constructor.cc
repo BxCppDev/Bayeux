@@ -661,6 +661,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::g4::neutrons_physics_constructor, ocd
   ocd_.set_class_documentation("The Geant4 simulation manager class embedded \n"
                                 "nuclear neutrons physics list.               \n"
                                 );
+
+  ::mctools::g4::neutrons_physics_constructor::init_ocd(ocd_);
+
   ocd_.set_configuration_hints("Not available yet                    \n"
                                );
   ocd_.set_validation_support(true);
