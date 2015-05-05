@@ -297,7 +297,7 @@ EOF
 if [ "x${registered_module}" != "x" ]; then
     cat >> ${setup_base_dir}/README.rst <<EOF
   $ bxgenbb_inspector \\
-      --datatools::resource_path toto@${config_base_dir} \\
+      --datatools::resource-path toto@${config_base_dir} \\
       --configuration "${setup_base_dir}/manager.conf" \\
       --action "list"
 
