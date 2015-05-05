@@ -298,7 +298,7 @@ EOF
     if [ "x${registered_module}" != "x" ]; then
 	cat >> ${setup_base_dir}/README.rst <<EOF
   $ bxgenvtx_production \\
-      --datatools::resource_path toto@${config_base_dir} \\
+      --datatools::resource-path toto@${config_base_dir} \\
       --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
       --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
       --list
