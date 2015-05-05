@@ -1,7 +1,7 @@
 /// physics_list.cc
 ///
 /// http://geant4.cern.ch/UserDocumentation/UsersGuides/ForApplicationDeveloper/html/ch06.html
-///
+/// http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml
 
 // Ourselves:
 #include <mctools/g4/physics_list.h>
@@ -833,6 +833,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
     for (size_t i = 0; i < f.AvailablePhysLists().size(); i++) {
       ld << " * ``\"" <<   f.AvailablePhysLists()[i] << "\"`` \n";
     }
+    ld << "                                                                      \n";
+    ld << "See also: http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml \n";
+    ld << "                                                                      \n";
     ld << "This property is not compatible with the ``physics_constructors.names``\n"
        << "property.                                                              \n"
       ;
