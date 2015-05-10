@@ -3,23 +3,28 @@
 // Ourselves:
 #include <mygsl/histogram.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <limits>
 #include <cmath>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_math.h>
+// - Boost:
 #include <boost/preprocessor/stringize.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This project:
 #include <mygsl/histogram_2d.h>
 
 namespace mygsl {
 
   using namespace std;
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(histogram,"mygsl::histogram")
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(histogram, "mygsl::histogram")
 
   const datatools::properties & histogram::get_auxiliaries () const
   {
@@ -382,6 +387,15 @@ namespace mygsl {
     }
     gsl_histogram_accumulate (_h_, x_, weight_);
     increment_counts ();
+    return;
+  }
+
+  void histogram::fill (int i_ , double safe_delta_, double weight_)
+  {
+    DT_THROW_IF(!is_initialized(), std::logic_error, " Histogram 1D is not initialized !");
+    DT_THROW_IF(safe_delta_ <= 0.0, std::domain_error, "Invalid safe delta [" << safe_delta_ << "]!");
+    double safe_x = i_ * 1.0 + safe_delta_;
+    fill(safe_x, weight_);
     return;
   }
 

@@ -89,6 +89,8 @@ namespace mygsl {
 
     void fill (double x_ , double weight_ = 1.0);
 
+    void fill (int i_ , double safe_delta_ = 1e-7, double weight_ = 1.0);
+
     void set (size_t i_, double value_);
 
     double underflow () const;
@@ -220,9 +222,6 @@ namespace mygsl {
 
     friend histogram operator* (double ,
                                 const histogram &);
-
-    // friend histogram operator/ (double ,
-    //                             const histogram &);
 
     friend histogram operator* (const histogram & ,
                                 double);
