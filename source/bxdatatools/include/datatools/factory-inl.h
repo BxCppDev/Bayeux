@@ -31,7 +31,6 @@ namespace datatools {
     DT_LOG_INFORMATION(logging_,"Construction is done (label='" << label_ << "'...");
   }
 
-
   // Destructor:
   template <typename BaseType>
   factory_register<BaseType>::~factory_register() {
@@ -42,30 +41,25 @@ namespace datatools {
     DT_LOG_INFORMATION(logging_,"Destruction is done (label='" << label_ << "'...");
   }
 
-
   template <typename BaseType>
   datatools::logger::priority factory_register<BaseType>::get_logging_priority() const {
     return logging_;
   }
-
 
   template <typename BaseType>
   void factory_register<BaseType>::set_logging_priority(datatools::logger::priority logging) {
     logging_ = logging;
   }
 
-
   template <typename BaseType>
   const std::string& factory_register<BaseType>::get_label() const {
     return label_;
   }
 
-
   template <typename BaseType>
   void factory_register<BaseType>::set_label(const std::string& label) {
     label_ = label;
   }
-
 
   template <typename BaseType>
   void factory_register<BaseType>::list_of_factories(std::vector<std::string>& ids) const {
@@ -76,12 +70,10 @@ namespace datatools {
     }
   }
 
-
   template <typename BaseType>
   bool factory_register<BaseType>::has(const std::string& id) const {
     return registered_.find(id) != registered_.end();
   }
-
 
   template <typename BaseType>
   void factory_register<BaseType>::clear() {
@@ -95,14 +87,12 @@ namespace datatools {
     registered_.clear();
   }
 
-
   template <typename BaseType>
   void factory_register<BaseType>::reset() {
     this->clear();
     label_.clear();
     logging_ = datatools::logger::PRIO_FATAL;
   }
-
 
   template <typename BaseType>
   typename factory_register<BaseType>::factory_type&
@@ -113,7 +103,6 @@ namespace datatools {
     return found->second;
   }
 
-
   template <typename BaseType>
   const typename factory_register<BaseType>::factory_type&
   factory_register<BaseType>::get(const std::string& id) const {
@@ -122,7 +111,6 @@ namespace datatools {
                 "Class ID '" << id << "' is not registered !");
     return found->second;
   }
-
 
   template <typename BaseType>
   void factory_register<BaseType>::registration(const std::string& id,
@@ -135,9 +123,8 @@ namespace datatools {
     registered_[id] = factory;
   }
 
-
   template <typename BaseType>
-  void factory_register<BaseType>::unregistration(const std::string& id) {
+  void factory_register<BaseType>::unregistration(const std::string & id) {
     DT_LOG_NOTICE(logging_, "Unregistration of class with ID '" << id << "'");
 
     typename factory_map_type::const_iterator found = registered_.find(id);
@@ -146,13 +133,11 @@ namespace datatools {
     registered_.erase(id);
   }
 
-
   template <typename BaseType>
-  void factory_register<BaseType>::import(const factory_register& other) {
+  void factory_register<BaseType>::import(const factory_register & other) {
     DT_LOG_NOTICE(logging_, "Importing registered factories from register '" << other.get_label() << "'...");
-
     for (typename factory_map_type::const_iterator i = other.registered_.begin();
-         i !=  other.registered_.end();
+         i != other.registered_.end();
          ++i) {
       const factory_type& the_out_factory = i->second;
       this->registration(i->first, the_out_factory);
@@ -161,12 +146,11 @@ namespace datatools {
   }
 
   template <typename BaseType>
-  void factory_register<BaseType>::import_some(const factory_register& other,
+  void factory_register<BaseType>::import_some(const factory_register & other,
                                                const std::vector<std::string> & imported_factories) {
     DT_LOG_NOTICE(logging_, "Importing registered factories from register '" << other.get_label() << "'...");
-
     for (typename factory_map_type::const_iterator i = other.registered_.begin();
-         i !=  other.registered_.end();
+         i != other.registered_.end();
          ++i) {
       if (std::find(imported_factories.begin(), imported_factories.end(), i->first) != imported_factories.end()) {
         const factory_type& the_out_factory = i->second;
@@ -175,7 +159,6 @@ namespace datatools {
     }
     DT_LOG_NOTICE(logging_, "Done.");
   }
-
 
   template <typename BaseType>
   void factory_register<BaseType>::print(std::ostream& out,
@@ -186,7 +169,6 @@ namespace datatools {
               << "\" : ";
     this->tree_dump(out, title_oss.str(), indent);
   }
-
 
   template <typename BaseType>
   void factory_register<BaseType>::tree_dump(std::ostream& out,

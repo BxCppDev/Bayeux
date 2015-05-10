@@ -105,7 +105,7 @@ namespace datatools {
     ///          is a reserved word
     void unregistration(const std::string& id);
 
-    /// Import registered factories from another factory register
+    /// Import all registered factories from another factory register
     void import(const factory_register & factory_register);
 
     /// Import only registered factories addressed by their registration names
