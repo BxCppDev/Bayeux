@@ -316,7 +316,7 @@ namespace geomtools {
   }
 
   cylindric_extrusion_boxed_model::wires_drawer::wires_drawer(const cylindric_extrusion_boxed_model & model_)
-    : i_wires_drawer(model_)
+    : i_wires_drawer<cylindric_extrusion_boxed_model>(model_)
   {
     return;
   }

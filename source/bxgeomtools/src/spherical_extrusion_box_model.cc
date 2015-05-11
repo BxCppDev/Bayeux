@@ -230,7 +230,7 @@ namespace geomtools {
   }
 
   spherical_extrusion_box_model::wires_drawer::wires_drawer(const spherical_extrusion_box_model & model_)
-    : i_wires_drawer(model_)
+    : i_wires_drawer<spherical_extrusion_box_model>(model_)
   {
     return;
   }

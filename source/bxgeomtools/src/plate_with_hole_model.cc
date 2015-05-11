@@ -224,7 +224,7 @@ namespace geomtools {
   }
 
   plate_with_hole_model::wires_drawer::wires_drawer(const plate_with_hole_model & model_)
-    : i_wires_drawer(model_)
+    : i_wires_drawer<plate_with_hole_model>(model_)
   {
     return;
   }
