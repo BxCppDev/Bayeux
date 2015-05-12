@@ -726,32 +726,32 @@ namespace geomtools {
   bool placement::from_string (const std::string & str_, placement & pl_)
   {
     pl_.reset ();
-    std::istringstream oss (str_);
+    std::istringstream iss (str_);
     double x (0.0), y (0.0), z (0.0);
     double length_unit = CLHEP::mm;
     double phi (0.0), theta (0.0), delta (0.0);
     double angle_unit = CLHEP::degree;
 
-    oss >> ws;
-    if (oss.eof ()) {
+    iss >> std::ws;
+    if (iss.eof ()) {
       return false;
     }
 
     // Position:
-    oss >> x >> y >> z >> ws;
+    iss >> x >> y >> z >> std::ws;
     // extract length unit:
-    if (! oss.eof ()) {
-        char open = oss.peek ();
+    if (! iss.eof ()) {
+        char open = iss.peek ();
         if (open == '(') {
             std::string length_unit_str;
-            oss.get ();
-            getline (oss, length_unit_str, ')');
-            if (! oss) {
+            iss.get ();
+            getline (iss, length_unit_str, ')');
+            if (! iss) {
               return false;
             }
             length_unit = datatools::units::get_length_unit_from (length_unit_str);
           }
-        oss >> ws;
+        iss >> std::ws;
       }
     x *= length_unit;
     y *= length_unit;
@@ -760,35 +760,35 @@ namespace geomtools {
     std::string rotation_axis_label;
     int rotation_axis = -1;
     bool simple_rotation = false;
-    oss >> ws;
-    if (! oss.eof ()) {
-        char pr_sep = oss.peek ();
+    iss >> std::ws;
+    if (! iss.eof ()) {
+        char pr_sep = iss.peek ();
         if (pr_sep != '@' && pr_sep != '/') {
             return false;
           }
-        oss.get ();
+        iss.get ();
         if (pr_sep == '@' ) {
-            oss >> phi >> theta >> delta >> ws;
+            iss >> phi >> theta >> delta >> std::ws;
           }
         if (pr_sep == '/' )
           {
             simple_rotation = true;
-            oss >> rotation_axis_label >> phi >> ws;;
+            iss >> rotation_axis_label >> phi >> std::ws;
             rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
           }
         // extract angle unit:
-        if (! oss.eof ()) {
-            char open = oss.peek ();
+        if (! iss.eof ()) {
+            char open = iss.peek ();
             if (open == '(') {
                 std::string angle_unit_str;
-                oss.get ();
-                getline (oss, angle_unit_str, ')');
-                if (! oss) {
+                iss.get ();
+                getline (iss, angle_unit_str, ')');
+                if (! iss) {
                     return false;
                   }
                 angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
               }
-            oss >> ws;
+            iss >> std::ws;
           }
 
       }

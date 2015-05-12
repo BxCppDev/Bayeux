@@ -1,12 +1,12 @@
 /// \file geomtools/physical_volume.h
-/* Author (s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-08
  * Last modified: 2010-02-08
  *
  * License:
  *
  * Description:
- *   Geometry ID
+ *   Physical geometry volume
  *
  * History:
  *
@@ -28,106 +28,104 @@
 
 namespace geomtools {
 
+  // Forward class declarations:
   class i_placement;
   class logical_volume;
 
-  /// \brief A physical geoemtry volume (ala GDML)
-  class physical_volume
-    : public datatools::i_tree_dumpable
+  /// \brief A physical geometry volume (ala GDML)
+  class physical_volume : public datatools::i_tree_dumpable
   {
-
-  private:
-
-    void _clear_logical_ ();
-
-    void _clear_placement_ ();
 
   public:
 
-    bool is_locked () const;
+    bool is_locked() const;
 
-    void lock ();
+    void lock();
 
-    void unlock ();
+    void unlock();
 
-    const std::string & get_name () const;
+    const std::string & get_name() const;
 
-    void set_name (const std::string &);
+    void set_name(const std::string &);
 
-    const datatools::properties & get_parameters () const;
+    const datatools::properties & get_parameters() const;
 
-    datatools::properties & grab_parameters ();
+    datatools::properties & grab_parameters();
 
-    bool has_placement () const;
+    bool has_placement() const;
 
-    void set_placement (const i_placement &);
+    void set_placement(const i_placement &);
 
-    void set_placement (const i_placement *);
+    void set_placement(const i_placement *);
 
-    const i_placement & get_placement () const;
+    const i_placement & get_placement() const;
 
-    bool has_logical () const;
+    bool has_logical() const;
 
-    void set_logical (const logical_volume &);
+    void set_logical(const logical_volume &);
 
-    void set_logical (const logical_volume *);
+    void set_logical(const logical_volume *);
 
-    const logical_volume & get_logical () const;
+    const logical_volume & get_logical() const;
 
-    bool has_mother () const;
+    bool has_mother() const;
 
-    void set_mother (const logical_volume &, const std::string & name_ = "");
+    void set_mother(const logical_volume &, const std::string & name_ = "");
 
-    const logical_volume & get_mother () const;
+    const logical_volume & get_mother() const;
 
-    bool has_real_mother () const;
+    bool has_real_mother() const;
 
-    void set_real_mother (const logical_volume &);
+    void set_real_mother(const logical_volume &);
 
-    const logical_volume & get_real_mother () const;
+    const logical_volume & get_real_mother() const;
 
-    physical_volume (datatools::logger::priority = datatools::logger::PRIO_FATAL);
+    physical_volume(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    physical_volume (const std::string & name_,
-                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
+    physical_volume(const std::string & name_,
+                    datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    physical_volume (const std::string & name_,
-                     const logical_volume & logical_,
-                     const logical_volume & mother_,
-                     const i_placement    & placement_,
-                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
+    physical_volume(const std::string & name_,
+                    const logical_volume & logical_,
+                    const logical_volume & mother_,
+                    const i_placement    & placement_,
+                    datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    physical_volume (const std::string & name_,
-                     const logical_volume * logical_,
-                     const logical_volume & mother_,
-                     const i_placement    & placement_,
-                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
+    physical_volume(const std::string & name_,
+                    const logical_volume * logical_,
+                    const logical_volume & mother_,
+                    const i_placement    & placement_,
+                    datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    physical_volume (const std::string & name_,
-                     const logical_volume & logical_,
-                     const logical_volume & mother_,
-                     const i_placement    * placement_,
-                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
+    physical_volume(const std::string & name_,
+                    const logical_volume & logical_,
+                    const logical_volume & mother_,
+                    const i_placement    * placement_,
+                    datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    physical_volume (const std::string & name_,
-                     const logical_volume * logical_,
-                     const logical_volume & mother_,
-                     const i_placement    * placement_,
-                     datatools::logger::priority = datatools::logger::PRIO_FATAL);
+    physical_volume(const std::string & name_,
+                    const logical_volume * logical_,
+                    const logical_volume & mother_,
+                    const i_placement    * placement_,
+                    datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
-    virtual ~physical_volume ();
+    virtual ~physical_volume();
 
     void set_logging_priority(datatools::logger::priority);
 
     datatools::logger::priority get_logging_priority() const;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
   private:
 
-    void _init_defaults_ ();
+    void _init_defaults_();
+
+    void _clear_logical_();
+
+    void _clear_placement_();
 
   private:
 

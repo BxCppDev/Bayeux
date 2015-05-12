@@ -28,7 +28,6 @@
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/reflection_macros.h>
-#include <datatools/reflection_macros.h>
 
 // This project:
 #include <geomtools/geomtools_config.h>
@@ -36,47 +35,64 @@
 
 namespace geomtools {
 
+  // Forward class declaration
   class placement;
 
-  /// \brief Abstract interface for all placement objects
+  //! \brief Abstract interface for all placement objects
   class i_placement
     : DATATOOLS_SERIALIZABLE_CLASS ,
       public datatools::i_tree_dumpable
   {
   public:
 
-    /// Constructor
-    i_placement ();
+    //! Default constructor
+    i_placement();
 
-    /// Destructor
-    virtual ~i_placement ();
+    //! Destructor
+    virtual ~i_placement();
 
-    bool is_multiple () const;
+    //! Check if the placement handles multiple positions
+    bool is_multiple() const;
 
-    placement get_placement (int item_) const;
+    //! Return the placement at given item rank/index
+    placement get_placement(int item_) const;
 
-    /// Same as get_placement(int) but workaround method overloading for CAMP
-    placement get_placement_by_index (int item_) const;
+    //! Same as get_placement(int) but workaround method overloading for CAMP
+    placement get_placement_by_index(int item_) const;
 
-    virtual bool has_only_one_rotation () const;
+    //! Check if the placement is based on one unique rotation
+    virtual bool has_only_one_rotation() const;
 
-    virtual size_t get_dimension () const = 0;
+    //! Return the dimension of the placement object
+    //!
+    //! A single unique placement is of dimension 0
+    //! A multiple placement replicated along a given axis is of dimension 0
+    //! A multiple placement replicated along a 2D mesh addresses by X-Y grid
+    //! coordinates is of dimension 2
+    virtual size_t get_dimension() const = 0;
 
-    virtual size_t get_number_of_items () const = 0;
+    //! Return the number of placement items
+    virtual size_t get_number_of_items() const = 0;
 
-    virtual size_t compute_index_map (std::vector<uint32_t> & map_, int item_) const = 0;
+    //! Compute an array of indexes in a multidimensional frame from the item rank/index
+    virtual size_t compute_index_map(std::vector<uint32_t> & map_, int item_) const = 0;
 
-    virtual bool is_replica () const = 0;
+    //! Check if the placement is a replica (GDML/Geant4 concept for multiple placement objects)
+    virtual bool is_replica() const = 0;
 
-    virtual void get_placement (int item_, placement & p_) const = 0;
+    //! Compute the placement at given item rank/index
+    virtual void get_placement(int item_, placement & p_) const = 0;
 
-    void compute_placement (int item_, placement & p_) const;
+    //! Compute the placement at given item rank/index
+    void compute_placement(int item_, placement & p_) const;
 
-    virtual void tree_dump (std::ostream & out_         = std::clog,
+    //! Smart print
+    virtual void tree_dump(std::ostream & out_         = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_          = false) const;
 
+    //! Serialization interface
     DATATOOLS_SERIALIZATION_DECLARATION();
 
     //! Reflection interface

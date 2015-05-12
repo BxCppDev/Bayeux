@@ -1,23 +1,20 @@
-// -*- mode: c++; -*-
-/* i_placement.cc
- */
+// i_placement.cc
 
+// Ourselves:
 #include <geomtools/i_placement.h>
+
+// This project:
 #include <geomtools/placement.h>
 
 namespace geomtools {
 
-  using namespace std;
-
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_placement, "geomtools::i_placement")
 
-  // ctor:
   i_placement::i_placement ()
   {
     return;
   }
 
-  // dtor:
   i_placement::~i_placement ()
   {
     return;
@@ -52,21 +49,17 @@ namespace geomtools {
     this->get_placement(item_,p_);
   }
 
-  void i_placement::tree_dump (ostream & out_,
-                               const string & title_,
-                               const string & indent_,
+  void i_placement::tree_dump (std::ostream & out_,
+                               const std::string & title_,
+                               const std::string & indent_,
                                bool inherit_) const
   {
-    string indent;
-    if (! indent_.empty ()) indent = indent_;
     if (! title_.empty ()) {
-      out_ << indent << title_ << std::endl;
+      out_ << indent_ << title_ << std::endl;
     }
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Number of items  = " << get_number_of_items () << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Number of items  = " << get_number_of_items() << std::endl;
     return;
   }
 
 } // end of namespace geomtools
-
-// end of i_placement.cc

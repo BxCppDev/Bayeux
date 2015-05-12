@@ -1,9 +1,9 @@
-// -*- mode: c++; -*-
-/* multiple_placement.cc
- */
+// multiple_placement.cc
 
+// Ourselves:
 #include <geomtools/multiple_placement.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
@@ -69,13 +69,11 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   multiple_placement::multiple_placement ()
   {
     return;
   }
 
-  // dtor:
   multiple_placement::~multiple_placement ()
   {
     reset ();
@@ -88,28 +86,21 @@ namespace geomtools {
     return;
   }
 
-  void multiple_placement::tree_dump (ostream & out_,
-                                      const string & title_,
-                                      const string & indent_,
+  void multiple_placement::tree_dump (std::ostream & out_,
+                                      const std::string & title_,
+                                      const std::string & indent_,
                                       bool inherit_) const
   {
-    string indent;
-    if (! indent_.empty ()) indent = indent_;
-
-    const string indent2 = indent; // + "|-- ";
+    const std::string indent2 = indent_;
     this->i_placement::tree_dump (out_, title_, indent2, true);
 
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Size    :" << get_number_of_items () << std::endl;
 
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Size    :" << get_number_of_items () << endl;
-
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Replica :" << is_replica () << endl;
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag (inherit_)
+         << "Replica :" << is_replica () << std::endl;
 
     return;
   }
 
-
 } // end of namespace geomtools
-
-// end of multiple_placement.cc

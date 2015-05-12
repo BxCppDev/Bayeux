@@ -12,6 +12,7 @@
 
 namespace geomtools {
 
+  //! \brief Mapping utilities
   struct mapping_utils
   {
   public:
@@ -26,28 +27,37 @@ namespace geomtools {
 
     static const std::string & mapping_daughter_id_property();
 
-    static void extract (const datatools::properties & source_,
-                         datatools::properties & target_);
+    static void extract(const datatools::properties & source_,
+                        datatools::properties & target_);
 
-    static std::string make_key (const std::string & key_);
+    static std::string make_key(const std::string & key_);
 
-    static bool has_key (const datatools::properties & config_,
+    static bool has_key(const datatools::properties & config_,
+                        const std::string & key_);
+
+    static bool has_flag(const datatools::properties & config_,
                          const std::string & key_);
 
-    static bool has_flag (const datatools::properties & config_,
-                          const std::string & key_);
+    static bool has_id(const datatools::properties & config_);
 
-    static bool has_id (const datatools::properties & config_);
+    static void fetch_id(const datatools::properties & config_,
+                         std::string & id_info_);
 
-    static void fetch_id (const datatools::properties & config_,
-                          std::string & id_info_);
+    static bool has_daughter_id(const datatools::properties & config_,
+                                const std::string & daughter_name_);
 
-    static bool has_daughter_id (const datatools::properties & config_,
-                                 const std::string & daughter_name_);
+    static void fetch_daughter_id(const datatools::properties & config_,
+                                  const std::string & daughter_name_,
+                                  std::string & id_info_);
 
-    static void fetch_daughter_id (const datatools::properties & config_,
-                                   const std::string & daughter_name_,
-                                   std::string & id_info_);
+    static bool has_labelled_info(const datatools::properties & config_,
+                                  const std::string & label_,
+                                  const std::string & name_);
+
+    static void fetch_labelled_info(const datatools::properties & config_,
+                                    const std::string & label_,
+                                    const std::string & name_,
+                                    std::string & id_info_);
 
   };
 

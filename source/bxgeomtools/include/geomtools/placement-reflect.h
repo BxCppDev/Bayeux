@@ -20,8 +20,6 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::placement, /*tag_*/)
         {
-//                                      std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-//                                                                              << "geomtools::placement" << std::endl;
           // Declare and populate the reflection metaclass for the 'geomtools::placement' class:
           DR_CLASS_DECLARE (::geomtools::placement)
             .DR_CLASS_BASE(::geomtools::i_placement)

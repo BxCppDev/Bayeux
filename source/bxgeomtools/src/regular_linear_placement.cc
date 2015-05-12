@@ -1,9 +1,9 @@
-// -*- mode: c++; -*-
-/* regular_linear_placement.cc
- */
+// regular_linear_placement.cc
 
+// Ourselves:
 #include <geomtools/regular_linear_placement.h>
 
+// Standard library
 #include <stdexcept>
 #include <sstream>
 
@@ -190,7 +190,6 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   regular_linear_placement::~regular_linear_placement ()
   {
     return;
@@ -259,14 +258,14 @@ namespace geomtools {
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Replica : " << is_replica ();
     if (is_replicant_x_axis ()) {
-        out_ << " [X]";
-      }
+      out_ << " [X]";
+    }
     if (is_replicant_y_axis ()) {
-        out_ << " [Y]";
-      }
+      out_ << " [Y]";
+    }
     if (is_replicant_z_axis ()) {
-        out_ << " [Z]";
-      }
+      out_ << " [Z]";
+    }
     out_ << endl;
 
     return;
@@ -274,5 +273,3 @@ namespace geomtools {
 
 
 } // end of namespace geomtools
-
-// end of regular_linear_placement.cc

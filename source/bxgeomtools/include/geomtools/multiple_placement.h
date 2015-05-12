@@ -6,7 +6,7 @@
  * License:
  *
  * Description:
- *  Utilities.
+ *  Multiple placement.
  *
  * History:
  *
@@ -25,57 +25,53 @@
 
 namespace geomtools {
 
-  class multiple_placement
-    : public i_placement
+  //! \brief Multiple placement with an arbitrary collection of single placements addressed by index
+  class multiple_placement : public i_placement
   {
   public:
 
+    //! \brief Type alias for a collection of single placements
     typedef std::vector<placement> placement_col_type;
 
-  public:
+    bool is_valid() const;
 
-    bool is_valid () const;
+    void invalidate();
 
-    void invalidate ();
+    void add(const placement & p_);
 
-    void add (const placement & p_);
+    const placement & get_placement(int index_) const;
 
-    const placement & get_placement (int index_) const;
+    placement & get_placement(int index_);
 
-    placement & get_placement (int index_);
+    virtual size_t get_dimension() const;
 
-  public:
+    virtual bool is_replica() const;
 
-    virtual size_t get_dimension () const;
+    virtual size_t get_number_of_items() const;
 
-    virtual bool is_replica () const;
+    virtual void get_placement(int item_, placement & p_) const;
 
-    virtual size_t get_number_of_items () const;
-
-    virtual void get_placement (int item_, placement & p_) const;
-
-    virtual size_t compute_index_map (std::vector<uint32_t> & map_,
-                                      int item_) const;
-
-  public:
+    virtual size_t compute_index_map(std::vector<uint32_t> & map_,
+                                     int item_) const;
 
     /// Default constructor
-    multiple_placement ();
+    multiple_placement();
 
     /// Destructor
-    virtual ~multiple_placement ();
+    virtual ~multiple_placement();
 
-    virtual void reset ();
+    /// Reset
+    virtual void reset();
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_ = std::clog,
-                            const std::string & title_ = "geomutils::multiple_placement",
-                            const std::string & indent_ = "",
-                            bool inherit_ = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_ = "geomutils::multiple_placement",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
   private:
 
-    placement_col_type _placements_;
+    placement_col_type _placements_; //!< Collection of single placements
 
   };
 
