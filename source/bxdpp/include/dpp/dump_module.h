@@ -1,9 +1,9 @@
 /// \file dpp/dump_module.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-12-13
+ * Last modified : 2015-05-13
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,9 +56,15 @@ namespace dpp {
 
   public:
 
+    /// Set the title:
+    void set_title(const std::string & a_title);
+
+    /// Set the indenting string:
+    void set_indent(const std::string & a_indent);
+
+    // Set the output:
     void set_output(const std::string & a_output,
                     const std::string & a_file = "");
-
 
     /// Constructor
     dump_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);

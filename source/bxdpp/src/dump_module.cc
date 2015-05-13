@@ -19,21 +19,37 @@
  *
  */
 
+// Ourselves:
+#include <dpp/dump_module.h>
+
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
 #include <datatools/things.h>
 
-#include <dpp/dump_module.h>
-
 namespace dpp {
 
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(dump_module, "dpp::dump_module");
+
+  void dump_module::set_title(const std::string & a_title)
+  {
+    _title_ = a_title;
+    return;
+  }
+
+  void dump_module::set_indent(const std::string & a_indent)
+  {
+    _indent_ = a_indent;
+    return;
+  }
 
   void dump_module::set_output (const std::string & a_output,
                                 const std::string & a_file)
@@ -67,8 +83,6 @@ namespace dpp {
     return;
   }
 
-  /*** Implementation of the interface ***/
-
   // Constructor :
   dump_module::dump_module(datatools::logger::priority logging_priority_)
     : base_module(logging_priority_)
@@ -96,11 +110,11 @@ namespace dpp {
     _common_initialize(a_config);
 
     if (a_config.has_key ("title")) {
-      _title_ = a_config.fetch_string ("title");
+      set_title(a_config.fetch_string ("title"));
     }
 
     if (a_config.has_key ("indent")) {
-      _indent_ = a_config.fetch_string ("indent");
+      set_indent(a_config.fetch_string ("indent"));
     }
 
     if (_output_ == OUTPUT_INVALID) {
