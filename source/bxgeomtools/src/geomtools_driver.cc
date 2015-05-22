@@ -671,7 +671,7 @@ namespace geomtools {
       mapping_title << "Geometry mapping ";
       mapping_title << '(' << mapping_name_ << ')';
       mapping_title << " : ";
-      out_ << mapping_title << std::endl;
+      out_ << mapping_title.str() << std::endl;
       gmpg.smart_print(out_);
     } catch (std::exception & error) {
       DT_LOG_ERROR(_params_.logging, "Cannot find mapping with name '"

@@ -890,9 +890,9 @@ Gnuplot& Gnuplot::plotfile_xyz_with_colored_wires (const std::string &filename,
   std::ostringstream wired_colored_pstyle;
   wired_colored_pstyle << "lines lt " << color_;
   if (title == "")
-    cmdstr << " notitle with " << wired_colored_pstyle;
+    cmdstr << " notitle with " << wired_colored_pstyle.str();
   else
-    cmdstr << " title \"" << title << "\" with " << wired_colored_pstyle;
+    cmdstr << " title \"" << title << "\" with " << wired_colored_pstyle.str();
 
   //
   // Do the actual plot
