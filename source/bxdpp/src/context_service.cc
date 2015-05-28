@@ -254,7 +254,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of context_service.cc
 /*
 ** Local Variables: --
 ** mode: c++ --
