@@ -150,6 +150,7 @@ namespace genvtx {
       geomtools::vector_3d current_vtx = vtx;
       bool ignore_daughters = false;
       do {
+        DT_LOG_TRACE(get_logging_priority(), "New try...");
         if (has_max_depth() && (current_depth >= _max_depth_)) {
           ignore_daughters = true;
         }
