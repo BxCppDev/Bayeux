@@ -456,4 +456,15 @@ namespace geomtools {
     return;
   }
 
+  // // virtual
+  void i_composite_shape_3d::make_any_face(face_identifier & fid_) const
+  {
+    fid_.invalidate();
+    if (using_face_id_part_index()) {
+      fid_.append_part(face_identifier::PART_INDEX_ANY);
+      fid_.set_any_parts();
+    }
+    return;
+  }
+
 } // end of namespace geomtools

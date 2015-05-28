@@ -126,6 +126,9 @@ namespace geomtools {
 
     bool using_face_id_part_index() const;
 
+    /// Build a face identifier any mask
+    virtual void make_any_face(face_identifier &) const;
+
     bool is_valid() const;
 
     bool is_composite() const;
