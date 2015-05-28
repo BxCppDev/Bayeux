@@ -78,14 +78,15 @@ set(${module_name}_MODULE_HEADERS
 
 # - configure special source file
 configure_file(${module_source_dir}/_genbb_help.cc.in
-               bx${module_name}/_genbb_help.cc
-              )
+  bx${module_name}/_genbb_help.cc
+  )
 
 # - configure resources
 configure_file(${module_source_dir}/resource.cc.in
-               bx${module_name}/resource.cc)
+  bx${module_name}/resource.cc
+  )
 
-set(${module_name}_PRIVATE_MODULE_HEADERS
+set(${module_name}_LEGACY_DECAY0_MODULE_HEADERS
   ${module_include_dir}/${module_name}/decay0/Ac228.h
   ${module_include_dir}/${module_name}/decay0/alpha.h
   ${module_include_dir}/${module_name}/decay0/Am241.h
@@ -235,6 +236,13 @@ set(${module_name}_PRIVATE_MODULE_HEADERS
   ${module_include_dir}/${module_name}/decay0/Zn65.h
   ${module_include_dir}/${module_name}/decay0/Zr92low.h
   ${module_include_dir}/${module_name}/decay0/Zr96.h
+  )
+
+list(APPEND ${module_name}_MODULE_HEADERS
+  ${${module_name}_LEGACY_DECAY0_MODULE_HEADERS}
+)
+
+set(${module_name}_PRIVATE_MODULE_HEADERS
   )
 
 # - NB Order of sources appears to be important - taken from genbb_help
