@@ -112,6 +112,9 @@ namespace genbb {
     /// Return a const pointer to primary particle of a certain type with given occurence
     const primary_particle * get_particle_of_type(int type_, int occurence_ = 0) const;
 
+    /// Remove particle
+    void remove_particle(int type_, int occurence_ = 0);
+
     /// Return the label
     const std::string & get_label() const;
 
