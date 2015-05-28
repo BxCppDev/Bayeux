@@ -22,7 +22,7 @@
  *
  * Description:
  *
- *  Some templatized caster utilities and associated macros.
+ *  Command utilities.
  *
  */
 #ifndef DATATOOLS_COMMAND_UTILS_H
