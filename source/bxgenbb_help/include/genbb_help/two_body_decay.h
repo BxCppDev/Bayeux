@@ -23,7 +23,7 @@
  *
  * Description:
  *
- *   Utilities related to beta decays.
+ *   Utilities related to two body decays.
  *
  * History:
  *
