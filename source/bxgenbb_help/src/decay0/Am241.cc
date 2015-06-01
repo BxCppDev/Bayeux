@@ -1,12 +1,17 @@
 
+// Ourselves:
 #include <genbb_help/decay0/Am241.h>
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 #include <cmath>
 
+// Third party:
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
+// This project:
 #include <genbb_help/primary_event.h>
 #include <genbb_help/decay0/alpha.h>
 #include <genbb_help/decay0/gamma.h>

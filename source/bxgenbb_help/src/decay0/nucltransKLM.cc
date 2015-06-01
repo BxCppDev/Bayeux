@@ -1,11 +1,16 @@
 // nucltransKLM.cc
 
+// Ourselves:
 #include <genbb_help/decay0/nucltransKLM.h>
 
+// Standard library:
 #include <cmath>
 
+// Third party:
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
+// This project:
 #include <genbb_help/primary_event.h>
 #include <genbb_help/decay0/particle.h>
 #include <genbb_help/decay0/electron.h>
@@ -52,6 +57,7 @@ namespace genbb {
       } else {
         decay0_pair(prng,event,Egamma-2.*emass,tclev,thlev,tdlev);
         if (debug) std::cerr << "genbb::decay0::decay0_nucltransKLM: " << "pair" << std::endl;
+        // std::cerr << "DEVEL: ***** genbb::decay0::decay0_nucltransKLM: " << "pair" << std::endl;
       }
       return;
     }
