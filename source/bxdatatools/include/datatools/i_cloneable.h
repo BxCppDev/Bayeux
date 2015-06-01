@@ -88,26 +88,25 @@ namespace datatools {
     /** Templatized static method for cloning copyable objects.
      */
     template<class Copyable>
-      static Copyable* clone_it(const Copyable& a_copyable) {
-      return new Copyable (a_copyable);
+    static Copyable* clone_it(const Copyable& a_copyable) {
+      return new Copyable(a_copyable);
     }
   };
 
 } // end of namespace datatools
 
-
 //----------------------------------------------------------------------
 // i_cloneable macros
 
-#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)	\
-  public:						\
-  virtual Cloneable* clone (void) const;		\
+#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)  \
+  public:                                           \
+  virtual Cloneable* clone(void) const;             \
   /**/
 
-#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)	\
-  Copyable* Copyable::clone (void) const {		\
-    return datatools::i_cloneable::clone_it (*this);	\
-  }							\
+#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)  \
+  Copyable* Copyable::clone(void) const {             \
+    return datatools::i_cloneable::clone_it(*this);   \
+  }                                                   \
   /**/
 
 #define DATATOOLS_CLONEABLE_TO_SERIALIZABLE_CASTER_DECLARATION(Cloneable) \
@@ -118,7 +117,7 @@ namespace datatools {
   DATATOOLS_CASTER_IMPLEMENTATION(datatools::i_cloneable,datatools::i_serializable, Cloneable,g_cloneable_to_serializable_caster,get_cloneable_to_serializable_caster) \
   /**/
 
-#endif // DATATOOLS_UTILS_I_CLONEABLE_H
+#endif // DATATOOLS_I_CLONEABLE_H
 
 /*
 ** Local Variables: --
