@@ -157,6 +157,7 @@ namespace geomtools {
       if (ipart == FIRST_PART) {
         face_identifier fid1;
         if (mask.can_inherit_parts(1)) {
+          // Decrease part depth by one level:
           mask.inherit_parts(fid1, 1);
         } else {
           sh3d1.make_any_face(fid1);
@@ -173,6 +174,7 @@ namespace geomtools {
       if (ipart == SECOND_PART) {
         face_identifier fid2;
         if (mask.can_inherit_parts(1)) {
+          // Decrease part depth by one level:
           mask.inherit_parts(fid2, 1);
         } else {
           sh3d2.make_any_face(fid2);
