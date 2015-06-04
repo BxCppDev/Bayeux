@@ -266,6 +266,12 @@ namespace cuts {
     /// Reset the embedded counters
     void reset_counters();
 
+    /// Check the flag to activate counters
+    bool is_activated_counters() const;
+
+    /// Set the flag to activate statistics
+    void set_activated_counters(bool);
+
   protected:
 
     /// The main selection method (pure virtual, invoked by the @see process method)
@@ -289,11 +295,15 @@ namespace cuts {
     /// Hook invoked after the main selection method @see _accept ()
     virtual int _finish_cut (int a_selection_status);
 
+    virtual void _increment_counters (int a_selection_status);
+
     virtual void _at_set_user_data();
 
     virtual void _at_reset_user_data();
 
     void _reset();
+
+    void _set_defaults();
 
   protected:
 
@@ -309,6 +319,7 @@ namespace cuts {
     bool _initialized_; //!< The initialization flag
 
     // Working data:
+    bool _activated_counters_; //!< Flag to activate statistics counters
     boost::shared_ptr<i_referenced_data> _user_data_; //!< Internal weak (not managed) handle to user data
     size_t _number_of_accepted_entries_; //!< Number of entries accepted by the cut
     size_t _number_of_rejected_entries_; //!< Number of entries rejected by the cut

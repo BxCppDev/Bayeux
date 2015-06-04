@@ -142,8 +142,27 @@ namespace cuts {
     return get_number_of_accepted_entries() + get_number_of_rejected_entries();
   }
 
+  bool i_cut::is_activated_counters() const
+  {
+    return _activated_counters_;
+  }
+
+  void i_cut::set_activated_counters(bool ac_)
+  {
+    _activated_counters_ = ac_;
+    return;
+  }
+
   void i_cut::reset_counters()
   {
+    _number_of_accepted_entries_ = 0;
+    _number_of_rejected_entries_ = 0;
+    return;
+  }
+
+  void i_cut::_set_defaults()
+  {
+    _activated_counters_ = true;
     _number_of_accepted_entries_ = 0;
     _number_of_rejected_entries_ = 0;
     return;
@@ -153,8 +172,7 @@ namespace cuts {
   {
     _initialized_ = false;
     _logging = p;
-    _number_of_accepted_entries_ = 0;
-    _number_of_rejected_entries_ = 0;
+    _set_defaults();
     return;
   }
 
@@ -208,6 +226,9 @@ namespace cuts {
       a_out << "<none>";
     }
     a_out << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::tag
+          << "Activated counters : " << _activated_counters_
+          << std::endl;
     size_t npe = _number_of_accepted_entries_ + _number_of_rejected_entries_;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Number of processed entries : " << npe
@@ -394,9 +415,16 @@ namespace cuts {
   int i_cut::_finish_cut (int a_selection_status)
   {
     DT_LOG_TRACE(_logging, "Visiting with selection status = " << a_selection_status);
-    if (a_selection_status == SELECTION_ACCEPTED) _number_of_accepted_entries_++;
-    else _number_of_rejected_entries_++;
     return a_selection_status;
+  }
+
+  void i_cut::_increment_counters (int a_selection_status)
+  {
+    if (_activated_counters_) {
+      if (a_selection_status == SELECTION_ACCEPTED) _number_of_accepted_entries_++;
+      else _number_of_rejected_entries_++;
+    }
+    return;
   }
 
   int i_cut::process ()
@@ -407,6 +435,7 @@ namespace cuts {
     _prepare_cut();
     status = _accept();
     status = _finish_cut(status);
+    _increment_counters(status);
     DT_LOG_TRACE(_logging, "Exiting with selection status = " << status);
     return status;
   }
