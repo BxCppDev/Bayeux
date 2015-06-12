@@ -76,7 +76,7 @@ namespace datatools {
     }
 
     double get_unit_in_dimension_from(const std::string & unit_id_,
-                                     const std::string & dimension_label_) {
+                                      const std::string & dimension_label_) {
       const unit & the_unit = registry::const_system_registry().get_unit_from_any(unit_id_);
       DT_THROW_IF(!the_unit.is_dimension(dimension_label_), std::logic_error,
                   "Unit '" << unit_id_ << "' is not of " << dimension_label_ << " dimension !");
@@ -1826,6 +1826,5 @@ namespace datatools {
     }
 
   } // end of namespace units
-
 
 } // end of namespace datatools
