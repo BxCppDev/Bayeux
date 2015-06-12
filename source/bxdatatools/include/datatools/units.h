@@ -406,7 +406,7 @@ namespace datatools {
       std::set<std::string> _symbols_;        //!< Unit symbols
       std::string           _main_symbol_;    //!< The main unit symbol
       std::string           _dimension_label_; //!< Label of the unit dimension
-      std::string           _dimension_meta_; //!< Meta infomation about the unit dimension
+      std::string           _dimension_meta_; //!< Meta information about the unit dimension
       bool                  _SI_main_;        //!< Flag the SI main unit
       double                _value_;          //!< Unit value (CLHEP convention)
 
@@ -429,7 +429,7 @@ namespace datatools {
         BD_AMOUNT               =  6, // [N]
         BD_AMOUNT_OF_SUBSTANCE  =  6, // [N]
         BD_LUMINOUS_INTENSITY   =  7,  // [J]
-        BD_LAST                 = 8
+        BD_LAST                 =  8
       };
 
       static std::string base_dimension_to_symbol(base_dimension_type);
