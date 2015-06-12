@@ -51,7 +51,7 @@ namespace datatools {
       CEC_COMMAND_INVALID_SYNTAX       = 23, //!< Invalid command syntax
       CEC_PARAMETER_INVALID_NUMBER     = 30, //!< Invalid parameter error
       CEC_PARAMETER_INVALID_KEY        = 31, //!< Invalid parameter key
-      CEC_PARAMETER_NO_PRIVILEDGE      = 32, //!< Invalid parameter context
+      CEC_PARAMETER_NO_PRIVILEDGE      = 32, //!< Invalid parameter access mode
       CEC_PARAMETER_INVALID_CONTEXT    = 33, //!< Invalid parameter context
       CEC_PARAMETER_INVALID_TYPE       = 34, //!< Invalid parameter type
       CEC_PARAMETER_UNSET_VALUE        = 35, //!< Unset value
