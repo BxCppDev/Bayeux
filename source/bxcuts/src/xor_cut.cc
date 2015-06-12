@@ -33,9 +33,9 @@ namespace cuts {
 
   int xor_cut::_accept()
   {
-    int status_1 = _handle_1.grab ().process();
-    int status_2 = _handle_2.grab ().process();
-    if ((status_1 < 0) || (status_2 < 0)) {
+    int status_1 = _handle_1.grab().process();
+    int status_2 = _handle_2.grab().process();
+    if ((status_1 == SELECTION_INAPPLICABLE) || (status_2 == SELECTION_INAPPLICABLE)) {
       return SELECTION_INAPPLICABLE;
     }
     if ((status_1 + status_2) == 1) {

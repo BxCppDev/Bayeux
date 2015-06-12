@@ -33,15 +33,15 @@ namespace cuts {
 
   int or_cut::_accept()
   {
-    int status_1 = _handle_1.grab ().process ();
-    int status_2 = _handle_2.grab ().process ();
-    if ((status_1 < 0) || (status_2 < 0)) {
+    int status_1 = _handle_1.grab().process();
+    int status_2 = _handle_2.grab().process();
+    if ((status_1 == SELECTION_INAPPLICABLE) || (status_2 == SELECTION_INAPPLICABLE)) {
       return SELECTION_INAPPLICABLE;
     }
-    if ((status_1 + status_2) > 0) {
-      return (SELECTION_ACCEPTED);
+    if ((status_1 == SELECTION_REJECTED) && (status_2 == SELECTION_REJECTED)) {
+      return (SELECTION_REJECTED);
     }
-    return (SELECTION_REJECTED);
+    return (SELECTION_ACCEPTED);
   }
 
 } // end of namespace cuts
