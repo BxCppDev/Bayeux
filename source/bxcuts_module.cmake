@@ -26,12 +26,10 @@ set(cuts_VERSION_MINOR 0)
 set(cuts_VERSION_PATCH 0)
 set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PATCHD}")
 
-
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/accept_cut.h
   ${module_include_dir}/${module_name}/and_cut.h
-  #${module_include_dir}/${module_name}/cut_macros.h
   ${module_include_dir}/${module_name}/cut_manager.h
   ${module_include_dir}/${module_name}/cuts_config.h.in
   ${module_include_dir}/${module_name}/cut_service.h
@@ -51,6 +49,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/reject_cut.h
   ${module_include_dir}/${module_name}/xnor_cut.h
   ${module_include_dir}/${module_name}/xor_cut.h
+  ${module_include_dir}/${module_name}/exclude_cut.h
   ${module_include_dir}/${module_name}/version.h.in
   )
 
@@ -76,8 +75,9 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/reject_cut.cc
   ${module_source_dir}/xnor_cut.cc
   ${module_source_dir}/xor_cut.cc
+  ${module_source_dir}/exclude_cut.cc
   ${module_source_dir}/version.cc
-    )
+  )
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
