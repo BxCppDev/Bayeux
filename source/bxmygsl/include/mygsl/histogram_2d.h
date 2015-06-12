@@ -138,6 +138,14 @@ namespace mygsl {
 
     void fill (double x_, double y_, double weight_ = 1.0);
 
+    void fill (int i_ , double y_, double safe_x_delta_ = 1e-7, double weight_ = 1.0);
+
+    void fill (double x_, int j_, double safe_y_delta_ = 1e-7, double weight_ = 1.0);
+
+    void fill (int i_, int j_,
+               double safe_x_delta_ = 1e-7, double safe_y_delta_ = 1e-7,
+               double weight_ = 1.0);
+
     double underflow_x () const;
 
     double overflow_x () const;

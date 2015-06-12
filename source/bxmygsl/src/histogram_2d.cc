@@ -493,6 +493,45 @@ namespace mygsl {
     return;
   }
 
+  void histogram_2d::fill(int i_ , double y_,
+                          double safe_x_delta_, double weight_)
+  {
+    DT_THROW_IF(!is_initialized(), std::logic_error,
+                "Histogram 2D is not initialized !");
+    DT_THROW_IF(safe_x_delta_ <= 0.0, std::domain_error,
+                "Invalid safe X delta [" << safe_x_delta_ << "]!");
+    double safe_x = i_ * 1.0 + safe_x_delta_;
+    fill(safe_x, y_, weight_);
+    return;
+  }
+
+  void histogram_2d::fill(double x_, int j_, double safe_y_delta_, double weight_)
+  {
+    DT_THROW_IF(!is_initialized(), std::logic_error,
+                "Histogram 2D is not initialized !");
+    DT_THROW_IF(safe_y_delta_ <= 0.0, std::domain_error,
+                "Invalid safe Y delta [" << safe_y_delta_ << "]!");
+    double safe_y = j_ * 1.0 + safe_y_delta_;
+    fill(x_, safe_y, weight_);
+    return;
+  }
+
+  void histogram_2d::fill(int i_, int j_,
+                          double safe_x_delta_, double safe_y_delta_,
+                          double weight_)
+  {
+    DT_THROW_IF(!is_initialized(), std::logic_error,
+                "Histogram 2D is not initialized !");
+    DT_THROW_IF(safe_x_delta_ <= 0.0, std::domain_error,
+                "Invalid safe X delta [" << safe_x_delta_ << "]!");
+    DT_THROW_IF(safe_y_delta_ <= 0.0, std::domain_error,
+                "Invalid safe Y delta [" << safe_y_delta_ << "]!");
+    double safe_x = i_ * 1.0 + safe_x_delta_;
+    double safe_y = j_ * 1.0 + safe_y_delta_;
+    fill(safe_x, safe_y, weight_);
+    return;
+  }
+
   void histogram_2d::fill (double x_ , double y_ , double weight_)
   {
     DT_THROW_IF (!is_initialized (), std::logic_error, "Histogram 2D is not initialized !");
