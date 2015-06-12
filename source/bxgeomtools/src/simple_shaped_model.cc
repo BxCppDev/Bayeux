@@ -248,6 +248,10 @@ namespace geomtools {
                     "Object provided by the shape factory (type='" << _shape_type_id_ << "') is not a 3D-shape!");
         _solid_ = dynamic_cast<i_shape_3d *>(&obj3d);
       }
+
+      // 2015-06-12, FM: Add missing material name in the logical
+      grab_logical().set_material_ref(_material_name_);
+
     } else {
       // Legacy solid:
       DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error,
