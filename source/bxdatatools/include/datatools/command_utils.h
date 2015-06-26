@@ -188,7 +188,7 @@ namespace datatools {
 */
 #define DT_COMMAND_RETURNED_SUCCESS(ReturnedInfo, OutputMessage)        \
   {                                                                     \
-    ReturnedInfo.set_error_code(datatools::command::returned_info::CEC_SUCCESS); \
+    ReturnedInfo.set_error_code(datatools::command::CEC_SUCCESS);       \
     std::stringstream s;                                                \
     s << OutputMessage;                                                 \
     ReturnedInfo.set_output(s.str());                                   \
