@@ -48,17 +48,9 @@ namespace geomtools {
   /// \brief Mother abstract class for all 3D solid shapes
   class i_shape_3d : public i_object_3d,
                      public i_wires_3d_rendering,
-                     public i_find_intercept //,
-                     //private boost::noncopyable
+                     public i_find_intercept
   {
   public:
-
-    // /// \brief Basic values and masks used to identify the faces
-    // enum base_faces_mask_type {
-    //   FACE_NONE     = face_identifier::FACE_BITS_NONE,
-    //   FACE_ALL_BITS = face_identifier::FACE_BITS_ANY,
-    //   FACE_ALL      = FACE_ALL_BITS
-    // };
 
     static const double DEFAULT_SKIN;
     static const double ZERO_SKIN;
@@ -102,12 +94,6 @@ namespace geomtools {
 
     /// Initialize a 'stackable_data' instance from stackable data attached to the 3D-shape
     static bool pickup_stackable(const i_shape_3d &, stackable_data &);
-
-    /*
-   /// Initialize a 'stackable_data' instance from properties embedded in the shape itself
-   static bool pickup_stackable_with_properties(const i_shape_3d & a_shape,
-   stackable_data & a_stackable_data);
-    */
 
     /// Return the stackable data associated to the shape
     const stackable_data & get_stackable_data() const;
