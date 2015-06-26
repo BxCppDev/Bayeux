@@ -41,15 +41,17 @@ namespace datatools {
 
     /// \brief Command error codes
     enum error_code_type {
-      CEC_SUCCESS                      =  0, //!< Command was successful
-      CEC_FAILURE                      =  1, //!< Command failed (generic failure)
+      CEC_SUCCESS                      =  0, //!< Generic success
+      CEC_FAILURE                      =  1, //!< Generic failure
       CEC_PARSING_FAILURE              =  2, //!< Generic parsing error
-      CEC_SCOPE_INVALID                = 10, //!< Invalid command scope (wrong namespace or general context)
+      CEC_CONTEXT_INVALID              =  3, //!< Invalid context
+      CEC_SCOPE_INVALID                = 10, //!< Invalid scope (wrong namespace or general context)
       CEC_COMMAND_INVALID              = 20, //!< Invalid command (unrecognized command name)
       CEC_COMMAND_NO_PRIVILEDGE        = 21, //!< Invalid command priviledge
       CEC_COMMAND_INVALID_CONTEXT      = 22, //!< Invalid command context
       CEC_COMMAND_INVALID_SYNTAX       = 23, //!< Invalid command syntax
-      CEC_PARAMETER_INVALID_NUMBER     = 30, //!< Invalid parameter error
+      CEC_COMMAND_INVALID_NUMBER_OF_ARGUMENTS = 24, //!< Invalid command number of arguments
+      CEC_PARAMETER_INVALID            = 30, //!< Invalid parameter error
       CEC_PARAMETER_INVALID_KEY        = 31, //!< Invalid parameter key
       CEC_PARAMETER_NO_PRIVILEDGE      = 32, //!< Invalid parameter access mode
       CEC_PARAMETER_INVALID_CONTEXT    = 33, //!< Invalid parameter context
