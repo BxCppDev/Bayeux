@@ -69,7 +69,10 @@ namespace datatools {
       /// Default constructor
       returned_info();
 
-      /// Constructor
+      /// Constructor of a successful command returned info
+      returned_info(const std::string & output_);
+
+      /// Constructor of a failed command returned info
       returned_info(error_code_type code_, const std::string & message_ = "");
 
       /// Check success
@@ -84,11 +87,23 @@ namespace datatools {
       /// Return the error code
       error_code_type get_error_code() const;
 
+      /// Check if an error message is set
+      bool has_error_message() const;
+
       /// Set the error message
       void set_error_message(const std::string & message_);
 
       /// Get the error message
       const std::string& get_error_message() const;
+
+      /// Check if an output is set
+      bool has_output() const;
+
+      /// Set the output
+      void set_output(const std::string & output_);
+
+      /// Get the output
+      const std::string& get_output() const;
 
       /// Reset
       void reset();
@@ -100,6 +115,7 @@ namespace datatools {
 
       error_code_type _error_code_;    //!< Error code
       std::string     _error_message_; //!< Error message
+      std::string     _output_;        //!< Output
 
     };
 
@@ -120,20 +136,11 @@ namespace datatools {
   this must take the form of a string or output stream
   sequence
 
-  The Message is formatted as
-
-  @code
-  [SIGNATURE:LINENUMBER: ErrorMessage]
-  @endcode
-
-  where SIGNATURE is the signature of the function from which the
-  object is built, and LINENUMBER is the line number where the
-  built occured.
-
   In the simplest case it may be used as
 
   @code
-  DT_THROW_IF(i < 0, std::logic_error, "parameter i is negative");
+  command::returned_error cri;
+  DT_COMMAND_RETURNED_ERROR(cri, command::CEC_FAILURE, "parameter i is negative!");
   @endcode
 
   If Message is composed from several streamable objects, it can
@@ -150,6 +157,41 @@ namespace datatools {
     std::stringstream s;                                                \
     s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << ErrorMessage << "]"; \
     ReturnedInfo.set_error_message(s.str());                            \
+  }                                                                     \
+  /**/
+
+/*! Build a command::returned_info object with proper output message.
+
+  This macro is intended to simplify the common use case of initializing
+  command::returned_info objects when no error is detected.
+  This macro takes two arguments as follows
+
+  @param ReturnedInfo  The command::returned_info target object
+  @param OutputMessage  Ouptut to supply to the command::returned_info object,
+  this must take the form of a string or output stream
+  sequence
+
+  In the simplest case it may be used as
+
+  @code
+  command::returned_error cri;
+  DT_COMMAND_RETURNED_SUCCESS(cri, "this command was successful!");
+  @endcode
+
+  If Message is composed from several streamable objects, it can
+  be composed using the streaming operator:
+
+  @code
+  command::returned_error cri;
+  DT_COMMAND_RETURNED_SUCCESS(cri, "Operation '" << "compute"  << "' was successful!");
+  @endcode
+*/
+#define DT_COMMAND_RETURNED_SUCCESS(ReturnedInfo, OutputMessage)        \
+  {                                                                     \
+    ReturnedInfo.set_error_code(datatools::command::returned_info::CEC_SUCCESS); \
+    std::stringstream s;                                                \
+    s << OutputMessage;                                                 \
+    ReturnedInfo.set_output(s.str());                                   \
   }                                                                     \
   /**/
 

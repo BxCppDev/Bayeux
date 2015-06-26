@@ -18,6 +18,13 @@ namespace datatools {
     return;
   }
 
+  command::returned_info::returned_info(const std::string & output_)
+  {
+    set_error_code(CEC_SUCCESS);
+    set_output(output_);
+    return;
+  }
+
   command::returned_info::returned_info(error_code_type code_,
                                         const std::string & message_)
   {
@@ -40,6 +47,7 @@ namespace datatools {
   {
     _error_code_ = CEC_SUCCESS;
     _error_message_.clear();
+    _output_.clear();
     return;
   }
 
@@ -54,6 +62,11 @@ namespace datatools {
     return _error_code_;
   }
 
+  bool command::returned_info::has_error_message() const
+  {
+    return ! _error_message_.empty();
+  }
+
   void command::returned_info::set_error_message(const std::string & message_)
   {
     _error_message_ = message_;
@@ -65,10 +78,32 @@ namespace datatools {
     return _error_message_;
   }
 
+  bool command::returned_info::has_output() const
+  {
+    return ! _output_.empty();
+  }
+
+  void command::returned_info::set_output(const std::string & output_)
+  {
+    _output_ = output_;
+    return;
+  }
+
+  const std::string& command::returned_info::get_output() const
+  {
+    return _output_;
+  }
+
   // friend
   std::ostream & operator<<(std::ostream & out_, const command::returned_info & ri_)
   {
-    out_ << '[' << "code=" << ri_.get_error_code() << "; message=" << ri_.get_error_message() << ']';
+    out_ << '[' << "code=" << ri_.get_error_code() << "; ";
+    if (ri_.is_success()) {
+      out_ << "output=" << ri_.get_output();
+    } else {
+      out_ << "message=" << ri_.get_error_message();
+    }
+    out_ << ']';
     return out_;
   }
 
