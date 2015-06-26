@@ -16,6 +16,7 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -23,16 +24,18 @@
 #include <list>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
-
 #include <datatools/base_service.h>
 #include <datatools/service_manager.h>
 
+// This project:
 #include <dpp/histogram_service.h>
 
 using namespace std;
@@ -145,6 +148,8 @@ int main (int argc_, char ** argv_)
         OCD.dump(std::clog, "OCD: ");
         std::ofstream fscf ("test_OCD_histogram_service.sample.conf");
         OCD.generate_sample_configuration(fscf, "the configuration of a 'dpp::histogram_service' object");
+
+        // unlink("test_OCD_histogram_service.sample.conf");
       }
     }
   catch (exception & x)

@@ -20,16 +20,19 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
@@ -40,6 +43,7 @@
 #include <datatools/base_service.h>
 #include <datatools/library_loader.h>
 
+// This project:
 #include <dpp/simple_data_source.h>
 #include <dpp/simple_data_sink.h>
 #include <dpp/base_module.h>
@@ -203,7 +207,6 @@ int main (int argc_, char ** argv_)
       dpp::module_manager MM (flags);
 
       std::cerr << "****** DEVEL ***** Go* " << std::endl;
-      //return 0;
 
       if (verbose) {
         MM.set_logging_priority(datatools::logger::PRIO_NOTICE);
@@ -211,7 +214,7 @@ int main (int argc_, char ** argv_)
       if (debug) {
         MM.set_logging_priority(datatools::logger::PRIO_DEBUG);
       }
-      //return 0;
+
       // Load properties from the configuration file:
       if (mgr_config.empty ())
         {
@@ -223,13 +226,10 @@ int main (int argc_, char ** argv_)
       datatools::fetch_path_with_env (MM_config_file);
       std::clog << "Manager config. file : '" << MM_config_file << "'" << std::endl;
 
-      //return 0;
       datatools::properties MM_config;
       datatools::properties::read_config (MM_config_file, MM_config);
       MM.initialize (MM_config);
       if (debug) MM.tree_dump (std::clog, "Module manager (initialized) : ", "DEBUG: ");
-
-      //return 0;
 
       std::clog << "Module to be used : '" << module_name << "'" << std::endl;
       if (! MM.has (module_name))
@@ -306,7 +306,6 @@ int main (int argc_, char ** argv_)
       // Terminate the module manager :
       MM.reset ();
 
-      std::cerr << "****** DEVEL ***** The end " << std::endl;
    }
   catch (std::exception & x) {
     std::cerr << "error: " << x.what () << std::endl;
@@ -319,7 +318,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_module_chain.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

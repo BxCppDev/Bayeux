@@ -284,6 +284,8 @@ int main (int argc_, char ** argv_)
         std::clog << mods[i] << std::endl;
       }
 
+      datatools::fetch_path_with_env(output_file);
+      unlink(output_file.c_str());
     }
   catch (std::exception & x)
     {

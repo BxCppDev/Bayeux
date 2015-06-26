@@ -18,18 +18,21 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <list>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/bio_guard.h>
 #include <datatools/exception.h>
-
+// - Bayeux/dpp:
 #include <dpp/version.h>
 #include <dpp/base_module.h>
 #include <dpp/simple_data_source.h>
@@ -343,7 +346,8 @@ int main (int argc_, char ** argv_)
 
       // Terminate the event record processing module :
       TM.reset ();
-    }
+
+   }
   catch (std::exception & x) {
     std::cerr << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
@@ -355,7 +359,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_module.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

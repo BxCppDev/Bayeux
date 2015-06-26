@@ -409,6 +409,18 @@ int main (int argc_, char ** argv_)
       //test_brio_1(debug);
     }
 
+    {
+      std::string fout = "${DPP_TMP_TEST_DIR}/test_input_output_modules_0.txt";
+      datatools::fetch_path_with_env(fout);
+      unlink(fout.c_str());
+    }
+
+    {
+      std::string fout = "${DPP_TMP_TEST_DIR}/test_input_output_modules_1.txt";
+      datatools::fetch_path_with_env(fout);
+      unlink(fout.c_str());
+    }
+
   }
   catch (std::exception & x) {
     std::cerr << "ERROR: test_input_output_modules: " << x.what () << std::endl;
