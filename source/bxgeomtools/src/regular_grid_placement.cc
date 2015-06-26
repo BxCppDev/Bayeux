@@ -67,8 +67,6 @@ namespace geomtools {
     return;
   }
 
-  void set_steps (double dx_, double dy_);
-
   void regular_grid_placement::set_steps (double dx_, double dy_)
   {
     set_column_step (dx_);
@@ -121,6 +119,11 @@ namespace geomtools {
   }
 
   placement & regular_grid_placement::get_basic_placement ()
+  {
+    return _basic_placement_;
+  }
+
+  placement & regular_grid_placement::grab_basic_placement ()
   {
     return _basic_placement_;
   }
@@ -352,7 +355,4 @@ namespace geomtools {
     return;
   }
 
-
 } // end of namespace geomtools
-
-// end of regular_grid_placement.cc

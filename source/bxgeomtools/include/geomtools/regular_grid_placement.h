@@ -30,10 +30,12 @@
 #ifndef GEOMTOOLS_REGULAR_GRID_PLACEMENT_H_
 #define GEOMTOOLS_REGULAR_GRID_PLACEMENT_H_ 1
 
+// Standard library:
 #include <iostream>
 #include <iomanip>
 #include <string>
 
+// This project:
 #include <geomtools/i_placement.h>
 #include <geomtools/placement.h>
 
@@ -94,7 +96,10 @@ namespace geomtools {
 
     const placement & get_basic_placement () const;
 
+    /// \deprecated Please use grab_basic_placement
     placement & get_basic_placement ();
+
+    placement & grab_basic_placement ();
 
     void set_number_of_rows (size_t nr_);
 
@@ -107,10 +112,6 @@ namespace geomtools {
     void get_placement (int col_, int row_, placement & p_) const;
 
     placement get_placement (int col_, int row_) const;
-
-  public:
-
-    // i_placement interface:
 
     virtual bool has_only_one_rotation () const;
 
@@ -125,11 +126,8 @@ namespace geomtools {
     virtual size_t compute_index_map (std::vector<uint32_t> & map_,
                                       int item_) const;
 
-  public:
-    // ctor:
     regular_grid_placement ();
 
-    // ctor:
     regular_grid_placement (const placement & basic_placement_,
                             double column_step_,
                             double row_step_,
@@ -138,7 +136,6 @@ namespace geomtools {
                             int mode_,
                             bool centered_ = true);
 
-    // dtor:
     virtual ~regular_grid_placement ();
 
     void init (const placement & basic_placement_,
@@ -151,7 +148,6 @@ namespace geomtools {
 
     virtual void reset ();
 
-    // i_tree_dump interface:
     virtual void tree_dump (std::ostream & out_  = std::clog,
                             const std::string & title_ = "geomutils::regular_grid_placement",
                             const std::string & indent_ = "",
@@ -160,8 +156,8 @@ namespace geomtools {
   private:
 
     placement _basic_placement_;
-    double    _column_step_; // y
-    double    _row_step_;    // x
+    double    _column_step_;       ///< y
+    double    _row_step_;          ///< x
     size_t    _number_of_columns_;
     size_t    _number_of_rows_;
     int       _mode_;
