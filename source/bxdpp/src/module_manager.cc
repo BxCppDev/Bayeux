@@ -19,18 +19,22 @@
  *
  */
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
-#include <dpp/module_manager.h>
-#include <dpp/base_module.h>
-
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
 #include <datatools/exception.h>
+
+// This project:
+#include <dpp/module_manager.h>
+#include <dpp/base_module.h>
 
 namespace dpp {
 
@@ -81,7 +85,6 @@ namespace dpp {
     return;
   }
 
-  // ctor:
   module_manager::module_manager (uint32_t flags_)
   {
     _logging_priority_      = datatools::logger::PRIO_WARNING;
@@ -125,7 +128,6 @@ namespace dpp {
     return;
   }
 
-  // dtor:
   module_manager::~module_manager ()
   {
     if (is_initialized ()) {
@@ -194,7 +196,7 @@ namespace dpp {
       _flags_ |= FACTORY_INITIALIZATION_AT_LOAD ;
     }
 
-    // Embed a  service manager :
+    // Embeds a service manager :
     if (! has_service_manager ()) {
       std::string service_manager_configuration_file;
       if (setup_.has_key ("service_manager.configuration")) {
