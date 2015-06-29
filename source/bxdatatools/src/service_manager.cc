@@ -252,11 +252,13 @@ const service_dict_type& service_manager::get_services() const {
   return services_;
 }
 
-
 service_dict_type& service_manager::get_services() {
   return services_;
 }
 
+service_dict_type& service_manager::grab_services() {
+  return services_;
+}
 
 bool service_manager::can_drop(const std::string& name) {
   service_dict_type::const_iterator found = services_.find(name);

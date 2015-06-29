@@ -44,6 +44,9 @@
 #include <datatools/service_tools.h>
 #include <datatools/factory_macros.h>
 #include <datatools/logger.h>
+#ifndef Q_MOC_RUN
+#include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
 
 namespace datatools {
 
@@ -68,13 +71,25 @@ namespace datatools {
     /// Destructor
     virtual ~base_service();
 
+    /// Check is the name is set
+    bool has_name() const;
+
     /// Set the name of the service
     void set_name(const std::string&);
 
     /// Get the name of the service
     const std::string& get_name() const;
 
-    /// Check is the description is not empty
+    /// Check is the display name is set
+    bool has_display_name() const;
+
+    /// Set the name of the service
+    void set_display_name(const std::string&);
+
+    /// Get the name of the service
+    const std::string& get_display_name() const;
+
+    /// Check is the description is set
     bool has_description() const;
 
     /// Get the description of the service
@@ -83,17 +98,20 @@ namespace datatools {
     /// Set the description of the service
     void set_description(const std::string& description);
 
-    /// Check is the version ID is not empty
+    /// @deprecated Check is the version ID is set
     bool has_version() const;
 
-    /// Get the version ID of the service
+    /// @deprecated Get the version ID of the service
     const std::string& get_version() const;
 
-    /// Set the version ID of the service
+    /// @deprecated Set the version ID of the service
     void set_version(const std::string& version);
 
     /// Undocumented unused/unimplemented method
     virtual void fetch_dependencies(service_dependency_dict_type& /*dependencies*/) const;
+
+    /// Initialize the service without a list of properties nor other services
+    virtual int initialize_simple();
 
     /// Initialize the service using only a list of properties without the needs of other services
     virtual int initialize_standalone(const datatools::properties& config);
@@ -132,15 +150,26 @@ namespace datatools {
 
     datatools::logger::priority _logging_priority; //!< Logging priority threshold
     std::string name_;         //!< The name of the service
+    std::string display_name_; //!< The display name of the service
     std::string description_;  //!< The description of the service
-    std::string version_;      //!< The version of the service
+    std::string version_;      //!< @deprecated The version of the service
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
 
+#ifndef Q_MOC_RUN
+      //! Reflection interface
+      DR_CLASS_RTTI();
+#endif // Q_MOC_RUN
+
   };
 
 }  // end of namespace datatools
+
+#ifndef Q_MOC_RUN
+// Activate reflection layer:
+DR_CLASS_INIT(datatools::base_service);
+#endif // Q_MOC_RUN
 
 #define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)    \
   private:                                                              \

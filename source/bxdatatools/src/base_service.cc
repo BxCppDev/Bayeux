@@ -60,6 +60,7 @@ base_service::base_service(const std::string& name,
                            const std::string& description,
                            const std::string& version)
     : name_(name),
+      display_name_(""),
       description_(description),
       version_(version) {
   set_logging_priority(datatools::logger::PRIO_FATAL);
@@ -67,6 +68,11 @@ base_service::base_service(const std::string& name,
 
 // Destructor :
 base_service::~base_service() {}
+
+
+bool base_service::has_name() const {
+  return !name_.empty();
+}
 
 
 const std::string& base_service::get_name() const {
@@ -78,6 +84,22 @@ void base_service::set_name(const std::string& name) {
   DT_THROW_IF(is_initialized(), std::logic_error,
               "Service is initialized and locked!");
   name_ = name;
+}
+
+bool base_service::has_display_name() const {
+  return !display_name_.empty();
+}
+
+
+const std::string& base_service::get_display_name() const {
+  return display_name_;
+}
+
+
+void base_service::set_display_name(const std::string& display_name) {
+  DT_THROW_IF(is_initialized(), std::logic_error,
+              "Service is initialized and locked!");
+  display_name_ = display_name;
 }
 
 
@@ -121,13 +143,18 @@ void base_service::fetch_dependencies(
 }
 
 
+int base_service::initialize_simple() {
+  datatools::properties dummy;
+  return this->initialize_standalone(dummy);
+}
+
 int base_service::initialize_standalone(
     const datatools::properties& config) {
   service_dict_type dummy;
   return this->initialize(config, dummy);
 }
 
-  void base_service::common_initialize(const datatools::properties& config) {
+void base_service::common_initialize(const datatools::properties& config) {
 
   // Logging priority:
   datatools::logger::priority lp
@@ -140,17 +167,23 @@ int base_service::initialize_standalone(
     }
   }
 
+  if (get_display_name().empty()) {
+    if (config.has_key("display_name")) {
+      set_display_name(config.fetch_string("display_name"));
+    }
+  }
+
   if (get_description().empty()) {
     if (config.has_key("description")) {
       set_description(config.fetch_string("description"));
     }
   }
 
-  if (get_version().empty()) {
-    if (config.has_key("version")) {
-      set_version(config.fetch_string("version"));
-    }
-  }
+  // if (get_version().empty()) {
+  //   if (config.has_key("version")) {
+  //     set_version(config.fetch_string("version"));
+  //   }
+  // }
 
 }
 
@@ -190,19 +223,34 @@ void base_service::common_ocd(datatools::object_configuration_description& ocd)
   }
   {
     datatools::configuration_property_description & cpd = ocd.add_configuration_property_info();
-    cpd.set_name_pattern("version")
+    cpd.set_name_pattern("display_name")
       .set_from("dpp::base_service")
-      .set_terse_description("The version of the service")
+      .set_terse_description("The display name of the service")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("A string version number given to the service.")
-      .add_example("Set the version of the service:: \n"
-                   "                                 \n"
-                   "  version : string = \"1.0.0\"   \n"
-                   "                                 \n"
+      .set_long_description("A display name given to the service.")
+      .add_example("Set the display name of the service::  \n"
+                   "                                       \n"
+                   "  display_name : string = \"DB\"       \n"
+                   "                                       \n"
                    )
       ;
   }
+  // {
+  //   datatools::configuration_property_description & cpd = ocd.add_configuration_property_info();
+  //   cpd.set_name_pattern("version")
+  //     .set_from("dpp::base_service")
+  //     .set_terse_description("The version of the service")
+  //     .set_traits(datatools::TYPE_STRING)
+  //     .set_mandatory(false)
+  //     .set_long_description("A string version number given to the service.")
+  //     .add_example("Set the version of the service:: \n"
+  //                  "                                 \n"
+  //                  "  version : string = \"1.0.0\"   \n"
+  //                  "                                 \n"
+  //                  )
+  //     ;
+  // }
 }
 
 void base_service::tree_dump(std::ostream& out,
@@ -215,19 +263,23 @@ void base_service::tree_dump(std::ostream& out,
   if (!title.empty()) out << indent << title << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Service name        : '"
+      << "Service name         : '"
       << name_ << "'" << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Service description : '"
-      << description_ << "'" << std::endl;
+      << "Service display name : '"
+      << display_name_ << "'" << std::endl;
 
   out << indent << i_tree_dumpable::tag
-      << "Service version     : '"
-      << version_ << "'" << std::endl;
+      << "Service description  : '"
+      << description_ << "'" << std::endl;
+
+  // out << indent << i_tree_dumpable::tag
+  //     << "Service version      : '"
+  //     << version_ << "'" << std::endl;
 
   out << indent << i_tree_dumpable::inherit_tag (a_inherit)
-      << "Service initialized : "
+      << "Service initialized  : "
       << this->is_initialized() << std::endl;
 }
 

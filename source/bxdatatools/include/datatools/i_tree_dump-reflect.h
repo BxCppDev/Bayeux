@@ -4,7 +4,7 @@
 
 // Third Party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
+// #include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/i_tree_dump.h>

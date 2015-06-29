@@ -38,6 +38,7 @@
 #include <datatools/multi_properties-reflect.h>
 #include <datatools/things-reflect.h>
 #include <datatools/enriched_base-reflect.h>
+#include <datatools/base_service-reflect.h>
 
 #endif // DATATOOLS_THE_INTROSPECTABLE_H
 

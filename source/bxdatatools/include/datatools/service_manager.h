@@ -69,8 +69,8 @@ namespace datatools {
   public:
     /// Constructor
     service_manager(const std::string& name = "",
-		    const std::string & description = "",
-		    uint32_t flag = BLANK);
+        const std::string & description = "",
+        uint32_t flag = BLANK);
 
     /// Destructor
     virtual ~service_manager();
@@ -153,24 +153,27 @@ namespace datatools {
     void drop(const std::string& name);
 
     void load(const std::string& name,
-	      const std::string& id,
-	      const datatools::properties& config);
+        const std::string& id,
+        const datatools::properties& config);
 
     void load(const datatools::multi_properties& config);
 
     const service_dict_type& get_services() const;
 
+    /// \deprecated
     service_dict_type& get_services();
 
+    service_dict_type& grab_services();
+
     void dump_services(std::ostream& out = std::clog,
-		       const std::string& title  = "",
-		       const std::string& indent = "") const;
+           const std::string& title  = "",
+           const std::string& indent = "") const;
 
     /// Smart print
     virtual void tree_dump(std::ostream& out         = std::clog,
-			   const std::string& title  = "",
-			   const std::string& indent = "",
-			   bool inherit              = false) const;
+         const std::string& title  = "",
+         const std::string& indent = "",
+         bool inherit              = false) const;
 
     void set_logging_priority(datatools::logger::priority);
 
@@ -178,8 +181,8 @@ namespace datatools {
 
   protected:
     void load_service(const std::string& name,
-		      const std::string& id,
-		      const datatools::properties& config);
+          const std::string& id,
+          const datatools::properties& config);
 
     void preload_global_dict();
 
