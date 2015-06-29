@@ -132,6 +132,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
   ${module_include_dir}/${module_name}/logger-reflect.h
   ${module_include_dir}/${module_name}/enriched_base-reflect.h
+  ${module_include_dir}/${module_name}/base_service-reflect.h
   ${module_include_dir}/${module_name}/event_id-reflect.h
   ${module_include_dir}/${module_name}/multi_properties-reflect.h
   ${module_include_dir}/${module_name}/properties-reflect.h
