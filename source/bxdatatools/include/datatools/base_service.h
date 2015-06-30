@@ -126,6 +126,9 @@ namespace datatools {
     /// Check if service is initialized
     virtual bool is_initialized() const = 0;
 
+    /// Return the service class
+    virtual std::string service_class_id() const = 0;
+
     /// Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
 
@@ -174,10 +177,13 @@ DR_CLASS_INIT(datatools::base_service);
 #define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)    \
   private:                                                              \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME); \
+  public:                                                                 \
+  virtual std::string service_class_id() const;                           \
   /**/
 
 #define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::datatools::base_service,SERVICE_CLASS_NAME,SERVICE_ID); \
+  std::string SERVICE_CLASS_NAME::service_class_id() const {return SERVICE_ID;}
   /**/
 
 #endif // DATATOOLS_BASE_SERVICE_H

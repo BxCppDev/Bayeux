@@ -43,7 +43,6 @@ void base_service::set_logging_priority(::datatools::logger::priority p)
 {
   _logging_priority = p;
 }
-
 datatools::logger::priority base_service::get_logging_priority() const
 {
   return _logging_priority;
