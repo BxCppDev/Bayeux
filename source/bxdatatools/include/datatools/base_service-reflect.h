@@ -46,6 +46,15 @@ namespace datatools {
                                  ::datatools::base_service,
                                  ::datatools::base_service::has_description,
                                  bool)
+          .DR_CLASS_METHOD("initialize_simple",
+                            ::datatools::base_service,
+                            ::datatools::base_service::initialize_simple,
+                            int)
+          .DR_CLASS_METHOD1("initialize_standalone",
+                            ::datatools::base_service,
+                            ::datatools::base_service::initialize_standalone,
+                            int,
+                            const datatools::properties &)
           ;
         return;
       }
