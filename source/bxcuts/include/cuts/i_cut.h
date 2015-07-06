@@ -254,6 +254,9 @@ namespace cuts {
     /// Get the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
 
+    /// Basic OCD support shared by all inherited modules
+    static void common_ocd(datatools::object_configuration_description & ocd_);
+
     /// Return the number of entries accepted by the cut
     size_t get_number_of_accepted_entries() const;
 

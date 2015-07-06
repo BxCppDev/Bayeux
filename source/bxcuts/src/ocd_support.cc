@@ -15,6 +15,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::accept_cut,ocd_)
                                 "This cut class has no specific configuration parameters.            \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   ocd_.set_configuration_hints ("A ``cuts::accept_cut`` object can be setup with the following syntax\n"
                                 "in a ``datatools::multi_properties`` configuration file :           \n"
@@ -46,6 +47,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::reject_cut,ocd_)
                                 "This cut class has no specific configuration parameters.              \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   ocd_.set_configuration_hints ("A ``cuts::reject_cut`` object can be setup with the following syntax\n"
                                 "in a ``datatools::multi_properties`` configuration file :           \n"
@@ -78,6 +80,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::random_cut,ocd_)
                                 "This cut may be provided a pseudo-random event number generator (PRNG) \n"
                                 "and given seed.                                                        \n"
                                 );
+
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -149,6 +153,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::not_cut,ocd_)
                                 "This cut must be given another cut of which the result is negated. \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -231,6 +236,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::and_cut,ocd_)
                                 "This cut must be given two other cuts of which the result  \n"
                                 "is combined.                                               \n"
                                 );
+
+  cuts::i_cut::common_ocd(ocd_);
+
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
     cpd.set_name_pattern("cut_1")
@@ -318,6 +326,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::or_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -404,6 +413,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xor_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -481,6 +491,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nand_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -549,6 +560,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::nor_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -621,6 +633,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::xnor_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -693,6 +706,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_and_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -766,6 +780,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_or_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -849,6 +864,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::cuts::multi_xor_cut,ocd_)
                                 "is combined.                                               \n"
                                 );
 
+  cuts::i_cut::common_ocd(ocd_);
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();

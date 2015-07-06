@@ -35,10 +35,10 @@
 
 namespace cuts {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_cut, "cuts::i_cut/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_cut, "cuts::i_cut/__system__");
 
   bool
-  i_cut::is_debug () const
+  i_cut::is_debug() const
   {
     return _logging >= datatools::logger::PRIO_DEBUG;
   }
@@ -229,7 +229,7 @@ namespace cuts {
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Activated counters : " << _activated_counters_
           << std::endl;
-    size_t npe = _number_of_accepted_entries_ + _number_of_rejected_entries_;
+    const size_t npe = _number_of_accepted_entries_ + _number_of_rejected_entries_;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Number of processed entries : " << npe
           << std::endl;
@@ -449,6 +449,44 @@ namespace cuts {
   {
     reset_user_data();
     reset_counters();
+    return;
+  }
+
+  void i_cut::common_ocd(datatools::object_configuration_description & ocd_)
+  {
+    datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal", "");
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_property_info();
+      cpd.set_name_pattern("description")
+        .set_from("cuts::i_cut")
+        .set_terse_description("The description of the cut")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("A description of the cut.")
+        .add_example("Example::                                          \n"
+                     "                                                   \n"
+                     "  description : string = \"Select strange events\" \n"
+                     "                                                   \n"
+                     )
+        ;
+    }
+
+    {
+      datatools::configuration_property_description & cpd = ocd_.add_property_info();
+      cpd.set_name_pattern("name")
+        .set_from("cuts::i_cut")
+        .set_terse_description("The name of the cut")
+        .set_traits(datatools::TYPE_STRING)
+        .set_mandatory(false)
+        .set_long_description("A name given to the cut.")
+        .add_example("Example::                  \n"
+                     "                           \n"
+                     "  name : string = \"Cut0\" \n"
+                     "                           \n"
+                     )
+        ;
+    }
     return;
   }
 
