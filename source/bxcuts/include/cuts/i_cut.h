@@ -114,31 +114,31 @@ namespace cuts {
       const std::type_info * _ti;      //! Reference of the referenced object's type
     };
 
-    bool is_debug () const;
+    bool is_debug() const;
 
-    bool has_name () const;
+    bool has_name() const;
 
-    void set_name (const std::string & a_name);
+    void set_name(const std::string & a_name);
 
-    const std::string & get_name () const;
+    const std::string & get_name() const;
 
-    bool has_description () const;
+    bool has_description() const;
 
-    const std::string & get_description () const;
+    const std::string & get_description() const;
 
-    void set_description (const std::string & a_description);
+    void set_description(const std::string & a_description);
 
-    bool has_version () const;
+    bool has_version() const;
 
-    const std::string & get_version () const;
+    const std::string & get_version() const;
 
-    void set_version (const std::string & a_version);
+    void set_version(const std::string & a_version);
 
     /// Check initialization status
-    bool is_initialized () const;
+    bool is_initialized() const;
 
     /// Check if some user data is referenced
-    bool has_user_data () const;
+    bool has_user_data() const;
 
     template<class T>
     void set_user_data(const T & obj_)
@@ -278,27 +278,27 @@ namespace cuts {
   protected:
 
     /// The main selection method (pure virtual, invoked by the @see process method)
-    virtual int _accept () = 0;
+    virtual int _accept() = 0;
 
     void _set_user_data(const boost::shared_ptr<i_referenced_data> & hd_);
 
-    void _common_initialize (const datatools::properties & a_config);
+    void _common_initialize(const datatools::properties & a_config);
 
     void _import_user_data_from(const i_cut &);
 
     void _export_user_data_to(i_cut &) const;
 
-    void _set_name (const std::string & a_name);
+    void _set_name(const std::string & a_name);
 
-    void _set_initialized (bool a_initialized);
+    void _set_initialized(bool a_initialized);
 
     /// Hook invoked before the main selection method @see _accept ()
-    virtual void _prepare_cut ();
+    virtual void _prepare_cut();
 
     /// Hook invoked after the main selection method @see _accept ()
-    virtual int _finish_cut (int a_selection_status);
+    virtual int _finish_cut(int a_selection_status);
 
-    virtual void _increment_counters (int a_selection_status);
+    virtual void _increment_counters(int a_selection_status);
 
     virtual void _at_set_user_data();
 

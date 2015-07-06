@@ -458,32 +458,32 @@ namespace cuts {
 
     {
       datatools::configuration_property_description & cpd = ocd_.add_property_info();
-      cpd.set_name_pattern("description")
+      cpd.set_name_pattern("cut.description")
         .set_from("cuts::i_cut")
         .set_terse_description("The description of the cut")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
         .set_long_description("A description of the cut.")
-        .add_example("Example::                                          \n"
-                     "                                                   \n"
-                     "  description : string = \"Select strange events\" \n"
-                     "                                                   \n"
+        .add_example("Example::                                              \n"
+                     "                                                       \n"
+                     "  cut.description : string = \"Select strange events\" \n"
+                     "                                                       \n"
                      )
         ;
     }
 
     {
       datatools::configuration_property_description & cpd = ocd_.add_property_info();
-      cpd.set_name_pattern("name")
+      cpd.set_name_pattern("cut.name")
         .set_from("cuts::i_cut")
         .set_terse_description("The name of the cut")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(false)
         .set_long_description("A name given to the cut.")
-        .add_example("Example::                  \n"
-                     "                           \n"
-                     "  name : string = \"Cut0\" \n"
-                     "                           \n"
+        .add_example("Example::                      \n"
+                     "                               \n"
+                     "  cut.name : string = \"Cut0\" \n"
+                     "                               \n"
                      )
         ;
     }
