@@ -179,7 +179,7 @@ namespace mctools {
              i != _step_hits_dict_.end ();
              i++) {
           const std::string & category = i->first;
-          if (! boost::starts_with(category, "--")) {
+          if (! boost::starts_with(category, "__")) {
             the_categories.push_back (category);
           }
         }
@@ -190,7 +190,7 @@ namespace mctools {
              i != _plain_step_hits_dict_.end ();
              i++) {
           const std::string & category = i->first;
-          if (! boost::starts_with(category, "--")) {
+          if (! boost::starts_with(category, "__")) {
             the_categories.push_back (category);
           }
         }
@@ -203,7 +203,7 @@ namespace mctools {
              i != _step_hits_dict_.end ();
              i++) {
           const std::string & category = i->first;
-          if (boost::starts_with(category, "--")) {
+          if (boost::starts_with(category, "__")) {
             the_categories.push_back (category);
           }
         }
@@ -214,7 +214,7 @@ namespace mctools {
              i != _plain_step_hits_dict_.end ();
              i++) {
           const std::string & category = i->first;
-          if (boost::starts_with(category, "--")) {
+          if (boost::starts_with(category, "__")) {
             the_categories.push_back (category);
           }
         }
