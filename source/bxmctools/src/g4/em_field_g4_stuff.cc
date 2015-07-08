@@ -209,8 +209,8 @@ namespace mctools {
 
     void em_field_g4_stuff::initialize(const datatools::properties & config_)
     {
-      DT_THROW_IF (is_initialized(),std::logic_error,
-                   "Geant4 EM field stuff is already initialized !");
+      DT_THROW_IF(is_initialized(),std::logic_error,
+                  "Geant4 EM field stuff is already initialized !");
 
       loggable_support::_initialize_logging_support(config_);
 
@@ -486,8 +486,8 @@ namespace mctools {
     void em_field_g4_stuff::reset()
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
-      DT_THROW_IF (! is_initialized(),std::logic_error,
-                   "Geant4 EM field internal is not initialized !");
+      DT_THROW_IF(! is_initialized(),std::logic_error,
+                  "Geant4 EM field internal is not initialized !");
       _initialized_ = false;
 
       // 1)
