@@ -156,7 +156,7 @@ namespace emfield {
         const std::string & a_coord = coordinates.at(j);
         const std::string key_base = "magnetic_field." + a_field + "." + a_coord;
         if (setup_.has_key(key_base + ".polynomial_degree")) {
-          const size_t degree = setup_.fetch_integer(key_base + ".polynomial_degree");
+          const size_t degree = setup_.fetch_integer(key_base + ".polynomial_degree") + 1;
           DT_THROW_IF(! setup_.has_key(key_base + ".polynomial_parameters"), std::logic_error,
                       "Missing polynomial parameters for " << a_field << " field "
                       << "and " << a_coord << " coordinate !");
