@@ -47,8 +47,8 @@ namespace dpp {
                                  int max_record_per_file_,
                                  int max_files_)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error,
-                 "Output module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(is_initialized(), std::logic_error,
+                "Output module '" << get_name() << "' is already initialized !");
     io_common & ioc = _grab_common();
     if (max_record_total_ > 0) {
       ioc.set_max_record_total(max_record_total_);
@@ -64,8 +64,8 @@ namespace dpp {
 
   void output_module::set_single_output_file(const std::string & filepath_)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error,
-                 "Output module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(is_initialized(), std::logic_error,
+                "Output module '" << get_name() << "' is already initialized !");
     io_common & ioc = _grab_common();
     datatools::smart_filename::make_single(ioc.grab_filenames(), filepath_);
     return;
@@ -74,8 +74,8 @@ namespace dpp {
   void output_module::set_list_of_output_files(const std::vector<std::string> & filepaths_,
                                                bool allow_duplicate_)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error,
-                 "Output module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(is_initialized(), std::logic_error,
+                "Output module '" << get_name() << "' is already initialized !");
     io_common & ioc = _grab_common();
     datatools::smart_filename & filenames = ioc.grab_filenames();
     datatools::smart_filename::make_list(filenames, allow_duplicate_);
@@ -92,8 +92,8 @@ namespace dpp {
                                                    unsigned int start_,
                                                    int increment_)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error,
-                 "Output module '" << get_name () << "' is already initialized !");
+    DT_THROW_IF(is_initialized(), std::logic_error,
+                "Output module '" << get_name() << "' is already initialized !");
     io_common & ioc = _grab_common();
     datatools::smart_filename::make_incremental(ioc.grab_filenames(),
                                                 path_,
@@ -106,28 +106,28 @@ namespace dpp {
     return;
   }
 
-  void output_module::set_preserve_existing_output (bool a_preserve_existing_output)
+  void output_module::set_preserve_existing_output(bool a_preserve_existing_output)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Output module '" << get_name () << "' is already initialized !");
+                "Output module '" << get_name() << "' is already initialized !");
     _preserve_existing_output_ = a_preserve_existing_output;
     return;
   }
 
-  bool output_module::is_terminated () const
+  bool output_module::is_terminated() const
   {
-    DT_THROW_IF(! is_initialized (),
+    DT_THROW_IF(! is_initialized(),
                 std::logic_error,
-                "Output module '" << get_name () << "' is not initialized ! ");
+                "Output module '" << get_name() << "' is not initialized ! ");
     return get_common().is_terminated();
   }
 
-  void output_module::_set_defaults ()
+  void output_module::_set_defaults()
   {
     _preserve_existing_output_ = false;
     _sink_   = 0;
-     return;
+    return;
   }
 
   const io_common & output_module::get_common() const
@@ -176,9 +176,9 @@ namespace dpp {
 
   void output_module::set_context_label(const std::string & label_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Output module '" << get_name () << "' is already initialized ! ");
+                "Output module '" << get_name() << "' is already initialized ! ");
     io_common & ioc = _grab_common();
     ioc.set_context_label(label_);
     return;
@@ -186,9 +186,9 @@ namespace dpp {
 
   void output_module::export_context_metadata(const std::string & metadata_label_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Output module '" << get_name () << "' is already initialized ! ");
+                "Output module '" << get_name() << "' is already initialized ! ");
     io_common & ioc = _grab_common();
     ioc.add_context_metadata(metadata_label_);
     return;
@@ -196,9 +196,9 @@ namespace dpp {
 
   void output_module::set_export_context_all(bool val_)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Output module '" << get_name () << "' is already initialized ! ");
+                "Output module '" << get_name() << "' is already initialized ! ");
     io_common & ioc = _grab_common();
     ioc.set_context_all(val_);
     return;
@@ -207,7 +207,7 @@ namespace dpp {
   output_module::output_module(datatools::logger::priority logging_priority_)
     : base_module(logging_priority_)
   {
-    _set_defaults ();
+    _set_defaults();
     return;
   }
 
@@ -221,9 +221,9 @@ namespace dpp {
                                  datatools::service_manager & a_service_manager,
                                  dpp::module_handle_dict_type & /*a_module_dict*/)
   {
-    DT_THROW_IF(is_initialized (),
+    DT_THROW_IF(is_initialized(),
                 std::logic_error,
-                "Output module '" << get_name () << "' is already initialized ! ");
+                "Output module '" << get_name() << "' is already initialized ! ");
 
     base_module::_common_initialize(a_config);
 
@@ -235,8 +235,8 @@ namespace dpp {
     }
     _common_.get()->initialize(a_config, a_service_manager);
 
-    if (a_config.has_flag ("preserve_existing_files")) {
-      set_preserve_existing_output (true);
+    if (a_config.has_flag("preserve_existing_files")) {
+      set_preserve_existing_output(true);
     }
 
     this->_open_sink();
@@ -246,26 +246,26 @@ namespace dpp {
      *************************************/
 
     // Tag the module as initialized :
-    _set_initialized (true);
+    _set_initialized(true);
     return;
   }
 
   void output_module::reset()
   {
-    DT_THROW_IF(! is_initialized (),
+    DT_THROW_IF(! is_initialized(),
                 std::logic_error,
-                "Output module '" << get_name () << "' is not initialized !");
+                "Output module '" << get_name() << "' is not initialized !");
 
     // Tag the module as un-initialized :
-    _set_initialized (false);
+    _set_initialized(false);
 
     /****************************
      *  revert to some defaults *
      ****************************/
 
     if (_sink_ != 0) {
-      if (_sink_->is_open ()) {
-        _sink_->close ();
+      if (_sink_->is_open()) {
+        _sink_->close();
       }
       delete _sink_;
       _sink_ = 0;
@@ -274,7 +274,7 @@ namespace dpp {
     _common_.get()->reset();
     _common_.reset(0);
     // XXX
-    _set_defaults ();
+    _set_defaults();
 
     /****************************
      *  end of the reset step   *
@@ -335,27 +335,27 @@ namespace dpp {
         }
       }
       /*
-      for (unsigned int i(0); i < ctx_md_labels.size(); i++) {
+        for (unsigned int i(0); i < ctx_md_labels.size(); i++) {
         const std::string & md_label = ctx_md_labels[i];
         if (! ctx_store.has_section(md_label)) {
-          DT_LOG_WARNING(get_logging_priority(),
-                         "Output module requested context metadata with label '"
-                         << md_label << "' but context service '"
-                         << get_common().get_context_label() << "' does not provide it !");
-          continue;
+        DT_LOG_WARNING(get_logging_priority(),
+        "Output module requested context metadata with label '"
+        << md_label << "' but context service '"
+        << get_common().get_context_label() << "' does not provide it !");
+        continue;
         }
         // Get a local copy:
         datatools::properties ctx_props = ctx_store.get_section(md_label);
         ctx_props.store_string(io_common::context_key(), md_label);
         ctx_props.store_integer(io_common::context_rank(), i);
         _sink_->store_metadata(ctx_props);
-      }
+        }
       */
     }
 
     // Then consider metadata to be stored from the embedded store to the output stream:
     datatools::multi_properties & MDS = grab_metadata_store();
-    for (int i(0); i < (int) MDS.size(); i++) {
+    for (size_t i(0); i < MDS.size(); i++) {
       const std::string & key = MDS.ordered_key(i);
       const std::string & meta = MDS.get(key).get_meta();
       // Get a working local copy:
@@ -374,22 +374,22 @@ namespace dpp {
   {
     if (_sink_ == 0) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
-      if (get_common().get_file_index() >= (int)get_common().get_filenames().size ()) {
+      if (get_common().get_file_index() >= (int)get_common().get_filenames().size()) {
         _grab_common().set_terminated(true);
         return PROCESS_FATAL;
       }
       std::string sink_label = get_common().get_filenames()[get_common().get_file_index()];
-      _sink_ = io_common::allocate_writer(sink_label, get_logging_priority ());
+      _sink_ = io_common::allocate_writer(sink_label, get_logging_priority());
       if (! _sink_) {
-        DT_LOG_ERROR (get_logging_priority (),
-                      "Cannot allocate any data writer for file '"
-                      << sink_label << "' !");
+        DT_LOG_ERROR(get_logging_priority(),
+                     "Cannot allocate any data writer for file '"
+                     << sink_label << "' !");
         return PROCESS_FATAL;
       }
       if (_preserve_existing_output_) {
-        _sink_->set_preserve_existing_sink (true);
+        _sink_->set_preserve_existing_sink(true);
       }
-      if (! _sink_->is_open ()) _sink_->open ();
+      if (! _sink_->is_open()) _sink_->open();
       _grab_common().set_file_record_counter(0);
       // Process metadata:
       _store_metadata_();
@@ -409,36 +409,36 @@ namespace dpp {
       }
     }
     /*
-    if (_sink_ == 0) {
+      if (_sink_ == 0) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
-      if (get_common().get_file_index() >= (int)get_common().get_filenames().size ()) {
-        store_status = PROCESS_FATAL;
-        return store_status;
+      if (get_common().get_file_index() >= (int)get_common().get_filenames().size()) {
+      store_status = PROCESS_FATAL;
+      return store_status;
       }
       std::string sink_label = get_common().get_filenames()[get_common().get_file_index()];
-      _sink_ = io_common::allocate_writer(sink_label, get_logging_priority ());
+      _sink_ = io_common::allocate_writer(sink_label, get_logging_priority());
       if (! _sink_) {
-        DT_LOG_ERROR (get_logging_priority (),
-                      "Cannot allocate any data writer for file '"
-                      << sink_label << "' !");
-        store_status = PROCESS_FATAL;
-        return store_status;
+      DT_LOG_ERROR(get_logging_priority(),
+      "Cannot allocate any data writer for file '"
+      << sink_label << "' !");
+      store_status = PROCESS_FATAL;
+      return store_status;
       }
       if (_preserve_existing_output_) {
-        _sink_->set_preserve_existing_sink (true);
+      _sink_->set_preserve_existing_sink(true);
       }
-      if (! _sink_->is_open ()) _sink_->open ();
+      if (! _sink_->is_open()) _sink_->open();
       _grab_common().set_file_record_counter(0);
       // Process metadata:
       _store_metadata_();
-    }
+      }
     */
     // force storage of the current data record :
     bool store_it = true;
     // store action :
     if (store_it) {
       if (_sink_ != 0) {
-        bool ok = _sink_->store_next_record (a_event_record);
+        bool ok = _sink_->store_next_record(a_event_record);
         if (! ok) {
           DT_LOG_ERROR(_logging, "Cannot store the data record ! This is a bug !");
           store_status = PROCESS_FATAL;
@@ -459,20 +459,20 @@ namespace dpp {
       if (get_common().get_record_counter() >= get_common().get_max_record_total()) {
         stop_output = true;
         stop_file   = true;
-        DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has reached the maximum number "
+        DT_LOG_NOTICE(_logging, "Output module '" << get_name() << "' has reached the maximum number "
                       << "of records stored in the output data source (" << get_common().get_max_record_total() << ") !");
       }
     }
     if (get_common().get_max_record_per_file() > 0) {
       if (get_common().get_file_record_counter() >= get_common().get_max_record_per_file()) {
         stop_file = true;
-        DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has reached the maximum number "
+        DT_LOG_NOTICE(_logging, "Output module '" << get_name() << "' has reached the maximum number "
                       << "of records to be stored in the current output file (" << get_common().get_max_record_per_file() << ") !");
       }
     }
     if (stop_file) {
       if (_sink_ != 0) {
-        _sink_->reset ();
+        _sink_->reset();
         delete _sink_;
         _sink_ = 0;
       }
@@ -480,14 +480,14 @@ namespace dpp {
       if (get_common().get_max_files() > 0) {
         if ((get_common().get_file_index() + 1) >= get_common().get_max_files()) {
           stop_output = true;
-          DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has reached the requested maximum number "
+          DT_LOG_NOTICE(_logging, "Output module '" << get_name() << "' has reached the requested maximum number "
                         << "of output files (" << get_common().get_max_files() << ") !");
         }
       }
-      if ((get_common().get_file_index() + 1) >= (int)get_common().get_filenames().size ()) {
+      if ((get_common().get_file_index() + 1) >= (int)get_common().get_filenames().size()) {
         stop_output = true;
-        DT_LOG_NOTICE(_logging, "Output module '" << get_name () << "' has filled the last requested "
-                      << "output file (total is " << get_common().get_filenames().size () << " files) !");
+        DT_LOG_NOTICE(_logging, "Output module '" << get_name() << "' has filled the last requested "
+                      << "output file (total is " << get_common().get_filenames().size() << " files) !");
       }
     }
     if (stop_output) {
@@ -502,12 +502,12 @@ namespace dpp {
                                 const std::string & a_indent,
                                 bool a_inherit) const
   {
-    this->base_module::tree_dump (a_out, a_title, a_indent, is_initialized ());
-    if (! is_initialized ()) {
+    this->base_module::tree_dump(a_out, a_title, a_indent, is_initialized());
+    if (! is_initialized()) {
       return;
     }
     std::string indent;
-    if (! a_indent.empty ()) {
+    if (! a_indent.empty()) {
       indent = a_indent;
     }
 
@@ -525,7 +525,7 @@ namespace dpp {
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Preserve existing output : " << _preserve_existing_output_ << std::endl;
 
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
           << "Sink : " << _sink_  << std::endl;
 
     return;
