@@ -80,6 +80,7 @@ namespace mctools {
   {
   public:
     static const std::string EVENT_GENBB_WEIGHT;
+    static const std::string EVENT_GENBB_LABEL;
     static const std::string EVENT_DEFAULT_SIMULATED_DATA_LABEL;
   };
 
