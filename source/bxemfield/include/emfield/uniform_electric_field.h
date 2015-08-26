@@ -1,5 +1,5 @@
 /// \file emfield/uniform_electric_field.h
-/* Author (s):    Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-25
  * Last modified: 2013-02-24
  *

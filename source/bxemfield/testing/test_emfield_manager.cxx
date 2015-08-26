@@ -1,6 +1,6 @@
-// -*- mode: c++ ; -*-
 // test_emfield_manager.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -8,12 +8,14 @@
 #include <string>
 #include <stdexcept>
 
+// Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/service_manager.h>
-
+// Bayeux/geomtools:
 #include <geomtools/gnuplot_i.h>
 
+// This project:
 #include <emfield/emfield_config.h>
 #include <emfield/electromagnetic_field_manager.h>
 #include <emfield/oscillating_field.h>
