@@ -47,12 +47,12 @@ namespace mctools {
       /// \Brief Type of ODE stepper
       enum stepper_type {
         STEPPER_INVALID = 0,
-        STEPPER_CASHKARP_RKF45,
-        STEPPER_CLASSICAL_RK4,
-        STEPPER_EXPLICIT_EULER,
-        STEPPER_IMPLICIT_EULER,
-        STEPPER_SIMPLE_HEUM,
-        STEPPER_SIMPLE_RUNGE,
+        STEPPER_CASHKARP_RKF45, // order 4/5
+        STEPPER_CLASSICAL_RK4,  // order 4
+        STEPPER_EXPLICIT_EULER, // order 1
+        STEPPER_IMPLICIT_EULER, // order 2
+        STEPPER_SIMPLE_HEUM,    // order 3
+        STEPPER_SIMPLE_RUNGE,   // order 2
         STEPPER_EXACT_HELIX,
         STEPPER_HELIX_EXPLICIT_EULER,
         STEPPER_HELIX_HEUM,
@@ -168,15 +168,14 @@ namespace mctools {
       magnetic_field        * _b_field_;  //!< Pure magnetic field
       electromagnetic_field * _eb_field_; //!< Electromagnetic field
 
-
-      // Some usefule documentation: http://geant4.in2p3.fr/2007/prog/JohnApostolakis/EMField.pdf
+      // Some useful documentation: http://geant4.in2p3.fr/2007/prog/JohnApostolakis/EMField.pdf
       stepper_type _stepper_type_; //!< Type of the ODE stepper
       double _min_step_;           //!< Minimum step length
-      double _delta_chord_;        //!< Undocumented
-      double _delta_one_step_;     //!< Undocumented
-      double _delta_intersection_; //!< Undocumented
-      double _eps_min_;            //!< Undocumented
-      double _eps_max_;            //!< Undocumented
+      double _delta_chord_;        //!< Upper bound for the chord distance
+      double _delta_one_step_;     //!< Position error which is acceptable in an integration step (same order of magnitude as _delta_intersection_)
+      double _delta_intersection_; //!< Upper limit inaccuracy of a single boundary crossing (same order of magnitude as _delta_one_step_)
+      double _eps_min_;            //!< Lower limit on the relative error of the position/momentum inaccuracy
+      double _eps_max_;            //!< Upper limit on the relative error of the position/momentum inaccuracy
       bool   _spin_;               //!< Spin flag
       bool   _propagate_to_daughters_; //!< Flag to propagate the field to all daughter volumes
 
