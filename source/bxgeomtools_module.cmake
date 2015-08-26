@@ -150,6 +150,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/regular_grid_placement.h
   ${module_include_dir}/${module_name}/regular_circular_placement.h
   ${module_include_dir}/${module_name}/regular_linear_placement.h
+  ${module_include_dir}/${module_name}/regular_3d_mesh_placement.h
   ${module_include_dir}/${module_name}/regular_polygon.h
   ${module_include_dir}/${module_name}/replicated_boxed_model.h
   ${module_include_dir}/${module_name}/replicated_circular_model.h
@@ -197,6 +198,10 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/the_introspectable.h
   ${module_include_dir}/${module_name}/utils-reflect.h
   ${module_include_dir}/${module_name}/resource.h
+  ${module_include_dir}/${module_name}/overlapping.h
+  ${module_include_dir}/${module_name}/model_with_internal_mesh_tools.h
+  ${module_include_dir}/${module_name}/simple_polygon.h
+  ${module_include_dir}/${module_name}/wall_solid.h
   )
 
 # - configure resources
@@ -243,6 +248,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/regular_grid_placement.cc
   ${module_source_dir}/regular_circular_placement.cc
   ${module_source_dir}/regular_linear_placement.cc
+  ${module_source_dir}/regular_3d_mesh_placement.cc
   ${module_source_dir}/placement.cc
   ${module_source_dir}/regular_polygon.cc
   ${module_source_dir}/sensitive.cc
@@ -319,6 +325,10 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/i_wires_drawer.cc
   ${module_source_dir}/geomtools_driver.cc
   ${module_source_dir}/version.cc
+  ${module_source_dir}/overlapping.cc
+  ${module_source_dir}/model_with_internal_mesh_tools.cc
+  ${module_source_dir}/simple_polygon.cc
+  ${module_source_dir}/wall_solid.cc
   bx${module_name}/resource.cc
   )
 
@@ -385,7 +395,9 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_regular_grid_placement.cxx
   ${module_test_dir}/test_regular_circular_placement.cxx
   ${module_test_dir}/test_regular_linear_placement.cxx
+  ${module_test_dir}/test_regular_3d_mesh_placement.cxx
   ${module_test_dir}/test_regular_polygon.cxx
+  ${module_test_dir}/test_simple_polygon.cxx
   ${module_test_dir}/test_rotation_3d.cxx
   ${module_test_dir}/test_s0.cxx
   ${module_test_dir}/test_serializable_2.cxx
@@ -409,6 +421,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_elliptical_cylinder.cxx
   ${module_test_dir}/test_wires.cxx
   ${module_test_dir}/test_wires_2.cxx
+  ${module_test_dir}/test_wall_solid.cxx
   )
 
 # - Applications
