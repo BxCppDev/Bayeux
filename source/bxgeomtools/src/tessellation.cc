@@ -1386,6 +1386,7 @@ namespace geomtools {
       a_out << "Vertex[" << i->first << "] : ";
       i->second.print(a_out);
     }
+
     a_out << a_indent << datatools::i_tree_dumpable::tag
           << "Bounding box: " << std::endl;
     a_out << a_indent << datatools::i_tree_dumpable::skip_tag
@@ -1402,7 +1403,26 @@ namespace geomtools {
           << _zrange_.get_max () << ']' << std::endl;
 
     a_out << a_indent << datatools::i_tree_dumpable::tag
-          << "Facet segments: " << _facet_segments_.size () << std::endl;
+          << "Facet segments: " << _facet_segments_.size() << std::endl;
+    for (facet_segments_col_type::const_iterator i = _facet_segments_.begin ();
+         i != _facet_segments_.end ();
+         i++) {
+      a_out << a_indent << datatools::i_tree_dumpable::skip_tag;
+      {
+        facet_segments_col_type::const_iterator j = i;
+        if (++j == _facet_segments_.end ()) {
+          a_out << datatools::i_tree_dumpable::last_tag;
+        } else {
+          a_out << datatools::i_tree_dumpable::tag;
+        }
+      }
+      a_out << "Facet segment[" << i->first << "] : ";
+      const facet_segment & fseg = i->second;
+      a_out << "from vertex [#" << fseg.vertex0_key << "] to vertex [#"
+            << fseg.vertex1_key << "] with facets [#" << fseg.facet0_key
+            << "/#" << fseg.facet1_key << "]"
+            << std::endl;
+    }
 
     a_out << a_indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
           << "Facets: " << _facets_.size () << std::endl;
@@ -2039,9 +2059,9 @@ namespace geomtools {
     bool all_segments = (options_ & WR_TESSELLA_ALL_SEGMENTS);
 
     // Keep only base rendering bits:
-    // uint32_t base_options = options_ & WR_BASE_MASK;
+    uint32_t base_options = options_ & WR_BASE_MASK;
 
-    if (! all_segments) {
+    if (!all_segments) {
       for (facet_segments_col_type::const_iterator iseg = _facet_segments_.begin();
            iseg != _facet_segments_.end();
            iseg++) {
@@ -2059,10 +2079,10 @@ namespace geomtools {
            ifacet++) {
         const facet34 & facet = ifacet->second;
         if (facet.has_tface()) {
-          facet.get_tface().generate_wires_self(wires_, options_);
+          facet.get_tface().generate_wires_self(wires_, base_options);
         }
         if (facet.has_qface()) {
-          facet.get_qface().generate_wires_self(wires_, options_);
+          facet.get_qface().generate_wires_self(wires_, base_options);
         }
       }
     }

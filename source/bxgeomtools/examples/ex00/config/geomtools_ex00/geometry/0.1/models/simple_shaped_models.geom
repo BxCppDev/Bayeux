@@ -559,17 +559,17 @@ z           : real as length =  100.0 mm
 # Material #
 ############
 
-#@description The name of the material the tube is made of
+#@description The name of the material the shape is made of
 material.ref : string = "iron"
 
 ##############
 # Visibility #
 ##############
 
-#@description The recommended color for the display of the tube
+#@description The recommended color for the display of the shape
 visibility.color  : string  = "blue"
 
-#@description The visibility hidden flag for the display of the tube
+#@description The visibility hidden flag for the display of the shape
 visibility.hidden : boolean = 0
 
 
@@ -601,17 +601,17 @@ z           : real as length =  200.0 mm
 # Material #
 ############
 
-#@description The name of the material the tube is made of
+#@description The name of the material the shape is made of
 material.ref : string = "iron"
 
 ##############
 # Visibility #
 ##############
 
-#@description The recommended color for the display of the tube
+#@description The recommended color for the display of the shape
 visibility.color  : string  = "red"
 
-#@description The visibility hidden flag for the display of the tube
+#@description The visibility hidden flag for the display of the shape
 visibility.hidden : boolean = 0
 
 
@@ -639,7 +639,7 @@ shapes.shape_type.foo_B : string = "geomtools::cylinder"
 shapes.params.foo_B.r   : real as length = 0.75 cm
 shapes.params.foo_B.z   : real as length = 0.5 cm
 
-#@description The shape type
+#@description The shape reference
 shape_type : string = "geomtools::union_3d"
 
 shape.first_shape.name       : string = "foo_A"
@@ -650,17 +650,17 @@ shape.second_shape.placement : string = "0.0 0.0 0.5 (cm)"
 # Material #
 ############
 
-#@description The name of the material the tube is made of
+#@description The name of the material the shape is made of
 material.ref : string = "iron"
 
 ##############
 # Visibility #
 ##############
 
-#@description The recommended color for the display of the tube
+#@description The recommended color for the display of the shape
 visibility.color  : string  = "red"
 
-#@description The visibility hidden flag for the display of the tube
+#@description The visibility hidden flag for the display of the shape
 visibility.hidden : boolean = 0
 
 
@@ -684,17 +684,17 @@ shape_ref : string = "El1"
 # Material #
 ############
 
-#@description The name of the material the tube is made of
+#@description The name of the material the shape is made of
 material.ref : string = "iron"
 
 ##############
 # Visibility #
 ##############
 
-#@description The recommended color for the display of the tube
+#@description The recommended color for the display of the shape
 visibility.color  : string  = "red"
 
-#@description The visibility hidden flag for the display of the tube
+#@description The visibility hidden flag for the display of the shape
 visibility.hidden : boolean = 0
 
 ##########################################################
@@ -709,7 +709,7 @@ shape_build_mode : string = "factory"
 # Geometry #
 ############
 
-#@description The shape type
+#@description The shape reference
 shape_type : string = "geomtools::union_3d"
 
 # shape.first_shape.name       : string = "Cube1"
@@ -721,17 +721,17 @@ shape.second_shape.placement : string = "0.0 0.0 0.5 (mm) @ 35.0 90.0 (degree)"
 # Material #
 ############
 
-#@description The name of the material the tube is made of
+#@description The name of the material the shape is made of
 material.ref : string = "iron"
 
 ##############
 # Visibility #
 ##############
 
-#@description The recommended color for the display of the tube
+#@description The recommended color for the display of the shape
 visibility.color  : string  = "green"
 
-#@description The visibility hidden flag for the display of the tube
+#@description The visibility hidden flag for the display of the shape
 visibility.hidden : boolean = 0
 
 
@@ -747,7 +747,7 @@ shape_build_mode : string = "factory"
 # Geometry #
 ############
 
-#@description The shape type
+#@description The shape reference
 shape_ref : string = "Ts1"
 # shape_ref : string = "Elt1"
 
@@ -755,21 +755,21 @@ shape_ref : string = "Ts1"
 # Material #
 ############
 
-#@description The name of the material the tube is made of
+#@description The name of the material the shape is made of
 material.ref : string = "iron"
 
 ##############
 # Visibility #
 ##############
 
-#@description The recommended color for the display of the tube
+#@description The recommended color for the display of the shape
 visibility.color  : string  = "blue"
 
-#@description The visibility hidden flag for the display of the tube
+#@description The visibility hidden flag for the display of the shape
 visibility.hidden : boolean = 0
 
 
-#############################################################
+##############################################################
 [name="tessella2.model" type="geomtools::simple_shaped_model"]
 
 #@config Configuration parameters for a tessellated geometry model
@@ -781,7 +781,7 @@ shape_build_mode : string = "factory"
 # Geometry #
 ############
 
-#@description The shape type
+#@description The shape reference
 shape_ref : string = "Ts2"
 # shape_ref : string = "Elt1"
 
@@ -789,15 +789,81 @@ shape_ref : string = "Ts2"
 # Material #
 ############
 
-#@description The name of the material the tube is made of
+#@description The name of the material the shape is made of
 material.ref : string = "iron"
 
 ##############
 # Visibility #
 ##############
 
-#@description The recommended color for the display of the tube
+#@description The recommended color for the display of the shape
 visibility.color  : string  = "magenta"
 
-#@description The visibility hidden flag for the display of the tube
+#@description The visibility hidden flag for the display of the shape
+visibility.hidden : boolean = 0
+
+
+###################################################################
+[name="building_walls.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a tessellated geometry model representing the wall of a building
+
+#@description Shape build mode
+shape_build_mode : string = "factory"
+
+############
+# Geometry #
+############
+
+#@description The shape reference
+shape_ref : string = "AC001"
+
+############
+# Material #
+############
+
+#@description The name of the material the building is made of
+material.ref : string = "concrete"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the shape
+visibility.color  : string  = "red"
+
+#@description The visibility hidden flag for the display of the shape
+visibility.hidden : boolean = 0
+
+
+##########################################################
+[name="wall1.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a wall solid
+
+############
+# Geometry #
+############
+
+#@description Shape build mode
+shape_build_mode : string = "factory"
+
+#@description The shape reference
+shape_ref : string = "Wall1"
+
+############
+# Material #
+############
+
+#@description The name of the material the volume is made of
+material.ref : string = "copper"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the volume
+visibility.color  : string  = "magenta"
+
+#@description The visibility hidden flag for the display of the volume
 visibility.hidden : boolean = 0

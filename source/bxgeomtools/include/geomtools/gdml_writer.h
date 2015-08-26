@@ -48,6 +48,7 @@ namespace geomtools {
   class tube;
   class cylinder;
   class tessellated_solid;
+  class wall_solid;
 
   /// \brief GDML writer class used by the geomtools GDML export functionalities
   class gdml_writer
@@ -390,6 +391,11 @@ namespace geomtools {
     void add_tessellated(const std::string & name_,
                          const tessellated_solid & ts_,
                          const std::string & lunit_str_ = "mm");
+
+    // GDML USER’S GUIDE Version 2.3 page 26
+    void add_wall(const std::string & name_,
+                  const wall_solid & ts_,
+                  const std::string & lunit_str_ = "mm");
 
     // GDML USER’S GUIDE Version 2.3 page 28
     void add_gdml_boolean(const std::string & name_,

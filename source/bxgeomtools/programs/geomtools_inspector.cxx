@@ -399,7 +399,7 @@ int main(int argc_, char ** argv_)
   }
   catch (std::exception & x) {
     print_help(opts);
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, APP_NAME << ": " << x.what ());
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, APP_NAME << ": " << x.what());
     error_code = EXIT_FAILURE;
   }
   catch (...) {

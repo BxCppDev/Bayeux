@@ -254,14 +254,12 @@ namespace geomtools {
     return;
   }
 
-  // ctor:
   regular_grid_placement::regular_grid_placement () : i_placement ()
   {
     reset ();
     return;
   }
 
-  // ctor:
   regular_grid_placement::regular_grid_placement (const placement & basic_placement_,
                                                   double column_step_,
                                                   double row_step_,
@@ -280,7 +278,6 @@ namespace geomtools {
     return;
   }
 
-  // dtor:
   regular_grid_placement::~regular_grid_placement ()
   {
     return;

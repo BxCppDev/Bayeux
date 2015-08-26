@@ -141,7 +141,6 @@ namespace geomtools {
     if (_sbm_ == SBM_LEGACY) {
       if (_inner_shape_ != 0) delete _inner_shape_;
       if (_outer_shape_ != 0) delete _outer_shape_;
-
       if (_box_ != 0)         delete _box_;
       if (_cylinder_ != 0)    delete _cylinder_;
       if (_tube_ != 0)        delete _tube_;
@@ -202,7 +201,7 @@ namespace geomtools {
       /*
        *  shape_build_mode : string = "factory"
        *
-       *  shapes.names     : string[2] = "A" "B" "C"
+       *  shapes.names     : string[3] = "A" "B" "C"
        *
        *  shapes.shape_type.A : string = "geomtools::box"
        *  shapes.params.A.x       : real as length = 3.2 mm
@@ -698,7 +697,7 @@ namespace geomtools {
   {
     datatools::logger::priority log_level = get_logging_priority ();
     //log_level = datatools::logger::PRIO_DEBUG;
-    this->i_model::_pre_construct(setup_,models_);
+    // this->i_model::_pre_construct(setup_, models_);
 
     std::vector<std::string> properties_prefixes;
     if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
@@ -711,7 +710,7 @@ namespace geomtools {
       if (std::find(properties_prefixes.begin(),
                     properties_prefixes.end(),
                     ii_prefix) == properties_prefixes.end()) {
-        // Add "internal_item." as exported prefixed properties:
+        // Add "internal_item." as exported property prefix:
         properties_prefixes.push_back(ii_prefix);
         // Update the vector of exported prefixed properties:
         setup_.update(i_model::exported_properties_prefixes_key(),
@@ -727,12 +726,14 @@ namespace geomtools {
   void simple_shaped_model::_post_construct (datatools::properties & setup_,
                                              models_col_type * models_)
   {
-    datatools::logger::priority log_level = get_logging_priority ();
+    // std::cerr << "DEVEL: simple_shaped_model::_post_construct: "
+    //           << "Entering model '" << get_name() << "'"
+    //           << std::endl;
+    datatools::logger::priority log_level = get_logging_priority();
     //log_level = datatools::logger::PRIO_DEBUG;
     DT_LOG_NOTICE(get_logging_priority (),
                   "Post-construction processing for model '" << get_name() << "' ...");
-
-    if (! is_filled ()) {
+    if (! is_filled()) {
       // None mode:
       this->i_model::_post_construct(setup_, models_);
     } else {
@@ -743,7 +744,7 @@ namespace geomtools {
           std::ostringstream log_params_desc;
           log_params_desc << "Auxiliary properties for shape logical volume in model '"
                           << get_name() << "'";
-          _inner_logical_.grab_parameters ().set_description(log_params_desc.str());
+          _inner_logical_.grab_parameters().set_description(log_params_desc.str());
         }
         std::vector<std::string> exported_prefixes;
         if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
@@ -753,32 +754,26 @@ namespace geomtools {
         for (size_t i = 0; i < exported_prefixes.size(); i++) {
           const std::string & topic_prefix = exported_prefixes[i];
           const std::string filled_topic_prefix = topic_prefix + "filled.";
-          DT_LOG_NOTICE(get_logging_priority (),
+          DT_LOG_NOTICE(get_logging_priority(),
                         "Reprocessing '" << topic_prefix << "' properties for model '" << get_name() << "' ...");
           // All (top+filled) properties :
           datatools::properties tmp_params;
-          setup_.export_starting_with (tmp_params, topic_prefix);
+          setup_.export_starting_with(tmp_params, topic_prefix);
           // Only properties for the 'filled' volume :
           datatools::properties filled_params;
-          tmp_params.export_starting_with (filled_params, filled_topic_prefix);
+          tmp_params.export_starting_with(filled_params, filled_topic_prefix);
           // Only 'top' properties :
-          tmp_params.erase_all_starting_with (filled_topic_prefix);
+          tmp_params.erase_all_starting_with(filled_topic_prefix);
           // Inner logical inherits the 'top' properties :
-          tmp_params.export_starting_with (_inner_logical_.grab_parameters (), topic_prefix);
+          tmp_params.export_starting_with(_inner_logical_.grab_parameters(), topic_prefix);
           // Top logical inherits the 'filled' properties :
-          grab_logical ().grab_parameters ().erase_all_starting_with (filled_topic_prefix);
-          grab_logical ().grab_parameters ().erase_all_starting_with (topic_prefix);
-          filled_params.export_and_rename_starting_with(grab_logical ().grab_parameters (), filled_topic_prefix, topic_prefix);
+          grab_logical().grab_parameters().erase_all_starting_with(filled_topic_prefix);
+          grab_logical().grab_parameters().erase_all_starting_with(topic_prefix);
+          filled_params.export_and_rename_starting_with(grab_logical().grab_parameters(), filled_topic_prefix, topic_prefix);
         }
       } // is_filled_by_envelope()
-
-    }
-    /*
-    if (_solid_) {
-      stackable::extract(setup_, _solid_->grab_auxiliaries ());
-    }
-    */
-    grab_logical ().set_geometry_model(*this);
+    } // Filled mode
+    grab_logical().set_geometry_model(*this);
 
     // Search for internal items to be installed within the logicals :
     if (is_filled()) {
@@ -793,9 +788,9 @@ namespace geomtools {
                       << _filled_internals_.get_number_of_items());
 
         DT_LOG_DEBUG (log_level, "Processing internal items in shape...");
-        _internals_.plug_internal_models (_inner_logical_.get_parameters(),
-                                          _inner_logical_,
-                                          models_);
+        _internals_.plug_internal_models(_inner_logical_.get_parameters(),
+                                         _inner_logical_,
+                                         models_);
         DT_LOG_DEBUG (log_level, "Number of items in shape : "
                       << _internals_.get_number_of_items());
       }
@@ -809,9 +804,16 @@ namespace geomtools {
       if (log_level >= datatools::logger::PRIO_DEBUG) {
         get_logical().get_parameters().tree_dump(std::cerr, "");
       }
-      _internals_.plug_internal_models (get_logical().get_parameters(),
-                                        grab_logical(),
-                                        models_);
+      // std::cerr <<
+      //   "*********** Model '" <<  get_name() << "' : plug internal items... *************"
+      //                         << std::endl;
+      // get_logical().get_parameters().tree_dump(std::cerr, "logical parameters:", "****** ");
+      _internals_.plug_internal_models(get_logical().get_parameters(),
+                                       grab_logical(),
+                                       models_);
+      // std::cerr <<
+      //   "*********** Model '" <<  get_name() << "' : plug internal items done *************"
+      //                         << std::endl;
     }
 
     return;
@@ -872,7 +874,7 @@ namespace geomtools {
            << "Filled mode : '" << filled_utils::get_filled_mode_label(_filled_mode_) << "'" << std::endl;
       if (! _filled_material_name_.empty ()) {
         out_ << indent << datatools::i_tree_dumpable::tag
-             << "Filled material name : '" << get_filled_material_name () << "'" << std::endl;
+             << "Filled material name : '" << get_filled_material_name() << "'" << std::endl;
       }
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Inner logical : " << std::endl;

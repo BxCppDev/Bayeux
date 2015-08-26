@@ -26,6 +26,7 @@
 #include <geomtools/right_polygonal_frustrum.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
+#include <geomtools/wall_solid.h>
 #include <geomtools/tessellation.h>
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
@@ -843,6 +844,7 @@ namespace geomtools {
       // _supported_solid_types->insert("right_polygonal_frustrum");
       _supported_solid_types->insert("polyhedra");
       _supported_solid_types->insert("tessellated");
+      _supported_solid_types->insert("wall_solid");
       _supported_solid_types->insert("union_3d");
       _supported_solid_types->insert("subtraction_3d");
       _supported_solid_types->insert("intersection_3d");
@@ -1608,6 +1610,16 @@ namespace geomtools {
                   2. * M_PI * CLHEP::radian,
                   lunit_str_,
                   aunit_str_);
+    return;
+  }
+
+  void gdml_writer::add_wall(const std::string & name_,
+                             const wall_solid & wall_,
+                             const std::string & lunit_str_)
+  {
+    tessellated_solid ts;
+    wall_.convert_to_tessellated(ts);
+    add_tessellated(name_, ts, lunit_str_);
     return;
   }
 

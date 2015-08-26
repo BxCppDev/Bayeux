@@ -252,7 +252,7 @@ namespace geomtools {
     facet_segment();
 
     /// Set vertex keys
-    void set_vertex_keys(int,int);
+    void set_vertex_keys(int, int);
 
     /// Set vertexes (associated to vertex keys)
     void set_vertexes(const facet_vertex & vtx0_, const facet_vertex & vtx1_);
@@ -264,9 +264,9 @@ namespace geomtools {
     const vector_3d & get_vertex_position(vertex_id_type) const;
 
     /// Set facet keys
-    void set_facet_keys(int,int);
+    void set_facet_keys(int, int);
 
-    void set(int,int,int,int);
+    void set(int, int, int, int);
 
     friend bool operator==(const facet_segment & fs1_, const facet_segment & fs2_);
 
@@ -290,7 +290,7 @@ namespace geomtools {
 
   };
 
-  /// \brief Tesselated solid made of facets
+  /// \brief Tessellated solid made of facets
   class tessellated_solid : public i_shape_3d,
                             public i_stackable
   {

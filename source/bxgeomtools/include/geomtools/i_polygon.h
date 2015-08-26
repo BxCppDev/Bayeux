@@ -7,7 +7,7 @@
  *
  * Description:
  *
- *   Polygone interface
+ *   Polygon interface
  *
  * History:
  *
@@ -24,6 +24,7 @@
 
 namespace geomtools {
 
+  /// \brief Polygon 2D shape
   class i_polygon
   {
   public:
@@ -35,7 +36,7 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-#endif // GEOMTOOLS_RECTANGLE_H
+#endif // GEOMTOOLS_I_POLYGON_H
 
 /*
 ** Local Variables: --

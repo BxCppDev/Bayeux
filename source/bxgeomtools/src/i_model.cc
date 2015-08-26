@@ -128,17 +128,27 @@ namespace geomtools {
     return physical_volume_name_.substr (0, pos);
   }
 
-  bool i_model::is_constructed () const
+  model_with_internal_mesh_data & i_model::grab_meshes()
+  {
+    return _meshes_;
+  }
+
+  const model_with_internal_mesh_data & i_model::get_meshes() const
+  {
+    return _meshes_;
+  }
+
+  bool i_model::is_constructed() const
   {
     return _constructed_;
   }
 
-  bool i_model::is_debug () const
+  bool i_model::is_debug() const
   {
     return _logging_priority >= datatools::logger::PRIO_DEBUG;
   }
 
-  void i_model::set_debug (bool new_value_)
+  void i_model::set_debug(bool new_value_)
   {
     if (new_value_) {
       _logging_priority = datatools::logger::PRIO_DEBUG;
@@ -153,39 +163,39 @@ namespace geomtools {
     return ! _name_.empty();
   }
 
-  const std::string & i_model::get_name () const
+  const std::string & i_model::get_name() const
   {
     return _name_;
   }
 
-  void i_model::set_name (const std::string & name_)
+  void i_model::set_name(const std::string & name_)
   {
     _name_ = name_;
     return;
   }
 
-  bool i_model::is_phantom_solid () const
+  bool i_model::is_phantom_solid() const
   {
     return _phantom_solid;
   }
 
-  void i_model::_set_phantom_solid (bool ps_)
+  void i_model::_set_phantom_solid(bool ps_)
   {
     _phantom_solid = ps_;
     return;
   }
 
-  const datatools::properties & i_model::parameters () const
+  const datatools::properties & i_model::parameters() const
   {
     return _parameters_;
   }
 
-  datatools::properties & i_model::parameters ()
+  datatools::properties & i_model::parameters()
   {
     return _parameters_;
   }
 
-  i_model::i_model (const std::string & /*dummy_*/)
+  i_model::i_model(const std::string & /*dummy_*/)
   {
     _constructed_     = false;
     _logging_priority = datatools::logger::PRIO_WARNING;
@@ -193,9 +203,9 @@ namespace geomtools {
     return;
   }
 
-  i_model::~i_model ()
+  i_model::~i_model()
   {
-    _parameters_.clear ();
+    _parameters_.clear();
     return;
   }
 
@@ -226,17 +236,17 @@ namespace geomtools {
     return *_shape_factory_;
   }
 
-  const geomtools::logical_volume & i_model::get_logical () const
+  const geomtools::logical_volume & i_model::get_logical() const
   {
     return _logical;
   }
 
-  geomtools::logical_volume & i_model::grab_logical ()
+  geomtools::logical_volume & i_model::grab_logical()
   {
     return _logical;
   }
 
-  void i_model::_common_construct (datatools::properties & setup_)
+  void i_model::_mandatory_pre_construct(datatools::properties & setup_, models_col_type * /* models_ */)
   {
     {
       // Logging priority:
@@ -247,26 +257,50 @@ namespace geomtools {
                   "Invalid logging priority level for geometry model '" << _name_ << "' !");
       set_logging_priority(lp);
     }
-    return;
-  }
 
-  void i_model::_pre_construct (datatools::properties & setup_, models_col_type * /*models_*/)
-  {
-    if (setup_.has_flag (i_model::phantom_solid_flag())) {
-      _set_phantom_solid (true);
+    if (setup_.has_flag(i_model::phantom_solid_flag())) {
+      _set_phantom_solid(true);
+    }
+
+    {
+      // Fetch the list of prefixes for exported property keys:
+      std::vector<std::string> exported_properties_prefixes;
+      if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
+        setup_.fetch(i_model::exported_properties_prefixes_key(),
+                     exported_properties_prefixes);
+      }
+      {
+        const std::string & im_prefix = model_with_internal_mesh_data::INTERNAL_MESH_PREFIX;
+        if (std::find(exported_properties_prefixes.begin(),
+                      exported_properties_prefixes.end(),
+                      im_prefix) == exported_properties_prefixes.end()) {
+          // Add "internal_mesh." as exported property prefix:
+          exported_properties_prefixes.push_back(im_prefix);
+          // Update the vector of exported prefixed properties:
+          setup_.update(i_model::exported_properties_prefixes_key(),
+                        exported_properties_prefixes);
+        }
+      }
     }
 
     return;
   }
 
-  void i_model::_post_construct (datatools::properties & setup_, models_col_type * /*models_*/)
+  void i_model::_pre_construct(datatools::properties & setup_, models_col_type * /*models_*/)
   {
+    return;
+  }
+
+  void i_model::_post_construct(datatools::properties & setup_, models_col_type * models_)
+  {
+    // Fetch the list of prefixes for exported property keys:
     std::vector<std::string> exported_properties_prefixes;
     if (setup_.has_key(i_model::exported_properties_prefixes_key())) {
       setup_.fetch(i_model::exported_properties_prefixes_key(),
                    exported_properties_prefixes);
     }
-    // Push some of the model's setup properties into the logical for further usage:
+
+    // Push some of the model's setup properties into the top logical volume for further usage:
     DT_LOG_DEBUG(get_logging_priority(),
                  "Number of exported properties prefixes is "
                  << exported_properties_prefixes.size() << " in geometry model '" << get_name() << "'...");
@@ -274,7 +308,22 @@ namespace geomtools {
       const std::string & prefix = exported_properties_prefixes[i];
       DT_LOG_DEBUG(get_logging_priority(), "Export properties starting with '"
                    << prefix << "' to the top logical in geometry model '" << get_name() << "'...");
-      setup_.export_starting_with (_logical.grab_parameters (), prefix);
+      setup_.export_starting_with(_logical.grab_parameters(), prefix);
+    }
+    return;
+  }
+
+  void i_model::_mandatory_post_construct(datatools::properties & setup_, models_col_type * models_)
+  {
+
+    // Plug internal meshes:
+    // std::cerr << "DEVEL: i_model::_mandatory_post_construct: "
+    //           << "Plug internal meshes..."
+    //           << std::endl;
+    datatools::properties internal_mesh_setup;
+    setup_.export_and_rename_starting_with(internal_mesh_setup, model_with_internal_mesh_data::INTERNAL_MESH_PREFIX, "");
+    if (internal_mesh_setup.size()) {
+      _meshes_.plug_internal_meshes(internal_mesh_setup, _logical, models_);
     }
 
     return;
@@ -294,6 +343,16 @@ namespace geomtools {
                            const std::vector<std::string> & properties_prefixes_,
                            models_col_type * models_)
   {
+    // std::cerr <<
+    //   "**********************************************\n"
+    //   "*                                            *\n"
+    //   "*    ";
+    // std::cerr << "Model '" << name_ << "'\n";
+    // std::cerr << "*\n"
+    //   "*                                            *\n"
+    //   "**********************************************\n"
+    //           << std::endl
+    //   ;
     DT_THROW_IF (is_constructed (), std::logic_error,
                  "Model '" << name_ << "' has been already constructed !");
     datatools::properties & setup = const_cast<datatools::properties &> (setup_);
@@ -306,20 +365,24 @@ namespace geomtools {
       std::ostringstream log_params_desc;
       log_params_desc << "Auxiliary properties for top logical volume in model '"
                       << name_ << "'";
-      _logical.grab_parameters ().set_description(log_params_desc.str());
+      _logical.grab_parameters().set_description(log_params_desc.str());
     }
     setup.store(i_model::exported_properties_prefixes_key(),
                 properties_prefixes_);
-    _common_construct (setup);
-    _pre_construct (setup, models_);
-    _at_construct (name_, setup_, models_);
-    _post_construct (setup, models_);
+    _mandatory_pre_construct(setup, models_);
+    _pre_construct(setup, models_);
+    _at_construct(name_, setup, models_);
+    _post_construct(setup, models_);
+    _mandatory_post_construct(setup, models_);
     _logical.set_geometry_model(*this);
     if (setup.has_key(i_model::exported_properties_prefixes_key())) {
       setup.erase(i_model::exported_properties_prefixes_key());
     }
     _logical.lock();
     _constructed_ = true;
+    // std::cerr <<
+    //   "*********** Model '" << name_ << "' done *************\n"
+    //                         << std::endl;
     return;
   }
 

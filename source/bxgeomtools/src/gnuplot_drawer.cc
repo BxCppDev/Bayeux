@@ -251,7 +251,7 @@ namespace geomtools {
   {
     std::clog << std::endl << "Press [Enter] to continue..." << std::endl;
     std::string s;
-    std::getline (std::cin, s);
+    std::getline(std::cin, s);
     return;
   }
 

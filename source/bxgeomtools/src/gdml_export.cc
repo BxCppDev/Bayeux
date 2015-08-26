@@ -38,6 +38,7 @@
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
 #include <geomtools/tessellation.h>
+#include <geomtools/wall_solid.h>
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
 #include <geomtools/intersection_3d.h>
@@ -401,6 +402,9 @@ namespace geomtools {
       } else if (shape_name == "tessellated") {
         const tessellated_solid & ts = dynamic_cast<const tessellated_solid &> (shape_);
         _writer_.add_tessellated(solid_name_, ts, _length_unit_);
+      } else if (shape_name == "wall_solid") {
+        const wall_solid & ws = dynamic_cast<const wall_solid &> (shape_);
+        _writer_.add_wall(solid_name_, ws, _length_unit_);
       } else {
         DT_THROW(std::logic_error, "Simple solid type '" << shape_name << "' is not supported !");
       }

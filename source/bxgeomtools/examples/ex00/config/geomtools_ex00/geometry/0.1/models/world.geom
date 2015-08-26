@@ -42,14 +42,16 @@ material.ref : string = "vacuum"
 ###################
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[28] = \
+internal_item.labels : string[30] = \
   "BoxA" "BoxB" "BoxC" "BoxD" "BoxE" \
   "ManyBoxes" "CircleBoxes" \
   "WallBricks" \
   "CylA" "CylB" "CylC" "CylD" "CylE" "CylF" \
   "CylCol0" "CylCol1a" "CylCol2a" "CylSubGrid" \
   "DetStack0" "DetStack1" "SpecialStack" "AnotherStack" \
-  "Foo1" "Foo2" "Bar1" "Dummy1" "Tessella1" "Tessella2"
+  "Foo1" "Foo2" "Bar1" "Dummy1" "Tessella1" "Tessella2" \
+  "MeshedBox0" \
+  "Wall1"
 
 #@description The model of the "BoxA" daughter volume
 internal_item.model.BoxA       : string  = "blue_box0.model"
@@ -218,6 +220,18 @@ internal_item.model.Tessella2      : string  = "tessella2.model"
 
 #@description The placement of the "Tessella2" daughter volume
 internal_item.placement.Tessella2  : string  = "-10 0 -10 (cm)"
+
+#@description The model of the "MeshedBox0" daughter volume
+internal_item.model.MeshedBox0      : string  = "large_green_box.model"
+
+#@description The placement of the "MeshedBox0" daughter volume
+internal_item.placement.MeshedBox0  : string  = "+35 0 -40 (cm)"
+
+#@description The model of the "Wall1" daughter volume
+internal_item.model.Wall1      : string  = "wall1.model"
+
+#@description The placement of the "Wall1" daughter volume
+internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
 
 ###########
 # Mapping #

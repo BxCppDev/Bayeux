@@ -48,6 +48,7 @@ namespace geomtools {
   class quadrangle;
   class rectangle;
   class regular_polygon;
+  class simple_polygon;
   class disk;
   class elliptical_sector;
   class spherical_sector;
@@ -69,6 +70,7 @@ namespace geomtools {
   class right_polygonal_frustrum;
   class polycone;
   class polyhedra;
+  class wall_solid;
   class tessellated_solid;
   class union_3d;
   class subtraction_3d;
@@ -695,6 +697,29 @@ namespace geomtools {
                          const regular_polygon &,
                          uint32_t options_ = DEFAULT_OPTIONS);
 
+    // Simple polygon:
+
+    /// Draw a simple polygon
+    static void
+    draw_simple_polygon(std::ostream &,
+                         const simple_polygon &,
+                         uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a simple polygon
+    static void
+    draw_simple_polygon(std::ostream &,
+                         const placement &,
+                         const simple_polygon &,
+                         uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a simple polygon
+    static void
+    draw_simple_polygon(std::ostream &,
+                         const vector_3d &,
+                         const rotation_3d &,
+                         const simple_polygon &,
+                         uint32_t options_ = DEFAULT_OPTIONS);
+
     // Box:
 
     /// Draw a box
@@ -1035,6 +1060,29 @@ namespace geomtools {
                    const rotation_3d &,
                    const polyhedra &,
                    uint32_t options_ = DEFAULT_OPTIONS);
+
+    // Wall:
+
+    /// Draw a wall solid object
+    static void
+    draw_wall(std::ostream &,
+              const wall_solid &,
+              uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a wall solid object
+    static void
+    draw_wall(std::ostream &,
+              const placement &,
+              const wall_solid &,
+              uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a wall solid object
+    static void
+    draw_wall(std::ostream &,
+              const vector_3d &,
+              const rotation_3d &,
+              const wall_solid &,
+              uint32_t options_ = DEFAULT_OPTIONS);
 
     // Tessellated:
 

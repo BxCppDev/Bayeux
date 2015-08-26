@@ -160,7 +160,7 @@ namespace geomtools {
     //logical_volume        * _daughter_owner_logical_; //!< The logical volume that is the top level mother of all daughter volumes implied by this model
 
     MWIM                    _internals_;        //!< Internal items within the shape
-    MWIM                    _filled_internals_; //!< Internal items within the cavity (type, polycone, polyhedra)
+    MWIM                    _filled_internals_; //!< Internal items within the cavity (tube, polycone, polyhedra)
 
     // registration interface :
     GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_shaped_model);

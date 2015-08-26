@@ -486,6 +486,7 @@ namespace geomtools {
       return true;
     }
 
+    // Questionable...
     if (!is_outside(position_, 0.0)) {
       face_identifier any_face_id;
       make_any_face(any_face_id);
@@ -522,6 +523,7 @@ namespace geomtools {
       return true;
     }
 
+    // Questionable...
     if (!is_inside(position_, 0.0)) {
       face_identifier any_face_id;
       make_any_face(any_face_id);

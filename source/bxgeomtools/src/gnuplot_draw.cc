@@ -33,6 +33,7 @@
 #include <geomtools/quadrangle.h>
 #include <geomtools/rectangle.h>
 #include <geomtools/regular_polygon.h>
+#include <geomtools/simple_polygon.h>
 #include <geomtools/disk.h>
 #include <geomtools/elliptical_sector.h>
 #include <geomtools/spherical_sector.h>
@@ -54,6 +55,7 @@
 #include <geomtools/right_polygonal_frustrum.h>
 #include <geomtools/polycone.h>
 #include <geomtools/polyhedra.h>
+#include <geomtools/wall_solid.h>
 #include <geomtools/tessellation.h>
 #include <geomtools/union_3d.h>
 #include <geomtools/subtraction_3d.h>
@@ -1407,6 +1409,44 @@ namespace geomtools {
     return;
   }
 
+  // Simple polygon:
+
+  void
+  gnuplot_draw::draw_simple_polygon(std::ostream & out_,
+                                     const simple_polygon & rp_,
+                                     uint32_t options_)
+  {
+    wires_type wires;
+    rp_.generate_wires_self(wires, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_simple_polygon(std::ostream & out_,
+                                     const placement & p_,
+                                     const simple_polygon & rp_,
+                                     uint32_t options_)
+  {
+    wires_type wires;
+    rp_.generate_wires(wires, p_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_simple_polygon(std::ostream & out_,
+                                     const vector_3d & pos_,
+                                     const rotation_3d & rot_,
+                                     const simple_polygon & rp_,
+                                     uint32_t options_)
+  {
+    wires_type wires;
+    rp_.generate_wires(wires, pos_, rot_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
   // Sphere:
 
   void
@@ -1686,110 +1726,6 @@ namespace geomtools {
     return;
   }
 
-  /*
-    void
-    gnuplot_draw::draw_polycone_sector(std::ostream & out_,
-    const vector_3d & position_,
-    const rotation_3d & rotation_,
-    const polycone & p_,
-    double phi1_, double phi2_,
-    uint32_t options_)
-    {
-    rotation_3d inverse_rotation(rotation_);
-    inverse_rotation.invert();
-
-    uint32_t phi_sample = i_wires_3d_rendering::angular_sampling_from_options(options_);
-    phi_sample = std::max(3U, (unsigned int) phi_sample);
-    double dphi = (phi2_ - phi1_) * CLHEP::radian / phi_sample;
-
-    // outer surface:
-    for(uint32_t i = 0; i <= phi_sample ; ++i) {
-    polyline_type polyline_meridian;
-    double phi = phi1_ + i * dphi;
-    for(polycone::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    double z = j->first;
-    double r = j->second.rmax;
-    vector_3d P;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_meridian.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_meridian);
-    }
-
-    for(polycone::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    polyline_type polyline_parallel;
-    double z = j->first;
-    double r = j->second.rmax;
-    for(uint32_t i = 0; i <= phi_sample ; ++i) {
-    vector_3d P;
-    double phi = phi1_ + i * dphi;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_parallel.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_parallel);
-    }
-
-    if (p_.is_extruded()) {
-    // inner surface:
-    for(uint32_t i = 0; i <= phi_sample ; ++i)
-    {
-    polyline_type polyline_meridian;
-    double phi = phi1_ + i * dphi;
-    for(polycone::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    double z = j->first;
-    double r = j->second.rmin;
-    vector_3d P;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_meridian.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_meridian);
-    }
-
-    for(polycone::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    polyline_type polyline_parallel;
-    double z = j->first;
-    double r = j->second.rmin;
-    for(uint32_t i = 0; i <= phi_sample ; ++i) {
-    vector_3d P;
-    double phi = phi1_ + i * dphi;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_parallel.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_parallel);
-    }
-    }
-    return;
-    }
-  */
-
   // Polyhedra:
 
   void
@@ -1828,114 +1764,45 @@ namespace geomtools {
     return;
   }
 
-  /*
-    rotation_3d inverse_rotation(rotation_);
-    inverse_rotation.invert();
+  // Wall:
 
-    uint32_t options = options_;
-    uint32_t nsides = p_.get_n_sides();
-    double dphi =  2 * M_PI * CLHEP::radian / nsides;
-    double phi0 = 0; //M_PI / nsides;
-    double factor = 1. / cos(0.5 * dphi);
-    for(uint32_t i = 0; i <= nsides ; ++i) {
-    polyline_type polyline_meridian;
-    double phi = phi0 + i * dphi;
-    for(polyhedra::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    double z = j->first;
-    double r = factor * j->second.rmax;
-    vector_3d P;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_meridian.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_meridian);
-    }
-    for(polyhedra::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    polyline_type polyline_parallel;
-    double z = j->first;
-    double r = factor * j->second.rmax;
-    for(uint32_t i = 0; i <= nsides ; ++i) {
-    vector_3d P;
-    double phi = phi0 + i * dphi;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_parallel.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_parallel);
-    }
-    if (p_.is_extruded()) {
-    // std::cerr << "DEVEL: gnuplot_draw::draw_polyhedra: "
-    // << " EXTRUDED !!!" << std::endl;
-    for(uint32_t i = 0; i <= nsides ; ++i) {
-    polyline_type polyline_meridian;
-    double phi = phi0 + i * dphi;
-    bool last_has_zero_r = false;
-    for(polyhedra::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    double z = j->first;
-    bool new_has_zero_r = false;
-    double r = factor * j->second.rmin;
-    if (r == 0) {
-    new_has_zero_r = true;
-    }
-    if (new_has_zero_r && last_has_zero_r) {
-    if (polyline_meridian.size() > 2) {
-    basic_draw_polyline(out_, polyline_meridian);
-    }
-    polyline_meridian.clear();
-    }
-    vector_3d P;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_meridian.push_back(P2);
-    last_has_zero_r = new_has_zero_r;
-    }
-    if (polyline_meridian.size() > 2) {
-    basic_draw_polyline(out_, polyline_meridian);
-    }
-    }
-    for(polyhedra::rz_col_type::const_iterator j = p_.points().begin();
-    j != p_.points().end();
-    j++) {
-    polyline_type polyline_parallel;
-    double z = j->first;
-    double r = factor * j->second.rmin;
-    if (r == 0.0) continue;
-    for(uint32_t i = 0; i <= nsides ; ++i) {
-    vector_3d P;
-    double phi = phi0 + i * dphi;
-    P.set(r * std::cos(phi),
-    r * std::sin(phi),
-    z);
-    vector_3d P2(P);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_parallel.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_parallel);
-    }
-    }
+  void
+  gnuplot_draw::draw_wall(std::ostream & out_,
+                                 const wall_solid & ts_,
+                                 uint32_t options_)
+  {
+    wires_type wires;
+    ts_.generate_wires_self(wires, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
     return;
-    }
-  */
+  }
 
+  void
+  gnuplot_draw::draw_wall(std::ostream & out_,
+                                 const placement & placement_,
+                                 const wall_solid & ts_,
+                                 uint32_t options_)
+  {
+    wires_type wires;
+    ts_.generate_wires(wires, placement_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_wall(std::ostream & out_,
+                                 const vector_3d & position_,
+                                 const rotation_3d & rotation_,
+                                 const wall_solid & ts_,
+                                 uint32_t options_)
+  {
+    wires_type wires;
+    ts_.generate_wires(wires, position_, rotation_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  // Tessellated:
   void
   gnuplot_draw::draw_tessellated(std::ostream & out_,
                                  const tessellated_solid & ts_,
@@ -1971,88 +1838,6 @@ namespace geomtools {
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
   }
-
-  /*
-    void
-    gnuplot_draw::draw_tessellated(std::ostream & out_,
-    const vector_3d & position_,
-    const rotation_3d & rotation_,
-    const tessellated_solid & t_,
-    uint32_t options_)
-    {
-    rotation_3d inverse_rotation(rotation_);
-    inverse_rotation.invert();
-
-    int count = 0;
-    for(tessellated_solid::facet_segments_col_type::const_iterator ifs
-    = t_.facet_segments().begin();
-    ifs !=  t_.facet_segments().end();
-    ifs++) {
-    const facet_segment & the_facet_segment = ifs->second;
-    if (! the_facet_segment.is_shown()) {
-    continue;
-    }
-
-    count++;
-    polyline_type polyline_facet;
-    const facet_vertex & vt0 =
-    t_.vertices().find(the_facet_segment.vertex0_key)->second;
-    const facet_vertex & vt1 =
-    t_.vertices().find(the_facet_segment.vertex1_key)->second;
-    vector_3d P0(vt0.get_position());
-    vector_3d P1(vt1.get_position());
-    P0.transform(inverse_rotation);
-    P0 += position_;
-    polyline_facet.push_back(P0);
-    if (count == 1) {
-    polyline_facet.push_back(P0);
-    }
-    P1.transform(inverse_rotation);
-    P1 += position_;
-    polyline_facet.push_back(P1);
-    basic_draw_polyline(out_, polyline_facet);
-    }
-
-    polyline_type polyline_facet;
-    uint32_t last_nvtx = 0;
-    for(tessellated_solid::facets_col_type::const_iterator i
-    = t_.facets().begin();
-    i !=  t_.facets().end();
-    i++)
-    {
-    polyline_facet.clear();
-    const i_facet * fct = i->second;
-    uint32_t nvtx = fct->get_number_of_vertices();
-    uint32_t nvtx_safe = nvtx;
-    if (last_nvtx == 0)
-    {
-    last_nvtx = nvtx;
-    }
-    else if (last_nvtx < 1000)
-    {
-    if (last_nvtx == nvtx)
-    {
-    nvtx_safe++;
-    last_nvtx = 1000;
-    }
-    else
-    {
-    last_nvtx = nvtx;
-    }
-    }
-    for(int i = 0; i <= nvtx_safe; i++)
-    {
-    vector_3d P2(fct->get_vertex(i % nvtx).position);
-    P2.transform(inverse_rotation);
-    P2 += position_;
-    polyline_facet.push_back(P2);
-    }
-    basic_draw_polyline(out_, polyline_facet);
-    }
-
-    return;
-    }
-  */
 
   // Intersection:
 
@@ -2257,6 +2042,12 @@ namespace geomtools {
       return;
     }
 
+    if (shape_name == "simple_polygon") {
+      const simple_polygon & rp = dynamic_cast<const simple_polygon &>(o_);
+      draw_simple_polygon(out_, pl_, rp, options_);
+      return;
+    }
+
     if (shape_name == "disk") {
       const disk & d = dynamic_cast<const disk &>(o_);
       draw_disk(out_, pl_, d, options_);
@@ -2352,6 +2143,12 @@ namespace geomtools {
     if (shape_name == "tessellated") {
       const tessellated_solid & ts = dynamic_cast<const tessellated_solid &>(o_);
       draw_tessellated(out_, pl_, ts, options_);
+      return;
+    }
+
+    if (shape_name == "wall") {
+      const wall_solid & ts = dynamic_cast<const wall_solid &>(o_);
+      draw_wall(out_, pl_, ts, options_);
       return;
     }
 
@@ -2492,12 +2289,20 @@ namespace geomtools {
                           uint32_t options_)
   {
     // multi-placement:
+    // std::cerr << "DEVEL: gnuplot_draw::draw: "
+    //           << "Number of items = " << p_.get_number_of_items()
+    //           << " for object with shape '" << o_.get_shape_name() << "'"
+    //           << std::endl;
     for (uint32_t i = 0; i < p_.get_number_of_items(); i++) {
       placement p;
       p_.get_placement(i, p);
+      // std::cerr << "DEVEL: gnuplot_draw::draw: "
+      //           << "  items #" << i
+      //           << "  placement = " << p
+      //           << std::endl;
       basic_draw(out_, p, o_, options_);
-      return;
     }
+    return;
   }
 
 } // end of namespace geomtools

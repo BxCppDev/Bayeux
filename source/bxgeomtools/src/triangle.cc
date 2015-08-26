@@ -43,9 +43,24 @@ namespace geomtools {
 
   bool triangle::is_valid() const
   {
+    if (!::geomtools::is_valid(get_vertex_0())) {
+      std::cerr << "DEVEL: triangle::is_valid: invalid V0=" << get_vertex_0() << std::endl;
+      return false;
+    }
+    if (!::geomtools::is_valid(get_vertex_1())) {
+      std::cerr << "DEVEL: triangle::is_valid: invalid V1=" << get_vertex_1() << std::endl;
+      return false;
+    }
+    if (!::geomtools::is_valid(get_vertex_2())) {
+      std::cerr << "DEVEL: triangle::is_valid: invalid V2=" << get_vertex_2() << std::endl;
+      return false;
+    }
+    return true;
+    /*
     return ::geomtools::is_valid(get_vertex_0())
       && ::geomtools::is_valid(get_vertex_1())
       && ::geomtools::is_valid(get_vertex_2());
+    */
   }
 
   // virtual
@@ -330,7 +345,6 @@ namespace geomtools {
     return true;
   }
 
-
   vector_3d triangle::get_normal_on_surface(const vector_3d & position_,
                                             bool check_,
                                             double skin_) const
@@ -357,7 +371,6 @@ namespace geomtools {
     double tolerance = compute_tolerance(tolerance_);
     bool res = p.find_intercept(from_, direction_, intercept_, tolerance);
     if (res) {
-      // std::cerr << "triangle::find_intercept: " << "Found an intercept on the plane (v0, v1, v2)" << std::endl;
       if (!is_on_surface(intercept_.get_impact(), tolerance)) {
         intercept_.reset();
       }

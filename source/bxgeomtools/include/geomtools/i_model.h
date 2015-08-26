@@ -1,13 +1,13 @@
 /// \file geomtools/i_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-20
- * Last modified: 2015-02-08
+ * Last modified: 2015-07-07
  *
  * License:
  *
  * Description:
  *
- *   Interface of a geometry model
+ *   Interface/base class for all geometry models
  *
  * History:
  *
@@ -34,6 +34,7 @@
 // This library:
 #include <geomtools/logical_volume.h>
 #include <geomtools/detail/model_tools.h>
+#include <geomtools/model_with_internal_mesh_tools.h>
 
 namespace geomtools {
 
@@ -54,6 +55,10 @@ namespace geomtools {
 
     /// \brief The collection of geometry models:
     typedef geomtools::models_col_type models_col_type;
+
+    model_with_internal_mesh_data & grab_meshes();
+
+    const model_with_internal_mesh_data & get_meshes() const;
 
     /// Check if the construction of the geometry model is completed
     bool is_constructed() const;
@@ -140,31 +145,35 @@ namespace geomtools {
     /// Set the phantom solid flag
     void _set_phantom_solid(bool);
 
-    /// Common construction method
-    void _common_construct(datatools::properties & setup_);
+    /// Mandatory pre construction
+    void _mandatory_pre_construct(datatools::properties & setup_, models_col_type * models_);
 
-    /// Pre-construction method
+    /// Pre-construction hook
     virtual void _pre_construct(datatools::properties & setup_, models_col_type * models_);
 
-    /// Post-construction method
-    virtual void _post_construct(datatools::properties & setup_, models_col_type * models_);
-
-    /// The main construction method (abstract)
+    /// The main construction hook
     virtual void _at_construct(const std::string & name_,
                                const datatools::properties & setup_,
                                models_col_type * models_ = 0) = 0;
 
+    /// Post-construction hook
+    virtual void _post_construct(datatools::properties & setup_, models_col_type * models_);
+
+    /// Mandatory post construction
+    void _mandatory_post_construct(datatools::properties & setup_, models_col_type * models_);
+
   protected:
 
+    datatools::logger::priority _logging_priority; //!< Logging priority threshold
     bool                        _phantom_solid;    //!< Special flag (not used yet)
     geomtools::logical_volume   _logical;          //!< Top logical volume attached to the model
-    datatools::logger::priority _logging_priority; //!< Logging priority threshold
 
   private:
 
     bool                  _constructed_; //!< Completed construction flag
     datatools::properties _parameters_;  //!< Definition parameters
     std::string           _name_;        //!< Name of the geometry model
+    model_with_internal_mesh_data _meshes_; //!< Internal meshes within the mother logical
 
     // Work:
     shape_factory *       _shape_factory_; //!< Handle to an external shape factory

@@ -280,7 +280,6 @@ namespace geomtools {
         ;
     }
 
-
     return;
   }
 

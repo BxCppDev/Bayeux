@@ -1,9 +1,10 @@
 // -*- mode: c++ ; -*-
-/* physical_volume.cc
- */
+// physical_volume.cc
 
+// Ourselves:
 #include <geomtools/physical_volume.h>
 
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 #include <geomtools/logical_volume.h>
@@ -283,8 +284,8 @@ namespace geomtools {
   physical_volume::~physical_volume ()
   {
     _locked_ = false;
-    _clear_placement_ ();
-    _clear_logical_ ();
+    _clear_placement_();
+    _clear_logical_();
     return;
   }
 
@@ -366,5 +367,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of physical_volume.cc
