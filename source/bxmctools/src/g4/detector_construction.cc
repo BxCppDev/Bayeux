@@ -742,7 +742,7 @@ namespace mctools {
                           << gefa.get_field_name() << "'.");
           }
 
-          // Create a new data structure for the handling of G4 EM field associated to this geom:field association...
+          // Create a new data structure for the handling of G4 EM field associated to this geom/field association...
           {
             em_field_g4_stuff * new_emf_working = new em_field_g4_stuff;
             _em_field_g4_data_[association_name] = new_emf_working;
