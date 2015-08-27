@@ -24,13 +24,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
       .set_terse_description("The title of the dump")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("The title of the display.                      \n"
-                            "Default value is empty.                        \n"
+      .set_long_description("The title of the display.        \n"
+                            "Default value is empty.          \n"
                             )
-      .add_example("Example::                                      \n"
-                   "                                               \n"
-                   "    title : string = \"The event record\"      \n"
-                   "                                               \n"
+      .add_example("Example::                                 \n"
+                   "                                          \n"
+                   "    title : string = \"The event record\" \n"
+                   "                                          \n"
                    )
       ;
   }
@@ -41,15 +41,15 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::dump_module,ocd_)
       .set_terse_description("The indent string of the dump")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
-      .set_long_description("The indent string.                             \n"
-                            "Default value is empty.                        \n"
+      .set_long_description("The indent string.       \n"
+                            "Default value is empty.  \n"
                             )
       .add_example(
-                   "Example::                                      \n"
-                   "                                               \n"
-                   "    indent : string = \"DEBUG: \"              \n"
-                   "                                               \n"
-                             )
+                   "Example::                         \n"
+                   "                                  \n"
+                   "    indent : string = \"DEBUG: \" \n"
+                   "                                  \n"
+                   )
       ;
   }
 
