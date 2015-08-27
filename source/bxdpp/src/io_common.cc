@@ -105,10 +105,10 @@ namespace dpp {
   io_common::format_type io_common::guess_format_from_filename(const std::string & filename_)
   {
     int mode_guess = 0;
-    if (brio::store_info::guess_mode_from_filename (filename_, mode_guess)
+    if (brio::store_info::guess_mode_from_filename(filename_, mode_guess)
         == brio::store_info::SUCCESS) {
       return FORMAT_BRIO;
-    } else if (datatools::io_factory::guess_mode_from_filename (filename_, mode_guess)
+    } else if (datatools::io_factory::guess_mode_from_filename(filename_, mode_guess)
                == datatools::io_factory::SUCCESS) {
       return FORMAT_BIO;
     }
@@ -122,9 +122,9 @@ namespace dpp {
     i_data_source * reader = 0;
     io_common::format_type format = io_common::guess_format_from_filename(filename_);
     if (format == io_common::FORMAT_INVALID) {
-      DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR, */
-                    "Cannot guess mode for input data file '"
-                    << filename_ << "' !");
+      DT_LOG_ERROR(p_, /* datatools::logger::PRIO_ERROR, */
+                   "Cannot guess mode for input data file '"
+                   << filename_ << "' !");
     } else {
       try {
         if (format == io_common::FORMAT_BRIO) {
@@ -134,9 +134,9 @@ namespace dpp {
         }
       }
       catch (std::exception & error) {
-        DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR,*/
-                      "Cannot open data source for input data file '"
-                      << filename_ << "' : " << error.what());
+        DT_LOG_ERROR(p_, /* datatools::logger::PRIO_ERROR,*/
+                     "Cannot open data source for input data file '"
+                     << filename_ << "' : " << error.what());
         reader = 0;
       }
     }
@@ -150,9 +150,9 @@ namespace dpp {
     i_data_sink * writer = 0;
     io_common::format_type format = io_common::guess_format_from_filename(filename_);
     if (format == io_common::FORMAT_INVALID) {
-      DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR, */
-                    "Cannot guess mode for output data file '"
-                    << filename_ << "' !");
+      DT_LOG_ERROR(p_, /* datatools::logger::PRIO_ERROR, */
+                   "Cannot guess mode for output data file '"
+                   << filename_ << "' !");
     } else {
       try {
         if (format == io_common::FORMAT_BRIO) {
@@ -162,16 +162,16 @@ namespace dpp {
         }
       }
       catch (std::exception & error) {
-        DT_LOG_ERROR (p_, /* datatools::logger::PRIO_ERROR, */
-                      "Cannot open data sink for output data file '"
-                      << filename_ << "' : " << error.what());
+        DT_LOG_ERROR(p_, /* datatools::logger::PRIO_ERROR, */
+                     "Cannot open data sink for output data file '"
+                     << filename_ << "' : " << error.what());
         writer = 0;
       }
     }
     return writer;
   }
 
-  void io_common::set_module_name (const std::string & modname_)
+  void io_common::set_module_name(const std::string & modname_)
   {
     _module_name_= modname_;
     return;
@@ -204,7 +204,7 @@ namespace dpp {
     return;
   }
 
-  void io_common::set_context_label (const std::string & a_ctx_label)
+  void io_common::set_context_label(const std::string & a_ctx_label)
   {
     _Ctx_label_ = a_ctx_label;
     return;
@@ -220,7 +220,7 @@ namespace dpp {
     return _Ctx_service_ != 0;
   }
 
-  void io_common::set_context_service (dpp::context_service & a_context_service, const std::string & a_ctx_label)
+  void io_common::set_context_service(dpp::context_service & a_context_service, const std::string & a_ctx_label)
   {
     set_context_label(a_ctx_label);
     _Ctx_service_ = &a_context_service;
@@ -229,7 +229,7 @@ namespace dpp {
 
   const dpp::context_service & io_common::get_context_service() const
   {
-    DT_THROW_IF(! has_context_service (),
+    DT_THROW_IF(! has_context_service(),
                 std::logic_error,
                 "I/O module '" << _module_name_ << "' has no context service !");
     return *_Ctx_service_;
@@ -237,7 +237,7 @@ namespace dpp {
 
   dpp::context_service & io_common::grab_context_service()
   {
-    DT_THROW_IF(! has_context_service (),
+    DT_THROW_IF(! has_context_service(),
                 std::logic_error,
                 "I/O module '" << _module_name_ << "' has no context service !");
     return *_Ctx_service_;
@@ -274,11 +274,11 @@ namespace dpp {
     return _Ctx_metadata_;
   }
 
-  void io_common::set_max_files (int a_max_files)
+  void io_common::set_max_files(int a_max_files)
   {
     DT_THROW_IF(a_max_files < 0,
                 std::domain_error,
-                "Invalid 'max_files' for I/O module '" << get_module_name () << "' !");
+                "Invalid 'max_files' for I/O module '" << get_module_name() << "' !");
     _max_files_ = a_max_files;
     return;
   }
@@ -288,11 +288,11 @@ namespace dpp {
     return _max_files_;
   }
 
-  void io_common::set_max_record_total (int a_max_record_total)
+  void io_common::set_max_record_total(int a_max_record_total)
   {
     DT_THROW_IF(a_max_record_total < 0,
                 std::domain_error,
-                "Invalid 'max_record_total' for I/O module '" << get_module_name () << "' !");
+                "Invalid 'max_record_total' for I/O module '" << get_module_name() << "' !");
     _max_record_total_ = a_max_record_total;
     return;
   }
@@ -302,11 +302,11 @@ namespace dpp {
     return _max_record_total_;
   }
 
-  void io_common::set_max_record_per_file (int a_max_record_per_file)
+  void io_common::set_max_record_per_file(int a_max_record_per_file)
   {
     DT_THROW_IF(a_max_record_per_file < 0,
                 std::domain_error,
-                "Invalid 'max_record_per_file' for I/O module '" << get_module_name () << "' !");
+                "Invalid 'max_record_per_file' for I/O module '" << get_module_name() << "' !");
     _max_record_per_file_ = a_max_record_per_file;
     return;
   }
@@ -316,17 +316,17 @@ namespace dpp {
     return _max_record_per_file_;
   }
 
-  void io_common::init_filenames (const datatools::properties & a_setup)
+  void io_common::init_filenames(const datatools::properties & a_setup)
   {
-    if (_filenames_.is_valid ()) {
-      _filenames_.reset ();
+    if (_filenames_.is_valid()) {
+      _filenames_.reset();
     }
     datatools::properties files_setup;
     a_setup.export_and_rename_starting_with(files_setup, "files." , "");
-    _filenames_.initialize (files_setup);
-    DT_THROW_IF(! _filenames_.is_valid (),
+    _filenames_.initialize(files_setup);
+    DT_THROW_IF(! _filenames_.is_valid(),
                 std::logic_error,
-                "Invalid list of filenames for I/O module '" << get_module_name () << "' !");
+                "Invalid list of filenames for I/O module '" << get_module_name() << "' !");
     return;
   }
 
@@ -340,12 +340,12 @@ namespace dpp {
     return _filenames_;
   }
 
-  bool io_common::is_terminated () const
+  bool io_common::is_terminated() const
   {
     return _terminated_;
   }
 
-  void io_common::set_terminated (bool t_)
+  void io_common::set_terminated(bool t_)
   {
     _terminated_ = t_;
     return;
@@ -384,7 +384,7 @@ namespace dpp {
     return;
   }
 
-  void io_common::_set_defaults ()
+  void io_common::_set_defaults()
   {
     _logging_ = 0;
     _module_name_.clear();
@@ -408,9 +408,9 @@ namespace dpp {
   io_common::io_common(datatools::logger::priority & logging_,
                        const std::string & module_name_)
   {
-    _set_defaults ();
+    _set_defaults();
     _logging_ = &logging_;
-    set_module_name (module_name_);
+    set_module_name(module_name_);
     return;
   }
 
@@ -428,57 +428,57 @@ namespace dpp {
     /**************************************************************
      *   fetch setup parameters from the configuration container  *
      **************************************************************/
-    if (! _filenames_.is_valid ()) {
-      init_filenames (a_config);
+    if (! _filenames_.is_valid()) {
+      init_filenames(a_config);
     }
 
     if (_max_files_ < 0) {
-      if (a_config.has_key ("max_files")) {
-        _max_files_ = a_config.fetch_integer ("max_files");
+      if (a_config.has_key("max_files")) {
+        _max_files_ = a_config.fetch_integer("max_files");
         DT_THROW_IF(_max_files_ < 1,
                     std::logic_error,
-                    "I/O Module '" << get_module_name () << "' : invalid max number of files !");
+                    "I/O Module '" << get_module_name() << "' : invalid max number of files !");
       }
     }
 
     if (_max_record_total_ == 0) {
-      if (a_config.has_key ("max_record_total")) {
-        _max_record_total_ = a_config.fetch_integer ("max_record_total");
+      if (a_config.has_key("max_record_total")) {
+        _max_record_total_ = a_config.fetch_integer("max_record_total");
         DT_THROW_IF(_max_record_total_ < 1,
                     std::logic_error,
-                    "I/O Module '" << get_module_name () << "' : invalid max total number of data records !");
+                    "I/O Module '" << get_module_name() << "' : invalid max total number of data records !");
       }
     }
 
     if (_max_record_per_file_ == 0) {
-      if (a_config.has_key ("max_record_per_file")) {
-        _max_record_per_file_ = a_config.fetch_integer ("max_record_per_file");
+      if (a_config.has_key("max_record_per_file")) {
+        _max_record_per_file_ = a_config.fetch_integer("max_record_per_file");
         DT_THROW_IF(_max_record_per_file_ < 1,
                     std::logic_error,
-                    "I/O module '" << get_module_name () << "' : invalid max number of data records per file !");
+                    "I/O module '" << get_module_name() << "' : invalid max number of data records per file !");
       }
     }
 
     if (_Ctx_service_ == 0) {
-      if (a_config.has_key ("Ctx_label")) {
-        _Ctx_label_ = a_config.fetch_string ("Ctx_label");
+      if (a_config.has_key("Ctx_label")) {
+        _Ctx_label_ = a_config.fetch_string("Ctx_label");
       }
-      if (! _Ctx_label_.empty ()) {
+      if (! _Ctx_label_.empty()) {
 
-        if (a_service_manager.has (_Ctx_label_)
-            && a_service_manager.is_a<dpp::context_service> (_Ctx_label_)) {
+        if (a_service_manager.has(_Ctx_label_)
+            && a_service_manager.is_a<dpp::context_service>(_Ctx_label_)) {
           dpp::context_service & Ctx
-            = a_service_manager.get<dpp::context_service> (_Ctx_label_);
+            = a_service_manager.get<dpp::context_service>(_Ctx_label_);
           _Ctx_service_ = &Ctx;
         } else {
           DT_LOG_ERROR((*_logging_), "Service manager has no 'context' service labelled with '"
-                       << _Ctx_label_ << "' for I/O module '" << get_module_name () << "' !");
+                       << _Ctx_label_ << "' for I/O module '" << get_module_name() << "' !");
         }
       }
     }
 
     if (_Ctx_service_ == 0) {
-      DT_LOG_WARNING((*_logging_), "Module '" << get_module_name ()
+      DT_LOG_WARNING((*_logging_), "Module '" << get_module_name()
                      << "' has no access to any 'context' service !");
     }
 
@@ -496,8 +496,8 @@ namespace dpp {
      ****************************/
 
     _metadata_store_.clear();
-    _filenames_.reset ();
-    _set_defaults ();
+    _filenames_.reset();
+    _set_defaults();
 
     /****************************
      *  end of the reset step   *
@@ -525,16 +525,16 @@ namespace dpp {
     return;
   }
 
-  void io_common::tree_dump (std::ostream & a_out ,
-                             const std::string & a_title,
-                             const std::string & a_indent,
-                             bool a_inherit) const
+  void io_common::tree_dump(std::ostream & a_out ,
+                            const std::string & a_title,
+                            const std::string & a_indent,
+                            bool a_inherit) const
   {
     std::string indent;
-    if (! a_indent.empty ()) {
+    if (! a_indent.empty()) {
       indent = a_indent;
     }
-    if (! a_title.empty ()) {
+    if (! a_title.empty()) {
       a_out << indent << a_title << std::endl;
     }
 
@@ -565,7 +565,7 @@ namespace dpp {
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Context service label : '" << _Ctx_label_ << "'" << std::endl;
 
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
           << "Context service @ " << _Ctx_service_ << std::endl;
 
     return;

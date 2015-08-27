@@ -369,8 +369,7 @@ namespace dpp {
     return;
   }
 
-  base_module::process_status
-  output_module::_open_sink()
+  base_module::process_status output_module::_open_sink()
   {
     if (_sink_ == 0) {
       _grab_common().set_file_index(get_common().get_file_index()+1);
@@ -397,8 +396,7 @@ namespace dpp {
     return PROCESS_OK;
   }
 
-  base_module::process_status
-  output_module::_store(const datatools::things & a_event_record)
+  base_module::process_status output_module::_store(const datatools::things & a_event_record)
   {
     process_status store_status = PROCESS_OK;
     if (_sink_ == 0) {
