@@ -271,7 +271,6 @@ namespace geomtools {
       placement plcmt_i;
       daughter_placement_.compute_placement(i, plcmt_i);
       DT_LOG_DEBUG(_logging_, "Daughter placement #" << i << " = " << plcmt_i);
-      int wire_count = 0;
       int vertex_count = 0;
       for (std::set<geomtools::vector_3d>::const_iterator ivertex = vertice_on_daughter_surface.begin();
            ivertex != vertice_on_daughter_surface.end();

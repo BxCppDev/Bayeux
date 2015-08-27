@@ -123,7 +123,7 @@ namespace geomtools {
 
   const vector_2d & simple_polygon::get_vertex(int index_) const
   {
-    DT_THROW_IF(index_ < 0 || index_ >= _vertices_.size(),
+    DT_THROW_IF(index_ < 0 || index_ >= (int)_vertices_.size(),
                 std::domain_error, "Invalid vertex index [" << index_ << "]!");
     return _vertices_[index_];
   }
@@ -194,7 +194,7 @@ namespace geomtools {
 
   void simple_polygon::add_vertex(const vector_2d & vtx_)
   {
-    DT_THROW_IF(! _build_mode_ == BUILD_MODE_BY_VERTICES, std::logic_error,
+    DT_THROW_IF(_build_mode_ != BUILD_MODE_BY_VERTICES, std::logic_error,
                 "The simple polygon build mode is not valid!");
     _add_vertex(vtx_);
     return;
@@ -207,9 +207,9 @@ namespace geomtools {
                                         double start_angle_,
                                         double stop_angle_)
   {
-    DT_THROW_IF(! _build_mode_ == BUILD_MODE_BY_SEGMENTS, std::logic_error,
+    DT_THROW_IF(_build_mode_ != BUILD_MODE_BY_SEGMENTS, std::logic_error,
                 "The simple polygon build mode is not valid!");
-    DT_THROW_IF(!_wall_segments_.size() == 0, std::logic_error,
+    DT_THROW_IF(!_wall_segments_.empty(), std::logic_error,
                 "There is already a first wall segment!");
     DT_THROW_IF(!geomtools::is_valid(start_), std::logic_error,
                 "Invalid start for wall segment [#" << _wall_segments_.size() << "]!");
@@ -230,7 +230,7 @@ namespace geomtools {
                                         double right_thickness_,
                                         double stop_angle_)
   {
-    DT_THROW_IF(! _build_mode_ == BUILD_MODE_BY_SEGMENTS, std::logic_error,
+    DT_THROW_IF(_build_mode_ != BUILD_MODE_BY_SEGMENTS, std::logic_error,
                 "The simple polygon build mode is not valid!");
     DT_THROW_IF(_wall_segments_.size() == 0, std::logic_error,
                 "There is no first wall segment!");
@@ -253,7 +253,7 @@ namespace geomtools {
 
   bool simple_polygon::walls_are_terminated() const
   {
-    DT_THROW_IF(! _build_mode_ == BUILD_MODE_BY_SEGMENTS, std::logic_error,
+    DT_THROW_IF(_build_mode_ != BUILD_MODE_BY_SEGMENTS, std::logic_error,
                 "The simple polygon build mode is not valid!");
     if (_wall_segments_.size() == 0) {
       // std::cerr << "DEVEL: " << "simple_polygon::walls_are_terminated: "

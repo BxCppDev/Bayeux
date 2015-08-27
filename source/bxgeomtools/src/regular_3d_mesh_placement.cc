@@ -525,22 +525,22 @@ namespace geomtools {
                                               "");
       uint32_t oflags = 0;
       if (overlapping_config.has_flag("check_old_first")) {
-        oflags != overlapping::FLAG_CHECK_OLD_FIRST;
+        oflags |= overlapping::FLAG_CHECK_OLD_FIRST;
       }
       if (overlapping_config.has_flag("check_inhibit_second")) {
-        oflags != overlapping::FLAG_CHECK_INHIBIT_SECOND;
+        oflags |= overlapping::FLAG_CHECK_INHIBIT_SECOND;
       }
       if (overlapping_config.has_flag("overlap_all")) {
-        oflags != overlapping::FLAG_OVERLAP_ALL;
+        oflags |= overlapping::FLAG_OVERLAP_ALL;
       }
       if (overlapping_config.has_flag("huge_sampling")) {
-        oflags != overlapping::FLAG_WIRES_HUGE_SAMPLING;
+        oflags |= overlapping::FLAG_WIRES_HUGE_SAMPLING;
       } else if (overlapping_config.has_flag("very_high_sampling")) {
-        oflags != overlapping::FLAG_WIRES_VERY_HIGH_SAMPLING;
+        oflags |= overlapping::FLAG_WIRES_VERY_HIGH_SAMPLING;
       } else if (overlapping_config.has_flag("high_sampling")) {
-        oflags != overlapping::FLAG_WIRES_HIGH_SAMPLING;
+        oflags |= overlapping::FLAG_WIRES_HIGH_SAMPLING;
       } else if (overlapping_config.has_flag("low_sampling")) {
-        oflags != overlapping::FLAG_WIRES_LOW_SAMPLING;
+        oflags |= overlapping::FLAG_WIRES_LOW_SAMPLING;
       }
 
       if (oflags != 0) {
