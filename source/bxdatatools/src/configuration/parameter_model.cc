@@ -2370,7 +2370,7 @@ namespace datatools {
           .set_long_description("Type is choosen among:                    \n"
                                 "                                          \n"
                                 " * \"``boolean``\" : boolean value        \n"
-                                " * \"``int``\" : signed integer value     \n"
+                                " * \"``integer``\" : signed integer value     \n"
                                 " * \"``real``\" : double precision floating point real value \n"
                                 " * \"``string``\" : character string      \n"
                                 "                                          \n"
