@@ -43,6 +43,7 @@
 
 // This Project:
 #include <datatools/properties.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -83,11 +84,11 @@ namespace datatools {
     /// Destructor
     virtual ~smart_filename();
 
-    /// Check debug flag
-    bool is_debug() const;
+    /// Set logging priority
+    void set_logging_priority(datatools::logger::priority p);
 
-    /// Set debug flag
-    void set_debug(bool);
+    /// Returns logging priority
+    datatools::logger::priority get_logging_priority() const;
 
     /// Return the mode
     int get_mode() const;
@@ -151,7 +152,7 @@ namespace datatools {
 
     /// Build the filename from the increment index in incremental mode
     void build_incremental_filename(int increment_index,
-				    std::string& filename) const;
+                                    std::string& filename) const;
 
     /// Raw print
     void dump(std::ostream& out = std::clog) const;
@@ -221,21 +222,21 @@ namespace datatools {
 
   private:
 
-    bool        debug_; //! Debug flag
-    uint32_t    mode_; //! Mode
-    bool        expand_path_; //! Flag to expand the file path name
-    list_type   list_; //! The list of filenames
-    bool        list_allow_duplication_; //! Flag to allow duplication of filenames in the list
-    bool        ranged_; //! Flag to indicate if the list is ranged
-    std::string incremental_path_; //! Path of the incremented filenames
-    std::string incremental_prefix_; //! Prefix of the incremented filenames
-    std::string incremental_suffix_; //! Suffix of the incremented filenames
-    std::string incremental_extension_; //! Extension of the incremented filenames
-    int32_t     incremental_starting_index_; //! Starting index of the incremented filenames
-    int32_t     incremental_stopping_index_; //! Stopping index of the incremented filenames
-    int32_t     incremental_increment_; //! Index increment of the incremented filenames
-    uint32_t    incremental_index_ndigit_; //! Number of digits used for the increment part of the filenames
-  };
+    datatools::logger::priority logging_;    //!< Logging priority
+    uint32_t    mode_;											 //!< Mode
+		bool				expand_path_;								 //!< Flag to expand the file path name
+		list_type		list_;											 //!< The list of filenames
+		bool				list_allow_duplication_;		 //!< Flag to allow duplication of filenames in the list
+		bool				ranged_;										 //!< Flag to indicate if the list is ranged
+		std::string incremental_path_;					 //!< Path of the incremented filenames
+		std::string incremental_prefix_;				 //!< Prefix of the incremented filenames
+		std::string incremental_suffix_;				 //!< Suffix of the incremented filenames
+		std::string incremental_extension_;			 //!< Extension of the incremented filenames
+		int32_t			incremental_starting_index_; //!< Starting index of the incremented filenames
+		int32_t			incremental_stopping_index_; //!< Stopping index of the incremented filenames
+		int32_t			incremental_increment_;			 //!< Index increment of the incremented filenames
+		uint32_t		incremental_index_ndigit_;	 //!< Number of digits used for the increment part of the filenames
+	};
 
 }  // end of namespace datatools
 

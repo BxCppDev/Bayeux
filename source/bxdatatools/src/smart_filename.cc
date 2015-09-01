@@ -74,13 +74,13 @@ namespace datatools {
   }
 
 
-  bool smart_filename::is_debug() const {
-    return debug_;
+  void smart_filename::set_logging_priority(datatools::logger::priority p) {
+    logging_ = p;
+    return;
   }
 
-
-  void smart_filename::set_debug(bool a_new_value) {
-    debug_ = a_new_value;
+  datatools::logger::priority smart_filename::get_logging_priority() const {
+    return logging_;
   }
 
 
@@ -142,7 +142,7 @@ namespace datatools {
     if (!this->is_initialized()) {
       return false;
     }
-    if (this->is_ranged() || list_.size () > 0) {
+    if (this->is_ranged() || list_.size() > 0) {
       return find(list_.begin(), list_.end(), fname) != list_.end();
     }
     return false;
@@ -150,9 +150,9 @@ namespace datatools {
 
 
   size_t smart_filename::size() const {
-    DT_THROW_IF (!this->is_ranged(),
-                 std::logic_error,
-                 "List of filenames is not ranged ! Size is not known in advance !");
+    DT_THROW_IF(!this->is_ranged(),
+                std::logic_error,
+                "List of filenames is not ranged ! Size is not known in advance !");
     return list_.size();
   }
 
@@ -163,9 +163,9 @@ namespace datatools {
 
 
   smart_filename::const_iterator smart_filename::end() const {
-    DT_THROW_IF (!ranged_,
-                 std::logic_error,
-                 "List of filenames is not ranged (incremental mode with no stopping index) !");
+    DT_THROW_IF(!ranged_,
+                std::logic_error,
+                "List of filenames is not ranged (incremental mode with no stopping index) !");
     return list_.end();
   }
 
@@ -176,8 +176,8 @@ namespace datatools {
 
 
   const std::string& smart_filename::get_filename(int a_index) const {
-    DT_THROW_IF (!this->is_valid(), std::logic_error, "Not valid !");
-    DT_THROW_IF (a_index < 0, std::range_error, "Index " << a_index << " is not valid !");
+    DT_THROW_IF(!this->is_valid(), std::logic_error, "Not valid !");
+    DT_THROW_IF(a_index < 0, std::range_error, "Index " << a_index << " is not valid !");
     if (this->is_incremental()
         && ! this->is_ranged()
         && (a_index >= (int)list_.size())) {
@@ -189,9 +189,9 @@ namespace datatools {
         mutable_this->add_list(filename);
       }
     } else {
-      DT_THROW_IF (a_index < 0 || a_index > (int)list_.size(),
-                   std::range_error,
-                   "Index " << a_index<< " is not valid !");
+      DT_THROW_IF(a_index < 0 || a_index > (int)list_.size(),
+                  std::range_error,
+                  "Index " << a_index<< " is not valid !");
     }
     return list_[a_index];
   }
@@ -215,7 +215,7 @@ namespace datatools {
 
 
   void smart_filename::set(const std::string& a_new_value) {
-    DT_THROW_IF (!this->is_single(),std::logic_error,"Not using 'single' mode !");
+    DT_THROW_IF(!this->is_single(),std::logic_error,"Not using 'single' mode !");
     list_.clear();
     this->add_list(a_new_value);
   }
@@ -227,6 +227,7 @@ namespace datatools {
 
 
   void smart_filename::reset() {
+    logging_ = datatools::logger::PRIO_ERROR;
     mode_ = MODE_INVALID;
     ranged_ = false;
     expand_path_ = true;
@@ -249,27 +250,27 @@ namespace datatools {
 
 
   void smart_filename::add_list(const std::string& a_filename) {
-    DT_THROW_IF (a_filename.empty(),std::logic_error,"Missing filename !");
-    DT_THROW_IF (this->is_single() && (list_.size() > 0),
-                 std::logic_error,
-                 "Cannot add a filename ('single' mode) !");
+    DT_THROW_IF(a_filename.empty(),std::logic_error,"Missing filename !");
+    DT_THROW_IF(this->is_single() && (list_.size() > 0),
+                std::logic_error,
+                "Cannot add a filename ('single' mode) !");
     std::string filename = a_filename;
     if (this->is_expand_path()) {
       datatools::fetch_path_with_env(filename);
     }
     if ((list_.size() > 0) && !list_allow_duplication_) {
-      DT_THROW_IF (std::find(list_.begin(), list_.end(), filename) != list_.end(),
-                   std::logic_error,
-                   "Duplication error: filename '" << filename << "' is already in the list !");
+      DT_THROW_IF(std::find(list_.begin(), list_.end(), filename) != list_.end(),
+                  std::logic_error,
+                  "Duplication error: filename '" << filename << "' is already in the list !");
     }
     list_.push_back(filename);
   }
 
 
   void smart_filename::add(const std::string& a_filename) {
-    DT_THROW_IF (!this->is_list(),
-                 std::logic_error,
-                 "Not using 'list' mode !");
+    DT_THROW_IF(!this->is_list(),
+                std::logic_error,
+                "Not using 'list' mode !");
     this->add_list(a_filename);
   }
 
@@ -281,7 +282,6 @@ namespace datatools {
 
   // Constructor:
   smart_filename::smart_filename() {
-    debug_ = false;
     this->reset();
   }
 
@@ -310,7 +310,7 @@ namespace datatools {
     a_smart_filename.reset();
     a_smart_filename.ranged_ = true;
     a_smart_filename.set_mode(MODE_LIST);
-    a_smart_filename.set_list_allow_duplication (a_allow_duplication);
+    a_smart_filename.set_list_allow_duplication(a_allow_duplication);
     a_smart_filename.expand_path_ = a_expand_path;
   }
 
@@ -326,17 +326,17 @@ namespace datatools {
     a_smart_filename.expand_path_ = a_expand_path;
     std::string list_filename = a_list_filename;
     datatools::fetch_path_with_env(list_filename);
-    DT_THROW_IF (!boost::filesystem::exists(list_filename),
-                 std::logic_error,
-                 "File '" << a_list_filename << "' does not exists !");
-    DT_THROW_IF (boost::filesystem::is_directory(list_filename),
-                 std::logic_error,
-                 "Path '" << list_filename << "' is a directory !");
+    DT_THROW_IF(!boost::filesystem::exists(list_filename),
+                std::logic_error,
+                "File '" << a_list_filename << "' does not exists !");
+    DT_THROW_IF(boost::filesystem::is_directory(list_filename),
+                std::logic_error,
+                "Path '" << list_filename << "' is a directory !");
     std::ostringstream message;
     message << "datatools::smart_filename::make_list: "
             << "Reading file '"
             << list_filename << "'...";
-    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,message.str());
+    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, message.str());
     std::ifstream inlist(list_filename.c_str());
     while (inlist) {
       std::string line;
@@ -391,15 +391,15 @@ namespace datatools {
     a_smart_filename.set_mode(MODE_INCREMENTAL);
     a_smart_filename.ranged_ = false;
     a_smart_filename.expand_path_ = a_expand_path;
-    DT_THROW_IF (a_prefix.empty(),
-                 std::logic_error,
-                 "Missing prefix !");
+    DT_THROW_IF(a_prefix.empty(),
+                std::logic_error,
+                "Missing prefix !");
     a_smart_filename.incremental_path_ = a_path;
     a_smart_filename.incremental_prefix_ = a_prefix;
     a_smart_filename.incremental_extension_ = a_extension;
     a_smart_filename.incremental_suffix_ = a_suffix;
     a_smart_filename.incremental_index_ndigit_ = a_incremental_index_ndigit;
-    DT_THROW_IF (a_increment_index == 0,std::logic_error,"Invalid null increment !");
+    DT_THROW_IF(a_increment_index == 0,std::logic_error,"Invalid null increment !");
     std::string path;
     if (!a_path.empty()) {
       path = a_smart_filename.incremental_path_;
@@ -427,14 +427,14 @@ namespace datatools {
         > MODE_INCREMENTAL_UNRANGED) {
       if (a_smart_filename.incremental_stopping_index_
           < a_smart_filename.incremental_starting_index_) {
-        DT_THROW_IF (a_smart_filename.incremental_increment_ >= 0,
-                     std::logic_error,
-                     "Invalid increment rule (start="
-                     << a_smart_filename.incremental_starting_index_
-                     << ",stop="
-                     << a_smart_filename.incremental_stopping_index_
-                     << ",increment="
-                     << a_smart_filename.incremental_increment_ << ") !");
+        DT_THROW_IF(a_smart_filename.incremental_increment_ >= 0,
+                    std::logic_error,
+                    "Invalid increment rule (start="
+                    << a_smart_filename.incremental_starting_index_
+                    << ",stop="
+                    << a_smart_filename.incremental_stopping_index_
+                    << ",increment="
+                    << a_smart_filename.incremental_increment_ << ") !");
       }
     }
 
@@ -485,7 +485,7 @@ namespace datatools {
 
 
   void smart_filename::print_list_of_filenames(std::ostream& /*a_out*/) const {
-    DT_THROW_IF (!this->is_initialized(),std::logic_error,"Smart file is not initialized !");
+    DT_THROW_IF(!this->is_initialized(),std::logic_error,"Smart file is not initialized !");
   }
 
 
@@ -499,7 +499,7 @@ namespace datatools {
     } else {
       fout.open(list_filename.c_str());
     }
-    DT_THROW_IF (!fout, std::runtime_error,"Cannot open file '" << list_filename << "' !");
+    DT_THROW_IF(!fout, std::runtime_error,"Cannot open file '" << list_filename << "' !");
     if (!a_append) {
       fout << "# a list of filenames : " << std::endl;
     }
@@ -508,7 +508,7 @@ namespace datatools {
 
   void smart_filename::dump(std::ostream& a_out) const {
     a_out << "smart_filename::dump : " << std::endl;
-    a_out << "|-- Debug       : " << debug_ << std::endl;
+    a_out << "|-- Logging priority : " << datatools::logger::get_priority_label(logging_) << std::endl;
     if (!this->is_initialized()) {
       a_out << "`-- Initialized : '" << "No" << "'" << std::endl;
     }
@@ -526,11 +526,11 @@ namespace datatools {
     } else {
       a_out << "|-- Valid       : '" << "Yes" << "'" << std::endl;
       a_out << "`-- Current list [" << list_.size() << ']' << std::endl;
-      for (int i = 0; i < (int)list_.size(); ++i) {
+      for (size_t i = 0; i < list_.size(); ++i) {
         a_out << "    ";
-        int j = i;
+        size_t j = i;
         j++;
-        if (j != (int)list_.size ()) {
+        if (j != list_.size()) {
           a_out << "|-- ";
         } else {
           a_out << "`-- ";
@@ -542,8 +542,12 @@ namespace datatools {
 
 
   void smart_filename::initialize(const properties& a_config) {
-    if (a_config.has_flag("debug")) {
-      this->set_debug(true);
+    datatools::logger::priority p =
+      datatools::logger::extract_logging_configuration(a_config,
+                                                       datatools::logger::PRIO_UNDEFINED,
+                                                       true);
+    if (p != datatools::logger::PRIO_UNDEFINED) {
+      set_logging_priority(p);
     }
 
     bool expand_path = true;
@@ -551,12 +555,12 @@ namespace datatools {
       expand_path = false;
     }
 
-    DT_THROW_IF (!a_config.has_key("mode"), std::logic_error, "Missing 'mode' key !");
+    DT_THROW_IF(!a_config.has_key("mode"), std::logic_error, "Missing 'mode' key !");
 
     std::string mode_str = a_config.fetch_string("mode");
 
     if (mode_str == labels::mode_single()) {
-      DT_THROW_IF (!a_config.has_key("single.filename"),std::logic_error,"Missing 'single.filename' key !");
+      DT_THROW_IF(!a_config.has_key("single.filename"),std::logic_error,"Missing 'single.filename' key !");
       std::string single_filename = a_config.fetch_string("single.filename");
       smart_filename::make_single(*this, single_filename, expand_path);
     } else if (mode_str == labels::mode_list()) {
@@ -569,10 +573,10 @@ namespace datatools {
         smart_filename::make_list(*this, list_file, allow_duplicate, expand_path);
       } else {
         std::vector<std::string> list_vec;
-        DT_THROW_IF (!a_config.has_key("list.filenames"), std::logic_error, "Missing 'list.filenames' key !");
+        DT_THROW_IF(!a_config.has_key("list.filenames"), std::logic_error, "Missing 'list.filenames' key !");
         smart_filename::make_list(*this, allow_duplicate, expand_path);
         a_config.fetch("list.filenames", list_vec);
-        for (int i = 0; i < (int)list_vec.size(); ++i) {
+        for (size_t i = 0; i < list_vec.size(); ++i) {
           this->add(list_vec[i]);
         }
       }
@@ -585,7 +589,7 @@ namespace datatools {
       int incremental_starting = MODE_INCREMENTAL_DEFAULT_START;
       int incremental_increment = MODE_INCREMENTAL_DEFAULT_INCREMENT;
       uint32_t incremental_index_ndigit = 0;
-      DT_THROW_IF (!a_config.has_key("incremental.prefix"),std::logic_error,"Missing 'incremental.prefix' key !");
+      DT_THROW_IF(!a_config.has_key("incremental.prefix"),std::logic_error,"Missing 'incremental.prefix' key !");
       if (a_config.has_key("incremental.suffix")) {
         incremental_suffix = a_config.fetch_string("incremental.suffix");
       }
@@ -597,11 +601,11 @@ namespace datatools {
       }
       if (a_config.has_key("incremental.increment")) {
         incremental_increment = a_config.fetch_integer("incremental.increment");
-        DT_THROW_IF (incremental_increment == 0,std::logic_error,"Invalid null increment value !");
+        DT_THROW_IF(incremental_increment == 0,std::logic_error,"Invalid null increment value !");
       }
       if (a_config.has_key("incremental.stop")) {
         incremental_stopping = a_config.fetch_integer("incremental.stop");
-        DT_THROW_IF (incremental_stopping < -1,std::logic_error,"Invalid negative stopping value !");
+        DT_THROW_IF(incremental_stopping < -1,std::logic_error,"Invalid negative stopping value !");
       } else {
         // 2012-05-02 FM : allow unranged list of incremented filenames.
         // DT_THROW_IF (incremental_increment > 0,
@@ -610,9 +614,9 @@ namespace datatools {
       }
       if (a_config.has_key("incremental.start")) {
         incremental_starting = a_config.fetch_integer("incremental.start");
-        DT_THROW_IF (incremental_starting < 0,std::logic_error,"Invalid negative starting value !");
+        DT_THROW_IF(incremental_starting < 0,std::logic_error,"Invalid negative starting value !");
       } else {
-        DT_THROW_IF (incremental_increment < 0,std::logic_error,"Missing 'incremental.start' key !");
+        DT_THROW_IF(incremental_increment < 0,std::logic_error,"Missing 'incremental.start' key !");
       }
       smart_filename::make_incremental(*this, incremental_path,
                                        incremental_prefix,
@@ -640,29 +644,29 @@ namespace datatools {
 // OCD support for class '::datatools::smart_filename' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
 {
-  ocd_.set_class_name ("datatools::smart_filename");
-  ocd_.set_class_description ("Smart automated list of filenames");
-  ocd_.set_class_library ("datatools");
-  ocd_.set_class_documentation ("A ``datatools::smart_filename`` object stores a sorted      \n"
-                                "list of filenames.                           \n"
-                                "There are three different modes to build     \n"
-                                "such a list of filenames :                   \n"
-                                "                                             \n"
-                                "a. the *single* mode manages one and         \n"
-                                "   only one filename explicitely provided by \n"
-                                "   the user.                                 \n"
-                                "b. the *list* mode manages several filenames \n"
-                                "   obtained from an explicit list provided by\n"
-                                "   the user.                                 \n"
-                                "c. the *incremental* mode manages several    \n"
-                                "   filenames that are automatically built    \n"
-                                "   from dedicated rules provided by the user.\n"
-                                "                                             \n"
-                                "All filenames may contains environment variables.\n"
-                                "Once initialized, a ``datatools::smart_filename`` object can be \n"
-                                "traversed to extract all, or part of, the list of\n"
-                                "filenames it contains.                           \n"
-                                )
+  ocd_.set_class_name("datatools::smart_filename");
+  ocd_.set_class_description("Smart automated list of filenames");
+  ocd_.set_class_library("datatools");
+  ocd_.set_class_documentation("A ``datatools::smart_filename`` object stores a sorted      \n"
+                               "list of filenames.                           \n"
+                               "There are three different modes to build     \n"
+                               "such a list of filenames :                   \n"
+                               "                                             \n"
+                               "a. the *single* mode manages one and         \n"
+                               "   only one filename explicitely provided by \n"
+                               "   the user.                                 \n"
+                               "b. the *list* mode manages several filenames \n"
+                               "   obtained from an explicit list provided by\n"
+                               "   the user.                                 \n"
+                               "c. the *incremental* mode manages several    \n"
+                               "   filenames that are automatically built    \n"
+                               "   from dedicated rules provided by the user.\n"
+                               "                                             \n"
+                               "All filenames may contains environment variables.\n"
+                               "Once initialized, a ``datatools::smart_filename`` object can be \n"
+                               "traversed to extract all, or part of, the list of\n"
+                               "filenames it contains.                           \n"
+                               )
     ;
 
   {
@@ -956,64 +960,64 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
       ;
   }
 
-  ocd_.set_configuration_hints ("Configuration examples for a ``datatools::smart_filename`` object :\n"
-                                "                                                             \n"
-                                "***Example 1:***                                             \n"
-                                "                                                             \n"
-                                "A unique filename: ::                                        \n"
-                                "                                                             \n"
-                                "   mode            : string = \"single\"                     \n"
-                                "   single.filename : string as path = \"${TMP_DIR}/test.tmp\"\n"
-                                "                                                             \n"
-                                "                                                             \n"
-                                "***Example 2:***                                             \n"
-                                "                                                             \n"
-                                "A list of filenames: ::                                      \n"
-                                "                                                             \n"
-                                "   mode            : string = \"list\"                       \n"
-                                "   list.duplicate  : boolean = 0                             \n"
-                                "   list.filenames  : string[2] as path = \\                  \n"
-                                "     \"${DATA_DIR}/run_0.data\" \\                           \n"
-                                "     \"${DATA_DIR}/run_1.data\" \\                           \n"
-                                "     \"${DATA_DIR}/run_2.data\"                              \n"
-                                "                                                             \n"
-                                "                                                             \n"
-                                "***Example 3:***                                             \n"
-                                "                                                             \n"
-                                "Incremented filenames: ::                                    \n"
-                                "                                                             \n"
-                                "   mode                  : string = \"incremental\"          \n"
-                                "   incremental.path      : string = \"/tmp/${USER}\"         \n"
-                                "   incremental.prefix    : string = \"run_\"                 \n"
-                                "   incremental.extension : string = \".data\"                \n"
-                                "   incremental.increment : integer = 1                       \n"
-                                "   incremental.start     : integer = 0                       \n"
-                                "   incremental.stop      : integer = 49                      \n"
-                                "                                                             \n"
-                                "***Example 4:***                                             \n"
-                                "                                                             \n"
-                                "Unranged incremented filenames (no ``incremental.stop`` index property): ::\n"
-                                "                                                             \n"
-                                "   mode                  : string = \"incremental\"          \n"
-                                "   incremental.path      : string = \"/tmp/${USER}\"         \n"
-                                "   incremental.prefix    : string = \"run_\"                 \n"
-                                "   incremental.extension : string = \".data\"                \n"
-                                "   incremental.increment : integer = 1                       \n"
-                                "   incremental.start     : integer = 0                       \n"
-                                "                                                             \n"
-                                "***Example 5:***                                             \n"
-                                "                                                             \n"
-                                "Decremented filenames: ::                                    \n"
-                                "                                                             \n"
-                                "   mode                  : string = \"incremental\"          \n"
-                                "   incremental.path      : string = \"/tmp/${USER}\"         \n"
-                                "   incremental.prefix    : string = \"run_\"                 \n"
-                                "   incremental.extension : string = \".data\"                \n"
-                                "   incremental.increment : integer = -1                      \n"
-                                "   incremental.start     : integer = 6                       \n"
-                                "   incremental.stop      : integer = 0                       \n"
-                                "                                                             \n"
-                                );
+  ocd_.set_configuration_hints("Configuration examples for a ``datatools::smart_filename`` object :\n"
+                               "                                                             \n"
+                               "***Example 1:***                                             \n"
+                               "                                                             \n"
+                               "A unique filename: ::                                        \n"
+                               "                                                             \n"
+                               "   mode            : string = \"single\"                     \n"
+                               "   single.filename : string as path = \"${TMP_DIR}/test.tmp\"\n"
+                               "                                                             \n"
+                               "                                                             \n"
+                               "***Example 2:***                                             \n"
+                               "                                                             \n"
+                               "A list of filenames: ::                                      \n"
+                               "                                                             \n"
+                               "   mode            : string = \"list\"                       \n"
+                               "   list.duplicate  : boolean = 0                             \n"
+                               "   list.filenames  : string[2] as path = \\                  \n"
+                               "     \"${DATA_DIR}/run_0.data\" \\                           \n"
+                               "     \"${DATA_DIR}/run_1.data\" \\                           \n"
+                               "     \"${DATA_DIR}/run_2.data\"                              \n"
+                               "                                                             \n"
+                               "                                                             \n"
+                               "***Example 3:***                                             \n"
+                               "                                                             \n"
+                               "Incremented filenames: ::                                    \n"
+                               "                                                             \n"
+                               "   mode                  : string = \"incremental\"          \n"
+                               "   incremental.path      : string = \"/tmp/${USER}\"         \n"
+                               "   incremental.prefix    : string = \"run_\"                 \n"
+                               "   incremental.extension : string = \".data\"                \n"
+                               "   incremental.increment : integer = 1                       \n"
+                               "   incremental.start     : integer = 0                       \n"
+                               "   incremental.stop      : integer = 49                      \n"
+                               "                                                             \n"
+                               "***Example 4:***                                             \n"
+                               "                                                             \n"
+                               "Unranged incremented filenames (no ``incremental.stop`` index property): ::\n"
+                               "                                                             \n"
+                               "   mode                  : string = \"incremental\"          \n"
+                               "   incremental.path      : string = \"/tmp/${USER}\"         \n"
+                               "   incremental.prefix    : string = \"run_\"                 \n"
+                               "   incremental.extension : string = \".data\"                \n"
+                               "   incremental.increment : integer = 1                       \n"
+                               "   incremental.start     : integer = 0                       \n"
+                               "                                                             \n"
+                               "***Example 5:***                                             \n"
+                               "                                                             \n"
+                               "Decremented filenames: ::                                    \n"
+                               "                                                             \n"
+                               "   mode                  : string = \"incremental\"          \n"
+                               "   incremental.path      : string = \"/tmp/${USER}\"         \n"
+                               "   incremental.prefix    : string = \"run_\"                 \n"
+                               "   incremental.extension : string = \".data\"                \n"
+                               "   incremental.increment : integer = -1                      \n"
+                               "   incremental.start     : integer = 6                       \n"
+                               "   incremental.stop      : integer = 0                       \n"
+                               "                                                             \n"
+                               );
   ocd_.set_validation_support(true);
   ocd_.lock();
   return;

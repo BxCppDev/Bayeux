@@ -3037,7 +3037,6 @@ namespace datatools {
             std::string pv_str = property_value_str;
             boost::trim(pv_str);
             if (variant_devel) std::cerr << "DEVEL: " << "pv_str='" << pv_str << "'" << std::endl;
-            if (variant_devel) std::cerr << "DEVEL: " << "pv_str='" << pv_str << "'" << std::endl;
             std::string effective_property_values_line = property_value_str;
             {
               std::string effective_line;
