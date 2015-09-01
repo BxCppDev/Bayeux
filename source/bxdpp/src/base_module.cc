@@ -116,7 +116,7 @@ namespace dpp {
 
   bool base_module::has_last_error_message () const
   {
-    return ! _last_error_message_.empty ();
+    return ! _last_error_message.empty ();
   }
 
   void base_module::set_last_error_message (const std::string & errmsg_)
@@ -127,24 +127,24 @@ namespace dpp {
 
   void base_module::append_last_error_message (const std::string & errmsg_)
   {
-    std::ostringstream msg (_last_error_message_);
-    if (! _last_error_message_.empty ()) {
+    std::ostringstream msg (_last_error_message);
+    if (! has_last_error_message()) {
       msg << ": ";
     }
     msg << errmsg_;
-    _last_error_message_ = msg.str ();
+    _last_error_message = msg.str ();
     return;
   }
 
   void base_module::reset_last_error_message ()
   {
-    _last_error_message_.clear ();
+    _last_error_message.clear ();
     return;
   }
 
   const std::string & base_module::get_last_error_message () const
   {
-    return _last_error_message_;
+    return _last_error_message;
   }
 
   base_module::base_module (datatools::logger::priority p)
@@ -194,7 +194,7 @@ namespace dpp {
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Module initialized : " << is_initialized () << std::endl;
     a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Last error message : '" << _last_error_message_ << "'" << std::endl;
+          << "Last error message : '" << get_last_error_message() << "'" << std::endl;
     return;
   }
 
