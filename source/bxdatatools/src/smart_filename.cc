@@ -560,8 +560,12 @@ namespace datatools {
     std::string mode_str = a_config.fetch_string("mode");
 
     if (mode_str == labels::mode_single()) {
-      DT_THROW_IF(!a_config.has_key("single.filename"),std::logic_error,"Missing 'single.filename' key !");
-      std::string single_filename = a_config.fetch_string("single.filename");
+      std::string single_path;
+      if (a_config.has_key("single.path")) {
+        single_path = a_config.fetch_string("single.path");
+      }
+      DT_THROW_IF(!a_config.has_key("single.filename"), std::logic_error, "Missing 'single.filename' key !");
+      std::string single_filename = single_path + a_config.fetch_string("single.filename");
       smart_filename::make_single(*this, single_filename, expand_path);
     } else if (mode_str == labels::mode_list()) {
       bool allow_duplicate = false;
