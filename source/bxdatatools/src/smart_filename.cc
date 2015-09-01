@@ -673,15 +673,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::datatools::smart_filename,ocd_)
                                )
     ;
 
-  {
-    configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("debug")
-      .set_terse_description("Flag to activate debugging output")
-      .set_traits(datatools::TYPE_BOOLEAN)
-      .set_mandatory(false)
-      .set_default_value_boolean(false)
-      ;
-  }
+  datatools::logger::declare_ocd_logging_configuration(ocd_, "fatal");
 
   {
     configuration_property_description & cpd = ocd_.add_configuration_property_info();
