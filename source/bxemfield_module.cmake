@@ -37,6 +37,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/placement_field.h
   ${module_include_dir}/${module_name}/uniform_electric_field.h
   ${module_include_dir}/${module_name}/uniform_magnetic_field.h
+  ${module_include_dir}/${module_name}/polynomial_magnetic_field.h
   ${module_include_dir}/${module_name}/emfield_geom_plugin.h
   ${module_include_dir}/${module_name}/geom_map.h
   ${module_include_dir}/${module_name}/emfield_config.h.in
@@ -52,6 +53,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/placement_field.cc
   ${module_source_dir}/uniform_electric_field.cc
   ${module_source_dir}/uniform_magnetic_field.cc
+  ${module_source_dir}/polynomial_magnetic_field.cc
   ${module_source_dir}/emfield_geom_plugin.cc
   ${module_source_dir}/geom_map.cc
   ${module_source_dir}/version.cc
