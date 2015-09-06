@@ -50,10 +50,11 @@ namespace mygsl {
       hh2d_type   hh2d;
 
     public:
-
+      /// Constructor
       histogram_entry_type ();
+      /// Destructor
       virtual ~histogram_entry_type ();
-      /// Main interface method for smart dump
+      /// Smart print
       virtual void tree_dump (std::ostream      & out_    = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
@@ -66,88 +67,88 @@ namespace mygsl {
 
     typedef std::map<std::string, histogram_entry_type> dict_type;
 
-    const std::string & get_description () const;
+    const std::string & get_description() const;
 
-    void set_description (const std::string & desc_);
+    void set_description(const std::string & desc_);
 
-    const datatools::properties & get_auxiliaries () const;
+    const datatools::properties & get_auxiliaries() const;
 
-    datatools::properties & grab_auxiliaries ();
+    datatools::properties & grab_auxiliaries();
 
-    histogram_pool ();
+    histogram_pool();
 
-    histogram_pool (const std::string & desc_);
+    histogram_pool(const std::string & desc_);
 
-    virtual ~histogram_pool ();
+    virtual ~histogram_pool();
 
-    static void init_histo_1d (histogram_1d & h1_,
-                               const datatools::properties & h1_setups_,
-                               const histogram_pool * histo_pool_ = 0);
+    static void init_histo_1d(histogram_1d & h1_,
+                              const datatools::properties & h1_setups_,
+                              const histogram_pool * histo_pool_ = 0);
 
-    static void init_histo_2d (histogram_2d & h2_,
-                               const datatools::properties & h2_setups_,
-                               const histogram_pool * histo_pool_ = 0);
+    static void init_histo_2d(histogram_2d & h2_,
+                              const datatools::properties & h2_setups_,
+                              const histogram_pool * histo_pool_ = 0);
 
-    void load (const std::string & histo_setups_filename_);
+    void load(const std::string & histo_setups_filename_);
 
-    void load (const datatools::multi_properties & histo_setups_);
+    void load(const datatools::multi_properties & histo_setups_);
 
-    bool is_initialized () const;
+    bool is_initialized() const;
 
-    void initialize (const datatools::properties & setup_);
+    void initialize(const datatools::properties & setup_);
 
-    void reset ();
+    void reset();
 
-    void remove_all ();
+    void remove_all();
 
-    bool empty () const;
+    bool empty() const;
 
-    unsigned int size () const;
+    unsigned int size() const;
 
-    void clear_auxiliaries ();
+    void clear_auxiliaries();
 
-    bool has (const std::string & name_, int dim_ = 0) const;
+    bool has(const std::string & name_, int dim_ = 0) const;
 
-    bool has_1d (const std::string & name_) const ;
+    bool has_1d(const std::string & name_) const ;
 
-    bool has_2d (const std::string & name_) const;
+    bool has_2d(const std::string & name_) const;
 
-    histogram_1d & grab_1d (const std::string & name_);
+    histogram_1d & grab_1d(const std::string & name_);
 
-    const histogram_1d & get_1d (const std::string & name_) const;
+    const histogram_1d & get_1d(const std::string & name_) const;
 
-    histogram_2d & grab_2d (const std::string & name_);
+    histogram_2d & grab_2d(const std::string & name_);
 
-    const histogram_2d & get_2d (const std::string & name_) const;
+    const histogram_2d & get_2d(const std::string & name_) const;
 
-    void remove (const std::string & name_);
+    void remove(const std::string & name_);
 
-    void rename (const std::string & name_, const std::string & new_name_);
+    void rename(const std::string & name_, const std::string & new_name_);
 
-    void set_title (const std::string & name_, const std::string & title_);
+    void set_title(const std::string & name_, const std::string & title_);
 
-    const std::string & get_title (const std::string & name_) const;
+    const std::string & get_title(const std::string & name_) const;
 
-    void set_group (const std::string & name_, const std::string & group_);
+    void set_group(const std::string & name_, const std::string & group_);
 
-    const std::string & get_group (const std::string & name_) const;
+    const std::string & get_group(const std::string & name_) const;
 
     /// Build an array containing the names of the histograms stored in the pool :
-    void names (std::vector<std::string> &names_, const std::string & filter_ = "", bool reverse_ = false) const;
+    void names(std::vector<std::string> &names_, const std::string & filter_ = "", bool reverse_ = false) const;
 
-    histogram_1d & add_1d (const std::string & name_,
-                           const std::string & title_ = "",
-                           const std::string & group_ = "");
+    histogram_1d & add_1d(const std::string & name_,
+                          const std::string & title_ = "",
+                          const std::string & group_ = "");
 
-    histogram_2d & add_2d (const std::string & name_,
-                           const std::string & title_ = "",
-                           const std::string & group_ = "");
+    histogram_2d & add_2d(const std::string & name_,
+                          const std::string & title_ = "",
+                          const std::string & group_ = "");
 
-    /// Main interface method for smart dump
-    virtual void tree_dump (std::ostream      & out    = std::clog,
-                            const std::string & title  = "",
-                            const std::string & indent = "",
-                            bool inherit               = false) const;
+    /// Smart print
+    virtual void tree_dump(std::ostream      & out    = std::clog,
+                           const std::string & title  = "",
+                           const std::string & indent = "",
+                           bool inherit               = false) const;
 
     void set_logging_priority(datatools::logger::priority);
 
@@ -157,10 +158,10 @@ namespace mygsl {
 
     static const std::string _INITIALIZED_FLAG_KEY_;
 
-    datatools::logger::priority _logging_priority_;
-    std::string           _description_;
-    dict_type             _dict_;
-    datatools::properties _auxiliaries_;
+    datatools::logger::priority _logging_priority_; ///< Logging priority threshold
+    std::string           _description_; ///< Description of the histogram pool
+    dict_type             _dict_; ///< Dictionnary of histogram entries
+    datatools::properties _auxiliaries_; ///< Auxiliary peoperties
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 
