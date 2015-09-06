@@ -983,6 +983,7 @@ namespace mygsl {
                                       const std::string & title_,
                                       const std::string & group_)
   {
+    // std::cerr << "DEVEL: histogram_pool::add_1d: name='" << name_<< "'" << std::endl;
     dict_type::const_iterator found = _dict_.find (name_);
     DT_THROW_IF (found != _dict_.end (), std::logic_error, "Histogram named '" << name_ << "' already exists !");
     {

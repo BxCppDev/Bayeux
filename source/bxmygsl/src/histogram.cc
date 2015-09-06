@@ -128,6 +128,9 @@ namespace mygsl {
   void histogram::initialize (const histogram & h_,
                               const std::vector<std::string> & imported_aux_prefixes_)
   {
+    // if (&h_ == &(*this)) { // XXX
+    //   h_.tree_dump(std::cerr, "right H1D: ", "DEVEL: ");
+    // }
     DT_THROW_IF (&h_ == &(*this), std::logic_error, "Self-reference initialization is forbidden!");
     DT_THROW_IF (! h_.is_initialized (), std::logic_error, "Invalid 1D-histogram source !");
     // Reset internals :
