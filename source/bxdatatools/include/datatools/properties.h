@@ -931,6 +931,9 @@ namespace datatools {
     //! Fetch the real vector value stored with a given key/name
     void fetch(const std::string& key, data::vdouble& values) const;
 
+    //! Fetch the dimensionless real vector value stored with a given key/name
+    void fetch_dimensionless(const std::string& key, data::vdouble& values) const;
+
     //! Fetch the string vector value stored with a given key/name
     void fetch(const std::string& key, data::vstring& values) const;
 
