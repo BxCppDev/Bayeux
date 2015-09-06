@@ -1141,8 +1141,6 @@ namespace datatools {
                   "Unit with name '" << unit_.get_name() << "' is not valid!");
       DT_THROW_IF(has_unit(unit_.get_name()), std::logic_error,
                   "Unit with name '" << unit_.get_name() << "' is already registered!");
-      DT_THROW_IF(! unit_.is_valid(), std::logic_error,
-                  "Unit with name '" << unit_.get_name() << "' is not valid!");
       const std::string & unit_name = unit_.get_name();
       {
         _units_[unit_name] = unit_;
@@ -1359,7 +1357,6 @@ namespace datatools {
         out_ << std::endl;
       }
 
-
       return;
     }
 
@@ -1535,10 +1532,10 @@ namespace datatools {
       registration(unit("imperial_gallon",
                         /**/      "imp_gal",      "volume", 4.54609      * litre));
       registration(unit("us_gallon",  "gal",
-                        /**/       "gal_us",   "volume", 3.785411784  * litre));
+                        /**/       "gal_us",      "volume", 3.785411784  * litre));
       registration(unit("inch3",      "in3",      "volume", 0.016387064  * litre));
       registration(unit("foot3",      "ft3",
-                        /**/        "feet3",    "volume",  8.316846592 * litre));
+                        /**/        "feet3",      "volume",  8.316846592 * litre));
 
 
       // Angle/plane angle:
