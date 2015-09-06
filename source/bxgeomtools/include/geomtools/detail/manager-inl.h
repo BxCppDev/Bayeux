@@ -71,4 +71,3 @@ namespace geomtools {
 } // end of namespace geomtools
 
 #endif // GEOMTOOLS_DETAIL_MANAGER_INL_H_
-
