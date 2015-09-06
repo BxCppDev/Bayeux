@@ -1469,7 +1469,9 @@ namespace datatools {
                  std::logic_error,
                  "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
     DT_THROW_IF (data_ptr->set_explicit_unit(a_explicit_unit) != data::ERROR_SUCCESS,
-                 std::logic_error, "Setting explicit unit fails !");
+                 std::logic_error,
+                 "Setting explicit unit fails for property '" << prop_key
+                 << "' in properties described by '" << get_description() << "' !");
     return;
   }
 
@@ -2170,6 +2172,13 @@ namespace datatools {
     }
   }
 
+  void properties::fetch_dimensionless(const std::string& prop_key,
+                                       data::vdouble& values) const {
+    this->fetch(prop_key, values);
+    DT_THROW_IF(has_explicit_unit(prop_key),
+                std::logic_error,
+                "Property '" << prop_key << "' is not dimensionless!");
+  }
 
   void properties::fetch(const std::string& prop_key,
                          data::vdouble& values) const {
