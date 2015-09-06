@@ -48,6 +48,8 @@ Introduction
      * ``config/plugins/materials_plugin.conf`` : the file that defines the
        *materials* plugin. At least one material plugin must be provided
        to export the geometry hierarchy in a GDML file.
+     * ``config/plugins/materials_aliases.def`` : the file that defines the
+       *materials* aliases used by this geometry setup.
      * ``config/plugins/mapping_plugins.conf`` : the file that defines some
        *geometry ID mapping* plugins. Mapping plugins are optional.
        A default *mapping* object is built from the rules exposed in the
@@ -57,6 +59,8 @@ Introduction
  * Built object(s) :
 
      * ``ex01`` : the example executable linked to the ``Bayeux`` library.
+       It runs a geometry manager, loaf and build a virtual geometry setup
+       and use a Gnuplot renderer for 3D visualization.
 
  * Build method: CMake.
 
@@ -89,7 +93,7 @@ Quick start
 5. Run the ``bxgeomtools_inspector`` ::
 
       shell> bxgeomtools_inspector \
-               --manager-config ${CONFIG_DIR}/manager.conf --visu-view-3d
+               --manager-config "${CONFIG_DIR}/manager.conf" --visu-view-3d
 
    It displays views of the setup using the ``geomtools`` Gnuplot viewer.
 

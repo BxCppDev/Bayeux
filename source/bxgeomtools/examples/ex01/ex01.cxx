@@ -30,8 +30,8 @@ int main(int argc_, char ** argv_)
 #endif // MATERIALS_STANDALONE == 1
 
   int error_code = EXIT_SUCCESS;
-
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+
   try {
 
     if (argc_>1) {

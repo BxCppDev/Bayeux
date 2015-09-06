@@ -1,20 +1,22 @@
 # -*- mode: conf-unix; -*-
-# List of geometry ID categories/types (datatools::multi_properties):
+# The definition of geometry ID categories/types (datatools::multi_properties):
 
-#@description A  list of geometry ID categories/types
+#@description The definition of geometry ID categories/types
 #@key_label   "category"
 #@meta_label  "type"
 
 
 ##################################################################
 # This is the mandatory top-level geometry category.
-# One should always provide it :
+# One must always provide it :
 [category="world" type="0"]
 
 #@config The geometry category of the top-level world volume
 
 #@description The world's GID address is characterized by its 'world' number
 addresses : string[1] = "world"
+#
+# The world top-level volume is given the following GID: [type=0:world=0]
 
 
 ##################################################################
@@ -25,7 +27,9 @@ addresses : string[1] = "world"
 
 #@description A lab's GID address is charaterized by its 'area' number
 addresses : string[1] = "area"
-
+#
+# The unique experimental area of the current setup has the
+# following GID : [type=100:area=0]
 
 ##################################################################
 # This geometry category addresses a vacuum chamber :
@@ -35,6 +39,9 @@ addresses : string[1] = "area"
 
 #@description A vacuum chamber's GID address is charaterized by its 'chamber' number
 addresses : string[1] = "chamber"
+#
+# The unique vacuum chamber of the current setup has the
+# following GID : [type=200:chamber=0]
 
 
 ##################################################################
@@ -48,7 +55,12 @@ extends  : string = "vessel.gc"
 
 #@description The vacuum chamber 'part' number extending the mother vacuum chamber GID address
 by       : string[1] = "part"
-
+#
+# The unique vacuum chamber is composed of 3 parts, each having a specific GID
+# following the scheme [type:chamber.part] :
+#  * [210:0.0] : for the bottom endcap
+#  * [210:0.1] : for the body (side wall)
+#  * [210:0.2] : for the top endcap
 
 ##################################################################
 # This geometry category addresses the internal volume of a the vacuum chamber :
@@ -58,7 +70,9 @@ by       : string[1] = "part"
 
 #@description The GID address of the inner volume of a vacuum chamber inherits the GID address of the vacuum chamber
 inherits : string = "vessel.gc"
-
+#
+# The unique vacuum chamber has an inner volume with a GID
+# following the scheme [type=220:chamber=0]
 
 ##################################################################
 # This geometry category addresses a calibration source object :
@@ -68,7 +82,11 @@ inherits : string = "vessel.gc"
 
 #@description The GID address of a source is defined by its 'position' number
 addresses : string[1] = "position"
-
+#
+# Each source has its own GID following the scheme [type:position] :
+#  * [1000:0] : first source
+#  * [1000:1] : second source
+#  * [1000:2] : third source
 
 ##################################################################
 # This geometry category addresses the support frame of a calibration source :
@@ -78,6 +96,11 @@ addresses : string[1] = "position"
 
 #@description The GID address of a source support inherits the GID address of the source
 inherits : string = "source.gc"
+#
+# Each source has its own support with its GID following the scheme [type:position] :
+#  * [1010:0] : support of the first source
+#  * [1010:1] : support of the second source
+#  * [1010:2] : support of the third source
 
 
 ##################################################################
@@ -91,6 +114,15 @@ extends  : string = "source_support.gc"
 
 #@description The 'hole' number extending the mother source support GID address
 by       : string[1] = "hole"
+#
+# Each source support has some holes, each with its GID following the
+# scheme [type:position.hole] :
+#  * [1012:0.0] : first hole of the support of the first source
+#  * [1012:0.1] : second hole of the support of the first source
+#  * [1012:1.0] : first hole of the support of the second source
+#  * [1012:1.1] : second hole of the support of the second source
+#  * [1012:2.0] : first hole of the support of the third source
+#  * [1012:2.1] : second hole of the support of the third source
 
 
 ##################################################################
@@ -101,15 +133,26 @@ by       : string[1] = "hole"
 
 #@description The GID address of a source film inherits the GID address of the source
 inherits : string = "source.gc"
+#
+# Each source has a unique film with its GID following the
+# scheme [type:position] :
+#  * [1020:0] : film of the first source
+#  * [1020:1] : film of the second source
+#  * [1020:2] : film of the third source
 
 
 ##################################################################
-# This geometry category addresses a vertical column of optical module :
+# This geometry category addresses a vertical column of optical modules :
 [category="optical_module_column.gc" type="2010"]
 
-#@config The geometry category of a calibration source film
+#@config The geometry category of a vertical column of optical modules
 
 addresses : string[1] = "column"
+#
+# Each colum of optical modules has its GID following the
+# scheme [type:column] :
+# * [2010:0] : first column
+# * [2010:1] : second column
 
 
 ##################################################################
@@ -120,6 +163,13 @@ addresses : string[1] = "column"
 
 extends  : string = "optical_module_column.gc"
 by       : string[1] = "row"
+#
+# Each optical module in its column has its GID following the
+# scheme [type:column.row] :
+# * [2020:0.0] : bottom optical module in the first column
+# * [2020:0.1] : top optical module in the first column
+# * [2020:1.0] : bottom optical module in the second column
+# * [2020:1.1] : top optical module in the second column
 
 
 ##################################################################
@@ -130,6 +180,13 @@ by       : string[1] = "row"
 
 #@description The GID address of a scin block inherits the GID address of the optical module
 inherits : string = "optical_module.gc"
+#
+# Each optical module has a scintillator block with its GID following the
+# scheme [type:column.row] :
+# * [2030:0.0] : scin block of the bottom optical module in the first column
+# * [2030:0.1] : scin block of the top optical module in the first column
+# * [2030:1.0] : scin block of the bottom optical module in the second column
+# * [2030:1.1] : scin block of the top optical module in the second column
 
 
 ##################################################################
@@ -140,6 +197,13 @@ inherits : string = "optical_module.gc"
 
 #@description The GID address of a PMT inherits the GID address of the optical module
 inherits  : string = "optical_module.gc"
+#
+# Each optical module has a photomultiplier tube (PMT) with its GID following the
+# scheme [type:column.row] :
+# * [2040:0.0] : PMT of the bottom optical module in the first column
+# * [2040:0.1] : PMT of the top optical module in the first column
+# * [2040:1.0] : PMT of the bottom optical module in the second column
+# * [2040:1.1] : PMT of the top optical module in the second column
 
 
 ##################################################################
@@ -150,8 +214,15 @@ inherits  : string = "optical_module.gc"
 
 #@description The GID address of a PMT bulb inherits the GID address of the optical module
 inherits  : string = "pmt.gc"
+#
+# Each PMT has a bulb made of glass with its GID following the
+# scheme [type:column.row] :
+# * [2042:0.0] : PMT's bulb of the bottom optical module in the first column
+# * [2042:0.1] : PMT's bulb of the top optical module in the first column
+# * [2042:1.0] : PMT's bulb of the bottom optical module in the second column
+# * [2042:1.1] : PMT's bulb of the top optical module in the second column
 
-##################################################################
+###########################################################
 #  This geometry category addresses a dynode inside a PMT :
 [category="pmt_dynode.gc" type="2043"]
 
@@ -159,24 +230,42 @@ inherits  : string = "pmt.gc"
 
 extends  : string = "pmt.gc"
 by       : string[1] = "dynode"
+#
+# Each PMT has a several dynodes, each with its GID following the
+# scheme [type:column.row.dynode] :
+# * [2043:0.0.0] : first dynode of PMT in the bottom optical module in the first column
+# * [2043:0.0.1] : second dynode of PMT in the bottom optical module in the first column
+# * [2043:0.0.N] : (N+1)th dynode of PMT in the bottom optical module in the first column
+# * [2043:0.1.0] : first dynode of PMT in the bottom optical module in the first column
+# * ... : more dynodes
 
 
-##################################################################
+######################################################################
 #  This geometry category addresses the focus electrode inside a PMT :
 [category="pmt_focus_electrode.gc" type="2044"]
 
 #@config The geometry category of the PMT's focus electrode
 
 inherits : string[1] = "pmt.gc"
+#
+# Each PMT has only one focusing electrode with its GID following the
+# scheme [type:column.row] :
+# * [2044:0.0] : focusing electrode of PMT in the bottom optical module in the first column
+# * ... : more
 
 
-##################################################################
+#####################################################################
 #  This geometry category addresses a shield wall around the vessel :
 [category="shield_wall.gc" type="2060"]
 
 #@config The geometry category of a shield wall
 
 addresses : string[1] = "wall"
+#
+# Each shielding wall has a GID following the
+# scheme [type:wall] :
+# * [2060:0] : left shielding wall
+# * [2060:1] : right shielding wall
 
 
 ##################################################################
@@ -187,6 +276,10 @@ addresses : string[1] = "wall"
 
 extends  : string = "shield_wall.gc"
 by       : string[2] = "column" "row"
+#
+# Each shielding wall is composed of a grid of bricks, each with a GID following the
+# scheme [type:wall.column.row] :
+# * [2070:0.7.4] : Brick in column 7 and row 4 in the first shielding wall
 
 
 # end
