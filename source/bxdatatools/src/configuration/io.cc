@@ -713,7 +713,7 @@ namespace datatools {
           }
           if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "parameter_effective_token = '" << parameter_effective_token << "'")
           target_out << parameter_effective_token;
-          line = line.substr(found2 + 1);
+          line = line.substr(found2 + variant_close_tag.length());
         }
         pos = 0;
       }
