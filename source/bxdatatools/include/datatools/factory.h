@@ -50,9 +50,20 @@ namespace datatools {
     : public base_factory_register,
       public datatools::i_tree_dumpable {
   public:
-    typedef BaseType                            base_type;
-    typedef boost::function<base_type*() >      factory_type;
+
+    typedef BaseType                       base_type;
+    typedef boost::function<base_type*() > factory_type;
+
+    /* Future addons:
+    struct factory_metadata {
+      std::string description;
+      std::string category;
+    };
+    */
+
+    /// \brief Dictionary of object factories
     typedef std::map<std::string, factory_type> factory_map_type;
+    // typedef std::map<std::string, factory_metadata> factory_metadata_map_type;
 
     /// Constructor
     factory_register();
