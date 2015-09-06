@@ -20,7 +20,8 @@ Introduction
 
    * ``config/geomtools_ex00/geometry/0.1/`` : the main configuration
      directory that hosts all files used to store configuration parameters
-     describing the setup.
+     describing the setup. Among them the ``manager.conf`` is the
+     top-level configuration file used by a geometry manager.
 
      Note: this directory has been originally created using the
      ``bxgeomtools_mkskelcfg`` script: ::
@@ -29,6 +30,9 @@ Introduction
           --setup-label "geomtools_ex00" \
           --setup-version "0.1" \
           --config-base-dir "config"
+
+     Then the resulting base configuration directory has been filled
+     with other configuration files.
 
 
 Quick start
