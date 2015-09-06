@@ -444,7 +444,7 @@ namespace geomtools {
 
   bool manager::has_plugin (const std::string & plugin_name_) const
   {
-    return _plugins_.find (plugin_name_) != _plugins_.end ();
+    return _plugins_.find(plugin_name_) != _plugins_.end ();
   }
 
   bool manager::has_plugin_type(const std::string& plugin_id_) const
@@ -458,7 +458,7 @@ namespace geomtools {
     return;
   }
 
-  const geomtools::mapping & manager::get_mapping (const std::string & mapping_name_) const
+  const geomtools::mapping & manager::get_mapping(const std::string & mapping_name_) const
   {
     if (! mapping_name_.empty()) {
       DT_THROW_IF(! is_plugin_a<mapping_plugin>(mapping_name_),
