@@ -62,7 +62,7 @@ namespace emfield {
                                                      double  /* time_ */,
                                                      ::geomtools::vector_3d & electric_field_) const
   {
-    DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE UNIFORM ELECTRIC FIELD ***");
+    // DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE UNIFORM ELECTRIC FIELD ***");
     electric_field_ = _uniform_electric_field_;
     DT_LOG_DEBUG(get_logging_priority(),
                  "Electric field value = "

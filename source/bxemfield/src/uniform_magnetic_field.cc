@@ -69,7 +69,7 @@ namespace emfield {
                                                      double  /* time_ */,
                                                      ::geomtools::vector_3d & magnetic_field_) const
   {
-    DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE UNIFORM MAGNETIC FIELD ***");
+    // DT_LOG_DEBUG(get_logging_priority(), "*** COMPUTE UNIFORM MAGNETIC FIELD ***");
     magnetic_field_ = _uniform_magnetic_field_;
     DT_LOG_DEBUG(get_logging_priority(),
                  "Magnetic field values = "
