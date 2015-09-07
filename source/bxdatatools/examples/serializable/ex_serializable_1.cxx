@@ -35,10 +35,11 @@
 #include <string>
 #include <exception>
 
+// Third party:
+// - Boost:
 // Code dedicated to the serialization of the ``std::vector`` template class :
 #include <boost/serialization/vector.hpp>
-
-// This project:
+// - Bayeux/datatools:
 #include <datatools/datatools_config.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
@@ -48,6 +49,7 @@
 #include <datatools/handle.h>
 #include <datatools/io_factory.h>
 
+// This project:
 #include <raw_hit.h>
 #include <raw_data.h>
 
@@ -121,10 +123,10 @@ void ex_raw_hit_3(datatools::logger::priority logging)
     RH.reset();
   }
   DT_LOG_INFORMATION(logging,
-                        "Number of serialized raw hits is "
-                        << number_of_hits);
+                     "Number of serialized raw hits is "
+                     << number_of_hits);
   DT_LOG_INFORMATION(logging,
-                        "The hits have been stored in the ``raw_hits.xml`` file.");
+                     "The hits have been stored in the ``raw_hits.xml`` file.");
 }
 
 
@@ -149,8 +151,8 @@ void ex_raw_hit_4(datatools::logger::priority logging)
     number_of_hits++;
   }
   DT_LOG_INFORMATION(logging,
-                        "Number of deserialized raw hits is "
-                        << number_of_hits);
+                     "Number of deserialized raw hits is "
+                     << number_of_hits);
 }
 
 /// Serialize several ``raw_hit`` handles in a XML file
@@ -171,9 +173,9 @@ void ex_raw_hit_5(datatools::logger::priority logging)
 
     DT_LOG_NOTICE(logging, "Serialized raw hit #" << hit_id);
     hits.back().get().dump(std::clog);
- }
+  }
 
-  // Declare a lone hit handle that references the 3rd hit (index==2)
+  // Declare a single hit handle that references the 3rd hit (index==2)
   // in the collection :
   handle_type special_RHH(hits[2]);
   DT_LOG_NOTICE(logging, "Serialized special raw hit (reference to the 3rd hit in the collection)");
@@ -182,27 +184,30 @@ void ex_raw_hit_5(datatools::logger::priority logging)
   // We use here a single archive to store all the hits hold
   // by the collection of handles and the special handle.
   // This allows the archive to preserved the layout of the
-  // memory as managed by the handles :
+  // memory as managed by the handles, with cross-references
+  // between them :
   datatools::data_writer serializer("raw_hits_h.xml",
                                     datatools::using_single_archive);
 
-  // Store the vector of handle passing an arbitrary *serial tag* of our choice
+  // Store the vector of handles passing an arbitrary *serial tag* of our choice
   // because class ``std::vector<handle_type>`` does not inherit the
-  // ``datatools::_i_serializable`` interface :
+  // ``datatools::i_serializable`` interface. We need here to tag the
+  // object with some arbitrary character string that will help us
+  // to recognize the container at deserialization.
   serializer.store("hit_handle_collection", hits);
 
   // Store the special hit handle with an arbitrary *serial tag*,
   // this only save some information to reference the 3rd item
   // in the collection, and does not duplicate the storage of
-  // the corresponding hit :
+  // the corresponding hit because handle objects use shared pointers:
   serializer.store("hit_handle", special_RHH);
 
   DT_LOG_INFORMATION(logging,
-                        "Number of serialized raw hit handles is "
-                        << number_of_hits);
+                     "Number of serialized raw hit handles is "
+                     << number_of_hits);
 
   DT_LOG_INFORMATION(logging,
-                        "The hit handles have been stored in the ``raw_hits_h.xml`` file.");
+                     "The hit handles have been stored in the ``raw_hits_h.xml`` file.");
 }
 
 
@@ -285,13 +290,13 @@ void ex_raw_hit_7(datatools::logger::priority logging)
   }
   catch(std::exception& x){
     DT_LOG_ERROR(logging,
-                    "As expected, the serialization failed ! Boost report is: " << x.what() << " !\n"
-                    << "\tThis is because  the ``raw_data`` class, while  being serializable, has not been  registered\n"
-                    << "\tthrough the *Boost serialization export* mechanism ! That means that the ``datatools::things``\n"
-                    << "\tcontainer turns to be not serializable if it contains **at least one** object in a data bank\n"
-                    << "\tof which the class is not serializable nor registered with the *class export* mechanism of the\n"
-                    << "\tBoost/Serialization library.\n"
-                    );
+                 "As expected, the serialization failed ! Boost report is: " << x.what() << " !\n"
+                 << "\tThis is because  the ``raw_data`` class, while  being serializable, has not been  registered\n"
+                 << "\tthrough the *Boost serialization export* mechanism ! That means that the ``datatools::things``\n"
+                 << "\tcontainer turns to be not serializable if it contains **at least one** object in a data bank\n"
+                 << "\tof which the class is not serializable nor registered with the *class export* mechanism of the\n"
+                 << "\tBoost/Serialization library.\n"
+                 );
   }
 }
 
@@ -335,8 +340,8 @@ void ex_raw_hit_8(datatools::logger::priority logging)
   }
   catch(std::exception& x){
     DT_LOG_ERROR(logging,
-                    "Serialization failed ! Boost report is: " << x.what() << " !\n"
-                    );
+                 "Serialization failed ! Boost report is: " << x.what() << " !\n"
+                 );
   }
 }
 
@@ -374,7 +379,7 @@ void ex_raw_hit_9(datatools::logger::priority logging)
     raw_data & RD0 = DR.grab<raw_data>("RD0");
     RD0.reset();
 
-   // Access the second raw data bank, unlock it then add a property in a given hit :
+    // Access the second raw data bank, unlock it then add a property in a given hit :
     DT_THROW_IF(! DR.is_a<raw_data>("RD1"),
                 std::logic_error,
                 "Cannot find a raw data bank named ``RD1`` !");
@@ -394,8 +399,8 @@ void ex_raw_hit_9(datatools::logger::priority logging)
   }
   catch(std::exception& x){
     DT_LOG_ERROR(logging,
-                    "Serialization failed ! Boost report is: " << x.what() << " !\n"
-                    );
+                 "Serialization failed ! Boost report is: " << x.what() << " !\n"
+                 );
   }
 
 }

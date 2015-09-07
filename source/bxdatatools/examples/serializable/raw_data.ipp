@@ -1,25 +1,30 @@
 // -*- mode: c++; -*-
 /// \file raw_data.ipp
 
-#ifndef RAW_DATA_IPP_
-#define RAW_DATA_IPP_ 1
+#ifndef RAW_DATA_IPP
+#define RAW_DATA_IPP
 
+// Ourselves:
 #include <raw_data.h>
 
+// Third party:
+// - Boost:
 // Support for inheritance from an serializable class :
 #include <boost/serialization/base_object.hpp>
-
-// Support for XML 'key-value' based archives:
+// Support for XML name-value based archives :
 #include <boost/serialization/nvp.hpp>
+// Support for serialization of ``std::string`` :
 #include <boost/serialization/string.hpp>
+// Support for serialization of ``std::vector`` :
 #include <boost/serialization/vector.hpp>
-
-// Datatools support for serializable objects :
+// - Bayeux/datatools:
+// Support for serializable objects :
 #include <datatools/i_serializable.ipp>
-
-// Support serialization for the ``datatools::properties`` class :
+// Support for serialization of ``datatools::properties`` :
 #include <datatools/properties.ipp>
 
+// This project:
+// Support for raw_hit
 #include <raw_hit.ipp>
 
 /** The main Boost/Serialization template method for class raw_data
@@ -37,5 +42,4 @@ void raw_data::serialize(Archive & ar, const unsigned int version)
   return;
 }
 
-#endif // RAW_DATA_IPP_
-
+#endif // RAW_DATA_IPP

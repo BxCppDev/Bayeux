@@ -1,17 +1,28 @@
 // -*- mode: c++ ; -*-
-/* raw_hit.cc
- */
+// raw_hit.cc
 
-#include <cstdlib>
+// Ourselves:
 #include <raw_hit.h>
 
+// Standard library:
+#include <cstdlib>
+
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This macro instantiate dedicated serialization code for the
+// "raw_hit" class:
 DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(raw_hit,"raw_hit")
 
-// Static constants :
-const double raw_hit::LOW_QUALITY_PROB = 0.25;
-const std::string raw_hit::LOW_QUALITY_KEY =  "low_quality";
+// Implementation of static constants :
+const int          raw_hit::INVALID_ID;
+const int          raw_hit::INVALID_CHANNEL;
+const unsigned int raw_hit::MAX_CHANNEL;
+const unsigned int raw_hit::MAX_ADC;
+const unsigned int raw_hit::MAX_TDC;
+const double       raw_hit::LOW_QUALITY_PROB = 0.25;
+const std::string  raw_hit::LOW_QUALITY_KEY =  "low_quality";
 
 raw_hit::raw_hit()
 {
@@ -37,6 +48,7 @@ void raw_hit::reset()
   _adc_ = 0;
   _tdc_ = 0;
   _auxiliaries_.clear();
+  return;
 }
 
 void raw_hit::randomize()
@@ -80,6 +92,7 @@ void raw_hit::set_channel(int ch_)
               std::domain_error,
               "Invalid channel ID '" << ch_ << "' !");
   _channel_ = ch_;
+  return;
 }
 
 int raw_hit::get_channel() const
@@ -93,6 +106,7 @@ void raw_hit::set_adc(int adc_)
               std::domain_error,
               "Invalid ADC value '" << adc_ << "' !");
   _adc_ = adc_;
+  return;
 }
 
 int raw_hit::get_adc() const
@@ -106,6 +120,7 @@ void raw_hit::set_tdc(int tdc_)
               std::domain_error,
               "Invalid TDC value '" << tdc_ << "' !");
   _tdc_ = tdc_;
+  return;
 }
 
 int raw_hit::get_tdc() const
@@ -139,5 +154,3 @@ void raw_hit::dump(std::ostream & out_,
   _auxiliaries_.tree_dump(out_,"",indent_ + "    ");
   return;
 }
-
-// end of raw_hit.cc

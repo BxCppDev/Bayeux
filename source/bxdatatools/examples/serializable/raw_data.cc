@@ -1,10 +1,14 @@
 // -*- mode: c++ ; -*-
-/* raw_data.cc
- */
+/// raw_data.cc
 
-#include <cstdlib>
+// Ourselves:
 #include <raw_data.h>
 
+// Standard library:
+#include <cstdlib>
+
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(raw_data,"raw_data")
@@ -33,6 +37,7 @@ void raw_data::reset()
   _auxiliaries_.clear();
   _locked_ = false;
   _lock_password_.clear();
+  return;
 }
 
 void raw_data::randomize_hits(unsigned int number_of_hits_)
@@ -76,15 +81,16 @@ bool raw_data::is_locked() const
 
 void raw_data::lock(const std::string & password_)
 {
-  DT_THROW_IF (is_locked(), std::logic_error, "Raw data is already locked !");
+  DT_THROW_IF(is_locked(), std::logic_error, "Raw data is already locked !");
   _locked_ = true;
   _lock_password_ = toy_cypher(password_);
+  return;
 }
 
 void raw_data::unlock(const std::string & password_)
 {
-  DT_THROW_IF (! is_locked(), std::logic_error, "Raw data is not locked !");
-  DT_THROW_IF (toy_cypher(password_) != _lock_password_, std::runtime_error, "Invalid lock password !");
+  DT_THROW_IF(! is_locked(), std::logic_error, "Raw data is not locked !");
+  DT_THROW_IF(toy_cypher(password_) != _lock_password_, std::runtime_error, "Invalid lock password !");
   _locked_ = false;
   _lock_password_.clear();
 }
@@ -93,9 +99,10 @@ void raw_data::unlock(const std::string & password_)
 void raw_data::set_lock_password(const std::string & new_password_,
                                  const std::string & old_password_)
 {
-  DT_THROW_IF (toy_cypher(old_password_) != _lock_password_, std::runtime_error, "Authentication failed ! Invalid lock password !");
+  DT_THROW_IF(toy_cypher(old_password_) != _lock_password_, std::runtime_error, "Authentication failed ! Invalid lock password !");
   _locked_ = true;
   _lock_password_ = toy_cypher(new_password_);
+  return;
 }
 
 void raw_data::dump(std::ostream & out_,
@@ -112,5 +119,3 @@ void raw_data::dump(std::ostream & out_,
   _auxiliaries_.tree_dump(out_,"",indent_ + "    ");
   return;
 }
-
-// end of raw_data.cc

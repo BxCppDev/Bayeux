@@ -6,28 +6,31 @@
  *
  */
 
-#ifndef RAW_DATA_H_
-#define RAW_DATA_H_ 1
+#ifndef RAW_DATA_H
+#define RAW_DATA_H
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Third party:
+// - Boost:
 // Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools:
 // Interface base class from datatools to support serialization tools:
 #include <datatools/i_serializable.h>
-
 // Use also this class from the datatools library :
 #include <datatools/properties.h>
 
+// This project:
 // Use the ``raw_hit`` class :
 #include <raw_hit.h>
 
-/** ``raw_data`` is a serializable class using datatools serialization
- *  concept and Boost/Serialization registration mechanism.
- */
+/// \brief ``raw_data`` is a serializable class using datatools serialization
+///  concept and Boost/Serialization registration mechanism. A "raw_data"
+///  object contains a collection of "raw_hit" serializable objects.
 class raw_data :
   DATATOOLS_SERIALIZABLE_CLASS
 {
@@ -78,12 +81,12 @@ public:
                          const std::string & old_password_);
 
 private:
-  bool _locked_;                       /** A flag to forbid modifications
-                                        *  of the collection of raw hits
-                                        */
-  std::string _lock_password_;         /// Lock password (encrypted with a toy cypher)
-  std::vector<raw_hit>  _hits_;        /// The collection of raw hits
-  datatools::properties _auxiliaries_; /// The container of auxiliary properties
+
+  bool _locked_;                       ///< A flag to forbid modifications of the collection of raw hits
+  std::string _lock_password_;         ///< Lock password (encrypted with a toy cypher)
+  std::vector<raw_hit>  _hits_;        ///< The collection of raw hits
+  // Note: the std::vector class is natively supported by the Boost/Serialization class.
+  datatools::properties _auxiliaries_; ///< The container of auxiliary properties
 
   /** This macro declares the serialization interface
    *  within the datatools framework
@@ -92,10 +95,10 @@ private:
 
 };
 
-// Special interface macro to register the class through the Boost/Serialization system :
+// Special interface macro to register the class through the Boost/Serialization system.
+// This macro and the associated one "BOOST_CLASS_EXPORT_IMPLEMENT(...)" are needed to make
+// "raw_data" objects storable in a ``datatools::things`` object:
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(raw_data, "raw_data");
 
-#endif // RAW_DATA_H_
-
-/* end of raw_data.h */
+#endif // RAW_DATA_H

@@ -7,8 +7,12 @@ Introduction
 
  * Description:
 
-   This example illustrates how to create classes with
-   serialization support within the ``Bayeux/datatools`` framework.
+   This example illustrates  how to create a  class with serialization
+   support within  the ``Bayeux/datatools``  framework.  Serialization
+   support means  that any object  of this class will  be serializable
+   through  the Boost/Serialization  library  and  Bayeux I/O  derived
+   tools. This  also means that such  objects will be storable  in the
+   banks of a ``datatools::things`` container.
 
  * Source files :
 

@@ -6,39 +6,40 @@
  *
  */
 
-#ifndef RAW_HIT_H_
-#define RAW_HIT_H_ 1
+#ifndef RAW_HIT_H
+#define RAW_HIT_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
+// Third party:
+// - Boost:
 // Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
-
+// - Bayeux/datatools:
 // Interface base class from datatools to support serialization tools:
 #include <datatools/i_serializable.h>
-
 // Use also this class from the datatools library :
 #include <datatools/properties.h>
 
-/** ``raw_hit`` is a serializable class using datatools serialization
- *  concept.
- */
+/// \brief ``raw_hit`` is a serializable class using datatools serialization
 class raw_hit :
   DATATOOLS_SERIALIZABLE_CLASS /** This macro declares this class as
-                                * serializable for datatools
+                                * serializable for Bayeux/datatools
                                 */
 {
 public:
 
-  static const int INVALID_ID = -1;
-  static const int INVALID_CHANNEL = -1;
-  static const unsigned int MAX_CHANNEL = 128;
-  static const unsigned int MAX_ADC = 1024;
-  static const unsigned int MAX_TDC = 1048576;
-  static const double LOW_QUALITY_PROB;
-  static const std::string LOW_QUALITY_KEY;
+  // Static constants :
+  static const int          INVALID_ID      = -1;
+  static const int          INVALID_CHANNEL = -1;
+  static const unsigned int MAX_CHANNEL     = 128;
+  static const unsigned int MAX_ADC         = 1024;
+  static const unsigned int MAX_TDC         = 1048576;
+  static const double       LOW_QUALITY_PROB;
+  static const std::string  LOW_QUALITY_KEY;
 
   /// Default constructor
   raw_hit();
@@ -89,13 +90,15 @@ private:
   /** We use here the ``[u]int[NBITS]_t`` Boost typedefs for
    *  integral types. This implies ``#include <boost/cstdint.hpp>``.
    */
-  int16_t  _id_;         /// The unique ID of the hit (16 bits)
-
-  bool     _simulated_;  /// Simulation flag
-  int8_t   _channel_;    /// The channel ID
-  uint16_t _adc_;        /// The ADC value
-  uint32_t _tdc_;        /// The TDC value
-  datatools::properties _auxiliaries_; /// The container of auxiliary properties
+  int16_t  _id_;         ///< The unique ID of the hit (16 bits)
+  bool     _simulated_;  ///< Simulation flag
+  int8_t   _channel_;    ///< The channel ID
+  uint16_t _adc_;        ///< The ADC value
+  uint32_t _tdc_;        ///< The TDC value
+  datatools::properties _auxiliaries_; ///< The container of auxiliary properties
+  // The ``datatools::properties`` class is made serializable by Bayeux/datatools
+  // so an attribute of this class is safely processed while a raw hit object
+  // is serialized.
 
   /** This macro declares the serialization interface
    *  within the datatools framework
@@ -104,6 +107,4 @@ private:
 
 };
 
-#endif // RAW_HIT_H_
-
-/* end of raw_hit.h */
+#endif // RAW_HIT_H

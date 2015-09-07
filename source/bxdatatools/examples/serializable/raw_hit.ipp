@@ -1,20 +1,21 @@
 // -*- mode: c++; -*-
 /// \file raw_hit.ipp
 
-#ifndef RAW_HIT_IPP_
-#define RAW_HIT_IPP_ 1
+#ifndef RAW_HIT_IPP
+#define RAW_HIT_IPP 1
 
+// Ourselves:
 #include <raw_hit.h>
 
+// Third party:
+// - Boost:
 // Support for inheritance from an serializable class :
 #include <boost/serialization/base_object.hpp>
-
 // Support for XML 'key-value' based archives:
 #include <boost/serialization/nvp.hpp>
-
+// - Bayeux/datatools:
 // Datatools support for serializable objects :
 #include <datatools/i_serializable.ipp>
-
 // Support serialization for the ``datatools::properties`` class :
 #include <datatools/properties.ipp>
 
@@ -35,5 +36,4 @@ void raw_hit::serialize(Archive & ar, const unsigned int version)
   return;
 }
 
-#endif // RAW_HIT_IPP_
-
+#endif // RAW_HIT_IPP
