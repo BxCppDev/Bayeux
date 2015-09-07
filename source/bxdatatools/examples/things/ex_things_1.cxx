@@ -126,10 +126,11 @@ int main (int argc_, char ** argv_)
 
     // Extract and manipulate data banks from the data record :
     {
+      // We check the bank name and the type of the stored object:
       if (DR.has("EH") && DR.is_a<datatools::properties>("EH")) {
         DT_LOG_NOTICE(logging, "Found the event header bank.");
 
-        // Obtain a mutable reference :
+        // Obtain a mutable reference to the embedded object:
         datatools::properties & EH = DR.grab<datatools::properties>("EH");
         EH.store_flag("visited"); // modify the contents of the container
 
@@ -138,6 +139,7 @@ int main (int argc_, char ** argv_)
         const_EH.tree_dump(std::clog, "Event header : "); // print it
       }
 
+      // We check the bank name and the type of another stored object:
       if (DR.has("RD") && DR.is_a<datatools::properties>("RD")) {
         DT_LOG_NOTICE(logging, "Found the raw data bank.");
 
@@ -166,7 +168,6 @@ int main (int argc_, char ** argv_)
       }
 
     }
-
 
     // Remove a data bank from the data record :
     {
