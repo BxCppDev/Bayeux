@@ -287,9 +287,9 @@ namespace datatools {
 
 
   int32_t properties::data::get_size() const {
-    DT_THROW_IF (!this->has_type(),
-                 std::logic_error,
-                 "No type!");
+    DT_THROW_IF(!this->has_type(),
+                std::logic_error,
+                "No type!");
     if (this->is_vector()) {
       if (this->is_boolean()) return _boolean_values_.size();
       if (this->is_integer()) return _integer_values_.size();
@@ -349,27 +349,27 @@ namespace datatools {
     _flags_  = 0;
     int code=0;
     this->init_values_(TYPE_STRING_SYMBOL, a_size);
-    DT_THROW_IF (has_forbidden_char (a_value),
-                 std::logic_error,
-                 "Forbidden char in string '" << a_value << "'!");
+    DT_THROW_IF(has_forbidden_char(a_value),
+                std::logic_error,
+                "Forbidden char in string '" << a_value << "'!");
     for (int i = 0; i < (int)this->size(); ++i) {
       code = this->set_value(a_value, i);
-      DT_THROW_IF (code != ERROR_SUCCESS,
-                   std::logic_error,
-                   "Failure!");
+      DT_THROW_IF(code != ERROR_SUCCESS,
+                  std::logic_error,
+                  "Failure!");
     }
   }
 
 
-  properties::data::data (const char* a_value, int a_size) {
+  properties::data::data(const char* a_value, int a_size) {
     _flags_ = 0;
     this->init_values_(TYPE_STRING_SYMBOL, a_size);
     std::string tmp;
     if (a_value != 0) {
       tmp = a_value;
-      DT_THROW_IF (has_forbidden_char(tmp),
-                   std::logic_error,
-                   "Forbidden char in string '" << tmp << "'!");
+      DT_THROW_IF(has_forbidden_char(tmp),
+                  std::logic_error,
+                  "Forbidden char in string '" << tmp << "'!");
     }
     for (int i = 0; i < (int)this->size(); ++i) {
       this->set_value(tmp, i);
@@ -445,9 +445,9 @@ namespace datatools {
 
   int properties::data::set_explicit_unit(bool xu_)
   {
-    DT_THROW_IF (!this->is_real(),
-                 std::logic_error,
-                 "Not a real type!");
+    DT_THROW_IF(!this->is_real(),
+                std::logic_error,
+                "Not a real type!");
     if (! xu_) {
       _flags_ &= ~MASK_EXPLICIT_UNIT;
     } else {
@@ -525,36 +525,36 @@ namespace datatools {
 
   bool properties::data::get_boolean_value(int a_index) const {
     bool value;
-    DT_THROW_IF (this->get_value(value, a_index) != ERROR_SUCCESS,
-                 std::logic_error,
-                 "Type is not boolean!");
+    DT_THROW_IF(this->get_value(value, a_index) != ERROR_SUCCESS,
+                std::logic_error,
+                "Type is not boolean!");
     return value;
   }
 
 
   int properties::data::get_integer_value(int a_index) const {
     int value;
-    DT_THROW_IF (this->get_value(value, a_index) != ERROR_SUCCESS,
-                 std::logic_error,
-                 "Type is not integer!");
+    DT_THROW_IF(this->get_value(value, a_index) != ERROR_SUCCESS,
+                std::logic_error,
+                "Type is not integer!");
     return value;
   }
 
 
   double properties::data::get_real_value(int a_index) const {
     double value;
-    DT_THROW_IF (this->get_value(value, a_index) != ERROR_SUCCESS,
-                 std::logic_error,
-                 "Type is not real!");
+    DT_THROW_IF(this->get_value(value, a_index) != ERROR_SUCCESS,
+                std::logic_error,
+                "Type is not real!");
     return value;
   }
 
 
   std::string properties::data::get_string_value(int a_index) const {
     std::string value;
-    DT_THROW_IF (this->get_value(value, a_index) != ERROR_SUCCESS,
-                 std::logic_error,
-                 "Type is not string!");
+    DT_THROW_IF(this->get_value(value, a_index) != ERROR_SUCCESS,
+                std::logic_error,
+                "Type is not string!");
     return value;
   }
 
@@ -725,10 +725,10 @@ namespace datatools {
 
   void properties::_validate_key_(const std::string& prop_key) const {
     if (_key_validator_ != 0) {
-      DT_THROW_IF (!_key_validator_->operator()(prop_key),
-                   std::logic_error,
-                   "After key validator, the '"
-                   << prop_key << "' key is not valid!");
+      DT_THROW_IF(!_key_validator_->operator()(prop_key),
+                  std::logic_error,
+                  "After key validator, the '"
+                  << prop_key << "' key is not valid!");
     }
   }
 
@@ -863,9 +863,9 @@ namespace datatools {
 
   void properties::erase(const std::string& prop_key) {
     pmap::iterator found = _props_.find(prop_key);
-    DT_THROW_IF (found == _props_.end(),
-                 std::logic_error,
-                 "Key '" << prop_key << "' not known!");
+    DT_THROW_IF(found == _props_.end(),
+                std::logic_error,
+                "Key '" << prop_key << "' not known!");
     _props_.erase(found);
   }
 
@@ -881,7 +881,7 @@ namespace datatools {
 
   void properties::erase_all_not_starting_with(const std::string& prefix) {
     keys_col_type keys;
-    keys_not_starting_with (keys, prefix);
+    keys_not_starting_with(keys, prefix);
     for (keys_col_type::const_iterator i = keys.begin(); i != keys.end(); ++i){
       this->erase(*i);
     }
@@ -891,9 +891,9 @@ namespace datatools {
   void properties::export_and_rename_starting_with(properties& a_props,
                                                    const std::string& prop_key_prefix,
                                                    const std::string& a_new_prefix) const {
-    DT_THROW_IF (this == &a_props,
-                 std::logic_error,
-                 "Self export is not allowed !");
+    DT_THROW_IF(this == &a_props,
+                std::logic_error,
+                "Self export is not allowed !");
     keys_col_type ks;
     this->keys_starting_with(ks, prop_key_prefix);
     for (keys_col_type::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
@@ -905,9 +905,9 @@ namespace datatools {
   }
 
   void properties::export_all(properties & a_props) const {
-    DT_THROW_IF (this == &a_props,
-                 std::logic_error,
-                 "Self export is not allowed !");
+    DT_THROW_IF(this == &a_props,
+                std::logic_error,
+                "Self export is not allowed !");
     keys_col_type ks;
     this->keys(ks);
     for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
@@ -918,9 +918,9 @@ namespace datatools {
 
   void properties::export_all_adding_prefix(properties & a_props,
                                             const std::string & prefix) const {
-    DT_THROW_IF (this == &a_props,
-                 std::logic_error,
-                 "Self export is not allowed !");
+    DT_THROW_IF(this == &a_props,
+                std::logic_error,
+                "Self export is not allowed !");
     keys_col_type ks;
     this->keys(ks);
     for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
@@ -933,9 +933,9 @@ namespace datatools {
 
   void properties::export_starting_with(properties & a_props,
                                         const std::string& prefix) const {
-    DT_THROW_IF (this == &a_props,
-                 std::logic_error,
-                 "Self export is not allowed !");
+    DT_THROW_IF(this == &a_props,
+                std::logic_error,
+                "Self export is not allowed !");
     keys_col_type ks;
     this->keys_starting_with(ks, prefix);
     for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
@@ -947,9 +947,9 @@ namespace datatools {
 
   void properties::export_not_starting_with(properties& a_props,
                                             const std::string& prefix) const {
-    DT_THROW_IF (this == &a_props,
-                 std::logic_error,
-                 "Self export is not allowed !");
+    DT_THROW_IF(this == &a_props,
+                std::logic_error,
+                "Self export is not allowed !");
     keys_col_type ks;
     this->keys_not_starting_with(ks, prefix);
     for (keys_col_type::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
@@ -972,16 +972,16 @@ namespace datatools {
     keys_col_type keys;
     this->keys_not_ending_with(keys, suffix);
     for (keys_col_type::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-      this->erase (*i);
+      this->erase(*i);
     }
   }
 
 
   void properties::export_ending_with(properties& a_props,
                                       const std::string& suffix) const {
-    DT_THROW_IF (this == &a_props,
-                 std::logic_error,
-                 "Self export is not allowed !");
+    DT_THROW_IF(this == &a_props,
+                std::logic_error,
+                "Self export is not allowed !");
     keys_col_type ks;
     this->keys_ending_with(ks, suffix);
     for (keys_col_type::const_iterator i = ks.begin(); i != ks.end(); ++i) {
@@ -993,9 +993,9 @@ namespace datatools {
 
   void properties::export_not_ending_with(properties& a_props,
                                           const std::string& suffix) const {
-    DT_THROW_IF (this == &a_props,
-                 std::logic_error,
-                 "Self export is not allowed !");
+    DT_THROW_IF(this == &a_props,
+                std::logic_error,
+                "Self export is not allowed !");
     keys_col_type ks;
     this->keys_not_ending_with(ks, suffix);
     for (keys_col_type::const_iterator i = ks.begin(); i !=  ks.end(); ++i) {
@@ -1034,9 +1034,9 @@ namespace datatools {
 
   void properties::keys_not_starting_with(std::vector<std::string>& keys,
                                           const std::string& prefix) const {
-    DT_THROW_IF (prefix.empty(),
-                 std::logic_error,
-                 "Empty key prefix argument !");
+    DT_THROW_IF(prefix.empty(),
+                std::logic_error,
+                "Empty key prefix argument !");
     size_t n = prefix.size();
     for (pmap::const_iterator iter = _props_.begin();
          iter != _props_.end();
@@ -1049,7 +1049,7 @@ namespace datatools {
 
 
   std::vector<std::string> properties::keys_not_starting_with(
-                                                       const std::string& prefix) const {
+                                                              const std::string& prefix) const {
     std::vector<std::string> lkeys;
     this->keys_not_starting_with(lkeys, prefix);
     return lkeys;
@@ -1058,9 +1058,9 @@ namespace datatools {
 
   void properties::keys_starting_with(std::vector<std::string>& keys,
                                       const std::string& prefix) const {
-    DT_THROW_IF (prefix.empty(),
-                 std::logic_error,
-                 "Empty key prefix argument !");
+    DT_THROW_IF(prefix.empty(),
+                std::logic_error,
+                "Empty key prefix argument !");
     size_t n = prefix.size();
     for (pmap::const_iterator iter = _props_.begin();
          iter != _props_.end();
@@ -1074,7 +1074,7 @@ namespace datatools {
 
 
   std::vector<std::string> properties::keys_starting_with(
-                                                   const std::string& prefix) const {
+                                                          const std::string& prefix) const {
     std::vector<std::string> lkeys;
     this->keys_starting_with(lkeys, prefix);
     return lkeys;
@@ -1083,9 +1083,9 @@ namespace datatools {
 
   void properties::keys_not_ending_with(std::vector<std::string>& prop_keys,
                                         const std::string& suffix) const {
-    DT_THROW_IF (suffix.empty(),
-                 std::logic_error,
-                 "Empty key suffix argument !");
+    DT_THROW_IF(suffix.empty(),
+                std::logic_error,
+                "Empty key suffix argument !");
     size_t n = suffix.size();
     for (pmap::const_iterator iter = _props_.begin();
          iter != _props_.end();
@@ -1101,7 +1101,7 @@ namespace datatools {
 
 
   std::vector<std::string> properties::keys_not_ending_with(
-                                                     const std::string& suffix) const {
+                                                            const std::string& suffix) const {
     std::vector<std::string> lkeys;
     this->keys_not_ending_with(lkeys, suffix);
     return lkeys;
@@ -1110,9 +1110,9 @@ namespace datatools {
 
   void properties::keys_ending_with(std::vector<std::string>& prop_keys,
                                     const std::string& suffix) const {
-    DT_THROW_IF (suffix.empty(),
-                 std::logic_error,
-                 "Empty key suffix argument in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(suffix.empty(),
+                std::logic_error,
+                "Empty key suffix argument in properties described by '" << get_description() << "' !");
     size_t n = suffix.size();
     for (pmap::const_iterator iter = _props_.begin();
          iter != _props_.end();
@@ -1152,9 +1152,9 @@ namespace datatools {
   properties::get(const std::string& prop_key) const
   {
     pmap::const_iterator found = _props_.find(prop_key);
-    DT_THROW_IF (found == _props_.end(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' does not exist in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(found == _props_.end(),
+                std::logic_error,
+                "Property '" << prop_key << "' does not exist in properties described by '" << get_description() << "' !");
     const data & pd = found->second;
     return pd;
   }
@@ -1165,7 +1165,7 @@ namespace datatools {
     _props_[prop_key] = value;
   }
 
-  const std::string & properties::key (int key_index_) const
+  const std::string & properties::key(int key_index_) const
   {
     int key_count = 0;
     pmap::const_iterator iter = _props_.begin();
@@ -1176,19 +1176,19 @@ namespace datatools {
         break;
       };
     }
-    DT_THROW_IF (iter == _props_.end(),
-                 std::logic_error,
-                 "Invalid key index '" << key_index_ << "' in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(iter == _props_.end(),
+                std::logic_error,
+                "Invalid key index '" << key_index_ << "' in properties described by '" << get_description() << "' !");
     return iter->first;
   }
 
   void properties::lock(const std::string& key) {
-    key_lock (key);
+    key_lock(key);
   }
 
 
   void properties::unlock(const std::string& key) {
-    key_unlock (key);
+    key_unlock(key);
   }
 
 
@@ -1253,14 +1253,14 @@ namespace datatools {
   }
 
 
-  bool properties::is_string (const std::string& key) const {
+  bool properties::is_string(const std::string& key) const {
     const data *data_ptr = 0;
     this->_check_key_(key, &data_ptr);
     return data_ptr->is_string();
   }
 
 
-  bool properties::is_scalar (const std::string& key) const {
+  bool properties::is_scalar(const std::string& key) const {
     const data *data_ptr = 0;
     this->_check_key_(key, &data_ptr);
     return data_ptr->is_scalar();
@@ -1294,7 +1294,7 @@ namespace datatools {
   }
 
 
-  void properties::key_lock (const std::string& prop_key)
+  void properties::key_lock(const std::string& prop_key)
   {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
@@ -1302,7 +1302,7 @@ namespace datatools {
     return;
   }
 
-  void properties::key_unlock (const std::string& prop_key)
+  void properties::key_unlock(const std::string& prop_key)
   {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
@@ -1311,15 +1311,15 @@ namespace datatools {
   }
 
   const std::string &
-  properties::get_key_description (const std::string& prop_key) const
+  properties::get_key_description(const std::string& prop_key) const
   {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     return data_ptr->get_description();
   }
 
-  void properties::set_key_description (const std::string& prop_key,
-                                        const std::string& desc_)
+  void properties::set_key_description(const std::string& prop_key,
+                                       const std::string& desc_)
   {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
@@ -1328,17 +1328,17 @@ namespace datatools {
   }
 
   void properties::_check_nokey_(const std::string& prop_key) const {
-    DT_THROW_IF (this->has_key(prop_key),
-                 std::logic_error,
-                 "Key '" << prop_key << "' already used in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(this->has_key(prop_key),
+                std::logic_error,
+                "Key '" << prop_key << "' already used in properties described by '" << get_description() << "' !");
   }
 
 
   void properties::_check_key_(const std::string& prop_key, data **a_data) {
     pmap::iterator iter = _props_.find(prop_key);
-    DT_THROW_IF (_props_.find(prop_key) == _props_.end(),
-                 std::logic_error,
-                 "Key '" << prop_key << "' does not exist in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(_props_.find(prop_key) == _props_.end(),
+                std::logic_error,
+                "Key '" << prop_key << "' does not exist in properties described by '" << get_description() << "' !");
     *a_data = &(iter->second);
   }
 
@@ -1346,9 +1346,9 @@ namespace datatools {
   void properties::_check_key_(const std::string& prop_key,
                                const data **a_data) const {
     pmap::const_iterator iter = _props_.find(prop_key);
-    DT_THROW_IF (_props_.find(prop_key) == _props_.end(),
-                 std::logic_error,
-                 "Key '" << prop_key << "' does not exist in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(_props_.find(prop_key) == _props_.end(),
+                std::logic_error,
+                "Key '" << prop_key << "' does not exist in properties described by '" << get_description() << "' !");
     *a_data = &(iter->second);
   }
 
@@ -1371,8 +1371,8 @@ namespace datatools {
   }
 
 
-  void properties::store (const std::string& prop_key, int value,
-                          const std::string& description, bool lock) {
+  void properties::store(const std::string& prop_key, int value,
+                         const std::string& description, bool lock) {
     this->_check_nokey_(prop_key);
     this->_validate_key_(prop_key);
     data a_data(value);
@@ -1397,9 +1397,9 @@ namespace datatools {
   {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (! data_ptr->is_string(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not of string type !");
+    DT_THROW_IF(! data_ptr->is_string(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not of string type !");
     return data_ptr->is_explicit_path();
   }
 
@@ -1408,9 +1408,9 @@ namespace datatools {
   {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (! data_ptr->is_real(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(! data_ptr->is_real(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
     return data_ptr->has_unit_symbol();
   }
 
@@ -1418,9 +1418,9 @@ namespace datatools {
   {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (! data_ptr->is_real(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(! data_ptr->is_real(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
     return data_ptr->get_unit_symbol();
   }
 
@@ -1428,11 +1428,11 @@ namespace datatools {
   {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (! data_ptr->is_real(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
-    DT_THROW_IF (data_ptr->set_unit_symbol(unit_symbol) != data::ERROR_SUCCESS,
-                 std::logic_error, "Setting unit symbol fails !");
+    DT_THROW_IF(! data_ptr->is_real(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(data_ptr->set_unit_symbol(unit_symbol) != data::ERROR_SUCCESS,
+                std::logic_error, "Setting unit symbol fails !");
     return;
   }
 
@@ -1441,9 +1441,9 @@ namespace datatools {
   {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (! data_ptr->is_real(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(! data_ptr->is_real(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
     return data_ptr->has_explicit_unit();
   }
 
@@ -1452,11 +1452,11 @@ namespace datatools {
   {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (! data_ptr->is_string(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not of string type in properties described by '" << get_description() << "' !");
-    DT_THROW_IF (data_ptr->set_explicit_path(a_explicit_path) != data::ERROR_SUCCESS,
-                 std::logic_error, "Setting explicit path fails !");
+    DT_THROW_IF(! data_ptr->is_string(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not of string type in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(data_ptr->set_explicit_path(a_explicit_path) != data::ERROR_SUCCESS,
+                std::logic_error, "Setting explicit path fails !");
     return;
   }
 
@@ -1465,13 +1465,13 @@ namespace datatools {
   {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (! data_ptr->is_real(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
-    DT_THROW_IF (data_ptr->set_explicit_unit(a_explicit_unit) != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Setting explicit unit fails for property '" << prop_key
-                 << "' in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(! data_ptr->is_real(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not of real type in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(data_ptr->set_explicit_unit(a_explicit_unit) != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Setting explicit unit fails for property '" << prop_key
+                << "' in properties described by '" << get_description() << "' !");
     return;
   }
 
@@ -1621,7 +1621,7 @@ namespace datatools {
     this->change(prop_key, value, index);
   }
 
-  void properties::change_boolean_scalar (const std::string& prop_key, bool value) {
+  void properties::change_boolean_scalar(const std::string& prop_key, bool value) {
     this->change(prop_key, value, 0);
   }
 
@@ -1685,11 +1685,11 @@ namespace datatools {
     this->_check_key_(prop_key, &data_ptr);
 
     int error = data_ptr->set_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot change value for boolean property '"
-                 << prop_key << "' in properties described by '" << get_description() << "' : "
-                 << data::get_error_message(error) << "!");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot change value for boolean property '"
+                << prop_key << "' in properties described by '" << get_description() << "' : "
+                << data::get_error_message(error) << "!");
   }
 
 
@@ -1697,11 +1697,11 @@ namespace datatools {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     int error = data_ptr->set_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot change value for integer property '"
-                 << prop_key << "' in properties described by '" << get_description() << "' : "
-                 << data::get_error_message(error) << "!");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot change value for integer property '"
+                << prop_key << "' in properties described by '" << get_description() << "' : "
+                << data::get_error_message(error) << "!");
   }
 
 
@@ -1709,11 +1709,11 @@ namespace datatools {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     int error = data_ptr->set_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot change value for property '"
-                 << prop_key << "' in properties described by '" << get_description() << "' : "
-                 << data::get_error_message(error) << "!");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot change value for property '"
+                << prop_key << "' in properties described by '" << get_description() << "' : "
+                << data::get_error_message(error) << "!");
   }
 
 
@@ -1722,11 +1722,11 @@ namespace datatools {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     int error = data_ptr->set_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot change value for string property '"
-                 << prop_key << "' in properties described by '" << get_description() << "' : "
-                 << data::get_error_message(error) << "!");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot change value for string property '"
+                << prop_key << "' in properties described by '" << get_description() << "' : "
+                << data::get_error_message(error) << "!");
   }
 
 
@@ -1741,24 +1741,24 @@ namespace datatools {
   void properties::change(const std::string& prop_key, const data::vbool& values) {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_boolean() || !data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of booleans in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(!data_ptr->is_boolean() || !data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of booleans in properties described by '" << get_description() << "' !");
     if ((int)values.size() != data_ptr->get_size()) {
       int error = data_ptr->boolean(values.size());
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of booleans property '"
-                   << prop_key << "': "
-                   << data::get_error_message(error) << " in properties described by '" << get_description() << "' !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of booleans property '"
+                  << prop_key << "': "
+                  << data::get_error_message(error) << " in properties described by '" << get_description() << "' !");
     }
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->set_value(values[i], i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of booleans property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': "
-                   << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of booleans property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
   }
 
@@ -1766,24 +1766,24 @@ namespace datatools {
   void properties::change(const std::string& prop_key, const data::vint& values) {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_integer() || !data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of integers in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(!data_ptr->is_integer() || !data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of integers in properties described by '" << get_description() << "' !");
     if ((int)values.size() != data_ptr->get_size()) {
       int error = data_ptr->integer(values.size());
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of integers property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': "
-                   << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of integers property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->set_value(values[i], i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of integers property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': "
-                   << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of integers property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
   }
 
@@ -1792,24 +1792,24 @@ namespace datatools {
                           const data::vdouble& values) {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_real() || ! data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of reals in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(!data_ptr->is_real() || ! data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of reals in properties described by '" << get_description() << "' !");
     if ((int)values.size() != data_ptr->get_size()) {
       int error = data_ptr->real(values.size());
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of reals property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': "
-                   << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of reals property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->set_value(values[i], i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of reals property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': "
-                   << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of reals property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
   }
 
@@ -1818,24 +1818,24 @@ namespace datatools {
                           const data::vstring& values) {
     data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_string() || ! data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of strings in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(!data_ptr->is_string() || ! data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of strings in properties described by '" << get_description() << "' !");
     if ((int)values.size() != data_ptr->get_size()) {
       int error = data_ptr->string(values.size());
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of strings property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': "
-                   << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of strings property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->set_value(values[i], i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot change value for vector of strings property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': "
-                   << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot change value for vector of strings property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': "
+                  << data::get_error_message(error) << " !");
     }
   }
 
@@ -2027,11 +2027,11 @@ namespace datatools {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot fetch boolean value from property '"
-                 << prop_key << "' in properties described by '" << get_description() << "': "
-                 << data::get_error_message(error) << " !");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot fetch boolean value from property '"
+                << prop_key << "' in properties described by '" << get_description() << "': "
+                << data::get_error_message(error) << " !");
   }
 
 
@@ -2040,11 +2040,11 @@ namespace datatools {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot fetch integer value from property '"
-                 << prop_key << "' in properties described by '" << get_description() << "': "
-                 << data::get_error_message(error) << " !");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot fetch integer value from property '"
+                << prop_key << "' in properties described by '" << get_description() << "': "
+                << data::get_error_message(error) << " !");
   }
 
 
@@ -2053,11 +2053,11 @@ namespace datatools {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot fetch real value from property '"
-                 << prop_key << "' in properties described by '" << get_description() << "': "
-                 << data::get_error_message(error) << " !");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot fetch real value from property '"
+                << prop_key << "' in properties described by '" << get_description() << "': "
+                << data::get_error_message(error) << " !");
   }
 
 
@@ -2066,11 +2066,11 @@ namespace datatools {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
     int error = data_ptr->get_value(value, index);
-    DT_THROW_IF (error != data::ERROR_SUCCESS,
-                 std::logic_error,
-                 "Cannot fetch string value from property '"
-                 << prop_key << "' in properties described by '" << get_description() << "': "
-                 << data::get_error_message(error) << " !");
+    DT_THROW_IF(error != data::ERROR_SUCCESS,
+                std::logic_error,
+                "Cannot fetch string value from property '"
+                << prop_key << "' in properties described by '" << get_description() << "': "
+                << data::get_error_message(error) << " !");
   }
 
 
@@ -2128,9 +2128,9 @@ namespace datatools {
                                      int index) const {
     std::string value;
     this->fetch(prop_key, value, index);
-    DT_THROW_IF (!fetch_path_with_env(value),
-                 std::logic_error,
-                 "Property '" << prop_key << "' cannot be interpreted as a valid path string !");
+    DT_THROW_IF(!fetch_path_with_env(value),
+                std::logic_error,
+                "Property '" << prop_key << "' cannot be interpreted as a valid path string !");
     return value;
   }
 
@@ -2138,18 +2138,18 @@ namespace datatools {
   void properties::fetch(const std::string& prop_key, data::vbool& values) const {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_boolean() || !data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of booleans !");
+    DT_THROW_IF(!data_ptr->is_boolean() || !data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of booleans !");
     values.resize(data_ptr->size());
     values.assign(data_ptr->size(), data::defaults::boolean_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       bool val;
       int error = data_ptr->get_value(val, i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot fetch a vector of booleans from property '"
-                   << prop_key << "': " << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot fetch a vector of booleans from property '"
+                  << prop_key << "': " << data::get_error_message(error) << " !");
       values[i] = val;
     }
   }
@@ -2158,17 +2158,17 @@ namespace datatools {
   void properties::fetch(const std::string& prop_key, data::vint& values) const {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_integer() || ! data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of integers !");
+    DT_THROW_IF(!data_ptr->is_integer() || ! data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of integers !");
     values.resize(data_ptr->size());
     values.assign(data_ptr->size(),data::defaults::integer_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->get_value(values[i], i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot fetch a vector of integers from property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': " << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot fetch a vector of integers from property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': " << data::get_error_message(error) << " !");
     }
   }
 
@@ -2184,17 +2184,17 @@ namespace datatools {
                          data::vdouble& values) const {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_real() || ! data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of reals !");
+    DT_THROW_IF(!data_ptr->is_real() || ! data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of reals !");
     values.resize(data_ptr->size());
     values.assign(data_ptr->size(), data::defaults::real_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->get_value(values[i], i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot fetch a vector of reals from property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': " << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot fetch a vector of reals from property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': " << data::get_error_message(error) << " !");
     }
   }
 
@@ -2203,17 +2203,17 @@ namespace datatools {
                          data::vstring& values) const {
     const data *data_ptr = 0;
     this->_check_key_(prop_key, &data_ptr);
-    DT_THROW_IF (!data_ptr->is_string() || ! data_ptr->is_vector(),
-                 std::logic_error,
-                 "Property '" << prop_key << "' is not a vector of string in properties described by '" << get_description() << "' !");
+    DT_THROW_IF(!data_ptr->is_string() || ! data_ptr->is_vector(),
+                std::logic_error,
+                "Property '" << prop_key << "' is not a vector of string in properties described by '" << get_description() << "' !");
     values.resize(data_ptr->size());
-    values.assign (data_ptr->size (), data::defaults::string_value());
+    values.assign(data_ptr->size(), data::defaults::string_value());
     for (int i = 0; i < (int)values.size(); ++i) {
       int error = data_ptr->get_value(values[i], i);
-      DT_THROW_IF (error != data::ERROR_SUCCESS,
-                   std::logic_error,
-                   "Cannot fetch  a vector of strings from property '"
-                   << prop_key << "' in properties described by '" << get_description() << "': " << data::get_error_message(error) << " !");
+      DT_THROW_IF(error != data::ERROR_SUCCESS,
+                  std::logic_error,
+                  "Cannot fetch  a vector of strings from property '"
+                  << prop_key << "' in properties described by '" << get_description() << "': " << data::get_error_message(error) << " !");
     }
   }
 
@@ -2284,9 +2284,9 @@ namespace datatools {
     this->tree_dump(out, "datatools::properties");
   }
 
-  void properties::write_configuration (const std::string& filename,
-                                        bool a_use_smart_modulo,
-                                        bool a_write_public_only) const
+  void properties::write_configuration(const std::string& filename,
+                                       bool a_use_smart_modulo,
+                                       bool a_write_public_only) const
   {
     write_config(filename,
                  *this,
@@ -2295,7 +2295,7 @@ namespace datatools {
     return;
   }
 
-  void properties::read_configuration (const std::string& filename)
+  void properties::read_configuration(const std::string& filename)
   {
     read_config(filename, *this);
     return;
@@ -2310,9 +2310,9 @@ namespace datatools {
 
     if (!a_filename.empty()) {
       fout.open(a_filename.c_str());
-      DT_THROW_IF (!fout,
-                   std::runtime_error,
-                   "Cannot open file '" << a_filename << " !");
+      DT_THROW_IF(!fout,
+                  std::runtime_error,
+                  "Cannot open file '" << a_filename << " !");
       out = &fout;
     }
     config a_cfg(a_use_smart_modulo,
@@ -2328,9 +2328,9 @@ namespace datatools {
   void properties::read_config(const std::string& filename,
                                properties& props) {
     std::ifstream fin(filename.c_str());
-    DT_THROW_IF (!fin,
-                 std::runtime_error,
-                 "Cannot open file '" << filename << " !");
+    DT_THROW_IF(!fin,
+                std::runtime_error,
+                "Cannot open file '" << filename << " !");
     config cfg;
     props.clear();
     cfg.read(fin, props);
@@ -2363,15 +2363,15 @@ namespace datatools {
         unit_symbol = a_data.get_unit_symbol();
       }
       /*
-      else if (! a_unit_symbol.empty() || ! a_unit_label.empty()) {
+        else if (! a_unit_symbol.empty() || ! a_unit_label.empty()) {
         real_with_unit = true;
         if (! a_unit_symbol.empty()) {
-          unit_symbol = a_unit_symbol;
+        unit_symbol = a_unit_symbol;
         } else if (! a_unit_label.empty()) {
-          unit_symbol = units::get_default_unit_symbol_from_label(a_unit_label);
-          unit_label = a_unit_label;
+        unit_symbol = units::get_default_unit_symbol_from_label(a_unit_label);
+        unit_label = a_unit_label;
         }
-      }
+        }
       */
       if (!unit_symbol.empty()) {
         std::string unit_label2;
@@ -2610,10 +2610,11 @@ namespace datatools {
 
     unsigned int vpp_flags = 0;
     // vpp_flags |= configuration::variant_preprocessor::FLAG_DEVEL;
+    // vpp_flags |= configuration::variant_preprocessor::FLAG_REMOVE_QUOTES;
     configuration::variant_preprocessor vpp(vpp_flags);
 
     while (a_in) {
-      DT_LOG_NOTICE (logging, "Loop on input stream...");
+      DT_LOG_NOTICE(logging, "Loop on input stream...");
       std::string line_get;
       std::getline(a_in, line_get);
       _read_line_count_++;
@@ -2625,17 +2626,17 @@ namespace datatools {
       if (sz > 0 && line_get[sz-1] == _continuation_char_) {
         line_continue = true;
         line_get = line_get.substr(0, sz - 1);
-        DT_LOG_NOTICE (logging, "line_get='" << line_get << "'");
+        DT_LOG_NOTICE(logging, "line_get='" << line_get << "'");
       }
 
       if (line_goon) {
         // append to previous line:
         line_in += line_get;
-        DT_LOG_NOTICE (logging,"Append to line='"<< line_in<< "'" );
+        DT_LOG_NOTICE(logging, "Append to line='"<< line_in<< "'" );
       } else {
         // a new line
         line_in = line_get;
-        DT_LOG_NOTICE (logging,"New line='"<< line_in<< "'");
+        DT_LOG_NOTICE(logging, "New line='"<< line_in<< "'");
       }
       line_goon = false;
 
@@ -2646,33 +2647,33 @@ namespace datatools {
       if (!line_goon) {
         bool skip_line = false;
         std::string line = line_in;
-        DT_LOG_NOTICE (logging,"Line " << _read_line_count_ << " size is " << line.size());
+        DT_LOG_NOTICE(logging, "Line " << _read_line_count_ << " size is " << line.size());
         // check if line is blank:
         std::istringstream check_iss(line_in);
         std::string check_word;
         check_iss >> std::ws >> check_word;
         if (check_word.empty()) {
-          DT_LOG_NOTICE (logging, "Line " << _read_line_count_ << " is blank");
+          DT_LOG_NOTICE(logging, "Line " << _read_line_count_ << " is blank");
           skip_line = true;
         }
 
         bool parsing = true;
 
         /*
-        if (variant_blocks.size()) {
-          DT_LOG_NOTICE (logging, "Checking variant '" << variant_blocks.front() << "'...");
+          if (variant_blocks.size()) {
+          DT_LOG_NOTICE(logging, "Checking variant '" << variant_blocks.front() << "'...");
           const std::string & current_variant = variant_blocks.front();
           if (! current_variant.empty()) {
-            bool active_variant = false;
+          bool active_variant = false;
 
-            // ...
+          // ...
 
-            if (! active_variant) {
-              DT_LOG_NOTICE (logging, "Variant '" << variant_blocks.front() << "' is not active.");
-              parsing = false;
-            }
+          if (! active_variant) {
+          DT_LOG_NOTICE(logging, "Variant '" << variant_blocks.front() << "' is not active.");
+          parsing = false;
           }
-        }
+          }
+          }
         */
 
         // check if line is a comment:
@@ -2682,7 +2683,7 @@ namespace datatools {
           iss >> c;
           if (c == _comment_char_) {
             // Handle meta comments:
-            DT_LOG_NOTICE (logging, "Line " << _read_line_count_ << " is a comment.");
+            DT_LOG_NOTICE(logging, "Line " << _read_line_count_ << " is a comment.");
             iss >> std::ws;
             std::string token;
             iss >> token;
@@ -2705,25 +2706,25 @@ namespace datatools {
                 std::string variant_path_rule;
                 iss >> std::ws >> variant_path_rule;
                 variant_only = variant_path_rule;
-                DT_LOG_NOTICE (logging, "Next parameter is active only with variant '" << variant_only << "'.");
+                DT_LOG_NOTICE(logging, "Next parameter is active only with variant '" << variant_only << "'.");
               }
               /*
-              if (token == "@variant_if") {
+                if (token == "@variant_if") {
                 std::string variant_path;
                 iss >> std::ws >> variant_name;
                 variant_blocks.push_front(variant_name);
-                DT_LOG_NOTICE (logging, "Current variant is '" << variant_blocks.front() << "'");
-              } else if (token == "@variant_endif") {
+                DT_LOG_NOTICE(logging, "Current variant is '" << variant_blocks.front() << "'");
+                } else if (token == "@variant_endif") {
                 std::string variant_name;
                 iss >> std::ws >> variant_name;
                 DT_THROW_IF(variant_name != variant_blocks.front(),
-                            std::logic_error,
-                            "Unmatching closing variant block '" << variant_name << "' !"
-                            << "Expected variant name is '" << variant_blocks.front() << "' !");
+                std::logic_error,
+                "Unmatching closing variant block '" << variant_name << "' !"
+                << "Expected variant name is '" << variant_blocks.front() << "' !");
                 variant_blocks.pop_front();
-                DT_LOG_NOTICE (logging, "Current variant is '"
-                               << variant_blocks.front() << "' (was '" << variant_name << "')");;
-              }
+                DT_LOG_NOTICE(logging, "Current variant is '"
+                << variant_blocks.front() << "' (was '" << variant_name << "')");;
+                }
               */
             } else if (parsing) {
 
@@ -2733,8 +2734,8 @@ namespace datatools {
                 iss >> std::ws;
                 std::string config_desc;
                 if (!prop_config.empty()) {
-                  DT_LOG_WARNING (logging, "Duplicated '@config' directive; "
-                                  << "Configuration description '" << a_props.get_description() << "' already loaded!");
+                  DT_LOG_WARNING(logging, "Duplicated '@config' directive; "
+                                 << "Configuration description '" << a_props.get_description() << "' already loaded!");
                 }
                 std::getline(iss, config_desc);
                 if (!config_desc.empty()) {
@@ -2745,7 +2746,7 @@ namespace datatools {
 
               if (allow_include) {
                 if (token == "@include") {
-                  DT_LOG_NOTICE (logging, "Using '@include' directive from line '" << line << "'");
+                  DT_LOG_NOTICE(logging, "Using '@include' directive from line '" << line << "'");
                   iss >> std::ws;
                   std::string include_desc;
                   std::getline(iss, include_desc);
@@ -2760,7 +2761,7 @@ namespace datatools {
                       include_config_file = include_desc;
                     }
                     datatools::fetch_path_with_env(include_config_file);
-                    DT_LOG_NOTICE (logging, "Included file is : '" << include_config_file << "'");
+                    DT_LOG_NOTICE(logging, "Included file is : '" << include_config_file << "'");
                     datatools::properties::read_config(include_config_file, a_props);
                     return;
                   }
@@ -2795,9 +2796,9 @@ namespace datatools {
           DT_LOG_NOTICE(logging, "Line " << _read_line_count_ << " is '" << line << "'");
           std::string line_parsing = line;
           int flag_pos = line_parsing.find_first_of(_assign_char_);
-          DT_THROW_IF (flag_pos >= (int) line_parsing.size(),
-                       std::logic_error,
-                       "Cannot find assign symbol !");
+          DT_THROW_IF(flag_pos >= (int) line_parsing.size(),
+                      std::logic_error,
+                      "Cannot find assign symbol !");
           // parse property desc:
           std::string property_desc_str = line_parsing.substr(0, flag_pos);
           DT_LOG_NOTICE(logging, "property_desc_str='" << property_desc_str << "'");
@@ -2822,7 +2823,7 @@ namespace datatools {
             std::string type_str2;
             std::string type_str3;
             DT_LOG_NOTICE(logging, "type_str='" << type_str << "'");
-            int vec_pos = type_str.find_first_of (OPEN_VECTOR);
+            int vec_pos = type_str.find_first_of(OPEN_VECTOR);
             if (vec_pos != (int)type_str.npos) {
               scalar = false;
               type_str2 = type_str.substr(0, vec_pos);
@@ -2830,26 +2831,26 @@ namespace datatools {
               std::string vec_str = type_str.substr(vec_pos + 1);
               std::istringstream vec_ss(vec_str);
               vec_ss >> vsize;
-              DT_THROW_IF (!vec_ss,
-                           std::logic_error,
-                           "Cannot find vector size for key '" << prop_key << "' at line '" << line << "' !");
-              DT_THROW_IF (vsize < 0,
-                           std::logic_error,
-                           "Invalid vector size !");
+              DT_THROW_IF(!vec_ss,
+                          std::logic_error,
+                          "Cannot find vector size for key '" << prop_key << "' at line '" << line << "' !");
+              DT_THROW_IF(vsize < 0,
+                          std::logic_error,
+                          "Invalid vector size !");
               char c = 0;
-              DT_THROW_IF (!vec_ss,
-                           std::logic_error,
-                           "Cannot find expected vector size closing symbol for key '"
-                           << prop_key
-                           << "' at line '"
-                           << line << "'  !");
+              DT_THROW_IF(!vec_ss,
+                          std::logic_error,
+                          "Cannot find expected vector size closing symbol for key '"
+                          << prop_key
+                          << "' at line '"
+                          << line << "'  !");
               vec_ss >> c;
-              DT_THROW_IF (c != CLOSE_VECTOR,
-                           std::logic_error,
-                           "Invalid vector size closing symbol for key '"
-                           << prop_key
-                           << "' at line '"
-                           << line << "' !");
+              DT_THROW_IF(c != CLOSE_VECTOR,
+                          std::logic_error,
+                          "Invalid vector size closing symbol for key '"
+                          << prop_key
+                          << "' at line '"
+                          << line << "' !");
               std::getline(vec_ss, type_str3);
             } else {
               scalar = true;
@@ -2863,7 +2864,7 @@ namespace datatools {
               type_token.clear();
               type_ss >> std::ws >> type_token >> std::ws;
             }
-            if  (type_token == "boolean") {
+            if (type_token == "boolean") {
               type = properties::data::TYPE_BOOLEAN_SYMBOL;
             } else if (type_token == "integer") {
               type = properties::data::TYPE_INTEGER_SYMBOL;
@@ -2896,18 +2897,18 @@ namespace datatools {
                 if (token == "as") {
                   std::string token2;
                   type_ss >> token2;
-                  DT_THROW_IF (token2.empty(),
-                               std::logic_error,
-                               "Missing directive (as) for string value with key '"
-                               << prop_key
-                               << "' at line '"
-                               << line << "' !");
-                  DT_THROW_IF (token2 != "path",
-                               std::logic_error,
-                               "Invalid token '" << token2 << "' for string value with key '"
-                               << prop_key
-                               << "' at line '"
-                               << line << "' !");
+                  DT_THROW_IF(token2.empty(),
+                              std::logic_error,
+                              "Missing directive (as) for string value with key '"
+                              << prop_key
+                              << "' at line '"
+                              << line << "' !");
+                  DT_THROW_IF(token2 != "path",
+                              std::logic_error,
+                              "Invalid token '" << token2 << "' for string value with key '"
+                              << prop_key
+                              << "' at line '"
+                              << line << "' !");
                   with_explicit_path = true;
                 }
               }
@@ -2924,60 +2925,60 @@ namespace datatools {
               if (! token.empty()) {
                 if (token == "as") {
                   type_ss >> std::ws >> requested_unit_label;
-                  DT_THROW_IF (requested_unit_label.empty(),
-                               std::logic_error,
-                               "Missing unit label (ex: 'as length') for real value with key '"
-                               << prop_key
-                               << "' at line '"
-                               << line << "' !");
-                  DT_THROW_IF (! units::is_unit_label_valid(requested_unit_label),
-                               std::logic_error,
-                               "Invalid unit label '" << requested_unit_label
-                               << "' for real value with key '"
-                               << prop_key
-                               << "' at line '"
-                               << line << "' !");
-                  DT_LOG_NOTICE(logging, "Unit label '"<< requested_unit_label << "' is valid !");
-                } else if (token == "in") {
-                  type_ss >> std::ws >> requested_unit_symbol;
-                  DT_THROW_IF (requested_unit_symbol.empty(),
-                               std::logic_error,
-                               "Missing unit symbol (ex: 'in millimeter') for real value with key '"
-                               << prop_key << "' at line '" << line << "' !");
-                  if (! scalar) {
-                    // For vectors of real:
-                    DT_THROW_IF (!units::find_unit(requested_unit_symbol,
-                                                   requested_unit_value,
-                                                   requested_unit_label),
-                                 std::logic_error,
-                                 "Invalid unit symbol '" << requested_unit_symbol << "' for real value with key '"
-                                 << prop_key << "' at line '" << line << "' !");
-                    DT_LOG_NOTICE(logging, "Unit symbol '" << requested_unit_symbol << "' is valid !");
-                  } else {
-                    DT_THROW (std::logic_error,
-                              "Directive 'in " << requested_unit_symbol
-                              << "' is not supported for scalar real value with key '"
+                  DT_THROW_IF(requested_unit_label.empty(),
+                              std::logic_error,
+                              "Missing unit label (ex: 'as length') for real value with key '"
                               << prop_key
                               << "' at line '"
                               << line << "' !");
+                  DT_THROW_IF(! units::is_unit_label_valid(requested_unit_label),
+                              std::logic_error,
+                              "Invalid unit label '" << requested_unit_label
+                              << "' for real value with key '"
+                              << prop_key
+                              << "' at line '"
+                              << line << "' !");
+                  DT_LOG_NOTICE(logging, "Unit label '"<< requested_unit_label << "' is valid !");
+                } else if (token == "in") {
+                  type_ss >> std::ws >> requested_unit_symbol;
+                  DT_THROW_IF(requested_unit_symbol.empty(),
+                              std::logic_error,
+                              "Missing unit symbol (ex: 'in millimeter') for real value with key '"
+                              << prop_key << "' at line '" << line << "' !");
+                  if (! scalar) {
+                    // For vectors of real:
+                    DT_THROW_IF(!units::find_unit(requested_unit_symbol,
+                                                  requested_unit_value,
+                                                  requested_unit_label),
+                                std::logic_error,
+                                "Invalid unit symbol '" << requested_unit_symbol << "' for real value with key '"
+                                << prop_key << "' at line '" << line << "' !");
+                    DT_LOG_NOTICE(logging, "Unit symbol '" << requested_unit_symbol << "' is valid !");
+                  } else {
+                    DT_THROW(std::logic_error,
+                             "Directive 'in " << requested_unit_symbol
+                             << "' is not supported for scalar real value with key '"
+                             << prop_key
+                             << "' at line '"
+                             << line << "' !");
                   }
                 } else {
-                  DT_THROW_IF (true,
-                               std::logic_error,
-                               "Unknown directive '" << token
-                               << "' for real value with key '"
-                               << prop_key
-                               << "' at line '"
-                               << line << "' !");
+                  DT_THROW_IF(true,
+                              std::logic_error,
+                              "Unknown directive '" << token
+                              << "' for real value with key '"
+                              << prop_key
+                              << "' at line '"
+                              << line << "' !");
                 }
               } // token not emtpy
               if (! enable_real_with_unit) {
-                DT_THROW_IF (! requested_unit_label.empty()
-                             || ! requested_unit_symbol.empty(),
-                             std::logic_error,
-                             "The use of unit directives '" << token
-                             << "' is not allowed for real value with key '"
-                             << prop_key << "' at line '" << line << "' !");
+                DT_THROW_IF(! requested_unit_label.empty()
+                            || ! requested_unit_symbol.empty(),
+                            std::logic_error,
+                            "The use of unit directives '" << token
+                            << "' is not allowed for real value with key '"
+                            << prop_key << "' at line '" << line << "' !");
               }
             } // end of REAL
             DT_LOG_NOTICE(logging, "type='"<< type << "'");
@@ -2999,11 +3000,11 @@ namespace datatools {
               }
             }
             if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
-                if (vsize > 0) {
-                  v_integers.assign(vsize,
-                                    properties::data::defaults::integer_value());
-                }
+              if (vsize > 0) {
+                v_integers.assign(vsize,
+                                  properties::data::defaults::integer_value());
               }
+            }
             if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
               if (vsize > 0) {
                 v_reals.assign(vsize,
@@ -3039,52 +3040,52 @@ namespace datatools {
                                                                variant_only_reverse);
               DT_THROW_IF(cri.is_failure(), std::logic_error,
                           "Cannot preprocess variant only directive from '" << variant_only << "' : " << cri.get_error_message());
-              if (variant_devel) std::cerr << "DEVEL: " << "VPP ==> variant_only_found='" << variant_only_found << "'" << std::endl;
-              if (variant_devel) std::cerr << "DEVEL: " << "VPP ==> variant_only_reverse='" << variant_only_reverse << "'" << std::endl;
+              if (variant_devel) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "VPP ==> variant_only_found='" << variant_only_found << "'");
+              if (variant_devel) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "VPP ==> variant_only_reverse='" << variant_only_reverse << "'");
             }
 
             std::string pv_str = property_value_str;
             boost::trim(pv_str);
-            if (variant_devel) std::cerr << "DEVEL: " << "pv_str='" << pv_str << "'" << std::endl;
+            if (variant_devel) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "pv_str='" << pv_str << "'");
             std::string effective_property_values_line = property_value_str;
             {
               std::string effective_line;
               command::returned_info cri = vpp.preprocess(pv_str, effective_line);
               DT_THROW_IF(cri.is_failure(), std::logic_error,
                           "Cannot preprocess variant in '" << pv_str << "' : " << cri.get_error_message());
-              if (variant_devel) std::cerr << "DEVEL: " << "VPP ==> effective_line='" << effective_line << "'" << std::endl;
+              if (variant_devel) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "VPP ==> effective_line='" << effective_line << "'");
               effective_property_values_line = effective_line;
             }
             /*
-            if (scalar) {
+              if (scalar) {
             */
 
-            if (variant_devel) std::cerr << "DEVEL: " << "--> effective_property_values_line='" << effective_property_values_line << "'" << std::endl;
+            if (variant_devel) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "--> effective_property_values_line='" << effective_property_values_line << "'");
             std::istringstream iss(effective_property_values_line);
             /***************
              *   BOOLEAN   *
              ***************/
             if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
-              if (variant_devel) std::cerr << "DEVEL: boolean: effective_property_values_line='" << effective_property_values_line << "'" << std::endl;
+              if (variant_devel) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "boolean: effective_property_values_line='" << effective_property_values_line << "'");
               if (scalar) {
-                DT_THROW_IF (!io::read_boolean(iss, a_boolean),
-                             std::logic_error,
-                             "Cannot read boolean value from '" << effective_property_values_line << "' for key '"
-                             << prop_key << "' at line '" << line << "' !");
+                DT_THROW_IF(!io::read_boolean(iss, a_boolean),
+                            std::logic_error,
+                            "Cannot read boolean value from '" << effective_property_values_line << "' for key '"
+                            << prop_key << "' at line '" << line << "' !");
                 // iss >> a_boolean;
-                // DT_THROW_IF (!iss,
+                // DT_THROW_IF(!iss,
                 //              std::logic_error,
                 //              "Cannot read boolean value for key '"
-                             // << prop_key << "' at line '" << line << "' !");
+                // << prop_key << "' at line '" << line << "' !");
               } else {
-               for (int i = 0; i < vsize; ++i) {
+                for (int i = 0; i < vsize; ++i) {
                   bool b;
-                  DT_THROW_IF (!io::read_boolean(iss, b),
-                               std::logic_error,
-                               "Cannot read vector boolean value for key '"
-                               << prop_key << "' at line '" << line << "' !");
+                  DT_THROW_IF(!io::read_boolean(iss, b),
+                              std::logic_error,
+                              "Cannot read vector boolean value for key '"
+                              << prop_key << "' at line '" << line << "' !");
                   // iss >> b;
-                  // DT_THROW_IF (!iss,
+                  // DT_THROW_IF(!iss,
                   //              std::logic_error,
                   //              "Cannot read vector boolean value for key '"
                   //              << prop_key << "' at line '" << line << "' !");
@@ -3099,18 +3100,18 @@ namespace datatools {
             if (type == properties::data::TYPE_INTEGER_SYMBOL) {
               if (scalar) {
                 iss >> a_integer;
-                DT_THROW_IF (!iss,
-                             std::logic_error,
-                             "Cannot read integer value for key '"
-                             << prop_key << "' at line '" << line << "' !");
+                DT_THROW_IF(!iss,
+                            std::logic_error,
+                            "Cannot read integer value for key '"
+                            << prop_key << "' at line '" << line << "' !");
               } else {
                 for (int i = 0; i < vsize; ++i) {
                   int k;
                   iss >> k;
-                  DT_THROW_IF (!iss,
-                               std::logic_error,
-                               "Cannot read vector integer value for key '"
-                               << prop_key << "' at line '" << line << "' !");
+                  DT_THROW_IF(!iss,
+                              std::logic_error,
+                              "Cannot read vector integer value for key '"
+                              << prop_key << "' at line '" << line << "' !");
                   v_integers[i] = k;
                 }
               }
@@ -3125,39 +3126,39 @@ namespace datatools {
             std::string unit_label;
             if (type == properties::data::TYPE_REAL_SYMBOL) {
               if (scalar) {
-               // Scalar real :
-               // Special mode to accept unit symbol after the real value :
+                // Scalar real :
+                // Special mode to accept unit symbol after the real value :
                 bool normal_value = true;
-                DT_THROW_IF (! datatools::io::read_real_number(iss, a_real, normal_value),
-                             std::logic_error,
-                             "Cannot read vector real value for key '"
-                             << prop_key << "' at line '" << line << "' (" << a_props.get_description() << ") !");
+                DT_THROW_IF(! datatools::io::read_real_number(iss, a_real, normal_value),
+                            std::logic_error,
+                            "Cannot read vector real value for key '"
+                            << prop_key << "' at line '" << line << "' (" << a_props.get_description() << ") !");
                 iss >> std::ws;
                 if (! iss.eof())  {
                   std::string unit_word;
                   iss >> unit_word >> std::ws;
                   if (! unit_word.empty() && unit_word[0] != _comment_char_) {
-                    DT_THROW_IF (! enable_real_with_unit,
-                                 std::logic_error,
-                                 "Trailing token '" << unit_word << "' is not allowed for real value with key '"
-                                 << prop_key << "' at line '" << line
-                                 << "'; you should activate the 'real with unit' feature to support this syntax !");
+                    DT_THROW_IF(! enable_real_with_unit,
+                                std::logic_error,
+                                "Trailing token '" << unit_word << "' is not allowed for real value with key '"
+                                << prop_key << "' at line '" << line
+                                << "'; you should activate the 'real with unit' feature to support this syntax !");
                     bool found_unit = datatools::units::find_unit(unit_word,
                                                                   unit_value,
                                                                   unit_label);
-                    DT_THROW_IF (! found_unit,
-                                 std::logic_error,
-                                 "Invalid unit symbol for key '"
-                                 << prop_key
-                                 << "' at line '"
-                                 << line
-                                 << "' !");
-                    DT_THROW_IF (! requested_unit_label.empty()
-                                 && unit_label != requested_unit_label,
-                                 std::logic_error,
-                                 "Unit symbol '" << unit_word << "' in not compatible with requested unit label '"
-                                 << requested_unit_label << "' for real scalar property with key '"
-                                 << prop_key << "' at line '" << line << "' !");
+                    DT_THROW_IF(! found_unit,
+                                std::logic_error,
+                                "Invalid unit symbol for key '"
+                                << prop_key
+                                << "' at line '"
+                                << line
+                                << "' !");
+                    DT_THROW_IF(! requested_unit_label.empty()
+                                && unit_label != requested_unit_label,
+                                std::logic_error,
+                                "Unit symbol '" << unit_word << "' in not compatible with requested unit label '"
+                                << requested_unit_label << "' for real scalar property with key '"
+                                << prop_key << "' at line '" << line << "' !");
                     a_real *= unit_value;
                     with_explicit_unit = true;
                     unit_symbol = unit_word;
@@ -3168,15 +3169,15 @@ namespace datatools {
                 for (int i = 0; i < vsize; ++i) {
                   double x;
                   bool normal_value;
-                  DT_THROW_IF (! datatools::io::read_real_number(iss, x, normal_value),
-                               std::logic_error,
-                               "Cannot read vector real value for key '"
-                               << prop_key << "' at line '" << line << "' !");
+                  DT_THROW_IF(! datatools::io::read_real_number(iss, x, normal_value),
+                              std::logic_error,
+                              "Cannot read vector real value for key '"
+                              << prop_key << "' at line '" << line << "' !");
                   if (enable_real_with_unit && datatools::is_valid(requested_unit_value)) {
                     x *= requested_unit_value;
                     with_explicit_unit = true;
                     unit_symbol = requested_unit_symbol;
-                 }
+                  }
                   v_reals[i] = x;
                 }
                 // if (requested_unit_symbol.empty()) {
@@ -3190,17 +3191,17 @@ namespace datatools {
              **************/
             if (type == properties::data::TYPE_STRING_SYMBOL) {
               if (scalar) {
-                DT_THROW_IF (!io::read_quoted_string(iss, a_string),
-                             std::logic_error,
-                             "Cannot read string value for key '"
-                             << prop_key << "' at line '" << line << "' !");
+                DT_THROW_IF(!io::read_quoted_string(iss, a_string),
+                            std::logic_error,
+                            "Cannot read string value for key '"
+                            << prop_key << "' at line '" << line << "' !");
               } else {
                 for (int i = 0; i < vsize; ++i) {
                   std::string str;
-                  DT_THROW_IF (!io::read_quoted_string(iss, str),
-                               std::logic_error,
-                               "Cannot read string value for key '"
-                               << prop_key << "' at line '" << line << "' !");
+                  DT_THROW_IF(!io::read_quoted_string(iss, str),
+                              std::logic_error,
+                              "Cannot read string value for key '"
+                              << prop_key << "' at line '" << line << "' !");
                   v_strings[i] = str;
                 }
               }
