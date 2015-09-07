@@ -26,7 +26,7 @@ public:
   {
   public:
 
-    /// \brief
+    /// \brief Running modes of the algorithm
     enum algo_mode_type {
       AM_UNDEFINED  = 0,
       AM_FAST,

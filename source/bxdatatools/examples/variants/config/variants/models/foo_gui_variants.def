@@ -203,6 +203,4 @@ parameters.color.description   : string = "The activation flag of color"
 parameters.antialiasing.model       : string = "on_off.PM"
 parameters.antialiasing.description : string = "The anti-aliasing switch"
 
-
-
 # end

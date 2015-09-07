@@ -6,25 +6,42 @@ Introduction
 ============
 
  * Description:
-   this example illustrates how to use the configuration variant
-   mechanism to configure object through ``datatools::properties`` containers.
+
+   This  example  illustrates how  to  use  the *configuration  variant*
+   mechanism  to  configure objects  through  ``datatools::properties``
+   containers with  dynamic possibility to  switch the values  of some
+   properties, typically at program start.
+
+   The ``application`` class represents an algorithm that must be configured
+   and initialized before to execute. The algorithm expected to be given
+   a sequence of configuration parameters that are classified following three
+   categories:
+
+    * ``core`` : the general parameters of the algorithm object.
+    * ``algo`` : the parameters related to the tuning of the algorithm itself.
+      Such parameters use a property key prefixed with ``algo.``.
+    * ``gui`` : the parameters related to some possible GUI companion tool (not provided in this example).
+      Such parameters use a property key prefixed with ``gui.``.
 
  * Source files :
 
    * ``ex_variants.cxx`` : the example main program source.
-   * ``config`` : the directory for configuration  files
+   * ``config`` : the directory for configuration  files and description
+     of the variant parameters.
 
  * Configuration file:
 
    * ``config/foo.conf`` :
      This static configuration file records the configuration parameters
      used to initialize the ``application`` object and its components in the main program.
-     No configuration variant parameters are used.
-     This file uses the ``datatools::properties`` ASCII format.
-   * ``config/foo_with_variants.conf`` :
-     This configuration file is similar to the ``config/foo.conf`` file with support for variants.
-     Some special directives are added to allow some of the parameters to be modified using the datatools variant mechanism.
-     This file uses the ``datatools::properties`` ASCII format.
+     No configuration variant parameters are used. This is a standard configuration file that
+     uses the ASCII format of  the  ``datatools::properties`` class.
+   * ``config/foo_with_variants.conf``  : This  configuration file  is
+     similar to  the ``config/foo.conf`` file with  additional support
+     for *variants*.  Some special directives  are added to allow some
+     of  the  parameters to  be  modified  using the  Bayeux/datatools
+     *configuration   variant*   mechanism.    This  file also  uses   the
+     ``datatools::properties`` ASCII format with additional *variance* directives.
    * ``config/variants/foo_variance.conf`` :
      This is the main configuration file of the variant repository used by the application.
      This file refers to the ``config/variants/registries/foo_core_registry.conf``,

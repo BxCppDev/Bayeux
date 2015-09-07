@@ -37,8 +37,7 @@
 // Third party:
 // - Boost:
 #include <boost/program_options.hpp>
-
-// Bayeux/datatools:
+// - Bayeux/datatools:
 #include <datatools/datatools_config.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
@@ -49,15 +48,19 @@
 #if DATATOOLS_STANDALONE == 1
 #include <datatools/datatools.h>
 #else
+// - Bayeux:
 #include <bayeux/bayeux.h>
 #endif // DATATOOLS_STANDALONE == 1
 #if DATATOOLS_WITH_QT_GUI == 1
+// - Qt:
 #include <QStyleFactory>
 #include <QApplication>
+// - Bayeux/datatools:
 #include <datatools/qt/interface.h>
 #include <datatools/configuration/ui/variant_repository_dialog.h>
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
+// This project:
 #include "application.hpp"
 
 void test0();
