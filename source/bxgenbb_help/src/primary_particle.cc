@@ -430,31 +430,14 @@ namespace genbb {
     case HE3 : return pdg::particle::HE3;
     case CERENKOV : return pdg::particle::MC_OPTICAL_PHOTON;
     case NUCLEUS :
-      {
-        int z, a, i(0);
-        if (_auxiliaries_.has_key("ion.Z")) {
-          z = _auxiliaries_.fetch_integer("ion.Z");
-        }
-        if (_auxiliaries_.has_key("ion.A")) {
-          a = _auxiliaries_.fetch_integer("ion.A");
-        }
-        if (_auxiliaries_.has_key("ion.I")) {
-          i = _auxiliaries_.fetch_integer("ion.I");
-        }
-        return pdg::particle::build_nuclear_code(z, a, i);
-      }
     case ION :
       {
-        int z, a, i(0);
-        if (_auxiliaries_.has_key("ion.Z")) {
-          z = _auxiliaries_.fetch_integer("ion.Z");
-        }
-        if (_auxiliaries_.has_key("ion.A")) {
-          a = _auxiliaries_.fetch_integer("ion.A");
-        }
-        if (_auxiliaries_.has_key("ion.I")) {
-          i = _auxiliaries_.fetch_integer("ion.I");
-        }
+        DT_THROW_IF(! _auxiliaries_.has_key("ion.Z"), std::logic_error, "Missing 'ion.Z' value!");
+        const int z = _auxiliaries_.fetch_integer("ion.Z");
+        DT_THROW_IF(! _auxiliaries_.has_key("ion.A"), std::logic_error, "Missing 'ion.A' value!");
+        const int a = _auxiliaries_.fetch_integer("ion.A");
+        DT_THROW_IF(! _auxiliaries_.has_key("ion.I"), std::logic_error, "Missing 'ion.I' value!");
+        const int i = _auxiliaries_.fetch_integer("ion.I");
         // Beware: no atomic charge state is recorded here
         return pdg::particle::build_nuclear_code(z, a, i);
       }

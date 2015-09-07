@@ -488,37 +488,27 @@ namespace genbb {
       _neutrino_data_->antineutrino = antineutrino;
     } else if (particle_name == "nucleus") {
       DT_LOG_DEBUG(get_logging_priority(), "Generating a nucleus...");
-      int z, a;
-      double estar;
-      if (config_.has_key("nucleus.z")) {
-        z = config_.fetch_integer("nucleus.z");
-      }
-      if (config_.has_key("nucleus.a")) {
-        a = config_.fetch_integer("nucleus.a");
-      }
-      if (config_.has_key("nucleus.excitation_energy")) {
-        estar = config_.fetch_real("nucleus.excitation_energy");
-      }
+      DT_THROW_IF(! config_.has_key("nucleus.z"), std::logic_error, "Missing 'nucleus.z' value!");
+      const int z = config_.fetch_integer("nucleus.z");
+      DT_THROW_IF(! config_.has_key("nucleus.a"), std::logic_error, "Missing 'nucleus.a' value!");
+      const int a = config_.fetch_integer("nucleus.a");
+      DT_THROW_IF(! config_.has_key("nucleus.excitation_energy"), std::logic_error, "Missing 'nucleus.excitation_energy' value!");
+      const double estar = config_.fetch_real("nucleus.excitation_energy");
+      DT_THROW_IF(! config_.has_key("nucleus.q"), std::logic_error, "Missing 'nucleus.q' value!");
       _ion_data_.reset(new ion_data_type);
       _ion_data_->Z = z;
       _ion_data_->A = a;
       _ion_data_->Estar = estar;
     } else if (particle_name == "ion") {
       DT_LOG_DEBUG(get_logging_priority(), "Generating an ion...");
-      int z, a, q;
-      double estar;
-      if (config_.has_key("ion.z")) {
-        z = config_.fetch_integer("ion.z");
-      }
-      if (config_.has_key("ion.a")) {
-        a = config_.fetch_integer("ion.a");
-      }
-      if (config_.has_key("ion.excitation_energy")) {
-        estar = config_.fetch_real("ion.excitation_energy");
-      }
-      if (config_.has_key("ion.q")) {
-        q = config_.fetch_integer("ion.q");
-      }
+      DT_THROW_IF(! config_.has_key("ion.z"), std::logic_error, "Missing 'ion.z' value!");
+      const int z = config_.fetch_integer("ion.z");
+      DT_THROW_IF(! config_.has_key("ion.a"), std::logic_error, "Missing 'ion.a' value!");
+      const int a = config_.fetch_integer("ion.a");
+      DT_THROW_IF(! config_.has_key("ion.excitation_energy"), std::logic_error, "Missing 'ion.excitation_energy' value!");
+      const double estar = config_.fetch_real("ion.excitation_energy");
+      DT_THROW_IF(! config_.has_key("ion.q"), std::logic_error, "Missing 'ion.q' value!");
+      const int q = config_.fetch_integer("ion.q");
       _ion_data_.reset(new ion_data_type);
       _ion_data_->Z = z;
       _ion_data_->A = a;
