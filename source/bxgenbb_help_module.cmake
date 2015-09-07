@@ -59,6 +59,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/beta_decay.h
   ${module_include_dir}/${module_name}/alpha_decay.h
   ${module_include_dir}/${module_name}/wdecay0.h
+  ${module_include_dir}/${module_name}/pdg_particle_tools.h
   ${module_include_dir}/${module_name}/primary_event.ipp
   ${module_include_dir}/${module_name}/primary_particle.ipp
   ${module_include_dir}/${module_name}/the_serializable.ipp
@@ -255,6 +256,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/two_body_decay.cc
   ${module_source_dir}/pg_tools.cc
   ${module_source_dir}/i_genbb.cc
+  ${module_source_dir}/pdg_particle_tools.cc
   ${module_source_dir}/primary_event.cc
   ${module_source_dir}/primary_particle.cc
   ${module_source_dir}/wdecay0.cc
@@ -456,6 +458,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_genbb_mgr_5.cxx
   ${module_test_dir}/test_genbb_mgr.cxx
   ${module_test_dir}/test_genbb_writer.cxx
+  ${module_test_dir}/test_pdg_particle_tools.cxx
   ${module_test_dir}/test_primary_event.cxx
   ${module_test_dir}/test_single_particle_generator_2.cxx
   ${module_test_dir}/test_single_particle_generator_3.cxx
