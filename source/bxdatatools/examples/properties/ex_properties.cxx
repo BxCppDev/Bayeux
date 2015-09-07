@@ -72,29 +72,45 @@ int main (int argc_, char ** argv_)
     // Declare a container of properties :
     DT_LOG_DEBUG(logging, "Declare a container of properties");
     datatools::properties foo_config;
+    // Give it a description text
     foo_config.set_description("The configuration parameters for a given task");
 
     DT_LOG_DEBUG(logging, "Store some properties in it...");
 
-    // Set the boolean property ``debug`` to true :
+    // Store the boolean property ``debug`` and assign the ``true`` value to it :
     foo_config.store_flag("debug", "The debug flag");
 
     // Set the integer property ``number_of_users`` to some value :
     foo_config.store("number_of_users", 666);  // Undocumented property : the number of users
 
-    // Set the real (double precision) property ``width`` to some value :
+    // Set the real (double precision) property ``width`` to some value.
+    // The value is stored in such a way the user must know the unit (mm)
+    // that has been used to record the property.
     double wthumb = 2.541 * CLHEP::cm;
     foo_config.store("width", wthumb / CLHEP::mm, "The width of my thumb (mm)");
+    // Such usage is not recommended. One should always prefer the mode with explicit
+    // unit illustrated in the next case.
+
+    // Set the real (double precision) property ``weight`` to some value.
+    // This method does the same than the previous one but it also tags
+    // the property with some special flag that indicates that a unit as been
+    // explicitely used to scale the stored value.
+    double weight = 1.2 * CLHEP::kg;
+    foo_config.store_with_explicit_unit("weight", weight, "The weight of my cat");
+    //  Cherry on the cake, the following method specifies the preferred unit associated to the
+    // ``weight``property:
+    foo_config.set_unit_symbol("weight", "g");
 
     // Set the string property ``colour`` to some value :
     foo_config.store("colour", "red", "My favorite colour");
 
-    // Set a vector of real property :
+    // Set a vector of real with explicit unit:
     std::vector<double> point;
     point.push_back(22.3 * CLHEP::cm);
     point.push_back(1.7 * CLHEP::m);
     point.push_back(8.5 * CLHEP::mm);
     foo_config.store("point", point, "A position in 3D-space (implicit lenght unit)");
+    foo_config.set_explicit_unit("point", true);
 
     // Set a vector of bool property :
     std::vector<bool> flags;
@@ -108,7 +124,7 @@ int main (int argc_, char ** argv_)
     flags.push_back(1);
     foo_config.store("flags", flags, "Some binary flags");
 
-    // Set an undocumented vector of string :
+    // Set an undocumented vector of charecter strings :
     std::vector<std::string> words;
     words.push_back("King");
     words.push_back("of");
@@ -145,10 +161,12 @@ int main (int argc_, char ** argv_)
     DT_LOG_DEBUG(logging, "Modify its contents...");
     // Change some existing values:
     foo_config.change("width", 3.244 * CLHEP::cm);
+    foo_config.set_explicit_unit("width");
     foo_config.update("colour", "blue");
 
     // Update some possibly existing values:
     foo_config.update("length", 17.3 * CLHEP::cm);
+    foo_config.set_explicit_unit("length");
 
     // Smart print :
     std::clog << std::endl;
@@ -195,5 +213,3 @@ int main (int argc_, char ** argv_)
   }
   return (error_code);
 }
-
-// end of ex_properties.cxx
