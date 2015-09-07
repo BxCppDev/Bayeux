@@ -1,11 +1,12 @@
-// -*- mode: c++; -*-
 // test_genbb_mgr.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This project:
 #include <genbb_help/genbb_mgr.h>
 #include <genbb_help/primary_event.h>
 
@@ -62,5 +63,3 @@ int main (int argc_, char ** argv_)
   }
   return error_code;
 }
-
-// end of test_genbb_mgr.cxx

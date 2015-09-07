@@ -1,6 +1,6 @@
 // primary_particle.cc
 /*
- * Copyright 2007-2014 F. Mauger
+ * Copyright 2007-2015 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 
 // This project:
 #include <genbb_help/genbb_help_config.h>
+#include <genbb_help/pdg_particle_tools.h>
 
 // Special backward compatibility support for serialization :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(genbb::primary_particle,
@@ -42,7 +43,7 @@ namespace genbb {
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_particle, "genbb::primary_particle")
 
   // static
-  const int primary_particle::INVALID_GENERATION_ID;
+  const int     primary_particle::INVALID_GENERATION_ID;
   const int32_t primary_particle::PDG_CODE_UNDEFINED;
 
   /// \brief Ion data for parser
@@ -116,7 +117,7 @@ namespace genbb {
     int q = 0;
     std::string word = label_;
     boost::trim(word);
-    if (!boost::starts_with(word, what_string+"(") || !boost::ends_with(word, ")")) {
+    if (!boost::starts_with(word, what_string + "(") || !boost::ends_with(word, ")")) {
       if (messages) DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Missing '" << what_string << "(...)' format!");
       return false;
     }
@@ -147,7 +148,7 @@ namespace genbb {
         a_iss >> a;
         if (! a_iss) {
           if (messages) DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid '" << partok << "' A-token!");
-         return false;
+          return false;
         }
         if (a < 0) {
           if (messages) DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid A='" << a << "' value!");
@@ -325,17 +326,17 @@ namespace genbb {
     return ! _particle_label_.empty();
   }
 
-  const std::string & primary_particle::get_particle_label () const
+  const std::string & primary_particle::get_particle_label() const
   {
     return _particle_label_;
   }
 
-  void primary_particle::set_particle_label (const std::string & pl_)
+  void primary_particle::set_particle_label(const std::string & pl_)
   {
     /*
       if (_type_ == PARTICLE_UNDEFINED) {
       _particle_label_
-    }
+      }
     */
     _particle_label_ = pl_;
     return;
@@ -343,7 +344,7 @@ namespace genbb {
 
   bool primary_particle::has_pdg_code() const
   {
-    return _pdg_code_ != 0;
+    return _pdg_code_ != PDG_CODE_UNDEFINED;
   }
 
   int primary_particle::get_pdg_code() const
@@ -355,6 +356,120 @@ namespace genbb {
   {
     _pdg_code_ = pdg_code_;
     return;
+  }
+
+  int primary_particle::fetch_pdg_code() const
+  {
+    switch (_type_) {
+    case GAMMA : return pdg::particle::GAMMA;
+    case POSITRON : return pdg::particle::POSITRON;
+    case ELECTRON : return pdg::particle::ELECTRON;
+    case NEUTRINO :
+      {
+        bool antineutrino = false;
+        if (_auxiliaries_.has_key("neutrino.type")) {
+          std::string nt = _auxiliaries_.fetch_string("neutrino.type");
+          if (nt == "neutrino") {
+            antineutrino = false;
+          } else if (nt == "antineutrino") {
+            antineutrino = true;
+          } else {
+            DT_THROW(std::logic_error, "Unknown neutrino type '" << nt << "'!");
+          }
+        }
+        if (_auxiliaries_.has_key("neutrino.flavour")) {
+          std::string f = _auxiliaries_.fetch_string("neutrino.flavour");
+          if (f == "electron") {
+            if (antineutrino) return pdg::particle::ANTI_NEUTRINO_ELECTRON;
+            else  return pdg::particle::NEUTRINO_ELECTRON;
+          } else if (f == "muon") {
+            if (antineutrino) return pdg::particle::ANTI_NEUTRINO_MUON;
+            else  return pdg::particle::NEUTRINO_MUON;
+          } else if (f == "tau") {
+            if (antineutrino) return pdg::particle::ANTI_NEUTRINO_TAU;
+            else  return pdg::particle::NEUTRINO_TAU;
+          } else {
+            DT_THROW(std::logic_error, "Unknown neutrino flavour '" << f << "'!");
+          }
+        }
+        // Default:
+        return pdg::particle::ANTI_NEUTRINO_ELECTRON;
+      }
+    case MUON_PLUS : return pdg::particle::MUON_PLUS;
+    case MUON_MINUS : return pdg::particle::MUON_MINUS;
+    case PION_0 : return pdg::particle::PION_ZERO;
+    case PION_PLUS : return pdg::particle::PION_PLUS;
+    case PION_MINUS : return pdg::particle::PION_MINUS;
+    case KAON_0_LONG : return pdg::particle::KAON_ZERO_LONG;
+    case KAON_PLUS : return pdg::particle::KAON_PLUS;
+    case KAON_MINUS : return pdg::particle::KAON_MINUS;
+    case NEUTRON : return pdg::particle::NEUTRON;
+    case PROTON : return pdg::particle::PROTON;
+    case ANTI_PROTON : return pdg::particle::ANTI_PROTON;
+    case KAON_0_SHORT : return pdg::particle::KAON_ZERO_SHORT;
+    case ETA : return pdg::particle::ETA;
+    case LAMBDA : return pdg::particle::LAMBDA;
+    case SIGMA_PLUS : return pdg::particle::SIGMA_PLUS;
+    case SIGMA_0 : return pdg::particle::SIGMA_ZERO;
+    case SIGMA_MINUS : return pdg::particle::SIGMA_MINUS;
+    case XI_0 : return pdg::particle::XI_ZERO;
+    case XI_MINUS : return pdg::particle::XI_MINUS;
+    case OMEGA_MINUS : return pdg::particle::OMEGA_MINUS;
+    case ANTI_NEUTRON : return pdg::particle::ANTI_NEUTRON;
+    case ANTI_LAMBDA : return pdg::particle::ANTI_LAMBDA;
+    case ANTI_SIGMA_MINUS : return pdg::particle::ANTI_SIGMA_PLUS;
+    case ANTI_SIGMA_0 : return pdg::particle::ANTI_SIGMA_ZERO;
+    case ANTI_SIGMA_PLUS : return pdg::particle::ANTI_SIGMA_MINUS;
+    case ANTI_XI_0 : return pdg::particle::ANTI_XI_ZERO;
+    case ANTI_XI_PLUS : return pdg::particle::ANTI_XI_MINUS;
+    case ANTI_OMEGA_PLUS : return pdg::particle::ANTI_OMEGA_MINUS;
+    case DEUTERON : return pdg::particle::DEUTERON;
+    case TRITON : return pdg::particle::TRITON;
+    case ALPHA : return pdg::particle::ALPHA;
+    case GEANTINO : return pdg::particle::MC_GEANTINO;
+    case HE3 : return pdg::particle::HE3;
+    case CERENKOV : return pdg::particle::MC_OPTICAL_PHOTON;
+    case NUCLEUS :
+      {
+        int z, a, i(0);
+        if (_auxiliaries_.has_key("ion.Z")) {
+          z = _auxiliaries_.fetch_integer("ion.Z");
+        }
+        if (_auxiliaries_.has_key("ion.A")) {
+          a = _auxiliaries_.fetch_integer("ion.A");
+        }
+        if (_auxiliaries_.has_key("ion.I")) {
+          i = _auxiliaries_.fetch_integer("ion.I");
+        }
+        return pdg::particle::build_nuclear_code(z, a, i);
+      }
+    case ION :
+      {
+        int z, a, i(0);
+        if (_auxiliaries_.has_key("ion.Z")) {
+          z = _auxiliaries_.fetch_integer("ion.Z");
+        }
+        if (_auxiliaries_.has_key("ion.A")) {
+          a = _auxiliaries_.fetch_integer("ion.A");
+        }
+        if (_auxiliaries_.has_key("ion.I")) {
+          i = _auxiliaries_.fetch_integer("ion.I");
+        }
+        // Beware: no atomic charge state is recorded here
+        return pdg::particle::build_nuclear_code(z, a, i);
+      }
+    case PARTICLE_UNKNOWN:
+      {
+        // We could check here the identifier label to guess some exotic particle...
+        // but we have no scheme for now.
+        return pdg::particle::MC_UNSPECIFIED;
+      }
+    default:
+      {
+        return pdg::particle::INVALID_CODE;
+      }
+    }
+    return pdg::particle::INVALID_CODE;
   }
 
   bool primary_particle::has_type() const
@@ -387,6 +502,15 @@ namespace genbb {
     }
     set_type(NUCLEUS);
     set_particle_label(nucleus_to_label(z_, a_, excitation_energy_));
+    _auxiliaries_.store_integer("ion.Z", z_);
+    _auxiliaries_.store_integer("ion.A", a_);
+    int i = 0;
+    if (excitation_energy_ > 0.0) {
+      i = 1;
+    }
+    _auxiliaries_.store_integer("ion.I", i);
+    _auxiliaries_.store_real("ion.excitation_energy", excitation_energy_);
+    _auxiliaries_.store_integer("ion.Q", z_);
     return;
   }
 
@@ -395,8 +519,14 @@ namespace genbb {
     {
       DT_THROW_IF(pdg_, std::logic_error, "Definition of an ion through its PDG code is not supported yet!");
     }
-    set_type(ION);
+    int nelectrons = z_ - charge_;
+    DT_THROW_IF(nelectrons < 0, std::range_error, "Invalid ionization!");
     set_particle_label(ion_to_label(z_, a_, excitation_energy_, charge_));
+    set_type(ION);
+    _auxiliaries_.store_integer("ion.Z", z_);
+    _auxiliaries_.store_integer("ion.A", a_);
+    _auxiliaries_.store_real("ion.excitation_energy", excitation_energy_);
+    _auxiliaries_.store_integer("ion.Q", charge_);
     return;
   }
 
@@ -404,6 +534,18 @@ namespace genbb {
   {
     set_type(NEUTRINO);
     set_particle_label(label_);
+    return;
+  }
+
+  void primary_particle::set_neutrino(const std::string & flavour_, bool antineutrino_)
+  {
+    set_type(NEUTRINO);
+    _auxiliaries_.store_string("neutrino.flavour", flavour_);
+    if (antineutrino_) {
+      _auxiliaries_.store_string("neutrino.type", "antineutrino");
+    } else {
+      _auxiliaries_.store_string("neutrino.type", "neutrino");
+    }
     return;
   }
 
@@ -569,12 +711,12 @@ namespace genbb {
   void primary_particle::_set_defaults()
   {
     _generation_id_ = INVALID_GENERATION_ID; // No unique Id is set
-    _type_ = PARTICLE_UNDEFINED;   // No Geant3 particule type is defined
-    _pdg_code_ = 0;                // No PDG particule code is defined
-    datatools::invalidate(_mass_); // Mass is not known
-    _time_ = 0.0;                  // Creation time is 0 by convention
-    geomtools::invalidate(_momentum_); // No momentum is defined
-    this->invalidate_vertex();     // No vertex is defined
+    _type_ = PARTICLE_UNDEFINED;             // No Geant3 particule type is defined
+    _pdg_code_ = PDG_CODE_UNDEFINED;         // No PDG particule code is defined
+    datatools::invalidate(_mass_);           // Mass is not known
+    _time_ = 0.0 * CLHEP::ns;                // Creation time is 0 by convention
+    geomtools::invalidate(_momentum_);       // No momentum is defined
+    this->invalidate_vertex();               // No vertex is defined
     return;
   }
 
@@ -593,8 +735,8 @@ namespace genbb {
   }
 
   primary_particle::primary_particle(int32_t type_,
-                                      double time_,
-                                      const geomtools::vector_3d & momentum_)
+                                     double time_,
+                                     const geomtools::vector_3d & momentum_)
   {
     _set_defaults();
     set_type(type_);
@@ -656,6 +798,20 @@ namespace genbb {
     case GEANTINO   : q =  1.0; break;
     case HE3        : q =  2.0; break;
     case CERENKOV   : q =  0.0; break;
+    case NUCLEUS    :
+      {
+        if (_auxiliaries_.has_key("ion.Q")) {
+          q = 1.0 * _auxiliaries_.fetch_integer("ion.Q");
+        }
+      }
+      break;
+    case ION        :
+      {
+        if (_auxiliaries_.has_key("ion.Q")) {
+          q = 1.0 * _auxiliaries_.fetch_integer("ion.Q");
+        }
+      }
+      break;
     default: break;
     }
     return q;
@@ -810,9 +966,9 @@ namespace genbb {
     out_ << std::endl;
 
     /*
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Particle label : '" << _particle_label_ << "'"
-         << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag
+      << "Particle label : '" << _particle_label_ << "'"
+      << std::endl;
     */
 
     out_ << indent << datatools::i_tree_dumpable::tag
@@ -950,11 +1106,6 @@ namespace genbb {
     }
     return "";
   }
-
-  // std::string primary_particle::particle_label_from_type(int type_)
-  // {
-  //   return primary_particle::get_label(type_);
-  // }
 
   int primary_particle::particle_type_from_label(const std::string & label_)
   {

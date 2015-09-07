@@ -76,22 +76,27 @@ namespace genbb {
     };
 
     enum direction_mode_type {
-      DIRECTION_Z_AXIS     =  0,
-      DIRECTION_RANDOMIZED =  1,
-      DIRECTION_CONE       =  2,
+      DIRECTION_Z_AXIS     = 0,
+      DIRECTION_RANDOMIZED = 1,
+      DIRECTION_CONE       = 2,
       DIRECTION_DEFAULT    = DIRECTION_Z_AXIS
     };
 
     struct ion_data_type {
-      int Z; //!< Atomic number
-      int A; //!< Number of nucleons
+      int Z;        //!< Atomic number
+      int A;        //!< Number of nucleons
       double Estar; //!< Excitation energy
-      int Q; //!< Ion charge
+      int Q;        //!< Ion charge
+    };
+
+    struct neutrino_data_type {
+      std::string flavour; //!< Neutrino flavour ("electron", "muon", "tau")
+      bool antineutrino;   //!< Neutrino/antineutrino flag
     };
 
     struct multi_rays_record_type {
-      double energy;      //!< Monokinetic energy of the ray
-      double probability; //!< Probability of the ray
+      double energy;            //!< Monokinetic energy of the ray
+      double probability;       //!< Probability of the ray
       double cumul_probability; //!< Cumulative probability
     };
 
@@ -165,6 +170,10 @@ namespace genbb {
     /// Check initialization status
     virtual bool is_initialized() const;
 
+    static double get_particle_mass_from_label(const std::string & particle_name_);
+
+    static bool particle_name_is_valid(const std::string & particle_name_);
+
   protected:
 
     /// Shoot the primary event
@@ -186,18 +195,13 @@ namespace genbb {
 
     void _at_reset_();
 
-  public:
-
-    static double get_particle_mass_from_label(const std::string & particle_name_);
-
-    static bool particle_name_is_valid(const std::string & particle_name_);
-
   private:
 
     bool   _initialized_;        //!< Initialization flag
     int    _particle_type_;      //!< Generated particle type
     std::string _particle_name_; //!< Generated particle name
     boost::scoped_ptr<ion_data_type> _ion_data_; //!< Ion data
+    boost::scoped_ptr<neutrino_data_type> _neutrino_data_; //!< Neutrino data
     double _particle_mass_; //!< Particle mass
     int    _mode_;          //!< Mode
     double _mean_energy_;   //!< Mean energy
@@ -207,7 +211,7 @@ namespace genbb {
 
     std::vector<multi_rays_record_type> _multi_rays_records_; //!< Records for the multi-ray mode
 
-    int    _spectrum_mode_;
+    int         _spectrum_mode_;
     std::string _spectrum_interpolation_name_;
     std::string _energy_spectrum_filename_;
     mygsl::tabulated_function _energy_spectrum_;

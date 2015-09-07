@@ -419,6 +419,9 @@ namespace genbb {
     if (_ion_data_) {
       _ion_data_.reset();
     }
+    if (_neutrino_data_) {
+      _neutrino_data_.reset();
+    }
     _vnm_.reset();
     _energy_spectrum_.reset();
     if (_random_) {
@@ -440,8 +443,8 @@ namespace genbb {
   }
 
   void single_particle_generator::initialize(const datatools::properties & config_,
-                                               datatools::service_manager & /*service_manager_*/,
-                                               detail::pg_dict_type & /*dictionary_*/)
+                                             datatools::service_manager & /*service_manager_*/,
+                                             detail::pg_dict_type & /*dictionary_*/)
   {
     DT_THROW_IF(_initialized_,std::logic_error, "Operation prohibited ! Object is already initialized !");
 
@@ -458,7 +461,71 @@ namespace genbb {
     DT_THROW_IF(!config_.has_key("particle_name"), std::logic_error,
                 "Missing 'particle_name' property for particle generator '" << get_name() << "' !");
     const std::string particle_name = config_.fetch_string("particle_name");
+    DT_LOG_TRACE(_logging_priority, "Particle name is '" << particle_name << "'...");
     set_particle_name(particle_name);
+
+    // Special case for (anti)neutrinos:
+    if (particle_name == "neutrino") {
+      DT_LOG_DEBUG(get_logging_priority(), "Generating a neutrino...");
+      bool antineutrino = false;
+      if (config_.has_key("neutrino.type")) {
+        std::string nu_type = config_.fetch_string("neutrino.type");
+        if (nu_type == "neutrino") {
+          antineutrino = false;
+        } else if (nu_type == "antineutrino") {
+          antineutrino = true;
+        } else {
+          DT_THROW(std::logic_error,
+                   "Invalid neutrino type '" << nu_type << "' property for particle generator '" << get_name() << "' !");
+        }
+      }
+      std::string flavour = "electron";
+      if (config_.has_key("neutrino.flavour")) {
+        flavour = config_.fetch_string("neutrino.flavour");
+      }
+      _neutrino_data_.reset(new neutrino_data_type);
+      _neutrino_data_->flavour = flavour;
+      _neutrino_data_->antineutrino = antineutrino;
+    } else if (particle_name == "nucleus") {
+      DT_LOG_DEBUG(get_logging_priority(), "Generating a nucleus...");
+      int z, a;
+      double estar;
+      if (config_.has_key("nucleus.z")) {
+        z = config_.fetch_integer("nucleus.z");
+      }
+      if (config_.has_key("nucleus.a")) {
+        a = config_.fetch_integer("nucleus.a");
+      }
+      if (config_.has_key("nucleus.excitation_energy")) {
+        estar = config_.fetch_real("nucleus.excitation_energy");
+      }
+      _ion_data_.reset(new ion_data_type);
+      _ion_data_->Z = z;
+      _ion_data_->A = a;
+      _ion_data_->Estar = estar;
+    } else if (particle_name == "ion") {
+      DT_LOG_DEBUG(get_logging_priority(), "Generating an ion...");
+      int z, a, q;
+      double estar;
+      if (config_.has_key("ion.z")) {
+        z = config_.fetch_integer("ion.z");
+      }
+      if (config_.has_key("ion.a")) {
+        a = config_.fetch_integer("ion.a");
+      }
+      if (config_.has_key("ion.excitation_energy")) {
+        estar = config_.fetch_real("ion.excitation_energy");
+      }
+      if (config_.has_key("ion.q")) {
+        q = config_.fetch_integer("ion.q");
+      }
+      _ion_data_.reset(new ion_data_type);
+      _ion_data_->Z = z;
+      _ion_data_->A = a;
+      _ion_data_->Estar = estar;
+      _ion_data_->Q = q;
+      DT_LOG_DEBUG(get_logging_priority(), " ... with effective charge [" << q << "]...");
+    }
 
     if (config_.has_key("emission_direction")) {
       std::string emission_direction = config_.fetch_string("emission_direction");
@@ -472,6 +539,7 @@ namespace genbb {
         DT_THROW_IF(true, std::logic_error,
                     "Invalid 'emission_direction' property for particle generator '" << get_name() << "' !");
       }
+      DT_LOG_DEBUG(get_logging_priority(), "Emission direction is '" << emission_direction << "'...");
     } else if (config_.has_flag("z_axis_direction")) {
       set_z_direction(false);
     } else if (config_.has_flag("randomized_direction")) {
@@ -558,6 +626,7 @@ namespace genbb {
     } else {
       DT_THROW_IF(true, std::logic_error, "Invalid mode '" << mode_str << "' !");
     }
+    DT_LOG_DEBUG(get_logging_priority(), "Mode is '" << mode_str << "'...");
 
     double energy_unit = CLHEP::keV;
     if (config_.has_key("energy_unit")) {
@@ -717,9 +786,26 @@ namespace genbb {
 
     event_.set_time(0.0 * CLHEP::second);
     primary_particle pp;
-    pp.set_type(_particle_type_);
-    if (pp.needs_particle_label()) {
-      pp.set_particle_label(_particle_name_);
+    pp.set_generation_id(0);
+    if (_ion_data_) {
+      if (_particle_type_ == primary_particle::NUCLEUS) {
+        DT_LOG_DEBUG(get_logging_priority(), "Primary particle is made a nucleus...");
+        pp.set_nucleus(_ion_data_->Z, _ion_data_->A, _ion_data_->Estar);
+      }
+      if (_particle_type_ == primary_particle::ION) {
+        DT_LOG_DEBUG(get_logging_priority(), "Primary particle is made an ion...");
+        pp.set_ion(_ion_data_->Z, _ion_data_->A, _ion_data_->Estar, _ion_data_->Q);
+        if (get_logging_priority() > datatools::logger::PRIO_DEBUG) {
+          pp.tree_dump(std::clog, "Single primary particle: ", "debug: ");
+        }
+      }
+    } else if (_neutrino_data_) {
+        pp.set_neutrino(_neutrino_data_->flavour, _neutrino_data_->antineutrino);
+    } else {
+      pp.set_type(_particle_type_);
+      if (pp.needs_particle_label()) {
+        pp.set_particle_label(_particle_name_);
+      }
     }
     pp.set_mass(_particle_mass_);
     pp.set_time(0.0 * CLHEP::second);
@@ -886,29 +972,29 @@ namespace genbb {
 
     // Search for a nucleus (Z,A,E*):
     if (_particle_type_ == primary_particle::PARTICLE_UNDEFINED) {
-      DT_LOG_TRACE(get_logging_priority(), "Search for a nucleus...");
+      DT_LOG_DEBUG(get_logging_priority(), "Search for a nucleus...");
       int Z, A;
       double Estar;
       if (primary_particle::label_to_nucleus(_particle_name_, Z, A, Estar)) {
-        DT_LOG_TRACE(get_logging_priority(), "Found a nucleus...");
+        DT_LOG_DEBUG(get_logging_priority(), "Found a nucleus...");
         _ion_data_.reset(new ion_data_type);
         _ion_data_->Z = Z;
         _ion_data_->A = A;
         _ion_data_->Estar = Estar;
         _particle_type_ = primary_particle::NUCLEUS;
         if (!datatools::is_valid(_particle_mass_)) {
-          DT_LOG_TRACE(get_logging_priority(), "Searching for the mass of the nucleus...");
+          DT_LOG_DEBUG(get_logging_priority(), "Searching for the mass of the nucleus...");
           materials::isotope::id nucleus_id(Z, A);
           if (materials::isotope::id_is_tabulated(nucleus_id)) {
-            DT_LOG_TRACE(get_logging_priority(), "Nucleus is tabulated...");
+            DT_LOG_DEBUG(get_logging_priority(), "Nucleus is tabulated...");
             const materials::isotope::record_type & isorec
               = materials::isotope::table_record_from_id(nucleus_id);
             double bea = isorec.get_binding_energy_per_nucleon();
-            DT_LOG_TRACE(get_logging_priority(), "Nucleus' binding energy per nucleon is " << bea / CLHEP::keV << " keV");
+            DT_LOG_DEBUG(get_logging_priority(), "Nucleus' binding energy per nucleon is " << bea / CLHEP::keV << " keV");
             DT_THROW_IF(!datatools::is_valid(bea), std::logic_error,
                         "Cannot fetch binding energy per nucleon for isotope " << nucleus_id.to_string() << " !");
             set_particle_mass(materials::isotope::compute_nucleus_mass(Z, A, bea));
-            DT_LOG_TRACE(get_logging_priority(), "Nucleus' mass is " << get_particle_mass() / CLHEP::GeV << " GeV");
+            DT_LOG_DEBUG(get_logging_priority(), "Nucleus' mass is " << get_particle_mass() / CLHEP::GeV << " GeV");
           } else {
             DT_THROW_IF(true, std::logic_error, "No registered isotope " << nucleus_id.to_string() << " !");
           }
@@ -918,10 +1004,11 @@ namespace genbb {
 
     // Search for an ion (Z,A,E*,Q):
     if (_particle_type_ == primary_particle::PARTICLE_UNDEFINED) {
-      DT_LOG_TRACE(get_logging_priority(), "Search for an ion...");
+      DT_LOG_DEBUG(get_logging_priority(), "Search for an ion...");
       int Z, A, Q;
       double Estar;
       if (primary_particle::label_to_ion(_particle_name_, Z, A, Estar, Q)) {
+        DT_LOG_DEBUG(get_logging_priority(), "Found an ion...");
         _ion_data_.reset(new ion_data_type);
         _ion_data_->Z = Z;
         _ion_data_->A = A;
@@ -943,6 +1030,16 @@ namespace genbb {
         }
       }
     }
+
+    /*
+    // XXX
+    if (_particle_type_ == primary_particle::NEUTRINO) {
+       _neutrino_data_.reset(new neutrino_data_type);
+       _neutrino_data_->flavour = nu_flavour;
+       _neutrino_data_->antineutrino = nu_antineutrino;
+
+    }
+    */
 
     // Search for other particles:
     if (_particle_type_ == primary_particle::PARTICLE_UNDEFINED) {

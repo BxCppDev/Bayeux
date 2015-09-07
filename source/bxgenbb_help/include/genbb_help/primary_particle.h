@@ -1,10 +1,10 @@
 /// \file genbb_help/primary_particle.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
- * Last modified: 2014-06-19
+ * Last modified: 2015-06-19
  *
  * License:
- * Copyright 2007-2014 F. Mauger
+ * Copyright 2007-2015 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,55 +70,56 @@ namespace genbb {
     static const int INVALID_GENERATION_ID = -1;
 
     /// \brief Extended Geant3 particle
-    // Using GEANT3 definition from:
-    //   http://wwwasdoc.web.cern.ch/wwwasdoc/geant_html3/node72.html#SECTION024000000000000000000000
-    //   http://www.star.bnl.gov/public/comp/simu/gstar/Manual/particle_id.html
+    /// These are historical codes used in GEANT3 and original GENBB/DECAY0 library.
+    /// Modern particle code scheme is proposed by the PDG. Some utilities are now
+    /// provided to translate such a code into the corresponding PDG code, if possible.
+    /// GEANT3 definition: http://www.star.bnl.gov/public/comp/simu/gstar/Manual/particle_id.html
     enum particle_type {
-      UNDEF              = -1, //!< @deprecated Undefined particle type
+      // UNDEF              = -1, //!< @deprecated Undefined particle type
       PARTICLE_UNDEFINED = -1, //!< Undefined particle type
       PARTICLE_UNKNOWN   = 0,  //!< A valid particle but unknown from the genbb library
-      GAMMA      = 1,
-      POSITRON   = 2,
-      ELECTRON   = 3,
-      NEUTRINO   = 4,
-      MUON_PLUS  = 5,
-      MUON_MINUS = 6,
-      PION_0     = 7,
-      PION_PLUS  = 8,
-      PION_MINUS = 9,
-      KAON_0_LONG  = 10,
-      KAON_PLUS    = 11,
-      KAON_MINUS   = 12,
-      NEUTRON      = 13,
-      PROTON       = 14,
-      ANTI_PROTON  = 15,
-      KAON_0_SHORT = 16,
-      ETA          = 17,
-      LAMBDA       = 18,
-      SIGMA_PLUS   = 19,
-      SIGMA_0      = 20,
-      SIGMA_MINUS  = 21,
-      XI_0         = 22,
-      XI_MINUS     = 23,
-      OMEGA_MINUS      = 24,
-      ANTI_NEUTRON     = 25,
-      ANTI_LAMBDA      = 26,
-      ANTI_SIGMA_MINUS = 27,
-      ANTI_SIGMA_0     = 28,
-      ANTI_SIGMA_PLUS  = 29,
-      ANTI_XI_0        = 30,
-      ANTI_XI_PLUS     = 31,
-      ANTI_OMEGA_PLUS  = 32,
-      DEUTERON   = 45,
-      TRITIUM    = 46,
-      TRITON     = 46,
-      ALPHA      = 47,
-      GEANTINO   = 48,
-      HE3        = 49,
-      CERENKOV   = 50,
+      GAMMA              = 1,
+      POSITRON           = 2,
+      ELECTRON           = 3,
+      NEUTRINO           = 4,
+      MUON_PLUS          = 5,
+      MUON_MINUS         = 6,
+      PION_0             = 7,
+      PION_PLUS          = 8,
+      PION_MINUS         = 9,
+      KAON_0_LONG        = 10,
+      KAON_PLUS          = 11,
+      KAON_MINUS         = 12,
+      NEUTRON            = 13,
+      PROTON             = 14,
+      ANTI_PROTON        = 15,
+      KAON_0_SHORT       = 16,
+      ETA                = 17,
+      LAMBDA             = 18,
+      SIGMA_PLUS         = 19,
+      SIGMA_0            = 20,
+      SIGMA_MINUS        = 21,
+      XI_0               = 22,
+      XI_MINUS           = 23,
+      OMEGA_MINUS        = 24,
+      ANTI_NEUTRON       = 25,
+      ANTI_LAMBDA        = 26,
+      ANTI_SIGMA_MINUS   = 27, // BEWARE: same as Geant4 "anti_sigma+"
+      ANTI_SIGMA_0       = 28, // BEWARE: same as Geant4 "anti_sigma0"
+      ANTI_SIGMA_PLUS    = 29, // BEWARE: same as Geant4 "anti_sigma-"
+      ANTI_XI_0          = 30, // BEWARE: same as Geant4 "anti_xi0"
+      ANTI_XI_PLUS       = 31, // BEWARE: same as Geant4 "anti_xi-"
+      ANTI_OMEGA_PLUS    = 32, // BEWARE: same as Geant4 "anti_omega-"
+      DEUTERON           = 45,
+      TRITIUM            = 46,
+      TRITON             = 46,
+      ALPHA              = 47,
+      GEANTINO           = 48,
+      HE3                = 49,
+      CERENKOV           = 50, // Optical photon/scintillation/Cerenkov
       // Additional codes:
-      NUCLEUS    = 1000000000, //!< Fully ionized ion (naked nucleus)
-      ION        = 1100000000  //!< An ion/atom with arbitrary ionization state
+      NUCLEUS            = 1000000000, //!< Fully ionized ion (naked nucleus)
+      ION                = 1100000000  //!< An ion/atom with arbitrary ionization state
     };
 
     /// Invalid PDG particle code
@@ -161,14 +162,17 @@ namespace genbb {
     /// Set the extended Geant3 type of the particle and set the corresponding particle label if it is empty
     void set_type(int type_);
 
-    /// Define a nucleus
+    /// Define a nucleus, possibly in some excited state
     void set_nucleus(int z_, int a_, double excitation_energy_ = 0.0, bool pdg_ = false);
 
-    /// Define an ion
+    /// Define an ion (or neutral atom)
     void set_ion(int z_, int a_, double excitation_energy_ = 0.0, int charge_ = 0, bool pdg_ = false);
 
     /// Define a neutrino
     void set_neutrino(const std::string & label_);
+
+    /// Define a neutrino
+    void set_neutrino(const std::string & flavour_, bool antineutrino_);
 
     /// Check if the PDG code of the particle is defined
     bool has_pdg_code() const;
@@ -177,13 +181,15 @@ namespace genbb {
     int get_pdg_code() const;
 
     /// Set the PDG code of the particle
-    // see also: http://pdg.lbl.gov/2011/reviews/rpp2011-rev-monte-carlo-numbering.pdf
     void set_pdg_code(int);
 
-    /// Return the creation time of the particle
+    /// Fetch the PDG code from the particle type/label...
+    int fetch_pdg_code() const;
+
+    /// Return the creation time of the particle (in unit of time)
     double get_time() const;
 
-    /// Return  mutable reference on the creation time of the particle
+    /// Return mutable reference on the creation time of the particle (in unit of time)
     double & grab_time();
 
     /// Check is the particle should have a specific identifier label because it lacks a type or code
@@ -198,10 +204,10 @@ namespace genbb {
     // Set the identifier label of the particle (for type == PARTICLE_UNKNWON, NUCLEUS, ION)
     void set_particle_label(const std::string &);
 
-    /// Set the creation time of the particle
+    /// Set the creation time of the particle (in unit of time)
     void set_time(double time_);
 
-    /// Shift the creation time of the particle
+    /// Shift the creation time of the particle (in unit of time)
     void shift_time(double delta_time_);
 
     /// Check if the description of the particle is valid
@@ -260,31 +266,31 @@ namespace genbb {
     /// Check if the particle is pion0
     bool is_pion_zero() const;
 
-    /// Check if the particle is an nucleus (not the light ones: D, T, He3, He4)
+    /// Check if the particle is an nucleus (not the light ones: p, D, T, He3, He4)
     bool is_nucleus() const;
 
-    /// Check if the particle is an ion (not the light ones: D, T, He3, He4)
+    /// Check if the particle is an ion (not the light ones: p, D, T, He3, He4)
     bool is_ion() const;
 
-    /// Set the momentum of the particle
+    /// Set the momentum of the particle (in unit of energy, i.e. p x c)
     void set_momentum(const geomtools::vector_3d & m_);
 
-    /// Return the const momentum of the particle
+    /// Return the const momentum of the particle (in unit of energy, i.e. p x c)
     const geomtools::vector_3d & get_momentum() const;
 
-    /// Return the mutable momentum of the particle
+    /// Return the mutable momentum of the particle (in unit of energy, i.e. p x c)
     geomtools::vector_3d & grab_momentum();
 
-    /// Compute the associated 4-vector
+    /// Compute the associated 4-vector (in unit of energy, i.e. p x c)
     void compute_four_momentum(CLHEP::HepLorentzVector &) const;
 
-    /// Set the vertex of the particle
+    /// Set the vertex of the particle (in unit of length)
     void set_vertex(const geomtools::vector_3d & v_);
 
-    /// Return the const vertex of the particle
+    /// Return the const vertex of the particle (in unit of length)
     const geomtools::vector_3d & get_vertex() const;
 
-    /// Return the mutable vertex of the particle
+    /// Return the mutable vertex of the particle (in unit of length)
     geomtools::vector_3d & grab_vertex();
 
     /// Check if the particle has its own vertex
@@ -296,31 +302,47 @@ namespace genbb {
     /// Check if the charge of the particle is known
     bool charge_is_known() const;
 
-    /// Return the charge of the particle
-    double get_charge() const; // in unit of e
+    /// Return the charge of the particle (in unit of +e, as a real number)
+    double get_charge() const;
 
-    /// Set the mass of the particle (in unit of energy)
+    /// Set the mass of the particle (in unit of energy, i.e. m x c2)
     void set_mass(double);
 
     /// Reset the mass of the particle
     void reset_mass();
 
-    /// Return the mass of the particle (in unit of energy)
+    /// Return the mass of the particle (in unit of energy, i.e. m x c2)
     double get_mass() const;
 
     /// Check if the mass of the particle is known
     bool mass_is_known() const;
 
-    /// Return the total energy
+    /// Return the total energy (in unit of energy)
     double get_total_energy() const;
 
-    /// Return the kinetic energy
+    /// Return the kinetic energy (in unit of energy)
     double get_kinetic_energy() const;
 
     /// Return the relativistic beta coefficient
     double get_beta() const;
 
     /// Return a const reference to the auxiliary properties
+    ///
+    /// Examples of supported properties:
+    ///
+    /// For nucleus/ion:
+    ///
+    ///  * "ion.Z" (integer) : value >= 1
+    ///  * "ion.A" (integer) : value >= Z
+    ///  * "ion.I" (integer) : value >= 1
+    ///  * "ion.excitation_energy" (real) : value > 0.0 keV (explicit energy unit)
+    ///  * "ion.Q" (integer) (only for ion) : Q>0, Q==0 (neutral atom), Q<0 (in unit: +e)
+    ///
+    /// For neutrinos:
+    ///
+    ///  * "neutrino.type" (string) : "neutrino", "antineutrino"
+    ///  * "neutrino.flavor" (string) : "electron", "muon", "tau"
+    ///
     const datatools::properties & get_auxiliaries() const;
 
     /// Return a mutable reference to the auxiliary properties

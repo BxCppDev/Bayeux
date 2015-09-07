@@ -35,6 +35,7 @@
 // Standard library:
 #include <string>
 #include <fstream>
+#include <vector>
 
 // Third party:
 // - Boost:
@@ -76,14 +77,33 @@ namespace genbb {
 
     /// \brief Type of the coupling
     enum coupling_type {
-      COUPLING_INVALID = 0,      //!< Invalid coupling
+      COUPLING_INVALID      = 0, //!< Invalid coupling
       COUPLING_AXIAL_VECTOR = 1, //!< Axial-vector coupling (pure Gamow-Teller)
-      COUPLING_TENSOR = 2,       //!< Tensor coupling
-      COUPLING_SCALAR = 3,       //!< Scalar coupling
-      COUPLING_VECTOR = 4,       //!< Vector coupling (pure Fermi)
-      COUPLING_USER   = 5,       //!< User defined coupling
-      COUPLING_UNKNOWN = 6       //!< Unknown coupling
+      COUPLING_TENSOR       = 2, //!< Tensor coupling
+      COUPLING_SCALAR       = 3, //!< Scalar coupling
+      COUPLING_VECTOR       = 4, //!< Vector coupling (pure Fermi)
+      COUPLING_USER         = 5, //!< User defined coupling
+      COUPLING_UNKNOWN      = 6  //!< Unknown coupling
     };
+
+    /// \brief Daughter recoil ion's electron shakeoff mode
+    enum electron_shakeoff_mode_type {
+      ESO_NO_SHAKEOFF   = 0, //!< No electron shakeoff
+      ESO_FIXED_CHARGE  = 1, //!< Force daughter recoil ion's charge state
+      ESO_RANDOM_CHARGE = 2  //!< Randomize daughter recoil ion's charge state
+    };
+
+    /// Invalid electron shakeoff fixed charge
+    static const int ESO_INVALID_FIXED_CHARGE = 0xFFFFFFFF;
+
+    /// \brief Entry for a given daughter recoil ion's charge state
+    struct electron_shakeoff_entry {
+      int    charge;            //!< Daughter recoil ion's cHarge state
+      double probability;       //!< Probability
+      double cumul_probability; //!< Cumulative probability
+    };
+
+    typedef std::vector<electron_shakeoff_entry> electron_shakeoff_data_type;
 
     /// Return a label associated to a coupling
     static std::string label_from_coupling(coupling_type);
@@ -184,6 +204,29 @@ namespace genbb {
     /// Return the cut on beta kinetic energy
     double get_ke_cut() const;
 
+    /// Check electron shakeoff mode
+    bool is_electron_shakeoff() const;
+
+    /// Set electron shakeoff mode
+    void set_electron_shakeoff(electron_shakeoff_mode_type eso_mode_);
+
+    /// Check the fixed electron shakeoff charge of the daughter recoil ion
+    bool has_electron_shakeoff_fixed_charge() const;
+
+    /// Return the fixed electron shakeoff charge of the daughter recoil ion
+    int get_electron_shakeoff_fixed_charge() const;
+
+    /// Set fixed electron shakeoff charge of the daughter recoil ion
+    void set_electron_shakeoff_fixed_charge(int charge_);
+
+    /// Add an charge entry for the random electron shakeoff
+    /// @arg charge_ the charge state (in unit of +e : ..., -2, -1 , 0, +1 , +2, ...)
+    /// @arg probability_ the associated probability (not necessarily normalized)
+    void add_electron_shakeoff_random(int charge_, double probability_);
+
+    /// Return the random for random electron shakeoff
+    const electron_shakeoff_data_type & get_electron_shakeoff_data_random() const;
+
     /// Set the name of the file
     void set_log_filename(const std::string &);
 
@@ -270,6 +313,9 @@ namespace genbb {
     /// Compute some internal data
     void _init();
 
+    /// Initialize electron shakeoff
+    void _init_electron_shakeoff();
+
     /// Set default values (initialization)
     void _set_default();
 
@@ -287,13 +333,16 @@ namespace genbb {
     double _energy_daughter_; //!< Excitation energy of the daughter decaying nucleus
     coupling_type _coupling_; //!< Weak coupling
     double _a_;               //!< Beta-neutrino angular correlation coefficient
+    electron_shakeoff_mode_type _electron_shakeoff_mode_; //!< Recoil nucleus' electron shakeoff mode
+    int                         _electron_shakeoff_fixed_charge_; //!< Fixed charge of the daughter recoil ion
+    electron_shakeoff_data_type _electron_shakeoff_data_random_; //!< Data for random electron shakeoff
     std::string _log_filename_; //!< Name of the file to save kinematics data
     boost::scoped_ptr<std::ofstream> _log_file_; //!< Smart pointer to a log file
     boost::scoped_ptr<fermi_function> _F_; //!< Smart pointer to the Fermi object-function
     bool _massive_neutrino_;   //!< Flag to use a massive neutrino
     double _neutrino_mass_;    //!< Specific nonzero neutrino mass
-    bool _beta_generated_;     //!< Flag to generate the beta
-    bool _neutrino_generated_; //!< Flag to generate the neutrino
+    bool _beta_generated_;     //!< Flag to generate the beta (minus/plus)
+    bool _neutrino_generated_; //!< Flag to generate the (anti)neutrino
     bool _daughter_generated_; //!< Flag to generate the daughter nucleus
 
     // Working data:

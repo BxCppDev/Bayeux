@@ -25,6 +25,7 @@
 // Standard library:
 #include <limits>
 #include <cmath>
+#include <set>
 
 // Third party:
 // - CLHEP:
@@ -51,6 +52,9 @@
 namespace genbb {
 
   GENBB_BDD_REGISTRATION_IMPLEMENT(beta_decay, "genbb::beta_decay");
+
+  // static
+  const int beta_decay::ESO_INVALID_FIXED_CHARGE;
 
   // static
   std::string beta_decay::label_from_decay_type(decay_type type_)
@@ -185,6 +189,9 @@ namespace genbb {
     _coupling_ = COUPLING_INVALID;
     datatools::invalidate(_a_);
     datatools::invalidate(_ke_cut_);
+    _electron_shakeoff_mode_ = ESO_NO_SHAKEOFF;
+    _electron_shakeoff_fixed_charge_ = ESO_INVALID_FIXED_CHARGE;
+
     _massive_neutrino_   = false;
     datatools::invalidate(_neutrino_mass_);
     _beta_generated_     = true;
@@ -230,6 +237,8 @@ namespace genbb {
     if (_F_) {
       _F_.reset();
     }
+
+    _electron_shakeoff_data_random_.clear();
 
     _set_default();
     return;
@@ -350,8 +359,8 @@ namespace genbb {
       set_mass_parent(mass_parent);
     }
 
-    DT_LOG_DEBUG(get_logging(), "TEST: Energy parent   = " << _energy_parent_   / CLHEP::keV << " keV");
-    DT_LOG_DEBUG(get_logging(), "TEST: Energy daughter = " << _energy_daughter_ / CLHEP::keV << " keV");
+    DT_LOG_DEBUG(get_logging(), "Energy parent   = " << _energy_parent_   / CLHEP::keV << " keV");
+    DT_LOG_DEBUG(get_logging(), "Energy daughter = " << _energy_daughter_ / CLHEP::keV << " keV");
 
     if (!datatools::is_valid(_energy_parent_)) {
       double energy_parent = 0.0;
@@ -426,6 +435,55 @@ namespace genbb {
       }
     }
 
+    if (! is_electron_shakeoff()) {
+
+      if (config_.has_key("electron.shakeoff")) {
+        std::string eso_mode = config_.fetch_string("electron.shakeoff");
+        if (eso_mode == "fixed") {
+          set_electron_shakeoff(ESO_FIXED_CHARGE);
+        } else if (eso_mode == "random") {
+          set_electron_shakeoff(ESO_RANDOM_CHARGE);
+        } else if (eso_mode == "no") {
+          set_electron_shakeoff(ESO_NO_SHAKEOFF);
+        }
+      }
+
+      if (_electron_shakeoff_mode_ == ESO_FIXED_CHARGE) {
+
+        if (config_.has_key("electron.shakeoff.fixed.charge")) {
+          int eso_fixed_charge = config_.fetch_integer("electron.shakeoff.fixed.charge");
+          set_electron_shakeoff_fixed_charge(eso_fixed_charge);
+        } else {
+          DT_THROW(std::logic_error, "Missing 'electron.shakeoff.fixed.charge' property!");
+        }
+
+      } else if (_electron_shakeoff_mode_ == ESO_RANDOM_CHARGE) {
+
+        std::vector<int>    so_charges;       // Electron shakeoff final charge states
+        std::vector<double> so_probabilities; // Associated probabilities
+
+        if (config_.has_key("electron.shakeoff.random.charges")) {
+          config_.fetch("electron.shakeoff.random.charges", so_charges);
+        } else {
+          DT_THROW(std::logic_error, "Missing 'electron.shakeoff.random.charges' property!");
+        }
+        if (config_.has_key("electron.shakeoff.random.probabilities")) {
+          // Hmm! We should make sure no unit is passed...
+          config_.fetch("electron.shakeoff.random.probabilities", so_probabilities);
+        } else {
+          DT_THROW(std::logic_error, "Missing 'electron.shakeoff.random.probabilities' property!");
+        }
+        DT_THROW_IF(so_charges.size() != so_probabilities.size(),
+                    std::logic_error,
+                    "Unmatching electron shakeoff random charge/probabilities!");
+        for (int i = 0; i < (int) so_charges.size(); i++) {
+          add_electron_shakeoff_random(so_charges[i], so_probabilities[i]);
+        }
+
+      }
+
+    }
+
     if (config_.has_key("beta.generated")) {
       set_beta_generated(config_.fetch_boolean("beta.generated"));
     }
@@ -455,6 +513,39 @@ namespace genbb {
     }
     _set_initialized(true);
     DT_LOG_DEBUG(get_logging(), "TEST: Exiting.");
+    return;
+  }
+
+  void beta_decay::_init_electron_shakeoff()
+  {
+    if (_electron_shakeoff_mode_ == ESO_FIXED_CHARGE) {
+      DT_THROW_IF(_electron_shakeoff_fixed_charge_ > _Z_daughter_,
+                  std::logic_error,
+                  "Invalid electron shakeoff fixed charge state ["
+                  << _electron_shakeoff_fixed_charge_ << "] for the recoil ion!");
+    }
+
+    if (_electron_shakeoff_mode_ == ESO_RANDOM_CHARGE) {
+      double prob_cumul = 0;
+      std::set<int> charges;
+      for (int i = 0; i < (int) _electron_shakeoff_data_random_.size(); i++) {
+        int charge =  _electron_shakeoff_data_random_[i].charge;
+        DT_THROW_IF(charges.count(charge),
+                    std::logic_error,
+                    "Electron shakeoff random charge state ["
+                    << charge << "] is already registered!");
+        charges.insert(charge);
+        DT_THROW_IF(charge > _Z_daughter_,
+                    std::logic_error,
+                    "Invalid electron shakeoff random charge state ["
+                    << _electron_shakeoff_fixed_charge_ << "] for the recoil ion!");
+        prob_cumul += _electron_shakeoff_data_random_[i].probability;
+      }
+      for (int i = 0; i < (int) _electron_shakeoff_data_random_.size(); i++) {
+        _electron_shakeoff_data_random_[i].cumul_probability /= prob_cumul;
+      }
+    }
+
     return;
   }
 
@@ -523,6 +614,10 @@ namespace genbb {
       DT_THROW_IF (!*_log_file_, std::runtime_error,
                    "Cannot open output log file '" << _log_filename_ << "'!");
       _log_file_->precision(15);
+    }
+
+    if (is_electron_shakeoff()) {
+      _init_electron_shakeoff();
     }
 
     unsigned int mode_SS = fermi_function::MODE_SPHERICALLY_SYMMETRIC;
@@ -732,6 +827,57 @@ namespace genbb {
   double beta_decay::get_ke_cut() const
   {
     return _ke_cut_;
+  }
+
+  bool beta_decay::is_electron_shakeoff() const
+  {
+    return _electron_shakeoff_mode_ != ESO_NO_SHAKEOFF;
+  }
+
+  void beta_decay::set_electron_shakeoff(electron_shakeoff_mode_type eso_mode_)
+  {
+    _electron_shakeoff_mode_ = eso_mode_;
+    return;
+  }
+
+  bool beta_decay::has_electron_shakeoff_fixed_charge() const
+  {
+    return _electron_shakeoff_fixed_charge_ != ESO_INVALID_FIXED_CHARGE;
+  }
+
+  int beta_decay::get_electron_shakeoff_fixed_charge() const
+  {
+    return _electron_shakeoff_fixed_charge_;
+  }
+
+  void beta_decay::set_electron_shakeoff_fixed_charge(int charge_)
+  {
+    DT_THROW_IF(_electron_shakeoff_mode_ == ESO_RANDOM_CHARGE,
+                std::logic_error,
+                "Invalid electron shakeoff mode (random)!");
+    if (_electron_shakeoff_mode_ == ESO_NO_SHAKEOFF) {
+      _electron_shakeoff_mode_ = ESO_FIXED_CHARGE;
+    }
+    _electron_shakeoff_fixed_charge_ = charge_;
+    return;
+  }
+
+  void beta_decay::add_electron_shakeoff_random(int charge_, double probability_)
+  {
+    DT_THROW_IF(probability_ < 0.0, std::range_error,
+                "Invalid electron shakeoff charge state probability!");
+    electron_shakeoff_entry esoe;
+    esoe.charge = charge_;
+    esoe.probability = probability_;
+    esoe.cumul_probability = datatools::invalid_real();
+    _electron_shakeoff_data_random_.push_back(esoe);
+    return;
+  }
+
+  const beta_decay::electron_shakeoff_data_type &
+  beta_decay::get_electron_shakeoff_data_random() const
+  {
+    return _electron_shakeoff_data_random_;
   }
 
   double beta_decay::get_pr_max() const
@@ -1150,7 +1296,11 @@ DEVEL: test1: ke = 2389.79051414769 keV
     if (is_beta_generated()) {
       // Beta:
       primary_particle & beta = event_.add_particle();
-      beta.set_type(primary_particle::ELECTRON);
+      if (is_beta_minus()) {
+        beta.set_type(primary_particle::ELECTRON);
+      } else {
+        beta.set_type(primary_particle::POSITRON);
+      }
       beta.set_time(0.0);
       //beta.grab_auxiliaries().store("DPId", "genbb::beta_decay@beta");
       kinematics beta_kine;
@@ -1162,7 +1312,7 @@ DEVEL: test1: ke = 2389.79051414769 keV
     if (is_neutrino_generated()) {
       // Neutrino:
       primary_particle & neutrino = event_.add_particle();
-      neutrino.set_type(primary_particle::NEUTRINO);
+      neutrino.set_neutrino("electron", is_beta_minus() /* antineutrino */);
       neutrino.set_time(0.0);
       //neutrino.grab_auxiliaries().store("DPId", "genbb::beta_decay@neutrino");
       kinematics neutrino_kine;
@@ -1174,14 +1324,27 @@ DEVEL: test1: ke = 2389.79051414769 keV
     if (is_daughter_generated()) {
       // Recoil ion:
       primary_particle & recoil = event_.add_particle();
-      recoil.set_type(primary_particle::ION);
-      recoil.set_time(0.0);
-      int ion_charge = 0;
-      // No shake-off is taken into account for now:
+      // For neutral parent atom and beta minus decay, expected recoil ion charge is typically +1...
+      int ion_charge = 0; // default: neutral atom (not realistic) !!!
+      if (is_electron_shakeoff()) {
+        // Apply electron shakeoff:
+        if (_electron_shakeoff_mode_ == ESO_FIXED_CHARGE) {
+          ion_charge = get_electron_shakeoff_fixed_charge();
+        } else if (_electron_shakeoff_mode_ == ESO_RANDOM_CHARGE) {
+          double prob = prng_.flat(0, +1.0);
+          for (int i = 0; i < (int) _electron_shakeoff_data_random_.size(); i++) {
+            if (prob < _electron_shakeoff_data_random_[i].cumul_probability) {
+              ion_charge = _electron_shakeoff_data_random_[i].charge;
+              break;
+            }
+          }
+        }
+      }
       recoil.set_ion(_Z_daughter_,
                      _A_,
                      _energy_daughter_,
                      ion_charge);
+      recoil.set_time(0.0);
       double recoil_mass = _m3_ + (_Z_daughter_ - ion_charge) * CLHEP::electron_mass_c2;
       recoil.set_mass(recoil_mass);
       //recoil.grab_auxiliaries().store("DPId", "genbb::beta_decay@recoil");
