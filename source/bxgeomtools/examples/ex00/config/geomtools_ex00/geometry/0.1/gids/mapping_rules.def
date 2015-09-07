@@ -13,29 +13,40 @@
 # volume (directly or indireclty through dedicated *replicated* models)
 # are considered to be classified (and labelled) in the same geometry
 # category: "box.gc". The numbering start arbitrarily from 0 (for
-# daughter "BoxA") and runs up to 17 (to last box in the "CircleBoxes"
-# replica model.
+# daughter "BoxA") and runs up to 17 (to the last box in the "CircleBoxes"
+# replica model).
 
 #@description The mapping directives for the "BoxA" daughter volume
 mapping.daughter_id.BoxA : string  = "[box.gc:position=0]"
+# This builds the [100:0] GID.
 
 #@description The mapping directives for the "BoxB" daughter volume
 mapping.daughter_id.BoxB : string  = "[box.gc:position=1]"
+# This builds the [100:1] GID.
 
 #@description The mapping directives for the "BoxC" daughter volume
 mapping.daughter_id.BoxC : string  = "[box.gc:position=2]"
+# This builds the [100:2] GID.
 
 #@description The mapping directives for the "BoxD" daughter volume
 mapping.daughter_id.BoxD : string  = "[box.gc:position=3]"
+# This builds the [100:3] GID.
 
 #@description The mapping directives for the "BoxE" daughter volume
 mapping.daughter_id.BoxE : string  = "[box.gc:position=4]"
+# This builds the [100:4] GID.
 
-# #@description The mapping directives for the "ManyBoxes" daughter volume
-# mapping.daughter_id.ManyBoxes : string  = "[box.gc:position+5]"
+#@description The mapping directives for the "ManyBoxes" daughter volume
+mapping.daughter_id.ManyBoxes : string  = "[box.gc:position+5]"
+# This  builds  the following  4  GIDS  : [100:5],  [100:6],  [100:7],
+# [100:8], respectively associated to  each replicated box addressed by
+# the ManyBoxes volume.
 
-# #@description The mapping directives for the "CircleBoxes" daughter volume
-# mapping.daughter_id.CircleBoxes : string  = "[box.gc:position+9]"
+#@description The mapping directives for the "CircleBoxes" daughter volume
+mapping.daughter_id.CircleBoxes : string  = "[box.gc:position+9]"
+# This  builds  the  following  9   GIDS  from  [100:9]  to  [100:17],
+# respectively  associated to  each  replicated box  addressed by  the
+# CircleBoxes volume.
 
 #@description The mapping directives for the "CylA" daughter volume
 mapping.daughter_id.CylA : string  = "[any_node.gc:column=0,row=0]"

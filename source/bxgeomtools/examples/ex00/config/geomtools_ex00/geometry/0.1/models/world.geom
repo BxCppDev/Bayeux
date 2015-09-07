@@ -1,8 +1,32 @@
-# -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# -*- mode: conf-unix;  -*-
+# The line  above is a  directive to  activate syntax coloring  in the
+# emacs editor.  It  is not mandatory but really useful  for those who
+# use this editing tool.
 
-#@description The geometry model of the world (mother-of-all) volume
+# This    file   use    the   ASCII    text   format    of   the    of
+# "datatools::multi_properties" class.  It is  organized as a sequence
+# of  sections,  each related  to  a  specific geometry  model.   Each
+# section starts with a header line that identifies the model:
+#
+# [name="NAME OF THE GEOMETRY MODEL" type="CLASS IDENTIFIER OF THE GEOMETRY MODEL"]
+#
+# The  name of  the  geometry  model is  unique  with  respect to  the
+# geometry manager,  even when  given in  different files.   The class
+# identifier  corresponds to  the  registration name  of the  geometry
+# model class in the Bayeux/geomtools library.  You can print the list
+# of available  geometry models  registered in  Bayeux/geomtools using
+# the OCD online manual utility:
+#  shell$ bxocd_manual --action list | grep geomtools::* | grep _model
+#
+# At least,  this prints the  list of geometry model  classes equipped
+# with the  OCD (Object Configuration Description)  feature.  The body
+# of  a  geometry   model's  section  consists  in   a  collection  of
+# configuration   properties  following   the  format   used  by   the
+# "datatools::properties" class.
 
+#@description The geometry model of the unique top-level world (mother-of-all) logical volume
+
+# Mandatory meta comments that describe the expected syntax of each section header:
 #@key_label  "name"
 #@meta_label "type"
 
@@ -11,18 +35,37 @@
 
 #@config The list of properties to configure the world logical volume
 
+# This  geometry  model  implements  the  mandatory  top-level  volume
+# (mother-of-all) Its name  is conventionnaly set to  "world". Also it
+# should be  associated to the  "world" geometry category with  type 0
+# (see the "lab_categories.lis" file in the "gids/" folder.
+
 ############
 # Geometry #
 ############
 
 #@description The default length unit
 length_unit : string = "mm"
+# This is only used if no explicit unit is given with the x, y and z dimensions
+# below.
 
 #@description The name of the 3D shape of the world logical volume
 shape_type : string = "box"
 
+# It is  typical to  use a  3D box as  the top-level  volume. However,
+# other shapes are possible (cylinder, sphere...) depending of what is
+# needed.
+
+# We must set the dimensions of the chosen shape above. In the case of
+# a 3D box, 3 mandatory  parameters (dimensions) are expected.  Please
+# use the  online Bayeux  OCD manual  to generate  documentation about
+# supported configuration  properties for the  "geomtools::box" class:
+#
+#   shell$ bxocd_manual --action show geomtools::box
+
 #@description The world volume X dimension (box)
 x          : real as length = 1000.0 mm
+# Here the type of physical quantity as well as the unit are explicitely set.
 
 #@description The world volume Y dimension (box)
 y          : real as length = 1000.0 mm
@@ -36,6 +79,12 @@ z          : real as length = 1000.0 mm
 
 #@description The name of the material that fills the lab atmosphere
 material.ref : string = "vacuum"
+
+# The identifier of the material must  match a material defined by the
+# material plugin. It may be an alias defined by the user. For example
+# here "vacuum" is  an alias for the  "std::vacuum" material published
+# by  the "Bayeux/materials"  library  and addressed  by the  material
+# plugin (see the "plugins/material_aliases.def" file).
 
 ###################
 # Daughter volume #
@@ -53,17 +102,48 @@ internal_item.labels : string[30] = \
   "MeshedBox0" \
   "Wall1"
 
+# Each daughter physical  volume has an unique name  within its mother
+# volume.  Also each  of them must be given: a)  a geometry model that
+# specifies  the logical  volume  that represent  it,  b) a  placement
+# directive (position/translation  and eventually rotation).   This is
+# what is  written through the collection  of configuration properties
+# below.
+
+# The properties below, prefixed  with the "internal_item." label, are
+# used as rules to position  some daughter physical volumes inside the
+# logical volume (the  mother volume) handled by  the current geometry
+# model. We  use the list of  identifiers given above to  identify the
+# configuration properties for each daughter volume:
+
 #@description The model of the "BoxA" daughter volume
 internal_item.model.BoxA       : string  = "blue_box0.model"
+
+# We give here the identifier/name of the geometry model associated to
+# the daughter  physical volume  named "BoxA".   This model  must have
+# been defined before. Thus the ordering  of ".geom" files used by the
+# geometry manager is relevant.
 
 #@description The placement of the "BoxA" daughter volume
 internal_item.placement.BoxA   : string  = "-40 40 -40 (cm)"
 
+# We give here the placement  for the "BoxA" daughter physical volume.
+# There is no rotation in this case, only the translation with respect
+# to the mother volume reference frame. The unit is explicitely set.
+
 #@description The model of the "BoxB" daughter volume
 internal_item.model.BoxB       : string  = "blue_box0.model"
 
+# We give here the identifier/name of the geometry model associated to
+# the daughter physical volume named "BoxB".
+
 #@description The placement of the "BoxB" daughter volume
-internal_item.placement.BoxB   : string  = "-40 30 -40 (cm)/ z 30 (degree) "
+internal_item.placement.BoxB   : string  = "-40 30 -40 (cm) / z 30 (degree) "
+
+# We give here the placement  for the "BoxB" daughter physical volume.
+# There is not only the translation  with respect to the mother volume
+# reference  frame but  also  the  rotation of  the  volume. Here  the
+# rotation  operated  with respect  to  the  Z  axis.  The  units  are
+# explicitely set.
 
 #@description The model of the "BoxC" daughter volume
 internal_item.model.BoxC       : string  = "blue_box0.model"
@@ -237,12 +317,40 @@ internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
 # Mapping #
 ###########
 
-# Here all the boxes of model "box0.model" that have been set in the world
-# volume (directly or indireclty through dedicated *replicated* models)
-# are considered to be classified (and labelled) in the same geometry
-# category: "box.gc". The numbering start arbitrarily from 0 (for
-# daughter "BoxA") and runs up to 17 (to last box in the "CircleBoxes"
-# replica model.
+# The so-called mapping directives, prefixed with the "mapping." label
+# are used  as rules to  automatically build the  geometry identifiers
+# (GIDs)  associated to  physical volumes  in the  geometry hierarchy.
+# Each daughter volume  an unique GID should be associated  to must be
+# passed  some  mapping directive  that  will  be interpreted  by  the
+# mapping manager.   Basically, we must  specify what is  the geometry
+# category the daughter volume belongs to  and how its address must be
+# constructed  as an  unique sequence  of integers  in the  considered
+# category. Note also  that it is not mandatory to  associate a GID to
+# each  daughter volume.   The user  is  invited to  publish only  the
+# mapping  rules  for the  daughter  volume  he/she is  interested  in
+# (examples: source  of particles  in a  setup used  by a  Monte Carlo
+# application, detection units...).
+
+# There  is  two ways  to  specify  the  mapping rules  associated  to
+# daughter volumes within a given volume (model):
+#  a) we  may directly embed the  "mapping.daughter_id.X" properties in
+#   the configuration section of the  geometry model in the ".geom"
+#   file, where "X" is the name of the daughter volume.
+#  b) we  may used  some external  files to  record the  mapping rules
+#     (using    the    same    syntax    as    in    a).    See    the
+#     "external_mapping_rules" property in the main configuration file
+#     of the geometry manager.
+
+# If  you plan  to use  technique a)  mentionned above,  the following
+# lines typically  correspond to  the mapping directives  for daughter
+# objects defined in the "world" volume.
+
+# Here all the daughter volumes  using the "box0.model" geometry model
+# that have been set in the  "world" volume -- directly as unique item
+# or  indirectly   through  dedicated   *replicated*  models   --  are
+# considered  to be  classified (and  labelled) in  the same  geometry
+# category:  "box.gc".   Other  daughter  volumes  are  classified  in
+# other geometry categories ("any_node.gc", "object.gc"...).
 
 # #@description The mapping directives for the "BoxA" daughter volume
 # mapping.daughter_id.BoxA : string  = "[box.gc:position=0]"
@@ -259,11 +367,11 @@ internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
 # #@description The mapping directives for the "BoxE" daughter volume
 # mapping.daughter_id.BoxE : string  = "[box.gc:position=4]"
 
-# # #@description The mapping directives for the "ManyBoxes" daughter volume
-# # mapping.daughter_id.ManyBoxes : string  = "[box.gc:position+5]"
+# #@description The mapping directives for the "ManyBoxes" daughter volume
+# mapping.daughter_id.ManyBoxes : string  = "[box.gc:position+5]"
 
-# # #@description The mapping directives for the "CircleBoxes" daughter volume
-# # mapping.daughter_id.CircleBoxes : string  = "[box.gc:position+9]"
+# #@description The mapping directives for the "CircleBoxes" daughter volume
+# mapping.daughter_id.CircleBoxes : string  = "[box.gc:position+9]"
 
 # #@description The mapping directives for the "CylA" daughter volume
 # mapping.daughter_id.CylA : string  = "[any_node.gc:column=0,row=0]"
@@ -297,7 +405,6 @@ internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
 
 # #@description The mapping directives for the "DetStack1" daughter volume
 # mapping.daughter_id.DetStack1 : string = "[detector.gc:unit=1]"
-
 
 # #@description The mapping directives for the "Tessella1" daughter volume
 # mapping.daughter_id.Tessella1 : string = "[object.gc:item=0]"

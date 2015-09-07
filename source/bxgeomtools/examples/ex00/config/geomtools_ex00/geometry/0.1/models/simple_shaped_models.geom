@@ -3,13 +3,13 @@
 
 #@description The geometry model of the detector volume
 
-#@key_label   "name"
-#@meta_label  "type"
+#@key_label  "name"
+#@meta_label "type"
 
-# We define here several geometry models with simple shaped volume (box, cylinder...)
-# with arbitrary dimensions and materials.
-# Some special *visibility* directives are used to set the colors used for the
-# graphics rendering of the volumes.
+# We define  here several  geometry models  with simple  shaped volume
+# (box, cylinder...)   with arbitrary dimensions and  materials.  Some
+# special *visibility* directives are used  to set the colors used for
+# the graphics rendering of the volumes.
 
 
 ##############################################################
@@ -21,8 +21,9 @@
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
+# Not used here because we explicitely the unit in the X, Y, Z dimensions below.
 
 #@description The name of the 3D shape of the detector volume
 shape_type  : string = "box"
@@ -47,6 +48,9 @@ material.ref : string = "copper"
 # Visibility #
 ##############
 
+# Properties prefixed with the "visibility." label may be used by some external
+# rendering tool as hint to generate the display of the virtual geometry setup.
+
 #@description The recommended color for the display of the box
 visibility.color  : string  = "blue"
 
@@ -63,8 +67,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "box"
@@ -105,8 +109,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "box"
@@ -147,8 +151,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "box"
@@ -189,11 +193,13 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"
+
+# For a cylinder shape, two mandatory dimensions are requested:
 
 #@description The radius of the cylinder
 r           : real as length =  40.0 mm
@@ -228,8 +234,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"
@@ -267,8 +273,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"
@@ -306,8 +312,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"
@@ -345,8 +351,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"
@@ -384,8 +390,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"
@@ -423,8 +429,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"
@@ -462,8 +468,8 @@ visibility.hidden : boolean = 0
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+# #@description The default length unit
+# length_unit : string = "mm"
 
 #@description The name of the 3D shape of the volume
 shape_type  : string = "cylinder"

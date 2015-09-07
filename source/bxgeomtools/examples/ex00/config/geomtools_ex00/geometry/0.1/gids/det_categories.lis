@@ -13,8 +13,9 @@
 
 #@description The GID address of a box is characterized by its 'position' number
 addresses : string[1] = "position"
-# Example: [100:0], [100:1]... [100:5] are GIDs associated to 6 different box
-# volumes, each with their own position number.
+# Example: [100:0], [100:1]... [100:N]... are GIDs associated to different box
+# volumes, each with their own position number but not necessarily having the
+# same dimensions and materials.
 
 
 ################################
