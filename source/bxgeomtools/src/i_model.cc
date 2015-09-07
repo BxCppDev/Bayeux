@@ -286,12 +286,12 @@ namespace geomtools {
     return;
   }
 
-  void i_model::_pre_construct(datatools::properties & setup_, models_col_type * /*models_*/)
+  void i_model::_pre_construct(datatools::properties & /*setup_*/, models_col_type * /*models_*/)
   {
     return;
   }
 
-  void i_model::_post_construct(datatools::properties & setup_, models_col_type * models_)
+  void i_model::_post_construct(datatools::properties & setup_, models_col_type * /*models_*/)
   {
     // Fetch the list of prefixes for exported property keys:
     std::vector<std::string> exported_properties_prefixes;

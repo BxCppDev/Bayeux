@@ -693,7 +693,7 @@ namespace geomtools {
   }
 
   void simple_shaped_model::_pre_construct (datatools::properties & setup_,
-                                            models_col_type * models_)
+                                            models_col_type * /*models_*/)
   {
     datatools::logger::priority log_level = get_logging_priority ();
     //log_level = datatools::logger::PRIO_DEBUG;

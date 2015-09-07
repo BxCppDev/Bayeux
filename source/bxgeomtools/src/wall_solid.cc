@@ -309,7 +309,6 @@ namespace geomtools {
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid wall solid!");
     double skin = get_skin (skin_);
-    double angular_tolerance = get_tolerance();
     double hskin = 0.5 * skin;
     if (std::abs(point_.z()) >= 0.5 * _z_ - hskin) {
       return false;
