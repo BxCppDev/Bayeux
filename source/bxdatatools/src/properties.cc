@@ -2700,7 +2700,18 @@ namespace datatools {
             } else if (token == "@disable_variants") {
               enable_variants = false;
             } else if (token.substr(0, 9) == "@variant_") {
-
+              if (token == "@variant_devel") {
+                vpp.set_trace(true);
+              }
+              if (token == "@variant_no_devel") {
+                vpp.set_trace(false);
+              }
+              if (token == "@variant_remove_quotes") {
+                vpp.set_remove_quotes(true);
+              }
+              if (token == "@variant_preserve_quotes") {
+                vpp.set_remove_quotes(false);
+              }
               if (token == "@variant_only") {
                 DT_THROW_IF(!enable_variants, std::logic_error, "Variants are not supported!");
                 std::string variant_path_rule;
@@ -3019,8 +3030,7 @@ namespace datatools {
             }
 
             /// Special devel print:
-            bool variant_devel = true;
-            variant_devel = false;
+            bool variant_devel = vpp.is_trace();
 
             bool variant_only_found = false;
             /* The variant_only_reverse flag reverses the condition:
