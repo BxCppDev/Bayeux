@@ -1,0 +1,40 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+
+##################################################################
+# This is the mandatory top-level geometry category.
+# One should always provide it :
+[category="world" type="0"]
+
+#@config The geometry category of the top-level world volume
+
+#@description The world's GID address is characterized by its 'world' number
+addresses : string[1] = "world"
+
+
+##################################################################
+# This geometry category addresses an experimental area volume :
+[category="lab.gc"  type="100"]
+
+#@config The geometry category of the experimental area volume (lab)
+
+#@description A lab's GID address is charaterized by its 'area' number
+addresses : string[1] = "area"
+
+
+##################################################################
+# This geometry category addresses a detector :
+[category="detector.gc" type="2020"]
+
+#@config The geometry category of a detector
+
+#@description The GID address of a column is defined by its 'block' number
+addresses : string[1] = "block"
+
+
+# end
