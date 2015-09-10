@@ -1,4 +1,4 @@
-# tabulated energy spectrum for the 'single_particle_generator' 
+# Tabulated energy spectrum for the 'genbb::single_particle_generator'
 #@interpolation_name cspline
 #@energy_unit        keV
 0     1
@@ -27,4 +27,4 @@
 1400  0.11
 1450  0.05
 1500  0.0
-# end 
+# end

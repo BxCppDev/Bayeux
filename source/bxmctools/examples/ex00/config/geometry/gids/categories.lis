@@ -16,6 +16,8 @@
 #@description The world's GID address is characterized by its 'world' number
 addresses : string[1] = "world"
 
+# World volume's GID is: [0:0]
+
 
 ##################################################################
 # This geometry category addresses an experimental area volume :
@@ -25,6 +27,8 @@ addresses : string[1] = "world"
 
 #@description A lab's GID address is charaterized by its 'area' number
 addresses : string[1] = "area"
+
+# The experimental area volume's GID is: [100:0]
 
 
 ################################################################
@@ -36,6 +40,8 @@ addresses : string[1] = "area"
 #@description The GID address of a calibration source is defined by its 'position' number
 addresses : string[1] = "position"
 
+# The unique calibration source volume's GID is: [1000:0]]
+
 
 ##############################################################################
 # This geometry category addresses the support frame of a calibration source :
@@ -45,6 +51,8 @@ addresses : string[1] = "position"
 
 #@description The GID address of a source support inherits the GID address of the source
 inherits : string = "source.gc"
+
+# The support of calibration source #0 has GID: [1010:0]
 
 
 #################################################################
@@ -56,6 +64,8 @@ inherits : string = "source.gc"
 #@description The GID address of a source film inherits the GID address of the source
 inherits : string = "source.gc"
 
+# The film of calibration source #0 has GID: [1020:0]
+
 
 ######################################################
 # This geometry category addresses an optical module :
@@ -66,6 +76,8 @@ inherits : string = "source.gc"
 #@description The GID address of a column is defined by its 'detector' number
 addresses : string[1] = "detector"
 
+# The unique optical module of this geometry setup has GID : [2020:0]
+
 
 #################################################################################
 #  This geometry category addresses the scintillator block of an optical module :
@@ -75,6 +87,8 @@ addresses : string[1] = "detector"
 
 #@description The GID address of a scin block inherits the GID address of the optical module
 inherits : string = "optical_module.gc"
+
+# The scintillator block of the optical module #0 has GID : [2030:0]
 
 
 ###############################################
@@ -88,6 +102,16 @@ extends : string[1] = "scin_block.gc"
 #@description The 'side' number extend the mother scintillator block GID address
 by       : string[1] = "side"
 
+# The wrapping films of the faces of the scintillator block
+# of the optical module #0 have GIDS:
+#  * [2031:0.0] front wrapping
+#  * [2031:0.1] back wrapping
+#  * [2031:0.2] left wrapping
+#  * [2031:0.3] right wrapping
+#  * bottom wrapping is not set (no GID)
+#  * [2031:0.5] top wrapping
+# See the "models/optical_module.geom" file.
+
 
 #######################################
 [category="light_guide.gc" type="2032"]
@@ -96,6 +120,8 @@ by       : string[1] = "side"
 
 #@description The GID address of a light guide inherits the GID address of the optical module
 inherits : string[1] = "optical_module.gc"
+
+# The light guide of the optical module #0 has GID : [2032:0]
 
 
 # end

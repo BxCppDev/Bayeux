@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description A sample list of aliases for standard materials
+#@description The list of aliases for some standard materials used in this setup
 #@key_label   "name"
 #@meta_label  "type"
 
@@ -48,6 +48,9 @@ material : string = "std::vacuum"
 [name="lab_medium" type="alias"]
 #@description The alias for air
 material : string = "std::air"
-#material : string = "std::vacuum"
+# Here we may easily switch to another material for
+# the lab atmosphere; one just need to switch on the
+# following line in place of the one above:
+# material : string = "std::vacuum"
 
 # end
