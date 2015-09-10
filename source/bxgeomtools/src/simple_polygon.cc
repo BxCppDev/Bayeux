@@ -137,7 +137,7 @@ namespace geomtools {
   bool simple_polygon::_check_vertex(const vector_2d & vtx_, bool no_first_check_) const
   {
     datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-    logging = datatools::logger::PRIO_DEBUG;
+    // logging = datatools::logger::PRIO_DEBUG;
     if (_vertices_.size() < 3) {
       DT_LOG_DEBUG(logging, "No need to check new vertex " << vtx_ / CLHEP::mm << " [mm]");
       return true;
@@ -1108,7 +1108,7 @@ namespace geomtools {
                                      std::vector<triangle> & triangles_)
   {
     datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-    logging = datatools::logger::PRIO_DEBUG;
+    // logging = datatools::logger::PRIO_DEBUG;
     if (vertices_.size() == 3) {
       triangle t;
       vector_3d vtx0(vertices_[0]->x(), vertices_[0]->y(), 0.0);
