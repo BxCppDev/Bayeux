@@ -19,7 +19,7 @@ addresses : string[1] = "world"
 
 ################################################################
 # This geometry category addresses an experimental area volume :
-[category="lab.gc"  type="100"]
+[category="lab.gc" type="100"]
 
 #@config The geometry category of the experimental area volume (lab)
 
@@ -224,4 +224,4 @@ extends  : string = "shield_wall.gc"
 by       : string[2] = "column" "row"
 
 
-# end
+# end of file

@@ -297,7 +297,7 @@ namespace mctools {
       // Allocate internal resources :
       _initialize_manager (service_manager_);
 
-      DT_LOG_NOTICE(get_logging_priority(),"Initialization done.");
+      DT_LOG_NOTICE(get_logging_priority(), "Initialization done.");
       // Initialization stops here.
 
       _set_initialized (true);
@@ -307,7 +307,7 @@ namespace mctools {
     // Reset :
     void simulation_module::reset ()
     {
-      DT_LOG_TRACE(get_logging_priority(),"Entering...");
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
       DT_THROW_IF (! is_initialized (), std::logic_error,
                    "Module '" << get_name () << "' is not initialized !");
 
@@ -315,7 +315,7 @@ namespace mctools {
 
       if (_simulation_ctrl_ != 0) {
         // Destruction of the thread synchronization object :
-        _simulation_ctrl_->set_stop_requested ();
+        _simulation_ctrl_->set_stop_requested();
         delete _simulation_ctrl_;
         _simulation_ctrl_ = 0;
       }
@@ -329,13 +329,13 @@ namespace mctools {
       _Geo_label_ = "";
       _erase_former_SD_bank_ = false;
 
-      DT_LOG_TRACE(get_logging_priority(),"Exiting.");
+      DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
 
     // Processing :
     dpp::base_module::process_status
-    simulation_module::process (datatools::things & event_record_)
+    simulation_module::process(datatools::things & event_record_)
     {
       DT_THROW_IF (! is_initialized (), std::logic_error,
                    "Module '" << get_name () << "' is not initialized !");
@@ -479,20 +479,20 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::g4::simulation_module,ocd_)
   ocd_.set_class_description("A module to generate Monte-Carlo events through the Geant4 library");
 
   ocd_.set_configuration_hints("A ``mctools::g4::simulation_module`` object can be setup with the    \n"
-                                "following syntax in a ``datatools::multi_properties`` configuration  \n"
-                                "file, typically from a module manager object.                        \n"
-                                "                                                                     \n"
-                                "Example::                                                            \n"
-                                "                                                                     \n"
-                                "  #@description A module that generates raw data                     \n"
-                                "  #@key_label   \"name\"                                             \n"
-                                "  #@meta_label  \"type\"                                             \n"
-                                "                                                                     \n"
-                                "  [name=\"g4sim\" type=\"mctools::g4::simulation_module\"]           \n"
-                                "  #@config A Geant4 simulation module                                \n"
-                                "  foo : string = \"bar\"                                             \n"
-                                "                                                                     \n"
-                                );
+                               "following syntax in a ``datatools::multi_properties`` configuration  \n"
+                               "file, typically from a module manager object.                        \n"
+                               "                                                                     \n"
+                               "Example::                                                            \n"
+                               "                                                                     \n"
+                               "  #@description A module that generates raw data                     \n"
+                               "  #@key_label   \"name\"                                             \n"
+                               "  #@meta_label  \"type\"                                             \n"
+                               "                                                                     \n"
+                               "  [name=\"g4sim\" type=\"mctools::g4::simulation_module\"]           \n"
+                               "  #@config A Geant4 simulation module                                \n"
+                               "  foo : string = \"bar\"                                             \n"
+                               "                                                                     \n"
+                               );
 
   ocd_.set_validation_support(false);
   ocd_.lock();

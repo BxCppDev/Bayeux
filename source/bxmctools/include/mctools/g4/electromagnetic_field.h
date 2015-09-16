@@ -23,7 +23,7 @@
 // - Boost:
 #include <boost/cstdint.hpp>
 // - Geant4:
-// #include <G4ElectroMagneticField.hh>
+#include <G4ElectroMagneticField.hh>
 #include <G4MagneticField.hh>
 // - Bayeux/geomtools :
 #include <geomtools/smart_id_locator.h>
@@ -53,8 +53,8 @@ namespace mctools {
 
     /// \brief Electromagnetic field using the Geant4 interface
     class electromagnetic_field : \
-      public G4MagneticField,
-      // public G4ElectroMagneticField, /* this is a bad OO design in G4 */
+      //public G4MagneticField,
+      public G4ElectroMagneticField,
       public loggable_support
     {
     public:

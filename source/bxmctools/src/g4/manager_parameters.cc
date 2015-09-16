@@ -42,7 +42,7 @@ namespace mctools {
       out_ << "|-- " << "interactive = " << interactive << std::endl;
       out_ << "|-- " << "g4_visu     = " << g4_visu << std::endl;
       out_ << "|-- " << "g4_macro    = '" << g4_macro << "'" << std::endl;
-      out_ << "|-- " << "logging     = '" << logging<< "'" << std::endl;
+      out_ << "|-- " << "logging     = '" << logging << "'" << std::endl;
       out_ << "|-- " << "dlls        = " << dlls.size() << std::endl;
       out_ << "|-- " << "manager_config_filename = '" << manager_config_filename<< "'" << std::endl;
       out_ << "|-- " << "number_of_events        = " << number_of_events << std::endl;
@@ -53,6 +53,8 @@ namespace mctools {
       out_ << "|-- " << "prng_states_save_modulo = " << prng_states_save_modulo << std::endl;
       out_ << "|-- " << "input_prng_seeds_file   = '" << input_prng_seeds_file << "'" << std::endl;
       out_ << "|-- " << "output_prng_seeds_file  = '" << output_prng_seeds_file << "'" << std::endl;
+      out_ << "|-- " << "output_data_format      = '" << output_data_format << "'" << std::endl;
+      out_ << "|-- " << "output_data_bank_label  = '" << output_data_bank_label << "'" << std::endl;
       out_ << "|-- " << "output_data_file        = '" << output_data_file << "'" << std::endl;
       out_ << "|-- " << "vg_name   = '" << vg_name << "'" << std::endl;
       out_ << "|-- " << "vg_seed   = " << vg_seed << std::endl;
@@ -77,13 +79,15 @@ namespace mctools {
       this->interactive = false;
       this->g4_macro.clear();
       this->g4_visu = false;
-      this->number_of_events = mctools::g4::manager::constants::instance ().NO_LIMIT;
+      this->number_of_events = mctools::g4::manager::constants::instance().NO_LIMIT;
       this->number_of_events_modulo = 0; // 0 == not used
       this->input_prng_states_file.clear();
       this->output_prng_states_file.clear();
       this->prng_states_save_modulo = 0; // 0 == not used
       this->input_prng_seeds_file.clear();
       this->output_prng_seeds_file.clear();
+      this->output_data_format.clear();
+      this->output_data_bank_label.clear();
       this->output_data_file.clear();
       this->vg_name.clear();
       this->vg_seed = mygsl::random_utils::SEED_INVALID;
@@ -102,7 +106,6 @@ namespace mctools {
     void manager_parameters::setup(const manager_parameters & a_params,
                                    manager & a_manager)
     {
-
       // Setup:
       DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.vg_seed),
                   std::logic_error,
@@ -124,55 +127,81 @@ namespace mctools {
                   "Invalid logging priority label '"
                   << a_params.logging << "' !");
       a_manager.set_logging_priority(mlogprio);
+      DT_LOG_NOTICE(a_manager.get_logging_priority(),
+                    "Manager logging prio = " << a_manager.get_logging_priority() << "'");
       a_manager.set_using_time_stat(a_params.using_time_stat);
+
       if (a_params.prng_states_save_modulo > 0) {
         a_manager.set_prng_state_save_modulo(a_params.prng_states_save_modulo);
       }
+
       if (! a_params.g4_macro.empty()) {
         DT_LOG_NOTICE(a_manager.get_logging_priority(),
                       "Using G4 macro '" << a_params.g4_macro << "'...");
         a_manager.set_g4_macro(a_params.g4_macro);
       }
+
       // PRNG seeding :
       if (a_params.mgr_seed != mygsl::random_utils::SEED_INVALID) {
         // register the G4 manager seed :
         a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().G4_MANAGER_LABEL, a_params.mgr_seed);
       }
+
       if (a_params.vg_seed != mygsl::random_utils::SEED_INVALID) {
         // register the vertex generator's seed :
         a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().VERTEX_GENERATOR_LABEL, a_params.vg_seed);
       }
+
       if (a_params.eg_seed != mygsl::random_utils::SEED_INVALID) {
         // register the event generator's seed :
         a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().EVENT_GENERATOR_LABEL, a_params.eg_seed);
       }
+
       if (a_params.shpf_seed != mygsl::random_utils::SEED_INVALID) {
         // register the SHPF PRNG's seed :
         a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().SHPF_LABEL, a_params.shpf_seed);
       }
+
       if (! a_params.input_prng_seeds_file.empty()) {
         a_manager.set_input_prng_seeds_file(a_params.input_prng_seeds_file);
       }
+
       if (! a_params.output_prng_seeds_file.empty()) {
         a_manager.set_output_prng_seeds_file(a_params.output_prng_seeds_file);
       }
+
       if (! a_params.input_prng_states_file.empty()) {
         a_manager.set_input_prng_states_file(a_params.input_prng_states_file);
       }
+
       if (! a_params.output_prng_states_file.empty()) {
         a_manager.set_output_prng_states_file(a_params.output_prng_states_file);
       }
+
+      if (! a_params.output_data_format.empty()) {
+        a_manager.set_output_data_format_by_label(a_params.output_data_format);
+      }
+
+      if (a_manager.get_output_data_format() == io_utils::DATA_FORMAT_BANK) {
+        if (! a_params.output_data_bank_label.empty()) {
+          a_manager.set_output_data_bank_label(a_params.output_data_bank_label);
+        }
+      }
+
       if (! a_params.output_data_file.empty()) {
         std::string output_data_file = a_params.output_data_file;
         datatools::fetch_path_with_env(output_data_file);
         a_manager.set_output_data_file(output_data_file);
       }
+
       if (! a_params.vg_name.empty()) {
         a_manager.set_vertex_generator_name(a_params.vg_name);
       }
+
       if (! a_params.eg_name.empty()) {
         a_manager.set_event_generator_name(a_params.eg_name);
       }
+
       if (a_params.number_of_events <= mctools::g4::manager::constants::instance().NO_LIMIT) {
         a_manager.set_number_of_events(a_params.number_of_events);
       }
@@ -183,16 +212,18 @@ namespace mctools {
 
       // Support for output profiles:
       if (! a_params.output_profiles_activation_rule.empty()) {
-        // Defered activation rule for output profiles
+        // Deferred activation rule for output profiles
         a_manager.set_output_profiles_activation_rule(a_params.output_profiles_activation_rule);
       }
 
       if (a_params.forbid_private_hits) {
         a_manager.set_forbid_private_hits(true);
       }
+
       if (a_params.dont_save_no_sensitive_hit_events) {
         a_manager.set_dont_save_no_sensitive_hit_events(true);
       }
+
       a_manager.set_use_run_header_footer(a_params.use_run_header_footer);
       a_manager.set_interactive(a_params.interactive);
       a_manager.set_g4_visualization(a_params.g4_visu);

@@ -1,7 +1,7 @@
 /// \file mctools/g4/event_action.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-10
- * Last modified: 2014-12-18
+ * Last modified: 2015-09-14
  *
  * License:
  *
@@ -44,7 +44,7 @@ namespace mctools {
     {
     public:
 
-      typedef ::mctools::simulated_data sim_data_type;
+      // typedef ::mctools::simulated_data sim_data_type;
 
       /// Check initialization flag
       bool is_initialized() const;
@@ -62,13 +62,13 @@ namespace mctools {
       void set_killed_event(bool = true);
 
       /// Set external event data
-      void set_external_event_data(sim_data_type & a_external_event_data);
+      void set_external_event_data(::mctools::simulated_data & a_external_event_data);
 
       /// Return non mutable event data
-      const sim_data_type & get_event_data() const;
+      const ::mctools::simulated_data & get_event_data() const;
 
       /// Return mutable event data
-      sim_data_type & grab_event_data();
+      ::mctools::simulated_data & grab_event_data();
 
       /// Return non mutable run action
       const run_action & get_run_action() const;
@@ -119,8 +119,8 @@ namespace mctools {
       bool                          _initialized_; //!< Initialization flag
       const detector_construction * _detector_construction_; //!< Handle to the G4 detector construction
       run_action *                  _run_action_; //!< Handle to the G4 run action
-      sim_data_type                 _event_data_; //!< Embedded simulated event model
-      sim_data_type               * _external_event_data_; //!< Handle to an external simulated event model
+      ::mctools::simulated_data     _event_data_; //!< Embedded simulated event model
+      ::mctools::simulated_data   * _external_event_data_; //!< Handle to an external simulated event model
       bool                          _aborted_event_; //!< Flag to abort the current event
       bool                          _killed_event_; //!< Flag to kill the current event
       ::mctools::base_step_hit_processor::step_hit_ptr_collection_type _phits_; //!< Collection of step hit processors

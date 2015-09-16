@@ -10,6 +10,10 @@
 // Standard library:
 #include <stdexcept>
 #include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+#include <sstream>
 
 // Third party:
 // - Bayeux/datatools:
@@ -53,7 +57,11 @@
 #include <G4hMultipleScattering.hh>
 #include <G4hIonisation.hh>
 #include <G4ionIonisation.hh>
-/* **** LIVERMORE **** */
+#include <G4BraggIonModel.hh>
+#include <G4BraggIonGasModel.hh>
+#include <G4BetheBlochModel.hh>
+#include <G4BetheBlochIonGasModel.hh>
+// Livermore:
 // Gammas :
 #include <G4LivermoreComptonModel.hh>
 #include <G4LivermoreRayleighModel.hh>
@@ -62,7 +70,7 @@
 // Electrons :
 #include <G4LivermoreIonisationModel.hh>
 #include <G4LivermoreBremsstrahlungModel.hh>
-/* **** PENELOPE **** */
+// Penelope:
 // Gammas :
 #include <G4PenelopeComptonModel.hh>
 #include <G4PenelopeRayleighModel.hh>
@@ -77,14 +85,28 @@
 #include <G4RegionStore.hh>
 #include <G4StepLimiter.hh>
 #include <G4UserSpecialCuts.hh>
+#include <G4EmConfigurator.hh>
+
+// This project:
+#include <mctools/g4/processes/em_extra_models.h>
+#include <mctools/g4/processes/em_model_factory.h>
 
 namespace mctools {
 
   namespace g4 {
 
-    DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (base_physics_constructor,
-                                                               em_physics_constructor,
-                                                               "mctools::g4::em_physics_constructor");
+    DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(base_physics_constructor,
+                                                              em_physics_constructor,
+                                                              "mctools::g4::em_physics_constructor");
+
+    // PIMPL-ized working data:
+    struct em_physics_constructor::_work_type_
+    {
+      std::map<std::string, ::mctools::g4::processes::em_extra_model> em_extra_models;
+      G4EmConfigurator em_configurator;
+      int em_configurator_verbosity;
+      ::mctools::g4::processes::em_model_factory em_model_fact;
+    };
 
     // *** em_physics_constructor::region_deexcitation_type *** //
 
@@ -140,35 +162,35 @@ namespace mctools {
     const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL = "Analytical";
     const std::string em_physics_constructor::EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL  = "Empirical";
 
-    const std::string & em_physics_constructor::get_em_model () const
+    const std::string & em_physics_constructor::get_em_model() const
     {
       return _em_model_;
     }
 
-    bool em_physics_constructor::is_em_standard () const
+    bool em_physics_constructor::is_em_standard() const
     {
       return _em_model_ == EM_MODEL_STANDARD;
     }
 
-    bool em_physics_constructor::is_em_low_energy_livermore () const
+    bool em_physics_constructor::is_em_low_energy_livermore() const
     {
       return _em_model_ == EM_MODEL_LOW_ENERGY_LIVERMORE;
     }
 
-    bool em_physics_constructor::is_em_low_energy_penelope () const
+    bool em_physics_constructor::is_em_low_energy_penelope() const
     {
       return _em_model_ == EM_MODEL_LOW_ENERGY_PENELOPE;
     }
 
-    em_physics_constructor::em_physics_constructor () : base_physics_constructor ()
+    em_physics_constructor::em_physics_constructor() : base_physics_constructor()
     {
-      this->em_physics_constructor::_set_defaults ();
+      this->em_physics_constructor::_set_defaults();
       SetPhysicsName("electromagnetic");
       SetPhysicsType(1);
       return;
     }
 
-    em_physics_constructor::~em_physics_constructor ()
+    em_physics_constructor::~em_physics_constructor()
     {
       if (is_initialized()) {
         this->em_physics_constructor::reset();
@@ -176,79 +198,93 @@ namespace mctools {
       return;
     }
 
-    void em_physics_constructor::initialize (const datatools::properties & config_,
-                                             physics_constructor_dict_type & /*dict_*/)
+    em_physics_constructor::_work_type_ & em_physics_constructor::_grab_work_()
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
-      DT_THROW_IF (is_initialized(), std::logic_error, "Already initialized !");
+      if (_work_.get() == 0) {
+        _work_.reset(new _work_type_);
+      }
+      return *_work_.get();
+    }
 
-      /*** parsing properties from 'config_'  ***/
+    void em_physics_constructor::initialize(const datatools::properties & config_,
+                                            physics_constructor_dict_type & /*dict_*/)
+    {
+      DT_LOG_TRACE_ENTERING(_logprio());
+      DT_THROW_IF(is_initialized(), std::logic_error, "Already initialized !");
+
+      DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
+
+      // Parsing logging properties:
       loggable_support::_initialize_logging_support(config_);
 
+      // Electro-magnetic processes:
 
-      // **** Electro-magnetic processes **** //
-
-      if (config_.has_key ("em.model")) {
-        _em_model_ = config_.fetch_string ("em.model");
+      if (config_.has_key("em.model")) {
+        _em_model_ = config_.fetch_string("em.model");
       }
-      DT_THROW_IF (_em_model_ != EM_MODEL_STANDARD
-                   && _em_model_ != EM_MODEL_LOW_ENERGY_LIVERMORE
-                   && _em_model_ != EM_MODEL_LOW_ENERGY_PENELOPE,
-                   std::logic_error,
-                   "Invalid electro-magnetic interaction model '" << _em_model_ << "' !");
-
-      DT_LOG_DEBUG(_logprio(),"Electro-magnetic model set to: '" << _em_model_ << "'");
+      DT_THROW_IF(_em_model_ != EM_MODEL_STANDARD
+                  && _em_model_ != EM_MODEL_LOW_ENERGY_LIVERMORE
+                  && _em_model_ != EM_MODEL_LOW_ENERGY_PENELOPE,
+                  std::logic_error,
+                  "Invalid electromagnetic interaction model '" << _em_model_ << "' !");
+      DT_LOG_NOTICE(_logprio(), "Default electromagnetic model set to: '" << _em_model_ << "'");
 
       // Gammas :
-      if (config_.has_key ("em.gamma.rayleigh_scattering")) {
-        _em_gamma_rayleigh_scattering_ = config_.fetch_boolean ("em.gamma.rayleigh_scattering");
+      if (config_.has_key("em.gamma.rayleigh_scattering")) {
+        _em_gamma_rayleigh_scattering_ = config_.fetch_boolean("em.gamma.rayleigh_scattering");
       }
       DT_LOG_DEBUG(_logprio(), "Gamma Rayleigh scattering process set to: " << _em_gamma_rayleigh_scattering_);
 
-      if (config_.has_key ("em.gamma.photo_electric")) {
-        _em_gamma_photo_electric_ = config_.fetch_boolean ("em.gamma.photo_electric");
+      if (config_.has_key("em.gamma.photo_electric")) {
+        _em_gamma_photo_electric_ = config_.fetch_boolean("em.gamma.photo_electric");
       }
-      DT_LOG_DEBUG(_logprio(), "Gamma photo-electric process set to: " << _em_gamma_photo_electric_);
+      DT_LOG_DEBUG(_logprio(), "Gamma photoelectric process set to: " << _em_gamma_photo_electric_);
 
-      if (config_.has_key ("em.gamma.compton_scattering")) {
-        _em_gamma_compton_scattering_ = config_.fetch_boolean ("em.gamma.compton_scattering");
+      if (config_.has_key("em.gamma.compton_scattering")) {
+        _em_gamma_compton_scattering_ = config_.fetch_boolean("em.gamma.compton_scattering");
       }
       DT_LOG_DEBUG(_logprio(), "Gamma Compton scattering process set to: " << _em_gamma_compton_scattering_);
 
-      if (config_.has_key ("em.gamma.conversion")) {
-        _em_gamma_conversion_ = config_.fetch_boolean ("em.gamma.conversion");
+      if (config_.has_key("em.gamma.conversion")) {
+        _em_gamma_conversion_ = config_.fetch_boolean("em.gamma.conversion");
       }
       DT_LOG_DEBUG(_logprio(), "Gamma conversion process set to: " << _em_gamma_conversion_);
 
-
-      if (config_.has_key ("em.gamma.conversion_to_muons")) {
-        _em_gamma_conversion_to_muons_ = config_.fetch_boolean ("em.gamma.conversion_to_muons");
+      if (config_.has_key("em.gamma.conversion_to_muons")) {
+        _em_gamma_conversion_to_muons_ = config_.fetch_boolean("em.gamma.conversion_to_muons");
       }
       DT_LOG_DEBUG(_logprio(), "Gamma conversion to muons process set to: " << _em_gamma_conversion_to_muons_);
 
-      if (config_.has_key ("em.gamma.step_limiter")) {
-        _em_gamma_step_limiter_ = config_.fetch_boolean ("em.gamma.step_limiter");
+      if (config_.has_key("em.gamma.step_limiter")) {
+        _em_gamma_step_limiter_ = config_.fetch_boolean("em.gamma.step_limiter");
+      }
+      DT_LOG_DEBUG(_logprio(),"Gamma step limiter set to: " << _em_gamma_step_limiter_);
+
+      if (config_.has_key("em.gamma.step_limiter")) {
+        _em_gamma_step_limiter_ = config_.fetch_boolean("em.gamma.step_limiter");
       }
       DT_LOG_DEBUG(_logprio(),"Gamma step limiter set to: " << _em_gamma_step_limiter_);
 
       // Electrons/positrons :
-      if (config_.has_key ("em.electron.ionisation")) {
-        _em_electron_ionisation_ = config_.fetch_boolean ("em.electron.ionisation");
+      if (config_.has_key("em.electron.ionization")) {
+        _em_electron_ionization_ = config_.fetch_boolean("em.electron.ionization");
+      } else if (config_.has_key("em.electron.ionisation")) {
+        _em_electron_ionization_ = config_.fetch_boolean("em.electron.ionisation");
       }
-      DT_LOG_DEBUG(_logprio(), "Electron/positron energy loss set to: " << _em_electron_ionisation_);
+      DT_LOG_DEBUG(_logprio(), "Electron/positron energy loss set to: " << _em_electron_ionization_);
 
-      if (config_.has_key ("em.electron.multiple_scattering")) {
-        _em_electron_multiple_scattering_ = config_.fetch_boolean ("em.electron.multiple_scattering");
+      if (config_.has_key("em.electron.multiple_scattering")) {
+        _em_electron_multiple_scattering_ = config_.fetch_boolean("em.electron.multiple_scattering");
       }
       DT_LOG_DEBUG(_logprio(),"Electron/positron multiple scattering set to: " << _em_electron_multiple_scattering_);
 
-      if (config_.has_key ("em.electron.multiple_scattering.use_distance_to_boundary")) {
-        _em_electron_ms_use_distance_to_boundary_ = config_.fetch_boolean ("em.electron.multiple_scattering.use_distance_to_boundary");
+      if (config_.has_key("em.electron.multiple_scattering.use_distance_to_boundary")) {
+        _em_electron_ms_use_distance_to_boundary_ = config_.fetch_boolean("em.electron.multiple_scattering.use_distance_to_boundary");
       }
       DT_LOG_DEBUG(_logprio(),"Electron/positron multiple scattering use distance to boundary: " << _em_electron_ms_use_distance_to_boundary_);
 
-      if (config_.has_key ("em.electron.multiple_scattering.range_factor")) {
-        _em_electron_ms_range_factor_ = config_.fetch_real ("em.electron.multiple_scattering.range_factor");
+      if (config_.has_key("em.electron.multiple_scattering.range_factor")) {
+        _em_electron_ms_range_factor_ = config_.fetch_real("em.electron.multiple_scattering.range_factor");
         DT_THROW_IF(_em_electron_ms_range_factor_ <= 0.0,
                     std::domain_error,
                     "Invalid multiple scattering range factor for electron/positron ("
@@ -256,20 +292,24 @@ namespace mctools {
       }
       DT_LOG_DEBUG(_logprio(),"Electron/positron multiple scattering range factor: " << _em_electron_ms_range_factor_);
 
-
-      if (config_.has_key ("em.electron.bremsstrahlung")) {
-        _em_electron_bremsstrahlung_ = config_.fetch_boolean ("em.electron.bremsstrahlung");
+      if (config_.has_key("em.electron.bremsstrahlung")) {
+        _em_electron_bremsstrahlung_ = config_.fetch_boolean("em.electron.bremsstrahlung");
       }
       DT_LOG_DEBUG(_logprio(),"Electron/positron bremsstrahlung set to: " << _em_electron_bremsstrahlung_);
 
       // Positrons :
-      if (config_.has_key ("em.positron.annihilation")) {
-        _em_positron_annihilation_ = config_.fetch_boolean ("em.positron.annihilation");
+      if (config_.has_key("em.positron.annihilation")) {
+        _em_positron_annihilation_ = config_.fetch_boolean("em.positron.annihilation");
       }
       DT_LOG_DEBUG(_logprio(),"Positron annihilation set to: " << _em_positron_annihilation_);
 
-      if (config_.has_key ("em.electron.step_limiter")) {
-        _em_electron_step_limiter_ = config_.fetch_boolean ("em.electron.step_limiter");
+      if (config_.has_key("em.electron.step_limiter")) {
+        _em_electron_step_limiter_ = config_.fetch_boolean("em.electron.step_limiter");
+      }
+      DT_LOG_DEBUG(_logprio(),"Electron/positron step limiter set to: " << _em_electron_step_limiter_);
+
+      if (config_.has_key("em.electron.step_limiter")) {
+        _em_electron_step_limiter_ = config_.fetch_boolean("em.electron.step_limiter");
       }
       DT_LOG_DEBUG(_logprio(),"Electron/positron step limiter set to: " << _em_electron_step_limiter_);
 
@@ -284,9 +324,6 @@ namespace mctools {
       if (_em_fluorescence_) {
         if (config_.has_key("em.deexcitation.auger")) {
           _em_auger_ = config_.fetch_boolean("em.deexcitation.auger");
-          // if (_em_auger_) {
-          //   _em_fluorescence_ = true;
-          // }
         }
         DT_LOG_DEBUG(_logprio(),"EM Auger set to : " << _em_auger_);
       }
@@ -296,30 +333,30 @@ namespace mctools {
       }
       DT_LOG_DEBUG(_logprio(),"EM PIXE set to : " << _em_pixe_);
 
-      if (config_.has_key ("em.deexcitation.pixe.cross_section_model")) {
-        _em_pixe_cross_section_model_ = config_.fetch_string ("em.deexcitation.pixe.cross_section_model");
-        DT_THROW_IF (_em_pixe_cross_section_model_ != EM_PIXE_MODEL_EMPIRICAL
-                     && _em_pixe_cross_section_model_ != EM_PIXE_MODEL_ECPSSR_FORMFACTOR
-                     && _em_pixe_cross_section_model_ != EM_PIXE_MODEL_ECPSSR_ANALYTICAL,
-                     std::logic_error,
-                     "Invalid EM PIXE cross-section model '" << _em_pixe_cross_section_model_ << "' !");
+      if (config_.has_key("em.deexcitation.pixe.cross_section_model")) {
+        _em_pixe_cross_section_model_ = config_.fetch_string("em.deexcitation.pixe.cross_section_model");
+        DT_THROW_IF(_em_pixe_cross_section_model_ != EM_PIXE_MODEL_EMPIRICAL
+                    && _em_pixe_cross_section_model_ != EM_PIXE_MODEL_ECPSSR_FORMFACTOR
+                    && _em_pixe_cross_section_model_ != EM_PIXE_MODEL_ECPSSR_ANALYTICAL,
+                    std::logic_error,
+                    "Invalid EM PIXE cross-section model '" << _em_pixe_cross_section_model_ << "' !");
         DT_LOG_DEBUG(_logprio(),"EM PIXE cross-section model set to : " << _em_pixe_cross_section_model_);
       }
 
-      if (config_.has_key ("em.deexcitation.pixe.electron_cross_section_model")) {
-        _em_pixe_electron_cross_section_model_ = config_.fetch_string ("em.deexcitation.pixe.electron_cross_section_model");
-        DT_THROW_IF (   _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_LIVERMORE
-                     && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL
-                     && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL
-                     && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PENELOPE,
-                     std::logic_error,
-                     "Invalid EM PIXE e+/e- cross-section model '" << _em_pixe_electron_cross_section_model_ << "' !");
+      if (config_.has_key("em.deexcitation.pixe.electron_cross_section_model")) {
+        _em_pixe_electron_cross_section_model_ = config_.fetch_string("em.deexcitation.pixe.electron_cross_section_model");
+        DT_THROW_IF(   _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_LIVERMORE
+                       && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PROTON_ANALYTICAL
+                       && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PROTON_EMPIRICAL
+                       && _em_pixe_electron_cross_section_model_ != EM_PIXE_ELECTRON_MODEL_PENELOPE,
+                       std::logic_error,
+                       "Invalid EM PIXE e+/e- cross-section model '" << _em_pixe_electron_cross_section_model_ << "' !");
         DT_LOG_DEBUG(_logprio(),"EM PIXE e+/e- cross-section model set to : " << _em_pixe_electron_cross_section_model_);
       }
 
       /* **** Atomic deexcitation per region **** */
       std::vector<std::string> deexcitation_regions;
-      if (config_.has_key ("em.deexcitation.regions")) {
+      if (config_.has_key("em.deexcitation.regions")) {
         config_.fetch("em.deexcitation.regions", deexcitation_regions);
       }
 
@@ -356,48 +393,98 @@ namespace mctools {
       }
 
       // Ion :
-      if (config_.has_key ("em.ion.ionisation")) {
-        _em_ion_ionisation_ = config_.fetch_boolean ("em.ion.ionisation");
+      if (config_.has_key("em.ion.ionization")) {
+        _em_ion_ionization_ = config_.fetch_boolean("em.ion.ionization");
+      } else if (config_.has_key("em.ion.ionisation")) {
+        _em_ion_ionization_ = config_.fetch_boolean("em.ion.ionisation");
       }
-      DT_LOG_DEBUG(_logprio(),"Ion ionisation set to: " << _em_ion_ionisation_);
+      DT_LOG_DEBUG(_logprio(),"Ion ionization set to: " << _em_ion_ionization_);
 
-      if (config_.has_key ("em.ion.multiple_scattering")) {
-        _em_ion_multiple_scattering_ = config_.fetch_boolean ("em.ion.multiple_scattering");
+      if (config_.has_key("em.ion.multiple_scattering")) {
+        _em_ion_multiple_scattering_ = config_.fetch_boolean("em.ion.multiple_scattering");
       }
       DT_LOG_DEBUG(_logprio(),"Ion multiple scattering set to: " << _em_ion_multiple_scattering_);
 
-      if (config_.has_key ("em.ion.step_limiter")) {
-        _em_ion_step_limiter_ = config_.fetch_boolean ("em.ion.step_limiter");
+      if (config_.has_key("em.ion.step_limiter")) {
+        _em_ion_step_limiter_ = config_.fetch_boolean("em.ion.step_limiter");
       }
       DT_LOG_DEBUG(_logprio(),"Ion step limiter set to: " << _em_ion_step_limiter_);
 
-      // Muons :
-      if (config_.has_key ("em.muon.ionisation")) {
-        _em_muon_ionisation_ = config_.fetch_boolean ("em.muon.ionisation");
+      if (config_.has_key("em.ion.user_special_cuts")) {
+        _em_ion_user_special_cuts_ = config_.fetch_boolean("em.ion.step_limiter");
       }
-      DT_LOG_DEBUG(_logprio(),"Muon ionisation set to: " << _em_muon_ionisation_);
+      DT_LOG_DEBUG(_logprio(),"Ion user special cuts set to: " << _em_ion_user_special_cuts_);
 
-      if (config_.has_key ("em.muon.bremsstrahlung")) {
-        _em_muon_bremsstrahlung_ = config_.fetch_boolean ("em.muon.bremsstrahlung");
+      // Muons :
+      if (config_.has_key("em.muon.ionization")) {
+        _em_muon_ionization_ = config_.fetch_boolean("em.muon.ionization");
+      } else if (config_.has_key("em.muon.ionisation")) {
+        _em_muon_ionization_ = config_.fetch_boolean("em.muon.ionisation");
+      }
+      DT_LOG_DEBUG(_logprio(),"Muon ionization set to: " << _em_muon_ionization_);
+
+      if (config_.has_key("em.muon.bremsstrahlung")) {
+        _em_muon_bremsstrahlung_ = config_.fetch_boolean("em.muon.bremsstrahlung");
       }
       DT_LOG_DEBUG(_logprio(),"Muon bremsstrahlung set to: " << _em_muon_bremsstrahlung_);
 
-      if (config_.has_key ("em.muon.multiple_scattering")) {
-        _em_muon_multiple_scattering_ = config_.fetch_boolean ("em.muon.multiple_scattering");
+      if (config_.has_key("em.muon.multiple_scattering")) {
+        _em_muon_multiple_scattering_ = config_.fetch_boolean("em.muon.multiple_scattering");
       }
       DT_LOG_DEBUG(_logprio(),"Muon multiple scattering set to: " << _em_muon_multiple_scattering_);
 
-      if (config_.has_key ("em.muon.pair_production")) {
-        _em_muon_pair_production_ = config_.fetch_boolean ("em.muon.pair_production");
+      if (config_.has_key("em.muon.pair_production")) {
+        _em_muon_pair_production_ = config_.fetch_boolean("em.muon.pair_production");
       }
       DT_LOG_DEBUG(_logprio(),"Muon pair production set to: " << _em_muon_pair_production_);
 
-      if (config_.has_key ("em.muon.step_limiter")) {
-        _em_muon_step_limiter_ = config_.fetch_boolean ("em.muon.step_limiter");
+      if (config_.has_key("em.muon.step_limiter")) {
+        _em_muon_step_limiter_ = config_.fetch_boolean("em.muon.step_limiter");
       }
       DT_LOG_DEBUG(_logprio(),"Muon step limiter set to: " << _em_muon_step_limiter_);
 
-      // End
+      if (config_.has_key("em.muon.user_special_cuts")) {
+        _em_muon_user_special_cuts_ = config_.fetch_boolean("em.muon.user_special_cuts");
+      }
+      DT_LOG_DEBUG(_logprio(),"Muon user special cuts set to: " << _em_muon_user_special_cuts_);
+
+      // Others:
+      if (config_.has_key("em.other.ionization")) {
+        _em_other_ionization_ = config_.fetch_boolean("em.other.ionization");
+      } else if (config_.has_key("em.other.ionisation")) {
+        _em_other_ionization_ = config_.fetch_boolean("em.other.ionisation");
+      }
+      DT_LOG_DEBUG(_logprio(),"Other ionization set to: " << _em_other_ionization_);
+
+      if (config_.has_key("em.other.multiple_scattering")) {
+        _em_other_multiple_scattering_ = config_.fetch_boolean("em.other.multiple_scattering");
+      }
+      DT_LOG_DEBUG(_logprio(),"Other multiple scattering set to: " << _em_other_multiple_scattering_);
+
+      if (config_.has_key("em.other.step_limiter")) {
+        _em_other_step_limiter_ = config_.fetch_boolean("em.other.step_limiter");
+      }
+      DT_LOG_DEBUG(_logprio(),"Other step limiter set to: " << _em_other_step_limiter_);
+
+      if (config_.has_key("em.other.user_special_cuts")) {
+        _em_other_user_special_cuts_ = config_.fetch_boolean("em.other.user_special_cuts");
+      }
+      DT_LOG_DEBUG(_logprio(),"Other user special cuts set to: " << _em_other_user_special_cuts_);
+
+      // EM extra models support:
+      if (config_.has_key("em.using_extra_models")) {
+        _em_using_extra_models_ = config_.fetch_boolean("em.using_extra_models");
+      }
+      DT_LOG_DEBUG(_logprio(),"Using extra models set to: " << _em_using_extra_models_);
+      if (_em_using_extra_models_) {
+        DT_LOG_TRACE(_logprio(), "Invoke specific EM models configuration.");
+       _setup_em_extra_models_configurator(config_);
+      }
+
+      // End.
+
+      this->G4VPhysicsConstructor::SetPhysicsName(get_name());
+      this->G4VPhysicsConstructor::SetPhysicsType(bElectromagnetic);
 
       _set_initialized(true);
 
@@ -406,12 +493,82 @@ namespace mctools {
         this->tree_dump(std::clog, "", "");
       }
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
+    void em_physics_constructor::_setup_em_extra_models_configurator(const datatools::properties & config_)
+    {
+      DT_LOG_TRACE_ENTERING(_logprio());
 
-    void em_physics_constructor::_set_defaults ()
+      _grab_work_().em_configurator_verbosity = 1;
+      if (config_.has_key("em.configurator.verbosity")) {
+        std::string verbosity_label = config_.fetch_string("em.configurator.verbosity");
+        if (verbosity_label == "mute") {
+          _grab_work_().em_configurator_verbosity = 0;
+        } else if (verbosity_label == "normal") {
+          _grab_work_().em_configurator_verbosity = 1;
+        } else if (verbosity_label == "verbose") {
+          _grab_work_().em_configurator_verbosity = 2;
+        } else {
+          DT_THROW(std::logic_error, "Invalid EM configurator verbosity '" << verbosity_label << "'!");
+        }
+      }
+
+      DT_LOG_NOTICE(_logprio(), "Setup the EM extra models...");
+      datatools::properties extra_models_config;
+      config_.export_and_rename_starting_with(extra_models_config, "em.extra_models.", "");
+
+      if (extra_models_config.has_key("labels")) {
+        std::vector<std::string> em_xmodel_labels;
+        extra_models_config.fetch("labels", em_xmodel_labels);
+        for (int i = 0; i < (int) em_xmodel_labels.size(); i++) {
+          const std::string & em_xmodel_label = em_xmodel_labels[i];
+          std::ostringstream em_xmodel_prefix;
+          em_xmodel_prefix << em_xmodel_label << '.';
+          datatools::properties extra_model_config;
+          extra_models_config.export_and_rename_starting_with(extra_model_config, em_xmodel_prefix.str(), "");
+          {
+            mctools::g4::processes::em_extra_model dummy;
+            _grab_work_().em_extra_models[em_xmodel_label] = dummy;
+          }
+          mctools::g4::processes::em_extra_model & em_xmodel = _grab_work_().em_extra_models.find(em_xmodel_label)->second;
+          em_xmodel.set_name(em_xmodel_label);
+          DT_LOG_NOTICE(_logprio(), "Fetch parameters for EM extra model '" << em_xmodel_label << "'...");
+          em_xmodel.initialize(extra_model_config);
+          DT_LOG_DEBUG(_logprio(), "EM extra model '" << em_xmodel_label << "' parameters are : ");
+          if (_logprio() >= datatools::logger::PRIO_DEBUG) {
+            em_xmodel.tree_dump(std::cerr, "", "[debug] ");
+          }
+        }
+      }
+
+      /*
+      DT_LOG_NOTICE(_logprio(), "Setup the EM configurator...");
+      _grab_work_().em_configurator.SetVerbose(em_configurator_verbosity);
+      DT_LOG_DEBUG(_logprio(), "Initialize the EM model factory...");
+      _grab_work_().em_model_fact.initialize();
+
+      DT_LOG_DEBUG(_logprio(), "Apply EM extra models to the Geant4 EM configurator...");
+      for (std::map<std::string, ::mctools::g4::processes::em_extra_model>::const_iterator
+             i = _grab_work_().em_extra_models.begin();
+           i != _grab_work_().em_extra_models.end();
+           i++){
+        const std::string & em_xmodel_label = i->first;
+        const ::mctools::g4::processes::em_extra_model & em_xmodel = i->second;
+        // Declare extra models to the embedded Geant4 EM configurator:
+        DT_LOG_NOTICE(_logprio(), "Declare extra model '" << em_xmodel_label << "' in the Geant4 EM configurator...");
+        em_xmodel.apply_to_g4(_grab_work_().em_configurator,
+                              _grab_work_().em_model_fact);
+      }
+      DT_LOG_DEBUG(_logprio(), "EM extra models have been applied to the Geant4 EM configurator.");
+      */
+
+      DT_LOG_TRACE_EXITING(_logprio());
+      return;
+    }
+
+    void em_physics_constructor::_set_defaults()
     {
       // Process:
       _em_model_                        = EM_MODEL_STANDARD;
@@ -426,7 +583,7 @@ namespace mctools {
       _em_gamma_user_special_cuts_      = false;
 
       // electron/positron:
-      _em_electron_ionisation_          = true;
+      _em_electron_ionization_          = true;
       _em_electron_bremsstrahlung_      = true;
       _em_electron_multiple_scattering_ = true;
       _em_electron_ms_use_distance_to_boundary_  = true;
@@ -445,31 +602,41 @@ namespace mctools {
 
       // ion:
       _em_ion_multiple_scattering_      = true;
-      _em_ion_ionisation_               = true;
+      _em_ion_ionization_               = true;
       _em_ion_step_limiter_             = false;
       _em_ion_user_special_cuts_        = false;
 
       // muon:
       _em_muon_multiple_scattering_     = true;
-      _em_muon_ionisation_              = true;
+      _em_muon_ionization_              = true;
       _em_muon_bremsstrahlung_          = true;
       _em_muon_pair_production_         = true;
       _em_muon_step_limiter_            = false;
       _em_muon_user_special_cuts_       = false;
 
+      // others:
+      _em_other_multiple_scattering_     = true;
+      _em_other_ionization_              = true;
+      _em_other_step_limiter_            = false;
+      _em_other_user_special_cuts_       = false;
+
+      // EM extra models:
+      _em_using_extra_models_ = false;
+
       return;
     }
 
-    void em_physics_constructor::reset ()
+    void em_physics_constructor::reset()
     {
       DT_LOG_TRACE(_logprio(), "Entering...");
 
-      DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
+      DT_THROW_IF(! is_initialized(), std::logic_error, "Not initialized !");
 
       _set_initialized(false);
 
+      _work_.reset();
       _em_regions_deexcitation_.clear();
-      _set_defaults ();
+      _set_defaults();
 
       this->base_physics_constructor::_reset();
 
@@ -477,14 +644,14 @@ namespace mctools {
       return;
     }
 
-    void em_physics_constructor::tree_dump (std::ostream & out_,
-                                            const std::string & title_,
-                                            const std::string & indent_,
-                                            bool inherit_) const
+    void em_physics_constructor::tree_dump(std::ostream & out_,
+                                           const std::string & title_,
+                                           const std::string & indent_,
+                                           bool inherit_) const
     {
       this->base_physics_constructor::tree_dump(out_, title_, indent_, true);
       std::string indent;
-      if (! indent_.empty ()) indent = indent_;
+      if (! indent_.empty()) indent = indent_;
 
       // EM model:
       out_ << indent << datatools::i_tree_dumpable::tag
@@ -521,11 +688,11 @@ namespace mctools {
 
       // Electron/positron:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Electron/positron ionisation : "
-           << (_em_electron_ionisation_ ? "Yes" : "No") << std::endl;
+           << "Electron/positron ionization : "
+           << (_em_electron_ionization_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Electron/positron  bremsstrahlung : "
+           << "Electron/positron bremsstrahlung : "
            << (_em_electron_bremsstrahlung_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
@@ -607,8 +774,8 @@ namespace mctools {
 
       // Ion:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Ion ionisation : "
-           << (_em_ion_ionisation_ ? "Yes" : "No") << std::endl;
+           << "Ion ionization : "
+           << (_em_ion_ionization_ ? "Yes" : "No") << std::endl;
 
 
       out_ << indent << datatools::i_tree_dumpable::tag
@@ -625,8 +792,8 @@ namespace mctools {
 
       // Muon:
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Muon ionisation : "
-           << (_em_muon_ionisation_ ? "Yes" : "No") << std::endl;
+           << "Muon ionization : "
+           << (_em_muon_ionization_ ? "Yes" : "No") << std::endl;
 
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon bremsstrahlung : "
@@ -644,31 +811,72 @@ namespace mctools {
            << "Muon step limiter : "
            << (_em_muon_step_limiter_ ? "Yes" : "No") << std::endl;
 
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+      out_ << indent << datatools::i_tree_dumpable::tag
            << "Muon user special cuts : "
            << (_em_muon_user_special_cuts_ ? "Yes" : "No") << std::endl;
 
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Other ionization : "
+           << (_em_other_ionization_ ? "Yes" : "No") << std::endl;
+
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Other multiple scattering : "
+           << (_em_other_multiple_scattering_ ? "Yes" : "No") << std::endl;
+
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Other step limiter : "
+           << (_em_other_step_limiter_ ? "Yes" : "No") << std::endl;
+
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Other user special cuts : "
+           << (_em_other_user_special_cuts_ ? "Yes" : "No") << std::endl;
+
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Using EM extra models : "
+           << (_em_using_extra_models_ ? "Yes" : "No") << std::endl;
+
       return;
     }
 
-    void em_physics_constructor::ConstructParticle ()
+    void em_physics_constructor::ConstructParticle()
     {
-      DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
+      DT_LOG_TRACE_ENTERING(_logprio());
+      DT_THROW_IF(! is_initialized(), std::logic_error, "Not initialized !");
 
+      DT_LOG_DEBUG(_logprio(), "Defining gamma...");
       G4Gamma::GammaDefinition();
+
+      DT_LOG_DEBUG(_logprio(), "Defining electron...");
       G4Electron::ElectronDefinition();
+
+      DT_LOG_DEBUG(_logprio(), "Defining positron...");
       G4Positron::PositronDefinition();
+
       if (_em_gamma_conversion_to_muons_) {
+        DT_LOG_DEBUG(_logprio(), "Defining muon plus...");
         G4MuonPlus::MuonPlusDefinition();
+        DT_LOG_DEBUG(_logprio(), "Defining muon minus...");
         G4MuonMinus::MuonMinusDefinition();
       }
 
+      /*
+      G4Proton::Proton();
+      G4Deuteron::Deuteron();
+      G4Triton::Triton();
+      G4He3::He3();
+      G4Alpha::Alpha();
+      G4GenericIon::GenericIonDefinition();
+      */
+
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
-    void em_physics_constructor::ConstructProcess ()
+    void em_physics_constructor::ConstructProcess()
     {
-      DT_THROW_IF (! is_initialized(), std::logic_error, "Not initialized !");
+      DT_LOG_TRACE_ENTERING(_logprio());
+
+      DT_THROW_IF(! is_initialized(), std::logic_error, "Not initialized !");
 
       this->em_physics_constructor::_ConstructEMProcess();
 
@@ -677,11 +885,47 @@ namespace mctools {
         this->em_physics_constructor::_ConstructEMDeexcitation();
       }
 
+      if (_em_using_extra_models_) {
+        this->em_physics_constructor::_ConstructExtraModels();
+      }
+
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
-    void em_physics_constructor::_ConstructEMDeexcitation ()
+    void em_physics_constructor::_ConstructExtraModels()
     {
+      DT_LOG_TRACE_ENTERING(_logprio());
+
+      DT_LOG_NOTICE(_logprio(), "Setup the EM configurator...");
+      _grab_work_().em_configurator.SetVerbose(_grab_work_().em_configurator_verbosity);
+      DT_LOG_DEBUG(_logprio(), "Initialize the EM model factory...");
+      _grab_work_().em_model_fact.initialize();
+
+      DT_LOG_DEBUG(_logprio(), "Apply EM extra models to the Geant4 EM configurator...");
+      for (std::map<std::string, ::mctools::g4::processes::em_extra_model>::const_iterator
+             i = _grab_work_().em_extra_models.begin();
+           i != _grab_work_().em_extra_models.end();
+           i++){
+        const std::string & em_xmodel_label = i->first;
+        const ::mctools::g4::processes::em_extra_model & em_xmodel = i->second;
+        // Declare extra models to the embedded Geant4 EM configurator:
+        DT_LOG_NOTICE(_logprio(), "Declare extra model '" << em_xmodel_label << "' in the Geant4 EM configurator...");
+        em_xmodel.apply_to_g4(_grab_work_().em_configurator,
+                              _grab_work_().em_model_fact);
+      }
+      DT_LOG_DEBUG(_logprio(), "EM extra models have been applied to the Geant4 EM configurator.");
+
+      DT_LOG_DEBUG(_logprio(), "Activating declared extra EM models through the EM configurator...");
+      _grab_work_().em_configurator.AddModels();
+
+      DT_LOG_TRACE_EXITING(_logprio());
+      return;
+    }
+
+    void em_physics_constructor::_ConstructEMDeexcitation()
+    {
+      DT_LOG_TRACE_ENTERING(_logprio());
       // First setup the static atomic deexcitation:
       // G4RadioactiveDecay* radioactiveDecay = new G4RadioactiveDecay();
       // radioactiveDecay->SetHLThreshold(nanosecond);
@@ -696,12 +940,12 @@ namespace mctools {
       int verbose = 1;
       emOptions.SetVerbose(verbose);
       /*
-      emOptions.SetMinEnergy(10*eV);     //default=100eV
-      emOptions.SetMaxEnergy(10*TeV);    //default=100TeV
-      emOptions.SetDEDXBinning(12*10);   //default=12*7
-      emOptions.SetLambdaBinning(12*10); //default=12*7
-      emOptions.SetMscStepLimitation(fUseDistanceToBoundary); //default=fUseSafety
-      emOptions.SetPolarAngleLimit(CLHEP::pi);
+        emOptions.SetMinEnergy(10*eV);     //default=100eV
+        emOptions.SetMaxEnergy(10*TeV);    //default=100TeV
+        emOptions.SetDEDXBinning(12*10);   //default=12*7
+        emOptions.SetLambdaBinning(12*10); //default=12*7
+        emOptions.SetMscStepLimitation(fUseDistanceToBoundary); //default=fUseSafety
+        emOptions.SetPolarAngleLimit(CLHEP::pi);
       */
 
       emOptions.SetFluo(_em_fluorescence_);
@@ -722,7 +966,7 @@ namespace mctools {
            i++) {
         const std::string & region_name = i->first;
         const region_deexcitation_type & rd = i->second;
-        G4Region * a_region = G4RegionStore::GetInstance ()->GetRegion (region_name);
+        G4Region * a_region = G4RegionStore::GetInstance()->GetRegion(region_name);
         DT_THROW_IF(a_region == 0, std::logic_error,
                     "Cannot find region named '" << region_name
                     << "' to apply de-excitation processes !");
@@ -735,25 +979,26 @@ namespace mctools {
         emOptions.SetDeexcitationActiveRegion(region_name, rd.fluorescence, rd.auger, rd.pixe);
       }
 
-     // de->SetFluo(true);
-     //  //de->SetFluo(_em_fluorescence_);
-     //  //de->SetFluo(true);
-     // de->SetAuger(true);
-     // de->SetPIXE(true);
+      // de->SetFluo(true);
+      //  //de->SetFluo(_em_fluorescence_);
+      //  //de->SetFluo(true);
+      // de->SetAuger(true);
+      // de->SetPIXE(true);
 
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
-    void em_physics_constructor::_ConstructEMProcess ()
+    void em_physics_constructor::_ConstructEMProcess()
     {
-      theParticleIterator->reset ();
-      while ((*theParticleIterator) ()) {
-        G4ParticleDefinition * particle = theParticleIterator->value ();
-        G4ProcessManager     * pmanager = particle->GetProcessManager ();
-        G4String particle_name = particle->GetParticleName ();
+      DT_LOG_TRACE_ENTERING(_logprio());
+      theParticleIterator->reset();
+      while ((*theParticleIterator)()) {
+        G4ParticleDefinition * particle = theParticleIterator->value();
+        G4ProcessManager     * pmanager = particle->GetProcessManager();
+        G4String particle_name = particle->GetParticleName();
 
-        DT_LOG_NOTICE (_logprio(), "Set electromagnetic processes for '"
-                       << particle_name << "'");
+        DT_LOG_NOTICE(_logprio(), "Set electromagnetic processes for '" << particle_name << "'");
 
         if (particle_name == "gamma") {
           /***********
@@ -782,84 +1027,102 @@ namespace mctools {
             the_gamma_conversion_to_muons = new G4GammaConversionToMuons();
           }
 
-          if (is_em_low_energy_livermore ()) {
+          if (is_em_low_energy_livermore()) {
             // Livermore:
 
             if (the_rayleigh_scattering) {
               G4LivermoreRayleighModel * the_livermore_rayleigh_model
-                = new G4LivermoreRayleighModel ();
-              the_rayleigh_scattering->SetEmModel (the_livermore_rayleigh_model);
+                = new G4LivermoreRayleighModel();
+              the_rayleigh_scattering->SetEmModel(the_livermore_rayleigh_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Livermore Rayleigh scattering model for '" << particle_name << "'");
             }
 
             if (the_photoelectric_effect) {
               G4LivermorePhotoElectricModel* the_livermore_photoelectric_model
-                = new G4LivermorePhotoElectricModel ();
-              the_photoelectric_effect->SetEmModel (the_livermore_photoelectric_model);
+                = new G4LivermorePhotoElectricModel();
+              the_photoelectric_effect->SetEmModel(the_livermore_photoelectric_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Livermore photoelectric effect model for '" << particle_name << "'");
             }
 
             if (the_compton_scattering) {
               G4LivermoreComptonModel* the_livermore_compton_model
-                = new G4LivermoreComptonModel ();
-              the_compton_scattering->SetEmModel (the_livermore_compton_model);
+                = new G4LivermoreComptonModel();
+              the_compton_scattering->SetEmModel(the_livermore_compton_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Livermore Compton scattering model for '" << particle_name << "'");
             }
 
             if (the_gamma_conversion) {
               G4LivermoreGammaConversionModel* the_livermore_gamma_conversion_model
-                = new G4LivermoreGammaConversionModel ();
-              the_gamma_conversion->SetEmModel (the_livermore_gamma_conversion_model);
+                = new G4LivermoreGammaConversionModel();
+              the_gamma_conversion->SetEmModel(the_livermore_gamma_conversion_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Livermore conversion model for '" << particle_name << "'");
             }
 
-          } else if (is_em_low_energy_penelope ()) {
+          } else if (is_em_low_energy_penelope()) {
             // Penelope:
 
             if (the_rayleigh_scattering) {
               G4PenelopeRayleighModel * the_penelope_rayleigh_model
-                = new G4PenelopeRayleighModel ();
-              the_rayleigh_scattering->SetEmModel (the_penelope_rayleigh_model);
+                = new G4PenelopeRayleighModel();
+              the_rayleigh_scattering->SetEmModel(the_penelope_rayleigh_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Penelope Rayleigh scattering model for '" << particle_name << "'");
             }
 
             if (the_photoelectric_effect) {
               G4PenelopePhotoElectricModel* the_penelope_photoelectric_model
-                = new G4PenelopePhotoElectricModel ();
-              the_photoelectric_effect->SetEmModel (the_penelope_photoelectric_model);
+                = new G4PenelopePhotoElectricModel();
+              the_photoelectric_effect->SetEmModel(the_penelope_photoelectric_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Penelope photoelectric effect model for '" << particle_name << "'");
             }
 
             if (the_compton_scattering) {
               G4PenelopeComptonModel* the_penelope_compton_model
-                = new G4PenelopeComptonModel ();
-              the_compton_scattering->SetEmModel (the_penelope_compton_model);
+                = new G4PenelopeComptonModel();
+              the_compton_scattering->SetEmModel(the_penelope_compton_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Penelope Compton scattering model for '" << particle_name << "'");
             }
 
             if (the_gamma_conversion) {
               G4PenelopeGammaConversionModel* the_penelope_gamma_conversion_model
-                = new G4PenelopeGammaConversionModel ();
-              the_gamma_conversion->SetEmModel (the_penelope_gamma_conversion_model);
+                = new G4PenelopeGammaConversionModel();
+              the_gamma_conversion->SetEmModel(the_penelope_gamma_conversion_model);
+              DT_LOG_NOTICE(_logprio(), "Setup Penelope conversion model for '" << particle_name << "'");
             }
 
           }
 
           if (the_rayleigh_scattering) {
-            pmanager->AddDiscreteProcess (the_rayleigh_scattering);
+            DT_LOG_NOTICE(_logprio(), "Add Rayleigh scattering for '" << particle_name << "'");
+            pmanager->AddDiscreteProcess(the_rayleigh_scattering);
           }
           if (the_photoelectric_effect) {
-            pmanager->AddDiscreteProcess (the_photoelectric_effect);
+            DT_LOG_NOTICE(_logprio(), "Add photoelectric effect for '" << particle_name << "'");
+            pmanager->AddDiscreteProcess(the_photoelectric_effect);
           }
           if (the_compton_scattering) {
-            pmanager->AddDiscreteProcess (the_compton_scattering);
+            DT_LOG_NOTICE(_logprio(), "Add Compton scattering for '" << particle_name << "'");
+            pmanager->AddDiscreteProcess(the_compton_scattering);
           }
           if (the_gamma_conversion) {
-            pmanager->AddDiscreteProcess (the_gamma_conversion);
+            DT_LOG_NOTICE(_logprio(), "Add conversion for '" << particle_name << "'");
+            pmanager->AddDiscreteProcess(the_gamma_conversion);
           }
           if (the_gamma_conversion_to_muons) {
-            pmanager->AddDiscreteProcess (the_gamma_conversion_to_muons);
+            DT_LOG_NOTICE(_logprio(), "Add conversion to muons for '" << particle_name << "'");
+            pmanager->AddDiscreteProcess(the_gamma_conversion_to_muons);
           }
 
           if (_em_gamma_step_limiter_) {
             ++process_rank;
-            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add step limiter for '" << particle_name << "'");
+            pmanager->AddProcess(new G4StepLimiter, -1, -1, process_rank);
           }
 
-          //pmanager->AddProcess (new G4StepLimiter (), -1, -1, 4);
+          if (_em_gamma_user_special_cuts_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add user special cuts limiter for '" << particle_name << "'");
+            pmanager->AddProcess(new G4UserSpecialCuts, -1, -1, process_rank);
+          }
 
         } else if (particle_name == "e-" || particle_name == "e+") {
           /***********************
@@ -869,77 +1132,88 @@ namespace mctools {
 
           if (_em_electron_multiple_scattering_) {
             // Multiple scattering:
-            G4eMultipleScattering * the_electron_multiple_scattering = new G4eMultipleScattering ();
+            G4eMultipleScattering * the_electron_multiple_scattering = new G4eMultipleScattering();
             // Setting the FacRange to 0.005 instead of default value 0.2
             the_electron_multiple_scattering->SetRangeFactor(_em_electron_ms_range_factor_);
-            //??? the_electron_multiple_scattering->SetStepLimitType (fUseDistanceToBoundary);
+            //??? the_electron_multiple_scattering->SetStepLimitType(fUseDistanceToBoundary);
             ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add e+/e- multiple scattering for '" << particle_name << "'");
             pmanager->AddProcess(the_electron_multiple_scattering, -1, process_rank, process_rank);
           }
 
-          if (_em_electron_ionisation_) {
-            // Ionisation:
-            G4eIonisation * the_e_ionisation = new G4eIonisation ();
-            if (is_em_low_energy_livermore ()) {
+          if (_em_electron_ionization_) {
+            // Ionization:
+            G4eIonisation * the_e_ionization = new G4eIonisation();
+            if (is_em_low_energy_livermore()) {
               // Livermore:
               if (particle_name == "e-"){
-                G4LivermoreIonisationModel* the_livermore_ionisation_model
-                  = new G4LivermoreIonisationModel ();
-                the_e_ionisation->SetEmModel(the_livermore_ionisation_model);
+                G4LivermoreIonisationModel* the_livermore_ionization_model
+                  = new G4LivermoreIonisationModel();
+                the_e_ionization->SetEmModel(the_livermore_ionization_model);
               } else if (particle_name == "e+"){
-                G4PenelopeIonisationModel* the_penelope_ionisation_model
-                  = new G4PenelopeIonisationModel ();
-                the_e_ionisation->SetEmModel(the_penelope_ionisation_model);
+                G4PenelopeIonisationModel* the_penelope_ionization_model
+                  = new G4PenelopeIonisationModel();
+                the_e_ionization->SetEmModel(the_penelope_ionization_model);
               }
-            } else if (is_em_low_energy_penelope ()) {
+            } else if (is_em_low_energy_penelope()) {
               // Penelope:
-              G4PenelopeIonisationModel* the_penelope_ionisation_model
-                = new G4PenelopeIonisationModel ();
-              the_e_ionisation->SetEmModel(the_penelope_ionisation_model);
+              G4PenelopeIonisationModel* the_penelope_ionization_model
+                = new G4PenelopeIonisationModel();
+              the_e_ionization->SetEmModel(the_penelope_ionization_model);
             }
             ++process_rank;
-            pmanager->AddProcess (the_e_ionisation, -1, process_rank, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add e+/e- ionization for '" << particle_name << "'");
+            pmanager->AddProcess(the_e_ionization, -1, process_rank, process_rank);
           }
 
           if (_em_electron_bremsstrahlung_) {
             // Bremsstrahlung:
-            G4eBremsstrahlung * the_e_bremsstrahlung = new G4eBremsstrahlung ();
-            if (is_em_low_energy_livermore ()) {
+            G4eBremsstrahlung * the_e_bremsstrahlung = new G4eBremsstrahlung();
+            if (is_em_low_energy_livermore()) {
               // Livermore:
               if (particle_name == "e-"){
                 G4LivermoreBremsstrahlungModel * the_livermore_bremsstrahlung_model
-                  = new G4LivermoreBremsstrahlungModel ();
+                  = new G4LivermoreBremsstrahlungModel();
                 the_e_bremsstrahlung->SetEmModel(the_livermore_bremsstrahlung_model);
               } else if (particle_name == "e+"){
                 G4PenelopeBremsstrahlungModel* the_penelope_bremsstrahlung_model
-                  = new G4PenelopeBremsstrahlungModel ();
+                  = new G4PenelopeBremsstrahlungModel();
                 the_e_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
               }
-            } else if (is_em_low_energy_penelope ()) {
+            } else if (is_em_low_energy_penelope()) {
               // Penelope:
               G4PenelopeBremsstrahlungModel* the_penelope_bremsstrahlung_model
-                = new G4PenelopeBremsstrahlungModel ();
+                = new G4PenelopeBremsstrahlungModel();
               the_e_bremsstrahlung->SetEmModel(the_penelope_bremsstrahlung_model);
             }
             ++process_rank;
-            pmanager->AddProcess (the_e_bremsstrahlung, -1, process_rank, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add e+/e- bremsstrahlung for '" << particle_name << "'");
+            pmanager->AddProcess(the_e_bremsstrahlung, -1, process_rank, process_rank);
           }
 
           if (particle_name == "e+" && _em_positron_annihilation_) {
             // e+ annihilation:
-            G4eplusAnnihilation * the_positron_annihilation = new G4eplusAnnihilation ();
-            if (is_em_low_energy_penelope ()) {
+            G4eplusAnnihilation * the_positron_annihilation = new G4eplusAnnihilation();
+            if (is_em_low_energy_penelope()) {
               G4PenelopeAnnihilationModel * the_penelope_annihilation_model
-                = new G4PenelopeAnnihilationModel ();
+                = new G4PenelopeAnnihilationModel();
               the_positron_annihilation->SetEmModel(the_penelope_annihilation_model);
             }
             ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add positron annihilation for '" << particle_name << "'");
             pmanager->AddProcess(the_positron_annihilation, 0, -1, process_rank);
           }
 
           if (_em_electron_step_limiter_) {
             ++process_rank;
-            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add step limiter for '" << particle_name << "'");
+            pmanager->AddProcess(new G4StepLimiter, -1, -1, process_rank);
+          }
+
+          if (_em_electron_user_special_cuts_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add user special cuts for '" << particle_name << "'");
+            pmanager->AddProcess(new G4UserSpecialCuts,      -1, -1, process_rank);
           }
 
         } else if (   particle_name == "alpha"    || particle_name == "anti_alpha"
@@ -954,18 +1228,67 @@ namespace mctools {
           if (_em_ion_multiple_scattering_) {
             G4hMultipleScattering * the_ion_multiple_scattering = new G4hMultipleScattering();
             ++process_rank;
-            pmanager->AddProcess (the_ion_multiple_scattering , -1, process_rank, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add hadron multiple scattering for '" << particle_name << "'");
+            pmanager->AddProcess(the_ion_multiple_scattering , -1, process_rank, process_rank);
           }
 
-          if (_em_ion_ionisation_) {
-            G4ionIonisation       * the_ion_ionisation = new G4ionIonisation();
+          if (_em_ion_ionization_) {
+            // use G4alphaIonisation for alpha...
+
+            G4ionIonisation       * the_ion_ionization = new G4ionIonisation();
+            the_ion_ionization->SetVerboseLevel(2);
+
+            // Special code for testing:
+            // Ion ionization process use the G4BraggIonModel (E=0-2 MeV) and
+            // G4BetheBlochModel (E>2MeV) models by default.
+            // For ion with speficic atomic electron vacancy (1+, 2+, 3+...),
+            // the energy loss process uses an effectuve charge to compute the energy loss
+            // in any materials, particularly in solid state.
+            // This has the effect to change the effective charge of the ion
+            // with some arbitrary value (example: +6e -> +1e). This is a priori not a problem
+            // in solid or liquid materials but the problem comes with low density materials
+            // (vacuum, gas) where the charge is changed regardless of the effective density
+            // and step length along the particle track. Now if an electric field is active
+            // in the some gas volume, the electric force computation is done with the
+            // changed (and wrong) effective charge and thus this results in an not correct
+            // deflection of the ion track.
+            // There is a solution to this issue: we can ask the particle to be associated
+            // with a suitable ionization model for this specific category of material.
+            // The G4BraggIonGasModel and G4BetheBlochIonGasModel do not use any effective
+            // charge of the ion and thus the electric force should be correctly computed
+            // in such medium. This implies to change the default ionization models for ions.
+            //
+            bool effective_charge_in_gas = true;
+            // effective_charge_in_gas = false;
+            if (effective_charge_in_gas) {
+              // This is the default behaviour of the G4ionIonisation class:
+              G4BraggIonModel * bragg_ion_model = new G4BraggIonModel;
+              the_ion_ionization->SetEmModel(bragg_ion_model, 1);
+              G4BetheBlochModel * bethe_bloch_model = new G4BetheBlochModel;
+              the_ion_ionization->SetEmModel(bethe_bloch_model, 2);
+            } else {
+              DT_LOG_DEBUG(_logprio(), "Using special ion ionization model in gas...");
+              G4BraggIonGasModel * bragg_ion_model = new G4BraggIonGasModel;
+              the_ion_ionization->SetEmModel(bragg_ion_model, 1);
+              G4BetheBlochIonGasModel * bethe_bloch_model = new G4BetheBlochIonGasModel;
+              the_ion_ionization->SetEmModel(bethe_bloch_model, 2);
+            }
+
             ++process_rank;
-            pmanager->AddProcess (the_ion_ionisation, -1, process_rank, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add ion ionization for '" << particle_name << "'");
+            pmanager->AddProcess(the_ion_ionization, -1, process_rank, process_rank);
           }
 
           if (_em_ion_step_limiter_) {
             ++process_rank;
-            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add step limiter for '" << particle_name << "'");
+            pmanager->AddProcess(new G4StepLimiter, -1, -1, process_rank);
+          }
+
+          if (_em_ion_user_special_cuts_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add user special cuts for '" << particle_name << "'");
+            pmanager->AddProcess(new G4UserSpecialCuts, -1, -1, process_rank);
           }
 
         } else if (particle_name == "mu+" ||
@@ -974,41 +1297,81 @@ namespace mctools {
           /*************
            *   Muons   *
            *************/
-          ++process_rank;
-          pmanager->AddProcess (new G4MuMultipleScattering, -1, process_rank, process_rank);
-          ++process_rank;
-          pmanager->AddProcess (new G4MuIonisation,         -1, process_rank, process_rank);
-          ++process_rank;
-          pmanager->AddProcess (new G4MuBremsstrahlung,     -1, process_rank, process_rank);
-          ++process_rank;
-          pmanager->AddProcess (new G4MuPairProduction,     -1, process_rank, process_rank);
+
+          if (_em_muon_multiple_scattering_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add muon multiple scattering for '" << particle_name << "'");
+            pmanager->AddProcess(new G4MuMultipleScattering, -1, process_rank, process_rank);
+          }
+
+          if (_em_muon_ionization_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add muon ionization for '" << particle_name << "'");
+            pmanager->AddProcess(new G4MuIonisation,         -1, process_rank, process_rank);
+          }
+
+          if (_em_muon_bremsstrahlung_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add muon bremsstrahlung for '" << particle_name << "'");
+            pmanager->AddProcess(new G4MuBremsstrahlung,     -1, process_rank, process_rank);
+          }
+
+          if (_em_muon_pair_production_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add muon pair production '" << particle_name << "'");
+            pmanager->AddProcess(new G4MuPairProduction,     -1, process_rank, process_rank);
+          }
 
           if (_em_muon_step_limiter_) {
             ++process_rank;
-            pmanager->AddProcess (new G4StepLimiter, -1, -1, process_rank);
+            DT_LOG_NOTICE(_logprio(), "Add step limiter for '" << particle_name << "'");
+            pmanager->AddProcess(new G4StepLimiter,          -1, -1, process_rank);
           }
-          // ++process_rank;
-          // pmanager->AddProcess (new G4UserSpecialCuts,      -1, -1, process_rank);
+
+          if (_em_muon_user_special_cuts_) {
+            ++process_rank;
+            DT_LOG_NOTICE(_logprio(), "Add user special cuts for '" << particle_name << "'");
+            pmanager->AddProcess(new G4UserSpecialCuts,      -1, -1, process_rank);
+          }
+
         } else {
           int process_rank = 0;
           /***********************
            *   other particles   *
            ***********************/
           // all others charged particles
-          if ((!particle->IsShortLived ()) &&
-              (particle->GetPDGCharge () != 0.0)) {
-            ++process_rank;
-            pmanager->AddProcess (new G4hMultipleScattering, -1, process_rank, process_rank);
-            ++process_rank;
-            pmanager->AddProcess (new G4hIonisation,         -1, process_rank, process_rank);
-            //      ++process_rank;
-            //      pmanager->AddProcess(new G4StepLimiter,       -1,-1, process_rank);
-            //      ++process_rank;
-            //      pmanager->AddProcess(new G4UserSpecialCuts,   -1,-1, process_rank);
+          if ((!particle->IsShortLived()) &&
+              (particle->GetPDGCharge() != 0.0)) {
+
+            if (_em_other_multiple_scattering_) {
+              ++process_rank;
+              DT_LOG_NOTICE(_logprio(), "Add hadron multiple scattering for '" << particle_name << "'");
+              pmanager->AddProcess(new G4hMultipleScattering, -1, process_rank, process_rank);
+            }
+
+            if (_em_other_ionization_) {
+              ++process_rank;
+              DT_LOG_NOTICE(_logprio(), "Add hadron ionization for '" << particle_name << "'");
+              pmanager->AddProcess(new G4hIonisation,         -1, process_rank, process_rank);
+            }
+
+            if (_em_other_step_limiter_) {
+              ++process_rank;
+              DT_LOG_NOTICE(_logprio(), "Add step limiter for '" << particle_name << "'");
+              pmanager->AddProcess(new G4StepLimiter,       -1, -1, process_rank);
+            }
+
+            if (_em_other_user_special_cuts_) {
+              ++process_rank;
+              DT_LOG_NOTICE(_logprio(), "Add user special cuts for '" << particle_name << "'");
+              pmanager->AddProcess(new G4UserSpecialCuts,   -1, -1, process_rank);
+            }
+
           }
         }
       }
 
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
@@ -1022,18 +1385,18 @@ namespace mctools {
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
 {
   // The class name :
-  ocd_.set_class_name ("mctools::g4::em_physics_constructor");
+  ocd_.set_class_name("mctools::g4::em_physics_constructor");
 
   // The class terse description :
-  ocd_.set_class_description ("The Geant4 simulation manager embedded electro-magnetic physics list");
+  ocd_.set_class_description("The Geant4 simulation manager embedded electro-magnetic physics list");
 
   // The library the class belongs to :
-  ocd_.set_class_library ("mctools_g4");
+  ocd_.set_class_library("mctools_g4");
 
   // The class detailed documentation :
-  ocd_.set_class_documentation ("The Geant4 simulation manager class embedded \n"
-                                "electromagnetic physics list.                \n"
-                                );
+  ocd_.set_class_documentation("The Geant4 simulation manager class embedded \n"
+                               "electromagnetic physics list.                \n"
+                               );
 
 
   logger::declare_ocd_logging_configuration(ocd_, "warning");
@@ -1150,17 +1513,17 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::em_physics_constructor, ocd_)
 
 
   {
-    // Description of the 'em.electron.ionisation' configuration property :
+    // Description of the 'em.electron.ionization' configuration property :
     datatools::configuration_property_description & cpd
       = ocd_.add_property_info();
-    cpd.set_name_pattern("em.electron.ionisation")
-      .set_terse_description("Flag to activate the electron/positron ionisation")
+    cpd.set_name_pattern("em.electron.ionization")
+      .set_terse_description("Flag to activate the electron/positron ionization")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(true)
-      .add_example("Activate electron/positron ionisation : :: \n"
+      .add_example("Activate electron/positron ionization : :: \n"
                    "                                           \n"
-                   " em.electron.ionisation : boolean = 1      \n"
+                   " em.electron.ionization : boolean = 1      \n"
                    "                                           \n"
                    )
       ;

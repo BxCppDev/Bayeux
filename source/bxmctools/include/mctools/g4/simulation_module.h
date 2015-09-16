@@ -5,7 +5,7 @@
  *
  * Description:
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  */
 
@@ -34,7 +34,7 @@ namespace mctools {
     class manager;
     class simulation_ctrl;
 
-    /// \brief The Geant4 simulation module
+    /// \brief The Geant4 simulation module based on Bayeux/dpp API
     class simulation_module : public dpp::base_module
     {
     public:
@@ -81,15 +81,15 @@ namespace mctools {
       virtual void reset();
 
       /// Data record processing
-      virtual dpp::base_module::process_status process(datatools::things & /* data_ */);
+      virtual dpp::base_module::process_status process(datatools::things & /* event_record_ */);
 
     protected :
 
-      void _initialize_manager(datatools::service_manager & smgr_);
+      void _initialize_manager(datatools::service_manager & /* smgr_ */);
 
       void _terminate_manager();
 
-      int _simulate_event(datatools::things & the_event_record);
+      int _simulate_event(datatools::things & /* event_record_ */);
 
     private:
 
@@ -97,15 +97,12 @@ namespace mctools {
       std::string _SD_label_;      //!< The label of the 'simulated_data' bank in the event record
       bool _erase_former_SD_bank_; //!< A flag to erase former 'simulated data' bank from the event record
 
-      manager_parameters _simulation_manager_params_; //!< The configuration parameters
-                                                      // for the GEANT4 simulation manager
-
+      manager_parameters _simulation_manager_params_; //!< The configuration parameters for the GEANT4 simulation manager
       const geomtools::manager * _geometry_manager_;   //!< Non-mutable reference to the geometry manager
-
       manager                  * _simulation_manager_; //!< The embedded GEANT4 simulation manager
       simulation_ctrl          * _simulation_ctrl_;    //!< The embedded control object for thread synchronization
 
-      // Macro to automate the registration of the module :
+      // Registration of the module :
       DPP_MODULE_REGISTRATION_INTERFACE(simulation_module);
 
     };

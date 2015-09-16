@@ -327,7 +327,7 @@ void ui::build_opts(boost::program_options::options_description & opts_,
 
     ("logging-priority,g",
      po::value<std::string>(&params_.logging)
-     ->default_value("warning"),
+     ->default_value("fatal"),
      "Set the logging priority threshold")
 
     ("number-of-events,n",
@@ -403,6 +403,14 @@ void ui::build_opts(boost::program_options::options_description & opts_,
     ("output-data-file",
      po::value<std::string>(),
      "Set the file to store the generated simulated data")
+
+    ("output-data-format",
+     po::value<std::string>(),
+     "Set the data format used for the generated simulated data")
+
+    ("output-data-bank",
+     po::value<std::string>(),
+     "Set the data bank label used to host the generated simulated data (\"bank\" format only")
 
     ("g4-visu",
      po::value<bool>(&params_.g4_visu)
@@ -533,6 +541,16 @@ void ui::process_opts( const boost::program_options::variables_map & vm_,
   if (vm_.count("output-data-file")) {
     params_.output_data_file
       = vm_["output-data-file"].as<std::string>();
+  }
+
+  if (vm_.count("output-data-format")) {
+    params_.output_data_format
+      = vm_["output-data-format"].as<std::string>();
+  }
+
+  if (vm_.count("output-data-bank")) {
+    params_.output_data_bank_label
+      = vm_["output-data-bank"].as<std::string>();
   }
 
   if (vm_.count("output-profiles")) {

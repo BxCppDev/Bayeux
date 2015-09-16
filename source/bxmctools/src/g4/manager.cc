@@ -557,6 +557,9 @@ namespace mctools {
       _input_prng_seeds_file_    = "";
       _output_prng_seeds_file_   = "";
 
+      _output_data_format_ = io_utils::DATA_FORMAT_INVALID;
+      _output_data_bank_label_ = "";
+
       _multi_config_     = 0;
       _interactive_      = false;
       _g4_visualization_ = false;
@@ -834,7 +837,6 @@ namespace mctools {
       return;
     }
 
-
     const std::string & manager::get_input_prng_states_file() const
     {
       return _input_prng_states_file_;
@@ -848,6 +850,49 @@ namespace mctools {
     void manager::set_input_prng_states_file(const std::string & fn_)
     {
       _input_prng_states_file_ = fn_;
+      return;
+    }
+
+    void manager::reset_output_data_format()
+    {
+      _output_data_format_ = io_utils::DATA_FORMAT_INVALID;
+      return;
+    }
+
+    void manager::set_output_data_format_by_label(const std::string & ff_)
+    {
+      io_utils::data_format_type df = io_utils::label_to_data_format(ff_);
+      DT_THROW_IF(df == io_utils::DATA_FORMAT_INVALID, std::logic_error, "Invalid output data format '" << ff_ << "'!");
+      set_output_data_format(df);
+      return;
+    }
+
+    void manager::set_output_data_format(io_utils::data_format_type of_)
+    {
+      _output_data_format_ = of_;
+      if (_output_data_format_ == io_utils::DATA_FORMAT_BANK) {
+        if (_output_data_bank_label_.empty()) {
+          set_output_data_bank_label(event_utils::event_default_simulated_data_label());
+        }
+      }
+      DT_LOG_DEBUG(_logprio(), "Output data format = " << _output_data_format_);
+      return;
+    }
+
+    io_utils::data_format_type manager::get_output_data_format() const
+    {
+      return _output_data_format_;
+    }
+
+    void manager::set_output_data_bank_label(const std::string & bl_)
+    {
+      _output_data_bank_label_ = bl_;
+      if (_output_data_format_ != io_utils::DATA_FORMAT_INVALID) {
+        set_output_data_format(io_utils::DATA_FORMAT_BANK);
+      }
+      DT_THROW_IF(_output_data_format_ != io_utils::DATA_FORMAT_BANK, std::logic_error,
+                  "Cannot set output data bank label with the plain output data format!");
+      DT_LOG_DEBUG(_logprio(), "Output data bank label = '" << _output_data_bank_label_ << "'");
       return;
     }
 
@@ -1348,6 +1393,13 @@ namespace mctools {
       const datatools::properties & run_action_config
         = _multi_config_->get("run_action").get_properties();
       _user_run_action_ = new run_action(*this);
+      if (_output_data_format_ == io_utils::DATA_FORMAT_INVALID) {
+        _output_data_format_ = io_utils::DATA_FORMAT_PLAIN;
+      }
+      _user_run_action_->set_output_data_format(_output_data_format_);
+      if (_output_data_format_ == io_utils::DATA_FORMAT_BANK) {
+        _user_run_action_->set_output_data_bank_label(_output_data_bank_label_);
+      }
       if (! _output_data_file_.empty()) {
         _user_run_action_->set_output_file(_output_data_file_);
       }
@@ -1374,7 +1426,6 @@ namespace mctools {
       _g4_run_manager_->SetUserAction(_user_event_action_);
       return;
     }
-
 
     void manager::_init_primary_generator_action ()
     {
@@ -1420,7 +1471,6 @@ namespace mctools {
       }
       return;
     }
-
 
     void manager::_init_stacking_action ()
     {
@@ -1612,11 +1662,7 @@ namespace mctools {
       // std::cerr << "DEVEL: Tracking action done.\n";
 
       // Stepping action:
-      bool use_stepping_action = false;
-      if (use_stepping_action) {
-        _init_stepping_action ();
-        // std::cerr << "DEVEL: Stepping action done.\n";
-      }
+      _init_stepping_action ();
 
       // Stacking action:
       _init_stacking_action ();

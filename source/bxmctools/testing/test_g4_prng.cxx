@@ -15,7 +15,6 @@
 
 int main(int argc_, char ** argv_)
 {
-  using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     std::clog << "Test program for class 'mctools::g4::g4_prng'!" << std::endl;
@@ -67,7 +66,7 @@ int main(int argc_, char ** argv_)
     }
     std::cout << std::endl << std::endl;
 
-    ostringstream ostatus;
+    std::ostringstream ostatus;
     random.to_stream(ostatus);
     std::string status = ostatus.str();
     std::cout << "status = " << status << std::endl;
@@ -81,7 +80,7 @@ int main(int argc_, char ** argv_)
     std::cout << std::endl << std::endl;
 
     std::cout << "reload the status..." << std::endl << "a = ";
-    istringstream istatus(status);
+    std::istringstream istatus(status);
     random.from_stream(istatus);
     my_prng.flatArray(10, a);
     for (int i = 0; i < 10; i++) {

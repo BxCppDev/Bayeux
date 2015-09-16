@@ -19,6 +19,10 @@
 // This project:
 #include <mctools/g4/loggable_support.h>
 
+// Third party:
+// - Bayeux/datatools :
+#include <datatools/i_tree_dump.h>
+
 class G4EquationOfMotion;
 class G4FieldManager;
 class G4PropagatorInField;
@@ -40,7 +44,9 @@ namespace mctools {
     class electromagnetic_field;
 
     /// \brief Working data for G4 EM field handling
-    class em_field_g4_stuff : public loggable_support
+    class em_field_g4_stuff :
+      public datatools::i_tree_dumpable,
+      public loggable_support
     {
     public:
 
@@ -153,6 +159,12 @@ namespace mctools {
       /// Return the field manager
       G4FieldManager * grab_field_manager();
 
+      /// Smart print
+      virtual void tree_dump(std::ostream      & out_    = std::clog,
+                             const std::string & title_  = "",
+                             const std::string & indent_ = "",
+                             bool inherit_               = false) const;
+
     protected:
 
       /// Set default attributes' values
@@ -165,8 +177,8 @@ namespace mctools {
 
       bool _initialized_; //!< Initialization flag
 
-      magnetic_field        * _b_field_;  //!< Pure magnetic field
-      electromagnetic_field * _eb_field_; //!< Electromagnetic field
+      magnetic_field        * _b_field_;  //!< Pure magnetic field (referenced, not deleted)
+      electromagnetic_field * _eb_field_; //!< Electromagnetic field (referenced, not deleted)
 
       // Some useful documentation: http://geant4.in2p3.fr/2007/prog/JohnApostolakis/EMField.pdf
       stepper_type _stepper_type_; //!< Type of the ODE stepper
@@ -179,12 +191,12 @@ namespace mctools {
       bool   _spin_;               //!< Spin flag
       bool   _propagate_to_daughters_; //!< Flag to propagate the field to all daughter volumes
 
-      G4EquationOfMotion *     _equation_;           //!< Equation of motion
-      G4FieldManager *         _field_manager_;      //!< Field manager
-      G4PropagatorInField *    _field_propagator_;   //!< Field propagator
-      G4MagIntegratorStepper * _field_stepper_;      //!< ODE stepper
-      G4ChordFinder *          _chord_finder_;       //!< Chord finder
-      G4MagInt_Driver*         _integration_driver_; //!< Integration driver
+      G4EquationOfMotion *     _equation_;           //!< Equation of motion (deleted by the chord finder!)
+      G4PropagatorInField *    _field_propagator_;   //!< Field propagator   (referenced, not deleted)
+      G4MagIntegratorStepper * _field_stepper_;      //!< ODE stepper        (deleted by this object)
+      G4MagInt_Driver*         _integration_driver_; //!< Integration driver (deleted by the chord finder!)
+      G4ChordFinder *          _chord_finder_;       //!< Chord finder       (deleted by this object)
+      G4FieldManager *         _field_manager_;      //!< Field manager      (deleted by this object)
 
     };
 

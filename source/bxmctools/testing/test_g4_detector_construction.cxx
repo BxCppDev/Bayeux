@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 // test_g4_detector_construction.cxx
 /*
  * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -19,12 +18,17 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
+
+// This project:
 #include <mctools/g4/detector_construction.h>
 #include <mctools/g4/manager.h>
 
@@ -77,14 +81,16 @@ int main (int argc_, char ** argv_)
     mctools::g4::detector_construction my_detector_construction (my_g4_manager);
     my_detector_construction.set_geometry_manager(geo_manager);
     datatools::properties dc_setup;
+    dc_setup.store("logging.priority", "trace");
     dc_setup.store("gdml.tmp_dir", ".");
     dc_setup.store("gdml.no_validation", false);
     dc_setup.store("gdml.schema_location", "local");
     dc_setup.store("materials.plugin_name", "materials_driver");
     dc_setup.store("hit_processor_factory.config",
                    "${MCTOOLS_TESTING_DIR}/config/g4/test-2.0/simulation/step_hit_processor_factory.conf");
+    std::cerr << std::endl << "******************* INITIALIZE *************" << std::endl;
     my_detector_construction.initialize(dc_setup);
-    G4VPhysicalVolume * mother = my_detector_construction.Construct ();
+    G4VPhysicalVolume * mother = my_detector_construction.Construct();
 
   }
   catch (exception & x) {

@@ -57,9 +57,24 @@ namespace mctools {
   const std::string event_utils::EVENT_GENBB_LABEL  = "event.genbb_label";
   const std::string event_utils::EVENT_DEFAULT_SIMULATED_DATA_LABEL = "SD";
 
+  // static
+  const std::string & event_utils::event_default_simulated_data_label()
+  {
+    static const std::string _label(EVENT_DEFAULT_SIMULATED_DATA_LABEL);
+    return _label;
+  }
+
   // Specific to I/O format :
   const std::string io_utils::GENERAL_INFO_STORE         = "GI";
   const std::string io_utils::PLAIN_SIMULATED_DATA_STORE = "PSD";
+
+  // static
+  io_utils::data_format_type io_utils::label_to_data_format(const std::string & label_)
+  {
+    if (label_ == "plain") return DATA_FORMAT_PLAIN;
+    if (label_ == "bank") return DATA_FORMAT_BANK;
+    return DATA_FORMAT_INVALID;
+  }
 
 } // end of namespace mctools
 

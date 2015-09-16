@@ -131,7 +131,6 @@ int main(int argc_, char **argv_)
       LL_config = vm["dll-config"].as<std::string> ();
     }
 
-
     datatools::library_loader LL(LL_config);
     BOOST_FOREACH (const std::string & dll_name, LL_dlls) {
       DT_LOG_NOTICE(logging,"Loading DLL '" << dll_name << "'...");
@@ -148,7 +147,7 @@ int main(int argc_, char **argv_)
                  std::runtime_error,
                  "File '" << plain_simulated_data_filename << "' does not exists !");
 
-    // The  plain simulated data reader :
+    // The plain simulated data reader :
     mctools::simulated_data_reader psd_reader;
     psd_reader.initialize(plain_simulated_data_filename);
 

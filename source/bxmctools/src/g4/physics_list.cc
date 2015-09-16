@@ -52,7 +52,7 @@ namespace mctools {
       gamma    = all_value_;
       electron = all_value_;
       positron = all_value_;
-      proton = all_value_;
+      proton   = all_value_;
       return;
     }
 
@@ -175,7 +175,7 @@ namespace mctools {
 
     void physics_list::initialize (const datatools::properties & config_)
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
       DT_THROW_IF (_initialized_, std::logic_error, "Already initialized !");
 
       // *********************** General properties *************************** //
@@ -515,19 +515,19 @@ namespace mctools {
 
       //SetVerboseLevel(_g4_verbosity_);
       DT_LOG_NOTICE(_logprio(),
-                     "Original default cut Length : " << G4BestUnit(defaultCutValue, "Length"));
+                    "Original default cut Length : " << G4BestUnit(defaultCutValue, "Length"));
 
       _register_physics_constructors();
 
       _initialized_ = true;
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
     void physics_list::_register_physics_constructors()
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
       DT_THROW_IF(_initialized_, std::logic_error, "Already initialized !");
 
       for (physics_constructor_dict_type::iterator i = _physics_constructors_.begin();
@@ -543,13 +543,13 @@ namespace mctools {
         RegisterPhysics(new physics_constructor_proxy(pc));
       }
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
     void physics_list::reset()
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
       DT_THROW_IF(! _initialized_, std::logic_error, "Not initialized !");
 
       _initialized_ = false;
@@ -563,13 +563,13 @@ namespace mctools {
       }
       _set_defaults();
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
     void physics_list::ConstructParticle()
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
 
       if (has_geant4_physics_list()) {
         grab_geant4_physics_list().ConstructParticle();
@@ -577,13 +577,13 @@ namespace mctools {
         this->G4VModularPhysicsList::ConstructParticle();
       }
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
     void physics_list::ConstructProcess()
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
 
       if (has_geant4_physics_list()) {
         grab_geant4_physics_list().ConstructProcess();
@@ -592,13 +592,13 @@ namespace mctools {
         this->G4VModularPhysicsList::ConstructProcess();
       }
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
     void physics_list::SetCuts()
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
 
       if (has_geant4_physics_list()) {
         grab_geant4_physics_list().SetCuts();
@@ -606,14 +606,14 @@ namespace mctools {
         _SetCuts();
       }
 
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
 
     void physics_list::_SetCuts()
     {
-      DT_LOG_TRACE(_logprio(), "Entering...");
+      DT_LOG_TRACE_ENTERING(_logprio());
 
       SetDefaultCutValue(_production_cuts_default_value_);
       DT_LOG_NOTICE(_logprio(), "Default cut Length : " << G4BestUnit(defaultCutValue, "Length"));
@@ -643,7 +643,7 @@ namespace mctools {
       if (_using_production_cuts_) {
         DT_LOG_TRACE(_logprio(), "Using production cuts...");
         // Defining production cuts for different particles:
-        // set production cut values for gamma at first and for e- second and next for e+ thn proton
+        // set production cut values for gamma at first and for e- second and next for e+ then proton
         // because some processes for e+/e- need cut values for gamma
         SetCutValue(_production_cuts_values_.gamma,    "gamma"  );
         SetCutValue(_production_cuts_values_.electron, "e-"     );
@@ -665,22 +665,24 @@ namespace mctools {
             a_region_cuts->SetProductionCut(pc_info.proton,   G4ProductionCuts::GetIndex("proton"));
             a_region->SetProductionCuts(a_region_cuts);
           } else {
-            DT_LOG_WARNING(_logprio(), "No region named '"
-                           << region_name << "' to be given production cuts !");
+            DT_THROW(std::logic_error,
+                     "No region named '" << region_name << "' to be given production cuts !");
+            // DT_LOG_WARNING(_logprio(), "No region named '"
+            //                << region_name << "' to be given production cuts !");
           }
         }
 
         // Verbosing:
         DumpCutValuesTable();
       }
-      DT_LOG_TRACE(_logprio(), "Exiting.");
+      DT_LOG_TRACE_EXITING(_logprio());
       return;
     }
 
     void physics_list::tree_dump(std::ostream & out_,
-                                  const std::string & title_,
-                                  const std::string & indent_,
-                                  bool inherit_) const
+                                 const std::string & title_,
+                                 const std::string & indent_,
+                                 bool inherit_) const
     {
       std::string indent;
       if (! indent_.empty()) indent = indent_;
@@ -851,7 +853,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                    "                                                              \n"
                    )
       ;
-    }
+  }
 
   // ***** Physics constructor plugins ***** //
 
@@ -989,7 +991,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                    " production_cuts.default_value : real as length = 10 um \n"
                    "                                                        \n"
                    )
-     ;
+      ;
   }
 
   {
@@ -1008,7 +1010,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                    " production_cuts.low_energy : real as energy =  250 eV \n"
                    "                                                       \n"
                    )
-     ;
+      ;
   }
 
   {
@@ -1027,7 +1029,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                    " production_cuts.high_energy : real as energy =  1 GeV \n"
                    "                                                       \n"
                    )
-     ;
+      ;
   }
 
   {
@@ -1065,7 +1067,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::physics_list,ocd_)
                    " production_cuts.positron : real as length = 1 mm        \n"
                    "                                                         \n"
                    )
-       ;
+      ;
   }
 
   {

@@ -39,6 +39,10 @@ namespace mctools {
     // Forward class declaration:
     class physics_list;
 
+    std::string g4_builder_type_to_label(int);
+
+    int label_to_g4_builder_type(const std::string & label_);
+
     /// \brief Base class for G4-based physics constructor with factory registration support
     class base_physics_constructor :
       public G4VPhysicsConstructor,

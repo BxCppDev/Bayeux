@@ -48,19 +48,19 @@ namespace mctools {
       return *_run_action_;
     }
 
-    const event_action::sim_data_type & event_action::get_event_data () const
+    const ::mctools::simulated_data & event_action::get_event_data () const
     {
       if (_external_event_data_ != 0) return *_external_event_data_;
       return _event_data_;
     }
 
-    event_action::sim_data_type & event_action::grab_event_data ()
+    ::mctools::simulated_data & event_action::grab_event_data ()
     {
       if (_external_event_data_ != 0) return *_external_event_data_;
       return _event_data_;
     }
 
-    void event_action::set_external_event_data (sim_data_type & a_external_event_data)
+    void event_action::set_external_event_data (::mctools::simulated_data & a_external_event_data)
     {
       _external_event_data_ = &a_external_event_data;
       return;
@@ -76,6 +76,7 @@ namespace mctools {
     {
       _initialized_           = false;
       _run_action_            = &run_action_;
+      _run_action_->register_event_action(*this);
       _detector_construction_ = &dctor_;
       _aborted_event_         = false;
       _killed_event_          = false;
@@ -119,12 +120,12 @@ namespace mctools {
       if (config_.has_key ("event_model.hit_collection_type")) {
         const std::string event_model_collection_type
           = config_.fetch_string ("event_model.hit_collection_type");
-        event_action::sim_data_type & event_data = this->grab_event_data ();
+        ::mctools::simulated_data & event_data = this->grab_event_data ();
         event_data.reset_collection_type ();
         if (event_model_collection_type == "plain") {
-          event_data.set_collection_type (sim_data_type::PLAIN_HIT_COLLECTION_TYPE);
+          event_data.set_collection_type (::mctools::simulated_data::PLAIN_HIT_COLLECTION_TYPE);
         } else if (event_model_collection_type == "handle") {
-          event_data.set_collection_type (sim_data_type::HANDLE_HIT_COLLECTION_TYPE);
+          event_data.set_collection_type (::mctools::simulated_data::HANDLE_HIT_COLLECTION_TYPE);
         } else {
           DT_THROW_IF(true, std::logic_error, "Invalid hit collection type '" << event_model_collection_type << "' !");
         }
@@ -344,21 +345,8 @@ namespace mctools {
 
     void event_action::_save_data_()
     {
-      if (_run_action_->get_manager().using_time_stat()) {
-        _run_action_->grab_manager().grab_CT_map()["IO"].start();
-      }
-      // Store the event if run_action has an initialized writer:
-      if (_run_action_->get_brio_writer().is_opened()) {
-        // first check 'brio::writer' :
-        _run_action_->grab_brio_writer().store(get_event_data());
-      } else if (_run_action_->get_writer().is_initialized()) {
-        // then check 'datatools::serialization::data_writer' :
-        _run_action_->grab_writer().store(get_event_data());
-      }
-      if (_run_action_->get_manager().using_time_stat()) {
-        _run_action_->grab_manager().grab_CT_map()["IO"].stop();
-      }
-      _run_action_->increment_number_of_saved_events();
+      // Store the event if run action has this ability:
+      _run_action_->store_data(get_event_data());
       return;
     }
 

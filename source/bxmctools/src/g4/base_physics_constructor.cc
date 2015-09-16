@@ -4,6 +4,8 @@
 #include <mctools/g4/base_physics_constructor.h>
 
 // Third party:
+// - Geant4:
+#include <G4BuilderType.hh>
 // - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/exception.h>
@@ -11,6 +13,36 @@
 namespace mctools {
 
   namespace g4 {
+
+    std::string g4_builder_type_to_label(int bt_)
+    {
+      switch (bt_) {
+      case bUnknown         : return std::string("unknown");
+      case bTransportation  : return std::string("transportation");
+      case bElectromagnetic : return std::string("electromagnetic");
+      case bEmExtra         : return std::string("electromagnetic_extra");
+      case bDecay           : return std::string("decay");
+      case bHadronElastic   : return std::string("hadron_elastic");
+      case bHadronInelastic : return std::string("hadron_inelastic");
+      case bStopping        : return std::string("stopping");
+      case bIons            : return std::string("ions");
+      default               : return std::string("invalid");
+      }
+    }
+
+    int label_to_g4_builder_type(const std::string & label_)
+    {
+      if (label_ == g4_builder_type_to_label(bUnknown)) return bUnknown;
+      if (label_ == g4_builder_type_to_label(bTransportation)) return bTransportation;
+      if (label_ == g4_builder_type_to_label(bElectromagnetic)) return bElectromagnetic;
+      if (label_ == g4_builder_type_to_label(bEmExtra)) return bEmExtra;
+      if (label_ == g4_builder_type_to_label(bDecay)) return bDecay;
+      if (label_ == g4_builder_type_to_label(bHadronElastic)) return bHadronElastic;
+      if (label_ == g4_builder_type_to_label(bHadronInelastic)) return bHadronInelastic;
+      if (label_ == g4_builder_type_to_label(bStopping)) return bStopping;
+      if (label_ == g4_builder_type_to_label(bIons)) return bIons;
+      return -1; // Special invalid code
+    }
 
     DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_physics_constructor, "mctools::g4::base_physics_constructor/__system__");
 

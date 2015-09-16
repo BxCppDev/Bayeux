@@ -31,6 +31,7 @@ namespace mctools {
   public:
 
     static const std::string DEFAULT_SD_BANK_LABEL;
+    static const std::string & default_sd_bank_label();
 
     // Constructor :
     simulated_data_input_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);

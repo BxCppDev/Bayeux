@@ -82,6 +82,7 @@ namespace mctools {
     static const std::string EVENT_GENBB_WEIGHT;
     static const std::string EVENT_GENBB_LABEL;
     static const std::string EVENT_DEFAULT_SIMULATED_DATA_LABEL;
+    static const std::string & event_default_simulated_data_label();
   };
 
   class io_utils
@@ -89,6 +90,16 @@ namespace mctools {
   public:
     static const std::string GENERAL_INFO_STORE;
     static const std::string PLAIN_SIMULATED_DATA_STORE;
+
+    enum data_format_type {
+      DATA_FORMAT_INVALID = 0, ///< Undefined output format
+      DATA_FORMAT_PLAIN   = 1, ///< Plain output format: archives of "mctools::simulated_data" objects
+      DATA_FORMAT_BANK    = 2  ///< Bank output format: archives of "datatools::things" objects
+      // DATA_FORMAT_USER      = X  ///< User data format (not supported yet)
+    };
+
+    static data_format_type label_to_data_format(const std::string &);
+
   };
 
 } // end of namespace mctools

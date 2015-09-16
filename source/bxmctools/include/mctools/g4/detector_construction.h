@@ -2,7 +2,7 @@
 /* Author(s) :  Benoit Guillon <guillon@lpccaen.in2p3.fr>
  *              François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-04
- * Last modified: 2013-06-15
+ * Last modified: 2015-09-06
  *
  * License:
  *
@@ -36,6 +36,7 @@
 // This project:
 #include <mctools/step_hit_processor_factory.h>
 #include <mctools/g4/loggable_support.h>
+#include <mctools/g4/region_tools.h>
 
 class G4UserLimits;
 class G4VisAttributes;
@@ -70,7 +71,7 @@ namespace mctools {
     public:
 
       typedef std::map<std::string, sensitive_detector *>      sensitive_detector_dict_type;
-      typedef std::map<std::string, std::vector<std::string> > region_infos_dict_type;
+      //typedef std::map<std::string, std::vector<std::string> > region_infos_dict_type;
       typedef mctools::step_hit_processor_factory              SHPF_type;
 
       /// Default control distance for particle tracking in magnetic field
@@ -234,7 +235,7 @@ namespace mctools {
 
       // Regions:
       bool _using_regions_;
-      region_infos_dict_type _region_infos_;
+      regions_setup _region_definitions_;
 
       // Step hit processor factory stuff (from mctools::core::step_hit_processor_factory) :
       datatools::properties _SHPF_config_;

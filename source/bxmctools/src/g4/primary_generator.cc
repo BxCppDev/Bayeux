@@ -5,6 +5,7 @@
 
 // Standard library:
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -394,10 +395,11 @@ namespace mctools {
           continue;
         }
         const std::string genbb_particle_label = genbb_particle.get_particle_label();
+        DT_LOG_DEBUG(get_logging_priority(), "Primary particle [#" << particle_counter << "] label = '" << genbb_particle_label << "'");
 
         /* Note:
          * G4 particle not implemented:
-         *  "nu_e" "nu_mu" "nu_tau"
+         *  "nu_e"      "nu_mu"      "nu_tau"
          *  "anti_nu_e" "anti_nu_mu" "anti_nu_tau"
          *  "opticalphoton"
          *  ...
@@ -411,8 +413,9 @@ namespace mctools {
         }
 
         if (genbb_particle.has_pdg_code()) {
+          DT_LOG_DEBUG(get_logging_priority(), "  Attempting to use primary particle PDG code [" << genbb_particle.get_pdg_code() << "]...");
           // Support for particle PDG encoding: NOT USABLE YET FOR NOW BECAUSE THIS INTERFACE
-          // NEEDS MORE WORKS, PARTICULARLY FOR PARTIALLY IONIZED IONS.
+          // NEEDS MORE WORKS.
           g4_particle = particle_table->FindParticle(genbb_particle.get_pdg_code());
           if (g4_particle == 0) {
             std::ostringstream message;
@@ -426,13 +429,15 @@ namespace mctools {
           }
           g4_particle_name = g4_particle->GetParticleName();
           _particle_gun_->SetParticleDefinition(g4_particle);
-          DT_LOG_TRACE(_logprio(), "Found a PDG particle: " << g4_particle_name
+          DT_LOG_DEBUG(_logprio(), "Found a PDG particle: " << g4_particle_name
                        << " with G4 PDG mass = " << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
                        << " and PDG charge = " << g4_particle->GetPDGCharge()
                        );
         } else if (genbb_particle.has_type()) {
           // Support for traditional particle 'types' from genbb_help (extended Geant3 codes):
+          DT_LOG_DEBUG(_logprio(), "  Attempting to use a GENBB particle with type: " << genbb_particle.get_type());
           if (genbb_particle.is_nucleus()) {
+            DT_LOG_DEBUG(_logprio(), "  Found a GENBB nucleus...");
             /*
             // Typical Support for radioactive ion (from G4 examples):
             G4int Z = 10, A = 24;
@@ -441,7 +446,7 @@ namespace mctools {
             G4ParticleDefinition* ion
             = G4ParticleTable::GetParticleTable()->GetIon(Z,A,excitEnergy);
             fParticleGun->SetParticleDefinition(ion);
-            fParticleGun->SetParticleCharge(ionCharge);
+            // fParticleGun->SetParticleCharge(ionCharge);
             */
             int Z = -1;
             int A =  0;
@@ -474,6 +479,7 @@ namespace mctools {
                          << " (charge set in the gun = " << _particle_gun_->GetParticleCharge() / CLHEP::eplus << " e)"
                          );
           } else if (genbb_particle.is_ion()) {
+            DT_LOG_DEBUG(_logprio(), "  Found a GENBB ion...");
             int Z = -1;
             int A =  0;
             double excitation_energy = 0.0;
@@ -499,15 +505,19 @@ namespace mctools {
               G4ParticleTable::GetParticleTable()->GetIon(Z, A, excitation_energy);
             g4_particle_name = g4_particle->GetParticleName();
             _particle_gun_->SetParticleDefinition(g4_particle);
-            // QUESTION: IS IT THE RIGHT WAY TO SET THE EFFECTIVE ION CHARGE ???
+            // QUESTION: WHAT IS THE RIGHT WAY TO SET THE EFFECTIVE ION CHARGE ???
+            DT_LOG_DEBUG(_logprio(), "  Assign dynamic charge [" << (ion_charge>0?"+":"") << ion_charge << "e] to the Geant4 ion...");
             _particle_gun_->SetParticleCharge(ion_charge * CLHEP::eplus);
-            DT_LOG_TRACE(_logprio(), "Found an ion: " << g4_particle_name
-                         << " with G4 PDG mass = " << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
-                         << " (GENBB mass = " << particle_mass / CLHEP::MeV << " MeV)"
-                         << " and PDG charge = " << g4_particle->GetPDGCharge()
-                         << " (GENBB charge set in the gun = " << _particle_gun_->GetParticleCharge() / CLHEP::eplus << " e)"
+
+            // std::cerr.precision(15);
+            DT_LOG_DEBUG(_logprio(), "Found an ion: " << g4_particle_name
+                         << " with G4 PDG mass = " << std::setprecision(15) << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
+                         << " (GENBB mass = " << std::setprecision(15) << particle_mass / CLHEP::MeV << " MeV)"
+                         << " and PDG charge = " << g4_particle->GetPDGCharge() << "e"
+                         << " (dynamic charge set in the gun = " << _particle_gun_->GetParticleCharge() / CLHEP::eplus << "e)"
                          );
           } else {
+
             // Fetch the G4 particle name from the traditional GENBB particle:
             g4_particle_name = get_g4_particle_name_from_genbb_particle(genbb_particle);
             if (g4_particle_name[0] == '?') {
@@ -535,7 +545,7 @@ namespace mctools {
             g4_particle_name = g4_particle->GetParticleName();
             DT_LOG_TRACE(_logprio(), "Found the Geant4 '" << g4_particle_name << "' particle from the GENBB particle"
                          << " with G4 PDG mass = " << g4_particle->GetPDGMass() / CLHEP::MeV << " MeV "
-                         << " and PDG charge = " << g4_particle->GetPDGCharge());
+                         << " and PDG charge = " << g4_particle->GetPDGCharge() << "e");
           }
         }
 
@@ -673,7 +683,7 @@ namespace mctools {
       }
       if (p_.is_ion()) {
         // What to do here ? shoud we support it from this method
-        // return "ElA[E*]"; //  G4 syntax seems to be : He6[0.0] but there is no way to set the ion charge
+        // return "ElA[E*]"; // G4 syntax seems to be : He6[0.0] but there is no way to set the ion charge
         return "?"; // FOR NOW THIS METHOD DOES NOT WORK FOR ION
       }
 

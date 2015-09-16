@@ -304,9 +304,9 @@ namespace mctools {
     void electromagnetic_field::GetFieldValue(const double position_[4],
                                               double * em_field_) const
     {
-      DT_LOG_TRACE(_logprio(), "Entering GetFieldValue for Geant4 magnetic field '" << get_name() << "'...");
+      DT_LOG_TRACE(_logprio(), "Entering GetFieldValue for Geant4 electromagnetic field '" << get_name() << "'...");
       DT_THROW_IF (! _initialized_, std::logic_error,
-                   "Geant4 magnetic field '" << get_name() << "' is not initialized !");
+                   "Geant4 electromagnetic field '" << get_name() << "' is not initialized !");
       em_field_[EMFIELD_BX] = 0.0;
       em_field_[EMFIELD_BY] = 0.0;
       em_field_[EMFIELD_BZ] = 0.0;
@@ -314,9 +314,11 @@ namespace mctools {
       em_field_[EMFIELD_EY] = 0.0;
       em_field_[EMFIELD_EZ] = 0.0;
       if (_field_ != 0) {
-        DT_LOG_TRACE(_logprio(), "Compute magnetic field for Geant4 magnetic field '" << get_name() << "'...");
         geomtools::vector_3d pos(position_[POSTIME_X], position_[POSTIME_Y], position_[POSTIME_Z]);
         double time = position_[POSTIME_T];
+        DT_LOG_TRACE(_logprio(), "Compute electromagnetic field at position/time "
+                     << pos / CLHEP::mm << " [mm] / " << time / CLHEP::ns << " [ns]"
+                     << " for Geant4 electromagnetic field '" << get_name() << "'...");
         if (_field_check_pos_time_) {
           DT_THROW_IF(! _field_->position_and_time_are_valid(pos, time),
                       std::logic_error,
@@ -326,6 +328,7 @@ namespace mctools {
                       << "' !");
         }
         if (_field_->is_magnetic_field()) {
+          DT_LOG_TRACE(_logprio(), "Compute magnetic field contribution...");
           geomtools::vector_3d the_magnetic_field;
           int status = _field_->compute_magnetic_field(pos, time, the_magnetic_field);
           DT_THROW_IF (status != 0,  std::logic_error,
@@ -338,6 +341,7 @@ namespace mctools {
           em_field_[EMFIELD_BZ] = the_magnetic_field.z();
         }
         if (_field_->is_electric_field()) {
+          DT_LOG_TRACE(_logprio(), "Compute electric field contribution...");
           geomtools::vector_3d the_electric_field;
           int status = _field_->compute_electric_field(pos, time, the_electric_field);
           DT_THROW_IF (status != 0,  std::logic_error,
@@ -358,7 +362,7 @@ namespace mctools {
         em_field_[EMFIELD_EY] = _standalone_constant_electric_field_.y();
         em_field_[EMFIELD_EZ] = _standalone_constant_electric_field_.z();
       }
-      DT_LOG_TRACE(_logprio(), "Exiting GetFieldValue for Geant4 magnetic field '" << get_name() << "'.");
+      DT_LOG_TRACE(_logprio(), "Exiting GetFieldValue for Geant4 electromagnetic field '" << get_name() << "'.");
       return;
     }
 

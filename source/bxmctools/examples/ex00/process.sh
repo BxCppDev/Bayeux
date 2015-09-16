@@ -157,9 +157,7 @@ if [ $do_simulation -eq 1 ]; then
     vg_name="source_bulk.vg"
 
     echo -e "\nRun the Geant4 simulation interactively..." 1>&2
-    # XXX echo -e "/run/beamOn 20\nexit" | \
-    #
-    echo -e "\nexit" | \
+    echo -e "/run/beamOn 20\nexit" | \
 	bxg4_production \
 	--logging-priority "warning" \
 	--number-of-events-modulo 1 \
@@ -181,8 +179,8 @@ if [ $do_simulation -eq 1 ]; then
 	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
-    # XXX
-    exit 0
+    # exit 0
+
     echo -e "\nSet LD_LIBRARY_PATH..." 1>&2
     export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 

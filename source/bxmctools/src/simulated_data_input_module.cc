@@ -17,6 +17,12 @@ namespace mctools {
                                     "mctools::simulated_data_input_module");
 
   const std::string simulated_data_input_module::DEFAULT_SD_BANK_LABEL = "SD";
+  // static
+  const std::string & simulated_data_input_module::default_sd_bank_label()
+  {
+    static std::string _label(DEFAULT_SD_BANK_LABEL);
+    return _label;
+  }
 
   void simulated_data_input_module::set_limits(int max_record_total_,
                                                int max_record_per_file_,
