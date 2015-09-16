@@ -3,7 +3,7 @@ Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
 :Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    2014-10-21
+:Date:    2015-09-16
 
 .. contents::
    :depth: 3
@@ -17,35 +17,48 @@ the  simulation,  recording  and  analysis of  data  for  experimental
 particle  and nuclear  physics projects.  This functionality  is split
 into several specialized submodules:
 
--  datatools :  Serializable data structures based on Boost and core utilities.
+- datatools :  Serializable data  structures based  on Boost  and core
+   utilities.
 
--  cuts :       Generic tools for making arbitrary data selections.
+- cuts : Generic tools for making arbitrary data selections.
 
--  materials :  Description of isotopes, elements and materials plus tools for input to simulation applications (i.e. GDML/Geant4).
+- materials: Description  of isotopes,  elements and  materials plus
+   tools for input to simulation applications (i.e. GDML/Geant4).
 
--  mygsl :      C++ wrapper and extensions to the GNU Scientific Library.
+- mygsl : C++ wrapper and extensions to the GNU Scientific Library.
 
--  geomtools :  Generic tools for working with experiment geometries and provide input to simulation tools (i.e. GDML/Geant4).
+- geomtools : Generic tools for working with experiment geometries and
+   provide input to simulation tools (i.e. GDML/Geant4).
 
--  emfield :    Electromagnetic field modelling and management.
+- emfield : Electromagnetic field modelling and management.
 
--  brio :       A Boost over ROOT I/O serialization system (extends datatools).
+- brio  :  A  Boost  over   ROOT  I/O  serialization  system  (extends
+   datatools).
 
--  dpp :        A basic data processing pipeline API.
+- dpp : A basic data processing pipeline API.
 
--  genbb_help : C++ wrapper and extensions to the Decay0/GENBB program by Vladimir Tretyak, for input to simulation applications.
+- genbb_help : C++ port and  extensions to the Decay0/GENBB program by
+   Vladimir Tretyak, for input to simulation applications.
 
--  genvtx :     Vertex random generator tools for input to simulation applications.
+- genvtx  : Vertex  random  generator tools  for  input to  simulation
+   applications.
 
--  mctools :    Utilities for particle and nuclear physics simulation with a Geant4 interface.
+- mctools : Utilities for particle and nuclear physics simulation with
+   a Geant4 interface.
 
 
 
-Naming
-------
+Naming and logo
+---------------
 
 Bayeux is  named thus  because it weaves  together several  threads of
 software developed in Normandy ;-).
+
+The use of the Bayeux name and logo (an extract of the lower frieze of
+the Bayeux Tapestry) have been  courteously authorized by the mayor of
+the  city  of Bayeux  in December  2014  at  the condition  the  Bayeux
+software tools are distributed under an open source software license.
+
 
 
 Licensing
@@ -57,7 +70,9 @@ conditions of use of Bayeux.
 Bayeux contains some code extracted  from the *Kitware System* library
 (OSI-approved BSD License),  the *BinReloc* library (Do  What The Fuck
 You Want To Public License, Version  2) and the *EOS portable archive*
-library (Boost Software License).
+library (Boost Software License). Vladimir Tretyak has accepted that the
+C++ wrapper and port of the original GENBB/DECAY0 library is published
+under the GPL 3 within Bayeux.
 
 
 Getting Help
@@ -75,7 +90,7 @@ lists:
  * ``bayeux-geometry-l@in2p3.fr`` : dedicated to geometry modelling,
  * ``bayeux-simulation-l@in2p3.fr`` : dedicated to simulation and the Geant4 module.
 
-Please contact the Bayeux team at bayeux@lpccaen.in2p3.fr.
+Please contact the Bayeux team at bayeux@lpccaen.in2p3.fr (in English or French).
 
 
 
@@ -183,14 +198,44 @@ these packages.
 
 -  **Additional Software Required**
 
+    - datatools requires the Qt4 library when the ``Bayeux_BUILD_QT_GUI``
+      option is set.
+
+      On Ubuntu 14.04, this implies the installation of the following packages:
+
+      .. code:: sh
+
+		$ sudo apt-get install libqt4-dev libqt4-dev-bin libqt4-gui
+
    - geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
+
+      On Ubuntu 14.04, this implies the installation of the following packages:
+
+      .. code:: sh
+
+		$ sudo apt-get install gnuplot gnuplot-doc gnuplot-mode
+
    - geomtools uses the Readline library, if available:
 
       * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
       * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
 
+      On Ubuntu 14.04, this implies the installation of the following packages:
+
+      .. code:: sh
+
+		$ sudo apt-get install libreadline-dev readline-common
+
    - pandoc is useful to generate documentation in user friendly format:
      http://johnmacfarlane.net/pandoc/
+
+      On Ubuntu 14.04, this implies the installation of the following packages:
+
+      .. code:: sh
+
+		$ sudo apt-get install pandoc pandoc-data
+
+
 
 Known Issues on Tested Platforms
 --------------------------------
@@ -380,3 +425,5 @@ indirect contributions to the Bayeux library:
   I/O system of the datatools and brio modules.
 * Nicolas Devillard and Rajarshi Guha are the authors of the *Gnuplot pipe*
   library that is embedded in geomtools.
+* Sylvette Lemagnen (Curator at the Bayeux Museum) and Patrick Gomont (mayor of the city of Bayeux)
+  for their authorization for the library's name and logo.
