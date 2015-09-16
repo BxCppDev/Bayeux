@@ -351,8 +351,16 @@ if(Bayeux_ENABLE_TESTING)
         set_property(TARGET ${_testname}
           APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
           )
-      else()
-        include_directories(BEFORE ${${_m}_test_dir})
+      endif()
+      include_directories(BEFORE ${${_m}_test_dir})
+
+      ### G4 specific link for some test progs
+      if(Bayeux_BUILD_GEANT4_MODULE)
+	string(REGEX MATCH "mctools-test_g4_*" _test_g4_res ${_testname})
+	if (NOT "x${_test_g4_res}" STREQUAL "x" )
+          message( STATUS "Special link to the Bayeux Geant4 module for test program '${_testname}'")
+	  target_link_libraries(${_testname} Bayeux_mctools_geant4)
+	endif()
       endif()
 
       target_link_libraries(${_testname} Bayeux)

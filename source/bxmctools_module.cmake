@@ -117,7 +117,8 @@ endforeach()
 
 
 # - Unit tests
-set(${module_name}_TEST_ENVIRONMENT "MCTOOLS_TESTING_DIR=${module_test_dir}")
+# message( STATUS "MATERIALS_RESOURCE_DIR=${bxmaterials_resource_dir}")
+set(${module_name}_TEST_ENVIRONMENT "MATERIALS_RESOURCE_DIR=${bxmaterials_resource_dir};MCTOOLS_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_base_step_hit.cxx
@@ -161,10 +162,14 @@ if(Bayeux_BUILD_GEANT4_MODULE)
 
   set(${module_name}_GEANT4_SOURCES
     mctools/g4/data_libraries.h
+    ${module_include_dir}/${module_name}/g4/processes/utils.h
+    ${module_include_dir}/${module_name}/g4/processes/em_extra_models.h
+    ${module_include_dir}/${module_name}/g4/processes/em_model_factory.h
     ${module_include_dir}/${module_name}/g4/simulation_module.h
     ${module_include_dir}/${module_name}/g4/primary_generator.h
     ${module_include_dir}/${module_name}/g4/magnetic_field.h
     ${module_include_dir}/${module_name}/g4/electromagnetic_field.h
+    ${module_include_dir}/${module_name}/g4/em_field_equation_of_motion.h
     ${module_include_dir}/${module_name}/g4/em_field_g4_utils.h
     ${module_include_dir}/${module_name}/g4/em_field_g4_stuff.h
     ${module_include_dir}/${module_name}/g4/particles_physics_constructor.h
@@ -180,12 +185,16 @@ if(Bayeux_BUILD_GEANT4_MODULE)
     ${module_include_dir}/${module_name}/g4/event_action.h
     ${module_include_dir}/${module_name}/g4/stepping_verbose.h
     ${module_include_dir}/${module_name}/g4/base_physics_constructor.h
+    ${module_include_dir}/${module_name}/g4/region_tools.h
     ${module_include_dir}/${module_name}/g4/detector_construction.h
     ${module_include_dir}/${module_name}/g4/stepping_action.h
     ${module_include_dir}/${module_name}/g4/sensitive_hit_collection.h
     ${module_include_dir}/${module_name}/g4/neutrons_physics_constructor.h
     ${module_include_dir}/${module_name}/g4/biasing_manager.h
 
+    ${module_source_dir}/g4/processes/utils.cc
+    ${module_source_dir}/g4/processes/em_extra_models.cc
+    ${module_source_dir}/g4/processes/em_model_factory.cc
     ${module_source_dir}/g4/manager_parameters.cc
     ${module_source_dir}/g4/particles_physics_constructor.cc
     ${module_source_dir}/g4/physics_list_utils.cc
@@ -203,6 +212,7 @@ if(Bayeux_BUILD_GEANT4_MODULE)
     ${module_source_dir}/g4/stepping_verbose.cc
     ${module_source_dir}/g4/event_action.cc
     ${module_source_dir}/g4/base_physics_constructor.cc
+    ${module_source_dir}/g4/region_tools.cc
     ${module_source_dir}/g4/detector_construction.cc
     ${module_source_dir}/g4/track_history.cc
     ${module_source_dir}/g4/stepping_action.cc
@@ -211,9 +221,16 @@ if(Bayeux_BUILD_GEANT4_MODULE)
     ${module_source_dir}/g4/simulation_module.cc
     ${module_source_dir}/g4/magnetic_field.cc
     ${module_source_dir}/g4/electromagnetic_field.cc
+    ${module_source_dir}/g4/em_field_equation_of_motion.cc
     ${module_source_dir}/g4/em_field_g4_stuff.cc
     ${module_source_dir}/g4/neutrons_physics_constructor.cc
     ${module_source_dir}/g4/biasing_manager.cc
+    )
+
+  list(APPEND ${module_name}_MODULE_TESTS
+    ${module_test_dir}/test_g4_prng.cxx
+    ${module_test_dir}/test_g4_processes_em_model_factory.cxx
+    ${module_test_dir}/test_g4_detector_construction.cxx
     )
 
     # - Applications

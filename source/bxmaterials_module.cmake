@@ -19,6 +19,9 @@ set(module_app_dir     "${module_root_dir}/programs")
 set(module_resource_dir "${module_root_dir}/resources")
 set(module_examples_dir "${module_root_dir}/examples")
 
+# Store explicitely this resource dir for further usage during other modules' tests
+set(bxmaterials_resource_dir ${module_resource_dir})
+
 foreach(dir root_dir include_dir source_dir test_dir app_dir resource_dir)
   set(${module_name}_${dir} ${module_${dir}})
 endforeach()
