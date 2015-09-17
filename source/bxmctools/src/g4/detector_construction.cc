@@ -328,8 +328,10 @@ namespace mctools {
       config_.export_starting_with(regions_setup_config, "regions.");
       _region_definitions_.set_geometry_manager(*_geom_manager_);
       _region_definitions_.initialize(regions_setup_config);
-      DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "Definitions of regions: ");
-      _region_definitions_.tree_dump(std::clog, "", "[notice]: ");
+      DT_LOG_NOTICE(_logprio(), "Definitions of regions: ");
+      if (_logprio() >= datatools::logger::PRIO_NOTICE) {
+        _region_definitions_.tree_dump(std::clog, "", "[notice]: ");
+      }
 
 
       /*************************

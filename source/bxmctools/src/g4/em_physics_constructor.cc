@@ -212,8 +212,6 @@ namespace mctools {
       DT_LOG_TRACE_ENTERING(_logprio());
       DT_THROW_IF(is_initialized(), std::logic_error, "Already initialized !");
 
-      DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
-
       // Parsing logging properties:
       loggable_support::_initialize_logging_support(config_);
 
@@ -1216,11 +1214,11 @@ namespace mctools {
             pmanager->AddProcess(new G4UserSpecialCuts,      -1, -1, process_rank);
           }
 
-        } else if (   particle_name == "alpha"    || particle_name == "anti_alpha"
-                      || particle_name == "deuteron" || particle_name == "anti_deuteron"
-                      || particle_name == "triton"   || particle_name == "anti_triton"
-                      || particle_name == "He3"      || particle_name == "anti_He3"
-                      || particle_name == "GenericIon") {
+        } else if (particle_name == "alpha"    || particle_name == "anti_alpha"    ||
+                   particle_name == "deuteron" || particle_name == "anti_deuteron" ||
+                   particle_name == "triton"   || particle_name == "anti_triton"   ||
+                   particle_name == "He3"      || particle_name == "anti_He3"      ||
+                   particle_name == "GenericIon") {
           int process_rank = 0;
           /************
            *   Ions   *
@@ -1235,8 +1233,14 @@ namespace mctools {
           if (_em_ion_ionization_) {
             // use G4alphaIonisation for alpha...
 
-            G4ionIonisation       * the_ion_ionization = new G4ionIonisation();
-            the_ion_ionization->SetVerboseLevel(2);
+            G4ionIonisation * the_ion_ionization = new G4ionIonisation();
+            if (_logprio() >= datatools::logger::PRIO_TRACE) {
+              the_ion_ionization->SetVerboseLevel(2);
+            } else if (_logprio() >= datatools::logger::PRIO_WARNING) {
+              the_ion_ionization->SetVerboseLevel(1);
+            } else {
+              the_ion_ionization->SetVerboseLevel(0);
+            }
 
             // Special code for testing:
             // Ion ionization process use the G4BraggIonModel (E=0-2 MeV) and
