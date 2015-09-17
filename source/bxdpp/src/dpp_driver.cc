@@ -253,7 +253,7 @@ namespace dpp {
       _module_mgr_->initialize(MM_config);
       DT_LOG_NOTICE(_logging_, "Module manager (initialized) : ");
       if (_logging_ >= datatools::logger::PRIO_NOTICE) {
-        _module_mgr_->tree_dump(std::clog);
+        _module_mgr_->tree_dump(std::clog, "", "[notice]: ");
       }
     }
 
@@ -271,7 +271,7 @@ namespace dpp {
       _modules_.push_back(&the_module);
       DT_LOG_NOTICE(_logging_, "Added module : ");
       if (_logging_ >= datatools::logger::PRIO_NOTICE) {
-        the_module.tree_dump (std::clog);
+        the_module.tree_dump (std::clog, "", "[notice]: ");
       }
     }
 
