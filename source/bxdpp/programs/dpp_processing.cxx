@@ -115,7 +115,8 @@ int main (int argc_, char ** argv_)
     // dpp driver session :
     if (run) {
       if (logging >= datatools::logger::PRIO_DEBUG) {
-        DP.dump(std::cerr);
+        DT_LOG_DEBUG(logging, "Configuration setup:");
+        DP.tree_dump(std::clog, "", "[debug]: ");
       }
       dpp::dpp_driver drv;
       drv.setup(DP);

@@ -46,7 +46,11 @@ namespace dpp {
   {
     dpp_driver_params();
     void reset();
-    void dump(std::ostream & out_ = std::clog);
+    void dump(std::ostream & out_ = std::clog) const;
+    void tree_dump(std::ostream & out_         = std::clog,
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_               = false) const;
 
     bool                     help;
     std::string              logging_label;

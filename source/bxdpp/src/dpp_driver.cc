@@ -56,38 +56,53 @@ namespace dpp {
     return;
   }
 
-  void dpp_driver_params::dump(std::ostream & out_)
+  void dpp_driver_params::dump(std::ostream & out_) const
   {
-    out_ << "dpp_driver_params::dump: " << std::endl;
-    out_ << "|-- " << "help  = "
+    tree_dump(out_, "dpp_driver_params::dump: ");
+    return;
+  }
+
+  void dpp_driver_params::tree_dump(std::ostream & out_,
+                                    const std::string & title_,
+                                    const std::string & indent_,
+                                    bool inherit_) const
+  {
+    std::string indent;
+    if (! indent_.empty()) {
+      indent = indent_;
+    }
+    if (! title_.empty()) {
+      out_ << indent << title_ << std::endl;
+    }
+    out_ << indent << datatools::i_tree_dumpable::tag << "help  : "
          << help << "" << std::endl;
-    out_ << "|-- " << "logging_label  = '"
+    out_ << indent << datatools::i_tree_dumpable::tag << "logging_label  : '"
          << logging_label << "'" << std::endl;
-    out_ << "|-- " << "break_on_error_as_fatal  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "break_on_error_as_fatal  : "
          << break_on_error_as_fatal << "" << std::endl;
-    out_ << "|-- " << "print_modulo  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "print_modulo  : "
          << print_modulo << "" << std::endl;
-    out_ << "|-- " << "module_manager_config_file  = '"
+    out_ << indent << datatools::i_tree_dumpable::tag << "module_manager_config_file  : '"
          << module_manager_config_file << "'" << std::endl;
-    out_ << "|-- " << "module_names  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "module_names  : "
          << module_names.size() << "" << std::endl;
-    out_ << "|-- " << "LL_config  = '"
+    out_ << indent << datatools::i_tree_dumpable::tag << "LL_config  : '"
          << LL_config << "'" << std::endl;
-    out_ << "|-- " << "LL_dlls  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "LL_dlls  : "
          << LL_dlls.size() << "" << std::endl;
-    out_ << "|-- " << "input_files  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "input_files  : "
          << input_files.size() << "" << std::endl;
-    out_ << "|-- " << "output_files  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "output_files  : "
          << output_files.size() << "" << std::endl;
-    out_ << "|-- " << "no_max_records  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "no_max_records  : "
          << no_max_records << "" << std::endl;
-    out_ << "|-- " << "max_records  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "max_records  : "
          << max_records << "" << std::endl;
-    out_ << "|-- " << "max_records_per_output_file  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "max_records_per_output_file  : "
          << max_records_per_output_file << "" << std::endl;
-    out_ << "|-- " << "save_stopped_data_records  = "
+    out_ << indent << datatools::i_tree_dumpable::tag << "save_stopped_data_records  : "
          << save_stopped_data_records << "" << std::endl;
-    out_ << "`-- " << "preserve_existing_files  = "
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "preserve_existing_files  : "
          << preserve_existing_files << "" << std::endl;
     return;
   }
