@@ -93,6 +93,7 @@ namespace mctools {
       case fPostponeToNextEvent : return "postpone_to_next_event";
         // Postpones the tracking of thecurrent track
         // to the next event.
+      default: return "";
       }
     }
 
@@ -113,6 +114,7 @@ namespace mctools {
         // Step defined by the user Step limit in the logical volume
       case fExclusivelyForcedProc: return "exclusively_forced_proc";
         // Step defined by an exclusively forced PostStepDoIt process
+      default:
       case fUndefined :            return "undefined";
       }
     }
@@ -123,6 +125,7 @@ namespace mctools {
       case NormalCondition: return "normal_condition";
       case AvoidHitInvocation: return "avoid_hit_invocation_alive";
       case Debug: return "debug";
+      default: return "";
       }
     }
 
@@ -140,9 +143,10 @@ namespace mctools {
       if (process_step) {
 
         // Fetch track informations:
-        G4Track * track        = g4_step_->GetTrack(); // fpSteppingManager->GetTrack();
-        G4int track_id         = track->GetTrackID();
-        G4int track_parent_id  = track->GetParentID();
+        G4Track * track           = g4_step_->GetTrack(); // fpSteppingManager->GetTrack();
+        G4int current_step_number = track->GetCurrentStepNumber();
+        G4int track_id            = track->GetTrackID();
+        G4int track_parent_id     = track->GetParentID();
 
         const G4DynamicParticle * dynamic_particle = track->GetDynamicParticle();
         G4double dynamic_particle_charge  = dynamic_particle->GetCharge();
@@ -150,58 +154,57 @@ namespace mctools {
         const G4ParticleDefinition * particle = track->GetParticleDefinition();
         G4String particle_name     = particle->GetParticleName();
         G4ThreeVector position     = track->GetPosition();
-        G4double track_global_time = track->GetGlobalTime();
-        G4double track_local_time  = track->GetLocalTime();
-        G4double track_proper_time = track->GetProperTime();
-        G4VPhysicalVolume * volume = track->GetVolume();
-        G4String volume_name;
-        if (volume) {
-          volume_name = volume->GetName();
-        }
-        G4VPhysicalVolume * next_volume = track->GetNextVolume();
-        G4String next_volume_name;
-        if (next_volume) {
-          next_volume_name = next_volume->GetName();
-        }
-        G4Material * material      = track->GetMaterial();
-        G4Material * next_material = track->GetNextMaterial();
-        G4double kinetic_energy    = track->GetKineticEnergy();
-        G4double total_energy      = track->GetTotalEnergy();
-        G4ThreeVector momentum     = track->GetMomentum();
-        G4double velocity          = track->GetVelocity();
-        G4TrackStatus track_status = track->GetTrackStatus();
-        G4bool below_threshold     = track->IsBelowThreshold();
-        G4bool good_for_traking    = track->IsGoodForTracking();
-        G4double track_length      = track->GetTrackLength();
-        G4int current_step_number  = track->GetCurrentStepNumber();
-        G4double track_step_length = track->GetStepLength();
-        G4double track_weight      = track->GetWeight();
+        // G4double track_global_time = track->GetGlobalTime();
+        // G4double track_local_time  = track->GetLocalTime();
+        // G4double track_proper_time = track->GetProperTime();
+        // G4VPhysicalVolume * volume = track->GetVolume();
+        // G4String volume_name;
+        // if (volume) {
+        //   volume_name = volume->GetName();
+        // }
+        // G4VPhysicalVolume * next_volume = track->GetNextVolume();
+        // G4String next_volume_name;
+        // if (next_volume) {
+        //   next_volume_name = next_volume->GetName();
+        // }
+        // G4ThreeVector momentum     = track->GetMomentum();
+        // G4Material * material      = track->GetMaterial();
+        // G4Material * next_material = track->GetNextMaterial();
+        // G4double kinetic_energy    = track->GetKineticEnergy();
+        // G4double total_energy      = track->GetTotalEnergy();
+        // G4double velocity          = track->GetVelocity();
+        // G4TrackStatus track_status = track->GetTrackStatus();
+        // G4bool below_threshold     = track->IsBelowThreshold();
+        // G4bool good_for_traking    = track->IsGoodForTracking();
+        // G4double track_length      = track->GetTrackLength();
+        // G4double track_step_length = track->GetStepLength();
+        // G4double track_weight      = track->GetWeight();
 
         // Fetch step informations:
 
         // Pre step:
-        const G4StepPoint * pre_step_point = g4_step_->GetPreStepPoint();
-        const G4VTouchable * pre_step_touchable  = pre_step_point->GetTouchable();
-        const G4ReferenceCountedHandle<G4VTouchable> post_step_touchable_handle
-          = g4_step_->GetPostStepPoint()->GetTouchableHandle();
-        const G4ThreeVector & pre_position = pre_step_point->GetPosition();
-        G4ThreeVector pre_position_t = pre_step_touchable->GetTranslation();
+        // const G4ThreeVector & pre_position = pre_step_point->GetPosition();
+        // const G4StepPoint * pre_step_point = g4_step_->GetPreStepPoint();
+        // const G4VTouchable * pre_step_touchable  = pre_step_point->GetTouchable();
+        // const G4ReferenceCountedHandle<G4VTouchable> post_step_touchable_handle
+        //   = g4_step_->GetPostStepPoint()->GetTouchableHandle();
+        // G4ThreeVector pre_position_t = pre_step_touchable->GetTranslation();
 
         // Post step:
-        const G4StepPoint * post_step_point = g4_step_->GetPostStepPoint();
-        const G4VTouchable * post_step_touchable = post_step_point->GetTouchable();
-        const G4ThreeVector & post_position = post_step_point->GetPosition();
-        G4ThreeVector post_position_t = post_step_touchable->GetTranslation();
-        G4String process_name         = post_step_point->GetProcessDefinedStep()->GetProcessName();
+        // const G4ThreeVector & post_position = post_step_point->GetPosition();
+        // const G4StepPoint * post_step_point = g4_step_->GetPostStepPoint();
+        // const G4VTouchable * post_step_touchable = post_step_point->GetTouchable();
+        // G4ThreeVector post_position_t = post_step_touchable->GetTranslation();
+        // G4String process_name         = post_step_point->GetProcessDefinedStep()->GetProcessName();
 
-        G4double step_length          = g4_step_->GetStepLength();
-        G4double total_energy_deposit = g4_step_->GetTotalEnergyDeposit();
-        G4double non_ionizing_energy_deposit = g4_step_->GetNonIonizingEnergyDeposit();
-        G4SteppingControl stepping_control   = g4_step_->GetControlFlag();
-        G4bool first_step_in_volume   = g4_step_->IsFirstStepInVolume();
-        G4bool last_step_in_volume    = g4_step_->IsLastStepInVolume();
-        G4ThreeVector delta_position  = g4_step_->GetDeltaPosition();
-        G4double delta_time           = g4_step_->GetDeltaTime();
+        // G4double step_length          = g4_step_->GetStepLength();
+        // G4double total_energy_deposit = g4_step_->GetTotalEnergyDeposit();
+        // G4double non_ionizing_energy_deposit = g4_step_->GetNonIonizingEnergyDeposit();
+        // G4SteppingControl stepping_control   = g4_step_->GetControlFlag();
+        // G4bool first_step_in_volume   = g4_step_->IsFirstStepInVolume();
+        // G4bool last_step_in_volume    = g4_step_->IsLastStepInVolume();
+        // G4ThreeVector delta_position  = g4_step_->GetDeltaPosition();
+        // G4double delta_time           = g4_step_->GetDeltaTime();
         // G4ThreeVector delta_momentum  = g4_step_->GetDeltaMomentum(); // obsolete
         // G4double delta_energy         = g4_step_->GetDeltaEnergy();   // obsolete
 
