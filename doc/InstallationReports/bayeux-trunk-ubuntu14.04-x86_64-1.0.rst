@@ -154,10 +154,12 @@ Executable are in: ::
   |-- bxquery
   `-- bxtests
 
-Run test programs
+These directories and files will be copied in the installation directory.
+
+Test programs
 =========================
 
-::
+Before to do the final installation, we run the test programs: ::
 
   $ make test
   ...
@@ -167,14 +169,15 @@ Run test programs
 Installation
 ====================
 
-::
+Simple run: ::
 
   $ make install
 
 Check installation
 ========================
 
-::
+Browse the installation directory: ::
+
   $ LANG=C tree -L 3 -F ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
   |-- bin/
