@@ -27,6 +27,7 @@ namespace mctools {
         case fParameterisation   : return std::string("parameterisation");
         case fUserDefined        : return std::string("user_defined");
         case fParallel           : return std::string("parallel");
+        default                  : return std::string("undefined");
         }
       }
 
