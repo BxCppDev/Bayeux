@@ -610,7 +610,7 @@ namespace datatools {
 
     if (!_description_.empty()) {
       a_out << indent << i_tree_dumpable::tag
-            << "Description  : " << this->get_description() << std::endl;
+            << "Description  : '" << this->get_description() << "'" << std::endl;
     }
 
     double unit_value = 1.0;
@@ -673,7 +673,7 @@ namespace datatools {
           a_out << std::endl;
         }
         if (this->is_string()) {
-          a_out << '"' << this->get_string_value(i) << '"' << std::endl;
+          a_out << "'" << this->get_string_value(i) << "'" << std::endl;
         }
       }
     } else {
@@ -2273,7 +2273,7 @@ namespace datatools {
           out << i_tree_dumpable::tag;
           indent_oss << i_tree_dumpable::skip_tag;
         }
-        out << "Name : " << '"' << prop_key << '"' << std::endl;
+        out << "Name : " << "'" << prop_key << "'" << std::endl;
         a_data.tree_dump(out, "", indent_oss.str());
       }
     }
