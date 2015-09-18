@@ -92,8 +92,12 @@ Configure Bayeux:
 
       $ do_cadfael_dev_setup
 
-  2. Invoke CMake to configure Bayeux: ::
+  2. Create a build directory and cd in it: ::
 
+      $ mkdir -p ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
+      $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
+
+  3. Invoke CMake to configure Bayeux: ::
       $ cmake \
          -DCMAKE_BUILD_TYPE:STRING=Release \
          -DCMAKE_INSTALL_PREFIX:PATH=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64 \
