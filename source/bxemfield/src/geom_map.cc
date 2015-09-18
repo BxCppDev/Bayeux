@@ -97,7 +97,7 @@ namespace emfield {
   {
     DT_LOG_DEBUG (get_logging_priority (), "Geometry volume/EM Field map: ");
     if (is_debug ()) {
-      config_.tree_dump (std::clog);
+      config_.tree_dump (std::clog, "", "[debug]: ");
     }
     std::vector<std::string> association_labels;
     if (config_.has_key ("associations.labels")) {

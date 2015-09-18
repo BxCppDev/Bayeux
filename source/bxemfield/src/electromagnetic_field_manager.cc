@@ -126,7 +126,7 @@ namespace emfield {
     DT_LOG_DEBUG (get_logging_priority (), "Geometry map setup:");
     if (is_debug())
       {
-        setup_.tree_dump(std::clog);
+        setup_.tree_dump(std::clog, "", "[debug]: ");
       }
     DT_LOG_DEBUG (get_logging_priority (), "Initialize geometry/field map...");
     _geom_map_.get()->initialize(setup_);
@@ -306,7 +306,7 @@ namespace emfield {
         setup_.export_and_rename_starting_with(geomap_config, "geom_map.", "");
       }
       if (is_debug()) {
-        geomap_config.tree_dump(std::cerr, "EM fields/Geometry map config: ", "DEVEL: ");
+        geomap_config.tree_dump(std::cerr, "EM fields/Geometry map config: ", "[debug]: ");
       }
       _construct_geomap_(geomap_config);
     }
