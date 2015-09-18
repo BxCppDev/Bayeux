@@ -14,14 +14,10 @@ int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try {
-    bool debug = false;
 
     int iarg = 1;
     while (iarg < argc_) {
       std::string arg = argv_[iarg];
-
-      if (arg == "-d" || arg == "--debug") debug = true;
-
       iarg++;
     }
 
