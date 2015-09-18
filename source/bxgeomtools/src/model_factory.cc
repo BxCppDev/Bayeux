@@ -228,7 +228,7 @@ namespace geomtools {
     _mp_.read(mprop_file_);
     if (is_trace()) {
       DT_LOG_TRACE(_logging_priority_, "Model factory multi-configuration: ");
-      _mp_.tree_dump(std::clog, "", "[trace:] ");
+      _mp_.tree_dump(std::clog, "", "[trace]: ");
     }
     return;
   }
