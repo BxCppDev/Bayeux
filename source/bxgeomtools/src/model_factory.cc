@@ -57,22 +57,22 @@ namespace geomtools {
     return true;
   }
 
-  bool model_factory::is_locked () const
+  bool model_factory::is_locked() const
   {
     return _locked_;
   }
 
-  bool model_factory::is_debug () const
+  bool model_factory::is_debug() const
   {
     return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
   }
 
-  bool model_factory::is_trace () const
+  bool model_factory::is_trace() const
   {
     return _logging_priority_ >= datatools::logger::PRIO_TRACE;
   }
 
-  void model_factory::set_debug (bool new_value_)
+  void model_factory::set_debug(bool new_value_)
   {
     if (new_value_) {
       _logging_priority_ = datatools::logger::PRIO_DEBUG;
@@ -82,12 +82,12 @@ namespace geomtools {
     return;
   }
 
-  datatools::logger::priority model_factory::get_logging_priority () const
+  datatools::logger::priority model_factory::get_logging_priority() const
   {
     return _logging_priority_;
   }
 
-  void model_factory::set_logging_priority (datatools::logger::priority p_)
+  void model_factory::set_logging_priority(datatools::logger::priority p_)
   {
     _logging_priority_ = p_;
     return;
@@ -120,17 +120,17 @@ namespace geomtools {
     return *_shape_factory_;
   }
 
-  const models_col_type & model_factory::get_models () const
+  const models_col_type & model_factory::get_models() const
   {
     return _models_;
   }
 
-  const logical_volume::dict_type & model_factory::get_logicals () const
+  const logical_volume::dict_type & model_factory::get_logicals() const
   {
     return _logicals_;
   }
 
-  void model_factory::_basic_construct_ ()
+  void model_factory::_basic_construct_()
   {
     _locked_ = false;
     _mp_.set_key_label("name");
@@ -146,7 +146,7 @@ namespace geomtools {
     return;
   }
 
-  model_factory::model_factory (datatools::logger::priority lp_)
+  model_factory::model_factory(datatools::logger::priority lp_)
   {
     _shape_factory_ = 0;
     _locked_ = false;
@@ -155,7 +155,7 @@ namespace geomtools {
     return;
   }
 
-  model_factory::model_factory (bool debug_, bool core_factory_verbose_)
+  model_factory::model_factory(bool debug_, bool core_factory_verbose_)
     :  _factory_register_("geomtools::i_model/model_factory",
                           core_factory_verbose_ ? i_model::factory_register_type::verbose : 0)
 
@@ -168,32 +168,32 @@ namespace geomtools {
     return;
   }
 
-  model_factory::~model_factory ()
+  model_factory::~model_factory()
   {
     if (_locked_) {
-      reset ();
+      reset();
     }
     return;
   }
 
   // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
-  void model_factory::load_geom_list (const std::string & geom_list_file_)
+  void model_factory::load_geom_list(const std::string & geom_list_file_)
   {
     std::string geom_lis_filename = geom_list_file_;
-    datatools::fetch_path_with_env (geom_lis_filename);
+    datatools::fetch_path_with_env(geom_lis_filename);
 
-    std::ifstream finlist (geom_lis_filename.c_str ());
-    DT_THROW_IF (! finlist, logic_error,
-                 "Cannot open file '" << geom_lis_filename << "' !");
+    std::ifstream finlist(geom_lis_filename.c_str());
+    DT_THROW_IF(! finlist, logic_error,
+                "Cannot open file '" << geom_lis_filename << "' !");
     while (finlist) {
       std::string line;
-      std::getline (finlist, line);
-      DT_THROW_IF (! finlist, logic_error,
-                   "I/O error while reading file '" << geom_lis_filename << "' !");
+      std::getline(finlist, line);
+      DT_THROW_IF(! finlist, logic_error,
+                  "I/O error while reading file '" << geom_lis_filename << "' !");
       std::string word;
-      std::istringstream line_iss (line);
+      std::istringstream line_iss(line);
       line_iss >> word;
-      if (word.length () < 1) {
+      if (word.length() < 1) {
         // skip blank line
         continue;
       }
@@ -201,10 +201,10 @@ namespace geomtools {
         continue;
       }
       std::string geom_filename = word;
-      datatools::fetch_path_with_env (geom_filename);
-      load (geom_filename);
+      datatools::fetch_path_with_env(geom_filename);
+      load(geom_filename);
       finlist >> ws;
-      if (finlist.eof ()) {
+      if (finlist.eof()) {
         break;
       }
     }
@@ -218,59 +218,59 @@ namespace geomtools {
 
   datatools::multi_properties & model_factory::grab_mp()
   {
-    DT_THROW_IF (_locked_, logic_error, "Model factory is locked !");
+    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
     return _mp_;
   }
 
-  void model_factory::load (const std::string & mprop_file_)
+  void model_factory::load(const std::string & mprop_file_)
   {
-    DT_THROW_IF (_locked_, logic_error, "Model factory is locked !");
-    _mp_.read (mprop_file_);
+    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
+    _mp_.read(mprop_file_);
     if (is_trace()) {
       DT_LOG_TRACE(_logging_priority_, "Model factory multi-configuration: ");
-      _mp_.dump (std::cerr);
+      _mp_.dump(std::cerr);
     }
     return;
   }
 
-  void model_factory::_lock_ ()
+  void model_factory::_lock_()
   {
-    DT_THROW_IF (_locked_, logic_error, "Model factory is locked !");
-    _construct_ ();
-    _mp_.reset ();
+    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
+    _construct_();
+    _mp_.reset();
     return;
   }
 
-  void model_factory::_unlock_ ()
+  void model_factory::_unlock_()
   {
     return;
   }
 
-  void model_factory::unlock ()
+  void model_factory::unlock()
   {
     if (! _locked_) return;
-    _unlock_ ();
+    _unlock_();
     _locked_ = false;
     return;
   }
 
-  void model_factory::lock ()
+  void model_factory::lock()
   {
-    DT_THROW_IF (_locked_, logic_error, "Model factory is locked !");
-    _lock_ ();
+    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
+    _lock_();
     _locked_ = true;
     return;
   }
 
-  void model_factory::reset ()
+  void model_factory::reset()
   {
     if (_locked_) {
-      unlock ();
+      unlock();
     }
     // The container of logicals does not have ownership of the pointers :
     _logicals_.clear();
     // Memory leak to be fixed:
-    for (models_col_type::iterator i = _models_.begin ();
+    for (models_col_type::iterator i = _models_.begin();
          i != _models_.end();
          i++) {
       const std::string & model_name = i->first;
@@ -280,9 +280,9 @@ namespace geomtools {
         delete model_ptr;
       }
     }
-    _models_.clear ();
-    _mp_.reset ();
-    _property_prefixes_.clear ();
+    _models_.clear();
+    _mp_.reset();
+    _property_prefixes_.clear();
     _shape_factory_ = 0;
     return;
   }
@@ -293,8 +293,8 @@ namespace geomtools {
     DT_THROW_IF(prefix_.empty(),
                 std::logic_error,
                 "Property prefix to be preserved cannot be empty !");
-    DT_THROW_IF((std::find(_property_prefixes_.begin (),
-                           _property_prefixes_.end (),
+    DT_THROW_IF((std::find(_property_prefixes_.begin(),
+                           _property_prefixes_.end(),
                            prefix_) != _property_prefixes_.end()),
                 std::logic_error,
                 "Property prefix to be preserved '" << prefix_<< "' already exists !");
@@ -302,19 +302,19 @@ namespace geomtools {
     return;
   }
 
-  void model_factory::_construct_ ()
+  void model_factory::_construct_()
   {
     DT_LOG_TRACE(_logging_priority_,"Entering...");
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
-           = _mp_.ordered_entries ().begin ();
-         i != _mp_.ordered_entries ().end ();
+           = _mp_.ordered_entries().begin();
+         i != _mp_.ordered_entries().end();
          i++) {
       const datatools::multi_properties::entry * ptr_entry = *i;
       const datatools::multi_properties::entry & e = *ptr_entry;
-      std::string model_name = e.get_key ();
+      std::string model_name = e.get_key();
       DT_THROW_IF(!validate_name_for_gdml(model_name), std::logic_error,
                   "Geometry model name '" << model_name << "' is not supported for GDML export in Geant4 !");
-      std::string model_type = e.get_meta ();
+      std::string model_type = e.get_meta();
       // if (! _factory_register_.has(model_type)) {
       //   DT_LOG_TRACE(_logging_priority_,
       //                "No registered class with ID '"
@@ -335,18 +335,18 @@ namespace geomtools {
       if (has_shape_factory()) {
         model->set_shape_factory(grab_shape_factory());
       }
-      model->construct(model_name, e.get_properties (), _property_prefixes_, &_models_);
+      model->construct(model_name, e.get_properties(), _property_prefixes_, &_models_);
       _models_[model_name] = model;
       DT_LOG_DEBUG(_logging_priority_,"Adding model '" << model_name << "'...");
-      std::string log_name = model->get_logical ().get_name ();
+      std::string log_name = model->get_logical().get_name();
       if (_logicals_.find(log_name) == _logicals_.end()) {
-        _logicals_[log_name] = &(model->get_logical ());
+        _logicals_[log_name] = &(model->get_logical());
       } else {
         DT_THROW_IF(true, std::runtime_error,
                     "Logical volume '" << log_name << "' is already referenced in the model factory !");
       }
-      for (logical_volume::physicals_col_type::const_iterator iphys = model->get_logical ().get_physicals ().begin();
-           iphys != model->get_logical ().get_physicals ().end();
+      for (logical_volume::physicals_col_type::const_iterator iphys = model->get_logical().get_physicals().begin();
+           iphys != model->get_logical().get_physicals().end();
            iphys++) {
         const physical_volume & phys_vol = *iphys->second;
         if (phys_vol.has_logical()) {
@@ -358,7 +358,7 @@ namespace geomtools {
       }
 
       DT_LOG_DEBUG(_logging_priority_,"New model is:");
-      if (is_debug ()) model->tree_dump (clog,"");
+      if (is_debug()) model->tree_dump(clog,"");
     }
     DT_LOG_TRACE(_logging_priority_,"Exiting.");
     return;
@@ -369,14 +369,14 @@ namespace geomtools {
     return _property_prefixes_;
   }
 
-  void model_factory::tree_dump (std::ostream & out_,
-                                 const std::string & title_,
-                                 const std::string & indent_,
-                                 bool inherit_) const
+  void model_factory::tree_dump(std::ostream & out_,
+                                const std::string & title_,
+                                const std::string & indent_,
+                                bool inherit_) const
   {
     std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) {
+    if (! indent_.empty()) indent = indent_;
+    if (! title_.empty()) {
       out_ << indent << title_ << endl;
     }
 
@@ -391,7 +391,7 @@ namespace geomtools {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Multi-properties : ";
-      if ( _mp_.entries ().size () == 0) {
+      if ( _mp_.entries().size() == 0) {
         out_ << "<empty>";
       }
       out_ << endl;
@@ -399,7 +399,7 @@ namespace geomtools {
         std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _mp_.tree_dump (out_, "", indent_oss.str ());
+        _mp_.tree_dump (out_, "", indent_oss.str());
       }
     }
 
@@ -407,14 +407,14 @@ namespace geomtools {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Logicals : ";
-      if ( _logicals_.size () == 0) {
+      if ( _logicals_.size() == 0) {
         out_ << "<empty>";
       } else {
-        out_ << "[" << _logicals_.size () << "]";
+        out_ << "[" << _logicals_.size() << "]";
       }
       out_ << endl;
-      // for (logical_volume::dict_type::const_iterator i = _logicals_.begin ();
-      //      i != _logicals_.end ();
+      // for (logical_volume::dict_type::const_iterator i = _logicals_.begin();
+      //      i != _logicals_.end();
       //      i++) {
       //   const string & key = i->first;
       //   const logical_volume * a_logical = i->second;
@@ -423,33 +423,33 @@ namespace geomtools {
 
     // Models:
     {
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Geometry models : ";
-      if ( _models_.size () == 0) {
+      if ( _models_.size() == 0) {
         out_ << "<empty>";
       } else {
-        out_ << "[" << _models_.size () << "]";
+        out_ << "[" << _models_.size() << "]";
       }
       out_ << endl;
-      for (models_col_type::const_iterator i = _models_.begin ();
-           i != _models_.end ();
+      for (models_col_type::const_iterator i = _models_.begin();
+           i != _models_.end();
            i++) {
         const std::string & key = i->first;
         const i_model * a_model = i->second;
         std::ostringstream indent_oss;
-        out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-        indent_oss << indent << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
+        out_ << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+        indent_oss << indent << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
         models_col_type::const_iterator j = i;
         j++;
-        if (j == _models_.end ()) {
-          out_ << datatools::i_tree_dumpable::inherit_tag (inherit_);
-          indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
+        if (j == _models_.end()) {
+          out_ << datatools::i_tree_dumpable::inherit_tag(inherit_);
+          indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
         } else {
           out_ << datatools::i_tree_dumpable::tag;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
         }
         out_ << "Model : " << '"' << key << '"' << endl;
-        a_model->tree_dump (out_, "", indent_oss.str ());
+        a_model->tree_dump(out_, "", indent_oss.str());
       }
     }
 
@@ -500,10 +500,10 @@ namespace geomtools {
 
     std::vector<const std::string*> selected_models;
     for (geomtools::models_col_type::const_iterator i
-           = mf_.get_models ().begin ();
-         i != mf_.get_models ().end ();
+           = mf_.get_models().begin();
+         i != mf_.get_models().end();
          i++) {
-      const std::string & model_name = i->second->get_name ();
+      const std::string & model_name = i->second->get_name();
       bool selected = true;
       // if (requested_patterns.size()) {
       //   selected = false;
@@ -526,19 +526,19 @@ namespace geomtools {
     size_t max_width = 32;
     int count = 0;
     for (std::vector<const std::string*>::const_iterator i
-           = selected_models.begin ();
-         i != selected_models.end ();
+           = selected_models.begin();
+         i != selected_models.end();
          i++) {
       const std::string & model_name = **i;
       if (with_multicolumn) {
         bool long_name = false;
-        if (model_name.size () > max_width) {
+        if (model_name.size() > max_width) {
           long_name = true;
         }
         if (count != 0 && (count % 2) == 0) {
           out_ << std::endl;
         }
-        out_  << "  " << std::setw (max_width)
+        out_  << "  " << std::setw(max_width)
               << std::setiosflags(std::ios::left)
               << std::resetiosflags(std::ios::right)
               << model_name << "  ";
@@ -605,10 +605,10 @@ namespace geomtools {
 
     std::vector<const std::string*> selected_logicals;
     for (logical_volume::dict_type::const_iterator i
-           = mf_.get_logicals ().begin ();
-         i != mf_.get_logicals ().end ();
+           = mf_.get_logicals().begin();
+         i != mf_.get_logicals().end();
          i++) {
-      const std::string & logical_name = i->second->get_name ();
+      const std::string & logical_name = i->second->get_name();
       bool selected = true;
       // if (requested_patterns.size()) {
       //   selected = false;
@@ -631,19 +631,19 @@ namespace geomtools {
     size_t max_width = 32;
     int count = 0;
     for (std::vector<const std::string*>::const_iterator i
-           = selected_logicals.begin ();
-         i != selected_logicals.end ();
+           = selected_logicals.begin();
+         i != selected_logicals.end();
          i++) {
       const std::string & logical_name = **i;
       if (with_multicolumn) {
         bool long_name = false;
-        if (logical_name.size () > max_width) {
+        if (logical_name.size() > max_width) {
           long_name = true;
         }
         if (count != 0 && (count % 2) == 0) {
           out_ << std::endl;
         }
-        out_  << "  " << std::setw (max_width)
+        out_  << "  " << std::setw(max_width)
               << std::setiosflags(std::ios::left)
               << std::resetiosflags(std::ios::right)
               << logical_name << "  ";
