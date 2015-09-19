@@ -97,7 +97,13 @@ namespace geomtools {
                                          int type_ = geom_id::INVALID_TYPE,
                                          double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    /// Print
+    /// Smart print
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_  = "",
+                   const std::string & indent_ = "",
+                   bool inherit_               = false) const;
+
+    /// Dump
     void dump(std::ostream & out_ = std::clog) const;
 
     /// Print

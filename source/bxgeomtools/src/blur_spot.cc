@@ -593,7 +593,7 @@ namespace geomtools {
     out_ << indent << i_tree_dumpable::tag << "Placement : "  << endl;
     {
       ostringstream indent_oss;
-      indent_oss << i_tree_dumpable::skip_tag;
+      indent_oss << indent << i_tree_dumpable::skip_tag;
       _placement_.tree_dump (out_, "", indent_oss.str ());
     }
 

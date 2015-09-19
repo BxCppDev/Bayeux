@@ -211,7 +211,7 @@ void test_0(const param_type & params_)
       tmp_file.out() << std::endl << std::endl;
 
       tmp_file.out() <<"# Spheres (index 2):" << std::endl;
-      for (int i = 0; i < mp.get_number_of_items(); i++) {
+      for (size_t i = 0; i < mp.get_number_of_items(); i++) {
         geomtools::placement p;
         mp.get_placement(i, p);
         geomtools::gnuplot_draw::draw_sphere(tmp_file.out(), p, sph,
@@ -361,7 +361,7 @@ void test_1(const param_type & params_)
       tmp_file.out() << std::endl << std::endl;
 
       tmp_file.out() <<"# Mesh (index 2):" << std::endl;
-      for (int i = 0; i < mesh_placement.get_number_of_items(); i++) {
+      for (size_t i = 0; i < mesh_placement.get_number_of_items(); i++) {
         geomtools::placement p;
         mesh_placement.get_placement(i, p);
         geomtools::gnuplot_draw::draw_box(tmp_file.out(), p, mesh_box,

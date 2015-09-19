@@ -358,7 +358,7 @@ namespace geomtools {
       }
 
       DT_LOG_DEBUG(_logging_priority_,"New model is:");
-      if (is_debug()) model->tree_dump(clog,"");
+      if (is_debug()) model->tree_dump(clog, "", "[debug]: ");
     }
     DT_LOG_TRACE(_logging_priority_,"Exiting.");
     return;
