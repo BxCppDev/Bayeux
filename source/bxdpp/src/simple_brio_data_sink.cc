@@ -173,7 +173,7 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
           {
             DT_LOG_INFORMATION (get_logging_priority (),
                                 "Create brio file with the following setup:");
-            _brio_file_writer_->tree_dump (std::clog);
+            _brio_file_writer_->tree_dump (std::clog, "", "[information]: ");
           }
         _sink_record.status = sink_record::STATUS_OPENED;
       }
