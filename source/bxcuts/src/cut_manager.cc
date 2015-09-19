@@ -336,8 +336,8 @@ namespace cuts {
   }
 
   void cut_manager::_load_cut(const std::string & cut_name_,
-                               const std::string & cut_id_,
-                               const datatools::properties & cut_config_)
+                              const std::string & cut_id_,
+                              const datatools::properties & cut_config_)
   {
     DT_LOG_TRACE(_logging_, "Entering...");
     DT_THROW_IF(has(cut_name_),
@@ -370,8 +370,8 @@ namespace cuts {
   }
 
   void cut_manager::load_cut(const std::string & cut_name_,
-                              const std::string & cut_id_,
-                              const datatools::properties & cut_config_)
+                             const std::string & cut_id_,
+                             const datatools::properties & cut_config_)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
@@ -385,7 +385,7 @@ namespace cuts {
   {
     if (_logging_ >= datatools::logger::PRIO_DEBUG) {
       DT_LOG_DEBUG(_logging_, "Cut manager configuration parameters : ");
-      config_.tree_dump(std::clog, "");
+      config_.tree_dump(std::clog, "", "[debug]: ");
     }
     const datatools::multi_properties::entries_ordered_col_type & oe = config_.ordered_entries();
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator
