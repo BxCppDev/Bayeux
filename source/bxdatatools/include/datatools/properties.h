@@ -1124,7 +1124,7 @@ DR_CLASS_INIT(::datatools::properties);
 BOOST_CLASS_VERSION(datatools::properties::data, 2)
 BOOST_CLASS_VERSION(datatools::properties, 2)
 
-#endif // DATATOOLS_UTILS_PROPERTIES_H
+#endif // DATATOOLS_PROPERTIES_H
 
 /*
 ** Local Variables: --
