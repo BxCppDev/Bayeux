@@ -90,7 +90,7 @@ int main (int argc_, char ** argv_)
                    "${MCTOOLS_TESTING_DIR}/config/g4/test-2.0/simulation/step_hit_processor_factory.conf");
     std::cerr << std::endl << "******************* INITIALIZE *************" << std::endl;
     my_detector_construction.initialize(dc_setup);
-    G4VPhysicalVolume * mother = my_detector_construction.Construct();
+    my_detector_construction.Construct();
 
   }
   catch (exception & x) {

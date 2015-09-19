@@ -36,37 +36,46 @@ namespace mctools {
       return;
     }
 
-    void manager_parameters::print(std::ostream & out_) const
+    void manager_parameters::tree_dump(std::ostream & out_,
+                                       const std::string & title_,
+                                       const std::string & indent_,
+                                       bool inherit_) const
     {
-      out_ << "Geant4 simulation manager : " << std::endl;
-      out_ << "|-- " << "interactive = " << interactive << std::endl;
-      out_ << "|-- " << "g4_visu     = " << g4_visu << std::endl;
-      out_ << "|-- " << "g4_macro    = '" << g4_macro << "'" << std::endl;
-      out_ << "|-- " << "logging     = '" << logging << "'" << std::endl;
-      out_ << "|-- " << "dlls        = " << dlls.size() << std::endl;
-      out_ << "|-- " << "manager_config_filename = '" << manager_config_filename<< "'" << std::endl;
-      out_ << "|-- " << "number_of_events        = " << number_of_events << std::endl;
-      out_ << "|-- " << "number_of_events_modulo = " << number_of_events_modulo << std::endl;
-      out_ << "|-- " << "mgr_seed                = " << mgr_seed << std::endl;
-      out_ << "|-- " << "input_prng_states_file  = '" << input_prng_states_file << "'" << std::endl;
-      out_ << "|-- " << "output_prng_states_file = '" << output_prng_states_file << "'" << std::endl;
-      out_ << "|-- " << "prng_states_save_modulo = " << prng_states_save_modulo << std::endl;
-      out_ << "|-- " << "input_prng_seeds_file   = '" << input_prng_seeds_file << "'" << std::endl;
-      out_ << "|-- " << "output_prng_seeds_file  = '" << output_prng_seeds_file << "'" << std::endl;
-      out_ << "|-- " << "output_data_format      = '" << output_data_format << "'" << std::endl;
-      out_ << "|-- " << "output_data_bank_label  = '" << output_data_bank_label << "'" << std::endl;
-      out_ << "|-- " << "output_data_file        = '" << output_data_file << "'" << std::endl;
-      out_ << "|-- " << "vg_name   = '" << vg_name << "'" << std::endl;
-      out_ << "|-- " << "vg_seed   = " << vg_seed << std::endl;
-      out_ << "|-- " << "eg_name   = '" << eg_name << "'" << std::endl;
-      out_ << "|-- " << "eg_seed   = " << eg_seed << std::endl;
-      out_ << "|-- " << "shpf_seed = " << shpf_seed << std::endl;
-      out_ << "|-- " << "output_profiles_activation_rule = '" << output_profiles_activation_rule << "'" << std::endl;
-      out_ << "|-- " << "using_time_stat     = " << using_time_stat << std::endl;
-      out_ << "|-- " << "forbid_private_hits = " << forbid_private_hits << std::endl;
-      out_ << "|-- " << "dont_save_no_sensitive_hit_events = " << dont_save_no_sensitive_hit_events << std::endl;
-      out_ << "|-- " << "use_run_header_footer = " << use_run_header_footer << std::endl;
-      out_ << "`-- " << "The end." << std::endl;
+      std::string indent;
+      if (! indent_.empty()) {
+        indent = indent_;
+      }
+      if (! title_.empty()) {
+        out_ << indent << title_ << std::endl;
+      }
+      out_ << indent << "Geant4 simulation manager : " << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "interactive = " << interactive << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "g4_visu     = " << g4_visu << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "g4_macro    = '" << g4_macro << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "logging     = '" << logging << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "dlls        = " << dlls.size() << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "manager_config_filename = '" << manager_config_filename<< "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "number_of_events        = " << number_of_events << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "number_of_events_modulo = " << number_of_events_modulo << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "mgr_seed                = " << mgr_seed << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "input_prng_states_file  = '" << input_prng_states_file << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "output_prng_states_file = '" << output_prng_states_file << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "prng_states_save_modulo = " << prng_states_save_modulo << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "input_prng_seeds_file   = '" << input_prng_seeds_file << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "output_prng_seeds_file  = '" << output_prng_seeds_file << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "output_data_format      = '" << output_data_format << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "output_data_bank_label  = '" << output_data_bank_label << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "output_data_file        = '" << output_data_file << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "vg_name   = '" << vg_name << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "vg_seed   = " << vg_seed << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "eg_name   = '" << eg_name << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "eg_seed   = " << eg_seed << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "shpf_seed = " << shpf_seed << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "output_profiles_activation_rule = '" << output_profiles_activation_rule << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "using_time_stat     = " << using_time_stat << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "forbid_private_hits = " << forbid_private_hits << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "dont_save_no_sensitive_hit_events = " << dont_save_no_sensitive_hit_events << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "use_run_header_footer = " << use_run_header_footer << std::endl;
       return;
     }
 

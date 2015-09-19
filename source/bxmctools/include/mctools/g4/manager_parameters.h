@@ -93,8 +93,11 @@ namespace mctools {
       /// Reset
       void reset();
 
-      /// Print
-      void print(std::ostream &) const;
+      /// Smart dump
+      void tree_dump(std::ostream & out_,
+                     const std::string & title_  = "",
+                     const std::string & indent_ = "",
+                     bool inherit_               = false) const;
 
       /// Setup a simulation manager from a set of parameters
       static void setup(const manager_parameters & a_params,

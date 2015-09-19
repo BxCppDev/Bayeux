@@ -301,7 +301,7 @@ namespace mctools {
           }
           if (is_debug()) {
             DT_LOG_DEBUG(_logprio(),"    ==> " << "Sensitive parameters for '" << *i << "' : ");
-            _SD_params_.get(*i).get_properties().tree_dump(std::clog, "");
+            _SD_params_.get(*i).get_properties().tree_dump(std::clog, "", "[debug]: ");
           }
         }
       }
@@ -426,7 +426,7 @@ namespace mctools {
           const emfield::electromagnetic_field_manager & emf_mgr = fgp.get_manager();
           DT_LOG_TRACE(_logprio(), "EM field manager: ");
           if (_logprio() >= datatools::logger::PRIO_TRACE) {
-            emf_mgr.tree_dump(std::cerr, "", "[trace] ");
+            emf_mgr.tree_dump(std::clog, "", "[trace]: ");
           }
           set_em_field_manager(emf_mgr);
         }
@@ -724,7 +724,7 @@ namespace mctools {
           }
           DT_LOG_TRACE(logging, "EM field stuff: ");
           if (logging >= datatools::logger::PRIO_TRACE) {
-            emf_working->tree_dump(std::cerr, "", "[trace] ");
+            emf_working->tree_dump(std::clog, "", "[trace]: ");
           }
           g4_module_log->SetFieldManager(emf_working->grab_field_manager(),
                                          emf_working->is_propagate_to_daughters());
@@ -953,7 +953,7 @@ namespace mctools {
       _SHPF_.initialize();
       DT_LOG_NOTICE(_logprio(), "SHPF: The step hit processors have been loaded from the SHPF.");
       if (_logprio() >= datatools::logger::PRIO_DEBUG) {
-        _SHPF_.tree_dump(std::clog, "SHPF: ", "debug: ");
+        _SHPF_.tree_dump(std::clog, "SHPF: ", "[debug]: ");
       }
 
       /*****************************************************************
@@ -1216,7 +1216,7 @@ namespace mctools {
           const std::string & sensitive_category = iSD->first;
           sensitive_detector * SD = iSD->second;
           DT_LOG_NOTICE(_logprio(),"Sensitive detector '" << sensitive_category << "' : ");
-          SD->tree_dump(std::clog, "", "notice: ");
+          SD->tree_dump(std::clog, "", "[notice]: ");
         }
       }
 

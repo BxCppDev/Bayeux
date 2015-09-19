@@ -431,9 +431,9 @@ namespace mctools {
       if (! gid.is_valid()) {
         // 2014-07-08, FM: Development/debugging:
         if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-          the_step_hit.tree_dump(std::clog, "Current step hit: ", "TRACE: ");
+          the_step_hit.tree_dump(std::clog, "Current step hit: ", "[trace]: ");
           DT_LOG_TRACE(get_logging_priority(), "Calo block locator : " );
-          _calo_block_locator_.dump(std::clog);
+          _calo_block_locator_.tree_dump(std::clog, "", "[trace]: ");
           DT_LOG_TRACE(get_logging_priority(), "Calo block type    = " << _calo_block_type_);
           DT_LOG_TRACE(get_logging_priority(), "Hit position start = " << std::setprecision(15) << hit_position_start / CLHEP::mm);
           DT_LOG_TRACE(get_logging_priority(), "Hit position stop  = " << std::setprecision(15) << hit_position_stop  / CLHEP::mm);

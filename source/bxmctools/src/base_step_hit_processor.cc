@@ -296,7 +296,7 @@ th row logic_error(message.str());
           capacity =(size_t) cap;
         }
         setup_private_pool(capacity);
-        if (is_debug()) _private_pool->dump(std::clog, "Private hit pool: ");
+        if (is_debug()) _private_pool->dump(std::clog, "Private hit pool: ", "[debug]: ");
       }
     }
 

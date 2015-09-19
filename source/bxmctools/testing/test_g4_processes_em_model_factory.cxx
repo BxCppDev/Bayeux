@@ -21,7 +21,7 @@ int main(int argc_, char ** argv_)
   try {
     std::clog << "Test program for class 'mctools::g4::processes::em_model_factory'!" << std::endl;
 
-    bool debug = false;
+    // bool debug = false;
 
     int iarg = 1;
     while(iarg < argc_) {
@@ -29,7 +29,7 @@ int main(int argc_, char ** argv_)
       if (token[0] == '-') {
         std::string option = token;
         if ((option == "-d") ||(option == "--debug")) {
-          debug = true;
+          // debug = true;
         }
         else {
           std::clog << "warning: ignoring option '" << option << "'!" << std::endl;
