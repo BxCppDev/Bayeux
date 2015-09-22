@@ -1,6 +1,6 @@
 /* cut_service.cc
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,9 +120,7 @@ namespace cuts {
     return EXIT_SUCCESS;
   }
 
-  // ctor:
-  cut_service::cut_service () : base_service ("cuts::cut_service",
-                                              "A cut service")
+  cut_service::cut_service () : base_service ("cuts", "Cut service")
   {
     _owns_manager_ = false;
     _cut_manager_ = 0;
