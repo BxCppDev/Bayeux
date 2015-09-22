@@ -1,6 +1,6 @@
 /* dummy_service.cc
  *
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,66 +23,63 @@
 
 namespace datatools {
 
-  /** Auto-registration of this service class in a central service Db */
+  /// Auto-registration of this service class in a central service Db
   DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(dummy_service, "datatools::dummy_service")
 
-  const std::string & dummy_service::get_label () const
+  const std::string & dummy_service::get_label() const
   {
     return _label_;
   }
 
-  void dummy_service::set_label (const std::string & a_label)
+  void dummy_service::set_label(const std::string & a_label)
   {
     _label_ = a_label;
     return;
   }
 
-  bool dummy_service::is_initialized () const
+  bool dummy_service::is_initialized() const
   {
-    return ! _label_.empty ();
+    return ! _label_.empty();
   }
 
-  int dummy_service::initialize (const datatools::properties & a_config,
+  int dummy_service::initialize(const datatools::properties & a_config,
                                  service_dict_type & /*a_service_dict*/)
   {
-    if (a_config.has_key ("label"))
-      this->set_label (a_config.fetch_string ("label"));
+    if(a_config.has_key("label")) {
+      this->set_label(a_config.fetch_string("label"));
+    }
 
     return EXIT_SUCCESS;
   }
 
-  int dummy_service::reset ()
+  int dummy_service::reset()
   {
     _label_ = "";
     return EXIT_SUCCESS;
   }
 
-  // ctor:
-  dummy_service::dummy_service ()
-    : base_service ("datatools::dummy",
-                    "A dummy service")
+  dummy_service::dummy_service() : base_service("dummy", "A dummy service")
   {
     _label_ = "";
     return;
   }
 
-  // dtor:
-  dummy_service::~dummy_service ()
+  dummy_service::~dummy_service()
   {
-    if (dummy_service::is_initialized ())
+    if(dummy_service::is_initialized())
       {
-        dummy_service::reset ();
+        dummy_service::reset();
       }
     return;
   }
 
-  void dummy_service::tree_dump (std::ostream & a_out ,
+  void dummy_service::tree_dump(std::ostream & a_out ,
                                  const std::string & a_title,
                                  const std::string & a_indent,
                                  bool a_inherit) const
   {
-    this->base_service::tree_dump (a_out, a_title, a_indent, true);
-    a_out << a_indent << i_tree_dumpable::inherit_tag (a_inherit)
+    this->base_service::tree_dump(a_out, a_title, a_indent, true);
+    a_out << a_indent << i_tree_dumpable::inherit_tag(a_inherit)
           << "Label : '" << _label_ << "'" << std::endl;
 
     return;
@@ -90,7 +87,6 @@ namespace datatools {
 
 }  // end of namespace datatools
 
-// end of dummy_service.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

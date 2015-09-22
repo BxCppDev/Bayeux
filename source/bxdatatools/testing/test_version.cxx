@@ -9,9 +9,6 @@
 // Standard Library
 #include <iostream>
 
-// Third Party
-// -
-
 // This Project
 #include "datatools/exception.h"
 

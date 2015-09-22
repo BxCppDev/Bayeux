@@ -1,14 +1,19 @@
 // -*- mode: c++; -*-
 // test_factory.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <stdexcept>
 
-#include <datatools/factory_macros.h>
+// Third Party:
+// - Boost:
 #include <boost/shared_ptr.hpp>
+
+// This Project:
+#include <datatools/factory_macros.h>
 
 /**
  *
@@ -221,5 +226,3 @@ int main (int /*argc_*/ , char ** /*argv_*/)
   std::clog << "End." << std::endl;
   return error_code;
 }
-
-// end of test_factory.cxx

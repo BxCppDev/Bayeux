@@ -2,6 +2,7 @@
 // test_things_macros.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -10,6 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
+// This Project:
 #include <datatools/things.h>
 #include <datatools/things_macros.h>
 #include <datatools/properties.h>
@@ -88,5 +90,3 @@ int main (/*int argc_ , char ** argv_*/)
     }
   return error_code;
 }
-
-// end of test_things_macros.cxx

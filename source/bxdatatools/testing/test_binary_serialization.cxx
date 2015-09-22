@@ -101,5 +101,3 @@ int main (int /* argc_ */ , char ** /* argv_ */)
 
   return 0;
 }
-
-/* end of test_binary_serialization.cxx */

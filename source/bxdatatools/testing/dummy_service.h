@@ -1,9 +1,9 @@
 /* dummy_service.h
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2012-12-15
+ * Last modified : 2015-09-22
  *
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,62 +28,64 @@
  *
  */
 
-#ifndef __datatools__dummy_service_h
-#define __datatools__dummy_service_h 1
+#ifndef DATATOOLS_DUMMY_SERVICE_H
+#define DATATOOLS_DUMMY_SERVICE_H 1
 
+// Standard Library:
 #include <string>
 
+// This project:
 #include <datatools/base_service.h>
 #include <datatools/service_tools.h>
 
 namespace datatools {
 
-    class properties;
+  class properties;
 
-    class dummy_service : public base_service
-    {
-    public:
+  /// \brief A dummy service
+  class dummy_service : public base_service
+  {
+  public:
 
-      const std::string & get_label () const;
+    const std::string & get_label() const;
 
-      void set_label (const std::string & a_label);
+    void set_label(const std::string & a_label);
 
-    public:
+    /// Check initialization
+    virtual bool is_initialized() const;
 
-      virtual bool is_initialized () const;
+    /// Initialize
+    virtual int initialize(const datatools::properties & a_config,
+                           service_dict_type & a_service_dict);
 
-      virtual int initialize (const datatools::properties & a_config,
-                              service_dict_type & a_service_dict);
+    /// Reset
+    virtual int reset();
 
-      virtual int reset ();
+    /// Default constructor
+    dummy_service();
 
-    public:
+    /// Destructor
+    virtual ~dummy_service();
 
-      // ctor:
-      dummy_service ();
+    /// Smart print:
+    virtual void tree_dump(std::ostream & a_out         = std::clog,
+                           const std::string & a_title  = "",
+                           const std::string & a_indent = "",
+                           bool a_inherit          = false) const;
 
-      // dtor:
-      virtual ~dummy_service ();
+  private:
 
-      virtual void tree_dump (std::ostream & a_out         = std::clog,
-                              const std::string & a_title  = "",
-                              const std::string & a_indent = "",
-                              bool a_inherit          = false) const;
+    std::string _label_; //!< Label
 
-    private:
+    // Registration :
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(dummy_service);
 
-      std::string _label_;
-
-      // Registration :
-      DATATOOLS_SERVICE_REGISTRATION_INTERFACE (dummy_service);
-
-    };
+  };
 
 }  // end of namespace datatools
 
-#endif // __datatools__dummy_service_h
+#endif // DATATOOLS_DUMMY_SERVICE_H
 
-// end of dummy_service.h
 /*
 ** Local Variables: --
 ** mode: c++ --

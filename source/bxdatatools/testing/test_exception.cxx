@@ -3,15 +3,11 @@
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
 
-// Ourselves
+// Ourselves:
 #include "datatools/exception.h"
 
-// Standard Library
+// Standard Library:
 #include <iostream>
-// Third Party
-// - A
-
-// This Project
 
 //! throw an exception if parameter is negative
 void check_throws(int i) {

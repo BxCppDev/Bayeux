@@ -1,10 +1,7 @@
 /// \file datatools/test_configuration_variant_model.cxx
 
-// - Ourselves
+// Ourselves:
 #include <datatools/configuration/variant_model.h>
-
-// - Boost
-// #include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/datatools_config.h>

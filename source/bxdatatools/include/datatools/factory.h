@@ -53,6 +53,7 @@ namespace datatools {
 
     typedef BaseType                       base_type;
     typedef boost::function<base_type*() > factory_type;
+    // typedef boost::function<base_type*(const std::string &) > named_factory_type;
 
     /* Future addons:
     struct factory_metadata {

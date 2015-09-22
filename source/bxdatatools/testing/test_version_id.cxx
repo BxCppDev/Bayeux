@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
 // test_version_id.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -8,6 +9,7 @@
 #include <stdexcept>
 #include <vector>
 
+// This project:
 #include <datatools/version_id.h>
 
 using namespace std;
@@ -325,5 +327,3 @@ int main (/*int argc_ , char ** argv_*/)
     }
   return error_code;
 }
-
-// end of test_version_id.cxx

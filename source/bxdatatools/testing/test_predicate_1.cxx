@@ -2,6 +2,7 @@
 // test_predicate_1.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -10,11 +11,11 @@
 #include <stdexcept>
 #include <vector>
 
+// This Project:
 #include <datatools/i_predicate.h>
 #include <datatools/handle.h>
 
 using namespace std;
-
 
 /** Some test class
  */
@@ -200,5 +201,3 @@ int main (// int argc_ , char ** argv_
     }
   return error_code;
 }
-
-// end of test_predicate_1.cxx

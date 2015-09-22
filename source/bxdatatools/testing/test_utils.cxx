@@ -1,8 +1,9 @@
 /* test_utils.cxx */
-// Ourselves
+
+// Ourselves:
 #include <datatools/utils.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
@@ -10,10 +11,7 @@
 #include <wordexp.h>
 #include <bitset>
 
-// Third Party
-// - A
-
-// This Project
+// This Project:
 #include <datatools/datatools_config.h>
 #include <datatools/ioutils.h>
 #include <datatools/kernel.h>
@@ -449,5 +447,3 @@ int main(int /*argc*/, const char** /*argv*/)
   }
   return EXIT_SUCCESS;
 }
-
-// end of test_utils.cxx

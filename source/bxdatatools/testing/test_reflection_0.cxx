@@ -1,16 +1,19 @@
 /* test_reflection_0.cxx */
 
+// Standard Library:
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
+// Third Party:
+// - Camp:
 #include <camp/invalidenum.hpp>
 #include <camp/invalidclass.hpp>
 
+// This Project:
 #include <datatools/logger.h>
-
 // Introspectable classes :
 #include <datatools/logger.h>
 #include <datatools/event_id.h>
@@ -326,5 +329,3 @@ int main (// int argc_, char ** argv_
 
   return (EXIT_SUCCESS);
 }
-
-/* end of test_reflection_0.cxx */

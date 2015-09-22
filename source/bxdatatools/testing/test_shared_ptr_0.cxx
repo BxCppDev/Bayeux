@@ -2,6 +2,7 @@
 // test_shared_ptr_0.cxx
 // Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -10,12 +11,15 @@
 #include <stdexcept>
 #include <vector>
 
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
+// This Project:
 #include <datatools/serialization_macros.h>
 
 #if defined(__clang__)
@@ -228,5 +232,3 @@ int main (/*int argc_ , char ** argv_*/)
     }
   return error_code;
 }
-
-// end of test_shared_ptr_0.cxx

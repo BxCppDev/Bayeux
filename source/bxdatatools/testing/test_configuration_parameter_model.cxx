@@ -1,10 +1,7 @@
 /// \file datatools/test_configuration_parameter_model.cxx
 
-// - Ourselves
+// Ourselves:
 #include <datatools/configuration/parameter_model.h>
-
-// - Boost
-// #include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/datatools_config.h>

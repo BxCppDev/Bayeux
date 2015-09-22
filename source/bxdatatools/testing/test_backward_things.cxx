@@ -1,4 +1,4 @@
-// Standard library
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>

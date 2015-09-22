@@ -1,30 +1,29 @@
 // test_things_3.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
-#include <datatools/serialization_macros.h>
-#include <datatools/i_serializable.h>
-#include <datatools/archives_instantiation.h>
-
+// Third Party:
+// - Boost:
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
 
+// This Project:
+#include <datatools/serialization_macros.h>
+#include <datatools/i_serializable.h>
+#include <datatools/archives_instantiation.h>
 // The serializable 'things' container :
 #include <datatools/things.h>
-
 // The serializable 'properties' container :
 #include <datatools/properties.h>
-
 #include <datatools_test_my_data.cc>
 #include <datatools_test_my_data.ipp>
-
 // the datatools writer and reader classes:
 #include <datatools/io_factory.h>
-
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
 
@@ -398,7 +397,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_things_3.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

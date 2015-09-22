@@ -1,9 +1,10 @@
-/* datatools test_types.cxx program
- */
+// datatools test_types.cxx program
 
+// Standard Library:
 #include <iostream>
 #include <string>
 
+// This project:
 #include <datatools/types.h>
 
 int main (void)
@@ -19,5 +20,3 @@ int main (void)
 
   return 0;
 }
-
-/* end */

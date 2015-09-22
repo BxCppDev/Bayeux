@@ -5,7 +5,7 @@
  *
  * License:
  *
- * Copyright (C) 2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,7 @@
  *
  * Description:
  *
- *   A base class for complex objects with several
- *   basic attributes.
+ *   A base class for complex objects with several basic attributes.
  *
  */
 
@@ -66,7 +65,7 @@ namespace datatools {
     enriched_base(const std::string & name_,
                   const std::string & display_name_ = "",
                   const std::string & terse_description_ = "",
-                  logger::priority lp_ = logger::PRIO_WARNING);
+                  logger::priority lp_ = logger::PRIO_FATAL);
 
     /// Destructor
     virtual ~enriched_base();
@@ -146,7 +145,7 @@ namespace datatools {
     /// Initialization from a container of properties
     void initialize(const datatools::properties & config_, bool clear_ = false);
 
-    //! \brief Flags for export to a container of properties
+    /// \brief Flags for export to a container of properties
     enum export_config_flags {
       EXPORT_CONFIG_CLEAR             = bit_mask::bit00,
       EXPORT_CONFIG_NAME              = bit_mask::bit01,
@@ -171,9 +170,9 @@ namespace datatools {
 
   private:
 
-    std::string _name_; //!< Name
-    std::string _display_name_; //!< Display name
-    std::string _terse_description_; //!< Description
+    std::string _name_;                  //!< Name
+    std::string _display_name_;          //!< Display name
+    std::string _terse_description_;     //!< Terse description
     logger::priority _logging_priority_; //!< Logging priority threshold
     datatools::properties _auxiliaries_; //!< Container of auxiliary properties
 

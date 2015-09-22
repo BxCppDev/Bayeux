@@ -1,33 +1,32 @@
 // test_things.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
-
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
-#include <datatools/serialization_macros.h>
-#include <datatools/i_serializable.h>
-#include <datatools/archives_instantiation.h>
-
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/export.hpp>
 
+// This Project:
+#include <datatools/serialization_macros.h>
+#include <datatools/i_serializable.h>
+#include <datatools/archives_instantiation.h>
 // The serializable 'things' container :
 #include <datatools/things.h>
 // The serializable 'properties' container :
 #include <datatools/properties.h>
-
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
 
 using namespace std;
 
-/*** the serializable A sample class ***/
-
+/// \brief the serializable A sample class
 class A : public datatools::i_serializable
 {
 
@@ -103,8 +102,7 @@ A::~A ()
 {
 }
 
-/*** serializable B  sample class ***/
-
+/// \brief the serializable B sample class
 class B : public datatools::i_serializable
 {
 public:
@@ -189,7 +187,6 @@ BOOST_CLASS_EXPORT_KEY2 (B, "test_things::B")
 BOOST_CLASS_EXPORT_IMPLEMENT (B)
 //DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(B)
 
-/*** main ***/
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
@@ -475,7 +472,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_things.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

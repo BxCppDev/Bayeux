@@ -1,7 +1,8 @@
 // -*- mode: c++; -*-
 // test_handle_macros.cxx
-// Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -10,6 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
+// This Project:
 #include <datatools/handle_macros.h>
 
 int main (/*int argc_ , char ** argv_*/)
@@ -79,5 +81,3 @@ int main (/*int argc_ , char ** argv_*/)
     }
   return error_code;
 }
-
-// end of test_handle_macros.cxx

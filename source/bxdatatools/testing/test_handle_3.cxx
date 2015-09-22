@@ -1,6 +1,7 @@
 // test_handle_3.cxx
 // Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -9,9 +10,12 @@
 #include <stdexcept>
 #include <vector>
 
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/foreach.hpp>
 
+// This Project:
 #include <datatools/handle.h>
 
 using namespace std;

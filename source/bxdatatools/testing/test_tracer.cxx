@@ -3,18 +3,18 @@
 // Copyright (c) 2013 by François Mauger <mauger@lpccaen.in2p3.fr>
 // Copyright (c) 2013 by Université de Caen Basse-Normandie
 
-// Ourselves
+// Ourselves:
 #include "datatools/tracer.h"
 
-// Standard Library
+// Standard Library:
 #include <iostream>
 #include <cstdlib>
 
-// Third Party
+// Third Party:
 // - Boost
 #include <boost/filesystem.hpp>
 
-// This Project
+// This Project:
 #include "datatools/logger.h"
 
 void test_tracer_1() {

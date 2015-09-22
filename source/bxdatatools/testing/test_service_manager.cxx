@@ -15,17 +15,18 @@
  *
  */
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <list>
 #include <stdexcept>
 
+// This Project:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
-
 #include <datatools/base_service.h>
 #include <datatools/service_manager.h>
 
@@ -283,7 +284,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_service_manager.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

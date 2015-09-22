@@ -1,6 +1,6 @@
 /// \file datatools/test_configuration_variant_manager.cxx
 
-// - Ourselves
+// Ourselves:
 #include <datatools/configuration/variant_registry_manager.h>
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/variant_repository.h>

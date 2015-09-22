@@ -40,6 +40,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // This project (Bayeux/datatools)
+#include <datatools/enriched_base.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/service_tools.h>
 #include <datatools/factory_macros.h>
@@ -58,54 +59,21 @@ namespace datatools {
    *  The base_service class provides the interface of all
    *  datatools-based service objects.
    */
-  class base_service : public datatools::i_tree_dumpable {
+  // class base_service : public datatools::i_tree_dumpable {
+  class base_service : public datatools::enriched_base {
   public:
 
     /// Default constructor
     base_service();
 
     /// Constructor
-    base_service(const std::string& name, const std::string& description = "",
-                 const std::string& version = "");
+    base_service(const std::string& name,
+                 const std::string& display_name = "",
+                 const std::string& description = "",
+                 logger::priority lp = logger::PRIO_FATAL);
 
     /// Destructor
     virtual ~base_service();
-
-    /// Check is the name is set
-    bool has_name() const;
-
-    /// Set the name of the service
-    void set_name(const std::string&);
-
-    /// Get the name of the service
-    const std::string& get_name() const;
-
-    /// Check is the display name is set
-    bool has_display_name() const;
-
-    /// Set the name of the service
-    void set_display_name(const std::string&);
-
-    /// Get the name of the service
-    const std::string& get_display_name() const;
-
-    /// Check is the description is set
-    bool has_description() const;
-
-    /// Get the description of the service
-    const std::string& get_description() const;
-
-    /// Set the description of the service
-    void set_description(const std::string& description);
-
-    /// @deprecated Check is the version ID is set
-    bool has_version() const;
-
-    /// @deprecated Get the version ID of the service
-    const std::string& get_version() const;
-
-    /// @deprecated Set the version ID of the service
-    void set_version(const std::string& version);
 
     /// Undocumented unused/unimplemented method
     virtual void fetch_dependencies(service_dependency_dict_type& /*dependencies*/) const;
@@ -129,12 +97,6 @@ namespace datatools {
     /// Return the service class
     virtual std::string service_class_id() const = 0;
 
-    /// Set the logging priority threshold
-    void set_logging_priority(datatools::logger::priority);
-
-    /// Return the logging priority threshold
-    datatools::logger::priority get_logging_priority() const;
-
     /// Basic OCD support shared by all inherited modules
     static void common_ocd(datatools::object_configuration_description & ocd_);
 
@@ -151,11 +113,11 @@ namespace datatools {
 
   protected:
 
-    datatools::logger::priority _logging_priority; //!< Logging priority threshold
-    std::string name_;         //!< The name of the service
-    std::string display_name_; //!< The display name of the service
-    std::string description_;  //!< The description of the service
-    std::string version_;      //!< @deprecated The version of the service
+    // datatools::logger::priority _logging_priority; //!< Logging priority threshold
+    // std::string name_;         //!< The name of the service
+    // std::string display_name_; //!< The display name of the service
+    // std::string description_;  //!< The description of the service
+    // std::string version_;      //!< @deprecated The version of the service
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);

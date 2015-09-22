@@ -1,17 +1,19 @@
 /* test_enriched_base.cxx */
 
-// - Boost
+// Third Party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
 
-// - Ourselves
+// This Project:
 #include <datatools/datatools_config.h>
 #include <datatools/logger.h>
 #include <datatools/enriched_base.h>
 #include <datatools/properties.h>
 #include <datatools/io_factory.h>
-
-#include <datatools/enriched_base.ipp>
 #include <datatools/reflection_guard.h>
+
+// Ourselves:
+#include <datatools/enriched_base.ipp>
 
 //#if DATATOOLS_WITH_REFLECTION == 1
 void test_reflection()

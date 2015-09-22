@@ -1,37 +1,40 @@
 // -*- mode: c++ ; -*-
 // test_smart_ref.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This Project:
 #include <datatools/smart_ref.h>
 
 using namespace std;
 
-/*** A dummy class to be referenced by a 'smart_ref' instance ***/
+/// \brief A dummy class to be referenced by a 'smart_ref' instance
 class dummy
 {
-  int __a;
-  int __b;
+private:
+  int _a_;
+  int _b_;
 public:
   dummy (int a_ = 0, int b_ = 0)
   {
-    __a = a_;
-    __b = b_;
+    _a_ = a_;
+    _b_ = b_;
   }
   int get_a () const
   {
-    return __a;
+    return _a_;
   }
   int get_b () const
   {
-    return __b;
+    return _b_;
   }
   void print (ostream & out_) const
   {
-    out_ << '(' << __a << ',' << __b << ')';
+    out_ << '(' << _a_ << ',' << _b_ << ')';
   }
 
   friend ostream & operator<< (ostream & out_, const dummy & d_);
@@ -43,42 +46,12 @@ ostream & operator<< (ostream & out_, const dummy & d_)
   return out_;
 }
 
-/***************************************/
-
 int main (/*int argc_, char ** argv_*/)
 {
   int error_code = EXIT_SUCCESS;
   try
     {
       clog << "Test program for class 'smart_ref'!" << endl;
-
-      // bool debug = false;
-
-      // int iarg = 1;
-      // while (iarg < argc_)
-      //   {
-      //     string token = argv_[iarg];
-      //     if (token[0] == '-')
-      //       {
-      //          string option = token;
-      //          if ((option == "-d") || (option == "--debug"))
-      //            {
-      //              debug = true;
-      //            }
-      //          else
-      //            {
-      //               clog << "warning: ignoring option '" << option << "'!" << endl;
-      //            }
-      //       }
-      //     else
-      //       {
-      //         string argument = token;
-      //         {
-      //           clog << "warning: ignoring argument '" << argument << "'!" << endl;
-      //         }
-      //       }
-      //     iarg++;
-      // }
 
       const size_t SZ = 10;
       dummy t[SZ];
@@ -133,5 +106,3 @@ int main (/*int argc_, char ** argv_*/)
     }
   return (error_code);
 }
-
-// end of test_smart_ref.cxx

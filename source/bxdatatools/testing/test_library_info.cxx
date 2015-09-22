@@ -1,12 +1,13 @@
 // -*- mode: c++ ; -*-
 // test_library_info.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-// This project
+// This project:
 #include <datatools/datatools.h>
 #include <datatools/datatools_config.h>
 #include <datatools/library_info.h>
@@ -163,5 +164,3 @@ int main(int argc_, char * argv_[]) {
   DATATOOLS_FINI();
   return error_code;
 }
-
-// end of test_library_info.cxx

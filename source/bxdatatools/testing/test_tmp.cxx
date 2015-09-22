@@ -2,6 +2,7 @@
  * use of typename in methods of a template class
  */
 
+// Standard Library:
 #include <iostream>
 #include <list>
 
@@ -17,7 +18,7 @@ public:
   {
     __items.clear ();
   }
-  void add (const T & item_)  
+  void add (const T & item_)
   {
     __items.push_back (item_);
   }
@@ -25,10 +26,10 @@ public:
   {
     std::cout << "begin" << std::endl;
     for (typename std::list<T>::const_iterator i = __items.begin ();
-	 i != __items.end ();
-	 i++)
+         i != __items.end ();
+         i++)
       {
-	std::cout << *i << std::endl;
+        std::cout << *i << std::endl;
       }
     std::cout << "end" << std::endl;
   }
@@ -37,7 +38,7 @@ public:
 int main (void)
 {
   col_t<int> ints;
-  
+
   for (int i = 0; i < 4; i++)
     {
       ints.add (i);

@@ -77,9 +77,9 @@ namespace datatools {
       static const std::string & minus_infinity_real_repr();
     };
 
-    static const int REAL_PRECISION  = 16; /// Default precision for double
-    static const int REAL8_PRECISION = 16; /// Default precision for double
-    static const int REAL4_PRECISION = 8;  /// Default precision for float
+    static const int REAL_PRECISION  = 16; ///< Default precision for double
+    static const int REAL8_PRECISION = 16; ///< Default precision for double
+    static const int REAL4_PRECISION = 8;  ///< Default precision for float
 
     /*! \brief I/O indenter class
      */

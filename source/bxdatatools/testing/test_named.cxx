@@ -1,12 +1,14 @@
 // -*- mode: c++; -*-
 // test_named.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <stdexcept>
 
+// This Project:
 #include <datatools/i_named.h>
 
 using namespace std;
@@ -14,40 +16,29 @@ using namespace std;
 struct foo : public datatools::i_named
 {
 private:
-  string __prefix;
-  int    __id;
+  string _prefix_;
+  int    _id_;
+
 public:
   foo (const string & prefix_ , int id_) :
-    __prefix (prefix_), __id (id_)
+    _prefix_ (prefix_), _id_ (id_)
   {
   }
   virtual string get_name ()
   {
     ostringstream name_ss;
-    name_ss << __prefix << __id;
+    name_ss << _prefix_ << _id_;
     return name_ss.str ();
   }
 };
 
-int main (// int argc_ , char ** argv_
-          )
+int main(int /* argc_ */, char ** /* argv_ */ )
 {
   int error_code = EXIT_SUCCESS;
   try
     {
 
       clog << "Test of the 'i_named' interface..." << endl;
-      // bool debug = false;
-
-      // int iarg =  1;
-      // while (iarg < argc_)
-      //   {
-      //     string arg = argv_[iarg];
-
-      //     if ((arg == "-d") || (arg == "--debug")) debug = true;
-
-      //     iarg++;
-      //   }
 
       foo t1 ("t",1);
       foo t2 ("t",2);
@@ -70,5 +61,3 @@ int main (// int argc_ , char ** argv_
     }
   return error_code;
 }
-
-// end of test_named.cxx

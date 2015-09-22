@@ -1,10 +1,12 @@
 // test_smart_filename.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
+// This Project:
 #include <datatools/smart_filename.h>
 #include <datatools/properties.h>
 #include <datatools/utils.h>
@@ -297,7 +299,6 @@ int main (/* int argc_, char ** argv_ */)
   return (error_code);
 }
 
-// end of test_smart_filename.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
 // test_cloneable.cxx
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -8,6 +9,7 @@
 #include <stdexcept>
 #include <vector>
 
+// This Project:
 #include <datatools/i_cloneable.h>
 
 using namespace std;
@@ -115,5 +117,3 @@ int main (int /* argc_ */, char ** /*argv_*/)
     }
   return error_code;
 }
-
-// end of test_cloneable.cxx

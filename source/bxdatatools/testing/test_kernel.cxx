@@ -6,7 +6,7 @@
 #include <string>
 #include <exception>
 
-// This project
+// This project:
 #include <datatools/datatools.h>
 #include <datatools/kernel.h>
 #include <datatools/exception.h>
@@ -41,5 +41,3 @@ int main(int argc_, char * argv_[]) {
   }
   return EXIT_SUCCESS;
 }
-
-// end of test_kernel.cxx

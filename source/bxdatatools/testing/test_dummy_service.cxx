@@ -15,18 +15,20 @@
  *
  */
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <list>
 #include <stdexcept>
 
+// This project:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
-
 #include <datatools/utils.h>
 
+// This test:
 #include "dummy_service.h"
 #include "dummy_service.cc"
 
@@ -102,7 +104,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-// end of test_dummy_service.cxx
 /*
 ** Local Variables: --
 ** mode: c++ --

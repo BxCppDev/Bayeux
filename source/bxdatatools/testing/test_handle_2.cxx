@@ -1,6 +1,7 @@
 // test_handle_2.cxx
 // Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -9,6 +10,8 @@
 #include <stdexcept>
 #include <vector>
 
+// Third Party:
+// - Boost:
 #include <boost/cstdint.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -26,6 +29,7 @@
 #pragma clang diagnostic pop
 #endif
 
+// This Project:
 #include <datatools/serialization_macros.h>
 #include <datatools/handle.h>
 #include <datatools/handle_pool.h>
@@ -238,5 +242,3 @@ int main (int /*argc_*/ , char ** /*argv_*/)
     }
   return error_code;
 }
-
-// end of test_handle_2.cxx

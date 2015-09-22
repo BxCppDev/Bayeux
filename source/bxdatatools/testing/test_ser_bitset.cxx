@@ -7,7 +7,6 @@
 #include <sstream>
 #include <stdexcept>
 
-
 // Third party:
 // - Boost:
 #include <boost/filesystem.hpp>
@@ -172,5 +171,3 @@ int main (int argc_, char ** argv_)
   //#endif
   return (EXIT_SUCCESS);
 }
-
-/* end of test_ser_bitset.cxx */

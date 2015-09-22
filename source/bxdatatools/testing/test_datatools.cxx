@@ -1,14 +1,14 @@
 // test_datatools.cxx
 
-// - Ourselves
+// Ourselves:
 #include <datatools/datatools_config.h>
 #include <datatools/version.h>
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
-
 
 int main (/* int argc_, char ** argv_ */) {
   try {

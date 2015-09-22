@@ -1,10 +1,10 @@
 // -*- mode: c++; -*-
 // test_multi_properties_0.cxx
 
+// This Project:
 #include <datatools/multi_properties.h>
 
-int main (// int argc_ , char ** argv_
-          )
+int main (int /* argc_ */, char ** /* argv_ */)
 {
   using namespace std;
   {
