@@ -1,9 +1,9 @@
 /* test_service_manager.cxx
  * Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-09
- * Last modified : 2013-03-09
+ * Last modified : 2015-09-22
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * Description:
  *
@@ -16,23 +16,25 @@
  *
  */
 
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <list>
 #include <stdexcept>
 
+// Third Party:
+// - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
-
 #include <datatools/base_service.h>
 #include <datatools/service_manager.h>
 
+// This project:
 #include <geomtools/geometry_service.h>
 #include <geomtools/manager.h>
-
 #include <geomtools/placement.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_drawer.h>
