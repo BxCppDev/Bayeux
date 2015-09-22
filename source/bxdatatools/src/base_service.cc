@@ -42,7 +42,6 @@ DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
 // Constructor
 base_service::base_service()
 {
-  set_logging_priority(datatools::logger::PRIO_FATAL);
 }
 
 // Constructor
