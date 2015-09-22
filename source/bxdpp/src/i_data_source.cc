@@ -18,13 +18,17 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/exception.h>
 
+// Ourselves:
 #include <dpp/i_data_source.h>
 
 namespace dpp {

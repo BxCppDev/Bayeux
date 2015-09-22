@@ -1,6 +1,5 @@
 // -*- mode: c++ ; -*-
-/* ocd_support.cc
- */
+/// ocd_support.cc
 
 // Ourselves:
 #include <dpp/ocd_support.h>
@@ -656,5 +655,3 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(dpp::utils_module,"dpp::utils_module")
-
-// end of ocd_support.cc

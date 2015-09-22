@@ -260,7 +260,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of dump_module.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

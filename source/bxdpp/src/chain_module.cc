@@ -19,11 +19,15 @@
  *
  */
 
+// Ourselves:
 #include <dpp/chain_module.h>
 
+// Standard Library:
 #include <stdexcept>
 #include <sstream>
 
+// Third Party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
@@ -220,7 +224,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of chain_module.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

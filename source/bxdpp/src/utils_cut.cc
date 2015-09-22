@@ -1,17 +1,20 @@
 // -*- mode: c++ ; -*-
-/* utils_cut.cc
- */
+// utils_cut.cc
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/exception.h>
 
+// This project:
 #include <dpp/utils_cut.h>
 
 namespace dpp {
@@ -210,7 +213,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of utils_cut.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

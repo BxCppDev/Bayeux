@@ -19,15 +19,19 @@
  *
  */
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <dpp/skip_module.h>
 
 namespace dpp {
@@ -227,7 +231,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of skip_module.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

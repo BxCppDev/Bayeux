@@ -1,9 +1,9 @@
 /// \file dpp/context_service.h
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-02-16
+ * Last modified : 2015-09-22
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,62 +51,60 @@ namespace datatools {
 
 namespace dpp {
 
-  /// \brief A service that handles a context object store implemented as a datatools' multi_properties container
-  class context_service :
-    public datatools::base_service
+  /// \brief A service that handles a context object store implemented as a datatools::multi_properties container
+  class context_service : public datatools::base_service
   {
   public:
 
-    const datatools::multi_properties & get_store () const;
+    /// Return a const reference to the internal store
+    const datatools::multi_properties & get_store() const;
 
-    datatools::multi_properties & grab_store ();
+    /// Return a mutable reference to the internal store
+    datatools::multi_properties & grab_store();
 
-    const datatools::multi_properties & operator () () const;
+    /// Return a const reference to the internal store
+    const datatools::multi_properties & operator()() const;
 
-    datatools::multi_properties & operator () ();
+    /// Return a mutable reference to the internal store
+    datatools::multi_properties & operator()();
 
-    bool is_debug () const;
+    /// Check initialization
+    virtual bool is_initialized() const;
 
-    void set_debug (bool);
-
-    bool is_verbose () const;
-
-    void set_verbose (bool);
-
-    virtual bool is_initialized () const;
-
-    virtual int initialize (const datatools::properties & a_config,
+    /// Initialize
+    virtual int initialize(const datatools::properties & a_config,
                             datatools::service_dict_type & a_service_dict);
 
-    virtual int reset ();
+    /// Reset
+    virtual int reset();
 
-  public:
+    /// Default constructor
+    context_service();
 
-    // ctor:
-    context_service ();
+    /// Destructor
+    virtual ~context_service();
 
-    // dtor:
-    virtual ~context_service ();
-
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
+    /// Smart print
+    virtual void tree_dump(std::ostream & a_out         = std::clog,
                             const std::string & a_title  = "",
                             const std::string & a_indent = "",
                             bool a_inherit               = false) const;
 
   private:
 
-    bool initialized_;
-    bool debug_;
-    bool verbose_;
+    // Management:
+    bool initialized_; //!< Initialization flag
 
-    datatools::multi_properties * store_;
+    // Configuration:
+    std::string load_filename_; //!< Name of the file from which the store is loaded
+    std::string store_filename_; //!< Name of the file to which the store is saved
+    std::string backup_filename_; //!< name of the backup file
 
-    std::string load_filename_;
-    std::string store_filename_;
-    std::string backup_filename_;
+    // Internal data:
+    datatools::multi_properties * store_; //!< Internal store
 
     // Registration :
-    DATATOOLS_SERVICE_REGISTRATION_INTERFACE (context_service);
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(context_service);
 
   };
 

@@ -1,6 +1,6 @@
 /* context_service.cc
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,216 +19,173 @@
  *
  */
 
+// Standard library:
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/multi_properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 
+// This project:
 #include <dpp/dpp_config.h>
-#include <dpp/context_service.h>
 
+// Ourselves:
+#include <dpp/context_service.h>
 
 namespace dpp {
 
-  /** Auto-registration of this service class in a central service Db */
+  /// Auto-registration of this service class in a central service Db
   DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(context_service, "dpp::context_service")
 
-  bool context_service::is_debug () const
+  const datatools::multi_properties & context_service::get_store() const
   {
-    return debug_;
-  }
-
-  void context_service::set_debug (bool a_debug)
-  {
-    debug_ = a_debug;
-    return;
-  }
-
-  bool context_service::is_verbose () const
-  {
-    return verbose_;
-  }
-
-  void context_service::set_verbose (bool a_verbose)
-  {
-    verbose_ = a_verbose;
-    return;
-  }
-
-  const datatools::multi_properties &
-  context_service::get_store () const
-  {
-    DT_THROW_IF (! is_initialized (),
+    DT_THROW_IF (! is_initialized(),
                  std::logic_error,
-                 "Service '" << get_name () << "' is not initialized !");
+                 "Service '" << get_name() << "' is not initialized !");
     return *store_;
   }
 
-  datatools::multi_properties &
-  context_service::grab_store ()
+  datatools::multi_properties & context_service::grab_store()
   {
-    DT_THROW_IF (! is_initialized (),
+    DT_THROW_IF (! is_initialized(),
                  std::logic_error,
-                 "Service '" << get_name () << "' is not initialized !");
+                 "Service '" << get_name() << "' is not initialized !");
     return *store_;
   }
 
-  const datatools::multi_properties &
-  context_service::operator () () const
+  const datatools::multi_properties & context_service::operator()() const
   {
-    return get_store ();
+    return get_store();
   }
 
-  datatools::multi_properties &
-  context_service::operator () ()
+  datatools::multi_properties & context_service::operator()()
   {
-    return grab_store ();
+    return grab_store();
   }
 
-  bool context_service::is_initialized () const
+  bool context_service::is_initialized() const
   {
     return initialized_;
   }
 
-  int context_service::initialize (const datatools::properties & a_config,
-                                   datatools::service_dict_type & /*a_service_dict*/)
+  int context_service::initialize(const datatools::properties & a_config,
+                                  datatools::service_dict_type & /*a_service_dict*/)
   {
-    DT_THROW_IF (is_initialized (),
-                 std::logic_error,
-                 "Service '" << get_name () << "' is already initialized !");
-    if (a_config.has_flag ("debug")) {
-        set_debug (true);
-      }
+    DT_THROW_IF(is_initialized(),
+                std::logic_error,
+                "Service '" << get_name() << "' is already initialized !");
 
-    if (a_config.has_flag ("verbose")) {
-        set_verbose (true);
-      }
+    this->datatools::base_service::common_initialize(a_config);
 
-    if (load_filename_.empty ()) {
-        if (a_config.has_key ("load.file")) {
-            load_filename_ = a_config.fetch_string ("load.file");
-          }
+    if (load_filename_.empty()) {
+      if (a_config.has_key("load.file")) {
+        load_filename_ = a_config.fetch_string("load.file");
       }
+    }
 
-    if (! load_filename_.empty ()) {
-        if (backup_filename_.empty ()) {
-            if (a_config.has_key ("backup.file")) {
-                backup_filename_ = a_config.fetch_string ("backup.file");
-              }
-          }
+    if (! load_filename_.empty()) {
+      if (backup_filename_.empty()) {
+        if (a_config.has_key("backup.file")) {
+          backup_filename_ = a_config.fetch_string("backup.file");
+        }
       }
+    }
 
-    if (store_filename_.empty ()) {
-        if (a_config.has_key ("store.file")) {
-            store_filename_ = a_config.fetch_string ("store.file");
-          }
+    if (store_filename_.empty()) {
+      if (a_config.has_key("store.file")) {
+        store_filename_ = a_config.fetch_string("store.file");
       }
+    }
 
     store_ = new datatools::multi_properties;
-    store_->set_debug (debug_);
-    if (! load_filename_.empty ()) {
-        std::string dummy = load_filename_;
-        datatools::fetch_path_with_env (dummy);
-        if (boost::filesystem::exists (dummy)) {
-            if (is_verbose ()) {
-                DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                              "Service '" << get_name ()
-                              << "' is loading from file '"
-                              << load_filename_ << "' !");
-              }
-            store_->read (dummy);
-            if (! backup_filename_.empty ()) {
-                std::string dummy2 = backup_filename_;
-                datatools::fetch_path_with_env (dummy2);
-                if (is_verbose ()) {
-                  DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                                "Service '" << get_name () << "' is backuping in file '"
-                                << dummy2 << "' !");
-                  }
-                store_->write (dummy2);
-              }
-          } else {
-            DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                           "Service '" << get_name ()
-                           << "' cannot load from file '"
-                           << dummy << "' !");
-          }
+    if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
+      store_->set_debug(true);
+    }
+
+    if (! load_filename_.empty()) {
+      std::string dummy = load_filename_;
+      datatools::fetch_path_with_env(dummy);
+      if (boost::filesystem::exists(dummy)) {
+        DT_LOG_NOTICE(get_logging_priority(),
+                      "Service '" << get_name()
+                      << "' is loading from file '"
+                      << load_filename_ << "' !");
+        store_->read(dummy);
+        if (! backup_filename_.empty()) {
+          std::string dummy2 = backup_filename_;
+          datatools::fetch_path_with_env(dummy2);
+          DT_LOG_NOTICE(get_logging_priority(),
+                        "Service '" << get_name() << "' is backuping in file '"
+                        << dummy2 << "' !");
+          store_->write(dummy2);
+        }
+      } else {
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                       "Service '" << get_name()
+                       << "' cannot load from file '"
+                       << dummy << "' !");
       }
+    }
     initialized_ = true;
     return EXIT_SUCCESS;
   }
 
-  int context_service::reset ()
+  int context_service::reset()
   {
-    DT_THROW_IF (! is_initialized (),
-                 std::logic_error,
-                 "Service '" << get_name () << "' is not initialized !");
+    DT_THROW_IF(! is_initialized(),
+                std::logic_error,
+                "Service '" << get_name() << "' is not initialized !");
+    initialized_ = false;
 
     if (store_ != 0) {
-        if (! store_filename_.empty ()) {
-            if (is_verbose ()) {
-              DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE,
-                            "Service '" << get_name ()
-                            << "' is storing in file '"
-                            << store_filename_ << "' !");
-            }
-            std::string dummy = store_filename_;
-            datatools::fetch_path_with_env (dummy);
-            store_->write (dummy);
-          }
-        delete store_;
-        store_ = 0;
+      if (! store_filename_.empty()) {
+        DT_LOG_NOTICE(get_logging_priority(),
+                      "Service '" << get_name()
+                      << "' is storing in file '"
+                      << store_filename_ << "' !");
+        std::string dummy = store_filename_;
+        datatools::fetch_path_with_env(dummy);
+        store_->write(dummy);
       }
+      delete store_;
+      store_ = 0;
+    }
 
-    load_filename_.clear ();
-    store_filename_.clear ();
-    backup_filename_.clear ();
-    debug_ = false;
-    verbose_ = false;
-    initialized_ = false;
+    load_filename_.clear();
+    store_filename_.clear();
+    backup_filename_.clear();
     return EXIT_SUCCESS;
   }
 
-  // ctor:
-  context_service::context_service ()
-    : datatools::base_service ("dpp::context_service",
-                               "Context service")
+  context_service::context_service()
   {
     initialized_ = false;
-    debug_ = false;
-    verbose_ = false;
     store_ = 0;
     return;
   }
 
-  // dtor:
-  context_service::~context_service ()
+  context_service::~context_service()
   {
-    if (this->context_service::is_initialized ()){
-        this->context_service::reset ();
-      }
+    if (this->context_service::is_initialized()) {
+      this->context_service::reset();
+    }
     return;
   }
 
-  void context_service::tree_dump (std::ostream & a_out ,
-                                   const std::string & a_title,
-                                   const std::string & a_indent,
-                                   bool a_inherit) const
+  void context_service::tree_dump(std::ostream & a_out ,
+                                  const std::string & a_title,
+                                  const std::string & a_indent,
+                                  bool a_inherit) const
   {
     namespace du = datatools;
-    this->base_service::tree_dump (a_out, a_title, a_indent, true);
-
-    a_out << a_indent << du::i_tree_dumpable::tag
-          << "Debug : " << debug_ << " " << std::endl;
-
-    a_out << a_indent << du::i_tree_dumpable::tag
-          << "Verbose : " << verbose_ << " " << std::endl;
+    this->datatools::base_service::tree_dump(a_out, a_title, a_indent, true);
 
     a_out << a_indent << du::i_tree_dumpable::tag
           << "Load filename   : '" << load_filename_ << "' " << std::endl;
@@ -240,15 +197,15 @@ namespace dpp {
           << "Store filename  : '" << store_filename_ << "' " << std::endl;
 
     if (store_ != 0) {
-        a_out << a_indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-              << "Store : [" << store_ << "] " << std::endl;
-        std::ostringstream indent_ss;
-        indent_ss << a_indent << du::i_tree_dumpable::inherit_skip_tag (a_inherit);
-        store_->tree_dump (a_out, "", indent_ss.str ());
-      } else {
-        a_out << a_indent << du::i_tree_dumpable::inherit_tag (a_inherit)
-              << "Store : <none>" << std::endl;
-      }
+      a_out << a_indent << du::i_tree_dumpable::inherit_tag(a_inherit)
+            << "Store : [" << store_ << "] " << std::endl;
+      std::ostringstream indent_ss;
+      indent_ss << a_indent << du::i_tree_dumpable::inherit_skip_tag(a_inherit);
+      store_->tree_dump(a_out, "", indent_ss.str());
+    } else {
+      a_out << a_indent << du::i_tree_dumpable::inherit_tag(a_inherit)
+            << "Store : <none>" << std::endl;
+    }
     return;
   }
 

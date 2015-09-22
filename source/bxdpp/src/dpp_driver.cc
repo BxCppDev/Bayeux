@@ -6,14 +6,14 @@
  */
 
 
-// Ourselves
+// Ourselves:
 #include <dpp/dpp_driver.h>
 
-// Third party
-// - Boost
+// Third party:
+// - Boost:
 #include <boost/foreach.hpp>
 
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/things.h>
 #include <datatools/ioutils.h>
@@ -21,7 +21,7 @@
 #include <datatools/utils.h>
 #include <datatools/library_loader.h>
 
-// This project
+// This project:
 #include <dpp/dpp_config.h>
 #include <dpp/base_module.h>
 #include <dpp/input_module.h>

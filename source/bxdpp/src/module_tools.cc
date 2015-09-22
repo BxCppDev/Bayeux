@@ -19,12 +19,16 @@
  *
  */
 
+// Standard library:
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This project:
 #include <dpp/module_tools.h>
 #include <dpp/base_module.h>
 #include <dpp/module_manager.h>
@@ -246,7 +250,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of module_tools.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

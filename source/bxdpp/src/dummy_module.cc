@@ -19,11 +19,14 @@
  *
  */
 
+// Ourselves:
+#include <dpp/dummy_module.h>
+
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
-#include <dpp/dummy_module.h>
-
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
@@ -177,7 +180,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of dummy_module.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

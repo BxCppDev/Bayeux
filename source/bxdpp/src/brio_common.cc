@@ -5,7 +5,7 @@
  *
  */
 
-
+// Ourselves:
 #include <dpp/brio_common.h>
 
 namespace dpp {
@@ -24,7 +24,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of brio_common.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -19,19 +19,21 @@
  *
  */
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
-// Access to the service manager functionnalities:
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/service_manager.h>
 #include <datatools/things.h>
 #include <datatools/ioutils.h>
-
-// Access to the cut service and its embedded cut manager:
+// - Bayeux/cuts:
 #include <cuts/cut_service.h>
 #include <cuts/cut_manager.h>
 #include <cuts/i_cut.h>
 
+// Ourselves:
 #include <dpp/if_module.h>
 
 namespace dpp {
@@ -398,7 +400,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of if_module.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

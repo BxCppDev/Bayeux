@@ -1,13 +1,16 @@
 // -*- mode: c++ ; -*-
-/* utils_module.cc
- */
+// utils_module.cc
 
+// Ourselves:
 #include <dpp/utils_module.h>
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/types.h>
 
 namespace dpp {
@@ -229,5 +232,3 @@ namespace dpp {
   }
 
 } // end of namespace dpp
-
-// end of utils_module.cc

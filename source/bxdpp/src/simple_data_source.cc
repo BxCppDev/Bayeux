@@ -19,21 +19,23 @@
  *
  */
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/things.h>
 #include <datatools/io_factory.h>
 #include <datatools/exception.h>
-
 #if DATATOOLS_WITH_BIO == 0
 #include <datatools/archives_instantiation.h>
 #include <datatools/things.ipp>
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL_IN(datatools::things)
 #endif
 
+// This project:
 #include <dpp/dpp_config.h>
 #include <dpp/simple_data_source.h>
 
@@ -257,7 +259,6 @@ namespace dpp {
 
 }  // end of namespace dpp
 
-// end of simple_data_source.cc
 /*
 ** Local Variables: --
 ** mode: c++ --

@@ -41,7 +41,7 @@ namespace dpp {
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(output_module, "dpp::output_module");
 
-  /*** Implementation of the interface ***/
+  // Implementation of the interface :
 
   void output_module::set_limits(int max_record_total_,
                                  int max_record_per_file_,
