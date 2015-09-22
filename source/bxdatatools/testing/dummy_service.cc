@@ -58,7 +58,7 @@ namespace datatools {
     return EXIT_SUCCESS;
   }
 
-  dummy_service::dummy_service() : base_service("dummy", "A dummy service")
+  dummy_service::dummy_service()
   {
     _label_ = "";
     return;
