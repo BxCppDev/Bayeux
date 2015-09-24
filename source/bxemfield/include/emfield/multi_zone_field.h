@@ -25,6 +25,7 @@
 // - Bayeux/geomtools:
 #include <geomtools/placement.h>
 #include <geomtools/i_shape_3d.h>
+#include <geomtools/shape_factory.h>
 
 // This project:
 #include <emfield/base_electromagnetic_field.h>
@@ -39,6 +40,23 @@ namespace emfield {
   {
   public:
 
+    enum zone_priority_type {
+      ZONE_PRIORITY_INVALID   = -1,
+      ZONE_PRIORITY_VERY_LOW  =  0,
+      ZONE_PRIORITY_LOW       =  1,
+      ZONE_PRIORITY_HIGH      =  2,
+      ZONE_PRIORITY_VERY_HIGH =  3,
+      ZONE_PRIORITY_MIN       =  ZONE_PRIORITY_VERY_LOW,
+      ZONE_PRIORITY_MAX       =  ZONE_PRIORITY_VERY_HIGH,
+      ZONE_PRIORITY_DEFAULT   =  ZONE_PRIORITY_MIN
+    };
+
+    /// Return the label associated to a given zone priority
+    static std::string zone_priority_to_label(zone_priority_type);
+
+    /// Return the zone priority associated to a given label
+    static zone_priority_type label_to_zone_priority(const std::string &);
+
     /// \brief The information associated to a given zone
     class zone_field_entry {
     public:
@@ -49,14 +67,24 @@ namespace emfield {
       /// Reset
       void reset();
 
+    protected:
+
+      /// Set default values to attributes
+      void _set_defaults();
+
+      /// Check if a zone field entry has higher priority than another one
+      static bool _higher_zone_priority(const zone_field_entry * zfe1_,
+                                        const zone_field_entry * zfe2_);
+
     private:
 
-      std::string _label_;
-      geomtools::placement _zone_positioning_;
-      double _zone_tolerance_;
-      const geomtools::i_shape_3d * _zone_shape_;
-      const base_electromagnetic_field * _zone_field_;
-      bool _absolute_positioning_;
+      std::string _label_; //!< Unique label of the association
+      geomtools::placement _zone_positioning_; //!< Placement of the zone
+      double _zone_tolerance_; //!< Tolerance of the zone
+      const geomtools::i_shape_3d * _zone_shape_; //!< Shape of the zone
+      const base_electromagnetic_field * _zone_field_; //!< Field associated to the zone
+      bool _absolute_positioning_; //!< Flag for absolute positioning
+      zone_priority_type _priority_; //!< Zone priority
 
       friend class multi_zone_field;
     };
@@ -94,14 +122,30 @@ namespace emfield {
                         const geomtools::i_shape_3d & zone_shape_,
                         double zone_tolerance_,
                         const base_electromagnetic_field & zone_field_,
-                        bool absolute_positioning_ = true);
+                        bool absolute_positioning_ = true,
+                        zone_priority_type priority_ = ZONE_PRIORITY_DEFAULT);
 
     /// Return the zone field entry associated to a given label
     const zone_field_entry & get_zone_field(const std::string & zone_label_) const;
 
     /// Find all zones where a position lies
-    void find_zone(const geomtools::vector_3d & position_,
-                   std::vector<const zone_field_entry *> & zones_) const;
+    void fine_zones(const geomtools::vector_3d & position_,
+                    std::vector<const zone_field_entry *> & zones_) const;
+
+    /// Check the ownership flag for the shape factory
+    bool owns_shape_factory() const;
+
+    /// Check if the shape factory is set
+    bool has_shape_factory() const;
+
+    /// Reset the shape factory
+    void reset_shape_factory();
+
+    /// Set an external shape factory
+    void set_shape_factory(const geomtools::shape_factory & shfact_);
+
+    /// Create an embedded shape factory
+    void create_shape_factory(const ::datatools::properties & setup_);
 
     /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
@@ -116,6 +160,8 @@ namespace emfield {
 
   private:
 
+    bool _own_shape_factory_; //!< Ownership flag for the shape factory
+    geomtools::shape_factory * _shape_factory_; //!< Handle to a shape factory
     zone_field_dict_type _zone_fields_; //!< Dictionary of zone fields
 
     // Macro to automate the registration of the EM field :

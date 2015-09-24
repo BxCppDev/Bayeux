@@ -45,7 +45,6 @@ int main (int argc_, char ** argv_)
 
     emfield::base_electromagnetic_field::field_dict_type fields;
 
-
     emfield::base_electromagnetic_field::handle_type uef0_h(new emfield::uniform_electric_field);
 
     {
@@ -87,7 +86,8 @@ int main (int argc_, char ** argv_)
     geomtools::sphere z0_shape(2.0 * CLHEP::mm);
     z0_shape.lock();
     double z0_skin = 0.01 * CLHEP::mm;
-    mzef.add_zone_field("Z0", z0_pos, z0_shape, z0_skin, uef0_h.get(), true);
+    mzef.add_zone_field("Z0", z0_pos, z0_shape, z0_skin, uef0_h.get(), true,
+                        emfield::multi_zone_field::ZONE_PRIORITY_HIGH);
 
     geomtools::placement z1_pos(0.0 * CLHEP::mm, 1.0 * CLHEP::mm,
                                 0.0, 0.0, 0.0, 20.0 * CLHEP::degree);
@@ -157,11 +157,11 @@ int main (int argc_, char ** argv_)
         plot_cmd << "splot '" << tmp_file.get_filename() << "' "
                  << " i 3 u 1:2:3:4:5:6 notitle 'Multi zone electric field' with vectors lw 2 ";
         plot_cmd << ",  '" << tmp_file.get_filename() << "' "
-                 << " i 0 title 'Zone 0' with lines";
+                 << " i 0 title 'Zone 0 (high priority)' with lines";
         plot_cmd << ",  '" << tmp_file.get_filename() << "' "
-                 << " i 1 title 'Zone 1' with lines";
+                 << " i 1 title 'Zone 1 (very low priority)' with lines";
         plot_cmd << ",  '" << tmp_file.get_filename() << "' "
-                 << " i 2 title 'Zone 2' with lines";
+                 << " i 2 title 'Zone 2 (very low priority)' with lines";
         g1.cmd(plot_cmd.str());
         g1.showonscreen(); // window output
         geomtools::gnuplot_drawer::wait_for_key();

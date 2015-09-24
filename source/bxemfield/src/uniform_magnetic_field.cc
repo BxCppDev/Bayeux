@@ -161,9 +161,8 @@ namespace emfield {
   {
     this->base_electromagnetic_field::tree_dump(out_, title_, indent_, true);
 
-
     out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Uniform magnetic field  : " << _uniform_magnetic_field_ / (CLHEP::volt/CLHEP::cm) << " V/cm" << std::endl;
+         << "Uniform magnetic field  : " << _uniform_magnetic_field_ / (CLHEP::tesla) << " T" << std::endl;
 
     return;
   }

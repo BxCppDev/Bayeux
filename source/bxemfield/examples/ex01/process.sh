@@ -42,7 +42,8 @@ cd ${opwd}
 ls -l
 
 echo "Run the 'ex01' program..." 1>&2
-CONFIG_DIR=$(pwd)/config ./ex01 --plot --plot2 -Ex10 -Ex10 -Bx10 -Bx10
+# CONFIG_DIR=$(pwd)/config ./ex01 --plot -Ex10 -Ex10 -Bx10 -Bx10 #--plot2
+CONFIG_DIR=$(pwd)/config ./ex01 --plot -Ex10 -Ex10 -Bx10 -Bx5 #--plot2
 if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex01 failed !" 1>&2
     my_exit 1

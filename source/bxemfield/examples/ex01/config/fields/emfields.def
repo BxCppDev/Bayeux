@@ -35,6 +35,18 @@ magnetic_field.unit            : string  = "gauss"
 magnetic_field.coordinates     : real[3] = 0.0 0.0 1.0
 
 
+##################################################
+[name="B1" type="emfield::uniform_magnetic_field"]
+magnetic_field.unit            : string  = "gauss"
+magnetic_field.coordinates     : real[3] = 1.0 0.0 0.0
+
+
+##################################################
+[name="B2" type="emfield::uniform_magnetic_field"]
+magnetic_field.unit            : string  = "gauss"
+magnetic_field.coordinates     : real[3] = 0.0 -1.0 0.0
+
+
 ##############################################################
 [name="E0+2*E1-3*B0" type="emfield::linear_combination_field"]
 
@@ -108,5 +120,49 @@ combined_fields.B2.name   : string = "B_coil"
 combined_fields.B2.weight : real   = +1.0
 combined_fields.B2.force_combined : boolean = 1
 
+
+######################################################
+# This field model is used when a field is evaluated
+# by regions/zones of arbitrary shapes and positions.
+[name="B_multi_zone" type="emfield::multi_zone_field"]
+
+# Embedded shape factory
+shape_factory.logging.priority : string = "debug"
+shape_factory.shapes_files     : string[1] as path = "${CONFIG_DIR}/fields/shapes.def"
+
+# List of zones to be associated to a particular field
+zones : string[3] = "A" "B" "C"
+
+# Zone A:
+zones.A.positioning : string  = "+1.0 0.0 0.0 (m) / y 90 (degree)"
+zones.A.tolerance   : real as length  = 0.1 cm
+zones.A.absolute    : boolean = true
+zones.A.field       : string  = "B1"
+zones.A.shape_ref   : string  = "ShapeA"
+zones.A.priority    : string  = "low"
+
+# Zone B has a higher priority than A. This means that
+# for any point in the overlapping region, we will use
+# the only field computed from the B field model.
+
+# Zone B:
+zones.B.positioning : string  = "0.0 0.0 0.0 (m)"
+zones.B.tolerance   : real as length  = 0.1 cm
+zones.B.absolute    : boolean = true
+zones.B.field       : string  = "B0"
+zones.B.shape_ref   : string  = "ShapeB"
+zones.B.priority    : string  = "high"
+
+# Zone C:
+zones.C.positioning : string  = "0.0 +1.0 0.0 (m)"
+zones.C.tolerance   : real as length = 0.1 cm
+zones.C.absolute    : boolean = true
+zones.C.field       : string  = "B2"
+zones.C.shape_ref   : string  = "ShapeC"
+zones.C.priority    : string  = "high"
+
+# Zone B and C have the same priority; This means that
+# for any point in the overlapping region, we will use
+# the mean field computed from both B and C field models.
 
 # End of list of multi-properties.
