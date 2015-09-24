@@ -172,25 +172,12 @@ test_module::process (datatools::things & the_data_record)
     // Find the event header :
     datatools::properties & the_properties
       = the_data_record.grab<datatools::properties>("Header");
-    if (is_debug ()) {
-      std::clog << datatools::io::debug
-                << "test_module::at_process_: "
-                << "Found the event header !"
-                << std::endl;
-    }
+    DT_LOG_DEBUG(get_logging_priority(), "Found the event header !");
     // Add a string property in it with value '_label_' :
-    if (is_debug ()) {
-      std::clog << datatools::io::debug
-                << "test_module::at_process_: "
-                << "Adding the 'label' property..."
-                << std::endl;
-    }
+    DT_LOG_DEBUG(get_logging_priority(), "Adding the 'label' property...");
     the_properties.store ("label", _label_);
   } else {
-    std::clog << datatools::io::error
-              << "test_module::at_process_: "
-              << "Could not find any event header !"
-              << std::endl;
+    DT_LOG_ERROR(get_logging_priority(), "Could not find any event header !");
     // Cannot find the event header :
     return dpp::base_module::PROCESS_ERROR;
   }

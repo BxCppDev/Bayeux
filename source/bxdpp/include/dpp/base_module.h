@@ -98,12 +98,6 @@ namespace dpp {
     /// Destructor :
     virtual ~base_module();
 
-    /// Check debug logging priority threshold
-    bool is_debug() const;
-
-    /// Set debug logging priority threshold
-    void set_debug(bool);
-
     /// Check the module name
     bool has_name() const;
 

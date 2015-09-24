@@ -42,19 +42,6 @@ namespace dpp {
 
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_module, "dpp::base_module/__system__");
 
-  bool
-  base_module::is_debug() const
-  {
-    return _logging >= datatools::logger::PRIO_DEBUG;
-  }
-
-  void
-  base_module::set_debug(bool /*a_debug*/)
-  {
-    _logging = datatools::logger::PRIO_DEBUG;
-    return;
-  }
-
   bool base_module::is_initialized() const
   {
     return _initialized;
