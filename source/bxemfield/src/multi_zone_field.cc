@@ -115,28 +115,20 @@ namespace emfield {
   void multi_zone_field::fine_zones(const geomtools::vector_3d & position_,
                                    std::vector<const zone_field_entry *> & zones_) const
   {
-    bool devel = false;
-    // devel = true;
-    if (devel) std::cerr << "DEVEL: multi_zone_field::fine_zones: "
-                         << "Entering..."
-                         << std::endl;
+    datatools::logger::priority local_priority = datatools::logger::PRIO_WARNING;
+    // local_priority = datatools::logger::PRIO_TRACE;
+    DT_LOG_TRACE_ENTERING(local_priority);
     zones_.clear();
     for (zone_field_dict_type::const_iterator i = _zone_fields_.begin();
          i != _zone_fields_.end();
          i++) {
-      if (devel) std::cerr << "DEVEL: multi_zone_field::fine_zones: "
-                           << "Checking inside zone '" << i->first << "'..."
-                           << std::endl;
+      DT_LOG_TRACE(local_priority, "Checking inside zone '" << i->first << "'...");
       const zone_field_entry & zfe = i->second;
-      if (devel) std::cerr << "DEVEL: multi_zone_field::fine_zones: "
-                           << "  zone tolerance = " << zfe._zone_tolerance_ / CLHEP::mm << " mm"
-                           << std::endl;
+      DT_LOG_TRACE(local_priority, "zone tolerance = " << zfe._zone_tolerance_ / CLHEP::mm << " mm");
       geomtools::vector_3d local_pos;
       zfe._zone_positioning_.mother_to_child(position_, local_pos);
       if (zfe._zone_shape_->check_inside(local_pos, zfe._zone_tolerance_)) {
-        if (devel) std::cerr << "DEVEL: multi_zone_field::fine_zones: "
-                             << "  inside zone '" << i->first << "'..."
-                             << std::endl;
+        DT_LOG_TRACE(local_priority, "inside zone '" << i->first << "'...");
         zones_.push_back(&zfe);
       }
     }
@@ -157,9 +149,7 @@ namespace emfield {
         zones_.erase(cut_iter, zones_.end());
       }
     }
-    if (devel) std::cerr << "DEVEL: multi_zone_field::fine_zones: "
-                         << "Exiting."
-                         << std::endl;
+    DT_LOG_TRACE_EXITING(local_priority);
     return;
   }
 
@@ -197,26 +187,21 @@ namespace emfield {
                                                double time_,
                                                ::geomtools::vector_3d & electric_field_) const
   {
-    bool devel = false;
-    if (devel) std::cerr << "DEVEL: multi_zone_field::compute_electric_field: "
-                         << "Entering..."
-                         << std::endl;
+    datatools::logger::priority local_priority = datatools::logger::PRIO_WARNING;
+    DT_LOG_TRACE_ENTERING(local_priority);
     geomtools::invalidate(electric_field_);
     if (! is_electric_field()) {
       return STATUS_ERROR;
     }
     std::vector<const zone_field_entry *> zones;
     fine_zones(position_, zones);
-    if (devel) std::cerr << "DEVEL: multi_zone_field::compute_electric_field: "
-                         << "zones = [" << zones.size() << ']'
-                         << std::endl;
+    DT_LOG_TRACE(local_priority, "zones = [" << zones.size() << ']');
     electric_field_.set(0.0, 0.0, 0.0);
     if (zones.size() > 0) {
-
       std::vector<geomtools::vector_3d> fields;
       fields.reserve(zones.size());
 
-      for (int izone = 0; izone < (int) zones.size(); izone++) {
+      for (size_t izone = 0; izone < zones.size(); izone++) {
         const zone_field_entry & zfe = *zones[izone];
         geomtools::vector_3d zone_pos;
         geomtools::vector_3d zone_field_value;
@@ -245,6 +230,7 @@ namespace emfield {
       electric_field_ /= fields.size();
     }
 
+    DT_LOG_TRACE_EXITING(local_priority);
     return STATUS_SUCCESS;
   }
 
@@ -252,8 +238,8 @@ namespace emfield {
                                                double time_,
                                                ::geomtools::vector_3d & magnetic_field_) const
   {
-    bool devel = false;
-    // devel = true;
+    datatools::logger::priority local_priority = datatools::logger::PRIO_WARNING;
+    DT_LOG_TRACE_ENTERING(local_priority);
     geomtools::invalidate(magnetic_field_);
     if (! is_magnetic_field()) {
       return STATUS_ERROR;
@@ -263,10 +249,10 @@ namespace emfield {
     magnetic_field_.set(0.0, 0.0, 0.0);
     if (zones.size() > 0) {
 
-      if (devel) {
-        std::cerr << "DEVEL: Found zones: [#" << zones.size() << ']' << std::endl;
-        for (int izone = 0; izone < zones.size(); izone++) {
-          std::cerr << "DEVEL: in Zone: " << zones[izone]->_label_ << std::endl;
+      if (local_priority >= datatools::logger::PRIO_TRACE) {
+        DT_LOG_TRACE(local_priority, "Found zones: [#" << zones.size() << ']');
+        for (size_t izone = 0; izone < zones.size(); izone++) {
+          DT_LOG_TRACE(local_priority, "in zone: " << zones[izone]->_label_);
         }
       }
 
@@ -302,7 +288,7 @@ namespace emfield {
       }
       magnetic_field_ /= fields.size();
     }
-
+    DT_LOG_TRACE_EXITING(local_priority);
     return STATUS_SUCCESS;
   }
 
