@@ -110,9 +110,9 @@ namespace mctools {
       _using_user_limits_         = true;
       _using_regions_             = true;
       _using_sensitive_detectors_ = true;
-      _using_em_field_            = true;
+      _using_em_field_            = false;
       _using_biasing_             = false;
-      _em_field_manager_         = 0;
+      _em_field_manager_          = 0;
       _miss_distance_unit_        = CLHEP::mm;
       _general_miss_distance_     = DEFAULT_MISS_DISTANCE;
       _SD_params_.set_key_label("name");
@@ -397,7 +397,7 @@ namespace mctools {
         const geomtools::manager & geo_mgr = get_geometry_manager();
         std::string emfield_geom_plugin_name = _emfield_geom_plugin_name_;
         if (_emfield_geom_plugin_name_.empty()) {
-          // We try to find a emfield plugin associated to the manager :
+          // We try to find a emfield plugin associated to the geometry manager :
           typedef geomtools::manager::plugins_dict_type dict_type;
           const dict_type & plugins = geo_mgr.get_plugins();
           for (dict_type::const_iterator ip = plugins.begin();
@@ -411,6 +411,8 @@ namespace mctools {
             }
           }
         }
+        DT_THROW_IF(_emfield_geom_plugin_name_.empty(), std::logic_error,
+                    "No geometry EM field plugin name is provided!");
         // Access to a given plugin by name and type :
         DT_LOG_DEBUG(_logprio(), "Trying to access to an EM field geometry plugin with name '" << emfield_geom_plugin_name << "'");
         DT_LOG_DEBUG(_logprio(), "A geometry plugin with name '" << emfield_geom_plugin_name << "' exists: "
