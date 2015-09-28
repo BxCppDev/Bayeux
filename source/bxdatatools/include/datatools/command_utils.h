@@ -45,6 +45,8 @@ namespace datatools {
       CEC_FAILURE                      =  1, //!< Generic failure
       CEC_PARSING_FAILURE              =  2, //!< Generic parsing error
       CEC_CONTEXT_INVALID              =  3, //!< Invalid context
+      CEC_STOP                         =  8, //!< Stop (can be used to stop a loop or a pipeline)
+      CEC_ABORT                        =  9, //!< Abort (can be used to abort a loop or a pipeline)
       CEC_SCOPE_INVALID                = 10, //!< Invalid scope (wrong namespace or general context)
       CEC_COMMAND_INVALID              = 20, //!< Invalid command (unrecognized command name)
       CEC_COMMAND_NO_PRIVILEDGE        = 21, //!< Invalid command priviledge
@@ -80,6 +82,9 @@ namespace datatools {
 
       /// Check failure
       bool is_failure() const;
+
+      /// Check if error code matches a given value
+      bool error_is(error_code_type code_) const;
 
       /// Set the error code
       void set_error_code(error_code_type code_);

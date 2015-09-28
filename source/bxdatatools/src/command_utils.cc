@@ -43,6 +43,11 @@ namespace datatools {
     return !is_success();
   }
 
+  bool command::returned_info::error_is(error_code_type code_) const
+  {
+    return _error_code_ == code_;
+  }
+
   void command::returned_info::reset()
   {
     _error_code_ = CEC_SUCCESS;
