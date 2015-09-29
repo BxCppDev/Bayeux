@@ -259,9 +259,14 @@ DR_CLASS_INIT(foo::bar);
   constructor5< Arg0Type , Arg1Type , Arg2Type , Arg3Type , Arg4Type >() \
   /**/
 
-// Declare metadata static tag for a class :
+// Declare metadata static flag tag for a class :
+#define DR_CLASS_TAG_FLAG(TagName)              \
+  tag(TagName)                                  \
+  /**/
+
+// Declare metadata static tag with value for a class :
 #define DR_CLASS_TAG(TagName,TagValue)          \
-  property(TagName, &TagValue)                  \
+  tag(TagName, TagValue)                       \
   /**/
 
 // Declare metadata read-only property for a class :
