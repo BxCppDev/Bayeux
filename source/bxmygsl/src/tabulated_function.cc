@@ -461,7 +461,7 @@ namespace mygsl {
     while (fin && !fin.eof()) {
       std::string line;
       std::getline(fin, line);
-      std::clog << "Line='" << line << "'" << std::endl;
+      // std::clog << "Line='" << line << "'" << std::endl;
       {
         std::istringstream tmp_iss(line);
         std::string word;
