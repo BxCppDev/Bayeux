@@ -422,8 +422,8 @@ namespace geomtools {
 
     /// \brief 3D rendering options
     enum tessella_wires_rendering_option_type {
-      WR_TESSELLA_ALL_SEGMENTS   = (WR_BASE_LAST << 1), //!< Render all segments
-      WR_TESSELLA_LAST           = (WR_TESSELLA_ALL_SEGMENTS),    //!< Last defined bit
+      WR_TESSELLA_ALL_SEGMENTS   = (WR_BASE_LAST << 1),        //!< Render all segments
+      WR_TESSELLA_LAST           = (WR_TESSELLA_ALL_SEGMENTS), //!< Last defined bit
       WR_TESSELLA_MASK           = (WR_TESSELLA_ALL_SEGMENTS
                                     )
     };
@@ -491,7 +491,7 @@ namespace geomtools {
   private:
 
     bool              _consistent_; //!< Flag to tag coherence of the tessellated solid
-    vertices_col_type _vertices_; //!< List of vertexes
+    vertices_col_type _vertices_;   //!< List of vertexes
     facets_col_type   _facets_; //!< List of facets
     mygsl::min_max    _xrange_; //!< Range on the X coordinate
     mygsl::min_max    _yrange_; //!< Range on the Y coordinate
