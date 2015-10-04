@@ -261,6 +261,20 @@ namespace mctools {
           current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
         }
 
+        const bool has_track_id
+          = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::TRACK_ID_KEY);
+        DT_LOG_DEBUG(get_logging_priority(), "Track ID = " << has_track_id);
+        if (has_track_id) {
+          current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::TRACK_ID_KEY);
+        }
+
+        const bool has_parent_track_id
+          = the_step_hit.get_auxiliaries().has_flag(mctools::track_utils::PARENT_TRACK_ID_KEY);
+        DT_LOG_DEBUG(get_logging_priority(), "Parent track ID = " << has_parent_track_id);
+        if (has_parent_track_id) {
+          current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::PARENT_TRACK_ID_KEY);
+        }
+
         if (the_step_hit.get_auxiliaries().has_flag (mctools::track_utils::ENTERING_VOLUME_FLAG)) {
           current_fluence_hit->grab_auxiliaries().store_flag(mctools::track_utils::ENTERING_VOLUME_FLAG);
           current_fluence_hit->set_position_start(position_start);
@@ -378,27 +392,28 @@ namespace mctools {
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::fluence_step_hit_processor, ocd_)
 {
   ocd_.set_class_name("mctools::fluence_step_hit_processor");
-  ocd_.set_class_description("A Monte Carlo step hit post-processor that scores the boundary energy of particles going through surface of sensitive volumes");
+  ocd_.set_class_description("A Monte Carlo step hit post-processor that scores the boundary energy of particles going through the surface of sensitive volumes");
   ocd_.set_class_library("mctools");
   ocd_.set_class_documentation("A Monte-Carlo step hit post-processor that saves hits entering in a \n"
                                "sensitive volume. It contains the following informations/attributes:\n"
                                "                                                                    \n"
-                               "  * the geometry Id of the geometry volume in which the hit was     \n"
-                               "    going through the surface                                       \n"
+                               "  * the geometry identifier (GID) of the geometry volume in which   \n"
+                               "    the hit was going through the surface                           \n"
                                "  * the name of the traversing particle                             \n"
                                "  * the energy of the particle at boundary                          \n"
                                "                                                                    \n"
+                               "Such hit is supposed to be use to compute , from a backend application\n"
+                               "dosimetry quantities such gas H*(10)*.                                \n"
                                );
   ocd_.set_class_library("mctools");
 
   // Load OCD support for this class:
   ::mctools::fluence_step_hit_processor::init_ocd(ocd_);
 
-  ocd_.set_configuration_hints("The fluence step hit processor factory uses a 'datatools::properties' \n"
+  ocd_.set_configuration_hints("The fluence step hit processor factory uses a ``datatools::properties`` \n"
                                "object to initialize its behaviour and contents.                  \n"
                                "                                                                  \n"
-                               "Example of the configuration for a fluence sensitive detector     \n"
-                               "from which we want to score the total energy deposit::            \n"
+                               "Example of the configuration for a fluence sensitive detector::   \n"
                                "                                                                  \n"
                                "  sensitive.category    : string  = \"fluence_SD\"                \n"
                                "  use_private_pool      : boolean = 1                             \n"
@@ -406,7 +421,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::mctools::fluence_step_hit_processor, ocd_)
                                "  mapping.category      : string  = \"fluence.volume\"            \n"
                                "                                                                  \n"
                                "From the main configuration file of a *step hit processor factory*,               \n"
-                               "one must use the 'datatools::multi_properties' format. Example of                 \n"
+                               "one must use the ``datatools::multi_properties`` format. Example of               \n"
                                "a fluence step hit processor attached to some fluence                             \n"
                                "volumes in an experimental setup::                                                \n"
                                "                                                                                  \n"
