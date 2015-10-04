@@ -305,12 +305,13 @@ void test_1(const param_type & params_)
   mesh_placement.set_node_log_vol(mesh_box_log);
 
   datatools::properties mesh_box_config;
-  mesh_box_config.store_real_with_explicit_unit("start_x", -1.5 * CLHEP::m);
-  mesh_box_config.store_real_with_explicit_unit("start_y", -1.0 * CLHEP::m);
+  // mesh_box_config.store_real_with_explicit_unit("start_x", -1.5 * CLHEP::m);
+  // mesh_box_config.store_real_with_explicit_unit("start_y", -1.0 * CLHEP::m);
   mesh_box_config.store_real_with_explicit_unit("start_z", -0.9 * CLHEP::m);
-  mesh_box_config.store_real_with_explicit_unit("step_x",     step);
-  mesh_box_config.store_real_with_explicit_unit("step_y",     step);
-  mesh_box_config.store_real_with_explicit_unit("step_z", 3 * step);
+  mesh_box_config.store_real_with_explicit_unit("stop_z",  +0.5 * CLHEP::m);
+  mesh_box_config.store_real_with_explicit_unit("step_x", 2 * step);
+  mesh_box_config.store_real_with_explicit_unit("step_y", 2 * step);
+  mesh_box_config.store_real_with_explicit_unit("step_z", 4 * step);
 
   mesh_placement.initialize(mesh_box_config);
   mesh_placement.tree_dump(std::clog, "3D mesh placement:");
@@ -405,7 +406,7 @@ void test_1(const param_type & params_)
         plot_cmd << "splot '" << tmp_file.get_filename() << "'"
                  << " index 0 title 'Subtraction' with lines lt 1";
         plot_cmd << ", '' index 1 title 'BB' with lines lt 7";
-        plot_cmd << ", '' index 2 title 'mesh' with lines lt 2";
+        plot_cmd << ", '' index 2 title 'mesh' with lines lt 2 lw 1";
         plot_cmd << ", '' index 3 title 'walls' with lines lt 3 lw 2";
 
         g1.cmd (plot_cmd.str ());
