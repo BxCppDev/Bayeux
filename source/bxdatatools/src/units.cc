@@ -1686,6 +1686,8 @@ namespace datatools {
       registration(unit("sievert",       "Sv", "equivalent_dose;[L2][T-2]", sievert, true));
       registration(unit("millisievert", "mSv", "equivalent_dose",  1.e-3 * sievert));
       registration(unit("microsievert", "uSv", "equivalent_dose",  1.e-6 * sievert));
+      registration(unit("nanosievert",  "nSv", "equivalent_dose",  1.e-9 * sievert));
+      registration(unit("picosievert",  "pSv", "equivalent_dose",  1.e-12 * sievert));
       registration(unit("rem",                 "equivalent_dose", 0.01 * sievert));
 
       // Fraction:
