@@ -1,6 +1,9 @@
-// -*- mode: c++ ; -*-
 // test_manager.cxx
 
+// Ourselves:
+#include <materials/manager.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -8,10 +11,10 @@
 #include <exception>
 #include <list>
 
+// Third Party:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/multi_properties.h>
-
-#include <materials/manager.h>
 
 int main (int argc_, char ** argv_)
 {
