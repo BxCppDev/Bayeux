@@ -72,6 +72,10 @@ Usage:
                                       Example:
                                         --skeleton-profile "${default_skeleton_profile}"
 
+Usage:
+XXX
+   ${this_bxapp} --setup-label "my_setup" --registered-module
+
 EOF
     return
 }
@@ -95,10 +99,8 @@ env_config_dir=""
 
 while [ -n "$1" ]; do
     token="$1"
-    #echo "NOTICE: Command line token is : '${token}' !" >&2
     if [ "x${token:0:1}" = "x-" ]; then
         option="$token"
-	#echo "NOTICE: Command line option is : '${option}' !" >&2
         if [  ${option} = "-V" -o ${option} = "--version" ]; then
 	    version=1
 	elif [ ${option} = "-h" -o ${option} = "--help" ]; then
@@ -286,10 +288,13 @@ Files
 
  * ${_dbq}README.rst${_dbq} : This file.
  * ${_dbq}manager.conf${_dbq} : The main configuration file for the geometry manager.
- * ${_dbq}categories.lis${_dbq} : Contains the definition of geometry categories
-   used by the automated numbering scheme for the mapping of geometry volumes
-   through geometry identifiers (GIDs).
  * Folders:
+
+   * ${_dbq}mapping${_dbq} : Contains the files that are used by GID mapping.
+
+     * ${_dbq}categories.lis${_dbq} : Contains the definition of geometry categories
+       used by the automated numbering scheme for the mapping of geometry volumes
+       through geometry identifiers (GIDs).
 
    * ${_dbq}models${_dbq} : Contains the files that describe geometry models.
 
@@ -297,8 +302,6 @@ Files
      * ${_dbq}detector.geom${_dbq} : The definition of a detector geometry model.
      * ${_dbq}world.geom${_dbq} : The definition of the top-level geometry volume (world) and
        its daughter physical volumes (source and detectors).
-     * ${_dbq}geom_models.lis${_dbq} : The list of files of geometry models (alternative setup
-       property in the ${_dbq}manager.conf${_dbq} file).
 
    * ${_dbq}plugins${_dbq} : Contains the files that describe plugins for the geometry manager.
 
@@ -340,7 +343,7 @@ fi
 # Lines starting with '#@' are special directives.
 # Lines starting with '#' are simple comments.
 
-#@description The logging priority threshold
+### #@description The logging priority threshold
 ### logging.priority : string = "warning"
 
 #@description The label that identifies the virtual geometry setup
@@ -349,41 +352,38 @@ setup_label : string = "${setup_label}"
 #@description The version string of the virtual geometry setup
 setup_version : string = "${setup_version}"
 
-#@description The description string of the virtual geometry setup
+### #@description The description string of the virtual geometry setup
 ### setup_description : string = "Short description of the setup"
 
-#@description The flag inhibits the preloading of plugins' factories
+### #@description The flag inhibits the preloading of plugins' factories
 ### plugins.factory_no_preload : boolean = 0
 
-#@description The flag to force the initialization of plugins at load stage.
+### #@description The flag to force the initialization of plugins at load stage.
 ### plugins.force_initialization_at_load : boolean = 0
 
-#@description The debug flag of the geometry model factory
+### #@description The debug flag of the geometry model factory
 ### factory.debug : boolean = 0
 
-#@description A file that contains a list of geometry definition files
-### factory.geom_list : string as path  = "${config_prefix}${setup_base_dir}/models/geom_models.lis"
-
-#@description A list of files that contains geometry models' definitions
+#@description A list of files that contains the definition of geometry models
 factory.geom_files : string[3] as path  = \\
   "${config_prefix}${setup_base_dir}/models/source.geom" \\
   "${config_prefix}${setup_base_dir}/models/detector.geom" \\
   "${config_prefix}${setup_base_dir}/models/world.geom"
 
-#@description A list of prefixes for property keys that are stored in the geometry logical volumes
+### #@description A list of prefixes for property keys that are stored in the geometry logical volumes
 ### factory.preserved_property_prefixes : string[3] = \\
 ###   "radioactivity." \\
 ###   "magnetization." \\
 ###   "optical_properties."
 
-#@description A name of the top level geometry volume
+### #@description A name of the top level geometry volume
 ### world_name : string = "world"
 
-#@description The debug flag of the geometry ID (GID) manager
-### id_mgr.debug : boolean = 0
+### #@description The logging priority threshold for the geometry ID (GID) manager
+### id_mgr.logging.priority : string = "fatal"
 
 #@description The configuration file that defines geometry categories
-id_mgr.categories_list : string as path = "${config_prefix}${setup_base_dir}/gids/categories.lis"
+id_mgr.categories_lists : string[1] as path = "${config_prefix}${setup_base_dir}/mapping/categories.lis"
 
 #@description This flag triggers the generation of a map of geometry IDs
 build_mapping : boolean = 1
@@ -397,14 +397,14 @@ plugins.configuration_files : string[2] as path = \\
 EOF
 
     #######################################################################
-    mkdir -p ${setup_base_dir}/gids
+    mkdir -p ${setup_base_dir}/mapping
     if [ $? -ne 0 ]; then
-	echo "ERROR: Directory '${setup_base_dir}/gids' was not created ! Abort !" >&2
+	echo "ERROR: Directory '${setup_base_dir}/mapping' was not created ! Abort !" >&2
 	return 1
     fi
 
     #######################################################################
-    cat > ${setup_base_dir}/gids/categories.lis <<EOF
+    cat > ${setup_base_dir}/mapping/categories.lis <<EOF
 # -*- mode: conf-unix; -*-
 # List of geometry ID categories/types (datatools::multi_properties):
 
@@ -450,15 +450,6 @@ EOF
     fi
 
     #######################################################################
-    cat > ${setup_base_dir}/models/geom_models.lis <<EOF
-# Ordered list of geometry models:
-${config_prefix}${setup_base_dir}/models/dummy.geom
-${config_prefix}${setup_base_dir}/models/world.geom
-# end
-EOF
-
-
-    #######################################################################
     cat > ${setup_base_dir}/models/world.geom <<EOF
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
@@ -477,8 +468,8 @@ EOF
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit     : string = "mm"
+### #@description The default length unit
+### length_unit     : string = "mm"
 
 #@description The name of the 3D shape of the world logical volume
 shape_type  : string = "box"
@@ -589,8 +580,8 @@ EOF
 
 #@description The geometry model of the source volume
 
-#@key_label   "name"
-#@meta_label  "type"
+#@key_label  "name"
+#@meta_label "type"
 
 
 ###########################################################
@@ -602,8 +593,8 @@ EOF
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+### #@description The default length unit
+### length_unit : string = "mm"
 
 #@description The name of the 3D shape of the source volume
 shape_type  : string = "cylinder"
@@ -640,8 +631,8 @@ EOF
 
 #@description The geometry model of the detector volume
 
-#@key_label   "name"
-#@meta_label  "type"
+#@key_label  "name"
+#@meta_label "type"
 
 
 #############################################################
@@ -653,8 +644,8 @@ EOF
 # Geometry #
 ############
 
-#@description The default length unit
-length_unit : string = "mm"
+### #@description The default length unit
+### length_unit : string = "mm"
 
 #@description The name of the 3D shape of the detector volume
 shape_type  : string = "box"
@@ -707,16 +698,16 @@ EOF
 # List of geometry plugins (datatools::multi_properties):
 
 #@description List of geometry plugins
-#@key_label   "name"
-#@meta_label  "type"
+#@key_label  "name"
+#@meta_label "type"
 
 ############################################################
 [name="materials_driver" type="geomtools::materials_plugin"]
 
 #@config The list of properties to configure the materials plugin
 
-#@description Debug flag
-materials.debug  : boolean = 0
+### #@description Logging priority threshold
+### materials.logging.priority  : string = "fatal"
 
 #@description Flag to allow material alias overloading
 materials.alias_allow_overload : boolean = 1
@@ -740,24 +731,20 @@ EOF
 #@key_label   "name"
 #@meta_label  "type"
 
-
 ############################
 [name="vacuum" type="alias"]
 #@description The alias for vacuum
 material : string = "std::vacuum"
-
 
 #####################################
 [name="source_material" type="alias"]
 #@description The alias for Mylar
 material : string = "std::mylar"
 
-
 #######################################
 [name="detector_material" type="alias"]
 #@description The alias for NaI
 material : string = "std::NaI"
-
 
 # end
 EOF
@@ -768,8 +755,8 @@ EOF
 # List of geometry plugins (datatools::multi_properties):
 
 #@description List of geometry plugins
-#@key_label   "name"
-#@meta_label  "type"
+#@key_label  "name"
+#@meta_label "type"
 
 ########################################################
 [name="only_detectors" type="geomtools::mapping_plugin"]
