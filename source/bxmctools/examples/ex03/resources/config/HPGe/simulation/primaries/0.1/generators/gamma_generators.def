@@ -1,0 +1,818 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The list of calibration radioactive decay generators
+#@key_label  "name"
+#@meta_label "type"
+
+### gamma_100keV
+### gamma_200keV
+### gamma_300keV
+### gamma_400keV
+### gamma_500keV
+### gamma_600keV
+### gamma_700keV
+### gamma_800keV
+### gamma_900keV
+### gamma_1000keV
+### gamma_1100keV
+### gamma_1200keV
+### gamma_1300keV
+### gamma_1400keV
+### gamma_1500keV
+### gamma_1600keV
+### gamma_1700keV
+### gamma_1800keV
+### gamma_1900keV
+### gamma_2000keV
+### gamma_2100keV
+### gamma_2200keV
+### gamma_2300keV
+### gamma_2400keV
+### gamma_2500keV
+### gamma_2600keV
+### gamma_2700keV
+### gamma_2800keV
+### gamma_2900keV
+### gamma_3000keV
+### gamma_0-3MeV_flat
+
+#############################################################
+[name="gamma_100keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 100.0 keV
+
+#############################################################
+[name="gamma_200keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 200.0 keV
+
+#############################################################
+[name="gamma_300keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 300.0 keV
+
+#############################################################
+[name="gamma_400keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 400.0 keV
+
+#############################################################
+[name="gamma_500keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 500.0 keV
+
+#############################################################
+[name="gamma_600keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 600.0 keV
+
+#############################################################
+[name="gamma_700keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 700.0 keV
+
+#############################################################
+[name="gamma_800keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 800.0 keV
+
+#############################################################
+[name="gamma_900keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 900.0 keV
+
+##############################################################
+[name="gamma_1000keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1000.0 keV
+
+##############################################################
+[name="gamma_1100keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1100.0 keV
+
+##############################################################
+[name="gamma_1200keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1200.0 keV
+
+##############################################################
+[name="gamma_1300keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1300.0 keV
+
+##############################################################
+[name="gamma_1400keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1400.0 keV
+
+##############################################################
+[name="gamma_1500keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1500.0 keV
+
+##############################################################
+[name="gamma_1600keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1600.0 keV
+
+##############################################################
+[name="gamma_1700keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1700.0 keV
+
+##############################################################
+[name="gamma_1800keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1800.0 keV
+
+##############################################################
+[name="gamma_1900keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 1900.0 keV
+
+##############################################################
+[name="gamma_2000keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2000.0 keV
+
+##############################################################
+[name="gamma_2100keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2100.0 keV
+
+##############################################################
+[name="gamma_2200keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2200.0 keV
+
+##############################################################
+[name="gamma_2300keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2300.0 keV
+
+##############################################################
+[name="gamma_2400keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2400.0 keV
+
+##############################################################
+[name="gamma_2500keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2500.0 keV
+
+##############################################################
+[name="gamma_2600keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2600.0 keV
+
+##############################################################
+[name="gamma_2700keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2700.0 keV
+
+##############################################################
+[name="gamma_2800keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2800.0 keV
+
+##############################################################
+[name="gamma_2900keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 2900.0 keV
+
+##############################################################
+[name="gamma_3000keV" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use keV as the default angle unit
+energy_unit        : string = "keV"
+
+#@description Energy range mode
+mode               : string = "monokinetic"
+
+#@description Set the kinetic energy
+energy             : real as energy = 3000.0 keV
+
+####################################
+[name="gamma_0-3MeV_flat" type="genbb::single_particle_generator"]
+#@config Gamma with flat ranged energy between 0 and 3 MeV
+
+#@description Set the logging threshold
+logging.priority   : string = "fatal"
+
+# #@description Set the PRNG seed with an arbitrary value
+# seed               : integer = 314159
+
+#@description Generate gamma particles
+particle_name      : string = "gamma"
+
+#@description Randomization (4 pi) of the direction
+emission_direction : string = "randomized"
+
+#@description Use MeV as the default energy unit
+energy_unit        : string = "MeV"
+
+#@description Energy range mode
+mode               : string = "energy_range"
+
+#@description Set the minimum kinetic energy
+min_energy         : real as energy = 0.0 MeV
+
+#@description Set the maximum kinetic energy
+max_energy         : real as energy = 3.0 MeV
+
+# end

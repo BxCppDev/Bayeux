@@ -1,0 +1,70 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The list of aliases for standard materials
+#@key_label  "name"
+#@meta_label "type"
+
+# All materials named "std::xxx" are provided by the bayeux/materials
+# library. We use here some convenience aliases for the materials used
+# in the geometry setup. This enables to easily change the effective
+# material of a logical volume by changing this file, without modifying
+# the geometry definition files.
+
+[name="air" type="alias"]
+#@description The alias for air
+material : string = "std::air"
+
+[name="aluminium" type="alias"]
+#@description The alias for aluminium
+material : string = "std::aluminium"
+
+[name="copper" type="alias"]
+#@description The alias for copper
+material : string = "std::copper"
+
+[name="glass" type="alias"]
+#@description The alias for pyrex
+material : string = "std::pyrex"
+
+[name="iron" type="alias"]
+#@description The alias for iron
+material : string = "std::iron"
+
+[name="mylar" type="alias"]
+#@description The alias for mylar
+material : string = "std::mylar"
+
+[name="plexiglass" type="alias"]
+#@description The alias for plexiglass
+material : string = "std::plexiglass"
+
+[name="polystyrene" type="alias"]
+#@description The alias for polystyrene
+material : string = "std::polystyrene"
+
+[name="vacuum" type="alias"]
+#@description The alias for vacuum
+material : string = "std::vacuum"
+
+[name="lead" type="alias"]
+#@description The alias for lead
+material : string = "std::lead"
+
+[name="water" type="alias"]
+#@description The alias for water
+material : string = "std::water"
+
+[name="germanium" type="alias"]
+#@description The alias for germanium
+material : string = "HPGe::germanium"
+
+[name="PVC" type="alias"]
+#@description The alias for PVC
+material : string = "HPGe::PVC"
+
+[name="concrete" type="alias"]
+#@description The alias for PVC
+material : string = "HPGe::concrete"
+
+# end of materials_aliases.def
