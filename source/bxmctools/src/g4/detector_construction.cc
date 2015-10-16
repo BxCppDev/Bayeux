@@ -173,7 +173,6 @@ namespace mctools {
 
       // Clear visualization attributes:
       DT_LOG_TRACE(_logprio(), "Clear visualization attributes...");
-      _vis_attributes_.clear();
       for (std::map<std::string, G4VisAttributes *>::iterator
              i = _vis_attributes_.begin(); i != _vis_attributes_.end();
            ++i) {
@@ -182,6 +181,7 @@ namespace mctools {
           i->second = 0;
         }
       }
+      _vis_attributes_.clear();
       DT_LOG_TRACE(_logprio(), "Clear visualization attributes... done.");
 
       // Clear user limits:
@@ -1544,6 +1544,8 @@ namespace mctools {
         std::string display_color;
         bool   force_wire_frame = true;
         bool   force_solid = false;
+        bool   force_aux_edge_visible = false;
+        double display_opacity = geomtools::visibility::default_opacity();
         if (geomtools::visibility::is_hidden(log.get_parameters())) {
           visible = false;
           daughters_visible = false;
@@ -1557,13 +1559,16 @@ namespace mctools {
           if (geomtools::visibility::has_color(log.get_parameters())) {
             display_color = geomtools::visibility::get_color(log.get_parameters());
           }
-          /*
-            if (geomtools::visibility::has_key(log.get_parameters(), "opacity"))
-            {
-            // Not supported.
-            //display_opacity = geomtools::visibility::get_color(log.get_parameters());
-            }
-          */
+          if (geomtools::visibility::has_opacity(log.get_parameters())) {
+            display_opacity = geomtools::visibility::get_opacity(log.get_parameters());
+            DT_THROW_IF(! geomtools::visibility::validate_opacity(display_opacity),
+                        std::range_error,
+                        "Invalid display opacity (" << display_opacity
+                        << " for logical volume '" << ilogical->first << "'!");
+          }
+          if (geomtools::visibility::is_visible_edges(log.get_parameters())) {
+            force_aux_edge_visible = true;
+          }
         }
         G4LogicalVolume * g4_log = 0;
         G4LogicalVolumeStore * g4_LV_store = G4LogicalVolumeStore::GetInstance();
@@ -1583,6 +1588,7 @@ namespace mctools {
           }
           va->SetForceWireframe(force_wire_frame);
           va->SetForceSolid(force_solid);
+          va->SetForceAuxEdgeVisible(force_aux_edge_visible);
           G4Colour color; // default == white
           if (! display_color.empty()) {
             const geomtools::color::constants & gcc = geomtools::color::constants::instance();
@@ -1595,10 +1601,11 @@ namespace mctools {
             if (display_color == gcc.cyan)    color = G4Colour::Cyan();
             if (display_color == gcc.magenta) color = G4Colour::Magenta();
             if (display_color == gcc.yellow)  color = G4Colour::Yellow();
+            if (display_color == gcc.brown)   color = G4Colour::Brown();
             if (display_color == gcc.orange)  color = G4Colour(1.0, 0.66, 0.0);
           }
           if (visible) {
-            va->SetColor(color);
+            va->SetColor(G4Colour(color.GetRed(), color.GetGreen(), color.GetBlue(), display_opacity));
           }
           // push the G4VisAttributes in the map for persistency in memory:
           _vis_attributes_[log.get_name()] = va;

@@ -3,21 +3,21 @@ Bayeux/mxtools example ex03 : HPGe detector simulation
 ===========================================================
 
 :Authors: - François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-	  - Arnaud Chapon, Cerap <achapon.cerap.fr>
+	  - Arnaud Chapon, Cerap <achapon@cerap.fr>
 :Date: 2015-10-16
 
 Introduction
 ============
 
-This example modelizes the radioactivity measurement of a sample with
-a HPGe detector. An application is also provided to analyze the data
-and produce the energy spectrum takig into account the energy resolution
-and detection threshold of the HPGe detector.
+This example modelizes the radioactivity  measurement of a sample with
+a HPGe detector.  An application is also provided to  analyze the data
+and  produce  the  energy  spectrum  takig  into  account  the  energy
+resolution and detection threshold of the HPGe detector.
 
 Prerequisite
 ============
 
-Make sure the following software are available on your system:
+Make sure the following software is available on your system:
 
 * cmake
 * g++
@@ -28,15 +28,15 @@ Make sure the following software are available on your system:
 Preparation
 ===========
 
-Make sure Bayeux is installed and setup in your shell environment. The following command
-should work:
+Make sure Bayeux is installed and setup in your shell environment. The
+following command should work:
 
 .. code:: sh
 
    $ bxquery --version
 
 
-Define the environment variable ``HPGE_RESOURCES_DIR`` and set it to
+Define the  environment variable ``HPGE_RESOURCES_DIR`` and  set it to
 the resource files base directory of the project:
 
 .. code:: sh
@@ -48,7 +48,7 @@ Create a working directory to store Monte-Carlo files (data and management):
 
 .. code:: sh
 
-   $ export HPGE_WORK_DIR="/tmp/${USER}/mctools/work"
+   $ export HPGE_WORK_DIR="/tmp/${USER}/mctools.ex03.d/HPGe"
    $ mkdir -p ${HPGE_WORK_DIR}
    $ mkdir -p ${HPGE_WORK_DIR}/data
    $ mkdir -p ${HPGE_WORK_DIR}/management
@@ -104,7 +104,8 @@ List the available vertex generators:
        --vertex-generator-manager "${HPGE_RESOURCES_DIR}/config/HPGe/simulation/vertexes/0.1/manager.conf" \
        --list
 
-Generate and display some randomize vertexes from the bulk volume of the measured sample:
+Generate and display  some randomize vertexes from the  bulk volume of
+the measured sample:
 
 .. code:: sh
 
@@ -194,8 +195,7 @@ Run an interactive simulation:
 	  --event-generator-seed 314159 \
 	  --g4-manager-seed 314159 \
 	  --shpf-seed 314159 \
-	  --number-of-events 10000 \
-	  --number-of-events-modulo 1000 \
+	  --number-of-events-modulo 1 \
 	  --output-prng-seeds-file  "${HPGE_WORK_DIR}/management/mc_g4_production.seeds" \
 	  --output-prng-states-file "${HPGE_WORK_DIR}/management/mc_g4_production.states" \
 	  --output-data-file "${HPGE_WORK_DIR}/data/mc_g4_sample.xml"

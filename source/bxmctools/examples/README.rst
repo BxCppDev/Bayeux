@@ -12,3 +12,4 @@ List of examples :
    than in ``ex00``.
  * ``ex02`` : This example implements the tracking of a low energy
    charged ion in an electric field.
+ * ``ex03`` : This example implements a HPGe detector.

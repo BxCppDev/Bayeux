@@ -207,7 +207,6 @@ if [ ${do_simulation} -eq 1 ]; then
 	--event-generator-seed 314159 \
 	--g4-manager-seed 314159 \
 	--shpf-seed 314159 \
-	--number-of-events 10000 \
 	--number-of-events-modulo 1000 \
 	--output-prng-seeds-file  "${HPGE_WORK_DIR}/management/mc_g4_production.seeds" \
 	--output-prng-states-file "${HPGE_WORK_DIR}/management/mc_g4_production.states" \

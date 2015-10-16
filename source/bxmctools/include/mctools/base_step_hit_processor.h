@@ -167,22 +167,22 @@ namespace mctools {
 
   protected:
 
-    datatools::logger::priority      _logging_priority; /// Logging priority threshold
-    std::string                      _name;             /// Name of the step hit processor
-    std::string                      _hit_category; /** The name of the category
+    datatools::logger::priority      _logging_priority; ///< Logging priority threshold
+    std::string                      _name;             ///< Name of the step hit processor
+    std::string                      _hit_category; /**< The name of the category
                                                      * of hits the hit processor
                                                      * accumulates
                                                      */
-    std::string                      _sensitive_category; /** The name of the category
+    std::string                      _sensitive_category; /**< The name of the category
                                                            * of sensitive detector
                                                            * the hit processor is
                                                            * attached with
                                                            */
-    const geomtools::manager       * _geom_manager; /// The geometry manager
-    datatools::properties            _auxiliaries;  /// Some auxiliary properties
-    pool_type                      * _private_pool; /// A private embedded pool of hits
-    bool                             _pool_owner;   /// Pool of hits ownership flag
-    pool_type                      * _pool;         /// Reference to an external pool of hits
+    const geomtools::manager       * _geom_manager; ///< The geometry manager
+    datatools::properties            _auxiliaries;  ///< Some auxiliary properties
+    pool_type                      * _private_pool; ///< A private embedded pool of hits
+    bool                             _pool_owner;   ///< Pool of hits ownership flag
+    pool_type                      * _pool;         ///< Reference to an external pool of hits
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_step_hit_processor);
