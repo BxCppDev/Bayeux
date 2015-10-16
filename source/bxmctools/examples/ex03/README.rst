@@ -35,7 +35,6 @@ following command should work:
 
    $ bxquery --version
 
-
 Define the  environment variable ``HPGE_RESOURCES_DIR`` and  set it to
 the resource files base directory of the project:
 
@@ -52,7 +51,6 @@ Create a working directory to store Monte-Carlo files (data and management):
    $ mkdir -p ${HPGE_WORK_DIR}
    $ mkdir -p ${HPGE_WORK_DIR}/data
    $ mkdir -p ${HPGE_WORK_DIR}/management
-
 
 Geometry
 ========
@@ -175,10 +173,8 @@ and browse some histograms of interest.
 
    root [2] .q
 
-
 Run a Geant4 simulation
 =======================
-
 
 Run an interactive simulation:
 
@@ -207,7 +203,6 @@ Run an interactive simulation:
    :align: center
 
    The 3D rendering of the setup in Geant4.
-
 
 Run 5 decays:
 
@@ -262,13 +257,52 @@ Run a batch simulation:
 	  --output-data-file "${HPGE_WORK_DIR}/data/mc_g4_sample.data.gz" \
 	  > ${HPGE_WORK_DIR}/management/mc_g4_production.log
 
-Run the analysis program:
+
+Build the analysis program
+==========================
+
+Prepare a build directory:
 
 .. code:: sh
 
-    ${HPGE_INSTALL_DIR}/bin/hpge_analysis  \
-    	--logging-priority "notice" \
-    	--input-file "${HPGE_WORK_DIR}/data/mc_g4_sample.data.gz" \
-	--prng-seed=12345 \
-	--histo-output-file "${HPGE_WORK_DIR}/data/histo_spectro.data \
-    	--histo-draw
+	  $ export HPGE_BUILD_DIR=$(pwd)/__build.d
+	  $ export HPGE_INSTALL_DIR=$(pwd)/__install.d
+	  $ mkdir ${HPGE_BUILD_DIR}
+
+Compile the analysis program:
+
+.. code:: sh
+
+   $ cd ${HPGE_BUILD_DIR}
+   $ cmake \
+	  -DCMAKE_INSTALL_PREFIX=${HPGE_INSTALL_DIR} \
+	  -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+	  ..
+   $ make
+   $ make install
+   $ LANG=C tree ${HPGE_INSTALL_DIR}/
+   _install.d/
+   |-- bin
+   |   `-- hpge_analysis
+   `-- lib
+       `-- libmctools_hpge.so
+
+
+Run the analysis program
+========================
+
+.. code:: sh
+
+   ${HPGE_INSTALL_DIR}/bin/hpge_analysis  \
+	  --logging-priority "notice" \
+	  --input-file "${HPGE_WORK_DIR}/data/mc_g4_sample.data.gz" \
+	  --prng-seed=12345 \
+	  --histo-output-file "${HPGE_WORK_DIR}/data/histo_spectro.data" \
+    	  --histo-draw
+
+.. figure:: ./images/analysis/spectro.png
+   :scale: 75%
+   :alt: The simulated HPGe energy spectrum for Co-60 decays (file ``images/analysis/spectro.png``)
+   :align: center
+
+   The simulated HPGe energy spectrum for Co-60 decays
