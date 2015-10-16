@@ -77,6 +77,12 @@ namespace geomtools {
   }
 
   // static
+  const std::string & color::brown()
+  {
+    return constants::instance().brown;
+  }
+
+  // static
   const std::string & color::yellow()
   {
     return constants::instance().yellow;
@@ -116,6 +122,7 @@ namespace geomtools {
     magenta = "magenta";
     cyan    = "cyan";
     yellow  = "yellow";
+    brown   = "brown";
     orange  = "orange";
     default_color = grey;
     transparent   = "transparent";
@@ -160,6 +167,7 @@ namespace geomtools {
     map_of_colors_[color::constants::instance().magenta] = COLOR_MAGENTA;
     map_of_colors_[color::constants::instance().cyan]    = COLOR_CYAN;
     map_of_colors_[color::constants::instance().yellow]  = COLOR_YELLOW;
+    map_of_colors_[color::constants::instance().brown]   = COLOR_BROWN;
     map_of_colors_[color::constants::instance().orange]  = COLOR_ORANGE;
     //DT_LOG_TRACE (local_priority, "Exiting.");
     return;

@@ -1137,10 +1137,10 @@ namespace geomtools {
       const std::string ext = output_ext.string();
       if (ext == ".jpeg" || ext == ".jpg") {
         terminal = "jpeg";
-        terminal_options = "nointerlace large enhanced size 500,500 xffffff";
+        terminal_options = "enhanced nointerlace large size 500,500 background rgb \"#FFFFFF\"";
       } else if (ext == ".png") {
         terminal = "png";
-        terminal_options = "notransparent nointerlace medium enhanced xffffff";
+        terminal_options = "enhanced notransparent nointerlace medium background rgb \"#FFFFFF\"";
       } else if (ext == ".eps") {
         terminal = "postscript";
         terminal_options = "eps enhanced color solid size 15cm,15cm";

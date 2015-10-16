@@ -49,6 +49,7 @@ namespace geomtools {
       COLOR_MAGENTA     =  4,
       COLOR_CYAN        =  5,
       COLOR_YELLOW      =  6,
+      COLOR_BROWN       =  7,
       COLOR_ORANGE      =  8,
       COLOR_DEFAULT     =  COLOR_GREY
     };
@@ -63,6 +64,7 @@ namespace geomtools {
     static const std::string & blue();
     static const std::string & magenta();
     static const std::string & cyan();
+    static const std::string & brown();
     static const std::string & yellow();
     static const std::string & orange();
     static const std::string & default_color();
@@ -80,6 +82,7 @@ namespace geomtools {
       std::string blue;
       std::string magenta;
       std::string cyan;
+      std::string brown;
       std::string yellow;
       std::string orange;
       std::string default_color;
