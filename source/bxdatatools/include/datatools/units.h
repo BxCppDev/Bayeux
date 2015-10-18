@@ -1,7 +1,7 @@
 //! \file datatools/units.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-03-18
- * Last modified: 2015-04-18
+ * Last modified: 2015-10-18
  *
  * License:
  *
@@ -566,6 +566,9 @@ namespace datatools {
 
       /// Check unit symbol
       bool has_symbol(const std::string & unit_symbol_) const;
+
+      /// Check unit name or symbol
+      bool has_unit_from_any(const std::string & unit_label_) const;
 
       /// Return a registered unit per symbol
       const unit & get_unit_from_symbol(const std::string & unit_symbol_) const;

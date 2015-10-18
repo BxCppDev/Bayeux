@@ -1194,6 +1194,11 @@ namespace datatools {
       return;
     }
 
+    bool registry::has_unit_from_any(const std::string & unit_label_) const
+    {
+      return has_unit(unit_label_) || has_symbol(unit_label_);
+    }
+
     bool registry::has_unit(const std::string & unit_name_) const
     {
       return _units_.find(unit_name_) != _units_.end();
@@ -1819,7 +1824,6 @@ namespace datatools {
 
       // Permeability (H/m = kg·m·s−2·A−2) :
       registration(unit("H/m",        "permeability;[M][L][T-2][I-2]", CLHEP::henry / CLHEP::meter, true));
-
 
       return;
     }
