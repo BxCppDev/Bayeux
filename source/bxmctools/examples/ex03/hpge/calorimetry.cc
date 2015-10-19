@@ -196,7 +196,7 @@ namespace hpge {
     hit_.reset();
     double energy_deposit_sum = 0.;
 
-    // Check if the source Monte-Carlo event contains some hits of the requestes category:
+    // Check if the source Monte-Carlo event contains some hits of the requested category:
     if (sd_.has_step_hits(_hit_category_)) {
       int nsteps = sd_.get_number_of_step_hits(_hit_category_);
       // Scan all Monte-Carlo (truth) hits from the requested hit category:
