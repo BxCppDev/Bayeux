@@ -740,6 +740,12 @@ namespace datatools {
     return 0;
   }
 
+  // static
+  const version_id & version_id::invalid()
+  {
+    static const version_id _vid;
+    return _vid;
+  }
 
   // static
   bool version_id::are_orderable(const version_id& vid0,

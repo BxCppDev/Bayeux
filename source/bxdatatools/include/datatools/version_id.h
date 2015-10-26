@@ -166,12 +166,15 @@ namespace datatools {
                               const version_id& vid1,
                               bool major_only = false);
 
+    //! Return an invalid version identifier
+    static const version_id & invalid();
+
   private:
     int32_t major_;      //!< The major number
     int32_t minor_;      //!< The minor number
     int32_t revision_;   //!< The revision number
-    std::string tag_;    //!< An additionnal tag (string)
-    int32_t tag_number_; //!< An additionnal tag (numeric)
+    std::string tag_;    //!< An additional tag (string)
+    int32_t tag_number_; //!< An additional tag (numeric)
   };
 
 } // namespace datatools
