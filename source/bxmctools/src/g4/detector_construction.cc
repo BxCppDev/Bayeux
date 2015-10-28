@@ -807,7 +807,7 @@ namespace mctools {
         //           << "Logical='" << lv_name << "' Sensitive='" << sd_name << "'"
         //           << std::endl;
         // We throw if some logical volumes do not exist and thus cannot be associated to
-        // a given requested sensitive category (error in some confguration file):
+        // a given requested sensitive category (error in some configuration file):
         DT_THROW_IF(_geom_manager_->get_factory().get_logicals().find(lv_name) ==
                     _geom_manager_->get_factory().get_logicals().end(),
                     std::logic_error,
