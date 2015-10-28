@@ -82,6 +82,7 @@ namespace mctools {
       void set_record_primary_particle(bool);
       void set_record_track_id(bool);
       void set_record_creator_process(bool);
+      /// \deprecated This method craps
       void set_record_creator_category(bool);
       void set_record_momentum(bool);
       void set_record_kinetic_energy(bool);
@@ -196,7 +197,7 @@ namespace mctools {
       bool                   _record_major_track_;          //!< Record the boolean property "track.major" for tracks of some importance (primary and energy above an user threshold)
       double                 _major_track_minimum_energy_;  //!< Energy threshold to flag "major" tracks
       bool                   _record_creator_process_;      //!< Record the informations about the creator process (string properties "track.creator_process" and "track.creator_category")
-      bool                   _record_creator_category_;     //!< Record the category of the creator process (string property "material.ref")
+      bool                   _record_creator_category_;     //!< \deprecated Record the category of the creator process
       bool                   _record_material_;             //!< Record the current material traversed by the track (string property "material.ref")
       bool                   _record_sensitive_category_;   //!< Record the sensitive category that generated the current hit (string property "sensitive.category")
       bool                   _record_boundaries_;           //!< Record boolean properties "track.entering_volume" and "track.leaving_volume" respectively when particle enters and leaves the volume

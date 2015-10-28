@@ -740,8 +740,8 @@ namespace mctools {
                 = step_->GetTrack()->GetCreatorProcess()->GetProcessName();
               ti.set_creator_process_name(process_name);
             }
-            const std::string & category = get_sensitive_category();
-            ti.set_creator_sensitive_category(category);
+            // const std::string & category = get_sensitive_category();
+            // ti.set_creator_sensitive_category(category);
             _track_info_ptr_ = &ti;
             _parent_track_info_ptr_ = 0;
           } else {
@@ -865,10 +865,10 @@ namespace mctools {
                                 _track_info_ptr_->get_creator_process_name());
         }
 
-        if (_record_creator_category_ && ! _track_info_ptr_->get_creator_sensitive_category().empty()) {
-          hit_aux.store_string(mctools::track_utils::CREATOR_CATEGORY_KEY,
-                                _track_info_ptr_->get_creator_sensitive_category());
-        }
+        // if (_record_creator_category_ && ! _track_info_ptr_->get_creator_sensitive_category().empty()) {
+        //   hit_aux.store_string(mctools::track_utils::CREATOR_CATEGORY_KEY,
+        //                         _track_info_ptr_->get_creator_sensitive_category());
+        // }
 
         if (_record_primary_particle_ && primary_track) {
           hit_aux.store_flag(mctools::track_utils::PRIMARY_PARTICLE_FLAG);
@@ -888,8 +888,6 @@ namespace mctools {
         }
       }
 
-      // 2011-08-26, FM: add
-      //>>>
       if (_record_material_) {
         static std::string material_ref_key =
           geomtools::material::make_key(geomtools::material::material_ref_property());
@@ -898,7 +896,6 @@ namespace mctools {
         boost::replace_all(material_ref, "__" , "::");
         hit_aux.store_string(material_ref_key, material_ref);
       }
-      //<<<
 
       if (_record_sensitive_category_) {
         static std::string sensitive_category_key =
