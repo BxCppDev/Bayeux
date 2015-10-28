@@ -4,6 +4,7 @@
 // Standard Library:
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <string>
 
@@ -18,8 +19,13 @@
 #include "ui/foo_commands.h"
 #include "ui/foo_command_interface.h"
 
-int main(int /* argc_ */, char * /* argv_ */[])
+int main(int argc_, char * argv_[])
 {
+  bool interactive = false;
+  if (argc_ > 1 && std::string(argv_[1]) == "-i") {
+    interactive = true;
+  }
+
   // A foo object;
   foo bar;
   std::clog << "bar = " << bar << std::endl;
@@ -30,12 +36,31 @@ int main(int /* argc_ */, char * /* argv_ */[])
   cmdInter.initialize_simple();
   cmdInter.tree_dump(std::clog, "Bar command interface: ");
 
+  std::ostringstream omacro;
+  omacro << "set_value 23" << std::endl;
+  omacro << "get_value" << std::endl;
+  omacro << "zero" << std::endl;
+  omacro << "get_value" << std::endl;
+  omacro << "set_sum 1 3 4 12" << std::endl;
+  omacro << "get_value" << std::endl;
+  omacro << "quit" << std::endl;
+  std::string macro = omacro.str();
+  std::istringstream imacro(macro);
+
+  std::istream * in = &imacro;
+  if (interactive) {
+    in = &std::cin;
+  } else {
+    std::clog << "Macro: " << std::endl;
+    std::clog << macro;
+  }
+
   // A micro shell:
   std::clog << "Starting shell (use 'quit' to exit the shell)..." << std::endl;
   std::string line;
   std::string prompt("test> ");
   std::clog << prompt << std::flush;
-  while (std::getline(std::cin, line)) {
+  while (std::getline(*in, line)) {
     std::vector<std::string> argv = boost::program_options::split_unix(line);
     if (argv.size()) {
       std::string cmd_name = argv[0];

@@ -85,6 +85,9 @@ namespace datatools {
       std::string basename(const std::string & path_)
       {
         boost::filesystem::path p(path_);
+        if (p.filename().string().empty()) {
+          return root_path();
+        }
         return p.filename().string();
       }
 
@@ -174,6 +177,12 @@ namespace datatools {
         return _red;
       }
 
+      const std::string & bright_red()
+      {
+        static const std::string _bright_red("\x1b[91m");
+        return _bright_red;
+      }
+
       const std::string & green()
       {
         static const std::string _green("\x1b[32m");
@@ -208,6 +217,12 @@ namespace datatools {
       {
         static const std::string _magenta("\x1b[35m");
         return _magenta;
+      }
+
+      const std::string & bright_magenta()
+      {
+        static const std::string _bright_magenta("\x1b[95m");
+        return _bright_magenta;
       }
 
       const std::string & cyan()

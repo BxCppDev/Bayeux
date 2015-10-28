@@ -28,14 +28,26 @@ namespace datatools {
 
   namespace ui {
 
+    shell_command_interface::shell_command_interface(const std::string & name_,
+                                                     const std::string & description_,
+                                                     const datatools::version_id & vid_)
+      : datatools::ui::target_command_interface<basic_shell>(name_, description_, vid_)
+    {
+      _initialized_  = false;
+      _inhibit_cd_   = false;
+      _inhibit_load_ = false;
+      return;
+    }
+
     shell_command_interface::shell_command_interface(basic_shell & sh_,
                                                      const std::string & name_,
                                                      const std::string & description_,
                                                      const datatools::version_id & vid_)
       : datatools::ui::target_command_interface<basic_shell>(sh_, name_, description_, vid_)
     {
-      _initialized_ = false;
-      _inhibit_cd_ = false;
+      _initialized_  = false;
+      _inhibit_cd_   = false;
+      _inhibit_load_ = false;
       return;
     }
 
@@ -68,7 +80,7 @@ namespace datatools {
     }
 
     void shell_command_interface::initialize(const datatools::properties & config_,
-                                             const datatools::service_manager & services_)
+                                             const datatools::service_manager & /* services_ */)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Command interface is already initialized!");
@@ -81,7 +93,12 @@ namespace datatools {
         set_inhibit_cd(icd);
       }
 
-      _add_base_commands();
+      if (config_.has_key("inhibit_load")) {
+        bool iload = config_.fetch_boolean("inhibit_load");
+        set_inhibit_load(iload);
+      }
+
+      _add_shell_commands();
       _initialized_ = true;
       return;
     }
@@ -91,9 +108,23 @@ namespace datatools {
       DT_THROW_IF(!is_initialized(), std::logic_error,
                   "Command interface is not initialized!");
       _initialized_ = false;
-      _remove_base_commands();
+      _remove_shell_commands();
       _inhibit_cd_ = false;
+      _inhibit_load_ = false;
       base_command_interface::_base_reset();
+      return;
+    }
+
+    bool shell_command_interface::is_inhibit_load() const
+    {
+      return _inhibit_load_;
+    }
+
+    void shell_command_interface::set_inhibit_load(bool iload_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Shell command interface is already initialized!");
+      _inhibit_load_ = iload_;
       return;
     }
 
@@ -110,9 +141,15 @@ namespace datatools {
       return;
     }
 
-    void shell_command_interface::_add_base_commands()
+    void shell_command_interface::_add_shell_commands()
     {
-      // Populate the interface with base commands:
+      // Populate the interface with shell commands:
+
+      {
+        shell_help_command * cmdHelp = new shell_help_command(grab_shell());
+        cmdHelp->initialize_simple();
+        add_command(cmdHelp, "help");
+      }
 
       {
         shell_exit_command * cmdExit = new shell_exit_command(grab_shell());
@@ -150,10 +187,16 @@ namespace datatools {
         add_command(cmdTree, "tree");
       }
 
+      if (! is_inhibit_load()) {
+        shell_load_command * cmdLoad = new shell_load_command(grab_shell());
+        cmdLoad->initialize_simple();
+        add_command(cmdLoad, "load");
+      }
+
       return;
     }
 
-    void shell_command_interface::_remove_base_commands()
+    void shell_command_interface::_remove_shell_commands()
     {
       remove_command("cd");
       remove_command("exit");
@@ -161,6 +204,7 @@ namespace datatools {
       remove_command("pwd");
       remove_command("ls");
       remove_command("tree");
+      remove_command("load");
       return;
     }
 

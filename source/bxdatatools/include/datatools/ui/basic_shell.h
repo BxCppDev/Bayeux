@@ -32,6 +32,7 @@
 // Third Party:
 // - Boost:
 #include <boost/optional.hpp>
+#include <boost/utility.hpp>
 
 // This project:
 #include <datatools/logger.h>
@@ -42,21 +43,27 @@
 #include <datatools/handle.h>
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
-#include <datatools/ui/base_command.h>
-#include <datatools/ui/base_command_interface.h>
 #include <datatools/ui/ihs.h>
 
 namespace datatools {
 
   namespace ui {
 
-    class base_command;
-    class base_command_interface;
+    class shell_command_interface;
 
     //! \brief Command line shell interface
-    class basic_shell : public datatools::i_tree_dumpable
+    class basic_shell : public datatools::i_tree_dumpable,
+                        private boost::noncopyable
     {
     public:
+
+      //! Special flags for run core
+      enum run_core_flags {
+        RC_NONE             = 0, //!< Normal run
+        RC_INHIBIT_HISTORY  = 1, //!< Inhibit the history
+        RC_INHIBIT_READLINE = 2, //!< Inhibit readline (only interactive session)
+        RC_EXIT_ON_ERROR    = 3  //!< Force the shell to exit when an error is met
+      };
 
       //! Retour the name of the system interface
       static const std::string & system_interface_name();
@@ -68,7 +75,7 @@ namespace datatools {
       static const std::string & default_continuation_prompt();
 
       //! Default constructor
-      basic_shell();
+      basic_shell(const std::string & name_ = "");
 
       //! Destructor
       virtual ~basic_shell();
@@ -127,23 +134,50 @@ namespace datatools {
       //! Return the current effective prompt
       std::string get_effective_continuation_prompt() const;
 
+      //! Set the abort-on-error flag
+      void set_exit_on_error(bool);
+
+      //! Return the abort-on-error flag
+      bool is_exit_on_error() const;
+
       //! Set the using splash
       void set_using_splash(bool);
+
+      //! Return the using splash flag
+      bool is_using_splash() const;
 
       //! Set the using readline
       void set_using_readline(bool);
 
+      //! Return the using readline flag
+      bool is_using_readline() const;
+
       //! Set the using history
       void set_using_history(bool);
+
+      //! Return the using history flag
+      bool is_using_history() const;
 
       //! Set the history filename
       void set_history_filename(const std::string &);
 
+      //! Return the history filename
+      const std::string & get_history_filename() const;
+
       //! Set the history truncate
       void set_history_truncate(unsigned int);
 
+      //! Return the history truncate
+      unsigned int get_history_truncate();
+
       //! Set the flag to add only valid command line in history
       void set_history_add_only_on_success(bool);
+
+      //! Return the flag to add only valid command line in history
+      bool is_history_add_only_on_success() const;
+
+      //! Check if the default path is set
+      bool has_default_path() const;
 
       //! Set the default path
       void set_default_path(const std::string &);
@@ -184,26 +218,14 @@ namespace datatools {
       //! Return a non mutable reference to the IHS
       const ihs & get_ihs() const;
 
-      // //! Mount an external command interface with explicit name
-      // void mount_interface(const std::string & interface_name_,
-      //                      base_command_interface & external_interface_);
+      //! Build the list of builtin commands
+      void builtin_command_names(std::vector<std::string> & cmd_names_) const;
 
-      // //! Mount an external command interface with default name
-      // void mount_interface(base_command_interface & external_interface_);
+      //! Check if a builtin command is available
+      bool has_builtin_command(const std::string & cmd_name_) const;
 
-      // //! Load a command interface
-      // void load_interface(const std::string & interface_name_,
-      //                     const std::string & interface_type_id_,
-      //                     const datatools::properties & interface_config_);
-
-      // //! Load interfaces
-      // void load_interfaces(const datatools::multi_properties & interfaces_config_);
-
-      // //! Check if interface with given name exists
-      // bool has_interface(const std::string & interface_name_);
-
-      // //! Build the list of interface names
-      // void build_interface_names(std::vector<std::string> & names_) const;
+      //! Return a const reference to a builtin command
+      const base_command & get_builtin_command(const std::string & cmd_name_) const;
 
       //! Check initialization
       bool is_initialized() const;
@@ -218,7 +240,7 @@ namespace datatools {
       void reset();
 
       //! Main run loop
-      void run();
+      int run();
 
       //! Build a upper and spaced title
       static void make_title_upper(const std::string & title_,
@@ -232,6 +254,9 @@ namespace datatools {
 
       //! Set the stop requested flag
       void set_stop_requested();
+
+      //! Load a macro file
+      void load_macro(const std::string & macro_, uint32_t flags_ = 0);
 
       //! Build list of interfaces
       void build_current_list_of_interfaces(std::vector<std::string> & names_,
@@ -274,7 +299,7 @@ namespace datatools {
       void _at_run_start();
 
       //! At run loop
-      void _run_core();
+      datatools::command::returned_info _run_core(std::istream * in_ = 0, uint32_t flags_ = RC_NONE);
 
       //! Run command
       datatools::command::returned_info _run_command(const std::string & command_line_);
@@ -294,6 +319,10 @@ namespace datatools {
       std::string _prompt_;  //!< Prompt string
       std::string _continuation_prompt_; //!< Continuation prompt string
       std::string _default_path_;        //!< Default path
+
+
+
+      bool        _exit_on_error_;       //!< Flag to exit/abort the shell on first error
       bool        _using_splash_;        //!< Flag to print splash at start
       bool        _using_readline_;      //!< Flag to use the readline library
       bool        _using_history_;       //!< Flag to use command history
@@ -305,7 +334,7 @@ namespace datatools {
       // Working data:
       ihs * _ihs_; //!< Handle to the IHS
       std::string _current_working_path_; //!< Current working interface path
-      boost::shared_ptr<base_command_interface> _system_interface_; //!< System interface for this shell
+      boost::scoped_ptr<shell_command_interface> _system_interface_; //!< System interface for this shell
 
       // Private data:
       struct pimpl_type;

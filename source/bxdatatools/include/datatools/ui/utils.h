@@ -85,12 +85,14 @@ namespace datatools {
 
       const std::string & black();
       const std::string & red();
+      const std::string & bright_red();
       const std::string & green();
       const std::string & bright_green();
       const std::string & yellow();
       const std::string & blue();
       const std::string & bright_blue();
       const std::string & magenta();
+      const std::string & bright_magenta();
       const std::string & cyan();
       const std::string & white();
       const std::string & blink_slow();

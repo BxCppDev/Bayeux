@@ -142,7 +142,7 @@ namespace datatools {
     void base_command_interface::_set_version(const datatools::version_id & version_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
-                  "Command '" << get_name() << "' is initialized!");
+                  "Command interface '" << get_name() << "' is initialized!");
       DT_THROW_IF(! version_.is_valid(), std::logic_error,
                   "Version ID '" << get_name() << "' is not valid!");
       _version_ = version_;

@@ -1,5 +1,5 @@
-//! \file  datatools/ui/shell_man_command.h
-//! \brief Shell man command
+//! \file  datatools/ui/shell_ls_command.h
+//! \brief Shell ls command
 //
 // Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
 //

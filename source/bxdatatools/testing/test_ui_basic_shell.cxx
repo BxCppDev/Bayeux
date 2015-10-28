@@ -34,6 +34,7 @@
 
 int main(int argc_, char * argv_[])
 {
+  int error_code = EXIT_SUCCESS;
   try {
 
     // The objects:
@@ -74,11 +75,12 @@ int main(int argc_, char * argv_[])
 
     // The foo shell:
     datatools::ui::basic_shell fooShell;
-    fooShell.set_name("fooShell");
+    fooShell.set_name("fooShell"); // Mandatory
     // fooShell.set_logging(datatools::logger::PRIO_TRACE);
     fooShell.set_version(datatools::version_id(1,0));
-    fooShell.set_prompt("%n:%w> ");
+    fooShell.set_prompt("%n:%W> ");
     fooShell.set_continuation_prompt("> ");
+    fooShell.set_exit_on_error(false);
     fooShell.set_using_splash(true);
     fooShell.set_using_readline(true);
     fooShell.set_using_history(true);
@@ -86,10 +88,11 @@ int main(int argc_, char * argv_[])
     fooShell.set_history_filename("fooShell.history");
     fooShell.set_history_truncate(100);
     fooShell.set_ihs(fooIHS);
+    fooShell.set_default_path("/dummy");
     fooShell.initialize_simple();
 
     // Run the shell session:
-    fooShell.run();
+    error_code = fooShell.run();
 
     // Terminate the shell:
     fooShell.reset();
@@ -97,12 +100,12 @@ int main(int argc_, char * argv_[])
   }
   catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, error.what());
-    return EXIT_FAILURE;
+    error_code = EXIT_FAILURE;
   }
   catch (...) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Unexpected error!");
-    return EXIT_FAILURE;
+    error_code = EXIT_FAILURE;
   }
 
-  return EXIT_SUCCESS;
+  return error_code;
 }

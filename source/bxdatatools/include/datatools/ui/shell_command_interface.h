@@ -41,6 +41,11 @@ namespace datatools {
     public:
 
       //! Default constructor
+      shell_command_interface(const std::string & name_ = "",
+                              const std::string & description_ = "",
+                              const datatools::version_id & vid_ = datatools::version_id::invalid());
+
+      //! Constructor
       shell_command_interface(basic_shell & sh_,
                               const std::string & name_ = "",
                               const std::string & description_ = "",
@@ -58,6 +63,12 @@ namespace datatools {
 
       //! Reset
       virtual void reset();
+
+      //! Check if the load command is inhibited
+      bool is_inhibit_load() const;
+
+      //! Set the load command inhibition flag
+      void set_inhibit_load(bool);
 
       //! Check if the cd command is inhibited
       bool is_inhibit_cd() const;
@@ -77,10 +88,10 @@ namespace datatools {
     protected:
 
       //! Add base shell commands
-      void _add_base_commands();
+      void _add_shell_commands();
 
       //! Remove base shell commands
-      void _remove_base_commands();
+      void _remove_shell_commands();
 
     private:
 
@@ -88,7 +99,8 @@ namespace datatools {
       bool _initialized_; //!< Initialization flag
 
       // Configuration:
-      bool _inhibit_cd_; //!< Inhibition flag for the cd command
+      bool _inhibit_cd_;   //!< Inhibition flag for the cd command
+      bool _inhibit_load_; //!< Inhibition flag for the load command
 
     };
 

@@ -1,5 +1,5 @@
-//! \file  datatools/ui/shell_commands.h
-//! \brief Shell commands interface
+//! \file  datatools/ui/shell_man_command.h
+//! \brief Shell help command
 //
 // Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
@@ -18,20 +18,32 @@
 // You should have received a copy of the GNU General Public License
 // along with datatools. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DATATOOLS_UI_SHELL_COMMANDS_H
-#define DATATOOLS_UI_SHELL_COMMANDS_H
+#ifndef DATATOOLS_UI_SHELL_HELP_COMMAND_H
+#define DATATOOLS_UI_SHELL_HELP_COMMAND_H
 
 // This project:
-#include <datatools/ui/shell_exit_command.h>
-#include <datatools/ui/shell_help_command.h>
-#include <datatools/ui/shell_pwd_command.h>
-#include <datatools/ui/shell_ls_command.h>
-#include <datatools/ui/shell_cd_command.h>
-#include <datatools/ui/shell_man_command.h>
-#include <datatools/ui/shell_tree_command.h>
-#include <datatools/ui/shell_load_command.h>
+#include <datatools/command_utils.h>
+#include <datatools/ui/base_command.h>
+#include <datatools/ui/basic_shell.h>
 
-#endif // DATATOOLS_UI_SHELL_COMMANDS_H
+namespace datatools {
+
+  namespace ui {
+
+    //! \brief Shell help command
+    struct shell_help_command : public target_command<basic_shell>
+    {
+      shell_help_command(basic_shell &);
+      virtual ~shell_help_command();
+      virtual void _init(const datatools::properties & config_);
+      virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);
+    };
+
+  } // namespace ui
+
+} // namespace datatools
+
+#endif // DATATOOLS_UI_SHELL_HELP_COMMAND_H
 
 /*
 ** Local Variables: --

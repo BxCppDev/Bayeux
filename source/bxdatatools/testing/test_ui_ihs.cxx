@@ -23,6 +23,7 @@
 // Standard Library:
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <string>
 
@@ -114,7 +115,7 @@ public:
   {
     std::string full_path = resolve_path(path_);
     full_path = datatools::ui::path::remove_trailing_sep(full_path);
-    std::clog << "DEVEL: foo_shell::cd: : Full path = '" << full_path << "'" << std::endl;
+    // std::clog << "DEVEL: foo_shell::cd: : Full path = '" << full_path << "'" << std::endl;
     if (!_ihs_->exists(full_path)) {
       std::cerr << "foo_shell: error: '" << path_ << "' does not exists!" << std::endl;
       return 1;
@@ -163,7 +164,7 @@ public:
     return 0;
   }
 
-  void run();
+  void run(bool interactive_);
 
 private:
 
@@ -172,12 +173,42 @@ private:
 
 };
 
-void foo_shell::run()
+void foo_shell::run(bool interactive_)
 {
+  std::ostringstream omacro;
+  omacro << "pwd" << std::endl;
+  omacro << "ls" << std::endl;
+  omacro << "cd bar" << std::endl;
+  omacro << "pwd" << std::endl;
+  omacro << "ls" << std::endl;
+  omacro << "cd truc" << std::endl;
+  omacro << "pwd" << std::endl;
+  omacro << "ls" << std::endl;
+  omacro << "cd .." << std::endl;
+  omacro << "pwd" << std::endl;
+  omacro << "ls" << std::endl;
+  omacro << "set_value 2" << std::endl;
+  omacro << "get_value" << std::endl;
+  omacro << "cd /test/bidule/joe" << std::endl;
+  omacro << "set_sum 1 2 3 4 5" << std::endl;
+  omacro << "get_value" << std::endl;
+  omacro << "/bar/get_value" << std::endl;
+  omacro << "quit" << std::endl;
+  std::string macro = omacro.str();
+  std::istringstream imacro(macro);
+
+  std::istream * in = &imacro;
+  if (interactive_) {
+    in = &std::cin;
+  } else {
+    std::clog << "Macro: " << std::endl;
+    std::clog << macro;
+  }
+
   std::string line;
   std::string prompt("test> ");
   std::clog << prompt << std::flush;
-  while (std::getline(std::cin, line)) {
+  while (std::getline(*in, line)) {
     std::vector<std::string> argv = boost::program_options::split_unix(line);
     if (argv.size()) {
       std::string cmd_name = argv[0];
@@ -221,9 +252,13 @@ void foo_shell::run()
   return;
 }
 
-int main(int /* argc_ */, char * /* argv_ */[])
+int main(int argc_, char * argv_[])
 {
   try {
+    bool interactive = false;
+    if (argc_ > 1 && std::string(argv_[1]) == "-i") {
+      interactive = true;
+    }
 
     // The objects:
     foo bar;
@@ -270,7 +305,7 @@ int main(int /* argc_ */, char * /* argv_ */[])
     std::clog << std::endl;
 
     foo_shell testShell(testIHS);
-    testShell.run();
+    testShell.run(interactive);
 
   }
   catch (std::exception & error) {

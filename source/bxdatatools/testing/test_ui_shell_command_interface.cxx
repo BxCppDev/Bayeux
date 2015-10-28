@@ -45,26 +45,6 @@ int main(int argc_, char * argv_[])
     shellCmdInter.tree_dump(std::clog, shellCmdInter.get_name());
     std::clog << std::endl;
 
-    /*
-    // The foo shell:
-    fooShell.set_name("fooShell");
-    fooShell.set_logging(datatools::logger::PRIO_FATAL);
-    fooShell.set_version("1.0");
-    fooShell.set_prompt("%n:%w> ");
-    fooShell.set_continuation_prompt("> ");
-    fooShell.set_using_splash(true);
-    fooShell.set_using_readline(true);
-    fooShell.set_using_history(true);
-    fooShell.set_history_add_only_on_success(true);
-    fooShell.set_history_filename("fooShell.history");
-    fooShell.set_history_truncate(100);
-    fooShell.set_ihs(fooIHS);
-    */
-
-    // fooShell.initialize_simple();
-    // fooShell.run();
-    // fooShell.reset();
-
   }
   catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, error.what());

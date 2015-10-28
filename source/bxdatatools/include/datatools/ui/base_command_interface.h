@@ -34,6 +34,7 @@
 #include <datatools/version_id.h>
 #include <datatools/command_utils.h>
 #include <datatools/factory_macros.h>
+#include <datatools/exception.h>
 
 namespace datatools {
 
@@ -142,17 +143,17 @@ namespace datatools {
       //! Set the version
       void _set_version(const datatools::version_id &);
 
-      //! Check the validity
-      virtual bool _is_valid() const;
-
-      //! Check the activity flag
-      virtual bool _is_active() const;
-
       //! Base initialization
       void _base_initialize(const datatools::properties & config_);
 
       //! Base reset
       void _base_reset();
+
+      //! Check the validity (this can be overloaded)
+      virtual bool _is_valid() const;
+
+      //! Check the activity (this can be overloaded)
+      virtual bool _is_active() const;
 
     private:
 
@@ -170,13 +171,27 @@ namespace datatools {
 
     };
 
-    //! \brief Base command _interface for a target object
+    //! \brief Base command interface for a target object
+    //!
+    //! The target object (of arbitrary template type)
+    //! cannot be set after the command interface object
+    //! has been initialized.
     template <typename Type>
     class target_command_interface : public base_command_interface
     {
     public:
 
       //! Default constructor
+      target_command_interface(const std::string & name_ = "",
+                               const std::string & description_ = "",
+                               const version_id & vid_ = version_id::invalid())
+        : base_command_interface(name_, description_, vid_),
+          _target_(0)
+      {
+        return;
+      }
+
+      //! Constructor
       target_command_interface(Type & target_,
                                const std::string & name_ = "",
                                const std::string & description_ = "",
@@ -198,6 +213,15 @@ namespace datatools {
       bool has_target() const
       {
         return _target_ != 0;
+      }
+
+      //! Set the target object
+      void set_target(Type & target_)
+      {
+        DT_THROW_IF(is_initialized(), std::logic_error,
+                    "Target command interface is already initialized!");
+        _set_target(target_);
+        return;
       }
 
       //! Return the target

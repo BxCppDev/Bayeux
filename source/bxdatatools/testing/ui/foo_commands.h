@@ -265,6 +265,17 @@ public:
 
 protected:
 
+  virtual void _init(const datatools::properties & config_)
+  {
+    this->base_command::_init(config_);
+
+    // Arguments description:
+    _grab_opts().add_options()
+      ; // end of options description
+
+    return;
+  }
+
   virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0)
   {
     cri_.reset();
