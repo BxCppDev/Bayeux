@@ -231,6 +231,11 @@ namespace datatools {
        "    --datatools::resource-path=\"bar@path2/subdir2\"                   "
        )
 
+      ("datatools::resource_path",
+       po::value< std::vector<std::string> >(),
+       "Deprecated option, please use '--datatools::resource-path'    \n"
+       )
+
       ("datatools::novariant",
        po::value<bool>(&params_.inhibit_variant_repository)
        ->zero_tokens()
@@ -242,11 +247,11 @@ namespace datatools {
 
       ("datatools::variant-config",
        po::value< std::string >(&params_.variant_config),
-       "The system variant repository configuration filename.                 \n"
+       "The system variant repository configuration filename.                \n"
        "Example :                                                            \n"
        "  Register the \"config/variance.conf\" file to initialize the       \n"
        "  repository for some application:                                   \n"
-       "    --datatools::variant-config=\"config/variance.conf\"             \n"
+       "    --datatools::variant-config=\"config/variance.conf\"               "
        )
 
       ("datatools::variant-registry-config",
@@ -281,7 +286,7 @@ namespace datatools {
        "  in the proper variant registry:                                       \n"
        "    --datatools::variant-set=\"foo:detector0=1\"                        \n"
        "    --datatools::variant-set=\"foo:detector0/if_detector/material=Silicium\" \n"
-       "    --datatools::variant-set=\"foo:detector0/if_detector/width=3 cm\"        \n"
+       "    --datatools::variant-set=\"foo:detector0/if_detector/width=3 cm\"        "
        )
 
 #if DATATOOLS_WITH_QT_GUI == 1
@@ -923,8 +928,16 @@ namespace datatools {
                                                    po::include_positional);
     po::store(parsed, vm);
     po::notify(vm);
+
     if (_params_.help) {
       print_opt_desc(opts, std::cout);
+    }
+
+    // Check:
+    if (vm.count("datatools::resource_path")) {
+      DT_THROW(std::logic_error,
+               "The datatools kernel option '--datatools::resource_path {}' is not supported anymore!"
+               << " Please use '--datatools::resource-path {}'!");
     }
 
     // Initialize internals:
