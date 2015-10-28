@@ -29,7 +29,7 @@ int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "Test program for class 'mygsl::signal::triangle_signal_shape'!" << std::endl;
+    std::clog << "Test program for class 'mctools::signal::triangle_signal_shape'!" << std::endl;
 
     bool draw = false;
 
@@ -75,9 +75,9 @@ int main (int argc_, char ** argv_)
 
     tmp_file.out() << "#signal_1:\n";
     tss1.write_ascii(tmp_file.out(),
-                    0.0 * CLHEP::nanosecond,
-                    300.0 * CLHEP::nanosecond,
-                    1000);
+                     0.0 * CLHEP::nanosecond,
+                     300.0 * CLHEP::nanosecond,
+                     1000);
     tmp_file.out() << "\n\n";
     tmp_file.out() << "#end_signal_1\n";
 
@@ -100,9 +100,9 @@ int main (int argc_, char ** argv_)
 
     tmp_file.out() << "#signal_1:\n";
     tss1.write_ascii(tmp_file.out(),
-                    0.0 * CLHEP::nanosecond,
-                    300.0 * CLHEP::nanosecond,
-                    1000);
+                     0.0 * CLHEP::nanosecond,
+                     300.0 * CLHEP::nanosecond,
+                     1000);
     tmp_file.out() << "\n\n";
     tmp_file.out() << "#end_signal_1\n";
 
