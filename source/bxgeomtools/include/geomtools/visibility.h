@@ -44,6 +44,7 @@ namespace geomtools {
       std::string VISIBILITY_COLOR_PROPERTY;
       std::string VISIBILITY_ENVELOPE_COLOR_PROPERTY;
       std::string VISIBILITY_OPACITY_PROPERTY;
+      std::string VISIBILITY_OPACITY_RULE_PROPERTY;
       std::string VISIBILITY_VISIBLE_EDGES_FLAG;
       double      VISIBILITY_DEFAULT_OPACITY;
       constants();

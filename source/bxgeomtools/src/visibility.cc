@@ -37,6 +37,7 @@ namespace geomtools {
     VISIBILITY_ENVELOPE_COLOR_PROPERTY = "envelope_color";
     VISIBILITY_WIRED_CYLINDER_FLAG     = "wired_cylinder";
     VISIBILITY_OPACITY_PROPERTY        = "opacity";
+    VISIBILITY_OPACITY_RULE_PROPERTY   = "opacity_rule";
     VISIBILITY_VISIBLE_EDGES_FLAG      = "visible_edges";
     VISIBILITY_DEFAULT_OPACITY         = 0.2;
     return;
