@@ -48,7 +48,6 @@
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
-
 // This project:
 #include <hpge/calorimeter_hit.h>
 #include <hpge/calorimetry.h>
