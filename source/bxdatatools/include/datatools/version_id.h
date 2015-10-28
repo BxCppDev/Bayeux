@@ -82,7 +82,7 @@ namespace datatools {
     // Constructors/Destructors
     version_id();
 
-    version_id(const std::string& tag);
+    explicit version_id(const std::string& tag);
 
     version_id(int major, int minor = -1, int revision = -1,
                const std::string& tag = "");
@@ -174,7 +174,7 @@ namespace datatools {
     int32_t minor_;      //!< The minor number
     int32_t revision_;   //!< The revision number
     std::string tag_;    //!< An additional tag (string)
-    int32_t tag_number_; //!< An additional tag (numeric)
+    int32_t tag_number_; //!< An additional tag number (numeric)
   };
 
 } // namespace datatools
