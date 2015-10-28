@@ -1,6 +1,6 @@
 # - Top level CMakeLists.txt for datatools project
 #-----------------------------------------------------------------------
-# Copyright (c) 2013-2014, François Mauger <mauger@lpccaen.in2p3.fr>
+# Copyright (c) 2013-2015, François Mauger <mauger@lpccaen.in2p3.fr>
 #                          Ben Morgan <Ben.Morgan@warwick.ac.uk>
 
 #-----------------------------------------------------------------------
