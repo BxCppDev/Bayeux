@@ -1,19 +1,20 @@
 // -*- mode: c++ ; -*-
-/* simulated_data.cc
- */
+// simulated_data.cc
 
+// Ourselves:
 #include <mctools/simulated_data.h>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/utils.h>
 
 namespace mctools {
 
-  /*** serialization ***/
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (simulated_data,"mctools::simulated_data")
+   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (simulated_data,"mctools::simulated_data")
 
   void simulated_data::reset_collection_type ()
   {
@@ -647,5 +648,3 @@ namespace mctools {
   }
 
 } // end of namespace mctools
-
-// end of simulated_data.cc
