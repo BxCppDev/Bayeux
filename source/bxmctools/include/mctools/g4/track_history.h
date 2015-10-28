@@ -56,36 +56,38 @@ namespace mctools {
 
       public:
 
-        int get_id () const;
+        int get_id() const;
 
-        void set_id (const int id_);
+        void set_id(const int id_);
 
-        int get_parent_id () const;
+        int get_parent_id() const;
 
-        void set_parent_id (const int id_);
+        void set_parent_id(const int id_);
 
-        bool is_primary () const;
+        bool is_primary() const;
 
-        const std::string & get_particle_name () const;
+        const std::string & get_particle_name() const;
 
-        void set_particle_name (const std::string & name_);
+        void set_particle_name(const std::string & name_);
 
-        const std::string & get_creator_process_name () const;
+        const std::string & get_creator_process_name() const;
 
-        void set_creator_process_name (const std::string & name_);
+        void set_creator_process_name(const std::string & name_);
 
-        const std::string & get_creator_sensitive_category () const;
+        /// \deprecated
+        const std::string & get_creator_sensitive_category() const;
 
-        void set_creator_sensitive_category (const std::string & category_);
+        /// \deprecated
+        void set_creator_sensitive_category(const std::string & category_);
 
         /// Constructor
-        track_info ();
+        track_info();
 
         /// Destructor
-        ~track_info ();
+        ~track_info();
 
         /// Reset
-        void reset ();
+        void reset();
 
       private:
 
@@ -93,7 +95,7 @@ namespace mctools {
         int         _parent_id_;            //!< G4 parent id (if any)
         std::string _particle_name_;        //!< G4 particle name
         std::string _creator_process_name_; //!< G4 creation process name
-        std::string _creator_sensitive_category_; //!< SNG4 sensitive category
+        std::string _creator_sensitive_category_; //!< SNG4 sensitive category (obsolete)
 
       };
 
@@ -102,26 +104,26 @@ namespace mctools {
       /// Dictionary type of track info
       typedef std::map<int, track_info> track_info_dict_type;
 
-      const track_info_dict_type & get_track_infos () const;
+      const track_info_dict_type & get_track_infos() const;
 
-      track_info_dict_type & grab_track_infos ();
+      track_info_dict_type & grab_track_infos();
 
-      bool has_track_info (const int id_) const;
+      bool has_track_info(const int id_) const;
 
-      const track_info & get_track_info (const int id_) const;
+      const track_info & get_track_info(const int id_) const;
 
-      track_info & grab_track_info (const int id_);
+      track_info & grab_track_info(const int id_);
 
-      void add_track_info (const int id_, const track_info & tinfo_);
+      void add_track_info(const int id_, const track_info & tinfo_);
 
       /// Constructor
-      track_history ();
+      track_history();
 
       /// Destructor
-      ~track_history ();
+      ~track_history();
 
       /// Reset the track history object
-      void reset ();
+      void reset();
 
     private:
 
