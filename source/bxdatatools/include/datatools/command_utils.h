@@ -41,11 +41,12 @@ namespace datatools {
 
     /// \brief Command error codes
     enum error_code_type {
+      CEC_STOP                         = -2, //!< Stop without error (can be used to stop a loop or a pipeline)
+      CEC_CONTINUE                     = -1, //!< Continue without error (can be used to continue a loop or a pipeline)
       CEC_SUCCESS                      =  0, //!< Generic success
       CEC_FAILURE                      =  1, //!< Generic failure
       CEC_PARSING_FAILURE              =  2, //!< Generic parsing error
       CEC_CONTEXT_INVALID              =  3, //!< Invalid context
-      CEC_STOP                         =  8, //!< Stop (can be used to stop a loop or a pipeline)
       CEC_ABORT                        =  9, //!< Abort (can be used to abort a loop or a pipeline)
       CEC_SCOPE_INVALID                = 10, //!< Invalid scope (wrong namespace or general context)
       CEC_COMMAND_INVALID              = 20, //!< Invalid command (unrecognized command name)
@@ -76,6 +77,21 @@ namespace datatools {
 
       /// Constructor of a failed command returned info
       returned_info(error_code_type code_, const std::string & message_ = "");
+
+      /// Set continue code
+      void set_continue();
+
+      /// Set stop code
+      void set_stop();
+
+      /// Set success code and output
+      void set_success(const std::string & output_ = "");
+
+      /// Set error code and message
+      void set_failure(error_code_type code_, const std::string & message_ = "");
+
+      /// Check success
+      bool is_stop() const;
 
       /// Check success
       bool is_success() const;
@@ -158,10 +174,9 @@ namespace datatools {
 */
 #define DT_COMMAND_RETURNED_ERROR(ReturnedInfo, ErrorCode, ErrorMessage) \
   {                                                                     \
-    ReturnedInfo.set_error_code(ErrorCode);                             \
-    std::stringstream s;                                                \
+    std::ostringstream s;                                               \
     s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << ErrorMessage << "]"; \
-    ReturnedInfo.set_error_message(s.str());                            \
+    ReturnedInfo.set_failure(ErrorCode, s.str());                       \
   }                                                                     \
   /**/
 
@@ -193,10 +208,9 @@ namespace datatools {
 */
 #define DT_COMMAND_RETURNED_SUCCESS(ReturnedInfo, OutputMessage)        \
   {                                                                     \
-    ReturnedInfo.set_error_code(datatools::command::CEC_SUCCESS);       \
-    std::stringstream s;                                                \
+    std::ostringstream s;                                               \
     s << OutputMessage;                                                 \
-    ReturnedInfo.set_output(s.str());                                   \
+    ReturnedInfo.set_success(s.str());                                  \
   }                                                                     \
   /**/
 

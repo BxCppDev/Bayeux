@@ -33,6 +33,40 @@ namespace datatools {
     return;
   }
 
+  void command::returned_info::set_continue()
+  {
+    _error_code_ = CEC_CONTINUE;
+    return;
+  }
+
+  void command::returned_info::set_stop()
+  {
+    _error_code_ = CEC_STOP;
+    return;
+  }
+
+  void command::returned_info::set_success(const std::string & output_)
+  {
+    _error_code_ = CEC_SUCCESS;
+    _error_message_.clear();
+    set_output(output_);
+    return;
+  }
+
+  void command::returned_info::set_failure(error_code_type code_,
+                                           const std::string & message_)
+  {
+    set_error_code(code_);
+    set_error_message(message_);
+    _output_.clear();
+    return;
+  }
+
+  bool command::returned_info::is_stop() const
+  {
+    return _error_code_ == CEC_STOP;
+  }
+
   bool command::returned_info::is_success() const
   {
     return _error_code_ == CEC_SUCCESS;
@@ -40,7 +74,7 @@ namespace datatools {
 
   bool command::returned_info::is_failure() const
   {
-    return !is_success();
+    return _error_code_ > CEC_SUCCESS;
   }
 
   bool command::returned_info::error_is(error_code_type code_) const
@@ -50,8 +84,7 @@ namespace datatools {
 
   void command::returned_info::reset()
   {
-    _error_code_ = CEC_SUCCESS;
-    _error_message_.clear();
+    set_success();
     _output_.clear();
     return;
   }
