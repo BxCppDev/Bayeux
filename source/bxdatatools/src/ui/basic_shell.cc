@@ -827,12 +827,18 @@ namespace datatools {
       return;
     }
 
-    int basic_shell::run()
+    int basic_shell::run(std::istream * in_)
     {
       DT_LOG_TRACE_ENTERING(_logging_);
       DT_THROW_IF(!is_initialized(), std::logic_error, "Shell is not initialized!");
       _at_run_start();
+      std::istream * in = in_;
       uint32_t rc_flags = RC_NONE;
+      if (in != 0) {
+        // Force readline/history inhibition:
+        rc_flags |= RC_INHIBIT_READLINE;
+        rc_flags |= RC_INHIBIT_HISTORY;
+      }
       if (is_exit_on_error()) {
         rc_flags |= RC_EXIT_ON_ERROR;
       }
@@ -846,11 +852,10 @@ namespace datatools {
         parser_context top_context;
         _grab_pimpl().pcontexts.push_back(top_context);
       }
-      datatools::command::returned_info cri = _run_core(0, rc_flags);
+      datatools::command::returned_info cri = _run_core(in, rc_flags);
       {
         _grab_pimpl().pcontexts.pop_back();
       }
-
       _at_run_stop();
       DT_LOG_TRACE_EXITING(_logging_);
       return cri.get_error_code();

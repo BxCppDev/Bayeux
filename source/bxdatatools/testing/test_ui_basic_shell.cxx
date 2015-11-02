@@ -23,6 +23,7 @@
 // Standard Library:
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <string>
 
@@ -35,6 +36,10 @@
 int main(int argc_, char * argv_[])
 {
   int error_code = EXIT_SUCCESS;
+  bool interactive = false;
+  if (argc_ > 1 && std::string(argv_[1]) == "-i") {
+    interactive = true;
+  }
   try {
 
     // The objects:
@@ -82,17 +87,43 @@ int main(int argc_, char * argv_[])
     fooShell.set_continuation_prompt("> ");
     fooShell.set_exit_on_error(false);
     fooShell.set_using_splash(true);
-    fooShell.set_using_readline(true);
-    fooShell.set_using_history(true);
-    fooShell.set_history_add_only_on_success(true);
-    fooShell.set_history_filename("fooShell.history");
-    fooShell.set_history_truncate(100);
+    fooShell.set_using_readline(false);
+    if (interactive) {
+      fooShell.set_using_readline(interactive);
+      fooShell.set_using_history(true);
+      fooShell.set_history_add_only_on_success(true);
+      fooShell.set_history_filename("fooShell.history");
+      fooShell.set_history_truncate(100);
+    }
     fooShell.set_ihs(fooIHS);
     fooShell.set_default_path("/dummy");
     fooShell.initialize_simple();
 
+    // Batch mode uses a dedicated input stream:
+    std::ostringstream omacro;
+    omacro << "pwd" << std::endl;
+    omacro << "ls" << std::endl;
+    omacro << "tree /" << std::endl;
+    omacro << "cd /bar" << std::endl;
+    omacro << "pwd" << std::endl;
+    omacro << "ls -l" << std::endl;
+    omacro << "set_value 2" << std::endl;
+    omacro << "get_value" << std::endl;
+    omacro << "cd /test/joe" << std::endl;
+    omacro << "pwd" << std::endl;
+    omacro << "set_sum 1 2 3 4 5" << std::endl;
+    omacro << "get_value" << std::endl;
+    omacro << "/bar/get_value" << std::endl;
+    omacro << "exit" << std::endl;
+    std::string macro = omacro.str();
+    std::istringstream imacro(macro);
+
+    std::istringstream * in = &imacro;
+    if (interactive) {
+      in = 0;
+    }
     // Run the shell session:
-    error_code = fooShell.run();
+    error_code = fooShell.run(in);
 
     // Terminate the shell:
     fooShell.reset();

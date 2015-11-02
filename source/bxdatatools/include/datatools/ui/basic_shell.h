@@ -240,7 +240,7 @@ namespace datatools {
       void reset();
 
       //! Main run loop
-      int run();
+      int run(std::istream * in_ = 0);
 
       //! Build a upper and spaced title
       static void make_title_upper(const std::string & title_,
@@ -319,9 +319,6 @@ namespace datatools {
       std::string _prompt_;  //!< Prompt string
       std::string _continuation_prompt_; //!< Continuation prompt string
       std::string _default_path_;        //!< Default path
-
-
-
       bool        _exit_on_error_;       //!< Flag to exit/abort the shell on first error
       bool        _using_splash_;        //!< Flag to print splash at start
       bool        _using_readline_;      //!< Flag to use the readline library
