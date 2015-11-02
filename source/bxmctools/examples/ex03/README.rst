@@ -11,7 +11,7 @@ Introduction
 
 This example modelizes the radioactivity  measurement of a sample with
 a HPGe detector.  An application is also provided to  analyze the data
-and  produce  the  energy  spectrum  takig  into  account  the  energy
+and  produce  the  energy  spectrum  taking into  account  the  energy
 resolution and detection threshold of the HPGe detector.
 
 Prerequisite

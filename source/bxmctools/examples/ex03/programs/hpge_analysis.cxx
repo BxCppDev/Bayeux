@@ -64,19 +64,19 @@ struct app_config_params {
   //! Default constructor
   app_config_params();
 
-  datatools::logger::priority logging; //!< Logging priority threshold
-  std::string input_filename; //!< Name of the input simulation data file
-  double energy_resolution; //!< Energy resolution of the HPGe detector (arbitrary unit)
-  double energy_resolution_pedestal; //!< Energy resolution pedestal of the HPGe detector (arbitrary unit)
-  double energy_threshold; //!< Low energy threshold
-  std::string hit_category; //!< Hit category
-  bool only_gamma; //!< Flag to process only gamma rays
-  int prng_seed; //!< PRNG seed
-  double histo_energy_min; //! Minimum histogram energy
-  double histo_energy_max; //! Maximum histogram energy
-  std::size_t histo_energy_nbins; //! Number of histogram energy bins
-  std::string histo_output_filename; //!< Name of the output histogram file
-  bool histo_draw; //!< Flag to draw the energy histogram
+  datatools::logger::priority logging; //!< Logging priority threshold (default value: FATAL)
+  std::string input_filename;          //!< Name of the input simulation data file (default value: empty)
+  double energy_resolution;            //!< Energy resolution of the HPGe detector (arbitrary unit, default value: 2.0e-3)
+  double energy_resolution_pedestal;   //!< Energy resolution pedestal of the HPGe detector (arbitrary unit, default value: 0.0)
+  double energy_threshold;             //!< Low energy threshold (default value: 10.0 keV)
+  std::string hit_category;            //!< Hit category (default value: "ge")
+  bool only_gamma;                     //!< Flag to process only gamma rays (default value: false)
+  int prng_seed;                       //!< PRNG seed (default value: invalid seed)
+  double histo_energy_min;             //!< Minimum histogram energy (default value:    0.0 keV)
+  double histo_energy_max;             //!< Maximum histogram energy (default value: 3000.0 keV)
+  std::size_t histo_energy_nbins;      //!< Number of histogram energy bins (default value: 3000)
+  std::string histo_output_filename;   //!< Name of the output histogram file (default value: empty)
+  bool histo_draw;                     //!< Flag to draw the energy histogram (default value: false)
 };
 
 //! Main program:
@@ -173,11 +173,13 @@ int main(int argc_, char * argv_[])
     // Use command line arguments :
 
     if (vm.count("help")) {
+      // Print help message then quit:
       app_usage(std::cout, opts);
       return(error_code);
     }
 
     if (vm.count("version")) {
+      // Print version then quit:
       app_version(std::cout);
       return(error_code);
     }
@@ -212,6 +214,10 @@ int main(int argc_, char * argv_[])
                  std::runtime_error,
                  "File '" << cfg.input_filename << "' does not exists !");
 
+    // Check the validity of the PRNG seed:
+    DT_THROW_IF (cfg.prng_seed == mygsl::random_utils::SEED_INVALID, std::logic_error,
+                 "Seed for pseudo random number generator (PRNG) is not explicitely set !");
+
     // The simulated data reader :
     mctools::simulated_data_reader sd_reader;
     sd_reader.initialize(cfg.input_filename);
@@ -224,7 +230,7 @@ int main(int argc_, char * argv_[])
     calo.set_energy_resolution_pedestal(cfg.energy_resolution_pedestal);
     calo.set_hit_category(cfg.hit_category);
     calo.set_only_gamma(cfg.only_gamma);
-    calo.set_prng_seed(3142159);
+    calo.set_prng_seed(cfg.prng_seed);
     calo.initialize();
 
     // The energy histogram:
@@ -246,7 +252,7 @@ int main(int argc_, char * argv_[])
       // Process the source Monte-Carlo data and build the HPGe calorimetry hit:
       calo.process_event(SD, CH);
 
-      // Statisitics:
+      // Statistics (coutners/histograms):
       hit_counter++;
       if (CH.is_valid()) {
         // Increment counter:
@@ -271,6 +277,7 @@ int main(int argc_, char * argv_[])
     if (cfg.histo_draw) {
       if (boost::filesystem::exists(cfg.histo_output_filename)) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+        // Online display:
         Gnuplot g1;
         g1.cmd("set title 'HPGe spectroscopy' ");
         // g1.cmd("set terminal wxt");
@@ -317,7 +324,7 @@ int main(int argc_, char * argv_[])
   return error_code;
 }
 
-// Definitions:
+// Definitions of functions:
 
 void app_version(std::ostream & out_)
 {
