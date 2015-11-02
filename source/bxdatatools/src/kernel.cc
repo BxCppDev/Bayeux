@@ -189,7 +189,8 @@ namespace datatools {
        )
 
       ("datatools::locale-category",
-       po::value<std::string>(&params_.locale_category),
+       po::value<std::string>(&params_.locale_category)
+       ->value_name("locale"),
        "Set the datatools kernel's local category.              \n"
        "Example :                                               \n"
        "  --datatools::locale-category=\"C\"                      "
@@ -197,6 +198,7 @@ namespace datatools {
 
       ("datatools::logging",
        po::value<std::string>(&params_.logging_label)
+       ->value_name("level")
        ->default_value("warning"),
        "Set the datatools kernel's logging priority threshold.  \n"
        "Example :                                               \n"
@@ -214,6 +216,7 @@ namespace datatools {
 
       ("datatools::libinfo::logging",
        po::value<std::string>(&params_.library_info_logging_label)
+       ->value_name("level")
        ->default_value("warning"),
        "Set the datatools kernel's library info logging priority threshold.  \n"
        "Example :                                                            \n"
@@ -221,7 +224,8 @@ namespace datatools {
        )
 
       ("datatools::resource-path",
-       po::value< std::vector<std::string> >(&params_.resource_paths),
+       po::value< std::vector<std::string> >(&params_.resource_paths)
+       ->value_name("rule"),
        "Register a resource path associated to a library or module.          \n"
        "Example :                                                            \n"
        "  Register the \"path1/subdir1\" path as the root directory of       \n"
@@ -232,7 +236,8 @@ namespace datatools {
        )
 
       ("datatools::resource_path",
-       po::value< std::vector<std::string> >(),
+       po::value< std::vector<std::string> >()
+       ->value_name("rule"),
        "Deprecated option, please use '--datatools::resource-path'    \n"
        )
 
@@ -246,7 +251,8 @@ namespace datatools {
        )
 
       ("datatools::variant-config",
-       po::value< std::string >(&params_.variant_config),
+       po::value< std::string >(&params_.variant_config)
+       ->value_name("file"),
        "The system variant repository configuration filename.                \n"
        "Example :                                                            \n"
        "  Register the \"config/variance.conf\" file to initialize the       \n"
@@ -255,7 +261,8 @@ namespace datatools {
        )
 
       ("datatools::variant-registry-config",
-       po::value< std::vector<std::string> >(&params_.variant_registry_configs),
+       po::value< std::vector<std::string> >(&params_.variant_registry_configs)
+      ->value_name("file(s)"),
        "Register a configuration variant registry in the system variant      \n"
        "repository.                                                          \n"
        "Example :                                                            \n"
@@ -268,7 +275,8 @@ namespace datatools {
        )
 
       ("datatools::variant-load",
-       po::value<std::string>(&params_.variant_load),
+       po::value<std::string>(&params_.variant_load)
+       ->value_name("file"),
        "Load the values of the variant parameters from a file.               \n"
        "Example :                                                            \n"
        "  Load parameters' values from the \"config/saved_variants.rep\" file\n"
@@ -276,7 +284,8 @@ namespace datatools {
        )
 
       ("datatools::variant-set",
-       po::value< std::vector<std::string> >(&params_.variant_sets),
+       po::value< std::vector<std::string> >(&params_.variant_sets)
+       ->value_name("rule(s)"),
        "Set the values of a set of configuration variant parameters associated  \n"
        "to some registry.                                                       \n"
        "Example :                                                               \n"
@@ -311,7 +320,8 @@ namespace datatools {
        )
 
       ("datatools::variant-qt-gui-style",
-       po::value<std::string>(&params_.variant_qt_gui_style),
+       po::value<std::string>(&params_.variant_qt_gui_style)
+       ->value_name("style"),
        "Set the style of variant Qt GUI dialog:                             \n"
        "Example :                                                           \n"
        "   --datatools::variant-qt-gui-style=\"plastique\"                    "
@@ -320,7 +330,8 @@ namespace datatools {
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
       ("datatools::variant-store",
-       po::value<std::string>(&params_.variant_store),
+       po::value<std::string>(&params_.variant_store)
+       ->value_name("file"),
        "Store the values of the variant parameters in a file:                \n"
        "Example :                                                            \n"
        "  Store parameters' values from the \"var/backup_variants.rep\" file \n"
@@ -375,7 +386,6 @@ namespace datatools {
 
     return;
   }
-
 
   kernel::param_type::param_type()
   {
@@ -834,9 +844,9 @@ namespace datatools {
         }
       }
 #if DATATOOLS_WITH_QT_GUI == 1
-        if (!_params_.inhibit_qt_gui) {
-          //
-        }
+      if (!_params_.inhibit_qt_gui) {
+        //
+      }
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
 #if DATATOOLS_WITH_QT_GUI == 1
