@@ -23,6 +23,8 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/range/algorithm/replace_if.hpp>
+// - GSL:
+#include <gsl/gsl_math.h>
 
 // This Project:
 #include <datatools/utils.h>
@@ -32,6 +34,67 @@
 namespace datatools {
 
   namespace units {
+
+    double power_of_ten_to_factor(power_of_ten pot_)
+    {
+      if (pot_ == UNIT_POWER_OF_TEN) return 1.0;
+      double pot = gsl_pow_int(10.0, (int) pot_);
+      return pot;
+    }
+
+    std::string power_of_ten_to_name(power_of_ten pot_)
+    {
+      switch (pot_){
+      case YOCTO : return "yocto";
+      case ZEPTO : return "zepto";
+      case ATTO  : return "atto";
+      case FEMTO : return "femto";
+      case PICO  : return "pico";
+      case NANO  : return "nano";
+      case MICRO : return "micro";
+      case MILLI : return "milli";
+      case CENTI : return "centi";
+      case DECI  : return "deci";
+      case UNIT_POWER_OF_TEN  : return "";
+      case DECA  : return "deca";
+      case HECTO : return "hecto";
+      case KILO  : return "kilo";
+      case MEGA  : return "mega";
+      case GIGA  : return "giga";
+      case TERA  : return "tera";
+      case PETA  : return "peta";
+      case EXA   : return "exa";
+      case ZETTA : return "zetta";
+      case YOTTA : return "yotta";
+      }
+    }
+
+    std::string power_of_ten_to_symbol(power_of_ten pot_)
+    {
+      switch (pot_){
+      case YOCTO : return "y";
+      case ZEPTO : return "z";
+      case ATTO  : return "a";
+      case FEMTO : return "f";
+      case PICO  : return "p";
+      case NANO  : return "n";
+      case MICRO : return "u";
+      case MILLI : return "m";
+      case CENTI : return "c";
+      case DECI  : return "d";
+      case UNIT_POWER_OF_TEN  : return "";
+      case DECA  : return "da";
+      case HECTO : return "h";
+      case KILO  : return "k";
+      case MEGA  : return "M";
+      case GIGA  : return "G";
+      case TERA  : return "T";
+      case PETA  : return "P";
+      case EXA   : return "E";
+      case ZETTA : return "Z";
+      case YOTTA : return "Y";
+      }
+    }
 
     size_t registered_unit_dimension_labels(std::vector<std::string> & dimension_labels_)
     {

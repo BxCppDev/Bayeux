@@ -30,6 +30,10 @@
 #include <datatools/exception.h>
 #include <datatools/i_tree_dump.h>
 
+#ifndef Q_MOC_RUN
+#include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
+
 namespace datatools {
 
   /*! \brief Utilities for units based on the CLHEP library's implementation.
@@ -42,6 +46,40 @@ namespace datatools {
    *
    */
   namespace units {
+
+    //! SI powers of ten
+    enum power_of_ten {
+      YOCTO = -24,
+      ZEPTO = -21,
+      ATTO  = -18,
+      FEMTO = -15,
+      PICO  = -12,
+      NANO  =  -9,
+      MICRO =  -6,
+      MILLI =  -3,
+      CENTI =  -2,
+      DECI  =  -1,
+      UNIT_POWER_OF_TEN = 0,
+      DECA  =   1,
+      HECTO =   2,
+      KILO  =   3,
+      MEGA  =   6,
+      GIGA  =   9,
+      TERA  =  12,
+      PETA  =  15,
+      EXA   =  18,
+      ZETTA =  21,
+      YOTTA =  24
+    };
+
+    //! Return the SI prefix factor associated to a given SI power of ten
+    double power_of_ten_to_factor(power_of_ten);
+
+    //! Return the SI name associated to a given SI power of ten
+    std::string power_of_ten_to_name(power_of_ten);
+
+    //! Return the SI symbol associated to a given SI power of ten
+    std::string power_of_ten_to_symbol(power_of_ten);
 
     /// Build the list of system registered dimension labels
     /// @param dimension_labels_ a vector of string to be filled by unit dimension labels
@@ -635,6 +673,11 @@ namespace datatools {
   } // end of namespace units
 
 } // end of namespace datatools
+
+#ifndef Q_MOC_RUN
+// Activate reflection layer:
+DR_TYPE_INIT(::datatools::units::power_of_ten);
+#endif // Q_MOC_RUN
 
 //! \def DT_THROW_BAD_UNIT(UnitType,UnitSymbol)
 //! \brief Throw a special exception when \c UnitSymbol does not match \c UnitType.
