@@ -28,6 +28,18 @@ set(datatools_VERSION_MINOR 0)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
+# - Readline (for the datatools::ui::basic_shell class)
+set(DATATOOLS_WITH_READLINE 0)
+find_package(Readline QUIET)
+if (Readline_FOUND)
+  # message (STATUS "bxdatatools: Found readline library...")
+  # message (STATUS "bxdatatools: Readline_INCLUDE_DIR = '${Readline_INCLUDE_DIR}' ")
+  # message (STATUS "bxdatatools: Readline_LIBRARIES   = '${Readline_LIBRARIES}' ")
+  set(DATATOOLS_WITH_READLINE 1)
+else()
+  message (STATUS "bxdatatools: Readline library not found!")
+endif()
+
 # - CAMP Reflection
 set(DATATOOLS_WITH_REFLECTION 1)
 
@@ -113,6 +125,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_check.h
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/version_id.h
+
   ${module_include_dir}/${module_name}/configuration/i_occurrence.h
   ${module_include_dir}/${module_name}/configuration/single_occurrence.h
   ${module_include_dir}/${module_name}/configuration/array_occurrence.h
@@ -128,6 +141,29 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/configuration/variant_registry.h
   ${module_include_dir}/${module_name}/configuration/variant_repository.h
 
+  ${module_include_dir}/${module_name}/introspection/data_type.h
+  ${module_include_dir}/${module_name}/introspection/data_layout.h
+  ${module_include_dir}/${module_name}/introspection/access_type.h
+  ${module_include_dir}/${module_name}/introspection/data_description.h
+  ${module_include_dir}/${module_name}/introspection/argument.h
+  ${module_include_dir}/${module_name}/introspection/method.h
+
+  ${module_include_dir}/${module_name}/ui/utils.h
+  ${module_include_dir}/${module_name}/ui/ihs.h
+  ${module_include_dir}/${module_name}/ui/base_command.h
+  ${module_include_dir}/${module_name}/ui/base_command_interface.h
+  ${module_include_dir}/${module_name}/ui/basic_shell.h
+  ${module_include_dir}/${module_name}/ui/shell_commands.h
+  ${module_include_dir}/${module_name}/ui/shell_command_interface.h
+  ${module_include_dir}/${module_name}/ui/shell_exit_command.h
+  ${module_include_dir}/${module_name}/ui/shell_pwd_command.h
+  ${module_include_dir}/${module_name}/ui/shell_ls_command.h
+  ${module_include_dir}/${module_name}/ui/shell_cd_command.h
+  ${module_include_dir}/${module_name}/ui/shell_man_command.h
+  ${module_include_dir}/${module_name}/ui/shell_tree_command.h
+  ${module_include_dir}/${module_name}/ui/shell_load_command.h
+  ${module_include_dir}/${module_name}/ui/shell_help_command.h
+
   ${module_include_dir}/${module_name}/i_serializable-reflect.h
   ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
   ${module_include_dir}/${module_name}/logger-reflect.h
@@ -137,6 +173,14 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/multi_properties-reflect.h
   ${module_include_dir}/${module_name}/properties-reflect.h
   ${module_include_dir}/${module_name}/things-reflect.h
+  ${module_include_dir}/${module_name}/units-reflect.h
+
+  ${module_include_dir}/${module_name}/introspection/data_type-reflect.h
+  ${module_include_dir}/${module_name}/introspection/access_type-reflect.h
+  ${module_include_dir}/${module_name}/introspection/data_layout-reflect.h
+  ${module_include_dir}/${module_name}/introspection/argument.h
+  ${module_include_dir}/${module_name}/introspection/method.h
+
   ${module_include_dir}/${module_name}/the_introspectable.h
   ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/detail/reflection_export.h
@@ -211,6 +255,28 @@ ${module_source_dir}/configuration/variant_physical.cc
 ${module_source_dir}/configuration/variant_record.cc
 ${module_source_dir}/configuration/variant_registry.cc
 ${module_source_dir}/configuration/variant_repository.cc
+
+${module_source_dir}/introspection/data_type.cc
+${module_source_dir}/introspection/access_type.cc
+${module_source_dir}/introspection/data_layout.cc
+${module_source_dir}/introspection/data_description.cc
+${module_source_dir}/introspection/argument.cc
+${module_source_dir}/introspection/method.cc
+
+${module_source_dir}/ui/basic_shell.cc
+${module_source_dir}/ui/shell_command_interface.cc
+${module_source_dir}/ui/shell_exit_command.cc
+${module_source_dir}/ui/shell_pwd_command.cc
+${module_source_dir}/ui/shell_ls_command.cc
+${module_source_dir}/ui/shell_cd_command.cc
+${module_source_dir}/ui/shell_man_command.cc
+${module_source_dir}/ui/shell_tree_command.cc
+${module_source_dir}/ui/shell_load_command.cc
+${module_source_dir}/ui/shell_help_command.cc
+${module_source_dir}/ui/ihs.cc
+${module_source_dir}/ui/base_command_interface.cc
+${module_source_dir}/ui/base_command.cc
+${module_source_dir}/ui/utils.cc
 #${module_source_dir}/the_introspectable.cc
 bx${module_name}/resource.cc
 bx${module_name}/_datatools.cc
@@ -373,7 +439,16 @@ ${module_test_dir}/test_version_id.cxx
 ${module_test_dir}/test_configuration_parameter_model.cxx
 ${module_test_dir}/test_configuration_variant_model.cxx
 ${module_test_dir}/test_configuration_variant_api_0.cxx
+${module_test_dir}/test_ui_utils.cxx
+${module_test_dir}/test_ui_ihs.cxx
+${module_test_dir}/test_ui_base_command.cxx
+${module_test_dir}/test_ui_base_command_interface.cxx
+${module_test_dir}/test_ui_shell_command_interface.cxx
+${module_test_dir}/test_ui_basic_shell.cxx
 ${module_test_dir}/test_backward_things.cxx
+${module_test_dir}/test_introspection_data_description.cxx
+${module_test_dir}/test_introspection_argument.cxx
+${module_test_dir}/test_introspection_method.cxx
 )
 
 # - Applications
