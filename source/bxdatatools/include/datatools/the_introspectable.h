@@ -40,6 +40,10 @@
 #include <datatools/enriched_base-reflect.h>
 #include <datatools/base_service-reflect.h>
 
+#include <datatools/introspection/data_type-reflect.h>
+#include <datatools/introspection/access_type-reflect.h>
+#include <datatools/introspection/data_layout-reflect.h>
+
 #endif // DATATOOLS_THE_INTROSPECTABLE_H
 
 /*
