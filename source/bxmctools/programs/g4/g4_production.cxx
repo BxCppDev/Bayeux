@@ -105,45 +105,65 @@ int main(int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-// #if DATATOOLS_WITH_QT_GUI == 1
-//   std::cerr << "DEVEL: Setup QApplication..." << std::endl;
-//   QApplication::setStyle(QStyleFactory::create(QString::fromStdString("plastique")));
-//   QApplication * app = new QApplication(argc_, argv_);
-// #endif
 #if MCTOOLS_STANDALONE == 1
   MCTOOLS_INIT_MAIN(argc_, argv_);
 #else
   BAYEUX_INIT_MAIN(argc_, argv_);
 #endif
-  // app->exec();
-  // std::cerr << "DEVEL: Setup QApplication done." << std::endl;
-// #if DATATOOLS_WITH_QT_GUI == 1
-//   if (app) {
-//     delete app;
-//   }
-// #endif
   try {
 
     // Configuration parameters for the G4 manager:
     mctools::g4::manager_parameters params;
     params.set_defaults();
 
-    // Preprocessor for command line arguments:
-    unsigned int vpp_flags = 0;
-    // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_TRACE;
-    vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_REMOVE_QUOTES;
-    datatools::configuration::variant_preprocessor vpp(vpp_flags);
-    std::vector<std::string> preprocessed_arguments;
-    vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
-
     // Shortcut for Boost/program_options namespace :
     namespace po = boost::program_options;
 
-    // Describe command line switches :
-    po::options_description opts("Allowed options");
-    ui::build_opts(opts, params);
-
+    // Variables map:
     po::variables_map vm;
+    po::options_description all_opts;
+
+    try {
+      // Preprocessor for command line arguments:
+      unsigned int vpp_flags = 0;
+      // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_TRACE;
+      vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_REMOVE_QUOTES;
+      datatools::configuration::variant_preprocessor vpp(vpp_flags);
+      std::vector<std::string> preprocessed_arguments;
+      vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
+
+      // Describe command line switches :
+      po::options_description opts("Allowed options");
+      ui::build_opts(opts, params);
+
+      // Describe Bayeux/datatools kernel options:
+      po::options_description kopts("Bayeux/datatools kernel options");
+      datatools::kernel::param_type kparams;
+      datatools::kernel::build_opt_desc(kopts, kparams);
+
+      // Collect all supported options in one container:
+      all_opts.add(opts);
+      all_opts.add(kopts);
+
+      // Configure the parser:
+      po::command_line_parser cl_parser(argc_, argv_);
+      cl_parser.options(all_opts);
+      // cl_parser.positional(args);
+      // cl_parser.allow_unregistered();
+
+      // Parse:
+      po::parsed_options parsed = cl_parser.run();
+
+      // Fill and notify a variable map:
+      po::store(parsed, vm);
+      po::notify(vm);
+    }
+    catch (std::exception & po_error) {
+      ui::print_usage(all_opts, std::cerr);
+      throw;
+    }
+
+    /*
     po::parsed_options parsed =
       po::command_line_parser(preprocessed_arguments)
       .options(opts)
@@ -156,6 +176,7 @@ int main(int argc_, char ** argv_)
                                                  po::include_positional);
     po::store(parsed, vm);
     po::notify(vm);
+    */
 
     // Parse specific options:
     bool do_splash = true;
@@ -181,13 +202,13 @@ int main(int argc_, char ** argv_)
 
     if (vm.count("help")) {
       if (vm["help"].as<bool>()) {
-        ui::print_usage(opts, std::cout);
+        ui::print_usage(all_opts, std::cout);
         return(0);
       }
     }
 
     // Fill the configuration data structure from program options:
-    ui::process_opts(vm, opts, params);
+    ui::process_opts(vm, all_opts, params);
 
     // DLL loading:
     datatools::library_loader dll_loader(params.dll_loader_config);
@@ -288,14 +309,6 @@ void ui::print_usage(const boost::program_options::options_description & opts_,
        << std::endl;
   out_ << std::endl;
   out_ << opts_ << std::endl;
-  {
-    //    out_ << "\nDatatools kernel options: \n";
-    boost::program_options::options_description kopts("datatools' kernel options");
-    datatools::kernel::param_type kparams;
-    datatools::kernel::build_opt_desc(kopts, kparams);
-    datatools::kernel::print_opt_desc(kopts, out_);
-  }
-  out_ << std::endl;
   ui::print_examples(out_,
                      APP_NAME,
                      "Examples : ");
@@ -422,11 +435,11 @@ void ui::build_opts(boost::program_options::options_description & opts_,
      po::value<bool>()
      ->zero_tokens()
      ->default_value(false),
-     "No G4 visualization(only in interactive mode)")
+     "No G4 visualization (only in interactive mode)")
 
     ("g4-macro",
      po::value<std::string>(),
-     "Set the G4 macro file(only if interactive G4 visualization)")
+     "Set the G4 macro file (only if interactive G4 visualization)")
 
     ("using-time-statistics",
      po::value<bool>(&params_.using_time_stat)
@@ -438,7 +451,7 @@ void ui::build_opts(boost::program_options::options_description & opts_,
      po::value<bool>(&params_.forbid_private_hits)
      ->zero_tokens()
      ->default_value(false),
-     "Do not allow private(un-official)\nMC hits")
+     "Do not allow private (un-official)\nMC hits")
 
     ("dont-save-no-sensitive-hit-events",
      po::value<bool>(&params_.dont_save_no_sensitive_hit_events)
