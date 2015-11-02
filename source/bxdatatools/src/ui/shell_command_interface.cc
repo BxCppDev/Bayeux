@@ -208,35 +208,6 @@ namespace datatools {
       return;
     }
 
-    /*
-      datatools::command::returned_info shell_command_interface::_cmd_printhelp(const std::string & interface_name_)
-      {
-      datatools::command::returned_info cri;
-
-      std::string interface_name = interface_name_;
-      if (interface_name.empty() || interface_name == shell::system_interface_name()) {
-      std::cout << grab_parent_shell().get_name() << " system shell usage: " << std::endl;
-      std::cout << std::endl;
-      std::cout << "Supported commands are: " << std::endl;
-      std::cout << std::endl;
-      this->print_usage(std::cout);
-      std::cout << std::endl;
-      } else if (grab_parent_shell().has_interface(interface_name)) {
-      std::cout << interface_name << " usage: " << std::endl << std::endl;
-      std::cout << '\t' << interface_name << " {command} [options...] [arguments...]" << std::endl;
-      std::cout << std::endl;
-      std::cout << "Supported commands are: " << std::endl;
-      std::cout << std::endl;
-      grab_parent_shell()._grab_interface(interface_name).print_usage(std::cout);
-      std::cout << std::endl;
-      } else {
-      DT_COMMAND_RETURNED_ERROR(cri, datatools::command::CEC_PARAMETER_INVALID,
-      "Invalid interface '" << interface_name << "'!");
-      }
-      return cri;
-      }
-    */
-
   } // namespace ui
 
 } // namespace datatools
