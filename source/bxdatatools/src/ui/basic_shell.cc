@@ -30,8 +30,10 @@
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
 // - Readline:
+#if DATATOOLS_WITH_READLINE == 1
 #include <readline/readline.h>
 #include <readline/history.h>
+#endif // DATATOOLS_WITH_READLINE
 
 // This project:
 #include <datatools/exception.h>
@@ -142,8 +144,13 @@ namespace datatools {
       _default_path_   = ::datatools::ui::path::root_path();
       _exit_on_error_ = false;
       _using_splash_   = true;
+#if DATATOOLS_WITH_READLINE == 1
       _using_readline_ = true;
       _using_history_  = true;
+#else
+      _using_readline_ = false;
+      _using_history_  = false;
+#endif // DATATOOLS_WITH_READLINE
       _history_add_only_on_success_ = true;
       _history_filename_.clear();
       _history_truncate_ = 0;
@@ -567,7 +574,9 @@ namespace datatools {
       }
 
       if (config_.has_key("using_readline")) {
+#if DATATOOLS_WITH_READLINE == 1
         set_using_readline(config_.fetch_boolean("using_readline"));
+#endif // DATATOOLS_WITH_READLINE
       }
 
       if (config_.has_key("using_splash")) {
@@ -575,9 +584,12 @@ namespace datatools {
       }
 
       if (config_.has_key("using_history")) {
+#if DATATOOLS_WITH_READLINE == 1
         set_using_history(config_.fetch_boolean("using_history"));
+#endif // DATATOOLS_WITH_READLINE
       }
 
+#if DATATOOLS_WITH_READLINE == 1
       if (_using_history_) {
 
         if (_history_filename_.empty()) {
@@ -610,6 +622,7 @@ namespace datatools {
         }
 
       }
+#endif // DATATOOLS_WITH_READLINE
 
       // Specific initialization:
       _at_init(config_);
@@ -848,6 +861,10 @@ namespace datatools {
       if (!is_using_history()) {
         rc_flags |= RC_INHIBIT_HISTORY;
       }
+#if DATATOOLS_WITH_READLINE == 0
+      rc_flags |= RC_INHIBIT_READLINE;
+      rc_flags |= RC_INHIBIT_HISTORY;
+#endif // DATATOOLS_WITH_READLINE
       {
         parser_context top_context;
         _grab_pimpl().pcontexts.push_back(top_context);
@@ -997,31 +1014,36 @@ namespace datatools {
         std::string line;
 
         // Read a line:
-        if (using_readline) {
-          char * readline_line = 0;
-          go_on = false;
-          readline_line = readline(get_effective_prompt().c_str()); // use readline library
-          _grab_pimpl().pcontexts.back().line_counter++;
-          if (readline_line != 0) {
-            go_on = true;
-            line = readline_line; // use readline library
-            if (! line.empty() && using_history) {
-              to_be_historized.push_back(readline_line);
-            }
-            free(readline_line);
-            readline_line = 0;
-          }
-        } else {
-          // Prompt:
-          if (using_prompt) {
-            std::cerr << get_effective_prompt() << std::flush;
-          }
-          std::getline(*input, line);
-          _grab_pimpl().pcontexts.back().line_counter++;
-          if (! *input || input->eof()) {
+#if DATATOOLS_WITH_READLINE == 1
+        if (using_readline)
+          {
+            char * readline_line = 0;
             go_on = false;
+            readline_line = readline(get_effective_prompt().c_str()); // use readline library
+            _grab_pimpl().pcontexts.back().line_counter++;
+            if (readline_line != 0) {
+              go_on = true;
+              line = readline_line; // use readline library
+              if (! line.empty() && using_history) {
+                to_be_historized.push_back(readline_line);
+              }
+              free(readline_line);
+              readline_line = 0;
+            }
           }
-        } // End of read line
+        else
+#endif // DATATOOLS_WITH_READLINE
+          {
+            // Prompt:
+            if (using_prompt) {
+              std::cerr << get_effective_prompt() << std::flush;
+            }
+            std::getline(*input, line);
+            _grab_pimpl().pcontexts.back().line_counter++;
+            if (! *input || input->eof()) {
+              go_on = false;
+            }
+          } // End of read line
 
         {
           // Skip blank line and lines starting with '#' :
@@ -1037,30 +1059,35 @@ namespace datatools {
           while (line[line.length()-1] == '\\') {
             line = line.substr(0, line.length()-1);
             std::string more;
-            if (using_readline) {
-              char * readline_line = 0;
-              go_on = false;
-              readline_line = readline(get_effective_continuation_prompt().c_str()); // use readline library
-              _grab_pimpl().pcontexts.back().line_counter++;
-              if (readline_line != 0) {
-                go_on = true;
-                more = readline_line; // use readline library
-                if (! more.empty() && using_history) {
-                  to_be_historized.push_back(readline_line);
-                }
-                free(readline_line);
-                readline_line = 0;
-              }
-            } else {
-              if (using_prompt) {
-                std::cerr << get_effective_continuation_prompt() << std::flush;
-              }
-              std::getline(*input, more);
-              _grab_pimpl().pcontexts.back().line_counter++;
-              if (! *input || input->eof()) {
+#if DATATOOLS_WITH_READLINE == 1
+            if (using_readline)
+              {
+                char * readline_line = 0;
                 go_on = false;
+                readline_line = readline(get_effective_continuation_prompt().c_str()); // use readline library
+                _grab_pimpl().pcontexts.back().line_counter++;
+                if (readline_line != 0) {
+                  go_on = true;
+                  more = readline_line; // use readline library
+                  if (! more.empty() && using_history) {
+                    to_be_historized.push_back(readline_line);
+                  }
+                  free(readline_line);
+                  readline_line = 0;
+                }
               }
-            }
+            else
+#endif // DATATOOLS_WITH_READLINE
+              {
+                if (using_prompt) {
+                  std::cerr << get_effective_continuation_prompt() << std::flush;
+                }
+                std::getline(*input, more);
+                _grab_pimpl().pcontexts.back().line_counter++;
+                if (! *input || input->eof()) {
+                  go_on = false;
+                }
+              }
             // Append to the current line:
             line += more;
           }
@@ -1101,6 +1128,7 @@ namespace datatools {
           }
         } // End of interpreter block.
 
+#if DATATOOLS_WITH_READLINE == 1
         // Use readline/history library:
         if (using_history) {
           bool historize_it = true;
@@ -1116,6 +1144,7 @@ namespace datatools {
           }
           to_be_historized.clear();
         }
+#endif // DATATOOLS_WITH_READLINE
 
         if (! using_readline && input->eof()) {
           DT_LOG_TRACE(get_logging(), "EOF.");

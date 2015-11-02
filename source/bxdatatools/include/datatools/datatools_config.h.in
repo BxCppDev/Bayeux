@@ -13,8 +13,11 @@
 //! Evaluates to true if datatools was built with Boost I/O support
 #define DATATOOLS_WITH_BIO 1
 
-//! Evaluates to true if datatools was built with CAMP reflection support
+//! Evaluates to true if datatools was built with CAMP reflection/introspection support
 #cmakedefine01 DATATOOLS_WITH_REFLECTION
+
+//! Evaluates to true if datatools was built with READLINE support
+#cmakedefine01 DATATOOLS_WITH_READLINE
 
 //! Evaluates to true if datatools was built with automated init/fini operation at DLL loading
 #cmakedefine01 DATATOOLS_WITH_IMPLICIT_INIT_FINI
