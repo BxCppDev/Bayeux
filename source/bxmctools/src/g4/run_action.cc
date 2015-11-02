@@ -52,18 +52,17 @@
 namespace mctools {
   namespace g4 {
 
-    // PIMPL-ized I/O working resources: XXX
+    //! \brief PIMPL-ized I/O working resources:
     struct run_action::io_work_type {
-      /// Default constructor
+      //! Default constructor
       io_work_type();
-      /// Destructor
+      //! Destructor
       ~io_work_type();
       // I/O engines:
-      boost::scoped_ptr<datatools::data_writer> writer;       ///< Plain data writer
-      boost::scoped_ptr<brio::writer>           brio_writer;  ///< Plain data writer (brio)
-      boost::scoped_ptr<dpp::output_module>     out_module;   ///< Bank writer
-      boost::scoped_ptr<datatools::things>      data_record;  ///< Data record for bank
-      // multi_properties *                        metadata;     ///< Run metadata
+      boost::scoped_ptr<datatools::data_writer> writer;       //!< Plain data writer
+      boost::scoped_ptr<brio::writer>           brio_writer;  //!< Plain data writer (brio)
+      boost::scoped_ptr<dpp::output_module>     out_module;   //!< Bank writer
+      boost::scoped_ptr<datatools::things>      data_record;  //!< Data record for bank
     };
 
     run_action::io_work_type::io_work_type()
