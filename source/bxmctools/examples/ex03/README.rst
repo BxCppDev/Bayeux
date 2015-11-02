@@ -251,11 +251,20 @@ Run a batch simulation:
 	  --shpf-seed 314159 \
 	  --number-of-events 100000 \
 	  --number-of-events-modulo 1000 \
-	  --forbid-private-hits --dont-save-no-sensitive-hit-events \
+	  --forbid-private-hits \
+          --dont-save-no-sensitive-hit-events \
 	  --output-prng-seeds-file  "${HPGE_WORK_DIR}/management/mc_g4_production.seeds" \
 	  --output-prng-states-file "${HPGE_WORK_DIR}/management/mc_g4_production.states" \
 	  --output-data-file "${HPGE_WORK_DIR}/data/mc_g4_sample.data.gz" \
 	  > ${HPGE_WORK_DIR}/management/mc_g4_production.log
+
+Note:
+
+  - the ``--forbid-private-hits`` option discards the storage of private collections of hits
+    in the output file (by convention, the name of such hit collections use the ``__`` prefix).
+  - the ``--dont-save-no-sensitive-hit-events`` option discards the storage of events with no
+    hits in sensitive detectors. Thus the number of saved events can be lower than the total number
+    of generated events.
 
 
 Build the analysis program
@@ -265,9 +274,9 @@ Prepare a build directory:
 
 .. code:: sh
 
-	  $ export HPGE_BUILD_DIR=$(pwd)/__build.d
-	  $ export HPGE_INSTALL_DIR=$(pwd)/__install.d
-	  $ mkdir ${HPGE_BUILD_DIR}
+   $ export HPGE_BUILD_DIR=$(pwd)/__build.d
+   $ export HPGE_INSTALL_DIR=$(pwd)/__install.d
+   $ mkdir ${HPGE_BUILD_DIR}
 
 Compile the analysis program:
 
@@ -296,6 +305,7 @@ Run the analysis program
    ${HPGE_INSTALL_DIR}/bin/hpge_analysis  \
 	  --logging-priority "notice" \
 	  --input-file "${HPGE_WORK_DIR}/data/mc_g4_sample.data.gz" \
+	  --input-nevents 100000 \
 	  --prng-seed=12345 \
 	  --histo-output-file "${HPGE_WORK_DIR}/data/histo_spectro.data" \
     	  --histo-draw

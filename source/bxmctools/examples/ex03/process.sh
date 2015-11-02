@@ -245,6 +245,7 @@ if [ ${do_analysis} -eq 1 ]; then
     ${HPGE_INSTALL_DIR}/bin/hpge_analysis  \
     	--logging-priority "notice" \
     	--input-file "${HPGE_WORK_DIR}/data/mc_g4_sample.data.gz" \
+	--input-nevents 100000 \
 	--prng-seed=12345 \
 	--histo-output-file "${HPGE_WORK_DIR}/data/histo_spectro.data" \
     	--histo-draw
