@@ -67,6 +67,7 @@ struct app_config_params {
 
   datatools::logger::priority logging; //!< Logging priority threshold (default value: FATAL)
   std::string input_filename;          //!< Name of the input simulation data file (default value: empty)
+  std::size_t input_nevents;           //!< Force number of input events (default: 0 for unused)
   double energy_resolution;            //!< Energy resolution of the HPGe detector (arbitrary unit, default value: 2.0e-3)
   double energy_resolution_pedestal;   //!< Energy resolution pedestal of the HPGe detector (arbitrary unit, default value: 0.0)
   double energy_threshold;             //!< Low energy threshold (default value: 10.0 keV)
@@ -90,74 +91,83 @@ int main(int argc_, char * argv_[])
     // The application configuration parameter set:
     app_config_params cfg;
 
+    // Default energy unit:
     double defaut_energy_unit = CLHEP::keV;
 
     // Describe command line arguments :
     namespace po = boost::program_options;
-    po::options_description opts("Allowed options");
-    opts.add_options()
-      ("help,h", "produce help message")
-
-      ("version,v", "print version")
-
-      ("logging-priority,L",
-       po::value<std::string>(),
-       "set the logging priority")
-
-      ("input-file,i",
-       po::value<std::string>(&cfg.input_filename),
-       "set the name of the input simulated data file from which to load the Monte-Carlo data")
-
-      ("hit-category,H",
-       po::value<std::string>(&cfg.hit_category),
-       "set the name of the hit category to be analyzed")
-
-      ("energy-threshold,T",
-       po::value<double>(),
-       "set the energy threshold of the HPGe detector")
-
-      ("energy-resolution,R",
-       po::value<double>(&cfg.energy_resolution)
-       ->default_value(2.0e-3),
-       "set the energy resolution of the HPGe detector")
-
-      ("energy-resolution-pedestal,P",
-       po::value<double>(&cfg.energy_resolution_pedestal)
-       ->default_value(0.0),
-       "set the energy resolution pedestal of the HPGe detector")
-
-      ("prng-seed,s",
-       po::value<int>(&cfg.prng_seed),
-       "set the PRNG seed")
-
-      ("histo-energy-min,m",
-       po::value<double>(),
-       "set the histogram minimum energy")
-
-      ("histo-energy-max,M",
-       po::value<double>(),
-       "set the histogram maximum energy")
-
-      ("histo-energy-nbins,b",
-       po::value<std::size_t>(&cfg.histo_energy_nbins),
-       "set the histogram number of bins")
-
-      ("histo-output-file,o",
-       po::value<std::string>(&cfg.histo_output_filename),
-       "set the name of the output histogram file")
-
-      ("histo-draw,d",
-       po::value<bool>(&cfg.histo_draw)
-       ->zero_tokens()
-       ->default_value(false),
-       "set the flag to draw the histogram")
-
-      ; // end of options description
 
     // Variable map:
     po::variables_map vm;
+    po::options_description all_opts;
 
     try {
+
+      // Describe the allowed options for this application:
+      po::options_description opts("Allowed options");
+      opts.add_options()
+        ("help,h", "produce help message")
+
+        ("version,v", "print version")
+
+        ("logging-priority,L",
+         po::value<std::string>(),
+         "set the logging priority")
+
+        ("input-file,i",
+         po::value<std::string>(&cfg.input_filename),
+         "set the name of the input simulated data file from which to load the Monte-Carlo data")
+
+        ("input-nevents,e",
+         po::value<std::size_t>(&cfg.input_nevents),
+         "set the true number of input simulated events even if the input data file contains less events due to storage optimization")
+
+        ("hit-category,H",
+         po::value<std::string>(&cfg.hit_category),
+         "set the name of the hit category to be analyzed")
+
+        ("energy-threshold,T",
+         po::value<double>(),
+         "set the energy threshold of the HPGe detector")
+
+        ("energy-resolution,R",
+         po::value<double>(&cfg.energy_resolution)
+         ->default_value(2.0e-3),
+         "set the energy resolution of the HPGe detector")
+
+        ("energy-resolution-pedestal,P",
+         po::value<double>(&cfg.energy_resolution_pedestal)
+         ->default_value(0.0),
+         "set the energy resolution pedestal of the HPGe detector")
+
+        ("prng-seed,s",
+         po::value<int>(&cfg.prng_seed),
+         "set the PRNG seed")
+
+        ("histo-energy-min,m",
+         po::value<double>(),
+         "set the histogram minimum energy")
+
+        ("histo-energy-max,M",
+         po::value<double>(),
+         "set the histogram maximum energy")
+
+        ("histo-energy-nbins,b",
+         po::value<std::size_t>(&cfg.histo_energy_nbins),
+         "set the histogram number of bins")
+
+        ("histo-output-file,o",
+         po::value<std::string>(&cfg.histo_output_filename),
+         "set the name of the output histogram file")
+
+        ("histo-draw,d",
+         po::value<bool>(&cfg.histo_draw)
+         ->zero_tokens()
+         ->default_value(false),
+         "set the flag to draw the histogram")
+
+        ; // end of options description
+
       // Describe positional arguments for this application:
       po::positional_options_description args;
       args.add("input-file", 1);
@@ -169,7 +179,6 @@ int main(int argc_, char * argv_[])
       datatools::kernel::build_opt_desc(kopts, kparams);
 
       // Collect all supported options in one container:
-      po::options_description all_opts;
       all_opts.add(opts);
       all_opts.add(kopts);
 
@@ -192,7 +201,7 @@ int main(int argc_, char * argv_[])
       po::notify(vm);
     }
     catch (std::exception & po_error) {
-      app_usage(std::cerr, opts);
+      app_usage(std::cerr, all_opts);
       throw;
     }
 
@@ -200,7 +209,7 @@ int main(int argc_, char * argv_[])
 
     if (vm.count("help")) {
       // Print help message then quit:
-      app_usage(std::cout, opts);
+      app_usage(std::cout, all_opts);
       return(error_code);
     }
 
@@ -229,6 +238,10 @@ int main(int argc_, char * argv_[])
 
     if (vm.count("histo_energy-max")) {
       cfg.histo_energy_max = vm["histo-energy-max"].as<double>() * defaut_energy_unit;
+    }
+
+    if (vm.count("input-nevents")) {
+      cfg.input_nevents = vm["input-nevents"].as<std::size_t>();
     }
 
     // Check:
@@ -278,7 +291,7 @@ int main(int argc_, char * argv_[])
       // Process the source Monte-Carlo data and build the HPGe calorimetry hit:
       calo.process_event(SD, CH);
 
-      // Statistics (coutners/histograms):
+      // Statistics (counters/histograms):
       hit_counter++;
       if (CH.is_valid()) {
         // Increment counter:
@@ -287,9 +300,16 @@ int main(int argc_, char * argv_[])
         spectroscopy.fill(CH.get_energy_deposit());
       }
     }
-    DT_LOG_NOTICE(cfg.logging, "Number of Monte-Carlo event   : " << hit_counter);
+    size_t total_event_counter = hit_counter;
+    if (cfg.input_nevents != 0) {
+      if (hit_counter > cfg.input_nevents) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Input number of events lower than number of stored events");
+      }
+      total_event_counter = cfg.input_nevents;
+    }
+    DT_LOG_NOTICE(cfg.logging, "Number of Monte-Carlo events  : " << total_event_counter);
     DT_LOG_NOTICE(cfg.logging, "Number of HPGe effective hits : " << calo_hit_counter);
-    double efficiency = (1.0 * calo_hit_counter)/ hit_counter;
+    double efficiency = (1.0 * calo_hit_counter)/ total_event_counter;
     DT_LOG_NOTICE(cfg.logging, "Detection efficiency          : " << efficiency * 100 << " %");
 
     if (! cfg.histo_output_filename.empty()) {
@@ -369,6 +389,7 @@ void app_usage(std::ostream & out_,
 app_config_params::app_config_params()
 {
   logging = datatools::logger::PRIO_FATAL;
+  input_nevents = 0;
   energy_resolution = 2.0e-3; //  typical value: 2.0e-3
   energy_resolution_pedestal = 0.0; // typical value: 0.50
   energy_threshold  = 10.0 * CLHEP::keV;
