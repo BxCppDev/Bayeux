@@ -33,6 +33,7 @@
 // - Bayeux:
 #include <bayeux/bayeux.h>
 // - Bayeux/datatools:
+#include <datatools/kernel.h>
 #include <datatools/properties.h>
 #include <datatools/library_loader.h>
 // - Bayeux/geomtools:
@@ -60,6 +61,8 @@ int main(int argc_, char **argv_)
     std::string              LL_config;
 
     namespace po = boost::program_options;
+
+    // Describe command line arguments for this application:
     po::options_description opts("Allowed options");
     opts.add_options()
       ("help,h", "produce help message")
@@ -101,19 +104,50 @@ int main(int argc_, char **argv_)
 
       ; // end of options description
 
-    // Describe command line arguments :
+    // Describe positional arguments for this application:
     po::positional_options_description args;
     args.add("input-file", 1);
+
+    // Describe Bayeux/datatools kernel options:
+    po::options_description kopts("Bayeux/datatools kernel options");
+    datatools::kernel::param_type kparams;
+    datatools::kernel::build_opt_desc(kopts, kparams);
+
+    // Collect all supported options in one container:
+    po::options_description all_opts;
+    all_opts.add(opts);
+    all_opts.add(kopts);
+
+    // Configure the parser:
+    po::command_line_parser cl_parser(argc_, argv_);
+    cl_parser.options(all_opts);
+    cl_parser.positional(args);
+    // cl_parser.allow_unregistered();
+
+    // Parse:
+    po::parsed_options parsed = cl_parser.run();
+
+    // // Collect all other options & args:
+    // std::vector<std::string> unrecognized_opts;
+    // unrecognized_opts = po::collect_unrecognized(parsed.options,
+    //                                              po::include_positional);
+
+    // Fill and notify a variable map:
     po::variables_map vm;
-    po::store(po::command_line_parser(argc_, argv_)
-      .options(opts)
-              .positional(args)
-              .run(), vm);
+    po::store(parsed, vm);
     po::notify(vm);
+
     // Use command line arguments :
     if (vm.count("help")) {
       std::cout << "Usage : " << std::endl;
-      std::cout << opts << std::endl;
+      std::cout << all_opts << std::endl;
+      // {
+      //   boost::program_options::options_description kopts("datatools' kernel options");
+      //   datatools::kernel::param_type kparams;
+      //   datatools::kernel::build_opt_desc(kopts, kparams);
+      //   datatools::kernel::print_opt_desc(kopts, std::cout);
+      // }
+      std::cout << std::endl;
       return(1);
     }
     if (vm.count("logging-priority")) {
