@@ -262,6 +262,7 @@ namespace mctools {
       }
 
       DT_LOG_DEBUG(_logprio(), "Event data #" << event_id);
+      DT_LOG_DEBUG(_logprio(), "Save this event = " << save_this_event);
       if (is_debug()) {
         get_event_data().tree_dump(std::clog);
       }
@@ -470,7 +471,6 @@ namespace mctools {
           // category/detector: step hits are dropped.
         }
       }
-
 
       // One tags events with 'physical' sensitive hits (not visual ones)
       if (public_sensitive_category_counter > 0) {
