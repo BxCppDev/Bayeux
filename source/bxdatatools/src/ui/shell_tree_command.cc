@@ -27,8 +27,8 @@ namespace datatools {
 
   namespace ui {
 
-    shell_tree_command::shell_tree_command(basic_shell & shell_)
-      : datatools::ui::target_command<basic_shell>(shell_, "tree", "List interfaces and commands")
+    shell_tree_command::shell_tree_command(const basic_shell & shell_)
+      : datatools::ui::const_target_command<basic_shell>(shell_, "tree", "List interfaces and commands")
     {
       return;
     }
@@ -125,7 +125,7 @@ namespace datatools {
         _prune_empty_dirs_ = false;
         _max_level_ = 0;
         _level_ = 0;
-        basic_shell & shell = _grab_target();
+        const basic_shell & shell = _get_target();
         if (_grab_vmap().count("path")) {
           path = _grab_vmap()["path"].as<std::string>();
         }
@@ -196,7 +196,7 @@ namespace datatools {
     std::string shell_tree_command::_format_full_path(const std::string & full_path_,
                                                       format_mode_type fm_)
     {
-      basic_shell & shell = _grab_target();
+      const basic_shell & shell = _get_target();
       std::string orig_path;
       std::string full_path = full_path_;
       if (fm_ == FM_ORIGINAL) {
@@ -263,7 +263,7 @@ namespace datatools {
                                                   const std::string & path_,
                                                   const std::string & indent_)
     {
-      basic_shell & shell = _grab_target();
+      const basic_shell & shell = _get_target();
       std::string full_path = shell.canonical_path(path_);
       std::vector<std::string> children;
       shell.get_ihs().build_children_paths(full_path, children);

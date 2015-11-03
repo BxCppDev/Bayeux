@@ -271,6 +271,100 @@ namespace datatools {
 
     };
 
+    //! \brief Base command interface for a const target object
+    //!
+    //! The target object (of arbitrary template type)
+    //! cannot be set after the command interface object
+    //! has been initialized.
+    template <typename Type>
+    class const_target_command_interface : public base_command_interface
+    {
+    public:
+
+      //! Default constructor
+      const_target_command_interface(const std::string & name_ = "",
+                                     const std::string & description_ = "",
+                                     const version_id & vid_ = version_id::invalid())
+        : base_command_interface(name_, description_, vid_),
+          _target_(0)
+      {
+        return;
+      }
+
+      //! Constructor
+      const_target_command_interface(const Type & target_,
+                                     const std::string & name_ = "",
+                                     const std::string & description_ = "",
+                                     const version_id & vid_ = version_id::invalid())
+        : base_command_interface(name_, description_, vid_),
+          _target_(0)
+      {
+        _set_target(target_);
+        return;
+      }
+
+      //! Destructor
+      virtual ~const_target_command_interface()
+      {
+        return;
+      }
+
+      //! Check if the target is set
+      bool has_target() const
+      {
+        return _target_ != 0;
+      }
+
+      //! Set the target object
+      void set_target(const Type & target_)
+      {
+        DT_THROW_IF(is_initialized(), std::logic_error,
+                    "Target command interface is already initialized!");
+        _set_target(target_);
+        return;
+      }
+
+      //! Return the target
+      const Type & get_target() const
+      {
+        return *_target_;
+      }
+
+      //! Smart print
+      virtual void tree_dump(std::ostream & out_ = std::clog,
+                             const std::string & title_  = "",
+                             const std::string & indent_ = "",
+                             bool inherit_ = false) const
+      {
+        this->base_command_interface::tree_dump(out_, title_, indent_, true);
+
+        out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+             << "Target : [@" << _target_ << "]" << std::endl;
+
+        return;
+      }
+
+    protected:
+
+      //! Return the target
+      const Type & _get_target()
+      {
+        return *_target_;
+      }
+
+      //! Set the target
+      void _set_target(const Type & target_)
+      {
+        _target_ = &target_;
+        return;
+      }
+
+    private:
+
+      const Type * _target_; //!< The reference to the const target object
+
+    };
+
   } // namespace ui
 
 } // namespace datatools

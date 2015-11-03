@@ -280,6 +280,82 @@ namespace datatools {
 
     };
 
+    //! \brief Base command for a const target object
+    template <typename Type>
+    class const_target_command : public base_command
+    {
+    public:
+
+      //! Default constructor
+      const_target_command(const Type & target_,
+                           const std::string & name_ = "",
+                           const std::string & description_ = "",
+                           const version_id & vid_ = version_id::invalid())
+        : base_command(name_, description_, vid_),
+          _target_(0)
+      {
+        _set_target(target_);
+        return;
+      }
+
+      //! Destructor
+      virtual ~const_target_command()
+      {
+        return;
+      }
+
+      //! Check validity
+      virtual bool is_valid() const
+      {
+        return base_command::is_valid() && has_target();
+      }
+
+      bool has_target() const
+      {
+        return _target_ != 0;
+      }
+
+      //! Return the target
+      const Type & get_target() const
+      {
+        return *_target_;
+      }
+
+      //! Smart print
+      virtual void tree_dump(std::ostream & out_ = std::clog,
+                             const std::string & title_  = "",
+                             const std::string & indent_ = "",
+                             bool inherit_ = false) const
+      {
+        this->base_command::tree_dump(out_, title_, indent_, true);
+
+        out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+             << "Target : [@" << _target_ << "]" << std::endl;
+
+        return;
+      }
+
+    protected:
+
+      //! Return the target
+      const Type & _get_target() const
+      {
+        return *_target_;
+      }
+
+      //! Set the target
+      void _set_target(const Type & target_)
+      {
+        _target_ = &target_;
+        return;
+      }
+
+    private:
+
+      const Type * _target_; //!< The reference to the const target object
+
+    };
+
   } // namespace ui
 
 } // namespace datatools

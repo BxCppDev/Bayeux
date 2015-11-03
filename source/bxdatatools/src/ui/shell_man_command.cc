@@ -27,8 +27,8 @@ namespace datatools {
 
   namespace ui {
 
-    shell_man_command::shell_man_command(basic_shell & shell_)
-      : datatools::ui::target_command<basic_shell>(shell_, "man", "On-line command reference manual")
+    shell_man_command::shell_man_command(const basic_shell & shell_)
+      : datatools::ui::const_target_command<basic_shell>(shell_, "man", "On-line command reference manual")
     {
       return;
     }
@@ -72,7 +72,7 @@ namespace datatools {
       try {
         // Options:
         std::string path;
-        basic_shell & shell = _grab_target();
+        const basic_shell & shell = _get_target();
         if (_grab_vmap().count("path") == 0) {
           DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,

@@ -31,9 +31,9 @@ namespace datatools {
   namespace ui {
 
     //! \brief Shell tree command
-    struct shell_tree_command : public target_command<basic_shell>
+    struct shell_tree_command : public const_target_command<basic_shell>
     {
-      shell_tree_command(basic_shell &);
+      shell_tree_command(const basic_shell &);
       virtual ~shell_tree_command();
       virtual void _init(const datatools::properties & config_);
       virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);

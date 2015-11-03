@@ -27,8 +27,8 @@ namespace datatools {
 
   namespace ui {
 
-    shell_ls_command::shell_ls_command(basic_shell & shell_)
-      : datatools::ui::target_command<basic_shell>(shell_, "ls", "List interfaces and commands")
+    shell_ls_command::shell_ls_command(const basic_shell & shell_)
+      : datatools::ui::const_target_command<basic_shell>(shell_, "ls", "List interfaces and commands")
     {
       return;
     }
@@ -95,7 +95,7 @@ namespace datatools {
         bool classify = false;
         bool longf    = false;
         bool colored  = false;
-        basic_shell & shell = _grab_target();
+        const basic_shell & shell = _get_target();
         if (_grab_vmap().count("path")) {
           path = _grab_vmap()["path"].as<std::string>();
         }

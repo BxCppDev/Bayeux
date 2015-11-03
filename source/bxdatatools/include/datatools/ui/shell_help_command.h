@@ -31,9 +31,9 @@ namespace datatools {
   namespace ui {
 
     //! \brief Shell help command
-    struct shell_help_command : public target_command<basic_shell>
+    struct shell_help_command : public const_target_command<basic_shell>
     {
-      shell_help_command(basic_shell &);
+      shell_help_command(const basic_shell &);
       virtual ~shell_help_command();
       virtual void _init(const datatools::properties & config_);
       virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);

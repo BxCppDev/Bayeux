@@ -27,8 +27,8 @@ namespace datatools {
 
   namespace ui {
 
-    shell_pwd_command::shell_pwd_command(basic_shell & shell_)
-      : datatools::ui::target_command<basic_shell>(shell_, "pwd", "Print current working interface")
+    shell_pwd_command::shell_pwd_command(const basic_shell & shell_)
+      : datatools::ui::const_target_command<basic_shell>(shell_, "pwd", "Print current working interface")
     {
       return;
     }
@@ -48,7 +48,7 @@ namespace datatools {
       DT_LOG_TRACE(get_logging_priority(), "Running command '" << get_name() << "'...");
       try {
         DT_LOG_TRACE(get_logging_priority(), "Pwd...");
-        std::cout << _grab_target().get_current_path() << std::endl;
+        std::cout << _get_target().get_current_path() << std::endl;
       }
       catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,

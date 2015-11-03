@@ -27,8 +27,8 @@ namespace datatools {
 
   namespace ui {
 
-    shell_help_command::shell_help_command(basic_shell & shell_)
-      : datatools::ui::target_command<basic_shell>(shell_, "help", "On-line help about the shell builtin commands")
+    shell_help_command::shell_help_command(const basic_shell & shell_)
+      : datatools::ui::const_target_command<basic_shell>(shell_, "help", "On-line help about the shell builtin commands")
     {
       return;
     }

@@ -251,6 +251,9 @@ namespace datatools {
       //! Check if a given path has a child with given name
       bool has_child(const std::string & path_, const std::string & name_) const;
 
+      //! Reset
+      void reset();
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",

@@ -30,16 +30,22 @@ namespace datatools {
 
     namespace path {
 
+      // Return the root path ("/")
       const std::string & root_path();
 
+      // Return the home path ("~")
       const std::string & home_interface_path();
 
+      // Return the current interface path (".")
       const std::string & current_interface_path();
 
+      // Return the current parent interface path ("..")
       const std::string & current_parent_interface_path();
 
+      // Return the path separator ('/')
       char sep();
 
+      // Return the executable suffix ('*')
       char exec();
 
       //! Remove trailing \a '/' character for a interface path

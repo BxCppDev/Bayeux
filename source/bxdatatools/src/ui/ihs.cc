@@ -369,6 +369,12 @@ namespace datatools {
 
     ihs::~ihs()
     {
+      reset();
+      return;
+    }
+
+    void ihs::reset()
+    {
       _nodes_.clear();
       return;
     }
