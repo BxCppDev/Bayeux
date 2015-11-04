@@ -166,6 +166,17 @@ else()
 endif()
 
 #-----------------------------------------------------------------------
+# Option for enabling LaHague module
+OPTION(Bayeux_BUILD_LAHAGUE_MODULE "Build LaHague module" OFF)
+mark_as_advanced(Bayeux_BUILD_LAHAGUE_MODULE)
+
+if (Bayeux_BUILD_LAHAGUE_MODULE)
+  set(BAYEUX_WITH_LAHAGUE_MODULE 1)
+else()
+  set(BAYEUX_WITH_LAHAGUE_MODULE 0)
+endif()
+
+#-----------------------------------------------------------------------
 # Option for enabling Qt GUI components
 #
 option(Bayeux_BUILD_QT_GUI "Build Qt-based GUI components" OFF)
