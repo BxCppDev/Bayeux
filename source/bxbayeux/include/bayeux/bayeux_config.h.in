@@ -24,13 +24,15 @@
 
 #ifndef BAYEUX_BAYEUX_CONFIG_H
 #define BAYEUX_BAYEUX_CONFIG_H
-// Standard Library
 
 //! Evaluates to true if Bayeux was built with automated init/fini operation at DLL loading
 #cmakedefine01 BAYEUX_WITH_IMPLICIT_INIT_FINI
 
 //! Evaluates to true if Bayeux was built with Geant4 extension module
 #cmakedefine01 BAYEUX_WITH_GEANT4_MODULE
+
+//! Evaluates to true if Bayeux was built with LaHague module
+#cmakedefine01 BAYEUX_WITH_LAHAGUE_MODULE
 
 //! Evaluates to true if Bayeux was installes examples
 #cmakedefine01 BAYEUX_WITH_EXAMPLES
@@ -41,8 +43,10 @@
 //! Evaluates to true if Bayeux was built with Qt-based GUI components
 #cmakedefine01 BAYEUX_WITH_QT_GUI
 
+//! The base directory of Bayeux resource files
 #define BAYEUX_ENV_RESOURCE_DIR "BAYEUX_RESOURCE_DIR"
 
+//! The list of Bayeux submodules
 #define BAYEUX_SUBMODULES "@Bayeux_SUBMODULES@"
 
 //! Defined if the BAYEUX_SYS_DEVEL is set
