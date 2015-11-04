@@ -186,7 +186,6 @@ namespace bayeux {
       lahague_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                      std::string(LAHAGUE_ENV_RESOURCE_DIR)
                                      );
-      // lahague_lib_infos.tree_dump(std::cerr, "LaHague module registration: ", "DEVEL: ");
 #endif // BAYEUX_WITH_LAHAGUE_MODULE
 
       // bayeux:
