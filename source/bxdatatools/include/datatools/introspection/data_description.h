@@ -30,6 +30,7 @@
 // This project:
 #include <datatools/introspection/data_type.h>
 #include <datatools/introspection/data_layout.h>
+#include <datatools/introspection/unit_support.h>
 
 namespace datatools {
 
@@ -79,14 +80,23 @@ namespace datatools {
       //! Set the vector fixed size
       void set_vector_fixed_size(std::size_t);
 
+      //! Check if unit info is defined
+      bool has_unit_info() const;
+
+      //! Check if data description has unit support
+      bool has_unit_support() const;
+
+      //! Return the unit information
+      const unit_info & get_unit_info() const;
+
+      //! Set the unit information
+      void set_unit_info(const unit_info & ui_);
+
       //! Check if the (real) data is stored using an implicit unit (ex: "volt", "ns", "mA"...)
       bool has_implicit_unit() const;
 
       //! Return the real data implicit unit symbol
       const std::string & get_implicit_unit_symbol() const;
-
-      //! Set the real data implicit unit symbol
-      void set_implicit_unit_symbol(const std::string &);
 
       //! Check if the (real) data is stored using an explicit unit of known dimension (ex: "length"/"time"/"mass"...)
       bool has_explicit_unit_dimension() const;
@@ -94,17 +104,11 @@ namespace datatools {
       //! Return the real data explicit unit dimension label ("length"/"time"/"mass"...)
       const std::string & get_explicit_unit_dimension_label() const;
 
-      //! Set the real data explicit unit dimension label ("length"/"time"/"mass"...)
-      void set_explicit_unit_dimension_label(const std::string &);
-
       //! Check if the (real) data has a preferred unit (ex: "volt", "ns", "mA"...)
-      bool has_explicit_preferred_unit() const;
+      bool has_preferred_unit() const;
 
       //! Return the (real) data preferred unit (ex: "volt", "ns", "mA"...)
-      const std::string & get_explicit_preferred_unit_symbol() const;
-
-      //! Set the (real) data preferred unit (ex: "volt", "ns", "mA"...)
-      void set_explicit_preferred_unit_symbol(const std::string &);
+      const std::string & get_preferred_unit_symbol() const;
 
       //! Check if the data has a type identifier (for enumeration and class)
       bool has_type_id() const;
@@ -134,27 +138,28 @@ namespace datatools {
                              bool inherit_ = false) const;
 
       //! Build a scalar data
-      void make_scalar(data_type, const std::string & info_ = "");
+      void make_scalar(data_type, const std::string & info_ = "", const std::string & info2_ = "");
 
       //! Build a vector data with fixed size
-      void make_fixed_size_vector(data_type, std::size_t size_, const std::string & info_ = "");
+      void make_fixed_size_vector(data_type, std::size_t size_, const std::string & info_ = "", const std::string & info2_ = "");
 
       //! Build a vector data with free size
-      void make_free_size_vector(data_type, const std::string & info_ = "");
+      void make_free_size_vector(data_type, const std::string & info_ = "", const std::string & info2_ = "");
 
     private:
 
       //! Set default values to attributes
       void _set_defaults();
 
+      //! Build unit information
+      void _make_unit(const std::string & utoken_ = "", const std::string & utoken2_ = "");
+
     private:
 
       data_type   _type_;   //!< Type of the data
       data_layout _layout_; //!< Layout of the data
       boost::optional<std::size_t> _vector_fixed_size_; //!< Fixed size for a vector
-      boost::optional<std::string> _implicit_unit_symbol_; //!< Implicit unit symbol for real data
-      boost::optional<std::string> _explicit_unit_dimension_label_; //!< Explicit unit dimension label for real data
-      boost::optional<std::string> _explicit_preferred_unit_symbol_; //!< Explicit preferred unit symbol for real data
+      boost::optional<unit_info>   _unit_info_; //!< Unit information (for real data)
       boost::optional<std::string> _type_id_; //!< Explicit user/enum type id (meta class name)
       // type restriction
 

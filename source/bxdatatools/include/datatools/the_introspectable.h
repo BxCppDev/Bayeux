@@ -42,6 +42,7 @@
 #include <datatools/units-reflect.h>
 
 #include <datatools/introspection/data_type-reflect.h>
+#include <datatools/introspection/unit_support-reflect.h>
 #include <datatools/introspection/access_type-reflect.h>
 #include <datatools/introspection/data_layout-reflect.h>
 

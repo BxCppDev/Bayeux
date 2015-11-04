@@ -51,12 +51,8 @@ namespace datatools {
         case DATA_TYPE_UINT32  : return typeid(uint32_t);
         case DATA_TYPE_INT64   : return typeid(int64_t);
         case DATA_TYPE_UINT64  : return typeid(uint64_t);
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT : return typeid(float);
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : return typeid(double);
+        case DATA_TYPE_FLOAT   : return typeid(float);
+        case DATA_TYPE_DOUBLE   : return typeid(double);
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : return typeid(std::string);
         case DATA_TYPE_ENUM : return typeid(std::string);
@@ -74,12 +70,8 @@ namespace datatools {
         case DATA_TYPE_UINT32  : return typeid(std::vector<uint32_t>);
         case DATA_TYPE_INT64   : return typeid(std::vector<int64_t>);
         case DATA_TYPE_UINT64  : return typeid(std::vector<uint64_t>);
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT : return typeid(std::vector<float>);
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : return typeid(std::vector<double>);
+        case DATA_TYPE_FLOAT   : return typeid(std::vector<float>);
+        case DATA_TYPE_DOUBLE  : return typeid(std::vector<double>);
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : return typeid(std::vector<std::string>);
         case DATA_TYPE_ENUM : return typeid(std::vector<std::string>);
@@ -97,12 +89,8 @@ namespace datatools {
         case DATA_TYPE_UINT32  : return typeid(std::list<uint32_t>);
         case DATA_TYPE_INT64   : return typeid(std::list<int64_t>);
         case DATA_TYPE_UINT64  : return typeid(std::list<uint64_t>);
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT : return typeid(std::list<float>);
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : return typeid(std::list<double>);
+        case DATA_TYPE_FLOAT   : return typeid(std::list<float>);
+        case DATA_TYPE_DOUBLE   : return typeid(std::list<double>);
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : return typeid(std::list<std::string>);
         case DATA_TYPE_ENUM : return typeid(std::list<std::string>);
@@ -120,15 +108,11 @@ namespace datatools {
         case DATA_TYPE_UINT32  : return typeid(std::map<std::string,uint32_t>);
         case DATA_TYPE_INT64   : return typeid(std::map<std::string,int64_t>);
         case DATA_TYPE_UINT64  : return typeid(std::map<std::string,uint64_t>);
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT : return typeid(std::map<std::string,float>);
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : return typeid(std::map<std::string,double>);
+        case DATA_TYPE_FLOAT   : return typeid(std::map<std::string,float>);
+        case DATA_TYPE_DOUBLE  : return typeid(std::map<std::string,double>);
         case DATA_TYPE_STRING :
-        case DATA_TYPE_PATH : return typeid(std::map<std::string,std::string>);
-        case DATA_TYPE_ENUM : return typeid(std::map<std::string,std::string>);
+        case DATA_TYPE_PATH   : return typeid(std::map<std::string,std::string>);
+        case DATA_TYPE_ENUM   : return typeid(std::map<std::string,std::string>);
         default :
           DT_THROW(std::logic_error, "Unsupported map data type '" << to_string(dt_) << "'!");
         }
@@ -149,12 +133,8 @@ namespace datatools {
         case DATA_TYPE_UINT32  : value_ = uint32_t(0);  return;
         case DATA_TYPE_INT64   : value_ = int64_t(0);  return;
         case DATA_TYPE_UINT64  : value_ = uint64_t(0); return;
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT : value_ = std::numeric_limits<float>::quiet_NaN(); return;
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : value_ = std::numeric_limits<double>::quiet_NaN(); return;
+        case DATA_TYPE_FLOAT   : value_ = std::numeric_limits<float>::quiet_NaN(); return;
+        case DATA_TYPE_DOUBLE  : value_ = std::numeric_limits<double>::quiet_NaN(); return;
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::string(); return;
         case DATA_TYPE_ENUM : value_ = std::string(); return;
@@ -170,12 +150,8 @@ namespace datatools {
         case DATA_TYPE_UINT32  : value_ = std::vector<uint32_t>(); return;
         case DATA_TYPE_INT64   : value_ = std::vector<int64_t>(); return;
         case DATA_TYPE_UINT64  : value_ = std::vector<uint64_t>(); return;
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT :  value_ = std::vector<float>(); return;
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : value_ = std::vector<double>(); return;
+        case DATA_TYPE_FLOAT   : value_ = std::vector<float>(); return;
+        case DATA_TYPE_DOUBLE  : value_ = std::vector<double>(); return;
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::vector<std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::vector<std::string>(); return;
@@ -191,12 +167,8 @@ namespace datatools {
         case DATA_TYPE_UINT32  : value_ = std::list<uint32_t>(); return;
         case DATA_TYPE_INT64   : value_ = std::list<int64_t>(); return;
         case DATA_TYPE_UINT64  : value_ = std::list<uint64_t>(); return;
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT :  value_ = std::list<float>(); return;
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : value_ = std::list<double>(); return;
+        case DATA_TYPE_FLOAT   : value_ = std::list<float>(); return;
+        case DATA_TYPE_DOUBLE  : value_ = std::list<double>(); return;
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::list<std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::list<std::string>(); return;
@@ -212,12 +184,8 @@ namespace datatools {
         case DATA_TYPE_UINT32  : value_ = std::map<std::string,uint32_t>(); return;
         case DATA_TYPE_INT64   : value_ = std::map<std::string,int64_t>(); return;
         case DATA_TYPE_UINT64  : value_ = std::map<std::string,uint64_t>(); return;
-        case DATA_TYPE_FLOAT_DIMENSIONLESS :
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT :  value_ = std::map<std::string,float>(); return;
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS :
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT :
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT : value_ = std::map<std::string,double>(); return;
+        case DATA_TYPE_FLOAT   :  value_ = std::map<std::string,float>(); return;
+        case DATA_TYPE_DOUBLE  :  value_ = std::map<std::string,double>(); return;
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::map<std::string,std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::map<std::string,std::string>(); return;
@@ -284,25 +252,8 @@ namespace datatools {
 
     bool is_real(data_type t_)
     {
-      return t_ == DATA_TYPE_FLOAT_DIMENSIONLESS
-        || t_ == DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT
-        || t_ == DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT
-        || t_ == DATA_TYPE_DOUBLE_DIMENSIONLESS
-        || t_ == DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT
-        || t_ == DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT
-        ;
-    }
-
-    bool has_explicit_unit(data_type t_)
-    {
-      return t_ == DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT
-        || t_ == DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT;
-    }
-
-    bool has_implicit_unit(data_type t_)
-    {
-      return t_ == DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT
-        || t_ == DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT;
+      return t_ == DATA_TYPE_FLOAT
+        || t_ == DATA_TYPE_DOUBLE;
     }
 
     bool is_string(data_type t_)

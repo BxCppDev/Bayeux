@@ -108,13 +108,15 @@ void test_argument_2()
 
     datatools::properties arg_config;
     arg_config.store_string("name", "position");
+    arg_config.store_integer("rank", 0);
     arg_config.store_string("description", "The 3D position of the detector");
     arg_config.store_string("access", "input");
-    arg_config.store_string("data.type", "double_with_explicit_unit");
-    arg_config.store_string("data.explicit_unit_dimension", "length");
     arg_config.store_string("data.layout", "vector_with_fixed_size");
     arg_config.store_integer("data.vector_fixed_size", 3);
-    arg_config.store_integer("rank", 0);
+    arg_config.store_string("data.type", "double");
+    arg_config.store_string("data.unit.support", "explicit_unit_dimension");
+    arg_config.store_string("data.unit.explicit_unit_dimension", "length");
+    arg_config.store_string("data.unit.preferred_unit", "mm");
 
     arg.initialize(arg_config);
     arg.tree_dump(std::clog, "Argument: ");

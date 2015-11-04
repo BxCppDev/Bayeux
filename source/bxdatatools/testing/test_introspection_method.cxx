@@ -102,9 +102,11 @@ void test_method_1()
       value_arg.set_description("Another short description");
       value_arg.set_access(datatools::introspection::ACCESS_OUTPUT);
       datatools::introspection::data_description & value_arg_dd = value_arg.grab_data_description();
-      value_arg_dd.set_type(datatools::introspection::DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT);
+      value_arg_dd.set_type(datatools::introspection::DATA_TYPE_FLOAT);
       value_arg_dd.set_layout(datatools::introspection::DATA_LAYOUT_SCALAR);
-      value_arg_dd.set_implicit_unit_symbol("V");
+      datatools::introspection::unit_info uinfo;
+      uinfo.make_implicit_unit("V");
+      value_arg_dd.set_unit_info(uinfo);
       value_arg.tree_dump(std::clog, "Returned argument: ");
       meth.add_argument(value_arg);
     }
@@ -165,9 +167,10 @@ void test_method_2()
     meth_config.store_string("arguments.tag.description", "A tag");
 
     meth_config.store_string("arguments.return.access",             "output");
-    meth_config.store_string("arguments.return.data.type",          "float_with_implicit_unit");
-    meth_config.store_string("arguments.return.data.implicit_unit", "V");
+    meth_config.store_string("arguments.return.data.type",          "float");
     meth_config.store_string("arguments.return.data.layout",        "scalar");
+    meth_config.store_string("arguments.return.data.unit.support",  "implicit_unit");
+    meth_config.store_string("arguments.return.data.unit.implicit_unit", "V");
 
     meth.initialize(meth_config);
     meth.tree_dump(std::clog, "Method: ");
@@ -185,11 +188,12 @@ void test_method_2()
     arg_names.push_back("return");
     meth_config.store("arguments", arg_names);
 
-    meth_config.store_string("arguments.return.access",             "output");
-    meth_config.store_string("arguments.return.description",        "The pressure");
-    meth_config.store_string("arguments.return.data.type",          "float_with_implicit_unit");
-    meth_config.store_string("arguments.return.data.implicit_unit", "mbar");
-    meth_config.store_string("arguments.return.data.layout",        "scalar");
+    meth_config.store_string("arguments.return.access",            "output");
+    meth_config.store_string("arguments.return.description",       "The pressure");
+    meth_config.store_string("arguments.return.data.type",         "float");
+    meth_config.store_string("arguments.return.data.layout",       "scalar");
+    meth_config.store_string("arguments.return.data.unit.support", "implicit_unit");
+    meth_config.store_string("arguments.return.data.unit.implicit_unit", "mbar");
 
     meth.initialize(meth_config);
     meth.tree_dump(std::clog, "Method: ");
@@ -205,9 +209,10 @@ void test_method_3()
   {
     datatools::introspection::method meth;
     meth.make_scalar_setter("pressure",
-                            datatools::introspection::DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT,
+                            datatools::introspection::DATA_TYPE_DOUBLE,
                             "mbar",
-                            "Set the pressure (in explicit pressure unit)",
+                            "mbar",
+                            "Set the pressure (in implicit pressure unit)",
                             "set_pressure");
     meth.tree_dump(std::clog, "Setter method: ");
   }
@@ -215,7 +220,8 @@ void test_method_3()
   {
     datatools::introspection::method meth;
     meth.make_scalar_getter("pressure",
-                            datatools::introspection::DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT,
+                            datatools::introspection::DATA_TYPE_DOUBLE,
+                            "pressure",
                             "mbar",
                             "Get the pressure (in explicit pressure unit)",
                             "get_pressure");

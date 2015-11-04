@@ -1,0 +1,165 @@
+//! \file  datatools/introspection/unit_support.h
+//! \brief Unit support utilities
+//
+// Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
+//
+// This file is part of datatools.
+//
+// datatools is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// datatools is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with datatools. If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef DATATOOLS_INTROSPECTION_UNIT_SUPPORT_H
+#define DATATOOLS_INTROSPECTION_UNIT_SUPPORT_H
+
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/properties.h>
+#include <datatools/i_tree_dump.h>
+#ifndef Q_MOC_RUN
+#include <datatools/reflection_macros.h>
+#endif // Q_MOC_RUN
+
+namespace datatools {
+
+  namespace introspection {
+
+    //! \brief Unit support type for real parameters
+    enum unit_support_type {
+      UNIT_SUPPORT_INVALID            = -1, //!< Invalid unit support
+      UNIT_SUPPORT_NONE               =  0, //!< No unit management (plain float/double)
+      UNIT_SUPPORT_IMPLICIT_UNIT      =  1, //!< Implicit unit associated to the parameter
+      UNIT_SUPPORT_EXPLICIT_DIMENSION =  2  //!< Explicit unit associated to the parameter
+    };
+
+    //! Convert an unit support type to a string
+    const std::string & to_string(unit_support_type);
+
+    //! Convert a string to an unit support type
+    bool from_string(const std::string & label_, unit_support_type & us_);
+
+    //! Convert a string to an unit support type
+    unit_support_type from_label_to_unit_support(const std::string & label_);
+
+    //! Check the validity of an unit support type
+    bool is_valid(unit_support_type);
+
+    //! Check if an unit support type is none
+    bool is_no_unit_support(unit_support_type);
+
+    //! Check if an unit support type is implicit unit
+    bool is_implicit_unit(unit_support_type);
+
+    //! Check if an unit support type is explicit dimension
+    bool is_explicit_unit_dimension(unit_support_type);
+
+    //! \brief Unit information associated to a parameter
+    class unit_info : public datatools::i_tree_dumpable
+    {
+    public:
+
+      //! Default constructor
+      unit_info();
+
+      //! Constructor
+      unit_info(unit_support_type, const std::string & unit_token_, const std::string & unit_token2_ = "");
+
+      //! Destructor
+      virtual ~unit_info();
+
+      //! Check validity
+      bool is_valid() const;
+
+      //! Check the implicit unit trait
+      bool has_implicit_unit() const;
+
+      //! Check the explicit unitdimension  trait
+      bool has_explicit_unit_dimension() const;
+
+      //! Set the unit support
+      void set_unit_support(unit_support_type);
+
+      //! Return the unit support
+      unit_support_type get_unit_support() const;
+
+      //! Set the implicit unit symbol
+      void set_implicit_unit_symbol(const std::string &);
+
+      //! Return the implicit unit symbol
+      const std::string & get_implicit_unit_symbol() const;
+
+      //! Set the explicit unit dimension label
+      void set_explicit_unit_dimension_label(const std::string &);
+
+      //! Return the explicit unit dimension
+      const std::string & get_explicit_unit_dimension_label() const;
+
+      //! Check if preferred unit symbol is set
+      bool has_preferred_unit_symbol() const;
+
+      //! Set the preferred unit symbol
+      void set_preferred_unit_symbol(const std::string &);
+
+      //! Return the preferred unit symbol
+      const std::string & get_preferred_unit_symbol() const;
+
+      //! Make the unit info with no unit support
+      void make_none();
+
+      //! Make the unit info with implicit unit
+      void make_implicit_unit(const std::string & unit_symbol_,
+                              const std::string & preferred_unit_symbol_ = "");
+
+
+      //! Make the unit info with explicit unit dimension
+      void make_explicit_unit_dimension(const std::string & unit_dimension_label_,
+                                        const std::string & preferred_unit_symbol_ = "");
+
+      //! Initialize from a set of properties
+      void initialize(const datatools::properties &);
+
+      //! Reset
+      void reset();
+
+      //! Smart print
+      virtual void tree_dump(std::ostream & out_ = std::clog,
+                             const std::string & title_  = "",
+                             const std::string & indent_ = "",
+                             bool inherit_ = false) const;
+
+    private:
+
+      unit_support_type _us_; //!< Type of unit support
+      std::string _implicit_unit_symbol_; //!< Implicit unit symbol for real data
+      std::string _explicit_unit_dimension_label_; //!< Explicit unit dimension label for real data
+      std::string _preferred_unit_symbol_; //!< Preferred unit symbol for real data
+
+    };
+
+  } // end of namespace introspection
+
+} // end of namespace datatools
+
+#ifndef Q_MOC_RUN
+// Activate reflection layer:
+DR_TYPE_INIT(::datatools::introspection::unit_support_type);
+#endif // Q_MOC_RUN
+
+#endif // DATATOOLS_INTROSPECTION_UNIT_SUPPORT_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

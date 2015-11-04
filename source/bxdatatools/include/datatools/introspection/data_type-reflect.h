@@ -45,16 +45,12 @@ namespace datatools {
           .DR_ENUM_PAIR("uint32",  ::datatools::introspection::DATA_TYPE_UINT32)
           .DR_ENUM_PAIR("int64",   ::datatools::introspection::DATA_TYPE_INT64)
           .DR_ENUM_PAIR("uint64",  ::datatools::introspection::DATA_TYPE_UINT64)
-          .DR_ENUM_PAIR("float_dimensionless",       ::datatools::introspection::DATA_TYPE_FLOAT_DIMENSIONLESS)
-          .DR_ENUM_PAIR("float_with_explicit_unit",  ::datatools::introspection::DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT)
-          .DR_ENUM_PAIR("float_with_implicit_unit",  ::datatools::introspection::DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT)
-          .DR_ENUM_PAIR("double_dimensionless",      ::datatools::introspection::DATA_TYPE_DOUBLE_DIMENSIONLESS)
-          .DR_ENUM_PAIR("double_with_explicit_unit", ::datatools::introspection::DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT)
-          .DR_ENUM_PAIR("double_with_implicit_unit", ::datatools::introspection::DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT)
-          .DR_ENUM_PAIR("string", ::datatools::introspection::DATA_TYPE_STRING)
-          .DR_ENUM_PAIR("path",   ::datatools::introspection::DATA_TYPE_PATH)
-          .DR_ENUM_PAIR("enum",   ::datatools::introspection::DATA_TYPE_ENUM)
-          .DR_ENUM_PAIR("user",   ::datatools::introspection::DATA_TYPE_USER)
+          .DR_ENUM_PAIR("float",   ::datatools::introspection::DATA_TYPE_FLOAT)
+          .DR_ENUM_PAIR("double",  ::datatools::introspection::DATA_TYPE_DOUBLE)
+          .DR_ENUM_PAIR("string",  ::datatools::introspection::DATA_TYPE_STRING)
+          .DR_ENUM_PAIR("path",    ::datatools::introspection::DATA_TYPE_PATH)
+          .DR_ENUM_PAIR("enum",    ::datatools::introspection::DATA_TYPE_ENUM)
+          .DR_ENUM_PAIR("user",    ::datatools::introspection::DATA_TYPE_USER)
           ;
         return;
       }

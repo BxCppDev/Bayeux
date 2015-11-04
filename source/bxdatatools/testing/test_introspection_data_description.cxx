@@ -79,9 +79,11 @@ void test_data_description_1()
 
   try {
     datatools::introspection::data_description dd;
-    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT);
+    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT);
     dd.set_layout(datatools::introspection::DATA_LAYOUT_SCALAR);
-    dd.set_implicit_unit_symbol("kilopotato");
+    datatools::introspection::unit_info uinfo;
+    uinfo.make_implicit_unit("kilopotato");
+    dd.set_unit_info(uinfo);
   } catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS,
                  "As expected, data description failed due to invalid implicit unit!");
@@ -90,18 +92,22 @@ void test_data_description_1()
 
   {
     datatools::introspection::data_description dd;
-    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT);
+    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT);
     dd.set_layout(datatools::introspection::DATA_LAYOUT_SCALAR);
-    dd.set_implicit_unit_symbol("volt");
+    datatools::introspection::unit_info uinfo;
+    uinfo.make_implicit_unit("volt");
+    dd.set_unit_info(uinfo);
     dd.tree_dump(std::clog, "Data description: ");
     std::clog << std::endl;
   }
 
   try {
     datatools::introspection::data_description dd;
-    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT);
+    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT);
     dd.set_layout(datatools::introspection::DATA_LAYOUT_SCALAR);
-    dd.set_explicit_unit_dimension_label("solar_neutrino_unit");
+    datatools::introspection::unit_info uinfo;
+    uinfo.make_explicit_unit_dimension("age", "year"); // Should be "time"
+    dd.set_unit_info(uinfo);
   } catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS,
                  "As expected, data description failed due to invalid explicit unit dimension!");
@@ -110,11 +116,12 @@ void test_data_description_1()
 
   {
     datatools::introspection::data_description dd;
-    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT);
+    dd.set_type(datatools::introspection::DATA_TYPE_FLOAT);
     dd.set_layout(datatools::introspection::DATA_LAYOUT_VECTOR_WITH_FREE_SIZE);
-    // dd.set_explicit_unit_dimension_label("pressure");
-    // dd.set_explicit_unit_dimension_label("temperature");
-    dd.set_explicit_preferred_unit_symbol("mbar");
+    datatools::introspection::unit_info uinfo;
+    uinfo.make_explicit_unit_dimension("pressure", "mbar");
+    // uinfo.make_explicit_unit_dimension("temperature", "kelvin");
+    dd.set_unit_info(uinfo);
     dd.tree_dump(std::clog, "Data description: ");
     std::clog << std::endl;
   }
@@ -130,11 +137,12 @@ void test_data_description_2()
     datatools::introspection::data_description dd;
 
     datatools::properties dd_config;
-    dd_config.store_string("type", "double_with_explicit_unit");
-    dd_config.store_string("explicit_unit_dimension", "length");
+    dd_config.store_string("type",   "double");
     dd_config.store_string("layout", "vector_with_fixed_size");
     dd_config.store_integer("vector_fixed_size", 3);
-
+    dd_config.store_string("unit.support", "explicit_unit_dimension");
+    dd_config.store_string("unit.explicit_unit_dimension", "length");
+    dd_config.store_string("unit.preferred_unit", "mm");
     dd.initialize(dd_config);
     dd.tree_dump(std::clog, "Data description: ");
     std::clog << std::endl;

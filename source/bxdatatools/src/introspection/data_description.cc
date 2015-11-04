@@ -109,70 +109,61 @@ namespace datatools {
       return;
     }
 
+    bool data_description::has_unit_support() const
+    {
+      return _unit_info_ && _unit_info_.get().is_valid();
+    }
+
+    bool data_description::has_unit_info() const
+    {
+      return _unit_info_;
+    }
+
+    const unit_info & data_description::get_unit_info() const
+    {
+      DT_THROW_IF(!has_unit_info(), std::logic_error, "No unit info is available!");
+      return _unit_info_.get();
+    }
+
+    void data_description::set_unit_info(const unit_info & ui_)
+    {
+      DT_THROW_IF(!is_real(get_type()), std::logic_error,
+                  "No unit information can be set for non-real data type!");
+      _unit_info_ = ui_;
+      return;
+    }
+
     bool data_description::has_implicit_unit() const
     {
-      return _implicit_unit_symbol_;
+      return has_unit_info() && get_unit_info().has_implicit_unit();
     }
 
     const std::string & data_description::get_implicit_unit_symbol() const
     {
-      return _implicit_unit_symbol_.get();
-    }
-
-    void data_description::set_implicit_unit_symbol(const std::string & rius_)
-    {
-      DT_THROW_IF(! datatools::units::registry::const_system_registry().has_unit_from_any(rius_),
-                  std::logic_error,
-                  "Unit symbol '" << rius_ << "' is not registered in the unit register!");
-      _implicit_unit_symbol_ = rius_;
-      return;
+      DT_THROW_IF(!has_unit_info(), std::logic_error, "No unit info is available!");
+      return get_unit_info().get_implicit_unit_symbol();
     }
 
     bool data_description::has_explicit_unit_dimension() const
     {
-      return _explicit_unit_dimension_label_;
+      return has_unit_info() && get_unit_info().has_explicit_unit_dimension();
     }
 
     const std::string & data_description::get_explicit_unit_dimension_label() const
     {
-      return _explicit_unit_dimension_label_.get();
+      DT_THROW_IF(!has_unit_info(), std::logic_error, "No unit info is available!");
+      return get_unit_info().get_explicit_unit_dimension_label();
     }
 
-    void data_description::set_explicit_unit_dimension_label(const std::string & reud_)
+    bool data_description::has_preferred_unit() const
     {
-      DT_THROW_IF(! datatools::units::registry::const_system_registry().has_dimension(reud_),
-                  std::logic_error,
-                  "Unit dimension label '" << reud_ << "' is not registered in the unit register!");
-      _explicit_unit_dimension_label_ = reud_;
-      return;
+      return has_unit_info() && get_unit_info().has_preferred_unit_symbol();
     }
 
-    bool data_description::has_explicit_preferred_unit() const
+    const std::string & data_description::get_preferred_unit_symbol() const
     {
-      return _explicit_preferred_unit_symbol_;
-    }
-
-    const std::string & data_description::get_explicit_preferred_unit_symbol() const
-    {
-      return _explicit_preferred_unit_symbol_.get();
-    }
-
-    void data_description::set_explicit_preferred_unit_symbol(const std::string & repu_)
-    {
-      DT_THROW_IF(! datatools::units::registry::const_system_registry().has_unit_from_any(repu_),
-                  std::logic_error,
-                  "Unit symbol '" << repu_ << "' is not registered in the unit register!");
-      const datatools::units::unit & u =
-        datatools::units::registry::const_system_registry().get_unit_from_any(repu_);
-      if (has_explicit_unit_dimension()) {
-        DT_THROW_IF(u.get_dimension_label() != _explicit_unit_dimension_label_,
-                    std::logic_error,
-                    "Explicit preferred unit symbol '" << repu_
-                    << "' does not match unit dimension labelled '" << _explicit_unit_dimension_label_.get() << "'!");
-      }
-      set_explicit_unit_dimension_label(u.get_dimension_label());
-      _explicit_preferred_unit_symbol_ = repu_;
-      return;
+      DT_THROW_IF(!has_unit_info(), std::logic_error, "No unit info is available!");
+      return get_unit_info().get_preferred_unit_symbol();
     }
 
     bool data_description::has_type_id() const
@@ -199,22 +190,8 @@ namespace datatools {
       // Layout must be set:
       if (! has_layout()) return false;
 
-      if (::datatools::introspection::has_implicit_unit(_type_)) {
-        // Implicit unit symbol must be set:
-        if (! has_implicit_unit()) {
-          return false;
-        }
-      } else if (::datatools::introspection::has_explicit_unit(_type_)) {
-        // Explicit unit dimension must be set:
-        if (! has_explicit_unit_dimension()) {
-          return false;
-        }
-      } else if (::datatools::introspection::is_user(_type_)
-                 || ::datatools::introspection::is_enum(_type_)) {
-        // Class/enum type id:
-        if (! has_type_id()) {
-          return false;
-        }
+      if (has_unit_info()) {
+        if (!get_unit_info().is_valid()) return false;
       }
 
       if (_layout_ == DATA_LAYOUT_VECTOR_WITH_FIXED_SIZE) {
@@ -270,30 +247,13 @@ namespace datatools {
         }
       }
 
-      if (::datatools::introspection::has_explicit_unit(_type_)) {
-        if (! has_explicit_unit_dimension()) {
-          DT_THROW_IF(! config_.has_key("explicit_unit_dimension"), std::logic_error,
-                      "Missing real explicit unit dimension!");
-          const std::string & reud = config_.fetch_string("explicit_unit_dimension");
-          set_explicit_unit_dimension_label(reud);
-        }
-      }
-
-      if (has_explicit_preferred_unit()) {
-        if (! has_explicit_preferred_unit()) {
-          DT_THROW_IF(! config_.has_key("explicit_preferred_unit"), std::logic_error,
-                      "Missing real explicit preferred unit!");
-          const std::string & repu = config_.fetch_string("explicit_preferred_unit");
-          set_explicit_preferred_unit_symbol(repu);
-        }
-      }
-
-      if (::datatools::introspection::has_implicit_unit(_type_)) {
-        if (! has_implicit_unit()) {
-          DT_THROW_IF(! config_.has_key("implicit_unit"), std::logic_error,
-                      "Missing real implicit unit symbol!");
-          const std::string & rius = config_.fetch_string("implicit_unit");
-          set_implicit_unit_symbol(rius);
+      if (::datatools::introspection::is_real(_type_)) {
+        if (!has_unit_info()) {
+          unit_info ui;
+          datatools::properties ui_config;
+          config_.export_and_rename_starting_with(ui_config, "unit.", "");
+          ui.initialize(ui_config);
+          set_unit_info(ui);
         }
       }
 
@@ -304,9 +264,7 @@ namespace datatools {
     void data_description::reset()
     {
       _vector_fixed_size_.reset();
-      _implicit_unit_symbol_.reset();
-      _explicit_unit_dimension_label_.reset();
-      _explicit_preferred_unit_symbol_.reset();
+      _unit_info_.reset();
       _type_id_.reset();
       _set_defaults();
       return;
@@ -347,37 +305,13 @@ namespace datatools {
         out_ << std::endl;
       }
 
-      if (_implicit_unit_symbol_) {
+      if (_unit_info_) {
         out_ << indent_ << i_tree_dumpable::tag
-             << "Implicit unit : ";
-        if (_implicit_unit_symbol_) {
-          out_ << "'" << _implicit_unit_symbol_.get() << "'";
-        } else {
-          out_ << "<not set>";
-        }
+             << "Unit information : ";
         out_ << std::endl;
-      }
-
-      if (_explicit_unit_dimension_label_) {
-        out_ << indent_ << i_tree_dumpable::tag
-             << "Explicit unit dimension : ";
-        if (_explicit_unit_dimension_label_) {
-          out_ << "'" << _explicit_unit_dimension_label_.get() << "'";
-        } else {
-          out_ << "<not set>";
-        }
-        out_ << std::endl;
-      }
-
-      if (_explicit_preferred_unit_symbol_) {
-        out_ << indent_ << i_tree_dumpable::tag
-             << "Explicit preferred unit : ";
-        if (_explicit_preferred_unit_symbol_) {
-          out_ << "'" << _explicit_preferred_unit_symbol_.get() << "'";
-        } else {
-          out_ << "<not set>";
-        }
-        out_ << std::endl;
+        std::ostringstream indent2;
+        indent2 << indent_ << i_tree_dumpable::skip_tag;
+        _unit_info_.get().tree_dump(out_, "", indent2.str());
       }
 
       if (_type_id_) {
@@ -397,21 +331,30 @@ namespace datatools {
       return;
     }
 
-    void data_description::make_scalar(data_type t_, const std::string & info_)
+    void data_description::_make_unit(const std::string & info_, const std::string & info2_)
+    {
+      if (! ::datatools::introspection::is_real(_type_)) return;
+      if (! info_.empty()) {
+        if (datatools::units::registry::const_system_registry().has_unit_from_any(info_)) {
+          unit_info uinfo;
+          uinfo.make_implicit_unit(info_, info2_);
+          set_unit_info(uinfo);
+        } else if (datatools::units::registry::const_system_registry().has_dimension(info_)) {
+          unit_info uinfo;
+          uinfo.make_explicit_unit_dimension(info_, info2_);
+          set_unit_info(uinfo);
+        }
+      }
+      return;
+    }
+
+    void data_description::make_scalar(data_type t_, const std::string & info_, const std::string & info2_)
     {
       reset();
       set_type(t_);
       set_layout(DATA_LAYOUT_SCALAR);
-      if (::datatools::introspection::has_explicit_unit(_type_)) {
-        if (datatools::units::registry::const_system_registry().has_dimension(info_)) {
-          set_explicit_unit_dimension_label(info_);
-        }
-        if (datatools::units::registry::const_system_registry().has_unit_from_any(info_)) {
-          set_explicit_preferred_unit_symbol(info_);
-        }
-      }
-      if (::datatools::introspection::has_implicit_unit(_type_)) {
-        set_implicit_unit_symbol(info_);
+      if (::datatools::introspection::is_real(_type_)) {
+        _make_unit(info_, info2_);
       }
       if (::datatools::introspection::is_user(_type_)) {
         set_type_id(info_);
@@ -420,22 +363,14 @@ namespace datatools {
       return;
     }
 
-    void data_description::make_fixed_size_vector(data_type t_, std::size_t size_, const std::string & info_)
+    void data_description::make_fixed_size_vector(data_type t_, std::size_t size_, const std::string & info_, const std::string & info2_)
     {
       reset();
       set_type(t_);
       set_layout(DATA_LAYOUT_VECTOR_WITH_FIXED_SIZE);
       set_vector_fixed_size(size_);
-      if (::datatools::introspection::has_explicit_unit(_type_)) {
-        if (datatools::units::registry::const_system_registry().has_dimension(info_)) {
-          set_explicit_unit_dimension_label(info_);
-        }
-        if (datatools::units::registry::const_system_registry().has_unit_from_any(info_)) {
-          set_explicit_preferred_unit_symbol(info_);
-        }
-      }
-      if (::datatools::introspection::has_implicit_unit(_type_)) {
-        set_implicit_unit_symbol(info_);
+      if (::datatools::introspection::is_real(_type_)) {
+        _make_unit(info_, info2_);
       }
       if (::datatools::introspection::is_user(_type_)) {
         set_type_id(info_);
@@ -444,21 +379,13 @@ namespace datatools {
       return;
     }
 
-    void data_description::make_free_size_vector(data_type t_, const std::string & info_)
+    void data_description::make_free_size_vector(data_type t_, const std::string & info_, const std::string & info2_)
     {
       reset();
       set_type(t_);
       set_layout(DATA_LAYOUT_VECTOR_WITH_FREE_SIZE);
-      if (::datatools::introspection::has_explicit_unit(_type_)) {
-        if (datatools::units::registry::const_system_registry().has_dimension(info_)) {
-          set_explicit_unit_dimension_label(info_);
-        }
-        if (datatools::units::registry::const_system_registry().has_unit_from_any(info_)) {
-          set_explicit_preferred_unit_symbol(info_);
-        }
-      }
-      if (::datatools::introspection::has_implicit_unit(_type_)) {
-        set_implicit_unit_symbol(info_);
+      if (::datatools::introspection::is_real(_type_)) {
+        _make_unit(info_, info2_);
       }
       if (::datatools::introspection::is_user(_type_)) {
         set_type_id(info_);

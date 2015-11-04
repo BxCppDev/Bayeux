@@ -114,15 +114,17 @@ namespace datatools {
 
       //! Make a setter method with one unique input scalar argument
       void make_scalar_setter(const std::string & arg_name_,
-                              data_type arg_type_,
+                              data_type           arg_type_,
                               const std::string & arg_info_ = "",
+                              const std::string & arg_info2_ = "",
                               const std::string & method_desc_ = "",
                               const std::string & method_name_ = "set");
 
       //! Make a getter method with one unique output scalar argument
       void make_scalar_getter(const std::string & arg_name_,
-                              data_type arg_type_,
+                              data_type           arg_type_,
                               const std::string & arg_info_ = "",
+                              const std::string & arg_info2_ = "",
                               const std::string & method_desc_ = "",
                               const std::string & method_name_ = "get");
 

@@ -331,8 +331,9 @@ namespace datatools {
     }
 
     void method::make_scalar_setter(const std::string & arg_name_,
-                                    data_type arg_type_,
+                                    data_type           arg_type_,
                                     const std::string & arg_info_,
+                                    const std::string & arg_info2_,
                                     const std::string & method_desc_,
                                     const std::string & method_name_)
     {
@@ -355,7 +356,7 @@ namespace datatools {
       }
       arg.set_rank(0);
       arg.set_access(ACCESS_INPUT);
-      arg.grab_data_description().make_scalar(arg_type_, arg_info_);
+      arg.grab_data_description().make_scalar(arg_type_, arg_info_, arg_info2_);
       arg.initialize();
       add_argument(arg);
       this->initialize();
@@ -365,6 +366,7 @@ namespace datatools {
     void method::make_scalar_getter(const std::string & arg_name_,
                                     data_type arg_type_,
                                     const std::string & arg_info_,
+                                    const std::string & arg_info2_,
                                     const std::string & method_desc_,
                                     const std::string & method_name_)
     {
@@ -387,85 +389,12 @@ namespace datatools {
       }
       arg.set_rank(0);
       arg.set_access(ACCESS_OUTPUT);
-      arg.grab_data_description().make_scalar(arg_type_, arg_info_);
+      arg.grab_data_description().make_scalar(arg_type_, arg_info_, arg_info2_);
       arg.initialize();
       add_argument(arg);
       this->initialize();
       return;
     }
-
-    /*
-    void method::generate(boost::program_options::options_description & opts_,
-                          boost::program_options::positional_options_description & pos_opts_) const
-    {
-      namespace po = boost::program_options;
-      const argument_set_by_rank & name_rank = _priv_->arguments.get<argument_tag_rank>();
-      for (argument_set_by_rank::const_iterator iarg = name_rank.begin();
-           iarg != name_rank.end();
-           iarg++) {
-        const argument & arg = *iarg;
-        boost::shared_ptr<boost::program_options::option_description> shopt;
-        int positional = -2;
-        if (arg.is_output()) {
-          return;
-        }
-        data_type arg_type = arg.get_data_description().get_type();
-        switch (arg_type) {
-        case DATA_TYPE_BOOLEAN:
-          shopt = arg.generate<bool>(positional);
-          break;
-        case DATA_TYPE_INT8:
-          shopt = arg.generate<int8_t>(positional);
-          break;
-        case DATA_TYPE_UINT8:
-          shopt = arg.generate<uint8_t>(positional);
-          break;
-        case DATA_TYPE_INT16:
-          shopt = arg.generate<int16_t>(positional);
-          break;
-        case DATA_TYPE_UINT16:
-          shopt = arg.generate<uint16_t>(positional);
-          break;
-        case DATA_TYPE_INT32:
-          shopt = arg.generate<int32_t>(positional);
-          break;
-        case DATA_TYPE_UINT32:
-          shopt = arg.generate<uint32_t>(positional);
-          break;
-        case DATA_TYPE_INT64:
-          shopt = arg.generate<int64_t>(positional);
-          break;
-        case DATA_TYPE_UINT64:
-          shopt = arg.generate<uint64_t>(positional);
-          break;
-        case DATA_TYPE_FLOAT_DIMENSIONLESS:
-        case DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT:
-        case DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT:
-          shopt = arg.generate<float>(positional);
-          break;
-        case DATA_TYPE_DOUBLE_DIMENSIONLESS:
-        case DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT:
-        case DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT:
-          shopt = arg.generate<double>(positional);
-          break;
-        case DATA_TYPE_STRING:
-        case DATA_TYPE_PATH:
-        case DATA_TYPE_ENUM:
-          shopt = arg.generate<std::string>(positional);
-          break;
-        default:
-          DT_THROW(std::logic_error, "Unsupported data type '" << to_string(arg_type)
-                   << "' in argument '" << arg.get_name()
-                   << "' of method '" << this->get_name() << "'!");
-        }
-        opts_.add(shopt);
-        if (positional >= 0) {
-          pos_opts_.add(opt_name.c_str(), arg_rank);
-        }
-      }
-      return;
-    }
-    */
 
   } // namespace introspection
 

@@ -39,27 +39,23 @@ namespace datatools {
 
     //! \brief Supported data types
     enum data_type {
-      DATA_TYPE_INVALID = -1, //!< Invalid data type
-      DATA_TYPE_VOID    =  0, //!< No type
-      DATA_TYPE_BOOLEAN =  1, //!< bool
-      DATA_TYPE_INT8    =  2, //!< int8_t
-      DATA_TYPE_UINT8   =  3, //!< uint8_t
-      DATA_TYPE_INT16   =  4, //!< int16_t
-      DATA_TYPE_UINT16  =  5, //!< uint16_t
-      DATA_TYPE_INT32   =  6, //!< int32_t
-      DATA_TYPE_UINT32  =  7, //!< uint32_t
-      DATA_TYPE_INT64   =  8, //!< int64_t
-      DATA_TYPE_UINT64  =  9, //!< uint64_t
-      DATA_TYPE_FLOAT_DIMENSIONLESS       = 10, //!< dimensionless float value
-      DATA_TYPE_FLOAT_WITH_EXPLICIT_UNIT  = 11, //!< float value with explicit unit
-      DATA_TYPE_FLOAT_WITH_IMPLICIT_UNIT  = 12, //!< float value with implicit unit
-      DATA_TYPE_DOUBLE_DIMENSIONLESS      = 13, //!< dimensionless double value
-      DATA_TYPE_DOUBLE_WITH_EXPLICIT_UNIT = 14, //!< double value with explicit unit
-      DATA_TYPE_DOUBLE_WITH_IMPLICIT_UNIT = 15, //!< double value with implicit unit
-      DATA_TYPE_STRING      = 16, //!< character string
-      DATA_TYPE_PATH        = 17, //!< filesystem path as a character string
-      DATA_TYPE_ENUM        = 18, //!< enumeration type
-      DATA_TYPE_USER        = 20  //!< user data type
+      DATA_TYPE_INVALID =  -1, //!< Invalid data type
+      DATA_TYPE_VOID    =   0, //!< No type
+      DATA_TYPE_BOOLEAN =   1, //!< bool
+      DATA_TYPE_INT8    =   2, //!< int8_t
+      DATA_TYPE_UINT8   =   3, //!< uint8_t
+      DATA_TYPE_INT16   =   4, //!< int16_t
+      DATA_TYPE_UINT16  =   5, //!< uint16_t
+      DATA_TYPE_INT32   =   6, //!< int32_t
+      DATA_TYPE_UINT32  =   7, //!< uint32_t
+      DATA_TYPE_INT64   =   8, //!< int64_t
+      DATA_TYPE_UINT64  =   9, //!< uint64_t
+      DATA_TYPE_FLOAT   =  10, //!< float value
+      DATA_TYPE_DOUBLE  =  11, //!< double value
+      DATA_TYPE_STRING  =  12, //!< character string
+      DATA_TYPE_PATH    =  13, //!< filesystem path as a character string
+      DATA_TYPE_ENUM    = 100, //!< enumeration type
+      DATA_TYPE_USER    = 200  //!< user data type
     };
 
     //! Return the type info associated to a given data type with specific layout
@@ -97,12 +93,6 @@ namespace datatools {
 
     //! Check if a data type is a real
     bool is_real(data_type);
-
-    //! Check if a real data type uses explicit unit
-    bool has_explicit_unit(data_type);
-
-    //! Check if a real data type uses implicit unit
-    bool has_implicit_unit(data_type);
 
     //! Check if a data type is a string
     bool is_string(data_type);
