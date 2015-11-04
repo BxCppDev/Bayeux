@@ -9,7 +9,7 @@
 #
 # Bayeux is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
+# the Free Software Foundation, ether version 3 of the License, or
 # (at your option) any later version.
 #
 # Bayeux is distributed in the hope that it will be useful,
@@ -111,6 +111,10 @@ set(Bayeux_SUBMODULES
   genvtx
   mctools
 )
+
+# if (BAYEUX_WITH_LAHAGUE_MODULE)
+#   list(APPEND Bayeux_SUBMODULES lahague)
+# endif()
 
 # - Base build dir for resource and example files
 set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_RESOURCE_DIR}")
@@ -274,6 +278,11 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
   target_link_libraries(bx${_app_basename} Bayeux)
 
   # - Use Readline
+  if(DATATOOLS_WITH_READLINE)
+    include_directories(${Readline_INCLUDE_DIR})
+    target_link_libraries(Bayeux ${Readline_LIBRARIES})
+  endif()
+
   if ("${_app_basename}" STREQUAL "geomtools_inspector")
     if(GEOMTOOLS_WITH_READLINE)
       include_directories(${Readline_INCLUDE_DIR})
