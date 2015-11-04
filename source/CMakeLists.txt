@@ -112,9 +112,9 @@ set(Bayeux_SUBMODULES
   mctools
 )
 
-# if (BAYEUX_WITH_LAHAGUE_MODULE)
-#   list(APPEND Bayeux_SUBMODULES lahague)
-# endif()
+if (BAYEUX_WITH_LAHAGUE_MODULE)
+  list(APPEND Bayeux_SUBMODULES lahague)
+endif()
 
 # - Base build dir for resource and example files
 set(MODULE_RESOURCE_ROOT_BASE "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${Bayeux_RESOURCE_DIR}")
