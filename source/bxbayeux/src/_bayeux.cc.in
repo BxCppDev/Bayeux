@@ -60,11 +60,11 @@
 
 #include <mctools/version.h>
 
-#ifdef BAYEUX_WITH_LAHAGUE_MODULE
+#if BAYEUX_WITH_LAHAGUE_MODULE == 1
 #include <lahague/version.h>
 #include <lahague/resource.h>
 #include <lahague/lahague_config.h>
-#endif // BAYEUX_WITH_LAHAGUE_MODULE
+#endif // BAYEUX_WITH_LAHAGUE_MODULE == 1
 
 // This package
 #include <datatools/kernel.h>
@@ -173,7 +173,7 @@ namespace bayeux {
       lib_info_reg.registration("mctools",
                                 "Monte-Carlo utilities with a Geant4 interface.",
                                 mctools::version::get_version());
-#ifdef BAYEUX_WITH_LAHAGUE_MODULE
+#if BAYEUX_WITH_LAHAGUE_MODULE == 1
       // LaHague:
       datatools::properties & lahague_lib_infos
         = lib_info_reg.registration("lahague",
@@ -186,7 +186,7 @@ namespace bayeux {
       lahague_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                      std::string(LAHAGUE_ENV_RESOURCE_DIR)
                                      );
-#endif // BAYEUX_WITH_LAHAGUE_MODULE
+#endif // BAYEUX_WITH_LAHAGUE_MODULE == 1
 
       // bayeux:
       datatools::properties& bayeux_lib_infos = lib_info_reg.registration("bayeux",
@@ -243,9 +243,9 @@ namespace bayeux {
         // from the kernel's library info register:
         if (lib_info_reg.has("bayeux")) lib_info_reg.unregistration("bayeux");
 
-#ifdef BAYEUX_WITH_LAHAGUE_MODULE
+#if BAYEUX_WITH_LAHAGUE_MODULE == 1
         if (lib_info_reg.has("lahague")) lib_info_reg.unregistration("lahague");
-#endif // BAYEUX_WITH_LAHAGUE_MODULE
+#endif // BAYEUX_WITH_LAHAGUE_MODULE == 1
 
         if (lib_info_reg.has("mctools")) lib_info_reg.unregistration("mctools");
 
