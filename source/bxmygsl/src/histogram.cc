@@ -264,8 +264,6 @@ namespace mygsl {
       {
         _h_ = gsl_histogram_clone (h_._h_);
       }
-    //std::cerr << "DEVEL: histogram::ctor/copy...\n";
-    //dump(std::cerr);
     return;
   }
 
