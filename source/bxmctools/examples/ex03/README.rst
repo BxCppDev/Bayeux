@@ -155,7 +155,7 @@ Open a Root interactive session:
 
 .. code:: sh
 
-   $ root histos_Co60.root
+   $ root ${HPGE_WORK_DIR}/data/histos_Co60.root
    root [0]
    Attaching file histos_Co60.root as _file0...
    root [1] TBrowser b;
