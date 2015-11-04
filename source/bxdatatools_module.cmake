@@ -142,6 +142,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/configuration/variant_repository.h
 
   ${module_include_dir}/${module_name}/introspection/data_type.h
+  ${module_include_dir}/${module_name}/introspection/unit_support.h
   ${module_include_dir}/${module_name}/introspection/data_layout.h
   ${module_include_dir}/${module_name}/introspection/access_type.h
   ${module_include_dir}/${module_name}/introspection/data_description.h
@@ -176,6 +177,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/units-reflect.h
 
   ${module_include_dir}/${module_name}/introspection/data_type-reflect.h
+  ${module_include_dir}/${module_name}/introspection/unit_support-reflect.h
   ${module_include_dir}/${module_name}/introspection/access_type-reflect.h
   ${module_include_dir}/${module_name}/introspection/data_layout-reflect.h
   ${module_include_dir}/${module_name}/introspection/argument.h
@@ -257,6 +259,7 @@ ${module_source_dir}/configuration/variant_registry.cc
 ${module_source_dir}/configuration/variant_repository.cc
 
 ${module_source_dir}/introspection/data_type.cc
+${module_source_dir}/introspection/unit_support.cc
 ${module_source_dir}/introspection/access_type.cc
 ${module_source_dir}/introspection/data_layout.cc
 ${module_source_dir}/introspection/data_description.cc
