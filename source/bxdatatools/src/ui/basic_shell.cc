@@ -809,7 +809,7 @@ namespace datatools {
     void basic_shell::make_title_upper(const std::string & title_, std::string & upper_)
     {
       std::ostringstream oss;
-      for (int i = 0; i < title_.length(); i++) {
+      for (size_t i = 0; i < title_.length(); i++) {
         oss << (char) toupper(title_[i]);
         if (i != title_.length() - 1) {
           oss << ' ';
@@ -885,7 +885,7 @@ namespace datatools {
       if (_using_splash_) {
         _print_splash(std::cout);
       }
-
+#if DATATOOLS_WITH_READLINE == 1
       if (_using_history_) {
         _grab_pimpl().expanded_history_filename = _history_filename_;
         datatools::fetch_path_with_env(_grab_pimpl().expanded_history_filename);
@@ -900,9 +900,8 @@ namespace datatools {
                          << _grab_pimpl().expanded_history_filename << "'!");
           }
         }
-
       }
-
+#endif // DATATOOLS_WITH_READLINE
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
@@ -911,6 +910,7 @@ namespace datatools {
     {
       DT_LOG_TRACE_ENTERING(_logging_);
       DT_LOG_TRACE(_logging_, "Stopping run...");
+#if DATATOOLS_WITH_READLINE == 1
       if (_using_history_) {
         if (! _grab_pimpl().expanded_history_filename.empty()) {
           int error = write_history(_grab_pimpl().expanded_history_filename.c_str());
@@ -925,6 +925,7 @@ namespace datatools {
         }
         clear_history();
       }
+#endif // DATATOOLS_WITH_READLINE
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
