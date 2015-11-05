@@ -303,7 +303,7 @@ namespace datatools {
            << "Arguments : " << _priv_->arguments.size()
            << std::endl;
       {
-        int counter = 0;
+        size_t counter = 0;
         const argument_set_by_name & name_index = _priv_->arguments.get<argument_tag_name>();
         for (argument_set_by_name::const_iterator iarg = name_index.begin();
              iarg != name_index.end();

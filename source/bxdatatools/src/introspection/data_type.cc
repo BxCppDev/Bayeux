@@ -116,6 +116,8 @@ namespace datatools {
         default :
           DT_THROW(std::logic_error, "Unsupported map data type '" << to_string(dt_) << "'!");
         }
+      } else {
+        DT_THROW(std::logic_error, "Unsupported layout label '" << layout_label_ << "'!");
       }
     }
 
@@ -123,7 +125,6 @@ namespace datatools {
     {
       if (layout_label_.empty() || layout_label_ == "scalar") {
         switch (dt_) {
-        case DATA_TYPE_VOID    : return;
         case DATA_TYPE_BOOLEAN : value_ = false; return;
         case DATA_TYPE_INT8    : value_ = int8_t(0); return;
         case DATA_TYPE_UINT8   : value_ = uint8_t(0); return;
@@ -138,6 +139,8 @@ namespace datatools {
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::string(); return;
         case DATA_TYPE_ENUM : value_ = std::string(); return;
+        case DATA_TYPE_VOID :
+        default : return;
         }
       } else if (layout_label_ == "vector") {
         switch (dt_) {
@@ -155,6 +158,7 @@ namespace datatools {
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::vector<std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::vector<std::string>(); return;
+        default : return;
         }
       } else if (layout_label_ == "list") {
         switch (dt_) {
@@ -172,6 +176,7 @@ namespace datatools {
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::list<std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::list<std::string>(); return;
+        default : return;
         }
        } else if (layout_label_ == "map") {
         switch (dt_) {
@@ -189,6 +194,7 @@ namespace datatools {
         case DATA_TYPE_STRING :
         case DATA_TYPE_PATH : value_ = std::map<std::string,std::string>(); return;
         case DATA_TYPE_ENUM : value_ = std::map<std::string,std::string>(); return;
+        default : return;
         }
       }
       DT_THROW(std::logic_error, "Unsupported '" << layout_label_ << "' data type '" << to_string(dt_) << "'!");

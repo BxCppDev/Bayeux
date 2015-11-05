@@ -173,7 +173,7 @@ namespace datatools {
     {
       DT_THROW_IF(!is_active(), std::logic_error, "Command is not active!");
       if (has_version()) {
-        std::cout << get_name() << " " << get_version() << std::endl;
+        out_ << get_name() << " " << get_version() << std::endl;
       }
       return;
     }
@@ -345,7 +345,7 @@ namespace datatools {
 
     // virtual
     void base_command::_base_run(datatools::command::returned_info & cri_,
-                                 uint32_t flags_)
+                                 uint32_t /*flags_*/)
     {
       cri_.reset();
       cri_.set_error_code(datatools::command::CEC_SUCCESS);

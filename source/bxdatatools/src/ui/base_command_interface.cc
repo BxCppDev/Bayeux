@@ -318,7 +318,7 @@ namespace datatools {
 
     int base_command_interface::operator()(const std::vector<std::string> & argv_,
                                            datatools::command::returned_info & cri_,
-                                           uint32_t flags_)
+                                           uint32_t /*flags_*/)
     {
       DT_LOG_TRACE_ENTERING(get_logging_priority());
       DT_THROW_IF(!is_active(), std::logic_error, "Command interface '" << get_name() << "' is not active!");

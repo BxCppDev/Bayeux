@@ -106,7 +106,7 @@ namespace datatools {
       return;
     }
 
-    void shell_tree_command::_run(datatools::command::returned_info & cri_, uint32_t flags_)
+    void shell_tree_command::_run(datatools::command::returned_info & cri_, uint32_t /*flags_*/)
     {
       cri_.reset();
       cri_.set_error_code(datatools::command::CEC_SUCCESS);
@@ -208,12 +208,12 @@ namespace datatools {
       }
       std::string parent_path = datatools::ui::path::parent_path(full_path);
       std::string base_path   = datatools::ui::path::basename(full_path);
-      bool hidden    = false;
+      // bool hidden    = false;
       bool interface = false;
       bool command   = false;
-      if (datatools::ui::path::is_hidden(base_path)) {
-        hidden = true;
-      }
+      // if (datatools::ui::path::is_hidden(base_path)) {
+      //   hidden = true;
+      // }
       if (shell.get_ihs().is_interface(full_path)) {
         interface = true;
       } else {
@@ -299,7 +299,7 @@ namespace datatools {
           if (child_interface) nb_child_interfaces++;
         }
       }
-      int child_counter = 0;
+      size_t child_counter = 0;
       for (std::map<std::string, bool>::const_iterator ilisted = listed_children.begin();
            ilisted != listed_children.end();
            ilisted++) {

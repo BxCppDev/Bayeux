@@ -55,7 +55,6 @@ namespace datatools {
       case MILLI : return "milli";
       case CENTI : return "centi";
       case DECI  : return "deci";
-      case UNIT_POWER_OF_TEN  : return "";
       case DECA  : return "deca";
       case HECTO : return "hecto";
       case KILO  : return "kilo";
@@ -66,6 +65,9 @@ namespace datatools {
       case EXA   : return "exa";
       case ZETTA : return "zetta";
       case YOTTA : return "yotta";
+      case UNIT_POWER_OF_TEN :
+      default :
+        return "";
       }
     }
 
@@ -82,7 +84,6 @@ namespace datatools {
       case MILLI : return "m";
       case CENTI : return "c";
       case DECI  : return "d";
-      case UNIT_POWER_OF_TEN  : return "";
       case DECA  : return "da";
       case HECTO : return "h";
       case KILO  : return "k";
@@ -93,6 +94,9 @@ namespace datatools {
       case EXA   : return "E";
       case ZETTA : return "Z";
       case YOTTA : return "Y";
+      case UNIT_POWER_OF_TEN :
+      default :
+        return "";
       }
     }
 

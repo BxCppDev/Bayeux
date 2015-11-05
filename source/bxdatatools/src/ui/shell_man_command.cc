@@ -64,7 +64,7 @@ namespace datatools {
       return;
     }
 
-    void shell_man_command::_run(datatools::command::returned_info & cri_, uint32_t flags_)
+    void shell_man_command::_run(datatools::command::returned_info & cri_, uint32_t /*flags_*/)
     {
       cri_.reset();
       cri_.set_error_code(datatools::command::CEC_SUCCESS);

@@ -326,7 +326,7 @@ namespace datatools {
       if (has_children()) {
         out_ << indent_ << i_tree_dumpable::tag
              << "Child nodes : " << "[" << _children_.size() << ']' << std::endl;
-        int counter = 0;
+        size_t counter = 0;
         for (std::set<node *>::const_iterator ichild = _children_.begin();
              ichild != _children_.end();
              ichild ++) {
@@ -708,7 +708,7 @@ namespace datatools {
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
            << "Nodes : [" << _nodes_.size() << ']' << std::endl;
       {
-        int counter = 0;
+        size_t counter = 0;
         for (node_dict_type::const_iterator inode = _nodes_.begin();
              inode != _nodes_.end();
              inode++) {
