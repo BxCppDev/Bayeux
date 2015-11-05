@@ -1,4 +1,4 @@
-Copyright  (C)  2011-2013 François  Mauger,  LPC  Caen CNRS/IN2P3  and
+Copyright  (C)  2011-2015 François  Mauger,  LPC  Caen CNRS/IN2P3  and
 Université de Caen Basse-Normandie
 
 This file is part of the datatools_ library.
