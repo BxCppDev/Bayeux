@@ -226,7 +226,7 @@ namespace datatools {
 
     bool basic_shell::has_version() const
     {
-      return _version_;
+      return _version_ != boost::none;
     }
 
     void basic_shell::set_version(const ::datatools::version_id & version_)

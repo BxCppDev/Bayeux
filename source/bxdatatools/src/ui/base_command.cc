@@ -75,7 +75,7 @@ namespace datatools {
 
     bool base_command::has_version() const
     {
-      return _version_;
+      return _version_ != boost::none;
     }
 
     void base_command::_set_version(const datatools::version_id & version_)
