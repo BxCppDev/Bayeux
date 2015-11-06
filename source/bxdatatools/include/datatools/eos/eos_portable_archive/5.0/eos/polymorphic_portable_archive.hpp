@@ -1,6 +1,6 @@
 /*****************************************************************************/
 /**
- * \file portable_archive.hpp
+ * \file polymorphic_portable_archive.hpp
  * \brief Needed for unit tests on portable archives.
  * \author christian.pfligersdorffer@gmx.at
  *
@@ -21,13 +21,13 @@
 // include output archive header
 #include "portable_oarchive.hpp"
 // set name of test output archive
-typedef eos::portable_oarchive test_oarchive;
+typedef eos::polymorphic_portable_oarchive test_oarchive;
 // set name of test output stream
 typedef std::ofstream test_ostream;
 
 // repeat the above for input archive
 #include "portable_iarchive.hpp"
-typedef eos::portable_iarchive test_iarchive;
+typedef eos::polymorphic_portable_iarchive test_iarchive;
 typedef std::ifstream test_istream;
 
 // define open mode for streams
