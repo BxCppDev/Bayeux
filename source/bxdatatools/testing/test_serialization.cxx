@@ -10,6 +10,9 @@
 // Third party:
 // - Boost:
 #include <boost/filesystem.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // This project:
 #include <datatools/io_factory.h>
@@ -29,6 +32,8 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::test::more_data_t)
 // BOOST_CLASS_VERSION(datatools::test::more_data_t, 66)
 
 using namespace std;
+
+void test_shared_ptr();
 
 int main(int argc_, char ** argv_)
 {
@@ -179,6 +184,8 @@ int main(int argc_, char ** argv_)
       clog << "NOTICE: reading done." << endl << endl;
     }
 
+    test_shared_ptr();
+
   }
   catch (exception & x) {
     cerr << "test_serialization: ERROR: " << x.what() << endl;
@@ -186,4 +193,72 @@ int main(int argc_, char ** argv_)
   }
 
   return (EXIT_SUCCESS);
+}
+
+class bar
+{
+public:
+  bar(datatools::test::data_t * data_) : _sh_data_(data_) {}
+  const datatools::test::data_t * get() const { return _sh_data_.get(); }
+  datatools::test::data_t * grab() { return _sh_data_.get(); }
+  void reset() { _sh_data_.reset(); }
+private:
+  boost::shared_ptr<datatools::test::data_t> _sh_data_;
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize (Archive & ar_,
+                  const unsigned int /* version_ */)
+  {
+    ar_ & boost::serialization::make_nvp ("sh_data", _sh_data_);
+    return;
+  }
+};
+
+void test_shared_ptr()
+{
+  boost::shared_ptr<datatools::test::data_t> shFoo(new datatools::test::data_t('c', 17, 1.234e5, 7));
+  bar foo(new datatools::test::data_t('z', 42, 3.14, 12));
+  bar foo2(new datatools::test::more_data_t('a', 666, 2.718, 3, "dummy"));
+  boost::shared_ptr<datatools::test::data_t> shFoo2 = shFoo;
+
+  shFoo->tree_dump(std::clog, "shFoo: ");
+  foo.get()->tree_dump(std::clog, "foo: ");
+  foo2.get()->tree_dump(std::clog, "foo2: ");
+  shFoo2->tree_dump(std::clog, "shFoo2: ");
+
+  std::string filename = "test_serialization_shared_ptr.xml";
+  {
+    std::clog << "NOTICE: writing..." << std::endl;
+    datatools::data_writer writer(filename);
+    writer.store("shptr_bar", shFoo);
+    writer.store("bar", foo);
+    writer.store("bar", foo2);
+    writer.store("shptr_bar", shFoo2);
+    std::clog << "NOTICE: done." << std::endl;
+  }
+
+  std::clog << "NOTICE: reset objects..." << std::endl;
+  shFoo.reset();
+  foo.reset();
+  foo2.reset();
+  shFoo2.reset();
+  std::clog << "NOTICE: done." << std::endl;
+
+  {
+    std::clog << "NOTICE: reading..." << std::endl;
+    datatools::data_reader reader(filename);
+    reader.load("shptr_bar", shFoo);
+    reader.load("bar", foo);
+    reader.load("bar", foo2);
+    reader.load("shptr_bar", shFoo2);
+    std::clog << "NOTICE: done." << std::endl;
+  }
+
+  shFoo->tree_dump(std::clog, "shFoo: ");
+  foo.get()->tree_dump(std::clog, "foo: ");
+  foo2.get()->tree_dump(std::clog, "foo2: ");
+  shFoo2->tree_dump(std::clog, "shFoo2: ");
+
+  return;
 }

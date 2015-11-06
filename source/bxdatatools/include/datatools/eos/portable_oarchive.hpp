@@ -62,7 +62,7 @@
  *
  * \note Version 2.1 removes several compiler warnings and enhances floating
  *       point diagnostics to inform the user if some preconditions are violated
- *		 on his platform. We do not strive for the universally portable solution
+ *               on his platform. We do not strive for the universally portable solution
  *       in binary floating point serialization as desired by some boost users.
  *       Instead we support only the most widely used IEEE 754 format and try to
  *       detect when requirements are not met and hence our approach must fail.
@@ -93,7 +93,7 @@
 #include <boost/archive/basic_binary_oarchive.hpp>
 
 #if BOOST_VERSION >= 105600
-#include <boost/serialization/shared_ptr_helper.hpp>
+// #include <boost/serialization/shared_ptr_helper.hpp>
 #elif BOOST_VERSION >= 103500
 #include <boost/archive/shared_ptr_helper.hpp>
 #endif
