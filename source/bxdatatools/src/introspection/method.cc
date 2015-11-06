@@ -26,6 +26,7 @@
 
 // Third party:
 // - Boost:
+#include <boost/version.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/error_code.hpp>
@@ -101,7 +102,7 @@ namespace datatools {
 
     bool method::has_constness() const
     {
-      return _constness_;
+      return _constness_ != boost::none;
     }
 
     bool method::is_constness() const
@@ -115,14 +116,26 @@ namespace datatools {
       return;
     }
 
+    void method::reset_constness()
+    {
+      _constness_ = boost::none;
+      return;
+    }
+
     bool method::has_type_id() const
     {
-      return _type_id_;
+      return _type_id_ != boost::none;
     }
 
     void method::set_type_id(const std::string & tid_)
     {
       _type_id_ = tid_;
+      return;
+    }
+
+    void method::reset_type_id()
+    {
+      _type_id_ = boost::none;
       return;
     }
 
@@ -283,6 +296,8 @@ namespace datatools {
     void method::reset()
     {
       _priv_->arguments.clear();
+      reset_constness();
+      reset_type_id();
       return;
     }
 
@@ -296,6 +311,12 @@ namespace datatools {
       if (has_constness()) {
         out_ << indent_ << i_tree_dumpable::tag
              << "Constness : " << _constness_.get()
+             << std::endl;
+      }
+
+      if (has_type_id()) {
+        out_ << indent_ << i_tree_dumpable::tag
+             << "Type identifier : '" << _type_id_.get() << "'"
              << std::endl;
       }
 

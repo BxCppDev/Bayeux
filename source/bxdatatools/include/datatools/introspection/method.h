@@ -61,11 +61,17 @@ namespace datatools {
       //! Set the method constness
       void set_constness(bool);
 
+      //! Reset the method constness
+      void reset_constness();
+
       //! Check if type identifier is set
       bool has_type_id() const;
 
       //! Set the type identifier
       void set_type_id(const std::string &);
+
+      //! Reset the type identifier
+      void reset_type_id();
 
       //! Return the type identifier
       const std::string & get_type_id() const;

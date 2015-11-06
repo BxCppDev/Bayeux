@@ -133,6 +133,9 @@ void test_method_1()
       }
     }
 
+    meth.reset();
+    meth.tree_dump(std::clog, "Method (after reset): ");
+
   }
 
   return;
@@ -175,6 +178,8 @@ void test_method_2()
     meth.initialize(meth_config);
     meth.tree_dump(std::clog, "Method: ");
 
+    meth.reset();
+    meth.tree_dump(std::clog, "Method (after reset): ");
   }
 
   {
@@ -184,6 +189,7 @@ void test_method_2()
     meth_config.store_string("name", "get");
     meth_config.store_string("terse_description", "Return the value");
     meth_config.store_boolean("constness", true);
+    meth_config.store_string("type_id", "my::class");
     std::vector<std::string> arg_names;
     arg_names.push_back("return");
     meth_config.store("arguments", arg_names);

@@ -136,6 +136,33 @@ namespace datatools {
                              const std::string & indent_ = "",
                              bool inherit_ = false) const;
 
+      //! Make the class "equality comparable" (needed by Boost/optional for some reason...)
+      //! Do not understand why (see also the "data_description::has_unit_info()" method)
+      //! In order to use the "boost::none" semantic, I had to add
+      //! the "unit_info::operator==(...)" operator despite what is written at:
+      //!  http://www.boost.org/doc/libs/1_59_0/libs/optional/doc/html/boost_optional/tutorial/relational_operators.html
+      //! \remark
+      //! In case where optional<T> is compared to none, it is not required that T be EqualityComparable.
+      //!
+      //! That's fine but is not true with Boost 1.55.
+      //!
+      //! The use of "boost::none" semantic was introduced to prepare the support for recent C++
+      //! compilers (with C++11 support) that seem to not support anymore the following semantics:
+      //! \code
+      //! boost::optional<unit_info> opt;
+      //! ...
+      //! if (opt) { /* do something */ }
+      //! \endcode
+      //! but require:
+      //! \code
+      //! boost::optional<unit_info> opt;
+      //! ...
+      //! if (opt != boost::none) { /* do something */ }
+      //! \endcode
+      //! However, for builtin types (int, float...), it works.
+      //! This must be clarified in the near future.
+      bool operator==(const unit_info & ui_) const;
+
     private:
 
       unit_support_type _us_; //!< Type of unit support

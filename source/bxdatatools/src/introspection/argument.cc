@@ -65,7 +65,7 @@ namespace datatools {
 
     bool argument::has_rank() const
     {
-      return _rank_;
+      return _rank_ != boost::none;
     }
 
     std::size_t argument::get_rank() const
@@ -81,7 +81,7 @@ namespace datatools {
 
     bool argument::has_name() const
     {
-      return _name_;
+      return _name_ != boost::none;
     }
 
     const std::string & argument::get_name() const
@@ -97,7 +97,7 @@ namespace datatools {
 
     bool argument::has_description() const
     {
-      return _description_;
+      return _description_ != boost::none;
     }
 
     const std::string & argument::get_description() const
@@ -181,7 +181,7 @@ namespace datatools {
 
     bool argument::has_default_value_str() const
     {
-      return _default_value_str_;
+      return _default_value_str_ != boost::none;
     }
 
     const std::string & argument::get_default_value_str() const
@@ -263,11 +263,11 @@ namespace datatools {
       _access_ = ACCESS_INVALID;
       reset_method();
       _description_.reset();
-      _rank_.reset();
-      _name_.reset();
-      _description_.reset();
+      _rank_ = boost::none;
+      _name_ = boost::none;
+      _description_ = boost::none;
       _default_value_ = boost::any();
-      _default_value_str_.reset();
+      _default_value_str_ = boost::none;
       return;
     }
 

@@ -21,6 +21,8 @@
 #include <datatools/introspection/data_description.h>
 
 // Third party:
+// - Boost:
+#include <boost/none.hpp>
 // - Camp:
 #include <camp/enum.hpp>
 
@@ -95,7 +97,7 @@ namespace datatools {
 
     bool data_description::has_vector_fixed_size() const
     {
-      return _vector_fixed_size_;
+      return _vector_fixed_size_ != boost::none;
     }
 
     std::size_t data_description::get_vector_fixed_size() const
@@ -109,14 +111,32 @@ namespace datatools {
       return;
     }
 
+    void data_description::reset_vector_fixed_size()
+    {
+      _vector_fixed_size_ = boost::none;
+      return;
+    }
+
     bool data_description::has_unit_support() const
     {
-      return _unit_info_ && _unit_info_.get().is_valid();
+      return has_unit_info() && _unit_info_.get().is_valid();
     }
 
     bool data_description::has_unit_info() const
     {
-      return _unit_info_;
+      // 2015-11-06, FM: it was:
+      // \code
+      //   return _unit_info_;
+      // \endcode
+      // Now we should support (to be checked):
+      // \code
+      // return ! (_unit_info_ == boost::none);
+      // \endcode
+      // or:
+      // \code
+      // return _unit_info_ != boost::none;
+      // \endcode
+      return ! (_unit_info_ == boost::none);
     }
 
     const unit_info & data_description::get_unit_info() const
@@ -130,6 +150,12 @@ namespace datatools {
       DT_THROW_IF(!is_real(get_type()), std::logic_error,
                   "No unit information can be set for non-real data type!");
       _unit_info_ = ui_;
+      return;
+    }
+
+    void data_description::reset_unit_info()
+    {
+      _unit_info_ = boost::none;
       return;
     }
 
@@ -168,17 +194,24 @@ namespace datatools {
 
     bool data_description::has_type_id() const
     {
-      return _type_id_;
+      return _type_id_ != boost::none;
     }
 
     const std::string & data_description::get_type_id() const
     {
+     DT_THROW_IF(!has_type_id(), std::logic_error, "No type identifier is available!");
       return _type_id_.get();
     }
 
     void data_description::set_type_id(const std::string & uti_)
     {
       _type_id_ = uti_;
+      return;
+    }
+
+    void data_description::reset_type_id()
+    {
+      _type_id_ = boost::none;
       return;
     }
 
@@ -263,9 +296,9 @@ namespace datatools {
 
     void data_description::reset()
     {
-      _vector_fixed_size_.reset();
-      _unit_info_.reset();
-      _type_id_.reset();
+      reset_vector_fixed_size();
+      reset_unit_info();
+      reset_type_id();
       _set_defaults();
       return;
     }
@@ -305,7 +338,7 @@ namespace datatools {
         out_ << std::endl;
       }
 
-      if (_unit_info_) {
+      if (has_unit_info()) {
         out_ << indent_ << i_tree_dumpable::tag
              << "Unit information : ";
         out_ << std::endl;

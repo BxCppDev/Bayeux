@@ -80,6 +80,9 @@ namespace datatools {
       //! Set the vector fixed size
       void set_vector_fixed_size(std::size_t);
 
+      //! Reset the vector fixed size
+      void reset_vector_fixed_size();
+
       //! Check if unit info is defined
       bool has_unit_info() const;
 
@@ -91,6 +94,9 @@ namespace datatools {
 
       //! Set the unit information
       void set_unit_info(const unit_info & ui_);
+
+      //! Reset the unit info
+      void reset_unit_info();
 
       //! Check if the (real) data is stored using an implicit unit (ex: "volt", "ns", "mA"...)
       bool has_implicit_unit() const;
@@ -118,6 +124,9 @@ namespace datatools {
 
       //! Set the type identifier (for enumeration and class)
       void set_type_id(const std::string &);
+
+      //! Reset the type identifier (for enumeration and class)
+      void reset_type_id();
 
       //! Check validity
       bool is_valid() const;

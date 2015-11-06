@@ -330,6 +330,15 @@ namespace datatools {
       return;
     }
 
+    bool unit_info::operator==(const unit_info & ui_) const
+    {
+      if (_us_ != ui_._us_) return false;
+      if (_implicit_unit_symbol_ != ui_._implicit_unit_symbol_) return false;
+      if (_explicit_unit_dimension_label_ != ui_._explicit_unit_dimension_label_) return false;
+      if (_preferred_unit_symbol_ != ui_._preferred_unit_symbol_) return false;
+      return false;
+    }
+
   } // namespace introspection
 
 } // namespace datatools
