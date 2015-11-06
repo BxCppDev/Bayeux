@@ -44,7 +44,7 @@ public:
     return;
   }
 
-  virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0)
+  virtual void _run(datatools::command::returned_info & cri_, uint32_t /*flags_ = 0*/)
   {
     cri_.reset();
     cri_.set_error_code(datatools::command::CEC_SUCCESS);
@@ -116,8 +116,7 @@ protected:
     return;
   }
 
-  virtual void _run(datatools::command::returned_info & cri_,
-                    uint32_t flags_ = 0)
+  virtual void _run(datatools::command::returned_info & cri_, uint32_t /*flags_ = 0*/)
   {
     cri_.reset();
     cri_.set_error_code(datatools::command::CEC_SUCCESS);
@@ -202,7 +201,7 @@ protected:
     return;
   }
 
-  virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0)
+  virtual void _run(datatools::command::returned_info & cri_, uint32_t /*flags_ = 0*/)
   {
     cri_.reset();
     cri_.set_error_code(datatools::command::CEC_SUCCESS);
@@ -276,7 +275,7 @@ protected:
     return;
   }
 
-  virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0)
+  virtual void _run(datatools::command::returned_info & cri_, uint32_t /*flags_ = 0*/)
   {
     cri_.reset();
     cri_.set_error_code(datatools::command::CEC_SUCCESS);
@@ -320,7 +319,7 @@ public:
 
 protected:
 
-  virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0)
+  virtual void _run(datatools::command::returned_info & cri_, uint32_t /*flags_ = 0*/)
   {
     cri_.reset();
     cri_.set_error_code(datatools::command::CEC_SUCCESS);

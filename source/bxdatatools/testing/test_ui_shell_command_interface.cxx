@@ -33,7 +33,7 @@
 #include <datatools/ui/basic_shell.h>
 #include "ui/foo_command_interface.h"
 
-int main(int argc_, char * argv_[])
+int main(/*int argc_, char * argv_[]*/)
 {
   try {
 
