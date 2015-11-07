@@ -9,11 +9,12 @@ set of data of the same type or data from mixed types, at user choice.
 
 brio depends on the datatools and ROOT libraries.
 
+brio is distributed as a module of the Bayeux software suite.
+
 Authors :
  - François Mauger (LPC  Caen, CNRS/IN2P3)
    and   Université  de   Caen Basse-Normandie,
  - Xavier Garrido (LAL, CNRS/IN2P3, Université Paris-Sud) : bug fixes,
  - Ben Morgan (University of Warwick) : CMake build system and packaging.
 
-Please read the INSTALL.txt file for installation instructions.
 Please read the COPYING.txt file for licensing terms.
