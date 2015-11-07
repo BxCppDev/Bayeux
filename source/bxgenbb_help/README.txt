@@ -4,11 +4,12 @@ Vladimir Tretyak.
 Some reader  C++ class  (the genbb_mgr class)  enables the use  of the
 output data  file from 'genbb' or  run (the genbb  and wgenbb classes)
 the core Fortran generator on the fly from a C++ application.
+The current version implements a C++ port of the original Fortran code
+and some extensions.
 
 Authors :
  - Vladimir Tretyak is the primary author of Decay0
- - François Mauger for the C++ wrapping then the C++ port
+ - François Mauger for the C++ wrapping, the C++ port
    and its extensions.
 
-Please read the INSTALL.txt file for installation instructions.
 Please read the COPYING.txt file for licensing terms.
