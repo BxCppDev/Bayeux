@@ -1,0 +1,23 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of aliases for standard materials
+#@key_label   "name"
+#@meta_label  "type"
+
+############################
+[name="vacuum" type="alias"]
+#@description The alias for vacuum
+material : string = "std::vacuum"
+
+#####################################
+[name="source_material" type="alias"]
+#@description The alias for Mylar
+material : string = "std::mylar"
+
+#######################################
+[name="detector_material" type="alias"]
+#@description The alias for NaI
+material : string = "std::NaI"
+
+# end
