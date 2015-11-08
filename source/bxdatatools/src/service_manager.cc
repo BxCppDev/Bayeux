@@ -1,6 +1,6 @@
 /* service_manager.cc
  *
- * Copyright (C) 2011-2012 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,9 +252,9 @@ const service_dict_type& service_manager::get_services() const {
   return services_;
 }
 
-service_dict_type& service_manager::get_services() {
-  return services_;
-}
+// service_dict_type& service_manager::get_services() {
+//   return services_;
+// }
 
 service_dict_type& service_manager::grab_services() {
   return services_;
@@ -267,7 +267,6 @@ bool service_manager::can_drop(const std::string& name) {
                "Service '" << name << "' does not exist !");
   return found->second.can_be_dropped();
 }
-
 
 void service_manager::drop(const std::string& name) {
   service_dict_type::iterator found = services_.find(name);
@@ -428,7 +427,7 @@ void service_manager::tree_dump(std::ostream& out,
 void service_manager::load_service(const std::string& name,
                                    const std::string& id,
                                    const datatools::properties& config) {
-  DT_LOG_TRACE(get_logging_priority(), "Entering...");
+  DT_LOG_TRACE_ENTERING(get_logging_priority());
   DT_THROW_IF (this->has(name),
                std::logic_error,
                "Service '" << name << "' already exists !");
@@ -469,14 +468,14 @@ void service_manager::load_service(const std::string& name,
   if (force_initialization_at_load_) {
     this->initialize_service(new_entry);
   }
-  DT_LOG_TRACE(get_logging_priority(),"Exiting.");
+  DT_LOG_TRACE_EXITING(get_logging_priority());
 }
 
 
 void service_manager::preload_global_dict() {
-  DT_LOG_TRACE(get_logging_priority(),"Entering !");
+  DT_LOG_TRACE_ENTERING(get_logging_priority());
   factory_register_.import(DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(datatools::base_service));
-  DT_LOG_TRACE(get_logging_priority(),"Embedded.");
+  DT_LOG_TRACE_EXITING(get_logging_priority());
 }
 
 
@@ -494,9 +493,8 @@ void service_manager::create_service(service_entry& entry) {
                  << entry.get_service_name() << "' !");
 
     // You don't think this might be a *little* too deeply nested?
-    typedef
-        datatools::base_service::factory_register_type::factory_type       FactoryType;
-
+    // Answer: Well, my deepest apologies for that, dear Ben!
+    typedef datatools::base_service::factory_register_type::factory_type FactoryType;
     const FactoryType& the_factory = factory_register_.get(entry.get_service_id());
     base_service* ptr = the_factory();
     entry.grab_service_handle().reset(ptr);

@@ -1,9 +1,9 @@
 /// \file datatools/service_tools.h
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2012-12-15
+ * Last modified : 2015-11-08
  *
- * Copyright (C) 2011 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- *
- *
  * Description:
  *
  *   Service tools, typedefs.
@@ -35,6 +33,7 @@
 // Standard Library:
 #include <string>
 #include <map>
+#include <vector>
 
 // Third Party:
 // - Boost:
@@ -81,62 +80,78 @@ namespace datatools {
   //! \brief Internal entry for service objects stored in the service manager class
   class service_entry : public datatools::i_tree_dumpable  {
   public:
+
+    //! \brief Service status flags
     enum status_type {
-      STATUS_BLANK             = 0x0,
-      STATUS_CREATED           = 0x1,
-      STATUS_INITIALIZED       = 0x2,
-      STATUS_BROKEN_DEPENDENCY = 0x4
+      STATUS_BLANK             = 0x0, //! Empty flag set
+      STATUS_CREATED           = 0x1, //! Instantiation flag
+      STATUS_INITIALIZED       = 0x2, //! Initialization flag
+      STATUS_BROKEN_DEPENDENCY = 0x4  //! Broken dependency flag
     };
 
   public:
 
+    //! Return the service name
     const std::string & get_service_name () const;
 
+    //! Set the service name
     void set_service_name (const std::string &);
 
+    //! Return the service identifier
     const std::string & get_service_id () const;
 
+    //! Set the service identifier
     void set_service_id (const std::string &);
 
+    //! Return a reference to the non mutable service configuration
     const datatools::properties & get_service_config () const;
 
+    //! Return a reference to the mutable service configuration
     datatools::properties & grab_service_config ();
 
+    //! Set the service configuration
     void set_service_config (const datatools::properties &);
 
+    //! Default constructor
     service_entry();
 
+    //! Check if service can be dropped
     bool can_be_dropped() const;
 
+    //! Return the service status
     uint32_t get_service_status() const;
 
+    //! Update the service status
     void update_service_status(uint32_t);
 
+    //! Reset the service status
     void reset_service_status(uint32_t);
 
+    //! Check if the service object is instantiated
     bool is_created() const;
 
+    //! Check if the service object is initialized
     bool is_initialized() const;
 
+    //! Check if the service object has slave service with given name
     bool has_slave(const std::string& name) const;
 
+    //! Remove slave service with given name
     void remove_slave(const std::string& name);
 
+    //! Smart print
     virtual void tree_dump(std::ostream& out = std::clog,
-			   const std::string & title  = "",
-			   const std::string & indent = "",
-			   bool inherit = false) const;
+         const std::string & title  = "",
+         const std::string & indent = "",
+         bool inherit = false) const;
 
+    //! Return a handle to the non mutable service
     const service_handle_type & get_service_handle() const;
 
+    //! Return a handle to the mutable service
     service_handle_type & grab_service_handle();
 
-  public: // TO BE CHANGED
   private:
-    // WHY ARE THESE PUBLIC?? service_entry has functionality, it's
-    // not just a bag of data...
-    // Either that, or it should be a pImpl of service_manager
-    //
     std::string  service_name;    //!< The name of the service
     std::string  service_id;      //!< The ID (type) of the service
     datatools::properties service_config;  //!< The configuration of the service
@@ -146,10 +161,21 @@ namespace datatools {
     service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
     dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
 
-    //friend class service_manager;
+    // friend class service_manager;
   };
 
+  //! \brief Type alias for a dictionary of service entries
   typedef std::map<std::string, service_entry> service_dict_type;
+
+  //! Find the service name with given service identifier from a dictionary of services
+  bool find_service_name_with_id(const service_dict_type & services_,
+                                 const std::string & service_id_,
+                                 std::string & service_name_);
+
+  //! Find all service names with given service identifier from a dictionary of services
+  bool find_service_names_with_id(const service_dict_type & services_,
+                                  const std::string & service_id_,
+                                  std::vector<std::string> & service_names_);
 
 }  // end of namespace datatools
 

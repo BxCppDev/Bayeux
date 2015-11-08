@@ -54,9 +54,9 @@ namespace datatools {
   class properties;
   class multi_properties;
 
-  /*! \brief Service management class
-   *
-   */
+  //! \brief Service management class
+  //!
+  //!
   class service_manager : public datatools::i_tree_dumpable {
   public:
     enum flag_type {
@@ -67,49 +67,52 @@ namespace datatools {
     };
 
   public:
-    /// Constructor
+    //! Constructor
     service_manager(const std::string& name = "",
         const std::string & description = "",
         uint32_t flag = BLANK);
 
-    /// Destructor
+    //! Destructor
     virtual ~service_manager();
 
-    /// Set the name of the service
+    //! Set the name of the service
     void set_name(const std::string& name);
 
-    /// Set the description of the service
+    //! Set the description of the service
     void set_description(const std::string& description);
 
-    /// Get the name of the service
+    //! Get the name of the service
     const std::string& get_name() const;
 
-    /// Get the description of the service
+    //! Get the description of the service
     const std::string& get_description() const;
 
-    /// Check the debug flag
+    //! Check the debug flag
     bool is_debug() const;
 
-    /// Set the debug flag
+    //! Set the debug flag
     void set_debug(bool debug = true);
 
-    /// Check the initialization flag
+    //! Check the initialization flag
     bool is_initialized() const;
 
-    /// Initialize the manager
+    //! Initialize the manager
     void initialize();
 
-    /// Initialize the manager from a container of properties
+    //! Initialize the manager from a container of properties
     void initialize(const datatools::properties& config);
 
-    /// Reset the manager
+    //! Reset the manager
     void reset();
 
+    //! Check if a service identifier/type is supported
     bool has_service_type(const std::string& id) const;
 
+    //! Register a service factory
     template <class ServiceClass>
       void register_service_type(const std::string& id);
 
+    //! Unregister a service factory
     void unregister_service_type(const std::string& id);
 
     /**  @param name The name of the service to be checked
@@ -126,21 +129,14 @@ namespace datatools {
      *   @return true if the service is of the requested type
      */
     template <class T>
-      bool is_a(const std::string& name) const;
-
-    /** Deprecated, please use the 'grab' method.
-     *  @param name The name of the service to be checked
-     *  @return a mutable reference to the service instance requested by name and type
-     */
-    template<class T>
-      T& get(const std::string& name);
+    bool is_a(const std::string& name) const;
 
     /**  Same as the mutable 'get' method
      *   @param name The name of the service to be checked
      *   @return a mutable reference to the service instance requested by name and type
      */
     template<class T>
-      T& grab(const std::string& name);
+    T& grab(const std::string& name);
 
     /**  @param name The name of the service to be checked
      *   @return a const reference to the service instance requested by name and type
@@ -148,52 +144,65 @@ namespace datatools {
     template<class T>
       const T& get(const std::string& name) const;
 
+    //! Check if a service with given name can be dropped
     bool can_drop(const std::string& name);
 
+    //! Drop a service given its name
     void drop(const std::string& name);
 
+    //! Load a service with given name, identifier and configuration
     void load(const std::string& name,
-        const std::string& id,
-        const datatools::properties& config);
+              const std::string& id,
+              const datatools::properties& config);
 
+    //! Load a set of services from a multi-service configuration
     void load(const datatools::multi_properties& config);
 
+    //! Return a reference to the non mutable dictionary of services
     const service_dict_type& get_services() const;
 
-    /// \deprecated
-    service_dict_type& get_services();
-
+    //! Return a reference to the mutable dictionary of services
     service_dict_type& grab_services();
 
+    //! Basic print of embedded services
     void dump_services(std::ostream& out = std::clog,
-           const std::string& title  = "",
-           const std::string& indent = "") const;
+                       const std::string& title  = "",
+                       const std::string& indent = "") const;
 
-    /// Smart print
+    //! Smart print
     virtual void tree_dump(std::ostream& out         = std::clog,
          const std::string& title  = "",
          const std::string& indent = "",
          bool inherit              = false) const;
 
+    //! Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
 
+    //! Return the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
 
   protected:
-    void load_service(const std::string& name,
-          const std::string& id,
-          const datatools::properties& config);
 
+    //! Load a service
+    void load_service(const std::string& name,
+                      const std::string& id,
+                      const datatools::properties& config);
+
+    //! Preload the factory register from service factory system register
     void preload_global_dict();
 
+    //! Instantiate a service from its entry
     void create_service(service_entry& entry);
 
+    //! Initialize a service from its entry
     void initialize_service(service_entry& entry);
 
+    //! Reset a service from its entry
     void reset_service(service_entry& entry);
 
   private:
-    /// Set the factory preload flag
+
+    //! Set the factory preload flag
     void set_preload(bool preload);
 
   private:
