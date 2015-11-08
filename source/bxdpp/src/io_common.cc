@@ -468,7 +468,7 @@ namespace dpp {
         if (a_service_manager.has(_Ctx_label_)
             && a_service_manager.is_a<dpp::context_service>(_Ctx_label_)) {
           dpp::context_service & Ctx
-            = a_service_manager.get<dpp::context_service>(_Ctx_label_);
+            = a_service_manager.grab<dpp::context_service>(_Ctx_label_);
           _Ctx_service_ = &Ctx;
         } else {
           DT_LOG_ERROR((*_logging_), "Service manager has no 'context' service labelled with '"
