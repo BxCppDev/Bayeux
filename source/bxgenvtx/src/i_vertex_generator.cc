@@ -414,7 +414,7 @@ namespace genvtx {
                      std::logic_error,
                      "Cannot find '" << _geo_label_ << "' service for vertex generator '" << get_name() << "' !");
         geomtools::geometry_service & Geo
-          = service_manager_.get<geomtools::geometry_service>(_geo_label_);
+          = service_manager_.grab<geomtools::geometry_service>(_geo_label_);
         set_geom_manager(Geo.get_geom_manager());
     }
 
