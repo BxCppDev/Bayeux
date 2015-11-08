@@ -272,11 +272,11 @@ namespace mctools {
         DT_THROW_IF (_Geo_label_.empty (), std::logic_error,
                      "Module '" << get_name ()
                      << "' has no valid '" << "Geo_label" << "' property !");
-        if (service_manager_.has (_Geo_label_)
-            && service_manager_.is_a<geomtools::geometry_service> (_Geo_label_)) {
+        if (service_manager_.has(_Geo_label_)
+            && service_manager_.is_a<geomtools::geometry_service>(_Geo_label_)) {
             // Fetch a reference to the geometry service :
             geomtools::geometry_service & Geo
-              = service_manager_.get<geomtools::geometry_service> (_Geo_label_);
+              = service_manager_.grab<geomtools::geometry_service>(_Geo_label_);
             // Request for a reference to the geometry manager and installation
             // in the simulation manager :
             this->set_geometry_manager (Geo.get_geom_manager ());
