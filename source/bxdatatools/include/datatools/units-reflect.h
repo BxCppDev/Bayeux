@@ -1,4 +1,4 @@
-//! \file  datatools/units/units-reflect.h
+//! \file  datatools/units-reflect.h
 //! \brief Units introspection support
 //
 // Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
@@ -50,12 +50,12 @@ namespace datatools {
           .DR_ENUM_PAIR("kilo",  ::datatools::units::KILO)
           .DR_ENUM_PAIR("mega",  ::datatools::units::MEGA)
           .DR_ENUM_PAIR("giga",  ::datatools::units::GIGA)
-	  .DR_ENUM_PAIR("tera",  ::datatools::units::TERA)
-	  .DR_ENUM_PAIR("peta",  ::datatools::units::PETA)
-	  .DR_ENUM_PAIR("exa",   ::datatools::units::EXA)
+    .DR_ENUM_PAIR("tera",  ::datatools::units::TERA)
+    .DR_ENUM_PAIR("peta",  ::datatools::units::PETA)
+    .DR_ENUM_PAIR("exa",   ::datatools::units::EXA)
           .DR_ENUM_PAIR("zetta", ::datatools::units::ZETTA)
-	  .DR_ENUM_PAIR("yotta", ::datatools::units::YOTTA)
-	  ;
+    .DR_ENUM_PAIR("yotta", ::datatools::units::YOTTA)
+    ;
         return;
       }
 

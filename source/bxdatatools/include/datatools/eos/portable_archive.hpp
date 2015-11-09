@@ -11,7 +11,7 @@
  *
  * \note Since portable archives version 5.0 we depend on program_options!
  * Edit libs/serialization/test/Jamfile.v2 and change the requirements to
- * : requirements <source>/boost/filesystem <source>/boost/program_options
+ * : requirements {source}/boost/filesystem {source}/boost/program_options
  */
 /****************************************************************************/
 

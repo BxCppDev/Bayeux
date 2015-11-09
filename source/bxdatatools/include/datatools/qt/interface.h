@@ -1,4 +1,4 @@
-/// \file datatools/qt/qt_interface.h
+/// \file datatools/qt/interface.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-11-30
  * Last modified: 2014-12-02
