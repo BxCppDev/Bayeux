@@ -1,4 +1,4 @@
-/// \file mctools/signal/i_signal.h
+/// \file mctools/signal/base_signal.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2015-04-01
  * Last modified : 2015-04-01
