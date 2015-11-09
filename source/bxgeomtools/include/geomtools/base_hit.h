@@ -84,6 +84,7 @@ namespace geomtools {
     /// if (hit0.has_hit_id()) {
     ///   ...
     /// }
+    /// @endcode
     void invalidate_hit_id ();
 
     /// Check if the geometry ID is valid
