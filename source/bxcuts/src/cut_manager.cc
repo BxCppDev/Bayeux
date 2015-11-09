@@ -252,14 +252,6 @@ namespace cuts {
     return;
   }
 
-  // void cut_manager::create_cut(cut_entry_type & cut_entry_)
-  // {
-  //   if (! cut_entry_.is_created()) {
-  //     this->_create_cut(cut_entry_);
-  //   }
-  //   return;
-  // }
-
   void cut_manager::_create_cut(cut_entry_type & cut_entry_)
   {
     if (cut_entry_.is_created()) {

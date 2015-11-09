@@ -1,7 +1,7 @@
-/// \file cuts/i_cut.h
+//! \file cuts/i_cut.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2015-04-17
+ * Last modified : 2015-11-09
  *
  * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -35,6 +35,7 @@
 #include <ostream>
 #include <string>
 #include <typeinfo>
+#include <set>
 
 // Third party:
 // - Boost:
@@ -54,15 +55,15 @@ namespace datatools {
   class service_manager;
 }
 
-/// Top-level namespace of the Bayeux/cuts module library
+//! Top-level namespace of the Bayeux/cuts module library
 namespace cuts {
 
-  /// \brief The cut abstract base class (interface)
+  //! \brief The cut abstract base class (interface)
   class i_cut : public datatools::i_tree_dumpable
   {
   public:
 
-    /// \brief An abstract class for daughter templatized data wrapper classes
+    //! \brief An abstract class for daughter templatized data wrapper classes
     struct i_referenced_data {
       virtual operator bool() const = 0;
       virtual const std::type_info * get_typeinfo() const = 0;
@@ -70,7 +71,7 @@ namespace cuts {
       virtual ~i_referenced_data() {}
     };
 
-    /// \brief A weak reference to an arbitrary object with tracked ``type_info``
+    //! \brief A weak reference to an arbitrary object with tracked ``type_info``
     template<class T>
     struct referenced_data : public i_referenced_data {
     public:
@@ -114,42 +115,57 @@ namespace cuts {
       const std::type_info * _ti;      //! Reference of the referenced object's type
     };
 
+    //! Check if logging priority is at least at debug level
     bool is_debug() const;
 
+    //! Check if the name of the cut is set
     bool has_name() const;
 
+    //! Set the name of the cut
     void set_name(const std::string & a_name);
 
+    //! Return the name of the cut
     const std::string & get_name() const;
 
+    //! Check if the description of the cut is set
     bool has_description() const;
 
+    //! Return the description of the cut
     const std::string & get_description() const;
 
+    //! Set the description of the cut
     void set_description(const std::string & a_description);
 
+    //! Check if the version of the cut is set
     bool has_version() const;
 
+    //! Return the version of the cut
     const std::string & get_version() const;
 
+    //! Return the version of the cut
     void set_version(const std::string & a_version);
 
-    /// Check initialization status
+    //! Check initialization status
     bool is_initialized() const;
 
-    /// Check if some user data is referenced
+    //! Check if some user data is referenced
     bool has_user_data() const;
 
+    //! Set user data
     template<class T>
     void set_user_data(const T & obj_)
     {
       DT_LOG_TRACE(_logging,
-                   "Cut '" << (has_name()?get_name():"?") << "' : "
-                   << "adding user data of type \"" << typeid(T).name() << "\"...");
+                   "Cut '" << (has_name() ? get_name() : "?") << "' : "
+                   << "adding user data of type '" << typeid(T).name() << "'...");
+      // DT_THROW_IF(!is_user_data_type_supported<T>(),
+      //             std::logic_error,
+      //             "User data type '" << typeid(T).name() << "' is not supported by cut '" << get_name() << "'!");
       boost::shared_ptr<i_referenced_data> ud(new referenced_data<T>(obj_));
       _set_user_data(ud);
     }
 
+    //! Check user data type
     template<class T>
     bool is_user_data() const
     {
@@ -160,6 +176,7 @@ namespace cuts {
       return _user_data_.get()->match(&ti);
     }
 
+    //! Get user data of given type
     template<class T>
     const T & get_user_data() const
     {
@@ -173,22 +190,62 @@ namespace cuts {
       return rd->get();
     }
 
-    /// Clear the referenced user data
+    //! Register user data type is supported
+    template<class T>
+    void register_supported_user_data_type()
+    {
+      const std::type_info & ti = typeid(T);
+      DT_LOG_DEBUG(_logging, "Registering supported type '" << ti.name() << "' !!!");
+      _supported_types_.insert(&ti);
+      return;
+    }
+
+    //! Unregister user data type is supported
+    template<class T>
+    void unregister_supported_user_data_type()
+    {
+      const std::type_info & ti = typeid(T);
+      DT_LOG_DEBUG(_logging, "Unregistering supported type '" << ti.name() << "' !!!");
+      _supported_types_.erase(&ti);
+      return;
+    }
+
+    //! Check if data type is supported
+    template<class T>
+    bool is_user_data_type_supported() const
+    {
+      if (_supported_types_.size() == 0) {
+        DT_LOG_TRACE(_logging, "Supported type");
+        return true;
+      }
+      DT_LOG_TRACE(_logging, "Checking supported type...");
+      const std::type_info & ti = typeid(T);
+      if (_supported_types_.count(&ti) == 1) {
+        DT_LOG_TRACE(_logging, "Supported registered type.");
+        return true;
+      }
+      return false;
+    }
+
+    //! Check if a data type is supported
+    bool is_user_data_type_supported(const std::type_info & tinfo_) const;
+
+    //! Clear the referenced user data
     void reset_user_data();
 
-    /// Naked initialization method (default implementation, @see initialize)
+    //! Naked initialization method (default implementation, @see initialize)
     virtual void initialize_simple();
 
-    /// Initialization method through a container of configuration properties (default implementation, @see initialize)
+    //! Initialization method through a container of configuration properties (default implementation, @see initialize)
     virtual void initialize_standalone(const datatools::properties & a_config);
 
-    /// Initialization method through a container of configuration properties
-    /// and a service manager (default implementation, @see initialize)
+    //! Initialization method through a container of configuration properties
+    //! and a service manager (default implementation, @see initialize)
     virtual void initialize_with_service_only(const datatools::properties & a_config,
                                               datatools::service_manager & a_service_manager);
 
-    /// Initialization method through a container of configuration properties
-    /// and a dictionary of cuts (default implementation, @see initialize)
+    //! Initialization method through a container of configuration properties
+    //! and a dictionary of cuts (default implementation, @see initialize)
     virtual void initialize_without_service(const datatools::properties & a_config,
                                             cut_handle_dict_type & a_cut_dictionary);
 
@@ -216,8 +273,7 @@ namespace cuts {
       EXPORT_CONFIG_LAST              = EXPORT_CONFIG_LOGGING_PRIORITY
     };
 
-    /** Export to a container of properties
-     */
+    //! Export to a container of properties
     virtual void export_to_config(datatools::properties & config_,
                                   uint32_t flags_ = EXPORT_CONFIG_DEFAULT,
                                   const std::string & prefix_ = "") const;
@@ -227,85 +283,96 @@ namespace cuts {
      */
     virtual int process();
 
-    /// Function interface for the selection method @see process
+    //! Function interface for the selection method @see process
     int operator()();
 
-    /// The main termination method
+    //! The main termination method
     virtual void reset() = 0;
 
-    /// Constructor
+    //! Constructor
     explicit i_cut(datatools::logger::priority p = datatools::logger::PRIO_FATAL);
 
-    /// Destructor
+    //! Destructor
     virtual ~i_cut();
 
-    /// Smart print
+    //! Smart print
     virtual void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",
                            const std::string & a_indent = "",
                            bool a_inherit          = false) const;
 
-    /// Print shortcut @see tree_dump()
+    //! Print shortcut @see tree_dump()
     void print(std::ostream & a_out = std::clog) const;
 
-    /// Set the logging priority threshold
+    //! Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority p);
 
-    /// Get the logging priority threshold
+    //! Get the logging priority threshold
     datatools::logger::priority get_logging_priority() const;
 
-    /// Basic OCD support shared by all inherited modules
+    //! Basic OCD support shared by all inherited modules
     static void common_ocd(datatools::object_configuration_description & ocd_);
 
-    /// Return the number of entries accepted by the cut
+    //! Return the number of entries accepted by the cut
     size_t get_number_of_accepted_entries() const;
 
-    /// Return the number of entries rejected by the cut
+    //! Return the number of entries rejected by the cut
     size_t get_number_of_rejected_entries() const;
 
-    /// Return the total number of entries processed by the cut
+    //! Return the total number of entries processed by the cut
     size_t get_number_of_processed_entries() const;
 
-    /// Reset the embedded counters
+    //! Reset the embedded counters
     void reset_counters();
 
-    /// Check the flag to activate counters
+    //! Check the flag to activate counters
     bool is_activated_counters() const;
 
-    /// Set the flag to activate statistics
+    //! Set the flag to activate statistics
     void set_activated_counters(bool);
 
   protected:
 
-    /// The main selection method (pure virtual, invoked by the @see process method)
+    //! The main selection method (pure virtual, invoked by the @see process method)
     virtual int _accept() = 0;
 
+    //! Set user data by shared pointer
     void _set_user_data(const boost::shared_ptr<i_referenced_data> & hd_);
 
+    //! Common initialization of all cuts
     void _common_initialize(const datatools::properties & a_config);
 
+    //! Import user data from another cut
     void _import_user_data_from(const i_cut &);
 
+    //! Export user data to another cut
     void _export_user_data_to(i_cut &) const;
 
+    //! Set the cut name
     void _set_name(const std::string & a_name);
 
+    //! Set the initialization flag
     void _set_initialized(bool a_initialized);
 
-    /// Hook invoked before the main selection method @see _accept ()
+    //! Hook invoked before the main selection method @see _accept ()
     virtual void _prepare_cut();
 
-    /// Hook invoked after the main selection method @see _accept ()
+    //! Hook invoked after the main selection method @see _accept ()
     virtual int _finish_cut(int a_selection_status);
 
+    //! Increment statistics counters
     virtual void _increment_counters(int a_selection_status);
 
+    //! Hook executed when user data is set
     virtual void _at_set_user_data();
 
+    //! Hook executed when user data is reset
     virtual void _at_reset_user_data();
 
+    //! Reset the cut
     void _reset();
 
+    //! Set default attributes values
     void _set_defaults();
 
   protected:
@@ -315,6 +382,7 @@ namespace cuts {
     std::string  _name;          //!< The name of the cut
     std::string  _description;   //!< The description of the cut
     std::string  _version;       //!< The version of the cut
+    std::set<const std::type_info *> _supported_types_; //!< The set of supported user data types
 
   private:
 
@@ -329,7 +397,7 @@ namespace cuts {
 
   public:
 
-    /// Return the unique type identifier associated to the class of the cut object
+    //! Return the unique type identifier associated to the class of the cut object
     virtual std::string get_type_id() const = 0;
 
     // Factory stuff :

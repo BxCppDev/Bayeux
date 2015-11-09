@@ -1,9 +1,10 @@
 // -*- mode: c++ ; -*-
-/* cuts_test_color_cut.cc
- */
+// cuts_test_color_cut.cc
 
+// Ourselves:
 #include <cuts_test_color_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
@@ -11,7 +12,7 @@ namespace cuts {
 
   namespace test {
 
-  using namespace std;
+    using namespace std;
 
     // Registration instantiation macro :
     CUT_REGISTRATION_IMPLEMENT(color_cut, "cuts::test::color_cut");
@@ -22,22 +23,20 @@ namespace cuts {
       return;
     }
 
-    // ctor:
     color_cut::color_cut(datatools::logger::priority a_logger_priority)
     : i_cut(a_logger_priority)
 
     {
       _color_ = data::BLACK;
+      this->register_supported_user_data_type<data>();
     }
 
-    // dtor:
     color_cut::~color_cut()
     {
       if (is_initialized()) {
         this->color_cut::reset();
       }
     }
-
 
     void color_cut::reset()
     {

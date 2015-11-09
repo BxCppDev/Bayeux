@@ -1,9 +1,10 @@
 // -*- mode: c++ ; -*-
-/* cuts_test_range_cut.cc
- */
+// cuts_test_range_cut.cc
 
+// Ourselves:
 #include <cuts_test_range_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
@@ -35,7 +36,6 @@ namespace cuts {
       return;
     }
 
-    // ctor:
     range_cut::range_cut(datatools::logger::priority a_logger_priority)
     : i_cut(a_logger_priority)
     {
@@ -43,6 +43,7 @@ namespace cuts {
       _min_ = 0.0;
       _max_ = 1.0;
       _reversed_ = false;
+      this->register_supported_user_data_type<data>();
       return;
     }
 
@@ -51,18 +52,8 @@ namespace cuts {
       if (is_initialized()) {
         this->range_cut::reset();
       }
-    }
-
-
-    /*
-    CUT_DESTRUCTOR_IMPLEMENT_HEAD(range_cut)
-    {
-      if (is_initialized ()) {
-        this->range_cut::reset ();
-      }
       return;
     }
-    */
 
     void range_cut::reset()
     {

@@ -1,21 +1,21 @@
-// -*- mode: c++ ; -*- 
-/* test_data.h
+// -*- mode: c++ ; -*-
+/* cuts_test_data.h
  * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-20
  * Last modified: 2010-09-20
- * 
- * License: 
+ *
+ * License:
  */
 
-/** 
- * Description: 
- * A simple test data structure to perform 
+/**
+ * Description:
+ * A simple test data structure to perform
  *  simple cuts.
- * 
+ *
  */
 
-#ifndef __cuts__test__test_data_h
-#define __cuts__test__test_data_h 1
+#ifndef CUTS_TEST_TEST_DATA_H
+#define CUTS_TEST_TEST_DATA_H
 
 #include <iostream>
 
@@ -23,34 +23,31 @@ namespace cuts {
 
   namespace test {
 
-    using namespace std;
-
+    //! \brief A colored point in a 3D space
     class data
     {
     public:
 
-      enum color_t
-	{
-	  BLACK = 0,
-	  RED   = 1,
-	  GREEN = 2,
-	  BLUE  = 3
-	};
-
-      double x, y, z;
-      int    color;
-
-    public:
+      enum color_type {
+        BLACK = 0,
+        RED   = 1,
+        GREEN = 2,
+        BLUE  = 3
+      };
 
       data ()
       {
-	x = y = z = 0.0;
-	color = BLACK;
+        x = y = z = 0.0;
+        color = BLACK;
       }
-      void print (ostream & out_) const
+
+      void print (std::ostream & out_) const
       {
-	out_ << x << ' ' << y << ' ' << z << ' ' << color << endl;
+        out_ << x << ' ' << y << ' ' << z << ' ' << color << std::endl;
       }
+
+      double x, y, z; //!< Coordinates in a 3D space
+      int    color; //!< Color
 
     };
 
@@ -58,6 +55,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__test__data_h
-
-// end of data.h
+#endif // CUTS_TESTING_TEST_DATA_H

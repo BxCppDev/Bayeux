@@ -1,9 +1,10 @@
 // -*- mode: c++ ; -*-
-/* cuts_test_sphere_cut.cc
- */
+// cuts_test_sphere_cut.cc
 
+// Ourselves:
 #include <cuts_test_sphere_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
@@ -36,7 +37,6 @@ namespace cuts {
       return;
     }
 
-    // ctor:
     sphere_cut::sphere_cut(datatools::logger::priority a_logger_priority)
     : i_cut(a_logger_priority)
     {
@@ -45,16 +45,32 @@ namespace cuts {
       _y0_ = 0.0;
       _z0_ = 0.0;
       _reversed_ = false;
+      this->register_supported_user_data_type<data>();
+      // this->register_supported_user_data_type<int>();
+      // this->register_supported_user_data_type<float>();
+      /*
+      tree_dump(std::cerr, "Sphere cut: ", "DEVEL: ");
+      if (is_user_data_type_supported<double>()) {
+        std::cerr << "DEVEL: !!! double is supported !!!" << std::endl;
+      } else {
+        std::cerr << "DEVEL: !!! double is NOT supported !!!" << std::endl;
+      }
+       if (is_user_data_type_supported<int>()) {
+        std::cerr << "DEVEL: !!! int is supported !!!" << std::endl;
+      } else {
+        std::cerr << "DEVEL: !!! int is NOT supported !!!" << std::endl;
+      }
+      */
+      return;
     }
 
-    // dtor:
     sphere_cut::~sphere_cut()
     {
       if (is_initialized()) {
         this->sphere_cut::reset();
       }
+      return;
     }
-
 
     void sphere_cut::reset()
     {
@@ -65,6 +81,7 @@ namespace cuts {
       _z0_ = 0.0;
       _reversed_ = false;
       i_cut::_reset();
+      return;
     }
 
     int sphere_cut::_accept()

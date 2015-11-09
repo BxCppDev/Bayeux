@@ -1,6 +1,6 @@
 // -*- mode: c++ ; -*-
-/* \file cuts_test_color_cut_h
- * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
+/** \file cuts_test_color_cut_h
+ * Author(s) :  Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-20
  * Last modified: 2010-09-20
  *
@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef __cuts__test__color_cut_h
-#define __cuts__test__color_cut_h 1
+#ifndef CUTS_TEST_COLOR_CUT_H
+#define CUTS_TEST_COLOR_CUT_H
 
 #include <iostream>
 
@@ -36,9 +36,9 @@ namespace cuts {
 
       void set_color (int a_color);
 
-    public:
       color_cut(datatools::logger::priority a_logging_priority =
             datatools::logger::PRIO_FATAL);
+
       virtual ~color_cut();
 
       /// Initialization
@@ -55,6 +55,7 @@ namespace cuts {
       virtual void reset();
 
     protected :
+
       /// Selection
       virtual int _accept();
 
@@ -71,4 +72,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__test__color_cut_h
+#endif // CUTS_TEST_COLOR_CUT_H

@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef __cuts__test__range_cut_h
-#define __cuts__test__range_cut_h 1
+#ifndef CUTS_TEST_RANGE_CUT_H
+#define CUTS_TEST_RANGE_CUT_H 1
 
 #include <iostream>
 
@@ -34,14 +34,11 @@ namespace cuts {
     {
     public:
 
-      enum mode_t
-        {
-          MODE_X = 0,
-          MODE_Y = 1,
-          MODE_Z = 2
-        };
-
-    public:
+      enum mode_t {
+        MODE_X = 0,
+        MODE_Y = 1,
+        MODE_Z = 2
+      };
 
       void set_mode (int a_mode);
 
@@ -82,6 +79,7 @@ namespace cuts {
       virtual void reset ();
 
     protected :
+
       // CUT_ACCEPT_DECLARE();
       virtual int _accept ();
 
@@ -101,6 +99,4 @@ namespace cuts {
 
 } // end of namespace cuts
 
-#endif // __cuts__test__range_cut_h
-
-// end of cuts_test_range_cut_h
+#endif // CUTS_TEST_RANGE_CUT_H

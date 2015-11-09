@@ -216,8 +216,26 @@ namespace cuts {
           << "Cut description : '" << _description << "'" << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Cut version     : '" << _version << "'" << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Cut initialized : " << is_initialized () << std::endl;
+
+    if (_supported_types_.size()) {
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Supported types : " << std::endl;
+      for (std::set<const std::type_info *>::const_iterator iter = _supported_types_.begin();
+          iter != _supported_types_.end();
+          iter++) {
+        const std::type_info * ti = *iter;
+        std::set<const std::type_info *>::const_iterator jter = iter;
+        jter++;
+        a_out << a_indent <<  datatools::i_tree_dumpable::skip_tag;
+        if (jter == _supported_types_.end()) {
+          a_out << datatools::i_tree_dumpable::last_tag;
+        } else {
+          a_out << datatools::i_tree_dumpable::tag;
+        }
+        a_out << "Type '" << ti->name() << "'" << std::endl;
+      }
+    }
+
     a_out << indent << datatools::i_tree_dumpable::tag
           << "User data : ";
     if (_user_data_.get() != 0) {
@@ -229,26 +247,32 @@ namespace cuts {
     a_out << indent << datatools::i_tree_dumpable::tag
           << "Activated counters : " << _activated_counters_
           << std::endl;
-    const size_t npe = _number_of_accepted_entries_ + _number_of_rejected_entries_;
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Number of processed entries : " << npe
-          << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::tag
-          << "Number of selected entries  : " << _number_of_accepted_entries_;
-    if (npe > 0) {
-      a_out << " ("
-            << (100.0*_number_of_accepted_entries_/npe)
-            << "%)";
+    if (_activated_counters_) {
+      const size_t npe = _number_of_accepted_entries_ + _number_of_rejected_entries_;
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Number of processed entries : " << npe
+            << std::endl;
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Number of selected entries  : " << _number_of_accepted_entries_;
+      if (npe > 0) {
+        a_out << " ("
+              << (100.0*_number_of_accepted_entries_/npe)
+              << "%)";
+      }
+      a_out << std::endl;
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Number of rejected entries  : " << _number_of_rejected_entries_;
+      if (npe > 0) {
+        a_out << " ("
+              << (100.0*_number_of_rejected_entries_/npe)
+              << "%)";
+      }
+      a_out << std::endl;
     }
-    a_out << std::endl;
+
     a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Number of rejected entries  : " << _number_of_rejected_entries_;
-    if (npe > 0) {
-      a_out << " ("
-            << (100.0*_number_of_rejected_entries_/npe)
-            << "%)";
-    }
-    a_out << std::endl;
+          << "Cut initialized : " << is_initialized () << std::endl;
+
     return;
   }
 
@@ -359,14 +383,30 @@ namespace cuts {
     return;
   }
 
+  bool i_cut::is_user_data_type_supported(const std::type_info & tinfo_) const
+  {
+    if (_supported_types_.size() == 0) {
+      return true;
+    }
+    if (_supported_types_.count(&tinfo_) == 1) {
+      DT_LOG_TRACE(_logging, "Supported registered type '" << tinfo_.name() << "'.");
+      return true;
+    }
+    return false;
+  }
+
   void i_cut::_set_user_data(const boost::shared_ptr<i_referenced_data> & rd_)
   {
     DT_LOG_TRACE(_logging,
                  "Cut named '" << (has_name()? get_name() : "?")
                  << "' sets user data of type '" << rd_.get()->get_typeinfo()->name() << "'.");
+    DT_THROW_IF(!is_user_data_type_supported(*rd_.get()->get_typeinfo()),
+                std::logic_error,
+                "User data type '" << rd_.get()->get_typeinfo()->name() << "' is not supported by cut '" << get_name() << "'!");
     _user_data_ = rd_;
     _at_set_user_data();
     DT_LOG_TRACE(_logging, "Exiting.");
+    return;
   }
 
   void i_cut::_at_set_user_data()
@@ -374,6 +414,7 @@ namespace cuts {
     DT_LOG_TRACE(_logging,
                  "Cut named '" << (has_name()? get_name() : "?")
                  << "' has user data of type '" << _user_data_.get()->get_typeinfo()->name() << "'.");
+    return;
   }
 
   void i_cut::_at_reset_user_data()
@@ -381,6 +422,7 @@ namespace cuts {
     DT_LOG_TRACE(_logging,
                  "Cut named '" << (has_name()? get_name() : "?")
                  << "' has no more referenced user data.");
+    return;
   }
 
   void i_cut::_import_user_data_from(const i_cut & a_cut)
@@ -391,6 +433,7 @@ namespace cuts {
                  << (a_cut.has_name()? a_cut.get_name() : "?") << "'");
     _set_user_data(a_cut._user_data_);
     DT_LOG_TRACE(_logging, "Exiting.");
+    return;
   }
 
   void i_cut::_export_user_data_to(i_cut & a_cut) const
@@ -401,6 +444,7 @@ namespace cuts {
                  << (a_cut.has_name()? a_cut.get_name() : "?") << "'");
     a_cut._set_user_data(_user_data_);
     DT_LOG_TRACE(_logging, "Exiting.");
+    return;
   }
 
   void i_cut::_prepare_cut ()
