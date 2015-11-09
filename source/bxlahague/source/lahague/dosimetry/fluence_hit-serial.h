@@ -1,6 +1,6 @@
-//! \file   lahague/dosimetry/fluence_hit-reflect.h
+//! \file   lahague/dosimetry/fluence_hit-serial.h
 //! \author François Mauger
-//! \brief  Serialization of fluence_hit class
+//! \brief  Serialization of fluence hit class
 //
 // Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
 //                       and Arnaud Chapon <achapon@cerap.fr>
