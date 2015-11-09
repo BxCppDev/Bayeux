@@ -1,4 +1,4 @@
-//! \file  mygsl/plain_function.h
+//! \file  mygsl/math.h
 //! \brief A composite function from two unary functors
 //
 // Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
