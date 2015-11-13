@@ -14,6 +14,7 @@
 
 void test1();
 void test2();
+void test3();
 
 int main (/*int argc_, char ** argv_*/)
 {
@@ -23,6 +24,7 @@ int main (/*int argc_, char ** argv_*/)
     {
       test1();
       test2();
+      test3();
 
       clog << "The end." << endl;
 
@@ -291,7 +293,6 @@ void test2()
     std::clog << std::endl;
   }
 
-
   {
     const datatools::units::unit & meter = unit_reg.get_unit_from_any("m");
     const datatools::units::unit & meter2 = unit_reg.get_unit_from_any("m2");
@@ -300,5 +301,26 @@ void test2()
     double area = a * b;
     std::clog << "area = " << area / meter2 << ' ' << meter2.str() << std::endl;
   }
+  return;
+}
+
+void test3()
+{
+  std::clog << std::endl;
+  std::clog << "test3..." << std::endl;
+
+  const datatools::units::registry & unit_reg = datatools::units::registry::const_system_registry();
+  std::cout << "Data storage and data transfert rate units: " << std::endl;
+  std::cout << "  1 bit    ==  " << datatools::units::bit << std::endl;
+  std::cout << "  1 byte   ==  " << datatools::units::byte << std::endl;
+  std::cout << "  1 octet  ==  " << datatools::units::octet << std::endl;
+  const datatools::units::unit & kibioctet = unit_reg.get_unit_from_any("KiB");
+  kibioctet.tree_dump(std::cout, "Kibioctet: ");
+  std::cout << "  1 kibioctet == " << kibioctet.get_value() <<std:: endl;
+
+  const datatools::units::unit & gigabit_per_sec = unit_reg.get_unit_from_any("GB/s");
+  gigabit_per_sec.tree_dump(std::cout, "GB/s: ");
+  std::cout << "  1 GB/s == " << gigabit_per_sec.get_value() << std::endl;
+
   return;
 }
