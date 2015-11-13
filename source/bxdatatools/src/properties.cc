@@ -2217,6 +2217,20 @@ namespace datatools {
     }
   }
 
+  void properties::fetch(const std::string& key,
+                         std::set<std::string>& values,
+                         bool allow_duplication_) const
+  {
+    std::vector<std::string> vvalues;
+    this->fetch(key, vvalues);
+    for (int i = 0; i < (int) vvalues.size(); i++) {
+      const std::string & value = vvalues[i];
+      DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
+                  std::logic_error,
+                  "Duplicated string value '" << value << "' at key '" << key << "'!");
+      values.insert(value);
+    }
+  }
 
   std::string properties::key_to_string(const std::string& prop_key) const {
     if (!this->has_key(prop_key)) return "";

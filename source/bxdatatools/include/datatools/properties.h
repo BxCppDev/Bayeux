@@ -36,6 +36,7 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -936,6 +937,9 @@ namespace datatools {
 
     //! Fetch the string vector value stored with a given key/name
     void fetch(const std::string& key, data::vstring& values) const;
+
+    //! Fetch a string set value from the vector value stored with a given key/name
+    void fetch(const std::string& key, std::set<std::string>& values, bool allow_duplication_ = false) const;
 
     //! Fetch the boolean value stored with a given key/name and index
     bool fetch_boolean(const std::string&, int index = 0) const;
