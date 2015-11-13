@@ -43,7 +43,7 @@ namespace datatools {
    *  It is based on the system of units in the CLHEP package.
    *  A system registry of units (class datatools::units::unit) is provided
    *  to register arbitrary SI based units.
-   *
+   *  Extension tools are provided beyond the CLHEP material.
    */
   namespace units {
 
@@ -81,53 +81,82 @@ namespace datatools {
     //! Return the SI symbol associated to a given SI power of ten
     std::string power_of_ten_to_symbol(power_of_ten);
 
-    /// Build the list of system registered dimension labels
-    /// @param dimension_labels_ a vector of string to be filled by unit dimension labels
-    /// @return the number of unit dimension labels
+    //! IEC powers of two (binary prefixes)
+    enum power_of_two {
+      UNIT_POWER_OF_TWO = 0,
+      KIBI = 10,
+      MEBI = 20,
+      GIBI = 30,
+      TEBI = 40,
+      PEBI = 50,
+      EXBI = 60,
+      ZEBI = 70,
+      YOBI = 80
+    };
+
+    //! Return the IEC 80000-13 byte (octet 8 bits) to bit factor
+    double byte_to_bit_factor();
+
+    static const double bit   = 1.0;
+    static const double octet = 8.0 * bit;
+    static const double byte  = octet;
+
+    //! Return the IEC binary prefix approximated factor associated to a given IEC power of two
+    double power_of_two_to_factor(power_of_two);
+
+    //! Return the IEC binary prefix name associated to a given IEC power of two
+    std::string power_of_two_to_name(power_of_two);
+
+    //! Return the IEC binary prefix symbol associated to a given IEC power of two
+    std::string power_of_two_to_symbol(power_of_two);
+
+    //! Build the list of system registered dimension labels
+    //! @param dimension_labels_ a vector of string to be filled by unit dimension labels
+    //! @return the number of unit dimension labels
     size_t registered_unit_dimension_labels(std::vector<std::string> & dimension_labels_);
 
-    /// Build the list of system registered unit names
-    /// @param unit_names_ a vector of string to be filled by unit names
-    /// @return the number of unit names
+    //! Build the list of system registered unit names
+    //! @param unit_names_ a vector of string to be filled by unit names
+    //! @return the number of unit names
     size_t registered_unit_names(std::vector<std::string> & unit_names_);
 
-    /// Build the list of system registered unit symbols
-    /// @param unit_symbols_ a vector of string to be filled by unit symbols
-    /// @return the number of unit symbols
+    //! Build the list of system registered unit symbols
+    //! @param unit_symbols_ a vector of string to be filled by unit symbols
+    //! @return the number of unit symbols
     size_t registered_unit_symbols(std::vector<std::string> & unit_symbols_);
 
-    /// Check if a unit value given by id (name or symbol) is in a dimension
-    /// @param unit_id_ the name or the symbol of the unit
-    /// @param unit_dimension_label_ the label of the unit dimension
-    /// @return the value associated to the unit
-    /// \code
-    /// double mm = get_unit_in_dimension_from("mm", "length"); // success
-    /// double xx = get_unit_in_dimension_from("kg", "length"); // throw an exception
-    /// double kg = get_unit_in_dimension_from("kg", "mass");   // success
-    /// \endcode
+    //! Check if a unit value given by id (name or symbol) is in a dimension
+    //! @param unit_id_ the name or the symbol of the unit
+    //! @param unit_dimension_label_ the label of the unit dimension
+    //! @return the value associated to the unit
+    //! \code
+    //! double mm = get_unit_in_dimension_from("mm", "length"); // success
+    //! double xx = get_unit_in_dimension_from("kg", "length"); // throw an exception
+    //! double kg = get_unit_in_dimension_from("kg", "mass");   // success
+    //! \endcode
     bool is_unit_in_dimension_from(const std::string& unit_id_,
                                    const std::string& unit_dimension_label_);
 
-    /// Return the unit value associated to an unit given its id (name or symbol) and dimension
-    /// @param unit_id_ the name or the symbol of the unit
-    /// @param unit_dimension_label_ the label of the unit dimension
-    /// @return the value associated to the unit
-    /// \code
-    /// double mm = get_unit_in_dimension_from("mm", "length"); // success
-    /// double xx = get_unit_in_dimension_from("kg", "length"); // throw an exception
-    /// double kg = get_unit_in_dimension_from("kg", "mass");   // success
-    /// \endcode
+    //! Return the unit value associated to an unit given its id (name or symbol) and dimension
+    //! @param unit_id_ the name or the symbol of the unit
+    //! @param unit_dimension_label_ the label of the unit dimension
+    //! @return the value associated to the unit
+    //! \code
+    //! double mm = get_unit_in_dimension_from("mm", "length"); // success
+    //! double xx = get_unit_in_dimension_from("kg", "length"); // throw an exception
+    //! double kg = get_unit_in_dimension_from("kg", "mass");   // success
+    //! \endcode
     double get_unit_in_dimension_from(const std::string& unit_id_,
                                       const std::string& unit_dimension_label_);
 
     //! Get the length unit value from a string.
-    /// @param unit_id_ the name or the symbol of the unit
-    /// @return the value associated to the unit
-    /// \code
-    /// double mm = get_length_unit_from("mm"); // success
-    /// double xx = get_length_unit_from("kg"); // throw an exception
-    /// double yy = get_length_unit_from("yy"); // throw an exception
-    /// \endcode
+    //! @param unit_id_ the name or the symbol of the unit
+    //! @return the value associated to the unit
+    //! \code
+    //! double mm = get_length_unit_from("mm"); // success
+    //! double xx = get_length_unit_from("kg"); // throw an exception
+    //! double yy = get_length_unit_from("yy"); // throw an exception
+    //! \endcode
     double get_length_unit_from(const std::string& unit_id_);
 
     //! Get the surface unit value from a string.
@@ -314,120 +343,120 @@ namespace datatools {
                                std::string& unit_symbol,
                                std::string& unit_label);
 
-    /// \brief The description of an unit
+    //! \brief The description of an unit
     class unit : public i_tree_dumpable {
 
     public:
 
-      /// Default constructor
+      //! Default constructor
       unit();
 
-      /// Constructor
+      //! Constructor
       unit(const std::string & name_,
            const std::string & dimension_desc_,
            double value_,
            bool SI_main_ = false);
 
-      /// Constructor
+      //! Constructor
       unit(const std::string & name_,
            const std::string & symbol_,
            const std::string & dimension_desc_,
            double value_,
            bool SI_main_ = false);
 
-      /// Constructor
+      //! Constructor
       unit(const std::string & name_,
            const std::string & main_symbol_,
-           const std::string & alt_symbol_,
+           const std::string & alt_symbols_,
            const std::string & dimension_desc_,
            double value_,
            bool SI_main_ = false);
 
-      /// Destructor
+      //! Destructor
       virtual ~unit();
 
-      /// Check validity
+      //! Check validity
       bool is_valid() const;
 
-      /// Reset
+      //! Reset
       void reset();
 
-      /// Check the name
+      //! Check the name
       bool has_name() const;
 
-      /// Return the name
+      //! Return the name
       const std::string & get_name() const;
 
-      /// Set the name
+      //! Set the name
       unit & set_name(const std::string &);
 
-      /// Add a symbol
+      //! Add a symbol
       unit & add_symbol(const std::string & symbol_, bool main_ = false);
 
-      /// Check if a given symbol is defined
+      //! Check if a given symbol is defined
       bool has_symbol(const std::string & symbol_) const;
 
-      /// Check if a given id matches the name or one of the symbol
+      //! Check if a given id matches the name or one of the symbol
       bool match(const std::string & id_) const;
 
-      /// Build the set of associated symbols
+      //! Build the set of associated symbols
       const std::set<std::string> & get_symbols() const;
 
-      /// Check main symbol
+      //! Check main symbol
       bool has_main_symbol() const;
 
-      /// Return the symbol
+      //! Return the symbol
       const std::string & get_main_symbol() const;
 
-      /// Set the symbol
+      //! Set the symbol
       unit & set_main_symbol(const std::string &);
 
-      /// Check dimension label
+      //! Check dimension label
       bool has_dimension_label() const;
 
-      /// Return the dimension label
+      //! Return the dimension label
       const std::string & get_dimension_label() const;
 
-      /// Set the dimension label
+      //! Set the dimension label
       unit & set_dimension_label(const std::string &);
 
-      /// Check dimension meta
+      //! Check dimension meta
       bool has_dimension_meta() const;
 
-      /// Return the dimension meta
+      //! Return the dimension meta
       const std::string & get_dimension_meta() const;
 
-      /// Set the dimension meta
+      //! Set the dimension meta
       unit & set_dimension_meta(const std::string &);
 
-      /// Set the dimension infos
+      //! Set the dimension infos
       unit & set_dimension_infos(const std::string &);
 
-      /// Check if the dimension matches a given label
+      //! Check if the dimension matches a given label
       bool is_dimension(const std::string &) const;
 
-      /// Check if the unit is the main SI unit for its unit dimension
+      //! Check if the unit is the main SI unit for its unit dimension
       bool is_SI_main() const;
 
-      /// Set the main SI unit flag
+      //! Set the main SI unit flag
       unit & set_SI_main(bool);
 
-      /// Return the value
+      //! Return the value
       double get_value() const;
 
-      /// Set the value
+      //! Set the value
       unit & set_value(double);
 
-      /// Conversion to double
+      //! Conversion to double
       operator double() const;
 
-      /// Shortcut for the symbol
+      //! Shortcut for the symbol
       const std::string & str() const;
 
       // Implement a manipulator for "cout << meter(23.1) << endl;" printing "0.0231" ???
       // std::ostream & operator()(std::ostream & out_, double x_) const;
 
-      /// Smart print
+      //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
@@ -435,7 +464,7 @@ namespace datatools {
 
     protected:
 
-      /// Set default attributes
+      //! Set default attributes
       void _set_default();
 
     private:
@@ -450,12 +479,12 @@ namespace datatools {
 
     };
 
-    /// \brief The description of an unit dimension
+    //! \brief The description of an unit dimension
     class unit_dimension : public i_tree_dumpable {
 
     public:
 
-      /// \brief Base dimension index
+      //! \brief Base dimension index
       enum base_dimension_type {
         BD_INVALID              =  0,
         BD_MASS                 =  1, // [M]
@@ -466,7 +495,7 @@ namespace datatools {
         BD_ABSOLUTE_TEMPERATURE =  5, // [theta]
         BD_AMOUNT               =  6, // [N]
         BD_AMOUNT_OF_SUBSTANCE  =  6, // [N]
-        BD_LUMINOUS_INTENSITY   =  7,  // [J]
+        BD_LUMINOUS_INTENSITY   =  7, // [J]
         BD_LAST                 =  8
       };
 
@@ -478,75 +507,75 @@ namespace datatools {
 
       static base_dimension_type label_to_base_dimension(const std::string &);
 
-      /// Validate a unit dimension label
+      //! Validate a unit dimension label
       static bool validate_dimension_label(const std::string & name_);
 
-      /// Default constructor
+      //! Default constructor
       unit_dimension();
 
-      /// Default constructor
+      //! Default constructor
       unit_dimension(const std::string & label_,
                      const std::string & default_unit_symbol_);
 
-      /// Destructor
+      //! Destructor
       virtual ~unit_dimension();
 
-      /// Check validity
+      //! Check validity
       bool is_valid() const;
 
-      /// Reset
+      //! Reset
       void reset();
 
-      /// Check the label
+      //! Check the label
       bool has_label() const;
 
-      /// Set the label of the unit dimension
+      //! Set the label of the unit dimension
       unit_dimension & set_label(const std::string &);
 
-      /// Return the label of the unit dimension
+      //! Return the label of the unit dimension
       const std::string & get_label() const;
 
-      /// Check if a unit is known by name
+      //! Check if a unit is known by name
       bool has_unit(const std::string & unit_name_) const;
 
-      /// Add an unit by name
+      //! Add an unit by name
       unit_dimension & add_unit(const std::string & unit_name_,
                                 bool default_unit_ = false);
 
-      /// Remove an unit by name
+      //! Remove an unit by name
       void remove_unit(const std::string & unit_name_);
 
-      /// Return the set of unit names
+      //! Return the set of unit names
       const std::set<std::string> & get_unit_names() const;
 
-      /// Check if a default unit is defined
+      //! Check if a default unit is defined
       bool has_default_unit() const;
 
-      /// Set the name of the default unit
+      //! Set the name of the default unit
       unit_dimension & set_default_unit_name(const std::string & unit_name_);
 
-      /// Return the name of the default unit
+      //! Return the name of the default unit
       const std::string & get_default_unit_name() const;
 
-      /// Check if the dimensional analysis information is available
+      //! Check if the dimensional analysis information is available
       bool has_dimensional_powers() const;
 
-      /// Reset the the dimensional analysis information
+      //! Reset the the dimensional analysis information
       void reset_dimensional_powers();
 
-      /// Decode and set the dimensional powers from a character string
+      //! Decode and set the dimensional powers from a character string
       bool decode_dimensional_powers(const std::string & word_);
 
-      /// Encode the set of dimensional powers
+      //! Encode the set of dimensional powers
       void encode_dimensional_powers(std::string & word_) const;
 
-      /// Check if unit dimension is dimensionless
+      //! Check if unit dimension is dimensionless
       bool is_dimensionless() const;
 
-      /// Check if the dimensional powers match another unit dimension
+      //! Check if the dimensional powers match another unit dimension
       bool match_dimensional_powers(const unit_dimension & ud_) const;
 
-      /// Smart print
+      //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
@@ -554,7 +583,7 @@ namespace datatools {
 
     protected:
 
-      /// Set default attributes
+      //! Set default attributes
       void _set_default();
 
     private:
@@ -566,7 +595,7 @@ namespace datatools {
 
     };
 
-    /// \brief A registry for units
+    //! \brief A registry for units
     class registry : public i_tree_dumpable {
 
     public:
@@ -575,67 +604,67 @@ namespace datatools {
         NO_STANDARD_UNITS = 0x1,
       };
 
-      /// Type of dictionary of unit
+      //! Type of dictionary of unit
       typedef std::map<std::string, unit> unit_dict_type;
 
-      /// Type of dictionary of unit
+      //! Type of dictionary of unit
       typedef std::map<std::string, const unit *> symbol_dict_type;
 
-      /// Type of dictionary of dimension
+      //! Type of dictionary of dimension
       typedef std::map<std::string, unit_dimension> dimension_dict_type;
 
-      /// Default constructor
+      //! Default constructor
       registry(uint32_t flags_ = 0);
 
-      /// Destructor
+      //! Destructor
       ~registry();
 
-      /// Registration of an unit
+      //! Registration of an unit
       void registration(const unit & unit_, bool default_in_dimension_ = false);
 
-      /// Unregistration of an unit
+      //! Unregistration of an unit
       void unregistration(const std::string & unit_name_);
 
-      /// Check unit
+      //! Check unit
       bool has_unit(const std::string & unit_name_) const;
 
-      /// Return a registered unit
+      //! Return a registered unit
       const unit & get_unit(const std::string & unit_name_) const;
 
-      /// Check unit symbol
+      //! Check unit symbol
       bool has_symbol(const std::string & unit_symbol_) const;
 
-      /// Check unit name or symbol
+      //! Check unit name or symbol
       bool has_unit_from_any(const std::string & unit_label_) const;
 
-      /// Return a registered unit per symbol
+      //! Return a registered unit per symbol
       const unit & get_unit_from_symbol(const std::string & unit_symbol_) const;
 
-      /// Return a registered unit by name or symbol
+      //! Return a registered unit by name or symbol
       const unit & get_unit_from_any(const std::string & unit_id_) const;
 
-      /// Check dimension
+      //! Check dimension
       bool has_dimension(const std::string & dimension_label_) const;
 
-      /// Return a registered unit dimension
+      //! Return a registered unit dimension
       const unit_dimension & get_dimension(const std::string & dimension_label_) const;
 
-      /// Clear the registry
+      //! Clear the registry
       void clear();
 
-      /// Return the non mutable dictionary of registered units
+      //! Return the non mutable dictionary of registered units
       const unit_dict_type & get_units() const;
 
-      /// Return the non mutable dictionary of registered unit symbols
+      //! Return the non mutable dictionary of registered unit symbols
       const symbol_dict_type & get_symbols() const;
 
-      /// Return the non mutable dictionary of registered unit dimensions
+      //! Return the non mutable dictionary of registered unit dimensions
       const dimension_dict_type & get_dimensions() const;
 
-      /// Register standard units
+      //! Register standard units
       void register_standard_units();
 
-      /// Smart print
+      //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
@@ -643,10 +672,10 @@ namespace datatools {
 
     protected:
 
-      /// Return a mutable registered unit
+      //! Return a mutable registered unit
       unit & _grab_unit(const std::string & unit_name_);
 
-      /// Return a mutable registered unit dimension
+      //! Return a mutable registered unit dimension
       unit_dimension & _grab_dimension(const std::string & dimension_label_);
 
     private:
@@ -657,15 +686,15 @@ namespace datatools {
 
     public:
 
-      /// Access to the mutable system singleton registry
+      //! Access to the mutable system singleton registry
       static registry & system_registry();
 
-      /// Access to the non mutable system singleton registry
+      //! Access to the non mutable system singleton registry
       static const registry & const_system_registry();
 
     private:
 
-      /// Private access to the mutable system singleton registry
+      //! Private access to the mutable system singleton registry
       static registry & _access_system_registry_();
 
     };

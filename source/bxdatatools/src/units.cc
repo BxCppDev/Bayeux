@@ -100,6 +100,52 @@ namespace datatools {
       }
     }
 
+    double byte_to_bit_factor()
+    {
+      return octet / bit;
+    }
+
+    double power_of_two_to_factor(power_of_two pot_)
+    {
+      if (pot_ == UNIT_POWER_OF_TWO) return 1.0;
+      double pot = gsl_pow_int(2.0, (int) pot_);
+      return pot;
+    }
+
+    std::string power_of_two_to_name(power_of_ten pot_)
+    {
+      switch (pot_){
+      case KIBI : return "kibi";
+      case MEBI : return "mebi";
+      case GIBI : return "gibi";
+      case TEBI : return "tebi";
+      case PEBI : return "pebi";
+      case EXBI : return "exbi";
+      case ZEBI : return "zebi";
+      case YOBI : return "yobi";
+      case UNIT_POWER_OF_TWO :
+      default :
+        return "";
+      }
+    }
+
+    std::string power_of_two_to_symbol(power_of_ten pot_)
+    {
+      switch (pot_) {
+      case KIBI : return "Ki";
+      case MEBI : return "Mi";
+      case GIBI : return "Gi";
+      case TEBI : return "Ti";
+      case PEBI : return "Pi";
+      case EXBI : return "Ei";
+      case ZEBI : return "Zi";
+      case YOBI : return "Yi";
+      case UNIT_POWER_OF_TWO :
+      default :
+        return "";
+      }
+    }
+
     size_t registered_unit_dimension_labels(std::vector<std::string> & dimension_labels_)
     {
       dimension_labels_.clear();
@@ -488,7 +534,7 @@ namespace datatools {
 
     unit::unit(const std::string & name_,
                const std::string & main_symbol_,
-               const std::string & alt_symbol_,
+               const std::string & alt_symbols_,
                const std::string & dimension_infos_,
                double value_,
                bool SI_main_)
@@ -496,7 +542,13 @@ namespace datatools {
       _set_default();
       set_name(name_);
       add_symbol(main_symbol_, true);
-      add_symbol(alt_symbol_, false);
+      std::vector<std::string> symbols;
+      boost::split(symbols, alt_symbols_, boost::is_any_of(";"));
+      for (int i = 0; i < (int) symbols.size(); i++) {
+        std::string symbol = symbols[i];
+        boost::trim(symbol);
+        add_symbol(symbol, false);
+      }
       set_dimension_infos(dimension_infos_);
       set_value(value_);
       set_SI_main(SI_main_);
@@ -1774,7 +1826,8 @@ namespace datatools {
       // Level:
       const double decibel = 1.0;
       registration(unit("decibel", "dB", "level;[1]",        decibel, true));
-      registration(unit("bel",      "B", "level", 10.0 * decibel));
+      // Bel SI unit symbol is set to "B_" because it is ambiguous with the "B == byte" unit
+      registration(unit("bel",     "B_", "level", 10.0 * decibel));
       registration(unit("neper",   "Np", "level", (20. / std::log(10.0)) * decibel));
 
       // Velocity:
@@ -1891,6 +1944,90 @@ namespace datatools {
 
       // Permeability (H/m = kg·m·s−2·A−2) :
       registration(unit("H/m",        "permeability;[M][L][T-2][I-2]", CLHEP::henry / CLHEP::meter, true));
+
+      // Data storage:
+      // Symbol 'b' is reserved for the 'barn' SI unit.
+      registration(unit("bit", "data_storage;[1]", bit, true));
+
+      registration(unit("kibibit",  "Kibit", "data_storage", bit * power_of_two_to_factor(KIBI)));
+      registration(unit("mebibit",  "Mibit", "data_storage", bit * power_of_two_to_factor(MEBI)));
+      registration(unit("gibibit",  "Gibit", "data_storage", bit * power_of_two_to_factor(GIBI)));
+      registration(unit("tebibit",  "Tibit", "data_storage", bit * power_of_two_to_factor(TEBI)));
+      registration(unit("pebibit",  "Pibit", "data_storage", bit * power_of_two_to_factor(PEBI)));
+      registration(unit("exbibit",  "Eibit", "data_storage", bit * power_of_two_to_factor(EXBI)));
+      registration(unit("zebibit",  "Zibit", "data_storage", bit * power_of_two_to_factor(ZEBI)));
+      registration(unit("yobibit",  "Yibit", "data_storage", bit * power_of_two_to_factor(YOBI)));
+
+      registration(unit("kilobit",  "kbit",  "data_storage", bit * power_of_ten_to_factor(KILO)));
+      registration(unit("megebit",  "Mbit",  "data_storage", bit * power_of_ten_to_factor(MEGA)));
+      registration(unit("gigabit",  "Gbit",  "data_storage", bit * power_of_ten_to_factor(GIGA)));
+      registration(unit("terabit",  "Tbit",  "data_storage", bit * power_of_ten_to_factor(TERA)));
+      registration(unit("petabit",  "Pbit",  "data_storage", bit * power_of_ten_to_factor(PETA)));
+      registration(unit("exabit",   "Ebit",  "data_storage", bit * power_of_ten_to_factor(EXA)));
+      registration(unit("zettabit", "Zbit",  "data_storage", bit * power_of_ten_to_factor(ZETTA)));
+      registration(unit("yottabit", "Ybit",  "data_storage", bit * power_of_ten_to_factor(YOTTA)));
+
+      // Symbol 'B_' is reserved for the 'bel' SI unit.
+      registration(unit("byte",      "B;o;octet",         "data_storage", byte , true));
+
+      registration(unit("kibibyte",  "KiB;Kio;kibioctet", "data_storage", byte * power_of_two_to_factor(KIBI)));
+      registration(unit("mebibyte",  "MiB;Mio;mebioctet", "data_storage", byte * power_of_two_to_factor(MEBI)));
+      registration(unit("gibibyte",  "GiB;Gio;gibioctet", "data_storage", byte * power_of_two_to_factor(GIBI)));
+      registration(unit("tebibyte",  "TiB;Tio;tebioctet", "data_storage", byte * power_of_two_to_factor(TEBI)));
+      registration(unit("pebibyte",  "PiB;Pio;pebioctet", "data_storage", byte * power_of_two_to_factor(PEBI)));
+      registration(unit("exbibyte",  "EiB;Eio;exbioctet", "data_storage", byte * power_of_two_to_factor(EXBI)));
+      registration(unit("zebibyte",  "ZiB;Zio;zebioctet", "data_storage", byte * power_of_two_to_factor(ZEBI)));
+      registration(unit("yobibyte",  "YiB;Yio;yobioctet", "data_storage", byte * power_of_two_to_factor(YOBI)));
+
+      registration(unit("kilobyte",  "kB;Ko;kilooctet",   "data_storage", byte * power_of_ten_to_factor(KILO)));
+      registration(unit("megabyte",  "MB;Mo;megaoctet",   "data_storage", byte * power_of_ten_to_factor(MEGA)));
+      registration(unit("gigabyte",  "GB;Go;gigaoctet",   "data_storage", byte * power_of_ten_to_factor(GIGA)));
+      registration(unit("terabyte",  "TB;To;teraoctet",   "data_storage", byte * power_of_ten_to_factor(TERA)));
+      registration(unit("petabyte",  "PB;Po;petaoctet",   "data_storage", byte * power_of_ten_to_factor(PETA)));
+      registration(unit("exabyte",   "EB;Eo;exaoctet",    "data_storage", byte * power_of_ten_to_factor(EXA)));
+      registration(unit("zettabyte", "ZB;Zo;zettaoctet",  "data_storage", byte * power_of_ten_to_factor(ZETTA)));
+      registration(unit("yottabyte", "YB;Yo;yottaoctet",  "data_storage", byte * power_of_ten_to_factor(YOTTA)));
+
+      // Data transfert rate:
+      double bit_per_second = bit / CLHEP::second;
+      registration(unit("bit/s",     "data_transfer_rate;[T-1]",  bit_per_second, true));
+      registration(unit("kibibit/s", "Kibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(KIBI)));
+      registration(unit("mebibit/s", "Mibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(MEBI)));
+      registration(unit("gibibit/s", "Gibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(GIBI)));
+      registration(unit("tebibit/s", "Tibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(TEBI)));
+      registration(unit("pebibit/s", "Pibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(PEBI)));
+      registration(unit("exbibit/s", "Eibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(EXBI)));
+      registration(unit("zebibit/s", "Zibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(ZEBI)));
+      registration(unit("yobibit/s", "Yibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(YOBI)));
+
+      registration(unit("kilobit/s",  "kbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(KILO)));
+      registration(unit("megabit/s",  "Mbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(MEGA)));
+      registration(unit("gigabit/s",  "Gbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(GIGA)));
+      registration(unit("terabit/s",  "Tbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(TERA)));
+      registration(unit("petabit/s",  "Pbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(PETA)));
+      registration(unit("exabit/s",   "Ebit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(EXA)));
+      registration(unit("zettabit/s", "Zbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(ZETTA)));
+      registration(unit("yottabit/s", "Ybit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(YOTTA)));
+
+      double byte_per_second = byte / CLHEP::second;
+      registration(unit("byte/s",     "B/s"        , "data_transfer_rate", byte_per_second, true));
+      registration(unit("kibibyte/s", "KiB/s;Kio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(KIBI)));
+      registration(unit("mebibyte/s", "MiB/s;Mio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(MEBI)));
+      registration(unit("gibibyte/s", "GiB/s;Gio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(GIBI)));
+      registration(unit("tebibyte/s", "TiB/s;Tio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(TEBI)));
+      registration(unit("pebibyte/s", "PiB/s;Pio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(PEBI)));
+      registration(unit("exbibyte/s", "EiB/s;Eio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(EXBI)));
+      registration(unit("zebibyte/s", "ZiB/s;Zio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(ZEBI)));
+      registration(unit("yobibyte/s", "YiB/s;Yio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(YOBI)));
+
+      registration(unit("kilobyte/s",  "kB/s;ko/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(KILO)));
+      registration(unit("megabyte/s",  "MB/s;Mo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(MEGA)));
+      registration(unit("gigabyte/s",  "GB/s;Go/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(GIGA)));
+      registration(unit("terabyte/s",  "TB/s;To/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(TERA)));
+      registration(unit("petabyte/s",  "PB/s;Po/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(PETA)));
+      registration(unit("exabyte/s",   "EB/s;Eo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(EXA)));
+      registration(unit("zettabyte/s", "ZB/s;Zo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(ZETTA)));
+      registration(unit("yottabyte/s", "YB/s;Yo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(YOTTA)));
 
       return;
     }
