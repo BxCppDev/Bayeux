@@ -116,11 +116,8 @@ namespace geomtools {
   // Default Constructor :
   blur_spot::blur_spot()
   {
-    _blur_dimension_ = DIMENSION_INVALID;
+    this->blur_spot::invalidate();
     _tolerance_ = constants::DEFAULT_TOLERANCE;
-    datatools::invalidate(_x_error_);
-    datatools::invalidate(_y_error_);
-    datatools::invalidate(_z_error_);
     return;
   }
 
@@ -128,15 +125,12 @@ namespace geomtools {
   blur_spot::blur_spot(int8_t blur_dimension_,
                        double tolerance_)
   {
-    _blur_dimension_ = DIMENSION_INVALID;
+    this->blur_spot::invalidate();
     if (blur_dimension_ != DIMENSION_INVALID) {
       set_blur_dimension(blur_dimension_);
     }
     _tolerance_ = constants::DEFAULT_TOLERANCE;
     set_tolerance(tolerance_);
-    datatools::invalidate(_x_error_);
-    datatools::invalidate(_y_error_);
-    datatools::invalidate(_z_error_);
     return;
   }
 
