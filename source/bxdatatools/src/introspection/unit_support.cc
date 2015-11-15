@@ -183,7 +183,7 @@ namespace datatools {
 
     bool unit_info::has_preferred_unit_symbol() const
     {
-      return !_implicit_unit_symbol_.empty();
+      return !_preferred_unit_symbol_.empty();
     }
 
     void unit_info::set_preferred_unit_symbol(const std::string & pus_)
@@ -196,7 +196,14 @@ namespace datatools {
                   "Unit symbol/name '" << pus_ << "' is not registered in the unit register!");
       const datatools::units::unit & u =
         datatools::units::registry::const_system_registry().get_unit_from_any(pus_);
-      if (has_explicit_unit_dimension()) {
+      if (has_implicit_unit()) {
+        const datatools::units::unit & implicit_u =
+          datatools::units::registry::const_system_registry().get_unit_from_any(_implicit_unit_symbol_);
+        DT_THROW_IF(u.get_dimension_label() != implicit_u.get_dimension_label(),
+                    std::logic_error,
+                    "Implicit preferred unit symbol/name '" << pus_
+                    << "' does not match implicit unit '" << _implicit_unit_symbol_ << "'!");
+      } else if (has_explicit_unit_dimension()) {
         DT_THROW_IF(u.get_dimension_label() != _explicit_unit_dimension_label_,
                     std::logic_error,
                     "Explicit preferred unit symbol/name '" << pus_
@@ -209,7 +216,7 @@ namespace datatools {
     const std::string & unit_info::get_preferred_unit_symbol() const
     {
       DT_THROW_IF(!has_preferred_unit_symbol(), std::logic_error, "No preferred unit symbol is set!");
-      return _implicit_unit_symbol_;
+      return _preferred_unit_symbol_;
     }
 
     void unit_info::make_none()
@@ -286,6 +293,29 @@ namespace datatools {
       return;
     }
 
+    void unit_info::export_to_config(datatools::properties & config_,
+                                     uint32_t flags_,
+                                     const std::string & prefix_) const
+    {
+      if (flags_ & UI_XC_UNIT_SUPPORT) {
+        config_.store_string(prefix_ + "support", to_string(_us_));
+
+        if (has_implicit_unit()) {
+          config_.store_string(prefix_ + "implicit_unit", get_implicit_unit_symbol());
+        } else if (has_explicit_unit_dimension()) {
+          config_.store_string(prefix_ + "explicit_unit_dimension", get_explicit_unit_dimension_label());
+        }
+      }
+
+      if (has_preferred_unit_symbol()) {
+        if (flags_ & UI_XC_PREFERRED_UNIT) {
+          config_.store_string(prefix_ + "preferred_unit", get_preferred_unit_symbol());
+        }
+      }
+
+      return;
+    }
+
     void unit_info::reset()
     {
       _us_ = UNIT_SUPPORT_INVALID;
@@ -316,13 +346,12 @@ namespace datatools {
         out_ << indent_ << i_tree_dumpable::tag
              << "Explicit unit dimension : '" << _explicit_unit_dimension_label_ << "'"
              << std::endl;
-      } else
-
-        if (has_preferred_unit_symbol()) {
-          out_ << indent_ << i_tree_dumpable::tag
-               << "Preferred unit : '" << _preferred_unit_symbol_ << "'"
-               << std::endl;
-        }
+      }
+      if (has_preferred_unit_symbol()) {
+        out_ << indent_ << i_tree_dumpable::tag
+             << "Preferred unit : '" << _preferred_unit_symbol_ << "'"
+             << std::endl;
+      }
 
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
            << "Validity : " << is_valid() << std::endl;

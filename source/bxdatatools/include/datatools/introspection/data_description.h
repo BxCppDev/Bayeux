@@ -140,6 +140,28 @@ namespace datatools {
       //! Reset
       void reset();
 
+      //! \brief Flags for export to a container of properties
+      enum dd_xc_flags {
+        DD_XC_CLEAR              = bit_mask::bit00,
+        DD_XC_TYPE               = bit_mask::bit01,
+        DD_XC_LAYOUT             = bit_mask::bit02,
+        DD_XC_VECTOR_FIXED_SIZE  = bit_mask::bit03,
+        DD_XC_UNIT_INFO          = bit_mask::bit04,
+        DD_XC_TYPE_ID            = bit_mask::bit05,
+        DD_XC_DEFAULT = (DD_XC_CLEAR
+                         | DD_XC_TYPE
+                         | DD_XC_LAYOUT
+                         | DD_XC_VECTOR_FIXED_SIZE
+                         | DD_XC_UNIT_INFO
+                         | DD_XC_TYPE_ID),
+        DD_XC_LAST    = DD_XC_TYPE_ID
+      };
+
+      //! Export to a container of properties
+      void export_to_config(datatools::properties & config_,
+                            uint32_t flags_ = DD_XC_DEFAULT,
+                            const std::string & prefix_ = "") const;
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",

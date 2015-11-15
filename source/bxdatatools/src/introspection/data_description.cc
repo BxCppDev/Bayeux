@@ -290,6 +290,12 @@ namespace datatools {
         }
       }
 
+      if (! has_type_id()) {
+        if (config_.has_key("type_id")) {
+          set_type_id(config_.fetch_string("type_id"));
+        }
+      }
+
       DT_THROW_IF(! is_valid(), std::logic_error, "Invalid data description!");
       return;
     }
@@ -300,6 +306,42 @@ namespace datatools {
       reset_unit_info();
       reset_type_id();
       _set_defaults();
+      return;
+    }
+
+    void data_description::export_to_config(datatools::properties & config_,
+                                            uint32_t flags_,
+                                            const std::string & prefix_) const
+    {
+      if (flags_ & DD_XC_TYPE) {
+        config_.store_string(prefix_ + "type", to_string(_type_));
+      }
+
+      if (flags_ & DD_XC_LAYOUT) {
+        config_.store_string(prefix_ + "layout", to_string(_layout_));
+      }
+
+      if (has_vector_fixed_size()) {
+        if (flags_ & DD_XC_VECTOR_FIXED_SIZE) {
+          config_.store_integer(prefix_ + "vector_fixed_size", get_vector_fixed_size());
+        }
+      }
+
+      if (has_unit_info()) {
+        if (flags_ & DD_XC_UNIT_INFO) {
+          get_unit_info().export_to_config(config_,
+                                           unit_info::UI_XC_UNIT_SUPPORT
+                                           | unit_info:: UI_XC_PREFERRED_UNIT,
+                                           prefix_ + "unit.");
+        }
+      }
+
+      if (has_type_id()) {
+        if (flags_ & DD_XC_TYPE_ID) {
+          config_.store_string(prefix_ + "type_id", get_type_id());
+        }
+      }
+
       return;
     }
 

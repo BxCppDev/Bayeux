@@ -130,6 +130,22 @@ namespace datatools {
       //! Reset
       void reset();
 
+      //! \brief Flags for export to a container of properties
+      enum unit_info_xc_flags {
+        UI_XC_CLEAR              = bit_mask::bit00,
+        UI_XC_UNIT_SUPPORT       = bit_mask::bit01,
+        UI_XC_PREFERRED_UNIT     = bit_mask::bit02,
+        UI_XC_DEFAULT = (UI_XC_CLEAR
+                         | UI_XC_UNIT_SUPPORT
+                         | UI_XC_PREFERRED_UNIT),
+        DD_XC_LAST    = UI_XC_PREFERRED_UNIT
+      };
+
+      //! Export to a container of properties
+      void export_to_config(datatools::properties & config_,
+                            uint32_t flags_ = UI_XC_DEFAULT,
+                            const std::string & prefix_ = "") const;
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",

@@ -76,6 +76,7 @@ void test_method_1()
     {
       datatools::introspection::argument index_arg;
       index_arg.set_name("index");
+      index_arg.set_description("Short description of the 'index' input argument");
       index_arg.set_access(datatools::introspection::ACCESS_INPUT);
       datatools::introspection::data_description & index_arg_dd = index_arg.grab_data_description();
       index_arg_dd.set_type(datatools::introspection::DATA_TYPE_INT32);
@@ -87,7 +88,7 @@ void test_method_1()
     {
       datatools::introspection::argument tag_arg;
       tag_arg.set_name("tag");
-      tag_arg.set_description("A short description");
+      tag_arg.set_description("Short description of the 'tag' input argument");
       tag_arg.set_access(datatools::introspection::ACCESS_INPUT);
       datatools::introspection::data_description & tag_arg_dd = tag_arg.grab_data_description();
       tag_arg_dd.set_type(datatools::introspection::DATA_TYPE_STRING);
@@ -99,7 +100,7 @@ void test_method_1()
     {
       datatools::introspection::argument value_arg;
       value_arg.set_name("return");
-      value_arg.set_description("Another short description");
+      value_arg.set_description("Short description of the returned value");
       value_arg.set_access(datatools::introspection::ACCESS_OUTPUT);
       datatools::introspection::data_description & value_arg_dd = value_arg.grab_data_description();
       value_arg_dd.set_type(datatools::introspection::DATA_TYPE_FLOAT);
@@ -133,8 +134,19 @@ void test_method_1()
       }
     }
 
+    datatools::properties xmeth_config;
+    meth.export_to_config(xmeth_config,
+                          datatools::introspection::method::METHOD_XC_DEFAULT);
+    xmeth_config.tree_dump(std::clog, "Method exported configuration: ");
+    std::clog << std::endl;
+
     meth.reset();
     meth.tree_dump(std::clog, "Method (after reset): ");
+    std::clog << std::endl;
+
+    meth.initialize(xmeth_config);
+    meth.tree_dump(std::clog, "Regenerated method: ");
+    std::clog << std::endl;
 
   }
 
@@ -174,12 +186,27 @@ void test_method_2()
     meth_config.store_string("arguments.return.data.layout",        "scalar");
     meth_config.store_string("arguments.return.data.unit.support",  "implicit_unit");
     meth_config.store_string("arguments.return.data.unit.implicit_unit", "V");
+    meth_config.tree_dump(std::clog, "Method primary configuration: ");
+    std::clog << std::endl;
 
     meth.initialize(meth_config);
     meth.tree_dump(std::clog, "Method: ");
+    std::clog << std::endl;
+
+    datatools::properties xmeth_config;
+    meth.export_to_config(xmeth_config,
+                          datatools::introspection::method::METHOD_XC_DEFAULT);
+    xmeth_config.tree_dump(std::clog, "Method exported configuration: ");
+    std::clog << std::endl;
 
     meth.reset();
     meth.tree_dump(std::clog, "Method (after reset): ");
+    std::clog << std::endl;
+
+    meth.initialize(xmeth_config);
+    meth.tree_dump(std::clog, "Regenerated method: ");
+    std::clog << std::endl;
+
   }
 
   {
@@ -200,9 +227,17 @@ void test_method_2()
     meth_config.store_string("arguments.return.data.layout",       "scalar");
     meth_config.store_string("arguments.return.data.unit.support", "implicit_unit");
     meth_config.store_string("arguments.return.data.unit.implicit_unit", "mbar");
+    meth_config.tree_dump(std::clog, "Method primary configuration: ");
+    std::clog << std::endl;
 
     meth.initialize(meth_config);
     meth.tree_dump(std::clog, "Method: ");
+    std::clog << std::endl;
+
+    datatools::properties xmeth_config;
+    meth.export_to_config(xmeth_config, datatools::introspection::argument::ARG_XC_DEFAULT);
+    xmeth_config.tree_dump(std::clog, "Method exported configuration: ");
+    std::clog << std::endl;
   }
 
   return;

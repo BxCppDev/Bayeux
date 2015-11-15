@@ -44,6 +44,10 @@ int main(int /* argc_ */, char ** /* argv_ */)
     std::clog << "Test program for the 'datatools::introspection::data_description' class."
               << std::endl;
 
+    datatools::units::registry::const_system_registry().tree_dump(std::clog,
+                                                                  "Unit registry: ");
+    std::clog << std::endl;
+
     test_data_description_1();
     test_data_description_2();
 
@@ -71,11 +75,14 @@ void test_data_description_1()
     dd.set_layout(datatools::introspection::DATA_LAYOUT_SCALAR);
     dd.tree_dump(std::clog, "Data description: ");
     std::clog << std::endl;
+
+    datatools::properties dd_config;
+    dd.export_to_config(dd_config, datatools::introspection::data_description::DD_XC_DEFAULT, "test.");
+    dd_config.tree_dump(std::clog, "Data description configuration: ");
+    std::clog << std::endl;
+
   }
 
-  datatools::units::registry::const_system_registry().tree_dump(std::clog,
-                                                                "Unit registry: ");
-  std::clog << std::endl;
 
   try {
     datatools::introspection::data_description dd;
@@ -99,6 +106,13 @@ void test_data_description_1()
     dd.set_unit_info(uinfo);
     dd.tree_dump(std::clog, "Data description: ");
     std::clog << std::endl;
+
+
+    datatools::properties dd_config;
+    dd.export_to_config(dd_config, datatools::introspection::data_description::DD_XC_DEFAULT, "test.");
+    dd_config.tree_dump(std::clog, "Data description configuration: ");
+    std::clog << std::endl;
+
   }
 
   try {

@@ -271,6 +271,51 @@ namespace datatools {
       return;
     }
 
+    void argument::export_to_config(datatools::properties & config_,
+                                    uint32_t flags_,
+                                    const std::string & prefix_) const
+    {
+      if (has_access()) {
+        if (flags_ & ARG_XC_ACCESS) {
+          config_.store_string(prefix_ + "access", to_string(_access_));
+        }
+      }
+
+      if (has_data_description()) {
+        if (flags_ & ARG_XC_DATA_DESCRIPTION) {
+          get_data_description().export_to_config(config_,
+                                                  data_description::DD_XC_DEFAULT,
+                                                  prefix_ + "data.");
+        }
+      }
+
+      if (has_rank()) {
+        if (flags_ & ARG_XC_RANK) {
+          config_.store_integer(prefix_ + "rank", get_rank());
+        }
+      }
+
+      if (has_name()) {
+        if (flags_ & ARG_XC_NAME) {
+          config_.store_string(prefix_ + "name", get_name());
+        }
+      }
+
+      if (has_description()) {
+        if (flags_ & ARG_XC_DESCRIPTION) {
+          config_.store_string(prefix_ + "description", get_description());
+        }
+      }
+
+      if (has_default_value_str()) {
+        if (flags_ & ARG_XC_DEFAULT_VALUE_STR) {
+          config_.store_string(prefix_ + "default_value", get_default_value_str());
+        }
+      }
+
+      return;
+    }
+
     void argument::tree_dump(std::ostream & out_,
                              const std::string & title_,
                              const std::string & indent_,
@@ -332,6 +377,13 @@ namespace datatools {
           out_ << "<yes>";
         }
         out_ << std::endl;
+      }
+
+      if (has_default_value_str()) {
+         out_ << indent_ << i_tree_dumpable::tag
+              << "Default value str : ";
+         out_ << "'" << get_default_value_str() << "'";
+         out_ << std::endl;
       }
 
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)

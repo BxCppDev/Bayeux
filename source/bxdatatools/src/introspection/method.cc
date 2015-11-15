@@ -151,6 +151,7 @@ namespace datatools {
 
     void method::add_argument(const argument & arg_, const std::string & arg_name_)
     {
+      // Use a working copy of the argument:
       argument arg = arg_;
       if (!arg.has_rank()) {
         arg.set_rank(_priv_->arguments.size());
@@ -176,6 +177,7 @@ namespace datatools {
                   std::logic_error,
                   "In method '" << this->get_name() << "' "
                   << "argument name '" << arg.get_name() << "' is already used!");
+      // Force the reference to this method:
       arg.set_method(*this);
       _priv_->arguments.insert(arg);
       return;
@@ -298,6 +300,7 @@ namespace datatools {
       _priv_->arguments.clear();
       reset_constness();
       reset_type_id();
+      this->datatools::enriched_base::reset();
       return;
     }
 
@@ -325,9 +328,9 @@ namespace datatools {
            << std::endl;
       {
         size_t counter = 0;
-        const argument_set_by_name & name_index = _priv_->arguments.get<argument_tag_name>();
-        for (argument_set_by_name::const_iterator iarg = name_index.begin();
-             iarg != name_index.end();
+        const argument_set_by_rank & rank_index = _priv_->arguments.get<argument_tag_rank>();
+        for (argument_set_by_rank::const_iterator iarg = rank_index.begin();
+             iarg != rank_index.end();
              iarg++) {
           const argument & arg = *iarg;
           out_ << indent_ << i_tree_dumpable::skip_tag;
@@ -416,6 +419,56 @@ namespace datatools {
       this->initialize();
       return;
     }
+
+    void method::export_to_config(datatools::properties & config_,
+                                  uint32_t flags_,
+                                  const std::string & prefix_) const
+    {
+      this->datatools::enriched_base::export_to_config(config_, flags_, prefix_);
+
+      if (has_constness()) {
+        if (flags_ & METHOD_XC_CONSTNESS) {
+          config_.store_boolean(prefix_ + "constness", is_constness());
+        }
+      }
+
+      if (has_type_id()) {
+        if (flags_ & METHOD_XC_TYPE_ID) {
+          config_.store_string(prefix_ + "type_id", get_type_id());
+        }
+      }
+
+      if (has_arguments()) {
+        // std::cerr << "DEVEL: method::export_to_config: "
+        //           << "#args = [" << _priv_->arguments.size() << "]"
+        //           << " with flags = " << flags_ << std::endl;
+        if (flags_ & METHOD_XC_ARGUMENTS) {
+          // std::cerr << "DEVEL: method::export_to_config: "
+          //           << "Export argument..." << std::endl;
+          std::vector<std::string> argument_names;
+          const argument_set_by_rank & rank_index = _priv_->arguments.get<argument_tag_rank>();
+          for (argument_set_by_rank::const_iterator iarg = rank_index.begin();
+               iarg != rank_index.end();
+               iarg++) {
+            const argument & arg = *iarg;
+            argument_names.push_back(arg.get_name());
+            arg.export_to_config(config_,
+                                 argument::ARG_XC_ACCESS
+                                 | argument::ARG_XC_DATA_DESCRIPTION
+                                 | argument::ARG_XC_DESCRIPTION
+                                 | argument::ARG_XC_DEFAULT_VALUE_STR
+                                 ,
+                                 prefix_ + "arguments." + arg.get_name() + ".");
+          }
+          config_.store(prefix_ + "arguments", argument_names);
+        }
+
+      }
+
+
+      return;
+    }
+
 
   } // namespace introspection
 

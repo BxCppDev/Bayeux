@@ -180,6 +180,30 @@ namespace datatools {
       //! Reset
       void reset();
 
+      //! \brief Flags for export to a container of properties
+      enum arg_xc_flags {
+        ARG_XC_CLEAR              = bit_mask::bit00,
+        ARG_XC_ACCESS             = bit_mask::bit01,
+        ARG_XC_DATA_DESCRIPTION   = bit_mask::bit02,
+        ARG_XC_RANK               = bit_mask::bit03,
+        ARG_XC_NAME               = bit_mask::bit04,
+        ARG_XC_DESCRIPTION        = bit_mask::bit05,
+        ARG_XC_DEFAULT_VALUE_STR  = bit_mask::bit06,
+        ARG_XC_DEFAULT = (ARG_XC_CLEAR
+                         | ARG_XC_ACCESS
+                         | ARG_XC_DATA_DESCRIPTION
+                         | ARG_XC_RANK
+                         | ARG_XC_NAME
+                         | ARG_XC_DESCRIPTION
+                         | ARG_XC_DEFAULT_VALUE_STR),
+        ARG_XC_LAST    = ARG_XC_DEFAULT_VALUE_STR
+      };
+
+      //! Export to a container of properties
+      void export_to_config(datatools::properties & config_,
+                            uint32_t flags_ = ARG_XC_DEFAULT,
+                            const std::string & prefix_ = "") const;
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",

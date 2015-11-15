@@ -94,6 +94,11 @@ void test_argument_1()
                 << std::endl;
     }
 
+    datatools::properties arg_config;
+    arg.export_to_config(arg_config, datatools::introspection::argument::ARG_XC_DEFAULT, "test.");
+    arg_config.tree_dump(std::clog, "Argument configuration: ");
+    std::clog << std::endl;
+
   }
 
   return;
@@ -117,9 +122,17 @@ void test_argument_2()
     arg_config.store_string("data.unit.support", "explicit_unit_dimension");
     arg_config.store_string("data.unit.explicit_unit_dimension", "length");
     arg_config.store_string("data.unit.preferred_unit", "mm");
+    arg_config.tree_dump(std::clog, "Argument primary configuration: ");
+    std::clog << std::endl;
 
     arg.initialize(arg_config);
     arg.tree_dump(std::clog, "Argument: ");
+    std::clog << std::endl;
+
+    datatools::properties xarg_config;
+    arg.export_to_config(xarg_config, datatools::introspection::argument::ARG_XC_DEFAULT);
+    xarg_config.tree_dump(std::clog, "Argument exported configuration: ");
+    std::clog << std::endl;
   }
 
   return;

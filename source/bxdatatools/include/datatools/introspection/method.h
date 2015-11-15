@@ -112,6 +112,24 @@ namespace datatools {
       //! Reset
       void reset();
 
+      //! \brief Flags for export to a container of properties
+      enum method_xc_flags {
+        METHOD_XC_CONSTNESS  = (datatools::enriched_base::EXPORT_CONFIG_LAST << 1),
+        METHOD_XC_TYPE_ID    = (datatools::enriched_base::EXPORT_CONFIG_LAST << 2),
+        METHOD_XC_ARGUMENTS  = (datatools::enriched_base::EXPORT_CONFIG_LAST << 3),
+        METHOD_XC_DEFAULT    = (datatools::enriched_base::EXPORT_CONFIG_DEFAULT
+                                | datatools::enriched_base::EXPORT_CONFIG_NAME
+                                | METHOD_XC_CONSTNESS
+                                | METHOD_XC_TYPE_ID
+                                | METHOD_XC_ARGUMENTS),
+        METHOD_XC_LAST       = (METHOD_XC_ARGUMENTS)
+      };
+
+      //! Export to a container of properties
+      void export_to_config(datatools::properties & config_,
+                            uint32_t flags_ = METHOD_XC_DEFAULT,
+                            const std::string & prefix_ = "") const;
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
@@ -136,8 +154,8 @@ namespace datatools {
 
     private:
 
-      boost::optional<bool> _constness_; //!< Constness flag
-      boost::optional<std::string> _type_id_; //!< Type/class identifier
+      boost::optional<bool>        _constness_; //!< Constness flag
+      boost::optional<std::string> _type_id_;   //!< Type/class identifier
 
       // Working data:
       // PIMPL-ized data structure:
