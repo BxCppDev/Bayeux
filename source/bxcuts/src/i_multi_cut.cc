@@ -88,8 +88,8 @@ namespace cuts {
   }
 
   void i_multi_cut::export_to_config(datatools::properties & config_,
-                                 uint32_t flags_,
-                                 const std::string & prefix_) const
+                                     uint32_t flags_,
+                                     const std::string & prefix_) const
   {
     this->cuts::i_cut::export_to_config(config_,flags_, prefix_);
     std::vector<std::string> cuts_names;
