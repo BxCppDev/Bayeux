@@ -112,7 +112,7 @@ namespace datatools {
       return pot;
     }
 
-    std::string power_of_two_to_name(power_of_ten pot_)
+    std::string power_of_two_to_name(power_of_two pot_)
     {
       switch (pot_){
       case KIBI : return "kibi";
@@ -129,7 +129,7 @@ namespace datatools {
       }
     }
 
-    std::string power_of_two_to_symbol(power_of_ten pot_)
+    std::string power_of_two_to_symbol(power_of_two pot_)
     {
       switch (pot_) {
       case KIBI : return "Ki";
