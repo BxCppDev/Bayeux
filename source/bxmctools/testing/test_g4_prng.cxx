@@ -19,7 +19,7 @@ int main(int argc_, char ** argv_)
   try {
     std::clog << "Test program for class 'mctools::g4::g4_prng'!" << std::endl;
 
-    bool debug = false;
+    // bool debug = false;
     std::string type = "taus2";
 
     int iarg = 1;
@@ -27,10 +27,11 @@ int main(int argc_, char ** argv_)
       std::string token = argv_[iarg];
       if (token[0] == '-') {
         std::string option = token;
-        if ((option == "-d") ||(option == "--debug")) {
-          debug = true;
-        }
-        else if ((option == "-t") ||(option == "--taus2")) {
+        // if ((option == "-d") ||(option == "--debug")) {
+        //   debug = true;
+        // }
+        // else
+        if ((option == "-t") ||(option == "--taus2")) {
           type = "taus2";
         }
         else if ((option == "-g") ||(option == "--gfsr4")) {
