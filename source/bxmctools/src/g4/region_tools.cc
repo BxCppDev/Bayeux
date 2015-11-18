@@ -96,15 +96,15 @@ namespace mctools {
             requested_material_max_density = config_.fetch_real("material.max_density");
             if (!config_.has_explicit_unit("material.max_density")) {
               requested_material_max_density *= default_density_unit;
-              use_density_range = true;
             }
+            use_density_range = true;
           }
           if (config_.has_key("material.requested_material_min_density")) {
             requested_material_min_density = config_.fetch_real("material.min_density");
             if (!config_.has_explicit_unit("material.min_density")) {
               requested_material_min_density *= default_density_unit;
-              use_density_range = true;
             }
+            use_density_range = true;
           }
           if (use_density_range) {
             if (!datatools::is_valid(requested_material_min_density)) {
@@ -231,20 +231,31 @@ namespace mctools {
       // Remove explicitely some logical volumes from the region if previously added
       // by one of the critera above:
       if (config_.has_key("volumes.excluded")) {
+        // std::cerr << "DEVEL: Region '" << get_name() << "' : checking excluded volumes..." << std::endl;
         std::vector<std::string> excluded_volumes;
         config_.fetch("volumes.excluded", excluded_volumes);
         for (size_t i = 0; i < excluded_volumes.size(); i++) {
           const std::string & log_name = excluded_volumes[i];
+          // std::cerr << "DEVEL: Region '" << get_name() << "' : processing excluded volume '" << log_name << "' ..." << std::endl;
           if (has_logical_volume(log_name)) {
+            // std::cerr << "DEVEL: Region '" << get_name() << "' : removing logical '" << log_name << "'..." << std::endl;
             remove_logical_volume(log_name);
           }
         }
+      } else {
+        // std::cerr << "DEVEL: Region '" << get_name() << "' : no excluded volumes." << std::endl;
       }
+      // config_.tree_dump(std::cerr, "Region info config: ", "DEVEL: ");
 
+      DT_THROW_IF(_logical_ids_.size() == 0,
+                  std::logic_error,
+                  "The region '" << get_name() << "' has not logical volumes !");
+      /*
       if (_logical_ids_.size() == 0) {
         DT_LOG_WARNING(get_logging_priority(),
                        "The region '" << get_name() << "' has not logical volumes !");
       }
+      */
 
       _initialized_ = true;
       return;
@@ -392,6 +403,7 @@ namespace mctools {
     {
       datatools::command::returned_info cri;
       std::set<std::string> associated_logicals;
+      std::map<std::string, std::string> logical_to_region_associations;
       for (region_infos_dict_type::const_iterator i = _region_infos_.begin();
            i != _region_infos_.end();
            i++) {
@@ -404,10 +416,11 @@ namespace mctools {
             // Logical volume already belongs to another region:
             DT_COMMAND_RETURNED_ERROR(cri, datatools::command::CEC_FAILURE,
                                       "Logical volume '" << log_id << "' associated to region '"
-                                      << the_region_name << "' is already associated to another region!");
+                                      << the_region_name << "' is already associated to region '" << logical_to_region_associations[log_id] << "'!");
             break;
           }
           associated_logicals.insert(log_id);
+          logical_to_region_associations[log_id] = the_region_name;
         }
         if (cri.is_failure()) break;
       }
