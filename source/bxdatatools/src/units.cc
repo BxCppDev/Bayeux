@@ -42,6 +42,126 @@ namespace datatools {
       return pot;
     }
 
+    double yocto()
+    {
+      static const double _f(power_of_ten_to_factor(YOCTO));
+      return _f;
+    }
+
+    double zepto()
+    {
+      static const double _f(power_of_ten_to_factor(ZEPTO));
+      return _f;
+    }
+
+    double atto()
+    {
+      static const double _f(power_of_ten_to_factor(ATTO));
+      return _f;
+    }
+
+    double femto()
+    {
+      static const double _f(power_of_ten_to_factor(FEMTO));
+      return _f;
+    }
+
+    double pico()
+    {
+      static const double _f(power_of_ten_to_factor(PICO));
+      return _f;
+    }
+
+    double nano()
+    {
+      static const double _f(power_of_ten_to_factor(NANO));
+      return _f;
+    }
+
+    double micro()
+    {
+      static const double _f(power_of_ten_to_factor(MICRO));
+      return _f;
+    }
+
+    double milli()
+    {
+      static const double _f(power_of_ten_to_factor(MILLI));
+      return _f;
+    }
+
+    double centi()
+    {
+      static const double _f(power_of_ten_to_factor(CENTI));
+      return _f;
+    }
+
+    double deci()
+    {
+      static const double _f(power_of_ten_to_factor(DECI));
+      return _f;
+    }
+
+    double deca()
+    {
+      static const double _f(power_of_ten_to_factor(DECA));
+      return _f;
+    }
+
+    double hecto()
+    {
+      static const double _f(power_of_ten_to_factor(HECTO));
+      return _f;
+    }
+
+    double kilo()
+    {
+      static const double _f(power_of_ten_to_factor(KILO));
+      return _f;
+    }
+
+    double mega()
+    {
+      static const double _f(power_of_ten_to_factor(MEGA));
+      return _f;
+    }
+
+    double giga()
+    {
+      static const double _f(power_of_ten_to_factor(GIGA));
+      return _f;
+    }
+
+    double tera()
+    {
+      static const double _f(power_of_ten_to_factor(TERA));
+      return _f;
+    }
+
+    double peta()
+    {
+      static const double _f(power_of_ten_to_factor(PETA));
+      return _f;
+    }
+
+    double exa()
+    {
+      static const double _f(power_of_ten_to_factor(EXA));
+      return _f;
+    }
+
+    double zetta()
+    {
+      static const double _f(power_of_ten_to_factor(ZETTA));
+      return _f;
+    }
+
+    double yotta()
+    {
+      static const double _f(power_of_ten_to_factor(YOTTA));
+      return _f;
+    }
+
     std::string power_of_ten_to_name(power_of_ten pot_)
     {
       switch (pot_){
@@ -453,8 +573,6 @@ namespace datatools {
       std::istringstream iss(word);
       iss >> val;
       if (!iss) {
-        // std::ostringstream message;
-        // message << "datatools::find_value_with_unit: Format error while reading a double value !";
         return false;
       }
       bool use_default_unit = true;
@@ -1491,12 +1609,12 @@ namespace datatools {
       registration(unit("angstrom",   "AA",  "length",             CLHEP::angstrom));
       registration(unit("femtometer", "fm",
                         /**/       "fermi",  "length",             CLHEP::fermi));
-      registration(unit("picometer",  "pm",  "length",      1e-3 * CLHEP::nanometer));
+      registration(unit("picometer",  "pm",  "length",      milli() * CLHEP::nanometer));
       registration(unit("nanometer",  "nm",  "length",             CLHEP::nanometer));
       registration(unit("micrometer", "um",  "length",             CLHEP::micrometer));
       registration(unit("millimeter", "mm",  "length",             CLHEP::millimeter));
       registration(unit("centimeter", "cm",  "length",             CLHEP::centimeter));
-      registration(unit("decimeter",  "dm",  "length",       0.1 * CLHEP::meter));
+      registration(unit("decimeter",  "dm",  "length",       deci() * CLHEP::meter));
       registration(unit("decameter", "dam",  "length",       10. * CLHEP::meter));
       registration(unit("hectometer", "hm",  "length",      100. * CLHEP::meter));
       registration(unit("kilometer",  "km",  "length",             CLHEP::kilometer));
@@ -1504,13 +1622,13 @@ namespace datatools {
                         /**/          "AU",  "length", 1.4960e11 * CLHEP::meter));
       const double light_year = 9.4607e15 * CLHEP::meter;
       registration(unit("light_year",      "ly",  "length", light_year));
-      registration(unit("kilolight_year", "kly",  "length", 1.e3 * light_year));
-      registration(unit("megalight_year", "Mly",  "length", 1.e6 * light_year));
-      registration(unit("gigalight_year", "Gly",  "length", 1.e9 * light_year));
+      registration(unit("kilolight_year", "kly",  "length", kilo() * light_year));
+      registration(unit("megalight_year", "Mly",  "length", mega() * light_year));
+      registration(unit("gigalight_year", "Gly",  "length", giga() * light_year));
       registration(unit("parsec",      "pc",  "length",            CLHEP::parsec));
-      registration(unit("kiloparsec", "kpc",  "length",     1.e3 * CLHEP::parsec));
-      registration(unit("megaparsec", "Mpc",  "length",     1.e6 * CLHEP::parsec));
-      registration(unit("gigaparsec", "Gpc",  "length",     1.e9 * CLHEP::parsec));
+      registration(unit("kiloparsec", "kpc",  "length",     kilo() * CLHEP::parsec));
+      registration(unit("megaparsec", "Mpc",  "length",     mega() * CLHEP::parsec));
+      registration(unit("gigaparsec", "Gpc",  "length",     giga() * CLHEP::parsec));
       registration(unit("inch",       "in",  "length",      2.54 * CLHEP::centimeter));
       registration(unit("foot",       "ft",
                         /**/        "feet",  "length",    0.3048 * CLHEP::meter));
@@ -1524,14 +1642,14 @@ namespace datatools {
 
       // Mass [M]:
       registration(unit("kilogram",  "kg",     "mass;[M]",    CLHEP::kilogram, true));
-      registration(unit("decagram", "dag",     "mass", 0.01 * CLHEP::kilogram));
-      registration(unit("hectogram", "hg",     "mass",  0.1 * CLHEP::kilogram));
-      registration(unit("ton",        "t",     "mass", 1e+3 * CLHEP::kilogram));
+      registration(unit("decagram", "dag",     "mass", deca() * CLHEP::gram));
+      registration(unit("hectogram", "hg",     "mass", kilo() * CLHEP::gram));
+      registration(unit("ton",        "t",     "mass", mega() * CLHEP::gram));
       registration(unit("gram",       "g",     "mass",        CLHEP::gram));
-      registration(unit("decigram",  "dg",     "mass",  0.1 * CLHEP::gram));
-      registration(unit("centigram", "cg",     "mass", 0.01 * CLHEP::gram));
+      registration(unit("decigram",  "dg",     "mass", deci() * CLHEP::gram));
+      registration(unit("centigram", "cg",     "mass", centi() * CLHEP::gram));
       registration(unit("milligram", "mg",     "mass",        CLHEP::milligram));
-      registration(unit("microgram", "ug",     "mass", 1e-3 * CLHEP::milligram));
+      registration(unit("microgram", "ug",     "mass", micro() * CLHEP::gram));
       registration(unit("eV/c2",               "mass",        CLHEP::eV / CLHEP::c_squared));
       registration(unit("MeV/c2",              "mass",        CLHEP::MeV / CLHEP::c_squared));
       registration(unit("GeV/c2",              "mass",        CLHEP::GeV / CLHEP::c_squared));
@@ -1543,7 +1661,7 @@ namespace datatools {
       registration(unit("microsecond", "us",  "time",         CLHEP::microsecond));
       registration(unit("nanosecond",  "ns",  "time",         CLHEP::nanosecond));
       registration(unit("picosecond",  "ps",  "time",         CLHEP::picosecond));
-      registration(unit("femtosecond", "fs",  "time", 1.e-3 * CLHEP::picosecond));
+      registration(unit("femtosecond", "fs",  "time", femto() * CLHEP::second));
       const double minute =   60 * CLHEP::second;
       registration(unit("minute",      "min", "time",  minute));
       const double hour   = 3600 * CLHEP::second;
@@ -1556,18 +1674,19 @@ namespace datatools {
       // https://en.wikipedia.org/wiki/SI_electromagnetism_units
 
       // Electric current [I] (A = W/V = C/s) :
-      registration(unit("ampere",       "A",    "electric_current;[I]",      CLHEP::ampere, true));
-      registration(unit("milliampere", "mA",    "electric_current", 1.e-3  * CLHEP::ampere));
-      registration(unit("microampere", "uA",    "electric_current", 1.e-6  * CLHEP::ampere));
-      registration(unit("nanoampere",  "nA",    "electric_current", 1.e-9  * CLHEP::ampere));
-      registration(unit("picoampere",  "pA",    "electric_current", 1.e-12 * CLHEP::ampere));
-      registration(unit("femtoampere", "fA",    "electric_current", 1.e-15 * CLHEP::ampere));
-      registration(unit("kiloampere",  "kA",    "electric_current", 1.e3   * CLHEP::ampere));
-      registration(unit("megaampere",  "MA",    "electric_current", 1.e6   * CLHEP::ampere));
+      registration(unit("ampere",       "A",    "electric_current;[I]",       CLHEP::ampere, true));
+      registration(unit("milliampere", "mA",    "electric_current", milli() * CLHEP::ampere));
+      registration(unit("microampere", "uA",    "electric_current", micro() * CLHEP::ampere));
+      registration(unit("nanoampere",  "nA",    "electric_current", nano()  * CLHEP::ampere));
+      registration(unit("picoampere",  "pA",    "electric_current", pico()  * CLHEP::ampere));
+      registration(unit("femtoampere", "fA",    "electric_current", femto() * CLHEP::ampere));
+      registration(unit("kiloampere",  "kA",    "electric_current", kilo()  * CLHEP::ampere));
+      registration(unit("megaampere",  "MA",    "electric_current", mega()  * CLHEP::ampere));
 
       // Temperature [theta]:
       registration(unit("kelvin",        "K",   "temperature;[theta]", CLHEP::kelvin, true));
-      registration(unit("millikelvin",  "mK",   "temperature", 1.e-3 * CLHEP::kelvin));
+      registration(unit("millikelvin",  "mK",   "temperature", milli() * CLHEP::kelvin));
+      registration(unit("microkelvin",  "uK",   "temperature", micro() * CLHEP::kelvin));
 
       // Amount [N]
       registration(unit("mole",        "mol",   "amount;[N]",          CLHEP::mole, true));
@@ -1600,7 +1719,7 @@ namespace datatools {
       registration(unit("meter2",       "m2", "surface;[L2]",      CLHEP::meter2, true));
       registration(unit("centimeter2", "cm2", "surface",           CLHEP::centimeter2));
       registration(unit("millimeter2", "mm2", "surface",           CLHEP::millimeter2));
-      registration(unit("micrometer2", "um2", "surface",   1.e-6 * CLHEP::millimeter2));
+      registration(unit("micrometer2", "um2", "surface",   micro() * CLHEP::millimeter2));
       registration(unit("femtometer2", "fm2",
                         /**/        "fermi2", "surface",  1.e-30 * CLHEP::meter2));
       registration(unit("kilometer2",  "km2", "surface",           CLHEP::kilometer2));
@@ -1617,13 +1736,13 @@ namespace datatools {
 
       // Cross-section:
       registration(unit("barn",          "b", "cross_section;[L2]",      CLHEP::barn, true));
-      registration(unit("megabarn",     "Mb", "cross_section",  1.e+6  * CLHEP::barn));
-      registration(unit("kilobarn",     "kb", "cross_section",  1.e+3  * CLHEP::barn));
-      registration(unit("millibarn",    "mb", "cross_section",  1.e-3  * CLHEP::barn));
-      registration(unit("microbarn",    "ub", "cross_section",  1.e-6  * CLHEP::barn));
-      registration(unit("nanobarn",     "nb", "cross_section",  1.e-9  * CLHEP::barn));
-      registration(unit("picobarn",     "pb", "cross_section",  1.e-12 * CLHEP::barn));
-      registration(unit("femtobarn",    "fb", "cross_section",  1.e-15 * CLHEP::barn));
+      registration(unit("megabarn",     "Mb", "cross_section",  mega()  * CLHEP::barn));
+      registration(unit("kilobarn",     "kb", "cross_section",  kilo()  * CLHEP::barn));
+      registration(unit("millibarn",    "mb", "cross_section",  milli() * CLHEP::barn));
+      registration(unit("microbarn",    "ub", "cross_section",  micro() * CLHEP::barn));
+      registration(unit("nanobarn",     "nb", "cross_section",  nano()  * CLHEP::barn));
+      registration(unit("picobarn",     "pb", "cross_section",  pico()  * CLHEP::barn));
+      registration(unit("femtobarn",    "fb", "cross_section",  femto() * CLHEP::barn));
 
       // Volume:
       registration(unit("meter3",       "m3",     "volume;[L3]",             CLHEP::meter3, true));
@@ -1636,23 +1755,23 @@ namespace datatools {
       registration(unit("litre",        "l",
                         /**/            "L",      "volume",                litre));
       registration(unit("decalitre",  "dal",
-                        /**/          "daL",      "volume",          10. * litre));
+                        /**/          "daL",      "volume",       deca() * litre));
       registration(unit("hectolitre",  "hl",
-                        /**/           "hL",      "volume",         100. * litre));
+                        /**/           "hL",      "volume",       hecto() * litre));
       registration(unit("kilolitre",   "kl",
-                        /**/           "kL",      "volume",         1.e3 * litre));
+                        /**/           "kL",      "volume",       kilo() * litre));
       registration(unit("megalitre",   "Ml",
-                        /**/           "ML",      "volume",         1.e6 * litre));
+                        /**/           "ML",      "volume",       mega() * litre));
       registration(unit("gigalitre",   "Gl",
-                        /**/           "GL",      "volume",         1.e9 * litre));
+                        /**/           "GL",      "volume",       giga() * litre));
       registration(unit("teralitre",   "Tl",
-                        /**/           "TL",      "volume",        1.e12 * litre));
+                        /**/           "TL",      "volume",       tera() * litre));
       registration(unit("centilitre",  "cl",
-                        /**/           "cL",      "volume",        1.e-2 * litre));
+                        /**/           "cL",      "volume",       centi() * litre));
       registration(unit("millilitre",  "ml",
-                        /**/           "mL",      "volume",           millilitre));
+                        /**/           "mL",      "volume",       milli() * litre));
       registration(unit("microlitre",  "ul",
-                        /**/           "uL",      "volume",        1.e-6 * litre));
+                        /**/           "uL",      "volume",       micro() * litre));
       registration(unit("imperial_gallon",
                         /**/      "imp_gal",      "volume", 4.54609      * litre));
       registration(unit("us_gallon",  "gal",
@@ -1665,33 +1784,33 @@ namespace datatools {
       // Angle/plane angle:
       registration(unit("radian",         "rad", "angle;[1]",        CLHEP::radian, true));
       registration(unit("milliradian",   "mrad", "angle",            CLHEP::milliradian));
-      registration(unit("microradian",   "urad", "angle",     1e-3 * CLHEP::milliradian));
+      registration(unit("microradian",   "urad", "angle",  micro() * CLHEP::radian));
       registration(unit("degree",         "deg", "angle",            CLHEP::degree));
       registration(unit("arcminute",   "arcmin",
                         /**/               "am", "angle",            CLHEP::degree / 60));
       registration(unit("arcsecond",   "arcsec",
                         /**/               "as", "angle",            CLHEP::degree / 3600));
-      registration(unit("milliarcsecond", "mas", "angle",    1.e-3 * CLHEP::degree / 3600));
-      registration(unit("microarcsecond", "uas", "angle",    1.e-6 * CLHEP::degree / 3600));
+      registration(unit("milliarcsecond", "mas", "angle",  milli() * CLHEP::degree / 3600));
+      registration(unit("microarcsecond", "uas", "angle",  micro() * CLHEP::degree / 3600));
       registration(unit("grade",          "gon", "angle",     M_PI * CLHEP::radian / 200));
       registration(unit("turn",          "turn", "angle", 2 * M_PI * CLHEP::radian));
 
       // Solid angle:
       registration(unit("steradian",       "sr",  "solid_angle;[1]",     CLHEP::steradian, true));
-      registration(unit("decasteradian", "dasr",  "solid_angle",   10. * CLHEP::steradian));
-      registration(unit("decisteradian",  "dsr",  "solid_angle",   0.1 * CLHEP::steradian));
-      registration(unit("centisteradian", "csr",  "solid_angle",  1e-2 * CLHEP::steradian));
-      registration(unit("millisteradian", "msr",  "solid_angle",  1e-3 * CLHEP::steradian));
-      registration(unit("microsteradian", "usr",  "solid_angle",  1e-6 * CLHEP::steradian));
-      registration(unit("nanosteradian",  "nsr",  "solid_angle",  1e-9 * CLHEP::steradian));
-      registration(unit("picosteradian",  "psr",  "solid_angle", 1e-12 * CLHEP::steradian));
-      registration(unit("femtosteradian", "fsr",  "solid_angle", 1e-15 * CLHEP::steradian));
+      registration(unit("decasteradian", "dasr",  "solid_angle",  deca() * CLHEP::steradian));
+      registration(unit("decisteradian",  "dsr",  "solid_angle",  deci() * CLHEP::steradian));
+      registration(unit("centisteradian", "csr",  "solid_angle",  centi() * CLHEP::steradian));
+      registration(unit("millisteradian", "msr",  "solid_angle",  milli() * CLHEP::steradian));
+      registration(unit("microsteradian", "usr",  "solid_angle",  micro() * CLHEP::steradian));
+      registration(unit("nanosteradian",  "nsr",  "solid_angle",  nano() * CLHEP::steradian));
+      registration(unit("picosteradian",  "psr",  "solid_angle", pico() * CLHEP::steradian));
+      registration(unit("femtosteradian", "fsr",  "solid_angle", femto() * CLHEP::steradian));
 
       // Energy:
       registration(unit("joule",               "J", "energy;[M][L2][T-2]", CLHEP::joule, true));
-      registration(unit("nanoelectronvolt",  "neV", "energy",  1e-9 * CLHEP::electronvolt));
-      registration(unit("microelectronvolt", "ueV", "energy",  1e-6 * CLHEP::electronvolt));
-      registration(unit("millielectronvolt", "meV", "energy",  1e-3 * CLHEP::electronvolt));
+      registration(unit("nanoelectronvolt",  "neV", "energy",  nano() * CLHEP::electronvolt));
+      registration(unit("microelectronvolt", "ueV", "energy",  micro() * CLHEP::electronvolt));
+      registration(unit("millielectronvolt", "meV", "energy",  milli() * CLHEP::electronvolt));
       registration(unit("electronvolt",       "eV", "energy",         CLHEP::electronvolt));
       registration(unit("kiloelectronvolt", "keV",  "energy",         CLHEP::kiloelectronvolt));
       registration(unit("megaelectronvolt", "MeV",  "energy",         CLHEP::megaelectronvolt));
@@ -1701,7 +1820,7 @@ namespace datatools {
 
       // Force (1 N = 1 kg⋅m/s2) :
       registration(unit("newton",      "N", "force;[M][L][T-2]",        CLHEP::newton, true));
-      registration(unit("kilonewton", "kN", "force",             1.e3 * CLHEP::newton));
+      registration(unit("kilonewton", "kN", "force",             kilo() * CLHEP::newton));
       const double dyne = 1.e-5 * CLHEP::newton;
       registration(unit("dyne",       "dyn",   "force",  dyne));
 
@@ -1711,17 +1830,18 @@ namespace datatools {
 
       // Pressure (1 N/m2) :
       registration(unit("pascal",       "Pa",   "pressure;[M][L-1][T-2]", CLHEP::hep_pascal, true));
-      registration(unit("decapascal", "daPa",   "pressure",     10  * CLHEP::hep_pascal));
-      registration(unit("hectopascal", "hPa",   "pressure",    100  * CLHEP::hep_pascal));
-      registration(unit("kilopascal",  "kPa",   "pressure",   1.e3  * CLHEP::hep_pascal));
-      registration(unit("megapascal",  "MPa",   "pressure",   1.e6  * CLHEP::hep_pascal));
-      registration(unit("gigapascal",  "GPa",   "pressure",   1.e9  * CLHEP::hep_pascal));
+      registration(unit("millipascal", "mPa",   "pressure",  milli() * CLHEP::hep_pascal));
+      registration(unit("decapascal", "daPa",   "pressure",  deca() * CLHEP::hep_pascal));
+      registration(unit("hectopascal", "hPa",   "pressure",   hecto() * CLHEP::hep_pascal));
+      registration(unit("kilopascal",  "kPa",   "pressure",   kilo() * CLHEP::hep_pascal));
+      registration(unit("megapascal",  "MPa",   "pressure",   mega() * CLHEP::hep_pascal));
+      registration(unit("gigapascal",  "GPa",   "pressure",   giga() * CLHEP::hep_pascal));
       registration(unit("bar",         "bar",   "pressure",           CLHEP::bar));
-      registration(unit("decibar",    "dbar",   "pressure",   1.e-1 * CLHEP::bar));
-      registration(unit("centibar",   "cbar",   "pressure",   1.e-2 * CLHEP::bar));
-      registration(unit("millibar",   "mbar",   "pressure",   1.e-3 * CLHEP::bar));
-      registration(unit("kilobar",    "kbar",   "pressure",   1.e+3 * CLHEP::bar));
-      registration(unit("megabar",    "Mbar",   "pressure",   1.e+6 * CLHEP::bar));
+      registration(unit("decibar",    "dbar",   "pressure",  deci() * CLHEP::bar));
+      registration(unit("centibar",   "cbar",   "pressure",  centi() * CLHEP::bar));
+      registration(unit("millibar",   "mbar",   "pressure",  milli() * CLHEP::bar));
+      registration(unit("kilobar",    "kbar",   "pressure",  kilo() * CLHEP::bar));
+      registration(unit("megabar",    "Mbar",   "pressure",  mega() * CLHEP::bar));
       registration(unit("atmosphere",  "atm",   "pressure",           CLHEP::atmosphere));
       const double torr = 133.322 * CLHEP::hep_pascal;
       registration(unit("torr",       "Torr",
@@ -1734,34 +1854,34 @@ namespace datatools {
       registration(unit("kg/L",    "kg/l",
                         /**/     "kg/dm3",   "density",         CLHEP::kilogram / litre));
       registration(unit("g/mL",    "g/mL",   "density",         CLHEP::gram / millilitre));
-      registration(unit("t/m3",              "density",  1.e3 * CLHEP::kilogram / CLHEP::m3));
+      registration(unit("t/m3",              "density",  kilo() * CLHEP::kilogram / CLHEP::m3));
       registration(unit("g/cm3",             "density",         CLHEP::gram / CLHEP::cm3));
       registration(unit("mg/cm3",            "density",         CLHEP::milligram / CLHEP::cm3));
 
       // Frequency:
       registration(unit("hertz",        "Hz",   "frequency;[T-1]",    CLHEP::hertz, true));
-      registration(unit("millihertz",  "mHz",   "frequency",  1.e-3 * CLHEP::hertz));
+      registration(unit("millihertz",  "mHz",   "frequency",  milli() * CLHEP::hertz));
       registration(unit("kilohertz",   "kHz",   "frequency",          CLHEP::kilohertz));
       registration(unit("megahertz",   "MHz",   "frequency",          CLHEP::megahertz));
-      registration(unit("gigahertz",   "GHz",   "frequency",   1.e3 * CLHEP::megahertz));
+      registration(unit("gigahertz",   "GHz",   "frequency",   kilo() * CLHEP::megahertz));
 
       // Angular velocity/frequency:
       registration(unit("rad/s",       "angular_frequency;[T-1]",   CLHEP::radian / CLHEP::second, true));
 
       // Activity:
-      registration(unit("becquerel",       "Bq",    "activity;[T-1]",    CLHEP::becquerel, true));
-      registration(unit("millibecquerel", "mBq",    "activity", 1.e-3  * CLHEP::becquerel));
-      registration(unit("microbecquerel", "uBq",    "activity", 1.e-6  * CLHEP::becquerel));
-      registration(unit("kilobecquerel",  "kBq",    "activity", 1.e+3  * CLHEP::becquerel));
-      registration(unit("megabecquerel",  "MBq",    "activity", 1.e+6  * CLHEP::becquerel));
-      registration(unit("gigabecquerel",  "GBq",    "activity", 1.e+9  * CLHEP::becquerel));
-      registration(unit("curie",          "Ci",     "activity",          CLHEP::curie));
-      registration(unit("millicurie",    "mCi",     "activity", 1.e-3  * CLHEP::curie));
-      registration(unit("microcurie",    "uCi",     "activity", 1.e-6  * CLHEP::curie));
-      registration(unit("nanocurie",     "nCi",     "activity", 1.e-9  * CLHEP::curie));
-      registration(unit("picocurie",     "pCi",     "activity", 1.e-12 * CLHEP::curie));
-      registration(unit("kilocurie",     "kCi",     "activity", 1.e+3  * CLHEP::curie));
-      registration(unit("megacurie",     "MCi",     "activity", 1.e+6  * CLHEP::curie));
+      registration(unit("becquerel",       "Bq",    "activity;[T-1]",     CLHEP::becquerel, true));
+      registration(unit("millibecquerel", "mBq",    "activity", milli() * CLHEP::becquerel));
+      registration(unit("microbecquerel", "uBq",    "activity", micro() * CLHEP::becquerel));
+      registration(unit("kilobecquerel",  "kBq",    "activity", kilo()  * CLHEP::becquerel));
+      registration(unit("megabecquerel",  "MBq",    "activity", mega()  * CLHEP::becquerel));
+      registration(unit("gigabecquerel",  "GBq",    "activity", giga()  * CLHEP::becquerel));
+      registration(unit("curie",          "Ci",     "activity",           CLHEP::curie));
+      registration(unit("millicurie",    "mCi",     "activity", milli() * CLHEP::curie));
+      registration(unit("microcurie",    "uCi",     "activity", micro() * CLHEP::curie));
+      registration(unit("nanocurie",     "nCi",     "activity", nano()  * CLHEP::curie));
+      registration(unit("picocurie",     "pCi",     "activity", pico()  * CLHEP::curie));
+      registration(unit("kilocurie",     "kCi",     "activity", kilo()  * CLHEP::curie));
+      registration(unit("megacurie",     "MCi",     "activity", mega()  * CLHEP::curie));
       const double dpm = CLHEP::becquerel / 60.0;
       registration(unit("dpm",                      "activity", dpm));
 
@@ -1769,33 +1889,33 @@ namespace datatools {
       const double Bq_per_m3 = CLHEP::becquerel / CLHEP::m3;
       const double dpm_per_m3 = dpm / CLHEP::m3;
       registration(unit("Bq/m3",     "volume_activity;[L-3][T-1]", Bq_per_m3, true));
-      registration(unit("mBq/m3",    "volume_activity", 1.e-3 * Bq_per_m3));
-      registration(unit("uBq/m3",    "volume_activity", 1.e-6 * Bq_per_m3));
-      registration(unit("kBq/m3",    "volume_activity", 1.e+3 * Bq_per_m3));
-      registration(unit("MBq/m3",    "volume_activity", 1.e+6 * Bq_per_m3));
-      registration(unit("GBq/m3",    "volume_activity", 1.e+9 * Bq_per_m3));
+      registration(unit("mBq/m3",    "volume_activity", milli() * Bq_per_m3));
+      registration(unit("uBq/m3",    "volume_activity", micro() * Bq_per_m3));
+      registration(unit("kBq/m3",    "volume_activity", kilo()  * Bq_per_m3));
+      registration(unit("MBq/m3",    "volume_activity", mega()  * Bq_per_m3));
+      registration(unit("GBq/m3",    "volume_activity", giga()  * Bq_per_m3));
       registration(unit("dpm/m3",    "volume_activity", dpm_per_m3));
 
       // Surface activity:
       const double Bq_per_m2 = CLHEP::becquerel / CLHEP::m2;
       const double dpm_per_m2 = dpm / CLHEP::m2;
       registration(unit("Bq/m2",     "surface_activity;[L-2][T-1]", Bq_per_m2, true));
-      registration(unit("mBq/m2",    "surface_activity", 1.e-3 * Bq_per_m2));
-      registration(unit("uBq/m2",    "surface_activity", 1.e-6 * Bq_per_m2));
-      registration(unit("kBq/m2",    "surface_activity", 1.e+3 * Bq_per_m2));
-      registration(unit("MBq/m2",    "surface_activity", 1.e+6 * Bq_per_m2));
-      registration(unit("GBq/m2",    "surface_activity", 1.e+9 * Bq_per_m2));
+      registration(unit("mBq/m2",    "surface_activity", milli() * Bq_per_m2));
+      registration(unit("uBq/m2",    "surface_activity", micro() * Bq_per_m2));
+      registration(unit("kBq/m2",    "surface_activity", kilo()  * Bq_per_m2));
+      registration(unit("MBq/m2",    "surface_activity", mega()  * Bq_per_m2));
+      registration(unit("GBq/m2",    "surface_activity", giga()  * Bq_per_m2));
       registration(unit("dpm/m2",    "surface_activity", dpm_per_m2));
 
       // Mass activity:
       const double Bq_per_kg = CLHEP::becquerel / CLHEP::kg;
       const double dpm_per_kg = dpm / CLHEP::kg;
       registration(unit("Bq/kg",     "mass_activity;[M-1][T-1]", Bq_per_kg, true));
-      registration(unit("mBq/kg",    "mass_activity", 1.e-3 * Bq_per_kg));
-      registration(unit("uBq/kg",    "mass_activity", 1.e-6 * Bq_per_kg));
-      registration(unit("kBq/kg",    "mass_activity", 1.e+3 * Bq_per_kg));
-      registration(unit("MBq/kg",    "mass_activity", 1.e+6 * Bq_per_kg));
-      registration(unit("GBq/kg",    "mass_activity", 1.e+9 * Bq_per_kg));
+      registration(unit("mBq/kg",    "mass_activity", milli() * Bq_per_kg));
+      registration(unit("uBq/kg",    "mass_activity", micro() * Bq_per_kg));
+      registration(unit("kBq/kg",    "mass_activity", kilo()  * Bq_per_kg));
+      registration(unit("MBq/kg",    "mass_activity", mega()  * Bq_per_kg));
+      registration(unit("GBq/kg",    "mass_activity", giga()  * Bq_per_kg));
       registration(unit("dpm/kg",    "mass_activity", dpm_per_kg));
 
       // Absorbed dose [L^2][T^-2]:
@@ -1808,11 +1928,11 @@ namespace datatools {
       // Equivalent dose [L^2][T^-2]:
       const double sievert = 1.0 * CLHEP::gray;
       registration(unit("sievert",       "Sv", "equivalent_dose;[L2][T-2]", sievert, true));
-      registration(unit("millisievert", "mSv", "equivalent_dose",  1.e-3 * sievert));
-      registration(unit("microsievert", "uSv", "equivalent_dose",  1.e-6 * sievert));
-      registration(unit("nanosievert",  "nSv", "equivalent_dose",  1.e-9 * sievert));
-      registration(unit("picosievert",  "pSv", "equivalent_dose",  1.e-12 * sievert));
-      registration(unit("rem",                 "equivalent_dose", 0.01 * sievert));
+      registration(unit("millisievert", "mSv", "equivalent_dose",  milli() * sievert));
+      registration(unit("microsievert", "uSv", "equivalent_dose",  micro() * sievert));
+      registration(unit("nanosievert",  "nSv", "equivalent_dose",  nano()  * sievert));
+      registration(unit("picosievert",  "pSv", "equivalent_dose",  pico()  * sievert));
+      registration(unit("rem",                 "equivalent_dose",  0.01 * sievert));
 
       // Fraction:
       registration(unit("percent",          "%",
@@ -1820,7 +1940,7 @@ namespace datatools {
       registration(unit("perthousand", "1/1000",    "fraction", CLHEP::perThousand));
       registration(unit("ppm",                      "fraction", CLHEP::perMillion));
       registration(unit("ppb",                      "fraction", 1.e-3 * CLHEP::perMillion));
-      registration(unit("ppt",                      "fraction", 1.e-6 * CLHEP::perMillion));
+      registration(unit("ppt",                      "fraction", micro() * CLHEP::perMillion));
       registration(unit("ppq",                      "fraction", 1.e-9 * CLHEP::perMillion));
 
       // Level:
@@ -1857,42 +1977,43 @@ namespace datatools {
 
       // Electric charge (C = A·s) :
       registration(unit("coulomb",      "C",    "electric_charge;[T][I]",  CLHEP::coulomb, true));
-      registration(unit("millicoulomb", "mC",   "electric_charge", 1e-3  * CLHEP::coulomb));
-      registration(unit("microcoulomb", "uC",   "electric_charge", 1e-6  * CLHEP::coulomb));
-      registration(unit("nanocoulomb",  "nC",   "electric_charge", 1e-9  * CLHEP::coulomb));
-      registration(unit("picocoulomb",  "pC",   "electric_charge", 1e-12 * CLHEP::coulomb));
-      registration(unit("femtocoulomb", "fC",   "electric_charge", 1e-15 * CLHEP::coulomb));
+      registration(unit("millicoulomb", "mC",   "electric_charge", milli() * CLHEP::coulomb));
+      registration(unit("microcoulomb", "uC",   "electric_charge", micro() * CLHEP::coulomb));
+      registration(unit("nanocoulomb",  "nC",   "electric_charge", nano()  * CLHEP::coulomb));
+      registration(unit("picocoulomb",  "pC",   "electric_charge", pico()  * CLHEP::coulomb));
+      registration(unit("femtocoulomb", "fC",   "electric_charge", femto() * CLHEP::coulomb));
 
       // Electric potential (V = J/C = kg·m2·s−3·A−1) :
       registration(unit("volt",       "V",    "electric_potential;[M][L2][T-3][I-1]", CLHEP::volt, true));
-      registration(unit("millivolt", "mV",    "electric_potential", 1e-3  * CLHEP::volt));
+      registration(unit("microvolt", "uV",    "electric_potential", micro() * CLHEP::volt));
+      registration(unit("millivolt", "mV",    "electric_potential", milli() * CLHEP::volt));
       registration(unit("kilovolt",  "kV",    "electric_potential",         CLHEP::kilovolt));
       registration(unit("megavolt",  "MV",    "electric_potential",         CLHEP::megavolt));
 
       // Electric resistance ( Ω = V/A = kg·m2·s−3·A−2) :
       registration(unit("ohm",       "O",   "electric_resistance;[M][L2][T-3][I-2]", CLHEP::ohm, true));
-      registration(unit("kiloohm",  "kO",   "electric_resistance", 1.e3 * CLHEP::ohm));
-      registration(unit("megaohm",  "MO",   "electric_resistance", 1.e6 * CLHEP::ohm));
+      registration(unit("kiloohm",  "kO;kOhm",   "electric_resistance", kilo() * CLHEP::ohm));
+      registration(unit("megaohm",  "MO;MOhm",   "electric_resistance", mega() * CLHEP::ohm));
 
       // Resistivity (Ω·m = kg·m3·s−3·A−2 ):
       registration(unit("ohm_meter", "ohm.m;O.m", "resistivity;[M][L3][T-3][I-2]",   CLHEP::ohm * CLHEP::meter, true));
 
       // Power (W = V·A = kg·m2·s−3) :
       registration(unit("watt",       "W",   "power;[M][L2][T-3]", CLHEP::watt, true));
-      registration(unit("milliwatt", "mW",   "power", 1.e-3 * CLHEP::watt));
-      registration(unit("microwatt", "uW",   "power", 1.e-6 * CLHEP::watt));
-      registration(unit("nanowatt",  "nW",   "power", 1.e-9 * CLHEP::watt));
-      registration(unit("kilowatt",  "kW",   "power", 1.e+3 * CLHEP::watt));
-      registration(unit("megawatt",  "MW",   "power", 1.e+6 * CLHEP::watt));
-      registration(unit("gigawatt",  "GW",   "power", 1.e+9 * CLHEP::watt));
+      registration(unit("milliwatt", "mW",   "power", milli() * CLHEP::watt));
+      registration(unit("microwatt", "uW",   "power", micro() * CLHEP::watt));
+      registration(unit("nanowatt",  "nW",   "power", nano()  * CLHEP::watt));
+      registration(unit("kilowatt",  "kW",   "power", kilo()  * CLHEP::watt));
+      registration(unit("megawatt",  "MW",   "power", mega()  * CLHEP::watt));
+      registration(unit("gigawatt",  "GW",   "power", giga()  * CLHEP::watt));
 
       // Capacitance (F = C/V = kg−1·m−2·A2·s4) :
       registration(unit("farad",       "F",   "capacitance;[M-1][L-2][T4][I2]", CLHEP::farad, true));
-      registration(unit("millifarad", "mF",   "capacitance",   1.e-3  * CLHEP::farad));
-      registration(unit("microfarad", "uF",   "capacitance",   1.e-6  * CLHEP::farad));
-      registration(unit("nanofarad",  "nF",   "capacitance",   1.e-9  * CLHEP::farad));
-      registration(unit("picofarad",  "pF",   "capacitance",   1.e-12 * CLHEP::farad));
-      registration(unit("femtofarad", "fF",   "capacitance",   1.e-15 * CLHEP::farad));
+      registration(unit("millifarad", "mF",   "capacitance",   milli()  * CLHEP::farad));
+      registration(unit("microfarad", "uF",   "capacitance",   micro()  * CLHEP::farad));
+      registration(unit("nanofarad",  "nF",   "capacitance",   nano()   * CLHEP::farad));
+      registration(unit("picofarad",  "pF",   "capacitance",   pico()   * CLHEP::farad));
+      registration(unit("femtofarad", "fF",   "capacitance",   femto()  * CLHEP::farad));
 
       // Electric flux (V·m = kg·m3·s−3·A−1 = L3MT–3I–1) :
       registration(unit("V.m",       "V.m",    "electric_flux;[M][L3][T-3][I-1]", CLHEP::volt * CLHEP::meter, true));
@@ -1921,26 +2042,28 @@ namespace datatools {
       registration(unit("tesla",       "T",
                         "magnetic_flux_density;[M][T-2][I-1]",
                         CLHEP::tesla, true));
-      registration(unit("millitesla", "mT",     "magnetic_flux_density", 1.e-3 * CLHEP::tesla));
-      registration(unit("microtesla", "uT",     "magnetic_flux_density", 1.e-6 * CLHEP::tesla));
-      registration(unit("nanotesla",  "nT",     "magnetic_flux_density", 1.e-9 * CLHEP::tesla));
+      registration(unit("millitesla", "mT",     "magnetic_flux_density", milli() * CLHEP::tesla));
+      registration(unit("microtesla", "uT",     "magnetic_flux_density", micro() * CLHEP::tesla));
+      registration(unit("nanotesla",  "nT",     "magnetic_flux_density", nano()  * CLHEP::tesla));
       registration(unit("gauss",       "G",
                         /**/           "Gs",    "magnetic_flux_density",         CLHEP::gauss));
-      registration(unit("milligauss", "mG",     "magnetic_flux_density", 1.e-3 * CLHEP::gauss));
+      registration(unit("milligauss", "mG",     "magnetic_flux_density", milli() * CLHEP::gauss));
       registration(unit("kilogauss",  "kG",     "magnetic_flux_density",         CLHEP::kilogauss));
 
       // Magnetic flux (Wb = V·s = kg·m2·s−2·A−1) :
       registration(unit("weber",       "Wb",     "magnetic_flux;[M][L2][T-2][I-1]", CLHEP::weber, true));
-      registration(unit("milliweber", "mWb",     "magnetic_flux", 1.e-3 * CLHEP::weber));
-      registration(unit("microweber", "uWb",     "magnetic_flux", 1.e-6 * CLHEP::weber));
-      registration(unit("nanoweber",  "nWb",     "magnetic_flux", 1.e-9 * CLHEP::weber));
+      registration(unit("milliweber", "mWb",     "magnetic_flux", milli() * CLHEP::weber));
+      registration(unit("microweber", "uWb",     "magnetic_flux", micro() * CLHEP::weber));
+      registration(unit("nanoweber",  "nWb",     "magnetic_flux", nano()  * CLHEP::weber));
       registration(unit("maxwell",     "Mx",     "magnetic_flux", 1.e-8 * CLHEP::weber));
 
       // Magnetic field strength (A/m = A·m−1) :
       registration(unit("A/m",                   "magnetic_field_strength;[L-1][I]",  CLHEP::ampere / CLHEP::meter, true));
 
       // Inductance (H = Wb/A = V·s/A = kg·m2·s−2·A−2):
-      registration(unit("henry", "H", "inductance;[M][L2][T-2][I-2]", CLHEP::henry, true));
+      registration(unit("henry",       "H", "inductance;[M][L2][T-2][I-2]", CLHEP::henry, true));
+      registration(unit("millihenry", "mH", "inductance", milli() * CLHEP::henry));
+      registration(unit("microhenry", "uH", "inductance", micro() * CLHEP::henry));
 
       // Permeability (H/m = kg·m·s−2·A−2) :
       registration(unit("H/m",        "permeability;[M][L][T-2][I-2]", CLHEP::henry / CLHEP::meter, true));
@@ -1958,14 +2081,14 @@ namespace datatools {
       registration(unit("zebibit",  "Zibit", "data_storage", bit * power_of_two_to_factor(ZEBI)));
       registration(unit("yobibit",  "Yibit", "data_storage", bit * power_of_two_to_factor(YOBI)));
 
-      registration(unit("kilobit",  "kbit",  "data_storage", bit * power_of_ten_to_factor(KILO)));
-      registration(unit("megebit",  "Mbit",  "data_storage", bit * power_of_ten_to_factor(MEGA)));
-      registration(unit("gigabit",  "Gbit",  "data_storage", bit * power_of_ten_to_factor(GIGA)));
-      registration(unit("terabit",  "Tbit",  "data_storage", bit * power_of_ten_to_factor(TERA)));
-      registration(unit("petabit",  "Pbit",  "data_storage", bit * power_of_ten_to_factor(PETA)));
-      registration(unit("exabit",   "Ebit",  "data_storage", bit * power_of_ten_to_factor(EXA)));
-      registration(unit("zettabit", "Zbit",  "data_storage", bit * power_of_ten_to_factor(ZETTA)));
-      registration(unit("yottabit", "Ybit",  "data_storage", bit * power_of_ten_to_factor(YOTTA)));
+      registration(unit("kilobit",  "kbit",  "data_storage",  kilo() * bit));
+      registration(unit("megabit",  "Mbit",  "data_storage",  mega() * bit));
+      registration(unit("gigabit",  "Gbit",  "data_storage",  giga() * bit));
+      registration(unit("terabit",  "Tbit",  "data_storage",  tera() * bit));
+      registration(unit("petabit",  "Pbit",  "data_storage",  peta() * bit));
+      registration(unit("exabit",   "Ebit",  "data_storage",   exa() * bit));
+      registration(unit("zettabit", "Zbit",  "data_storage", zetta() * bit));
+      registration(unit("yottabit", "Ybit",  "data_storage", yotta() * bit));
 
       // Symbol 'B_' is reserved for the 'bel' SI unit.
       registration(unit("byte",      "B;o;octet",         "data_storage", byte , true));
@@ -1979,14 +2102,14 @@ namespace datatools {
       registration(unit("zebibyte",  "ZiB;Zio;zebioctet", "data_storage", byte * power_of_two_to_factor(ZEBI)));
       registration(unit("yobibyte",  "YiB;Yio;yobioctet", "data_storage", byte * power_of_two_to_factor(YOBI)));
 
-      registration(unit("kilobyte",  "kB;Ko;kilooctet",   "data_storage", byte * power_of_ten_to_factor(KILO)));
-      registration(unit("megabyte",  "MB;Mo;megaoctet",   "data_storage", byte * power_of_ten_to_factor(MEGA)));
-      registration(unit("gigabyte",  "GB;Go;gigaoctet",   "data_storage", byte * power_of_ten_to_factor(GIGA)));
-      registration(unit("terabyte",  "TB;To;teraoctet",   "data_storage", byte * power_of_ten_to_factor(TERA)));
-      registration(unit("petabyte",  "PB;Po;petaoctet",   "data_storage", byte * power_of_ten_to_factor(PETA)));
-      registration(unit("exabyte",   "EB;Eo;exaoctet",    "data_storage", byte * power_of_ten_to_factor(EXA)));
-      registration(unit("zettabyte", "ZB;Zo;zettaoctet",  "data_storage", byte * power_of_ten_to_factor(ZETTA)));
-      registration(unit("yottabyte", "YB;Yo;yottaoctet",  "data_storage", byte * power_of_ten_to_factor(YOTTA)));
+      registration(unit("kilobyte",  "kB;Ko;kilooctet",   "data_storage",  kilo() * byte));
+      registration(unit("megabyte",  "MB;Mo;megaoctet",   "data_storage",  mega() * byte));
+      registration(unit("gigabyte",  "GB;Go;gigaoctet",   "data_storage",  giga() * byte));
+      registration(unit("terabyte",  "TB;To;teraoctet",   "data_storage",  tera() * byte));
+      registration(unit("petabyte",  "PB;Po;petaoctet",   "data_storage",  peta() * byte));
+      registration(unit("exabyte",   "EB;Eo;exaoctet",    "data_storage",   exa() * byte));
+      registration(unit("zettabyte", "ZB;Zo;zettaoctet",  "data_storage", zetta() * byte));
+      registration(unit("yottabyte", "YB;Yo;yottaoctet",  "data_storage", yotta() * byte));
 
       // Data transfert rate:
       double bit_per_second = bit / CLHEP::second;
@@ -1995,39 +2118,39 @@ namespace datatools {
       registration(unit("mebibit/s", "Mibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(MEBI)));
       registration(unit("gibibit/s", "Gibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(GIBI)));
       registration(unit("tebibit/s", "Tibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(TEBI)));
-      registration(unit("pebibit/s", "Pibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(PEBI)));
-      registration(unit("exbibit/s", "Eibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(EXBI)));
-      registration(unit("zebibit/s", "Zibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(ZEBI)));
-      registration(unit("yobibit/s", "Yibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(YOBI)));
+      // registration(unit("pebibit/s", "Pibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(PEBI)));
+      // registration(unit("exbibit/s", "Eibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(EXBI)));
+      // registration(unit("zebibit/s", "Zibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(ZEBI)));
+      // registration(unit("yobibit/s", "Yibit/s", "data_transfer_rate",        bit_per_second * power_of_two_to_factor(YOBI)));
 
-      registration(unit("kilobit/s",  "kbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(KILO)));
-      registration(unit("megabit/s",  "Mbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(MEGA)));
-      registration(unit("gigabit/s",  "Gbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(GIGA)));
-      registration(unit("terabit/s",  "Tbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(TERA)));
-      registration(unit("petabit/s",  "Pbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(PETA)));
-      registration(unit("exabit/s",   "Ebit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(EXA)));
-      registration(unit("zettabit/s", "Zbit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(ZETTA)));
-      registration(unit("yottabit/s", "Ybit/s", "data_transfer_rate", bit_per_second * power_of_ten_to_factor(YOTTA)));
+      registration(unit("kilobit/s",  "kbit/s", "data_transfer_rate",  kilo() * bit_per_second));
+      registration(unit("megabit/s",  "Mbit/s", "data_transfer_rate",  mega() * bit_per_second));
+      registration(unit("gigabit/s",  "Gbit/s", "data_transfer_rate",  giga() * bit_per_second));
+      registration(unit("terabit/s",  "Tbit/s", "data_transfer_rate",  tera() * bit_per_second));
+      // registration(unit("petabit/s",  "Pbit/s", "data_transfer_rate",  peta() * bit_per_second));
+      // registration(unit("exabit/s",   "Ebit/s", "data_transfer_rate",   exa() * bit_per_second));
+      // registration(unit("zettabit/s", "Zbit/s", "data_transfer_rate", zetta() * bit_per_second));
+      // registration(unit("yottabit/s", "Ybit/s", "data_transfer_rate", yotta() * bit_per_second));
 
       double byte_per_second = byte / CLHEP::second;
-      registration(unit("byte/s",     "B/s"        , "data_transfer_rate", byte_per_second, true));
+      registration(unit("byte/s",     "B/s"        , "data_transfer_rate", byte_per_second));
       registration(unit("kibibyte/s", "KiB/s;Kio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(KIBI)));
       registration(unit("mebibyte/s", "MiB/s;Mio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(MEBI)));
       registration(unit("gibibyte/s", "GiB/s;Gio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(GIBI)));
       registration(unit("tebibyte/s", "TiB/s;Tio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(TEBI)));
-      registration(unit("pebibyte/s", "PiB/s;Pio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(PEBI)));
-      registration(unit("exbibyte/s", "EiB/s;Eio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(EXBI)));
-      registration(unit("zebibyte/s", "ZiB/s;Zio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(ZEBI)));
-      registration(unit("yobibyte/s", "YiB/s;Yio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(YOBI)));
+      // registration(unit("pebibyte/s", "PiB/s;Pio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(PEBI)));
+      // registration(unit("exbibyte/s", "EiB/s;Eio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(EXBI)));
+      // registration(unit("zebibyte/s", "ZiB/s;Zio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(ZEBI)));
+      // registration(unit("yobibyte/s", "YiB/s;Yio/s", "data_transfer_rate", byte_per_second * power_of_two_to_factor(YOBI)));
 
-      registration(unit("kilobyte/s",  "kB/s;ko/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(KILO)));
-      registration(unit("megabyte/s",  "MB/s;Mo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(MEGA)));
-      registration(unit("gigabyte/s",  "GB/s;Go/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(GIGA)));
-      registration(unit("terabyte/s",  "TB/s;To/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(TERA)));
-      registration(unit("petabyte/s",  "PB/s;Po/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(PETA)));
-      registration(unit("exabyte/s",   "EB/s;Eo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(EXA)));
-      registration(unit("zettabyte/s", "ZB/s;Zo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(ZETTA)));
-      registration(unit("yottabyte/s", "YB/s;Yo/s", "data_transfer_rate",  byte_per_second * power_of_ten_to_factor(YOTTA)));
+      registration(unit("kilobyte/s",  "kB/s;ko/s", "data_transfer_rate",  kilo() * byte_per_second));
+      registration(unit("megabyte/s",  "MB/s;Mo/s", "data_transfer_rate",  mega() * byte_per_second));
+      registration(unit("gigabyte/s",  "GB/s;Go/s", "data_transfer_rate",  giga() * byte_per_second));
+      registration(unit("terabyte/s",  "TB/s;To/s", "data_transfer_rate",  tera() * byte_per_second));
+      // registration(unit("petabyte/s",  "PB/s;Po/s", "data_transfer_rate",  peta() * byte_per_second));
+      // registration(unit("exabyte/s",   "EB/s;Eo/s", "data_transfer_rate",   exa() * byte_per_second));
+      // registration(unit("zettabyte/s", "ZB/s;Zo/s", "data_transfer_rate", zetta() * byte_per_second));
+      // registration(unit("yottabyte/s", "YB/s;Yo/s", "data_transfer_rate", yotta() * byte_per_second));
 
       return;
     }

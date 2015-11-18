@@ -72,6 +72,27 @@ namespace datatools {
       YOTTA =  24
     };
 
+    double yocto();
+    double zepto();
+    double atto();
+    double femto();
+    double pico();
+    double nano();
+    double micro();
+    double milli();
+    double centi();
+    double deci();
+    double deca();
+    double hecto();
+    double kilo();
+    double mega();
+    double giga();
+    double tera();
+    double peta();
+    double exa();
+    double zetta();
+    double yotta();
+
     //! Return the SI prefix factor associated to a given SI power of ten
     double power_of_ten_to_factor(power_of_ten);
 
