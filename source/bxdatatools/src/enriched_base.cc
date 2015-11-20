@@ -23,9 +23,15 @@ namespace datatools {
     return true;
   }
 
+  // static
+  logger::priority enriched_base::default_logging_priority()
+  {
+    return logger::PRIO_FATAL;
+  }
+
   enriched_base::enriched_base()
   {
-    _logging_priority_ = logger::PRIO_FATAL;
+    _logging_priority_ = default_logging_priority();
     return;
   }
 
@@ -162,10 +168,11 @@ namespace datatools {
 
   void enriched_base::clear()
   {
-    _name_.clear();
-    _display_name_.clear();
-    _terse_description_.clear();
     reset_auxiliaries();
+    _terse_description_.clear();
+    _display_name_.clear();
+    _name_.clear();
+    _logging_priority_ = default_logging_priority();
     return;
   }
 
@@ -273,23 +280,39 @@ namespace datatools {
     if (flags_ & EXPORT_CONFIG_CLEAR) {
       config_.clear();
     }
+
     if (flags_ & EXPORT_CONFIG_NAME) {
-      config_.store_string(prefix_ + "name", get_name(), "Name");
+      if (has_name()) {
+        config_.store_string(prefix_ + "name", get_name(), "Name");
+      }
     }
+
     if (flags_ & EXPORT_CONFIG_DISPLAY_NAME) {
-      config_.store_string(prefix_ + "display_name", get_display_name(), "Display name");
+      if (has_display_name()) {
+        config_.store_string(prefix_ + "display_name", get_display_name(), "Display name");
+      }
     }
+
     if (flags_ & EXPORT_CONFIG_TERSE_DESCRIPTION) {
-      config_.store_string(prefix_ + "terse_description", get_terse_description(), "Short description");
+      if (has_terse_description()) {
+        config_.store_string(prefix_ + "terse_description", get_terse_description(), "Short description");
+      }
     }
+
     if (flags_ & EXPORT_CONFIG_LOGGING_PRIORITY) {
-      config_.store_string(prefix_ + "logging.priority",
-                           datatools::logger::get_priority_label(get_logging_priority()),
-                           "Logging priority threshold");
+      if (get_logging_priority() != default_logging_priority()) {
+        config_.store_string(prefix_ + "logging.priority",
+                             datatools::logger::get_priority_label(get_logging_priority()),
+                             "Logging priority threshold");
+      }
     }
+
     if (flags_ & EXPORT_CONFIG_AUXILIARIES) {
-      get_auxiliaries().export_all_adding_prefix(config_, prefix_ + "aux.");
+      if (has_auxiliaries()) {
+        get_auxiliaries().export_all_adding_prefix(config_, prefix_ + "aux.");
+      }
     }
+
     return;
   }
 

@@ -130,6 +130,9 @@ namespace datatools {
     /// Return the logging priority threshold
     logger::priority get_logging_priority() const;
 
+    /// Return the default logging priority threshold
+    static logger::priority default_logging_priority();
+
     /// Clear
     void clear();
 

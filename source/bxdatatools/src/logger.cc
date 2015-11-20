@@ -121,9 +121,12 @@ logger::priority logger::extract_logging_configuration(
   if (config.has_key("logging.priority")) {
     std::string ps = config.fetch_string("logging.priority");
     p = datatools::logger::get_priority(ps);
-    DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED && throw_on_error,
-                std::logic_error,
-                "Invalid logging priority label '" << ps << "' !");
+    if (p == datatools::logger::PRIO_UNDEFINED) {
+      DT_THROW_IF(throw_on_error,
+                  std::logic_error,
+                  "Invalid logging priority label '" << ps << "' !");
+      p = default_prio;
+    }
   } else if (config.has_flag("debug") || config.has_flag("logging.debug")) {
     p = datatools::logger::PRIO_DEBUG;
   } else if (config.has_flag("verbose") || config.has_flag("logging.verbose")) {
