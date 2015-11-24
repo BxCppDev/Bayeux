@@ -236,6 +236,11 @@ namespace genvtx {
     return *_external_prng_;
   }
 
+  bool i_vertex_generator::is_time_generator() const
+  {
+    return _time_generator_;
+  }
+
   i_vertex_generator::i_vertex_generator()
   {
     _logging_priority = datatools::logger::PRIO_FATAL;
@@ -243,6 +248,7 @@ namespace genvtx {
     _total_weight_.invalidate();
     _external_prng_ = 0;
     _vertex_validation_support_ = true;
+    _time_generator_ = false;
     return;
   }
 
@@ -261,6 +267,97 @@ namespace genvtx {
   bool i_vertex_generator::has_next_vertex() const
   {
     return true;
+  }
+
+  void i_vertex_generator::_shoot_vertex_(mygsl::rng & random_,
+                                          geomtools::vector_3d & vertex_)
+  {
+    DT_THROW_IF(is_time_generator(), std::logic_error, "This is a vertex/time generator!");
+    if (is_time_generator()) {
+      double time = datatools::invalid_real();
+      _shoot_vertex_and_time(random_, vertex_, time);
+    } else {
+      _shoot_vertex(random_, vertex_);
+    }
+    return;
+  }
+
+  void i_vertex_generator::_shoot_vertex_and_time_(mygsl::rng & random_,
+                                                   geomtools::vector_3d & vertex_,
+                                                   double & time_)
+  {
+    DT_THROW_IF(!is_time_generator(), std::logic_error, "This generator is not able to generate a decay time associated to random vertex!");
+    _shoot_vertex_and_time(random_, vertex_, time_);
+    return;
+  }
+
+  // virtual
+  void i_vertex_generator::_shoot_vertex(mygsl::rng & random_,
+                                         geomtools::vector_3d & vertex_)
+  {
+    DT_THROW(std::logic_error, "This method is not implemented ! "
+             << "It should be overloaded for the class of the '" << get_name() << "' vertex generator!");
+    return;
+  }
+
+  // virtual
+  void i_vertex_generator::_shoot_vertex_and_time(mygsl::rng & random_,
+                                                  geomtools::vector_3d & vertex_,
+                                                  double & time_)
+  {
+    DT_THROW(std::logic_error, "This method is not implemented ! "
+             << "It should be overloaded for the class of the '" << get_name() << "' vertex generator!");
+    return;
+  }
+
+  void i_vertex_generator::shoot_vertex_and_time(geomtools::vector_3d & vertex_,
+                                                 double & time_)
+  {
+    DT_THROW_IF (_external_prng_ == 0, std::logic_error,
+                 "Missing external PRNG handle in vertex/time generator '" << get_name() << "' !");
+    shoot_vertex_and_time(*_external_prng_, vertex_, time_);
+    return;
+  }
+
+  void i_vertex_generator::shoot_vertex_and_time(mygsl::rng & random_,
+                                                 geomtools::vector_3d & vertex_,
+                                                 double & time_)
+  {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    do {
+      _shoot_vertex_and_time_(random_, vertex_, time_);
+      if (is_vertex_validation_supported() && has_vertex_validation()) {
+        // If a vertex validation manager is installed, we use it...
+        // Check the validity of the geometry context associated to the candidate vertex:
+        DT_THROW_IF (! _grab_vertex_validation().grab_geometry_context().is_valid(),
+                     std::logic_error,
+                     "Vertex generator '" << get_name()  << "' : "
+                     << "Invalid geometry context for vertex validation !");
+        // Invoke the validator:
+        DT_LOG_TRACE(get_logging_priority(), "Invoking the validator...");
+        vertex_validation::validate_status_type status = _grab_vertex_validation().validate();
+        if (status == vertex_validation::VS_ACCEPTED) {
+          _grab_vertex_validation().grab_geometry_context().reset();
+          break;
+        } else if (status == vertex_validation::VS_REJECTED) {
+          _grab_vertex_validation().grab_geometry_context().reset();
+        } else if (status == vertex_validation::VS_MAXTRIES) {
+          DT_THROW_IF (true, std::logic_error,
+                       "Vertex generator '" << get_name()  << "' : "
+                       << "Number of vertex shots exceeds the maximum number of allowed tries !");
+          break;
+        } else {
+          DT_THROW_IF (true, std::logic_error,
+                       "Vertex generator '" << get_name()  << "' : "
+                       << "It was not possible to apply vertex validation !");
+        }
+      } else {
+        // Otherwise, return the randomize vertex/time
+        break;
+      }
+    } while(true);
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
+    return;
   }
 
   void i_vertex_generator::shoot_vertex(geomtools::vector_3d & vertex_)
@@ -308,7 +405,7 @@ namespace genvtx {
       }
     } while(true);
     DT_LOG_TRACE(get_logging_priority(), "Exiting.");
-   return;
+    return;
   }
 
   geomtools::vector_3d i_vertex_generator::shoot_vertex(mygsl::rng & random_)
@@ -374,6 +471,9 @@ namespace genvtx {
       // Protect against vertex validation initialization if this feature is not supported:
       return;
     }
+
+
+
     bool vtx_validation = false;
     if (setup_.has_key("validation.activation")) {
       vtx_validation = setup_.fetch_boolean("validation.activation");
@@ -459,11 +559,18 @@ namespace genvtx {
     _geo_label_.clear();
     _geom_setup_requirement_.clear();
     _geom_manager_ = 0;
+    _time_generator_ = false;
     _total_weight_.invalidate();
     _logging_priority = datatools::logger::PRIO_FATAL;
     if (_vertex_validation_) {
       _vertex_validation_.reset();
     }
+    return;
+  }
+
+  void i_vertex_generator::_set_time_generator(bool tg_)
+  {
+    _time_generator_ = tg_;
     return;
   }
 
@@ -495,6 +602,9 @@ namespace genvtx {
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Geometry manager : " << _geom_manager_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Time generator : " << _time_generator_ << std::endl;
 
     if (has_total_weight()) {
       // out_ << indent << datatools::i_tree_dumpable::tag

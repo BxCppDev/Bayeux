@@ -688,6 +688,14 @@ namespace genvtx {
       && _current_vg_.get().has_next_vertex();
   }
 
+  bool manager::is_time_generator() const
+  {
+    if (!can_shoot_vertex()) {
+      return false;
+    }
+    return _current_vg_.get().is_time_generator();
+  }
+
   void manager::shoot_vertex(geomtools::vector_3d & vertex_)
   {
     DT_THROW_IF (! is_initialized(),
@@ -696,6 +704,20 @@ namespace genvtx {
       activate_current_vg();
     }
     _current_vg_.grab().shoot_vertex(_random_, vertex_);
+    return;
+  }
+
+  void manager::shoot_vertex_and_time(geomtools::vector_3d & vertex_, double & time_)
+  {
+    DT_THROW_IF (! is_initialized(),
+                 std::logic_error, "Generator has not been locked !");
+    if (! has_current_vg()) {
+      activate_current_vg();
+    }
+    DT_THROW_IF(!_current_vg_.get().is_time_generator(),
+                std::logic_error,
+                "Current generator cannot generate time associated to vertex!");
+    _current_vg_.grab().shoot_vertex_and_time(_random_, vertex_, time_);
     return;
   }
 

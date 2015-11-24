@@ -193,8 +193,14 @@ namespace genvtx {
     /// Check if manager can fire vertex :
     bool can_shoot_vertex() const;
 
+    /// Check is manager can fire vertex and time
+    bool is_time_generator() const;
+
     /// Main public method to randomize a 3D vertex point
     void shoot_vertex(geomtools::vector_3d & vertex_);
+
+    /// Main public method to randomize a 3D vertex point/time
+    void shoot_vertex_and_time(geomtools::vector_3d & vertex_, double & time_);
 
     /// Smart print method
     virtual void tree_dump(std::ostream & out_         = std::clog,

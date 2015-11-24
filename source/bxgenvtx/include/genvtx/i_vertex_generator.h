@@ -131,6 +131,9 @@ namespace genvtx {
     /// Get the weight info attached to the vertex generator
     const weight_info & get_total_weight() const;
 
+    /// Check if the generator also generates a random time associated to the vertex
+    bool is_time_generator() const;
+
     /// Check if another vertex is available
     virtual bool has_next_vertex() const;
 
@@ -142,6 +145,12 @@ namespace genvtx {
 
     /// Wrapper method for vertex randomization
     geomtools::vector_3d shoot_vertex(mygsl::rng & random_);
+
+    /// Wrapper method for vertex/time randomization
+    void shoot_vertex_and_time(mygsl::rng & random_, geomtools::vector_3d & vertex_, double & time_);
+
+    /// Wrapper method for vertex/time randomization
+    void shoot_vertex_and_time(geomtools::vector_3d & vertex_, double & time_);
 
     /// Simple initialization(no external resource)
     virtual void initialize_simple();
@@ -191,6 +200,9 @@ namespace genvtx {
 
   protected:
 
+    /// Set the time generator flag
+    void _set_time_generator(bool);
+
     /// Internal initialization
     void _initialize(const datatools::properties & setup_,
                      datatools::service_manager & service_manager_);
@@ -217,7 +229,21 @@ namespace genvtx {
     vertex_validation & _grab_vertex_validation();
 
     /// Main vertex randomization interface method
-    virtual void _shoot_vertex(mygsl::rng & random_, geomtools::vector_3d & vertex_) = 0;
+    virtual void _shoot_vertex(mygsl::rng & random_,
+                               geomtools::vector_3d & vertex_);
+
+    /// Main vertex randomization interface method (default: throw exception)
+    virtual void _shoot_vertex_and_time(mygsl::rng & random_,
+                                        geomtools::vector_3d & vertex_,
+                                        double & time_);
+
+  private:
+
+    /// Vertex randomization interface method
+    void _shoot_vertex_(mygsl::rng & random_, geomtools::vector_3d & vertex_);
+
+    /// Vertex/time randomization interface method
+    void _shoot_vertex_and_time_(mygsl::rng & random_, geomtools::vector_3d & vertex_, double & time_);
 
   protected:
 
@@ -226,12 +252,13 @@ namespace genvtx {
   private:
 
     std::string                  _name_;         //!< The name of the vertex generator
+    bool                         _time_generator_; //!< The generator also generates a (decay) time associated to the vertex
     std::string                  _geo_label_;    //!< The label of the Geometry Service
     std::string                  _geom_setup_requirement_; //!< The requirement ont the requested geometry setup (label and version)
     const ::geomtools::manager * _geom_manager_; //!< Handle to the geometry manager
     weight_info                  _total_weight_; //!< Weighting data
     mygsl::rng                 * _external_prng_; //!< Handle to an external PRNG
-    bool                                 _vertex_validation_support_; //!< Flag for vertex validation support
+    bool                         _vertex_validation_support_; //!< Flag for vertex validation support
     boost::scoped_ptr<vertex_validation> _vertex_validation_; //!< Handle to the vertex validation
 
     // Factory declaration :

@@ -40,7 +40,7 @@ namespace genvtx {
 
   /// \brief A vertex generator based on the geometry of a 3D tube
   class tube_vg : public i_vertex_generator
-   {
+  {
   public:
 
     static const int MODE_INVALID = -1;

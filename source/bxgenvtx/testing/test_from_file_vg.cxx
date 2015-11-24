@@ -1,19 +1,23 @@
 // -*- mode: c++ ; -*-
 // test_from_file_vg.cxx
 
+// Ourselves:
+#include <genvtx/from_file_vg.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <exception>
 
-#include <genvtx/from_file_vg.h>
+// Bayeux:
 #include <mygsl/rng.h>
 #include <geomtools/gnuplot_draw.h>
 
-using namespace std;
-
 int main (int argc_, char ** argv_)
 {
+
+using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test program for class 'genvtx::from_file_vg'!" << endl;
@@ -51,19 +55,28 @@ int main (int argc_, char ** argv_)
       input_vertex_file = "${GENVTX_TESTING_DIR}/data/test_cylinder_vertices.data";
     }
     vg.set_filename (input_vertex_file);
-    vg.set_length_unit (CLHEP::mm);
+    // vg.set_length_unit(CLHEP::mm);
     vg.initialize_simple ();
     vg.tree_dump (clog, "From file vertex generator");
 
     geomtools::vector_3d vertex;
+    double time;
 
     while (true) {
-      vg.shoot_vertex (random, vertex);
-      if (! geomtools::is_valid (vertex)) {
+      if (vg.is_time_generator()) {
+        vg.shoot_vertex_and_time(random, vertex, time);
+      } else {
+        vg.shoot_vertex(random, vertex);
+      }
+      if (! geomtools::is_valid(vertex)) {
         clog << "End of vertex source file." << endl;
         break;
       }
-      geomtools::gnuplot_draw::basic_draw_point (cout, vertex, true);
+      geomtools::gnuplot_draw::basic_draw_point(std::cout, vertex, false);
+      if (vg.is_time_generator()) {
+        std::cout << ' ' << time;
+      }
+      std::cout << std::endl;
     }
 
   }
@@ -77,5 +90,3 @@ int main (int argc_, char ** argv_)
   }
   return (error_code);
 }
-
-// end of test_from_file_vg.cxx

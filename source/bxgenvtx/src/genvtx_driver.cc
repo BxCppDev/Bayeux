@@ -238,7 +238,7 @@ namespace genvtx {
       if (! _params_.VtxOutputFile.empty()) {
         fout.reset(new std::ofstream);
         std::string ofn = _params_.VtxOutputFile;
-        datatools::fetch_path_with_env (ofn);
+        datatools::fetch_path_with_env(ofn);
         fout.get()->open(ofn.c_str());
         DT_THROW_IF (! *fout.get(), std::runtime_error,
                      "Cannot open output file '" << ofn << "' !");
@@ -248,14 +248,27 @@ namespace genvtx {
         *fout.get() << "#@geometry.setup.version=" << _geo_mgr_->get_setup_version() << std::endl;
         *fout.get() << "#@vertex_generator.name=" << _vtx_mgr_->get_generator_name () << std::endl;
         *fout.get() << "#@length_unit=mm" << std::endl;
+        if (_vtx_mgr_->is_time_generator()) {
+          *fout.get() << "#@time_unit=ns" << std::endl;
+        }
       }
       int vtx_counter = 0;
       while (vtx_counter < _params_.nshoots && _vtx_mgr_->can_shoot_vertex()) {
         DT_LOG_TRACE(_logging_, "Vertex count : " << vtx_counter);
         geomtools::vector_3d vertex_pos;
-        _vtx_mgr_->shoot_vertex(vertex_pos);
+        double time = datatools::invalid_real();
+        if (_vtx_mgr_->is_time_generator()) {
+          _vtx_mgr_->shoot_vertex_and_time(vertex_pos, time);
+        } else {
+          _vtx_mgr_->shoot_vertex(vertex_pos);
+        }
         if (fout) {
-          geomtools::gnuplot_draw::basic_draw_point(*fout.get(), (vertex_pos / CLHEP::mm));
+          // Save the vertex[/time] in an text output file:
+          geomtools::gnuplot_draw::basic_draw_point(*fout.get(), (vertex_pos / CLHEP::mm), false);
+          if (_vtx_mgr_->is_time_generator()) {
+            *fout.get() << ' ' << time / CLHEP::nanosecond;
+          }
+          *fout.get() << std::endl;
         }
         if (_action_ & genvtx_driver::ACTION_VISU) {
           if (_params_.visu_max_counts == 0 || vtx_counter < _params_.visu_max_counts) {

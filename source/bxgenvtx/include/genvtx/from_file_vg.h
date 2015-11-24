@@ -31,15 +31,21 @@ namespace genvtx {
 
     static double default_length_unit();
 
-    bool is_open () const;
+    static double default_time_unit();
 
-    const std::string & get_filename () const;
+    bool is_open() const;
 
-    void set_filename (const std::string &);
+    const std::string & get_filename() const;
 
-    void set_length_unit (double lu_);
+    void set_filename(const std::string &);
 
-    double get_length_unit () const;
+    void set_length_unit(double lu_);
+
+    double get_length_unit() const;
+
+    void set_time_unit(double tu_);
+
+    double get_time_unit() const;
 
     /// Constructor
     from_file_vg();
@@ -63,24 +69,36 @@ namespace genvtx {
 
   protected :
 
-    /// Randomize vertex
+    /// Load vertex from the source
     virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
 
-    void _open_source ();
+    /// Load vertex/time from the source
+    virtual void _shoot_vertex_and_time(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_, double & time_);
 
-    void _close_source ();
+    /// Open the source file
+    void _open_source();
 
-    void _read_next ();
+    /// Close the source file
+    void _close_source();
 
-    bool _has_next ();
+    /// Read the next vertex[/time] entry
+    void _read_next();
+
+    /// Check for a next vertex[/time] entry
+    bool _has_next();
 
   private:
 
-    std::string          _filename_;
-    bool                 _open_;
-    std::ifstream        _source_;
-    geomtools::vector_3d _next_;
+    // Configuration:
+    std::string          _filename_;    //!< Filename of the input source file
     double               _length_unit_; // default length unit (default == 1);
+    double               _time_unit_;   // default time unit (default == 1);
+
+    // Working:
+    bool                 _open_;      //!< Open source flag
+    std::ifstream        _source_;    //!< Input source file stream
+    geomtools::vector_3d _next_;      //!< Next vertex to be delivered
+    double               _next_time_; //!< Next decay time to be delivered
 
     /// Registration macro
     /// @arg from_file_vg the class to be registered
