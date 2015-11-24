@@ -529,7 +529,7 @@ namespace materials {
     return;
   }
 
-  void material::add_material_by_mass(const material * mat_ptr_ , double weight_  )
+  void material::add_material_by_mass(const material * mat_ptr_ , double weight_)
   {
     add_material_by_mass(*mat_ptr_, weight_);
     return;

@@ -61,65 +61,65 @@ namespace materials {
   {
   public:
 
-    /// Maximum number of protons for an isotope (element 'Ei')
+    //! Maximum number of protons for an isotope (element 'Ei')
     static int max_number_of_protons();
 
-    /// Undefined number of nucleons for an isotope
+    //! Undefined number of nucleons for an isotope
     static int undefined_number_of_nucleons();
 
-    /// Maximum number of nucleons for an isotope (element 'Ei')
+    //! Maximum number of nucleons for an isotope (element 'Ei')
     static int max_number_of_nucleons();
 
-    /// \brief The identifier for an isotope based on its Z and A>=Z numbers
+    //! \brief The identifier for an isotope based on its Z and A>=Z numbers
     class id : public datatools::i_tree_dumpable {
     public:
 
-      /// Default constructor
+      //! Default constructor
       id();
 
-      /// Constructor
+      //! Constructor
       id(int z_, int a_);
 
-      /// Reset
+      //! Reset
       void reset();
 
-      /// Set the number of protons
+      //! Set the number of protons
       void set_z(int z_);
 
-      /// Return the number of protons
+      //! Return the number of protons
       int get_z() const;
 
-      /// Set the number of nucleons
+      //! Set the number of nucleons
       void set_a(int z_);
 
-      /// Return the number of nucleons
+      //! Return the number of nucleons
       int get_a() const;
 
-      /// Set the numbers of protons and nucleons
+      //! Set the numbers of protons and nucleons
       void set(int z_, int a_);
 
-      /// Return the name associated to the isotope Id
+      //! Return the name associated to the isotope Id
       std::string get_name() const;
 
-      /// Export to a string identifier
+      //! Export to a string identifier
       void to_string(std::string &) const;
 
-      /// Return a string identifier
+      //! Return a string identifier
       std::string to_string() const;
 
-      /// Import from a string identifier
+      //! Import from a string identifier
       bool from_string(const std::string &);
 
-      /// Check the validity of the isotope id
+      //! Check the validity of the isotope id
       bool is_valid() const;
 
-      /// Comparison operator
+      //! Comparison operator
       bool operator<(const id &) const;
 
-      /// Comparison operator
+      //! Comparison operator
       bool operator==(const id &) const;
 
-      /// Smart print
+      //! Smart print
       virtual void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
@@ -127,38 +127,38 @@ namespace materials {
 
     private:
 
-      int _z_; /// The number of protons
-      int _a_; /// The number of nucleons
+      int _z_; //!< The number of protons
+      int _a_; //!< The number of nucleons
 
     };
 
-    /// \brief Build flags
+    //! \brief Build flags
     enum build_flag_type {
-      BF_MASS_DATA  = datatools::bit_mask::bit00, /// Extract mass excess and mass from tabulated isotopes
-      BF_DECAY_DATA = datatools::bit_mask::bit01, /// Extract decay half-life from tabulated isotopes
-      BF_LOCK       = datatools::bit_mask::bit31  /// Lock after building
+      BF_MASS_DATA  = datatools::bit_mask::bit00, //!< Extract mass excess and mass from tabulated isotopes
+      BF_DECAY_DATA = datatools::bit_mask::bit01, //!< Extract decay half-life from tabulated isotopes
+      BF_LOCK       = datatools::bit_mask::bit31  //!< Lock after building
     };
 
-    /// \brief Isotope record from AME table
+    //! \brief Isotope record from AME table
     struct record_type  : public datatools::i_tree_dumpable {
     public:
-      /// Return Z
+      //! Return Z
       int get_Z() const;
-      /// Return A
+      //! Return A
       int get_A() const;
-      /// Return N
+      //! Return N
       int get_N() const;
-      /// Return nucleus mass
+      //! Return nucleus mass
       double get_nucleus_mass() const;
-      /// Return mass excess
+      //! Return mass excess
       double get_mass_excess() const;
-      /// Return binding energy per nucleon
+      //! Return binding energy per nucleon
       double get_binding_energy_per_nucleon() const;
-      /// Return atomic mass
+      //! Return atomic mass
       double get_atomic_mass() const;
-      /// Default constructor
+      //! Default constructor
       record_type();
-      /// Smart print
+      //! Smart print
       virtual void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
                              const std::string & indent_ = "",
@@ -166,32 +166,32 @@ namespace materials {
 
     public:
 
-      std::string symbol; /// Chemical symbol of the element
-      int    Z;           /// The number of protons
-      int    A;           /// The number of nucleons
-      double mx;          /// Mass excess
-      double mx_err;      /// Error on mass excess
-      double bea;         /// Binding energy per nucleon
-      double bea_err;     /// Error on binding energy per nucleon
-      double am;          /// Atomic mass
-      double am_err;      /// Error on atomic mass
+      std::string symbol; //!< Chemical symbol of the element
+      int    Z;           //!< The number of protons
+      int    A;           //!< The number of nucleons
+      double mx;          //!< Mass excess
+      double mx_err;      //!< Error on mass excess
+      double bea;         //!< Binding energy per nucleon
+      double bea_err;     //!< Error on binding energy per nucleon
+      double am;          //!< Atomic mass
+      double am_err;      //!< Error on atomic mass
 
    };
 
-    /// Dictionary of isotope records
+    //! Dictionary of isotope records
     typedef std::map<id, record_type> isotope_dict_type;
 
-    /// Print a table of isotopes
+    //! Print a table of isotopes
     static void print_table_of_isotopes(const isotope_dict_type &,
                                         std::ostream & out_ = std::clog,
                                         const std::string & title_ = "",
                                         const std::string & indent_ = "",
                                         bool inherit_ = false);
 
-    /// Return the isotope database singleton
+    //! Return the isotope database singleton
     static const isotope_dict_type & table_of_isotopes();
 
-    /// Check if the database knows a given isotope id
+    //! Check if the database knows a given isotope id
     static bool id_is_tabulated(const id &);
 
     enum ame_release_type {
@@ -199,50 +199,50 @@ namespace materials {
       AME_RELEASE_2012 = 1,
     };
 
-    /// Load a dictionary of isotope records from the AME (2003/2012) data file
+    //! Load a dictionary of isotope records from the AME (2003/2012) data file
     static void load_ame_table(isotope::isotope_dict_type &, ame_release_type ame_release_ = AME_RELEASE_2012);
 
-    /// Return the isotope record from the table
+    //! Return the isotope record from the table
     static const record_type & table_record_from_id(const id &);
 
-    /// \brief Isomeric level
+    //! \brief Isomeric level
     enum isomeric_level_type {
-      GROUND_STATE           =  0,                                                   /// Ground state (default)
-      ISOMERIC_STATE         =  datatools::bit_mask::bit00,                          /// Isomeric level
-      ISOMERIC_M             =  ISOMERIC_STATE,                                      /// Unique isomeric level
-      ISOMERIC_M1            =  ISOMERIC_STATE | datatools::bit_mask::bit02,         /// First isomeric level
-      ISOMERIC_M2            =  ISOMERIC_STATE | datatools::bit_mask::bit03,         /// Second isomeric level
-      ISOMERIC_M3            =  ISOMERIC_STATE | datatools::bit_mask::bit04,         /// Third isomeric level
-      ISOMERIC_FISSION_STATE =  datatools::bit_mask::bit01,                          /// Fission/shape isomeric level
-      ISOMERIC_F             =  ISOMERIC_FISSION_STATE,                              /// Unique fission/shape isomeric level
-      ISOMERIC_F1            =  ISOMERIC_FISSION_STATE | datatools::bit_mask::bit02, /// First fission/shape isomeric level
-      ISOMERIC_F2            =  ISOMERIC_FISSION_STATE | datatools::bit_mask::bit03, /// Second fission/shape isomeric level
-      ISOMERIC_F3            =  ISOMERIC_FISSION_STATE | datatools::bit_mask::bit04, /// Third fission/shape isomeric level
-      ISOMERIC_INVALID       =  datatools::bit_mask::bit31                           /// Invalid isomeric level
+      GROUND_STATE           =  0,                                                   //!< Ground state (default)
+      ISOMERIC_STATE         =  datatools::bit_mask::bit00,                          //!< Isomeric level
+      ISOMERIC_M             =  ISOMERIC_STATE,                                      //!< Unique isomeric level
+      ISOMERIC_M1            =  ISOMERIC_STATE | datatools::bit_mask::bit02,         //!< First isomeric level
+      ISOMERIC_M2            =  ISOMERIC_STATE | datatools::bit_mask::bit03,         //!< Second isomeric level
+      ISOMERIC_M3            =  ISOMERIC_STATE | datatools::bit_mask::bit04,         //!< Third isomeric level
+      ISOMERIC_FISSION_STATE =  datatools::bit_mask::bit01,                          //!< Fission/shape isomeric level
+      ISOMERIC_F             =  ISOMERIC_FISSION_STATE,                              //!< Unique fission/shape isomeric level
+      ISOMERIC_F1            =  ISOMERIC_FISSION_STATE | datatools::bit_mask::bit02, //!< First fission/shape isomeric level
+      ISOMERIC_F2            =  ISOMERIC_FISSION_STATE | datatools::bit_mask::bit03, //!< Second fission/shape isomeric level
+      ISOMERIC_F3            =  ISOMERIC_FISSION_STATE | datatools::bit_mask::bit04, //!< Third fission/shape isomeric level
+      ISOMERIC_INVALID       =  datatools::bit_mask::bit31                           //!< Invalid isomeric level
     };
 
-    /// Return the label associated to an isomeric level
+    //! Return the label associated to an isomeric level
     static std::string isomeric_to_label(isomeric_level_type);
 
-    /// Return the isomeric level associated to a label
+    //! Return the isomeric level associated to a label
     static isomeric_level_type label_to_isomeric(const std::string &);
 
-    /// Default Constructor
+    //! Default Constructor
     isotope();
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param name_ : ID name
      */
     explicit isotope(const std::string & name_);
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param name_ : ID name
      */
     explicit isotope(const char * name_);
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param z_    : Number of protons (0 <= Z <= 118)
      * \param a_    : Number of nucleons (Z <= A  <= 293)
@@ -257,7 +257,7 @@ namespace materials {
                      isomeric_level_type i_ = GROUND_STATE,
                      unsigned int build_flags_ = 0);
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param ch_symbol_ : Chemical symbol ( "H " <=  Ch  <= "Ei")
      * \param a_    : Number of nucleons (Z <= A  <= 293)
@@ -272,7 +272,7 @@ namespace materials {
                      isomeric_level_type i_ = GROUND_STATE,
                      unsigned int build_flags_ = 0);
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param ch_symbol_ : Chemical symbol ( "H " <=  Ch  <= "Ei")
      * \param a_    : Number of nucleons (Z <= A  <= 293)
@@ -287,7 +287,7 @@ namespace materials {
                      isomeric_level_type i_ = GROUND_STATE,
                      unsigned int build_flags_ = 0);
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param name_ : ID name
      * \param z_    : Number of protons (0 <= Z <= 118)
@@ -304,7 +304,7 @@ namespace materials {
                      isomeric_level_type i_ = GROUND_STATE,
                      unsigned int build_flags_ = 0);
 
-   /// Constructor
+   //! Constructor
     /*!
      * \param name_ : ID name
      * \param z_    : Number of protons (0 <= Z <= 118)
@@ -322,7 +322,7 @@ namespace materials {
                      unsigned int build_flags_ = 0);
 
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param name_      : ID name
      * \param ch_symbol_ : Chemical symbol ( "H " <=  Ch  <= "Ei")
@@ -339,7 +339,7 @@ namespace materials {
                      isomeric_level_type i_ = GROUND_STATE,
                      unsigned int build_flags_ = 0);
 
-    /// Constructor
+    //! Constructor
     /*!
      * \param name_      : ID name
      * \param ch_symbol_ : Chemical symbol ( "H " <=  Ch  <= "Ei")
@@ -356,88 +356,88 @@ namespace materials {
                      isomeric_level_type i_ = GROUND_STATE,
                      unsigned int build_flags_ = 0);
 
-    /// Destructor
+    //! Destructor
     virtual ~isotope();
 
-    /// Return true if isotope is valid, false either
+    //! Return true if isotope is valid, false either
     bool is_valid() const;
 
-    /// Search & set the mass excess and mass from the tabulated isotopes
+    //! Search & set the mass excess and mass from the tabulated isotopes
     bool find_mass_data();
 
-    /// Search & set the half-life from the tabulated isotopes
+    //! Search & set the half-life from the tabulated isotopes
     bool find_decay_data();
 
-    /// Return the name
+    //! Return the name
     const std::string & get_name() const;
 
-    /// Return the chemical symbol
+    //! Return the chemical symbol
     const std::string & get_chemical_symbol() const;
 
-    /// Return the zai name : 'ChA(I)'
+    //! Return the zai name : 'ChA(I)'
     std::string get_zai_name() const;
 
-    /// Return Z (number of protons)
+    //! Return Z (number of protons)
     int get_z() const;
 
-    /// Return A (number of nucleons)
+    //! Return A (number of nucleons)
     int get_a() const;
 
-    /// Return N (number of neutrons)
+    //! Return N (number of neutrons)
     int get_n() const;
 
-    /// Return the isotope Id
+    //! Return the isotope Id
     id get_id() const;
 
-    /// Return the mass in unit of energy
+    //! Return the mass in unit of energy
     double get_mass() const;
 
-    /// Return the isomeric state
+    //! Return the isomeric state
     isomeric_level_type get_isomeric() const;
 
-    /// Check ground state
+    //! Check ground state
     bool is_ground_state() const;
 
-    /// Check if the isotope is known from tables
+    //! Check if the isotope is known from tables
     bool is_known() const;
 
-    /// Return true if atomic mass data have been set properly, false either
+    //! Return true if atomic mass data have been set properly, false either
     bool has_atomic_mass_data() const;
 
-    /// Return true if mass excess have been set properly, false either
+    //! Return true if mass excess have been set properly, false either
     bool has_mass_excess_data() const;
 
-    /// Return the mass excess in unit of energy
+    //! Return the mass excess in unit of energy
     double get_mass_excess() const;
 
-    /// Return the error on mass excess in unit of energy
+    //! Return the error on mass excess in unit of energy
     double get_err_mass_excess() const;
 
-    /// Return the atomic mass in unit of [u]
+    //! Return the atomic mass in unit of [u]
     double get_atomic_mass() const;
 
-    /// Return the error on the atomic mass in unit of [u]
+    //! Return the error on the atomic mass in unit of [u]
     double get_err_atomic_mass() const;
 
-    /// Set the number of protons  :
+    //! Set the number of protons  :
     /*!
      * \param z_ :  0 <  Z  <= 119  (check if exist)
      */
     void set_z(int z_);
 
-    /// Set the number of nucleons :
+    //! Set the number of nucleons :
     /*!
      * \param a_ :  0 <  A  <= 293
      */
     void set_a(int a_);
 
-    /// Set the isomeric state :
+    //! Set the isomeric state :
     /*!
      * \param i_ : isomeric state
      */
     void set_isomeric(isomeric_level_type i_);
 
-    /// Set Z, A, I attributes
+    //! Set Z, A, I attributes
     /*!
      * \param z_ : Number of protons  (0 <= Z  <= 119)
      * \param a_ : Number of nucleons (Z <= A  <= 293)
@@ -448,103 +448,103 @@ namespace materials {
      */
     void set_zai(int z_, int a_, isomeric_level_type i_ = GROUND_STATE);
 
-    /// Check if the mass of the nucleus is defined
+    //! Check if the mass of the nucleus is defined
     bool has_mass() const;
 
-    /// Set the name
+    //! Set the name
     /*!
      * \param name_ : user name  of the isotope
      */
     void set_name(const std::string & name_);
 
-    /// Set the mass
+    //! Set the mass
     /*!
      * \param mass_     : Mass of the nucleus
      */
     void set_mass(double mass_);
 
-    /// Set the mass excess and its error in explicit unit of energy
+    //! Set the mass excess and its error in explicit unit of energy
     /*!
      * \param mass_excess_     : Mass excess
      * \param err_mass_excess_ : Mass excess error
      */
     void set_mass_excess(double mass_excess_, double err_mass_excess_ = 0.0);
 
-    /// Set the binding energy per nucleon and its error in explicit unit of energy
+    //! Set the binding energy per nucleon and its error in explicit unit of energy
     /*!
      * \param bea_     : Binding energy per nucleon
      * \param err_bea_ : Binding energy per nucleon error
      */
     void set_binding_energy_per_nucleon(double bea_, double err_bea_ = 0.0);
 
-    /// Set the atomic mass and its error in implicit unit of [u]
+    //! Set the atomic mass and its error in implicit unit of [u]
     /*!
      * \param mass_     : Atomic mass in implicit unit of [u]
      * \param err_mass_ : Atomic mass error in implicit unit of [u]
      */
     void set_atomic_mass(double mass_, double err_mass_ = 0.0);
 
-    /// Set the decay data
+    //! Set the decay data
     /*!
      * \param half_life_     : Half-life in explicit unit of time
      * \param err_half_life_ : Half-life error in explicit unit of time
      */
     void set_half_life(double half_life_, double err_half_life_ = 0.0);
 
-    /// Return true if decay data have been set properly, false either
+    //! Return true if decay data have been set properly, false either
     bool has_decay_data() const;
 
-    /// Return true if isotope is stable, false either
+    //! Return true if isotope is stable, false either
     bool is_stable() const;
 
-    /// Return the half-life in unit of time
+    //! Return the half-life in unit of time
     double get_half_life() const;
 
-    /// Return the error on half-life in unit of time
+    //! Return the error on half-life in unit of time
     double get_err_half_life() const;
 
-    /// Give access to properties
+    //! Give access to properties
     datatools::properties & grab_properties();
 
-    /// Give access to properties
+    //! Give access to properties
     const datatools::properties & get_properties() const;
 
-    /// Return true if isotope is locked (i.e. fully set), false either
+    //! Return true if isotope is locked (i.e. fully set), false either
     bool is_locked() const;
 
-    /// Lock the isotope
+    //! Lock the isotope
     void lock();
 
-    /// Unlock the isotope
+    //! Unlock the isotope
     void unlock();
 
-    /// Load additional data in the isotope data structure
+    //! Load additional data in the isotope data structure
     void build(unsigned int flags_ = 0);
 
-    /// Set data to default values
+    //! Set data to default values
     void set_default_data();
 
-    /// Reset
+    //! Reset
     void reset();
 
-    /// Smart print
+    //! Smart print
     virtual void tree_dump(std::ostream & out_         = std::clog,
                            const std::string & title_  = "",
                            const std::string & indent_ = "",
                            bool inherit_          = false) const;
 
-    /// Compute the atomic electron binding energy for ion with given Z
+    //! Compute the atomic electron binding energy for ion with given Z
     static double compute_electron_binding_energy(int z_);
 
-    /// Compute the mass of the nucleus from its Z, A and binding energy per nucleon (in unit of energy)
+    //! Compute the mass of the nucleus from its Z, A and binding energy per nucleon (in unit of energy)
     static double compute_nucleus_mass(int z_, int a_, double binding_energy_per_nucleon_);
 
-    /// Compute the mass of the nucleus from its Z and atomic mass (in unit of energy)
+    //! Compute the mass of the nucleus from its Z and atomic mass (in unit of energy)
     static double compute_nucleus_mass(int z_, double atomic_mass_);
 
   protected:
 
-    /// Set default attributes
+    //! Set default attributes
     void _set_defaults();
 
   private :

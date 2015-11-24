@@ -56,7 +56,7 @@ namespace materials {
     /// Check the weight
     bool has_weight() const;
 
-    /// Return the weigth
+    /// Return the weight
     double get_weight() const;
 
     /// Set the weight
