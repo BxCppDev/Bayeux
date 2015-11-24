@@ -120,6 +120,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_ring_random_tools.cxx
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/test_vertex_validation.cxx
+  ${module_test_dir}/test_dummy_vg.cxx
   )
 
 # - Applications
