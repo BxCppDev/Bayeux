@@ -96,7 +96,7 @@ namespace mctools {
     /// Check if some collections of MC hits exist
     bool has_data () const;
 
-    /// Check if a vertex vertex is defined
+    /// Check if a vertex is defined
     bool has_vertex () const;
 
     /// Get a reference to the non mutable vertex
@@ -107,6 +107,15 @@ namespace mctools {
 
     /// Set the vertex
     void set_vertex (const geomtools::vector_3d &);
+
+    /// Check if a time is defined
+    bool has_time () const;
+
+    /// Get the reference time
+    double get_time() const;
+
+    /// Set the reference time
+    void set_time(double);
 
     /// Get a reference to the non mutable primary event
     const primary_event_type & get_primary_event () const;
@@ -188,12 +197,8 @@ namespace mctools {
     /// Destructor
     virtual ~simulated_data ();
 
-    /*** interface i_clear ***/
-
     /// Reset the internal data
     virtual void clear ();
-
-    /*** interface i_tree_dumpable ***/
 
     /// Smart print
     virtual void tree_dump (std::ostream & a_out         = std::clog,
@@ -205,13 +210,14 @@ namespace mctools {
 
     // Attributes :
     geomtools::vector_3d         _vertex_;               //!< Common primary vertex
+    double                       _time_;                 //!< Common primary time
     primary_event_type           _primary_event_;        //!< Primary generated event
     datatools::properties        _properties_;           //!< List of properties
     int8_t                       _collection_type_;      //!< Storage type (handle/plain hits)
-    step_hits_dict_type          _step_hits_dict_;       //!< Dictionary of collection of handle of hits (default type)
-    plain_step_hits_dict_type    _plain_step_hits_dict_; //!< Dictionary of collection of plain hits
+    step_hits_dict_type          _step_hits_dict_;       //!< Dictionary of collections of handle of hits (default type)
+    plain_step_hits_dict_type    _plain_step_hits_dict_; //!< Dictionary of collections of plain hits
 
-    /*** datatools/Boost/brio serialization ***/
+    // datatools/Boost/brio serialization:
     DATATOOLS_SERIALIZATION_DECLARATION();
 
 #if MCTOOLS_WITH_REFLECTION == 1
@@ -232,7 +238,7 @@ DR_CLASS_INIT(::mctools::simulated_data);
 #endif // MCTOOLS_WITH_REFLECTION
 
 #include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(mctools::simulated_data, 2)
+BOOST_CLASS_VERSION(mctools::simulated_data, 3)
 
 #endif // MCTOOLS_SIMULATED_DATA_H
 

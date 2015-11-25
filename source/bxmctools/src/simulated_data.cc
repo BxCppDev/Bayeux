@@ -14,7 +14,7 @@
 
 namespace mctools {
 
-   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (simulated_data,"mctools::simulated_data")
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (simulated_data,"mctools::simulated_data")
 
   void simulated_data::reset_collection_type ()
   {
@@ -65,7 +65,7 @@ namespace mctools {
 
   bool simulated_data::has_data () const
   {
-    return has_vertex ();
+    return has_vertex();
   }
 
   bool simulated_data::has_vertex () const
@@ -86,6 +86,22 @@ namespace mctools {
   void simulated_data::set_vertex (const geomtools::vector_3d & a_v)
   {
     _vertex_ = a_v;
+    return;
+  }
+
+  bool simulated_data::has_time() const
+  {
+    return datatools::is_valid(_time_);
+  }
+
+  double simulated_data::get_time() const
+  {
+    return _time_;
+  }
+
+  void simulated_data::set_time(double t_)
+  {
+    _time_ = t_;
     return;
   }
 
@@ -334,22 +350,19 @@ namespace mctools {
   {
     size_t nbr_step_hits = 0;
     if (use_handle_hit_collection ()) {
-      step_hits_dict_type::const_iterator found
-        = _step_hits_dict_.find (a_category);
+      step_hits_dict_type::const_iterator found = _step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of hits with category '" << a_category << "' !");
       nbr_step_hits = found->second.size ();
-    }
-    else if (use_plain_hit_collection ()) {
+    } else if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::const_iterator found
         = _plain_step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _plain_step_hits_dict_.end (),
                    std::logic_error,
                    "No collection of hits with category '" << a_category << "' !");
       nbr_step_hits = found->second.size ();
-    }
-    else {
+    } else {
       DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
     }
     return nbr_step_hits;
@@ -489,33 +502,33 @@ namespace mctools {
     return found->second;
   }
 
-  // ctor:
   simulated_data::simulated_data ()
   {
     geomtools::invalidate (_vertex_);
+    datatools::invalidate(_time_);
     _collection_type_ = HANDLE_HIT_COLLECTION_TYPE;
     return;
   }
 
-  // ctor:
   simulated_data::simulated_data (int a_collection_type)
   {
     geomtools::invalidate (_vertex_);
+    datatools::invalidate(_time_);
     _collection_type_ = INVALID_HIT_COLLECTION_TYPE;
     set_collection_type (a_collection_type);
     return;
   }
 
-  // dtor:
   simulated_data::~simulated_data ()
   {
-    reset ();
+    reset();
     return;
   }
 
   simulated_data & simulated_data::reset (bool a_reset_collection_type)
   {
-    geomtools::invalidate (_vertex_);
+    geomtools::invalidate(_vertex_);
+    datatools::invalidate(_time_);
     _primary_event_.reset ();
     _properties_.clear ();
     if (use_handle_hit_collection ()) {
@@ -535,8 +548,6 @@ namespace mctools {
     reset (false);
     return;
   }
-
-  /*** tree_dump ***/
 
   void simulated_data::tree_dump (std::ostream & a_out,
                                   const std::string & a_title,
@@ -636,6 +647,18 @@ namespace mctools {
         indent_oss << datatools::i_tree_dumpable::skip_tag;
         _primary_event_.tree_dump (a_out, "", indent_oss.str ());
       }
+    }
+
+    // Time:
+    {
+      a_out << indent << datatools::i_tree_dumpable::tag
+            << "Time : ";
+      if (has_time()) {
+        a_out << _time_ / CLHEP::nanosecond << " ns";
+      } else {
+        a_out << "<none>";
+      }
+      a_out << std::endl;
     }
 
     // Vertex:
