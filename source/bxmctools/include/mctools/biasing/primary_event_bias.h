@@ -95,6 +95,7 @@ namespace mctools {
       public:
         /// Default constructor
         biasing_info();
+
         /// Reset
         void reset();
 

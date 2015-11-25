@@ -430,7 +430,6 @@ namespace mctools {
       return;
     }
 
-
     // void primary_event_bias::add_particle_by_pdg_code(int /*code_*/)
     // {
     //   DT_THROW_IF(is_initialized(), std::logic_error,
