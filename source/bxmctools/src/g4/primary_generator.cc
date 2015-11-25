@@ -290,8 +290,9 @@ namespace mctools {
       _event_action_->set_aborted_event(false);
       _event_action_->set_killed_event(false);
 
-      // Generate the vertex:
+      // Generate the vertex[/time]:
       geomtools::invalidate(_current_vertex_);
+      datatools::invalidate(_current_time_);
       if (_vertex_generator_ != 0) {
         _generate_vertex();
       }
@@ -317,13 +318,26 @@ namespace mctools {
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["VG"].start();
       }
-      _vertex_generator_->shoot_vertex(mgr.grab_vg_prng(), _current_vertex_);
+      if (_vertex_generator_->is_time_generator()) {
+        // Vertex+time generator:
+        _vertex_generator_->shoot_vertex_and_time(mgr.grab_vg_prng(),
+                                                  _current_vertex_,
+                                                  _current_time_);
+      } else {
+        // Vertex generator:
+        _vertex_generator_->shoot_vertex(mgr.grab_vg_prng(),
+                                         _current_vertex_);
+      }
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["VG"].stop();
       }
 
       // Save current event vertex:
       _event_action_->grab_event_data().set_vertex(_current_vertex_);
+      if (datatools::is_valid(_current_time_)) {
+        // Save current event time:
+        _event_action_->grab_event_data().set_time(_current_time_);
+      }
       return;
     }
 
@@ -349,7 +363,7 @@ namespace mctools {
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["EG"].stop();
       }
-      current_generated_event.set_time(0.0 * CLHEP::ns);
+      // current_generated_event.set_time(0.0 * CLHEP::ns);
 
       if (_bias_) {
         // Here the bias object is processing the primary event:
@@ -379,7 +393,16 @@ namespace mctools {
 
       // Process the primary event:
       // about to insert primary particles in the G4 particle gun.
-      double event_time = current_generated_event.get_time();
+
+      // Default event reference time:
+      double event_time = 0.0;
+      if (datatools::is_valid(_current_time_)) {
+        // Explicit event reference time:
+        event_time = _current_time_;
+      }
+      if (datatools::is_valid(current_generated_event.get_time())) {
+        event_time += current_generated_event.get_time();
+      }
 
       G4ParticleTable * particle_table = G4ParticleTable::GetParticleTable();
 
@@ -601,8 +624,11 @@ namespace mctools {
         _particle_gun_->SetParticleMomentumDirection(momentum);
         _particle_gun_->SetParticleEnergy(kinetic_energy);
 
-        const double particle_time  = genbb_particle.get_time();
-        _particle_gun_->SetParticleTime(event_time + particle_time);
+        double particle_time = event_time;
+        if (genbb_particle.has_time()) {
+          particle_time += genbb_particle.get_time();
+        }
+        _particle_gun_->SetParticleTime(particle_time);
         // And finaly, we fill the Geant4 primary event:
         _particle_gun_->GeneratePrimaryVertex(g4_event_);
 
@@ -618,22 +644,22 @@ namespace mctools {
             tag2 = last_skip_tag;
           }
           DT_LOG_TRACE(_logprio(), "Particle #" << particle_counter << " : ");
-          std::clog << tag2 << tag      << "Type       = "
+          std::clog << tag2 << tag << "Type       = "
                     << genbb_particle.get_type() << " ('" << genbb_particle_label << "')"
                     << std::endl;
-          std::clog << tag2 << tag      << "PDG code   = "
+          std::clog << tag2 << tag << "PDG code   = "
                     << genbb_particle.get_pdg_code()
                     << std::endl;
-          std::clog << tag2 << tag      << "Geant4 name  = "
+          std::clog << tag2 << tag << "Geant4 name  = "
                     << g4_particle_name
                     << std::endl;
-           std::clog << tag2 << tag      << "Time       = "
+           std::clog << tag2 << tag << "Time       = "
                     << _particle_gun_->GetParticleTime() / CLHEP::ns << " ns"
                     << std::endl;
-          std::clog << tag2 << tag      << "Position   = " << _current_vertex_ / CLHEP::mm << " mm" << std::endl;
+          std::clog << tag2 << tag << "Position   = " << _current_vertex_ / CLHEP::mm << " mm" << std::endl;
           std::clog << tag2 << tag << "Momentum   = " << genbb_particle.get_momentum() / CLHEP::keV << " keV" << std::endl;
           if (datatools::is_valid(kinetic_energy)) {
-            std::clog << tag2 << last_tag    << "Energy     = " << kinetic_energy / CLHEP::keV << " keV (FYI)" << std::endl;
+            std::clog << tag2 << last_tag << "Energy     = " << kinetic_energy / CLHEP::keV << " keV (FYI)" << std::endl;
           }
         }
       } // Particle loop

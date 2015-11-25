@@ -129,6 +129,7 @@ namespace mctools {
       ::genbb::i_genbb  *  _event_generator_; //!< The external event generator
       G4ParticleGun *      _particle_gun_;    //!< The Geant4 particle gun
       geomtools::vector_3d _current_vertex_;  //!< The current generated vertex
+      double               _current_time_;    //!< The current generated time (if any)
       size_t               _event_counter_;   //!< The event counter
       std::map<std::string, std::string> _particle_names_map_; //!< A dictionary of particle names
       boost::scoped_ptr<mctools::biasing::primary_event_bias> _bias_; //!< Handle to a primary event bias algorithm
