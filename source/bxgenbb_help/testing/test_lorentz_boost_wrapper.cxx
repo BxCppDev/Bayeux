@@ -27,20 +27,13 @@
 #include <genbb_help/primary_event.h>
 
 /// \brief A generator of Lorentz boost along a chosen arbitrary axis and fixed position
-struct lbs : public genbb::i_lorentz_boost_generator
+class lbs : public genbb::i_lorentz_boost_generator
 {
+public:
+
   virtual bool has_next()
   {
     return true;
-  }
-
-  virtual void generate(geomtools::vector_3d & speed_,
-                        geomtools::vector_3d & vtx_)
-  {
-    speed_= _vbeta_ * CLHEP::c_light;
-    geomtools::invalidate(vtx_);
-    vtx_.set(0.0, 0.0, 1.0 * CLHEP::mm);
-    return;
   }
 
   virtual void add_metadata(genbb::primary_event & pe_)
@@ -100,6 +93,21 @@ struct lbs : public genbb::i_lorentz_boost_generator
     _vbeta_.set(xbeta_, ybeta_, zbeta_);
     return;
   }
+
+protected:
+
+  virtual void _generate(geomtools::vector_3d & speed_,
+                         geomtools::vector_3d & vtx_,
+                         double & time_)
+  {
+    speed_ = _vbeta_ * CLHEP::c_light;
+    geomtools::invalidate(vtx_);
+    vtx_.set(0.0, 0.0, 1.0 * CLHEP::mm);
+    time_ = 1.0 * CLHEP::ns;
+    return;
+  }
+
+private:
 
   geomtools::vector_3d _vbeta_;  //!< Beta vector
 

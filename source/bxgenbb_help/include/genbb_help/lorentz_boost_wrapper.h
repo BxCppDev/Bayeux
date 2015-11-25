@@ -67,9 +67,6 @@ namespace genbb {
     /// Check if the generator can provide more Lorentz Boost information
     virtual bool has_next() = 0;
 
-    /// Generate Lorentz Boost information
-    virtual void generate(geomtools::vector_3d & speed_, geomtools::vector_3d & vtx_) = 0;
-
     /// Add metadata
     virtual void add_metadata(primary_event & pe_);
 
@@ -85,9 +82,20 @@ namespace genbb {
     /// Simple initialization
     void initialize_simple();
 
+    /// Generate Lorentz Boost information
+    void generate(geomtools::vector_3d & speed_, geomtools::vector_3d & vtx_);
+
+    /// Generate Lorentz Boost information
+    void generate(geomtools::vector_3d & speed_, geomtools::vector_3d & vtx_, double & time_);
+
     /// Factory method
     static i_lorentz_boost_generator * create(const std::string & class_id_,
                                               const datatools::properties & config_);
+
+  protected:
+
+    /// Generate Lorentz Boost information
+    virtual void _generate(geomtools::vector_3d & speed_, geomtools::vector_3d & vtx_, double & time_) = 0;
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_lorentz_boost_generator);

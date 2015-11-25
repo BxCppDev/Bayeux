@@ -78,6 +78,22 @@ namespace genbb {
     return lbg;
   }
 
+  void i_lorentz_boost_generator::generate(geomtools::vector_3d & speed_,
+                                           geomtools::vector_3d & vtx_)
+  {
+    double time = datatools::invalid_real();
+    _generate(speed_, vtx_, time);
+    return;
+  }
+
+  void i_lorentz_boost_generator::generate(geomtools::vector_3d & speed_,
+                                           geomtools::vector_3d & vtx_,
+                                           double & time_)
+  {
+    _generate(speed_, vtx_, time_);
+    return;
+  }
+
   // Factory stuff :
   GENBB_PG_REGISTRATION_IMPLEMENT(lorentz_boost_wrapper, "genbb::lorentz_boost_wrapper");
 
@@ -230,16 +246,18 @@ namespace genbb {
       // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: LBG" << std::endl;
       geomtools::vector_3d vertex;
       geomtools::vector_3d speed;
+      double time;
       geomtools::invalidate(vertex);
       geomtools::invalidate(speed);
-      _lbg_->generate(speed, vertex);
+      datatools::invalidate(time);
+      _lbg_->generate(speed, vertex, time);
       // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: c      =" << CLHEP::c_light / (CLHEP::m / CLHEP::s) << " m/s" << std::endl;
       // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: vertex =" << vertex / CLHEP::mm << " mm" << std::endl;
       // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: speed  =" << speed / CLHEP::c_light << " c" << std::endl;
-      for (primary_event::particles_col_type::iterator i = event_.grab_particles().begin();
-           i != event_.grab_particles().end();
-           i++) {
-        primary_particle & part = *i;
+      for (primary_event::particles_col_type::iterator ipart = event_.grab_particles().begin();
+           ipart != event_.grab_particles().end();
+           ipart++) {
+        primary_particle & part = *ipart;
         if (geomtools::is_valid(vertex)) {
           part.set_vertex(vertex);
         }
@@ -255,6 +273,9 @@ namespace genbb {
           // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: new E=" << part.get_total_energy() / CLHEP::MeV << std::endl;
           // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: new p=" << part.get_momentum() / CLHEP::MeV << std::endl;
         }
+      }
+      if (datatools::is_valid(time)) {
+        event_.set_time(time);
       }
       _lbg_->add_metadata(event_);
     }

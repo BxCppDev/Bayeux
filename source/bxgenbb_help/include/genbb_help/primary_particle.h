@@ -186,6 +186,9 @@ namespace genbb {
     /// Fetch the PDG code from the particle type/label...
     int fetch_pdg_code() const;
 
+    /// Check if time is defined
+    bool has_time() const;
+
     /// Return the creation time of the particle (in unit of time)
     double get_time() const;
 
@@ -198,10 +201,10 @@ namespace genbb {
     /// Check is the particle has a specific identifier label
     bool has_particle_label() const;
 
-    // Return the identifier label of the particle
+    /// Return the identifier label of the particle
     const std::string & get_particle_label() const;
 
-    // Set the identifier label of the particle (for type == PARTICLE_UNKNWON, NUCLEUS, ION)
+    /// Set the identifier label of the particle (for type == PARTICLE_UNKNOWN, NUCLEUS, ION)
     void set_particle_label(const std::string &);
 
     /// Set the creation time of the particle (in unit of time)

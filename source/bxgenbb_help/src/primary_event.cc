@@ -30,6 +30,7 @@
 #include <fstream>
 #include <string>
 #include <limits>
+#include <cmath>
 
 // Third party:
 // - Boost:
@@ -105,8 +106,14 @@ namespace genbb {
     return;
   }
 
+  bool primary_event::has_time() const
+  {
+    return datatools::is_valid(_time_);
+  }
+
   void primary_event::set_time(double t_)
   {
+    DT_THROW_IF(std::isinf(t_), std::logic_error, "Invalid primary event time!");
     _time_ = t_;
     return;
   }
@@ -370,7 +377,13 @@ namespace genbb {
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag << "Label : '" << _label_ << "'" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "Time  : " << _time_ / CLHEP::second << " s" << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::tag << "Time  : ";
+    if (has_time()) {
+      out_ << _time_ / CLHEP::second << " s";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "Particles: [" << _particles_.size() << "]" << std::endl;
 
     int particle_counter = 0;

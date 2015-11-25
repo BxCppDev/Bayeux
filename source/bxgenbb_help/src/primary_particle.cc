@@ -232,7 +232,7 @@ namespace genbb {
   bool primary_particle::label_to_ion(const std::string label_,
                                       int & z_,
                                       int & a_,
-                                      double & excitation_energy_,
+                                     double & excitation_energy_,
                                       int & charge_)
   {
     static boost::scoped_ptr<ion_parser> _ion_parser;
@@ -617,6 +617,11 @@ namespace genbb {
     return _type_ == PION_0;
   }
 
+  bool primary_particle::has_time() const
+  {
+    return datatools::is_valid(_time_);
+  }
+
   double primary_particle::get_time() const
   {
     return _time_;
@@ -633,7 +638,7 @@ namespace genbb {
     return;
   }
 
-  void  primary_particle::shift_time(double delta_time_)
+  void primary_particle::shift_time(double delta_time_)
   {
     _time_ += delta_time_;
     return;
@@ -975,7 +980,7 @@ namespace genbb {
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Time           : ";
     double time = _time_;
-    if (datatools::is_valid(time)) {
+    if (has_time()) {
       std::ostringstream time_oss;
       time_oss.precision(15);
       time_oss << time / CLHEP::ns;

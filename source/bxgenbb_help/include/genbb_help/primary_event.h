@@ -73,6 +73,9 @@ namespace genbb {
     /// Reset the primary event
     void reset();
 
+    /// Check if time is defined
+    bool has_time() const;
+
     /// Set the time
     void set_time(double);
 
