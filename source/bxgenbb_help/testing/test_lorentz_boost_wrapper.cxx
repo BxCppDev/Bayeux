@@ -248,6 +248,7 @@ int main(int argc_, char ** argv_)
       lbw_config.store_flag("lbg.config.zaxis");
     }
     lbw_config.store("lbg.config.beta", 0.5);
+    // lbw_config.update("lbg.config.beta", 0.0);
     LBW.initialize_standalone(lbw_config);
 
     // Shoot events:
@@ -260,10 +261,10 @@ int main(int argc_, char ** argv_)
       if (debug) pe.dump();
       // Print the kinetic energy from the only particle in each event:
       std::cout << pe.get_particles().front().get_kinetic_energy()
-           << ' ' << pe.get_particles().front().get_momentum().x()
-           << ' ' << pe.get_particles().front().get_momentum().y()
-           << ' ' << pe.get_particles().front().get_momentum().z()
-           << std::endl;
+                << ' ' << pe.get_particles().front().get_momentum().x()
+                << ' ' << pe.get_particles().front().get_momentum().y()
+                << ' ' << pe.get_particles().front().get_momentum().z()
+                << std::endl;
     }
 
     if (debug) std::clog << "debug: " << "The end." << std::endl;

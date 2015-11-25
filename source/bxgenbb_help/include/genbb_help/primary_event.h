@@ -192,10 +192,10 @@ namespace genbb {
 
   private:
 
-    double                _time_;           //!< The generation time
+    double                _time_;           //!< The generation time (optional)
     particles_col_type    _particles_;      //!< The list of primary particles
     std::string           _label_;          //!< A label associated to the generated event
-    std::string           _classification_; //!< A classification string id
+    std::string           _classification_; //!< A classification string id (optional)
     double                _genbb_weight_;   //!< The weight of the generated event with respect to a reference sample
     datatools::properties _auxiliaries_;    //!< Auxiliary properties
 

@@ -386,14 +386,14 @@ namespace genbb {
 
   private:
 
-    int                  _generation_id_;  //!< The unique generation Id
+    int                  _generation_id_;  //!< The unique generation identifier
     int32_t              _type_;           //!< Extended Geant3 type of the particle (using historical Geant3 particle Ids + additional codes)
     int32_t              _pdg_code_;       //!< Standard PDG code of the particle (NOT USED YET)
     std::string          _particle_label_; //!< String identifier of the particle in case it is not supported by the table of Geant3 codes (type) or PDG standards
     double               _mass_;           //!< The mass in CLHEP explicit energy unit
     double               _time_;           //!< The time in CLHEP explicit time unit
     geomtools::vector_3d _momentum_;       //!< The momentum in CLHEP explicit momentum unit
-    geomtools::vector_3d _vertex_;         //!< The vertex in CLHEP position unit
+    geomtools::vector_3d _vertex_;         //!< The vertex in CLHEP explicit position unit
     datatools::properties _auxiliaries_;   //!< Auxiliary properties
 
     //! Support for Boost-based serialization

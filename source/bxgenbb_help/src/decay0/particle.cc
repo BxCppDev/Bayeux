@@ -132,25 +132,16 @@ namespace genbb {
       double stet=std::sqrt(1.-ctet*ctet);
       double E=E1;
       if (E1 != E2) E=E1+(E2-E1)*prng_();
-      // --- randomly blur the particle energy
-      // double dE=0.000025;
-      // E=E+dE*(-1+2*prng_());
       double p=std::sqrt(E*(E+2.*pmass));
       geomtools::vector_3d momentum(p*stet*std::cos(phi),
                                     p*stet*std::sin(phi),
                                     p*ctet);
-      geomtools::vector_3d vertex;
-      geomtools::invalidate(vertex);
-
       tdlev=tclev;
       if (thlev > 0.) tdlev = tclev - thlev / std::log(2.) * std::log(prng_());
-
       part.set_type(np);
       part.set_time (last_time + tdlev * CLHEP::second);
       part.set_momentum (momentum * CLHEP::MeV);
-      part.set_vertex (vertex);
-      event_.grab_particles ().push_back(part);
-
+      event_.grab_particles().push_back(part);
       return;
     }
 

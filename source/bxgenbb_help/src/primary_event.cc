@@ -53,9 +53,9 @@ namespace genbb {
 
   bool primary_event::is_valid() const
   {
-    if (!datatools::is_valid(_time_)) {
-      return false;
-    }
+    // if (!datatools::is_valid(_time_)) {
+    //   return false;
+    // }
     for (particles_col_type::const_iterator it = _particles_.begin();
          it != _particles_.end();
          it++) {
@@ -75,11 +75,11 @@ namespace genbb {
 
   void primary_event::reset()
   {
-    _set_defaults();
     reset_label();
     _particles_.clear();
     reset_classification();
     _auxiliaries_.clear();
+    _set_defaults();
     return;
   }
 
@@ -377,9 +377,10 @@ namespace genbb {
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag << "Label : '" << _label_ << "'" << std::endl;
+
     out_ << indent << datatools::i_tree_dumpable::tag << "Time  : ";
     if (has_time()) {
-      out_ << _time_ / CLHEP::second << " s";
+      out_ << _time_ / CLHEP::nanosecond << " ns";
     } else {
       out_ << "<none>";
     }
