@@ -502,7 +502,7 @@ namespace mctools {
     return found->second;
   }
 
-  simulated_data::simulated_data ()
+  void simulated_data::_set_defaults()
   {
     geomtools::invalidate (_vertex_);
     datatools::invalidate(_time_);
@@ -510,12 +510,16 @@ namespace mctools {
     return;
   }
 
-  simulated_data::simulated_data (int a_collection_type)
+  simulated_data::simulated_data()
   {
-    geomtools::invalidate (_vertex_);
-    datatools::invalidate(_time_);
-    _collection_type_ = INVALID_HIT_COLLECTION_TYPE;
-    set_collection_type (a_collection_type);
+    _set_defaults();
+    return;
+  }
+
+  simulated_data::simulated_data(int a_collection_type)
+  {
+    _set_defaults();
+    set_collection_type(a_collection_type);
     return;
   }
 
@@ -525,7 +529,21 @@ namespace mctools {
     return;
   }
 
-  simulated_data & simulated_data::reset (bool a_reset_collection_type)
+  void simulated_data::reset()
+  {
+    if (use_handle_hit_collection()) {
+      _step_hits_dict_.clear();
+    }
+    if (use_plain_hit_collection()) {
+      _plain_step_hits_dict_.clear();
+    }
+    _properties_.clear();
+    _primary_event_.reset();
+    _set_defaults();
+    return;
+  }
+
+  simulated_data & simulated_data::reset(bool a_reset_collection_type)
   {
     geomtools::invalidate(_vertex_);
     datatools::invalidate(_time_);
@@ -538,14 +556,14 @@ namespace mctools {
       _plain_step_hits_dict_.clear ();
     }
     if (a_reset_collection_type) {
-      _collection_type_ = INVALID_HIT_COLLECTION_TYPE;
+      _collection_type_ = HANDLE_HIT_COLLECTION_TYPE; //INVALID_HIT_COLLECTION_TYPE;
     }
     return *this;
   }
 
-  void simulated_data::clear ()
+  void simulated_data::clear()
   {
-    reset (false);
+    reset(false);
     return;
   }
 
@@ -663,8 +681,14 @@ namespace mctools {
 
     // Vertex:
     {
-      a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-            << "Vertex : " << _vertex_ / CLHEP::mm  << " mm"<< std::endl;
+      a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+            << "Vertex : ";
+      if (has_vertex()) {
+        a_out << _vertex_ / CLHEP::mm  << " mm";
+      } else {
+        a_out << "<none>";
+      }
+      a_out << std::endl;
     }
 
     return;

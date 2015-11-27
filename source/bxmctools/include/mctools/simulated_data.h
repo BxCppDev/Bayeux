@@ -185,8 +185,11 @@ namespace mctools {
     /// Get a reference to the non mutable collection of plain MC hits with a given category
     const hit_collection_type & get_plain_step_hits (const std::string & a_category) const;
 
-    /// Reset the internal data
-    simulated_data & reset (bool a_reset_collection_type = false);
+    /// \deprecated Reset the internal data
+    simulated_data & reset(bool a_reset_collection_type);
+
+    /// Reset data
+    void reset();
 
     /// Default constructor
     simulated_data ();
@@ -206,11 +209,16 @@ namespace mctools {
                             const std::string & a_indent = "",
                             bool a_inherit          = false) const;
 
+  protected:
+
+    /// Set default values to attributes
+    void _set_defaults();
+
   private:
 
     // Attributes :
-    geomtools::vector_3d         _vertex_;               //!< Common primary vertex
-    double                       _time_;                 //!< Common primary time
+    geomtools::vector_3d         _vertex_;               //!< Common primary vertex (optional)
+    double                       _time_;                 //!< Common primary time (optional)
     primary_event_type           _primary_event_;        //!< Primary generated event
     datatools::properties        _properties_;           //!< List of properties
     int8_t                       _collection_type_;      //!< Storage type (handle/plain hits)
