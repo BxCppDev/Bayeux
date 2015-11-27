@@ -160,13 +160,14 @@ namespace genbb {
 
   bool genbb_mgr::has_next ()
   {
+    // return _current_.get_number_of_particles() > 0;
     return _current_.is_valid ();
   }
 
   void genbb_mgr::_load_next (primary_event & event_,
                               bool compute_classification_)
   {
-    //provide the preloaded current event:
+    // provide the preloaded current event:
     event_ = _current_;
     if (compute_classification_) {
       event_.compute_classification ();
@@ -213,7 +214,7 @@ namespace genbb {
 
   void genbb_mgr::_load_next_ ()
   {
-    _current_.reset ();
+    _current_.reset();
     if (_format_ == FORMAT_GENBB) {
       _load_next_genbb_ ();
     }

@@ -44,18 +44,21 @@
 #include <genbb_help/genbb_help_config.h>
 
 // Special backward compatibility support for serialization :
-DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(genbb::primary_event,"genbb::primary_event")
-DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(genbb::primary_event,"__genbb::primary_event__")
+DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(genbb::primary_event, "genbb::primary_event")
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(genbb::primary_event, "__genbb::primary_event__")
 
 namespace genbb {
 
-  DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_event,"genbb::primary_event")
+  DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(primary_event, "genbb::primary_event")
 
   bool primary_event::is_valid() const
   {
     // if (!datatools::is_valid(_time_)) {
     //   return false;
     // }
+    if (_particles_.size() == 0) {
+      return false;
+    }
     for (particles_col_type::const_iterator it = _particles_.begin();
          it != _particles_.end();
          it++) {
