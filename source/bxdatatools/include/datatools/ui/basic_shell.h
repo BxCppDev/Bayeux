@@ -290,13 +290,13 @@ namespace datatools {
       void _print_help(std::ostream & out_ = std::cout);
 
       //! At initialization
-      void _at_init(const datatools::properties & config_);
+      virtual void _at_init(const datatools::properties & config_);
 
       //! At reset
-      void _at_reset();
+      virtual void _at_reset();
 
       //! At run start
-      void _at_run_start();
+      virtual void _at_run_start();
 
       //! At run loop
       datatools::command::returned_info _run_core(std::istream * in_ = 0, uint32_t flags_ = RC_NONE);
@@ -305,7 +305,7 @@ namespace datatools {
       datatools::command::returned_info _run_command(const std::string & command_line_);
 
       //! At run stop
-      void _at_run_stop();
+      virtual void _at_run_stop();
 
     private:
 

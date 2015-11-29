@@ -35,6 +35,7 @@ namespace datatools {
     {
       shell_cd_command(basic_shell &);
       virtual ~shell_cd_command();
+    protected:
       virtual void _init(const datatools::properties & config_);
       virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);
     };

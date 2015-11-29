@@ -35,6 +35,7 @@ namespace datatools {
     {
       shell_help_command(const basic_shell &);
       virtual ~shell_help_command();
+    protected:
       virtual void _init(const datatools::properties & config_);
       virtual void _run(datatools::command::returned_info & cri_, uint32_t flags_ = 0);
     };
