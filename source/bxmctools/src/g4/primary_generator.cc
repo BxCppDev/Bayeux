@@ -363,7 +363,6 @@ namespace mctools {
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["EG"].stop();
       }
-      // current_generated_event.set_time(0.0 * CLHEP::ns);
 
       if (_bias_) {
         // Here the bias object is processing the primary event:
@@ -395,12 +394,13 @@ namespace mctools {
       // about to insert primary particles in the G4 particle gun.
 
       // Default event reference time:
+      // current_generated_event.set_time(0.0 * CLHEP::ns);
       double event_time = 0.0;
       if (datatools::is_valid(_current_time_)) {
         // Explicit event reference time:
         event_time = _current_time_;
       }
-      if (datatools::is_valid(current_generated_event.get_time())) {
+      if (current_generated_event.has_time()) {
         event_time += current_generated_event.get_time();
       }
 
