@@ -1715,7 +1715,11 @@ namespace genbb {
           event_.shift_particles_time(tdnuc1 * CLHEP::second, npfull0);
         }
         //tevst=tdnuc;
-        event_.set_time(tdnuc * CLHEP::second);
+        // 2015-11-29: FM+XG: force reference decay time to 0
+        // was:
+        // event_.set_time(tdnuc * CLHEP::second);
+        // now:
+        event_.set_time(0.0 * CLHEP::second);
 
         /* The following cases have not been ported in C++ (will they ever be ?)
          * - Artificial

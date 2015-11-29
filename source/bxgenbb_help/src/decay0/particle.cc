@@ -139,8 +139,8 @@ namespace genbb {
       tdlev=tclev;
       if (thlev > 0.) tdlev = tclev - thlev / std::log(2.) * std::log(prng_());
       part.set_type(np);
-      part.set_time (last_time + tdlev * CLHEP::second);
-      part.set_momentum (momentum * CLHEP::MeV);
+      part.set_time(last_time + tdlev * CLHEP::second);
+      part.set_momentum(momentum * CLHEP::MeV);
       event_.grab_particles().push_back(part);
       return;
     }

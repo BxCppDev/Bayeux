@@ -239,8 +239,7 @@ namespace genbb {
                                          bool compute_classification_)
   {
     DT_LOG_TRACE(_logging_priority, "Entering...");
-    DT_THROW_IF(_pg_ == 0, std::logic_error,
-                "Null particle generator !");
+    DT_THROW_IF(_pg_ == 0, std::logic_error, "Null particle generator !");
     _pg_->load_next(event_, compute_classification_);
     if (_lbg_) {
       // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: LBG" << std::endl;
