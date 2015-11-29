@@ -35,7 +35,7 @@ namespace datatools {
 
     class basic_shell;
 
-    //! \brief Command interface for a basic shell
+    //! \brief Base command interface for a shell
     class shell_command_interface : public target_command_interface<basic_shell>
     {
     public:
@@ -88,10 +88,10 @@ namespace datatools {
     protected:
 
       //! Add base shell commands
-      void _add_shell_commands();
+      virtual void _add_shell_commands();
 
       //! Remove base shell commands
-      void _remove_shell_commands();
+      virtual void _remove_shell_commands();
 
     private:
 
@@ -101,6 +101,9 @@ namespace datatools {
       // Configuration:
       bool _inhibit_cd_;   //!< Inhibition flag for the cd command
       bool _inhibit_load_; //!< Inhibition flag for the load command
+
+      DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(base_command_interface,
+                                                           shell_command_interface);
 
     };
 

@@ -44,6 +44,7 @@
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/ui/ihs.h>
+#include <datatools/ui/base_command_interface.h>
 
 namespace datatools {
 
@@ -56,6 +57,8 @@ namespace datatools {
                         private boost::noncopyable
     {
     public:
+
+      typedef target_command_interface<basic_shell> shell_command_interface_type;
 
       //! Special flags for run core
       enum run_core_flags {
@@ -266,8 +269,11 @@ namespace datatools {
       //! Check if system interface is set
       bool has_system_interface() const;
 
+      //! Set an external system interface
+      void set_system_interface(shell_command_interface_type &);
+
       // Shell command interface has special priviledeges:
-      friend class shell_command_interface;
+      // friend class shell_command_interface;
 
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -307,6 +313,12 @@ namespace datatools {
       //! At run stop
       virtual void _at_run_stop();
 
+      //! Return the system interface
+      shell_command_interface_type & _grab_system_interface();
+
+      //! Return the system interface
+      const shell_command_interface_type & _get_system_interface() const;
+
     private:
 
       // Control/management:
@@ -331,7 +343,8 @@ namespace datatools {
       // Working data:
       ihs * _ihs_; //!< Handle to the IHS
       std::string _current_working_path_; //!< Current working interface path
-      boost::scoped_ptr<shell_command_interface> _system_interface_; //!< System interface for this shell
+      boost::scoped_ptr<shell_command_interface_type> _system_interface_; //!< Embedded system interface for this shell
+      shell_command_interface_type * _external_system_interface_; //! External system interface for this shell
 
       // Private data:
       struct pimpl_type;

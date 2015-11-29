@@ -81,7 +81,7 @@ int main(int argc_, char * argv_[])
     // The foo shell:
     datatools::ui::basic_shell fooShell;
     fooShell.set_name("fooShell"); // Mandatory
-    // fooShell.set_logging(datatools::logger::PRIO_TRACE);
+    fooShell.set_logging(datatools::logger::PRIO_NOTICE);
     fooShell.set_version(datatools::version_id(1,0));
     fooShell.set_prompt("%n:%W> ");
     fooShell.set_continuation_prompt("> ");

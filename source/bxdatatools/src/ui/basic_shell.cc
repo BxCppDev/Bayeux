@@ -154,9 +154,10 @@ namespace datatools {
       _history_add_only_on_success_ = true;
       _history_filename_.clear();
       _history_truncate_ = 0;
-
+      _services_ = 0;
       _ihs_ = 0;
       _current_working_path_ = ::datatools::ui::path::root_path();
+      _external_system_interface_ = 0;
       return;
     }
 
@@ -448,8 +449,36 @@ namespace datatools {
 
     bool basic_shell::has_system_interface() const
     {
+      if (_external_system_interface_ != 0) return true;
       return _system_interface_.get() != 0;
     }
+
+    void basic_shell::set_system_interface(shell_command_interface_type & si_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(_system_interface_.get() != 0, std::logic_error, "Shell already has an embedded system interface!");
+      _external_system_interface_ = &si_;
+      return;
+    }
+
+    basic_shell::shell_command_interface_type & basic_shell::_grab_system_interface()
+    {
+      DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell has no system interface!");
+      if (_external_system_interface_ != 0) {
+        return *_external_system_interface_;
+      }
+      return *_system_interface_.get();
+    }
+
+    const basic_shell::shell_command_interface_type & basic_shell::_get_system_interface() const
+    {
+      DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell has no system interface!");
+      if (_external_system_interface_ != 0) {
+        return *_external_system_interface_;
+      }
+      return *_system_interface_.get();
+    }
+
 
     bool basic_shell::has_ihs() const
     {
@@ -483,7 +512,7 @@ namespace datatools {
     void basic_shell::builtin_command_names(std::vector<std::string> & cmd_names_) const
     {
       DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell '" << get_name() << "' has no system interface!");
-      const shell_command_interface & sci = *_system_interface_.get();
+      const shell_command_interface_type & sci = _get_system_interface();
       sci.build_command_names(cmd_names_);
       return;
     }
@@ -491,14 +520,14 @@ namespace datatools {
     bool basic_shell::has_builtin_command(const std::string & cmd_name_) const
     {
       DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell '" << get_name() << "' has no system interface!");
-      const shell_command_interface & sci = *_system_interface_.get();
+      const shell_command_interface_type & sci = _get_system_interface();
       return sci.has_command(cmd_name_);
     }
 
     const base_command & basic_shell::get_builtin_command(const std::string & cmd_name_) const
     {
       DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell '" << get_name() << "' has no system interface!");
-      const shell_command_interface & sci = *_system_interface_.get();
+      const shell_command_interface_type & sci = _get_system_interface();
       return sci.get_command(cmd_name_);
     }
 
@@ -627,6 +656,12 @@ namespace datatools {
       // Specific initialization:
       _at_init(config_);
 
+      if (has_system_interface()) {
+        if (_logging_ >= datatools::logger::PRIO_NOTICE) {
+          _get_system_interface().tree_dump(std::clog, "System builtin command interface: ", "[notice] ");
+        }
+      }
+
       // Set the current path:
       set_current_path(get_default_path());
 
@@ -648,28 +683,59 @@ namespace datatools {
 
     void basic_shell::_at_init(const datatools::properties & config_)
     {
-      _system_interface_.reset(new shell_command_interface);
-      _system_interface_->set_target(*this);
-      _system_interface_->set_name(system_interface_name());
-      _system_interface_->set_terse_description(std::string("System builtin commands for the '") + get_name() + "' shell");
 
-      datatools::properties sci_config;
-      config_.export_and_rename_starting_with(sci_config, "system_interface.", "");
-      if (has_services()) {
-        _system_interface_->initialize(sci_config, get_services());
-      } else {
-        _system_interface_->initialize_standalone(sci_config);
+      if (! has_system_interface()) {
+
+        std::string system_interface_id;
+        if (config_.has_key("system_interface_id")) {
+          system_interface_id = config_.fetch_string("system_interface_id");
+        } else {
+          // Default to basic shell interface:
+          system_interface_id = "datatools::ui::shell_command_interface";
+        }
+
+        const base_command_interface::factory_register_type & the_factory_register =
+          DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(base_command_interface);
+        DT_THROW_IF(!the_factory_register.has(system_interface_id),
+                    std::logic_error,
+                    "No command interface is registered with type identifier '" << system_interface_id << "'!");
+        const base_command_interface::factory_register_type::factory_type & the_factory
+          = the_factory_register.get(system_interface_id);
+        DT_LOG_NOTICE(_logging_, "Instantiating shell command interface of type '" << system_interface_id << "'...");
+        base_command_interface * bci = the_factory();
+        shell_command_interface_type * sci = dynamic_cast<shell_command_interface_type *>(bci);
+        DT_THROW_IF(sci == 0,
+                    std::logic_error,
+                    "Command interface with type identifier '" << system_interface_id << "' has no shell target!");
+
+        _system_interface_.reset(sci);
+        _system_interface_->set_target(*this);
+        _system_interface_->set_name(system_interface_name());
+        _system_interface_->set_terse_description(std::string("System builtin commands for the '") + get_name() + "' shell");
+
+        datatools::properties sci_config;
+        config_.export_and_rename_starting_with(sci_config, "system_interface.", "");
+        DT_LOG_NOTICE(_logging_, "Initializing the shell command interface...");
+        if (has_services()) {
+          _system_interface_->initialize(sci_config, get_services());
+        } else {
+          _system_interface_->initialize_standalone(sci_config);
+        }
       }
-      _system_interface_->tree_dump(std::clog, "System builtin command interface: ");
       return;
     }
 
     void basic_shell::_at_reset()
     {
-      if (_system_interface_ != 0 && _system_interface_->is_initialized()) {
-        _system_interface_->reset();
+      if (_external_system_interface_ != 0) {
+        _external_system_interface_ = 0;
       }
-      _system_interface_.reset();
+      if (_system_interface_.get() != 0) {
+        if (_system_interface_->is_initialized()) {
+          _system_interface_->reset();
+        }
+        _system_interface_.reset();
+      }
       return;
     }
 
@@ -1187,9 +1253,9 @@ namespace datatools {
         if (! call_done) {
           if (has_system_interface()) {
             DT_LOG_TRACE(get_logging(), "Trying system interface...");
-            if (_system_interface_->has_command(cmd_name)) {
+            if (_get_system_interface().has_command(cmd_name)) {
               call_done = true;
-              _system_interface_->call(argv, cri);
+              _grab_system_interface().call(argv, cri);
             } else {
               DT_LOG_TRACE(get_logging(), "Not a system interface command!");
             }
@@ -1296,7 +1362,7 @@ namespace datatools {
       }
 
       out_ << indent_ << i_tree_dumpable::tag
-           << "System interface : " << (has_system_interface() ? (std::string("'") +_system_interface_->get_name() + "'") : "<none>") << std::endl;
+           << "System interface : " << (has_system_interface() ? (std::string("'") +_get_system_interface().get_name() + "'") : "<none>") << std::endl;
 
       out_ << indent_ << i_tree_dumpable::tag
            << "IHS : " << "[@" << _ihs_ << "]" << std::endl;
