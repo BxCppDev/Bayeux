@@ -458,6 +458,10 @@ namespace datatools {
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       DT_THROW_IF(_system_interface_.get() != 0, std::logic_error, "Shell already has an embedded system interface!");
       _external_system_interface_ = &si_;
+      if (! _external_system_interface_->has_target()) {
+        _external_system_interface_->set_target(*this);
+        _external_system_interface_->initialize_simple();
+      }
       return;
     }
 
