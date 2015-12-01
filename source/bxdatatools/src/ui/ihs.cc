@@ -714,9 +714,9 @@ namespace datatools {
              inode++) {
           out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_);
           if (++counter == _nodes_.size()) {
-            out_ << indent_ << i_tree_dumpable::last_tag;
+            out_ << i_tree_dumpable::last_tag;
           } else {
-            out_ << indent_ << i_tree_dumpable::tag;
+            out_ << i_tree_dumpable::tag;
           }
           out_ << "Node '" << inode->first << "' : ";
           const node & the_node = inode->second;

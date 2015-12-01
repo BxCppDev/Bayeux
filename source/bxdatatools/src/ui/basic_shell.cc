@@ -455,13 +455,16 @@ namespace datatools {
 
     void basic_shell::set_system_interface(shell_command_interface_type & si_)
     {
+      DT_LOG_TRACE_ENTERING(get_logging());
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       DT_THROW_IF(_system_interface_.get() != 0, std::logic_error, "Shell already has an embedded system interface!");
       _external_system_interface_ = &si_;
       if (! _external_system_interface_->has_target()) {
+        DT_LOG_TRACE(get_logging(), "Install external system interface target!");
         _external_system_interface_->set_target(*this);
         _external_system_interface_->initialize_simple();
       }
+      DT_LOG_TRACE_EXITING(get_logging());
       return;
     }
 
@@ -1365,8 +1368,18 @@ namespace datatools {
 
       }
 
-      out_ << indent_ << i_tree_dumpable::tag
-           << "System interface : " << (has_system_interface() ? (std::string("'") +_get_system_interface().get_name() + "'") : "<none>") << std::endl;
+      out_ << indent_ << i_tree_dumpable::tag << "System interface : ";
+      if (has_system_interface()) {
+        out_ << "'" << _get_system_interface().get_name() << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+      if (has_system_interface()) {
+        std::ostringstream indent2;
+        indent2 << indent_ << i_tree_dumpable::skip_tag;
+        _get_system_interface().tree_dump(out_, "", indent2.str());
+      }
 
       out_ << indent_ << i_tree_dumpable::tag
            << "IHS : " << "[@" << _ihs_ << "]" << std::endl;
