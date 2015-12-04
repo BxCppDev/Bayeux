@@ -1,6 +1,6 @@
 // lorentz_boost_wrapper.cc
 /*
- * Copyright 2014 F. Mauger
+ * Copyright 2014-2015 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,48 +238,39 @@ namespace genbb {
   void lorentz_boost_wrapper::_load_next(primary_event & event_,
                                          bool compute_classification_)
   {
-    DT_LOG_TRACE(_logging_priority, "Entering...");
+    DT_LOG_TRACE_ENTERING(_logging_priority);
     DT_THROW_IF(_pg_ == 0, std::logic_error, "Null particle generator !");
     _pg_->load_next(event_, compute_classification_);
     if (_lbg_) {
-      // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: LBG" << std::endl;
       geomtools::vector_3d vertex;
       geomtools::vector_3d speed;
       double time;
-      geomtools::invalidate(vertex);
       geomtools::invalidate(speed);
+      geomtools::invalidate(vertex);
       datatools::invalidate(time);
       _lbg_->generate(speed, vertex, time);
-      // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: c      =" << CLHEP::c_light / (CLHEP::m / CLHEP::s) << " m/s" << std::endl;
-      // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: vertex =" << vertex / CLHEP::mm << " mm" << std::endl;
-      // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: speed  =" << speed / CLHEP::c_light << " c" << std::endl;
-      for (primary_event::particles_col_type::iterator ipart = event_.grab_particles().begin();
-           ipart != event_.grab_particles().end();
-           ipart++) {
-        primary_particle & part = *ipart;
-        if (geomtools::is_valid(vertex)) {
-          part.set_vertex(vertex);
-        }
-        if (geomtools::is_valid(speed)) {
-          // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: old p=" << part.get_momentum() / CLHEP::MeV << std::endl;
-          // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: apply Lorentz Boost Transformation to the particle momentum..." << std::endl;
-          CLHEP::HepLorentzVector q4;
-          // Compute the associated 4-vector
-          part.compute_four_momentum(q4);
-          CLHEP::HepLorentzVector q4_2 = CLHEP::boostOf(q4, speed / CLHEP::c_light);
-          part.set_momentum(q4_2.vect());
-          // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: new E=" << q4_2.t() / CLHEP::MeV << std::endl;
-          // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: new E=" << part.get_total_energy() / CLHEP::MeV << std::endl;
-          // std::cerr << "DEVEL: lorentz_boost_wrapper::_load_next: new p=" << part.get_momentum() / CLHEP::MeV << std::endl;
-        }
+      if (geomtools::is_valid(vertex)) {
+        event_.set_vertex(vertex);
       }
       if (datatools::is_valid(time)) {
         event_.set_time(time);
       }
+      for (primary_event::particles_col_type::iterator ipart = event_.grab_particles().begin();
+           ipart != event_.grab_particles().end();
+           ipart++) {
+        primary_particle & part = *ipart;
+        if (geomtools::is_valid(speed)) {
+          CLHEP::HepLorentzVector q4;
+          // Compute the associated 4-vector:
+          part.compute_four_momentum(q4);
+          CLHEP::HepLorentzVector q4_2 = CLHEP::boostOf(q4, speed / CLHEP::c_light);
+          part.set_momentum(q4_2.vect());
+        }
+      }
       _lbg_->add_metadata(event_);
     }
 
-    DT_LOG_TRACE(_logging_priority, "Exiting.");
+    DT_LOG_TRACE_EXITING(_logging_priority);
     return;
   }
 

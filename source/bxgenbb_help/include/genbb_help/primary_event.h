@@ -1,10 +1,10 @@
 /// \file genbb_help/primary_event.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-11
- * Last modified: 2014-06-19
+ * Last modified: 2015-12-04
  *
  * License:
- * Copyright 2007-2014 F. Mauger
+ * Copyright 2007-2015 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@
 #include <datatools/units.h>
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
+// - Bayeux/geomtools:
+#include <geomtools/utils.h>
 
 // This project:
 #include <genbb_help/primary_particle.h>
@@ -81,6 +83,15 @@ namespace genbb {
 
     /// Return the time
     double get_time() const;
+
+    /// Check if vertex is defined
+    bool has_vertex() const;
+
+    /// Set the vertex
+    void set_vertex(const geomtools::vector_3d &);
+
+    /// Return the time
+    const geomtools::vector_3d & get_vertex() const;
 
     /// Set the weight
     void set_genbb_weight(double genbb_weight_);
@@ -193,9 +204,10 @@ namespace genbb {
   private:
 
     double                _time_;           //!< The generation time (optional)
+    geomtools::vector_3d  _vertex_;         //!< The event vertex (optional)
     particles_col_type    _particles_;      //!< The list of primary particles
     std::string           _label_;          //!< A label associated to the generated event
-    std::string           _classification_; //!< A classification string id (optional)
+    std::string           _classification_; //!< A classification string (optional)
     double                _genbb_weight_;   //!< The weight of the generated event with respect to a reference sample
     datatools::properties _auxiliaries_;    //!< Auxiliary properties
 
@@ -222,7 +234,7 @@ DR_CLASS_INIT(::genbb::primary_event);
 
 // Explicit class version:
 #include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(genbb::primary_event, 4)
+BOOST_CLASS_VERSION(genbb::primary_event, 5)
 
 #endif // GENBB_HELP_PRIMARY_EVENT_H
 

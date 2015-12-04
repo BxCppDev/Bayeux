@@ -1,6 +1,6 @@
 // primary_event.cc
 /*
- * Copyright 2007-2014 F. Mauger
+ * Copyright 2007-2015 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +53,6 @@ namespace genbb {
 
   bool primary_event::is_valid() const
   {
-    // if (!datatools::is_valid(_time_)) {
-    //   return false;
-    // }
     if (_particles_.size() == 0) {
       return false;
     }
@@ -72,16 +69,17 @@ namespace genbb {
   void primary_event::_set_defaults()
   {
     datatools::invalidate(_time_);
+    geomtools::invalidate(_vertex_);
     _genbb_weight_ = 1.0;
     return;
   }
 
   void primary_event::reset()
   {
+    _auxiliaries_.clear();
+    reset_classification();
     reset_label();
     _particles_.clear();
-    reset_classification();
-    _auxiliaries_.clear();
     _set_defaults();
     return;
   }
@@ -92,9 +90,9 @@ namespace genbb {
     for (particles_col_type::const_iterator i = _particles_.begin();
          i != _particles_.end();
          i++) {
-        const primary_particle & p = *i;
-        tke += p.get_kinetic_energy();
-      }
+      const primary_particle & p = *i;
+      tke += p.get_kinetic_energy();
+    }
     return tke;
   }
 
@@ -124,6 +122,22 @@ namespace genbb {
   double primary_event::get_time() const
   {
     return _time_;
+  }
+
+  bool primary_event::has_vertex() const
+  {
+    return geomtools::is_valid(_vertex_);
+  }
+
+  void primary_event::set_vertex(const geomtools::vector_3d & vtx_)
+  {
+    _vertex_ = vtx_;
+    return;
+  }
+
+  const geomtools::vector_3d & primary_event::get_vertex() const
+  {
+    return _vertex_;
   }
 
   void primary_event::set_genbb_weight(double genbb_weight_)
@@ -388,6 +402,16 @@ namespace genbb {
       out_ << "<none>";
     }
     out_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag << "Vertex  : ";
+    if (has_vertex()) {
+      out_ << _vertex_ / CLHEP::mm << " mm";
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
+
+
     out_ << indent << datatools::i_tree_dumpable::tag << "Particles: [" << _particles_.size() << "]" << std::endl;
 
     int particle_counter = 0;
@@ -419,20 +443,21 @@ namespace genbb {
          << "Classification : '" << get_classification()
          << "'" << std::endl;
 
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "Valid: " << is_valid() << std::endl;
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Valid: " << is_valid() << std::endl;
 
     return;
   }
 
   void primary_event::dump(std::ostream & out_,
-                            const std::string & title_,
-                            const std::string & indent_) const
+                           const std::string & title_,
+                           const std::string & indent_) const
   {
     tree_dump(out_, title_, indent_);
   }
 
   void primary_event::dump(std::ostream & out_,
-                            const std::string & indent_) const
+                           const std::string & indent_) const
   {
     dump(out_, "genbb::primary_event:", indent_);
     return;
@@ -446,11 +471,11 @@ namespace genbb {
     for (particles_col_type::iterator i = _particles_.begin();
          i != _particles_.end();
          i++) {
-        primary_particle & p = *i;
-        geomtools::vector_3d & momentum = p.grab_momentum();
-        geomtools::vector_3d rotated_momentum = rot * momentum;
-        momentum = rotated_momentum;
-      }
+      primary_particle & p = *i;
+      geomtools::vector_3d & momentum = p.grab_momentum();
+      geomtools::vector_3d rotated_momentum = rot * momentum;
+      momentum = rotated_momentum;
+    }
     return;
   }
 

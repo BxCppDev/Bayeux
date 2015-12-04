@@ -14,6 +14,8 @@
 #include <boost/serialization/string.hpp>
 // - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
+// - Bayeux/geomtools:
+#include <geomtools/utils.ipp>
 
 // This project:
 #include <genbb_help/primary_particle.ipp>
@@ -47,6 +49,18 @@ namespace genbb {
 
     // Time:
     ar_ & boost::serialization::make_nvp("time", _time_);
+
+    // Vertex:
+    // 2015-12-04 FM : support common vertex :
+    if (version_ < 5) {
+      if (Archive::is_saving::value) {
+        ar_ & boost::serialization::make_nvp("vertex", _vertex_);
+      } else {
+        geomtools::invalidate(_vertex_);
+      }
+    } else {
+      ar_ & boost::serialization::make_nvp("vertex", _vertex_);
+    }
 
     // List of primary particles:
     ar_ & boost::serialization::make_nvp("particles", _particles_);
