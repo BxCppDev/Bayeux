@@ -115,12 +115,37 @@ void service_manager::load(const datatools::multi_properties& config) {
   }
 }
 
+const base_service & service_manager::get_service(const std::string& name) const
+{
+  DT_LOG_DEBUG(get_logging_priority(), "name='" << name << "'");
+  service_manager * mutable_this = const_cast<service_manager*>(this);
+  return const_cast<base_service&>(mutable_this->grab_service(name));
+}
+
+base_service & service_manager::grab_service(const std::string& name)
+{
+  DT_LOG_DEBUG(get_logging_priority(), "name='" << name << "'");
+  service_dict_type::iterator found = services_.find(name);
+  DT_THROW_IF (found == services_.end(),
+               std::logic_error,
+               "No service named '" << name << "' !");
+  service_entry& sentry = found->second;
+  if (!sentry.is_initialized()) {
+    this->initialize_service(sentry);
+  }
+  return sentry.grab_service_handle().grab();
+}
 
 void service_manager::initialize(const datatools::properties& config) {
   DT_THROW_IF(this->is_initialized(), std::logic_error, "Service manager is already initialized !");
 
-  datatools::logger::priority p = datatools::logger::extract_logging_configuration(config);
-  set_logging_priority (p);
+  datatools::logger::priority p
+    = datatools::logger::extract_logging_configuration(config,
+                                                       get_logging_priority(),
+                                                       true);
+  if (p != datatools::logger::PRIO_UNDEFINED) {
+    set_logging_priority(p);
+  }
 
   if (name_.empty()) {
     if (config.has_key("name")) {
@@ -239,6 +264,7 @@ service_manager::~service_manager () {
  ****************/
 
 bool service_manager::has(const std::string& name) const {
+  // DT_LOG_DEBUG(get_logging_priority(), "name='" << name << "'");
   return services_.find(name) != services_.end();
 }
 
@@ -439,12 +465,13 @@ void service_manager::load_service(const std::string& name,
                  "Add an entry for service '"<< name << "'...");
     services_[name] = tmp_entry;
   }
-  // fetch a reference on it and update :
+  // Fetch a reference on it and update :
   service_entry& new_entry = services_.find(name)->second;
+  new_entry.set_service_manager(*this);
   new_entry.set_service_id(id);
   new_entry.set_service_config(config);
   //new_entry.service_status = service_entry::STATUS_BLANK;
-  DT_LOG_DEBUG(get_logging_priority(),"Fetch...");
+  // DT_LOG_DEBUG(get_logging_priority(),"Fetch...");
   this->create_service(new_entry);
   std::vector<std::string> strict_dependencies;
   if (config.has_key("dependencies.strict")) {

@@ -1,9 +1,9 @@
 /// \file datatools/service_manager.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2013-05-19
+ * Last modified : 2015-12-03
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Copyright (C) 2012 Ben Morgan <Ben.Morgan@warwick.ac.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -110,7 +110,7 @@ namespace datatools {
 
     //! Register a service factory
     template <class ServiceClass>
-      void register_service_type(const std::string& id);
+    void register_service_type(const std::string& id);
 
     //! Unregister a service factory
     void unregister_service_type(const std::string& id);
@@ -142,7 +142,17 @@ namespace datatools {
      *   @return a const reference to the service instance requested by name and type
      */
     template<class T>
-      const T& get(const std::string& name) const;
+    const T& get(const std::string& name) const;
+
+    /**  @param name The name of the service to be checked
+     *   @return a mutable reference to the service instance requested by name
+     */
+    base_service & grab_service(const std::string& name);
+
+    /**  @param name The name of the service to be checked
+     *   @return a const reference to the service instance requested by name
+     */
+    const base_service & get_service(const std::string& name) const;
 
     //! Check if a service with given name can be dropped
     bool can_drop(const std::string& name);

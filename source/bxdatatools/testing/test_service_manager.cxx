@@ -212,10 +212,11 @@ int main (int argc_, char ** argv_)
             SM_flags |= datatools::service_manager::FACTORY_VERBOSE;
           }
         datatools::service_manager SM ("SM", "A test service manager", SM_flags);
-        SM.tree_dump (clog, "Service manager : ");
+        if (debug) SM.set_logging_priority(datatools::logger::PRIO_DEBUG);
+        SM.tree_dump(clog, "Service manager : ");
 
         // Create a multi_property container:
-        datatools::multi_properties SM_services_config;
+        datatools::multi_properties SM_services_config("name", "type");
         SM_services_config.add ("test_1", "test_service");
         SM_services_config.grab_section ("test_1").store ("label", "test_service_1::label");
 
@@ -228,19 +229,23 @@ int main (int argc_, char ** argv_)
         SM_services_config.add ("foo", "datatools::dummy_service");
         SM_services_config.grab_section ("foo").store ("label", "King Arthur");
 
+        SM_services_config.tree_dump(std::cerr, "SM services config: ", "DEVEL: ");
         if (debug) clog << datatools::io::debug << "Load embedded services' configuration..." << endl;
         // Load it !
         SM.load (SM_services_config);
+        SM.tree_dump (clog, "Service manager (with loaded services) : ");
 
         // Load another multi_property container stored in a file :
-        datatools::multi_properties SM_services_config_2;
+        datatools::multi_properties SM_services_config_2("name", "type");
         string services_conf = "${DATATOOLS_TESTING_DIR}/config/test_service_manager.conf";
         datatools::fetch_path_with_env (services_conf);
         SM_services_config_2.read (services_conf);
         SM.load (SM_services_config_2);
+        SM.tree_dump (clog, "Service manager (with loaded services 2) : ");
 
         if (debug) clog << datatools::io::debug << "Initializing the service manager..." << endl;
         SM.initialize ();
+        if (debug) clog << datatools::io::debug << "Done." << endl;
 
         if (SM.has ("test_2") && SM.is_a<test_service> ("test_2"))
           {

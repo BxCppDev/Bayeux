@@ -1,7 +1,7 @@
 /// \file datatools/service_tools.h
 /* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2015-11-08
+ * Last modified : 2015-12-03
  *
  * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -40,6 +40,7 @@
 #include <boost/cstdint.hpp>
 
 // This project:
+#include <datatools/exception.h>
 #include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
@@ -74,19 +75,19 @@ namespace datatools {
 
   class service_manager;
 
-  // Record that handles a dynamically allocated service and additional
-  // informations :
-
   //! \brief Internal entry for service objects stored in the service manager class
+  //!
+  //! Record that handles a dynamically allocated and initialized service and additional
+  //! informations
   class service_entry : public datatools::i_tree_dumpable  {
   public:
 
     //! \brief Service status flags
     enum status_type {
-      STATUS_BLANK             = 0x0, //! Empty flag set
-      STATUS_CREATED           = 0x1, //! Instantiation flag
-      STATUS_INITIALIZED       = 0x2, //! Initialization flag
-      STATUS_BROKEN_DEPENDENCY = 0x4  //! Broken dependency flag
+      STATUS_BLANK             = 0x0, //!< Empty flag set
+      STATUS_CREATED           = 0x1, //!< Instantiation flag
+      STATUS_INITIALIZED       = 0x2, //!< Initialization flag
+      STATUS_BROKEN_DEPENDENCY = 0x4  //!< Broken dependency flag
     };
 
   public:
@@ -151,17 +152,28 @@ namespace datatools {
     //! Return a handle to the mutable service
     service_handle_type & grab_service_handle();
 
+    //! Check if service manager is available
+    bool has_service_manager() const;
+
+    //! Set the service manager
+    void set_service_manager(service_manager & smgr);
+
+    //! Return a reference to the service manager
+    const service_manager & get_service_manager() const;
+
+    //! Return a mutable reference to the service manager
+    service_manager & grab_service_manager();
+
   private:
     std::string  service_name;    //!< The name of the service
     std::string  service_id;      //!< The ID (type) of the service
     datatools::properties service_config;  //!< The configuration of the service
     uint32_t service_status;  //!< The status of the service
     service_handle_type service_handle;  //!< The handle for the allocated service
+    service_manager * manager; //!< The handle to the host service manager
   public:
     service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
     dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
-
-    // friend class service_manager;
   };
 
   //! \brief Type alias for a dictionary of service entries
@@ -176,6 +188,44 @@ namespace datatools {
   bool find_service_names_with_id(const service_dict_type & services_,
                                   const std::string & service_id_,
                                   std::vector<std::string> & service_names_);
+
+  //! Return the mutable reference to a service given its name
+  base_service & grab_service(service_dict_type & services_,
+                              const std::string & service_name_);
+
+  //! Return the const reference to a service given its name
+  const base_service & get_service(const service_dict_type & services_,
+                                   const std::string & service_name_);
+
+  /**
+   *   @param services_ The dictionary of service entries
+   *   @param service_name_ The name of the service to be checked
+   *   @return a mutable reference to the service instance requested by name and type
+   */
+  template<class T>
+  T& grab(service_dict_type & services_, const std::string& service_name_)
+  {
+    base_service & srvc = grab_service(services_, service_name_);
+    const std::type_info& ti = typeid(T);
+    const std::type_info& tf = typeid(srvc);
+    DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
+    return dynamic_cast<T&>(srvc);
+  }
+
+  /**
+   *   @param services_ The dictionary of service entries
+   *   @param service_name_ The name of the service to be checked
+   *   @return a const reference to the service instance requested by name and type
+   */
+  template<class T>
+  const T& get(const service_dict_type & services_, const std::string& service_name_)
+  {
+    const base_service & srvc = get_service(services_, service_name_);
+    const std::type_info& ti = typeid(T);
+    const std::type_info& tf = typeid(srvc);
+    DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
+    return dynamic_cast<const T&>(srvc);
+  }
 
 }  // end of namespace datatools
 

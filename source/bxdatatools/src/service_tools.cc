@@ -29,6 +29,7 @@
 // This project:
 #include <datatools/base_service.h>
 #include <datatools/exception.h>
+#include <datatools/service_manager.h>
 
 namespace datatools {
 
@@ -98,7 +99,6 @@ namespace datatools {
     return;
   }
 
-
   const service_handle_type & service_entry::get_service_handle() const
   {
     return service_handle;
@@ -109,10 +109,33 @@ namespace datatools {
     return service_handle;
   }
 
+  bool service_entry::has_service_manager() const
+  {
+    return manager != 0;
+  }
+
+  void service_entry::set_service_manager(service_manager & smgr)
+  {
+    manager = &smgr;
+  }
+
+  const service_manager & service_entry::get_service_manager() const
+  {
+    DT_THROW_IF(!has_service_manager(), std::logic_error, "Missing service manager!");
+    return *manager;
+  }
+
+  service_manager & service_entry::grab_service_manager()
+  {
+    DT_THROW_IF(!has_service_manager(), std::logic_error, "Missing service manager!");
+    return *manager;
+  }
+
 
   service_entry::service_entry() {
     service_status = STATUS_BLANK;
     service_handle.reset();
+    manager = 0;
   }
 
   bool service_entry::has_slave(const std::string& name) const {
@@ -120,14 +143,12 @@ namespace datatools {
     return (found != service_slaves.end()) && (found->second == DEPENDENCY_STRICT);
   }
 
-
   void service_entry::remove_slave(const std::string& name) {
     dependency_level_dict_type::iterator found = service_slaves.find(name);
     if (found != service_slaves.end()) {
       service_slaves.erase(found);
     }
   }
-
 
   bool service_entry::can_be_dropped() const {
     for (dependency_level_dict_type::const_iterator i = service_slaves.begin();
@@ -139,7 +160,6 @@ namespace datatools {
     }
     return true;
   }
-
 
   bool service_entry::is_created() const
   {
@@ -169,6 +189,15 @@ namespace datatools {
         << "Service ID       : '"
         << service_id
         << "'" << std::endl;
+
+    out << indent << i_tree_dumpable::tag
+        << "Service manager  : ";
+    if (has_service_manager()) {
+      out << "[@" << manager << "]";
+    } else {
+      out << "<none>";
+    }
+    out << "'" << std::endl;
 
     {
       out << indent << i_tree_dumpable::tag
@@ -273,17 +302,16 @@ namespace datatools {
                                  std::string & service_name_)
   {
     service_name_.clear();
-    for (datatools::service_dict_type::const_iterator iserv = services_.begin();
+    for (::datatools::service_dict_type::const_iterator iserv = services_.begin();
          iserv != services_.end();
          iserv++) {
       const std::string & service_name = iserv->first;
-      const datatools::service_entry & sentry = iserv->second;
+      const ::datatools::service_entry & sentry = iserv->second;
       if (sentry.get_service_id() == service_id_) {
         service_name_ = service_name;
         break;
       }
     }
-
     return !service_name_.empty();
   }
 
@@ -292,16 +320,34 @@ namespace datatools {
                                   std::vector<std::string> & service_names_)
   {
     std::size_t sz = service_names_.size();
-    for (datatools::service_dict_type::const_iterator iserv = services_.begin();
+    for (::datatools::service_dict_type::const_iterator iserv = services_.begin();
          iserv != services_.end();
          iserv++) {
       const std::string & service_name = iserv->first;
-      const datatools::service_entry & sentry = iserv->second;
+      const ::datatools::service_entry & sentry = iserv->second;
       if (sentry.get_service_id() == service_id_) {
         service_names_.push_back(service_name);
       }
     }
     return service_names_.size() > sz;
+  }
+
+  base_service & grab_service(service_dict_type & services_,
+                              const std::string & service_name_)
+  {
+    ::datatools::service_dict_type::iterator found = services_.find(service_name_);
+    DT_THROW_IF(found == services_.end(), std::logic_error,
+                "Cannot find service named '" << service_name_ << "'!");
+    ::datatools::service_entry & sentry = found->second;
+    service_manager & smgr = sentry.grab_service_manager();
+    return smgr.grab_service(service_name_);
+  }
+
+  const base_service & get_service(const service_dict_type & services_,
+                                   const std::string & service_name_)
+  {
+    service_dict_type & mutable_services = const_cast<service_dict_type &>(services_);
+    return const_cast<base_service&>(grab_service(mutable_services,service_name_));
   }
 
 }  // end of namespace datatools
