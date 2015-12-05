@@ -292,8 +292,8 @@ namespace genvtx {
   }
 
   // virtual
-  void i_vertex_generator::_shoot_vertex(mygsl::rng & random_,
-                                         geomtools::vector_3d & vertex_)
+  void i_vertex_generator::_shoot_vertex(mygsl::rng & /*random_*/,
+                                         geomtools::vector_3d & /*vertex_*/)
   {
     DT_THROW(std::logic_error, "This method is not implemented ! "
              << "It should be overloaded for the class of the '" << get_name() << "' vertex generator!");
@@ -301,9 +301,9 @@ namespace genvtx {
   }
 
   // virtual
-  void i_vertex_generator::_shoot_vertex_and_time(mygsl::rng & random_,
-                                                  geomtools::vector_3d & vertex_,
-                                                  double & time_)
+  void i_vertex_generator::_shoot_vertex_and_time(mygsl::rng & /*random_*/,
+                                                  geomtools::vector_3d & /*vertex_*/,
+                                                  double & /*time_*/)
   {
     DT_THROW(std::logic_error, "This method is not implemented ! "
              << "It should be overloaded for the class of the '" << get_name() << "' vertex generator!");
