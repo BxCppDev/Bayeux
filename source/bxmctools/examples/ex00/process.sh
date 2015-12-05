@@ -169,7 +169,7 @@ if [ $do_simulation -eq 1 ]; then
 	--event-generator-name ${eg_name} \
 	--event-generator-seed 0 \
 	--shpf-seed 0 \
-	--output-profiles " calo + calo_details " \
+	--output-profiles " calo + all_details " \
 	--g4-manager-seed 0 \
 	--output-prng-seeds-file "prng_seeds.save" \
 	--output-prng-states-file "prng_states.save" \
