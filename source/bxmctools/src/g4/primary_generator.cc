@@ -293,8 +293,10 @@ namespace mctools {
       // Generate the vertex[/time]:
       geomtools::invalidate(_current_vertex_);
       datatools::invalidate(_current_time_);
-      if (_vertex_generator_ != 0) {
-        _generate_vertex();
+      if (! geomtools::is_valid(_current_vertex_)) {
+        if (_vertex_generator_ != 0) {
+          _generate_vertex();
+        }
       }
       // Generate the primary event:
       _generate_event(g4_event_);
@@ -338,6 +340,7 @@ namespace mctools {
         // Save current event time:
         _event_action_->grab_event_data().set_time(_current_time_);
       }
+
       return;
     }
 
@@ -362,6 +365,25 @@ namespace mctools {
       _event_generator_->load_next(current_generated_event);
       if (mgr.using_time_stat()) {
         mgr.grab_CT_map()["EG"].stop();
+      }
+      // current_generated_event.set_time(0.0 * CLHEP::ns);
+
+      // Default event reference time:
+      double event_time = 0.0;
+      if (datatools::is_valid(_current_time_)) {
+        // Explicit event reference time:
+        event_time = _current_time_;
+      }
+      if (current_generated_event.has_time()) {
+        // if (datatools::is_valid(current_generated_event.get_time())) {
+        event_time += current_generated_event.get_time();
+      }
+
+      // Default event vertex:
+      if (! geomtools::is_valid(_current_vertex_)) {
+        if (current_generated_event.has_vertex()) {
+          _current_vertex_ = current_generated_event.get_vertex();
+        }
       }
 
       if (_bias_) {
@@ -392,17 +414,6 @@ namespace mctools {
 
       // Process the primary event:
       // about to insert primary particles in the G4 particle gun.
-
-      // Default event reference time:
-      // current_generated_event.set_time(0.0 * CLHEP::ns);
-      double event_time = 0.0;
-      if (datatools::is_valid(_current_time_)) {
-        // Explicit event reference time:
-        event_time = _current_time_;
-      }
-      if (current_generated_event.has_time()) {
-        event_time += current_generated_event.get_time();
-      }
 
       G4ParticleTable * particle_table = G4ParticleTable::GetParticleTable();
 
@@ -573,11 +584,13 @@ namespace mctools {
         }
 
         // Plug the primary particle's vertex in the G4 particle gun:
+        geomtools::vector_3d particle_vertex;
+        geomtools::invalidate(particle_vertex);
         if (geomtools::is_valid(_current_vertex_)) {
           // All particles originate from an unique vertex provided by the vertex generator:
-          _particle_gun_->SetParticlePosition(_current_vertex_);
+          particle_vertex = _current_vertex_;
         } else {
-          // Search for a specific vertex associated to any individual particle:
+          // Search for a specific vertex associated to each individual particle:
           if (! genbb_particle.has_vertex()) {
             std::ostringstream message;
             message << "Particle named '" << g4_particle_name << "' has no valid vertex provided by the event generator !";
@@ -587,8 +600,9 @@ namespace mctools {
                         message.str().c_str());
           }
           // Each particle originates from its own vertex provided by the event generator:
-          _particle_gun_->SetParticlePosition(genbb_particle.get_vertex());
+          particle_vertex = genbb_particle.get_vertex();
         }
+        _particle_gun_->SetParticlePosition(particle_vertex);
 
         // Fetch the mass of the particle from PDG data if mass is not known yet:
         if (! datatools::is_valid(particle_mass)) {

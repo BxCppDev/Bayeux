@@ -75,6 +75,9 @@ namespace mctools {
                                 const detector_construction & dctor_)
     {
       _initialized_           = false;
+
+      _save_only_tracked_events_ = true;
+
       _run_action_            = &run_action_;
       _run_action_->register_event_action(*this);
       _detector_construction_ = &dctor_;
@@ -96,8 +99,9 @@ namespace mctools {
     void event_action::reset ()
     {
       DT_THROW_IF(! is_initialized (), std::logic_error, "Not initialized !");
-      _at_reset_ ();
       _initialized_ = false;
+      _at_reset_();
+      _save_only_tracked_events_ = true;
       return;
     }
 
@@ -130,12 +134,22 @@ namespace mctools {
           DT_THROW_IF(true, std::logic_error, "Invalid hit collection type '" << event_model_collection_type << "' !");
         }
       }
+
+      if (config_.has_key("save_only_tracked_events")) {
+        _save_only_tracked_events_ = config_.fetch_boolean("save_only_tracked_events");
+      }
+
       // end of fetching.
 
       _at_init_();
 
       _initialized_ = true;
       return;
+    }
+
+    bool event_action::is_save_only_tracked_events() const
+    {
+      return _save_only_tracked_events_;
     }
 
     bool event_action::is_aborted_event () const
@@ -259,12 +273,17 @@ namespace mctools {
 
       if (! is_killed_event()) {
         _process_sensitive_hits_(event_, save_this_event);
+      } else {
+        if (is_save_only_tracked_events()) {
+          // We don't save killed events:
+          save_this_event = false;
+        }
       }
 
       DT_LOG_DEBUG(_logprio(), "Event data #" << event_id);
       DT_LOG_DEBUG(_logprio(), "Save this event = " << save_this_event);
-      if (is_debug()) {
-        get_event_data().tree_dump(std::clog);
+      if (is_debug() && save_this_event) {
+        get_event_data().tree_dump(std::clog, "Saved event: ", "[debug] ");
       }
 
       _run_action_->increment_number_of_processed_events();
@@ -272,6 +291,7 @@ namespace mctools {
       // Save output simulated data:
       if (_run_action_->save_data() && save_this_event) {
         _save_data_();
+        DT_LOG_DEBUG(_logprio(), "Event saved.");
       }
 
       // Clear the working sensitive hit collections:

@@ -136,6 +136,12 @@ namespace mctools {
       /// Reset the embedded statistics record
       void reset_stats();
 
+      /// Check if a store file is used to record statistics record
+      bool has_stats_store() const;
+
+      /// Set the filename of a file used to record statistics record
+      void set_stats_store(const std::string &);
+
       /// \brief Dictionary of points of interest
       struct poi_entry_type
       {
@@ -253,6 +259,9 @@ namespace mctools {
       void draw(const geomtools::vector_3d & vertex_,
                 genbb::primary_event & event_) const;
 
+      /// Saev the statistics record
+      void store_stats();
+
     protected:
 
       /// Set default attribute values
@@ -282,6 +291,7 @@ namespace mctools {
       bool                _track_only_master_particle_; //!< Flag to track only the master particle and do not track other ones
       poi_dict_type       _pois_;                       //!< Dictionary of points of interest
       stat_record         _stats_;                      //!< Statistics record
+      std::string         _stats_store_;                //!< Name of the file where to store statistics record
 
     };
 

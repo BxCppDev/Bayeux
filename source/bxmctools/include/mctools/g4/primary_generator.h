@@ -133,6 +133,7 @@ namespace mctools {
       size_t               _event_counter_;   //!< The event counter
       std::map<std::string, std::string> _particle_names_map_; //!< A dictionary of particle names
       boost::scoped_ptr<mctools::biasing::primary_event_bias> _bias_; //!< Handle to a primary event bias algorithm
+
     };
 
   } // namespace g4

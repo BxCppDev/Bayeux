@@ -64,6 +64,9 @@ namespace mctools {
       /// Set external event data
       void set_external_event_data(::mctools::simulated_data & a_external_event_data);
 
+      /// Set the flag to save only tracked/unkilled events
+      bool is_save_only_tracked_events() const;
+
       /// Return non mutable event data
       const ::mctools::simulated_data & get_event_data() const;
 
@@ -116,7 +119,13 @@ namespace mctools {
 
     private:
 
+      // Management:
       bool                          _initialized_; //!< Initialization flag
+
+      // Configuration:
+      bool _save_only_tracked_events_; //!< Flag to save only tracked/unkilled event
+
+      // Working data:
       const detector_construction * _detector_construction_; //!< Handle to the G4 detector construction
       run_action *                  _run_action_; //!< Handle to the G4 run action
       ::mctools::simulated_data     _event_data_; //!< Embedded simulated event model

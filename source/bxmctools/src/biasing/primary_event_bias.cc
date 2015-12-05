@@ -79,6 +79,17 @@ namespace mctools {
       return _flag;
     }
 
+    bool primary_event_bias::has_stats_store() const
+    {
+      return !_stats_store_.empty();
+    }
+
+    void primary_event_bias::set_stats_store(const std::string & filename_)
+    {
+      _stats_store_ = filename_;
+      return;
+    }
+
     primary_event_bias::stat_record::stat_record()
     {
       total_counts = 0;
@@ -357,7 +368,26 @@ namespace mctools {
         }
       }
 
+      if (config_.has_key("stats_store")) {
+        const std::string & ss = config_.fetch_string("stats_store");
+        set_stats_store(ss);
+      }
+
       _initialized_ = true;
+      return;
+    }
+
+    void primary_event_bias::store_stats()
+    {
+      std::string fn = _stats_store_;
+      datatools::fetch_path_with_env(fn);
+      std::ofstream fout(fn.c_str());
+      fout << "# Primary event bias statistics record: " << std::endl;
+      fout << "total_counts="     << _stats_.total_counts     << std::endl;
+      fout << "killed_counts="    << _stats_.killed_counts    << std::endl;
+      fout << "truncated_counts=" << _stats_.truncated_counts << std::endl;
+      fout << "normal_counts="    << _stats_.normal_counts    << std::endl;
+
       return;
     }
 
@@ -369,6 +399,12 @@ namespace mctools {
       DT_LOG_TRACE(_logging_, " - truncated events    = " << _stats_.truncated_counts);
       DT_LOG_TRACE(_logging_, " - normal events       = " << _stats_.normal_counts);
       _initialized_ = false;
+
+      if (has_stats_store()) {
+        store_stats();
+      }
+
+      _stats_store_.clear();
       _mapping_name_.clear();
       _pois_.clear();
       _geom_mgr_ = 0;
@@ -767,7 +803,13 @@ namespace mctools {
         bool checked = true;
 
         // Check master momentum versus attractive/repulsive PoIs...
-        checked = _validate_particle_direction(*master_particle, vertex_);
+        geomtools::vector_3d particle_vertex = vertex_;
+        if (!geomtools::is_valid(particle_vertex)) {
+          if (event_.has_vertex()) {
+            particle_vertex = event_.get_vertex();
+          }
+        }
+        checked = _validate_particle_direction(*master_particle, particle_vertex);
         if (! checked) {
           event_.grab_auxiliaries().store(biased_event_status_key(), killed_event_label());
           bi_.set_status(BES_KILLED);
