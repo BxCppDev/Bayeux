@@ -27,33 +27,31 @@
 namespace mygsl {
 
   template<class Archive>
-  void histogram_pool::histogram_entry_type::serialize (Archive & ar,
-                                                        const unsigned int /*version*/)
+  void histogram_pool::histogram_entry_type::serialize(Archive & ar,
+                                                       const unsigned int /*version*/)
   {
-    ar & boost::serialization::make_nvp ("name", name);
-    ar & boost::serialization::make_nvp ("title", title);
-    ar & boost::serialization::make_nvp ("dimension", dimension);
-    if (dimension == histogram_pool::HISTOGRAM_DIM_1D)
-      {
-        ar & boost::serialization::make_nvp ("hh1d", hh1d);
-      }
-    if (dimension == histogram_pool::HISTOGRAM_DIM_2D)
-      {
-        ar & boost::serialization::make_nvp ("hh2d", hh2d);
-      }
-    ar & boost::serialization::make_nvp ("group", group);
+    ar & boost::serialization::make_nvp("name", name);
+    ar & boost::serialization::make_nvp("title", title);
+    ar & boost::serialization::make_nvp("dimension", dimension);
+    if (dimension == histogram_pool::HISTOGRAM_DIM_1D) {
+      ar & boost::serialization::make_nvp("hh1d", hh1d);
+    }
+    if (dimension == histogram_pool::HISTOGRAM_DIM_2D) {
+      ar & boost::serialization::make_nvp("hh2d", hh2d);
+    }
+    ar & boost::serialization::make_nvp("group", group);
     //ar & boost::serialization::make_nvp ("auxiliaries", auxiliaries);
     return;
   }
 
   template<class Archive>
-  void histogram_pool::serialize (Archive & ar,
-                                  const unsigned int /*version*/)
+  void histogram_pool::serialize(Archive & ar,
+                                 const unsigned int /*version*/)
   {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    ar & boost::serialization::make_nvp ("description", _description_);
-    ar & boost::serialization::make_nvp ("dict", _dict_);
-    ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
+    ar & boost::serialization::make_nvp("description", _description_);
+    ar & boost::serialization::make_nvp("dict", _dict_);
+    ar & boost::serialization::make_nvp("auxiliaries", _auxiliaries_);
     return;
   }
 
