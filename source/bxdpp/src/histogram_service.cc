@@ -413,7 +413,7 @@ namespace dpp {
     _pool_.names(histo2d_names, "dim=2");
 
     DT_LOG_NOTICE(get_logging_priority(),"Exporting 1D-histograms...");
-    for(size_t i = 0; i < histo1d_names.size(); i++) {
+    for (size_t i = 0; i < histo1d_names.size(); i++) {
       const std::string & hname = histo1d_names[i];
       const mygsl::histogram_1d & h1d = _pool_.get_1d(hname);
       const std::string & htitle = _pool_.get_title(hname);
@@ -423,28 +423,42 @@ namespace dpp {
       // not export it. This trick is particularly useful when defining
       // 'template' histogram to avoid the export of these templates.
       const bool is_private_histogram = boost::starts_with(hgroup, "__");
-      if(is_private_histogram) continue;
-      if(! _root_export_title_prefix_.empty()) {
+      if (is_private_histogram) continue;
+      if (! _root_export_title_prefix_.empty()) {
         title_oss << _root_export_title_prefix_ << std::endl;
       }
-      if(htitle.empty()) {
+      if (htitle.empty()) {
         title_oss << hname;
       } else {
         title_oss << htitle;
       }
-      if(! hgroup.empty()) {
+      if (! hgroup.empty()) {
         title_oss << "(" << hgroup << ")";
       }
+      // Create ROOT directory
+      TDirectory * dir = &orf;
+      if (! hgroup.empty()) {
+        std::string a_dir = hgroup;
+        std::replace(a_dir.begin(), a_dir.end(), ':', '_');
+        dir = orf.GetDirectory(a_dir.c_str());
+        if (! dir) {
+          orf.mkdir(a_dir.c_str());
+          // 2015-12-30 XG: the mkdir function returns the top directory
+          // i.e. when using some hierarchical construction such as a/b/c then
+          // mkdir function returns the 'a' directory. Here we get the directory
+          // address of the deepest directory
+          dir = orf.GetDirectory(a_dir.c_str());
+        }
+      }
+      dir->cd();
       TH1D rootH1d;
-      rootH1d.SetDirectory(&orf);
       rootH1d.SetStats(_root_export_stats_);
       export_to_root(h1d, hname + _root_export_name_suffix_, title_oss.str(), rootH1d,
                      _root_export_stats_);
-      rootH1d.SetDirectory(&orf);
       rootH1d.Write();
     }
-    DT_LOG_NOTICE(get_logging_priority(),"Exporting 2D-histograms...");
-    for(size_t i = 0; i < histo2d_names.size(); i++) {
+    DT_LOG_NOTICE(get_logging_priority(), "Exporting 2D-histograms...");
+    for (size_t i = 0; i < histo2d_names.size(); i++) {
       const std::string & hname = histo2d_names[i];
       const mygsl::histogram_2d & h2d = _pool_.get_2d(hname);
       const std::string & htitle = _pool_.get_title(hname);
@@ -463,12 +477,26 @@ namespace dpp {
       if(! hgroup.empty()) {
         title_oss << "(" << hgroup << ")";
       }
+      // Create ROOT directory
+      TDirectory * dir = &orf;
+      if (! hgroup.empty()) {
+        std::string a_dir = hgroup;
+        std::replace(a_dir.begin(), a_dir.end(), ':', '_');
+        dir = orf.GetDirectory(a_dir.c_str());
+        if (! dir) {
+          orf.mkdir(a_dir.c_str());
+          // 2015-12-30 XG: the mkdir function returns the top directory
+          // i.e. when using some hierarchical construction such as a/b/c then
+          // mkdir function returns the 'a' directory. Here we get the directory
+          // address of the deepest directory
+          dir = orf.GetDirectory(a_dir.c_str());
+        }
+      }
+      dir->cd();
       TH2D rootH2d;
-      rootH2d.SetDirectory(&orf);
       rootH2d.SetStats(_root_export_stats_);
       export_to_root(h2d, hname + _root_export_name_suffix_, title_oss.str(), rootH2d,
                      _root_export_stats_);
-      rootH2d.SetDirectory(&orf);
       rootH2d.Write();
     }
 
