@@ -49,6 +49,7 @@ namespace materials {
   //!        resource root.
   //! \param overriden_env flag to allow path overriding by the MATERIALS_RESOURCE_DIR environment variable.
   std::string get_resource(const std::string& rname, bool overriden_env = false);
+
 } // namespace materials
 
 #endif // MATERIALS_RESOURCE_H

@@ -66,18 +66,19 @@ namespace {
 
 namespace materials {
 
-std::string get_resource_dir(bool overriden_env) {
-  return get_resource_root(overriden_env);
-}
+  std::string get_resource_dir(bool overriden_env) {
+    return get_resource_root(overriden_env);
+  }
 
-std::string get_resource(const std::string& rname, bool overriden_env) {
-  DT_THROW_IF(rname[0] == '/', std::logic_error, "invalid resource name");
+  std::string get_resource(const std::string& rname, bool overriden_env) {
+    DT_THROW_IF(rname[0] == '/', std::logic_error, "invalid resource name");
 
-  std::string fullpath(get_resource_root(overriden_env) + "/" + rname);
-  std::ifstream check(fullpath.c_str());
-  DT_THROW_IF(!check.good(),
-              std::runtime_error,
-              "Unreadable resource '" << fullpath << "'")
-  return fullpath;
-}
+    std::string fullpath(get_resource_root(overriden_env) + "/" + rname);
+    std::ifstream check(fullpath.c_str());
+    DT_THROW_IF(!check.good(),
+                std::runtime_error,
+                "Unreadable resource '" << fullpath << "'");
+    return fullpath;
+  }
+
 } // namespace materials
