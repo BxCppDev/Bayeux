@@ -488,16 +488,28 @@ extern "C" {
       else
         return (char *) NULL;
     }
-
+    static int _flag = 0;
     dir1 = br_dirname (exe);
+    if (_flag == 0) {
+      fprintf(stderr, "DEVEL: br_find_prefix: exe dir = '%s'\n", dir1);
+    }
     if (strlen("@CMAKE_LIBRARY_ARCHITECTURE@") == 0) {
+      if (_flag == 0) {
+	fprintf(stderr, "DEVEL: br_find_prefix: No CMAKE_LIBRARY_ARCHITECTURE\n");
+      }
       dir2 = br_dirname (dir1);
     } else {
+      if (_flag == 0) {
+	fprintf(stderr, "DEVEL: br_find_prefix: CMAKE_LIBRARY_ARCHITECTURE='%s'\n", "@CMAKE_LIBRARY_ARCHITECTURE@");
+      }
       tmp0 = br_dirname (dir1);
       dir2 = br_dirname (tmp0);
       free (tmp0);
     }
     free (dir1);
+    if (_flag == 0) {
+      _flag=1;
+    }
     return dir2;
   }
 
