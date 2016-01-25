@@ -99,6 +99,7 @@ set(${module_name}_MODULE_TESTS
 # - Applications
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/materials_inspector.cxx
+  ${module_app_dir}/materials_diagnose.cxx
   )
 
 # - Resource files
