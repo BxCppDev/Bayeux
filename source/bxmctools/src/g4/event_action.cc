@@ -441,10 +441,10 @@ namespace mctools {
         }
 
         /** Note:
-         * MC hit categories with a name starting with '_' (double underscore)
-         * are conventionnaly considered as 'private' hit categories, added by the user
+         * MC hit categories with a name starting with "__" (double underscore)
+         * are conventionally considered as 'private' hit categories, added by the user
          * for special purpose (debug, visualization...).
-         * 'official' MC hit categories should never starts with '_' and should
+         * 'official' MC hit categories should never starts with "__" and should
          * be associated to some sensitive detector.
          */
         const bool is_private_category = boost::starts_with(sensitive_category, "__");
@@ -464,7 +464,7 @@ namespace mctools {
         if (the_detector.get_hit_processors ().size () > 0) {
           // Collect a 'phits' vector of pointers on 'base step hits':
           ::mctools::base_step_hit_processor::step_hit_ptr_collection_type phits;
-          // 2011-04-05 FM : this should accelerate the process a few :
+          // 2011-04-05 FM : this should accelerate the process a little bit :
           phits.reserve (SHC->get_hits ().size ());
           for (size_t ihit = 0; ihit < SHC->get_hits ().size (); ihit++) {
             phits.push_back (&(SHC->grab_hits ().at (ihit)->grab_hit_data ()));
@@ -482,9 +482,8 @@ namespace mctools {
               cerr << "DEVEL: " << "mctools::g4::event_action::EndOfEventAction: "
               << "hit_proc_name = `" << hit_proc_name << "'" << endl;
             */
-            ::mctools::base_step_hit_processor * hit_proc
-              = iproc->second;
-            hit_proc->process (phits, grab_event_data ());
+            ::mctools::base_step_hit_processor * hit_proc = iproc->second;
+            hit_proc->process(phits, grab_event_data ());
           }
         } else {
           // No hit processor for this sensitive
@@ -492,7 +491,7 @@ namespace mctools {
         }
       }
 
-      // One tags events with 'physical' sensitive hits (not visual ones)
+      // One tags events with 'physical' hits (not private ones)
       if (public_sensitive_category_counter > 0) {
         DT_LOG_DEBUG(_logprio(), "Tagging current event with 'physical' sensitive hits categories to be saved...");
         save_this_event_ = true;
