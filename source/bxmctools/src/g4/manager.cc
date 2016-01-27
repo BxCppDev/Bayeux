@@ -1119,6 +1119,15 @@ namespace mctools {
 
       // Begin of property parsing:
 
+      // 2016-01-27 FM: add config property:
+      if (!dont_save_no_sensitive_hit_events()) {
+        // If not already set, we try to fetch this parameter:
+        if (manager_config.has_key("dont_save_no_sensitive_hit_events")) {
+          bool dont_save = manager_config.fetch_boolean("dont_save_no_sensitive_hit_events");
+          set_dont_save_no_sensitive_hit_events(dont_save);
+        }
+      }
+
       // 2014-07-04 XG : Get initialization method for seeds. If seeds are equal
       // to 0 then their values may be initialized through 3 differents methods:
       // - 'current_time' i.e. getting seed value from time in seconds,
@@ -2161,6 +2170,29 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                    "  output_profiles.activation: string = \"ecalo_details + muons_details\" \n"
                    )
        ;
+  }
+
+  {
+    // Description of the 'dont_save_no_sensitive_hit_events' configuration property :
+    datatools::configuration_property_description & cpd
+      = ocd_.add_property_info();
+    cpd.set_name_pattern("dont_save_no_sensitive_hit_events")
+      .set_section("manager")
+      .set_terse_description("Flag used to record only events with sensitive hits")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      // .set_long_description("This property is not taken into account if the                          \n"
+      //                       "*number of events* attributes has been set previously through           \n"
+      //                       "the ``mctools::g4::manager::set_number_of_events(...)`` method.         \n"
+      //                       "                                                                        \n"
+      //                       )
+      .add_example("Set a specific number of events to simulate: ::      \n"
+                   "                                                     \n"
+                   "  [name=\"manager\"]                                 \n"
+                   "  dont_save_no_sensitive_hit_events : boolean = true \n"
+                   "                                                     \n"
+                   )
+      ;
   }
 
   {
