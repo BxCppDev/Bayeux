@@ -127,6 +127,9 @@ namespace datatools {
     /// Set the logging priority threshold
     enriched_base & set_logging_priority_c(logger::priority lp_);
 
+    /// Set the logging priority threshold from a string
+    void set_logging(const std::string & label_);
+
     /// Return the logging priority threshold
     logger::priority get_logging_priority() const;
 

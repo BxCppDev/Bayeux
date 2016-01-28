@@ -150,6 +150,13 @@ namespace datatools {
     return;
   }
 
+  void enriched_base::set_logging(const std::string & label_)
+  {
+    logger::priority p = logger::get_priority(label_);
+    set_logging_priority(p);
+    return;
+  }
+
   enriched_base & enriched_base::set_logging_priority_c(logger::priority lp_)
   {
     _logging_priority_ = lp_;
