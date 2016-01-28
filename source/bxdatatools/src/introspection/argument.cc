@@ -277,7 +277,7 @@ namespace datatools {
     {
       if (has_access()) {
         if (flags_ & ARG_XC_ACCESS) {
-          config_.store_string(prefix_ + "access", to_string(_access_));
+          config_.store_string(prefix_ + "access", to_string(_access_), "Argument's access mode");
         }
       }
 
@@ -291,25 +291,25 @@ namespace datatools {
 
       if (has_rank()) {
         if (flags_ & ARG_XC_RANK) {
-          config_.store_integer(prefix_ + "rank", get_rank());
+          config_.store_integer(prefix_ + "rank", get_rank(), "Rank of the argument in the method's list of arguments");
         }
       }
 
       if (has_name()) {
         if (flags_ & ARG_XC_NAME) {
-          config_.store_string(prefix_ + "name", get_name());
+          config_.store_string(prefix_ + "name", get_name(), "Name of the argument in the method's list of arguments");
         }
       }
 
       if (has_description()) {
         if (flags_ & ARG_XC_DESCRIPTION) {
-          config_.store_string(prefix_ + "description", get_description());
+          config_.store_string(prefix_ + "description", get_description(), "Description of the argument");
         }
       }
 
       if (has_default_value_str()) {
         if (flags_ & ARG_XC_DEFAULT_VALUE_STR) {
-          config_.store_string(prefix_ + "default_value", get_default_value_str());
+          config_.store_string(prefix_ + "default_value", get_default_value_str(), "Argument's default value");
         }
       }
 

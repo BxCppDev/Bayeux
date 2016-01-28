@@ -298,18 +298,18 @@ namespace datatools {
                                      const std::string & prefix_) const
     {
       if (flags_ & UI_XC_UNIT_SUPPORT) {
-        config_.store_string(prefix_ + "support", to_string(_us_));
+        config_.store_string(prefix_ + "support", to_string(_us_), "Type of unit support for the target parameter");
 
         if (has_implicit_unit()) {
-          config_.store_string(prefix_ + "implicit_unit", get_implicit_unit_symbol());
+          config_.store_string(prefix_ + "implicit_unit", get_implicit_unit_symbol(), "Implicit unit for the target parameter");
         } else if (has_explicit_unit_dimension()) {
-          config_.store_string(prefix_ + "explicit_unit_dimension", get_explicit_unit_dimension_label());
+          config_.store_string(prefix_ + "explicit_unit_dimension", get_explicit_unit_dimension_label(), "Explicit unit dimension for the target parameter");
         }
       }
 
       if (has_preferred_unit_symbol()) {
         if (flags_ & UI_XC_PREFERRED_UNIT) {
-          config_.store_string(prefix_ + "preferred_unit", get_preferred_unit_symbol());
+          config_.store_string(prefix_ + "preferred_unit", get_preferred_unit_symbol(), "Preferred unit's symbol for the target parameter");
         }
       }
 

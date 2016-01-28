@@ -428,13 +428,13 @@ namespace datatools {
 
       if (has_constness()) {
         if (flags_ & METHOD_XC_CONSTNESS) {
-          config_.store_boolean(prefix_ + "constness", is_constness());
+          config_.store_boolean(prefix_ + "constness", is_constness(), "Constness of the method");
         }
       }
 
       if (has_type_id()) {
         if (flags_ & METHOD_XC_TYPE_ID) {
-          config_.store_string(prefix_ + "type_id", get_type_id());
+          config_.store_string(prefix_ + "type_id", get_type_id(), "Type identifier of the method model");
         }
       }
 
@@ -460,15 +460,13 @@ namespace datatools {
                                  ,
                                  prefix_ + "arguments." + arg.get_name() + ".");
           }
-          config_.store(prefix_ + "arguments", argument_names);
+          config_.store(prefix_ + "arguments", argument_names, "List of method's arguments");
         }
 
       }
 
-
       return;
     }
-
 
   } // namespace introspection
 

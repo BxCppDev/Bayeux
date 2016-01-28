@@ -314,16 +314,16 @@ namespace datatools {
                                             const std::string & prefix_) const
     {
       if (flags_ & DD_XC_TYPE) {
-        config_.store_string(prefix_ + "type", to_string(_type_));
+        config_.store_string(prefix_ + "type", to_string(_type_), "Type of the parameter");
       }
 
       if (flags_ & DD_XC_LAYOUT) {
-        config_.store_string(prefix_ + "layout", to_string(_layout_));
+        config_.store_string(prefix_ + "layout", to_string(_layout_), "Layout of the parameter");
       }
 
       if (has_vector_fixed_size()) {
         if (flags_ & DD_XC_VECTOR_FIXED_SIZE) {
-          config_.store_integer(prefix_ + "vector_fixed_size", get_vector_fixed_size());
+          config_.store_integer(prefix_ + "vector_fixed_size", get_vector_fixed_size(), "Fixed size of the vector parameter");
         }
       }
 
@@ -338,7 +338,7 @@ namespace datatools {
 
       if (has_type_id()) {
         if (flags_ & DD_XC_TYPE_ID) {
-          config_.store_string(prefix_ + "type_id", get_type_id());
+          config_.store_string(prefix_ + "type_id", get_type_id(), "Type identifier of the parameter model");
         }
       }
 
