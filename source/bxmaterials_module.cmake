@@ -113,6 +113,9 @@ set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/data/std_elements.def
   ${module_resource_dir}/data/std_isotopes.def
   ${module_resource_dir}/data/std_materials.def
+  ${module_resource_dir}/data/std_material_aliases.def
+  ${module_resource_dir}/data/tissues/README.rst
+  ${module_resource_dir}/data/tissues/1.0/README.rst
   )
 
 # - Publish resource files
