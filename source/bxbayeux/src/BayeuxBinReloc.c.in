@@ -19,11 +19,13 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <libgen.h>
 #if defined(__APPLE__) && defined(__MACH__)
 #include <sys/param.h>
 #include <dlfcn.h>
 #include <mach-o/dyld.h>
 #endif
+
 #include "bayeux/BayeuxBinReloc.h"
 
 #ifdef __cplusplus
@@ -488,9 +490,13 @@ extern "C" {
       else
         return (char *) NULL;
     }
-    static int _flag = 0;
-    dir1 = br_dirname (exe);
+    static int _flag = 1;
+    if (getenv("BAYEUX_DEVEL_FLAG") != 0) {
+      _flag = 0;
+    }
+    dir1 = br_dirname(exe);
     if (_flag == 0) {
+      fprintf(stderr, "DEVEL: br_find_prefix: exe     = '%s'\n", exe);
       fprintf(stderr, "DEVEL: br_find_prefix: exe dir = '%s'\n", dir1);
     }
     if (strlen("@CMAKE_LIBRARY_ARCHITECTURE@") == 0) {
@@ -502,13 +508,24 @@ extern "C" {
       if (_flag == 0) {
 	fprintf(stderr, "DEVEL: br_find_prefix: CMAKE_LIBRARY_ARCHITECTURE='%s'\n", "@CMAKE_LIBRARY_ARCHITECTURE@");
       }
-      tmp0 = br_dirname (dir1);
-      dir2 = br_dirname (tmp0);
-      free (tmp0);
+      if ((br_basename_is(dir1, "@CMAKE_LIBRARY_ARCHITECTURE@") == 1)) {
+	tmp0 = br_dirname (dir1);
+	dir2 = br_dirname (tmp0);
+	if (_flag == 0) {
+	  fprintf(stderr, "DEVEL: br_find_prefix: tmp0='%s'\n", tmp0);
+	  fprintf(stderr, "DEVEL: br_find_prefix: dir2='%s'\n", dir2);
+	}
+	free (tmp0);
+      } else {
+	dir2 = br_dirname (dir1);
+	if (_flag == 0) {
+	  fprintf(stderr, "DEVEL: br_find_prefix: dir2='%s'\n", dir2);
+	}
+      }
     }
-    free (dir1);
+    //free (dir1);
     if (_flag == 0) {
-      _flag=1;
+      _flag = 1;
     }
     return dir2;
   }
@@ -839,7 +856,6 @@ extern "C" {
     return result;
   }
 
-
   /** Extracts the directory component of a path.
    *
    * Similar to g_dirname() or the dirname commandline application.
@@ -874,6 +890,21 @@ extern "C" {
       return result;
   }
 
+  int br_basename_is(const char *path, const char * basename_)
+  {
+    int ok = 0;
+    char * bname = 0;
+    char * basec = strdup(path);
+    bname = basename(basec);
+    // fprintf(stderr, "DEVEL: br_find_prefix: path      = '%s'\n", path);
+    // fprintf(stderr, "DEVEL: br_find_prefix: basename_ = '%s'\n", basename_);
+    if (strcmp(bname, basename_) == 0) {
+      // fprintf(stderr, "DEVEL: br_find_prefix: bname     = '%s'\n", bname);
+      ok = 1;
+    }
+    free(basec);
+    return ok;
+  }
 
 #ifdef __cplusplus
 }
