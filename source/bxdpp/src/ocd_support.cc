@@ -655,3 +655,102 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::utils_module,ocd_)
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END()
 DOCD_CLASS_SYSTEM_REGISTRATION(dpp::utils_module,"dpp::utils_module")
+
+
+/****************************************************************/
+// OCD support for class '::dpp::skip_module' :
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::dpp::skip_module,ocd_)
+{
+  ocd_.set_class_name ("dpp::skip_module");
+  ocd_.set_class_library ("dpp");
+  ocd_.set_class_description ("A module that performs some event filtering");
+  ocd_.set_class_documentation ("This module applies a given module only on \n"
+                                "a slide of data records. \n"
+                                );
+
+  ::dpp::base_module::common_ocd(ocd_);
+
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("first")
+      .set_terse_description("The first event to be selected")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(true)
+      .add_example("Specify the first event::                              \n"
+                   "                                                       \n"
+                   "  first : integer = 10                                 \n"
+                   "                                                       \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("last")
+      .set_terse_description("The last event to be selected")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .add_example("Specify the last event::                               \n"
+                   "                                                       \n"
+                   "  first : integer = 10                                 \n"
+                   "  last  : integer = 14                                 \n"
+                   "                                                       \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("number")
+      .set_terse_description("The number of events to be selected from the first one")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .add_example("Specify the number of events::                         \n"
+                   "                                                       \n"
+                   "  first  : integer = 10                                \n"
+                   "  number : integer = 5                                 \n"
+                   "                                                       \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("inverted")
+      .set_terse_description("The inverted flag applies on the complementary set of sliced events")
+      .set_traits(datatools::TYPE_INTEGER)
+      .set_mandatory(false)
+      .add_example("Specify the inverted selection mode::                  \n"
+                   "                                                       \n"
+                   "  first  : integer = 10                                \n"
+                   "  number : integer = 5                                 \n"
+                   "  inverted : boolean = true                            \n"
+                   "                                                       \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("module")
+      .set_terse_description("The module that will be applied on the selected events")
+      .set_traits(datatools::TYPE_STRING)
+      .set_mandatory(true)
+      .add_example("Specify the module to be applied on data records::     \n"
+                   "                                                       \n"
+                   "  first  : integer = 10                                \n"
+                   "  number : integer = 1                                 \n"
+                   "  module : string = \"save_one\"                       \n"
+                   "                                                       \n"
+                   )
+      ;
+  }
+
+  // ocd_.set_configuration_hints ("Nothing special.");
+  ocd_.set_validation_support(true);
+  ocd_.lock();
+  return;
+}
+DOCD_CLASS_IMPLEMENT_LOAD_END()
+DOCD_CLASS_SYSTEM_REGISTRATION(dpp::skip_module,"dpp::skip_module")

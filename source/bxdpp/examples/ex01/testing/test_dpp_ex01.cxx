@@ -51,7 +51,7 @@ int main() {
       dpp_ex01::raw_data RD2;
       datatools::data_reader DR("test_dpp_ex01.xml",
                                 datatools::using_multi_archives);
-      if (DR.has_record_tag ()
+      if (DR.has_record_tag()
           && DR.record_tag_is(dpp_ex01::raw_data::SERIAL_TAG)) {
         DR.load(RD2);
         RD2.dump(std::clog, "Deserialized raw data:");

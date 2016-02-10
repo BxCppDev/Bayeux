@@ -9,7 +9,7 @@ Introduction
  * Description :
 
    This example illustrates the use of the ``module::manager`` class
-   with embeded data processing module objects from the ``dpp_processing``
+   with embedded data processing module objects from the ``bxdpp_processing``
    program.
 
    It defines a simple and serializable data model representing a collection
@@ -20,7 +20,7 @@ Introduction
    The example creates a core DLL, an associated DLL dedicated to
    serialization, and provides a test executable.
 
-   Finally, it shows how to use the ``dpp_processing`` executable to
+   Finally, it shows how to use the ``bxdpp_processing`` executable to
    run a data processing pipeline.
 
  * Source files :
@@ -100,7 +100,7 @@ Quick start
      shell> cd __build
      shell> cmake \
        -DCMAKE_INSTALL_PREFIX=.. \
-       -Ddpp_DIR=$(dpp-config --prefix) \
+       -DBayeux_DIR=$(bxquery --prefix) \
        ..
      shell> make
      shell> make install
@@ -111,11 +111,11 @@ Quick start
      * List of registered class IDs in the ``dpp_ex01`` DLL::
 
         shell> export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
-        shell> ocd_manual --load-dll dpp_ex01 --action list | grep "dpp_ex01::" 2> /dev/null
+        shell> bxocd_manual --load-dll dpp_ex01 --action list | grep "dpp_ex01::" 2> /dev/null
 
      * Generate the OCD documentation (ReST+HTML) for class ``dpp_ex01::raw_generator_module``::
 
-        shell> ocd_manual --load-dll dpp_ex01 --action show \
+        shell> bxocd_manual --load-dll dpp_ex01 --action show \
                 --class-id dpp_ex01::raw_generator_module > dpp_ex01_RGM.rst
         shell> pandoc -r rst -w html dpp_ex01_RGM.rst > dpp_ex01_RGM.html
 
@@ -124,10 +124,12 @@ Quick start
         shell> ./test_dpp_ex01
         shell> less test_dpp_ex01.xml
 
-5. Run the example::
+5. Run the example:
+
+.. code:: sh
 
      shell> LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
-              dpp_processing \
+              bxdpp_processing \
 	        --verbose \
 	        --load-dll "dpp_ex01_bio" \
 	        --modulo 1 \
@@ -140,13 +142,35 @@ Quick start
 	        --output-file dpp_ex01_03.xml \
 	        --output-file dpp_ex01_04.xml
 
-6. Check the output files::
+6. Check the output files:
 
-     shell> ls -l dpp_ex01_intermediate_0?.brio
+.. code:: sh
+
+     shell> ls -l dpp_ex01_intermediate_?.brio
      shell> ls -l dpp_ex01_0?.xml
      shell> less  dpp_ex01_01.xml
 
-7. Clean::
+
+7. Extract a few data records from the final sample of events:
+
+.. code:: sh
+
+     shell> LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
+       bxdpp_processing \
+	  --verbose \
+	  --load-dll "dpp_ex01_bio" \
+	  --modulo 1 \
+	  --input-file dpp_ex01_01.xml \
+	  --input-file dpp_ex01_02.xml \
+	  --input-file dpp_ex01_03.xml \
+	  --input-file dpp_ex01_04.xml \
+	  --output-file dpp_ex01_out.xml \
+	  --slice-start=10 \
+	  --slice-width=20
+
+8. Clean:
+
+.. code:: sh
 
      shell> rm -f ./dpp_ex01_intermediate_*.brio
      shell> rm -f ./dpp_ex01_*.xml
@@ -154,5 +178,3 @@ Quick start
      shell> rm -f ./test_dpp_ex01
      shell> rm -fr ./lib
      shell> rm -fr ./__build
-
-

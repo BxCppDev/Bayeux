@@ -1,9 +1,9 @@
 /// \file dpp/dpp_driver.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2013-10-08
+ * Last modified : 2016-02-10
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,19 @@
 
 namespace dpp {
 
+  /// \brief The set of configuration parameters for the data processing pipeline driver
   struct dpp_driver_params
   {
+    /// Default constructor
     dpp_driver_params();
+
+    /// Reset
     void reset();
+
+    /// Print
     void dump(std::ostream & out_ = std::clog) const;
+
+    /// Smart print
     void tree_dump(std::ostream & out_         = std::clog,
                    const std::string & title_  = "",
                    const std::string & indent_ = "",
@@ -65,12 +73,12 @@ namespace dpp {
     bool   no_max_records;
     int    max_records;
     int    max_records_per_output_file;
+    int    slice_start;
+    int    slice_stop;
+    int    slice_width;
+    bool   slice_store_out;
     bool   save_stopped_data_records;
     bool   preserve_existing_files;
-
-
-    /* static void build_opts(boost::program_options::options_description &, */
-    /*                        dpp_driver_params &); */
 
   };
 
@@ -79,23 +87,41 @@ namespace dpp {
   class input_module;
   class output_module;
 
+  /// \brief The data processing pipeline driver
   class dpp_driver {
   public:
+
+    /// Default constructor
     dpp_driver();
+
+    /// Destrcutor
     ~dpp_driver();
+
+    /// Check initialization flag
     bool is_initialized() const;
+
+    /// Setup from configuration parameters
     void setup(const dpp_driver_params &);
+
+    /// Initialization
     void initialize();
+
+    /// Run
     void run();
+
+    /// Reset
     void reset();
+
   private:
-    bool _initialized_;
-    datatools::logger::priority _logging_;
-    dpp_driver_params _params_;
-    boost::scoped_ptr<dpp::module_manager> _module_mgr_;
-    std::vector<dpp::base_module*> _modules_;
-    boost::scoped_ptr<dpp::output_module> _sink_;
-    boost::scoped_ptr<dpp::input_module> _source_;
+
+    bool _initialized_; ///< Initialization flag
+    datatools::logger::priority _logging_; ///< Logging priority threshold
+    dpp_driver_params _params_; ///< Parameters
+    boost::scoped_ptr<dpp::module_manager> _module_mgr_; ///< Manager for data processing modules
+    std::vector<dpp::base_module*> _modules_; ///< Array of  data processing module handles
+    bool _use_slice_; ///< Slice usage flag
+    boost::scoped_ptr<dpp::output_module> _sink_; ///< Output module
+    boost::scoped_ptr<dpp::input_module> _source_; ///< Input module
 
   };
 

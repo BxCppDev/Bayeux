@@ -1,9 +1,9 @@
 /* dpp_processing.cxx
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-07-03
- * Last modified : 2013-10-23
+ * Last modified : 2016-02-10
  *
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * Description:
  *
@@ -143,7 +143,6 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-
 void ui::print_usage(std::ostream & out_)
 {
   out_ << APP_NAME << " -- A generic data chain processing program" << std::endl;
@@ -248,6 +247,18 @@ void ui::build_opts(boost::program_options::options_description & opts_,
     ("max-records-per-output-file,O",
      po::value<int> (&params_.max_records_per_output_file)->default_value (0),
      "set the maximum number of data records per output file.")
+    ("slice-start,s",
+     po::value<int> (&params_.slice_start)->default_value(-1),
+     "set the index of the first data record to be processed.")
+    ("slice-stop,S",
+     po::value<int> (&params_.slice_stop)->default_value(-1),
+     "set the index of the last data record to be processed.")
+    ("slice-width,w",
+     po::value<int> (&params_.slice_width)->default_value(-1),
+     "set the width of the slice of data records to be processed.")
+    ("slice-store-out,T",
+     po::value<bool> (&params_.slice_store_out)->zero_tokens()->default_value(false),
+     "set the flag to store only the sliced data records.")
     // ("save-stopped-records,s",
     //  po::value<bool>(&save_stopped_data_records)->zero_tokens()->default_value (false),
     //  "Blablabla.")
