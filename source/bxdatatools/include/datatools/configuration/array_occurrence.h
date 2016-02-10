@@ -80,6 +80,7 @@ namespace datatools {
 
       unsigned int _size_;     //!< Number of occurrences
       int          _start_id_; //!< Starting id
+
     };
 
   }  // end of namespace configuration
