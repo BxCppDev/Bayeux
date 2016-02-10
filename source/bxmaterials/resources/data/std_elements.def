@@ -1,5 +1,6 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# std_elements.def
+# List of standard elements based on standard isotopes (format: datatools::multi_properties)
 
 #@description A standard list of elements based on natural isotopic abundances (NIST)
 #@key_label   "name"
@@ -298,3 +299,5 @@ isotope.weights : real[4]   = 1.4      24.1     22.1     52.4
 z               : integer   = 83
 isotope.names   : string[1] = "Bi-209"
 isotope.weights : real[1]   = 100.0
+
+# end of std_elements.def

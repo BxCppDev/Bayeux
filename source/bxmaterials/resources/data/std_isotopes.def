@@ -1,5 +1,6 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# std_isotopes.def
+# List of standard isotopes (format: datatools::multi_properties)
 
 #@description A list of stable isotopes found in nature as compounds of chemical elements
 #@key_label   "name"
@@ -1141,3 +1142,5 @@ a : integer = 235
 #@config The U-238 isotope
 z : integer = 92
 a : integer = 238
+
+# end of std_isotopes.def

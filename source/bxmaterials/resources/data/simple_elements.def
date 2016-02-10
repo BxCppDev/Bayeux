@@ -1,5 +1,6 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# simple_elements.def
+# List of simple elements (format: datatools::multi_properties)
 
 #@description A list of elements given Z and mean molar mass (no isotopic composition)
 #@key_label   "name"
@@ -154,3 +155,5 @@ a               : real      = 95.96
 #@config The Lead natural element
 z               : integer   = 82
 a               : real      = 207.2
+
+# end of simple_elements.def

@@ -1,12 +1,13 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# std_materials.def
+# List of standard materials based on standard elements (format: datatools::multi_properties)
 
 #@description A list of common materials composed from elements with isotopic composition
 #@key_label   "name"
 #@meta_label  "type"
 
 [name="std::vacuum" type="material"]
-#@config Vacuum material
+#@config Vacuum material as 'galactic' density hydrogen gas
 density                   : real   = 1.0e-13
 density.unit              : string = "mg/cm3"
 state                     : string = "gas"
@@ -15,15 +16,29 @@ composition.names         : string [1]  = "Hydrogen"
 composition.fraction_mass : real   [1]  =  1.0
 
 
-[name="std::air" type="material"]
+[name="std::air_stp" type="material"]
 #@config Air material
 density          : real   = 1.2931
 density.unit     : string = "mg/cm3"
 state            : string = "gas"
-temperature      : real   = 300.
+temperature      : real   = 273.15
+temperature.unit : string = "kelvin"
+pressure         : real   = 101325.
+pressure.unit    : string = "Pa"
+composition.mode : string = "fraction_mass"
+composition.names         : string [2]  = "Nitrogen" "Oxygen"
+composition.fraction_mass : real   [2]  =  0.8        0.2
+
+
+[name="std::air" type="material"]
+#@config Air material
+density          : real   = 1.205
+density.unit     : string = "mg/cm3"
+state            : string = "gas"
+temperature      : real   = 294.25
 temperature.unit : string = "kelvin"
 pressure         : real   = 1.
-pressure.unit    : string = "bar"
+pressure.unit    : string = "atm"
 composition.mode : string = "fraction_mass"
 composition.names         : string [2]  = "Nitrogen" "Oxygen"
 composition.fraction_mass : real   [2]  =  0.8        0.2
@@ -93,8 +108,24 @@ composition.names           : string  [2]  = "Hydrogen" "Oxygen"
 composition.number_of_atoms : integer [2]  =  2          1
 
 
+[name="std::graphite" type="material"]
+#@config Graphite material
+# Particle Physics Booklet 2010: density = 2.210 g/cm3
+density                   : real   = 2.267
+density.unit              : string = "g/cm3"
+temperature               : real   = 300.
+temperature.unit          : string = "kelvin"
+pressure                  : real   = 1.
+pressure.unit             : string = "bar"
+state                     : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Carbon"
+composition.fraction_mass : real   [1]  =  1.0
+
+
 [name="std::diamond" type="material"]
 #@config Diamond material
+# Particle Physics Booklet 2010: density = 3.520 g/cm3
 density                   : real   = 3.517
 density.unit              : string = "g/cm3"
 temperature               : real   = 300.
@@ -167,8 +198,8 @@ composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =     10        9
 
 
-[name="std::PVT" type="material"]
-#@config PVT (polyvinyl-toluene) material CH2CH (C6H4CH3)n
+[name="std::polyvinyltoluene" type="material"]
+#@config PVT (polyvinyl toluene) material CH2CH (C6H4CH3)n
 density                     : real   = 1.032
 density.unit                : string = "g/cm3"
 state                       : string = "solid"
@@ -177,8 +208,8 @@ composition.names           : string  [2]  = "Hydrogen"  "Carbon"
 composition.number_of_atoms : integer [2]  =     10         9
 
 
-[name="std::delrin" type="material"]
-#@config Delrin material (http://en.wikipedia.org/wiki/Polyoxymethylene)
+[name="std::polyoxymethylene" type="material"]
+#@config Polyoxymethylene material (http://en.wikipedia.org/wiki/Polyoxymethylene -> Delrin)
 density          : real   = 1.42
 density.unit     : string = "g/cm3"
 state            : string = "solid"
@@ -217,8 +248,8 @@ composition.names           : string  [2]  = "Silicium" "Oxygen"
 composition.number_of_atoms : integer [2]  =     1       2
 
 
-[name="std::plexiglass" type="material"]
-#@config Plexiglass material (PMMA = C5H8O2)
+[name="std::PMMA" type="material"]
+#@config Poly(methyl methacrylate) material (PMMA = C5H8O2 -> Plexiglass, Lucite)
 density          : real   = 1.190
 density.unit     : string = "g/cm3"
 state            : string = "solid"
@@ -287,8 +318,8 @@ composition.names         : string [6]  = "Silicium" "Oxygen" "Calcium" "Alumini
 composition.fraction_mass : real   [6]  =  0.227915   0.60541  0.04986  0.014245    0.00285 0.09972
 
 
-[name="std::pfte" type="material"]
-#@config Polytetrafluoroethylene (C2F4, PFTE)
+[name="std::ptfe" type="material"]
+#@config Polytetrafluoroethylene (C2F4, PTFE -> Teflon)
 density          : real   = 2.20
 density.unit     : string = "g/cm3"
 state            : string = "solid"
@@ -296,12 +327,4 @@ composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Fluorine"  "Carbon"
 composition.number_of_atoms : integer [2]  =      4        2
 
-
-[name="std::teflon" type="material"]
-#@config Teflon material (C2F4, PFTE)
-density          : real   = 2.2 #0.55 #2.2
-density.unit     : string = "g/cm3"
-state            : string = "solid"
-composition.mode            : string       = "number_of_atoms"
-composition.names           : string  [2]  = "Carbon" "Fluorine"
-composition.number_of_atoms : integer [2]  =     1        2
+# end of std_materials.def

@@ -1,5 +1,6 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# simple_materials.def
+# List of simple materials based on simple elements (format: datatools::multi_properties)
 
 #@description A list of common materials
 #@key_label   "name"
@@ -305,3 +306,5 @@ state            : string = "solid"
 composition.mode            : string      = "number_of_atoms"
 composition.names           : string  [2] = "simple::Carbon" "simple::Fluorine"
 composition.number_of_atoms : integer [2] =  1                2
+
+# end of simple_materials.def
