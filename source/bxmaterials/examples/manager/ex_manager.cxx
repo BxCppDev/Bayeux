@@ -74,7 +74,7 @@ int main(int argc_, char ** argv_)
     // Pickup a specific material by name :
     const materials::material_dict_type & materials_map = my_material_manager.get_materials();
     if (material_name.empty()) {
-      material_name = "water";
+      material_name = "my::water";
     }
     if (materials_map.find(material_name) != materials_map.end()) {
       const materials::material & my_material = materials_map.find(material_name)->second.get_ref ();
@@ -84,6 +84,35 @@ int main(int argc_, char ** argv_)
       message << "No material with name '" << material_name << "' !";
       throw std::logic_error(message.str());
     }
+    std::clog << std::endl;
+
+    // Pickup a specific material through an alias :
+    if (my_material_manager.has_material("metal")) {
+      const materials::material & my_metal = my_material_manager.get_material("metal");
+      my_metal.tree_dump(std::clog, "The metal alias is : ");
+      // const materials::material & my_metal2 = my_material_manager.get_unaliased_material("metal");
+      // my_metal2.tree_dump(std::clog, "The unaliased metal alias is : ");
+    }
+    std::clog << std::endl;
+
+    // Pickup a specific material through an alias of alias :
+    if (my_material_manager.has_material("soft_metal")) {
+      const materials::material & my_soft_metal = my_material_manager.get_material("soft_metal");
+      my_soft_metal.tree_dump(std::clog, "The soft metal alias is : ");
+      // const materials::material & my_soft_metal2 = my_material_manager.get_unaliased_material("soft_metal");
+      // my_soft_metal2.tree_dump(std::clog, "The unaliased soft metal alias is : ");
+    }
+    std::clog << std::endl;
+
+    // Pickup a specific material through an alias of alias :
+    if (my_material_manager.has_material("dummy_metal")) {
+      const materials::material & my_dummy_metal = my_material_manager.get_material("dummy_metal");
+      my_dummy_metal.tree_dump(std::clog, "The dummy metal alias is : ");
+      // const materials::material & my_dummy_metal2 = my_material_manager.get_unaliased_material("dummy_metal");
+      // my_dummy_metal2.tree_dump(std::clog, "The unaliased dummy metal alias is : ");
+    }
+    std::clog << std::endl;
+
   }
   catch(std::exception & x) {
     std::cerr << "ERROR: " << x.what() << std::endl;

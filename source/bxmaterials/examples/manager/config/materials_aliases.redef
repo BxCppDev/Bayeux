@@ -1,5 +1,6 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# materials_aliases.redef
+# Redefinitions of material aliases (format: datatools::multi_properties):
 
 #@description A sample list of aliases for materials
 #@key_label   "name"
@@ -7,7 +8,7 @@
 
 ##################################
 [name="tracking_gas" type="alias"]
-#@config Change alias for tracking gas
-material : string = "air"
+#@config Change alias for the tracking gas
+material : string = "my::air"
 
-# end
+# end of materials_aliases.redef

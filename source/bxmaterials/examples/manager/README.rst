@@ -17,12 +17,12 @@ Introduction
  * Configuration files :
 
    * ``config/manager.conf`` : main configuration file of the materials manager
-   * ``config/isotopes.conf`` : definition of registered isotopes
-   * ``config/elements.def`` : definition of registered elements
-   * ``config/materials.def`` : definition of registered materials
-   * ``config/material_aliases.def`` : definition of registered material aliases
-   * ``config/material_aliases.redef`` : redefinition of some registered material
-     aliases (supersedes some previous definitions)
+   * ``config/isotopes.conf`` : definitions of registered isotopes
+   * ``config/elements.def`` : definitions of registered elements
+   * ``config/materials.def`` : definitions of registered materials
+   * ``config/material_aliases.def`` : definitions of registered material aliases
+   * ``config/material_aliases.redef`` : redefinitions of some registered material
+     aliases (supersedes some previous material alias definitions)
 
  * Build method : CMake
 

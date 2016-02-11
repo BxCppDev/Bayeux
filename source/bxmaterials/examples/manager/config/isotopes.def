@@ -1,5 +1,6 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# isotopes.def
+# Definitions of isotopes (format: datatools::multi_properties):
 
 #@description A sample list of isotopes
 #@key_label   "name"
@@ -13,10 +14,12 @@
 z : integer = 1
 a : integer = 1
 
+
 [name="D" type="isotope"]
 #@config The deuterium hydrogen isotope
 z : integer = 1
 a : integer = 2
+
 
 [name="T" type="isotope"]
 #@config The tritium hydrogen isotope
@@ -25,10 +28,12 @@ a : integer = 3
 
 ### helium:
 
+
 [name="He-3" type="isotope"]
 #@config The He-4 isotope
 z : integer = 2
 a : integer = 3
+
 
 [name="He-4" type="isotope"]
 #@config The He-4 isotope
@@ -42,6 +47,7 @@ a : integer = 4
 z : integer = 5
 a : integer = 10
 
+
 [name="B-11" type="isotope"]
 #@config The B-11 isotope
 z : integer = 5
@@ -54,200 +60,240 @@ a : integer = 11
 z : integer = 6
 a : integer = 12
 
+
 [name="C-13" type="isotope"]
 #@config The C-13 isotope
 z : integer = 6
 a : integer = 13
+
 
 [name="N-14" type="isotope"]
 #@config The N-15 isotope
 z : integer = 7
 a : integer = 14
 
+
 [name="N-15" type="isotope"]
 #@config The N-15 isotope
 z : integer = 7
 a : integer = 15
+
 
 [name="O-16" type="isotope"]
 #@config The O-16 isotope
 z : integer = 8
 a : integer = 16
 
+
 [name="O-17" type="isotope"]
 #@config The O-17 isotope
 z : integer = 8
 a : integer = 17
+
 
 [name="O-18" type="isotope"]
 #@config The O-18 isotope
 z : integer = 8
 a : integer = 18
 
+
 [name="F-19" type="isotope"]
 #@config The F-19 isotope
 z : integer = 9
 a : integer = 19
+
 
 [name="Ne-20" type="isotope"]
 #@config The Ne-20 isotope
 z : integer = 10
 a : integer = 20
 
+
 [name="Ne-21" type="isotope"]
 #@config The Ne-21 isotope
 z : integer = 10
 a : integer = 21
+
 
 [name="Ne-22" type="isotope"]
 #@config The Ne-22 isotope
 z : integer = 10
 a : integer = 22
 
+
 [name="Na-23" type="isotope"]
 #@config The Na-23 isotope
 z : integer = 11
 a : integer = 23
+
 
 [name="Mg-24" type="isotope"]
 #@config The Mg-24 isotope
 z : integer = 12
 a : integer = 24
 
+
 [name="Mg-25" type="isotope"]
 #@config The Mg-25 isotope
 z : integer = 12
 a : integer = 25
+
 
 [name="Mg-26" type="isotope"]
 #@config The Mg-26 isotope
 z : integer = 12
 a : integer = 26
 
+
 [name="Al-27" type="isotope"]
 #@config The Al-27 isotope
 z : integer = 13
 a : integer = 27
+
 
 [name="Si-28" type="isotope"]
 #@config The Si-28 isotope
 z : integer = 14
 a : integer = 28
 
+
 [name="Si-29" type="isotope"]
 #@config The Si-29 isotope
 z : integer = 14
 a : integer = 29
+
 
 [name="Si-30" type="isotope"]
 #@config The Si-30 isotope
 z : integer = 14
 a : integer = 30
 
+
 [name="P-31" type="isotope"]
 #@config The P-31 isotope
 z : integer = 15
 a : integer = 31
+
 
 [name="Mn-55" type="isotope"]
 #@config The Mn-55 isotope
 z : integer = 25
 a : integer = 55
 
+
 [name="Fe-54" type="isotope"]
 #@config The Fe-54 isotope
 z : integer = 26
 a : integer = 54
+
 
 [name="Fe-56" type="isotope"]
 #@config The Fe-56 isotope
 z : integer = 26
 a : integer = 56
 
+
 [name="Fe-57" type="isotope"]
 #@config The Fe-57 isotope
 z : integer = 26
 a : integer = 57
+
 
 [name="Fe-58" type="isotope"]
 #@config The Fe-58 isotope
 z : integer = 26
 a : integer = 58
 
+
 [name="Co-59" type="isotope"]
 #@config The Co-59 isotope
 z : integer = 27
 a : integer = 59
+
 
 [name="Ni-58" type="isotope"]
 #@config The Ni-58 isotope
 z : integer = 28
 a : integer = 58
 
+
 [name="Ni-60" type="isotope"]
 #@config The Ni-60 isotope
 z : integer = 28
 a : integer = 60
+
 
 [name="Ni-61" type="isotope"]
 #@config The Ni-61 isotope
 z : integer = 28
 a : integer = 61
 
+
 [name="Ni-62" type="isotope"]
 #@config The Ni-62 isotope
 z : integer = 28
 a : integer = 62
+
 
 [name="Ni-64" type="isotope"]
 #@config The Ni-64 isotope
 z : integer = 28
 a : integer = 64
 
+
 [name="Cu-63" type="isotope"]
 #@config The Cu-63 isotope
 z : integer = 29
 a : integer = 63
+
 
 [name="Cu-65" type="isotope"]
 #@config The Cu-65 isotope
 z : integer = 29
 a : integer = 65
 
+
 [name="Pb-204" type="isotope"]
 #@config The Pb-204 isotope
 z : integer = 82
 a : integer = 204
+
 
 [name="Pb-206" type="isotope"]
 #@config The Pb-206 isotope
 z : integer = 82
 a : integer = 206
 
+
 [name="Pb-207" type="isotope"]
 #@config The Pb-207 isotope
 z : integer = 82
 a : integer = 207
+
 
 [name="Pb-208" type="isotope"]
 #@config The Pb-208 isotope
 z : integer = 82
 a : integer = 208
 
+
 [name="U-234" type="isotope"]
 #@config The U-234 isotope
 z : integer = 92
 a : integer = 234
+
 
 [name="U-235" type="isotope"]
 #@config The U-235 isotope
 z : integer = 92
 a : integer = 235
 
+
 [name="U-238" type="isotope"]
 #@config The U-238 isotope
 z : integer = 92
 a : integer = 238
+
 ### Potassium
 
 [name="K-39" type="isotope"]
@@ -255,10 +301,12 @@ a : integer = 238
 z : integer = 19
 a : integer = 39
 
+
 [name="K-40" type="isotope"]
 #@config The K-40 isotope
 z : integer = 19
 a : integer = 40
+
 
 [name="K-41" type="isotope"]
 #@config The K-41 isotope
@@ -266,4 +314,4 @@ z : integer = 19
 a : integer = 41
 
 
-# end
+# end of isotopes.def
