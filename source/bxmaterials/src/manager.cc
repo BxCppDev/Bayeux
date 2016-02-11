@@ -24,21 +24,21 @@ namespace materials {
   // static
   bool manager::validate_name_for_gdml(const std::string & candidate_)
   {
-    /* Using some 'column' (:)  in a name is not allowed
+    /* Using some 'column'(:)  in a name is not allowed
      * because of GDML/XML restriction on the possible names
      * for isotopes, elements and materials. So here, as '::'
-     * underscore is used to defined a namespace-like scope for
-     * names, we allow double column ('::') in names but it will
+     * separator is used to defined a namespace-like scope for
+     * names, we allow double column('::') in names but it will
      * be transformed in '__' before to be used in GDML. However
      * this approach has consequences:
      *
      * Examples:
      * a)  "aaaa::bbbb" will be transformed in "aaaa__bbbb" in GDML
      *     then converted back to "aaaa::bbbb" in the Geant4 engine.
-     * b)  "aaaa__bbbb" will be preserved as is ("aaaa__bbbb") in GDML
+     * b)  "aaaa__bbbb" will be preserved as is("aaaa__bbbb") in GDML
      *     but converted back to "aaaa::bbbb" in the Geant4 engine, which
      *     doesn't match the original name.
-     * c)  "aaaa_::bbbb" will be preserved as is ("aaaa___bbbb") in GDML
+     * c)  "aaaa_::bbbb" will be preserved as is("aaaa___bbbb") in GDML
      *     but converted back to "aaaa::_bbbb" in the Geant4 engine, which
      *     doesn't match the original names.
      *
@@ -46,8 +46,10 @@ namespace materials {
      * with the '0x' tag in it (it cuts the original names).
      *
      * d) "water10xenon2" will be cut as "water1", possible colliding
-     *     with another name being "water1" name or "water30xenon2".
+     *     with another name like "water1" or "water10xenon3".
      *
+     * So we have decide to forbid a few name patterns to make sure
+     * the name will be properly handled by the library and GDML.
      */
     if (candidate_.find("__") != std::string::npos) return false;
     if (candidate_.find(":::") != std::string::npos) return false;
@@ -57,7 +59,32 @@ namespace materials {
     return true;
   }
 
-  bool manager::is_initialized () const
+  void manager::_set_defaults()
+  {
+    _alias_allow_overload_ = false;
+    _load_isotope_mass_data_ = true;
+    _load_isotope_decay_data_ = false;
+    _alias_of_alias_allowed_ = true;
+    return;
+  }
+
+  manager::manager()
+  {
+    _locked_ = false;
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
+    _set_defaults();
+    return;
+  }
+
+  manager::~manager()
+  {
+    if (is_initialized()) {
+      reset();
+    }
+    return;
+  }
+
+  bool manager::is_initialized() const
   {
     return is_locked();
   }
@@ -72,31 +99,43 @@ namespace materials {
     return _logging_priority_;
   }
 
-  bool manager::is_debug () const
+  bool manager::is_debug() const
   {
     return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
   }
 
-  void manager::set_debug (bool new_value_)
+  void manager::set_debug(bool new_value_)
   {
     if (new_value_) set_logging_priority(datatools::logger::PRIO_DEBUG);
-    else set_logging_priority(datatools::logger::PRIO_WARNING);
+    else set_logging_priority(datatools::logger::PRIO_FATAL);
     return;
   }
 
-  bool manager::is_locked () const
+  bool manager::is_locked() const
   {
     return _locked_;
   }
 
-  void manager::set_alias_allow_overload (bool aao_)
+  void manager::set_alias_of_alias_allowed(bool aoaa_)
   {
-    DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
+    DT_THROW_IF(is_locked(), std::logic_error, "Manager is locked !");
+    _alias_of_alias_allowed_ = aoaa_;
+    return;
+  }
+
+  bool manager::is_alias_of_alias_allowed() const
+  {
+    return _alias_of_alias_allowed_;
+  }
+
+  void manager::set_alias_allow_overload(bool aao_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Manager is locked !");
     _alias_allow_overload_ = aao_;
     return;
   }
 
-  bool manager::is_alias_allow_overload () const
+  bool manager::is_alias_allow_overload() const
   {
     return _alias_allow_overload_;
   }
@@ -108,7 +147,7 @@ namespace materials {
 
   void manager::set_load_isotope_mass_data(bool val_)
   {
-    DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
+    DT_THROW_IF(is_locked(), std::logic_error, "Manager is locked !");
     _load_isotope_mass_data_ = val_;
     return;
   }
@@ -120,7 +159,7 @@ namespace materials {
 
   void manager::set_load_isotope_decay_data(bool val_)
   {
-    DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
+    DT_THROW_IF(is_locked(), std::logic_error, "Manager is locked !");
     _load_isotope_decay_data_ = val_;
     return;
   }
@@ -129,7 +168,7 @@ namespace materials {
   {
     DT_THROW_IF(prefix_.length() > 1 && prefix_[prefix_.length()-1] != '.',
                 std::logic_error,
-                "Candidate prefix '" << prefix_ << "' does not end with a dot character (example: 'mpt.') !");
+                "Candidate prefix '" << prefix_ << "' does not end with a dot character(example: 'mpt.') !");
     _material_exported_prefixes_.insert(prefix_);
     return;
   }
@@ -181,6 +220,24 @@ namespace materials {
     return sr.get_ref();
   }
 
+  // const material & manager::get_unaliased_material(const std::string & entry_name_) const
+  // {
+  //   const material * umat = 0;
+  //   std::string en = entry_name_;
+  //   do {
+  //     material_dict_type::const_iterator found = _materials_.find(en);
+  //     DT_THROW_IF(found == _materials_.end(), std::logic_error,
+  //                 "Cannot find material or material alias named '" << en << "'!");
+  //     const ::materials::smart_ref<material> & sr = found->second;
+  //     if (sr.is_alias()) {
+  //       en = sr.get_alias_of();
+  //     } else {
+  //       umat = &sr.get_ref();
+  //     }
+  //   } while(umat == 0);
+  //   return *umat;
+  // }
+
   bool manager::is_alias(const std::string & entry_name_) const
   {
     return ! manager::alias_of(entry_name_).empty();
@@ -191,77 +248,66 @@ namespace materials {
     material_dict_type::const_iterator found = _materials_.find(entry_name_);
     const ::materials::smart_ref<material> & sr = found->second;
     std::string mat_alias;
-    if (sr.is_alias ()) {
+    if (sr.is_alias()) {
       return sr.get_alias_of();
     }
     return mat_alias;
   }
 
-  const isotope_dict_type & manager::get_isotopes () const
+  const isotope_dict_type & manager::get_isotopes() const
   {
     return _isotopes_;
   }
 
-  const element_dict_type & manager::get_elements () const
+  const element_dict_type & manager::get_elements() const
   {
     return _elements_;
   }
 
-  const material_dict_type & manager::get_materials () const
+  const material_dict_type & manager::get_materials() const
   {
     return _materials_;
   }
 
-  const std::list<std::string> & manager::get_ordered_materials () const
+  const std::list<std::string> & manager::get_ordered_materials() const
   {
     return _ordered_materials_;
   }
 
-  manager::manager ()
-  {
-    _logging_priority_ = datatools::logger::PRIO_WARNING;
-    reset();
-    return;
-  }
-
-  manager::~manager ()
-  {
-    if (is_initialized()) {
-      reset();
-    }
-    return;
-  }
-
-  void manager::lock ()
+  void manager::lock()
   {
     _locked_ = true;
     return;
   }
 
-  void manager::unlock ()
+  void manager::unlock()
   {
     _locked_ = false;
     return;
   }
 
-  void manager::initialize (const datatools::properties & setup_)
+  void manager::initialize(const datatools::properties & setup_)
   {
     // std::cerr << "DEVEL: manager::initialize: Entering..." << std::endl;
-    DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
+    DT_THROW_IF(is_locked(), std::logic_error, "Manager is locked !");
 
     // Logging priority:
-    datatools::logger::priority lp = datatools::logger::extract_logging_configuration (setup_);
+    datatools::logger::priority lp = datatools::logger::extract_logging_configuration(setup_);
     DT_THROW_IF(lp == datatools::logger::PRIO_UNDEFINED,
                 std::logic_error,
                 "Invalid logging priority level for geometry manager !");
     set_logging_priority(lp);
 
-    if (setup_.has_flag("debug")) {
-      set_debug(true);
-    }
+    // if (setup_.has_flag("debug")) {
+    //   set_debug(true);
+    // }
 
     if (setup_.has_key("alias_allow_overload")) {
       set_alias_allow_overload(setup_.fetch_boolean("alias_allow_overload"));
+    }
+
+    if (setup_.has_key("alias_of_alias_allowed")) {
+      set_alias_of_alias_allowed(setup_.fetch_boolean("alias_of_alias_allowed"));
     }
 
     if (setup_.has_key("load_isotope_mass_data")) {
@@ -302,93 +348,94 @@ namespace materials {
     return;
   }
 
-  void manager::load (const datatools::multi_properties & config_)
+  void manager::load(const datatools::multi_properties & config_)
   {
-    DT_THROW_IF (is_locked (), std::logic_error, "Manager is locked !");
+    DT_THROW_IF(is_locked(), std::logic_error, "Manager is locked !");
 
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
-           = config_.ordered_entries ().begin ();
-         i != config_.ordered_entries ().end ();
+           = config_.ordered_entries().begin();
+         i != config_.ordered_entries().end();
          i++) {
       datatools::multi_properties::entry * e = *i;
-      const std::string & name = e->get_key ();
-      const std::string & type = e->get_meta ();
-      const datatools::properties & props = e->get_properties ();
+      const std::string & name = e->get_key();
+      const std::string & type = e->get_meta();
+      const datatools::properties & props = e->get_properties();
 
       DT_LOG_DEBUG(_logging_priority_, "Load name = '" << name << "'");
       DT_LOG_DEBUG(_logging_priority_, "Load type = '" << type << "'");
 
-      DT_THROW_IF (!manager::validate_name_for_gdml(name), std::logic_error,
+      DT_THROW_IF(!manager::validate_name_for_gdml(name), std::logic_error,
                    "Proposed name '" << name << "' is not supported for GDML export !");
 
-      if (type == "isotope") {
-        DT_THROW_IF (_isotopes_.find (name) != _isotopes_.end (),
+      if (type == "isotope" || type == "materials::isotope") {
+        DT_THROW_IF(_isotopes_.find(name) != _isotopes_.end(),
                      std::logic_error,
                      "Isotope with name '" << name << "' already exists !");
         isotope * iso = _creator_->create_isotope(name, props);
-        _isotopes_[iso->get_name ()] = materials::smart_ref<isotope> ();
-        _isotopes_[iso->get_name ()].set_ref(iso);
-        DT_LOG_DEBUG(_logging_priority_,"Add new isotope = '" << iso->get_zai_name () << "'");
+        _isotopes_[iso->get_name()] = materials::smart_ref<isotope>();
+        _isotopes_[iso->get_name()].set_ref(iso);
+        DT_LOG_DEBUG(_logging_priority_, "Add new isotope = '" << iso->get_zai_name() << "'");
       }
-      else if (type == "element") {
-        DT_THROW_IF (_elements_.find (name) != _elements_.end (),
+      else if (type == "element" || type == "materials::element") {
+        DT_THROW_IF(_elements_.find(name) != _elements_.end(),
                      std::logic_error,
                      "Element with name '" << name << "' already exists !");
         bool unique_element_material = false;
-        DT_THROW_IF (unique_element_material,
+        DT_THROW_IF(unique_element_material,
                      std::logic_error,
                      "Material with name '" << name << "' already exists !");
         element * elmt = _creator_->create_element(name, props, _isotopes_);
-        _elements_[elmt->get_name ()] = materials::smart_ref<element> ();
-        _elements_[elmt->get_name ()].set_ref (elmt);
-        DT_LOG_DEBUG(_logging_priority_,"Add new element = '" << elmt->get_name () << "'");
-      } else if (type == "material") {
-        DT_THROW_IF (_materials_.find (name) != _materials_.end (),
+        _elements_[elmt->get_name()] = materials::smart_ref<element>();
+        _elements_[elmt->get_name()].set_ref(elmt);
+        DT_LOG_DEBUG(_logging_priority_, "Add new element = '" << elmt->get_name() << "'");
+      } else if (type == "material" || type == "materials::material") {
+        DT_THROW_IF(_materials_.find(name) != _materials_.end(),
                      std::logic_error,
                      "Material with name '" << name << "' already exists !");
         bool unique_element_material = false;
         if (unique_element_material) {
-          DT_THROW_IF (_elements_.find (name) != _elements_.end (),
+          DT_THROW_IF(_elements_.find(name) != _elements_.end(),
                        std::logic_error,
-                       "Elements with name '" << name << "' already exists !");
+                       "Element with name '" << name << "' already exists !");
         }
         material * matl = _creator_->create_material(name,
                                                      props,
                                                      _elements_,
                                                      _materials_);
-        _materials_[matl->get_name ()] = materials::smart_ref<material> ();
-        _materials_[matl->get_name ()].set_ref (matl);
-        DT_LOG_DEBUG(_logging_priority_,"Add new material = '" << matl->get_name () << "'");
-        _ordered_materials_.push_back (matl->get_name ());
-      }
-      else if (type == "alias") {
-        material_dict_type::const_iterator mat_found = _materials_.find (name);
-        if (mat_found != _materials_.end ()) {
+        _materials_[matl->get_name()] = materials::smart_ref<material>();
+        _materials_[matl->get_name()].set_ref(matl);
+        DT_LOG_DEBUG(_logging_priority_, "Add new material = '" << matl->get_name() << "'");
+        _ordered_materials_.push_back(matl->get_name());
+      } else if (type == "alias" || type == "materials::material_alias") {
+        material_dict_type::const_iterator mat_found = _materials_.find(name);
+        if (mat_found != _materials_.end()) {
           const smart_ref<material> & sref = mat_found->second;
-          DT_THROW_IF (! sref.is_alias(),
+          DT_THROW_IF(! sref.is_alias(),
                        std::logic_error,
                        "Material with name '" << name
                        << "' already exists ! It cannot be overloaded !");
           // Already existing material alias:
-          DT_THROW_IF (! is_alias_allow_overload(),
+          DT_THROW_IF(! is_alias_allow_overload(),
                        std::logic_error,
                        "Alias with name '" << name << "' cannot be overloaded !");
-          DT_LOG_WARNING(_logging_priority_,"Redefinition of alias '" << name << "' !");
+          DT_LOG_WARNING(_logging_priority_, "Redefinition of alias '" << name << "' !");
         }
-        DT_THROW_IF (! props.has_key ("material"),
+        DT_THROW_IF(! props.has_key("material"),
                      std::logic_error,
                      "Missing property 'material' for a material alias !");
-        std::string alias_material = props.fetch_string ("material");
-        material_dict_type::iterator found = _materials_.find (alias_material);
-        DT_THROW_IF (found == _materials_.end (),
+        std::string alias_material = props.fetch_string("material");
+        DT_THROW_IF(alias_material == name, std::logic_error,
+                    "Material alias named '" << alias_material << "' cannot reference itself !");
+        material_dict_type::iterator found = _materials_.find(alias_material);
+        DT_THROW_IF(found == _materials_.end(),
                      std::logic_error,
                      "Aliased material named '" << alias_material << "' does not exist !");
-        DT_THROW_IF (found->second.is_alias(),
+        DT_THROW_IF(!_alias_of_alias_allowed_ && found->second.is_alias(),
                      std::logic_error,
                      "Material alias with name '" << name
-                     << "' cannot refer itself to another alias ('" << alias_material << "') !");
-        _materials_[name] = materials::smart_ref<material> ();
-        _materials_[name].set_ref (found->second.grab_ref ());
+                     << "' cannot refer to another material alias '" << alias_material << "' !");
+        _materials_[name] = materials::smart_ref<material>();
+        _materials_[name].set_ref(found->second.grab_ref());
         _materials_[name].set_alias_of(alias_material);
         std::list<std::string>::iterator ofound = std::find(_ordered_materials_.begin(),
                                                             _ordered_materials_.end(),
@@ -396,7 +443,7 @@ namespace materials {
         if (ofound != _ordered_materials_.end()) {
           _ordered_materials_.erase(ofound);
         }
-        _ordered_materials_.push_back (name);
+        _ordered_materials_.push_back(name);
         DT_LOG_DEBUG(_logging_priority_, "Add new material alias = '" << name << "' for material '" << alias_material << "'");
       }
 
@@ -405,34 +452,32 @@ namespace materials {
     return;
   }
 
-  void manager::reset ()
+  void manager::reset()
   {
     unlock();
-    _ordered_materials_.clear ();
-    _materials_.clear ();
-    _elements_.clear ();
-    _isotopes_.clear ();
+    _ordered_materials_.clear();
+    _materials_.clear();
+    _elements_.clear();
+    _isotopes_.clear();
     _creator_.reset();
-    _alias_allow_overload_ = false;
-    _load_isotope_mass_data_ = true;
-    _load_isotope_decay_data_ = false;
     _material_exported_prefixes_.clear();
+    _set_defaults();
     return;
   }
 
-  void manager::tree_dump (std::ostream & out_,
+  void manager::tree_dump(std::ostream & out_,
                            const std::string & title_,
                            const std::string & indent_,
                            bool /*inherit_*/) const
   {
     std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    if (! title_.empty ()) {
+    if (! indent_.empty()) indent = indent_;
+    if (! title_.empty()) {
       out_ << indent << title_ << std::endl;
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Debug : " << is_debug () << std::endl;
+         << "Debug : " << is_debug() << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Isotope mass data : " << is_load_isotope_mass_data() << std::endl;
@@ -442,6 +487,9 @@ namespace materials {
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Alias overload : " << is_alias_allow_overload() << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Alias of alias allowed : " << is_alias_of_alias_allowed() << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Material exported property prefixes : " << std::endl;
@@ -463,19 +511,19 @@ namespace materials {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Creator: "
-           << (_creator_ ? "Yes" : "No")
+           <<(_creator_ ? "Yes" : "No")
            << std::endl;
     }
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Isotopes";
-      if ( _isotopes_.size () == 0) {
+      if ( _isotopes_.size() == 0) {
         out_ << " : <empty>" << std::endl;
       } else {
-        out_ << " [" << _isotopes_.size () << "] :" << std::endl;
-        for (isotope_dict_type::const_iterator i = _isotopes_.begin ();
-             i != _isotopes_.end ();
+        out_ << " [" << _isotopes_.size() << "] :" << std::endl;
+        for (isotope_dict_type::const_iterator i = _isotopes_.begin();
+             i != _isotopes_.end();
              i++) {
           std::ostringstream indent_oss;
           indent_oss << indent;
@@ -483,7 +531,7 @@ namespace materials {
           isotope_dict_type::const_iterator j = i;
           j++;
           out_ << indent << datatools::i_tree_dumpable::skip_tag;;
-          if (j != _isotopes_.end ()) {
+          if (j != _isotopes_.end()) {
             out_ << datatools::i_tree_dumpable::tag;
             indent_oss << datatools::i_tree_dumpable::skip_tag;;
           } else {
@@ -491,7 +539,7 @@ namespace materials {
             indent_oss << datatools::i_tree_dumpable::last_skip_tag;;
           }
           out_ << "Isotope '" << i->first << "' :" << std::endl;
-          i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
+          i->second.get_ref().tree_dump(out_, "", indent_oss.str());
         }
       }
     }
@@ -499,12 +547,12 @@ namespace materials {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Elements";
-      if ( _elements_.size () == 0) {
+      if ( _elements_.size() == 0) {
         out_ << " : <empty>" << std::endl;
       } else {
-        out_ << " [" << _elements_.size () << "] :" << std::endl;
-        for (element_dict_type::const_iterator i = _elements_.begin ();
-             i != _elements_.end ();
+        out_ << " [" << _elements_.size() << "] :" << std::endl;
+        for (element_dict_type::const_iterator i = _elements_.begin();
+             i != _elements_.end();
              i++) {
           std::ostringstream indent_oss;
           indent_oss << indent;
@@ -512,7 +560,7 @@ namespace materials {
           element_dict_type::const_iterator j = i;
           j++;
           out_ << indent << datatools::i_tree_dumpable::skip_tag;;
-          if (j != _elements_.end ()) {
+          if (j != _elements_.end()) {
             out_ << datatools::i_tree_dumpable::tag;
             indent_oss << datatools::i_tree_dumpable::skip_tag;;
           } else {
@@ -520,7 +568,7 @@ namespace materials {
             indent_oss << datatools::i_tree_dumpable::last_skip_tag;;
           }
           out_ << "Element '" << i->first << "' :" << std::endl;
-          i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
+          i->second.get_ref().tree_dump(out_, "", indent_oss.str());
         }
       }
     }
@@ -528,12 +576,12 @@ namespace materials {
     {
       out_ << indent << datatools::i_tree_dumpable::tag
            << "Materials";
-      if ( _materials_.size () == 0) {
+      if ( _materials_.size() == 0) {
         out_ << " : <empty>" << std::endl;
       } else {
-        out_ << " [" << _materials_.size () << "] :" << std::endl;
-        for (material_dict_type::const_iterator i = _materials_.begin ();
-             i != _materials_.end ();
+        out_ << " [" << _materials_.size() << "] :" << std::endl;
+        for (material_dict_type::const_iterator i = _materials_.begin();
+             i != _materials_.end();
              i++) {
           std::ostringstream indent_oss;
           indent_oss << indent;
@@ -541,7 +589,7 @@ namespace materials {
           material_dict_type::const_iterator j = i;
           j++;
           out_ << indent << datatools::i_tree_dumpable::skip_tag;;
-          if (j != _materials_.end ()) {
+          if (j != _materials_.end()) {
             out_ << datatools::i_tree_dumpable::tag;
             indent_oss << datatools::i_tree_dumpable::skip_tag;;
           } else {
@@ -549,15 +597,15 @@ namespace materials {
             indent_oss << datatools::i_tree_dumpable::last_skip_tag;;
           }
           out_ << "Material '" << i->first << "'";
-          if (i->second.is_alias ()) {
-            out_ << " (alias of '" << i->second.get_alias_of() << "')";
+          if (i->second.is_alias()) {
+            out_ << "(alias of '" << i->second.get_alias_of() << "')";
             out_ << std::endl;
           } else {
-            if (! i->second.is_owned ()) {
-              out_ << " (external)";
+            if (! i->second.is_owned()) {
+              out_ << "(external)";
             }
             out_ << " : " << std::endl;
-            i->second.get_ref ().tree_dump (out_, "", indent_oss.str ());
+            i->second.get_ref().tree_dump(out_, "", indent_oss.str());
           }
         }
       }
@@ -566,13 +614,13 @@ namespace materials {
 
     {
       out_ << indent << datatools::i_tree_dumpable::tag
-           << "Materials (ordered)";
-      if ( _ordered_materials_.size () == 0) {
+           << "Materials(ordered)";
+      if ( _ordered_materials_.size() == 0) {
         out_ << " : <empty>" << std::endl;
       } else {
-        out_ << " [" << _ordered_materials_.size () << "] :" << std::endl;
-        for (std::list<std::string>::const_iterator i = _ordered_materials_.begin ();
-             i != _ordered_materials_.end ();
+        out_ << " [" << _ordered_materials_.size() << "] :" << std::endl;
+        for (std::list<std::string>::const_iterator i = _ordered_materials_.begin();
+             i != _ordered_materials_.end();
              i++) {
           std::ostringstream indent_oss;
           indent_oss << indent;
@@ -580,7 +628,7 @@ namespace materials {
           std::list<std::string>::const_iterator j = i;
           j++;
           out_ << indent << datatools::i_tree_dumpable::skip_tag;
-          if (j != _ordered_materials_.end ()) {
+          if (j != _ordered_materials_.end()) {
             out_ << datatools::i_tree_dumpable::tag;
             indent_oss << datatools::i_tree_dumpable::skip_tag;
           } else {
@@ -713,7 +761,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                             "allow client application to be able to fetch arbitrary   \n"
                             "informations from the collection of auxiliary properties \n"
                             "associated to a given material. The prefixes must end    \n"
-                            "with a dot (examples:  \"mpt.\", \"visu.\", \"test.\").  \n"
+                            "with a dot(examples:  \"mpt.\", \"visu.\", \"test.\").  \n"
                             )
       .add_example("This example exports all properties for *Material Properties Tables*    \n"
                    "and *Visualization*: ::                                                 \n"
@@ -761,7 +809,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
       ;
   }
 
-  ocd_.set_configuration_hints ("Here is an example of a configuration using the                         \n"
+  ocd_.set_configuration_hints("Here is an example of a configuration using the                         \n"
                                 "``datatools::properties`` format: ::                                    \n"
                                 "                                                                        \n"
                                 "  logging.priority : string = \"warning\"                               \n"

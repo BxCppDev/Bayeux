@@ -1,9 +1,9 @@
 /// materials/detail/tools.h
-/* Author(s)    : Benoit Guillon  <guillon@lpccaen.in2p3.fr>
+/* Author(s)    : François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-09-22
  * Last modified: 2010-09-22
  *
- * Description : Some typedef definitions
+ * Description : Some typedef definitions and template class for handling pointers
  *
  */
 
@@ -136,7 +136,7 @@ namespace materials {
 
     bool _owned_;           //!< Flag to indicate if the smart_ref object is responsible of the deletion of the instance
     T *  _ref_;             //!< Address of an instance
-    std::string _alias_of_; //!< Name of another instance of which the smart_ref is an alias (symbolic link)
+    std::string _alias_of_; //!< Name of another instance of which the smart_ref is an alias (some kind of symbolic link)
 
   };
 

@@ -98,7 +98,7 @@ namespace materials {
     /// \brief Build flags
     enum build_flag_type {
       BF_NIST_COMPOSITION = datatools::bit_mask::bit00, //!< Build from the NIST table
-      BF_LOCK            = datatools::bit_mask::bit31 //!< Lock after building
+      BF_LOCK             = datatools::bit_mask::bit31  //!< Lock after building
     };
 
     /// Defaut Constructor
@@ -193,7 +193,7 @@ namespace materials {
     /// Build the element : norm weights, compute molar mass.
     void build(unsigned int build_flags_ = 0);
 
-    /// Build the element using nist composition data, then normalize weights, compute molar mass.
+    /// Build the element using NIST composition data, then normalize weights, compute molar mass.
     void build_from_nist();
 
     /// Return the name.

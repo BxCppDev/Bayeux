@@ -15,7 +15,7 @@
  * History:
  *
  *
- *  Author:
+ *  Authors:
  *   - Benoit Guillon <guillon@lpccaen.in2p3.fr>
  *   - François Mauger <mauger@lpccaen.in2p3.fr>
  *
