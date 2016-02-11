@@ -365,12 +365,12 @@ namespace materials {
       DT_LOG_DEBUG(_logging_priority_, "Load type = '" << type << "'");
 
       DT_THROW_IF(!manager::validate_name_for_gdml(name), std::logic_error,
-                   "Proposed name '" << name << "' is not supported for GDML export !");
+                  "Proposed name '" << name << "' is not supported for GDML export !");
 
       if (type == "isotope" || type == "materials::isotope") {
         DT_THROW_IF(_isotopes_.find(name) != _isotopes_.end(),
-                     std::logic_error,
-                     "Isotope with name '" << name << "' already exists !");
+                    std::logic_error,
+                    "Isotope with name '" << name << "' already exists !");
         isotope * iso = _creator_->create_isotope(name, props);
         _isotopes_[iso->get_name()] = materials::smart_ref<isotope>();
         _isotopes_[iso->get_name()].set_ref(iso);
@@ -378,25 +378,25 @@ namespace materials {
       }
       else if (type == "element" || type == "materials::element") {
         DT_THROW_IF(_elements_.find(name) != _elements_.end(),
-                     std::logic_error,
-                     "Element with name '" << name << "' already exists !");
+                    std::logic_error,
+                    "Element with name '" << name << "' already exists !");
         bool unique_element_material = false;
         DT_THROW_IF(unique_element_material,
-                     std::logic_error,
-                     "Material with name '" << name << "' already exists !");
+                    std::logic_error,
+                    "Material with name '" << name << "' already exists !");
         element * elmt = _creator_->create_element(name, props, _isotopes_);
         _elements_[elmt->get_name()] = materials::smart_ref<element>();
         _elements_[elmt->get_name()].set_ref(elmt);
         DT_LOG_DEBUG(_logging_priority_, "Add new element = '" << elmt->get_name() << "'");
       } else if (type == "material" || type == "materials::material") {
         DT_THROW_IF(_materials_.find(name) != _materials_.end(),
-                     std::logic_error,
-                     "Material with name '" << name << "' already exists !");
+                    std::logic_error,
+                    "Material with name '" << name << "' already exists !");
         bool unique_element_material = false;
         if (unique_element_material) {
           DT_THROW_IF(_elements_.find(name) != _elements_.end(),
-                       std::logic_error,
-                       "Element with name '" << name << "' already exists !");
+                      std::logic_error,
+                      "Element with name '" << name << "' already exists !");
         }
         material * matl = _creator_->create_material(name,
                                                      props,
@@ -411,29 +411,29 @@ namespace materials {
         if (mat_found != _materials_.end()) {
           const smart_ref<material> & sref = mat_found->second;
           DT_THROW_IF(! sref.is_alias(),
-                       std::logic_error,
-                       "Material with name '" << name
-                       << "' already exists ! It cannot be overloaded !");
+                      std::logic_error,
+                      "Material with name '" << name
+                      << "' already exists ! It cannot be overloaded !");
           // Already existing material alias:
           DT_THROW_IF(! is_alias_allow_overload(),
-                       std::logic_error,
-                       "Alias with name '" << name << "' cannot be overloaded !");
+                      std::logic_error,
+                      "Alias with name '" << name << "' cannot be overloaded !");
           DT_LOG_WARNING(_logging_priority_, "Redefinition of alias '" << name << "' !");
         }
         DT_THROW_IF(! props.has_key("material"),
-                     std::logic_error,
-                     "Missing property 'material' for a material alias !");
+                    std::logic_error,
+                    "Missing property 'material' for a material alias !");
         std::string alias_material = props.fetch_string("material");
         DT_THROW_IF(alias_material == name, std::logic_error,
                     "Material alias named '" << alias_material << "' cannot reference itself !");
         material_dict_type::iterator found = _materials_.find(alias_material);
         DT_THROW_IF(found == _materials_.end(),
-                     std::logic_error,
-                     "Aliased material named '" << alias_material << "' does not exist !");
+                    std::logic_error,
+                    "Aliased material named '" << alias_material << "' does not exist !");
         DT_THROW_IF(!_alias_of_alias_allowed_ && found->second.is_alias(),
-                     std::logic_error,
-                     "Material alias with name '" << name
-                     << "' cannot refer to another material alias '" << alias_material << "' !");
+                    std::logic_error,
+                    "Material alias with name '" << name
+                    << "' cannot refer to another material alias '" << alias_material << "' !");
         _materials_[name] = materials::smart_ref<material>();
         _materials_[name].set_ref(found->second.grab_ref());
         _materials_[name].set_alias_of(alias_material);
@@ -466,9 +466,9 @@ namespace materials {
   }
 
   void manager::tree_dump(std::ostream & out_,
-                           const std::string & title_,
-                           const std::string & indent_,
-                           bool /*inherit_*/) const
+                          const std::string & title_,
+                          const std::string & indent_,
+                          bool /*inherit_*/) const
   {
     std::string indent;
     if (! indent_.empty()) indent = indent_;
@@ -724,7 +724,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
       .set_default_value_boolean(false)
       .set_long_description("Users are invited to define material aliases, i.e. some     \n"
                             "human-friendly character strings that are associated        \n"
-                            "to material objects stored in the manager's dictionnary.    \n"
+                            "to material objects stored in the manager's dictionary.     \n"
                             "Typically, one may want to use the alias ``metal`` as a     \n"
                             "shortcut for the ``std::inox`` material.                    \n"
                             "If the user changes his/her mind, it is easy to make the    \n"
@@ -732,18 +732,39 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                             "This gives some flexibility by just changing the definition \n"
                             "of an alias without changing the definitions of standard    \n"
                             "materials like copper or inox registered in some standard   \n"
-                            "dictionnary.                                                \n"
+                            "dictionary.                                                 \n"
                             "When the ``alias_allow_overload`` is set, it is possible to \n"
                             "overload some previous definitions of a material alias, the \n"
                             "last one overloading the former ones. Otherwise, alias      \n"
                             "redefinition is considered as an error.                     \n"
                             "                                                            \n"
                             "Superseded by a previous call of :                          \n"
-                            "  ``materials::manager::set_alias_allow_overload(true)``    \n"
+                            "``materials::manager::set_alias_allow_overload(true)``      \n"
                             )
       .add_example("This example allows alias overloading::         \n"
                    "                                                \n"
                    "  alias_allow_overload : boolean = 1            \n"
+                   "                                                \n"
+                   )
+      ;
+  }
+
+  {
+    configuration_property_description & cpd = ocd_.add_configuration_property_info();
+    cpd.set_name_pattern("alias_of_alias_allowed")
+      .set_terse_description("Flag to allow alias of material alias")
+      .set_traits(datatools::TYPE_BOOLEAN)
+      .set_mandatory(false)
+      .set_default_value_boolean(true)
+      .set_long_description("This flag allows the definition of an alias of alias for    \n"
+                            "material.                                                   \n"
+                            "                                                            \n"
+                            "Superseded by a previous call of :                          \n"
+                            "``materials::manager::set_alias_of_alias_allowled(true)``   \n"
+                            )
+      .add_example("This example forbids alias of alias::           \n"
+                   "                                                \n"
+                   "  alias_of_alias_allowed : boolean = 0          \n"
                    "                                                \n"
                    )
       ;
@@ -794,7 +815,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
                             "                                                          \n"
                             "Extends the instantiation of objects triggered by         \n"
                             "previous calls to :                                       \n"
-                            "  ``materials::manager::load(...)``                       \n"
+                            "``materials::manager::load(...)``                         \n"
                             )
       .add_example("This example loads 4 configuration files respectively for isotopes,\n"
                    "elements, materials and material aliases::                         \n"
@@ -809,112 +830,113 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::materials::manager,ocd_)
       ;
   }
 
-  ocd_.set_configuration_hints("Here is an example of a configuration using the                         \n"
-                                "``datatools::properties`` format: ::                                    \n"
-                                "                                                                        \n"
-                                "  logging.priority : string = \"warning\"                               \n"
-                                "  load_isotope_mass_data : boolean = 1                                  \n"
-                                "  load_isotope_decay_data : boolean = 0                                 \n"
-                                "  alias_allow_overload : boolean = 1                                    \n"
-                                "  material_exported_prefixes : string[2] : \"mpt.\" \"visualization.\"  \n"
-                                "  # Here, only one file contains definitions of isotopes, elements,     \n"
-                                "  #  materials and material aliases :                                   \n"
-                                "  configuration_files : string[1] as path = \\                          \n"
-                                "                \"${CONFIG_REPOSITORY_DIR}/iema.def\"                   \n"
-                                "                                                                        \n"
-                                "A materials manager is configured through a set of configuration      \n"
-                                "files that use the format of the ``datatools::multi_properties``      \n"
-                                "configuration file.                                                   \n"
-                                "                                                                      \n"
-                                "The method used to instantiate isotopes, elements and materials       \n"
-                                "objects is :                                                          \n"
-                                "   ``void manager::load(const datatools::multi_properties & config_);``\n"
-                                "                                                                      \n"
-                                "Each ``multi_properties`` object contains a list of records that      \n"
-                                "describe isotopes, elements, materials and possibly material aliases. \n"
-                                "The order used to load the files is important because some materials  \n"
-                                "may depend on some elements or other materials, elements themselves   \n"
-                                "may depend on isotopes. Also material aliases depends on existing     \n"
-                                "materials. It is thus recommended to load the files in such a way:    \n"
-                                "first isotopes, then elements, then materials and finaly material aliases are\n"
-                                "described, possibly from separated files for clarity and reusability. \n"
-                                "                                                                      \n"
-                                "Here is an example of a single file that contains all kinds of objects::\n"
-                                "                                                                      \n"
-                                "    #@description Definitions for some isotopes, elements and materials\n"
-                                "    #@key_label   \"name\"                                           \n"
-                                "    #@meta_label  \"type\"                                           \n"
-                                "                                                                     \n"
-                                "    # First, the isotopes:                                           \n"
-                                "                                                                     \n"
-                                "    [name=\"H\" type=\"isotope\"]                                    \n"
-                                "    #@config The H hydrogen isotope                                  \n"
-                                "    z : integer = 1                                                  \n"
-                                "    a : integer = 1                                                  \n"
-                                "                                                                     \n"
-                                "    [name=\"D\" type=\"isotope\"]                                    \n"
-                                "    #@config The deuterium hydrogen isotope                          \n"
-                                "    z : integer = 1                                                  \n"
-                                "    a : integer = 2                                                  \n"
-                                "                                                                     \n"
-                                "    [name=\"T\" type=\"isotope\"]                                    \n"
-                                "    #@config The tritium hydrogen isotope                            \n"
-                                "    z : integer = 1                                                  \n"
-                                "    a : integer = 3                                                  \n"
-                                "                                                                     \n"
-                                "    [name=\"O-16\" type=\"isotope\"]                                 \n"
-                                "    #@config The O-16 oxygen isotope                                 \n"
-                                "    z : integer = 8                                                  \n"
-                                "    a : integer = 16                                                 \n"
-                                "                                                                     \n"
-                                "    [name=\"O-17\" type=\"isotope\"]                                 \n"
-                                "    #@config The O-17 oxygen isotope                                 \n"
-                                "    z : integer = 8                                                  \n"
-                                "    a : integer = 17                                                 \n"
-                                "                                                                     \n"
-                                "    [name=\"O-18\" type=\"isotope\"]                                 \n"
-                                "    #@config The O-18 oxygen isotope                                 \n"
-                                "    z : integer = 8                                                  \n"
-                                "    a : integer = 18                                                 \n"
-                                "                                                                     \n"
-                                "    # Second, the elements:                                          \n"
-                                "                                                                     \n"
-                                "    [name=\"Hydrogen\" type=\"element\"]                             \n"
-                                "    #@config The H natural element                                   \n"
-                                "    z               : integer   = 1                                  \n"
-                                "    isotope.names   : string[2] = \"H\"   \"D\"                      \n"
-                                "    isotope.weights : real[2]   = 99.9885 0.0115                     \n"
-                                "                                                                     \n"
-                                "    [name=\"Oxygen\" type=\"element\"]                               \n"
-                                "    #@config The O natural element                                   \n"
-                                "    z               : integer   = 8                                  \n"
-                                "    isotope.names   : string[3] = \"O-16\" \"O-17\" \"O-18\"         \n"
-                                "    isotope.weights : real[3]   =  99.757 0.038  0.205               \n"
-                                "                                                                     \n"
-                                "    # Third, the materials:                                          \n"
-                                "                                                                     \n"
-                                "    [name=\"Water\" type=\"material\"]                               \n"
-                                "    #@config Water material                                          \n"
-                                "    density          : real   = 1.0                                  \n"
-                                "    density.unit     : string = \"g/cm3\"                            \n"
-                                "    temperature      : real   = 300.                                 \n"
-                                "    temperature.unit : string = \"kelvin\"                           \n"
-                                "    pressure         : real   = 1.                                   \n"
-                                "    pressure.unit    : string = \"bar\"                              \n"
-                                "    state            : string = \"liquid\"                              \n"
-                                "    composition.mode            : string       = \"number_of_atoms\"    \n"
-                                "    composition.names           : string  [2]  = \"Hydrogen\" \"Oxygen\"\n"
-                                "    composition.number_of_atoms : integer [2]  =      2        1        \n"
-                                "    mpt.op.pp        : real [5] = 1.0    2.0  3.0   5.0  10.0           \n"
-                                "    mpt.op.rindex    : real [5] = 1.33  1.34  1.35  1.40  1.42          \n"
-                                "                                                                        \n"
-                                "    # Last, the material aliases:                                       \n"
-                                "                                                                        \n"
-                                "    [name=\"Fluid\" type=\"alias\"]                                     \n"
-                                "    #@config An material alias for water                                \n"
-                                "    material : string = \"Water\"                                       \n"
-                                "                                                                        \n"
-                                );
+  ocd_.set_configuration_hints("Here is an example of a configuration using the                        \n"
+                               "``datatools::properties`` format: ::                                   \n"
+                               "                                                                       \n"
+                               "  logging.priority : string = \"warning\"                              \n"
+                               "  load_isotope_mass_data : boolean = 1                                 \n"
+                               "  load_isotope_decay_data : boolean = 0                                \n"
+                               "  alias_of_alias_allowed : boolean = 1                                 \n"
+                               "  alias_allow_overload : boolean = 1                                   \n"
+                               "  material_exported_prefixes : string[2] : \"mpt.\" \"visualization.\" \n"
+                               "  # Here, only one file contains definitions of isotopes, elements,    \n"
+                               "  #  materials and material aliases :                                  \n"
+                               "  configuration_files : string[1] as path = \\                         \n"
+                               "                \"${CONFIG_REPOSITORY_DIR}/iema.def\"                  \n"
+                               "                                                                       \n"
+                               "A materials manager is configured through a set of configuration      \n"
+                               "files that use the format of the ``datatools::multi_properties``      \n"
+                               "configuration file.                                                   \n"
+                               "                                                                      \n"
+                               "The method used to instantiate isotopes, elements and materials       \n"
+                               "objects is :                                                          \n"
+                               "``void manager::load(const datatools::multi_properties & config_);``  \n"
+                               "                                                                      \n"
+                               "Each ``multi_properties`` object contains a list of records that      \n"
+                               "describe isotopes, elements, materials and possibly material aliases. \n"
+                               "The order used to load the files is important because some materials  \n"
+                               "may depend on some elements or other materials, elements themselves   \n"
+                               "may depend on isotopes. Also material aliases depends on existing     \n"
+                               "materials. It is thus recommended to load the files in such a way:    \n"
+                               "first isotopes, then elements, then materials and finaly material aliases are\n"
+                               "described, possibly from separated files for clarity and reusability. \n"
+                               "                                                                      \n"
+                               "Here is an example of a single file that contains all kinds of objects::\n"
+                               "                                                                      \n"
+                               "    #@description Definitions for some isotopes, elements and materials\n"
+                               "    #@key_label   \"name\"                                           \n"
+                               "    #@meta_label  \"type\"                                           \n"
+                               "                                                                     \n"
+                               "    # First, the isotopes:                                           \n"
+                               "                                                                     \n"
+                               "    [name=\"H\" type=\"isotope\"]                                    \n"
+                               "    #@config The H hydrogen isotope                                  \n"
+                               "    z : integer = 1                                                  \n"
+                               "    a : integer = 1                                                  \n"
+                               "                                                                     \n"
+                               "    [name=\"D\" type=\"isotope\"]                                    \n"
+                               "    #@config The deuterium hydrogen isotope                          \n"
+                               "    z : integer = 1                                                  \n"
+                               "    a : integer = 2                                                  \n"
+                               "                                                                     \n"
+                               "    [name=\"T\" type=\"isotope\"]                                    \n"
+                               "    #@config The tritium hydrogen isotope                            \n"
+                               "    z : integer = 1                                                  \n"
+                               "    a : integer = 3                                                  \n"
+                               "                                                                     \n"
+                               "    [name=\"O-16\" type=\"isotope\"]                                 \n"
+                               "    #@config The O-16 oxygen isotope                                 \n"
+                               "    z : integer = 8                                                  \n"
+                               "    a : integer = 16                                                 \n"
+                               "                                                                     \n"
+                               "    [name=\"O-17\" type=\"isotope\"]                                 \n"
+                               "    #@config The O-17 oxygen isotope                                 \n"
+                               "    z : integer = 8                                                  \n"
+                               "    a : integer = 17                                                 \n"
+                               "                                                                     \n"
+                               "    [name=\"O-18\" type=\"isotope\"]                                 \n"
+                               "    #@config The O-18 oxygen isotope                                 \n"
+                               "    z : integer = 8                                                  \n"
+                               "    a : integer = 18                                                 \n"
+                               "                                                                     \n"
+                               "    # Second, the elements:                                          \n"
+                               "                                                                     \n"
+                               "    [name=\"Hydrogen\" type=\"element\"]                             \n"
+                               "    #@config The H natural element                                   \n"
+                               "    z               : integer   = 1                                  \n"
+                               "    isotope.names   : string[2] = \"H\"   \"D\"                      \n"
+                               "    isotope.weights : real[2]   = 99.9885 0.0115                     \n"
+                               "                                                                     \n"
+                               "    [name=\"Oxygen\" type=\"element\"]                               \n"
+                               "    #@config The O natural element                                   \n"
+                               "    z               : integer   = 8                                  \n"
+                               "    isotope.names   : string[3] = \"O-16\" \"O-17\" \"O-18\"         \n"
+                               "    isotope.weights : real[3]   =  99.757 0.038  0.205               \n"
+                               "                                                                     \n"
+                               "    # Third, the materials:                                          \n"
+                               "                                                                     \n"
+                               "    [name=\"Water\" type=\"material\"]                               \n"
+                               "    #@config Water material                                          \n"
+                               "    density          : real   = 1.0                                  \n"
+                               "    density.unit     : string = \"g/cm3\"                            \n"
+                               "    temperature      : real   = 300.                                 \n"
+                               "    temperature.unit : string = \"kelvin\"                           \n"
+                               "    pressure         : real   = 1.                                   \n"
+                               "    pressure.unit    : string = \"bar\"                              \n"
+                               "    state            : string = \"liquid\"                              \n"
+                               "    composition.mode            : string       = \"number_of_atoms\"    \n"
+                               "    composition.names           : string  [2]  = \"Hydrogen\" \"Oxygen\"\n"
+                               "    composition.number_of_atoms : integer [2]  =      2        1        \n"
+                               "    mpt.op.pp        : real [5] = 1.0    2.0  3.0   5.0  10.0           \n"
+                               "    mpt.op.rindex    : real [5] = 1.33  1.34  1.35  1.40  1.42          \n"
+                               "                                                                        \n"
+                               "    # Last, the material aliases:                                       \n"
+                               "                                                                        \n"
+                               "    [name=\"Fluid\" type=\"alias\"]                                     \n"
+                               "    #@config An material alias for water                                \n"
+                               "    material : string = \"Water\"                                       \n"
+                               "                                                                        \n"
+                               );
 
   ocd_.set_validation_support(true);
   ocd_.lock();
