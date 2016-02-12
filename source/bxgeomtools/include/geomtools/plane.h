@@ -14,7 +14,7 @@
  */
 
 #ifndef GEOMTOOLS_PLANE_H
-#define GEOMTOOLS_PLANE_H 1
+#define GEOMTOOLS_PLANE_H
 
 // This project:
 #include <geomtools/utils.h>

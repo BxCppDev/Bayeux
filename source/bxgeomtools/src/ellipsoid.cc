@@ -169,7 +169,7 @@ namespace geomtools {
 
     _set_default();
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 
@@ -232,82 +232,83 @@ namespace geomtools {
   void ellipsoid::initialize(const datatools::properties & config_,
                              const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit")) {
-      const std::string lunit_str = config_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
+    if (!is_valid()) {
+      double lunit = CLHEP::mm;
+      if (config_.has_key ("length_unit")) {
+        const std::string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::units::get_length_unit_from (lunit_str);
+      }
+
+      double x_radius;
+      datatools::invalidate (x_radius);
+      if (config_.has_key ("x_radius")) {
+        x_radius = config_.fetch_real ("x_radius");
+        if (! config_.has_explicit_unit ("x_radius")) {
+          x_radius *= lunit;
+        }
+      } else if (config_.has_key ("x_diameter")) {
+        x_radius = 0.5 * config_.fetch_real ("x_diameter");
+        if (! config_.has_explicit_unit ("x_diameter")) {
+          x_radius *= lunit;
+        }
+      }
+      DT_THROW_IF (! datatools::is_valid (x_radius), std::logic_error,
+                   "Missing elliptical_tube 'x_radius' property !");
+
+      double y_radius;
+      datatools::invalidate (y_radius);
+      if (config_.has_key ("y_radius")) {
+        y_radius = config_.fetch_real ("y_radius");
+        if (! config_.has_explicit_unit ("y_radius")) {
+          y_radius *= lunit;
+        }
+      } else if (config_.has_key ("y_diameter")) {
+        y_radius = 0.5 * config_.fetch_real ("y_diameter");
+        if (! config_.has_explicit_unit ("y_diameter")) {
+          y_radius *= lunit;
+        }
+      }
+      DT_THROW_IF (! datatools::is_valid (y_radius), std::logic_error,
+                   "Missing elliptical_tube 'y_radius' property !");
+
+      double z_radius;
+      datatools::invalidate (z_radius);
+      if (config_.has_key ("z_radius")) {
+        z_radius = config_.fetch_real ("z_radius");
+        if (! config_.has_explicit_unit ("z_radius")) {
+          z_radius *= lunit;
+        }
+      } else if (config_.has_key ("x_diameter")) {
+        z_radius = 0.5 * config_.fetch_real ("x_diameter");
+        if (! config_.has_explicit_unit ("x_diameter")) {
+          z_radius *= lunit;
+        }
+      }
+      DT_THROW_IF (! datatools::is_valid (z_radius), std::logic_error,
+                   "Missing elliptical_tube 'z_radius' property !");
+
+      double bottom_z;
+      datatools::invalidate(bottom_z);
+      if (config_.has_key ("bottom_z_cut")) {
+        bottom_z = config_.fetch_real ("bottom_z_cut");
+        if (! config_.has_explicit_unit ("bottom_z_cut")) {
+          bottom_z *= lunit;
+        }
+      }
+
+      double top_z;
+      datatools::invalidate(top_z);
+      if (config_.has_key ("top_z_cut")) {
+        top_z = config_.fetch_real ("top_z_cut");
+        if (! config_.has_explicit_unit ("top_z_cut")) {
+          top_z *= lunit;
+        }
+      }
+
+      set(x_radius, y_radius, z_radius, bottom_z, top_z);
     }
-
-    double x_radius;
-    datatools::invalidate (x_radius);
-    if (config_.has_key ("x_radius")) {
-      x_radius = config_.fetch_real ("x_radius");
-      if (! config_.has_explicit_unit ("x_radius")) {
-        x_radius *= lunit;
-      }
-    } else if (config_.has_key ("x_diameter")) {
-      x_radius = 0.5 * config_.fetch_real ("x_diameter");
-      if (! config_.has_explicit_unit ("x_diameter")) {
-        x_radius *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (x_radius), std::logic_error,
-                 "Missing elliptical_tube 'x_radius' property !");
-
-    double y_radius;
-    datatools::invalidate (y_radius);
-    if (config_.has_key ("y_radius")) {
-      y_radius = config_.fetch_real ("y_radius");
-      if (! config_.has_explicit_unit ("y_radius")) {
-        y_radius *= lunit;
-      }
-    } else if (config_.has_key ("y_diameter")) {
-      y_radius = 0.5 * config_.fetch_real ("y_diameter");
-      if (! config_.has_explicit_unit ("y_diameter")) {
-        y_radius *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (y_radius), std::logic_error,
-                 "Missing elliptical_tube 'y_radius' property !");
-
-    double z_radius;
-    datatools::invalidate (z_radius);
-    if (config_.has_key ("z_radius")) {
-      z_radius = config_.fetch_real ("z_radius");
-      if (! config_.has_explicit_unit ("z_radius")) {
-        z_radius *= lunit;
-      }
-    } else if (config_.has_key ("x_diameter")) {
-      z_radius = 0.5 * config_.fetch_real ("x_diameter");
-      if (! config_.has_explicit_unit ("x_diameter")) {
-        z_radius *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (z_radius), std::logic_error,
-                 "Missing elliptical_tube 'z_radius' property !");
-
-    double bottom_z;
-    datatools::invalidate(bottom_z);
-    if (config_.has_key ("bottom_z_cut")) {
-      bottom_z = config_.fetch_real ("bottom_z_cut");
-      if (! config_.has_explicit_unit ("bottom_z_cut")) {
-        bottom_z *= lunit;
-      }
-    }
-
-    double top_z;
-    datatools::invalidate(top_z);
-    if (config_.has_key ("top_z_cut")) {
-      top_z = config_.fetch_real ("top_z_cut");
-      if (! config_.has_explicit_unit ("top_z_cut")) {
-        top_z *= lunit;
-      }
-    }
-
-    set(x_radius, y_radius, z_radius, bottom_z, top_z);
     lock();
     return;
   }

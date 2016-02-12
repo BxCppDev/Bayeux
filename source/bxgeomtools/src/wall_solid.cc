@@ -113,25 +113,32 @@ namespace geomtools {
   // virtual
   void wall_solid::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
+    if (! is_valid()) {
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+      DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing box 'z' property !");
+
+      if (!datatools::is_valid(_z_)) {
+        double z = config_.fetch_real("z");
+        if (! config_.has_explicit_unit("z")) {
+          z *= lunit;
+        }
+        set_z(z);
+      }
+
+      if (!_base_.is_valid()) {
+        datatools::properties base_config;
+        config_.export_and_rename_starting_with(base_config, "base.", "");
+        _base_.initialize(base_config);
+      }
+
     }
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing box 'z' property !");
-    double z = config_.fetch_real("z");
-    if (! config_.has_explicit_unit("z")) {
-      z *= lunit;
-    }
-    set_z(z);
-
-    datatools::properties base_config;
-    config_.export_and_rename_starting_with(base_config, "base.", "");
-    _base_.initialize(base_config);
-
     lock();
     return;
   }
@@ -143,7 +150,7 @@ namespace geomtools {
     _base_.reset();
     _set_defaults();
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 

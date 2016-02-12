@@ -346,87 +346,89 @@ namespace geomtools {
   void sphere::initialize(const datatools::properties & config_,
                           const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit")) {
-      const std::string lunit_str = config_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
-    }
+    if (! is_valid()) {
 
-    double aunit = CLHEP::degree;
-    if (config_.has_key ("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string ("angle_unit");
-      aunit = datatools::units::get_angle_unit_from (aunit_str);
-    }
+      double lunit = CLHEP::mm;
+      if (config_.has_key ("length_unit")) {
+        const std::string lunit_str = config_.fetch_string ("length_unit");
+        lunit = datatools::units::get_length_unit_from (lunit_str);
+      }
 
-    double rmin, rmax;
-    rmin = 0.0;
-    if (config_.has_key ("r_max")) {
-      rmax = config_.fetch_real ("r_max");
-      if (! config_.has_explicit_unit ("r_max")) {
-        rmax *= lunit;
+      double aunit = CLHEP::degree;
+      if (config_.has_key ("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string ("angle_unit");
+        aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
-    } else {
-      DT_THROW_IF (! config_.has_key ("r"), std::logic_error,
-                   "Missing sphere 'r' property !");
-      rmax = config_.fetch_real ("r");
-      if (! config_.has_explicit_unit ("r")) {
-        rmax *= lunit;
-      }
-    }
-    if (config_.has_key ("r_min")) {
-      rmin = config_.fetch_real ("r_min");
-      if (! config_.has_explicit_unit ("r_min")) {
-        rmin *= lunit;
-      }
-    }
 
-    double start_theta = 0.0;
-    double delta_theta = M_PI * CLHEP::radian;
-    bool not_full_theta = false;
-    if (config_.has_key ("start_theta")) {
-      start_theta = config_.fetch_real ("start_theta");
-      if (! config_.has_explicit_unit ("start_theta")) {
-        start_theta *= aunit;
+      double rmin, rmax;
+      rmin = 0.0;
+      if (config_.has_key ("r_max")) {
+        rmax = config_.fetch_real ("r_max");
+        if (! config_.has_explicit_unit ("r_max")) {
+          rmax *= lunit;
+        }
+      } else {
+        DT_THROW_IF (! config_.has_key ("r"), std::logic_error,
+                     "Missing sphere 'r' property !");
+        rmax = config_.fetch_real ("r");
+        if (! config_.has_explicit_unit ("r")) {
+          rmax *= lunit;
+        }
       }
-      not_full_theta = true;
-    }
-    if (config_.has_key ("delta_theta")) {
-      delta_theta = config_.fetch_real ("delta_theta");
-      if (! config_.has_explicit_unit ("delta_theta")) {
-        delta_theta *= aunit;
+      if (config_.has_key ("r_min")) {
+        rmin = config_.fetch_real ("r_min");
+        if (! config_.has_explicit_unit ("r_min")) {
+          rmin *= lunit;
+        }
       }
-      not_full_theta = true;
-    }
 
-    double start_phi = 0.0;
-    double delta_phi = 2 * M_PI * CLHEP::radian;
-    bool not_full_phi = false;
-    if (config_.has_key ("start_phi")) {
-      start_phi = config_.fetch_real ("start_phi");
-      if (! config_.has_explicit_unit ("start_phi")) {
-        start_phi *= aunit;
+      double start_theta = 0.0;
+      double delta_theta = M_PI * CLHEP::radian;
+      bool not_full_theta = false;
+      if (config_.has_key ("start_theta")) {
+        start_theta = config_.fetch_real ("start_theta");
+        if (! config_.has_explicit_unit ("start_theta")) {
+          start_theta *= aunit;
+        }
+        not_full_theta = true;
       }
-      not_full_phi = true;
-    }
-    if (config_.has_key ("delta_phi")) {
-      delta_phi = config_.fetch_real ("delta_phi");
-      if (! config_.has_explicit_unit ("delta_phi")) {
-        delta_phi *= aunit;
+      if (config_.has_key ("delta_theta")) {
+        delta_theta = config_.fetch_real ("delta_theta");
+        if (! config_.has_explicit_unit ("delta_theta")) {
+          delta_theta *= aunit;
+        }
+        not_full_theta = true;
       }
-      not_full_phi = true;
-    }
-    if (rmin > 0.0) {
-      set_r_min(rmin);
-    }
-    set_r_max(rmax);
-    if (not_full_theta) {
-      set_theta(start_theta, delta_theta);
-    }
-    if (not_full_phi) {
-      set_phi(start_phi, delta_phi);
+
+      double start_phi = 0.0;
+      double delta_phi = 2 * M_PI * CLHEP::radian;
+      bool not_full_phi = false;
+      if (config_.has_key ("start_phi")) {
+        start_phi = config_.fetch_real ("start_phi");
+        if (! config_.has_explicit_unit ("start_phi")) {
+          start_phi *= aunit;
+        }
+        not_full_phi = true;
+      }
+      if (config_.has_key ("delta_phi")) {
+        delta_phi = config_.fetch_real ("delta_phi");
+        if (! config_.has_explicit_unit ("delta_phi")) {
+          delta_phi *= aunit;
+        }
+        not_full_phi = true;
+      }
+      if (rmin > 0.0) {
+        set_r_min(rmin);
+      }
+      set_r_max(rmax);
+      if (not_full_theta) {
+        set_theta(start_theta, delta_theta);
+      }
+      if (not_full_phi) {
+        set_phi(start_phi, delta_phi);
+      }
     }
 
     lock();
@@ -523,7 +525,7 @@ namespace geomtools {
 
     _set_default();
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 
@@ -620,7 +622,7 @@ namespace geomtools {
           dface_.set_delta_angle(_delta_phi_);
         }
         face_placement_.set(0.0, 0.0, 0.0, 0, 0, 0);
-     } else {
+      } else {
         double ztop = _r_ * std::cos(theta);
         double r_min = 0.0;
         if (has_r_min()) {
@@ -737,7 +739,7 @@ namespace geomtools {
   }
 
   void sphere::compute_stop_phi_face(disk & face_,
-                                       placement & face_placement_) const
+                                     placement & face_placement_) const
   {
     DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
     face_.reset();
@@ -1060,7 +1062,7 @@ namespace geomtools {
         if (dface.is_valid()) {
           p_normal = dface.get_normal_on_surface(p_face);
         }
-       face_placement.child_to_mother_direction(p_normal, normal);
+        face_placement.child_to_mother_direction(p_normal, normal);
       }
       break;
     case FACE_START_PHI_SIDE :
@@ -1326,7 +1328,7 @@ namespace geomtools {
         uint32_t options = base_options;
         if (face.is_valid()) face.generate_wires(wires_, face_placement, options);
         else if (dface.is_valid()) dface.generate_wires(wires_, face_placement, options);
-     }
+      }
 
       if (draw_stop_theta_face) {
         right_circular_conical_nappe face;

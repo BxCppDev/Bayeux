@@ -78,8 +78,7 @@ namespace geomtools {
     const logical_volume::dict_type & get_logicals() const;
 
     /// Constructor
-    explicit model_factory(datatools::logger::priority lp_ =
-                           datatools::logger::PRIO_WARNING);
+    explicit model_factory(datatools::logger::priority lp_ = datatools::logger::PRIO_FATAL);
 
     /// Constructor
     model_factory(bool debug_, bool core_factory_verbose_ = false);

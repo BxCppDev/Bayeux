@@ -143,11 +143,11 @@ namespace geomtools {
     /// Destructor
     virtual ~i_shape_3d();
 
-    /// Initialize the 3D-shape from properties
-    virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
+    // /// Initialize the 3D-shape from properties
+    // virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
 
-    /// Reset
-    virtual void reset();
+    // /// Reset
+    // virtual void reset();
 
     /// Check if the solid is composite
     virtual bool is_composite() const;
@@ -280,6 +280,12 @@ namespace geomtools {
     /// Executed at unlock stage
     virtual void _at_unlock();
 
+    /// Initialize from properties
+    void _initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    void _reset();
+
     /// Build the bounding data
     virtual void _build_bounding_data();
 
@@ -308,6 +314,9 @@ namespace geomtools {
      *
      */
     void _initialize_bounding_data(const datatools::properties & config_);
+
+    /// Reset the bounding data
+    void _reset_bounding_data();
 
     /// Return the bounding data
     bounding_data & _grab_bounding_data();

@@ -153,7 +153,7 @@ namespace geomtools {
     if (new_value_) {
       _logging_priority = datatools::logger::PRIO_DEBUG;
     } else {
-      _logging_priority = datatools::logger::PRIO_WARNING;
+      _logging_priority = datatools::logger::PRIO_FATAL;
     }
     return;
   }
@@ -198,7 +198,7 @@ namespace geomtools {
   i_model::i_model(const std::string & /*dummy_*/)
   {
     _constructed_     = false;
-    _logging_priority = datatools::logger::PRIO_WARNING;
+    _logging_priority = datatools::logger::PRIO_FATAL;
     _phantom_solid    = false;
     return;
   }

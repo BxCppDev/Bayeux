@@ -34,6 +34,7 @@ namespace geomtools {
     _grab_bounding_data().make_box(get_xmin(), get_xmax(),
                                    get_ymin(), get_ymax(),
                                    get_zmin(), get_zmax());
+    DT_LOG_DEBUG(get_logging_priority(), "Box now has bounding data.");
     return;
   }
 
@@ -171,14 +172,13 @@ namespace geomtools {
 
   box::box() : i_shape_3d(DEFAULT_SKIN)
   {
-    _x_ = -1.0;
-    _y_ = -1.0;
-    _z_ = -1.0;
+    _set_defaults();
     return;
   }
 
   box::box(double a_x, double a_y,double a_z ) : i_shape_3d(DEFAULT_SKIN)
   {
+    _set_defaults();
     set_x(a_x);
     set_y(a_y);
     set_z(a_z);
@@ -258,38 +258,43 @@ namespace geomtools {
   void box::initialize(const datatools::properties & config_,
                        const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
+    DT_LOG_DEBUG(get_logging_priority(), "Box validity = " << is_valid());
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
-    }
+    if (! is_valid()) {
 
-    DT_THROW_IF (! config_.has_key("x"), std::logic_error, "Missing box 'x' property !");
-    double x = config_.fetch_real("x");
-    if (! config_.has_explicit_unit("x")) {
-      x *= lunit;
-    }
-    DT_THROW_IF (! config_.has_key("y"), std::logic_error, "Missing box 'y' property !");
-    double y = config_.fetch_real("y");
-    if (! config_.has_explicit_unit("y")) {
-      y *= lunit;
-    }
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing box 'z' property !");
-    double z = config_.fetch_real("z");
-    if (! config_.has_explicit_unit("z")) {
-      z *= lunit;
-    }
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
 
-    set(x, y, z);
+      DT_THROW_IF(! config_.has_key("x"), std::logic_error, "Missing box 'x' property !");
+      double x = config_.fetch_real("x");
+      if (! config_.has_explicit_unit("x")) {
+        x *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("y"), std::logic_error, "Missing box 'y' property !");
+      double y = config_.fetch_real("y");
+      if (! config_.has_explicit_unit("y")) {
+        y *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("z"), std::logic_error, "Missing box 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
+      }
+
+      set(x, y, z);
+    }
 
     lock();
     return;
   }
 
-  void box::_set_default()
+  void box::_set_defaults()
   {
     datatools::invalidate(_x_);
     datatools::invalidate(_y_);
@@ -297,14 +302,11 @@ namespace geomtools {
     return;
   }
 
-  void
-  box::reset()
+  void box::reset()
   {
     unlock();
-
-    _set_default();
-
-    this->i_shape_3d::reset();
+    _set_defaults();
+    this->i_shape_3d::_reset();
     return;
   }
 
@@ -413,9 +415,9 @@ namespace geomtools {
     double skin = get_skin(a_skin);
     double hskin = 0.5 * skin;
     if (   (std::abs(a_position.x()) >= (0.5 * _x_ + hskin))
-        || (std::abs(a_position.y()) >= (0.5 * _y_ + hskin))
-        || (std::abs(a_position.z()) >= (0.5 * _z_ + hskin))
-        ) {
+           || (std::abs(a_position.y()) >= (0.5 * _y_ + hskin))
+           || (std::abs(a_position.z()) >= (0.5 * _z_ + hskin))
+           ) {
       return true;
     }
     return false;
@@ -428,9 +430,9 @@ namespace geomtools {
     double skin = get_skin(a_skin);
     double hskin = 0.5 * skin;
     if (   (std::abs(a_position.x()) <= (0.5 * _x_ - hskin))
-        && (std::abs(a_position.y()) <= (0.5 * _y_ - hskin))
-        && (std::abs(a_position.z()) <= (0.5 * _z_ - hskin))
-        ) {
+           && (std::abs(a_position.y()) <= (0.5 * _y_ - hskin))
+           && (std::abs(a_position.z()) <= (0.5 * _z_ - hskin))
+           ) {
       return true;
     }
     return false;
@@ -537,25 +539,25 @@ namespace geomtools {
     }
 
     /*
-    int face_counter = 0;
-    for (faces_mask_type face_bit = _FACE_BEGIN;
-         face_bit != _FACE_END;
-         face_bit = static_cast<faces_mask_type>(face_bit << 1)) {
+      int face_counter = 0;
+      for (faces_mask_type face_bit = _FACE_BEGIN;
+      face_bit != _FACE_END;
+      face_bit = static_cast<faces_mask_type>(face_bit << 1)) {
       // std::cerr << "DEVEL: box::find_intercept: face_bit=" << face_bit << std::endl;
       const int FACE_INDEX = face_counter;
       rectangle face;
       placement face_placement;
       compute_face(face_bit, face, face_placement);
       if (face.i_find_intercept::find_intercept(from_,
-                                                direction_,
-                                                face_placement,
-                                                intercepts[FACE_INDEX],
-                                                skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(face_bit);
-        candidate_impact_counter++;
+      direction_,
+      face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(face_bit);
+      candidate_impact_counter++;
       }
       face_counter++;
-    }
+      }
     */
 
     if (candidate_impact_counter > 0) {
@@ -628,15 +630,13 @@ namespace geomtools {
                       const std::string & a_indent,
                       bool a_inherit) const
   {
-    std::string indent;
-    if (! a_indent.empty()) indent = a_indent;
     i_shape_3d::tree_dump(a_out, a_title, a_indent, true);
 
-    a_out << indent << datatools::i_tree_dumpable::tag
+    a_out << a_indent << datatools::i_tree_dumpable::tag
           << "X : " << get_x() / CLHEP::mm << " mm" << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::tag
+    a_out << a_indent << datatools::i_tree_dumpable::tag
           << "Y : " << get_y() / CLHEP::mm << " mm" << std::endl;
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+    a_out << a_indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
           << "Z : " << get_z() / CLHEP::mm << " mm" << std::endl;
     return;
   }
@@ -702,10 +702,12 @@ namespace geomtools {
       placement face_placement;
       compute_face(FACE_BACK, face, face_placement);
       uint32_t options = base_options;
-      if (edge00) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
-      else edge00 = true;
-      if (edge01) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
-      else edge01 = true;
+      // if (edge00) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      // else edge00 = true;
+      // if (edge01) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      // else edge01 = true;
+      edge00 = true;
+      edge01 = true;
       edge08 = true;
       edge09 = true;
       face.generate_wires(wires_, face_placement, options);
@@ -716,10 +718,12 @@ namespace geomtools {
       placement face_placement;
       compute_face(FACE_FRONT, face, face_placement);
       uint32_t options = base_options;
-      if (edge02) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
-      else edge02 = true;
-      if (edge03) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
-      else edge03 = true;
+      // if (edge02) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      // else edge02 = true;
+      // if (edge03) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      // else edge03 = true;
+      edge02 = true;
+      edge03 = true;
       edge10 = true;
       edge11 = true;
       face.generate_wires(wires_, face_placement, options);
@@ -730,29 +734,38 @@ namespace geomtools {
       placement face_placement;
       compute_face(FACE_LEFT, face, face_placement);
       uint32_t options = base_options;
-      if (edge04) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
-      else edge04 = true;
-      if (edge05) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
-      else edge05 = true;
-      if (edge08) options |= rectangle::WR_RECT_NO_YMINUS_SIDE;
-      else edge08 = true;
-      if (edge10) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
-      else edge10 = true;
+      // if (edge04) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      // else edge04 = true;
+      // if (edge05) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      // else edge05 = true;
+      // if (edge08) options |= rectangle::WR_RECT_NO_YMINUS_SIDE;
+      // else edge08 = true;
+      // if (edge10) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
+      // else edge10 = true;
+      edge04 = true;
+      edge05 = true;
+      edge08 = true;
+      edge10 = true;
       face.generate_wires(wires_, face_placement, options);
     }
+
     if (draw_right) {
       rectangle face;
       placement face_placement;
       compute_face(FACE_RIGHT, face, face_placement);
       uint32_t options = base_options;
-      if (edge06) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
-      else edge06 = true;
-      if (edge07) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
-      else edge07 = true;
-      if (edge09) options |= rectangle::WR_RECT_NO_YMINUS_SIDE;
-      else edge09 = true;
-      if (edge11) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
-      else edge11 = true;
+      // if (edge06) options |= rectangle::WR_RECT_NO_XMINUS_SIDE;
+      // else edge06 = true;
+      // if (edge07) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
+      // else edge07 = true;
+      // if (edge09) options |= rectangle::WR_RECT_NO_YMINUS_SIDE;
+      // else edge09 = true;
+      // if (edge11) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
+      // else edge11 = true;
+      edge06 = true;
+      edge07 = true;
+      edge09 = true;
+      edge11 = true;
       face.generate_wires(wires_, face_placement, options);
     }
 

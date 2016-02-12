@@ -416,9 +416,9 @@ namespace geomtools {
   void extruded_box::initialize(const datatools::properties & config_,
                                 const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
+    if (!is_valid()) {
     double lunit = CLHEP::mm;
     if (config_.has_key("length_unit")) {
       const std::string lunit_str = config_.fetch_string("length_unit");
@@ -470,6 +470,7 @@ namespace geomtools {
     set_top(has_top);
     set_bottom(has_bottom);
 
+    }
     lock();
     return;
   }
@@ -493,7 +494,7 @@ namespace geomtools {
 
     _set_default();
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 

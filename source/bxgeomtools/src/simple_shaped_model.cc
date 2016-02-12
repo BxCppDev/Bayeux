@@ -331,10 +331,19 @@ namespace geomtools {
                                             const datatools::properties & config_,
                                             models_col_type * /*models_*/)
   {
+    DT_LOG_DEBUG(get_logging_priority(), "Construct box named '" << name_ << "'");
     // Build the box:
     _box_ = new box;
     try {
+      DT_LOG_DEBUG(get_logging_priority(), "Initialize box from config: ");
+      if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
+        config_.tree_dump(std::cerr, "", "[debug] ");
+      }
       _box_->initialize(config_);
+      DT_LOG_DEBUG(get_logging_priority(), "Box is initialized.");
+      if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
+        _box_->tree_dump(std::cerr, "Box: ", "[debug] ");
+      }
     } catch (std::exception & error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
       delete _box_;
@@ -342,9 +351,9 @@ namespace geomtools {
     }
     DT_THROW_IF (! _box_->is_valid(), std::logic_error,
                  "Invalid box parameters in simple shaped (box) model '" << name_ << "' !");
+    DT_LOG_DEBUG(get_logging_priority(), "Box validity: " << _box_->is_valid());
     _solid_ = _box_;
     grab_logical().set_material_ref(_material_name_);
-
     return;
   }
 

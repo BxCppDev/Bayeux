@@ -232,7 +232,7 @@ namespace geomtools {
   {
     unlock();
     _set_defaults();
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 
@@ -258,7 +258,7 @@ namespace geomtools {
     double hskin = 0.5 * skin;
     double r = hypot(a_position.x(), a_position.y());
     if ( (r >= (_radius_ + hskin))
-        || ( std::abs(a_position.z()) >= (0.5 * _z_ + hskin) ) ) {
+         || ( std::abs(a_position.z()) >= (0.5 * _z_ + hskin) ) ) {
       return true;
     }
     return false;
@@ -319,38 +319,38 @@ namespace geomtools {
     }
 
     /*
-    if (a_surface_mask.has_face_bit(FACE_SIDE)) {
+      if (a_surface_mask.has_face_bit(FACE_SIDE)) {
       cylindrical_sector side;
       placement side_placement;
       compute_side_face(side, side_placement);
       vector_3d p_side;
       side_placement.mother_to_child(point_, p_side);
       if (side.is_on_surface(p_side, skin)) {
-        return face_identifier(FACE_SIDE);
+      return face_identifier(FACE_SIDE);
       }
-    }
+      }
 
-    if (a_surface_mask.has_face_bit(FACE_TOP)) {
+      if (a_surface_mask.has_face_bit(FACE_TOP)) {
       disk top;
       placement top_placement;
       compute_top_bottom_face(FACE_TOP, top, top_placement);
       vector_3d p_top;
       top_placement.mother_to_child(point_, p_top);
       if (top.is_on_surface(p_top, skin)) {
-        return face_identifier(FACE_TOP);
+      return face_identifier(FACE_TOP);
       }
-    }
+      }
 
-    if (a_surface_mask.has_face_bit(FACE_BOTTOM)) {
+      if (a_surface_mask.has_face_bit(FACE_BOTTOM)) {
       disk bottom;
       placement bottom_placement;
       compute_top_bottom_face(FACE_BOTTOM, bottom, bottom_placement);
       vector_3d p_bottom;
       bottom_placement.mother_to_child(point_, p_bottom);
       if (bottom.is_on_surface(p_bottom, skin)) {
-        return face_identifier(FACE_BOTTOM);
+      return face_identifier(FACE_BOTTOM);
       }
-    }
+      }
     */
 
     return face_identifier::face_invalid();
@@ -395,50 +395,50 @@ namespace geomtools {
     }
 
     /*
-    {
+      {
       const int FACE_INDEX = 0;
       disk bottom_face;
       placement bottom_face_placement;
       compute_top_bottom_face(FACE_BOTTOM, bottom_face, bottom_face_placement);
       if (bottom_face.i_find_intercept::find_intercept(a_from,
-                                                       a_direction,
-                                                       bottom_face_placement,
-                                                       intercepts[FACE_INDEX],
-                                                       skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
-        candidate_impact_counter++;
+      a_direction,
+      bottom_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    {
+      {
       const int FACE_INDEX = 1;
       disk top_face;
       placement top_face_placement;
       compute_top_bottom_face(FACE_TOP, top_face, top_face_placement);
       if (top_face.i_find_intercept::find_intercept(a_from,
-                                                    a_direction,
-                                                    top_face_placement,
-                                                    intercepts[FACE_INDEX],
-                                                    skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
-        candidate_impact_counter++;
+      a_direction,
+      top_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    {
+      {
       const int FACE_INDEX = 2;
       cylindrical_sector side_face;
       placement side_face_placement;
       compute_side_face(side_face, side_face_placement);
       if (side_face.i_find_intercept::find_intercept(a_from,
-                                                     a_direction,
-                                                     side_face_placement,
-                                                     intercepts[FACE_INDEX],
-                                                     skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_SIDE);
-        candidate_impact_counter++;
+      a_direction,
+      side_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_SIDE);
+      candidate_impact_counter++;
       }
-    }
+      }
     */
 
     if (candidate_impact_counter > 0) {
@@ -676,44 +676,45 @@ namespace geomtools {
   void cylinder::initialize(const datatools::properties & config_,
                             const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
-    }
-
-    double r;
-    datatools::invalidate(r);
-    if(config_.has_key("r")) {
-      r = config_.fetch_real("r");
-      if(! config_.has_explicit_unit("r")) {
-        r *= lunit;
+    if (!is_valid()) {
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
       }
-    } else if(config_.has_key("radius")) {
-      r = config_.fetch_real("radius");
-      if(! config_.has_explicit_unit("radius")) {
-        r *= lunit;
+
+      double r;
+      datatools::invalidate(r);
+      if(config_.has_key("r")) {
+        r = config_.fetch_real("r");
+        if(! config_.has_explicit_unit("r")) {
+          r *= lunit;
+        }
+      } else if(config_.has_key("radius")) {
+        r = config_.fetch_real("radius");
+        if(! config_.has_explicit_unit("radius")) {
+          r *= lunit;
+        }
+      } else if(config_.has_key("diameter")) {
+        r = 0.5 * config_.fetch_real("diameter");
+        if(! config_.has_explicit_unit("diameter")) {
+          r *= lunit;
+        }
       }
-    } else if(config_.has_key("diameter")) {
-      r = 0.5 * config_.fetch_real("diameter");
-      if(! config_.has_explicit_unit("diameter")) {
-        r *= lunit;
+      DT_THROW_IF(! datatools::is_valid(r), std::logic_error, "Missing cylinder 'r', 'radius' or 'diameter' property !");
+
+      DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing cylinder 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
       }
+
+      set_r(r);
+      set_z(z);
+
     }
-    DT_THROW_IF(! datatools::is_valid(r), std::logic_error, "Missing cylinder 'r', 'radius' or 'diameter' property !");
-
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing cylinder 'z' property !");
-    double z = config_.fetch_real("z");
-    if (! config_.has_explicit_unit("z")) {
-      z *= lunit;
-    }
-
-    set_r(r);
-    set_z(z);
-
     lock();
     return;
   }

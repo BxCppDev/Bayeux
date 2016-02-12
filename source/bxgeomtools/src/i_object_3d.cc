@@ -101,6 +101,17 @@ namespace geomtools {
 
   /* i_object_3d */
 
+  datatools::logger::priority i_object_3d::get_logging_priority() const
+  {
+    return _logging_priority_;
+  }
+
+  void i_object_3d::set_logging_priority(datatools::logger::priority p_)
+  {
+    _logging_priority_ = p_;
+    return;
+  }
+
   void i_object_3d::set_tolerance (double tolerance_)
   {
     DT_THROW_IF (tolerance_ <= 0.0, std::logic_error, "Tolerance value '" << tolerance_ << "' must be positive !");
@@ -163,6 +174,7 @@ namespace geomtools {
 
   void i_object_3d::_set_defaults()
   {
+    _logging_priority_ = datatools::logger::PRIO_FATAL;
     _tolerance_ = constants::get_default_tolerance();
     _angular_tolerance_ = constants::get_default_angular_tolerance();
     _wires_drawer_ = 0;
@@ -261,9 +273,29 @@ namespace geomtools {
     return;
   }
 
+  void i_object_3d::initialize_simple()
+  {
+    datatools::properties dummy_config;
+    initialize(dummy_config, 0);
+    return;
+  }
+
   void i_object_3d::initialize(const datatools::properties & config_,
                                const handle_dict_type * /* objects_ */)
   {
+    this->i_object_3d::_initialize(config_);
+    return;
+  }
+
+  void i_object_3d::_initialize(const datatools::properties & config_,
+                                const handle_dict_type * /* objects_ */)
+  {
+    // Parse logging priority:
+    datatools::logger::priority prio = datatools::logger::extract_logging_configuration(config_, _logging_priority_, true);
+    if (prio != datatools::logger::PRIO_UNDEFINED) {
+      set_logging_priority(prio);
+    }
+
     double tlunit = CLHEP::micrometer;
     if (config_.has_key("tolerance.length_unit")) {
       const std::string tolerance_length_unit_str = config_.fetch_string("tolerance.length_unit");
@@ -297,6 +329,12 @@ namespace geomtools {
 
   void i_object_3d::reset()
   {
+    this->i_object_3d::_reset();
+    return;
+  }
+
+  void i_object_3d::_reset()
+  {
     reset_wires_drawer();
     this->i_object_3d::_set_defaults();
     return;
@@ -310,6 +348,9 @@ namespace geomtools {
     if (! title_.empty()) {
       out_ << indent_ << title_ << std::endl;
     }
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Logging priority : \"" << datatools::logger::get_priority_label(_logging_priority_) << "\"" << std::endl;
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Shape name : \"" << get_shape_name () << "\"" << std::endl;

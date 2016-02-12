@@ -378,10 +378,10 @@ namespace geomtools {
     return;
   }
 
-  void i_shape_3d::initialize(const datatools::properties & config_,
-                              const handle_dict_type * /* objects_ */)
+  void i_shape_3d::_initialize(const datatools::properties & config_,
+                               const handle_dict_type * objects_)
   {
-    this->i_object_3d::initialize(config_);
+    this->i_object_3d::_initialize(config_, objects_);
     _initialize_bounding_data(config_);
     return;
   }
@@ -400,14 +400,21 @@ namespace geomtools {
     return;
   }
 
-  void i_shape_3d::reset()
+  void i_shape_3d::_reset_bounding_data()
+  {
+    _bounding_data_.reset();
+    return;
+  }
+
+  void i_shape_3d::_reset()
   {
     if (is_locked()) {
       unlock();
     }
     reset_stackable_data();
     reset_computed_faces();
-    this->i_object_3d::reset();
+    _set_defaults();
+    this->i_object_3d::_reset();
     return;
   }
 
@@ -626,7 +633,7 @@ namespace geomtools {
                              const string & a_indent,
                              bool a_inherit) const
   {
-    i_object_3d::tree_dump (a_out, a_title, a_indent, true);
+    i_object_3d::tree_dump(a_out, a_title, a_indent, true);
 
     {
       a_out << a_indent << datatools::i_tree_dumpable::tag
@@ -682,6 +689,7 @@ namespace geomtools {
 
   void i_shape_3d::lock()
   {
+    DT_LOG_DEBUG(get_logging_priority(), "Locking shape type '" << get_shape_name() << "'");
     if (is_locked()) return;
     _at_lock();
     _locked_ = true;
@@ -690,7 +698,8 @@ namespace geomtools {
 
   void i_shape_3d::unlock()
   {
-    if (!is_locked()) return;
+   DT_LOG_DEBUG(get_logging_priority(), "Unlocking shape type '" << get_shape_name() << "'");
+   if (!is_locked()) return;
     _locked_ = false;
     _at_unlock();
     return;
@@ -698,13 +707,14 @@ namespace geomtools {
 
   void i_shape_3d::_at_lock()
   {
+    DT_LOG_DEBUG(get_logging_priority(), "Building bounding data for shape type '" << get_shape_name() << "'");
     _build_bounding_data();
     return;
   }
 
   void i_shape_3d::_at_unlock()
   {
-    _bounding_data_.reset();
+    _reset_bounding_data();
     return;
   }
 
@@ -716,6 +726,7 @@ namespace geomtools {
 
   void i_shape_3d::_build_bounding_data()
   {
+    std::cerr << "DEVEL: i_shape_3d::_build_bounding_data: ***** DEFAULT EMPTY METHOD!!!" << std::endl;
     return;
   }
 

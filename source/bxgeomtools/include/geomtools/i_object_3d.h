@@ -29,6 +29,7 @@
 #include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_serializable.h>
+#include <datatools/logger.h>
 
 // This project:
 #include <geomtools/utils.h>
@@ -58,14 +59,6 @@ namespace geomtools {
       DIMENSIONAL_2 = 2, //!< Two dimension object (example: a rectangle)
       DIMENSIONAL_3 = 3  //!< Three dimension object (example: a box)
     };
-
-    /*
-    /// \brief Surface bits
-    enum surface_bits {
-      NO_SURFACES  = ::geomtools::FACE_NONE, //!< No surface/side/facet
-      ALL_SURFACES = ::geomtools::FACE_ALL   //!< All surfaces/sides/facets
-    };
-    */
 
     /// A handle to a 3D object
     typedef datatools::handle<i_object_3d> handle_type;
@@ -139,6 +132,12 @@ namespace geomtools {
     /// Check the validity of the object
     virtual bool is_valid() const = 0;
 
+    /// Return the logging priority threshold
+    datatools::logger::priority get_logging_priority() const;
+
+    /// Set the logging priority threshold
+    void set_logging_priority(datatools::logger::priority);
+
     /// Check is a wires drawer is available
     bool has_wires_drawer() const;
 
@@ -193,6 +192,9 @@ namespace geomtools {
     /// Destructor
     virtual ~i_object_3d();
 
+    /// Initialize the 3D object
+    void initialize_simple();
+
     /// Initialize from properties and a dictionary of 3D-objects
     virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
 
@@ -213,9 +215,16 @@ namespace geomtools {
     /// Set default values for attributes
     void _set_defaults();
 
+    /// Initialize from properties
+    void _initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    void _reset();
+
   private:
 
     // Parameters:
+    datatools::logger::priority _logging_priority_; //!< Logging priority threshold
     double _tolerance_;         //!< Length tolerance to check surface/curve belonging
     double _angular_tolerance_; //!< Angular tolerance to check surface/curve belonging
 

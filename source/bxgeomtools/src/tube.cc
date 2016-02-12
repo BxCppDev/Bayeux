@@ -984,120 +984,124 @@ namespace geomtools {
   {
     bool devel = false;
     // devel = true;
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
-    }
-    if (devel) std::cerr << "DEVEL: tube::initialize: "
-                         << "lunit = " << lunit / CLHEP::mm << " mm" << std::endl;
+    if (!is_valid()) {
 
-    double aunit = CLHEP::degree;
-    if (config_.has_key("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string("angle_unit");
-      aunit = datatools::units::get_angle_unit_from(aunit_str);
-    }
-    if (devel) std::cerr << "DEVEL: tube::initialize: "
-                         << "aunit = " << aunit / CLHEP::degree << " degree" << std::endl;
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+      if (devel) std::cerr << "DEVEL: tube::initialize: "
+                           << "lunit = " << lunit / CLHEP::mm << " mm" << std::endl;
 
-    double inner_r;
-    datatools::invalidate (inner_r);
-    if (config_.has_key ("inner_r")) {
-      inner_r = config_.fetch_real ("inner_r");
-      if (devel) std::cerr << "DEVEL: geomtools::tube::initialize: inner_r = " << inner_r << std::endl;
-      if (! config_.has_explicit_unit ("inner_r")) {
-        inner_r *= lunit;
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        aunit = datatools::units::get_angle_unit_from(aunit_str);
       }
-    } else if (config_.has_key ("inner_radius")) {
-      inner_r = config_.fetch_real ("inner_radius");
-      if (! config_.has_explicit_unit ("inner_radius")) {
-        inner_r *= lunit;
-      }
-    } else if (config_.has_key ("inner_diameter")) {
-      inner_r = 0.5 * config_.fetch_real ("inner_diameter");
-      if (! config_.has_explicit_unit ("inner_diameter")) {
-        inner_r *= lunit;
-      }
-    }
-    if (! datatools::is_valid(inner_r)) {
-      // DT_LOG_WARNING (get_logging_priority (),
-      //                 "Missing tube 'inner_r' property ! Using 0-default inner radius !");
-      inner_r = 0.0;
-    }
-    if (devel) std::cerr << "DEVEL: geomtools::tube::initialize: FINAL inner_r = " << inner_r << std::endl;
+      if (devel) std::cerr << "DEVEL: tube::initialize: "
+                           << "aunit = " << aunit / CLHEP::degree << " degree" << std::endl;
 
-    double outer_r;
-    datatools::invalidate (outer_r);
-    if (config_.has_key ("outer_r")) {
-      outer_r = config_.fetch_real ("outer_r");
-      if (! config_.has_explicit_unit ("outer_r")) {
-        outer_r *= lunit;
+      double inner_r;
+      datatools::invalidate(inner_r);
+      if (config_.has_key ("inner_r")) {
+        inner_r = config_.fetch_real ("inner_r");
+        if (devel) std::cerr << "DEVEL: geomtools::tube::initialize: inner_r = " << inner_r << std::endl;
+        if (! config_.has_explicit_unit ("inner_r")) {
+          inner_r *= lunit;
+        }
+      } else if (config_.has_key ("inner_radius")) {
+        inner_r = config_.fetch_real ("inner_radius");
+        if (! config_.has_explicit_unit ("inner_radius")) {
+          inner_r *= lunit;
+        }
+      } else if (config_.has_key ("inner_diameter")) {
+        inner_r = 0.5 * config_.fetch_real ("inner_diameter");
+        if (! config_.has_explicit_unit ("inner_diameter")) {
+          inner_r *= lunit;
+        }
       }
-    } else if (config_.has_key ("outer_radius")) {
-      outer_r = config_.fetch_real ("outer_radius");
-      if (! config_.has_explicit_unit ("outer_radius")) {
-        outer_r *= lunit;
+      if (! datatools::is_valid(inner_r)) {
+        // DT_LOG_WARNING (get_logging_priority (),
+        //                 "Missing tube 'inner_r' property ! Using 0 default inner radius !");
+        inner_r = 0.0;
       }
-    } else if (config_.has_key ("outer_diameter")) {
-      outer_r = 0.5 * config_.fetch_real ("outer_diameter");
-      if (! config_.has_explicit_unit ("outer_diameter")) {
-        outer_r *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (outer_r), std::logic_error,
-                 "Missing tube 'outer_r' property !");
+      if (devel) std::cerr << "DEVEL: geomtools::tube::initialize: FINAL inner_r = " << inner_r << std::endl;
 
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error,
-                 "Missing tube 'z' property !");
-    double z = config_.fetch_real("z");
-    if (! config_.has_explicit_unit("z")) {
-      z *= lunit;
-    }
-
-    double start_phi = 0.0;
-    double delta_phi = 2 * M_PI * CLHEP::radian;
-    bool not_full_phi = false;
-    if (config_.has_key ("start_phi")) {
-      start_phi = config_.fetch_real ("start_phi");
-      if (! config_.has_explicit_unit ("start_phi")) {
-        start_phi *= aunit;
+      double outer_r;
+      datatools::invalidate(outer_r);
+      if (config_.has_key ("outer_r")) {
+        outer_r = config_.fetch_real ("outer_r");
+        if (! config_.has_explicit_unit ("outer_r")) {
+          outer_r *= lunit;
+        }
+      } else if (config_.has_key ("outer_radius")) {
+        outer_r = config_.fetch_real ("outer_radius");
+        if (! config_.has_explicit_unit ("outer_radius")) {
+          outer_r *= lunit;
+        }
+      } else if (config_.has_key ("outer_diameter")) {
+        outer_r = 0.5 * config_.fetch_real ("outer_diameter");
+        if (! config_.has_explicit_unit ("outer_diameter")) {
+          outer_r *= lunit;
+        }
       }
-      not_full_phi = true;
-    }
-    if (config_.has_key ("delta_phi")) {
-      delta_phi = config_.fetch_real ("delta_phi");
-      if (! config_.has_explicit_unit ("delta_phi")) {
-        delta_phi *= aunit;
+      DT_THROW_IF (! datatools::is_valid(outer_r), std::logic_error,
+                   "Missing tube 'outer_r' property !");
+
+      DT_THROW_IF (! config_.has_key("z"), std::logic_error,
+                   "Missing tube 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
       }
-      not_full_phi = true;
-    }
-    if (devel) {
-      std::cerr << "DEVEL: tube::initialize: "
-                << "inner_r = " << inner_r / CLHEP::mm << " mm" << std::endl;
-      std::cerr << "DEVEL: tube::initialize: "
-                << "outer_r = " << outer_r / CLHEP::mm << " mm" << std::endl;
-      std::cerr << "DEVEL: tube::initialize: "
-                << "z = " << z / CLHEP::mm << " mm" << std::endl;
-      std::cerr << "DEVEL: tube::initialize: "
-                << "start_phi = " << start_phi / CLHEP::degree << " degree" << std::endl;
-      std::cerr << "DEVEL: tube::initialize: "
-                << "delta_phi = " << delta_phi / CLHEP::degree << " degree" << std::endl;
-    }
 
-    set_radii(inner_r, outer_r);
-    set_z(z);
-    if (not_full_phi) {
-      set_phi(start_phi, delta_phi);
-    }
+      double start_phi = 0.0;
+      double delta_phi = 2 * M_PI * CLHEP::radian;
+      bool not_full_phi = false;
+      if (config_.has_key ("start_phi")) {
+        start_phi = config_.fetch_real ("start_phi");
+        if (! config_.has_explicit_unit ("start_phi")) {
+          start_phi *= aunit;
+        }
+        not_full_phi = true;
+      }
+      if (config_.has_key ("delta_phi")) {
+        delta_phi = config_.fetch_real ("delta_phi");
+        if (! config_.has_explicit_unit ("delta_phi")) {
+          delta_phi *= aunit;
+        }
+        not_full_phi = true;
+      }
 
-    if (devel) {
-      std::cerr << "DEVEL: tube::initialize: "
-                << "inner_r = " << _inner_r_ / CLHEP::mm << " mm" << std::endl;
-      std::cerr << "DEVEL: tube::initialize: "
-                << "outer_r = " << _outer_r_ / CLHEP::mm << " mm" << std::endl;
+      if (devel) {
+        std::cerr << "DEVEL: tube::initialize: "
+                  << "inner_r = " << inner_r / CLHEP::mm << " mm" << std::endl;
+        std::cerr << "DEVEL: tube::initialize: "
+                  << "outer_r = " << outer_r / CLHEP::mm << " mm" << std::endl;
+        std::cerr << "DEVEL: tube::initialize: "
+                  << "z = " << z / CLHEP::mm << " mm" << std::endl;
+        std::cerr << "DEVEL: tube::initialize: "
+                  << "start_phi = " << start_phi / CLHEP::degree << " degree" << std::endl;
+        std::cerr << "DEVEL: tube::initialize: "
+                  << "delta_phi = " << delta_phi / CLHEP::degree << " degree" << std::endl;
+      }
+
+      set_radii(inner_r, outer_r);
+      set_z(z);
+      if (not_full_phi) {
+        set_phi(start_phi, delta_phi);
+      }
+
+      if (devel) {
+        std::cerr << "DEVEL: tube::initialize: "
+                  << "inner_r = " << _inner_r_ / CLHEP::mm << " mm" << std::endl;
+        std::cerr << "DEVEL: tube::initialize: "
+                  << "outer_r = " << _outer_r_ / CLHEP::mm << " mm" << std::endl;
+      }
+
     }
 
     lock();
@@ -1287,12 +1291,12 @@ namespace geomtools {
 
 } // end of namespace geomtools
 
-/** Opening macro for implementation
- *  @arg geomtools::tube the full class name
- *  @arg ocd_ is the identifier of the 'datatools::object_configuration_description'
- *            to be initialized(passed by mutable reference).
- *  This macro must be used outside of any namespace.
- */
+  /** Opening macro for implementation
+   *  @arg geomtools::tube the full class name
+   *  @arg ocd_ is the identifier of the 'datatools::object_configuration_description'
+   *            to be initialized(passed by mutable reference).
+   *  This macro must be used outside of any namespace.
+   */
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(geomtools::tube, ocd_)
 {
   // The class name :

@@ -354,7 +354,7 @@ namespace geomtools {
   {
     unlock();
     _set_defaults();
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
   void right_circular_conical_frustrum::tree_dump (std::ostream & out_,
@@ -821,96 +821,97 @@ namespace geomtools {
   void right_circular_conical_frustrum::initialize(const datatools::properties & config_,
                                                    const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
-    }
-
-    double aunit = CLHEP::degree;
-    if (config_.has_key("angle_unit")) {
-      const std::string aunit_str = config_.fetch_string("angle_unit");
-      aunit = datatools::units::get_angle_unit_from(aunit_str);
-    }
-
-    double inner_top_r;
-    datatools::invalidate (inner_top_r);
-    if (config_.has_key ("inner_top_r")) {
-      inner_top_r = config_.fetch_real ("inner_top_r");
-      if (! config_.has_explicit_unit ("inner_top_r")) {
-        inner_top_r *= lunit;
+    if (!is_valid()) {
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
       }
-    }
 
-    DT_THROW_IF (! config_.has_key("outer_top_r"), std::logic_error,
-                 "Missing tube 'outer_top_r' property !");
-    double outer_top_r;
-    datatools::invalidate (outer_top_r);
-    if (config_.has_key ("outer_top_r")) {
-      outer_top_r = config_.fetch_real ("outer_top_r");
-      if (! config_.has_explicit_unit ("outer_top_r")) {
-        outer_top_r *= lunit;
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        aunit = datatools::units::get_angle_unit_from(aunit_str);
       }
-    }
 
-    double inner_bottom_r;
-    datatools::invalidate (inner_bottom_r);
-    if (config_.has_key ("inner_bottom_r")) {
-      inner_bottom_r = config_.fetch_real ("inner_bottom_r");
-      if (! config_.has_explicit_unit ("inner_bottom_r")) {
-        inner_bottom_r *= lunit;
+      double inner_top_r;
+      datatools::invalidate (inner_top_r);
+      if (config_.has_key ("inner_top_r")) {
+        inner_top_r = config_.fetch_real ("inner_top_r");
+        if (! config_.has_explicit_unit ("inner_top_r")) {
+          inner_top_r *= lunit;
+        }
       }
-    }
 
-    double outer_bottom_r;
-    datatools::invalidate (outer_bottom_r);
-    DT_THROW_IF (! config_.has_key("outer_bottom_r"), std::logic_error,
-                 "Missing tube 'outer_bottom_r' property !");
-    if (config_.has_key ("outer_bottom_r")) {
-      outer_bottom_r = config_.fetch_real ("outer_bottom_r");
-      if (! config_.has_explicit_unit ("outer_bottom_r")) {
-        outer_bottom_r *= lunit;
+      DT_THROW_IF (! config_.has_key("outer_top_r"), std::logic_error,
+                   "Missing tube 'outer_top_r' property !");
+      double outer_top_r;
+      datatools::invalidate (outer_top_r);
+      if (config_.has_key ("outer_top_r")) {
+        outer_top_r = config_.fetch_real ("outer_top_r");
+        if (! config_.has_explicit_unit ("outer_top_r")) {
+          outer_top_r *= lunit;
+        }
       }
-    }
 
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error,
-                 "Missing tube 'z' property !");
-    double z = config_.fetch_real("z");
-    if (! config_.has_explicit_unit("z")) {
-      z *= lunit;
-    }
-
-    double start_angle = 0.0;
-    double delta_angle = 2 * M_PI * CLHEP::radian;
-    bool not_full_angle = false;
-    if (config_.has_key ("start_angle")) {
-      start_angle = config_.fetch_real ("start_angle");
-      if (! config_.has_explicit_unit ("start_angle")) {
-        start_angle *= aunit;
+      double inner_bottom_r;
+      datatools::invalidate (inner_bottom_r);
+      if (config_.has_key ("inner_bottom_r")) {
+        inner_bottom_r = config_.fetch_real ("inner_bottom_r");
+        if (! config_.has_explicit_unit ("inner_bottom_r")) {
+          inner_bottom_r *= lunit;
+        }
       }
-      not_full_angle = true;
-    }
-    if (config_.has_key ("delta_angle")) {
-      delta_angle = config_.fetch_real ("delta_angle");
-      if (! config_.has_explicit_unit ("delta_angle")) {
-        delta_angle *= aunit;
+
+      double outer_bottom_r;
+      datatools::invalidate (outer_bottom_r);
+      DT_THROW_IF (! config_.has_key("outer_bottom_r"), std::logic_error,
+                   "Missing tube 'outer_bottom_r' property !");
+      if (config_.has_key ("outer_bottom_r")) {
+        outer_bottom_r = config_.fetch_real ("outer_bottom_r");
+        if (! config_.has_explicit_unit ("outer_bottom_r")) {
+          outer_bottom_r *= lunit;
+        }
       }
-      not_full_angle = true;
-    }
 
-    set_inner_bottom_radius(inner_bottom_r);
-    set_inner_top_radius(inner_top_r);
-    set_outer_bottom_radius(outer_bottom_r);
-    set_outer_top_radius(outer_top_r);
-    set_z(z);
-    if (not_full_angle) {
-      set_start_angle(start_angle);
-      set_delta_angle(delta_angle);
-    }
+      DT_THROW_IF (! config_.has_key("z"), std::logic_error,
+                   "Missing tube 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
+      }
 
+      double start_angle = 0.0;
+      double delta_angle = 2 * M_PI * CLHEP::radian;
+      bool not_full_angle = false;
+      if (config_.has_key ("start_angle")) {
+        start_angle = config_.fetch_real ("start_angle");
+        if (! config_.has_explicit_unit ("start_angle")) {
+          start_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (config_.has_key ("delta_angle")) {
+        delta_angle = config_.fetch_real ("delta_angle");
+        if (! config_.has_explicit_unit ("delta_angle")) {
+          delta_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+
+      set_inner_bottom_radius(inner_bottom_r);
+      set_inner_top_radius(inner_top_r);
+      set_outer_bottom_radius(outer_bottom_r);
+      set_outer_top_radius(outer_top_r);
+      set_z(z);
+      if (not_full_angle) {
+        set_start_angle(start_angle);
+        set_delta_angle(delta_angle);
+      }
+
+    }
     lock();
     return;
   }
@@ -1028,10 +1029,10 @@ namespace geomtools {
     }
 
     /*
-    double r = hypot(point_.x(), point_.y());
-    double phi = std::atan2(point_.y(), point_.x());
+      double r = hypot(point_.x(), point_.y());
+      double phi = std::atan2(point_.y(), point_.x());
 
-    if (surface_mask_.has_face_bit(FACE_OUTER_SIDE)) {
+      if (surface_mask_.has_face_bit(FACE_OUTER_SIDE)) {
       conical_nappe side;
       placement side_placement;
       side_placement.set_identity();
@@ -1039,82 +1040,82 @@ namespace geomtools {
       vector_3d p_side;
       side_placement.mother_to_child(point_, p_side);
       if (side.is_on_surface(p_side, skin)) {
-        return face_identifier(FACE_OUTER_SIDE);
+      return face_identifier(FACE_OUTER_SIDE);
       }
-    }
+      }
 
-    if (has_inner_face()) {
+      if (has_inner_face()) {
       if (surface_mask_.has_face_bit(FACE_INNER_SIDE)) {
-        conical_nappe side;
-        placement side_placement;
-        side_placement.set_identity();
-        compute_inner_face(side);
-        vector_3d p_side;
-        side_placement.mother_to_child(point_, p_side);
-        if (side.is_on_surface(p_side, skin)) {
-          return face_identifier(FACE_INNER_SIDE);
-        }
+      conical_nappe side;
+      placement side_placement;
+      side_placement.set_identity();
+      compute_inner_face(side);
+      vector_3d p_side;
+      side_placement.mother_to_child(point_, p_side);
+      if (side.is_on_surface(p_side, skin)) {
+      return face_identifier(FACE_INNER_SIDE);
       }
-    }
+      }
+      }
 
-    if (has_top_face()) {
+      if (has_top_face()) {
       if (surface_mask_.has_face_bit(FACE_TOP)) {
-        disk top;
-        placement top_placement;
-        compute_top_face(top, top_placement);
-        vector_3d p_top;
-        top_placement.mother_to_child(point_, p_top);
-        if (top.is_on_surface(p_top, skin)) {
-          return face_identifier(FACE_TOP);
-        }
+      disk top;
+      placement top_placement;
+      compute_top_face(top, top_placement);
+      vector_3d p_top;
+      top_placement.mother_to_child(point_, p_top);
+      if (top.is_on_surface(p_top, skin)) {
+      return face_identifier(FACE_TOP);
       }
-    }
+      }
+      }
 
-    if (has_bottom_face()) {
+      if (has_bottom_face()) {
       if (surface_mask_.has_face_bit(FACE_BOTTOM)) {
-        disk bottom;
-        placement bottom_placement;
-        compute_bottom_face(bottom, bottom_placement);
-        vector_3d p_bottom;
-        bottom_placement.mother_to_child(point_, p_bottom);
-        if (bottom.is_on_surface(p_bottom, skin)) {
-          return face_identifier(FACE_BOTTOM);
-        }
+      disk bottom;
+      placement bottom_placement;
+      compute_bottom_face(bottom, bottom_placement);
+      vector_3d p_bottom;
+      bottom_placement.mother_to_child(point_, p_bottom);
+      if (bottom.is_on_surface(p_bottom, skin)) {
+      return face_identifier(FACE_BOTTOM);
       }
-    }
+      }
+      }
 
-    if (has_partial_angle()) {
+      if (has_partial_angle()) {
       if (surface_mask_.has_face_bit(FACE_START_ANGLE)) {
-        quadrangle qface;
-        triangle tface;
-        placement face_placement;
-        compute_start_angle_face(qface, tface, face_placement);
-        vector_3d p_face;
-        face_placement.mother_to_child(point_, p_face);
-        if (qface.is_valid() && qface.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_START_ANGLE);
-        }
-        if (tface.is_valid() && tface.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_START_ANGLE);
-        }
+      quadrangle qface;
+      triangle tface;
+      placement face_placement;
+      compute_start_angle_face(qface, tface, face_placement);
+      vector_3d p_face;
+      face_placement.mother_to_child(point_, p_face);
+      if (qface.is_valid() && qface.is_on_surface(p_face, skin)) {
+      return face_identifier(FACE_START_ANGLE);
+      }
+      if (tface.is_valid() && tface.is_on_surface(p_face, skin)) {
+      return face_identifier(FACE_START_ANGLE);
+      }
       }
 
       if (surface_mask_.has_face_bit(FACE_STOP_ANGLE)) {
-        quadrangle qface;
-        triangle tface;
-        placement face_placement;
-        compute_stop_angle_face(qface, tface, face_placement);
-        vector_3d p_face;
-        face_placement.mother_to_child(point_, p_face);
-        if (qface.is_valid() && qface.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_STOP_ANGLE);
-        }
-        if (tface.is_valid() && tface.is_on_surface(p_face, skin)) {
-          return face_identifier(FACE_STOP_ANGLE);
-        }
+      quadrangle qface;
+      triangle tface;
+      placement face_placement;
+      compute_stop_angle_face(qface, tface, face_placement);
+      vector_3d p_face;
+      face_placement.mother_to_child(point_, p_face);
+      if (qface.is_valid() && qface.is_on_surface(p_face, skin)) {
+      return face_identifier(FACE_STOP_ANGLE);
+      }
+      if (tface.is_valid() && tface.is_on_surface(p_face, skin)) {
+      return face_identifier(FACE_STOP_ANGLE);
+      }
       }
 
-    }
+      }
     */
     return face_identifier::face_invalid();
   }
@@ -1161,7 +1162,7 @@ namespace geomtools {
         face_pl.mother_to_child(position_c);
         vector_3d normal_c = face.get_normal_on_surface(position_c, false);
         normal = face_pl.child_to_mother_direction(normal_c);
-     }
+      }
       break;
     case FACE_START_ANGLE:
       if (has_partial_angle())  {
@@ -1238,116 +1239,116 @@ namespace geomtools {
     }
 
     /*
-    if (has_bottom_face()) {
+      if (has_bottom_face()) {
       const int FACE_INDEX = 0;
       disk bottom_face;
       placement bottom_face_placement;
       compute_bottom_face(bottom_face, bottom_face_placement);
       if (bottom_face.i_find_intercept::find_intercept(from_,
-                                                       direction_,
-                                                       bottom_face_placement,
-                                                       intercepts[FACE_INDEX],
-                                                       skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
-        candidate_impact_counter++;
+      direction_,
+      bottom_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    if (has_top_face()) {
+      if (has_top_face()) {
       const int FACE_INDEX = 1;
       disk top_face;
       placement top_face_placement;
       compute_top_face(top_face, top_face_placement);
       if (top_face.i_find_intercept::find_intercept(from_,
-                                                    direction_,
-                                                    top_face_placement,
-                                                    intercepts[FACE_INDEX],
-                                                    skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
-        candidate_impact_counter++;
+      direction_,
+      top_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    {
+      {
       const int FACE_INDEX = 2;
       conical_nappe outer_side_face;
       placement outer_side_face_placement;
       outer_side_face_placement.set_identity();
       compute_outer_face(outer_side_face);
       if (outer_side_face.i_find_intercept::find_intercept(from_,
-                                                           direction_,
-                                                           outer_side_face_placement,
-                                                           intercepts[FACE_INDEX], skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_OUTER_SIDE);
-        candidate_impact_counter++;
+      direction_,
+      outer_side_face_placement,
+      intercepts[FACE_INDEX], skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_OUTER_SIDE);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    if (has_inner_face()) {
+      if (has_inner_face()) {
       const int FACE_INDEX = 3;
       conical_nappe inner_side_face;
       placement inner_side_face_placement;
       inner_side_face_placement.set_identity();
       compute_inner_face(inner_side_face);
       if (inner_side_face.i_find_intercept::find_intercept(from_,
-                                                           direction_,
-                                                           inner_side_face_placement,
-                                                           intercepts[FACE_INDEX],
-                                                           skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_INNER_SIDE);
-        candidate_impact_counter++;
+      direction_,
+      inner_side_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_INNER_SIDE);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    if (has_partial_angle()) {
+      if (has_partial_angle()) {
 
       {
-        const int FACE_INDEX = 4;
-        quadrangle start_phi_qface;
-        triangle start_phi_tface;
-        placement start_phi_face_placement;
-        compute_start_angle_face(start_phi_qface, start_phi_tface, start_phi_face_placement);
-        if (start_phi_qface.is_valid() && start_phi_qface.i_find_intercept::find_intercept(from_,
-                                                                                           direction_,
-                                                                                           start_phi_face_placement,
-                                                                                           intercepts[FACE_INDEX],
-                                                                                           skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_ANGLE);
-          candidate_impact_counter++;
-        } else if (start_phi_tface.is_valid() && start_phi_tface.i_find_intercept::find_intercept(from_,
-                                                                                                  direction_,
-                                                                                                  start_phi_face_placement,
-                                                                                                  intercepts[FACE_INDEX],
-                                                                                                  skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_ANGLE);
-          candidate_impact_counter++;
-        }
+      const int FACE_INDEX = 4;
+      quadrangle start_phi_qface;
+      triangle start_phi_tface;
+      placement start_phi_face_placement;
+      compute_start_angle_face(start_phi_qface, start_phi_tface, start_phi_face_placement);
+      if (start_phi_qface.is_valid() && start_phi_qface.i_find_intercept::find_intercept(from_,
+      direction_,
+      start_phi_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_ANGLE);
+      candidate_impact_counter++;
+      } else if (start_phi_tface.is_valid() && start_phi_tface.i_find_intercept::find_intercept(from_,
+      direction_,
+      start_phi_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_ANGLE);
+      candidate_impact_counter++;
+      }
       }
 
       {
-        const int FACE_INDEX = 5;
-        quadrangle stop_phi_qface;
-        triangle stop_phi_tface;
-        placement stop_phi_face_placement;
-        compute_stop_angle_face(stop_phi_qface, stop_phi_tface, stop_phi_face_placement);
-        if (stop_phi_qface.is_valid() && stop_phi_qface.i_find_intercept::find_intercept(from_,
-                                                                                         direction_,
-                                                                                         stop_phi_face_placement,
-                                                                                         intercepts[FACE_INDEX],
-                                                                                         skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_ANGLE);
-          candidate_impact_counter++;
-        } else if (stop_phi_tface.is_valid() && stop_phi_tface.i_find_intercept::find_intercept(from_,
-                                                                                                direction_,
-                                                                                                stop_phi_face_placement,
-                                                                                                intercepts[FACE_INDEX],
-                                                                                                skin)) {
-          intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_ANGLE);
-          candidate_impact_counter++;
-        }
+      const int FACE_INDEX = 5;
+      quadrangle stop_phi_qface;
+      triangle stop_phi_tface;
+      placement stop_phi_face_placement;
+      compute_stop_angle_face(stop_phi_qface, stop_phi_tface, stop_phi_face_placement);
+      if (stop_phi_qface.is_valid() && stop_phi_qface.i_find_intercept::find_intercept(from_,
+      direction_,
+      stop_phi_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_ANGLE);
+      candidate_impact_counter++;
+      } else if (stop_phi_tface.is_valid() && stop_phi_tface.i_find_intercept::find_intercept(from_,
+      direction_,
+      stop_phi_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_ANGLE);
+      candidate_impact_counter++;
+      }
       }
 
-    }
+      }
     */
 
     if (candidate_impact_counter > 0) {

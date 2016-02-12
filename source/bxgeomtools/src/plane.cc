@@ -226,10 +226,10 @@ namespace geomtools {
     return n;
   }
 
-  bool plane::find_intercept (const vector_3d & from_,
-                              const vector_3d & direction_,
-                              face_intercept_info & intercept_,
-                              double /* tolerance_ */) const
+  bool plane::find_intercept(const vector_3d & from_,
+                             const vector_3d & direction_,
+                             face_intercept_info & intercept_,
+                             double /* tolerance_ */) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid plane!");
     intercept_.reset();

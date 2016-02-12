@@ -235,7 +235,7 @@ namespace geomtools {
   protected:
 
     /// Set default attributes
-    void _set_default();
+    void _set_defaults();
 
     /// Build the bounding data
     virtual void _build_bounding_data();

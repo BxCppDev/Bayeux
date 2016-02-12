@@ -1397,7 +1397,7 @@ namespace geomtools {
           << datatools::i_tree_dumpable::tag
           << "Y: ["  << _yrange_.get_min () << ';'
           << _yrange_.get_max () << ']' << std::endl;
-      a_out << a_indent << datatools::i_tree_dumpable::skip_tag
+    a_out << a_indent << datatools::i_tree_dumpable::skip_tag
           << datatools::i_tree_dumpable::last_tag
           << "Z: ["  << _zrange_.get_min () << ';'
           << _zrange_.get_max () << ']' << std::endl;
@@ -1667,7 +1667,7 @@ namespace geomtools {
     }
     unsigned int facet_index;
     if (_on_facet(position_, facet_index, skin)) {
-       return face_identifier(facet_index, face_identifier::MODE_FACE_INDEX);
+      return face_identifier(facet_index, face_identifier::MODE_FACE_INDEX);
     }
     return face_identifier::face_invalid();
   }
@@ -1715,70 +1715,70 @@ namespace geomtools {
     }
 
     /*
-    double skin = compute_tolerance(skin_);
-    const unsigned int NFACES = facets().size();
-    std::vector<face_intercept_info> intercepts;
-    intercepts.reserve(20);
-    {
+      double skin = compute_tolerance(skin_);
+      const unsigned int NFACES = facets().size();
+      std::vector<face_intercept_info> intercepts;
+      intercepts.reserve(20);
+      {
       face_intercept_info dummy;
       intercepts.push_back(dummy);
-    }
-    unsigned int candidate_impact_counter = 0;
+      }
+      unsigned int candidate_impact_counter = 0;
 
-    for (facets_col_type::const_iterator ifacet = _facets_.begin();
-         ifacet != _facets_.end();
-         ifacet++) {
+      for (facets_col_type::const_iterator ifacet = _facets_.begin();
+      ifacet != _facets_.end();
+      ifacet++) {
       uint32_t facet_index = ifacet->first;
       // Search for excluded facet indexes:
       for (std::set<unsigned int>::const_iterator iex = excluded_facet_indexes_.begin();
-           iex != excluded_facet_indexes_.end();
-           iex++) {
-        unsigned int excluded_facet_index = *iex;
-        if (excluded_facet_index_ != INVALID_FACET_INDEX) {
-          // Skip this facet:
-          if (facet_index == excluded_facet_index_) {
-            continue;
-          }
-        }
+      iex != excluded_facet_indexes_.end();
+      iex++) {
+      unsigned int excluded_facet_index = *iex;
+      if (excluded_facet_index_ != INVALID_FACET_INDEX) {
+      // Skip this facet:
+      if (facet_index == excluded_facet_index_) {
+      continue;
+      }
+      }
       }
       const facet34 & face = ifacet->second;
       if (face.has_tface()) {
-        face_intercept_info & fii = intercepts.back();
-        if (face.get_tface().find_intercept(from_, direction_, fii, skin)) {
-          fii.grab_face_id().set_face_index(facet_index);
-          {
-            face_intercept_info dummy;
-            intercepts.push_back(dummy);
-          }
-        } else {
-          fii.reset();
-        }
-      } else if (face.has_qface()) {
-        face_intercept_info & fii = intercepts.back();
-        if (face.get_qface().find_intercept(from_, direction_, fii, skin)) {
-          fii.grab_face_id().set_face_index(facet_index);
-          {
-            face_intercept_info dummy;
-            intercepts.push_back(dummy);
-          }
-        } else {
-          fii.reset();
-        }
+      face_intercept_info & fii = intercepts.back();
+      if (face.get_tface().find_intercept(from_, direction_, fii, skin)) {
+      fii.grab_face_id().set_face_index(facet_index);
+      {
+      face_intercept_info dummy;
+      intercepts.push_back(dummy);
       }
-    }
-    if (candidate_impact_counter > 0) {
+      } else {
+      fii.reset();
+      }
+      } else if (face.has_qface()) {
+      face_intercept_info & fii = intercepts.back();
+      if (face.get_qface().find_intercept(from_, direction_, fii, skin)) {
+      fii.grab_face_id().set_face_index(facet_index);
+      {
+      face_intercept_info dummy;
+      intercepts.push_back(dummy);
+      }
+      } else {
+      fii.reset();
+      }
+      }
+      }
+      if (candidate_impact_counter > 0) {
       double min_length_to_impact = -1.0;
       for (unsigned int iface = 0; iface < NFACES; iface++) {
-        if (intercepts[iface].is_ok()) {
-          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
-          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
-            min_length_to_impact = length_to_impact;
-            intercept_.grab_face_id().set_face_index(intercepts[iface].get_face_id().get_face_index());
-            intercept_.set_impact(intercepts[iface].get_impact());
-          }
-        }
+      if (intercepts[iface].is_ok()) {
+      double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+      if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+      min_length_to_impact = length_to_impact;
+      intercept_.grab_face_id().set_face_index(intercepts[iface].get_face_id().get_face_index());
+      intercept_.set_impact(intercepts[iface].get_impact());
       }
-    }
+      }
+      }
+      }
     */
 
     return intercept_.is_ok();
@@ -1859,62 +1859,62 @@ namespace geomtools {
     std::set<unsigned int> dummy;
     return _find_intercept_exclude(from_, direction_, intercept_, skin_, dummy);
     /*
-    intercept_.reset ();
-    double skin = compute_tolerance(skin_);
-    const unsigned int NFACES = facets().size();
-    std::vector<face_intercept_info> intercepts;
-    intercepts.reserve(20);
-    {
+      intercept_.reset ();
+      double skin = compute_tolerance(skin_);
+      const unsigned int NFACES = facets().size();
+      std::vector<face_intercept_info> intercepts;
+      intercepts.reserve(20);
+      {
       face_intercept_info dummy;
       intercepts.push_back(dummy);
-    }
-    unsigned int candidate_impact_counter = 0;
+      }
+      unsigned int candidate_impact_counter = 0;
 
-    for (facets_col_type::const_iterator ifacet = _facets_.begin();
-         ifacet != _facets_.end();
-         ifacet++) {
+      for (facets_col_type::const_iterator ifacet = _facets_.begin();
+      ifacet != _facets_.end();
+      ifacet++) {
       uint32_t facet_index = ifacet->first;
       const facet34 & face = ifacet->second;
       if (face.has_tface()) {
-        face_intercept_info & fii = intercepts.back();
-        if (face.get_tface().find_intercept(from_, direction_, fii, skin)) {
-          fii.grab_face_id().set_face_index(facet_index);
-          {
-            face_intercept_info dummy;
-            intercepts.push_back(dummy);
-          }
-        } else {
-          fii.reset();
-        }
-      } else if (face.has_qface()) {
-        face_intercept_info & fii = intercepts.back();
-        if (face.get_qface().find_intercept(from_, direction_, fii, skin)) {
-          fii.grab_face_id().set_face_index(facet_index);
-          {
-            face_intercept_info dummy;
-            intercepts.push_back(dummy);
-          }
-        } else {
-          fii.reset();
-        }
+      face_intercept_info & fii = intercepts.back();
+      if (face.get_tface().find_intercept(from_, direction_, fii, skin)) {
+      fii.grab_face_id().set_face_index(facet_index);
+      {
+      face_intercept_info dummy;
+      intercepts.push_back(dummy);
       }
-    }
+      } else {
+      fii.reset();
+      }
+      } else if (face.has_qface()) {
+      face_intercept_info & fii = intercepts.back();
+      if (face.get_qface().find_intercept(from_, direction_, fii, skin)) {
+      fii.grab_face_id().set_face_index(facet_index);
+      {
+      face_intercept_info dummy;
+      intercepts.push_back(dummy);
+      }
+      } else {
+      fii.reset();
+      }
+      }
+      }
 
-    if (candidate_impact_counter > 0) {
+      if (candidate_impact_counter > 0) {
       double min_length_to_impact = -1.0;
       for (unsigned int iface = 0; iface < NFACES; iface++) {
-        if (intercepts[iface].is_ok()) {
-          double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
-          if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
-            min_length_to_impact = length_to_impact;
-            intercept_.grab_face_id().set_face_index(intercepts[iface].get_face_id().get_face_index());
-            intercept_.set_impact(intercepts[iface].get_impact());
-          }
-        }
+      if (intercepts[iface].is_ok()) {
+      double length_to_impact = (intercepts[iface].get_impact() - from_).mag();
+      if (min_length_to_impact < 0.0 || length_to_impact < min_length_to_impact) {
+      min_length_to_impact = length_to_impact;
+      intercept_.grab_face_id().set_face_index(intercepts[iface].get_face_id().get_face_index());
+      intercept_.set_impact(intercepts[iface].get_impact());
       }
-    }
+      }
+      }
+      }
 
-    return intercept_.is_ok();
+      return intercept_.is_ok();
     */
   }
 
@@ -1968,37 +1968,38 @@ namespace geomtools {
   void tessellated_solid::initialize(const datatools::properties & config_,
                                      const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
+    if (! is_valid()) {
 
-    double default_length_unit = 1.0 * CLHEP::mm;
-    // std::cerr << "DEVEL: default_length_unit [0] = " << default_length_unit << std::endl;
-    if (config_.has_key ("length_unit")) {
-      const std::string length_unit_str = config_.fetch_string("length_unit");
-      default_length_unit = datatools::units::get_length_unit_from(length_unit_str);
-    }
-    // std::cerr << "DEVEL: default_length_unit [1] = " << default_length_unit << std::endl;
-
-    if (config_.has_key ("length_unit_value")) {
-      double length_unit_value = config_.fetch_real("length_unit_value");
-      if (! config_.has_explicit_unit("length_unit_value")) {
-        length_unit_value *= default_length_unit;
+      double default_length_unit = 1.0 * CLHEP::mm;
+      // std::cerr << "DEVEL: default_length_unit [0] = " << default_length_unit << std::endl;
+      if (config_.has_key ("length_unit")) {
+        const std::string length_unit_str = config_.fetch_string("length_unit");
+        default_length_unit = datatools::units::get_length_unit_from(length_unit_str);
       }
-      default_length_unit = length_unit_value;
-    }
-    // std::cerr << "DEVEL: default_length_unit [2] = " << default_length_unit << std::endl;
+      // std::cerr << "DEVEL: default_length_unit [1] = " << default_length_unit << std::endl;
 
-    if (config_.has_key("stl_file")) {
-      std::string stl_filename = config_.fetch_string("stl_file");
-      datatools::fetch_path_with_env(stl_filename);
-      initialize_from_stl(stl_filename, default_length_unit);
+      if (config_.has_key ("length_unit_value")) {
+        double length_unit_value = config_.fetch_real("length_unit_value");
+        if (! config_.has_explicit_unit("length_unit_value")) {
+          length_unit_value *= default_length_unit;
+        }
+        default_length_unit = length_unit_value;
+      }
+      // std::cerr << "DEVEL: default_length_unit [2] = " << default_length_unit << std::endl;
+
+      if (config_.has_key("stl_file")) {
+        std::string stl_filename = config_.fetch_string("stl_file");
+        datatools::fetch_path_with_env(stl_filename);
+        initialize_from_stl(stl_filename, default_length_unit);
+      }
     }
 
     lock();
     return;
   }
 
-  void tessellated_solid::reset ()
+  void tessellated_solid::reset()
   {
     unlock();
 
@@ -2010,7 +2011,7 @@ namespace geomtools {
     _facet_segments_.clear();
     _consistent_ = false;
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 

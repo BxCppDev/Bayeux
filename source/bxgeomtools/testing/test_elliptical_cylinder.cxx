@@ -62,13 +62,13 @@ int main (int argc_, char ** argv_)
     geomtools::elliptical_cylinder my_solid(1.5 * CLHEP::mm,
                                             0.75 * CLHEP::mm,
                                             2.5 * CLHEP::mm);
+    my_solid.set_logging_priority(datatools::logger::PRIO_DEBUG);
     my_solid.lock();
     my_solid.tree_dump(std::clog, "my_solid", "test 1: ");
     std::clog << "Solid = " << my_solid << " " << std::endl;
 
     // Compute some quantities:
     {
-
       std::clog << "Volume   = " << my_solid.get_volume() / CLHEP::mm3 << " mm3" << std::endl;
 
       std::clog << "Side surface = "
@@ -97,6 +97,7 @@ int main (int argc_, char ** argv_)
                                                         );
       tmp_file.out() << std::endl << std::endl;
     }
+    std::clog << "Draw volume done." << std::endl;
 
     // Locate points with respect to the volume:
     {
@@ -137,6 +138,7 @@ int main (int argc_, char ** argv_)
       }
       tmp_file.out() << std::endl << std::endl;
     }
+    std::clog << "Locate points done." << std::endl;
 
     {
       // Find intercepts:
@@ -166,6 +168,7 @@ int main (int argc_, char ** argv_)
       }
       tmp_file.out() << std::endl << std::endl;
     }
+    std::clog << "Find intercepts." << std::endl;
 
     // Draw the volume with high wires sampling:
     {
@@ -181,9 +184,11 @@ int main (int argc_, char ** argv_)
                                                         );
       tmp_file.out() << std::endl << std::endl;
     }
+    std::clog << "Draw volume done." << std::endl;
 
     if (draw) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+      std::clog << "Gnuplot draw...." << std::endl;
       Gnuplot g1;
       g1.cmd("set title 'Test geomtools::" + my_solid.get_shape_name() + "' ");
       g1.cmd("set grid");
@@ -223,10 +228,12 @@ int main (int argc_, char ** argv_)
         geomtools::gnuplot_drawer::wait_for_key();
         usleep(2);
       }
+      std::clog << "Done." << std::endl;
 
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     }
 
+    std::clog << "The end." << std::endl;
   }
   catch (std::exception & x) {
     std::cerr << "error: " << x.what() << std::endl;

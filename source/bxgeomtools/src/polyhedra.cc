@@ -234,7 +234,7 @@ namespace geomtools {
   }
 
   void polyhedra::compute_inner_face(composite_surface & face_,
-                                    placement & positioning_) const
+                                     placement & positioning_) const
   {
     face_.reset();
     positioning_.reset();
@@ -474,106 +474,106 @@ namespace geomtools {
   void polyhedra::initialize(const datatools::properties & setup_,
                              const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(setup_, objects_);
+    this->i_shape_3d::_initialize(setup_, objects_);
 
-    double lunit = CLHEP::mm;
+    if (!is_valid()) {
+      double lunit = CLHEP::mm;
 
-    if (setup_.has_key("length_unit")) {
-      const std::string lunit_str = setup_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
-    }
-
-    std::string build_mode_label;
-    if (setup_.has_key ("build_mode")) {
-      build_mode_label = setup_.fetch_string ("build_mode");
-    }
-
-    if (build_mode_label == "points") {
-      size_t n_sides = 0;
-      if (setup_.has_key ("sides")) {
-        const int ns = setup_.fetch_integer ("sides");
-        DT_THROW_IF (ns < (int)MIN_NUMBER_OF_SIDES, std::domain_error, "'sides' is not large enough !");
-        n_sides = ns;
-      }
-      this->set_n_sides(n_sides);
-
-      bool build_by_apothem = false;
-      if (setup_.has_key("build_by_apothem")) {
-        build_by_apothem = setup_.fetch_boolean("build_by_apothem");
+      if (setup_.has_key("length_unit")) {
+        const std::string lunit_str = setup_.fetch_string ("length_unit");
+        lunit = datatools::units::get_length_unit_from (lunit_str);
       }
 
-      DT_THROW_IF (!setup_.has_key ("list_of_z"), std::logic_error, "Missing 'list_of_z' property !");
-      std::vector<double> zs;
-      setup_.fetch ("list_of_z", zs);
-      DT_THROW_IF (zs.size () < 2, std::domain_error, "'list_of_z' has not enough points !");
+      std::string build_mode_label;
+      if (setup_.has_key ("build_mode")) {
+        build_mode_label = setup_.fetch_string ("build_mode");
+      }
 
-      DT_THROW_IF (! setup_.has_key ("list_of_rmax"), std::logic_error, "Missing 'list_of_rmax' property !");
-      std::vector<double> rmaxs;
-      setup_.fetch ("list_of_rmax", rmaxs);
-      DT_THROW_IF (rmaxs.size () != zs.size (), std::logic_error,
-                   "'list_of_z' and 'list_of_rmax' have not the same size !");
-
-      std::vector<double> rmins;
-      double rmin;
-      datatools::invalidate (rmin);
-      if (setup_.has_key ("list_of_rmin")) {
-        setup_.fetch ("list_of_rmin", rmins);
-        DT_THROW_IF (rmins.size () != zs.size (), std::logic_error,
-                     "'list_of_rmin' and 'list_of_rmax' have not the same size !");
-      } else if (setup_.has_key ("rmin")) {
-        rmin = setup_.fetch_real ("rmin");
-        if (! setup_.has_explicit_unit ("rmin")) {
-          rmin *= lunit;
+      if (build_mode_label == "points") {
+        size_t n_sides = 0;
+        if (setup_.has_key ("sides")) {
+          const int ns = setup_.fetch_integer ("sides");
+          DT_THROW_IF (ns < (int)MIN_NUMBER_OF_SIDES, std::domain_error, "'sides' is not large enough !");
+          n_sides = ns;
         }
+        this->set_n_sides(n_sides);
+
+        bool build_by_apothem = false;
+        if (setup_.has_key("build_by_apothem")) {
+          build_by_apothem = setup_.fetch_boolean("build_by_apothem");
+        }
+
+        DT_THROW_IF (!setup_.has_key ("list_of_z"), std::logic_error, "Missing 'list_of_z' property !");
+        std::vector<double> zs;
+        setup_.fetch ("list_of_z", zs);
+        DT_THROW_IF (zs.size () < 2, std::domain_error, "'list_of_z' has not enough points !");
+
+        DT_THROW_IF (! setup_.has_key ("list_of_rmax"), std::logic_error, "Missing 'list_of_rmax' property !");
+        std::vector<double> rmaxs;
+        setup_.fetch ("list_of_rmax", rmaxs);
+        DT_THROW_IF (rmaxs.size () != zs.size (), std::logic_error,
+                     "'list_of_z' and 'list_of_rmax' have not the same size !");
+
+        std::vector<double> rmins;
+        double rmin;
+        datatools::invalidate (rmin);
+        if (setup_.has_key ("list_of_rmin")) {
+          setup_.fetch ("list_of_rmin", rmins);
+          DT_THROW_IF (rmins.size () != zs.size (), std::logic_error,
+                       "'list_of_rmin' and 'list_of_rmax' have not the same size !");
+        } else if (setup_.has_key ("rmin")) {
+          rmin = setup_.fetch_real ("rmin");
+          if (! setup_.has_explicit_unit ("rmin")) {
+            rmin *= lunit;
+          }
+        } else {
+          rmin = 0.0 * lunit;
+        }
+
+        for (size_t i = 0; i < zs.size (); i++) {
+          const double a_z = zs[i];
+          double a_rmin;
+          if (datatools::is_valid(rmin)) {
+            a_rmin = rmin;
+          } else {
+            a_rmin = rmins[i];
+          }
+          double a_rmax = rmaxs[i];
+          if (build_by_apothem) {
+            double apothem_factor = std::cos(M_PI / n_sides);
+            // DT_LOG_NOTICE(0, "build_by_apothem=" << build_by_apothem << " apothem_factor="
+            //            << apothem_factor);
+            a_rmin /= apothem_factor;
+            a_rmax /= apothem_factor;
+          }
+          this->add(a_z, a_rmin, a_rmax, false);
+        }
+        this->_compute_all_ ();
+      } else if (build_mode_label == "datafile") {
+        DT_THROW_IF (! setup_.has_key ("datafile"), std::logic_error, "Missing 'datafile' property !");
+        std::string datafile = setup_.fetch_string ("datafile");
+        datatools::fetch_path_with_env (datafile);
+        int dc_mode = RMIN_RMAX;
+        if (setup_.has_key ("datafile.columns")) {
+          std::string dc = setup_.fetch_string ("datafile.columns");
+          if (dc == "rmin_as_rmax") {
+            dc_mode = RMIN_AS_RMAX;
+          } else if (dc == "ignore_rmin") {
+            dc_mode = IGNORE_RMIN;
+          } else if (dc == "rmin_rmax") {
+            dc_mode = RMIN_RMAX;
+          } else {
+            DT_THROW_IF (true,
+                         std::logic_error,
+                         "Invalid 'datafile.columns' mode ('"
+                         << dc << "' !");
+          }
+        }
+        this->initialize(datafile, dc_mode);
       } else {
-        rmin = 0.0 * lunit;
+        DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
       }
-
-      for (size_t i = 0; i < zs.size (); i++) {
-        const double a_z = zs[i];
-        double a_rmin;
-        if (datatools::is_valid(rmin)) {
-          a_rmin = rmin;
-        } else {
-          a_rmin = rmins[i];
-        }
-        double a_rmax = rmaxs[i];
-        if (build_by_apothem) {
-          double apothem_factor = std::cos(M_PI / n_sides);
-          // DT_LOG_NOTICE(0, "build_by_apothem=" << build_by_apothem << " apothem_factor="
-          //            << apothem_factor);
-          a_rmin /= apothem_factor;
-          a_rmax /= apothem_factor;
-        }
-        this->add(a_z, a_rmin, a_rmax, false);
-      }
-      this->_compute_all_ ();
-    } else if (build_mode_label == "datafile") {
-      DT_THROW_IF (! setup_.has_key ("datafile"), std::logic_error, "Missing 'datafile' property !");
-      std::string datafile = setup_.fetch_string ("datafile");
-      datatools::fetch_path_with_env (datafile);
-      int dc_mode = RMIN_RMAX;
-      if (setup_.has_key ("datafile.columns")) {
-        std::string dc = setup_.fetch_string ("datafile.columns");
-        if (dc == "rmin_as_rmax") {
-          dc_mode = RMIN_AS_RMAX;
-        } else if (dc == "ignore_rmin") {
-          dc_mode = IGNORE_RMIN;
-        } else if (dc == "rmin_rmax") {
-          dc_mode = RMIN_RMAX;
-        } else {
-          DT_THROW_IF (true,
-                       std::logic_error,
-                       "Invalid 'datafile.columns' mode ('"
-                       << dc << "' !");
-        }
-      }
-      this->initialize(datafile, dc_mode);
-    } else {
-      DT_THROW_IF (true, std::logic_error, "Invalid build mode '" << build_mode_label << "' !");
     }
-
     lock();
     return;
   }
@@ -621,19 +621,19 @@ namespace geomtools {
               int ns;
               iss >> ns;
               DT_THROW_IF(! iss, std::logic_error,
-                           "Invalid format for the number of sides directive in data file '"
-                           << filename << "' at line " << count << " !");
+                          "Invalid format for the number of sides directive in data file '"
+                          << filename << "' at line " << count << " !");
               DT_THROW_IF(ns < (int)MIN_NUMBER_OF_SIDES, std::domain_error,
-                           "Number of sides is not large enough in data file '"
-                           << filename << "' at line " << count << " !");
+                          "Number of sides is not large enough in data file '"
+                          << filename << "' at line " << count << " !");
               const size_t nsides = (size_t) ns;
               set_n_sides(nsides);
             } else if (word == "#@length_unit") {
               std::string unit_str;
               iss >> unit_str;
               DT_THROW_IF(! iss, std::logic_error,
-                           "Invalid format for the length unit directive in data file '"
-                           << filename << "' at line " << count << " !");
+                          "Invalid format for the length unit directive in data file '"
+                          << filename << "' at line " << count << " !");
               length_unit = datatools::units::get_length_unit_from(unit_str);
             } else if (word == "#@ignore_rmin") {
               ignore_rmin = true;
@@ -645,8 +645,8 @@ namespace geomtools {
             } else if (word == "#@r_factor") {
               iss >> r_factor;
               DT_THROW_IF(! iss, std::logic_error,
-                           "Invalid format for the R-factor directive in data file '"
-                           << filename << "' at line " << count << " !");
+                          "Invalid format for the R-factor directive in data file '"
+                          << filename << "' at line " << count << " !");
             } else if (word == "#@build_by_apothem") {
               build_by_apothem = true;
             }
@@ -666,7 +666,7 @@ namespace geomtools {
                      "Format error for 'z' in data file '" << filename << "' at line " << count << " !");
         iss >> r1;
         DT_THROW_IF(! iss, std::logic_error,
-                     "Format error for 'r1' in data file '" << filename << "' at line " << count << " !");
+                    "Format error for 'r1' in data file '" << filename << "' at line " << count << " !");
         // try to read a third column:
         std::string token;
         iss >> token;
@@ -692,8 +692,8 @@ namespace geomtools {
           }
         }
         DT_THROW_IF(datatools::is_valid(r2) && (r2 < 0.0), std::logic_error,
-                     "Invalid value '" << r2 << "' for '2' in data file '"
-                     << filename << "' at line " << count << " !");
+                    "Invalid value '" << r2 << "' for '2' in data file '"
+                    << filename << "' at line " << count << " !");
         double apothem_factor = 1.0;
         if (build_by_apothem) {
           apothem_factor = std::cos(M_PI / get_n_sides());
@@ -865,17 +865,17 @@ namespace geomtools {
   }
 
   vector_3d polyhedra::get_corner(int zplane_index_,
-                                   int corner_index_,
-                                   bool inner_) const
+                                  int corner_index_,
+                                  bool inner_) const
   {
     vector_3d corner;
     geomtools::invalidate(corner);
     DT_THROW_IF((zplane_index_ < 0)  || (zplane_index_ > (int)_points_.size()),
-                 std::domain_error,
-                 "Invalid Z-plane index (" << zplane_index_ << ") !");
+                std::domain_error,
+                "Invalid Z-plane index (" << zplane_index_ << ") !");
     DT_THROW_IF((corner_index_ < 0)  || (corner_index_ > (int)_n_sides_),
-                 std::domain_error,
-                 "Invalid corner index (" << corner_index_ << ") !");
+                std::domain_error,
+                "Invalid corner index (" << corner_index_ << ") !");
     int zcount = 0;
     rz_col_type::const_iterator i = _points_.begin();
     for (; i != _points_.end(); i++) {
@@ -939,7 +939,7 @@ namespace geomtools {
              (a1_2 + a2_2) / std::tan (angle)
              +
              std::sqrt ((a1_2 - a2_2) * (a1_2 - a2_2) / (std::cos (angle) * std::cos (angle))
-                   + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
+                        + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
         s += A;
         // increment:
         j++;
@@ -983,7 +983,7 @@ namespace geomtools {
              (a1_2 + a2_2) / std::tan(angle)
              +
              std::sqrt((a1_2 - a2_2) * (a1_2 - a2_2) / (std::cos(angle) *std::cos(angle))
-                   + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
+                       + 4 * h * h * (a1_2 + a2_2) * (a1_2 + a2_2)));
         s += A;
         // increment:
         j++;
@@ -1121,8 +1121,8 @@ namespace geomtools {
 
   double polyhedra::get_volume(uint32_t /*flags*/) const
   {
-     DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
-   return _volume_;
+    DT_THROW_IF (! is_valid (), std::logic_error, "Polyhedra is not valid !");
+    return _volume_;
   }
 
   double polyhedra::get_parameter (const std::string & flag_) const

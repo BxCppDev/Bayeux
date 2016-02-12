@@ -341,6 +341,11 @@ namespace geomtools {
       DT_THROW_IF(! i_shape_3d::is_stackable(found->second->get_logical().get_shape()),
                    std::logic_error,
                    "The embedded model '" << found->second->get_name() << "' is not stackable in stacked model '" << name_ << "' !");
+      const i_model * geo_model = found->second;
+      DT_LOG_DEBUG(get_logging_priority(), "Model to be stacked = '" << geo_model->get_name() << "'");
+      if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
+        geo_model->tree_dump(std::cerr, "", "[debug] ");
+      }
       add_stacked_model(i, *(found->second), label_name);
     }
 
@@ -410,10 +415,18 @@ namespace geomtools {
          i != _stacked_models_.end();
          i++) {
       const int index = i->first;
+      DT_LOG_DEBUG(get_logging_priority(), "Stacked index = " << index);
       const stacked_item & bi = i->second;
+      DT_LOG_DEBUG(get_logging_priority(), "Stacked label = '" << bi.label << "'");
       const i_model * stacked_model = bi.model;
       const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      if (get_logging_priority() > datatools::logger::PRIO_DEBUG) {
+        the_shape.tree_dump(std::cerr, "Stacked shape: ", "[debug] ");
+      }
       // Bounding box:
+      if (! the_shape.has_bounding_data()) {
+        DT_LOG_DEBUG(get_logging_priority(), "Stacked = " << "No BB");
+      }
       DT_THROW_IF(! the_shape.has_bounding_data(),
                   std::logic_error,
                   "Cannot find bounding data in shape '" << the_shape.get_shape_name()

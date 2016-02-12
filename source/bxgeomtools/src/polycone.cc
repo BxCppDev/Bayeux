@@ -862,8 +862,8 @@ namespace geomtools {
   void polycone::initialize (const datatools::properties & setup_,
                              const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(setup_, objects_);
+    this->i_shape_3d::_initialize(setup_, objects_);
+    if (!is_valid()) {
 
     double lunit = CLHEP::mm;
     double aunit = CLHEP::degree;
@@ -977,7 +977,7 @@ namespace geomtools {
         set_delta_angle(dangle);
       }
     }
-
+    }
     lock();
     return;
   }
@@ -1302,7 +1302,7 @@ namespace geomtools {
     _points_.clear ();
     _set_defaults();
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 

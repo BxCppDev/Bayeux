@@ -64,7 +64,7 @@ namespace geomtools {
     /// Return the perimeter
     virtual double get_perimeter(uint32_t flags_ = ALL_PIECES) const;
 
-    /// Check if the 2D shape known its surface
+    /// Check if the 2D shape surface is defined
     virtual bool has_surface(uint32_t flags_ = ALL_PIECES) const;
 
     /// Return the surface

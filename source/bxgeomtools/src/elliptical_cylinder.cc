@@ -275,11 +275,12 @@ namespace geomtools {
 
   void elliptical_cylinder::reset ()
   {
+    DT_LOG_DEBUG(get_logging_priority(), "Reset shape type '" << get_shape_name() << "'");
     unlock();
 
     _set_default();
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 
@@ -382,43 +383,43 @@ namespace geomtools {
 
     /*
 
-    double skin = compute_tolerance(a_skin);
-    double angular_tolerance = get_angular_tolerance();
+      double skin = compute_tolerance(a_skin);
+      double angular_tolerance = get_angular_tolerance();
 
-    uint32_t mask = a_surface_mask.get_face_bits() & elliptical_cylinder::FACE_ALL;
+      uint32_t mask = a_surface_mask.get_face_bits() & elliptical_cylinder::FACE_ALL;
 
-    if (mask & FACE_SIDE) {
+      if (mask & FACE_SIDE) {
       elliptical_cylinder_sector side;
       placement side_placement;
       compute_side_face(side, side_placement);
       vector_3d p_side;
       side_placement.mother_to_child(a_point, p_side);
       if (side.is_on_surface(p_side, skin)) {
-        return face_identifier(FACE_SIDE);
+      return face_identifier(FACE_SIDE);
       }
-    }
+      }
 
-    if (mask & FACE_BOTTOM) {
+      if (mask & FACE_BOTTOM) {
       elliptical_sector bottom;
       placement bottom_placement;
       compute_top_bottom_face(FACE_BOTTOM, bottom, bottom_placement);
       vector_3d p_bottom;
       bottom_placement.mother_to_child(a_point, p_bottom);
       if (bottom.is_on_surface(p_bottom, skin)) {
-        return face_identifier(FACE_BOTTOM);
+      return face_identifier(FACE_BOTTOM);
       }
-    }
+      }
 
-    if (mask & FACE_TOP) {
+      if (mask & FACE_TOP) {
       elliptical_sector top;
       placement top_placement;
       compute_top_bottom_face(FACE_TOP, top, top_placement);
       vector_3d p_top;
       top_placement.mother_to_child(a_point, p_top);
       if (top.is_on_surface(p_top, skin)) {
-        return face_identifier(FACE_TOP);
+      return face_identifier(FACE_TOP);
       }
-    }
+      }
     */
 
     return face_identifier(FACE_NONE);
@@ -461,49 +462,49 @@ namespace geomtools {
     }
 
     /*
-    {
+      {
       const int FACE_INDEX = 0;
       elliptical_cylinder_sector side_face;
       placement side_face_placement;
       compute_side_face(side_face, side_face_placement);
       if (side_face.i_find_intercept::find_intercept(from_,
-                                                     direction_,
-                                                     side_face_placement,
-                                                     intercepts[FACE_INDEX], skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_SIDE);
-        candidate_impact_counter++;
+      direction_,
+      side_face_placement,
+      intercepts[FACE_INDEX], skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_SIDE);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    {
+      {
       const int FACE_INDEX = 1;
       elliptical_sector bottom_face;
       placement bottom_face_placement;
       compute_top_bottom_face(FACE_BOTTOM, bottom_face, bottom_face_placement);
       if (bottom_face.i_find_intercept::find_intercept(from_,
-                                                       direction_,
-                                                       bottom_face_placement,
-                                                       intercepts[FACE_INDEX],
-                                                       skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
-        candidate_impact_counter++;
+      direction_,
+      bottom_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
+      candidate_impact_counter++;
       }
-    }
+      }
 
-    {
+      {
       const int FACE_INDEX = 2;
       elliptical_sector top_face;
       placement top_face_placement;
       compute_top_bottom_face(FACE_TOP, top_face, top_face_placement);
       if (top_face.i_find_intercept::find_intercept(from_,
-                                                    direction_,
-                                                    top_face_placement,
-                                                    intercepts[FACE_INDEX],
-                                                    skin)) {
-        intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
-        candidate_impact_counter++;
+      direction_,
+      top_face_placement,
+      intercepts[FACE_INDEX],
+      skin)) {
+      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
+      candidate_impact_counter++;
       }
-    }
+      }
     */
 
     if (candidate_impact_counter > 0) {
@@ -582,7 +583,7 @@ namespace geomtools {
   {
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    i_object_3d::tree_dump (out_, title_, indent_, true);
+    i_shape_3d::tree_dump (out_, title_, indent_, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "X radius : " << get_x_radius () / CLHEP::mm << " mm" << std::endl;
@@ -693,60 +694,63 @@ namespace geomtools {
   void elliptical_cylinder::initialize(const datatools::properties & config_,
                                        const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
+    if (!is_valid()) {
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      // double aunit = CLHEP::degree;
+      // if (config_.has_key("angle_unit")) {
+      //   const std::string aunit_str = config_.fetch_string("angle_unit");
+      //   aunit = datatools::units::get_angle_unit_from(aunit_str);
+      // }
+
+      double x_radius;
+      datatools::invalidate (x_radius);
+      if (config_.has_key ("x_radius")) {
+        x_radius = config_.fetch_real ("x_radius");
+        if (! config_.has_explicit_unit ("x_radius")) {
+          x_radius *= lunit;
+        }
+      } else if (config_.has_key ("x_diameter")) {
+        x_radius = 0.5 * config_.fetch_real ("x_diameter");
+        if (! config_.has_explicit_unit ("x_diameter")) {
+          x_radius *= lunit;
+        }
+      }
+      DT_THROW_IF (! datatools::is_valid (x_radius), std::logic_error,
+                   "Missing elliptical_cylinder 'x_radius' property !");
+
+      double y_radius;
+      datatools::invalidate (y_radius);
+      if (config_.has_key ("y_radius")) {
+        y_radius = config_.fetch_real ("y_radius");
+        if (! config_.has_explicit_unit ("y_radius")) {
+          y_radius *= lunit;
+        }
+      } else if (config_.has_key("y_diameter")) {
+        y_radius = 0.5 * config_.fetch_real ("y_diameter");
+        if (! config_.has_explicit_unit ("y_diameter")) {
+          y_radius *= lunit;
+        }
+      }
+      DT_THROW_IF (! datatools::is_valid(y_radius), std::logic_error,
+                   "Missing elliptical_cylinder 'y_radius' property !");
+
+      DT_THROW_IF (! config_.has_key("z"), std::logic_error,
+                   "Missing elliptical_cylinder 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
+      }
+      set(x_radius, y_radius, z);
     }
 
-    // double aunit = CLHEP::degree;
-    // if (config_.has_key("angle_unit")) {
-    //   const std::string aunit_str = config_.fetch_string("angle_unit");
-    //   aunit = datatools::units::get_angle_unit_from(aunit_str);
-    // }
-
-    double x_radius;
-    datatools::invalidate (x_radius);
-    if (config_.has_key ("x_radius")) {
-      x_radius = config_.fetch_real ("x_radius");
-      if (! config_.has_explicit_unit ("x_radius")) {
-        x_radius *= lunit;
-      }
-    } else if (config_.has_key ("x_diameter")) {
-      x_radius = 0.5 * config_.fetch_real ("x_diameter");
-      if (! config_.has_explicit_unit ("x_diameter")) {
-        x_radius *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (x_radius), std::logic_error,
-                 "Missing elliptical_cylinder 'x_radius' property !");
-
-    double y_radius;
-    datatools::invalidate (y_radius);
-    if (config_.has_key ("y_radius")) {
-      y_radius = config_.fetch_real ("y_radius");
-      if (! config_.has_explicit_unit ("y_radius")) {
-        y_radius *= lunit;
-      }
-    } else if (config_.has_key ("y_diameter")) {
-      y_radius = 0.5 * config_.fetch_real ("y_diameter");
-      if (! config_.has_explicit_unit ("y_diameter")) {
-        y_radius *= lunit;
-      }
-    }
-    DT_THROW_IF (! datatools::is_valid (y_radius), std::logic_error,
-                 "Missing elliptical_cylinder 'y_radius' property !");
-
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error,
-                 "Missing elliptical_cylinder 'z' property !");
-    double z = config_.fetch_real("z");
-    if (! config_.has_explicit_unit("z")) {
-      z *= lunit;
-    }
-    set(x_radius, y_radius, z);
     lock();
     return;
   }

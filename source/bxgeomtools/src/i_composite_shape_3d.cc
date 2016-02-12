@@ -361,95 +361,97 @@ namespace geomtools {
     _shape1_.reset();
     _shape2_.reset();
 
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 
   void i_composite_shape_3d::initialize(const datatools::properties & config_,
                                         const i_object_3d::handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    if (! _shape1_.is_valid() || ! _shape1_.is_valid()) {
-      DT_THROW_IF (!objects_,
-                   std::logic_error,
-                   "Missing dictionary of 3D objects!");
-    }
+    if (!is_valid()) {
 
-    if (! _shape1_.is_valid()) {
-      std::string sname;
-      if (sname.empty() && config_.has_key("shape_1.name")) {
-        sname = config_.fetch_string("shape_1.name");
+      if (! _shape1_.is_valid() || ! _shape1_.is_valid()) {
+        DT_THROW_IF (!objects_,
+                     std::logic_error,
+                     "Missing dictionary of 3D objects!");
       }
-      if (sname.empty() && config_.has_key("first_shape.name")) {
-        sname = config_.fetch_string("first_shape.name");
-      }
-      DT_THROW_IF (sname.empty(),
-                   std::logic_error,
-                   "Missing first shape's name!");
 
-      DT_THROW_IF (objects_->find(sname) == objects_->end(),
-                   std::logic_error,
-                   "Cannot find first shape with name '" << sname << "'!");
-      const i_object_3d::object_entry & oe = objects_->find(sname)->second;
-      DT_THROW_IF (!oe.has_object(),
-                   std::logic_error,
-                   "3D object named '" << sname << "' is not valid!");
-      const i_shape_3d & sh = dynamic_cast<const i_shape_3d &>(oe.get_object());
-      placement pl;
-      pl.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-      /*
-      // GDML does not allow a placement for the first shape in composite shapes:
-      std::string splacement;
-      if (splacement.empty() &&  config_.has_key("shape_1.placement")) {
-      splacement = config_.fetch_string("shape_1.placement");
-      }
-      if (splacement.empty() &&  config_.has_key("first_shape.placement")) {
-      splacement = config_.fetch_string("first_shape.placement");
-      }
-      if (! splacement.empty()) {
-      DT_THROW_IF (!placement::from_string(splacement, pl),std::logic_error,
-      "Cannot parse placement '" << splacement << "'!");
-      }
-      */
-      set_shape1(const_cast<i_shape_3d &>(sh), pl, sname);
-    }
+      if (! _shape1_.is_valid()) {
+        std::string sname;
+        if (sname.empty() && config_.has_key("shape_1.name")) {
+          sname = config_.fetch_string("shape_1.name");
+        }
+        if (sname.empty() && config_.has_key("first_shape.name")) {
+          sname = config_.fetch_string("first_shape.name");
+        }
+        DT_THROW_IF (sname.empty(),
+                     std::logic_error,
+                     "Missing first shape's name!");
 
-    if (! _shape2_.is_valid()) {
-      std::string sname;
-      if (sname.empty() && config_.has_key("shape_2.name")) {
-        sname = config_.fetch_string("shape_2.name");
-      }
-      if (sname.empty() && config_.has_key("second_shape.name")) {
-        sname = config_.fetch_string("second_shape.name");
-      }
-      DT_THROW_IF (sname.empty(),
-                   std::logic_error,
-                   "Missing second shape's name!");
-      DT_THROW_IF (objects_->find(sname) == objects_->end(),
-                   std::logic_error,
-                   "Cannot find second shape with name '" << sname << "'!");
-      const i_object_3d::object_entry & oe = objects_->find(sname)->second;
-      DT_THROW_IF (!oe.has_object(),
-                   std::logic_error,
-                   "3D object named '" << sname << "' is not valid!");
-      const i_shape_3d & sh = dynamic_cast<const i_shape_3d &>(oe.get_object());
-      placement pl;
-      pl.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-      std::string splacement;
-      if (splacement.empty() &&  config_.has_key("shape_2.placement")) {
-        splacement = config_.fetch_string("shape_2.placement");
-      }
-      if (splacement.empty() &&  config_.has_key("second_shape.placement")) {
-        splacement = config_.fetch_string("second_shape.placement");
-      }
-      if (! splacement.empty()) {
+        DT_THROW_IF (objects_->find(sname) == objects_->end(),
+                     std::logic_error,
+                     "Cannot find first shape with name '" << sname << "'!");
+        const i_object_3d::object_entry & oe = objects_->find(sname)->second;
+        DT_THROW_IF (!oe.has_object(),
+                     std::logic_error,
+                     "3D object named '" << sname << "' is not valid!");
+        const i_shape_3d & sh = dynamic_cast<const i_shape_3d &>(oe.get_object());
+        placement pl;
+        pl.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        /*
+        // GDML does not allow a placement for the first shape in composite shapes:
+        std::string splacement;
+        if (splacement.empty() &&  config_.has_key("shape_1.placement")) {
+        splacement = config_.fetch_string("shape_1.placement");
+        }
+        if (splacement.empty() &&  config_.has_key("first_shape.placement")) {
+        splacement = config_.fetch_string("first_shape.placement");
+        }
+        if (! splacement.empty()) {
         DT_THROW_IF (!placement::from_string(splacement, pl),std::logic_error,
-                     "Cannot parse placement '" << splacement << "'!");
-
+        "Cannot parse placement '" << splacement << "'!");
+        }
+        */
+        set_shape1(const_cast<i_shape_3d &>(sh), pl, sname);
       }
-      set_shape2(const_cast<i_shape_3d &>(sh), pl, sname);
+
+      if (! _shape2_.is_valid()) {
+        std::string sname;
+        if (sname.empty() && config_.has_key("shape_2.name")) {
+          sname = config_.fetch_string("shape_2.name");
+        }
+        if (sname.empty() && config_.has_key("second_shape.name")) {
+          sname = config_.fetch_string("second_shape.name");
+        }
+        DT_THROW_IF (sname.empty(),
+                     std::logic_error,
+                     "Missing second shape's name!");
+        DT_THROW_IF (objects_->find(sname) == objects_->end(),
+                     std::logic_error,
+                     "Cannot find second shape with name '" << sname << "'!");
+        const i_object_3d::object_entry & oe = objects_->find(sname)->second;
+        DT_THROW_IF (!oe.has_object(),
+                     std::logic_error,
+                     "3D object named '" << sname << "' is not valid!");
+        const i_shape_3d & sh = dynamic_cast<const i_shape_3d &>(oe.get_object());
+        placement pl;
+        pl.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        std::string splacement;
+        if (splacement.empty() &&  config_.has_key("shape_2.placement")) {
+          splacement = config_.fetch_string("shape_2.placement");
+        }
+        if (splacement.empty() &&  config_.has_key("second_shape.placement")) {
+          splacement = config_.fetch_string("second_shape.placement");
+        }
+        if (! splacement.empty()) {
+          DT_THROW_IF (!placement::from_string(splacement, pl),std::logic_error,
+                       "Cannot parse placement '" << splacement << "'!");
+
+        }
+        set_shape2(const_cast<i_shape_3d &>(sh), pl, sname);
+      }
     }
 
     lock();

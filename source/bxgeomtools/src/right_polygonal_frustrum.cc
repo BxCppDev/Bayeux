@@ -318,7 +318,7 @@ namespace geomtools {
   {
     unlock();
     _set_defaults();
-    this->i_shape_3d::reset();
+    this->i_shape_3d::_reset();
     return;
   }
 
@@ -338,11 +338,11 @@ namespace geomtools {
     }
     out_ << std::endl;
 
-   out_ << indent_ << datatools::i_tree_dumpable::tag
-        << "Start sector : " << _sector_start_ << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Start sector : " << _sector_start_ << std::endl;
 
-   out_ << indent_ << datatools::i_tree_dumpable::tag
-        << "Stop sector  : " << _sector_stop_ << std::endl;
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Stop sector  : " << _sector_stop_ << std::endl;
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Inner bottom radius : ";
@@ -475,33 +475,33 @@ namespace geomtools {
         double start_angle = get_start_angle(isector);
         double stop_angle = start_angle + get_sector_angle();
         if (ibr == 0) {
-           geomtools::face_info & finfo = face_.add();
-           geomtools::triangle & t = finfo.add_face<geomtools::triangle>();
-           geomtools::vector_3d A(itr * std::cos(start_angle),
-                                  itr * std::sin(start_angle),
-                                  +0.5 * z);
-           geomtools::vector_3d B(itr * std::cos(stop_angle),
-                                  itr * std::sin(stop_angle),
-                                  +0.5 * z);
-           geomtools::vector_3d C(0.0,
-                                  0.0,
-                                  -0.5 * z);
-           t.set_vertexes(A, B, C);
-           finfo.set_identity_positioning();
+          geomtools::face_info & finfo = face_.add();
+          geomtools::triangle & t = finfo.add_face<geomtools::triangle>();
+          geomtools::vector_3d A(itr * std::cos(start_angle),
+                                 itr * std::sin(start_angle),
+                                 +0.5 * z);
+          geomtools::vector_3d B(itr * std::cos(stop_angle),
+                                 itr * std::sin(stop_angle),
+                                 +0.5 * z);
+          geomtools::vector_3d C(0.0,
+                                 0.0,
+                                 -0.5 * z);
+          t.set_vertexes(A, B, C);
+          finfo.set_identity_positioning();
         } else if (itr == 0) {
-           geomtools::face_info & finfo = face_.add();
-           geomtools::triangle & t = finfo.add_face<geomtools::triangle>();
-           geomtools::vector_3d A(ibr * std::cos(start_angle),
-                                  ibr * std::sin(start_angle),
-                                  -0.5 * z);
-           geomtools::vector_3d B(ibr * std::cos(stop_angle),
-                                  ibr * std::sin(stop_angle),
-                                  -0.5 * z);
-           geomtools::vector_3d C(0.0,
-                                  0.0,
-                                  +0.5 * z);
-           t.set_vertexes(B, A, C);
-           finfo.set_identity_positioning();
+          geomtools::face_info & finfo = face_.add();
+          geomtools::triangle & t = finfo.add_face<geomtools::triangle>();
+          geomtools::vector_3d A(ibr * std::cos(start_angle),
+                                 ibr * std::sin(start_angle),
+                                 -0.5 * z);
+          geomtools::vector_3d B(ibr * std::cos(stop_angle),
+                                 ibr * std::sin(stop_angle),
+                                 -0.5 * z);
+          geomtools::vector_3d C(0.0,
+                                 0.0,
+                                 +0.5 * z);
+          t.set_vertexes(B, A, C);
+          finfo.set_identity_positioning();
         } else {
           geomtools::face_info & finfo = face_.add();
           geomtools::quadrangle & q = finfo.add_face<geomtools::quadrangle>();
@@ -984,92 +984,93 @@ namespace geomtools {
   void right_polygonal_frustrum::initialize(const datatools::properties & config_,
                                             const handle_dict_type * objects_)
   {
-    reset();
-    this->i_shape_3d::initialize(config_, objects_);
+    this->i_shape_3d::_initialize(config_, objects_);
 
-    double lunit = CLHEP::mm;
-    if (config_.has_key("length_unit")) {
-      const std::string lunit_str = config_.fetch_string("length_unit");
-      lunit = datatools::units::get_length_unit_from(lunit_str);
-    }
-
-    DT_THROW_IF (! config_.has_key("n_sides"), std::logic_error,
-                 "Missing frustrum 'n_sides' property !");
-    unsigned int n_sides = 0;
-    if (config_.has_key("n_sides")) {
-      int ns = config_.fetch_integer("n_sides");
-      DT_THROW_IF (ns < (int)MIN_NUMBER_OF_SIDES, std::logic_error,
-                   "Invalid number of sides !");
-      n_sides = (unsigned int) ns;
-    }
-
-    double inner_top_r;
-    datatools::invalidate (inner_top_r);
-    if (config_.has_key ("inner_top_r")) {
-      inner_top_r = config_.fetch_real ("inner_top_r");
-      if (! config_.has_explicit_unit ("inner_top_r")) {
-        inner_top_r *= lunit;
+    if (!is_valid()) {
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
       }
-    }
 
-    DT_THROW_IF (! config_.has_key("outer_top_r"), std::logic_error,
-                 "Missing frustrum 'outer_top_r' property !");
-    double outer_top_r;
-    datatools::invalidate (outer_top_r);
-    if (config_.has_key ("outer_top_r")) {
-      outer_top_r = config_.fetch_real ("outer_top_r");
-      if (! config_.has_explicit_unit ("outer_top_r")) {
-        outer_top_r *= lunit;
+      DT_THROW_IF (! config_.has_key("n_sides"), std::logic_error,
+                   "Missing frustrum 'n_sides' property !");
+      unsigned int n_sides = 0;
+      if (config_.has_key("n_sides")) {
+        int ns = config_.fetch_integer("n_sides");
+        DT_THROW_IF (ns < (int)MIN_NUMBER_OF_SIDES, std::logic_error,
+                     "Invalid number of sides !");
+        n_sides = (unsigned int) ns;
       }
-    }
 
-    double inner_bottom_r;
-    datatools::invalidate (inner_bottom_r);
-    if (config_.has_key ("inner_bottom_r")) {
-      inner_bottom_r = config_.fetch_real ("inner_bottom_r");
-      if (! config_.has_explicit_unit ("inner_bottom_r")) {
-        inner_bottom_r *= lunit;
+      double inner_top_r;
+      datatools::invalidate (inner_top_r);
+      if (config_.has_key ("inner_top_r")) {
+        inner_top_r = config_.fetch_real ("inner_top_r");
+        if (! config_.has_explicit_unit ("inner_top_r")) {
+          inner_top_r *= lunit;
+        }
       }
-    }
 
-    double outer_bottom_r;
-    datatools::invalidate (outer_bottom_r);
-    DT_THROW_IF (! config_.has_key("outer_bottom_r"), std::logic_error,
-                 "Missing frustrum 'outer_bottom_r' property !");
-    if (config_.has_key ("outer_bottom_r")) {
-      outer_bottom_r = config_.fetch_real ("outer_bottom_r");
-      if (! config_.has_explicit_unit ("outer_bottom_r")) {
-        outer_bottom_r *= lunit;
+      DT_THROW_IF (! config_.has_key("outer_top_r"), std::logic_error,
+                   "Missing frustrum 'outer_top_r' property !");
+      double outer_top_r;
+      datatools::invalidate (outer_top_r);
+      if (config_.has_key ("outer_top_r")) {
+        outer_top_r = config_.fetch_real ("outer_top_r");
+        if (! config_.has_explicit_unit ("outer_top_r")) {
+          outer_top_r *= lunit;
+        }
       }
+
+      double inner_bottom_r;
+      datatools::invalidate (inner_bottom_r);
+      if (config_.has_key ("inner_bottom_r")) {
+        inner_bottom_r = config_.fetch_real ("inner_bottom_r");
+        if (! config_.has_explicit_unit ("inner_bottom_r")) {
+          inner_bottom_r *= lunit;
+        }
+      }
+
+      double outer_bottom_r;
+      datatools::invalidate (outer_bottom_r);
+      DT_THROW_IF (! config_.has_key("outer_bottom_r"), std::logic_error,
+                   "Missing frustrum 'outer_bottom_r' property !");
+      if (config_.has_key ("outer_bottom_r")) {
+        outer_bottom_r = config_.fetch_real ("outer_bottom_r");
+        if (! config_.has_explicit_unit ("outer_bottom_r")) {
+          outer_bottom_r *= lunit;
+        }
+      }
+
+      DT_THROW_IF (! config_.has_key("z"), std::logic_error,
+                   "Missing frustrum 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
+      }
+
+      // int start_sector = 0;
+      // int stop_sector = 0;
+      // bool not_full_angle = false;
+      // if (config_.has_key ("start_sector")) {
+      //   start_sector = config_.fetch_integer ("start_sector");
+      // }
+      // if (config_.has_key ("stop_sector")) {
+      //   stop_sector = config_.fetch_real ("stop_sector");
+      // }
+
+      set_n_sides(n_sides);
+      set_outer_bottom_radius(outer_bottom_r);
+      set_outer_top_radius(outer_top_r);
+      set_inner_bottom_radius(inner_bottom_r);
+      set_inner_top_radius(inner_top_r);
+      set_z(z);
+      // if (not_full_angle) {
+      //   set_sector_start(start_sector);
+      //   set_sector_stop(stop_sector);
+      // }
     }
-
-    DT_THROW_IF (! config_.has_key("z"), std::logic_error,
-                 "Missing frustrum 'z' property !");
-    double z = config_.fetch_real("z");
-    if (! config_.has_explicit_unit("z")) {
-      z *= lunit;
-    }
-
-    // int start_sector = 0;
-    // int stop_sector = 0;
-    // bool not_full_angle = false;
-    // if (config_.has_key ("start_sector")) {
-    //   start_sector = config_.fetch_integer ("start_sector");
-    // }
-    // if (config_.has_key ("stop_sector")) {
-    //   stop_sector = config_.fetch_real ("stop_sector");
-    // }
-
-    set_n_sides(n_sides);
-    set_outer_bottom_radius(outer_bottom_r);
-    set_outer_top_radius(outer_top_r);
-    set_inner_bottom_radius(inner_bottom_r);
-    set_inner_top_radius(inner_top_r);
-    set_z(z);
-    // if (not_full_angle) {
-    //   set_sector_start(start_sector);
-    //   set_sector_stop(stop_sector);
-    // }
 
     lock();
     return;

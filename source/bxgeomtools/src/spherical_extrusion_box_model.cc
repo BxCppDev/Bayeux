@@ -272,13 +272,13 @@ namespace geomtools {
       mother_box.generate_wires_self(wires_, options);
     }
 
-     if (draw_extrusion) {
+    if (draw_extrusion) {
 
-       const double zcyl = mother_box.get_z();
-       const double c = zcyl - h;
-       const double rs = extrusion_sphere.get_r();
-       const double a = rs - c;
-       const double re = std::sqrt(rs * rs - a * a);
+      const double zcyl = mother_box.get_z();
+      const double c = zcyl - h;
+      const double rs = extrusion_sphere.get_r();
+      const double a = rs - c;
+      const double re = std::sqrt(rs * rs - a * a);
 
       // Surface extrusion circle:
       {
@@ -299,10 +299,10 @@ namespace geomtools {
           const double c2 = rfactor[i] * c;
           double z = 0.5 * mother_box.get_z() - c + c2;
           if (bottom) z *= -1.0;
-          // const double rs = extrusion_sphere.get_r();
-          // const double a2 = rs - c2;
-          // const double r2 = std::sqrt(rs *rs - a2 * a2);
-          circle c1(re);
+          const double rs = extrusion_sphere.get_r();
+          const double a2 = rs - c2;
+          const double r2 = std::sqrt(rs *rs - a2 * a2);
+          circle c1(r2);
           uint32_t options = base_options;
           placement c1_placement(0.0, 0.0, z, 0.0, 0.0, 0.0);
           c1.generate_wires(wires_, c1_placement, options);
@@ -329,40 +329,7 @@ namespace geomtools {
         arc.generate_wires(wires_, arc1_placement, options);
         arc.generate_wires(wires_, arc2_placement, options);
       }
-     }
-
-      /*
-      // extrusion arcs:
-        {
-          double z = 0.5 * zcyl;
-          double theta0 = asin (re / rs);
-          size_t nsamples = 20;
-          double dt = 2 * theta0 / nsamples;
-          double zs = z - c + rs;
-          if (bottom) zs *= -1.0;
-          geomtools::gnuplot_draw::polyline_type arc1;
-          geomtools::gnuplot_draw::polyline_type arc2;
-          for (size_t i = 0; i <= nsamples; i++)
-            {
-              const double theta = -theta0 + i * dt;
-              double dz = -rs * cos (theta);
-              if (bottom) dz *= -1.0;
-              const double dt = rs * sin (theta);
-              geomtools::vector_3d P1 (dt, 0.0, zs + dz);
-              arc1.push_back (P1);
-              geomtools::vector_3d P2 (0.0, dt, zs + dz);
-              arc2.push_back (P2);
-            }
-          geomtools::gnuplot_draw::draw_polyline (out_,
-                                                  position_,
-                                                  rotation_,
-                                                  arc1);
-          geomtools::gnuplot_draw::draw_polyline (out_,
-                                                  position_,
-                                                  rotation_,
-                                                  arc2);
-        }
-      */
+    }
 
     return;
   }

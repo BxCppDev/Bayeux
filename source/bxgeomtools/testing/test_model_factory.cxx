@@ -33,6 +33,7 @@ int main (int argc_, char ** argv_)
       clog << "Test program for class 'model_factory'!" << endl;
 
       bool debug = false;
+      // debug = true;
       bool devel = false;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       string drawer_view = geomtools::gnuplot_drawer::view_3d();
