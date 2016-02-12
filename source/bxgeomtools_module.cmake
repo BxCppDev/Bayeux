@@ -202,6 +202,9 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/model_with_internal_mesh_tools.h
   ${module_include_dir}/${module_name}/simple_polygon.h
   ${module_include_dir}/${module_name}/wall_solid.h
+  ${module_include_dir}/${module_name}/quadric.h
+  ${module_include_dir}/${module_name}/point_on_quadric_finder.h
+  ${module_include_dir}/${module_name}/foot_point_on_quadric_finder.h
   )
 
 # - configure resources
@@ -329,6 +332,9 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/model_with_internal_mesh_tools.cc
   ${module_source_dir}/simple_polygon.cc
   ${module_source_dir}/wall_solid.cc
+  ${module_source_dir}/quadric.cc
+  ${module_source_dir}/point_on_quadric_finder.cc
+  ${module_source_dir}/foot_point_on_quadric_finder.cc
   bx${module_name}/resource.cc
   )
 
@@ -422,6 +428,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_wires.cxx
   ${module_test_dir}/test_wires_2.cxx
   ${module_test_dir}/test_wall_solid.cxx
+  ${module_test_dir}/test_quadric.cxx
   )
 
 # - Applications
