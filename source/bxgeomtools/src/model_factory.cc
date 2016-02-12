@@ -9,8 +9,11 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <vector>
 
 // Third party:
+// - Boost:
+#include <boost/filesystem.hpp>
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
@@ -77,7 +80,7 @@ namespace geomtools {
     if (new_value_) {
       _logging_priority_ = datatools::logger::PRIO_DEBUG;
     } else {
-      _logging_priority_ = datatools::logger::PRIO_WARNING;
+      _logging_priority_ = datatools::logger::PRIO_FATAL;
     }
     return;
   }
@@ -147,6 +150,8 @@ namespace geomtools {
   }
 
   model_factory::model_factory(datatools::logger::priority lp_)
+    :  _factory_register_("geomtools::i_model/model_factory",
+                          (lp_ >= datatools::logger::PRIO_NOTICE) ? i_model::factory_register_type::verbose : 0)
   {
     _shape_factory_ = 0;
     _locked_ = false;
@@ -179,34 +184,43 @@ namespace geomtools {
   // 2012-05-25 FM : add support for loading a file that contains a list of geometry filenames :
   void model_factory::load_geom_list(const std::string & geom_list_file_)
   {
+    std::vector<std::string> model_filenames;
     std::string geom_lis_filename = geom_list_file_;
     datatools::fetch_path_with_env(geom_lis_filename);
-
+    DT_LOG_NOTICE(_logging_priority_, "Opening geometry models filename list...");
+    DT_THROW_IF(! boost::filesystem::exists(geom_lis_filename), logic_error,
+                "File '" << geom_lis_filename << "' does not exist!");
     std::ifstream finlist(geom_lis_filename.c_str());
     DT_THROW_IF(! finlist, logic_error,
                 "Cannot open file '" << geom_lis_filename << "' !");
+    DT_LOG_NOTICE(_logging_priority_, "Geometry models filename list if open.");
     while (finlist) {
       std::string line;
       std::getline(finlist, line);
+      DT_LOG_NOTICE(_logging_priority_, "line='" << line << "'");
       DT_THROW_IF(! finlist, logic_error,
                   "I/O error while reading file '" << geom_lis_filename << "' !");
       std::string word;
       std::istringstream line_iss(line);
       line_iss >> word;
-      if (word.length() < 1) {
-        // skip blank line
-        continue;
+      // Skip blank line:
+      if (word.length() > 0) {
+        // Skip comment:
+        if (word[0] != '#') {
+          std::string geom_filename = word;
+          model_filenames.push_back(geom_filename);
+        }
       }
-      if (word[0] == '#') {
-        continue;
-      }
-      std::string geom_filename = word;
-      datatools::fetch_path_with_env(geom_filename);
-      load(geom_filename);
-      finlist >> ws;
+      finlist >> std::ws;
       if (finlist.eof()) {
         break;
       }
+    }
+    for (int i = 0; i < model_filenames.size(); i++) {
+      std::string geom_filename = model_filenames[i];
+      datatools::fetch_path_with_env(geom_filename);
+      DT_LOG_NOTICE(_logging_priority_, "Loading geoemtry models from file '" << geom_filename << "'...");
+      load(geom_filename);
     }
     return;
   }
@@ -304,7 +318,7 @@ namespace geomtools {
 
   void model_factory::_construct_()
   {
-    DT_LOG_TRACE(_logging_priority_,"Entering...");
+    DT_LOG_TRACE(_logging_priority_, "Entering...");
     for (datatools::multi_properties::entries_ordered_col_type::const_iterator i
            = _mp_.ordered_entries().begin();
          i != _mp_.ordered_entries().end();
