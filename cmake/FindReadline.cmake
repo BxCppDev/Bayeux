@@ -4,30 +4,26 @@
 #  Readline_LIBRARIES   - List of libraries when using readline
 #  Readline_FOUND       - True if readline is found
 
-# message(STATUS "FindReadline: Entering...")
-IF (Readline_INCLUDE_DIR)
-  # Already in cache
-  SET(Readline_FIND_QUIETLY TRUE)
-ENDIF (Readline_INCLUDE_DIR)
+find_path(Readline_INCLUDE_DIR readline/readline.h readline.h)
+find_library(Readline_LIBRARY readline)
+mark_as_advanced(Readline_LIBRARY Readline_INCLUDE_DIR)
 
-FIND_PATH(Readline_INCLUDE_DIR readline/readline.h readline.h PATHS /usr)
-FIND_LIBRARY(Readline_LIBRARIES readline PATHS /usr)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Readline
+  REQUIRED_VARS Readline_INCLUDE_DIR Readline_LIBRARY
+  )
 
-IF(Readline_INCLUDE_DIR AND Readline_LIBRARIES)
-   SET(Readline_FOUND TRUE)
-ELSE(Readline_INCLUDE_DIR AND Readline_LIBRARIES)
-   SET(Readline_FOUND FALSE)
-ENDIF (Readline_INCLUDE_DIR AND Readline_LIBRARIES)
+if(Readline_FOUND)
+  set(Readline_INCLUDE_DIRS ${Readline_INCLUDE_DIR})
+  set(Readline_LIBRARIES ${Readline_LIBRARY})
 
-IF (Readline_FOUND)
-   IF (NOT Readline_FIND_QUIETLY)
-      MESSAGE(STATUS "FindReadline: Found Readline library: ${Readline_LIBRARIES}")
-      MESSAGE(STATUS "FindReadline: Found Readline headers: ${Readline_INCLUDE_DIR}")
-   ENDIF (NOT Readline_FIND_QUIETLY)
-ELSE (Readline_FOUND)
-   IF (Readline_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "FindReadline: Could NOT find Readline")
-   ENDIF (Readline_FIND_REQUIRED)
-ENDIF (Readline_FOUND)
+  if(NOT TARGET Readline::Readline)
+    add_library(Readline::Readline UNKNOWN IMPORTED)
+    set_target_properties(Readline::Readline
+      PROPERTIES
+        IMPORTED_LOCATION "${Readline_LIBRARY}"
+        INTERFACE_INCLUDE_DIRECTORIES "${Readline_INCLUDE_DIRS}"
+      )
+  endif()
+endif()
 
-MARK_AS_ADVANCED(Readline_LIBRARIES Readline_INCLUDE_DIR)

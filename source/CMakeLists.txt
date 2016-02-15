@@ -45,16 +45,20 @@ set(Bayeux_Boost_LIBRARIES
   )
 
 # - Camp
-find_package(CAMP 0.7.1 REQUIRED)
+find_package(CAMP 0.7.1 REQUIRED NO_MODULE)
 
 # - CLHEP
-find_package(CLHEP 2.1.3.1 REQUIRED)
+find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
 
 # - GSL
 find_package(GSL 1.15 QUIET NO_MODULE)
+find_package(GSL 1.15 REQUIRED)
 
 # - ROOT
+set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
+include(RootNewMacros)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
 if (Bayeux_BUILD_QT_GUI)
   find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
@@ -64,7 +68,7 @@ endif()
 # We do this here because we may need to configure files in MCTools
 # using the results of the search
 if(Bayeux_BUILD_GEANT4_MODULE)
-  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml)
+  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml NO_MODULE)
   if(Geant4_DATASETS)
     set(MCTOOLS_G4_DATA_ASSIGNMENTS)
     foreach(_ds ${Geant4_DATASETS})
