@@ -1,0 +1,48 @@
+# -*- mode: conf-unix; -*-
+# @materials:data/basic/1.0/material_aliases.def
+# List of material aliases based on basic materials (format: datatools::multi_properties)
+
+#@description A list of common basic material aliases
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="basic::teflon" type="alias"]
+#@description The teflon alias for polytetrafluoroethylene
+material : string = "basic::polytetrafluoroethylene"
+
+
+[name="basic::PTFE" type="alias"]
+#@description The PTFE alias for polytetrafluoroethylene
+material : string = "basic::polytetrafluoroethylene"
+
+
+[name="basic::delrin" type="alias"]
+#@description The delrin alias for polyoxymethylene
+material : string = "basic::polyoxymethylene"
+
+
+[name="basic::PS" type="alias"]
+#@description The PS alias for polystyrene
+material : string = "basic::polystyrene"
+
+
+[name="basic::PVT" type="alias"]
+#@description The PVT alias for polyvinyltoluene
+material : string = "basic::polyvinyltoluene"
+
+
+[name="basic::PMMA" type="alias"]
+#@description The PMMA alias for polymethylmethacrylate
+material : string = "basic::polymethylmethacrylate"
+
+
+[name="basic::plexiglass" type="alias"]
+#@description The plexiglass alias for PMMA
+material : string = "basic::polymethylmethacrylate"
+
+
+[name="basic::lucite" type="alias"]
+#@description The Lucite alias for polymethylmethacrylate
+material : string = "basic::polymethylmethacrylate"
+
+# end of @materials:data/basic/1.0/material_aliases.def
