@@ -1,8 +1,8 @@
 Bayeux/materials resource files for biological tissues
 =======================================================
 
-This directory contains some data resource files used by the
-Bayeux/materials modules and dedicated to the description of
+This directory contains some data resource files usable through the
+Bayeux/materials library module and dedicated to the description of
 biological tissues of interest for radioprotection and medical
 physics.
 
