@@ -38,3 +38,5 @@
 2013-07-15 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
         - cleaning, commenting, re-indentation
 	- factory support of "doping" build method for material class
+2016-02-15 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        - refactor the resource files
