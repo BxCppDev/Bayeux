@@ -39,9 +39,9 @@ int main(/*int argc_ , char ** argv_*/)
       std::cout << std::endl << std::endl;
     }
 
-    lcf.change_weight(-0.75, f0_index);
-    lcf.change_weight(+1.25, f1_index);
-    lcf.change_weight(+0.00, f2_index);
+    lcf.change_weight(f0_index, -0.75);
+    lcf.change_weight(f1_index, +1.25);
+    lcf.change_weight(f2_index, 0.0);
 
     {
       double dx = 0.05;
