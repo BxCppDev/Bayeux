@@ -237,7 +237,7 @@ namespace lahague {
       for (dose_config_dict_type::const_iterator i = _dose_configs_.begin();
            i != _dose_configs_.end();
            i++) {
-        const std::string & cdc_label = i->first;
+        // const std::string & cdc_label = i->first;
         const compute_dose_config & cdc = i->second;
         if (sd_.has_step_hits(cdc.hit_category)) {
           unsigned int nsteps = sd_.get_number_of_step_hits(cdc.hit_category);
