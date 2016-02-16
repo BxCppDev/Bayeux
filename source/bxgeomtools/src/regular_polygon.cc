@@ -11,12 +11,13 @@
 #include <sstream>
 #include <string>
 
-// - GSL:
-#include <gsl/gsl_poly.h>
 
 // Third party:
+// - GSL:
+#include <gsl/gsl_poly.h>
 // - Bayeux/datatools:
 #include <datatools/utils.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/i_shape_2d.h>
@@ -24,6 +25,9 @@
 #include <geomtools/triangle.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(regular_polygon, "geomtools::regular_polygon");
 
   const std::string & regular_polygon::regular_polygon_label()
   {
@@ -124,10 +128,68 @@ namespace geomtools {
     return _n_sides_ >= MIN_NUMBER_OF_SIDES && datatools::is_valid(_r_);
   }
 
+  void regular_polygon::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      DT_THROW_IF(! config_.has_key("r"), std::logic_error, "Missing regular polygon 'r' property !");
+      double r = config_.fetch_real("r");
+      if (! config_.has_explicit_unit("r")) {
+        r *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("n_sides"), std::logic_error, "Missing regular polygon 'n_sides' property !");
+      int n_sides = config_.fetch_integer("n_sides");
+      DT_THROW_IF(n_sides < 3, std::logic_error, "Invalid number of sides!");
+
+      set_r(r);
+      set_n_sides((uint32_t) n_sides);
+
+      // double aunit = CLHEP::degree;
+      // if (config_.has_key("angle_unit")) {
+      //   const std::string aunit_str = config_.fetch_string("angle_unit");
+      //   aunit = datatools::units::get_angle_unit_from(aunit_str);
+      // }
+
+      // double start_angle = 0.0;
+      // double delta_angle = 2 * M_PI * CLHEP::radian;
+      // bool not_full_angle = false;
+      // if (config_.has_key ("start_angle")) {
+      //   start_angle = config_.fetch_real ("start_angle");
+      //   if (! config_.has_explicit_unit ("start_angle")) {
+      //     start_angle *= aunit;
+      //   }
+      //   not_full_angle = true;
+      // }
+      // if (config_.has_key ("delta_angle")) {
+      //   delta_angle = config_.fetch_real ("delta_angle");
+      //   if (! config_.has_explicit_unit ("delta_angle")) {
+      //     delta_angle *= aunit;
+      //   }
+      //   not_full_angle = true;
+      // }
+      // if (not_full_angle) {
+      //   set_start_angle(start_angle);
+      //   set_delta_angle(delta_angle);
+      // }
+
+    }
+
+    return;
+  }
+
   void regular_polygon::reset()
   {
      _n_sides_ = 0;
      datatools::invalidate(_r_);
+     this->i_object_3d::reset();
      return;
   }
 

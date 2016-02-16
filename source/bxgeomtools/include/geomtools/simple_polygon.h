@@ -35,9 +35,8 @@ namespace geomtools {
   class triangle;
 
   /// \brief A simple polygon in the XY plane
-  class simple_polygon :
-    public i_shape_2d,
-    public i_polygon
+  class simple_polygon : public i_shape_2d,
+                         public i_polygon
   {
 
   public:
@@ -128,12 +127,6 @@ namespace geomtools {
     /// Destructor
     virtual ~simple_polygon();
 
-    /// Reset
-    void reset();
-
-    /// Check initialization
-    bool is_initialized() const;
-
     /// Check is a given point belongs to the surface of the 2D shape
     virtual bool is_on_surface(const vector_3d &,
                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -186,11 +179,17 @@ namespace geomtools {
     /// Return the bounding interval on the Y axis
     const mygsl::min_max & get_yrange() const;
 
-    /// Initialization
-    void initialize();
+    /// Check initialization
+    bool is_initialized() const;
+
+    // /// Initialization
+    // void initialize();
 
     /// Initialization
-    void initialize(const datatools::properties &);
+    void initialize(const datatools::properties &, const handle_dict_type * objects_ = 0);
+
+    /// Reset
+    void reset();
 
     /// Find the intersection between two 2D segments
     static bool find_segment_2d_intersection(const vector_2d & a_,
@@ -233,6 +232,9 @@ namespace geomtools {
                            double start_angle_,
                            double stop_angle_0);
 
+    /// Special init operations
+    void _at_initialize();
+
   private:
 
     build_mode_type _build_mode_; //!< The build mode
@@ -245,6 +247,9 @@ namespace geomtools {
     mygsl::min_max _yrange_; //!< Bounding interval on the Y axis
     vector_3d _normal_; //!< Normal
     std::vector<triangle> _triangles_; //!< List of triangles
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(simple_polygon);
 
   };
 

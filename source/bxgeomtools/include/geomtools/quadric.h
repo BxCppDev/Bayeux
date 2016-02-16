@@ -41,6 +41,9 @@ namespace geomtools {
     //! Check if the plane is valid
     bool is_valid() const;
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     //! Reset
     void reset();
 
@@ -219,6 +222,9 @@ namespace geomtools {
   private:
 
     double _coefficients_[NCOEFFS]; //!< Coefficients of the quadric
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(quadric);
 
   };
 

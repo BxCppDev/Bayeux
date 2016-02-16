@@ -14,12 +14,18 @@
 // Third party:
 // - GSL:
 #include <gsl/gsl_poly.h>
+// - Bayeux/datatools:
+#include <datatools/utils.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/ellipse.h>
 #include <geomtools/line_3d.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(elliptical_sector, "geomtools::elliptical_sector");
 
   const std::string & elliptical_sector::elliptical_sector_label()
   {
@@ -153,9 +159,68 @@ namespace geomtools {
     return true;
   }
 
+  void elliptical_sector::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      DT_THROW_IF(! config_.has_key("x_radius"), std::logic_error, "Missing elliptical sector 'x_radius' property !");
+      double x_radius = config_.fetch_real("x_radius");
+      if (! config_.has_explicit_unit("x_radius")) {
+        x_radius *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("y_radius"), std::logic_error, "Missing elliptical sector 'y_radius' property !");
+      double y_radius = config_.fetch_real("y_radius");
+      if (! config_.has_explicit_unit("y_radius")) {
+        y_radius *= lunit;
+      }
+
+      set_radii(x_radius, y_radius);
+
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        aunit = datatools::units::get_angle_unit_from(aunit_str);
+      }
+
+      double start_angle = 0.0;
+      double delta_angle = 2 * M_PI * CLHEP::radian;
+      bool not_full_angle = false;
+      if (config_.has_key ("start_angle")) {
+        start_angle = config_.fetch_real ("start_angle");
+        if (! config_.has_explicit_unit ("start_angle")) {
+          start_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (config_.has_key ("delta_angle")) {
+        delta_angle = config_.fetch_real ("delta_angle");
+        if (! config_.has_explicit_unit ("delta_angle")) {
+          delta_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (not_full_angle) {
+        set_start_angle(start_angle);
+        set_delta_angle(delta_angle);
+      }
+
+    }
+
+    return;
+  }
+
   void elliptical_sector::reset()
   {
     _set_defaults();
+    this->i_object_3d::reset();
     return;
   }
 

@@ -33,7 +33,10 @@ namespace geomtools {
     /// Check if the plane is valid
     bool is_valid() const;
 
-    /// Reset
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset the shape
     void reset();
 
     /// Return the first parameter

@@ -29,7 +29,6 @@ int main(int argc_, char ** argv_)
   int error_code = EXIT_SUCCESS;
   try {
     // bool interactive = false;
-    bool debug = false;
     bool side = true;
     bool top = true;
     bool bottom = true;
@@ -69,7 +68,7 @@ int main(int argc_, char ** argv_)
     base.add_vertex(2.5, 1.0);
     base.add_vertex(2.5,-2.0);
     base.add_vertex(0.0,-2.0);
-    base.initialize();
+    base.initialize_simple();
     my_wall.tree_dump(std::clog, "my_wall");
 
     geomtools::tessellated_solid my_wall_ts;

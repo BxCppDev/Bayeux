@@ -85,6 +85,12 @@ namespace geomtools {
     /// Destructor
     virtual ~cylindrical_sector();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    void reset();
+
     /// Check if the rectangle is valid
     bool is_valid() const;
 

@@ -216,10 +216,10 @@ namespace geomtools {
         break;
       }
     }
-    for (int i = 0; i < model_filenames.size(); i++) {
+    for (int i = 0; i < (int) model_filenames.size(); i++) {
       std::string geom_filename = model_filenames[i];
       datatools::fetch_path_with_env(geom_filename);
-      DT_LOG_NOTICE(_logging_priority_, "Loading geoemtry models from file '" << geom_filename << "'...");
+      DT_LOG_NOTICE(_logging_priority_, "Loading geometry models from file '" << geom_filename << "'...");
       load(geom_filename);
     }
     return;

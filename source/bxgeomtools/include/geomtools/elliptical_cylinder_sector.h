@@ -102,6 +102,9 @@ namespace geomtools {
     /// Check the validity of the shape
     bool is_valid() const;
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     /// Reset the shape
     void reset();
 
@@ -158,6 +161,9 @@ namespace geomtools {
     double _z_;            //!< z
     double _start_angle_;  //!< Start angle
     double _delta_angle_;  //!< Delta angle
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_cylinder_sector);
 
   };
 

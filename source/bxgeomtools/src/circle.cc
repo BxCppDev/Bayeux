@@ -16,11 +16,15 @@
 // - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/utils.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/polyline_3d.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(circle, "geomtools::circle");
 
   const std::string & circle::circle_label()
   {
@@ -198,6 +202,58 @@ namespace geomtools {
 
   circle::~circle()
   {
+    return;
+  }
+
+  void circle::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      DT_THROW_IF(! config_.has_key("radius"), std::logic_error, "Missing circle 'radius' property !");
+      double radius = config_.fetch_real("radius");
+      if (! config_.has_explicit_unit("radius")) {
+        radius *= lunit;
+      }
+
+      set_radius(radius);
+
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        aunit = datatools::units::get_angle_unit_from(aunit_str);
+      }
+
+      double start_angle = 0.0;
+      double delta_angle = 2 * M_PI * CLHEP::radian;
+      bool not_full_angle = false;
+      if (config_.has_key ("start_angle")) {
+        start_angle = config_.fetch_real ("start_angle");
+        if (! config_.has_explicit_unit ("start_angle")) {
+          start_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (config_.has_key ("delta_angle")) {
+        delta_angle = config_.fetch_real ("delta_angle");
+        if (! config_.has_explicit_unit ("delta_angle")) {
+          delta_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (not_full_angle) {
+        set_start_angle(start_angle);
+        set_delta_angle(delta_angle);
+      }
+
+    }
+
     return;
   }
 

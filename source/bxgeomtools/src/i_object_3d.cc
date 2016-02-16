@@ -281,9 +281,9 @@ namespace geomtools {
   }
 
   void i_object_3d::initialize(const datatools::properties & config_,
-                               const handle_dict_type * /* objects_ */)
+                               const handle_dict_type * objects_)
   {
-    this->i_object_3d::_initialize(config_);
+    this->i_object_3d::_initialize(config_, objects_);
     return;
   }
 

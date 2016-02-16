@@ -10,6 +10,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/utils.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/geomtools_config.h>
@@ -64,9 +65,35 @@ namespace geomtools {
     return;
   }
 
+
+  void plane::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      // Not implemented yet
+
+      // a, b, c, d
+
+      // point + normal
+
+      // point + u1 + u2
+
+    }
+
+    return;
+  }
+
   void plane::reset ()
   {
     _set_defaults();
+    this->i_object_3d::reset();
     return;
   }
 

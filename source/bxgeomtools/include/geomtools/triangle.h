@@ -86,6 +86,9 @@ namespace geomtools {
     /// Destructor
     virtual ~triangle();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     /// Reset
     void reset();
 
@@ -156,6 +159,9 @@ namespace geomtools {
     vector_3d _vertex_0_; //!< The first vertex
     vector_3d _vertex_1_; //!< The second vertex
     vector_3d _vertex_2_; //!< The third vertex
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(triangle);
 
   };
 

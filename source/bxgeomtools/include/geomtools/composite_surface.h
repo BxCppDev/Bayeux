@@ -48,6 +48,9 @@ namespace geomtools {
     /// Destructor
     virtual ~composite_surface();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     /// Reset
     void reset();
 

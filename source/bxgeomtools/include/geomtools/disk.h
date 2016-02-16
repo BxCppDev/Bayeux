@@ -111,6 +111,9 @@ namespace geomtools {
     /// Destructor
     virtual ~disk();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     /// Reset
     void reset();
 
@@ -166,6 +169,9 @@ namespace geomtools {
     double _outer_radius_; //!< External radius of the disk sector
     double _start_angle_;  //!< Start angle of the disk sector
     double _delta_angle_;  //!< Delta angle of the disk sector
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(disk);
 
   };
 

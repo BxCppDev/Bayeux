@@ -25,6 +25,9 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(simple_polygon, "geomtools::simple_polygon");
+
   // static
   simple_polygon::build_mode_type
   simple_polygon::build_mode_from_label(const std::string & label_)
@@ -546,255 +549,258 @@ namespace geomtools {
       && _triangles_.size() > 0;
   }
 
-  void simple_polygon::initialize(const datatools::properties & config_)
+  void simple_polygon::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
   {
-    // std::cerr << "DEVEL: simple_polygon::initialize: " << "Entering..." << std::endl;
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+      // std::cerr << "DEVEL: simple_polygon::initialize: " << "Entering..." << std::endl;
 
-    // Fetch property:
-    if (_build_mode_ == BUILD_MODE_INVALID) {
-      // std::cerr << "DEVEL: simple_polygon::initialize: " << "BUILD_MODE_INVALID..." << std::endl;
+      // Fetch property:
+      if (_build_mode_ == BUILD_MODE_INVALID) {
+        // std::cerr << "DEVEL: simple_polygon::initialize: " << "BUILD_MODE_INVALID..." << std::endl;
 
-      if (config_.has_key("build_mode")) {
-        std::string label = config_.fetch_string("build_mode");
-        // std::cerr << "DEVEL: simple_polygon::initialize: " << "label='" << label << "'" << std::endl;
-        build_mode_type bmode = build_mode_from_label(label);
-        DT_THROW_IF(bmode == BUILD_MODE_INVALID,
-                    std::logic_error,
-                    "Invalid build mode!");
-        set_build_mode(bmode);
-      }
-
-      double default_length_unit = CLHEP::mm;
-      double default_angle_unit  = CLHEP::degree;
-
-      if (config_.has_key("length_unit")) {
-        const std::string lunit_str = config_.fetch_string("length_unit");
-        default_length_unit = datatools::units::get_length_unit_from(lunit_str);
-      }
-
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        default_angle_unit = datatools::units::get_angle_unit_from(aunit_str);
-      }
-
-      if (_build_mode_ == BUILD_MODE_BY_VERTICES) {
-
-        if (config_.has_key("vertices")) {
-          std::vector<std::string> vertice_labels;
-          config_.fetch("vertices", vertice_labels);
-          DT_THROW_IF(vertice_labels.size() < 3,
+        if (config_.has_key("build_mode")) {
+          std::string label = config_.fetch_string("build_mode");
+          // std::cerr << "DEVEL: simple_polygon::initialize: " << "label='" << label << "'" << std::endl;
+          build_mode_type bmode = build_mode_from_label(label);
+          DT_THROW_IF(bmode == BUILD_MODE_INVALID,
                       std::logic_error,
-                      "Number of vertices is too low!");
-          for (int i = 0; i < (int) vertice_labels.size(); i++) {
-            std::ostringstream x_vtx_key_oss;
-            x_vtx_key_oss << "vertices." << vertice_labels[i] << ".x";
-            std::ostringstream y_vtx_key_oss;
-            y_vtx_key_oss << "vertices." << vertice_labels[i] << ".y";
-
-            std::string x_vtx_key = x_vtx_key_oss.str();
-            std::string y_vtx_key = y_vtx_key_oss.str();
-
-            DT_THROW_IF(!config_.has_key(x_vtx_key), std::logic_error,
-                        "Missing key '" << x_vtx_key << "'!");
-
-            DT_THROW_IF(!config_.has_key(y_vtx_key), std::logic_error,
-                        "Missing key '" << y_vtx_key << "'!");
-
-            double x_vtx = config_.fetch_real(x_vtx_key);
-            if (!config_.has_explicit_unit(x_vtx_key)) {
-              x_vtx *= default_length_unit;
-            }
-
-            double y_vtx = config_.fetch_real(y_vtx_key);
-            if (!config_.has_explicit_unit(y_vtx_key)) {
-              y_vtx *= default_length_unit;
-            }
-
-            add_vertex(x_vtx, y_vtx);
-          } // Loop on vertexes
+                      "Invalid build mode!");
+          set_build_mode(bmode);
         }
 
-      } // _build_mode_ == BUILD_MODE_BY_VERTICES
+        double default_length_unit = CLHEP::mm;
+        double default_angle_unit  = CLHEP::degree;
 
+        if (config_.has_key("length_unit")) {
+          const std::string lunit_str = config_.fetch_string("length_unit");
+          default_length_unit = datatools::units::get_length_unit_from(lunit_str);
+        }
 
-      if (_build_mode_ == BUILD_MODE_BY_SEGMENTS) {
-        if (config_.has_key("segments")) {
-          std::vector<std::string> segment_labels;
-          config_.fetch("segments", segment_labels);
-          DT_THROW_IF(segment_labels.size() < 1,
-                      std::logic_error,
-                      "Number of wall segments is too low!");
-          for (int i = 0; i < (int) segment_labels.size(); i++) {
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          default_angle_unit = datatools::units::get_angle_unit_from(aunit_str);
+        }
 
-            vector_2d segment_start;
-            vector_2d segment_stop;
-            double segment_right_thickness;
-            double segment_left_thickness;
-            double segment_start_angle;
-            double segment_stop_angle;
-            geomtools::invalidate(segment_start);
-            geomtools::invalidate(segment_stop);
-            datatools::invalidate(segment_right_thickness);
-            datatools::invalidate(segment_left_thickness);
-            datatools::invalidate(segment_start_angle);
-            datatools::invalidate(segment_stop_angle);
+        if (_build_mode_ == BUILD_MODE_BY_VERTICES) {
 
-            if (i == 0) {
-              // First wall segment:
+          if (config_.has_key("vertices")) {
+            std::vector<std::string> vertice_labels;
+            config_.fetch("vertices", vertice_labels);
+            DT_THROW_IF(vertice_labels.size() < 3,
+                        std::logic_error,
+                        "Number of vertices is too low!");
+            for (int i = 0; i < (int) vertice_labels.size(); i++) {
+              std::ostringstream x_vtx_key_oss;
+              x_vtx_key_oss << "vertices." << vertice_labels[i] << ".x";
+              std::ostringstream y_vtx_key_oss;
+              y_vtx_key_oss << "vertices." << vertice_labels[i] << ".y";
 
-              // Start position:
-              std::ostringstream start_x_segment_key_oss;
-              start_x_segment_key_oss << "segments." << segment_labels[i] << ".start_x";
-              std::ostringstream start_y_segment_key_oss;
-              start_y_segment_key_oss << "segments." << segment_labels[i] << ".start_y";
+              std::string x_vtx_key = x_vtx_key_oss.str();
+              std::string y_vtx_key = y_vtx_key_oss.str();
 
-              std::string start_x_segment_key = start_x_segment_key_oss.str();
-              std::string start_y_segment_key = start_y_segment_key_oss.str();
+              DT_THROW_IF(!config_.has_key(x_vtx_key), std::logic_error,
+                          "Missing key '" << x_vtx_key << "'!");
 
-              DT_THROW_IF(!config_.has_key(start_x_segment_key), std::logic_error,
-                          "Missing key '" << start_x_segment_key << "'!");
+              DT_THROW_IF(!config_.has_key(y_vtx_key), std::logic_error,
+                          "Missing key '" << y_vtx_key << "'!");
 
-              DT_THROW_IF(!config_.has_key(start_y_segment_key), std::logic_error,
-                          "Missing key '" << start_y_segment_key << "'!");
-
-              double start_x_wall = config_.fetch_real(start_x_segment_key);
-              if (!config_.has_explicit_unit(start_x_segment_key)) {
-                start_x_wall *= default_length_unit;
+              double x_vtx = config_.fetch_real(x_vtx_key);
+              if (!config_.has_explicit_unit(x_vtx_key)) {
+                x_vtx *= default_length_unit;
               }
 
-              double start_y_wall = config_.fetch_real(start_y_segment_key);
-              if (!config_.has_explicit_unit(start_y_segment_key)) {
-                start_y_wall *= default_length_unit;
+              double y_vtx = config_.fetch_real(y_vtx_key);
+              if (!config_.has_explicit_unit(y_vtx_key)) {
+                y_vtx *= default_length_unit;
               }
-              segment_start.set(start_x_wall, start_y_wall);
 
-              // Start angle:
-              std::ostringstream start_angle_segment_key_oss;
-              start_angle_segment_key_oss << "segments." << segment_labels[i] << ".start_angle";
-              std::string start_angle_segment_key = start_angle_segment_key_oss.str();
-              if (config_.has_key(start_angle_segment_key)) {
-                segment_start_angle = config_.fetch_real(start_angle_segment_key);
-                if (!config_.has_explicit_unit(start_angle_segment_key)) {
-                  segment_start_angle *= default_angle_unit;
+              add_vertex(x_vtx, y_vtx);
+            } // Loop on vertexes
+          }
+
+        } // _build_mode_ == BUILD_MODE_BY_VERTICES
+
+
+        if (_build_mode_ == BUILD_MODE_BY_SEGMENTS) {
+          if (config_.has_key("segments")) {
+            std::vector<std::string> segment_labels;
+            config_.fetch("segments", segment_labels);
+            DT_THROW_IF(segment_labels.size() < 1,
+                        std::logic_error,
+                        "Number of wall segments is too low!");
+            for (int i = 0; i < (int) segment_labels.size(); i++) {
+
+              vector_2d segment_start;
+              vector_2d segment_stop;
+              double segment_right_thickness;
+              double segment_left_thickness;
+              double segment_start_angle;
+              double segment_stop_angle;
+              geomtools::invalidate(segment_start);
+              geomtools::invalidate(segment_stop);
+              datatools::invalidate(segment_right_thickness);
+              datatools::invalidate(segment_left_thickness);
+              datatools::invalidate(segment_start_angle);
+              datatools::invalidate(segment_stop_angle);
+
+              if (i == 0) {
+                // First wall segment:
+
+                // Start position:
+                std::ostringstream start_x_segment_key_oss;
+                start_x_segment_key_oss << "segments." << segment_labels[i] << ".start_x";
+                std::ostringstream start_y_segment_key_oss;
+                start_y_segment_key_oss << "segments." << segment_labels[i] << ".start_y";
+
+                std::string start_x_segment_key = start_x_segment_key_oss.str();
+                std::string start_y_segment_key = start_y_segment_key_oss.str();
+
+                DT_THROW_IF(!config_.has_key(start_x_segment_key), std::logic_error,
+                            "Missing key '" << start_x_segment_key << "'!");
+
+                DT_THROW_IF(!config_.has_key(start_y_segment_key), std::logic_error,
+                            "Missing key '" << start_y_segment_key << "'!");
+
+                double start_x_wall = config_.fetch_real(start_x_segment_key);
+                if (!config_.has_explicit_unit(start_x_segment_key)) {
+                  start_x_wall *= default_length_unit;
                 }
-              } else {
-                segment_start_angle = 0.0;
-              }
-            } // (i == 0)
 
-            // Any wall segment:
-            {
-              // Stop position:
-              std::ostringstream stop_x_segment_key_oss;
-              stop_x_segment_key_oss << "segments." << segment_labels[i] << ".stop_x";
-              std::ostringstream stop_y_segment_key_oss;
-              stop_y_segment_key_oss << "segments." << segment_labels[i] << ".stop_y";
+                double start_y_wall = config_.fetch_real(start_y_segment_key);
+                if (!config_.has_explicit_unit(start_y_segment_key)) {
+                  start_y_wall *= default_length_unit;
+                }
+                segment_start.set(start_x_wall, start_y_wall);
 
-              std::string stop_x_segment_key = stop_x_segment_key_oss.str();
-              std::string stop_y_segment_key = stop_y_segment_key_oss.str();
-
-              DT_THROW_IF(!config_.has_key(stop_x_segment_key), std::logic_error,
-                          "Missing key '" << stop_x_segment_key << "'!");
-
-              DT_THROW_IF(!config_.has_key(stop_y_segment_key), std::logic_error,
-                          "Missing key '" << stop_y_segment_key << "'!");
-
-              double stop_x_wall = config_.fetch_real(stop_x_segment_key);
-              if (!config_.has_explicit_unit(stop_x_segment_key)) {
-                stop_x_wall *= default_length_unit;
-              }
-
-              double stop_y_wall = config_.fetch_real(stop_y_segment_key);
-              if (!config_.has_explicit_unit(stop_y_segment_key)) {
-                stop_y_wall *= default_length_unit;
-              }
-              segment_stop.set(stop_x_wall, stop_y_wall);
-
-              if (i == ((int) segment_labels.size() - 1)) {
-                // Stop angle:
-                std::ostringstream stop_angle_segment_key_oss;
-                stop_angle_segment_key_oss << "segments." << segment_labels[i] << ".stop_angle";
-                std::string stop_angle_segment_key = stop_angle_segment_key_oss.str();
-                if (config_.has_key(stop_angle_segment_key)) {
-                  segment_stop_angle = config_.fetch_real(stop_angle_segment_key);
-                  if (!config_.has_explicit_unit(stop_angle_segment_key)) {
-                    segment_stop_angle *= default_angle_unit;
+                // Start angle:
+                std::ostringstream start_angle_segment_key_oss;
+                start_angle_segment_key_oss << "segments." << segment_labels[i] << ".start_angle";
+                std::string start_angle_segment_key = start_angle_segment_key_oss.str();
+                if (config_.has_key(start_angle_segment_key)) {
+                  segment_start_angle = config_.fetch_real(start_angle_segment_key);
+                  if (!config_.has_explicit_unit(start_angle_segment_key)) {
+                    segment_start_angle *= default_angle_unit;
                   }
                 } else {
-                  segment_stop_angle = 0.0;
+                  segment_start_angle = 0.0;
                 }
+              } // (i == 0)
+
+              // Any wall segment:
+              {
+                // Stop position:
+                std::ostringstream stop_x_segment_key_oss;
+                stop_x_segment_key_oss << "segments." << segment_labels[i] << ".stop_x";
+                std::ostringstream stop_y_segment_key_oss;
+                stop_y_segment_key_oss << "segments." << segment_labels[i] << ".stop_y";
+
+                std::string stop_x_segment_key = stop_x_segment_key_oss.str();
+                std::string stop_y_segment_key = stop_y_segment_key_oss.str();
+
+                DT_THROW_IF(!config_.has_key(stop_x_segment_key), std::logic_error,
+                            "Missing key '" << stop_x_segment_key << "'!");
+
+                DT_THROW_IF(!config_.has_key(stop_y_segment_key), std::logic_error,
+                            "Missing key '" << stop_y_segment_key << "'!");
+
+                double stop_x_wall = config_.fetch_real(stop_x_segment_key);
+                if (!config_.has_explicit_unit(stop_x_segment_key)) {
+                  stop_x_wall *= default_length_unit;
+                }
+
+                double stop_y_wall = config_.fetch_real(stop_y_segment_key);
+                if (!config_.has_explicit_unit(stop_y_segment_key)) {
+                  stop_y_wall *= default_length_unit;
+                }
+                segment_stop.set(stop_x_wall, stop_y_wall);
+
+                if (i == ((int) segment_labels.size() - 1)) {
+                  // Stop angle:
+                  std::ostringstream stop_angle_segment_key_oss;
+                  stop_angle_segment_key_oss << "segments." << segment_labels[i] << ".stop_angle";
+                  std::string stop_angle_segment_key = stop_angle_segment_key_oss.str();
+                  if (config_.has_key(stop_angle_segment_key)) {
+                    segment_stop_angle = config_.fetch_real(stop_angle_segment_key);
+                    if (!config_.has_explicit_unit(stop_angle_segment_key)) {
+                      segment_stop_angle *= default_angle_unit;
+                    }
+                  } else {
+                    segment_stop_angle = 0.0;
+                  }
+                }
+
               }
 
-            }
-
-            {
-              std::ostringstream right_thickness_segment_key_oss;
-              right_thickness_segment_key_oss << "segments." << segment_labels[i] << ".right_thickness";
-              std::string right_thickness_segment_key = right_thickness_segment_key_oss.str();
-              DT_THROW_IF (! config_.has_key(right_thickness_segment_key), std::logic_error,
-                           "Missing '" << right_thickness_segment_key << "' property !");
-              segment_right_thickness = config_.fetch_real(right_thickness_segment_key);
-              if (! config_.has_explicit_unit(right_thickness_segment_key)) {
-                segment_right_thickness *= default_length_unit;
+              {
+                std::ostringstream right_thickness_segment_key_oss;
+                right_thickness_segment_key_oss << "segments." << segment_labels[i] << ".right_thickness";
+                std::string right_thickness_segment_key = right_thickness_segment_key_oss.str();
+                DT_THROW_IF (! config_.has_key(right_thickness_segment_key), std::logic_error,
+                             "Missing '" << right_thickness_segment_key << "' property !");
+                segment_right_thickness = config_.fetch_real(right_thickness_segment_key);
+                if (! config_.has_explicit_unit(right_thickness_segment_key)) {
+                  segment_right_thickness *= default_length_unit;
+                }
+                // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
+                //           << "segment_right_thickness=" << segment_right_thickness << std::endl;
               }
-              // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
-              //           << "segment_right_thickness=" << segment_right_thickness << std::endl;
-            }
 
-            {
-              std::ostringstream left_thickness_segment_key_oss;
-              left_thickness_segment_key_oss << "segments." << segment_labels[i] << ".left_thickness";
-              std::string left_thickness_segment_key = left_thickness_segment_key_oss.str();
-              DT_THROW_IF (! config_.has_key(left_thickness_segment_key), std::logic_error,
-                           "Missing '" << left_thickness_segment_key << "' property !");
-              segment_left_thickness = config_.fetch_real(left_thickness_segment_key);
-              if (! config_.has_explicit_unit(left_thickness_segment_key)) {
-                segment_left_thickness *= default_length_unit;
+              {
+                std::ostringstream left_thickness_segment_key_oss;
+                left_thickness_segment_key_oss << "segments." << segment_labels[i] << ".left_thickness";
+                std::string left_thickness_segment_key = left_thickness_segment_key_oss.str();
+                DT_THROW_IF (! config_.has_key(left_thickness_segment_key), std::logic_error,
+                             "Missing '" << left_thickness_segment_key << "' property !");
+                segment_left_thickness = config_.fetch_real(left_thickness_segment_key);
+                if (! config_.has_explicit_unit(left_thickness_segment_key)) {
+                  segment_left_thickness *= default_length_unit;
+                }
+                // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
+                //           << "segment_left_thickness=" << segment_left_thickness << std::endl;
               }
+
+              // Default thicknesses:
+              if (! datatools::is_valid(segment_right_thickness)) {
+                // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
+                //           << "NULL segment_right_thickness" << std::endl;
+                segment_right_thickness = 0.0;
+              }
+
+              if (! datatools::is_valid(segment_left_thickness)) {
+                // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
+                //           << "NULL segment_left_thickness" << std::endl;
+                segment_left_thickness = 0.0;
+              }
+
               // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
-              //           << "segment_left_thickness=" << segment_left_thickness << std::endl;
-            }
-
-            // Default thicknesses:
-            if (! datatools::is_valid(segment_right_thickness)) {
+              //           << "FINAL => segment_right_thickness = " << segment_right_thickness << std::endl;
               // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
-              //           << "NULL segment_right_thickness" << std::endl;
-              segment_right_thickness = 0.0;
-            }
+              //           << "FINAL => segment_left_thickness  = " << segment_left_thickness << std::endl;
 
-            if (! datatools::is_valid(segment_left_thickness)) {
-              // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
-              //           << "NULL segment_left_thickness" << std::endl;
-              segment_left_thickness = 0.0;
-            }
+              if (i == 0) {
+                add_wall_segment(segment_start, segment_stop,
+                                 segment_left_thickness, segment_right_thickness,
+                                 segment_start_angle, segment_stop_angle);
+              } else {
+                add_wall_segment(segment_stop,
+                                 segment_left_thickness, segment_right_thickness,
+                                 segment_stop_angle);
+              }
 
-            // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
-            //           << "FINAL => segment_right_thickness = " << segment_right_thickness << std::endl;
-            // std::cerr << "DEVEL: " << "simple_polygon::initialize: "
-            //           << "FINAL => segment_left_thickness  = " << segment_left_thickness << std::endl;
+            } // Loop on vertexes
 
-            if (i == 0) {
-              add_wall_segment(segment_start, segment_stop,
-                               segment_left_thickness, segment_right_thickness,
-                               segment_start_angle, segment_stop_angle);
-            } else {
-              add_wall_segment(segment_stop,
-                               segment_left_thickness, segment_right_thickness,
-                               segment_stop_angle);
-            }
+          } // _build_mode_ == BUILD_MODE_BY_SEGMENTS
 
-          } // Loop on vertexes
-
-        } // _build_mode_ == BUILD_MODE_BY_SEGMENTS
+        }
 
       }
-
     }
-    initialize();
+    _at_initialize();
     return;
   }
 
-  void simple_polygon::initialize()
+  void simple_polygon::_at_initialize()
   {
     DT_THROW_IF(_build_mode_ == BUILD_MODE_INVALID,
                 std::logic_error,
@@ -936,7 +942,7 @@ namespace geomtools {
         -vAB * ws0.right_thickness
         +uAB * ws0.right_thickness * std::tan(ws0.start_angle);
       geomtools::vector_2d AL =
-         vAB * ws0.left_thickness
+        vAB * ws0.left_thickness
         -uAB * ws0.left_thickness * std::tan(ws0.start_angle);
       // Right vertex:
       R = A + AR;
@@ -949,12 +955,12 @@ namespace geomtools {
 
     /*
 
-    int ws_counter = 0;
-    geomtools::vector_2d A, C, E, uAB;
-    geomtools::invalidate(A);
-    geomtools::invalidate(C);
-    geomtools::invalidate(E);
-    geomtools::invalidate(uAB);
+      int ws_counter = 0;
+      geomtools::vector_2d A, C, E, uAB;
+      geomtools::invalidate(A);
+      geomtools::invalidate(C);
+      geomtools::invalidate(E);
+      geomtools::invalidate(uAB);
     */
     geomtools::vector_2d A = _wall_segments_[0].stop;
     for (int iwall = 1; iwall < (int) _wall_segments_.size(); iwall++) {
@@ -1019,7 +1025,7 @@ namespace geomtools {
         -vAB * ws_last.right_thickness
         +uAB * ws_last.right_thickness * std::tan(ws_last.stop_angle);
       geomtools::vector_2d BL =
-         vAB * ws_last.left_thickness
+        vAB * ws_last.left_thickness
         -uAB * ws_last.left_thickness * std::tan(ws_last.stop_angle);
       // Right vertex:
       geomtools::vector_2d R = B + BR;

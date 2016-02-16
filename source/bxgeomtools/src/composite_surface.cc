@@ -14,6 +14,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/utils.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/i_shape_2d.h>
@@ -110,9 +111,22 @@ namespace geomtools {
     return;
   }
 
+  void composite_surface::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      // Not implemented yet.
+
+    }
+
+    return;
+  }
+
   void composite_surface::reset()
   {
     _surfaces_.clear();
+    this->i_object_3d::reset();
     return;
   }
 

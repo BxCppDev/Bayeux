@@ -88,6 +88,11 @@ namespace geomtools {
 
   void print_xyz_stderr(const vector_3d & p_);
 
+  void set_vector_2d(const std::vector<double> & source_, vector_2d & target_);
+
+  void set_vector_3d(const std::vector<double> & source_, vector_3d & target_);
+
+
   //! \brief Parse a vector 3D object from an input stream
   //!
   //! Supported format is:

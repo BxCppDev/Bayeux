@@ -9,8 +9,13 @@
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
 // - GSL:
 #include <gsl/gsl_poly.h>
+// - Bayeux/datatools:
+//#include <datatools/utils.h>
+#include <datatools/units.h>
+//#include <datatools/properties.h>
 
 // This project:
 #include <geomtools/geomtools_config.h>
@@ -19,6 +24,9 @@
 namespace geomtools {
 
   using namespace std;
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(rectangle, "geomtools::rectangle");
 
   const std::string & rectangle::rectangle_label()
   {
@@ -341,6 +349,41 @@ namespace geomtools {
       }
     }
 
+    return;
+  }
+
+  void rectangle::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+       DT_THROW_IF(! config_.has_key("x"), std::logic_error, "Missing rectangle 'x' property !");
+      double x = config_.fetch_real("x");
+      if (! config_.has_explicit_unit("x")) {
+        x *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("y"), std::logic_error, "Missing rectangle 'y' property !");
+      double y = config_.fetch_real("y");
+      if (! config_.has_explicit_unit("y")) {
+        y *= lunit;
+      }
+
+      set(x, y);
+    }
+
+    return;
+  }
+
+  void rectangle::reset()
+  {
+    _set_defaults();
+    this->i_object_3d::_reset();
     return;
   }
 

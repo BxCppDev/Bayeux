@@ -22,6 +22,10 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(right_circular_conical_nappe,
+                                             "geomtools::right_circular_conical_nappe");
+
   // static
   const std::string & right_circular_conical_nappe::right_circular_conical_nappe_label()
   {
@@ -35,6 +39,79 @@ namespace geomtools {
   std::string right_circular_conical_nappe::get_shape_name () const
   {
     return right_circular_conical_nappe::right_circular_conical_nappe_label();
+  }
+
+  void right_circular_conical_nappe::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      DT_THROW_IF(! config_.has_key("bottom_radius"), std::logic_error, "Missing elliptical sector 'bottom_radius' property !");
+      double bottom_radius = config_.fetch_real("bottom_radius");
+      if (! config_.has_explicit_unit("bottom_radius")) {
+        bottom_radius *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("top_radius"), std::logic_error, "Missing elliptical sector 'top_radius' property !");
+      double top_radius = config_.fetch_real("top_radius");
+      if (! config_.has_explicit_unit("top_radius")) {
+        top_radius *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("z"), std::logic_error, "Missing elliptical cylinder sector 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
+      }
+
+      set_bottom_radius(bottom_radius);
+      set_top_radius(top_radius);
+      set_z(z);
+
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        aunit = datatools::units::get_angle_unit_from(aunit_str);
+      }
+
+      double start_angle = 0.0;
+      double delta_angle = 2 * M_PI * CLHEP::radian;
+      bool not_full_angle = false;
+      if (config_.has_key ("start_angle")) {
+        start_angle = config_.fetch_real ("start_angle");
+        if (! config_.has_explicit_unit ("start_angle")) {
+          start_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (config_.has_key ("delta_angle")) {
+        delta_angle = config_.fetch_real ("delta_angle");
+        if (! config_.has_explicit_unit ("delta_angle")) {
+          delta_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (not_full_angle) {
+        set_start_angle(start_angle);
+        set_delta_angle(delta_angle);
+      }
+
+    }
+
+    return;
+  }
+
+  void right_circular_conical_nappe::reset()
+  {
+    _set_defaults();
+    this->i_object_3d::reset();
+    return;
   }
 
   void right_circular_conical_nappe::_set_defaults()

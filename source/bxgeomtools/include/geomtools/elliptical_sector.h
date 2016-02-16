@@ -103,6 +103,9 @@ namespace geomtools {
     /// Destructor
     virtual ~elliptical_sector();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     /// Reset
     void reset();
 
@@ -156,6 +159,9 @@ namespace geomtools {
     double _y_radius_;    //!< The Y radius of the ellipse (in arbitrary units).
     double _start_angle_; //!< Start angle of the elliptic arc
     double _delta_angle_; //!< Delta angle of the elliptic arc
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_sector);
 
   };
 

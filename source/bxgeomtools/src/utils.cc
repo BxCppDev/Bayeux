@@ -305,6 +305,20 @@ namespace geomtools {
     return;
   }
 
+  void set_vector_2d(const std::vector<double> & source_, vector_2d & target_)
+  {
+    DT_THROW_IF(source_.size() != 2, std::logic_error, "Source vector is not dimension 2!");
+    target_.set(source_[0], source_[1]);
+    return;
+  }
+
+  void set_vector_3d(const std::vector<double> & source_, vector_3d & target_)
+  {
+    DT_THROW_IF(source_.size() != 3, std::logic_error, "Source vector is not dimension 3!");
+    target_.set(source_[0], source_[1], source_[2]);
+    return;
+  }
+
   void create (vector_3d & v_,
                double x_,
                double y_,

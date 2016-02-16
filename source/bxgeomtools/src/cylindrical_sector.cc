@@ -38,6 +38,72 @@ namespace geomtools {
     return cylindrical_sector::cylindrical_sector_label();
   }
 
+  void cylindrical_sector::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      DT_THROW_IF(! config_.has_key("radius"), std::logic_error, "Missing cylindrical sector 'radius' property !");
+      double radius = config_.fetch_real("radius");
+      if (! config_.has_explicit_unit("radius")) {
+        radius *= lunit;
+      }
+
+      DT_THROW_IF(! config_.has_key("z"), std::logic_error, "Missing cylindrical sector 'z' property !");
+      double z = config_.fetch_real("z");
+      if (! config_.has_explicit_unit("z")) {
+        z *= lunit;
+      }
+
+      set_z(z);
+      set_radius(radius);
+
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        aunit = datatools::units::get_angle_unit_from(aunit_str);
+      }
+
+      double start_angle = 0.0;
+      double delta_angle = 2 * M_PI * CLHEP::radian;
+      bool not_full_angle = false;
+      if (config_.has_key ("start_angle")) {
+        start_angle = config_.fetch_real ("start_angle");
+        if (! config_.has_explicit_unit ("start_angle")) {
+          start_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (config_.has_key ("delta_angle")) {
+        delta_angle = config_.fetch_real ("delta_angle");
+        if (! config_.has_explicit_unit ("delta_angle")) {
+          delta_angle *= aunit;
+        }
+        not_full_angle = true;
+      }
+      if (not_full_angle) {
+        set_start_angle(start_angle);
+        set_delta_angle(delta_angle);
+      }
+
+    }
+
+    return;
+  }
+
+  void cylindrical_sector::reset()
+  {
+    _set_defaults();
+    this->i_object_3d::reset();
+    return;
+  }
+
   void cylindrical_sector::_set_defaults()
   {
     datatools::invalidate(_radius_);

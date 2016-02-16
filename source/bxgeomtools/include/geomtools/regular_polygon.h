@@ -118,6 +118,9 @@ namespace geomtools {
     /// Destructor
     virtual ~regular_polygon();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     /// Reset
     void reset();
 
@@ -163,6 +166,9 @@ namespace geomtools {
 
     uint32_t _n_sides_; //!< The number of sides/vertices of the polygon
     double   _r_;       //!< The radius of the polygon, i.e. the distance from center to vertices (circumradius)
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(regular_polygon);
 
   };
 

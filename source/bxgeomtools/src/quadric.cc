@@ -29,6 +29,7 @@
 #include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
+#include <datatools/units.h>
 // - Bayeux/mygsl:
 #include <mygsl/polynomial.h>
 
@@ -37,6 +38,9 @@
 #include <geomtools/foot_point_on_quadric_finder.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(quadric, "geomtools::quadric");
 
   // static
   const std::string & quadric::quadric_label()
@@ -65,9 +69,126 @@ namespace geomtools {
     return /*!all_zero &&*/ !all_zero_AF;
   }
 
+  void quadric::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+
+      static const int MODE_INVALID = 0;
+      static const int MODE_PLAIN = 1;
+      int mode = MODE_INVALID;
+
+      if (config_.has_key("mode")) {
+        const std::string & mode_str = config_.fetch_string("mode");
+        if (mode_str == "plain") {
+          mode = MODE_PLAIN;
+        } else {
+          DT_THROW(std::logic_error, "Invalid build mode '" << mode_str << "'!");
+        }
+      }
+
+      if (mode == MODE_INVALID) {
+        mode = MODE_PLAIN;
+      }
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      double lunit_sqr = lunit * lunit;
+      if (config_.has_key("square_length_unit")) {
+        const std::string lunit_sqr_str = config_.fetch_string("square_length_unit");
+        lunit_sqr = datatools::units::get_surface_unit_from(lunit_sqr_str);
+      }
+
+      // Note (FM) : Should we check the coherence between lunit and lunit_sqr ?
+
+      if (mode == MODE_PLAIN) {
+        double a(0.0), b(0.0), c(0.0), d(0.0), e(0.0), f(0.0), g(0.0), h(0.0), i(0.0), j(0.0);
+
+        if (config_.has_key("A")) {
+          a = config_.fetch_real("A");
+          DT_THROW_IF(config_.has_explicit_unit("A"), std::logic_error, "Parameter 'A' must be dimensionless!");
+        }
+
+        if (config_.has_key("B")) {
+          b = config_.fetch_real("B");
+          DT_THROW_IF(config_.has_explicit_unit("B"), std::logic_error, "Parameter 'B' must be dimensionless!");
+        }
+
+        if (config_.has_key("C")) {
+          c = config_.fetch_real("C");
+          DT_THROW_IF(config_.has_explicit_unit("C"), std::logic_error, "Parameter 'C' must be dimensionless!");
+        }
+
+        if (config_.has_key("D")) {
+          d = config_.fetch_real("D");
+          DT_THROW_IF(config_.has_explicit_unit("D"), std::logic_error, "Parameter 'D' must be dimensionless!");
+         }
+
+        if (config_.has_key("E")) {
+          e = config_.fetch_real("E");
+          DT_THROW_IF(config_.has_explicit_unit("E"), std::logic_error, "Parameter 'E' must be dimensionless!");
+       }
+
+        if (config_.has_key("F")) {
+          f = config_.fetch_real("F");
+          DT_THROW_IF(config_.has_explicit_unit("F"), std::logic_error, "Parameter 'F' must be dimensionless!");
+        }
+
+        if (config_.has_key("G")) {
+          g = config_.fetch_real("G");
+          if (! config_.has_explicit_unit("g")) {
+            g *= lunit;
+          }
+        }
+
+        if (config_.has_key("H")) {
+          h = config_.fetch_real("H");
+          if (! config_.has_explicit_unit("h")) {
+            h *= lunit;
+          }
+        }
+
+        if (config_.has_key("I")) {
+          i = config_.fetch_real("I");
+          if (! config_.has_explicit_unit("I")) {
+            i *= lunit;
+          }
+        }
+
+        if (config_.has_key("J")) {
+          j = config_.fetch_real("J");
+          if (! config_.has_explicit_unit("J")) {
+            j *= lunit_sqr;
+          }
+        }
+
+        set_coefficient(A, a);
+        set_coefficient(B, b);
+        set_coefficient(C, c);
+        set_coefficient(D, d);
+        set_coefficient(E, e);
+        set_coefficient(F, f);
+        set_coefficient(G, g);
+        set_coefficient(H, h);
+        set_coefficient(I, i);
+        set_coefficient(J, j);
+
+      }
+
+    }
+
+    return;
+  }
+
   void quadric::reset()
   {
     _set_defaults();
+    this->i_object_3d::reset();
     return;
   }
 
@@ -314,7 +435,7 @@ namespace geomtools {
                                face_intercept_info & intercept_,
                                double tolerance_) const
   {
-    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid plane!");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid quadric!");
     intercept_.reset();
     const geomtools::vector_3d & P = from_;
     geomtools::vector_3d I = this->projection(P, direction_, tolerance_);
@@ -523,7 +644,7 @@ namespace geomtools {
   void quadric::generate_wires_self(wires_type & /*wires_*/,
                                     uint32_t /*options_*/) const
   {
-    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid plane!");
+    DT_THROW_IF(! is_valid(), std::logic_error, "Invalid quadric!");
 
     // NIY
 
@@ -544,13 +665,14 @@ namespace geomtools {
     case H : return std::string("H");
     case I : return std::string("I");
     case J : return std::string("J");
+    default: return std::string("!");
     }
   }
 
   void quadric::tree_dump(std::ostream & out_,
-                           const std::string & title_,
-                           const std::string & indent_,
-                           bool inherit_) const
+                          const std::string & title_,
+                          const std::string & indent_,
+                          bool inherit_) const
   {
     i_object_3d::tree_dump(out_, title_, indent_, true);
 

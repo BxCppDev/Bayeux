@@ -24,6 +24,10 @@
 
 namespace geomtools {
 
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(spherical_sector,
+                                             "geomtools::spherical_sector");
+
   // static
   const std::string & spherical_sector::spherical_sector_label()
   {
@@ -46,6 +50,88 @@ namespace geomtools {
     datatools::invalidate(_delta_theta_);
     datatools::invalidate(_start_phi_);
     datatools::invalidate(_delta_phi_);
+    return;
+  }
+
+
+  void spherical_sector::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      DT_THROW_IF(! config_.has_key("radius"), std::logic_error, "Missing spherical sector 'radius' property !");
+      double radius = config_.fetch_real("radius");
+      if (! config_.has_explicit_unit("radius")) {
+        radius *= lunit;
+      }
+
+      set_radius(radius);
+
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        aunit = datatools::units::get_angle_unit_from(aunit_str);
+      }
+
+      double start_theta = 0.0;
+      double delta_theta = 2 * M_PI * CLHEP::radian;
+      bool not_full_theta = false;
+      if (config_.has_key ("start_theta")) {
+        start_theta = config_.fetch_real ("start_theta");
+        if (! config_.has_explicit_unit ("start_theta")) {
+          start_theta *= aunit;
+        }
+        not_full_theta = true;
+      }
+      if (config_.has_key ("delta_theta")) {
+        delta_theta = config_.fetch_real ("delta_theta");
+        if (! config_.has_explicit_unit ("delta_theta")) {
+          delta_theta *= aunit;
+        }
+        not_full_theta = true;
+      }
+      if (not_full_theta) {
+        set_start_theta(start_theta);
+        set_delta_theta(delta_theta);
+      }
+
+      double start_phi = 0.0;
+      double delta_phi = 2 * M_PI * CLHEP::radian;
+      bool not_full_phi = false;
+      if (config_.has_key ("start_phi")) {
+        start_phi = config_.fetch_real ("start_phi");
+        if (! config_.has_explicit_unit ("start_phi")) {
+          start_phi *= aunit;
+        }
+        not_full_phi = true;
+      }
+      if (config_.has_key ("delta_phi")) {
+        delta_phi = config_.fetch_real ("delta_phi");
+        if (! config_.has_explicit_unit ("delta_phi")) {
+          delta_phi *= aunit;
+        }
+        not_full_phi = true;
+      }
+      if (not_full_phi) {
+        set_start_phi(start_phi);
+        set_delta_phi(delta_phi);
+      }
+
+    }
+
+    return;
+  }
+
+  void spherical_sector::reset()
+  {
+    _set_defaults();
+    this->i_object_3d::reset();
     return;
   }
 

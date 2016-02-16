@@ -161,7 +161,7 @@ namespace geomtools {
         if (fdebug) {
           *fdebug.get() << p0.x() << ' ' << p0.y() << ' ' << p0.z() << std::endl;
         }
-      } while (true);
+      } while (go_on);
       on_surface_ = p0;
     }
     if (error_code != EXIT_SUCCESS) {

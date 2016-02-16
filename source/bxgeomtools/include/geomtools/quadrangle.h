@@ -100,6 +100,9 @@ namespace geomtools {
     /// Destructor
     virtual ~quadrangle();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
     /// Reset
     void reset();
 
@@ -192,6 +195,9 @@ namespace geomtools {
     // Working data:
     boost::scoped_ptr<triangle> _t012_;
     boost::scoped_ptr<triangle> _t023_;
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(quadrangle);
 
   };
 

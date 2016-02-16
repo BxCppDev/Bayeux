@@ -18,6 +18,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/utils.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/i_shape_2d.h>
@@ -26,6 +27,9 @@
 #include <geomtools/line_3d.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(triangle, "geomtools::triangle");
 
   const std::string & triangle::triangle_label()
   {
@@ -238,6 +242,63 @@ namespace geomtools {
 
   triangle::~triangle()
   {
+    return;
+  }
+
+  void triangle::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      vector_3d vtx0;
+      vector_3d vtx1;
+      vector_3d vtx2;
+      invalidate_vector_3d(vtx0);
+      invalidate_vector_3d(vtx1);
+      invalidate_vector_3d(vtx2);
+
+      if (config_.has_key("vertex_0")) {
+        std::vector<double> coord0;
+        config_.fetch("vertex_0", coord0);
+        DT_THROW_IF(coord0.size() != 3, std::logic_error, "Invalid number of coordinates for vertex #0!");
+        set_vector_3d(coord0, vtx0);
+        DT_THROW_IF(! is_valid_vector_3d(vtx0), std::logic_error, "Invalid vertex #0!");
+        if ( config_.has_explicit_unit("vertex_0")) {
+          vtx0 *= lunit;
+        }
+      }
+
+      if (config_.has_key("vertex_1")) {
+        std::vector<double> coord1;
+        config_.fetch("vertex_1", coord1);
+        DT_THROW_IF(coord1.size() != 3, std::logic_error, "Invalid number of coordinates for vertex #1!");
+        set_vector_3d(coord1, vtx1);
+        DT_THROW_IF(! is_valid_vector_3d(vtx1), std::logic_error, "Invalid vertex #1!");
+        if ( config_.has_explicit_unit("vertex_1")) {
+          vtx1 *= lunit;
+        }
+      }
+
+      if (config_.has_key("vertex_2")) {
+        std::vector<double> coord2;
+        config_.fetch("vertex_2", coord2);
+        DT_THROW_IF(coord2.size() != 3, std::logic_error, "Invalid number of coordinates for vertex #2!");
+        set_vector_3d(coord2, vtx2);
+        DT_THROW_IF(! is_valid_vector_3d(vtx2), std::logic_error, "Invalid vertex #2!");
+        if ( config_.has_explicit_unit("vertex_2")) {
+          vtx2 *= lunit;
+        }
+      }
+
+      set_vertexes(vtx0, vtx1, vtx2);
+    }
+
     return;
   }
 

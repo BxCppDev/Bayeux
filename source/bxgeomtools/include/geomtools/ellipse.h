@@ -144,9 +144,6 @@ namespace geomtools {
     /// Destructor
     virtual ~ellipse();
 
-    /// Reset
-    void reset();
-
     /// Return the name of this solid shape class
     virtual std::string get_shape_name() const;
 
@@ -167,6 +164,12 @@ namespace geomtools {
     virtual void generate_wires_self(wires_type & wires_,
                                      uint32_t options_ = 0) const;
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    virtual void reset();
+
   protected:
 
     /// Set default attributes values
@@ -178,6 +181,9 @@ namespace geomtools {
     double _y_radius_;    //!< The Y radius of the ellipse (in arbitrary units).
     double _start_angle_; //!< Start angle of the elliptic arc
     double _delta_angle_; //!< Delta angle of the elliptic arc
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(ellipse);
 
   };
 

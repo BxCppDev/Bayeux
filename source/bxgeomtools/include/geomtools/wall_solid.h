@@ -183,15 +183,15 @@ namespace geomtools {
     double         _z_;    //!< Height of the wall
     simple_polygon _base_; //!< Simple polygon base of the wall
 
-    // Working data:
-    bool    _computed_; //!< Flag indicating that internal working data have been computed
-    boost::logic::tribool _has_top_face_;
-    boost::logic::tribool _has_bottom_face_;
-    boost::logic::tribool _has_inner_face_;
-    double  _top_surface_;
-    double  _bottom_surface_;
-    double  _side_surface_;
-    double  _volume_;
+    // Working data (not used yet):
+    // bool    _computed_; //!< Flag indicating that internal working data have been computed
+    // boost::logic::tribool _has_top_face_;
+    // boost::logic::tribool _has_bottom_face_;
+    // boost::logic::tribool _has_inner_face_;
+    // double  _top_surface_;
+    // double  _bottom_surface_;
+    // double  _side_surface_;
+    // double  _volume_;
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(wall_solid);

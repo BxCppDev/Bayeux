@@ -102,9 +102,6 @@ namespace geomtools {
     /// Destructor
     virtual ~circle();
 
-    /// Reset
-    void reset();
-
     /// Return the name of this solid shape class
     virtual std::string get_shape_name() const;
 
@@ -125,6 +122,13 @@ namespace geomtools {
     virtual void generate_wires_self(wires_type & wires_,
                                      uint32_t options_ = 0) const;
 
+
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    void reset();
+
   protected:
 
     /// Set default attributes values
@@ -135,6 +139,9 @@ namespace geomtools {
     double _radius_;      //!< The radius of the circle (in arbitrary units).
     double _start_angle_; //!< Start angle of the circular arc
     double _delta_angle_; //!< Delta angle of the circular arc
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(circle);
 
   };
 

@@ -116,6 +116,12 @@ namespace geomtools {
     /// Build an ordered collection of vertexes
     virtual unsigned int compute_vertexes(vertex_col_type & vertexes_) const;
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    void reset();
+
   protected:
 
     /// Set default attributes values
@@ -125,6 +131,9 @@ namespace geomtools {
 
     double _x_; //!< X dimension
     double _y_; //!< Y dimension
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(rectangle);
 
   };
 

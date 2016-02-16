@@ -113,15 +113,16 @@ namespace geomtools {
   // virtual
   void wall_solid::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
   {
-    this->i_shape_3d::_initialize(config_, objects_);
 
     if (! is_valid()) {
+      this->i_shape_3d::_initialize(config_, objects_);
 
       double lunit = CLHEP::mm;
       if (config_.has_key("length_unit")) {
         const std::string lunit_str = config_.fetch_string("length_unit");
         lunit = datatools::units::get_length_unit_from(lunit_str);
       }
+
       DT_THROW_IF (! config_.has_key("z"), std::logic_error, "Missing box 'z' property !");
 
       if (!datatools::is_valid(_z_)) {
@@ -135,10 +136,10 @@ namespace geomtools {
       if (!_base_.is_valid()) {
         datatools::properties base_config;
         config_.export_and_rename_starting_with(base_config, "base.", "");
-        _base_.initialize(base_config);
+        _base_.initialize(base_config, objects_);
       }
 
-    }
+    } // ! is_valid
     lock();
     return;
   }
@@ -149,7 +150,6 @@ namespace geomtools {
     unlock();
     _base_.reset();
     _set_defaults();
-
     this->i_shape_3d::_reset();
     return;
   }

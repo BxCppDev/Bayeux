@@ -67,7 +67,7 @@ int main (int argc_, char ** argv_)
     my_simple_polygon.add_vertex(0.0,-2.0); // good
     // my_simple_polygon.add_vertex(7.0, 2.5); // bad
 
-    my_simple_polygon.initialize();
+    my_simple_polygon.initialize_simple();
     my_simple_polygon.tree_dump(std::clog, "my_simple_polygon");
 
     std::cerr << "Polygon #2 :" << std::endl;
@@ -101,7 +101,7 @@ int main (int argc_, char ** argv_)
                                         0.15, 0.15,
                                         30.0 * CLHEP::degree);
     std::cerr << "  Initializing..." << std::endl;
-    my_simple_polygon3.initialize();
+    my_simple_polygon3.initialize_simple();
     std::cerr << "  Done." << std::endl;
     my_simple_polygon3.tree_dump(std::clog, "my_simple_polygon3");
 

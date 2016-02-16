@@ -112,7 +112,7 @@ namespace geomtools {
 
   private:
 
-    datatools::logger::priority _logging_priority_;    //!< Logging priority threshold
+    datatools::logger::priority _logging_priority_; //!< Logging priority threshold
     bool _initialized_; //!< Initialization flag
     i_object_3d::factory_register_type _factory_register_; //!< Register of model factories
     i_object_3d::handle_dict_type      _shapes_; //!< Dictionary of shapes

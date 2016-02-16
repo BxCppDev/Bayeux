@@ -100,6 +100,12 @@ namespace geomtools {
     /// Destructor
     virtual ~spherical_sector();
 
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
+
+    /// Reset
+    void reset();
+
     /// Check if a point is on the surface
     virtual bool is_on_surface(const vector_3d &,
                                double tolerance_ = GEOMTOOLS_PROPER_TOLERANCE) const;
@@ -152,6 +158,9 @@ namespace geomtools {
     double _delta_theta_; //!< The delta theta angle
     double _start_phi_;   //!< The starting phi angle
     double _delta_phi_;   //!< The delta phi angle
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(spherical_sector);
 
   };
 
