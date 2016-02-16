@@ -68,7 +68,7 @@ extern "C" {
   char *br_strcat  (const char *str1, const char *str2);
   char *br_build_path (const char *dir, const char *file);
   char *br_dirname (const char *path);
-
+  int br_basename_is(const char *path, const char * basename_);
 
 #ifdef __cplusplus
 }
