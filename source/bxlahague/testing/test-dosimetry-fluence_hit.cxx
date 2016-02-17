@@ -40,11 +40,11 @@
 int main (int /* argc_ */, char ** /* argv_*/)
 {
   BAYEUX_INIT();
-  using namespace std;
+  // using namespace std;
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for the 'lahague::dosimetry::fluence_hit' class." << endl;
+      std::clog << "Test program for the 'lahague::dosimetry::fluence_hit' class." << std::endl;
 
       lahague::dosimetry::fluence_hit flhit;
 
@@ -84,26 +84,22 @@ int main (int /* argc_ */, char ** /* argv_*/)
 
       flhit.tree_dump(std::clog, "Fluence hit (deserialized): ");
 
-      double A_source = 1.0 * datatools::units::get_unit("GBq");
+      // double A_source = 1.0 * datatools::units::get_unit("GBq");
       double r_icru = 15.0 * CLHEP::cm;
       double s_icru = M_PI * r_icru * r_icru;
-
       double H10_star = flhit.get_h10_star() / s_icru;
-
       double h10_unit = datatools::units::get_unit("uSv") / datatools::units::get_unit("GBq") /  datatools::units::get_unit("hour");
       std::clog << "H*(10) = " << H10_star / h10_unit << " uSv/GBq/h" << std::endl;
 
-
-
     }
-  catch (exception & x)
+  catch (std::exception & x)
     {
-      cerr << "error: " << x.what () << endl;
+      std::cerr << "error: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error !" << endl;
+      std::cerr << "error: " << "unexpected error !" << std::endl;
       error_code = EXIT_FAILURE;
     }
   BAYEUX_FINI();
