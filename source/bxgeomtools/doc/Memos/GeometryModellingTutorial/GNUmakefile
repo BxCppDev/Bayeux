@@ -14,6 +14,8 @@ TEX_DIR=$(THE_BASE_DIR)
 PDFTEX_DIR=$(THE_BASE_DIR)/pdftex
 PDFTEX_T_DIR=$(THE_BASE_DIR)/pdftex_t
 
+LATEX_MAIN_SRC_FILE=GeometryModellingTutorial
+
 vpath %.fig      $(XFIG_DIR)
 vpath %.png      $(PNG_DIR)
 vpath %.tex      $(TEX_DIR)
@@ -21,16 +23,14 @@ vpath %.pdf      $(PDFTEX_DIR)
 vpath %.pdftex_t $(PDFTEX_T_DIR)
 
 # Automaticaly build the list of Fig files to be processed
-# by fig2dev : 
-fig_files           := $(notdir $(shell ls $(XFIG_DIR)/*.fig))  
-fig2pdfsrc_files    := $(notdir $(shell ls $(XFIG_DIR)/*.fig))  
+# by fig2dev :
+fig_files           := $(notdir $(shell ls $(XFIG_DIR)/*.fig))
+fig2pdfsrc_files    := $(notdir $(shell ls $(XFIG_DIR)/*.fig))
 fig2pdftex_files    := $(fig2pdfsrc_files:%.fig=%.pdf)
 fig2pdftex_t_files  := $(fig2pdfsrc_files:%.fig=%.pdftex_t)
 
 .PHONY : all
 all : pdf
-
-LATEX_MAIN_SRC_FILE=GeometryModellingTutorial
 
 .PHONY : clean
 clean : clean_pdftex clean_pdftex_t
@@ -45,31 +45,35 @@ clean : clean_pdftex clean_pdftex_t
 	$(RM) $(LATEX_MAIN_SRC_FILE).tos
 
 .PHONY : clean_pdftex
-clean_pdftex : 
+clean_pdftex :
 	@$(RM) $(PDFTEX_DIR)/*.pdf
 
 .PHONY : clean_pdftex_t
-clean_pdftex_t : 
+clean_pdftex_t :
 	@$(RM) $(PDFTEX_T_DIR)/*.pdftex_t
 
 .PHONY : show
 show : pdf
 	@test  "xacroread" = "x" && echo "ERROR: No PDF browser! " || \
-	 (which acroread >/dev/null 2>&1 ) && acroread $(LATEX_MAIN_SRC_FILE).pdf & 
+	 (which acroread >/dev/null 2>&1 ) && acroread $(LATEX_MAIN_SRC_FILE).pdf &
 
 .PHONY : pdf
 pdf : $(LATEX_MAIN_SRC_FILE).pdf
+
+.PHONY : show
+show : $(LATEX_MAIN_SRC_FILE).pdf
+	xdg-open $(LATEX_MAIN_SRC_FILE).pdf
 
 $(LATEX_MAIN_SRC_FILE).pdf : $(LATEX_MAIN_SRC_FILE).tex special
 	pdflatex $<
 	pdflatex $<
 
 .PHONY : special
-special : images fig2pdftex_t 
+special : images fig2pdftex_t
 	@echo "special: Nothing to do here for now..."
 
 .PHONY : images
-images : 
+images :
 	@echo "images: Nothing to do here for now..."
 
 %.pdftex_t : %.fig

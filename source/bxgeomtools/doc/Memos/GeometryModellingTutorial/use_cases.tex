@@ -8,17 +8,17 @@ complexity progressively.
 
 \subsection{A box in a virtual world}
 
-We  want to achieve  the construction  of the  virtual setup  shown on
+We want  to achieve  the construction  of the  virtual setup  shown on
 figure \ref{fig:mf:0}.   We have here  a simple top level  large green
-box (the \emph{world}) with  given dimensions and auxiliary properties
-(color,  material\dots).   This \emph{world}  box  contains a  single
-smaller red  box with its  own geometry and auxiliary  properties. The
-placement of the red box inside  the mother green box is determined by
-the position  of the center  $O'$ of the  red box with respect  to the
-center $O$  of the green box.   The orientation of the  red box inside
-the mother green box can  be determined by the Euler angles associated
-to  the rotation matrix  that transform  the ($0xyz$)  world reference
-frame axis into the ($0'x'y'z'$) daughter frame axis.
+box  (the top-level  \emph{world}  volume) with  given dimensions  and
+auxiliary  properties (color,  material\dots).  This  \emph{world} box
+contains a single smaller red box  with its own geometry and auxiliary
+properties. The placement  of the red box inside the  mother green box
+is determined by the  position of the center $O'$ of  the red box with
+respect to  the center $O$ of  the green box.  The  orientation of the
+red box  inside the mother  green box can  be determined by  the Euler
+angles associated to  the rotation matrix that  transform the ($0xyz$)
+world reference frame axis into the ($0'x'y'z'$) daughter frame axis.
 
 
 \begin{figure}[h]
@@ -30,7 +30,7 @@ frame axis into the ($0'x'y'z'$) daughter frame axis.
 
 With  \texttt{geomtools}, the  easiest way  to construct  this virtual
 geometry setup is to use two available geometry model classes :
-\begin{itemize} 
+\begin{itemize}
 
 \item  the \texttt{geomtools::simple\_world\_model} class  is designed
   to model a  top-level box with arbitrary dimensions.  It can contain
@@ -47,21 +47,21 @@ geometry setup is to use two available geometry model classes :
 
 Both            \texttt{geomtools::simple\_world\_model}           and
 \texttt{geomtools::simple\_shaped\_model} are registered by default in
-the \texttt{geomtools}' \emph{model factory}.
+the \texttt{geomtools} \emph{model factory}.
 
 What we  need now is to  provide some configuration file  with all the
 directives that reflect the  layout seen on figure \ref{fig:mf:0}. The
 file will use by convention the \texttt{.geom} extension, note however
 it  is  not  mandatory.  The  format  is  the  ASCII encoding  of  the
-\texttt{datatools::utils::multi\_properties}  class. The  principle is
+\texttt{datatools::multi\_properties}  class. The  principle is
 to provide one  section of properties per geometry  model described in
-the setup. Here we will have two section : one for the top-level world
+the setup. Here we will have two sections : one for the top-level world
 model, the  second for the daughter  box in it. Note  that blank lines
 are ignored as  well as line starting with the  \# character. There is
 an exception  with special meta-comments starting  with \verb+#@+ that
 are        part        of        the       syntax        of        the
-\texttt{datatools::utils::multi\_properties}        and       embedded
-\texttt{datatools::utils::properties} objects.  This meta-comments are
+\texttt{datatools::multi\_properties}        and       embedded
+\texttt{datatools::properties} objects.  This meta-comments are
 \verb+#@description+ and \verb+#@config+ (see the example below).
 
 We first  create a file named \TT{simple\_world\_1.geom}  and we write
@@ -79,6 +79,7 @@ showspaces=false]{\codingpath/simple_world_1.geom}
 \label{sample:header:1}
 \end{sample}
 
+% XXX
 
 \pn This meta information,  stored as meta-comments, inform the parser
 for  the \\  \texttt{datatools::utils::multi\_properties}  object that
@@ -107,7 +108,7 @@ leaf of  the hierarchy, it contains  no daughter. This  simple case is
 addressed  by  the   \texttt{simple\_shaped\_model}  provided  by  the
 \texttt{geomtools} API.
 
-\pn The file sample \ref{sample:section_srb:1} shows 
+\pn The file sample \ref{sample:section_srb:1} shows
 the section for the \emph{small red box}.
 
 \begin{sample}[h]
@@ -183,7 +184,7 @@ directives  stored in the  \TT{simple\_world\_1.geom} file.   Once the
 factory object has loaded the file and has been locked, the transcient
 geometry hierarchy model is built and the program prints its structure
 on the terminal.
-  
+
 
 \begin{program}[h]
 \VerbatimInput[frame=single,
@@ -288,7 +289,7 @@ showspaces=false]{\codingpath/setup_2.geom}
 
 Using   the   \texttt{setup\_construct\_and\_view.cxx}  program   (see
 program  \ref{program:scav:0}),  we   obtain  the  display  in  figure
-\ref{fig:setup_2:0}. 
+\ref{fig:setup_2:0}.
 
 \begin{program}[hp]
 \VerbatimInput[frame=single,
@@ -321,9 +322,9 @@ additional      names      and      provide     the      corresponding
 \texttt{internal\_item.model.XXX}                                   and
 \texttt{internal\_item.placement.XXX}  rules.  But we  can also  get a
 mix  of different  kind of  objects as  daughters of  the \emph{world}
-volume.  
+volume.
 
-In  a new  \TT{setup\_3.geom}  file, let's  introduce,  after the  
+In  a new  \TT{setup\_3.geom}  file, let's  introduce,  after the
 well known  \TT{small\_red\_box} section,  a new  geometry  model that
 represents a  long blue cylinder.  This  is done with  the file sample
 \ref{sample:setup_3:0} that shows the  parameters of a new section for
@@ -355,7 +356,7 @@ showspaces=false]{\codingpath/setup_3.geom}
 \label{sample:setup_3:1}
 \end{sample}
 
-Now the \texttt{setup\_construct\_and\_view.cxx} program (program source 
+Now the \texttt{setup\_construct\_and\_view.cxx} program (program source
 \ref{program:scav:0}) displays the figure \ref{fig:setup_3:0}.
 Easy isn't it ?
 
@@ -375,14 +376,14 @@ Easy isn't it ?
 This section describes a more complex setup. Now we will implement a
 world volume that contains not only a long blue cylinder but also
 a huge magenta cube that contains in turn three small red boxes
-with arbitrary placements. 
+with arbitrary placements.
 
 File samples \ref{sample:setup_4:1} and \ref{sample:setup_4:2}
 show the associated sections of a new file \TT{setup\_4.geom}.
 The display of this three-level hierarchy setup can be sen on figure \ref{fig:setup_4:0}.
 
 There is no limit to the number of levels we can handle with such mecanism.
-The \texttt{internal\_item.XXX} rule can be used to nest more and more 
+The \texttt{internal\_item.XXX} rule can be used to nest more and more
 daughter volumes at higher depth.
 
 \begin{sample}[h]
@@ -462,7 +463,7 @@ arbitrary  rotation  angle.  The  rotation  operates  on a  predefined
 box-shape model. As the rotation operates on the $Oz$ axis, the height
 of the mother volume equals the height of the daughter volume. However
 the width (\texttt{x})  and depth (\texttt{y}) of the  mother box must
-be provided by the user in such a way the mother box fully enclose the 
+be provided by the user in such a way the mother box fully enclose the
 daughter volume.
 
 Another  possibility is shown  with sample  \ref{sample:rotated:1}. In
@@ -636,10 +637,10 @@ showspaces=false]{\codingpath/setup_7.geom}
 \subsubsection{The \texttt{stacked\_model} driver}
 
 The \texttt{stacked\_model} driver is responsible to stack several objects
-along an arbitrary axis ($x$, $y$ or $z$). A mother volume is automatically 
+along an arbitrary axis ($x$, $y$ or $z$). A mother volume is automatically
 computed to enclose the full set of stacked daughter volumes. Stacked objects
-must fulfill the \emph{stackable object} interface; boxes, cylinders, 
-tubes as well as other basic shapes do. 
+must fulfill the \emph{stackable object} interface; boxes, cylinders,
+tubes as well as other basic shapes do.
 
 The sample  \ref{sample:stacked:0} shows the  syntax used to  define a
 \texttt{stacked\_model}  driver  with  four different  volumes  placed
