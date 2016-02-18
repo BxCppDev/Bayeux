@@ -11,6 +11,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QWidget>
+#include <QDialog>
 #include <datatools/qt/led.h>
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
@@ -48,9 +49,9 @@ void test_qt_led(bool gui_)
     int argc = 1;
     // char qtitle[100];
     // qtitle = { "test" };
-    char * argv[] = { "test" };
 #if DATATOOLS_WITH_QT_GUI == 1
-    QApplication app(argc, argv);
+    const char * argv[] = { "test" };
+    QApplication app(argc, (char **) argv);
     QWidget window;
     QVBoxLayout * layout = new QVBoxLayout;
     QPushButton * my_button = new QPushButton("Toggle");
@@ -69,6 +70,9 @@ void test_qt_led(bool gui_)
     window.setLayout(layout);
     window.show();
     int ret = app.exec();
+    if (ret == QDialog::Rejected) {
+      DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "datatools::qt::led test GUI dialog was rejected!");
+    }
 #else
     std::cerr << "test_qt_led::No support for Qt based GUI\n";
 #endif // DATATOOLS_WITH_QT_GUI == 1

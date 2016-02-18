@@ -491,6 +491,9 @@ void test1(bool debug_, bool
             datatools::configuration::ui::variant_registry_dialog window(vrtm);
             window.show();
             int ret = app.exec();
+            if (ret == QDialog::Rejected) {
+              DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "Variant registry dialog was rejected!");
+            }
           }
           dkvr.get_registry("geometry").tree_dump(std::clog, "Settings:");
         }
@@ -505,12 +508,18 @@ void test1(bool debug_, bool
           window->setLayout(layout);
           window->show();
           int ret = app.exec();
+          if (ret == QDialog::Rejected) {
+            DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "Variant repository viewer was rejected!");
+          }
         }
 
         {
           datatools::configuration::ui::variant_repository_dialog window(dkvr);
           window.show();
           int ret = app.exec();
+          if (ret == QDialog::Rejected) {
+            DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "Variant repository dialog was rejected!");
+          }
         }
 
       }

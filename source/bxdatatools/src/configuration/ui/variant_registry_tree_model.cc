@@ -659,6 +659,7 @@ namespace datatools {
               display_unit_symbol = par_mod.get_real_preferred_unit();
               unit = units::get_unit(par_mod.get_real_preferred_unit());
             } // real/unit
+            DT_LOG_NOTICE(_logging_, "Unit = " << unit << "!");
 
             std::ostringstream tt_text;
             tt_text << "Configuration parameter:\n";

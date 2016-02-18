@@ -327,7 +327,7 @@ namespace datatools {
       }
 
       void variant_registry_viewer::slot_compute_expand2(const QModelIndex & top_left_index_,
-                                                         const QModelIndex & bottom_right_index_)
+                                                         const QModelIndex & /* bottom_right_index_ */)
       {
         bool devel = false; // _devel_mode_ ;
         static io::indenter indent;
@@ -383,8 +383,8 @@ namespace datatools {
             && active_children_params_count == 0
             && active_children_variants_count == 0) {
           // Collapse an active node if none of its daughters are active:
-          tree_item * node = _registry_tree_model_->node_from_index(top_left_index_);
-          bool active = node->get_record().is_active();
+          // tree_item * node = _registry_tree_model_->node_from_index(top_left_index_);
+          // bool active = node->get_record().is_active();
           _tree_view_->collapse(top_left_index_);
         }
 
@@ -393,11 +393,11 @@ namespace datatools {
         return;
       }
 
-      void variant_registry_viewer::slot_compute_expand(const QModelIndex & parent_index_)
+      void variant_registry_viewer::slot_compute_expand(const QModelIndex & /* parent_index_ */)
       {
         // std::cerr << "DEVEL: variant_registry_viewer::slot_compute_expand: "
         //           << "Entering..." << std::endl;
-        slot_compute_expand2(QModelIndex(),QModelIndex());
+        slot_compute_expand2(QModelIndex(), QModelIndex());
         // std::cerr << "DEVEL: variant_registry_viewer::slot_compute_expand: "
         //           << "Exiting." << std::endl;
         return;

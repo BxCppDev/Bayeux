@@ -412,8 +412,8 @@ namespace datatools {
              i != _repository_->grab_registries().end();
              i++) {
           const std::string & reg_name = i->first;
-          variant_repository::registry_entry & reg_entry = i->second;
-          variant_registry & var_reg = reg_entry.grab_registry();
+          // variant_repository::registry_entry & reg_entry = i->second;
+          // variant_registry & var_reg = reg_entry.grab_registry();
           registry_model_wrapper & reg_model_wrap = _models_.find(reg_name)->second;
           variant_registry_viewer & reg_viewer = reg_model_wrap.grab_viewer();
           reg_viewer.grab_registry_tree_model().set_read_only(ro_);

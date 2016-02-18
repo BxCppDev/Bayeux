@@ -682,6 +682,9 @@ namespace datatools {
       DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Qt is initialized...");
       datatools::configuration::ui::variant_repository_dialog vrep_dialog(*_vrep_);
       int ret = vrep_dialog.exec();
+      if (ret == QDialog::Rejected) {
+        DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "Variant repository dialog was rejected!");
+      }
       /*
       datatools::configuration::ui::variant_repository_dialog * vrep_dialog
         = new datatools::configuration::ui::variant_repository_dialog(*_vrep_);
@@ -915,7 +918,7 @@ namespace datatools {
       _argv_[i] = (char *) malloc((std::strlen(argv_[i]) + 2) * sizeof(char));
       std::strcpy(_argv_[i], argv_[i]);
     }
-    _argv_[argc_] = '\0';
+    _argv_[argc_] = 0; //'\0';
 
     // Fetch the application name:
     if ( argc_ >= 1 ) {

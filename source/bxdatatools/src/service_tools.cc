@@ -1,6 +1,6 @@
 /* service_tools.cc
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,13 @@
 namespace datatools {
 
   dependency_info_type::dependency_info_type() {
+    level = DEPENDENCY_STRICT;
+  }
+
+  void  dependency_info_type::reset() {
+    id.clear();
+    version.clear();
+    meta.clear();
     level = DEPENDENCY_STRICT;
   }
 

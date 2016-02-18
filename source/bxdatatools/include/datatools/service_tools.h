@@ -1,9 +1,9 @@
 /// \file datatools/service_tools.h
-/* Author(s)     :     Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2015-12-03
+ * Last modified : 2016-12-18
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2018 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,25 +51,26 @@ namespace datatools {
   class base_service;
   typedef datatools::handle<base_service> service_handle_type;
 
-  // Constants to measure the level of dependance between services
+  //! \brief Constants to measure the level of dependance between services
   enum dependency_level_type {
+    DEPENDENCY_UNKNOWN  = -1, //! Unknown/undefined dependency relationship
     DEPENDENCY_NONE     =  0, //!< The service does not depend on the external service
     DEPENDENCY_OPTIONAL =  1, //!< The service can work without the external service
     DEPENDENCY_WEAK     =  2, //!< Not so strong dependency on the external service (however part of the service may be invalidated)
-    DEPENDENCY_STRICT   =  3, //!< Strictly depends on the external service
-    DEPENDENCY_UNKNOWN  = -1
+    DEPENDENCY_STRICT   =  3  //!< Strictly depends on the external service
   };
 
   //! \brief Record that stores informations about the dependency between services :
   struct dependency_info_type {
-    std::string id;      //!< ID of the external service
-    std::string version; //!< Version of the external service
-    std::string meta;    //!< Auxiliary information
-    int level;           //!< Level of the dependency (see dependency_level_type enum)
+    std::string id;              //!< ID of the external service
+    std::string version;         //!< Version of the external service
+    std::string meta;            //!< Auxiliary information
+    dependency_level_type level; //!< Level of the dependency (see dependency_level_type enum)
     dependency_info_type();
+    void reset();
   };
 
-  // HA! The typedef names are JUST AS LONG!!!!
+  // Long typedef names
   typedef std::map<std::string, int> dependency_level_dict_type;
   typedef std::map<std::string, dependency_info_type> service_dependency_dict_type;
 
@@ -142,9 +143,9 @@ namespace datatools {
 
     //! Smart print
     virtual void tree_dump(std::ostream& out = std::clog,
-         const std::string & title  = "",
-         const std::string & indent = "",
-         bool inherit = false) const;
+                           const std::string & title  = "",
+                           const std::string & indent = "",
+                           bool inherit = false) const;
 
     //! Return a handle to the non mutable service
     const service_handle_type & get_service_handle() const;
@@ -165,12 +166,12 @@ namespace datatools {
     service_manager & grab_service_manager();
 
   private:
-    std::string  service_name;    //!< The name of the service
-    std::string  service_id;      //!< The ID (type) of the service
-    datatools::properties service_config;  //!< The configuration of the service
-    uint32_t service_status;  //!< The status of the service
-    service_handle_type service_handle;  //!< The handle for the allocated service
-    service_manager * manager; //!< The handle to the host service manager
+    std::string           service_name;   //!< The name of the service
+    std::string           service_id;     //!< The ID (type) of the service
+    datatools::properties service_config; //!< The configuration of the service
+    uint32_t              service_status; //!< The status of the service
+    service_handle_type   service_handle; //!< The handle for the allocated service
+    service_manager *     manager;        //!< The handle to the host service manager
   public:
     service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
     dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
@@ -178,54 +179,6 @@ namespace datatools {
 
   //! \brief Type alias for a dictionary of service entries
   typedef std::map<std::string, service_entry> service_dict_type;
-
-  //! Find the service name with given service identifier from a dictionary of services
-  bool find_service_name_with_id(const service_dict_type & services_,
-                                 const std::string & service_id_,
-                                 std::string & service_name_);
-
-  //! Find all service names with given service identifier from a dictionary of services
-  bool find_service_names_with_id(const service_dict_type & services_,
-                                  const std::string & service_id_,
-                                  std::vector<std::string> & service_names_);
-
-  //! Return the mutable reference to a service given its name
-  base_service & grab_service(service_dict_type & services_,
-                              const std::string & service_name_);
-
-  //! Return the const reference to a service given its name
-  const base_service & get_service(const service_dict_type & services_,
-                                   const std::string & service_name_);
-
-  /**
-   *   @param services_ The dictionary of service entries
-   *   @param service_name_ The name of the service to be checked
-   *   @return a mutable reference to the service instance requested by name and type
-   */
-  template<class T>
-  T& grab(service_dict_type & services_, const std::string& service_name_)
-  {
-    base_service & srvc = grab_service(services_, service_name_);
-    const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(srvc);
-    DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
-    return dynamic_cast<T&>(srvc);
-  }
-
-  /**
-   *   @param services_ The dictionary of service entries
-   *   @param service_name_ The name of the service to be checked
-   *   @return a const reference to the service instance requested by name and type
-   */
-  template<class T>
-  const T& get(const service_dict_type & services_, const std::string& service_name_)
-  {
-    const base_service & srvc = get_service(services_, service_name_);
-    const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(srvc);
-    DT_THROW_IF(ti != tf, std::logic_error, "Service '" << service_name_ << "' is not of requested type!");
-    return dynamic_cast<const T&>(srvc);
-  }
 
 }  // end of namespace datatools
 

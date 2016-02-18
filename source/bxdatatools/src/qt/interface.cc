@@ -41,6 +41,8 @@ namespace datatools {
 
   namespace qt {
 
+    /*
+    /// \brief Not used yet
     class interface_impl
     {
       int _argc_;            //!< Command line argument count
@@ -49,6 +51,7 @@ namespace datatools {
       bool _external_app_;   //!< Flag for external Qt application
       bool _qt_initialized_; //!< Flag for Qt initialization
     };
+    */
 
     interface::interface(int argc_, char ** argv_, const char * name_)
     {

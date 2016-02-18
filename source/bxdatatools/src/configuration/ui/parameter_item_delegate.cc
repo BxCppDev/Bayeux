@@ -458,14 +458,14 @@ namespace datatools {
                   integer_combo->setAutoFillBackground(true);
                   std::vector<int> vints;
                   param_model.fetch_integer_enumeration(vints);
-                  int current_index = -1;
+                  //int current_index = -1;
                   for (int i = 0; i < (int) vints.size(); i++) {
                     if (rec.value_is_set()) {
                       int intval;
                       command::returned_info cri = rec.get_integer_value(intval);
                       if (cri.is_success()) {
                         if (vints[i] == intval) {
-                          current_index = i;
+                          //current_index = i;
                         }
                       }
                       std::ostringstream valint_oss;
@@ -525,7 +525,10 @@ namespace datatools {
                     unit_symbol = units::get_default_unit_symbol_from_label(param_model.get_real_unit_label());
                     std::string unit_label2;
                     bool found_unit = units::find_unit(unit_symbol, display_unit, unit_label2);
-                    // DT_THROW_IF(found_unit, std::logic_error, "Cannot find unit !");
+                    if (!found_unit) {
+                      DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Cannot find unit with symbol '" << unit_symbol << "'!");
+                    }
+                    // DT_THROW_IF(!found_unit, std::logic_error, "Cannot find unit !");
                   }
                   param_model.fetch_real_enumeration(vreals);
                   for (int i = 0; i < (int) vreals.size(); i++) {
@@ -540,8 +543,6 @@ namespace datatools {
 
               // String:
               if (param_model.is_string()) {
-
-                bool path = param_model.is_path();
 
                 if (param_model.is_free()) {
 
@@ -823,7 +824,7 @@ namespace datatools {
 
       void parameter_item_delegate::updateEditorGeometry(QWidget * editor_,
                                                          const QStyleOptionViewItem & option_,
-                                                         const QModelIndex & index_) const
+                                                         const QModelIndex & /* index_ */) const
       {
         editor_->setGeometry(option_.rect);
         // QStyledItemDelegate::updateEditorGeometry(editor_, option_, index_);
