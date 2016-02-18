@@ -24,7 +24,7 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(geomtools_VERSION_MAJOR 5)
+set(geomtools_VERSION_MAJOR 6)
 set(geomtools_VERSION_MINOR 0)
 set(geomtools_VERSION_PATCH 0)
 set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_VERSION_PATCH}")
@@ -462,7 +462,7 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
+if (BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/geomtools_mkskelcfg.in
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg @ONLY)
 
