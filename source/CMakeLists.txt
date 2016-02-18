@@ -55,12 +55,16 @@ find_package(GSL 1.15 QUIET NO_MODULE)
 find_package(GSL 1.15 REQUIRED)
 
 # - ROOT
-set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
+if(NOT Bayeux_USE_LEGACY_ROOT)
+  set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
+endif()
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
-include(RootNewMacros)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
+if(NOT Bayeux_USE_LEGACY_ROOT)
+  include(RootNewMacros)
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
+endif()
 
-if (Bayeux_BUILD_QT_GUI)
+if (BAYEUX_WITH_QT_GUI)
   find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
 endif()
 
@@ -94,7 +98,120 @@ if (Qt4_FOUND)
   add_definitions(${QT_DEFINITIONS})
 endif()
 
+#-----------------------------------------------------------------------
+# Set variable to hold addons for later export
+#
+set(Bayeux_ADDON_TARGETS)
+
+#-----------------------------------------------------------------------
 # - The LPC Modules
+
+if (Bayeux_WITH_BRIO)
+  set(BAYEUX_WITH_BRIO 1)
+endif()
+
+if (Bayeux_WITH_CUTS)
+  set(BAYEUX_WITH_CUTS 1)
+endif()
+
+if (Bayeux_WITH_MYGSL)
+  set(BAYEUX_WITH_MYGSL 1)
+endif()
+
+if (Bayeux_WITH_DPP)
+  set(BAYEUX_WITH_DPP 1)
+endif()
+
+if (Bayeux_WITH_MATERIALS)
+  set(BAYEUX_WITH_MATERIALS 1)
+endif()
+
+if (Bayeux_WITH_GEOMTOOLS)
+  set(BAYEUX_WITH_GEOMTOOLS 1)
+endif()
+
+if (Bayeux_WITH_EMFIELD)
+  set(BAYEUX_WITH_EMFIELD 1)
+endif()
+
+if (Bayeux_WITH_GENBB_HELP)
+  set(BAYEUX_WITH_GENBB_HELP 1)
+endif()
+
+if (Bayeux_WITH_GENVTX)
+  set(BAYEUX_WITH_GENVTX 1)
+endif()
+
+if (Bayeux_WITH_MCTOOLS)
+  set(BAYEUX_WITH_MCTOOLS 1)
+endif()
+
+if (Bayeux_BUILD_GEANT4_MODULE)
+  set(BAYEUX_WITH_GEANT4_MODULE 1)
+else()
+  set(BAYEUX_WITH_GEANT4_MODULE 0)
+endif()
+
+if (Bayeux_BUILD_MCNP_MODULE)
+  set(BAYEUX_WITH_MCNP_MODULE 1)
+else()
+  set(BAYEUX_WITH_MCNP_MODULE 0)
+endif()
+
+if (Bayeux_WITH_LAHAGUE)
+  set(BAYEUX_WITH_LAHAGUE 1)
+else()
+  set(BAYEUX_WITH_LAHAGUE 0)
+endif()
+
+# - Process dependencies
+
+if (BAYEUX_WITH_LAHAGUE)
+  set(BAYEUX_WITH_MCTOOLS     1)
+endif()
+
+if (BAYEUX_WITH_GEANT4_MODULE)
+  set(BAYEUX_WITH_MCTOOLS     1)
+endif()
+
+if (BAYEUX_WITH_MCNP_MODULE)
+  set(BAYEUX_WITH_MCTOOLS     1)
+endif()
+
+if (BAYEUX_WITH_MCTOOLS)
+  set(BAYEUX_WITH_GENVTX     1)
+  set(BAYEUX_WITH_GENBB_HELP 1)
+  set(BAYEUX_WITH_GEOMTOOLS  1)
+  set(BAYEUX_WITH_EMFIELD    1)
+  set(BAYEUX_WITH_MYGSL      1)
+  set(BAYEUX_WITH_DPP        1)
+endif()
+
+if (BAYEUX_WITH_GENVTX)
+  set(BAYEUX_WITH_GEOMTOOLS 1)
+  set(BAYEUX_WITH_MYGSL     1)
+endif()
+
+if (BAYEUX_WITH_GENBB_HELP)
+  set(BAYEUX_WITH_GEOMTOOLS 1)
+  set(BAYEUX_WITH_MYGSL     1)
+endif()
+
+if (BAYEUX_WITH_EMFIELD)
+  set(BAYEUX_WITH_GEOMTOOLS 1)
+endif()
+
+if (BAYEUX_WITH_GEOMTOOLS)
+  set(BAYEUX_WITH_MYGSL     1)
+  set(BAYEUX_WITH_MATERIALS 1)
+endif()
+
+if (BAYEUX_WITH_DPP)
+  set(BAYEUX_WITH_CUTS      1)
+  set(BAYEUX_WITH_MYGSL     1)
+  set(BAYEUX_WITH_BRIO      1)
+endif()
+
 # The processing order should be from least to most dependent
 # That's to ensure that any needed CMake variables are set in the correct
 # order, and that ordering of source files (and hence object files)
@@ -102,22 +219,67 @@ endif()
 # NB: Order may need reviewing because may need least dependent object
 # files last because of the statics...
 # NB2: The use of the COFU idiom should solve most of potential issues...
+
+# - Bayeux/datatools is mandatory because it contains some core functionalities used by the Bayeux library:
 set(Bayeux_SUBMODULES
   datatools
-  cuts
-  materials
-  mygsl
-  geomtools
-  emfield
-  brio
-  dpp
-  genbb_help
-  genvtx
-  mctools
 )
+message(STATUS "Bayeux/datatools core library module will be built")
 
-if (BAYEUX_WITH_LAHAGUE_MODULE)
+# - Activate other library modules on demand:
+if (BAYEUX_WITH_CUTS)
+  list(APPEND Bayeux_SUBMODULES cuts)
+  message( STATUS "Bayeux/cuts library module will be built")
+endif()
+
+if (BAYEUX_WITH_MATERIALS)
+  list(APPEND Bayeux_SUBMODULES materials)
+  message( STATUS "Bayeux/materials library module will be built")
+endif()
+
+if (BAYEUX_WITH_MYGSL)
+  list(APPEND Bayeux_SUBMODULES mygsl)
+  message( STATUS "Bayeux/mygsl library module will be built")
+endif()
+
+if (BAYEUX_WITH_BRIO)
+  list(APPEND Bayeux_SUBMODULES brio)
+  message( STATUS "Bayeux/brio library module will be built")
+endif()
+
+if (BAYEUX_WITH_DPP)
+  list(APPEND Bayeux_SUBMODULES dpp)
+  message( STATUS "Bayeux/dpp library module will be built")
+endif()
+
+if (BAYEUX_WITH_GEOMTOOLS)
+  list(APPEND Bayeux_SUBMODULES geomtools)
+  message( STATUS "Bayeux/geomtools library module will be built")
+endif()
+
+if (BAYEUX_WITH_EMFIELD)
+  list(APPEND Bayeux_SUBMODULES emfield)
+  message( STATUS "Bayeux/emfield library module will be built")
+endif()
+
+if (BAYEUX_WITH_GENBB_HELP)
+  list(APPEND Bayeux_SUBMODULES genbb_help)
+  message( STATUS "Bayeux/genbb_help library module will be built")
+endif()
+
+if (BAYEUX_WITH_GENVTX)
+  list(APPEND Bayeux_SUBMODULES genvtx)
+  message( STATUS "Bayeux/genvtx library module will be built")
+endif()
+
+if (BAYEUX_WITH_MCTOOLS)
+  list(APPEND Bayeux_SUBMODULES mctools)
+  message( STATUS "Bayeux/mctools library module will be built")
+endif()
+
+if (BAYEUX_WITH_LAHAGUE)
   list(APPEND Bayeux_SUBMODULES lahague)
+  message( STATUS "Bayeux/lahague library module will be built")
 endif()
 
 # - Base build dir for resource and example files
@@ -147,6 +309,9 @@ foreach(_m ${Bayeux_SUBMODULES})
   if (DEFINED ${_m}_GEANT4_MODULE_APPS)
     list(APPEND Bayeux_GEANT4_APPS ${${_m}_GEANT4_MODULE_APPS})
   endif()
+  if (DEFINED ${_m}_MCNP_MODULE_APPS)
+    list(APPEND Bayeux_MCNP_APPS ${${_m}_MNCP_MODULE_APPS})
+  endif()
   if (DEFINED ${_m}_MODULE_EXAMPLES)
     list(APPEND Bayeux_EXAMPLES ${${_m}_MODULE_EXAMPLES})
   endif()
@@ -159,14 +324,21 @@ list(APPEND Bayeux_SOURCES ${bayeux_ENDING_MODULE_SOURCES})
 # Hack for datatools headers
 #include_directories(${datatools_include_dir})
 
-# Hack for geomtools private headers
-include_directories(${geomtools_include_dir})
+if (BAYEUX_WITH_GEOMTOOLS)
+  # Hack for geomtools private headers
+  include_directories(${geomtools_include_dir})
+endif()
 
-# Hack for genbb_help private headers
-include_directories(${genbb_help_include_dir})
+if (BAYEUX_WITH_GENBB_HELP)
+  # Hack for genbb_help private headers
+  include_directories(${genbb_help_include_dir})
+endif()
 
-# Hack for mctools private/generated headers
-include_directories(${mctools_include_dir})
+if (BAYEUX_WITH_MCTOOLS)
+  # Hack for mctools private/generated headers
+  include_directories(${mctools_include_dir})
+endif()
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 #-----------------------------------------------------------------------
@@ -179,7 +351,7 @@ target_link_libraries(Bayeux ${CAMP_LIBRARIES})
 target_link_libraries(Bayeux ${GSL_LIBRARIES})
 target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
 target_link_libraries(Bayeux ${ROOT_LIBRARIES})
-if (Bayeux_BUILD_QT_GUI)
+if (BAYEUX_WITH_QT_GUI)
   target_link_libraries(Bayeux ${QT_LIBRARIES})
 endif()
 
@@ -203,57 +375,23 @@ elseif(APPLE)
 endif()
 
 #-----------------------------------------------------------------------
-# Set variable to hold addons for later export
-#
-set(Bayeux_ADDON_TARGETS)
-
-#-----------------------------------------------------------------------
-# - Build/Link the geant4 extension module, if required
-#
-if(Bayeux_BUILD_GEANT4_MODULE)
-  include_directories(${Geant4_INCLUDE_DIRS})
-  add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
-  # Hack - strip "-D" flag as we should only supply the def names
-  set(Bayeux_Geant4_DEFINITIONS)
-  foreach(_def ${Geant4_DEFINITIONS})
-    string(REGEX REPLACE "^-D" "" _bxdef ${_def})
-    list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxdef})
-  endforeach()
-
-  set_target_properties(Bayeux_mctools_geant4
-    PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
-    )
-  target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES} ${Boost_THREAD_LIBRARY})
-
-  # - Set RPATH as needed
-  set_target_properties(Bayeux_mctools_geant4 PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
-
-  if(UNIX AND NOT APPLE)
-    set_target_properties(Bayeux_mctools_geant4
-      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-      )
-  elseif(APPLE)
-    # Temporary setting - needs testing
-    set_target_properties(Bayeux_mctools_geant4
-      PROPERTIES
-        INSTALL_NAME_DIR "@rpath"
-        LINK_FLAGS "-undefined dynamic_lookup"
-      )
-  endif()
-
-  # - Create the public link interface
-  set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_INTERFACE_LIBRARIES "")
-  # or shall we use this one ?
-  # set_target_properties(Bayeux_mctools_geant4 PROPERTIES INTERFACE_LINK_LIBRARIES "")
-
-  list(APPEND Bayeux_ADDON_TARGETS Bayeux_mctools_geant4)
-endif()
-
-#-----------------------------------------------------------------------
 # Build/Link the executables - can be switched off when embedded
 #
 if(NOT Bayeux_EMBEDDED OR (Bayeux_EMBEDDED AND Bayeux_BUILD_TOOLS))
-foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
+
+set(Bayeux_ALL_APPS ${Bayeux_APPS})
+
+if (BAYEUX_WITH_GEANT4_MODULE)
+  list(APPEND Bayeux_ALL_APPS ${Bayeux_GEANT4_APPS})
+endif()
+
+if (BAYEUX_WITH_MCNP_MODULE)
+  list(APPEND Bayeux_ALL_APPS ${Bayeux_MCNP_APPS})
+endif()
+
+# message(STATUS "**** source/CMakeLists: Bayeux_ADDON_TARGETS=${Bayeux_ADDON_TARGETS}")
+
+foreach(_bxapp IN LISTS Bayeux_ALL_APPS)
   get_filename_component(_app_basename ${_bxapp} NAME_WE)
   add_executable(bx${_app_basename} ${_bxapp})
   set_target_properties(bx${_app_basename}
@@ -273,10 +411,19 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
       )
   endif()
 
-  if(Bayeux_BUILD_GEANT4_MODULE)
-    list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
-    if (_g4app_found GREATER -1)
-      target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
+  if (BAYEUX_WITH_MCTOOLS)
+    if(BAYEUX_WITH_GEANT4_MODULE)
+      list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
+      if (_g4app_found GREATER -1)
+	target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
+      endif()
+    endif()
+
+    if(BAYEUX_WITH_MCNP_MODULE)
+      list(FIND Bayeux_MCNP_APPS ${_bxapp} _mcnpapp_found)
+      if (_mcnpapp_found GREATER -1)
+	target_link_libraries(bx${_app_basename} Bayeux_mctools_mcnp)
+      endif()
     endif()
   endif()
   target_link_libraries(bx${_app_basename} Bayeux)
@@ -287,10 +434,12 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
     target_link_libraries(Bayeux ${Readline_LIBRARIES})
   endif()
 
-  if ("${_app_basename}" STREQUAL "geomtools_inspector")
-    if(GEOMTOOLS_WITH_READLINE)
-      include_directories(${Readline_INCLUDE_DIR})
-      target_link_libraries(bx${_app_basename} ${Readline_LIBRARIES})
+  if(BAYEUX_WITH_GEOMTOOLS)
+    if ("${_app_basename}" STREQUAL "geomtools_inspector")
+      if(GEOMTOOLS_WITH_READLINE)
+	include_directories(${Readline_INCLUDE_DIR})
+	target_link_libraries(bx${_app_basename} ${Readline_LIBRARIES})
+      endif()
     endif()
   endif()
 
@@ -300,6 +449,8 @@ foreach(_bxapp IN LISTS Bayeux_APPS Bayeux_GEANT4_APPS)
   list(APPEND Bayeux_ADDON_TARGETS bx${_app_basename})
 endforeach()
 endif()
+
+# message(STATUS "**** source/CMakeLists: Bayeux_ADDON_TARGETS=${Bayeux_ADDON_TARGETS}")
 
 #-----------------------------------------------------------------------
 # Install targets and resources
@@ -367,13 +518,29 @@ if(Bayeux_ENABLE_TESTING)
       endif()
       include_directories(BEFORE ${${_m}_test_dir})
 
-      ### G4 specific link for some test progs
-      if(Bayeux_BUILD_GEANT4_MODULE)
-	string(REGEX MATCH "mctools-test_g4_*" _test_g4_res ${_testname})
-	if (NOT "x${_test_g4_res}" STREQUAL "x" )
-          message( STATUS "Special link to the Bayeux Geant4 module for test program '${_testname}'")
-	  target_link_libraries(${_testname} Bayeux_mctools_geant4)
+      if (BAYEUX_WITH_MCTOOLS)
+	# message( STATUS "Checking special linking for test program = '${_testname}'...")
+
+	### G4 specific link for some test progs
+	if(BAYEUX_WITH_GEANT4_MODULE)
+	  string(REGEX MATCH "mctools-test_g4_*" _test_g4_res ${_testname})
+	  # message( STATUS "    _test_g4_res = '${_test_g4_res}'")
+	  if (NOT "x${_test_g4_res}" STREQUAL "x" )
+            message( STATUS "Special link to the Bayeux Geant4 module for test program '${_testname}'")
+	    target_link_libraries(${_testname} Bayeux_mctools_geant4)
+	  endif()
 	endif()
+
+	### MCNP specific link for some test progs
+	if(BAYEUX_WITH_MCNP_MODULE)
+	  string(REGEX MATCH "mctools-test_mcnp_*" _test_mcnp_res ${_testname})
+	  # message( STATUS "    _test_mcnp_res = '${_test_mcnp_res}'")
+	  if (NOT "x${_test_mcnp_res}" STREQUAL "x" )
+            message( STATUS "Special link to the Bayeux MCNP module for test program '${_testname}'")
+	    target_link_libraries(${_testname} Bayeux_mctools_mcnp)
+	  endif()
+	endif()
+
       endif()
 
       target_link_libraries(${_testname} Bayeux)
@@ -393,7 +560,7 @@ endif()
 
 #-----------------------------------------------------------------------
 # Install examples if required
-if(Bayeux_WITH_EXAMPLES)
+if(BAYEUX_WITH_EXAMPLES)
   foreach(_m ${Bayeux_SUBMODULES})
     foreach(_example ${${_m}_MODULE_EXAMPLES})
       install(DIRECTORY ${_example}/

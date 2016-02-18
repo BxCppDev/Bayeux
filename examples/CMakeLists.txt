@@ -60,7 +60,7 @@ if(CMAKE_VERSION VERSION_GREATER 2.8.10.99)
 endif()
 
 #-----------------------------------------------------------------------
-# MCTools/Geant4 testc
+# MCTools/Geant4 test
 # - Requires support for internal dependencies in ExternalProject
 if(CMAKE_VERSION VERSION_GREATER 2.8.10.99 AND Bayeux_BUILD_GEANT4_MODULE)
   ExternalProject_Add(Bayeux_MCToolsGeant4Check

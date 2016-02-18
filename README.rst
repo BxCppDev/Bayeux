@@ -20,6 +20,9 @@ into several specialized submodules:
 - datatools :  Serializable data  structures based  on Boost  and core
    utilities.
 
+- brio  :  A  Boost  over   ROOT  I/O  serialization  system  (extends
+   datatools).
+
 - cuts : Generic tools for making arbitrary data selections.
 
 - materials: Description  of isotopes,  elements and  materials plus
@@ -27,15 +30,12 @@ into several specialized submodules:
 
 - mygsl : C++ wrapper and extensions to the GNU Scientific Library.
 
+- dpp : A basic data processing pipeline API.
+
 - geomtools : Generic tools for working with experiment geometries and
    provide input to simulation tools (i.e. GDML/Geant4).
 
 - emfield : Electromagnetic field modelling and management.
-
-- brio  :  A  Boost  over   ROOT  I/O  serialization  system  (extends
-   datatools).
-
-- dpp : A basic data processing pipeline API.
 
 - genbb_help : C++ port and  extensions to the Decay0/GENBB program by
    Vladimir Tretyak, for input to simulation applications.
@@ -44,7 +44,9 @@ into several specialized submodules:
    applications.
 
 - mctools : Utilities for particle and nuclear physics simulation with
-   a Geant4 interface.
+   an optional Geant4 interface.
+
+- lahague : Utilities for dosimetry and radioprotection.
 
 
 
@@ -55,8 +57,8 @@ Bayeux is  named thus  because it weaves  together several  threads of
 software developed in Normandy ;-).
 
 The use of the Bayeux name and logo (an extract of the lower frieze of
-the Bayeux Tapestry) have been  courteously authorized by the mayor of
-the  city  of Bayeux  in December  2014  at  the condition  the  Bayeux
+the Bayeux Tapestry) have been  courteously authorized by the Mayor of
+the  City of  Bayeux  in December  2014 at  the  condition the  Bayeux
 software tools are distributed under an open source software license.
 
 
@@ -70,9 +72,9 @@ conditions of use of Bayeux.
 Bayeux contains some code extracted  from the *Kitware System* library
 (OSI-approved BSD License),  the *BinReloc* library (Do  What The Fuck
 You Want To Public License, Version  2) and the *EOS portable archive*
-library (Boost Software License). Vladimir Tretyak has accepted that the
-C++ wrapper and port of the original GENBB/DECAY0 library is published
-under the GPL 3 within Bayeux.
+library (MIT License). Vladimir Tretyak  has accepted that
+the  C++ wrapper  and port  of  the original  GENBB/DECAY0 library  is
+published under the GPL 3 within Bayeux.
 
 
 Getting Help
@@ -83,47 +85,51 @@ of its submodules, please contact the SuperNEMO Software Working Group
 via  the  main   development  website  https://nemo.lpc-caen.in2p3.fr/
 (protected access, only available to authorized collaborators).
 
-You may ask to be registered in one of the protected Bayeux  users diffusion
-lists:
+You may  ask to  be registered  in one of  the protected  Bayeux users
+diffusion lists:
 
  * ``bayeux-users-l@in2p3.fr`` : general,
  * ``bayeux-geometry-l@in2p3.fr`` : dedicated to geometry modelling,
  * ``bayeux-simulation-l@in2p3.fr`` : dedicated to simulation and the Geant4 module.
 
-Please contact the Bayeux team at bayeux@lpccaen.in2p3.fr (in English or French).
+Please contact the Bayeux  team at bayeux@lpccaen.in2p3.fr (in English
+or French).
 
 
 
 Getting Bayeux
 ===============
 
-You can obtain the Bayeux source code from the main LPC Caen Subversion
-repository.
+You  can  obtain  the  Bayeux  source code  from  the  main  LPC  Caen
+Subversion repository.
 
-For example, to download Bayeux version 1.0.0, you may use:
+For example, to download Bayeux version 2.1.0, you may use:
 
 .. code:: sh
 
     $ cd ${HOME}
     $ mkdir -p ${HOME}/Software/Bayeux/Source
     $ cd ${HOME}/Software/Bayeux/Source
-    $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/tags/Bayeux-1.0.0 Bayeux-1.0.0
+    $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/tags/Bayeux-2.1.0 Bayeux-2.1.0
 
-The ``${HOME}/Software/Bayeux/Source/Bayeux-1.0.0`` source directory is thus created.
+The  ``${HOME}/Software/Bayeux/Source/Bayeux-2.1.0`` source  directory
+is thus created.
 
-If you want to download the development version (possibly unstable), use:
+If you want  to download the development  version (possibly unstable),
+use:
 
 .. code:: sh
 
     $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/trunk Bayeux-trunk
 
-The ``${HOME}/Software/Bayeux/Source/Bayeux-trunk`` source directory is thus created.
+The  ``${HOME}/Software/Bayeux/Source/Bayeux-trunk`` source  directory
+is thus created.
 
-You can now  create a dedicated directory to  build Bayeux 1.0.0 (or *trunk*)
-following  the   guidelines  in   the  *Installing Bayeux*  section
-below.  Note that  different  versions of  Bayeux  may have slightly different
-build/installation   procedures,   so   you   should   read   carefully   the
-``README.rst`` file supplied with the source code.
+You can  now create a  dedicated directory  to build Bayeux  2.1.0 (or
+*trunk*) following  the guidelines in the  *Installing Bayeux* section
+below.   Note that  different  versions of  Bayeux  may have  slightly
+different build/installation procedures, so  you should read carefully
+the ``README.rst`` file supplied with the source code.
 
 
 Preparing Your System for Bayeux Installation
@@ -191,10 +197,10 @@ clicking on the Downloads tab, and then installing Command Line Tools.
        * GDML,
        * OpenGL.
 
-For ease of use, LPC Caen provides the Cadfael SDK which bundles these
-libraries for  easy use by Bayeux  and clients of Bayeux.  You can use
-this bundle, or, at your discretion,  your own, or system, installs of
-these packages.
+For ease of use, the  SuperNEMO collaboration provides the Cadfael SDK
+which bundles  these libraries for easy  use by Bayeux and  clients of
+Bayeux.  You can use this bundle, or, at your discretion, your own, or
+system, installs of these packages.
 
 -  **Additional Software Required**
 
@@ -215,7 +221,7 @@ these packages.
 
 		$ sudo apt-get install gnuplot gnuplot-doc gnuplot-mode
 
-   - geomtools uses the Readline library, if available:
+   - datatools and geomtools uses the Readline library, if available:
 
       * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
       * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
@@ -226,15 +232,25 @@ these packages.
 
 		$ sudo apt-get install libreadline-dev readline-common
 
-   - pandoc is useful to generate documentation in user friendly format:
-     http://johnmacfarlane.net/pandoc/
+   - pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
+     documentation in user friendly format:
+
+
+      On Ubuntu 14.04, this implies  the installation of the following
+      packages:
+
+      .. code:: sh
+
+	 $ sudo apt-get install pandoc pandoc-data
+
+   - docutils  (http://docutils.sourceforge.net/)  is also  useful  to
+     generate documentation from ReST format in user friendly format:
 
       On Ubuntu 14.04, this implies the installation of the following packages:
 
       .. code:: sh
 
-		$ sudo apt-get install pandoc pandoc-data
-
+	 $ sudo apt-get install docutils-common docutils-doc python-docutils
 
 
 Known Issues on Tested Platforms
@@ -308,26 +324,92 @@ Bayeux Configuration Options
 
 These options control the core configuration of Bayeux.
 
--  ``Bayeux_ENABLE_TESTING``
+-  ``Bayeux_FORCE_CXX_ALL_WARNINGS``
 
-   -  Build the collection of Bayeux's test programs. Default is OFF.
-
--  ``Bayeux_WITH_GEANT4``
-
-   -  Build the Bayeux/mctools Geant4 extension module. Default is OFF.
-
--  ``Bayeux_WITH_EXAMPLES``
-
-   -  Install the Bayeux example projects. Default is ON.
-
--  ``Bayeux_BUILD_DOCS``
-
-   -  Build and install the documentation. Default is OFF.
+   - Build the Bayeux libraries, test suite and executable with all possible
+     compiler warnings. Default is ON.
 
 -  ``Bayeux_BUILD_DEVELOPER_TOOLS``
 
    -  Build and install additional tools for developers and *normal* users.
+      Default is ON.
+
+-  ``Bayeux_USE_LEGACY_ROOT``
+
+   -  Bayeux is built using an old version of ROOT (prior to version 6).
       Default is OFF.
+
+-  ``Bayeux_WITH_BRIO``
+
+   - Build the Bayeux/brio library module. Default is ON.
+
+-  ``Bayeux_WITH_CUTS``
+
+   - Build the Bayeux/cuts library module. Default is ON.
+
+-  ``Bayeux_WITH_MYGSL``
+
+   - Build the Bayeux/mygsl library module. Default is ON.
+
+-  ``Bayeux_WITH_DPP``
+
+   - Build the Bayeux/dpp library module. Default is ON.
+
+-  ``Bayeux_WITH_MATERIALS``
+
+   - Build the Bayeux/materials library module. Default is ON.
+
+-  ``Bayeux_WITH_GEOMTOOLS``
+
+   - Build the Bayeux/geomtools library module. Default is ON.
+
+-  ``Bayeux_WITH_EMFIELD``
+
+   - Build the Bayeux/emfield library module. Default is ON.
+
+-  ``Bayeux_WITH_GENBB_HELP``
+
+   - Build the Bayeux/genbb_help library module. Default is ON.
+
+-  ``Bayeux_WITH_GENVTX``
+
+   - Build the Bayeux/genvtx library module. Default is ON.
+
+-  ``Bayeux_WITH_MCTOOLS``
+
+   - Build the Bayeux/mctools library module. Default is ON.
+
+-  ``Bayeux_BUILD_GEANT4_MODULE``
+
+   - Build the Bayeux/mctools Geant4 library extension module. Default is ON.
+
+-  ``Bayeux_BUILD_MCNP_MODULE``
+
+   - Build the Bayeux/mctools MCNP library extension module (experimental). Default is OFF.
+
+-  ``Bayeux_WITH_LAHAGUE``
+
+   - Build the Bayeux/lahague library module. Default is OFF.
+
+-  ``Bayeux_BUILD_QT_GUI``
+
+   - Build the Qt-based GUI components. Default is OFF.
+
+-  ``Bayeux_ENABLE_TESTING``
+
+   -  Build unit testing system for Bayeux. Default is OFF.
+
+-  ``Bayeux_BUILD_DOCS``
+
+   -  Build Bayeux documentation products. Default is ON.
+
+-  ``Bayeux_BUILD_OCD_DOCS``
+
+   -  Build OCD documentation. Default is ON. Implies ``Bayeux_BUILD_DOCS``.
+
+-  ``Bayeux_WITH_EXAMPLES``
+
+   -  Install Bayeux with examples. Default is ON.
 
 Building and Installing
 -----------------------
@@ -402,13 +484,10 @@ though many scientific software projects (badly mis)use it.
 To do
 =====
 
-* Implement support for configuration variants in the datatools module
-  (through  the datatools::properties  and datatools::multi_properties
-  classes).
 * Implement support for radioactive decays  using ENSDF from Geant4 in
   the genbb_help module.
-* Implement support  for mapped electromagnetic fields  in the emfield
-  module.
+* Implement the Bayeux/mctools MCNP extension library module and companion tools.
+* Implement the Bayeux/datatools bxvariant_inspector application.
 
 
 Acknowledgements
@@ -417,13 +496,14 @@ Acknowledgements
 The authors gratefully thank the following persons for their direct or
 indirect contributions to the Bayeux library:
 
-* Vladimir  Tretyak  is  the   author  of  the  original  *Decay0/GENBB*
+* Vladimir  Tretyak  is  the  author of  the  original  *Decay0/GENBB*
   generator  (written in  Fortran 77)  from  which large  part of  the
   genbb_help module is derived.
 * Christian Pfligersdorffer  is the author of  the Boost/Serialization
-  *based portable  binary archive* classes  which is supported  by the
-  I/O system of the datatools and brio modules.
-* Nicolas Devillard and Rajarshi Guha are the authors of the *Gnuplot pipe*
-  library that is embedded in geomtools.
-* Sylvette Lemagnen (Curator at the Bayeux Museum) and Patrick Gomont (mayor of the city of Bayeux)
-  for their authorization for the library's name and logo.
+  *portable  binary archive*  classes which  is supported  by the  I/O
+  *system of the datatools and brio modules.
+* Nicolas Devillard and Rajarshi Guha  are the authors of the *Gnuplot
+  pipe* library that is embedded in geomtools.
+* Sylvette Lemagnen (Curator at the  Bayeux Museum) and Patrick Gomont
+  (Mayor  of the  City  of  Bayeux) for  their  authorization for  the
+  library's name and logo.

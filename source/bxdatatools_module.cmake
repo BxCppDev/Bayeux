@@ -24,7 +24,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(datatools_VERSION_MAJOR 7)
-set(datatools_VERSION_MINOR 0)
+set(datatools_VERSION_MINOR 1)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
@@ -286,7 +286,7 @@ bx${module_name}/_datatools.cc
   )
 
 set(DATATOOLS_WITH_QT_GUI 0)
-if (Bayeux_BUILD_QT_GUI)
+if (BAYEUX_WITH_QT_GUI)
   set(DATATOOLS_WITH_QT_GUI 1)
   # - QT4 moc headers
   set(${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED
@@ -457,6 +457,7 @@ ${module_test_dir}/test_introspection_method.cxx
 # - Applications
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/ocd_manual.cxx
+  # ${module_app_dir}/variant_inspector.cxx
   )
 
 # - Examples dir
@@ -470,7 +471,7 @@ set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/variants/models/base_variants.def
   )
 
-if (Bayeux_BUILD_QT_GUI)
+if (BAYEUX_WITH_QT_GUI)
 
   # - Special test program(s)
   list(APPEND ${module_name}_MODULE_TESTS
@@ -529,7 +530,7 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
+if (BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/ocd_make_doc
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxocd_make_doc @ONLY)
   configure_file(${module_app_dir}/ocd_sort_classnames.py

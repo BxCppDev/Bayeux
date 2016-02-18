@@ -39,7 +39,7 @@ namespace datatools {
   } // end namespace detail
 } // end namespace datatools
 
-
+#if BAYEUX_WITH_GEOMTOOLS == 1
 #include <geomtools/detail/reflection_link_guard.h>
 #include <geomtools/the_introspectable.h>
 
@@ -68,6 +68,9 @@ namespace geomtools {
   } // end namespace detail
 } // end namespace geomtools
 
+#endif //  BAYEUX_WITH_GEOMTOOLS == 1
+
+#if BAYEUX_WITH_GENBB_HELP == 1
 #include <genbb_help/detail/reflection_link_guard.h>
 #include <genbb_help/the_introspectable.h>
 
@@ -95,6 +98,8 @@ namespace genbb {
     } // end namespace reflection
   } // end namespace detail
 } // end namespace genbb
+
+#endif // BAYEUX_WITH_GENBB_HELP == 1
 
 /*
 ** Local Variables: --

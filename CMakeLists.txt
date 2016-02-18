@@ -67,7 +67,7 @@ include(SVNUtilities)
 
 # - Versioning
 set(Bayeux_VERSION_MAJOR 2)
-set(Bayeux_VERSION_MINOR 0)
+set(Bayeux_VERSION_MINOR 1)
 set(Bayeux_VERSION_PATCH 0)
 set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
 
@@ -115,6 +115,12 @@ foreach(_dir BINDIR LIBDIR INCLUDEDIR DATAROOTDIR)
   endif()
 endforeach()
 
+# Devel printings:
+# message(STATUS "DEVEL: CMAKE_C_LIBRARY_ARCHITECTURE='${CMAKE_C_LIBRARY_ARCHITECTURE}'")
+# message(STATUS "DEVEL: CMAKE_CXX_LIBRARY_ARCHITECTURE='${CMAKE_CXX_LIBRARY_ARCHITECTURE}'")
+# message(STATUS "DEVEL: CMAKE_LIBRARY_ARCHITECTURE='${CMAKE_LIBRARY_ARCHITECTURE}'")
+# message(STATUS "DEVEL: CMAKE_INSTALL_LIBDIR = '${CMAKE_INSTALL_LIBDIR}'")
+
 # Add a path for CMake config files
 set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
 set(CMAKE_INSTALL_FULL_CMAKEDIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
@@ -140,6 +146,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_L
 #
 option(Bayeux_BUILD_DEVELOPER_TOOLS "Build/install developer tools" ON)
 mark_as_advanced(Bayeux_BUILD_DEVELOPER_TOOLS)
+if (Bayeux_BUILD_DEVELOPER_TOOLS)
+  set(BAYEUX_WITH_DEVELOPER_TOOLS 1)
+else()
+  set(BAYEUX_WITH_DEVELOPER_TOOLS 0)
+endif()
 
 #-----------------------------------------------------------------------
 # Use implicit Bayeux init/fini instruction
@@ -153,28 +164,48 @@ else()
   set(BAYEUX_WITH_IMPLICIT_INIT_FINI 0)
 endif()
 
+
+# - Options for enabling Bayeux library modules
+option(Bayeux_WITH_BRIO       "Build Bayeux/brio library module"       ON)
+option(Bayeux_WITH_CUTS       "Build Bayeux/cuts library module"       ON)
+option(Bayeux_WITH_MYGSL      "Build Bayeux/mygsl library module"      ON)
+option(Bayeux_WITH_DPP        "Build Bayeux/dpp library module"        ON)
+option(Bayeux_WITH_MATERIALS  "Build Bayeux/materials library module"  ON)
+option(Bayeux_WITH_GEOMTOOLS  "Build Bayeux/geomtools library module"  ON)
+option(Bayeux_WITH_EMFIELD    "Build Bayeux/emfield library module"    ON)
+option(Bayeux_WITH_GENBB_HELP "Build Bayeux/genbb_help library module" ON)
+option(Bayeux_WITH_GENVTX     "Build Bayeux/genvtx library module"     ON)
+option(Bayeux_WITH_MCTOOLS    "Build Bayeux/mctools library module"    ON)
+option(Bayeux_WITH_LAHAGUE    "Build Bayeux/lahague library module"    OFF)
+mark_as_advanced(Bayeux_BUILD_LAHAGUE_MODULE)
+mark_as_advanced(Bayeux_WITH_BRIO)
+mark_as_advanced(Bayeux_WITH_CUTS)
+mark_as_advanced(Bayeux_WITH_MYGSL)
+mark_as_advanced(Bayeux_WITH_DPP)
+mark_as_advanced(Bayeux_WITH_MATERIALS)
+mark_as_advanced(Bayeux_WITH_GEOMTOOLS)
+mark_as_advanced(Bayeux_WITH_EMFIELD)
+mark_as_advanced(Bayeux_WITH_GENBB_HELP)
+mark_as_advanced(Bayeux_WITH_GENVTX)
+mark_as_advanced(Bayeux_WITH_MCTOOLS)
+
 #-----------------------------------------------------------------------
-# Option for enabling Geant4 module
+# Transitional option for backward compatibility with old ROOT versions (<6)
 #
-option(Bayeux_BUILD_GEANT4_MODULE "Build Geant4 Monte-Carlo module (mctools/g4)" ON)
+option(Bayeux_USE_LEGACY_ROOT "Bayeux is built using ROOT version (<6.X)" OFF)
+mark_as_advanced(Bayeux_USE_LEGACY_ROOT)
+
+#-----------------------------------------------------------------------
+# Option for enabling Geant4 extension library module
+#
+option(Bayeux_BUILD_GEANT4_MODULE "Build Bayeux/mctools Geant4 Monte-Carlo module" ON)
 mark_as_advanced(Bayeux_BUILD_GEANT4_MODULE)
 
-if (Bayeux_BUILD_GEANT4_MODULE)
-  set(BAYEUX_WITH_GEANT4_MODULE 1)
-else()
-  set(BAYEUX_WITH_GEANT4_MODULE 0)
-endif()
-
 #-----------------------------------------------------------------------
-# Option for enabling LaHague module
-OPTION(Bayeux_BUILD_LAHAGUE_MODULE "Build LaHague module" OFF)
-mark_as_advanced(Bayeux_BUILD_LAHAGUE_MODULE)
-
-if (Bayeux_BUILD_LAHAGUE_MODULE)
-  set(BAYEUX_WITH_LAHAGUE_MODULE 1)
-else()
-  set(BAYEUX_WITH_LAHAGUE_MODULE 0)
-endif()
+# Option for enabling MCNP extension library module
+#
+option(Bayeux_BUILD_MCNP_MODULE "Build Bayeux/mctools MCNP Monte-Carlo module" OFF)
+mark_as_advanced(Bayeux_BUILD_MCNP_MODULE)
 
 #-----------------------------------------------------------------------
 # Option for enabling Qt GUI components
@@ -235,6 +266,7 @@ if (Bayeux_BUILD_DOCS)
 
   if(Bayeux_BUILD_OCD_DOCS)
     set(BAYEUX_WITH_OCD_DOCS 1)
+    set(BAYEUX_WITH_DOCS 1)
   else()
     set(BAYEUX_WITH_OCD_DOCS 0)
   endif()

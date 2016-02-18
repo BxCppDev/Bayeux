@@ -11,11 +11,11 @@ endforeach()
 
 # - Module
 set(module_name mctools)
-set(module_root_dir "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
-set(module_include_dir "${module_root_dir}/include")
-set(module_source_dir  "${module_root_dir}/src")
-set(module_test_dir    "${module_root_dir}/testing")
-set(module_app_dir     "${module_root_dir}/programs")
+set(module_root_dir     "${CMAKE_CURRENT_SOURCE_DIR}/bx${module_name}")
+set(module_include_dir  "${module_root_dir}/include")
+set(module_source_dir   "${module_root_dir}/src")
+set(module_test_dir     "${module_root_dir}/testing")
+set(module_app_dir      "${module_root_dir}/programs")
 set(module_resource_dir "${module_root_dir}/resources")
 set(module_examples_dir "${module_root_dir}/examples")
 
@@ -26,7 +26,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(mctools_VERSION_MAJOR 2)
-set(mctools_VERSION_MINOR 0)
+set(mctools_VERSION_MINOR 1)
 set(mctools_VERSION_PATCH 0)
 set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools_VERSION_PATCH}")
 
@@ -34,7 +34,7 @@ set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools
 set(MCTOOLS_WITH_BIO 1)
 set(MCTOOLS_WITH_REFLECTION 1)
 set(MCTOOLS_WITH_G4 0)
-if(Bayeux_BUILD_GEANT4_MODULE)
+if(BAYEUX_WITH_GEANT4_MODULE)
   set(MCTOOLS_WITH_G4 1)
   option(MCTOOLS_WITH_G4_G4VIS_USE "Build the Geant4 visualization interface" ON)
 endif()
@@ -111,13 +111,12 @@ set(${module_name}_MODULE_SOURCES
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")
   string(REGEX REPLACE "^${module_include_dir}" "${MODULE_HEADER_ROOT}" _hdrout
-"${_hdrout}")
+    "${_hdrout}")
   configure_file(${_hdrin} ${_hdrout} @ONLY)
 endforeach()
 
 
 # - Unit tests
-# message( STATUS "MATERIALS_RESOURCE_DIR=${bxmaterials_resource_dir}")
 set(${module_name}_TEST_ENVIRONMENT "MATERIALS_RESOURCE_DIR=${bxmaterials_resource_dir};MCTOOLS_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS
@@ -132,121 +131,131 @@ set(${module_name}_MODULE_TESTS
   )
 
 #-----------------------------------------------------------------------
+# - Build/Link the geant4 extension module, if required
+#
+include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_geant4_module.cmake)
+
+#-----------------------------------------------------------------------
+# - Build/Link the MCNP extension module, if required
+#
+# include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_mcnp_module.cmake)
+
+#-----------------------------------------------------------------------
 # The Geant4 Extension Headers and Sources
 # - Slight hack, only list the manager and manager_parameters as
 # headers, put the rest in SOURCES. Idea is to only publish public
 # headers... Though these two headers are the only real public interface,
 # they #include other headers, so these also need to be present...
 #
-if(Bayeux_BUILD_GEANT4_MODULE)
-  set(${module_name}_GEANT4_HEADERS
-    ${module_include_dir}/${module_name}/g4/manager_parameters.h
-    ${module_include_dir}/${module_name}/g4/manager.h
-    ${module_include_dir}/${module_name}/g4/loggable_support.h
-    ${module_include_dir}/${module_name}/g4/g4_prng.h
-    ${module_include_dir}/${module_name}/g4/track_history.h
-    ${module_include_dir}/${module_name}/g4/simulation_module.h
-    )
-  # - Published headers
-  foreach(_hdrin ${${module_name}_GEANT4_HEADERS})
-    string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")
-    string(REGEX REPLACE "^${module_include_dir}" "${MODULE_HEADER_ROOT}" _hdrout "${_hdrout}")
-    configure_file(${_hdrin} ${_hdrout} @ONLY)
-  endforeach()
+# if(BAYEUX_WITH_GEANT4_MODULE)
+#   set(${module_name}_GEANT4_HEADERS
+#     ${module_include_dir}/${module_name}/g4/manager_parameters.h
+#     ${module_include_dir}/${module_name}/g4/manager.h
+#     ${module_include_dir}/${module_name}/g4/loggable_support.h
+#     ${module_include_dir}/${module_name}/g4/g4_prng.h
+#     ${module_include_dir}/${module_name}/g4/track_history.h
+#     ${module_include_dir}/${module_name}/g4/simulation_module.h
+#     )
+#   # - Published headers
+#   foreach(_hdrin ${${module_name}_GEANT4_HEADERS})
+#     string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")
+#     string(REGEX REPLACE "^${module_include_dir}" "${MODULE_HEADER_ROOT}" _hdrout "${_hdrout}")
+#     configure_file(${_hdrin} ${_hdrout} @ONLY)
+#   endforeach()
 
-  # - Configurable private headers
-  configure_file(${module_include_dir}/${module_name}/g4/data_libraries.h.in
-    mctools/g4/data_libraries.h
-    @ONLY
-    )
+#   # - Configurable private headers
+#   configure_file(${module_include_dir}/${module_name}/g4/data_libraries.h.in
+#     mctools/g4/data_libraries.h
+#     @ONLY
+#     )
 
-  set(${module_name}_GEANT4_SOURCES
-    mctools/g4/data_libraries.h
-    ${module_include_dir}/${module_name}/g4/processes/utils.h
-    ${module_include_dir}/${module_name}/g4/processes/em_extra_models.h
-    ${module_include_dir}/${module_name}/g4/processes/em_model_factory.h
-    ${module_include_dir}/${module_name}/g4/simulation_module.h
-    ${module_include_dir}/${module_name}/g4/primary_generator.h
-    ${module_include_dir}/${module_name}/g4/magnetic_field.h
-    ${module_include_dir}/${module_name}/g4/electromagnetic_field.h
-    ${module_include_dir}/${module_name}/g4/em_field_equation_of_motion.h
-    ${module_include_dir}/${module_name}/g4/em_field_g4_utils.h
-    ${module_include_dir}/${module_name}/g4/em_field_g4_stuff.h
-    ${module_include_dir}/${module_name}/g4/particles_physics_constructor.h
-    ${module_include_dir}/${module_name}/g4/physics_list_utils.h
-    ${module_include_dir}/${module_name}/g4/tracking_action.h
-    ${module_include_dir}/${module_name}/g4/stacking_action.h
-    ${module_include_dir}/${module_name}/g4/run_action.h
-    ${module_include_dir}/${module_name}/g4/sensitive_detector.h
-    ${module_include_dir}/${module_name}/g4/simulation_ctrl.h
-    ${module_include_dir}/${module_name}/g4/em_physics_constructor.h
-    ${module_include_dir}/${module_name}/g4/sensitive_hit.h
-    ${module_include_dir}/${module_name}/g4/physics_list.h
-    ${module_include_dir}/${module_name}/g4/event_action.h
-    ${module_include_dir}/${module_name}/g4/stepping_verbose.h
-    ${module_include_dir}/${module_name}/g4/base_physics_constructor.h
-    ${module_include_dir}/${module_name}/g4/region_tools.h
-    ${module_include_dir}/${module_name}/g4/detector_construction.h
-    ${module_include_dir}/${module_name}/g4/stepping_action.h
-    ${module_include_dir}/${module_name}/g4/sensitive_hit_collection.h
-    ${module_include_dir}/${module_name}/g4/neutrons_physics_constructor.h
-    ${module_include_dir}/${module_name}/g4/biasing_manager.h
+#   set(${module_name}_GEANT4_SOURCES
+#     mctools/g4/data_libraries.h
+#     ${module_include_dir}/${module_name}/g4/processes/utils.h
+#     ${module_include_dir}/${module_name}/g4/processes/em_extra_models.h
+#     ${module_include_dir}/${module_name}/g4/processes/em_model_factory.h
+#     ${module_include_dir}/${module_name}/g4/simulation_module.h
+#     ${module_include_dir}/${module_name}/g4/primary_generator.h
+#     ${module_include_dir}/${module_name}/g4/magnetic_field.h
+#     ${module_include_dir}/${module_name}/g4/electromagnetic_field.h
+#     ${module_include_dir}/${module_name}/g4/em_field_equation_of_motion.h
+#     ${module_include_dir}/${module_name}/g4/em_field_g4_utils.h
+#     ${module_include_dir}/${module_name}/g4/em_field_g4_stuff.h
+#     ${module_include_dir}/${module_name}/g4/particles_physics_constructor.h
+#     ${module_include_dir}/${module_name}/g4/physics_list_utils.h
+#     ${module_include_dir}/${module_name}/g4/tracking_action.h
+#     ${module_include_dir}/${module_name}/g4/stacking_action.h
+#     ${module_include_dir}/${module_name}/g4/run_action.h
+#     ${module_include_dir}/${module_name}/g4/sensitive_detector.h
+#     ${module_include_dir}/${module_name}/g4/simulation_ctrl.h
+#     ${module_include_dir}/${module_name}/g4/em_physics_constructor.h
+#     ${module_include_dir}/${module_name}/g4/sensitive_hit.h
+#     ${module_include_dir}/${module_name}/g4/physics_list.h
+#     ${module_include_dir}/${module_name}/g4/event_action.h
+#     ${module_include_dir}/${module_name}/g4/stepping_verbose.h
+#     ${module_include_dir}/${module_name}/g4/base_physics_constructor.h
+#     ${module_include_dir}/${module_name}/g4/region_tools.h
+#     ${module_include_dir}/${module_name}/g4/detector_construction.h
+#     ${module_include_dir}/${module_name}/g4/stepping_action.h
+#     ${module_include_dir}/${module_name}/g4/sensitive_hit_collection.h
+#     ${module_include_dir}/${module_name}/g4/neutrons_physics_constructor.h
+#     ${module_include_dir}/${module_name}/g4/biasing_manager.h
 
-    ${module_source_dir}/g4/processes/utils.cc
-    ${module_source_dir}/g4/processes/em_extra_models.cc
-    ${module_source_dir}/g4/processes/em_model_factory.cc
-    ${module_source_dir}/g4/manager_parameters.cc
-    ${module_source_dir}/g4/particles_physics_constructor.cc
-    ${module_source_dir}/g4/physics_list_utils.cc
-    ${module_source_dir}/g4/tracking_action.cc
-    ${module_source_dir}/g4/stacking_action.cc
-    ${module_source_dir}/g4/g4_prng.cc
-    ${module_source_dir}/g4/run_action.cc
-    ${module_source_dir}/g4/sensitive_detector.cc
-    ${module_source_dir}/g4/simulation_ctrl.cc
-    ${module_source_dir}/g4/em_physics_constructor.cc
-    ${module_source_dir}/g4/loggable_support.cc
-    ${module_source_dir}/g4/manager.cc
-    ${module_source_dir}/g4/physics_list.cc
-    ${module_source_dir}/g4/sensitive_hit.cc
-    ${module_source_dir}/g4/stepping_verbose.cc
-    ${module_source_dir}/g4/event_action.cc
-    ${module_source_dir}/g4/base_physics_constructor.cc
-    ${module_source_dir}/g4/region_tools.cc
-    ${module_source_dir}/g4/detector_construction.cc
-    ${module_source_dir}/g4/track_history.cc
-    ${module_source_dir}/g4/stepping_action.cc
-    ${module_source_dir}/g4/sensitive_hit_collection.cc
-    ${module_source_dir}/g4/primary_generator.cc
-    ${module_source_dir}/g4/simulation_module.cc
-    ${module_source_dir}/g4/magnetic_field.cc
-    ${module_source_dir}/g4/electromagnetic_field.cc
-    ${module_source_dir}/g4/em_field_equation_of_motion.cc
-    ${module_source_dir}/g4/em_field_g4_stuff.cc
-    ${module_source_dir}/g4/neutrons_physics_constructor.cc
-    ${module_source_dir}/g4/biasing_manager.cc
-    )
+#     ${module_source_dir}/g4/processes/utils.cc
+#     ${module_source_dir}/g4/processes/em_extra_models.cc
+#     ${module_source_dir}/g4/processes/em_model_factory.cc
+#     ${module_source_dir}/g4/manager_parameters.cc
+#     ${module_source_dir}/g4/particles_physics_constructor.cc
+#     ${module_source_dir}/g4/physics_list_utils.cc
+#     ${module_source_dir}/g4/tracking_action.cc
+#     ${module_source_dir}/g4/stacking_action.cc
+#     ${module_source_dir}/g4/g4_prng.cc
+#     ${module_source_dir}/g4/run_action.cc
+#     ${module_source_dir}/g4/sensitive_detector.cc
+#     ${module_source_dir}/g4/simulation_ctrl.cc
+#     ${module_source_dir}/g4/em_physics_constructor.cc
+#     ${module_source_dir}/g4/loggable_support.cc
+#     ${module_source_dir}/g4/manager.cc
+#     ${module_source_dir}/g4/physics_list.cc
+#     ${module_source_dir}/g4/sensitive_hit.cc
+#     ${module_source_dir}/g4/stepping_verbose.cc
+#     ${module_source_dir}/g4/event_action.cc
+#     ${module_source_dir}/g4/base_physics_constructor.cc
+#     ${module_source_dir}/g4/region_tools.cc
+#     ${module_source_dir}/g4/detector_construction.cc
+#     ${module_source_dir}/g4/track_history.cc
+#     ${module_source_dir}/g4/stepping_action.cc
+#     ${module_source_dir}/g4/sensitive_hit_collection.cc
+#     ${module_source_dir}/g4/primary_generator.cc
+#     ${module_source_dir}/g4/simulation_module.cc
+#     ${module_source_dir}/g4/magnetic_field.cc
+#     ${module_source_dir}/g4/electromagnetic_field.cc
+#     ${module_source_dir}/g4/em_field_equation_of_motion.cc
+#     ${module_source_dir}/g4/em_field_g4_stuff.cc
+#     ${module_source_dir}/g4/neutrons_physics_constructor.cc
+#     ${module_source_dir}/g4/biasing_manager.cc
+#     )
 
-  list(APPEND ${module_name}_MODULE_TESTS
-    ${module_test_dir}/test_g4_prng.cxx
-    ${module_test_dir}/test_g4_processes_em_model_factory.cxx
-    ${module_test_dir}/test_g4_detector_construction.cxx
-    )
+#   list(APPEND ${module_name}_MODULE_TESTS
+#     ${module_test_dir}/test_g4_prng.cxx
+#     ${module_test_dir}/test_g4_processes_em_model_factory.cxx
+#     ${module_test_dir}/test_g4_detector_construction.cxx
+#     )
 
-    # - Applications
-    set(${module_name}_GEANT4_MODULE_APPS
-      ${module_app_dir}/g4/g4_production.cxx
-      )
+#   # - Applications
+#   set(${module_name}_GEANT4_MODULE_APPS
+#     ${module_app_dir}/g4/g4_production.cxx
+#     )
 
-endif()
+# endif()
 
 # - Examples dir
 set(${module_name}_MODULE_EXAMPLES
   ${module_examples_dir}
   )
 
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
-  if(Bayeux_BUILD_GEANT4_MODULE)
+if (BAYEUX_WITH_DEVELOPER_TOOLS)
+  if(BAYEUX_WITH_GEANT4_MODULE)
 
     # - Utility script:
     configure_file(${module_app_dir}/g4/mctools_g4_mkskelcfg.in

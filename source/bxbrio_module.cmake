@@ -54,18 +54,21 @@ set(${module_name}_MODULE_SOURCES
   )
 
 # - Generate ROOT headers
-#root_generate_dictionary("${module_include_dir}/${module_name}/detail/brio_record.h;${module_include_dir}/${module_name}/detail/TArrayCMod.h"
-#  "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
-#  "${PROJECT_BINARY_DIR}/brio_dict.cc"
-#  "${module_include_dir}"
-#  )
-#list(APPEND ${module_name}_MODULE_SOURCES ${PROJECT_BINARY_DIR}/brio_dict.cc)
-root_generate_dictionary(brio_dict
-  ${module_include_dir}/${module_name}/detail/brio_record.h
-  ${module_include_dir}/${module_name}/detail/TArrayCMod.h
-  LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
-  )
-list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
+if(Bayeux_USE_LEGACY_ROOT)
+  root_generate_dictionary("${module_include_dir}/${module_name}/detail/brio_record.h;${module_include_dir}/${module_name}/detail/TArrayCMod.h"
+    "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
+    "${PROJECT_BINARY_DIR}/brio_dict.cc"
+    "${module_include_dir}"
+    )
+  list(APPEND ${module_name}_MODULE_SOURCES ${PROJECT_BINARY_DIR}/brio_dict.cc)
+else()
+  root_generate_dictionary(brio_dict
+    ${module_include_dir}/${module_name}/detail/brio_record.h
+    ${module_include_dir}/${module_name}/detail/TArrayCMod.h
+    LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
+    )
+  list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
+endif()
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})

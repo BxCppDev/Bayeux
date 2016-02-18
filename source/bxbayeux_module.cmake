@@ -69,11 +69,6 @@ set(${module_name}_MODULE_SOURCES
 
 set(${module_name}_ENDING_MODULE_SOURCES )
 
-set(BAYEUX_WITH_QT_GUI 0)
-if (Bayeux_BUILD_QT_GUI)
-  set(BAYEUX_WITH_QT_GUI 1)
-endif()
-
 # - Publish headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")
@@ -85,7 +80,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/..
   ${CMAKE_CURRENT_BINARY_DIR}/bx${module_name}
   )
 
-if (Bayeux_BUILD_IMPLICIT_INIT_FINI)
+if (BAYEUX_WITH_IMPLICIT_INIT_FINI)
   list(APPEND ${module_name}_ENDING_MODULE_SOURCES
     bx${module_name}/_init_fini.cc
     )

@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2013 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013 by Université de Caen
+// Copyright (c) 2013-2016 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2016 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -25,14 +25,47 @@
 #ifndef BAYEUX_BAYEUX_CONFIG_H
 #define BAYEUX_BAYEUX_CONFIG_H
 
-//! Evaluates to true if Bayeux was built with automated init/fini operation at DLL loading
+//! Evaluates to true if Bayeux was built with automated init/fini operations at DLL loading
 #cmakedefine01 BAYEUX_WITH_IMPLICIT_INIT_FINI
+
+//! Evaluates to true if Bayeux was built with the cuts module
+#cmakedefine01 BAYEUX_WITH_CUTS
+
+//! Evaluates to true if Bayeux was built with the mygsl module
+#cmakedefine01 BAYEUX_WITH_MYGSL
+
+//! Evaluates to true if Bayeux was built with the materials module
+#cmakedefine01 BAYEUX_WITH_MATERIALS
+
+//! Evaluates to true if Bayeux was built with the brio module
+#cmakedefine01 BAYEUX_WITH_BRIO
+
+//! Evaluates to true if Bayeux was built with the dpp module
+#cmakedefine01 BAYEUX_WITH_DPP
+
+//! Evaluates to true if Bayeux was built with the geomtools module
+#cmakedefine01 BAYEUX_WITH_GEOMTOOLS
+
+//! Evaluates to true if Bayeux was built with the genbb_help module
+#cmakedefine01 BAYEUX_WITH_GENBB_HELP
+
+//! Evaluates to true if Bayeux was built with the genvtx module
+#cmakedefine01 BAYEUX_WITH_GENVTX
+
+//! Evaluates to true if Bayeux was built with the emfield module
+#cmakedefine01 BAYEUX_WITH_EMFIELD
+
+//! Evaluates to true if Bayeux was built with the mctools module
+#cmakedefine01 BAYEUX_WITH_MCTOOLS
 
 //! Evaluates to true if Bayeux was built with Geant4 extension module
 #cmakedefine01 BAYEUX_WITH_GEANT4_MODULE
 
-//! Evaluates to true if Bayeux was built with LaHague module
-#cmakedefine01 BAYEUX_WITH_LAHAGUE_MODULE
+//! Evaluates to true if Bayeux was built with MCNP extension module
+#cmakedefine01 BAYEUX_WITH_MCNP_MODULE
+
+//! Evaluates to true if Bayeux was built with the lahague module
+#cmakedefine01 BAYEUX_WITH_LAHAGUE
 
 //! Evaluates to true if Bayeux was installes examples
 #cmakedefine01 BAYEUX_WITH_EXAMPLES
