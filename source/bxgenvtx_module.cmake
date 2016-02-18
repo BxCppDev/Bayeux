@@ -23,7 +23,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(genvtx_VERSION_MAJOR 5)
-set(genvtx_VERSION_MINOR 0)
+set(genvtx_VERSION_MINOR 1)
 set(genvtx_VERSION_PATCH 0)
 set(genvtx_VERSION "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_VERSION_PATCH}")
 set(GENVTX_WITH_BIO 1)
@@ -134,7 +134,7 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
+if (BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/genvtx_mkskelcfg.in
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenvtx_mkskelcfg @ONLY)
 
