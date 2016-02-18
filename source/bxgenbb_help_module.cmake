@@ -24,7 +24,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(genbb_help_VERSION_MAJOR 6)
-set(genbb_help_VERSION_MINOR 0)
+set(genbb_help_VERSION_MINOR 1)
 set(genbb_help_VERSION_PATCH 0)
 set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_VERSION_PATCH}")
 
@@ -535,7 +535,7 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
+if (BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/genbb_mkskelcfg.in
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg @ONLY)
 
