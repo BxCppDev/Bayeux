@@ -22,7 +22,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(mygsl_VERSION_MAJOR 6)
-set(mygsl_VERSION_MINOR 0)
+set(mygsl_VERSION_MINOR 1)
 set(mygsl_VERSION_PATCH 0)
 set(mygsl_VERSION "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_VERSION_PATCH}")
 set(MYGSL_WITH_BIO ON)
