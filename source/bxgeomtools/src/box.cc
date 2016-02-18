@@ -656,18 +656,18 @@ namespace geomtools {
     // Keep only base rendering bits:
     uint32_t base_options = options_ & WR_BASE_MASK;
 
-    bool edge00 = false;
-    bool edge01 = false;
-    bool edge02 = false;
-    bool edge03 = false;
-    bool edge04 = false;
-    bool edge05 = false;
-    bool edge06 = false;
-    bool edge07 = false;
-    bool edge08 = false;
-    bool edge09 = false;
-    bool edge10 = false;
-    bool edge11 = false;
+    // bool edge00 = false;
+    // bool edge01 = false;
+    // bool edge02 = false;
+    // bool edge03 = false;
+    // bool edge04 = false;
+    // bool edge05 = false;
+    // bool edge06 = false;
+    // bool edge07 = false;
+    // bool edge08 = false;
+    // bool edge09 = false;
+    // bool edge10 = false;
+    // bool edge11 = false;
 
     // double explode_factor = 1.0;
     // if (debug_explode) {
@@ -678,10 +678,10 @@ namespace geomtools {
       placement face_placement;
       compute_face(FACE_BOTTOM, face, face_placement);
       uint32_t options = base_options;
-      edge00 = true;
-      edge02 = true;
-      edge04 = true;
-      edge06 = true;
+      // edge00 = true;
+      // edge02 = true;
+      // edge04 = true;
+      // edge06 = true;
       face.generate_wires(wires_, face_placement, options);
     }
 
@@ -690,10 +690,10 @@ namespace geomtools {
       placement face_placement;
       compute_face(FACE_TOP, face, face_placement);
       uint32_t options = base_options;
-      edge01 = true;
-      edge03 = true;
-      edge05 = true;
-      edge07 = true;
+      // edge01 = true;
+      // edge03 = true;
+      // edge05 = true;
+      // edge07 = true;
       face.generate_wires(wires_, face_placement, options);
     }
 
@@ -706,10 +706,10 @@ namespace geomtools {
       // else edge00 = true;
       // if (edge01) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
       // else edge01 = true;
-      edge00 = true;
-      edge01 = true;
-      edge08 = true;
-      edge09 = true;
+      // edge00 = true;
+      // edge01 = true;
+      // edge08 = true;
+      // edge09 = true;
       face.generate_wires(wires_, face_placement, options);
     }
 
@@ -722,10 +722,10 @@ namespace geomtools {
       // else edge02 = true;
       // if (edge03) options |= rectangle::WR_RECT_NO_XPLUS_SIDE;
       // else edge03 = true;
-      edge02 = true;
-      edge03 = true;
-      edge10 = true;
-      edge11 = true;
+      // edge02 = true;
+      // edge03 = true;
+      // edge10 = true;
+      // edge11 = true;
       face.generate_wires(wires_, face_placement, options);
     }
 
@@ -742,10 +742,10 @@ namespace geomtools {
       // else edge08 = true;
       // if (edge10) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
       // else edge10 = true;
-      edge04 = true;
-      edge05 = true;
-      edge08 = true;
-      edge10 = true;
+      // edge04 = true;
+      // edge05 = true;
+      // edge08 = true;
+      // edge10 = true;
       face.generate_wires(wires_, face_placement, options);
     }
 
@@ -762,10 +762,10 @@ namespace geomtools {
       // else edge09 = true;
       // if (edge11) options |= rectangle::WR_RECT_NO_YPLUS_SIDE;
       // else edge11 = true;
-      edge06 = true;
-      edge07 = true;
-      edge09 = true;
-      edge11 = true;
+      // edge06 = true;
+      // edge07 = true;
+      // edge09 = true;
+      // edge11 = true;
       face.generate_wires(wires_, face_placement, options);
     }
 
