@@ -71,15 +71,79 @@ namespace geomtools {
     if (!is_valid()) {
       this->i_object_3d::_initialize(config_, objects_);
 
+      static const int MODE_NONE = -1;
+      static const int MODE_PLAIN = 0;
+      // static const int MODE_POINT_NORMAL = 1;
+      // static const int MODE_POINT_VECTORS = 2;
+
+      int mode = MODE_NONE;
+
+      if (config_.has_key("mode")) {
+        const std::string & mode_str = config_.fetch_string("mode");
+        if (mode_str == "plain") {
+          mode = MODE_PLAIN;
+        // } else if (mode_str == "point_normal") {
+        // Not implemented yet:
+        //   mode = MODE_POINT_NORMAL;
+        // } else if (mode_str == "point_vectors") {
+        // Not implemented yet:
+        //   mode = MODE_POINT_VECTORS;
+        } else {
+          DT_THROW(std::logic_error, "Invalid plane build mode '" << mode_str << "'!");
+        }
+      }
+
+      if (mode == MODE_NONE) {
+        mode = MODE_PLAIN;
+      }
+
       double lunit = CLHEP::mm;
       if (config_.has_key("length_unit")) {
         const std::string lunit_str = config_.fetch_string("length_unit");
         lunit = datatools::units::get_length_unit_from(lunit_str);
       }
 
-      // Not implemented yet
+      double lunit_sqr = lunit * lunit;
+      if (config_.has_key("square_length_unit")) {
+        const std::string lunit_sqr_str = config_.fetch_string("square_length_unit");
+        lunit_sqr = datatools::units::get_surface_unit_from(lunit_sqr_str);
+      }
 
-      // a, b, c, d
+      if (mode == MODE_PLAIN) {
+
+        double a(0.0), b(0.0), c(0.0), d(0.0);
+        if (config_.has_key("a")) {
+          a = config_.fetch_real("a");
+          if (!config_.has_explicit_unit("a")) {
+            a *= lunit;
+          }
+        }
+
+        if (config_.has_key("b")) {
+          b = config_.fetch_real("b");
+          if (!config_.has_explicit_unit("b")) {
+            b *= lunit;
+          }
+        }
+
+        if (config_.has_key("c")) {
+          c = config_.fetch_real("c");
+          if (!config_.has_explicit_unit("c")) {
+            c *= lunit;
+          }
+        }
+
+        if (config_.has_key("d")) {
+          d = config_.fetch_real("d");
+          if (!config_.has_explicit_unit("d")) {
+            d *= lunit_sqr;
+          }
+        }
+
+        set(a, b, c, d);
+      }
+
+      // Not implemented yet:
 
       // point + normal
 
@@ -128,7 +192,6 @@ namespace geomtools {
     _d_ = d_;
     return;
   }
-
 
 
   plane::plane (const geomtools::vector_3d & point_,

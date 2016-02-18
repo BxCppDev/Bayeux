@@ -118,6 +118,7 @@ namespace geomtools {
 
   private:
 
+    // a.x + b.y + c.z + d  = 0
     double _a_;
     double _b_;
     double _c_;
