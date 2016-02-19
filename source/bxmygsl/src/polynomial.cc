@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <cmath> // for std::abs
+#include <complex> // for std::abs
 
 // Third party:
 // - GSL:
@@ -94,6 +95,11 @@ namespace mygsl {
   void polynomial::set_coefficients(const std::vector<double>& c_)
   {
     _c_ = c_;
+  }
+
+  const std::vector<double> & polynomial::get_coefficients() const
+  {
+    return _c_;
   }
 
   bool polynomial::is_initialized() const
@@ -311,14 +317,30 @@ namespace mygsl {
   // Inner solver class implementation
   //
   struct polynomial::solver::solver_impl {
-    int    _status_;
-    unsigned int _sz_;
-    gsl_poly_complex_workspace *_ws_;
+    int                          _status_;
+    unsigned int                 _sz_;
+    std::vector<double>          _z_;
+    gsl_poly_complex_workspace * _ws_;
+    /*
+    unsigned int _capacity_;
+    double * _z_;
+    */
   };
+
+  bool polynomial::solver::is_initialized() const
+  {
+    return pImpl->_ws_ != 0;
+  }
+
+  bool polynomial::solver::is_success() const
+  {
+    return pImpl->_status_ = GSL_SUCCESS;
+  }
 
   polynomial::solver::solver(unsigned int sz_) {
     pImpl = new solver_impl;
-    pImpl->_status_ = 0;
+    pImpl->_status_ = GSL_EFAILED;
+    pImpl->_sz_ = 0;
     pImpl->_ws_ = 0;
     _init_(sz_);
   }
@@ -329,16 +351,13 @@ namespace mygsl {
 
   void polynomial::solver::_init_(unsigned int sz_) {
     pImpl->_status_ = GSL_EFAILED;
-    if (pImpl->_ws_ != 0) {
-      if (pImpl->_sz_ >= sz_) {
-        return;
-      } else {
-        _reset_();
-      }
+    if (is_initialized()) {
+      _reset_();
     }
     if (sz_ > 1) {
       pImpl->_ws_ = gsl_poly_complex_workspace_alloc(sz_);
       pImpl->_sz_ = sz_;
+      pImpl->_z_.assign(2 * (sz_ - 1), std::numeric_limits<double>::quiet_NaN());
     }
   }
 
@@ -346,16 +365,56 @@ namespace mygsl {
     if (pImpl->_ws_ != 0) {
       gsl_poly_complex_workspace_free(pImpl->_ws_);
       pImpl->_ws_ = 0;
-      pImpl->_sz_ = 0;
     }
+    pImpl->_z_.clear();
+    pImpl->_sz_ = 0;
     pImpl->_status_ = GSL_EFAILED;
+  }
+
+  size_t polynomial::solver::fetch_solutions(std::vector<std::complex<double> > & zsols_)
+  {
+    zsols_.clear();
+    if (pImpl->_status_ != GSL_EFAILED) {
+      zsols_.reserve(pImpl->_sz_ - 1);
+      for (int i = 0; i < (int) pImpl->_sz_ - 1; i++) {
+        std::complex<double> zi(pImpl->_z_[2 * i], pImpl->_z_[2 * i + 1]);
+        zsols_.push_back(zi);
+      }
+    }
+    return zsols_.size();
+  }
+
+  size_t polynomial::solver::fetch_real_solutions(std::vector<double> & rsols_, double precision_)
+  {
+    double precision = precision_;
+    if (precision <= std::numeric_limits<double>::epsilon()) {
+      precision = std::numeric_limits<double>::epsilon();
+    }
+    rsols_.clear();
+    if (pImpl->_status_ != GSL_EFAILED) {
+      rsols_.reserve(pImpl->_sz_ - 1);
+      for (int i = 0; i < (int) pImpl->_sz_ - 1; i++) {
+        std::complex<double> zi(pImpl->_z_[2 * i], pImpl->_z_[2 * i + 1]);
+        if (std::abs(zi.imag()) < precision) {
+          rsols_.push_back(zi.real());
+        }
+      }
+    }
+    return rsols_.size();
   }
 
   bool polynomial::solver::solve(const polynomial& p_) {
     unsigned int deg = p_.get_degree();
-    _init_(deg + 1);
+    size_t n = deg + 1;
+    if (! is_initialized()) {
+      _init_(n);
+    }
     {
-      DT_THROW_IF(true, std::logic_error, "Polynomial solver is not implemented yet !");
+      const double * a = &(p_.get_coefficients()[0]); // C++11 uses .data()
+      pImpl->_status_ = gsl_poly_complex_solve(a,
+                                               pImpl->_sz_ ,
+                                               pImpl->_ws_,
+                                               &pImpl->_z_[0]);
     }
     return pImpl->_status_ == GSL_SUCCESS;
   }

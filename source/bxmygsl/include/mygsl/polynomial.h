@@ -50,6 +50,8 @@ namespace mygsl {
 
     void set_coefficients(const std::vector<double>& c_);
 
+    const std::vector<double> & get_coefficients() const;
+
     unsigned int get_degree() const;
 
     unsigned int get_ncoeffs() const;
@@ -125,7 +127,11 @@ namespace mygsl {
     public:
       solver(unsigned int sz_ = 0);
       virtual ~solver();
+      bool is_initialized() const;
       bool solve(const polynomial& p_);
+      bool is_success() const;
+      size_t fetch_solutions(std::vector<std::complex<double> > & zsols_);
+      size_t fetch_real_solutions(std::vector<double> & rsols_, double precision_ = -1.0);
 
     private:
       void _init_(unsigned int);
