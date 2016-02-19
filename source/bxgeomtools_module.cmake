@@ -205,6 +205,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/quadric.h
   ${module_include_dir}/${module_name}/point_on_quadric_finder.h
   ${module_include_dir}/${module_name}/foot_point_on_quadric_finder.h
+  ${module_include_dir}/${module_name}/toroid_nappe.h
   )
 
 # - configure resources
@@ -335,6 +336,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/quadric.cc
   ${module_source_dir}/point_on_quadric_finder.cc
   ${module_source_dir}/foot_point_on_quadric_finder.cc
+  ${module_source_dir}/toroid_nappe.cc
   bx${module_name}/resource.cc
   )
 
@@ -429,6 +431,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_wires_2.cxx
   ${module_test_dir}/test_wall_solid.cxx
   ${module_test_dir}/test_quadric.cxx
+  ${module_test_dir}/test_toroid_nappe.cxx
   )
 
 # - Applications
