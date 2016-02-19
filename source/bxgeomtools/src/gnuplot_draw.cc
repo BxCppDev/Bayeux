@@ -42,6 +42,7 @@
 #include <geomtools/cylindrical_sector.h>
 #include <geomtools/elliptical_cylinder_sector.h>
 #include <geomtools/composite_surface.h>
+#include <geomtools/toroid_nappe.h>
 
 // Volumes/Solids:
 #include <geomtools/box.h>
@@ -199,6 +200,7 @@ namespace geomtools {
          << z_ << ' '
          << color;
     if (new_line_) out_ << std::endl;
+    else out_ << ' ';
     return;
   }
 
@@ -235,6 +237,7 @@ namespace geomtools {
       out_ << ' ' << color_context_const().str();
     }
     if (new_line_) out_ << std::endl;
+    else out_ << ' ';
     return;
   }
 
@@ -841,6 +844,44 @@ namespace geomtools {
   {
     wires_type wires;
     r_.generate_wires(wires, position_, rotation_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  // Spherical sector:
+
+  void
+  gnuplot_draw::draw_toroid_nappe(std::ostream & out_,
+                                  const toroid_nappe & tn_,
+                                  uint32_t options_)
+  {
+    wires_type wires;
+    tn_.generate_wires_self(wires, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_toroid_nappe(std::ostream & out_,
+                                  const placement & p_,
+                                  const toroid_nappe & tn_,
+                                  uint32_t options_)
+  {
+    wires_type wires;
+    tn_.generate_wires(wires, p_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_toroid_nappe(std::ostream & out_,
+                                  const vector_3d & position_,
+                                  const rotation_3d & rotation_,
+                                  const toroid_nappe & tn_,
+                                  uint32_t options_)
+  {
+    wires_type wires;
+    tn_.generate_wires(wires, position_, rotation_, options_);
     gnuplot_draw::basic_draw_wires(out_, wires);
     return;
   }

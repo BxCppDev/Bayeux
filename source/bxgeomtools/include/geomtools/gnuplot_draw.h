@@ -57,6 +57,7 @@ namespace geomtools {
   class cylindrical_sector;
   class elliptical_cylinder_sector;
   class composite_surface;
+  class toroid_nappe;
 
   // Volumes/Solids:
   class box;
@@ -562,6 +563,29 @@ namespace geomtools {
                           const rotation_3d &,
                           const spherical_sector &,
                           uint32_t options_ = DEFAULT_OPTIONS);
+
+    // Toroid nappe:
+
+    /// Draw a toroid nappe
+    static void
+    draw_toroid_nappe(std::ostream &,
+                      const toroid_nappe &,
+                      uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a toroid nappe
+    static void
+    draw_toroid_nappe(std::ostream &,
+                      const placement &,
+                      const toroid_nappe &,
+                      uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a toroid nappe
+    static void
+    draw_toroid_nappe(std::ostream &,
+                      const vector_3d &,
+                      const rotation_3d &,
+                      const toroid_nappe &,
+                      uint32_t options_ = DEFAULT_OPTIONS);
 
     // Disk:
 

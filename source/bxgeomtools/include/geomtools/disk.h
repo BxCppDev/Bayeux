@@ -21,7 +21,7 @@
 
 namespace geomtools {
 
-  /// \brief A disk sector surface (2D shape)
+  /// \brief A disk/ring sector surface (2D shape)
   class disk : public i_shape_2d
   {
 
