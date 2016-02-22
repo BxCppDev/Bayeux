@@ -530,7 +530,7 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (BAYEUX_WITH_DEVELOPER_TOOLS)
+if(Bayeux_BUILD_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/ocd_make_doc
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxocd_make_doc @ONLY)
   configure_file(${module_app_dir}/ocd_sort_classnames.py

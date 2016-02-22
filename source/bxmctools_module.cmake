@@ -254,7 +254,7 @@ set(${module_name}_MODULE_EXAMPLES
   ${module_examples_dir}
   )
 
-if (BAYEUX_WITH_DEVELOPER_TOOLS)
+if(Bayeux_BUILD_DEVELOPER_TOOLS)
   if(BAYEUX_WITH_GEANT4_MODULE)
 
     # - Utility script:

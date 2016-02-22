@@ -465,7 +465,7 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (BAYEUX_WITH_DEVELOPER_TOOLS)
+if(Bayeux_BUILD_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/geomtools_mkskelcfg.in
     ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg @ONLY)
 
