@@ -158,13 +158,13 @@ though support will be on a best effort basis.
 
 -  **Core Software Required**:
 
-   -  CMake 2.8.0 or higher: http://www.cmake.org
+   -  CMake 3.3.0 or higher: http://www.cmake.org
    -  C/C++ compiler supporting at least C++03 standard
       (GNU/Clang/Intel)
 
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
-clusters) may  not provide CMake  2.8. If this  is the case,  then you
+clusters) may  not provide CMake  3.3. If this  is the case,  then you
 should download the latest Linux *binary .sh* file from:
 
 -  http://www.cmake.org/cmake/resources/software.html
