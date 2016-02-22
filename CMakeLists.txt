@@ -36,17 +36,6 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 #-----------------------------------------------------------------------
-# If the user specifies -DCMAKE_BUILD_TYPE on the command line, take their definition
-# and dump it in the cache along with proper documentation, otherwise set CMAKE_BUILD_TYPE
-# to Release prior to calling PROJECT()
-#
-IF(DEFINED CMAKE_BUILD_TYPE)
-   SET(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.")
-ELSE()
-   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.")
-ENDIF()
-
-#-----------------------------------------------------------------------
 # CMake/project requirements and configuration
 #
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
@@ -54,63 +43,85 @@ project(Bayeux VERSION "2.1.0")
 
 # - Load Custom Modules
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
-include(SVNUtilities)
 
+#-----------------------------------------------------------------------
+# Additional SVN Revision tracking for developers
+include(SVNUtilities)
+set(Bayeux_VERSION_REVISION 0)
+
+Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
+if(Bayeux_DIRECTORY_IS_WC)
+  Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Bayeux)
+  set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
+endif()
+
+#-----------------------------------------------------------------------
+# Compiler configuration
 # - Enforce all warnings, but ensure other flags are retained
 # Note that the added flags *won't* show up in the cache.
 # TODO : better way to do this with the "Make Override" system?
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+option(Bayeux_FORCE_CXX_ALL_WARNINGS "Enable all C++ compiler warnings" ON)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|(Apple)+Clang")
   # Developers may need to mute warnings in order to track easily
   # error and warning messages mixed up in the output stream with
   # multi-threaded build. So we make this compiler flag an option,
   # activated by default for a production build:
-  option(Bayeux_FORCE_CXX_ALL_WARNINGS "Force all C++ compiler warnings" ON)
   if (Bayeux_FORCE_CXX_ALL_WARNINGS)
     set(Bayeux_CXX_FLAGS "-W -Wall")
     ### set(Bayeux_CXX_FLAGS "-W -Wall -Woverloaded-virtual")
   endif()
 
   # On clang, need larger template depth
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
     set(Bayeux_CXX_FLAGS "${Bayeux_CXX_FLAGS} -ftemplate-depth=512")
   endif()
-elseif(CMAKE_CXX_COMPILER MATCHES "icpc.*|icc.*")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
   # Needs more testing
   set(Bayeux_CXX_FLAGS "-w2")
 endif()
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Bayeux_CXX_FLAGS}")
 
-# - SVN Versioning, if available
-set(Bayeux_VERSION_REVISION 0)
-
-Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
-
-if(Bayeux_DIRECTORY_IS_WC)
-  Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Bayeux)
-  set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
+#-----------------------------------------------------------------------
+# If the user specifies -DCMAKE_BUILD_TYPE on the command line, take their definition
+# and dump it in the cache along with proper documentation, otherwise set CMAKE_BUILD_TYPE
+# to RelWithDebInfo
+#
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  if(NOT CMAKE_BUILD_TYPE)
+    # Default to a RelWithDebInfo build if nothing else...
+    set(CMAKE_BUILD_TYPE RelWithDebInfo
+      CACHE STRING "Choose the type of build, options are: None Release MinSizeRel Debug RelWithDebInfo MinSizeRel."
+      FORCE
+      )
+  else()
+    # Force to the cache, but use existing value.
+    set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}"
+      CACHE STRING "Choose the type of build, options are: None Release MinSizeRel Debug RelWithDebInfo MinSizeRel."
+      FORCE
+      )
+  endif()
 endif()
 
+#-----------------------------------------------------------------------
 # - Standard UNIX Tool install paths, including relative paths for use
 # by applications requiring resources
-# Validate that certain paths are relative, otherwise relocation may fail
 include(GNUInstallDirs)
+
+# Validate that certain paths are relative, otherwise relocation may fail
 foreach(_dir BINDIR LIBDIR INCLUDEDIR DATAROOTDIR)
   if(IS_ABSOLUTE "${CMAKE_INSTALL_${_dir}}")
     message(FATAL_ERROR "Absolute path for CMAKE_INSTALL_${_dir} not allowed")
   endif()
 endforeach()
 
-# Devel printings:
-# message(STATUS "DEVEL: CMAKE_C_LIBRARY_ARCHITECTURE='${CMAKE_C_LIBRARY_ARCHITECTURE}'")
-# message(STATUS "DEVEL: CMAKE_CXX_LIBRARY_ARCHITECTURE='${CMAKE_CXX_LIBRARY_ARCHITECTURE}'")
-# message(STATUS "DEVEL: CMAKE_LIBRARY_ARCHITECTURE='${CMAKE_LIBRARY_ARCHITECTURE}'")
-# message(STATUS "DEVEL: CMAKE_INSTALL_LIBDIR = '${CMAKE_INSTALL_LIBDIR}'")
-
 # Add a path for CMake config files
 set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
 set(CMAKE_INSTALL_FULL_CMAKEDIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 
 
+#-----------------------------------------------------------------------
 # - Configure output paths for products to give inplace build that roughly
 #   matches install layout.
 #   We allow a parent project to change the output root so that Bayeux
@@ -119,6 +130,8 @@ if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
   set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
 endif()
 
+# - Note that at present, this layout only supports single mode
+# generators like make/ninja...
 file(RELATIVE_PATH Bayeux_BINDIR_TO_RESOURCEDIR "${CMAKE_INSTALL_FULL_BINDIR}"  "${CMAKE_INSTALL_FULL_DATAROOTDIR}/Bayeux-${Bayeux_VERSION}")
 file(RELATIVE_PATH Bayeux_CMAKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}/Bayeux-${Bayeux_VERSION}"  "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 
