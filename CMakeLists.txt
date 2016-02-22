@@ -49,27 +49,12 @@ ENDIF()
 #-----------------------------------------------------------------------
 # CMake/project requirements and configuration
 #
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
-# If Policy CMP0022 exists, use OLD because Bayeux still needs
-# to support versions of CMake < 2.8.12.
-# This relates to LINK_INTERFACE_LIBRARIES and can be removed once
-# minimum required CMake version reaches 2.8.12
-if(POLICY CMP0022)
-  cmake_policy(SET CMP0022 OLD)
-endif()
-
-project(Bayeux)
+cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+project(Bayeux VERSION "2.1.0")
 
 # - Load Custom Modules
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 include(SVNUtilities)
-
-# - Versioning
-set(Bayeux_VERSION_MAJOR 2)
-set(Bayeux_VERSION_MINOR 1)
-set(Bayeux_VERSION_PATCH 0)
-set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
 
 # - Enforce all warnings, but ensure other flags are retained
 # Note that the added flags *won't* show up in the cache.
