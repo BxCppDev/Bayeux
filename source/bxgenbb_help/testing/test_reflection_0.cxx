@@ -29,9 +29,8 @@ void test_primary_particle()
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   const DR_CLASS & ppMetaClass  = DR_CLASS_BY_NAME("genbb::primary_particle");
 
-  boost::scoped_ptr<genbb::primary_particle> part0(ppMetaClass.construct<genbb::primary_particle>());
 
-  DR_OBJECT partObj0(*part0.get());
+  DR_OBJECT partObj0 = ppMetaClass.construct();
   DT_LOG_NOTICE(logging, "Initializing the primary particle object...");
 
   partObj0.set("type",           DR_VALUE(3));
@@ -57,9 +56,8 @@ void test_primary_event()
 {
   //datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   const DR_CLASS & peMetaClass  = DR_CLASS_BY_NAME("genbb::primary_event");
-  boost::scoped_ptr<genbb::primary_event> event0(peMetaClass.construct<genbb::primary_event>());
 
-  DR_OBJECT eventObj0(*event0.get());
+  DR_OBJECT eventObj0 = peMetaClass.construct();
 
   eventObj0.DR_CALL("tree_print", DR_ARGS(1,"The primary event: "));
 
