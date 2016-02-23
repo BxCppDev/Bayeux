@@ -52,7 +52,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @Bayeux_DOXYGEN_OUTPUT_DIR@
+OUTPUT_DIRECTORY       = @BAYEUX_DOXYGEN_OUTPUT_DIR@
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -128,7 +128,7 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH        = @Bayeux_BUILDPRODUCT_DIR@/include
+STRIP_FROM_PATH        = @BAYEUX_BUILDPRODUCT_DIR@/include
 
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
@@ -138,7 +138,7 @@ STRIP_FROM_PATH        = @Bayeux_BUILDPRODUCT_DIR@/include
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = @Bayeux_BUILDPRODUCT_DIR@/include
+STRIP_FROM_INC_PATH    = @BAYEUX_BUILDPRODUCT_DIR@/include
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful if your file system
@@ -641,9 +641,9 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @Bayeux_ABSOLUTE_MARKDOWN_DOCS@ \
-                         @Bayeux_DOCEXPORT_DIR@ \
-                         @PROJECT_SOURCE_DIR@/doc @Bayeux_BUILDPRODUCT_DIR@/include/bayeux
+INPUT                  = @BAYEUX_ABSOLUTE_MARKDOWN_DOCS@ \
+                         @BAYEUX_DOCEXPORT_DIR@ \
+                         @PROJECT_SOURCE_DIR@/doc @BAYEUX_BUILDPRODUCT_DIR@/include/bayeux
 
 
 # This tag can be used to specify the character encoding of the source files
@@ -1546,7 +1546,7 @@ TAGFILES               =
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE       = @Bayeux_DOXYGEN_OUTPUT_DIR@/bayeux.doxy.tag
+GENERATE_TAGFILE       = @BAYEUX_DOXYGEN_OUTPUT_DIR@/bayeux.doxy.tag
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed
 # in the class index. If set to NO only the inherited external classes

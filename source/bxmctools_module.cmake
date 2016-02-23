@@ -254,23 +254,20 @@ set(${module_name}_MODULE_EXAMPLES
   ${module_examples_dir}
   )
 
-if(Bayeux_BUILD_DEVELOPER_TOOLS)
-  if(BAYEUX_WITH_GEANT4_MODULE)
+if(BAYEUX_WITH_DEVELOPER_TOOLS AND BAYEUX_WITH_GEANT4_MODULE)
+  # - Utility script:
+  configure_file(${module_app_dir}/g4/mctools_g4_mkskelcfg.in
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxmctools_g4_mkskelcfg @ONLY)
 
-    # - Utility script:
-    configure_file(${module_app_dir}/g4/mctools_g4_mkskelcfg.in
-      ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxmctools_g4_mkskelcfg @ONLY)
+  install(FILES
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxmctools_g4_mkskelcfg
+    DESTINATION
+    ${CMAKE_INSTALL_BINDIR}
+    PERMISSIONS
+    OWNER_READ OWNER_EXECUTE
+    GROUP_READ GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE
+    COMPONENT Development
+    )
 
-    install(FILES
-      ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxmctools_g4_mkskelcfg
-      DESTINATION
-      ${CMAKE_INSTALL_BINDIR}
-      PERMISSIONS
-      OWNER_READ OWNER_EXECUTE
-      GROUP_READ GROUP_EXECUTE
-      WORLD_READ WORLD_EXECUTE
-      COMPONENT Development
-      )
-
-  endif()
 endif()

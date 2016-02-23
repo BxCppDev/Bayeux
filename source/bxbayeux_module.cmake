@@ -80,7 +80,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/..
   ${CMAKE_CURRENT_BINARY_DIR}/bx${module_name}
   )
 
-if (BAYEUX_WITH_IMPLICIT_INIT_FINI)
+if(BAYEUX_WITH_IMPLICIT_INIT_FINI)
   list(APPEND ${module_name}_ENDING_MODULE_SOURCES
     bx${module_name}/_init_fini.cc
     )
@@ -102,8 +102,6 @@ foreach(_rfin ${${module_name}_MODULE_RESOURCES})
 endforeach()
 
 # - Unit tests
-# set(Bayeux_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
-# set(${module_name}_TEST_ENVIRONMENT ${Bayeux_TEST_ENVIRONMENT})
 set(${module_name}_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS

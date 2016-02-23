@@ -54,7 +54,7 @@ set(${module_name}_MODULE_SOURCES
   )
 
 # - Generate ROOT headers
-if(Bayeux_USE_LEGACY_ROOT)
+if(BAYEUX_USE_LEGACY_ROOT)
   root_generate_dictionary("${module_include_dir}/${module_name}/detail/brio_record.h;${module_include_dir}/${module_name}/detail/TArrayCMod.h"
     "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
     "${PROJECT_BINARY_DIR}/brio_dict.cc"

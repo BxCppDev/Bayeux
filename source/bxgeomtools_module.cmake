@@ -37,13 +37,8 @@ set(GEOMTOOLS_WITH_ROOT_DISPLAY 1)
 
 # - Readline (for the bxgeomtools_inspector application)
 find_package(Readline QUIET)
-if (Readline_FOUND)
-  # message (STATUS "bxgeomtools: Found readline library...")
-  # message (STATUS "bxgeomtools: Readline_INCLUDE_DIR = '${Readline_INCLUDE_DIR}' ")
-  # message (STATUS "bxgeomtools: Readline_LIBRARIES   = '${Readline_LIBRARIES}' ")
+if(Readline_FOUND)
   set(GEOMTOOLS_WITH_READLINE 1)
-else()
-  message (STATUS "bxgeomtools: Readline library not found!")
 endif()
 
 # - Raw Headers and Sources
@@ -465,12 +460,12 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if(Bayeux_BUILD_DEVELOPER_TOOLS)
+if(BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/geomtools_mkskelcfg.in
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg @ONLY)
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg @ONLY)
 
   install(FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS

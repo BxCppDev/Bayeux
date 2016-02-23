@@ -535,12 +535,12 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if(Bayeux_BUILD_DEVELOPER_TOOLS)
+if(BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/genbb_mkskelcfg.in
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg @ONLY)
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg @ONLY)
 
   install(FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS

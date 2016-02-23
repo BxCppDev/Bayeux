@@ -59,7 +59,7 @@ namespace bayeux {
 
       _init = true;
     } else {
-#if BAYEUX_WITH_IMPLICIT_INIT_FINI == 0
+#ifndef Bayeux_WITH_IMPLICIT_INIT_FINI
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                      "Attempt to initialize the already initialized Bayeux library !");
 #endif
@@ -81,7 +81,7 @@ namespace bayeux {
       ::datatools::terminate();
       _terminate = true;
     } else {
-#if BAYEUX_WITH_IMPLICIT_INIT_FINI == 0
+#ifndef Bayeux_WITH_IMPLICIT_INIT_FINI
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                      "Attempt to terminate the already terminated Bayeux library !");
 #endif

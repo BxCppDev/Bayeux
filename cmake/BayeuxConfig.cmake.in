@@ -31,16 +31,20 @@
 # alongside us...
 #
 get_filename_component(__bayeux_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+message(STATUS "bxconfig in '${__bayeux_config_dir}'")
 
 #-----------------------------------------------------------------------
 # Hard code paths to headers for now...
 #
-get_filename_component(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/@Bayeux_CMAKEDIR_TO_INCLUDEDIR@" ABSOLUTE CACHE)
+set(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/@BAYEUX_CMAKEDIR_TO_INCLUDEDIR@")
+
+message(STATUS "Bayeux_INCLUDE_DIR = '${Bayeux_INCLUDE_DIR}'")
+
 mark_as_advanced(Bayeux_INCLUDE_DIR)
 set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux")
 
 set(Bayeux_DEFINITIONS)
-set(Bayeux_HAS_QT @Bayeux_BUILD_QT_GUI@)
+set(Bayeux_HAS_QT @BAYEUX_WITH_QT_GUI@)
 
 #-----------------------------------------------------------------------
 # Handle paths/targets for third party deps here...
@@ -89,8 +93,8 @@ find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
 # the plugin
 
 # - Qt4
-if (Bayeux_HAS_QT)
-find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
+if(Bayeux_HAS_QT)
+  find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
 endif()
 
 #-----------------------------------------------------------------------
@@ -105,7 +109,7 @@ list(APPEND Bayeux_INCLUDE_DIRS
   )
 
 # Qt support
-if (Bayeux_HAS_QT)
+if(Bayeux_HAS_QT)
   include(${QT_USE_FILE})
   list(APPEND Bayeux_DEFINITIONS ${QT_DEFINITIONS})
 endif()

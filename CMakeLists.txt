@@ -60,28 +60,23 @@ endif()
 # - Enforce all warnings, but ensure other flags are retained
 # Note that the added flags *won't* show up in the cache.
 # TODO : better way to do this with the "Make Override" system?
-option(Bayeux_FORCE_CXX_ALL_WARNINGS "Enable all C++ compiler warnings" ON)
+option(BAYEUX_FORCE_CXX_ALL_WARNINGS "Enable all C++ compiler warnings" ON)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|(Apple)+Clang")
-  # Developers may need to mute warnings in order to track easily
-  # error and warning messages mixed up in the output stream with
-  # multi-threaded build. So we make this compiler flag an option,
-  # activated by default for a production build:
-  if (Bayeux_FORCE_CXX_ALL_WARNINGS)
-    set(Bayeux_CXX_FLAGS "-W -Wall")
-    ### set(Bayeux_CXX_FLAGS "-W -Wall -Woverloaded-virtual")
+  if (BAYEUX_FORCE_CXX_ALL_WARNINGS)
+    set(BAYEUX_CXX_FLAGS "-W -Wall")
   endif()
 
   # On clang, need larger template depth
   if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
-    set(Bayeux_CXX_FLAGS "${Bayeux_CXX_FLAGS} -ftemplate-depth=512")
+    set(BAYEUX_CXX_FLAGS "${Bayeux_CXX_FLAGS} -ftemplate-depth=512")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
   # Needs more testing
-  set(Bayeux_CXX_FLAGS "-w2")
+  set(BAYEUX_CXX_FLAGS "-w2")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Bayeux_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BAYEUX_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------
 # If the user specifies -DCMAKE_BUILD_TYPE on the command line, take their definition
@@ -120,183 +115,134 @@ endforeach()
 set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
 set(CMAKE_INSTALL_FULL_CMAKEDIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
 
+# Resources directories based on name-version subdirs
+set(BAYEUX_TAG "Bayeux-${Bayeux_VERSION}")
+set(BAYEUX_RESOURCE_DIR "${BAYEUX_TAG}/resources")
+set(BAYEUX_EXAMPLE_DIR "${BAYEUX_TAG}/examples")
+set(BAYEUX_DOCUMENTATION_DIR "${BAYEUX_TAG}/Documentation")
+
 
 #-----------------------------------------------------------------------
 # - Configure output paths for products to give inplace build that roughly
 #   matches install layout.
 #   We allow a parent project to change the output root so that Bayeux
 #   can be embedded in another project
-if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
-  set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
+if(NOT BAYEUX_EMBEDDED OR NOT BAYEUX_BUILDPRODUCT_DIR)
+  set(BAYEUX_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
 endif()
 
 # - Note that at present, this layout only supports single mode
 # generators like make/ninja...
-file(RELATIVE_PATH Bayeux_BINDIR_TO_RESOURCEDIR "${CMAKE_INSTALL_FULL_BINDIR}"  "${CMAKE_INSTALL_FULL_DATAROOTDIR}/Bayeux-${Bayeux_VERSION}")
-file(RELATIVE_PATH Bayeux_CMAKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}/Bayeux-${Bayeux_VERSION}"  "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
+file(RELATIVE_PATH BAYEUX_BINDIR_TO_RESOURCEDIR "${CMAKE_INSTALL_FULL_BINDIR}"  "${CMAKE_INSTALL_FULL_DATAROOTDIR}/${BAYEUX_TAG}")
+file(RELATIVE_PATH BAYEUX_CMAKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}/${BAYEUX_TAG}"  "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
+
 
 #-----------------------------------------------------------------------
 # Option for building/installing developer tools
 #
-option(Bayeux_BUILD_DEVELOPER_TOOLS "Build/install developer tools" ON)
-mark_as_advanced(Bayeux_BUILD_DEVELOPER_TOOLS)
+option(BAYEUX_WITH_DEVELOPER_TOOLS "Build/install developer tools" ON)
+mark_as_advanced(BAYEUX_WITH_DEVELOPER_TOOLS)
 
 #-----------------------------------------------------------------------
 # Use implicit Bayeux init/fini instruction
 #
-option(Bayeux_BUILD_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
-mark_as_advanced(Bayeux_BUILD_IMPLICIT_INIT_FINI)
-
-if (Bayeux_BUILD_IMPLICIT_INIT_FINI)
-  set(BAYEUX_WITH_IMPLICIT_INIT_FINI 1)
-else()
-  set(BAYEUX_WITH_IMPLICIT_INIT_FINI 0)
-endif()
-
+option(BAYEUX_WITH_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
+mark_as_advanced(BAYEUX_WITH_IMPLICIT_INIT_FINI)
 
 # - Options for enabling Bayeux library modules
-option(Bayeux_WITH_BRIO       "Build Bayeux/brio library module"       ON)
-option(Bayeux_WITH_CUTS       "Build Bayeux/cuts library module"       ON)
-option(Bayeux_WITH_MYGSL      "Build Bayeux/mygsl library module"      ON)
-option(Bayeux_WITH_DPP        "Build Bayeux/dpp library module"        ON)
-option(Bayeux_WITH_MATERIALS  "Build Bayeux/materials library module"  ON)
-option(Bayeux_WITH_GEOMTOOLS  "Build Bayeux/geomtools library module"  ON)
-option(Bayeux_WITH_EMFIELD    "Build Bayeux/emfield library module"    ON)
-option(Bayeux_WITH_GENBB_HELP "Build Bayeux/genbb_help library module" ON)
-option(Bayeux_WITH_GENVTX     "Build Bayeux/genvtx library module"     ON)
-option(Bayeux_WITH_MCTOOLS    "Build Bayeux/mctools library module"    ON)
-option(Bayeux_WITH_LAHAGUE    "Build Bayeux/lahague library module"    OFF)
-mark_as_advanced(Bayeux_BUILD_LAHAGUE_MODULE)
-mark_as_advanced(Bayeux_WITH_BRIO)
-mark_as_advanced(Bayeux_WITH_CUTS)
-mark_as_advanced(Bayeux_WITH_MYGSL)
-mark_as_advanced(Bayeux_WITH_DPP)
-mark_as_advanced(Bayeux_WITH_MATERIALS)
-mark_as_advanced(Bayeux_WITH_GEOMTOOLS)
-mark_as_advanced(Bayeux_WITH_EMFIELD)
-mark_as_advanced(Bayeux_WITH_GENBB_HELP)
-mark_as_advanced(Bayeux_WITH_GENVTX)
-mark_as_advanced(Bayeux_WITH_MCTOOLS)
+option(BAYEUX_WITH_BRIO       "Build BAYEUX/brio library module"       ON)
+option(BAYEUX_WITH_CUTS       "Build BAYEUX/cuts library module"       ON)
+option(BAYEUX_WITH_MYGSL      "Build BAYEUX/mygsl library module"      ON)
+option(BAYEUX_WITH_DPP        "Build BAYEUX/dpp library module"        ON)
+option(BAYEUX_WITH_MATERIALS  "Build BAYEUX/materials library module"  ON)
+option(BAYEUX_WITH_GEOMTOOLS  "Build BAYEUX/geomtools library module"  ON)
+option(BAYEUX_WITH_EMFIELD    "Build BAYEUX/emfield library module"    ON)
+option(BAYEUX_WITH_GENBB_HELP "Build BAYEUX/genbb_help library module" ON)
+option(BAYEUX_WITH_GENVTX     "Build BAYEUX/genvtx library module"     ON)
+option(BAYEUX_WITH_MCTOOLS    "Build BAYEUX/mctools library module"    ON)
+option(BAYEUX_WITH_LAHAGUE    "Build BAYEUX/lahague library module"    OFF)
+mark_as_advanced(
+  BAYEUX_BUILD_LAHAGUE_MODULE
+  BAYEUX_WITH_BRIO
+  BAYEUX_WITH_CUTS
+  BAYEUX_WITH_MYGSL
+  BAYEUX_WITH_DPP
+  BAYEUX_WITH_MATERIALS
+  BAYEUX_WITH_GEOMTOOLS
+  BAYEUX_WITH_EMFIELD
+  BAYEUX_WITH_GENBB_HELP
+  BAYEUX_WITH_GENVTX
+  BAYEUX_WITH_MCTOOLS
+  )
 
 #-----------------------------------------------------------------------
 # Transitional option for backward compatibility with old ROOT versions (<6)
 #
-option(Bayeux_USE_LEGACY_ROOT "Bayeux is built using ROOT version (<6.X)" OFF)
-mark_as_advanced(Bayeux_USE_LEGACY_ROOT)
+option(BAYEUX_USE_LEGACY_ROOT "Bayeux is built using ROOT version (<6.X)" OFF)
+mark_as_advanced(BAYEUX_USE_LEGACY_ROOT)
 
 #-----------------------------------------------------------------------
 # Option for enabling Geant4 extension library module
 #
-option(Bayeux_BUILD_GEANT4_MODULE "Build Bayeux/mctools Geant4 Monte-Carlo module" ON)
-mark_as_advanced(Bayeux_BUILD_GEANT4_MODULE)
+option(BAYEUX_WITH_GEANT4_MODULE "Build Bayeux/mctools Geant4 Monte-Carlo module" ON)
+mark_as_advanced(BAYEUX_WITH_GEANT4_MODULE)
 
 #-----------------------------------------------------------------------
 # Option for enabling MCNP extension library module
 #
-option(Bayeux_BUILD_MCNP_MODULE "Build Bayeux/mctools MCNP Monte-Carlo module" OFF)
-mark_as_advanced(Bayeux_BUILD_MCNP_MODULE)
+option(BAYEUX_WITH_MCNP_MODULE "Build Bayeux/mctools MCNP Monte-Carlo module" OFF)
+mark_as_advanced(BAYEUX_WITH_MCNP_MODULE)
 
 #-----------------------------------------------------------------------
 # Option for enabling Qt GUI components
 #
-option(Bayeux_BUILD_QT_GUI "Build Qt-based GUI components" OFF)
-mark_as_advanced(Bayeux_BUILD_QT_GUI)
-if (Bayeux_BUILD_QT_GUI)
-  set(BAYEUX_WITH_QT_GUI 1)
-else()
-  set(BAYEUX_WITH_QT_GUI 0)
-endif()
+option(BAYEUX_WITH_QT_GUI "Build Qt-based GUI components" OFF)
+mark_as_advanced(BAYEUX_WITH_QT_GUI)
 
 #-----------------------------------------------------------------------
 # Configure testing if required
 #
-option(Bayeux_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)
-mark_as_advanced(Bayeux_ENABLE_TESTING)
+option(BAYEUX_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)
 
-if(Bayeux_ENABLE_TESTING)
+# - If testing required, *must* call enable_testing here!!
+if(BAYEUX_ENABLE_TESTING)
   enable_testing()
 endif()
 
 #-----------------------------------------------------------------------
-# - Parent subdirectory of all Bayeux data files: define the Bayeux_TAG variable:
-set(Bayeux_TAG "Bayeux-${Bayeux_VERSION}")
-
-#-----------------------------------------------------------------------
-# - Resource subdirectory: define the Bayeux_RESOURCE_DIR variable:
-set(Bayeux_RESOURCE_DIR "${Bayeux_TAG}/resources")
-
-#-----------------------------------------------------------------------
-# - Example subdirectory: define the Bayeux_EXAMPLE_DIR variable:
-set(Bayeux_EXAMPLE_DIR "${Bayeux_TAG}/examples")
-
-#-----------------------------------------------------------------------
-# - Documentation subdirectory: define the Bayeux_DOCUMENTATION_DIR:
-set(Bayeux_DOCUMENTATION_DIR "${Bayeux_TAG}/Documentation")
-
-#-----------------------------------------------------------------------
 # Optional for enabling documentation
 #
-set(Bayeux_DOCEXPORT_DIR "${PROJECT_BINARY_DIR}/doc")
-
-option(Bayeux_BUILD_DOCS "Build Bayeux documentation products" ON)
-mark_as_advanced(Bayeux_BUILD_DOCS)
-
-if(Bayeux_BUILD_DOCS)
-  set(BAYEUX_WITH_DOCS 1)
-else()
-  set(BAYEUX_WITH_DOCS 0)
-endif()
-
-if (Bayeux_BUILD_DOCS)
-  #-----------------------------------------------------------------------
-  # Build OCD documentation for Bayeux's classes
-  option(Bayeux_BUILD_OCD_DOCS "Build OCD documentation" ON)
-  mark_as_advanced(Bayeux_BUILD_OCD_DOCS)
-
-  if(Bayeux_BUILD_OCD_DOCS)
-    set(BAYEUX_WITH_OCD_DOCS 1)
-    set(BAYEUX_WITH_DOCS 1)
-  else()
-    set(BAYEUX_WITH_OCD_DOCS 0)
-  endif()
-
-endif()
+include(CMakeDependentOption)
+option(BAYEUX_WITH_DOCS "Build Bayeux documentation products" ON)
+cmake_dependent_option(BAYEUX_WITH_DOCS_OCD "Build Plugin Module documentation" OFF "BAYEUX_WITH_DOCS" OFF)
+mark_as_advanced(BAYEUX_WITH_DOCS BAYEUX_WITH_OCD_DOCS)
 
 #-----------------------------------------------------------------------
 # Optional for installing examples
 #
-option(Bayeux_WITH_EXAMPLES "Install Bayeux with examples" ON)
-mark_as_advanced(Bayeux_WITH_EXAMPLES)
-
-if(Bayeux_WITH_EXAMPLES)
-  set(BAYEUX_WITH_EXAMPLES 1)
-else()
-  set(BAYEUX_WITH_EXAMPLES 0)
-endif()
+option(BAYEUX_WITH_EXAMPLES "Install Bayeux with examples" ON)
+mark_as_advanced(BAYEUX_WITH_EXAMPLES)
 
 #-----------------------------------------------------------------------
 # Build the subdirectories
 #
 add_subdirectory(source)
 add_subdirectory(doc)
-
-if(Bayeux_ENABLE_TESTING)
-  add_subdirectory(examples)
-endif()
+add_subdirectory(examples)
 
 #-----------------------------------------------------------------------
 # Install common resources
-install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATAROOTDIR}/${Bayeux_TAG}
+install(DIRECTORY ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_TAG}
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   )
 
 #-----------------------------------------------------------------------
 # Package Sources and Binaries - only if not embedded
 #
-if(NOT Bayeux_EMBEDDED)
+if(NOT BAYEUX_EMBEDDED)
   include(BXCPack)
 endif()
