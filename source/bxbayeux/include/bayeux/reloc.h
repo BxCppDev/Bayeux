@@ -29,7 +29,7 @@
 #define BAYEUX_RELOC_H
 
 // Standard Library:
-#include <string>
+#include <iosfwd>
 
 namespace bayeux {
 

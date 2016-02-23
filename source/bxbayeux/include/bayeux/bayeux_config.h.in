@@ -26,7 +26,7 @@
 #define BAYEUX_BAYEUX_CONFIG_H
 
 //! Evaluates to true if Bayeux was built with automated init/fini operations at DLL loading
-#cmakedefine Bayeux_WITH_IMPLICIT_INIT_FINI
+#cmakedefine BAYEUX_WITH_IMPLICIT_INIT_FINI
 
 //! Evaluates to true if Bayeux was built with the cuts module
 #cmakedefine01 BAYEUX_WITH_CUTS
@@ -74,7 +74,7 @@
 #define BAYEUX_ENV_RESOURCE_DIR "BAYEUX_RESOURCE_DIR"
 
 //! The list of Bayeux submodules
-#define BAYEUX_SUBMODULES "@Bayeux_SUBMODULES@"
+#define BAYEUX_SUBMODULES "@BAYEUX_SUBMODULES@"
 
 //! Defined if the BAYEUX_SYS_DEVEL is set
 #cmakedefine BAYEUX_SYS_DEVEL

@@ -4,15 +4,13 @@
 #include <bayeux/bayeux_config.h>
 
 // Standard Library:
-#include <iostream>
 
 // Third Party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
+#include <boost/smart_ptr/scoped_ptr.hpp>
 
 // Load the link guard definition :
 #include <datatools/detail/reflection_link_guard.h>
-#include <datatools/the_introspectable.h>
 
 // Load the link guard implementation :
 namespace datatools {

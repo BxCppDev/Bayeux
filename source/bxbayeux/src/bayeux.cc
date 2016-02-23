@@ -21,15 +21,19 @@
 // along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 
 // Standard library
-#include <iostream>
+#include <cstdlib>
 
 // Ourselves
-#include <bayeux/bayeux_config.h>
+#include <bayeux/bayeux_config.h> // IWYU pragma: keep
 #include <bayeux/bayeux.h>
 
 // This project
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
+
+// Third party
+#include <boost/smart_ptr/scoped_ptr.hpp>
+
 
 // Tests
 // #include <datatools/kernel.h>
@@ -59,7 +63,7 @@ namespace bayeux {
 
       _init = true;
     } else {
-#ifndef Bayeux_WITH_IMPLICIT_INIT_FINI
+#ifndef BAYEUX_WITH_IMPLICIT_INIT_FINI
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                      "Attempt to initialize the already initialized Bayeux library !");
 #endif
@@ -81,7 +85,7 @@ namespace bayeux {
       ::datatools::terminate();
       _terminate = true;
     } else {
-#ifndef Bayeux_WITH_IMPLICIT_INIT_FINI
+#ifndef BAYEUX_WITH_IMPLICIT_INIT_FINI
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                      "Attempt to terminate the already terminated Bayeux library !");
 #endif

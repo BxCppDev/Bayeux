@@ -21,20 +21,14 @@
 #include <bayeux/reloc.h>
 
 // Standard Library
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <sstream>
-#include <stdexcept>
+#include <string>
 
 // Third Party
 // Boost
-#include <boost/filesystem.hpp>
 
 // This Project
-#include <bayeux/bayeux_config.h>
-
 #include <bayeux/BayeuxBinReloc.h>
+
 namespace {
 
   //! Initialize directory
@@ -84,28 +78,28 @@ namespace bayeux {
   std::string get_data_dir() {
     init_directories();
     std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
-    dir += "/@Bayeux_TAG@";
+    dir += "/@BAYEUX_TAG@";
     return dir;
   }
 
   std::string get_resource_dir() {
     init_directories();
     std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
-    dir += "/@Bayeux_RESOURCE_DIR@";
+    dir += "/@BAYEUX_RESOURCE_DIR@";
     return dir;
   }
 
   std::string get_doc_dir() {
     init_directories();
     std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
-    dir += "/@Bayeux_DOCUMENTATION_DIR@";
+    dir += "/@BAYEUX_DOCUMENTATION_DIR@";
     return dir;
   }
 
   std::string get_example_dir() {
     init_directories();
     std::string dir = br_find_data_dir("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@");
-    dir += "/@Bayeux_EXAMPLE_DIR@";
+    dir += "/@BAYEUX_EXAMPLE_DIR@";
     return dir;
   }
 

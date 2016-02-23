@@ -21,7 +21,8 @@
 // along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 
 // Standard library
-#include <string>
+#include <iostream>
+#include <stdexcept>
 
 // This package
 #include <bayeux/bayeux_config.h>
@@ -29,6 +30,9 @@
 #include <bayeux/version.h>
 
 // Submodules version & resource management
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+#include <datatools/properties.h>
 #include <datatools/version.h>
 #include <datatools/resource.h>
 #include <datatools/datatools_config.h>
@@ -254,7 +258,7 @@ namespace bayeux {
       bayeux_lib_infos.store_integer(datatools::library_info::keys::version_patch(),
                                      bayeux::version::get_patch());
       bayeux_lib_infos.store_string(datatools::library_info::keys::modules(),
-                                    "@Bayeux_SUBMODULES@");
+                                    "@BAYEUX_SUBMODULES@");
       bayeux_lib_infos.store_string(datatools::library_info::keys::url(),
                                     "https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux");
       bayeux_lib_infos.store_string(datatools::library_info::keys::authors(),
