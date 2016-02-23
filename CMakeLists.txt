@@ -79,6 +79,16 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BAYEUX_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------
+# Optional IWYU support
+option(BAYEUX_WITH_IWYU_CHECK "Run include-what-you-use on Bayeux sources" OFF)
+if(BAYEUX_WITH_IWYU_CHECK)
+  find_program(IWYU_EXECUTABLE
+    NAMES include-what-you use iwyu
+    DOC "Path to include-what-you-use-executable"
+    )
+endif()
+
+#-----------------------------------------------------------------------
 # If the user specifies -DCMAKE_BUILD_TYPE on the command line, take their definition
 # and dump it in the cache along with proper documentation, otherwise set CMAKE_BUILD_TYPE
 # to RelWithDebInfo

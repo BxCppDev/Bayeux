@@ -280,6 +280,11 @@ if(BAYEUX_WITH_QT_GUI)
   target_link_libraries(Bayeux ${QT_LIBRARIES})
 endif()
 
+# - Use IWYU, if available
+if(BAYEUX_WITH_IWYU_CHECK AND IWYU_EXECUTABLE)
+  set_target_properties(Bayeux PROPERTIES CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXECUTABLE})
+endif()
+
 # - Set RPATH as needed
 set_target_properties(Bayeux PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
 
