@@ -22,10 +22,10 @@ void test_reflection()
   const DR_CLASS & aoMetaClass = DR_CLASS_BY_NAME("datatools::enriched_base");
   std::cerr << "******** Go. " << std::endl;
 
-  boost::scoped_ptr<datatools::enriched_base> ao;
-  datatools::enriched_base * eb = aoMetaClass.construct<datatools::enriched_base>();
-  ao.reset(eb);
-  DR_OBJECT aoObj = ao.get();
+  //boost::scoped_ptr<datatools::enriched_base> ao;
+  DR_OBJECT aoObj = aoMetaClass.construct();
+  //ao.reset(eb);
+  //DR_OBJECT aoObj = ao.get();
   aoObj.call("smart_print", DR_ARGS(1, "Advanced object: ", "*** "));
   std::cerr << "******** Test 1. " << std::endl;
 

@@ -18,9 +18,9 @@
 #include <datatools/i_serializable.ipp>
 
 #if BOOST_VERSION < 103600
-namespace bm=boost::math;
+namespace bmath=boost::math;
 #else
-namespace bm=boost::spirit::math;
+namespace bmath=boost::spirit::math;
 #endif
 
 using namespace std;
@@ -70,8 +70,8 @@ public:
   void info () const
   {
     clog << "DEVEL: info: " << endl;
-    clog << "DEVEL: v1 is " << get_fp_classify_label (bm::fpclassify (__v1)) << endl;
-    clog << "DEVEL: v2 is " << get_fp_classify_label (bm::fpclassify (__v2)) << endl;
+    clog << "DEVEL: v1 is " << get_fp_classify_label (bmath::fpclassify (__v1)) << endl;
+    clog << "DEVEL: v2 is " << get_fp_classify_label (bmath::fpclassify (__v2)) << endl;
     if (! isfinite (__v1))
       {
         clog << "DEVEL: v1 is " << ((__v1 < 0)? " - ": " + ") << endl;

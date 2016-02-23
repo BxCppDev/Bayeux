@@ -9,8 +9,8 @@
 
 // Third Party:
 // - Camp:
-#include <camp/invalidenum.hpp>
-#include <camp/invalidclass.hpp>
+#include <camp/errors.hpp>
+//#include <camp/invalidclass.hpp>
 
 // This Project:
 #include <datatools/logger.h>
@@ -32,14 +32,13 @@ void test_things (bool // debug_
   // Access meta class for class 'things' :
   const DR_CLASS & tMetaClass = DR_CLASS_BY_NAME("datatools::things");
   {
-    boost::scoped_ptr<datatools::things> er;
 
     // Allocate a new 'things' object from the metaclass factory
     // and store it in a scoped_ptr for memory sanity :
-    er.reset (tMetaClass.construct<datatools::things> (DR_ARGS ("<unnamed>", "A generic event record")));
+    DR_OBJECT erObj = tMetaClass.construct(DR_ARGS ("<unnamed>", "A generic event record"));
 
     // Build a meta object from this new allocated things :
-    DR_OBJECT erObj = er.get ();
+    //DR_OBJECT erObj = er.get ();
 
     // Invoke a print method :
     erObj.call("tree_print", DR_ARGS(1, "Event record (things) : "));
@@ -97,9 +96,7 @@ void test_multi_properties (bool // debug_
   std::clog << "*** test_multi_properties : " << std::endl;
   const DR_CLASS & mpropsMetaClass = DR_CLASS_BY_NAME("datatools::multi_properties");
   {
-    boost::scoped_ptr<datatools::multi_properties> mprops;
-    mprops.reset (mpropsMetaClass.construct<datatools::multi_properties> (DR_ARGS ("id", "class")));
-    DR_OBJECT mpropsObj = mprops.get ();
+    DR_OBJECT mpropsObj = mpropsMetaClass.construct(DR_ARGS ("id", "class"));
 
     mpropsObj.set ("description", DR_VALUE ("A test multi-properties"));
     mpropsObj.call("tree_print", DR_ARGS(1, "Multi-properties: "));
@@ -158,11 +155,10 @@ void test_properties (bool // debug_
   const DR_CLASS & propsMetaClass = DR_CLASS_BY_NAME("datatools::properties");
 
   {
-    boost::scoped_ptr<datatools::properties> props (propsMetaClass.construct<datatools::properties> (DR_ARGS ("A test properties")));
+    //boost::scoped_ptr<datatools::properties> props (propsMetaClass.construct<datatools::properties> (DR_ARGS ("A test properties")));
+    //props.get ()->tree_dump(std::clog, "Properties : ");
 
-    props.get ()->tree_dump(std::clog, "Properties : ");
-
-    DR_OBJECT propsObj(*props.get ());
+    DR_OBJECT propsObj = propsMetaClass.construct(DR_ARGS ("A test properties"));
     propsMetaClass.function("set_description").call(propsObj, DR_ARGS("A dummy properties"));
     propsObj.call ("store_flag", DR_ARGS("foo", "A dummy (boolean) flag", false));
     propsObj.call ("store_integer", DR_ARGS("number", 3, "Number of stars", false));
@@ -204,11 +200,11 @@ void test_event_id (bool // debug_
   const DR_CLASS & evIdMetaClass = DR_CLASS_BY_NAME("datatools::event_id");
 
   {
-    boost::scoped_ptr<datatools::event_id> evId (evIdMetaClass.construct<datatools::event_id> (DR_ARGS (3, 55)));
+    //boost::scoped_ptr<datatools::event_id> evId (evIdMetaClass.construct<datatools::event_id> (DR_ARGS (3, 55)));
+    //std::clog << "Event ID = " << *evId.get () << std::endl;
 
-    std::clog << "Event ID = " << *evId.get () << std::endl;
+    DR_OBJECT evIdObj = evIdMetaClass.construct(DR_ARGS (3, 55));
 
-    DR_OBJECT evIdObj(*evId.get ());
     evIdMetaClass.function("set").call(evIdObj, DR_ARGS(7, 567));
     std::clog << "Event ID = "
               << evIdMetaClass.function("to_string").call(evIdObj)
@@ -254,8 +250,8 @@ void test_logger (bool // debug_
         std::clog << " - Key '" << tMetaEnum.pair(i).name
                   << "' has value = " << tMetaEnum.pair(i).value << std::endl;
       }
-    } catch (camp::InvalidEnum & ie) {
-      std::cerr << "Error: test_logger: " << ie.what() << " for enum named '" << ie.enumName() << "'" << std::endl;
+    } catch (camp::EnumNotFound & ie) {
+      std::cerr << "Error: test_logger: " << ie.what() << " for enum named '" << "'" << std::endl;
       throw;
     }
  }
@@ -318,8 +314,8 @@ int main (// int argc_, char ** argv_
 
       std::clog << "The end" << std::endl;
     }
-  catch (camp::InvalidClass & ic) {
-    std::cerr << "ERROR: test_reflection_0: " << ic.what () << " class : " << ic.className() << std::endl;
+  catch (camp::BadType & ic) {
+    std::cerr << "ERROR: test_reflection_0: " << ic.what () << std::endl;
     exit (EXIT_FAILURE);
   }
   catch (std::exception & x) {
