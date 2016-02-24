@@ -101,6 +101,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/range_tools.h
   ${module_include_dir}/${module_name}/real_range.h
   ${module_include_dir}/${module_name}/reflection_guard.h
+  ${module_include_dir}/${module_name}/reflection_interface.h
   ${module_include_dir}/${module_name}/reflection_macros.h
   ${module_include_dir}/${module_name}/resource.h
   ${module_include_dir}/${module_name}/safe_serial.h
@@ -280,7 +281,7 @@ ${module_source_dir}/ui/ihs.cc
 ${module_source_dir}/ui/base_command_interface.cc
 ${module_source_dir}/ui/base_command.cc
 ${module_source_dir}/ui/utils.cc
-#${module_source_dir}/the_introspectable.cc
+${module_source_dir}/the_introspectable.cc
 bx${module_name}/resource.cc
 bx${module_name}/_datatools.cc
   )
@@ -376,6 +377,7 @@ set(${module_name}_TEST_ENVIRONMENT "DATATOOLS_RESOURCE_DIR=${module_resource_di
 # ls -1 bxdatatools/testing/*.cxx | sed -e 's@bxdatatools/testing@${module_test_dir}@g'
 
 set(${module_name}_MODULE_TESTS
+${module_test_dir}/test_reflection_0.cxx
 ${module_test_dir}/test_enriched_base.cxx
 ${module_test_dir}/test_binary_serialization.cxx
 ${module_test_dir}/test_cloneable_2.cxx
@@ -410,7 +412,6 @@ ${module_test_dir}/test_properties_3.cxx
 ${module_test_dir}/test_properties_4.cxx
 ${module_test_dir}/test_properties.cxx
 ${module_test_dir}/test_real_range.cxx
-${module_test_dir}/test_reflection_0.cxx
 ${module_test_dir}/test_ser_bitset.cxx
 ${module_test_dir}/test_serializable_1.cxx
 ${module_test_dir}/test_serializable_2.cxx
@@ -450,10 +451,10 @@ ${module_test_dir}/test_configuration_variant_api_0.cxx
 #${module_test_dir}/test_ui_base_command_interface.cxx
 #${module_test_dir}/test_ui_shell_command_interface.cxx
 #${module_test_dir}/test_ui_basic_shell.cxx
-${module_test_dir}/test_backward_things.cxx
-${module_test_dir}/test_introspection_data_description.cxx
-${module_test_dir}/test_introspection_argument.cxx
-${module_test_dir}/test_introspection_method.cxx
+# ${module_test_dir}/test_backward_things.cxx
+# ${module_test_dir}/test_introspection_data_description.cxx
+# ${module_test_dir}/test_introspection_argument.cxx
+# ${module_test_dir}/test_introspection_method.cxx
 )
 
 # - Applications
