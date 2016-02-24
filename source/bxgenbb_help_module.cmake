@@ -428,9 +428,9 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/decay0/Zn65.cc
   ${module_source_dir}/decay0/Zr92low.cc
   ${module_source_dir}/decay0/Zr96.cc
+  ${module_source_dir}/the_introspectable.cc
   bx${module_name}/resource.cc
   bx${module_name}/_genbb_help.cc
-  #${module_source_dir}/the_introspectable.cc
   )
 
 # - Publish public headers only
