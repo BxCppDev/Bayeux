@@ -60,7 +60,7 @@ configure_file(${module_source_dir}/BayeuxBinReloc.c.in
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/bayeux.cc
-  ${module_source_dir}/the_introspectable.cc
+  # ${module_source_dir}/the_introspectable.cc
   bx${module_name}/_bayeux.cc
   bx${module_name}/reloc.cc
   bx${module_name}/${module_name}/BayeuxBinReloc.h
