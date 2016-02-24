@@ -58,7 +58,7 @@ namespace genbb {
 
   /// \brief A primary event from a Monte-Carlo generator
   class primary_event
-    : DATATOOLS_SERIALIZABLE_CLASS,
+    : public datatools::i_serializable,
       public datatools::i_tree_dumpable
   {
 

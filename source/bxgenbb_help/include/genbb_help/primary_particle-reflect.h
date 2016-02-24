@@ -6,6 +6,10 @@
 // This project:
 #include <genbb_help/primary_particle.h>
 
+// - Bayeux/datatools:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Export the introspection code for the 'genbb::primary_particle' class:
 DR_CLASS_EXPORT (::genbb::primary_particle, "genbb::primary_particle")
 

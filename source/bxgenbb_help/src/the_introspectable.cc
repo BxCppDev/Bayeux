@@ -7,6 +7,9 @@
 // Load the link guard definition :
 #include <genbb_help/detail/reflection_link_guard.h>
 
+// Ourselves:
+#include <genbb_help/the_introspectable.h>
+
 // Load the link guard implementation :
 namespace genbb {
   namespace detail {
@@ -31,5 +34,3 @@ namespace genbb {
     } // end namespace reflection
   } // end namespace detail
 } // end namespace genbb
-
-#include <genbb_help/the_introspectable.h>

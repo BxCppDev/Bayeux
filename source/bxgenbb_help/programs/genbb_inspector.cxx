@@ -36,6 +36,13 @@
 // Third Party:
 // - Boost:
 #include <boost/program_options.hpp>
+// - Camp:
+#include <camp/camptype.hpp>
+#include <camp/class.hpp>
+#include <camp/enum.hpp>
+#include <camp/value.hpp>
+#include <camp/args.hpp>
+#include <camp/userobject.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -59,7 +66,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/reflection_macros.h>
-#include <datatools/reflection_guard.h>
+#include <datatools/detail/reflection_export.h>
 #include <datatools/library_loader.h>
 #include <datatools/tracer.h>
 #include <datatools/exception.h>
@@ -67,11 +74,11 @@
 #include <datatools/kernel.h>
 #include <datatools/io_factory.h>
 #include <datatools/configuration/io.h>
-// -  Bayeux/mygsl:
+// - Bayeux/mygsl:
 #include <mygsl/histogram_pool.h>
 #include <mygsl/histogram_1d.h>
 #include <mygsl/histogram_2d.h>
-// - Bayeux/ dpp:
+// - Bayeux/dpp:
 #include <dpp/output_module.h>
 #include <dpp/histogram_service.h>
 #if GENBB_HELP_STANDALONE == 0
@@ -79,14 +86,14 @@
 #include <bayeux/bayeux.h>
 #endif
 
-// This project
+// This project:
 #include <genbb_help/manager.h>
 #include <genbb_help/primary_event.h>
 // 2015-02-11, FM: Fix bug : add the .ipp header to use the BOOST_CLASS_VERSION macro
 #include <genbb_help/primary_event.ipp>
 #include <genbb_help/resource.h>
 
-// Some pre-processor linkage guard :
+// Some pre-processor linkage guard:
 #include <mygsl/bio_guard.h>
 #include <geomtools/bio_guard.h>
 #include <genbb_help/bio_guard.h>
@@ -112,7 +119,7 @@ namespace genbb {
     std::string generator;                         //!< Particle generator name
     std::string output_mode;                       //!< Output mode
     std::string output_bank_label;                 //!< Bank label for 'bank' mode
-    int         output_bank_max_records;            //!< Mas number of records per file for 'bank' mode
+    int         output_bank_max_records;           //!< Mas number of records per file for 'bank' mode
     std::vector<std::string> output_paths;         //!< List of output files
     int number_of_events;                          //!< Number of generated events
     int print_modulo;                              //!< Modulo print period for generated events
@@ -402,8 +409,6 @@ namespace genbb {
     reset();
     return;
   }
-
-  /***/
 
   double inspector_data::get_cos_theta(const std::string & type1_, int i1_,
                                        const std::string & type2_, int i2_) const
@@ -1022,7 +1027,6 @@ namespace datatools {
                                     genbb::inspector_data::get_other_positive_particles_energy_sum)
           .DR_CLASS_PROPERTY_GETTER("other_negative_particles_energy_sum",
                                     genbb::inspector_data::get_other_negative_particles_energy_sum)
-
           .DR_CLASS_METHOD1_CONST("electron_energy",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_electron_energy,
@@ -1083,7 +1087,6 @@ namespace datatools {
                                   genbb::inspector_data::get_other_negative_particle_energy,
                                   double,
                                   int)
-
           .DR_CLASS_METHOD1_CONST("electron_time",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_electron_time,
@@ -1144,7 +1147,6 @@ namespace datatools {
                                   genbb::inspector_data::get_other_negative_particle_time,
                                   double,
                                   int)
-
           .DR_CLASS_METHOD1_CONST("electron_phi",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_electron_phi,
@@ -1205,7 +1207,6 @@ namespace datatools {
                                   genbb::inspector_data::get_other_negative_particle_phi,
                                   double,
                                   int)
-
           .DR_CLASS_METHOD1_CONST("electron_cos_theta",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_electron_cos_theta,
@@ -1266,7 +1267,6 @@ namespace datatools {
                                   genbb::inspector_data::get_other_negative_particle_cos_theta,
                                   double,
                                   int)
-
           .DR_CLASS_METHOD4_CONST("cos_theta",
                                   genbb::inspector_data,
                                   genbb::inspector_data::get_cos_theta,
@@ -1928,7 +1928,7 @@ namespace genbb {
     inspector_data timing_data[2];
 
     // Reflection meta-class :
-    const DR_CLASS & metaClass = DR_CLASS_BY_NAME("genbb::inspector_data");
+    const camp::Class & metaClass = camp::classByName("genbb::inspector_data");
 
     // Extract data from the generated event :
     for (int timing = PROMPT; timing <= DELAYED; timing++) {
@@ -2034,7 +2034,7 @@ namespace genbb {
       // Fetch the names of the histogram in the current 'timing' group :
       std::vector<std::string> histo_names;
       _histos_->names (histo_names, std::string("group=") + time_range_label[timing]);
-      DR_OBJECT idObj = idata;
+      camp::UserObject idObj = idata;
 
       for (int ihn = 0; ihn < (int) histo_names.size(); ihn++) {
         const std::string & hn = histo_names[ihn];
@@ -2112,17 +2112,17 @@ namespace genbb {
               << " @ " << "index=" << value_index
               << std::endl;
             */
-            DR_VALUE val;
+            camp::Value val;
             if (value_index < 0) {
               if (metaClass.hasProperty(value_accessor)) {
-                val = idObj.DR_GET(value_accessor);
+                val = idObj.get(value_accessor);
               } else {
                 DT_THROW_IF (true, std::logic_error,
                              "Cannot find property named '" << value_accessor << "' in meta class !");
               }
             } else if (value_index2 < 0) {
               if (metaClass.hasFunction(value_accessor)) {
-                val = idObj.DR_CALL(value_accessor, DR_ARGS (value_index));
+                val = idObj.call(value_accessor, camp::Args (value_index));
               } else {
                 DT_THROW_IF (true, std::logic_error,
                              "Cannot find function named '" << value_accessor << "' in meta class !");
@@ -2133,7 +2133,7 @@ namespace genbb {
                                            particle_type1_array.end());
                 std::string particle_type2(particle_type2_array.begin(),
                                            particle_type2_array.end());
-                val = idObj.DR_CALL(value_accessor, DR_ARGS (particle_type1, value_index,
+                val = idObj.call(value_accessor, camp::Args (particle_type1, value_index,
                                                              particle_type2, value_index2));
                 //std::cerr << "DEVEL: **************** val=" << val << std::endl;
               } else {
@@ -2143,9 +2143,9 @@ namespace genbb {
             }
             double value;
             datatools::invalidate(value);
-            if (val.type() == DR_REALTYPE) {
+            if (val.type() == camp::realType) {
               value = val.to<double>();
-            } else if (val.type() == DR_INTEGERTYPE) {
+            } else if (val.type() == camp::intType) {
               int ival = val.to<int>();
               value = ival * 1.0;
             }
@@ -2231,47 +2231,47 @@ namespace genbb {
             double x_value, y_value;
             datatools::invalidate(x_value);
             datatools::invalidate(y_value);
-            DR_VALUE x_val;
+            camp::Value x_val;
             if (x_value_index < 0) {
               if (metaClass.hasProperty(x_value_accessor)) {
-                x_val = idObj.DR_GET(x_value_accessor);
+                x_val = idObj.get(x_value_accessor);
               } else {
                 DT_THROW_IF (true, std::logic_error,
                              "Cannot find property named '" << x_value_accessor << "' in meta class !");
               }
             } else {
               if (metaClass.hasFunction(x_value_accessor)) {
-                x_val = idObj.DR_CALL (x_value_accessor, DR_ARGS (x_value_index));
+                x_val = idObj.call(x_value_accessor, camp::Args (x_value_index));
               } else {
                 DT_THROW_IF (true, std::logic_error,
                              "Cannot find function named '" << x_value_accessor << "' in meta class !");
               }
             }
-            if (x_val.type() == DR_REALTYPE) {
+            if (x_val.type() == camp::realType) {
               x_value = x_val.to<double>();
-            } else if (x_val.type() == DR_INTEGERTYPE) {
+            } else if (x_val.type() == camp::intType) {
               int ival = x_val.to<int>();
               x_value = ival * 1.0;
             }
-            DR_VALUE y_val;
+            camp::Value y_val;
             if (y_value_index < 0) {
               if (metaClass.hasProperty(y_value_accessor)) {
-                y_val = idObj.DR_GET(y_value_accessor);
+                y_val = idObj.get(y_value_accessor);
               } else {
                 DT_THROW_IF (true, std::logic_error,
                              "Cannot find property named '" << y_value_accessor << "' in meta class !");
               }
             } else {
               if (metaClass.hasFunction(y_value_accessor)) {
-                y_val = idObj.DR_CALL (y_value_accessor, DR_ARGS (y_value_index));
+                y_val = idObj.call(y_value_accessor, camp::Args (y_value_index));
               } else {
                 DT_THROW_IF (true, std::logic_error,
                              "Cannot find property named '" << y_value_accessor << "' in meta class !");
               }
             }
-            if (y_val.type() == DR_REALTYPE) {
+            if (y_val.type() == camp::realType) {
               y_value = y_val.to<double>();
-            } else if (y_val.type() == DR_INTEGERTYPE) {
+            } else if (y_val.type() == camp::intType) {
               int ival = y_val.to<int>();
               y_value = ival * 1.0;
             }

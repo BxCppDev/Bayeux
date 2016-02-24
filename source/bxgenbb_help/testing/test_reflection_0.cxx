@@ -1,15 +1,24 @@
-/* test_reflection_0.cxx */
+// test_reflection_0.cxx
 
+// Standard library;
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
+// - Camp:
+#include <camp/class.hpp>
+#include <camp/userobject.hpp>
+#include <camp/value.hpp>
+#include <camp/args.hpp>
+// - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/clhep_units.h>
+//#include <datatools/reflection_macros.h>
 
 // Introspectable classes :
 #include <genbb_help/primary_particle.h>
@@ -27,15 +36,15 @@
 void test_primary_particle()
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
-  const DR_CLASS & ppMetaClass  = DR_CLASS_BY_NAME("genbb::primary_particle");
+  const camp::Class & ppMetaClass  = camp::classByName("genbb::primary_particle");
 
 
-  DR_OBJECT partObj0 = ppMetaClass.construct();
+  camp::UserObject partObj0 = ppMetaClass.construct();
   DT_LOG_NOTICE(logging, "Initializing the primary particle object...");
 
-  partObj0.set("type",           DR_VALUE(3));
-  partObj0.set("particle_label", DR_VALUE("electron"));
-  partObj0.set("time",           DR_VALUE(3.9 * CLHEP::ns));
+  partObj0.set("type",           camp::Value(3));
+  partObj0.set("particle_label", camp::Value("electron"));
+  partObj0.set("time",           camp::Value(3.9 * CLHEP::ns));
 
   geomtools::vector_3d momentum(0.23 * CLHEP::MeV,
                                 0.13 * CLHEP::MeV,
@@ -43,23 +52,22 @@ void test_primary_particle()
   geomtools::vector_3d vertex(0.0 * CLHEP::mm,
                               0.0 * CLHEP::mm,
                               5.3 * CLHEP::mm);
-  DR_OBJECT momObj = momentum;
-  DR_OBJECT vtxObj = vertex;
-  partObj0.set("momentum", DR_VALUE(momObj));
-  partObj0.set("vertex", DR_VALUE(vtxObj));
-
-  partObj0.DR_CALL("tree_print", DR_ARGS(1,"The primary particle: "));
+  camp::UserObject momObj = momentum;
+  camp::UserObject vtxObj = vertex;
+  partObj0.set("momentum", camp::Value(momObj));
+  partObj0.set("vertex", camp::Value(vtxObj));
+  partObj0.call("tree_print", camp::Args(1,"The primary particle: "));
 
 }
 
 void test_primary_event()
 {
   //datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
-  const DR_CLASS & peMetaClass  = DR_CLASS_BY_NAME("genbb::primary_event");
+  const camp::Class & peMetaClass  = camp::classByName("genbb::primary_event");
 
-  DR_OBJECT eventObj0 = peMetaClass.construct();
+  camp::UserObject eventObj0 = peMetaClass.construct();
 
-  eventObj0.DR_CALL("tree_print", DR_ARGS(1,"The primary event: "));
+  eventObj0.call("tree_print", camp::Args(1,"The primary event: "));
 
 }
 
