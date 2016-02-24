@@ -20,6 +20,9 @@
 // Ourselves:
 #include <mygsl/parameter_store.h>
 
+// Standard library:
+#include <limits>
+
 // Third party:
 // - Bayeux/datatools :
 #include <datatools/exception.h>
