@@ -1,34 +1,35 @@
 // -*- mode: c++; -*-
-/** brio_test_data.h 
+/** brio_test_data.h
  *
  * A serializable sample class
- * 
+ *
  */
 
-#ifndef __brio__test__data_h
-#define __brio__test__data_h 1
+#ifndef BRIO_TEST_DATA_H
+#define BRIO_TEST_DATA_H 1
 
+// Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
 
-// Portable integral types (mandatory):
+// Third party:
+// - Boost - Portable integral types (mandatory):
 #include <boost/cstdint.hpp>
 
-// Interface base class from datatools to support serialization tools:
+// - Bayeux/datatools - Interface base class from datatools to support serialization tools:
 #include <datatools/i_serializable.h>
-
 
 namespace brio {
 
   namespace test {
 
-    using namespace std;
+    // using namespace std;
 
-    /** A sample serializable class using datatools and/or brio serialization  
+    /** A sample serializable class using datatools and/or brio serialization
      *  concept.
      */
-    class data_t : DATATOOLS_SERIALIZABLE_CLASS     
+    class data_t : public datatools::i_serializable
       {
 
       public:
@@ -41,16 +42,16 @@ namespace brio {
 
         void randomize ();
 
-        void dump (ostream & a_out = clog, const string & a_title = "") const;
+        void dump (std::ostream & a_out = clog, const std::string & a_title = "") const;
 
       private:
 
-        bool     __bval; // A boolean 
-        int8_t   __cval; /* A signed char (8 bits) 
+        bool     __bval; // A boolean
+        int8_t   __cval; /* A signed char (8 bits)
                           * imples #include <boost/cstdint.hpp>
                           */
-        int32_t  __ival; // A 32 bits signed integral  
-        float    __fval; // A 32 bits float  
+        int32_t  __ival; // A 32 bits signed integral
+        float    __fval; // A 32 bits float
         double   __dval; // A 64 bits float
         string   __sval; /** A STL string
                           * implies #include <boost/serialization/string.hpp>
@@ -64,10 +65,8 @@ namespace brio {
 
       };
 
-  } // namespace test 
+  } // namespace test
 
-} // namespace brio 
+} // namespace brio
 
-#endif // __brio__test__data_h
-
-/* end of brio_test_data.h */
+#endif // BRIO_TEST_DATA_H

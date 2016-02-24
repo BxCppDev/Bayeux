@@ -1,17 +1,18 @@
 // -*- mode: c++ ; -*-
-/* brio_test_data.cc
- */
+// brio_test_data.cc
 
-#include <cstdlib>
+// Ourselves:
 #include <brio_test_data.h>
+
+// Standard library:
+#include <cstdlib>
 
 namespace brio {
 
   namespace test {
 
-    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (data_t,"brio::test::data_t")
+    DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(data_t,"brio::test::data_t")
 
-    // ctor:
     data_t::data_t ()
     {
       // Initialize members with arbitrary values:
@@ -26,7 +27,6 @@ namespace brio {
       return;
     }
 
-    // dtor:
     data_t::~data_t ()
     {
       return;
@@ -50,34 +50,32 @@ namespace brio {
       return;
     }
 
-    void data_t::dump (ostream & a_out, const string & a_title) const
+    void data_t::dump (std::ostream & a_out, const std::string & a_title) const
     {
       if (a_title.empty ())
         {
-          a_out << "brio::test::data_t::dump: " << endl;
+          a_out << "brio::test::data_t::dump: " << std::endl;
         }
       else
         {
-          a_out << a_title << endl;
+          a_out << a_title << std::endl;
         }
-      a_out << "|-- " << "bval  =  " << __bval << endl;
-      a_out << "|-- " << "cval  =  '" << __cval << "'" << endl;
-      a_out << "|-- " << "ival  =  " << __ival << endl;
-      a_out << "|-- " << "fval  =  " << __fval << endl;
-      a_out << "|-- " << "dval  =  " << __dval << endl;
-      a_out << "|-- " << "sval  =  '" << __sval << "'" << endl;
+      a_out << "|-- " << "bval  =  " << __bval << std::endl;
+      a_out << "|-- " << "cval  =  '" << __cval << "'" << std::endl;
+      a_out << "|-- " << "ival  =  " << __ival << std::endl;
+      a_out << "|-- " << "fval  =  " << __fval << std::endl;
+      a_out << "|-- " << "dval  =  " << __dval << std::endl;
+      a_out << "|-- " << "sval  =  '" << __sval << "'" << std::endl;
       a_out << "`-- " << "dval_vec = {";
       for (int i = 0; i < (int) __dval_vec.size (); i++)
         {
           if (i != 0) a_out << "; ";
           a_out << __dval_vec[i];
         }
-      a_out << "}" << endl;
+      a_out << "}" << std::endl;
       return;
     }
 
   } // end of namespace test
 
 } // end of namespace brio
-
-// end of brio_test_data.cc
