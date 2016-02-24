@@ -137,29 +137,32 @@ namespace geomtools {
 
   //! Orientation constants
   enum orientation_type {
-    VERTICAL   = 0,
-    HORIZONTAL = 1
+    ORIENTATION_INVALID    = -1, ///< Invalid orientation
+    ORIENTATION_VERTICAL   =  0, ///< Vertical orientation
+    VERTICAL               =  0, ///< Vertical orientation
+    ORIENTATION_HORIZONTAL =  1, ///< Horizontal orientation
+    HORIZONTAL             =  1  ///< Horizontal orientation
   };
 
   //! Direction flags
   enum direction_flags_type {
     DIRECTION_NONE   = 0x0,
-    DIRECTION_BACK   = datatools::bit_mask::bit00, // -x
-    DIRECTION_FRONT  = datatools::bit_mask::bit01, // +x
-    DIRECTION_LEFT   = datatools::bit_mask::bit02, // -y
-    DIRECTION_RIGHT  = datatools::bit_mask::bit03, // +y
-    DIRECTION_BOTTOM = datatools::bit_mask::bit04, // -z
-    DIRECTION_TOP    = datatools::bit_mask::bit05  // +z
+    DIRECTION_BACK   = datatools::bit_mask::bit00, ///< -x direction
+    DIRECTION_FRONT  = datatools::bit_mask::bit01, ///< +x direction
+    DIRECTION_LEFT   = datatools::bit_mask::bit02, ///< -y direction
+    DIRECTION_RIGHT  = datatools::bit_mask::bit03, ///< +y direction
+    DIRECTION_BOTTOM = datatools::bit_mask::bit04, ///< -z direction
+    DIRECTION_TOP    = datatools::bit_mask::bit05  ///< +z direction
   };
 
   //! Direction type
   enum direction_type {
-    BACK   = 0, // -x
-    FRONT  = 1, // +x
-    LEFT   = 2, // -y
-    RIGHT  = 3, // +y
-    BOTTOM = 4, // -z
-    TOP    = 5  // +z
+    BACK             = 0, ///< -x direction
+    FRONT            = 1, ///< +x direction
+    LEFT             = 2, ///< -y direction
+    RIGHT            = 3, ///< +y direction
+    BOTTOM           = 4, ///< -z direction
+    TOP              = 5  ///< +z direction
   };
 
   enum vertex_1d_type {
