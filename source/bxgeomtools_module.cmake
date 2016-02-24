@@ -201,6 +201,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/point_on_quadric_finder.h
   ${module_include_dir}/${module_name}/foot_point_on_quadric_finder.h
   ${module_include_dir}/${module_name}/toroid_nappe.h
+  #${module_include_dir}/${module_name}/torus.h
   )
 
 # - configure resources
@@ -332,6 +333,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/point_on_quadric_finder.cc
   ${module_source_dir}/foot_point_on_quadric_finder.cc
   ${module_source_dir}/toroid_nappe.cc
+  #${module_source_dir}/torus.cc
+  ${module_source_dir}/the_introspectable.cc
   bx${module_name}/resource.cc
   )
 
