@@ -7,7 +7,7 @@
 #include <geomtools/utils.h>
 
 // This project:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for geomtools enums:

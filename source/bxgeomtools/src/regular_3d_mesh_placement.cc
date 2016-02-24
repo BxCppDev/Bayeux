@@ -34,8 +34,8 @@
 namespace geomtools {
 
   /// \brief 3D discrete node coordinates
-  struct node_coord_3d : DATATOOLS_SERIALIZABLE_CLASS {
-
+  struct node_coord_3d :  public datatools::i_serializable
+  {
     node_coord_3d();
     node_coord_3d(int32_t i_, int32_t j_, int32_t k_);
     void set(int32_t i_, int32_t j_, int32_t k_);
@@ -124,7 +124,7 @@ namespace geomtools {
   }
 
   /// \brief 3D mesh node:
-  struct node_type : DATATOOLS_SERIALIZABLE_CLASS
+  struct node_type : public datatools::i_serializable
   {
     int32_t       id;
     node_coord_3d coordinates;
