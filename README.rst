@@ -324,90 +324,90 @@ Bayeux Configuration Options
 
 These options control the core configuration of Bayeux.
 
--  ``Bayeux_FORCE_CXX_ALL_WARNINGS``
+-  ``BAYEUX_FORCE_CXX_ALL_WARNINGS``
 
    - Build the Bayeux libraries, test suite and executable with all possible
      compiler warnings. Default is ON.
 
--  ``Bayeux_BUILD_DEVELOPER_TOOLS``
+-  ``BAYEUX_WITH_DEVELOPER_TOOLS``
 
    -  Build and install additional tools for developers and *normal* users.
       Default is ON.
 
--  ``Bayeux_USE_LEGACY_ROOT``
+-  ``BAYEUX_USE_LEGACY_ROOT``
 
    -  Bayeux is built using an old version of ROOT (prior to version 6).
       Default is OFF.
 
--  ``Bayeux_WITH_BRIO``
+-  ``BAYEUX_WITH_BRIO``
 
    - Build the Bayeux/brio library module. Default is ON.
 
--  ``Bayeux_WITH_CUTS``
+-  ``BAYEUX_WITH_CUTS``
 
    - Build the Bayeux/cuts library module. Default is ON.
 
--  ``Bayeux_WITH_MYGSL``
+-  ``BAYEUX_WITH_MYGSL``
 
    - Build the Bayeux/mygsl library module. Default is ON.
 
--  ``Bayeux_WITH_DPP``
+-  ``BAYEUX_WITH_DPP``
 
    - Build the Bayeux/dpp library module. Default is ON.
 
--  ``Bayeux_WITH_MATERIALS``
+-  ``BAYEUX_WITH_MATERIALS``
 
    - Build the Bayeux/materials library module. Default is ON.
 
--  ``Bayeux_WITH_GEOMTOOLS``
+-  ``BAYEUX_WITH_GEOMTOOLS``
 
    - Build the Bayeux/geomtools library module. Default is ON.
 
--  ``Bayeux_WITH_EMFIELD``
+-  ``BAYEUX_WITH_EMFIELD``
 
    - Build the Bayeux/emfield library module. Default is ON.
 
--  ``Bayeux_WITH_GENBB_HELP``
+-  ``BAYEUX_WITH_GENBB_HELP``
 
    - Build the Bayeux/genbb_help library module. Default is ON.
 
--  ``Bayeux_WITH_GENVTX``
+-  ``BAYEUX_WITH_GENVTX``
 
    - Build the Bayeux/genvtx library module. Default is ON.
 
--  ``Bayeux_WITH_MCTOOLS``
+-  ``BAYEUX_WITH_MCTOOLS``
 
    - Build the Bayeux/mctools library module. Default is ON.
 
--  ``Bayeux_BUILD_GEANT4_MODULE``
+-  ``BAYEUX_WITH_GEANT4_MODULE``
 
    - Build the Bayeux/mctools Geant4 library extension module. Default is ON.
 
--  ``Bayeux_BUILD_MCNP_MODULE``
+-  ``BAYEUX_WITH_MCNP_MODULE``
 
    - Build the Bayeux/mctools MCNP library extension module (experimental). Default is OFF.
 
--  ``Bayeux_WITH_LAHAGUE``
+-  ``BAYEUX_WITH_LAHAGUE``
 
    - Build the Bayeux/lahague library module. Default is OFF.
 
--  ``Bayeux_BUILD_QT_GUI``
+-  ``BAYEUX_WITH_QT_GUI``
 
    - Build the Qt-based GUI components. Default is OFF.
 
--  ``Bayeux_ENABLE_TESTING``
+-  ``BAYEUX_ENABLE_TESTING``
 
    -  Build unit testing system for Bayeux. Default is OFF.
 
--  ``Bayeux_BUILD_DOCS``
+-  ``BAYEUX_WITH_DOCS``
 
    -  Build Bayeux documentation products. Default is ON.
 
--  ``Bayeux_BUILD_OCD_DOCS``
+-  ``BAYEUX_WITH_DOCS_OCD``
 
-   -  Build OCD documentation. Default is ON. Implies ``Bayeux_BUILD_DOCS``.
+   -  Build OCD documentation. Default is OFF. Implies ``BAYEUX_WITH_DOCS``.
 
--  ``Bayeux_WITH_EXAMPLES``
+-  ``BAYEUX_WITH_EXAMPLES``
 
    -  Install Bayeux with examples. Default is ON.
 
