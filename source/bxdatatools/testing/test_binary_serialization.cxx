@@ -13,7 +13,7 @@
 #include <boost/serialization/string.hpp>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
+// #include <datatools/bio_guard.h>
 
 using namespace std;
 

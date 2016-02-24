@@ -24,6 +24,10 @@
 // Ourselves:
 #include <datatools/introspection/access_type.h>
 
+// This project:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Registration:
 DR_TYPE_EXPORT(::datatools::introspection::access_type, "datatools::introspection::access_type");
 

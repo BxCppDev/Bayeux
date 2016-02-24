@@ -22,30 +22,31 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DATATOOLS_DETAIL_REFLECTION_LINK_GUARD_H_
-#define DATATOOLS_DETAIL_REFLECTION_LINK_GUARD_H_
+#ifndef DATATOOLS_DETAIL_REFLECTION_LINK_GUARD_H
+#define DATATOOLS_DETAIL_REFLECTION_LINK_GUARD_H
 
 namespace datatools {
   namespace detail {
     namespace reflection {
 
       /** \brief Data structure to ensure that a given executable is linked
-       *        against the datatools_reflection DLL with new gcc 4.6 linking strategy
-       *        even if no explicit datatools reflection code is explicitely
+       *        against the Bayeux/datatools module with new gcc 4.6 linking strategy
+       *        even if no explicit datatools code is explicitely
        *        invoked from the executable.
        */
       class dynamic_link_guard {
       public:
-	dynamic_link_guard();
-	~dynamic_link_guard();
-	static dynamic_link_guard& instance();
+        dynamic_link_guard();
+        ~dynamic_link_guard();
+      public:
+        static dynamic_link_guard& instance();
       };
 
     } // end namespace reflection
   } // end namespace detail
 } // end namespace datatools
 
-#endif // DATATOOLS_DETAIL_REFLECTION_LINK_GUARD_H_
+#endif // DATATOOLS_DETAIL_REFLECTION_LINK_GUARD_H
 
 /*
 ** Local Variables: --

@@ -14,7 +14,7 @@
 #include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
+//#include <datatools/bio_guard.h>
 
 int main (int /* argc_ */, char ** /* argv_ */)
 {

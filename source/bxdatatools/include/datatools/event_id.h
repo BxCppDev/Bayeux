@@ -29,6 +29,9 @@
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_clear.h>
+#ifndef Q_MOC_RUN
+#include <datatools/reflection_interface.h>
+#endif // Q_MOC_RUN
 
 namespace datatools {
 

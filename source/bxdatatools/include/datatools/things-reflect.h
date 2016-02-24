@@ -3,11 +3,15 @@
 #ifndef DATATOOLS_THINGS_REFLECT_H
 #define DATATOOLS_THINGS_REFLECT_H
 
+// Ourselves:
+#include <datatools/things.h>
+
 // Third Party:
 #include <boost/scoped_ptr.hpp>
 
 // This project:
-#include <datatools/things.h>
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the reflection code for the 'datatools::things' class:
 DR_CLASS_EXPORT (::datatools::things, "datatools::things")

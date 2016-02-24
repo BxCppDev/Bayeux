@@ -24,6 +24,10 @@
 // Ourselves:
 #include <datatools/introspection/unit_support.h>
 
+// This project:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Registration:
 DR_TYPE_EXPORT(::datatools::introspection::unit_support_type, "datatools::introspection::unit_support_type");
 

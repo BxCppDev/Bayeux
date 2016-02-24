@@ -1,7 +1,7 @@
 /// \file datatools/reflection_macros.h
-/// \details Some useful classes and macros related to Camp based reflection within datatools
+/// \details Some useful macros related to Camp based reflection within datatools
 /*
- * Copyright (C) 2012-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2012-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,11 @@
 // Standard Library:
 #include <string>
 
+// Special Boost headers :
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+#include <boost/ref.hpp>
+
 // Third Party:
 // - Camp:
 #include <camp/camptype.hpp>
@@ -45,146 +50,13 @@
 #include <camp/observer.hpp>
 #include <camp/args.hpp>
 #include <camp/function.hpp>
+#include <camp/errors.hpp>
 
 // This project :
 #include <datatools/detail/reflection_utils.h>
-#include <datatools/detail/reflection_export.h>
-#include <datatools/detail/reflection_version.h>
+//#include <datatools/detail/reflection_export.h>
+//#include <datatools/detail/reflection_version.h>
 
-/// \def DR_CLASS_REGISTER(Class)
-/// \brief Inform Camp that class \a Class exists
-///
-/// @arg \a Class the full identifier of the class to be registered
-///      in the Camp system (including namespaces)
-///
-/** Example:
-    @code{.cpp}
-namespace foo {
-  class bar {
-    ...
-  };
-}
-DR_CLASS_REGISTER(foo::bar);
-    @endcode
-*/
-#define DR_CLASS_REGISTER(Class)                 \
-  CAMP_TYPE( Class )                             \
-  /**/
-
-/// \def DR_TYPE_REGISTER(Type)
-/// \brief Inform Camp that type \a Type exists
-///
-/// @see DR_CLASS_REGISTER
-#define DR_TYPE_REGISTER(Type)                  \
-  CAMP_TYPE( Type )                             \
-  /**/
-
-/// \def DR_CLASS_NONCOPYABLE_REGISTER(Class)
-/// \brief Inform Camp that non copyable class \a Class exists :
-///
-/// @arg Class the full identifier of the class to be registered
-///      in the Camp system (including namespaces)
-///
-/** Example:
-    @code{.cpp}
-namespace foo {
-  class bar : private boost::noncopyable {
-    ...
-  };
-}
-DR_CLASS_NONCOPYABLE_REGISTER(foo::bar);
-    @endcode
-*/
-#define DR_CLASS_NONCOPYABLE_REGISTER(Class)     \
-  CAMP_TYPE_NONCOPYABLE( Class )                 \
-  /**/
-
-/// \def DR_TYPE_NONCOPYABLE_REGISTER(Type)
-/// \brief Inform Camp that non copyable type \a Type exists
-///
-/// @see DR_CLASS_NONCOPYABLE_REGISTER
-#define DR_TYPE_NONCOPYABLE_REGISTER(Type)      \
-  CAMP_TYPE_NONCOPYABLE( Type )                 \
-  /**/
-
-/// \def DR_CLASS_RTTI()
-/// \brief Declare Camp RTTI within class declaration
-///
-/** Example:
-    @code{.cpp}
-namespace foo {
-  class bar {
-    ...
-#ifndef Q_MOC_RUN // Special guard to avoid clash with Qt MOC interpreter
-    DR_CLASS_RTTI();
-#endif // Q_MOC_RUN
-  };
-}
-    @endcode
-*/
-#define DR_CLASS_RTTI()                         \
-  CAMP_RTTI()                                   \
-  /**/
-
-/// \def DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)
-/// \brief Declare the reflection template function associated to class \a Introspectable
-#define DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)       \
-  namespace datatools{                                                  \
-    namespace detail {                                                  \
-      namespace reflection {                                            \
-        template<>                                                      \
-        void implement_reflection< Introspectable > (unsigned int);     \
-      }}}                                                               \
-  /**/
-
-/// \def DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)
-/// \see DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION
-#define DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)        \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)             \
-  /**/
-
-/// \def DR_CLASS_INIT(Introspectable)
-/// \brief Inform Camp that class \a Introspectable exists and trigger the automatic registration
-///        of dedicated reflection feature.
-///
-/// @arg \a Introspectable the full identifier (with namespaces) of the introspectable class to be registered
-///      in the Camp system with introspection support in Bayeux/datatools.
-///
-/** Example:
-    @code{.cpp}
-namespace foo {
-  class bar {
-    ...
-  };
-}
-DR_CLASS_INIT(foo::bar);
-    @endcode
-*/
-#define DR_CLASS_INIT(Introspectable)                           \
-  DR_CLASS_REGISTER(Introspectable);                            \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable);    \
-  /**/
-
-/// \def DR_CLASS_NONCOPYABLE_INIT(Introspectable)
-/// \brief Inform Camp that non copyable class \a Introspectable exists and trigger the automatic registration
-///        of dedicated introspection feature.
-/// @see DR_CLASS_INIT
-#define DR_CLASS_NONCOPYABLE_INIT(Introspectable)               \
-  DR_CLASS_NONCOPYABLE_REGISTER(Introspectable);                \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable);    \
-  /**/
-
-/// \def DR_TYPE_INIT(Introspectable)
-/// @see DR_CLASS_INIT
-#define DR_TYPE_INIT(Introspectable)            \
-  DR_CLASS_INIT(Introspectable)                 \
-  /**/
-
-/// \def DR_TYPE_NONCOPYABLE_INIT(Introspectable)
-/// @see DR_CLASS_NONCOPYABLE_INIT
-#define DR_TYPE_NONCOPYABLE_INIT(Introspectable)        \
-  DR_CLASS_NONCOPYABLE_INIT(Introspectable)             \
-  /**/
 
 /****************************************
  *    Introspection metaclass macros    *
@@ -584,10 +456,6 @@ DR_CLASS_INIT(foo::bar);
 /// \deprecated
 #define DR_CLASS           camp::Class
 
-/// \def DR_ENUM
-/// \deprecated
-#define DR_ENUM            camp::Enum
-
 /// \def DR_CLASS_BY_NAME
 /// \deprecated
 #define DR_CLASS_BY_NAME   camp::classByName
@@ -604,9 +472,21 @@ DR_CLASS_INIT(foo::bar);
 /// \deprecated
 #define DR_CLASS_BY_OBJECT camp::classByObject
 
+/// \def DR_CLASS_COUNT
+/// \deprecated
+#define DR_CLASS_COUNT     camp::classCount
+
+/// \def DR_ENUM
+/// \deprecated
+#define DR_ENUM            camp::Enum
+
 /// \def DR_ENUM_BY_NAME
 /// \deprecated
 #define DR_ENUM_BY_NAME    camp::enumByName
+
+/// \def DR_ENUM_MANAGER
+/// \deprecated
+#define DR_ENUM_MANAGER    camp::detail::EnumManager
 
 /// \def DR_ENUM_BY_TYPE
 /// \deprecated
@@ -619,6 +499,18 @@ DR_CLASS_INIT(foo::bar);
 /// \def DR_ENUM_BY_OBJECT
 /// \deprecated
 #define DR_ENUM_BY_OBJECT  camp::enumByObject
+
+/// \def DR_ENUM_COUNT
+/// \deprecated
+#define DR_ENUM_COUNT      camp::enumCount
+
+/// \def DR_ENUM_NOT_FOUND
+/// \deprecated
+#define DR_ENUM_NOT_FOUND  camp::EnumNotFound
+
+/// \def DR_BAD_TYPE
+/// \deprecated
+#define DR_BAD_TYPE        camp::BadType
 
 /// \def DR_OBJECT
 /// \deprecated
@@ -710,115 +602,6 @@ DR_CLASS_INIT(foo::bar);
 
 #define DR_CONST_REF_WRAPPER(TypeId)            \
   boost::reference_wrapper< TypeId const>       \
-  /**/
-
-/// \def DR_CLASS_EXPORT_IMPLEMENT(T)
-/// \brief Define registration of a class \a T with reflection support
-///
-/// This macro must be invoked outside of any namespace scope.
-/** Example:
-    @code{.cpp}
-namespace foo {
-  class bar {
-    ...
-  };
-}
-DR_CLASS_REGISTER(foo::bar);
-DR_CLASS_EXPORT_IMPLEMENT(foo::bar);
-    @endcode
-*/
-#define DR_CLASS_EXPORT_IMPLEMENT(T)                                    \
-  namespace datatools {                                                 \
-    namespace detail {                                                  \
-      namespace reflection {                                            \
-        template<>                                                      \
-        struct init_guid< T > {                                         \
-          static guid_initializer< T > const & g;                       \
-        };                                                              \
-        guid_initializer< T > const & init_guid< T >::g =               \
-          ::boost::serialization::singleton< guid_initializer< T > >    \
-          ::get_mutable_instance().export_guid();                       \
-      }}}                                                               \
-  /**/
-
-
-/// \def DR_CLASS_EXPORT_KEY(T, K)
-/// \brief Define class identifier \a K for the registration of a class \a T with reflection support
-///
-/// This macro must be invoked outside of any namespace scope.
-/** Example:
-    @code{.cpp}
-DR_CLASS_EXPORT_KEY(foo::bar, "foo::bar"");
-    @endcode
-*/
-#define DR_CLASS_EXPORT_KEY(T, K)                               \
-  namespace datatools {                                         \
-    namespace detail {                                          \
-      namespace reflection {                                    \
-        template<>                                              \
-        struct guid_defined< T > : boost::mpl::true_ {};        \
-        template<>                                              \
-        inline const char * guid< T >(){                        \
-          return K;                                             \
-        }                                                       \
-      }}}                                                       \
-  /**/
-
-/// \def DR_CLASS_EXPORT(T, K)
-/// \brief Implement the code for reflection support of class  \a T with identifier \a K
-///
-/// This macro must be invoked outside of any namespace scope.
-/** Example:
-    @code{.cpp}
-DR_CLASS_EXPORT(foo::bar, "foo::bar"");
-    @endcode
-*/
-#define DR_CLASS_EXPORT(T, K)                   \
-  DR_CLASS_EXPORT_KEY (T, K)                    \
-  DR_CLASS_EXPORT_IMPLEMENT (T)                 \
-  /**/
-
-/// \def DR_TYPE_EXPORT(T, K)
-/// \see DR_CLASS_EXPORT
-#define DR_TYPE_EXPORT(T, K)                    \
-  DR_CLASS_EXPORT (T, K)                        \
-  /**/
-
-/// \def DR_CLASS_VERSION(T, N)
-/// \brief Specify the current version number \a N for the class \a T
-///        version numbers limited to 8 bits
-///
-/// @arg \a T the type full identifier (with namespaces)
-/// @arg \a N the version number
-///
-/// This macro must be invoked outside of any namespace scope.
-/** Example:
-    @code{.cpp}
-namespace foo {
-  class bar {
-    ...
-    int val;   // Legacy attribute (original version 0)
-    int other; // Attribute added in version 1
-  };
-}
-DR_CLASS_VERSION(foo::bar, 1);
-    @endcode
- */
-#define DR_CLASS_VERSION(T, N)                                          \
-  namespace datatools {                                                 \
-    namespace detail {                                                  \
-      namespace reflection {                                            \
-        template<>                                                      \
-        struct version<T >                                              \
-        {                                                               \
-          typedef boost::mpl::int_<N> type;                             \
-          typedef boost::mpl::integral_c_tag tag;                       \
-          BOOST_STATIC_CONSTANT(int, value = version::type::value);     \
-          BOOST_MPL_ASSERT((                                            \
-                            boost::mpl::less<boost::mpl::int_<N>,       \
-                            boost::mpl::int_<256> >));                  \
-        };                                                              \
-      }}}                                                               \
   /**/
 
 #endif // DATATOOLS_REFLECTION_MACROS_H

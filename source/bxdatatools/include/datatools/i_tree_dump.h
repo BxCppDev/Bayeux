@@ -9,7 +9,7 @@
 // This project:
 #include <datatools/datatools_config.h>
 #ifndef Q_MOC_RUN
-#include <datatools/reflection_macros.h>
+#include <datatools/reflection_interface.h>
 #endif // Q_MOC_RUN
 
 namespace datatools {

@@ -17,12 +17,11 @@
 #include <datatools/clhep_units.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
-
-using namespace std;
+// #include <datatools/bio_guard.h>
 
 int main(int argc_, char ** argv_)
 {
+  using namespace std;
   int error_code = EXIT_SUCCESS;
   try {
     clog << "Test of the 'properties' class..." << endl;

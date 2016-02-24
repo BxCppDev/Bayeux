@@ -39,7 +39,7 @@
 #include <datatools/factory_macros.h>
 #include <datatools/utils.h>
 #ifndef Q_MOC_RUN
-#include <datatools/reflection_macros.h>
+#include <datatools/reflection_interface.h>
 #endif // Q_MOC_RUN
 
 // Main namespace of the datatools library

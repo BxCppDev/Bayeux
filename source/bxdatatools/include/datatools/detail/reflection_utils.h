@@ -22,28 +22,37 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DATATOOLS_DETAIL_REFLECTION_UTILS_H_
-#define DATATOOLS_DETAIL_REFLECTION_UTILS_H_
-
-// Standard Library
-#include <string>
-
-// Special Boost headers :
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-#include <boost/ref.hpp>
+#ifndef DATATOOLS_DETAIL_REFLECTION_UTILS_H
+#define DATATOOLS_DETAIL_REFLECTION_UTILS_H
 
 namespace datatools{
   namespace detail {
     /// Nested private namespace of the Bayeux/datatools module library (reflection)
     namespace reflection {
       template<typename Introspectable>
-      void implement_reflection (unsigned int);
+      void implement_reflection(unsigned int);
     }
   }
 }
 
-#endif // DATATOOLS_DETAIL_REFLECTION_UTILS_H_
+/// \def DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)
+/// \brief Declare the reflection template function associated to class \a Introspectable
+#define DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)       \
+  namespace datatools{                                                  \
+    namespace detail {                                                  \
+      namespace reflection {                                            \
+        template<>                                                      \
+        void implement_reflection< Introspectable > (unsigned int);     \
+      }}}                                                               \
+  /**/
+
+/// \def DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)
+/// \see DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION
+#define DR_TYPE_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)        \
+  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)             \
+  /**/
+
+#endif // DATATOOLS_DETAIL_REFLECTION_UTILS_H
 
 /*
 ** Local Variables: --

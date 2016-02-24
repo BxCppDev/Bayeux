@@ -1,6 +1,6 @@
 /// \file datatools/detail/bio_link_guard.h
-#ifndef DATATOOLS_DETAIL_BIO_LINK_GUARD_H_
-#define DATATOOLS_DETAIL_BIO_LINK_GUARD_H_
+#ifndef DATATOOLS_DETAIL_BIO_LINK_GUARD_H
+#define DATATOOLS_DETAIL_BIO_LINK_GUARD_H
 
 namespace datatools {
   namespace detail {
@@ -16,7 +16,6 @@ namespace datatools {
       public:
         dynamic_link_guard();
         ~dynamic_link_guard();
-
         static dynamic_link_guard& instance();
       private:
         static bool _g_devel_;
@@ -26,7 +25,7 @@ namespace datatools {
   } // end namespace detail
 } // end namespace datatools
 
-#endif // DATATOOLS_DETAIL_BIO_LINK_GUARD_H_
+#endif // DATATOOLS_DETAIL_BIO_LINK_GUARD_H
 
 /*
 ** Local Variables: --

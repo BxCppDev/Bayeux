@@ -54,9 +54,6 @@
 #include <datatools/i_cloneable.h>
 #include <datatools/bit_mask.h>
 #include <datatools/exception.h>
-#ifndef Q_MOC_RUN
-#include <datatools/reflection_macros.h>
-#endif // Q_MOC_RUN
 
 namespace datatools {
 

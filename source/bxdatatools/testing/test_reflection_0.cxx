@@ -7,10 +7,9 @@
 #include <sstream>
 #include <stdexcept>
 
-// Third Party:
-// - Camp:
-#include <camp/errors.hpp>
-//#include <camp/invalidclass.hpp>
+// // Third Party:
+// // - Camp:
+// #include <camp/errors.hpp>
 
 // This Project:
 #include <datatools/logger.h>
@@ -20,8 +19,9 @@
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/things.h>
+#include <datatools/reflection_macros.h>
 
-// Some pre-processor guard about CAMP reflection usage and linkage :
+// Some pre-processor guard about reflection usage and linkage to Bayeux:
 #include <datatools/reflection_guard.h>
 
 void test_things (bool // debug_
@@ -44,10 +44,10 @@ void test_things (bool // debug_
     erObj.call("tree_print", DR_ARGS(1, "Event record (things) : "));
 
     // Change its 'name' property :
-    erObj.set ("name", DR_VALUE ("event_record"));
+    erObj.set("name", DR_VALUE ("event_record"));
 
     // Change its 'description' property :
-    erObj.set ("description", DR_VALUE ("A smart generic event record"));
+    erObj.set("description", DR_VALUE ("A smart generic event record"));
 
     // Print it again :
     erObj.call("tree_print", DR_ARGS(1, "Event record (things) : "));
@@ -55,8 +55,8 @@ void test_things (bool // debug_
     // Now automagically allocate and store a new bank named 'EH'
     // of the serialization type 'properties' :
     DR_VALUE ehVal = erObj.DR_CALL ("add_entry", DR_ARGS ("EH",
-                                                         "datatools::properties",
-                                                         "The event header", false));
+                                                          "datatools::properties",
+                                                          "The event header", false));
 
     std::clog << "EH was added. " << std::endl;
 
@@ -102,10 +102,10 @@ void test_multi_properties (bool // debug_
     mpropsObj.call("tree_print", DR_ARGS(1, "Multi-properties: "));
 
     {
-       mpropsObj.call ("set_description", DR_ARGS("The bar description"));
-       DR_VALUE propsVal = mpropsObj.call ("get_description");
-       std::clog << "NOTICE: Bar description is '"
-                 << propsVal.to<std::string>() << "'." << std::endl;
+      mpropsObj.call ("set_description", DR_ARGS("The bar description"));
+      DR_VALUE propsVal = mpropsObj.call ("get_description");
+      std::clog << "NOTICE: Bar description is '"
+                << propsVal.to<std::string>() << "'." << std::endl;
     }
 
     {
@@ -120,7 +120,7 @@ void test_multi_properties (bool // debug_
       DR_VALUE propsVal = mpropsObj.call ("write", DR_ARGS("datatools_test_reflection_0a.txt", false, false));
     }
 
-     {
+    {
       DR_VALUE propsVal = mpropsObj.call ("add_section", DR_ARGS("foo", "foo_type"));
       DR_OBJECT propsObj = propsVal.to<DR_OBJECT>();
       propsObj.call ("store_flag",    DR_ARGS("debug",  "Debug flag", false));
@@ -232,29 +232,29 @@ void test_logger (bool // debug_
 {
   std::clog << "*** test_logger : " << std::endl;
   {
-    const DR_CLASS & tMetaClass = camp::classByName("datatools::logger");
+    const DR_CLASS & tMetaClass = DR_CLASS_BY_NAME("datatools::logger");
     std::clog << "tMetaClass = " << tMetaClass.name() <<  std::endl;
 
     try {
-      camp::detail::EnumManager & emgr = camp::detail::EnumManager::instance();
+      DR_ENUM_MANAGER & emgr = DR_ENUM_MANAGER::instance();
       std::clog << "Count: " << emgr.count() << std::endl;
 
       if (emgr.enumExists("datatools::logger::priority")) {
         std::clog << "Exists: " << "datatools::logger::property" << std::endl;
       } else {
         std::clog << "Does not exist: " << "datatools::logger::property" << std::endl;
-       }
+      }
 
-      const DR_ENUM & tMetaEnum = camp::enumByName("datatools::logger::priority");
+      const DR_ENUM & tMetaEnum = DR_ENUM_BY_NAME("datatools::logger::priority");
       for (int i = 0; i < (int) tMetaEnum.size(); i++) {
         std::clog << " - Key '" << tMetaEnum.pair(i).name
                   << "' has value = " << tMetaEnum.pair(i).value << std::endl;
       }
-    } catch (camp::EnumNotFound & ie) {
+    } catch (DR_ENUM_NOT_FOUND & ie) {
       std::cerr << "Error: test_logger: " << ie.what() << " for enum named '" << "'" << std::endl;
       throw;
     }
- }
+  }
 
   return;
 }
@@ -268,60 +268,41 @@ int main (// int argc_, char ** argv_
     {
       bool debug = false;
       long seed  = 12345;
-      //int nrecords = 3;
 
-      // int iarg = 1;
-      // while (iarg < argc_)
-      //   {
-      //     std::string arg = argv_[iarg];
-      //     if (arg[0] == '-')
-      //       {
-      //         if (arg == "-d") debug = true;
-      //         if (arg == "-10") nrecords = 10;
-      //         if (arg == "-100") nrecords = 100;
-      //         if (arg == "-1000") nrecords = 1000;
-      //       }
-      //     else
-      //       {
-      //       }
-      //     iarg++;
-      //   }
+      srand48(seed);
 
-      srand48 (seed);
-
-
-      DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
-      for (int i = 0; i < (int) camp::classCount(); i++) {
-        const camp::Class & c = camp::classByIndex(i);
+      DT_LOG_NOTICE(logging, "Number of metaclasses = " << DR_CLASS_COUNT());
+      for (int i = 0; i < (int) DR_CLASS_COUNT(); i++) {
+        const DR_CLASS & c = DR_CLASS_BY_INDEX(i);
         DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
       }
 
-      DT_LOG_NOTICE(logging, "Number of metaenums = " << camp::enumCount());
-      for (int i = 0; i < (int) camp::enumCount(); i++) {
-        const camp::Enum & e = camp::enumByIndex(i);
+      DT_LOG_NOTICE(logging, "Number of metaenums = " << DR_ENUM_COUNT());
+      for (int i = 0; i < (int) DR_ENUM_COUNT(); i++) {
+        const DR_ENUM & e = DR_ENUM_BY_INDEX(i);
         DT_LOG_NOTICE(logging, "Metaenum #" << i << " : " << e.name());
       }
 
-      test_logger (debug);
+      test_logger(debug);
 
-      test_event_id (debug);
+      test_event_id(debug);
 
-      test_properties (debug);
+      test_properties(debug);
 
-      test_multi_properties (debug);
+      test_multi_properties(debug);
 
-      test_things (debug);
+      test_things(debug);
 
       std::clog << "The end" << std::endl;
     }
-  catch (camp::BadType & ic) {
+  catch (DR_BAD_TYPE & ic) {
     std::cerr << "ERROR: test_reflection_0: " << ic.what () << std::endl;
     exit (EXIT_FAILURE);
   }
   catch (std::exception & x) {
-      std::cerr << "ERROR: test_reflection_0: " << x.what () << std::endl;
-      exit (EXIT_FAILURE);
-    }
+    std::cerr << "ERROR: test_reflection_0: " << x.what () << std::endl;
+    exit (EXIT_FAILURE);
+  }
 
   return (EXIT_SUCCESS);
 }

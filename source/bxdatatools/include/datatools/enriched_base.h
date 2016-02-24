@@ -42,9 +42,6 @@
 #include <datatools/logger.h>
 #include <datatools/properties.h>
 #include <datatools/object_configuration_description.h>
-#ifndef Q_MOC_RUN
-#include <datatools/reflection_macros.h>
-#endif // Q_MOC_RUN
 
 namespace datatools {
 

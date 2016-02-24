@@ -39,16 +39,17 @@
 #warning This executable is built with its own datatools reflection code.
 #include <datatools/the_introspectable.h>
 #else
-//#warning This executable must ensure the datatools reflection library is loaded.
+//#warning This executable must ensure the Bayeux/datatools library module is loaded with builtin reflection code.
 
 namespace datatools {
 
   /** \brief Data structure that ensures the invocation of some explicit code
-   *         for datatools_reflection DLL liking.
+   *         related to reflection. This guarantees the linking to the proper code.
    */
   struct reflection_guard {
     reflection_guard() {
       //::datatools::detail::reflection::dynamic_link_guard& dlg =
+      std::cerr << "DEVEL: datatools::reflection_guard: Instantiation..." << std::endl;
       ::datatools::detail::reflection::dynamic_link_guard::instance();
     }
     static reflection_guard _g_trigger_link_guard_;

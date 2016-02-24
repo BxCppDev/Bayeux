@@ -3,12 +3,16 @@
 #ifndef DATATOOLS_PROPERTIES_REFLECT_H
 #define DATATOOLS_PROPERTIES_REFLECT_H
 
+// Ouselves:
+#include <datatools/properties.h>
+
 // Third Party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
 
 // This project:
-#include <datatools/properties.h>
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::properties' class:
 DR_CLASS_EXPORT (::datatools::properties, "datatools::properties")

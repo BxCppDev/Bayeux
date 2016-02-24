@@ -31,7 +31,7 @@
 #include <datatools/i_tree_dump.h>
 
 #ifndef Q_MOC_RUN
-#include <datatools/reflection_macros.h>
+#include <datatools/reflection_interface.h>
 #endif // Q_MOC_RUN
 
 namespace datatools {

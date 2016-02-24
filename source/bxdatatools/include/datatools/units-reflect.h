@@ -24,6 +24,10 @@
 // Ourselves:
 #include <datatools/units.h>
 
+// This project:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Registration:
 DR_TYPE_EXPORT(::datatools::units::power_of_ten, "datatools::units::power_of_ten");
 
@@ -50,12 +54,12 @@ namespace datatools {
           .DR_ENUM_PAIR("kilo",  ::datatools::units::KILO)
           .DR_ENUM_PAIR("mega",  ::datatools::units::MEGA)
           .DR_ENUM_PAIR("giga",  ::datatools::units::GIGA)
-    .DR_ENUM_PAIR("tera",  ::datatools::units::TERA)
-    .DR_ENUM_PAIR("peta",  ::datatools::units::PETA)
-    .DR_ENUM_PAIR("exa",   ::datatools::units::EXA)
+          .DR_ENUM_PAIR("tera",  ::datatools::units::TERA)
+          .DR_ENUM_PAIR("peta",  ::datatools::units::PETA)
+          .DR_ENUM_PAIR("exa",   ::datatools::units::EXA)
           .DR_ENUM_PAIR("zetta", ::datatools::units::ZETTA)
-    .DR_ENUM_PAIR("yotta", ::datatools::units::YOTTA)
-    ;
+          .DR_ENUM_PAIR("yotta", ::datatools::units::YOTTA)
+          ;
         return;
       }
 

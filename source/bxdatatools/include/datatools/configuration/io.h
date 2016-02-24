@@ -33,6 +33,7 @@
 
 // Standard library:
 #include <iostream>
+#include <vector>
 
 // This project (Bayeux/datatools):
 #include <datatools/bit_mask.h>

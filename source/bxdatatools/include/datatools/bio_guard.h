@@ -39,7 +39,7 @@
 #warning This executable is built with its own datatools Boost/Serialization code.
 #include <datatools/the_serializable.h>
 #else
-//#warning This executable must ensure the datatools Boost/Serialization library is loaded.
+//#warning This executable must ensure the Bayuex/datatools library is linked with proper Boost/Serialization based code.
 namespace datatools {
 
   /** \brief Data structure that ensures the invocation of some explicit code
@@ -47,10 +47,8 @@ namespace datatools {
    */
   struct bio_guard {
     bio_guard() {
-      // datatools::detail::serialization::dynamic_link_guard& dlg =
       ::datatools::detail::serialization::dynamic_link_guard::instance();
     }
-
     static bio_guard _g_trigger_link_guard_;
   };
 

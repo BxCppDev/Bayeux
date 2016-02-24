@@ -63,7 +63,7 @@
 
 // This project:
 #ifndef Q_MOC_RUN
-#include <datatools/reflection_macros.h>
+#include <datatools/reflection_interface.h>
 #endif // Q_MOC_RUN
 
 namespace datatools {
@@ -129,99 +129,99 @@ namespace datatools {
     //!        triggers an exception
     //! @returns the priority as configured from the properties
     static priority extract_logging_configuration(const datatools::properties & config,
-						  priority default_prio = datatools::logger::PRIO_FATAL,
-						  bool throw_on_error = true);
+              priority default_prio = datatools::logger::PRIO_FATAL,
+              bool throw_on_error = true);
 
     static void declare_ocd_logging_configuration(datatools::object_configuration_description &,
-						  const std::string & default_value_ = "fatal",
-						  const std::string & prefix_ = "",
-						  const std::string & from_ = "");
+              const std::string & default_value_ = "fatal",
+              const std::string & prefix_ = "",
+              const std::string & from_ = "");
 
   };
 } // namespace datatools
 
 //! Log Message if Priority is greater or equal to PRIO_FATAL
-#define DT_LOG_FATAL(Priority, Message)					\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_FATAL(Priority, Message)         \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_FATAL) { \
       std::cerr << "[fatal:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log Message if Priority is greater or equal to PRIO_CRITICAL
-#define DT_LOG_CRITICAL(Priority, Message)				\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_CRITICAL(Priority, Message)        \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_CRITICAL) { \
       std::cerr << "[critical:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log Message if Priority is greater or equal to PRIO_ERROR
-#define DT_LOG_ERROR(Priority, Message)					\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_ERROR(Priority, Message)         \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p  >= ::datatools::logger::PRIO_ERROR) { \
       std::cerr << "[error:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log Message if Priority is greater or equal to PRIO_WARNING
-#define DT_LOG_WARNING(Priority, Message)				\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_WARNING(Priority, Message)       \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_WARNING) { \
       std::cerr << "[warning:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log Message if Priority is greater or equal to PRIO_NOTICE
-#define DT_LOG_NOTICE(Priority, Message)				\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_NOTICE(Priority, Message)        \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_NOTICE) { \
       std::clog << "[notice:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log Message if Priority is greater or equal to PRIO_INFORMATION
-#define DT_LOG_INFORMATION(Priority, Message)				\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_INFORMATION(Priority, Message)       \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_INFORMATION) { \
       std::clog << "[information:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log Message if Priority is greater or equal to PRIO_DEBUG
-#define DT_LOG_DEBUG(Priority, Message)					\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_DEBUG(Priority, Message)         \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_DEBUG) { \
       std::clog << "[debug:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log Message if Priority is greater or equal to PRIO_TRACE
-#define DT_LOG_TRACE(Priority, Message)					\
-  {									\
-    ::datatools::logger::priority _dt_xxx_p = Priority;			\
+#define DT_LOG_TRACE(Priority, Message)         \
+  {                 \
+    ::datatools::logger::priority _dt_xxx_p = Priority;     \
     if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_TRACE) { \
       std::cerr << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }									\
+    }                 \
   }
 
 //! Log an entering message if Priority is greater or equal to PRIO_TRACE
-#define DT_LOG_TRACE_ENTERING(Priority)		\
-  {						\
-    DT_LOG_TRACE(Priority, "Entering...");	\
+#define DT_LOG_TRACE_ENTERING(Priority)   \
+  {           \
+    DT_LOG_TRACE(Priority, "Entering...");  \
   }
 
 //! Log an exiting message if Priority is greater or equal to PRIO_TRACE
-#define DT_LOG_TRACE_EXITING(Priority)		\
-  {						\
-    DT_LOG_TRACE(Priority, "Exiting.");		\
+#define DT_LOG_TRACE_EXITING(Priority)    \
+  {           \
+    DT_LOG_TRACE(Priority, "Exiting.");   \
   }
 
 

@@ -7,6 +7,8 @@
 
 // This project:
 #include <datatools/logger.h>
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::logger::priority' enum:
 DR_CLASS_EXPORT(::datatools::logger, "datatools::logger")

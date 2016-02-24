@@ -3,11 +3,15 @@
 #ifndef DATATOOLS_MULTI_PROPERTIES_REFLECT_H
 #define DATATOOLS_MULTI_PROPERTIES_REFLECT_H
 
+// Ourselves:
+#include <datatools/multi_properties.h>
+
 // Standard Library:
 #include <string>
 
 // This project:
-#include <datatools/multi_properties.h>
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the reflection code for the 'datatools::multi_properties' class:
 DR_CLASS_EXPORT (::datatools::multi_properties, "datatools::multi_properties")

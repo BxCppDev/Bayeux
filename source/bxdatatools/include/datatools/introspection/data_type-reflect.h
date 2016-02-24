@@ -24,6 +24,10 @@
 // Ourselves:
 #include <datatools/introspection/data_type.h>
 
+// This project:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Registration:
 DR_TYPE_EXPORT(::datatools::introspection::data_type, "datatools::introspection::data_type");
 

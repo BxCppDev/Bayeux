@@ -11,9 +11,11 @@
 
 // This project:
 #include <datatools/event_id.h>
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::event_id' class:
-DR_CLASS_EXPORT (::datatools::event_id, "datatools::event_id")
+DR_CLASS_EXPORT(::datatools::event_id, "datatools::event_id")
 
 namespace datatools {
   namespace detail {
