@@ -6,6 +6,11 @@
 // Ourselves:
 #include <geomtools/blur_spot.h>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Export the introspection code for the 'geomtools::blur_spot' class:
 DR_CLASS_EXPORT (::geomtools::blur_spot, "geomtools::blur_spot")
 

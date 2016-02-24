@@ -6,6 +6,10 @@
 // Ourselves:
 #include <geomtools/utils.h>
 
+// This project:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Export the introspection code for the 'geomtools::XXX' enums:
 DR_TYPE_EXPORT(::geomtools::orientation_type, "geomtools::orientation_type")
 DR_TYPE_EXPORT(::geomtools::direction_type, "geomtools::direction_type")

@@ -31,15 +31,14 @@
 #include <boost/cstdint.hpp>
 // - Bayeux/datatools :
 #include <datatools/i_serializable.h>
-#include <datatools/reflection_macros.h>
+#include <datatools/reflection_interface.h>
 
 // This project :
 #include <geomtools/geomtools_config.h>
 
 namespace geomtools {
 
-  class geom_id :
-    DATATOOLS_SERIALIZABLE_CLASS
+  class geom_id : public datatools::i_serializable
   {
   public:
 

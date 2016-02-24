@@ -10,6 +10,7 @@
 // Standard library:
 #include <iomanip>
 #include <stdexcept>
+#include <sstream>
 
 namespace geomtools {
 

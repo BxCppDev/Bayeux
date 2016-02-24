@@ -3,8 +3,13 @@
 #ifndef GEOMTOOLS_GEOM_ID_REFLECT_H
 #define GEOMTOOLS_GEOM_ID_REFLECT_H
 
-// This project:
+// Ourselves:
 #include <geomtools/geom_id.h>
+
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'geomtools::geom_id' class:
 DR_CLASS_EXPORT (::geomtools::geom_id, "geomtools::geom_id")

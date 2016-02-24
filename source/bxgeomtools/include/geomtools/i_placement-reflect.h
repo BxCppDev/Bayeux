@@ -6,6 +6,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // This project:
 #include <geomtools/i_placement.h>
@@ -22,8 +23,6 @@ namespace datatools {
 
       DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::i_placement, /*tag_*/)
       {
-        //                                      std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-        //                                                                              << "geomtools::i_placement" << std::endl;
         // Declare and populate the reflection metaclass for the 'geomtools::i_placement' class:
         DR_CLASS_DECLARE (::geomtools::i_placement)
           .DR_CLASS_BASE(::datatools::i_serializable)

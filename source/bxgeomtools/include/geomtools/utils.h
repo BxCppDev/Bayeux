@@ -25,7 +25,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/bit_mask.h>
-#include <datatools/reflection_macros.h>
+#include <datatools/reflection_interface.h>
 
 // This project:
 #include <geomtools/geomtools_config.h>

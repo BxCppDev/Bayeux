@@ -2,12 +2,13 @@
 #ifndef GEOMTOOLS_CLHEP_REFLECT_H
 #define GEOMTOOLS_CLHEP_REFLECT_H
 
+// Ourselves:
+#include <geomtools/clhep.h>
+
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/reflection_macros.h>
-
-// This project:
-#include <geomtools/clhep.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the CLHEP class:
 DR_CLASS_EXPORT (::geomtools::vector_2d, "geomtools::vector_2d")

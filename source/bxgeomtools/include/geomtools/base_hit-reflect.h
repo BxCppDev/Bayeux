@@ -19,6 +19,7 @@
 // Third party:
 // - Bayeux/datatools
 #include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // This project :
 #include <geomtools/base_hit.h>

@@ -5,6 +5,8 @@
 // - Boost
 #include <boost/scoped_ptr.hpp>
 
+#include <geomtools/the_introspectable.h>
+
 // Load the link guard definition :
 #include <geomtools/detail/reflection_link_guard.h>
 
@@ -32,7 +34,3 @@ namespace geomtools {
     } // end namespace reflection
   } // end namespace detail
 } // end namespace geomtools
-
-#include <geomtools/the_introspectable.h>
-
-// end of the_introspectable.cc

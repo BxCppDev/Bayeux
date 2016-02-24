@@ -10,6 +10,7 @@
 
 #include <datatools/logger.h>
 #include <datatools/clhep_units.h>
+#include <datatools/reflection_macros.h>
 
 // Introspectable classes :
 #include <geomtools/utils.h>
@@ -55,7 +56,7 @@ void test_base_hit()
 
 
   DR_OBJECT gObj0 = gidMetaClass.construct(DR_ARGS(1203, 1,3,4));
-  DT_LOG_NOTICE(logging, "Mutable GID from the hit object : " << gObj0);
+  DT_LOG_NOTICE(logging, "Mutable GID from the hit object : " << gObj0.get<geomtools::geom_id>());
 
   DR_OBJECT pObj0 = propMetaClass.construct(DR_ARGS("Hit auxiliary properties"));
   pObj0.DR_CALL("store_flag",    DR_ARGS("raw", "", false));

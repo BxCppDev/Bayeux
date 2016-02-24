@@ -27,7 +27,7 @@
 // - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
-#include <datatools/reflection_macros.h>
+#include <datatools/reflection_interface.h>
 
 // This project:
 #include <geomtools/geomtools_config.h>
@@ -40,7 +40,7 @@ namespace geomtools {
 
   //! \brief Abstract interface for all placement objects
   class i_placement
-    : DATATOOLS_SERIALIZABLE_CLASS ,
+    : public datatools::i_serializable,
       public datatools::i_tree_dumpable
   {
   public:
