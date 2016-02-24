@@ -16,11 +16,13 @@
 #ifndef MCTOOLS_BASE_STEP_HIT_REFLECT_H
 #define MCTOOLS_BASE_STEP_HIT_REFLECT_H 1
 
+// Ourselves :
+#include <mctools/base_step_hit.h>
+
 // Third party:
 // - Bayeux/datatools :
-#include <datatools/reflection_macros.h>
-// - Bayeux/mctools :
-#include <mctools/base_step_hit.h>
+#include <datatools/detail/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'mctools::base_step_hit' class:
 DR_CLASS_EXPORT (::mctools::base_step_hit, "mctools::base_step_hit")

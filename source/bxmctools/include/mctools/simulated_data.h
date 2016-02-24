@@ -42,7 +42,7 @@ namespace mctools {
 
   /// The container of collections of MC hits
   class simulated_data :
-    DATATOOLS_SERIALIZABLE_CLASS,
+    public datatools::i_serializable,
     public datatools::i_tree_dumpable,
     public datatools::i_clear
   {
@@ -52,8 +52,8 @@ namespace mctools {
     enum collection_type
       {
         INVALID_HIT_COLLECTION_TYPE = -1, //!< Invalid type of hit collection
-        PLAIN_HIT_COLLECTION_TYPE   =  0, //!< @deprecated Plain hit collection
-        HANDLE_HIT_COLLECTION_TYPE  =  1, //!< Hit handle collection
+        PLAIN_HIT_COLLECTION_TYPE   =  0, //!< @deprecated Collection of plain hits
+        HANDLE_HIT_COLLECTION_TYPE  =  1, //!< Collection of hit handles
       };
 
     /// Categories of MC hits

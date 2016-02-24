@@ -16,12 +16,13 @@
 #ifndef MCTOOLS_SIMULATED_DATA_REFLECT_H
 #define MCTOOLS_SIMULATED_DATA_REFLECT_H 1
 
+// Ourselves:
+#include <mctools/simulated_data.h>
+
 // Third party:
 // - Bayeux/datatools :
-#include <datatools/reflection_macros.h>
-
-// This project:
-#include <mctools/simulated_data.h>
+#include <datatools/detail/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'mctools::simulated_data' class:
 DR_CLASS_EXPORT (::mctools::simulated_data, "mctools::simulated_data")
