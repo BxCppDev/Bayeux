@@ -39,7 +39,7 @@
 namespace geomtools {
 
   class display_data :
-    DATATOOLS_SERIALIZABLE_CLASS,
+    public datatools::i_serializable,
     public datatools::i_tree_dumpable,
     public datatools::i_clear
   {

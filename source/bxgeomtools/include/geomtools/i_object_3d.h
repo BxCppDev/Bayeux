@@ -47,7 +47,7 @@ namespace geomtools {
 
   /// \brief Mother abstract class for all 3D object classes
   class i_object_3d :
-    DATATOOLS_SERIALIZABLE_CLASS,
+    public datatools::i_serializable,
     public datatools::i_tree_dumpable
   {
   public:
