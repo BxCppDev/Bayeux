@@ -26,8 +26,7 @@ namespace mygsl {
   class histogram;
 
   /// \brief Two dimensional histogram
-  class histogram_2d :
-    DATATOOLS_SERIALIZABLE_CLASS
+  class histogram_2d : public datatools::i_serializable
   {
   public:
 

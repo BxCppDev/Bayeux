@@ -25,7 +25,7 @@ namespace mygsl {
   public:
 
     /// \brief The serializable result data of the linear regression algorithm
-    class fit_data : DATATOOLS_SERIALIZABLE_CLASS
+    class fit_data : public datatools::i_serializable
     {
 
     public:
@@ -188,13 +188,13 @@ namespace mygsl {
 
   private:
 
-    bool        _initialized_; /// initialization flag
-    fit_data    _fit_data_; /// Fit data result
-    bool        _delete_; /// Delete flag for temporary arrays
-    double    * _x_; /// Handle to working array
-    double    * _y_; /// Handle to working array
-    double    * _w_; /// Handle to working array
-    bool        _can_weighted_; /// Flag for weighted fit
+    bool        _initialized_; ///< initialization flag
+    fit_data    _fit_data_; ///< Fit data result
+    bool        _delete_; ///< Delete flag for temporary arrays
+    double    * _x_; ///< Handle to working array
+    double    * _y_; ///< Handle to working array
+    double    * _w_; ///< Handle to working array
+    bool        _can_weighted_; ///< Flag for weighted fit
 
   };
 

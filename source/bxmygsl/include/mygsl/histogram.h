@@ -28,7 +28,7 @@ namespace mygsl {
 
   /// \brief One dimensional histogram
   class histogram :
-    DATATOOLS_SERIALIZABLE_CLASS,
+    public datatools::i_serializable,
     public datatools::i_tree_dumpable
   {
   public:

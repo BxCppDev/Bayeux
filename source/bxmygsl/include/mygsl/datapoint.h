@@ -17,50 +17,50 @@
 namespace mygsl {
 
   /// \brief A serializable (x,y,sigma(y)) triplet
-  class datapoint : DATATOOLS_SERIALIZABLE_CLASS
+  class datapoint : public datatools::i_serializable
   {
 
   public:
 
     /// Default constructor
-    datapoint ();
+    datapoint();
 
     /// Constructor with a (x, y, sigma_y) triplet
-    datapoint (double x_,
-               double y_,
-               double sigma_y_ = std::numeric_limits<double>::quiet_NaN ());
+    datapoint(double x_,
+              double y_,
+              double sigma_y_ = std::numeric_limits<double>::quiet_NaN());
 
     /// Destructor
-    virtual ~datapoint ();
+    virtual ~datapoint();
 
     /// Return the X coordinate
-    const double & x () const;
+    const double & x() const;
 
     /// Return the Y coordinate
-    const double & y () const;
+    const double & y() const;
 
     /// Return the error on the Y coordinate
-    const double & sigma_y () const;
+    const double & sigma_y() const;
 
     /// Check if the error on the Y coordinate is provided
-    bool has_sigma_y () const;
+    bool has_sigma_y() const;
 
     /// Check if the datapoints in weighted with the error on the Y coordinate
-    bool is_weighted () const;
+    bool is_weighted() const;
 
-    friend std::ostream & operator<< (std::ostream &, const datapoint &);
+    friend std::ostream & operator<<(std::ostream &, const datapoint &);
 
-    friend std::istream & operator>> (std::istream &, datapoint &);
+    friend std::istream & operator>>(std::istream &, datapoint &);
 
     /// Compare two datapoint using their X coordinate
-    static bool comp_by_x (const datapoint & p1_,
-                           const datapoint & p2_);
+    static bool comp_by_x(const datapoint & p1_,
+                          const datapoint & p2_);
 
   private:
 
-    double _x_;       /// X coordinate
-    double _y_;       /// Y coordinate
-    double _sigma_y_; /// Error on Y coordinate
+    double _x_;       ///< X coordinate
+    double _y_;       ///< Y coordinate
+    double _sigma_y_; ///< Error on Y coordinate
 
     DATATOOLS_SERIALIZATION_DECLARATION();
 

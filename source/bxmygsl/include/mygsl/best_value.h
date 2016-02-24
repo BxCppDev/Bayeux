@@ -13,8 +13,7 @@
 namespace mygsl {
 
   /// \brief A data structure representing a numeric value and its associated error
-  class best_value :
-    DATATOOLS_SERIALIZABLE_CLASS
+  class best_value : public datatools::i_serializable
     {
     public:
 

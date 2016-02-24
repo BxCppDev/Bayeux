@@ -25,8 +25,9 @@
 namespace mygsl {
 
   /// \brief A pool of histograms
-  class histogram_pool : DATATOOLS_SERIALIZABLE_CLASS,
-                         public datatools::i_tree_dumpable
+  class histogram_pool :
+    public datatools::i_serializable,
+    public datatools::i_tree_dumpable
   {
   public:
 

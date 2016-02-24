@@ -18,7 +18,7 @@ namespace mygsl {
   //! \brief A real polynomial of arbitrary degree
   class polynomial :
     public i_unary_function,
-    DATATOOLS_SERIALIZABLE_CLASS {
+    public datatools::i_serializable {
   public:
 
     //! Check validity of the polynomial

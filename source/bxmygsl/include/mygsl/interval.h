@@ -39,8 +39,7 @@
 namespace mygsl {
 
   /// \brief An interval with real bounds
-  class interval :
-    DATATOOLS_SERIALIZABLE_CLASS
+  class interval : public datatools::i_serializable
     {
     public:
 
