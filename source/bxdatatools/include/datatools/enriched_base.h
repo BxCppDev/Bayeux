@@ -47,7 +47,7 @@ namespace datatools {
 
   /// \brief A base class with useful attributes usable in many contexts
   class enriched_base  :
-    DATATOOLS_SERIALIZABLE_CLASS,
+    public datatools::i_serializable,
     public datatools::i_tree_dumpable {
 
   public:

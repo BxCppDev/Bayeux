@@ -96,7 +96,7 @@ namespace datatools {
    * \endcode
    */
   class multi_properties :
-    DATATOOLS_SERIALIZABLE_CLASS,
+    public datatools::i_serializable,
     public datatools::i_clear,
     public datatools::i_tree_dumpable,
     public datatools::i_cloneable {

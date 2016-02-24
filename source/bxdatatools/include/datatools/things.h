@@ -82,7 +82,7 @@ namespace datatools {
 
   //! \brief A generic serializable and noncopyable container for arbitrary serializable objects.
   class things :
-    DATATOOLS_SERIALIZABLE_CLASS,
+    public datatools::i_serializable,
     public datatools::i_tree_dumpable,
     public datatools::i_clear,
     private boost::noncopyable {

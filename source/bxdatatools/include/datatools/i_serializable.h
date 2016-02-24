@@ -95,11 +95,12 @@ DR_CLASS_INIT(::datatools::i_serializable);
  *
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS , ...
+ * class Foo : public datatools::i_serializable , ...
  * {
  *   ...
  * };
  * \endcode
+ * \deprecated
  */
 #define DATATOOLS_SERIALIZABLE_CLASS            \
   public datatools::i_serializable              \
@@ -131,7 +132,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *  declare serial tag support :
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
  * };
@@ -148,7 +149,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 /** Macro invoked to implement serial tag support :
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
  * };
@@ -185,7 +186,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *  declare backward compatibility serial tag support :
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *   DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
  *   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_DECLARATION()
@@ -226,7 +227,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *   ...
  * };
@@ -250,7 +251,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *   ...
  * };
@@ -298,7 +299,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  * Example:
  * \code
  * namespace Bar {
- *   class Foo : DATATOOLS_SERIALIZABLE_CLASS()
+ *   class Foo : public datatools::i_serializable
  *   {
  *     DATATOOLS_SERIALIZATION_DECLARATION_BASIC()
  *   };
@@ -322,7 +323,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *  @param ClassName The class name (possibly with its full namespace path prefix by ::)
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *   DATATOOLS_SERIALIZATION_FACTORY_INTERFACE (::Foo)
  * };
@@ -339,7 +340,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *  @param ClassSerialTag The unique class ID used by the factory (including full namespace prefix)
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *   DATATOOLS_SERIALIZATION_FACTORY_INTERFACE (::Foo)
  * };
@@ -357,7 +358,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  * Example:
  * \code
- *   class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ *   class Foo : public datatools::i_serializable
  *   {
  *      DATATOOLS_SERIALIZATION_DECLARATION();
  *   };
@@ -377,12 +378,12 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(Foo);
  * };
  * namespace James {
- *   class Bond : DATATOOLS_SERIALIZABLE_CLASS
+ *   class Bond : public datatools::i_serializable
  *   {
  *     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(Bond);
  *   };
@@ -401,13 +402,13 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
  *
  * Example:
  * \code
- * class Foo : DATATOOLS_SERIALIZABLE_CLASS
+ * class Foo : public datatools::i_serializable
  * {
  *    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(::Foo);
  * };
  * DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED (::Foo, "Foo")
  * namespace James {
- *   class Bond : DATATOOLS_SERIALIZABLE_CLASS
+ *   class Bond : public datatools::i_serializable
  *   {
  *     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(::James::Bond);
  *   };
