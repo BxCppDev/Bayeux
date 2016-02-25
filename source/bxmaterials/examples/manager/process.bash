@@ -19,7 +19,7 @@ test $? = 0 && pandoc -r rst -w html README.rst > README.html
 # test $? = 0 && firefox file://$(pwd)/README.html &
 
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
 test ! -d ${build_dir} && mkdir ${build_dir}
