@@ -67,7 +67,7 @@ if [ $html -eq 1 ]; then
     test $? -eq 0 && firefox file://$(pwd)/${html_file} &
 fi
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 test -d ${build_dir} || mkdir ${build_dir}
 

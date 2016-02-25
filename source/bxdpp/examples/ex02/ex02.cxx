@@ -4,13 +4,12 @@
 #include <cstdlib>
 
 // Third party
-// - datatools
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/things.h>
 #include <datatools/service_manager.h>
-
-// This project
+// - Bayeux/dpp:
 #include <dpp/simple_data_sink.h>
 #include <dpp/simple_brio_data_sink.h>
 #include <dpp/simple_data_source.h>
@@ -242,12 +241,12 @@ void test4w() {
   std::clog << std::endl << "Using the output module to store context + embedded metadata + event records (xml)..."
             << std::endl;
 
-  // ********* The service manager *********
+  // The service manager :
   datatools::service_manager SM;
   datatools::properties ctx_config;
   SM.load("Ctx", "dpp::context_service", ctx_config); // Add a context service named 'Ctx'
 
-  // ********* Access to the context service *********
+  // Access to the context service:
   dpp::context_service & CS = SM.grab<dpp::context_service>("Ctx");
   // Some parameters for the global metadata:
   std::string operator_name = "jeanlou";
@@ -266,7 +265,7 @@ void test4w() {
   transient.store("dummy_param", "foo");
   transient.tree_dump(std::clog, "Transient metadata store in 'Ctx':");
 
-  // ********* The output module *********
+  // The output module:
   dpp::output_module OM;
   OM.set_name("OM");
   OM.set_description("Example output module with metadata from context service");
@@ -335,12 +334,12 @@ void test4r(){
   std::clog << std::endl << "Using the input module to load context + embedded metadata + event records (xml)..."
             << std::endl;
 
-  // ********* The service manager *********
+  // The service manager:
   datatools::service_manager SM;
   datatools::properties ctx_config;
   SM.load("Ctx", "dpp::context_service", ctx_config); // Add a context service named 'Ctx'
 
-  // ********* The input module *********
+  // The input module:
   dpp::input_module IM;
   //IM.set_logging_priority(datatools::logger::PRIO_TRACE);
   IM.set_name("IM");
