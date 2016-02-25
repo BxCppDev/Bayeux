@@ -274,8 +274,8 @@ Prepare a build directory:
 
 .. code:: sh
 
-   $ export HPGE_BUILD_DIR=$(pwd)/__build.d
-   $ export HPGE_INSTALL_DIR=$(pwd)/__install.d
+   $ export HPGE_BUILD_DIR=$(pwd)/_build.d
+   $ export HPGE_INSTALL_DIR=$(pwd)/_install.d
    $ mkdir ${HPGE_BUILD_DIR}
 
 Compile the analysis program:

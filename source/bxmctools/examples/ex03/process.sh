@@ -27,7 +27,7 @@ do_build=1
 do_simulation=1
 do_analysis=1
 do_check=1
-do_clean=0
+do_clean=1
 
 # Parse command line options:
 while [ -n "$1" ]; do
@@ -76,8 +76,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # Prepare environment:
-export HPGE_BUILD_DIR=$(pwd)/__build.d
-export HPGE_INSTALL_DIR=$(pwd)/__install.d
+export HPGE_BUILD_DIR=$(pwd)/_build.d
+export HPGE_INSTALL_DIR=$(pwd)/_install.d
 test -d ${HPGE_BUILD_DIR} && rm -fr ${HPGE_BUILD_DIR}
 
 # Generate HTML doc

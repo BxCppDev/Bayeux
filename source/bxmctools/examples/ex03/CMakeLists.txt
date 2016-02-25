@@ -20,7 +20,7 @@ find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 
 # - Bayeux :
-find_package(Bayeux 1.0.0 REQUIRED)
+find_package(Bayeux 2.1.0 REQUIRED)
 set(_incs ${Bayeux_INCLUDE_DIRS})
 set(_libs ${Bayeux_LIBRARIES})
 
