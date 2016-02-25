@@ -249,7 +249,7 @@ namespace mctools {
 
       DT_THROW_IF(_logical_ids_.size() == 0,
                   std::logic_error,
-                  "The region '" << get_name() << "' has not logical volumes !");
+                  "The region '" << get_name() << "' has no logical volumes !");
       /*
       if (_logical_ids_.size() == 0) {
         DT_LOG_WARNING(get_logging_priority(),
