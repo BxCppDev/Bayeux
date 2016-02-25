@@ -454,6 +454,7 @@ int example_mctools()
 }
 #endif // BAYEUX_WITH_MCTOOLS == 1
 
+#include <camp/class.hpp>
 int example_reflection()
 {
   std::clog << "Number of metaclasses = " << camp::classCount() << std::endl;
