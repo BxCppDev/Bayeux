@@ -36,7 +36,7 @@ done
 
 opwd=$(pwd)
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
 which pandoc > /dev/null 2<&1
