@@ -1,4 +1,4 @@
-# - Top level CMakeLists.txt for brio ex02 example program
+# - Top level CMakeLists.txt for brio ex01 example program
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(brio_ex02)
@@ -14,19 +14,16 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - brio :
-if (NOT brio_DIR)
-  execute_process(COMMAND brio-config --prefix
-                  OUTPUT_VARIABLE brio_DIR )
-endif()
+# - Bayeux :
+find_package(Bayeux 2.1.0 REQUIRED)
+set(_incs ${Bayeux_INCLUDE_DIRS})
+set(_libs ${Bayeux_LIBRARIES})
 
-find_package(brio 4.0.0 REQUIRED)
-
-include_directories(${PROJECT_SOURCE_DIR} ${brio_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR} ${_incs})
 
 add_executable(ex02 ex02.cxx foo.cc)
 
-target_link_libraries(ex02 ${brio_LIBRARY} )
+target_link_libraries(ex02 ${_libs} )
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex02

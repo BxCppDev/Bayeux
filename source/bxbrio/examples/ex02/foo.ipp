@@ -1,23 +1,23 @@
 // -*- mode: c++; -*-
 /// \file foo.ipp
 
-#ifndef FOO_IPP_
-#define FOO_IPP_ 1
+#ifndef FOO_IPP
+#define FOO_IPP 1
 
+// Ourselves:
 #include <foo.h>
 
+// Third party:
+// - Boost:
 // Support for inheritance from an serializable class :
 #include <boost/serialization/base_object.hpp>
-
 // Support for XML 'key-value' based archives:
 #include <boost/serialization/nvp.hpp>
-
 // Support Boost serialization of STL vector templatized objects:
 #include <boost/serialization/vector.hpp>
-
 // Support Boost serialization of STL string objects:
 #include <boost/serialization/string.hpp>
-
+// - Bayeux/datatools:
 // Datatools support for serializable objects :
 #include <datatools/i_serializable.ipp>
 
@@ -39,5 +39,4 @@ void foo::serialize (Archive & ar, const unsigned int version)
   return;
 }
 
-#endif // FOO_IPP_
-
+#endif // FOO_IPP
