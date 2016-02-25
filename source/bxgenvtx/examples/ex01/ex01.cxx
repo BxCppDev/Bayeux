@@ -14,14 +14,14 @@
 // - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 #include <datatools/properties.h>
-// - geomtools:
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_draw.h>
-// - genvtx:
+// - Bayeux/genvtx:
 #include <genvtx/manager.h>
 
 int main(int argc_, char ** argv_)

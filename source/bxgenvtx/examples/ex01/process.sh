@@ -61,7 +61,7 @@ EOF
     my_exit 0
 fi
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
 test ! -d ${build_dir} && mkdir ${build_dir}

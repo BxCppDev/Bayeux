@@ -52,8 +52,8 @@ Quick start
 
 3. Build and install the example::
 
-      shell> mkdir __build
-      shell> cd __build
+      shell> mkdir _build.d
+      shell> cd _build.d
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
 	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
@@ -98,4 +98,4 @@ Quick start
 7. Clean::
 
       shell> rm ex01
-      shell> rm -fr __build
+      shell> rm -fr _build.d
