@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DATATOOLS_REFLECTION_MACROS_H
-#define DATATOOLS_REFLECTION_MACROS_H
+#ifndef DATATOOLS_DETAIL_REFLECTION_MACROS_H
+#define DATATOOLS_DETAIL_REFLECTION_MACROS_H
 
 // Standard Library:
 #include <string>
@@ -54,8 +54,6 @@
 
 // This project :
 #include <datatools/detail/reflection_utils.h>
-//#include <datatools/detail/reflection_export.h>
-//#include <datatools/detail/reflection_version.h>
 
 
 /****************************************
@@ -65,26 +63,26 @@
 /// \def DR_CLASS_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)
 /// \brief Header of the implementation code block that defines
 ///        Camp based reflection functionalities for class \a TypeId.
-#define DR_CLASS_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)      \
-  template<>                                                    \
-  void implement_reflection< TypeId > (unsigned int TypeTag)    \
+#define DR_CLASS_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)    \
+  template<>                                                  \
+  void implement_reflection< TypeId > (unsigned int TypeTag)  \
   /**/
 
 /// \def DR_TYPE_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)
 /// @see DR_CLASS_IMPLEMENT_REFLECTION_HEAD
-#define DR_TYPE_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)       \
-  DR_CLASS_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)            \
+#define DR_TYPE_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag) \
+  DR_CLASS_IMPLEMENT_REFLECTION_HEAD(TypeId,TypeTag)      \
   /**/
 
 /// \def DR_CLASS_DECLARE2(ClassId,ClassName)
 /// \brief Declare reflection metaclass for class \a ClassId with registration class name \a ClassName
-#define DR_CLASS_DECLARE2(ClassId,ClassName)      \
-  ::camp::Class::declare< ClassId >(ClassName)    \
+#define DR_CLASS_DECLARE2(ClassId,ClassName)    \
+  ::camp::Class::declare< ClassId >(ClassName)  \
   /**/
 
 /// \def DR_CLASS_DECLARE(ClassId)
 /// \brief Declare reflection metaclass for class \a ClassId
-#define DR_CLASS_DECLARE(ClassId)                                        \
+#define DR_CLASS_DECLARE(ClassId)                                       \
   DR_CLASS_DECLARE2( ClassId , ::datatools::detail::reflection::guid< ClassId >() ) \
   /**/
 
@@ -108,20 +106,20 @@
 
 /// \def DR_CLASS_CONSTRUCTOR2(Arg0Type,Arg1Type)
 /// \brief Declare a class constructor with two arguments of type \a Arg0Type and \a Arg1Type
-#define DR_CLASS_CONSTRUCTOR2(Arg0Type,Arg1Type)        \
-  constructor2< Arg0Type , Arg1Type >()                 \
+#define DR_CLASS_CONSTRUCTOR2(Arg0Type,Arg1Type)  \
+  constructor2< Arg0Type , Arg1Type >()           \
   /**/
 
 /// \def DR_CLASS_CONSTRUCTOR3(Arg0Type,Arg1Type,Arg2Type)
 /// \brief Declare a class constructor with three arguments of type \a Arg0Type, \a Arg1Type and \a Arg2Type
-#define DR_CLASS_CONSTRUCTOR3(Arg0Type,Arg1Type,Arg2Type)       \
-  constructor3< Arg0Type , Arg1Type , Arg2Type >()              \
+#define DR_CLASS_CONSTRUCTOR3(Arg0Type,Arg1Type,Arg2Type) \
+  constructor3< Arg0Type , Arg1Type , Arg2Type >()        \
   /**/
 
 /// \def DR_CLASS_CONSTRUCTOR4(Arg0Type,Arg1Type,Arg2Type,Arg3Type)
 /// \brief Declare a class constructor with four arguments of type \a Arg0Type, \a Arg1Type, \a Arg2Type and \a Arg3Type
-#define DR_CLASS_CONSTRUCTOR4(Arg0Type,Arg1Type,Arg2Type,Arg3Type)      \
-  constructor4< Arg0Type , Arg1Type , Arg2Type , Arg3Type >()           \
+#define DR_CLASS_CONSTRUCTOR4(Arg0Type,Arg1Type,Arg2Type,Arg3Type)  \
+  constructor4< Arg0Type , Arg1Type , Arg2Type , Arg3Type >()       \
   /**/
 
 /// \def DR_CLASS_CONSTRUCTOR5(Arg0Type,Arg1Type,Arg2Type,Arg3Type,Arg4Type)
@@ -138,7 +136,7 @@
 
 // Declare metadata static tag with value for a class :
 #define DR_CLASS_TAG(TagName,TagValue)          \
-  tag(TagName, TagValue)                       \
+  tag(TagName, TagValue)                        \
   /**/
 
 // Declare metadata read-only property for a class :
@@ -147,8 +145,8 @@
   /**/
 
 // Declare metadata read-only property for a class :
-#define DR_CLASS_PROPERTY_REFGETTER(PropertyName,RefPropertyGetterId)   \
-  property(PropertyName, RefPropertyGetterId)                           \
+#define DR_CLASS_PROPERTY_REFGETTER(PropertyName,RefPropertyGetterId) \
+  property(PropertyName, RefPropertyGetterId)                         \
   /**/
 
 // Declare metadata read-write property for a class :
@@ -180,19 +178,19 @@
   function(MethodName,                                          \
            boost::function< ReturnType ( TypeId & )>            \
            (boost::bind(& MethodId , _1)))                      \
-  /**/
+           /**/
 
 // Declare metadata property for a class method :
-#define DR_CLASS_REFMETHOD(MethodName,TypeId,RefMethodId,ReturnType)    \
-  function(MethodName,                                                  \
-           boost::function< ReturnType ( TypeId & )>                    \
-           (boost::bind(RefMethodId , _1)))                             \
-  /**/
+#define DR_CLASS_REFMETHOD(MethodName,TypeId,RefMethodId,ReturnType)  \
+    function(MethodName,                                              \
+             boost::function< ReturnType ( TypeId & )>                \
+             (boost::bind(RefMethodId , _1)))                         \
+    /**/
 
 // Declare metadata property for a class method :
-#define DR_CLASS_VOID_METHOD(MethodName,TypeId,MethodId)        \
-  DR_CLASS_METHOD(MethodName,TypeId,MethodId,void)              \
-  /**/
+#define DR_CLASS_VOID_METHOD(MethodName,TypeId,MethodId)  \
+    DR_CLASS_METHOD(MethodName,TypeId,MethodId,void)      \
+    /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_REFMETHOD(MethodName,TypeId,RefMethodId)  \
@@ -200,18 +198,18 @@
   /**/
 
 // Declare metadata property for a class method (const) :
-#define DR_CLASS_METHOD_CONST(MethodName,TypeId,MethodId,ReturnType)    \
-  function(MethodName,                                                  \
-           boost::function< ReturnType ( const TypeId & )>              \
-           (boost::bind(& MethodId , _1 )))                             \
-  /**/
+#define DR_CLASS_METHOD_CONST(MethodName,TypeId,MethodId,ReturnType)  \
+  function(MethodName,                                                \
+           boost::function< ReturnType ( const TypeId & )>            \
+           (boost::bind(& MethodId , _1 )))                           \
+           /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_REFMETHOD_CONST(MethodName,TypeId,RefMethodId,ReturnType) \
-  function(MethodName,                                                  \
-           boost::function< ReturnType ( const TypeId & )>              \
-           (boost::bind(RefMethodId , _1 )))                            \
-  /**/
+    function(MethodName,                                                \
+             boost::function< ReturnType ( const TypeId & )>            \
+             (boost::bind(RefMethodId , _1 )))                          \
+    /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_METHOD_CONST(MethodName,TypeId,MethodId)  \
@@ -219,8 +217,8 @@
   /**/
 
 // Declare metadata property for a class method (const) :
-#define DR_CLASS_VOID_REFMETHOD_CONST(MethodName,TypeId,RefMethodId)    \
-  DR_CLASS_REFMETHOD_CONST(MethodName,TypeId,MethodId,void)             \
+#define DR_CLASS_VOID_REFMETHOD_CONST(MethodName,TypeId,RefMethodId)  \
+  DR_CLASS_REFMETHOD_CONST(MethodName,TypeId,MethodId,void)           \
   /**/
 
 
@@ -237,8 +235,8 @@
   /**/
 
 // Declare metadata property for a class method :
-#define DR_CLASS_VOID_METHOD1(MethodName,TypeId,MethodId,Arg0Type)      \
-  DR_CLASS_METHOD1(MethodName,TypeId,MethodId,void,Arg0Type)            \
+#define DR_CLASS_VOID_METHOD1(MethodName,TypeId,MethodId,Arg0Type)  \
+  DR_CLASS_METHOD1(MethodName,TypeId,MethodId,void,Arg0Type)        \
   /**/
 
 // Declare metadata property for a class method (const) :
@@ -246,19 +244,19 @@
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type )>   \
            (boost::bind(& MethodId , _1, _2 )))                         \
-  /**/
+           /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_METHOD1_CONST(MethodName,TypeId,MethodId,Arg0Type) \
-  DR_CLASS_METHOD1_CONST(MethodName,TypeId,MethodId,void,Arg0Type)      \
-  /**/
+    DR_CLASS_METHOD1_CONST(MethodName,TypeId,MethodId,void,Arg0Type)    \
+    /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_REFMETHOD1(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type) \
-  function(MethodName,                                                  \
-           boost::function< ReturnType ( TypeId & , Arg0Type )>         \
-           (boost::bind(RefMethodId , _1, _2)))                         \
-    /**/
+    function(MethodName,                                                \
+             boost::function< ReturnType ( TypeId & , Arg0Type )>       \
+             (boost::bind(RefMethodId , _1, _2)))                       \
+             /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_REFMETHOD1(MethodName,TypeId,RefMethodId,Arg0Type) \
@@ -270,12 +268,12 @@
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type )>   \
            (boost::bind(RefMethodId , _1, _2 )))                        \
-  /**/
+           /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_REFMETHOD1_CONST(MethodName,TypeId,RefMethodId,Arg0Type) \
-  DR_CLASS_REFMETHOD1_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type) \
-  /**/
+    DR_CLASS_REFMETHOD1_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type) \
+    /**/
 
 
 /***************************************
@@ -287,7 +285,7 @@
   function(MethodName,                                                  \
            boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type )> \
            (boost::bind(& MethodId , _1, _2, _3)))                      \
-    /**/
+           /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_METHOD2(MethodName,TypeId,MethodId,Arg0Type,Arg1Type) \
@@ -299,7 +297,7 @@
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type )> \
            (boost::bind(& MethodId , _1, _2, _3 )))                     \
-  /**/
+           /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_METHOD2_CONST(MethodName,TypeId,MethodId,Arg0Type,Arg1Type) \
@@ -308,22 +306,22 @@
 
 // Declare metadata property for a class method :
 #define DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type) \
-  function(MethodName,                                                  \
-           boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type )> \
-           (boost::bind(RefMethodId , _1, _2, _3)))                     \
-  /**/
+    function(MethodName,                                                \
+             boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type )> \
+             (boost::bind(RefMethodId , _1, _2, _3)))                   \
+             /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_REFMETHOD2(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type) \
-  DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type) \
-  /**/
+    DR_CLASS_REFMETHOD2(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type) \
+    /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_REFMETHOD2_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type )> \
            (boost::bind(RefMethodId , _1, _2, _3 )))                    \
-  /**/
+           /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_REFMETHOD2_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type) \
@@ -337,10 +335,10 @@
 
 // Declare metadata property for a class method :
 #define DR_CLASS_METHOD3(MethodName,TypeId,MethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type) \
-  function(MethodName,                                                  \
-           boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type )> \
-           (boost::bind(& MethodId , _1, _2, _3, _4)))                  \
-  /**/
+    function(MethodName,                                                \
+             boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type )> \
+             (boost::bind(& MethodId , _1, _2, _3, _4)))                \
+    /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_METHOD3(MethodName,TypeId,MethodId,Arg0Type,Arg1Type,Arg2Type) \
@@ -368,15 +366,15 @@
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_REFMETHOD3(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type) \
-  DR_CLASS_REFMETHOD3(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type) \
-  /**/
+    DR_CLASS_REFMETHOD3(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type) \
+    /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_REFMETHOD3_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type) \
   function(MethodName,                                                  \
            boost::function< ReturnType ( const TypeId & , Arg0Type , Arg1Type , Arg2Type )> \
            (boost::bind(RefMethodId , _1, _2, _3, _4 )))                \
-    /**/
+  /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_REFMETHOD3_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type) \
@@ -390,15 +388,15 @@
 
 // Declare metadata property for a class method :
 #define DR_CLASS_METHOD4(MethodName,TypeId,MethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-  function(MethodName,                                                  \
-           boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type , Arg3Type )> \
-           (boost::bind(& MethodId , _1, _2, _3, _4, _5)))              \
-  /**/
+    function(MethodName,                                                \
+             boost::function< ReturnType ( TypeId & , Arg0Type , Arg1Type , Arg2Type , Arg3Type )> \
+             (boost::bind(& MethodId , _1, _2, _3, _4, _5)))            \
+    /**/
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_METHOD4(MethodName,TypeId,MethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
   DR_CLASS_METHOD4(MethodName,TypeId,MethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-    /**/
+  /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_METHOD4_CONST(MethodName,TypeId,MethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
@@ -421,8 +419,8 @@
 
 // Declare metadata property for a class method :
 #define DR_CLASS_VOID_REFMETHOD4(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-  DR_CLASS_REFMETHOD4(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-  /**/
+    DR_CLASS_REFMETHOD4(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+      /**/
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,ReturnType,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
@@ -433,178 +431,40 @@
 
 // Declare metadata property for a class method (const) :
 #define DR_CLASS_VOID_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-  DR_CLASS_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
-  /**/
+    DR_CLASS_REFMETHOD4_CONST(MethodName,TypeId,RefMethodId,void,Arg0Type,Arg1Type,Arg2Type,Arg3Type) \
+    /**/
 
 // Declare introspection metadata for an enum :
 #define DR_ENUM_DECLARE2(TypeId,TypeName)       \
-  ::camp::Enum::declare< TypeId >(TypeName)     \
-  /**/
+    ::camp::Enum::declare< TypeId >(TypeName)   \
+    /**/
 
 // Declare introspection metadata for a enum :
 #define DR_ENUM_DECLARE(TypeId)                                         \
   DR_ENUM_DECLARE2( TypeId , ::datatools::detail::reflection::guid< TypeId >() ) \
   /**/
 
+// #define DR_ENUM_PAIR(PairName,PairValue)        \
+//   value( PairName, PairValue )                  \
+//   /**/
 
-/************************************************************************/
+// #define DR_REF(TypeId)                          \
+//   boost::ref( TypeId )                          \
+//   /**/
 
-// Should we use this aliases/macros ?
-// They probably obfuscate the code...
+// #define DR_CONST_REF(TypeId)                    \
+//   const boost::cref( TypeId )                   \
+//   /**/
 
-/// \def DR_CLASS
-/// \deprecated
-#define DR_CLASS           camp::Class
+// #define DR_REF_WRAPPER(TypeId)                  \
+//   boost::reference_wrapper< TypeId >            \
+//   /**/
 
-/// \def DR_CLASS_BY_NAME
-/// \deprecated
-#define DR_CLASS_BY_NAME   camp::classByName
+// #define DR_CONST_REF_WRAPPER(TypeId)            \
+//   boost::reference_wrapper< TypeId const>       \
+//   /**/
 
-/// \def DR_CLASS_BY_TYPE
-/// \deprecated
-#define DR_CLASS_BY_TYPE   camp::classByType
-
-/// \def DR_CLASS_BY_INDEX
-/// \deprecated
-#define DR_CLASS_BY_INDEX  camp::classByIndex
-
-/// \def DR_CLASS_BY_OBJECT
-/// \deprecated
-#define DR_CLASS_BY_OBJECT camp::classByObject
-
-/// \def DR_CLASS_COUNT
-/// \deprecated
-#define DR_CLASS_COUNT     camp::classCount
-
-/// \def DR_ENUM
-/// \deprecated
-#define DR_ENUM            camp::Enum
-
-/// \def DR_ENUM_BY_NAME
-/// \deprecated
-#define DR_ENUM_BY_NAME    camp::enumByName
-
-/// \def DR_ENUM_MANAGER
-/// \deprecated
-#define DR_ENUM_MANAGER    camp::detail::EnumManager
-
-/// \def DR_ENUM_BY_TYPE
-/// \deprecated
-#define DR_ENUM_BY_TYPE    camp::enumByType
-
-/// \def DR_ENUM_BY_INDEX
-/// \deprecated
-#define DR_ENUM_BY_INDEX   camp::enumByIndex
-
-/// \def DR_ENUM_BY_OBJECT
-/// \deprecated
-#define DR_ENUM_BY_OBJECT  camp::enumByObject
-
-/// \def DR_ENUM_COUNT
-/// \deprecated
-#define DR_ENUM_COUNT      camp::enumCount
-
-/// \def DR_ENUM_NOT_FOUND
-/// \deprecated
-#define DR_ENUM_NOT_FOUND  camp::EnumNotFound
-
-/// \def DR_BAD_TYPE
-/// \deprecated
-#define DR_BAD_TYPE        camp::BadType
-
-/// \def DR_OBJECT
-/// \deprecated
-#define DR_OBJECT        camp::UserObject
-
-/// \def DR_VALUE
-/// \deprecated
-#define DR_VALUE         camp::Value
-
-/// \def DR_ARGS
-/// \deprecated
-#define DR_ARGS          camp::Args
-
-/// \def DR_FUNCTION
-/// \deprecated
-#define DR_FUNCTION      camp::Function
-
-/// \def DR_SET
-/// \deprecated
-#define DR_SET           set
-
-/// \def DR_CALL
-/// \deprecated
-#define DR_CALL          call
-
-/// \def DR_GET
-/// \deprecated
-#define DR_GET           get
-
-/// \def DR_NOTYPE
-/// \deprecated
-#define DR_NOTYPE        camp::noType
-
-/// \def DR_BOOLEANTYPE
-/// \deprecated
-#define DR_BOOLEANTYPE   camp::boolType
-
-/// \def DR_INTEGERTYPE
-/// \deprecated
-#define DR_INTEGERTYPE   camp::intType
-
-/// \def DR_REALTYPE
-/// \deprecated
-#define DR_REALTYPE      camp::realType
-
-/// \def DR_STRINGTYPE
-/// \deprecated
-#define DR_STRINGTYPE    camp::stringType
-
-/// \def DR_ENUMTYPE
-/// \deprecated
-#define DR_ENUMTYPE      camp::enumType
-
-/// \def DR_ARRAYTYPE
-/// \deprecated
-#define DR_ARRAYTYPE     camp::arrayType
-
-/// \def DR_USERTYPE
-/// \deprecated
-#define DR_USERTYPE      camp::userType
-
-/// \def DR_ENUM_VALUE
-/// \deprecated
-#define DR_ENUM_VALUE    value
-
-/// \def DR_ENUM_NAME
-/// \deprecated
-#define DR_ENUM_NAME     name
-
-/// \def DR_ENUM_SIZE
-/// \deprecated
-#define DR_ENUM_SIZE     size
-
-#define DR_ENUM_PAIR(PairName,PairValue)        \
-  value( PairName, PairValue )                  \
-  /**/
-
-#define DR_REF(TypeId)                          \
-  boost::ref( TypeId )                          \
-  /**/
-
-#define DR_CONST_REF(TypeId)                    \
-  const boost::cref( TypeId )                   \
-  /**/
-
-#define DR_REF_WRAPPER(TypeId)                  \
-  boost::reference_wrapper< TypeId >            \
-  /**/
-
-#define DR_CONST_REF_WRAPPER(TypeId)            \
-  boost::reference_wrapper< TypeId const>       \
-  /**/
-
-#endif // DATATOOLS_REFLECTION_MACROS_H
+#endif // DATATOOLS_DETAIL_REFLECTION_MACROS_H
 
 /*
 ** Local Variables: --

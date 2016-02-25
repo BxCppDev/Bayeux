@@ -10,7 +10,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // This project:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Export the reflection code for the 'datatools::things' class:

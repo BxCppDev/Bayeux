@@ -35,8 +35,8 @@
 
 // This project:
 #include <datatools/datatools_config.h>
-#include <datatools/serialization_macros.h>
 #include <datatools/factory_macros.h>
+#include <datatools/serialization_macros.h>
 #include <datatools/utils.h>
 #ifndef Q_MOC_RUN
 #include <datatools/reflection_interface.h>
@@ -102,19 +102,18 @@ DR_CLASS_INIT(::datatools::i_serializable);
  * \endcode
  * \deprecated
  */
-#define DATATOOLS_SERIALIZABLE_CLASS            \
-  public datatools::i_serializable              \
+// #define DATATOOLS_SERIALIZABLE_CLASS            \
+//   public datatools::i_serializable              \
   /**/
-
 
 namespace datatools {
   template <class T>
-  const std::string & serial_tag ();
+  const std::string & serial_tag();
 }
 
 namespace datatools {
   template <class T>
-  const std::string & backward_serial_tag (int i = 0);
+  const std::string & backward_serial_tag(int i = 0);
 }
 
 /// Template support for serializable type (backward compatibility support)
@@ -123,7 +122,7 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
 #define DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(ClassName)   \
   namespace datatools {                                                 \
     template <>                                                         \
-    const std::string & serial_tag< ClassName > ();                     \
+    const std::string & serial_tag< ClassName >();                      \
   }                                                                     \
   /**/
 
@@ -172,9 +171,9 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_bsts, backward_serial_tag_support, false)
   namespace datatools {                                                 \
     template <>                                                         \
     const std::string & serial_tag<ClassName> (){                       \
-      static boost::scoped_ptr<std::string> _serial_tag (0);            \
+      static boost::scoped_ptr<std::string> _serial_tag(0);             \
       if ( !_serial_tag){                                               \
-        _serial_tag.reset(new std::string (ClassSerialTag));            \
+        _serial_tag.reset(new std::string(ClassSerialTag));             \
       }                                                                 \
       return *_serial_tag.get();                                        \
     }                                                                   \

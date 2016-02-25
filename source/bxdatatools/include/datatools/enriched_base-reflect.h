@@ -9,6 +9,8 @@
 // This project:
 #include <datatools/enriched_base.h>
 #include <datatools/properties.h>
+#include <datatools/detail/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::enriched_base' class:
 DR_CLASS_EXPORT(::datatools::enriched_base, "datatools::enriched_base")

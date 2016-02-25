@@ -25,7 +25,7 @@
 #include <datatools/introspection/unit_support.h>
 
 // This project:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Registration:
@@ -38,10 +38,10 @@ namespace datatools {
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::unit_support_type, /*tag_*/)
       {
         DR_ENUM_DECLARE(::datatools::introspection::unit_support_type)
-          .DR_ENUM_PAIR("invalid",            ::datatools::introspection::UNIT_SUPPORT_INVALID)
-          .DR_ENUM_PAIR("none",               ::datatools::introspection::UNIT_SUPPORT_NONE)
-          .DR_ENUM_PAIR("implicit_unit",      ::datatools::introspection::UNIT_SUPPORT_IMPLICIT_UNIT)
-          .DR_ENUM_PAIR("explicit_unit_dimension", ::datatools::introspection::UNIT_SUPPORT_EXPLICIT_DIMENSION)
+          .value("invalid",                 ::datatools::introspection::UNIT_SUPPORT_INVALID)
+          .value("none",                    ::datatools::introspection::UNIT_SUPPORT_NONE)
+          .value("implicit_unit",           ::datatools::introspection::UNIT_SUPPORT_IMPLICIT_UNIT)
+          .value("explicit_unit_dimension", ::datatools::introspection::UNIT_SUPPORT_EXPLICIT_DIMENSION)
           ;
         return;
       }

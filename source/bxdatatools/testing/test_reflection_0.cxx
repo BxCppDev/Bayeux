@@ -7,9 +7,14 @@
 #include <sstream>
 #include <stdexcept>
 
-// // Third Party:
-// // - Camp:
-// #include <camp/errors.hpp>
+// Third Party:
+// - Camp:
+#include <camp/userobject.hpp>
+#include <camp/value.hpp>
+#include <camp/args.hpp>
+#include <camp/class.hpp>
+#include <camp/errors.hpp>
+#include <camp/enum.hpp>
 
 // This Project:
 #include <datatools/logger.h>
@@ -19,7 +24,6 @@
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/things.h>
-#include <datatools/reflection_macros.h>
 
 // Some pre-processor guard about reflection usage and linkage to Bayeux:
 #include <datatools/reflection_guard.h>
@@ -30,31 +34,31 @@ void test_things (bool // debug_
   std::clog << "*** test_things : " << std::endl;
 
   // Access meta class for class 'things' :
-  const DR_CLASS & tMetaClass = DR_CLASS_BY_NAME("datatools::things");
+  const camp::Class & tMetaClass = camp::classByName("datatools::things");
   {
 
     // Allocate a new 'things' object from the metaclass factory
     // and store it in a scoped_ptr for memory sanity :
-    DR_OBJECT erObj = tMetaClass.construct(DR_ARGS ("<unnamed>", "A generic event record"));
+    camp::UserObject erObj = tMetaClass.construct(camp::Args ("<unnamed>", "A generic event record"));
 
     // Build a meta object from this new allocated things :
-    //DR_OBJECT erObj = er.get ();
+    //camp::UserObject erObj = er.get ();
 
     // Invoke a print method :
-    erObj.call("tree_print", DR_ARGS(1, "Event record (things) : "));
+    erObj.call("tree_print", camp::Args(1, "Event record (things) : "));
 
     // Change its 'name' property :
-    erObj.set("name", DR_VALUE ("event_record"));
+    erObj.set("name", camp::Value ("event_record"));
 
     // Change its 'description' property :
-    erObj.set("description", DR_VALUE ("A smart generic event record"));
+    erObj.set("description", camp::Value ("A smart generic event record"));
 
     // Print it again :
-    erObj.call("tree_print", DR_ARGS(1, "Event record (things) : "));
+    erObj.call("tree_print", camp::Args(1, "Event record (things) : "));
 
     // Now automagically allocate and store a new bank named 'EH'
     // of the serialization type 'properties' :
-    DR_VALUE ehVal = erObj.DR_CALL ("add_entry", DR_ARGS ("EH",
+    camp::Value ehVal = erObj.call("add_entry", camp::Args ("EH",
                                                           "datatools::properties",
                                                           "The event header", false));
 
@@ -62,7 +66,7 @@ void test_things (bool // debug_
 
     // More with a new bank named 'GC'
     // of the serialization type 'multi_properties' :
-    DR_VALUE gcVal = erObj.DR_CALL ("add_entry", DR_ARGS ("GC",
+    camp::Value gcVal = erObj.call ("add_entry", camp::Args ("GC",
                                                           "datatools::multi_properties",
                                                           "The global configuration",
                                                           false));
@@ -70,23 +74,23 @@ void test_things (bool // debug_
 
     // Manipulate the 'EH' bank :
     std::clog << "Build an object from the value : " << std::endl;
-    DR_OBJECT ehObj = ehVal.to<DR_OBJECT>();
+    camp::UserObject ehObj = ehVal.to<camp::UserObject>();
     std::clog << "Done." << std::endl;
 
-    if (erObj.DR_CALL ("entry_is_a", DR_ARGS ("EH", "datatools::properties")))
+    if (erObj.call ("entry_is_a", camp::Args ("EH", "datatools::properties")))
       {
         std::clog << "Manipulate the 'EH' object : " << std::endl;
-        ehObj.call ("store_flag", DR_ARGS("debug", "Debug flag", false));
-        ehObj.call ("store_integer", DR_ARGS("run_number", 3, "Run number", true));
-        ehObj.call ("store_integer", DR_ARGS("event_number", 0, "Event number", true));
-        ehObj.call ("store_real", DR_ARGS("pi", 3.14, "Pi value", true));
-        ehObj.call ("store_string", DR_ARGS("Author", "Monty", "Author's name", false));
-        ehObj.call ("store_integer", DR_ARGS("Epoch", 123456789, "Date", false));
-        ehObj.call ("tree_print", DR_ARGS(1, "Event header: "));
+        ehObj.call ("store_flag", camp::Args("debug", "Debug flag", false));
+        ehObj.call ("store_integer", camp::Args("run_number", 3, "Run number", true));
+        ehObj.call ("store_integer", camp::Args("event_number", 0, "Event number", true));
+        ehObj.call ("store_real", camp::Args("pi", 3.14, "Pi value", true));
+        ehObj.call ("store_string", camp::Args("Author", "Monty", "Author's name", false));
+        ehObj.call ("store_integer", camp::Args("Epoch", 123456789, "Date", false));
+        ehObj.call ("tree_print", camp::Args(1, "Event header: "));
       }
 
     // Final print :
-    erObj.call("tree_print", DR_ARGS(1, "Event record (things) : "));
+    erObj.call("tree_print", camp::Args(1, "Event record (things) : "));
   }
 }
 
@@ -94,22 +98,22 @@ void test_multi_properties (bool // debug_
                             )
 {
   std::clog << "*** test_multi_properties : " << std::endl;
-  const DR_CLASS & mpropsMetaClass = DR_CLASS_BY_NAME("datatools::multi_properties");
+  const camp::Class & mpropsMetaClass = camp::classByName("datatools::multi_properties");
   {
-    DR_OBJECT mpropsObj = mpropsMetaClass.construct(DR_ARGS ("id", "class"));
+    camp::UserObject mpropsObj = mpropsMetaClass.construct(camp::Args ("id", "class"));
 
-    mpropsObj.set ("description", DR_VALUE ("A test multi-properties"));
-    mpropsObj.call("tree_print", DR_ARGS(1, "Multi-properties: "));
+    mpropsObj.set ("description", camp::Value ("A test multi-properties"));
+    mpropsObj.call("tree_print", camp::Args(1, "Multi-properties: "));
 
     {
-      mpropsObj.call ("set_description", DR_ARGS("The bar description"));
-      DR_VALUE propsVal = mpropsObj.call ("get_description");
+      mpropsObj.call ("set_description", camp::Args("The bar description"));
+      camp::Value propsVal = mpropsObj.call ("get_description");
       std::clog << "NOTICE: Bar description is '"
                 << propsVal.to<std::string>() << "'." << std::endl;
     }
 
     {
-      DR_VALUE propsVal = mpropsObj.call ("has_section", DR_ARGS("foo"));
+      camp::Value propsVal = mpropsObj.call ("has_section", camp::Args("foo"));
       if (! propsVal.to<bool>())
         {
           std::clog << "NOTICE: No 'foo' section." << std::endl;
@@ -117,32 +121,32 @@ void test_multi_properties (bool // debug_
     }
 
     {
-      DR_VALUE propsVal = mpropsObj.call ("write", DR_ARGS("datatools_test_reflection_0a.txt", false, false));
+      camp::Value propsVal = mpropsObj.call ("write", camp::Args("datatools_test_reflection_0a.txt", false, false));
     }
 
     {
-      DR_VALUE propsVal = mpropsObj.call ("add_section", DR_ARGS("foo", "foo_type"));
-      DR_OBJECT propsObj = propsVal.to<DR_OBJECT>();
-      propsObj.call ("store_flag",    DR_ARGS("debug",  "Debug flag", false));
-      propsObj.call ("store_real",    DR_ARGS("pi",     3.14, "Pi value", true));
-      propsObj.call ("store_string",  DR_ARGS("Author", "Monty", "Author's name", false));
-      propsObj.call ("store_integer", DR_ARGS("Epoch",  123456789, "Date", false));
-      propsObj.call ("tree_print", DR_ARGS(1, "foo: "));
+      camp::Value propsVal = mpropsObj.call ("add_section", camp::Args("foo", "foo_type"));
+      camp::UserObject propsObj = propsVal.to<camp::UserObject>();
+      propsObj.call ("store_flag",    camp::Args("debug",  "Debug flag", false));
+      propsObj.call ("store_real",    camp::Args("pi",     3.14, "Pi value", true));
+      propsObj.call ("store_string",  camp::Args("Author", "Monty", "Author's name", false));
+      propsObj.call ("store_integer", camp::Args("Epoch",  123456789, "Date", false));
+      propsObj.call ("tree_print", camp::Args(1, "foo: "));
     }
 
     {
-      DR_VALUE propsVal = mpropsObj.call ("add_section", DR_ARGS("bar", "bar_type"));
-      DR_OBJECT propsObj = propsVal.to<DR_OBJECT>();
-      propsObj.call ("store_string",  DR_ARGS("Version",  "1.0", "The version ID", false));
-      propsObj.call ("store_integer", DR_ARGS("Major",    1, "The version major number", false));
-      propsObj.call ("store_integer", DR_ARGS("Minor",    0, "The version minor number", false));
-      propsObj.call ("store_integer", DR_ARGS("Revision", 0, "The version revision number", false));
-      propsObj.call ("store_flag",    DR_ARGS("Devel",    "Development mode", false));
-      propsObj.call ("tree_print", DR_ARGS(1, "bar: "));
+      camp::Value propsVal = mpropsObj.call ("add_section", camp::Args("bar", "bar_type"));
+      camp::UserObject propsObj = propsVal.to<camp::UserObject>();
+      propsObj.call ("store_string",  camp::Args("Version",  "1.0", "The version ID", false));
+      propsObj.call ("store_integer", camp::Args("Major",    1, "The version major number", false));
+      propsObj.call ("store_integer", camp::Args("Minor",    0, "The version minor number", false));
+      propsObj.call ("store_integer", camp::Args("Revision", 0, "The version revision number", false));
+      propsObj.call ("store_flag",    camp::Args("Devel",    "Development mode", false));
+      propsObj.call ("tree_print", camp::Args(1, "bar: "));
     }
 
-    mpropsObj.call("tree_print", DR_ARGS(1, "Multi-properties: "));
-    mpropsObj.call ("write", DR_ARGS("datatools_test_reflection_0b.txt", true, false));
+    mpropsObj.call("tree_print", camp::Args(1, "Multi-properties: "));
+    mpropsObj.call ("write", camp::Args("datatools_test_reflection_0b.txt", true, false));
 
   }
 }
@@ -152,42 +156,42 @@ void test_properties (bool // debug_
                       )
 {
   std::clog << "*** test_properties : " << std::endl;
-  const DR_CLASS & propsMetaClass = DR_CLASS_BY_NAME("datatools::properties");
+  const camp::Class & propsMetaClass = camp::classByName("datatools::properties");
 
   {
-    //boost::scoped_ptr<datatools::properties> props (propsMetaClass.construct<datatools::properties> (DR_ARGS ("A test properties")));
+    //boost::scoped_ptr<datatools::properties> props (propsMetaClass.construct<datatools::properties> (camp::Args ("A test properties")));
     //props.get ()->tree_dump(std::clog, "Properties : ");
 
-    DR_OBJECT propsObj = propsMetaClass.construct(DR_ARGS ("A test properties"));
-    propsMetaClass.function("set_description").call(propsObj, DR_ARGS("A dummy properties"));
-    propsObj.call ("store_flag", DR_ARGS("foo", "A dummy (boolean) flag", false));
-    propsObj.call ("store_integer", DR_ARGS("number", 3, "Number of stars", false));
-    propsObj.call ("store_real", DR_ARGS("pi", 3.14, "Value of Pi", true));
-    propsObj.call ("store_string", DR_ARGS("author", "frc", "The author's name", true));
-    propsObj.call ("store_boolean", DR_ARGS("debug", false, "Debug flag", false));
+    camp::UserObject propsObj = propsMetaClass.construct(camp::Args ("A test properties"));
+    propsMetaClass.function("set_description").call(propsObj, camp::Args("A dummy properties"));
+    propsObj.call ("store_flag", camp::Args("foo", "A dummy (boolean) flag", false));
+    propsObj.call ("store_integer", camp::Args("number", 3, "Number of stars", false));
+    propsObj.call ("store_real", camp::Args("pi", 3.14, "Value of Pi", true));
+    propsObj.call ("store_string", camp::Args("author", "frc", "The author's name", true));
+    propsObj.call ("store_boolean", camp::Args("debug", false, "Debug flag", false));
 
-    propsObj.call("tree_print", DR_ARGS(1, "Properties: "));
+    propsObj.call("tree_print", camp::Args(1, "Properties: "));
 
-    DR_VALUE piVal = propsObj.call ("fetch_real", DR_ARGS("pi"));
+    camp::Value piVal = propsObj.call ("fetch_real", camp::Args("pi"));
     std::clog << "piVal = " << piVal << std::endl;
 
     std::clog << "Change 'number' from 3 to 8 ..." << std::endl;
-    propsObj.call ("change_integer", DR_ARGS("number", 8));
+    propsObj.call ("change_integer", camp::Args("number", 8));
 
     std::clog << "Change 'number' from 3 to 17 (by string)..." << std::endl;
-    propsObj.call ("change_integer", DR_ARGS("number", "17"));
+    propsObj.call ("change_integer", camp::Args("number", "17"));
 
-    if (propsObj.call ("is_locked", DR_ARGS("pi")))
+    if (propsObj.call ("is_locked", camp::Args("pi")))
       {
         std::clog << "Cannot change Pi value because it is locked !" << std::endl;
         std::clog << "Unlock it first !" << std::endl;
-        propsObj.call ("key_unlock", DR_ARGS("pi"));
+        propsObj.call ("key_unlock", camp::Args("pi"));
         std::clog << "Changing Pi value..." << std::endl;
-        propsObj.call ("change_real", DR_ARGS("pi", "3.14159"));
+        propsObj.call ("change_real", camp::Args("pi", "3.14159"));
         std::clog << "Finally re-lock it !" << std::endl;
-        propsObj.call ("key_lock", DR_ARGS("pi"));
+        propsObj.call ("key_lock", camp::Args("pi"));
       }
-    propsObj.call("tree_print", DR_ARGS(1, "Properties: "));
+    propsObj.call("tree_print", camp::Args(1, "Properties: "));
   }
   return;
 }
@@ -197,21 +201,21 @@ void test_event_id (bool // debug_
                     )
 {
   std::clog << "*** test_event_id : " << std::endl;
-  const DR_CLASS & evIdMetaClass = DR_CLASS_BY_NAME("datatools::event_id");
+  const camp::Class & evIdMetaClass = camp::classByName("datatools::event_id");
 
   {
-    //boost::scoped_ptr<datatools::event_id> evId (evIdMetaClass.construct<datatools::event_id> (DR_ARGS (3, 55)));
+    //boost::scoped_ptr<datatools::event_id> evId (evIdMetaClass.construct<datatools::event_id> (camp::Args (3, 55)));
     //std::clog << "Event ID = " << *evId.get () << std::endl;
 
-    DR_OBJECT evIdObj = evIdMetaClass.construct(DR_ARGS (3, 55));
+    camp::UserObject evIdObj = evIdMetaClass.construct(camp::Args (3, 55));
 
-    evIdMetaClass.function("set").call(evIdObj, DR_ARGS(7, 567));
+    evIdMetaClass.function("set").call(evIdObj, camp::Args(7, 567));
     std::clog << "Event ID = "
               << evIdMetaClass.function("to_string").call(evIdObj)
               << std::endl;
 
-    evIdObj.set ("run_number", DR_VALUE(12));
-    evIdObj.set ("event_number", DR_VALUE(3));
+    evIdObj.set ("run_number", camp::Value(12));
+    evIdObj.set ("event_number", camp::Value(3));
     std::clog << "Event ID = "
               << evIdObj.call ("to_string") << std::endl;
 
@@ -220,7 +224,7 @@ void test_event_id (bool // debug_
     std::clog << "Event ID = "
               << evIdObj.call ("to_string") << std::endl;
 
-    evIdObj.call("tree_print", DR_ARGS(1, "Event ID: "));
+    evIdObj.call("tree_print", camp::Args(1, "Event ID: "));
   }
 
   return;
@@ -232,11 +236,11 @@ void test_logger (bool // debug_
 {
   std::clog << "*** test_logger : " << std::endl;
   {
-    const DR_CLASS & tMetaClass = DR_CLASS_BY_NAME("datatools::logger");
+    const camp::Class & tMetaClass = camp::classByName("datatools::logger");
     std::clog << "tMetaClass = " << tMetaClass.name() <<  std::endl;
 
     try {
-      DR_ENUM_MANAGER & emgr = DR_ENUM_MANAGER::instance();
+      camp::detail::EnumManager & emgr = camp::detail::EnumManager::instance();
       std::clog << "Count: " << emgr.count() << std::endl;
 
       if (emgr.enumExists("datatools::logger::priority")) {
@@ -245,12 +249,12 @@ void test_logger (bool // debug_
         std::clog << "Does not exist: " << "datatools::logger::property" << std::endl;
       }
 
-      const DR_ENUM & tMetaEnum = DR_ENUM_BY_NAME("datatools::logger::priority");
+      const camp::Enum & tMetaEnum = camp::enumByName("datatools::logger::priority");
       for (int i = 0; i < (int) tMetaEnum.size(); i++) {
         std::clog << " - Key '" << tMetaEnum.pair(i).name
                   << "' has value = " << tMetaEnum.pair(i).value << std::endl;
       }
-    } catch (DR_ENUM_NOT_FOUND & ie) {
+    } catch (camp::EnumNotFound & ie) {
       std::cerr << "Error: test_logger: " << ie.what() << " for enum named '" << "'" << std::endl;
       throw;
     }
@@ -271,15 +275,15 @@ int main (// int argc_, char ** argv_
 
       srand48(seed);
 
-      DT_LOG_NOTICE(logging, "Number of metaclasses = " << DR_CLASS_COUNT());
-      for (int i = 0; i < (int) DR_CLASS_COUNT(); i++) {
-        const DR_CLASS & c = DR_CLASS_BY_INDEX(i);
+      DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
+      for (int i = 0; i < (int) camp::classCount(); i++) {
+        const camp::Class & c = camp::classByIndex(i);
         DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
       }
 
-      DT_LOG_NOTICE(logging, "Number of metaenums = " << DR_ENUM_COUNT());
-      for (int i = 0; i < (int) DR_ENUM_COUNT(); i++) {
-        const DR_ENUM & e = DR_ENUM_BY_INDEX(i);
+      DT_LOG_NOTICE(logging, "Number of metaenums = " << camp::enumCount());
+      for (int i = 0; i < (int) camp::enumCount(); i++) {
+        const camp::Enum & e = camp::enumByIndex(i);
         DT_LOG_NOTICE(logging, "Metaenum #" << i << " : " << e.name());
       }
 
@@ -295,7 +299,7 @@ int main (// int argc_, char ** argv_
 
       std::clog << "The end" << std::endl;
     }
-  catch (DR_BAD_TYPE & ic) {
+  catch (camp::BadType & ic) {
     std::cerr << "ERROR: test_reflection_0: " << ic.what () << std::endl;
     exit (EXIT_FAILURE);
   }

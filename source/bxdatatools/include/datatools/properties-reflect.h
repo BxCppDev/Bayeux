@@ -11,7 +11,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // This project:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::properties' class:

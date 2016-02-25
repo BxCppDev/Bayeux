@@ -20,9 +20,12 @@
 // Ourselves:
 #include <datatools/introspection/argument.h>
 
+// Third party:
+#include <camp/enum.hpp>
+
 // This project:
 #include <datatools/introspection/method.h>
-#include <datatools/reflection_macros.h>
+//#include <datatools/reflection_macros.h>
 
 namespace datatools {
 
@@ -219,7 +222,7 @@ namespace datatools {
         access_type access;
         DT_THROW_IF(! ::datatools::introspection::from_string(access_label, access),
                     std::logic_error,
-                    "Enumeration '" << DR_ENUM_BY_TYPE<access_type>().name()
+                    "Enumeration '" << camp::enumByType<access_type>().name()
                     << "' has no value labelled '" << access_label << "'!");
         set_access(access);
       }

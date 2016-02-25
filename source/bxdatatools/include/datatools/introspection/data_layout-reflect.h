@@ -25,7 +25,7 @@
 #include <datatools/introspection/data_layout.h>
 
 // This project:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Registration:
@@ -38,10 +38,10 @@ namespace datatools {
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::data_layout, /*tag_*/)
       {
         DR_ENUM_DECLARE(::datatools::introspection::data_layout)
-          .DR_ENUM_PAIR("invalid",                ::datatools::introspection::DATA_LAYOUT_INVALID)
-          .DR_ENUM_PAIR("scalar",                 ::datatools::introspection::DATA_LAYOUT_SCALAR)
-          .DR_ENUM_PAIR("vector_with_fixed_size", ::datatools::introspection::DATA_LAYOUT_VECTOR_WITH_FIXED_SIZE)
-          .DR_ENUM_PAIR("vector_with_free_size",  ::datatools::introspection::DATA_LAYOUT_VECTOR_WITH_FREE_SIZE)
+          .value("invalid",                ::datatools::introspection::DATA_LAYOUT_INVALID)
+          .value("scalar",                 ::datatools::introspection::DATA_LAYOUT_SCALAR)
+          .value("vector_with_fixed_size", ::datatools::introspection::DATA_LAYOUT_VECTOR_WITH_FIXED_SIZE)
+          .value("vector_with_free_size",  ::datatools::introspection::DATA_LAYOUT_VECTOR_WITH_FREE_SIZE)
           ;
         return;
       }

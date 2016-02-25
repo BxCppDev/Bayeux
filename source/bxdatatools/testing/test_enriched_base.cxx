@@ -3,6 +3,11 @@
 // Third Party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
+// - Camp:
+#include <camp/userobject.hpp>
+#include <camp/value.hpp>
+#include <camp/args.hpp>
+#include <camp/class.hpp>
 
 // This Project:
 #include <datatools/datatools_config.h>
@@ -12,7 +17,7 @@
 #include <datatools/io_factory.h>
 #if DATATOOLS_WITH_REFLECTION == 1
 //#include <datatools/reflection_guard.h>
-#include <datatools/reflection_macros.h>
+//#include <datatools/reflection_macros.h>
 #endif // DATATOOLS_WITH_REFLECTION == 1
 
 // Ourselves:
@@ -83,36 +88,33 @@ void test2()
 void test_reflection()
 {
   std::cerr << "\n******** Entering test_reflection... " << std::endl;
-  const DR_CLASS & aoMetaClass = DR_CLASS_BY_NAME("datatools::enriched_base");
+  const camp::Class & aoMetaClass = camp::classByName("datatools::enriched_base");
   std::cerr << "******** Go. " << std::endl;
 
-  //boost::scoped_ptr<datatools::enriched_base> ao;
-  DR_OBJECT aoObj = aoMetaClass.construct();
-  //ao.reset(eb);
-  //DR_OBJECT aoObj = ao.get();
-  aoObj.call("smart_print", DR_ARGS(1, "Advanced object: ", "*** "));
+  camp::UserObject aoObj = aoMetaClass.construct();
+  aoObj.call("smart_print", camp::Args(1, "Advanced object: ", "*** "));
   std::cerr << "******** Test 1. " << std::endl;
 
   // Change its 'name' attribute/property :
-  aoObj.set("name", DR_VALUE("MyAdvancedObject"));
+  aoObj.set("name", camp::Value("MyAdvancedObject"));
   std::cerr << "******** Test 2. " << std::endl;
 
   // Change its 'terse description' attribute/property :
-  aoObj.set("terse_description", DR_VALUE("A dummy object"));
+  aoObj.set("terse_description", camp::Value("A dummy object"));
   std::cerr << "******** Test 3. " << std::endl;
 
-  DR_VALUE auxVal = aoObj.DR_CALL("grab_auxiliaries");
-  DR_OBJECT auxObj = auxVal.to<DR_OBJECT>();
-  auxObj.call("store_string", DR_ARGS("Name", "Arthur", "The name fo a King", false));
-  auxObj.call("store_real", DR_ARGS("Pi",3.14159, "The Pi constant", false));
-  auxObj.call("store_flag", DR_ARGS("Dummy", "A dummy flag", false));
-  auxObj.call("smart_print", DR_ARGS(1, "Auxiliaries: ", ">>> "));
+  camp::Value auxVal = aoObj.call("grab_auxiliaries");
+  camp::UserObject auxObj = auxVal.to<camp::UserObject>();
+  auxObj.call("store_string", camp::Args("Name", "Arthur", "The name fo a King", false));
+  auxObj.call("store_real", camp::Args("Pi",3.14159, "The Pi constant", false));
+  auxObj.call("store_flag", camp::Args("Dummy", "A dummy flag", false));
+  auxObj.call("smart_print", camp::Args(1, "Auxiliaries: ", ">>> "));
   std::cerr << "******** Test 4. " << std::endl;
 
-  aoObj.set("logging_priority", DR_VALUE("trace"));
-  aoObj.set("name", DR_VALUE("Mao"));
-  aoObj.set("display_name", DR_VALUE("MAO"));
-  aoObj.call("smart_print", DR_ARGS(1, "Advanced object: ", "*** "));
+  aoObj.set("logging_priority", camp::Value("trace"));
+  aoObj.set("name", camp::Value("Mao"));
+  aoObj.set("display_name", camp::Value("MAO"));
+  aoObj.call("smart_print", camp::Args(1, "Advanced object: ", "*** "));
 
   std::cerr << "******** End. " << std::endl;
 

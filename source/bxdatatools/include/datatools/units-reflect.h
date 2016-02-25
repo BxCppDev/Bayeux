@@ -25,7 +25,7 @@
 #include <datatools/units.h>
 
 // This project:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Registration:
@@ -38,27 +38,27 @@ namespace datatools {
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::units::power_of_ten, /*tag_*/)
       {
         DR_ENUM_DECLARE(::datatools::units::power_of_ten)
-          .DR_ENUM_PAIR("yocto", ::datatools::units::YOCTO)
-          .DR_ENUM_PAIR("zepto", ::datatools::units::ZEPTO)
-          .DR_ENUM_PAIR("atto",  ::datatools::units::ATTO)
-          .DR_ENUM_PAIR("femto", ::datatools::units::FEMTO)
-          .DR_ENUM_PAIR("pico",  ::datatools::units::PICO)
-          .DR_ENUM_PAIR("nano",  ::datatools::units::NANO)
-          .DR_ENUM_PAIR("micro", ::datatools::units::MICRO)
-          .DR_ENUM_PAIR("milli", ::datatools::units::MILLI)
-          .DR_ENUM_PAIR("centi", ::datatools::units::CENTI)
-          .DR_ENUM_PAIR("deci",  ::datatools::units::DECI)
-          .DR_ENUM_PAIR("",      ::datatools::units::UNIT_POWER_OF_TEN)
-          .DR_ENUM_PAIR("deca",  ::datatools::units::DECA)
-          .DR_ENUM_PAIR("hecto", ::datatools::units::HECTO)
-          .DR_ENUM_PAIR("kilo",  ::datatools::units::KILO)
-          .DR_ENUM_PAIR("mega",  ::datatools::units::MEGA)
-          .DR_ENUM_PAIR("giga",  ::datatools::units::GIGA)
-          .DR_ENUM_PAIR("tera",  ::datatools::units::TERA)
-          .DR_ENUM_PAIR("peta",  ::datatools::units::PETA)
-          .DR_ENUM_PAIR("exa",   ::datatools::units::EXA)
-          .DR_ENUM_PAIR("zetta", ::datatools::units::ZETTA)
-          .DR_ENUM_PAIR("yotta", ::datatools::units::YOTTA)
+          .value("yocto", ::datatools::units::YOCTO)
+          .value("zepto", ::datatools::units::ZEPTO)
+          .value("atto",  ::datatools::units::ATTO)
+          .value("femto", ::datatools::units::FEMTO)
+          .value("pico",  ::datatools::units::PICO)
+          .value("nano",  ::datatools::units::NANO)
+          .value("micro", ::datatools::units::MICRO)
+          .value("milli", ::datatools::units::MILLI)
+          .value("centi", ::datatools::units::CENTI)
+          .value("deci",  ::datatools::units::DECI)
+          .value("",      ::datatools::units::UNIT_POWER_OF_TEN)
+          .value("deca",  ::datatools::units::DECA)
+          .value("hecto", ::datatools::units::HECTO)
+          .value("kilo",  ::datatools::units::KILO)
+          .value("mega",  ::datatools::units::MEGA)
+          .value("giga",  ::datatools::units::GIGA)
+          .value("tera",  ::datatools::units::TERA)
+          .value("peta",  ::datatools::units::PETA)
+          .value("exa",   ::datatools::units::EXA)
+          .value("zetta", ::datatools::units::ZETTA)
+          .value("yotta", ::datatools::units::YOTTA)
           ;
         return;
       }

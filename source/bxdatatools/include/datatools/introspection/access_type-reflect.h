@@ -25,7 +25,7 @@
 #include <datatools/introspection/access_type.h>
 
 // This project:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Registration:
@@ -38,9 +38,9 @@ namespace datatools {
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::access_type, /*tag_*/)
       {
         DR_ENUM_DECLARE(::datatools::introspection::access_type)
-          .DR_ENUM_PAIR("invalid",  ::datatools::introspection::ACCESS_INVALID)
-          .DR_ENUM_PAIR("input",    ::datatools::introspection::ACCESS_INPUT)
-          .DR_ENUM_PAIR("output",   ::datatools::introspection::ACCESS_OUTPUT)
+          .value("invalid", ::datatools::introspection::ACCESS_INVALID)
+          .value("input",   ::datatools::introspection::ACCESS_INPUT)
+          .value("output",  ::datatools::introspection::ACCESS_OUTPUT)
           ;
         return;
       }

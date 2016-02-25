@@ -8,6 +8,10 @@
 // Ourselves:
 #include <datatools/i_serializable.h>
 
+// This project:
+#include <datatools/detail/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
+
 // Export the introspection code for the 'datatools::i_serializable' class:
 DR_CLASS_EXPORT (::datatools::i_serializable, "datatools::i_serializable")
 

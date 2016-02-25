@@ -2,13 +2,19 @@
 #ifndef DATATOOLS_BASE_SERVICE_REFLECT_H
 #define DATATOOLS_BASE_SERVICE_REFLECT_H
 
+// Ourselves:
+#include <datatools/base_service.h>
+
 // Third party:
 // - CAMP:
 #include <camp/enum.hpp>
 
 // This project:
-#include <datatools/base_service.h>
 #include <datatools/properties.h>
+
+// This project:
+#include <datatools/detail/reflection_macros.h>
+#include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::base_service' class:
 DR_CLASS_EXPORT(::datatools::base_service, "datatools::base_service")

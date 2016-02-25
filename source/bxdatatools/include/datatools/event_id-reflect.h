@@ -2,6 +2,9 @@
 #ifndef DATATOOLS_EVENT_ID_REFLECT_H
 #define DATATOOLS_EVENT_ID_REFLECT_H
 
+// Ourselves:
+#include <datatools/event_id.h>
+
 // Standard Library:
 #include <iostream>
 
@@ -10,8 +13,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // This project:
-#include <datatools/event_id.h>
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::event_id' class:

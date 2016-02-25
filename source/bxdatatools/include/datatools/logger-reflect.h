@@ -7,7 +7,7 @@
 
 // This project:
 #include <datatools/logger.h>
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::logger::priority' enum:
@@ -28,15 +28,15 @@ namespace datatools {
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, /*tag_*/)
       {
         DR_ENUM_DECLARE(::datatools::logger::priority)
-          .DR_ENUM_PAIR("undefined",   ::datatools::logger::PRIO_UNDEFINED)
-          .DR_ENUM_PAIR("fatal",       ::datatools::logger::PRIO_FATAL)
-          .DR_ENUM_PAIR("critical",    ::datatools::logger::PRIO_CRITICAL)
-          .DR_ENUM_PAIR("error",       ::datatools::logger::PRIO_ERROR)
-          .DR_ENUM_PAIR("warning",     ::datatools::logger::PRIO_WARNING)
-          .DR_ENUM_PAIR("notice",      ::datatools::logger::PRIO_NOTICE)
-          .DR_ENUM_PAIR("information", ::datatools::logger::PRIO_INFORMATION)
-          .DR_ENUM_PAIR("debug",       ::datatools::logger::PRIO_DEBUG)
-          .DR_ENUM_PAIR("trace",       ::datatools::logger::PRIO_TRACE)
+          .value("undefined",   ::datatools::logger::PRIO_UNDEFINED)
+          .value("fatal",       ::datatools::logger::PRIO_FATAL)
+          .value("critical",    ::datatools::logger::PRIO_CRITICAL)
+          .value("error",       ::datatools::logger::PRIO_ERROR)
+          .value("warning",     ::datatools::logger::PRIO_WARNING)
+          .value("notice",      ::datatools::logger::PRIO_NOTICE)
+          .value("information", ::datatools::logger::PRIO_INFORMATION)
+          .value("debug",       ::datatools::logger::PRIO_DEBUG)
+          .value("trace",       ::datatools::logger::PRIO_TRACE)
           ;
         return;
       }

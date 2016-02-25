@@ -8,7 +8,7 @@
 
 // This project:
 #include <datatools/i_tree_dump.h>
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'datatools::i_tree_dumpable' class:
