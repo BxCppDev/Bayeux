@@ -6,8 +6,7 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/logger.h>
-
-// This project:
+// - Bayeux/brio:
 #include <brio/writer.h>
 #include <brio/reader.h>
 

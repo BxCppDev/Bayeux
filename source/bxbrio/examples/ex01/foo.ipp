@@ -4,21 +4,20 @@
 #ifndef FOO_IPP
 #define FOO_IPP 1
 
-// This example:
+// Ourselves:
 #include <foo.h>
 
+// Third party:
+// - Boost:
 // Support for inheritance from an serializable class :
 #include <boost/serialization/base_object.hpp>
-
 // Support for XML 'key-value' based archives:
 #include <boost/serialization/nvp.hpp>
-
 // Support Boost serialization of STL vector templatized objects:
 #include <boost/serialization/vector.hpp>
-
 // Support Boost serialization of STL string objects:
 #include <boost/serialization/string.hpp>
-
+// - Bayeux/datatools:
 // Datatools support for serializable objects :
 #include <datatools/i_serializable.ipp>
 

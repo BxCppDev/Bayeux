@@ -1,12 +1,12 @@
 // foo.cc
 
+// Ourselves:
+#include <foo.h>
+
 // Standard library:
 #include <cstdlib>
 
-// This example:
-#include <foo.h>
-
-DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (foo,"foo")
+DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(foo,"foo")
 
 foo::foo ()
 {
