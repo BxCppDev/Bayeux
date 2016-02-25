@@ -1,7 +1,8 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# materials.def
+# List of materials (format: datatools::multi_properties):
 
-#@description A list of common materials
+#@description A list of specific materials
 #@key_label   "name"
 #@meta_label  "type"
 
@@ -17,3 +18,5 @@ pressure.unit    : string = "bar"
 composition.mode : string   = "fraction_mass"
 composition.names         : string [2]  = "Nitrogen" "Oxygen"
 composition.fraction_mass : real   [2]  =  0.8        0.2
+
+# end of materials.def

@@ -1,45 +1,46 @@
 # -*- mode: conf-unix; -*-
-# List of multi-properties (datatools::multi_properties):
+# materials_aliases.def
+# List of material aliases (format: datatools::multi_properties):
 
-#@description A sample list of aliases for standard materials
+#@description A list of aliases for materials
 #@key_label   "name"
 #@meta_label  "type"
 
 [name="air" type="alias"]
 #@description The alias for air
-material : string = "std::air"
+material : string = "basic::air"
 
 [name="aluminium" type="alias"]
 #@description The alias for aluminium
-material : string = "std::aluminium"
+material : string = "basic::aluminium"
 
 [name="copper" type="alias"]
 #@description The alias for copper
-material : string = "std::copper"
+material : string = "basic::copper"
 
 [name="glass" type="alias"]
 #@description The alias for pyrex
-material : string = "std::pyrex"
+material : string = "basic::pyrex"
 
 [name="iron" type="alias"]
 #@description The alias for iron
-material : string = "std::iron"
+material : string = "basic::iron"
 
 [name="mylar" type="alias"]
 #@description The alias for mylar
-material : string = "std::mylar"
+material : string = "basic::mylar"
 
 [name="plexiglass" type="alias"]
 #@description The alias for plexiglass
-material : string = "std::plexiglass"
+material : string = "basic::polymethylmethacrylate"
 
 [name="polystyrene" type="alias"]
 #@description The alias for polystyrene
-material : string = "std::polystyrene"
+material : string = "basic::polystyrene"
 
 [name="vacuum" type="alias"]
 #@description The alias for vacuum
-material : string = "std::vacuum"
+material : string = "basic::vacuum"
 
 [name="vessel_gas" type="alias"]
 #@description The alias for low pressure air in the vessel
@@ -47,6 +48,6 @@ material : string = "low_pressure_air"
 
 [name="lead" type="alias"]
 #@description The alias for lead
-material : string = "std::lead"
+material : string = "basic::lead"
 
-# end
+# end of materials_aliases.def

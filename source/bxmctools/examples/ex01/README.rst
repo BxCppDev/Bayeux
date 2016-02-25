@@ -152,8 +152,8 @@ Quick start
 
 3. Build and install the example program::
 
-      $ mkdir __build
-      $ cd __build
+      $ mkdir _build.d
+      $ cd _build.d
       $ cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
         -Dmctools_DIR=$(mctools-config --prefix) \
@@ -484,4 +484,4 @@ Quick start
       $ rm -f prng_seeds.save*
       $ rm -f prng_states.save*
       $ rm -fr lib
-      $ rm -fr __build
+      $ rm -fr _build.d

@@ -21,7 +21,7 @@ done
 
 opwd=$(pwd)
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
 pandoc -r rst -w html README.rst -o mctools-ex01_README.html

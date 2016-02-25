@@ -18,25 +18,31 @@
  *
  */
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
 
+// - Bayeux:
 #include <bayeux/bayeux.h>
+// - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/library_loader.h>
-
+// - Bayeux/geomtools:
 #include <geomtools/manager.h>
-
+// - Bayeux/mctools:
 #include <mctools/simulated_data.h>
 #include <mctools/simulated_data_reader.h>
 
+// This project:
 #include <ex01_inspector.h>
 
 int main(int argc_, char **argv_) {
@@ -192,5 +198,3 @@ int main(int argc_, char **argv_) {
   BAYEUX_FINI();
   return error_code;
 }
-
-// end of ex01_read_plain_simdata

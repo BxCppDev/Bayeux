@@ -1,6 +1,6 @@
 // ex01_inspector.cc
 
-// Ourselves;
+// Ourselves:
 #include <ex01_inspector.h>
 
 // Third party:
@@ -16,6 +16,7 @@
 #include <mctools/simulated_data.h>
 
 namespace mctools {
+
   namespace ex01 {
 
     simulated_data_inspector::simulated_data_inspector()
@@ -282,4 +283,5 @@ namespace mctools {
     }
 
   }  // namespace ex01
+
 } // namespace mctools
