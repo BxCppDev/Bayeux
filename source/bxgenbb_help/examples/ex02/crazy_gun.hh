@@ -1,10 +1,10 @@
 /// \file crazy_gun.h
 /* Author(s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2014-02-04
- * Last modified: 2014-02-04
+ * Last modified: 2016-02-25
  *
  * License:
- * Copyright 2014-2014 F. Mauger
+ * Copyright 2014-2016 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
  */
 
 #ifndef GENBB_HELP_EX02_CRAZY_GUN_H
-#define GENBB_HELP_EX02_CRAZY_GUN_H 1
+#define GENBB_HELP_EX02_CRAZY_GUN_H
 
 // Third party:
 // - Bayeux/genbb_help:
@@ -101,9 +101,9 @@ namespace genbb {
 
     private:
 
-      bool _initialized_;
-      unsigned int _min_number_of_particles_;
-      unsigned int _max_number_of_particles_;
+      bool _initialized_; ///< Initialization flag of the generator
+      unsigned int _min_number_of_particles_; ///!< Min number of generatedparticles
+      unsigned int _max_number_of_particles_; ///!< Max number of generatedparticles
 
       /// Class registration macro
       GENBB_PG_REGISTRATION_INTERFACE(crazy_gun);
@@ -114,9 +114,7 @@ namespace genbb {
 
 } // end of namespace genbb
 
-  /***************
-   * OCD support *
-   ***************/
+// OCD support:
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(genbb::ex02::crazy_gun)
 
