@@ -1,21 +1,25 @@
 // test_serializable_3.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/nvp.hpp>
+// - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 #include <datatools/archives_instantiation.h>
-
-// The serializable 'things' container :
 #include <datatools/things.h>
-
-// The serializable 'properties' container :
 #include <datatools/properties.h>
+#include <datatools/library_loader.h>
+#include <datatools/i_serializable.ipp>
+// - Bayeux/geomtools:
 #include <geomtools/geom_id.h>
 #include <geomtools/line_3d.h>
 #include <geomtools/helix_3d.h>
@@ -25,17 +29,11 @@
 #include <datatools/bio_guard.h>
 #include <geomtools/bio_guard.h>
 
-#include <datatools/library_loader.h>
-
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/nvp.hpp>
-#include <datatools/i_serializable.ipp>
-
 using namespace std;
 
 /*** the serializable A sample class ***/
 
-class A : DATATOOLS_SERIALIZABLE_CLASS
+class A : public datatools::i_serializable
 {
 
 public:
@@ -57,7 +55,7 @@ public:
 
   virtual ~A ();
 
-  void dump (ostream & = clog) const;
+  void dump (std::ostream & = std::clog) const;
 
 
 private :
@@ -78,7 +76,6 @@ BOOST_CLASS_EXPORT_KEY2 (A, "test_things::A")
  * Boost/Serialization export/implement/instantiation code *
  * for the A                                               *
  ***********************************************************/
-
 
 template<class Archive>
 void A::serialize (Archive & ar, const unsigned int /* version */)
@@ -113,7 +110,7 @@ A::~A ()
 
 /*** serializable B  sample class ***/
 
-class B : DATATOOLS_SERIALIZABLE_CLASS
+class B : public datatools::i_serializable
 {
 public:
 

@@ -34,7 +34,7 @@ using namespace std;
 
 /*** the serializable A sample class ***/
 
-class A : DATATOOLS_SERIALIZABLE_CLASS
+class A : public datatools::i_serializable
 {
 
 public:
@@ -99,7 +99,7 @@ A::~A ()
 
 /*** serializable B  sample class ***/
 
-class B : DATATOOLS_SERIALIZABLE_CLASS
+class B : public datatools::i_serializable
 {
 public:
 

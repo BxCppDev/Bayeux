@@ -31,7 +31,6 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/datatools_config.h>
-#include <datatools/reflection_macros.h>
 
 // This project:
 #include <geomtools/geomtools_config.h>
