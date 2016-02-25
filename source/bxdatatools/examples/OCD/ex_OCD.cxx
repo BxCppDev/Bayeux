@@ -28,24 +28,23 @@
  *
  */
 
-// This project
+// This project:
 #include <datatools/datatools_config.h>
 
-// Standard Library
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
-// Third Party
+// Third Party:
 
 #if DATATOOLS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
 #endif // DATATOOLS_STANDALONE == 1
-
-// - datatools
+// - Bayeux/datatools
 #include <datatools/object_configuration_description.h>
 #include <datatools/service_manager.h>
 #include <datatools/logger.h>

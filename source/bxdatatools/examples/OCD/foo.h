@@ -5,12 +5,15 @@
  *
  */
 
-#ifndef FOO_H_
-#define FOO_H_ 1
+#ifndef FOO_H
+#define FOO_H 1
 
+// Standard library:
 #include <string>
 #include <map>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/datatools_config.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
@@ -30,19 +33,19 @@ struct foo {
 
   // Attributes (should be private but here this is just an example) :
  public:
-  bool initialized; /// Initialization flag
-  std::string name; /// Name
-  std::string what; /// Description
-  std::string tmpfile; /// Temporary filename
-  std::map<std::string, std::pair<int,std::string> > dict; /// A dictionary
-  int dummy; /// A dummy attributes
-  double width; /// Width
-  double weight; /// Weight
-  double length; /// Length
+  bool initialized; ///< Initialization flag
+  std::string name; ///< Name
+  std::string what; ///< Description
+  std::string tmpfile; ///< Temporary filename
+  std::map<std::string, std::pair<int,std::string> > dict; ///< A dictionary
+  int dummy; ///< A dummy attributes
+  double width; ///< Width
+  double weight; ///< Weight
+  double length; ///< Length
 
  private:
-  bool _logging_;
-  datatools::logger::priority _logging_level_; /// Logging priority
+  bool _logging_; ///< Logging flag
+  datatools::logger::priority _logging_level_; ///< Logging priority
 
 };
 
@@ -55,4 +58,4 @@ struct foo {
 // @arg foo the name the class
 DOCD_CLASS_DECLARATION(foo)
 
-#endif // FOO_H_
+#endif // FOO_H

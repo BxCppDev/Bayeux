@@ -248,10 +248,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
       .set_mandatory(false)
       .set_long_description("The allowed values are 0 (false) or 1 (true).")
       .set_default_value_boolean(false)
-      .add_example("Deactivation of the logging fonctionality::"
-                   "                                \n"
-                   "  logging : boolean = 0         \n"
-                   "                                \n"
+      .add_example("Deactivation of the logging fonctionality:: \n"
+                   "                                            \n"
+                   "  logging : boolean = 0                     \n"
+                   "                                            \n"
                    )
       ;
   }
@@ -521,9 +521,9 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(foo,ocd_)
                                "  name : string = \"_you\"                       \n"
                                "  what : string = \"Some text\"                  \n"
                                "  tmpfile : const string as path = \"/tmp/log.tmp\"\n"
-                               "  width : real = 1.23                            \n"
-                               "  weight : real as mass = 1.23 mg                \n"
-                               "  length : real = 4.56      # cm                 \n"
+                               "  width  : real as length = 1.23 mm              \n"
+                               "  weight : real as mass   = 1.23 mg              \n"
+                               "  length : real as length = 4.56 cm              \n"
                                "  labels : string[2] = \"Obj0\" \"Obj1\"         \n"
                                "  objects.Obj0.value : integer = 67              \n"
                                "  objects.Obj1.value : integer = 12              \n"
