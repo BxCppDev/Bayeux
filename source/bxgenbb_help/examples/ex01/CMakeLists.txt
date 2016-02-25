@@ -15,7 +15,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # - Bayeux :
-find_package(Bayeux 1.0.0 REQUIRED)
+find_package(Bayeux 2.1.0 REQUIRED)
 set(_incs ${Bayeux_INCLUDE_DIRS})
 set(_libs ${Bayeux_LIBRARIES})
 

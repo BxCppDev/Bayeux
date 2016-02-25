@@ -21,7 +21,7 @@ function my_exit()
     exit $1
 }
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
 test ! -d ${build_dir} && mkdir ${build_dir}
@@ -121,6 +121,8 @@ fi
 
 if [ $clean -eq 1 ]; then
     rm -f ./ex01
+    rm -f ./ex01.xml
+    rm -f ./ex01_plain_reader
     rm -f ./histos_Co60.root
     rm -f ./histos_bb2nu_Se82_HE_one_shot.xml
     rm -f ./histos_bb2nu_Se82_HE_?.xml
