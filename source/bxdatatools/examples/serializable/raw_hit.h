@@ -25,10 +25,7 @@
 #include <datatools/properties.h>
 
 /// \brief ``raw_hit`` is a serializable class using datatools serialization
-class raw_hit :
-  DATATOOLS_SERIALIZABLE_CLASS /** This macro declares this class as
-                                * serializable for Bayeux/datatools
-                                */
+class raw_hit : public datatools::i_serializable
 {
 public:
 

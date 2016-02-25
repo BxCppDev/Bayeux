@@ -31,8 +31,7 @@
 /// \brief ``raw_data`` is a serializable class using datatools serialization
 ///  concept and Boost/Serialization registration mechanism. A "raw_data"
 ///  object contains a collection of "raw_hit" serializable objects.
-class raw_data :
-  DATATOOLS_SERIALIZABLE_CLASS
+class raw_data : public datatools::i_serializable
 {
 public:
 
