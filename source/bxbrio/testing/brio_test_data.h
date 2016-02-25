@@ -34,15 +34,15 @@ namespace brio {
 
       public:
 
-        // Here we provide a default constructor:
+        // Default constructor:
         data_t ();
 
-        // Desctructor:
+        // Destructor:
         virtual ~data_t ();
 
         void randomize ();
 
-        void dump (std::ostream & a_out = clog, const std::string & a_title = "") const;
+        void dump (std::ostream & a_out = std::clog, const std::string & a_title = "") const;
 
       private:
 
@@ -53,9 +53,9 @@ namespace brio {
         int32_t  __ival; // A 32 bits signed integral
         float    __fval; // A 32 bits float
         double   __dval; // A 64 bits float
-        string   __sval; /** A STL string
-                          * implies #include <boost/serialization/string.hpp>
-                          */
+        std::string __sval; /** A STL string
+                             * implies #include <boost/serialization/string.hpp>
+                             */
         std::vector<double> __dval_vec; /** a STL vector of 64 bits floats
                                          * implies #include <boost/serialization/vector.hpp>
                                          */

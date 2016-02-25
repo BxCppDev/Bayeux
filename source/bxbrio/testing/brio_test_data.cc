@@ -41,7 +41,7 @@ namespace brio {
       __dval = drand48 () * 10.;
       __sval = "Hello world !";
       __dval_vec.clear ();
-      size_t sz = (size_t) (drand48 () * 10);
+      size_t sz = (size_t) (drand48() * 10);
       __dval_vec.reserve (sz);
       for (int i = 0; i < (int) sz; i++)
         {
