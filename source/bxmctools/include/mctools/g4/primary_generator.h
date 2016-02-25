@@ -14,10 +14,11 @@
  */
 
 #ifndef MCTOOLS_G4_PRIMARY_GENERATOR_H
-#define MCTOOLS_G4_PRIMARY_GENERATOR_H 1
+#define MCTOOLS_G4_PRIMARY_GENERATOR_H
 
 // Standard library:
 #include <string>
+#include <map>
 
 // Third party:
 // - Boost
