@@ -52,7 +52,7 @@ private:
   std::string   _sval_; ///< A STL string (implies boost/serialization/string.hpp)
   std::vector<double> _dval_vec_; ///< A STL vector of 64 bits floats (implies boost/serialization/vector.hpp)
 
-  // interface i_serializable
+  // Interface for serializable class:
   DATATOOLS_SERIALIZATION_DECLARATION();
 
 };
