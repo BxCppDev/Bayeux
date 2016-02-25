@@ -13,7 +13,7 @@ function my_exit()
     exit $1
 }
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
 test ! -d ${build_dir} && mkdir ${build_dir}
@@ -49,6 +49,7 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 rm -f ./ex01
+rm -f ./field1.data
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 
