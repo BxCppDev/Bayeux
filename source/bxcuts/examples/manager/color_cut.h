@@ -1,17 +1,19 @@
 // -*- mode: c++ ; -*-
-/* color_cut_h
+/* color_cut.h
  * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-10
  * Last modified: 2013-05-17
  *
- * License:
  */
 
-#ifndef COLOR_CUT_H_
-#define COLOR_CUT_H_ 1
+#ifndef COLOR_CUT_H
+#define COLOR_CUT_H
 
+// Standard library:
 #include <iostream>
 
+// Third party:
+// - Bayeux/cuts:
 #include <cuts/i_cut.h>
 
 /// \brief A cut on the color of object of class data
@@ -50,6 +52,4 @@ protected :
 
 };
 
-#endif // COLOR_CUT_H_
-
-// end of color_cut_h
+#endif // COLOR_CUT_H

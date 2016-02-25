@@ -2,13 +2,18 @@
 /* range_cut.cc
  */
 
+// Ourselves:
 #include <range_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
+// This project:
 #include <data.h>
 
 // Registration instantiation macro :
@@ -156,5 +161,3 @@ int range_cut::_accept()
   }
   return result;
 }
-
-// end of range_cut.cc

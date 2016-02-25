@@ -1,7 +1,7 @@
 // -*- mode: c++ ; -*-
 // ex_manager.cxx
 
-// Standard library
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -11,25 +11,25 @@
 #include <vector>
 #include <map>
 
-// Third party
-// - datatools:
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/datatools.h>
 #if DATATOOLS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
 #endif
-// - datatools:
+// - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-// - cuts:
+// - Bayeux/cuts:
 #include <cuts/cuts_config.h>
 #include <cuts/cut_manager.h>
 
+// This project:
 // The data model to be selected :
 #include <data.h>
-
 // Registered cuts on the data class :
 #include <range_cut.h>
 #include <sphere_cut.h>
@@ -255,5 +255,3 @@ int main(int argc_, char ** argv_)
 #endif // DATATOOLS_STANDALONE == 1
   return(error_code);
 }
-
-// end of ex_manager.cxx

@@ -2,11 +2,14 @@
 /* color_cut.cc
  */
 
+// Ourselves:
 #include <color_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// This project:
 #include <data.h>
 
 // Registration instantiation macro :
@@ -90,5 +93,3 @@ int color_cut::_accept()
   }
   return result;
 }
-
-// end of color_cut.cc

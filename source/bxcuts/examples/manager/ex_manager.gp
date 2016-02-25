@@ -7,6 +7,8 @@ set zlabel "z"
 set xrange [-1:+1]
 set yrange [-1:+1]
 set zrange [-1:+1]
+set size ratio -1
+set view equal xyz
 
 set title "Original data points"
 splot \

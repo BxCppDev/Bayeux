@@ -5,11 +5,14 @@
  * Last modified: 2013-05-17
  */
 
-#ifndef RANGE_CUT_H_
-#define RANGE_CUT_H_ 1
+#ifndef RANGE_CUT_H
+#define RANGE_CUT_H
 
+// Standard library:
 #include <iostream>
 
+// Third party:
+// - Bayeux/cuts:
 #include <cuts/i_cut.h>
 
 /// \brief A cut to test the position of a 3D-point relatively to a range on X, Y or Z axis.
@@ -67,6 +70,4 @@ private:
 
 };
 
-#endif // RANGE_CUT_H_
-
-// end of range_cut_h
+#endif // RANGE_CUT_H

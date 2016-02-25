@@ -1,8 +1,10 @@
 // -*- mode: c++ ; -*-
 /* data.cc */
 
+// Ourselves:
 #include <data.h>
 
+// Standard library:
 #include <limits>
 
 data::data () {
@@ -19,5 +21,3 @@ void data::reset()
   x = y = z = std::numeric_limits<double>::quiet_NaN();
   color = COLOR_INVALID;
 }
-
-// end of data.cc

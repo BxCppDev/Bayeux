@@ -2,11 +2,14 @@
 /* sphere_cut.cc
  */
 
+// Ourselves:
 #include <sphere_cut.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 
+// This project:
 #include <data.h>
 
 // Registration instantiation macro :
@@ -131,5 +134,3 @@ int sphere_cut::_accept()
   }
   return result;
 }
-
-// end of sphere_cut.cc

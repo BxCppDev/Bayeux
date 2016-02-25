@@ -1,13 +1,14 @@
 // -*- mode: c++ ; -*-
 /* data.h
- * Author (s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Author(s) : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-05-10
  * Last modified: 2013-05-10
  */
 
-#ifndef DATA_H_
-#define DATA_H_ 1
+#ifndef DATA_H
+#define DATA_H 1
 
+// Standard library:
 #include <iostream>
 
 /// \brief A simple data structure with (x,y,z) position
@@ -41,6 +42,4 @@ public:
 
 };
 
-#endif // DATA_H_
-
-// end of data.h
+#endif // DATA_H

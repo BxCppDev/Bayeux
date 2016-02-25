@@ -12,11 +12,14 @@
  *
  */
 
-#ifndef SPHERE_CUT_H_
-#define SPHERE_CUT_H_ 1
+#ifndef SPHERE_CUT_H
+#define SPHERE_CUT_H
 
+// Standard library:
 #include <iostream>
 
+// Third party:
+// - Bayeux/cuts:
 #include <cuts/i_cut.h>
 
 /// \brief A cut to test the position of a 3D-point relatively to a sphere.
@@ -63,6 +66,4 @@ protected :
 
 };
 
-#endif // SPHERE_CUT_H_
-
-// end of sphere_cut.h
+#endif // SPHERE_CUT_H
