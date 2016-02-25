@@ -67,7 +67,7 @@ if [ $html -eq 1 ]; then
     test $? -eq 0 && firefox file://$(pwd)/${html_file} &
 fi
 
-build_dir=$(pwd)/__build
+build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 test -d ${build_dir} || mkdir ${build_dir}
 
@@ -125,7 +125,7 @@ echo "NOTICE: Run the ./test_dpp_ex01 executable :" 1>&2
 ls -l ./test_dpp_ex01.xml
 
 echo "" 1>&2
-echo "NOTICE: Run the dpp_processing executable :" 1>&2
+echo "NOTICE: Run the bxdpp_processing executable :" 1>&2
 bxdpp_processing \
     --load-dll "dpp_ex01_bio" \
     --modulo 25 \
@@ -138,7 +138,7 @@ bxdpp_processing \
     --output-file dpp_ex01_03.xml \
     --output-file dpp_ex01_04.xml
 if [ $? -ne 0 ]; then
-    echo "ERROR: dpp_processing has failed !" 1>&2
+    echo "ERROR: bxdpp_processing has failed !" 1>&2
     exit 1
 fi
 ls -l ./dpp_ex01_intermediate_*.brio
@@ -155,7 +155,7 @@ bxdpp_processing \
     --input-file dpp_ex01_04.xml \
     --output-file dpp_ex01_01-04.data.gz
 if [ $? -ne 0 ]; then
-    echo "ERROR: dpp_processing has failed to merge and convert XML files !" 1>&2
+    echo "ERROR: bxdpp_processing has failed to merge and convert XML files !" 1>&2
     exit 1
 fi
 

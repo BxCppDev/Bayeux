@@ -1,17 +1,19 @@
 // -*- mode: c++; -*-
 /// \file raw_generator_module.h
 
-#ifndef RAW_GENERATOR_MODULE_H_
-#define RAW_GENERATOR_MODULE_H_
+#ifndef RAW_GENERATOR_MODULE_H
+#define RAW_GENERATOR_MODULE_H
 
+// Standard library:
 #include <string>
 
+// Third party:
+// - Boost:
 #include <boost/scoped_ptr.hpp>
-
+// - Bayeux/mygsl:
 #include <mygsl/rng.h>
-
-// The parent module class
-#include <dpp/base_module.h>
+// - Bayeux/dpp:
+#include <dpp/base_module.h> // The parent module class
 
 namespace dpp_ex01 {
 
@@ -62,14 +64,14 @@ namespace dpp_ex01 {
 
   private:
 
-    std::string _raw_data_bank_label_; /** The name of the data bank where
-                                        * the generated raw_data object
-                                        * must be stored in the data record
-                                        */
-    double _mean_number_of_hits_; /// The mean number of hits
-    double _mean_energy_; /// The mean energy per hit
-    double _sigma_energy_; /// The energy standart deviation per hit
-    mygsl::rng _prng_; /// Embedded PRNG
+    /// The name of the data bank where
+    /// the generated raw_data object
+    /// must be stored in the data record
+    std::string _raw_data_bank_label_;
+    double _mean_number_of_hits_; ///< The mean number of hits
+    double _mean_energy_; ///< The mean energy per hit
+    double _sigma_energy_; ///< The energy standart deviation per hit
+    mygsl::rng _prng_; ///< Embedded PRNG
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(raw_generator_module);
@@ -78,10 +80,8 @@ namespace dpp_ex01 {
 
 } // namespace dpp_ex01
 
-
 // Object configuration description (OCD) support :
 #include <datatools/ocd_macros.h>
 DOCD_CLASS_DECLARATION(dpp_ex01::raw_generator_module)
 
-
-#endif // RAW_GENERATOR_MODULE_H_
+#endif // RAW_GENERATOR_MODULE_H

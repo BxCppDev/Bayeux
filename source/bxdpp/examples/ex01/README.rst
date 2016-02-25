@@ -8,16 +8,17 @@ Introduction
 
  * Description :
 
-   This example illustrates the use of the ``module::manager`` class
-   with embedded data processing module objects from the ``bxdpp_processing``
-   program.
+   This example  illustrates the use of  the ``module::manager`` class
+   with   embedded   data   processing   module   objects   from   the
+   ``bxdpp_processing`` program.
 
-   It defines a simple and serializable data model representing a collection
-   of raw hits in a detector. It also defines a special data processing module
-   for the generation of simulated raw hits and storage in the main
-   data/event record (implemented with a ``datatools::things`` instance).
+   It  defines a  simple and  serializable data  model representing  a
+   collection of  raw hits in  a detector.  It also defines  a special
+   data processing module for the generation of simulated raw hits and
+   storage  in   the  main  data/event  record   (implemented  with  a
+   ``datatools::things`` instance).
 
-   The example creates a core DLL, an associated DLL dedicated to
+   The  example creates  a core  DLL, an  associated DLL  dedicated to
    serialization, and provides a test executable.
 
    Finally, it shows how to use the ``bxdpp_processing`` executable to
@@ -69,18 +70,18 @@ Introduction
  * Configuration files :
 
    * ``config/module_manager.conf`` : the configuration parameters for
-     the module manager embeded in ``dpp_processing``
+     the module manager embeded in ``bxdpp_processing``
    * ``config/modules.conf`` : the configuration parameters for some data
-     processing modules to be dynamically loaded by ``dpp_processing``
+     processing modules to be dynamically loaded by ``bxdpp_processing``
 
  * Outputs :
 
    * ``test_dpp_ex01.xml`` : test program output file to check
      serialization of the ``dpp_ex01::hit`` and ``dpp_ex01::raw_data``
      classes
-   * ``dpp_ex01_*.xml`` : final output files of the ``dpp_processing``
+   * ``dpp_ex01_*.xml`` : final output files of the ``bxdpp_processing``
    * ``dpp_ex01_intermediate_*.brio`` : intermediate output files
-     generated during the running of ``dpp_processing``
+     generated during the running of ``bxdpp_processing``
 
  * Build method : CMake
 
@@ -96,8 +97,8 @@ Quick start
 
 3. Build and install the example::
 
-     shell> mkdir __build
-     shell> cd __build
+     shell> mkdir _build.d
+     shell> cd _build.d
      shell> cmake \
        -DCMAKE_INSTALL_PREFIX=.. \
        -DBayeux_DIR=$(bxquery --prefix) \
@@ -177,4 +178,4 @@ Quick start
      shell> rm -f ./test_dpp_ex01.xml
      shell> rm -f ./test_dpp_ex01
      shell> rm -fr ./lib
-     shell> rm -fr ./__build
+     shell> rm -fr ./_build.d
