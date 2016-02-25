@@ -137,8 +137,8 @@ Quick start
 
 3. Build and install the example program::
 
-      $ mkdir __build
-      $ cd __build
+      $ mkdir _build.d
+      $ cd _build.d
       $ cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
 	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
@@ -519,4 +519,4 @@ Quick start
       $ rm prng_seeds.save.~backup~
       $ rm prng_states.save
       $ rm prng_states.save.~backup~
-      $ rm -fr __build/
+      $ rm -fr _build.d/
