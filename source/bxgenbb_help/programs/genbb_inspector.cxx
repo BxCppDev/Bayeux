@@ -65,7 +65,7 @@
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 #include <datatools/library_loader.h>
 #include <datatools/tracer.h>

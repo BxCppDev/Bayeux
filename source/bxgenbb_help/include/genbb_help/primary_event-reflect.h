@@ -7,7 +7,7 @@
 #include <genbb_help/primary_event.h>
 
 // - Bayeux/datatools:
-#include <datatools/reflection_macros.h>
+#include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
 
 // Export the introspection code for the 'genbb::primary_event' class:
