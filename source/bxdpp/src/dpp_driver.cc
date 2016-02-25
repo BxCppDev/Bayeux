@@ -491,6 +491,7 @@ namespace dpp {
               }
             } else if (processing_status & dpp::base_module::PROCESS_STOP) {
               DT_LOG_WARNING(_logging_, "Processing of data record #" << record_counter << " stopped at some stage.");
+              break;
             }
             if (do_break_record_loop) {
               break;

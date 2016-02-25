@@ -165,8 +165,8 @@ namespace dpp {
           if (a_module.has_last_error_message ()) {
             this->append_last_error_message (a_module.get_last_error_message ());
           }
-          a_module.reset_last_error_message ();
-          if (status & PROCESS_FATAL ) {
+          a_module.reset_last_error_message();
+          if (status & PROCESS_FATAL) {
             return PROCESS_FATAL;
           }
         }

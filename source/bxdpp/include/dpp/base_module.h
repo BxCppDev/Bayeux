@@ -203,7 +203,7 @@ namespace dpp {
     datatools::logger::priority _logging; //!< The logging priority threshold
 
     bool        _initialized;    //!< The initialization flag
-    std::string _last_error_message; //!< Last error message
+    std::string _last_error_message; //!< Last error message (questionable)
 
     // Factory stuff :
     DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_module);
