@@ -272,6 +272,7 @@ if [ $do_simulation -eq 1 ]; then
 fi
 
 if [ ${do_clean} -eq 1 ]; then
+    rm -f bias_stats.data
     rm -f ex00_run_sim_module
     rm -f ex00_read_plain_simdata
     rm -f ex00_read_pipeline_simdata
