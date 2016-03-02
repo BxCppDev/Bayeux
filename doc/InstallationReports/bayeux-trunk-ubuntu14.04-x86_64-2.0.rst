@@ -3,7 +3,7 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-02-25
+:Date:   2016-03-02
 
 In this document we propose an installation procedure for the Bayeux/trunk
 library on top of Cadfaelbrew (2016.01) on Xubuntu 14.04 LTS system.
