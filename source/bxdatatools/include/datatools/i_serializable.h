@@ -86,26 +86,6 @@ DR_CLASS_INIT(::datatools::i_serializable);
  * Helpful macros *
  ******************/
 
-
-/** Macro invoked to make a class serializable by inheriting the
- *  ::datatools::i_serializable interface. This
- *  mechanism enables the serialization through base pointer
- *  with the Boost/Serialization library. It is used by the
- *  'datatools::things' class.
- *
- * Example:
- * \code
- * class Foo : public datatools::i_serializable , ...
- * {
- *   ...
- * };
- * \endcode
- * \deprecated
- */
-// #define DATATOOLS_SERIALIZABLE_CLASS            \
-//   public datatools::i_serializable              \
-  /**/
-
 namespace datatools {
   template <class T>
   const std::string & serial_tag();
