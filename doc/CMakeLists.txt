@@ -127,3 +127,10 @@ file(RELATIVE_PATH BAYEUX_DOXYGEN_HTML_DIR_RELATIVE ${__doc_cmake_dir} ${BAYEUX_
 file(RELATIVE_PATH BAYEUX_DOXYGEN_TAGFILE_RELATIVE ${__doc_cmake_dir} ${BAYEUX_DOXYGEN_OUTPUT_DIR}/bayeux.doxy.tag)
 
 configure_file(BayeuxDocs.cmake.in ${__doc_cmake_dir}/BayeuxDocs.cmake @ONLY)
+
+install(
+  FILES
+    ${__doc_cmake_dir}/BayeuxDocs.cmake
+  DESTINATION
+    ${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}
+  )
