@@ -334,7 +334,7 @@ namespace mygsl {
 
   bool polynomial::solver::is_success() const
   {
-    return pImpl->_status_ = GSL_SUCCESS;
+    return pImpl->_status_ == GSL_SUCCESS;
   }
 
   polynomial::solver::solver(unsigned int sz_) {
