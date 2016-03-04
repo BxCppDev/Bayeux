@@ -49,7 +49,7 @@
 
 namespace genbb {
 
-  GENBB_BDD_REGISTRATION_IMPLEMENT(nuclear_transition, "genbb::nuclear_transition");
+  GENBB_BDD_REGISTRATION_IMPLEMENT(nuclear_transition, "genbb::nuclear_transition")
 
   void nuclear_transition::_set_default()
   {

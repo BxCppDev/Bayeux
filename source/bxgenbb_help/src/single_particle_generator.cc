@@ -46,7 +46,7 @@
 
 namespace genbb {
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(single_particle_generator, "genbb::single_particle_generator");
+  GENBB_PG_REGISTRATION_IMPLEMENT(single_particle_generator, "genbb::single_particle_generator")
 
   bool single_particle_generator::can_external_random() const
   {

@@ -36,7 +36,7 @@
 
 namespace genbb {
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(from_file_generator,"genbb::from_file_generator");
+  GENBB_PG_REGISTRATION_IMPLEMENT(from_file_generator,"genbb::from_file_generator")
 
   struct from_file_generator::pimpl_imp
   {

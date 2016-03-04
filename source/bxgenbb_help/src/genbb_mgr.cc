@@ -55,7 +55,7 @@ namespace genbb {
 
   using namespace std;
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(genbb_mgr,"genbb::genbb_mgr");
+  GENBB_PG_REGISTRATION_IMPLEMENT(genbb_mgr,"genbb::genbb_mgr")
 
   // static
   const std::string & genbb_mgr::format_genbb_label()

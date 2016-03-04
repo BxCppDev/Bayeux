@@ -246,7 +246,7 @@ namespace genbb {
     double _cumul_pp_;  //!< Cumulative probability of pair conversion
 
 
-    GENBB_BDD_REGISTRATION_INTERFACE(nuclear_transition);
+    GENBB_BDD_REGISTRATION_INTERFACE(nuclear_transition)
 
   };
 

@@ -51,7 +51,7 @@
 
 namespace genbb {
 
-  GENBB_BDD_REGISTRATION_IMPLEMENT(alpha_decay, "genbb::alpha_decay");
+  GENBB_BDD_REGISTRATION_IMPLEMENT(alpha_decay, "genbb::alpha_decay")
 
   void alpha_decay::_set_default()
   {

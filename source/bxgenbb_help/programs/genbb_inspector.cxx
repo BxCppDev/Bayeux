@@ -337,7 +337,7 @@ namespace genbb {
     geomtools::vector_3d _invalid_vector_;
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -953,7 +953,7 @@ namespace genbb {
  ************************************************************/
 
 // Activate reflection layer for the 'genbb::inspector_data' class:
-DR_CLASS_INIT(genbb::inspector_data);
+DR_CLASS_INIT(genbb::inspector_data)
 
 // Export the introspection code for the 'genbb::inspector_data' class:
 DR_CLASS_EXPORT (genbb::inspector_data, "genbb::inspector_data")

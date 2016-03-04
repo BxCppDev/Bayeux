@@ -43,7 +43,7 @@
 
 namespace genbb {
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(wdecay0,"genbb::wdecay0");
+  GENBB_PG_REGISTRATION_IMPLEMENT(wdecay0,"genbb::wdecay0")
 
 
   // static

@@ -44,7 +44,7 @@
 
 namespace genbb {
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(combined_particle_generator,"genbb::combined_particle_generator");
+  GENBB_PG_REGISTRATION_IMPLEMENT(combined_particle_generator,"genbb::combined_particle_generator")
 
   combined_particle_generator::entry_type::entry_type()
   {

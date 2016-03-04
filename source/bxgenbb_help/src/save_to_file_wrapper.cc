@@ -35,7 +35,7 @@
 
 namespace genbb {
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(save_to_file_wrapper,"genbb::save_to_file_wrapper");
+  GENBB_PG_REGISTRATION_IMPLEMENT(save_to_file_wrapper,"genbb::save_to_file_wrapper")
 
   struct save_to_file_wrapper::pimpl_imp
   {

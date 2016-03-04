@@ -26,19 +26,19 @@ namespace genbb {
 
 /// genbb_help' kernel initialization macro using main function arguments
 #define GENBB_HELP_INIT_MAIN(Argc,Argv)          \
-  DATATOOLS_INIT_MAIN( Argc , Argv );            \
+  DATATOOLS_INIT_MAIN( Argc , Argv )            \
   ::genbb::initialize( Argc , Argv );            \
   /**/
 
 /// genbb_help' kernel initialization macro
 #define GENBB_HELP_INIT()                        \
-  DATATOOLS_INIT_MAIN( 0, 0 );                   \
+  DATATOOLS_INIT_MAIN( 0, 0 )                   \
   ::genbb::initialize(0, 0);                     \
   /**/
 
 #define GENBB_HELP_FINI()                        \
   ::genbb::terminate();                          \
-  DATATOOLS_FINI();                              \
+  DATATOOLS_FINI()                              \
   /**/
 
 #endif // GENBB_HELP_GENBB_HELP_H

@@ -138,7 +138,7 @@ namespace genbb {
 
     boost::scoped_ptr<genbb::decay0::bbpars> _bb_params_;
 
-    GENBB_PG_REGISTRATION_INTERFACE(wdecay0);
+    GENBB_PG_REGISTRATION_INTERFACE(wdecay0)
 
   };
 

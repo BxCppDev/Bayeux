@@ -21,11 +21,11 @@
 
 #define GENBB_PG_REGISTRATION_INTERFACE(GENBB_CLASS_NAME)               \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::i_genbb,GENBB_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::i_genbb,GENBB_CLASS_NAME) \
   /**/
 
 #define GENBB_PG_REGISTRATION_IMPLEMENT(GENBB_CLASS_NAME,GENBB_ID)      \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::i_genbb,GENBB_CLASS_NAME,GENBB_ID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::i_genbb,GENBB_CLASS_NAME,GENBB_ID) \
   /**/
 
 /* Macros for interface/implementation of static creator methods in decay driver classes */
@@ -34,11 +34,11 @@
 
 #define GENBB_BDD_REGISTRATION_INTERFACE(GENBB_CLASS_NAME)              \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::base_decay_driver,GENBB_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::base_decay_driver,GENBB_CLASS_NAME) \
   /**/
 
 #define GENBB_BDD_REGISTRATION_IMPLEMENT(GENBB_CLASS_NAME,GENBB_ID)     \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::base_decay_driver,GENBB_CLASS_NAME,GENBB_ID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::base_decay_driver,GENBB_CLASS_NAME,GENBB_ID) \
   /**/
 
 /* Macros for interface/implementation of static creator methods in Lorentz Boost generator classes */
@@ -47,11 +47,11 @@
 
 #define GENBB_LBG_REGISTRATION_INTERFACE(GENBB_CLASS_NAME)              \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::i_lorentz_boost_generator,GENBB_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (::genbb::i_lorentz_boost_generator,GENBB_CLASS_NAME) \
   /**/
 
 #define GENBB_LBG_REGISTRATION_IMPLEMENT(GENBB_CLASS_NAME,GENBB_ID)     \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::i_lorentz_boost_generator,GENBB_CLASS_NAME,GENBB_ID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::genbb::i_lorentz_boost_generator,GENBB_CLASS_NAME,GENBB_ID) \
   /**/
 
 #endif // GENBB_GENBB_MACROS_H

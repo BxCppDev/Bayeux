@@ -40,7 +40,7 @@
 
 namespace genbb {
 
-  GENBB_PG_REGISTRATION_IMPLEMENT(nuclear_decay_generator, "genbb::nuclear_decay_generator");
+  GENBB_PG_REGISTRATION_IMPLEMENT(nuclear_decay_generator, "genbb::nuclear_decay_generator")
 
   nuclear_decay_generator::nuclear_decay_generator() : i_genbb()
   {

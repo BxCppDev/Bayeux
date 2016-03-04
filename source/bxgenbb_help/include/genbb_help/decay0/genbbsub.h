@@ -50,7 +50,7 @@ namespace genbb {
 
     enum genbbsub_i2bbs_type {
       GENBBSUB_I2BBS_DBD = 1, /// Double beta decay mode
-      GENBBSUB_I2BBS_BACKGROUND = 2, /// Background/calibration decay mode
+      GENBBSUB_I2BBS_BACKGROUND = 2 /// Background/calibration decay mode
     };
 
     enum genbbsub_start_type {

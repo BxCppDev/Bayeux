@@ -111,10 +111,10 @@ private:
 
   geomtools::vector_3d _vbeta_;  //!< Beta vector
 
-  GENBB_LBG_REGISTRATION_INTERFACE(lbs);
+  GENBB_LBG_REGISTRATION_INTERFACE(lbs)
 };
 
-GENBB_LBG_REGISTRATION_IMPLEMENT(lbs, "lbs");
+GENBB_LBG_REGISTRATION_IMPLEMENT(lbs, "lbs")
 
 int main(int argc_, char ** argv_)
 {

@@ -72,7 +72,7 @@ namespace genbb {
     enum flag_type {
       BLANK              = 0,
       NO_PRELOAD         = datatools::bit_mask::bit00,
-      FORCE_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01,
+      FORCE_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01
     };
 
   public:

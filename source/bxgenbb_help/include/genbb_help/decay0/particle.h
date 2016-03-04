@@ -53,7 +53,7 @@ namespace genbb {
         ALPHA          = 47, // alpha
         GEANTINO       = 48, // geantino
         HE3            = 49, // He3
-        CERENKOV       = 50, // Cerenkov
+        CERENKOV       = 50 // Cerenkov
       };
 
     /// Return the name of the particle with given ID (MeV)

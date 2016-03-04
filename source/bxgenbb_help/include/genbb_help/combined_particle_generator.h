@@ -158,7 +158,7 @@ namespace genbb {
     unsigned long _seed_;            //!< Local PRNG's seed
     mygsl::rng    _random_;          //!< Local PRNG
     pg_col_type   _generators_info_; //!< Particle generators
-    GENBB_PG_REGISTRATION_INTERFACE(combined_particle_generator);
+    GENBB_PG_REGISTRATION_INTERFACE(combined_particle_generator)
 
   };
 

@@ -99,7 +99,7 @@ namespace genbb {
     unsigned long _seed_;   //!< Local PRNG's seed
     boost::scoped_ptr<mygsl::rng> _random_; //!< Local PRNG
 
-    GENBB_PG_REGISTRATION_INTERFACE(nuclear_decay_generator);
+    GENBB_PG_REGISTRATION_INTERFACE(nuclear_decay_generator)
 
   };
 

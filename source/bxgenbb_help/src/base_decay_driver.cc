@@ -32,7 +32,7 @@
 namespace genbb {
 
   // Factory stuff :
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_decay_driver,"genbb::base_decay_driver/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_decay_driver,"genbb::base_decay_driver/__system__")
 
 
   void base_decay_driver::_set_default()

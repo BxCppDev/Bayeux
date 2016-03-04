@@ -88,14 +88,14 @@ namespace decay0 {
     //
     //  REPLACE D BY THE LEADING DIAGONAL OF A DIVIDED-DIFFERENCE TABLE, SUP-
     //  PLEMENTED BY AN EXTRA LINE IF *EXTRA* IS TRUE.
-    for (int L = 1; L <= M; L++) {
+    for (int localL = 1; localL <= M; localL++) {
       if (!EXTRA) goto tag_12;
-      ISUB = MPLUS - L;
+      ISUB = MPLUS - localL;
       D[M+1] = (D[M+1] - D[M-1]) / (T[M+1] - T[ISUB-1]);
     tag_12:
       int I = MPLUS;
-      for (int J = L ; J <= M; J++) {
-        ISUB = I - L;
+      for (int J = localL ; J <= M; J++) {
+        ISUB = I - localL;
         D[I-1] = (D[I-1] - D[I-2]) / (T[I-1] - T[ISUB-1]);
         I = I - 1;
       }
@@ -106,7 +106,7 @@ namespace decay0 {
     double SUM = D[MPLUS-1];
     if (EXTRA) SUM = 0.5 * (SUM + D[M+1]);
     int J = M;
-    for (int L = 1; L <= M; L++){
+    for (int localL = 1; localL <= M; localL++){
       SUM = D[J-1] + (X_ - T[J-1]) * SUM;
       J--;
     }

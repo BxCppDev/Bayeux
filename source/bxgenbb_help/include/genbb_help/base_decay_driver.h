@@ -116,7 +116,7 @@ namespace genbb {
     const nuclear_decay *       _decay_;       //!< Handle to a nuclear decay
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_decay_driver);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_decay_driver)
 
   };
 

@@ -197,7 +197,7 @@ namespace genbb {
     double _m2_;              //!< Mass of the daughter nucleus
     two_body_decay _tbd_;     //!< Two-body decay kinematics
 
-    GENBB_BDD_REGISTRATION_INTERFACE(alpha_decay);
+    GENBB_BDD_REGISTRATION_INTERFACE(alpha_decay)
 
   };
 

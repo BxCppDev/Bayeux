@@ -130,7 +130,7 @@ namespace genbb {
     primary_event          _current_;      //!< Current primary event
     double                 _genbb_weight_; //!< GENBB event weight (for DBD energy range)
 
-    GENBB_PG_REGISTRATION_INTERFACE(genbb_mgr);
+    GENBB_PG_REGISTRATION_INTERFACE(genbb_mgr)
 
   };
 

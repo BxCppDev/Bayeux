@@ -354,7 +354,7 @@ namespace genbb {
     double _kr_max_;          //!< Maximum value of the recoil ion kinetic energy
     double _probability_max_; //!< Maximum value of the density function
 
-    GENBB_BDD_REGISTRATION_INTERFACE(beta_decay);
+    GENBB_BDD_REGISTRATION_INTERFACE(beta_decay)
 
   };
 

@@ -102,8 +102,8 @@ void test1(bool draw_, int many_)
     std::clog << "Count : " << i << std::endl;
     NDG.load_next(pe);
     // pe.tree_dump(std::clog, "Nuclear decay:");
-    for (int i = 0; i < (int) pe.get_number_of_particles(); i++) {
-      const genbb::primary_particle & part = pe.get_particle(i);
+    for (int j = 0; j < (int) pe.get_number_of_particles(); j++) {
+      const genbb::primary_particle & part = pe.get_particle(j);
       if (part.is_electron()) {
         double ke = part.get_kinetic_energy();
         h_ke.fill(ke / CLHEP::keV);

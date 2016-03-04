@@ -89,7 +89,7 @@ namespace genbb {
         MODEBB_0NUBB_RHCE_0_NME = 18, /// 0nubb with rhc-eta        0+ -> 0+       with specific NMEs
         MODEBB_18               = MODEBB_0NUBB_RHCE_0_NME,
         MODEBB_MIN              = MODEBB_1,
-        MODEBB_MAX              = MODEBB_18,
+        MODEBB_MAX              = MODEBB_18
       };
 
     std::string decay0_dbd_mode_label(int);

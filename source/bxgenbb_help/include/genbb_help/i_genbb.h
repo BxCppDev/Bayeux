@@ -174,7 +174,7 @@ namespace genbb {
     bool _assign_generation_ids_; //!< Flag to assign unique generation Ids to primary particles
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_genbb);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_genbb)
 
   };
 

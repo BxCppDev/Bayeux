@@ -37,7 +37,7 @@
 namespace genbb {
 
   // Factory stuff :
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_lorentz_boost_generator, "genbb::i_lorentz_boost_generator/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_lorentz_boost_generator, "genbb::i_lorentz_boost_generator/__system__")
 
   i_lorentz_boost_generator::i_lorentz_boost_generator()
   {
@@ -95,8 +95,7 @@ namespace genbb {
   }
 
   // Factory stuff :
-  GENBB_PG_REGISTRATION_IMPLEMENT(lorentz_boost_wrapper, "genbb::lorentz_boost_wrapper");
-
+  GENBB_PG_REGISTRATION_IMPLEMENT(lorentz_boost_wrapper, "genbb::lorentz_boost_wrapper")
   lorentz_boost_wrapper::lorentz_boost_wrapper() : i_genbb()
   {
     _initialized_ = false;

@@ -98,7 +98,7 @@ namespace genbb {
     virtual void _generate(geomtools::vector_3d & speed_, geomtools::vector_3d & vtx_, double & time_) = 0;
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_lorentz_boost_generator);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_lorentz_boost_generator)
 
   };
 
@@ -149,7 +149,7 @@ namespace genbb {
     i_genbb *   _pg_;          //!< Handle to a primary particle generator
     i_lorentz_boost_generator * _lbg_; //!< Handle to a generator of Lorentz boost
     bool _lbg_owned_; //!< Flag to own the handle to the generator of Lorentz boost
-    GENBB_PG_REGISTRATION_INTERFACE(lorentz_boost_wrapper);
+    GENBB_PG_REGISTRATION_INTERFACE(lorentz_boost_wrapper)
 
   };
 

@@ -403,7 +403,7 @@ namespace genbb {
     DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -412,7 +412,7 @@ namespace genbb {
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_particle)
 
 // Activate reflection layer for the genbb::primary_particle class :
-DR_CLASS_INIT(::genbb::primary_particle);
+DR_CLASS_INIT(::genbb::primary_particle)
 
 // Explicit class version:
 #include <boost/serialization/version.hpp>

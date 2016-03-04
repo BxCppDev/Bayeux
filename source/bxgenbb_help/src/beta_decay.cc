@@ -51,7 +51,7 @@
 
 namespace genbb {
 
-  GENBB_BDD_REGISTRATION_IMPLEMENT(beta_decay, "genbb::beta_decay");
+  GENBB_BDD_REGISTRATION_IMPLEMENT(beta_decay, "genbb::beta_decay")
 
   // static
   const int beta_decay::ESO_INVALID_FIXED_CHARGE;

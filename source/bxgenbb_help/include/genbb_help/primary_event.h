@@ -218,7 +218,7 @@ namespace genbb {
     DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -230,7 +230,7 @@ BOOST_CLASS_EXPORT_KEY2(genbb::primary_event, "genbb::primary_event")
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::genbb::primary_event)
 
 // Activate reflection layer for the genbb::primary_event class :
-DR_CLASS_INIT(::genbb::primary_event);
+DR_CLASS_INIT(::genbb::primary_event)
 
 // Explicit class version:
 #include <boost/serialization/version.hpp>
