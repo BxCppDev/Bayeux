@@ -41,7 +41,7 @@ namespace dpp {
       MODE_CLEAR           = 0x1, //!< Clear all banks mode
       MODE_REMOVE_ONE_TYPED_BANK = 0x2, //!< Remove one single bank, optionaly with a given type (serial tag)
       MODE_REMOVE_BANKS    = 0x4, //!< Remove several banks by label (name)
-      MODE_ADD_PROPERTY    = 0x8, //!< Add a property in a bank
+      MODE_ADD_PROPERTY    = 0x8 //!< Add a property in a bank
     };
 
     /// Constructor
@@ -91,7 +91,7 @@ namespace dpp {
     bool                     _add_property_update_; //!< Flag to allow update of an existing property in a 'datatools::property' bank
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(utils_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(utils_module)
 
   };
 

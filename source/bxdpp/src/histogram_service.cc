@@ -10,9 +10,16 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/classification.hpp>
 // - Root:
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-long-long"
+#endif
 #include <TFile.h>
 #include <TH1D.h>
 #include <TH2D.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 // - Bayeux/datatools:
 #include <datatools/io_factory.h>
 #include <datatools/utils.h>

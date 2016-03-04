@@ -151,7 +151,7 @@ namespace dpp {
     i_data_sink                * _sink_;   //!< Abstract data writer
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(output_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(output_module)
 
   };
 

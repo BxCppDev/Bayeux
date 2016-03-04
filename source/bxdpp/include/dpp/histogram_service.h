@@ -118,7 +118,7 @@ namespace dpp {
     std::string               _root_export_title_prefix_; /// General common user histogram title prefix (ROOT export)
     std::string               _root_export_name_suffix_; /// General common user histogram name suffix (ROOT export)
     // Registration :
-    DATATOOLS_SERVICE_REGISTRATION_INTERFACE (histogram_service);
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE (histogram_service)
 
   };
 

@@ -106,7 +106,7 @@ namespace dpp {
   private:
 
     // Macro to automate the registration of the cut :
-    CUT_REGISTRATION_INTERFACE(utils_cut);
+    CUT_REGISTRATION_INTERFACE(utils_cut)
 
   };
 

@@ -107,7 +107,7 @@ namespace dpp {
     std::ostream * _out_;             //<! Output stream handle
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(dump_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(dump_module)
 
   };
 

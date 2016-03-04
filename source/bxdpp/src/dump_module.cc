@@ -37,7 +37,7 @@
 namespace dpp {
 
   // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(dump_module, "dpp::dump_module");
+  DPP_MODULE_REGISTRATION_IMPLEMENT(dump_module, "dpp::dump_module")
 
   void dump_module::set_title(const std::string & a_title)
   {

@@ -16,7 +16,7 @@
 namespace dpp {
 
   // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(utils_module,"dpp::utils_module");
+  DPP_MODULE_REGISTRATION_IMPLEMENT(utils_module,"dpp::utils_module")
 
   // Initialization :
   void utils_module::initialize(const datatools::properties & a_setup,

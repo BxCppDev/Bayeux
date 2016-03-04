@@ -34,7 +34,7 @@
 namespace dpp {
 
   // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(dummy_module, "dpp::dummy_module");
+  DPP_MODULE_REGISTRATION_IMPLEMENT(dummy_module, "dpp::dummy_module")
 
   // The default GP label of the bank :
   const std::string & dummy_module::default_gp_label()

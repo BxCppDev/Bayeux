@@ -67,7 +67,7 @@ namespace dpp {
       {
         STATUS_BLANK       = 0,
         STATUS_CREATED     = datatools::bit_mask::bit00,
-        STATUS_INITIALIZED = datatools::bit_mask::bit01,
+        STATUS_INITIALIZED = datatools::bit_mask::bit01
       };
 
   public:

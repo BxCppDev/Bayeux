@@ -40,7 +40,7 @@
 
 namespace dpp {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_module, "dpp::base_module/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_module, "dpp::base_module/__system__")
 
   bool base_module::is_initialized() const
   {

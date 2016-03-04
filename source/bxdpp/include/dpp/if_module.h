@@ -126,7 +126,7 @@ namespace dpp {
     module_entry   _else_module_;       /// 'else' action module entry
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(if_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(if_module)
 
   };
 

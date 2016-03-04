@@ -39,7 +39,7 @@
 namespace dpp {
 
   // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(output_module, "dpp::output_module");
+  DPP_MODULE_REGISTRATION_IMPLEMENT(output_module, "dpp::output_module")
 
   // Implementation of the interface :
 

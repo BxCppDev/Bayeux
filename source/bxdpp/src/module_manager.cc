@@ -181,11 +181,11 @@ namespace dpp {
 
     if (setup_.has_key("factory.logging.priority")) {
       std::string prio_label = setup_.fetch_string("factory.logging.priority");
-      datatools::logger::priority p = datatools::logger::get_priority(prio_label);
-      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+      datatools::logger::priority op = datatools::logger::get_priority(prio_label);
+      DT_THROW_IF(op == datatools::logger::PRIO_UNDEFINED,
                   std::domain_error,
                   "Unknow logging priority ``" << prio_label << "`` !");
-      _factory_register_.set_logging_priority(p);
+      _factory_register_.set_logging_priority(op);
     }
 
     if (setup_.has_flag ("factory.no_preload")) {

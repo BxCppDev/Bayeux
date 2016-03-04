@@ -55,7 +55,7 @@ namespace dpp {
     enum ctor_flag_type {
       BLANK             = 0,
       FACTORY_NOPRELOAD = datatools::bit_mask::bit00,
-      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01,
+      FACTORY_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01
     };
 
     bool is_no_preload () const;

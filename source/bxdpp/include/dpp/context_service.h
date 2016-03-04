@@ -104,7 +104,7 @@ namespace dpp {
     datatools::multi_properties * store_; //!< Internal store
 
     // Registration :
-    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(context_service);
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(context_service)
 
   };
 

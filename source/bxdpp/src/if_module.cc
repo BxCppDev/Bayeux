@@ -39,7 +39,7 @@
 namespace dpp {
 
   // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(if_module, "dpp::if_module");
+  DPP_MODULE_REGISTRATION_IMPLEMENT(if_module, "dpp::if_module")
 
   const std::string & if_module::default_cut_service_label()
   {

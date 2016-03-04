@@ -37,7 +37,7 @@
 namespace dpp {
 
   // Registration instantiation macro :
-  DPP_MODULE_REGISTRATION_IMPLEMENT(skip_module, "dpp::skip_module");
+  DPP_MODULE_REGISTRATION_IMPLEMENT(skip_module, "dpp::skip_module")
 
   int skip_module::get_first () const
   {

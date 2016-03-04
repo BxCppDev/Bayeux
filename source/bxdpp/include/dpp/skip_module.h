@@ -101,7 +101,7 @@ namespace dpp {
     bool               _inverted_; //!< Invert data record selection flag
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(skip_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(skip_module)
 
   };
 

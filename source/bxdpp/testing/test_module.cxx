@@ -78,7 +78,7 @@ class test_module : public dpp::base_module
   std::string _label_;
 
   // Macro to automate the registration of the module :
-  DPP_MODULE_REGISTRATION_INTERFACE(test_module);
+  DPP_MODULE_REGISTRATION_INTERFACE(test_module)
 
 };
 

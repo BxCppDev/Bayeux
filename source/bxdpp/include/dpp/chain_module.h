@@ -91,7 +91,7 @@ namespace dpp {
     module_list_type _modules_;  //!< The list of data processing modules
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(chain_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(chain_module)
 
   };
 

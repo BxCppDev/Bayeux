@@ -97,7 +97,7 @@ namespace dpp {
     std::string _flag_name_; //!< The name of the flag to be stored inside the "General properties" data bank.
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(dummy_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(dummy_module)
 
   };
 

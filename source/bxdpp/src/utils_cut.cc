@@ -20,7 +20,7 @@
 namespace dpp {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(utils_cut, "dpp::utils_cut");
+  CUT_REGISTRATION_IMPLEMENT(utils_cut, "dpp::utils_cut")
 
   void utils_cut::set_mode (int mode_)
   {

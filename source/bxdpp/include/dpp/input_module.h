@@ -163,7 +163,7 @@ namespace dpp {
     bool                         _metadata_updated_; //!< Flag for possible metadata update
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(input_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(input_module)
 
   };
 

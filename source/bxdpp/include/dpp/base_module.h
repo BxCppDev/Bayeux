@@ -206,7 +206,7 @@ namespace dpp {
     std::string _last_error_message; //!< Last error message (questionable)
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_module);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_module)
 
   };
 
@@ -228,7 +228,7 @@ namespace dpp {
  */
 #define DPP_MODULE_REGISTRATION_INTERFACE(T)                            \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::dpp::base_module,T); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::dpp::base_module,T) \
   /**/
 
 /** Implementation macro to automate the registration of the module in the global register for
@@ -240,7 +240,7 @@ namespace dpp {
  *  \endcode
  */
 #define DPP_MODULE_REGISTRATION_IMPLEMENT(T,ModuleID)                   \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::dpp::base_module,T,ModuleID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::dpp::base_module,T,ModuleID) \
   /**/
 
 #endif // DPP_BASE_MODULE_H
