@@ -61,6 +61,12 @@ if(BAYEUX_USE_LEGACY_ROOT)
     "${module_include_dir}"
     )
   list(APPEND ${module_name}_MODULE_SOURCES ${PROJECT_BINARY_DIR}/brio_dict.cc)
+
+  if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
+    set_property(SOURCE ${PROJECT_BINARY_DIR}/brio_dict.cc
+      PROPERTY COMPILE_FLAGS "-Wno-keyword-macro -Wno-c++11-long-long"
+      )
+  endif()
 else()
   root_generate_dictionary(brio_dict
     ${module_include_dir}/${module_name}/detail/brio_record.h
@@ -68,6 +74,11 @@ else()
     LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
     )
   list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
+    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
+      PROPERTY COMPILE_FLAGS "-Wno-keyword-macro -Wno-c++11-long-long"
+      )
+    endif()
 endif()
 
 # - Published headers

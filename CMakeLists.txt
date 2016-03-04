@@ -60,23 +60,32 @@ endif()
 # - Enforce all warnings, but ensure other flags are retained
 # Note that the added flags *won't* show up in the cache.
 # TODO : better way to do this with the "Make Override" system?
-option(BAYEUX_FORCE_CXX_ALL_WARNINGS "Enable all C++ compiler warnings" ON)
+option(BAYEUX_COMPILER_ERROR_ON_WARNING "Turn warnings into errors" ON)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|(Apple)+Clang")
-  if (BAYEUX_FORCE_CXX_ALL_WARNINGS)
-    set(BAYEUX_CXX_FLAGS "-W -Wall")
+  set(BAYEUX_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic")
+
+  # Disable C99 extension warnings on Clang
+  if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
+    set(BAYEUX_CXX_FLAGS "${BAYEUX_CXX_FLAGS} -Wno-c99-extensions")
+  endif()
+
+  if(BAYEUX_COMPILER_ERROR_ON_WARNING)
+    # Use fatal-errors to fall over at first sign of trouble
+    set(BAYEUX_CXX_FLAGS "${BAYEUX_CXX_FLAGS} -Werror -Wfatal-errors")
   endif()
 
   # On clang, need larger template depth
   if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
-    set(BAYEUX_CXX_FLAGS "${Bayeux_CXX_FLAGS} -ftemplate-depth=512")
+    set(BAYEUX_CXX_FLAGS "${BAYEUX_CXX_FLAGS} -ftemplate-depth=512")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
   # Needs more testing
   set(BAYEUX_CXX_FLAGS "-w2")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${BAYEUX_CXX_FLAGS}")
+# Enforce c++98 for now.
+set(CMAKE_CXX_FLAGS "${BAYEUX_CXX_FLAGS} -std=c++98 ${CMAKE_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------
 # Optional IWYU support

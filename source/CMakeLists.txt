@@ -86,7 +86,6 @@ endif()
 # - Core Includes for Bayeux + Third Party
 include_directories(${BAYEUX_BUILDPRODUCT_DIR}/include)
 include_directories(${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${GSL_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
@@ -96,6 +95,7 @@ if (Qt4_FOUND)
   include(${QT_USE_FILE})
   add_definitions(${QT_DEFINITIONS})
 endif()
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------
 # Set variable to hold addons for later export
