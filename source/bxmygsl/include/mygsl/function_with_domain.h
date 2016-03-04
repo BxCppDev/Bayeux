@@ -91,7 +91,7 @@ namespace mygsl {
     interval                 _domain_of_definition_; //!< Interval of definition
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(function_with_domain);
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(function_with_domain)
 
   };
 

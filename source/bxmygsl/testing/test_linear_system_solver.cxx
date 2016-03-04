@@ -110,18 +110,18 @@ int main (int argc_, char ** argv_)
       {
         double a1, b1, c1;
         double a2, b2, c2;
-        double x,y;
+        double local_x,local_y;
         a1 = 1.0;
         b1 = 2.0;
         c1 = 3.0;
         a2 = 4.0;
         b2 = 5.0;
         c2 = 0.0;
-        if (mygsl::linear_system_2x2_solve (a1, b1, c1, a2, b2, c2, x, y))
+        if (mygsl::linear_system_2x2_solve (a1, b1, c1, a2, b2, c2, local_x, local_y))
           {
             cout << "Solution: " << endl;
-            cout << "  x = " << x << endl;
-            cout << "  y = " << y << endl;
+            cout << "  x = " << local_x << endl;
+            cout << "  y = " << local_y << endl;
           }
         else
           {

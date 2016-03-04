@@ -230,8 +230,8 @@ int main (int /* argc_ */, char ** /* argv_ */)
     tf_inner.lock_table ();
     // Draw it:
     {
-      double dx = 0.01;
-      for (double x = tf_outer.x_min (); x <= tf_outer.x_max () + 0.001 * dx; x += dx) {
+      double local_dx = 0.01;
+      for (double x = tf_outer.x_min (); x <= tf_outer.x_max () + 0.001 * local_dx; x += local_dx) {
         if (tf_outer.is_valid (x)) {
           cout << x << ' ' << tf_outer (x) << endl;
         }
@@ -240,8 +240,8 @@ int main (int /* argc_ */, char ** /* argv_ */)
     }
     // Draw it:
     {
-      double dx = 0.01;
-      for (double x = tf_inner.x_min (); x <= tf_inner.x_max () + 0.001 * dx; x += dx) {
+      double local_dx = 0.01;
+      for (double x = tf_inner.x_min (); x <= tf_inner.x_max () + 0.001 * local_dx; x += local_dx) {
         if (tf_inner.is_valid (x))  {
           cout << x << ' ' << tf_inner (x) << endl;
         }

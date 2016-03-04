@@ -80,7 +80,7 @@ namespace mygsl {
       INIT_SEED_FROM_CURRENT_TIME_AND_PID = INIT_SEED_FROM_CURRENT_TIME | INIT_SEED_FROM_CURRENT_PID ,
       INIT_SEED_FROM_URANDOM = datatools::bit_mask::bit02,
       //INIT_SEED_FROM_RANDOM_DEVICE = datatools::bit_mask::bit03
-      INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_URANDOM,
+      INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_URANDOM
     };
 
     /// Return true if the seed has a valid value

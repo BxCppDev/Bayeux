@@ -67,7 +67,7 @@ namespace mygsl {
                              bool inherit_               = false) const;
 
 
-      DATATOOLS_SERIALIZATION_DECLARATION();
+      DATATOOLS_SERIALIZATION_DECLARATION()
     };
 
     /// Alias to histogram dictionnary
@@ -204,7 +204,7 @@ namespace mygsl {
     dict_type             _dict_;                   //!< Dictionnary of histogram entries
     datatools::properties _auxiliaries_;            //!< Auxiliary peoperties
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

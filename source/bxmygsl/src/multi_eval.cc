@@ -111,7 +111,7 @@ namespace mygsl {
   {
     const multi_eval * an_eval = static_cast<const multi_eval *>(functor_);
     return (*an_eval) (x_);
-  };
+  }
 
   /***************************************/
 

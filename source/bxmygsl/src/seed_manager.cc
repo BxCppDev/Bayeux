@@ -301,7 +301,7 @@ namespace mygsl {
     // showing contents:
     DT_LOG_TRACE (get_logging_priority (), "Seed manager contains:");
     iter_type it, it2;
-    for (iter_type it = mmseeds.begin();
+    for (it = mmseeds.begin();
          it != mmseeds.end();
          it = it2)
       {
@@ -512,9 +512,9 @@ namespace mygsl {
       }
     typedef boost::tokenizer<boost::char_separator<char> > tokenizator;
     boost::char_separator<char> sep(";");
-    tokenizator tok (content, sep);
-    for (tokenizator::iterator beg = tok.begin ();
-         beg != tok.end ();
+    tokenizator tok_iter (content, sep);
+    for (tokenizator::iterator beg = tok_iter.begin ();
+         beg != tok_iter.end ();
          ++beg)
       {
         boost::char_separator<char> sep2 ("=");

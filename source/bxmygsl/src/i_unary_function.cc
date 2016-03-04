@@ -20,7 +20,7 @@
 namespace mygsl {
 
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_unary_function,
-                                                   "mygsl::i_unary_function/__system__");
+                                                   "mygsl::i_unary_function/__system__")
 
   const double i_unary_function::DEFAULT_EPSILON = 1.0e-7;
   const double i_unary_function::AUTO_EPSILON    = 0.0;
@@ -331,7 +331,7 @@ namespace mygsl {
   }
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(identity_function,
-                                             "mygsl::identity_function");
+                                             "mygsl::identity_function")
 
   identity_function::identity_function()
   {

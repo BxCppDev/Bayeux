@@ -115,7 +115,7 @@ namespace mygsl {
     tabfunc_impl *pImpl;
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(tabulated_function);
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(tabulated_function)
 
   };
 

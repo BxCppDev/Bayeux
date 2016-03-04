@@ -28,7 +28,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(composite_function,
-                                             "mygsl::composite_function");
+                                             "mygsl::composite_function")
 
   composite_function::composite_function()
   {

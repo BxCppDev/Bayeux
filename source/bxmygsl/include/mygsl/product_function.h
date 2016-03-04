@@ -96,8 +96,7 @@ namespace mygsl {
     const i_unary_function * _g_; //!< Second functor
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(product_function);
-
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(product_function)
   };
 
 } // end of namespace mygsl

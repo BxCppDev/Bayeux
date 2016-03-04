@@ -30,7 +30,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(gaussian_function,
-                                             "mygsl::gaussian_function");
+                                             "mygsl::gaussian_function")
 
   void gaussian_function::_set_defaults()
   {

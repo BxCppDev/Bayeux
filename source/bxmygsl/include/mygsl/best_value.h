@@ -65,7 +65,7 @@ namespace mygsl {
       double _error_high_;
       double _confidence_level_;
 
-      DATATOOLS_SERIALIZATION_DECLARATION();
+      DATATOOLS_SERIALIZATION_DECLARATION()
 
     };
 

@@ -28,7 +28,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(gate_function,
-                                             "mygsl::gate_function");
+                                             "mygsl::gate_function")
 
   void gate_function::_set_defaults()
   {

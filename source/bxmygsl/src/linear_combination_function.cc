@@ -28,7 +28,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(linear_combination_function,
-                                             "mygsl::linear_combination_function");
+                                             "mygsl::linear_combination_function")
 
   void linear_combination_function::_set_defaults()
   {

@@ -83,7 +83,7 @@ namespace mygsl {
       double sumsq;         /// Sum of squared residuals
       double chisq;         /// Chi-square
 
-      DATATOOLS_SERIALIZATION_DECLARATION();
+      DATATOOLS_SERIALIZATION_DECLARATION()
 
     };
 

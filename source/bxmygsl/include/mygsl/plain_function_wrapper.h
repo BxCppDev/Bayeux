@@ -78,7 +78,7 @@ namespace mygsl {
     plain_function_type _plain_function_; //!< Address of a plain function
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(plain_function_wrapper);
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(plain_function_wrapper)
 
   };
 

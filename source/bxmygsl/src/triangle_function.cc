@@ -28,7 +28,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(triangle_function,
-                                             "mygsl::triangle_function");
+                                             "mygsl::triangle_function")
 
   void triangle_function::_set_defaults()
   {

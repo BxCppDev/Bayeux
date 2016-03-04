@@ -32,11 +32,11 @@ namespace datatools {
 
 #define MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(UNARY_FUNCTOR_CLASS) \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::mygsl::i_unary_function, UNARY_FUNCTOR_CLASS); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::mygsl::i_unary_function, UNARY_FUNCTOR_CLASS) \
   /**/
 
 #define MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(UNARY_FUNCTOR_CLASS, UNARY_FUNCTOR_CLASS_ID) \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::mygsl::i_unary_function, UNARY_FUNCTOR_CLASS, UNARY_FUNCTOR_CLASS_ID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::mygsl::i_unary_function, UNARY_FUNCTOR_CLASS, UNARY_FUNCTOR_CLASS_ID) \
   /**/
 
 namespace mygsl {
@@ -184,7 +184,7 @@ namespace mygsl {
     double _epsilon_; //!< Precision
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_unary_function);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_unary_function)
 
   };
 
@@ -207,7 +207,7 @@ namespace mygsl {
   private:
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(identity_function);
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(identity_function)
 
   };
 

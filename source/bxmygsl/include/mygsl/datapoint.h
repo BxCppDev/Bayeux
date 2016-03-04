@@ -62,7 +62,7 @@ namespace mygsl {
     double _y_;       ///< Y coordinate
     double _sigma_y_; ///< Error on Y coordinate
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

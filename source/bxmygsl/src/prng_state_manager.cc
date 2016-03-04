@@ -312,7 +312,7 @@ namespace mygsl {
       //   }
       DT_THROW_IF (! iss,runtime_error,"Cannot read the size of the PRNG internal state from file '" << fn << "' file !");
       add_state (label, state_sz);
-      for (size_t i = 0; i < state_sz; i++) {
+      for (size_t j = 0; j < state_sz; j++) {
         unsigned int val;
         iss >> val;
         DT_THROW_IF (! iss,runtime_error,"Cannot read the PRNG internal state byte from file '" << fn << "' file !");
@@ -395,8 +395,8 @@ namespace mygsl {
       const record & rec = i->second;
       ofs << i->first << ' ';
       ofs << rec.state_buffer.size ();
-      for (size_t i = 0; i < rec.state_buffer.size (); i++) {
-        unsigned int b = static_cast<unsigned int> (rec.state_buffer[i]);
+      for (size_t j = 0; j < rec.state_buffer.size (); j++) {
+        unsigned int b = static_cast<unsigned int> (rec.state_buffer[j]);
         ofs << ' ' << b;
       }
       ofs << endl;

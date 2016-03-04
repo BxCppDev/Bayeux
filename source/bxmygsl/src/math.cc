@@ -68,9 +68,9 @@ namespace mygsl {
       out_ << "'";
       out_ << " address=[";
       if (pfe.type == PLAIN_FUNCTION_SIMPLE) {
-        out_ << (void*) pfe.func_simple;
+        out_ << pfe.func_simple;
       } else if (pfe.type == PLAIN_FUNCTION_WITH_PARAMS) {
-        out_ << (void*) pfe.func_with_params;
+        out_ << pfe.func_with_params;
       }
       out_ << "]";
       out_ << std::endl;

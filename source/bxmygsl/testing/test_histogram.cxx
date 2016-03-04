@@ -255,8 +255,8 @@ int main(int /* argc_ */, char ** /* argv_ */)
       }
      try
         {
-          mygsl::histogram h;
-          h *= 2.0;
+          mygsl::histogram local_h;
+          local_h *= 2.0;
         }
       catch(std::exception & pb)
         {

@@ -28,7 +28,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(product_function,
-                                             "mygsl::product_function");
+                                             "mygsl::product_function")
 
   product_function::product_function()
   {

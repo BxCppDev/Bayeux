@@ -28,7 +28,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(function_with_domain,
-                                             "mygsl::function_with_domain");
+                                             "mygsl::function_with_domain")
 
   bool function_with_domain::has_domain_of_definition() const
   {

@@ -166,7 +166,7 @@ namespace mygsl {
       double _max_; //!< Max bound
       double _eps_; //!< Epsilon
 
-      DATATOOLS_SERIALIZATION_DECLARATION();
+      DATATOOLS_SERIALIZATION_DECLARATION()
 
     };
 

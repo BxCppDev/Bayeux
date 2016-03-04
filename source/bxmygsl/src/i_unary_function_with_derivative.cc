@@ -92,7 +92,7 @@ namespace mygsl {
   // Class unary_function_promoted_with_numeric_derivative:
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(unary_function_promoted_with_numeric_derivative,
-                                             "mygsl::unary_function_promoted_with_numeric_derivative");
+                                             "mygsl::unary_function_promoted_with_numeric_derivative")
 
   bool unary_function_promoted_with_numeric_derivative::has_functor() const
   {

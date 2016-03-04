@@ -23,7 +23,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(tabulated_function,
-                                             "mygsl::tabulated_function");
+                                             "mygsl::tabulated_function")
 
   const std::string & tabulated_function::linear_interp_name()
   {

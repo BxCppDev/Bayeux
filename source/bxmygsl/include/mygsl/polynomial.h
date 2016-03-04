@@ -146,10 +146,10 @@ namespace mygsl {
 
     std::vector<double> _c_; //!< Coefficients of the polynomial
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(polynomial);
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(polynomial)
 
   };
 

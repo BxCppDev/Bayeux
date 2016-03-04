@@ -85,7 +85,7 @@ namespace mygsl {
     double _amplitude_; //!< Amplitude
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(gaussian_function);
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(gaussian_function)
 
   };
 

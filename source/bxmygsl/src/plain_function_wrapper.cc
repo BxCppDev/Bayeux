@@ -31,7 +31,7 @@
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(plain_function_wrapper,
-                                             "mygsl::plain_function_wrapper");
+                                             "mygsl::plain_function_wrapper")
 
   void plain_function_wrapper::set_plain_function_by_name(const std::string & plain_func_name_)
   {

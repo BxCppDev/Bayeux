@@ -91,8 +91,7 @@ namespace mygsl {
     double _amplitude_; //!< Amplitude of the gate
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(gate_function);
-
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(gate_function)
   };
 
 } // end of namespace mygsl

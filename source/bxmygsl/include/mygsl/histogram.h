@@ -244,7 +244,7 @@ namespace mygsl {
     gsl_histogram * _h_;
     datatools::properties _auxiliaries_;
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   public:
 

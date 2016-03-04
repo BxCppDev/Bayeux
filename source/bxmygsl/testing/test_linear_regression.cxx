@@ -78,11 +78,11 @@ int main (int /* argc_ */, char ** /* argv_ */)
           for (double x = min (0.0, x_min); x <= (x_max + 0.5 * dx); x += dx)
             {
               double y;
-              double y_err;
-              lr_func.eval_err(x, y, y_err);
+              double local_y_err;
+              lr_func.eval_err(x, y, local_y_err);
               cout << x << ' '
                    << y << ' '
-                   << y_err << endl;
+                   << local_y_err << endl;
 
             }
           cout << endl;
@@ -92,11 +92,11 @@ int main (int /* argc_ */, char ** /* argv_ */)
             {
               double x = points[i].x();
               double y;
-              double y_err;
-              lr_func.eval_err(x, y, y_err);
+              double local_y_err;
+              lr_func.eval_err(x, y, local_y_err);
               cout << x << ' '
                    << y << ' '
-                   << y_err << endl;
+                   << local_y_err << endl;
             }
           cout << endl;
           cout << endl;
@@ -126,11 +126,11 @@ int main (int /* argc_ */, char ** /* argv_ */)
           for (double x = min (0.0, x_min); x <= (x_max + 0.5 * dx); x += dx)
             {
               double y;
-              double y_err;
-              lr_func.eval_err(x, y, y_err);
+              double local_y_err;
+              lr_func.eval_err(x, y, local_y_err);
               cout << x << ' '
                    << y << ' '
-                   << y_err << endl;
+                   << local_y_err << endl;
 
             }
           cout << endl;
@@ -140,11 +140,11 @@ int main (int /* argc_ */, char ** /* argv_ */)
             {
               double x = points[i].x();
               double y;
-              double y_err;
-              lr_func.eval_err(x, y, y_err);
+              double local_y_err;
+              lr_func.eval_err(x, y, local_y_err);
               cout << x << ' '
                    << y << ' '
-                   << y_err << endl;
+                   << local_y_err << endl;
             }
           cout << endl;
           cout << endl;

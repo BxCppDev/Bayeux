@@ -294,7 +294,7 @@ namespace mygsl {
     gsl_histogram2d * _h_;  // bin(i,j) = bin[i * ny + j].
     datatools::properties _auxiliaries_;
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   public:
 

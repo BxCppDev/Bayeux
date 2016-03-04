@@ -105,7 +105,7 @@ namespace mygsl {
     double _non_zero_domain_max_; //!< Non zero domain maximum bound
 
     //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(linear_combination_function);
+    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(linear_combination_function)
 
   };
 

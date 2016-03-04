@@ -26,7 +26,7 @@ namespace mygsl {
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(polynomial, "mygsl::polynomial")
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(polynomial,
-                                             "mygsl::polynomial");
+                                             "mygsl::polynomial")
 
   bool polynomial::is_valid() const {
     return _c_.size() > 0;
