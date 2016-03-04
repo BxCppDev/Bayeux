@@ -35,7 +35,7 @@ namespace mctools {
   namespace g4 {
 
     // Registration instantiation macro :
-    DPP_MODULE_REGISTRATION_IMPLEMENT(simulation_module, "mctools::g4::simulation_module");
+    DPP_MODULE_REGISTRATION_IMPLEMENT(simulation_module, "mctools::g4::simulation_module")
 
     void simulation_module::set_geo_label(const std::string & geo_)
     {

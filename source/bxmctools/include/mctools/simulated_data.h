@@ -53,7 +53,7 @@ namespace mctools {
       {
         INVALID_HIT_COLLECTION_TYPE = -1, //!< Invalid type of hit collection
         PLAIN_HIT_COLLECTION_TYPE   =  0, //!< @deprecated Collection of plain hits
-        HANDLE_HIT_COLLECTION_TYPE  =  1, //!< Collection of hit handles
+        HANDLE_HIT_COLLECTION_TYPE  =  1 //!< Collection of hit handles
       };
 
     /// Categories of MC hits
@@ -226,11 +226,11 @@ namespace mctools {
     plain_step_hits_dict_type _plain_step_hits_dict_; //!< Dictionary of collections of plain hits
 
     // datatools/Boost/brio serialization:
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
 #if MCTOOLS_WITH_REFLECTION == 1
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 #endif
 
   };
@@ -242,7 +242,7 @@ BOOST_CLASS_EXPORT_KEY2(mctools::simulated_data, "mctools::simulated_data")
 
 #if MCTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the mctools::simulated_data class :
-DR_CLASS_INIT(::mctools::simulated_data);
+DR_CLASS_INIT(::mctools::simulated_data)
 #endif // MCTOOLS_WITH_REFLECTION
 
 #include <boost/serialization/version.hpp>

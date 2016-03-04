@@ -22,7 +22,7 @@
 namespace mctools {
 
   MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(fluence_step_hit_processor,
-                                                    "mctools::fluence_step_hit_processor");
+                                                    "mctools::fluence_step_hit_processor")
 
   void fluence_step_hit_processor::set_mapping_category(const std::string & sc_)
   {

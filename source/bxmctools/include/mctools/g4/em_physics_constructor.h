@@ -184,7 +184,7 @@ namespace mctools {
 
       boost::scoped_ptr<_work_type_> _work_; ///< Private working data
 
-      DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(base_physics_constructor, em_physics_constructor);
+      DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(base_physics_constructor, em_physics_constructor)
 
     };
 

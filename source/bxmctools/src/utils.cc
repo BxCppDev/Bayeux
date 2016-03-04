@@ -41,7 +41,7 @@ namespace mctools {
   const std::string track_utils::PRIMARY_PARTICLE_FLAG     = "track.primary";
   const std::string track_utils::MAJOR_TRACK_FLAG          = "track.major";
   const std::string track_utils::START_KINETIC_ENERGY_KEY  = "track.start_kinetic_energy";
-  const std::string track_utils::STOP_KINETIC_ENERGY_KEY   = "track.stop_kinetic_energy"; ;
+  const std::string track_utils::STOP_KINETIC_ENERGY_KEY   = "track.stop_kinetic_energy";
   const std::string track_utils::CREATOR_PROCESS_KEY       = "track.creator_process";
   const std::string track_utils::CREATOR_CATEGORY_KEY      = "track.creator_category";
   const std::string track_utils::DELTA_RAY_FROM_ALPHA_FLAG = "track.delta_ray_from_alpha";

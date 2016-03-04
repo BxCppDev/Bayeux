@@ -44,7 +44,7 @@ namespace mctools {
       return -1; // Special invalid code
     }
 
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_physics_constructor, "mctools::g4::base_physics_constructor/__system__");
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_physics_constructor, "mctools::g4::base_physics_constructor/__system__")
 
     bool base_physics_constructor::is_initialized() const
     {

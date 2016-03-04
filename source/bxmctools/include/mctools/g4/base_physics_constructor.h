@@ -118,7 +118,7 @@ namespace mctools {
       physics_list * _mother_physics_list_; //!< Reference to the mother physics list
 
       // Factory registration system :
-      DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_physics_constructor);
+      DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_physics_constructor)
 
       friend class physics_list;
 

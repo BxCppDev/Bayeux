@@ -94,7 +94,7 @@ namespace mctools {
 
     DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (base_physics_constructor,
                                                                neutrons_physics_constructor,
-                                                               "mctools::g4::neutrons_physics_constructor");
+                                                               "mctools::g4::neutrons_physics_constructor")
 
     // *** neutrons_physics_constructor *** //
     neutrons_physics_constructor::neutrons_physics_constructor () : base_physics_constructor ()

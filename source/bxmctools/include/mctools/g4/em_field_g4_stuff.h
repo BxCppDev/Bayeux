@@ -64,7 +64,7 @@ namespace mctools {
         STEPPER_HELIX_HEUM,
         STEPPER_HELIX_IMPLICIT_EULER,
         STEPPER_HELIX_MIXED_EULER,
-        STEPPER_HELIX_SIMPLE_RUNGE,
+        STEPPER_HELIX_SIMPLE_RUNGE
        };
 
       static std::string label_from_stepper(stepper_type);

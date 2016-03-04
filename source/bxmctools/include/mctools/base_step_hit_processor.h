@@ -185,7 +185,7 @@ namespace mctools {
     pool_type                      * _pool;         ///< Reference to an external pool of hits
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_step_hit_processor);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_step_hit_processor)
 
   };
 
@@ -237,7 +237,7 @@ namespace mctools {
     bool _record_mc_step_hit_processor_; /** Flag to mark MC step hits with the name of the processor
                                           */
     // Registration macro :
-    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(push_all_step_hit_processor);
+    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(push_all_step_hit_processor)
 
   };
 
@@ -268,7 +268,7 @@ namespace mctools {
                          ::mctools::simulated_data::hit_collection_type & the_plain_hits);
 
     // Registration macro :
-    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(kill_all_step_hit_processor);
+    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(kill_all_step_hit_processor)
 
   };
 

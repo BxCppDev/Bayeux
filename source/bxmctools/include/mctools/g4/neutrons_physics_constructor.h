@@ -76,7 +76,7 @@ namespace mctools {
 
       /// Registration macro :
       DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(base_physics_constructor,
-                                                           neutrons_physics_constructor);
+                                                           neutrons_physics_constructor)
 
     };
 

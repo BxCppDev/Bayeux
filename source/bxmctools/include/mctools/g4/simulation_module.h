@@ -103,7 +103,7 @@ namespace mctools {
       simulation_ctrl          * _simulation_ctrl_;    //!< The embedded control object for thread synchronization
 
       // Registration of the module :
-      DPP_MODULE_REGISTRATION_INTERFACE(simulation_module);
+      DPP_MODULE_REGISTRATION_INTERFACE(simulation_module)
 
     };
 

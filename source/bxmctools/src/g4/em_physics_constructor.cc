@@ -97,7 +97,7 @@ namespace mctools {
 
     DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(base_physics_constructor,
                                                               em_physics_constructor,
-                                                              "mctools::g4::em_physics_constructor");
+                                                              "mctools::g4::em_physics_constructor")
 
     // PIMPL-ized working data:
     struct em_physics_constructor::_work_type_

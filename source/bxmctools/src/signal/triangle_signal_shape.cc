@@ -39,7 +39,7 @@ namespace mctools {
   namespace signal {
 
     MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(triangle_signal_shape,
-                                               "mctools::signal::triangle_signal_shape");
+                                               "mctools::signal::triangle_signal_shape")
 
     void triangle_signal_shape::_set_defaults()
     {

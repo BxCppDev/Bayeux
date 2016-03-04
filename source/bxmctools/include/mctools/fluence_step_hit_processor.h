@@ -123,7 +123,7 @@ namespace mctools {
                                                            */
 
     // Registration macro :
-    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(fluence_step_hit_processor);
+    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(fluence_step_hit_processor)
 
   };
 

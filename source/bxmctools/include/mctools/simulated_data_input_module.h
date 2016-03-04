@@ -82,7 +82,7 @@ namespace mctools {
     boost::scoped_ptr<mctools::simulated_data_reader> _reader_; //!< Reader
 
     // Macro to automate the registration of the module :
-    DPP_MODULE_REGISTRATION_INTERFACE(simulated_data_input_module);
+    DPP_MODULE_REGISTRATION_INTERFACE(simulated_data_input_module)
 
   };
 

@@ -209,11 +209,11 @@ namespace mctools {
     std::string                  _particle_name_;  //!< Name of the particle associated to the hit
     double                       _biasing_weight_; //!< The biasing weight of the particle track
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
 #if MCTOOLS_WITH_REFLECTION == 1
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 #endif
 
   };
@@ -222,7 +222,7 @@ namespace mctools {
 
 #if MCTOOLS_WITH_REFLECTION == 1
 // Activate reflection layer for the mctools::base_step_hit class :
-DR_CLASS_INIT(::mctools::base_step_hit);
+DR_CLASS_INIT(::mctools::base_step_hit)
 #endif // MCTOOLS_WITH_REFLECTION
 
 // Class version:

@@ -20,7 +20,7 @@
 namespace mctools {
 
   MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(calorimeter_step_hit_processor,
-                                                    "mctools::calorimeter_step_hit_processor");
+                                                    "mctools::calorimeter_step_hit_processor")
 
   void calorimeter_step_hit_processor::set_mapping_category(const std::string & sc_)
   {

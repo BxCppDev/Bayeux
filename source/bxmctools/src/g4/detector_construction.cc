@@ -34,6 +34,10 @@
 #include <emfield/geom_map.h>
 
 // G4 stuff:
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-long-long"
+#endif
 #include <globals.hh>
 #include <G4FieldManager.hh>
 #include <G4ChordFinder.hh>
@@ -45,7 +49,9 @@
 #include <G4VisAttributes.hh>
 #include <G4UserLimits.hh>
 #include <G4RegionStore.hh>
-
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 // This project:
 #include <mctools/g4/sensitive_detector.h>
 #include <mctools/g4/magnetic_field.h>
@@ -1082,11 +1088,11 @@ namespace mctools {
               }
               if (checked_material) {
                 if (std::find(logicals.begin(), logicals.end(), logical_name) == logicals.end()) {
-                  std::ostringstream message;
+                  std::ostringstream local_message;
                   message << "SHPF: Associate the logical volume '" << logical_name << "' with material '"
                           << mat_name << "' to the new sensitive detector with category '"
                           << from_processor_sensitive_category << "'";
-                  DT_LOG_NOTICE(_logprio(), message.str());
+                  DT_LOG_NOTICE(_logprio(), local_message.str());
                   logicals.push_back(logical_name);
                 }
               }

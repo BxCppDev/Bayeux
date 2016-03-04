@@ -154,7 +154,7 @@ namespace mctools {
     bool _alpha_quenching_; /// Flag to take into account quenching of alpha particle at low energy
 
     // Registration macro :
-    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(calorimeter_step_hit_processor);
+    MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_INTERFACE(calorimeter_step_hit_processor)
 
   };
 

@@ -77,7 +77,7 @@ namespace mctools {
       bool        _use_generic_ion_;
 
       DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (base_physics_constructor,
-                                                            particles_physics_constructor);
+                                                            particles_physics_constructor)
 
     };
 

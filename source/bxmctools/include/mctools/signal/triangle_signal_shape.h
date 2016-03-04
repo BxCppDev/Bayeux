@@ -171,7 +171,7 @@ namespace mctools {
       boost::scoped_ptr<mygsl::triangle_function> _shape_; //!< Shape of the signal
 
       //! Registration of the functor class
-      MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(triangle_signal_shape);
+      MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(triangle_signal_shape)
 
 
     };

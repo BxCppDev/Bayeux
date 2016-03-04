@@ -87,7 +87,7 @@ namespace mctools {
         BES_UNDEFINED   = 0, //!< Undefined status
         BES_NORMAL      = 1, //!< Normal status (event is preserved as is and tracked)
         BES_TRUNCATED   = 2, //!< Normal status (event is preserved but some particles are not tracked)
-        BES_KILLED      = 3, //!< Event should be killed (not tracked at all)
+        BES_KILLED      = 3 //!< Event should be killed (not tracked at all)
       };
 
       /// \brief Biasing information associated to a biased primary event

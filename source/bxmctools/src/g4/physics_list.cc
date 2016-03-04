@@ -423,12 +423,12 @@ namespace mctools {
             } else {
               // try gamma:
               {
-                std::ostringstream key_ss;
-                key_ss << "production_cuts.regions." << region_label << ".gamma";
-                const std::string key = key_ss.str();
-                if (config_.has_key(key)) {
-                  double gamma_production_cut = config_.fetch_real(key);
-                  if (! config_.has_explicit_unit(key)) {
+                std::ostringstream gamma_key_ss;
+                gamma_key_ss << "production_cuts.regions." << region_label << ".gamma";
+                const std::string gamma_key = gamma_key_ss.str();
+                if (config_.has_key(gamma_key)) {
+                  double gamma_production_cut = config_.fetch_real(gamma_key);
+                  if (! config_.has_explicit_unit(gamma_key)) {
                     gamma_production_cut *= lunit;
                   }
                   pc_info.gamma = gamma_production_cut;
@@ -437,12 +437,12 @@ namespace mctools {
               }
               // try electron:
               {
-                std::ostringstream key_ss;
-                key_ss << "production_cuts.regions." << region_label << ".electron";
-                const std::string key = key_ss.str();
-                if (config_.has_key(key)) {
-                  double electron_production_cut = config_.fetch_real(key);
-                  if (! config_.has_explicit_unit(key)) {
+                std::ostringstream electron_key_ss;
+                electron_key_ss << "production_cuts.regions." << region_label << ".electron";
+                const std::string electron_key = electron_key_ss.str();
+                if (config_.has_key(electron_key)) {
+                  double electron_production_cut = config_.fetch_real(electron_key);
+                  if (! config_.has_explicit_unit(electron_key)) {
                     electron_production_cut *= lunit;
                   }
                   pc_info.electron = electron_production_cut;
@@ -451,12 +451,12 @@ namespace mctools {
               }
               // try positron:
               {
-                std::ostringstream key_ss;
-                key_ss << "production_cuts.regions." << region_label << ".positron";
-                const std::string key = key_ss.str();
-                if (config_.has_key(key)) {
-                  double positron_production_cut = config_.fetch_real(key);
-                  if (! config_.has_explicit_unit(key)) {
+                std::ostringstream positron_key_ss;
+                positron_key_ss << "production_cuts.regions." << region_label << ".positron";
+                const std::string positron_key = positron_key_ss.str();
+                if (config_.has_key(positron_key)) {
+                  double positron_production_cut = config_.fetch_real(positron_key);
+                  if (! config_.has_explicit_unit(positron_key)) {
                     positron_production_cut *= lunit;
                   }
                   pc_info.positron = positron_production_cut;
@@ -465,12 +465,12 @@ namespace mctools {
               }
               // try proton:
               {
-                std::ostringstream key_ss;
-                key_ss << "production_cuts.regions." << region_label << ".proton";
-                const std::string key = key_ss.str();
-                if (config_.has_key(key)) {
-                  double proton_production_cut = config_.fetch_real(key);
-                  if (! config_.has_explicit_unit(key)) {
+                std::ostringstream proton_key_ss;
+                proton_key_ss << "production_cuts.regions." << region_label << ".proton";
+                const std::string proton_key = proton_key_ss.str();
+                if (config_.has_key(proton_key)) {
+                  double proton_production_cut = config_.fetch_real(proton_key);
+                  if (! config_.has_explicit_unit(proton_key)) {
                     proton_production_cut *= lunit;
                   }
                   pc_info.proton = proton_production_cut;

@@ -14,7 +14,7 @@ namespace mctools {
 
   // Registration instantiation macro :
   DPP_MODULE_REGISTRATION_IMPLEMENT(simulated_data_input_module,
-                                    "mctools::simulated_data_input_module");
+                                    "mctools::simulated_data_input_module")
 
   const std::string simulated_data_input_module::DEFAULT_SD_BANK_LABEL = "SD";
   // static

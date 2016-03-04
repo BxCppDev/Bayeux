@@ -39,7 +39,7 @@ namespace mctools {
       POL_INVALID  = -1, //!< Invalid polarity
       POL_POSITIVE =  0, //!< Positive polarity
       POL_NEGATIVE =  1, //!< Negative polarity
-      POL_UNKNOWN  =  2, //!< Unknown polarity
+      POL_UNKNOWN  =  2 //!< Unknown polarity
     };
 
     bool polarity_is_valid(polarity_type);

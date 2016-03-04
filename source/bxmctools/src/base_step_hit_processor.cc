@@ -18,7 +18,7 @@
 namespace mctools {
 
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_step_hit_processor,
-                                                   "mctools::base_step_hit_processor/__system__");
+                                                   "mctools::base_step_hit_processor/__system__")
 
   // static
   const size_t base_step_hit_processor::DEFAULT_POOL_CAPACITY;
@@ -604,7 +604,7 @@ th row logic_error(message.str());
   }
 
   MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(push_all_step_hit_processor,
-                                                    "mctools::push_all_step_hit_processor");
+                                                    "mctools::push_all_step_hit_processor")
 
   kill_all_step_hit_processor::kill_all_step_hit_processor()
     : base_step_hit_processor()
@@ -644,7 +644,7 @@ th row logic_error(message.str());
   }
 
   MCTOOLS_STEP_HIT_PROCESSOR_REGISTRATION_IMPLEMENT(kill_all_step_hit_processor,
-                                                    "mctools::kill_all_step_hit_processor");
+                                                    "mctools::kill_all_step_hit_processor")
 
 } // end of namespace mctools
 
