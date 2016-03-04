@@ -50,13 +50,13 @@ namespace mygsl {
       {
         for (size_t ii = 0 ; ii < _h_->n + 1; ii ++ )
           {
-            std::string tag = "range_" + boost::lexical_cast<std::string>(ii) ;
-            ar & boost::serialization::make_nvp(tag.c_str(), _h_->range[ii]) ;
+            std::string local_tag = "range_" + boost::lexical_cast<std::string>(ii) ;
+            ar & boost::serialization::make_nvp(local_tag.c_str(), _h_->range[ii]) ;
           }
         for (size_t ii = 0 ; ii < _h_->n; ii ++ )
           {
-            std::string tag = "bin_" + boost::lexical_cast<std::string>(ii) ;
-            ar & boost::serialization::make_nvp(tag.c_str(), _h_->bin[ii]) ;
+            std::string local_tag = "bin_" + boost::lexical_cast<std::string>(ii) ;
+            ar & boost::serialization::make_nvp(local_tag.c_str(), _h_->bin[ii]) ;
           }
       }
     ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
