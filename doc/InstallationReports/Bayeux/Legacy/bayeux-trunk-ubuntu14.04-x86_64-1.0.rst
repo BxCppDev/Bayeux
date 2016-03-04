@@ -3,10 +3,8 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-03-02
+:Date:   2015-10-15
 
-In this document we propose an installation procedure for the Bayeux/trunk
-library on top of Cadfaelbrew (2016.01) on Xubuntu 14.04 LTS system.
 
 The target system
 =================
@@ -16,8 +14,7 @@ Architecture:
 .. code:: sh
 
    $ uname -a
-   Linux mauger-laptop 3.13.0-74-generic #118-Ubuntu SMP Thu Dec 17 22:52:10 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
-..
+   Linux mauger-laptop 3.13.0-55-generic #94-Ubuntu SMP Thu Jun 18 00:27:10 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
 
 Processors:
 
@@ -28,9 +25,8 @@ Processors:
    model name	: Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
    model name	: Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
    model name	: Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
-..
 
-Linux version:
+Linux version: ::
 
 .. code:: sh
 
@@ -39,83 +35,15 @@ Linux version:
    DISTRIB_RELEASE=14.04
    DISTRIB_CODENAME=trusty
    DISTRIB_DESCRIPTION="Ubuntu 14.04.3 LTS"
-..
-
-Installation of Cadfaelbrew
-===============================
-
-Links:
-
- * Cadfaelbrew_ repository (GitHub)
- * Cadfael_ (SuperNEMO Wiki)
-
-.. _Cadfael: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael
-.. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/cadfaelbrew
 
 
-Please follow the instructions on the following document: ::
-
-  https://nemo.lpc-caen.in2p3.fr/attachment/wiki/Software/Cadfael/cadfaelbrew_xubuntu14.04_report-0.1.pdf
-
-Once you have installed Cadfaelbrew, you should be able to run a *brew* session:
+GCC version:
 
 .. code:: sh
 
-   $ brewsh
-..
+   $ g++ --version | head -1
+   g++ (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
 
-It opens a new shell with all environmental variables activated to setup all the software tools
-managed through Cadfaelbrew.
-
-Alternatively you can use a dedicated setup function:
-
-.. code:: sh
-
-   $ do_cadfaelbrew_setup
-   NOTICE: CadfaelBrew is now setup !
-..
-
-You can check the location and version of core software utilities:
-
-.. code:: sh
-
-   $ which cmake
-   {... path to the Cadfaelbrew installation directory...}/supernemo/cxx11/Cadfael.git/bin/cmake
-..
-.. code:: sh
-
-   $ cmake --version
-   cmake version 3.4.0
-..
-.. code:: sh
-
-   $ g++ --version
-   g++ (Homebrew gcc49 4.9.2_2) 4.9.2
-..
-
-.. code:: sh
-
-   $ doxygen --version
-   1.8.10
-..
-
-Ninja_ is a build system which can be used in place of (GNU)make.
-Install Ninja through brew if it was not already done before:
-
-.. _Ninja: https://ninja-build.org/
-
-.. code:: sh
-
-   $ brew install ninja
-..
-
-You can check your Ninja version:
-
-.. code:: sh
-
-   $ ninja --version
-   1.6.0
-..
 
 Installation of Bayeux (trunk)
 ===============================
@@ -124,38 +52,34 @@ Install dependencies:
 
 .. code:: sh
 
+   $ sudo apt-get install libreadline-dev
    $ sudo apt-get install gnuplot gnuplot-doc gnuplot-mode
    $ sudo apt-get install libqt4-dev libqt4-dev-bin libqt4-gui
    $ sudo apt-get install libreadline-dev readline-common
    $ sudo apt-get install pandoc pandoc-data
-   $ sudo apt-get install python-docutils
-..
+   $ sudo apt-get install doxygen
 
 Set the software base directory where there is enough storage capacity to host
-Bayeux (> 1 GB). Here we use a simple environment variable ``SW_WORK_DIR`` which points
-to a specific directory on the filesystem:
+Bayeux (> 1 GB). I choose here to use a simple environment variable ``SW_WORK_DIR``:
 
 .. code:: sh
 
    $ export SW_WORK_DIR=/data/sw
-..
 
 You should adapt this base directory to your own system, for example:
 
 .. code:: sh
 
    $ export SW_WORK_DIR=${HOME}/Software
-..
 
 Then create a few working directories:
 
 .. code:: sh
 
    $ mkdir -p ${SW_WORK_DIR}
-   $ mkdir ${SW_WORK_DIR}/Bayeux         # This one is the base working directory for Bayeux
-   $ mkdir ${SW_WORK_DIR}/Bayeux/Source  # This one will host the source code
-   $ mkdir ${SW_WORK_DIR}/Bayeux/Binary  # This one will host the build and installation directories
-..
+   $ mkdir ${SW_WORK_DIR}/Bayeux          # This one is the base working directory for Bayeux
+   $ mkdir ${SW_WORK_DIR}/Bayeux/Source   # This one will host the source code
+   $ mkdir ${SW_WORK_DIR}/Bayeux/Binary   # This one will host the build and installation directories
 
 Download Bayeux/trunk source files:
 
@@ -171,23 +95,22 @@ Download Bayeux/trunk source files:
    Relative URL: ^/Bayeux/trunk
    Repository Root: https://nemo.lpc-caen.in2p3.fr/svn
    Repository UUID: 3e0f96b8-c9f3-44f3-abf0-77131c94f4b4
-   Revision: 17096
+   Revision: 15637
    Node Kind: directory
    Schedule: normal
-   Last Changed Author: morgan
-   Last Changed Rev: 17096
-   Last Changed Date: 2016-02-23 17:08:30 +0100 (Tue, 23 Feb 2016)
-..
+   Last Changed Author: mauger
+   Last Changed Rev: 15637
+   Last Changed Date: 2015-01-20 09:28:20 +0100 (Tue, 20 Jan 2015)
 
 Configure Bayeux:
 
-  1. Make sure Cadfaelbrew is setup on your system. If you follow the Cadfaelbrew installation report
-     available from the Cadfael wiki page, you just have to invoke:
+  1. Make sure Cadfael is setup on your system. If you follow the Cadfael installation report
+     available from the Cadfael wiki page (https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael)
+     you just have to invoke:
 
 .. code:: sh
 
-      $ brewsh
-..
+      $ do_cadfael_dev_setup
 
   2. Create a build directory and cd in it:
 
@@ -195,46 +118,31 @@ Configure Bayeux:
 
       $ mkdir -p ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
       $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
-..
 
-  3. Configure Bayeux with CMake:
+  3. Invoke CMake to configure Bayeux:
 
 .. code:: sh
 
       $ cmake \
          -DCMAKE_BUILD_TYPE:STRING=Release \
          -DCMAKE_INSTALL_PREFIX:PATH=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64 \
-         -DBAYEUX_FORCE_CXX_ALL_WARNINGS=ON \
-	 -DBAYEUX_WITH_IWYU_CHECK=ON \
-	 -DBAYEUX_WITH_DOCS=ON \
-         -DBAYEUX_WITH_DOCS_OCD=ON \
-         -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
-         -DBAYEUX_WITH_EXAMPLES=ON \
-	 -DBAYEUX_WITH_BRIO=ON \
-	 -DBAYEUX_WITH_CUTS=ON \
-	 -DBAYEUX_WITH_MYGSL=ON \
-	 -DBAYEUX_WITH_DPP=ON \
-	 -DBAYEUX_WITH_MATERIALS=ON \
-	 -DBAYEUX_WITH_GEOMTOOLS=ON \
-	 -DBAYEUX_WITH_EMFIELD=ON \
-	 -DBAYEUX_WITH_GENVTX=ON \
-	 -DBAYEUX_WITH_GENBB_HELP=ON \
-	 -DBAYEUX_WITH_MCTOOLS=ON \
-	 -DBAYEUX_WITH_LAHAGUE=ON \
-	 -DBAYEUX_WITH_GEANT4_MODULE=ON \
-	 -DBAYEUX_WITH_MCNP_MODULE=OFF \
-         -DBAYEUX_ENABLE_TESTING=ON \
-         -GNinja \
+         -DCMAKE_FIND_ROOT_PATH:PATH=${SW_WORK_DIR}/Cadfael/Binary/Cadfael-trunk/Install-Linux-x86_64 \
+         -DBayeux_FORCE_CXX_ALL_WARNINGS=ON \
+         -DBayeux_BUILD_GEANT4_MODULE=ON \
+         -DBayeux_BUILD_DOCS=ON \
+         -DBayeux_BUILD_OCD_DOCS=ON \
+         -DBayeux_BUILD_DEVELOPER_TOOLS=ON \
+         -DBayeux_BUILD_QT_GUI=ON \
+         -DBayeux_ENABLE_TESTING=ON \
+         -DBayeux_WITH_EXAMPLES=ON \
          ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
-..
 
 Build (using 4 processors to go faster):
 
 .. code:: sh
 
-   $ ninja -j4
+   $ make -j4
    ...
-..
 
 Quick check after build
 =========================
@@ -245,51 +153,43 @@ After the build step, Bayeux uses the following hierarchy on the file system:
 
    $ LANG=C tree -L 1 BuildProducts/
    BuildProducts/
-   |-- bin/
-   |-- include/
-   |-- lib/
-   `-- share/
-..
+   |-- bin
+   |-- include
+   |-- lib
+   `-- share
 
 Particularly, the shared libraries are:
 
 .. code:: sh
 
-   $ LANG=C tree -F BuildProducts/lib/
+   $ LANG=C tree -L 2 BuildProducts/lib/
    BuildProducts/lib/
-   |-- cmake/
-   |   `-- Bayeux-2.1.0/
-   |       |-- BayeuxConfig.cmake
-   |       |-- BayeuxConfigVersion.cmake
-   |       |-- BayeuxDocs.cmake
-   |       `-- BayeuxTargets.cmake
-   |-- libBayeux.so*
-   `-- libBayeux_mctools_geant4.so*
-..
+   `-- x86_64-linux-gnu
+       |-- cmake
+       |-- libBayeux.so
+       `-- libBayeux_mctools_geant4.so
 
 Executable are in:
 
 .. code:: sh
 
-   $ LANG=C tree -L 1 -F BuildProducts/bin/
+   $ LANG=C tree -L 1 BuildProducts/bin/
    BuildProducts/bin/
-   |-- bxdpp_processing*
-   |-- bxg4_production*
-   |-- bxgenbb_inspector*
-   |-- bxgenbb_mkskelcfg*
-   |-- bxgenvtx_mkskelcfg*
-   |-- bxgenvtx_production*
-   |-- bxgeomtools_inspector*
-   |-- bxgeomtools_mkskelcfg*
-   |-- bxmaterials_diagnose*
-   |-- bxmaterials_inspector*
-   |-- bxmctools_g4_mkskelcfg*
-   |-- bxocd_make_doc*
-   |-- bxocd_manual*
-   |-- bxocd_sort_classnames.py*
-   |-- bxquery*
-   `-- bxtests/
-..
+   |-- bxdpp_processing
+   |-- bxg4_production
+   |-- bxgenbb_inspector
+   |-- bxgenbb_mkskelcfg
+   |-- bxgenvtx_mkskelcfg
+   |-- bxgenvtx_production
+   |-- bxgeomtools_inspector
+   |-- bxgeomtools_mkskelcfg
+   |-- bxmaterials_inspector
+   |-- bxmctools_g4_mkskelcfg
+   |-- bxocd_make_doc
+   |-- bxocd_manual
+   |-- bxocd_sort_classnames.py
+   |-- bxquery
+   `-- bxtests
 
 These directories and files will be copied in the installation directory.
 
@@ -300,29 +200,19 @@ Before to do the final installation, we run the test programs:
 
 .. code:: sh
 
-   $ ninja test
-   [1/1] Running tests...
-   Test project /data/sw/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
-           Start   1: datatools-test_reflection_0
-     1/303 Test   #1: datatools-test_reflection_0 ....................   Passed    0.28 sec
+   $ make test
    ...
-   303/303 Test #303: bayeux-test_bayeux .............................   Passed    0.09 sec
-
-   100% tests passed, 0 tests failed out of 303
-
-   Total Test time (real) =  83.62 sec
-..
+   100% tests passed, 0 tests failed out of 298
+   Total Test time (real) =  25.90 sec
 
 Installation
 ====================
 
-Run:
+Simple run:
 
 .. code:: sh
 
-   $ ninja install
-   ...
-..
+   $ make install
 
 Check installation
 ========================
@@ -334,20 +224,20 @@ Browse the installation directory:
    $ LANG=C tree -L 3 -F ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
    /data/sw/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
    |-- bin/
-   |   |-- bxdpp_processing*
-   |   |-- bxg4_production*
-   |   |-- bxgenbb_inspector*
-   |   |-- bxgenbb_mkskelcfg*
-   |   |-- bxgenvtx_mkskelcfg*
-   |   |-- bxgenvtx_production*
-   |   |-- bxgeomtools_inspector*
-   |   |-- bxgeomtools_mkskelcfg*
-   |   |-- bxmaterials_inspector*
-   |   |-- bxmctools_g4_mkskelcfg*
-   |   |-- bxocd_make_doc*
-   |   |-- bxocd_manual*
-   |   |-- bxocd_sort_classnames.py*
-   |   `-- bxquery*
+   |   |-- bxdpp_processing
+   |   |-- bxg4_production
+   |   |-- bxgenbb_inspector
+   |   |-- bxgenbb_mkskelcfg
+   |   |-- bxgenvtx_mkskelcfg
+   |   |-- bxgenvtx_production
+   |   |-- bxgeomtools_inspector
+   |   |-- bxgeomtools_mkskelcfg
+   |   |-- bxmaterials_inspector
+   |   |-- bxmctools_g4_mkskelcfg
+   |   |-- bxocd_make_doc
+   |   |-- bxocd_manual
+   |   |-- bxocd_sort_classnames.py
+   |   `-- bxquery
    |-- include/
    |   `-- bayeux/
    |       |-- bayeux.h
@@ -367,49 +257,45 @@ Browse the installation directory:
    |       |-- reloc.h
    |       `-- version.h
    |-- lib/
-   |   |-- cmake/
-   |   |   `-- Bayeux-2.1.0/
-   |   |-- libBayeux.so
-   |   `-- libBayeux_mctools_geant4.so
+   |   `-- x86_64-linux-gnu/
+   |       |-- cmake/
+   |       |-- libBayeux.so
+   |       `-- libBayeux_mctools_geant4.so
    `-- share/
-       `-- Bayeux-2.1.0/
+       `-- Bayeux-2.0.0/
            |-- Documentation/
            |-- examples/
            `-- resources/
 
 Suggestions for a Bash setup (see below):
 
- 1. Define convenient environmental variables:
+ 1. Define convenient environment variables:
 
 .. code:: sh
 
-   $ export SW_WORK_DIR=/data/sw
-   $ export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
-..
+     $ export SW_WORK_DIR=/data/sw
+     $ export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
 
  2. The only configuration you need now is:
 
 .. code:: sh
 
-   $ export PATH=${BAYEUX_INSTALL_DIR}/bin:${PATH}
-..
+     $ export PATH=${BAYEUX_INSTALL_DIR}/bin:${PATH}
 
     There is no need to update the ``LD_LIBRARY_PATH`` environment variable because Bayeux
     uses RPATH. So you **should NOT** use the following:
 
 .. code:: sh
 
-   $ export LD_LIBRARY_PATH=${BAYEUX_INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
-..
+     $ export LD_LIBRARY_PATH=${BAYEUX_INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
 
  3. After setting ``PATH`` as shown above, you can check where some of the
     executable are installed:
 
 .. code:: sh
 
-   $ which bxquery
-   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64/bin/bxquery
-..
+      $ which bxquery
+      /data/sw/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64/bin/bxquery
 
     Check datatools' OCD tool:
 
@@ -423,7 +309,6 @@ Suggestions for a Bash setup (see below):
       cuts::and_cut
       ...
       mygsl::histogram_pool
-..
 
     Check geometry tools; cd in the Bayeux/geomtools example #01:
 
@@ -444,7 +329,7 @@ Suggestions for a Bash setup (see below):
 	quit:           type "quit"
 	support:        Gnuplot display
 	support:        Root display from GDML
-..
+
 
 .. code:: gnuplot
 
@@ -469,7 +354,6 @@ Suggestions for a Bash setup (see below):
       geomtools>  export_gdml bxgeomtools_test.gdml
       GDML file 'bxgeomtools_test.gdml' has been generated !
       geomtools> quit
-..
 
 Conclusion:
 
@@ -479,7 +363,7 @@ Conclusion:
 Setup your environment for Bayeux
 ==================================
 
-Here we explicitely *load/setup* the Bayeux environment from a Bash shell
+I prefer here to explicitely *load/setup* the Bayeux environment from my Bash shell
 with a dedicated function defined in my ``~/.bashrc`` startup file:
 
 .. code:: sh
@@ -490,7 +374,7 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
    # The Bayeux/trunk setup function:
    function do_bayeux_trunk_setup()
    {
-     do_cadfaelbrew_setup # Automatically load the Cadfaelbrew dependency
+     do_cadfael_dev_setup # Automatically load the Cadfael dependency
      if [ -n "${BAYEUX_INSTALL_DIR}" ]; then
          echo "ERROR: Bayeux/trunk is already setup !" >&2
          return 1
@@ -505,12 +389,11 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
    # Special alias:
    alias do_bayeux_dev_setup="do_bayeux_trunk_setup"
 
-When one wants to use pieces of software from Bayeux, one runs:
+When I want to use pieces of software from Bayeux, I run:
 
 .. code:: sh
 
    $ do_bayeux_dev_setup
-..
 
 Then all executable are usable from the Bayeux installation directory:
 
@@ -522,7 +405,7 @@ Then all executable are usable from the Bayeux installation directory:
    ...
    $ which bxg4_production
    ...
-..
+
 
 Update the source code from the Bayeux/trunk
 ============================================
@@ -532,27 +415,25 @@ Update the source code from the Bayeux/trunk
 .. code:: sh
 
    $ cd ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
-..
 
 2. Update the source code:
 
 .. code:: sh
 
    $ svn up
-..
+
 
 3. Cd in the Bayeux/trunk build directory:
 
 .. code:: sh
 
    $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
-..
+
 
 4. Rebuild and reinstall
 
 .. code:: sh
 
-   $ ninja -j4
-   $ ninja test
-   $ ninja install
-..
+   $ make -j4
+   $ make test
+   $ make install
