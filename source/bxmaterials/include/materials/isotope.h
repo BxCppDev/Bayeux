@@ -196,7 +196,7 @@ namespace materials {
 
     enum ame_release_type {
       AME_RELEASE_2003 = 0,
-      AME_RELEASE_2012 = 1,
+      AME_RELEASE_2012 = 1
     };
 
     //! Load a dictionary of isotope records from the AME (2003/2012) data file

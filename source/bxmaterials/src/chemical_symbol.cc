@@ -88,6 +88,6 @@ namespace materials {
   {
     DT_THROW_IF(! z_is_tabulated(z_), std::logic_error, "Z value : '" << z_ << "' not tabulated !");
     return table_of_symbols().at(z_);
-  };
+  }
 
 } // end of namespace materials

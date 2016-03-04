@@ -41,7 +41,7 @@ namespace materials {
       ACTION_SHOW_ISOTOPE   =  0x10,
       ACTION_SHOW_ELEMENT   =  0x20,
       ACTION_SHOW_MATERIAL  =  0x40,
-      ACTION_DUMP_MANAGER   =  0x1000,
+      ACTION_DUMP_MANAGER   =  0x1000
     };
 
     /// Default constructor
