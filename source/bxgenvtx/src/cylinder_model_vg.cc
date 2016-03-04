@@ -36,7 +36,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(cylinder_model_vg,"genvtx::cylinder_model_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(cylinder_model_vg,"genvtx::cylinder_model_vg")
 
   bool cylinder_model_vg::is_mode_valid() const
   {

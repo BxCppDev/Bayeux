@@ -70,7 +70,7 @@ namespace genvtx {
 
     /// Registration macro
     /// @arg spot_vertex_generator the class to be registered
-    GENVTX_VG_REGISTRATION_INTERFACE(spot_vertex_generator);
+    GENVTX_VG_REGISTRATION_INTERFACE(spot_vertex_generator)
 
   };
 

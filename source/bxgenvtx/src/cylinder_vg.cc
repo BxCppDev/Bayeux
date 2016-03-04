@@ -22,7 +22,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(cylinder_vg,"genvtx::cylinder_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(cylinder_vg,"genvtx::cylinder_vg")
 
   // static
   const int cylinder_vg::MODE_INVALID;

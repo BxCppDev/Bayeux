@@ -33,7 +33,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(tube_model_vg,"genvtx::tube_model_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(tube_model_vg,"genvtx::tube_model_vg")
 
   bool tube_model_vg::is_mode_valid () const
   {

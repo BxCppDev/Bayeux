@@ -150,11 +150,11 @@ namespace genvtx {
 
       /// Registration macro
       /// @arg dummy_vg the class to be registered
-      GENVTX_VG_REGISTRATION_INTERFACE(dummy_vg);
+      GENVTX_VG_REGISTRATION_INTERFACE(dummy_vg)
 
     };
 
-    GENVTX_VG_REGISTRATION_IMPLEMENT(dummy_vg, "genvtx::testing::dummy_vg");
+    GENVTX_VG_REGISTRATION_IMPLEMENT(dummy_vg, "genvtx::testing::dummy_vg")
 
   } // end of namespace testing
 

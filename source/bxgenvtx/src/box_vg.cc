@@ -23,7 +23,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(box_vg,"genvtx::box_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(box_vg,"genvtx::box_vg")
 
   // static
   const int box_vg::MODE_INVALID;

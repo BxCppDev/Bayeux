@@ -23,7 +23,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(polycone_vg, "genvtx::polycone_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(polycone_vg, "genvtx::polycone_vg")
 
   // static
   const int polycone_vg::MODE_INVALID;

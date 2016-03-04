@@ -31,7 +31,7 @@ namespace genvtx {
 
   // Factory system register :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_vertex_generator,
-                                                   "genvtx::i_vertex_generator/_system_");
+                                                   "genvtx::i_vertex_generator/_system_")
 
   const std::string & i_vertex_generator::get_name() const
   {

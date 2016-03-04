@@ -24,7 +24,7 @@ namespace genvtx {
 
   using namespace std;
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(from_file_vg,"genvtx::from_file_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(from_file_vg,"genvtx::from_file_vg")
 
   double from_file_vg::default_length_unit()
   {

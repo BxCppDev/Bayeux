@@ -18,7 +18,7 @@ namespace genvtx {
 
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(in_materials_vertex_validator,
-                             "genvtx::in_materials_vertex_validator");
+                             "genvtx::in_materials_vertex_validator")
 
   in_materials_vertex_validator::in_materials_vertex_validator(datatools::logger::priority logging_priority_)
     : cuts::i_cut(logging_priority_)

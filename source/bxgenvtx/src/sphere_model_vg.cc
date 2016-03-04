@@ -34,7 +34,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(sphere_model_vg,"genvtx::sphere_model_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(sphere_model_vg,"genvtx::sphere_model_vg")
 
   bool sphere_model_vg::is_mode_valid () const
   {

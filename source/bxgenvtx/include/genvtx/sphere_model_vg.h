@@ -151,7 +151,7 @@ namespace genvtx {
 
     /// Registration macro
     /// @arg sphere_model_vg the class to be registered
-    GENVTX_VG_REGISTRATION_INTERFACE(sphere_model_vg);
+    GENVTX_VG_REGISTRATION_INTERFACE(sphere_model_vg)
 
   };
 

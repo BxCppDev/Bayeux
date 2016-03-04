@@ -145,7 +145,7 @@ namespace genvtx {
 
     /// Registration macro
     /// @arg polycone_model_vg the class to be registered
-    GENVTX_VG_REGISTRATION_INTERFACE(polycone_model_vg);
+    GENVTX_VG_REGISTRATION_INTERFACE(polycone_model_vg)
 
   };
 

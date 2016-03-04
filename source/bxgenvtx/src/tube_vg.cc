@@ -23,7 +23,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(tube_vg,"genvtx::tube_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(tube_vg,"genvtx::tube_vg")
 
   // static
   const int tube_vg::MODE_INVALID;

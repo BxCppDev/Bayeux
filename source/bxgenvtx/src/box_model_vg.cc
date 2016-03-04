@@ -34,7 +34,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(box_model_vg, "genvtx::box_model_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(box_model_vg, "genvtx::box_model_vg")
 
   bool box_model_vg::is_mode_valid () const
   {

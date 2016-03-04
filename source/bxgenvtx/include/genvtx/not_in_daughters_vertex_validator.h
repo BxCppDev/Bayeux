@@ -77,7 +77,7 @@ namespace genvtx {
     double _daughter_tolerance_; //!< Tolerance to check daughter volumes
 
     /// Macro to automate the registration of the cut
-    CUT_REGISTRATION_INTERFACE(not_in_daughters_vertex_validator);
+    CUT_REGISTRATION_INTERFACE(not_in_daughters_vertex_validator)
 
   };
 

@@ -92,7 +92,7 @@ namespace genvtx {
 
     /// Registration macro
     /// @arg placement_vg the class to be registered
-    GENVTX_VG_REGISTRATION_INTERFACE(placement_vg);
+    GENVTX_VG_REGISTRATION_INTERFACE(placement_vg)
 
   };
 

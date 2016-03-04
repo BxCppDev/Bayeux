@@ -25,7 +25,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(sphere_vg,"genvtx::sphere_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(sphere_vg,"genvtx::sphere_vg")
 
   // static
   const int sphere_vg::MODE_INVALID;

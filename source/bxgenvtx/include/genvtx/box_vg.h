@@ -152,7 +152,7 @@ namespace genvtx {
 
     /// Registration macro
     /// @arg box_vg the class to be registered
-    GENVTX_VG_REGISTRATION_INTERFACE(box_vg);
+    GENVTX_VG_REGISTRATION_INTERFACE(box_vg)
 
   };
 

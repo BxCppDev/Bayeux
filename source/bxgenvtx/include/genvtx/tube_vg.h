@@ -135,7 +135,7 @@ namespace genvtx {
 
     /// Registration macro
     /// @arg tube_vg the class to be registered
-    GENVTX_VG_REGISTRATION_INTERFACE(tube_vg);
+    GENVTX_VG_REGISTRATION_INTERFACE(tube_vg)
 
   };
 

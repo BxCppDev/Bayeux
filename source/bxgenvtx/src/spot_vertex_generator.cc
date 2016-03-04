@@ -18,7 +18,7 @@ namespace genvtx {
 
   using namespace std;
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(spot_vertex_generator,"genvtx::spot_vertex_generator");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(spot_vertex_generator,"genvtx::spot_vertex_generator")
 
   const geomtools::vector_3d & spot_vertex_generator::get_spot () const
   {

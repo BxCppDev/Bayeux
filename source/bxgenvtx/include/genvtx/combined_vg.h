@@ -102,7 +102,7 @@ namespace genvtx {
 
     /// Registration macro
     /// @arg combined_vg the class to be registered
-    GENVTX_VG_REGISTRATION_INTERFACE(combined_vg);
+    GENVTX_VG_REGISTRATION_INTERFACE(combined_vg)
 
   };
 

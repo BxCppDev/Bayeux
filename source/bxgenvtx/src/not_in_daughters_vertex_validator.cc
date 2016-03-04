@@ -16,7 +16,7 @@ namespace genvtx {
 
   // Registration instantiation macro :
   CUT_REGISTRATION_IMPLEMENT(not_in_daughters_vertex_validator,
-                             "genvtx::not_in_daughters_vertex_validator");
+                             "genvtx::not_in_daughters_vertex_validator")
 
   not_in_daughters_vertex_validator::not_in_daughters_vertex_validator(datatools::logger::priority logging_priority_)
     : cuts::i_cut(logging_priority_)

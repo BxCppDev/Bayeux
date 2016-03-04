@@ -262,7 +262,7 @@ namespace genvtx {
     boost::scoped_ptr<vertex_validation> _vertex_validation_; //!< Handle to the vertex validation
 
     // Factory declaration :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_vertex_generator);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_vertex_generator)
 
   };
 

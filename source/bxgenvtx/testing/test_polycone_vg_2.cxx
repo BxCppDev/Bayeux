@@ -363,29 +363,29 @@ int main (int argc_, char ** argv_)
         Q1.add( 3.5, 23.0);
         Q1.tree_dump(clog, "Q1 polycone : ");
         for (int i = 0; i < 8; i ++) {
-          genvtx::polycone_vg vg;
+          genvtx::polycone_vg local_vg;
           if (debug) {
-            vg.set_logging_priority(datatools::logger::PRIO_TRACE);
+            local_vg.set_logging_priority(datatools::logger::PRIO_TRACE);
           }
-          vg.set_polycone(Q1);
-          vg.set_active_frustrum(1, true);
+          local_vg.set_polycone(Q1);
+          local_vg.set_active_frustrum(1, true);
           double phi1 = -0.40*M_PI + i * 0.25 * M_PI;
           double phi2 = phi1 + 0.20 * M_PI;
           if (phi2 > 1.40*M_PI) phi2 = 1.40*M_PI;
-          vg.set_angles(phi1, phi2);
-          vg.set_mode(genvtx::polycone_vg::MODE_BULK);
-          int bulk_mask = 0;
-          bulk_mask |= genvtx::polycone_vg::BULK_BODY;
-          vg.set_bulk_mask(bulk_mask);
-          vg.set_skin_thickness(10.0);
-          vg.initialize_simple();
-          vg.tree_dump(clog, "Orange pulp vertex generator: ");
-          size_t nshoots = 200 * (phi2-phi1) / 0.25 * M_PI;
-          geomtools::vector_3d vertex;
-          for (int i = 0; i < (int) nshoots; i++) {
-            vg.shoot_vertex(random, vertex);
+          local_vg.set_angles(phi1, phi2);
+          local_vg.set_mode(genvtx::polycone_vg::MODE_BULK);
+          int local_bulk_mask = 0;
+          local_bulk_mask |= genvtx::polycone_vg::BULK_BODY;
+          local_vg.set_bulk_mask(local_bulk_mask);
+          local_vg.set_skin_thickness(10.0);
+          local_vg.initialize_simple();
+          local_vg.tree_dump(clog, "Orange pulp vertex generator: ");
+          size_t local_nshoots = 200 * (phi2-phi1) / 0.25 * M_PI;
+          geomtools::vector_3d local_vertex;
+          for (int j = 0; j < (int) local_nshoots; j++) {
+            local_vg.shoot_vertex(random, local_vertex);
             geomtools::vector_3d vtx;
-            pl.child_to_mother(vertex, vtx);
+            pl.child_to_mother(local_vertex, vtx);
             geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), vtx, true);
           }
         }

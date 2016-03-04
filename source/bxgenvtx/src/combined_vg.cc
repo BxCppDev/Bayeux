@@ -20,7 +20,7 @@
 
 namespace genvtx {
 
-  GENVTX_VG_REGISTRATION_IMPLEMENT(combined_vg, "genvtx::combined_vg");
+  GENVTX_VG_REGISTRATION_IMPLEMENT(combined_vg, "genvtx::combined_vg")
 
   combined_vg::entry_type::entry_type ()
   {

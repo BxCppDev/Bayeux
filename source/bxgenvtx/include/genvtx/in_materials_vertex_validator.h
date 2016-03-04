@@ -83,7 +83,7 @@ namespace genvtx {
     int _max_depth_; //!< Maximum depth in the hierarchy of daughter volumes to investigate materials
 
     /// Macro to automate the registration of the cut
-    CUT_REGISTRATION_INTERFACE(in_materials_vertex_validator);
+    CUT_REGISTRATION_INTERFACE(in_materials_vertex_validator)
 
   };
 
