@@ -16,7 +16,7 @@ namespace emfield {
 
   // Registration instantiation macro :
   EMFIELD_REGISTRATION_IMPLEMENT(linear_combination_field,
-                                 "emfield::linear_combination_field");
+                                 "emfield::linear_combination_field")
 
   linear_combination_field::combined_field_entry::combined_field_entry()
   {

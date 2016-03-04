@@ -10,7 +10,7 @@
 
 namespace emfield {
 
-  GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(emfield_geom_plugin, "emfield::emfield_geom_plugin");
+  GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(emfield_geom_plugin, "emfield::emfield_geom_plugin")
 
   const electromagnetic_field_manager & emfield_geom_plugin::get_manager () const
   {

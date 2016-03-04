@@ -124,7 +124,7 @@ namespace emfield {
     double _scale_;     //!< Scale (default value 1)
 
     // Macro to automate the registration of the EM field :
-    EMFIELD_REGISTRATION_INTERFACE(oscillating_field);
+    EMFIELD_REGISTRATION_INTERFACE(oscillating_field)
 
   };
 

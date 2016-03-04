@@ -12,7 +12,7 @@
 namespace emfield {
 
   // Registration instantiation macro :
-  EMFIELD_REGISTRATION_IMPLEMENT(polynomial_magnetic_field, "emfield::polynomial_magnetic_field");
+  EMFIELD_REGISTRATION_IMPLEMENT(polynomial_magnetic_field, "emfield::polynomial_magnetic_field")
 
   polynomial_magnetic_field::magnetic_field_coordinate::magnetic_field_coordinate()
   {

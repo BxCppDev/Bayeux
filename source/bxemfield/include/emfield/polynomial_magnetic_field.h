@@ -88,7 +88,7 @@ namespace emfield {
     magnetic_field_coordinate _bz_; //!< Bz field coordinate
 
     // Macro to automate the registration of the EM field :
-    EMFIELD_REGISTRATION_INTERFACE(polynomial_magnetic_field);
+    EMFIELD_REGISTRATION_INTERFACE(polynomial_magnetic_field)
 
   };
 

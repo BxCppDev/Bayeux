@@ -15,7 +15,7 @@
 namespace emfield {
 
   // Registration instantiation macro :
-  EMFIELD_REGISTRATION_IMPLEMENT(placement_field, "emfield::placement_field");
+  EMFIELD_REGISTRATION_IMPLEMENT(placement_field, "emfield::placement_field")
 
   void placement_field::_set_defaults()
   {

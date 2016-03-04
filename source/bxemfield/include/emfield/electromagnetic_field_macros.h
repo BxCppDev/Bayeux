@@ -137,17 +137,17 @@
 
 /* /// Macro for the declaration of the minimal interface */
 /* #define EMFIELD_INTERFACE()         \ */
-/*   EMFIELD_INITIALIZE_DECLARE();     \ */
-/*   EMFIELD_RESET_DECLARE();          \ */
-/*   EMFIELD_COMPUTE_EFIELD_DECLARE(); \ */
-/*   EMFIELD_COMPUTE_BFIELD_DECLARE(); \ */
+/*   EMFIELD_INITIALIZE_DECLARE()     \ */
+/*   EMFIELD_RESET_DECLARE()          \ */
+/*   EMFIELD_COMPUTE_EFIELD_DECLARE() \ */
+/*   EMFIELD_COMPUTE_BFIELD_DECLARE() \ */
 
 
 /* /// Macro for the declaration of the minimal interface */
 /* #define EMFIELD_INTERFACE_CTOR_DTOR(EMFIELD_CLASS_NAME) \ */
-/*   EMFIELD_CONSTRUCTOR_DECLARE(EMFIELD_CLASS_NAME);      \ */
-/*   EMFIELD_DESTRUCTOR_DECLARE(EMFIELD_CLASS_NAME);       \ */
-/*   EMFIELD_INTERFACE ();                                 \ */
+/*   EMFIELD_CONSTRUCTOR_DECLARE(EMFIELD_CLASS_NAME)      \ */
+/*   EMFIELD_DESTRUCTOR_DECLARE(EMFIELD_CLASS_NAME)       \ */
+/*   EMFIELD_INTERFACE ()                                 \ */
 
 
 /* Macros for interface/implementation of static creator methods in EM field classes */
@@ -156,13 +156,13 @@
 
 #define EMFIELD_REGISTRATION_INTERFACE(EMFIELD_CLASS_NAME)              \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::emfield::base_electromagnetic_field,EMFIELD_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::emfield::base_electromagnetic_field,EMFIELD_CLASS_NAME) \
   public:                                                               \
   virtual std::string get_class_id() const;                             \
 
 
 #define EMFIELD_REGISTRATION_IMPLEMENT(EMFIELD_CLASS_NAME,EMFIELD_ID)   \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::emfield::base_electromagnetic_field,EMFIELD_CLASS_NAME,EMFIELD_ID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::emfield::base_electromagnetic_field,EMFIELD_CLASS_NAME,EMFIELD_ID) \
   std::string EMFIELD_CLASS_NAME::get_class_id() const {                \
     return std::string(EMFIELD_ID);                                     \
   }                                                                     \

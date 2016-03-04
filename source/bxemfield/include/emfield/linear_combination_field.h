@@ -83,7 +83,7 @@ namespace emfield {
     combined_field_dict_type _combined_fields_; //!< Dictionnary of combined fields
 
     // Macro to automate the registration of the EM field :
-    EMFIELD_REGISTRATION_INTERFACE(linear_combination_field);
+    EMFIELD_REGISTRATION_INTERFACE(linear_combination_field)
 
   };
 

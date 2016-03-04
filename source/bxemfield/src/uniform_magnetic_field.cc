@@ -12,7 +12,7 @@
 namespace emfield {
 
   // Registration instantiation macro :
-  EMFIELD_REGISTRATION_IMPLEMENT(uniform_magnetic_field, "emfield::uniform_magnetic_field");
+  EMFIELD_REGISTRATION_IMPLEMENT(uniform_magnetic_field, "emfield::uniform_magnetic_field")
 
   void uniform_magnetic_field::_set_defaults()
   {

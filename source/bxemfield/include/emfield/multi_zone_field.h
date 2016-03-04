@@ -165,7 +165,7 @@ namespace emfield {
     zone_field_dict_type _zone_fields_; //!< Dictionary of zone fields
 
     // Macro to automate the registration of the EM field :
-    EMFIELD_REGISTRATION_INTERFACE(multi_zone_field);
+    EMFIELD_REGISTRATION_INTERFACE(multi_zone_field)
 
   };
 

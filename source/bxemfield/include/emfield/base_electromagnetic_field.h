@@ -212,7 +212,7 @@ namespace emfield {
     bool     _magnetic_field_is_time_dependent_; //!< Flag that indicates that the magnetic field is time dependent
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_electromagnetic_field);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_electromagnetic_field)
 
   };
 

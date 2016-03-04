@@ -82,7 +82,7 @@ namespace emfield {
     geomtools::placement _placement_; //!< Placement (translation and rotation) of the field
 
     // Macro to automate the registration of the EM field :
-    EMFIELD_REGISTRATION_INTERFACE(placement_field);
+    EMFIELD_REGISTRATION_INTERFACE(placement_field)
 
   };
 

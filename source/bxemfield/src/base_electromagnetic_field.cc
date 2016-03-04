@@ -15,7 +15,7 @@ namespace emfield {
 
   // Factory stuff :
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_electromagnetic_field,
-                                                   "emfield::base_electromagnetic_field/__system__");
+                                                   "emfield::base_electromagnetic_field/__system__")
 
   // static
   const char base_electromagnetic_field::ELECTRIC_FIELD_LABEL;

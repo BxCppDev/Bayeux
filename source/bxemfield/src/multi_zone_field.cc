@@ -18,7 +18,7 @@
 namespace emfield {
 
   // Registration instantiation macro :
-  EMFIELD_REGISTRATION_IMPLEMENT(multi_zone_field, "emfield::multi_zone_field");
+  EMFIELD_REGISTRATION_IMPLEMENT(multi_zone_field, "emfield::multi_zone_field")
 
   // static
   std::string multi_zone_field::zone_priority_to_label(zone_priority_type p_)

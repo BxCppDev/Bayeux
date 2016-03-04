@@ -68,7 +68,7 @@ namespace emfield {
     bool                           _initialized_; //!< Initialization flag
     electromagnetic_field_manager  _manager_;     //!< The embeded manager of EM fields
 
-    GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(emfield_geom_plugin);
+    GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(emfield_geom_plugin)
 
   };
 

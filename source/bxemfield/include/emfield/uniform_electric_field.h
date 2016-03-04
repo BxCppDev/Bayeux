@@ -72,7 +72,7 @@ namespace emfield {
     geomtools::vector_3d _uniform_electric_field_; //!< Uniform electric field
 
     // Macro to automate the registration of the EM field :
-    EMFIELD_REGISTRATION_INTERFACE(uniform_electric_field);
+    EMFIELD_REGISTRATION_INTERFACE(uniform_electric_field)
 
   };
 

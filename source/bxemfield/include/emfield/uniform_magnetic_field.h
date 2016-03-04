@@ -73,7 +73,7 @@ namespace emfield {
     geomtools::vector_3d _uniform_magnetic_field_; //!< The uniform magnetic field
 
     // Macro to automate the registration of the EM field :
-    EMFIELD_REGISTRATION_INTERFACE(uniform_magnetic_field);
+    EMFIELD_REGISTRATION_INTERFACE(uniform_magnetic_field)
 
   };
 

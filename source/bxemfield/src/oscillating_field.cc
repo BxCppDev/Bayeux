@@ -17,7 +17,7 @@
 namespace emfield {
 
   // Registration instantiation macro :
-  EMFIELD_REGISTRATION_IMPLEMENT(oscillating_field, "emfield::oscillating_field");
+  EMFIELD_REGISTRATION_IMPLEMENT(oscillating_field, "emfield::oscillating_field")
 
   void oscillating_field::_set_defaults()
   {

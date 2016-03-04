@@ -13,7 +13,7 @@
 namespace emfield {
 
   // Registration instantiation macro :
-  EMFIELD_REGISTRATION_IMPLEMENT(uniform_electric_field, "emfield::uniform_electric_field");
+  EMFIELD_REGISTRATION_IMPLEMENT(uniform_electric_field, "emfield::uniform_electric_field")
 
   void uniform_electric_field::_set_defaults()
   {
