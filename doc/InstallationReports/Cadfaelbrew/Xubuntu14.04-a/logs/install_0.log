@@ -1,0 +1,437 @@
+$ /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/bin/brew install cadfael
+==> Installing cadfael from supernemo-dbd/homebrew-cadfael
+==> Installing dependencies for supernemo-dbd/cadfael/cadfael: binutils, gcc49, pkg-config, homebrew/dupes/ncurses, readline, homebr
+==> Installing supernemo-dbd/cadfael/cadfael dependency: binutils
+==> Downloading http://ftpmirror.gnu.org/binutils/binutils-2.25.1.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/binutils-2.25.1.tar.gz
+==> Downloading https://gist.githubusercontent.com/mistydemeo/f14c03c0c9ddfce97cf7/raw/2107e53002c34e41ade9b54629e670184e438d80/binutils_10
+Already downloaded: /data3/var/cache/Homebrew/binutils--patch-5ff40b9d7ad174d3c24edd8381471b8f5c408703111f0c90135ad0fffba452c2.diff
+==> Patching
+patching file bfd/config.in
+patching file bfd/configure
+patching file bfd/configure.ac
+patching file bfd/peXXigen.c
+==> ./configure  --with-sysroot=/ --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/binutils/2.25.1 --infodir=/data3/sw/Cad
+==> make
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/binutils/2.25.1: 3031 files, 194M, built in 2.6 minutes
+==> Installing supernemo-dbd/cadfael/cadfael dependency: gcc49
+==> Downloading http://ftpmirror.gnu.org/gcc/gcc-4.9.2/gcc-4.9.2.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/gcc49-4.9.2.tar.bz2
+==> Downloading https://gist.githubusercontent.com/sjackman/34fa1081982bda781862/raw/738349d49f4f094cced7cfe287cdcdfcd7207265/52fd2e1.diff
+Already downloaded: /data3/var/cache/Homebrew/gcc49--patch-c1dc9a0669eb48a427fbd0cb6a2c209ca9cbf765.diff
+==> Downloading https://files.warwick.ac.uk/supernemo/files/Cadfael/distfiles/gcc49-use-curl-prerequisites.patch
+Already downloaded: /data3/var/cache/Homebrew/gcc49--patch-97899007c4d92dfd4039ecd5f33b33f1edf6295937b4cf7131d4cc4fd8598fed.patch
+==> Patching
+patching file config-ml.in
+patching file contrib/download_prerequisites
+==> ./contrib/download_prerequisites
+==> ../configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gcc49/4.9.2_2  --enable-languages=c,c++,objc,obj-c++,for
+==> make bootstrap
+==> make install
+==> mv /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gcc49/4.9.2_2/lib64/* /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cel
+==> Creating the GCC specs file: /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gcc49/4.9.2_2/lib/gcc/x86_64-unknown-linux-gnu/4.
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gcc49/4.9.2_2: 1111 files, 649M, built in 35.2 minutes
+==> Installing supernemo-dbd/cadfael/cadfael dependency: pkg-config
+==> Downloading http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/pkg-config-0.28.tar.gz
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/pkg-config/0.28 --disable-host-tool --with-internal-glib
+==> make
+==> make check
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/pkg-config/0.28: 10 files, 644K, built in 28 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: homebrew/dupes/ncurses
+==> Downloading http://ftpmirror.gnu.org/ncurses/ncurses-6.0.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/ncurses-6.0.tar.gz
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/ncurses/6.0_1 --enable-pc-files --with-pkg-config-libdir=
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/ncurses/6.0_1: 1977 files, 19M, built in 47 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: readline
+==> Downloading http://ftpmirror.gnu.org/readline/readline-6.3.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/readline-6.3.8.tar.gz
+==> Downloading https://gist.githubusercontent.com/jacknagel/d886531fb6623b60b2af/raw/746fc543e56bc37a26ccf05d2946a45176b0894e/readline-6.3
+Already downloaded: /data3/var/cache/Homebrew/readline--patch-ef4fd6f24103b8f1d1199a6254d81a0cd63329bd2449ea9b93e66caf76d7ab89.diff
+==> Patching
+patching file display.c
+patching file input.c
+patching file misc.c
+patching file patchlevel
+patching file readline.c
+patching file rltypedefs.h
+patching file util.c
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/readline/6.3.8 --enable-multibyte --with-curses
+==> make install SHLIB_LIBS=-lcurses
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/readline/6.3.8: 40 files, 1,7M, built in 9 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: homebrew/dupes/unzip
+==> Downloading https://downloads.sourceforge.net/project/infozip/UnZip%206.x%20%28latest%29/UnZip%206.0/unzip60.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/unzip-6.0.tar.gz
+==> make -f unix/Makefile macosx
+==> make prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/unzip/6.0 MANDIR=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/unzip/6.0: 14 files, 432K, built in 2 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: sqlite
+==> Downloading https://sqlite.org/2015/sqlite-autoconf-3081101.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sqlite-3.8.11.1.tar.gz
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sqlite/3.8.11.1 --enable-dynamic-extensions
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sqlite/3.8.11.1: 9 files, 2,7M, built in 45 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: gdbm
+==> Downloading http://ftpmirror.gnu.org/gdbm/gdbm-1.11.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/gdbm-1.11.tar.gz
+==> ./configure --disable-silent-rules --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gdbm/1.11
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gdbm/1.11: 27 files, 828K, built in 6 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: makedepend
+==> Downloading http://xorg.freedesktop.org/releases/individual/util/makedepend-1.0.5.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/makedepend-1.0.5.tar.bz2
+==> Downloading http://xorg.freedesktop.org/releases/individual/proto/xproto-7.0.25.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/makedepend--xproto-7.0.25.tar.bz2
+==> ./configure --disable-silent-rules --prefix=/data3/var/tmp/makedepend20160225-6540-1wtagu7/makedepend-1.0.5/xproto
+==> make install
+==> Downloading http://xorg.freedesktop.org/releases/individual/util/util-macros-1.18.0.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/makedepend--xorg-macros-1.18.0.tar.bz2
+==> ./configure --prefix=/data3/var/tmp/makedepend20160225-6540-1wtagu7/makedepend-1.0.5/xorg-macros
+==> make install
+==> ./configure --disable-silent-rules --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/makedepend/1.0.5
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/makedepend/1.0.5: 7 files, 112K, built in 10 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: zlib
+==> Downloading http://zlib.net/zlib-1.2.8.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/zlib-1.2.8.tar.gz
+==> Patching
+patching file configure
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/zlib/1.2.8
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/zlib/1.2.8: 9 files, 416K, built in 2 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: openssl
+==> Downloading https://www.openssl.org/source/openssl-1.0.2d.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/openssl-1.0.2d.tar.gz
+tar: Bloc zéro solitaire repéré à 52140
+==> perl ./Configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/openssl/1.0.2d_1 --openssldir=/data3/sw/CadfaelBrew/
+==> make depend
+==> make
+==> make test
+==> make install MANDIR=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/openssl/1.0.2d_1/share/man MANSUFFIX=ssl
+==> Downloading https://raw.githubusercontent.com/bagder/ca-bundle/bff056d04b9e2c92ea8c83b2e39be9c8d0501039/ca-bundle.crt
+Already downloaded: /data3/var/cache/Homebrew/openssl--cacert-bundle.crt
+==> Caveats
+A CA file has been bootstrapped using certificates from the system
+keychain. To add additional certificates, place .pem files in
+  /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/etc/openssl/certs
+
+and run
+  /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/opt/openssl/bin/c_rehash
+
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/openssl/1.0.2d_1: 464 files, 16M, built in 2.8 minutes
+==> Installing supernemo-dbd/cadfael/cadfael dependency: python
+==> Downloading https://www.python.org/ftp/python/2.7.10/Python-2.7.10.tgz
+Already downloaded: /data3/var/cache/Homebrew/python-2.7.10.tgz
+==> Downloading https://bugs.python.org/file30805/issue10910-workaround.txt
+Already downloaded: /data3/var/cache/Homebrew/python--patch-c075353337f9ff3ccf8091693d278782fcdff62c113245d8de43c5c7acc57daf.txt
+==> Downloading https://bugs.python.org/file40479/xcode-stubs-2.7.patch
+Already downloaded: /data3/var/cache/Homebrew/python--patch-86714b750c887065952cd556f4d23246edf3124384f579356c8e377bc6ff2f83.patch
+==> Patching
+patching file Include/pyport.h
+Hunk #1 succeeded at 713 (offset 14 lines).
+Hunk #2 succeeded at 736 (offset 14 lines).
+patching file Lib/distutils/ccompiler.py
+patching file Lib/distutils/unixccompiler.py
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/python/2.7.10_2 --enable-ipv6 --datarootdir=/data3/sw/Cad
+==> make
+==> make install PYTHONAPPSDIR=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/python/2.7.10_2
+==> Downloading https://pypi.python.org/packages/source/s/setuptools/setuptools-18.3.1.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/python--setuptools-18.3.1.tar.gz
+==> Downloading https://pypi.python.org/packages/source/p/pip/pip-7.1.2.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/python--pip-7.1.2.tar.gz
+==> Downloading https://pypi.python.org/packages/source/w/wheel/wheel-0.26.0.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/python--wheel-0.26.0.tar.gz
+==> /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/python/2.7.10_2/bin/python -s setup.py --no-user-cfg install --force --verbose
+==> /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/python/2.7.10_2/bin/python -s setup.py --no-user-cfg install --force --verbose
+==> /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/python/2.7.10_2/bin/python -s setup.py --no-user-cfg install --force --verbose
+==> Caveats
+Pip and setuptools have been installed. To update them
+  pip install --upgrade pip setuptools
+
+You can install Python packages with
+  pip install <package>
+
+They will install into the site-package directory
+  /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/lib/python2.7/site-packages
+
+See: https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Homebrew-and-Python.md
+
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/python/2.7.10_2: 5374 files, 112M, built in 95 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: curl
+==> Downloading https://github.com/bagder/curl/releases/download/curl-7_45_0/curl-7.45.0.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/curl-7.45.0.tar.bz2
+==> ./configure --disable-silent-rules --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/curl/7.45.0 --with-ssl=/data3/sw/C
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/curl/7.45.0: 355 files, 3,4M, built in 44 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: sphinx-doc
+==> Downloading https://pypi.python.org/packages/source/S/Sphinx/Sphinx-1.3.1.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc-1.3.1.tar.gz
+==> Downloading https://pypi.python.org/packages/source/a/alabaster/alabaster-0.7.6.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--alabaster-0.7.6.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/B/Babel/Babel-2.1.1.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--Babel-2.1.1.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/d/docutils/docutils-0.12.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--docutils-0.12.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/J/Jinja2/Jinja2-2.8.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--Jinja2-2.8.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/M/MarkupSafe/MarkupSafe-0.23.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--MarkupSafe-0.23.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/P/Pygments/Pygments-2.0.2.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--Pygments-2.0.2.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/p/pytz/pytz-2015.7.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--pytz-2015.7.tar.bz2
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/s/six/six-1.10.0.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--six-1.10.0.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/s/snowballstemmer/snowballstemmer-1.2.0.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--snowballstemmer-1.2.0.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Downloading https://pypi.python.org/packages/source/s/sphinx_rtd_theme/sphinx_rtd_theme-0.1.9.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/sphinx-doc--sphinx_rtd_theme-0.1.9.tar.gz
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> python -c import setuptools... --no-user-cfg install --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1
+==> Caveats
+This formula is keg-only, which means it was not symlinked into /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git.
+
+This formula is mainly used internally by other formulae.
+Users are advised to use `pip` to install sphinx-doc.
+
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/sphinx-doc/1.3.1: 2618 files, 36M, built in 4 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: cmake
+==> Downloading https://cmake.org/files/v3.4/cmake-3.4.0.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/cmake-3.4.0.tar.gz
+==> ./bootstrap --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/cmake/3.4.0 --no-system-libs --parallel=4 --datadir=/shar
+==> make
+==> make install
+==> Caveats
+
+Emacs Lisp files have been installed to:
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/share/emacs/site-lisp/
+
+Add the following to your init file to have packages installed by
+Homebrew added to your load-path:
+(let ((default-directory "/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/share/emacs/site-lisp/"))
+  (normal-top-level-add-subdirs-to-load-path))
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/cmake/3.4.0: 1980 files, 31M, built in 4.7 minutes
+==> Installing supernemo-dbd/cadfael/cadfael dependency: xz
+==> Downloading https://fossies.org/linux/misc/xz-5.2.2.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/xz-5.2.2.tar.gz
+==> ./configure --disable-silent-rules --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/xz/5.2.2
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/xz/5.2.2: 65 files, 1,9M, built in 17 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: gettext
+==> Downloading http://ftpmirror.gnu.org/gettext/gettext-0.19.6.tar.xz
+Already downloaded: /data3/var/cache/Homebrew/gettext-0.19.6.tar.xz
+==> ./configure --disable-silent-rules --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gettext/0.19.6  --with-included-gl
+==> make
+==> make install
+==> Caveats
+
+Emacs Lisp files have been installed to:
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/share/emacs/site-lisp/
+
+Add the following to your init file to have packages installed by
+Homebrew added to your load-path:
+(let ((default-directory "/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/share/emacs/site-lisp/"))
+  (normal-top-level-add-subdirs-to-load-path))
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gettext/0.19.6: 1918 files, 23M, built in 2.5 minutes
+==> Installing supernemo-dbd/cadfael/cadfael dependency: flex
+==> Downloading https://downloads.sourceforge.net/flex/flex-2.5.39.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/flex-2.5.39.tar.bz2
+==> ./configure --disable-shared --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/flex/2.5.39
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/flex/2.5.39: 45 files, 2,3M, built in 11 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: bison
+==> Downloading http://ftpmirror.gnu.org/bison/bison-3.0.4.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/bison-3.0.4.tar.gz
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/bison/3.0.4
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/bison/3.0.4: 117 files, 3,3M, built in 34 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: doxygen
+==> Downloading http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.src.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/doxygen-1.8.10.tar.gz
+==> cmake .. -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/C
+==> make
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/doxygen/1.8.10: 8 files, 13M, built in 64 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: supernemo-dbd/cadfael/gsl
+==> Downloading http://ftpmirror.gnu.org/gsl/gsl-1.15.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/gsl-1.15.tar.gz
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gsl/1.15
+==> make
+==> make install
+==> Cloning https://github.com/SuperNEMO-DBD/GSLCMakeSupport.git
+Updating /data3/var/cache/Homebrew/gsl--GSLCMakeSupport--git
+==> Checking out branch master
+==> cmake -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cell
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/gsl/1.15: 250 files, 9,6M, built in 72 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: supernemo-dbd/cadfael/boost
+==> Downloading https://downloads.sourceforge.net/project/boost/boost/1.55.0/boost_1_55_0.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/boost-1.55.0.tar.bz2
+==> Downloading https://github.com/boostorg/atomic/commit/6bb71fdd.diff
+Already downloaded: /data3/var/cache/Homebrew/boost--patch-ca8679011d5293a7fd02cb3b97dde3515b8b2b03.diff
+==> Downloading https://github.com/boostorg/atomic/commit/e4bde20f.diff
+Already downloaded: /data3/var/cache/Homebrew/boost--patch-b68f5536474c9f543879698299bd4975538a89eb.diff
+==> Downloading https://github.com/boostorg/chrono/commit/143260d.diff
+Already downloaded: /data3/var/cache/Homebrew/boost--patch-2600214608e7706116831d6ffc302d099ba09950.diff
+==> Downloading https://gist.githubusercontent.com/philacs/375303205d5f8918e700/raw/d6ded52c3a927b6558984d22efe0a5cf9e59cd8c/0005-Boost.S11
+Already downloaded: /data3/var/cache/Homebrew/boost--patch-a37552d48e5c1c0507ee9d48fb82a3fa5e3bc9fa.patch
+==> Patching
+patching file boost/atomic/detail/cas128strong.hpp
+patching file boost/atomic/detail/gcc-atomic.hpp
+patching file boost/chrono/config.hpp
+patching file boost/chrono/detail/inlined/mac/thread_clock.hpp
+patching file boost/archive/iterators/transform_width.hpp
+==> ./bootstrap.sh --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/boost/1.55.0_2 --libdir=/data3/sw/CadfaelBrew/supernem
+==> ./b2 --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/boost/1.55.0_2 --libdir=/data3/sw/CadfaelBrew/supernemo/cxx11/Ca
+==> Cloning https://github.com/SuperNEMO-DBD/BoostCMakeSupport.git
+Updating /data3/var/cache/Homebrew/boost--BoostCMakeSupport--git
+==> Checking out branch master
+==> cmake -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cell
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/boost/1.55.0_2: 9957 files, 130M, built in 3.4 minutes
+==> Installing supernemo-dbd/cadfael/cadfael dependency: supernemo-dbd/cadfael/camp
+==> Cloning https://github.com/drbenmorgan/camp.git
+Updating /data3/var/cache/Homebrew/camp--git
+==> Checking out revision 7564e57f7b406d1021290cf2260334d57d8df255
+==> cmake . -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Ce
+==> make
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/camp/0.8.0: 110 files, 1,2M, built in 19 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: supernemo-dbd/cadfael/clhep
+==> Downloading http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/clhep-2.1.3.1.tgz
+Already downloaded: /data3/var/cache/Homebrew/clhep-2.1.3.1.tgz
+==> Patching
+patching file CLHEP/Matrix/src/Vector.cc
+==> cmake ../CLHEP -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/clhep/2.1.3.1: 328 files, 12M, built in 101 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: supernemo-dbd/cadfael/xerces-c
+==> Downloading https://www.apache.org/dyn/closer.cgi?path=xerces/c/3/sources/xerces-c-3.1.2.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/xerces-c-3.1.2.tar.gz
+==> ./configure --disable-silent-rules --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/xerces-c/3.1.2
+==> make install
+==> Cloning https://github.com/SuperNEMO-DBD/XercesCCMakeSupport.git
+Updating /data3/var/cache/Homebrew/xerces-c--XercesCCMakeSupport--git
+==> Checking out branch master
+==> cmake -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cell
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/xerces-c/3.1.2: 493 files, 22M, built in 99 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: supernemo-dbd/cadfael/geant4
+==> Downloading http://geant4.cern.ch/support/source/geant4.9.6.p04.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/geant4-9.6.4.tar.gz
+==> Downloading https://files.warwick.ac.uk/supernemo/files/Cadfael/distfiles/geant4-9.6.4-data-export.patch
+Already downloaded: /data3/var/cache/Homebrew/geant4--patch-6d7b50f504b53c924dfae28562726b839e191c4c78139dfa33040dfd460aebed.patch
+==> Downloading https://files.warwick.ac.uk/supernemo/files/Cadfael/distfiles/geant4-9.6.4-xcode.patch
+Already downloaded: /data3/var/cache/Homebrew/geant4--patch-0efa7f5b6c25f20493a3268dbd492ee3334f7839d2008554d57584ec9e4e7617.patch
+==> Downloading https://files.warwick.ac.uk/supernemo/files/Cadfael/distfiles/geant4-9.6.4-c11.patch
+Already downloaded: /data3/var/cache/Homebrew/geant4--patch-c99f760125f185f436a9191c5cdbad7053e7c41aaac0f6ccbacab392787f39a9.patch
+==> Downloading https://files.warwick.ac.uk/supernemo/files/Cadfael/distfiles/geant4-9.6.4-xercesc-include.patch
+Already downloaded: /data3/var/cache/Homebrew/geant4--patch-668d78b7c24efe9065a4e1aadd5441c129a454113eae96812c77a2c8861bfa64.patch
+==> Patching
+patching file cmake/Modules/Geant4BuildProjectConfig.cmake
+patching file cmake/Modules/Geant4InstallData.cmake
+patching file cmake/Templates/Geant4Config.cmake.in
+patching file cmake/Modules/Geant4MakeRules_cxx.cmake
+patching file source/processes/hadronic/models/low_energy/src/G4LElastic.cc
+patching file source/visualization/gMocren/src/G4GMocrenIO.cc
+patching file cmake/Modules/Geant4ConfigureConfigScript.cmake
+==> cmake ../ -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/
+==> make install
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/geant4/9.6.4_3: 28278 files, 1,4G, built in 23.3 minutes
+==> Installing supernemo-dbd/cadfael/cadfael dependency: libpng
+==> Downloading ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng16/libpng-1.6.19.tar.xz
+Already downloaded: /data3/var/cache/Homebrew/libpng-1.6.19.tar.xz
+==> ./configure --disable-silent-rules --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/libpng/1.6.19
+==> make
+==> make test
+==> make install
+==> Caveats
+This formula is keg-only, which means it was not symlinked into /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git.
+
+OS X already provides this software in versions before Mountain Lion.
+
+Generally there are no consequences of this for you. If you build your
+own software and it requires this formula, you'll need to add to your
+build variables:
+
+    LDFLAGS:  -L/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/opt/libpng/lib
+    CPPFLAGS: -I/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/opt/libpng/include
+
+
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/libpng/1.6.19: 17 files, 1,3M, built in 44 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: freetype
+==> Downloading https://downloads.sf.net/project/freetype/freetype2/2.6/freetype-2.6.tar.bz2
+Already downloaded: /data3/var/cache/Homebrew/freetype-2.6.tar.bz2
+==> Downloading https://gist.githubusercontent.com/anonymous/b47d77c41a6801879fd2/raw/fc21c3516b465095da7ed13f98bea491a7d18bbd/patch
+Already downloaded: /data3/var/cache/Homebrew/freetype--patch-5b21575d0384c9e502b51b0ba4be0ff453a34bcf9deba52b6baa38c3ffcde063
+==> Patching
+patching file builds/unix/ftconfig.in
+patching file include/config/ftconfig.h
+patching file include/internal/ftobjs.h
+patching file src/autofit/afwarp.h
+==> ./configure --prefix=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/freetype/2.6_1 --without-harfbuzz
+==> make
+==> make install
+==> Caveats
+This formula is keg-only, which means it was not symlinked into /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git.
+
+OS X already provides this software in versions before Mountain Lion.
+
+Generally there are no consequences of this for you. If you build your
+own software and it requires this formula, you'll need to add to your
+build variables:
+
+    LDFLAGS:  -L/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/opt/freetype/lib
+    CPPFLAGS: -I/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/opt/freetype/include
+
+
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/freetype/2.6_1: 60 files, 2,8M, built in 13 seconds
+==> Installing supernemo-dbd/cadfael/cadfael dependency: supernemo-dbd/cadfael/root5
+==> Downloading ftp://root.cern.ch/root/root_v5.34.30.source.tar.gz
+Already downloaded: /data3/var/cache/Homebrew/root5-5.34.30.tar.gz
+==> Patching
+patching file cmake/modules/RootBuildOptions.cmake
+patching file cmake/modules/SetUpLinux.cmake
+==> cmake ../ -DCMAKE_C_FLAGS_RELEASE= -DCMAKE_CXX_FLAGS_RELEASE= -DCMAKE_INSTALL_PREFIX=/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/
+==> make
+==> make install
+==> Caveats
+
+Emacs Lisp files have been installed to:
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/share/emacs/site-lisp/
+
+Add the following to your init file to have packages installed by
+Homebrew added to your load-path:
+(let ((default-directory "/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/share/emacs/site-lisp/"))
+  (normal-top-level-add-subdirs-to-load-path))
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/root5/5.34.30: 4607 files, 174M, built in 13.6 minutes
+==> Installing supernemo-dbd/cadfael/cadfael
+==> Cloning /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Library/Taps/supernemo-dbd/homebrew-cadfael
+Updating /data3/var/cache/Homebrew/cadfael--git
+==> Checking out branch master
+==> touch /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/cadfael/2016.01/bin/cadfael-installed-2016.01
+==> Caveats
+This formula is keg-only, which means it was not symlinked into /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git.
+
+Requirement and version tracking formula only
+
+==> Summary
+/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/Cellar/cadfael/2016.01: 4 files, 20K, built in 2 seconds
