@@ -51,7 +51,8 @@ namespace geomtools {
       if (! fi.is_valid()) {
         if (devel) std::cerr << "DEVEL: composite_surface::is_valid: Surface at index [" << i << "] is not valid";
         if (fi.has_face()) {
-          if (devel) std::cerr << " (type='" << typeid(fi.get_face_ref()).name() << "')";
+          const geomtools::i_shape_2d& cur = fi.get_face_ref();
+          if (devel) std::cerr << " (type='" << typeid(cur).name() << "')";
         }
         if (devel) std::cerr << std::endl;
         return false;

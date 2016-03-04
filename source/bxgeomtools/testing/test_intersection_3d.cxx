@@ -173,26 +173,26 @@ int main (int argc_, char ** argv_)
       if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
 
       double dim = 6. * CLHEP::mm;
-      geomtools::vector_3d pos (0, 0, 0);
-      if (! zero) pos.set(dim * drand48 (),
+      geomtools::vector_3d local_pos (0, 0, 0);
+      if (! zero) local_pos.set(dim * drand48 (),
                           dim * drand48 (),
                           dim * drand48 ());
-      if (center2) pos.set(2. * CLHEP::mm, 2. * CLHEP::mm, 2. * CLHEP::mm);
+      if (center2) local_pos.set(2. * CLHEP::mm, 2. * CLHEP::mm, 2. * CLHEP::mm);
 
-      geomtools::vector_3d dir;
-      geomtools::randomize_direction (drand48, dir);
+      geomtools::vector_3d local_dir;
+      geomtools::randomize_direction (drand48, local_dir);
 
-      geomtools::face_intercept_info intercept;
+      geomtools::face_intercept_info local_intercept;
       // int intercept_face;
-      double tolerance = 0.1;
-      if (inter1.find_intercept (pos, dir, intercept, tolerance)) {
+      double local_tolerance = 0.1;
+      if (inter1.find_intercept (local_pos, local_dir, local_intercept, local_tolerance)) {
         if (debug) std::clog << "test 1: Intercept face="
-                             << intercept.get_face_id ()
+                             << local_intercept.get_face_id ()
                              << " at impact="
-                             << intercept.get_impact ()
+                             << local_intercept.get_impact ()
                              << std::endl;
         geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(),
-                                                   intercept.get_impact ());
+                                                   local_intercept.get_impact ());
       } else {
         if (debug) std::clog << "test 1: No intercept." << std::endl;
       }

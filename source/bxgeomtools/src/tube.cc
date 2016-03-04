@@ -24,7 +24,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(tube, "geomtools::tube");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(tube, "geomtools::tube")
 
   using namespace std;
 

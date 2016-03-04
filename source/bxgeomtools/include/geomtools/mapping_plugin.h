@@ -58,7 +58,7 @@ namespace geomtools {
     bool                _initialized_; //<! Initialization flag
     geomtools::mapping  _mapping_;  //<! Embeded mapping instance
 
-    GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(mapping_plugin);
+    GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(mapping_plugin)
 
   };
 

@@ -26,7 +26,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(disk, "geomtools::disk");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(disk, "geomtools::disk")
 
   const std::string & disk::disk_label()
   {

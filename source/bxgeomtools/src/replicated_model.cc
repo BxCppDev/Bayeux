@@ -368,7 +368,7 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_model,"geomtools::replicated_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_model,"geomtools::replicated_model")
 
 } // end of namespace geomtools
 

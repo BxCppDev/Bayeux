@@ -67,7 +67,7 @@ namespace geomtools {
     //std::string                 _material_;
 
     // Registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_world_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_world_model)
 
   };
 

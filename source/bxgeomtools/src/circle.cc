@@ -24,7 +24,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(circle, "geomtools::circle");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(circle, "geomtools::circle")
 
   const std::string & circle::circle_label()
   {

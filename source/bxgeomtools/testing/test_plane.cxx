@@ -92,8 +92,8 @@ void test0 ( bool draw_ )
       geomtools::vector_3d pos((-2. + 4.* drand48()),
                                (-2. + 4.* drand48()),
                                (+3. + 4.* drand48()));
-      double tolerance = 0.25;
-      if (my_plane.is_on_surface(pos, tolerance)) {
+      double local_tolerance = 0.25;
+      if (my_plane.is_on_surface(pos, local_tolerance)) {
         counts++;
         geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), pos, 3.0);
       }
@@ -116,9 +116,9 @@ void test0 ( bool draw_ )
       geomtools::vector_3d dir;
       geomtools::randomize_direction(drand48, dir);
 
-      double tolerance = 0.05;
+      double local_tolerance = 0.05;
       geomtools::face_intercept_info intercept;
-      if (my_plane.find_intercept(pos, dir, intercept, tolerance)) {
+      if (my_plane.find_intercept(pos, dir, intercept, local_tolerance)) {
         counts++;
         geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), intercept.get_impact(), 2.0);
         // Test: intercept segments
@@ -170,19 +170,19 @@ void test0 ( bool draw_ )
 
     bool yz = false;
     if (yz) {
-      Gnuplot g1("lines");
-      g1.cmd("set title 'Test geomtools::plane -- test0' ");
-      g1.cmd("set grid");
-      g1.cmd("set size ratio -1");
-      g1.set_xlabel("y").set_ylabel("z");
-      g1.set_xrange(-10, +10).set_yrange(-10, +10).set_zrange(-10, +10);
+      Gnuplot g2("lines");
+      g2.cmd("set title 'Test geomtools::plane -- test0' ");
+      g2.cmd("set grid");
+      g2.cmd("set size ratio -1");
+      g2.set_xlabel("y").set_ylabel("z");
+      g2.set_xrange(-10, +10).set_yrange(-10, +10).set_zrange(-10, +10);
       std::ostringstream plot_cmd;
       plot_cmd << "plot '" << tmp_file.get_filename() << "' index 0 using 2:3 title 'Plane p' with lines ,";
       plot_cmd << " '' index 1 using 2:3 notitle with points lt 3 pt 7 ps 1.0 ,";
       plot_cmd << " '' index 2 using 2:3 notitle with lines lt 2 ";
       g1.cmd(plot_cmd.str());
       //g1.plotfile_xyz (tmp_file.get_filename (), 1, 2, 3, "3D view");
-      g1.showonscreen(); // window output
+      g2.showonscreen(); // window output
       geomtools::gnuplot_drawer::wait_for_key();
       usleep(200);
     }

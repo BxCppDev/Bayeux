@@ -829,7 +829,7 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(stacked_model, "geomtools::stacked_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(stacked_model, "geomtools::stacked_model")
 
 } // end of namespace geomtools
 

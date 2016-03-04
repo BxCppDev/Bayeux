@@ -175,6 +175,6 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(multiple_items_model,"geomtools::multiple_items_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(multiple_items_model,"geomtools::multiple_items_model")
 
 } // end of namespace geomtools

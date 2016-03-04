@@ -163,7 +163,7 @@ namespace geomtools {
     double _delta_angle_;  //!< Delta angle
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_cylinder_sector);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_cylinder_sector)
 
   };
 

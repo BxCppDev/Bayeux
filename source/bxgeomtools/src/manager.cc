@@ -52,7 +52,7 @@
 namespace geomtools {
 
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(manager::base_plugin,
-                                                   "geomtools::manager::base_plugin/__system__");
+                                                   "geomtools::manager::base_plugin/__system__")
 
   datatools::logger::priority manager::base_plugin::get_logging_priority() const
   {
@@ -963,10 +963,10 @@ namespace geomtools {
         out_ << "Name : '" << plugin_name << "' "
              << "Type : '" << plugin_record._id_ << "' ";
         out_ << '(';
-        int count = 0;
+        int local_count = 0;
         if (plugin_record._status_ & plugin_entry::STATUS_INITIALIZED) {
           out_ << "initialized";
-          count++;
+          local_count++;
         }
         out_ << ')';
         out_ << std::endl;

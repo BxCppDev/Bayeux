@@ -14,9 +14,9 @@
 
 namespace geomtools {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_object_3d, "geomtools::i_object_3d/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_object_3d, "geomtools::i_object_3d/__system__")
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_object_3d,"geomtools::i_object_3d");
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_object_3d,"geomtools::i_object_3d")
 
   i_object_3d::object_entry::object_entry()
   {

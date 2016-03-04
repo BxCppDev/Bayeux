@@ -18,7 +18,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(subtraction_3d, "geomtools::subtraction_3d");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(subtraction_3d, "geomtools::subtraction_3d")
 
   const std::string & subtraction_3d::subtraction_3d_label()
   {

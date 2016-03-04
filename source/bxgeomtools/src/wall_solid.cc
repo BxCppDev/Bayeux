@@ -20,7 +20,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(wall_solid, "geomtools::wall_solid");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(wall_solid, "geomtools::wall_solid")
 
   const std::string & wall_solid::wall_solid_label()
   {

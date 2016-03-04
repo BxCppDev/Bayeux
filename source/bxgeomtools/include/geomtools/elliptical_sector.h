@@ -161,7 +161,7 @@ namespace geomtools {
     double _delta_angle_; //!< Delta angle of the elliptic arc
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_sector);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_sector)
 
   };
 

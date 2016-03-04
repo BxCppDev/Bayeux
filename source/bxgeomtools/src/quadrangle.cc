@@ -29,7 +29,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(quadrangle, "geomtools::quadrangle");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(quadrangle, "geomtools::quadrangle")
 
   const std::string & quadrangle::quadrangle_label()
   {

@@ -614,7 +614,7 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(surrounded_boxed_model,"geomtools::surrounded_boxed_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(surrounded_boxed_model,"geomtools::surrounded_boxed_model")
 
 } // end of namespace geomtools
 

@@ -71,7 +71,7 @@ namespace geomtools {
     virtual void _build_bounding_data();
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(intersection_3d);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(intersection_3d)
 
   };
 

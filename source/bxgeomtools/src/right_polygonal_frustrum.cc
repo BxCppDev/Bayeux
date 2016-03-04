@@ -27,7 +27,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(right_polygonal_frustrum,
-                                             "geomtools::right_polygonal_frustrum");
+                                             "geomtools::right_polygonal_frustrum")
 
   // static
   const unsigned int right_polygonal_frustrum::MIN_NUMBER_OF_SIDES;

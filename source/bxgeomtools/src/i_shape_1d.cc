@@ -6,7 +6,7 @@
 namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_1d,
-                                                    "geomtools::i_shape_1d");
+                                                    "geomtools::i_shape_1d")
 
   bool i_shape_1d::has_number_of_paths() const
   {

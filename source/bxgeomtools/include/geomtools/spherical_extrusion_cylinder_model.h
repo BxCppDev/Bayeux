@@ -108,7 +108,7 @@ namespace geomtools {
 
     boost::scoped_ptr<wires_drawer> _drawer_;
 
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(spherical_extrusion_cylinder_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(spherical_extrusion_cylinder_model)
 
   };
 

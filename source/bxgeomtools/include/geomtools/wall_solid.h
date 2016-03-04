@@ -194,7 +194,7 @@ namespace geomtools {
     // double  _volume_;
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(wall_solid);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(wall_solid)
 
   };
 

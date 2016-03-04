@@ -312,10 +312,10 @@ namespace geomtools {
     rotation_3d  _inverse_rotation_; //!< Child->Mother frame coord. transformation
 
     //! Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -324,7 +324,7 @@ namespace geomtools {
 } // end of namespace geomtools
 
 // Activate reflection layer :
-DR_CLASS_INIT(::geomtools::placement);
+DR_CLASS_INIT(::geomtools::placement)
 
 /*
 // Class version:

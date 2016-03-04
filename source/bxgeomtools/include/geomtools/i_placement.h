@@ -93,17 +93,17 @@ namespace geomtools {
                             bool inherit_          = false) const;
 
     //! Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
 } // end of namespace geomtools
 
 // Activate reflection layer for the geomtools::i_placement class :
-DR_CLASS_INIT(::geomtools::i_placement);
+DR_CLASS_INIT(::geomtools::i_placement)
 
 /*
 // Class version:

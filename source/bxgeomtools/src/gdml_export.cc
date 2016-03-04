@@ -517,11 +517,11 @@ namespace geomtools {
       }
 
       std::list<gdml_writer::physvol> physvols;
-      for (logical_volume::physicals_col_type::const_iterator i
+      for (logical_volume::physicals_col_type::const_iterator iter
              = logical.get_physicals ().begin ();
-           i != logical.get_physicals ().end ();
-           i++) {
-        const physical_volume & phys = *(i->second);
+           iter != logical.get_physicals ().end ();
+           iter++) {
+        const physical_volume & phys = *(iter->second);
         DT_LOG_TRACE (get_logging_priority (), "phys=" << phys.get_name ());
         const logical_volume & log_child = phys.get_logical ();
         DT_LOG_TRACE (get_logging_priority (), "log_child=" << log_child.get_name ());

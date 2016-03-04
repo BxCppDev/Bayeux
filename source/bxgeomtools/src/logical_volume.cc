@@ -532,11 +532,11 @@ namespace geomtools {
               bool daughter_outside_main_shape
                 = daughter_shape.is_outside(daughter_item_position, daughter_tolerance_);
               if (! daughter_outside_main_shape) {
-                face_identifier fid;
-                daughter_shape.make_any_face(fid);
+                face_identifier local_fid;
+                daughter_shape.make_any_face(local_fid);
                 bool on_daughter_shape_surface
                   = daughter_shape.is_on_surface(daughter_item_position,
-                                                 fid,
+                                                 local_fid,
                                                  daughter_tolerance_);
                 if (on_daughter_shape_surface) {
                   bits |= SHAPE_DOMAIN_ON_DAUGHTER_SURFACE;

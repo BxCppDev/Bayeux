@@ -325,7 +325,7 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_circular_model,"geomtools::replicated_circular_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_circular_model,"geomtools::replicated_circular_model")
 
 } // end of namespace geomtools
 

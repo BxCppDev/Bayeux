@@ -71,7 +71,7 @@ namespace geomtools {
     static void init_ocd(datatools::object_configuration_description &);
 
     // Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

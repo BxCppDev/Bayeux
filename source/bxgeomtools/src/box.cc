@@ -18,7 +18,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(box, "geomtools::box");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(box, "geomtools::box")
 
   const std::string & box::box_label()
   {

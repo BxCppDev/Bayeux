@@ -5,7 +5,7 @@
 
 namespace geomtools {
 
-  GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(mapping_plugin,"geomtools::mapping_plugin");
+  GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(mapping_plugin,"geomtools::mapping_plugin")
 
   const geomtools::mapping & mapping_plugin::get_mapping () const
   {

@@ -26,7 +26,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(simple_polygon, "geomtools::simple_polygon");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(simple_polygon, "geomtools::simple_polygon")
 
   // static
   simple_polygon::build_mode_type
@@ -965,7 +965,8 @@ namespace geomtools {
     geomtools::vector_2d A = _wall_segments_[0].stop;
     for (int iwall = 1; iwall < (int) _wall_segments_.size(); iwall++) {
       const wall_segment_type & ws = _wall_segments_[iwall];
-      geomtools::vector_2d A = _wall_segments_[iwall-1].stop;
+      // Same as above or not? 
+      A = _wall_segments_[iwall-1].stop;
       geomtools::vector_2d B = ws.stop;
       geomtools::vector_2d uAB = (B - A).unit();
       double thetaAB = std::atan2(uAB.y(), uAB.x());

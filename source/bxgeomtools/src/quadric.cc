@@ -40,7 +40,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(quadric, "geomtools::quadric");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(quadric, "geomtools::quadric")
 
   // static
   const std::string & quadric::quadric_label()

@@ -161,7 +161,7 @@ namespace geomtools {
     MWIM              _internals_; //!< Internal/daughter volumes
 
     // registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(stacked_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(stacked_model)
 
   };
 

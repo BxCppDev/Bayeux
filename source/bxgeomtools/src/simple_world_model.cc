@@ -243,7 +243,7 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_world_model,"geomtools::simple_world_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(simple_world_model,"geomtools::simple_world_model")
 
 } // end of namespace geomtools
 

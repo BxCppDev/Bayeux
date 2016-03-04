@@ -82,11 +82,11 @@ private:
   bool                _initialized_;
   geomtools::mapping  _mapping_;
 
-  GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(test_plugin);
+  GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(test_plugin)
 
 };
 
-GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(test_plugin,"test_plugin");
+GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(test_plugin,"test_plugin")
 
 const geomtools::mapping & test_plugin::get_mapping() const
 {

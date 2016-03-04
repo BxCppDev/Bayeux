@@ -29,7 +29,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(triangle, "geomtools::triangle");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(triangle, "geomtools::triangle")
 
   const std::string & triangle::triangle_label()
   {
@@ -534,8 +534,8 @@ namespace geomtools {
       for (size_t i = 1; i < nsamples_12 - 1; i++) {
         vector_3d p0 = get_vertex_0();
         vector_3d p1 = get_vertex_1() + i * dl01 * u01;
-        line_3d l01(p0, p1);
-        l01.generate_wires_self(wires_);
+        line_3d line_l01(p0, p1);
+        line_l01.generate_wires_self(wires_);
       }
 
     }

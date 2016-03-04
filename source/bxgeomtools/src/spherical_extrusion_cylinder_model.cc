@@ -22,7 +22,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(spherical_extrusion_cylinder_model,
-                                         "geomtools::spherical_extrusion_cylinder_model");
+                                         "geomtools::spherical_extrusion_cylinder_model")
 
   std::string spherical_extrusion_cylinder_model::get_model_id () const
   {

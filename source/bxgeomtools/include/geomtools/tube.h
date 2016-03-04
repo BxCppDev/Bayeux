@@ -288,7 +288,7 @@ namespace geomtools {
     double _delta_phi_; //!< Delta phi angle
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tube);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tube)
 
   };
 

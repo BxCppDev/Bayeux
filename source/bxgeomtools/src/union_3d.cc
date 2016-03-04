@@ -19,7 +19,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(union_3d, "geomtools::union_3d");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(union_3d, "geomtools::union_3d")
 
   const std::string & union_3d::union_3d_label()
   {

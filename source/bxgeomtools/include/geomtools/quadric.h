@@ -224,7 +224,7 @@ namespace geomtools {
     double _coefficients_[NCOEFFS]; //!< Coefficients of the quadric
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(quadric);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(quadric)
 
   };
 

@@ -109,7 +109,7 @@ namespace geomtools {
     static void init_ocd(datatools::object_configuration_description & ocd_);
 
     // Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

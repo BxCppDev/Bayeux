@@ -23,7 +23,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(cylinder, "geomtools::cylinder");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(cylinder, "geomtools::cylinder")
 
   const std::string & cylinder::cylinder_label()
   {

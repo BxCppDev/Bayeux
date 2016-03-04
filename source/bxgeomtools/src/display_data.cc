@@ -269,9 +269,9 @@ namespace geomtools {
     else
       {
         DT_THROW_IF (frame_ < 0, std::logic_error, "Algo step item should have frame number >= 0 !");
-        std::map<int32_t, display_item>::iterator found
+        std::map<int32_t, display_item>::iterator frameFound
           = the_entry->items.find (frame_);
-        DT_THROW_IF (found != the_entry->items.end (),
+        DT_THROW_IF (frameFound != the_entry->items.end (),
                      std::logic_error,
                      "Algo step item in entry '" << name_ << "' with frame number '" << frame_ << "' already exists !");
         // add a new display item with requested frame number :

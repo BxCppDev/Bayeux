@@ -183,7 +183,7 @@ namespace geomtools {
     vector_3d _last_;  //!< Stop point of the segment
 
     // Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

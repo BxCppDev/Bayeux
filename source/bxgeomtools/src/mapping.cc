@@ -706,9 +706,9 @@ namespace geomtools {
             if (expect_mother) {
               std::ostringstream message;
               message << "Cannot build any GID scheme from all levels of mothership from GIDs={";
-              for (size_t i = 0; i < propagated_world_ids.size(); i++) {
-                if (i > 0) message << ", ";
-                message << propagated_world_ids[i];
+              for (size_t local_i = 0; local_i < propagated_world_ids.size(); local_i++) {
+                if (local_i > 0) message << ", ";
+                message << propagated_world_ids[local_i];
               }
               message << "} !";
               DT_THROW_IF(true, std::logic_error, message.str());

@@ -197,7 +197,7 @@ namespace geomtools {
     boost::scoped_ptr<triangle> _t023_;
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(quadrangle);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(quadrangle)
 
   };
 

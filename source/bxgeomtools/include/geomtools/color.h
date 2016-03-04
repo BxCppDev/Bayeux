@@ -159,7 +159,7 @@ namespace geomtools {
         ENCODING_NONE     = 0,
         ENCODING_BY_CODE  = 1,
         ENCODING_BY_VALUE = 2,
-        ENCODING_BY_NAME  = 3,
+        ENCODING_BY_NAME  = 3
         //ENCODING_BY_COLOR = 4,
       };
 

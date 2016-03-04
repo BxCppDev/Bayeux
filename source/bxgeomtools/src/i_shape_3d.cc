@@ -15,7 +15,7 @@
 
 namespace geomtools {
 
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_3d, "geomtools::i_shape_3d");
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_3d, "geomtools::i_shape_3d")
 
   using namespace std;
 

@@ -160,7 +160,7 @@ namespace geomtools {
     double _delta_phi_;   //!< The delta phi angle
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(spherical_sector);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(spherical_sector)
 
   };
 

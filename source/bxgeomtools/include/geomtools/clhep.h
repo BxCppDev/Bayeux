@@ -33,9 +33,9 @@ namespace geomtools {
 
 // Activate reflection layer for some classes :
 #include <datatools/reflection_interface.h>
-DR_CLASS_INIT(::geomtools::vector_2d);
-DR_CLASS_INIT(::geomtools::vector_3d);
-DR_CLASS_INIT(::geomtools::rotation_3d);
+DR_CLASS_INIT(::geomtools::vector_2d)
+DR_CLASS_INIT(::geomtools::vector_3d)
+DR_CLASS_INIT(::geomtools::rotation_3d)
 
 namespace geomtools {
 

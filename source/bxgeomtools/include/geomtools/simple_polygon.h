@@ -45,7 +45,7 @@ namespace geomtools {
     enum build_mode_type {
       BUILD_MODE_INVALID     = 0, ///< Invalid build mode
       BUILD_MODE_BY_VERTICES = 1, ///< Build mode by vertices
-      BUILD_MODE_BY_SEGMENTS = 2, ///< Build mode by segments
+      BUILD_MODE_BY_SEGMENTS = 2 ///< Build mode by segments
     };
 
     /// Return the build mode from a label
@@ -249,7 +249,7 @@ namespace geomtools {
     std::vector<triangle> _triangles_; //!< List of triangles
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(simple_polygon);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(simple_polygon)
 
   };
 

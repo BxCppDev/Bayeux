@@ -91,7 +91,7 @@ namespace geomtools {
     MWIM                       _internals_; /// Internal items within the mother shape
 
     // registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(replicated_circular_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(replicated_circular_model)
 
   };
 

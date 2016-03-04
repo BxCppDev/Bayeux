@@ -162,7 +162,7 @@ namespace geomtools {
     double _delta_angle_;   //!< The delta phi angle (longitude/azimuth)
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(right_circular_conical_nappe);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(right_circular_conical_nappe)
 
   };
 

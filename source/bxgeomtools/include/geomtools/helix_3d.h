@@ -220,7 +220,7 @@ namespace geomtools {
     double    _t2_;     //!< The stop angle divided by (2 pi)
 
     // Serialization interface:
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

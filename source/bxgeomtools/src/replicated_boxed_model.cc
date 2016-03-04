@@ -242,7 +242,7 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_boxed_model,"geomtools::replicated_boxed_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(replicated_boxed_model,"geomtools::replicated_boxed_model")
 
 } // end of namespace geomtools
 

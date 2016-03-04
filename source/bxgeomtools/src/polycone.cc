@@ -35,7 +35,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(polycone, "geomtools::polycone");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(polycone, "geomtools::polycone")
 
   const std::string & polycone::polycone_label()
   {
@@ -839,7 +839,7 @@ namespace geomtools {
     mygsl::tabulated_function::points_map_type::const_iterator i = tf_outer.points ().begin ();
     mygsl::tabulated_function::points_map_type::const_iterator j = tf_inner.points ().begin ();
     for (size_t k = 0; k < tf_outer.points ().size (); k++) {
-      double z = i->first;
+      double local_z = i->first;
       double rmin = j->second;
       double rmax = i->second;
       if (rmin > rmax) rmin = rmax;
@@ -849,7 +849,7 @@ namespace geomtools {
       if (rmin < 1e-300) {
         rmin = 0.0;
       }
-      this->add (z, rmin, rmax, false);
+      this->add (local_z, rmin, rmax, false);
       i++;
       j++;
     }

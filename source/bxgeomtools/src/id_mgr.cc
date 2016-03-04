@@ -275,11 +275,11 @@ namespace geomtools {
                  std::logic_error,
                  "Meta label '" << mp_.get_meta_label () << "' is not valid !");
 
-    for (datatools::multi_properties::entries_ordered_col_type::const_iterator i =
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator iter =
            mp_.ordered_entries ().begin ();
-         i != mp_.ordered_entries ().end ();
-         i++) {
-      const datatools::multi_properties::entry & the_entry = *(*i);
+         iter != mp_.ordered_entries ().end ();
+         iter++) {
+      const datatools::multi_properties::entry & the_entry = *(*iter);
       DT_LOG_TRACE (get_logging_priority (), "Entry: ");
       if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
         the_entry.tree_dump (std::cerr);
@@ -773,10 +773,10 @@ namespace geomtools {
        * or
        *     address rules == "address rule 1, address rule 2..."
        */
-      std::string addresses_token = split_vec[1];
-      DT_LOG_TRACE (get_logging_priority (), "Addresses info is `" << addresses_token << "'");
+      std::string local_addresses_token = split_vec[1];
+      DT_LOG_TRACE (get_logging_priority (), "Addresses info is `" << local_addresses_token << "'");
       split_vector_type split_addr;
-      boost::split (split_addr, addresses_token, boost::algorithm::is_any_of (","));
+      boost::split (split_addr, local_addresses_token, boost::algorithm::is_any_of (","));
       if (split_addr.size () != number_of_remaining_addresses) {
         DT_LOG_FATAL (get_logging_priority (), "Category info:");
         if (get_logging_priority () >= datatools::logger::PRIO_FATAL) ci.tree_dump (std::cerr);
@@ -785,7 +785,7 @@ namespace geomtools {
         std::ostringstream message;
         message << "geomtools::id_mgr::compute_id_from_info: "
                 << "Invalid number of remaining addresses info for category `"
-                << category << "' from token `" << addresses_token << "' "
+                << category << "' from token `" << local_addresses_token << "' "
                 << " with mother ID " << mother_id_ << " (mother=`" << mother_category << "') [";
         for (std::vector<uint32_t>::const_iterator ii = items_index_.begin ();
              ii !=  items_index_.end ();

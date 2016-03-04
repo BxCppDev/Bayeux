@@ -136,7 +136,7 @@ namespace geomtools {
     //! \brief Print flags
     enum smart_print_flags_type {
       PRINT_TITLE = datatools::bit_mask::bit00,
-      PRINT_PAGER = datatools::bit_mask::bit01,
+      PRINT_PAGER = datatools::bit_mask::bit01
     };
 
     //! Smart print

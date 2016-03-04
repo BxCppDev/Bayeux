@@ -9,7 +9,7 @@ namespace geomtools {
   using namespace std;
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_world_model,"geomtools::test::test_world_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(test_world_model,"geomtools::test::test_world_model")
 
   const geomtools::box & test_world_model::get_solid () const
   {

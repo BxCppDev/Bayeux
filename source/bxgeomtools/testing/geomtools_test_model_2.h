@@ -68,7 +68,7 @@ namespace geomtools {
       geomtools::box              _solid_;
 
       // Registration interface :
-      GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(test_model_2);
+      GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(test_model_2)
 
     };
 

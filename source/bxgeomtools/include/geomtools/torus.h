@@ -242,7 +242,7 @@ namespace geomtools {
     double _delta_phi_;      //!< Delta phi
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(torus);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(torus)
 
   };
 

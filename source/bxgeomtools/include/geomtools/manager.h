@@ -140,7 +140,7 @@ namespace geomtools {
       std::vector<std::string> _geom_setup_requirements_; //!< Minimal version of geometry setups
 
       // Factory stuff :
-      DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_plugin);
+      DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_plugin)
     };
 
     typedef datatools::handle<base_plugin> plugin_handle_type;
@@ -154,7 +154,7 @@ namespace geomtools {
       enum status_type {
         STATUS_BLANK        = 0x0, //!< Not created not initialized
         STATUS_CREATED      = 0x1, //!< Created
-        STATUS_INITIALIZED  = 0x2, //!< Initialized
+        STATUS_INITIALIZED  = 0x2 //!< Initialized
       };
 
       /// Set the name of the plugin

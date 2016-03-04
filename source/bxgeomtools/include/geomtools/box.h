@@ -247,7 +247,7 @@ namespace geomtools {
     double _z_; //!< Height (in arbitrary units)
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(box);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(box)
 
   };
 

@@ -226,17 +226,17 @@ int main(int argc_, char ** argv_)
           std::string more;
 #if GEOMTOOLS_WITH_READLINE == 1
           {
-            char * readline_line = 0;
+            char * local_readline_line = 0;
             go_on = false;
-            readline_line = readline (prompt_continue.c_str ()); // use readline library
-            if (readline_line != 0) {
+            local_readline_line = readline (prompt_continue.c_str ()); // use readline library
+            if (local_readline_line != 0) {
               go_on = true;
-              more = readline_line; // use readline library
+              more = local_readline_line; // use readline library
               if (! more.empty()) {
-                add_history(readline_line); // use readline/history library
+                add_history(local_readline_line); // use readline/history library
               }
-              free(readline_line);
-              readline_line = 0;
+              free(local_readline_line);
+              local_readline_line = 0;
             }
           }
 #else // GEOMTOOLS_WITH_READLINE

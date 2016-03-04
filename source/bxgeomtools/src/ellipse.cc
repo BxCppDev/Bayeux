@@ -27,7 +27,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ellipse, "geomtools::ellipse");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ellipse, "geomtools::ellipse")
 
   const std::string & ellipse::ellipse_label()
   {

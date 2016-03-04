@@ -203,7 +203,7 @@ namespace geomtools {
     static std::string extract_label_from_physical_volume_name(const std::string & physical_volume_name_);
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_model);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_model)
 
   }; // class i_model
 

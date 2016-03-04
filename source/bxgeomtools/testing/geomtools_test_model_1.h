@@ -57,7 +57,7 @@ namespace geomtools {
 
 
       // registration interface :
-      GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(test_model_1);
+      GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(test_model_1)
 
     };
 

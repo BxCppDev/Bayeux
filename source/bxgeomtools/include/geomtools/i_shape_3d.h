@@ -331,7 +331,7 @@ namespace geomtools {
     datatools::handle<face_info_collection_type> _computed_faces_; //!< Computed faces
 
     // Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

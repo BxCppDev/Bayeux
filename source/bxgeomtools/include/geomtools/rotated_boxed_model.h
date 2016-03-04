@@ -66,7 +66,7 @@ namespace geomtools {
     geomtools::box   _solid_;
 
     // Registration interface
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(rotated_boxed_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(rotated_boxed_model)
 
   };
 

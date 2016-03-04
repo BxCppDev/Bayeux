@@ -47,12 +47,12 @@ namespace geomtools {
 
     enum display_type {
       DISPLAY_STATIC = 0,
-      DISPLAY_FRAMED = 1,
+      DISPLAY_FRAMED = 1
     };
 
     enum display_style_type {
       DISPLAY_STYLE_UNDEFINED = -1,
-      DISPLAY_STYLE_WIRES  = 0,
+      DISPLAY_STYLE_WIRES  = 0
     };
 
     struct label_item {
@@ -73,7 +73,7 @@ namespace geomtools {
       display_item ();
       virtual ~display_item ();
       void reset ();
-      DATATOOLS_SERIALIZATION_DECLARATION();
+      DATATOOLS_SERIALIZATION_DECLARATION()
     };
 
     typedef std::map<int32_t, display_item> items_dict_type;
@@ -96,7 +96,7 @@ namespace geomtools {
       const display_item & get_framed_item (int frame_index_) const;
       bool has_framed_item (int frame_index_) const;
 
-      DATATOOLS_SERIALIZATION_DECLARATION();
+      DATATOOLS_SERIALIZATION_DECLARATION()
     };
 
     typedef std::map<std::string, display_entry> entries_dict_type;
@@ -167,7 +167,7 @@ namespace geomtools {
     std::map<std::string, display_entry> _entries_; //!< Collection of display entities
     datatools::properties                _auxiliaries_; //!< Auxiliary properties
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

@@ -29,7 +29,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(right_circular_conical_frustrum,
-                                             "geomtools::right_circular_conical_frustrum");
+                                             "geomtools::right_circular_conical_frustrum")
 
   const std::string & right_circular_conical_frustrum::rccf_label()
   {

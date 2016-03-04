@@ -21,7 +21,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(elliptical_cylinder,
-                                             "geomtools::elliptical_cylinder");
+                                             "geomtools::elliptical_cylinder")
 
   const std::string & elliptical_cylinder::elliptical_cylinder_label()
   {

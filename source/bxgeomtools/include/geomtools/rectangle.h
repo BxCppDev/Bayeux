@@ -133,7 +133,7 @@ namespace geomtools {
     double _y_; //!< Y dimension
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(rectangle);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(rectangle)
 
   };
 

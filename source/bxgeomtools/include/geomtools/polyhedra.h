@@ -334,7 +334,7 @@ namespace geomtools {
     bool    _extruded_;
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(polyhedra);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(polyhedra)
 
   };
 

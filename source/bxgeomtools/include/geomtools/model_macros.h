@@ -29,11 +29,11 @@
 
 #define GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(ModelClassName)          \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::i_model,ModelClassName); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::i_model,ModelClassName) \
   /**/
 
 #define GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(ModelClassName,ModelClassId) \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::i_model,ModelClassName,ModelClassId); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::i_model,ModelClassName,ModelClassId) \
   /**/
 
 #define GEOMTOOLS_MODEL_PRE_CONSTRUCT_INTERFACE()               \

@@ -25,7 +25,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(toroid_nappe,
-                                             "geomtools::toroid_nappe");
+                                             "geomtools::toroid_nappe")
 
   // static
   const std::string & toroid_nappe::toroid_nappe_label()

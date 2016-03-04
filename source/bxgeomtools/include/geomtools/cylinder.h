@@ -220,7 +220,7 @@ namespace geomtools {
     double _radius_; //<! Radius
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(cylinder);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(cylinder)
 
   };
 

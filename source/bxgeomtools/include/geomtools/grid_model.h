@@ -113,7 +113,7 @@ namespace geomtools {
     MWIM           _internals_; /// internal items within the shape
 
     // registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(grid_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(grid_model)
 
   };
 

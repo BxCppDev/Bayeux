@@ -208,7 +208,7 @@ namespace geomtools {
     double _top_z_cut_;    //!< upper cut plane level / z
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(ellipsoid);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(ellipsoid)
 
   };
 

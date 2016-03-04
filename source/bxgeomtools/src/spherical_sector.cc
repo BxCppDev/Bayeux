@@ -26,7 +26,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(spherical_sector,
-                                             "geomtools::spherical_sector");
+                                             "geomtools::spherical_sector")
 
   // static
   const std::string & spherical_sector::spherical_sector_label()

@@ -355,17 +355,17 @@ namespace geomtools {
     geomtools::geom_id    _geom_id_;     //!< Geometry ID
     datatools::properties _auxiliaries_; //!< Auxiliary properties
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
 } // end of namespace geomtools
 
 // Activate reflection layer for the geomtools::base_hit class :
-DR_CLASS_INIT(::geomtools::base_hit);
+DR_CLASS_INIT(::geomtools::base_hit)
 
 // Class version:
 #include <boost/serialization/version.hpp>

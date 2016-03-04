@@ -499,7 +499,7 @@ namespace geomtools {
     facet_segments_col_type _facet_segments_; //!< List of facet segments
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tessellated_solid);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tessellated_solid)
 
   };
 

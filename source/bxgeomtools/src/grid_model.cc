@@ -18,7 +18,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(grid_model,"geomtools::grid_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(grid_model,"geomtools::grid_model")
 
   const geomtools::box & grid_model::get_box () const
   {

@@ -26,7 +26,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ellipsoid, "geomtools::ellipsoid");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ellipsoid, "geomtools::ellipsoid")
 
   const std::string & ellipsoid::ellipsoid_label()
   {

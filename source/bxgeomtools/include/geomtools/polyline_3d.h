@@ -124,7 +124,7 @@ namespace geomtools {
     polyline_type _points_; //!< Sequence of points/vertexes
 
     //! Serialization support
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
   };
 

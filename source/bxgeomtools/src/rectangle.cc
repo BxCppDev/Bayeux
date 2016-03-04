@@ -26,7 +26,7 @@ namespace geomtools {
   using namespace std;
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(rectangle, "geomtools::rectangle");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(rectangle, "geomtools::rectangle")
 
   const std::string & rectangle::rectangle_label()
   {

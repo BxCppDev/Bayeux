@@ -145,7 +145,7 @@ namespace geomtools {
     MWIM                _internals_; /// Internal/daughter volumes
 
     // Registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(surrounded_boxed_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(surrounded_boxed_model)
 
   };
 

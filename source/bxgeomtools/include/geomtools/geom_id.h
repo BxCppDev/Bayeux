@@ -203,10 +203,10 @@ namespace geomtools {
     uint32_t              _type_;      //!< The unique 'type' identifier of the geometry category associated to the GID
     std::vector<uint32_t> _addresses_; //!< The array of addresses
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -217,7 +217,7 @@ BOOST_CLASS_EXPORT_KEY2(geomtools::geom_id, "geomtools::geom_id")
 
 //#warning Activate reflection layer for the geomtools::geom_id class
 // Activate reflection layer for the geomtools::geom_id class :
-DR_CLASS_INIT(::geomtools::geom_id);
+DR_CLASS_INIT(::geomtools::geom_id)
 
 // Class version:
 #include <boost/serialization/version.hpp>

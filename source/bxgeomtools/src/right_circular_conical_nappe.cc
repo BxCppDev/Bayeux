@@ -24,7 +24,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(right_circular_conical_nappe,
-                                             "geomtools::right_circular_conical_nappe");
+                                             "geomtools::right_circular_conical_nappe")
 
   // static
   const std::string & right_circular_conical_nappe::right_circular_conical_nappe_label()

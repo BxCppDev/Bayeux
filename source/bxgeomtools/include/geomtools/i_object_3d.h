@@ -232,10 +232,10 @@ namespace geomtools {
     i_wires_3d_rendering * _wires_drawer_; //!< The handle on an external wires drawer object (may be used by some display tool, i.e. the gnuplot renderer)
 
     // Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_object_3d);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_object_3d)
 
   public:
 
@@ -259,11 +259,11 @@ namespace geomtools {
 
 #define GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(ModelClassName)      \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::i_object_3d,ModelClassName); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::geomtools::i_object_3d,ModelClassName) \
   /**/
 
 #define GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ModelClassName,ModelClassId) \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::i_object_3d,ModelClassName,ModelClassId); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::geomtools::i_object_3d,ModelClassName,ModelClassId) \
   /**/
 
 /*

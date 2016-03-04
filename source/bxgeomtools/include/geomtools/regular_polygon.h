@@ -168,7 +168,7 @@ namespace geomtools {
     double   _r_;       //!< The radius of the polygon, i.e. the distance from center to vertices (circumradius)
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(regular_polygon);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(regular_polygon)
 
   };
 

@@ -255,7 +255,7 @@ namespace geomtools {
     double   _z_;                   //!< The Z dimension
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(right_polygonal_frustrum);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(right_polygonal_frustrum)
 
   };
 

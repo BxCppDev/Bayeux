@@ -170,25 +170,25 @@ int main (int argc_, char ** argv_)
 
         // special debug activation:
         double dim = 6. * CLHEP::mm;
-        geomtools::vector_3d pos (dim * drand48 (),
+        geomtools::vector_3d local_pos (dim * drand48 (),
                                   dim * drand48 (),
                                   dim * drand48 ());
-        geomtools::vector_3d dir;
-        geomtools::randomize_direction (drand48, dir);
+        geomtools::vector_3d local_dir;
+        geomtools::randomize_direction (drand48, local_dir);
 
-        geomtools::face_intercept_info intercept;
-        double tolerance = 0.01;
-        if (do_intercept && sub1.find_intercept (pos, dir, intercept, tolerance)) {
+        geomtools::face_intercept_info local_intercept;
+        double local_tolerance = 0.01;
+        if (do_intercept && sub1.find_intercept (local_pos, local_dir, local_intercept, local_tolerance)) {
           if (debug) std::clog << "test 1: Intercept face="
-                               << intercept.get_face_id ()
+                               << local_intercept.get_face_id ()
                                << " at impact="
-                               << intercept.get_impact ()
+                               << local_intercept.get_impact ()
                                << std::endl;
           geomtools::gnuplot_draw::basic_draw_point (tmp_file.out(),
-                                                     intercept.get_impact(),
+                                                     local_intercept.get_impact(),
                                                      false);
           int face = 0;
-          switch (intercept.get_face_id().get_face_bits()) {
+          switch (local_intercept.get_face_id().get_face_bits()) {
           case 0x1: face = 1; break;
           case 0x2: face = 2; break;
           case 0x4: face = 3; break;
@@ -196,7 +196,7 @@ int main (int argc_, char ** argv_)
           case 0x10: face = 5; break;
           case 0x20: face = 6; break;
           }
-          if (intercept.get_face_id().get_part(0) == 1) face += 6;
+          if (local_intercept.get_face_id().get_part(0) == 1) face += 6;
           tmp_file.out() << ' ' << face;
           tmp_file.out() << std::endl;
           count++;

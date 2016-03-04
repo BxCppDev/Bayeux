@@ -26,7 +26,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(polyhedra, "geomtools::polyhedra");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(polyhedra, "geomtools::polyhedra")
 
   const size_t polyhedra::MIN_NUMBER_OF_SIDES;
 

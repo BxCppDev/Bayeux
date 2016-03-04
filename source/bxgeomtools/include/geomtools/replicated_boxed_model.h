@@ -74,7 +74,7 @@ namespace geomtools {
     geomtools::box _solid_;
 
     // registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(replicated_boxed_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(replicated_boxed_model)
 
   };
 

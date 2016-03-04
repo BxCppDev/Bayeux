@@ -261,7 +261,7 @@ namespace geomtools {
     double _delta_theta_; //!< Delta theta angle
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(sphere);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(sphere)
 
   };
 

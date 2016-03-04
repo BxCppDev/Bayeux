@@ -141,7 +141,7 @@ namespace geomtools {
     double _delta_angle_; //!< Delta angle of the circular arc
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(circle);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(circle)
 
   };
 

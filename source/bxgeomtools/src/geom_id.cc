@@ -405,18 +405,18 @@ namespace geomtools {
     id_._addresses_.reserve (geom_id::DEFAULT_ADDRESS_DEPTH);
     while (true)
       {
-        char check = in_.peek ();
+        char local_check = in_.peek ();
         if (in_.eof ())
           {
             return in_;
           }
         uint32_t val;
-        if (check == geom_id::IO_ADDRESS_INVALID)
+        if (local_check == geom_id::IO_ADDRESS_INVALID)
           {
             id_.set_invalid (count);
             in_.get ();
           }
-        else if (check == geom_id::IO_ADDRESS_ANY)
+        else if (local_check == geom_id::IO_ADDRESS_ANY)
           {
             id_.set_any (count);
             in_.get ();

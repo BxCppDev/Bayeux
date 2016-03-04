@@ -10,7 +10,7 @@
 namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(i_shape_2d,
-                                                    "geomtools::i_shape_2d");
+                                                    "geomtools::i_shape_2d")
 
   // static
   const uint32_t i_shape_2d::ALL_PIECES;

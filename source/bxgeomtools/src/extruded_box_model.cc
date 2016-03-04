@@ -23,7 +23,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(extruded_box_model, "geomtools::extruded_box_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(extruded_box_model, "geomtools::extruded_box_model")
 
   const geomtools::i_shape_3d & extruded_box_model::get_solid() const
   {

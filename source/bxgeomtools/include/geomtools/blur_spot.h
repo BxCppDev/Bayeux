@@ -262,10 +262,10 @@ namespace geomtools {
     double _z_error_;                    //!< Error/spread of the spot along the Z-axis
 
     //! Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -314,7 +314,7 @@ namespace geomtools {
 } // end of namespace geomtools
 
 // Activate reflection layer for the blur_spot class :
-DR_CLASS_INIT(::geomtools::blur_spot);
+DR_CLASS_INIT(::geomtools::blur_spot)
 
 // Class version:
 // 2014-07-03 FM: Now inherits from geomtools::base_hit :

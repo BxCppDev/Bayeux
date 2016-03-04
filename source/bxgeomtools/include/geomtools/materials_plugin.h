@@ -70,7 +70,7 @@ namespace geomtools {
     bool               _initialized_; //!< Initialization flag
     materials::manager _manager_;     //!< The embeded manager of isotopes, elements and materials
 
-    GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(materials_plugin);
+    GEOMTOOLS_PLUGIN_REGISTRATION_INTERFACE(materials_plugin)
 
   };
 

@@ -570,11 +570,11 @@ namespace geomtools {
 
       DT_LOG_TRACE (local_priority, "Drawing children...");
       display_level++;
-      for (geomtools::logical_volume::physicals_col_type::const_iterator i
+      for (geomtools::logical_volume::physicals_col_type::const_iterator iter
              = log.get_physicals ().begin ();
-           i != log.get_physicals ().end (); i++) {
+           iter != log.get_physicals ().end (); ++iter) {
         bool draw_it = true;
-        const physical_volume & phys = *(i->second);
+        const physical_volume & phys = *(iter->second);
         const geomtools::logical_volume & log_child = phys.get_logical ();
         if (! draw_children) {
           draw_it = false;
@@ -846,12 +846,12 @@ namespace geomtools {
            i++) {
         const cstream & cs = i->second;
         cmdstr << "\"" << cs.filename << "\" using " << col1 << ":" << col2;
-        int color = cs.color;
+        int local_color = cs.color;
         if (plot_dim == 3) {
           cmdstr << ":" << col3;
         }
         cmdstr << " notitle";
-        cmdstr << " with lines lt " << color << ' ' ;
+        cmdstr << " with lines lt " << local_color << ' ' ;
         cmdstr << " lw " << 0.5 << ' ' ;
 
         // if there is another one:

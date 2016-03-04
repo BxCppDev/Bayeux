@@ -518,7 +518,7 @@ namespace geomtools {
     materials_stream << "<element"
                      << " name=" << '"' << to_html(name_) << '"'
                      << " >" << std::endl;
-    double s = 0.0;
+    double sWhat = 0.0;
     for(std::map<std::string, double>::const_iterator i = fractions_.begin();
         i != fractions_.end();
         i++) {
@@ -527,14 +527,14 @@ namespace geomtools {
       DT_THROW_IF (n < 0.0 || n > 1.0, std::logic_error,
                    "Invalid fraction value '" << n << "' for referenced '" << ref << "' in element '"
                    << name_ << "' !");
-      s += n;
+      sWhat += n;
       materials_stream << "  <fraction"
                        << " ref=" << '"' << to_html(ref) << '"'
                        << " n=" << '"';
       materials_stream.precision(15);
       materials_stream << n << '"' << " />" << std::endl;
     }
-    DT_THROW_IF (s > 1.000000000001, std::logic_error,
+    DT_THROW_IF (sWhat > 1.000000000001, std::logic_error,
                  "Invalid fraction sum in element '" << name_ << "' !");
     materials_stream << "</element>" << std::endl;
     _get_stream(materials_section()) << materials_stream.str();
@@ -1644,12 +1644,12 @@ namespace geomtools {
     solids_stream << " >" << std::endl << std::endl;
 
     // Registration of facets:
-    for (tessellated_solid::facets_col_type::const_iterator i
+    for (tessellated_solid::facets_col_type::const_iterator iter
            = t_.facets().begin();
-         i != t_.facets().end();
-         i++) {
+         iter != t_.facets().end();
+         iter++) {
        // unsigned int facet_index = i->first;
-       const facet34 & facet = i->second;
+       const facet34 & facet = iter->second;
 
        solids_stream << "<";
        if (facet.is_triangle()) {

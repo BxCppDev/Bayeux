@@ -855,7 +855,7 @@ namespace geomtools {
 
   // Registration :
   GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(tessellated_solid,
-                                             "geomtools::tessellated_solid");
+                                             "geomtools::tessellated_solid")
 
   // static
   const int tessellated_solid::INVALID_VERTEX;

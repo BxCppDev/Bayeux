@@ -27,7 +27,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(regular_polygon, "geomtools::regular_polygon");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(regular_polygon, "geomtools::regular_polygon")
 
   const std::string & regular_polygon::regular_polygon_label()
   {

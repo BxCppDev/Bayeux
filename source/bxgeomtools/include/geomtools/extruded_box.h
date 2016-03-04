@@ -288,7 +288,7 @@ namespace geomtools {
     // placement              _inner_box_placement_;
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(extruded_box);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(extruded_box)
 
   };
 

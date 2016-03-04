@@ -28,7 +28,8 @@ namespace geomtools {
       mutable_this->_initialize_plugin(mutable_entry);
     }
     const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(found->second.get());
+    const base_plugin& cur = found->second.get();
+    const std::type_info& tf = typeid(cur);
     return (ti == tf);
   }
 
@@ -44,7 +45,8 @@ namespace geomtools {
       this->_initialize_plugin(entry);
     }
     const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(found->second.get());
+    const base_plugin& cur = found->second.get();
+    const std::type_info& tf = typeid(cur);
     DT_THROW_IF (ti != tf,
                  std::logic_error,
                  "Requested plugin type '"

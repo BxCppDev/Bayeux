@@ -47,7 +47,7 @@ namespace geomtools {
 
     int32_t i, j, k;
 
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
   };
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION(node_coord_3d, "geomtools::mesh_3d::node_coord_3d")
@@ -131,7 +131,7 @@ namespace geomtools {
     bool          active;
     int32_t get_id() const;
     const node_coord_3d & get_coordinates() const;
-    DATATOOLS_SERIALIZATION_DECLARATION();
+    DATATOOLS_SERIALIZATION_DECLARATION()
   };
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION(node_type,"geomtools::mesh_3d::node_type")
@@ -154,8 +154,8 @@ namespace geomtools {
     return coordinates;
   }
 
-  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(node_coord_3d);
-  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(node_type);
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(node_coord_3d)
+  DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(node_type)
 
   // Tags for accessing the corresponding indices of resource_set :
   struct node_tag_id {};
@@ -806,15 +806,15 @@ namespace geomtools {
                     const physical_volume * phys_daughter = idaughter->second;
                     const logical_volume & log_daughter = phys_daughter->get_logical();
                     const i_placement & plcmt_daughter = phys_daughter->get_placement();
-                    overlapping::report overlap_report;
-                    uint32_t overlapping_flags = _overlapping_flags_;
-                    bool overlap = OL.check_two_volumes_overlap(log_daughter.get_shape(),
+                    overlapping::report local_overlap_report;
+                    uint32_t local_overlapping_flags = _overlapping_flags_;
+                    bool local_overlap = OL.check_two_volumes_overlap(log_daughter.get_shape(),
                                                                 plcmt_daughter,
                                                                 _node_log_vol_->get_shape(),
                                                                 node_placement,
-                                                                overlap_report,
-                                                                overlapping_flags);
-                    if (overlap) {
+                                                                local_overlap_report,
+                                                                local_overlapping_flags);
+                    if (local_overlap) {
                       map_it = false;
                       DT_LOG_DEBUG(_logging_, "Overlap with daugther '" << idaughter->first  << "' was detected.");
                       break;

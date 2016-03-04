@@ -75,7 +75,7 @@ namespace geomtools {
     MWIM             _internals_; /// The register of internal/daughter volumes
 
     // registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(multiple_items_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(multiple_items_model)
 
   };
 

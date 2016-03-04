@@ -20,7 +20,7 @@
 
 namespace geomtools {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_model, "geomtools::i_model/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (i_model, "geomtools::i_model/__system__")
 
   // static
   const std::string & i_model::solid_suffix()

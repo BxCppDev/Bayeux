@@ -215,7 +215,7 @@ namespace geomtools {
     double _z_;        //!< Z dimension
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_cylinder);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_cylinder)
 
   };
 

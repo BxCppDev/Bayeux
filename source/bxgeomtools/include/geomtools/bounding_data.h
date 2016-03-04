@@ -48,7 +48,7 @@ namespace geomtools {
     enum bb_type {
       BD_INVALID  = 0, //!< Invalid type
       BD_BOX      = 1, //!< Bounding box
-      BD_CYLINDER = 2, //!< Bounding cylinder
+      BD_CYLINDER = 2 //!< Bounding cylinder
     };
 
     /// Check validity

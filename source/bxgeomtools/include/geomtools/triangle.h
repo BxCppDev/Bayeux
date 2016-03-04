@@ -161,7 +161,7 @@ namespace geomtools {
     vector_3d _vertex_2_; //!< The third vertex
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(triangle);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(triangle)
 
   };
 

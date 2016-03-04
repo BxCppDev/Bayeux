@@ -371,7 +371,7 @@ namespace geomtools {
   }
 
   // registration :
-  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(cylindric_extrusion_boxed_model,"geomtools::cylindric_extrusion_boxed_model");
+  GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(cylindric_extrusion_boxed_model,"geomtools::cylindric_extrusion_boxed_model")
 
 } // end of namespace geomtools
 

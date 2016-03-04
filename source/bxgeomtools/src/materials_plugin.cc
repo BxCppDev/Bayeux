@@ -12,7 +12,7 @@
 
 namespace geomtools {
 
-  GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(materials_plugin,"geomtools::materials_plugin");
+  GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(materials_plugin,"geomtools::materials_plugin")
 
   const materials::manager & materials_plugin::get_manager () const
   {

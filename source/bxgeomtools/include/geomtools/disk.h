@@ -171,7 +171,7 @@ namespace geomtools {
     double _delta_angle_;  //!< Delta angle of the disk sector
 
     // Registration interface :
-    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(disk);
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(disk)
 
   };
 

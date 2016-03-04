@@ -222,28 +222,28 @@ int main (int argc_, char ** argv_)
       if ((i%10000) == 0) clog << "Loop #" << i << std::endl;
 
       double dim = 6. * CLHEP::mm;
-      geomtools::vector_3d pos(0, 0, 0);
-      if (! zero) pos.set(dim * drand48(),
+      geomtools::vector_3d local_pos(0, 0, 0);
+      if (! zero) local_pos.set(dim * drand48(),
                           dim * drand48(),
                           dim * drand48());
-      if (center2) pos.set(2. * CLHEP::mm, 2. * CLHEP::mm, 2. * CLHEP::mm);
+      if (center2) local_pos.set(2. * CLHEP::mm, 2. * CLHEP::mm, 2. * CLHEP::mm);
 
-      geomtools::vector_3d dir;
-      geomtools::randomize_direction(drand48, dir);
+      geomtools::vector_3d local_dir;
+      geomtools::randomize_direction(drand48, local_dir);
 
       if (!tub2) {
-        geomtools::face_intercept_info intercept;
-        double tolerance = 0.2;
-        if (u1.find_intercept(pos, dir, intercept, tolerance)) {
+        geomtools::face_intercept_info local_intercept;
+        double local_tolerance = 0.2;
+        if (u1.find_intercept(local_pos, local_dir, local_intercept, local_tolerance)) {
           if (debug) clog << "test 1: Intercept face="
-                          << intercept.get_face_id()
+                          << local_intercept.get_face_id()
                           << " at impact="
-                          << intercept.get_impact()
+                          << local_intercept.get_impact()
                           << std::endl;
           geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(),
-                                                    intercept.get_impact(),
+                                                    local_intercept.get_impact(),
                                                     false);
-          int face = intercept.get_face_id().get_face_bits();
+          int face = local_intercept.get_face_id().get_face_bits();
           tmp_file.out() << ' ' << face;
           tmp_file.out() << std::endl;
         } else {

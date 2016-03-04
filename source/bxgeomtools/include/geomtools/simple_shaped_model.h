@@ -163,7 +163,7 @@ namespace geomtools {
     MWIM                    _filled_internals_; //!< Internal items within the cavity (tube, polycone, polyhedra)
 
     // registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_shaped_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE(simple_shaped_model)
 
   };
 

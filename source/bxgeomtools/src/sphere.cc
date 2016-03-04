@@ -30,7 +30,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(sphere, "geomtools::sphere");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(sphere, "geomtools::sphere")
 
   using namespace std;
 

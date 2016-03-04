@@ -123,7 +123,7 @@ namespace geomtools {
   private:
 
     // Registration interface :
-    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE (plate_with_hole_model);
+    GEOMTOOLS_MODEL_REGISTRATION_INTERFACE (plate_with_hole_model)
 
   };
 

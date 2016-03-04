@@ -17,7 +17,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(intersection_3d, "geomtools::intersection_3d");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(intersection_3d, "geomtools::intersection_3d")
 
   // static
   const std::string & intersection_3d::intersection_3d_label()

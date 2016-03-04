@@ -25,7 +25,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(elliptical_sector, "geomtools::elliptical_sector");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(elliptical_sector, "geomtools::elliptical_sector")
 
   const std::string & elliptical_sector::elliptical_sector_label()
   {

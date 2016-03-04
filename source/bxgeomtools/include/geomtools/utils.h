@@ -746,10 +746,10 @@ namespace boost {
 } // namespace boost
 
 // Activate reflection layer for some 'geomtools::XXX' enums:
-DR_TYPE_INIT(::geomtools::orientation_type);
-DR_TYPE_INIT(::geomtools::direction_type);
-DR_TYPE_INIT(::geomtools::axis_type);
-DR_TYPE_INIT(::geomtools::rotation_axis_type);
+DR_TYPE_INIT(::geomtools::orientation_type)
+DR_TYPE_INIT(::geomtools::direction_type)
+DR_TYPE_INIT(::geomtools::axis_type)
+DR_TYPE_INIT(::geomtools::rotation_axis_type)
 
 #endif // GEOMTOOLS_UTILS_H
 
