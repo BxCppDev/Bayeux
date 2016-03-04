@@ -26,15 +26,51 @@
 #include <geomtools/mapping.h>
 #include <geomtools/mapping_plugin.h>
 #include <geomtools/materials_plugin.h>
+#include <geomtools/id_selector.h>
 
 // This project:
 #include <genvtx/utils.h>
 #include <genvtx/detail/geom_manager_utils.h>
 #include <genvtx/vertex_validation.h>
+#include <genvtx/box_vg.h>
 
 namespace genvtx {
 
   GENVTX_VG_REGISTRATION_IMPLEMENT(box_model_vg, "genvtx::box_model_vg")
+
+  // Pimpl-ized working data
+  struct box_model_vg::_work_type {
+    genvtx::box_vg         vg;           //!< Embedded vertex generator from a box
+    geomtools::id_selector src_selector; //!< A selector of GIDs
+    geomtools::box         bb; //!< Bounding box
+    geomtools::placement   bb_placement; //!< Bounding box placement
+    std::vector<weight_entry_type> entries; //!< Information about the weights
+    _work_type();
+    ~_work_type();
+    void reset();
+  };
+
+  box_model_vg::_work_type::_work_type()
+  {
+    bb_placement.invalidate();
+    return;
+  }
+
+  box_model_vg::_work_type::~_work_type()
+  {
+    reset();
+    return;
+  }
+
+  void box_model_vg::_work_type::reset()
+  {
+    entries.clear();
+    if (bb_placement.is_valid()) bb_placement.invalidate();
+    if (bb.is_valid()) bb.reset();
+    if (vg.is_initialized()) vg.reset();
+    if (src_selector.is_initialized()) src_selector.reset();
+    return;
+  }
 
   bool box_model_vg::is_mode_valid () const
   {
@@ -199,10 +235,22 @@ namespace genvtx {
     return;
   }
 
+  void box_model_vg::set_use_bounding_box(bool ubb_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
+    _use_bb_ = ubb_;
+    return;
+  }
+
+  bool box_model_vg::is_using_bounding_box()
+  {
+    return _use_bb_;
+  }
+
   box_model_vg::box_model_vg() : genvtx::i_vertex_generator()
   {
     _initialized_ = false;
-    _set_defaults_ ();
+    _set_defaults_();
     return;
   }
 
@@ -213,7 +261,7 @@ namespace genvtx {
 
   box_model_vg::~box_model_vg()
   {
-    if (is_initialized ()) reset ();
+    if (is_initialized()) reset ();
     return;
   }
 
@@ -222,6 +270,7 @@ namespace genvtx {
     // Internal reset:
     utils::origin_invalidate (_origin_rules_);
     _mode_           = utils::MODE_INVALID;
+    _use_bb_         = false;
     _surface_back_   = false;
     _surface_front_  = false;
     _surface_bottom_ = false;
@@ -230,18 +279,19 @@ namespace genvtx {
     _surface_right_  = false;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    if (_box_vg_.is_initialized()) _box_vg_.reset ();
     _origin_rules_.clear();
     _mapping_plugin_name_.clear();
     _materials_plugin_name_.clear();
-    _entries_.clear ();
-    _src_selector_.reset ();
     this->i_vertex_generator::_reset ();
     return;
   }
 
   void box_model_vg::_reset_ ()
   {
+    if (_work_.get() != 0) {
+      _work_->reset();
+      _work_.reset();
+    }
     _set_defaults_ ();
     return;
   }
@@ -249,8 +299,9 @@ namespace genvtx {
   void box_model_vg::reset ()
   {
     DT_THROW_IF (! is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
-    _reset_ ();
     _initialized_ = false;
+    _reset_();
+    // WAS: _initialized_ = false;
     return;
   }
 
@@ -266,10 +317,10 @@ namespace genvtx {
   void box_model_vg::_shoot_vertex_boxes (mygsl::rng & random_,
                                           geomtools::vector_3d & vertex_)
   {
-    double ran_w = random_.uniform ();
+    double ran_w = random_.uniform();
     int index = -1;
-    for (size_t i = 0; i < _entries_.size (); i++) {
-      if (ran_w <= _entries_[i].cumulated_weight) {
+    for (size_t i = 0; i < _work_->entries.size (); i++) {
+      if (ran_w <= _work_->entries[i].cumulated_weight) {
         index = i;
         break;
       }
@@ -277,13 +328,18 @@ namespace genvtx {
     DT_THROW_IF (index < 0, std::logic_error,
                  "Cannot determine the vertex location index in vertex generator '" << get_name() << "' !");
     geomtools::vector_3d src_vtx;
-    _box_vg_.shoot_vertex (random_, src_vtx);
-
+    if (_use_bb_) {
+      geomtools::vector_3d bb_vtx;
+      _work_->vg.shoot_vertex(random_, bb_vtx);
+      _work_->bb_placement.child_to_mother(bb_vtx, src_vtx);
+    } else {
+      _work_->vg.shoot_vertex(random_, src_vtx);
+    }
     const geomtools::placement & world_plct
-      = _entries_[index].ginfo->get_world_placement ();
+      = _work_->entries[index].ginfo->get_world_placement ();
     // Special treatment for geomtools::rotated_boxed_model :
-    if (_entries_[index].ginfo->get_logical().has_effective_relative_placement()) {
-      const geomtools::placement & eff_ref_placement = _entries_[index].ginfo->get_logical().get_effective_relative_placement();
+    if (_work_->entries[index].ginfo->get_logical().has_effective_relative_placement()) {
+      const geomtools::placement & eff_ref_placement = _work_->entries[index].ginfo->get_logical().get_effective_relative_placement();
       geomtools::vector_3d rel_vtx;
       eff_ref_placement.child_to_mother(src_vtx, rel_vtx);
       src_vtx = rel_vtx;
@@ -294,7 +350,7 @@ namespace genvtx {
       // Setup the geometry context for the vertex validation system:
       _grab_vertex_validation().grab_geometry_context().set_local_candidate_vertex(src_vtx);
       _grab_vertex_validation().grab_geometry_context().set_global_candidate_vertex(vertex_);
-      _grab_vertex_validation().grab_geometry_context().set_ginfo(_entries_[index].get_ginfo());
+      _grab_vertex_validation().grab_geometry_context().set_ginfo(_work_->entries[index].get_ginfo());
     }
     return;
   }
@@ -309,10 +365,12 @@ namespace genvtx {
     DT_THROW_IF (mapping_ptr == 0, std::logic_error,
                  "No available geometry mapping was found in vertex generator '" << get_name() << "' !");
 
+    _work_.reset(new _work_type);
+
     //DT_LOG_FATAL(get_logging_priority(), "*** Origin rules : " << _origin_rules_);
-    _src_selector_.set_id_mgr (get_geom_manager ().get_id_mgr ());
-    _src_selector_.initialize (_origin_rules_);
-    //_src_selector_.dump (clog, "genvtx::box_model_vg::initialize: ID selector:");
+    _work_->src_selector.set_id_mgr(get_geom_manager ().get_id_mgr ());
+    _work_->src_selector.initialize(_origin_rules_);
+    // _work_->src_selector.dump(std::cerr, "genvtx::box_model_vg::initialize: ID selector:");
 
     const geomtools::mapping & the_mapping = *mapping_ptr;
     const geomtools::geom_info_dict_type & geom_infos
@@ -323,7 +381,7 @@ namespace genvtx {
          i != geom_infos.end ();
          i++) {
       const geomtools::geom_id & gid = i->first;
-      if (_src_selector_.match (gid)) {
+      if (_work_->src_selector.match(gid)) {
         const geomtools::geom_info * ginfo = &(i->second);
         weight_entry_type e;
         e.weight = 0.0;
@@ -336,21 +394,21 @@ namespace genvtx {
                  "Cannot compute any source of vertex in vertex generator '" << get_name() << "' !");
 
     weight_entry_type dummy;
-    _entries_.assign (entries.size (), dummy);
-    std::copy (entries.begin (), entries.end (), _entries_.begin ());
+    _work_->entries.assign(entries.size(), dummy);
+    std::copy(entries.begin(), entries.end(), _work_->entries.begin());
 
     const geomtools::logical_volume * src_log = 0;
-    for (size_t i = 0; i < _entries_.size (); i++) {
+    for (size_t i = 0; i < _work_->entries.size (); i++) {
       DT_LOG_DEBUG(get_logging_priority(),
-                   "ID #" << i << " = " << _entries_[i].ginfo->get_id ());
+                   "ID #" << i << " = " << _work_->entries[i].ginfo->get_id ());
       if (src_log == 0) {
-        src_log = &_entries_[i].ginfo->get_logical ();
+        src_log = &_work_->entries[i].ginfo->get_logical ();
       } else {
-        //DT_THROW_IF (src_log != &_entries_[i].ginfo->get_logical (),
-        DT_THROW_IF (! geomtools::logical_volume::same(*src_log, _entries_[i].ginfo->get_logical()),
+        //DT_THROW_IF (src_log != &_work_->entries[i].ginfo->get_logical (),
+        DT_THROW_IF (! geomtools::logical_volume::same(*src_log, _work_->entries[i].ginfo->get_logical()),
                      std::logic_error,
                      "Vertex location with different logical geometry volumes ('" << src_log->get_name()
-                     << "' vs. '" << _entries_[i].ginfo->get_logical ().get_name()
+                     << "' vs. '" << _work_->entries[i].ginfo->get_logical ().get_name()
                      << "') are not supported  (different shapes or materials) in vertex generator '"
                      << get_name() << "' !");
       }
@@ -388,16 +446,16 @@ namespace genvtx {
     }
     int surface_mask = 0;
     if (is_mode_surface ()) {
-      _box_vg_.set_mode (utils::MODE_SURFACE);
+      _work_->vg.set_mode (utils::MODE_SURFACE);
       if (_surface_back_)   surface_mask |= geomtools::box::FACE_BACK;
       if (_surface_front_)  surface_mask |= geomtools::box::FACE_FRONT;
       if (_surface_bottom_) surface_mask |= geomtools::box::FACE_BOTTOM;
       if (_surface_top_)    surface_mask |= geomtools::box::FACE_TOP;
       if (_surface_left_)   surface_mask |= geomtools::box::FACE_LEFT;
       if (_surface_right_)  surface_mask |= geomtools::box::FACE_RIGHT;
-      _box_vg_.set_surface_mask (surface_mask);
+      _work_->vg.set_surface_mask (surface_mask);
     } else {
-      _box_vg_.set_mode (utils::MODE_BULK);
+      _work_->vg.set_mode (utils::MODE_BULK);
     }
     const geomtools::i_shape_3d * src_shape_ptr = 0;
     {
@@ -408,35 +466,49 @@ namespace genvtx {
         src_shape_ptr = &src_log->get_effective_shape ();
       }
     }
+
     const geomtools::i_shape_3d & src_shape = *src_shape_ptr;
-    DT_THROW_IF (src_shape.get_shape_name () != "box", std::logic_error,
-                 "Shape is '" << src_shape.get_shape_name () << "' but "
-                 << "only box shape is supported in vertex generator '" << get_name() << "' !");
-    const geomtools::box & box_shape
-      = dynamic_cast<const geomtools::box &> (src_shape);
-    _box_vg_.set_box_ref (box_shape);
-    _box_vg_.set_skin_skip(_skin_skip_);
-    _box_vg_.set_skin_thickness(_skin_thickness_);
-    _box_vg_.initialize_simple ();
-    // _box_vg_.tree_dump(std::cerr, "Box VG: ", "***** DEVEL ***** ");
-    double weight = 0.0;
-    if (is_mode_surface ()) {
-      weight = box_shape.get_surface (surface_mask);
+    if (!_use_bb_) {
+      // Default:
+      DT_THROW_IF (src_shape.get_shape_name () != "box", std::logic_error,
+                   "Shape is '" << src_shape.get_shape_name () << "' but "
+                   << "only box shape is supported in vertex generator '" << get_name() << "' !");
+      const geomtools::box & box_shape
+        = dynamic_cast<const geomtools::box &> (src_shape);
+      _work_->vg.set_box_ref(box_shape);
     } else {
-      weight = box_shape.get_volume ();
+      // Extract BB from the "src_shape"...
+      DT_THROW_IF (!src_shape.has_bounding_data(), std::logic_error,
+                   "Shape '" << src_shape.get_shape_name () << "' has no "
+                   << "bounding data for vertex generator '" << get_name() << "' !");
+      const geomtools::bounding_data & bbdata = src_shape.get_bounding_data();
+      bbdata.compute_bounding_box(_work_->bb, _work_->bb_placement);
+      // _work_->bb.tree_dump(std::cerr, "BB = ", "DEVEL: ");
+      _work_->vg.set_box_ref(_work_->bb);
+    }
+
+    _work_->vg.set_skin_skip(_skin_skip_);
+    _work_->vg.set_skin_thickness(_skin_thickness_);
+    _work_->vg.initialize_simple ();
+    // _work_->vg.tree_dump(std::cerr, "Box VG: ", "***** DEVEL ***** ");
+    double weight = 0.0;
+    if (is_mode_surface()) {
+      weight = _work_->vg.get_box_safe().get_surface(surface_mask);
+    } else {
+      weight = _work_->vg.get_box_safe().get_volume();
     }
 
     // Compute weight:
-    _entries_[0].cumulated_weight = _entries_[0].weight;
-    for (size_t i = 0; i < _entries_.size (); i++) {
-      _entries_[i].weight = weight;
+    _work_->entries[0].cumulated_weight = _work_->entries[0].weight;
+    for (size_t i = 0; i < _work_->entries.size(); i++) {
+      _work_->entries[i].weight = weight;
       double cumul = 0.0;
-      if (i > 0) cumul = _entries_[i - 1].cumulated_weight;
-      _entries_[i].cumulated_weight = cumul + _entries_[i].weight;
+      if (i > 0) cumul = _work_->entries[i - 1].cumulated_weight;
+      _work_->entries[i].cumulated_weight = cumul + _work_->entries[i].weight;
     }
 
     // Store the total weight before normalization for alternative use :
-    double the_weight_value = _entries_.back ().cumulated_weight;
+    double the_weight_value = _work_->entries.back ().cumulated_weight;
     int the_weight_type = weight_info::WEIGHTING_VOLUME;
     if (is_mode_surface ())  {
       the_weight_type = weight_info::WEIGHTING_SURFACE;
@@ -451,8 +523,8 @@ namespace genvtx {
     _set_total_weight (the_weight_info);
 
     // Normalize weight:
-    for (size_t i = 0; i < _entries_.size (); i++) {
-      _entries_[i].cumulated_weight /= _entries_.back ().cumulated_weight;
+    for (size_t i = 0; i < _work_->entries.size (); i++) {
+      _work_->entries[i].cumulated_weight /= _work_->entries.back ().cumulated_weight;
     }
     return;
   }
@@ -469,6 +541,7 @@ namespace genvtx {
     std::string origin_rules;
     utils::origin_invalidate (origin_rules);
     std::string mode_str;
+    bool use_bb = false;
     bool surface_back   = false;
     bool surface_front  = false;
     bool surface_bottom = false;
@@ -500,6 +573,9 @@ namespace genvtx {
                  "Missing 'mode' property in vertex generator '" << get_name() << "' !");
     mode_str = setup_.fetch_string ("mode");
 
+    if (setup_.has_key("use_bounding_box")) {
+      use_bb = setup_.fetch_boolean("use_bounding_box");
+    }
     if (mode_str == "bulk") mode = utils::MODE_BULK;
     if (mode_str == "surface") mode = utils::MODE_SURFACE;
 
@@ -540,6 +616,7 @@ namespace genvtx {
       if (! setup_.has_explicit_unit ("skin_thickness")) skin_thickness *= lunit;
     }
 
+    set_use_bounding_box(use_bb);
     set_skin_skip(skin_skip);
     set_skin_thickness(skin_thickness);
     set_origin_rules (origin_rules);
@@ -552,7 +629,6 @@ namespace genvtx {
       set_surface_left   (surface_left);
       set_surface_right  (surface_right);
     }
-    // this->tree_dump(std::cerr, "Box model VG:", "***** DEVEL ***** ");
 
     _init_ ();
     _initialized_ = true;
@@ -588,12 +664,14 @@ namespace genvtx {
          << "Skin skip      : " << _skin_skip_ / CLHEP::mm << std::endl;
     out_ << indent << du::i_tree_dumpable::tag
          << "Skin thickness : " << _skin_thickness_ / CLHEP::mm << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
-         << "Origin rules   : '" << _origin_rules_ << "'" << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
-         << "ID selector " << std::endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
-         << "Entries        : " << _entries_.size () << std::endl;
+         << "Origin rules   : '" << _origin_rules_ << "'" << std::endl;
+    if (is_initialized() && _work_.get() != 0) {
+      // out_ << indent << du::i_tree_dumpable::tag
+      //      << "ID selector " << std::endl;
+      out_ << indent << du::i_tree_dumpable::inherit_skip_tag (inherit_)
+           << du::i_tree_dumpable::last_tag << "Entries : " << _work_->entries.size () << std::endl;
+    }
     return;
   }
 
@@ -612,7 +690,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::box_model_vg,ocd_)
   // ocd_.set_class_documentation("");
 
   ::genvtx::i_vertex_generator::ocd_support(ocd_);
-
 
   //ocd_.set_configuration_hints("Nothing special.");
   ocd_.add_example("From the bulk volume of a collection of box volumes::          \n"
@@ -637,6 +714,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::box_model_vg,ocd_)
                    "  mode.surface.right  : boolean = 1                            \n"
                    "  skin_skip           : real = 0 mm                            \n"
                    "  skin_thickness      : real = 0 mm                            \n"
+                   "                                                               \n"
+                   );
+  ocd_.add_example("From the bulk volume of the bounding boxes of a collection of spheres:: \n"
+                   "                                                               \n"
+                   "  origin : string = \" category='ball' item=* \"               \n"
+                   "  mode   : string = \"bulk\"                                   \n"
+                   "  use_bounding_box : boolean = true                            \n"
                    "                                                               \n"
                    );
 

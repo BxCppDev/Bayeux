@@ -21,11 +21,10 @@
 #include <string>
 
 // Third party:
-// - Bayeux/geomtools:
-#include <geomtools/id_selector.h>
+// - Boost:
+#include <boost/scoped_ptr.hpp>
 
 // This project:
-#include <genvtx/box_vg.h>
 #include <genvtx/vg_macros.h>
 #include <genvtx/utils.h>
 
@@ -117,6 +116,12 @@ namespace genvtx {
     /// Set the mode
     void set_mode(int);
 
+    /// Set the flag using bounding box
+    void set_use_bounding_box(bool);
+
+    /// Check the flag using bounding box
+    bool is_using_bounding_box();
+
     /// Smart print
     virtual void tree_dump(std::ostream & out_ = std::clog,
                            const std::string & title_ = "",
@@ -163,6 +168,7 @@ namespace genvtx {
   private:
 
     bool                    _initialized_;    //!< Initialization flag
+    bool                    _use_bb_;         //!< Flag for using the bounding box of a shape
     int                     _mode_;           //!< Mode : "bulk" of "surface"
     bool                    _surface_back_;   //!< Flag for back surface generation mode
     bool                    _surface_front_;  //!< Flag for front surface generation mode
@@ -172,12 +178,13 @@ namespace genvtx {
     bool                    _surface_right_;  //!< Flag for right surface generation mode
     double                  _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the box
     double                  _skin_thickness_; //!< Intrinsic thickness of the surface
-    genvtx::box_vg          _box_vg_;         //!< Embeded vertex generator from a box
     std::string             _origin_rules_;   //!< Rules to select the physical volumes from where to generate vertexes
     std::string             _mapping_plugin_name_;   //!< The name of the geometry 'mapping' plugin
     std::string             _materials_plugin_name_; //!< The name of the geometry 'materials' plugin
-    geomtools::id_selector  _src_selector_;   //!< A selector of GIDs
-    std::vector<weight_entry_type> _entries_; //!< Information about the weights
+
+    // Pimplized:
+    struct _work_type;
+    boost::scoped_ptr<_work_type> _work_;
 
     /// Registration macro
     /// @arg box_model_vg the class to be registered
