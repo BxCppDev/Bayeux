@@ -71,7 +71,7 @@ namespace datatools {
       DEP_UNDEFINED = 0, ///< undefined dependency
       DEP_DYNAMIC   = 1, ///< Dynamic dependency from another property of which the name is used to build the property's name
       DEP_BY_FLAG   = 2, ///< Dependency from a boolean property (flag) with a specific value (true or false)
-      DEP_BY_LABEL  = 3, ///< Dependency from a string property (label) with a specific value
+      DEP_BY_LABEL  = 3 ///< Dependency from a string property (label) with a specific value
     };
 
     /// \brief Description of a dependency
@@ -239,7 +239,7 @@ namespace datatools {
     enum po_flags_type {
       po_none = 0,
       po_no_config = 0x1,
-      po_no_title = 0x2,
+      po_no_title = 0x2
     };
 
     /// \brief Skeleton/sample generator option flags

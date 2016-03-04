@@ -23,21 +23,21 @@
 #include <datatools/base_service.h>
 
 // Standard Library:
-#include <stdexcept>
-#include <sstream>
 
 // This project:
 #include <datatools/service_tools.h>
 #include <datatools/properties.h>
-#include <datatools/ioutils.h>
-#include <datatools/exception.h>
-#include <datatools/object_configuration_description.h>
+#include <boost/smart_ptr/scoped_ptr.hpp>  // for scoped_ptr
+#include "datatools/enriched_base.h"       // for enriched_base
+#include "datatools/factory_macros.h"
+#include "datatools/i_tree_dump.h"         // for operator<<, etc
+#include "datatools/logger.h"              // for logger, logger::priority
 
 namespace datatools {
 
 DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(
     base_service,
-    "datatools::base_service/__system__");
+    "datatools::base_service/__system__")
 
 // Constructor
 base_service::base_service()

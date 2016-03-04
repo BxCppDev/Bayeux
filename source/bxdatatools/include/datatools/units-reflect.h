@@ -29,7 +29,7 @@
 #include <datatools/detail/reflection_export.h>
 
 // Registration:
-DR_TYPE_EXPORT(::datatools::units::power_of_ten, "datatools::units::power_of_ten");
+DR_TYPE_EXPORT(::datatools::units::power_of_ten, "datatools::units::power_of_ten")
 
 namespace datatools {
   namespace detail {

@@ -309,15 +309,15 @@ int main (int argc_, char ** argv_)
         bags.push_back (new datatools::things ("O2", "another bag"));
         bags.push_back (new datatools::things ("O3", "yet another bag"));
 
-        BOOST_FOREACH(datatools::things * bag, bags)
+        BOOST_FOREACH(datatools::things * mybag, bags)
           {
-            if (bag != 0) bag->tree_dump (clog, "Stored bag: ");
+            if (mybag != 0) mybag->tree_dump (clog, "Stored bag: ");
           }
 
         clog << "Delete stored bags..." << endl;
-        BOOST_FOREACH(datatools::things * bag, bags)
+        BOOST_FOREACH(datatools::things * mybag, bags)
           {
-            if (bag != 0) delete bag;
+            if (mybag != 0) delete mybag;
           }
       }
 

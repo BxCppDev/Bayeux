@@ -547,15 +547,15 @@ namespace datatools {
         for (std::set<node *>::iterator inode = the_node._children_.begin();
              inode != the_node._children_.end();
              inode++) {
-          node * the_node = *inode;
-          if (the_node->is_interface()) {
+          node * the_local_node = *inode;
+          if (the_local_node->is_interface()) {
             DT_LOG_TRACE(get_logging_priority(),
-                         "Removing interface node '" << the_node->get_full_path() << "'...");
-            remove_interface(the_node->get_full_path(), recursive_);
-          } else if (the_node->is_command()) {
+                         "Removing interface node '" << the_local_node->get_full_path() << "'...");
+            remove_interface(the_local_node->get_full_path(), recursive_);
+          } else if (the_local_node->is_command()) {
             DT_LOG_TRACE(get_logging_priority(),
-                         "Removing command node '" << the_node->get_full_path() << "'...");
-            remove_command(the_node->get_full_path());
+                         "Removing command node '" << the_local_node->get_full_path() << "'...");
+            remove_command(the_local_node->get_full_path());
           }
         }
       }
@@ -656,8 +656,8 @@ namespace datatools {
       for (std::set<node *>::iterator inode = the_node._children_.begin();
            inode != the_node._children_.end();
            inode++) {
-        node * the_node = *inode;
-        children_paths_.push_back(the_node->get_full_path());
+        node * the_local_node = *inode;
+        children_paths_.push_back(the_local_node->get_full_path());
       }
       return;
     }

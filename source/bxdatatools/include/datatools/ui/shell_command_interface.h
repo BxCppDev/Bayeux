@@ -103,7 +103,7 @@ namespace datatools {
       bool _inhibit_load_; //!< Inhibition flag for the load command
 
       DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(base_command_interface,
-                                                           shell_command_interface);
+                                                           shell_command_interface)
 
     };
 

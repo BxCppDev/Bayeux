@@ -19,15 +19,15 @@
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_properties,
-                                                      "datatools::multi_properties");
+                                                      "datatools::multi_properties")
 
 // Support for old serialization tag :
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_properties,
-                                                               "datatools::utils::multi_properties");
+                                                               "datatools::utils::multi_properties")
 
 namespace datatools {
 
-  DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(multi_properties,"datatools::multi_properties");
+  DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(multi_properties,"datatools::multi_properties")
 
   const char multi_properties::OPEN = '[';
   const char multi_properties::CLOSE = ']';
@@ -715,9 +715,9 @@ namespace datatools {
             }
             skip_line = true;
             {
-              std::istringstream iss(line);
+              std::istringstream local_iss(line);
               std::string check;
-              iss >> check;
+              local_iss >> check;
               if (check.length() > 2 && check.substr(0,2) == "#@") {
                 skip_line = false;
               }

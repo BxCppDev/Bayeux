@@ -164,7 +164,7 @@ namespace datatools {
       std::string meta_;      //!< Meta information text of the section
       properties properties_; //!< Container of properties stored in the section
 
-      BOOST_SERIALIZATION_BASIC_DECLARATION();
+      BOOST_SERIALIZATION_BASIC_DECLARATION()
 
     }; // multi_properties::entry
 
@@ -361,15 +361,15 @@ namespace datatools {
     entries_ordered_col_type ordered_entries_; //!< List of ordered properties objects
 
     //! Cloneable interface
-    DATATOOLS_CLONEABLE_DECLARATION(multi_properties);
+    DATATOOLS_CLONEABLE_DECLARATION(multi_properties)
 
     //! Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(multi_properties);
-    DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(multi_properties)
+    DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
 #ifndef Q_MOC_RUN
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 #endif // Q_MOC_RUN
 
   };
@@ -377,16 +377,16 @@ namespace datatools {
 } // end of namespace datatools
 
 // Support for serialization tag :
-DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::multi_properties);
+DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::multi_properties)
 // Support for old serialization tag :
-DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::multi_properties);
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::multi_properties)
 
 #include <boost/serialization/export.hpp>
 BOOST_CLASS_EXPORT_KEY2(datatools::multi_properties, "datatools::multi_properties")
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::multi_properties' class:
-DR_CLASS_INIT(::datatools::multi_properties);
+DR_CLASS_INIT(::datatools::multi_properties)
 #endif // Q_MOC_RUN
 
 // Explicit class version:

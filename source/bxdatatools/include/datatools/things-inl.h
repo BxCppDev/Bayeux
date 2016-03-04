@@ -45,7 +45,8 @@ namespace datatools {
                  std::logic_error,
                  "No stored object has name '"  << a_name << "' !");
     const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(*(found->second.handle));
+    datatools::i_serializable& cur = *found->second.handle;
+    const std::type_info& tf = typeid(cur);
     T tmp;
     DT_THROW_IF (ti != tf,
                  datatools::bad_things_cast,
@@ -66,7 +67,8 @@ namespace datatools {
                  std::logic_error,
                  "No stored object has name '" << a_name << "' !");
     const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(*(found->second.handle));
+    datatools::i_serializable& cur = *found->second.handle;
+    const std::type_info& tf = typeid(cur);
     T tmp;
     DT_THROW_IF (ti != tf,
                  datatools::bad_things_cast,
@@ -87,7 +89,8 @@ namespace datatools {
                  std::logic_error,
                  "No object named '" << a_name << "' !");
     const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(*found->second.handle);
+    datatools::i_serializable& cur = *found->second.handle;
+    const std::type_info& tf = typeid(cur);
     return (ti == tf);
   }
 
@@ -99,7 +102,8 @@ namespace datatools {
                  std::logic_error,
                  "No object named '" << a_name << "' !");
     const std::type_info& ti = typeid(T);
-    const std::type_info& tf = typeid(*found->second.handle);
+    datatools::i_serializable& cur = *found->second.handle;
+    const std::type_info& tf = typeid(cur);
     T tmp;
     DT_THROW_IF (ti != tf,
                  datatools::bad_things_cast,

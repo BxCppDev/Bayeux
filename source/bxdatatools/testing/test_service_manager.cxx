@@ -69,7 +69,7 @@ private:
   /* Macro to declare the registration interface of this service
    * in the database with a default creator :
    */
-  DATATOOLS_SERVICE_REGISTRATION_INTERFACE (test_service);
+  DATATOOLS_SERVICE_REGISTRATION_INTERFACE (test_service)
 };
 
 /** Auto-registration of this service class in a central service Db */

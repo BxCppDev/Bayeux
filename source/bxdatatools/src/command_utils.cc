@@ -4,11 +4,8 @@
 #include <datatools/command_utils.h>
 
 // Standard Library:
-#include <sstream>
-#include <stdexcept>
 
 // This project:
-#include <datatools/exception.h>
 
 namespace datatools {
 

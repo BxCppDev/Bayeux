@@ -57,7 +57,7 @@ namespace datatools {
 #include <boost/mpl/has_xxx.hpp>
 
 /// Template support for configurable type
-BOOST_MPL_HAS_XXX_TRAIT_DEF(load);
+BOOST_MPL_HAS_XXX_TRAIT_DEF(load)
 
 namespace datatools {
 

@@ -44,11 +44,11 @@ namespace my
     virtual std::string to_string  () const = 0;
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_type);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_type)
 
   };
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_type, "my::base_type/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION (base_type, "my::base_type/__system__")
 
   base_type::base_type ()
   {
@@ -80,10 +80,10 @@ namespace my
       return "derived_1_type";
     }
 
-    DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (base_type, derived_1_type);
+    DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (base_type, derived_1_type)
   };
 
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (base_type, derived_1_type, "my::derived_1_type");
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (base_type, derived_1_type, "my::derived_1_type")
 
   /***************************************************************************/
 
@@ -102,10 +102,10 @@ namespace my
     {
       return "derived_2_type";
     }
-    DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (base_type, derived_2_type);
+    DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE (base_type, derived_2_type)
   };
 
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (base_type, derived_2_type, "my::derived_2_type");
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (base_type, derived_2_type, "my::derived_2_type")
 
   /***************************************************************************/
 

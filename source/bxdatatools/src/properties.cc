@@ -30,11 +30,11 @@
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
-                                                      "datatools::properties");
+                                                      "datatools::properties")
 
 // Support for old serialization tag :
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
-                                                               "datatools::utils::properties");
+                                                               "datatools::utils::properties")
 
 namespace datatools {
 
@@ -3304,12 +3304,12 @@ namespace datatools {
 
   void properties::export_to_string_based_dictionary(std::map<std::string, std::string>& dict,
                                                      bool quoted_strings) const {
-    for (pmap::const_iterator i = _props_.begin();
-         i != _props_.end();
-         ++i) {
-      const std::string& prop_key = i->first;
+    for (pmap::const_iterator iter = _props_.begin();
+         iter != _props_.end();
+         ++iter) {
+      const std::string& prop_key = iter->first;
       std::ostringstream valoss;
-      const data& data = i->second;
+      const data& data = iter->second;
 
       if (data.is_vector()) valoss << '(';
 

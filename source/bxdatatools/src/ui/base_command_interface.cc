@@ -34,7 +34,7 @@ namespace datatools {
   namespace ui {
 
     DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(base_command_interface,
-                                                     "datatools::ui::base_command_interface/__system__");
+                                                     "datatools::ui::base_command_interface/__system__")
 
     //! \brief Command entry
     struct command_entry_type {

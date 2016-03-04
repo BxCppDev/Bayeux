@@ -458,10 +458,10 @@ namespace datatools {
       bool variant_active = false;
       if (has_repository()) {
         const variant_repository & rep = get_repository();
-        command::returned_info cri = rep.cmd_is_active_variant(variant_registry_name,
+        command::returned_info local_cri = rep.cmd_is_active_variant(variant_registry_name,
                                                                variant_path,
                                                                variant_active);
-        if (cri.is_success()) {
+        if (local_cri.is_success()) {
           variant_found = true;
           if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found variant only from '" << variant_desc_ << "'");
         } else {

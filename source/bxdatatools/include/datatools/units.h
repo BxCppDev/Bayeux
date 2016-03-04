@@ -622,7 +622,7 @@ namespace datatools {
     public:
 
       enum init_flag_type {
-        NO_STANDARD_UNITS = 0x1,
+        NO_STANDARD_UNITS = 0x1
       };
 
       //! Type of dictionary of unit
@@ -726,7 +726,7 @@ namespace datatools {
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer:
-DR_TYPE_INIT(::datatools::units::power_of_ten);
+DR_TYPE_INIT(::datatools::units::power_of_ten)
 #endif // Q_MOC_RUN
 
 //! \def DT_THROW_BAD_UNIT(UnitType,UnitSymbol)

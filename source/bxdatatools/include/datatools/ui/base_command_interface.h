@@ -167,7 +167,7 @@ namespace datatools {
       const pimpl_type & _get_pimpl() const;
 
       // Factory stuff :
-      DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_command_interface);
+      DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_command_interface)
 
     };
 

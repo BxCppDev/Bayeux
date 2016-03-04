@@ -113,9 +113,9 @@ int main (int argc_, char ** argv_)
           {
             if (debug) clog << "DEBUG: Counts = " << i << endl;
             bitset_data.make ();
-            for (int i = 0; i < (int) BSSZ; i++)
+            for (int j = 0; j < (int) BSSZ; j++)
               {
-                bitset_data.grab().set(i, drand48 () < 0.5 ? true: false);
+                bitset_data.grab().set(j, drand48 () < 0.5 ? true: false);
               }
 #if __GNUC__ > 3
             clog << "bitset = " << bitset_data.get ().to_string () << endl;

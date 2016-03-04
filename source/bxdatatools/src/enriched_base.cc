@@ -1,10 +1,19 @@
 // Ourselves:
 #include <datatools/enriched_base.h>
 
+// Standard Library
+#include <sstream>                                       // for operator<<, etc
+#include <stdexcept>                                     // for logic_error
+#include <string>                                        // for char_traits, etc
+
 // This project:
 #include <datatools/exception.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
+#include "datatools/i_serializable.h"
+#include "datatools/i_tree_dump.h"
+#include "datatools/object_configuration_description.h"
+#include "datatools/types.h"
 
 namespace datatools {
 

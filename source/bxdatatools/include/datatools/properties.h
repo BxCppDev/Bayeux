@@ -305,7 +305,7 @@ namespace datatools {
       int init_values_(char a_type = TYPE_INTEGER_SYMBOL,
                        int a_size = SCALAR_DEF);
 
-      BOOST_SERIALIZATION_BASIC_DECLARATION();
+      BOOST_SERIALIZATION_BASIC_DECLARATION()
 
     private:
       std::string _description_; //!< Description of the property
@@ -1054,12 +1054,12 @@ namespace datatools {
     DATATOOLS_CLONEABLE_DECLARATION(properties)
 
     //! Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(properties);
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(properties)
     DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
 #ifndef Q_MOC_RUN
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 #endif // Q_MOC_RUN
 
   };
@@ -1108,16 +1108,16 @@ namespace datatools {
 } // end of namespace datatools
 
 // Support for serialization tag :
-DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::properties);
+DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::properties)
 // Support for old serialization tag :
-DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::properties);
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::properties)
 
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties");
+BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties")
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::properties' class:
-DR_CLASS_INIT(::datatools::properties);
+DR_CLASS_INIT(::datatools::properties)
 #endif // Q_MOC_RUN
 
 // Explicit class version:

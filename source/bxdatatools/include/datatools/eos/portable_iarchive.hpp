@@ -408,8 +408,15 @@ namespace eos {
                         // after reading the note above you still might decide to
                         // deactivate this static assert and try if it works out.
                         typename traits::bits bits;
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
                         BOOST_STATIC_ASSERT(sizeof(bits) == sizeof(T));
                         BOOST_STATIC_ASSERT(std::numeric_limits<T>::is_iec559);
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
                         load(bits);
                         traits::set_bits(t, bits);

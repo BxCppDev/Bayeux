@@ -60,13 +60,13 @@ namespace datatools {
     virtual const std::string& get_serial_tag() const = 0;
 
     /// Macro to declare basic support for serialization
-    BOOST_SERIALIZATION_BASIC_DECLARATION();
+    BOOST_SERIALIZATION_BASIC_DECLARATION()
 
     /// Interface of the factory
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_serializable);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_serializable)
 
 #ifndef Q_MOC_RUN
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 #endif // Q_MOC_RUN
 
   };
@@ -75,7 +75,7 @@ namespace datatools {
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::i_serializable' class.
-DR_CLASS_INIT(::datatools::i_serializable);
+DR_CLASS_INIT(::datatools::i_serializable)
 #endif // Q_MOC_RUN
 
 // Explicit class version:

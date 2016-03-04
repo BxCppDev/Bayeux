@@ -32,18 +32,18 @@
 #define DATATOOLS_ENRICHED_BASE_H
 
 // Standard library:
-#include <string>
+#include <cstdint>
+#include <iostream>
 
 // This project:
-#include <datatools/datatools_config.h>
 #include <datatools/bit_mask.h>
 #include <datatools/i_serializable.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/logger.h>
 #include <datatools/properties.h>
-#include <datatools/object_configuration_description.h>
 
 namespace datatools {
+  class object_configuration_description;
 
   /// \brief A base class with useful attributes usable in many contexts
   class enriched_base  :
@@ -180,11 +180,11 @@ namespace datatools {
     datatools::properties _auxiliaries_; //!< Container of auxiliary properties
 
     //! Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(enriched_base);
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(enriched_base)
 
 #ifndef Q_MOC_RUN
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 #endif // Q_MOC_RUN
 
   };
@@ -192,11 +192,11 @@ namespace datatools {
 } // end of namespace datatools
 
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT_KEY2(datatools::enriched_base, "datatools::enriched_base");
+BOOST_CLASS_EXPORT_KEY2(datatools::enriched_base, "datatools::enriched_base")
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::enriched_base' class:
-DR_CLASS_INIT(::datatools::enriched_base);
+DR_CLASS_INIT(::datatools::enriched_base)
 #endif // Q_MOC_RUN
 
 // Explicit class version:

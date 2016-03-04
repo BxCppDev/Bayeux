@@ -38,11 +38,11 @@
 
 // Support for serialization tag :
 DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::things,
-                                                      "datatools::things");
+                                                      "datatools::things")
 
 // Support for old serialization tag :
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::things,
-                                                               "datatools::utils::things");
+                                                               "datatools::utils::things")
 
 namespace datatools {
 

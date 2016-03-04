@@ -148,8 +148,8 @@ DR_CLASS_INIT(foo::bar);
     @endcode
 */
 #define DR_CLASS_INIT(Introspectable)                           \
-  DR_CLASS_REGISTER(Introspectable);                            \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable);    \
+  DR_CLASS_REGISTER(Introspectable)                            \
+  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)    \
   /**/
 
 /// \def DR_CLASS_NONCOPYABLE_INIT(Introspectable)
@@ -157,8 +157,8 @@ DR_CLASS_INIT(foo::bar);
 ///        of dedicated introspection feature.
 /// @see DR_CLASS_INIT
 #define DR_CLASS_NONCOPYABLE_INIT(Introspectable)               \
-  DR_CLASS_NONCOPYABLE_REGISTER(Introspectable);                \
-  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable);    \
+  DR_CLASS_NONCOPYABLE_REGISTER(Introspectable)                \
+  DR_CLASS_IMPLEMENT_REFLECTION_DECLARATION(Introspectable)    \
   /**/
 
 /// \def DR_TYPE_INIT(Introspectable)

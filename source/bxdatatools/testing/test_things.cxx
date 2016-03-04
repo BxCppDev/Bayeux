@@ -293,9 +293,9 @@ int main (int argc_, char ** argv_)
             // grab a 'B' non-const reference to the 'b2' object :
             try
               {
-                B & b2 = bag.grab<B> ("b2");
+                B & local_b2 = bag.grab<B> ("b2");
                 // modify the 'b2' object that is stored in 'bag' :
-                b2.set_index (999);
+                local_b2.set_index (999);
               }
             catch (exception & x)
               {

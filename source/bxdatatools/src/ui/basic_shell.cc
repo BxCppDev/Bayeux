@@ -1211,9 +1211,9 @@ namespace datatools {
           }
           if (historize_it) {
             for (int iline = 0; iline < (int) to_be_historized.size(); iline++) {
-              const std::string & line = to_be_historized[iline];
-              DT_LOG_TRACE(get_logging(), "Adding history '" << line << "'...");
-              add_history(line.c_str());
+              const std::string & local_line = to_be_historized[iline];
+              DT_LOG_TRACE(get_logging(), "Adding history '" << local_line << "'...");
+              add_history(local_line.c_str());
             }
           }
           to_be_historized.clear();

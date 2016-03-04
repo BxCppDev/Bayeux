@@ -43,7 +43,7 @@ private:
   double    tdc_;
 private:
   friend class boost::serialization::access;
-  BOOST_SERIALIZATION_SERIALIZE_DECLARATION();
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
 public:
   hit & set_id (int a_id)

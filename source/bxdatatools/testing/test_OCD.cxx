@@ -83,11 +83,11 @@ struct foo {
     const std::string labels_key = "labels";
     std::vector<std::string> labels;
     if (config_.has_key(labels_key)) {
-      std::vector<std::string> labels;
-      config_.fetch(labels_key, labels);
+      std::vector<std::string> local_labels;
+      config_.fetch(labels_key, local_labels);
       // Parse dependees of the 'labels' property :
-      for (int i = 0; i < (int) labels.size() ; i++) {
-        std::string value_key = "objects." + labels[i] + ".value";
+      for (int i = 0; i < (int) local_labels.size() ; i++) {
+        std::string value_key = "objects." + local_labels[i] + ".value";
         if (! config_.has_key(value_key)) {
           throw std::logic_error("foo::initialize: Missing '"+value_key+"' property!");
         }

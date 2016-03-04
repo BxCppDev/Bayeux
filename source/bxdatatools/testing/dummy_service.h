@@ -78,7 +78,7 @@ namespace datatools {
     std::string _label_; //!< Label
 
     // Registration :
-    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(dummy_service);
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(dummy_service)
 
   };
 

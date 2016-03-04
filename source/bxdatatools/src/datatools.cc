@@ -3,12 +3,18 @@
 // Ourselves:
 #include <datatools/datatools.h>
 
+// Stdlib
+#include <stdlib.h>                        // for getenv
+
 // Third party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
+#include <boost/smart_ptr/scoped_ptr.hpp>
 
 // This project:
+#include <datatools/datatools_config.h>
 #include <datatools/kernel.h>
+#include "datatools/logger.h"              // for logger, etc
+
 
 namespace datatools {
 

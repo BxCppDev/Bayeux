@@ -194,7 +194,7 @@ namespace datatools {
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer:
-DR_TYPE_INIT(::datatools::introspection::unit_support_type);
+DR_TYPE_INIT(::datatools::introspection::unit_support_type)
 #endif // Q_MOC_RUN
 
 #endif // DATATOOLS_INTROSPECTION_UNIT_SUPPORT_H

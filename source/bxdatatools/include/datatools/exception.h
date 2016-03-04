@@ -76,9 +76,9 @@
 #define DT_THROW_IF(Condition, ExceptionType, Message)			\
   {									\
     if (Condition) {							\
-      std::stringstream s;						\
-      s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
-      throw ExceptionType(s.str());					\
+      std::stringstream sDT_THROW_IF_ONLY;						\
+      sDT_THROW_IF_ONLY << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
+      throw ExceptionType(sDT_THROW_IF_ONLY.str());					\
     }									\
   }
 
@@ -120,9 +120,9 @@
 */
 #define DT_THROW(ExceptionType, Message)				\
   {									\
-    std::stringstream s;						\
-    s << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
-    throw ExceptionType(s.str());					\
+    std::stringstream sDT_THROW_ONLY;						\
+    sDT_THROW_ONLY << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": " << Message << "]"; \
+    throw ExceptionType(sDT_THROW_ONLY.str());					\
   }
 
 #endif // DATATOOLS_EXCEPTION_H

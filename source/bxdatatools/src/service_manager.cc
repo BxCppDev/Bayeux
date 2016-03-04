@@ -337,16 +337,16 @@ void service_manager::dump_services(std::ostream& out,
       out << "Name : '" << service_name << "' "
           << "Type : '" << service_record.get_service_id () << "' ";
       out << '(';
-      int count = 0;
+      int local_count = 0;
       if (service_record.is_initialized()) {
         out << "initialized";
-        count++;
+        local_count++;
       }
 
       if (service_record.get_service_status () & service_entry::STATUS_BROKEN_DEPENDENCY) {
-        if (count > 0) out << '/',
+        if (local_count > 0) out << '/',
         out << "broken";
-        count++;
+        local_count++;
       }
       out << ')';
       out << std::endl;

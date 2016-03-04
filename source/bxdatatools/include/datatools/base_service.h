@@ -32,18 +32,23 @@
 #define DATATOOLS_BASE_SERVICE_H
 
 // Standard Library
-#include <string>
 #include <iostream>
+#include <map>
+#include <stdexcept>
+#include <typeinfo>
+#include <vector>
 
 // Third Party
-// - Boost
-#include <boost/scoped_ptr.hpp>
+#include <boost/function/function_base.hpp>
 
 // This project (Bayeux/datatools)
 #include <datatools/enriched_base.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/service_tools.h>
 #include <datatools/factory_macros.h>
+#include <datatools/exception.h>
+#include "datatools/factory-inl.h"
+
 #include <datatools/logger.h>
 #ifndef Q_MOC_RUN
 #include <datatools/reflection_interface.h>
@@ -53,6 +58,7 @@ namespace datatools {
 
   // Forward class declaration:
   class properties;
+  class object_configuration_description;
 
   /*! \brief The base service class
    *
@@ -111,11 +117,11 @@ namespace datatools {
     void common_initialize(const datatools::properties & config);
 
      // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_service)
 
 #ifndef Q_MOC_RUN
       //! Reflection interface
-      DR_CLASS_RTTI();
+      DR_CLASS_RTTI()
 #endif // Q_MOC_RUN
 
   };
@@ -172,18 +178,18 @@ namespace datatools {
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer:
-DR_CLASS_INIT(datatools::base_service);
+DR_CLASS_INIT(datatools::base_service)
 #endif // Q_MOC_RUN
 
 #define DATATOOLS_SERVICE_REGISTRATION_INTERFACE(SERVICE_CLASS_NAME)    \
   private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::datatools::base_service, SERVICE_CLASS_NAME) \
   public:                                                                 \
   virtual std::string service_class_id() const;                           \
   /**/
 
 #define DATATOOLS_SERVICE_REGISTRATION_IMPLEMENT(SERVICE_CLASS_NAME,SERVICE_ID) \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::datatools::base_service,SERVICE_CLASS_NAME,SERVICE_ID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION (::datatools::base_service,SERVICE_CLASS_NAME,SERVICE_ID) \
   std::string SERVICE_CLASS_NAME::service_class_id() const {return SERVICE_ID;}
   /**/
 

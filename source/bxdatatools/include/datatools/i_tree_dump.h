@@ -89,7 +89,7 @@ namespace datatools {
     };
 
 #ifndef Q_MOC_RUN
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 #endif // Q_MOC_RUN
 
   };
@@ -98,7 +98,7 @@ namespace datatools {
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::i_tree_dumpable' class:
-DR_CLASS_INIT(::datatools::i_tree_dumpable);
+DR_CLASS_INIT(::datatools::i_tree_dumpable)
 #endif // Q_MOC_RUN
 
 #endif // DATATOOLS_I_TREE_DUMP_H

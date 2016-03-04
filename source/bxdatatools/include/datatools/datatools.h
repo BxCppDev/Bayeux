@@ -10,7 +10,6 @@
 #include <boost/noncopyable.hpp>
 
 // This project:
-#include <datatools/datatools_config.h>
 #include <datatools/logger.h>
 
 /// Top-level namespace of the Bayeux/datatools module library

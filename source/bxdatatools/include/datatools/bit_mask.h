@@ -17,7 +17,7 @@
 
 // Third Party
 // - Boost
-#include <boost/cstdint.hpp>
+#include <boost/cstdint.hpp> // IWYU pragma: keep
 
 namespace datatools {
   /**! \struct bit_mask

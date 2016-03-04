@@ -391,10 +391,16 @@ namespace eos {
                         // 3. your machine is using an unknown floating point format
                         // after reading the note above you still might decide to
                         // deactivate this static assert and try if it works out.
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
                         typename traits::bits bits;
                         BOOST_STATIC_ASSERT(sizeof(bits) == sizeof(T));
                         BOOST_STATIC_ASSERT(std::numeric_limits<T>::is_iec559);
-
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
                         // examine value closely
                         switch (fp::fpclassify(t))
                         {

@@ -29,7 +29,6 @@
 #define DATATOOLS_COMMAND_UTILS_H
 
 // Standard library:
-#include <string>
 #include <iostream>
 
 namespace datatools {
@@ -61,7 +60,7 @@ namespace datatools {
       CEC_PARAMETER_INVALID_TYPE       = 34, //!< Invalid parameter type
       CEC_PARAMETER_UNSET_VALUE        = 35, //!< Unset value
       CEC_PARAMETER_INVALID_VALUE      = 36, //!< Invalid parameter value
-      CEC_PARAMETER_INVALID_UNIT       = 37, //!< Invalid parameter unit (for real numbers)
+      CEC_PARAMETER_INVALID_UNIT       = 37 //!< Invalid parameter unit (for real numbers)
     };
 
     /// \brief Command returned information

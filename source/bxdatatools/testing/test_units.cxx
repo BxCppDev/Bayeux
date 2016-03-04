@@ -294,12 +294,12 @@ void test2()
   }
 
   {
-    const datatools::units::unit & meter = unit_reg.get_unit_from_any("m");
-    const datatools::units::unit & meter2 = unit_reg.get_unit_from_any("m2");
-    double a = 3.0 * meter;
-    double b = 2.0 * meter;
+    const datatools::units::unit & local_meter = unit_reg.get_unit_from_any("m");
+    const datatools::units::unit & local_meter2 = unit_reg.get_unit_from_any("m2");
+    double a = 3.0 * local_meter;
+    double b = 2.0 * local_meter;
     double area = a * b;
-    std::clog << "area = " << area / meter2 << ' ' << meter2.str() << std::endl;
+    std::clog << "area = " << area / local_meter2 << ' ' << local_meter2.str() << std::endl;
   }
   return;
 }

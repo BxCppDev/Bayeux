@@ -134,9 +134,9 @@ namespace datatools {
 
 
   bool smart_filename::has_filename(const std::string& filename_,
-                                    bool expand_path_) const {
+                                    bool expandMe) const {
     std::string fname = filename_;
-    if (expand_path_) {
+    if (expandMe) {
       datatools::fetch_path_with_env(fname);
     }
     if (!this->is_initialized()) {

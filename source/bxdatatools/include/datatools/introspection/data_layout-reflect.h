@@ -29,7 +29,7 @@
 #include <datatools/detail/reflection_export.h>
 
 // Registration:
-DR_TYPE_EXPORT(::datatools::introspection::data_layout, "datatools::introspection::data_layout");
+DR_TYPE_EXPORT(::datatools::introspection::data_layout, "datatools::introspection::data_layout")
 
 namespace datatools {
   namespace detail {

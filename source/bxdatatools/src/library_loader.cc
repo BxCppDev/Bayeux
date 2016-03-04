@@ -77,8 +77,8 @@ namespace datatools {
   // dtor :
   library_entry_type::~library_entry_type() {
     if (handle != 0) {
-      int status = datatools::detail::DynamicLoader::CloseLibrary(handle);
-      if (status != 1) {
+      int statusOnClose = datatools::detail::DynamicLoader::CloseLibrary(handle);
+      if (statusOnClose != 1) {
         std::ostringstream message;
         message << "library_entry_type::dtor: The '"
                 << name << "' library was not closed ! "

@@ -43,7 +43,7 @@ public:
   static bool g_debug;
 
   /** Macro for automatic generation of the 'get_serial_tag' method signature */
-  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION();
+  DATATOOLS_SERIALIZATION_SERIAL_TAG_DECLARATION()
 
 private:
   int32_t   id_;
@@ -51,7 +51,7 @@ private:
 private:
   friend class boost::serialization::access;
   /** Macro for automatic generation of the 'serialize' method signature */
-  BOOST_SERIALIZATION_SERIALIZE_DECLARATION();
+  BOOST_SERIALIZATION_SERIALIZE_DECLARATION()
 
 public:
   hit & set_id (int a_id)
@@ -92,7 +92,7 @@ int  hit::g_count  = 0;
 bool hit::g_debug = false;
 
 /** Macro for automatic implementation of the 'get_serial_tag' method signature */
-DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(hit, "hit");
+DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(hit, "hit")
 
 template<class Archive>
 void hit::serialize (Archive & ar_,

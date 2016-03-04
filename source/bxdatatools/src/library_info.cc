@@ -319,7 +319,7 @@ namespace datatools {
 
     int t = TYPE_STRING;
     if (! info_type_.empty()) {
-      int t = get_type_from_label(info_type_);
+      t = get_type_from_label(info_type_);
       DT_THROW_IF(t == TYPE_NONE,
                   std::range_error,
                   "Invalid type '" << info_type_ << "' for key '"

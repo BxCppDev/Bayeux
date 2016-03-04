@@ -194,7 +194,7 @@ namespace datatools {
     //! Support for backward compatibility serialization tag
     DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -225,7 +225,7 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::event_i
 
 #ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::event_id' class:
-DR_CLASS_INIT(::datatools::event_id);
+DR_CLASS_INIT(::datatools::event_id)
 #endif // Q_MOC_RUN
 
 // Explicit class version:

@@ -30,7 +30,7 @@ namespace datatools {
 
     DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(base_command_interface,
                                                               shell_command_interface,
-                                                              "datatools::ui::shell_command_interface");
+                                                              "datatools::ui::shell_command_interface")
 
 
     shell_command_interface::shell_command_interface(const std::string & name_,

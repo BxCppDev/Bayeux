@@ -116,7 +116,7 @@ namespace datatools {
       uint8_t                     flags;
       datatools::i_serializable * handle;
 
-      BOOST_SERIALIZATION_BASIC_DECLARATION ();
+      BOOST_SERIALIZATION_BASIC_DECLARATION ()
 
     };
 
@@ -314,11 +314,11 @@ namespace datatools {
     dict_type   things_;      //!< The internal dictionary of objects
 
     //! Serialization interface
-    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(things);
-    DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT();
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(things)
+    DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
     //! Reflection interface
-    DR_CLASS_RTTI();
+    DR_CLASS_RTTI()
 
   };
 
@@ -328,15 +328,15 @@ namespace datatools {
 #include <datatools/things-inl.h>
 
 // Support for serialization tag :
-DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::things);
+DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::things)
 // Support for old serialization tag :
-DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::things);
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::things)
 
 #include <boost/serialization/export.hpp>
-BOOST_CLASS_EXPORT_KEY2(datatools::things,"datatools::things");
+BOOST_CLASS_EXPORT_KEY2(datatools::things,"datatools::things")
 
 // Activate reflection layer for the 'datatools::things' class:
-DR_CLASS_NONCOPYABLE_INIT(::datatools::things);
+DR_CLASS_NONCOPYABLE_INIT(::datatools::things)
 
 // Explicit class version:
 #include <boost/serialization/version.hpp>

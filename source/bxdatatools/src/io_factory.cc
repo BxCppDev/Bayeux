@@ -969,9 +969,9 @@ namespace datatools {
   // ctor
   data_writer::data_writer(const std::string& filename,
                            bool multiple_archives,
-                           bool append_mode) {
+                           bool this_append_mode) {
     writer_ = 0;
-    this->init(filename, multiple_archives, append_mode);
+    this->init(filename, multiple_archives, this_append_mode);
   }
 
   // ctor

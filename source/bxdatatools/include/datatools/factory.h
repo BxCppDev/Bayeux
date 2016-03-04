@@ -32,7 +32,7 @@ namespace datatools {
   class base_factory_register {
   public:
     enum flag_type {
-      verbose = 0x1,
+      verbose = 0x1
     };
 
   public:

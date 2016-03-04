@@ -10,7 +10,7 @@
   See the License for more information.
 ============================================================================*/
 #include <datatools/detail/DynamicLoader.h>
-#include <datatools/detail/Configure.h>
+#include <datatools/detail/Configure.h> // IWYU pragma: keep
 
 // Work-around CMake dependency scanning limitation.  This must
 // duplicate the above list of headers.
@@ -355,7 +355,7 @@ DynamicLoader::SymbolPointer DynamicLoader::GetSymbolAddress(
   DynamicLoader::LibraryHandle lib, const char* sym)
 {
   // Hack to cast pointer-to-data to pointer-to-function.
-  union 
+  union
   {
     void* pvoid;
     DynamicLoader::SymbolPointer psym;
@@ -477,7 +477,7 @@ DynamicLoader::SymbolPointer DynamicLoader::GetSymbolAddress(
   DynamicLoader::LibraryHandle lib, const char* sym)
 {
   // Hack to cast pointer-to-data to pointer-to-function.
-  union 
+  union
   {
     void* pvoid;
     DynamicLoader::SymbolPointer psym;

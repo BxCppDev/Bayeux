@@ -393,11 +393,11 @@ namespace datatools {
     }
     // Check there is only a tag without leading "major[.minor[.revision[-tag]]]" :
     {
-      std::istringstream iss(token);
+      std::istringstream local_iss(token);
       int val = INVALID_NUMBER;
-      iss >> val;
+      local_iss >> val;
 
-      if (!iss) {
+      if (!local_iss) {
         // cannot parse an integer :
         try {
           // pure "tag" format :
@@ -423,13 +423,13 @@ namespace datatools {
 
     // Now we are in a "major[.minor[.revision[-tag]]]" format :
     {
-      std::istringstream iss(token);
+      std::istringstream local_iss(token);
       bool search_tag = false;
       for (int i = 0; i < 3; i++) {
         int val = INVALID_NUMBER;
-        iss >> val;
+        local_iss >> val;
 
-        if (!iss) {
+        if (!local_iss) {
           this->reset();
           return false;
         } else if (val < 0) {
@@ -448,13 +448,13 @@ namespace datatools {
         }
         // get the separator :
         char sep = 0;
-        iss.get(sep);
+        local_iss.get(sep);
         if (devel) {
           std::cerr << "DEVEL: version_id::from_string:   separator = '"
                     << sep << "'" << std::endl;
         }
 
-        if (!iss) return true;
+        if (!local_iss) return true;
 
         if (sep == TAG_SEPARATOR) {
           if (i < 2) {
@@ -474,7 +474,7 @@ namespace datatools {
       if (search_tag) {
         // extract a tag :
         std::string tag;
-        iss >> tag;
+        local_iss >> tag;
         if (devel) {
           std::cerr << "DEVEL: version_id::from_string:   tag = '"
                     << tag << "'" << std::endl;
