@@ -107,7 +107,7 @@ namespace geomtools {
     /// Compute the vertexes (corners) of the bounding box in the solid reference frame
     void compute_bounding_box_vertexes(std::vector<vector_3d> &, double safe_skin_ = 0.0) const;
 
-    /// Compute the face centers (corners) of the bounding box in the solid reference frame
+    /// Compute the face centers of the bounding box in the solid reference frame
     void compute_bounding_box_face_centers(std::vector<vector_3d> &, double safe_skin_ = 0.0) const;
 
     /// Build a bounding data from a collection of points
