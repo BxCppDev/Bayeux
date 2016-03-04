@@ -102,7 +102,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/real_range.h
   ${module_include_dir}/${module_name}/reflection_guard.h
   ${module_include_dir}/${module_name}/reflection_interface.h
-  # ${module_include_dir}/${module_name}/reflection_macros.h
   ${module_include_dir}/${module_name}/resource.h
   ${module_include_dir}/${module_name}/safe_serial.h
   ${module_include_dir}/${module_name}/serialization_macros.h
