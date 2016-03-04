@@ -15,7 +15,7 @@ namespace cuts {
     using namespace std;
 
     // Registration instantiation macro :
-    CUT_REGISTRATION_IMPLEMENT(sphere_cut, "cuts::test::sphere_cut");
+    CUT_REGISTRATION_IMPLEMENT(sphere_cut, "cuts::test::sphere_cut")
 
     void sphere_cut::set_radius (double radius_)
     {

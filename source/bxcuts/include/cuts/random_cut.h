@@ -62,7 +62,7 @@ namespace cuts {
     boost::scoped_ptr<boost::variate_generator<base_generator_type&, boost::uniform_real<> > > _uni_;
 
     // Macro to automate the registration of the cut :
-    CUT_REGISTRATION_INTERFACE(random_cut);
+    CUT_REGISTRATION_INTERFACE(random_cut)
 
   };
 

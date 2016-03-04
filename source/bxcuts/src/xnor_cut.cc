@@ -15,7 +15,7 @@
 namespace cuts {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(xnor_cut, "cuts::xnor_cut");
+  CUT_REGISTRATION_IMPLEMENT(xnor_cut, "cuts::xnor_cut")
 
   xnor_cut::xnor_cut (datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)

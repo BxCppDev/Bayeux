@@ -15,7 +15,7 @@ namespace cuts {
     using namespace std;
 
     // Registration instantiation macro :
-    CUT_REGISTRATION_IMPLEMENT(color_cut, "cuts::test::color_cut");
+    CUT_REGISTRATION_IMPLEMENT(color_cut, "cuts::test::color_cut")
 
     void color_cut::set_color (int color_)
     {

@@ -35,7 +35,7 @@
 
 namespace cuts {
 
-  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_cut, "cuts::i_cut/__system__");
+  DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_cut, "cuts::i_cut/__system__")
 
   bool
   i_cut::is_debug() const
@@ -46,7 +46,6 @@ namespace cuts {
   void i_cut::set_logging_priority(datatools::logger::priority p)
   {
     _logging = p;
-    return;
   }
 
   datatools::logger::priority i_cut::get_logging_priority() const
@@ -62,7 +61,6 @@ namespace cuts {
   void i_cut::_set_initialized (bool a_initialized)
   {
     _initialized_ = a_initialized;
-    return;
   }
 
   bool i_cut::has_name () const
@@ -92,7 +90,6 @@ namespace cuts {
   i_cut::_set_name (const std::string & a_new_value)
   {
     _name = a_new_value;
-    return;
   }
 
   bool i_cut::has_description () const
@@ -108,7 +105,6 @@ namespace cuts {
   void i_cut::set_description (const std::string & a_description)
   {
     _description = a_description;
-    return;
   }
 
   bool i_cut::has_version () const
@@ -124,7 +120,6 @@ namespace cuts {
   void i_cut::set_version (const std::string & a_version)
   {
     _version = a_version;
-    return;
   }
 
   size_t i_cut::get_number_of_accepted_entries() const
@@ -150,14 +145,12 @@ namespace cuts {
   void i_cut::set_activated_counters(bool ac_)
   {
     _activated_counters_ = ac_;
-    return;
   }
 
   void i_cut::reset_counters()
   {
     _number_of_accepted_entries_ = 0;
     _number_of_rejected_entries_ = 0;
-    return;
   }
 
   void i_cut::_set_defaults()
@@ -165,7 +158,6 @@ namespace cuts {
     _activated_counters_ = true;
     _number_of_accepted_entries_ = 0;
     _number_of_rejected_entries_ = 0;
-    return;
   }
 
   i_cut::i_cut (datatools::logger::priority p)
@@ -173,7 +165,6 @@ namespace cuts {
     _initialized_ = false;
     _logging = p;
     _set_defaults();
-    return;
   }
 
   i_cut::~i_cut ()
@@ -186,13 +177,11 @@ namespace cuts {
                 << "still has its 'initialized' flag on ! "
                 << "Possible bug !");
     DT_LOG_TRACE(_logging, "Destruction done.");
-    return;
   }
 
   void i_cut::print (std::ostream & a_out) const
   {
     this->tree_dump (a_out, "Base cut :");
-    return;
   }
 
   void i_cut::tree_dump (std::ostream & a_out ,
@@ -380,7 +369,6 @@ namespace cuts {
       DT_LOG_TRACE(_logging, "Cut named '" << (has_name()? get_name() : "?") << "' resets user data.");
       _user_data_.reset();
     }
-    return;
   }
 
   bool i_cut::is_user_data_type_supported(const std::type_info & tinfo_) const
@@ -406,7 +394,6 @@ namespace cuts {
     _user_data_ = rd_;
     _at_set_user_data();
     DT_LOG_TRACE(_logging, "Exiting.");
-    return;
   }
 
   void i_cut::_at_set_user_data()
@@ -414,7 +401,6 @@ namespace cuts {
     DT_LOG_TRACE(_logging,
                  "Cut named '" << (has_name()? get_name() : "?")
                  << "' has user data of type '" << _user_data_.get()->get_typeinfo()->name() << "'.");
-    return;
   }
 
   void i_cut::_at_reset_user_data()
@@ -422,7 +408,6 @@ namespace cuts {
     DT_LOG_TRACE(_logging,
                  "Cut named '" << (has_name()? get_name() : "?")
                  << "' has no more referenced user data.");
-    return;
   }
 
   void i_cut::_import_user_data_from(const i_cut & a_cut)
@@ -433,7 +418,6 @@ namespace cuts {
                  << (a_cut.has_name()? a_cut.get_name() : "?") << "'");
     _set_user_data(a_cut._user_data_);
     DT_LOG_TRACE(_logging, "Exiting.");
-    return;
   }
 
   void i_cut::_export_user_data_to(i_cut & a_cut) const
@@ -444,7 +428,6 @@ namespace cuts {
                  << (a_cut.has_name()? a_cut.get_name() : "?") << "'");
     a_cut._set_user_data(_user_data_);
     DT_LOG_TRACE(_logging, "Exiting.");
-    return;
   }
 
   void i_cut::_prepare_cut ()
@@ -453,7 +436,6 @@ namespace cuts {
     DT_THROW_IF(! has_user_data(),
                 std::logic_error,
                 "Cut named '" << (has_name()? get_name() : "?") << "' references no user data !");
-    return;
   }
 
   int i_cut::_finish_cut (int a_selection_status)
@@ -468,7 +450,6 @@ namespace cuts {
       if (a_selection_status == SELECTION_ACCEPTED) _number_of_accepted_entries_++;
       else _number_of_rejected_entries_++;
     }
-    return;
   }
 
   int i_cut::process ()
@@ -493,7 +474,6 @@ namespace cuts {
   {
     reset_user_data();
     reset_counters();
-    return;
   }
 
   void i_cut::common_ocd(datatools::object_configuration_description & ocd_)
@@ -531,7 +511,6 @@ namespace cuts {
                      )
         ;
     }
-    return;
   }
 
 }  // end of namespace cuts

@@ -14,7 +14,7 @@
 namespace cuts {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(random_cut, "cuts::random_cut");
+  CUT_REGISTRATION_IMPLEMENT(random_cut, "cuts::random_cut")
 
   random_cut::random_cut(datatools::logger::priority a_logger_priority)
   : i_cut(a_logger_priority)

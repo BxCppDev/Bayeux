@@ -15,7 +15,7 @@
 namespace cuts {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(not_cut, "cuts::not_cut");
+  CUT_REGISTRATION_IMPLEMENT(not_cut, "cuts::not_cut")
 
   void not_cut::set_cut (cut_handle_type & a_cut_handle)
   {

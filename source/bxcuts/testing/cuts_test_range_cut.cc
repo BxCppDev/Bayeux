@@ -15,7 +15,7 @@ namespace cuts {
     using namespace std;
 
     // Registration instantiation macro :
-    CUT_REGISTRATION_IMPLEMENT(range_cut, "cuts::test::range_cut");
+    CUT_REGISTRATION_IMPLEMENT(range_cut, "cuts::test::range_cut")
 
     void range_cut::set_mode (int mode_)
     {

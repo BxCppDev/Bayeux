@@ -401,7 +401,7 @@ namespace cuts {
     virtual std::string get_type_id() const = 0;
 
     // Factory stuff :
-    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut);
+    DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(i_cut)
 
   };
 
@@ -412,13 +412,13 @@ namespace cuts {
   public:                                       \
   virtual std::string get_type_id() const; \
   private:                                                                \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut, T); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::cuts::i_cut, T) \
   /**/
 
 /** Implementation macro for automated registration of a cut class in the global register */
 #define CUT_REGISTRATION_IMPLEMENT(T,CutID)               \
   std::string T::get_type_id() const { return CutID; } \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut, T, CutID); \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::cuts::i_cut, T, CutID) \
   /**/
 
 #endif // CUTS_I_CUT_H

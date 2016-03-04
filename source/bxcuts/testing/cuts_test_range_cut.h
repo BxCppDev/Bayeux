@@ -91,7 +91,7 @@ namespace cuts {
       bool   _reversed_;
 
       // Macro to automate the registration of the cut :
-      CUT_REGISTRATION_INTERFACE(range_cut);
+      CUT_REGISTRATION_INTERFACE(range_cut)
 
     };
 

@@ -15,7 +15,7 @@
 namespace cuts {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(xor_cut, "cuts::xor_cut");
+  CUT_REGISTRATION_IMPLEMENT(xor_cut, "cuts::xor_cut")
 
   xor_cut::xor_cut(datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)

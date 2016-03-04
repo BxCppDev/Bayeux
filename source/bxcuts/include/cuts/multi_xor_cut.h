@@ -44,7 +44,7 @@ namespace cuts {
   private:
 
     /// Macro to automate the registration of the cut
-    CUT_REGISTRATION_INTERFACE(multi_xor_cut);
+    CUT_REGISTRATION_INTERFACE(multi_xor_cut)
 
   };
 

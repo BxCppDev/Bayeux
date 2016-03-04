@@ -10,7 +10,7 @@
 namespace cuts {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(accept_cut, "cuts::accept_cut");
+  CUT_REGISTRATION_IMPLEMENT(accept_cut, "cuts::accept_cut")
 
   accept_cut::accept_cut(datatools::logger::priority a_logger_priority)
     : i_cut(a_logger_priority)

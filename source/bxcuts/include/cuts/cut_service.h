@@ -94,7 +94,7 @@ namespace cuts {
     cut_manager * _cut_manager_;  //!< Handle to the embedded cut manager
 
     // Registration :
-    DATATOOLS_SERVICE_REGISTRATION_INTERFACE (cut_service);
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE (cut_service)
 
   };
 

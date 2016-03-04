@@ -40,7 +40,7 @@ namespace cuts {
   private:
 
     /// Macro to automate the registration of the cut
-    CUT_REGISTRATION_INTERFACE(exclude_cut);
+    CUT_REGISTRATION_INTERFACE(exclude_cut)
 
   };
 

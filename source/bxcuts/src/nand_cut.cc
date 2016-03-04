@@ -15,7 +15,7 @@
 namespace cuts {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(nand_cut, "cuts::nand_cut");
+  CUT_REGISTRATION_IMPLEMENT(nand_cut, "cuts::nand_cut")
 
   nand_cut::nand_cut(datatools::logger::priority logging_priority_)
     : i_binary_cut(logging_priority_)

@@ -17,7 +17,7 @@
 namespace cuts {
 
   // Registration instantiation macro :
-  CUT_REGISTRATION_IMPLEMENT(multi_xor_cut, "cuts::multi_xor_cut");
+  CUT_REGISTRATION_IMPLEMENT(multi_xor_cut, "cuts::multi_xor_cut")
 
   multi_xor_cut::multi_xor_cut(datatools::logger::priority logging_priority_)
     : i_multi_cut(logging_priority_)
