@@ -35,8 +35,8 @@ namespace datatools {
       struct basic_traits;
 
       //! \brief Struct used internally by the reflection mechanism for versionning
-      // Default version number is 0. Override with higher version
-      // when class definition changes.
+      //! Default version number is 0. Override with higher version
+      //! when class definition changes.
       template<class T>
       struct version
       {
@@ -59,7 +59,7 @@ namespace datatools {
       };
 
 #ifndef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
-      /// Special initialization for specific compiler not supporting in class member initialization
+      /// \brief Special initialization for specific compiler not supporting in class member initialization
       template<class T>
       const int version<T>::value;
 #endif
