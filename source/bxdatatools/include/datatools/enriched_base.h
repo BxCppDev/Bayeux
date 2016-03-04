@@ -32,8 +32,11 @@
 #define DATATOOLS_ENRICHED_BASE_H
 
 // Standard library:
-#include <cstdint>
 #include <iostream>
+// - Breaks with GCC4.9.2_2 in C++98 :
+// #include <cstdint> // requires C++11
+// Third party:
+#include <boost/cstdint.hpp>
 
 // This project:
 #include <datatools/bit_mask.h>
