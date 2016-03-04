@@ -1,17 +1,20 @@
 // -*- mode: c++; -*-
-/* id_selector.cc
- */
+// id_selector.cc
 
+// Ourselves:
 #include <geomtools/id_selector.h>
 
+// Standard library:
 #include <cstdlib>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
 
+// Third party:
+// - Boost:
 #include <boost/algorithm/string.hpp>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 
 namespace geomtools {
@@ -62,8 +65,7 @@ namespace geomtools {
     if (is_initialized ()) {
       _cat_info_ = 0;
     }
-    DT_THROW_IF (_id_mgr_ == 0, logic_error,
-                 "Missing ID manager !");
+    DT_THROW_IF (_id_mgr_ == 0, logic_error, "Missing ID manager !");
     istringstream rules_iss (rules_);
 
     // Extract the geometry category token :
