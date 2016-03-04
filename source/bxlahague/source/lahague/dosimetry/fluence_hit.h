@@ -116,7 +116,7 @@ namespace lahague {
       double             _h10_star_;        //!< H*(10)
 
       //! Serialization interface
-      DATATOOLS_SERIALIZATION_DECLARATION();
+      DATATOOLS_SERIALIZATION_DECLARATION()
 
     };
 
