@@ -75,24 +75,24 @@ namespace datatools {
     //! \brief Internal data stored within the dictionary of the properties class.
     class data {
     public:
-      static const int  ERROR_SUCCESS = 0;
-      static const int  ERROR_FAILURE = 1;
-      static const int  ERROR_BADTYPE = 2;
-      static const int  ERROR_RANGE   = 3;
-      static const int  ERROR_LOCK    = 4;
+      static const int ERROR_SUCCESS = 0;
+      static const int ERROR_FAILURE = 1;
+      static const int ERROR_BADTYPE = 2;
+      static const int ERROR_RANGE   = 3;
+      static const int ERROR_LOCK    = 4;
 
-      static const char MASK_TYPE          = 0x7;   // = 00000111
-      static const char MASK_UNIT_SYMBOL   = 0x8;   // = 00001000 for real parameters
-      static const char MASK_EXPLICIT_PATH = 0x10;  // = 00010000 for string parameters
-      static const char MASK_EXPLICIT_UNIT = 0x20;  // = 00100000 for real parameters
-      static const char MASK_LOCK          = 0x40;  // = 01000000
-      static const char MASK_VECTOR        = 0x80;  // = 10000000
+      static const unsigned char MASK_TYPE          = 0x7;   // = 00000111
+      static const unsigned char MASK_UNIT_SYMBOL   = 0x8;   // = 00001000 for real parameters
+      static const unsigned char MASK_EXPLICIT_PATH = 0x10;  // = 00010000 for string parameters
+      static const unsigned char MASK_EXPLICIT_UNIT = 0x20;  // = 00100000 for real parameters
+      static const unsigned char MASK_LOCK          = 0x40;  // = 01000000
+      static const unsigned char MASK_VECTOR        = 0x80;  // = 10000000
 
-      static const char TYPE_NONE    = 0x0; // = 000
-      static const char TYPE_BOOLEAN = 0x1; // = 001
-      static const char TYPE_INTEGER = 0x2; // = 010
-      static const char TYPE_REAL    = 0x3; // = 011
-      static const char TYPE_STRING  = 0x4; // = 100
+      static const unsigned char TYPE_NONE    = 0x0; // = 000
+      static const unsigned char TYPE_BOOLEAN = 0x1; // = 001
+      static const unsigned char TYPE_INTEGER = 0x2; // = 010
+      static const unsigned char TYPE_REAL    = 0x3; // = 011
+      static const unsigned char TYPE_STRING  = 0x4; // = 100
 
       static const char TYPE_BOOLEAN_SYMBOL = 'B';
       static const char TYPE_INTEGER_SYMBOL = 'I';

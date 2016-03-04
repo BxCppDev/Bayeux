@@ -58,18 +58,18 @@ namespace datatools {
   const int  properties::data::ERROR_RANGE;
   const int  properties::data::ERROR_LOCK;
 
-  const char properties::data::MASK_TYPE;
-  const char properties::data::MASK_UNIT_SYMBOL;
-  const char properties::data::MASK_EXPLICIT_PATH;
-  const char properties::data::MASK_EXPLICIT_UNIT;
-  const char properties::data::MASK_LOCK;
-  const char properties::data::MASK_VECTOR;
+  const unsigned char properties::data::MASK_TYPE;
+  const unsigned char properties::data::MASK_UNIT_SYMBOL;
+  const unsigned char properties::data::MASK_EXPLICIT_PATH;
+  const unsigned char properties::data::MASK_EXPLICIT_UNIT;
+  const unsigned char properties::data::MASK_LOCK;
+  const unsigned char properties::data::MASK_VECTOR;
 
-  const char properties::data::TYPE_NONE;
-  const char properties::data::TYPE_BOOLEAN;
-  const char properties::data::TYPE_INTEGER;
-  const char properties::data::TYPE_REAL;
-  const char properties::data::TYPE_STRING;
+  const unsigned char properties::data::TYPE_NONE;
+  const unsigned char properties::data::TYPE_BOOLEAN;
+  const unsigned char properties::data::TYPE_INTEGER;
+  const unsigned char properties::data::TYPE_REAL;
+  const unsigned char properties::data::TYPE_STRING;
 
   const char properties::data::TYPE_BOOLEAN_SYMBOL;
   const char properties::data::TYPE_INTEGER_SYMBOL;
