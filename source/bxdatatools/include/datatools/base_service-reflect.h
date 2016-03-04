@@ -37,6 +37,10 @@ namespace datatools {
                             ::datatools::base_service::initialize_standalone,
                             int,
                             const datatools::properties &)
+          .DR_CLASS_METHOD("service_class_id",
+                           ::datatools::base_service,
+                           ::datatools::base_service::service_class_id,
+                           std::string)
           ;
         return;
       }

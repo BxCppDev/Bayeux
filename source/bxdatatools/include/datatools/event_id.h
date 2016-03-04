@@ -223,8 +223,10 @@ namespace datatools {
 
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::event_id)
 
+#ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::event_id' class:
 DR_CLASS_INIT(::datatools::event_id);
+#endif // Q_MOC_RUN
 
 // Explicit class version:
 #include <boost/serialization/version.hpp>
