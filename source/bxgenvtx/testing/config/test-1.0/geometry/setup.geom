@@ -1,7 +1,7 @@
 # -*- mode: conf-unix; -*-
 # List of multi-properties (datatools::multi_properties):
 
-#@description The geometry model of the world (mother-of-all) volume 
+#@description The geometry model of the world (mother-of-all) volume
 
 #@key_label  "name"
 #@meta_label "type"
@@ -214,6 +214,26 @@ visibility.hidden : boolean = 0
 visibility.color  : string  = "green"
 
 
+#########################################################
+[name="ball.model" type="geomtools::simple_shaped_model"]
+
+#@config The list of properties to configure the capacitor logical volume
+
+#@description The name of the 3D shape
+shape_type   : string =  "sphere"
+
+#@description The length unit
+length_unit  : string  = "mm"
+
+#@description The radius
+r            : real   = 10.0
+
+#@description The name of the material
+material.ref : string = "polystyrene"
+
+#@description The recommended color for the display
+visibility.color  : string  = "cyan"
+
 ##########################################################
 [name="board.model" type="geomtools::simple_shaped_model"]
 
@@ -245,30 +265,34 @@ visibility.color  : string  = "cyan"
 
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[5] = \
+internal_item.labels : string[6] = \
   "pcb"  \
   "daughter_board_a" \
   "daughter_board_b" \
   "daughter_board_c" \
-  "daughter_board_d" 
+  "daughter_board_d" \
+  "ball_0"
 
 internal_item.model.pcb              : string = "board_pcb.model"
 internal_item.model.daughter_board_a : string = "mezzanine.model"
 internal_item.model.daughter_board_b : string = "mezzanine.model"
 internal_item.model.daughter_board_c : string = "mezzanine.model"
 internal_item.model.daughter_board_d : string = "mezzanine.model"
+internal_item.model.ball_0           : string = "ball.model"
 
 internal_item.placement.pcb              : string = "  0   0  -3 (mm)"
 internal_item.placement.daughter_board_a : string = "+30  15  +5 (mm)"
 internal_item.placement.daughter_board_b : string = "+30 -60  +5 (mm)"
 internal_item.placement.daughter_board_c : string = "-50 -10  +5 (mm) / z 90 (deg)"
 internal_item.placement.daughter_board_d : string = "+30  70  +5 (mm)"
+internal_item.placement.ball_0           : string = "  0   0  +35 (mm)"
 
 mapping.daughter_id.pcb              : string = "[board_pcb.gc]"
 mapping.daughter_id.daughter_board_a : string = "[mezzanine.gc:daughter=0]"
 mapping.daughter_id.daughter_board_b : string = "[mezzanine.gc:daughter=1]"
 mapping.daughter_id.daughter_board_c : string = "[mezzanine.gc:daughter=2]"
 mapping.daughter_id.daughter_board_d : string = "[mezzanine.gc:daughter=10]"
+mapping.daughter_id.ball_0           : string = "[ball.gc:item=0]"
 
 
 ###################################################
@@ -280,7 +304,7 @@ mapping.daughter_id.daughter_board_d : string = "[mezzanine.gc:daughter=10]"
 material.ref    : string = "vacuum"
 
 #@description The name of the model that represents the experimental setup
-setup.model     : string = "board.model" 
+setup.model     : string = "board.model"
 
 #@description The angular unit for the experimental setup placement
 angle_unit      : string = "degree"

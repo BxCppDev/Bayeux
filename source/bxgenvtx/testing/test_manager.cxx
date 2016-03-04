@@ -29,8 +29,7 @@ int main (int argc_, char ** argv_)
   try {
     std::clog << "Test program for the 'genvtx::manager' class." << std::endl;
 
-    // bool debug = false;
-    // bool verbose = false;
+    bool debug = false;
     int nshoots = 1;
     std::string vg_name;
     bool visu = false;
@@ -46,14 +45,13 @@ int main (int argc_, char ** argv_)
 
       if (token[0] == '-')  {
         std::string option = token;
-        // if ((option == "-d") || (option == "--debug")) {
-        //   debug = true;
-        // }
-        // else if ((option == "-v") || (option == "--visu")) {
-        //   visu = true;
-        // }
-        // else
-        if ((option == "-m") || (option == "--many")) {
+        if ((option == "-d") || (option == "--debug")) {
+          debug = true;
+        }
+        else if ((option == "-v") || (option == "--visu")) {
+          visu = true;
+        }
+        else if ((option == "-m") || (option == "--many")) {
           nshoots *= 10;
         }
         else if ((option == "-D") || (option == "--dump")) {
