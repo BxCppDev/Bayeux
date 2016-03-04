@@ -48,15 +48,15 @@ namespace brio {
       static const std::string & text_label(); /// Label for Boost portable text archive
 
       enum format_type {
-	FORMAT_UNDEFINED = 0,
-	FORMAT_PBA       = 1, /// Boost portable binary archive (file extension: .brio)
-	FORMAT_TEXT      = 2, /// Boost portable text archive (file extension: .trio)
+        FORMAT_UNDEFINED = 0,
+        FORMAT_PBA       = 1, /// Boost portable binary archive (file extension: .brio)
+        FORMAT_TEXT      = 2 /// Boost portable text archive (file extension: .trio)
       };
 
       enum rw_type {
-	RW_UNDEFINED = 0,
-	RW_READ      = 1, /// Reader mode
-	RW_WRITE     = 2  /// Writer mode
+        RW_UNDEFINED = 0,
+        RW_READ      = 1, /// Reader mode
+        RW_WRITE     = 2  /// Writer mode
       };
 
     public:

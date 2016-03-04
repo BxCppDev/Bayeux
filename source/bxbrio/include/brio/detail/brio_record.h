@@ -20,9 +20,19 @@
 
 // Third Party:
 // - ROOT:
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-long-long"
+#pragma clang diagnostic ignored "-Wshadow"
+#endif
+
 #include <TObject.h>
 #include <TBuffer.h>
 #include <TString.h>
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 // This Project:
 #include <brio/detail/TArrayCMod.h>

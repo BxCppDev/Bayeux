@@ -12,7 +12,15 @@
 #include <boost/archive/codecvt_null.hpp>
 #include <boost/filesystem.hpp>
 // - ROOT
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-long-long"
+#endif
 #include <TFile.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 // - Bayeux/datatools
 #include <datatools/exception.h>
 

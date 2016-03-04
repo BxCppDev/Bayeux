@@ -24,7 +24,14 @@
 
 // Third Party:
 // - ROOT:
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-long-long"
+#endif
 #include <TTree.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 namespace brio {
   template<typename T>

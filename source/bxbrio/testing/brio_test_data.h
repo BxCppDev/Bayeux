@@ -61,7 +61,7 @@ namespace brio {
                                          */
 
         /* interface i_serializable */
-        DATATOOLS_SERIALIZATION_DECLARATION();
+        DATATOOLS_SERIALIZATION_DECLARATION()
 
       };
 

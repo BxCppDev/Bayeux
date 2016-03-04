@@ -10,9 +10,18 @@
 // - Boost:
 #include <boost/filesystem.hpp>
 // - ROOT:
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-long-long"
+#endif
 #include <TTree.h>
 #include <TFile.h>
 #include <TKey.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
+
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>

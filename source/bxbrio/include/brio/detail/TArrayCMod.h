@@ -12,9 +12,15 @@
 
 // Third Party:
 // - ROOT:
-#ifndef ROOT_TArray
-#include "TArray.h"
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc++11-long-long"
 #endif
+#include <TArray.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 
 //! \brief The internal ROOT I/O buffer of bytes
 class TArrayCMod : public TArray {

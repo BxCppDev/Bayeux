@@ -248,13 +248,13 @@ int main (int argc_, char ** argv_)
             }
           my_writer.store (data);
 
-          datatools::properties infos;
-          infos.store_flag ("in_mixed_store");
+          datatools::properties writer_infos;
+          writer_infos.store_flag ("in_mixed_store");
           if (dump)
             {
-              infos.tree_dump (clog, "Properties to be stored in the 'mixed_data' store in ROOT file: ");
+              writer_infos.tree_dump (clog, "Properties to be stored in the 'mixed_data' store in ROOT file: ");
             }
-          my_writer.store (infos);
+          my_writer.store (writer_infos);
         }
 
       // Unselect the current store:
@@ -279,9 +279,9 @@ int main (int argc_, char ** argv_)
       // Store a properties object int the *automatic* store:
       {
         my_writer.unlock ();
-        datatools::properties infos;
-        infos.store_flag ("in_automatic_store");
-        my_writer.store (infos);
+        datatools::properties auto_infos;
+        auto_infos.store_flag ("in_automatic_store");
+        my_writer.store (auto_infos);
       }
 
       // Print writer's status:
