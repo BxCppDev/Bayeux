@@ -172,12 +172,12 @@ Download Bayeux/trunk source files:
    Relative URL: ^/Bayeux/trunk
    Repository Root: https://nemo.lpc-caen.in2p3.fr/svn
    Repository UUID: 3e0f96b8-c9f3-44f3-abf0-77131c94f4b4
-   Revision: 17178
+   Revision: 17214
    Node Kind: directory
    Schedule: normal
    Last Changed Author: mauger
-   Last Changed Rev: 17161
-   Last Changed Date: 2016-03-03 01:13:48 +0100 (Thu, 03 Mar 2016)
+   Last Changed Rev: 17210
+   Last Changed Date: 2016-03-04 23:36:04 +0100 (Fri, 04 Mar 2016)
 ..
 
 Configure Bayeux:
@@ -213,7 +213,7 @@ or :
          -DCMAKE_BUILD_TYPE:STRING=Release \
          -DCMAKE_INSTALL_PREFIX:PATH=\
            ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64 \
-         -DBAYEUX_FORCE_CXX_ALL_WARNINGS=ON \
+         -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
 	 -DBAYEUX_WITH_IWYU_CHECK=ON \
 	 -DBAYEUX_WITH_DOCS=ON \
          -DBAYEUX_WITH_DOCS_OCD=ON \
