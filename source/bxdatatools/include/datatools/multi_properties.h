@@ -160,9 +160,9 @@ namespace datatools {
                              bool a_inherit = false) const;
 
     private:
-      std::string key_;       //!< Primary key of the section
-      std::string meta_;      //!< Meta information text of the section
-      properties properties_; //!< Container of properties stored in the section
+      std::string key_;        //!< Primary key of the section
+      std::string meta_;       //!< Meta information text of the section
+      properties  properties_; //!< Container of properties stored in the section
 
       BOOST_SERIALIZATION_BASIC_DECLARATION()
 
