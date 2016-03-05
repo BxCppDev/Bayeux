@@ -894,7 +894,7 @@ namespace datatools {
       for (entries_col_type::const_iterator i = entries_.begin();
            i != entries_.end();
            ++i) {
-        const std::string& key = i->first;
+        const std::string& local_key = i->first;
         const entry& a_entry = i->second;
         a_out << indent;
         std::ostringstream indent_oss;
@@ -913,9 +913,9 @@ namespace datatools {
           a_out << i_tree_dumpable::tag;
           indent_oss << i_tree_dumpable::skip_tag;
         }
-        a_out << "Entry : " << '"' << key << '"';
+        a_out << "Entry : " << '"' << local_key << '"';
 
-        if (properties::key_is_private(key)) a_out << " [private]";
+        if (properties::key_is_private(local_key)) a_out << " [private]";
 
         a_out << std::endl;
         a_entry.tree_dump(a_out, "", indent_oss.str());
@@ -953,10 +953,10 @@ namespace datatools {
           indent_oss << i_tree_dumpable::skip_tag;
         }
 
-        std::string key = p_entry->get_key();
-        a_out << "Entry [rank=" << rank << "] : " << '"' << key << '"';
+        std::string local_key = p_entry->get_key();
+        a_out << "Entry [rank=" << rank << "] : " << '"' << local_key << '"';
 
-        if (properties::key_is_private(key)) a_out << " [private]";
+        if (properties::key_is_private(local_key)) a_out << " [private]";
 
         a_out << std::endl;
         rank++;
