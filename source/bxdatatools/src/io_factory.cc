@@ -476,9 +476,9 @@ namespace datatools {
                                       std::locale::classic(),
                                       new boost::archive::codecvt_null<char>);
 
-    bool write = ((mode & MASK_RW) != 0);
+    bool local_write = ((mode & MASK_RW) != 0);
 
-    if (write) {
+    if (local_write) {
       locale_ = new std::locale(*default_locale_,
                                 new boost::math::nonfinite_num_put<char>);
     } else {
@@ -500,9 +500,9 @@ namespace datatools {
                                       std::locale::classic(),
                                       new boost::archive::codecvt_null<char>);
 
-    bool write = ((mode & MASK_RW) != 0);
+    bool local_write = ((mode & MASK_RW) != 0);
 
-    if (write) {
+    if (local_write) {
       locale_ = new std::locale(*default_locale_,
                                 new boost::math::nonfinite_num_put<char>);
     } else {
