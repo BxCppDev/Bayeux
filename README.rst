@@ -324,10 +324,13 @@ Bayeux Configuration Options
 
 These options control the core configuration of Bayeux.
 
--  ``BAYEUX_FORCE_CXX_ALL_WARNINGS``
+-  ``BAYEUX_COMPILER_ERROR_ON_WARNING``
 
-   - Build the Bayeux libraries, test suite and executable with all possible
-     compiler warnings. Default is ON.
+   - Turn warnings into errors. Default is ON.
+
+-  ``BAYEUX_WITH_IWYU_CHECK``
+
+   - Run include-what-you-use on Bayeux sources. Default is OFF.
 
 -  ``BAYEUX_WITH_DEVELOPER_TOOLS``
 
