@@ -238,16 +238,16 @@ bool integer_range::has(const integer_range & ir) const
       return false;
     }
   } else {
-    int first = ir.first();
-    if (!this->has(first)) return false;
+    int local_first = ir.first();
+    if (!this->has(local_first)) return false;
   }
   if (!ir.is_upper_bounded()) {
     if (this->is_upper_bounded()) {
       return false;
     }
   } else {
-    int last = ir.last();
-    if (!this->has(last)) return false;
+    int local_last = ir.last();
+    if (!this->has(local_last)) return false;
   }
   return true;
 }
