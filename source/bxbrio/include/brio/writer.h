@@ -54,12 +54,12 @@ namespace brio {
 
     //! Constructor
     writer(const std::string& a_filename,
-	   datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
+           datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Constructor
     writer(const std::string& a_filename,
-	   const std::string& a_format_str,
-	   datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
+           const std::string& a_format_str,
+           datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Destructor
     virtual ~writer();
@@ -104,30 +104,30 @@ namespace brio {
      *  to store objects with a dedicated serialization tag 'serial_tag_'
      */
     int add_store(const std::string& a_label,
-		  const std::string& a_serial_tag,
-		  size_t a_buffer_size = 256000);
+                  const std::string& a_serial_tag,
+                  size_t a_buffer_size = 256000);
 
     /** Add a new store with label 'label_'
      *  to store objects with a dedicated serialization tag 'serial_tag_'
      */
     int add_store(const std::string& a_label,
-		  size_t a_buffer_size = 256000);
+                  size_t a_buffer_size = 256000);
 
     /** Add a new store with label 'label_'
      *  to store objects with arbitrary serialization tags
      */
     int add_mixed_store(const std::string& a_label,
-			size_t a_buffer_size = 0);
+                        size_t a_buffer_size = 0);
 
     // Store template method
     template <typename T>
-      int store(const T& a_data, const std::string& a_label = "");
+    int store(const T& a_data, const std::string& a_label = "");
 
     //! Smart print
     virtual void tree_dump(std::ostream& a_out = std::clog,
-			   const std::string& a_title = "",
-			   const std::string& a_indent = "",
-			   bool a_inherit = false) const;
+                           const std::string& a_title = "",
+                           const std::string& a_indent = "",
+                           bool a_inherit = false) const;
 
     //! Print
     void print_info(std::ostream& a_out = std::clog) const;
@@ -136,11 +136,11 @@ namespace brio {
     void _set_default();
 
     store_info* _add_store(const std::string& a_label,
-			   const std::string& a_serial_tag,
-			   size_t a_buffer_size);
+                           const std::string& a_serial_tag,
+                           size_t a_buffer_size);
 
     template <typename T>
-      int _at_store(const T& a_data, store_info *a_store_info);
+    int _at_store(const T& a_data, store_info *a_store_info);
 
     virtual void _at_open(const std::string& a_filename);
 
@@ -149,11 +149,11 @@ namespace brio {
     /*  void _only_if_locked_(const std::string& a_where) const; */
 
   private:
-    bool _locked_; /// Flag to lock the writer storage structure
-    bool _allow_mixed_types_in_stores_; /// Flag to allow stores with mixed types
-    bool _allow_automatic_store_;       /// Flag to allow an default automatic store
-    bool _existing_file_protected_;     /// Flag to protect existing output data file
-    store_info *_automatic_store_;     /// A handle to the automatic store (if any)
+    bool _locked_; ///< Flag to lock the writer storage structure
+    bool _allow_mixed_types_in_stores_; ///< Flag to allow stores with mixed types
+    bool _allow_automatic_store_;       ///< Flag to allow an default automatic store
+    bool _existing_file_protected_;     ///< Flag to protect existing output data file
+    store_info *_automatic_store_;      ///< A handle to the automatic store (if any)
   };
 } // end of namespace brio
 
