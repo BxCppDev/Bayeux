@@ -25,11 +25,16 @@
 #pragma clang diagnostic ignored "-Wc++11-long-long"
 #pragma clang diagnostic ignored "-Wshadow"
 #endif
-
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include <TObject.h>
 #include <TBuffer.h>
 #include <TString.h>
-
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -39,12 +44,12 @@
 
 /// The internal ROOT I/O record class
 class brio_record : public TObject {
- public:
-  TString    fSerialTag;  /// The serialization tag of the data class
-  UInt_t     fVersionTag; /// The serialization version number of the data class
-  TArrayCMod fDataBuffer; /// The buffer of bytes that contains the Boost archive associated to the serialized data
+public:
+  TString    fSerialTag;  ///< The serialization tag of the data class
+  UInt_t     fVersionTag; ///< The serialization version number of the data class
+  TArrayCMod fDataBuffer; ///< The buffer of bytes that contains the Boost archive associated to the serialized data
 
- public:
+public:
   //! Constructor
   brio_record();
 
@@ -54,8 +59,8 @@ class brio_record : public TObject {
   //! Reset the internal data
   void reset();
 
-  ClassDef(brio_record,1) //Basic BRIO record
-    };
+  ClassDef(brio_record,1) // Basic BRIO record
+};
 
 #endif // BRIO_DETAIL_BRIO_RECORD_H
 
