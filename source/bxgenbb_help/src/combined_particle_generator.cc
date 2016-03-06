@@ -545,10 +545,10 @@ namespace genbb {
       out_ << indent_ << title_ << std::endl;
     }
     bool inherited = false;
-    std::string tag = "|-- ";
+    std::string itag = "|-- ";
     std::string ctag = "`-- ";
     if (inherited) {
-      tag = "    ";
+      itag = "    ";
       ctag = "`-- ";
     }
     out_ << indent_ << "|-- " << "Mode          : "  << _mode_ << std::endl;
