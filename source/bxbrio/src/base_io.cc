@@ -410,16 +410,16 @@ namespace brio {
         const store_info& si = i->second;
         store_info_dict_type::const_iterator j = i;
         j++;
-        std::string tag = "|-- ";
-        std::string skip_tag = "|   ";
+        std::string local_tag = "|-- ";
+        std::string local_skip_tag = "|   ";
 
         if (j ==  _store_infos.end()) {
-          tag = "`-- ";
-          skip_tag = "    ";
+          local_tag = "`-- ";
+          local_skip_tag = "    ";
         }
-        out_ << indent << "|   " << tag
+        out_ << indent << "|   " << local_tag
              << "Store label: '" << si.label << "' : " << std::endl;
-        out_ << indent << "|   " << skip_tag
+        out_ << indent << "|   " << local_skip_tag
              << "|-- " << "Serialization tag = ";
         if (si.has_dedicated_serialization_tag()) {
           out_ << indent << "'" << si.get_serialization_tag () << "'";
@@ -427,8 +427,8 @@ namespace brio {
           out_ << "<mixed>";
         }
         out_ << std::endl;
-        out_ << indent << "|   " << skip_tag << "|-- " << "Number of entries = " << si.number_of_entries << " " << std::endl;
-        out_ << indent << "|   " << skip_tag << "`-- " << "Current entry     = ";
+        out_ << indent << "|   " << local_skip_tag << "|-- " << "Number of entries = " << si.number_of_entries << " " << std::endl;
+        out_ << indent << "|   " << local_skip_tag << "`-- " << "Current entry     = ";
         if (si.current_entry < 0) {
           out_ << "<rewind>";
         } else if (si.current_entry >= si.number_of_entries) {
