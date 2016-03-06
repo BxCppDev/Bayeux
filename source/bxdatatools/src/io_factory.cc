@@ -528,46 +528,46 @@ namespace datatools {
     std::ostringstream tag_ss, last_tag_ss; // tree_trick
     tag_ss << i_tree_dumpable::tag; // tree_trick
     last_tag_ss << i_tree_dumpable::inherit_tag(inherit); // tree_trick
-    std::string tag = tag_ss.str(); // tree_trick
-    std::string last_tag = last_tag_ss.str(); // tree_trick
+    std::string local_tag = tag_ss.str(); // tree_trick
+    std::string local_last_tag = last_tag_ss.str(); // tree_trick
     std::string indent;
     if (!a_indent.empty()) indent = a_indent;
     if (!a_title.empty()) out << indent << a_title << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "Mode  : " << std::hex << mode_ << std::dec << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_read  : " << this->is_read() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_write : " << this->is_write() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_compressed : " << this->is_compressed() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_uncompressed : " << this->is_uncompressed() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_gzip : " << this->is_gzip() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_bzip2 : " << this->is_bzip2() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_text : " << this->is_text() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_binary : " << this->is_binary() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_xml : " << this->is_xml() << std::endl;
 
-    out << indent << tag
+    out << indent << local_tag
         << "is_single_archive : " << this->is_single_archive() << std::endl;
 
-    out << indent << last_tag
+    out << indent << local_last_tag
         << "is_multi_archives : " << this->is_multi_archives() << std::endl;
   }
 
