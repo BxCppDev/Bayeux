@@ -31,8 +31,8 @@
 class TTree;
 
 namespace brio {
-  /// A class that contains internal dynamic informations for a given store
-  class store_info {
+  /// \brief A class that contains internal dynamic informations for a given store
+  struct store_info {
   public:
     struct constants {
       static const std::string & brio_file_extension();
@@ -42,8 +42,8 @@ namespace brio {
       static const std::string & automatic_store_label();
       static const std::string & postponed_dedicated_serial_tag_label();
       static const std::string & no_dedicated_serial_tag_label();
-      static size_t        default_store_buffer_size();
-      static size_t        default_stream_buffer_size();
+      static size_t default_store_buffer_size();
+      static size_t default_stream_buffer_size();
     };
 
     enum mode_type {
@@ -72,15 +72,15 @@ namespace brio {
 
   public:
     // make all attributes public:
-    std::string       label; /// the label (name) of the \e store
-    std::string       serialization_tag; /// the serialization tag associated to the object stored in the \e store
-    size_t       bufsize; /// the size of the output buffer (used only by the writer)
-    TTree*      tree; /// the embedded ROOT tree
-    brio_record  record; /// the current brio record to be (de)serialized
+    std::string  label; ///< the label (name) of the \e store
+    std::string  serialization_tag; ///< the serialization tag associated to the object stored in the \e store
+    size_t       bufsize; ///< the size of the output buffer (used only by the writer)
+    TTree*       tree; ///< the embedded ROOT tree
+    brio_record  record; ///< the current brio record to be (de)serialized
     brio_record *p_record;
-    std::vector<char> buffer; /// the input buffer (used only by the writer)
-    int64_t      number_of_entries; /// the number of entries in the \e store
-    int64_t      current_entry; /// the current entry number in the \e store
+    std::vector<char> buffer; ///< the input buffer (used only by the writer)
+    int64_t      number_of_entries; ///< the number of entries in the \e store
+    int64_t      current_entry; ///< the current entry number in the \e store
   };
 
   typedef std::map<std::string, store_info> store_info_dict_type;
