@@ -13,7 +13,7 @@
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
 
-using namespace std;
+// using namespace std;
 
 // Dummy class :
 struct foo {
@@ -32,6 +32,7 @@ struct foo {
 
   void initialize(const datatools::properties & config_) {
 
+    // std::cerr << "DEVEL: foo::initialize: Entering..." << std::endl;
     double length_unit = CLHEP::cm;
 
     // Parse 'debug' :
@@ -45,6 +46,8 @@ struct foo {
       debug_level = config_.fetch_integer(debug_level_key);
     }
 
+    // std::cerr << "DEVEL: foo::initialize: TEST 1..." << std::endl;
+
     // Parse mandatory 'name' :
     const std::string name_key = "name";
     if (config_.has_key(name_key)) {
@@ -54,17 +57,23 @@ struct foo {
       throw std::logic_error("foo::initialize: Missing '"+name_key+"' property!");
     }
 
+    // std::cerr << "DEVEL: foo::initialize: TEST 2..." << std::endl;
+
     // Parse 'what' :
     const std::string what_key = "what";
     if (config_.has_key(what_key)) {
       what = config_.fetch_string(what_key);
     }
 
-    // Parse 'what' :
+    // std::cerr << "DEVEL: foo::initialize: TEST 3..." << std::endl;
+
+    // Parse 'tmpfile' :
     const std::string tmpfile_key = "tmpfile";
     if (config_.has_key(tmpfile_key)) {
       tmpfile = config_.fetch_path(tmpfile_key);
     }
+
+    // std::cerr << "DEVEL: foo::initialize: TEST 4..." << std::endl;
 
     // Parse 'width' :
     const std::string width_key = "width";
@@ -73,21 +82,25 @@ struct foo {
       width *= length_unit;
     }
 
+    // std::cerr << "DEVEL: foo::initialize: TEST 5..." << std::endl;
+
     // Parse 'weight' :
     const std::string weight_key = "weight";
     if (config_.has_key(weight_key)) {
       weight = config_.fetch_real(weight_key);
     }
 
+    // std::cerr << "DEVEL: foo::initialize: TEST 6..." << std::endl;
+
     // Parse 'labels' :
     const std::string labels_key = "labels";
-    std::vector<std::string> labels;
     if (config_.has_key(labels_key)) {
-      std::vector<std::string> local_labels;
-      config_.fetch(labels_key, local_labels);
+      std::vector<std::string> labels;
+      config_.fetch(labels_key, labels);
+      // std::cerr << "DEVEL: foo::initialize: size of labels=" << labels.size() << std::endl;
       // Parse dependees of the 'labels' property :
-      for (int i = 0; i < (int) local_labels.size() ; i++) {
-        std::string value_key = "objects." + local_labels[i] + ".value";
+      for (int i = 0; i < (int) labels.size() ; i++) {
+        std::string value_key = "objects." + labels[i] + ".value";
         if (! config_.has_key(value_key)) {
           throw std::logic_error("foo::initialize: Missing '"+value_key+"' property!");
         }
@@ -102,6 +115,8 @@ struct foo {
       }
     }
 
+    // std::cerr << "DEVEL: foo::initialize: TEST 7..." << std::endl;
+
     // Rather complex triggering conditions for the 'dummy" property :
     if (! name.empty() && name[0] == '_' && dict.size() >= 2) {
       const std::string dummy_key = "dummy";
@@ -111,13 +126,15 @@ struct foo {
       dummy = config_.fetch_integer(dummy_key);
     }
 
+    // std::cerr << "DEVEL: foo::initialize: TEST 8..." << std::endl;
+
     // Parse mandatory 'secret' :
     int secret;
     const std::string secret_key = "secret";
     if (config_.has_key(secret_key)) {
       secret = config_.fetch_integer(secret_key);
       if (secret > 3) {
-        std::cerr << "DEVEL: foo::initialize: "
+        std::clog << "DEVEL: foo::initialize: "
                   << "You have found my secret !" << std::endl;
       }
     }
@@ -374,52 +391,21 @@ int main (int /*argc_*/, char ** /*argv_*/)
   int error_code = EXIT_SUCCESS;
   try
     {
-      clog << "Test program for the 'OCD' tools." << endl;
-
-      /*
-      bool debug = false;
-
-      int iarg = 1;
-      while (iarg < argc_)
-        {
-          string token = argv_[iarg];
-
-          if (token[0] == '-')
-            {
-              string option = token;
-              if ((option == "-d") || (option == "--debug"))
-                {
-                  debug = true;
-                }
-              else
-                {
-                  clog << "warning: ignoring option '" << option << "'!" << endl;
-                }
-            }
-          else
-            {
-              string argument = token;
-              {
-                clog << "warning: ignoring argument '" << argument << "'!" << endl;
-              }
-            }
-          iarg++;
-        }
-      */
+      std::clog << "Test program for the 'OCD' tools." << std::endl;
 
       {
-        clog << endl;
+        std::clog << std::endl;
         datatools::object_configuration_description OCD;
         if (! datatools::load_ocd<datatools::properties>(OCD)) {
-          clog << "No OCD support for the 'datatools::properties' class." << endl;
+          std::clog << "No OCD support for the 'datatools::properties' class." << std::endl;
         }
       }
 
       {
-        clog << endl;
+        std::clog << std::endl;
         datatools::object_configuration_description OCD;
         if (datatools::load_ocd<foo>(OCD)) {
-          clog << "Found OCD support for the 'foo' class." << endl;
+          std::clog << "Found OCD support for the 'foo' class." << std::endl;
           OCD.print(std::clog, "*** ");
           OCD.dump(std::clog, "OCD: ");
 
@@ -450,10 +436,10 @@ int main (int /*argc_*/, char ** /*argv_*/)
       }
 
       {
-        clog << endl;
+        std::clog << std::endl;
         datatools::object_configuration_description OCD;
         if (datatools::load_ocd<datatools::service_manager>(OCD)) {
-          clog << "Found OCD support for the 'datatools::service_manager' class." << endl;
+          std::clog << "Found OCD support for the 'datatools::service_manager' class." << std::endl;
           OCD.print(std::clog, "=== ");
           std::ofstream fscf ("test_OCD_SM.sample.conf");
           OCD.generate_sample_configuration(fscf, "the configuration of a 'datatools::service_manager' object");
@@ -468,21 +454,21 @@ int main (int /*argc_*/, char ** /*argv_*/)
       OCDreg.smart_dump(std::clog, "An OCD registration : ");
 
       if (OCDreg.has_id("foo")) {
-        clog << "Class 'foo' has OCD support." << endl;
+        std::clog << "Class 'foo' has OCD support." << std::endl;
         const datatools::object_configuration_description & foo_OCD = OCDreg.get("foo");
         foo_OCD.dump(std::clog, "foo OCD: ");
       }
 
-      clog << "The end." << endl;
+      std::clog << "The end." << std::endl;
     }
-  catch (exception & x)
+  catch (std::exception & x)
     {
-      cerr << "error: " << x.what () << endl;
+      std::cerr << "error: " << x.what () << std::endl;
       error_code = EXIT_FAILURE;
     }
   catch (...)
     {
-      cerr << "error: " << "unexpected error !" << endl;
+      std::cerr << "error: " << "unexpected error !" << std::endl;
       error_code = EXIT_FAILURE;
     }
   return (error_code);
