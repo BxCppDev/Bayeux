@@ -53,12 +53,12 @@ namespace brio {
 
     //! Constructor
     reader(const std::string& filename_,
-	   datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
+     datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Constructor
     reader(const std::string& filename_,
-	   const std::string& format_str_,
-	   datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
+     const std::string& format_str_,
+     datatools::logger::priority p_ = datatools::logger::PRIO_FATAL);
 
     //! Destructor
     virtual ~reader();
@@ -112,9 +112,9 @@ namespace brio {
 
     //! Smart print
     virtual void tree_dump(std::ostream& out_ = std::clog,
-			   const std::string& title_ = "",
-			   const std::string& indent_ = "",
-			   bool inherit_ = false) const;
+         const std::string& title_ = "",
+         const std::string& indent_ = "",
+         bool inherit_ = false) const;
 
     //! Print
     void print_info(std::ostream& out_ = std::clog) const;
@@ -135,10 +135,10 @@ namespace brio {
 
 
   private:
-    bool _allow_mixed_types_in_stores_; /// Flag to allow stores with mixed types
-    bool _allow_automatic_store_;       /// Flag to allow an default automatic store
-    bool _check_serial_tag_;            /// Flag to automatically check coherence between the store's serialization tag and the stored objects serialization tag
-    store_info *_automatic_store_;     /// A handle to the automatic store (if any)
+    bool _allow_mixed_types_in_stores_; ///< Flag to allow stores with mixed types
+    bool _allow_automatic_store_;       ///< Flag to allow an default automatic store
+    bool _check_serial_tag_;            ///< Flag to automatically check coherence between the store's serialization tag and the stored objects serialization tag
+    store_info *_automatic_store_;      ///< A handle to the automatic store (if any)
   };
 } // end of namespace brio
 
