@@ -35,44 +35,44 @@
 
 namespace brio {
   template<typename T>
-    int reader::load_next(T& data_, const std::string& label_) {
+  int reader::load_next(T& data_, const std::string& label_) {
     int64_t entry = this->get_current_entry(label_);
     return this->load<T>(data_, label_, entry + 1);
   }
 
   template<typename T>
-    int reader::load_previous(T& data_, const std::string& label_) {
+  int reader::load_previous(T& data_, const std::string& label_) {
     int64_t entry = this->get_current_entry(label_);
     return this->load<T>(data_, label_, entry - 1);
   }
 
   template<typename T>
-    int reader::load(T& data_, int64_t nentry_) {
+  int reader::load(T& data_, int64_t nentry_) {
     return this->load<T>(data_, "", nentry_);
   }
 
   template<typename T>
-    int reader::load(T& data_, const std::string& label_, int64_t nentry_) {
+  int reader::load(T& data_, const std::string& label_, int64_t nentry_) {
     DT_THROW_IF(!this->is_opened(),
-		std::logic_error,
-		"Operation prohibited; file is not opened !");
+                std::logic_error,
+                "Operation prohibited; file is not opened !");
 
     store_info *ptr_si = this->_get_store_info(label_);
     if (!ptr_si) {
       DT_THROW_IF(!label_.empty (),
-		  std::logic_error,
-		  "No source store with label '" << label_ << "' !");
+                  std::logic_error,
+                  "No source store with label '" << label_ << "' !");
       // if we do not allow automatic store, this is a critical error:
       DT_THROW_IF(!_allow_automatic_store_,
-		  std::logic_error,
-		  "No source store is selected nor default store is available !");
+                  std::logic_error,
+                  "No source store is selected nor default store is available !");
       ptr_si = _automatic_store_;
     }
     return this->_at_load<T>(data_, ptr_si, nentry_);
   }
 
   template<class T>
-    int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
+  int reader::_at_load(T& data_, store_info *ptr_si_, int64_t nentry_) {
     DT_LOG_TRACE(this->get_logging_priority(),"Entering...");
     store_info& si = *ptr_si_;
 
@@ -80,34 +80,34 @@ namespace brio {
       // We check if the serialization tag from the store matches the
       // data's one:
       if (si.has_dedicated_serialization_tag()) {
-	// 2013-02-19 FM : change the way we check the serial tag :
-	//if (data_.get_serial_tag () != si.get_serialization_tag ())
-	DT_THROW_IF(!datatools::check_serial_tag<T>(si.get_serialization_tag ()),
-		    std::logic_error,
-		    "Data serialization tag '" << data_.get_serial_tag()
-		    << "' does not match source store's serialization tag '" << si.get_serialization_tag () << "' !");
+        // 2013-02-19 FM : change the way we check the serial tag :
+        //if (data_.get_serial_tag () != si.get_serialization_tag ())
+        DT_THROW_IF(!datatools::check_serial_tag<T>(si.get_serialization_tag ()),
+                    std::logic_error,
+                    "Data serialization tag '" << data_.get_serial_tag()
+                    << "' does not match source store's serialization tag '" << si.get_serialization_tag () << "' !");
       }
     }
 
     DT_THROW_IF(si.number_of_entries == 0,
-		std::logic_error,
-		"Source store '" << si.label << "' has no entry !");
+                std::logic_error,
+                "Source store '" << si.label << "' has no entry !");
     int64_t nentry = nentry_;
     if (nentry >= 0) {
       // check overflow:
       DT_THROW_IF(nentry_ >= si.number_of_entries,
-		  std::logic_error,
-		  "Source store '" << si.label << "' has "
-		  << "no serialized entry at index '" << nentry_ << "' !");
+                  std::logic_error,
+                  "Source store '" << si.label << "' has "
+                  << "no serialized entry at index '" << nentry_ << "' !");
     } else {
       // if nentry_ < 0: use entry index relative to the current entry
       // position
       if (si.current_entry < 0) {// at rewind position
-	// start with first entry:
-	nentry = 0;
+        // start with first entry:
+        nentry = 0;
       } else {
-	// try next entry:
-	nentry = si.current_entry + 1;
+        // try next entry:
+        nentry = si.current_entry + 1;
       }
     }
 
@@ -116,18 +116,18 @@ namespace brio {
     int ret = si.tree->GetEntry(nentry, 1); // -> 1 for all branches
     if (!ret) {
       DT_THROW_IF(true,
-		  std::logic_error,
-		  "No entry '"
-		  << nentry << "' at entry # " << nentry
-		  << " in source store labelled '" << si.label.c_str()
-		  << "' from  file '" << _filename << "' !");
+                  std::logic_error,
+                  "No entry '"
+                  << nentry << "' at entry # " << nentry
+                  << " in source store labelled '" << si.label.c_str()
+                  << "' from  file '" << _filename << "' !");
     } else if (ret == -1) {
       DT_THROW_IF(true,
-		  std::logic_error,
-		  "An I/O error occurs from entry '"
-		  << nentry
-		  << "' in source store labelled '" << si.label.c_str()
-		  << "' from  file '" << _filename << "' !");
+                  std::logic_error,
+                  "An I/O error occurs from entry '"
+                  << nentry
+                  << "' in source store labelled '" << si.label.c_str()
+                  << "' from  file '" << _filename << "' !");
     } else {
       si.current_entry = nentry;
     }
@@ -137,19 +137,19 @@ namespace brio {
        * Here we test if data and the entry's serial tags match:
        */
       if (!si.has_dedicated_serialization_tag()) {
-	// check serial tag associated to the buffered binary archive:
-	std::string serial_tag = si.record.fSerialTag.Data();
-	// 2013-02-19 FM : change the way we check
-	// if (data_.get_serial_tag () != serial_tag)
-	DT_THROW_IF(!datatools::check_serial_tag<T>(serial_tag),
-		    std::logic_error,
-		    "Entry '" << nentry
-		    << "' with serial tag '" << serial_tag
-		    << "' in (mixed) source store labelled '" << si.label.c_str()
+        // check serial tag associated to the buffered binary archive:
+        std::string serial_tag = si.record.fSerialTag.Data();
+        // 2013-02-19 FM : change the way we check
+        // if (data_.get_serial_tag () != serial_tag)
+        DT_THROW_IF(!datatools::check_serial_tag<T>(serial_tag),
+                    std::logic_error,
+                    "Entry '" << nentry
+                    << "' with serial tag '" << serial_tag
+                    << "' in (mixed) source store labelled '" << si.label.c_str()
 
-		    << "' from  file '" << _filename
-		    << "' does not match the requested '"
-		    << data_.get_serial_tag() << "' data type !");
+                    << "' from  file '" << _filename
+                    << "' does not match the requested '"
+                    << data_.get_serial_tag() << "' data type !");
       }
     }
 
