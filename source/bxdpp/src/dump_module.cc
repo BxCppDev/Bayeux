@@ -206,14 +206,14 @@ namespace dpp {
     for (size_t ibank = 0; ibank < bank_labels.size(); ibank++) {
       const std::string & bank_label = bank_labels[ibank];
       const datatools::i_serializable & bank = the_data_record.get(bank_label);
-      std::string tag = "|-- ";
-      std::string tag2 = "|   ";
+      std::string local_tag = "|-- ";
+      std::string local_tag2 = "|   ";
       if (ibank == bank_labels.size() - 1) {
-        tag = "`-- ";
-        tag2 = "    ";
+        local_tag = "`-- ";
+        local_tag2 = "    ";
       }
       _grab_output () << _indent_;
-      _grab_output () << tag << "Bank '" << bank_label << "'";
+      _grab_output () << local_tag << "Bank '" << bank_label << "'";
       if (the_data_record.is_constant(bank_label)) {
         _grab_output () << " (const)";
       }
@@ -223,7 +223,7 @@ namespace dpp {
         = dynamic_cast<const datatools::i_tree_dumpable*>(&bank);
       if (dumpable != 0) {
         std::ostringstream indent_oss;
-        indent_oss << _indent_ << tag2;
+        indent_oss << _indent_ << local_tag2;
         dumpable->tree_dump(_grab_output (),"", indent_oss.str());
       }
     }
