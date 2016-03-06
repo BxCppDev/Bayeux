@@ -506,9 +506,9 @@ namespace mygsl {
   }
 
   void tabulated_function::tabfunc_load(std::istream& in_, void* /*context_*/) {
-    std::string interpolator_name;
-    in_ >> interpolator_name >> std::ws;
-    DT_THROW_IF (!interpolator_name_is_valid(interpolator_name),
+    std::string the_interpolator_name;
+    in_ >> the_interpolator_name >> std::ws;
+    DT_THROW_IF (!interpolator_name_is_valid(the_interpolator_name),
                  std::out_of_range, "Interpolator '" << pImpl->_interpolator_name_ << "' is not supported !");
     size_t n = 0;
     in_ >> n >> std::ws;
@@ -518,7 +518,7 @@ namespace mygsl {
       DT_THROW_IF (!in_, std::logic_error, "Invalid format for (x, y) data point");
       add_point(x, y, false);
     }
-    lock_table(interpolator_name);
+    lock_table(the_interpolator_name);
   }
 
   void tabulated_function::tabfunc_store(std::ostream& out_,

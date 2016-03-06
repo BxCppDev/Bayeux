@@ -1,15 +1,22 @@
 // mygsl::histogram_2d.cc
 
+// Ourselves:
 #include <mygsl/histogram_2d.h>
-#include <mygsl/histogram_1d.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <limits>
 #include <cmath>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_math.h>
+// - Boost:
 #include <boost/preprocessor/stringize.hpp>
+
+// This project:
+#include <mygsl/histogram_1d.h>
 
 namespace mygsl {
 
@@ -755,14 +762,14 @@ namespace mygsl {
       _h_->yrange[i]=yr;
     }
     for (size_t i = 0; i < nx*ny; i++) {
-      double count;
-      in_ >> count;
+      double local_count;
+      in_ >> local_count;
       DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram_2d bin count contents from stream !");
-      _h_->bin[i] = count;
+      _h_->bin[i] = local_count;
     }
-    int counts;
+    int local_counts;
     double x_binning_info, y_binning_info;
-    in_ >> x_binning_info >> y_binning_info >> counts;
+    in_ >> x_binning_info >> y_binning_info >> local_counts;
     double x_underflow, x_overflow, y_underflow, y_overflow;
     std::string uo_token;
     in_ >> uo_token;
@@ -781,7 +788,7 @@ namespace mygsl {
     _x_overflow_     = x_overflow;
     _y_underflow_    = y_underflow;
     _y_overflow_     = y_overflow;
-    _counts_         = counts;
+    _counts_         = local_counts;
     return;
   }
 

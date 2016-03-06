@@ -638,21 +638,21 @@ namespace mygsl {
     DT_THROW_IF (n < 1, std::logic_error, "Invalid histogram size!");
     initialize (n, 0.0, 1.0, BIN_MODE_LINEAR);
     for (size_t i = 0; i < n; i++) {
-      double min, max, bin_counts;
-      in_ >> min >> max >> bin_counts;
+      double lmin, lmax, bin_counts;
+      in_ >> lmin >> lmax >> bin_counts;
       DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram bin contents from stream!");
-      if (i==0) _h_->range[i]=min;
-      _h_->range[i+1]=max;
+      if (i==0) _h_->range[i]=lmin;
+      _h_->range[i+1]=lmax;
       _h_->bin[i]=bin_counts;
     }
-    int counts;
-    double binning_info, underflow, overflow;
-    in_ >> binning_info >> counts;
+    int local_counts;
+    double binning_info, lunderflow, loverflow;
+    in_ >> binning_info >> local_counts;
     std::string uo_token;
     in_ >> uo_token;
     if (uo_token == "1")
       {
-        in_ >> underflow >> overflow;
+        in_ >> lunderflow >> loverflow;
       }
     else
       {
@@ -660,9 +660,9 @@ namespace mygsl {
       }
     DT_THROW_IF (! in_, std::logic_error, "Cannot read histogram underflow/overflow from stream!");
     _binning_info_ = binning_info;
-    _counts_       = counts;
-    _underflow_    = underflow;
-    _overflow_     = overflow;
+    _counts_       = local_counts;
+    _underflow_    = lunderflow;
+    _overflow_     = loverflow;
     return;
   }
 

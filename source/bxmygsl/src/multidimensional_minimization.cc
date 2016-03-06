@@ -1,12 +1,16 @@
 // multidimensional_minimization.cc
 
+// Ourselves:
 #include <mygsl/multidimensional_minimization.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <fstream>
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/utils.h>
@@ -728,8 +732,8 @@ namespace mygsl {
     if (epsabs_ < 0.0) {
       _epsabs_ = DEFAULT_EPSABS;
     }
-    double f;
-    datatools::invalidate(f);
+    double fx;
+    datatools::invalidate(fx);
 
     do {
       iter++;
@@ -743,7 +747,7 @@ namespace mygsl {
         double size = gsl_multimin_fminimizer_size (_fmin_);
         status = gsl_multimin_test_size (size, _epsabs_);
         x = _fmin_->x->data;
-        f = _fmin_->fval;
+        fx = _fmin_->fval;
       }
 
       if (_mode_ == MODE_FDF) {
@@ -754,10 +758,10 @@ namespace mygsl {
         }
         status = gsl_multimin_test_gradient (_fdfmin_->gradient, _epsabs_);
         x = _fdfmin_->x->data;
-        f = _fdfmin_->f;
+        fx = _fdfmin_->f;
       }
-      _at_step_hook (status, iter, x, dim, f);
-      _fval_ = f;
+      _at_step_hook (status, iter, x, dim, fx);
+      _fval_ = fx;
       if ((iter % _modulo_iter_) == 0) {
         DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Iteration #" << iter << " Fval == " << _fval_);
         _sys_->print_status (std::clog);
@@ -775,5 +779,3 @@ namespace mygsl {
   }
 
 } // namespace mygsl
-
-// end of multidimensional_minimization.cc
