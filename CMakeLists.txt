@@ -77,7 +77,6 @@ set(BAYEUX_RESOURCE_DIR "${BAYEUX_TAG}/resources")
 set(BAYEUX_EXAMPLE_DIR "${BAYEUX_TAG}/examples")
 set(BAYEUX_DOCUMENTATION_DIR "${BAYEUX_TAG}/Documentation")
 
-
 #-----------------------------------------------------------------------
 # - Configure output paths for products to give inplace build that roughly
 #   matches install layout.
@@ -95,7 +94,6 @@ file(RELATIVE_PATH BAYEUX_CMAKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
-
 
 #-----------------------------------------------------------------------
 # Compiler configuration
@@ -158,7 +156,7 @@ enum_option(BAYEUX_CXX_STANDARD
 set(BAYEUX_CXX_COMPILE_FEATURES cxx_template_template_parameters)
 
 # - For C++11, add all features supported in GCC 4.9 and above, except
-#   thread_local because that needs a workarounf on OS X
+#   thread_local because that needs a workaround on OS X
 set(BAYEUX_CXX11_COMPILE_FEATURES
   cxx_alias_templates
   cxx_alignas
