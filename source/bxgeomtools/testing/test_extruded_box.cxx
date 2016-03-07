@@ -143,7 +143,7 @@ int main (int argc_, char ** argv_)
 
     {
       tmp_file.out() << "# locate (index 1): " << std::endl;
-      size_t nshoots = 500000;
+      size_t nshoots = 20000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         double dim = 8. * CLHEP::mm;
@@ -190,7 +190,7 @@ int main (int argc_, char ** argv_)
 
     {
       tmp_file.out() << "# intercepts (index 2): " << std::endl;
-      size_t nshoots = 200000;
+      size_t nshoots = 50000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(10. * (-1 + 2 *  drand48()) * CLHEP::mm,

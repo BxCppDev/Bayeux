@@ -173,7 +173,7 @@ int main (int argc_, char ** argv_)
 
     {
       // Draw intercepts (index 3):
-      size_t nshoots = 50000;
+      size_t nshoots = 10000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(0.* drand48() * CLHEP::mm,
@@ -233,7 +233,7 @@ int main (int argc_, char ** argv_)
 
     {
       // Draw intercepts 2 (index 6):
-      size_t nshoots = 50000;
+      size_t nshoots = 10000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(0.* drand48() * CLHEP::mm,

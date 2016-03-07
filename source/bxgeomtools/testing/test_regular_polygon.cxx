@@ -116,7 +116,7 @@ int main (int argc_, char ** argv_)
     {
       // Draw on surface (index 4):
       tmp_file.out() << "# on surface: " << std::endl;
-      size_t  nshoots = 50000;
+      size_t  nshoots = 10000;
       int counts = 0;
       int counts2 = 0;
       for (int i = 0; i < (int) nshoots; i++) {
@@ -145,7 +145,7 @@ int main (int argc_, char ** argv_)
 
     {
       // Draw intercepts (index 5):
-      size_t nshoots = 100000;
+      size_t nshoots = 10000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(2.* drand48() * CLHEP::mm,

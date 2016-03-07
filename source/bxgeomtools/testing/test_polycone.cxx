@@ -191,7 +191,7 @@ int main (int argc_, char ** argv_)
     if (do_locate) {
       tmp_file.out() << "# Locate points (index 1) " << std::endl;
       //bool locate = locate_outer_side | locate_inner_side | locate_bottom | locate_top | locate_start | locate_stop | locate_bulk;
-      size_t nshoots = 1000000;
+      size_t nshoots = 100000;
       size_t counts = 0;
       double dim2 = 0.7 * dim;
       for (int i = 0; i < (int) nshoots; i++) {
@@ -248,7 +248,7 @@ int main (int argc_, char ** argv_)
     if (do_intercept) {
       // Find intercepts:
       tmp_file.out() << "# Intercepts (index 2):" << std::endl;
-      size_t nshoots = 400000;
+      size_t nshoots = 100000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(dim * (-1.0 + 2.0 * drand48()),

@@ -169,7 +169,7 @@ int main (int argc_, char ** argv_)
     if (test3) {
       std::clog << "test 3: Box #3   = " << my_box << " " << std::endl;
       tmp_file.out() << "# intercepts (index 4): " << std::endl;
-      size_t nshoots = 100000;
+      size_t nshoots = 50000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(10.* drand48() * CLHEP::mm,
@@ -204,7 +204,7 @@ int main (int argc_, char ** argv_)
       std::clog << "INFO: Intercept done." << std::endl;
 
       tmp_file.out() << "# locate (index 5): " << std::endl;
-      nshoots = 1000000;
+      nshoots = 100000;
       counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         double dim = 3. * CLHEP::mm;

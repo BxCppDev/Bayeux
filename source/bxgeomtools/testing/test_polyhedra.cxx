@@ -134,7 +134,7 @@ int main (int argc_, char ** argv_)
     std::clog << "INFO: Locate start..." << std::endl;
     if (do_locate) {
       tmp_file.out() << "# Locate points (index 1) " << std::endl;
-      size_t nshoots = 100000;
+      size_t nshoots = 5000;
       size_t counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d position(dim * ( -1.0 + 2.0 * drand48()),
@@ -182,7 +182,7 @@ int main (int argc_, char ** argv_)
       // Find intercepts:
       std::clog << "INFO: Intercepts start..." << std::endl;
       tmp_file.out() << "# Intercepts (index 2):" << std::endl;
-      size_t nshoots = 100000;
+      size_t nshoots = 5000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(dim * (-1.0 + 2.0 * drand48()),

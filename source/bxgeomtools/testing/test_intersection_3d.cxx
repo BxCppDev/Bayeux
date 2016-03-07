@@ -168,7 +168,7 @@ int main (int argc_, char ** argv_)
     std::clog << "test 1: End." << std::endl;
 
     tmp_file.out() << "# draw intercepts (index 4): " << std::endl;
-    size_t nshoots = 100000;
+    size_t nshoots = 10000;
     for (int i = 0; i < (int) nshoots; i++) {
       if ((i%1000) == 0) std::clog << "Loop #" << i << std::endl;
 
@@ -200,7 +200,7 @@ int main (int argc_, char ** argv_)
     tmp_file.out() << std::endl << std::endl;
 
     tmp_file.out() << "# draw locate (index 5): " << std::endl;
-    nshoots = 10000000;
+    nshoots = 500000;
     int count = 0;
     for (int i = 0; i < (int) nshoots; i++) {
       double dim = 6. * CLHEP::mm;

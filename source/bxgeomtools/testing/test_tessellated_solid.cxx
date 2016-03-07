@@ -226,7 +226,7 @@ void test5(bool draw_)
 
     int counts = 0;
     tmp_file.out() << "# locate (index 1)" << std::endl;
-    size_t nshoots = 200000;
+    size_t nshoots = 50000;
     for (int i = 0; i < (int) nshoots; i++) {
       double dim = 3. * CLHEP::mm;
       geomtools::vector_3d position (dim * ( 0 + drand48 ()),

@@ -92,7 +92,7 @@ int main(int argc_, char ** argv_)
     {
       // Draw intercepts (index 3):
       tmp_file.out() << "# locate " << std::endl;
-      size_t nshoots = 100000;
+      size_t nshoots = 20000;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
         geomtools::vector_3d pos(8. * (-1.0 + 2.0 * drand48()),
@@ -115,7 +115,7 @@ int main(int argc_, char ** argv_)
     {
       // Draw intercepts (index 3):
       tmp_file.out() << "# intercepts " << std::endl;
-      size_t nshoots = 500000;
+      size_t nshoots = 50000;
       // nshoots = 100;
       int counts = 0;
       for (int i = 0; i < (int) nshoots; i++) {
