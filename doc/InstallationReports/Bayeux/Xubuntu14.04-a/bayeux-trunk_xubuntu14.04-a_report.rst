@@ -7,6 +7,7 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 
 In this document we propose an installation procedure for the Bayeux/trunk
 library on top of Cadfaelbrew (2016.01) on Xubuntu 14.04 LTS system (64bits).
+The build is done using the C++98 standard.
 
 The target system
 =================
@@ -24,10 +25,10 @@ Processors:
 .. code:: sh
 
    $ cat /proc/cpuinfo | grep "model name"
-   model name	: Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
-   model name	: Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
-   model name	: Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
-   model name	: Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
+   model name   : Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
+   model name   : Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
+   model name   : Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
+   model name   : Intel(R) Core(TM) i7-3540M CPU @ 3.00GHz
 ..
 
 Linux version:
@@ -80,11 +81,13 @@ You can check the location and version of core software utilities:
    $ which cmake
    /path/to/Cadfaelbrew/install/supernemo/cxx11/Cadfael.git/bin/cmake
 ..
+
 .. code:: sh
 
    $ cmake --version
    cmake version 3.4.0
 ..
+
 .. code:: sh
 
    $ g++ --version
@@ -215,25 +218,26 @@ or :
          -DCMAKE_BUILD_TYPE:STRING=Release \
          -DCMAKE_INSTALL_PREFIX:PATH=\
            ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64 \
+         -DBAYEUX_CXX_STANDARD="98" \
          -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
-	 -DBAYEUX_WITH_IWYU_CHECK=ON \
-	 -DBAYEUX_WITH_DOCS=ON \
+         -DBAYEUX_WITH_IWYU_CHECK=ON \
+         -DBAYEUX_WITH_DOCS=ON \
          -DBAYEUX_WITH_DOCS_OCD=ON \
          -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
          -DBAYEUX_WITH_EXAMPLES=ON \
-	 -DBAYEUX_WITH_BRIO=ON \
-	 -DBAYEUX_WITH_CUTS=ON \
-	 -DBAYEUX_WITH_MYGSL=ON \
-	 -DBAYEUX_WITH_DPP=ON \
-	 -DBAYEUX_WITH_MATERIALS=ON \
-	 -DBAYEUX_WITH_GEOMTOOLS=ON \
-	 -DBAYEUX_WITH_EMFIELD=ON \
-	 -DBAYEUX_WITH_GENVTX=ON \
-	 -DBAYEUX_WITH_GENBB_HELP=ON \
-	 -DBAYEUX_WITH_MCTOOLS=ON \
-	 -DBAYEUX_WITH_LAHAGUE=ON \
-	 -DBAYEUX_WITH_GEANT4_MODULE=ON \
-	 -DBAYEUX_WITH_MCNP_MODULE=OFF \
+         -DBAYEUX_WITH_BRIO=ON \
+         -DBAYEUX_WITH_CUTS=ON \
+         -DBAYEUX_WITH_MYGSL=ON \
+         -DBAYEUX_WITH_DPP=ON \
+         -DBAYEUX_WITH_MATERIALS=ON \
+         -DBAYEUX_WITH_GEOMTOOLS=ON \
+         -DBAYEUX_WITH_EMFIELD=ON \
+         -DBAYEUX_WITH_GENVTX=ON \
+         -DBAYEUX_WITH_GENBB_HELP=ON \
+         -DBAYEUX_WITH_MCTOOLS=ON \
+         -DBAYEUX_WITH_LAHAGUE=ON \
+         -DBAYEUX_WITH_GEANT4_MODULE=ON \
+         -DBAYEUX_WITH_MCNP_MODULE=OFF \
          -DBAYEUX_ENABLE_TESTING=ON \
          -GNinja \
          ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
@@ -245,9 +249,9 @@ Build (using 4 processors to go faster):
 
    $ time ninja -j4
    ...
-   real	12m6.886s
-   user	43m4.932s
-   sys	2m24.929s
+   real 12m6.886s
+   user 43m4.932s
+   sys  2m24.929s
 ..
 
 
@@ -394,6 +398,7 @@ Browse the installation directory:
            |-- Documentation/
            |-- examples/
            `-- resources/
+..
 
 Suggestions for a Bash setup (see below):
 
@@ -451,17 +456,17 @@ Suggestions for a Bash setup (see below):
       $ export CONFIG_DIR=$(pwd)/config
       $ bxgeomtools_inspector --manager-config config/manager.conf
 
-	G E O M T O O L S    I N S P E C T O R
-	Version 5.0.0
+        G E O M T O O L S    I N S P E C T O R
+        Version 5.0.0
 
-	Copyright (C) 2009-2015
-	Francois Mauger, Xavier Garrido, Benoit Guillon,
-	Ben Morgan and Arnaud Chapon
+        Copyright (C) 2009-2015
+        Francois Mauger, Xavier Garrido, Benoit Guillon,
+        Ben Morgan and Arnaud Chapon
 
-	immediate help: type "help"
-	quit:           type "quit"
-	support:        Gnuplot display
-	support:        Root display from GDML
+        immediate help: type "help"
+        quit:           type "quit"
+        support:        Gnuplot display
+        support:        Root display from GDML
 ..
 
 .. code:: gnuplot
@@ -522,6 +527,7 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
 
    # Special alias:
    alias do_bayeux_dev_setup="do_bayeux_trunk_setup"
+..
 
 When one wants to use pieces of software from Bayeux, one runs:
 
@@ -547,10 +553,16 @@ Update the source code from the Bayeux/trunk
 
 1. Activate the Cadfaelbrew environment:
 
-
 .. code:: sh
 
    $ do_cadfaelbrew_setup
+..
+
+   or enter a ``brew`` shell:
+
+.. code:: sh
+
+   $ brewsh
 ..
 
 2. Cd in the Bayeux/trunk source directory:
@@ -574,7 +586,33 @@ Update the source code from the Bayeux/trunk
    $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-gcc-ninja-Linux-x86_64
 ..
 
-5. Rebuild and reinstall
+5. You may need to clean the build directory:
+
+.. code:: sh
+
+   $ ninja -clean
+..
+
+   and even to completely delete it to rebuild from scratch:
+
+.. code:: sh
+
+   $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/
+   $ rm -fr Build-gcc-ninja-Linux-x86_64
+   $ mkdir Build-gcc-ninja-Linux-x86_64
+   $ cd Build-gcc-ninja-Linux-x86_64
+..
+
+   then reconfigure (see above).
+
+6. You may need to delete the install tree:
+
+.. code:: sh
+
+   $ rm -fr ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
+..
+
+7. Rebuild, test and install:
 
 .. code:: sh
 
@@ -584,7 +622,7 @@ Update the source code from the Bayeux/trunk
 ..
 
 
-Alrernative: build Bayeux with GNU make
+Alternative: build Bayeux with GNU make
 ===================================================
 
 a. Build dir:
@@ -595,7 +633,7 @@ a. Build dir:
       $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-gcc-gnumake-Linux-x86_64
 ..
 
-b. Configure Bayeux with CMake and GNU make :
+b. Configure Bayeux with CMake and GNU make (default build system):
 
 .. code:: sh
 
@@ -603,33 +641,36 @@ b. Configure Bayeux with CMake and GNU make :
          -DCMAKE_BUILD_TYPE:STRING=Release \
          -DCMAKE_INSTALL_PREFIX:PATH=\
            ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64 \
+         -DBAYEUX_CXX_STANDARD="98" \
          -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
-	 -DBAYEUX_WITH_IWYU_CHECK=ON \
-	 -DBAYEUX_WITH_DOCS=ON \
+         -DBAYEUX_WITH_IWYU_CHECK=ON \
+         -DBAYEUX_WITH_DOCS=ON \
          -DBAYEUX_WITH_DOCS_OCD=ON \
          -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
          -DBAYEUX_WITH_EXAMPLES=ON \
-	 -DBAYEUX_WITH_BRIO=ON \
-	 -DBAYEUX_WITH_CUTS=ON \
-	 -DBAYEUX_WITH_MYGSL=ON \
-	 -DBAYEUX_WITH_DPP=ON \
-	 -DBAYEUX_WITH_MATERIALS=ON \
-	 -DBAYEUX_WITH_GEOMTOOLS=ON \
-	 -DBAYEUX_WITH_EMFIELD=ON \
-	 -DBAYEUX_WITH_GENVTX=ON \
-	 -DBAYEUX_WITH_GENBB_HELP=ON \
-	 -DBAYEUX_WITH_MCTOOLS=ON \
-	 -DBAYEUX_WITH_LAHAGUE=ON \
-	 -DBAYEUX_WITH_GEANT4_MODULE=ON \
-	 -DBAYEUX_WITH_MCNP_MODULE=OFF \
+         -DBAYEUX_WITH_BRIO=ON \
+         -DBAYEUX_WITH_CUTS=ON \
+         -DBAYEUX_WITH_MYGSL=ON \
+         -DBAYEUX_WITH_DPP=ON \
+         -DBAYEUX_WITH_MATERIALS=ON \
+         -DBAYEUX_WITH_GEOMTOOLS=ON \
+         -DBAYEUX_WITH_EMFIELD=ON \
+         -DBAYEUX_WITH_GENVTX=ON \
+         -DBAYEUX_WITH_GENBB_HELP=ON \
+         -DBAYEUX_WITH_MCTOOLS=ON \
+         -DBAYEUX_WITH_LAHAGUE=ON \
+         -DBAYEUX_WITH_GEANT4_MODULE=ON \
+         -DBAYEUX_WITH_MCNP_MODULE=OFF \
          -DBAYEUX_ENABLE_TESTING=ON \
          ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
 ..
 
-c. Build:
+c. Build, test and install:
 
 .. code:: sh
 
    $ time make -j4
    ...
+   $ make test
+   $ make install
 ..
