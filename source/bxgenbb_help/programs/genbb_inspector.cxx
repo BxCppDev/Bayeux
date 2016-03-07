@@ -962,7 +962,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::inspector_data, /* tag_ */ )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::inspector_data, tag_ __attribute__((unused)) )
       {
         // Declare and populate the introspection metaclass for the 'genbb::inspector_data' class:
         DR_CLASS_DECLARE (::genbb::inspector_data)

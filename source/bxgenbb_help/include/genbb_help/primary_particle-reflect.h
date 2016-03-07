@@ -17,7 +17,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::primary_particle, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::primary_particle, tag_ __attribute__((unused)) )
         {
           // Declare and populate the reflection metaclass for the 'genbb::primary_particle' class:
           DR_CLASS_DECLARE (::genbb::primary_particle)
