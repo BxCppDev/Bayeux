@@ -119,10 +119,10 @@ namespace geomtools {
   private:
 
     // a.x + b.y + c.z + d  = 0
-    double _a_;
-    double _b_;
-    double _c_;
-    double _d_;
+    double _a_; ///< Coefficient for x
+    double _b_; ///< Coefficient for y
+    double _c_; ///< Coefficient for z
+    double _d_; ///< Pedestal
 
   };
 
