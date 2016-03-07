@@ -22,7 +22,7 @@ clean :
 
 .PHONY : tag
 tag : final
-	cp -f $(cb_tagged_report_name).pdf tags/
+	cp -f $(cb_tagged_report_name).pdf tagged/
 
 .PHONY : final
 final : $(cb_report_name).pdf

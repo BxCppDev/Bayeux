@@ -5,7 +5,7 @@ Installation report for Cadfaelbrew on Xubuntu Linux 14.04 (LTS)
 :Author: F.Mauger
 :Version: 0.1
 :Contact: mauger@lpccaen.in2p3.fr
-:Date: 2016-02-25
+:Date: 2016-03-06
 
 This note  explains the Cadfaelbrew installation  procedure on Xubuntu
 Linux 14.04 (LTS) (64-bits). Cadfaelbrew is a package manager, derived
@@ -42,8 +42,8 @@ Preparation
 
 .. code:: sh
 
-   bash$ mkdir -p /data3/sw/CadfaelBrew
-   bash$ cd /data3/sw/CadfaelBrew
+   bash$ mkdir -p /data3/sw/Cadfaelbrew
+   bash$ cd /data3/sw/Cadfaelbrew
 ..
 
    c. Install mandatory packages:
@@ -60,9 +60,9 @@ Download the Cadfael installer
 ================================================================================
 
 The Cadfael installer utility  is available from the ``SuperNEMO-DBD``
-Git  repository (GitHub).   You  must  have a  decent  version of  Git
-installed on your system. The installer will first install Cadfaelbrew
-before the Cadfael software itself.
+``git``  repository  (GitHub).  You  must  have  a recent  version  of
+``git`` installed  on your  system. The  installer will  first install
+Cadfaelbrew before the Cadfael software itself.
 
    a. Clone the default Git branch to your local filesystem:
 
@@ -158,20 +158,20 @@ b. Here we request a bare installation (``-b``) of Cadfaelbrew without
    We build the software with C++11 (``-e``).  The installation prefix
    is set with the ``-p`` switch:
 
-   ``/data3/sw/CadfaelBrew/supernemo/cxx11``.
+   ``/data3/sw/Cadfaelbrew/supernemo/cxx11``.
 
    Run:
 
 .. code:: sh
 
    bash$ cd cadfael-installer.git/
-   bash$ ./cadfael-installer -b -e -p /data3/sw/CadfaelBrew/supernemo/cxx11
+   bash$ ./cadfael-installer -b -e -p /data3/sw/Cadfaelbrew/supernemo/cxx11
 ..
 
    At  the end  of the  process, the  Cadfaelbrew environment  will be
    installed in :
 
-   ``/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/``
+   ``/data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git/``
 
    You will find the ``brew`` script in the ``bin/`` subdirectory.
 
@@ -184,14 +184,14 @@ Cadfael software:
 
 .. code:: sh
 
-   bash$ /data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/bin/brew \
+   bash$ /data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git/bin/brew \
      install cadfael
 ..
 
 This is a  rather long process, particularly because  the GCC compiler
 (version 4.9) is built and installed (~35 min on this system).  Geant4
 and Root  are also  rather long  to build.  All  the software  will be
-installed   in  ``/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git``.
+installed   in  ``/data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git``.
 It takes approximatively 3 GB.
 
 The following report gives you an idea of the time needed to build the
@@ -232,11 +232,11 @@ a. You can  define a specific Bash function in your ``~/.bashrc`` startup file:
 	  return 1
       fi
       export CADFAELBREW_INSTALL_DIR=\
-        "/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git"
+        "/data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git"
       export PATH="${CADFAELBREW_INSTALL_DIR}/bin:${PATH}"
       export MANPATH="${CADFAELBREW_INSTALL_DIR}/share/man:${MANPATH}"
       export INFOPATH="${CADFAELBREW_INSTALL_DIR}/share/info:${INFOPATH}"
-      echo "NOTICE: CadfaelBrew is now setup !" >&2
+      echo "NOTICE: Cadfaelbrew is now setup !" >&2
       return
    }
    export -f do_cadfaelbrew_setup
@@ -254,7 +254,7 @@ b. Alternatively you can use the ``brew.sh`` script provided by Cadfaelbrew.
 
 .. code:: sh
 
-   alias brewsh='/data3/sw/CadfaelBrew/supernemo/cxx11/Cadfael.git/bin/brew sh'
+   alias brewsh='/data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git/bin/brew sh'
 ..
 
    Then, each time you need to use Cadfaelbrew or some software managed by it, you
