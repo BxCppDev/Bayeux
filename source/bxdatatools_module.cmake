@@ -53,6 +53,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/caster_utils.h
   ${module_include_dir}/${module_name}/clhep_units.h
   ${module_include_dir}/${module_name}/command_utils.h
+  ${module_include_dir}/${module_name}/compiler_macros.h
   ${module_include_dir}/${module_name}/datatools.h
   ${module_include_dir}/${module_name}/datatools_config.h.in
   ${module_include_dir}/${module_name}/detail/api.h
