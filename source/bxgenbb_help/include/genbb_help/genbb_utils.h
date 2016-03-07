@@ -34,13 +34,16 @@
 #include <vector>
 #include <map>
 
+/// Top-level namespace of the Bayeux/genbb_help module library
 namespace genbb
 {
 
+  /// \brief Utility class
   class utils
   {
   public:
 
+    /// \brief Decay type
     enum decay_type
     {
       INVALID_DECAY_TYPE = 0,
