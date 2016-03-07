@@ -19,10 +19,8 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, tag_ __attribute__((unused)) )
       {
-//                              std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
-//                                                                      << "geomtools::geom_id" << std::endl;
         DR_CLASS_DECLARE (::geomtools::geom_id)
           .DR_CLASS_BASE(::datatools::i_serializable)
           .DR_CLASS_CONSTRUCTOR()

@@ -20,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::orientation_type, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::orientation_type, tag_ __attribute__((unused)) )
       {
         DR_ENUM_DECLARE(::geomtools::orientation_type)
           .value("vertical",   geomtools::VERTICAL)
@@ -29,7 +29,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, tag_ __attribute__((unused)) )
       {
         DR_ENUM_DECLARE(::geomtools::direction_type)
           .value("back",   geomtools::BACK)
@@ -42,7 +42,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::axis_type, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::axis_type, tag_ __attribute__((unused)) )
       {
         DR_ENUM_DECLARE(::geomtools::axis_type)
           .value("invalid", geomtools::AXIS_INVALID)
@@ -53,7 +53,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_axis_type, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_axis_type, tag_ __attribute__((unused)) )
       {
         DR_ENUM_DECLARE(::geomtools::rotation_axis_type)
           .value("invalid", geomtools::ROTATION_AXIS_INVALID)

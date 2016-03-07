@@ -20,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_2d, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_2d, tag_ __attribute__((unused)) )
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //           << "geomtools::vector_2d" << std::endl;
@@ -114,7 +114,7 @@ namespace datatools {
         return;
       }
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_3d, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_3d, tag_ __attribute__((unused)) )
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //        << "geomtools::vector_3d" << std::endl;
@@ -267,7 +267,7 @@ namespace datatools {
         return;
       }
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_3d, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_3d, tag_ __attribute__((unused)) )
       {
         // Declare and populate the reflection metaclass for the 'geomtools::rotation_3d' class:
         DR_CLASS_DECLARE (::geomtools::rotation_3d)

@@ -21,7 +21,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::i_placement, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::i_placement, tag_ __attribute__((unused)) )
       {
         // Declare and populate the reflection metaclass for the 'geomtools::i_placement' class:
         DR_CLASS_DECLARE (::geomtools::i_placement)

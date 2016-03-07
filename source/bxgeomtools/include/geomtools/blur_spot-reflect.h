@@ -19,7 +19,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::blur_spot, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::blur_spot, tag_ __attribute__((unused)) )
       {
         DR_CLASS_DECLARE (::geomtools::blur_spot)
           .DR_CLASS_BASE(::geomtools::base_hit)
