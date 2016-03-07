@@ -9,6 +9,7 @@
 // - Bayeux/datatools:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'genbb::primary_particle' class:
 DR_CLASS_EXPORT(::genbb::primary_particle, "genbb::primary_particle")
@@ -17,7 +18,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::primary_particle, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::genbb::primary_particle, DT_UNUSED(tag_) )
         {
           // Declare and populate the reflection metaclass for the 'genbb::primary_particle' class:
           DR_CLASS_DECLARE (::genbb::primary_particle)
