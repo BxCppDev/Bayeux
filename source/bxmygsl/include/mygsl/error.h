@@ -33,9 +33,9 @@ namespace mygsl {
     static void set_gsl_default ();
 
     static void default_handler(const char * reason_ ,
-				const char * file_ ,
-				int line_ ,
-				int gsl_errno_);
+                                const char * file_ ,
+                                int line_ ,
+                                int gsl_errno_);
   private:
 
     error();
@@ -58,7 +58,7 @@ namespace mygsl {
 
 #endif // MYGSL_ERROR_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables:
+// mode: c++
+// coding: utf-8
+// End:

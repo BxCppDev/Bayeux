@@ -12,18 +12,19 @@
 #include <boost/serialization/nvp.hpp>
 // - Bayeux/datatools:
 #include <datatools/i_serializable.ipp>
+#include <datatools/compiler_macros.h>
 
 namespace mygsl {
 
   template<class Archive>
-  void best_value::serialize (Archive & ar,
-                              const unsigned int /*version*/)
+  void best_value::serialize(Archive & ar,
+                             const unsigned int DT_UNUSED(version_))
   {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    ar & boost::serialization::make_nvp ("value", _value_);
-    ar & boost::serialization::make_nvp ("error_low", _error_low_);
-    ar & boost::serialization::make_nvp ("error_high", _error_high_);
-    ar & boost::serialization::make_nvp ("confidence_level", _confidence_level_);
+    ar & boost::serialization::make_nvp("value", _value_);
+    ar & boost::serialization::make_nvp("error_low", _error_low_);
+    ar & boost::serialization::make_nvp("error_high", _error_high_);
+    ar & boost::serialization::make_nvp("confidence_level", _confidence_level_);
     return;
   }
 
@@ -31,7 +32,7 @@ namespace mygsl {
 
 #endif // MYGSL_BEST_VALUE_IPP
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables:
+// mode: c++
+// coding: utf-8
+// End:

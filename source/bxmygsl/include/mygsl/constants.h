@@ -3,13 +3,13 @@
 #ifndef MYGSL_CONSTANTS_H
 #define MYGSL_CONSTANTS_H 1
 
-/// Top-level namespace of the Bayeux/mygsl module library
+/// \brief Top-level namespace of the Bayeux/mygsl module library
 namespace mygsl {
 
-  /// Nested namespace of the Bayeux/mygsl module library (constants)
+  /// \brief Nested namespace of the Bayeux/mygsl module library (constants)
   namespace constants {
 
-    //! MKSA system of units and constants
+    //! \brief MKSA system of units and constants
     class mksa
     {
     public:
@@ -117,8 +117,7 @@ namespace mygsl {
       static const double yard;
     }; // end of class mksa
 
-
-    //! Units prefixes and constants
+    //! \brief Units prefixes and constants
     class num
     {
     public:
@@ -143,7 +142,7 @@ namespace mygsl {
       static const double zetta;
     }; // end of class num
 
-    //! CSGM system of units and constants
+    //! \brief CSGM system of units and constants
     class cgsm
     {
     public:
@@ -255,7 +254,7 @@ namespace mygsl {
 
 #endif // MYGSL_CONSTANTS_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables:
+// mode: c++
+// coding: utf-8
+// End:

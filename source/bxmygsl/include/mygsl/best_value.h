@@ -10,6 +10,7 @@
 // - Bayeux/datatools:
 #include <datatools/i_serializable.h>
 
+/// \brief Top-level namespace of the Bayeux/mygsl module library
 namespace mygsl {
 
   /// \brief A data structure representing a numeric value and its associated error
@@ -75,7 +76,7 @@ namespace mygsl {
 
 #endif // MYGSL_BEST_VALUE_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables:
+// mode: c++
+// coding: utf-8
+// End:
