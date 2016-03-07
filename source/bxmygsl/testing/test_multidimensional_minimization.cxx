@@ -1,8 +1,9 @@
 // test_multidimensional_minimization.cxx
-/*
- *
- */
 
+// Ourselves:
+#include <mygsl/multidimensional_minimization.h>
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -13,13 +14,15 @@
 #include <limits>
 #include <stdexcept>
 
+// Third party:
+// - GSL:
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
 #include <gsl/gsl_randist.h>
 
+// This project:
 #include <mygsl/rng.h>
 #include <mygsl/histogram.h>
-#include <mygsl/multidimensional_minimization.h>
 #include <mygsl/param_entry.h>
 #include <mygsl/error.h>
 
@@ -30,9 +33,9 @@ using namespace std;
 double log_poisson (unsigned long k_, double mu_)
 {
   double mu = mu_;
-  if ((k_ > 0) && (mu_ < numeric_limits<double>::denorm_min ()))
+  if ((k_ > 0) && (mu_ < std::numeric_limits<double>::denorm_min ()))
     {
-      mu = numeric_limits<double>::denorm_min ();
+      mu = std::numeric_limits<double>::denorm_min ();
     }
   if ((k_ == 0) && (mu_ == 0.0))
     {
@@ -133,7 +136,7 @@ public:
   }
 
   experiment (const params_type & params_,
-              size_t nevents_         = 5000,
+              size_t nevents_         = 500,
               unsigned long int seed_ = 0)
   {
     __e1 = data::E1;
@@ -468,7 +471,7 @@ int main (int argc_, char ** argv_)
       int mode   = test_multimin_system::MODE_CHISQUARE;
       bool debug = false;
       bool time_seed = false;
-      size_t nevents  = 5000;
+      size_t nevents  = 500;
       unsigned long int seed = 1;
       bool use_default_step_action = false;
       string method_name = "nmsimplex";
@@ -737,7 +740,7 @@ int main (int argc_, char ** argv_)
       clog << "Init done." << endl;
 
       double epsabs = 1.0;
-      epsabs = 1.0e-2;
+      epsabs = 10.0e-2;
       //epsabs = 1.0e-3;
       if (mm.minimize (epsabs) == GSL_SUCCESS)
         {
@@ -804,5 +807,3 @@ int main (int argc_, char ** argv_)
     }
   return (EXIT_SUCCESS);
 }
-
-// end of test_multidimensional_minimization.cxx
