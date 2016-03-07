@@ -65,6 +65,13 @@ option(BAYEUX_COMPILER_ERROR_ON_WARNING "Turn warnings into errors" ON)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|(Apple)+Clang")
   set(BAYEUX_CXX_FLAGS "-Wall -Wextra -Wshadow -pedantic")
 
+  # Disable specific warnings on GCC (-Wlong-long/pedantic) because Root source code (Rtypes.h)
+  # makes use of unsupported type by ISO C++ 98 ([unsigned] long long int) and
+  # the 'pragma GCC diagnostic ignored "-Wlong-long"' does not work
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(BAYEUX_CXX_FLAGS "${BAYEUX_CXX_FLAGS} -Wno-long-long")
+  endif()
+
   # Disable C99 extension warnings on Clang
   if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
     set(BAYEUX_CXX_FLAGS "${BAYEUX_CXX_FLAGS} -Wno-c99-extensions")
@@ -79,6 +86,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|(Apple)+Clang")
   if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
     set(BAYEUX_CXX_FLAGS "${BAYEUX_CXX_FLAGS} -ftemplate-depth=512")
   endif()
+
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
   # Needs more testing
   set(BAYEUX_CXX_FLAGS "-w2")
