@@ -10,6 +10,7 @@
 // - Bayeux/datatools:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'geomtools::geom_id' class:
 DR_CLASS_EXPORT (::geomtools::geom_id, "geomtools::geom_id")
@@ -19,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::geom_id, DT_UNUSED(tag_) )
       {
         DR_CLASS_DECLARE (::geomtools::geom_id)
           .DR_CLASS_BASE(::datatools::i_serializable)

@@ -20,6 +20,7 @@
 // - Bayeux/datatools
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // This project :
 #include <geomtools/base_hit.h>
@@ -32,7 +33,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::base_hit, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::base_hit, DT_UNUSED(tag_) )
       {
         DR_CLASS_DECLARE (::geomtools::base_hit)
           .DR_CLASS_BASE(::datatools::i_serializable)

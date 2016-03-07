@@ -9,6 +9,7 @@
 // - Bayeux/datatools:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the CLHEP class:
 DR_CLASS_EXPORT (::geomtools::vector_2d, "geomtools::vector_2d")
@@ -20,7 +21,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_2d, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_2d, DT_UNUSED(tag_) )
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //           << "geomtools::vector_2d" << std::endl;
@@ -114,7 +115,7 @@ namespace datatools {
         return;
       }
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_3d, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::vector_3d, DT_UNUSED(tag_) )
       {
         // std::cerr << "****** DEVEL ****** datatools::detail::reflection: "
         //        << "geomtools::vector_3d" << std::endl;
@@ -267,7 +268,7 @@ namespace datatools {
         return;
       }
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_3d, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_3d, DT_UNUSED(tag_) )
       {
         // Declare and populate the reflection metaclass for the 'geomtools::rotation_3d' class:
         DR_CLASS_DECLARE (::geomtools::rotation_3d)

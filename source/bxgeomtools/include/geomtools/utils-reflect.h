@@ -9,6 +9,7 @@
 // This project:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for geomtools enums:
 DR_TYPE_EXPORT(::geomtools::orientation_type, "geomtools::orientation_type")
@@ -20,7 +21,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::orientation_type, tag_ __attribute__((unused)) )
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::orientation_type, DT_UNUSED(tag_) )
       {
         DR_ENUM_DECLARE(::geomtools::orientation_type)
           .value("vertical",   geomtools::VERTICAL)
@@ -29,7 +30,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, tag_ __attribute__((unused)) )
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, DT_UNUSED(tag_) )
       {
         DR_ENUM_DECLARE(::geomtools::direction_type)
           .value("back",   geomtools::BACK)
@@ -42,7 +43,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::axis_type, tag_ __attribute__((unused)) )
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::axis_type, DT_UNUSED(tag_) )
       {
         DR_ENUM_DECLARE(::geomtools::axis_type)
           .value("invalid", geomtools::AXIS_INVALID)
@@ -53,7 +54,7 @@ namespace datatools {
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_axis_type, tag_ __attribute__((unused)) )
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::rotation_axis_type, DT_UNUSED(tag_) )
       {
         DR_ENUM_DECLARE(::geomtools::rotation_axis_type)
           .value("invalid", geomtools::ROTATION_AXIS_INVALID)

@@ -10,6 +10,7 @@
 // - Bayeux/datatools:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'geomtools::blur_spot' class:
 DR_CLASS_EXPORT (::geomtools::blur_spot, "geomtools::blur_spot")
@@ -19,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::blur_spot, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::blur_spot, DT_UNUSED(tag_) )
       {
         DR_CLASS_DECLARE (::geomtools::blur_spot)
           .DR_CLASS_BASE(::geomtools::base_hit)

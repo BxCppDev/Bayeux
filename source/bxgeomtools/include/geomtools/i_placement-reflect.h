@@ -7,6 +7,7 @@
 // - Bayeux/datatools:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // This project:
 #include <geomtools/i_placement.h>
@@ -21,7 +22,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::i_placement, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::geomtools::i_placement, DT_UNUSED(tag_) )
       {
         // Declare and populate the reflection metaclass for the 'geomtools::i_placement' class:
         DR_CLASS_DECLARE (::geomtools::i_placement)
