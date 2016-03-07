@@ -3,7 +3,7 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-03-02
+:Date:   2016-03-06
 
 In this document we propose an installation procedure for the Bayeux/trunk
 library on top of Cadfaelbrew (2016.01) on Xubuntu 14.04 LTS system (64bits).
@@ -70,7 +70,7 @@ Alternatively you can use a dedicated setup function:
 .. code:: sh
 
    $ do_cadfaelbrew_setup
-   NOTICE: CadfaelBrew is now setup !
+   NOTICE: Cadfaelbrew is now setup !
 ..
 
 You can check the location and version of core software utilities:
@@ -132,9 +132,10 @@ Install dependencies:
    $ sudo apt-get install python-docutils
 ..
 
-Set the software base directory where there is enough storage capacity to host
-Bayeux (> 1 GB). Here we use a simple environment variable ``SW_WORK_DIR`` which points
-to a specific directory on the filesystem:
+Set the software base directory where there is enough storage capacity
+to host  Bayeux (> 1  GB). Here we  use a simple  environment variable
+``SW_WORK_DIR``  which   points  to   a  specific  directory   on  the
+filesystem:
 
 .. code:: sh
 
@@ -182,8 +183,9 @@ Download Bayeux/trunk source files:
 
 Configure Bayeux:
 
-  1. Make sure Cadfaelbrew is setup on your system. If you follow the Cadfaelbrew installation report
-     available from the Cadfael wiki page, you just have to invoke:
+  1. Make sure Cadfaelbrew is setup on  your system. If you follow the
+     Cadfaelbrew installation  report available from the  Cadfael wiki
+     page, you just have to invoke:
 
 .. code:: sh
 
@@ -201,18 +203,18 @@ or :
 
 .. code:: sh
 
-      $ mkdir -p ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
-      $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
+      $ mkdir -p ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-gcc-ninja-Linux-x86_64
+      $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-gcc-ninja-Linux-x86_64
 ..
 
-  3. Configure Bayeux with CMake and Ninja :
+  3. Configure the Bayeux build with CMake and using Ninja and GCC :
 
 .. code:: sh
 
       $ cmake \
          -DCMAKE_BUILD_TYPE:STRING=Release \
          -DCMAKE_INSTALL_PREFIX:PATH=\
-           ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64 \
+           ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64 \
          -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
 	 -DBAYEUX_WITH_IWYU_CHECK=ON \
 	 -DBAYEUX_WITH_DOCS=ON \
@@ -241,14 +243,19 @@ Build (using 4 processors to go faster):
 
 .. code:: sh
 
-   $ ninja -j4
+   $ time ninja -j4
    ...
+   real	12m6.886s
+   user	43m4.932s
+   sys	2m24.929s
 ..
+
 
 Quick check after build
 =========================
 
-After the build step, Bayeux uses the following hierarchy on the file system:
+After the build step, Bayeux uses  the following hierarchy on the file
+system:
 
 .. code:: sh
 
@@ -300,7 +307,8 @@ Executable are in:
    `-- bxtests/
 ..
 
-These directories and files will be copied in the installation directory.
+These  directories  and  files  will be  copied  in  the  installation
+directory.
 
 Test programs
 =========================
@@ -311,7 +319,7 @@ Before to do the final installation, we run the test programs:
 
    $ ninja test
    [1/1] Running tests...
-   Test project /data/sw/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
+   Test project /data/sw/Bayeux/Binary/Bayeux-trunk/Build-gcc-ninja-Linux-x86_64
            Start   1: datatools-test_reflection_0
      1/303 Test   #1: datatools-test_reflection_0 .......   Passed    0.28 sec
    ...
@@ -341,8 +349,8 @@ Browse the installation directory:
 .. code:: sh
 
    $ LANG=C tree -L 3 -F \
-     ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
-   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
+     ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
+   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
    |-- bin/
    |   |-- bxdpp_processing*
    |   |-- bxg4_production*
@@ -394,7 +402,7 @@ Suggestions for a Bash setup (see below):
 .. code:: sh
 
    $ export SW_WORK_DIR=/data/sw
-   $ export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
+   $ export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
 ..
 
  2. The only configuration you need now is:
@@ -418,7 +426,7 @@ Suggestions for a Bash setup (see below):
 .. code:: sh
 
    $ which bxquery
-   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64/bin/bxquery
+   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64/bin/bxquery
 ..
 
     Check datatools' OCD tool:
@@ -426,7 +434,7 @@ Suggestions for a Bash setup (see below):
 .. code:: sh
 
       $ which bxocd_manual
-      /data/sw/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64/bin/bxocd_manual
+      /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64/bin/bxocd_manual
       $ bxocd_manual --action list
       List of registered class IDs :
       cuts::accept_cut
@@ -505,7 +513,7 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
          echo "ERROR: Bayeux/trunk is already setup !" >&2
          return 1
      fi
-     export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-Linux-x86_64
+     export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
      export PATH=${BAYEUX_INSTALL_DIR}/bin:${PATH}
      echo "NOTICE: Bayeux/trunk is now setup !" >&2
      return;
@@ -563,7 +571,7 @@ Update the source code from the Bayeux/trunk
 
 .. code:: sh
 
-   $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-Linux-x86_64
+   $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-gcc-ninja-Linux-x86_64
 ..
 
 5. Rebuild and reinstall
@@ -573,4 +581,55 @@ Update the source code from the Bayeux/trunk
    $ ninja -j4
    $ ninja test
    $ ninja install
+..
+
+
+Alrernative: build Bayeux with GNU make
+===================================================
+
+a. Build dir:
+
+.. code:: sh
+
+      $ mkdir -p ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-gcc-gnumake-Linux-x86_64
+      $ cd ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Build-gcc-gnumake-Linux-x86_64
+..
+
+b. Configure Bayeux with CMake and GNU make :
+
+.. code:: sh
+
+      $ cmake \
+         -DCMAKE_BUILD_TYPE:STRING=Release \
+         -DCMAKE_INSTALL_PREFIX:PATH=\
+           ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64 \
+         -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
+	 -DBAYEUX_WITH_IWYU_CHECK=ON \
+	 -DBAYEUX_WITH_DOCS=ON \
+         -DBAYEUX_WITH_DOCS_OCD=ON \
+         -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
+         -DBAYEUX_WITH_EXAMPLES=ON \
+	 -DBAYEUX_WITH_BRIO=ON \
+	 -DBAYEUX_WITH_CUTS=ON \
+	 -DBAYEUX_WITH_MYGSL=ON \
+	 -DBAYEUX_WITH_DPP=ON \
+	 -DBAYEUX_WITH_MATERIALS=ON \
+	 -DBAYEUX_WITH_GEOMTOOLS=ON \
+	 -DBAYEUX_WITH_EMFIELD=ON \
+	 -DBAYEUX_WITH_GENVTX=ON \
+	 -DBAYEUX_WITH_GENBB_HELP=ON \
+	 -DBAYEUX_WITH_MCTOOLS=ON \
+	 -DBAYEUX_WITH_LAHAGUE=ON \
+	 -DBAYEUX_WITH_GEANT4_MODULE=ON \
+	 -DBAYEUX_WITH_MCNP_MODULE=OFF \
+         -DBAYEUX_ENABLE_TESTING=ON \
+         ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
+..
+
+c. Build:
+
+.. code:: sh
+
+   $ time make -j4
+   ...
 ..
