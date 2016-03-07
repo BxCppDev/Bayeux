@@ -616,7 +616,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::sphere_model_vg,ocd_)
   ocd_.add_example("From the bulk volume of some spherical volumes::                     \n"
                    "                                                                     \n"
                    "  length_unit : string = \"mm\"                                      \n"
-                   "  origin : string = \" category='core_layer' star=0 layer=[0:2] \"   \n"
+                   "  origin : string = \" category='core_layer' star=0 layer=[0;2] \"   \n"
                    "  mode   : string = \"bulk\"                                         \n"
                    "  skin_skip      : real = 0 mm                                       \n"
                    "  skin_thickness : real = 0 mm                                       \n"
