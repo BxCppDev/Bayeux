@@ -15,6 +15,7 @@
 // This project:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'datatools::event_id' class:
 DR_CLASS_EXPORT(::datatools::event_id, "datatools::event_id")
@@ -23,7 +24,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::event_id, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::event_id, DT_UNUSED(tag_) )
       {
         // Declare and populate the reflection metaclass for the 'datatools::event_id' class:
         DR_CLASS_DECLARE (::datatools::event_id)

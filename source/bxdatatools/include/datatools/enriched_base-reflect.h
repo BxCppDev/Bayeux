@@ -11,6 +11,7 @@
 #include <datatools/properties.h>
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'datatools::enriched_base' class:
 DR_CLASS_EXPORT(::datatools::enriched_base, "datatools::enriched_base")
@@ -19,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-    DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::enriched_base, tag_ __attribute__((unused)) )
+    DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::enriched_base, DT_UNUSED(tag_) )
     {
       // Declare and populate the reflection metaclass for the 'datatools::enriched_base' class:
       DR_CLASS_DECLARE (::datatools::enriched_base)

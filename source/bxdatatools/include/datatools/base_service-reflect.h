@@ -11,6 +11,7 @@
 
 // This project:
 #include <datatools/properties.h>
+#include <datatools/compiler_macros.h>
 
 // This project:
 #include <datatools/detail/reflection_macros.h>
@@ -23,7 +24,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::base_service, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::base_service, DT_UNUSED(tag_) )
       {
         // Declare and populate the reflection metaclass for the 'datatools::base_service' class:
         DR_CLASS_DECLARE(::datatools::base_service)

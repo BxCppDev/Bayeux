@@ -9,6 +9,7 @@
 #include <datatools/logger.h>
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'datatools::logger::priority' enum:
 DR_CLASS_EXPORT(::datatools::logger, "datatools::logger")
@@ -18,14 +19,14 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger, tag_ __attribute__((unused)))
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger, DT_UNUSED(tag_))
       {
         DR_CLASS_DECLARE(::datatools::logger)
           ;
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, tag_ __attribute__((unused)))
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, DT_UNUSED(tag_))
       {
         DR_ENUM_DECLARE(::datatools::logger::priority)
           .value("undefined",   ::datatools::logger::PRIO_UNDEFINED)

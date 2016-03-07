@@ -13,6 +13,7 @@
 // This project:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'datatools::properties' class:
 DR_CLASS_EXPORT (::datatools::properties, "datatools::properties")
@@ -21,7 +22,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::properties, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::properties, DT_UNUSED(tag_) )
       {
         // Declare and populate the introspection metaclass for the 'datatools::properties' class:
         DR_CLASS_DECLARE (::datatools::properties)

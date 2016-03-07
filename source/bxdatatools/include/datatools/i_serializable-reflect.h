@@ -7,6 +7,7 @@
 
 // Ourselves:
 #include <datatools/i_serializable.h>
+#include <datatools/compiler_macros.h>
 
 // This project:
 #include <datatools/detail/reflection_macros.h>
@@ -19,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, DT_UNUSED(tag_) )
       {
         DR_CLASS_DECLARE (::datatools::i_serializable)
           /*

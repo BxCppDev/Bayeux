@@ -10,6 +10,7 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the introspection code for the 'datatools::i_tree_dumpable' class:
 DR_CLASS_EXPORT (::datatools::i_tree_dumpable, "datatools::i_tree_dumpable")
@@ -18,7 +19,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_tree_dumpable, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_tree_dumpable, DT_UNUSED(tag_) )
       {
         // Declare and populate the reflection metaclass for the 'datatools::i_tree_dumpable' class:
         DR_CLASS_DECLARE (::datatools::i_tree_dumpable)

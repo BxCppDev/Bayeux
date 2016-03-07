@@ -12,6 +12,7 @@
 // This project:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Export the reflection code for the 'datatools::multi_properties' class:
 DR_CLASS_EXPORT (::datatools::multi_properties, "datatools::multi_properties")
@@ -20,7 +21,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::multi_properties, tag_ __attribute__((unused)) )
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::multi_properties, DT_UNUSED(tag_) )
       {
         // Declare and populate the reflection metaclass for
         // the 'datatools::multi_properties' class :
