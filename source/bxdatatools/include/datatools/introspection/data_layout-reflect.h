@@ -27,6 +27,7 @@
 // This project:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Registration:
 DR_TYPE_EXPORT(::datatools::introspection::data_layout, "datatools::introspection::data_layout")
@@ -35,7 +36,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::data_layout, tag_  __attribute__((unused)) )
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::data_layout, DT_UNUSED(tag_) )
       {
         DR_ENUM_DECLARE(::datatools::introspection::data_layout)
           .value("invalid",                ::datatools::introspection::DATA_LAYOUT_INVALID)

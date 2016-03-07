@@ -27,6 +27,7 @@
 // This project:
 #include <datatools/detail/reflection_macros.h>
 #include <datatools/detail/reflection_export.h>
+#include <datatools/compiler_macros.h>
 
 // Registration:
 DR_TYPE_EXPORT(::datatools::introspection::access_type, "datatools::introspection::access_type")
@@ -35,7 +36,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::access_type, tag_  __attribute__((unused)) )
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::access_type, DT_UNUSED(tag_) )
       {
         DR_ENUM_DECLARE(::datatools::introspection::access_type)
           .value("invalid", ::datatools::introspection::ACCESS_INVALID)
