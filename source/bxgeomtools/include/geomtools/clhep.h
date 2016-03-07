@@ -4,9 +4,18 @@
 #define GEOMTOOLS_CLHEP_H 1
 
 // Third party:
+
 // - CLHEP:
 #include <CLHEP/Units/SystemOfUnits.h>
+// #ifdef __GNUC__
+// # pragma GCC diagnostic push
+// Broken in GCC:
+// # pragma GCC diagnostic ignored "-Wunused-variable"
+// #endif
 #include <CLHEP/Units/PhysicalConstants.h>
+// #ifdef __GNUC__
+// # pragma GCC diagnostic pop
+// #endif
 #include <CLHEP/Vector/TwoVector.h>
 #include <CLHEP/Vector/ThreeVector.h>
 #include <CLHEP/Vector/Rotation.h>
