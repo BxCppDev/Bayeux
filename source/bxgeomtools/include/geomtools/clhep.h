@@ -7,18 +7,20 @@
 
 // - CLHEP:
 #include <CLHEP/Units/SystemOfUnits.h>
-// #ifdef __GNUC__
-// # pragma GCC diagnostic push
-// Broken in GCC:
-// # pragma GCC diagnostic ignored "-Wunused-variable"
-// #endif
 #include <CLHEP/Units/PhysicalConstants.h>
-// #ifdef __GNUC__
-// # pragma GCC diagnostic pop
-// #endif
 #include <CLHEP/Vector/TwoVector.h>
 #include <CLHEP/Vector/ThreeVector.h>
+
+// In C++11 with CLHEP 2.1.3.1, can no longer use register
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <CLHEP/Vector/Rotation.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #include <CLHEP/Random/RandFlat.h>
 
 // This project:
