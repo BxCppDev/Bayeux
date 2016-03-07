@@ -112,6 +112,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   include_directories(${Geant4_INCLUDE_DIRS})
 
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
+  target_compile_features(Bayeux_mctools_geant4 PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_Geant4_DEFINITIONS)
   foreach(_def ${Geant4_DEFINITIONS})

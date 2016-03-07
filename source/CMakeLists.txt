@@ -270,6 +270,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 # Build/Link the library
 #
 add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
+target_compile_features(Bayeux PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
+
 target_link_libraries(Bayeux ${CMAKE_DL_LIBS})
 target_link_libraries(Bayeux ${Bayeux_Boost_LIBRARIES})
 target_link_libraries(Bayeux ${CAMP_LIBRARIES})

@@ -62,6 +62,7 @@ if(BAYEUX_WITH_MCNP_MODULE)
 
   include_directories(${MCNP_INCLUDE_DIRS})
   add_library(Bayeux_mctools_mcnp SHARED ${mctools_MCNP_SOURCES} ${mctool_MCNP_HEADERS})
+  target_compile_features(Bayeux_mctools_mcnp PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_MCNP_DEFINITIONS)
   foreach(_def ${MCNP_DEFINITIONS})
