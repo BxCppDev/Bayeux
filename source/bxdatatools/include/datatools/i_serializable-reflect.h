@@ -19,7 +19,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_serializable, tag_ __attribute__((unused)) )
       {
         DR_CLASS_DECLARE (::datatools::i_serializable)
           /*

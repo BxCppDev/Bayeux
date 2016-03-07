@@ -18,7 +18,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_tree_dumpable, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::i_tree_dumpable, tag_ __attribute__((unused)) )
       {
         // Declare and populate the reflection metaclass for the 'datatools::i_tree_dumpable' class:
         DR_CLASS_DECLARE (::datatools::i_tree_dumpable)

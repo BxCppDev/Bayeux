@@ -20,7 +20,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::multi_properties, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::multi_properties, tag_ __attribute__((unused)) )
       {
         // Declare and populate the reflection metaclass for
         // the 'datatools::multi_properties' class :

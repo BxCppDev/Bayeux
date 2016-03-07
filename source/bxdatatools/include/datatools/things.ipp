@@ -23,7 +23,9 @@
 namespace datatools {
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things::entry_type, archive, /*version*/)
+  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things::entry_type,
+                                                     archive,
+                                                     version __attribute__((unused)))
   {
     archive & boost::serialization::make_nvp("description", description);
     archive & boost::serialization::make_nvp("flags",       flags);

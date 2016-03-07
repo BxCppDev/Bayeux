@@ -18,14 +18,14 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger, tag_ __attribute__((unused)))
       {
         DR_CLASS_DECLARE(::datatools::logger)
           ;
         return;
       }
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::logger::priority, tag_ __attribute__((unused)))
       {
         DR_ENUM_DECLARE(::datatools::logger::priority)
           .value("undefined",   ::datatools::logger::PRIO_UNDEFINED)

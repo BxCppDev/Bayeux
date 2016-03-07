@@ -23,7 +23,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::base_service, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::base_service, tag_ __attribute__((unused)) )
       {
         // Declare and populate the reflection metaclass for the 'datatools::base_service' class:
         DR_CLASS_DECLARE(::datatools::base_service)

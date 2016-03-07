@@ -23,7 +23,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::event_id, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::event_id, tag_ __attribute__((unused)) )
       {
         // Declare and populate the reflection metaclass for the 'datatools::event_id' class:
         DR_CLASS_DECLARE (::datatools::event_id)

@@ -35,7 +35,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::units::power_of_ten, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::units::power_of_ten, tag_ __attribute__((unused)))
       {
         DR_ENUM_DECLARE(::datatools::units::power_of_ten)
           .value("yocto", ::datatools::units::YOCTO)

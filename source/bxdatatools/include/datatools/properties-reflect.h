@@ -21,7 +21,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::properties, /*tag_*/)
+      DR_CLASS_IMPLEMENT_REFLECTION_HEAD(::datatools::properties, tag_ __attribute__((unused)) )
       {
         // Declare and populate the introspection metaclass for the 'datatools::properties' class:
         DR_CLASS_DECLARE (::datatools::properties)

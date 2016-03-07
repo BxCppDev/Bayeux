@@ -35,7 +35,7 @@ namespace datatools {
   namespace detail {
     namespace reflection {
 
-      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::data_layout, /*tag_*/)
+      DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::datatools::introspection::data_layout, tag_  __attribute__((unused)) )
       {
         DR_ENUM_DECLARE(::datatools::introspection::data_layout)
           .value("invalid",                ::datatools::introspection::DATA_LAYOUT_INVALID)

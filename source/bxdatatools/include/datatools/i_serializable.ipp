@@ -12,7 +12,10 @@
 namespace datatools {
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(i_serializable, /*archive*/, /*version*/)
+  // Add __attribute__ because of GCC C++98 warning: "empty macro arguments are undefined in ISO C90 and ISO C++98"
+  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(i_serializable,
+                                                     archive __attribute__((unused)),
+                                                     version __attribute__((unused)) )
   {
   }
 
