@@ -151,7 +151,7 @@ int main (int argc_, char ** argv_)
       vg.set_skin_thickness(0.0);
       vg.initialize_simple();
       vg.tree_dump(clog, "Fingerprint : ");
-      size_t nshoots = 5000;
+      size_t nshoots = 1000;
       geomtools::vector_3d vertex;
       for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
@@ -177,7 +177,7 @@ int main (int argc_, char ** argv_)
       vg.set_skin_thickness(0.0);
       vg.initialize_simple();
       vg.tree_dump(clog, "Lipstick : ");
-      size_t nshoots = 4000;
+      size_t nshoots = 1000;
       geomtools::vector_3d vertex;
       for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
@@ -209,7 +209,7 @@ int main (int argc_, char ** argv_)
       vg.set_skin_thickness(0.0);
       vg.initialize_simple();
       vg.tree_dump(clog, "Polycone vertex generator 2 : ");
-      size_t nshoots = 30000;
+      size_t nshoots = 50000;
       geomtools::vector_3d vertex;
       for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
@@ -234,7 +234,7 @@ int main (int argc_, char ** argv_)
       vg.set_skin_thickness(0.0);
       vg.initialize_simple();
       vg.tree_dump(clog, "Polycone vertex generator 3 : ");
-      size_t nshoots = 30000;
+      size_t nshoots = 5000;
       geomtools::vector_3d vertex;
       for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
@@ -260,7 +260,7 @@ int main (int argc_, char ** argv_)
       vg.set_active_all_frustrum();
       vg.initialize_simple();
       vg.tree_dump(clog, "Polycone vertex generator 4 : ");
-      size_t nshoots = 30000;
+      size_t nshoots = 10000;
       geomtools::vector_3d vertex;
       for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
@@ -408,7 +408,7 @@ int main (int argc_, char ** argv_)
       vg.set_active_all_frustrum();
       vg.initialize_simple();
       vg.tree_dump(clog, "Sugar : ");
-      size_t nshoots = 5000;
+      size_t nshoots = 2000;
       geomtools::vector_3d vertex;
       for (int i = 0; i < (int) nshoots; i++) {
         vg.shoot_vertex(random, vertex);
