@@ -418,8 +418,8 @@ namespace geomtools {
       DT_LOG_DEBUG(get_logging_priority(), "Stacked index = " << index);
       const stacked_item & bi = i->second;
       DT_LOG_DEBUG(get_logging_priority(), "Stacked label = '" << bi.label << "'");
-      const i_model * stacked_model = bi.model;
-      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      const i_model * the_stacked_model = bi.model;
+      const i_shape_3d & the_shape = the_stacked_model->get_logical().get_shape();
       if (get_logging_priority() > datatools::logger::PRIO_DEBUG) {
         the_shape.tree_dump(std::cerr, "Stacked shape: ", "[debug] ");
       }
@@ -438,7 +438,7 @@ namespace geomtools {
                    "Cannot stack non-stackable model of shape '" << the_shape.get_shape_name()
                    << "' in stacked model '" << name_ << "' !");
       DT_LOG_TRACE(get_logging_priority(),
-                    "Dump stackable data for '" << stacked_model->get_name() <<
+                    "Dump stackable data for '" << the_stacked_model->get_name() <<
                     "' from '" << name_ << "'...");
       if(get_logging_priority() >= datatools::logger::PRIO_TRACE) {
         the_SD.tree_dump(std::cerr);
@@ -545,8 +545,8 @@ namespace geomtools {
          i++) {
       const int index = i->first;
       stacked_item & bi = i->second;
-      const i_model * stacked_model = bi.model;
-      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      const i_model * the_stacked_model = bi.model;
+      const i_shape_3d & the_shape = the_stacked_model->get_logical().get_shape();
       stackable_data the_SD;
       DT_THROW_IF (! i_shape_3d::pickup_stackable(the_shape, the_SD),
                    std::logic_error,
@@ -602,8 +602,8 @@ namespace geomtools {
          i++) {
       const int index = i->first;
       const stacked_item & bi = i->second;
-      const i_model * stacked_model = bi.model;
-      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      const i_model * the_stacked_model = bi.model;
+      const i_shape_3d & the_shape = the_stacked_model->get_logical().get_shape();
       box bbi;
       placement pl_bbi;
       the_shape.get_bounding_data().compute_bounding_box(bbi, pl_bbi);
@@ -670,8 +670,8 @@ namespace geomtools {
       }
       // std::cerr << "DEVEL: stacked_model::_at_construct: min_index=" << min_index << std::endl;
       const stacked_item & bi = _stacked_models_.find(min_index)->second;
-      const i_model * stacked_model = bi.model;
-      const i_shape_3d & the_shape = stacked_model->get_logical().get_shape();
+      const i_model * the_stacked_model = bi.model;
+      const i_shape_3d & the_shape = the_stacked_model->get_logical().get_shape();
       // Bounding data:
       double min_pos = stacked_positions[min_index];
       const bounding_data & bd = the_shape.get_bounding_data();
@@ -744,7 +744,7 @@ namespace geomtools {
          i++) {
       const int index = i->first;
       stacked_item & bi = i->second;
-      //const i_model * stacked_model = bi.model;
+      //const i_model * the_stacked_model = bi.model;
       double xi, yi, zi;
       xi = yi = zi = 0.0;
       if (is_stacking_along_x()) {

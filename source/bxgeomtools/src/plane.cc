@@ -111,36 +111,36 @@ namespace geomtools {
 
       if (mode == MODE_PLAIN) {
 
-        double a(0.0), b(0.0), c(0.0), d(0.0);
+        double la(0.0), lb(0.0), lc(0.0), ld(0.0);
         if (config_.has_key("a")) {
-          a = config_.fetch_real("a");
+          la = config_.fetch_real("a");
           if (!config_.has_explicit_unit("a")) {
-            a *= lunit;
+            la *= lunit;
           }
         }
 
         if (config_.has_key("b")) {
-          b = config_.fetch_real("b");
+          lb = config_.fetch_real("b");
           if (!config_.has_explicit_unit("b")) {
-            b *= lunit;
+            lb *= lunit;
           }
         }
 
         if (config_.has_key("c")) {
-          c = config_.fetch_real("c");
+          lc = config_.fetch_real("c");
           if (!config_.has_explicit_unit("c")) {
-            c *= lunit;
+            lc *= lunit;
           }
         }
 
         if (config_.has_key("d")) {
-          d = config_.fetch_real("d");
+          ld = config_.fetch_real("d");
           if (!config_.has_explicit_unit("d")) {
-            d *= lunit_sqr;
+            ld *= lunit_sqr;
           }
         }
 
-        set(a, b, c, d);
+        set(la, lb, lc, ld);
       }
 
       // Not implemented yet:
@@ -230,24 +230,24 @@ namespace geomtools {
     DT_THROW_IF (u2_.mag2() < 1.0e-15, std::logic_error, "Invalid 'u2' vector !");
     geomtools::vector_3d u1 = u1_.unit();
     geomtools::vector_3d u2 = u2_.unit();
-    const geomtools::vector_3d normal = u1.cross(u2);
-    DT_THROW_IF (normal.mag2() < 1.0e-15, std::logic_error, "Vectors are colinear !");
-    _a_ = normal.x();
-    _b_ = normal.y();
-    _c_ = normal.z();
-    _d_ = (-normal).dot(point_);
+    const geomtools::vector_3d the_normal = u1.cross(u2);
+    DT_THROW_IF (the_normal.mag2() < 1.0e-15, std::logic_error, "Vectors are colinear !");
+    _a_ = the_normal.x();
+    _b_ = the_normal.y();
+    _c_ = the_normal.z();
+    _d_ = (-the_normal).dot(point_);
     return;
   }
 
   double plane::distance(const geomtools::vector_3d & position_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid plane!");
-    double d = _a_ * position_.x ()
+    double dist = _a_ * position_.x ()
       + _b_ * position_.y ()
       + _c_ * position_.z ()
       + _d_;
-    d /= std::sqrt(_a_ * _a_ + _b_ * _b_ + _c_ * _c_);
-    return std::abs(d);
+    dist /= std::sqrt(_a_ * _a_ + _b_ * _b_ + _c_ * _c_);
+    return std::abs(dist);
   }
 
   geomtools::vector_3d
@@ -295,10 +295,10 @@ namespace geomtools {
                              double skin_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid plane!");
-    double d = plane::distance(position_);
+    double dist = plane::distance(position_);
     double normal_tolerance = compute_tolerance(skin_);
     double half_normal_tolerance = 0.5 * normal_tolerance;
-    if (std::abs(d) > half_normal_tolerance) return false;
+    if (std::abs(dist) > half_normal_tolerance) return false;
     return true;
   }
 

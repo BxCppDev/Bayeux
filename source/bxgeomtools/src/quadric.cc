@@ -437,13 +437,12 @@ namespace geomtools {
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid quadric!");
     intercept_.reset();
-    const geomtools::vector_3d & P = from_;
-    geomtools::vector_3d I = this->projection(P, direction_, tolerance_);
+    geomtools::vector_3d impact = this->projection(from_, direction_, tolerance_);
     if (geomtools::is_valid(I)) {
-      geomtools::vector_3d PI = I - P;
-      if (PI.dot(direction_) > 0.0) {
+      geomtools::vector_3d prog_segment = impact - from_;
+      if (prog_segment.dot(direction_) > 0.0) {
         intercept_.grab_face_id().set_face_bit(FACE_UNIQUE);
-        intercept_.set_impact(I);
+        intercept_.set_impact(impact);
       }
     }
     return intercept_.is_ok();

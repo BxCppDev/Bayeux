@@ -1447,17 +1447,17 @@ namespace geomtools {
 
   void tessellated_solid::dump (std::ostream & out_) const
   {
-    std::string tag   = "|-- ";
+    std::string local_tag   = "|-- ";
     std::string stag  = "|   ";
     std::string ltag  = "`-- ";
     std::string sltag = "    ";
     out_ << "geomtools::tessellated_solid" << std::endl;
-    out_ << tag << "Locked: " << is_locked () << std::endl;
-    out_ << tag << "Vertices: " << _vertices_.size () << std::endl;
+    out_ << local_tag << "Locked: " << is_locked () << std::endl;
+    out_ << local_tag << "Vertices: " << _vertices_.size () << std::endl;
     for (vertices_col_type::const_iterator i = _vertices_.begin ();
          i != _vertices_.end ();
          i++) {
-      std::string tag2 = tag;
+      std::string tag2 = local_tag;
       {
         vertices_col_type::const_iterator j = i;
         if (++j == _vertices_.end ()) tag2 = ltag;
@@ -1465,18 +1465,18 @@ namespace geomtools {
       out_ << stag << tag2 << "Vertex[" << i->first << "] : ";
       i->second.print (out_);
     }
-    out_ << tag << "Bounding box: " << std::endl;
-    out_ << stag << tag << "X: ["  << _xrange_.get_min () << ';' << _xrange_.get_max () << ']' << std::endl;
-    out_ << stag << tag << "Y: ["  << _yrange_.get_min () << ';' << _yrange_.get_max () << ']' << std::endl;
+    out_ << local_tag << "Bounding box: " << std::endl;
+    out_ << stag << local_tag << "X: ["  << _xrange_.get_min () << ';' << _xrange_.get_max () << ']' << std::endl;
+    out_ << stag << local_tag << "Y: ["  << _yrange_.get_min () << ';' << _yrange_.get_max () << ']' << std::endl;
     out_ << stag << ltag << "Z: [" << _zrange_.get_min () << ';' << _zrange_.get_max () << ']' << std::endl;
 
-    out_ << tag << "Facet segments: " << _facet_segments_.size () << std::endl;
+    out_ << local_tag << "Facet segments: " << _facet_segments_.size () << std::endl;
 
     out_ << ltag << "Facets: " << _facets_.size () << std::endl;
     for (facets_col_type::const_iterator i = _facets_.begin ();
          i != _facets_.end ();
          i++) {
-      std::string tag2 = tag;
+      std::string tag2 = local_tag;
       {
         facets_col_type::const_iterator j = i;
         if (++j == _facets_.end ()) tag2 = ltag;

@@ -447,28 +447,28 @@ namespace geomtools {
       thickness *= lunit;
     }
 
-    bool has_top    = true;
-    bool has_bottom = true;
+    bool local_has_top    = true;
+    bool local_has_bottom = true;
 
     if (config_.has_flag("remove_top")) {
-      has_top = false;
+      local_has_top = false;
     }
 
     if (config_.has_key("has_top")) {
-      has_top = config_.fetch_boolean("has_top");
+      local_has_top = config_.fetch_boolean("has_top");
     }
 
     if (config_.has_flag("remove_bottom")) {
-      has_bottom = false;
+      local_has_bottom = false;
     }
 
     if (config_.has_key("has_bottom")) {
-      has_bottom = config_.fetch_boolean ("has_bottom");
+      local_has_bottom = config_.fetch_boolean ("has_bottom");
     }
 
     set(x, y, z, thickness);
-    set_top(has_top);
-    set_bottom(has_bottom);
+    set_top(local_has_top);
+    set_bottom(local_has_bottom);
 
     }
     lock();

@@ -319,18 +319,18 @@ namespace geomtools {
       } else {
         if (props.has_key ("inherits")) {
           DT_LOG_TRACE (get_logging_priority (), "Inherits...");
-          const std::string inherits = props.fetch_string ("inherits");
+          const std::string local_inherits = props.fetch_string ("inherits");
           categories_by_name_col_type::const_iterator i_inherits
-            = _categories_by_name_.find (inherits);
-          DT_LOG_TRACE (get_logging_priority (), "inherits='" << inherits << "'");
+            = _categories_by_name_.find (local_inherits);
+          DT_LOG_TRACE (get_logging_priority (), "inherits='" << local_inherits << "'");
           DT_THROW_IF (i_inherits == _categories_by_name_.end (),
                        std::logic_error,
-                       "Category '" << inherits << "' does not exist !");
+                       "Category '" << local_inherits << "' does not exist !");
           const category_info & inherits_entry = i_inherits->second;
-          cat_entry.inherits = inherits;
+          cat_entry.inherits = local_inherits;
           cat_entry.addresses = inherits_entry.addresses;
           cat_entry.ancestors = inherits_entry.ancestors;
-          cat_entry.add_ancestor (inherits);
+          cat_entry.add_ancestor (local_inherits);
         } else if (props.has_key ("extends")) {
           const std::string extends = props.fetch_string ("extends");
           DT_LOG_TRACE (get_logging_priority (), "extends category '" << extends << "'");
