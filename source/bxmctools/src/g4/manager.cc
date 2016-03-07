@@ -69,7 +69,17 @@
 #include <G4ParticleDefinition.hh>
 #include <G4UIterminal.hh>
 #include <G4UImanager.hh>
+
+// In C++11, no register keyword, remove once updated to G4 10.2
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <G4RunManager.hh>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 
 #ifdef G4UI_USE_TCSH
 #include "G4UItcsh.hh" // For terminal tcsh use

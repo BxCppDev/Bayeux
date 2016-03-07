@@ -14,7 +14,17 @@
 #include <datatools/exception.h>
 // - Geant4:
 #include <globals.hh>
+
+// For C++11 compatibility, remove once Bayeux is C++11 Geant4 10.2 only
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <G4TransportationManager.hh>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #include <G4Track.hh>
 #include <G4VPhysicalVolume.hh>
 #include <G4ThreeVector.hh>

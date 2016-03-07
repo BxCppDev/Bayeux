@@ -6,7 +6,16 @@
 // Third party:
 // Geant4:
 // Base model:
+// For C++11 compatibility, remove once Bayeux is C++11 Geant4 10.2 only
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <G4DummyModel.hh>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 // EM standard model:
 #include <G4BraggIonModel.hh>
 #include <G4ICRU73QOModel.hh>

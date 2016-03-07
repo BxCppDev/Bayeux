@@ -26,7 +26,18 @@
 #include <globals.hh>
 #include <G4Version.hh>
 #include <G4UnitsTable.hh>
+
+// For C++11 compatibility, remove once Bayeux is C++11 Geant4 10.2 only
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <G4ProcessManager.hh>
+#include <G4eMultipleScattering.hh>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 // Particles:
 #include <G4ParticleDefinition.hh>
 #include <G4LossTableManager.hh>
@@ -46,7 +57,6 @@
 #include <G4GammaConversion.hh>
 #include <G4GammaConversionToMuons.hh>
 #include <G4PhotoElectricEffect.hh>
-#include <G4eMultipleScattering.hh>
 #include <G4eIonisation.hh>
 #include <G4eBremsstrahlung.hh>
 #include <G4eplusAnnihilation.hh>

@@ -27,7 +27,16 @@
 #include <boost/cstdint.hpp>
 // - Bayeux/datatools :
 #include <datatools/properties.h>
+
+// For C++11 support, remove once Bayeux is c++11/Geant4 10.2 only
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <G4VSensitiveDetector.hh>
+#ifdef __clang__
+#pragma clang diagnostic push
+#endif
 
 // This project:
 #include <mctools/base_step_hit_processor.h>

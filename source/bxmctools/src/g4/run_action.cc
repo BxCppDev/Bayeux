@@ -36,7 +36,17 @@
 // - Geant4:
 #include <globals.hh>
 #include <G4Run.hh>
+
+// In C++11, no register keyword, remove once updated to G4 10.2
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <G4RunManager.hh>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #include <G4UImanager.hh>
 #include <G4VVisManager.hh>
 #include <G4ios.hh>

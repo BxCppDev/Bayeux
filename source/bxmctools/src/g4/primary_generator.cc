@@ -31,7 +31,17 @@
 #include <globals.hh>
 #include <G4ThreeVector.hh>
 #include <G4ParticleDefinition.hh>
+
+// In C++11, no register keyword, remove once updated to G4 10.2
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include <G4RunManager.hh>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #include <G4Event.hh>
 #include <G4ParticleGun.hh>
 #include <G4ParticleTable.hh>

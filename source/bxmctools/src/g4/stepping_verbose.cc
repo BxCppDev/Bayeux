@@ -5,7 +5,16 @@
 
 // Third party:
 // - Geant4:
+// For C++11 compatibility, remove once Bayeux is C++11 Geant4 10.2 only
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include "G4SteppingManager.hh"
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #include "G4UnitsTable.hh"
 #include "G4VTouchable.hh"
 #include "G4NavigationHistory.hh"

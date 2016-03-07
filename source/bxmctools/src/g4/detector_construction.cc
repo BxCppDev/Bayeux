@@ -37,6 +37,7 @@
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wc++11-long-long"
+#pragma clang diagnostic ignored "-Wdeprecated-register"
 #endif
 #include <globals.hh>
 #include <G4FieldManager.hh>
