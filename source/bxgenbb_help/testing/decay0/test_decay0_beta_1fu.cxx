@@ -29,7 +29,7 @@ int main(void)
   double halflife      = 10.0; // sec
   double decay_time; // sec
 
-  for (int i = 0; i < 100000; i++) {
+  for (int i = 0; i < 10000; i++) {
     event.reset();
     event.set_time (0.0);
     event.set_label ("test_decay0_beta_1fu (decay0 C++ port)");

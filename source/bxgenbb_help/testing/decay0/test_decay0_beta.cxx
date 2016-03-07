@@ -21,15 +21,15 @@ int main(void)
   double halflife      = 0.0; // sec
   double decay_time; // sec
 
-  for (int i = 0; i < 100000; i++)
+  for (int i = 0; i < 10000; i++)
     {
       event.reset();
       event.set_time (0.0);
       event.set_label ("test_beta (decay0 C++ port)");
       genbb::decay0::decay0_beta(prng, event,
-                                 creation_time, 
+                                 creation_time,
                                  halflife,
-                                 decay_time, 
+                                 decay_time,
                                  &beta_params);
       const genbb::primary_particle & beta = event.get_particles().front();
       if (! beta.is_electron())
@@ -44,15 +44,15 @@ int main(void)
   std::cout << '\n' << '\n';
 
   beta_params.Zdtr = -84;
-  for (int i = 0; i < 100000; i++)
+  for (int i = 0; i < 10000; i++)
     {
       event.reset();
       event.set_time (0.0);
       event.set_label ("test_beta (decay0 C++ port)");
       genbb::decay0::decay0_beta(prng, event,
-                                 creation_time, 
+                                 creation_time,
                                  halflife,
-                                 decay_time, 
+                                 decay_time,
                                  &beta_params);
       const genbb::primary_particle & beta = event.get_particles().front();
       if (! beta.is_positron())

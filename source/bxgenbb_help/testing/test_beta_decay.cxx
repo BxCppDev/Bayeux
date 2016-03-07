@@ -126,7 +126,7 @@ void test1(bool draw_, bool tensor_)
       mygsl::histogram_1d h_pr(100, 0.0, decay.get_pr_max());
       mygsl::histogram_2d h_ke_pr(100, 0.0, decay.get_q_beta(),
                                   100, 0.0, decay.get_pr_max());
-      int nshoots = 1000000;
+      int nshoots = 50000;
       for (int ishoot = 0; ishoot < nshoots; ishoot++) {
         double ke, pr, pnu, cos_er, cos_enu;
         int err = decay.fire_event_kinematics(random, ke, pr, pnu, cos_er, cos_enu);
