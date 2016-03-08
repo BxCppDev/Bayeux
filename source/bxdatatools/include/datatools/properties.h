@@ -1112,7 +1112,15 @@ DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_DECLARATION(::datatools::properties)
 // Support for old serialization tag :
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_DECLARATION(::datatools::properties)
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
 #include <boost/serialization/export.hpp>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 BOOST_CLASS_EXPORT_KEY2(datatools::properties, "datatools::properties")
 
 #ifndef Q_MOC_RUN

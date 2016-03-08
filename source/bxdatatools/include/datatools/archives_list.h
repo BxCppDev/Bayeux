@@ -37,8 +37,10 @@
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
 #include <boost/archive/polymorphic_iarchive.hpp>
+#include <datatools/eos/portable_iarchive.hpp>
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
@@ -50,7 +52,6 @@
 #include <boost/archive/xml_oarchive.hpp>
 
 // 2012-06-07 FM : switch to Portable Archive v5.0
-#include <datatools/eos/portable_iarchive.hpp>
 #include <datatools/eos/portable_oarchive.hpp>
 
 /// Top-level namespace of the portable binary archives
