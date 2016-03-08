@@ -48,7 +48,8 @@ namespace bayeux {
   void _special_initialize_impl();
 
   void _special_terminate_impl();
-  // Detail namespace of the Bayeux/datatools module library
+
+  /// \brief Nested namespace of the Bayeux library (detail)
   namespace detail {
 
     /// \brief System class for developpers:
@@ -76,18 +77,18 @@ namespace bayeux {
 }
 
 /// bayeux initialization macro using main function arguments
-#define BAYEUX_INIT_MAIN(Argc,Argv)		\
-  ::bayeux::initialize( Argc , Argv );		\
+#define BAYEUX_INIT_MAIN(Argc,Argv)   \
+  ::bayeux::initialize( Argc , Argv );    \
   /**/
 
 /// bayeux initialization macro
-#define BAYEUX_INIT()				\
-  ::bayeux::initialize(0, 0);			\
+#define BAYEUX_INIT()       \
+  ::bayeux::initialize(0, 0);     \
   /**/
 
 /// bayeux termination macro
-#define BAYEUX_FINI()				\
-  ::bayeux::terminate();			\
+#define BAYEUX_FINI()       \
+  ::bayeux::terminate();      \
   /**/
 
 #endif // BAYEUX_BAYEUX_H
