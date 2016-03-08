@@ -3,7 +3,7 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-03-06
+:Date:   2016-03-07
 
 In this document we propose an installation procedure for the Bayeux/trunk
 library on top of Cadfaelbrew (2016.01) on Xubuntu 14.04 LTS system (64bits).
@@ -42,6 +42,10 @@ Linux version:
    DISTRIB_DESCRIPTION="Ubuntu 14.04.3 LTS"
 ..
 
+.. raw:: latex
+
+   \pagebreak
+
 Installation of Cadfaelbrew
 ===============================
 
@@ -55,6 +59,9 @@ Links:
 
 
 Please follow the instructions on the installation report at https://nemo.lpc-caen.in2p3.fr/browser/Bayeux/trunk/doc/InstallationReports/Cadfaelbrew/Xubuntu14.04-a/tagged/cadfaelbrew_xubuntu14.04-a_report-0.1.pdf
+
+brew
+------------
 
 Once you have installed Cadfaelbrew, you should be able to run a *brew* session:
 
@@ -100,6 +107,9 @@ You can check the location and version of core software utilities:
    1.8.10
 ..
 
+Ninja
+-------------
+
 Ninja_ is  a build  system which  can be used  in place  of (GNU)make.
 Install Ninja through ``brew`` if it  was not already done before (you
 must setup the brew environment for that):
@@ -121,8 +131,21 @@ You can check your Ninja version:
    $ exit
 ..
 
+.. raw:: latex
+
+   \pagebreak
+
 Installation of Bayeux (trunk)
 ===============================
+
+Links:
+
+ * Bayeux_ (SuperNEMO Wiki)
+
+.. _Bayeux: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux
+
+System dependencies
+---------------------------
 
 Install dependencies:
 
@@ -134,6 +157,10 @@ Install dependencies:
    $ sudo apt-get install pandoc pandoc-data
    $ sudo apt-get install python-docutils
 ..
+
+
+Working directory
+---------------------------
 
 Set the software base directory where there is enough storage capacity
 to host  Bayeux (> 1  GB). Here we  use a simple  environment variable
@@ -162,6 +189,9 @@ Then create a few working directories:
    $ mkdir ${SW_WORK_DIR}/Bayeux/Binary  # hosts the build/installation directories
 ..
 
+Download Bayeux
+---------------------
+
 Download Bayeux/trunk source files:
 
 .. code:: sh
@@ -184,7 +214,8 @@ Download Bayeux/trunk source files:
    Last Changed Date: 2016-03-04 23:36:04 +0100 (Fri, 04 Mar 2016)
 ..
 
-Configure Bayeux:
+Configure Bayeux
+--------------------------
 
   1. Make sure Cadfaelbrew is setup on  your system. If you follow the
      Cadfaelbrew installation  report available from the  Cadfael wiki
@@ -217,7 +248,7 @@ or :
       $ cmake \
          -DCMAKE_BUILD_TYPE:STRING=Release \
          -DCMAKE_INSTALL_PREFIX:PATH=\
-           ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64 \
+            "${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64" \
          -DBAYEUX_CXX_STANDARD="98" \
          -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
          -DBAYEUX_WITH_IWYU_CHECK=ON \
@@ -243,7 +274,10 @@ or :
          ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
 ..
 
-Build (using 4 processors to go faster):
+Build
+-----------------
+
+Using 4 processors to go faster (depends on your machine):
 
 .. code:: sh
 
@@ -254,9 +288,12 @@ Build (using 4 processors to go faster):
    sys  2m24.929s
 ..
 
+.. raw:: latex
+
+   \pagebreak
 
 Quick check after build
-=========================
+---------------------------------
 
 After the build step, Bayeux uses  the following hierarchy on the file
 system:
@@ -314,8 +351,13 @@ Executable are in:
 These  directories  and  files  will be  copied  in  the  installation
 directory.
 
+..
+    .. raw:: latex
+
+..  \pagebreak
+
 Test programs
-=========================
+---------------------------------
 
 Before to do the final installation, we run the test programs:
 
@@ -334,6 +376,10 @@ Before to do the final installation, we run the test programs:
    Total Test time (real) =  83.62 sec
 ..
 
+.. raw:: latex
+
+   \pagebreak
+
 Installation
 ====================
 
@@ -346,7 +392,7 @@ Run:
 ..
 
 Check installation
-========================
+-----------------------
 
 Browse the installation directory:
 
@@ -400,21 +446,28 @@ Browse the installation directory:
            `-- resources/
 ..
 
-Suggestions for a Bash setup (see below):
+.. raw:: latex
+
+   \pagebreak
+..
+
+Suggestions for a Bash setup (see below)
+----------------------------------------------------
 
  1. Define convenient environmental variables:
 
 .. code:: sh
 
    $ export SW_WORK_DIR=/data/sw
-   $ export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
+   $ export BX_INSTALL_DIR=\
+       "${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64"
 ..
 
  2. The only configuration you need now is:
 
 .. code:: sh
 
-   $ export PATH=${BAYEUX_INSTALL_DIR}/bin:${PATH}
+   $ export PATH=${BX_INSTALL_DIR}/bin:${PATH}
 ..
 
     There is no need to update the ``LD_LIBRARY_PATH`` environment variable because Bayeux
@@ -422,7 +475,7 @@ Suggestions for a Bash setup (see below):
 
 .. code:: sh
 
-   $ export LD_LIBRARY_PATH=${BAYEUX_INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
+   $ export LD_LIBRARY_PATH=${BX_INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
 ..
 
  3. After setting ``PATH`` as shown above, you can check where some of the
@@ -455,6 +508,9 @@ Suggestions for a Bash setup (see below):
       $ cd ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk/source/bxgeomtools/examples/ex01
       $ export CONFIG_DIR=$(pwd)/config
       $ bxgeomtools_inspector --manager-config config/manager.conf
+..
+
+.. code::
 
         G E O M T O O L S    I N S P E C T O R
         Version 5.0.0
@@ -467,9 +523,6 @@ Suggestions for a Bash setup (see below):
         quit:           type "quit"
         support:        Gnuplot display
         support:        Root display from GDML
-..
-
-.. code:: gnuplot
 
       geomtools> help
       ...
@@ -499,6 +552,10 @@ Conclusion:
  * No problem for compiling, running tests and examples.
 
 
+.. raw:: latex
+
+   \pagebreak
+
 Setup your environment for Bayeux
 ==================================
 
@@ -513,15 +570,15 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
    # The Bayeux/trunk setup function:
    function do_bayeux_trunk_setup()
    {
-     do_cadfaelbrew_setup # Automatically load the Cadfaelbrew dependency
-     if [ -n "${BAYEUX_INSTALL_DIR}" ]; then
-         echo "ERROR: Bayeux/trunk is already setup !" >&2
-         return 1
-     fi
-     export BAYEUX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
-     export PATH=${BAYEUX_INSTALL_DIR}/bin:${PATH}
-     echo "NOTICE: Bayeux/trunk is now setup !" >&2
-     return;
+    do_cadfaelbrew_setup # Automatically load the Cadfaelbrew dependency
+    if [ -n "${BX_INSTALL_DIR}" ]; then
+      echo "ERROR: Bayeux/trunk is already setup !" >&2
+      return 1
+    fi
+    export BX_INSTALL_DIR=${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64
+    export PATH=${BX_INSTALL_DIR}/bin:${PATH}
+    echo "NOTICE: Bayeux/trunk is now setup !" >&2
+    return;
    }
    export -f do_bayeux_trunk_setup
 
@@ -547,6 +604,10 @@ Then all executable are usable from the Bayeux installation directory:
    $ which bxg4_production
    ...
 ..
+
+.. raw:: latex
+
+   \pagebreak
 
 Update the source code from the Bayeux/trunk
 ============================================
@@ -621,6 +682,9 @@ Update the source code from the Bayeux/trunk
    $ ninja install
 ..
 
+.. raw:: latex
+
+   \pagebreak
 
 Alternative: build Bayeux with GNU make
 ===================================================
