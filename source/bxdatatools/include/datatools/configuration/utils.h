@@ -42,6 +42,7 @@
 
 namespace datatools {
 
+  /// \brief Nested namespace of the Bayeux/datatools module library
   namespace configuration {
 
     // Forward declarations:

@@ -54,6 +54,7 @@
 #include <datatools/reflection_interface.h>
 #endif // Q_MOC_RUN
 
+/// \brief Top-level namespace of the Bayeux/datatools module library
 namespace datatools {
 
   // Forward class declaration:

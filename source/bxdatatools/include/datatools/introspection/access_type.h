@@ -30,6 +30,7 @@
 
 namespace datatools {
 
+  /// \brief Nested namespace of the Bayeux/datatools module library
   namespace introspection {
 
     //! \brief Access type associated to a method argument

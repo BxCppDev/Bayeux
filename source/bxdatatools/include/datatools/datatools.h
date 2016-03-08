@@ -12,10 +12,10 @@
 // This project:
 #include <datatools/logger.h>
 
-/// Top-level namespace of the Bayeux/datatools module library
+/// \brief Top-level namespace of the Bayeux/datatools module library
 namespace datatools {
 
-  // Detail namespace of the Bayeux/datatools module library
+  /// \brief Nested namespace of the Bayeux/datatools module library (detail)
   namespace detail {
 
     /// \brief System class for developpers:
@@ -35,9 +35,10 @@ namespace datatools {
 
     private:
 
-      logger::priority _logging_; //!< Logging priority threshold
+      logger::priority _logging_; ///< Logging priority threshold
 
     };
+
   } // end of namespace detail
 
   /// Initialize the datatools library and kernel
