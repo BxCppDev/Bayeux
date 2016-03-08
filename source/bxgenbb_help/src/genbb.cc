@@ -109,12 +109,6 @@ namespace genbb {
     return _random_;
   }
 
-
-  mygsl::rng & genbb::get_random ()
-  {
-    return grab_random ();
-  }
-
   mygsl::rng & genbb::grab_random ()
   {
     if (has_external_random ()) {
@@ -164,7 +158,6 @@ namespace genbb {
     return;
   }
 
-  // ctor:
   genbb::genbb () : i_genbb ()
   {
     _initialized_ = false;
@@ -201,7 +194,6 @@ namespace genbb {
     return;
   }
 
-  // dtor:
   genbb::~genbb ()
   {
     _clean_ ();
@@ -422,8 +414,6 @@ namespace genbb {
       {
         _random_.init ("taus2", _seed_);
       }
-
-    /***************/
 
     // Temporary directory setup :
     {
@@ -809,5 +799,3 @@ namespace genbb {
   }
 
 } // end of namespace genbb
-
-// end of genbb.cc

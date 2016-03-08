@@ -51,6 +51,7 @@
 // class, implies also <genbb_help/primary_particle.ipp> :
 //#include <genbb_help/primary_event.ipp>
 
+/// \brief Top-level namespace of the Bayeux/genbb_help module library
 namespace genbb {
 
   //! \brief Legacy bridge manager that reads Genbb files

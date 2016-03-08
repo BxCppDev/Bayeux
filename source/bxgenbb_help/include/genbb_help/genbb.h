@@ -47,8 +47,10 @@
 #include <genbb_help/i_genbb.h>
 #include <genbb_help/genbb_utils.h>
 
+/// \brief Top-level namespace of the Bayeux/genbb_help module library
 namespace genbb {
 
+  /// \brief Genbb generator
   class genbb : public i_genbb
   {
   public:
@@ -59,63 +61,62 @@ namespace genbb {
 
   public:
 
-    bool is_debug () const;
+    bool is_debug() const;
 
-    void set_debug (bool d_);
+    void set_debug(bool d_);
 
-    void set_delete_conf_file (bool);
+    void set_delete_conf_file(bool);
 
-    void set_delete_log_files (bool);
+    void set_delete_log_files(bool);
 
-    void set_delete_data_files (bool);
+    void set_delete_data_files(bool);
 
-    void set_delete_tmp_dir (bool);
+    void set_delete_tmp_dir(bool);
 
-    void set_tmp_dir (const std::string &);
+    void set_tmp_dir(const std::string &);
 
-    void set_tmp_base_dir (const std::string &);
+    void set_tmp_base_dir(const std::string &);
 
-    virtual bool can_external_random () const;
+    virtual bool can_external_random() const;
 
-    const mygsl::rng & get_random () const;
+    const mygsl::rng & get_random() const;
 
-    mygsl::rng & grab_random ();
+    mygsl::rng & grab_random();
 
-    /// Obsoleted by grab_random
-    mygsl::rng & get_random ();
+    const std::string & get_tmp_base_dir() const;
 
-    const std::string & get_tmp_base_dir () const;
+    std::string get_tmp_dir() const;
 
-    std::string get_tmp_dir () const;
+    size_t get_buffer_size() const;
 
-    size_t get_buffer_size () const;
+    size_t get_event_count() const;
 
-    size_t get_event_count () const;
+    genbb();
 
-    genbb ();
+    virtual ~genbb();
 
-    virtual ~genbb ();
+    virtual bool is_initialized() const;
 
-    virtual bool is_initialized () const;
+    void initialize(const datatools::properties & setup_,
+                    datatools::service_manager & service_manager_,
+                    detail::pg_dict_type & dictionary_);
 
-    void initialize (const datatools::properties & setup_,
-                     datatools::service_manager & service_manager_,
-                     detail::pg_dict_type & dictionary_);
+    virtual void reset();
 
-    virtual void reset ();
-
-    virtual bool has_next ();
+    virtual bool has_next();
 
   protected:
 
-    virtual void _load_next (primary_event & event_,
+    virtual void _load_next(primary_event & event_,
                             bool compute_classification_ = true);
 
   private:
 
-    void _init_ ();  /// Initialize material associated to a new buffer file
+    /// Initialize material associated to a new buffer file
+    void _init_();
 
-    void _clean_ (); /// Clean material associated to the current buffer file
+    /// Clean material associated to the current buffer file
+    void _clean_();
 
   private:
     bool   _initialized_;

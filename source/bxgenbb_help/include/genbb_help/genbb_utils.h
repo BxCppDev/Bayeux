@@ -34,7 +34,7 @@
 #include <vector>
 #include <map>
 
-/// Top-level namespace of the Bayeux/genbb_help module library
+/// \brief Top-level namespace of the Bayeux/genbb_help module library
 namespace genbb
 {
 
@@ -46,22 +46,22 @@ namespace genbb
     /// \brief Decay type
     enum decay_type
     {
-      INVALID_DECAY_TYPE = 0,
-      DECAY_TYPE_DBD = 1,
-      DECAY_TYPE_BACKGROUND = 2
+      INVALID_DECAY_TYPE    = 0, ///< Invalid decay type
+      DECAY_TYPE_DBD        = 1, ///< Double beta decay type
+      DECAY_TYPE_BACKGROUND = 2  ///< Background decay type
     };
 
     static const double DEFAULT_ENERGY_RANGE_MIN;
 
     static const double DEFAULT_ENERGY_RANGE_MAX;
 
-    static const std::vector<std::string> & get_dbd_nuclides ();
+    static const std::vector<std::string> & get_dbd_nuclides();
 
-    static const std::vector<std::string> & get_background_nuclides ();
+    static const std::vector<std::string> & get_background_nuclides();
 
-    static const std::map<int, std::string> & get_dbd_modes ();
+    static const std::map<int, std::string> & get_dbd_modes();
 
-    static const std::vector<int> & get_dbd_modes_with_energy_range ();
+    static const std::vector<int> & get_dbd_modes_with_energy_range();
 
   };
 
