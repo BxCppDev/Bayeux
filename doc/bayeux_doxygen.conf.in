@@ -45,7 +45,7 @@ PROJECT_BRIEF          = "Core Foundation library for SuperNEMO"
 # exceed 55 pixels and the maximum width should not exceed 200 pixels.
 # Doxygen will copy the logo to the output directory.
 
-PROJECT_LOGO           =
+PROJECT_LOGO           = @PROJECT_SOURCE_DIR@/source/bxbayeux/logo/logo_bayeux_66x55_transparent.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -699,7 +699,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = */.svn/* */*.ipp
+EXCLUDE_PATTERNS       = */.svn/* */*.ipp */*-reflect.h */*-serial.h */reflection_version.h
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
