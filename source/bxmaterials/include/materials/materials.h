@@ -12,6 +12,7 @@
 // This project
 #include <materials/materials_config.h>
 
+/// \brief Top-level namespace of the Bayeux/materials module library
 namespace materials {
 
   void initialize(int argc_ = 0, char ** argv_ = 0);

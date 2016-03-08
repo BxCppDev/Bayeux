@@ -14,6 +14,7 @@
 #include <string>
 #include <map>
 
+/// \brief Top-level namespace of the Bayeux/materials module library
 namespace materials {
 
   /// \brief A handler object that is used as a smart reference for an object of which it can have the responsibility of the deletion

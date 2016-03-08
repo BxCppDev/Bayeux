@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 
+/// \brief Top-level namespace of the Bayeux/materials module library
 namespace materials {
 
   /// Utilities for chemical symbols

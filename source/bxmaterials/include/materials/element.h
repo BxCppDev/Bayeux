@@ -28,6 +28,7 @@
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
 
+/// \brief Top-level namespace of the Bayeux/materials module library
 namespace materials {
 
   // Forward declaration:
