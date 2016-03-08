@@ -3,7 +3,7 @@ Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
 :Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    2015-09-16
+:Date:    2016-03-07
 
 .. contents::
    :depth: 3
@@ -323,6 +323,16 @@ Bayeux Configuration Options
 ----------------------------
 
 These options control the core configuration of Bayeux.
+
+-  ``BAYEUX_CXX_STANDARD``
+
+   - Select the C++  Standard to compile against. Recognized values are:
+
+    * ``98`` (default) : complete C++98 standard
+    * ``11`` : all features of the C++11 standard in GCC 4.9 (provided
+      for forward compatibility)
+    * ``14``  :  same  as  ``11``  plus at  least  one  C++14  feature
+      (provided for forward compatibility)
 
 -  ``BAYEUX_COMPILER_ERROR_ON_WARNING``
 
