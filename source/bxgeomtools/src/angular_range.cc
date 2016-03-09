@@ -305,12 +305,21 @@ namespace geomtools {
     else return get_max_angle();
   }
 
-  bool angular_range::contains(double angle_, bool DT_UNUSED(modulo_)) const
+  double angular_range::get_angle_spread() const
   {
-    DT_THROW_IF(! is_valid(), std::range_error, "Angular range is not valid!");
-    DT_THROW_IF(angle_ < get_min_angle(), std::range_error, "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
-    DT_THROW_IF(angle_ > get_max_angle(), std::range_error, "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
-    return ::geomtools::angle_is_in(angle_, get_first_angle(), get_last_angle(), 0.0, false);
+    return get_last_angle() - get_first_angle();
+  }
+
+  bool angular_range::contains(double angle_, double tolerance_, bool strict_range_) const
+  {
+    DT_THROW_IF(! is_valid(), std::logic_error, "Angular range is not valid!");
+    if (strict_range_) {
+      DT_THROW_IF(angle_ < get_min_angle(), std::range_error,
+                  "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
+      DT_THROW_IF(angle_ > get_max_angle(), std::range_error,
+                  "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
+    }
+    return ::geomtools::angle_is_in(angle_, get_first_angle(), get_last_angle(), tolerance_, false);
   }
 
   void angular_range::tree_dump(std::ostream & out_,
@@ -532,7 +541,8 @@ namespace geomtools {
   }
 
   // static
-  void angular_range::init_ocd(datatools::object_configuration_description & ocd_, const std::string & prefix_ = "")
+  void angular_range::init_ocd(datatools::object_configuration_description & ocd_,
+                               const std::string & prefix_)
   {
 
     {

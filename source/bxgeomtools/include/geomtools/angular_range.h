@@ -116,8 +116,11 @@ namespace geomtools {
     /// Return the last angle
     double get_last_angle() const;
 
+    /// Return the angular spread
+    double get_angle_spread() const;
+
     /// Check if a given angle is contains in the range
-    bool contains(double angle_, bool modulo_ = false) const;
+    bool contains(double angle_, double tolerance_ = 0.0, bool strict_range_ = false) const;
 
     /// Check if the range is valid
     bool is_valid() const;
@@ -138,7 +141,8 @@ namespace geomtools {
                            bool inherit_= false) const;
 
     /// OCD support
-    static void init_ocd(datatools::object_configuration_description &);
+    static void init_ocd(datatools::object_configuration_description &,
+                               const std::string & prefix_ = "");
 
     /// \brief Forward iterator associated to an angular range
     class iterator :  public datatools::i_tree_dumpable {
