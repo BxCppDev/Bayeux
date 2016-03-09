@@ -35,6 +35,8 @@
 
 #include <geomtools/display_data.ipp>
 
+#include <geomtools/angular_range.ipp>
+
 #endif // GEOMTOOLS_THE_SERIALIZABLE_IPP
 
 /*
