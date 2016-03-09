@@ -1,18 +1,22 @@
 // -*- mode: c++; -*-
 // test_serializable.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
+// Third party:
+// - Bayeux/datatools:
+#include <datatools/io_factory.h>
+
+// This project:
 #include <geomtools/utils.h>
 #include <geomtools/geom_id.h>
 #include <geomtools/version.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
-
-#include <datatools/io_factory.h>
 
 // Some pre-processor guard about Boost I/O usage and linkage :
 #include <datatools/bio_guard.h>
