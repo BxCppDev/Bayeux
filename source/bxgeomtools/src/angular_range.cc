@@ -24,21 +24,21 @@ namespace geomtools {
   // static
   std::string angular_range::type_to_label(angular_range::range_type rt_)
   {
-    if (rt_ == RANGE_TYPE_PI) return std::string("pi");
-    if (rt_ == RANGE_TYPE_TWOPI) return std::string("twopi");
+    if (rt_ == RANGE_TYPE_POLAR) return std::string("polar");
+    if (rt_ == RANGE_TYPE_AZIMUTHAL) return std::string("azimuthal");
     return std::string("");
   }
 
   // static
   angular_range::range_type angular_range::label_to_type(const std::string & token_)
   {
-    if (token_ == "pi") return RANGE_TYPE_PI;
-    if (token_ == "twopi") return RANGE_TYPE_TWOPI;
+    if (token_ == type_to_label(RANGE_TYPE_POLAR)) return RANGE_TYPE_POLAR;
+    if (token_ == type_to_label(RANGE_TYPE_AZIMUTHAL)) return RANGE_TYPE_AZIMUTHAL;
     return RANGE_TYPE_INVALID;
   }
 
   // static
-  double angular_range::min_angle(range_type rt_)
+  double angular_range::min_start_angle(range_type rt_)
   {
     double ma = 0.0;
     switch(rt_) {
@@ -52,17 +52,17 @@ namespace geomtools {
   }
 
   // static
-  double angular_range::max_angle(range_type rt_)
+  double angular_range::max_start_angle(range_type rt_)
   {
     double ma = 0.0;
     switch(rt_) {
     case RANGE_TYPE_INVALID :
       datatools::invalidate(ma);
       break;
-    case RANGE_TYPE_PI :
+    case RANGE_TYPE_POLAR :
       ma  = M_PI;
       break;
-    case RANGE_TYPE_TWOPI :
+    case RANGE_TYPE_AZIMUTHAL :
       ma  = 2 * M_PI;
       break;
     }
@@ -125,24 +125,24 @@ namespace geomtools {
     return _type_;
   }
 
-  bool angular_range::is_pi() const
+  bool angular_range::is_polar() const
   {
-    return _type_ == RANGE_TYPE_PI;
+    return _type_ == RANGE_TYPE_POLAR;
   }
 
-  bool angular_range::is_two_pi() const
+  bool angular_range::is_azimuthal() const
   {
-    return _type_ == RANGE_TYPE_TWOPI;
+    return _type_ == RANGE_TYPE_AZIMUTHAL;
   }
 
-  double angular_range::get_min_angle() const
+  double angular_range::get_min_start_angle() const
   {
-    return min_angle(_type_);
+    return min_start_angle(_type_);
   }
 
-  double angular_range::get_max_angle() const
+  double angular_range::get_max_start_angle() const
   {
-    return max_angle(_type_);
+    return max_start_angle(_type_);
   }
 
   bool angular_range::is_partial() const
@@ -157,16 +157,17 @@ namespace geomtools {
 
   void angular_range::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < get_min_angle() || new_value_ >= get_max_angle(),
+    DT_THROW_IF (new_value_ < get_min_start_angle() || new_value_ >= get_max_start_angle(),
                  std::domain_error,
                  "Invalid [" << new_value_ / CLHEP::degree << " degree] start angle value !");
     if (!has_delta_angle()) {
-      _delta_angle_ = get_max_angle() - _start_angle_;
+      // Default delta angle:
+      _delta_angle_ = get_max_start_angle() - _start_angle_;
     }
-    DT_THROW_IF (_start_angle_ + _delta_angle_ > get_max_angle(),
+    DT_THROW_IF (_start_angle_ + _delta_angle_ > get_max_start_angle(),
                  std::domain_error,
                  "Angle overflow with [start=" <<  new_value_ / CLHEP::degree << " + delta="
-                 << _delta_angle_  / CLHEP::degree << " > max=" << get_max_angle() / CLHEP::degree << " degree] !");
+                 << _delta_angle_  / CLHEP::degree << " > max=" << get_max_start_angle() / CLHEP::degree << " degree] !");
     _start_angle_ = new_value_;
     return;
   }
@@ -183,16 +184,24 @@ namespace geomtools {
 
   void angular_range::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > get_max_angle(),
+    DT_THROW_IF (new_value_ < 0.0,
                  std::domain_error,
-                 "Invalid [" << new_value_ / CLHEP::degree << " degree] delta angle value !");
+                 "Invalid negative delta angle value !");
     if (!has_start_angle()) {
-      _start_angle_ = get_min_angle();
+      _start_angle_ = get_min_start_angle();
     }
-    DT_THROW_IF (_start_angle_ + new_value_ > get_max_angle(),
+    DT_THROW_IF (is_polar() && ((_start_angle_ + new_value_) > get_max_start_angle()),
                  std::domain_error,
-                 "Angle overflow with [start=" << _start_angle_  / CLHEP::degree << " + delta="
-                 <<  new_value_ / CLHEP::degree << " > max=" << get_max_angle() / CLHEP::degree << " degree] !");
+                 "Polar angle overflow with [start=" << _start_angle_  / CLHEP::degree << " + delta="
+                 <<  new_value_ / CLHEP::degree << " > max=" << get_max_start_angle() / CLHEP::degree << " degree] !");
+    double dangle = new_value_;
+    if (std::abs(new_value_ -  2 * M_PI) < M_PI * std::numeric_limits<double>::epsilon()) {
+      dangle = 2 * M_PI;
+    }
+    DT_THROW_IF (is_azimuthal() && (dangle > 2 * M_PI),
+                 std::domain_error,
+                 "Azimuthal angle overflow with [start=" << _start_angle_  / CLHEP::degree << " + delta="
+                 <<  new_value_ / CLHEP::degree << " > max=" << get_max_start_angle() / CLHEP::degree << " degree] !");
     _delta_angle_ = new_value_;
     return;
   }
@@ -233,24 +242,24 @@ namespace geomtools {
       range_type rt = RANGE_TYPE_INVALID;
       if (config_.has_key("type")) {
         const std::string & rt_str = config_.fetch_string("type");
-        if (rt_str == type_to_label(RANGE_TYPE_PI)) {
-          rt = RANGE_TYPE_PI;
-        } else if (rt_str == type_to_label(RANGE_TYPE_TWOPI)) {
-          rt = RANGE_TYPE_TWOPI;
+        if (rt_str == type_to_label(RANGE_TYPE_POLAR)) {
+          rt = RANGE_TYPE_POLAR;
+        } else if (rt_str == type_to_label(RANGE_TYPE_AZIMUTHAL)) {
+          rt = RANGE_TYPE_AZIMUTHAL;
         } else {
           DT_THROW(std::logic_error, "Invalid angular range type '" << rt_str << "'!");
         }
       }
       if (rt == RANGE_TYPE_INVALID) {
         // Default range type:
-        rt = RANGE_TYPE_TWOPI;
+        rt = RANGE_TYPE_AZIMUTHAL;
       }
       set_type(rt);
     }
 
     // Fetch angle information:
-    double start_angle = get_min_angle();
-    double delta_angle = get_max_angle();
+    double start_angle = get_min_start_angle();
+    double delta_angle = get_max_start_angle() - start_angle;
     bool not_full_angle = false;
     if (config_.has_key("start")) {
       start_angle = config_.fetch_real("start");
@@ -267,8 +276,7 @@ namespace geomtools {
       not_full_angle = true;
     }
     if (not_full_angle) {
-      set_start_angle(start_angle);
-      set_delta_angle(delta_angle);
+      set_partial_angles(start_angle, delta_angle);
     }
 
     return;
@@ -296,13 +304,13 @@ namespace geomtools {
   double angular_range::get_first_angle() const
   {
     if (is_partial()) return _start_angle_;
-    else return get_min_angle();
+    else return get_min_start_angle();
   }
 
   double angular_range::get_last_angle() const
   {
     if (is_partial()) return _start_angle_ + _delta_angle_;
-    else return get_max_angle();
+    else return get_max_start_angle();
   }
 
   double angular_range::get_angle_spread() const
@@ -310,15 +318,15 @@ namespace geomtools {
     return get_last_angle() - get_first_angle();
   }
 
-  bool angular_range::contains(double angle_, double tolerance_, bool strict_range_) const
+  bool angular_range::contains(double angle_, double tolerance_, bool DT_UNUSED(strict_range_)) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Angular range is not valid!");
-    if (strict_range_) {
-      DT_THROW_IF(angle_ < get_min_angle(), std::range_error,
-                  "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
-      DT_THROW_IF(angle_ > get_max_angle(), std::range_error,
-                  "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
-    }
+    // if (strict_range_) {
+    //   DT_THROW_IF(angle_ < get_min_start_angle(), std::range_error,
+    //               "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
+    //   DT_THROW_IF(angle_ > get_max_start_angle(), std::range_error,
+    //               "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
+    // }
     return ::geomtools::angle_is_in(angle_, get_first_angle(), get_last_angle(), tolerance_, false);
   }
 
@@ -341,9 +349,9 @@ namespace geomtools {
     out_ << std::endl;
     if (has_type()) {
       out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Min allowed angle : " << get_min_angle() / CLHEP::degree << " degree" << std::endl;
+           << "Min allowed start angle : " << get_min_start_angle() / CLHEP::degree << " degree" << std::endl;
       out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Max allowed angle : " << get_max_angle() / CLHEP::degree << " degree" << std::endl;
+           << "Max allowed start angle : " << get_max_start_angle() / CLHEP::degree << " degree" << std::endl;
     }
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
@@ -573,14 +581,13 @@ namespace geomtools {
         .set_terse_description("The type of angular range")
         .set_traits(datatools::TYPE_STRING)
         .set_mandatory(true)
-        .set_default_value_string("twopi")
-        .set_long_description("A character string that represents the type of     \n"
-                              "angular range. Range in [0;pi] is labelled 'pi'.  \n"
-                              " [0;2*pi] is labelled 'twopi'.  \n"
+        .set_long_description("A character string that represents the type of  \n"
+                              "angular range. Polar angle is labelled 'polar'. \n"
+                              "An azimuthal angle is labelled 'azimuthal'.     \n"
                               )
         .add_example("Set the type of the angular range:: \n"
                      "                                    \n"
-                     "  type : string = \"pi\"            \n"
+                     "  type : string = \"polar\"         \n"
                      "                                    \n"
                      )
         ;
@@ -652,7 +659,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(geomtools::angular_range, ocd_)
                                "``datatools::properties`` ASCII format::         \n"
                                "                                                 \n"
                                "  angle_unit : string = \"degree\"               \n"
-                               "  type  : string = \"pi\"                        \n"
+                               "  type  : string = \"polar\"                     \n"
                                "  start : real as angle = 12.0 degree            \n"
                                "  delta : real as angle = 56.0 degree            \n"
                                "                                                 \n"

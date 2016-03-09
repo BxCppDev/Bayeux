@@ -38,20 +38,22 @@ namespace geomtools {
 
     /// \brief The type of angular range
     enum range_type {
-      RANGE_TYPE_INVALID = -1, ///< Invalid range type
-      RANGE_TYPE_PI      =  0, ///< Pi based angular range
-      RANGE_TYPE_TWOPI   =  1  ///< Two-Pi-based angular range
+      RANGE_TYPE_INVALID   = -1, ///< Invalid range type
+      RANGE_TYPE_POLAR     =  0, ///< Polar angle
+      RANGE_TYPE_AZIMUTHAL =  1  ///< Azimuthal range
     };
 
+    /// Return the label associated to a range type
     static std::string type_to_label(range_type rt_);
 
+    /// Return the range type associated to a label
     static range_type label_to_type(const std::string &);
 
-    /// Return the min angle
-    static double min_angle(range_type);
+    /// Return the min start angle
+    static double min_start_angle(range_type);
 
-    /// Return the min angle
-    static double max_angle(range_type);
+    /// Return the max start angle
+    static double max_start_angle(range_type);
 
     /// Default constructor
     explicit angular_range(range_type rt_ = RANGE_TYPE_INVALID);
@@ -71,17 +73,17 @@ namespace geomtools {
     /// Return the range type
     range_type get_type() const;
 
-    /// Check if the type of the range is 'Pi'
-    bool is_pi() const;
+    /// Check if the type of the range is 'polar'
+    bool is_polar() const;
 
-    /// Check if the type of the range is 'TwoPi'
-    bool is_two_pi() const;
+    /// Check if the type of the range is 'azimuthal'
+    bool is_azimuthal() const;
 
-    /// Return the min angle
-    double get_min_angle() const;
+    /// Return the min start angle
+    double get_min_start_angle() const;
 
-    /// Return the min angle
-    double get_max_angle() const;
+    /// Return the max start angle
+    double get_max_start_angle() const;
 
     /// Check the start angle
     bool has_start_angle() const;
@@ -200,7 +202,6 @@ namespace geomtools {
       /// Check the validity of the iterator
       bool operator!() const;
 
-
     private:
 
       const angular_range & _ref_; ///< Reference to the traverwed angular range
@@ -215,7 +216,6 @@ namespace geomtools {
 
     /// Set default value foe attibutes
     void _set_defaults();
-
 
   private:
 

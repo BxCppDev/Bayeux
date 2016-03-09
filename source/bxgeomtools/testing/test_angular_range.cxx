@@ -47,10 +47,10 @@ void test1()
 {
   std::clog << "Running test1... " << std::endl;
   // [0:360]° :
-  geomtools::angular_range ar0("twopi");
+  geomtools::angular_range ar0("azimuthal");
   ar0.tree_dump(std::clog, "Angular range #0: ", "");
-  for (double alpha = geomtools::angular_range::min_angle(ar0.get_type());
-       alpha <= geomtools::angular_range::max_angle(ar0.get_type());
+  for (double alpha = geomtools::angular_range::min_start_angle(ar0.get_type());
+       alpha <= geomtools::angular_range::max_start_angle(ar0.get_type());
        alpha += 5.0 * CLHEP::degree) {
     if (!ar0.contains(alpha)) {
       std::clog << "Angle [" << alpha / CLHEP::degree << " degree] is not in range #0." << std::endl;
@@ -78,11 +78,11 @@ void test1()
   std::clog << std::endl;
 
   // [32.5:360]° :
-  geomtools::angular_range ar1("twopi");
+  geomtools::angular_range ar1("azimuthal");
   ar1.set_start_angle(32.5 * CLHEP::degree);
   ar1.tree_dump(std::clog, "Angular range #1: ", "");
-  for (double alpha = geomtools::angular_range::min_angle(ar1.get_type());
-       alpha <= geomtools::angular_range::max_angle(ar1.get_type());
+  for (double alpha = geomtools::angular_range::min_start_angle(ar1.get_type());
+       alpha <= geomtools::angular_range::max_start_angle(ar1.get_type());
        alpha += 5.0 * CLHEP::degree) {
     if (!ar1.contains(alpha)) {
       std::clog << "Angle [" << alpha / CLHEP::degree << " degree] is not in range #1." << std::endl;
@@ -98,11 +98,11 @@ void test1()
   std::clog << std::endl;
 
   // [0:64.5]° :
-  geomtools::angular_range ar2(geomtools::angular_range::RANGE_TYPE_PI);
+  geomtools::angular_range ar2(geomtools::angular_range::RANGE_TYPE_POLAR);
   ar2.set_delta_angle(64.5 * CLHEP::degree);
   ar2.tree_dump(std::clog, "Angular range #2: ", "");
-  for (double alpha = geomtools::angular_range::min_angle(ar2.get_type());
-       alpha <= geomtools::angular_range::max_angle(ar2.get_type());
+  for (double alpha = geomtools::angular_range::min_start_angle(ar2.get_type());
+       alpha <= geomtools::angular_range::max_start_angle(ar2.get_type());
        alpha += 5.0 * CLHEP::degree) {
     if (!ar2.contains(alpha)) {
       std::clog << "Angle [" << alpha / CLHEP::degree << " degree] is not in range #2." << std::endl;
@@ -111,12 +111,12 @@ void test1()
   std::clog << std::endl;
 
   // [12.5:290]° :
-  geomtools::angular_range ar3(geomtools::angular_range::RANGE_TYPE_TWOPI);
+  geomtools::angular_range ar3(geomtools::angular_range::RANGE_TYPE_AZIMUTHAL);
   ar3.set_start_angle(12.5 * CLHEP::degree);
   ar3.set_delta_angle(277.5 * CLHEP::degree);
   ar3.tree_dump(std::clog, "Angular range #3: ", "");
-  for (double alpha = geomtools::angular_range::min_angle(ar3.get_type());
-       alpha <= geomtools::angular_range::max_angle(ar3.get_type());
+  for (double alpha = geomtools::angular_range::min_start_angle(ar3.get_type());
+       alpha <= geomtools::angular_range::max_start_angle(ar3.get_type());
        alpha += 5.0 * CLHEP::degree) {
     if (!ar3.contains(alpha)) {
       std::clog << "Angle [" << alpha / CLHEP::degree << " degree] is not in range #2." << std::endl;
@@ -148,7 +148,7 @@ void test2()
     {
       // [12.5:290]° :
       geomtools::angular_range ar0;
-      ar0.set_type(geomtools::angular_range::RANGE_TYPE_TWOPI);
+      ar0.set_type(geomtools::angular_range::RANGE_TYPE_AZIMUTHAL);
       ar0.set_start_angle(12.5 * CLHEP::degree);
       ar0.set_delta_angle(277.5 * CLHEP::degree);
       ar0.tree_dump(std::clog, "Angular range #0: ", "");
@@ -170,7 +170,7 @@ void test2()
     {
       // [0:360]° :
       geomtools::angular_range ar1;
-      ar1.set_type(geomtools::angular_range::RANGE_TYPE_TWOPI);
+      ar1.set_type(geomtools::angular_range::RANGE_TYPE_AZIMUTHAL);
       ar1.tree_dump(std::clog, "Angular range #1: ", "");
 
       datatools::data_writer the_writer("test_angular_range_1.xml", datatools::using_multi_archives);
@@ -195,9 +195,9 @@ void test3()
   std::clog << "Running test3... " << std::endl;
 
   {
-    geomtools::angular_range ar0("pi");
+    geomtools::angular_range ar0("polar");
     datatools::properties ar_cfg;
-    ar_cfg.store("type", "pi");
+    ar_cfg.store("type", "polar");
     ar_cfg.store_real_with_explicit_unit("start", 10.0 * CLHEP::degree);
     ar_cfg.store_real_with_explicit_unit("delta", 171.0 * CLHEP::degree);
     try {
@@ -209,9 +209,9 @@ void test3()
   }
 
   {
-    geomtools::angular_range ar1("pi");
+    geomtools::angular_range ar1("polar");
     datatools::properties ar_cfg;
-    ar_cfg.store("type", "pi");
+    ar_cfg.store("type", "polar");
     ar_cfg.store_real_with_explicit_unit("start", 10.0 * CLHEP::degree);
     ar_cfg.store_real_with_explicit_unit("delta", 134.0 * CLHEP::degree);
     ar1.initialize(ar_cfg);
@@ -222,7 +222,7 @@ void test3()
   {
     geomtools::angular_range ar1;
     datatools::properties ar_cfg;
-    ar_cfg.store("type", "twopi");
+    ar_cfg.store("type", "azimuthal");
     ar_cfg.store_real_with_explicit_unit("delta", 270.0 * CLHEP::degree);
     ar1.initialize(ar_cfg);
     ar1.tree_dump(std::clog, "Angular range #0: ", "");
