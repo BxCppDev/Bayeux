@@ -5,7 +5,7 @@ Installation report for Cadfaelbrew on Xubuntu Linux 14.04 (LTS)
 :Author: F.Mauger
 :Version: 0.1
 :Contact: mauger@lpccaen.in2p3.fr
-:Date: 2016-03-06
+:Date: 2016-03-09
 
 This note  explains the Cadfaelbrew installation  procedure on Xubuntu
 Linux 14.04 (LTS) (64-bits). Cadfaelbrew is a package manager, derived
@@ -221,7 +221,34 @@ Setup Cadfaelbrew for your environment
 
 To activate Cadfaelbrew in your environement, you have two possibilities:
 
-a. You can  define a specific Bash function in your ``~/.bashrc`` startup file:
+a. You can use the ``brew.sh`` script provided by Cadfaelbrew.
+   In your ``~/.bashrc`` startup file, define:
+
+.. code:: sh
+
+   alias brewsh='/data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git/bin/brew sh \
+      --cc=gcc-4.9'
+..
+
+   Then, each time you need to use Cadfaelbrew or some software managed by it, you
+   just type in your shell:
+
+.. code:: sh
+
+   bash$ brewsh
+   bash$ # ... you can now work with brewed software ...
+..
+
+   This will start a dedicated shell with all Cadfaelbrew software activated.
+   To leave this environment, type:
+
+.. code:: sh
+
+   bash$ exit
+..
+
+
+b. Alternatively, you can  define a specific Bash function in your ``~/.bashrc`` startup file:
 
 .. code:: sh
 
@@ -248,31 +275,6 @@ a. You can  define a specific Bash function in your ``~/.bashrc`` startup file:
 
    bash$ do_cadfaelbrew_setup
 ..
-
-b. Alternatively you can use the ``brew.sh`` script provided by Cadfaelbrew.
-   In your ``~/.bashrc`` startup file, define:
-
-.. code:: sh
-
-   alias brewsh='/data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git/bin/brew sh'
-..
-
-   Then, each time you need to use Cadfaelbrew or some software managed by it, you
-   just type in your shell:
-
-.. code:: sh
-
-   bash$ brewsh
-..
-
-   This will start a dedicated shell with all Cadfaelbrew software activated.
-   To leave this environment, type:
-
-.. code:: sh
-
-   bash$ exit
-..
-
 
 Additional operations after installation of the ``cadfael`` formula
 ======================================================================
