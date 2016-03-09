@@ -54,14 +54,10 @@ find_package(GSL 1.15 QUIET NO_MODULE)
 find_package(GSL 1.15 REQUIRED)
 
 # - ROOT
-if(NOT BAYEUX_USE_LEGACY_ROOT)
-  set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
-endif()
+set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
-if(NOT BAYEUX_USE_LEGACY_ROOT)
-  include(RootNewMacros)
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
-endif()
+include(RootNewMacros)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
 if (BAYEUX_WITH_QT_GUI)
   find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
@@ -84,8 +80,6 @@ if(BAYEUX_WITH_GEANT4_MODULE)
 endif()
 
 # - Core Includes for Bayeux + Third Party
-include_directories(${BAYEUX_BUILDPRODUCT_DIR}/include)
-include_directories(${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux)
 include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${GSL_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
@@ -246,38 +240,30 @@ endforeach()
 #   datatools, cuts, materials...
 list(APPEND Bayeux_SOURCES ${bayeux_ENDING_MODULE_SOURCES})
 
-# Hack for datatools headers
-#include_directories(${datatools_include_dir})
-
-if(BAYEUX_WITH_GEOMTOOLS)
-  # Hack for geomtools private headers
-  include_directories(${geomtools_include_dir})
-endif()
-
-if(BAYEUX_WITH_GENBB_HELP)
-  # Hack for genbb_help private headers
-  include_directories(${genbb_help_include_dir})
-endif()
-
-if(BAYEUX_WITH_MCTOOLS)
-  # Hack for mctools private/generated headers
-  include_directories(${mctools_include_dir})
-endif()
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 #-----------------------------------------------------------------------
 # Build/Link the library
 #
 add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
 target_compile_features(Bayeux PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
+target_include_directories(Bayeux
+  PUBLIC
+   $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include>
+   $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
+   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+  PRIVATE
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
+   )
 
-target_link_libraries(Bayeux ${CMAKE_DL_LIBS})
-target_link_libraries(Bayeux ${Bayeux_Boost_LIBRARIES})
-target_link_libraries(Bayeux ${CAMP_LIBRARIES})
-target_link_libraries(Bayeux ${GSL_LIBRARIES})
-target_link_libraries(Bayeux ${CLHEP_LIBRARIES})
-target_link_libraries(Bayeux ${ROOT_LIBRARIES})
+target_link_libraries(Bayeux
+  ${CMAKE_DL_LIBS}
+  ${Bayeux_Boost_LIBRARIES}
+  ${CAMP_LIBRARIES}
+  ${GSL_LIBRARIES}
+  ${CLHEP_LIBRARIES}
+  ${ROOT_LIBRARIES}
+  )
 if(BAYEUX_WITH_QT_GUI)
   target_link_libraries(Bayeux ${QT_LIBRARIES})
 endif()
@@ -297,91 +283,87 @@ if(UNIX AND NOT APPLE)
   set_target_properties(Bayeux
     PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
     )
-elseif(APPLE)
-  # Temporary setting - needs testing
-  set_target_properties(Bayeux
-    PROPERTIES
-      INSTALL_NAME_DIR "@rpath"
-      LINK_FLAGS "-undefined dynamic_lookup"
-    )
 endif()
 
 #-----------------------------------------------------------------------
 # Build/Link the executables - can be switched off when embedded
 #
-if(NOT BAYEUX_EMBEDDED OR (BAYEUX_EMBEDDED AND BAYEUX_BUILD_TOOLS))
-  set(BAYEUX_ALL_APPS ${Bayeux_APPS})
+set(BAYEUX_ALL_APPS ${Bayeux_APPS})
 
-  if(BAYEUX_WITH_GEANT4_MODULE)
-    list(APPEND BAYEUX_ALL_APPS ${Bayeux_GEANT4_APPS})
-  endif()
-
-  if(BAYEUX_WITH_MCNP_MODULE)
-    list(APPEND BAYEUX_ALL_APPS ${Bayeux_MCNP_APPS})
-  endif()
-
-  foreach(_bxapp IN LISTS BAYEUX_ALL_APPS)
-    get_filename_component(_app_basename ${_bxapp} NAME_WE)
-    add_executable(bx${_app_basename} ${_bxapp})
-    set_target_properties(bx${_app_basename}
-      PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1
-    )
-
-    if(UNIX AND NOT APPLE)
-      set_target_properties(bx${_app_basename}
-        PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-      )
-    elseif(APPLE)
-      # Temporary setting - needs testing
-      set_target_properties(bx${_app_basename}
-        PROPERTIES
-          BUILD_WITH_INSTALL_RPATH 1
-          INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
-          LINK_FLAGS "-Wl,-rpath,@loader_path/../${CMAKE_INSTALL_LIBDIR} -undefined dynamic_lookup"
-        )
-    endif()
-
-    if(BAYEUX_WITH_MCTOOLS)
-      if(BAYEUX_WITH_GEANT4_MODULE)
-        list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
-        if (_g4app_found GREATER -1)
-	        target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
-        endif()
-      endif()
-
-      if(BAYEUX_WITH_MCNP_MODULE)
-        list(FIND Bayeux_MCNP_APPS ${_bxapp} _mcnpapp_found)
-        if (_mcnpapp_found GREATER -1)
-	        target_link_libraries(bx${_app_basename} Bayeux_mctools_mcnp)
-        endif()
-      endif()
-    endif()
-
-    target_link_libraries(bx${_app_basename} Bayeux)
-
-    # - Use Readline
-    if(DATATOOLS_WITH_READLINE)
-      include_directories(${Readline_INCLUDE_DIR})
-      target_link_libraries(Bayeux ${Readline_LIBRARIES})
-    endif()
-
-    if(BAYEUX_WITH_GEOMTOOLS)
-      if("${_app_basename}" STREQUAL "geomtools_inspector")
-        if(GEOMTOOLS_WITH_READLINE)
-	        include_directories(${Readline_INCLUDE_DIR})
-         	target_link_libraries(bx${_app_basename} ${Readline_LIBRARIES})
-        endif()
-      endif()
-    endif()
-
-    # - Hack to get program_options in without linking it to libBayeux
-    target_link_libraries(bx${_app_basename} ${Boost_program_options_LIBRARY})
-
-    list(APPEND Bayeux_ADDON_TARGETS bx${_app_basename})
-  endforeach()
+if(BAYEUX_WITH_GEANT4_MODULE)
+  list(APPEND BAYEUX_ALL_APPS ${Bayeux_GEANT4_APPS})
 endif()
 
-# message(STATUS "**** source/CMakeLists: Bayeux_ADDON_TARGETS=${Bayeux_ADDON_TARGETS}")
+if(BAYEUX_WITH_MCNP_MODULE)
+  list(APPEND BAYEUX_ALL_APPS ${Bayeux_MCNP_APPS})
+endif()
+
+foreach(_bxapp IN LISTS BAYEUX_ALL_APPS)
+  get_filename_component(_app_basename ${_bxapp} NAME_WE)
+  add_executable(bx${_app_basename} ${_bxapp})
+
+  # For relocation...
+  target_include_directories(bx${_app_basename}
+    PRIVATE
+     ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
+     )
+
+  set_target_properties(bx${_app_basename}
+    PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1
+    )
+
+  if(UNIX AND NOT APPLE)
+    set_target_properties(bx${_app_basename}
+      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+      )
+  elseif(APPLE)
+    # Temporary setting - needs testing
+    set_target_properties(bx${_app_basename}
+      PROPERTIES
+      BUILD_WITH_INSTALL_RPATH 1
+      INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+      )
+  endif()
+
+  if(BAYEUX_WITH_MCTOOLS)
+    if(BAYEUX_WITH_GEANT4_MODULE)
+      list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
+      if (_g4app_found GREATER -1)
+        target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
+      endif()
+    endif()
+
+    if(BAYEUX_WITH_MCNP_MODULE)
+      list(FIND Bayeux_MCNP_APPS ${_bxapp} _mcnpapp_found)
+      if (_mcnpapp_found GREATER -1)
+        target_link_libraries(bx${_app_basename} Bayeux_mctools_mcnp)
+      endif()
+    endif()
+  endif()
+
+  target_link_libraries(bx${_app_basename} Bayeux)
+
+  # - Use Readline
+  if(DATATOOLS_WITH_READLINE AND NOT READLINE_ALREADY_LINKED_TO_BAYEUX)
+    include_directories(${Readline_INCLUDE_DIR})
+    target_link_libraries(Bayeux ${Readline_LIBRARIES})
+    set(READLINE_ALREADY_LINKED_TO_BAYEUX 1)
+  endif()
+
+  if(BAYEUX_WITH_GEOMTOOLS)
+    if("${_app_basename}" STREQUAL "geomtools_inspector")
+      if(GEOMTOOLS_WITH_READLINE)
+        include_directories(${Readline_INCLUDE_DIR})
+        target_link_libraries(bx${_app_basename} ${Readline_LIBRARIES})
+      endif()
+    endif()
+  endif()
+
+  # - Hack to get program_options in without linking it to libBayeux
+  target_link_libraries(bx${_app_basename} ${Boost_program_options_LIBRARY})
+
+  list(APPEND Bayeux_ADDON_TARGETS bx${_app_basename})
+endforeach()
 
 #-----------------------------------------------------------------------
 # Install targets and resources
@@ -442,12 +424,9 @@ if(BAYEUX_ENABLE_TESTING)
         )
 
       # Handle CMake version difference temporarily
-      if(CMAKE_VERSION VERSION_GREATER 2.8.7)
-        set_property(TARGET ${_testname}
-          APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
-          )
-      endif()
-      include_directories(BEFORE ${${_m}_test_dir})
+      set_property(TARGET ${_testname}
+        APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
+        )
 
       if(BAYEUX_WITH_MCTOOLS)
         ### G4 specific link for some test progs
@@ -473,11 +452,6 @@ if(BAYEUX_ENABLE_TESTING)
 
       target_link_libraries(${_testname} Bayeux)
 
-      # - On Apple, ensure dynamic_lookup of undefined symbols
-      if(APPLE)
-        set_target_properties(${_testname} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-      endif()
-
       add_test(NAME ${_testname} COMMAND ${_testname})
       set_property(TEST ${_testname}
         APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
@@ -488,14 +462,12 @@ endif()
 
 #-----------------------------------------------------------------------
 # Install examples if required
-if(BAYEUX_WITH_EXAMPLES)
-  foreach(_m ${BAYEUX_SUBMODULES})
-    foreach(_example ${${_m}_MODULE_EXAMPLES})
-      install(DIRECTORY ${_example}/
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_EXAMPLE_DIR}/${_m}
-        PATTERN ".svn" EXCLUDE
-	      )
-    endforeach()
+foreach(_m ${BAYEUX_SUBMODULES})
+  foreach(_example ${${_m}_MODULE_EXAMPLES})
+    install(DIRECTORY ${_example}/
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_EXAMPLE_DIR}/${_m}
+      PATTERN ".svn" EXCLUDE
+      )
   endforeach()
-endif()
+endforeach()
 

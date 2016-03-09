@@ -82,13 +82,6 @@ if(BAYEUX_WITH_MCNP_MODULE)
     set_target_properties(Bayeux_mctools_mcnp
       PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
       )
-  elseif(APPLE)
-    # Temporary setting - needs testing
-    set_target_properties(Bayeux_mctools_mcnp
-      PROPERTIES
-        INSTALL_NAME_DIR "@rpath"
-        LINK_FLAGS "-undefined dynamic_lookup"
-      )
   endif()
 
   # - Create the public link interface

@@ -113,6 +113,15 @@ if(BAYEUX_WITH_GEANT4_MODULE)
 
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   target_compile_features(Bayeux_mctools_geant4 PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
+  target_include_directories(Bayeux_mctools_geant4
+    PUBLIC
+     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include>
+     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+     $<BUILD_INTERFACE:${module_include_dir}>
+     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+     )
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_Geant4_DEFINITIONS)
   foreach(_def ${Geant4_DEFINITIONS})
@@ -131,13 +140,6 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   if(UNIX AND NOT APPLE)
     set_target_properties(Bayeux_mctools_geant4
       PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-      )
-  elseif(APPLE)
-    # Temporary setting - needs testing
-    set_target_properties(Bayeux_mctools_geant4
-      PROPERTIES
-        INSTALL_NAME_DIR "@rpath"
-        LINK_FLAGS "-undefined dynamic_lookup"
       )
   endif()
 

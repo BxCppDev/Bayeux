@@ -76,10 +76,6 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   configure_file(${_hdrin} ${_hdrout} @ONLY)
 endforeach()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/..
-  ${CMAKE_CURRENT_BINARY_DIR}/bx${module_name}
-  )
-
 if(BAYEUX_WITH_IMPLICIT_INIT_FINI)
   list(APPEND ${module_name}_ENDING_MODULE_SOURCES
     bx${module_name}/_init_fini.cc

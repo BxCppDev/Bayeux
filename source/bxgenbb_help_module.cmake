@@ -46,6 +46,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/primary_event.h
   ${module_include_dir}/${module_name}/primary_particle.h
   ${module_include_dir}/${module_name}/single_particle_generator.h
+  ${module_include_dir}/${module_name}/combined_particle_generator.h
   ${module_include_dir}/${module_name}/save_to_file_wrapper.h
   ${module_include_dir}/${module_name}/lorentz_boost_wrapper.h
   ${module_include_dir}/${module_name}/from_file_generator.h
