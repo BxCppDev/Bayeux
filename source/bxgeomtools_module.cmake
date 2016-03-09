@@ -44,6 +44,8 @@ endif()
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/address_set.h
+  ${module_include_dir}/${module_name}/angular_range.h
+  ${module_include_dir}/${module_name}/angular_range.ipp
   ${module_include_dir}/${module_name}/base_hit.h
   ${module_include_dir}/${module_name}/base_hit.ipp
   ${module_include_dir}/${module_name}/bio_guard.h
@@ -213,6 +215,7 @@ configure_file(${module_source_dir}/resource.cc.in
 #   totally clear this is in the right place...
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/base_hit.cc
+  ${module_source_dir}/angular_range.cc
   ${module_source_dir}/blur_spot.cc
   ${module_source_dir}/address_set.cc
   ${module_source_dir}/extruded_box.cc
@@ -350,6 +353,7 @@ set(${module_name}_TEST_ENVIRONMENT "GEOMTOOLS_RESOURCE_DIR=${module_resource_di
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_address_set.cxx
+  ${module_test_dir}/test_angular_range.cxx
   ${module_test_dir}/test_base_hit.cxx
   ${module_test_dir}/test_blur_spot.cxx
   ${module_test_dir}/test_box.cxx
