@@ -172,8 +172,8 @@ namespace geomtools {
   bool right_circular_conical_nappe::has_partial_angle() const
   {
     if (_delta_angle_ == 2 * M_PI) return false;
-    if (_start_angle_ > 0.0) return true;
-    return false;
+    // bug: if (_start_angle_ > 0.0) return true;
+    return true;
   }
 
   bool right_circular_conical_nappe::has_start_angle() const

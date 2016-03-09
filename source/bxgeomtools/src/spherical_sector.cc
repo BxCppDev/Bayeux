@@ -150,8 +150,8 @@ namespace geomtools {
   bool spherical_sector::has_partial_theta() const
   {
     if (_delta_theta_ == M_PI) return false;
-    if (_start_theta_ > 0.0) return true;
-    return false;
+    // bug: if (_start_theta_ > 0.0) return true;
+    return true;
   }
 
   bool spherical_sector::has_start_theta() const
@@ -195,8 +195,8 @@ namespace geomtools {
   bool spherical_sector::has_partial_phi() const
   {
     if (_delta_phi_ == 2 * M_PI) return false;
-    if (_start_phi_ > 0.0) return true;
-    return false;
+    // if (_start_phi_ > 0.0) return true;
+    return true;
   }
 
   bool spherical_sector::has_start_phi() const
