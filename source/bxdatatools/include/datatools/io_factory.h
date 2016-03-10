@@ -33,14 +33,29 @@
 #include <sstream>
 #include <fstream>
 #include <locale>
-#include <typeinfo>
+// #include <typeinfo>
 
 // Third Party:
 // - Boost:
-// 2012-01-09 FM : now use the Boost 1.47 header :
+// 2012-01-09 FM : now use the Boost >=1.47 header :
 //#include <boost/math/nonfinite_num_facets.hpp>
-#include <boost/math/special_functions/nonfinite_num_facets.hpp>
+//#include <boost/math/special_functions/nonfinite_num_facets.hpp>
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wshadow"
+#endif
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include <boost/iostreams/filtering_stream.hpp>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 // Wrap Boost's iostreams/filter/gzip header
 // This header, causes "unused parameter" warnings from its
@@ -51,16 +66,25 @@
 // We only use clang pragmas for now because GCC's are highly version
 // dependent - so need a bit more thought.
 // To be removed when Boost fix their headers...
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif
-#include <boost/iostreams/filter/gzip.hpp>
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
+// #ifdef __clang__
+// #pragma clang diagnostic push
+// #pragma clang diagnostic ignored "-Wunused-parameter"
+// #pragma clang diagnostic ignored "-Wshadow"
+// #endif
+// #ifdef __GNUC__
+// #pragma GCC diagnostic push
+// // #pragma GCC diagnostic ignored "-Wunused-parameter" // Bug in GCC
+// #pragma GCC diagnostic ignored "-Wshadow"
+// #endif
+// #include <boost/iostreams/filter/gzip.hpp>
+// #ifdef __GNUC__
+// #pragma GCC diagnostic pop
+// #endif
+// #ifdef __clang__
+// #pragma clang diagnostic pop
+// #endif
 
-#include <boost/iostreams/filter/bzip2.hpp>
+// #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/serialization/string.hpp>
 
 // Wrap Boost's tokenizer header
@@ -72,14 +96,14 @@
 // We only use clang pragmas for now because GCC's are highly version
 // dependent - so need a bit more thought.
 // To be removed when Boost fix their headers...
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif
-#include <boost/tokenizer.hpp>
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
+// #ifdef __clang__
+// #pragma clang diagnostic push
+// #pragma clang diagnostic ignored "-Wunused-parameter"
+// #endif
+// #include <boost/tokenizer.hpp>
+// #ifdef __clang__
+// #pragma clang diagnostic pop
+// #endif
 
 // Datatools
 #include <datatools/archives_list.h>
@@ -150,18 +174,18 @@ namespace datatools {
     };
 
     static int guess_mode_from_filename(const std::string& a_filename,
-                                        int& mode);
+                                        int& a_mode);
 
     void set_logging_priority(datatools::logger::priority);
 
     datatools::logger::priority get_logging_priority() const;
 
     /// Constructor
-    io_factory(int mode = io_factory::MODE_DEFAULT);
+    io_factory(int a_mode = io_factory::MODE_DEFAULT);
 
     /// Constructor
     io_factory(const std::string & a_stream_name,
-               int mode = io_factory::MODE_DEFAULT);
+               int a_mode = io_factory::MODE_DEFAULT);
 
     /// Destructor
     virtual ~io_factory();
@@ -377,7 +401,9 @@ namespace datatools {
 
   private:
 
-    int mode_;
+
+    datatools::logger::priority _logging_priority; ///< Logging priority threshold
+    unsigned int mode_; ///< Mode bitset of the I/O factory
 
     std::istream *in_;
     std::ostream *out_;
@@ -403,9 +429,7 @@ namespace datatools {
     eos::portable_iarchive *ibar_ptr_;
     eos::portable_oarchive *obar_ptr_;
 
-    datatools::logger::priority _logging_priority; /// Logging priority threshold
-
-  }; // end of class io_factory ?
+  }; // end of class io_factory
 
 
   //----------------------------------------------------------------------
@@ -679,16 +703,18 @@ namespace datatools {
    */
   class data_writer {
   public:
-    // ctor
+    /// Default constructor
     data_writer();
 
+    /// Constructor
     data_writer(const std::string& filename, int mode);
 
+    /// Constructor
     data_writer(const std::string& filename,
                 bool use_multiple_archives = using_single_archive,
                 bool append_mode = no_append_mode);
 
-    // dtor
+    /// Destructor
     virtual ~data_writer();
 
     bool is_initialized() const;

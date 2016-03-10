@@ -6,13 +6,63 @@
 // Third Party:
 // - Boost:
 #include <boost/archive/codecvt_null.hpp>
+// 2012-01-09 FM : now use the Boost >=1.47 header :
+//#include <boost/math/nonfinite_num_facets.hpp>
+#include <boost/math/special_functions/nonfinite_num_facets.hpp>
+
+// Wrap Boost's tokenizer header
+// This header, causes "unused parameter" warnings from its
+// static void assign(Iterator b, Iterator e, Token &t)
+// function.
+// This should be an innocuous warning, so remove diagnostic for this
+// header only.
+// We only use clang pragmas for now because GCC's are highly version
+// dependent - so need a bit more thought.
+// To be removed when Boost fix their headers...
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif
+#include <boost/tokenizer.hpp>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
+// Wrap Boost's iostreams/filter/gzip header
+// This header, causes "unused parameter" warnings from its
+// static void write_long(long n, Sink& next, boost::mpl::false_)
+// function.
+// This should be an innocuous warning, so remove diagnostic for this
+// header only.
+// We only use clang pragmas for now because GCC's are highly version
+// dependent - so need a bit more thought.
+// To be removed when Boost fix their headers...
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wshadow"
+#endif
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wunused-parameter" // Bug in GCC
+#pragma GCC diagnostic ignored "-Wshadow"
+#endif
+#include <boost/iostreams/filter/gzip.hpp>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
+#include <boost/iostreams/filter/bzip2.hpp>
 
 
 #if defined (__clang__)
 //#pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif
-#if defined (__gnuc__)
+#if defined (__GNUC__)
 //#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #endif

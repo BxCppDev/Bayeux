@@ -2,13 +2,6 @@
 #ifndef DATATOOLS_DETAIL_REFLECTION_VERSION_H
 #define DATATOOLS_DETAIL_REFLECTION_VERSION_H
 
-// MS compatible compilers support #pragma once
-/*
-  #if defined(_MSC_VER) && (_MSC_VER >= 1020)
-  # pragma once
-  #endif
-*/
-
 /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
 // reflection_version_h
 // This code is derived from Boost/Serialization's version.hpp:
