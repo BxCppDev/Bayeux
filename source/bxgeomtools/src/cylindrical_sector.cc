@@ -418,7 +418,6 @@ namespace geomtools {
       delta_angle = get_delta_angle();
     }
     unsigned int nsamples_angle = angular_sampling_from_options(base_options);
-    double dangle = delta_angle / nsamples_angle;
 
     // Draw parallel arcs:
     {
