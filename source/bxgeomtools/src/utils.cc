@@ -54,7 +54,8 @@ namespace geomtools {
   }
 
   bool angle_is_in(double angle_,
-                   double start_angle_, double delta_angle_,
+                   double start_angle_,
+                   double delta_angle_,
                    double angular_tolerance_,
                    bool bounds_excluded_)
   {
