@@ -25,6 +25,7 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/angular_range.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -69,8 +70,8 @@ namespace geomtools {
     void set(double rx_, double ry_, double rz_,
              double zm_, double zp_);
 
-    /// Set angles
-    void set_angle(double start_angle_, double delta_angle_);
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
 
     /// Check if the sector has partial angle
     bool has_partial_angle() const;
@@ -113,6 +114,9 @@ namespace geomtools {
 
     /// Check the validity of the ellipsoid sector
     bool is_valid() const;
+
+    /// Initialize from properties and a dictionary of 3D-objects
+    void initialize(const datatools::properties &, const handle_dict_type * = 0);
 
     /// Reset the ellipsoid sector
     void reset();
@@ -168,10 +172,12 @@ namespace geomtools {
     double _x_radius_;     //!< x radius
     double _y_radius_;     //!< y radius
     double _z_radius_;     //!< z radius
-    double _start_angle_;  //!< Start angle
-    double _delta_angle_;  //!< Delta angle
+    angular_range _angle_domain_; //!< Angular spread of the ellipsoid sector (azimuthal)
     double _bottom_z_cut_; //!< lower cut plane level / z
     double _top_z_cut_;    //!< upper cut plane level / z
+
+    // Registration interface :
+    GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(ellipsoid_sector)
 
   };
 

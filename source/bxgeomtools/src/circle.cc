@@ -290,8 +290,13 @@ namespace geomtools {
     if ((position_ - proj).mag() > half_tolerance) {
       return false;
     }
-    double angular_tolerance = 0.0;
-    return _angle_domain_.contains(theta, angular_tolerance);
+    if (_angle_domain_.is_partial()) {
+      double angular_tolerance = 0.0;
+      if (! _angle_domain_.contains(theta, angular_tolerance)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   vector_3d circle::get_direction_on_curve(const vector_3d & position_) const

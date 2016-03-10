@@ -64,34 +64,40 @@ namespace geomtools {
       set_z(z);
       set_radius(radius);
 
-      double aunit = CLHEP::degree;
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        aunit = datatools::units::get_angle_unit_from(aunit_str);
-      }
-
-      double start_angle = 0.0;
-      double delta_angle = 2 * M_PI * CLHEP::radian;
-      bool not_full_angle = false;
-      if (config_.has_key ("start_angle")) {
-        start_angle = config_.fetch_real ("start_angle");
-        if (! config_.has_explicit_unit ("start_angle")) {
-          start_angle *= aunit;
+      datatools::properties angle_config;
+      config_.export_and_rename_starting_with(angle_config, "angle.", "");
+      if (angle_config.size()) {
+        _angle_domain_.initialize(angle_config);
+      } else {
+        // deprecated ;
+        double aunit = CLHEP::degree;
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          aunit = datatools::units::get_angle_unit_from(aunit_str);
         }
-        not_full_angle = true;
-      }
-      if (config_.has_key ("delta_angle")) {
-        delta_angle = config_.fetch_real ("delta_angle");
-        if (! config_.has_explicit_unit ("delta_angle")) {
-          delta_angle *= aunit;
-        }
-        not_full_angle = true;
-      }
-      if (not_full_angle) {
-        set_start_angle(start_angle);
-        set_delta_angle(delta_angle);
-      }
 
+        double start_angle = 0.0;
+        double delta_angle = 2 * M_PI * CLHEP::radian;
+        bool not_full_angle = false;
+        if (config_.has_key ("start_angle")) {
+          start_angle = config_.fetch_real ("start_angle");
+          if (! config_.has_explicit_unit ("start_angle")) {
+            start_angle *= aunit;
+          }
+          not_full_angle = true;
+        }
+        if (config_.has_key ("delta_angle")) {
+          delta_angle = config_.fetch_real ("delta_angle");
+          if (! config_.has_explicit_unit ("delta_angle")) {
+            delta_angle *= aunit;
+          }
+          not_full_angle = true;
+        }
+        if (not_full_angle) {
+          set_start_angle(start_angle);
+          set_delta_angle(delta_angle);
+        }
+      }
     }
 
     return;
@@ -108,8 +114,8 @@ namespace geomtools {
   {
     datatools::invalidate(_radius_);
     datatools::invalidate(_z_);
-    datatools::invalidate(_start_angle_);
-    datatools::invalidate(_delta_angle_);
+    _angle_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _angle_domain_.reset_partial_angles();
     return;
   }
 
@@ -137,50 +143,46 @@ namespace geomtools {
     return _z_;
   }
 
+  const angular_range & cylindrical_sector::get_angle_domain() const
+  {
+    return _angle_domain_;
+  }
+
   bool cylindrical_sector::has_partial_angle() const
   {
-    if (has_start_angle() && has_delta_angle()) {
-      return true;
-    }
-    return false;
+    return _angle_domain_.is_partial();
   }
 
   bool cylindrical_sector::has_start_angle() const
   {
-    return datatools::is_valid(_start_angle_);
+    return _angle_domain_.has_start_angle();
   }
 
   void cylindrical_sector::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ >= M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start angle value !");
-    _start_angle_ = new_value_;
+    _angle_domain_.set_start_angle(new_value_);
     return;
   }
 
   double cylindrical_sector::get_start_angle() const
   {
-    return _start_angle_;
+    return _angle_domain_.get_start_angle();
   }
 
   bool cylindrical_sector::has_delta_angle() const
   {
-    return datatools::is_valid(_delta_angle_);
+    return _angle_domain_.has_delta_angle();
   }
 
   void cylindrical_sector::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta angle value !");
-    _delta_angle_ = new_value_;
+    _angle_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double cylindrical_sector::get_delta_angle() const
   {
-    return _delta_angle_;
+    return _angle_domain_.get_delta_angle();
   }
 
   bool cylindrical_sector::is_valid() const
@@ -191,12 +193,7 @@ namespace geomtools {
     if (!datatools::is_valid(_z_)) {
       return false;
     }
-    if (has_start_angle()) {
-      if (!datatools::is_valid(_delta_angle_)) {
-        return false;
-      }
-    }
-    return true;
+    return _angle_domain_.is_valid();
   }
 
   cylindrical_sector::cylindrical_sector()
@@ -205,10 +202,11 @@ namespace geomtools {
     return;
   }
 
-  cylindrical_sector::cylindrical_sector(double radius_, double /*z_*/)
+  cylindrical_sector::cylindrical_sector(double radius_, double z_)
   {
     _set_defaults();
     set_radius(radius_);
+    set_z(z_);
     return;
   }
 
@@ -220,8 +218,7 @@ namespace geomtools {
     _set_defaults();
     set_radius(radius_);
     set_z(z_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
@@ -236,11 +233,7 @@ namespace geomtools {
     double s;
     datatools::invalidate(s);
     if (is_valid()) {
-      double delta_angle = 2 * M_PI;
-      if (has_start_angle()) {
-        delta_angle = _delta_angle_;
-      }
-      s = _radius_ * (delta_angle) * _z_;
+      s = _radius_ * _angle_domain_.get_angle_spread() * _z_;
     }
     return s;
   }
@@ -258,19 +251,15 @@ namespace geomtools {
     if (std::abs(position_.z()) > 0.5 * _z_ + 0.5 * tolerance) {
       return false;
     }
-    double phi = position_.phi();
-    double start_phi = 0.0;
-    double delta_phi = 2 * M_PI;
-    if (has_start_angle()) {
-      start_phi = _start_angle_;
-      delta_phi = _delta_angle_;
-    }
-    if (angle_is_in(phi,
-                    start_phi,
-                    delta_phi,
-                    angular_tolerance,
-                    true)) {
-      return true;
+    if (has_partial_angle()) {
+      double phi =  position_.phi();
+      if (!::geomtools::angle_is_in(phi,
+                                    _angle_domain_.get_first_angle(),
+                                    _angle_domain_.get_angle_spread(),
+                                    angular_tolerance,
+                                    true)) {
+        return false;
+      }
     }
     return false;
   }
@@ -397,24 +386,13 @@ namespace geomtools {
     }
     out_ << std::endl;
 
-
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start angle : ";
-    if (has_start_angle()) {
-      out_ << _start_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Angle domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _angle_domain_.tree_dump(out_, "", indent2.str());
     }
-    out_ << std::endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Delta angle : ";
-    if (has_delta_angle()) {
-      out_ << _delta_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
 
     return;
   }
@@ -436,8 +414,8 @@ namespace geomtools {
     double start_angle = 0.0;
     double delta_angle = 2.0 * M_PI;
     if (has_partial_angle()) {
-      start_angle = _start_angle_;
-      delta_angle = _delta_angle_;
+      start_angle = get_start_angle();
+      delta_angle = get_delta_angle();
     }
     unsigned int nsamples_angle = angular_sampling_from_options(base_options);
     double dangle = delta_angle / nsamples_angle;
@@ -477,12 +455,22 @@ namespace geomtools {
         max_nangle++;
       }
       if (devel) std::cerr << "DEVEL: cylindrical_sector::generate_wires_self: max_nangle=" << max_nangle << std::endl;
-      for (uint32_t iangle = 0; iangle < max_nangle ; ++iangle) {
+      for (angular_range::iterator iter(_angle_domain_, nsamples_angle);
+           !iter;
+           ++iter) {
         if (has_partial_angle()) {
+          if (no_start_angle_edge && iter.is_at_first()) continue;
+          if (no_stop_angle_edge && iter.is_at_last()) continue;
+        }
+        /*
+          for (uint32_t iangle = 0; iangle < max_nangle ; ++iangle) {
+          if (has_partial_angle()) {
           if ((iangle == 0) && no_start_angle_edge) continue;
           if ((iangle == (max_nangle - 1)) && no_stop_angle_edge) continue;
-        }
-        double angle = start_angle + iangle * dangle;
+          }
+          double angle = start_angle + iangle * dangle;
+        */
+        double angle = iter.get_current_angle();
         double x = get_radius() * std::cos(angle);
         double y = get_radius() * std::sin(angle);
         if (devel) std::cerr << "DEVEL: cylindrical_sector::generate_wires_self: x=" << x << std::endl;

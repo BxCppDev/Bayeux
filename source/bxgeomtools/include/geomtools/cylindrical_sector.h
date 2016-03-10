@@ -1,7 +1,7 @@
 /// \file geomtools/cylindrical_sector.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2015-02-26
- * Last modified: 2015-02-26
+ * Last modified: 2016-03-10
  *
  * License:
  *
@@ -16,10 +16,11 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
-  /// \brief A sperical sector (2D shape)
+  /// \brief A spherical sector (2D shape)
   class cylindrical_sector : public i_shape_2d
   {
   public:
@@ -41,6 +42,9 @@ namespace geomtools {
 
     /// Return the height
     double get_z() const;
+
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
 
     /// Check if the sector has partial angle
     bool has_partial_angle() const;
@@ -142,10 +146,9 @@ namespace geomtools {
 
   private:
 
-    double _radius_;      //!< The radius
-    double _z_;           //!< The height
-    double _start_angle_; //!< The starting angle
-    double _delta_angle_; //!< The delta angle
+    double        _radius_;       //!< The radius
+    double        _z_;            //!< The height
+    angular_range _angle_domain_; //!< Angular spread of the cylindrical sector
 
   };
 

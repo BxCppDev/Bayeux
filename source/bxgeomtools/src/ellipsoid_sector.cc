@@ -20,9 +20,11 @@
 // This project:
 #include <geomtools/ellipse.h>
 #include <geomtools/utils.h>
-// #include <geomtools/line_3d.h>
 
 namespace geomtools {
+
+  // Registration :
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(ellipsoid_sector, "geomtools::ellipsoid_sector")
 
   // static
   const std::string & ellipsoid_sector::ellipsoid_sector_label()
@@ -46,8 +48,8 @@ namespace geomtools {
     datatools::invalidate(_z_radius_);
     datatools::invalidate(_bottom_z_cut_);
     datatools::invalidate(_top_z_cut_);
-    datatools::invalidate(_start_angle_);
-    datatools::invalidate(_delta_angle_);
+    _angle_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _angle_domain_.reset_partial_angles();
     return;
   }
 
@@ -111,50 +113,46 @@ namespace geomtools {
     return _top_z_cut_;
   }
 
+  const angular_range &ellipsoid_sector::get_angle_domain() const
+  {
+    return _angle_domain_;
+  }
+
   bool ellipsoid_sector::has_partial_angle() const
   {
-    if (has_start_angle() && has_delta_angle()) {
-      return true;
-    }
-    return false;
+    return _angle_domain_.is_partial();
   }
 
   bool ellipsoid_sector::has_start_angle() const
   {
-    return datatools::is_valid(_start_angle_);
+    return _angle_domain_.has_start_angle();
   }
 
   void ellipsoid_sector::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start angle value !");
-    _start_angle_ = new_value_;
+    _angle_domain_.set_start_angle(new_value_);
     return;
   }
 
   double ellipsoid_sector::get_start_angle() const
   {
-    return _start_angle_;
+    return _angle_domain_.get_start_angle();
   }
 
   bool ellipsoid_sector::has_delta_angle() const
   {
-    return datatools::is_valid(_delta_angle_);
+    return _angle_domain_.has_delta_angle();
   }
 
   void ellipsoid_sector::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta angle value !");
-    _delta_angle_ = new_value_;
+    _angle_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double ellipsoid_sector::get_delta_angle() const
   {
-    return _delta_angle_;
+    return _angle_domain_.get_delta_angle();
   }
 
   bool ellipsoid_sector::is_valid() const
@@ -168,12 +166,7 @@ namespace geomtools {
     if (!datatools::is_valid(_z_radius_)) {
       return false;
     }
-    if (has_start_angle()) {
-      if (!has_delta_angle()) {
-        return false;
-      }
-    }
-    return true;
+    return _angle_domain_.is_valid();
   }
 
   ellipsoid_sector::ellipsoid_sector()
@@ -220,14 +213,72 @@ namespace geomtools {
     set_z_radius(z_radius_);
     set_bottom_z_cut(bottom_z_cut_);
     set_top_z_cut(top_z_cut_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
 
   ellipsoid_sector::~ellipsoid_sector()
   {
+    return;
+  }
+
+  void ellipsoid_sector::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  {
+    if (!is_valid()) {
+      this->i_object_3d::_initialize(config_, objects_);
+
+      double lunit = CLHEP::mm;
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        lunit = datatools::units::get_length_unit_from(lunit_str);
+      }
+
+      DT_THROW_IF(! config_.has_key("x_radius"), std::logic_error, "Missing ellipsoid sector 'x_radius' property !");
+      double x_radius = config_.fetch_real("x_radius");
+      if (! config_.has_explicit_unit("x_radius")) {
+        x_radius *= lunit;
+      }
+      set_x_radius(x_radius);
+
+      DT_THROW_IF(! config_.has_key("y_radius"), std::logic_error, "Missing ellipsoid sector 'y_radius' property !");
+      double y_radius = config_.fetch_real("y_radius");
+      if (! config_.has_explicit_unit("y_radius")) {
+        y_radius *= lunit;
+      }
+      set_y_radius(y_radius);
+
+      DT_THROW_IF(! config_.has_key("z_radius"), std::logic_error, "Missing ellipsoid sector 'z_radius' property !");
+      double z_radius = config_.fetch_real("z_radius");
+      if (! config_.has_explicit_unit("z_radius")) {
+        z_radius *= lunit;
+      }
+      set_z_radius(z_radius);
+
+      datatools::properties angle_config;
+      config_.export_and_rename_starting_with(angle_config, "angle.", "");
+      if (angle_config.size()) {
+        _angle_domain_.initialize(angle_config);
+      }
+
+      if (config_.has_key("bottom_z_cut")) {
+        double bottom_z_cut = config_.fetch_real("bottom_z_cut");
+        if (! config_.has_explicit_unit("bottom_z_cut")) {
+          bottom_z_cut *= lunit;
+        }
+        set_bottom_z_cut(bottom_z_cut);
+      }
+
+      if (config_.has_key("top_z_cut")) {
+        double top_z_cut = config_.fetch_real("top_z_cut");
+        if (! config_.has_explicit_unit("top_z_cut")) {
+          top_z_cut *= lunit;
+        }
+        set_top_z_cut(top_z_cut);
+      }
+
+    }
+
     return;
   }
 
@@ -242,6 +293,7 @@ namespace geomtools {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid ellipsoid sector!");
     double s;
     datatools::invalidate(s);
+    // Not implemented yet !
     return s;
   }
 
@@ -253,9 +305,6 @@ namespace geomtools {
     double angular_tolerance = get_angular_tolerance();
     double half_tolerance = 0.5 * tolerance;
     double z = position_.z();
-    // std::cerr << "DEVEL: ellipsoid_sector::is_on_surface: z = " << z << std::endl;
-    // std::cerr << "DEVEL: ellipsoid_sector::is_on_surface: _top_z_cut_ = " << _top_z_cut_ << std::endl;
-    // std::cerr << "DEVEL: ellipsoid_sector::is_on_surface: _z_radius_  = " << _z_radius_ << std::endl;
     if (datatools::is_valid(_top_z_cut_)) {
       if (z > _top_z_cut_ + half_tolerance) {
         return false;
@@ -275,12 +324,12 @@ namespace geomtools {
       }
     }
     if (has_partial_angle()) {
-      double angle = position_.phi();
-      if (!angle_is_in(angle,
-                       _start_angle_,
-                       _delta_angle_,
-                       angular_tolerance,
-                       true)) {
+      double phi = position_.phi();
+      if (!::geomtools::angle_is_in(phi,
+                                    _angle_domain_.get_first_angle(),
+                                    _angle_domain_.get_angle_spread(),
+                                    angular_tolerance,
+                                    true)) {
         return false;
       }
     }
@@ -297,8 +346,8 @@ namespace geomtools {
         double b2 = b * term;
         ellipse ell(a2, b2);
         if (has_partial_angle()) {
-          ell.set_start_angle(_start_angle_);
-          ell.set_delta_angle(_delta_angle_);
+          ell.set_start_angle(get_start_angle());
+          ell.set_delta_angle(get_delta_angle());
         }
         vector_3d pos(x, y, 0.0);
         if (ell.is_on_curve(pos, tolerance)) {
@@ -461,23 +510,13 @@ namespace geomtools {
     }
     out_ << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start angle : ";
-    if (has_start_angle()) {
-      out_ << _start_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Angle domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _angle_domain_.tree_dump(out_, "", indent2.str());
     }
-    out_ << std::endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Delta angle : ";
-    if (has_delta_angle()) {
-      out_ << _delta_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
 
     return;
   }
@@ -499,8 +538,8 @@ namespace geomtools {
     double start_angle = 0.0;
     double delta_angle = 2.0 * M_PI;
     if (has_partial_angle()) {
-      start_angle = _start_angle_;
-      delta_angle = _delta_angle_;
+      start_angle = get_start_angle();
+      delta_angle = get_delta_angle();
     }
     unsigned int nsamples_angle = angular_sampling_from_options(base_options);
     double dangle = delta_angle / nsamples_angle;

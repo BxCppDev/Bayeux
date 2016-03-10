@@ -47,8 +47,8 @@ namespace geomtools {
   {
     datatools::invalidate(_x_radius_);
     datatools::invalidate(_y_radius_);
-    datatools::invalidate(_start_angle_);
-    datatools::invalidate(_delta_angle_);
+    _angle_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _angle_domain_.reset_partial_angles();
     return;
   }
 
@@ -96,53 +96,53 @@ namespace geomtools {
     return;
   }
 
+  const angular_range & ellipse::get_angle_domain() const
+  {
+    return _angle_domain_;
+  }
+
   bool ellipse::has_partial_angle() const
   {
-    return has_start_angle() && has_delta_angle();
+    return _angle_domain_.is_partial();
   }
 
   bool ellipse::has_start_angle() const
   {
-    return datatools::is_valid(_start_angle_);
+    return _angle_domain_.has_start_angle();
   }
 
   void ellipse::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ >= 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start angle value !");
-    _start_angle_ = new_value_;
+    _angle_domain_.set_start_angle(new_value_);
     return;
   }
 
   double ellipse::get_start_angle() const
   {
-    return _start_angle_;
+    return _angle_domain_.get_start_angle();
   }
 
   bool ellipse::has_delta_angle() const
   {
-    return datatools::is_valid(_delta_angle_);
+    return _angle_domain_.has_delta_angle();
   }
 
   void ellipse::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta angle value !");
-    _delta_angle_ = new_value_;
+    _angle_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double ellipse::get_delta_angle() const
   {
-    return _delta_angle_;
+    return _angle_domain_.get_delta_angle();
   }
 
   double ellipse::get_circumference() const
   {
     double c;
     datatools::invalidate(c);
+    // Not implemented yet:
     return c;
   }
 
@@ -154,12 +154,7 @@ namespace geomtools {
     if (!datatools::is_valid(_y_radius_)) {
       return false;
     }
-    if (has_start_angle()) {
-      if (!datatools::is_valid(_delta_angle_)) {
-        return false;
-      }
-    }
-    return true;
+    return _angle_domain_.is_valid();
   }
 
   ellipse::ellipse()
@@ -181,8 +176,7 @@ namespace geomtools {
     _set_defaults();
     set_x_radius(xr_);
     set_y_radius(yr_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
@@ -216,34 +210,40 @@ namespace geomtools {
 
       set_radii(x_radius, y_radius);
 
-      double aunit = CLHEP::degree;
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        aunit = datatools::units::get_angle_unit_from(aunit_str);
-      }
-
-      double start_angle = 0.0;
-      double delta_angle = 2 * M_PI * CLHEP::radian;
-      bool not_full_angle = false;
-      if (config_.has_key ("start_angle")) {
-        start_angle = config_.fetch_real ("start_angle");
-        if (! config_.has_explicit_unit ("start_angle")) {
-          start_angle *= aunit;
+      datatools::properties angle_config;
+      config_.export_and_rename_starting_with(angle_config, "angle.", "");
+      if (angle_config.size()) {
+        _angle_domain_.initialize(angle_config);
+      } else {
+        // deprecated ;
+        double aunit = CLHEP::degree;
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          aunit = datatools::units::get_angle_unit_from(aunit_str);
         }
-        not_full_angle = true;
-      }
-      if (config_.has_key ("delta_angle")) {
-        delta_angle = config_.fetch_real ("delta_angle");
-        if (! config_.has_explicit_unit ("delta_angle")) {
-          delta_angle *= aunit;
-        }
-        not_full_angle = true;
-      }
-      if (not_full_angle) {
-        set_start_angle(start_angle);
-        set_delta_angle(delta_angle);
-      }
 
+        double start_angle = 0.0;
+        double delta_angle = 2 * M_PI * CLHEP::radian;
+        bool not_full_angle = false;
+        if (config_.has_key ("start_angle")) {
+          start_angle = config_.fetch_real ("start_angle");
+          if (! config_.has_explicit_unit ("start_angle")) {
+            start_angle *= aunit;
+          }
+          not_full_angle = true;
+        }
+        if (config_.has_key ("delta_angle")) {
+          delta_angle = config_.fetch_real ("delta_angle");
+          if (! config_.has_explicit_unit ("delta_angle")) {
+            delta_angle *= aunit;
+          }
+          not_full_angle = true;
+        }
+        if (not_full_angle) {
+          set_start_angle(start_angle);
+          set_delta_angle(delta_angle);
+        }
+      }
     }
 
     return;
@@ -275,7 +275,7 @@ namespace geomtools {
       return;
     }
     if (has_partial_angle()) {
-      if (!angle_is_in(theta_, _start_angle_, _delta_angle_)) {
+      if (!_angle_domain_.contains(theta_, 0.0)) {
         return;
       }
     }
@@ -293,36 +293,25 @@ namespace geomtools {
   }
 
   void ellipse::tree_dump(std::ostream & out_,
-                         const std::string & title_,
-                         const std::string & indent_,
-                         bool inherit_) const
+                          const std::string & title_,
+                          const std::string & indent_,
+                          bool inherit_) const
   {
     i_object_3d::tree_dump(out_, title_, indent_, true);
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
-          << "X radius : " << get_x_radius() / CLHEP::mm << " mm" << std::endl;
+         << "X radius : " << get_x_radius() / CLHEP::mm << " mm" << std::endl;
 
     out_ << indent_ << datatools::i_tree_dumpable::tag
-          << "Y radius : " << get_y_radius() / CLHEP::mm << " mm" << std::endl;
+         << "Y radius : " << get_y_radius() / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start angle : ";
-    if (has_start_angle()) {
-      out_ << get_start_angle() / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Angle domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _angle_domain_.tree_dump(out_, "", indent2.str());
     }
-    out_ << std::endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Delta angle : ";
-    if (has_delta_angle()) {
-      out_ << get_delta_angle() / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
-
     return;
   }
 
@@ -348,7 +337,7 @@ namespace geomtools {
     double ym = dd->ym;
     *f_ = gsl_pow_2(xm  - xh) + gsl_pow_2(ym  - yh);
     *df_ =
-        2 * dd->a * xm * st
+      2 * dd->a * xm * st
       + 2 * dd->b * ym * ct
       + 2 * (dd->b * dd->b - dd->a * dd->a) * ct * st;
     return;
@@ -379,16 +368,16 @@ namespace geomtools {
   }
 
   /*
-  bool ellipse::compute_orthogonal_projection(const vector_3d & a_position,
-                                              vector_3d & a_projection,
-                                              double a_tolerance) const
-  {
+    bool ellipse::compute_orthogonal_projection(const vector_3d & a_position,
+    vector_3d & a_projection,
+    double a_tolerance) const
+    {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid ellipse!");
     bool debug = false;
     debug = true;
     if (debug) {
-      std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                << "Entering...\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Entering...\n";
     }
     double tolerance = compute_tolerance(a_tolerance);
     double half_tolerance = 0.5 * tolerance;
@@ -397,213 +386,213 @@ namespace geomtools {
     double ym = a_position.y();
     double theta = std::atan2(ym, xm);
     if (theta < 0.0) {
-      theta += 2 * M_PI;
+    theta += 2 * M_PI;
     }
     double zm = a_position.z();
     double tmin;
     double tmax;
     if (xm >= 0.0 && ym >= 0.0) {
-      if (debug) {
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "First quadrant.\n";
-      }
-      tmin = 0.0;
-      tmax = 0.5 * M_PI;
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "First quadrant.\n";
+    }
+    tmin = 0.0;
+    tmax = 0.5 * M_PI;
     } else if (xm < 0.0 && ym >= 0.0) {
-      if (debug) {
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "Second quadrant.\n";
-      }
-      tmin = 0.5 * M_PI;
-      tmax = M_PI;
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Second quadrant.\n";
+    }
+    tmin = 0.5 * M_PI;
+    tmax = M_PI;
     } else if (xm < 0.0 && ym < 0.0) {
-      if (debug) {
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "Third quadrant.\n";
-      }
-      tmin = M_PI;
-      tmax = 1.5 * M_PI;
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Third quadrant.\n";
+    }
+    tmin = M_PI;
+    tmax = 1.5 * M_PI;
     } else if (xm >= 0.0 && ym < 0.0) {
-      if (debug) {
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "Fourth quadrant.\n";
-      }
-      tmin = 1.5 * M_PI;
-      tmax = 2.0 * M_PI;
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Fourth quadrant.\n";
+    }
+    tmin = 1.5 * M_PI;
+    tmax = 2.0 * M_PI;
     }
     tmin -= 1. * CLHEP::degree;
     tmax += 1. * CLHEP::degree;
     {
-      // This problem implies in principle to solve a quartic equation.
-      // A numerical minimization method is used for now:
-      struct distance_data_type params;
-      params.a = _x_radius_;
-      params.b = _y_radius_;
-      params.xm = xm;
-      params.ym = ym;
-      // gsl_function_fdf FDF;
-      // FDF.fdf = &ellipse::squared_distance_to_point_with_derivative;
-      // FDF.params = &params;
-      gsl_function F;
-      F.function = &ellipse::squared_distance_to_point;
-      F.params = &params;
-      double epsabs = std::min(half_tolerance / _x_radius_, half_tolerance /_y_radius_);
-      epsabs /= 50;
-      double epsrel = 0.0;
-      double t_guess = theta; // 0.5 * (tmin + tmax);
-      if (debug) {
-        std::cerr.precision(15);
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "tmin = " << tmin << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "tmax = " << tmax << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "t_guess = " << t_guess << "\n";
-      }
-      const gsl_min_fminimizer_type * T = gsl_min_fminimizer_goldensection;
-      T = gsl_min_fminimizer_brent;
-      gsl_min_fminimizer * s = gsl_min_fminimizer_alloc(T);
-      double t_minimum  = t_guess;
-      double t_lower    = tmin;
-      double t_upper    = tmax;
-      double d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
-      double d2_lower   = this->compute_squared_distance_to_point(t_lower, xm, ym);
-      double d2_upper   = this->compute_squared_distance_to_point(t_upper, xm, ym);
-      if (debug) {
-       std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                 << "Guess : \n";
-       std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                 << "    D2(t_lower)   = " << d2_lower << "\n";
-       std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                 << "    D2(t_upper)   = " << d2_upper << "\n";
-       std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                 << "    D2(t_minimum) = " << d2_minimum << "\n";
-      }
-      if (d2_minimum >= d2_lower || d2_minimum >= d2_upper) {
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "    Find a better guess range...\n";
-        if (d2_minimum >= d2_lower) {
-          while (d2_minimum >= d2_lower) {
-            t_upper = t_minimum;
-            d2_upper = d2_minimum;
-            t_minimum = 0.5 * (t_minimum + t_lower);
-            d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
-          }
-        } else if (d2_minimum >= d2_upper) {
-          while (d2_minimum >= d2_upper) {
-            t_lower = t_minimum;
-            d2_lower = d2_minimum;
-            t_minimum = 0.5 * (t_minimum + t_upper);
-            d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
-          }
-        }
-                  // {
-          //   if ((d2_t0 < d2_lower) && (d2_t0 < d2_upper)) {
-          //     t_minimum = t_0;
-          //     d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
-          //   } else {
-          //     DT_THROW(std::logic_error, "Cannot accept the guess!");
-          //   }
-          // }
+    // This problem implies in principle to solve a quartic equation.
+    // A numerical minimization method is used for now:
+    struct distance_data_type params;
+    params.a = _x_radius_;
+    params.b = _y_radius_;
+    params.xm = xm;
+    params.ym = ym;
+    // gsl_function_fdf FDF;
+    // FDF.fdf = &ellipse::squared_distance_to_point_with_derivative;
+    // FDF.params = &params;
+    gsl_function F;
+    F.function = &ellipse::squared_distance_to_point;
+    F.params = &params;
+    double epsabs = std::min(half_tolerance / _x_radius_, half_tolerance /_y_radius_);
+    epsabs /= 50;
+    double epsrel = 0.0;
+    double t_guess = theta; // 0.5 * (tmin + tmax);
+    if (debug) {
+    std::cerr.precision(15);
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "tmin = " << tmin << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "tmax = " << tmax << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "t_guess = " << t_guess << "\n";
+    }
+    const gsl_min_fminimizer_type * T = gsl_min_fminimizer_goldensection;
+    T = gsl_min_fminimizer_brent;
+    gsl_min_fminimizer * s = gsl_min_fminimizer_alloc(T);
+    double t_minimum  = t_guess;
+    double t_lower    = tmin;
+    double t_upper    = tmax;
+    double d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
+    double d2_lower   = this->compute_squared_distance_to_point(t_lower, xm, ym);
+    double d2_upper   = this->compute_squared_distance_to_point(t_upper, xm, ym);
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Guess : \n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "    D2(t_lower)   = " << d2_lower << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "    D2(t_upper)   = " << d2_upper << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "    D2(t_minimum) = " << d2_minimum << "\n";
+    }
+    if (d2_minimum >= d2_lower || d2_minimum >= d2_upper) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "    Find a better guess range...\n";
+    if (d2_minimum >= d2_lower) {
+    while (d2_minimum >= d2_lower) {
+    t_upper = t_minimum;
+    d2_upper = d2_minimum;
+    t_minimum = 0.5 * (t_minimum + t_lower);
+    d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
+    }
+    } else if (d2_minimum >= d2_upper) {
+    while (d2_minimum >= d2_upper) {
+    t_lower = t_minimum;
+    d2_lower = d2_minimum;
+    t_minimum = 0.5 * (t_minimum + t_upper);
+    d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
+    }
+    }
+    // {
+    //   if ((d2_t0 < d2_lower) && (d2_t0 < d2_upper)) {
+    //     t_minimum = t_0;
+    //     d2_minimum = this->compute_squared_distance_to_point(t_minimum, xm, ym);
+    //   } else {
+    //     DT_THROW(std::logic_error, "Cannot accept the guess!");
+    //   }
+    // }
 
-      }
-      t_lower -= 1.0 * CLHEP::degree;
-      t_upper += 1.0 * CLHEP::degree;
-      const int max_iter = 50;
-      if (debug) {
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "Using '" << gsl_min_fminimizer_name (s) << "' method...\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  t_lower   = " << t_lower << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  D2(t_lower)   = " << d2_lower << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  t_upper   = " << t_upper << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  D2(t_upper)   = " << d2_upper << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  t_minimum = " << t_minimum << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  D2(t_minimum)   = " << d2_minimum << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  max_iter  = " << max_iter << "\n";
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "  epsabs    = " << epsabs << std::endl;
-      }
-      int status = GSL_CONTINUE;
-      gsl_min_fminimizer_set(s, &F, t_minimum, t_lower, t_upper);
-      if (debug) {
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                  << "GSL minimizer is set.\n";
-      }
-      bool converged = false;
-      int iter = 0;
-      do {
-        if (debug) {
-          std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                    << "Entering iteration = " << iter << std::endl;
-        }
-        iter++;
-        status = gsl_min_fminimizer_iterate(s);
-        if (status == GSL_FAILURE) {
-          std::cerr << "ERROR: Minimization iteration failed!" << std::endl;
-          break;
-        } else if (status == GSL_EBADFUNC) {
-          std::cerr << "ERROR: Singular point!" << std::endl;
-          break;
-        }
-        double t_minimum = gsl_min_fminimizer_x_minimum(s);
-        double t_upper   = gsl_min_fminimizer_x_upper(s);
-        double t_lower   = gsl_min_fminimizer_x_lower(s);
-        status = gsl_min_test_interval(t_lower, t_upper, epsabs, epsrel);
-        if (status == GSL_SUCCESS) {
-          converged = true;
-          if (debug) {
-            std::cerr << "DEBUG: Converged to the requested tolerance after " << iter << " iteration(s) :" << "\n";
-            std::cerr << "    t_lower=" << t_lower;
-            std::cerr << "    t_upper=" << t_upper;
-            std::cerr << "    t_minimum=" << t_minimum << "\n";
-          }
-        } else if (status == GSL_CONTINUE) {
-          if (debug) {
-            std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                      << "No convergence yet: continuing..." << std::endl;
-          }
-        } else {
-          if (debug) {
-            std::cerr << "ERROR: ellipse::compute_orthogonal_projection: "
-                      << "Error status = " << status << " at iteration " << iter << std::endl;
-          }
-          break;
-        }
-        if (converged) {
-          break;
-        }
-      } while (status == GSL_CONTINUE && iter < max_iter);
-      if (debug) {
-        t_minimum = gsl_min_fminimizer_x_minimum(s);
-        t_upper   = gsl_min_fminimizer_x_upper(s);
-        t_lower   = gsl_min_fminimizer_x_lower(s);
-        std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: ";
-        std::cerr << "Converged :\n";
-        std::cerr << "  iter = " << iter << "\n";
-        std::cerr << "  t_lower = " << t_lower << "\n";
-        std::cerr << "  t_upper = " << t_upper << "\n";
-        std::cerr << "  t_minimum = " << t_minimum << "\n";
-      }
-      gsl_min_fminimizer_free(s);
-      if (converged) {
-        a_projection.set(_x_radius_ * std::cos(t_minimum),
-                         _y_radius_ * std::sin(t_minimum),
-                         0.0);
-      }
+    }
+    t_lower -= 1.0 * CLHEP::degree;
+    t_upper += 1.0 * CLHEP::degree;
+    const int max_iter = 50;
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Using '" << gsl_min_fminimizer_name (s) << "' method...\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  t_lower   = " << t_lower << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  D2(t_lower)   = " << d2_lower << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  t_upper   = " << t_upper << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  D2(t_upper)   = " << d2_upper << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  t_minimum = " << t_minimum << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  D2(t_minimum)   = " << d2_minimum << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  max_iter  = " << max_iter << "\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "  epsabs    = " << epsabs << std::endl;
+    }
+    int status = GSL_CONTINUE;
+    gsl_min_fminimizer_set(s, &F, t_minimum, t_lower, t_upper);
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "GSL minimizer is set.\n";
+    }
+    bool converged = false;
+    int iter = 0;
+    do {
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Entering iteration = " << iter << std::endl;
+    }
+    iter++;
+    status = gsl_min_fminimizer_iterate(s);
+    if (status == GSL_FAILURE) {
+    std::cerr << "ERROR: Minimization iteration failed!" << std::endl;
+    break;
+    } else if (status == GSL_EBADFUNC) {
+    std::cerr << "ERROR: Singular point!" << std::endl;
+    break;
+    }
+    double t_minimum = gsl_min_fminimizer_x_minimum(s);
+    double t_upper   = gsl_min_fminimizer_x_upper(s);
+    double t_lower   = gsl_min_fminimizer_x_lower(s);
+    status = gsl_min_test_interval(t_lower, t_upper, epsabs, epsrel);
+    if (status == GSL_SUCCESS) {
+    converged = true;
+    if (debug) {
+    std::cerr << "DEBUG: Converged to the requested tolerance after " << iter << " iteration(s) :" << "\n";
+    std::cerr << "    t_lower=" << t_lower;
+    std::cerr << "    t_upper=" << t_upper;
+    std::cerr << "    t_minimum=" << t_minimum << "\n";
+    }
+    } else if (status == GSL_CONTINUE) {
+    if (debug) {
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "No convergence yet: continuing..." << std::endl;
+    }
+    } else {
+    if (debug) {
+    std::cerr << "ERROR: ellipse::compute_orthogonal_projection: "
+    << "Error status = " << status << " at iteration " << iter << std::endl;
+    }
+    break;
+    }
+    if (converged) {
+    break;
+    }
+    } while (status == GSL_CONTINUE && iter < max_iter);
+    if (debug) {
+    t_minimum = gsl_min_fminimizer_x_minimum(s);
+    t_upper   = gsl_min_fminimizer_x_upper(s);
+    t_lower   = gsl_min_fminimizer_x_lower(s);
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: ";
+    std::cerr << "Converged :\n";
+    std::cerr << "  iter = " << iter << "\n";
+    std::cerr << "  t_lower = " << t_lower << "\n";
+    std::cerr << "  t_upper = " << t_upper << "\n";
+    std::cerr << "  t_minimum = " << t_minimum << "\n";
+    }
+    gsl_min_fminimizer_free(s);
+    if (converged) {
+    a_projection.set(_x_radius_ * std::cos(t_minimum),
+    _y_radius_ * std::sin(t_minimum),
+    0.0);
+    }
     }
     if (debug) {
-      std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
-                << "Exiting.\n\n";
+    std::cerr << "DEBUG: ellipse::compute_orthogonal_projection: "
+    << "Exiting.\n\n";
     }
     return geomtools::is_valid(a_projection);
-  }
+    }
   */
 
   bool ellipse::is_on_curve(const vector_3d & a_position,
@@ -633,9 +622,9 @@ namespace geomtools {
     if (dist > 0.5 * tolerance) {
       return false;
     }
-    if (has_partial_angle()) {
+    if (_angle_domain_.is_partial()) {
       double angular_tolerance = 0.0;
-      if (! angle_is_in(theta, _start_angle_, _delta_angle_, angular_tolerance)) {
+      if (! _angle_domain_.contains(theta, angular_tolerance)) {
         return false;
       }
     }
@@ -706,15 +695,18 @@ namespace geomtools {
       wires_.push_back(dummy);
     }
     polyline_type & wire = wires_.back();
-    double t0 = 0.0;
-    double t1 = 2 * M_PI;
-    if (has_start_angle()) {
-      t0 = get_start_angle();
-      t1 = t0 + get_delta_angle();
-    }
-    double dtheta = (t1 - t0) / nsamples_angle;
-    for (size_t it = 0; it <= nsamples_angle; it++) {
-      double thetai = t0 + it * dtheta;
+    // double t0 = 0.0;
+    // double t1 = 2 * M_PI;
+    // if (has_start_angle()) {
+    //   t0 = get_start_angle();
+    //   t1 = t0 + get_delta_angle();
+    // }
+    // double dtheta = (t1 - t0) / nsamples_angle;
+    // for (size_t it = 0; it <= nsamples_angle; it++) {
+    for (angular_range::iterator iter(_angle_domain_, nsamples_angle);
+         !iter;
+         ++iter) {
+      double thetai = *iter;
       double x, y;
       compute_x_y_from_theta(thetai, x, y);
       vector_3d v(x, y, 0.0);

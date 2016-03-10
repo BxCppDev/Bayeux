@@ -16,6 +16,7 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
@@ -39,6 +40,9 @@ namespace geomtools {
     /// Return the radius
     double get_radius() const;
 
+    /// Return the theta domain (polar angle)
+    const angular_range & get_theta_domain() const;
+
     /// Check if the sector has partial theta angle
     bool has_partial_theta() const;
 
@@ -59,6 +63,9 @@ namespace geomtools {
 
     /// Return the delta angle
     double get_delta_theta() const;
+
+    /// Return the phi domain (azimuthal angle)
+    const angular_range & get_phi_domain() const;
 
     /// Check if the sector has partial phi angle
     bool has_partial_phi() const;
@@ -153,11 +160,9 @@ namespace geomtools {
 
   private:
 
-    double _radius_;      //!< The radius
-    double _start_theta_; //!< The starting theta angle
-    double _delta_theta_; //!< The delta theta angle
-    double _start_phi_;   //!< The starting phi angle
-    double _delta_phi_;   //!< The delta phi angle
+    double        _radius_;       //!< The radius
+    angular_range _theta_domain_; //!< Angular spread of the polar arc
+    angular_range _phi_domain_;   //!< Angular spread of the azimuthal arc
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(spherical_sector)

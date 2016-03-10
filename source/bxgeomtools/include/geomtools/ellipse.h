@@ -23,6 +23,7 @@
 // This project:
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/i_wires_3d_rendering.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
@@ -53,6 +54,9 @@ namespace geomtools {
 
     /// Set the Y radius
     void set_y_radius(double y_radius_);
+
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
 
     /// Check for the partial arc
     bool has_partial_angle() const;
@@ -177,10 +181,9 @@ namespace geomtools {
 
   private:
 
-    double _x_radius_;    //!< The X radius of the ellipse (in arbitrary units).
-    double _y_radius_;    //!< The Y radius of the ellipse (in arbitrary units).
-    double _start_angle_; //!< Start angle of the elliptic arc
-    double _delta_angle_; //!< Delta angle of the elliptic arc
+    double        _x_radius_;     //!< The X radius of the ellipse (in arbitrary units).
+    double        _y_radius_;     //!< The Y radius of the ellipse (in arbitrary units).
+    angular_range _angle_domain_; //!< Angular spread of the elliptical arc (azimuthal)
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(ellipse)

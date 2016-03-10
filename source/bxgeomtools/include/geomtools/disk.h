@@ -174,8 +174,6 @@ namespace geomtools {
 
     double _inner_radius_; //!< Internal radius of the disk sector
     double _outer_radius_; //!< External radius of the disk sector
-    // double _start_angle_;  //!< Start angle of the disk sector
-    // double _delta_angle_;  //!< Delta angle of the disk sector
     angular_range _angle_domain_; //!< Angular spread of the disk sector
 
     // Registration interface :

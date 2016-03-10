@@ -242,33 +242,33 @@ namespace geomtools {
         _angle_domain_.initialize(angle_config);
       } else {
         // deprecated ;
-      double aunit = CLHEP::degree;
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        aunit = datatools::units::get_angle_unit_from(aunit_str);
-      }
+        double aunit = CLHEP::degree;
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          aunit = datatools::units::get_angle_unit_from(aunit_str);
+        }
 
-      double start_angle = 0.0;
-      double delta_angle = 2 * M_PI * CLHEP::radian;
-      bool not_full_angle = false;
-      if (config_.has_key ("start_angle")) {
-        start_angle = config_.fetch_real ("start_angle");
-        if (! config_.has_explicit_unit ("start_angle")) {
-          start_angle *= aunit;
+        double start_angle = 0.0;
+        double delta_angle = 2 * M_PI * CLHEP::radian;
+        bool not_full_angle = false;
+        if (config_.has_key ("start_angle")) {
+          start_angle = config_.fetch_real ("start_angle");
+          if (! config_.has_explicit_unit ("start_angle")) {
+            start_angle *= aunit;
+          }
+          not_full_angle = true;
         }
-        not_full_angle = true;
-      }
-      if (config_.has_key ("delta_angle")) {
-        delta_angle = config_.fetch_real ("delta_angle");
-        if (! config_.has_explicit_unit ("delta_angle")) {
-          delta_angle *= aunit;
+        if (config_.has_key ("delta_angle")) {
+          delta_angle = config_.fetch_real ("delta_angle");
+          if (! config_.has_explicit_unit ("delta_angle")) {
+            delta_angle *= aunit;
+          }
+          not_full_angle = true;
         }
-        not_full_angle = true;
-      }
-      if (not_full_angle) {
-        set_start_angle(start_angle);
-        set_delta_angle(delta_angle);
-      }
+        if (not_full_angle) {
+          set_start_angle(start_angle);
+          set_delta_angle(delta_angle);
+        }
       }
     }
 
@@ -497,7 +497,6 @@ namespace geomtools {
       }
       arc.generate_wires_self(wires_, base_options);
     }
-    //std::cerr << "DEVEL: TEST 3" << std::endl;
 
     uint32_t nsamples_th = 0;
     if (has_start_angle()) {
@@ -520,14 +519,6 @@ namespace geomtools {
           if (no_start_angle_edge && iter.is_at_first()) continue;
           if (no_stop_angle_edge && iter.is_at_last()) continue;
         }
-        /*
-          for (size_t it = 0; it < nth_max; it++) {
-          if (has_start_angle()) {
-          if (no_start_angle_edge && it == 0) continue;
-          if (no_stop_angle_edge && it == (nsamples_th - 1)) continue;
-          }
-          double thetai = theta_min + it * dtheta;
-        */
         int    it = iter.get_current_step();
         double thetai = iter.get_current_angle();
         double r_min = rmin;
