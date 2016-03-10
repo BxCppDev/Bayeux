@@ -475,13 +475,6 @@ namespace geomtools {
     }
     double dr = (rmax - rmin) / (nsamples_r - 1);
 
-    double theta_min = 0.0;
-    double theta_max = 2 * M_PI;
-    if (has_start_angle()) {
-      theta_min = get_start_angle();
-      theta_max = theta_min + get_delta_angle();
-    }
-
     for (size_t ir = 0; ir < nsamples_r; ir++) {
       if (has_inner_r()) {
         if (no_int_edge && (ir == 0)) continue;
@@ -506,7 +499,6 @@ namespace geomtools {
       nsamples_th = i_wires_3d_rendering::angular_sampling_from_options(base_options);
     }
     if (nsamples_th > 0) {
-      double dtheta = (theta_max - theta_min) / (nsamples_th);
       uint32_t nth_max = nsamples_th;
       if (has_start_angle()) {
         nth_max++;
@@ -515,9 +507,13 @@ namespace geomtools {
       for (angular_range::iterator iter(_angle_domain_, nsamples_th);
            !iter;
            ++iter) {
-        if (has_partial_angle()) {
-          if (no_start_angle_edge && iter.is_at_first()) continue;
-          if (no_stop_angle_edge && iter.is_at_last()) continue;
+        if (iter.is_at_first()) {
+          if (!has_partial_angle()) continue;
+          else if (no_start_angle_edge) continue;
+        }
+        if (iter.is_at_last()) {
+          if (!has_partial_angle()) continue;
+          else if (no_stop_angle_edge) continue;
         }
         int    it = iter.get_current_step();
         double thetai = iter.get_current_angle();

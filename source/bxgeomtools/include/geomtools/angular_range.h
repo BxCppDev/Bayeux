@@ -207,7 +207,7 @@ namespace geomtools {
       const angular_range & _ref_; ///< Reference to the traverwed angular range
       unsigned int _nsamples_; ///< Number of sampled angle (number of angular steps + 1)
       double _step_angle_; ///< Step angle value
-      int _current_step_; ///< Current sample index
+      unsigned int _current_step_; ///< Current sample index
       double _current_angle_; ///< Value of the current sampled angle
 
     };

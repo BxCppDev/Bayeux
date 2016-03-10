@@ -519,7 +519,7 @@ namespace geomtools {
 
   int angular_range::iterator::get_current_step() const
   {
-    return _current_step_;
+    return (int) _current_step_; // XXX
   }
 
   double angular_range::iterator::get_current_angle() const
