@@ -18,6 +18,7 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
@@ -63,6 +64,9 @@ namespace geomtools {
     /// Set the inner radius
     void set_inner_r(double);
 
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
+
     /// Check the start angle
     bool has_start_angle() const;
 
@@ -80,6 +84,9 @@ namespace geomtools {
 
     /// Return the delta angle
     double get_delta_angle() const;
+
+    /// Check for the partial angle
+    bool has_partial_angle() const;
 
     /// Return the surface
     virtual double get_surface(uint32_t flags_ = ALL_PIECES) const;
@@ -167,8 +174,9 @@ namespace geomtools {
 
     double _inner_radius_; //!< Internal radius of the disk sector
     double _outer_radius_; //!< External radius of the disk sector
-    double _start_angle_;  //!< Start angle of the disk sector
-    double _delta_angle_;  //!< Delta angle of the disk sector
+    // double _start_angle_;  //!< Start angle of the disk sector
+    // double _delta_angle_;  //!< Delta angle of the disk sector
+    angular_range _angle_domain_; //!< Angular spread of the disk sector
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(disk)

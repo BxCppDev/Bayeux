@@ -23,6 +23,7 @@
 // This project:
 #include <geomtools/i_shape_1d.h>
 #include <geomtools/i_wires_3d_rendering.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
@@ -56,6 +57,9 @@ namespace geomtools {
 
     /// Return the diameter
     double get_diameter() const;
+
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
 
     /// Check for the partial arc
     bool has_partial_angle() const;
@@ -119,9 +123,7 @@ namespace geomtools {
     virtual vector_3d get_direction_on_curve(const vector_3d & a_tposition) const;
 
     /// Generate a sequence of polylines for wires 3D rendering
-    virtual void generate_wires_self(wires_type & wires_,
-                                     uint32_t options_ = 0) const;
-
+    virtual void generate_wires_self(wires_type & wires_, uint32_t options_ = 0) const;
 
     /// Initialize from properties and a dictionary of 3D-objects
     void initialize(const datatools::properties &, const handle_dict_type * = 0);
@@ -137,8 +139,7 @@ namespace geomtools {
   private:
 
     double _radius_;      //!< The radius of the circle (in arbitrary units).
-    double _start_angle_; //!< Start angle of the circular arc
-    double _delta_angle_; //!< Delta angle of the circular arc
+    angular_range _angle_domain_; //!< Angular spread of the circular arc
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(circle)

@@ -41,8 +41,8 @@ namespace geomtools {
   {
     datatools::invalidate(_inner_radius_);
     datatools::invalidate(_outer_radius_);
-    datatools::invalidate(_start_angle_);
-    datatools::invalidate(_delta_angle_);
+    _angle_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _angle_domain_.reset_partial_angles();
     return;
   }
 
@@ -121,42 +121,46 @@ namespace geomtools {
     return;
   }
 
+  const angular_range & disk::get_angle_domain() const
+  {
+    return _angle_domain_;
+  }
+
+  bool disk::has_partial_angle() const
+  {
+    return _angle_domain_.is_partial();
+  }
+
   bool disk::has_start_angle() const
   {
-    return datatools::is_valid(_start_angle_);
+    return _angle_domain_.has_start_angle();
   }
 
   void disk::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ >= 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start angle value !");
-    _start_angle_ = new_value_;
+    _angle_domain_.set_start_angle(new_value_);
     return;
   }
 
   double disk::get_start_angle() const
   {
-    return _start_angle_;
+    return _angle_domain_.get_start_angle();
   }
 
   bool disk::has_delta_angle() const
   {
-    return datatools::is_valid(_delta_angle_);
+    return _angle_domain_.has_delta_angle();
   }
 
   void disk::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta angle value !");
-    _delta_angle_ = new_value_;
+    _angle_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double disk::get_delta_angle() const
   {
-    return _delta_angle_;
+    return _angle_domain_.get_delta_angle();
   }
 
   double disk::get_surface (uint32_t /* flags_ */) const
@@ -169,11 +173,7 @@ namespace geomtools {
     if (has_inner_r()) {
       s_int = _inner_radius_ * _inner_radius_;
     }
-    double angular_factor = M_PI;
-    if (has_start_angle()) {
-      angular_factor = 0.5 * _delta_angle_;
-    }
-    surface = angular_factor * (s_ext - s_int);
+    surface = 0.5 * _angle_domain_.get_angle_spread() * (s_ext - s_int);
     return surface;
   }
 
@@ -183,20 +183,18 @@ namespace geomtools {
     return get_circumference();
   }
 
-  double disk::get_circumference () const
+  double disk::get_circumference() const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid disk!");
-    double circum;
-    datatools::invalidate(circum);
+    double circum = datatools::invalid_real();
     double circ_ext = _outer_radius_;
     double circ_int = 0.0;
     double rad_start_stop = 0.0;
     if (has_inner_r()) {
       circ_int = _inner_radius_;
     }
-    double angle = 2 * M_PI;
-    if (has_start_angle()) {
-      angle = _delta_angle_;
+    double angle = _angle_domain_.get_angle_spread();
+    if (has_partial_angle()) {
       if (has_inner_r()) {
         rad_start_stop = circ_ext - circ_int;
       }
@@ -210,12 +208,7 @@ namespace geomtools {
     if (!datatools::is_valid(_outer_radius_)) {
       return false;
     }
-    if (has_start_angle()) {
-      if (!datatools::is_valid(_delta_angle_)) {
-        return false;
-      }
-    }
-    return true;
+    return _angle_domain_.is_valid();
   }
 
   void disk::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
@@ -243,6 +236,12 @@ namespace geomtools {
 
       set(inner_radius, outer_radius);
 
+      datatools::properties angle_config;
+      config_.export_and_rename_starting_with(angle_config, "angle.", "");
+      if (angle_config.size()) {
+        _angle_domain_.initialize(angle_config);
+      } else {
+        // deprecated ;
       double aunit = CLHEP::degree;
       if (config_.has_key("angle_unit")) {
         const std::string aunit_str = config_.fetch_string("angle_unit");
@@ -270,7 +269,7 @@ namespace geomtools {
         set_start_angle(start_angle);
         set_delta_angle(delta_angle);
       }
-
+      }
     }
 
     return;
@@ -296,8 +295,7 @@ namespace geomtools {
     reset();
     set_outer_r(outer_r_);
     set_inner_r(inner_r_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
@@ -327,8 +325,7 @@ namespace geomtools {
     _set_defaults();
     set_outer_r(outer_r_);
     set_inner_r(inner_r_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
@@ -350,9 +347,13 @@ namespace geomtools {
     }
     double x = position_.x();
     double y = position_.y();
-    if (has_start_angle()) {
+    if (has_partial_angle()) {
       double theta = std::atan2(y, x);
-      if (!angle_is_in(theta, _start_angle_, _delta_angle_, angular_tolerance, true)) {
+      if (!::geomtools::angle_is_in(theta,
+                                    _angle_domain_.get_first_angle(),
+                                    _angle_domain_.get_angle_spread(),
+                                    angular_tolerance,
+                                    true)) {
         return false;
       }
     }
@@ -444,23 +445,13 @@ namespace geomtools {
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Outer radius : " << get_outer_r() / CLHEP::mm << " mm" << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start angle : ";
-    if (has_start_angle()) {
-      out_ << get_start_angle() / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Angle domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _angle_domain_.tree_dump(out_, "", indent2.str());
     }
-    out_ << std::endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Delta angle : ";
-    if (has_delta_angle()) {
-      out_ << get_delta_angle() / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
 
     return;
   }
@@ -476,7 +467,6 @@ namespace geomtools {
 
     uint32_t base_options = options_ & WR_BASE_MASK;
 
-    //std::cerr << "DEVEL: TEST 1" << std::endl;
     uint32_t nsamples_r  = linear_sampling_from_options(base_options);
     double rmin = 0.0;
     double rmax = get_outer_r();
@@ -484,13 +474,13 @@ namespace geomtools {
       rmin = get_inner_r();
     }
     double dr = (rmax - rmin) / (nsamples_r - 1);
+
     double theta_min = 0.0;
     double theta_max = 2 * M_PI;
     if (has_start_angle()) {
       theta_min = get_start_angle();
       theta_max = theta_min + get_delta_angle();
     }
-    //std::cerr << "DEVEL: TEST 2" << std::endl;
 
     for (size_t ir = 0; ir < nsamples_r; ir++) {
       if (has_inner_r()) {
@@ -500,10 +490,8 @@ namespace geomtools {
       }
       if (no_ext_edge && (ir == (nsamples_r-1))) continue;
       double ri = rmin + ir * dr;
-      // std::cerr << "DEVEL: generate_wires_self: DISK" << std::endl;
       circle arc(ri);
-      // std::cerr << "DEVEL: generate_wires_self: DISK OK" << std::endl;
-      if (has_start_angle()) {
+      if (has_partial_angle()) {
         arc.set_start_angle(get_start_angle());
         arc.set_delta_angle(get_delta_angle());
       }
@@ -518,30 +506,37 @@ namespace geomtools {
     if (options_ & i_wires_3d_rendering::WR_BASE_GRID) {
       nsamples_th = i_wires_3d_rendering::angular_sampling_from_options(base_options);
     }
-    //std::cerr << "DEVEL: TEST 4: nsamples_th=" << nsamples_th << std::endl;
     if (nsamples_th > 0) {
       double dtheta = (theta_max - theta_min) / (nsamples_th);
-      //std::cerr << "DEVEL: TEST 5: dtheta=" << dtheta / CLHEP::degree << " degree" << std::endl;
       uint32_t nth_max = nsamples_th;
       if (has_start_angle()) {
         nth_max++;
       }
-      for (size_t it = 0; it < nth_max; it++) {
-        if (has_start_angle()) {
+
+      for (angular_range::iterator iter(_angle_domain_, nsamples_th);
+           !iter;
+           ++iter) {
+        if (has_partial_angle()) {
+          if (no_start_angle_edge && iter.is_at_first()) continue;
+          if (no_stop_angle_edge && iter.is_at_last()) continue;
+        }
+        /*
+          for (size_t it = 0; it < nth_max; it++) {
+          if (has_start_angle()) {
           if (no_start_angle_edge && it == 0) continue;
           if (no_stop_angle_edge && it == (nsamples_th - 1)) continue;
-        }
-        double thetai = theta_min + it * dtheta;
+          }
+          double thetai = theta_min + it * dtheta;
+        */
+        int    it = iter.get_current_step();
+        double thetai = iter.get_current_angle();
         double r_min = rmin;
         if (! has_inner_r() || r_min < 2 * dr) {
           size_t nth = nsamples_th;
           if (nth > angular_sampling(SL_LOW)) {
             int f0 = nth / angular_sampling(SL_LOW);
-            //std::cerr << "DEVEL: TEST 5.1: f0=" << f0 << std::endl;
             int f1 = nth / (2 * angular_sampling(SL_LOW));
-            //std::cerr << "DEVEL: TEST 5.2: f1=" << f1 << std::endl;
             int f2 = nth / (4 * angular_sampling(SL_LOW));
-            //std::cerr << "DEVEL: TEST 5.3: f2=" << f2 << std::endl;
             int itest0 = (it % f0);
             if (itest0 != 0) {
               r_min = rmin + dr;
@@ -564,7 +559,6 @@ namespace geomtools {
                      0.0);
         line_3d radial(v1, v2);
         radial.generate_wires_self(wires_, 0);
-        //std::cerr << "DEVEL: TEST 5.4: end" << std::endl;
       }
     }
     return;
