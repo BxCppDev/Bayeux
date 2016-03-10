@@ -327,7 +327,7 @@ namespace geomtools {
     //   DT_THROW_IF(angle_ > get_max_start_angle(), std::range_error,
     //               "Angle [" << angle_ / CLHEP::degree << "] out of range validity!");
     // }
-    return ::geomtools::angle_is_in(angle_, get_first_angle(), get_last_angle(), tolerance_, false);
+    return ::geomtools::angle_is_in(angle_, get_first_angle(), get_angle_spread(), tolerance_, false);
   }
 
   void angular_range::tree_dump(std::ostream & out_,
