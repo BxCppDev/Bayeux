@@ -49,8 +49,8 @@ namespace datatools {
     std::string filename;
     std::string full_path;
     std::string version;
-    bool   autoload;
-    int    status;
+    bool        autoload;
+    int         status;
     datatools::detail::DynamicLoader::LibraryHandle handle;
   };
 
@@ -63,7 +63,6 @@ namespace datatools {
 
   //----------------------------------------------------------------------
   // library_entry struct
-  // ctor :
   library_entry_type::library_entry_type(const std::string& lib_name,
                                          const std::string& lib_directory,
                                          const std::string& lib_filename,
@@ -74,7 +73,6 @@ namespace datatools {
       full_path(lib_full_path), version(lib_version),
       autoload(lib_autoload), status(0), handle(0) {}
 
-  // dtor :
   library_entry_type::~library_entry_type() {
     if (handle != 0) {
       int statusOnClose = datatools::detail::DynamicLoader::CloseLibrary(handle);
