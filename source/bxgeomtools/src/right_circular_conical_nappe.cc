@@ -52,19 +52,19 @@ namespace geomtools {
         lunit = datatools::units::get_length_unit_from(lunit_str);
       }
 
-      DT_THROW_IF(! config_.has_key("bottom_radius"), std::logic_error, "Missing elliptical sector 'bottom_radius' property !");
+      DT_THROW_IF(! config_.has_key("bottom_radius"), std::logic_error, "Missing sector 'bottom_radius' property !");
       double bottom_radius = config_.fetch_real("bottom_radius");
       if (! config_.has_explicit_unit("bottom_radius")) {
         bottom_radius *= lunit;
       }
 
-      DT_THROW_IF(! config_.has_key("top_radius"), std::logic_error, "Missing elliptical sector 'top_radius' property !");
+      DT_THROW_IF(! config_.has_key("top_radius"), std::logic_error, "Missing sector 'top_radius' property !");
       double top_radius = config_.fetch_real("top_radius");
       if (! config_.has_explicit_unit("top_radius")) {
         top_radius *= lunit;
       }
 
-      DT_THROW_IF(! config_.has_key("z"), std::logic_error, "Missing elliptical cylinder sector 'z' property !");
+      DT_THROW_IF(! config_.has_key("z"), std::logic_error, "Missing cylinder sector 'z' property !");
       double z = config_.fetch_real("z");
       if (! config_.has_explicit_unit("z")) {
         z *= lunit;
@@ -74,32 +74,38 @@ namespace geomtools {
       set_top_radius(top_radius);
       set_z(z);
 
-      double aunit = CLHEP::degree;
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        aunit = datatools::units::get_angle_unit_from(aunit_str);
-      }
+      datatools::properties angle_config;
+      config_.export_and_rename_starting_with(angle_config, "angle.", "");
+      if (angle_config.size()) {
+        _angle_domain_.initialize(angle_config);
+      } else {
+        double aunit = CLHEP::degree;
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          aunit = datatools::units::get_angle_unit_from(aunit_str);
+        }
 
-      double start_angle = 0.0;
-      double delta_angle = 2 * M_PI * CLHEP::radian;
-      bool not_full_angle = false;
-      if (config_.has_key ("start_angle")) {
-        start_angle = config_.fetch_real ("start_angle");
-        if (! config_.has_explicit_unit ("start_angle")) {
-          start_angle *= aunit;
+        double start_angle = 0.0;
+        double delta_angle = 2 * M_PI * CLHEP::radian;
+        bool not_full_angle = false;
+        if (config_.has_key ("start_angle")) {
+          start_angle = config_.fetch_real ("start_angle");
+          if (! config_.has_explicit_unit ("start_angle")) {
+            start_angle *= aunit;
+          }
+          not_full_angle = true;
         }
-        not_full_angle = true;
-      }
-      if (config_.has_key ("delta_angle")) {
-        delta_angle = config_.fetch_real ("delta_angle");
-        if (! config_.has_explicit_unit ("delta_angle")) {
-          delta_angle *= aunit;
+        if (config_.has_key ("delta_angle")) {
+          delta_angle = config_.fetch_real ("delta_angle");
+          if (! config_.has_explicit_unit ("delta_angle")) {
+            delta_angle *= aunit;
+          }
+          not_full_angle = true;
         }
-        not_full_angle = true;
-      }
-      if (not_full_angle) {
-        set_start_angle(start_angle);
-        set_delta_angle(delta_angle);
+        if (not_full_angle) {
+          set_start_angle(start_angle);
+          set_delta_angle(delta_angle);
+        }
       }
 
     }
@@ -119,8 +125,8 @@ namespace geomtools {
     datatools::invalidate(_bottom_radius_);
     datatools::invalidate(_top_radius_);
     datatools::invalidate(_z_);
-    datatools::invalidate(_start_angle_);
-    datatools::invalidate(_delta_angle_);
+    _angle_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _angle_domain_.reset_partial_angles();
     return;
   }
 
@@ -169,49 +175,46 @@ namespace geomtools {
     return;
   }
 
+  const angular_range & right_circular_conical_nappe::get_angle_domain() const
+  {
+    return _angle_domain_;
+  }
+
   bool right_circular_conical_nappe::has_partial_angle() const
   {
-    if (_delta_angle_ == 2 * M_PI) return false;
-    // bug: if (_start_angle_ > 0.0) return true;
-    return true;
+    return _angle_domain_.is_partial();
   }
 
   bool right_circular_conical_nappe::has_start_angle() const
   {
-    return datatools::is_valid(_start_angle_);
+    return _angle_domain_.has_start_angle();
   }
 
   void right_circular_conical_nappe::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ >= 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start angle value !");
-    _start_angle_ = new_value_;
+    _angle_domain_.set_start_angle(new_value_);
     return;
   }
 
   double right_circular_conical_nappe::get_start_angle() const
   {
-    return _start_angle_;
+    return _angle_domain_.get_start_angle();
   }
 
   bool right_circular_conical_nappe::has_delta_angle() const
   {
-    return datatools::is_valid(_delta_angle_);
+    return _angle_domain_.has_delta_angle();
   }
 
   void right_circular_conical_nappe::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ <= 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta angle value !");
-    _delta_angle_ = new_value_;
+    _angle_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double right_circular_conical_nappe::get_delta_angle() const
   {
-    return _delta_angle_;
+    return _angle_domain_.get_delta_angle();
   }
 
   bool right_circular_conical_nappe::is_valid () const
@@ -225,12 +228,7 @@ namespace geomtools {
     if (!datatools::is_valid(_z_)) {
       return false;
     }
-    if (has_start_angle()) {
-      if (!datatools::is_valid(_delta_angle_)) {
-        return false;
-      }
-    }
-    return true;
+    return _angle_domain_.is_valid();
   }
 
   right_circular_conical_nappe::right_circular_conical_nappe ()
@@ -260,8 +258,7 @@ namespace geomtools {
     set_bottom_radius(bottom_radius_);
     set_top_radius(top_radius_);
     set_z(z_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
@@ -275,10 +272,12 @@ namespace geomtools {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid circular conical nappe!");
     double s;
     datatools::invalidate(s);
-    s = cone::compute_frustrum_lateral_surface(-0.5 * _z_, +0.5 * _z_,
-                                               _bottom_radius_, _top_radius_);
-    if (has_start_angle()) {
-      s *= (_delta_angle_ / (2 * M_PI));
+    if (is_valid()) {
+      s = cone::compute_frustrum_lateral_surface(-0.5 * _z_, +0.5 * _z_,
+                                                 _bottom_radius_, _top_radius_);
+      if (has_partial_angle()) {
+        s *= (_angle_domain_.get_angle_spread() / (2 * M_PI));
+      }
     }
     return s;
   }
@@ -297,7 +296,11 @@ namespace geomtools {
     }
     if (has_partial_angle()) {
       double angle = std::atan2(position_.y(), position_.x());
-      if (!angle_is_in(angle, _start_angle_, _delta_angle_, angular_tolerance, true)) {
+      if (!angle_is_in(angle,
+                       _angle_domain_.get_first_angle(),
+                       _angle_domain_.get_angle_spread(),
+                       angular_tolerance,
+                       true)) {
         return false;
       }
     }
@@ -459,23 +462,13 @@ namespace geomtools {
     }
     out_ << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start angle : ";
-    if (has_start_angle()) {
-      out_ << _start_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Angle domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _angle_domain_.tree_dump(out_, "", indent2.str());
     }
-    out_ << std::endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Delta angle : ";
-    if (has_delta_angle()) {
-      out_ << _delta_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
 
     return;
   }
@@ -538,8 +531,8 @@ namespace geomtools {
           //           << "rz OK"
           //           << std::endl;
           if (has_partial_angle()) {
-            arc.set_start_angle(_start_angle_);
-            arc.set_delta_angle(_delta_angle_);
+            arc.set_start_angle(get_start_angle());
+            arc.set_delta_angle(get_delta_angle());
           }
           placement arc_placement(0.0, 0.0, zz);
           arc.generate_wires(wires_, arc_placement, options);
@@ -558,8 +551,8 @@ namespace geomtools {
     double start_phi = 0.0;
     double delta_phi = 2.0 * M_PI;
     if (has_partial_angle()) {
-      start_phi = _start_angle_;
-      delta_phi = _delta_angle_;
+      start_phi = get_start_angle();
+      delta_phi = get_delta_angle();
     }
     double dphi = delta_phi / nsamples_phi;
     // std::cerr << "DEVEL: right_circular_conical_nappe::generate_wires_self: "
@@ -575,12 +568,20 @@ namespace geomtools {
       if (has_partial_angle()) {
         max_nphi++;
       }
-      for (uint32_t iphi = 0; iphi < max_nphi ; ++iphi) {
+      for (angular_range::iterator iter(_angle_domain_, nsamples_phi);
+           !iter;
+           ++iter) {
         if (has_partial_angle()) {
-          if ((iphi == 0) && no_start_angle_edge) continue;
-          if ((iphi == (max_nphi - 1)) && no_stop_angle_edge) continue;
+          if (no_start_angle_edge && iter.is_at_first()) continue;
+          if (no_stop_angle_edge && iter.is_at_last()) continue;
         }
-        double phi = start_phi + iphi * dphi;
+        // for (uint32_t iphi = 0; iphi < max_nphi ; ++iphi) {
+        //   if (has_partial_angle()) {
+        //     if ((iphi == 0) && no_start_angle_edge) continue;
+        //     if ((iphi == (max_nphi - 1)) && no_stop_angle_edge) continue;
+        //   }
+        //   double phi = start_phi + iphi * dphi;
+        double phi = iter.get_current_angle();
         placement lp(0.0, 0.0, 0.0, AXIS_Z, phi);
         l.generate_wires(wires_, lp, options);
       }

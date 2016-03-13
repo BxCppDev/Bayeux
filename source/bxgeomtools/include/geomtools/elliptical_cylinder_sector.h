@@ -26,6 +26,7 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/angular_range.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -62,8 +63,8 @@ namespace geomtools {
     void set(double rx_, double ry_, double z_,
              double start_angle_, double delta_angle_);
 
-    /// Set angles
-    void set_angle(double start_angle_, double delta_angle_);
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
 
     /// Check if the sector has partial angle
     bool has_partial_angle() const;
@@ -159,8 +160,7 @@ namespace geomtools {
     double _x_radius_;     //!< x radius
     double _y_radius_;     //!< y radius
     double _z_;            //!< z
-    double _start_angle_;  //!< Start angle
-    double _delta_angle_;  //!< Delta angle
+    angular_range _angle_domain_; //!< Angular spread of the ellipsoid cylinder sector (azimuthal)
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(elliptical_cylinder_sector)

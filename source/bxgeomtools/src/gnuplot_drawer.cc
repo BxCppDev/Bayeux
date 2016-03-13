@@ -609,13 +609,13 @@ namespace geomtools {
       }
     }
     catch (GnuplotException ge) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, ge.what ());
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << ge.what());
     }
     catch (std::exception & x) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, x.what ());
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << x.what());
     }
     catch (...) {
-      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Unexpected error !");
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << "Unexpected error !");
     }
     DT_LOG_TRACE (local_priority, "Exiting.");
     return;

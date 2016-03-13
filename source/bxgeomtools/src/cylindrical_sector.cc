@@ -252,7 +252,7 @@ namespace geomtools {
       return false;
     }
     if (has_partial_angle()) {
-      double phi =  position_.phi();
+      double phi = position_.phi();
       if (!::geomtools::angle_is_in(phi,
                                     _angle_domain_.get_first_angle(),
                                     _angle_domain_.get_angle_spread(),
@@ -261,7 +261,7 @@ namespace geomtools {
         return false;
       }
     }
-    return false;
+    return true;
   }
 
   vector_3d cylindrical_sector::get_normal_on_surface(const vector_3d & position_,

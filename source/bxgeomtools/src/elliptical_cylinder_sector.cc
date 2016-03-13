@@ -46,8 +46,8 @@ namespace geomtools {
     datatools::invalidate(_x_radius_);
     datatools::invalidate(_y_radius_);
     datatools::invalidate(_z_);
-    datatools::invalidate(_start_angle_);
-    datatools::invalidate(_delta_angle_);
+    _angle_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _angle_domain_.reset_partial_angles();
     return;
   }
 
@@ -104,50 +104,46 @@ namespace geomtools {
     return;
   }
 
+  const angular_range &elliptical_cylinder_sector::get_angle_domain() const
+  {
+    return _angle_domain_;
+  }
+
   bool elliptical_cylinder_sector::has_partial_angle() const
   {
-    if (has_start_angle() && has_delta_angle()) {
-      return true;
-    }
-    return false;
+    return _angle_domain_.is_partial();
   }
 
   bool elliptical_cylinder_sector::has_start_angle() const
   {
-    return datatools::is_valid(_start_angle_);
+    return _angle_domain_.has_start_angle();
   }
 
   void elliptical_cylinder_sector::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start angle value !");
-    _start_angle_ = new_value_;
+    _angle_domain_.set_start_angle(new_value_);
     return;
   }
 
   double elliptical_cylinder_sector::get_start_angle() const
   {
-    return _start_angle_;
+    return _angle_domain_.get_start_angle();
   }
 
   bool elliptical_cylinder_sector::has_delta_angle() const
   {
-    return datatools::is_valid(_delta_angle_);
+    return _angle_domain_.has_delta_angle();
   }
 
   void elliptical_cylinder_sector::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta angle value !");
-    _delta_angle_ = new_value_;
+    _angle_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double elliptical_cylinder_sector::get_delta_angle() const
   {
-    return _delta_angle_;
+    return _angle_domain_.get_delta_angle();
   }
 
   bool elliptical_cylinder_sector::is_valid() const
@@ -161,12 +157,7 @@ namespace geomtools {
     if (!datatools::is_valid(_z_)) {
       return false;
     }
-    if (has_start_angle()) {
-      if (!has_delta_angle()) {
-        return false;
-      }
-    }
-    return true;
+    return _angle_domain_.is_valid();
   }
 
   elliptical_cylinder_sector::elliptical_cylinder_sector()
@@ -194,8 +185,7 @@ namespace geomtools {
     set_x_radius(x_radius_);
     set_y_radius(y_radius_);
     set_z(z_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
@@ -204,7 +194,8 @@ namespace geomtools {
     return;
   }
 
-  void elliptical_cylinder_sector::initialize(const datatools::properties & config_, const handle_dict_type * objects_)
+  void elliptical_cylinder_sector::initialize(const datatools::properties & config_,
+                                              const handle_dict_type * objects_)
   {
     if (!is_valid()) {
       this->i_object_3d::_initialize(config_, objects_);
@@ -235,34 +226,39 @@ namespace geomtools {
 
       set(x_radius, y_radius, z);
 
-      double aunit = CLHEP::degree;
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        aunit = datatools::units::get_angle_unit_from(aunit_str);
-      }
-
-      double start_angle = 0.0;
-      double delta_angle = 2 * M_PI * CLHEP::radian;
-      bool not_full_angle = false;
-      if (config_.has_key ("start_angle")) {
-        start_angle = config_.fetch_real ("start_angle");
-        if (! config_.has_explicit_unit ("start_angle")) {
-          start_angle *= aunit;
+      datatools::properties angle_config;
+      config_.export_and_rename_starting_with(angle_config, "angle.", "");
+      if (angle_config.size()) {
+        _angle_domain_.initialize(angle_config);
+      } else {
+        // Deprecated:
+        double aunit = CLHEP::degree;
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          aunit = datatools::units::get_angle_unit_from(aunit_str);
         }
-        not_full_angle = true;
-      }
-      if (config_.has_key ("delta_angle")) {
-        delta_angle = config_.fetch_real ("delta_angle");
-        if (! config_.has_explicit_unit ("delta_angle")) {
-          delta_angle *= aunit;
+        double start_angle = 0.0;
+        double delta_angle = 2 * M_PI * CLHEP::radian;
+        bool not_full_angle = false;
+        if (config_.has_key ("start_angle")) {
+          start_angle = config_.fetch_real ("start_angle");
+          if (! config_.has_explicit_unit ("start_angle")) {
+            start_angle *= aunit;
+          }
+          not_full_angle = true;
         }
-        not_full_angle = true;
+        if (config_.has_key ("delta_angle")) {
+          delta_angle = config_.fetch_real ("delta_angle");
+          if (! config_.has_explicit_unit ("delta_angle")) {
+            delta_angle *= aunit;
+          }
+          not_full_angle = true;
+        }
+        if (not_full_angle) {
+          set_start_angle(start_angle);
+          set_delta_angle(delta_angle);
+        }
       }
-      if (not_full_angle) {
-        set_start_angle(start_angle);
-        set_delta_angle(delta_angle);
-      }
-
     }
 
     return;
@@ -297,8 +293,8 @@ namespace geomtools {
       if (has_partial_angle()) {
         double angle = position_.phi();
         if (!angle_is_in(angle,
-                         _start_angle_,
-                         _delta_angle_,
+                         get_start_angle(),
+                         get_delta_angle(),
                          angular_tolerance,
                          true)) {
           return false;
@@ -311,8 +307,8 @@ namespace geomtools {
         double b = _y_radius_;
         ellipse ell(a, b);
         if (has_partial_angle()) {
-          ell.set_start_angle(_start_angle_);
-          ell.set_delta_angle(_delta_angle_);
+          ell.set_start_angle(get_start_angle());
+          ell.set_delta_angle(get_delta_angle());
         }
         vector_3d pos(x, y, 0.0);
         if (ell.is_on_curve(pos, tolerance)) {
@@ -456,23 +452,13 @@ namespace geomtools {
     }
     out_ << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start angle : ";
-    if (has_start_angle()) {
-      out_ << _start_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Angle domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _angle_domain_.tree_dump(out_, "", indent2.str());
     }
-    out_ << std::endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Delta angle : ";
-    if (has_delta_angle()) {
-      out_ << _delta_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
 
     return;
   }
@@ -494,8 +480,8 @@ namespace geomtools {
     double start_angle = 0.0;
     double delta_angle = 2.0 * M_PI;
     if (has_partial_angle()) {
-      start_angle = _start_angle_;
-      delta_angle = _delta_angle_;
+      start_angle = get_start_angle();
+      delta_angle = get_delta_angle();
     }
     unsigned int nsamples_angle = angular_sampling_from_options(base_options);
     double dangle = delta_angle / nsamples_angle;

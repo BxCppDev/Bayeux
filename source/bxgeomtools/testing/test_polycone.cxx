@@ -161,7 +161,7 @@ int main (int argc_, char ** argv_)
     }
     if (do_sector) {
       my_solid.set_start_angle(0.25 * M_PI);
-      my_solid.set_delta_angle(0.25 * M_PI);
+      my_solid.set_delta_angle(0.55 * M_PI);
     }
     my_solid.lock();
     my_solid.tree_dump (std::clog, "Polycone");

@@ -17,6 +17,7 @@
 // This project:
 #include <geomtools/cone.h>
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
@@ -55,6 +56,9 @@ namespace geomtools {
 
     /// Return the top radius
     double get_top_radius() const;
+
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
 
     /// Check if the nappe has partial phi angle
     bool has_partial_angle() const;
@@ -158,8 +162,7 @@ namespace geomtools {
     double _bottom_radius_; //!< The bottom radius
     double _top_radius_;    //!< The top radius
     double _z_;             //!< The height
-    double _start_angle_;   //!< The starting phi angle (longitude/azimuth)
-    double _delta_angle_;   //!< The delta phi angle (longitude/azimuth)
+    angular_range _angle_domain_; //!< Angular spread of the cylindrical sector (longitude/azimuth)
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(right_circular_conical_nappe)

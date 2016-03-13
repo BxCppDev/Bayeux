@@ -318,41 +318,6 @@ namespace geomtools {
       }
     }
 
-    /*
-      if (a_surface_mask.has_face_bit(FACE_SIDE)) {
-      cylindrical_sector side;
-      placement side_placement;
-      compute_side_face(side, side_placement);
-      vector_3d p_side;
-      side_placement.mother_to_child(point_, p_side);
-      if (side.is_on_surface(p_side, skin)) {
-      return face_identifier(FACE_SIDE);
-      }
-      }
-
-      if (a_surface_mask.has_face_bit(FACE_TOP)) {
-      disk top;
-      placement top_placement;
-      compute_top_bottom_face(FACE_TOP, top, top_placement);
-      vector_3d p_top;
-      top_placement.mother_to_child(point_, p_top);
-      if (top.is_on_surface(p_top, skin)) {
-      return face_identifier(FACE_TOP);
-      }
-      }
-
-      if (a_surface_mask.has_face_bit(FACE_BOTTOM)) {
-      disk bottom;
-      placement bottom_placement;
-      compute_top_bottom_face(FACE_BOTTOM, bottom, bottom_placement);
-      vector_3d p_bottom;
-      bottom_placement.mother_to_child(point_, p_bottom);
-      if (bottom.is_on_surface(p_bottom, skin)) {
-      return face_identifier(FACE_BOTTOM);
-      }
-      }
-    */
-
     return face_identifier::face_invalid();
   }
 

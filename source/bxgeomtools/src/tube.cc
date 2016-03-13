@@ -364,7 +364,7 @@ namespace geomtools {
   {
     set_radii(ir_ ,or_);
     set_z(z_);
-    set_phi(start_phi_, delta_phi_);
+    _phi_domain_.set_partial_angles(start_phi_, delta_phi_);
     return;
   }
 
@@ -389,24 +389,50 @@ namespace geomtools {
     DT_THROW_IF(delta_phi_ < 0,
                 std::domain_error,
                 "Delta phi is negative (< 0)!");
-    _start_phi_ = start_phi_;
-    _delta_phi_ = delta_phi_;
+    _phi_domain_.set_partial_angles(start_phi_, delta_phi_);
+    return;
+  }
+
+  const angular_range & tube::get_phi_domain() const
+  {
+    return _phi_domain_;
+  }
+
+  bool tube::has_partial_phi() const
+  {
+    return _phi_domain_.is_partial();
+  }
+
+  bool tube::has_start_phi() const
+  {
+    return _phi_domain_.has_start_angle();
+  }
+
+  void tube::set_start_phi(double new_value_)
+  {
+    _phi_domain_.set_start_angle(new_value_);
     return;
   }
 
   double tube::get_start_phi() const
   {
-    return _start_phi_;
+    return _phi_domain_.get_start_angle();
+  }
+
+  bool tube::has_delta_phi() const
+  {
+    return _phi_domain_.has_delta_angle();
+  }
+
+  void tube::set_delta_phi(double new_value_)
+  {
+    _phi_domain_.set_delta_angle(new_value_);
+    return;
   }
 
   double tube::get_delta_phi() const
   {
-    return _delta_phi_;
-  }
-
-  bool tube::has_partial_phi() const
-  {
-    return (datatools::is_valid(_start_phi_) && datatools::is_valid(_delta_phi_));
+    return _phi_domain_.get_delta_angle();
   }
 
   tube::tube ()
@@ -451,7 +477,7 @@ namespace geomtools {
     }
     double angle = 2 * M_PI;
     if (has_partial_phi()) {
-      angle = _delta_phi_;
+      angle = get_delta_phi();
     }
     // std::cerr << "DEVEL: geomtools::tube::get_surface: angle = " << angle << std::endl;
     // std::cerr << "DEVEL: geomtools::tube::get_surface: ir    = " << ir << std::endl;
@@ -489,7 +515,7 @@ namespace geomtools {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
     double angle = 2 * M_PI;
     if (has_partial_phi()) {
-      angle = _delta_phi_;
+      angle = get_delta_phi();
     }
     double ir = 0.0;
     if (has_inner_r()) {
@@ -507,7 +533,13 @@ namespace geomtools {
 
   bool tube::is_valid () const
   {
-    return datatools::is_valid(_outer_r_) && datatools::is_valid(_z_);
+    if (! datatools::is_valid(_outer_r_)) {
+      return false;
+    }
+    if (! datatools::is_valid(_z_)) {
+      return false;
+    }
+    return _phi_domain_.is_valid();
   }
 
   void tube::_set_defaults()
@@ -515,8 +547,8 @@ namespace geomtools {
     datatools::invalidate(_inner_r_);
     datatools::invalidate(_outer_r_);
     datatools::invalidate(_z_);
-    datatools::invalidate(_start_phi_);
-    datatools::invalidate(_delta_phi_);
+    _phi_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _phi_domain_.reset_partial_angles();
     return;
   }
 
@@ -546,7 +578,7 @@ namespace geomtools {
          ) {
       if (has_partial_phi()) {
         double phi = std::atan2(point_.y(), point_.x());
-        return angle_is_in(phi, _start_phi_, _delta_phi_, angular_tolerance, true);
+        return angle_is_in(phi, get_start_phi(), get_delta_phi(), angular_tolerance, true);
       } else {
         return true;
       }
@@ -574,7 +606,7 @@ namespace geomtools {
     }
     if (has_partial_phi()) {
       double phi = std::atan2(point_.y(), point_.x());
-      if (! angle_is_in(phi, _start_phi_, _delta_phi_, angular_tolerance, true)) {
+      if (! angle_is_in(phi, get_start_phi(), get_delta_phi(), angular_tolerance, true)) {
         return true;
       }
     }
@@ -729,13 +761,14 @@ namespace geomtools {
          << t_._inner_r_ << ' '
          << t_._outer_r_ << ' '
          << t_._z_ << ' '
-         << t_._start_phi_ << ' '
-         << t_._delta_phi_ << '}';
+         << t_.get_start_phi() << ' '
+         << t_.get_delta_phi() << '}';
     return out_;
   }
 
   std::istream & operator>> (std::istream & in_, tube & t_)
   {
+    // Questionnable!!!
     t_.reset ();
     char c = 0;
     in_.get (c);
@@ -812,13 +845,13 @@ namespace geomtools {
     } else {
       mygsl::min_max xrange;
       mygsl::min_max yrange;
-      double dphi = std::min(0.5 * CLHEP::degree, _delta_phi_ / 100);
+      double dphi = std::min(0.5 * CLHEP::degree, get_delta_phi() / 100);
       if (!has_inner_r()) {
         xrange.add(0.0);
         yrange.add(0.0);
       }
-      for (double phi = _start_phi_;
-           phi <  _start_phi_ + _delta_phi_;
+      for (double phi = get_start_phi();
+           phi <  get_start_phi() + get_delta_phi();
            phi += dphi) {
         double cp = std::cos(phi);
         double sp = std::sin(phi);
@@ -870,11 +903,13 @@ namespace geomtools {
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Z : " << get_z () / CLHEP::mm << " mm" << endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start phi : " << _start_phi_ / CLHEP::degree << " degree" << endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Delta phi : " << _delta_phi_ / CLHEP::degree << " degree" << endl;
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Phi domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _phi_domain_.tree_dump(out_, "", indent2.str());
+    }
 
     return;
   }
@@ -996,14 +1031,6 @@ namespace geomtools {
       if (devel) std::cerr << "DEVEL: tube::initialize: "
                            << "lunit = " << lunit / CLHEP::mm << " mm" << std::endl;
 
-      double aunit = CLHEP::degree;
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        aunit = datatools::units::get_angle_unit_from(aunit_str);
-      }
-      if (devel) std::cerr << "DEVEL: tube::initialize: "
-                           << "aunit = " << aunit / CLHEP::degree << " degree" << std::endl;
-
       double inner_r;
       datatools::invalidate(inner_r);
       if (config_.has_key ("inner_r")) {
@@ -1057,51 +1084,43 @@ namespace geomtools {
       if (! config_.has_explicit_unit("z")) {
         z *= lunit;
       }
-
-      double start_phi = 0.0;
-      double delta_phi = 2 * M_PI * CLHEP::radian;
-      bool not_full_phi = false;
-      if (config_.has_key ("start_phi")) {
-        start_phi = config_.fetch_real ("start_phi");
-        if (! config_.has_explicit_unit ("start_phi")) {
-          start_phi *= aunit;
-        }
-        not_full_phi = true;
-      }
-      if (config_.has_key ("delta_phi")) {
-        delta_phi = config_.fetch_real ("delta_phi");
-        if (! config_.has_explicit_unit ("delta_phi")) {
-          delta_phi *= aunit;
-        }
-        not_full_phi = true;
-      }
-
-      if (devel) {
-        std::cerr << "DEVEL: tube::initialize: "
-                  << "inner_r = " << inner_r / CLHEP::mm << " mm" << std::endl;
-        std::cerr << "DEVEL: tube::initialize: "
-                  << "outer_r = " << outer_r / CLHEP::mm << " mm" << std::endl;
-        std::cerr << "DEVEL: tube::initialize: "
-                  << "z = " << z / CLHEP::mm << " mm" << std::endl;
-        std::cerr << "DEVEL: tube::initialize: "
-                  << "start_phi = " << start_phi / CLHEP::degree << " degree" << std::endl;
-        std::cerr << "DEVEL: tube::initialize: "
-                  << "delta_phi = " << delta_phi / CLHEP::degree << " degree" << std::endl;
-      }
-
       set_radii(inner_r, outer_r);
       set_z(z);
-      if (not_full_phi) {
-        set_phi(start_phi, delta_phi);
-      }
 
-      if (devel) {
-        std::cerr << "DEVEL: tube::initialize: "
-                  << "inner_r = " << _inner_r_ / CLHEP::mm << " mm" << std::endl;
-        std::cerr << "DEVEL: tube::initialize: "
-                  << "outer_r = " << _outer_r_ / CLHEP::mm << " mm" << std::endl;
+      datatools::properties phi_config;
+      config_.export_and_rename_starting_with(phi_config, "phi.", "");
+      if (phi_config.size()) {
+        _phi_domain_.initialize(phi_config);
+      } else {
+        // Deprecated:
+        double aunit = CLHEP::degree;
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          aunit = datatools::units::get_angle_unit_from(aunit_str);
+        }
+        if (devel) std::cerr << "DEVEL: tube::initialize: "
+                             << "aunit = " << aunit / CLHEP::degree << " degree" << std::endl;
+        double start_phi = 0.0;
+        double delta_phi = 2 * M_PI * CLHEP::radian;
+        bool not_full_phi = false;
+        if (config_.has_key ("start_phi")) {
+          start_phi = config_.fetch_real ("start_phi");
+          if (! config_.has_explicit_unit ("start_phi")) {
+            start_phi *= aunit;
+          }
+          not_full_phi = true;
+        }
+        if (config_.has_key ("delta_phi")) {
+          delta_phi = config_.fetch_real ("delta_phi");
+          if (! config_.has_explicit_unit ("delta_phi")) {
+            delta_phi *= aunit;
+          }
+          not_full_phi = true;
+        }
+        if (not_full_phi) {
+          set_phi(start_phi, delta_phi);
+        }
       }
-
     }
 
     lock();
@@ -1325,6 +1344,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(geomtools::tube, ocd_)
                                "  inner_r : real as length = 15.0 mm             \n"
                                "  outer_r : real as length = 25.0 mm             \n"
                                "  z       : real           = 25.3 cm             \n"
+                               "  phi.start : real as angle = 30 degree          \n"
+                               "  phi.delta : real as angle = 60 degree          \n"
                                "                                                 \n"
                                );
 

@@ -18,6 +18,7 @@
 #include <geomtools/cone.h>
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
@@ -129,6 +130,12 @@ namespace geomtools {
     /// Return the outer top radius
     double get_outer_top_radius() const;
 
+    /// Return the angle domain
+    const angular_range & get_angle_domain() const;
+
+    /// Check is the angular spread is partial
+    bool has_partial_angle() const;
+
     /// Check the start angle
     bool has_start_angle() const;
 
@@ -146,9 +153,6 @@ namespace geomtools {
 
     /// Return the delta angle
     double get_delta_angle() const;
-
-    /// Check is the angular spread is partial
-    bool has_partial_angle() const;
 
     /// Default constructor
     right_circular_conical_frustrum();
@@ -300,8 +304,7 @@ namespace geomtools {
     double _inner_top_radius_;    //!< The inner top radius
     double _outer_top_radius_;    //!< The outer top radius
     double _z_;                   //!< The Z dimension
-    double _start_angle_;         //!< The starting phi angle (longitude/azimuth)
-    double _delta_angle_;         //!< The delta phi angle (longitude/azimuth)
+    angular_range _angle_domain_; //!< Angular spread of the cylindrical sector (longitude/azimuth)
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(right_circular_conical_frustrum)

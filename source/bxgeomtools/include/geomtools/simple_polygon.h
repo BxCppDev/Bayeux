@@ -45,7 +45,7 @@ namespace geomtools {
     enum build_mode_type {
       BUILD_MODE_INVALID     = 0, ///< Invalid build mode
       BUILD_MODE_BY_VERTICES = 1, ///< Build mode by vertices
-      BUILD_MODE_BY_SEGMENTS = 2 ///< Build mode by segments
+      BUILD_MODE_BY_SEGMENTS = 2  ///< Build mode by segments
     };
 
     /// Return the build mode from a label
@@ -136,8 +136,10 @@ namespace geomtools {
                                             bool check_ = false,
                                             double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
+    /// Check if the polygon is clockwise
     bool is_clockwise() const;
 
+    /// Check if the polygon is anticlockwise
     bool is_anticlockwise() const;
 
     /// Find the intercept of a ray with the 2D shape's surfaces
@@ -154,8 +156,8 @@ namespace geomtools {
 
     /// \brief 3D rendering options
     enum simple_polygon_wires_rendering_option_type {
-      WR_SP_INTERNAL_EDGES = (WR_BASE_LAST << 1),        //!< Do render the internal triangle edges
-      WR_SP_LAST           = (WR_SP_INTERNAL_EDGES),  //!< Last defined bit
+      WR_SP_INTERNAL_EDGES = (WR_BASE_LAST << 1),    //!< Do render the internal triangle edges
+      WR_SP_LAST           = (WR_SP_INTERNAL_EDGES), //!< Last defined bit
       WR_SP_MASK           = (WR_SP_INTERNAL_EDGES
                               )   //!< Rendering options bit mask
     };
@@ -181,9 +183,6 @@ namespace geomtools {
 
     /// Check initialization
     bool is_initialized() const;
-
-    // /// Initialization
-    // void initialize();
 
     /// Initialization
     void initialize(const datatools::properties &, const handle_dict_type * objects_ = 0);
@@ -230,7 +229,7 @@ namespace geomtools {
                            double left_thickness_,
                            double right_thickness_,
                            double start_angle_,
-                           double stop_angle_0);
+                           double stop_angle_);
 
     /// Special init operations
     void _at_initialize();

@@ -90,7 +90,7 @@ int main(int argc_, char ** argv_)
     }
 
     {
-      // Draw intercepts (index 3):
+      // Draw intercepts (index 2):
       tmp_file.out() << "# locate " << std::endl;
       size_t nshoots = 100000;
       int counts = 0;
@@ -207,7 +207,7 @@ int main(int argc_, char ** argv_)
         std::ostringstream plot_cmd;
         plot_cmd << "splot '" << tmp_file.get_filename()
                  << "' index 1 title 'Cylindrical_Sector' with lines ";
-         plot_cmd << ", '' index 2 using 1:2:3:4 title 'Surface'    with points pt 6 ps 0.25 linecolor variable";
+         plot_cmd << ", '' index 2 using 1:2:3:4 title 'Surface' with points pt 6 ps 0.25 linecolor variable";
         g1.cmd(plot_cmd.str());
         g1.showonscreen(); // window output
         geomtools::gnuplot_drawer::wait_for_key();

@@ -56,12 +56,7 @@ namespace geomtools {
     if (!datatools::is_valid(_z_)) {
       return false;
     }
-    if (has_start_angle()) {
-      if (!datatools::is_valid(_delta_angle_)) {
-        return false;
-      }
-    }
-    return true;
+    return _angle_domain_.is_valid();
   }
 
   bool right_circular_conical_frustrum::has_top_face() const
@@ -248,49 +243,46 @@ namespace geomtools {
     return _outer_top_radius_;
   }
 
+  const angular_range & right_circular_conical_frustrum::get_angle_domain() const
+  {
+    return _angle_domain_;
+  }
+
+  bool right_circular_conical_frustrum::has_partial_angle() const
+  {
+    return _angle_domain_.is_partial();
+  }
+
   bool right_circular_conical_frustrum::has_start_angle() const
   {
-    return datatools::is_valid(_start_angle_);
+    return _angle_domain_.has_start_angle();
   }
 
   void right_circular_conical_frustrum::set_start_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ >= 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start angle value !");
-    _start_angle_ = new_value_;
+    _angle_domain_.set_start_angle(new_value_);
     return;
   }
 
   double right_circular_conical_frustrum::get_start_angle() const
   {
-    return _start_angle_;
+    return _angle_domain_.get_start_angle();
   }
 
   bool right_circular_conical_frustrum::has_delta_angle() const
   {
-    return datatools::is_valid(_delta_angle_);
+    return _angle_domain_.has_delta_angle();
   }
 
   void right_circular_conical_frustrum::set_delta_angle(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta angle value !");
-    _delta_angle_ = new_value_;
+    _angle_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double right_circular_conical_frustrum::get_delta_angle() const
   {
-    return _delta_angle_;
-  }
-
-  bool right_circular_conical_frustrum::has_partial_angle() const
-  {
-    if (_delta_angle_ == 2 * M_PI) return false;
-    // bug: if (_start_angle_ > 0.0) return true;
-    return true;
+    return _angle_domain_.get_delta_angle();
   }
 
   right_circular_conical_frustrum::right_circular_conical_frustrum()
@@ -328,8 +320,7 @@ namespace geomtools {
     set_inner_top_radius(inner_top_radius_);
     set_outer_top_radius(outer_top_radius_);
     set_z(z_);
-    set_start_angle(start_angle_);
-    set_delta_angle(delta_angle_);
+    _angle_domain_.set_partial_angles(start_angle_, delta_angle_);
     return;
   }
 
@@ -345,8 +336,8 @@ namespace geomtools {
     datatools::invalidate(_inner_top_radius_);
     datatools::invalidate(_outer_top_radius_);
     datatools::invalidate(_z_);
-    datatools::invalidate(_start_angle_);
-    datatools::invalidate(_delta_angle_);
+    _angle_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _angle_domain_.reset_partial_angles();
     return;
   }
 
@@ -409,23 +400,13 @@ namespace geomtools {
     }
     out_ << std::endl;
 
-    out_ << indent_ << datatools::i_tree_dumpable::tag
-         << "Start angle : ";
-    if (has_start_angle()) {
-      out_ << _start_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Angle domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _angle_domain_.tree_dump(out_, "", indent2.str());
     }
-    out_ << std::endl;
-
-    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-         << "Delta angle : ";
-    if (has_delta_angle()) {
-      out_ << _delta_angle_ / CLHEP::degree << " degree";
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
 
     return;
   }
@@ -462,7 +443,11 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Frustrum is not valid !");
     top_disk_.reset();
     if (has_top_face()) {
-      top_disk_.set(_inner_top_radius_, _outer_top_radius_, _start_angle_, _delta_angle_);
+      top_disk_.set(_inner_top_radius_, _outer_top_radius_);
+      if (has_partial_angle()) {
+        top_disk_.set_start_angle(get_start_angle());
+        top_disk_.set_delta_angle(get_delta_angle());
+      }
       face_placement_.set(0.0, 0.0, +0.5 * _z_, 0.0, 0.0, 0.0);
     }
     return;
@@ -474,7 +459,11 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Frustrum is not valid !");
     bottom_disk_.reset();
     if (has_bottom_face()) {
-      bottom_disk_.set(_inner_bottom_radius_, _outer_bottom_radius_, _start_angle_, _delta_angle_);
+      bottom_disk_.set(_inner_bottom_radius_, _outer_bottom_radius_);
+      if (has_partial_angle()) {
+        bottom_disk_.set_start_angle(get_start_angle());
+        bottom_disk_.set_delta_angle(get_delta_angle());
+      }
       face_placement_.set(0.0, 0.0, -0.5 * _z_, 0.0, 0.0, 0.0);
     }
     return;
@@ -487,8 +476,10 @@ namespace geomtools {
     on_.set_bottom_radius(get_outer_bottom_radius());
     on_.set_top_radius(get_outer_top_radius());
     on_.set_z(get_z());
-    on_.set_start_angle(get_start_angle());
-    on_.set_delta_angle(get_delta_angle());
+    if (has_partial_angle()) {
+      on_.set_start_angle(get_start_angle());
+      on_.set_delta_angle(get_delta_angle());
+    }
     return;
   }
 
@@ -574,7 +565,7 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Frustrum is not valid !");
     compute_start_stop_angle_face(qface_, tface_);
     if (has_partial_angle()) {
-      face_placement_.set(0.0, 0.0, 0.0, AXIS_Z, _start_angle_);
+      face_placement_.set(0.0, 0.0, 0.0, AXIS_Z, get_start_angle());
     }
     return;
   }
@@ -586,7 +577,7 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Frustrum is not valid !");
     compute_start_stop_angle_face(qface_, tface_);
     if (has_partial_angle()) {
-      face_placement_.set(0.0, 0.0, 0.0, AXIS_Z, _start_angle_ + _delta_angle_);
+      face_placement_.set(0.0, 0.0, 0.0, AXIS_Z, get_start_angle() + get_delta_angle());
     }
     return;
   }
@@ -813,7 +804,7 @@ namespace geomtools {
       }
     }
     if (has_partial_angle()) {
-      v *= (_delta_angle_ / 2 * M_PI);
+      v *= (get_delta_angle() / 2 * M_PI);
     }
     return v;
   }
@@ -828,12 +819,6 @@ namespace geomtools {
       if (config_.has_key("length_unit")) {
         const std::string lunit_str = config_.fetch_string("length_unit");
         lunit = datatools::units::get_length_unit_from(lunit_str);
-      }
-
-      double aunit = CLHEP::degree;
-      if (config_.has_key("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string("angle_unit");
-        aunit = datatools::units::get_angle_unit_from(aunit_str);
       }
 
       double inner_top_r;
@@ -883,35 +868,47 @@ namespace geomtools {
         z *= lunit;
       }
 
-      double start_angle = 0.0;
-      double delta_angle = 2 * M_PI * CLHEP::radian;
-      bool not_full_angle = false;
-      if (config_.has_key ("start_angle")) {
-        start_angle = config_.fetch_real ("start_angle");
-        if (! config_.has_explicit_unit ("start_angle")) {
-          start_angle *= aunit;
-        }
-        not_full_angle = true;
-      }
-      if (config_.has_key ("delta_angle")) {
-        delta_angle = config_.fetch_real ("delta_angle");
-        if (! config_.has_explicit_unit ("delta_angle")) {
-          delta_angle *= aunit;
-        }
-        not_full_angle = true;
-      }
-
       set_inner_bottom_radius(inner_bottom_r);
       set_inner_top_radius(inner_top_r);
       set_outer_bottom_radius(outer_bottom_r);
       set_outer_top_radius(outer_top_r);
       set_z(z);
-      if (not_full_angle) {
-        set_start_angle(start_angle);
-        set_delta_angle(delta_angle);
-      }
 
+      datatools::properties angle_config;
+      config_.export_and_rename_starting_with(angle_config, "angle.", "");
+      if (angle_config.size()) {
+        _angle_domain_.initialize(angle_config);
+      } else {
+        // deprecated ;
+        double aunit = CLHEP::degree;
+        if (config_.has_key("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string("angle_unit");
+          aunit = datatools::units::get_angle_unit_from(aunit_str);
+        }
+        double start_angle = 0.0;
+        double delta_angle = 2 * M_PI * CLHEP::radian;
+        bool not_full_angle = false;
+        if (config_.has_key ("start_angle")) {
+          start_angle = config_.fetch_real ("start_angle");
+          if (! config_.has_explicit_unit ("start_angle")) {
+            start_angle *= aunit;
+          }
+          not_full_angle = true;
+        }
+        if (config_.has_key ("delta_angle")) {
+          delta_angle = config_.fetch_real ("delta_angle");
+          if (! config_.has_explicit_unit ("delta_angle")) {
+            delta_angle *= aunit;
+          }
+          not_full_angle = true;
+        }
+        if (not_full_angle) {
+          set_start_angle(start_angle);
+          set_delta_angle(delta_angle);
+        }
+      }
     }
+
     lock();
     return;
   }
@@ -950,7 +947,7 @@ namespace geomtools {
     if (has_partial_angle()) {
       double angular_tolerance = get_angular_tolerance();
       double angle = std::atan2(point_.y(), point_.x());
-      if (!angle_is_in(angle, _start_angle_, _delta_angle_, angular_tolerance, true)) {
+      if (!angle_is_in(angle, get_start_angle(), get_delta_angle(), angular_tolerance, true)) {
         return false;
       }
     }
@@ -991,7 +988,7 @@ namespace geomtools {
     if (has_partial_angle()) {
       double angular_tolerance = get_angular_tolerance();
       double angle = std::atan2(point_.y(), point_.x());
-      if (!angle_is_in(angle, _start_angle_, _delta_angle_, angular_tolerance, true)) {
+      if (!angle_is_in(angle, get_start_angle(), get_delta_angle(), angular_tolerance, true)) {
         return false;
       }
     }
@@ -1028,95 +1025,6 @@ namespace geomtools {
       }
     }
 
-    /*
-      double r = hypot(point_.x(), point_.y());
-      double phi = std::atan2(point_.y(), point_.x());
-
-      if (surface_mask_.has_face_bit(FACE_OUTER_SIDE)) {
-      conical_nappe side;
-      placement side_placement;
-      side_placement.set_identity();
-      compute_outer_face(side);
-      vector_3d p_side;
-      side_placement.mother_to_child(point_, p_side);
-      if (side.is_on_surface(p_side, skin)) {
-      return face_identifier(FACE_OUTER_SIDE);
-      }
-      }
-
-      if (has_inner_face()) {
-      if (surface_mask_.has_face_bit(FACE_INNER_SIDE)) {
-      conical_nappe side;
-      placement side_placement;
-      side_placement.set_identity();
-      compute_inner_face(side);
-      vector_3d p_side;
-      side_placement.mother_to_child(point_, p_side);
-      if (side.is_on_surface(p_side, skin)) {
-      return face_identifier(FACE_INNER_SIDE);
-      }
-      }
-      }
-
-      if (has_top_face()) {
-      if (surface_mask_.has_face_bit(FACE_TOP)) {
-      disk top;
-      placement top_placement;
-      compute_top_face(top, top_placement);
-      vector_3d p_top;
-      top_placement.mother_to_child(point_, p_top);
-      if (top.is_on_surface(p_top, skin)) {
-      return face_identifier(FACE_TOP);
-      }
-      }
-      }
-
-      if (has_bottom_face()) {
-      if (surface_mask_.has_face_bit(FACE_BOTTOM)) {
-      disk bottom;
-      placement bottom_placement;
-      compute_bottom_face(bottom, bottom_placement);
-      vector_3d p_bottom;
-      bottom_placement.mother_to_child(point_, p_bottom);
-      if (bottom.is_on_surface(p_bottom, skin)) {
-      return face_identifier(FACE_BOTTOM);
-      }
-      }
-      }
-
-      if (has_partial_angle()) {
-      if (surface_mask_.has_face_bit(FACE_START_ANGLE)) {
-      quadrangle qface;
-      triangle tface;
-      placement face_placement;
-      compute_start_angle_face(qface, tface, face_placement);
-      vector_3d p_face;
-      face_placement.mother_to_child(point_, p_face);
-      if (qface.is_valid() && qface.is_on_surface(p_face, skin)) {
-      return face_identifier(FACE_START_ANGLE);
-      }
-      if (tface.is_valid() && tface.is_on_surface(p_face, skin)) {
-      return face_identifier(FACE_START_ANGLE);
-      }
-      }
-
-      if (surface_mask_.has_face_bit(FACE_STOP_ANGLE)) {
-      quadrangle qface;
-      triangle tface;
-      placement face_placement;
-      compute_stop_angle_face(qface, tface, face_placement);
-      vector_3d p_face;
-      face_placement.mother_to_child(point_, p_face);
-      if (qface.is_valid() && qface.is_on_surface(p_face, skin)) {
-      return face_identifier(FACE_STOP_ANGLE);
-      }
-      if (tface.is_valid() && tface.is_on_surface(p_face, skin)) {
-      return face_identifier(FACE_STOP_ANGLE);
-      }
-      }
-
-      }
-    */
     return face_identifier::face_invalid();
   }
 
@@ -1238,119 +1146,6 @@ namespace geomtools {
       face_counter++;
     }
 
-    /*
-      if (has_bottom_face()) {
-      const int FACE_INDEX = 0;
-      disk bottom_face;
-      placement bottom_face_placement;
-      compute_bottom_face(bottom_face, bottom_face_placement);
-      if (bottom_face.i_find_intercept::find_intercept(from_,
-      direction_,
-      bottom_face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_BOTTOM);
-      candidate_impact_counter++;
-      }
-      }
-
-      if (has_top_face()) {
-      const int FACE_INDEX = 1;
-      disk top_face;
-      placement top_face_placement;
-      compute_top_face(top_face, top_face_placement);
-      if (top_face.i_find_intercept::find_intercept(from_,
-      direction_,
-      top_face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_TOP);
-      candidate_impact_counter++;
-      }
-      }
-
-      {
-      const int FACE_INDEX = 2;
-      conical_nappe outer_side_face;
-      placement outer_side_face_placement;
-      outer_side_face_placement.set_identity();
-      compute_outer_face(outer_side_face);
-      if (outer_side_face.i_find_intercept::find_intercept(from_,
-      direction_,
-      outer_side_face_placement,
-      intercepts[FACE_INDEX], skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_OUTER_SIDE);
-      candidate_impact_counter++;
-      }
-      }
-
-      if (has_inner_face()) {
-      const int FACE_INDEX = 3;
-      conical_nappe inner_side_face;
-      placement inner_side_face_placement;
-      inner_side_face_placement.set_identity();
-      compute_inner_face(inner_side_face);
-      if (inner_side_face.i_find_intercept::find_intercept(from_,
-      direction_,
-      inner_side_face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_INNER_SIDE);
-      candidate_impact_counter++;
-      }
-      }
-
-      if (has_partial_angle()) {
-
-      {
-      const int FACE_INDEX = 4;
-      quadrangle start_phi_qface;
-      triangle start_phi_tface;
-      placement start_phi_face_placement;
-      compute_start_angle_face(start_phi_qface, start_phi_tface, start_phi_face_placement);
-      if (start_phi_qface.is_valid() && start_phi_qface.i_find_intercept::find_intercept(from_,
-      direction_,
-      start_phi_face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_ANGLE);
-      candidate_impact_counter++;
-      } else if (start_phi_tface.is_valid() && start_phi_tface.i_find_intercept::find_intercept(from_,
-      direction_,
-      start_phi_face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_START_ANGLE);
-      candidate_impact_counter++;
-      }
-      }
-
-      {
-      const int FACE_INDEX = 5;
-      quadrangle stop_phi_qface;
-      triangle stop_phi_tface;
-      placement stop_phi_face_placement;
-      compute_stop_angle_face(stop_phi_qface, stop_phi_tface, stop_phi_face_placement);
-      if (stop_phi_qface.is_valid() && stop_phi_qface.i_find_intercept::find_intercept(from_,
-      direction_,
-      stop_phi_face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_ANGLE);
-      candidate_impact_counter++;
-      } else if (stop_phi_tface.is_valid() && stop_phi_tface.i_find_intercept::find_intercept(from_,
-      direction_,
-      stop_phi_face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(FACE_STOP_ANGLE);
-      candidate_impact_counter++;
-      }
-      }
-
-      }
-    */
-
     if (candidate_impact_counter > 0) {
       double min_length_to_impact = -1.0;
       for (unsigned int iface = 0; iface < NFACES; iface++) {
@@ -1470,7 +1265,7 @@ namespace geomtools {
     } else {
       mygsl::min_max xrange;
       mygsl::min_max yrange;
-      double dphi = std::min(0.5 * CLHEP::degree, _delta_angle_ / 100);
+      double dphi = std::min(0.5 * CLHEP::degree, _angle_domain_.get_angle_spread() / 100);
       if (!has_inner_face()) {
         xrange.add(0.0);
         yrange.add(0.0);
@@ -1479,8 +1274,8 @@ namespace geomtools {
       if (get_outer_bottom_radius() > get_outer_top_radius()) {
         ro = get_outer_bottom_radius();
       }
-      for (double phi = _start_angle_;
-           phi <  _start_angle_ + _delta_angle_;
+      for (double phi = _angle_domain_.get_first_angle();
+           phi < _angle_domain_.get_last_angle();
            phi += dphi) {
         double cp = std::cos(phi);
         double sp = std::sin(phi);

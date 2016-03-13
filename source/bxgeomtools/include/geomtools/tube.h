@@ -26,6 +26,7 @@
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
+#include <geomtools/angular_range.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -154,16 +155,31 @@ namespace geomtools {
     /// Set the dimensions and angular limits
     void set(double inner_r_, double outer_r_, double z_, double start_phi_, double delta_phi_);
 
-    void set_phi(double start_phi_, double delta_phi_);
+    /// Return the phi domain
+    const angular_range & get_phi_domain() const;
 
-    /// Set the starting angle
+    /// Check for the partial arc
+    bool has_partial_phi() const;
+
+    /// Check the start phi
+    bool has_start_phi() const;
+
+    /// Set the start phi
+    void set_start_phi(double);
+
+    /// Return the start phi
     double get_start_phi() const;
 
-    /// Set the angular spread
+    /// Check the dedislta phi
+    bool has_delta_phi() const;
+
+    /// Set the delta phi
+    void set_delta_phi(double);
+
+    /// Return the delta phi
     double get_delta_phi() const;
 
-    /// Check if angle is limited
-    bool has_partial_phi() const;
+    void set_phi(double start_phi_, double delta_phi_);
 
     /// Compute the inner nappe
     void compute_inner_cylinder(cylinder & ic_);
@@ -281,11 +297,10 @@ namespace geomtools {
 
   private:
 
-    double _z_;         //!< Length of the tube along the Z axis
-    double _inner_r_;   //!< Inner radius
-    double _outer_r_;   //!< Outer radius
-    double _start_phi_; //!< Start phi angle
-    double _delta_phi_; //!< Delta phi angle
+    double _z_;       //!< Length of the tube along the Z axis
+    double _inner_r_; //!< Inner radius
+    double _outer_r_; //!< Outer radius
+    angular_range _phi_domain_; //!< Angular spread of the elliptical sector (azimuthal)
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tube)
