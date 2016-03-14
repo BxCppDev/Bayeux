@@ -549,12 +549,12 @@ namespace geomtools {
     //           << "nsamples_phi = " << nsamples_phi
     //           << std::endl;
     // double start_phi = 0.0;
-    double delta_phi = 2.0 * M_PI;
-    if (has_partial_angle()) {
-      // start_phi = get_start_angle();
-      delta_phi = get_delta_angle();
-    }
-    double dphi = delta_phi / nsamples_phi;
+    // double delta_phi = 2.0 * M_PI;
+    // if (has_partial_angle()) {
+    //   start_phi = get_start_angle();
+    //   delta_phi = get_delta_angle();
+    // }
+    // double dphi = delta_phi / nsamples_phi;
     // std::cerr << "DEVEL: right_circular_conical_nappe::generate_wires_self: "
     //           << "dphi = " << dphi
     //           << std::endl;
