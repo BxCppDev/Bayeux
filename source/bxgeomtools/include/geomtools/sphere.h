@@ -26,6 +26,7 @@
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
+#include <geomtools/angular_range.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -102,21 +103,58 @@ namespace geomtools {
 
     void set(double rmin_, double rmax_);
 
-    void set_phi(double start_phi_, double delta_phi_);
 
-    double get_start_phi() const;
+    /// Return the theta domain (polar angle)
+    const angular_range & get_theta_domain() const;
 
-    double get_delta_phi() const;
+    /// Check if the sector has partial theta angle
+    bool has_partial_theta() const;
 
-    bool has_partial_phi() const;
+    /// Check the start theta angle
+    bool has_start_theta() const;
 
-    void set_theta(double start_theta_, double delta_theta_);
+    /// Set the start theta angle
+    void set_start_theta(double);
 
+    /// Return the start theta angle
     double get_start_theta() const;
 
+    /// Check the delta theta angle
+    bool has_delta_theta() const;
+
+    /// Set the delta theta angle
+    void set_delta_theta(double);
+
+    /// Return the delta angle
     double get_delta_theta() const;
 
-    bool has_partial_theta() const;
+    /// Return the phi domain (azimuthal angle)
+    const angular_range & get_phi_domain() const;
+
+    /// Check if the sector has partial phi angle
+    bool has_partial_phi() const;
+
+    /// Check the start phi angle
+    bool has_start_phi() const;
+
+    /// Set the start phi angle
+    void set_start_phi(double);
+
+    /// Return the start phi angle
+    double get_start_phi() const;
+
+    /// Check the delta phi angle
+    bool has_delta_phi() const;
+
+    /// Set the delta phi angle
+    void set_delta_phi(double);
+
+    /// Return the delta angle
+    double get_delta_phi() const;
+
+    void set_phi(double start_phi_, double delta_phi_);
+
+    void set_theta(double start_theta_, double delta_theta_);
 
     bool is_orb() const;
 
@@ -255,10 +293,8 @@ namespace geomtools {
 
     double _r_;           //!< Outer radius
     double _r_min_;       //!< Inner radius
-    double _start_phi_;   //!< Start phi angle
-    double _delta_phi_;   //!< Delta phi angle
-    double _start_theta_; //!< Start theta angle
-    double _delta_theta_; //!< Delta theta angle
+    angular_range _theta_domain_; //!< Angular spread of the polar arc
+    angular_range _phi_domain_;   //!< Angular spread of the azimuthal arc
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(sphere)

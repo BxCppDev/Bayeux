@@ -466,7 +466,6 @@ namespace geomtools {
       _phi_domain_.tree_dump(out_, "", indent2.str());
     }
 
-
     return;
   }
 

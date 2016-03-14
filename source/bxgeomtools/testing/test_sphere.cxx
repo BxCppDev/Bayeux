@@ -77,8 +77,8 @@ int main (int argc_, char ** argv_)
       my_sphere.set_r_min(2.0 * CLHEP::mm);
     }
     if (do_sector) {
-      my_sphere.set_theta(0.25 * M_PI, 0.25 * M_PI);
-      my_sphere.set_phi(M_PI/6, M_PI/7);
+      my_sphere.set_theta(0.25 * M_PI, 0.65 * M_PI);
+      my_sphere.set_phi(M_PI/6, M_PI/3);
     }
 
     geomtools::placement sphere_placement(0.2, 0.15, 0.1, M_PI / 7.0, M_PI / 6.0, 0.0);

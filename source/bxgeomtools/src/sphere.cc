@@ -61,15 +61,21 @@ namespace geomtools {
       double phi_start = 0.0;
       double phi_stop  = 2 * M_PI;
       if (has_partial_theta()) {
-        theta_start = _start_theta_;
-        theta_stop = theta_start + _delta_theta_;
+        theta_start = get_start_theta();
+        theta_stop = theta_start + get_delta_theta();
       }
       if (has_partial_phi()) {
-        phi_start = _start_phi_;
-        phi_stop = phi_start + _delta_phi_;
+        phi_start = get_start_phi();
+        phi_stop = phi_start + get_delta_phi();
       }
-      double dtheta = std::min(0.5 * CLHEP::degree, _delta_theta_ / 100);
-      double dphi   = std::min(0.5 * CLHEP::degree, _delta_phi_ / 100);
+      double dtheta = 0.5 * CLHEP::degree;
+      double dphi   = 0.5 * CLHEP::degree;
+      if (has_partial_theta()) {
+        dtheta = std::min(dtheta, get_delta_theta() / 100);
+      }
+      if (has_partial_phi()) {
+        dphi   = std::min(dphi, get_delta_phi() / 100);
+      }
       for (double theta = theta_start;
            theta < theta_stop;
            theta += dtheta) {
@@ -138,8 +144,8 @@ namespace geomtools {
   double sphere::get_zmin () const
   {
     if (has_partial_theta()) {
-      return std::min(_r_ * std::cos(_start_theta_ + _delta_theta_),
-                      _r_min_ * std::cos(_start_theta_ + _delta_theta_)
+      return std::min(_r_ * std::cos(get_start_theta() + get_delta_theta()),
+                      _r_min_ * std::cos(get_start_theta() + get_delta_theta())
                       );
     } else {
       return -_r_;
@@ -149,8 +155,8 @@ namespace geomtools {
   double sphere::get_zmax () const
   {
     if (has_partial_theta()) {
-      return std::max(_r_ * std::cos(_start_theta_),
-                      _r_min_ * std::cos(_start_theta_)
+      return std::max(_r_ * std::cos(get_start_theta()),
+                      _r_min_ * std::cos(get_start_theta())
                       );
     } else {
       return +_r_;
@@ -198,13 +204,13 @@ namespace geomtools {
   }
 
   void
-  sphere::set_r_max (double new_value_)
+  sphere::set_r_max(double new_value_)
   {
     set_r(new_value_);
   }
 
   void
-  sphere::set_r_min (double new_value_)
+  sphere::set_r_min(double new_value_)
   {
     _r_min_ = new_value_;
     DT_THROW_IF(new_value_ < 0.0, std::domain_error,
@@ -215,26 +221,26 @@ namespace geomtools {
   }
 
   void
-  sphere::reset_r_max ()
+  sphere::reset_r_max()
   {
     datatools::invalidate(_r_);
   }
 
   void
-  sphere::reset_r_min ()
+  sphere::reset_r_min()
   {
     _r_min_ = 0.0;
   }
 
   void
-  sphere::set_radius (double new_value_)
+  sphere::set_radius(double new_value_)
   {
-    set_r (new_value_);
+    set_r(new_value_);
     return;
   }
 
   void
-  sphere::set (double r_)
+  sphere::set(double r_)
   {
     reset_r_min();
     set_r_max(r_);
@@ -242,82 +248,117 @@ namespace geomtools {
   }
 
   void
-  sphere::set (double r_min_, double r_max_)
+  sphere::set(double r_min_, double r_max_)
   {
     set_r_min(r_min_);
     set_r_max(r_max_);
     return;
   }
 
-  void sphere::set_phi(double start_phi_, double delta_phi_)
+  void sphere::set_theta(double start_theta_, double delta_theta_)
   {
-    DT_THROW_IF(start_phi_ < 0.0,
-                std::domain_error,
-                "Start phi is negative !");
-    DT_THROW_IF(start_phi_ >= 2 * M_PI,
-                std::domain_error,
-                "Start phi is too large (> 2 pi) !");
-    DT_THROW_IF(delta_phi_ > 2 * M_PI,
-                std::domain_error,
-                "Delta phi is too large (> 2 pi)!");
-    DT_THROW_IF(delta_phi_ < 0,
-                std::domain_error,
-                "Delta phi is negative (< 0)!");
-    _start_phi_ = start_phi_;
-    _delta_phi_ = delta_phi_;
+    _theta_domain_.set_partial_angles(start_theta_, delta_theta_);
     return;
   }
 
-  double sphere::get_start_phi() const
+  const angular_range & sphere::get_theta_domain() const
   {
-    return _start_phi_;
+    return _theta_domain_;
   }
 
-  double sphere::get_delta_phi() const
+  bool sphere::has_partial_theta() const
   {
-    return _delta_phi_;
+    return _theta_domain_.is_partial();
   }
 
-  void sphere::set_theta(double start_theta_, double delta_theta_)
+  bool sphere::has_start_theta() const
   {
-    DT_THROW_IF(start_theta_ < 0.0,
-                std::domain_error,
-                "Start theta is too small (< 0)!");
-    DT_THROW_IF(start_theta_ > M_PI,
-                std::domain_error,
-                "Start theta is too large (> pi)!");
-    DT_THROW_IF(delta_theta_ < 0,
-                std::domain_error,
-                "Delta theta is negative (< 0)!");
-    // DT_THROW_IF(delta_theta_ > M_PI,
-    //             std::domain_error,
-    //             "Delta theta is too large (> pi)!");
-    DT_THROW_IF((start_theta_ + delta_theta_) > M_PI,
-                std::domain_error,
-                "Theta bound is too large (> pi)!");
-    _start_theta_ = start_theta_;
-    _delta_theta_ = delta_theta_;
+    return _theta_domain_.has_start_angle();
+  }
+
+  void sphere::set_start_theta(double new_value_)
+  {
+    _theta_domain_.set_start_angle(new_value_);
     return;
   }
 
   double sphere::get_start_theta() const
   {
-    return _start_theta_;
+    return _theta_domain_.get_start_angle();
+  }
+
+  bool sphere::has_delta_theta() const
+  {
+    return _theta_domain_.has_delta_angle();
+  }
+
+  void sphere::set_delta_theta(double new_value_)
+  {
+    _theta_domain_.set_delta_angle(new_value_);
+    return;
   }
 
   double sphere::get_delta_theta() const
   {
-    return _delta_theta_;
+    return _theta_domain_.get_delta_angle();
+  }
+
+  void sphere::set_phi(double start_phi_, double delta_phi_)
+  {
+    _phi_domain_.set_partial_angles(start_phi_, delta_phi_);
+    return;
+  }
+
+  const angular_range & sphere::get_phi_domain() const
+  {
+    return _phi_domain_;
+  }
+
+  bool sphere::has_partial_phi() const
+  {
+    return _phi_domain_.is_partial();
+  }
+
+  bool sphere::has_start_phi() const
+  {
+    return _phi_domain_.has_start_angle();
+  }
+
+  void sphere::set_start_phi(double new_value_)
+  {
+    _phi_domain_.set_start_angle(new_value_);
+    return;
+  }
+
+  double sphere::get_start_phi() const
+  {
+    return _phi_domain_.get_start_angle();
+  }
+
+  bool sphere::has_delta_phi() const
+  {
+    return _phi_domain_.has_delta_angle();
+  }
+
+  void sphere::set_delta_phi(double new_value_)
+  {
+    _phi_domain_.set_delta_angle(new_value_);
+    return;
+  }
+
+  double sphere::get_delta_phi() const
+  {
+    return _phi_domain_.get_delta_angle();
   }
 
   void sphere::_set_default()
   {
     datatools::invalidate(_r_);
     datatools::invalidate(_r_min_);
-    datatools::invalidate(_start_phi_);
-    datatools::invalidate(_delta_phi_);
-    datatools::invalidate(_start_theta_);
-    datatools::invalidate(_delta_theta_);
+    _theta_domain_.set_type(angular_range::RANGE_TYPE_POLAR);
+    _theta_domain_.reset_partial_angles();
+    _phi_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _phi_domain_.reset_partial_angles();
     return;
   }
 
@@ -341,6 +382,7 @@ namespace geomtools {
 
   sphere::~sphere ()
   {
+    return;
   }
 
   void sphere::initialize(const datatools::properties & config_,
@@ -354,12 +396,6 @@ namespace geomtools {
       if (config_.has_key ("length_unit")) {
         const std::string lunit_str = config_.fetch_string ("length_unit");
         lunit = datatools::units::get_length_unit_from (lunit_str);
-      }
-
-      double aunit = CLHEP::degree;
-      if (config_.has_key ("angle_unit")) {
-        const std::string aunit_str = config_.fetch_string ("angle_unit");
-        aunit = datatools::units::get_angle_unit_from (aunit_str);
       }
 
       double rmin, rmax;
@@ -384,50 +420,70 @@ namespace geomtools {
         }
       }
 
-      double start_theta = 0.0;
-      double delta_theta = M_PI * CLHEP::radian;
-      bool not_full_theta = false;
-      if (config_.has_key ("start_theta")) {
-        start_theta = config_.fetch_real ("start_theta");
-        if (! config_.has_explicit_unit ("start_theta")) {
-          start_theta *= aunit;
-        }
-        not_full_theta = true;
-      }
-      if (config_.has_key ("delta_theta")) {
-        delta_theta = config_.fetch_real ("delta_theta");
-        if (! config_.has_explicit_unit ("delta_theta")) {
-          delta_theta *= aunit;
-        }
-        not_full_theta = true;
-      }
-
-      double start_phi = 0.0;
-      double delta_phi = 2 * M_PI * CLHEP::radian;
-      bool not_full_phi = false;
-      if (config_.has_key ("start_phi")) {
-        start_phi = config_.fetch_real ("start_phi");
-        if (! config_.has_explicit_unit ("start_phi")) {
-          start_phi *= aunit;
-        }
-        not_full_phi = true;
-      }
-      if (config_.has_key ("delta_phi")) {
-        delta_phi = config_.fetch_real ("delta_phi");
-        if (! config_.has_explicit_unit ("delta_phi")) {
-          delta_phi *= aunit;
-        }
-        not_full_phi = true;
-      }
       if (rmin > 0.0) {
         set_r_min(rmin);
       }
       set_r_max(rmax);
-      if (not_full_theta) {
-        set_theta(start_theta, delta_theta);
+
+      datatools::properties theta_config;
+      config_.export_and_rename_starting_with(theta_config, "theta.", "");
+      if (theta_config.size()) {
+        _theta_domain_.initialize(theta_config);
       }
-      if (not_full_phi) {
-        set_phi(start_phi, delta_phi);
+      datatools::properties phi_config;
+      config_.export_and_rename_starting_with(phi_config, "phi.", "");
+      if (phi_config.size()) {
+        _phi_domain_.initialize(phi_config);
+      }
+      if (! theta_config.size() && !phi_config.size()) {
+        // deprecated ;
+
+        double aunit = CLHEP::degree;
+        if (config_.has_key ("angle_unit")) {
+          const std::string aunit_str = config_.fetch_string ("angle_unit");
+          aunit = datatools::units::get_angle_unit_from (aunit_str);
+        }
+        double start_theta = 0.0;
+        double delta_theta = M_PI * CLHEP::radian;
+        bool not_full_theta = false;
+        if (config_.has_key ("start_theta")) {
+          start_theta = config_.fetch_real ("start_theta");
+          if (! config_.has_explicit_unit ("start_theta")) {
+            start_theta *= aunit;
+          }
+          not_full_theta = true;
+        }
+        if (config_.has_key ("delta_theta")) {
+          delta_theta = config_.fetch_real ("delta_theta");
+          if (! config_.has_explicit_unit ("delta_theta")) {
+            delta_theta *= aunit;
+          }
+          not_full_theta = true;
+        }
+
+        double start_phi = 0.0;
+        double delta_phi = 2 * M_PI * CLHEP::radian;
+        bool not_full_phi = false;
+        if (config_.has_key ("start_phi")) {
+          start_phi = config_.fetch_real ("start_phi");
+          if (! config_.has_explicit_unit ("start_phi")) {
+            start_phi *= aunit;
+          }
+          not_full_phi = true;
+        }
+        if (config_.has_key ("delta_phi")) {
+          delta_phi = config_.fetch_real ("delta_phi");
+          if (! config_.has_explicit_unit ("delta_phi")) {
+            delta_phi *= aunit;
+          }
+          not_full_phi = true;
+        }
+        if (not_full_theta) {
+          set_theta(start_theta, delta_theta);
+        }
+        if (not_full_phi) {
+          set_phi(start_phi, delta_phi);
+        }
       }
     }
 
@@ -441,13 +497,13 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
     double delta_phi = 2 * M_PI;
     if (has_partial_phi()) {
-      delta_phi = _delta_phi_;
+      delta_phi = get_delta_phi();
     }
     double start_theta = 0.0;
     double delta_theta = M_PI;
     if (has_partial_theta()) {
-      start_theta = _start_theta_;
-      delta_theta = _delta_theta_;
+      start_theta = get_start_theta();
+      delta_theta = get_delta_theta();
     }
     double stop_theta = start_theta + delta_theta;
     double r_min = 0.0;
@@ -488,13 +544,13 @@ namespace geomtools {
     DT_THROW_IF (! is_valid(), std::logic_error, "Sphere is not valid !");
     double delta_phi = 2 * M_PI;
     if (has_partial_phi()) {
-      delta_phi = _delta_phi_;
+      delta_phi = get_delta_phi();
     }
     double start_theta = 0.0;
     double delta_theta = M_PI;
     if (has_partial_theta()) {
-      start_theta = _start_theta_;
-      delta_theta = _delta_theta_;
+      start_theta = get_start_theta();
+      delta_theta = get_delta_theta();
     }
     double stop_theta = start_theta + delta_theta;
     double r_min = 0.0;
@@ -527,16 +583,6 @@ namespace geomtools {
 
     this->i_shape_3d::_reset();
     return;
-  }
-
-  bool sphere::has_partial_phi() const
-  {
-    return datatools::is_valid(_start_phi_) && datatools::is_valid(_delta_phi_);
-  }
-
-  bool sphere::has_partial_theta() const
-  {
-    return datatools::is_valid(_start_theta_) && datatools::is_valid(_delta_theta_);
   }
 
   bool sphere::is_orb() const
@@ -575,12 +621,12 @@ namespace geomtools {
     if (has_r_min()) {
       inner_.set_radius(_r_min_);
       if (has_partial_theta()) {
-        inner_.set_start_theta(_start_theta_);
-        inner_.set_delta_theta(_delta_theta_);
+        inner_.set_start_theta(get_start_theta());
+        inner_.set_delta_theta(get_delta_theta());
       }
       if (has_partial_phi()) {
-        inner_.set_start_phi(_start_phi_);
-        inner_.set_delta_phi(_delta_phi_);
+        inner_.set_start_phi(get_start_phi());
+        inner_.set_delta_phi(get_delta_phi());
       }
     }
     return;
@@ -592,12 +638,12 @@ namespace geomtools {
     outer_.reset();
     outer_.set_radius(_r_);
     if (has_partial_theta()) {
-      outer_.set_start_theta(_start_theta_);
-      outer_.set_delta_theta(_delta_theta_);
+      outer_.set_start_theta(get_start_theta());
+      outer_.set_delta_theta(get_delta_theta());
     }
     if (has_partial_phi()) {
-      outer_.set_start_phi(_start_phi_);
-      outer_.set_delta_phi(_delta_phi_);
+      outer_.set_start_phi(get_start_phi());
+      outer_.set_delta_phi(get_delta_phi());
     }
     return;
   }
@@ -611,15 +657,15 @@ namespace geomtools {
     dface_.reset();
     face_placement_.reset();
     if (has_partial_theta()) {
-      double theta = _start_theta_;
+      double theta = get_start_theta();
       if (std::abs(theta - 0.5 * M_PI) < get_angular_tolerance()) {
         dface_.set_outer_r(_r_);
         if (has_r_min()) {
           dface_.set_inner_r(_r_min_);
         }
         if (has_partial_phi()) {
-          dface_.set_start_angle(_start_phi_);
-          dface_.set_delta_angle(_delta_phi_);
+          dface_.set_start_angle(get_start_phi());
+          dface_.set_delta_angle(get_delta_phi());
         }
         face_placement_.set(0.0, 0.0, 0.0, 0, 0, 0);
       } else {
@@ -635,8 +681,8 @@ namespace geomtools {
         face_.set_bottom_radius(ztop > zbottom ? rbottom : rtop);
         face_.set_z(std::abs(ztop - zbottom));
         if (has_partial_phi()) {
-          face_.set_start_angle(_start_phi_);
-          face_.set_delta_angle(_delta_phi_);
+          face_.set_start_angle(get_start_phi());
+          face_.set_delta_angle(get_delta_phi());
         }
         face_placement_.set(0.0, 0.0, 0.5 * (zbottom + ztop), 0, 0, 0);
       }
@@ -653,15 +699,15 @@ namespace geomtools {
     dface_.reset();
     face_placement_.reset();
     if (has_partial_theta()) {
-      double theta = _start_theta_ + _delta_theta_;
+      double theta = get_start_theta() + get_delta_theta();
       if (std::abs(theta - 0.5 * M_PI) < get_angular_tolerance()) {
         dface_.set_outer_r(_r_);
         if (has_r_min()) {
           dface_.set_inner_r(_r_min_);
         }
         if (has_partial_phi()) {
-          dface_.set_start_angle(_start_phi_);
-          dface_.set_delta_angle(_delta_phi_);
+          dface_.set_start_angle(get_start_phi());
+          dface_.set_delta_angle(get_delta_phi());
         }
         face_placement_.set(0.0, 0.0, 0.0, 0, 0, 0);
       } else {
@@ -678,8 +724,8 @@ namespace geomtools {
         face_.set_bottom_radius(ztop > zbottom ? rbottom : rtop);
         face_.set_z(std::abs(ztop - zbottom));
         if (has_partial_phi()) {
-          face_.set_start_angle(_start_phi_);
-          face_.set_delta_angle(_delta_phi_);
+          face_.set_start_angle(get_start_phi());
+          face_.set_delta_angle(get_delta_phi());
         }
         face_placement_.set(0.0, 0.0, 0.5 * (zbottom + ztop), 0, 0, 0);
       }
@@ -711,7 +757,7 @@ namespace geomtools {
     face_.reset();
     face_placement_.reset();
     if (has_partial_phi()) {
-      double start_phi = _start_phi_;
+      double start_phi = get_start_phi();
       face_.set_r(_r_);
       if (has_r_min()) {
         face_.set_inner_r(_r_min_);
@@ -719,8 +765,8 @@ namespace geomtools {
       double start_theta = 0.0;
       double delta_theta = M_PI;
       if (has_partial_theta()) {
-        start_theta = _start_theta_;
-        delta_theta = _delta_theta_;
+        start_theta = get_start_theta();
+        delta_theta = get_delta_theta();
       }
       face_.set_start_angle(start_theta);
       face_.set_delta_angle(delta_theta);
@@ -745,8 +791,8 @@ namespace geomtools {
     face_.reset();
     face_placement_.reset();
     if (has_partial_phi()) {
-      double start_phi = _start_phi_;
-      double delta_phi = _delta_phi_;
+      double start_phi = get_start_phi();
+      double delta_phi = get_delta_phi();
       double stop_phi = start_phi + delta_phi;
       face_.set_r(_r_);
       if (has_r_min()) {
@@ -755,8 +801,8 @@ namespace geomtools {
       double start_theta = 0.0;
       double delta_theta = M_PI;
       if (has_partial_theta()) {
-        start_theta = _start_theta_;
-        delta_theta = _delta_theta_;
+        start_theta = get_start_theta();
+        delta_theta = get_delta_theta();
       }
       face_.set_start_angle(start_theta);
       face_.set_delta_angle(delta_theta);
@@ -838,7 +884,7 @@ namespace geomtools {
           faces_.push_back(dummy);
         }
         face_info & finfo = faces_.back();
-        if (std::abs(_start_theta_ - 0.5 * M_PI) < get_angular_tolerance()) {
+        if (std::abs(get_start_theta() - 0.5 * M_PI) < get_angular_tolerance()) {
           // std::cerr << "DEVEL: sphere::compute_faces: DISK!" << std::endl;
           right_circular_conical_nappe rccn;
           disk & d =  finfo.add_face<disk>();
@@ -863,7 +909,7 @@ namespace geomtools {
           faces_.push_back(dummy);
         }
         face_info & finfo = faces_.back();
-        double stop_theta = _start_theta_ + _delta_theta_;
+        double stop_theta = get_start_theta() + get_delta_theta();
         // std::cerr << "DEVEL: sphere::compute_faces: stop theta=" << stop_theta / M_PI << " pi" << std::endl;
         if (std::abs(stop_theta - 0.5 * M_PI) < get_angular_tolerance()) {
           // std::cerr << "DEVEL: sphere::compute_faces: DISK!" << std::endl;
@@ -944,13 +990,13 @@ namespace geomtools {
     double phi = point_.phi();
     double eps_phi = std::atan2(hskin, rho);
     if (has_partial_phi()) {
-      if (! angle_is_in(phi, _start_phi_ + eps_phi , _delta_phi_ - 2 * eps_phi, 0.0)) {
+      if (! angle_is_in(phi, get_start_phi() + eps_phi , get_delta_phi() - 2 * eps_phi, 0.0)) {
         return false;
       }
     }
     if (has_partial_theta()) {
       double eps_theta = std::atan2(hskin, r);
-      if (!angle_is_in(theta, _start_theta_ + eps_theta, _delta_theta_ - 2 * eps_theta, 0.0)) {
+      if (!angle_is_in(theta, get_start_theta() + eps_theta, get_delta_theta() - 2 * eps_theta, 0.0)) {
         return false;
       }
     }
@@ -977,13 +1023,19 @@ namespace geomtools {
     double phi = point_.phi();
     double eps_phi = std::atan2(hskin, rho);
     if (has_partial_phi()) {
-      if (! angle_is_in(phi, _start_phi_ - eps_phi , _delta_phi_ + 2 * eps_phi, 0.0)) {
+      if (! angle_is_in(phi,
+                        get_start_phi() - eps_phi ,
+                        get_delta_phi() + 2 * eps_phi,
+                        0.0)) {
         return true;
       }
     }
     if (has_partial_theta()) {
       double eps_theta = std::atan2(hskin, r);
-      if (!angle_is_in(theta, _start_theta_ - eps_theta, _delta_theta_ + 2 * eps_theta, 0.0)) {
+      if (!angle_is_in(theta,
+                       get_start_theta() - eps_theta,
+                       get_delta_theta() + 2 * eps_theta,
+                       0.0)) {
         return true;
       }
     }
@@ -1186,10 +1238,11 @@ namespace geomtools {
     out_ << '{' << sphere::sphere_label() << ' '
          << s_._r_ << ' '
          << s_._r_min_ << ' '
-         << s_._start_phi_ << ' '
-         << s_._delta_phi_ << ' '
-         << s_._start_theta_ << ' '
-         << s_._delta_theta_ << '}';
+         // << s_._start_phi_ << ' '
+         // << s_._delta_phi_ << ' '
+         // << s_._start_theta_ << ' '
+         // << s_._delta_theta_
+         << '}';
     return out_;
   }
 
@@ -1216,6 +1269,7 @@ namespace geomtools {
       in_.clear (std::ios_base::failbit);
       return in_;
     }
+    /*
     double start_phi, delta_phi;
     in_ >> start_phi >> delta_phi;
     if (! in_)
@@ -1230,6 +1284,7 @@ namespace geomtools {
         in_.clear (std::ios_base::failbit);
         return in_;
       }
+    */
     c = 0;
     in_.get (c);
     if (c != '}')  {
@@ -1258,16 +1313,26 @@ namespace geomtools {
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "R : " << _r_ / CLHEP::mm << " mm" << std::endl;
+
     out_ << indent << datatools::i_tree_dumpable::tag
          << "R(min) : " << _r_min_ / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Start phi : " << _start_phi_ / CLHEP::degree << " degree" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Delta phi : " << _delta_phi_ / CLHEP::degree << " degree" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag
-         << "Start theta : " << _start_theta_ / CLHEP::degree << " degree" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Delta theta : " << _delta_theta_ / CLHEP::degree << " degree" << std::endl;
+
+
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Theta domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::skip_tag;
+      _theta_domain_.tree_dump(out_, "", indent2.str());
+    }
+
+    {
+      out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+           << "Phi domain : " << std::endl;
+      std::ostringstream indent2;
+      indent2 << indent_ << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+      _phi_domain_.tree_dump(out_, "", indent2.str());
+    }
 
     return;
   }
