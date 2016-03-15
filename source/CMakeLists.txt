@@ -50,7 +50,6 @@ find_package(CAMP 0.7.1 REQUIRED NO_MODULE)
 find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
 
 # - GSL
-find_package(GSL 1.15 QUIET NO_MODULE)
 find_package(GSL 1.15 REQUIRED)
 
 # - ROOT
@@ -81,7 +80,6 @@ endif()
 
 # - Core Includes for Bayeux + Third Party
 include_directories(${CLHEP_INCLUDE_DIRS})
-include_directories(${GSL_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
 include_directories(${CAMP_INCLUDE_DIRS})
 
@@ -260,7 +258,7 @@ target_link_libraries(Bayeux
   ${CMAKE_DL_LIBS}
   ${Bayeux_Boost_LIBRARIES}
   ${CAMP_LIBRARIES}
-  ${GSL_LIBRARIES}
+  GSL::gsl
   ${CLHEP_LIBRARIES}
   ${ROOT_LIBRARIES}
   )
