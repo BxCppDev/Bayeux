@@ -254,7 +254,7 @@ namespace geomtools {
 } // end of namespace geomtools
 
 /// OCD support declaration
-// @param geomtools::box the name the class with registered OCD support
+// @param geomtools::box the name of the class with registered OCD support
 DOCD_CLASS_DECLARATION(geomtools::box)
 
 #endif // GEOMTOOLS_BOX_H
