@@ -251,11 +251,11 @@ or :
             "${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64" \
          -DBAYEUX_CXX_STANDARD="98" \
          -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
+         -DBAYEUX_ENABLE_TESTING=ON \
          -DBAYEUX_WITH_IWYU_CHECK=ON \
+         -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
          -DBAYEUX_WITH_DOCS=ON \
          -DBAYEUX_WITH_DOCS_OCD=ON \
-         -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
-         -DBAYEUX_WITH_EXAMPLES=ON \
          -DBAYEUX_WITH_BRIO=ON \
          -DBAYEUX_WITH_CUTS=ON \
          -DBAYEUX_WITH_MYGSL=ON \
@@ -269,7 +269,6 @@ or :
          -DBAYEUX_WITH_LAHAGUE=ON \
          -DBAYEUX_WITH_GEANT4_MODULE=ON \
          -DBAYEUX_WITH_MCNP_MODULE=OFF \
-         -DBAYEUX_ENABLE_TESTING=ON \
          -GNinja \
          ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
 ..
@@ -707,11 +706,11 @@ b. Configure Bayeux with CMake and GNU make (default build system):
            ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-Linux-x86_64 \
          -DBAYEUX_CXX_STANDARD="98" \
          -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
+         -DBAYEUX_ENABLE_TESTING=ON \
+         -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
          -DBAYEUX_WITH_IWYU_CHECK=ON \
          -DBAYEUX_WITH_DOCS=ON \
          -DBAYEUX_WITH_DOCS_OCD=ON \
-         -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
-         -DBAYEUX_WITH_EXAMPLES=ON \
          -DBAYEUX_WITH_BRIO=ON \
          -DBAYEUX_WITH_CUTS=ON \
          -DBAYEUX_WITH_MYGSL=ON \
@@ -725,7 +724,6 @@ b. Configure Bayeux with CMake and GNU make (default build system):
          -DBAYEUX_WITH_LAHAGUE=ON \
          -DBAYEUX_WITH_GEANT4_MODULE=ON \
          -DBAYEUX_WITH_MCNP_MODULE=OFF \
-         -DBAYEUX_ENABLE_TESTING=ON \
          ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
 ..
 

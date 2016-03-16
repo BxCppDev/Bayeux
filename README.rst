@@ -3,7 +3,7 @@ Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
 :Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    2016-03-07
+:Date:    2016-03-16
 
 .. contents::
    :depth: 3
@@ -12,7 +12,9 @@ Bayeux C++ Library for Experimental Particle/Nuclear Physics
 About Bayeux
 ============
 
-Bayeux provides a collection of C++ classes and functions designed for
+.. _Bayeux: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux
+
+Bayeux_ provides a collection of C++ classes and functions designed for
 the  simulation,  recording  and  analysis of  data  for  experimental
 particle  and nuclear  physics projects.  This functionality  is split
 into several specialized submodules:
@@ -183,7 +185,7 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 
 -  **Core Libraries Required**
 
-   -  Boost 1.53.0 or higher: http://www.boost.org
+   -  Boost 1.55.0 or higher: http://www.boost.org
        - with serialization, filesystem, system libraries.
    -  Camp 0.7.1 : https://github.com/tegesoft/camp
    -  GSL 1.15 or higher: http://www.gnu.org/s/gsl
@@ -197,14 +199,18 @@ clicking on the Downloads tab, and then installing Command Line Tools.
        * GDML,
        * OpenGL.
 
-For ease of use, the  SuperNEMO collaboration provides the Cadfael SDK
-which bundles  these libraries for easy  use by Bayeux and  clients of
-Bayeux.  You can use this bundle, or, at your discretion, your own, or
-system, installs of these packages.
+For ease of use, the  SuperNEMO collaboration provides the Cadfaelbrew_
+SDK which bundles  these libraries for easy use by  Bayeux and clients
+of  Bayeux.  It  is  strongly  advised to  use  this  bundle. It  will
+provide, for Linux  and Mac systems, an  uniform software environement
+with a selected set of blessed software, including the C++ compiler.
+
+.. _Cadfael: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael
+.. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/cadfaelbrew
 
 -  **Additional Software Required**
 
-    - datatools requires the Qt4 library when the ``Bayeux_BUILD_QT_GUI``
+    - datatools requires the Qt4 library when the ``BAYEUX_WITH_QT_GUI``
       option is set.
 
       On Ubuntu 14.04, this implies the installation of the following packages:
@@ -234,7 +240,6 @@ system, installs of these packages.
 
    - pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
      documentation in user friendly format:
-
 
       On Ubuntu 14.04, this implies  the installation of the following
       packages:
@@ -313,11 +318,11 @@ to deal with the following three in most cases:
 
 -  ``CMAKE_BUILD_TYPE``
 
-   -  Build type, e.g. Release, Debug. You  will want this to be set to
-      Release in most  cases. Debug builds are only needed  if you are
-      needing  to  follow  debugging  symbols into  one  of  Cadfael's
-      binaries. It defaults to Release, so you will not need to change
-      it in most cases.
+   - Build type, e.g. ``Release``, ``Debug``. You will want this to be
+      set  to ``Release``  in most  cases. ``Debug``  builds are  only
+      needed if you  are needing to follow debugging  symbols into one
+      of Cadfael's binaries.  It defaults to ``Release``,  so you will
+      not need to change it in most cases.
 
 Bayeux Configuration Options
 ----------------------------
@@ -328,11 +333,11 @@ These options control the core configuration of Bayeux.
 
    - Select the C++  Standard to compile against. Recognized values are:
 
-    * ``98`` (default) : complete C++98 standard
-    * ``11`` : all features of the C++11 standard in GCC 4.9 (provided
-      for forward compatibility)
-    * ``14``  :  same  as  ``11``  plus at  least  one  C++14  feature
-      (provided for forward compatibility)
+     * ``98`` (default) : complete C++98 standard
+     * ``11`` : all features of the C++11 standard in GCC 4.9 (provided
+       for forward compatibility)
+     * ``14``  :  same  as  ``11``  plus at  least  one  C++14  feature
+       (provided for forward compatibility)
 
 -  ``BAYEUX_COMPILER_ERROR_ON_WARNING``
 
@@ -346,11 +351,6 @@ These options control the core configuration of Bayeux.
 
    -  Build and install additional tools for developers and *normal* users.
       Default is ON.
-
--  ``BAYEUX_USE_LEGACY_ROOT``
-
-   -  Bayeux is built using an old version of ROOT (prior to version 6).
-      Default is OFF.
 
 -  ``BAYEUX_WITH_BRIO``
 
@@ -420,9 +420,6 @@ These options control the core configuration of Bayeux.
 
    -  Build OCD documentation. Default is OFF. Implies ``BAYEUX_WITH_DOCS``.
 
--  ``BAYEUX_WITH_EXAMPLES``
-
-   -  Install Bayeux with examples. Default is ON.
 
 Building and Installing
 -----------------------
