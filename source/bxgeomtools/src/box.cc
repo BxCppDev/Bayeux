@@ -538,28 +538,6 @@ namespace geomtools {
       face_counter++;
     }
 
-    /*
-      int face_counter = 0;
-      for (faces_mask_type face_bit = _FACE_BEGIN;
-      face_bit != _FACE_END;
-      face_bit = static_cast<faces_mask_type>(face_bit << 1)) {
-      // std::cerr << "DEVEL: box::find_intercept: face_bit=" << face_bit << std::endl;
-      const int FACE_INDEX = face_counter;
-      rectangle face;
-      placement face_placement;
-      compute_face(face_bit, face, face_placement);
-      if (face.i_find_intercept::find_intercept(from_,
-      direction_,
-      face_placement,
-      intercepts[FACE_INDEX],
-      skin)) {
-      intercepts[FACE_INDEX].grab_face_id().set_face_bit(face_bit);
-      candidate_impact_counter++;
-      }
-      face_counter++;
-      }
-    */
-
     if (candidate_impact_counter > 0) {
       double min_length_to_impact = -1.0;
       for (unsigned int iface = 0; iface < NFACES; iface++) {
