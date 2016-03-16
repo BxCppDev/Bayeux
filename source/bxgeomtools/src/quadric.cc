@@ -74,7 +74,6 @@ namespace geomtools {
     if (!is_valid()) {
       this->i_object_3d::_initialize(config_, objects_);
 
-
       static const int MODE_INVALID = 0;
       static const int MODE_PLAIN = 1;
       int mode = MODE_INVALID;
