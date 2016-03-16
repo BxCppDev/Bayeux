@@ -40,7 +40,7 @@ Introduction
      * ``config/models/pmt_hamamatsu_R5912MOD_polycone.data`` : the dimensions
        and shape of the photomultiplier tube used by the optical module.
 
-   * ``config/gids/categories.lis`` : the file that defines the
+   * ``config/mapping/categories.lis`` : the file that defines the
      list of *geometry categories* used to assign *geometry IDs* to the
      volumes in the hierarchy.
    * Geometry plugins:
@@ -53,7 +53,7 @@ Introduction
      * ``config/plugins/mapping_plugins.conf`` : the file that defines some
        *geometry ID mapping* plugins. Mapping plugins are optional.
        A default *mapping* object is built from the rules exposed in the
-       ``config/gids/categories.lis`` file. Additionnal (and specialized)
+       ``config/mapping/categories.lis`` file. Additionnal (and specialized)
        *mapping* objects may be optionally provided within plugins.
 
  * Built object(s) :
@@ -115,7 +115,7 @@ Quick start
 
          shell> root
          root [0] TGeoManager * geo = new TGeoManager("geo","geomtools examples/ex01 virtual setup");
-         root [1] TGeoManager * g2 = geo->Import("geomtools-ex01.gdml");
+         root [1] TGeoManager * g2 = geo->Import("geomtools-ex01-1.0.gdml");
          root [2] g2->SetVisOption(0);
          root [3] g2->SetVisLevel(100);
          root [4] g2->GetMasterVolume()->Draw("");

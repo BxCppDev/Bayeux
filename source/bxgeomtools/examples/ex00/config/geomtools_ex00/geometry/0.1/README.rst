@@ -12,7 +12,7 @@ Files
  * ``manager.conf`` : The main configuration file for the geometry manager.
  * Folders:
 
-   * ``gids`` : Contains the files that describe geometry categories.
+ * ``mapping`` : Contains the files that describe geometry categories.
 
      * ``lab_categories.lis`` : Contains the definitions of geometry categories
        used by the automated numbering scheme for the mapping of geometry volumes
