@@ -138,7 +138,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_geant4_module.cmake)
 #-----------------------------------------------------------------------
 # - Build/Link the MCNP extension module, if required
 #
-# include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_mcnp_module.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/bxmctools_mcnp_module.cmake)
 
 #-----------------------------------------------------------------------
 # The Geant4 Extension Headers and Sources

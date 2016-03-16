@@ -1,4 +1,3 @@
-# message(STATUS "**** bxmctools_geant4_module: Entering...")
 
 #-----------------------------------------------------------------------
 # The Geant4 Extension Headers and Sources
@@ -8,7 +7,6 @@
 # they #include other headers, so these also need to be present...
 #
 if(BAYEUX_WITH_GEANT4_MODULE)
- #  message(STATUS "**** BAYEUX_WITH_GEANT4_MODULE")
 
   set(${module_name}_GEANT4_HEADERS
     ${module_include_dir}/${module_name}/g4/manager_parameters.h
@@ -144,12 +142,8 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   endif()
 
   # - Create the public link interface
-  #set_target_properties(Bayeux_mctools_geant4 PROPERTIES LINK_INTERFACE_LIBRARIES "")
-  # or shall we use this one ?
   set_target_properties(Bayeux_mctools_geant4 PROPERTIES INTERFACE_LINK_LIBRARIES "")
 
   list(APPEND Bayeux_ADDON_TARGETS Bayeux_mctools_geant4)
 
 endif()
-# message(STATUS "**** bxmctools_geant4_module: Bayeux_ADDON_TARGETS=${Bayeux_ADDON_TARGETS}")
-# message(STATUS "**** bxmctools_geant4_module: Exiting.")

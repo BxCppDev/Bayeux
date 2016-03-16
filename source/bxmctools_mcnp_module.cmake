@@ -61,8 +61,18 @@ if(BAYEUX_WITH_MCNP_MODULE)
     #   )
 
   include_directories(${MCNP_INCLUDE_DIRS})
+
   add_library(Bayeux_mctools_mcnp SHARED ${mctools_MCNP_SOURCES} ${mctool_MCNP_HEADERS})
   target_compile_features(Bayeux_mctools_mcnp PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
+  target_include_directories(Bayeux_mctools_mcnp
+    PUBLIC
+     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include>
+     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+     $<BUILD_INTERFACE:${module_include_dir}>
+     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+     )
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_MCNP_DEFINITIONS)
   foreach(_def ${MCNP_DEFINITIONS})
@@ -85,9 +95,8 @@ if(BAYEUX_WITH_MCNP_MODULE)
   endif()
 
   # - Create the public link interface
-  set_target_properties(Bayeux_mctools_mcnp PROPERTIES LINK_INTERFACE_LIBRARIES "")
-  # or shall we use this one ?
-  # set_target_properties(Bayeux_mctools_mcnp PROPERTIES INTERFACE_LINK_LIBRARIES "")
+  set_target_properties(Bayeux_mctools_mcnp PROPERTIES INTERFACE_LINK_LIBRARIES "")
 
   list(APPEND Bayeux_ADDON_TARGETS Bayeux_mctools_mcnp)
+
 endif()
