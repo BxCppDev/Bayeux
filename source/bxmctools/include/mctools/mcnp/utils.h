@@ -35,7 +35,7 @@ namespace mctools {
       struct parameter_type {
         std::string name;
         boost::any  value;
-  std::string dimension;
+        std::string dimension;
       };
 
       typedef std::vector<parameter_type> parameter_array_type;

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <fstream>
 
 // Third party:
 // // - Bayeux/mygsl:
@@ -92,8 +93,11 @@ int main(int /* argc_ */, char ** /* argv_ */)
 
       m3::material_store mat_store;
       mat_store.build_from_bxmaterials(mat_mgr);
-      mat_store.print_card(std::clog, mctools::mcnp::format::CARD_COMMENT);
-      std::clog << std::endl;
+
+      std::ofstream mat_cards("test_mcnp_materials.inp");
+      mctools::mcnp::format::add_comment_line(mat_cards, "Generated from Bayeux/mctools/ MCNP module:");
+      mat_store.print_card(mat_cards, mctools::mcnp::format::CARD_COMMENT);
+      mat_cards << std::endl;
 
     }
 
