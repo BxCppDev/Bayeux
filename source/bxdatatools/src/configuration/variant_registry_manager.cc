@@ -282,7 +282,7 @@ namespace datatools {
           DT_THROW_IF(top_variant_type != item::label_from_model_type(item::MODEL_VARIANT),
                       std::logic_error,
                       "Definition for configuration item named '"
-                    << _top_variant_name_ << "' does not correspond to a variant !");
+                      << _top_variant_name_ << "' does not correspond to a variant !");
         }
       }
 
@@ -318,9 +318,9 @@ namespace datatools {
     }
 
     void variant_registry_manager::tree_dump(std::ostream& out_,
-                                    const std::string& title_,
-                                    const std::string& indent_,
-                                    bool inherit_) const
+                                             const std::string& title_,
+                                             const std::string& indent_,
+                                             bool inherit_) const
     {
       this-> enriched_base::tree_dump(out_, title_, indent_, true);
 
