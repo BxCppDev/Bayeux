@@ -66,9 +66,7 @@ set(BAYEUX_DOXYGEN_OUTPUT_IMAGE_DIR ${BAYEUX_DOXYGEN_OUTPUT_DIR}/html/images)
 #-----------------------------------------------------------------------
 # Individual Documents
 #
-set(Cadfael_VERSION "1.0.1")
 configure_file(BxInstallationGuide.md.in BxInstallationGuide.md @ONLY)
-
 configure_file(BxOCD/BxOCD.md.in BxOCD/BxOCD.md @ONLY)
 
 set(BAYEUX_MARKDOWN_DOCS

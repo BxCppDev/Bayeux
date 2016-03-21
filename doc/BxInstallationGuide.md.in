@@ -23,7 +23,7 @@ To install the Bayeux stack, you first need the following:
 * UNIX Operating System
   * Linux (Ubuntu, SUSE, RedHat/CentOS/Scientific)
     * Other distributions should work provided they supply the software requirements listed below
-  * Mac OS X 10.8/9 (Mountain Lion/Mavericks)
+  * Mac OS X 10.9/10/11 (Mavericks/Yosemite/El Capitan)
     * Earlier versions should work, but are not tested
 * Several GB of free disk space:
   * At least 200MB for a source code check out
@@ -31,27 +31,45 @@ To install the Bayeux stack, you first need the following:
 * Familiarity with the UNIX command line
 * Required Software
   * Subversion 1.6 or above
-  * CMake 2.8.8 or above
+  * CMake 3.3 or above
   * Doxygen 1.8 or above
   * C/C++ compiler supporting at least the C++03 standard
     * GCC 4.5 or above, and Clang 3.1 or above are recommended
     * If available, you should use a C++11 compliant compiler
-      * GCC 4.7 or higher, Clang 3.3 or higher
+      * GCC 4.9 or higher, Clang 3.3 or higher
       * This is purely for the best forward compatibility, it is not a requirement.
     * On OS X systems, you should install Xcode from the App Store, and ensure the Command Line Tools are installed
-  * BZip2 Library and Headers
-  * zlib Library and Headers
-  * readline Library and Headers
-
 We recommend that the Required Software are installed via the relevant
 package manager (e.g.  yum, apt on Linux, Homebrew or  MacPorts on Mac
 OS X)  for your system, unless  the version requirement listed  is not
 met.
 
-We expect the  Bayeux stack to compile  and run on most  modern BSD or
-Linux  based   systems  provided  the  listed   Required  Software  is
-installed. Note  however that  this list  is a  work in  progress, and
-sections below  will highlight where  problems may occur  with missing
+In addition to the tools used to build Bayeux, the following libraries
+are needed to support its functionality:
+
+- [Boost C++ Libraries](http://www.boost.org) 1.55.0 and higher
+- [CAMP C++ Reflection Library](https://github.com/tegesoft/camp) 0.7.1 and higher
+- [CLHEP C++ HEP Library](http://proj-clhep.web.cern.ch/proj-clhep/) 2.1.3.1 and higher
+- [GNU Scientific Library](http://www.gnu.org/software/gsl/) 1.15 and higher
+- [ROOT C++ HEP Toolkit](http://root.cern.ch) 5.34.30 and higher
+- [Geant4 C++ Toolkit for Detector Simulations](http://geant4.cern.ch) 9.6.4 and higher
+- BZip2 Library and Headers
+- zlib Library and Headers
+- readline Library and Headers
+
+You can reuse any existing installations of these libraries on your system
+to build Bayeux against. For the easiest and most robust installation, we recommend
+using  the  `Cadfael`  Software  Development  Kit. This is based on the
+[Linuxbrew](https://github.com/linuxbrew/linuxbrew) cross UNIX platform
+package manager and provides a robust installation of the dependencies.
+It also provides the needed build tools listed earlier.
+To install `Cadfael` and the requisite software packages, see the
+dedicated [installtion guide](https://github.com/SuperNEMO-DBD/cadfaelbrew).
+
+We expect the Bayeux stack to compile  and run on most  modern BSD or
+Linux based systems provided the listed Required Software is
+installed. Note however that  this list is a work in progress, and
+sections below  will highlight where  problems may occur with missing
 software, and how to report and resolve these issues.
 
 
@@ -150,19 +168,13 @@ Checked out revision 15106.
 The revision number  you see will vary depending on  the current state
 of development.   If you now  list the contents of  the `lpc-caen.svn`
 directory  it will  be empty  apart from  a `.svn`  directory. We  now
-checkout  the  parts  we  need, specifically  the  `Cadfael`  Software
-Development Kit (SDK) and the `Bayeux` project.
+checkout  the  parts  we  need, specifically the `Bayeux` project.
 
 ~~~~~
 $ pwd
 /Users/ben/BxSoftware
 $ cd lpc-caen.svn
-$ svn up --set-depth immediates Cadfael Bayeux
-A    Cadfael
-A    Cadfael/trunk
-A    Cadfael/branches
-A    Cadfael/tags
-Updated to revision 15106.
+$ svn up --set-depth immediates Bayeux
 A    Bayeux
 A    Bayeux/trunk
 A    Bayeux/branches
@@ -180,17 +192,9 @@ An  `ls` of  the above  directories will  show that,  again, they  are
 empty.  However, if you use Subversion's list command, e.g.
 
 ~~~~~
-$ svn ls Cadfael/trunk
+$ svn ls Bayeux/trunk
 CMakeLists.txt
-CadfaelVersion.txt
-License.txt
-NEWS.rst
-README.rst
-cadfael-bootstrap
-cmake/
-docs/
-ports/
-testing/
+...
 ~~~~~
 
 you will  get a listing  of the  contents in the  upstream repository.
@@ -201,8 +205,8 @@ of the current tags of Bayeux by doing
 
 ~~~~~
 $ svn ls Bayeux/tags
-Bayeux-0.9.0/
-Bayeux-0.9.1/
+Bayeux-2.0.0/
+Bayeux-2.0.1/
 ...
 Bayeux-@Bayeux_VERSION@/
 ~~~~~
@@ -212,21 +216,14 @@ convention  with an  optional additional  `-STATUSN` flag  to indicate
 development lines.
 
 
-Checking out Cadfael and Bayeux {#bxinstallationguide_checkout}
--------------------------------
+Checking out Bayeux {#bxinstallationguide_checkout}
+-------------------
 
-With the workspace in place,  we can checkout the required development
-lines  of Cadfael  and Bayeux.  The version  of Bayeux  to which  this
-documentation refers  is @Bayeux_VERSION@,  and this  requires Cadfael
-version @Cadfael_VERSION@. To check these tags out from scratch we do
+With the workspace in place, we can checkout the required development
+lines of Bayeux.  The version of Bayeux to which this
+documentation refers is @Bayeux_VERSION@. To check this tags out from scratch we do
 
 ~~~~~
-$ svn up --set-depth infinity Cadfael/tags/Cadfael-1.0.1
-A    Cadfael/tags/Cadfael-1.0.1
-A    Cadfael/tags/Cadfael-1.0.1/License.txt
-...
-A    Cadfael/tags/Cadfael-1.0.1/testing/ImportedTargets/CMakeLists.txt
-Updated to revision 15106.
 $ svn ls Bayeux/tags
 ...
 $ svn up --set-depth infinity Bayeux/tags/Bayeux-@Bayeux_VERSION@
@@ -235,126 +232,6 @@ $ svn up --set-depth infinity Bayeux/tags/Bayeux-@Bayeux_VERSION@
 The basic source  code working copy is now in  place. For more details
 on   using  Subversion,   we  recommend   the  [Subversion   Red  Bean
 Guide](http://svnbook.red-bean.com/).
-
-Installing the Cadfael SDK {#bxinstallationguide_cadfael}
-==========================
-
-Bayeux   uses  several   third  party   libraries  to   implement  its
-functionality, specifically:
-
-- [Boost C++ Libraries](http://www.boost.org) 1.48.0 and higher
-- [CAMP C++ Reflection Library](https://github.com/tegesoft/camp) 0.7.1 and higher
-- [CLHEP C++ HEP Library](http://proj-clhep.web.cern.ch/proj-clhep/) 2.1.3.1 and higher
-- [GNU Scientific Library](http://www.gnu.org/software/gsl/) 1.15 and higher
-- [ROOT C++ HEP Toolkit](http://root.cern.ch) 5.34.00 and higher
-- [Geant4 C++ Toolkit for Detector Simulations](http://geant4.cern.ch) 9.6.1 and higher
-
-You  can reuse  existing  installations of  these  libraries to  build
-Bayeux, but for the easiest and most robust installation, we recommend
-using  the  `Cadfael`  Software  Development  Kit.  This  bundles  the
-configuration, build and installation of these libraries into a single
-easy to  use toolchain.  If  you have  an existing install  of Cadfael
-that  meets  the  version  requirements  above, you  do  not  need  to
-reinstall it. Otherwise, you should follow the following guide.
-
-Bootstrapping Cadfael {#cadfael_bootstrap}
----------------------
-
-Cadfael uses  the [CMake](http://www.cmake.org)  tool for  driving the
-configure, build and install of  the above libraries. For convenience,
-a  simple bootstrapping  script,  `cadfael-bootstrap`  is provided  to
-automate  this  process.   If  you  require  more   control  over  the
-configuration,  you  should  consult  the  `README.rst`  file  in  the
-`Cadfael/tags/Cadfael-@Cadfael_VERSION@` directory.
-
-All Bayeux  software requires  builds and installs  to be  in separate
-directories  from source  code. This  is enforced  because builds  can
-generate many local  files which could by accident  get committed back
-to the central  repository. It also allows you  quicker switch between
-builds, or  to cleanly delete a  build if anything goes  wrong without
-risk of deleting any sources.
-
-To bootstrap an install of Cadfael, go into your workspace and run the
-bootstrapping script as follows:
-
-~~~~~
-$ cd /Users/ben/BxSoftware
-$ ./lpc-caen.svn/Cadfael/tags/Cadfael-@Cadfael_VERSION@/cadfael-bootstrap -DCMAKE_INSTALL_PREFIX=$(pwd)/installs/Cadfael \
--DCADFAEL_BUILD_PREFIX=$(pwd)/builds/Cadfael
-~~~~~
-
-
-This will create a build directory under the `builds` area and install
-Cadfael  into  a  dedicated  root under  `installs`.  Note  that  both
-`CMAKE_INSTALL_PREFIX`  and  `CADFAEL_BUILD_PREFIX` must  be  absolute
-paths,  hence   the  use  of   the  shell  `$(pwd)`.  Note   that  the
-bootstrapping  script  assumes  you   have  a  `cmake`  executable  in
-`/usr/bin`. If that is not the case, you can run the script using your
-install of cmake directly:
-
-~~~~~
-$ cd /Users/ben/BxSoftware
-$ /path/to/your/cmake -P ./lpc-caen.svn/Cadfael/tags/Cadfael-@Cadfael_VERSION@/cadfael-bootstrap \
--DCMAKE_INSTALL_PREFIX=$(pwd)/installs/Cadfael \
--DCADFAEL_BUILD_PREFIX=$(pwd)/builds/Cadfael
-~~~~~
-
-Cadfael will  maximally parallelize the  builds for speed, but  it may
-take up  to an  hour or  two on  older machines  with fewer  cores. It
-should  generally complete  in well  under an  hour on  quad core  and
-better   systems.   If   bootstrapping   completes  successfully   the
-`installs/Cadfael`  directory will  be  populated with  a POSIX  style
-layout of the third party software required for Bayeux.
-
-~~~~~
-installs/Cadfael/
-|-- bin
-|-- etc
-|   |-- cmake
-|   |-- daemons
-|   |-- html
-|   |-- plugins
-|   |-- proof
-|   `-- vmc
-|-- include
-|   |-- CLHEP
-|   |-- Geant4
-|   |-- boost
-|   |-- camp
-|   |-- camp-xml
-|   |-- gsl
-|   |-- root
-|   `-- xercesc
-|-- lib
-|   |-- CLHEP-2.1.3.1
-|   |-- Geant4-9.6.1
-|   |-- cmake
-|   |-- pkgconfig
-|   `-- root
-`-- share
-    |-- Geant4-9.6.1
-    |-- aclocal
-    |-- camp
-    |-- doc
-    |-- emacs
-    |-- info
-    |-- man
-    `-- root
-~~~~~
-
-You  do not  require any  environment setup  to use  the applications,
-though you may, at your preference, prepend the `installs/Cadfael/bin`
-path  to   your  UNIX   `PATH`. From a `sh` shell, this may write:
-
-~~~~~
-export PATH=/Users/ben/BxSoftware/installs/Cadfael/bin:${PATH}
-~~~~~
-
-Once you  have installed Cadfael  successfully, you can  safely remove
-the  build  directory  created  by  the  bootstrapping  to  save  disk
-space. As  Cadfael updates are  expected to be  relatively infrequent,
-this "one-shot"  installation is generally  the easiest way  to manage
-the SDK.
 
 Building and Installing Bayeux {#bxinstallationguide_buildinstall}
 ==============================
@@ -383,12 +260,10 @@ a name related to the build task.
 
 
 We now  run cmake as follows  to configure the build  to install under
-our workspace  area, and to  use the  libraries provided in  our prior
-install of Cadfael:
+our workspace  area:
 
 ~~~~~
 $ cmake -DCMAKE_INSTALL_PREFIX=/Users/ben/BxSoftware/installs/bayeux-@Bayeux_VERSION@ \
- -DCMAKE_PREFIX_PATH=/Users/ben/BxSoftware/installs/Cadfael \
  ../../lpc-caen.svn/Bayeux/tags/Bayeux-@Bayeux_VERSION@
 ...
 -- Configuring done
@@ -396,11 +271,9 @@ $ cmake -DCMAKE_INSTALL_PREFIX=/Users/ben/BxSoftware/installs/bayeux-@Bayeux_VER
 -- Build files have been written to: /Users/ben/BxSoftware/builds/bayeux-@Bayeux_VERSION@
 ~~~~~
 
-The `CMAKE_INSTALL_PREFIX` variable tells  cmake where to install, and
-`CMAKE_PREFIX_PATH`  where to  look first  for headers,  libraries and
-applications (i.e. the Cadfael installation directory).
+The `CMAKE_INSTALL_PREFIX` variable tells  cmake where to install, and further options
+are available to configure the build properties:
 
-List of available options:
 - `Bayeux_WITH_GEANT4` : build the Bayeux/mctools Geant4 plugin library and associated tools (default: ON),
 - `Bayeux_ENABLE_TESTING` : build the collection of testing programs (default: ON),
 - `Bayeux_WITH_EXAMPLES` : install examples (default: ON),
@@ -408,7 +281,6 @@ List of available options:
 - `Bayeux_BUILDS_OCD_DOCS` : build and install [Object Configuration Description](@ref bxocd) (OCD) documentation
   (default: ON, only if `Bayeux_BUILD_DOCS` is set).
 - `Bayeux_BUILD_DEVELOPER_TOOLS` : build and install utilities for developers (helper scripts and tools, default: ON)
-- `Bayeux_FORCE_CXX_ALL_WARNINGS` : activate all Compiler warning messages (default: ON),
 
 The exact output  of the configuration step will depend  on the OS you
 are  running on,  the compiler  detected and  the exact  CMake version
@@ -517,7 +389,7 @@ email your issue to:
 
 * Xavier Garrido (garrido@lal.in2p3.fr)
 * François Mauger (mauger@lpccaen.in2p3.fr)
-* Ben Morgan (bmorgan.warwick@gmail.com)
+* Ben Morgan (Ben.Morgan@warwick.ac.uk)
 
 TODO
 Setup :
