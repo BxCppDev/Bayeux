@@ -329,4 +329,16 @@ composition.mode            : string       = "number_of_atoms"
 composition.names           : string  [2]  = "Fluorine"  "Carbon"
 composition.number_of_atoms : integer [2]  =      4        2
 
+
+[name="basic::tungsten" type="material"]
+#@config Tungsten material
+# Particle Physics Booklet 2010: density = 19.3 g/cm3
+density                   : real   = 19.3
+density.unit              : string = "g/cm3"
+state                     : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Tungsten"
+composition.fraction_mass : real   [1]  =  1.0
+
+
 # end of @materials:data/basic/1.0/materials.def
