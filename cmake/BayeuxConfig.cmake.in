@@ -31,14 +31,11 @@
 # alongside us...
 #
 get_filename_component(__bayeux_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
-message(STATUS "bxconfig in '${__bayeux_config_dir}'")
 
 #-----------------------------------------------------------------------
 # Hard code paths to headers for now...
 #
 set(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/@BAYEUX_CMAKEDIR_TO_INCLUDEDIR@")
-
-message(STATUS "Bayeux_INCLUDE_DIR = '${Bayeux_INCLUDE_DIR}'")
 
 mark_as_advanced(Bayeux_INCLUDE_DIR)
 set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux")
