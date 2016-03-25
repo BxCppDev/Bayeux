@@ -12,35 +12,35 @@ namespace emfield {
 
   GEOMTOOLS_PLUGIN_REGISTRATION_IMPLEMENT(emfield_geom_plugin, "emfield::emfield_geom_plugin")
 
-  const electromagnetic_field_manager & emfield_geom_plugin::get_manager () const
+  const electromagnetic_field_manager & emfield_geom_plugin::get_manager() const
   {
     return _manager_;
   }
 
-  emfield_geom_plugin::emfield_geom_plugin ()
+  emfield_geom_plugin::emfield_geom_plugin()
   {
     _initialized_ = false;
     return;
   }
 
-  emfield_geom_plugin::~emfield_geom_plugin ()
+  emfield_geom_plugin::~emfield_geom_plugin()
   {
     if (is_initialized ()) {
-      reset ();
+      reset();
     }
     return;
   }
 
-  bool emfield_geom_plugin::is_initialized () const
+  bool emfield_geom_plugin::is_initialized() const
   {
     return _initialized_;
   }
 
-  int emfield_geom_plugin::initialize (const datatools::properties & config_,
-                                       const geomtools::manager::plugins_dict_type & /*plugins_*/,
-                                       const datatools::service_dict_type & /*services_*/)
+  int emfield_geom_plugin::initialize(const datatools::properties & config_,
+                                      const geomtools::manager::plugins_dict_type & /*plugins_*/,
+                                      const datatools::service_dict_type & /*services_*/)
   {
-    DT_THROW_IF (is_initialized (), std::logic_error, "Plugin is already initialized !");
+    DT_THROW_IF(is_initialized(), std::logic_error, "Plugin is already initialized !");
 
     geomtools::manager::base_plugin::_basic_initialize(config_);
 
@@ -68,14 +68,14 @@ namespace emfield {
     return 0;
   }
 
-  void emfield_geom_plugin::_build_manager (const datatools::properties & manager_config_)
+  void emfield_geom_plugin::_build_manager(const datatools::properties & manager_config_)
   {
-    DT_LOG_TRACE (get_logging_priority (), "Entering...");
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
     _manager_.set_geometry_manager(get_geo_manager());
     _manager_.initialize(manager_config_);
 
-    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 

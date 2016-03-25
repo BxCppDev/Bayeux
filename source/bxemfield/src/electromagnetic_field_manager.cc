@@ -100,7 +100,6 @@ namespace emfield {
   {
     // Extract geomap setup
     _geom_map_.reset(new emfield::geom_map);
-    _geom_map_.get()->set_logging_priority(get_logging_priority());
     _geom_map_.get()->set_fields_manager(const_cast<electromagnetic_field_manager&>(*this));
     if (has_geometry_manager()) {
       DT_LOG_DEBUG(get_logging_priority(), "Setup the geometry manager in the geometry/field map...");
@@ -218,8 +217,12 @@ namespace emfield {
                 "The EM field manager is already initialized !");
 
     // Parse configuration parameters :
-    datatools::logger::priority lp = datatools::logger::extract_logging_configuration(setup_);
-    set_logging_priority(lp);
+    // Logging priority:
+    datatools::logger::priority lp
+      = datatools::logger::extract_logging_configuration(setup_, datatools::logger::PRIO_UNDEFINED, true);
+    if (lp != datatools::logger::PRIO_UNDEFINED) {
+      set_logging_priority(lp);
+    }
 
     bool needs_service_manager = false;
     if(setup_.has_key("needs_service_manager")) {
@@ -284,12 +287,12 @@ namespace emfield {
         setup_.export_and_rename_starting_with(geomap_config, "geom_map.", "");
       }
       if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
-        geomap_config.tree_dump(std::cerr, "EM fields/Geometry map config: ", "[debug]: ");
+        geomap_config.tree_dump(std::clog, "EM fields/Geometry map config: ", "[debug]: ");
       }
       _construct_geomap_(geomap_config);
     }
 
-    _set_initialized (true);
+    _set_initialized(true);
     return;
   }
 

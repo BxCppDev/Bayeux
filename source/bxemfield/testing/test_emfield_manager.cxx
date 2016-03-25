@@ -103,7 +103,7 @@ int main (int argc_, char ** argv_)
 
       // This is the EM fields manager :
       emfield::electromagnetic_field_manager EMFmgr;
-      EMFmgr.set_debug(debug);
+      if (debug) EMFmgr.set_logging_priority(datatools::logger::PRIO_DEBUG);
       EMFmgr.set_service_manager (SRVCmgr); // Attach the service manager
       std::string EMFmgrConfigFile = "${EMFIELD_TESTING_DIR}/config/test_manager.conf";
       datatools::properties EMFmgrConfig;

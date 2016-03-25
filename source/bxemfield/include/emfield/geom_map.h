@@ -76,40 +76,40 @@ namespace emfield {
 
     virtual ~geom_map();
 
-    const association_dict_type & get_associations () const;
+    const association_dict_type & get_associations() const;
 
-    association_dict_type & grab_associations ();
+    association_dict_type & grab_associations();
 
-    void set_logging_priority (datatools::logger::priority priority_);
+    void set_logging_priority(datatools::logger::priority priority_);
 
-    datatools::logger::priority get_logging_priority () const;
+    datatools::logger::priority get_logging_priority() const;
 
-    bool is_initialized () const;
+    bool is_initialized() const;
 
-    void initialize (const datatools::properties& config_);
+    void initialize(const datatools::properties& config_);
 
-    void reset ();
+    void reset();
 
-    bool has_geometry_manager () const;
+    bool has_geometry_manager() const;
 
-    void set_geometry_manager (const geomtools::manager & gmgr_);
+    void set_geometry_manager(const geomtools::manager & gmgr_);
 
-    const geomtools::manager & get_geometry_manager () const;
+    const geomtools::manager & get_geometry_manager() const;
 
-    bool has_fields_manager () const;
+    bool has_fields_manager() const;
 
-    void set_fields_manager (const electromagnetic_field_manager & emfmgr_);
+    void set_fields_manager(const electromagnetic_field_manager & emfmgr_);
 
-    const electromagnetic_field_manager & get_fields_manager () const;
+    const electromagnetic_field_manager & get_fields_manager() const;
 
-    virtual void tree_dump (std::ostream & out_ = std::clog,
-                            const std::string & title = "",
-                            const std::string & indent_= "",
-                            bool inherit_ = false) const;
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title = "",
+                           const std::string & indent_= "",
+                           bool inherit_ = false) const;
 
   protected :
 
-    void _construct (const datatools::properties& config_);
+    void _construct(const datatools::properties& config_);
 
   private:
 
