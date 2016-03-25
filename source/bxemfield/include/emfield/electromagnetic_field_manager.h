@@ -69,12 +69,6 @@ namespace emfield {
     /// Check initialization status
     bool is_initialized() const;
 
-    /// Check debug status
-    bool is_debug() const;
-
-    /// Set debug status
-    void set_debug(bool debug_);
-
     /// Set the factory preload flag
     void set_factory_preload(bool);
 

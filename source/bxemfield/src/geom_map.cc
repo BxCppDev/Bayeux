@@ -79,11 +79,6 @@ namespace emfield {
     datatools::logger::priority lp = datatools::logger::extract_logging_configuration (config_);
     set_logging_priority(lp);
 
-    if (config_.has_flag ("debug"))
-      {
-        set_debug (true);
-      }
-
     DT_THROW_IF (! has_geometry_manager (), std::logic_error, "No geometry manager is available !");
     DT_THROW_IF (! has_fields_manager (), std::logic_error, "No EM fields manager is available !");
 
@@ -96,7 +91,7 @@ namespace emfield {
   void geom_map::_construct (const datatools::properties& config_)
   {
     DT_LOG_DEBUG (get_logging_priority (), "Geometry volume/EM Field map: ");
-    if (is_debug ()) {
+    if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
       config_.tree_dump (std::clog, "", "[debug]: ");
     }
     std::vector<std::string> association_labels;
@@ -157,18 +152,6 @@ namespace emfield {
     _fields_manager_ = 0;
 
     _initialized_ = false;
-    return;
-  }
-
-  bool geom_map::is_debug() const
-  {
-    return get_logging_priority () >= datatools::logger::PRIO_DEBUG;
-  }
-
-  void geom_map::set_debug(bool debug_)
-  {
-    if (debug_) set_logging_priority (datatools::logger::PRIO_DEBUG);
-    else        set_logging_priority (datatools::logger::PRIO_WARNING);
     return;
   }
 

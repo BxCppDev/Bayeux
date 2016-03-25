@@ -90,10 +90,6 @@ namespace emfield {
 
     void reset ();
 
-    bool is_debug () const;
-
-    void set_debug (bool d_);
-
     bool has_geometry_manager () const;
 
     void set_geometry_manager (const geomtools::manager & gmgr_);
