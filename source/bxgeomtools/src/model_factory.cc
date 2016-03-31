@@ -27,8 +27,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   // static
   const std::string & model_factory::default_world_label()
   {
@@ -188,17 +186,17 @@ namespace geomtools {
     std::string geom_lis_filename = geom_list_file_;
     datatools::fetch_path_with_env(geom_lis_filename);
     DT_LOG_NOTICE(_logging_priority_, "Opening geometry models filename list...");
-    DT_THROW_IF(! boost::filesystem::exists(geom_lis_filename), logic_error,
+    DT_THROW_IF(! boost::filesystem::exists(geom_lis_filename), std::logic_error,
                 "File '" << geom_lis_filename << "' does not exist!");
     std::ifstream finlist(geom_lis_filename.c_str());
-    DT_THROW_IF(! finlist, logic_error,
+    DT_THROW_IF(! finlist, std::logic_error,
                 "Cannot open file '" << geom_lis_filename << "' !");
     DT_LOG_NOTICE(_logging_priority_, "Geometry models filename list if open.");
     while (finlist) {
       std::string line;
       std::getline(finlist, line);
       DT_LOG_NOTICE(_logging_priority_, "line='" << line << "'");
-      DT_THROW_IF(! finlist, logic_error,
+      DT_THROW_IF(! finlist, std::logic_error,
                   "I/O error while reading file '" << geom_lis_filename << "' !");
       std::string word;
       std::istringstream line_iss(line);
@@ -232,13 +230,13 @@ namespace geomtools {
 
   datatools::multi_properties & model_factory::grab_mp()
   {
-    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
+    DT_THROW_IF(_locked_, std::logic_error, "Model factory is locked !");
     return _mp_;
   }
 
   void model_factory::load(const std::string & mprop_file_)
   {
-    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
+    DT_THROW_IF(_locked_, std::logic_error, "Model factory is locked !");
     _mp_.read(mprop_file_);
     if (is_trace()) {
       DT_LOG_TRACE(_logging_priority_, "Model factory multi-configuration: ");
@@ -249,7 +247,7 @@ namespace geomtools {
 
   void model_factory::_lock_()
   {
-    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
+    DT_THROW_IF(_locked_, std::logic_error, "Model factory is locked !");
     _construct_();
     _mp_.reset();
     return;
@@ -270,7 +268,7 @@ namespace geomtools {
 
   void model_factory::lock()
   {
-    DT_THROW_IF(_locked_, logic_error, "Model factory is locked !");
+    DT_THROW_IF(_locked_, std::logic_error, "Model factory is locked !");
     _lock_();
     _locked_ = true;
     return;
@@ -372,7 +370,7 @@ namespace geomtools {
       }
 
       DT_LOG_DEBUG(_logging_priority_,"New model is:");
-      if (is_debug()) model->tree_dump(clog, "", "[debug]: ");
+      if (is_debug()) model->tree_dump(std::clog, "", "[debug]: ");
     }
     DT_LOG_TRACE(_logging_priority_,"Exiting.");
     return;
@@ -391,7 +389,7 @@ namespace geomtools {
     std::string indent;
     if (! indent_.empty()) indent = indent_;
     if (! title_.empty()) {
-      out_ << indent << title_ << endl;
+      out_ << indent << title_ << std::endl;
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
@@ -399,7 +397,7 @@ namespace geomtools {
          << datatools::logger::get_priority_label(_logging_priority_) << "\"" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Locked  : " <<  (_locked_? "Yes": "No") << endl;
+         << "Locked  : " <<  (_locked_? "Yes": "No") << std::endl;
 
     // Configurations:
     {
@@ -408,7 +406,7 @@ namespace geomtools {
       if ( _mp_.entries().size() == 0) {
         out_ << "<empty>";
       }
-      out_ << endl;
+      out_ << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
@@ -426,7 +424,7 @@ namespace geomtools {
       } else {
         out_ << "[" << _logicals_.size() << "]";
       }
-      out_ << endl;
+      out_ << std::endl;
       // for (logical_volume::dict_type::const_iterator i = _logicals_.begin();
       //      i != _logicals_.end();
       //      i++) {
@@ -444,7 +442,7 @@ namespace geomtools {
       } else {
         out_ << "[" << _models_.size() << "]";
       }
-      out_ << endl;
+      out_ << std::endl;
       for (models_col_type::const_iterator i = _models_.begin();
            i != _models_.end();
            i++) {
@@ -462,7 +460,7 @@ namespace geomtools {
           out_ << datatools::i_tree_dumpable::tag;
           indent_oss << datatools::i_tree_dumpable::skip_tag;
         }
-        out_ << "Model : " << '"' << key << '"' << endl;
+        out_ << "Model : " << '"' << key << '"' << std::endl;
         a_model->tree_dump(out_, "", indent_oss.str());
       }
     }
