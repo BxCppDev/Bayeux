@@ -139,7 +139,15 @@ namespace geomtools {
     DT_LOG_TRACE (get_logging_priority (), "zsphere =" << zsphere / CLHEP::mm << " mm");
 
     const geomtools::placement sphere_extrusion_placement (0, 0, zsphere, 0, 0, 0);
-    _solid_.set_shapes (_mother_, _extrusion_, sphere_extrusion_placement);
+    _solid_.set_shapes(_mother_, _extrusion_, sphere_extrusion_placement);
+    {
+      double r = _r_sphere_;
+      double h = c;
+      double vol = _mother_.get_volume();
+      double extrusion_vol = M_PI * h * h * (3 * r - h) / 3;
+      vol -= extrusion_vol;
+      _solid_.set_forced_volume(vol);
+    }
 
     // Install proposed 'stackable data' pointer in the shape:
     {

@@ -65,14 +65,15 @@ namespace geomtools {
       std::string                       style;
       std::string                       color;
       std::list<geomtools::polyline_3d> paths; //!< Obsolete
-      wires_type                        wires;
+      wires_type                        wires; //!< Collection of polylines (in 'wires' style)
       //std::list<geomtools::facet_3d>  facets;  //!< Future?
       //std::list<geomtools::vector_3d> markers; //!< Future?
       //std::map<int,label_item>        labels;  //!< Future?
     public:
-      display_item ();
-      virtual ~display_item ();
-      void reset ();
+      display_item();
+      virtual ~display_item();
+      void reset();
+      wires_type & grab_wires();
       DATATOOLS_SERIALIZATION_DECLARATION()
     };
 
@@ -83,81 +84,81 @@ namespace geomtools {
       int32_t                         entry_type;
       std::string                     group;
       std::map<int32_t, display_item> items;
-      datatools::properties           auxiliaries;
+      datatools::properties           auxiliaries; //!< Auxiliary properties
     public:
-      bool is_static () const;
-      bool is_framed () const;
-      display_entry ();
-      virtual ~display_entry ();
-      void reset ();
-      const std::map<int32_t, display_item> & get_items () const;
-      std::map<int32_t, display_item> & grab_items ();
-      const display_item & get_static_item () const;
-      const display_item & get_framed_item (int frame_index_) const;
-      bool has_framed_item (int frame_index_) const;
+      bool is_static() const;
+      bool is_framed() const;
+      display_entry();
+      virtual ~display_entry();
+      void reset();
+      const std::map<int32_t, display_item> & get_items() const;
+      std::map<int32_t, display_item> & grab_items();
+      const display_item & get_static_item() const;
+      const display_item & get_framed_item(int frame_index_) const;
+      bool has_framed_item(int frame_index_) const;
 
       DATATOOLS_SERIALIZATION_DECLARATION()
     };
 
     typedef std::map<std::string, display_entry> entries_dict_type;
 
-    void reset ();
+    void reset();
 
     /// Constructor
-    display_data ();
+    display_data();
 
     /// Destructor
-    virtual ~display_data ();
+    virtual ~display_data();
 
-    virtual void clear ();
+    virtual void clear();
 
-    const std::vector<std::string> & get_colors () const;
+    const std::vector<std::string> & get_colors() const;
 
-    std::vector<std::string> & grab_colors ();
+    std::vector<std::string> & grab_colors();
 
-    const std::vector<std::string> & get_groups () const;
+    const std::vector<std::string> & get_groups() const;
 
-    std::vector<std::string> & grab_groups ();
+    std::vector<std::string> & grab_groups();
 
-    const std::map<std::string, display_entry> & get_entries () const;
+    const std::map<std::string, display_entry> & get_entries() const;
 
-    std::map<std::string, display_entry> & grab_entries ();
+    std::map<std::string, display_entry> & grab_entries();
 
-    const std::map<int32_t,std::string> & get_frames () const;
+    const std::map<int32_t,std::string> & get_frames() const;
 
-    std::map<int32_t,std::string> & grab_frames ();
+    std::map<int32_t,std::string> & grab_frames();
 
     void add_frame_info(int frame_index_, const std::string & frame_info_ = 0);
 
-    const datatools::properties & get_auxiliaries () const;
+    const datatools::properties & get_auxiliaries() const;
 
-    datatools::properties & grab_auxiliaries ();
+    datatools::properties & grab_auxiliaries();
 
 
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+    virtual void tree_dump(std::ostream & a_out         = std::clog,
+                           const std::string & a_title  = "",
+                           const std::string & a_indent = "",
+                           bool a_inherit          = false) const;
 
-    display_item & add_static_item (const std::string & name_,
-                                    const std::string & group_ = "",
-                                    const std::string & color_ = "");
+    display_item & add_static_item(const std::string & name_,
+                                   const std::string & group_ = "",
+                                   const std::string & color_ = "");
 
-    display_item & add_framed_item (const std::string & name_,
-                                    int frame_,
-                                    const std::string & group_ = "",
-                                    const std::string & color_ = "",
-                                    const std::string & frame_info_ = "");
+    display_item & add_framed_item(const std::string & name_,
+                                   int frame_,
+                                   const std::string & group_ = "",
+                                   const std::string & color_ = "",
+                                   const std::string & frame_info_ = "");
 
     void process();
 
   protected:
 
-    display_item & _add_item (const std::string & name_,
-                              int entry_type_,
-                              int frame_,
-                              const std::string & group_,
-                              const std::string & color_);
+    display_item & _add_item(const std::string & name_,
+                             int entry_type_,
+                             int frame_,
+                             const std::string & group_,
+                             const std::string & color_);
 
   private:
 
@@ -178,7 +179,7 @@ BOOST_CLASS_EXPORT_KEY2(geomtools::display_data, "geomtools::display_data")
 
 // Class version:
 #include <boost/serialization/version.hpp>
-BOOST_CLASS_VERSION(geomtools::display_data::display_item, 1)
+BOOST_CLASS_VERSION(geomtools::display_data::display_item, 2)
 BOOST_CLASS_VERSION(geomtools::display_data, 1)
 
 #endif // GEOMTOOLS_DISPLAY_DATA_H

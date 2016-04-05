@@ -75,12 +75,13 @@ namespace geomtools {
                               const placement &,
                               shape_type &);
 
-
+      /// Smart print
       virtual void tree_dump(std::ostream & out_         = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
                               bool inherit_          = false) const;
 
+      /// Print
       void dump(std::ostream & out_ = std::clog) const;
 
     private:
@@ -122,38 +123,56 @@ namespace geomtools {
       COMPONENT_SHAPE_ALL    = COMPONENT_SHAPE_FIRST | COMPONENT_SHAPE_SECOND
     };
 
+    /// Check if the face identification scheme is based on face bits
     bool using_face_id_bits() const;
 
+    /// Check if the face identification scheme uses part index
     bool using_face_id_part_index() const;
 
     /// Build a face identifier any mask
     virtual void make_any_face(face_identifier &) const;
 
+    /// Check if the shape is valid
     bool is_valid() const;
 
+    /// Check if the shape is composite
     bool is_composite() const;
 
+    /// Check if a forced volume can be set
+    virtual bool volume_can_be_forced() const;
+
+    /// Constructor
     i_composite_shape_3d(double skin_ = GEOMTOOLS_DEFAULT_TOLERANCE);
 
+    /// Destructor
     virtual ~i_composite_shape_3d();
 
+    /// Set first shape
     void set_shape1(i_shape_3d &, const placement &, const std::string & shref_ = "");
 
+    /// Set second shape
     void set_shape2(i_shape_3d &, const placement &, const std::string & shref_ = "");
 
+    /// Set both shapes
     void set_shapes(i_shape_3d &, i_shape_3d &, const placement &,
                     const std::string & sh1ref_ = "", const std::string & sh2ref_ = "");
 
+    /// Set first shape
     void set_shape1(i_shape_3d *, const placement &);
 
+    /// Set second shape
     void set_shape2(i_shape_3d *, const placement &);
 
+    /// Set both shapes
     void set_shapes(i_shape_3d *, i_shape_3d *, const placement &);
 
+    /// Return first shape
     const shape_type & get_shape1() const;
 
+    /// Return second shape
     const shape_type & get_shape2() const;
 
+    /// Return shape by index
     const shape_type & get_shape(int i_) const;
 
     /// Dump

@@ -133,6 +133,14 @@ namespace geomtools {
                         _extrusion_,
                         sphere_extrusion_placement);
     _h_ = h;
+    {
+      double r = _r_sphere_;
+      double h = c;
+      double vol = _mother_.get_volume();
+      double extrusion_vol = M_PI * h * h * (3 * r - h) / 3;
+      vol -= extrusion_vol;
+      _solid_.set_forced_volume(vol);
+    }
 
     // Install proposed 'stackable data' pointer in the shape:
     {

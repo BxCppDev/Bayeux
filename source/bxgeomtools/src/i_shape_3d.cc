@@ -7,6 +7,7 @@
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
+#include <datatools/units.h>
 
 // This project:
 #include <geomtools/utils.h>
@@ -65,6 +66,31 @@ namespace geomtools {
     return 0;
   }
 
+  bool i_shape_3d::volume_can_be_forced() const
+  {
+    return false;
+  }
+
+  bool i_shape_3d::has_forced_volume() const
+  {
+    return _forced_volume_ != boost::none;
+  }
+
+  void i_shape_3d::set_forced_volume(double forced_volume_)
+  {
+    DT_THROW_IF(!volume_can_be_forced(),
+                std::logic_error,
+                "This shape does not accept forced volume!");
+    _forced_volume_ = forced_volume_;
+    return;
+  }
+
+  double i_shape_3d::get_forced_volume() const
+  {
+    DT_THROW_IF(!_forced_volume_, std::logic_error, "Shape has no forced volume!");
+    return _forced_volume_.get();
+  }
+
   bool i_shape_3d::has_volume(uint32_t flags_) const
   {
     /*
@@ -91,6 +117,14 @@ namespace geomtools {
     }
     */
     return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  double i_shape_3d::get_effective_volume() const
+  {
+    if (has_forced_volume()) {
+      return get_forced_volume();
+    }
+    return get_volume();
   }
 
   bool i_shape_3d::has_surface(uint32_t flags_) const
@@ -383,6 +417,21 @@ namespace geomtools {
   {
     this->i_object_3d::_initialize(config_, objects_);
     _initialize_bounding_data(config_);
+
+    double default_volume_unit = CLHEP::millimeter3;
+
+    if (config_.has_key("volume_unit")) {
+      const std::string ustr = config_.fetch_string("volume_unit");
+      default_volume_unit = datatools::units::get_volume_unit_from(ustr);
+    }
+
+    if (config_.has_key("forced_volume")) {
+      double v = config_.fetch_real("forced_volume");
+      if (!config_.has_explicit_unit("forced_volume")) {
+        v *= default_volume_unit;
+      }
+      set_forced_volume(v);
+    }
     return;
   }
 
@@ -412,6 +461,9 @@ namespace geomtools {
       unlock();
     }
     reset_stackable_data();
+    if (_forced_volume_) {
+      _forced_volume_ = boost::none;
+    }
     reset_computed_faces();
     _set_defaults();
     this->i_object_3d::_reset();
@@ -726,7 +778,7 @@ namespace geomtools {
 
   void i_shape_3d::_build_bounding_data()
   {
-    std::cerr << "DEVEL: i_shape_3d::_build_bounding_data: ***** DEFAULT EMPTY METHOD!!!" << std::endl;
+    DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "!!!DEFAULT EMPTY METHOD!!!");
     return;
   }
 

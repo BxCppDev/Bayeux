@@ -12,6 +12,7 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
+#include <boost/serialization/list.hpp>
 #include <boost/serialization/string.hpp>
 // - Bayeux/datatools:
 #include <datatools/i_serializable.h>
@@ -24,39 +25,45 @@ namespace geomtools {
 
   /// Boost serialization template method
   template<class Archive>
-  void display_data::display_item::serialize (Archive & ar,
-                                              const unsigned int version)
+  void display_data::display_item::serialize(Archive & ar,
+                                             const unsigned int version)
   {
-    ar & boost::serialization::make_nvp ("frame_info", frame_info);
-    if (version > 0)
-      {
-        ar & boost::serialization::make_nvp ("style",      style);
+    ar & boost::serialization::make_nvp("frame_info", frame_info);
+    if (version > 0) {
+      ar & boost::serialization::make_nvp("style", style);
+    } else {
+      if (Archive::is_saving::value) {
+        ar & boost::serialization::make_nvp("style", style);
+      } else  {
+        style.clear();
       }
-    else
-      {
-        if (Archive::is_saving::value)
-          {
-            ar & boost::serialization::make_nvp ("style",      style);
-         }
-        else
-          {
-            style.clear();
-          }
+    }
+    ar & boost::serialization::make_nvp("color", color);
+    // 2016-03-23 FM : attribute 'paths' is obsolete but we keep it for now
+    ar & boost::serialization::make_nvp("paths", paths);
+    // 2016-03-23 FM : attribute 'wires' is the new implementation of
+    // the container for segments to be rendered
+    if (version > 1) {
+      ar & boost::serialization::make_nvp("wires", wires);
+    } else {
+      if (Archive::is_saving::value) {
+        ar & boost::serialization::make_nvp("wires", wires);
+      } else  {
+        wires.clear();
       }
-    ar & boost::serialization::make_nvp ("color",      color);
-    ar & boost::serialization::make_nvp ("paths",      paths);
+    }
     return;
   }
 
 
   template<class Archive>
-  void display_data::display_entry::serialize (Archive & ar,
-                                               const unsigned int /*version*/)
+  void display_data::display_entry::serialize(Archive & ar,
+                                              const unsigned int /*version*/)
   {
-    ar & boost::serialization::make_nvp ("entry_type",  entry_type);
-    ar & boost::serialization::make_nvp ("group",       group);
-    ar & boost::serialization::make_nvp ("items",       items);
-    ar & boost::serialization::make_nvp ("auxiliaries", auxiliaries);
+    ar & boost::serialization::make_nvp("entry_type",  entry_type);
+    ar & boost::serialization::make_nvp("group",       group);
+    ar & boost::serialization::make_nvp("items",       items);
+    ar & boost::serialization::make_nvp("auxiliaries", auxiliaries);
     return;
   }
 
@@ -66,19 +73,19 @@ namespace geomtools {
                                 const unsigned int version)
   {
     ar & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    ar & boost::serialization::make_nvp ("groups",      _groups_);
-    ar & boost::serialization::make_nvp ("entries",     _entries_);
+    ar & boost::serialization::make_nvp("groups",      _groups_);
+    ar & boost::serialization::make_nvp("entries",     _entries_);
     if (version > 0) {
-      ar & boost::serialization::make_nvp ("frames", _frames_);
+      ar & boost::serialization::make_nvp("frames", _frames_);
     } else {
       if (Archive::is_saving::value) {
-        ar & boost::serialization::make_nvp ("frames", _frames_);
+        ar & boost::serialization::make_nvp("frames", _frames_);
       } else {
         _frames_.clear();
       }
     }
-    ar & boost::serialization::make_nvp ("colors",      _colors_);
-    ar & boost::serialization::make_nvp ("auxiliaries", _auxiliaries_);
+    ar & boost::serialization::make_nvp("colors",      _colors_);
+    ar & boost::serialization::make_nvp("auxiliaries", _auxiliaries_);
     return;
   }
 

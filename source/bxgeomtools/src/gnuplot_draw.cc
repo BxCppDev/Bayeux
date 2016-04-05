@@ -2289,7 +2289,13 @@ namespace geomtools {
       if (frame_index_ >= 0 && de.is_framed()) {
         const geomtools::display_data::display_item & di = de.get_framed_item(frame_index_);
         if (color_.empty() || di.color == color_) {
-          for(std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin();
+          wires_type tr_wires;
+          transform_wires_to(pl_,
+                             di.wires,
+                             tr_wires);
+          draw_wires(out_, tr_wires);
+          /*
+           for(std::list<geomtools::polyline_3d>::const_iterator ip = di.paths.begin();
               ip != di.paths.end();
               ip++) {
             //const geomtools::polyline_3d & wires = *ip;
@@ -2317,9 +2323,10 @@ namespace geomtools {
                                                    pl_,
                                                    wires);
           }
-        }
-      }
-    }
+          */
+        } // if (color_.empty()
+      } // if (frame_index_ >= 0
+    } // for(
 
     return;
   }

@@ -197,30 +197,51 @@ namespace geomtools {
                  "Extrusion radius (" << extrusion_radius / CLHEP::mm
                  << " mm) is too large (Y-axis) in cylindric extrusion boxed model '"
                  << name_ << "' !");
+    DT_THROW_IF(extrusion_x + extrusion_radius >= +0.5 * mother_x, std::logic_error,
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm
+                 << " mm) is too large (X-axis) in cylindric extrusion boxed model '"
+                 << name_ << "' !");
+    DT_THROW_IF(extrusion_x - extrusion_radius <= -0.5 * mother_x, std::logic_error,
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm
+                 << " mm) is too large (X-axis) in cylindric extrusion boxed model '"
+                 << name_ << "' !");
+    DT_THROW_IF(extrusion_y + extrusion_radius >= +0.5 * mother_y, std::logic_error,
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm
+                 << " mm) is too large (Y-axis) in cylindric extrusion boxed model '"
+                 << name_ << "' !");
+    DT_THROW_IF(extrusion_y - extrusion_radius <= -0.5 * mother_y, std::logic_error,
+                 "Extrusion radius (" << extrusion_radius / CLHEP::mm
+                 << " mm) is too large (y-axis) in cylindric extrusion boxed model '"
+                 << name_ << "' !");
 
     set_material_name (material_name);
-    set_mother_x (mother_x);
-    set_mother_y (mother_y);
-    set_mother_z (mother_z);
-    set_extrusion (extrusion_x, extrusion_y, extrusion_radius);
+    set_mother_x(mother_x);
+    set_mother_y(mother_y);
+    set_mother_z(mother_z);
+    set_extrusion(extrusion_x, extrusion_y, extrusion_radius);
 
     _mother_box_.reset();
     _mother_box_.set_x(get_mother_x());
     _mother_box_.set_y(get_mother_y());
     _mother_box_.set_z(get_mother_z());
     _mother_box_.lock();
-    DT_THROW_IF (! _mother_box_.is_valid (), std::logic_error,
-                 "Invalid box dimensions in cylindric extrusion boxed model '" << name_ << "' !");
+    DT_THROW_IF(! _mother_box_.is_valid(), std::logic_error,
+                "Invalid box dimensions in cylindric extrusion boxed model '" << name_ << "' !");
 
-    _extrusion_cylinder_.set_diameter (2 * get_extrusion_radius ());
+    _extrusion_cylinder_.set_diameter(2 * get_extrusion_radius());
     const double eps = 1.0e-5 * CLHEP::mm;
-    _extrusion_cylinder_.set_z (get_mother_z () + eps);
+    _extrusion_cylinder_.set_z(get_mother_z() + eps);
     _extrusion_cylinder_.lock();
 
-    const placement p1 (vector_3d (0, 0, 0), 0, 0, 0);
-    const placement p2 (vector_3d (_extrusion_x_, _extrusion_y_, 0), 0, 0, 0);
-    _extruded_solid_.set_shape1 (_mother_box_, p1);
-    _extruded_solid_.set_shape2 (_extrusion_cylinder_, p2);
+    const placement p1(vector_3d(0, 0, 0), 0, 0, 0);
+    const placement p2(vector_3d(_extrusion_x_, _extrusion_y_, 0), 0, 0, 0);
+    _extruded_solid_.set_shape1(_mother_box_, p1);
+    _extruded_solid_.set_shape2(_extrusion_cylinder_, p2);
+    {
+      double vol = _mother_box_.get_volume();
+      vol -= _extrusion_cylinder_.get_volume() * _mother_box_.get_z() / _extrusion_cylinder_.get_z();
+      _extruded_solid_.set_forced_volume(vol);
+    }
     _extruded_solid_.lock();
     DT_LOG_TRACE (get_logging_priority(), "Extruded solid:");
     if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {

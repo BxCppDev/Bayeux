@@ -22,6 +22,7 @@
 // Third party:
 // - Boost:
 #include <boost/utility.hpp>
+#include <boost/optional.hpp>
 // - Bayeux/datatools:
 #include <datatools/handle.h>
 #include <datatools/ocd_macros.h>
@@ -170,11 +171,26 @@ namespace geomtools {
     /// Return the number of faces
     virtual unsigned int get_number_of_faces() const;
 
+    /// Check if a forced volume can be set
+    virtual bool volume_can_be_forced() const;
+
+    /// Check is a forced volume is set
+    virtual bool has_forced_volume() const;
+
+    /// Force the volume
+    void set_forced_volume(double volume_);
+
+    /// Return the forced volume
+    double get_forced_volume() const;
+
     /// Check is the volume is known
     virtual bool has_volume(uint32_t flags_ = 0) const;
 
     /// Return the volume
     virtual double get_volume(uint32_t flags_ = 0) const;
+
+    /// Return the total effective volume
+    double get_effective_volume() const;
 
     /// Check is the surface is known
     virtual bool has_surface(uint32_t flags_ = face_identifier::FACE_BITS_ANY) const;
@@ -328,6 +344,7 @@ namespace geomtools {
     bool                   _owns_stackable_data_; //!< Ownership flag for stackable data
     const stackable_data * _stackable_data_;      //!< Handle to stackable data
     bounding_data          _bounding_data_;       //!< Bounding data
+    boost::optional<double> _forced_volume_;      //!< Forced volume
     datatools::handle<face_info_collection_type> _computed_faces_; //!< Computed faces
 
     // Serialization interface

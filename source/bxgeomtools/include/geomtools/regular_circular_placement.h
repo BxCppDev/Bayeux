@@ -82,7 +82,7 @@ namespace geomtools {
     virtual size_t compute_index_map(std::vector<uint32_t> & map_,
                                      int item_) const;
 
-    /// Destructor constructor
+    /// Default constructor
     regular_circular_placement();
 
     /// Constructor
@@ -120,13 +120,13 @@ namespace geomtools {
 
   private:
 
-    vector_3d _center_;          /// Intersection of the rotation axis with the plane
-    double    _radius_;
-    double    _step_angle_;
-    double    _start_angle_;
-    size_t    _number_of_items_;
-    bool      _follow_rotation_;
-    rotation_axis_type _rotation_axis_;
+    vector_3d _center_; ///< Intersection of the rotation axis with the plane
+    double    _radius_; ///< Radius of the circle
+    double    _step_angle_; ///< Step angle
+    double    _start_angle_; ///< Start angle
+    size_t    _number_of_items_; ///< Number of items places along the arc
+    bool      _follow_rotation_; ///< Flag that indicates that items'orientation follow the rotation
+    rotation_axis_type _rotation_axis_; ///< Rotation axis identifier
 
   };
 
@@ -134,10 +134,9 @@ namespace geomtools {
 
 #endif // GEOMTOOLS_REGULAR_CIRCULAR_PLACEMENT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

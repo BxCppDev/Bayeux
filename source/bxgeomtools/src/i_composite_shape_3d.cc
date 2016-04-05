@@ -231,6 +231,11 @@ namespace geomtools {
     return;
   }
 
+  bool i_composite_shape_3d::volume_can_be_forced() const
+  {
+    return true;
+  }
+
   bool i_composite_shape_3d::is_valid() const
   {
     return _shape1_.is_valid() && _shape2_.is_valid();

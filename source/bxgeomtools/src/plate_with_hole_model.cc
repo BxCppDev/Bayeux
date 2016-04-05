@@ -180,24 +180,25 @@ namespace geomtools {
                  "Invalid dimension(s) for the mother box in plate with hole model '" << name_ << "' !");
 
     geomtools::placement hole_placement (_x_pos_hole_, _y_pos_hole_, 0.0, 0, 0, 0);
+    bool hole_vol = 0.0;
     if (datatools::is_valid (_r_hole_)) {
       _cyl_hole_.set_r (_r_hole_);
       _cyl_hole_.set_z (_z_hole_);
       _cyl_hole_.lock();
-      _solid_.set_shapes (_mother_,
-                          _cyl_hole_,
-                          hole_placement);
+      _solid_.set_shapes(_mother_, _cyl_hole_, hole_placement);
+      hole_vol = _cyl_hole_.get_volume();
     } else if (datatools::is_valid (_x_hole_) && datatools::is_valid (_y_hole_)) {
       _box_hole_.set_x (_x_hole_);
       _box_hole_.set_y (_y_hole_);
       _box_hole_.set_z (_z_hole_);
       _box_hole_.lock();
-      _solid_.set_shapes (_mother_,
-                          _box_hole_,
-                          hole_placement);
+      _solid_.set_shapes(_mother_, _box_hole_, hole_placement);
+      hole_vol = _box_hole_.get_volume();
     } else {
       DT_THROW_IF (true, std::logic_error, "No defined shape for hole in plate with hole model '" << name_ << "' !");
     }
+    hole_vol *= (_z_ / _z_hole_);
+    _solid_.set_forced_volume(_mother_.get_volume() - hole_vol);
 
     // Install proposed 'stackable data' pointer in the shape:
     {
