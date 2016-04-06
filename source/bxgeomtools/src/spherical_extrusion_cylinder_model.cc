@@ -24,23 +24,23 @@ namespace geomtools {
   GEOMTOOLS_MODEL_REGISTRATION_IMPLEMENT(spherical_extrusion_cylinder_model,
                                          "geomtools::spherical_extrusion_cylinder_model")
 
-  std::string spherical_extrusion_cylinder_model::get_model_id () const
+  std::string spherical_extrusion_cylinder_model::get_model_id() const
   {
     return "geomtools::spherical_extrusion_cylinder_model";
   }
 
-  const std::string & spherical_extrusion_cylinder_model::get_material () const
+  const std::string & spherical_extrusion_cylinder_model::get_material() const
   {
     return _material_;
   }
 
-  const geomtools::subtraction_3d & spherical_extrusion_cylinder_model::get_solid () const
+  const geomtools::subtraction_3d & spherical_extrusion_cylinder_model::get_solid() const
   {
     return _solid_;
   }
 
-  spherical_extrusion_cylinder_model::spherical_extrusion_cylinder_model ()
-    : i_model ("spherical_extrusion_cylinder_model")
+  spherical_extrusion_cylinder_model::spherical_extrusion_cylinder_model()
+    : i_model("spherical_extrusion_cylinder_model")
   {
     _material_ = "";
     _bottom_ = false;
@@ -51,87 +51,87 @@ namespace geomtools {
     return;
   }
 
-  spherical_extrusion_cylinder_model::~spherical_extrusion_cylinder_model ()
+  spherical_extrusion_cylinder_model::~spherical_extrusion_cylinder_model()
   {
     return;
   }
 
-  void spherical_extrusion_cylinder_model::_at_construct (const std::string & name_,
-                                                          const datatools::properties & config_,
-                                                          geomtools::models_col_type * /*models_*/)
+  void spherical_extrusion_cylinder_model::_at_construct(const std::string & name_,
+                                                         const datatools::properties & config_,
+                                                         geomtools::models_col_type * /*models_*/)
   {
-    DT_LOG_TRACE (get_logging_priority (), "Entering...");
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
-    //set_name (name_);
+    //set_name(name_);
 
     // Parse properties:
 
     double lunit = CLHEP::mm;
-    if (config_.has_key ("length_unit")) {
-      const std::string lunit_str = config_.fetch_string ("length_unit");
-      lunit = datatools::units::get_length_unit_from (lunit_str);
+    if (config_.has_key("length_unit")) {
+      const std::string lunit_str = config_.fetch_string("length_unit");
+      lunit = datatools::units::get_length_unit_from(lunit_str);
     }
 
-    DT_THROW_IF (!config_.has_key ("material.ref"), std::logic_error, "Missing 'material.ref' property in spherical extrusion cylinder model '" << name_ << "' !");
-    _material_ = config_.fetch_string ("material.ref");
+    DT_THROW_IF(!config_.has_key("material.ref"), std::logic_error, "Missing 'material.ref' property in spherical extrusion cylinder model '" << name_ << "' !");
+    _material_ = config_.fetch_string("material.ref");
 
-    DT_THROW_IF (! config_.has_key ("z"), std::logic_error, "Missing 'z' property in spherical extrusion cylinder model '" << name_ << "' !");
-    double z = config_.fetch_real ("z");
-    if (! config_.has_explicit_unit ("z")) z *= lunit;
+    DT_THROW_IF(! config_.has_key("z"), std::logic_error, "Missing 'z' property in spherical extrusion cylinder model '" << name_ << "' !");
+    double z = config_.fetch_real("z");
+    if (! config_.has_explicit_unit("z")) z *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("r"), std::logic_error, "Missing 'r' property in spherical extrusion cylinder model '" << name_ << "' !");
-    double r = config_.fetch_real ("r");
-    if (! config_.has_explicit_unit ("r")) r *= lunit;
+    DT_THROW_IF(! config_.has_key("r"), std::logic_error, "Missing 'r' property in spherical extrusion cylinder model '" << name_ << "' !");
+    double r = config_.fetch_real("r");
+    if (! config_.has_explicit_unit("r")) r *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("r_extrusion"), std::logic_error, "Missing 'r_extrusion' property in spherical extrusion cylinder model '" << name_ << "' !");
-    double re = config_.fetch_real ("r_extrusion");
-    if (! config_.has_explicit_unit ("r_extrusion")) re *= lunit;
+    DT_THROW_IF(! config_.has_key("r_extrusion"), std::logic_error, "Missing 'r_extrusion' property in spherical extrusion cylinder model '" << name_ << "' !");
+    double re = config_.fetch_real("r_extrusion");
+    if (! config_.has_explicit_unit("r_extrusion")) re *= lunit;
 
-    DT_THROW_IF (! config_.has_key ("r_sphere"), std::logic_error, "Missing 'r_sphere' property in spherical extrusion cylinder model '" << name_ << "' !");
-    double rs = config_.fetch_real ("r_sphere");
-    if (! config_.has_explicit_unit ("r_sphere")) rs *= lunit;
+    DT_THROW_IF(! config_.has_key("r_sphere"), std::logic_error, "Missing 'r_sphere' property in spherical extrusion cylinder model '" << name_ << "' !");
+    double rs = config_.fetch_real("r_sphere");
+    if (! config_.has_explicit_unit("r_sphere")) rs *= lunit;
 
-    if (config_.has_flag ("bottom")) {
+    if (config_.has_flag("bottom")) {
       _bottom_ = true;
     }
 
-    DT_LOG_TRACE (get_logging_priority (), "Properties are parsed !");
+    DT_LOG_TRACE(get_logging_priority(), "Properties are parsed !");
 
     _r_ = r;
     _z_ = z;
     _r_extrusion_ = re;
     _r_sphere_    = rs;
 
-    DT_THROW_IF (_r_extrusion_ > _r_, std::logic_error, "Extrusion radius is larger than mother cylinder radius in spherical extrusion cylinder model '" << name_ << "' !");
-    DT_THROW_IF (_r_extrusion_ > _r_sphere_, std::logic_error, "Extrusion radius is larger than the spherical radius in spherical extrusion cylinder model '" << name_ << "' !");
+    DT_THROW_IF(_r_extrusion_ > _r_, std::logic_error, "Extrusion radius is larger than mother cylinder radius in spherical extrusion cylinder model '" << name_ << "' !");
+    DT_THROW_IF(_r_extrusion_ > _r_sphere_, std::logic_error, "Extrusion radius is larger than the spherical radius in spherical extrusion cylinder model '" << name_ << "' !");
 
-    _mother_.set_r (_r_);
-    _mother_.set_z (_z_);
+    _mother_.set_r(_r_);
+    _mother_.set_z(_z_);
     _mother_.lock();
-    DT_THROW_IF (! _mother_.is_valid (), std::logic_error,  "Invalid dimension(s) for the mother cylinder in spherical extrusion cylinder model '" << name_ << "' !");
+    DT_THROW_IF(! _mother_.is_valid(), std::logic_error,  "Invalid dimension(s) for the mother cylinder in spherical extrusion cylinder model '" << name_ << "' !");
 
-    _extrusion_.set (_r_sphere_);
+    _extrusion_.set(_r_sphere_);
     _extrusion_.lock();
 
-    const double a = std::sqrt (_r_sphere_ * _r_sphere_
-                                - _r_extrusion_ * _r_extrusion_);
+    const double a = std::sqrt(_r_sphere_ * _r_sphere_
+                               - _r_extrusion_ * _r_extrusion_);
     const double c = _r_sphere_ - a;
-    DT_THROW_IF (c > _z_, std::logic_error, "Mother cylinder is not long enough (Z ) to host the extrusion in spherical extrusion cylinder model '" << name_ << "' !");
+    DT_THROW_IF(c > _z_, std::logic_error, "Mother cylinder is not long enough (Z) to host the extrusion in spherical extrusion cylinder model '" << name_ << "' !");
     const double h = _z_ - c;
     double zsphere = 0.5 * _z_ + a;
     if (_bottom_) zsphere *= -1;
 
-    DT_LOG_TRACE (get_logging_priority (), "z       =" << z / CLHEP::mm << " mm");
-    DT_LOG_TRACE (get_logging_priority (), "r       =" << r / CLHEP::mm << " mm");
-    DT_LOG_TRACE (get_logging_priority (), "re      =" << re / CLHEP::mm << " mm");
-    DT_LOG_TRACE (get_logging_priority (), "rs      =" << rs / CLHEP::mm << " mm");
-    DT_LOG_TRACE (get_logging_priority (), "h       =" << h / CLHEP::mm << " mm");
-    DT_LOG_TRACE (get_logging_priority (), "zsphere =" << zsphere / CLHEP::mm << " mm");
+    DT_LOG_TRACE(get_logging_priority(), "z       =" << z / CLHEP::mm << " mm");
+    DT_LOG_TRACE(get_logging_priority(), "r       =" << r / CLHEP::mm << " mm");
+    DT_LOG_TRACE(get_logging_priority(), "re      =" << re / CLHEP::mm << " mm");
+    DT_LOG_TRACE(get_logging_priority(), "rs      =" << rs / CLHEP::mm << " mm");
+    DT_LOG_TRACE(get_logging_priority(), "h       =" << h / CLHEP::mm << " mm");
+    DT_LOG_TRACE(get_logging_priority(), "zsphere =" << zsphere / CLHEP::mm << " mm");
 
-    geomtools::placement sphere_extrusion_placement (0, 0, zsphere, 0, 0, 0);
-    _solid_.set_shapes (_mother_,
-                        _extrusion_,
-                        sphere_extrusion_placement);
+    geomtools::placement sphere_extrusion_placement(0, 0, zsphere, 0, 0, 0);
+    _solid_.set_shapes(_mother_,
+                       _extrusion_,
+                       sphere_extrusion_placement);
     _h_ = h;
     {
       const double r1 = _r_sphere_;
@@ -156,10 +156,10 @@ namespace geomtools {
         sd_ptr->zmin = -0.5 * z + c;
         sd_ptr->zmax = +0.5 * z;
       }
-      _solid_.set_stackable_data (sd_ptr);
-      DT_LOG_TRACE (get_logging_priority (), "Stackable data:");
-      if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
-        sd_ptr->tree_dump (std::cerr);
+      _solid_.set_stackable_data(sd_ptr);
+      DT_LOG_TRACE(get_logging_priority(), "Stackable data:");
+      if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+        sd_ptr->tree_dump();
       }
     }
 
@@ -179,14 +179,14 @@ namespace geomtools {
     return;
   }
 
-  void spherical_extrusion_cylinder_model::tree_dump (std::ostream & out_,
-                                                      const std::string & title_,
-                                                      const std::string & indent_,
-                                                      bool inherit_) const
+  void spherical_extrusion_cylinder_model::tree_dump(std::ostream & out_,
+                                                     const std::string & title_,
+                                                     const std::string & indent_,
+                                                     bool inherit_) const
   {
     std::string indent;
-    if (! indent_.empty ()) indent = indent_;
-    i_model::tree_dump (out_, title_, indent, true);
+    if (! indent_.empty()) indent = indent_;
+    i_model::tree_dump(out_, title_, indent, true);
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Material : '" << _material_ << "'" << std::endl;
@@ -199,7 +199,7 @@ namespace geomtools {
         std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _mother_.tree_dump (out_,"",indent_oss.str ());
+        _mother_.tree_dump(out_,"",indent_oss.str());
       }
     }
 
@@ -211,7 +211,7 @@ namespace geomtools {
         std::ostringstream indent_oss;
         indent_oss << indent;
         indent_oss << datatools::i_tree_dumpable::skip_tag;
-        _extrusion_.tree_dump (out_,"",indent_oss.str ());
+        _extrusion_.tree_dump(out_,"",indent_oss.str());
       }
     }
 
@@ -220,13 +220,13 @@ namespace geomtools {
 
     {
       // Solid:
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Solid : " << std::endl;
       {
         std::ostringstream indent_oss;
         indent_oss << indent;
-        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag (inherit_);
-        _solid_.tree_dump (out_,"",indent_oss.str ());
+        indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(inherit_);
+        _solid_.tree_dump(out_,"",indent_oss.str());
       }
     }
 
@@ -277,7 +277,7 @@ namespace geomtools {
     }
 
     if (draw_extrusion) {
-       const double zcyl = mother_cylinder.get_z();
+      const double zcyl = mother_cylinder.get_z();
       const double c = zcyl - h;
       const double rs = extrusion_sphere.get_r();
       const double a = rs - c;
