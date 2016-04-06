@@ -2266,8 +2266,8 @@ namespace geomtools {
                                        const std::string & group_,
                                        const std::string & name_)
   {
-    int last_np = -1;
-    bool safe = false;
+    // int last_np = -1;
+    // bool safe = false;
     for(geomtools::display_data::entries_dict_type::const_iterator i
           = dd_.get_entries().begin();
         i != dd_.get_entries().end();
