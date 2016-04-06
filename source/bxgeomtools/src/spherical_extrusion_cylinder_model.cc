@@ -134,10 +134,10 @@ namespace geomtools {
                         sphere_extrusion_placement);
     _h_ = h;
     {
-      double r = _r_sphere_;
-      double h = c;
+      const double r1 = _r_sphere_;
+      const double h1 = c;
       double vol = _mother_.get_volume();
-      double extrusion_vol = M_PI * h * h * (3 * r - h) / 3;
+      const double extrusion_vol = M_PI * h1 * h1 * (3 * r1 - h1) / 3.;
       vol -= extrusion_vol;
       _solid_.set_forced_volume(vol);
     }
