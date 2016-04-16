@@ -141,11 +141,26 @@ namespace lahague {
 
       if (_dose_configs_.empty()) {
         std::vector<std::string> labels;
+        /*
+         * compute_dose.labels : string[2] = "monitor" "dosimetre"
+         */
         if (config_.has_key("compute_dose.labels")) {
           config_.fetch("compute_dose.labels", labels);
         }
 
+
         for (int i = 0; i < (int) labels.size(); i++) {
+          /*
+           *
+           * compute_dose.monitor.hit_category        : string = "monitor_hit"
+           * compute_dose.dosimetre.hit_category      : string = "dosimetre_hit"
+           * compute_dose.monitor.geometry_category   : string = "monitor.gc"
+           * compute_dose.dosimetre.geometry_category : string = "dosimetre.gc"
+           * compute_dose.monitor.particle_name       : string = "neutron"
+           * compute_dose.dosimetre.particle_name     : string = "gamma"
+           *
+           *
+           */
           compute_dose_config cdconf;
           const std::string & label = labels[i];
           {
@@ -173,7 +188,6 @@ namespace lahague {
         }
 
       }
-
 
       _initialized_ = true;
       return;

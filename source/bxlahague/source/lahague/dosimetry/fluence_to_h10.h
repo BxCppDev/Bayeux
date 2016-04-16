@@ -1,6 +1,6 @@
 //! \file   lahague/dosimetry/fluence_to_h10.h
-//! \author François Mauger
-//! \brief  Describe the LaHague dosimetry utilties
+//! \author François Mauger, Arnaud Chapon
+//! \brief  Tool for neutron or gamma fluence conversion to H10* for Monte-Carlo data
 //
 // Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
 //                       and Arnaud Chapon <achapon@cerap.fr>
@@ -52,7 +52,7 @@ namespace lahague {
     //! Return the fluence to H10 conversion factor for neutrons at a given energy
     double neutron_fluence_to_h10_conversion(double energy_, uint32_t /* flags_ */ = 0);
 
-    //! \brief Compute H*(10) dose assiciated to fluence hits obtained by Monte-Carlo
+    //! \brief Compute H*(10) dose associated to fluence hits obtained by Monte-Carlo
     class mc_fluence_to_h10_processor
     {
     public:
@@ -101,7 +101,7 @@ namespace lahague {
         std::string hit_category;      //!< The hit category to be processed
         std::string geometry_category; //!< The geometry category of volume to be processed
         std::string particle_name;     //!< The name of the particle ("gamma", "neutron")
-        uint32_t geometry_type;        //!< The geometry type
+        uint32_t    geometry_type;     //!< The geometry type
       };
 
       //! Add a configuration to compute dose
