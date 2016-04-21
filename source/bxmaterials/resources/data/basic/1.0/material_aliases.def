@@ -45,4 +45,15 @@ material : string = "basic::polymethylmethacrylate"
 #@description The Lucite alias for polymethylmethacrylate
 material : string = "basic::polymethylmethacrylate"
 
+
+[name="basic::PVA" type="alias"]
+#@description The PVA alias for polyvinylalcohol
+material : string = "basic::polyvinylalcohol"
+
+
+[name="basic::PVOH" type="alias"]
+#@description The PVOH alias for polyvinylalcohol
+material : string = "basic::polyvinylalcohol"
+
+
 # end of @materials:data/basic/1.0/material_aliases.def
