@@ -331,11 +331,13 @@ namespace datatools {
       command::returned_info cri;
       try {
         cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
+        // tree_dump(std::cerr, "Registry: ", "DEVEL: ***** ");
         DT_THROW_IF(!has_variant_record(variant_path_), std::logic_error,
                     "Variant record with path '" << variant_path_ << "' does not exist!");
         const variant_record & variant_rec = get_variant_record(variant_path_);
         cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
         active_ = variant_rec.is_active();
+        // std::cerr << "DEVEL: *************** ACTIVE = " << active_ << std::endl;
         cri.set_error_code(command::CEC_SUCCESS);
       }
       catch (std::exception & x) {

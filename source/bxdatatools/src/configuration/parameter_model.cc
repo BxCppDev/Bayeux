@@ -1531,12 +1531,12 @@ namespace datatools {
         // Boolean
         if (is_boolean()) {
           // Variants associated to boolean values:
-          if (setup_.has_key("boolean.variant.true")) {
-            std::string bvt_str = setup_.fetch_string("boolean.variant.true");
+          if (setup_.has_key("boolean.true.variant")) {
+            std::string bvt_str = setup_.fetch_string("boolean.true.variant");
             associate_variant_to_boolean(true, bvt_str);
           }
-          if (setup_.has_key("boolean.variant.false")) {
-            std::string bvf_str = setup_.fetch_string("boolean.variant.false");
+          if (setup_.has_key("boolean.false.variant")) {
+            std::string bvf_str = setup_.fetch_string("boolean.false.variant");
             associate_variant_to_boolean(false, bvf_str);
           }
         }

@@ -39,6 +39,8 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+// - Boost:
+#include <boost/scoped_ptr.hpp>
 
 // This project
 #include <datatools/logger.h>

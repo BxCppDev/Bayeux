@@ -37,6 +37,7 @@
 
 // Third party:
 // - Boost:
+#include <boost/cstdint.hpp>
 #include <boost/scoped_ptr.hpp>
 // - Qt:
 #include <QWidget>

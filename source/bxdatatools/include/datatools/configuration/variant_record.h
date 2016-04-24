@@ -49,7 +49,7 @@ namespace datatools {
   namespace configuration {
 
     /// \brief Registry record
-    class variant_record : public enriched_base //public datatools::i_tree_dumpable
+    class variant_record : public enriched_base
     {
     public:
 
@@ -207,9 +207,9 @@ namespace datatools {
 
     };
 
-  }  // end of namespace configuration
+  } // end of namespace configuration
 
-}  // end of namespace datatools
+} // end of namespace datatools
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_RECORD_H
 

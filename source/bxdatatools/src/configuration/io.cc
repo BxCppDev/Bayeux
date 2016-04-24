@@ -434,20 +434,20 @@ namespace datatools {
         variant_reverse = true;
         variant_desc = variant_desc.substr(1);
         // Should we trim 'variant_desc' ?
-        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc (reverse) = '" << variant_desc_ << "'");
+        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_desc (reverse) = '" << variant_desc << "'");
       }
       std::vector<std::string> variant_tokens2;
       boost::split(variant_tokens2, variant_desc, boost::is_any_of(":"));
       if (variant_tokens2.size() != 2) {
         DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARSING_FAILURE,
                                   "Cannot parse variant path tokens from '"
-                                  << variant_desc_ << "' !");
+                                  << variant_desc << "' !");
         return cri;
       }
       std::string variant_registry_name = variant_tokens2[0];
       if (variant_registry_name.empty()) {
         DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARSING_FAILURE,
-                                  "Missing variant only path from '" << variant_desc_ << "' !");
+                                  "Missing variant only path from '" << variant_desc << "' !");
         return cri;
       }
       if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name = '" << variant_registry_name << "'");
@@ -459,13 +459,16 @@ namespace datatools {
       if (has_repository()) {
         const variant_repository & rep = get_repository();
         command::returned_info local_cri = rep.cmd_is_active_variant(variant_registry_name,
-                                                               variant_path,
-                                                               variant_active);
+                                                                     variant_path,
+                                                                     variant_active);
         if (local_cri.is_success()) {
           variant_found = true;
-          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found variant only from '" << variant_desc_ << "'");
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found variant only from '" << variant_desc << "'");
         } else {
-          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Cannot found variant only from '" << variant_desc_ << "'");
+          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                                    "Cannot found variant only from '" << variant_desc << "' :  "
+                                    << local_cri.get_error_message()
+                                    );
           variant_found = false;
           // DT_THROW_IF(true, std::logic_error,
           //          "Cannot resolve configuration variant '" << variant_desc
@@ -479,7 +482,7 @@ namespace datatools {
       if (!variant_found) {
         if (!has_variant_default) {
           DT_COMMAND_RETURNED_ERROR(cri, command::CEC_COMMAND_INVALID_CONTEXT,
-                                    "No available default value for variant only directive '" << variant_desc_ << "' !");
+                                    "No available default value for variant only directive '" << variant_desc << "' !");
           return cri;
         }
         variant_active = variant_default;

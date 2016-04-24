@@ -191,7 +191,7 @@ namespace datatools {
       command::returned_info
       cmd_is_active_variant(const std::string & registry_key_,
                             const std::string & variant_path_,
-                             bool & active_) const;
+                            bool & active_) const;
 
       /// Export to the system variant repository
       void system_export(uint32_t flags_ = 0);
