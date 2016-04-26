@@ -424,6 +424,8 @@ namespace genvtx {
       if (src_log->has_effective_material_ref()) {
         material_name = src_log->get_effective_material_ref();
       }
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "material_name = '" << material_name << "'");
       if (! material_name.empty()) {
         const materials::manager * mat_mgr_ptr
           = detail::access_materials_manager(get_geom_manager(),

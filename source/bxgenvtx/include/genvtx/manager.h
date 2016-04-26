@@ -80,8 +80,7 @@ namespace genvtx {
    *  it manages is done through containers of properties.
    *
    */
-  class manager :
-    public datatools::i_tree_dumpable
+  class manager : public datatools::i_tree_dumpable
   {
 
   public:

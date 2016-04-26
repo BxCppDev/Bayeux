@@ -203,31 +203,39 @@ namespace genvtx {
       }
     }
 
-    if (_action_ & genvtx_driver::ACTION_SHOW ||
-        _action_ & genvtx_driver::ACTION_SHOOT) {
-      DT_THROW_IF(_params_.generator_name.empty(),
-                  std::logic_error,
-                  "Missing vertex generator name !");
+    // Set the generator name to be used:
+    std::string generator_name;
+    if (!_params_.generator_name.empty()) {
       DT_THROW_IF(! _vtx_mgr_->has_generator(_params_.generator_name),
                   std::logic_error,
                   "Cannot find vertex generator with name '" << _params_.generator_name << "' !");
+      generator_name = _params_.generator_name;
+    } else {
+      if (_vtx_mgr_->has_generator_name()) {
+        // Default from the manager, if any:
+        generator_name = _vtx_mgr_->get_generator_name();
+      }
+    }
+
+    if (_action_ & genvtx_driver::ACTION_SHOW ||
+        _action_ & genvtx_driver::ACTION_SHOOT) {
+      DT_THROW_IF(generator_name.empty(),
+                  std::logic_error,
+                  "Missing vertex generator name !");
     }
 
     if (_action_ & genvtx_driver::ACTION_SHOW) {
-      genvtx::vg_handle_type vgh = _vtx_mgr_->grab_generator(_params_.generator_name);
+      genvtx::vg_handle_type vgh = _vtx_mgr_->grab_generator(generator_name);
       const genvtx::i_vertex_generator & vh = vgh.get();
       std::ostringstream title;
-      title << "Vertex generator '" << _params_.generator_name << "' :";
+      title << "Vertex generator '" << generator_name << "' :";
       vh.tree_dump(std::cout, title.str());
     }
 
     if (_action_ & genvtx_driver::ACTION_SHOOT) {
-      if (! _params_.generator_name.empty()) {
-        _vtx_mgr_->activate_current_vg(_params_.generator_name);
-      }
-
-      DT_THROW_IF(_params_.nshoots < 1, std::logic_error, "Number of random vertices is invalid !");
+      _vtx_mgr_->activate_current_vg(generator_name);
       DT_LOG_DEBUG(_logging_, "Number of random vertices is : " << _params_.nshoots);
+      DT_THROW_IF(_params_.nshoots < 1, std::logic_error, "Number of random vertices is invalid !");
 
       // The 3D representation of a vertex :
       double vertex_dim = _params_.visu_spot_size;
@@ -246,7 +254,7 @@ namespace genvtx {
         *fout.get() << "#@genvtx.version=" << GENVTX_LIB_VERSION << std::endl;
         *fout.get() << "#@geometry.setup.label=" << _geo_mgr_->get_setup_label() << std::endl;
         *fout.get() << "#@geometry.setup.version=" << _geo_mgr_->get_setup_version() << std::endl;
-        *fout.get() << "#@vertex_generator.name=" << _vtx_mgr_->get_generator_name () << std::endl;
+        *fout.get() << "#@vertex_generator.name=" << _vtx_mgr_->get_generator_name() << std::endl;
         *fout.get() << "#@length_unit=mm" << std::endl;
         if (_vtx_mgr_->is_time_generator()) {
           *fout.get() << "#@time_unit=ns" << std::endl;
