@@ -330,7 +330,7 @@ composition.names           : string  [2]  = "Fluorine"  "Carbon"
 composition.number_of_atoms : integer [2]  =      4        2
 
 
-[name="basic::polyvinylalcohol)" type="material"]
+[name="basic::polyvinylalcohol" type="material"]
 #@config Polyvinylalcohol (PVOH, PVA)
 density          : real   = 1.25
 density.unit     : string = "g/cm3"
