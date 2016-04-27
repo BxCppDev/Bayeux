@@ -25,36 +25,51 @@ namespace geomtools {
 
   class geom_id;
 
+  /// \brief A selector of geometry IDs using a specific geometry category
+  ///
+  /// The selector is given a textual rule that describes:
+  ///  - the geometry category of objects to be selected
+  ///  - some additional filtering informations to select a subset of objects in the requested category
   class id_selector
   {
 
   public:
 
-    bool is_initialized () const;
+    /// Check initialization status
+    bool is_initialized() const;
 
-    void set_id_mgr (const id_mgr & id_mgr_);
+    /// Set the GID manager
+    void set_id_mgr(const id_mgr & id_mgr_);
 
-    const id_mgr::category_info & get_category_info () const;
+    /// Get the information associated to the requested geometry category
+    const id_mgr::category_info & get_category_info() const;
 
-    id_selector ();
+    /// Default constructor
+    id_selector();
 
-    id_selector (const id_mgr & id_mgr_);
+    /// Constructor
+    id_selector(const id_mgr & id_mgr_);
 
-    ~id_selector ();
+    /// Destructor
+    ~id_selector();
 
-    void initialize (const std::string & rules_);
+    /// Initialize the selector frop a textual rule
+    void initialize(const std::string & rules_);
 
-    void reset ();
+    /// Reset the selector
+    void reset();
 
-    bool match (const geom_id & gid_) const;
+    /// Check if a geometry ID match the selection
+    bool match(const geom_id & gid_) const;
 
-    void dump (std::ostream & out_ =std:: clog, const std::string & title_ = "") const;
+    /// Print
+    void dump(std::ostream & out_ = std::clog, const std::string & title_ = "") const;
 
   private:
 
-    const id_mgr                * _id_mgr_; //!< Handle to a geometry ID manager
+    const id_mgr                * _id_mgr_;   //!< Handle to a geometry ID manager
     const id_mgr::category_info * _cat_info_; //!< Handle to some 'category info' object
-    std::map<int, address_set> _addr_sets_; //!< Collection of address sets
+    std::map<int, address_set> _addr_sets_;   //!< Collection of address sets
 
   };
 

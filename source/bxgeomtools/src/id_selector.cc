@@ -100,7 +100,7 @@ namespace geomtools {
     while (! rules_iss.eof () && (parsed_addr_rules < _cat_info_->get_depth ())) {
       string addr_token;
       rules_iss >> addr_token >> ws;
-      // Only throw if stream is bad and NOT at eof. Some c++ libraries
+      // Only throw if stream is bad and NOT at eof. Some C++ libraries
       // (Apple clang on Mavericks) will set bad/failbit at eof. Seems
       // not to be C++11 standard compliant, but is still present!
       DT_THROW_IF (! rules_iss && !rules_iss.eof(),

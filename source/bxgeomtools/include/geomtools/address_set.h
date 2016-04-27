@@ -23,7 +23,16 @@
 
 namespace geomtools {
 
-  /// \brief A set of index representing subaddresses (for geomtools::geom_id)
+  /// \brief A set of indexes representing subaddresses in a geometry ID (see geomtools::geom_id)
+  ///
+  /// Supported syntax:
+  ///  * "{!}" : empty set of addresses
+  ///  * "{*}" : all addresses (from a reference set) are selected in the set
+  ///  * "{3;8;9;13}" : explicit list of addresses are selected in the set
+  ///  * "[4;9]" : explicit range of addresses are selected in the set
+  /// Reversed selection (! operator):
+  ///  * "!{3;8;9;13}" : the complement of address set list "{3;8;9;13}"
+  ///  * "![4;9]" : the complement of address set range "[4;9]"
   class address_set
   {
 
@@ -43,75 +52,76 @@ namespace geomtools {
   private:
 
     /// Reset the range informations
-    void _reset_range_ ();
+    void _reset_range_();
 
     /// Reset the list informations
-    void _reset_list_ ();
+    void _reset_list_();
 
   public:
+
     /// Check the validity of the set
-    bool is_valid () const;
+    bool is_valid() const;
 
     /// Invalidate the set
-    void invalidate ();
+    void invalidate();
 
     /// Check the reverse flag
-    bool is_reverse () const;
+    bool is_reverse() const;
 
     /// Set the reverse flag
-    void set_reverse (bool = true);
+    void set_reverse(bool = true);
 
     /// Check if the mode is defined
-    bool is_mode_none () const;
+    bool is_mode_none() const;
 
     /// Check if the mode 'all' is activated
-    bool is_mode_all () const;
+    bool is_mode_all() const;
 
     /// Check if mode 'range' is used
-    bool is_mode_range () const;
+    bool is_mode_range() const;
 
     /// Check if mode 'list' is used
-    bool is_mode_list () const;
+    bool is_mode_list() const;
 
     /// Set the mode 'mode'
-    void set_mode_none ();
+    void set_mode_none();
 
     /// Set the mode 'all'
-    void set_mode_all ();
+    void set_mode_all();
 
     /// Set the mode 'range'
-    void set_mode_range ();
+    void set_mode_range();
 
     /// Set the range ('range' mode only)
-    void set_range (uint32_t a_min, uint32_t a_max);
+    void set_range(uint32_t a_min, uint32_t a_max);
 
     /// Set the mode 'range' and associated range
-    void set_mode_range (uint32_t a_min, uint32_t a_max);
+    void set_mode_range(uint32_t a_min, uint32_t a_max);
 
     /// Set the mode 'list'
-    void set_mode_list ();
+    void set_mode_list();
 
     /// Add an address to the list ('list' mode only)
-    void add_to_list (uint32_t a_value);
+    void add_to_list(uint32_t a_value);
 
     /// Check if a value matches the collection of addresses
-    bool match (uint32_t a_value) const;
+    bool match(uint32_t a_value) const;
 
     /// Terminate
-    void reset ();
+    void reset();
 
     /// Constructor
-    address_set ();
+    address_set();
 
     /// Print operator
-    friend std::ostream & operator<< (std::ostream & a_out, const address_set & a_addset);
+    friend std::ostream & operator<<(std::ostream & a_out, const address_set & a_addset);
 
     /// Reader operator
-    friend std::istream & operator>> (std::istream & a_in, address_set & a_addset);
+    friend std::istream & operator>>(std::istream & a_in, address_set & a_addset);
 
   private:
 
-    int           _mode_;           //!< The mode defining the collection of valid addresses
+    mode_type     _mode_;           //!< The mode defining the collection of valid addresses
     uint32_t      _range_min_;      //!< In 'range' mode, the minimum bound of valid addresses
     uint32_t      _range_max_;      //!< In 'range' mode, the maximum bound of valid addresses
     std::set<uint32_t> _addresses_; //!< In 'list' mode, the explicit list of valid addresses
