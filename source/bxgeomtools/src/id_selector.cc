@@ -203,5 +203,3 @@ namespace geomtools {
   }
 
 } // end of namespace geomtools
-
-// end of id_selector.cc
