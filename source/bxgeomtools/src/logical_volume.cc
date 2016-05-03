@@ -317,21 +317,21 @@ namespace geomtools {
     // DT_THROW_IF (is_locked (),
     //              std::logic_error,
     //              "Logical volume '" << get_name() << "' is locked ! Cannot add daughter physical volume with name '" << name_ << "' !");
-    DT_THROW_IF (_physicals_.find (name_) != _physicals_.end (),
-                 std::logic_error,
-                 "Name '" << name_ << "' is already used in logical volume '" <<  get_name()  << "' !");
-    string name;
-    if (name_.empty ()) {
-      name = phys_.get_name ();
+    DT_THROW_IF(_physicals_.find(name_) != _physicals_.end(),
+                std::logic_error,
+                "Name '" << name_ << "' is already used in logical volume '" << get_name()  << "' !");
+    std::string name;
+    if (name_.empty()) {
+      name = phys_.get_name();
     } else {
       name = name_;
     }
-    DT_THROW_IF (name.empty (), std::logic_error, "Missing physical's name in logical volume '" <<  get_name()  << "' !");
-    DT_THROW_IF (_parameters_.has_flag(logical_volume::has_replica_flag()), std::logic_error,
-                 "Cannot add more physical volume for a 'replica' already exists in logical volume '" <<  get_name()  << "' !");
+    DT_THROW_IF(name.empty(), std::logic_error, "Missing physical's name in logical volume '" <<  get_name()  << "' !");
+    DT_THROW_IF(_parameters_.has_flag(logical_volume::has_replica_flag()), std::logic_error,
+                "Cannot add more physical volume for a 'replica' already exists in logical volume '" <<  get_name()  << "' !");
     if (phys_.get_placement().is_replica()) {
-      DT_THROW_IF (_physicals_.size () > 0, std::logic_error,
-                   "Cannot add a 'replica' physical volume for other physicals already exist in logical volume '" <<  get_name()  << "' !");
+      DT_THROW_IF(_physicals_.size() > 0, std::logic_error,
+                  "Cannot add a 'replica' physical volume for other physicals already exist in logical volume '" <<  get_name()  << "' !");
       _parameters_.store_flag(logical_volume::has_replica_flag());
     }
     _physicals_[name] = &phys_;

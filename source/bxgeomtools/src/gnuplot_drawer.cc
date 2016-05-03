@@ -485,19 +485,19 @@ namespace geomtools {
       int display_level = 0;
 
       datatools::properties log_visu_config;
-      visibility::extract (log.get_parameters (), log_visu_config);
+      visibility::extract(log.get_parameters (), log_visu_config);
 
-      DT_LOG_TRACE (local_priority, "Logical volume '" << log.get_name () << "' visibility properties:");
+      DT_LOG_TRACE (local_priority, "Logical volume '" << log.get_name() << "' visibility properties:");
       if (local_priority >= datatools::logger::PRIO_TRACE) {
-        log_visu_config.tree_dump (std::cerr);
+        log_visu_config.tree_dump(std::cerr);
       }
 
       bool shown = true;
       bool shown_envelope = true;
-      if (visibility::is_shown (log_visu_config)) {
+      if (visibility::is_shown(log_visu_config)) {
         shown = true;
       }
-      if (visibility::is_hidden (log_visu_config)) {
+      if (visibility::is_hidden(log_visu_config)) {
         shown = false;
       }
 
@@ -505,7 +505,7 @@ namespace geomtools {
         shown = get_properties ().fetch_boolean (force_show_property_name());
       }
 
-      if (visibility::is_hidden_envelope (log_visu_config)) {
+      if (visibility::is_hidden_envelope(log_visu_config)) {
         shown_envelope = false;
       }
       DT_LOG_TRACE (local_priority, "Show         = " << shown);
@@ -536,8 +536,6 @@ namespace geomtools {
             //   mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
             // }
             uint32_t options = 0;
-            // XXX
-
             gnuplot_draw::draw(colored_oss,
                                p_,
                                log.get_shape(),
@@ -572,40 +570,88 @@ namespace geomtools {
       DT_LOG_TRACE (local_priority, "Drawing children...");
       display_level++;
       for (geomtools::logical_volume::physicals_col_type::const_iterator iter
-             = log.get_physicals ().begin ();
-           iter != log.get_physicals ().end (); ++iter) {
-        bool draw_it = true;
+             = log.get_physicals().begin();
+           iter != log.get_physicals().end();
+           ++iter) {
         const physical_volume & phys = *(iter->second);
-        const geomtools::logical_volume & log_child = phys.get_logical ();
+        const geomtools::logical_volume & log_child = phys.get_logical();
+        // Default behaviour:
+        bool draw_it = true;
         if (! draw_children) {
           draw_it = false;
         }
-        if (log_child.get_parameters ().has_flag ("visibility.shown")) {
-          draw_it = true;
-        }
-        if (log_child.get_parameters ().has_flag ("visibility.hidden")) {
+        // if (log_child.get_parameters().has_flag("visibility.shown")) {
+        //   draw_it = true;
+        // }
+        if (visibility::has_flag(log_child.get_parameters(),visibility::constants::instance().VISIBILITY_HIDDEN_FLAG)) {
           draw_it = false;
         }
+        std::string phys_label = i_model::extract_label_from_physical_volume_name(iter->first);
+        bool devel = false;
+        // if (phys_label == "PHYSLABEL") {
+        //   devel = true;
+        // }
+        if (devel) std::cerr << "\n\nDEVEL: phys_label = '" << phys_label << "'" << std::endl;
+        // Individual hidden child volume:
+        int explicit_vis_key = 0;
+        std::ostringstream vis_child_name_hidden_key;
+        vis_child_name_hidden_key << "visibility.daughters." << phys_label << ".hidden";
+        {
+          if (devel) std::cerr << "DEVEL: vis key = '" << vis_child_name_hidden_key.str() << "'" << std::endl;
+          if (log_visu_config.has_flag(vis_child_name_hidden_key.str())) {
+            if (devel) std::cerr << "DEVEL: has vis hidden flag" << std::endl;
+            bool hidden = true; // log_visu_config.fetch_boolean(vis_child_name_hidden_key.str());
+            if (hidden) {
+              explicit_vis_key++;
+              if (devel) std::cerr << "DEVEL: vis hidden" << std::endl;
+              draw_it = false;
+            }
+          }
+        }
+        // Individual shown child volume:
+        std::ostringstream vis_child_name_shown_key;
+        vis_child_name_shown_key << "visibility.daughters." << phys_label << ".shown";
+        {
+          if (devel) std::cerr << "DEVEL: vis key = '" << vis_child_name_shown_key.str() << "'" << std::endl;
+          if (log_visu_config.has_flag(vis_child_name_shown_key.str())) {
+            if (devel) std::cerr << "DEVEL: has vis shown key" << std::endl;
+            bool shown = true; // log_visu_config.fetch_boolean(vis_child_name_shown_key.str());
+            if (shown) {
+              if (explicit_vis_key > 0) {
+                DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                               "Logical '" << log.get_name() << ", daughter physical '" << phys_label << "' : "
+                               << "Property '" << vis_child_name_shown_key.str()
+                               << "' conflicts with '" << vis_child_name_hidden_key.str() << "'! Ignoring...");
+                draw_it = false;
+                explicit_vis_key++;
+              } else {
+                if (devel) std::cerr << "DEVEL: vis shown" << std::endl;
+                draw_it = true;
+              }
+            }
+          }
+        }
         if (! draw_it) {
+          if (devel) std::cerr << "DEVEL: not drawn" << std::endl;
           continue;
         }
-        const geomtools::i_placement * pp = &(phys.get_placement ());
-        size_t npp = pp->get_number_of_items ();
+        const geomtools::i_placement * pp = &(phys.get_placement());
+        size_t npp = pp->get_number_of_items();
         for (size_t i = 0; i < npp; i++) {
           geomtools::placement p;
           // get placement from the daughter physical #i:
-          pp->get_placement (i, p);
+          pp->get_placement(i, p);
           //pp->tree_dump (clog, "item placement (child)", "    ");
           geomtools::placement pt = p;
           // compute the placement relative to the mother volume:
-          p_.child_to_mother (p, pt);
+          p_.child_to_mother(p, pt);
           //pt.tree_dump (clog, "item placement (mother)", "    ");
 
           // recursive invocation of the visualization data generation
           // for daughter #i:
-          gnuplot_drawer::_draw_ (log_child,
-                                  pt,
-                                  max_display_level - 1);
+          gnuplot_drawer::_draw_(log_child,
+                                 pt,
+                                 max_display_level - 1);
         }
       }
     }

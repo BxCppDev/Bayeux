@@ -20,10 +20,9 @@ namespace geomtools {
   visibility::constants::instance()
   {
     static boost::scoped_ptr<visibility::constants> g_global_constants(0);
-    if( g_global_constants.get() == 0)
-      {
-        g_global_constants.reset(new visibility::constants);
-      }
+    if( g_global_constants.get() == 0) {
+      g_global_constants.reset(new visibility::constants);
+    }
     return *g_global_constants.get();
   }
 
@@ -72,10 +71,9 @@ namespace geomtools {
   bool visibility::is_shown(const datatools::properties & config_)
   {
     bool shown = true; // default:
-    if(visibility::has_flag(config_, visibility::constants::instance().VISIBILITY_HIDDEN_FLAG))
-      {
-        shown = false;
-      }
+    if(visibility::has_flag(config_, visibility::constants::instance().VISIBILITY_HIDDEN_FLAG)) {
+      shown = false;
+    }
     return shown;
   }
 
