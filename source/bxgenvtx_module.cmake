@@ -36,6 +36,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/sphere_vg.h
   ${module_include_dir}/${module_name}/from_file_vg.h
   ${module_include_dir}/${module_name}/i_vertex_generator.h
+  ${module_include_dir}/${module_name}/i_from_model_vg.h
   ${module_include_dir}/${module_name}/placement_vg.h
   ${module_include_dir}/${module_name}/quadrangle_random_tools.h
   ${module_include_dir}/${module_name}/spot_vertex_generator.h
@@ -64,6 +65,7 @@ set(${module_name}_MODULE_HEADERS
 
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/i_vertex_generator.cc
+  ${module_source_dir}/i_from_model_vg.cc
   ${module_source_dir}/spot_vertex_generator.cc
   ${module_source_dir}/from_file_vg.cc
   ${module_source_dir}/placement_vg.cc
