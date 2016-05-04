@@ -615,8 +615,8 @@ namespace geomtools {
           if (devel) std::cerr << "DEVEL: vis key = '" << vis_child_name_shown_key.str() << "'" << std::endl;
           if (log_visu_config.has_flag(vis_child_name_shown_key.str())) {
             if (devel) std::cerr << "DEVEL: has vis shown key" << std::endl;
-            bool shown = true; // log_visu_config.fetch_boolean(vis_child_name_shown_key.str());
-            if (shown) {
+            bool local_shown = true; // log_visu_config.fetch_boolean(vis_child_name_shown_key.str());
+            if (local_shown) {
               if (explicit_vis_key > 0) {
                 DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                                "Logical '" << log.get_name() << ", daughter physical '" << phys_label << "' : "
