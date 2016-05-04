@@ -107,13 +107,27 @@ namespace geomtools {
           addr_processed = true;
         }
       }
+      /*
+      {
+        // Search for a range of values for a given address, examples:
+        //   address.row.range  : string = "[0;3]"
+        addr_processed = true;
+      }
+      {
+        // Search for a list of values for a given address, examples:
+        //   address.row.list   : string = "{0;1;7,8}"
+        addr_processed = true;
+      }
+      */
       if (!addr_processed) {
         address_set as;
         as.set_mode_all();
         _addr_sets_[addr_index] = as;
         addr_processed = true;
-        DT_THROW(std::logic_error,
-                 "Address '" << addr_name << "' in category '" << category << "' is not specified!");
+        // DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+        //                "Address '" << addr_name << "' in category '" << category << "' is set to 'all'!");
+        // DT_THROW(std::logic_error,
+        //          "Address '" << addr_name << "' in category '" << category << "' is not specified!");
       }
     }
     return;
