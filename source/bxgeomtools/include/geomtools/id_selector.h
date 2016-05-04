@@ -29,20 +29,12 @@ namespace geomtools {
   ///
   /// The selector is given a textual rule that describes:
   ///  - the geometry category of objects to be selected
-  ///  - some additional filtering informations to select a subset of objects in the requested category
+  ///  - some additional filtering informations to select a subset of objects
+  ///    in the requested category through some specific subaddresses
   class id_selector
   {
 
   public:
-
-    /// Check initialization status
-    bool is_initialized() const;
-
-    /// Set the GID manager
-    void set_id_mgr(const id_mgr & id_mgr_);
-
-    /// Get the information associated to the requested geometry category
-    const id_mgr::category_info & get_category_info() const;
 
     /// Default constructor
     id_selector();
@@ -53,11 +45,23 @@ namespace geomtools {
     /// Destructor
     ~id_selector();
 
+    /// Check initialization status
+    bool is_initialized() const;
+
     /// Initialize the selector frop a textual rule
     void initialize(const std::string & rules_);
 
+    /// Initialize the selector frop a textual rule
+    void initialize(const datatools::properties & config_);
+
     /// Reset the selector
     void reset();
+
+    /// Set the GID manager
+    void set_id_mgr(const id_mgr & id_mgr_);
+
+    /// Get the information associated to the requested geometry category
+    const id_mgr::category_info & get_category_info() const;
 
     /// Check if a geometry ID match the selection
     bool match(const geom_id & gid_) const;
@@ -65,11 +69,16 @@ namespace geomtools {
     /// Print
     void dump(std::ostream & out_ = std::clog, const std::string & title_ = "") const;
 
+    /// Print
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_ = "",
+                   const std::string & indent_ = "") const;
+
   private:
 
-    const id_mgr                * _id_mgr_;   //!< Handle to a geometry ID manager
-    const id_mgr::category_info * _cat_info_; //!< Handle to some 'category info' object
-    std::map<int, address_set> _addr_sets_;   //!< Collection of address sets
+    const id_mgr                * _id_mgr_;    //!< Handle to a geometry ID manager
+    const id_mgr::category_info * _cat_info_;  //!< Handle to some 'category info' object
+    std::map<int, address_set>    _addr_sets_; //!< Collection of address sets
 
   };
 

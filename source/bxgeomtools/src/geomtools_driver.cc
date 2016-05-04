@@ -594,17 +594,17 @@ namespace geomtools {
   }
 
   /*
-  int geomtools_driver::command_print_list_of_shapes(std::ostream & out_,
-                                                     const std::string & print_shapes_options_) const
-  {
+    int geomtools_driver::command_print_list_of_shapes(std::ostream & out_,
+    const std::string & print_shapes_options_) const
+    {
     if (! is_initialized()) {
-      DT_LOG_ERROR(_params_.logging, "Geometry driver is not initialized !");
-      return 1;
+    DT_LOG_ERROR(_params_.logging, "Geometry driver is not initialized !");
+    return 1;
     }
     return geomtools::shape_factory::print_list_of_shapes(*_shape_factory_ref_,
-                                                          out_,
-                                                          print_shapes_options_);
-  }
+    out_,
+    print_shapes_options_);
+    }
   */
 
   int geomtools_driver::command_print_list_of_models(std::ostream & out_,
@@ -664,7 +664,7 @@ namespace geomtools {
       DT_LOG_ERROR(_params_.logging, "Geometry driver is not initialized !");
       return 1;
     }
-   try {
+    try {
       const geomtools::mapping & gmpg
         = _geo_mgr_.get()->get_mapping(mapping_name_);
       std::ostringstream mapping_title;
@@ -712,7 +712,7 @@ namespace geomtools {
   }
 
   int geomtools_driver::command_print_logical(const std::string & logical_name_,
-                                      std::ostream & out_) const
+                                              std::ostream & out_) const
   {
     if (! is_initialized()) {
       DT_LOG_ERROR(_params_.logging, "Driver is not initialized !");
@@ -838,14 +838,14 @@ namespace geomtools {
   }
 
   /*
-  int geomtools_driver::command_set_rendering_options(const std::vector<std::string> & argv_,
-                                                      std::ostream & out_)
-  {
+    int geomtools_driver::command_set_rendering_options(const std::vector<std::string> & argv_,
+    std::ostream & out_)
+    {
     int error_code = 0;
     if (! is_initialized()) {
-      DT_LOG_ERROR(_params_.logging, "Driver is not initialized !");
-      error_code = 1;
-      return error_code;
+    DT_LOG_ERROR(_params_.logging, "Driver is not initialized !");
+    error_code = 1;
+    return error_code;
     }
 
     std::string visu_object_name;
@@ -859,82 +859,82 @@ namespace geomtools {
     uint32_t w3d_options = 0;
 
     while (argcount < argv_.size()) {
-      const std::string & token = argv_[argcount++];
-      if (token.empty()) break;
-      if (token[0] == '-') {
-        std::string option = token;
-        if (option  == "-h" || option  == "--help") {
-          out_ << "   Usage: \n";
-          out_ << "     set_rendering_options [OPTIONS...] [NAME] \n"
-               << "\n";
-          out_ << "   Options: \n";
-          out_ << "     -h | --help       Print this help\n"
-               << "     --invisible       Hide the object\n"
-               << "     --visible         Show the object\n"
-               << "     --no-grid         Inhibit grid wire-based rendering\n"
-               << "     --grid            Enable grid wire-based rendering\n"
-               << "     --grid-low        Use grid wire-based rendering\n"
-               << "     --grid-high       Use grid wire-based rendering\n"
-               << "     --grid-very-high  Use grid wire-based rendering\n"
-               << "     --grid-huge       Use grid wire-based rendering\n"
-               << "     --angle-low       Use low angle sampling\n"
-               << "     --angle-high      Use high angle sampling\n"
-               << "     --angle-very-high Use very high angle sampling\n"
-               << "     --angle-huge      Use huge angle sampling\n"
-               << "     --bbox            Use bounding box\n"
-               << "     --no-bbox         Do not use bounding box\n"
-               << "\n";
-          out_ << "   NAME : The name of the object to be displayed (optional)\n";
-          out_ << "          It can be:                       \n";
-          out_ << "          - the name of a geometry model,  \n";
-          out_ << "          - the name of a logical volume,  \n";
-          out_ << "          - the GID associated to a volume \n";
-          out_ << "            by the active mapping.         \n";
-          out_ << std::flush;
-          return -1;
-        } else if (option  == "--invisible") {
-          visible = false;
-        } else if (option  == "--visible") {
-          visible = true;
-        } else if (option  == "--grid") {
-          w3d_grid = true;
-          w3r_grid_level = argv_[argcount++];
-        } else if (option  == "--no-grid") {
-          w3d_grid = false;
-          w3r_grid_level = "normal";
-        } else if (option  == "--angular-sampling") {
-          w3r_angle_level = argv_[argcount++];
-        } else if (option  == "--no-bbox") {
-          w3r_bbox = false;
-        } else if (option  == "--bbox") {
-          w3r_bbox = true;
-        } else {
-          // Ignore...
-        }
-      } else {
-        std::string argument = token;
-        if (visu_object_name.empty()) {
-          visu_object_name = argument;
-        } else {
-          DT_LOG_ERROR(_params_.logging, "Invalid argument '" << argument << "' !");
-          return -1;
-        }
-      }
+    const std::string & token = argv_[argcount++];
+    if (token.empty()) break;
+    if (token[0] == '-') {
+    std::string option = token;
+    if (option  == "-h" || option  == "--help") {
+    out_ << "   Usage: \n";
+    out_ << "     set_rendering_options [OPTIONS...] [NAME] \n"
+    << "\n";
+    out_ << "   Options: \n";
+    out_ << "     -h | --help       Print this help\n"
+    << "     --invisible       Hide the object\n"
+    << "     --visible         Show the object\n"
+    << "     --no-grid         Inhibit grid wire-based rendering\n"
+    << "     --grid            Enable grid wire-based rendering\n"
+    << "     --grid-low        Use grid wire-based rendering\n"
+    << "     --grid-high       Use grid wire-based rendering\n"
+    << "     --grid-very-high  Use grid wire-based rendering\n"
+    << "     --grid-huge       Use grid wire-based rendering\n"
+    << "     --angle-low       Use low angle sampling\n"
+    << "     --angle-high      Use high angle sampling\n"
+    << "     --angle-very-high Use very high angle sampling\n"
+    << "     --angle-huge      Use huge angle sampling\n"
+    << "     --bbox            Use bounding box\n"
+    << "     --no-bbox         Do not use bounding box\n"
+    << "\n";
+    out_ << "   NAME : The name of the object to be displayed (optional)\n";
+    out_ << "          It can be:                       \n";
+    out_ << "          - the name of a geometry model,  \n";
+    out_ << "          - the name of a logical volume,  \n";
+    out_ << "          - the GID associated to a volume \n";
+    out_ << "            by the active mapping.         \n";
+    out_ << std::flush;
+    return -1;
+    } else if (option  == "--invisible") {
+    visible = false;
+    } else if (option  == "--visible") {
+    visible = true;
+    } else if (option  == "--grid") {
+    w3d_grid = true;
+    w3r_grid_level = argv_[argcount++];
+    } else if (option  == "--no-grid") {
+    w3d_grid = false;
+    w3r_grid_level = "normal";
+    } else if (option  == "--angular-sampling") {
+    w3r_angle_level = argv_[argcount++];
+    } else if (option  == "--no-bbox") {
+    w3r_bbox = false;
+    } else if (option  == "--bbox") {
+    w3r_bbox = true;
+    } else {
+    // Ignore...
+    }
+    } else {
+    std::string argument = token;
+    if (visu_object_name.empty()) {
+    visu_object_name = argument;
+    } else {
+    DT_LOG_ERROR(_params_.logging, "Invalid argument '" << argument << "' !");
+    return -1;
+    }
+    }
     } // while
 
     if (visu_object_name.empty()) {
-      if (! _params_.visu_object_name.empty()) {
-        visu_object_name = _params_.visu_object_name;
-      } else {
-        DT_LOG_ERROR(_params_.logging, "Missing object name !");
-      }
+    if (! _params_.visu_object_name.empty()) {
+    visu_object_name = _params_.visu_object_name;
+    } else {
+    DT_LOG_ERROR(_params_.logging, "Missing object name !");
+    }
     }
 
     if (_ropts_.find(visu_object_name) == _ropts_.end()) {
-      {
-        datatools::properties dummy;
-        _ropts_[visu_object_name] = dummy;
-      }
+    {
+    datatools::properties dummy;
+    _ropts_[visu_object_name] = dummy;
+    }
     }
     datatools::properties & obj_ropt = _ropts_.find(visu_object_name)->second;
     obj_ropts.store_boolean("visible", visible);
@@ -944,7 +944,7 @@ namespace geomtools {
     obj_ropts.store_string("angular_sampling", w3r_angular_sampling);
 
     return;
-  }
+    }
   */
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
@@ -967,6 +967,10 @@ namespace geomtools {
     std::string terminal;
     std::string terminal_options;
     bool using_title = true;
+    bool force_show_envelope = false;
+    bool force_show_children = false;
+    bool force_hide_envelope = false;
+    bool force_hide_children = false;
     size_t argcount = 0;
     while (argcount < argv_.size()) {
       const std::string & token = argv_[argcount++];
@@ -984,14 +988,18 @@ namespace geomtools {
                << "     -yz|--visu-view-yz    Use Y-Z 2D projection\n"
                << "     -3d|--visu-view-3d    Use 3D view \n"
                << "     -3d-free|--visu-view-3d-free Use 3D view (free scale)\n"
+               << "     -e|--force-show-envelope Force the display of volume envelope\n"
+               << "     -E|--force-hide-envelope Disable the display of volume envelope\n"
+               << "     -c|--force-show-children Force the display of children volumes\n"
+               << "     -C|--force-hide-children Disable the display of children volumes\n"
                << "     --labels              Display axis with labels\n"
                << "     --no-labels           Do not display axis with labels\n"
                << "     --title               Display image title\n"
                << "     --no-title            Do not display image title\n"
                << "     -o|--output OUT_FILE  Print in the 'OUT_FILE' file\n"
-               // << "     -t|--terminal TERM    Use terminal 'TERM'\n"
-               // << "     -to|--terminal-options TERMOPT \n"
-               // << "                           Use terminal options 'TERMOPT'\n"
+            // << "     -t|--terminal TERM    Use terminal 'TERM'\n"
+            // << "     -to|--terminal-options TERMOPT \n"
+            // << "                           Use terminal options 'TERMOPT'\n"
                << "\n";
           out_ << "   NAME : The name of the object to be displayed (optional)\n";
           out_ << "          It can be:                       \n";
@@ -1001,6 +1009,22 @@ namespace geomtools {
           out_ << "            by the active mapping.         \n";
           out_ << std::flush;
           return -1;
+        } else if (option == "-c" || option  == "--force-show-children") {
+          force_show_children = true;
+          if (force_hide_children) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                                                  "Setting 'force-show-children' option conflicts with 'force-hide-children' ! Ignore !");
+        } else if (option == "-C" || option  == "--force-hide-children") {
+          force_hide_children = true;
+          if (force_show_children) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                                                  "Setting 'force-hide-children' option conflicts with 'force-show-children' ! Ignore !");
+        } else if (option == "-e" || option  == "--force-show-envelope") {
+          force_show_envelope = true;
+          if (force_hide_envelope) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                                                  "Setting 'force-show-envelope' option conflicts with 'force-hide-envelope' ! Ignore !");
+        } else if (option == "-E" || option  == "--force-hide-envelope") {
+          force_hide_envelope = true;
+          if (force_show_envelope) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                                                  "Setting 'force-hide-envelope' option conflicts with 'force-show-envelope' ! Ignore !");
         } else if (option  == "--labels") {
           _params_.visu_drawer_labels = true;
         } else if (option == "--no-labels") {
@@ -1012,7 +1036,7 @@ namespace geomtools {
         } else if (option == "-o" || option == "--output") {
           output = argv_[argcount++];
         } else {
-          _params_.visu_drawer_view = get_drawer_view (option);
+          _params_.visu_drawer_view = get_drawer_view(option);
         }
       } else {
         std::string argument = token;
@@ -1040,6 +1064,16 @@ namespace geomtools {
       std::clog << "`-- Show labels    : " << _params_.visu_drawer_labels << std::endl;
     }
     geomtools::gnuplot_drawer GPD;
+    if (force_show_envelope) {
+      GPD.grab_properties().store_flag(gnuplot_drawer::force_show_envelope_property_name());
+    } else if (force_hide_envelope) {
+      GPD.grab_properties().store_flag(gnuplot_drawer::force_hide_envelope_property_name());
+    }
+    if (force_show_children) {
+      GPD.grab_properties().store_flag(gnuplot_drawer::force_show_children_property_name());
+    } else if (force_hide_children) {
+      GPD.grab_properties().store_flag(gnuplot_drawer::force_hide_children_property_name());
+    }
     GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
     GPD.set_view (_params_.visu_drawer_view);
     if (! output.empty() || ! terminal.empty()) {

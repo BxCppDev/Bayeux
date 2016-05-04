@@ -59,6 +59,8 @@ namespace geomtools {
     static const std::string & force_show_property_name();
     static const std::string & force_show_envelope_property_name();
     static const std::string & force_show_children_property_name();
+    static const std::string & force_hide_envelope_property_name();
+    static const std::string & force_hide_children_property_name();
     static const std::string & world_name_key();
 
     /// Wait for key stroke in interactive Gnuplot session

@@ -152,6 +152,18 @@ namespace geomtools {
     return token;
   }
 
+  const std::string & gnuplot_drawer::force_hide_envelope_property_name()
+  {
+    static std::string token = "visibility.force_hide_envelope";
+    return token;
+  }
+
+  const std::string & gnuplot_drawer::force_hide_children_property_name()
+  {
+    static std::string token = "visibility.force_hide_children";
+    return token;
+  }
+
   const std::string & gnuplot_drawer::world_name_key()
   {
     static std::string token = "world_name";
@@ -471,9 +483,9 @@ namespace geomtools {
    return;
   }
 
-  void gnuplot_drawer::_draw_ (const logical_volume & log_,
-                               const placement & p_,
-                               int max_display_level_)
+  void gnuplot_drawer::_draw_(const logical_volume & log_,
+                              const placement & p_,
+                              int max_display_level_)
   {
     const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     int max_display_level = max_display_level_;
@@ -494,26 +506,29 @@ namespace geomtools {
 
       bool shown = true;
       bool shown_envelope = true;
+
+      // Really useful ?
       if (visibility::is_shown(log_visu_config)) {
         shown = true;
       }
       if (visibility::is_hidden(log_visu_config)) {
         shown = false;
       }
-
-      if (get_properties ().has_key (force_show_property_name())) {
-        shown = get_properties ().fetch_boolean (force_show_property_name());
+      if (get_properties().has_key(force_show_property_name())) {
+        shown = get_properties().fetch_boolean(force_show_property_name());
       }
 
+      // Default envelope visibility for the logical volume:
       if (visibility::is_hidden_envelope(log_visu_config)) {
         shown_envelope = false;
       }
+      // Force envelope visibility from the Gnuplot drawer:
+      if (get_properties().has_key(force_show_envelope_property_name())) {
+        shown_envelope = get_properties().fetch_boolean(force_show_envelope_property_name());
+      }
+
       DT_LOG_TRACE (local_priority, "Show         = " << shown);
       DT_LOG_TRACE (local_priority, "Show envelope = " << shown_envelope);
-
-      if (get_properties ().has_key (force_show_envelope_property_name()))  {
-        shown_envelope = get_properties ().fetch_boolean (force_show_envelope_property_name());
-      }
 
       // Draw the envelope volume :
       if (shown && shown_envelope){
@@ -547,7 +562,7 @@ namespace geomtools {
       // Draw the children volume :
       bool draw_children = true;
 
-      // check the display level of the geometry tree:
+      // Check the display level of the geometry tree:
       if ((display_level < max_display_level)
           && (log.get_physicals().size() > 0)) {
         // default is 'drawing children':
@@ -560,9 +575,10 @@ namespace geomtools {
       if (! shown) {
         draw_children = false;
       } else if (visibility::is_daughters_hidden(log_visu_config)) {
+        // Logical volume tells us not to draw its daughters by default:
         draw_children = false;
       }
-
+      // Gnuplot drawer can force daughters' visibility:
       if (get_properties().has_key(force_show_children_property_name())) {
         draw_children = get_properties().fetch_boolean(force_show_children_property_name());
       }
@@ -580,12 +596,12 @@ namespace geomtools {
         if (! draw_children) {
           draw_it = false;
         }
-        // if (log_child.get_parameters().has_flag("visibility.shown")) {
-        //   draw_it = true;
-        // }
+        /*
+        // 2016-05-04 FM: removed
         if (visibility::has_flag(log_child.get_parameters(),visibility::constants::instance().VISIBILITY_HIDDEN_FLAG)) {
           draw_it = false;
         }
+        */
         std::string phys_label = i_model::extract_label_from_physical_volume_name(iter->first);
         bool devel = false;
         // if (phys_label == "PHYSLABEL") {
@@ -639,15 +655,14 @@ namespace geomtools {
         size_t npp = pp->get_number_of_items();
         for (size_t i = 0; i < npp; i++) {
           geomtools::placement p;
-          // get placement from the daughter physical #i:
+          // Get placement from the daughter physical #i:
           pp->get_placement(i, p);
-          //pp->tree_dump (clog, "item placement (child)", "    ");
+          if (devel) pp->tree_dump(std::clog, "item placement (child)", "DEVEL: ");
           geomtools::placement pt = p;
           // compute the placement relative to the mother volume:
           p_.child_to_mother(p, pt);
-          //pt.tree_dump (clog, "item placement (mother)", "    ");
-
-          // recursive invocation of the visualization data generation
+          if (devel) pt.tree_dump(std::clog, "item placement (mother)", "DEVEL: ");
+          // Recursive invocation of the visualization data generation
           // for daughter #i:
           gnuplot_drawer::_draw_(log_child,
                                  pt,
