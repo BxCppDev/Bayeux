@@ -19,9 +19,31 @@ namespace genvtx {
   const int utils::MODE_SURFACE;
   const int utils::MODE_DEFAULT;
 
+  bool origin_definition::is_defined() const
+  {
+    return !config.empty();
+  }
+
+  void origin_definition::load(const datatools::properties & config_)
+  {
+    config.clear();
+    if (config_.has_key("origin")) {
+      config.store("rules", config_.fetch_string("origin"));
+    } else {
+      config_.export_and_rename_starting_with(config, "origin.", "");
+    }
+    return;
+  }
+
+  void origin_definition::reset()
+  {
+    config.reset();
+    return;
+  }
+
   void utils::origin_invalidate (std::string & origin_)
   {
-    origin_.clear ();
+    origin_.clear();
     return;
   }
 
@@ -169,6 +191,7 @@ namespace genvtx {
     out_ << "|-- " << "Type  = " << type << '\n';
     out_ << "|-- " << "Value = " << value << '\n';
     out_ << "`-- " << "Mass  = " << mass/ CLHEP::gram << " g" << '\n';
+    return;
   }
 
 } // end of namespace genvtx

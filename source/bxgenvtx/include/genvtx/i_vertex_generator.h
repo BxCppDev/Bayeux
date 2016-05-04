@@ -22,6 +22,7 @@
 // Third party:
 // - Boost
 #include <boost/scoped_ptr.hpp>
+#include <boost/noncopyable.hpp>
 // - Bayeux/datatools
 #include <datatools/factory_macros.h>
 #include <datatools/handle.h>
@@ -55,7 +56,8 @@ namespace genvtx {
   class vertex_validation;
 
   /// \brief The base interface class for all vertex generator classes
-  class i_vertex_generator : public datatools::i_tree_dumpable
+  class i_vertex_generator : private boost::noncopyable,
+                             public datatools::i_tree_dumpable
   {
   public:
 

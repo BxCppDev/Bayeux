@@ -12,6 +12,8 @@
 // Third party:
 // - Boost:
 #include <boost/type_traits/integral_constant.hpp>
+// - Bayeux/datatools:
+#include <datatools/properties.h>
 
 namespace geomtools {
   class geom_info;
@@ -32,6 +34,13 @@ namespace genvtx {
     static void origin_invalidate(std::string &);
     static bool origin_is_invalid(const std::string &);
 
+  };
+
+  struct origin_definition {
+    datatools::properties config;
+    void load(const datatools::properties & config_);
+    void reset();
+    bool is_defined() const;
   };
 
   /// \brief Weight data for combined vertex generators

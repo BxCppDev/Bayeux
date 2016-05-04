@@ -21,18 +21,19 @@
 #include <string>
 
 // Third party:
-// - Bayeux/geomtools
-#include <geomtools/id_selector.h>
+// // - Bayeux/geomtools
+// #include <geomtools/id_selector.h>
 
 // This project:
 #include <genvtx/cylinder_vg.h>
 #include <genvtx/vg_macros.h>
 #include <genvtx/utils.h>
+#include <genvtx/i_from_model_vg.h>
 
 namespace genvtx {
 
   /// \brief A vertex generator based on a cylindric geometry model
-  class cylinder_model_vg : public i_vertex_generator
+  class cylinder_model_vg : public i_from_model_vg
   {
   public:
 
@@ -58,22 +59,6 @@ namespace genvtx {
 
     void set_skin_thickness (double skin_thickness_);
 
-    const std::string & get_origin_rules () const;
-
-    void set_origin_rules (const std::string &);
-
-    bool has_mapping_plugin_name() const;
-
-    const std::string & get_mapping_plugin_name() const;
-
-    void set_mapping_plugin_name(const std::string & mpn_);
-
-    bool has_materials_plugin_name() const;
-
-    const std::string & get_materials_plugin_name() const;
-
-    void set_materials_plugin_name(const std::string & mpn_);
-
     int get_mode () const;
 
     void set_mode (int);
@@ -91,8 +76,8 @@ namespace genvtx {
 
     /// Initialization
     virtual void initialize(const ::datatools::properties &,
-                             ::datatools::service_manager &,
-                             ::genvtx::vg_dict_type &);
+                            ::datatools::service_manager &,
+                            ::genvtx::vg_dict_type &);
 
     /// Reset
     virtual void reset();
@@ -118,23 +103,19 @@ namespace genvtx {
 
   private:
 
-    bool                    _initialized_;           //!< Initialization flag
-    int                     _mode_;                  //!< Mode : "bulk" of "surface"
-    bool                    _surface_side_;          //!< Flag for side surface generation mode
-    bool                    _surface_bottom_;        //!< Flag for bottom surface generation mode
-    bool                    _surface_top_;           //!< Flag for top surface generation mode
-    double                  _skin_skip_;             //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the box
-    double                  _skin_thickness_;        //!< Intrinsic thickness of the surface
-    genvtx::cylinder_vg     _cylinder_vg_;           //!< Embeded vertex generator from a cylinder
-    std::string             _origin_rules_;          //!< Rules to select the physical volumes from where to generate vertexes
-    std::string             _mapping_plugin_name_;   //!< The name of the geometry 'mapping' plugin
-    std::string             _materials_plugin_name_; //!< The name of the geometry 'materials' plugin
-    geomtools::id_selector  _src_selector_;          //!< A selector of GIDs
-    std::vector<weight_entry_type> _entries_;        //!< Information about the weights
+    bool                    _initialized_;    //!< Initialization flag
+    int                     _mode_;           //!< Mode : "bulk" of "surface"
+    bool                    _surface_side_;   //!< Flag for side surface generation mode
+    bool                    _surface_bottom_; //!< Flag for bottom surface generation mode
+    bool                    _surface_top_;    //!< Flag for top surface generation mode
+    double                  _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the box
+    double                  _skin_thickness_; //!< Intrinsic thickness of the surface
+    genvtx::cylinder_vg     _cylinder_vg_;    //!< Embeded vertex generator from a cylinder
+    std::vector<weight_entry_type> _entries_; //!< Information about the weights
 
     /// Registration macro
     /// @arg cylinder_model_vg the class to be registered
-     GENVTX_VG_REGISTRATION_INTERFACE(cylinder_model_vg)
+    GENVTX_VG_REGISTRATION_INTERFACE(cylinder_model_vg)
 
   };
 

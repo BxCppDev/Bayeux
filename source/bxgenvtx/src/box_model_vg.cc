@@ -41,7 +41,6 @@ namespace genvtx {
   // Pimpl-ized working data
   struct box_model_vg::_work_type {
     genvtx::box_vg         vg;              //!< Embedded vertex generator from a box
-    geomtools::id_selector src_selector;    //!< A selector of GIDs
     geomtools::box         bb;              //!< Bounding box
     geomtools::placement   bb_placement;    //!< Bounding box placement
     std::vector<weight_entry_type> entries; //!< Information about the weights
@@ -68,8 +67,7 @@ namespace genvtx {
     if (bb_placement.is_valid()) bb_placement.invalidate();
     if (bb.is_valid()) bb.reset();
     if (vg.is_initialized()) vg.reset();
-    if (src_selector.is_initialized()) src_selector.reset();
-    return;
+     return;
   }
 
   bool box_model_vg::is_mode_valid() const
@@ -173,52 +171,6 @@ namespace genvtx {
     return;
   }
 
-  const std::string & box_model_vg::get_origin_rules() const
-  {
-    return _origin_rules_;
-  }
-
-  void box_model_vg::set_origin_rules(const std::string & origin_rules_)
-  {
-    DT_THROW_IF(is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
-    _origin_rules_ = origin_rules_;
-    return;
-  }
-
-  bool box_model_vg::has_mapping_plugin_name() const
-  {
-    return ! _mapping_plugin_name_.empty();
-  }
-
-  const std::string & box_model_vg::get_mapping_plugin_name() const
-  {
-    return _mapping_plugin_name_;
-  }
-
-  void box_model_vg::set_mapping_plugin_name(const std::string & mpn_)
-  {
-    DT_THROW_IF(is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
-    _mapping_plugin_name_ = mpn_;
-    return;
-  }
-
-  bool box_model_vg::has_materials_plugin_name() const
-  {
-    return ! _materials_plugin_name_.empty();
-  }
-
-  const std::string & box_model_vg::get_materials_plugin_name() const
-  {
-    return _materials_plugin_name_;
-  }
-
-  void box_model_vg::set_materials_plugin_name(const std::string & mpn_)
-  {
-    DT_THROW_IF(is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
-    _materials_plugin_name_ = mpn_;
-    return;
-  }
-
   int box_model_vg::get_mode() const
   {
     return _mode_;
@@ -247,7 +199,7 @@ namespace genvtx {
     return _use_bb_;
   }
 
-  box_model_vg::box_model_vg() : genvtx::i_vertex_generator()
+  box_model_vg::box_model_vg() : genvtx::i_from_model_vg()
   {
     _initialized_ = false;
     _set_defaults_();
@@ -268,7 +220,6 @@ namespace genvtx {
   void box_model_vg::_set_defaults_()
   {
     // Internal reset:
-    utils::origin_invalidate(_origin_rules_);
     _mode_           = utils::MODE_INVALID;
     _use_bb_         = false;
     _surface_back_   = false;
@@ -279,10 +230,7 @@ namespace genvtx {
     _surface_right_  = false;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    _origin_rules_.clear();
-    _mapping_plugin_name_.clear();
-    _materials_plugin_name_.clear();
-    this->i_vertex_generator::_reset();
+    this->i_from_model_vg::_set_defaults();
     return;
   }
 
@@ -292,6 +240,7 @@ namespace genvtx {
       _work_->reset();
       _work_.reset();
     }
+    this->i_from_model_vg::_reset();
     _set_defaults_();
     return;
   }
@@ -301,7 +250,6 @@ namespace genvtx {
     DT_THROW_IF(! is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is not initialized !");
     _initialized_ = false;
     _reset_();
-    // WAS: _initialized_ = false;
     return;
   }
 
@@ -361,16 +309,11 @@ namespace genvtx {
     DT_THROW_IF(! has_geom_manager(), std::logic_error, "Missing geometry manager in vertex generator '" << get_name() << "' !");
 
     const geomtools::mapping * mapping_ptr
-      = detail::access_geometry_mapping(get_geom_manager(), _mapping_plugin_name_);
+      = detail::access_geometry_mapping(get_geom_manager(), get_mapping_plugin_name());
     DT_THROW_IF(mapping_ptr == 0, std::logic_error,
                 "No available geometry mapping was found in vertex generator '" << get_name() << "' !");
 
     _work_.reset(new _work_type);
-
-    //DT_LOG_FATAL(get_logging_priority(), "*** Origin rules : " << _origin_rules_);
-    _work_->src_selector.set_id_mgr(get_geom_manager().get_id_mgr());
-    _work_->src_selector.initialize(_origin_rules_);
-    // _work_->src_selector.dump(std::cerr, "genvtx::box_model_vg::initialize: ID selector:");
 
     const geomtools::mapping & the_mapping = *mapping_ptr;
     const geomtools::geom_info_dict_type & geom_infos
@@ -381,7 +324,7 @@ namespace genvtx {
          i != geom_infos.end();
          i++) {
       const geomtools::geom_id & gid = i->first;
-      if (_work_->src_selector.match(gid)) {
+      if (_get_source_selector().match(gid)) {
         const geomtools::geom_info * ginfo = &(i->second);
         weight_entry_type e;
         e.weight = 0.0;
@@ -429,9 +372,9 @@ namespace genvtx {
       if (! material_name.empty()) {
         const materials::manager * mat_mgr_ptr
           = detail::access_materials_manager(get_geom_manager(),
-                                             _materials_plugin_name_);
+                                             get_materials_plugin_name());
         DT_THROW_IF(mat_mgr_ptr == 0, std::logic_error,
-                    "No geometry materials plugin named '" << _materials_plugin_name_
+                    "No geometry materials plugin named '" << get_materials_plugin_name()
                     << "' available from the geometry manager in vertex generator '" << get_name() << "' !");
         const materials::manager & mat_mgr = *mat_mgr_ptr;
         materials::material_dict_type::const_iterator found =
@@ -446,6 +389,7 @@ namespace genvtx {
         }
       }
     }
+
     int surface_mask = 0;
     if (is_mode_surface()) {
       _work_->vg.set_mode(utils::MODE_SURFACE);
@@ -533,15 +477,13 @@ namespace genvtx {
 
   void box_model_vg::initialize(const ::datatools::properties & setup_,
                                 ::datatools::service_manager & service_manager_,
-                                ::genvtx::vg_dict_type & /*vgens_*/)
+                                ::genvtx::vg_dict_type & generators_)
   {
     DT_THROW_IF(is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
-    this->::genvtx::i_vertex_generator::_initialize(setup_, service_manager_);
+    this->::genvtx::i_from_model_vg::_initialize(setup_, service_manager_, generators_);
 
     int mode = utils::MODE_INVALID;
-    std::string origin_rules;
-    utils::origin_invalidate(origin_rules);
     std::string mode_str;
     bool use_bb = false;
     bool surface_back   = false;
@@ -557,17 +499,6 @@ namespace genvtx {
     if (setup_.has_key("length_unit")) {
       std::string lunit_str = setup_.fetch_string("length_unit");
       lunit = datatools::units::get_length_unit_from(lunit_str);
-    }
-
-    DT_THROW_IF(!setup_.has_key("origin"),
-                std::logic_error,
-                "Missing 'origin_rules' property in vertex generator '" << get_name() << "' !");
-    origin_rules = setup_.fetch_string("origin");
-
-    if (setup_.has_key("materials.plugin_name")) {
-      std::string mpn;
-      mpn = setup_.fetch_string("materials.plugin_name");
-      set_materials_plugin_name(mpn);
     }
 
     DT_THROW_IF(! setup_.has_key("mode"),
@@ -621,7 +552,6 @@ namespace genvtx {
     set_use_bounding_box(use_bb);
     set_skin_skip(skin_skip);
     set_skin_thickness(skin_thickness);
-    set_origin_rules(origin_rules);
     set_mode(mode);
     if (is_mode_surface()) {
       set_surface_back(surface_back);
@@ -645,7 +575,8 @@ namespace genvtx {
     namespace du = datatools;
     std::string indent;
     if (! indent_.empty()) indent = indent_;
-    this->i_vertex_generator::tree_dump(out_, title_, indent_, true);
+    this->i_from_model_vg::tree_dump(out_, title_, indent_, true);
+
     out_ << indent << du::i_tree_dumpable::tag
          << "Mode           : '" << _mode_ << "'" << std::endl;
     if (is_mode_surface())  {
@@ -664,13 +595,10 @@ namespace genvtx {
     }
     out_ << indent << du::i_tree_dumpable::tag
          << "Skin skip      : " << _skin_skip_ / CLHEP::mm << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
-         << "Skin thickness : " << _skin_thickness_ / CLHEP::mm << std::endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag(inherit_)
-         << "Origin rules   : '" << _origin_rules_ << "'" << std::endl;
+         << "Skin thickness : " << _skin_thickness_ / CLHEP::mm << std::endl;
+
     if (is_initialized() && _work_.get() != 0) {
-      // out_ << indent << du::i_tree_dumpable::tag
-      //      << "ID selector " << std::endl;
       out_ << indent << du::i_tree_dumpable::inherit_skip_tag(inherit_)
            << du::i_tree_dumpable::last_tag << "Entries : " << _work_->entries.size() << std::endl;
     }
@@ -691,7 +619,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::box_model_vg,ocd_)
   ocd_.set_class_library("genvtx");
   // ocd_.set_class_documentation("");
 
-  ::genvtx::i_vertex_generator::ocd_support(ocd_);
+  ::genvtx::i_from_model_vg::ocd_support(ocd_);
 
   //ocd_.set_configuration_hints("Nothing special.");
   ocd_.add_example("From the bulk volume of a collection of box volumes::          \n"

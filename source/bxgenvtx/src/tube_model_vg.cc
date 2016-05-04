@@ -1,5 +1,8 @@
 // tube_model_vg.cc
 
+// Ourselves:
+#include <genvtx/tube_model_vg.h>
+
 // Standard library:
 #include <iostream>
 #include <stdexcept>
@@ -24,10 +27,10 @@
 #include <geomtools/mapping.h>
 #include <geomtools/mapping_plugin.h>
 #include <geomtools/materials_plugin.h>
+#include <geomtools/id_selector.h>
 
 // This project:
 #include <genvtx/utils.h>
-#include <genvtx/tube_model_vg.h>
 #include <genvtx/detail/geom_manager_utils.h>
 #include <genvtx/vertex_validation.h>
 
@@ -112,52 +115,6 @@ namespace genvtx {
     return;
   }
 
-  const std::string & tube_model_vg::get_origin_rules () const
-  {
-    return _origin_rules_;
-  }
-
-  void tube_model_vg::set_origin_rules (const std::string & origin_rules_)
-  {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
-    _origin_rules_ = origin_rules_;
-    return;
-  }
-
-  bool tube_model_vg::has_mapping_plugin_name() const
-  {
-    return ! _mapping_plugin_name_.empty();
-  }
-
-  const std::string & tube_model_vg::get_mapping_plugin_name() const
-  {
-    return _mapping_plugin_name_;
-  }
-
-  void tube_model_vg::set_mapping_plugin_name(const std::string & mpn_)
-  {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
-    _mapping_plugin_name_ = mpn_;
-    return;
-  }
-
-  bool tube_model_vg::has_materials_plugin_name() const
-  {
-    return ! _materials_plugin_name_.empty();
-  }
-
-  const std::string & tube_model_vg::get_materials_plugin_name() const
-  {
-    return _materials_plugin_name_;
-  }
-
-  void tube_model_vg::set_materials_plugin_name(const std::string & mpn_)
-  {
-    DT_THROW_IF (is_initialized(), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
-    _materials_plugin_name_ = mpn_;
-    return;
-  }
-
   int tube_model_vg::get_mode () const
   {
     return _mode_;
@@ -174,7 +131,7 @@ namespace genvtx {
     return;
   }
 
-  tube_model_vg::tube_model_vg() : genvtx::i_vertex_generator()
+  tube_model_vg::tube_model_vg() : genvtx::i_from_model_vg()
   {
     _initialized_ = false;
     _set_defaults_ ();
@@ -195,7 +152,6 @@ namespace genvtx {
   void tube_model_vg::_set_defaults_ ()
   {
     // Internal reset:
-    utils::origin_invalidate (_origin_rules_);
     _mode_ = utils::MODE_INVALID;
     _surface_inner_side_ = false;
     _surface_outer_side_ = false;
@@ -203,18 +159,15 @@ namespace genvtx {
     _surface_top_ = false;
     _skin_skip_ = 0.0;
     _skin_thickness_ = 0.0;
-    if (_tube_vg_.is_initialized()) _tube_vg_.reset ();
-    _origin_rules_.clear();
-    _mapping_plugin_name_.clear();
-    _materials_plugin_name_.clear();
-    _entries_.clear ();
-    _src_selector_.reset ();
-    this->i_vertex_generator::_reset ();
+    this->i_from_model_vg::_set_defaults();
     return;
   }
 
   void tube_model_vg::_reset_ ()
   {
+    _entries_.clear ();
+    if (_tube_vg_.is_initialized()) _tube_vg_.reset ();
+    this->i_from_model_vg::_reset();
     _set_defaults_ ();
     return;
   }
@@ -274,17 +227,15 @@ namespace genvtx {
     return;
   }
 
-
   void tube_model_vg::_init_ ()
   {
     DT_THROW_IF (! is_mode_valid (), std::logic_error, "Invalid mode for vertex generator '" << get_name() << "' !");
     DT_THROW_IF (! has_geom_manager (),  std::logic_error,"Missing geometry manager for vertex generator '" << get_name() << "' !");
+
     const geomtools::mapping * mapping_ptr
-      = detail::access_geometry_mapping(get_geom_manager (), _mapping_plugin_name_);
+      = detail::access_geometry_mapping(get_geom_manager (), get_mapping_plugin_name());
     DT_THROW_IF (mapping_ptr == 0, std::logic_error,
                  "No available geometry mapping was found for vertex generator '" << get_name() << "' !");
-    _src_selector_.set_id_mgr (get_geom_manager ().get_id_mgr ());
-    _src_selector_.initialize (_origin_rules_);
 
     const geomtools::mapping & the_mapping = *mapping_ptr;
     const geomtools::geom_info_dict_type & geom_infos
@@ -295,7 +246,7 @@ namespace genvtx {
          i != geom_infos.end ();
          i++) {
       const geomtools::geom_id & gid = i->first;
-      if (_src_selector_.match (gid)) {
+      if (_get_source_selector().match (gid)) {
         const geomtools::geom_info * ginfo = &(i->second);
         weight_entry_type e;
         e.weight = 0.0;
@@ -318,7 +269,6 @@ namespace genvtx {
       } else {
         const geomtools::logical_volume * check_src_log = 0;
         check_src_log = &_entries_[i].ginfo->get_logical ();
-        //DT_THROW_IF (src_log != check_src_log,
         DT_THROW_IF (! geomtools::logical_volume::same(*src_log, *check_src_log),
                      std::logic_error,
                      "Vertex location with different logical geometry volumes are not supported (different shapes or materials) in vertex generator '" << get_name() << "' !");
@@ -338,9 +288,9 @@ namespace genvtx {
       if (! material_name.empty()){
         const materials::manager * mat_mgr_ptr
           = detail::access_materials_manager(get_geom_manager (),
-                                             _materials_plugin_name_);
+                                             get_materials_plugin_name());
         DT_THROW_IF (mat_mgr_ptr == 0, std::logic_error,
-                     "No geometry materials plugin named '" << _materials_plugin_name_
+                     "No geometry materials plugin named '" << get_materials_plugin_name()
                      << "' available from the geometry manager for vertex generator '" << get_name() << "' !");
         const materials::manager & mat_mgr = *mat_mgr_ptr;
         materials::material_dict_type::const_iterator found =
@@ -434,15 +384,13 @@ namespace genvtx {
 
   void tube_model_vg::initialize (const ::datatools::properties & setup_,
                                  ::datatools::service_manager & service_manager_,
-                                 ::genvtx::vg_dict_type & /*vgens_*/)
+                                 ::genvtx::vg_dict_type & generators_)
   {
     DT_THROW_IF (is_initialized (), std::logic_error, "Vertex generator '" << get_name() << "' is already initialized !");
 
-    this->::genvtx::i_vertex_generator::_initialize(setup_, service_manager_);
+    this->::genvtx::i_from_model_vg::_initialize(setup_, service_manager_, generators_);
 
     int mode = utils::MODE_INVALID;
-    std::string origin_rules;
-    utils::origin_invalidate (origin_rules);
     std::string mode_str;
     bool surface_inner_side   = false;
     bool surface_outer_side   = false;
@@ -455,16 +403,6 @@ namespace genvtx {
     if (setup_.has_key ("length_unit")) {
       std::string lunit_str = setup_.fetch_string ("length_unit");
       lunit = datatools::units::get_length_unit_from (lunit_str);
-    }
-
-    DT_THROW_IF (! setup_.has_key ("origin"), std::logic_error,
-                 "Missing 'origin_rules' property in vertex generator '" << get_name() << "' !");
-    origin_rules = setup_.fetch_string ("origin");
-
-    if (setup_.has_key ("materials.plugin_name")) {
-      std::string mpn;
-      mpn = setup_.fetch_string ("materials.plugin_name");
-      set_materials_plugin_name(mpn);
     }
 
     DT_THROW_IF (! setup_.has_key ("mode"), std::logic_error,
@@ -505,7 +443,6 @@ namespace genvtx {
 
     set_skin_skip(skin_skip);
     set_skin_thickness(skin_thickness);
-    set_origin_rules (origin_rules);
     set_mode (mode);
     if (is_mode_surface ()) {
       set_surface_inner_side (surface_inner_side);
@@ -527,7 +464,7 @@ namespace genvtx {
     namespace du = datatools;
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
-    this->i_vertex_generator::tree_dump (out_, title_, indent_, true);
+    this->i_from_model_vg::tree_dump(out_, title_, indent_, true);
     out_ << indent << du::i_tree_dumpable::tag
          << "Mode           : '" << _mode_ << "'" << std::endl;
     if (is_mode_surface ()) {
@@ -544,10 +481,6 @@ namespace genvtx {
          << "Skin skip      : " << _skin_skip_ / CLHEP::mm << std::endl;
     out_ << indent << du::i_tree_dumpable::tag
          << "Skin thickness : " << _skin_thickness_ / CLHEP::mm << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
-         << "Origin rules   : '" << _origin_rules_ << "'" << std::endl;
-    out_ << indent << du::i_tree_dumpable::tag
-         << "ID selector " << std::endl;
     out_ << indent << du::i_tree_dumpable::inherit_tag (inherit_)
          << "Entries        : " << _entries_.size () << std::endl;
     return;

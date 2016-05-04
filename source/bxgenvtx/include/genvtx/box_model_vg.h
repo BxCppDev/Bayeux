@@ -15,7 +15,7 @@
  */
 
 #ifndef GENVTX_BOX_MODEL_VG_H
-#define GENVTX_BOX_MODEL_VG_H 1
+#define GENVTX_BOX_MODEL_VG_H
 
 // Standard library:
 #include <string>
@@ -27,13 +27,20 @@
 // This project:
 #include <genvtx/vg_macros.h>
 #include <genvtx/utils.h>
+#include <genvtx/i_from_model_vg.h>
 
 namespace genvtx {
 
   /// \brief A vertex generator based on a boxed geometry model
-  class box_model_vg : public i_vertex_generator
+  class box_model_vg : public i_from_model_vg
   {
   public:
+
+    /// Constructor
+    box_model_vg();
+
+    /// Destructor
+    virtual ~box_model_vg();
 
     /// Check the validity of the mode
     bool is_mode_valid() const;
@@ -86,30 +93,6 @@ namespace genvtx {
     /// Set the skin thickness
     void set_skin_thickness(double skin_thickness_);
 
-    /// Return the origin rules
-    const std::string & get_origin_rules() const;
-
-    /// Set the origin rules
-    void set_origin_rules(const std::string &);
-
-    /// Check if a mapping plugin name is defined
-    bool has_mapping_plugin_name() const;
-
-    /// Return the mapping plugin name
-    const std::string & get_mapping_plugin_name() const;
-
-    /// Set the mapping plugin name
-    void set_mapping_plugin_name(const std::string & mpn_);
-
-    /// Check if a materials plugin name is defined
-    bool has_materials_plugin_name() const;
-
-    /// Return the materials plugin name is defined
-    const std::string & get_materials_plugin_name() const;
-
-    /// Set the materials plugin name is defined
-    void set_materials_plugin_name(const std::string & mpn_);
-
     /// Return the mode
     int get_mode() const;
 
@@ -128,12 +111,6 @@ namespace genvtx {
                            const std::string & indent_ = "",
                            bool inherit_ = false) const;
 
-    /// Constructor
-    box_model_vg();
-
-    /// Destructor
-    virtual ~box_model_vg();
-
     /// Initialization
     virtual void initialize(const ::datatools::properties &,
                             ::datatools::service_manager &,
@@ -151,8 +128,7 @@ namespace genvtx {
     virtual void _shoot_vertex(::mygsl::rng & random_, ::geomtools::vector_3d & vertex_);
 
     /// Main vertex randomization algorithm
-    void _shoot_vertex_boxes(mygsl::rng & random_,
-                             geomtools::vector_3d & vertex_);
+    void _shoot_vertex_boxes(mygsl::rng & random_, geomtools::vector_3d & vertex_);
 
   private:
 
@@ -167,20 +143,17 @@ namespace genvtx {
 
   private:
 
-    bool                    _initialized_;    //!< Initialization flag
-    bool                    _use_bb_;         //!< Flag for using the bounding box of a shape
-    int                     _mode_;           //!< Mode : "bulk" of "surface"
-    bool                    _surface_back_;   //!< Flag for back surface generation mode
-    bool                    _surface_front_;  //!< Flag for front surface generation mode
-    bool                    _surface_bottom_; //!< Flag for bottom surface generation mode
-    bool                    _surface_top_;    //!< Flag for top surface generation mode
-    bool                    _surface_left_;   //!< Flag for left surface generation mode
-    bool                    _surface_right_;  //!< Flag for right surface generation mode
-    double                  _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the box
-    double                  _skin_thickness_; //!< Intrinsic thickness of the surface
-    std::string             _origin_rules_;   //!< Rules to select the physical volumes from where to generate vertexes
-    std::string             _mapping_plugin_name_;   //!< The name of the geometry 'mapping' plugin
-    std::string             _materials_plugin_name_; //!< The name of the geometry 'materials' plugin
+    bool  _initialized_;    //!< Initialization flag
+    bool  _use_bb_;         //!< Flag for using the bounding box of a shape
+    int   _mode_;           //!< Mode : "bulk" of "surface"
+    bool  _surface_back_;   //!< Flag for back surface generation mode
+    bool  _surface_front_;  //!< Flag for front surface generation mode
+    bool  _surface_bottom_; //!< Flag for bottom surface generation mode
+    bool  _surface_top_;    //!< Flag for top surface generation mode
+    bool  _surface_left_;   //!< Flag for left surface generation mode
+    bool  _surface_right_;  //!< Flag for right surface generation mode
+    double _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the box
+    double _skin_thickness_; //!< Intrinsic thickness of the surface
 
     // Pimplized:
     struct _work_type;

@@ -21,18 +21,19 @@
 #include <string>
 
 // Third party:
-// - Bayeux/geomtools
-#include <geomtools/id_selector.h>
+// // - Bayeux/geomtools
+// #include <geomtools/id_selector.h>
 
 // This project:
 #include <genvtx/sphere_vg.h>
 #include <genvtx/vg_macros.h>
 #include <genvtx/utils.h>
+#include <genvtx/i_from_model_vg.h>
 
 namespace genvtx {
 
   /// \brief A vertex generator based on a spherical geometry model
-  class sphere_model_vg : public i_vertex_generator
+  class sphere_model_vg : public i_from_model_vg
   {
   public:
 
@@ -69,22 +70,6 @@ namespace genvtx {
     void set_skin_skip (double skin_skip_);
 
     void set_skin_thickness (double skin_thickness_);
-
-    const std::string & get_origin_rules () const;
-
-    void set_origin_rules (const std::string &);
-
-    bool has_mapping_plugin_name() const;
-
-    const std::string & get_mapping_plugin_name() const;
-
-    void set_mapping_plugin_name(const std::string & mpn_);
-
-    bool has_materials_plugin_name() const;
-
-    const std::string & get_materials_plugin_name() const;
-
-    void set_materials_plugin_name(const std::string & mpn_);
 
     int get_mode () const;
 
@@ -143,10 +128,6 @@ namespace genvtx {
     double                  _skin_skip_;      //!< Skip (normal to the surface) to an effective position of the skin relative to the surface of the sphere
     double                  _skin_thickness_; //!< Intrinsic thickness of the surface
     genvtx::sphere_vg       _sphere_vg_;         //!< Embeded vertex generator from a sphere
-    std::string             _origin_rules_;   //!< Rules to select the physical volumes from where to generate vertexes
-    std::string             _mapping_plugin_name_;   //!< The name of the geometry 'mapping' plugin
-    std::string             _materials_plugin_name_; //!< The name of the geometry 'materials' plugin
-    geomtools::id_selector  _src_selector_;   //!< A selector of GIDs
     std::vector<weight_entry_type> _entries_; //!< Information about the weights
 
     /// Registration macro
