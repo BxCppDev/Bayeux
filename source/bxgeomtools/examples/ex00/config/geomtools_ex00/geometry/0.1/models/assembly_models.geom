@@ -63,9 +63,6 @@ material.ref    : string = "vacuum"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "grey"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
-
 ###########
 # Mapping #
 ###########
@@ -133,9 +130,6 @@ material.ref    : string = "vacuum"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "grey"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
-
 
 ##########################################################
 [name="exbox1.model" type="geomtools::extruded_box_model"]
@@ -174,9 +168,6 @@ material.ref : string = "copper"
 
 #@description The recommended color for the display of the box
 visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
 
 
 ##########################################################
@@ -220,10 +211,6 @@ material.ref : string = "copper"
 
 #@description The recommended color for the display of the box
 visibility.color  : string  = "green"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
-
 
 
 ############################################################
@@ -278,6 +265,3 @@ material.ref    : string = "vacuum"
 
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "grey"
-
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0

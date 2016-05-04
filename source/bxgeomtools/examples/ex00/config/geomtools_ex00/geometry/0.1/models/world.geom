@@ -419,8 +419,5 @@ internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
 #@description The recommended color for the display of the world volume
 visibility.color            : string  = "cyan"
 
-#@description The visibility hidden flag for the display of the world volume
-visibility.hidden           : boolean = 0
-
 #@description The daughters' visibility hidden flag for the display
-visibility.daughters.hidden : boolean = 0
+visibility.daughters.hidden : boolean = false

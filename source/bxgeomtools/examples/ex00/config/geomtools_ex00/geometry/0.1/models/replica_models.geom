@@ -55,9 +55,6 @@ material.ref : string = "vacuum"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "grey"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
-
 
 ##############################################################################
 [name="box0_circular_chain.model" type="geomtools::replicated_circular_model"]
@@ -153,8 +150,6 @@ internal_item.placement.SpecialBox1 : string  = "+200 0 0 (mm) / z 90 (degree)"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "grey"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
 
 ########################################################
 [name="box0_yz_grid.model" type="geomtools::grid_model"]
@@ -203,8 +198,6 @@ material.ref : string = "vacuum"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "grey"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
 
 ###################
 # Daughter volume #
@@ -287,9 +280,6 @@ material.ref : string = "vacuum"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "cyan"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
-
 
 #########################################################################
 [name="cylinder0_medium_column.model" type="geomtools::replicated_model"]
@@ -338,9 +328,6 @@ material.ref : string = "vacuum"
 
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "cyan"
-
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
 
 
 ########################################################################
@@ -391,9 +378,6 @@ material.ref : string = "vacuum"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "cyan"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
-
 
 ###########################################################
 [name="box0_small_grid.model" type="geomtools::grid_model"]
@@ -442,8 +426,6 @@ material.ref : string = "vacuum"
 #@description The recommended color for the display of the mother volume
 visibility.color  : string  = "cyan"
 
-#@description The visibility hidden flag for the display of the mother volume
-visibility.hidden : boolean = 0
 
 ###########
 # Mapping #

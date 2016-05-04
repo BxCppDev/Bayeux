@@ -39,11 +39,6 @@ material.ref : string = "copper"
 #@description The recommended color for the display of the box
 visibility.color  : string  = "magenta"
 
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
-
-
-
 
 #################################################################
 [name="tiny_red_box.model" type="geomtools::simple_shaped_model"]
@@ -77,9 +72,6 @@ material.ref : string = "copper"
 
 #@description The recommended color for the display of the box
 visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
 
 
 #####################################################################
@@ -115,9 +107,6 @@ material.ref : string = "copper"
 #@description The recommended color for the display of the box
 visibility.color  : string  = "orange"
 
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
-
 
 ####################################################################
 [name="medium_blue_box.model" type="geomtools::simple_shaped_model"]
@@ -151,10 +140,6 @@ material.ref : string = "copper"
 
 #@description The recommended color for the display of the box
 visibility.color  : string  = "blue"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
-
 
 
 ####################################################################
@@ -286,9 +271,6 @@ internal_mesh.placement.MicroVoxel.overlapping.low_sampling: boolean = true
 
 #@description The recommended color for the display of the box
 visibility.color  : string  = "green"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
 
 
 # end

@@ -52,10 +52,7 @@ material.ref : string = "copper"
 # rendering tool as hint to generate the display of the virtual geometry setup.
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "blue"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "blue"
 
 
 ##############################################################
@@ -94,10 +91,7 @@ material.ref : string = "copper"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "red"
 
 
 ##############################################################
@@ -136,10 +130,7 @@ material.ref : string = "copper"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "magenta"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "magenta"
 
 
 ##############################################################
@@ -178,10 +169,7 @@ material.ref : string = "copper"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "green"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "green"
 
 
 ###################################################################
@@ -219,10 +207,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "blue"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "blue"
 
 
 ########################################################################
@@ -258,10 +243,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "blue"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "blue"
 
 
 #####################################################################
@@ -297,10 +279,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "orange"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "orange"
 
 
 ####################################################################
@@ -336,10 +315,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "green"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "green"
 
 
 ##################################################################
@@ -375,10 +351,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "red"
 
 
 ##########################################################################
@@ -414,10 +387,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "blue"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "blue"
 
 
 ############################################################################
@@ -453,10 +423,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "orange"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "orange"
 
 
 ###########################################################################
@@ -492,10 +459,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "green"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "green"
 
 
 #########################################################################
@@ -531,10 +495,7 @@ material.ref : string = "lead"
 ##############
 
 #@description The recommended color for the display of the box
-visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the box
-visibility.hidden : boolean = 0
+visibility.color : string = "red"
 
 
 #####################################################################
@@ -573,10 +534,7 @@ material.ref : string = "iron"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "blue"
-
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
+visibility.color : string = "blue"
 
 
 ###################################################################
@@ -615,10 +573,7 @@ material.ref : string = "iron"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
+visibility.color : string = "red"
 
 
 ########################################################
@@ -664,10 +619,7 @@ material.ref : string = "iron"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
+visibility.color : string = "red"
 
 
 ########################################################
@@ -698,10 +650,8 @@ material.ref : string = "iron"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "red"
+visibility.color : string = "red"
 
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
 
 ##########################################################
 [name="dummy.model" type="geomtools::simple_shaped_model"]
@@ -735,10 +685,7 @@ material.ref : string = "iron"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "green"
-
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
+visibility.color : string = "green"
 
 
 #############################################################
@@ -769,10 +716,7 @@ material.ref : string = "iron"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "blue"
-
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
+visibility.color : string = "blue"
 
 
 ##############################################################
@@ -803,10 +747,7 @@ material.ref : string = "iron"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "magenta"
-
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
+visibility.color : string = "magenta"
 
 
 ###################################################################
@@ -836,10 +777,7 @@ material.ref : string = "concrete"
 ##############
 
 #@description The recommended color for the display of the shape
-visibility.color  : string  = "red"
-
-#@description The visibility hidden flag for the display of the shape
-visibility.hidden : boolean = 0
+visibility.color : string = "red"
 
 
 ##########################################################
@@ -869,7 +807,4 @@ material.ref : string = "copper"
 ##############
 
 #@description The recommended color for the display of the volume
-visibility.color  : string  = "magenta"
-
-#@description The visibility hidden flag for the display of the volume
-visibility.hidden : boolean = 0
+visibility.color : string = "magenta"
