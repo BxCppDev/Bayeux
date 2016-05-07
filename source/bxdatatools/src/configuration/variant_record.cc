@@ -34,7 +34,7 @@ namespace datatools {
 
   namespace configuration {
 
-    variant_record::variant_record() // : enriched_based()
+    variant_record::variant_record()
     {
       _parameter_model_ = 0;
       _variant_model_ = 0;
