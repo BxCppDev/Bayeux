@@ -2783,7 +2783,7 @@ namespace datatools {
                 iss >> std::ws >> variant_path;
                 if (!variant_path.empty()) {
                   std::string vibr_current = variant_if_blocks.back();
-                  int npipe = vibr_current.find('|');
+                  const size_t npipe = vibr_current.find('|');
                   std::string vib_path = vibr_current;
                   if (npipe != vibr_current.npos) {
                     vib_path = vibr_current.substr(0, npipe);
