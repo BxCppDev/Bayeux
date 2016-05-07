@@ -2587,6 +2587,22 @@ namespace datatools {
 
   properties::config::~config() {}
 
+  // void properties::config::set_config_tag(const std::string & ct_)
+  // {
+  //   _config_tag_ = ct_;
+  //   return;
+  // }
+
+  // void properties::config::reset_config_tag()
+  // {
+  //   _config_tag_.clear();
+  //   return;
+  // }
+
+  // const std::string & properties::config::get_config_tag() const
+  // {
+  //   return _config_tag_;
+  // }
 
   void properties::config::read(std::istream& in, properties& props) {
     this->read_(in, props);
@@ -2602,17 +2618,37 @@ namespace datatools {
     // 2013-04-05 FM : default is to allow unit directives for real numbers
     bool enable_real_with_unit = true;
     bool enable_variants = true;
-    // std::list<std::string> variant_if_blocks;
 
-    /* The variant only directive must be placed before the property line:
+    /* The variant_if directive must be placed before the property line:
      *
      *  Examples:
      *
-     *  #@variant_only trigger:trigger_mode/multiplicity_mode
+     *
+     *  #@variant_if trigger:trigger_mode/coincidence
+     *
+     *  #@description The submodules to be triggered in coincidence
+     *  trigger.coincidence.submodules    : string[2] = "calorimeter" "tracker"
+     *
+     *  #@description The coincidence time gate between submodules
+     *  trigger.coincidence.time_gate     : real as time = 1260 us
+     *
+     *  #@description The number of neighbouring sectors to be considered
+     *  trigger.coincidence.sector_spread : integer = 3
+     *
+     *  #@variant_endif
+     *
+     */
+    std::list<std::string> variant_if_blocks;
+
+    /* The variant_only directive must be placed before the property line:
+     *
+     *  Examples:
+     *
+     *  #@variant_only trigger:trigger_mode/if_multiplicity
      *  #@description The multiplicity threshold of the trigger system (when the trigger runs multiplicity mode)
      *  trigger.multiplicity.threshold : integer = 3
      *
-     *  #@variant_only !trigger:trigger_mode/multiplicity_mode
+     *  #@variant_only !trigger:trigger_mode/if_multiplicity
      *  #@description The ADC threshold of the trigger system (when the trigger runs NO multiplicity mode)
      *  trigger.adc.threshold : real = 15 mV
      *
@@ -2733,24 +2769,37 @@ namespace datatools {
                 variant_only = variant_path_rule;
                 DT_LOG_NOTICE(logging, "Next parameter is active only with variant '" << variant_only << "'.");
               }
-              /*
-                if (token == "@variant_if") {
+
+              if (token == "@variant_if") {
+                DT_THROW_IF(!enable_variants, std::logic_error, "Variants are not supported!");
+                std::string variant_path_rule;
+                iss >> std::ws >> variant_path_rule;
+                variant_if_blocks.push_back(variant_path_rule);
+                DT_LOG_NOTICE(logging, "Open a variant if block with variant '" << variant_if_blocks.back() << "'.");
+              } else if (token == "@variant_endif") {
+                DT_THROW_IF(!enable_variants, std::logic_error, "Variants are not supported!");
+                DT_THROW_IF(variant_if_blocks.size() == 0, std::logic_error, "No variant conditional block is currently set!");
                 std::string variant_path;
-                iss >> std::ws >> variant_name;
-                variant_blocks.push_front(variant_name);
-                DT_LOG_NOTICE(logging, "Current variant is '" << variant_blocks.front() << "'");
-                } else if (token == "@variant_endif") {
-                std::string variant_name;
-                iss >> std::ws >> variant_name;
-                DT_THROW_IF(variant_name != variant_blocks.front(),
-                std::logic_error,
-                "Unmatching closing variant block '" << variant_name << "' !"
-                << "Expected variant name is '" << variant_blocks.front() << "' !");
-                variant_blocks.pop_front();
-                DT_LOG_NOTICE(logging, "Current variant is '"
-                << variant_blocks.front() << "' (was '" << variant_name << "')");;
+                iss >> std::ws >> variant_path;
+                if (!variant_path.empty()) {
+                  std::string vibr_current = variant_if_blocks.back();
+                  int npipe = vibr_current.find('|');
+                  std::string vib_path = vibr_current;
+                  if (npipe != vibr_current.npos) {
+                    vib_path = vibr_current.substr(0, npipe);
+                  }
+                  DT_THROW_IF(variant_path != vib_path,
+                              std::logic_error,
+                              "Unmatching closing variant conditional block '" << variant_path << "'! "
+                              << "Expected variant path is '" << vib_path << "' !");
                 }
-              */
+                variant_if_blocks.pop_back();
+                if (variant_if_blocks.size()) {
+                  DT_LOG_NOTICE(logging, "Current variant conditional block is '"
+                                << variant_if_blocks.back() << "' (was '" << variant_path << "')");;
+                }
+              }
+
             } else if (parsing) {
 
               // Maybe we should ensure only one '@config' directive
@@ -3043,6 +3092,31 @@ namespace datatools {
               }
             }
 
+            // Property is enabled by default:
+            bool exhibit_property = true;
+            if (variant_if_blocks.size()) {
+              for (std::list<std::string>::const_iterator ivib = variant_if_blocks.begin();
+                   ivib != variant_if_blocks.end();
+                   ivib++) {
+                bool variant_if_found = false;
+                bool variant_if_reverse = false;
+                const std::string & variant_if_rule = *ivib;
+                command::returned_info cri = vpp.resolve_variant(variant_if_rule,
+                                                                 variant_if_found,
+                                                                 variant_if_reverse);
+                DT_THROW_IF(cri.is_failure(), std::logic_error,
+                            "Cannot preprocess variant if block directive from '" << variant_if_rule << "' : " << cri.get_error_message());
+                exhibit_property = variant_if_found;
+                if (variant_if_reverse) {
+                  exhibit_property = !variant_if_found;
+                }
+                if (!exhibit_property) {
+                  // We break at first inhibited conditional block:
+                  break;
+                }
+              }
+            }
+
             /// Special devel print:
             bool variant_devel = vpp.is_trace();
 
@@ -3058,7 +3132,7 @@ namespace datatools {
              */
             bool variant_only_reverse = false;
             // Process the variant_only directive if it exists:
-            if (!variant_only.empty()) {
+            if (exhibit_property && !variant_only.empty()) {
               command::returned_info cri = vpp.resolve_variant(variant_only,
                                                                variant_only_found,
                                                                variant_only_reverse);
@@ -3231,13 +3305,16 @@ namespace datatools {
               }
             }
 
-            bool store_it = true;
-            if (! variant_only.empty()) {
-              store_it = variant_only_found;
-              if (variant_only_reverse) {
-                store_it = !variant_only_found;
+            bool store_it = exhibit_property;
+            if (store_it) {
+              if (! variant_only.empty()) {
+                store_it = variant_only_found;
+                if (variant_only_reverse) {
+                  store_it = !variant_only_found;
+                }
               }
             }
+
             if (store_it) {
               // scalar :
               if (type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar) {
@@ -3289,6 +3366,9 @@ namespace datatools {
         } // !skip_line && parsing
       } // if (! line_goon)
     } // while (*_in)
+    if (variant_if_blocks.size() > 0) {
+      DT_THROW(std::logic_error, "Unclosed variant conditional block '" << variant_if_blocks.back() << "'!");
+    }
     return;
   }
 

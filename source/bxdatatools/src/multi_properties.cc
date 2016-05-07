@@ -578,6 +578,7 @@ namespace datatools {
 
 
   void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
+    //datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
     bool devel = false; // Debug stuff
     std::string line_in;
     std::string mprop_description;
@@ -589,6 +590,11 @@ namespace datatools {
     std::string current_key = "";
     std::string current_meta = "";
 
+    bool enable_variants = true;
+    std::string variant_section_only;
+    bool can_variant_section_only = false;
+    unsigned int vpp_flags = 0;
+    configuration::variant_preprocessor vpp(vpp_flags);
     /// Special devel print:
     // bool variant_devel = false;
     // unsigned int vpp_flags = 0;
@@ -622,7 +628,6 @@ namespace datatools {
       bool process_block = false;
       std::string new_key = "";
       std::string new_meta = "";
-      std::string variant_only;
 
       if (!line_goon) {
         bool skip_line = false;
@@ -646,13 +651,21 @@ namespace datatools {
             std::string token;
             iss >> token;
 
-            // if (token == "@variant_log=devel") {
-            //   variant_devel = true;
-            // }
-
-            // if (token == "@variant_log=mute") {
-            //   variant_devel = false;
-            // }
+            if (token == "@variant_section_only") {
+              DT_THROW_IF(!enable_variants, std::logic_error, "Variants are not supported!");
+              DT_THROW_IF(!can_variant_section_only, std::logic_error,
+                          "'@variant_section_only' directive can only be set at section start!");
+              std::string variant_path_rule;
+              iss >> std::ws >> variant_path_rule;
+              variant_section_only = variant_path_rule;
+              if (devel) {
+                std::cerr << "Next section is active only with variant '"
+                          << variant_section_only << "'" << std::endl;
+              }
+              append_block_line = false;
+              can_variant_section_only = false;
+              std::cerr << "DEVEL: *** can_variant_section_only is inhibited just after parsing a '@variant_section_only' directive." << std::endl;
+            }
 
             if (token == "@description" && mprop_description.empty()) {
               iss >> std::ws;
@@ -764,8 +777,8 @@ namespace datatools {
             iss >> std::ws;
             char dummy = iss.peek();
             new_meta.clear();
+            std::string meta_label;
             if (dummy != ']') {
-              std::string meta_label;
               std::getline(iss, meta_label, '=');
               if (!meta_label.empty()) {
                 DT_THROW_IF (meta_label != this->get_meta_label(),
@@ -801,10 +814,21 @@ namespace datatools {
             c = 0;
             iss >> c;
             DT_THROW_IF (c != ']', std::logic_error, "Cannot read 'key/meta' closing symbol !");
+            std::cerr << "DEVEL: *** Found a section header  = ["
+                      << key_label << "=" << '"' << new_key << '"';
+            if (!meta_label.empty()) {
+              std::cerr << " " << meta_label << "=" << '"' << new_meta << '"';
+            }
+            std::cerr << "]" << std::endl;
+            can_variant_section_only = true;
+            std::cerr << "DEVEL: *** can_variant_section_only is enabled = " << can_variant_section_only << std::endl;
             process_block = true;
           } else {
             // Append line to the current block stream:
             if (append_block_line) {
+              std::cerr << "DEVEL: *** appending block line = '" << line << "'" << std::endl;
+              can_variant_section_only = false;
+              std::cerr << "DEVEL: *** can_variant_section_only is inhibited because we have found a line to be appended to a section block." << std::endl;
               current_block_oss << line << std::endl;
             }
           }
@@ -827,6 +851,32 @@ namespace datatools {
         }
         if (!current_key.empty()) {
           bool load_it = true;
+          bool variant_section_devel = vpp.is_trace();
+          bool variant_section_only_found = false;
+          bool variant_section_only_reverse = false;
+          if (!variant_section_only.empty()) {
+            command::returned_info cri = vpp.resolve_variant(variant_section_only,
+                                                             variant_section_only_found,
+                                                             variant_section_only_reverse);
+            DT_THROW_IF(cri.is_failure(), std::logic_error,
+                        "Cannot preprocess variant section only directive from '"
+                        << variant_section_only << "' : " << cri.get_error_message());
+            if (variant_section_devel) {
+              DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                           "VPP ==> variant_section_only_found='"
+                           << variant_section_only_found << "'");
+              DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+                           "VPP ==> variant_section_only_reverse='"
+                           << variant_section_only_reverse << "'");
+            }
+            if (! variant_section_only.empty()) {
+              load_it = variant_section_only_found;
+              if (variant_section_only_reverse) {
+                load_it = !variant_section_only_found;
+              }
+            }
+            variant_section_only.clear();
+          }
           if (a_skip_private) {
             if (properties::key_is_private(current_key)) {
               load_it = false;
@@ -834,6 +884,7 @@ namespace datatools {
           }
 
           if (load_it) {
+            std::cerr << "DEVEL: *** load the current section '" << current_key << "' with meta='" << current_meta << "'" << std::endl;
             this->add(current_key, current_meta);
             multi_properties::entry & e = this->grab(current_key);
             properties::config pcr;
