@@ -1,14 +1,15 @@
 [algo]
 accuracy = 6
 max_time = 8 second
-nevents = 95
+nevents = 15
 [core]
 gui = 1
 help = "OnlyTooltips"
 logging = "notice"
 operator = "King Arthur"
+plugin = 0
 [gui]
 antialiasing = 1
 color = 0
-color/uncolored/mode = "Gray scale"
+color/is_uncolored/mode = "Gray scale"
 logging = "trace"

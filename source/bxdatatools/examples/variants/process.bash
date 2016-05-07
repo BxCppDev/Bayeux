@@ -72,19 +72,19 @@ echo "INFO: The example program ex_variants with variants (2)..." 1>&2
 # - launch a GUI dialog box to enable the (re)configuration of some of the variant parameters,
 # - save the variant parameters values in a file (my_profile.rep)
 #
-./ex_variants --with-variants --variants-test 2 \
+./ex_variants --with-variants --variants-test 1 \
     --datatools::logging="fatal" \
     --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variance.conf" \
     --datatools::variant-load="${FOO_CONFIG_DIR}/variants/profiles/default.rep" \
-    --datatools::variant-set="algo:accuracy=4" \
-    --datatools::variant-set="algo:max_time=3 s" \
-    --datatools::variant-set="algo:nevents=5" \
     --datatools::variant-set="core:gui=true" \
     --datatools::variant-set="core:operator=John Doe" \
     --datatools::variant-set="core:logging=warning" \
+    --datatools::variant-set="algo:accuracy=4" \
+    --datatools::variant-set="algo:max_time=3 s" \
+    --datatools::variant-set="algo:nevents=5" \
     --datatools::variant-set="gui:antialiasing=false" \
     --datatools::variant-qt-gui \
-    --datatools::variant-store="${FOO_CONFIG_DIR}/variants/profiles/my_profile.rep"
+    --datatools::variant-store="my_profile.rep"
 if [ $? -ne 0 ]; then
     echo "ERROR: The example program ex_variants failed !" 1>&2
     my_exit 1

@@ -96,26 +96,27 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/datatools/examples/variants /tmp/datatools_ex_variants
-      shell> cd /tmp/datatools_ex_variants
+      shell$ cp -a $(bxquery --exampledir)/datatools/examples/variants /tmp/datatools_ex_variants
+      shell$ cd /tmp/datatools_ex_variants
 
 3. Build and install the example::
 
-      shell> mkdir _build.d
-      shell> cd _build.d
-      shell> cmake \
+      shell$ mkdir _build.d
+      shell$ cd _build.d
+      shell$ cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
         -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
-      shell> make
-      shell> make install
-      shell> cd ..
+      shell$ make
+      shell$ make install
+      shell$ cd ..
 
 4. Run the example::
 
-      shell> ./ex_variants
+      shell$ export FOO_CONFIG_DIR=./config
+      shell$ ./ex_variants
 
 6. Clean::
 
-      shell> rm ex_variants
-      shell> rm -fr _build.d
+      shell$ rm ex_variants
+      shell$ rm -fr _build.d

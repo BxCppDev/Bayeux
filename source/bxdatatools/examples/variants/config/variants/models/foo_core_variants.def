@@ -38,7 +38,7 @@ string.enumerated_2.value : string = "Visitor"
 string.default            : string = "John Doe"
 
 
-########################################
+################################
 [name="url.PM" type="parameter"]
 
 #@config A parameter model describing an URL
@@ -71,7 +71,7 @@ string.default            : string = "http://foo.org/help/"
 display_name              : string = "Manpage"
 
 #@description A short description of the parameter model
-terse_description         : string = "The application manpage source file"
+terse_description         : string = "Application manpage source file"
 
 #@description The type of the parameter model
 type                      : string = "string"
@@ -101,22 +101,22 @@ string.default            : string = "/usr/share/man/en_GB/man1/foo.1.gz"
 display_name              : string = "Full help"
 
 #@description A short description of this variant model
-terse_description         : string = "The help mode"
+terse_description         : string = "The full help mode"
 
 #@description The list of variant parameters
 parameters : string[2] = "url" "manpage"
 
 parameters.url.model           : string = "url.PM"
-parameters.url.description     : string = "The URL of the online help"
+parameters.url.description     : string = "URL of the online help"
 
 parameters.manpage.model       : string = "manpage.PM"
-parameters.manpage.description : string = "The manpage on the system help"
+parameters.manpage.description : string = "Manpage on the system help"
 
 
 ######################################
 [name="help_mode.PM" type="parameter"]
 
-#@config A parameter describing the logging priority of some components
+#@config A parameter describing the help mode of some components
 
 #@description The display name of this parameter
 display_name              : string = "Help mode"
@@ -147,7 +147,7 @@ string.default            : string = "OnlyTooltips"
 variants : string[1] = "is_full_help"
 
 variants.is_full_help.model       : string = "full_help.VM"
-variants.is_full_help.description : string = "Set of parameters in 'full help' mode"
+variants.is_full_help.description : string = "Parameters in 'full help' mode"
 
 string.enumerated_1.variant : string = "is_full_help"
 
@@ -164,19 +164,31 @@ display_name      : string = "Core setup"
 terse_description : string = "The configuration parameters for the core application"
 
 #@description The list of variant parameters
-parameters : string[4] = "logging" "operator" "help" "gui"
+parameters : string[8] = "logging" "operator" "help" "gui" "plugin" "test1" "test2" "test3"
 
-parameters.logging.model        : string = "logging_priority.PM"
-parameters.logging.description  : string = "The logging priority"
+parameters.logging.model        : string = "datatools::basic::logging_priority.PM"
+parameters.logging.description  : string = "Logging priority"
 
 parameters.operator.model       : string = "operator_id.PM"
-parameters.operator.description : string = "The operator identifier"
+parameters.operator.description : string = "Operator ID"
 
 parameters.help.model           : string = "help_mode.PM"
-parameters.help.description     : string = "The help mode"
+parameters.help.description     : string = "Help mode"
 
-parameters.gui.model            : string = "off_on.PM"
-parameters.gui.description      : string = "The GUI activation flag"
+parameters.gui.model            : string = "datatools::basic::off_on.PM"
+parameters.gui.description      : string = "GUI activation flag"
+
+parameters.plugin.model         : string = "datatools::basic::off_on.PM"
+parameters.plugin.description   : string = "Plugin activation flag"
+
+parameters.test1.model          : string = "datatools::basic::off_on.PM"
+parameters.test1.description    : string = "Test 1 activation flag"
+
+parameters.test2.model          : string = "datatools::basic::off_on.PM"
+parameters.test2.description    : string = "Test 2 activation flag"
+
+parameters.test3.model          : string = "datatools::basic::on_off.PM"
+parameters.test3.description    : string = "Test 3 activation flag"
 
 
 # end

@@ -42,6 +42,7 @@
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/properties.h>
+#include <datatools/multi_properties.h>
 #include <datatools/kernel.h>
 // #include <datatools/clhep_units.h>
 #include <datatools/configuration/variant_repository.h>
@@ -68,6 +69,8 @@ void test0();
 void test1();
 
 void test2();
+
+void test3();
 
 int main(int argc_, char ** argv_)
 {
@@ -251,12 +254,82 @@ void test1()
 
 void test2()
 {
-  std::clog << "test2: Setup the application with variant parameters fetched from the Bayeux/datatools' kernel...\n";
+  std::clog << "\ntest2: Use the configuration variants mechanism...\n";
+
+  // Declare a variant repository:
+  datatools::configuration::variant_repository foo_rep;
+
+  {
+    std::clog << "test2: Setup a configuration variants repository...\n";
+    // Process the configuration of the variant repository:
+    std::string foo_rep_config_filename = "${FOO_CONFIG_DIR}/variants/foo_variance.conf";
+    datatools::fetch_path_with_env(foo_rep_config_filename);
+    datatools::properties foo_rep_config;
+    foo_rep_config.read_configuration(foo_rep_config_filename);
+
+    // Initialize from a configuration file:
+    foo_rep.initialize(foo_rep_config);
+    foo_rep.tree_dump(std::clog, "Variant repository:");
+
+#if DATATOOLS_WITH_QT_GUI == 1
+    {
+      std::clog << "test2: Run a GUI...\n";
+      // Launch a Qt based dialog for the variant repository:
+      const datatools::kernel & krnl = datatools::kernel::const_instance();
+      datatools::qt::interface & iqt = datatools::qt::interface::instance(krnl.get_argc(),
+                                                                          krnl.get_argv(),
+                                                                          krnl.get_application_name().c_str());
+      // datatools::configuration::ui::variant_repository_dialog * vrep_dialog
+      //   = new datatools::configuration::ui::variant_repository_dialog(foo_rep);
+      // vrep_dialog->setAttribute(Qt::WA_DeleteOnClose);
+      // int ret = vrep_dialog->exec();
+      // // if (ret == QDialog::Accepted) {
+      // //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Accepted");
+      // // } else  {
+      // //   DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "QDialog::Rejected");
+      // // }
+      // vrep_dialog->close();
+      datatools::configuration::ui::variant_repository_dialog vrep_dialog(foo_rep);
+      int ret = vrep_dialog.exec();
+    }
+#endif // DATATOOLS_WITH_QT_GUI == 1
+
+    // Import all registries in the kernel system configuration repository
+    // and make it globally visible :
+    std::clog << "test2: Make the variant repository available from the Bayeux/datatools' kernel...\n";
+    foo_rep.system_export();
+  }
+
+  {
+    std::clog << "test2: Setup the application with variant parameters fetched from the Bayeux/datatools' kernel...\n";
+    std::string app_mconfig_filename = "${FOO_CONFIG_DIR}/bar.conf";
+    datatools::fetch_path_with_env(app_mconfig_filename);
+    datatools::multi_properties app_mconfig;
+    app_mconfig.read(app_mconfig_filename);
+
+    application app;
+    app.initialize_m(app_mconfig);
+    app.print();
+    app.run();
+  }
+  // Discard all registries in the repository from the kernel system configuration repository,
+  // making them not globally visible anymore:
+  std::clog << "test2: Remove the variant repository stuff from the Bayeux/datatools' kernel...\n";
+  foo_rep.system_discard();
+
+  std::clog << "test2: End.\n";
+  return;
+}
+
+void test3()
+{
+  std::clog << "test3: Setup the application with variant parameters fetched from the Bayeux/datatools' kernel...\n";
   std::string app_config_filename = "${FOO_CONFIG_DIR}/foo_with_variants.conf";
   datatools::fetch_path_with_env(app_config_filename);
   datatools::properties app_config;
   app_config.read_configuration(app_config_filename);
   app_config.tree_dump(std::clog, "Configuration properties (with variants):");
+
   application app;
   app.initialize(app_config);
   app.print();

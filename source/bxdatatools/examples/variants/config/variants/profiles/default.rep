@@ -7,8 +7,9 @@ gui = 0
 help = "OnlyTooltips"
 logging = "fatal"
 operator = "Visitor"
+plugin = 0
 [gui]
 antialiasing = 1
 color = 1
-color/colored/palette = 1
+color/is_colored/palette = 1
 logging = "fatal"

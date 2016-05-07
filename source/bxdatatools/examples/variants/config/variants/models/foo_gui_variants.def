@@ -15,7 +15,7 @@
 display_name              : string = "RGBA"
 
 #@description A short description of this variant model
-terse_description         : string = "The RGBA color mode"
+terse_description         : string = "RGBA color mode"
 
 
 ###############################
@@ -27,7 +27,7 @@ terse_description         : string = "The RGBA color mode"
 display_name              : string = "YMCK"
 
 #@description A short description of this variant model
-terse_description         : string = "The YMCK color mode"
+terse_description         : string = "YMCK color mode"
 
 
 #######################################
@@ -60,10 +60,10 @@ integer.default    : integer = 0
 variants : string[2] = "rgba" "ymck"
 
 variants.rgba.model       : string = "rgba.VM"
-variants.rgba.description : string = "Set of parameters of the 'rgba' color mode"
+variants.rgba.description : string = "Parameters of the 'rgba' color mode"
 
 variants.ymck.model       : string = "ymck.VM"
-variants.ymck.description : string = "Set of parameters of the 'ymck' color mode"
+variants.ymck.description : string = "Parameters of the 'ymck' color mode"
 
 #@description The integer subranges
 integer.ranges  :  string[3] = "A" "B" "C"
@@ -125,7 +125,7 @@ terse_description  : string = "The configuration parameters for the GUI color su
 parameters         : string[1] = "palette"
 
 parameters.palette.model            : string = "palette_id.PM"
-parameters.palette.description      : string = "The identifier of the color palette"
+parameters.palette.description      : string = "Color palette ID"
 
 
 ######################################
@@ -143,7 +143,7 @@ terse_description  : string = "The configuration parameters for the B/W support"
 parameters         : string[1] = "mode"
 
 parameters.mode.model       : string = "bw_mode.PM"
-parameters.mode.description : string = "The B/W mode"
+parameters.mode.description : string = "B/W mode"
 
 
 #########################################
@@ -164,20 +164,20 @@ type               : string = "boolean"
 mutability         : string = "variable"
 
 #@description The default value
-boolean.default    : boolean = 0
+boolean.default    : boolean = false
 
 #@description The variants associated to supported values
-variants : string[2] = "colored" "uncolored"
+variants : string[2] = "is_colored" "is_uncolored"
 
-variants.colored.model       : string = "with_colors.VM"
-variants.colored.description : string = "Set of parameters for the colored mode"
+variants.is_colored.model       : string = "with_colors.VM"
+variants.is_colored.description : string = "Parameters for the colored mode"
 
-variants.uncolored.model       : string = "black_white.VM"
-variants.uncolored.description : string = "Set of parameters for the uncolored mode"
+variants.is_uncolored.model       : string = "black_white.VM"
+variants.is_uncolored.description : string = "Parameters for the uncolored mode"
 
 #@description Variant associations
-boolean.variant.false : string = "uncolored"
-boolean.variant.true  : string = "colored"
+boolean.false.variant : string = "is_uncolored"
+boolean.true.variant  : string = "is_colored"
 
 
 ##############################
@@ -194,13 +194,13 @@ terse_description  : string = "The configuration parameters for the GUI"
 #@description The list of variant parameters
 parameters         : string[3] = "logging" "color" "antialiasing"
 
-parameters.logging.model       : string = "logging_priority.PM"
-parameters.logging.description : string = "The logging priority"
+parameters.logging.model       : string = "datatools::basic::logging_priority.PM"
+parameters.logging.description : string = "Logging priority"
 
 parameters.color.model         : string = "color_switch.PM"
-parameters.color.description   : string = "The activation flag of color"
+parameters.color.description   : string = "Color activation"
 
-parameters.antialiasing.model       : string = "on_off.PM"
-parameters.antialiasing.description : string = "The anti-aliasing switch"
+parameters.antialiasing.model       : string = "datatools::basic::on_off.PM"
+parameters.antialiasing.description : string = "Anti-aliasing activation"
 
 # end

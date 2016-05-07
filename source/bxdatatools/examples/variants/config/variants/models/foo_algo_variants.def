@@ -87,7 +87,7 @@ mutability         : string = "variable"
 variable.mode      : string = "interval"
 
 #@description The domain of supported values
-integer.domain     : string = "[1, 100000]"
+integer.domain     : string = "[1, 20]"
 
 #@description The default palette identifier
 integer.default    : integer = 10
@@ -132,15 +132,16 @@ terse_description  : string = "The configuration parameters for the GUI"
 parameters         : string[4] = "max_time" "accuracy" "nevents" "vt"
 
 parameters.max_time.model       : string = "computing_time.PM"
-parameters.max_time.description : string = "The maximum computing time"
+parameters.max_time.description : string = "Maximum computing time"
 
 parameters.accuracy.model       : string = "accuracy.PM"
-parameters.accuracy.description : string = "The computing accuracy order"
+parameters.accuracy.description : string = "Computing accuracy order"
 
 parameters.nevents.model        : string = "event_multiplicity.PM"
-parameters.nevents.description  : string = "The number of events to be processed"
+parameters.nevents.description  : string = "Number of events to be processed"
 
-parameters.vt.model        : string = "volume_tracker.PM"
-parameters.vt.description  : string = "Volume tracker"
+parameters.vt.model             : string = "volume_tracker.PM"
+parameters.vt.description       : string = "Volume tracker"
+
 
 # end

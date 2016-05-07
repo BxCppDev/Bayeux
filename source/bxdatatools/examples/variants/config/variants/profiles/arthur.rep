@@ -9,8 +9,9 @@ help/is_full_help/manpage = "/usr/share/man/en_GB/man1/foo.1.gz"
 help/is_full_help/url = "http://foo.org/help/toto.html"
 logging = "notice"
 operator = "King Arthur"
+plugin = 0
 [gui]
 antialiasing = 0
 color = 1
-color/colored/palette = 3
+color/is_colored/palette = 3
 logging = "fatal"
