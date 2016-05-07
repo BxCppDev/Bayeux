@@ -1,4 +1,4 @@
-/// \file datatools/test_configuration_variant_manager.cxx
+/// \file datatools/test_configuration_variant_api_0.cxx
 
 // Ourselves:
 #include <datatools/configuration/variant_registry_manager.h>
