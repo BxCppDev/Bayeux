@@ -238,21 +238,6 @@ namespace datatools {
     {
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
 
-      // Parse configuration parameters:
-      if (!has_organization()) {
-        if (config_.has_key("organization")) {
-          const std::string & org = config_.fetch_string("organization");
-          set_organization(org);
-        }
-      }
-
-      if (!has_application()) {
-        if (config_.has_key("application")) {
-          const std::string & app = config_.fetch_string("application");
-          set_application(app);
-        }
-      }
-
       std::vector<std::string> registry_config_filenames;
       if (config_.has_key("registries.config")) {
         config_.fetch("registries.config", registry_config_filenames);
@@ -289,7 +274,7 @@ namespace datatools {
         // std::string reg_filename = registry_config_filenames[i];
         // datatools::fetch_path_with_env(reg_filename);
         DT_LOG_TRACE(get_logging_priority(),
-                     "Variant " << variant_name << "' configuration file '"
+                     "Variant '" << variant_name << "' configuration file '"
                      << variant_mgr_config_file << "' registration...");
         registration_embedded(variant_mgr_config_file, "", variant_name);
       }
@@ -305,11 +290,26 @@ namespace datatools {
 
       this->enriched_base::initialize(config_, false);
 
-      load_registries(config_);
+      // Parse configuration parameters:
+      if (!has_organization()) {
+        if (config_.has_key("organization")) {
+          const std::string & org = config_.fetch_string("organization");
+          set_organization(org);
+        }
+      }
+
+      if (!has_application()) {
+        if (config_.has_key("application")) {
+          const std::string & app = config_.fetch_string("application");
+          set_application(app);
+        }
+      }
 
       if (config_.has_flag("lock")) {
         requested_lock = true;
       }
+
+      load_registries(config_);
 
       if (requested_lock) {
         lock();
