@@ -1,0 +1,137 @@
+# -*- mode: conf-unix -*-
+# @datatools:variants/models/basic/1.0/utils.def
+# Format: datatools::multi_properties
+
+#@description The definitions for generic variants
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###############################################################
+[name="datatools::basic::logging_priority.PM" type="parameter"]
+
+#@config A parameter model describing the logging priority of some components
+
+#@description The display name of this parameter
+display_name              : string = "Logging priority"
+
+#@description A short description of the parameter
+terse_description         : string = "The logging priority"
+
+#@description The type of the parameter
+type                      : string = "string"
+
+#@description The mutability of the parameter
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode             : string = "enumeration"
+
+#@description The number of supported values
+string.enumerated.size    : integer = 8
+
+# The list of supported values:
+string.enumerated_0.value : string = "fatal"
+string.enumerated_1.value : string = "critical"
+string.enumerated_2.value : string = "error"
+string.enumerated_3.value : string = "warning"
+string.enumerated_4.value : string = "notice"
+string.enumerated_5.value : string = "information"
+string.enumerated_6.value : string = "debug"
+string.enumerated_7.value : string = "trace"
+
+#@description The default value
+string.default            : string = "fatal"
+
+
+##################################################
+[name="datatools::basic::is_on.VM" type="variant"]
+
+#@config Basic variant model describing the activation of some boolean variable
+
+#@description The display name of this parameter
+display_name              : string = "On"
+
+#@description A short description of the parameter
+terse_description         : string = "Activation of a boolean parameter"
+
+
+###################################################
+[name="datatools::basic::is_off.VM" type="variant"]
+
+#@config Basic variant model describing the deactivation of some boolean variable
+
+#@description The display name of this parameter
+display_name      : string = "Off"
+
+#@description A short description of the parameter
+terse_description : string = "Deactivation of a boolean parameter"
+
+
+#####################################################
+[name="datatools::basic::off_on.PM" type="parameter"]
+
+#@config A parameter model describing an 'On/Off' status flag parameter with default 'Off'
+
+#@description The display name of this parameter
+display_name              : string = "On/Off"
+
+#@description A short description of the parameter
+terse_description         : string = "The On/Off status"
+
+#@description The type of the parameter
+type                      : string = "boolean"
+
+#@description The mutability of the parameter
+mutability                : string = "variable"
+
+#@description The default value
+boolean.default           : boolean = false
+
+#@description The list of variants
+variants : string[2] = "is_on" "is_off"
+
+variants.is_on.model        : string = "datatools::basic::is_on.VM"
+variants.is_on.description  : string = "Activation"
+
+variants.is_off.model       : string = "datatools::basic::is_off.VM"
+variants.is_off.description : string = "Deactivation (default)"
+
+boolean.true.variant  : string = "is_on"
+boolean.false.variant : string = "is_off"
+
+
+#####################################################
+[name="datatools::basic::on_off.PM" type="parameter"]
+
+#@config A parameter model describing an 'On/Off' status flag parameter with default 'On'
+
+#@description The display name of this parameter
+display_name              : string = "On/Off"
+
+#@description A short description of the parameter
+terse_description         : string = "The On/Off status"
+
+#@description The type of the parameter
+type                      : string = "boolean"
+
+#@description The mutability of the parameter
+mutability                : string = "variable"
+
+#@description The default value
+boolean.default           : boolean = true
+
+#@description The list of variants
+variants : string[2] = "is_on" "is_off"
+
+variants.is_on.model        : string = "datatools::basic::is_on.VM"
+variants.is_on.description  : string = "Activation (default)"
+
+variants.is_off.model       : string = "datatools::basic::is_off.VM"
+variants.is_off.description : string = "Deactivation"
+
+boolean.true.variant  : string = "is_on"
+boolean.false.variant : string = "is_off"
+
+
+# end of @datatools:variants/models/basic/1.0/utils.def
