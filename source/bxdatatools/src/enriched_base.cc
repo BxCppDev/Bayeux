@@ -10,10 +10,10 @@
 #include <datatools/exception.h>
 #include <datatools/properties.h>
 #include <datatools/logger.h>
-#include "datatools/i_serializable.h"
-#include "datatools/i_tree_dump.h"
-#include "datatools/object_configuration_description.h"
-#include "datatools/types.h"
+#include <datatools/i_serializable.h>
+#include <datatools/i_tree_dump.h>
+#include <datatools/object_configuration_description.h>
+#include <datatools/types.h>
 
 namespace datatools {
 
@@ -23,7 +23,7 @@ namespace datatools {
   bool enriched_base::validate_name(const std::string & candidate_name_)
   {
     static const std::string allowed_chars =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.";
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.:";
     if (candidate_name_.empty()) return false;
     if (candidate_name_.find_first_not_of(allowed_chars)
         != candidate_name_.npos) return false;
