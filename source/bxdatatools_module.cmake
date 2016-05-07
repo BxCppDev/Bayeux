@@ -473,6 +473,7 @@ set(${module_name}_MODULE_EXAMPLES
 set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/OCD/pandoc/templates/OCD2DoxygenTemplate.html
   ${module_resource_dir}/variants/models/base_variants.def
+  ${module_resource_dir}/variants/models/basic/1.0/utils.def
   )
 
 if (BAYEUX_WITH_QT_GUI)
