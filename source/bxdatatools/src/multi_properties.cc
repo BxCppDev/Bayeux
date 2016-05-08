@@ -659,12 +659,12 @@ namespace datatools {
               iss >> std::ws >> variant_path_rule;
               variant_section_only = variant_path_rule;
               if (devel) {
-                std::cerr << "Next section is active only with variant '"
+                std::cerr << "DEVEL: Next section is active only with variant '"
                           << variant_section_only << "'" << std::endl;
               }
               append_block_line = false;
               can_variant_section_only = false;
-              std::cerr << "DEVEL: *** can_variant_section_only is inhibited just after parsing a '@variant_section_only' directive." << std::endl;
+              if (devel) std::cerr << "DEVEL: *** can_variant_section_only is inhibited just after parsing a '@variant_section_only' directive." << std::endl;
             }
 
             if (token == "@description" && mprop_description.empty()) {
@@ -814,21 +814,23 @@ namespace datatools {
             c = 0;
             iss >> c;
             DT_THROW_IF (c != ']', std::logic_error, "Cannot read 'key/meta' closing symbol !");
-            std::cerr << "DEVEL: *** Found a section header  = ["
-                      << key_label << "=" << '"' << new_key << '"';
-            if (!meta_label.empty()) {
-              std::cerr << " " << meta_label << "=" << '"' << new_meta << '"';
+            if (devel) {
+              std::cerr << "DEVEL: *** Found a section header  = ["
+                        << key_label << "=" << '"' << new_key << '"';
+              if (!meta_label.empty()) {
+                std::cerr << " " << meta_label << "=" << '"' << new_meta << '"';
+              }
+              std::cerr << "]" << std::endl;
             }
-            std::cerr << "]" << std::endl;
             can_variant_section_only = true;
-            std::cerr << "DEVEL: *** can_variant_section_only is enabled = " << can_variant_section_only << std::endl;
+            if (devel) std::cerr << "DEVEL: *** can_variant_section_only is enabled = " << can_variant_section_only << std::endl;
             process_block = true;
           } else {
             // Append line to the current block stream:
             if (append_block_line) {
-              std::cerr << "DEVEL: *** appending block line = '" << line << "'" << std::endl;
+               if (devel) std::cerr << "DEVEL: *** appending block line = '" << line << "'" << std::endl;
               can_variant_section_only = false;
-              std::cerr << "DEVEL: *** can_variant_section_only is inhibited because we have found a line to be appended to a section block." << std::endl;
+               if (devel) std::cerr << "DEVEL: *** can_variant_section_only is inhibited because we have found a line to be appended to a section block." << std::endl;
               current_block_oss << line << std::endl;
             }
           }
@@ -884,7 +886,7 @@ namespace datatools {
           }
 
           if (load_it) {
-            std::cerr << "DEVEL: *** load the current section '" << current_key << "' with meta='" << current_meta << "'" << std::endl;
+            if (devel) std::cerr << "DEVEL: *** load the current section '" << current_key << "' with meta='" << current_meta << "'" << std::endl;
             this->add(current_key, current_meta);
             multi_properties::entry & e = this->grab(current_key);
             properties::config pcr;
