@@ -126,25 +126,33 @@ namespace emfield {
       datatools::invalidate(magfield_amp);
       if (setup_.has_key("magnetic_field.magnitude")) {
         magfield_amp = setup_.fetch_real("magnetic_field.magnitude");
+        DT_THROW_IF(magfield_amp < 0.0, std::logic_error,
+                    "Invalid negative magnitude!");
         if (! setup_.has_explicit_unit("magnetic_field.magnitude")) {
           magfield_amp *= b_unit;
         }
       }
 
-      int magfield_axis = geomtools::ROTATION_AXIS_INVALID;
+      geomtools::direction_type magfield_axis = geomtools::DIRECTION_INVALID;
       if (setup_.has_key("magnetic_field.axis")) {
         const std::string axis_str = setup_.fetch_string("magnetic_field.axis");
-        magfield_axis = geomtools::get_rotation_axis_from_label(axis_str);
-        DT_THROW_IF(magfield_axis == geomtools::ROTATION_AXIS_INVALID, std::logic_error, "Invalid 'magnetic_field.axis' !");
+        magfield_axis = geomtools::get_direction_from_label(axis_str);
+        DT_THROW_IF(magfield_axis == geomtools::DIRECTION_INVALID, std::logic_error, "Invalid 'magnetic_field.axis' !");
       }
 
       geomtools::vector_3d magfield_direction(0., 0., 0.);
-      if (magfield_axis == geomtools::ROTATION_AXIS_X) {
-        magfield_direction.setX(1.0);
-      } else if (magfield_axis == geomtools::ROTATION_AXIS_Y) {
-        magfield_direction.setY(1.0);
-      } else if (magfield_axis == geomtools::ROTATION_AXIS_Z) {
-        magfield_direction.setZ(1.0);
+      if (magfield_axis == geomtools::DIRECTION_XMINUS) {
+        magfield_direction.setX(-1.0);
+      } else if (magfield_axis == geomtools::DIRECTION_XPLUS) {
+        magfield_direction.setX(+1.0);
+      } else if (magfield_axis == geomtools::DIRECTION_YMINUS) {
+        magfield_direction.setY(-1.0);
+      } else if (magfield_axis == geomtools::DIRECTION_YPLUS) {
+        magfield_direction.setY(+1.0);
+      } else if (magfield_axis == geomtools::DIRECTION_ZMINUS) {
+        magfield_direction.setZ(-1.0);
+      } else if (magfield_axis == geomtools::DIRECTION_ZPLUS) {
+        magfield_direction.setZ(+1.0);
       }
 
       _uniform_magnetic_field_ = magfield_amp * magfield_direction;
