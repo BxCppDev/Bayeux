@@ -53,6 +53,9 @@ namespace datatools {
     {
     public:
 
+      /// Check if a name is valid
+      virtual bool is_name_valid(const std::string & name_) const;
+
       /// Array of pointers to daughter records
       typedef std::map<std::string, variant_record *> daughter_dict_type;
 

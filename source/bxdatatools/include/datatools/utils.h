@@ -9,7 +9,8 @@
 #include <string>
 
 // This Project:
-#include "datatools/exception.h"
+#include <datatools/exception.h>
+#include <datatools/bit_mask.h>
 
 namespace datatools {
 
@@ -118,6 +119,16 @@ namespace datatools {
   compare_result_type compare_real(double x1_, double x2_, double abs_eps_ = 0.0, double rel_eps_ = 0.0);
 
   /* String utility functions */
+
+  enum name_validation_flags {
+    NV_NO_COLON      = bit_mask::bit00, ///< Forbid the 'colon' character in names
+    NV_NO_DOT        = bit_mask::bit01, ///< Forbid the 'dot' character in names
+    NV_NO_HYPHEN     = bit_mask::bit02, ///< Forbid the 'hyphen' character in names
+    NV_NO_UNDERSCORE = bit_mask::bit03  ///< Forbid the 'underscore' character in names
+  };
+
+  /// Check if a name (object identifier) is valid using simple criteria
+  bool name_validation(const std::string & name_, uint32_t flags_ = NV_NO_HYPHEN);
 
   /// Check if a string is quoted
   /// @arg text_ the string to check

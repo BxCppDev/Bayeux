@@ -1,10 +1,10 @@
 // Ourselves:
 #include <datatools/enriched_base.h>
 
-// Standard Library
-#include <sstream>                                       // for operator<<, etc
-#include <stdexcept>                                     // for logic_error
-#include <string>                                        // for char_traits, etc
+// Standard Library:
+#include <sstream>
+#include <stdexcept>
+#include <string>
 
 // This project:
 #include <datatools/exception.h>
@@ -14,6 +14,7 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/object_configuration_description.h>
 #include <datatools/types.h>
+#include <datatools/utils.h>
 
 namespace datatools {
 
@@ -22,14 +23,15 @@ namespace datatools {
 
   bool enriched_base::validate_name(const std::string & candidate_name_)
   {
-    static const std::string allowed_chars =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.:";
-    if (candidate_name_.empty()) return false;
-    if (candidate_name_.find_first_not_of(allowed_chars)
-        != candidate_name_.npos) return false;
-    if (candidate_name_.find_first_of("0123456789.") == 0) return false;
-    if (candidate_name_[candidate_name_.size()-1] == '.') return false;
-    return true;
+    return ::datatools::name_validation(candidate_name_,
+                                        ::datatools::NV_NO_HYPHEN
+                                        | ::datatools::NV_NO_COLON);
+  }
+
+  // virtual
+  bool enriched_base::is_name_valid(const std::string & name_) const
+  {
+    return validate_name(name_);
   }
 
   // static
@@ -73,7 +75,7 @@ namespace datatools {
 
   enriched_base & enriched_base::set_name_c(const std::string & name_)
   {
-    DT_THROW_IF(! validate_name(name_),
+    DT_THROW_IF(! is_name_valid(name_),
                 std::logic_error,
                 "Invalid name '" << name_ << "' !");
     if (_name_ != name_) {
@@ -86,6 +88,12 @@ namespace datatools {
   const std::string & enriched_base::get_name() const
   {
     return _name_;
+  }
+
+  void enriched_base::reset_name()
+  {
+    _name_.clear();
+    return;
   }
 
   bool enriched_base::has_display_name() const
@@ -187,7 +195,7 @@ namespace datatools {
     reset_auxiliaries();
     _terse_description_.clear();
     _display_name_.clear();
-    _name_.clear();
+    reset_name();
     _logging_priority_ = default_logging_priority();
     return;
   }

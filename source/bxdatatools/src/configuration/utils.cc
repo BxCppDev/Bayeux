@@ -36,6 +36,7 @@
 #include <datatools/multi_properties.h>
 #include <datatools/configuration/parameter_model.h>
 #include <datatools/configuration/variant_model.h>
+#include <datatools/configuration/variant_repository.h>
 #include <datatools/command_utils.h>
 
 namespace datatools {
@@ -48,6 +49,16 @@ namespace datatools {
         return false;
       }
       return true;
+    }
+
+    bool validate_instance_name(const std::string & candidate_)
+    {
+      return ::datatools::name_validation(candidate_, ::datatools::NV_NO_HYPHEN | NV_NO_COLON);
+    }
+
+    bool validate_model_name(const std::string & candidate_)
+    {
+      return ::datatools::name_validation(candidate_, ::datatools::NV_NO_HYPHEN);
     }
 
     // static
@@ -551,6 +562,17 @@ namespace datatools {
       return cri;
     }
 
+    variant_parameter_set_comparator::variant_parameter_set_comparator() : _repository_(0)
+    {
+      return;
+    }
+
+    variant_parameter_set_comparator::variant_parameter_set_comparator(variant_repository & rep_)
+      : _repository_(&rep_)
+    {
+      return;
+    }
+
     bool variant_parameter_set_comparator::operator()(const std::string & vs1_, const std::string & vs2_) const
     {
       variant_parameter_set_type vps1;
@@ -559,10 +581,29 @@ namespace datatools {
       command::returned_info cri = vps1.parse(vs1_);
       DT_THROW_IF(cri.is_failure(), std::logic_error,
                   cri.get_error_message());
-      cri = vps1.parse(vs2_);
+      cri = vps2.parse(vs2_);
       DT_THROW_IF(cri.is_failure(), std::logic_error,
                   cri.get_error_message());
 
+      // If registries are ranked, apply the rank as a priority:
+      if (_repository_ != 0) {
+        if (_repository_->is_ranked(vps1.registry_key) && ! _repository_->is_ranked(vps2.registry_key)) {
+          return true;
+        }
+        if (! _repository_->is_ranked(vps1.registry_key) && _repository_->is_ranked(vps2.registry_key)) {
+          return false;
+        }
+        if (_repository_->is_ranked(vps1.registry_key) && _repository_->is_ranked(vps2.registry_key)) {
+          if (_repository_->get_rank(vps1.registry_key) < _repository_->get_rank(vps2.registry_key)) {
+            return true;
+          }
+          if (_repository_->get_rank(vps1.registry_key) > _repository_->get_rank(vps2.registry_key)) {
+            return false;
+          }
+        }
+      }
+
+      // Otherwise, use lexicographical compare, taking into account '/' separators:
       if (vps1.registry_key < vps2.registry_key) {
         return true;
       } else if (vps1.registry_key > vps2.registry_key) {

@@ -34,6 +34,13 @@ namespace datatools {
 
   namespace configuration {
 
+    // virtual
+    bool variant_record::is_name_valid(const std::string & name_) const
+    {
+      // std::cerr << "DEVEL: variant_record::is_name_valid: name = '" << name_ << "'" << std::endl;
+      return ::datatools::configuration::validate_model_name(name_);
+    }
+
     variant_record::variant_record()
     {
       _parameter_model_ = 0;
@@ -698,7 +705,7 @@ namespace datatools {
                     "Parameter record '" << _path_ << "' has no value set!");
         std::ostringstream value_oss;
         if (get_parameter_model().is_boolean()) {
-          io::write_boolean(value_oss, _boolean_value_);
+          io::write_boolean(value_oss, _boolean_value_, true);
         }
         if (get_parameter_model().is_integer()) {
           io::write_integer(value_oss, _integer_value_);

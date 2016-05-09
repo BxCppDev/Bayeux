@@ -160,17 +160,29 @@ namespace datatools {
 
       public slots:
 
-        /// Slot: update the Read-only flag from the  check box state
+        /// Slot: update the Read-only flag from the check box state
         void slot_update_read_only_from_check_state(int check_state_);
 
         /// Slot: update the Read-only check box state
         void slot_update_read_only_cb(bool read_only_);
+
+        /// Slot: action at registry changed
+        void slot_at_registry_changed(std::string changed_registry_);
+
+        /// Slot: action at registry data changed
+        void slot_at_registry_data_changed(std::string changed_registry_, std::string changed_data_path_);
+
+        /// Slot: update registry tabs
+        void slot_update_tabs();
 
         /// Slot: set read-only flag
         void slot_at_set_read_only(bool);
 
         /// Slot: update LEDs
         void slot_update_leds();
+
+        /// Slot: general update
+        void slot_update();
 
         /// Slot: dump
         void slot_dump() const;
@@ -204,6 +216,9 @@ namespace datatools {
         /// Construct the development part of the GUI
         void _construct_devel();
 
+        /// Compute the registries activation
+        void _compute_active_registries();
+
       private:
 
         bool _devel_mode_; //!< Development mode flag
@@ -221,6 +236,7 @@ namespace datatools {
         datatools::qt::led * _accomplished_led_; //!< LED for accomplished status
         QCheckBox *   _read_only_cb_;            //!< Check box for the read-only lock
         QTabWidget *  _registry_tabs_;           //!< Tabs for registry
+        std::map<std::string, int> _tab_indexes_; //!< Tab indexes
         QPushButton * _dump_button_;             //!< Button for dump
         QLabel *      _logging_label_;           //!< Label for logging
         QComboBox *   _logging_combo_;           //!< Combo to select the logging prority

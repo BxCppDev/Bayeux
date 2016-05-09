@@ -72,12 +72,6 @@ namespace datatools {
       /// Reset
       void reset();
 
-      /// Return logging priority
-      datatools::logger::priority get_logging() const;
-
-      /// Set logging priority
-      void set_logging(datatools::logger::priority);
-
       /// Set the name of the top variant
       void set_top_variant_name(const std::string &);
 
@@ -121,7 +115,6 @@ namespace datatools {
     private:
 
       bool                   _initialized_;         //!< Initialization flag
-      logger::priority       _logging_;             //!< Logging priority
       multi_properties       _mp_;                  //!< Multi-container for description of configuration items
       std::set<std::string>  _property_prefixes_;   //!< List of prefixes for propreties to be preserved in configuration items
       std::string            _top_variant_name_;    //!< The name of the top variant

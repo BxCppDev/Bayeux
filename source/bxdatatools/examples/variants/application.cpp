@@ -47,11 +47,11 @@ void application::plugin::run()
   return;
 }
 
-void application::plugin::print() const
+void application::plugin::print(const std::string & indent_) const
 {
-  std::clog << "application::plugin: \n";
-  std::clog << "  logging  = '" << _logging_  << "'" << std::endl;
-  std::clog << "  dummy    = " << _dummy_ << std::endl;
+  std::clog << indent_ << "application::plugin: \n";
+  std::clog << indent_ <<"  logging  = '" << _logging_  << "'" << std::endl;
+  std::clog << indent_ <<"  dummy    = " << _dummy_ << std::endl;
   return;
 }
 
@@ -135,14 +135,14 @@ void application::algo::run()
   return;
 }
 
-void application::algo::print() const
+void application::algo::print(const std::string & indent_) const
 {
-  std::clog << "application::algo: \n";
-  std::clog << "  logging  = '" << _logging_  << "'" << std::endl;
-  std::clog << "  max_time = " << _max_time_ / CLHEP::second << " s" << std::endl;
-  std::clog << "  mode     = " << _mode_ << std::endl;
-  std::clog << "  accuracy = " << _accuracy_  << std::endl;
-  std::clog << "  nevents  = " << _nevents_ << std::endl;
+  std::clog << indent_ << "application::algo: \n";
+  std::clog << indent_ << "  logging  = '" << _logging_  << "'" << std::endl;
+  std::clog << indent_ << "  max_time = " << _max_time_ / CLHEP::second << " s" << std::endl;
+  std::clog << indent_ << "  mode     = " << _mode_ << std::endl;
+  std::clog << indent_ << "  accuracy = " << _accuracy_  << std::endl;
+  std::clog << indent_ << "  nevents  = " << _nevents_ << std::endl;
   return;
 }
 
@@ -253,17 +253,17 @@ bool application::gui::is_colored() const
   return _color_;
 }
 
-void application::gui::print() const
+void application::gui::print(const std::string & indent_) const
 {
-  std::clog << "application::gui: \n";
-  std::clog << "  logging = '" << _logging_  << "'" << std::endl;
-  std::clog << "  color = " << _color_ << std::endl;
-  std::clog << "  antialiasing = " << _antialiasing_ << std::endl;
-  std::clog << "  color_palette = " << _color_palette_ << std::endl;
-  std::clog << "  color_foreground = '" << _color_foreground_ << "'"  << std::endl;
-  std::clog << "  color_background = '" << _color_background_ << "'"  << std::endl;
-  std::clog << "  bw_mode = '" << _bw_mode_ << "'"  << std::endl;
-  std::clog << "  bw_reverse = " << _bw_reverse_ << std::endl;
+  std::clog << indent_ << "application::gui: \n";
+  std::clog << indent_ << "  logging = '" << _logging_  << "'" << std::endl;
+  std::clog << indent_ << "  color = " << _color_ << std::endl;
+  std::clog << indent_ << "  antialiasing = " << _antialiasing_ << std::endl;
+  std::clog << indent_ << "  color_palette = " << _color_palette_ << std::endl;
+  std::clog << indent_ << "  color_foreground = '" << _color_foreground_ << "'"  << std::endl;
+  std::clog << indent_ << "  color_background = '" << _color_background_ << "'"  << std::endl;
+  std::clog << indent_ << "  bw_mode = '" << _bw_mode_ << "'"  << std::endl;
+  std::clog << indent_ << "  bw_reverse = " << _bw_reverse_ << std::endl;
   return;
 }
 
@@ -282,7 +282,7 @@ application::application()
 void application::initialize_m(const datatools::multi_properties & mconfig_)
 {
   std::clog << "Initializing core (m)..." << std::endl;
-  mconfig_.tree_dump(std::clog, "Core multi-config: ", "DEBUG: ");
+  // mconfig_.tree_dump(std::clog, "Core multi-config: ", "DEBUG: ");
 
   if (mconfig_.has_section("core")) {
     const datatools::properties & core_config = mconfig_.get_section("core");
@@ -456,24 +456,24 @@ void application::run()
   return;
 }
 
-void application::print() const
+void application::print(const std::string & indent_) const
 {
-  std::clog << "application: \n";
-  std::clog << "  logging   = '" << _logging_ << "'" << std::endl;
-  std::clog << "  operator  = '" << _operator_ << "'"  << std::endl;
-  std::clog << "  help_mode = " << _help_mode_ << std::endl;
+  std::clog << indent_ << "application: \n";
+  std::clog << indent_ << "  logging   = '" << _logging_ << "'" << std::endl;
+  std::clog << indent_ << "  operator  = '" << _operator_ << "'"  << std::endl;
+  std::clog << indent_ << "  help_mode = " << _help_mode_ << std::endl;
   if (_help_mode_ == HELP_FULL) {
-    std::clog << "    full_help_url     = '" << _full_help_url_ << "'"  << std::endl;
-    std::clog << "    full_help_manpage = '" << _full_help_manpage_ << "'"  << std::endl;
+    std::clog << indent_ << "    full_help_url     = '" << _full_help_url_ << "'"  << std::endl;
+    std::clog << indent_ << "    full_help_manpage = '" << _full_help_manpage_ << "'"  << std::endl;
   }
-  _algo_.print();
-  std::clog << "  gui       = " << (_gui_ ? "yes" : "no") << std::endl;
+  _algo_.print(indent_ + "  ");
+  std::clog << indent_ << "  gui       = " << (_gui_ ? "yes" : "no") << std::endl;
   if (_gui_) {
-    _gui_->print();
+    _gui_->print(indent_ + "  ");
   }
-  std::clog << "  plugin    = " << (_plugin_ ? "yes" : "no") << std::endl;
+  std::clog << indent_ << "  plugin    = " << (_plugin_ ? "yes" : "no") << std::endl;
   if (_plugin_) {
-    _plugin_->print();
+    _plugin_->print(indent_ + "  ");
   }
   return;
 }

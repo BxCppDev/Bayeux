@@ -38,6 +38,8 @@
 #include <datatools/qt/led.h>
 
 // Third party:
+// - Boost:
+#include <boost/algorithm/string/predicate.hpp>
 // - Qt:
 #include <QTabWidget>
 #include <QString>
@@ -309,8 +311,16 @@ namespace datatools {
         top_layout2->addWidget(_repository_app_title_label_);
         top_layout2->addWidget(_repository_app_display_label_);
 
+        std::vector<std::string> registry_keys;
+        _repository_->build_ordered_registry_keys(registry_keys);
+
         // For each registry in the repository:
-        for (variant_repository::registry_dict_type::iterator i
+        for (unsigned int ikey = 0; ikey < registry_keys.size(); ikey++) {
+          const std::string & reg_name = registry_keys[ikey];
+          variant_registry & var_reg = _repository_->grab_registry(reg_name);
+          /*
+          // XXX
+          for (variant_repository::registry_dict_type::iterator i
                = _repository_->grab_registries().begin();
              i != _repository_->grab_registries().end();
              i++) {
@@ -320,6 +330,7 @@ namespace datatools {
           DT_THROW_IF(!reg_entry.is_valid(), std::logic_error,
                       "Invalid registry entry '" << reg_name << "'!");
           variant_registry & var_reg = reg_entry.grab_registry();
+          */
           // Add a new registry UI wrapper in the viewer:
           {
             registry_model_wrapper dummy(this);
@@ -334,12 +345,22 @@ namespace datatools {
             tab_title = QString::fromStdString(var_reg.get_name());
           }
           _registry_tabs_->addTab(reg_viewer, tab_title);
+          _tab_indexes_[reg_name] = ikey;
+
           QObject::connect(this,       SIGNAL(sig_repository_changed()),
                            reg_viewer, SIGNAL(sig_model_changed()));
 
           QObject::connect(reg_viewer, SIGNAL(sig_model_changed()),
-                           this,       SLOT(slot_update_leds()));
+                           this,       SLOT(slot_update()));
+
+          QObject::connect(&reg_viewer->grab_registry_tree_model(), SIGNAL(sig_registry_data_changed(std::string,std::string)),
+                           this,       SLOT(slot_at_registry_data_changed(std::string,std::string)));
+
+          QObject::connect(&reg_viewer->grab_registry_tree_model(), SIGNAL(sig_registry_changed(std::string)),
+                           this,       SLOT(slot_at_registry_changed(std::string)));
         }
+
+
 
         QObject::connect(this, SIGNAL(sig_read_only_changed(bool)),
                          this, SLOT(slot_update_read_only_cb(bool))
@@ -358,7 +379,7 @@ namespace datatools {
         main_layout->addLayout(top_layout2);
         main_layout->addWidget(_registry_tabs_);
 
-        slot_update_leds();
+        slot_update();
 
         if (_devel_mode_) {
           _construct_devel();
@@ -373,6 +394,88 @@ namespace datatools {
         }
 
         setLayout(main_layout);
+        return;
+      }
+
+      void variant_repository_viewer::slot_at_registry_changed(std::string changed_registry_name_)
+      {
+        // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_changed: "
+        //           << "Registry '" << changed_registry_name_ << "' has changed!"
+        //           << std::endl;
+        slot_update();
+        return;
+      }
+
+      void variant_repository_viewer::slot_update()
+      {
+        slot_update_tabs();
+        slot_update_leds();
+        return;
+      }
+
+      void variant_repository_viewer::slot_update_tabs()
+      {
+        for (variant_repository::registry_dict_type::const_iterator ireg = _repository_->get_registries().begin();
+             ireg != _repository_->get_registries().end();
+             ireg++) {
+          const std::string & the_registry_name = ireg->first;
+          const variant_repository::registry_entry & re = ireg->second;
+          int reg_tab_index = _tab_indexes_.find(the_registry_name)->second;
+          bool active = _repository_->is_active_registry(the_registry_name);
+          // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_update_tabs: "
+          //           << (active? "Enable" : "Disable") << " tab at index [" << reg_tab_index << "] for registry '" << the_registry_name << "'!"
+          //           << std::endl;
+          _registry_tabs_->setTabEnabled(reg_tab_index, active);
+        }
+        return;
+      }
+
+      void variant_repository_viewer::slot_at_registry_data_changed(std::string changed_registry_name_,
+                                                                    std::string changed_data_path_)
+      {
+        // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
+        //           << "Data '" << changed_data_path_ << "' in registry '" << changed_registry_name_ << "' has changed!"
+        //           << std::endl;
+        // Compute consequence on depender registries...
+        for (variant_repository::registry_dict_type::const_iterator ireg = _repository_->get_registries().begin();
+             ireg != _repository_->get_registries().end();
+             ireg++) {
+          const std::string & the_registry_name = ireg->first;
+          if (the_registry_name == changed_registry_name_) {
+            continue;
+          }
+          const variant_repository::registry_entry & re = ireg->second;
+          if (!re.has_dependencies()) {
+            continue;
+          }
+          const std::list<std::string> & the_registry_dependencies = re.get_dependencies();
+          for (std::list<std::string>::const_iterator idep = the_registry_dependencies.begin();
+               idep != the_registry_dependencies.end();
+               idep++) {
+            const std::string & the_registry_dependency = *idep;
+            int found_colon = the_registry_dependency.find(':');
+            std::string dependee_registry = the_registry_dependency.substr(0, found_colon);
+            std::string local_variant_path = the_registry_dependency.substr(found_colon + 1);
+            if (dependee_registry != changed_registry_name_) {
+              continue;
+            }
+            // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
+            //           << "Registry '" << the_registry_name << "' has some dependency from changed registry '" << changed_registry_name_ << "'!"
+            //           << std::endl;
+            if (boost::starts_with(local_variant_path, changed_data_path_+ "/")) {
+              bool active = _repository_->is_active_registry(the_registry_name);
+              // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
+              //           << "Registry '" << the_registry_name << "' is" << (active? "" : " not") << " active!"
+              //           << std::endl;
+              int reg_tab_index = _tab_indexes_.find(the_registry_name)->second;
+              // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
+              //           << (active? "Enable" : "Disable") << " tab at index [" << reg_tab_index << "] for registry '" << the_registry_name << "'!"
+              //           << std::endl;
+              _registry_tabs_->setTabEnabled(reg_tab_index, active);
+            }
+          }
+
+        }
         return;
       }
 

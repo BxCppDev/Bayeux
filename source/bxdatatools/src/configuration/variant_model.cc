@@ -37,6 +37,13 @@ namespace datatools {
 
   namespace configuration {
 
+    // virtual
+    bool variant_model::is_name_valid(const std::string & name_) const
+    {
+      // std::cerr << "DEVEL: variant_model::is_name_valid: name = '" << name_ << "'" << std::endl;
+      return ::datatools::configuration::validate_model_name(name_);
+    }
+
     variant_model::variant_model()
     {
       _initialized_ = false;
@@ -136,7 +143,7 @@ namespace datatools {
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Configuration variant model '" << get_name() << "' is locked !");
-      DT_THROW_IF(!validate_item_name(parameter_name_), std::logic_error,
+      DT_THROW_IF(!validate_instance_name(parameter_name_), std::logic_error,
                   "Parameter name '" << parameter_name_ << "' is not allowed "
                   << "in configuration variant model '" << get_name() << "'!");
       DT_THROW_IF(!parameter_model_handle_, std::logic_error,

@@ -65,6 +65,9 @@ namespace datatools {
     {
     public:
 
+      /// Check if a name is valid
+      virtual bool is_name_valid(const std::string & name_) const;
+
       /// Dictionary of variant physicals
       typedef std::map<std::string, variant_physical> variant_dict_type;
 

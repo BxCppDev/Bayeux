@@ -52,6 +52,9 @@ namespace datatools {
     {
     public:
 
+      /// Check if a name is valid
+      virtual bool is_name_valid(const std::string & name_) const;
+
       /// Default constructeur
       variant_physical();
 

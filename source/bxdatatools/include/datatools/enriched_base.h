@@ -58,6 +58,9 @@ namespace datatools {
     /// Validate a name
     static bool validate_name(const std::string & candidate_name_);
 
+    /// Check if a name is valid
+    virtual bool is_name_valid(const std::string & name_) const;
+
     /// Default constructor
     enriched_base();
 
@@ -81,6 +84,9 @@ namespace datatools {
 
     /// Return the name
     const std::string & get_name() const;
+
+    /// Reset the name
+    void reset_name();
 
     /// Check if the display name is empty
     bool has_display_name() const;

@@ -61,7 +61,8 @@ namespace datatools {
       /// Return the default root variant name
       static const std::string & default_top_variant_name();
 
-      // typedef std::map<std::string, variant_record *> alias_dict_type;
+      /// Check if a name is valid
+      virtual bool is_name_valid(const std::string & name_) const;
 
       /// Default constructor
       variant_registry();
@@ -141,6 +142,11 @@ namespace datatools {
       command::returned_info
       cmd_is_active_variant(const std::string & variant_path_,
                             bool & active_) const;
+
+      /// Check if a variant exists
+      command::returned_info
+      cmd_has_variant(const std::string & variant_path_,
+                            bool & existing_) const;
 
     protected:
 

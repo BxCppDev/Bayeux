@@ -202,20 +202,18 @@ namespace datatools {
         QObject::connect(this, SIGNAL(sig_logging_changed(datatools::logger::priority)),
                          this, SLOT(slot_update_logging_combo(datatools::logger::priority)));
 
-        QObject::connect(_registry_tree_model_, SIGNAL(sig_registry_data_changed()),
+        // XXX
+        QObject::connect(_registry_tree_model_, SIGNAL(sig_registry_data_changed(std::string,std::string)),
                          this,                  SLOT(slot_update_leds()));
 
-        QObject::connect(_registry_tree_model_, SIGNAL(sig_registry_data_changed()),
+        QObject::connect(_registry_tree_model_, SIGNAL(sig_registry_data_changed(std::string,std::string)),
                          this,                  SIGNAL(sig_model_changed()));
 
-        QObject::connect(_registry_tree_model_, SIGNAL(sig_registry_changed()),
+        QObject::connect(_registry_tree_model_, SIGNAL(sig_registry_changed(std::string)),
                          this,                  SIGNAL(sig_model_changed()));
 
         QObject::connect(this, SIGNAL(sig_model_changed()),
                          this, SLOT(slot_expand_only_active()));
-
-        // QObject::connect(_registry_tree_model_, SIGNAL(dataChanged(const QModelIndex &,const QModelIndex &)),
-        //                  this, SLOT(slot_compute_expand2(const QModelIndex &,const QModelIndex &)));
 
         QObject::connect(_registry_tree_model_, SIGNAL(dataChanged(const QModelIndex &,const QModelIndex &)),
                          this,                  SLOT(slot_expand_only_active()));

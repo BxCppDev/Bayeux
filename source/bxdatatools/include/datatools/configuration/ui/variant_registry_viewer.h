@@ -168,7 +168,7 @@ namespace datatools {
       private:
 
         bool _devel_mode_; //!< Development mode flag
-        datatools::logger::priority   _logging_;        //!< Logging priority
+        datatools::logger::priority   _logging_;             //!< Logging priority
         variant_registry_tree_model * _registry_tree_model_; //!< The variant registry tree model
         QLabel *      _registry_name_title_label_;   //!< Label for the title of the registry name
         QLabel *      _registry_name_display_label_; //!< Display the registry name

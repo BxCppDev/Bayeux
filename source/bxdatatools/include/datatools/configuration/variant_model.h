@@ -61,6 +61,9 @@ namespace datatools {
     {
     public:
 
+      /// Check if a name is valid
+      virtual bool is_name_valid(const std::string & name_) const;
+
       /// Dictionary of parameter physicals
       typedef std::map<std::string, parameter_physical> parameter_dict_type;
       typedef std::map<std::string, int> ranked_parameter_dict_type;

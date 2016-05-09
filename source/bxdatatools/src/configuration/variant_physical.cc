@@ -29,6 +29,13 @@ namespace datatools {
 
   namespace configuration {
 
+    // virtual
+    bool variant_physical::is_name_valid(const std::string & name_) const
+    {
+      // std::cerr << "DEVEL: variant_physical::is_name_valid: name = '" << name_ << "'" << std::endl;
+      return ::datatools::configuration::validate_instance_name(name_);
+    }
+
     variant_physical::variant_physical()
     {
       return;

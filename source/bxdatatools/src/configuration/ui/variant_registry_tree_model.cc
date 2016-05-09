@@ -816,7 +816,7 @@ namespace datatools {
           }
 
         }
-       return QVariant();
+        return QVariant();
       }
 
       bool variant_registry_tree_model::setData(const QModelIndex & index_,
@@ -1016,7 +1016,7 @@ namespace datatools {
                                                   const std::string & registry_name_)
       {
         DT_LOG_TRACE(_logging_, "Entering...");
-        std::string top_variant_name =  variant_registry::default_top_variant_name();
+        std::string top_variant_name = variant_registry::default_top_variant_name();
         // if (top_variant_name.empty()) {
         //   top_variant_name = registry_.get_top_variant_name();
         // }
@@ -1040,13 +1040,16 @@ namespace datatools {
           } else {
             set_registry_name(std::string("Variant registry [") + top_record.get_variant_model().get_name() + ']');
           }
+        } else {
+          set_registry_name(rn);
         }
-        set_registry_name(rn);
         //slot_store_to_restore_buffer();
         // Each time a data is changed, one should signal that some status should be re-fetched
         // from the registry (example: the 'variant_registry::is_accomplished' method )
         connect(this, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-                this, SIGNAL(sig_registry_data_changed()));
+                this, SLOT(slot_broadcast_data_change(const QModelIndex &, const QModelIndex &)));
+        // connect(this, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+        //         this, SIGNAL(sig_registry_data_changed()));
         DT_LOG_TRACE(_logging_, "Exiting.");
         return;
       }
@@ -1058,15 +1061,13 @@ namespace datatools {
 
       variant_registry & variant_registry_tree_model::grab_registry()
       {
-        DT_THROW_IF(!has_registry(), std::logic_error,
-                    "Model has no registry!");
+        DT_THROW_IF(!has_registry(), std::logic_error, "Model has no registry!");
         return *_registry_;
       }
 
       const variant_registry & variant_registry_tree_model::get_registry() const
       {
-        DT_THROW_IF(!has_registry(), std::logic_error,
-                    "Model has no registry!");
+        DT_THROW_IF(!has_registry(), std::logic_error, "Model has no registry!");
         return *_registry_;
       }
 
@@ -1109,6 +1110,25 @@ namespace datatools {
         return;
       }
 
+      void variant_registry_tree_model::slot_broadcast_data_change(const QModelIndex & i0_,
+                                                                   const QModelIndex & i1_)
+      {
+         // std::cerr << "DEVEL: variant_registry_tree_model::slot_broadcast_data_change: for registry='"
+         //           << _registry_name_ << "'"
+         //           << std::endl;
+         tree_item * node = node_from_index(i0_);
+         const variant_record & vrec = node->get_record();
+         if (vrec.is_parameter()) {
+           std::string data_path = vrec.get_path();
+           // std::cerr << "DEVEL: variant_registry_tree_model::slot_broadcast_data_change: "
+           //           << "data '" << data_path << "' has changed in registry='"
+           //           << _registry_name_ << "'"
+           //           << std::endl;
+           emit sig_registry_data_changed(_registry_name_, data_path);
+         }
+         return;
+      }
+
       void variant_registry_tree_model::slot_load_from_reg_file(const QString & in_reg_filename_)
       {
          std::string reg_file_name = in_reg_filename_.toStdString();
@@ -1128,7 +1148,7 @@ namespace datatools {
          }
          // std::cerr << "DEVEL: registry was loaded from file '" << reg_file_name << "'" << std::endl;
          this->endResetModel();
-         emit sig_registry_changed();
+         emit sig_registry_changed(_registry_name_);
          return;
       }
 
@@ -1205,7 +1225,7 @@ namespace datatools {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Failed to load repository from restore buffer!");
         }
         this->endResetModel();
-        emit sig_registry_changed();
+        emit sig_registry_changed(_registry_name_);
         return;
       }
 

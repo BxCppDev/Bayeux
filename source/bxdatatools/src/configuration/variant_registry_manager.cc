@@ -64,7 +64,6 @@ namespace datatools {
 
     void variant_registry_manager::_set_default()
     {
-      _logging_ = logger::PRIO_FATAL;
       return;
     }
 
@@ -132,7 +131,7 @@ namespace datatools {
                       std::logic_error,
                       "Property prefix to be preserved in configuration item must end with a dot '.' ("
                       << prefix << " ) !");
-          DT_LOG_DEBUG(_logging_, "Property prefix '" << prefix << "' will be exported");
+          DT_LOG_DEBUG(get_logging_priority(), "Property prefix '" << prefix << "' will be exported");
           add_property_prefix(prefix);
         }
       }
@@ -157,10 +156,10 @@ namespace datatools {
            i++) {
         std::string item_filename = *i;
         datatools::fetch_path_with_env(item_filename);
-        DT_LOG_DEBUG(_logging_,
+        DT_LOG_DEBUG(get_logging_priority(),
                      "Loading configuration item definition file '" << item_filename << "'... ");
         load(item_filename);
-        DT_LOG_DEBUG(_logging_,
+        DT_LOG_DEBUG(get_logging_priority(),
                      "Configuration items were loaded from file '" << item_filename << "'.");
       }
 
@@ -168,17 +167,6 @@ namespace datatools {
       _mp_.reset();
 
       _initialized_ = true;
-      return;
-    }
-
-    datatools::logger::priority variant_registry_manager::get_logging() const
-    {
-      return _logging_;
-    }
-
-    void variant_registry_manager::set_logging(datatools::logger::priority lp_)
-    {
-      _logging_ = lp_;
       return;
     }
 
@@ -253,7 +241,7 @@ namespace datatools {
       std::string file_name = items_config_file_;
       datatools::fetch_path_with_env(file_name);
       _mp_.read(file_name);
-      // DT_LOG_TRACE(_logging_, "Variant manager multi-configuration: ");
+      // DT_LOG_TRACE(get_logging_priority(), "Variant manager multi-configuration: ");
       // _mp_.tree_dump(std::cerr,"", "TRACE: ");
       return;
     }
@@ -266,7 +254,7 @@ namespace datatools {
     void variant_registry_manager::_construct_()
     {
 
-      if (_logging_ == logger::PRIO_TRACE) {
+      if (get_logging_priority() == logger::PRIO_TRACE) {
         _mp_.tree_dump(std::cerr, "Configuration items definitions:", "TRACE: ");
       }
 

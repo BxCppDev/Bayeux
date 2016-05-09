@@ -230,6 +230,9 @@ namespace datatools {
     void import_configuration_registry(configuration::variant_repository & rep_,
                                        const std::string & registry_name_ = "");
 
+    /// Check if the kernel has configuration variant registries
+    bool has_configuration_registries() const;
+
     /// Check for an external registry given its name
     bool has_external_configuration_registry(const std::string & registry_name_) const;
 

@@ -47,6 +47,7 @@ namespace datatools {
 
     // Forward declarations:
     class parameter_model;
+    class variant_repository;
     class variant_model;
     class item;
 
@@ -59,7 +60,15 @@ namespace datatools {
     /// Dictionary of items
     typedef std::map<std::string, item> item_dict_type;
 
+    /// \deprecated
+    /// \see validate_instance_name
     bool validate_item_name(const std::string &);
+
+    /// Validate the name of an instance
+    bool validate_instance_name(const std::string &);
+
+    /// Validate the name of a model
+    bool validate_model_name(const std::string &);
 
     /// \brief Configuration item with an embedded parameter or variant model handle through a smart pointer
     class item {
@@ -243,7 +252,10 @@ namespace datatools {
 
     /// \brief Comparator functor used to sort variant parameters by registry and path
     struct variant_parameter_set_comparator {
+      variant_parameter_set_comparator();
+      variant_parameter_set_comparator(variant_repository &);
       bool operator()(const std::string & vs1_, const std::string & vs2_) const;
+      variant_repository * _repository_;
     };
 
   }  // end of namespace configuration

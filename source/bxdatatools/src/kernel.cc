@@ -820,8 +820,11 @@ namespace datatools {
         // "foo:value/case_small/color" and "foo:value/case_small/count" parameters.
         //
         std::vector<std::string> variant_sets = _params_.variant_sets;
+        for (size_t i = 0; i < variant_sets.size(); i++) {
+          DT_LOG_TRACE(_logging_, "Unordered variant parameter set : '" << variant_sets[i] << "'");
+        }
 
-        configuration::variant_parameter_set_comparator comp;
+        configuration::variant_parameter_set_comparator comp(*_variant_repository_);
         std::sort(variant_sets.begin(), variant_sets.end(), comp);
         for (size_t i = 0; i < variant_sets.size(); i++) {
           DT_LOG_TRACE(_logging_, "Ordered variant parameter set : '" << variant_sets[i] << "'");
@@ -1122,6 +1125,14 @@ namespace datatools {
     return;
   }
 
+  bool kernel::has_configuration_registries() const
+  {
+    if (has_variant_repository()) {
+      return get_variant_repository().get_registries().size() > 0;
+    }
+    return false;
+  }
+
   void kernel::clear_configuration_repository()
   {
     DT_THROW_IF(!has_variant_repository(), std::logic_error,
@@ -1181,7 +1192,11 @@ namespace datatools {
         import_it = true;
       }
       if (import_it) {
-        grab_variant_repository().registration_external(reg);
+        int rank  = -1;
+        if (rep_.is_ranked(reg_name)) {
+          rank = rep_.get_rank(reg_name);
+        }
+        grab_variant_repository().registration_external(reg, reg_name, rank);
       }
     }
     return;
@@ -1199,7 +1214,7 @@ namespace datatools {
     if (! kernel::is_instantiated()) {
       static boost::scoped_ptr<datatools::kernel> _kernel_handler;
       if (! _kernel_handler) {
-        // Allocate the new global kernel and initialize it
+        // Allocate the new global kernel and initialize it:
         _kernel_handler.reset(new datatools::kernel);
       }
     }

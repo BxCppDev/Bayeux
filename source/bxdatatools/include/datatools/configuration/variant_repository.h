@@ -33,7 +33,9 @@
 
 // Standard library:
 #include <string>
+#include <list>
 #include <map>
+#include <vector>
 
 // Third party:
 // - Boost:
@@ -69,19 +71,31 @@ namespace datatools {
         bool is_valid() const;
         void set_external_registry(variant_registry &);
         void set_rank(int);
-        int get_rank() const;
+        int  get_rank() const;
         bool has_rank() const;
+        bool has_dependencies() const;
+        bool depends_on(const std::string & variant_path_) const;
+        void add_dependency(const std::string & variant_path_);
+        void remove_dependency(const std::string & variant_path_);
+        const std::list<std::string> & get_dependencies() const;
+
       private:
+
         int _rank_;
         boost::shared_ptr<variant_registry_manager> _embedded_manager_; //!< Embedded registry factory/manager
         boost::shared_ptr<variant_registry> _embedded_registry_; //!< Embedded registry
         variant_registry                  * _external_registry_; //!< Handle to an external registry
+        std::list<std::string>              _dependencies_; //!< List of dependencies
+
         friend class variant_repository;
+
       };
 
       /// Type of dictionary of configuration variant registries
       typedef std::map<std::string, registry_entry> registry_dict_type;
-      //typedef std::map<std::string, int>            registry_rank_type;
+      typedef std::map<int, std::string> ranked_dict_type;
+
+      virtual bool is_name_valid(const std::string & name_) const;
 
       /// Default constructor
       variant_repository();
@@ -148,22 +162,48 @@ namespace datatools {
                                  const std::string & top_variant_name_ = "",
                                  const std::string & registry_name_ = "",
                                  const std::string & registry_display_name_ = "",
-                                 const std::string & registry_terse_description_ = "");
+                                 const std::string & registry_terse_description_ = "",
+                                 int rank_ = -1);
 
       /// Registration of an external registry
       void registration_external(variant_registry & external_registry_,
-                                 const std::string & registry_name_ = "");
+                                 const std::string & registry_name_ = "",
+                                 int rank_ = -1);
 
       /// Unregistration of some specific registry
       void unregistration(const std::string & registry_name_);
 
-      /// Clear registries
+      /// Built the ordered list of registry keys
+      void build_ordered_registry_keys(std::vector<std::string> & keys_) const;
+
+      /// Add a registry dependency
+      void add_registry_dependency(const std::string & registry_name_,
+                                   const std::string & variant_path_);
+
+      /// Remove a registry dependency
+      void remove_registry_dependency(const std::string & registry_name_,
+                                      const std::string & variant_path_);
+
+      /// Check if a registry has a dependency
+      bool has_registry_dependency(const std::string & registry_name_,
+                                   const std::string & variant_path_) const;
+
+      /// Check if a registry is ranked
+      bool is_ranked(const std::string & registry_name_) const;
+
+      /// Return the rank of a registry
+      int get_rank(const std::string & registry_name_) const;
+
+      /// Check if a variant registry is active
+      bool is_active_registry(const std::string & registry_key_) const;
+
+      /// Clear all registries
       void clear_registries();
 
-      /// Unregistration of external registries
+      /// Unregistration of external registries only
       void external_registries_unregistration();
 
-      /// Check if all registries are accomplished
+      /// Check if all embedded registries are accomplished
       bool is_accomplished() const;
 
       /// Check if the repository is locked
@@ -193,6 +233,11 @@ namespace datatools {
                             const std::string & variant_path_,
                             bool & active_) const;
 
+      /// Check if a variant registry is active
+      command::returned_info
+      cmd_is_active_registry(const std::string & registry_key_,
+                             bool & active_) const;
+
       /// Export to the system variant repository
       void system_export(uint32_t flags_ = 0);
 
@@ -201,7 +246,10 @@ namespace datatools {
 
     protected:
 
-      registry_entry & _add_entry(const std::string & registry_name_);
+      registry_entry & _add_entry(const std::string & registry_name_, int rank_ = -1);
+
+      /// Deprecated configuration mode for embedded variant registries
+      void _legacy_load_registries(const datatools::properties & config_);
 
     private:
 
@@ -210,6 +258,8 @@ namespace datatools {
       std::string        _application_;  //!< The name of the application
       bool               _locked_;       //!< Lock flag
       registry_dict_type _registries_;   //!< Dictionary of configuration variant registries
+      ranked_dict_type   _ranked_;       //!< Dictionary of ranked configuration variant registries
+      std::vector<std::string> _unranked_; //!< List of unranked configuration variant registries
 
     };
 
@@ -217,7 +267,7 @@ namespace datatools {
 
 }  // end of namespace datatools
 
-#endif // DATATOOLS_CONFIGURATION_VARIANT_REGISTRY_H
+#endif // DATATOOLS_CONFIGURATION_VARIANT_REPOSITORY_H
 
 /*
 ** Local Variables: --

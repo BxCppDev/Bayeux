@@ -45,7 +45,7 @@ public:
     void run();
 
     /// Basic print
-    void print() const;
+    void print(const std::string & indent_ = "") const;
 
   private:
 
@@ -80,7 +80,7 @@ public:
     void run();
 
     /// Basic print
-    void print() const;
+    void print(const std::string & indent_ = "") const;
 
     /// Check color mode
     bool is_colored() const;
@@ -119,7 +119,7 @@ public:
     void run();
 
     /// Basic print
-    void print() const;
+    void print(const std::string & indent_ = "") const;
 
   private:
 
@@ -150,7 +150,7 @@ public:
   void run();
 
   /// Basic print
-  void print() const;
+  void print(const std::string & indent_ = "") const;
 
 private:
 

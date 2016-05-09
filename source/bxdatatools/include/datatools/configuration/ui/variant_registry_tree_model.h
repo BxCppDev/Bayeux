@@ -260,6 +260,9 @@ namespace datatools {
 
       public slots:
 
+        /// Slot: broadcast data change
+        void slot_broadcast_data_change(const QModelIndex &, const QModelIndex &);
+
         /// Slot: store the current status to a buffer
         void slot_store_to_restore_buffer(std::string * buffer_ = 0);
 
@@ -280,9 +283,9 @@ namespace datatools {
 
         void sig_logging_changed();
 
-        void sig_registry_changed();
+        void sig_registry_changed(std::string);
 
-        void sig_registry_data_changed();
+        void sig_registry_data_changed(std::string, std::string);
 
       private:
 

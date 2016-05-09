@@ -94,12 +94,20 @@ namespace datatools {
   }
 
   void io::write_boolean(std::ostream& a_out,
-                         bool a_bool)
+                         bool a_bool, bool text_)
   {
     if (a_bool) {
-      a_out << "1";
+      if (text_) {
+        a_out << "true";
+      } else {
+        a_out << "1";
+      }
     } else {
-      a_out << "0";
+      if (text_) {
+        a_out << "false";
+      } else {
+        a_out << "0";
+      }
     }
     return;
   }

@@ -259,13 +259,15 @@ namespace datatools {
 
     void ascii_io::store_repository(std::ostream & out_, const variant_repository & vrep_) const
     {
-      for (variant_repository::registry_dict_type::const_iterator i = vrep_.get_registries().begin();
-           i != vrep_.get_registries().end();
-           i++) {
-        const std::string & re_name = i->first;
-        const variant_repository::registry_entry & re = i->second;
-        out_ << "[" << re_name << "]" << std::endl;
-        store_registry(out_, re.get_registry());
+      std::vector<std::string> reg_keys;
+      vrep_.build_ordered_registry_keys(reg_keys);
+      for (unsigned int ireg = 0; ireg < reg_keys.size(); ireg++) {
+        const std::string & reg_name = reg_keys[ireg];
+        if (!vrep_.is_active_registry(reg_name)) {
+          continue;
+        }
+        out_ << "[" << reg_name << "]" << std::endl;
+        store_registry(out_, vrep_.get_registry(reg_name));
       }
       return;
     }
@@ -289,7 +291,7 @@ namespace datatools {
           std::string word;
           std::istringstream line_iss(line);
           line_iss >> word;
-          if (word.size() == 0) {
+          if (word.size() == 0 || word[0] == '#') {
             continue;
           }
           DT_LOG_TRACE(_logging_, "word = '" << word << "'");
@@ -375,7 +377,7 @@ namespace datatools {
 
     const variant_repository & variant_preprocessor::get_repository() const
     {
-      DT_THROW_IF(!has_repository(), std::logic_error, "No defined variant repository!");
+      DT_THROW_IF(!has_repository(), std::logic_error, "No variant repository is defined!");
       return *_repository_;
     }
 

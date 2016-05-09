@@ -125,7 +125,7 @@ namespace datatools {
     static bool read_boolean(std::istream&, bool&);
 
     /// Write a boolean
-    static void write_boolean(std::ostream& a_out, bool a_bool);
+    static void write_boolean(std::ostream& a_out, bool a_bool, bool a_text = false);
 
     /// Parse an integer
     static bool read_integer(std::istream&, int&);

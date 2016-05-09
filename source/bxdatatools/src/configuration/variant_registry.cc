@@ -51,6 +51,13 @@ namespace datatools {
       return _n;
     }
 
+    // virtual
+    bool variant_registry::is_name_valid(const std::string & name_) const
+    {
+      // std::cerr << "DEVEL: variant_registry::is_name_valid: name = '" << name_ << "'" << std::endl;
+      return ::datatools::configuration::validate_instance_name(name_);
+    }
+
     variant_registry::variant_registry()
     {
       _initialized_ = false;
@@ -87,6 +94,7 @@ namespace datatools {
       _initialized_ = false;
       _top_variant_name_.clear();
       _records_.clear();
+      this->enriched_base::reset();
       return;
     }
 
@@ -197,7 +205,6 @@ namespace datatools {
       top_variant_record.set_active(true);
       _build_parameter_records_from_variant(top_variant_model, &top_variant_record);
       _top_variant_name_ = top_variant_name;
-
 
       if (!name_.empty()) {
         set_name(name_);
@@ -322,6 +329,16 @@ namespace datatools {
       std::vector<std::string> unset_paths;
       list_of_unset_parameters(unset_paths);
       return unset_paths.size() == 0;
+    }
+
+    command::returned_info
+    variant_registry::cmd_has_variant(const std::string & variant_path_,
+                                      bool & existing_) const
+    {
+      command::returned_info cri;
+      cri.set_error_code(command::CEC_SUCCESS);
+      existing_ = has_variant_record(variant_path_);
+      return cri;
     }
 
     command::returned_info
