@@ -798,6 +798,30 @@ namespace geomtools {
     return (axis_ >= ROTATION_AXIS_X) && (axis_ <= ROTATION_AXIS_Z);
   }
 
+  direction_type get_direction_from_label(const string & s_)
+  {
+    if (s_ == "-x" || s_ == "back")   return DIRECTION_XMINUS;
+    if (s_ == "+x" || s_ == "front")  return DIRECTION_XPLUS;
+    if (s_ == "-y" || s_ == "left")   return DIRECTION_YMINUS;
+    if (s_ == "+y" || s_ == "right")  return DIRECTION_YPLUS;
+    if (s_ == "-z" || s_ == "bottom") return DIRECTION_ZMINUS;
+    if (s_ == "+z" || s_ == "top")    return DIRECTION_ZPLUS;
+    return DIRECTION_INVALID;
+  }
+
+  std::string get_direction_label(direction_type axis_)
+  {
+    switch (axis_) {
+    case DIRECTION_XMINUS : return "-x";
+    case DIRECTION_XPLUS  : return "+x";
+    case DIRECTION_YMINUS : return "-y";
+    case DIRECTION_YPLUS  : return "+y";
+    case DIRECTION_ZMINUS : return "-z";
+    case DIRECTION_ZPLUS  : return "+z";
+    }
+    return "";
+  }
+
   int get_rotation_axis_from_label (const string & s_)
   {
     if (s_ == "x") return ROTATION_AXIS_X;

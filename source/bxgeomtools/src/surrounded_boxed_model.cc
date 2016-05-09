@@ -264,7 +264,7 @@ namespace geomtools {
 
     // loop over surrounding models:
     {
-      int ipos = BACK;
+      int ipos = DIRECTION_BACK;
       for (std::vector<std::string>::const_iterator ilabel = position_labels().begin ();
            ilabel != position_labels().end ();
            ilabel++, ipos++){
@@ -356,7 +356,7 @@ namespace geomtools {
       const double g2zmin = the_SD2.get_zmin ();
       const double g2zmax = the_SD2.get_zmax ();
 
-      if (position == BACK) {
+      if (position == DIRECTION_BACK) {
         dx0 = std::abs (g2xmax - g2xmin);
         x0 -= dx0;
         mmy0.add (g2ymin);
@@ -364,7 +364,7 @@ namespace geomtools {
         mmz0.add (g2zmin);
         mmz1.add (g2zmax);
       }
-      if (position == FRONT) {
+      if (position == DIRECTION_FRONT) {
         dx1 = std::abs (g2xmax - g2xmin);
         x1 += dx1;
         mmy0.add (g2ymin);
@@ -372,7 +372,7 @@ namespace geomtools {
         mmz0.add (g2zmin);
         mmz1.add (g2zmax);
       }
-      if (position == LEFT) {
+      if (position == DIRECTION_LEFT) {
         dy0 = std::abs (g2ymax - g2ymin);
         y0 -= dy0;
         mmx0.add (g2xmin);
@@ -380,7 +380,7 @@ namespace geomtools {
         mmz0.add (g2zmin);
         mmz1.add (g2zmax);
       }
-      if (position == RIGHT) {
+      if (position == DIRECTION_RIGHT) {
         dy1 = std::abs (g2ymax - g2ymin);
         y1 += dy1;
         mmx0.add (g2xmin);
@@ -388,7 +388,7 @@ namespace geomtools {
         mmz0.add (g2zmin);
         mmz1.add (g2zmax);
       }
-      if (position == BOTTOM) {
+      if (position == DIRECTION_BOTTOM) {
         dz0 = std::abs (g2zmax - g2zmin);
         z0 -= dz0;
         mmx0.add (g2xmin);
@@ -396,7 +396,7 @@ namespace geomtools {
         mmy0.add (g2ymin);
         mmy1.add (g2ymax);
       }
-      if (position == TOP) {
+      if (position == DIRECTION_TOP) {
         dz1 = std::abs (g2zmax - g2zmin);
         z1 += dz1;
         mmx0.add (g2xmin);
@@ -519,27 +519,27 @@ namespace geomtools {
       const double g2ymax = the_SD2.get_ymax ();
       const double g2zmin = the_SD2.get_zmin ();
       const double g2zmax = the_SD2.get_zmax ();
-      if (position == BACK) {
+      if (position == DIRECTION_BACK) {
         xi += the_SD.get_xmin ();
         xi -= g2xmax;
       }
-      if (position == FRONT) {
+      if (position == DIRECTION_FRONT) {
         xi += the_SD.get_xmax ();
         xi -= g2xmin;
       }
-      if (position == LEFT) {
+      if (position == DIRECTION_LEFT) {
         yi += the_SD.get_ymin ();
         yi -= g2ymax;
       }
-      if (position == RIGHT) {
+      if (position == DIRECTION_RIGHT) {
         yi += the_SD.get_ymax ();
         yi -= g2ymin;
       }
-      if (position == BOTTOM) {
+      if (position == DIRECTION_BOTTOM) {
         zi += the_SD.get_zmin ();
         zi -= g2zmax;
       }
-      if (position == TOP) {
+      if (position == DIRECTION_TOP) {
         zi += the_SD.get_zmax ();
         zi -= g2zmin;
       }
@@ -744,7 +744,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::surrounded_boxed_model, ocd_)
       ;
   }
 
-  int ipos = geomtools::BACK;
+  int ipos = geomtools::DIRECTION_BACK;
   for (std::vector<std::string>::const_iterator ilabel
          = geomtools::surrounded_boxed_model::position_labels().begin ();
        ilabel != geomtools::surrounded_boxed_model::position_labels().end ();

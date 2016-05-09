@@ -33,12 +33,12 @@ namespace datatools {
       DR_TYPE_IMPLEMENT_REFLECTION_HEAD(::geomtools::direction_type, DT_UNUSED(tag_) )
       {
         DR_ENUM_DECLARE(::geomtools::direction_type)
-          .value("back",   geomtools::BACK)
-          .value("front",  geomtools::FRONT)
-          .value("left",   geomtools::LEFT)
-          .value("right",  geomtools::RIGHT)
-          .value("bottom", geomtools::BOTTOM)
-          .value("top",    geomtools::TOP)
+          .value("back",   geomtools::DIRECTION_BACK)
+          .value("front",  geomtools::DIRECTION_FRONT)
+          .value("left",   geomtools::DIRECTION_LEFT)
+          .value("right",  geomtools::DIRECTION_RIGHT)
+          .value("bottom", geomtools::DIRECTION_BOTTOM)
+          .value("top",    geomtools::DIRECTION_TOP)
           ;
         return;
       }

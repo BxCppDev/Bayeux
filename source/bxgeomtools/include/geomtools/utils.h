@@ -146,24 +146,35 @@ namespace geomtools {
 
   //! Direction flags
   enum direction_flags_type {
-    DIRECTION_NONE   = 0x0,
-    DIRECTION_BACK   = datatools::bit_mask::bit00, ///< -x direction
-    DIRECTION_FRONT  = datatools::bit_mask::bit01, ///< +x direction
-    DIRECTION_LEFT   = datatools::bit_mask::bit02, ///< -y direction
-    DIRECTION_RIGHT  = datatools::bit_mask::bit03, ///< +y direction
-    DIRECTION_BOTTOM = datatools::bit_mask::bit04, ///< -z direction
-    DIRECTION_TOP    = datatools::bit_mask::bit05  ///< +z direction
+    DIRECTION_FLAGS_NONE   = 0x0,
+    DIRECTION_FLAGS_BACK   = datatools::bit_mask::bit00, ///< -x direction
+    DIRECTION_FLAGS_FRONT  = datatools::bit_mask::bit01, ///< +x direction
+    DIRECTION_FLAGS_LEFT   = datatools::bit_mask::bit02, ///< -y direction
+    DIRECTION_FLAGS_RIGHT  = datatools::bit_mask::bit03, ///< +y direction
+    DIRECTION_FLAGS_BOTTOM = datatools::bit_mask::bit04, ///< -z direction
+    DIRECTION_FLAGS_TOP    = datatools::bit_mask::bit05  ///< +z direction
   };
 
   //! Direction type
   enum direction_type {
-    BACK             = 0, ///< -x direction
-    FRONT            = 1, ///< +x direction
-    LEFT             = 2, ///< -y direction
-    RIGHT            = 3, ///< +y direction
-    BOTTOM           = 4, ///< -z direction
-    TOP              = 5  ///< +z direction
+    DIRECTION_INVALID = -1,                ///< Invalid direction
+    DIRECTION_BACK    =  0,                ///< -x direction
+    DIRECTION_XMINUS  =  DIRECTION_BACK,   ///< -x direction
+    DIRECTION_FRONT   =  1,                ///< +x direction
+    DIRECTION_XPLUS   =  DIRECTION_FRONT,  ///< +x direction
+    DIRECTION_LEFT    =  2,                ///< -y direction
+    DIRECTION_YMINUS  =  DIRECTION_LEFT,   ///< -y direction
+    DIRECTION_RIGHT   =  3,                ///< +y direction
+    DIRECTION_YPLUS   =  DIRECTION_RIGHT,  ///< +y direction
+    DIRECTION_BOTTOM  =  4,                ///< -y direction
+    DIRECTION_ZMINUS  =  DIRECTION_BOTTOM, ///< -y direction
+    DIRECTION_TOP     =  5,                ///< +z direction
+    DIRECTION_ZPLUS   =  DIRECTION_TOP     ///< +z direction
   };
+
+  direction_type get_direction_from_label(const std::string &);
+
+  std::string get_direction_label(direction_type);
 
   enum vertex_1d_type {
     VERTEX_NONE     = 0x0,
