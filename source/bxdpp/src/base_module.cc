@@ -144,12 +144,11 @@ namespace dpp {
 
   base_module::~base_module()
   {
-    DT_THROW_IF(_initialized,
-                std::logic_error,
-                "Module '" << _name << "' "
-                << "still has its 'initialized' flag on ! "
-                << "Possible bug !"
-                );
+    if (is_initialized()) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Module '" << _name << "' "
+                   << "still has its 'initialized' flag on ! "
+                   << "Possible bug !");
+    }
     return;
   }
 
