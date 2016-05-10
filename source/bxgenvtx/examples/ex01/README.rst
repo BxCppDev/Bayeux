@@ -93,7 +93,56 @@ Quick start
 	       --prng-seed 314159 \
 	       --vertex-generator "all_mezzanine_pcb_bulk.vg" \
                --output-file "genvtx_ex01_vertices.txt" \
-	       --visu --tiny
+	       --visu
+
+   * Generate vertices and serialize a 'display data' object containing
+     some vertexes::
+
+      shell> bxgenvtx_production \
+               --geometry-manager config/geometry/manager.conf \
+               --vertex-generator-manager config/vertex/manager.conf \
+               --shoot \
+	       --number-of-vertices 10000 \
+	       --prng-seed 314159 \
+	       --vertex-generator "all_mezzanine_pcb_bulk.vg" \
+               --output-file "genvtx_ex01_vertices.txt" \
+	       --visu-max-counts 100 \
+	       --visu-spot-color "magenta" \
+	       --visu-output-file "vertices-dd-magenta.data.gz"
+
+      shell> bxgenvtx_production \
+               --geometry-manager config/geometry/manager.conf \
+               --vertex-generator-manager config/vertex/manager.conf \
+               --shoot \
+	       --number-of-vertices 10000 \
+	       --prng-seed 314159 \
+	       --vertex-generator "all_mezzanine_pcb_bulk.vg" \
+               --output-file "genvtx_ex01_vertices.txt" \
+	       --visu-max-counts 30 \
+	       --visu-spot-color "red" \
+	       --visu-output-file "vertices-dd-red.data.gz"
+
+   * Redisplay geometry plus vertexes::
+
+      shell> bxgeomtools_inspector \
+                  --manager-config config/geometry/manager.conf
+      geomtools> ldd -n "vtx-red" -i "vertices-dd-red.data.gz"
+      geomtools> ldd -n "vtx-magenta" -i "vertices-dd-magenta.data.gz"
+      geomtools> pdd
+      List of embedded display data :
+      vtx-magenta
+      vtx-red
+
+      geomtools> d [1200:6.1]
+
+      Press [Enter] to continue...
+      geomtools> d -xy world
+
+      Press [Enter] to continue...
+      geomtools> d -xy -nodd world
+      geomtools> cdd
+      geomtools> q
+
 
 7. Clean::
 

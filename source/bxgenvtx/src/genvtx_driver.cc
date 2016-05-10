@@ -14,6 +14,7 @@
 #include <datatools/clhep_units.h>
 #include <datatools/library_loader.h>
 #include <datatools/configuration/io.h>
+#include <datatools/io_factory.h>
 // - Bayeux/mygsl:
 #include <mygsl/rng.h>
 // - Bayeux/geomtools:
@@ -24,6 +25,7 @@
 #include <geomtools/manager.h>
 #include <geomtools/gnuplot_drawer.h>
 #include <geomtools/gnuplot_draw.h>
+#include <geomtools/color.h>
 
 // This project:
 #include <genvtx/genvtx_config.h>
@@ -74,8 +76,13 @@ namespace genvtx {
     action_visu = false;
     visu_spot_zoom = 1.0;
     visu_spot_size = 1.0 * CLHEP::mm;
+    visu_spot_color = geomtools::color::magenta();
     visu_object.clear();
     visu_max_counts = 10000;
+
+    // - Visu: store display data
+    action_visu_store_dd = false;
+    visu_store_dd_out.clear();
 
     return;
   }
@@ -98,9 +105,24 @@ namespace genvtx {
     std::cerr << " - action_visu      = " << action_visu << std::endl;
     std::cerr << " - visu_spot_zoom   = " << visu_spot_zoom << std::endl;
     std::cerr << " - visu_spot_size   = " << visu_spot_size << std::endl;
+    std::cerr << " - visu_spot_color  = '" << visu_spot_color << "'" << std::endl;
     std::cerr << " - visu_object      = '" << visu_object << "'" << std::endl;
     std::cerr << " - visu_max_counts  = '" << visu_max_counts << "'" << std::endl;
+    std::cerr << " - action_visu_store_dd  = " << action_visu_store_dd << std::endl;
+    std::cerr << " - visu_store_dd_out     = '" << visu_store_dd_out << "'" << std::endl;
     return;
+  }
+
+  bool genvtx_driver_params::check() const
+  {
+    if (action_visu_store_dd) {
+      if (!VtxOutputFile.empty() && !visu_store_dd_out.empty()) {
+        if (VtxOutputFile == visu_store_dd_out) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   // ------------------------------------------------
@@ -173,9 +195,35 @@ namespace genvtx {
 
   void genvtx_driver::run()
   {
+    bool devel = false;
+    if (devel) std::cerr << "DEVEL: genvtx_driver::run: Entering..." << std::endl;
     DT_THROW_IF (!is_initialized(),
                  std::logic_error,
                  "Driver is not initialized !");
+    if (devel) {
+      std::cerr << "DEVEL: genvtx_driver::run: Params = " << std::endl;
+      _params_.dump();
+    if (_action_ & genvtx_driver::ACTION_LIST) {
+      std::cerr << "DEVEL: ACTION_LIST = " << 1 << std::endl;
+    } else  {
+      std::cerr << "DEVEL: ACTION_LIST = " << 0 << std::endl;
+    }
+    if (_action_ & genvtx_driver::ACTION_SHOOT) {
+      std::cerr << "DEVEL: ACTION_SHOOT = " << 1 << std::endl;
+    } else  {
+      std::cerr << "DEVEL: ACTION_SHOOT = " << 0 << std::endl;
+    }
+    if (_action_ & genvtx_driver::ACTION_VISU) {
+      std::cerr << "DEVEL: ACTION_VISU = " << 1 << std::endl;
+    } else  {
+      std::cerr << "DEVEL: ACTION_VISU = " << 0 << std::endl;
+    }
+    if (_action_ & genvtx_driver::ACTION_VISU_STORE_DD) {
+      std::cerr << "DEVEL: ACTION_VISU_STORE_DD = " << 1 << std::endl;
+    } else  {
+      std::cerr << "DEVEL: ACTION_VISU_STORE_DD = " << 0 << std::endl;
+    }
+    }
 
     // A display object that contains vertex rendering infos:
     geomtools::display_data dd;
@@ -278,14 +326,24 @@ namespace genvtx {
           }
           *fout.get() << std::endl;
         }
-        if (_action_ & genvtx_driver::ACTION_VISU) {
+        if ((_action_ & genvtx_driver::ACTION_VISU)
+            || (_action_ & genvtx_driver::ACTION_VISU_STORE_DD)) {
+          std::string visu_spot_color = _params_.visu_spot_color;
+          if (visu_spot_color.empty()) {
+            visu_spot_color = geomtools::color::magenta();
+          } else {
+            geomtools::color::code_type color_code = geomtools::color::get_color(visu_spot_color);
+            if (color_code == geomtools::color::COLOR_INVALID) {
+              visu_spot_color = geomtools::color::magenta();
+            }
+          }
           if (_params_.visu_max_counts == 0 || vtx_counter < _params_.visu_max_counts) {
             std::ostringstream vertex_name_oss;
             vertex_name_oss << "vertex_" << vtx_counter;
             geomtools::display_data::display_item & vertex_spot_DI
               = dd.add_static_item (vertex_name_oss.str(),
                                     "group::vertex",
-                                    "magenta");
+                                    visu_spot_color);
             geomtools::placement vertex_plcmt;
             vertex_plcmt.set_translation(vertex_pos);
             vertex_spot.generate_wires(vertex_spot_DI.wires, vertex_plcmt);
@@ -316,9 +374,24 @@ namespace genvtx {
       int visu_depth = 100;
       int view_code = GPD.draw(*_geo_mgr_, _params_.visu_object, visu_depth);
       if (view_code != 0) {
-        DT_LOG_ERROR(_logging_,"Cannot display the object with label '" << _geo_mgr_->get_world_name () << "' !");
+        DT_LOG_ERROR(_logging_,"Cannot display the object with label '" << _geo_mgr_->get_world_name() << "' !");
       }
     }
+
+    if ((_action_ & genvtx_driver::ACTION_SHOOT)
+        && (_action_ & genvtx_driver::ACTION_VISU_STORE_DD)) {
+      if (devel) std::cerr << "DEVEL: genvtx_driver::run: Visu store dd..." << std::endl;
+       datatools::data_writer writer;
+      std::string visu_store_dd_out = _params_.visu_store_dd_out;
+      // if (visu_store_dd_out.empty()) {
+      //   visu_store_dd_out = "vertexes-as-display-data.data.gz";
+      // }
+      datatools::fetch_path_with_env(visu_store_dd_out);
+      writer.init(visu_store_dd_out, datatools::using_multi_archives);
+      writer.store(dd);
+    }
+
+    if (devel) std::cerr << "DEVEL: genvtx_driver::run: Exiting." << std::endl;
     return;
   }
 
@@ -328,11 +401,14 @@ namespace genvtx {
                  std::logic_error,
                  "Driver is already initialized !");
     _params_ = params_;
+    std::cerr << "DEVEL: genvtx_driver::setup: " << std::endl;
+    _params_.dump();
     return;
   }
 
   void genvtx_driver::initialize()
   {
+    std::cerr << "DEVEL: genvtx_driver::initialize: Entering..." << std::endl;
     DT_THROW_IF (is_initialized(),
                  std::logic_error,
                  "Driver is already initialized !");
@@ -342,6 +418,7 @@ namespace genvtx {
     if (_logging_ >= datatools::logger::PRIO_DEBUG) {
       _params_.dump();
     }
+    _params_.dump();
 
     datatools::library_loader LL(_params_.LL_config);
     BOOST_FOREACH (const std::string & dll_name, _params_.LL_dlls) {
@@ -438,17 +515,31 @@ namespace genvtx {
     if (_params_.action_visu) {
       _action_ |= genvtx_driver::ACTION_VISU;
     }
+    std::cerr << "DEVEL: _params_.action_visu_store_dd     = " << _params_.action_visu_store_dd << std::endl;
+    std::cerr << "DEVEL: _params_.action_visu_store_dd_out = '" << _params_.visu_store_dd_out << "'" << std::endl;
     if (_action_ & genvtx_driver::ACTION_SHOOT) {
       DT_THROW_IF(_params_.nshoots <= 0, std::range_error,
                   "Invalid number of vertexes to be generated (" << _params_.nshoots << ") !");
+      if (!_params_.visu_store_dd_out.empty()) {
+        std::cerr << "DEVEL: _params_.action_visu_store_dd not empty..." << std::endl;
+        _params_.action_visu_store_dd = true;
+        std::cerr << "DEVEL: _params_.action_visu_store_dd (2) = " << _params_.action_visu_store_dd << std::endl;
+      }
+      if (_params_.action_visu_store_dd) {
+        DT_THROW_IF(_params_.visu_store_dd_out.empty(), std::logic_error,
+                    "Missing display data store output filename!");
+        _action_ |= genvtx_driver::ACTION_VISU_STORE_DD;
+      }
     }
 
     _initialized_ = true;
+    std::cerr << "DEVEL: genvtx_driver::initialize: Exiting." << std::endl;
     return;
   }
 
   void genvtx_driver::reset()
   {
+    std::cerr << "DEVEL: genvtx_driver::reset: Entering..." << std::endl;
     DT_THROW_IF (!is_initialized(),
                  std::logic_error,
                  "Driver is not initialized !");
@@ -459,6 +550,7 @@ namespace genvtx {
     _geo_mgr_.reset();
     _params_.reset();
     _logging_ = datatools::logger::PRIO_WARNING;
+    std::cerr << "DEVEL: genvtx_driver::reset: Exiting." << std::endl;
     return;
   }
 

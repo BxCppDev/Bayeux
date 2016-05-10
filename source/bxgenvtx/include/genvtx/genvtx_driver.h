@@ -42,6 +42,9 @@ namespace genvtx {
     /// Rough print
     void dump() const;
 
+    /// Check
+    bool check() const;
+
   public:
     bool        help;
     std::string logging_label;
@@ -67,6 +70,11 @@ namespace genvtx {
     int         visu_max_counts;
     double      visu_spot_zoom;
     double      visu_spot_size;
+    std::string visu_spot_color;
+
+    bool        action_visu_store_dd;
+    std::string visu_store_dd_out;
+
   };
 
   /// \brief The genvtx driver
@@ -91,27 +99,49 @@ namespace genvtx {
       ACTION_LIST      =  0x1,
       ACTION_SHOW      =  0x2,
       ACTION_SHOOT     =  0x4,
-      ACTION_VISU      =  0x8
+      ACTION_VISU      =  0x8,
+      ACTION_VISU_STORE_DD = 0x10
     };
+
+    /// Default constructor
     genvtx_driver();
+
+    /// Constructor
     genvtx_driver(const genvtx_driver_params &);
+
+    /// Destructor
     ~genvtx_driver();
+
+    /// Check initialization status
     bool is_initialized() const;
+
+    /// Load the configuration parameters:
     void setup(const genvtx_driver_params &);
+
+    /// Initialize
     void initialize();
+
+    /// Reset
     void reset();
+
+    /// Run the driver
     void run();
+
+    /// Return the logging priority threshold
     datatools::logger::priority get_logging() const;
+
+    /// Return the configuration parameter
     const genvtx_driver_params & get_params() const;
 
   private:
-    genvtx_driver_params _params_;         /// Configuration parameters
-    bool _initialized_;                    /// Initialization flags
-    datatools::logger::priority _logging_; /// Logger priority threshold
-    uint32_t _action_;                     /// Action bit set
-    boost::scoped_ptr<geomtools::manager> _geo_mgr_; /// Geometry manager handle
-    boost::scoped_ptr<mygsl::rng> _prng_;            /// PRNG handle
-    boost::scoped_ptr<genvtx::manager> _vtx_mgr_;    /// Vertex generator manager handle
+
+    genvtx_driver_params _params_;         ///< Configuration parameters
+    bool _initialized_;                    ///< Initialization flags
+    datatools::logger::priority _logging_; ///< Logger priority threshold
+    uint32_t _action_;                     ///< Action bit set
+    boost::scoped_ptr<geomtools::manager> _geo_mgr_; ///< Geometry manager handle
+    boost::scoped_ptr<mygsl::rng> _prng_;            ///< PRNG handle
+    boost::scoped_ptr<genvtx::manager> _vtx_mgr_;    ///< Vertex generator manager handle
 
   };
 

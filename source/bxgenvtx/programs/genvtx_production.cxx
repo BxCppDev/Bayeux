@@ -25,6 +25,8 @@
 #include <datatools/configuration/io.h>
 // - Bayeux/materials:
 #include <materials/materials.h>
+// - Bayeux/geomtools:
+#include <geomtools/color.h>
 // - Bayeux/genvtx:
 #include <genvtx/genvtx_driver.h>
 
@@ -52,9 +54,9 @@ namespace genvtx {
 
     int command_initialize(const std::vector<std::string> & argv_);
 
-    int command_run(const std::vector<std::string> & argv_);
+    // int command_run(const std::vector<std::string> & argv_);
 
-    int command_reset(const std::vector<std::string> & argv_);
+    // int command_reset(const std::vector<std::string> & argv_);
 
   };
 
@@ -177,7 +179,7 @@ namespace genvtx {
     const std::string APP_NAME = "bxgenvtx_production";
 #endif // GEOMTOOLS_STANDALONE == 1
 
-    out_ << "Usage : " << APP_NAME << " [OPTION]...                                   \n";
+    out_ << "Usage : " << APP_NAME << " [OPTION]...                                      \n";
     out_ << "                                                                            \n";
     out_ << "  Inspect and generate vertices from a vertex generator                     \n";
     out_ << "  managed by a vertex generator manager associated to a                     \n";
@@ -201,7 +203,8 @@ namespace genvtx {
     out_ << "       --vertex-generator-manager \"${CONFIG_DIR}/vertex/manager.conf\" \\  \n";
     out_ << "       --show --vertex-generator \"scintillator_block.vg\"                  \n";
     out_ << "                                                                            \n";
-    out_ << "  Generate some vertices, store then in a file and display:                 \n";
+    out_ << "  Generate some vertices, store them in a file, display them and            \n";
+    out_ << "  serialize a display data object:                                          \n";
     out_ << "                                                                            \n";
     out_ << "     " << APP_NAME << " \\                                                   \n";
     out_ << "       --geometry-manager \"${CONFIG_DIR}/geometry/manager.conf\" \\        \n";
@@ -211,7 +214,8 @@ namespace genvtx {
     out_ << "       --number-of-vertices 10000 \\                                        \n";
     out_ << "       --vertex-generator \"scintillator_block.vg\" \\                      \n";
     out_ << "       --output-file \"vertices.data\"    \\                                \n";
-    out_ << "       --visu                                                               \n";
+    out_ << "       --visu \\                                                            \n";
+    out_ << "       --visu-output-file \"vertices-visu-dd.data.gz\"                      \n";
     out_ << "                                                                            \n";
     out_ << "                                                                            \n";
     return;
@@ -386,6 +390,32 @@ namespace genvtx {
        "Example :                            \n"
        "  --visu-spot-size \"3.0 mm\"          "
        )
+      ("visu-spot-color",
+       po::value<std::string>(&params_.visu_spot_color)
+       ->default_value(geomtools::color::magenta())
+       ,
+       "Set the color of the randomly \n"
+       "generated vertices to be displayed.  \n"
+       "Example :                            \n"
+       "  --visu-spot-color \"magenta\"        "
+       )
+      ("visu-output",
+       po::value<bool>(&params_.action_visu_store_dd)
+       ->zero_tokens()
+       //->default_value(false)
+       ,
+       "Activate display data storage.       \n"
+       "Example :                            \n"
+       "  --visu-output                        "
+       )
+      ("visu-output-file",
+       po::value<std::string>(&params_.visu_store_dd_out),
+       "Set the output file name where to store  \n"
+       "generated vertices converted in some     \n"
+       "display data object.                     \n"
+       "Example :                                \n"
+       "  --visu-output-file \"vertexes-dd.data\" "
+       )
       ;
     return;
   }
@@ -456,7 +486,7 @@ namespace genvtx {
     return EXIT_SUCCESS;
   }
 
-
+  /*
   int cli::command_reset(const std::vector<std::string> & argv_)
   {
     namespace po = boost::program_options;
@@ -495,7 +525,9 @@ namespace genvtx {
     }
     return EXIT_SUCCESS;
   }
+  */
 
+  /*
   int cli::command_run(const std::vector<std::string> & argv_)
   {
     namespace po = boost::program_options;
@@ -528,6 +560,7 @@ namespace genvtx {
         return EXIT_SUCCESS;
       }
 
+      std::
       driver().run();
     }
     catch (std::exception & error) {
@@ -540,5 +573,6 @@ namespace genvtx {
     }
     return EXIT_SUCCESS;
   }
+*/
 
 } // namespace genvtx
