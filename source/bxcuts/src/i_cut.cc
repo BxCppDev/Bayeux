@@ -171,11 +171,11 @@ namespace cuts {
   {
     DT_LOG_TRACE(_logging, "Destruction.");
     _reset();
-    DT_THROW_IF(is_initialized(),
-                std::logic_error,
-                "Cut '" << _name << "' "
-                << "still has its 'initialized' flag on ! "
-                << "Possible bug !");
+    if (is_initialized()) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Cut '" << _name << "' "
+                   << "still has its 'initialized' flag on ! "
+                   << "Possible bug !");
+    }
     DT_LOG_TRACE(_logging, "Destruction done.");
   }
 
