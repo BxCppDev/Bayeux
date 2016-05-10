@@ -267,11 +267,12 @@ namespace emfield {
   // Destructor :
   base_electromagnetic_field::~base_electromagnetic_field()
   {
-    DT_THROW_IF(is_initialized(),
-                std::logic_error,
-                "EM field still has its 'initialized' flag on !" <<
-                "The '::reset' method has not been invoked from the daughter class' destructor !" <<
-                "Possible bug !");
+    if (is_initialized()) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS,
+                   "EM field still has its 'initialized' flag on !" <<
+                   "The '::reset' method has not been invoked from the daughter class' destructor !" <<
+                   "Possible bug !");
+    }
     return;
   }
 
