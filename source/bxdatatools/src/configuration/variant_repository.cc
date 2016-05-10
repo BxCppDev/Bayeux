@@ -118,7 +118,7 @@ namespace datatools {
 
     bool variant_repository::registry_entry::has_dependencies() const
     {
-      return _dependencies_.size() >= 0;
+      return _dependencies_.size() > 0;
     }
 
     bool variant_repository::registry_entry::depends_on(const std::string & variant_path_) const
