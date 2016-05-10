@@ -413,6 +413,7 @@ std::istream& operator>>(std::istream& in, integer_range& a_range) {
   std::vector<std::string> tokens;
   static std::string separators;
   if (separators.empty()) {
+    separators += range_tools::token_separator2;
     separators += range_tools::token_separator;
   }
   boost::split(tokens, word, boost::is_any_of(separators));
@@ -482,7 +483,7 @@ std::ostream& operator<<(std::ostream& out, const integer_range& a_range) {
     } else {
       out << range_tools::token_open_excluded;
     }
-    out << range_tools::token_separator;
+    out << range_tools::token_separator2;
     if (a_range.is_upper_bounded()) {
       out << a_range.get_upper_bound();
       if (a_range.is_upper_included()) {

@@ -561,7 +561,7 @@ namespace datatools {
       } else {
         a_out << range_tools::token_open_excluded;
       }
-      a_out << range_tools::token_separator;
+      a_out << range_tools::token_separator2;
       if (a_range.is_upper_bounded()) {
         a_out << a_range.get_upper() / unit;
         if (!display_unit.empty()) {
@@ -643,6 +643,7 @@ namespace datatools {
     std::vector<std::string> tokens;
     static std::string separators;
     if (separators.empty()) {
+      separators += range_tools::token_separator2;
       separators += range_tools::token_separator;
     }
     boost::split(tokens, word, boost::is_any_of(separators));

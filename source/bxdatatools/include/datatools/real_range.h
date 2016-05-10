@@ -120,36 +120,36 @@ namespace datatools {
     // Collections of 'make-methods' :
 
     /// Build a singleton
-    // "[2,2]"
+    // "[2;2]"
     void make_singleton(double);
 
     /// Build an empty interval
-    // "(0,0)"
+    // "(0;0)"
     void make_empty();
 
     /// Build a fully bounded positive interval starting at 0
-    // "[0,)"
+    // "[0;)"
     void make_positive_unbounded();
 
     /// Build a fully bounded  negative interval ending at 0
-    // "(,0]"
+    // "(;0]"
     void make_negative_unbounded();
 
     /// Build a half bounded interval with no upper bound
-    // "[lower,)" or "(lower,[
+    // "[lower;)" or "(lower;[
     void make_upper_unbounded(double from, bool inclusive = true);
 
     /// Build a half bounded interval with no lower bound
-    // "(,upper]" or "(,upper)"
+    // "(;upper]" or "(;upper)"
     void make_lower_unbounded(double to, bool inclusive = true);
 
     /// Build a full unbounded interval with no lower or upper bounds
-    // "(,)"
+    // "(;)"
     void make_unbounded();
 
     /// Build a fully bounded interval with specific lower and upper bounds
-    // "(lower,upper]" or "(lower,upper)"
-    // "[lower,upper]" or "[lower,upper)"
+    // "(lower;upper]" or "(lower;upper)"
+    // "[lower;upper]" or "[lower;upper)"
     void make_bounded(double from, double to,
                       bool lower_included = true,
                       bool upper_included = true);

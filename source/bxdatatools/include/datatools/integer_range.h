@@ -123,32 +123,32 @@ namespace datatools {
     // Collections of 'make-methods' :
 
     /// Build an empty interval
-    // "(0,0)"
+    // "(0;0)"
     void make_empty();
 
     /// Build a fully bounded interval
-    // "[min_int,max_int]"
+    // "[min_int;max_int]"
     void make_full();
 
     /// Build a fully bounded positive interval starting at 0
-    // "[0,max_int]"
+    // "[0;max_int]"
     void make_full_positive();
 
     /// Build a fully bounded  negative interval ending at 0
-    // "[min_int,0]"
+    // "[min_int;0]"
     void make_full_negative();
 
     /// Build a half bounded interval with no upper bound
-    // "[lower,)" or "(lower,)
+    // "[lower;)" or "(lower;)
     void make_upper_unbounded(value_type from, bool inclusive = true);
 
     /// Build a half bounded interval with no lower bound
-    // "(,upper]" or "(,upper)"
+    // "(;upper]" or "(;upper)"
     void make_lower_unbounded(value_type to, bool inclusive = true);
 
     /// Build a fully bounded interval with specific lower and upper bounds
-    // "(lower,upper]" or "(lower,upper)"
-    // "[lower,upper]" or "[lower,upper)"
+    // "(lower;upper]" or "(lower;upper)"
+    // "[lower;upper]" or "[lower;upper)"
     void make_bounded(value_type from, value_type to,
                       bool lower_included = true,
                       bool upper_included = true);
