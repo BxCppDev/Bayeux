@@ -53,71 +53,68 @@ namespace cuts {
     return _logging;
   }
 
-  bool i_cut::is_initialized () const
+  bool i_cut::is_initialized() const
   {
     return _initialized_;
   }
 
-  void i_cut::_set_initialized (bool a_initialized)
+  void i_cut::_set_initialized(bool a_initialized)
   {
     _initialized_ = a_initialized;
   }
 
-  bool i_cut::has_name () const
+  bool i_cut::has_name() const
   {
-    return ! _name.empty ();
+    return ! _name.empty();
   }
 
-  const std::string &
-  i_cut::get_name () const
+  const std::string & i_cut::get_name() const
   {
     return _name;
   }
 
-  void
-  i_cut::set_name (const std::string & a_new_value)
+  void i_cut::set_name(const std::string & a_new_value)
   {
     DT_THROW_IF(is_initialized(),
                 std::logic_error,
                 "Cut '" << _name << "' "
                 << "is already initialized ! "
                 << "Cannot change the name !");
-    _set_name (a_new_value);
+    _set_name(a_new_value);
     return;
   }
 
-  void
-  i_cut::_set_name (const std::string & a_new_value)
+  void i_cut::_set_name(const std::string & a_new_value)
   {
     _name = a_new_value;
   }
 
-  bool i_cut::has_description () const
+  bool i_cut::has_description() const
   {
-    return ! _description.empty ();
+    return ! _description.empty();
   }
 
-  const std::string & i_cut::get_description () const
+  const std::string & i_cut::get_description() const
   {
     return _description;
   }
 
-  void i_cut::set_description (const std::string & a_description)
+  void i_cut::set_description(const std::string & a_description)
   {
     _description = a_description;
   }
 
-  bool i_cut::has_version () const
+  bool i_cut::has_version() const
   {
-    return ! _version.empty ();
+    return ! _version.empty();
   }
 
-  const std::string & i_cut::get_version () const
+  const std::string & i_cut::get_version() const
   {
     return _version;
   }
 
-  void i_cut::set_version (const std::string & a_version)
+  void i_cut::set_version(const std::string & a_version)
   {
     _version = a_version;
   }
@@ -160,14 +157,14 @@ namespace cuts {
     _number_of_rejected_entries_ = 0;
   }
 
-  i_cut::i_cut (datatools::logger::priority p)
+  i_cut::i_cut(datatools::logger::priority p)
   {
     _initialized_ = false;
     _logging = p;
     _set_defaults();
   }
 
-  i_cut::~i_cut ()
+  i_cut::~i_cut()
   {
     DT_LOG_TRACE(_logging, "Destruction.");
     _reset();
@@ -179,21 +176,21 @@ namespace cuts {
     DT_LOG_TRACE(_logging, "Destruction done.");
   }
 
-  void i_cut::print (std::ostream & a_out) const
+  void i_cut::print(std::ostream & a_out) const
   {
-    this->tree_dump (a_out, "Base cut :");
+    this->tree_dump(a_out, "Base cut :");
   }
 
-  void i_cut::tree_dump (std::ostream & a_out ,
-                         const std::string & a_title,
-                         const std::string & a_indent,
-                         bool a_inherit) const
+  void i_cut::tree_dump(std::ostream & a_out ,
+                        const std::string & a_title,
+                        const std::string & a_indent,
+                        bool a_inherit) const
   {
     std::string indent;
-    if (! a_indent.empty ()) {
+    if (! a_indent.empty()) {
       indent = a_indent;
     }
-    if ( ! a_title.empty () )  {
+    if ( ! a_title.empty() )  {
       a_out << indent << a_title << std::endl;
     }
     a_out << indent << datatools::i_tree_dumpable::tag
@@ -210,8 +207,8 @@ namespace cuts {
       a_out << indent << datatools::i_tree_dumpable::tag
             << "Supported types : " << std::endl;
       for (std::set<const std::type_info *>::const_iterator iter = _supported_types_.begin();
-          iter != _supported_types_.end();
-          iter++) {
+           iter != _supported_types_.end();
+           iter++) {
         const std::type_info * ti = *iter;
         std::set<const std::type_info *>::const_iterator jter = iter;
         jter++;
@@ -259,13 +256,13 @@ namespace cuts {
       a_out << std::endl;
     }
 
-    a_out << indent << datatools::i_tree_dumpable::inherit_tag (a_inherit)
-          << "Cut initialized : " << is_initialized () << std::endl;
+    a_out << indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+          << "Cut initialized : " << is_initialized() << std::endl;
 
     return;
   }
 
-  void i_cut::_common_initialize (const datatools::properties & a_config)
+  void i_cut::_common_initialize(const datatools::properties & a_config)
   {
     DT_LOG_TRACE(_logging, "Entering common initialization of the cut...");
 
@@ -278,19 +275,19 @@ namespace cuts {
                 "Invalid logging priority !");
     set_logging_priority(lp);
 
-    if (! has_name ()) {
+    if (! has_name()) {
       if (a_config.has_key("cut.name")) {
         set_name(a_config.fetch_string("cut.name"));
       }
     }
 
-    if (! has_description ()) {
+    if (! has_description()) {
       if (a_config.has_key("cut.description")) {
         set_description(a_config.fetch_string("cut.description"));
       }
     }
 
-    if (! has_version ()) {
+    if (! has_version()) {
       if (a_config.has_key("cut.version")) {
         set_version(a_config.fetch_string("cut.version"));
       }
@@ -298,36 +295,36 @@ namespace cuts {
     DT_LOG_TRACE(_logging, "Exiting common initialization of the cut.");
   }
 
-  void i_cut::initialize_simple ()
+  void i_cut::initialize_simple()
   {
     datatools::properties dummy_config;
     datatools::service_manager dummy_service_manager;
     cut_handle_dict_type dummy_cut_dict;
-    initialize (dummy_config, dummy_service_manager, dummy_cut_dict);
+    initialize(dummy_config, dummy_service_manager, dummy_cut_dict);
     return;
   }
 
-  void i_cut::initialize_standalone (const datatools::properties & a_config)
+  void i_cut::initialize_standalone(const datatools::properties & a_config)
   {
     datatools::service_manager dummy;
     cut_handle_dict_type dummy2;
-    initialize (a_config, dummy, dummy2);
+    initialize(a_config, dummy, dummy2);
     return;
   }
 
-  void i_cut::initialize_with_service_only (const datatools::properties & a_config,
-                                            datatools::service_manager & a_service_manager)
+  void i_cut::initialize_with_service_only(const datatools::properties & a_config,
+                                           datatools::service_manager & a_service_manager)
   {
     cut_handle_dict_type dummy;
-    initialize (a_config, a_service_manager, dummy);
+    initialize(a_config, a_service_manager, dummy);
     return;
   }
 
-  void i_cut::initialize_without_service (const datatools::properties & a_config,
-                                          cut_handle_dict_type & a_cut_dictionary)
+  void i_cut::initialize_without_service(const datatools::properties & a_config,
+                                         cut_handle_dict_type & a_cut_dictionary)
   {
     datatools::service_manager dummy_service_manager;
-    initialize (a_config, dummy_service_manager, a_cut_dictionary);
+    initialize(a_config, dummy_service_manager, a_cut_dictionary);
     return;
   }
 
@@ -358,12 +355,12 @@ namespace cuts {
     return;
   }
 
-  bool i_cut::has_user_data () const
+  bool i_cut::has_user_data() const
   {
     return _user_data_.get() != 0;
   }
 
-  void i_cut::reset_user_data ()
+  void i_cut::reset_user_data()
   {
     if (_user_data_) {
       DT_LOG_TRACE(_logging, "Cut named '" << (has_name()? get_name() : "?") << "' resets user data.");
@@ -430,7 +427,7 @@ namespace cuts {
     DT_LOG_TRACE(_logging, "Exiting.");
   }
 
-  void i_cut::_prepare_cut ()
+  void i_cut::_prepare_cut()
   {
     DT_LOG_TRACE(_logging, "Entering...");
     DT_THROW_IF(! has_user_data(),
@@ -438,13 +435,13 @@ namespace cuts {
                 "Cut named '" << (has_name()? get_name() : "?") << "' references no user data !");
   }
 
-  int i_cut::_finish_cut (int a_selection_status)
+  int i_cut::_finish_cut(int a_selection_status)
   {
     DT_LOG_TRACE(_logging, "Visiting with selection status = " << a_selection_status);
     return a_selection_status;
   }
 
-  void i_cut::_increment_counters (int a_selection_status)
+  void i_cut::_increment_counters(int a_selection_status)
   {
     if (_activated_counters_) {
       if (a_selection_status == SELECTION_ACCEPTED) _number_of_accepted_entries_++;
@@ -452,7 +449,7 @@ namespace cuts {
     }
   }
 
-  int i_cut::process ()
+  int i_cut::process()
   {
     DT_LOG_TRACE(_logging,
                  "Entering: processing of the cut named '" << (has_name()? get_name() : "?") << "'");
@@ -465,12 +462,12 @@ namespace cuts {
     return status;
   }
 
-  int i_cut::operator() ()
+  int i_cut::operator()()
   {
-    return this->process ();
+    return this->process();
   }
 
-  void i_cut::_reset ()
+  void i_cut::_reset()
   {
     reset_user_data();
     reset_counters();
