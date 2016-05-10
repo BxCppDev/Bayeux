@@ -6,6 +6,7 @@
 #include <geomtools/geomtools_config.h>
 
 #include <datatools/exception.h>
+#include <datatools/logger.h>
 
 using namespace std;
 
@@ -216,7 +217,7 @@ Gnuplot::~Gnuplot()
 #elif defined(unix) || defined(__unix) || defined(__unix__) || defined(__APPLE__)
     if (pclose(_gnucmd_) == -1)
 #endif
-      DT_THROW_IF(true, GnuplotException, "Problem closing communication to gnuplot");
+      DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Problem closing communication to gnuplot");
 }
 
 
