@@ -68,7 +68,7 @@ namespace geomtools {
     }
     DT_THROW_IF(_id_mgr_ == 0, logic_error, "Missing ID manager !");
 
-    config_.tree_dump(std::cerr, "Configuration: ", "DEVEL: id_selector::initialize: ");
+    // config_.tree_dump(std::cerr, "Configuration: ", "DEVEL: id_selector::initialize: ");
 
     // Search for an single rule, example:
     //   rule : string  = " category='detector' row=[0;3] column={*} "
