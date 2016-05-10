@@ -46,6 +46,8 @@ void print_help(const boost::program_options::options_description & opts_,
 void print_shell_help(geomtools::geomtools_driver & gd_,
                       std::ostream & out_ = std::clog);
 
+void build_argv(std::istringstream & command_in_, std::vector<std::string> & argv_);
+
 int main(int argc_, char ** argv_)
 {
 #if MATERIALS_STANDALONE == 1
@@ -92,7 +94,7 @@ int main(int argc_, char ** argv_)
        ->default_value(false),
        "Deactivate readline.\n"
        )
- #endif // GEOMTOOLS_WITH_READLINE
+#endif // GEOMTOOLS_WITH_READLINE
       ("logging,G",
        po::value<std::string>(&logging_label)
        ->default_value("warning"),
@@ -262,13 +264,7 @@ int main(int argc_, char ** argv_)
           go_on = false;
         } else if (command == "i" || command == "initialize") {
           std::vector<std::string> argv;
-          while (command_iss) {
-            std::string token;
-            command_iss >> token >> std::ws;
-            if (token.empty()) break;
-            argv.push_back(token);
-            if (command_iss.eof()) break;
-          } // end of parsing
+          build_argv(command_iss, argv);
           int error = GD.command_initialize(argv, std::clog);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot initialize the geometry driver ! ");
@@ -342,13 +338,7 @@ int main(int argc_, char ** argv_)
         } else if (command == "x" || command == "export_gdml") {
           if (GD.has_manager()) {
             std::vector<std::string> argv;
-            while (command_iss) {
-              std::string token;
-              command_iss >> token >> std::ws;
-              if (token.empty()) break;
-              argv.push_back(token);
-              if (command_iss.eof()) break;
-            } // end of parsing
+            build_argv(command_iss, argv);
             int error = GD.command_export_gdml(argv);
             if (error > 0) {
               DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot export GDML file !");
@@ -359,18 +349,40 @@ int main(int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
         } else if (command == "d" || command == "display") {
           std::vector<std::string> argv;
-          while (command_iss) {
-            std::string token;
-            command_iss >> token >> std::ws;
-            if (token.empty()) break;
-            argv.push_back(token);
-            if (command_iss.eof()) break;
-          } // end of parsing
+          build_argv(command_iss, argv);
           int error = GD.command_gnuplot_display(argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot display the geometry setup !");
           }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+        } else if (command == "pdd" || command == "print_display_data") {
+          std::string print_dd_options;
+          std::getline(command_iss, print_dd_options);
+          int error = GD.command_print_list_of_display_data(std::cout, print_dd_options);
+          if (error > 0) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot print the list of display data !");
+          }
+        } else if (command == "ldd" || command == "load_display_data") {
+          std::vector<std::string> argv;
+          build_argv(command_iss, argv);
+          int error = GD.command_load_display_data(argv);
+          if (error > 0) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot load display data !");
+          }
+        } else if (command == "udd" || command == "unload_display_data") {
+          std::vector<std::string> argv;
+          build_argv(command_iss, argv);
+          int error = GD.command_unload_display_data(argv);
+          if (error > 0) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot unload display data !");
+          }
+        } else if (command == "cdd" || command == "clear_display_data") {
+          std::vector<std::string> argv;
+          build_argv(command_iss, argv);
+          int error = GD.command_clear_display_data(argv);
+          if (error > 0) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot clear display data !");
+          }
         } else {
           // Invalid command:
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid command '" << command << "' !");
@@ -491,6 +503,12 @@ void print_shell_help (geomtools::geomtools_driver & /*gd_*/, std::ostream & out
   out_ <<  "                                   Use 'list_of_gids --help' for the list of options.     \n";
   out_ <<  "  m | model MODEL_NAME           : Print the geometry model named 'MODEL_NAME'            \n";
   out_ <<  "  l | logical LOGICAL_NAME       : Print the logical volume named 'LOGICAL_NAME'          \n";
+  out_ <<  "  ldd | load_display_data [OPTIONS] [NAME] [INFILE] : \n";
+  out_ << "                                    Load a display data object  \n";
+  out_ <<  "  udd | unload_display_data [OPTIONS] [NAME] [INFILE] : \n";
+  out_ << "                                    Unload a display data object \n";
+  out_ <<  "  cdd | clear_display_data :       Clear display data objects \n";
+  out_ <<  "  pdd | print_display_data :       Print the list of display data objects \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
   out_ <<  "  d | display [OPTIONS] [NAME]   : Gnuplot display of the geometry setup         \n";
   out_ <<  "                                   Use 'display --help' for the online help.     \n";
@@ -499,5 +517,17 @@ void print_shell_help (geomtools::geomtools_driver & /*gd_*/, std::ostream & out
        << "                                    Export the geometry setup to a GDML file      \n";
   out_ <<  "                                   Use 'export_gdml --help' for the online help. \n";
   out_ <<  "  q | quit                       : Quit                                          \n";
+  return;
+}
+
+void build_argv(std::istringstream & command_in_, std::vector<std::string> & argv_)
+{
+  while (command_in_) {
+    std::string token;
+    command_in_ >> token >> std::ws;
+    if (token.empty()) break;
+    argv_.push_back(token);
+    if (command_in_.eof()) break;
+  } // end of parsing
   return;
 }

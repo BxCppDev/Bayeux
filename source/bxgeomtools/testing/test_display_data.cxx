@@ -15,6 +15,7 @@
 #include <datatools/clhep_units.h>
 #include <datatools/temporary_files.h>
 #include <datatools/utils.h>
+#include <datatools/io_factory.h>
 
 // This project:
 #include <geomtools/box.h>
@@ -331,6 +332,12 @@ int main (int argc_, char ** argv_)
     }
 
     DD.tree_dump (std::clog, "Display data : ");
+
+    {
+      datatools::data_writer writer;
+      writer.init("test_display_data.data.gz", datatools::using_multi_archives);
+      writer.store(DD);
+    }
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
     if (draw) {

@@ -30,6 +30,7 @@
 
 // This project:
 #include <geomtools/geomtools_config.h>
+#include <geomtools/display_data.h>
 
 /// Top-level namespace of the Bayeux/geomtools module library
 namespace geomtools {
@@ -137,6 +138,22 @@ namespace geomtools {
     /// Print a logical volume given by name
     int command_print_logical(const std::string & logical_name_, std::ostream & out_) const;
 
+    /// Print the list of embedded display data
+    int command_print_list_of_display_data(std::ostream & out_,
+                                           const std::string & print_dd_options_ = "") const;
+
+    /// Load a display data
+    int command_load_display_data(const std::vector<std::string> & argv_,
+                                  std::ostream & out_ = std::clog);
+
+    /// Unload a display data
+    int command_unload_display_data(const std::vector<std::string> & argv_,
+                                    std::ostream & out_ = std::clog);
+
+    /// Unload several/all display data
+    int command_clear_display_data(const std::vector<std::string> & argv_,
+                                   std::ostream & out_ = std::clog);
+
     // /// Set the rendering options attached to a logical volume given by name
     // int command_set_rendering_options(const std::vector<std::string> & argv_,
     //                                   std::ostream & out_) const;
@@ -177,8 +194,9 @@ namespace geomtools {
     boost::scoped_ptr<manager>       _geo_mgr_;         //!< Geometry manager handle
     boost::scoped_ptr<model_factory> _geo_factory_;     //!< Geometry model factory handle
     const model_factory *            _geo_factory_ref_; //!< Geometry model factory effective handle
-    bool        _has_world_;          //!< Flag for a 'world' top-level volume/model
-    // std::map<std::string, datatools::properties> _ropts_, //!< Rendering options associated to displayed objects
+    bool                             _has_world_;       //!< Flag for a 'world' top-level volume/model
+    // std::map<std::string, datatools::properties> _ropts_; //!< Rendering options associated to displayed objects
+    std::map<std::string, display_data> _dds_; //!< Embedded display data objects
 
   };
 

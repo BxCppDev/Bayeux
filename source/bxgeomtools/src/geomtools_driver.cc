@@ -12,6 +12,7 @@
 #include <datatools/utils.h>
 #include <datatools/library_loader.h>
 #include <datatools/exception.h>
+#include <datatools/io_factory.h>
 
 // This project:
 #include <geomtools/shape_factory.h>
@@ -34,7 +35,7 @@
 // #endif // GEOMTOOLS_WITH_ROOT_DISPLAY
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-std::string get_drawer_view (const std::string & option_);
+std::string get_drawer_view(const std::string & option_);
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
 namespace geomtools {
@@ -731,6 +732,185 @@ namespace geomtools {
     return 0;
   }
 
+  int geomtools_driver::command_print_list_of_display_data(std::ostream & out_,
+                                                           const std::string & print_dd_options_) const
+  {
+    if (_dds_.size() == 0) {
+      DT_LOG_WARNING(_params_.logging, "No display data to be printed!");
+      return -1;
+    }
+    bool with_title = true;
+    if (with_title) {
+      out_ << std::flush << "List of embedded display data : " << std::endl;
+    }
+    for (std::map<std::string, display_data>::const_iterator idd = _dds_.begin();
+         idd != _dds_.end();
+         idd++) {
+      out_ << idd->first << std::endl;
+    }
+    if (with_title) {
+      out_ << std::endl;
+    }
+    return 0;
+  }
+
+  int geomtools_driver::command_load_display_data(const std::vector<std::string> & argv_,
+                                            std::ostream & out_)
+  {
+    int error_code = 0;
+    std::string display_data_file;
+    std::string display_data_name;
+    size_t argcount = 0;
+    while (argcount < argv_.size()) {
+      const std::string & token = argv_[argcount++];
+      if (token.empty()) break;
+      if (token[0] == '-') {
+        std::string option = token;
+        if (option  == "-h" || option  == "--help") {
+          out_ << "   Usage: \n";
+          out_ << "     display [OPTIONS...] [NAME] \n"
+               << "\n";
+          out_ << "   Options: \n";
+          out_ << "     -h|--help          Print this help\n"
+               << "     -n|--name NAME     Select the name of the display data object\n"
+               << "     -i|--input IN_FILE Select the input file from which to laod \n"
+               << "                        the display data object\n"
+               << "\n";
+          out_ << "   NAME : The name of the display data object to be loaded\n";
+          out_ << "   FROM : The file name of the display data object to be loaded\n";
+          out_ << std::flush;
+          return -1;
+        // } else if (option == "--no-xxx") {
+        //   using_xxx = false;
+        } else if (option == "-i" || option == "--input") {
+          display_data_file = argv_[argcount++];
+        } else if (option == "-n" || option == "--name") {
+          display_data_name = argv_[argcount++];
+        } else {
+          DT_LOG_ERROR(_params_.logging, "Invalid option '" << option << "' !");
+          return -1;
+        }
+      } else {
+        std::string argument = token;
+        if (display_data_name.empty()) {
+          display_data_name = argument;
+        } else if (display_data_file.empty()) {
+          display_data_file = argument;
+        } else {
+          DT_LOG_ERROR(_params_.logging, "Invalid argument '" << argument << "' !");
+          return -1;
+        }
+      }
+    } // while
+
+    datatools::remove_quotes(display_data_name);
+    datatools::remove_quotes(display_data_file);
+
+    if (display_data_name.empty()) {
+      DT_LOG_ERROR(_params_.logging, "Missing display data name !");
+      return 1;
+    }
+    if (display_data_file.empty()) {
+      DT_LOG_ERROR(_params_.logging, "Missing display data input file !");
+      return 1;
+    }
+
+    datatools::fetch_path_with_env(display_data_file);
+    try {
+      std::map<std::string, display_data>::iterator found = _dds_.find(display_data_name);
+      if (found != _dds_.end()) {
+        std::vector<std::string> argv;
+        argv.push_back("-n " + display_data_name);
+        command_unload_display_data(argv);
+      }
+      datatools::data_reader reader;
+      reader.init(display_data_file, datatools::using_multi_archives);
+      if (reader.has_record_tag() && reader.get_record_tag () == display_data::serial_tag()) {
+        {
+          display_data dummy_dd;
+          _dds_[display_data_name] = dummy_dd;
+        }
+        display_data & dd = _dds_.find(display_data_name)->second;
+        reader.load(dd);
+      } else {
+        DT_LOG_ERROR(_params_.logging,
+                     "File '" << display_data_file << "' does not contains a display data object!");
+        error_code = 1;
+      }
+    }
+    catch (std::exception & error) {
+      DT_LOG_ERROR(_params_.logging,
+                   "Cannot load display data '" << display_data_name << "': " << error.what());
+      error_code = 1;
+    }
+    return error_code;
+  }
+
+  int geomtools_driver::command_unload_display_data(const std::vector<std::string> & argv_,
+                                                    std::ostream & out_)
+  {
+    int error_code = 0;
+    std::string display_data_name;
+    size_t argcount = 0;
+    while (argcount < argv_.size()) {
+      const std::string & token = argv_[argcount++];
+      if (token.empty()) break;
+      if (token[0] == '-') {
+        std::string option = token;
+        if (option  == "-h" || option  == "--help") {
+          out_ << "   Usage: \n";
+          out_ << "     display [OPTIONS...] [NAME] \n"
+               << "\n";
+          out_ << "   Options: \n";
+          out_ << "     -h|--help          Print this help\n"
+               << "     -n|--name NAME     Select the name of the display data object\n"
+               << "\n";
+          out_ << "   NAME : The name of the display data object to be loaded\n";
+          out_ << std::flush;
+          return -1;
+        } else if (option == "-n" || option == "--name") {
+          display_data_name = argv_[argcount++];
+        } else {
+          DT_LOG_ERROR(_params_.logging, "Invalid option '" << option << "' !");
+          return -1;
+        }
+      } else {
+        std::string argument = token;
+        if (display_data_name.empty()) {
+          display_data_name = argument;
+        } else {
+          DT_LOG_ERROR(_params_.logging, "Invalid argument '" << argument << "' !");
+          return -1;
+        }
+      }
+    } // while
+
+    datatools::remove_quotes(display_data_name);
+
+    if (display_data_name.empty()) {
+      DT_LOG_ERROR(_params_.logging, "Missing display data name !");
+      return 1;
+    }
+    std::map<std::string, display_data>::iterator found = _dds_.find(display_data_name);
+    if (found != _dds_.end()) {
+      _dds_.erase(found);
+      return 0;
+    }
+    DT_LOG_ERROR(_params_.logging, "Cannot found display data '" << display_data_name << "' to be unloaded!");
+    return 1;
+  }
+
+  int geomtools_driver::command_clear_display_data(const std::vector<std::string> & argv_,
+                                                   std::ostream & out_)
+  {
+    if (_dds_.size() == 0) {
+      DT_LOG_WARNING(_params_.logging, "No display data to be unloaded!");
+      return -1;
+    }
+    _dds_.clear();
+    return 0;
+  }
+
   int geomtools_driver::command_export_gdml(const std::vector<std::string> & argv_,
                                             std::ostream & out_) const
   {
@@ -971,6 +1151,7 @@ namespace geomtools {
     bool force_show_children = false;
     bool force_hide_envelope = false;
     bool force_hide_children = false;
+    bool process_display_data = true;
     size_t argcount = 0;
     while (argcount < argv_.size()) {
       const std::string & token = argv_[argcount++];
@@ -992,11 +1173,13 @@ namespace geomtools {
                << "     -E|--force-hide-envelope Disable the display of volume envelope\n"
                << "     -c|--force-show-children Force the display of children volumes\n"
                << "     -C|--force-hide-children Disable the display of children volumes\n"
+               << "     -dd|--with-display_data Display data are included in the scene\n"
+               << "     -nodd|--without-display_data Display data are not included in the scene\n"
                << "     --labels              Display axis with labels\n"
                << "     --no-labels           Do not display axis with labels\n"
                << "     --title               Display image title\n"
                << "     --no-title            Do not display image title\n"
-               << "     -o|--output OUT_FILE  Print in the 'OUT_FILE' file\n"
+                << "     -o|--output OUT_FILE  Print in the 'OUT_FILE' file\n"
             // << "     -t|--terminal TERM    Use terminal 'TERM'\n"
             // << "     -to|--terminal-options TERMOPT \n"
             // << "                           Use terminal options 'TERMOPT'\n"
@@ -1009,27 +1192,31 @@ namespace geomtools {
           out_ << "            by the active mapping.         \n";
           out_ << std::flush;
           return -1;
-        } else if (option == "-c" || option  == "--force-show-children") {
+        } else if (option == "-dd" || option == "--with-display-data") {
+          process_display_data = true;
+        } else if (option == "-nodd" || option == "--without-display-data") {
+          process_display_data = false;
+        } else if (option == "-c" || option == "--force-show-children") {
           force_show_children = true;
           if (force_hide_children) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                                                   "Setting 'force-show-children' option conflicts with 'force-hide-children' ! Ignore !");
-        } else if (option == "-C" || option  == "--force-hide-children") {
+        } else if (option == "-C" || option == "--force-hide-children") {
           force_hide_children = true;
           if (force_show_children) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                                                   "Setting 'force-hide-children' option conflicts with 'force-show-children' ! Ignore !");
-        } else if (option == "-e" || option  == "--force-show-envelope") {
+        } else if (option == "-e" || option == "--force-show-envelope") {
           force_show_envelope = true;
           if (force_hide_envelope) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                                                   "Setting 'force-show-envelope' option conflicts with 'force-hide-envelope' ! Ignore !");
-        } else if (option == "-E" || option  == "--force-hide-envelope") {
+        } else if (option == "-E" || option == "--force-hide-envelope") {
           force_hide_envelope = true;
           if (force_show_envelope) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                                                   "Setting 'force-hide-envelope' option conflicts with 'force-show-envelope' ! Ignore !");
-        } else if (option  == "--labels") {
+        } else if (option == "--labels") {
           _params_.visu_drawer_labels = true;
         } else if (option == "--no-labels") {
           _params_.visu_drawer_labels = false;
-        } else if (option  == "--title") {
+        } else if (option == "--title") {
           using_title = true;
         } else if (option == "--no-title") {
           using_title = false;
@@ -1064,6 +1251,15 @@ namespace geomtools {
       std::clog << "`-- Show labels    : " << _params_.visu_drawer_labels << std::endl;
     }
     geomtools::gnuplot_drawer GPD;
+    GPD.set_drawing_display_data(process_display_data);
+    if (GPD.is_drawing_display_data()) {
+      // Load display data:
+      for (std::map<std::string, display_data>::const_iterator idd = _dds_.begin();
+           idd != _dds_.end();
+           idd++) {
+        GPD.add_display_data(idd->second);
+      }
+    }
     if (force_show_envelope) {
       GPD.grab_properties().store_flag(gnuplot_drawer::force_show_envelope_property_name());
     } else if (force_hide_envelope) {
@@ -1086,9 +1282,9 @@ namespace geomtools {
       GPD.print(std::clog);
     }
     if (has_manager()) {
-      int code = GPD.draw (*_geo_mgr_.get(),
-                           visu_object_name,
-                           geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+      int code = GPD.draw(*_geo_mgr_.get(),
+                          visu_object_name,
+                          geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
       if (code != 0) {
         DT_LOG_ERROR(_params_.logging,
                      "Cannot display the object with model name or GID : '"
@@ -1101,7 +1297,7 @@ namespace geomtools {
     } else {
       try {
         geomtools::placement root_plcmt;
-        root_plcmt.set (0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
+        root_plcmt.set(0, 0, 0, 0 * CLHEP::degree, 0 * CLHEP::degree, 0);
         GPD.draw_model(*_geo_factory_ref_,
                        visu_object_name,
                        root_plcmt,
@@ -1125,7 +1321,7 @@ namespace geomtools {
 
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-  std::string geomtools_driver::get_drawer_view (const std::string & view_label_)
+  std::string geomtools_driver::get_drawer_view(const std::string & view_label_)
   {
     std::string drawer_view = geomtools::gnuplot_drawer::view_3d();
     if (view_label_ == "-xy" || view_label_ == "--visu-view-xy")  {
