@@ -84,79 +84,79 @@ namespace cuts {
     };
 
     /// Return non mutable cut configuration
-    const datatools::properties & get_cut_config () const;
+    const datatools::properties & get_cut_config() const;
 
     /// Return mutable cut configuration
-    datatools::properties & grab_cut_config ();
+    datatools::properties & grab_cut_config();
 
     /// Set the cut configuration
-    void set_cut_config (const datatools::properties &);
+    void set_cut_config(const datatools::properties &);
 
     /// Return the cut name
-    const std::string & get_cut_name () const;
+    const std::string & get_cut_name() const;
 
     /// Set the cut name
-    void set_cut_name (const std::string &);
+    void set_cut_name(const std::string &);
 
     /// Return the cut class identifier
-    const std::string & get_cut_id () const;
+    const std::string & get_cut_id() const;
 
     /// Set the address of the embedded
-    void set_ptr (i_cut *);
+    void set_ptr(i_cut *);
 
     /// Set the cut class identifier
-    void set_cut_id (const std::string &);
+    void set_cut_id(const std::string &);
 
     /// Check the availability of a cut manager
-    bool has_manager () const;
+    bool has_manager() const;
 
     /// Set the cut manager address
-    void set_manager (cut_manager &);
+    void set_manager(cut_manager &);
 
     /// Set the blank flag
-    void set_blank ();
+    void set_blank();
 
     /// Set the 'creation' flag
-    void set_created ();
+    void set_created();
 
     /// Set the 'initialization' flag
-    void set_initialized ();
+    void set_initialized();
 
     /// Unset the 'initialization' flag
-    void set_uninitialized ();
+    void set_uninitialized();
 
     /// Check the 'creation' flag
-    bool is_created () const;
+    bool is_created() const;
 
     /// Check the 'initialization' flag
-    bool is_initialized () const;
+    bool is_initialized() const;
 
     /// Constructor
-    cut_entry_type ();
+    cut_entry_type();
 
     /// Check is the cut is referenced in the embedded handle
-    bool has_cut () const;
+    bool has_cut() const;
 
     /// Return a non mutable reference to the cut
-    const i_cut & get_cut () const;
+    const i_cut & get_cut() const;
 
     /// Return a mutable reference to the cut
-    i_cut & grab_cut ();
+    i_cut & grab_cut();
 
     /// Return a non mutable handle to the cut
-    const cut_handle_type & get_cut_handle () const;
+    const cut_handle_type & get_cut_handle() const;
 
     /// Return a mutable handle to the cut
-    cut_handle_type & grab_cut_handle ();
+    cut_handle_type & grab_cut_handle();
 
     /// Return a mutable handle to the initialized cut
-    cut_handle_type & grab_initialized_cut_handle ();
+    cut_handle_type & grab_initialized_cut_handle();
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_         = std::clog,
-                            const std::string & title_  = "",
-                            const std::string & indent_ = "",
-                            bool inherit_               = false) const;
+    virtual void tree_dump(std::ostream & out_         = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_               = false) const;
 
   private:
 
