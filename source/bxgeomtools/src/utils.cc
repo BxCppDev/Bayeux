@@ -818,8 +818,8 @@ namespace geomtools {
     case DIRECTION_YPLUS  : return "+y";
     case DIRECTION_ZMINUS : return "-z";
     case DIRECTION_ZPLUS  : return "+z";
+    default:                return "";
     }
-    return "";
   }
 
   int get_rotation_axis_from_label (const string & s_)
