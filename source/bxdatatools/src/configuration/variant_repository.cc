@@ -736,7 +736,7 @@ namespace datatools {
                   std::logic_error,
                   "Registry '" << registry_name_ << "' already depends on variant '"
                   << dependee_variant_path_ << "'!");
-      int found_colon = dependee_variant_path_.find(':');
+      size_t found_colon = dependee_variant_path_.find(':');
       DT_THROW_IF(found_colon == dependee_variant_path_.npos,
                   std::logic_error,
                   "Bad variant path format!");
