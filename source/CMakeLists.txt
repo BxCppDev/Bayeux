@@ -32,6 +32,7 @@ find_package(Boost 1.48.0
   serialization
   iostreams
   program_options
+  regex
   # thread
   NO_MODULE
   )
@@ -41,6 +42,7 @@ set(Bayeux_Boost_LIBRARIES
   ${Boost_SERIALIZATION_LIBRARY}
   ${Boost_IOSTREAMS_LIBRARY}
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  ${Boost_REGEX_LIBRARY}
   )
 
 # - Camp
@@ -474,4 +476,3 @@ foreach(_m ${BAYEUX_SUBMODULES})
       )
   endforeach()
 endforeach()
-
