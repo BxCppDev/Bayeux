@@ -733,7 +733,7 @@ namespace geomtools {
   }
 
   int geomtools_driver::command_print_list_of_display_data(std::ostream & out_,
-                                                           const std::string & print_dd_options_) const
+                                                           const std::string & /*print_dd_options_*/) const
   {
     if (_dds_.size() == 0) {
       DT_LOG_WARNING(_params_.logging, "No display data to be printed!");
@@ -849,7 +849,7 @@ namespace geomtools {
   int geomtools_driver::command_unload_display_data(const std::vector<std::string> & argv_,
                                                     std::ostream & out_)
   {
-    int error_code = 0;
+    // int error_code = 0;
     std::string display_data_name;
     size_t argcount = 0;
     while (argcount < argv_.size()) {
@@ -900,8 +900,8 @@ namespace geomtools {
     return 1;
   }
 
-  int geomtools_driver::command_clear_display_data(const std::vector<std::string> & argv_,
-                                                   std::ostream & out_)
+  int geomtools_driver::command_clear_display_data(const std::vector<std::string> & /*argv_*/,
+                                                   std::ostream & /*out_*/)
   {
     if (_dds_.size() == 0) {
       DT_LOG_WARNING(_params_.logging, "No display data to be unloaded!");
