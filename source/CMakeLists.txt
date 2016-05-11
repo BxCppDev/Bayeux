@@ -249,6 +249,12 @@ target_include_directories(Bayeux
    $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+   # Also need to add, for now, include directories for deps
+   # that are not supplied as full imported targets
+   # ROOT
+   ${ROOT_INCLUDE_DIRS}
+   # CLHEP
+   ${CLHEP_INCLUDE_DIRS}
   PRIVATE
    ${CMAKE_CURRENT_BINARY_DIR}
    ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
