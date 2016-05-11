@@ -917,9 +917,9 @@ namespace geomtools {
         selected_categories.push_back(&category);
       } else {
         bool selected = false;
-        for (int i = 0; i < (int) requested_patterns.size(); i++) {
+        for (size_t j = 0; j < requested_patterns.size(); j++) {
           try {
-            boost::regex expression(requested_patterns[i]);
+            boost::regex expression(requested_patterns[j]);
             if (boost::regex_search(category.begin(), category.end(), expression)) {
               selected = true;
               break;
@@ -937,7 +937,6 @@ namespace geomtools {
     if (with_title) {
       out_ << std::flush << "List of available geometry categories : " << std::endl;
     }
-    int count = 0;
     for (std::vector<const std::string*>::const_iterator i
            = selected_categories.begin();
          i != selected_categories.end();
