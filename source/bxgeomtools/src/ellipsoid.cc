@@ -185,6 +185,7 @@ namespace geomtools {
 
   void ellipsoid::set(double rx_, double ry_, double rz_)
   {
+    _set_default();
     set_x_radius(rx_);
     set_y_radius(ry_);
     set_z_radius(rz_);
@@ -194,10 +195,7 @@ namespace geomtools {
   void ellipsoid::set (double rx_, double ry_, double rz_,
                        double zm_, double zp_)
   {
-    _set_default();
-    set_x_radius(rx_);
-    set_y_radius(ry_);
-    set_z_radius(rz_);
+    set(rx_, ry_, rz_);
     set_bottom_z_cut(zm_);
     set_top_z_cut(zp_);
     return;
@@ -289,6 +287,8 @@ namespace geomtools {
       DT_THROW_IF (! datatools::is_valid (z_radius), std::logic_error,
                    "Missing elliptical_tube 'z_radius' property !");
 
+      set(x_radius, y_radius, z_radius);
+
       double bottom_z;
       datatools::invalidate(bottom_z);
       if (config_.has_key ("bottom_z_cut")) {
@@ -296,6 +296,7 @@ namespace geomtools {
         if (! config_.has_explicit_unit ("bottom_z_cut")) {
           bottom_z *= lunit;
         }
+	set_bottom_z_cut(bottom_z);
       }
 
       double top_z;
@@ -305,9 +306,8 @@ namespace geomtools {
         if (! config_.has_explicit_unit ("top_z_cut")) {
           top_z *= lunit;
         }
+	set_top_z_cut(top_z);
       }
-
-      set(x_radius, y_radius, z_radius, bottom_z, top_z);
     }
     lock();
     return;
@@ -495,7 +495,7 @@ namespace geomtools {
       }
       break;
     case FACE_TOP:
-      if (datatools::is_valid(_bottom_z_cut_)) {
+      if (datatools::is_valid(_top_z_cut_)) {
         double term = std::sqrt(1 - gsl_pow_2(_top_z_cut_/ _z_radius_));
         face_.set_x_radius(_x_radius_ * term);
         face_.set_y_radius(_y_radius_ * term);

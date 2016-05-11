@@ -835,7 +835,7 @@ namespace geomtools {
         = ocd_.add_property_info();
       cpd.set_name_pattern("y")
         .set_from("geomtools::box")
-        .set_terse_description("The dimension of the box along the X axis")
+        .set_terse_description("The dimension of the box along the Y axis")
         .set_traits(datatools::TYPE_REAL)
         .set_mandatory(true)
         .add_example("Set the Y dimension::          \n"
