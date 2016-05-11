@@ -620,6 +620,21 @@ namespace geomtools {
                                                           print_models_options_);
   }
 
+  int geomtools_driver::command_print_list_of_categories(std::ostream & out_,
+                                                         const std::vector<std::string> & argv_) const
+  {
+    if (! is_initialized()) {
+      DT_LOG_ERROR(_params_.logging, "Geometry driver is not initialized !");
+      return 1;
+    }
+    if (has_manager()) {
+      return _geo_mgr_->get_id_mgr().print_list_of_categories(out_, argv_);
+    } else {
+      DT_LOG_ERROR(_params_.logging, "No geometry ID manager is available !");
+      return 1;
+    }
+  }
+
   int geomtools_driver::command_print_list_of_logicals(std::ostream & out_,
                                                        const std::string & print_logicals_options_) const
   {
@@ -733,13 +748,52 @@ namespace geomtools {
   }
 
   int geomtools_driver::command_print_list_of_display_data(std::ostream & out_,
-                                                           const std::string & /*print_dd_options_*/) const
+                                                           const std::vector<std::string> & argv_) const
   {
     if (_dds_.size() == 0) {
       DT_LOG_WARNING(_params_.logging, "No display data to be printed!");
       return -1;
     }
     bool with_title = true;
+    // Parse options/args:
+    size_t argcount = 0;
+    while (argcount < argv_.size()) {
+      const std::string & token = argv_[argcount++];
+      if (token.empty()) break;
+      if (token[0] == '-') {
+        std::string option = token;
+        if (option  == "-h" || option  == "--help") {
+          out_ << "   Usage: \n";
+          out_ << "     display [OPTIONS...]  \n"
+               << "\n";
+          out_ << "   Options: \n";
+          out_ << "     -h|--help          Print this help\n"
+               << "     --with-title       Print a title line\n"
+               << "     --without-title    Do not print a title line\n"
+               << "\n";
+          out_ << std::flush;
+          return -1;
+        } else if (option == "--with-title") {
+          with_title = true;
+        } else if (option == "--without-title") {
+          with_title = false;
+        // } else if (option == "-p" || option == "--pattern") {
+        //   std::string pattern = argv_[argcount++];
+        //   datatools::remove_quotes(pattern);
+        //   requested_patterns.push_back(pattern);
+        } else {
+          DT_LOG_ERROR(_params_.logging, "Invalid option '" << option << "' !");
+          return -1;
+        }
+      } else {
+        std::string argument = token;
+        {
+          DT_LOG_ERROR(_params_.logging, "Invalid argument '" << argument << "' !");
+          return -1;
+        }
+      }
+    } // while
+
     if (with_title) {
       out_ << std::flush << "List of embedded display data : " << std::endl;
     }
@@ -755,7 +809,7 @@ namespace geomtools {
   }
 
   int geomtools_driver::command_load_display_data(const std::vector<std::string> & argv_,
-                                            std::ostream & out_)
+                                                  std::ostream & out_)
   {
     int error_code = 0;
     std::string display_data_file;
@@ -773,7 +827,7 @@ namespace geomtools {
           out_ << "   Options: \n";
           out_ << "     -h|--help          Print this help\n"
                << "     -n|--name NAME     Select the name of the display data object\n"
-               << "     -i|--input IN_FILE Select the input file from which to laod \n"
+               << "     -i|--input IN_FILE Select the input file from which to load \n"
                << "                        the display data object\n"
                << "\n";
           out_ << "   NAME : The name of the display data object to be loaded\n";
@@ -849,7 +903,7 @@ namespace geomtools {
   int geomtools_driver::command_unload_display_data(const std::vector<std::string> & argv_,
                                                     std::ostream & out_)
   {
-    // int error_code = 0;
+    int error_code = 0;
     std::string display_data_name;
     size_t argcount = 0;
     while (argcount < argv_.size()) {
@@ -896,12 +950,13 @@ namespace geomtools {
       _dds_.erase(found);
       return 0;
     }
+    error_code = 1;
     DT_LOG_ERROR(_params_.logging, "Cannot found display data '" << display_data_name << "' to be unloaded!");
-    return 1;
+    return error_code;
   }
 
-  int geomtools_driver::command_clear_display_data(const std::vector<std::string> & /*argv_*/,
-                                                   std::ostream & /*out_*/)
+  int geomtools_driver::command_clear_display_data(const std::vector<std::string> & /* argv_ */,
+                                                   std::ostream & /* out_ */)
   {
     if (_dds_.size() == 0) {
       DT_LOG_WARNING(_params_.logging, "No display data to be unloaded!");

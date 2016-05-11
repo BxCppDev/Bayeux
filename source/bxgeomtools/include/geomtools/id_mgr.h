@@ -56,14 +56,14 @@ namespace geomtools {
     class category_info : public datatools::i_tree_dumpable
     {
     public:
-      std::string category;                /// human readable category label
-      uint32_t    type;                    /// unique integral ID
-      std::string inherits;                /// the mother category from which the category is inherited
-      std::string extends;                 /// the mother category from which the category is extented
-      std::vector<std::string> ancestors;  /// the list of ancestor categories
-      std::vector<std::string> extends_by; /// the addresses added by the extension
-      std::vector<std::string> addresses;  /// the full list of addresses
-      std::vector<int>         nbits;      /// the number of bits used to encode addresses
+      std::string category;                ///< human readable category label
+      uint32_t    type;                    ///< unique integral ID
+      std::string inherits;                ///< the mother category from which the category is inherited
+      std::string extends;                 ///< the mother category from which the category is extented
+      std::vector<std::string> ancestors;  ///< the list of ancestor categories
+      std::vector<std::string> extends_by; ///< the addresses added by the extension
+      std::vector<std::string> addresses;  ///< the full list of addresses
+      std::vector<int>         nbits;      ///< the number of bits used to encode addresses
 
     public:
 
@@ -223,6 +223,9 @@ namespace geomtools {
     /// Factory method that initialize a GID of a given category by name
     void make_id (const std::string & category_, geom_id & id_) const;
 
+    /// Print the list of categories
+    int print_list_of_categories(std::ostream & out_, const std::vector<std::string> & argv_) const;
+
     /*
       void make_extended (const geom_id & mother_id_,
       geom_id & id_,
@@ -253,9 +256,9 @@ namespace geomtools {
                               uint32_t nitem1_ = geom_id::INVALID_ADDRESS,
                               uint32_t nitem2_ = geom_id::INVALID_ADDRESS) const;
 
-    datatools::logger::priority get_logging_priority () const;
+    datatools::logger::priority get_logging_priority() const;
 
-    void set_logging_priority (datatools::logger::priority);
+    void set_logging_priority(datatools::logger::priority);
 
   private:
 

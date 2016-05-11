@@ -132,6 +132,9 @@ namespace geomtools {
     /// Print the list of registered GIDs
     int command_print_list_of_gids(std::ostream & out_, const std::string & print_gids_options_ = "") const;
 
+    /// Print the list of registered geometry categories
+    int command_print_list_of_categories(std::ostream & out_, const std::vector<std::string> & argv_) const;
+
     /// Print a geometry model given by name
     int command_print_model(const std::string & model_name_, std::ostream & out_) const;
 
@@ -139,8 +142,7 @@ namespace geomtools {
     int command_print_logical(const std::string & logical_name_, std::ostream & out_) const;
 
     /// Print the list of embedded display data
-    int command_print_list_of_display_data(std::ostream & out_,
-                                           const std::string & print_dd_options_ = "") const;
+    int command_print_list_of_display_data(std::ostream & out_, const std::vector<std::string> & argv_) const;
 
     /// Load a display data
     int command_load_display_data(const std::vector<std::string> & argv_,

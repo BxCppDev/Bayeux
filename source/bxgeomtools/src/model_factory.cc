@@ -483,7 +483,7 @@ namespace geomtools {
       std::string rule;
       rules_iss >> rule >> std::ws;
 
-      if (rule=="--help") {
+      if (rule=="--help" || rule=="-h") {
         out_ << "  --with-title              Print a title line\n"
              << "  --without-title           Do not print a title line\n"
              << "  --multicolumn             Print in multicolumn mode\n"
@@ -588,7 +588,7 @@ namespace geomtools {
       std::string rule;
       rules_iss >> rule >> std::ws;
 
-      if (rule=="--help") {
+      if (rule=="--help" || rule=="-h") {
         out_ << "  --with-title              Print a title line\n"
              << "  --without-title           Do not print a title line\n"
              << "  --multicolumn             Print in multicolumn mode\n"

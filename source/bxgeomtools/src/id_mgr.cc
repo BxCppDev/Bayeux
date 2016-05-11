@@ -16,6 +16,7 @@
 // Third party:
 // - Boost:
 #include <boost/algorithm/string.hpp>
+#include <boost/regex.hpp>
 // - Bayeux/datatools:
 #include <datatools/exception.h>
 
@@ -859,6 +860,97 @@ namespace geomtools {
     }
 
     return EXIT_SUCCESS;
+  }
+
+  int id_mgr::print_list_of_categories(std::ostream & out_, const std::vector<std::string> & argv_) const
+  {
+    bool with_title = true;
+    std::vector<std::string> requested_patterns;
+    size_t argcount = 0;
+    while (argcount < argv_.size()) {
+      const std::string & token = argv_[argcount++];
+      if (token.empty()) break;
+      if (token[0] == '-') {
+        std::string option = token;
+        if (option  == "-h" || option  == "--help") {
+          out_ << "   Usage: \n";
+          out_ << "     display [OPTIONS...] [NAME] \n"
+               << "\n";
+          out_ << "   Options: \n";
+          out_ << "     -h|--help          Print this help\n"
+               << "     --with-title       Print a title line\n"
+               << "     --without-title    Do not print a title line\n"
+               << "     -p|--pattern PATTERN  Select categories matching pattern PATTERN\n"
+               << "\n";
+          out_ << "   NAME : The name of the display data object to be loaded\n";
+          out_ << "   FROM : The file name of the display data object to be loaded\n";
+          out_ << std::flush;
+          return -1;
+        } else if (option == "--with-title") {
+          with_title = true;
+        } else if (option == "--without-title") {
+          with_title = false;
+        } else if (option == "-p" || option == "--pattern") {
+          std::string pattern = argv_[argcount++];
+          datatools::remove_quotes(pattern);
+          requested_patterns.push_back(pattern);
+        } else {
+          DT_LOG_ERROR(get_logging_priority(), "Invalid option '" << option << "' !");
+          return -1;
+        }
+      } else {
+        std::string argument = token;
+        {
+          DT_LOG_ERROR(get_logging_priority(), "Invalid argument '" << argument << "' !");
+          return -1;
+        }
+      }
+    } // while
+
+    std::vector<const std::string*> selected_categories;
+    for (categories_by_name_col_type::const_iterator i
+           = _categories_by_name_.begin();
+         i != _categories_by_name_.end();
+         i++) {
+      const std::string & category = i->first;
+      if (requested_patterns.size() == 0) {
+        selected_categories.push_back(&category);
+      } else {
+        bool selected = false;
+        for (int i = 0; i < (int) requested_patterns.size(); i++) {
+          try {
+            boost::regex expression(requested_patterns[i]);
+            if (boost::regex_search(category.begin(), category.end(), expression)) {
+              selected = true;
+              break;
+            }
+          } catch (std::exception & error) {
+            DT_LOG_ERROR(get_logging_priority(), "Regular expression error: " << error.what());
+            return 1;
+          }
+        }
+        if (selected) {
+          selected_categories.push_back(&category);
+        }
+      }
+    }
+    if (with_title) {
+      out_ << std::flush << "List of available geometry categories : " << std::endl;
+    }
+    int count = 0;
+    for (std::vector<const std::string*>::const_iterator i
+           = selected_categories.begin();
+         i != selected_categories.end();
+         i++) {
+      const std::string & category = **i;
+      out_ << category << " [type=" << _categories_by_name_.find(category)->second.get_type() << "] ";
+      // bool desc = false;
+      // if (desc) {
+      //        out_<< " : " << _categories_by_name_[category].second.get_description();
+      // }
+      out_ << std::endl;
+    }
+    return 0;
   }
 
 } // end of namespace geomtools

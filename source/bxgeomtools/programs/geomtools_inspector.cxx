@@ -355,10 +355,17 @@ int main(int argc_, char ** argv_)
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot display the geometry setup !");
           }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-        } else if (command == "pdd" || command == "print_display_data") {
-          std::string print_dd_options;
-          std::getline(command_iss, print_dd_options);
-          int error = GD.command_print_list_of_display_data(std::cout, print_dd_options);
+        } else if (command == "C" || command == "list_of_categories") {
+          std::vector<std::string> argv;
+          build_argv(command_iss, argv);
+          int error = GD.command_print_list_of_categories(std::cout, argv);
+          if (error > 0) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot print the list of geometry categories !");
+          }
+        } else if (command == "lsdd" || command == "list_of_display_data") {
+          std::vector<std::string> argv;
+          build_argv(command_iss, argv);
+          int error = GD.command_print_list_of_display_data(std::cout, argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot print the list of display data !");
           }
@@ -494,18 +501,20 @@ void print_shell_help (geomtools::geomtools_driver & /*gd_*/, std::ostream & out
   out_ <<  "  r | reset                      : Terminate the geometry driver                    \n";
   out_ <<  "  P | print_manager              : Print the embedded geometry manager              \n";
   out_ <<  "  F | print_factory              : Print the embedded geometry model factory        \n";
-  out_ <<  "  A | print_mapping [NAME]       : Print the embedded mapping object                \n";
-  out_ <<  "  M | list_of_models [OPTIONS]   : Print the list of geometry models.               \n";
-  out_ <<  "                                   Use 'list_of_models --help' for the list of options.   \n";
-  out_ <<  "  L | list_of_logicals [OPTIONS] : Print the list of logical volumes.                     \n";
-  out_ <<  "                                   Use 'list_of_logicals --help' for the list of options. \n";
-  out_ <<  "  G | list_of_gids  [OPTIONS]    : Print the list of geometry identifiers (GID).          \n";
-  out_ <<  "                                   Use 'list_of_gids --help' for the list of options.     \n";
-  out_ <<  "  m | model MODEL_NAME           : Print the geometry model named 'MODEL_NAME'            \n";
-  out_ <<  "  l | logical LOGICAL_NAME       : Print the logical volume named 'LOGICAL_NAME'          \n";
+  out_ <<  "  C | list_of_categories [OPTIONS] : Print the list of geometry categories (GID).          \n";
+  out_ <<  "                                   Use 'list_of_categories --help' for the list of options.\n";
+  out_ <<  "  M | list_of_models [OPTIONS]   : Print the list of geometry models.                      \n";
+  out_ <<  "                                   Use 'list_of_models --help' for the list of options.    \n";
+  out_ <<  "  L | list_of_logicals [OPTIONS] : Print the list of logical volumes.                      \n";
+  out_ <<  "                                   Use 'list_of_logicals --help' for the list of options.  \n";
+  out_ <<  "  A | print_mapping [NAME]       : Print the embedded mapping object                       \n";
+  out_ <<  "  G | list_of_gids  [OPTIONS]    : Print the list of geometry identifiers (GID).           \n";
+  out_ <<  "                                   Use 'list_of_gids --help' for the list of options.      \n";
+  out_ <<  "  m | model MODEL_NAME           : Print the geometry model named 'MODEL_NAME'             \n";
+  out_ <<  "  l | logical LOGICAL_NAME       : Print the logical volume named 'LOGICAL_NAME'           \n";
   out_ <<  "  ldd | load_display_data [OPTIONS] [NAME] [INFILE] : \n";
   out_ << "                                    Load a display data object  \n";
-  out_ <<  "  udd | unload_display_data [OPTIONS] [NAME] [INFILE] : \n";
+  out_ <<  "  udd | unload_display_data [OPTIONS] [NAME] : \n";
   out_ << "                                    Unload a display data object \n";
   out_ <<  "  cdd | clear_display_data :       Clear display data objects \n";
   out_ <<  "  pdd | print_display_data :       Print the list of display data objects \n";
