@@ -203,26 +203,26 @@ namespace genvtx {
     if (devel) {
       std::cerr << "DEVEL: genvtx_driver::run: Params = " << std::endl;
       _params_.dump();
-    if (_action_ & genvtx_driver::ACTION_LIST) {
-      std::cerr << "DEVEL: ACTION_LIST = " << 1 << std::endl;
-    } else  {
-      std::cerr << "DEVEL: ACTION_LIST = " << 0 << std::endl;
-    }
-    if (_action_ & genvtx_driver::ACTION_SHOOT) {
-      std::cerr << "DEVEL: ACTION_SHOOT = " << 1 << std::endl;
-    } else  {
-      std::cerr << "DEVEL: ACTION_SHOOT = " << 0 << std::endl;
-    }
-    if (_action_ & genvtx_driver::ACTION_VISU) {
-      std::cerr << "DEVEL: ACTION_VISU = " << 1 << std::endl;
-    } else  {
-      std::cerr << "DEVEL: ACTION_VISU = " << 0 << std::endl;
-    }
-    if (_action_ & genvtx_driver::ACTION_VISU_STORE_DD) {
-      std::cerr << "DEVEL: ACTION_VISU_STORE_DD = " << 1 << std::endl;
-    } else  {
-      std::cerr << "DEVEL: ACTION_VISU_STORE_DD = " << 0 << std::endl;
-    }
+      if (_action_ & genvtx_driver::ACTION_LIST) {
+        std::cerr << "DEVEL: ACTION_LIST = " << 1 << std::endl;
+      } else  {
+        std::cerr << "DEVEL: ACTION_LIST = " << 0 << std::endl;
+      }
+      if (_action_ & genvtx_driver::ACTION_SHOOT) {
+        std::cerr << "DEVEL: ACTION_SHOOT = " << 1 << std::endl;
+      } else  {
+        std::cerr << "DEVEL: ACTION_SHOOT = " << 0 << std::endl;
+      }
+      if (_action_ & genvtx_driver::ACTION_VISU) {
+        std::cerr << "DEVEL: ACTION_VISU = " << 1 << std::endl;
+      } else  {
+        std::cerr << "DEVEL: ACTION_VISU = " << 0 << std::endl;
+      }
+      if (_action_ & genvtx_driver::ACTION_VISU_STORE_DD) {
+        std::cerr << "DEVEL: ACTION_VISU_STORE_DD = " << 1 << std::endl;
+      } else  {
+        std::cerr << "DEVEL: ACTION_VISU_STORE_DD = " << 0 << std::endl;
+      }
     }
 
     // A display object that contains vertex rendering infos:
@@ -401,14 +401,14 @@ namespace genvtx {
                  std::logic_error,
                  "Driver is already initialized !");
     _params_ = params_;
-    std::cerr << "DEVEL: genvtx_driver::setup: " << std::endl;
-    _params_.dump();
+    // std::cerr << "DEVEL: genvtx_driver::setup: " << std::endl;
+    // _params_.dump();
     return;
   }
 
   void genvtx_driver::initialize()
   {
-    std::cerr << "DEVEL: genvtx_driver::initialize: Entering..." << std::endl;
+    // std::cerr << "DEVEL: genvtx_driver::initialize: Entering..." << std::endl;
     DT_THROW_IF (is_initialized(),
                  std::logic_error,
                  "Driver is already initialized !");
@@ -418,7 +418,6 @@ namespace genvtx {
     if (_logging_ >= datatools::logger::PRIO_DEBUG) {
       _params_.dump();
     }
-    _params_.dump();
 
     datatools::library_loader LL(_params_.LL_config);
     BOOST_FOREACH (const std::string & dll_name, _params_.LL_dlls) {
@@ -515,15 +514,15 @@ namespace genvtx {
     if (_params_.action_visu) {
       _action_ |= genvtx_driver::ACTION_VISU;
     }
-    std::cerr << "DEVEL: _params_.action_visu_store_dd     = " << _params_.action_visu_store_dd << std::endl;
-    std::cerr << "DEVEL: _params_.action_visu_store_dd_out = '" << _params_.visu_store_dd_out << "'" << std::endl;
+    // std::cerr << "DEVEL: _params_.action_visu_store_dd     = " << _params_.action_visu_store_dd << std::endl;
+    // std::cerr << "DEVEL: _params_.action_visu_store_dd_out = '" << _params_.visu_store_dd_out << "'" << std::endl;
     if (_action_ & genvtx_driver::ACTION_SHOOT) {
       DT_THROW_IF(_params_.nshoots <= 0, std::range_error,
                   "Invalid number of vertexes to be generated (" << _params_.nshoots << ") !");
       if (!_params_.visu_store_dd_out.empty()) {
-        std::cerr << "DEVEL: _params_.action_visu_store_dd not empty..." << std::endl;
+        // std::cerr << "DEVEL: _params_.action_visu_store_dd not empty..." << std::endl;
         _params_.action_visu_store_dd = true;
-        std::cerr << "DEVEL: _params_.action_visu_store_dd (2) = " << _params_.action_visu_store_dd << std::endl;
+        // std::cerr << "DEVEL: _params_.action_visu_store_dd (2) = " << _params_.action_visu_store_dd << std::endl;
       }
       if (_params_.action_visu_store_dd) {
         DT_THROW_IF(_params_.visu_store_dd_out.empty(), std::logic_error,
@@ -533,13 +532,13 @@ namespace genvtx {
     }
 
     _initialized_ = true;
-    std::cerr << "DEVEL: genvtx_driver::initialize: Exiting." << std::endl;
+    // std::cerr << "DEVEL: genvtx_driver::initialize: Exiting." << std::endl;
     return;
   }
 
   void genvtx_driver::reset()
   {
-    std::cerr << "DEVEL: genvtx_driver::reset: Entering..." << std::endl;
+    // std::cerr << "DEVEL: genvtx_driver::reset: Entering..." << std::endl;
     DT_THROW_IF (!is_initialized(),
                  std::logic_error,
                  "Driver is not initialized !");
@@ -550,7 +549,7 @@ namespace genvtx {
     _geo_mgr_.reset();
     _params_.reset();
     _logging_ = datatools::logger::PRIO_WARNING;
-    std::cerr << "DEVEL: genvtx_driver::reset: Exiting." << std::endl;
+    // std::cerr << "DEVEL: genvtx_driver::reset: Exiting." << std::endl;
     return;
   }
 
