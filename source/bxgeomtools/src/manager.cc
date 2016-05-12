@@ -542,18 +542,24 @@ namespace geomtools {
 
   void manager::initialize (const datatools::properties & config_)
   {
+    DT_LOG_TRACE_ENTERING(_logging);
     DT_THROW_IF(_initialized_,
                 std::logic_error,
                 "Geometry manager is already initialized !");
+    DT_LOG_TRACE(_logging, " Pre-init...");
     _pre_init(config_);
+    DT_LOG_TRACE(_logging, " At-init...");
     _at_init_(config_);
+    DT_LOG_TRACE(_logging, " Post-init...");
     _post_init(config_);
     _initialized_ = true;
+    DT_LOG_TRACE_EXITING(_logging);
     return;
   }
 
   void manager::reset ()
   {
+    DT_LOG_TRACE_ENTERING(_logging);
     DT_THROW_IF (! _initialized_,
                  std::logic_error,
                  "Geometry manager is not initialized ! Cannot reset !");
@@ -561,6 +567,7 @@ namespace geomtools {
     _shape_factory_.reset();
     _id_manager_.reset();
     _initialized_ = false;
+    DT_LOG_TRACE_EXITING(_logging);
     return;
   }
 
@@ -671,13 +678,6 @@ namespace geomtools {
     // Pass the shape factory to the model factory:
     _factory_.set_shape_factory(_shape_factory_);
 
-    if (config_.has_key ("id_mgr.categories_list")) {
-      std::string categories_list = config_.fetch_string("id_mgr.categories_list");
-      categories_lists.push_back(categories_list);
-    } else if (config_.has_key ("id_mgr.categories_lists")) {
-      config_.fetch("id_mgr.categories_lists", categories_lists);
-    }
-
     // Load on list file of geometry models defintion files:
     if (config_.has_key ("factory.geom_list")) {
       std::string factory_geom_list = config_.fetch_string ("factory.geom_list");
@@ -732,7 +732,6 @@ namespace geomtools {
     if (! setup_description.empty ()) {
       set_setup_description (setup_description);
     }
-
 
     /************************************************
      * Initialization of the geometry model factory *
