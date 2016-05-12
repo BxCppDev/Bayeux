@@ -1292,8 +1292,9 @@ namespace geomtools {
   }
 
   int manager::print_list_of_gids(const geomtools::manager & mgr_,
-                                  std::ostream & out_,
-                                  const std::string & rules_)
+                                  const std::string & command_,
+                                  const std::string & options_,
+                                  std::ostream & out_)
   {
     std::vector<std::string> requested_categories;
     std::vector<int> requested_types;
@@ -1302,29 +1303,36 @@ namespace geomtools {
     bool with_multicolumn = true;
     std::string mapping_plugin;
 
-    // Parse rules :
-    std::istringstream rules_iss(rules_);
-    while (rules_iss) {
-      std::string rule;
-      rules_iss >> rule >> std::ws;
+    // Parse options :
+    std::istringstream options_iss(options_);
+    options_iss >> std::ws;
+    while (options_iss && ! options_iss.eof()) {
+      std::string option;
+      options_iss >> option >> std::ws;
 
-      if (rule=="--help" || rule=="-h") {
-        out_ << "  --with-title              Print a title line\n"
-             << "  --without-title           Do not print a title line\n"
-             << "  --multicolumn             Print in multicolumn mode\n"
-             << "  --onecolumn               Print in one column mode\n"
-             << "  --with-category CATEGORY  Print GIDs with category name CATEGORY\n"
-             << "  --with-type     TYPE      Print GIDs with category type TYPE\n"
+      if (option=="--help" || option=="-h") {
+        out_ << "  Usage: \n";
+        out_ << "     " << command_ << " [OPTIONS...]  \n"
+             << "\n";
+        out_ << "  Options: \n";
+        out_ << "    -h | --help                    Print this help\n"
+             << "    -t | --with-title              Print a title line\n"
+             << "    -T | --without-title           Do not print a title line\n"
+             << "    -m | --multicolumn             Print in multicolumn mode\n"
+             << "    -1 | --onecolumn               Print in one column mode\n"
+             << "    -c | --with-category CATEGORY  Print GIDs with category name CATEGORY\n"
+             << "    -p | --with-type     TYPE      Print GIDs with category type TYPE\n"
              << std::endl;
         return -1;
       }
-      else if (rule=="--with-title") with_title = true;
-      else if (rule=="--without-title") with_title = false;
-      else if (rule=="--multicolumn") with_multicolumn = true;
-      else if (rule=="--onecolumn") with_multicolumn = false;
-      else if (rule=="--with-category") {
+      else if (option=="--with-title" || option=="-t") with_title = true;
+      else if (option=="--without-title" || option=="-T") with_title = false;
+      else if (option=="--multicolumn" || option=="-m") with_multicolumn = true;
+      else if (option=="--onecolumn" || option=="-1") with_multicolumn = false;
+      else if (option=="--with-category" || option=="-c") {
         std::string category;
-        rules_iss >> category;
+        options_iss >> category >> std::ws;
+        datatools::remove_quotes(category);
         if (category.empty()) {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                        "Missing geometry category name (please use: '--with-category CATEGORY' ) !");
@@ -1332,10 +1340,14 @@ namespace geomtools {
         }
         requested_categories.push_back(category);
       }
-      else if (rule=="--with-type") {
+      else if (option=="--with-type" || option=="-p") {
         int type = -1;
-        rules_iss >> type;
-        if (!rules_iss) return 1;
+        options_iss >> type >> std::ws;
+        if (!options_iss) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                       "Invalid geometry type format !");
+          return 1;
+        }
         if (type < 0) {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                        "Missing geometry category type (please use: '--with-type TYPE') !");
@@ -1343,9 +1355,9 @@ namespace geomtools {
         }
         requested_types.push_back(type);
       }
-      // else if (rule=="--with-mapping-plugin") {
+      // else if (option=="--with-mapping-plugin") {
       //   std::string plugin;
-      //   rules_iss >> plugin;
+      //   options_iss >> plugin;
       //   if (plugin.empty()) {
       //     DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
       //                  "Missing mapping plugin name (please use: '--with-mapping-plugin PLUGIN' ) !");
@@ -1353,8 +1365,11 @@ namespace geomtools {
       //   }
       //   mapping_plugin = plugin;
       // }
-
-      if (rules_iss.eof()) break;
+      else {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid option '" << option << "' !");
+        return -1;
+      }
+      if (options_iss.eof()) break;
     }
 
     if (mapping_plugin.empty() && ! mgr_.is_mapping_available()) {

@@ -109,39 +109,39 @@ namespace geomtools {
           if ((option == "-h") || (option == "--help")) {
             out_ << "  Usage:                                  \n";
             out_ << "    initialize [OPTIONS...] [MGRCFG_FILE] \n"
-                 << "                                           \n";
+                 << "                                          \n";
             out_ << "  Options:                                \n";
-            out_ << "    -h|--help             Print this help \n";
-            out_ << "    -hs|--help-short      Print this help (short version) \n";
-            out_ << "    --mute                Mute mode (inhibit message)     \n";
+            out_ << "    -h  | --help            Print this help \n";
+            out_ << "    -hs | --help-short      Print this help (short version) \n";
+            out_ << "    -u  | --mute            Mute mode (inhibit message)     \n";
           }
-          out_ << "  -G|--logging LOGPRIO  Set the logging priority threshold 'LOGPRIO'    \n"
+          out_ << "  -G  | --logging LOGPRIO  Set the logging priority threshold 'LOGPRIO'    \n"
                << "                        Accepted values are: 'trace', 'debug',          \n"
                << "                          'information', 'notice', 'warning',           \n"
                << "                          'error', 'critical', 'fatal'                  \n"
-               << "  -B|--batch            Run in batch mode (no user interaction)         \n"
-               << "  -I|--interactive      Run in interactive mode (with user interaction) \n"
-               << "  -c|--manager-config MGRCFG_FILE                                       \n"
+               << "  -B  | --batch            Run in batch mode (no user interaction)         \n"
+               << "  -I  | --interactive      Run in interactive mode (with user interaction) \n"
+               << "  -c  | --manager-config MGRCFG_FILE                                       \n"
                << "                        Use the configuration file named 'MGRCFG_FILE'  \n"
                << "                        for the geometry manager                        \n"
                << "                        (incompatible with '--geometry-file')           \n"
-               << "  -MP|--materials-plugin MATPLG                                         \n"
+               << "  -MP | --materials-plugin MATPLG                                         \n"
                << "                        Use the materials plugin named 'MATPLG'         \n"
-               << "  -g|--geometry-file GEOM_FILE                                          \n"
+               << "  -g  | --geometry-file GEOM_FILE                                          \n"
                << "                        Use the geometry file named 'GEOM_FILE'         \n"
                << "                        for the plain model factory                     \n"
                << "                        (incompatible with '--manager-config')          \n"
-               << "  -l|--load-dll DLL     Load the shared library named 'DLL'             \n";
+               << "  -l  | --load-dll DLL     Load the shared library named 'DLL'             \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-          out_ << "  +V|--with-visu        Visualize the geometry setup                     \n";
-          out_ << "  -V|--without-visu     Do not visualize the geometry setup (default)    \n";
-          out_ << "  -xy|--visu-view-xy    Visualization defaults to XY view                \n";
-          out_ << "  -yz|--visu-view-yz    Visualization defaults to YZ view                \n";
-          out_ << "  -xz|--visu-view-xz    Visualization defaults to XZ view                \n";
-          out_ << "  -3d|--visu-view-3d    Visualization defaults to 3D view (default)      \n";
-          out_ << "  +VL|--visu-labels     Visualization shows axis and labels (default)    \n";
-          out_ << "  -VL|--visu-no-labels  Visualization does not show axis and labels      \n";
-          out_ << "  -VO|--visu-object MODEL_NAME|VOLUME_GID                                \n";
+          out_ << "  +V  | --with-visu        Visualize the geometry setup                     \n";
+          out_ << "  -V  | --without-visu     Do not visualize the geometry setup (default)    \n";
+          out_ << "  -xy | --visu-view-xy    Visualization defaults to XY view                \n";
+          out_ << "  -yz | --visu-view-yz    Visualization defaults to YZ view                \n";
+          out_ << "  -xz | --visu-view-xz    Visualization defaults to XZ view                \n";
+          out_ << "  -3d | --visu-view-3d    Visualization defaults to 3D view (default)      \n";
+          out_ << "  +VL | --visu-labels     Visualization shows axis and labels (default)    \n";
+          out_ << "  -VL | --visu-no-labels  Visualization does not show axis and labels      \n";
+          out_ << "  -VO | --visu-object MODEL_NAME|VOLUME_GID                                \n";
           out_ << "                        Visualization displays a specific geometry model \n"
                << "                        by name, a logical volume by name or a physical  \n";
           out_ << "                        volume by GID (default: autodetected)            \n";
@@ -160,7 +160,7 @@ namespace geomtools {
           } else {
             logging = lp;
           }
-        } else if ((option == "--mute"))  {
+        } else if ((option == "--mute") || (option == "-u"))  {
           mute = true;
         } else if ((option == "-B") || (option == "--batch"))  {
           interactive = false;
@@ -616,8 +616,9 @@ namespace geomtools {
       return 1;
     }
     return geomtools::model_factory::print_list_of_models(*_geo_factory_ref_,
-                                                          out_,
-                                                          print_models_options_);
+                                                          "list_of_models",
+                                                          print_models_options_,
+                                                          out_);
   }
 
   int geomtools_driver::command_print_list_of_categories(std::ostream & out_,
@@ -628,7 +629,9 @@ namespace geomtools {
       return 1;
     }
     if (has_manager()) {
-      return _geo_mgr_->get_id_mgr().print_list_of_categories(out_, argv_);
+      return _geo_mgr_->get_id_mgr().print_list_of_categories("list_of_categories",
+                                                              argv_,
+                                                              out_);
     } else {
       DT_LOG_ERROR(_params_.logging, "No geometry ID manager is available !");
       return 1;
@@ -643,8 +646,9 @@ namespace geomtools {
       return 1;
     }
     return geomtools::model_factory::print_list_of_logicals(*_geo_factory_ref_,
-                                                            out_,
-                                                            print_logicals_options_);
+                                                            "list_of_logicals",
+                                                            print_logicals_options_,
+                                                            out_);
   }
 
   int geomtools_driver::command_print_list_of_gids(std::ostream & out_,
@@ -655,12 +659,13 @@ namespace geomtools {
       return 1;
     }
     if (! _geo_mgr_) {
-      DT_LOG_ERROR(_params_.logging, "No embeded geometry manager !");
+      DT_LOG_ERROR(_params_.logging, "No embedded geometry manager !");
       return 1;
     }
     return geomtools::manager::print_list_of_gids(*_geo_mgr_.get(),
-                                                  out_,
-                                                  print_gids_options_);
+                                                  "list_of_gids",
+                                                  print_gids_options_,
+                                                  out_);
   }
 
   int geomtools_driver::command_print_manager(std::ostream & out_) const
@@ -767,15 +772,15 @@ namespace geomtools {
           out_ << "     display [OPTIONS...]  \n"
                << "\n";
           out_ << "   Options: \n";
-          out_ << "     -h|--help          Print this help\n"
-               << "     --with-title       Print a title line\n"
-               << "     --without-title    Do not print a title line\n"
+          out_ << "     -h | --help          Print this help\n"
+               << "     -t | --with-title    Print a title line\n"
+               << "     -T | --without-title Do not print a title line\n"
                << "\n";
           out_ << std::flush;
           return -1;
-        } else if (option == "--with-title") {
+        } else if (option == "--with-title" || option == "-t") {
           with_title = true;
-        } else if (option == "--without-title") {
+        } else if (option == "--without-title" || option == "-T") {
           with_title = false;
         // } else if (option == "-p" || option == "--pattern") {
         //   std::string pattern = argv_[argcount++];
@@ -825,9 +830,9 @@ namespace geomtools {
           out_ << "     display [OPTIONS...] [NAME] \n"
                << "\n";
           out_ << "   Options: \n";
-          out_ << "     -h|--help          Print this help\n"
-               << "     -n|--name NAME     Select the name of the display data object\n"
-               << "     -i|--input IN_FILE Select the input file from which to load \n"
+          out_ << "     -h | --help          Print this help\n"
+               << "     -n | --name NAME     Select the name of the display data object\n"
+               << "     -i | --input IN_FILE Select the input file from which to load \n"
                << "                        the display data object\n"
                << "\n";
           out_ << "   NAME : The name of the display data object to be loaded\n";
@@ -916,8 +921,8 @@ namespace geomtools {
           out_ << "     display [OPTIONS...] [NAME] \n"
                << "\n";
           out_ << "   Options: \n";
-          out_ << "     -h|--help          Print this help\n"
-               << "     -n|--name NAME     Select the name of the display data object\n"
+          out_ << "     -h | --help          Print this help\n"
+               << "     -n | --name NAME     Select the name of the display data object\n"
                << "\n";
           out_ << "   NAME : The name of the display data object to be loaded\n";
           out_ << std::flush;
@@ -995,8 +1000,8 @@ namespace geomtools {
                << "\n";
           out_ << "  Options: \n";
           out_ << "    -h | --help           Print this help\n"
-               << "    --with-replica        With replica support\n"
-               << "    --without-replica     Without replica support\n"
+               << "    -r | --with-replica        With replica support\n"
+               << "    -R | --without-replica     Without replica support\n"
                << "    --no-root-display     Do not display the GDML geometry from ROOT\n"
                << "    --root-display        Display the GDML geometry from ROOT\n"
                << "                          (interactive mode only)\n"
@@ -1009,9 +1014,9 @@ namespace geomtools {
           return -1;
         } else if (option  == "--root-display") {
           root_display = true;
-        } else if (option  == "--with-replica") {
+        } else if (option  == "--with-replica" || option  == "-r") {
           replica_support = true;
-        } else if (option  == "--without-replica") {
+        } else if (option  == "--without-replica" || option  == "-R") {
           replica_support = false;
         } else if (option == "--no-root-display") {
           root_display = false;
@@ -1214,42 +1219,44 @@ namespace geomtools {
       if (token[0] == '-') {
         std::string option = token;
         if (option  == "-h" || option  == "--help") {
-          out_ << "   Usage: \n";
-          out_ << "     display [OPTIONS...] [NAME] \n"
+          out_ << "  Usage: \n";
+          out_ << "    display [OPTIONS...] [NAME] \n"
                << "\n";
-          out_ << "   Options: \n";
-          out_ << "     -h | --help           Print this help\n"
-               << "     -xy|--visu-view-xy    Use X-Y 2D projection\n"
-               << "     -xz|--visu-view-xz    Use X-Z 2D projection\n"
-               << "     -yz|--visu-view-yz    Use Y-Z 2D projection\n"
-               << "     -3d|--visu-view-3d    Use 3D view \n"
-               << "     -3d-free|--visu-view-3d-free Use 3D view (free scale)\n"
-               << "     -e|--force-show-envelope Force the display of volume envelope\n"
-               << "     -E|--force-hide-envelope Disable the display of volume envelope\n"
-               << "     -c|--force-show-children Force the display of children volumes\n"
-               << "     -C|--force-hide-children Disable the display of children volumes\n"
-               << "     -dd|--with-display_data Display data are included in the scene\n"
-               << "     -nodd|--without-display_data Display data are not included in the scene\n"
-               << "     --labels              Display axis with labels\n"
-               << "     --no-labels           Do not display axis with labels\n"
-               << "     --title               Display image title\n"
-               << "     --no-title            Do not display image title\n"
-                << "     -o|--output OUT_FILE  Print in the 'OUT_FILE' file\n"
-            // << "     -t|--terminal TERM    Use terminal 'TERM'\n"
-            // << "     -to|--terminal-options TERMOPT \n"
+          out_ << "  Options: \n";
+          out_ << "    -h  | --help                Print this help\n"
+               << "    -xy | --visu-view-xy        Use X-Y 2D projection\n"
+               << "    -xz | --visu-view-xz        Use X-Z 2D projection\n"
+               << "    -yz | --visu-view-yz        Use Y-Z 2D projection\n"
+               << "    -3d | --visu-view-3d        Use 3D view \n"
+               << "    -3f | --visu-view-3d-free   Use 3D view (free scale)\n"
+               << "    -e  | --force-show-envelope Force the display of volume envelope\n"
+               << "    -E  | --force-hide-envelope Disable the display of volume envelope\n"
+               << "    -c  | --force-show-children Force the display of children volumes\n"
+               << "    -C  | --force-hide-children Disable the display of children volumes\n"
+               << "    -dd | --with-display_data   Display data are included in the scene.n"
+               << "                                This works only with GID objects rendering.\n"
+               << "    -DD | --without-display_data \n"
+               << "                                Display data are not included in the scene\n"
+               << "    -l  | --labels              Display axis with labels\n"
+               << "    -L  | --no-labels           Do not display axis with labels\n"
+               << "    -t  | --title               Display image title\n"
+               << "    -T  | --no-title            Do not display image title\n"
+               << "    -o  | --output OUT_FILE     Print in the 'OUT_FILE' file\n"
+            // << "    -r  | --terminal TERM    Use terminal 'TERM'\n"
+            // << "    -R  | --terminal-options TERMOPT \n"
             // << "                           Use terminal options 'TERMOPT'\n"
                << "\n";
-          out_ << "   NAME : The name of the object to be displayed (optional)\n";
-          out_ << "          It can be:                       \n";
-          out_ << "          - the name of a geometry model,  \n";
-          out_ << "          - the name of a logical volume,  \n";
-          out_ << "          - the GID associated to a volume \n";
-          out_ << "            by the active mapping.         \n";
+          out_ << "  NAME : The name of the object to be displayed (optional)\n";
+          out_ << "         It can be:                       \n";
+          out_ << "         - the name of a geometry model,  \n";
+          out_ << "         - the name of a logical volume,  \n";
+          out_ << "         - the GID associated to a volume \n";
+          out_ << "           by the active mapping.         \n";
           out_ << std::flush;
           return -1;
         } else if (option == "-dd" || option == "--with-display-data") {
           process_display_data = true;
-        } else if (option == "-nodd" || option == "--without-display-data") {
+        } else if (option == "-DD" || option == "--without-display-data") {
           process_display_data = false;
         } else if (option == "-c" || option == "--force-show-children") {
           force_show_children = true;
@@ -1267,21 +1274,23 @@ namespace geomtools {
           force_hide_envelope = true;
           if (force_show_envelope) DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                                                   "Setting 'force-hide-envelope' option conflicts with 'force-show-envelope' ! Ignore !");
-        } else if (option == "--labels") {
+        } else if (option == "--labels" || option == "-l") {
           _params_.visu_drawer_labels = true;
-        } else if (option == "--no-labels") {
+        } else if (option == "--no-labels" || option == "-L") {
           _params_.visu_drawer_labels = false;
-        } else if (option == "--title") {
+        } else if (option == "--title" || option == "-t") {
           using_title = true;
-        } else if (option == "--no-title") {
+        } else if (option == "--no-title" || option == "-T") {
           using_title = false;
         } else if (option == "-o" || option == "--output") {
           output = argv_[argcount++];
+          datatools::remove_quotes(output);
         } else {
           _params_.visu_drawer_view = get_drawer_view(option);
         }
       } else {
         std::string argument = token;
+        datatools::remove_quotes(argument);
         if (visu_object_name.empty()) {
           visu_object_name = argument;
         } else {
@@ -1387,7 +1396,7 @@ namespace geomtools {
       drawer_view = geomtools::gnuplot_drawer::view_2d_yz();
     } else if (view_label_ == "-3d" || view_label_ == "--visu-view-3d") {
       drawer_view = geomtools::gnuplot_drawer::view_3d();
-    } else if (view_label_ == "-3d-free" || view_label_ == "--visu-view-3d-free") {
+    } else if (view_label_ == "-3f" || view_label_ == "-3d-free" || view_label_ == "--visu-view-3d-free") {
       drawer_view = geomtools::gnuplot_drawer::view_3d_free_scale();
     } else {
       DT_LOG_WARNING(datatools::logger::PRIO_WARNING,

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <map>
@@ -862,9 +863,12 @@ namespace geomtools {
     return EXIT_SUCCESS;
   }
 
-  int id_mgr::print_list_of_categories(std::ostream & out_, const std::vector<std::string> & argv_) const
+  int id_mgr::print_list_of_categories(const std::string & command_,
+                                       const std::vector<std::string> & argv_,
+                                       std::ostream & out_) const
   {
     bool with_title = true;
+    bool with_type = true;
     std::vector<std::string> requested_patterns;
     size_t argcount = 0;
     while (argcount < argv_.size()) {
@@ -873,22 +877,26 @@ namespace geomtools {
       if (token[0] == '-') {
         std::string option = token;
         if (option  == "-h" || option  == "--help") {
-          out_ << "   Usage: \n";
-          out_ << "     display [OPTIONS...] [NAME] \n"
+          out_ << "  Usage: \n";
+          out_ << "    " << command_ << " [OPTIONS...]  \n"
                << "\n";
-          out_ << "   Options: \n";
-          out_ << "     -h|--help          Print this help\n"
-               << "     --with-title       Print a title line\n"
-               << "     --without-title    Do not print a title line\n"
-               << "     -p|--pattern PATTERN  Select categories matching pattern PATTERN\n"
+          out_ << "  Options: \n";
+          out_ << "    -h | --help             Print this help\n"
+               << "    -p | --with-type        Print type\n"
+               << "    -P | --without-type     Do not print type\n"
+               << "    -t | --with-title       Print a title line\n"
+               << "    -T | --without-title    Do not print a title line\n"
+               << "    -p | --pattern PATTERN  Select categories matching pattern PATTERN\n"
                << "\n";
-          out_ << "   NAME : The name of the display data object to be loaded\n";
-          out_ << "   FROM : The file name of the display data object to be loaded\n";
-          out_ << std::flush;
+           out_ << std::flush;
           return -1;
-        } else if (option == "--with-title") {
+        } else if (option == "--with-type" || option=="-p") {
+          with_type = true;
+        } else if (option == "--without-type" || option=="-P") {
+          with_type = false;
+        } else if (option == "--with-title" || option=="-t") {
           with_title = true;
-        } else if (option == "--without-title") {
+        } else if (option == "--without-title" || option=="-T") {
           with_title = false;
         } else if (option == "-p" || option == "--pattern") {
           std::string pattern = argv_[argcount++];
@@ -934,6 +942,14 @@ namespace geomtools {
         }
       }
     }
+    unsigned int longest = 0;
+    for (std::vector<const std::string*>::const_iterator i
+           = selected_categories.begin();
+         i != selected_categories.end();
+         i++) {
+      const std::string & category = **i;
+      if (category.length() > longest) longest = category.length();
+    }
     if (with_title) {
       out_ << std::flush << "List of available geometry categories : " << std::endl;
     }
@@ -942,7 +958,10 @@ namespace geomtools {
          i != selected_categories.end();
          i++) {
       const std::string & category = **i;
-      out_ << category << " [type=" << _categories_by_name_.find(category)->second.get_type() << "] ";
+      out_ << std::left << std::setw(longest + 1) << category;
+      if (with_type) {
+        out_ << " [type=" << _categories_by_name_.find(category)->second.get_type() << "] ";
+      }
       // bool desc = false;
       // if (desc) {
       //        out_<< " : " << _categories_by_name_[category].second.get_description();

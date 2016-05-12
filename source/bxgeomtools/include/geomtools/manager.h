@@ -398,8 +398,9 @@ namespace geomtools {
 
     //! Print the list of geometry identifiers (GIDs) from a manager and given specific rules
     static int print_list_of_gids(const geomtools::manager & mgr_,
-                                  std::ostream & out_ = std::clog,
-                                  const std::string & rules_ = "");
+                                  const std::string & command_,
+                                  const std::string & rules_ = "",
+                                  std::ostream & out_ = std::clog);
 
   protected:
 

@@ -127,13 +127,15 @@ namespace geomtools {
 
     /// Print the list of geometry models
     static int print_list_of_models(const geomtools::model_factory & mf_,
-                                    std::ostream & out_ = std::clog,
-                                    const std::string & options_ = "");
+                                    const std::string & command_,
+                                    const std::string & argv_ = "",
+                                    std::ostream & out_ = std::clog);
 
     /// Print the list of geometry logical volumes
     static int print_list_of_logicals(const geomtools::model_factory & mf_,
-                                      std::ostream & out_ = std::clog,
-                                      const std::string & options_ = "");
+                                      const std::string & command_,
+                                      const std::string & argv_ = "",
+                                      std::ostream & out_ = std::clog);
 
   private:
 

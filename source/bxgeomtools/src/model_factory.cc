@@ -14,6 +14,7 @@
 // Third party:
 // - Boost:
 #include <boost/filesystem.hpp>
+#include <boost/regex.hpp>
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/exception.h>
@@ -469,46 +470,58 @@ namespace geomtools {
   }
 
   int model_factory::print_list_of_models(const geomtools::model_factory & mf_,
-                                          std::ostream & out_,
-                                          const std::string & rules_)
+                                          const std::string & command_,
+                                          const std::string & options_,
+                                          std::ostream & out_)
   {
+    //std::cerr << "DEVEL: model_factory::print_list_of_models: Entering... \n";
     std::vector<std::string> requested_patterns;
 
     bool with_title = true;
     bool with_multicolumn = true;
 
-    // Parse rules :
-    std::istringstream rules_iss(rules_);
-    while (rules_iss) {
-      std::string rule;
-      rules_iss >> rule >> std::ws;
+    //std::cerr << "DEVEL: model_factory::print_list_of_models: Parsing options... \n";
+    // Parse options :
+    std::istringstream options_iss(options_);
+    options_iss >> std::ws;
+    while (options_iss && ! options_iss.eof()) {
+      std::string option;
+      options_iss >> option >> std::ws;
 
-      if (rule=="--help" || rule=="-h") {
-        out_ << "  --with-title              Print a title line\n"
-             << "  --without-title           Do not print a title line\n"
-             << "  --multicolumn             Print in multicolumn mode\n"
-             << "  --onecolumn               Print in one column mode\n"
-          //   << "  --with-pattern PATTERN    Print the geometry models named with PATTERN\n"
+      if (option=="--help" || option=="-h") {
+        out_ << "  Usage: \n";
+        out_ << "     " << command_ << " [OPTIONS...]  \n"
+             << "\n";
+        out_ << "  Options: \n";
+        out_ << "    -h | --help            Print this help\n"
+             << "    -t | --with-title      Print a title line\n"
+             << "    -T | --without-title   Do not print a title line\n"
+             << "    -m | --multicolumn     Print in multicolumn mode\n"
+             << "    -1 | --onecolumn       Print in one column mode\n"
+             << "    -p | --pattern PATTERN Select geometry models with matching pattern PATTERN\n"
              << std::endl;
         return -1;
       }
-      else if (rule=="--with-title") with_title = true;
-      else if (rule=="--without-title") with_title = false;
-      else if (rule=="--multicolumn") with_multicolumn = true;
-      else if (rule=="--onecolumn") with_multicolumn = false;
-      // else if (rule=="--with-pattern") {
-      //   std::string pattern;
-      //   rules_iss >> pattern;
-      //   if (pattern.empty()) {
-      //     DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-      //                  "Missing model name pattern (please use: '--with-pattern PATTERN' ) !");
-      //     return 1;
-      //   }
-      //   requested_patterns.push_back(category);
-      // }
-
-      if (rules_iss.eof()) break;
+      else if (option == "--with-title" || option=="-t") with_title = true;
+      else if (option == "--without-title" || option=="-T") with_title = false;
+      else if (option == "--multicolumn" || option=="-m") with_multicolumn = true;
+      else if (option == "--onecolumn" || option=="-1") with_multicolumn = false;
+      else if (option == "-p" || option == "--pattern") {
+        std::string pattern;
+        options_iss >> pattern >> std::ws;
+        datatools::remove_quotes(pattern);
+        if (pattern.empty()) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Empty geometry model pattern !");
+          return 1;
+        }
+        requested_patterns.push_back(pattern);
+      } else {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid option '" << option << "' !");
+        return 1;
+      }
+      if (options_iss.eof()) break;
     }
+    //std::cerr << "DEVEL: model_factory::print_list_of_models: Parsed options. \n";
 
     std::vector<const std::string*> selected_models;
     for (geomtools::models_col_type::const_iterator i
@@ -516,21 +529,29 @@ namespace geomtools {
          i != mf_.get_models().end();
          i++) {
       const std::string & model_name = i->second->get_name();
-      bool selected = true;
-      // if (requested_patterns.size()) {
-      //   selected = false;
-      // }
-      // if (! selected && requested_patterns.size()) {
-      //   if (std::find(requested_patterns.begin(),
-      //                 requested_patterns.end(),
-      //                 category) != requested_patterns.end()) {
-      //      selected = true;
-      //   }
-      // }
-      if (selected) {
+      if (requested_patterns.size() == 0) {
         selected_models.push_back(&model_name);
+      } else {
+        bool selected = false;
+        for (size_t j = 0; j < requested_patterns.size(); j++) {
+          try {
+            boost::regex expression(requested_patterns[j]);
+            if (boost::regex_search(model_name.begin(), model_name.end(), expression)) {
+              selected = true;
+              break;
+            }
+          } catch (std::exception & error) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Regular expression error: " << error.what());
+            return 1;
+          }
+        }
+        if (selected) {
+          selected_models.push_back(&model_name);
+        }
       }
     }
+
+    //std::cerr << "DEVEL: model_factory::print_list_of_models: Nb sel. models = " << selected_models.size() << " \n";
 
     if (with_title) {
       out_ << std::flush << "List of available geometry models : " << std::endl;
@@ -574,45 +595,54 @@ namespace geomtools {
   }
 
   int model_factory::print_list_of_logicals(const geomtools::model_factory & mf_,
-                                            std::ostream & out_,
-                                            const std::string & rules_)
+                                            const std::string & command_,
+                                            const std::string & options_,
+                                            std::ostream & out_)
   {
     std::vector<std::string> requested_patterns;
 
     bool with_title = true;
     bool with_multicolumn = true;
 
-    // Parse rules :
-    std::istringstream rules_iss(rules_);
-    while (rules_iss) {
-      std::string rule;
-      rules_iss >> rule >> std::ws;
-
-      if (rule=="--help" || rule=="-h") {
-        out_ << "  --with-title              Print a title line\n"
-             << "  --without-title           Do not print a title line\n"
-             << "  --multicolumn             Print in multicolumn mode\n"
-             << "  --onecolumn               Print in one column mode\n"
-          //   << "  --with-pattern PATTERN    Print the logical volumes named with PATTERN\n"
+    // Parse options :
+    std::istringstream options_iss(options_);
+    options_iss >> std::ws;
+    while (options_iss && ! options_iss.eof()) {
+      std::string option;
+      options_iss >> option >> std::ws;
+      // std::cerr << "DEVEL: Option = '" << option << "'\n";
+      if (option=="--help" || option=="-h") {
+        out_ << "  Usage: \n";
+        out_ << "     " << command_ << " [OPTIONS...]  \n"
+             << "\n";
+        out_ << "  Options: \n";
+        out_ << "    -h | --help            Print this help\n"
+             << "    -t | --with-title      Print a title line\n"
+             << "    -T | --without-title   Do not print a title line\n"
+             << "    -m | --multicolumn     Print in multicolumn mode\n"
+             << "    -1 | --onecolumn       Print in one column mode\n"
+             << "    -p | --pattern PATTERN Select logical volumes with matching pattern PATTERN\n"
              << std::endl;
         return -1;
       }
-      else if (rule=="--with-title") with_title = true;
-      else if (rule=="--without-title") with_title = false;
-      else if (rule=="--multicolumn") with_multicolumn = true;
-      else if (rule=="--onecolumn") with_multicolumn = false;
-      // else if (rule=="--with-pattern") {
-      //   std::string pattern;
-      //   rules_iss >> pattern;
-      //   if (pattern.empty()) {
-      //     DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-      //                  "Missing logical volume pattern (please use: '--with-pattern PATTERN' ) !");
-      //     return 1;
-      //   }
-      //   requested_patterns.push_back(category);
-      // }
-
-      if (rules_iss.eof()) break;
+      else if (option == "--with-title" || option=="-t") with_title = true;
+      else if (option == "--without-title" || option=="-T") with_title = false;
+      else if (option == "--multicolumn" || option=="-m") with_multicolumn = true;
+      else if (option == "--onecolumn" || option=="-1") with_multicolumn = false;
+      else if (option == "-p" || option == "--pattern") {
+        std::string pattern;
+        options_iss >> pattern >> std::ws;
+        datatools::remove_quotes(pattern);
+        if (pattern.empty()) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Empty geometry model pattern !");
+          return 1;
+        }
+        requested_patterns.push_back(pattern);
+      } else {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid option '" << option << "' !");
+        return 1;
+      }
+      if (options_iss.eof()) break;
     }
 
     std::vector<const std::string*> selected_logicals;
@@ -621,19 +651,25 @@ namespace geomtools {
          i != mf_.get_logicals().end();
          i++) {
       const std::string & logical_name = i->second->get_name();
-      bool selected = true;
-      // if (requested_patterns.size()) {
-      //   selected = false;
-      // }
-      // if (! selected && requested_patterns.size()) {
-      //   if (std::find(requested_patterns.begin(),
-      //                 requested_patterns.end(),
-      //                 category) != requested_patterns.end()) {
-      //      selected = true;
-      //   }
-      // }
-      if (selected) {
+      if (requested_patterns.size() == 0) {
         selected_logicals.push_back(&logical_name);
+      } else {
+        bool selected = false;
+        for (size_t j = 0; j < requested_patterns.size(); j++) {
+          try {
+            boost::regex expression(requested_patterns[j]);
+            if (boost::regex_search(logical_name.begin(), logical_name.end(), expression)) {
+              selected = true;
+              break;
+            }
+          } catch (std::exception & error) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Regular expression error: " << error.what());
+            return 1;
+          }
+        }
+        if (selected) {
+          selected_logicals.push_back(&logical_name);
+        }
       }
     }
 

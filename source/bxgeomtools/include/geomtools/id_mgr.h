@@ -224,7 +224,9 @@ namespace geomtools {
     void make_id (const std::string & category_, geom_id & id_) const;
 
     /// Print the list of categories
-    int print_list_of_categories(std::ostream & out_, const std::vector<std::string> & argv_) const;
+    int print_list_of_categories(const std::string & command_,
+                                 const std::vector<std::string> & argv_,
+                                 std::ostream & out_ = std::clog) const;
 
     /*
       void make_extended (const geom_id & mother_id_,
