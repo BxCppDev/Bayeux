@@ -592,7 +592,7 @@ namespace geomtools {
     std::string setup_description = _setup_description_;
     std::string setup_version = _setup_version_;
     std::string world_name;
-    std::string factory_geom_list;
+    // std::string factory_geom_list;
     std::vector<std::string> factory_geom_lists;
     std::vector<std::string> factory_geom_files;
     std::vector<std::string> factory_preserved_property_prefixes;
@@ -671,14 +671,22 @@ namespace geomtools {
     // Pass the shape factory to the model factory:
     _factory_.set_shape_factory(_shape_factory_);
 
-    // Load on list file of geometry models defintion files:
-    if (config_.has_key ("factory.geom_list")) {
-      factory_geom_list = config_.fetch_string ("factory.geom_list");
+    if (config_.has_key ("id_mgr.categories_list")) {
+      std::string categories_list = config_.fetch_string("id_mgr.categories_list");
+      categories_lists.push_back(categories_list);
+    } else if (config_.has_key ("id_mgr.categories_lists")) {
+      config_.fetch("id_mgr.categories_lists", categories_lists);
     }
 
-    // Load several list files of geometry models defintion files:
-    if (config_.has_key ("factory.geom_lists")) {
-      config_.fetch("factory.geom_lists", factory_geom_lists);
+    // Load on list file of geometry models defintion files:
+    if (config_.has_key ("factory.geom_list")) {
+      std::string factory_geom_list = config_.fetch_string ("factory.geom_list");
+      factory_geom_lists.push_back(factory_geom_list);
+    } else {
+      // Load several list files of geometry models defintion files:
+      if (config_.has_key ("factory.geom_lists")) {
+        config_.fetch("factory.geom_lists", factory_geom_lists);
+      }
     }
 
     if (config_.has_key ("factory.geom_files")) {
@@ -764,10 +772,6 @@ namespace geomtools {
       DT_LOG_NOTICE(_logging,
                    "Property prefix '" << prefix << "' will be exported by the model factory");
       _factory_.add_property_prefix(prefix);
-    }
-
-    if (! factory_geom_list.empty ()) {
-      _factory_.load_geom_list(factory_geom_list);
     }
 
     for (std::vector<std::string>::const_iterator i
@@ -1708,7 +1712,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                    "      \"${CONFIG_REPOSITORY_DIR}/geom/geom_files.lis\"       \n"
                    "                                                             \n"
                    "where the '.../geom/geom_files.lis' file has the following   \n"
-                   "format :                                                     \n"
+                   "format ::                                                    \n"
                    "                                                             \n"
                    "     ${CONFIG_REPOSITORY_DIR}/geom/models/sources.geom       \n"
                    "     ${CONFIG_REPOSITORY_DIR}/geom/models/detectors.geom     \n"
@@ -1719,6 +1723,16 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::manager,ocd_)
                    "                                                             \n"
                    "Here the ``CONFIG_REPOSITORY_DIR`` is an environment variable\n"
                    "which points to the base configuration directory.            \n"
+                   "                                                             \n"
+                   "A plural version exist to load several lists of geom files:: \n"
+                   "The order of the geometry list files (``*.lis``) is critical \n"
+                   "because some geometry models may depend on other ones::      \n"
+                   "                                                             \n"
+                   "    factory.geom_lists : string[3] as path = \\              \n"
+                   "      \"${CONFIG_REPOSITORY_DIR}/geom/calo_models_1.lis\" \\  \n"
+                   "      \"${CONFIG_REPOSITORY_DIR}/geom/traker_models_2.lis\" \\\n"
+                   "      \"${CONFIG_REPOSITORY_DIR}/geom/detector.lis\"         \n"
+                   "                                                             \n"
                    )
       ;
   }
