@@ -882,17 +882,17 @@ namespace geomtools {
                << "\n";
           out_ << "  Options: \n";
           out_ << "    -h | --help             Print this help\n"
-               << "    -p | --with-type        Print type\n"
-               << "    -P | --without-type     Do not print type\n"
+               << "    -y | --with-type        Print type\n"
+               << "    -Y | --without-type     Do not print type\n"
                << "    -t | --with-title       Print a title line\n"
                << "    -T | --without-title    Do not print a title line\n"
                << "    -p | --pattern PATTERN  Select categories matching pattern PATTERN\n"
                << "\n";
            out_ << std::flush;
           return -1;
-        } else if (option == "--with-type" || option=="-p") {
+        } else if (option == "--with-type" || option=="-y") {
           with_type = true;
-        } else if (option == "--without-type" || option=="-P") {
+        } else if (option == "--without-type" || option=="-Y") {
           with_type = false;
         } else if (option == "--with-title" || option=="-t") {
           with_title = true;

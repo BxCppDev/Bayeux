@@ -593,6 +593,7 @@ namespace geomtools {
     std::string setup_version = _setup_version_;
     std::string world_name;
     std::string factory_geom_list;
+    std::vector<std::string> factory_geom_lists;
     std::vector<std::string> factory_geom_files;
     std::vector<std::string> factory_preserved_property_prefixes;
     std::vector<std::string> categories_lists;
@@ -670,8 +671,14 @@ namespace geomtools {
     // Pass the shape factory to the model factory:
     _factory_.set_shape_factory(_shape_factory_);
 
+    // Load on list file of geometry models defintion files:
     if (config_.has_key ("factory.geom_list")) {
       factory_geom_list = config_.fetch_string ("factory.geom_list");
+    }
+
+    // Load several list files of geometry models defintion files:
+    if (config_.has_key ("factory.geom_lists")) {
+      config_.fetch("factory.geom_lists", factory_geom_lists);
     }
 
     if (config_.has_key ("factory.geom_files")) {
@@ -761,6 +768,19 @@ namespace geomtools {
 
     if (! factory_geom_list.empty ()) {
       _factory_.load_geom_list(factory_geom_list);
+    }
+
+    for (std::vector<std::string>::const_iterator i
+           = factory_geom_lists.begin();
+         i != factory_geom_lists.end();
+         i++) {
+      std::string geom_list = *i;
+      datatools::fetch_path_with_env (geom_list);
+      DT_LOG_NOTICE(_logging,
+                    "Loading list of geometry model configuration files '" << geom_list << "'... ");
+      _factory_.load_geom_list(geom_list);
+      DT_LOG_NOTICE(_logging,
+                    "Lists were loaded from file '" << geom_list << "'.");
     }
 
     for (std::vector<std::string>::const_iterator i
