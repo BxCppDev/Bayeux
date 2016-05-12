@@ -1406,7 +1406,7 @@ int main (int argc_, char ** argv_)
 
       ("generator,g",
        po::value<std::string> (&params.generator),
-       "set the particle generator. \n"
+       "set the particle generator in 'shoot' mode. \n"
        "Example :                   \n"
        " --generator \"Bi207\"        "
        )
