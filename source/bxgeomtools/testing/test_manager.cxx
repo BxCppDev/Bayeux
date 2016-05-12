@@ -50,7 +50,7 @@
 #include <geomtools/box.h>
 #include <geomtools/blur_spot.h>
 
-/* A plugin for the geometry manager which instantiate
+/* A plugin for the geometry manager which instantiates
  * a 'mapping' object with its specific mapping rules.
  * It is a clone of the 'geomtools::mapping_plugin class'.
  */
@@ -144,6 +144,7 @@ int main (int argc_, char ** argv_)
   try {
       std::clog << "Test program for class 'geomtools::manager' !" << std::endl;
 
+      bool   trace = false;
       bool   debug = false;
       bool   verbose = false;
       std::string manager_config_file;
@@ -176,6 +177,10 @@ int main (int argc_, char ** argv_)
               else if ((option == "-V") || (option == "--verbose"))
                 {
                   verbose = true;
+                }
+              else if ((option == "-T") || (option == "--trace"))
+                {
+                  trace = true;
                 }
               else if ((option == "-v") || (option == "--visu"))
                 {
@@ -293,14 +298,15 @@ int main (int argc_, char ** argv_)
 
       // load properties from the configuration file:
       datatools::properties manager_config;
-      datatools::properties::read_config (manager_config_file,
-                                          manager_config);
+      datatools::properties::read_config(manager_config_file,
+                                         manager_config);
 
       DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(geomtools::manager::base_plugin).tree_dump (std::clog, "Geometry plugin system register: ", "INFO: ");
 
       geomtools::manager geo_mgr;
       if (verbose) geo_mgr.set_logging_priority (datatools::logger::PRIO_NOTICE);
       if (debug) geo_mgr.set_logging_priority (datatools::logger::PRIO_DEBUG);
+      if (trace) geo_mgr.set_logging_priority (datatools::logger::PRIO_TRACE);
       geo_mgr.initialize (manager_config);
       if (dump)
         {
