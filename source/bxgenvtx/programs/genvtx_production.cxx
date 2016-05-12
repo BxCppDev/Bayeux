@@ -347,6 +347,12 @@ namespace genvtx {
        "Example :                                  \n"
        "  --number-of-vertices 1000                  "
        )
+      ("vertex-modulo,m",
+       po::value<int>(&params_.shoot_modulo),
+       "Set the modulo on number of generated vertices.\n"
+       "Example :                                      \n"
+       "  --vertex-modulo 100                            "
+       )
       ("output-file,o",
        po::value<std::string>(&params_.VtxOutputFile),
        "Set the output file name where to store  \n"

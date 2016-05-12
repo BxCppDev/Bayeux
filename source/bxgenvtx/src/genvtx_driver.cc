@@ -69,6 +69,7 @@ namespace genvtx {
     prng_type.clear();
     prng_seed = mygsl::random_utils::SEED_INVALID;
     nshoots = 0;
+    shoot_modulo = 0;
     VtxOutputFile.clear();
     VtxInputFile.clear();
 
@@ -101,6 +102,7 @@ namespace genvtx {
     std::cerr << " - action_shoot     = " << action_shoot << std::endl;
     std::cerr << " - prng_seed        = " << prng_seed << std::endl;
     std::cerr << " - nshoots          = " << nshoots << std::endl;
+    std::cerr << " - shoot modulo     = " << shoot_modulo << std::endl;
     std::cerr << " - VtxOutputFile    = '" << VtxOutputFile << "'" << std::endl;
     std::cerr << " - action_visu      = " << action_visu << std::endl;
     std::cerr << " - visu_spot_zoom   = " << visu_spot_zoom << std::endl;
@@ -350,6 +352,12 @@ namespace genvtx {
           }
         }
         vtx_counter++;
+        if (_params_.shoot_modulo > 0 &&
+            (vtx_counter == 1
+             || vtx_counter % _params_.shoot_modulo == 0
+             || vtx_counter ==_params_.nshoots)) {
+          std::clog << "Generated vertex : " << vtx_counter << '/' << _params_.nshoots << std::endl;
+        }
       }
     }
 

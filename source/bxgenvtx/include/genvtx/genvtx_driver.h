@@ -62,6 +62,7 @@ namespace genvtx {
     std::string prng_type;
     int         prng_seed;
     int         nshoots;
+    int         shoot_modulo;
     std::string VtxOutputFile;
     std::string VtxInputFile;
 
