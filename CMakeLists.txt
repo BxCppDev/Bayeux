@@ -89,36 +89,10 @@ option(BAYEUX_WITH_DEVELOPER_TOOLS "Build/install developer tools" ON)
 mark_as_advanced(BAYEUX_WITH_DEVELOPER_TOOLS)
 
 #-----------------------------------------------------------------------
-# Use implicit Bayeux init/fini instruction
+# Optional dosimetry module
 #
-option(BAYEUX_WITH_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
-mark_as_advanced(BAYEUX_WITH_IMPLICIT_INIT_FINI)
-
-# - Options for enabling Bayeux library modules
-option(BAYEUX_WITH_BRIO       "Build Bayeux/brio library module"       ON)
-option(BAYEUX_WITH_CUTS       "Build Bayeux/cuts library module"       ON)
-option(BAYEUX_WITH_MYGSL      "Build Bayeux/mygsl library module"      ON)
-option(BAYEUX_WITH_DPP        "Build Bayeux/dpp library module"        ON)
-option(BAYEUX_WITH_MATERIALS  "Build Bayeux/materials library module"  ON)
-option(BAYEUX_WITH_GEOMTOOLS  "Build Bayeux/geomtools library module"  ON)
-option(BAYEUX_WITH_EMFIELD    "Build Bayeux/emfield library module"    ON)
-option(BAYEUX_WITH_GENBB_HELP "Build Bayeux/genbb_help library module" ON)
-option(BAYEUX_WITH_GENVTX     "Build Bayeux/genvtx library module"     ON)
-option(BAYEUX_WITH_MCTOOLS    "Build Bayeux/mctools library module"    ON)
-option(BAYEUX_WITH_LAHAGUE    "Build Bayeux/lahague library module"    OFF)
-mark_as_advanced(
-  BAYEUX_WITH_BRIO
-  BAYEUX_WITH_CUTS
-  BAYEUX_WITH_MYGSL
-  BAYEUX_WITH_DPP
-  BAYEUX_WITH_MATERIALS
-  BAYEUX_WITH_GEOMTOOLS
-  BAYEUX_WITH_EMFIELD
-  BAYEUX_WITH_GENBB_HELP
-  BAYEUX_WITH_GENVTX
-  BAYEUX_WITH_MCTOOLS
-  BAYEUX_WITH_LAHAGUE
-  )
+option(BAYEUX_WITH_LAHAGUE "Build Bayeux/lahague library module" OFF)
+mark_as_advanced(BAYEUX_WITH_LAHAGUE)
 
 #-----------------------------------------------------------------------
 # Option for enabling Geant4 extension library module

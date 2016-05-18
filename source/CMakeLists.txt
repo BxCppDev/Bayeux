@@ -25,7 +25,7 @@
 # Configure build of Bayeux library
 # - Packages
 # - Boost
-find_package(Boost 1.48.0
+find_package(Boost 1.55.0
   REQUIRED
   filesystem
   system
@@ -96,54 +96,6 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 #
 set(BAYEUX_ADDON_TARGETS)
 
-#-----------------------------------------------------------------------
-# - The LPC Modules
-# - Process dependencies
-if(BAYEUX_WITH_LAHAGUE)
-  set(BAYEUX_WITH_MCTOOLS     1)
-endif()
-
-if(BAYEUX_WITH_GEANT4_MODULE)
-  set(BAYEUX_WITH_MCTOOLS     1)
-endif()
-
-if(BAYEUX_WITH_MCNP_MODULE)
-  set(BAYEUX_WITH_MCTOOLS     1)
-endif()
-
-if(BAYEUX_WITH_MCTOOLS)
-  set(BAYEUX_WITH_GENVTX     1)
-  set(BAYEUX_WITH_GENBB_HELP 1)
-  set(BAYEUX_WITH_GEOMTOOLS  1)
-  set(BAYEUX_WITH_EMFIELD    1)
-  set(BAYEUX_WITH_MYGSL      1)
-  set(BAYEUX_WITH_DPP        1)
-endif()
-
-if(BAYEUX_WITH_GENVTX)
-  set(BAYEUX_WITH_GEOMTOOLS 1)
-  set(BAYEUX_WITH_MYGSL     1)
-endif()
-
-if(BAYEUX_WITH_GENBB_HELP)
-  set(BAYEUX_WITH_GEOMTOOLS 1)
-  set(BAYEUX_WITH_MYGSL     1)
-endif()
-
-if(BAYEUX_WITH_EMFIELD)
-  set(BAYEUX_WITH_GEOMTOOLS 1)
-endif()
-
-if(BAYEUX_WITH_GEOMTOOLS)
-  set(BAYEUX_WITH_MYGSL     1)
-  set(BAYEUX_WITH_MATERIALS 1)
-endif()
-
-if(BAYEUX_WITH_DPP)
-  set(BAYEUX_WITH_CUTS      1)
-  set(BAYEUX_WITH_MYGSL     1)
-  set(BAYEUX_WITH_BRIO      1)
-endif()
 
 # The processing order should be from least to most dependent
 # That's to ensure that any needed CMake variables are set in the correct
@@ -153,50 +105,22 @@ endif()
 # files last because of the statics...
 # NB2: The use of the COFU idiom should solve most of potential issues...
 
-# - Bayeux/datatools is mandatory because it contains some core functionalities used by the Bayeux library:
-set(BAYEUX_SUBMODULES datatools)
+# - Core
+set(BAYEUX_SUBMODULES
+  datatools
+  cuts
+  materials
+  mygsl
+  brio
+  dpp
+  geomtools
+  emfield
+  genbb_help
+  genvtx
+  mctools
+  )
 
-# - Activate other library modules on demand:
-if(BAYEUX_WITH_CUTS)
-  list(APPEND BAYEUX_SUBMODULES cuts)
-endif()
-
-if(BAYEUX_WITH_MATERIALS)
-  list(APPEND BAYEUX_SUBMODULES materials)
-endif()
-
-if(BAYEUX_WITH_MYGSL)
-  list(APPEND BAYEUX_SUBMODULES mygsl)
-endif()
-
-if(BAYEUX_WITH_BRIO)
-  list(APPEND BAYEUX_SUBMODULES brio)
-endif()
-
-if(BAYEUX_WITH_DPP)
-  list(APPEND BAYEUX_SUBMODULES dpp)
-endif()
-
-if(BAYEUX_WITH_GEOMTOOLS)
-  list(APPEND BAYEUX_SUBMODULES geomtools)
-endif()
-
-if(BAYEUX_WITH_EMFIELD)
-  list(APPEND BAYEUX_SUBMODULES emfield)
-endif()
-
-if(BAYEUX_WITH_GENBB_HELP)
-  list(APPEND BAYEUX_SUBMODULES genbb_help)
-endif()
-
-if(BAYEUX_WITH_GENVTX)
-  list(APPEND BAYEUX_SUBMODULES genvtx)
-endif()
-
-if(BAYEUX_WITH_MCTOOLS)
-  list(APPEND BAYEUX_SUBMODULES mctools)
-endif()
-
+# - Optional
 if(BAYEUX_WITH_LAHAGUE)
   list(APPEND BAYEUX_SUBMODULES lahague)
 endif()

@@ -76,12 +76,6 @@ foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   configure_file(${_hdrin} ${_hdrout} @ONLY)
 endforeach()
 
-if(BAYEUX_WITH_IMPLICIT_INIT_FINI)
-  list(APPEND ${module_name}_ENDING_MODULE_SOURCES
-    bx${module_name}/_init_fini.cc
-    )
-endif()
-
 # - Applications
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/query.cxx

@@ -145,7 +145,7 @@ Prerequisite Software
 -  **UNIX Operating System**:
 
    -  Linux
-   -  Mac OS X 10.7 (Lion) or higher
+   -  Mac OS X 10.9 (Mavericks) or higher
 
 We expect  Bayeux to  work on  most modern BSD  based Unices  or Linux
 distributions  derived from  Fedora(RedHat)  and  Debian provided  the
@@ -206,7 +206,7 @@ provide, for Linux  and Mac systems, an  uniform software environement
 with a selected set of blessed software, including the C++ compiler.
 
 .. _Cadfael: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael
-.. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/cadfaelbrew
+.. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/brew
 
 -  **Additional Software Required**
 
