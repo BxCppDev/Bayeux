@@ -124,11 +124,14 @@ namespace datatools {
     NV_NO_COLON      = bit_mask::bit00, ///< Forbid the 'colon' character in names
     NV_NO_DOT        = bit_mask::bit01, ///< Forbid the 'dot' character in names
     NV_NO_HYPHEN     = bit_mask::bit02, ///< Forbid the 'hyphen' character in names
-    NV_NO_UNDERSCORE = bit_mask::bit03  ///< Forbid the 'underscore' character in names
+    NV_NO_UNDERSCORE = bit_mask::bit03, ///< Forbid the 'underscore' character in names
+    NV_DEFAULT       = NV_NO_HYPHEN ,   ///< Default validation rule
+    NV_INSTANCE      = NV_NO_HYPHEN | NV_NO_COLON, ///< Default validation rule for object instance
+    NV_MODEL         = NV_NO_HYPHEN     ///< Default validation rule for object model
   };
 
   /// Check if a name (object identifier) is valid using simple criteria
-  bool name_validation(const std::string & name_, uint32_t flags_ = NV_NO_HYPHEN);
+  bool name_validation(const std::string & name_, uint32_t flags_ = NV_DEFAULT);
 
   /// Check if a string is quoted
   /// @arg text_ the string to check
