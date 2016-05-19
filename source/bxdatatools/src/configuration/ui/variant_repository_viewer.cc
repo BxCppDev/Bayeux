@@ -571,7 +571,7 @@ namespace datatools {
           buf = _restore_buffer_.get();
         }
         std::ostringstream out;
-        ascii_io rep_io;
+        ascii_io rep_io(ascii_io::IO_DEFAULT);
         rep_io.store_repository(out, this->get_repository());
         *buf = out.str();
         return;
@@ -591,7 +591,7 @@ namespace datatools {
           buf =_restore_buffer_.get();
         }
         std::istringstream in(*buf);
-        ascii_io rep_io;
+        ascii_io rep_io(ascii_io::IO_DEFAULT);
         int error = rep_io.load_repository(in, this->grab_repository());
         if (error) {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Failed to load repository from restore buffer!");
@@ -619,7 +619,7 @@ namespace datatools {
           DT_THROW_IF(true, std::runtime_error, "Cannot open file '"  << rep_file_name << "'!");
         }
         //this->beginResetModel();
-        ascii_io rep_io;
+        ascii_io rep_io(ascii_io::IO_DEFAULT);
         // rep_io.set_logging(logger::PRIO_TRACE);
         int error = rep_io.load_repository(rep_file, this->grab_repository());
         if (error) {
@@ -651,7 +651,8 @@ namespace datatools {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Cannot open file '"  << rep_file_name << "'!");
           return;
         }
-        ascii_io rep_io;
+        // std::cerr << "DEVEL: variant_repository_viewer::slot_store_to_file: ..." << std::endl;
+        ascii_io rep_io(ascii_io::IO_DEFAULT);
         rep_io.store_repository(rep_file, this->get_repository());
         //std::cerr << "DEVEL: repository was stored in file '" << rep_file_name << "'" << std::endl;
         return;

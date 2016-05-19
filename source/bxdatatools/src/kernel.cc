@@ -782,7 +782,7 @@ namespace datatools {
         load_file.open(variant_load.c_str());
         DT_THROW_IF(!load_file, std::runtime_error,
                     "Cannot open configuration variant file '" << variant_load << "'!");
-        unsigned int ioflags = 0;
+        unsigned int ioflags = datatools::configuration::ascii_io::IO_DEFAULT;
         datatools::configuration::ascii_io repository_io(ioflags);
         int error = repository_io.load_repository(load_file, *_variant_repository_);
         DT_THROW_IF(error != 0, std::runtime_error,
@@ -882,7 +882,7 @@ namespace datatools {
         store_file.open(variant_store.c_str());
         DT_THROW_IF(!store_file, std::runtime_error,
                     "Cannot open configuration variant file '" << variant_store << "'!");
-        unsigned int ioflags = 0;
+        unsigned int ioflags = datatools::configuration::ascii_io::IO_DEFAULT;
         datatools::configuration::ascii_io repository_io(ioflags);
         repository_io.store_repository(store_file, *_variant_repository_);
         DT_LOG_NOTICE(_logging_, "Variant repository was stored in configuration file '"

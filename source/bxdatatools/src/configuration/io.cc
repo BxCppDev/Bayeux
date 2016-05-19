@@ -25,6 +25,7 @@
 // Third party:
 // - Boost:
 #include <boost/algorithm/string.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // This project:
 #include <datatools/exception.h>
@@ -49,12 +50,33 @@ namespace datatools {
       return _label;
     }
 
+    // static
+    const std::string & ascii_io::format_label()
+    {
+      static const std::string _label("datatools::configuration::variant");
+      return _label;
+    }
+
+    // static
+    version_id ascii_io::current_format_version_id()
+    {
+      static boost::scoped_ptr<version_id> _vid;
+      if (_vid.get() == 0) {
+        _vid.reset(new version_id(1,0));
+      }
+      return *_vid;
+    }
+
     ascii_io::ascii_io(uint32_t flags_)
     {
+      _format_version_   = current_format_version_id();
+      _no_header_        = false;
       _with_description_ = false;
-      _with_title_ = false;
-      _logging_ = logger::PRIO_FATAL;
-      // std::cerr << "ascii_io::ascii_io: logging (1) = '" <<  logger::get_priority_label(_logging_) << "'" << std::endl;
+      _with_title_       = false;
+      _logging_          = logger::PRIO_FATAL;
+      if (flags_ & IO_NO_HEADER) {
+        _no_header_ = true;
+      }
       if (flags_ & IO_DESCRIPTION) {
         _with_description_ = true;
       }
@@ -62,11 +84,8 @@ namespace datatools {
         _with_title_ = true;
       }
       if (flags_ & IO_TRACE) {
-        std::cerr << "ascii_io::ascii_io: " << "set_logging(PRIO_TRACE)" << std::endl;
         set_logging(logger::PRIO_TRACE);
       }
-      // std::cerr << "ascii_io::ascii_io: logging (2) = '" <<  logger::get_priority_label(_logging_) << "'" << std::endl;
-      // print(std::cerr, "ascii_io::ascii_io");
       return;
     }
 
@@ -152,13 +171,29 @@ namespace datatools {
           if (line.empty()) {
             return 1;
           } else {
-            std::istringstream line_iss(line);
+            {
+              std::istringstream iss(line);
+              std::string check;
+              iss >> check;
+              if (check[0] == '[') {
+                DT_LOG_FATAL(_logging_, "Detected a start block tag '[' in line '" << line << "'!");
+                return 1;
+              }
+            }
+            unsigned int equal_pos = line.find('=');
+            if (equal_pos == line.npos) {
+              DT_LOG_FATAL(_logging_, "Cannot find '=' separator in line '" << line << "'!");
+              return 1;
+            }
+            std::string path_str = line.substr(0, equal_pos);
+            std::istringstream path_iss(path_str);
             std::string path;
-            char equal = 0;
-            line_iss >> path >> std::ws >> equal >> std::ws;
-            DT_THROW_IF(equal != '=', std::logic_error, "Invalid parameter format!");
-            std::string value_str;
-            std::getline(line_iss, value_str);
+            path_iss >> path;
+            // line_iss >> path >> std::ws >> equal >> std::ws;
+            // DT_THROW_IF(equal != '=', std::logic_error,
+            //             "Invalid parameter format in line '" << line << "'!");
+            std::string value_str = line.substr(equal_pos + 1);
+            // std::getline(line_iss, value_str);
             DT_LOG_TRACE(_logging_, "path = '" << path << "'");
             DT_LOG_TRACE(_logging_, "value_str = '" << value_str << "'");
             command::returned_info cri;
@@ -244,14 +279,12 @@ namespace datatools {
         if (error) {
           return 1;
         }
-        /*
-          char c = 0;
-          in_.get(c);
-          in_.putback(c);
-          if (c == '[') {
-          break;
-          }
-        */
+        // char c = 0;
+        // in_.get(c);
+        // in_.putback(c);
+        // if (c == '[') {
+        //   break;
+        // }
       }
       DT_LOG_TRACE(_logging_, "Exiting.");
       return 0;
@@ -259,6 +292,17 @@ namespace datatools {
 
     void ascii_io::store_repository(std::ostream & out_, const variant_repository & vrep_) const
     {
+      if (!_no_header_) {
+        out_ << "#@format=" << format_label() << std::endl;
+        out_ << "#@format.version=" << _format_version_.to_string() << std::endl;
+        if (vrep_.has_organization()) {
+          out_ << "#@organization=" << vrep_.get_organization() << std::endl;
+        }
+        if (vrep_.has_application()) {
+          out_ << "#@application=" << vrep_.get_application() << std::endl;
+        }
+        out_ << std::endl;
+      }
       std::vector<std::string> reg_keys;
       vrep_.build_ordered_registry_keys(reg_keys);
       for (unsigned int ireg = 0; ireg < reg_keys.size(); ireg++) {
@@ -266,8 +310,10 @@ namespace datatools {
         if (!vrep_.is_active_registry(reg_name)) {
           continue;
         }
-        out_ << "[" << reg_name << "]" << std::endl;
+        out_ << "[registry=\"" << reg_name << "\"]" << std::endl;
+        // out_ << "[" << reg_name << "]" << std::endl;
         store_registry(out_, vrep_.get_registry(reg_name));
+        out_ << std::endl;
       }
       return;
     }
@@ -278,6 +324,7 @@ namespace datatools {
       std::string line;
       std::string current_registry_name;
       variant_registry * current_registry_ptr = 0;
+      datatools::version_id in_format_version;
       while (in_) {
         int line_count = 0;
         std::getline(in_, line);
@@ -286,8 +333,57 @@ namespace datatools {
         if (line.empty()) {
           continue;
         } else if (line[0] == '#') {
+          if (line.length() >= 2 && line[1] == '@') {
+            unsigned long equal_pos = line.find('=');
+            if (equal_pos != line.npos) {
+              std::string tag = boost::trim_right_copy(line.substr(2, equal_pos - 2));
+              DT_LOG_TRACE(_logging_,"tag = '" << tag << "'");
+              std::string tag_value = line.substr(equal_pos + 1);
+              boost::trim(tag_value);
+              DT_LOG_TRACE(_logging_,"tag_value = '" << tag_value << "'");
+              if (tag == "format") {
+                if (!tag_value.empty()) {
+                  std::string format_lbl = tag_value;
+                  DT_LOG_TRACE(_logging_,"format = '" << format_lbl << "'");
+                  if (!_no_header_) {
+                    DT_THROW_IF(format_lbl != format_label(), std::logic_error,
+                                "Invalid format label '" << format_lbl << "'!");
+                  }
+                }
+              }
+              if (tag == "format.version") {
+                if (!tag_value.empty()) {
+                  std::string in_format_version_repr = tag_value;
+                  DT_LOG_TRACE(_logging_,"format_version_repr = '" << in_format_version_repr << "'");
+                  datatools::version_id in_vid;
+                  bool ok = in_vid.from_string(in_format_version_repr);
+                  DT_THROW_IF(!ok, std::logic_error,
+                              "Invalid format version identifier '" << in_format_version_repr << "'!");
+                  if (!_no_header_) {
+                    in_format_version = in_vid;
+                    // We dont' check it !
+                  }
+                }
+              }
+              if (tag == "organization") {
+                if (!tag_value.empty()) {
+                  if (!_no_header_) {
+                    vrep_.set_organization(tag_value);
+                  }
+                }
+              }
+              if (tag == "application") {
+                if (!tag_value.empty()) {
+                  if (!_no_header_) {
+                    vrep_.set_application(tag_value);
+                  }
+                }
+              }
+            }
+          }
           continue;
         } else {
+          boost::trim(line);
           std::string word;
           std::istringstream line_iss(line);
           line_iss >> word;
@@ -295,8 +391,26 @@ namespace datatools {
             continue;
           }
           DT_LOG_TRACE(_logging_, "word = '" << word << "'");
-          if (boost::starts_with(word, "[") && boost::ends_with(word, "]")) {
-            current_registry_name = word.substr(1, word.length()-2);
+          if (boost::starts_with(line, "[") && boost::ends_with(line, "]")) {
+            std::string reg_name_repr = line.substr(1, word.length()-2);
+            unsigned int equal_pos = reg_name_repr.find('=');
+            if (equal_pos > 0 && equal_pos < reg_name_repr.length()) {
+              std::string reg_name_tag = reg_name_repr.substr(0, equal_pos);
+              boost::trim(reg_name_tag);
+              DT_LOG_TRACE(_logging_, "reg_name_tag = '" << reg_name_tag << "'");
+              DT_THROW_IF(reg_name_tag != "registry", std::logic_error,
+                          "Invalid registry tag '" << reg_name_tag << "' in line '" << line << "'!");
+              current_registry_name = reg_name_repr.substr(equal_pos+1);
+              boost::trim(current_registry_name);
+              datatools::remove_quotes(current_registry_name);
+              DT_LOG_TRACE(_logging_, "current_registry_name = '" << current_registry_name << "'");
+            } else {
+              // Legacy format:
+              current_registry_name = word.substr(1, word.length()-2);
+              DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                             "Deprecated variant registry format '" << line << "'! Please use '[registry=\""
+                             << current_registry_name << "\"]' syntax !");
+            }
             DT_LOG_TRACE(_logging_, "current_registry_name = '" << current_registry_name << "'");
             DT_THROW_IF (!vrep_.has_registry(current_registry_name), std::logic_error,
                          "Variant repository has no registry named '" << current_registry_name << "'!");
@@ -318,8 +432,10 @@ namespace datatools {
     void ascii_io::print(std::ostream & out_, const std::string & title_) const
     {
       out_ << "ascii_io::print: " << title_ << std::endl;
+      out_ << "|-- no_header = " << _no_header_ << std::endl;
       out_ << "|-- with_description = " << _with_description_ << std::endl;
       out_ << "|-- with_title = " << _with_title_ << std::endl;
+      out_ << "|-- format_version = " << _format_version_.to_string() << std::endl;
       out_ << "`-- logging = '" << datatools::logger::get_priority_label(_logging_)
            << "'" << std::endl;
       return;

@@ -40,6 +40,7 @@
 #include <datatools/logger.h>
 #include <datatools/bit_mask.h>
 #include <datatools/command_utils.h>
+#include <datatools/version_id.h>
 
 namespace datatools {
 
@@ -59,14 +60,22 @@ namespace datatools {
       enum store_flags {
         IO_DESCRIPTION = datatools::bit_mask::bit00, //!< Print meta comment
         IO_TITLE       = datatools::bit_mask::bit01, //!< Print title comment
-        IO_TRACE       = datatools::bit_mask::bit02  //!< Trace/debug mode
+        IO_TRACE       = datatools::bit_mask::bit02, //!< Trace/debug mode
+        IO_NO_HEADER   = datatools::bit_mask::bit03, //!< Do not print header
+        IO_DEFAULT     = 0                           //!< Default flags
       };
 
       /// Return unset parameter label
       static const std::string & unset_label();
 
+      /// Return format label
+      static const std::string & format_label();
+
+      /// Return the current format version identifier
+      static version_id current_format_version_id();
+
       /// Default constructor
-      ascii_io(uint32_t flags_ = 0);
+      explicit ascii_io(uint32_t flags_ = IO_DEFAULT);
 
       /// Store a variant registry record
       void store_record(std::ostream & out_, const variant_record & vrec_) const;
@@ -97,9 +106,11 @@ namespace datatools {
 
     private:
 
+      bool _no_header_;           //!< Flag to inhibit header at begin of file
       bool _with_description_;    //!< Flag to print description meta comment
       bool _with_title_;          //!< Flag to print a title comment
       logger::priority _logging_; //!< Logging priority
+      datatools::version_id _format_version_; //!< Format version identifier
 
     };
 
