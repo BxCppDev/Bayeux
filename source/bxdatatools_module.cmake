@@ -310,7 +310,7 @@ if (BAYEUX_WITH_QT_GUI)
   # #include <boost/lexical_cast.hpp>
   # #endif
 
-  QT4_WRAP_CPP(${module_name}_MODULE_HEADERS_QT_MOC
+  QT5_WRAP_CPP(${module_name}_MODULE_HEADERS_QT_MOC
     ${${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED}
     # OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED ### This option does not work
     )
@@ -461,7 +461,6 @@ ${module_test_dir}/test_configuration_variant_api_0.cxx
 # - Applications
 set(${module_name}_MODULE_APPS
   ${module_app_dir}/ocd_manual.cxx
-  # ${module_app_dir}/variant_inspector.cxx
   )
 
 # - Examples dir
@@ -477,6 +476,9 @@ set(${module_name}_MODULE_RESOURCES
   )
 
 if (BAYEUX_WITH_QT_GUI)
+  list(APPEND ${module_name}_MODULE_APPS
+    ${module_app_dir}/variant_inspector.cxx
+    )
 
   # - Special test program(s)
   list(APPEND ${module_name}_MODULE_TESTS

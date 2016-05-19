@@ -61,7 +61,10 @@ include(RootNewMacros)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
 if (BAYEUX_WITH_QT_GUI)
-  find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
+  find_package(Qt5Core 5.6.0 REQUIRED)
+  find_package(Qt5Gui 5.6.0 REQUIRED)
+  find_package(Qt5Widgets 5.6.0 REQUIRED)
+  find_package(Qt5Svg 5.6.0 REQUIRED)
 endif()
 
 # - Geant4 if building the MCTools extension library
@@ -85,10 +88,6 @@ include_directories(${CLHEP_INCLUDE_DIRS})
 include_directories(${ROOT_INCLUDE_DIRS})
 include_directories(${CAMP_INCLUDE_DIRS})
 
-if (Qt4_FOUND)
-  include(${QT_USE_FILE})
-  add_definitions(${QT_DEFINITIONS})
-endif()
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------
@@ -195,7 +194,7 @@ target_link_libraries(Bayeux
   ${ROOT_LIBRARIES}
   )
 if(BAYEUX_WITH_QT_GUI)
-  target_link_libraries(Bayeux ${QT_LIBRARIES})
+  target_link_libraries(Bayeux Qt5::Core Qt5::Widgets Qt5::Svg)
 endif()
 
 # - Use IWYU, if available

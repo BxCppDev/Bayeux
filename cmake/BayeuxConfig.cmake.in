@@ -87,7 +87,8 @@ find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
 
 # - Qt4
 if(Bayeux_HAS_QT)
-  find_package(Qt4 REQUIRED QtCore QtGui QtSvg)
+  find_package(Qt5Core REQUIRED)
+  find_package(Qt5Widgets REQUIRED)
 endif()
 
 #-----------------------------------------------------------------------
@@ -100,12 +101,6 @@ list(APPEND Bayeux_INCLUDE_DIRS
   ${GSL_INCLUDE_DIRS}
   ${ROOT_INCLUDE_DIRS}
   )
-
-# Qt support
-if(Bayeux_HAS_QT)
-  include(${QT_USE_FILE})
-  list(APPEND Bayeux_DEFINITIONS ${QT_DEFINITIONS})
-endif()
 
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets.
