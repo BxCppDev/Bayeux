@@ -25,39 +25,6 @@
 #ifndef BAYEUX_BAYEUX_CONFIG_H
 #define BAYEUX_BAYEUX_CONFIG_H
 
-//! Evaluates to true if Bayeux was built with automated init/fini operations at DLL loading
-#cmakedefine BAYEUX_WITH_IMPLICIT_INIT_FINI
-
-//! Evaluates to true if Bayeux was built with the cuts module
-#cmakedefine01 BAYEUX_WITH_CUTS
-
-//! Evaluates to true if Bayeux was built with the mygsl module
-#cmakedefine01 BAYEUX_WITH_MYGSL
-
-//! Evaluates to true if Bayeux was built with the materials module
-#cmakedefine01 BAYEUX_WITH_MATERIALS
-
-//! Evaluates to true if Bayeux was built with the brio module
-#cmakedefine01 BAYEUX_WITH_BRIO
-
-//! Evaluates to true if Bayeux was built with the dpp module
-#cmakedefine01 BAYEUX_WITH_DPP
-
-//! Evaluates to true if Bayeux was built with the geomtools module
-#cmakedefine01 BAYEUX_WITH_GEOMTOOLS
-
-//! Evaluates to true if Bayeux was built with the genbb_help module
-#cmakedefine01 BAYEUX_WITH_GENBB_HELP
-
-//! Evaluates to true if Bayeux was built with the genvtx module
-#cmakedefine01 BAYEUX_WITH_GENVTX
-
-//! Evaluates to true if Bayeux was built with the emfield module
-#cmakedefine01 BAYEUX_WITH_EMFIELD
-
-//! Evaluates to true if Bayeux was built with the mctools module
-#cmakedefine01 BAYEUX_WITH_MCTOOLS
-
 //! Evaluates to true if Bayeux was built with Geant4 extension module
 #cmakedefine01 BAYEUX_WITH_GEANT4_MODULE
 
@@ -75,9 +42,6 @@
 
 //! The list of Bayeux submodules
 #define BAYEUX_SUBMODULES "@BAYEUX_SUBMODULES@"
-
-//! Defined if the BAYEUX_SYS_DEVEL is set
-#cmakedefine BAYEUX_SYS_DEVEL
 
 #endif // BAYEUX_BAYEUX_CONFIG_H
 

@@ -39,51 +39,22 @@
 
 // This project:
 
-#if BAYEUX_WITH_CUTS == 1
 #include <cuts/version.h>
-#endif // BAYEUX_WITH_CUTS == 1
-
-#if BAYEUX_WITH_BRIO == 1
 #include <brio/version.h>
-#endif // BAYEUX_WITH_BRIO == 1
-
-#if BAYEUX_WITH_DPP == 1
 #include <dpp/version.h>
-#endif // BAYEUX_WITH_DPP == 1
-
-#if BAYEUX_WITH_MATERIALS == 1
 #include <materials/version.h>
 #include <materials/resource.h>
 #include <materials/materials_config.h>
-#endif // BAYEUX_WITH_MATERIALS == 1
-
-#if BAYEUX_WITH_MYGSL == 1
 #include <mygsl/version.h>
-#endif // BAYEUX_WITH_MYGSL == 1
-
-#if BAYEUX_WITH_GEOMTOOLS == 1
 #include <geomtools/version.h>
 #include <geomtools/resource.h>
 #include <geomtools/geomtools_config.h>
-#endif // BAYEUX_WITH_GEOMTOOLS == 1
-
-#if BAYEUX_WITH_EMFIELD == 1
 #include <emfield/version.h>
-#endif // BAYEUX_WITH_EMFIELD == 1
-
-#if BAYEUX_WITH_GENBB_HELP == 1
 #include <genbb_help/version.h>
 #include <genbb_help/resource.h>
 #include <genbb_help/genbb_help_config.h>
-#endif // BAYEUX_WITH_GENBB_HELP == 1
-
-#if BAYEUX_WITH_GENVTX == 1
 #include <genvtx/version.h>
-#endif // BAYEUX_WITH_GENVTX == 1
-
-#if BAYEUX_WITH_MCTOOLS == 1
 #include <mctools/version.h>
-#endif // BAYEUX_WITH_MCTOOLS == 1
 
 #if BAYEUX_WITH_LAHAGUE == 1
 #include <lahague/version.h>
@@ -122,14 +93,10 @@ namespace bayeux {
                                        std::string(DATATOOLS_ENV_RESOURCE_DIR)
                                        );
 
-#if BAYEUX_WITH_CUTS == 1
       // cuts:
       lib_info_reg.registration("cuts",
                                 "Generic tools for making arbitrary data selections.",
                                 cuts::version::get_version());
-#endif // BAYEUX_WITH_CUTS == 1
-
-#if BAYEUX_WITH_MATERIALS == 1
       // materials:
       datatools::properties & materials_lib_infos
         = lib_info_reg.registration("materials",
@@ -143,16 +110,10 @@ namespace bayeux {
       materials_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                        std::string(MATERIALS_ENV_RESOURCE_DIR)
                                        );
-#endif // BAYEUX_WITH_MATERIALS == 1
-
-#if BAYEUX_WITH_MYGSL == 1
       // mygsl:
       lib_info_reg.registration("mygsl",
                                 "C++ wrapper and extensions to the GNU Scientific Library.",
                                 mygsl::version::get_version());
-#endif // BAYEUX_WITH_MYGSL == 1
-
-#if BAYEUX_WITH_GEOMTOOLS == 1
       // geomtools:
       datatools::properties & geomtools_lib_infos
         = lib_info_reg.registration("geomtools",
@@ -166,30 +127,18 @@ namespace bayeux {
       geomtools_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                        std::string(GEOMTOOLS_ENV_RESOURCE_DIR)
                                        );
-#endif // BAYEUX_WITH_GEOMTOOLS == 1
-
-#if BAYEUX_WITH_EMFIELD == 1
       // emfield:
       lib_info_reg.registration("emfield",
                                 "Electromagnetic field modelling and management.",
                                 emfield::version::get_version());
-#endif // BAYEUX_WITH_EMFIELD == 1
-
-#if BAYEUX_WITH_BRIO == 1
       // brio:
       lib_info_reg.registration("brio",
                                 "A Boost over ROOT I/O serialization system (extends datatools).",
                                 brio::version::get_version());
-#endif // BAYEUX_WITH_BRIO == 1
-
-#if BAYEUX_WITH_DPP == 1
       // dpp:
       lib_info_reg.registration("dpp",
                                 "A basic data processing pipeline API.",
                                 dpp::version::get_version());
-#endif // BAYEUX_WITH_DPP == 1
-
-#if BAYEUX_WITH_GENBB_HELP == 1
       // genbb_help:
       datatools::properties & genbb_help_lib_infos
         = lib_info_reg.registration("genbb_help",
@@ -203,21 +152,14 @@ namespace bayeux {
       genbb_help_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                         std::string(GENBB_HELP_ENV_RESOURCE_DIR)
                                         );
-#endif // BAYEUX_WITH_GENBB_HELP == 1
-
-#if BAYEUX_WITH_GENVTX == 1
       // genvtx:
       lib_info_reg.registration("genvtx",
                                 "Vertex random generator tools for input to simulation applications.",
                                 genvtx::version::get_version());
-#endif // BAYEUX_WITH_GENVTX == 1
-
-#if BAYEUX_WITH_MCTOOLS == 1
       // mctools::
       lib_info_reg.registration("mctools",
                                 "Monte-Carlo utilities with a Geant4 interface.",
                                 mctools::version::get_version());
-#endif // BAYEUX_WITH_MCTOOLS == 1
 
 #if BAYEUX_WITH_LAHAGUE == 1
       // LaHague:
