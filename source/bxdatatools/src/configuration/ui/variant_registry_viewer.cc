@@ -71,7 +71,7 @@ namespace datatools {
         _read_only_cb_ = new QCheckBox("Read-only", this);
         _tree_view_ = new QTreeView(this);
         _tree_view_->setDragEnabled(false);
-        _tree_view_->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+        _tree_view_->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         _value_delegate_ = 0;
         _value_delegate_ = new parameter_item_delegate(parent_);
         _tree_view_->setItemDelegateForColumn(2, _value_delegate_);

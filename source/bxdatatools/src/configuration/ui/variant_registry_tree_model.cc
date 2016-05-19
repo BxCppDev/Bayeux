@@ -471,7 +471,7 @@ namespace datatools {
       {
         delete _root_;
         _root_ = node_;
-        reset();
+        //reset();
         return;
       }
 
@@ -1111,7 +1111,7 @@ namespace datatools {
       }
 
       void variant_registry_tree_model::slot_broadcast_data_change(const QModelIndex & i0_,
-                                                                   const QModelIndex & i1_)
+                                                                   const QModelIndex & /*i1_*/)
       {
          // std::cerr << "DEVEL: variant_registry_tree_model::slot_broadcast_data_change: for registry='"
          //           << _registry_name_ << "'"
@@ -1170,7 +1170,7 @@ namespace datatools {
 
       bool variant_registry_tree_model::has_restore_buffer() const
       {
-        return _restore_buffer_;
+        return _restore_buffer_.get() ? true : false;
       }
 
       void variant_registry_tree_model::reset_restore_buffer()

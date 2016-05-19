@@ -243,7 +243,7 @@ namespace datatools {
 
       bool variant_repository_viewer::has_restore_buffer() const
       {
-        return _restore_buffer_;
+        return _restore_buffer_.get() ? true : false;
       }
 
       void variant_repository_viewer::reset_restore_buffer()
@@ -397,7 +397,7 @@ namespace datatools {
         return;
       }
 
-      void variant_repository_viewer::slot_at_registry_changed(std::string changed_registry_name_)
+      void variant_repository_viewer::slot_at_registry_changed(std::string /*changed_registry_name_*/)
       {
         // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_changed: "
         //           << "Registry '" << changed_registry_name_ << "' has changed!"
@@ -419,7 +419,6 @@ namespace datatools {
              ireg != _repository_->get_registries().end();
              ireg++) {
           const std::string & the_registry_name = ireg->first;
-          const variant_repository::registry_entry & re = ireg->second;
           int reg_tab_index = _tab_indexes_.find(the_registry_name)->second;
           bool active = _repository_->is_active_registry(the_registry_name);
           // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_update_tabs: "

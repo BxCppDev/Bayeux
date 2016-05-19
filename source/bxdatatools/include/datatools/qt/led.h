@@ -59,9 +59,9 @@ namespace datatools {
       Q_OBJECT
       Q_ENUMS (led_color_type)
       Q_ENUMS (led_shape_type)
-      Q_PROPERTY(bool value READ get_value WRITE set_value);
-      Q_PROPERTY(led_color_type on_color READ get_on_color WRITE set_on_color);
-      Q_PROPERTY(led_color_type off_color READ get_off_color WRITE set_off_color);
+      Q_PROPERTY(bool value READ get_value WRITE set_value)
+      Q_PROPERTY(led_color_type on_color READ get_on_color WRITE set_on_color)
+      Q_PROPERTY(led_color_type off_color READ get_off_color WRITE set_off_color)
       Q_PROPERTY(led_shape_type shape READ get_shape WRITE set_shape)
 
     public:

@@ -102,7 +102,7 @@ namespace datatools {
 
       bool variant_repository_dialog::has_restore_buffer() const
       {
-        return _restore_buffer_;
+        return _restore_buffer_.get() ? true : false;
       }
 
       void variant_repository_dialog::reset_restore_buffer()

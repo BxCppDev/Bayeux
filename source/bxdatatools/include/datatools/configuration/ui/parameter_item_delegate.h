@@ -65,7 +65,7 @@ namespace datatools {
       /// \brief Button to launch a real dialog widget
       class RealDialogLauncherButton : public QPushButton
       {
-        Q_OBJECT;
+        Q_OBJECT
 
       public:
 
@@ -111,7 +111,7 @@ namespace datatools {
       /// \brief Button to launch a file dialog widget
       class FileDialogLauncherButton : public QPushButton
       {
-        Q_OBJECT;
+        Q_OBJECT
 
       public:
 
