@@ -101,9 +101,8 @@ echo "INFO: The example program ex_variants with variants (3)..." 1>&2
     --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variance.conf" \
     --datatools::variant-set="core:gui=true" \
     --datatools::variant-set="core:operator=John Doe" \
-    --datatools::variant-set="core:operator=John Doe" \
     --datatools::variant-set="core:help=FullHelp" \
-    --datatools::variant-set="core:help/is_full_help/url=https://foo.org/help2/" \
+    --datatools::variant-set="core:help/if_full_help/url=https://foo.org/help2/" \
     --datatools::variant-set="core:plugin=true" \
     --datatools::variant-set="algo:accuracy=4" \
     --datatools::variant-set="algo:max_time=3 s" \
@@ -121,9 +120,7 @@ else
     # my_exit 0
 fi
 
-
-
-echo "INFO: The example program ex_variants with variants (3)..." 1>&2
+echo "INFO: The example program ex_variants with variants (4)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
 #   configuration file (foo_variance.conf),
@@ -146,14 +143,15 @@ echo "INFO: The example program ex_variants with variants (3)..." 1>&2
     --datatools::variant-qt-gui \
     --datatools::variant-store="my_profile.rep"
 if [ $? -ne 0 ]; then
-    echo "ERROR: The example program ex_variants (3) failed !" 1>&2
+    echo "ERROR: The example program ex_variants (4) failed !" 1>&2
     my_exit 1
 else
-    echo "INFO: The example program ex_variants (3) is ok !" 1>&2
+    echo "INFO: The example program ex_variants (4) is ok !" 1>&2
 fi
 
-# rm -f ex_variants
-# rm -fr ${build_dir}
+rm -f my_profile.rep
+rm -f ex_variants
+rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 
 my_exit 0

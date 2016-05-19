@@ -1,15 +1,24 @@
-[algo]
-accuracy = 2
-max_time = 5 second
-nevents = 10
-[core]
-gui = 0
+#@format=datatools::configuration::variant
+#@format.version=1.0
+
+[registry="core"]
+gui = true
 help = "OnlyTooltips"
+logging = "warning"
+operator = "John Doe"
+plugin = false
+test1 = false
+test2 = false
+test3 = true
+
+[registry="algo"]
+accuracy = 4
+max_time = 3 second
+nevents = 5
+
+[registry="gui"]
+antialiasing = false
+color = false
+color/is_uncolored/mode = "B/W"
 logging = "fatal"
-operator = "Visitor"
-plugin = 0
-[gui]
-antialiasing = 1
-color = 1
-color/is_colored/palette = 1
-logging = "fatal"
+

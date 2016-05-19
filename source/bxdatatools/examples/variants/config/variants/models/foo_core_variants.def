@@ -144,12 +144,12 @@ string.enumerated_1.value : string = "FullHelp"
 string.default            : string = "OnlyTooltips"
 
 #@description The list of variants
-variants : string[1] = "is_full_help"
+variants : string[1] = "if_full_help"
 
-variants.is_full_help.model       : string = "full_help.VM"
-variants.is_full_help.description : string = "Parameters in 'full help' mode"
+variants.if_full_help.model       : string = "full_help.VM"
+variants.if_full_help.description : string = "Parameters in 'full help' mode"
 
-string.enumerated_1.variant : string = "is_full_help"
+string.enumerated_1.variant : string = "if_full_help"
 
 
 ###############################
