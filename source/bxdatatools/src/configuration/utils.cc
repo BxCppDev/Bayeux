@@ -53,12 +53,12 @@ namespace datatools {
 
     bool validate_instance_name(const std::string & candidate_)
     {
-      return ::datatools::name_validation(candidate_, ::datatools::NV_NO_HYPHEN | NV_NO_COLON);
+      return ::datatools::name_validation(candidate_, ::datatools::NV_INSTANCE);
     }
 
     bool validate_model_name(const std::string & candidate_)
     {
-      return ::datatools::name_validation(candidate_, ::datatools::NV_NO_HYPHEN);
+      return ::datatools::name_validation(candidate_, ::datatools::NV_MODEL);
     }
 
     // static
