@@ -150,6 +150,8 @@ namespace datatools {
 
     void to_string(std::string& format) const;
 
+    std::string to_string() const;
+
     bool from_string(const std::string&);
 
     void dump(std::ostream& out = std::clog,

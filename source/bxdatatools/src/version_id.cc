@@ -333,11 +333,16 @@ namespace datatools {
     return compare(*this, vid, major_only);
   }
 
-
   void version_id::to_string(std::string& format) const {
     std::ostringstream out;
     out << *this;
     format = out.str();
+  }
+
+  std::string version_id::to_string() const {
+    std::string repr;
+    to_string(repr);
+    return repr;
   }
 
 
