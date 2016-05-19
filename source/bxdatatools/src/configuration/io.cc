@@ -180,8 +180,8 @@ namespace datatools {
                 return 1;
               }
             }
-            unsigned int equal_pos = line.find('=');
-            if (equal_pos == line.npos) {
+            size_t equal_pos = line.find('=');
+            if (equal_pos == std::string::npos) {
               DT_LOG_FATAL(_logging_, "Cannot find '=' separator in line '" << line << "'!");
               return 1;
             }
