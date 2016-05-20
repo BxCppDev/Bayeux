@@ -81,10 +81,8 @@
 // - Bayeux/dpp:
 #include <dpp/output_module.h>
 #include <dpp/histogram_service.h>
-#if GENBB_HELP_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif
 
 // This project:
 #include <genbb_help/manager.h>
@@ -1287,11 +1285,7 @@ void usage (const boost::program_options::options_description &,
 
 int main (int argc_, char ** argv_)
 {
-#if GENBB_HELP_STANDALONE == 1
-  GENBB_HELP_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif
+  bayeux::initialize(argc_, argv_);
 
   int error_code = EXIT_SUCCESS;
   genbb::inspector_params params;
@@ -1549,22 +1543,14 @@ int main (int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if GENBB_HELP_STANDALONE == 1
-  GENBB_HELP_FINI();
-#else
-  BAYEUX_FINI();
-#endif
+  bayeux::terminate();
   return error_code;
 }
 
 void usage (const boost::program_options::options_description & options_,
             std::ostream & out_)
 {
-#if GENBB_HELP_STANDALONE == 1
-  const std::string APP_NAME = "genbb_inspector";
-#else
   const std::string APP_NAME = "bxgenbb_inspector";
-#endif // GENBB_HELP_STANDALONE == 1
   out_ << "\n " << APP_NAME << " -- Inspector for GENBB primary event generators" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
