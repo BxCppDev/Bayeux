@@ -83,11 +83,6 @@ int main(int argc_, char * argv_[])
        ->zero_tokens(),
        "Print data base directory. \n"
        )
-      ("exampledir",
-       bpo::value<bool>()
-       ->zero_tokens(),
-       "Print example base directory.  \n"
-       )
       ("resourcedir",
        bpo::value<bool>()
        ->zero_tokens(),
