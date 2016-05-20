@@ -39,10 +39,8 @@
 #include <boost/foreach.hpp>
 #include <boost/program_options.hpp>
 
-#if MCTOOLS_STANDALONE == 0
-// - Bayeux:
+// - Bayeux
 #include <bayeux/bayeux.h>
-#endif
 // - Bayeux/datatools:
 #include <datatools/datatools.h>
 #include <datatools/datatools_config.h>
@@ -105,11 +103,7 @@ int main(int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-#if MCTOOLS_STANDALONE == 1
-  MCTOOLS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif
+  bayeux::initialize(argc_, argv_);
   try {
 
     // Configuration parameters for the G4 manager:
@@ -265,21 +259,13 @@ int main(int argc_, char ** argv_)
   }
   DT_LOG_TRACE(logging, "g4_production ends here.");
 
-#if MCTOOLS_STANDALONE == 1
-  MCTOOLS_FINI();
-#else
-  BAYEUX_FINI();
-#endif
-  return(error_code);
+  bayeux::terminate();
+  return error_code;
 }
 
 void ui::splash(std::ostream & out_)
 {
-#if MCTOOLS_STANDALONE == 1
-  const std::string APP_NAME = "g4_production";
-#else
   const std::string APP_NAME = "bxg4_production";
-#endif
   out_ << "\n"
        << "     M C T O O L S - G 4";
   out_ << "\n";
@@ -296,11 +282,7 @@ void ui::splash(std::ostream & out_)
 void ui::print_usage(const boost::program_options::options_description & opts_,
                      std::ostream & out_)
 {
-#if MCTOOLS_STANDALONE == 1
-  const std::string APP_NAME = "g4_production";
-#else
   const std::string APP_NAME = "bxg4_production";
-#endif
   out_ << APP_NAME << " -- A generic GEANT4 simulation wrapper" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;

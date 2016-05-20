@@ -3,9 +3,6 @@
 #ifndef MCTOOLS_MCTOOLS_CONFIG_H
 #define MCTOOLS_MCTOOLS_CONFIG_H 1
 
-/***  mctools is built standalone or not ***/
-#cmakedefine01 MCTOOLS_STANDALONE
-
 /***  mctools debug flag ***/
 #cmakedefine01 MCTOOLS_WITH_DEBUG
 
