@@ -14,17 +14,15 @@
 // - Boost
 #include <boost/program_options.hpp>
 
-#if MATERIALS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
-#endif // MATERIALS_STANDALONE == 1
 
-// - datatools
+// - Bayeux/datatools
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/datatools.h>
 
-// - materials
+// - Bayeux/materials
 #include <materials/materials_driver.h>
 
 namespace materials {
@@ -40,13 +38,9 @@ namespace materials {
 /****************
  * Main program *
  ****************/
-int main (int argc_, char ** argv_)
+int main(int argc_, char ** argv_)
 {
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // MATERIALS_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   materials::materials_driver_params MDP;
@@ -260,12 +254,8 @@ int main (int argc_, char ** argv_)
     DT_LOG_FATAL(logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // MATERIALS_STANDALONE == 1
-  return (error_code);
+  bayeux::terminate();
+  return error_code;
 }
 
 namespace materials {
@@ -273,12 +263,7 @@ namespace materials {
   void ui::print_usage(std::ostream & out_,
                        const boost::program_options::options_description & opts_)
   {
-#if MATERIALS_STANDALONE == 1
-    const std::string APP_NAME = "materials_inspector";
-#else
     const std::string APP_NAME = "bxmaterials_inspector";
-#endif // MATERIALS_STANDALONE == 1
-
 
     out_ << "Inspect a manager of registered isotopes, elements and materials.           \n";
     out_ << "                                                                            \n";

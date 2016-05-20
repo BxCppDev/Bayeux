@@ -3,9 +3,6 @@
 #ifndef MATERIALS_MATERIALS_CONFIG_H
 #define MATERIALS_MATERIALS_CONFIG_H 1
 
-/*** materials is built standalone or not ***/
-#cmakedefine01 MATERIALS_STANDALONE
-
 //! Evaluates to true if materials was built with automated init/fini operation at DLL loading
 #cmakedefine01 MATERIALS_WITH_IMPLICIT_INIT_FINI
 
