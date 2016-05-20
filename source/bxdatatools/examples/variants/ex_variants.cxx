@@ -46,12 +46,8 @@
 #include <datatools/kernel.h>
 // #include <datatools/clhep_units.h>
 #include <datatools/configuration/variant_repository.h>
-#if DATATOOLS_STANDALONE == 1
-#include <datatools/datatools.h>
-#else
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif // DATATOOLS_STANDALONE == 1
 #if DATATOOLS_WITH_QT_GUI == 1
 // - Qt:
 #include <QStyleFactory>
@@ -76,11 +72,7 @@ int main(int argc_, char ** argv_)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
   try {
 
     bool help = false;
@@ -169,12 +161,8 @@ int main(int argc_, char ** argv_)
     DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // DATATOOLS_STANDALONE == 1
-  return (error_code);
+  bayeux::terminate();
+  return error_code;
 }
 
 void test0()

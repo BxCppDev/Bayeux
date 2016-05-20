@@ -14,12 +14,10 @@
 // - Boost
 #include <boost/program_options.hpp>
 
-#if DATATOOLS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
-#endif // DATATOOLS_STANDALONE == 0
 
-// - datatools
+// - Bayeux/datatools
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/ocd_driver.h>
@@ -45,11 +43,7 @@ namespace datatools {
  ****************/
 int main(int argc_, char ** argv_)
 {
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
 
   int error_code = EXIT_SUCCESS;
   datatools::ocd_driver_params params;
@@ -109,11 +103,7 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::terminate();
   return error_code;
 }
 
@@ -194,11 +184,7 @@ namespace datatools {
   void ui::print_usage(boost::program_options::options_description & opts_,
                        std::ostream & out_)
   {
-#if DATATOOLS_STANDALONE == 1
-    const std::string APP_NAME = "ocd_manual";
-#else
     const std::string APP_NAME = "bxocd_manual";
-#endif // DATATOOLS_STANDALONE == 1
     out_ << "\n" << APP_NAME << " -- Object Configuration Description Manual" << std::endl;
     out_ << "                     (datatools OCD support)" << std::endl;
     out_ << std::endl;
@@ -214,11 +200,7 @@ namespace datatools {
     out_ << "                                                        " << std::endl;
     out_ << "  " << APP_NAME << " --action list | grep ^datatools::  " << std::endl;
     out_ << "                                                        " << std::endl;
-#if DATATOOLS_STANDALONE == 1
-    out_ << "  " << APP_NAME << " --load-dll genvtx --action list    " << std::endl;
-#else
     out_ << "  " << APP_NAME << " --load-dll foo --action list       " << std::endl;
-#endif // DATATOOLS_STANDALONE == 1
     out_ << "                                                        " << std::endl;
     out_ << "  " << APP_NAME << " \\" << std::endl
          << "             --class-id datatools::service_manager    \\" << std::endl

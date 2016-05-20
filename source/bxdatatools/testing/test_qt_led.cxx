@@ -19,11 +19,7 @@ void test_qt_led(bool gui_ = false);
 
 int main(int argc_, char * argv_[])
 {
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
 
   bool gui = false;
   int iarg =  1;
@@ -35,11 +31,7 @@ int main(int argc_, char * argv_[])
 
   test_qt_led(gui);
 
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::terminate();
   return 0;
 }
 

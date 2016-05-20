@@ -19,10 +19,8 @@
 #include <datatools/kernel.h>
 #include <datatools/properties.h>
 
-#if DATATOOLS_STANDALONE == 0
-// - bayeux:
+// - Bayeux:
 #include <bayeux/bayeux.h>
-#endif // DATATOOLS_STANDALONE == 0
 
 #if DATATOOLS_WITH_QT_GUI == 1
 
@@ -47,11 +45,7 @@ void test1(bool debug_ = false, bool gui_ = false);
 
 int main(int argc_, char ** argv_)
 {
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
   int error_code = EXIT_SUCCESS;
   try {
 
@@ -84,11 +78,7 @@ int main(int argc_, char ** argv_)
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::terminate();
   return error_code;
 }
 
