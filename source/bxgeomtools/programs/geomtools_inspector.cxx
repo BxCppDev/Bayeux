@@ -15,10 +15,8 @@
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
-#if GEOMTOOLS_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif
 #if GEOMTOOLS_WITH_READLINE == 1
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -50,16 +48,8 @@ void build_argv(std::istringstream & command_in_, std::vector<std::string> & arg
 
 int main(int argc_, char ** argv_)
 {
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif
-#if GEOMTOOLS_STANDALONE == 1
-  const std::string APP_NAME = "geomtools_inspector";
-#else
+  bayeux::initialize(argc_, argv_);
   const std::string APP_NAME = "bxgeomtools_inspector";
-#endif // GEOMTOOLS_STANDALONE == 1
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
@@ -427,11 +417,7 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_FINI();
-#else
-  BAYEUX_FINI();
-#endif
+  bayeux::terminate();
   return (error_code);
 }
 
@@ -460,11 +446,7 @@ void print_splash(std::ostream & out_)
 void print_help (const boost::program_options::options_description & opts_,
                  std::ostream & out_)
 {
-#if GEOMTOOLS_STANDALONE == 1
-  const std::string APP_NAME = "geomtools_inspector";
-#else
   const std::string APP_NAME = "bxgeomtools_inspector";
-#endif // GEOMTOOLS_STANDALONE == 1
   out_ << APP_NAME << " -- Inspect and display a virtual geometry" << std::endl;
   out_ << "\n";
   out_ << "Usage: \n\n";

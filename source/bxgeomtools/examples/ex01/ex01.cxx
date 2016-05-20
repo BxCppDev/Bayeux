@@ -7,10 +7,8 @@
 #include <iostream>
 
 // Third party:
-#if GEOMTOOLS_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif
 // - Bayeux/datatools:
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
@@ -23,11 +21,7 @@
 
 int main(int argc_, char ** argv_)
 {
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // MATERIALS_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
@@ -77,10 +71,6 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // MATERIALS_STANDALONE == 1
+  bayeux::terminate();
   return error_code;
 }

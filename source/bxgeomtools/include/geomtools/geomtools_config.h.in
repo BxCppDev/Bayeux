@@ -3,9 +3,6 @@
 #ifndef GEOMTOOLS_GEOMTOOLS_CONFIG_H
 #define GEOMTOOLS_GEOMTOOLS_CONFIG_H 1
 
-/***  geomtools is built standalone or not ***/
-#cmakedefine01 GEOMTOOLS_STANDALONE
-
 /***  geomtools debug flag ***/
 #cmakedefine01 GEOMTOOLS_WITH_DEBUG
 
