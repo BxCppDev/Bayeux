@@ -12,10 +12,8 @@
 // Third Party:
 // - Boost:
 #include <boost/program_options.hpp>
-#if GENVTX_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif
 // - Bayeux/datatools:
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
@@ -64,11 +62,7 @@ namespace genvtx {
 
 int main(int argc_, char ** argv_)
 {
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif
+  bayeux::initialize(argc_, argv_);
 
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
@@ -143,12 +137,8 @@ int main(int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_FINI();
-#else
-  BAYEUX_FINI();
-#endif
-  return (error_code);
+  bayeux::terminate();
+  return error_code;
 }
 
 // Implementation:
@@ -173,11 +163,7 @@ namespace genvtx {
       .add(driver_init_opts)
       .add(driver_action_opts);
 
-#if GEOMTOOLS_STANDALONE == 1
-    const std::string APP_NAME = "genvtx_production";
-#else
     const std::string APP_NAME = "bxgenvtx_production";
-#endif // GEOMTOOLS_STANDALONE == 1
 
     out_ << "Usage : " << APP_NAME << " [OPTION]...                                      \n";
     out_ << "                                                                            \n";

@@ -10,10 +10,8 @@
 #include <exception>
 
 // Third Party
-#if GENVTX_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
@@ -26,11 +24,7 @@
 
 int main(int argc_, char ** argv_)
 {
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif
+  bayeux::initialize(argc_, argv_);
 
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   int error_code = EXIT_SUCCESS;
@@ -111,10 +105,6 @@ int main(int argc_, char ** argv_)
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-#if MATERIALS_STANDALONE == 1
-  MATERIALS_FINI();
-#else
-  BAYEUX_FINI();
-#endif
-  return(error_code);
+  bayeux::terminate();
+  return error_code;
 }
