@@ -14,10 +14,8 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/datatools.h>
-#if DATATOOLS_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif
 // - Bayeux/datatools:
 #include <datatools/utils.h>
 #include <datatools/properties.h>
@@ -37,11 +35,7 @@
 
 int main(int argc_, char ** argv_)
 {
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // DATATOOLS_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
 
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
@@ -248,10 +242,6 @@ int main(int argc_, char ** argv_)
     DT_LOG_FATAL(logging,"Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-#if DATATOOLS_STANDALONE == 1
-  DATATOOLS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // DATATOOLS_STANDALONE == 1
-  return(error_code);
+  bayeux::terminate();
+  return error_code;
 }
