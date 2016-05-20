@@ -25,10 +25,8 @@
 // - Boost
 #include <boost/program_options.hpp>
 
-#if DPP_STANDALONE == 0
 // - Bayeux:
 #include <bayeux/bayeux.h>
-#endif // DPP_STANDALONE == 0
 
 // - datatools
 #include <datatools/datatools.h>
@@ -57,20 +55,12 @@ struct ui {
 
 };
 
-#if DPP_STANDALONE == 1
-const std::string ui::APP_NAME = "dpp_processing";
-#else
 const std::string ui::APP_NAME = "bxdpp_processing";
-#endif
 
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-#if DPP_STANDALONE == 1
-  DATATOOLS_INIT_MAIN(argc_, argv_);
-#else
-  BAYEUX_INIT_MAIN(argc_, argv_);
-#endif // DPP_STANDALONE == 1
+  bayeux::initialize(argc_, argv_);
 
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   namespace po = boost::program_options;
@@ -135,12 +125,8 @@ int main (int argc_, char ** argv_)
     error_code = EXIT_FAILURE;
   }
 
-#if DPP_STANDALONE == 1
-  DATATOOLS_FINI();
-#else
-  BAYEUX_FINI();
-#endif // DPP_STANDALONE == 1
-  return (error_code);
+  bayeux::terminate();
+  return error_code;
 }
 
 void ui::print_usage(std::ostream & out_)

@@ -3,9 +3,6 @@
 #ifndef DPP_DPP_CONFIG_H
 #define DPP_DPP_CONFIG_H 1
 
-/*** dpp is built standalone or not ***/
-#cmakedefine01 DPP_STANDALONE
-
 /*** dpp debug flag ***/
 #cmakedefine01 DPP_WITH_DEBUG
 
