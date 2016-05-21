@@ -108,7 +108,7 @@ namespace genvtx {
                  "Cannot add a NULL vertex generator handle in combined vertex generator '" << get_name() << "' !");
     for (size_t i = 0; i < _entries_.size (); ++i) {
       const entry_type & a_entry = _entries_[i];
-      DT_THROW_IF (&a_entry.vg_handle.get () == &a_vg.get (),
+      DT_THROW_IF (&a_entry.vg_handle.get () == &a_vg.get(),
                    std::logic_error,
                    "Cannot add twice a generator in combined vertex generator '" << get_name() << "' !");
     }
