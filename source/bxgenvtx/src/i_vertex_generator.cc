@@ -65,6 +65,11 @@ namespace genvtx {
     DT_THROW_IF (is_initialized(),
                 std::logic_error,
                 "Vertex generator '" << get_name() << "' is initialized/locked !");
+    DT_THROW_IF(! ::datatools::name_validation(name_,
+                                               ::datatools::NV_NO_HYPHEN
+                                               | ::datatools::NV_NO_COLON),
+                std::logic_error,
+                "Invalid name '" << name_ << "' for vertex generator!");
     _name_ = name_;
   }
 
