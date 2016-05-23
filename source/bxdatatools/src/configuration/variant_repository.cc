@@ -184,6 +184,22 @@ namespace datatools {
       return found != _registries_.end();
     }
 
+    unsigned int variant_repository::get_number_of_registries() const
+    {
+      return _registries_.size();
+    }
+
+    void variant_repository::list_of_registry_keys(std::set<std::string> & keys_) const
+    {
+      keys_.clear();
+      for (registry_dict_type::const_iterator i = _registries_.begin();
+           i != _registries_.end();
+           i++) {
+        keys_.insert(i->first);
+      }
+      return;
+    }
+
     const variant_registry &
     variant_repository::get_registry(const std::string & registry_name_) const
     {
@@ -593,6 +609,37 @@ namespace datatools {
 
       if (requested_lock) {
         lock();
+      }
+
+      bool has_warnings = false;
+      if (!has_name()) {
+        has_warnings = true;
+        DT_LOG_WARNING(get_logging_priority(), "Repository has no name!");
+      }
+
+      if (!has_organization()) {
+        has_warnings = true;
+        DT_LOG_WARNING(get_logging_priority(), "Repository '" << get_name() << "' has no organization set!");
+      }
+
+      if (!has_application()) {
+        has_warnings = true;
+        DT_LOG_WARNING(get_logging_priority(), "Repository '" << get_name() << "' has no application set!");
+      }
+
+      if (!get_number_of_registries()) {
+        has_warnings = true;
+        DT_LOG_WARNING(get_logging_priority(), "Repository '" << get_name() << "' has no variant registry !");
+      }
+
+      if (!is_locked()) {
+        has_warnings = true;
+        DT_LOG_WARNING(get_logging_priority(), "Repository '" << get_name() << "' is not locked!");
+      }
+
+      if (has_warnings) {
+        DT_LOG_WARNING(get_logging_priority(), "You configuration setup (file/multi_properties) for variant repository '" << get_name()
+                       << "' seems not to be valid!");
       }
 
       _initialized_ = true;

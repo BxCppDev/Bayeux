@@ -716,14 +716,29 @@ namespace datatools {
       // Initialize the system variant repository from a configuration file:
       if (! _params_.variant_config.empty()) {
         std::string config_filename =_params_.variant_config;
-        datatools::fetch_path_with_env(config_filename);
         datatools::properties config;
         DT_LOG_TRACE(_logging_, "Variant configuration file '"
                      << config_filename << "'...");
-        config.read_configuration(config_filename);
-        _variant_repository_->set_organization("");
-        _variant_repository_->set_application("");
+        uint32_t reader_opts = 0;
+        reader_opts |= multi_properties::config::FORBID_VARIANTS;
+        datatools::properties::config reader(reader_opts);
+        reader.read(config_filename, config);
+        // _variant_repository_->set_organization("");
+        // _variant_repository_->set_application("");
         _variant_repository_->unlock();
+        if (!_variant_repository_->has_organization()) {
+          // Fetch organization:
+          if (config.has_key("organization")) {
+            const std::string & org = config.fetch_string("organization");
+            _variant_repository_->set_organization(org);
+          }
+        }
+        if (!_variant_repository_->has_application()) {
+          if (config.has_key("application")) {
+            const std::string & app = config.fetch_string("application");
+            _variant_repository_->set_application(app);
+          }
+        }
         DT_LOG_TRACE(_logging_, "About to load registries...");
         _variant_repository_->load_registries(config);
         if (_logging_ >= datatools::logger::PRIO_TRACE) {
@@ -735,7 +750,7 @@ namespace datatools {
       if (_params_.variant_registry_configs.size()) {
         if (rep_locked) {
           // Unlock to add more registries:
-           _variant_repository_->unlock();
+          _variant_repository_->unlock();
         }
         // Parse some special directives to load the definitions of configuration
         // variant registry from a file:

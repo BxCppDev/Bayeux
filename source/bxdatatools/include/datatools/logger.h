@@ -105,6 +105,46 @@ namespace datatools {
     //!          is not valid
     static std::string get_priority_label(priority p);
 
+    //! check if priority satisfy the fatal level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the fatal level
+    static bool is_fatal(priority p);
+
+    //! check if priority satisfy the critical level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the critical level
+    static bool is_critical(priority p);
+
+    //! check if priority satisfy the error level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the error level
+    static bool is_error(priority p);
+
+    //! check if priority satisfy the warning level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the warning level
+    static bool is_warning(priority p);
+
+    //! check if priority satisfy the notice level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the notice level
+    static bool is_notice(priority p);
+
+    //! check if priority satisfy the information level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the information level
+    static bool is_information(priority p);
+
+    //! check if priority satisfy the debug level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the debug level
+    static bool is_debug(priority p);
+
+    //! check if priority satisfy the trace level
+    //! @param p priority enumeration
+    //! @returns true if the priority is at least at the trace level
+    static bool is_trace(priority p);
+
     //! return the priority level from a collection of properties
     //! The following properties are recognized:
     //!   logging.priority : string = "fatal" # or "trace", "debug",

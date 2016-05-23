@@ -1,11 +1,11 @@
 /// \file datatools/properties.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
- * Last modified: 2015-01-16
+ * Last modified: 2016-05-20
  *
  * License:
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2008-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,7 @@
  *
  * Description:
  *
- *   A simple properties dictionary
- *
- * History:
+ *   A simple properties dictionary with I/O functionalities.
  *
  */
 #ifndef DATATOOLS_PROPERTIES_H
@@ -61,7 +59,7 @@ namespace datatools {
   /**
    *  The properties class provides a serializable container that holds
    *  many different data of different types (bool, int, double, string)
-   *  as well as arrays (std::vector) of these build-in types.
+   *  as well as fixed size arrays (std::vector) of these build-in types.
    *
    */
   class properties :
@@ -81,18 +79,18 @@ namespace datatools {
       static const int ERROR_RANGE   = 3;
       static const int ERROR_LOCK    = 4;
 
-      static const unsigned char MASK_TYPE          = 0x7;   // = 00000111
-      static const unsigned char MASK_UNIT_SYMBOL   = 0x8;   // = 00001000 for real parameters
-      static const unsigned char MASK_EXPLICIT_PATH = 0x10;  // = 00010000 for string parameters
-      static const unsigned char MASK_EXPLICIT_UNIT = 0x20;  // = 00100000 for real parameters
-      static const unsigned char MASK_LOCK          = 0x40;  // = 01000000
-      static const unsigned char MASK_VECTOR        = 0x80;  // = 10000000
+      static const uint8_t MASK_TYPE          = 0x7;  // = 00000111
+      static const uint8_t MASK_UNIT_SYMBOL   = 0x8;  // = 00001000 for real parameters
+      static const uint8_t MASK_EXPLICIT_PATH = 0x10; // = 00010000 for string parameters
+      static const uint8_t MASK_EXPLICIT_UNIT = 0x20; // = 00100000 for real parameters
+      static const uint8_t MASK_LOCK          = 0x40; // = 01000000
+      static const uint8_t MASK_VECTOR        = 0x80; // = 10000000
 
-      static const unsigned char TYPE_NONE    = 0x0; // = 000
-      static const unsigned char TYPE_BOOLEAN = 0x1; // = 001
-      static const unsigned char TYPE_INTEGER = 0x2; // = 010
-      static const unsigned char TYPE_REAL    = 0x3; // = 011
-      static const unsigned char TYPE_STRING  = 0x4; // = 100
+      static const uint8_t TYPE_NONE    = 0x0; // = 000
+      static const uint8_t TYPE_BOOLEAN = 0x1; // = 001
+      static const uint8_t TYPE_INTEGER = 0x2; // = 010
+      static const uint8_t TYPE_REAL    = 0x3; // = 011
+      static const uint8_t TYPE_STRING  = 0x4; // = 100
 
       static const char TYPE_BOOLEAN_SYMBOL = 'B';
       static const char TYPE_INTEGER_SYMBOL = 'I';
@@ -101,21 +99,22 @@ namespace datatools {
 
       static const char STRING_FORBIDDEN_CHAR = '"';
 
-      static const int  SCALAR_DEF  = -1;
-      static const int  SCALAR_SIZE =  1;
+      static const int SCALAR_DEF  = -1;
+      static const int SCALAR_SIZE =  1;
 
+      /// \brief Provides static method for default values for each supported type
       struct defaults {
-        static bool boolean_value();
-        static int integer_value();
-        static double real_value();
-        static const std::string string_value();
+        static bool boolean_value(); // return false
+        static int integer_value();  // return 0
+        static double real_value();  // return 0.0
+        static const std::string string_value(); // return empty string
       };
 
     public:
-      typedef std::vector<bool>        vbool;
-      typedef std::vector<int32_t>     vint;
-      typedef std::vector<double>      vdouble;
-      typedef std::vector<std::string> vstring;
+      typedef std::vector<bool>        vbool;   ///< Container for boolean data
+      typedef std::vector<int32_t>     vint;    ///< Container for integer data
+      typedef std::vector<double>      vdouble; ///< Container for real data
+      typedef std::vector<std::string> vstring; ///< Container for character string data
 
     public:
 
@@ -140,6 +139,9 @@ namespace datatools {
 
       /// Destructor
       virtual ~data();
+
+      /// Check is description is set
+      bool has_description() const;
 
       /// Set the description string associated to the stored data
       void set_description(const std::string&);
@@ -342,12 +344,13 @@ namespace datatools {
     public:
       static const std::string & allowed_chars();
 
-      // ctor
+      /// Default constructor
       default_key_validator();
 
-      // dtor
+      /// Destructor
       virtual ~default_key_validator ();
 
+      /// Object function interface
       virtual bool operator()(const std::string& a_key_arg) const;
     };
 
@@ -358,49 +361,113 @@ namespace datatools {
     //! \brief Class for ASCII file I/O operations with properties objects.
     class config {
     public:
-      static const char DEFAULT_CONTINUATION_CHAR; // = '\\';
-      static const char DEFAULT_COMMENT_CHAR; //  = '#';
-      static const char DEFAULT_ASSIGN_CHAR; //   = '=';
-      static const char DEFAULT_DESC_CHAR; //     = ':';
-      static const char OPEN_VECTOR; //           = '[';
-      static const char CLOSE_VECTOR; //          = ']';
 
-      static const int MODE_BARE; //          = 0;
-      static const int MODE_HEADER_FOOTER; // = 1;
-      static const int MODE_DEFAULT; //       = MODE_HEADER_FOOTER;
-      static const int mode_header_footer; // = MODE_HEADER_FOOTER;
-      static const int mode_bare; //          = MODE_BARE;
+      static const std::string & lock_decorator();
+      static const std::string & as_directive();
+      static const std::string & in_directive();
+      static const std::string & path_decorator();
+      static const std::string & metacomment_prefix();
 
-      static const bool write_private_also; //   = false;
-      static const bool write_public_only; //    = true;
-      static const bool without_smart_modulo; // = false;
-      static const bool with_smart_modulo; //    = true;
-      static const bool allow_variant; //    = true;
+      /// \brief Decoration mode
+      /// @deprecated is replaced by
+      /// the dedicated options_flag (HEADER_FOOTER) in constructor.
+      enum decoration_mode_type {
+        MODE_BARE          = 0,         ///< No decoration
+        MODE_HEADER_FOOTER = 1,         ///< Header/footer decoration
+        MODE_DEFAULT       = MODE_BARE, ///< Default decoration mode
+        mode_bare          = MODE_BARE,
+        mode_header_footer = MODE_HEADER_FOOTER
+      };
+
+      /// \brief Option flags used at construction
+      enum options_flag {
+        SKIP_PRIVATE     = bit_mask::bit00, ///< Skip private properties bit
+        FORBID_VARIANTS  = bit_mask::bit01, ///< Forbid variant directives bit
+        LOG_MUTE         = bit_mask::bit02, ///< Mute mode activation bit
+        LOG_DEBUG        = bit_mask::bit03, ///< Debug mode activation bit
+        LOG_TRACE        = bit_mask::bit04, ///< Trace mode activation bit
+        SMART_MODULO     = bit_mask::bit05, ///< Use smart modulo (write)
+        HEADER_FOOTER    = bit_mask::bit06, ///< Use header/footer (write)
+        REQUESTED_TOPIC  = bit_mask::bit07, ///< Requested topic (read/write)
+        FORBID_INCLUDES  = bit_mask::bit08, ///< Forbid include directives bit
+        DONT_CLEAR       = bit_mask::bit09, ///< Don't clear before parsing bit (read)
+        RESOLVE_PATH     = bit_mask::bit10  ///< Resolve path for input filename (read/write)
+      };
 
     public:
 
-      // Constructor
-      config(bool a_use_smart_modulo = false,
-             int a_mode = 1, // MODE_DEFAULT
-             bool a_write_public_only = true);
+      /// Constructor
+      config(uint32_t options_ = 0,
+             const std::string & topic_ = "",
+             const std::string & section_name_ = "",
+             int section_start_line_number_ = -1);
 
-      // Destructor
+      /// Destructor
       virtual ~config();
 
-      /// Check the debug flag
-      bool is_debug() const;
+      /// Return the logging priority threshold
+      datatools::logger::priority get_logging() const;
 
-      /// Set the debug flag
-      void set_debug(bool a_debug);
+      /// Set the logging priority threshold
+      void set_logging(datatools::logger::priority);
+
+      // /// @deprecated Check the debug flag
+      // bool is_debug() const;
+
+      // /// @deprecated Set the debug flag
+      // void set_debug(bool a_debug);
 
       /// Read a properties container from an input stream
       void read(std::istream& a_in, properties& a_prop);
 
+      /// Read a properties container from an input file
+      void read(const std::string & a_in, properties& a_prop);
+
       /// Write a properties container to an output stream
       void write(std::ostream& a_out, const properties& a_prop);
 
-      // /// Utility to parse quoted string token
-      // static bool read_quoted_string(std::istream&, std::string&);
+      /// Write a properties container to an output file
+      void write(const std::string & a_filename, const properties& a_prop);
+
+      /// Return the current value of the line counter
+      int get_current_line_number() const;
+
+      /// Set the filename and the line counter before parsing
+      void set_reader_input(const std::string & filename, int line_count = -1);
+
+      /// Check if topic is set
+      bool has_topic() const;
+
+      /// Set the topic that should be matched
+      void set_topic(const std::string & topic);
+
+      /// Return the topic
+      const std::string & get_topic() const;
+
+      /// Check if section info is set
+      bool has_section_info() const;
+
+      /// Set the section info
+      void set_section_info(const std::string & section_name_,
+                            int section_start_line_number);
+
+      /// Reset the section info
+      void reset_section_info();
+
+      /// Return the section
+      const std::string & get_section_name() const;
+
+      /// Return the section start line
+      int get_section_start_line_number() const;
+
+      /// Reset
+      void reset();
+
+      /// Write metacomment
+      void write_metacomment(std::ostream& a_out,
+                             const std::string & tag,
+                             const std::string & value = "",
+                             const std::string & comment = "");
 
       /// Write a property data
       void write_data(std::ostream& a_out,
@@ -410,26 +477,37 @@ namespace datatools {
                       const std::string & a_unit_label = "",
                       const std::string & a_comment = "");
 
-      /// Write header
-      void write_header(std::ostream& a_out, const std::string & topic_ = "");
-
-      /// Write footer
-      void write_footer(std::ostream& a_out, const std::string & topic_ = "");
-
     private:
 
+      /// Set default values at construction
+      void init_defaults_();
+
+      /// Parsing implementation
       void read_(std::istream& a_in, properties& a_prop);
 
+      /// Saving implementation
+      void write_(std::ostream& a_out, const properties& a_prop);
+
     private:
-      bool   _debug_; //!< Debug flag
-      int    _mode_;
-      bool   _use_smart_modulo_;
-      bool   _write_public_only_;
-      size_t _read_line_count_;
-      char   _continuation_char_;
-      char   _comment_char_;
-      char   _assign_char_;
-      char   _desc_char_;
+
+      // Configuration:
+      logger::priority _logging_; ///< Logging priority threshold (read/write)
+      int    _mode_;              ///< Decoration mode (header/footer)
+      bool   _dont_clear_;        ///< Do not clear the container at the beginning of parsing (read)
+      bool   _use_smart_modulo_;  ///< Use multiline formatting for vector data (write)
+      bool   _write_public_only_; ///< Only output public properties
+      bool   _forbid_variants_;   ///< Flag to forbid variant directives (read)
+      bool   _forbid_includes_;   ///< Flag to forbid include directives (read)
+      bool   _requested_topic_;   ///< Flag to activate topic matching (read)
+      bool   _resolve_path_;      ///< Explicitely resolve path for input/output filenames (read/write)
+      std::string _topic_;             ///< Topic to be validated
+      std::string _section_name_;      ///< Current section name (from hosting multi_properties, read)
+      int _section_start_line_number_; ///< Current section start line number (from hosting multi_properties, read)
+
+      // Working parsing data:
+      size_t      _current_line_number_; ///< Current input line number
+      std::string _current_filename_;    ///< Current filename
+
     }; //----- end of class config
 
 
@@ -439,6 +517,9 @@ namespace datatools {
   public:
 
     //! Prefix string used for the naming of private properties
+    //!
+    //! A private property has a key starting with this prefix,
+    //! namely '__' (double underscore).
     static const std::string & private_property_prefix();
 
     // Typedefs declarations:
@@ -448,13 +529,13 @@ namespace datatools {
     typedef std::vector<std::string>    keys_col_type;
 
   public:
-    /// Default constructor
-    properties(); // with embedded default key validator
+    /// Default constructor with embedded default key validator
+    properties();
 
-    /// Constructor
-    properties(const std::string& a_desc); // with embedded default key validator
+    /// Constructor with explicit description and embedded default key validator
+    properties(const std::string& a_desc);
 
-    /// Constructor
+    /// Constructor with explicit description and explicit key validator
     properties(const std::string & a_desc, const basic_key_validator&);
 
     /// Constructor with explicit key validator
@@ -465,11 +546,11 @@ namespace datatools {
      *      validator is deleted in the destructor.
      */
 
-    /// Constructor
+    /// Constructor with explicit description and explicit external key validator
     properties(const std::string& a_desc, const basic_key_validator*,
                bool deletion_on_destroy_ = true);
 
-    /// Constructor
+    /// Constructor with explicit external key validator
     properties(const basic_key_validator*,
                bool deletion_on_destroy_ = true);
 
@@ -1005,21 +1086,32 @@ namespace datatools {
 
     //! Store the properties' container object in an ASCII text file
     void write_configuration(const std::string& filename,
-                             bool a_use_smart_modulo = true,
-                             bool a_write_public_only = true) const;
+                             uint32_t options = config::SMART_MODULO | config::SKIP_PRIVATE) const;
+
+    // //! @deprecated Store the properties' container object in an ASCII text file
+    // void write_configuration(const std::string& filename,
+    //                          bool a_use_smart_modulo,
+    //                          bool a_write_public_only) const;
 
     //! Load the properties' container object from an ASCII text file
-    void read_configuration(const std::string& filename);
+    void read_configuration(const std::string& filename,
+                            uint32_t options = 0);
 
     //! Store the properties' container object in an ASCII text file
     static void write_config(const std::string& filename,
                              const properties& props,
-                             bool a_use_smart_modulo = true,
-                             bool a_write_public_only = true);
+                             uint32_t options = 0);
+
+    // //! @deprecated Store the properties' container object in an ASCII text file
+    // static void write_config(const std::string& filename,
+    //                          const properties& props,
+    //                          bool a_use_smart_modulo,
+    //                          bool a_write_public_only);
 
     //! Load the properties' container object from an ASCII text file
     static void read_config(const std::string& filename,
-                            properties& props);
+                            properties& props,
+                            uint32_t options = 0);
 
     //! Build a new property key from a prefix and a key
     static std::string build_property_key(const std::string& a_prefix,
@@ -1027,8 +1119,8 @@ namespace datatools {
 
   protected:
 
+    /// Default global key validator (singleton)
     static default_key_validator & global_default_key_validator();
-
 
     // methods:
   private:

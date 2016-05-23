@@ -1760,11 +1760,10 @@ namespace datatools {
     PROP.set_description (std::string("Sample configuration for class ") + get_class_name());
 
     // Not fully implemented yet !!
-    properties::config PC(properties::config::with_smart_modulo,
-                          properties::config::mode_header_footer,
-                          properties::config::write_private_also);
+    properties::config PC(properties::config::SMART_MODULO
+                          | properties::config::HEADER_FOOTER);
 
-    PC.write_header(out_, topic_);
+    // PC.write_header(out_, topic_);
     const std::string prop_comment_prefix = "### ";
 
     out_ << '\n';
@@ -1922,7 +1921,7 @@ namespace datatools {
     }
 
     out_ << '\n';
-    PC.write_footer(out_, topic_);
+    // PC.write_footer(out_, topic_);
     return;
   }
 

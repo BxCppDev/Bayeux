@@ -36,6 +36,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <set>
 
 // Third party:
 // - Boost:
@@ -141,6 +142,12 @@ namespace datatools {
                              const std::string & title_ = "",
                              const std::string & indent_ = "",
                              bool inherit_ = false) const;
+
+      /// Return the number of registries
+      unsigned int get_number_of_registries() const;
+
+      /// Build the list of registry keys
+      void list_of_registry_keys(std::set<std::string> & keys_) const;
 
       /// Check if a registry exists
       bool has_registry(const std::string & registry_name_) const;

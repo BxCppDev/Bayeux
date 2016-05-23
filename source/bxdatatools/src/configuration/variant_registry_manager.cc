@@ -239,8 +239,9 @@ namespace datatools {
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Variant manager is locked !");
       std::string file_name = items_config_file_;
-      datatools::fetch_path_with_env(file_name);
-      _mp_.read(file_name);
+      uint32_t reader_opts = 0;
+      reader_opts |= multi_properties::config::FORBID_VARIANTS;
+      _mp_.read(file_name, reader_opts);
       // DT_LOG_TRACE(get_logging_priority(), "Variant manager multi-configuration: ");
       // _mp_.tree_dump(std::cerr,"", "TRACE: ");
       return;
@@ -258,14 +259,12 @@ namespace datatools {
         _mp_.tree_dump(std::cerr, "Configuration items definitions:", "TRACE: ");
       }
 
-
       bool test_top = true;
       if (test_top) {
         if (! _top_variant_name_.empty()) {
           DT_THROW_IF(! _mp_.has_section(_top_variant_name_), std::logic_error,
                       "No definition for configuration item named '" << _top_variant_name_ << "' !");
           const datatools::multi_properties::entry & top_variant_entry = _mp_.get(_top_variant_name_);
-          // const std::string & top_variant_name  = top_variant_entry.get_key();
           const std::string & top_variant_type = top_variant_entry.get_meta();
           DT_THROW_IF(top_variant_type != item::label_from_model_type(item::MODEL_VARIANT),
                       std::logic_error,

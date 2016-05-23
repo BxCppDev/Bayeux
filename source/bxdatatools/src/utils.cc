@@ -271,6 +271,16 @@ namespace datatools {
     return;
   }
 
+  void remove_all_quotes(std::string & text_)
+  {
+    if (is_quoted(text_, '"')) {
+      remove_quotes(text_, '"');
+    } else if (is_quoted(text_, '\'')) {
+      remove_quotes(text_, '\'');
+    }
+    return;
+  }
+
   void remove_quotes(const std::string & from_, std::string & to_, char q_)
   {
     DT_THROW_IF(q_ != '\'' && q_ != '"',

@@ -260,7 +260,6 @@ int main(int argc_, char ** argv_)
     string filename_cfg = "test_properties.conf";
 
     datatools::properties::write_config(filename_cfg, my_dict);
-    datatools::properties::write_config("", my_dict);
     my_dict.clear();
     my_dict.tree_dump(clog, "Cleared dict:");
     clog << endl;

@@ -80,8 +80,7 @@ int main (int argc_ , char ** argv_)
 
         clog << endl << "Saving in ASCII file keeping private entries..." << endl;
         mp.write ("test_multi_properties.conf",
-                  datatools::multi_properties::with_header_footer,
-                  datatools::multi_properties::write_private_also);
+                  datatools::multi_properties::config::HEADER_FOOTER);
 
         {
           clog << endl << "Serializing in XML archive file..." << endl;
@@ -99,11 +98,11 @@ int main (int argc_ , char ** argv_)
         datatools::multi_properties mp ("name", "type");
         clog << "Reading from ASCII file skipping private entries..." << endl;
         mp.read ("test_multi_properties.conf",
-                 datatools::multi_properties::read_public_only);
+                 datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
         mp.dump (clog);
         mp.write ("test_multi_properties_2.conf",
-                  datatools::multi_properties::with_header_footer,
-                  datatools::multi_properties::write_public_only);
+                  datatools::multi_properties::config::HEADER_FOOTER
+                  | datatools::multi_properties::config::SKIP_PRIVATE_SECTIONS);
 
         {
           clog << endl << "Deserializing from XML archive file..." << endl;

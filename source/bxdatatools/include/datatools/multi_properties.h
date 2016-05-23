@@ -2,11 +2,11 @@
 /* multi_properties.h
  * Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2009
- * Last modified: 2014-02-26
+ * Last modified: 2016-05-20
  *
  * License:
  *
- * Copyright (C) 2011-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@
 #include <datatools/i_tree_dump.h>
 #include <datatools/i_cloneable.h>
 #include <datatools/properties.h>
+#include <datatools/bit_mask.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -101,16 +103,6 @@ namespace datatools {
     public datatools::i_tree_dumpable,
     public datatools::i_cloneable {
   public:
-
-    static const char OPEN; /// Open section character
-    static const char CLOSE; /// Close section character
-    static const char COMMENT; /// Comment character
-    static const bool with_header_footer; /// Flag to add a header and a footer when writing
-    static const bool without_header_footer; /// Flag to remove header and footer when writing
-    static const bool write_public_only; /// Flag to write only sections with a public key
-    static const bool write_private_also; /// Flag to also write sections with a private key
-    static const bool read_public_only; /// Flag to read only sections with a public key
-    static const bool read_private_also; /// Flag to also read sections with a private key
 
     /// \brief Default values
     struct defaults {
@@ -319,16 +311,14 @@ namespace datatools {
     /// Remove a section
     void remove(const std::string& a_key);
 
-    /// Write in a file
-    void write(const std::string& a_filename,
-               bool a_header_footer = true,
-               bool a_write_private = false) const;
+    /// Write to a configuration file
+    void write(const std::string& filename,
+               uint32_t options = config::HEADER_FOOTER | config::SKIP_PRIVATE_SECTIONS) const;
 
-    /// Read from a file
-    void read(const std::string& a_filename,
-              bool a_skip_private = false);
+    /// Read from a configuration file
+    void read(const std::string& filename, uint32_t options = 0);
 
-    /// Default print
+    /// Basic print
     void dump(std::ostream& a_out = std::clog) const;
 
     /// Smart print
@@ -337,7 +327,90 @@ namespace datatools {
                            const std::string& a_indent = "",
                            bool a_inherit          = false) const;
 
+    /// \brief Reader/writer class for multi_properties objects
+    class config {
+    public:
+      enum options_flag {
+        SKIP_PRIVATE_SECTIONS = bit_mask::bit00, ///< Skip private sections bit
+        FORBID_VARIANTS       = bit_mask::bit01, ///< Forbid variant block directives bit
+        LOG_MUTE              = bit_mask::bit02, ///< Mute mode activation bit
+        LOG_DEBUG             = bit_mask::bit03, ///< Debug mode activation bit
+        LOG_TRACE             = bit_mask::bit04, ///< Trace mode activation bit
+        SKIP_PRIVATE_PROPS    = bit_mask::bit05, ///< Skip private properties in sections bit
+        HEADER_FOOTER         = bit_mask::bit06, ///< Use header/footer (write)
+        DONT_CLEAR            = bit_mask::bit07, ///< Don't clear before parsing bit (read)
+        REQUESTED_TOPIC       = bit_mask::bit08, ///< Requested topic (read/write)
+        RESOLVE_PATH          = bit_mask::bit09  ///< Resolve path for input filename (read/write)
+      };
+
+      /// Default constructor
+      config(uint32_t options_ = 0, const std::string & topic_ = "");
+
+      /// Return the logging priority threshold
+      datatools::logger::priority get_logging() const;
+
+      /// Set the logging priority threshold
+      void set_logging(datatools::logger::priority);
+
+      /// Reset the reader/writer
+      void reset();
+
+      /// Read from an input file
+      void read(const std::string & a_filename, multi_properties& target_);
+
+      /// Read from an input stream
+      void read(std::istream& a_in, multi_properties& target_);
+
+      /// Write to an output stream
+      void write(std::ostream& a_out, const multi_properties& source_);
+
+      /// Write to an output file
+      void write(const std::string & a_filename, const multi_properties& source_);
+
+      /// Check if topic is set
+      bool has_topic() const;
+
+      /// Set the topic that should be matched
+      void set_topic(const std::string & topic);
+
+      /// Return the topic
+      const std::string & get_topic() const;
+
+    protected:
+
+      /// Default initialization
+      void _init_defaults();
+
+      /// Read from an input stream
+      void _read(std::istream& a_in, multi_properties& target_);
+
+      /// Write to an output stream
+      void _write(std::ostream& a_out, const multi_properties& target_);
+
+      /// Store the current filename
+      void _set_current_filename(const std::string & filename_);
+
+    private:
+
+      // Configuration:
+      datatools::logger::priority _logging_; ///< Logging priority threshold (read/write)
+      bool _skip_private_sections_;   ///< Flag to skip private sections (read/write)
+      bool _skip_private_properties_; ///< Flag to skip private properties in sections (read/write)
+      bool _forbid_variants_;         ///< Flag to forbid variant directives (read)
+      bool _header_footer_;           ///< Flag to print header/footer (write)
+      bool _dont_clear_;              ///< Do not clear the container at the beginning of parsing (read)
+      bool _requested_topic_;         ///< Flag to activate topic matching (read)
+      std::string _topic_;            ///< Topic to be validated
+      bool _resolve_path_;            ///< Explicitely resolve path for input/output filenames (read/write)
+
+      // Working parsing data:
+      std::string _current_filename_;    ///< Current filename
+      int         _current_line_number_; ///< Current line number
+
+    }; //----- end of class config
+
   private:
+
     /// Remove section implementation
     void remove_impl(const std::string& a_key);
 
@@ -349,8 +422,11 @@ namespace datatools {
     properties& add_impl2(const std::string& a_key,
                           const std::string& a_meta = "");
 
-    /// Read section implementation
-    void read_impl(std::istream& a_in, bool a_skip_private);
+    // /// @deprecated Read section implementation
+    // void read_impl(std::istream& a_in, bool a_skip_private);
+
+    /// Set default values at construction
+    void init_defaults();
 
   private:
     bool                  debug_;       //!< Debug flag

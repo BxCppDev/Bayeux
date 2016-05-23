@@ -8,6 +8,9 @@
 #include <sstream>
 #include <fstream>
 
+// - Boost:
+#include <boost/algorithm/string.hpp>
+
 // This Project:
 #include <datatools/exception.h>
 #include <datatools/logger.h>
@@ -25,32 +28,34 @@ DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_propert
 DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::multi_properties,
                                                                "datatools::utils::multi_properties")
 
+namespace {
+
+  struct _format {
+    static const char OPEN_CHAR    = '['; ///< Open section character
+    static const char ASSIGN_CHAR  = '='; ///< Assignement key/meta label character
+    static const char CLOSE_CHAR   = ']'; ///< Close section character
+    static const char COMMENT_CHAR = '#'; ///< Comment character
+    static const char QUOTES_CHAR  = '"'; ///< Quoting character
+    static const char SPACE_CHAR   = ' '; ///< Space character
+    static const char CONTINUATION_CHAR = '\\'; ///< Continuation character
+  };
+
+}
+
 namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(multi_properties,"datatools::multi_properties")
 
-  const char multi_properties::OPEN = '[';
-  const char multi_properties::CLOSE = ']';
-  const char multi_properties::COMMENT = '#';
-  const bool multi_properties::with_header_footer = true;
-  const bool multi_properties::without_header_footer = false;
-  const bool multi_properties::write_public_only = false;
-  const bool multi_properties::write_private_also = true;
-  const bool multi_properties::read_public_only = true;
-  const bool multi_properties::read_private_also = false;
-
   const std::string & multi_properties::defaults::key_label()
   {
-    static std::string value;
-    if (value.empty()) value = "name";
-    return value;
+    static const std::string _label("name");
+    return _label;
   }
 
   const std::string & multi_properties::defaults::meta_label()
   {
-    static std::string value;
-    if (value.empty()) value = "type";
-    return value;
+    static const std::string _label("type");
+    return _label;
   }
 
   //----------------------------------------------------------------------
@@ -197,19 +202,6 @@ namespace datatools {
     return meta_label_;
   }
 
-  /*
-    const std::string & multi_properties::any_meta_label()
-    {
-    static std::string value;
-    if (value.empty()) value = "*";
-    return value;
-    }
-
-    bool multi_properties::has_any_meta_label() const {
-    return (meta_label_ == multi_properties::any_meta_label());
-    }
-  */
-
   uint32_t multi_properties::size() const {
     DT_THROW_IF (ordered_entries_.size() != entries_.size(),
                  std::runtime_error,
@@ -228,17 +220,14 @@ namespace datatools {
     this->clear();
   }
 
-
   void multi_properties::clear() {
     ordered_entries_.clear();
     entries_.clear();
   }
 
-
   const multi_properties::entries_col_type& multi_properties::entries() const {
     return entries_;
   }
-
 
   const multi_properties::entries_ordered_col_type&
   multi_properties::ordered_entries() const {
@@ -257,18 +246,15 @@ namespace datatools {
     this->set_description(a_description);
   }
 
-
   multi_properties::multi_properties() {
     debug_ = false;
     _init_("", "", "", false);
   }
 
-
   multi_properties::multi_properties(const std::string& a_key_label,
                                      const std::string& a_meta_label) {
     _init_(a_key_label,a_meta_label,"",false);
   }
-
 
   multi_properties::multi_properties(const std::string& a_key_label,
                                      const std::string& a_meta_label,
@@ -276,7 +262,6 @@ namespace datatools {
                                      bool a_debug) {
     _init_(a_key_label,a_meta_label,a_description,a_debug);
   }
-
 
   multi_properties::~multi_properties() {
     ordered_entries_.clear();
@@ -428,11 +413,9 @@ namespace datatools {
     return this->get(a_key).get_properties();
   }
 
-
   properties& multi_properties::grab_section(const std::string& a_key) {
     return this->grab(a_key).grab_properties();
   }
-
 
   void multi_properties::remove_impl(const std::string& a_key) {
     entries_ordered_col_type::iterator found = ordered_entries_.end();
@@ -516,98 +499,279 @@ namespace datatools {
   }
 
   void multi_properties::write(const std::string& a_filename,
-                               bool a_header_footer,
-                               bool a_write_private) const {
-    std::ofstream fout(a_filename.c_str());
+                               uint32_t options) const
+  {
+    config w(options);
+    w.write(a_filename, *this);
+    return;
+  }
+
+  void multi_properties::read(const std::string& a_filename,
+                              uint32_t options) {
+    config r(options);
+    r.read(a_filename, *this);
+    return;
+  }
+
+  multi_properties::config::config(uint32_t options_, const std::string & topic_)
+  {
+    _init_defaults();
+    if (options_ & SKIP_PRIVATE_SECTIONS) {
+      _skip_private_sections_ = true;
+    }
+    if (options_ & SKIP_PRIVATE_PROPS) {
+      _skip_private_properties_ = true;
+    }
+    if (options_ & FORBID_VARIANTS) {
+      _forbid_variants_ = true;
+    }
+    if (options_ & HEADER_FOOTER) {
+      _header_footer_ = true;
+    }
+    if (options_ & LOG_MUTE) {
+      set_logging(datatools::logger::PRIO_FATAL);
+    }
+    if (options_ & LOG_DEBUG) {
+      set_logging(datatools::logger::PRIO_DEBUG);
+    }
+    if (options_ & LOG_TRACE) {
+      set_logging(datatools::logger::PRIO_TRACE);
+    }
+    if (options_ & RESOLVE_PATH) {
+      _resolve_path_ = true;
+    }
+    if (!topic_.empty()) {
+      set_topic(topic_);
+    }
+    return;
+  }
+
+  datatools::logger::priority multi_properties::config::get_logging() const
+  {
+    return _logging_;
+  }
+
+  void multi_properties::config::set_logging(datatools::logger::priority p_)
+  {
+    _logging_ = p_;
+    return;
+  }
+
+  void multi_properties::config::_init_defaults()
+  {
+    _logging_ = datatools::logger::PRIO_WARNING;
+    _skip_private_sections_ = false;
+    _skip_private_properties_ = false;
+    _forbid_variants_ = false;
+    _header_footer_ = false;
+    _current_line_number_ = -1;
+    return;
+  }
+
+  void multi_properties::config::reset()
+  {
+    _current_filename_.clear();
+    _init_defaults();
+    return;
+  }
+
+  void multi_properties::config::_set_current_filename(const std::string & filename_)
+  {
+    _current_filename_ = filename_;
+    return;
+  }
+
+  void multi_properties::config::read(const std::string & a_filename, multi_properties & target_)
+  {
+    std::string filename = a_filename;
+    if (_resolve_path_) {
+      DT_THROW_IF(!fetch_path_with_env(filename),
+                  std::runtime_error,
+                  "Cannot resolve filename '" + a_filename + "'!");
+    }
+    std::ifstream fin(filename.c_str());
+    DT_THROW_IF(!fin,
+                std::runtime_error,
+                "Cannot open filename '" + a_filename + "' (resolved as '" + filename + "'!");
+    _set_current_filename(filename);
+    read(fin, target_);
+    fin.close();
+    _current_filename_.clear();
+    _current_line_number_ = -1;
+    return;
+  }
+
+  void multi_properties::config::read(std::istream& in, multi_properties& target)
+  {
+    _read(in, target);
+    return;
+  }
+
+  void multi_properties::config::write(const std::string& a_filename,
+                                       const multi_properties& source_)
+  {
+    std::string filename = a_filename;
+    if (_resolve_path_) {
+      DT_THROW_IF(!fetch_path_with_env(filename),
+                  std::runtime_error,
+                  "Cannot resolve filename '" + a_filename + "'!");
+    }
+    std::ofstream fout(filename.c_str());
     DT_THROW_IF (!fout,
                  std::runtime_error,
-                 "Cannot open file '" <<  a_filename << "' !");
-    properties::config pcfg(true, properties::config::MODE_BARE, true);
-    if (a_header_footer) {
-      fout << "# List of multi-properties (datatools::multi_properties):" << std::endl;
-      fout << std::endl;
-    }
-    if (this->has_description()) {
-      fout << "#@description " << this->get_description() << std::endl;
-    }
-    fout << "#@key_label   " << '"' << this->get_key_label() << '"'
-         << std::endl;
-    fout << "#@meta_label  " << '"' << this->get_meta_label()<< '"'
-         << std::endl;
-    fout << std::endl;
+                 "Cannot open filename '" + a_filename + "' (resolved as '" + filename + "'!");
+    _set_current_filename(filename);
+    _write(fout, source_);
+    fout.close();
+    _current_filename_.clear();
+    _current_line_number_ = -1;
+    return;
+  }
 
-    for (entries_ordered_col_type::const_iterator i = ordered_entries_.begin();
-         i != ordered_entries_.end();
+  void multi_properties::config::write(std::ostream& out,
+                                       const multi_properties& source)
+  {
+    _write(out, source);
+    return;
+  }
+
+  bool multi_properties::config::has_topic() const
+  {
+    return !_topic_.empty();
+  }
+
+  void multi_properties::config::set_topic(const std::string & topic)
+  {
+    if (!topic.empty()) {
+      uint32_t validation_flags = 0;
+      // validation_flags != NV_NO_HYPHEN
+      DT_THROW_IF(!name_validation(topic, validation_flags),
+                  std::logic_error,
+                  "Keyword/topic '" << topic << "' contains forbidden characters!");
+      _requested_topic_ = true;
+    } else {
+      _requested_topic_ = false;
+    }
+    _topic_ = topic;
+    return;
+  }
+
+  const std::string & multi_properties::config::get_topic() const
+  {
+    return _topic_;
+  }
+
+  void multi_properties::config::_write(std::ostream& a_out, const multi_properties& target_)
+  {
+    uint32_t pcfg_options = 0;
+    pcfg_options |= properties::config::SMART_MODULO;
+    pcfg_options |= properties::config::RESOLVE_PATH;
+    if (_skip_private_properties_) {
+      pcfg_options |= properties::config::SKIP_PRIVATE;
+    }
+    properties::config pcfg(pcfg_options);
+    if (_header_footer_) {
+      a_out << _format::COMMENT_CHAR << _format::SPACE_CHAR
+            << "List of sections of configuration properties (datatools::multi_properties)"
+            << std::endl;
+      a_out << std::endl;
+    }
+
+    if (has_topic() && _requested_topic_) {
+      a_out << "#@topic" << _format::SPACE_CHAR << get_topic() << std::endl;
+    }
+    if (target_.has_description()) {
+      a_out << "#@description" << _format::SPACE_CHAR << target_.get_description() << std::endl;
+    }
+    a_out << "#@key_label" << _format::SPACE_CHAR << _format::QUOTES_CHAR << target_.get_key_label() << _format::QUOTES_CHAR
+          << std::endl;
+    a_out << "#@meta_label" << _format::SPACE_CHAR << _format::QUOTES_CHAR << target_.get_meta_label() << _format::QUOTES_CHAR
+          << std::endl;
+    a_out << std::endl;
+
+    for (entries_ordered_col_type::const_iterator i = target_.ordered_entries_.begin();
+         i != target_.ordered_entries_.end();
          ++i) {
       const entry *pentry = *i;
       const std::string& name = pentry->get_key();
       const entry& an_entry = *pentry;
-      if (!a_write_private) {
+      bool skip_this_section = false;
+
+      // Apply criterion to skip the section:
+      if (_skip_private_sections_) {
         if (properties::key_is_private(name)) {
-          continue;
+          skip_this_section = true;
         }
       }
-      fout << multi_properties::OPEN
-           << this->get_key_label() << '='
-           << '"' << name << '"';
-      if (an_entry.has_meta()) {
-        fout << ' '
-             << this->get_meta_label() << '='
-             << '"' << an_entry.get_meta() << '"';
+
+      if (skip_this_section) {
+        continue;
       }
-      fout << multi_properties::CLOSE << std::endl << std::endl;
 
-      pcfg.write(fout, an_entry.get_properties());
-      fout << std::endl;
+      a_out << _format::OPEN_CHAR
+            << target_.get_key_label() << _format::ASSIGN_CHAR
+            << _format::QUOTES_CHAR << name << _format::QUOTES_CHAR;
+      if (an_entry.has_meta()) {
+        a_out << _format::SPACE_CHAR
+              << target_.get_meta_label() << _format::ASSIGN_CHAR
+              << _format::QUOTES_CHAR << an_entry.get_meta() << _format::QUOTES_CHAR;
+      }
+      a_out << _format::CLOSE_CHAR << std::endl << std::endl;
+
+      pcfg.write(a_out, an_entry.get_properties());
+      a_out << std::endl;
     }
 
-    if (a_header_footer) {
-      fout << "# End of list of multi-properties." << std::endl;
+    if (_header_footer_) {
+      a_out << _format::COMMENT_CHAR << _format::SPACE_CHAR << "End of list of sections of configuration properties (datatools::multi_properties)"
+            << std::endl;
     }
+    return;
   }
 
-
-  void multi_properties::read(const std::string& a_filename,
-                              bool a_skip_private) {
-    std::ifstream fin(a_filename.c_str());
-    DT_THROW_IF (!fin,
-                 std::runtime_error,
-                 "Cannot open file '" <<  a_filename << "' !");
-    this->read_impl(fin, a_skip_private);
-  }
-
-
-  void multi_properties::read_impl(std::istream& in_, bool a_skip_private) {
-    //datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
-    bool devel = false; // Debug stuff
+  void multi_properties::config::_read(std::istream& in_, multi_properties& target_)
+  {
     std::string line_in;
     std::string mprop_description;
     std::string mprop_key_label;
     std::string mprop_meta_label;
+    std::string mprop_format;
+    int closed_section_first_line_number = -1;
+    int new_section_first_line_number = -1;
+
     bool line_goon = false;
     int line_count = 0;
     std::ostringstream current_block_oss;
     std::string current_key = "";
     std::string current_meta = "";
 
+    _current_line_number_ = 0;
     bool enable_variants = true;
+    bool variant_trace = false;
+    if (_forbid_variants_) {
+      enable_variants = false;
+    } else {
+      if (datatools::logger::is_trace(_logging_)) {
+        variant_trace = true;
+      }
+    }
     std::string variant_section_only;
     bool can_variant_section_only = false;
     unsigned int vpp_flags = 0;
+    if (variant_trace) {
+      // Special trace print:
+      vpp_flags |= configuration::variant_preprocessor::FLAG_TRACE;
+    }
     configuration::variant_preprocessor vpp(vpp_flags);
-    /// Special devel print:
-    // bool variant_devel = false;
-    // unsigned int vpp_flags = 0;
-    // vpp_flags |= configuration::variant_preprocessor::FLAG_DEVEL;
-    // configuration::variant_preprocessor vpp(vpp_flags);
 
     while (in_) {
       bool append_block_line = true;
       std::string line_get;
       std::getline(in_,line_get);
+      _current_line_number_++;
       bool line_continue = false;
       int sz = line_get.size ();
-      if (sz > 0 && line_get[sz-1] == '\\') {
+      if (sz > 0 && line_get[sz-1] == _format::CONTINUATION_CHAR) {
         line_continue = true;
         line_get = line_get.substr(0, sz - 1);
       }
@@ -652,28 +816,50 @@ namespace datatools {
             iss >> token;
 
             if (token == "@variant_section_only") {
-              DT_THROW_IF(!enable_variants, std::logic_error, "Variants are not supported!");
+              DT_THROW_IF(!enable_variants, std::logic_error,
+                          (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                          "Line " << _current_line_number_ << ": "
+                          << "Variant directives are forbidden!");
               DT_THROW_IF(!can_variant_section_only, std::logic_error,
-                          "'@variant_section_only' directive can only be set at section start!");
+                          (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                          "Line " << _current_line_number_ << ": "
+                          << "'@variant_section_only' directive can only be set at section start!");
               std::string variant_path_rule;
               iss >> std::ws >> variant_path_rule;
               variant_section_only = variant_path_rule;
-              if (devel) {
-                std::cerr << "DEVEL: Next section is active only with variant '"
-                          << variant_section_only << "'" << std::endl;
-              }
+              DT_LOG_DEBUG(_logging_,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "Next section is active only with variant '"
+                           << variant_section_only << "'");
               append_block_line = false;
               can_variant_section_only = false;
-              if (devel) std::cerr << "DEVEL: *** can_variant_section_only is inhibited just after parsing a '@variant_section_only' directive." << std::endl;
+              DT_LOG_TRACE(_logging_,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "'can_variant_section_only' is inhibited just after parsing a '@variant_section_only' directive.");
             }
 
-            if (token == "@description" && mprop_description.empty()) {
+            if (token == "@format" && mprop_format.empty()) {
+              iss >> std::ws;
+              std::string format;
+              std::getline(iss, format);
+              if (!format.empty()) {
+                mprop_format = format;
+                DT_THROW_IF(mprop_format != "datatools::multi_properties",
+                            std::logic_error,
+                            (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                            "Line " << _current_line_number_ << ": "
+                            << "The '@format' directive does not match the expected 'datatools::multi_properties'!");
+              }
+              append_block_line = false;
+            } else if (token == "@description" && mprop_description.empty()) {
               iss >> std::ws;
               std::string desc;
               std::getline(iss, desc);
               if (!desc.empty()) {
                 mprop_description = desc;
-                this->set_description(mprop_description);
+                target_.set_description(mprop_description);
               }
               append_block_line = false;
             } else if (token == "@key_label" && mprop_key_label.empty()) {
@@ -681,20 +867,24 @@ namespace datatools {
               std::string key_label;
               DT_THROW_IF (!io::read_quoted_string(iss, key_label),
                            std::logic_error,
-                           "Unquoted value for '@key_label'");
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "Unquoted value for '@key_label'");
               std::string tmp;
               std::getline(iss, tmp);
               if (!key_label.empty()) {
                 mprop_key_label = key_label;
-                if (key_label_.empty()) {
-                  this->set_key_label(mprop_key_label);
+                if (target_.get_key_label().empty()) {
+                  target_.set_key_label(mprop_key_label);
                 } else {
-                  DT_THROW_IF (key_label_ != mprop_key_label,
+                  DT_THROW_IF (target_.key_label_ != mprop_key_label,
                                std::logic_error,
-                               "Incompatible key label '"
+                               (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                               "Line " << _current_line_number_ << ": "
+                               << "Incompatible key label '"
                                << mprop_key_label
                                << "' with required '"
-                               << key_label_ << "' !");
+                               << target_.key_label_ << "' !");
                 }
               }
               append_block_line = false;
@@ -703,25 +893,31 @@ namespace datatools {
               std::string meta_label;
               DT_THROW_IF (!io::read_quoted_string(iss, meta_label),
                            std::logic_error,
-                           "Unquoted value for '@meta_label'");
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "Unquoted value for '@meta_label'");
               std::string tmp;
               std::getline(iss, tmp);
               if (meta_label.empty()) {
-                DT_THROW_IF (!meta_label_.empty(),
+                DT_THROW_IF (!target_.meta_label_.empty(),
                              std::logic_error,
-                             "Missing meta label with setup '"
-                             << meta_label_ << "' !");
+                             (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                             "Line " << _current_line_number_ << ": "
+                             << "Missing meta label with setup '"
+                             << target_.meta_label_ << "' !");
               } else {
                 mprop_meta_label = meta_label;
-                if (meta_label_.empty()) {
-                  this->set_meta_label(mprop_meta_label);
+                if (target_.meta_label_.empty()) {
+                  target_.set_meta_label(mprop_meta_label);
                 } else {
-                  DT_THROW_IF (meta_label_ != mprop_meta_label,
+                  DT_THROW_IF (target_.meta_label_ != mprop_meta_label,
                                std::logic_error,
-                               "Incompatible meta label '"
+                               (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                               "Line " << _current_line_number_ << ": "
+                               << "Incompatible meta label '"
                                << mprop_meta_label
                                << "' with required '"
-                               << meta_label_ << "' !");
+                               << target_.meta_label_ << "' !");
                 }
               }
               append_block_line = false;
@@ -735,102 +931,162 @@ namespace datatools {
                 skip_line = false;
               }
             }
-            if (devel) {
-              if (skip_line) {
-                std::cerr << "DEVEL: " << "SKIP LINE      = '" << line << "'" << std::endl;
-              } else {
-                std::cerr << "DEVEL: " << "DONT SKIP LINE = '" << line << "'" << std::endl;
-              }
+            if (skip_line) {
+              DT_LOG_TRACE(_logging_,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "Skip line  '" << line << "'");
+            } else {
+              DT_LOG_TRACE(_logging_,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "Do not skip line  '" << line << "'");
             }
           }
         } // if ( ! skip_line )
 
-        if (devel) {
-          std::cerr << "DEVEL: " << "line='" << line << "'" << std::endl;
-          std::cerr << "DEVEL: " << "append_block_line=" << append_block_line << std::endl;
-        }
+        DT_LOG_TRACE(_logging_,
+                     (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                     "Line '" << line << "'");
+        DT_LOG_TRACE(_logging_,
+                     (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                     "append_block_line=" << append_block_line);
+
         // Parse line:
         if (!skip_line)  {
-          std::istringstream iss(line);
+          // std::cerr << "DEVEL: " << "PROCESSING LINE = '" << line << "'" << std::endl;
+          std::istringstream iss_line(line);
           char c = 0;
-          iss >> c >> std::ws;
+          iss_line >> c >> std::ws;
           // Search for 'key/meta' line:
-          if (c == '[') {
+          if (c == _format::OPEN_CHAR) {
             if (! blocks_started) {
               blocks_started = true;
+              // std::cerr << "DEVEL: " << "blocks_started: new_section_first_line_number = [" << new_section_first_line_number << "]..." << std::endl;
+              if (new_section_first_line_number > 0) {
+                closed_section_first_line_number = new_section_first_line_number;
+                // std::cerr << "DEVEL: " << "Previous SECTION started at line [" << closed_section_first_line_number << "]..." << std::endl;
+              }
+              new_section_first_line_number = _current_line_number_;
+              // std::cerr << "DEVEL: " << "New SECTION starts at line [" << _current_line_number_ << "]..." << std::endl;
             }
             // Parse 'key/meta' line:
-            iss >> std::ws;
+            iss_line >> std::ws;
             std::string key_label;
-            std::getline(iss, key_label, '=');
-            DT_THROW_IF (key_label != this->get_key_label(),
+            std::getline(iss_line, key_label, _format::ASSIGN_CHAR);
+            DT_THROW_IF (key_label != target_.key_label_,
                          std::logic_error,
-                         "Incompatible key label '"
+                         (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                         "Line " << _current_line_number_ << ": "
+                         << "Incompatible key label '"
                          << key_label
                          << "' with required '"
-                         << key_label_ << "' !");
+                         << target_.key_label_ << "' !");
             new_key.clear();
-            DT_THROW_IF (! io::read_quoted_string(iss, new_key),
+            DT_THROW_IF (! io::read_quoted_string(iss_line, new_key),
                          std::logic_error,
-                         "Cannot read quoted string key value from line '"
+                         (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                         "Line " << _current_line_number_ << ": "
+                         << "Cannot read quoted string key value from line '"
                          << line << "' !");
-            iss >> std::ws;
-            char dummy = iss.peek();
+            iss_line >> std::ws;
+            char dummy = iss_line.peek();
             new_meta.clear();
             std::string meta_label;
-            if (dummy != ']') {
-              std::getline(iss, meta_label, '=');
+            if (dummy != _format::CLOSE_CHAR) {
+              // Parsing meta directive:
+              std::getline(iss_line, meta_label, _format::ASSIGN_CHAR);
               if (!meta_label.empty()) {
-                DT_THROW_IF (meta_label != this->get_meta_label(),
+                DT_THROW_IF (meta_label != target_.meta_label_,
                              std::logic_error,
-                             "Incompatible meta label '"
+                             (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                             "Line " << _current_line_number_ << ": "
+                             << "Incompatible meta label '"
                              << meta_label
                              << "' with required '"
-                             << meta_label_ << "' !");
-                DT_THROW_IF (!io::read_quoted_string(iss, new_meta),
+                             << target_.meta_label_ << "' !");
+                DT_THROW_IF (!io::read_quoted_string(iss_line, new_meta),
                              std::logic_error,
-                             "Cannot read quoted string meta value from line '"
+                             (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                             "Line " << _current_line_number_ << ": "
+                             << "Cannot read quoted string meta value from line '"
                              << line << "' !");
               }
             } else {
-              // Missing meta directive:
-              if (!this->get_meta_label().empty()) {
-                DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                               "Missing meta directive with meta label '"
-                               << this->get_meta_label() << "' for container described by '"
+              // Case with missing meta directive:
+              if (!target_.get_meta_label().empty()) {
+                DT_LOG_WARNING(_logging_,
+                               (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                               "Line " << _current_line_number_ << ": "
+                               << "Missing meta directive with meta label '"
+                               << target_.get_meta_label() << "' for container described by '"
                                << mprop_description << "'!");
               }
               /*
               // 2014-02-26 FM: we accept if the meta directive (meta_label="blah") is missing...
-              DT_THROW_IF (!this->get_meta_label().empty(),
+              DT_THROW_IF (!target_.get_meta_label().empty(),
               std::logic_error,
               "Expected meta record '"
-              << this->get_meta_label()
+              << target_.get_meta_label()
               << '='
               << "\"???\"" << "' is missing !");
               */
+
             }
-            iss >> std::ws;
+            iss_line >> std::ws;
             c = 0;
-            iss >> c;
-            DT_THROW_IF (c != ']', std::logic_error, "Cannot read 'key/meta' closing symbol !");
-            if (devel) {
-              std::cerr << "DEVEL: *** Found a section header  = ["
-                        << key_label << "=" << '"' << new_key << '"';
-              if (!meta_label.empty()) {
-                std::cerr << " " << meta_label << "=" << '"' << new_meta << '"';
-              }
-              std::cerr << "]" << std::endl;
+            iss_line >> c;
+            DT_THROW_IF (c != _format::CLOSE_CHAR, std::logic_error,
+                         (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                         "Line " << _current_line_number_ << ": "
+                         << "Cannot read 'key/meta' closing symbol !");
+            DT_LOG_TRACE(_logging_,
+                         (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                         "Line " << _current_line_number_ << ": "
+                         << "Found a section header  = [" << key_label << "=" << '"' << new_key << "\"]");
+            if (!meta_label.empty()) {
+              DT_LOG_TRACE(_logging_,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "  with meta label = [" << meta_label << "=" << '"' << new_meta << "\"]");
             }
             can_variant_section_only = true;
-            if (devel) std::cerr << "DEVEL: *** can_variant_section_only is enabled = " << can_variant_section_only << std::endl;
+            DT_LOG_TRACE(_logging_,
+                         (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                         "Line " << _current_line_number_ << ": "
+                         << "'can_variant_section_only' is enabled = " << can_variant_section_only);
             process_block = true;
+
+            {
+              // Detection of trailing bits after section definition :
+              //  * Warn:  '[key_label="new_key" meta_label="new_meta"] Blah-blah '
+              //  * Pass:  '[key_label="new_key" meta_label="new_meta"] # Blah-blah '
+              std::string trailing_bits;
+              iss_line >> trailing_bits;
+              boost::trim(trailing_bits);
+              if (trailing_bits.length() > 0) {
+                if (trailing_bits[0] != _format::COMMENT_CHAR) {
+                  DT_LOG_WARNING(_logging_,
+                                 (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                                 "Line " << _current_line_number_ << ": " <<
+                                 "There are unprocessed trailing characters '" << trailing_bits
+                                 << "' after definition of new section '" << new_key << "'!");
+                }
+              }
+            }
+
           } else {
             // Append line to the current block stream:
             if (append_block_line) {
-               if (devel) std::cerr << "DEVEL: *** appending block line = '" << line << "'" << std::endl;
+              DT_LOG_TRACE(_logging_,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "appending block line = '" << line << "'");
               can_variant_section_only = false;
-               if (devel) std::cerr << "DEVEL: *** can_variant_section_only is inhibited because we have found a line to be appended to a section block." << std::endl;
+              DT_LOG_TRACE(_logging_,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "'can_variant_section_only' is inhibited because we have found a line to be appended to a section block.");
               current_block_oss << line << std::endl;
             }
           }
@@ -838,18 +1094,19 @@ namespace datatools {
 
       } // if ( ! line_goon )
 
-      in_ >> std::ws;
+      // in_ >> std::ws;
 
+      // At the end of the stream, we should process the current block, if any:
       if (in_.eof()) process_block = true;
 
       if (process_block) {
 
-        if (devel) {
-          std::cerr << "**************************************" << std::endl;
-          std::cerr << " BLOCK                                " << std::endl;
-          std::cerr << "**************************************" << std::endl;
+        if (datatools::logger::is_trace(_logging_)) {
+          DT_LOG_TRACE(_logging_, "**************************************");
+          DT_LOG_TRACE(_logging_, " BLOCK                                ");
+          DT_LOG_TRACE(_logging_, "**************************************");
           std::cerr << current_block_oss.str() << std::endl;
-          std::cerr << "**************************************" << std::endl;
+          DT_LOG_TRACE(_logging_, "**************************************");
         }
         if (!current_key.empty()) {
           bool load_it = true;
@@ -864,10 +1121,10 @@ namespace datatools {
                         "Cannot preprocess variant section only directive from '"
                         << variant_section_only << "' : " << cri.get_error_message());
             if (variant_section_devel) {
-              DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+              DT_LOG_TRACE(_logging_,
                            "VPP ==> variant_section_only_found='"
                            << variant_section_only_found << "'");
-              DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+              DT_LOG_TRACE(_logging_,
                            "VPP ==> variant_section_only_reverse='"
                            << variant_section_only_reverse << "'");
             }
@@ -879,19 +1136,27 @@ namespace datatools {
             }
             variant_section_only.clear();
           }
-          if (a_skip_private) {
+          if (_skip_private_sections_) {
             if (properties::key_is_private(current_key)) {
               load_it = false;
             }
           }
 
           if (load_it) {
-            if (devel) std::cerr << "DEVEL: *** load the current section '" << current_key << "' with meta='" << current_meta << "'" << std::endl;
-            this->add(current_key, current_meta);
-            multi_properties::entry & e = this->grab(current_key);
-            properties::config pcr;
+            DT_LOG_TRACE(_logging_, "load the current section '" << current_key << "' with meta='" << current_meta << "'");
+            target_.add(current_key, current_meta);
+            multi_properties::entry & e = target_.grab(current_key);
+            uint32_t pcr_options = 0;
+            pcr_options |= properties::config::RESOLVE_PATH;
+            if (_skip_private_properties_) {
+              pcr_options |= properties::config::SKIP_PRIVATE;
+            }
+            properties::config pcr(pcr_options);
+            pcr.set_reader_input(_current_filename_); //, closed_section_first_line_number);
+            pcr.set_section_info(current_key, closed_section_first_line_number);
             std::istringstream block_iss(current_block_oss.str());
             pcr.read(block_iss, e.grab_properties());
+            // Reset the current block stream:
             current_block_oss.str("");
           }
         }
@@ -901,8 +1166,17 @@ namespace datatools {
       }
 
     } // while ( *_in )
-  } /* end of multi_properties::read_impl */
+    if (mprop_key_label.empty()
+        && mprop_meta_label.empty()
+        && mprop_format.empty()
+        && target_.size() == 0) {
+      DT_LOG_WARNING(_logging_,
+                     "Could not load any configuration section from the input stream !"
+                     << "The input stream seems not to have to proper \"datatools::multi_properties\" format! "
+                     << "Please check the input file/stream!");
+    }
 
+  } /* end of multi_properties::config::read */
 
   void multi_properties::dump(std::ostream& a_out) const {
     this->tree_dump(a_out, "datatools::multi_properties:");
@@ -954,8 +1228,6 @@ namespace datatools {
         indent_oss << indent;
         entries_col_type::const_iterator j = i;
         j++;
-        //a_out << i_tree_dumpable::inherit_skip_tag (a_inherit);
-        //indent_oss << i_tree_dumpable::inherit_skip_tag (a_inherit);
         a_out << i_tree_dumpable::skip_tag;
         indent_oss << i_tree_dumpable::skip_tag;
 

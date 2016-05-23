@@ -112,6 +112,46 @@ std::string logger::get_priority_label(logger::priority p)
   return n != a.right.end() ? GetCanonicalLabel(n->second) : "";
 }
 
+bool logger::is_fatal(priority p)
+{
+  return p >= PRIO_FATAL;
+}
+
+bool logger::is_critical(priority p)
+{
+  return p >= PRIO_CRITICAL;
+}
+
+bool logger::is_error(priority p)
+{
+  return p >= PRIO_ERROR;
+}
+
+bool logger::is_warning(priority p)
+{
+  return p >= PRIO_WARNING;
+}
+
+bool logger::is_notice(priority p)
+{
+  return p >= PRIO_NOTICE;
+}
+
+bool logger::is_information(priority p)
+{
+  return p >= PRIO_INFORMATION;
+}
+
+bool logger::is_debug(priority p)
+{
+  return p >= PRIO_DEBUG;
+}
+
+bool logger::is_trace(priority p)
+{
+  return p >= PRIO_TRACE;
+}
+
 logger::priority logger::extract_logging_configuration(
   const datatools::properties & config,
   logger::priority default_prio,

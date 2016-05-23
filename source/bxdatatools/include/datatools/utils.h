@@ -151,6 +151,9 @@ namespace datatools {
   /// Remove quotes from a string
   void remove_quotes(std::string & text_, char q_ = '"');
 
+  /// Remove all quotes from a string
+  void remove_all_quotes(std::string & text_);
+
   /* Functions to expand string as path */
 
   /// Extract the keys used by library information registration mechanism
