@@ -18,6 +18,7 @@ if(BAYEUX_WITH_MCNP_MODULE)
     ${module_include_dir}/${module_name}/mcnp/geometry/surface_type.h
     ${module_include_dir}/${module_name}/mcnp/geometry/surface.h
     ${module_include_dir}/${module_name}/mcnp/geometry/surface_store.h
+    # ${module_include_dir}/${module_name}/mcnp/geometry/cell.h
     # ${module_include_dir}/${module_name}/mcnp/geometry/universe.h
     # ${module_include_dir}/${module_name}/mcnp/geometry/universe_store.h
     )
@@ -44,6 +45,7 @@ if(BAYEUX_WITH_MCNP_MODULE)
     ${module_source_dir}/mcnp/geometry/surface_type.cc
     ${module_source_dir}/mcnp/geometry/surface.cc
     ${module_source_dir}/mcnp/geometry/surface_store.cc
+    # ${module_source_dir}/mcnp/geometry/cell.cc
     # ${module_source_dir}/mcnp/geometry/universe.cc
     # ${module_source_dir}/mcnp/geometry/universe_store.cc
     )
@@ -52,6 +54,7 @@ if(BAYEUX_WITH_MCNP_MODULE)
     ${module_test_dir}/test_mcnp_format.cxx
     ${module_test_dir}/test_mcnp_surface.cxx
     ${module_test_dir}/test_mcnp_material.cxx
+    # ${module_test_dir}/test_mcnp_cell.cxx
     ${module_test_dir}/test_mcnp_mcsetup.cxx
     )
 
