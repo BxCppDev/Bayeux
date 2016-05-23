@@ -2752,7 +2752,7 @@ namespace datatools {
     _dont_clear_ = false;
     _use_smart_modulo_ = false;
     _write_public_only_ = false;
-    _current_line_number_ = -1;
+    _current_line_number_ = 0;
     _forbid_variants_ = false;
     _forbid_includes_ = false;
     _requested_topic_ = false;
@@ -2833,7 +2833,7 @@ namespace datatools {
     read_(fin, props);
     fin.close();
     _current_filename_.clear();
-    _current_line_number_ = -1;
+    _current_line_number_ = 0;
     return;
   }
 
