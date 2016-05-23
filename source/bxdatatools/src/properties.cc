@@ -36,32 +36,32 @@ DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
   DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
                                                                  "datatools::utils::properties")
 
-#define DT_PROP_CFG_READ_THROW_IF(Condition, ExceptionType,             \
-                                  FileName,                             \
-                                  SectionName, SectionLineNumber,       \
-                                  LineNumber, Message)                  \
-  {                                                                     \
-    if (Condition) {                                                    \
-      std::stringstream sDT_THROW_IF_ONLY;                              \
+#define DT_PROP_CFG_READ_THROW_IF(Condition, ExceptionType,                          \
+                                  FileName,                                          \
+                                  SectionName, SectionLineNumber,                    \
+                                  LineNumber, Message)                               \
+  {                                                                                  \
+    if (Condition) {                                                                 \
+      std::stringstream sDT_THROW_IF_ONLY;                                           \
       sDT_THROW_IF_ONLY << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": "; \
-      if (!FileName.empty()) {                                          \
-        sDT_THROW_IF_ONLY << "in file '" << FileName << "': ";             \
-      }                                                                 \
-      if (SectionName.empty()) {                                        \
-        if (LineNumber > 0) {                                           \
-          sDT_THROW_IF_ONLY << "at line #" << LineNumber << ": ";          \
-        }                                                               \
-      } else {                                                          \
-        sDT_THROW_IF_ONLY << "in section '" << SectionName << "'";        \
-        if (SectionLineNumber > 0) {                                    \
-          sDT_THROW_IF_ONLY << " starting at line #" << SectionLineNumber; \
-        }                                                               \
-        sDT_THROW_IF_ONLY << ": ";                                      \
-      }                                                                 \
-      sDT_THROW_IF_ONLY << Message << "]";                              \
-      throw ExceptionType(sDT_THROW_IF_ONLY.str());                     \
-    }                                                                   \
-  }                                                                     \
+      if (!FileName.empty()) {                                                       \
+        sDT_THROW_IF_ONLY << "in file '" << FileName << "': ";                       \
+      }                                                                              \
+      if (SectionName.empty()) {                                                     \
+        if (LineNumber > 0) {                                                        \
+          sDT_THROW_IF_ONLY << "at line #" << LineNumber << ": ";                    \
+        }                                                                            \
+      } else {                                                                       \
+        sDT_THROW_IF_ONLY << "in section '" << SectionName << "'";                   \
+        if (SectionLineNumber > 0) {                                                 \
+          sDT_THROW_IF_ONLY << " starting at line #" << SectionLineNumber;           \
+        }                                                                            \
+        sDT_THROW_IF_ONLY << ": ";                                                   \
+      }                                                                              \
+      sDT_THROW_IF_ONLY << Message << "]";                                           \
+      throw ExceptionType(sDT_THROW_IF_ONLY.str());                                  \
+    }                                                                                \
+  }                                                                                  \
 /**/
 
 namespace {
