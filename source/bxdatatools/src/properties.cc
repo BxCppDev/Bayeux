@@ -72,7 +72,6 @@ namespace {
     static const char DESC_CHAR    = ':'; ///< Type descriptor separator character
     static const char CLOSE_VECTOR = ']'; ///< Close section character
     static const char COMMENT_CHAR = '#'; ///< Comment character
-    static const char QUOTES_CHAR  = '"'; ///< Quoting character
     static const char SPACE_CHAR   = ' '; ///< Space character
     static const char CONTINUATION_CHAR = '\\'; ///< Continuation character
   };
@@ -2870,9 +2869,6 @@ namespace datatools {
       a_props.clear();
     }
     datatools::logger::priority logging = _logging_;
-    if (_current_line_number_ < 0) {
-      _current_line_number_ = 0;
-    }
     std::string line_in;
     std::string prop_topic;
     std::string prop_config;

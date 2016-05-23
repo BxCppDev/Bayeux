@@ -398,7 +398,6 @@ namespace datatools {
       bool _skip_private_properties_; ///< Flag to skip private properties in sections (read/write)
       bool _forbid_variants_;         ///< Flag to forbid variant directives (read)
       bool _header_footer_;           ///< Flag to print header/footer (write)
-      bool _dont_clear_;              ///< Do not clear the container at the beginning of parsing (read)
       bool _requested_topic_;         ///< Flag to activate topic matching (read)
       std::string _topic_;            ///< Topic to be validated
       bool _resolve_path_;            ///< Explicitely resolve path for input/output filenames (read/write)

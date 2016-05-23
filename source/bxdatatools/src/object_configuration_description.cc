@@ -1753,7 +1753,7 @@ namespace datatools {
 
   void
   object_configuration_description::generate_sample_configuration(std::ostream & out_,
-                                                                  const std::string & topic_,
+                                                                  const std::string& /*topic_*/,
                                                                   uint32_t sgo_flags_) const
   {
     properties PROP;
