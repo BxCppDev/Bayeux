@@ -111,6 +111,13 @@ mark_as_advanced(BAYEUX_WITH_MCNP_MODULE)
 #
 option(BAYEUX_WITH_QT_GUI "Build Qt-based GUI components" OFF)
 mark_as_advanced(BAYEUX_WITH_QT_GUI)
+if (BAYEUX_WITH_QT_GUI)
+  # Minimal system Qt5 version from Ubuntu 14.04:
+  set(BAYEUX_QT5_VERSION "5.2.1")
+  # Qt5 version from cadfaelbrew (but conflict with system installation
+  # on Ubuntu 14.04 when running examples):
+  # set(BAYEUX_QT5_VERSION "5.6.0")
+endif()
 
 #-----------------------------------------------------------------------
 # Configure testing if required
@@ -147,4 +154,3 @@ install(DIRECTORY ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATAROOTDIR}/${BAYE
 # Package Sources and Binaries - only if not embedded
 #
 include(BXCPack)
-
