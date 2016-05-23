@@ -36,6 +36,8 @@ ExternalProject_Add(Bayeux_BasicVersionCheck
   DOWNLOAD_COMMAND ""
   CONFIGURE_COMMAND ${CMAKE_COMMAND}
   -DCMAKE_PREFIX_PATH=${BAYEUX_BUILDPRODUCT_DIR}
+  -DBAYEUX_WITH_QT_GUI=${BAYEUX_WITH_QT_GUI}
+  -DBAYEUX_QT5_VERSION=${BAYEUX_QT5_VERSION}
   <SOURCE_DIR>
   BUILD_COMMAND     make VERBOSE=1
   TEST_COMMAND      make test
@@ -51,6 +53,8 @@ ExternalProject_Add(Bayeux_BasicModulesCheck
   DOWNLOAD_COMMAND ""
   CONFIGURE_COMMAND ${CMAKE_COMMAND}
   -DCMAKE_PREFIX_PATH=${BAYEUX_BUILDPRODUCT_DIR}
+  -DBAYEUX_WITH_QT_GUI=${BAYEUX_WITH_QT_GUI}
+  -DBAYEUX_QT5_VERSION=${BAYEUX_QT5_VERSION}
   <SOURCE_DIR>
   BUILD_COMMAND     make VERBOSE=1
   TEST_COMMAND      make test
@@ -59,7 +63,7 @@ ExternalProject_Add(Bayeux_BasicModulesCheck
 
 #-----------------------------------------------------------------------
 # MCTools/Geant4 test
-if(Bayeux_BUILD_GEANT4_MODULE)
+if(BAYEUX_WITH_GEANT4_MODULE)
   ExternalProject_Add(Bayeux_MCToolsGeant4Check
     DEPENDS Bayeux Bayeux_mctools_geant4
     LIST_SEPARATOR @
@@ -67,6 +71,8 @@ if(Bayeux_BUILD_GEANT4_MODULE)
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
     -DCMAKE_PREFIX_PATH=${BAYEUX_BUILDPRODUCT_DIR}
+    -DBAYEUX_WITH_QT_GUI=${BAYEUX_WITH_QT_GUI}
+    -DBAYEUX_QT5_VERSION=${BAYEUX_QT5_VERSION}
     <SOURCE_DIR>
     BUILD_COMMAND     make VERBOSE=1
     TEST_COMMAND      make test

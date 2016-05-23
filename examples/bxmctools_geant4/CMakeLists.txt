@@ -5,6 +5,12 @@ find_package(Bayeux REQUIRED)
 if(NOT Bayeux_MCTOOLS_GEANT4_FOUND)
   message(FATAL_ERROR "Bayeux does not supply the mctools/geant4 module")
 endif()
+if (BAYEUX_WITH_QT_GUI)
+  find_package(Qt5Core ${BAYEUX_QT5_VERSION} REQUIRED)
+  find_package(Qt5Gui ${BAYEUX_QT5_VERSION} REQUIRED)
+  find_package(Qt5Widgets ${BAYEUX_QT5_VERSION} REQUIRED)
+  find_package(Qt5Svg ${BAYEUX_QT5_VERSION} REQUIRED)
+endif()
 
 include_directories(${Bayeux_INCLUDE_DIRS})
 
