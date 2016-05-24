@@ -18,10 +18,6 @@
 #include <boost/filesystem.hpp>
 // - Bayeux/datatools:
 #include <datatools/io_factory.h>
-// Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
-// - Bayeux/mygsl:
-#include <mygsl/bio_guard.h>
 #include <mygsl/histogram_pool.h>
 #include <mygsl/rng.h>
 

@@ -2,62 +2,104 @@
 /* the_serializable.cc
  */
 
-#include <mygsl/the_serializable.h>
+// Third party:
+// - Boost:
+#include <boost/serialization/export.hpp>
+// - Bayeux/datatools:
+#include <datatools/archives_instantiation.h>
 
-// Load the link guard definition :
-#include <mygsl/detail/bio_link_guard.h>
+// This project:
+/*********************
+ * mygsl::best_value *
+ *********************/
+#include <mygsl/best_value.ipp>
 
-#include <cstdlib>
-#include <iostream>
-#include <boost/scoped_ptr.hpp>
+/********************
+ * mygsl::datapoint *
+ ********************/
+#include <mygsl/datapoint.ipp>
 
-// Load the link guard implementation :
+/****************************
+ * mygsl::linear_regression *
+ ****************************/
+#include <mygsl/linear_regression.ipp>
 
-namespace mygsl {
-namespace detail {
-  namespace serialization {
+/*******************
+ * mygsl::interval *
+ *******************/
+#include <mygsl/interval.ipp>
 
-    bool dynamic_link_guard::_g_devel_ = false;
+/*********************
+ * mygsl::polynomial *
+ *********************/
+#include <mygsl/polynomial.ipp>
 
-    dynamic_link_guard::dynamic_link_guard ()
-    {
-      if (getenv ("MYGSL_SERIALIZATION_DEVEL") != NULL)
-        {
-          dynamic_link_guard::_g_devel_ = true;
-        }
-      if (dynamic_link_guard::_g_devel_)
-        {
-          //std::clog << "mygsl::detail::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
-        }
-      return;
-    }
+/********************
+ * mygsl::histogram *
+ ********************/
+#include <mygsl/histogram.ipp>
 
-    dynamic_link_guard::~dynamic_link_guard ()
-    {
-      if (dynamic_link_guard::_g_devel_)
-        {
-          //std::clog << "mygsl::detail::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
-        }
-      return;
-    }
+/********************
+ * mygsl::histogram *
+ ********************/
+#include <mygsl/histogram.ipp>
 
-    dynamic_link_guard & dynamic_link_guard::instance ()
-    {
-      static boost::scoped_ptr<dynamic_link_guard> g_global_guard (0);
-      if ( g_global_guard.get () == 0)
-        {
-          g_global_guard.reset (new dynamic_link_guard);
-        }
-      if (dynamic_link_guard::_g_devel_)
-        {
-          //std::clog << "mygsl::detail::serialization::dynamic_link_guard::instance: Ok." << std::endl;
-        }
-      return *g_global_guard.get ();
-    }
+/***********************
+ * mygsl::histogram_2d *
+ ***********************/
+#include <mygsl/histogram_2d.ipp>
 
-  } // end namespace serialization
-} // end namespace detail
-} // end namespace mygsl
+/*************************
+ * mygsl::histogram_pool *
+ *************************/
+#include <mygsl/histogram_pool.ipp>
+
+/*********************
+ * mygsl::best_value *
+ *********************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::best_value)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::best_value)
+
+/********************
+ * mygsl::datapoint *
+ ********************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::datapoint)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::datapoint)
+
+/**************************************
+ * mygsl::linear_regression::fit_data *
+ **************************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::linear_regression::fit_data)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::linear_regression::fit_data)
+
+/********************
+ * mygsl::interval *
+ ********************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::interval)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::interval)
+
+/********************
+ * mygsl::polynomial *
+ ********************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::polynomial)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::polynomial)
+
+/********************
+ * mygsl::histogram *
+ ********************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::histogram)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::histogram)
+
+/***********************
+ * mygsl::histogram_2d *
+ ***********************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::histogram_2d)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::histogram_2d)
+
+/*************************
+ * mygsl::histogram_pool *
+ *************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mygsl::histogram_pool)
+BOOST_CLASS_EXPORT_IMPLEMENT(mygsl::histogram_pool)
 
 
-// end of the_serializable.cc
