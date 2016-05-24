@@ -186,15 +186,7 @@ set(${module_name}_MODULE_HEADERS
 )
 
 # - configure special source file
-configure_file(${module_source_dir}/_datatools.cc.in
-               bx${module_name}/_datatools.cc
-              )
-
-# - configure resources
-configure_file(${module_source_dir}/resource.cc.in
-               bx${module_name}/resource.cc)
-
-# ls -1 bxdatatools/src/*.cc | sed -e 's@bxdatatools/src@${module_source_dir}@g'  | grep -v _init_fini | grep -v the_introspectable
+configure_file(${module_source_dir}/_datatools.cc.in bx${module_name}/_datatools.cc)
 
 set(${module_name}_MODULE_SOURCES
 ${module_source_dir}/base_service.cc
@@ -224,6 +216,7 @@ ${module_source_dir}/ocd_utils.cc
 ${module_source_dir}/properties.cc
 ${module_source_dir}/range_tools.cc
 ${module_source_dir}/real_range.cc
+${module_source_dir}/resource.cc
 ${module_source_dir}/service_manager.cc
 ${module_source_dir}/service_tools.cc
 ${module_source_dir}/smart_filename.cc
@@ -276,9 +269,8 @@ ${module_source_dir}/ui/base_command_interface.cc
 ${module_source_dir}/ui/base_command.cc
 ${module_source_dir}/ui/utils.cc
 ${module_source_dir}/the_introspectable.cc
-bx${module_name}/resource.cc
 bx${module_name}/_datatools.cc
-  )
+)
 
 set(DATATOOLS_WITH_QT_GUI 0)
 if (BAYEUX_WITH_QT_GUI)
