@@ -25,9 +25,6 @@
 #include <geomtools/helix_3d.h>
 #include <geomtools/polyline_3d.h>
 
-// Some pre-processor guards about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
-#include <geomtools/bio_guard.h>
 
 using namespace std;
 

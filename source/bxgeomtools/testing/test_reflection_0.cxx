@@ -29,9 +29,6 @@
 #include <geomtools/base_hit.h>
 #include <geomtools/placement.h>
 
-// Some pre-processor guard about CAMP reflection usage and linkage :
-#include <datatools/reflection_guard.h>
-#include <geomtools/reflection_guard.h>
 
 void test_placement()
 {

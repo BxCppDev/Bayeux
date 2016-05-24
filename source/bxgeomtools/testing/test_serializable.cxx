@@ -18,9 +18,6 @@
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 
-// Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
-#include <geomtools/bio_guard.h>
 
 using namespace std;
 

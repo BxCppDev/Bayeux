@@ -11,9 +11,6 @@
 
 #include <datatools/io_factory.h>
 
-// Some pre-processor linkage guards :
-#include <datatools/bio_guard.h>
-#include <geomtools/bio_guard.h>
 
 void test1()
 {

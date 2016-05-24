@@ -1,44 +1,89 @@
 // the_serializable.cc
-
-// Standard library:
-#include <cstdlib>
-#include <iostream>
-
 // Third party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
+#include <boost/serialization/export.hpp>
+// - Bayeux/datatools:
+#include <datatools/archives_instantiation.h>
 
 // This project:
-// Load the Boost/Serialization instantiation and registration code :
-#include <geomtools/the_serializable.h>
-// Load the link guard definition :
-#include <geomtools/detail/bio_link_guard.h>
+#include <geomtools/geom_id.ipp>
 
-// Load the link guard implementation :
-namespace geomtools {
-  namespace detail {
-    namespace serialization {
+#include <geomtools/utils.ipp>
 
-      dynamic_link_guard::dynamic_link_guard ()
-      {
-        return;
-      }
+#include <geomtools/i_object_3d.ipp>
 
-      dynamic_link_guard::~dynamic_link_guard ()
-      {
-        return;
-      }
+#include <geomtools/i_shape_1d.ipp>
 
-      dynamic_link_guard & dynamic_link_guard::instance ()
-      {
-        static boost::scoped_ptr<dynamic_link_guard> g_global_guard (0);
-        if ( g_global_guard.get () == 0)
-          {
-            g_global_guard.reset (new dynamic_link_guard);
-          }
-        return *g_global_guard.get ();
-      }
+#include <geomtools/i_shape_2d.ipp>
 
-    } // end namespace serialization
-  } // end namespace detail
-} // end namespace geomtools
+#include <geomtools/i_shape_3d.ipp>
+
+#include <geomtools/helix_3d.ipp>
+
+#include <geomtools/line_3d.ipp>
+
+#include <geomtools/polyline_3d.ipp>
+
+#include <geomtools/i_placement.ipp>
+
+#include <geomtools/placement.ipp>
+
+#include <geomtools/blur_spot.ipp>
+
+#include <geomtools/base_hit.ipp>
+
+#include <geomtools/display_data.ipp>
+
+#include <geomtools/angular_range.ipp>
+
+
+
+DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::vector_2d)
+
+DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::vector_3d)
+
+DATATOOLS_SERIALIZATION_NON_INTRUSIVE_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::rotation_3d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::angular_range)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::angular_range)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::geom_id)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::geom_id)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::i_object_3d)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::i_object_3d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::i_shape_1d)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::i_shape_1d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::i_shape_2d)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::i_shape_2d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::i_shape_3d)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::i_shape_3d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::line_3d)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::line_3d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::helix_3d)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::helix_3d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::polyline_3d)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::polyline_3d)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::i_placement)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::i_placement)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::placement)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::placement)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::blur_spot)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::blur_spot)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::base_hit)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::base_hit)
+
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(geomtools::display_data)
+BOOST_CLASS_EXPORT_IMPLEMENT(geomtools::display_data)
+
+

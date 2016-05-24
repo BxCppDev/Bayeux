@@ -20,8 +20,6 @@
 #include <datatools/io_factory.h>
 #include <datatools/temporary_files.h>
 #include <datatools/utils.h>
-// Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
 // - Bayeux/mygsl:
 #include <mygsl/rng.h>
 
@@ -31,7 +29,6 @@
 #include <geomtools/placement.h>
 #include <geomtools/units.h>
 // Some pre-processor guard about Boost I/O usage and linkage :
-#include <geomtools/bio_guard.h>
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_draw.h>
