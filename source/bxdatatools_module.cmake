@@ -48,7 +48,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/archives_instantiation.h
   ${module_include_dir}/${module_name}/archives_list.h
   ${module_include_dir}/${module_name}/base_service.h
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/bit_mask.h
   ${module_include_dir}/${module_name}/caster_utils.h
   ${module_include_dir}/${module_name}/clhep_units.h
@@ -57,7 +56,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/datatools.h
   ${module_include_dir}/${module_name}/datatools_config.h.in
   ${module_include_dir}/${module_name}/detail/api.h
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/Configure.h
   ${module_include_dir}/${module_name}/detail/DynamicLoader.h
   ${module_include_dir}/${module_name}/detail/ocd_utils.h
@@ -101,7 +99,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/properties.ipp
   ${module_include_dir}/${module_name}/range_tools.h
   ${module_include_dir}/${module_name}/real_range.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
   ${module_include_dir}/${module_name}/reflection_interface.h
   ${module_include_dir}/${module_name}/resource.h
   ${module_include_dir}/${module_name}/safe_serial.h
@@ -112,11 +109,9 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/smart_filename.h
   ${module_include_dir}/${module_name}/smart_ref.h
   ${module_include_dir}/${module_name}/temporary_files.h
-  ${module_include_dir}/${module_name}/the_serializable.h
-  ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/things.h
-  ${module_include_dir}/${module_name}/things-inl.h
   ${module_include_dir}/${module_name}/things.ipp
+  ${module_include_dir}/${module_name}/things-inl.h
   ${module_include_dir}/${module_name}/things_macros.h
   ${module_include_dir}/${module_name}/time_tools.h
   ${module_include_dir}/${module_name}/tracer.h
@@ -184,8 +179,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/introspection/argument.h
   ${module_include_dir}/${module_name}/introspection/method.h
 
-  ${module_include_dir}/${module_name}/the_introspectable.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/detail/reflection_export.h
   ${module_include_dir}/${module_name}/detail/reflection_utils.h
   ${module_include_dir}/${module_name}/detail/reflection_version.h
@@ -338,32 +331,6 @@ if (BAYEUX_WITH_QT_GUI)
     )
 endif()
 
-# - Reflection component - still optional, so factor out and allow for
-#   inclusion later
-# if(DATATOOLS_WITH_REFLECTION)
-#   set(datatools_REFLECTION_HEADERS
-#     ${module_include_dir}/${module_name}/reflection_guard.h
-#     ${module_include_dir}/${module_name}/i_serializable-reflect.h
-#     ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
-#     ${module_include_dir}/${module_name}/logger-reflect.h
-#     ${module_include_dir}/${module_name}/advanced_object-reflect.h
-#     ${module_include_dir}/${module_name}/event_id-reflect.h
-#     ${module_include_dir}/${module_name}/multi_properties-reflect.h
-#     ${module_include_dir}/${module_name}/properties-reflect.h
-#     ${module_include_dir}/${module_name}/things-reflect.h
-#     ${module_include_dir}/${module_name}/the_introspectable.h
-#     ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
-#     ${module_include_dir}/${module_name}/detail/reflection_export.h
-#     ${module_include_dir}/${module_name}/detail/reflection_utils.h
-#     ${module_include_dir}/${module_name}/detail/reflection_version.h
-#     )
-#   set(datatools_REFLECTION_SOURCES
-#     ${module_source_dir}/the_introspectable.cc
-#     )
-#   set(datatools_REFLECTION_TESTS
-#     ${module_test_dir}/test_reflection_0.cxx
-#     )
-# endif()
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})

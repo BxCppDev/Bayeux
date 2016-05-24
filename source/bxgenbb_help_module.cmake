@@ -34,7 +34,6 @@ set(GENBB_HELP_WITH_REFLECTION 1)
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/genbb_macros.h
   ${module_include_dir}/${module_name}/genbb_mgr.h
   ${module_include_dir}/${module_name}/genbb_utils.h
@@ -63,18 +62,12 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/pdg_particle_tools.h
   ${module_include_dir}/${module_name}/primary_event.ipp
   ${module_include_dir}/${module_name}/primary_particle.ipp
-  ${module_include_dir}/${module_name}/the_serializable.ipp
-  ${module_include_dir}/${module_name}/the_serializable.h
   ${module_include_dir}/${module_name}/genbb_help.h
   ${module_include_dir}/${module_name}/genbb_help_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/pg_tools.h
   ${module_include_dir}/${module_name}/primary_particle-reflect.h
   ${module_include_dir}/${module_name}/primary_event-reflect.h
-  ${module_include_dir}/${module_name}/the_introspectable.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/resource.h
   )
 

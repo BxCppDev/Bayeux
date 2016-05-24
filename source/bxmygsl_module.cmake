@@ -32,11 +32,9 @@ set(MYGSL_WITH_BIO ON)
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/best_value.h
   ${module_include_dir}/${module_name}/best_value.ipp
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/constants.h
   ${module_include_dir}/${module_name}/datapoint.h
   ${module_include_dir}/${module_name}/datapoint.ipp
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/error.h
   ${module_include_dir}/${module_name}/math.h
   ${module_include_dir}/${module_name}/fft_real.h
@@ -87,8 +85,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/rng.h
   ${module_include_dir}/${module_name}/seed_manager.h
   ${module_include_dir}/${module_name}/tabulated_function.h
-  ${module_include_dir}/${module_name}/the_serializable.h
-  ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/von_neumann_method.h
   ${module_include_dir}/${module_name}/version.h.in
   )

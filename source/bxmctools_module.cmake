@@ -67,17 +67,10 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/simulated_data_input_module.h
   ${module_include_dir}/${module_name}/base_step_hit.ipp
   ${module_include_dir}/${module_name}/simulated_data.ipp
-  ${module_include_dir}/${module_name}/the_serializable.ipp
-  ${module_include_dir}/${module_name}/the_serializable.h
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/base_step_hit-reflect.h
   ${module_include_dir}/${module_name}/simulated_data-reflect.h
-  ${module_include_dir}/${module_name}/the_introspectable.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
   ${module_include_dir}/${module_name}/mctools_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/detail/step_hit_processor_macros.h
   ${module_include_dir}/${module_name}/mctools.h
   ${module_include_dir}/${module_name}/biasing/point_of_interest.h

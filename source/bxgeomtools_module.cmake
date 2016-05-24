@@ -48,7 +48,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/angular_range.ipp
   ${module_include_dir}/${module_name}/base_hit.h
   ${module_include_dir}/${module_name}/base_hit.ipp
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/blur_spot.h
   ${module_include_dir}/${module_name}/blur_spot.ipp
   ${module_include_dir}/${module_name}/box.h
@@ -67,7 +66,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/cylindrical_sector.h
   ${module_include_dir}/${module_name}/cylinder.h
   ${module_include_dir}/${module_name}/cylindric_extrusion_boxed_model.h
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/manager-inl.h
   ${module_include_dir}/${module_name}/detail/model_tools.h
   ${module_include_dir}/${module_name}/disk.h
@@ -170,8 +168,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/tessellation.h
   ${module_include_dir}/${module_name}/triangle.h
   ${module_include_dir}/${module_name}/quadrangle.h
-  ${module_include_dir}/${module_name}/the_serializable.h
-  ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/tube.h
   ${module_include_dir}/${module_name}/union_3d.h
   ${module_include_dir}/${module_name}/units.h
@@ -187,12 +183,9 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/base_hit-reflect.h
   ${module_include_dir}/${module_name}/blur_spot-reflect.h
   ${module_include_dir}/${module_name}/clhep-reflect.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/geom_id-reflect.h
   ${module_include_dir}/${module_name}/i_placement-reflect.h
   ${module_include_dir}/${module_name}/placement-reflect.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
-  ${module_include_dir}/${module_name}/the_introspectable.h
   ${module_include_dir}/${module_name}/utils-reflect.h
   ${module_include_dir}/${module_name}/resource.h
   ${module_include_dir}/${module_name}/overlapping.h
