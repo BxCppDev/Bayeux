@@ -28,7 +28,6 @@
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
-#include <datatools/bio_guard.h>
 
 // This project:
 #include <dpp/input_module.h>

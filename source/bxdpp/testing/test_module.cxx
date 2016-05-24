@@ -30,7 +30,6 @@
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/things.h>
-#include <datatools/bio_guard.h>
 #include <datatools/exception.h>
 // - Bayeux/dpp:
 #include <dpp/version.h>

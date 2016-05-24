@@ -37,9 +37,6 @@
 #include <datatools/properties.h>
 #include <datatools/things.h>
 #include <datatools/utils.h>
-#include <datatools/ioutils.h>
-#include <datatools/ioutils.h>
-#include <datatools/bio_guard.h>
 #include <datatools/base_service.h>
 #include <datatools/library_loader.h>
 

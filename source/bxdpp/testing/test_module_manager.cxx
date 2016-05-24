@@ -28,11 +28,9 @@
 
 #include <boost/foreach.hpp>
 
-#include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>
-#include <datatools/bio_guard.h>
 #include <datatools/library_loader.h>
 #include <datatools/factory_macros.h>
 

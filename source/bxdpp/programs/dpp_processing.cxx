@@ -34,10 +34,6 @@
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 
-// - Boost I/O guard
-#include <datatools/bio_guard.h>
-#include <mygsl/bio_guard.h>
-
 // This project
 #include <dpp/dpp_driver.h>
 
