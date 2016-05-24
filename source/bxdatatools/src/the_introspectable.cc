@@ -1,40 +1,19 @@
 // the_introspectable.cc
 
 // Ourselves :
-#include <datatools/the_introspectable.h>
+#include <datatools/datatools_config.h>
+#include <datatools/logger-reflect.h>
+#include <datatools/i_serializable-reflect.h>
+#include <datatools/i_tree_dump-reflect.h>
+#include <datatools/event_id-reflect.h>
+#include <datatools/properties-reflect.h>
+#include <datatools/multi_properties-reflect.h>
+#include <datatools/things-reflect.h>
+#include <datatools/enriched_base-reflect.h>
+#include <datatools/base_service-reflect.h>
+#include <datatools/units-reflect.h>
+#include <datatools/introspection/data_type-reflect.h>
+#include <datatools/introspection/unit_support-reflect.h>
+#include <datatools/introspection/access_type-reflect.h>
+#include <datatools/introspection/data_layout-reflect.h>
 
-// Third Party:
-// - Boost:
-#include <boost/smart_ptr/scoped_ptr.hpp>
-
-// This project:
-// Load the link guard definition :
-#include <datatools/detail/reflection_link_guard.h>
-
-// Load the link guard implementation :
-namespace datatools {
-  namespace detail {
-    namespace reflection {
-
-      dynamic_link_guard::dynamic_link_guard()
-      {
-        return;
-      }
-
-      dynamic_link_guard::~dynamic_link_guard()
-      {
-        return;
-      }
-
-      dynamic_link_guard& dynamic_link_guard::instance()
-      {
-        static boost::scoped_ptr<dynamic_link_guard> _guard(0);
-        if (_guard.get() == 0) {
-          _guard.reset(new dynamic_link_guard);
-        }
-        return *_guard.get();
-      }
-
-    } // end namespace reflection
-  } // end namespace detail
-} // end namespace datatools

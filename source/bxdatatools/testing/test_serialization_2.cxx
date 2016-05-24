@@ -19,9 +19,6 @@
 #include <datatools_test_my_data.cc>
 #include <datatools_test_my_data.ipp>
 
-// Some pre-processor guard about Boost I/O usage and linkage :
-//#include <datatools/bio_guard.h>
-
 // Special Boost serialization export/registration code :
 /*
 BOOST_CLASS_EXPORT_KEY2(datatools::test::data_t, "datatools::test::data_t")

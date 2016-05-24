@@ -24,8 +24,6 @@
 #include <datatools_test_my_data.ipp>
 // the datatools writer and reader classes:
 #include <datatools/io_factory.h>
-// Some pre-processor guard about Boost I/O usage and linkage :
-//#include <datatools/bio_guard.h>
 
 using namespace std;
 

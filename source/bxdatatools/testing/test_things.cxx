@@ -21,8 +21,6 @@
 #include <datatools/things.h>
 // The serializable 'properties' container :
 #include <datatools/properties.h>
-// Some pre-processor guard about Boost I/O usage and linkage :
-//#include <datatools/bio_guard.h>
 
 using namespace std;
 

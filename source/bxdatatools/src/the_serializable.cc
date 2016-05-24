@@ -1,60 +1,51 @@
 // the_serializable.cc
 
-// Ourselves:
-#include <datatools/the_serializable.h>
+// Third Party:
+// - Boost:
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
 
-// Standard Library:
-// #include <cstdlib>
-// #include <iostream>
-// #include <boost/scoped_ptr.hpp>
+// This project:
+#include <datatools/archives_instantiation.h>
 
-// This Project:
-// Load the link guard definition :
-#include <datatools/detail/bio_link_guard.h>
+// Headers for serialization defs
+#include <datatools/i_serializable.ipp>
+#include <datatools/properties.ipp>
+#include <datatools/multi_properties.ipp>
+#include <datatools/things.ipp>
+#include <datatools/event_id.ipp>
 
-// Load the link guard implementation :
-namespace datatools {
-  namespace detail {
-    namespace serialization {
+/** Macros to automatically instantiate Boost/Serialization-based
+ * code associated to serializable classes.
+ *
+ */
 
-      bool dynamic_link_guard::_g_devel_ = false;
+/********************************************
+ * datatools::i_serializable                *
+ ********************************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::i_serializable)
 
-      dynamic_link_guard::dynamic_link_guard ()
-      {
-        if (getenv ("DATATOOLS_SERIALIZATION_DEVEL") != NULL)
-          {
-            dynamic_link_guard::_g_devel_ = true;
-          }
-        if (dynamic_link_guard::_g_devel_)
-          {
-            std::clog << "datatools::detail::serialization::dynamic_link_guard::CTOR: Ok." << std::endl;
-          }
-        return;
-      }
+/********************************
+ * datatools::properties        *
+ ********************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::properties)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::properties)
 
-      dynamic_link_guard::~dynamic_link_guard ()
-      {
-        if (dynamic_link_guard::_g_devel_)
-          {
-            std::clog << "datatools::detail::serialization::dynamic_link_guard::DTOR: Ok." << std::endl;
-          }
-        return;
-      }
+/**************************************
+ * datatools::multi_properties        *
+ **************************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::multi_properties)
+  BOOST_CLASS_EXPORT_IMPLEMENT(datatools::multi_properties)
 
-      dynamic_link_guard & dynamic_link_guard::instance ()
-      {
-        static boost::scoped_ptr<dynamic_link_guard> g_global_guard (0);
-        if ( g_global_guard.get () == 0)
-          {
-            g_global_guard.reset (new dynamic_link_guard);
-          }
-        if (dynamic_link_guard::_g_devel_)
-          {
-            std::clog << "datatools::detail::serialization::dynamic_link_guard::instance: Ok." << std::endl;
-          }
-        return *g_global_guard.get ();
-      }
+/****************************
+ * datatools::things        *
+ ****************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::things)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::things)
 
-    } // end namespace serialization
-  } // end namespace detail
-} // end namespace datatools
+/*********************************
+ * datatools::event_id           *
+ *********************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event_id)
+
+

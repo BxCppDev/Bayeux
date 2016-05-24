@@ -15,10 +15,6 @@
 #include <datatools/enriched_base.h>
 #include <datatools/properties.h>
 #include <datatools/io_factory.h>
-#if DATATOOLS_WITH_REFLECTION == 1
-//#include <datatools/reflection_guard.h>
-//#include <datatools/reflection_macros.h>
-#endif // DATATOOLS_WITH_REFLECTION == 1
 
 // Ourselves:
 #include <datatools/enriched_base.ipp>

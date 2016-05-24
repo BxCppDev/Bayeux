@@ -16,9 +16,6 @@
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 
-// Some pre-processor guard about Boost I/O usage and linkage :
-// #include <datatools/bio_guard.h>
-
 int main(int argc_, char ** argv_)
 {
   using namespace std;

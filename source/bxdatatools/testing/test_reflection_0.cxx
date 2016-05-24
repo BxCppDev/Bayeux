@@ -25,9 +25,6 @@
 #include <datatools/multi_properties.h>
 #include <datatools/things.h>
 
-// Some pre-processor guard about reflection usage and linkage to Bayeux:
-#include <datatools/reflection_guard.h>
-
 void test_things (bool // debug_
                   )
 {
