@@ -18,19 +18,11 @@
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/clhep_units.h>
-//#include <datatools/reflection_macros.h>
 
 // Introspectable classes :
 #include <genbb_help/primary_particle.h>
 #include <genbb_help/primary_event.h>
 
-// Some pre-processor guard about Bio usage and linkage :
-#include <datatools/bio_guard.h>
-
-// Some pre-processor guard about CAMP reflection usage and linkage :
-#include <datatools/reflection_guard.h>
-#include <geomtools/reflection_guard.h>
-#include <genbb_help/reflection_guard.h>
 
 
 void test_primary_particle()

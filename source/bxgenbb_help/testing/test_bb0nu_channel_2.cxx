@@ -15,7 +15,6 @@
 #include <datatools/utils.h>
 
 #include <genbb_help/genbb_mgr.h>
-#include <genbb_help/bio_guard.h>
 
 int main (int argc_, char ** argv_)
 {

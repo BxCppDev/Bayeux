@@ -91,14 +91,6 @@
 #include <genbb_help/primary_event.ipp>
 #include <genbb_help/resource.h>
 
-// Some pre-processor linkage guard:
-#include <mygsl/bio_guard.h>
-#include <geomtools/bio_guard.h>
-#include <genbb_help/bio_guard.h>
-#include <datatools/reflection_guard.h>
-#include <geomtools/reflection_guard.h>
-#include <genbb_help/reflection_guard.h>
-
 namespace genbb {
 
   /// \brief Configuration parameters for the inspector of GENBB primary event generator

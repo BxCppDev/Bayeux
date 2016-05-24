@@ -17,10 +17,6 @@
 #include <geomtools/geom_id.h>
 #include <genbb_help/primary_event.h>
 
-// Some pre-processor guards about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
-#include <geomtools/bio_guard.h>
-#include <genbb_help/bio_guard.h>
 
 #include <datatools/io_factory.h>
 
