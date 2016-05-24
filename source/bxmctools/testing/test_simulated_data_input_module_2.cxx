@@ -16,13 +16,6 @@
 #include <mctools/simulated_data.h>
 #include <mctools/simulated_data_input_module.h>
 
-// Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
-#include <mygsl/bio_guard.h>
-#include <geomtools/bio_guard.h>
-#include <genbb_help/bio_guard.h>
-#include <mctools/bio_guard.h>
-
 using namespace std;
 
 int main (int argc_, char ** argv_)

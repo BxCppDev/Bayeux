@@ -66,12 +66,6 @@
 #include <QApplication>
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
-// For Boost I/O :
-// Some pre-processor guard about Boost I/O usage and linkage :
-#include <mygsl/bio_guard.h>
-#include <geomtools/bio_guard.h>
-#include <genbb_help/bio_guard.h>
-#include <mctools/bio_guard.h>
 
 /// \brief User interface of the (bx)g4_production application:
 struct ui {

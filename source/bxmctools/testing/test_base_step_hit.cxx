@@ -16,12 +16,6 @@
 #include <mctools/base_step_hit.h>
 #include <mctools/base_step_hit.ipp>
 
-// Some pre-processor guard about Boost I/O usage and linkage :
-#include <datatools/bio_guard.h>
-#include <mygsl/bio_guard.h>
-#include <geomtools/bio_guard.h>
-#include <genbb_help/bio_guard.h>
-#include <mctools/bio_guard.h>
 
 int main (int /* argc_ */, char ** /* argv_ */)
 {
