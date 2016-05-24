@@ -37,10 +37,8 @@
 
 // This Project
 #include <datatools/datatools_config.h>
-#if DATATOOLS_STANDALONE == 0
 // - Bayeux
 #include <bayeux/reloc.h>
-#endif
 
 namespace {
   //! Return the path to the root resource directory
@@ -53,14 +51,8 @@ namespace {
     }
     static boost::filesystem::path install_resource_root;
     if (install_resource_root.empty()) {
-#if DATATOOLS_STANDALONE == 1
-      install_resource_root = "@CMAKE_INSTALL_PREFIX@";
-      install_resource_root /= "@CMAKE_INSTALL_DATADIR@";
-      install_resource_root /= "resources";
-#else
       install_resource_root = bayeux::get_resource_dir();
       install_resource_root /= "datatools";
-#endif
     }
     return install_resource_root.string();
   }
