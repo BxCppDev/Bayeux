@@ -3,13 +3,12 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-03-17
+:Date:   2016-05-25
 
 In  this  document  we  propose  an  installation  procedure  for  the
 Bayeux_/trunk  library on  top  of Cadfaelbrew_  (2016.01) on  Xubuntu
 14.04 LTS (Trusty Tahr) for a system (64-bits).  By default, the build
-is done using the C++98 standard.  An alternative is also proposed for
-C++11.
+of Bayeux is done using the C++11 standard.
 
 Notes:
 
@@ -194,6 +193,34 @@ Then you can check your Ninja version:
 
    \pagebreak
 
+
+Qt5
+-------------
+
+Qt5 is used for the QSt-based GUI component implemented in Bayeux (as an optional component).
+
+For now we use the system install of Qt5 (5.2.1 on Ubuntu 14.04):
+
+.. code:: sh
+
+   $ sudo apt-get install libqt5core5a
+	  libqt5gui5
+	  libqt5svg5
+	  libqt5svg5-dev
+	  libqt5svg5-private-dev
+	  libqt5widgets5
+..
+
+Brew is able to install a recent Qt5 (Qt5.6.0) but this is still broken wihtin Bayeux.
+Please do not use it as long as it is not fixed.
+
+.. code:: sh
+
+   $ brew install qt5-base
+
+..
+
+
 Configuration and build of Bayeux/trunk
 =================================================
 
@@ -211,11 +238,12 @@ Install dependencies:
 .. code:: sh
 
    $ sudo apt-get install gnuplot gnuplot-doc gnuplot-mode
-   $ sudo apt-get install libqt4-dev libqt4-dev-bin libqt4-gui
    $ sudo apt-get install libreadline-dev readline-common
    $ sudo apt-get install pandoc pandoc-data
    $ sudo apt-get install python-docutils
 ..
+
+See above for Qt5 components.
 
 
 Working directory
@@ -301,41 +329,35 @@ or :
 .. code:: sh
 
    $ BX_DEV_BIN_DIR="${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk"
-   $ mkdir -p ${BX_DEV_BIN_DIR}/Build-gcc-cxx98-ninja-Linux-x86_64
-   $ cd ${BX_DEV_BIN_DIR}/Build-gcc-cxx98-ninja-Linux-x86_64
+   $ mkdir -p ${BX_DEV_BIN_DIR}/Build-gcc-cxx11-ninja-Linux-x86_64
+   $ cd ${BX_DEV_BIN_DIR}/Build-gcc-cxx11-ninja-Linux-x86_64
 ..
 
   3. Configure the Bayeux build with CMake and using Ninja and GCC :
 
 .. code:: sh
 
-   $ BX98_DEV_INSTALL_DIR="${BX_DEV_BIN_DIR}/Install-gcc-cxx98-Linux-x86_64"
+   $ BX11_DEV_INSTALL_DIR="${BX_DEV_BIN_DIR}/Install-gcc-cxx11-Linux-x86_64"
    $ cmake \
-     -DCMAKE_BUILD_TYPE:STRING=Release \
-     -DCMAKE_INSTALL_PREFIX:PATH="${BX98_DEV_INSTALL_DIR}" \
-     -DBAYEUX_CXX_STANDARD="98" \
-     -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
-     -DBAYEUX_ENABLE_TESTING=ON \
-     -DBAYEUX_WITH_IWYU_CHECK=ON \
-     -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
-     -DBAYEUX_WITH_DOCS=ON \
-     -DBAYEUX_WITH_DOCS_OCD=ON \
-     -DBAYEUX_WITH_BRIO=ON \
-     -DBAYEUX_WITH_CUTS=ON \
-     -DBAYEUX_WITH_MYGSL=ON \
-     -DBAYEUX_WITH_DPP=ON \
-     -DBAYEUX_WITH_MATERIALS=ON \
-     -DBAYEUX_WITH_GEOMTOOLS=ON \
-     -DBAYEUX_WITH_EMFIELD=ON \
-     -DBAYEUX_WITH_GENVTX=ON \
-     -DBAYEUX_WITH_GENBB_HELP=ON \
-     -DBAYEUX_WITH_MCTOOLS=ON \
-     -DBAYEUX_WITH_LAHAGUE=ON \
-     -DBAYEUX_WITH_GEANT4_MODULE=ON \
-     -DBAYEUX_WITH_MCNP_MODULE=OFF \
-     -GNinja \
-     ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
+    -DCMAKE_BUILD_TYPE:STRING="Release" \
+    -DCMAKE_INSTALL_PREFIX:FILEPATH="${BX11_DEV_INSTALL_DIR}" \
+    -DBAYEUX_WITH_IWYU_CHECK=ON \
+    -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
+    -DBAYEUX_WITH_LAHAGUE=ON \
+    -DBAYEUX_WITH_GEANT4_MODULE=ON \
+    -DBAYEUX_WITH_MCNP_MODULE=ON \
+    -DBAYEUX_WITH_QT_GUI=ON \
+    -DBAYEUX_ENABLE_TESTING=ON \
+    -DBAYEUX_WITH_DOCS=ON \
+    -DBAYEUX_WITH_DOCS_OCD=ON \
+    -GNinja \
+    ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
 ..
+
+..    -DQt5Core_DIR:FILEPATH="$(brew --prefix)/Cellar/qt5-base/5.6.0/lib/cmake/Qt5Core" \
+..    -DQt5Gui_DIR:FILEPATH="$(brew --prefix)/Cellar/qt5-base/5.6.0/lib/cmake/Qt5Gui" \
+..    -DQt5Widgets_DIR:FILEPATH="$(brew --prefix)/Cellar/qt5-base/5.6.0/lib/cmake/Qt5Widgets" \
+..    -DQt5Svg_DIR:FILEPATH="$(brew --prefix)/Cellar/qt5-base/5.6.0/lib/cmake/Qt5Svg" \
 
 Build
 -----------------
@@ -384,7 +406,8 @@ Particularly, the shared libraries are:
    |       |-- BayeuxDocs.cmake
    |       `-- BayeuxTargets.cmake
    |-- libBayeux.so*
-   `-- libBayeux_mctools_geant4.so*
+   |-- libBayeux_mctools_geant4.so*
+   `-- libBayeux_mctools_mcnp.so*
 ..
 
 Executable are in:
@@ -428,15 +451,16 @@ Before to do the final installation, we run the test programs:
 
    $ ninja test
    [1/1] Running tests...
-   Test project /data/sw/Bayeux/Binary/Bayeux-trunk/Build-gcc-cxx98-ninja-Linux-x86_64
+   Test project /data/sw/Bayeux/Binary/Bayeux-trunk/Build-gcc-cxx11-ninja-Linux-x86_64
            Start   1: datatools-test_reflection_0
      1/303 Test   #1: datatools-test_reflection_0 .......   Passed    0.28 sec
    ...
-   303/303 Test #303: bayeux-test_bayeux ................   Passed    0.09 sec
+           Start 309: bayeux-test_bayeux
+   309/309 Test #309: bayeux-test_bayeux ................   Passed    0.13 sec
 
-   100% tests passed, 0 tests failed out of 303
+   100% tests passed, 0 tests failed out of 309
 
-   Total Test time (real) =  83.62 sec
+   Total Test time (real) =  60.47 sec
 ..
 
 .. raw:: latex
@@ -463,8 +487,8 @@ Browse the installation directory:
 .. code:: sh
 
    $ LANG=C tree -L 3 -F \
-     ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx98-Linux-x86_64
-   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx98-Linux-x86_64
+     ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64
+   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64
    |-- bin/
    |   |-- bxdpp_processing*
    |   |-- bxg4_production*
@@ -523,15 +547,15 @@ Suggestions for a Bash setup (see below)
 .. code:: sh
 
    $ export SW_WORK_DIR=/data/sw
-   $ export BX98_DEV_INSTALL_DIR=\
-       "${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx98-Linux-x86_64"
+   $ export BX11_DEV_INSTALL_DIR=\
+       "${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64"
 ..
 
  2. The only configuration you need now is:
 
 .. code:: sh
 
-   $ export PATH=${BX98_DEV_INSTALL_DIR}/bin:${PATH}
+   $ export PATH=${BX11_DEV_INSTALL_DIR}/bin:${PATH}
 ..
 
     There is no need to update the ``LD_LIBRARY_PATH`` environment variable because Bayeux
@@ -539,7 +563,7 @@ Suggestions for a Bash setup (see below)
 
 .. code:: sh
 
-   $ export LD_LIBRARY_PATH=${BX98_DEV_INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
+   $ export LD_LIBRARY_PATH=${BX11_DEV_INSTALL_DIR}/lib:${LD_LIBRARY_PATH}
 ..
 
  3. After setting ``PATH`` as shown above, you can check where some of the
@@ -548,7 +572,7 @@ Suggestions for a Bash setup (see below)
 .. code:: sh
 
    $ which bxquery
-   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx98-Linux-x86_64/bin/bxquery
+   /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64/bin/bxquery
 ..
 
     Check datatools' OCD tool:
@@ -556,7 +580,7 @@ Suggestions for a Bash setup (see below)
 .. code:: sh
 
       $ which bxocd_manual
-      /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx98-Linux-x86_64/bin/bxocd_manual
+      /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64/bin/bxocd_manual
       $ bxocd_manual --action list
       List of registered class IDs :
       cuts::accept_cut
@@ -633,23 +657,23 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
    export BX_DEV_BIN_DIR="${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk"
 
    # The Bayeux/trunk setup function:
-   function do_bayeux_trunk_cxx98_setup()
+   function do_bayeux_trunk_cxx11_setup()
    {
     do_cadfaelbrew_setup # Automatically load the Cadfaelbrew dependency
-    if [ -n "${BX98_DEV_INSTALL_DIR}" ]; then
+    if [ -n "${BX11_DEV_INSTALL_DIR}" ]; then
       echo "ERROR: Bayeux/trunk is already setup !" >&2
       return 1
     fi
-    export BX98_DEV_INSTALL_DIR=${BX_DEV_BIN_DIR}/Install-gcc-cxx98-Linux-x86_64
-    export PATH=${BX98_DEV_INSTALL_DIR}/bin:${PATH}
+    export BX11_DEV_INSTALL_DIR=${BX_DEV_BIN_DIR}/Install-gcc-cxx11-Linux-x86_64
+    export PATH=${BX11_DEV_INSTALL_DIR}/bin:${PATH}
     echo "NOTICE: Bayeux/trunk is now setup !" >&2
     return;
    }
-   export -f do_bayeux_trunk_cxx98_setup
+   export -f do_bayeux_trunk_cxx11_setup
 
    # Special alias:
-   alias do_bayeux_dev98_setup="do_bayeux_trunk_cxx98_setup"
-   alias do_bayeux_dev_setup="do_bayeux_trunk_cxx98_setup"
+   alias do_bayeux_dev11_setup="do_bayeux_trunk_cxx11_setup"
+   alias do_bayeux_dev_setup="do_bayeux_trunk_cxx11_setup"
 ..
 
 When one wants to use pieces of software from Bayeux, one runs:
@@ -712,7 +736,7 @@ Update the source code from the Bayeux/trunk
 .. code:: sh
 
    $ BX_DEV_BIN_DIR="${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk"
-   $ cd ${BX_DEV_BIN_DIR}/Build-gcc-cxx98-ninja-Linux-x86_64
+   $ cd ${BX_DEV_BIN_DIR}/Build-gcc-cxx11-ninja-Linux-x86_64
 ..
 
 5. You may need to clean the build directory:
@@ -727,9 +751,9 @@ Update the source code from the Bayeux/trunk
 .. code:: sh
 
    $ cd ${BX_DEV_BIN_DIR}
-   $ rm -fr Build-gcc-cxx98-ninja-Linux-x86_64
-   $ mkdir Build-gcc-cxx98-ninja-Linux-x86_64
-   $ cd Build-gcc-cxx98-ninja-Linux-x86_64
+   $ rm -fr Build-gcc-cxx11-ninja-Linux-x86_64
+   $ mkdir Build-gcc-cxx11-ninja-Linux-x86_64
+   $ cd Build-gcc-cxx11-ninja-Linux-x86_64
 ..
 
    then reconfigure (see above).
@@ -738,7 +762,7 @@ Update the source code from the Bayeux/trunk
 
 .. code:: sh
 
-   $ rm -fr ${BX_DEV_BIN_DIR}/Install-gcc-cxx98-Linux-x86_64
+   $ rm -fr ${BX_DEV_BIN_DIR}/Install-gcc-cxx11-Linux-x86_64
 ..
 
 7. Rebuild, test and install:
@@ -765,8 +789,8 @@ a. Build dir:
 .. code:: sh
 
    $ BX_DEV_BIN_DIR="${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk"
-   $ mkdir -p ${BX_DEV_BIN_DIR}/Build-gcc-cxx98-gnumake-Linux-x86_64
-   $ cd ${BX_DEV_BIN_DIR}/Build-gcc-cxx98-gnumake-Linux-x86_64
+   $ mkdir -p ${BX_DEV_BIN_DIR}/Build-gcc-cxx11-gnumake-Linux-x86_64
+   $ cd ${BX_DEV_BIN_DIR}/Build-gcc-cxx11-gnumake-Linux-x86_64
 ..
 
 b. Configure Bayeux with CMake and GNU make (default build system):
@@ -774,31 +798,20 @@ b. Configure Bayeux with CMake and GNU make (default build system):
 .. code:: sh
 
    $ brewsh
-   $ BX98_DEV_INSTALL_DIR="${BX_DEV_BIN_DIR}/Install-gcc-cxx98-Linux-x86_64"
+   $ BX11_DEV_INSTALL_DIR="${BX_DEV_BIN_DIR}/Install-gcc-cxx11-Linux-x86_64"
    $ cmake \
-     -DCMAKE_BUILD_TYPE:STRING=Release \
-     -DCMAKE_INSTALL_PREFIX:PATH="${BX98_DEV_INSTALL_DIR}" \
-     -DBAYEUX_CXX_STANDARD="98" \
-     -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
-     -DBAYEUX_ENABLE_TESTING=ON \
-     -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
-     -DBAYEUX_WITH_IWYU_CHECK=ON \
-     -DBAYEUX_WITH_DOCS=ON \
-     -DBAYEUX_WITH_DOCS_OCD=ON \
-     -DBAYEUX_WITH_BRIO=ON \
-     -DBAYEUX_WITH_CUTS=ON \
-     -DBAYEUX_WITH_MYGSL=ON \
-     -DBAYEUX_WITH_DPP=ON \
-     -DBAYEUX_WITH_MATERIALS=ON \
-     -DBAYEUX_WITH_GEOMTOOLS=ON \
-     -DBAYEUX_WITH_EMFIELD=ON \
-     -DBAYEUX_WITH_GENVTX=ON \
-     -DBAYEUX_WITH_GENBB_HELP=ON \
-     -DBAYEUX_WITH_MCTOOLS=ON \
-     -DBAYEUX_WITH_LAHAGUE=ON \
-     -DBAYEUX_WITH_GEANT4_MODULE=ON \
-     -DBAYEUX_WITH_MCNP_MODULE=OFF \
-     ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
+    -DCMAKE_BUILD_TYPE:STRING="Release" \
+    -DCMAKE_INSTALL_PREFIX:FILEPATH="${BX11_DEV_INSTALL_DIR}" \
+    -DBAYEUX_WITH_IWYU_CHECK=ON \
+    -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
+    -DBAYEUX_WITH_LAHAGUE=ON \
+    -DBAYEUX_WITH_GEANT4_MODULE=ON \
+    -DBAYEUX_WITH_MCNP_MODULE=ON \
+    -DBAYEUX_WITH_QT_GUI=ON \
+    -DBAYEUX_ENABLE_TESTING=ON \
+    -DBAYEUX_WITH_DOCS=ON \
+    -DBAYEUX_WITH_DOCS_OCD=ON \
+    ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
 ..
 
 c. Build, test and install:
@@ -814,93 +827,3 @@ c. Build, test and install:
 .. raw:: latex
 
    \pagebreak
-
-Alternative: build Bayeux with C++ 11
-------------------------------------------
-
-a. Build dir:
-
-.. code:: sh
-
-   $ BX_DEV_BIN_DIR="${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk"
-   $ mkdir -p ${BX_DEV_BIN_DIR}/Build-gcc-cxx11-ninja-Linux-x86_64
-   $ cd ${BX_DEV_BIN_DIR}/Build-gcc-cxx11-ninja-Linux-x86_64
-..
-
-b. Configure Bayeux with CMake and GNU make (default build system):
-
-.. code:: sh
-
-   $ brewsh
-   $ BX11_DEV_INSTALL_DIR="${BX_DEV_BIN_DIR}/Install-gcc-cxx11-Linux-x86_64"
-   $ cmake \
-     -DCMAKE_BUILD_TYPE:STRING=Release \
-     -DCMAKE_INSTALL_PREFIX:PATH="${BX11_DEV_INSTALL_DIR}" \
-     -DBAYEUX_CXX_STANDARD="11" \
-     -DBAYEUX_COMPILER_ERROR_ON_WARNING=OFF \
-     -DBAYEUX_ENABLE_TESTING=ON \
-     -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
-     -DBAYEUX_WITH_IWYU_CHECK=ON \
-     -DBAYEUX_WITH_DOCS=ON \
-     -DBAYEUX_WITH_DOCS_OCD=ON \
-     -DBAYEUX_WITH_BRIO=ON \
-     -DBAYEUX_WITH_CUTS=ON \
-     -DBAYEUX_WITH_MYGSL=ON \
-     -DBAYEUX_WITH_DPP=ON \
-     -DBAYEUX_WITH_MATERIALS=ON \
-     -DBAYEUX_WITH_GEOMTOOLS=ON \
-     -DBAYEUX_WITH_EMFIELD=ON \
-     -DBAYEUX_WITH_GENVTX=ON \
-     -DBAYEUX_WITH_GENBB_HELP=ON \
-     -DBAYEUX_WITH_MCTOOLS=ON \
-     -DBAYEUX_WITH_LAHAGUE=ON \
-     -DBAYEUX_WITH_GEANT4_MODULE=ON \
-     -DBAYEUX_WITH_MCNP_MODULE=OFF \
-     -GNinja \
-     ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk
-..
-
-c. Build, test and install:
-
-.. code:: sh
-
-   $ time ninja -j4
-    ...
-   $ ninja test
-   $ ninja install
-..
-
-
-d. Setup:
-
-.. code:: sh
-
-   # The base directory of all the software (convenient path variable):
-   export SW_WORK_DIR=/data/sw
-   export BX_DEV_BIN_DIR="${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk"
-
-   # The Bayeux/trunk setup function:
-   function do_bayeux_trunk_cxx11_setup()
-   {
-    do_cadfaelbrew_setup # Automatically load the Cadfaelbrew dependency
-    if [ -n "${BX11_DEV_INSTALL_DIR}" ]; then
-      echo "ERROR: Bayeux/trunk C++11 is already setup !" >&2
-      return 1
-    fi
-    export BX11_DEV_INSTALL_DIR=${BX_DEV_BIN_DIR}/Install-gcc-cxx11-Linux-x86_64
-    export PATH=${BX11_DEV_INSTALL_DIR}/bin:${PATH}
-    echo "NOTICE: Bayeux/trunk C++11 is now setup !" >&2
-    return;
-   }
-   export -f do_bayeux_trunk_cxx11_setup
-
-   # Special alias:
-   alias do_bayeux_dev11_setup="do_bayeux_trunk_cxx11_setup"
-..
-
-When one wants to use pieces of software from Bayeux, one runs:
-
-.. code:: sh
-
-   $ do_bayeux_dev11_setup
-..
