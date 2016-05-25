@@ -24,13 +24,10 @@
 // #include <term.h>
 #endif // GEOMTOOLS_WITH_READLINE
 // - Bayeux/datatools:
-#include <datatools/datatools.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/kernel.h>
 #include <datatools/configuration/io.h>
-// - Bayeux/materials:
-#include <materials/materials.h>
 
 // This project:
 #include <geomtools/version.h>
