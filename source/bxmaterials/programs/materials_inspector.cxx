@@ -1,9 +1,6 @@
 // -*- mode: c++ ; -*-
 // materials_inspector.cxx
 
-// This project
-#include <materials/materials.h>
-
 // Standard Library
 #include <cstdlib>
 #include <iostream>
@@ -20,7 +17,6 @@
 // - Bayeux/datatools
 #include <datatools/logger.h>
 #include <datatools/exception.h>
-#include <datatools/datatools.h>
 
 // - Bayeux/materials
 #include <materials/materials_driver.h>

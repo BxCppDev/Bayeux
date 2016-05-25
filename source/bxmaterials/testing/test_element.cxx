@@ -9,7 +9,6 @@
 // This project
 #include <materials/isotope.h>
 #include <materials/element.h>
-#include <materials/materials.h>
 
 using namespace std;
 

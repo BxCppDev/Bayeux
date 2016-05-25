@@ -1,9 +1,6 @@
 // -*- mode: c++ ; -*-
 // materials_diagnose.cxx
 
-// This project
-#include <materials/materials.h>
-
 // Standard Library
 #include <cstdlib>
 #include <iostream>
