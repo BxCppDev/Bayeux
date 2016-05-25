@@ -1,8 +1,5 @@
 // ocd_manual.cxx
 
-// This project
-#include <datatools/datatools.h>
-
 // Standard Library
 #include <cstdlib>
 #include <iostream>

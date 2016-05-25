@@ -141,7 +141,7 @@ void test_kernel_libinfo()
 }
 
 int main(int argc_, char * argv_[]) {
-  DATATOOLS_INIT_MAIN(argc_,argv_);
+  datatools::initialize(argc_,argv_);
   int error_code = EXIT_SUCCESS;
   try {
 
@@ -161,6 +161,6 @@ int main(int argc_, char * argv_[]) {
     std::cerr << "error: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
-  DATATOOLS_FINI();
+  datatools::terminate();
   return error_code;
 }

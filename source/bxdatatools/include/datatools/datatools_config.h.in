@@ -5,8 +5,6 @@
 #ifndef DATATOOLS_DATATOOLS_CONFIG_H
 #define DATATOOLS_DATATOOLS_CONFIG_H 1
 
-//! Evaluates to true if datatools is built within a bundle library (Bayeux)
-
 //! Evaluates to true if datatools was built with Boost I/O support
 #define DATATOOLS_WITH_BIO 1
 
@@ -15,9 +13,6 @@
 
 //! Evaluates to true if datatools was built with READLINE support
 #cmakedefine01 DATATOOLS_WITH_READLINE
-
-//! Evaluates to true if datatools was built with automated init/fini operation at DLL loading
-#cmakedefine01 DATATOOLS_WITH_IMPLICIT_INIT_FINI
 
 //! Evaluates to true if datatools was built with Qt-based GUI components
 #cmakedefine01 DATATOOLS_WITH_QT_GUI

@@ -13,7 +13,8 @@
 #include <datatools/library_info.h>
 
 int main(int argc_, char * argv_[]) {
-  DATATOOLS_INIT_MAIN(argc_, argv_);
+  datatools::initialize(argc_, argv_);
+  int error_code = EXIT_SUCCESS;
   try {
 
     DT_THROW_IF(! datatools::kernel::is_instantiated(),
@@ -33,11 +34,12 @@ int main(int argc_, char * argv_[]) {
   }
   catch (std::exception & x) {
     std::cerr << "error: " << x.what () << std::endl;
-    return EXIT_FAILURE;
+    error_code = EXIT_FAILURE;
   }
   catch (...) {
     std::cerr << "error: " << "unexpected error !" << std::endl;
-    return EXIT_FAILURE;
+    error_code = EXIT_FAILURE;
   }
-  return EXIT_SUCCESS;
+  datatools::terminate();
+  return error_code;
 }
