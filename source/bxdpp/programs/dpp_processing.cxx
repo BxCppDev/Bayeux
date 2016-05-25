@@ -29,7 +29,6 @@
 #include <bayeux/bayeux.h>
 
 // - datatools
-#include <datatools/datatools.h>
 #include <datatools/kernel.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
