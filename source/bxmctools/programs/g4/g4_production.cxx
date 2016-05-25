@@ -23,9 +23,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Ourselves:
-#include <mctools/mctools.h>
-
 // Standard library:
 #include <cstdlib>
 #include <iostream>
@@ -42,7 +39,6 @@
 // - Bayeux
 #include <bayeux/bayeux.h>
 // - Bayeux/datatools:
-#include <datatools/datatools.h>
 #include <datatools/datatools_config.h>
 #include <datatools/utils.h>
 #include <datatools/ioutils.h>

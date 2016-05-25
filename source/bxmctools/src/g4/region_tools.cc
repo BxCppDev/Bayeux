@@ -15,7 +15,6 @@
 #include <datatools/utils.h>
 #include <datatools/exception.h>
 // - Bayeux/materials :
-#include <materials/material.h>
 #include <materials/manager.h>
 // - Bayeux/geomtools :
 #include <geomtools/materials_plugin.h>
