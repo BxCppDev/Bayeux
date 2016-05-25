@@ -53,20 +53,7 @@ namespace bayeux {
       // Special initialization code:
       ::bayeux::_special_initialize_impl();
 
-      // Tests :
-      // datatools::kernel & krnl = datatools::kernel::instance();
-      // if (krnl.has_library_info_register()) {
-      //   datatools::library_info & lib_info_reg
-      //     = krnl.grab_library_info_register();
-      //   lib_info_reg.tree_dump(std::cerr, "bayeux::initialize: Before special initialize", "DEVEL: ");
-      // }
-
       _init = true;
-    } else {
-#ifndef BAYEUX_WITH_IMPLICIT_INIT_FINI
-      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                     "Attempt to initialize the already initialized Bayeux library !");
-#endif
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
@@ -84,11 +71,6 @@ namespace bayeux {
       // Wrap datatools kernel termination:
       ::datatools::terminate();
       _terminate = true;
-    } else {
-#ifndef BAYEUX_WITH_IMPLICIT_INIT_FINI
-      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                     "Attempt to terminate the already terminated Bayeux library !");
-#endif
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;

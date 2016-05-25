@@ -33,12 +33,6 @@ set(materials_VERSION_MINOR 0)
 set(materials_VERSION_PATCH 0)
 set(materials_VERSION "${materials_VERSION_MAJOR}.${materials_VERSION_MINOR}.${materials_VERSION_PATCH}")
 
-
-# - configure special source file
-configure_file(${module_source_dir}/_materials.cc.in
-               bx${module_name}/_materials.cc
-              )
-
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/chemical_symbol.h
@@ -49,15 +43,10 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/manager.h
   ${module_include_dir}/${module_name}/material.h
   ${module_include_dir}/${module_name}/materials_driver.h
-  ${module_include_dir}/${module_name}/materials.h
   ${module_include_dir}/${module_name}/materials_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/resource.h
   )
-
-# - configure resources
-configure_file(${module_source_dir}/resource.cc.in
-               bx${module_name}/resource.cc)
 
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/chemical_symbol.cc
@@ -68,9 +57,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/manager.cc
   ${module_source_dir}/materials_driver.cc
   ${module_source_dir}/version.cc
-  ${module_source_dir}/materials.cc
-  bx${module_name}/resource.cc
-  bx${module_name}/_materials.cc
+  ${module_source_dir}/resource.cc
   )
 
 # - Published headers

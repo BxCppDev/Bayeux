@@ -72,7 +72,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/mctools_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/detail/step_hit_processor_macros.h
-  ${module_include_dir}/${module_name}/mctools.h
   ${module_include_dir}/${module_name}/biasing/point_of_interest.h
   ${module_include_dir}/${module_name}/biasing/primary_event_bias.h
   ${module_include_dir}/${module_name}/signal/utils.h
@@ -92,7 +91,6 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/simulated_data_input_module.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
-  ${module_source_dir}/mctools.cc
   ${module_source_dir}/biasing/point_of_interest.cc
   ${module_source_dir}/biasing/primary_event_bias.cc
   ${module_source_dir}/signal/utils.cc

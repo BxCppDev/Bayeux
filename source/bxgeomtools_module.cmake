@@ -199,10 +199,6 @@ set(${module_name}_MODULE_HEADERS
   #${module_include_dir}/${module_name}/torus.h
   )
 
-# - configure resources
-configure_file(${module_source_dir}/resource.cc.in
-               bx${module_name}/resource.cc)
-
 # - NB Order of sources appears to be important - taken from geomtools
 #   listing. Note that the_serializable.cc is added manually - not
 #   totally clear this is in the right place...
@@ -331,7 +327,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/toroid_nappe.cc
   #${module_source_dir}/torus.cc
   ${module_source_dir}/the_introspectable.cc
-  bx${module_name}/resource.cc
+  ${module_source_dir}/resource.cc
   )
 
 # - Published headers

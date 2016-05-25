@@ -186,7 +186,7 @@ set(${module_name}_MODULE_HEADERS
 )
 
 # - configure special source file
-configure_file(${module_source_dir}/_datatools.cc.in bx${module_name}/_datatools.cc)
+# configure_file(${module_source_dir}/_datatools.cc.in bx${module_name}/_datatools.cc)
 
 set(${module_name}_MODULE_SOURCES
 ${module_source_dir}/base_service.cc
@@ -269,7 +269,7 @@ ${module_source_dir}/ui/base_command_interface.cc
 ${module_source_dir}/ui/base_command.cc
 ${module_source_dir}/ui/utils.cc
 ${module_source_dir}/the_introspectable.cc
-bx${module_name}/_datatools.cc
+# bx${module_name}/_datatools.cc
 )
 
 set(DATATOOLS_WITH_QT_GUI 0)

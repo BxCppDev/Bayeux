@@ -62,23 +62,12 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/pdg_particle_tools.h
   ${module_include_dir}/${module_name}/primary_event.ipp
   ${module_include_dir}/${module_name}/primary_particle.ipp
-  ${module_include_dir}/${module_name}/genbb_help.h
   ${module_include_dir}/${module_name}/genbb_help_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/detail/pg_tools.h
   ${module_include_dir}/${module_name}/primary_particle-reflect.h
   ${module_include_dir}/${module_name}/primary_event-reflect.h
   ${module_include_dir}/${module_name}/resource.h
-  )
-
-# - configure special source file
-configure_file(${module_source_dir}/_genbb_help.cc.in
-  bx${module_name}/_genbb_help.cc
-  )
-
-# - configure resources
-configure_file(${module_source_dir}/resource.cc.in
-  bx${module_name}/resource.cc
   )
 
 set(${module_name}_LEGACY_DECAY0_MODULE_HEADERS
@@ -272,7 +261,6 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/manager.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
-  ${module_source_dir}/genbb_help.cc
   ${module_source_dir}/decay0/Ac228.cc
   ${module_source_dir}/decay0/alpha.cc
   ${module_source_dir}/decay0/Am241.cc
@@ -423,8 +411,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/decay0/Zr92low.cc
   ${module_source_dir}/decay0/Zr96.cc
   ${module_source_dir}/the_introspectable.cc
-  bx${module_name}/resource.cc
-  bx${module_name}/_genbb_help.cc
+  ${module_source_dir}/resource.cc
   )
 
 # - Publish public headers only
