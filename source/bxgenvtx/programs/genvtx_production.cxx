@@ -15,14 +15,11 @@
 // - Bayeux:
 #include <bayeux/bayeux.h>
 // - Bayeux/datatools:
-#include <datatools/datatools.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/configuration/io.h>
-// - Bayeux/materials:
-#include <materials/materials.h>
 // - Bayeux/geomtools:
 #include <geomtools/color.h>
 // - Bayeux/genvtx:
