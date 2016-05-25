@@ -197,7 +197,7 @@ Then you can check your Ninja version:
 Qt5
 -------------
 
-Qt5 is used for the QSt-based GUI component implemented in Bayeux (as an optional component).
+Qt5 is used for the QS-based GUI components implemented in Bayeux (optional component).
 
 For now we use the system install of Qt5 (5.2.1 on Ubuntu 14.04):
 
@@ -214,9 +214,9 @@ For now we use the system install of Qt5 (5.2.1 on Ubuntu 14.04):
 Brew is able to install a recent Qt5 (Qt5.6.0) but this is still broken wihtin Bayeux.
 Please do not use it as long as it is not fixed.
 
-.. code:: sh
+.. .. code:: sh
 
-   $ brew install qt5-base
+..   $ brew install qt5-base
 
 ..
 
