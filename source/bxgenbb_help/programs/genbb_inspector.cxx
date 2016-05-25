@@ -21,9 +21,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// Ourselves:
-#include <genbb_help/genbb_help.h>
-
 // Standard libraries:
 #include <cstdlib>
 #include <iostream>

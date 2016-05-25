@@ -3,9 +3,6 @@
 #ifndef GENBB_HELP_GENBB_HELP_CONFIG_H
 #define GENBB_HELP_GENBB_HELP_CONFIG_H 1
 
-//! Evaluates to true if materials was built with automated init/fini operation at DLL loading
-#cmakedefine01 GENBB_HELP_WITH_IMPLICIT_INIT_FINI
-
 /***  genbb_help debug flag ***/
 #cmakedefine01 GENBB_HELP_WITH_DEBUG
 
