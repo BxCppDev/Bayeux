@@ -85,8 +85,10 @@ find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
 # - NB, nothing for Geant4 yet because it's not an interface of
 # the plugin
 
-# - Qt4
+# - Qt
 if(Bayeux_HAS_QT)
+  # Make sure targets like "Qt5::Core", ... "Qt5::Svg" are recognized
+  # in client package
   find_package(Qt5Core REQUIRED)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5Gui REQUIRED)
