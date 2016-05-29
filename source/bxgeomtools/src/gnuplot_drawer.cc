@@ -394,6 +394,34 @@ namespace geomtools {
     return;
   }
 
+  void gnuplot_drawer::set_rendering_options_current(uint32_t flags_)
+  {
+    _rendering_options_current_ = flags_;
+    return;
+  }
+
+  void gnuplot_drawer::reset_rendering_options_current()
+  {
+    _rendering_options_current_ = 0;
+    return;
+  }
+
+  void gnuplot_drawer::set_rendering_options_depth(int32_t depth_)
+  {
+    if (depth_ <= 0) {
+      _rendering_options_depth_ = 0;
+    } else {
+      _rendering_options_depth_ = depth_;
+    }
+    return;
+  }
+
+  void gnuplot_drawer::reset_rendering_options_depth()
+  {
+    _rendering_options_depth_ = 0;
+    return;
+  }
+
   gnuplot_drawer::gnuplot_drawer ()
   {
     _initialized_ = false;
@@ -407,6 +435,8 @@ namespace geomtools {
     _drawing_display_data_ = true;
     reset_output ();
     reset_terminal ();
+    _rendering_options_current_ = 0;
+    _rendering_options_depth_ = 0;
     return;
   }
 
@@ -441,6 +471,8 @@ namespace geomtools {
     _initialized_ = false;
     reset_cstreams ();
     reset_terminal ();
+    reset_rendering_options_current();
+    reset_rendering_options_depth();
     _view_ = gnuplot_drawer::default_view();
     _labels_ = true;
     _using_title_ = true;
@@ -480,7 +512,7 @@ namespace geomtools {
     out_ << "|-- " << "Terminal         : " << _terminal_ << std::endl;
     out_ << "|-- " << "Terminal options : " << _terminal_options_ << std::endl;
     out_ << "`-- " << "Output           : " << _output_ << std::endl;
-   return;
+    return;
   }
 
   void gnuplot_drawer::_draw_(const logical_volume & log_,
@@ -543,14 +575,22 @@ namespace geomtools {
             DT_LOG_TRACE(local_priority, "Found color '" << color_label
                           << "' for logical '" << log.get_name() << "'...");
           }
-
           if (color_label != color::transparent()) {
             std::ostringstream & colored_oss = _get_stream (color_label);
             // unsigned long mode = gnuplot_draw::MODE_NULL;
             // if (visibility::is_wired_cylinder(log_visu_config)) {
             //   mode |= gnuplot_draw::MODE_WIRED_CYLINDER;
             // }
+            // Default rendering options:
             uint32_t options = 0;
+            // std::cerr << "DEVEL: **** gnuplot_drawer::_draw_: "
+            //           << "log = '" << log.get_name() << "'" << std::endl;
+            // std::cerr << "DEVEL: **** gnuplot_drawer::_draw_: "
+            //           << "_rendering_options_depth_ = "
+            //           << _rendering_options_depth_ << std::endl;
+            if ((_rendering_options_depth_ + 1) > 0) {
+              options = _rendering_options_current_;
+            }
             gnuplot_draw::draw(colored_oss,
                                p_,
                                log.get_shape(),
@@ -664,9 +704,11 @@ namespace geomtools {
           if (devel) pt.tree_dump(std::clog, "item placement (mother)", "DEVEL: ");
           // Recursive invocation of the visualization data generation
           // for daughter #i:
+          _rendering_options_depth_--;
           gnuplot_drawer::_draw_(log_child,
                                  pt,
                                  max_display_level - 1);
+          _rendering_options_depth_++;
         }
       }
     }
@@ -683,11 +725,11 @@ namespace geomtools {
     return;
   }
 
-  void gnuplot_drawer::draw_logical (const logical_volume & log_,
-                                     const placement & p_,
-                                     int max_display_level_,
-                                     const std::string & title_,
-                                     bool drawing_display_data_)
+  void gnuplot_drawer::draw_logical(const logical_volume & log_,
+                                    const placement & p_,
+                                    int max_display_level_,
+                                    const std::string & title_,
+                                    bool drawing_display_data_)
   {
     const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     int max_display_level = max_display_level_;
@@ -760,7 +802,6 @@ namespace geomtools {
          i++) {
       const std::string & label = i->first;
       cstream & cs = i->second;
-
       {
         // New method:
         datatools::temp_file tmp_file;
@@ -778,7 +819,7 @@ namespace geomtools {
       }
     }
 
-    usleep (200);
+    usleep(200);
 
     std::string view = _view_;
 
@@ -980,16 +1021,16 @@ namespace geomtools {
     return;
   }
 
-  int gnuplot_drawer::draw (const manager & geo_mgr_,
-                            const std::string & what_,
-                            int max_display_level_)
+  int gnuplot_drawer::draw(const manager & geo_mgr_,
+                           const std::string & what_,
+                           int max_display_level_)
   {
     std::string what = what_;
     if (what.empty()) {
-      what = geo_mgr_.get_world_name () ;
+      what = geo_mgr_.get_world_name();
     }
-    DT_THROW_IF (what.empty(), std::logic_error,
-                 "Missing object label to be displayed !");
+    DT_THROW_IF(what.empty(), std::logic_error,
+                "Missing object label to be displayed !");
     std::istringstream visu_gid_iss(what);
     geomtools::geom_id visu_gid;
     visu_gid_iss >> visu_gid;
@@ -1002,17 +1043,17 @@ namespace geomtools {
                      "Cannot find geometry volume with GID='" << visu_gid << "' in mapping dictionnary !");
         return EXIT_FAILURE;
       }
-      draw_physical_from_gid (geo_mgr_.get_factory(),
-                              visu_gid,
-                              geo_mgr_.get_mapping(),
-                              max_display_level_);
+      draw_physical_from_gid(geo_mgr_.get_factory(),
+                             visu_gid,
+                             geo_mgr_.get_mapping(),
+                             max_display_level_);
     } else {
       //DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,"Label '" << what << "' is not a GID !");
       // Try to draw logical:
-      const logical_volume::dict_type & logs = geo_mgr_.get_factory ().get_logicals();
+      const logical_volume::dict_type & logs = geo_mgr_.get_factory().get_logicals();
       const std::string & visu_log_name = what;
       logical_volume::dict_type::const_iterator log_found = logs.find(visu_log_name);
-      if (log_found != logs.end ()) {
+      if (log_found != logs.end()) {
         geomtools::placement visu_placement;
         draw_logical(*log_found->second,
                      visu_placement,
@@ -1023,8 +1064,8 @@ namespace geomtools {
         // Try to draw model:
         geomtools::placement visu_placement;
         const std::string & visu_model_name = what;
-        models_col_type::const_iterator found = geo_mgr_.get_factory ().get_models ().find (visu_model_name);
-        if (found == geo_mgr_.get_factory ().get_models ().end ()) {
+        models_col_type::const_iterator found = geo_mgr_.get_factory().get_models().find(visu_model_name);
+        if (found == geo_mgr_.get_factory().get_models().end()) {
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                        "Cannot find geometry model with name='" << visu_model_name
                        << "' in the geometry model factory !");
@@ -1039,24 +1080,23 @@ namespace geomtools {
     return EXIT_SUCCESS;
   }
 
-  void gnuplot_drawer::draw_physical_from_gid (const model_factory & mf_,
-                                               const geom_id & gid_,
-                                               const mapping & mapping_,
-                                               int max_display_level_)
+  void gnuplot_drawer::draw_physical_from_gid(const model_factory & mf_,
+                                              const geom_id & gid_,
+                                              const mapping & mapping_,
+                                              int max_display_level_)
   {
-    DT_THROW_IF (! mapping_.validate_id(gid_),
+    DT_THROW_IF(! mapping_.validate_id(gid_),
                  std::logic_error,
                  "Cannot find object with GID='" << gid_ << "' in the mapping dictionnary !");
-    const geom_info & ginfo = mapping_.get_geom_info (gid_);
-    const placement & wpl = ginfo.get_world_placement ();
-    const logical_volume & log = ginfo.get_logical ();
-
+    const geom_info & ginfo = mapping_.get_geom_info(gid_);
+    const placement & wpl = ginfo.get_world_placement();
+    const logical_volume & log = ginfo.get_logical();
     if (_drawing_display_data_) {
       _draw_display_data(mf_, wpl);
     }
     std::ostringstream title_oss;
     title_oss << "Volume " << gid_ << " (instance of logical volume '"
-              << log.get_name () << "')";
+              << log.get_name() << "')";
     draw_logical(log, wpl, max_display_level_, title_oss.str(), false);
     return;
   }
@@ -1072,7 +1112,6 @@ namespace geomtools {
                  "Cannot find geometry model with name '" << name_ << "' !");
     const i_model & model = *(found->second);
     const geomtools::logical_volume & log = model.get_logical();
-
     std::string world_name;
     if (get_properties().has_key(gnuplot_drawer::world_name_key())
         && get_properties().is_string(gnuplot_drawer::world_name_key())) {
@@ -1085,12 +1124,11 @@ namespace geomtools {
       _draw_display_data(mf_, p_);
     }
     draw_logical(log, p_, max_display_level_, log.get_name(), false);
-
     return;
   }
 
-  void gnuplot_drawer::_draw_display_data (const model_factory & /*mf_*/,
-                                           const placement & /*p_*/)
+  void gnuplot_drawer::_draw_display_data(const model_factory & /*mf_*/,
+                                          const placement & /*p_*/)
   {
     const datatools::logger::priority local_priority = datatools::logger::PRIO_FATAL;
     DT_LOG_TRACE (local_priority, "Entering...");

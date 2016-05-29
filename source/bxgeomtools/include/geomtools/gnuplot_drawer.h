@@ -218,30 +218,19 @@ namespace geomtools {
                        const std::string & title_,
                        bool drawing_display_data_ = false);
 
-    // /// \deprecated Use draw_logical
-    // void draw (const logical_volume & log_,
-    //            const placement & p_,
-    //            int max_display_level_,
-    //            const std::string & title_,
-    //            bool display_data_ = false);
-
-    /// Draw a geometry model its own reference frame
+    /// Draw a geometry model in its own reference frame
     void draw_model (const model_factory & mf_,
                      const std::string & model_name_,
                      const placement & p_,
                      int max_display_level_);
 
-    // // \deprecated Use draw_model
-    // void draw (const model_factory & mf_,
-    //            const std::string & model_name_,
-    //            const placement & p_,
-    //            int max_display_level_);
-
+    /// Draw a physical volume given its GID its the world reference frame
     void draw_physical_from_gid (const model_factory & mf_,
                                  const geom_id & gid_,
                                  const mapping & mapping_,
                                  int max_display_level_);
 
+    /// Draw a logical volume with given name from a model factory
     void draw_logical (const model_factory & mf_,
                        const std::string & logical_name_,
                        const placement & p_,
@@ -262,6 +251,18 @@ namespace geomtools {
     /// Remove all display data formerly added to the scene
     void reset_display_data();
 
+    /// Set shape rendering options
+    void set_rendering_options_current(uint32_t flags_);
+
+    /// Reset shape rendering options
+    void reset_rendering_options_current();
+
+    /// Set shape rendering options depth
+    void set_rendering_options_depth(int32_t depth_);
+
+    /// Reset shape rendering options depth
+    void reset_rendering_options_depth();
+
   protected:
 
     void _draw_display_data(const model_factory & mf_,
@@ -273,9 +274,9 @@ namespace geomtools {
 
   private:
 
-    void _draw_ (const logical_volume & log_,
-                 const placement & p_,
-                 int max_display_level_ = 0);
+    void _draw_(const logical_volume & log_,
+                const placement & p_,
+                int max_display_level_ = 0);
 
     /*
     // Future : enrich the interface of the '_draw_' method...
@@ -315,6 +316,9 @@ namespace geomtools {
     std::string _terminal_;
     std::string _terminal_options_;
     std::string _output_;
+    int         _max_display_level_; // XXX
+    uint32_t    _rendering_options_current_;
+    int32_t     _rendering_options_depth_;
 
   }; // class gnuplot_drawer
 

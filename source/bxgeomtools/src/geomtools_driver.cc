@@ -24,6 +24,8 @@
 #include <geomtools/materials_utils.h>
 #include <geomtools/gdml_export.h>
 #include <geomtools/placement.h>
+#include <geomtools/i_composite_shape_3d.h>
+#include <geomtools/i_wires_3d_rendering.h>
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
 #include <geomtools/gnuplot_drawer.h>
@@ -1212,11 +1214,15 @@ namespace geomtools {
     bool force_hide_envelope = false;
     bool force_hide_children = false;
     bool process_display_data = true;
+    uint32_t rendering_options = 0;
+    uint32_t rendering_options_depth = 0;
+    std::set<std::string> rendering_tags;
+    int max_display_level = geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
     size_t argcount = 0;
     while (argcount < argv_.size()) {
       const std::string & token = argv_[argcount++];
       if (token.empty()) break;
-      if (token[0] == '-') {
+      if (token[0] == '-' || token[0] == '+') {
         std::string option = token;
         if (option  == "-h" || option  == "--help") {
           out_ << "  Usage: \n";
@@ -1233,15 +1239,32 @@ namespace geomtools {
                << "    -E  | --force-hide-envelope Disable the display of volume envelope\n"
                << "    -c  | --force-show-children Force the display of children volumes\n"
                << "    -C  | --force-hide-children Disable the display of children volumes\n"
-               << "    -dd | --with-display_data   Display data are included in the scene.n"
+               << "    -dd | --with-display-data   Display data are included in the scene.n"
                << "                                This works only with GID objects rendering.\n"
-               << "    -DD | --without-display_data \n"
+               << "    -DD | --without-display-data \n"
                << "                                Display data are not included in the scene\n"
                << "    -l  | --labels              Display axis with labels\n"
                << "    -L  | --no-labels           Do not display axis with labels\n"
                << "    -t  | --title               Display image title\n"
                << "    -T  | --no-title            Do not display image title\n"
                << "    -o  | --output OUT_FILE     Print in the 'OUT_FILE' file\n"
+               << "    -g  | --add-rendering-option TAG\n"
+               << "                                Add shape rendering option labelled TAG.\n"
+               << "                                Supported tags are:                 \n"
+               << "                                 * 'grid'                           \n"
+               << "                                 * 'grid.high_density'              \n"
+               << "                                 * 'grid.very_high_density'         \n"
+               << "                                 * 'grid.huge_density'              \n"
+               << "                                 * 'angle.high_sampling'            \n"
+               << "                                 * 'angle.very_high_sampling'       \n"
+               << "                                 * 'angle.huge_sampling'            \n"
+               << "                                 * 'composite.boost_sampling'       \n"
+               << "    -p  | --rendering-option-daughters\n"
+               << "                                Apply current shape rendering options\n"
+               << "                                down to daughter volume.\n"
+               << "    -x  | --max-display-level DEPTH\n"
+               << "                                Display daughter volumes down to\n"
+               << "                                level DEPTH.\n"
             // << "    -r  | --terminal TERM    Use terminal 'TERM'\n"
             // << "    -R  | --terminal-options TERMOPT \n"
             // << "                           Use terminal options 'TERMOPT'\n"
@@ -1285,6 +1308,22 @@ namespace geomtools {
         } else if (option == "-o" || option == "--output") {
           output = argv_[argcount++];
           datatools::remove_quotes(output);
+        } else if (option == "-g" || option == "--add-rendering-option") {
+          std::string rendering_tag_repr = argv_[argcount++];
+          rendering_tags.insert(rendering_tag_repr);
+        } else if (option == "-p" || option == "--rendering-option-daughters") {
+          rendering_options_depth = 1;
+        } else if (option == "-x" || option == "--max-display-level") {
+          std::string level_repr = argv_[argcount++];
+          std::istringstream level_iss(level_repr);
+          int level = geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT;
+          level_iss >> level;
+          if (level < 1) {
+            DT_LOG_ERROR(_params_.logging, "Invalid max display level argument '"
+                         << level_repr << "' !");
+            return -1;
+          }
+          max_display_level = level;
         } else {
           _params_.visu_drawer_view = get_drawer_view(option);
         }
@@ -1314,7 +1353,49 @@ namespace geomtools {
       std::clog << "|-- View          : '" << _params_.visu_drawer_view << "'" << std::endl;
       std::clog << "`-- Show labels    : " << _params_.visu_drawer_labels << std::endl;
     }
+
+    for (std::set<std::string>::const_iterator irt = rendering_tags.begin();
+         irt != rendering_tags.end();
+         irt++) {
+      const std::string & rendering_tag = *irt;
+      if (rendering_tag == "grid") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID;
+      }
+      if (rendering_tag == "grid.low_density") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID;
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID_LOW_DENSITY;
+      } else if (rendering_tag == "grid.high_density") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID;
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID_HIGH_DENSITY;
+      } else if (rendering_tag == "grid.very_high_density") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID;
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID_VERY_HIGH_DENSITY;
+      } else if (rendering_tag == "grid.huge_density") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID;
+        rendering_options |= i_wires_3d_rendering::WR_BASE_GRID_HUGE_DENSITY;
+      }
+      if (rendering_tag == "angle.low_sampling") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_LOW_ANGLE_SAMPLING;
+      } else if (rendering_tag == "angle.high_sampling") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_HIGH_ANGLE_SAMPLING;
+      } else if (rendering_tag == "angle.very_high_sampling") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_VERY_HIGH_ANGLE_SAMPLING;
+      } else if (rendering_tag == "angle.huge_sampling") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_HUGE_ANGLE_SAMPLING;
+      }
+      if (rendering_tag == "bounding") {
+        rendering_options |= i_wires_3d_rendering::WR_BASE_BOUNDINGS;
+      }
+      if (rendering_tag == "composite.only_bounding") {
+        rendering_options |= i_composite_shape_3d::WR_COMPOSITE_ONLY_BB;
+      }
+      if (rendering_tag == "composite.boost_sampling") {
+        rendering_options |= i_composite_shape_3d::WR_COMPOSITE_BOOST_SAMPLING;
+      }
+   }
     geomtools::gnuplot_drawer GPD;
+    GPD.set_rendering_options_current(rendering_options);
+    GPD.set_rendering_options_depth(rendering_options_depth);
     GPD.set_drawing_display_data(process_display_data);
     if (GPD.is_drawing_display_data()) {
       // Load display data:
@@ -1335,12 +1416,12 @@ namespace geomtools {
       GPD.grab_properties().store_flag(gnuplot_drawer::force_hide_children_property_name());
     }
     GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
-    GPD.set_view (_params_.visu_drawer_view);
+    GPD.set_view(_params_.visu_drawer_view);
     if (! output.empty() || ! terminal.empty()) {
-      GPD.set_output_medium (output, terminal, terminal_options);
+      GPD.set_output_medium(output, terminal, terminal_options);
     }
-    GPD.set_using_title (using_title);
-    GPD.set_drawing_display_data (true);
+    GPD.set_using_title(using_title);
+    GPD.set_drawing_display_data(true);
     GPD.set_labels(_params_.visu_drawer_labels);
     if (_params_.logging >= datatools::logger::PRIO_DEBUG) {
       GPD.print(std::clog);
@@ -1348,7 +1429,7 @@ namespace geomtools {
     if (has_manager()) {
       int code = GPD.draw(*_geo_mgr_.get(),
                           visu_object_name,
-                          geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+                          max_display_level); // geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
       if (code != 0) {
         DT_LOG_ERROR(_params_.logging,
                      "Cannot display the object with model name or GID : '"
@@ -1365,7 +1446,7 @@ namespace geomtools {
         GPD.draw_model(*_geo_factory_ref_,
                        visu_object_name,
                        root_plcmt,
-                       geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
+                       max_display_level); // geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
         _params_.visu_object_name = visu_object_name;
       }
       catch (std::exception & error) {
