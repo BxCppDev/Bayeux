@@ -24,8 +24,8 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(geomtools_VERSION_MAJOR 6)
-set(geomtools_VERSION_MINOR 0)
+set(geomtools_VERSION_MAJOR 5)
+set(geomtools_VERSION_MINOR 1)
 set(geomtools_VERSION_PATCH 0)
 set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_VERSION_PATCH}")
 
