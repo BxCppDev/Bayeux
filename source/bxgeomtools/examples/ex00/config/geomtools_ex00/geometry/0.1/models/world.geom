@@ -64,14 +64,14 @@ shape_type : string = "box"
 #   shell$ bxocd_manual --action show geomtools::box
 
 #@description The world volume X dimension (box)
-x          : real as length = 1000.0 mm
+x          : real as length = 1500.0 mm
 # Here the type of physical quantity as well as the unit are explicitely set.
 
 #@description The world volume Y dimension (box)
-y          : real as length = 1000.0 mm
+y          : real as length = 1500.0 mm
 
 #@description The world volume Z dimension (box)
-z          : real as length = 1000.0 mm
+z          : real as length = 1500.0 mm
 
 ############
 # Material #
@@ -91,7 +91,7 @@ material.ref : string = "vacuum"
 ###################
 
 #@description The list of daughter volumes by labels
-internal_item.labels : string[30] = \
+internal_item.labels : string[31] = \
   "BoxA" "BoxB" "BoxC" "BoxD" "BoxE" \
   "ManyBoxes" "CircleBoxes" \
   "WallBricks" \
@@ -100,7 +100,8 @@ internal_item.labels : string[30] = \
   "DetStack0" "DetStack1" "SpecialStack" "AnotherStack" \
   "Foo1" "Foo2" "Bar1" "Dummy1" "Tessella1" "Tessella2" \
   "MeshedBox0" \
-  "Wall1"
+  "Wall1" \
+  "SIB"
 
 # Each daughter physical  volume has an unique name  within its mother
 # volume.  Also each  of them must be given: a)  a geometry model that
@@ -312,6 +313,12 @@ internal_item.model.Wall1      : string  = "wall1.model"
 
 #@description The placement of the "Wall1" daughter volume
 internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
+
+#@description The model of the "SIB" daughter volume
+internal_item.model.SIB      : string  = "SIB1.model"
+
+#@description The placement of the "SIB" daughter volume
+internal_item.placement.SIB  : string  = "600 600 -600 (mm)"
 
 ###########
 # Mapping #

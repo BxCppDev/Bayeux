@@ -576,6 +576,41 @@ material.ref : string = "iron"
 visibility.color : string = "red"
 
 
+#########################################################
+[name="SIB1.model" type="geomtools::simple_shaped_model"]
+
+#@config Configuration parameters for a foo geometry model
+
+#@description Shape build mode
+shape_build_mode : string = "factory"
+
+#@description The shape reference
+shape_ref : string = "SmallIntestineS3"
+
+# shape_type : string = "geomtools::intersection_3d"
+
+# shape.first_shape.name       : string = "SmallIntestineCube"
+# shape.second_shape.name      : string = "SmallIntestineCyl"
+# shape.second_shape.placement : string = "0.0 0.0 0.0 (cm)"
+
+##############
+# Visibility #
+##############
+
+#@description The recommended color for the display of the shape
+visibility.color : string = "red"
+
+############
+# Material #
+############
+
+#@description The name of the material the shape is made of
+material.ref : string = "water"
+
+# internal_item.labels : string[3] = \
+
+
+
 ########################################################
 [name="foo.model" type="geomtools::simple_shaped_model"]
 

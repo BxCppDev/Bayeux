@@ -9,6 +9,57 @@
 # We define here several 3D solid shapes (box, cylinder...)
 # with arbitrary dimensions.
 
+[name="SmallIntestineCube" type="geomtools::box"]
+
+x : real as length = 15.0 cm
+y : real as length = 40.0 cm
+z : real as length = 16.0 cm
+
+[name="SmallIntestineCyl" type="geomtools::cylinder"]
+
+r : real as length = 15.0 cm
+z : real as length = 20.0 cm
+
+
+[name="SmallIntestineBase" type="geomtools::intersection_3d"]
+# [name="SmallIntestineBase" type="geomtools::union_3d"]
+
+first_shape.name       : string = "SmallIntestineCyl"
+second_shape.name      : string = "SmallIntestineCube"
+second_shape.placement : string = "0.0 0.0 0.0 (cm)"
+
+
+[name="LargeIntestineHCyl" type="geomtools::cylinder"]
+
+r : real as length =  2.5 cm
+z : real as length = 22.0 cm
+
+
+[name="LargeIntestineVCyl" type="geomtools::cylinder"]
+
+r : real as length = 2.5 cm
+z : real as length = 15.0 cm
+
+
+[name="SmallIntestineS1" type="geomtools::subtraction_3d"]
+
+first_shape.name       : string = "SmallIntestineBase"
+second_shape.name      : string = "LargeIntestineVCyl"
+second_shape.placement : string = "0.0 -8.5 -2.0 (cm)"
+
+[name="SmallIntestineS2" type="geomtools::subtraction_3d"]
+
+first_shape.name       : string = "SmallIntestineS1"
+second_shape.name      : string = "LargeIntestineVCyl"
+second_shape.placement : string = "0.0 +8.5 -2.0 (cm)"
+
+[name="SmallIntestineS3" type="geomtools::subtraction_3d"]
+
+first_shape.name       : string = "SmallIntestineS2"
+second_shape.name      : string = "LargeIntestineHCyl"
+second_shape.placement : string = "0.0 0.0 5.0 (cm) / x 90 (degree)"
+
+
 [name="Cube1" type="geomtools::box"]
 
 x : real as length = 3.0 cm
