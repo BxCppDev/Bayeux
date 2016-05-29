@@ -25,6 +25,7 @@
 // - Bayeux/datatools:
 #include <datatools/units.h>
 #include <datatools/clhep_units.h>
+#include <datatools/utils.h>
 
 namespace mctools {
 
@@ -45,6 +46,35 @@ namespace mctools {
 
 
       return;
+    }
+
+    double units::get_default_unit_for_dimension(const std::string & unit_dimension_label_)
+    {
+      if (unit_dimension_label_.empty()) {
+        return 1.0;
+      }
+      if (unit_dimension_label_ == "length") {
+        return length_unit();
+      }
+      if (unit_dimension_label_ == "surface") {
+        return surface_unit();
+      }
+      if (unit_dimension_label_ == "volume") {
+        return volume_unit();
+      }
+      if (unit_dimension_label_ == "energy") {
+        return energy_unit();
+      }
+      if (unit_dimension_label_ == "time") {
+        return time_unit();
+      }
+      if (unit_dimension_label_ == "velocity") {
+        return velocity_unit();
+      }
+      if (unit_dimension_label_ == "density") {
+        return density_unit();
+      }
+      return datatools::invalid_real();
     }
 
     // static

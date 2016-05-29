@@ -1,5 +1,5 @@
 //! \file  mctools/mcnp/geometry/surface.cc
-//! \brief Description of MNCP surface
+//! \brief Description of MCNP surface
 //
 // Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
@@ -31,6 +31,7 @@
 
 // This project:
 #include <mctools/mcnp/format.h>
+#include <mctools/mcnp/units.h>
 
 namespace mctools {
 
@@ -143,6 +144,7 @@ namespace mctools {
 
       void surface::set_type(surface_type t_)
       {
+        // std::cerr << "DEVEL: surface::set_type: type_ == [" << t_ << "] " << std::endl;
         _type_ = t_;
         return;
       }
@@ -160,9 +162,10 @@ namespace mctools {
       void surface::print_card(std::ostream & out_, uint32_t flags_) const
       {
         DT_THROW_IF(!is_valid(), std::logic_error, "Invalid surface '" << _name_ << "'!");
+        // std::cerr << "DEVEL: surface::print_card: get_type() == [" << get_type() << "] " << std::endl;
 
-        if (flags_ & format::CARD_COMMENT) {
-          format::add_comment_line(out_, "Surface '" + get_name() + "' : " + surface_type_to_mcnp_label(get_type()) );
+        if (flags_ & ::mctools::mcnp::format::CARD_COMMENT) {
+          ::mctools::mcnp::format::add_comment_line(out_, "Surface '" + get_name() + "' : " + surface_type_to_mcnp_label(get_type()) );
         }
         std::ostringstream outss;
         int hskip = 0;
@@ -179,7 +182,11 @@ namespace mctools {
               << _id_;
         out_ << outss.str();
         out_ << " ";
-        out_ << surface_type_to_mcnp_label(get_type()) << std::endl;
+        out_ << surface_type_to_mcnp_label(get_type());
+        if (flags_ & ::mctools::mcnp::format::CARD_COMMENT) {
+          out_ << " $ " << surface_type_to_mcnp_description(get_type());
+        }
+        out_ << std::endl;
         for (int ipar = 0; ipar < (int) _parameters_.size(); ipar++) {
           const parameter_type & par = _parameters_[ipar];
           // if (ipar == 0) {
@@ -190,11 +197,15 @@ namespace mctools {
           out_ << std::left << std::setfill(' ') << std::setw(20);
           out_.precision(12);
           if (par.value.type() == typeid(double)) {
-            double value = boost::any_cast<double>(par.value);
+            double unit = ::mctools::mcnp::units::get_default_unit_for_dimension(par.dimension);
+            double value = boost::any_cast<double>(par.value) / unit;
             out_ << value;
           }
-          if (flags_ & format::CARD_COMMENT) {
+          if (flags_ & ::mctools::mcnp::format::CARD_COMMENT) {
             out_ << " $ " << par.name;
+            if (!par.dimension.empty()) {
+              out_ << " in MCNP " << par.dimension << " unit";
+            }
           }
           out_ << std::endl;
         }

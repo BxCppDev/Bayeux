@@ -21,6 +21,9 @@
 // Ourselves:
 #include <mctools/mcnp/geometry/surface_type.h>
 
+// // Standard library:
+// #include <iostream>
+
 namespace mctools {
 
   namespace mcnp {
@@ -29,36 +32,38 @@ namespace mctools {
 
       std::string surface_type_to_mcnp_label(surface_type t_)
       {
+        // std::cerr << "DEVEL: surface_type_to_mcnp_label: t_ == [" << t_ << "] " << std::endl;
         std::string label;
         switch(t_) {
-        SURF_PLANE           : label = "P"; break;
-        SURF_PLANE_X         : label = "PX"; break;
-        SURF_PLANE_Y         : label = "PY"; break;
-        SURF_PLANE_Z         : label = "PZ"; break;
-        SURF_GENERAL_SPHERE  : label = "S"; break;
-        SURF_SPHERE_O        : label = "SO"; break;
-        SURF_SPHERE_X        : label = "SX"; break;
-        SURF_SPHERE_Y        : label = "SY"; break;
-        SURF_SPHERE_Z        : label = "SZ"; break;
-        SURF_CYL_PARAL_X     : label = "C/X"; break;
-        SURF_CYL_PARAL_Y     : label = "C/Y"; break;
-        SURF_CYL_PARAL_Z     : label = "C/Z"; break;
-        SURF_CYL_AXIS_X      : label = "CX"; break;
-        SURF_CYL_AXIS_Y      : label = "CY"; break;
-        SURF_CYL_AXIS_Z      : label = "CZ"; break;
-        SURF_CONE_PARAL_X    : label = "K/X"; break;
-        SURF_CONE_PARAL_Y    : label = "K/Y"; break;
-        SURF_CONE_PARAL_Z    : label = "K/Z"; break;
-        SURF_CONE_AXIS_X     : label = "KX"; break;
-        SURF_CONE_AXIS_Y     : label = "KY"; break;
-        SURF_CONE_AXIS_Z     : label = "KZ"; break;
-        SURF_SPECIAL_QUADRIC : label = "SQ"; break;
-        SURF_GENERAL_QUADRIC : label = "GQ"; break;
-        SURF_TORUS_PARAL_X   : label = "TX"; break;
-        SURF_TORUS_PARAL_Y   : label = "TY"; break;
-        SURF_TORUS_PARAL_Z   : label = "TZ"; break;
-        SURF_BY_POINTS       : label = "XYZP"; break;
+        case SURF_PLANE           : label = "P"; break;
+        case SURF_PLANE_X         : label = "PX"; break;
+        case SURF_PLANE_Y         : label = "PY"; break;
+        case SURF_PLANE_Z         : label = "PZ"; break;
+        case SURF_GENERAL_SPHERE  : label = "S"; break;
+        case SURF_SPHERE_O        : label = "SO"; break;
+        case SURF_SPHERE_X        : label = "SX"; break;
+        case SURF_SPHERE_Y        : label = "SY"; break;
+        case SURF_SPHERE_Z        : label = "SZ"; break;
+        case SURF_CYL_PARAL_X     : label = "C/X"; break;
+        case SURF_CYL_PARAL_Y     : label = "C/Y"; break;
+        case SURF_CYL_PARAL_Z     : label = "C/Z"; break;
+        case SURF_CYL_AXIS_X      : label = "CX"; break;
+        case SURF_CYL_AXIS_Y      : label = "CY"; break;
+        case SURF_CYL_AXIS_Z      : label = "CZ"; break;
+        case SURF_CONE_PARAL_X    : label = "K/X"; break;
+        case SURF_CONE_PARAL_Y    : label = "K/Y"; break;
+        case SURF_CONE_PARAL_Z    : label = "K/Z"; break;
+        case SURF_CONE_AXIS_X     : label = "KX"; break;
+        case SURF_CONE_AXIS_Y     : label = "KY"; break;
+        case SURF_CONE_AXIS_Z     : label = "KZ"; break;
+        case SURF_SPECIAL_QUADRIC : label = "SQ"; break;
+        case SURF_GENERAL_QUADRIC : label = "GQ"; break;
+        case SURF_TORUS_PARAL_X   : label = "TX"; break;
+        case SURF_TORUS_PARAL_Y   : label = "TY"; break;
+        case SURF_TORUS_PARAL_Z   : label = "TZ"; break;
+        case SURF_BY_POINTS       : label = "XYZP"; break;
         }
+        // std::cerr << "DEVEL: surface_type_to_mcnp_label: label == '" << label << "' " << std::endl;
         return label;
       }
 
@@ -66,33 +71,33 @@ namespace mctools {
       {
         std::string name;
         switch(t_) {
-        SURF_PLANE           : name = "General plane"; break;
-        SURF_PLANE_X         : name = "Plane normal to X"; break;
-        SURF_PLANE_Y         : name = "Plane normal to Y"; break;
-        SURF_PLANE_Z         : name = "Plane normal to Z"; break;
-        SURF_GENERAL_SPHERE  : name = "General sphere"; break;
-        SURF_SPHERE_O        : name = "Sphere centered at origin"; break;
-        SURF_SPHERE_X        : name = "Sphere centered along the X axis"; break;
-        SURF_SPHERE_Y        : name = "Sphere centered along the Y axis"; break;
-        SURF_SPHERE_Z        : name = "Sphere centered along the Z axis"; break;
-        SURF_CYL_PARAL_X     : name = "Cylinder parallel to the X axis"; break;
-        SURF_CYL_PARAL_Y     : name = "Cylinder parallel to the Y axis"; break;
-        SURF_CYL_PARAL_Z     : name = "Cylinder parallel to the Z axis"; break;
-        SURF_CYL_AXIS_X      : name = "Cylinder along the X axis"; break;
-        SURF_CYL_AXIS_Y      : name = "Cylinder along the Y axis"; break;
-        SURF_CYL_AXIS_Z      : name = "Cylinder along the Z axis"; break;
-        SURF_CONE_PARAL_X    : name = "Cone parallel to the X axis"; break;
-        SURF_CONE_PARAL_Y    : name = "Cone parallel to the Y axis"; break;
-        SURF_CONE_PARAL_Z    : name = "Cone parallel to the Z axis"; break;
-        SURF_CONE_AXIS_X     : name = "Cone along the X axis"; break;
-        SURF_CONE_AXIS_Y     : name = "Cone along the Y axis"; break;
-        SURF_CONE_AXIS_Z     : name = "Cone along the Z axis"; break;
-        SURF_SPECIAL_QUADRIC : name = "Special ellipsoid/hyperboloid/paraboloid parallel to X/Y/Z axis"; break;
-        SURF_GENERAL_QUADRIC : name = "General cylinder/cone/ellipsoid/hyperboloid/paraboloid not parallel to X/Y/Z axis"; break;
-        SURF_TORUS_PARAL_X   : name = "Elliptical or circular torus parallel to X axis"; break;
-        SURF_TORUS_PARAL_Y   : name = "Elliptical or circular torus parallel to Y axis"; break;
-        SURF_TORUS_PARAL_Z   : name = "Elliptical or circular torus parallel to Z axis"; break;
-        SURF_BY_POINTS       : name = "Surface defined by points"; break;
+        case SURF_PLANE           : name = "General plane"; break;
+        case SURF_PLANE_X         : name = "Plane normal to X"; break;
+        case SURF_PLANE_Y         : name = "Plane normal to Y"; break;
+        case SURF_PLANE_Z         : name = "Plane normal to Z"; break;
+        case SURF_GENERAL_SPHERE  : name = "General sphere"; break;
+        case SURF_SPHERE_O        : name = "Sphere centered at origin"; break;
+        case SURF_SPHERE_X        : name = "Sphere centered along the X axis"; break;
+        case SURF_SPHERE_Y        : name = "Sphere centered along the Y axis"; break;
+        case SURF_SPHERE_Z        : name = "Sphere centered along the Z axis"; break;
+        case SURF_CYL_PARAL_X     : name = "Cylinder parallel to the X axis"; break;
+        case SURF_CYL_PARAL_Y     : name = "Cylinder parallel to the Y axis"; break;
+        case SURF_CYL_PARAL_Z     : name = "Cylinder parallel to the Z axis"; break;
+        case SURF_CYL_AXIS_X      : name = "Cylinder along the X axis"; break;
+        case SURF_CYL_AXIS_Y      : name = "Cylinder along the Y axis"; break;
+        case SURF_CYL_AXIS_Z      : name = "Cylinder along the Z axis"; break;
+        case SURF_CONE_PARAL_X    : name = "Cone parallel to the X axis"; break;
+        case SURF_CONE_PARAL_Y    : name = "Cone parallel to the Y axis"; break;
+        case SURF_CONE_PARAL_Z    : name = "Cone parallel to the Z axis"; break;
+        case SURF_CONE_AXIS_X     : name = "Cone along the X axis"; break;
+        case SURF_CONE_AXIS_Y     : name = "Cone along the Y axis"; break;
+        case SURF_CONE_AXIS_Z     : name = "Cone along the Z axis"; break;
+        case SURF_SPECIAL_QUADRIC : name = "Special ellipsoid/hyperboloid/paraboloid parallel to X/Y/Z axis"; break;
+        case SURF_GENERAL_QUADRIC : name = "General cylinder/cone/ellipsoid/hyperboloid/paraboloid not parallel to X/Y/Z axis"; break;
+        case SURF_TORUS_PARAL_X   : name = "Elliptical or circular torus parallel to X axis"; break;
+        case SURF_TORUS_PARAL_Y   : name = "Elliptical or circular torus parallel to Y axis"; break;
+        case SURF_TORUS_PARAL_Z   : name = "Elliptical or circular torus parallel to Z axis"; break;
+        case SURF_BY_POINTS       : name = "Surface defined by points"; break;
         }
         return name;
       }

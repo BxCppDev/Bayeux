@@ -23,6 +23,11 @@
 
 // Standard library:
 #include <string>
+#include <list>
+
+// Third party:
+// - Boost:
+#include <boost/tuple/tuple.hpp>
 
 namespace mctools {
 
@@ -67,6 +72,13 @@ namespace mctools {
 
       //! Return the MCNP surface name associated to a given surface type
       std::string surface_type_to_mcnp_description(surface_type);
+
+      typedef boost::tuple<std::string, std::string> param_desc_type;
+
+      typedef std::list<param_desc_type> expected_parameters_type;
+
+      // expected_parameters_type
+
 
     } // namespace geometry
 

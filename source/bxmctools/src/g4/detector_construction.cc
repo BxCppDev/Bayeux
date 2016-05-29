@@ -497,6 +497,7 @@ namespace mctools {
 
       // Automaticaly construct the geometry tree:
       G4VPhysicalVolume * world_physical_volume = 0;
+      // try {
       std::setlocale(LC_NUMERIC, "C");
       G4GDMLParser parser;
       parser.SetStripFlag(false);
@@ -507,6 +508,12 @@ namespace mctools {
         parser.Read("test_manager.gdml");
       }
       world_physical_volume = parser.GetWorldVolume();
+      // }
+      // catch (std::exception & g4_error) {
+      //   DT_LOG_FATAL(datatools::logger::PRIO_FATAL,
+      //                "GDML Parser failed: " << g4_error.what());
+      //   throw;
+      // }
 
       if (is_debug()) {
         DT_LOG_DEBUG(_logprio(), "G4LogicalVolumeStore: ");
@@ -1130,7 +1137,7 @@ namespace mctools {
 
           // Loop on the specified logical volumes and make them sensitive
           // with the new sensitive detector.
-          // Detect conflict(more than one sensitive detector per logical volume).
+          // Detect conflict (more than one sensitive detector per logical volume).
           for (std::vector<std::string>::const_iterator ilogical = logicals.begin();
                ilogical != logicals.end();
                ++ilogical) {

@@ -75,7 +75,7 @@ namespace mctools {
         //! Reset
         void reset();
 
-        //! Check if surface is valid
+        //! Check if universe is valid
         bool is_valid() const;
 
       };

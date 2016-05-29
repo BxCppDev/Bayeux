@@ -174,56 +174,9 @@ namespace mctools {
         std::string                _name_;        //!< Material name
         int                        _id_;          //!< Number of the material
         std::vector<nuclide_entry> _composition_; //!< Composition in term of nuclides
+        // double                     _rho_;         //!< Density
 
       };
-
-      /*
-      //! \brief Dictionary of materials
-      typedef std::map<int, material_ptr_type> material_dict_type;
-
-      //! \brief Store of materials
-      class material_store
-      {
-      public:
-
-        //! Default constructor
-        material_store();
-
-        //! Destructor
-        ~material_store();
-
-        //! Reset
-        void reset();
-
-        //! Check material by identifier
-        bool has_material(int id_) const;
-
-        //! Add a material with identifier
-        material & add_material(int id_);
-
-        //! Remove material with identifier
-        void remove_material(int id_);
-
-        //! Return the material pointer with identifier
-        const material_ptr_type & get(int id_) const;
-
-        //! Build from Bayeux/materials manager
-        void build_from_bxmaterials(const ::materials::manager &);
-
-        //! Print MCNP card
-        void print_card(std::ostream & out_, uint32_t flags_ = 0) const;
-
-        //! Build a material
-        bool build_material_from_bxmaterials(const ::materials::material & bxmat_,
-                                             material & mat_);
-
-      private:
-
-        material_dict_type _materials_; //!< Dictionary of materials
-
-      };
-
-      */
 
     } // namespace material
 

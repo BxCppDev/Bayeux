@@ -60,6 +60,9 @@ namespace mctools {
       //! Return the density unit
       static double density_unit();
 
+      //! Return the default unit associated to a given unit dimension label
+      static double get_default_unit_for_dimension(const std::string & unit_dimension_label_);
+
     };
 
   } // namespace mcnp

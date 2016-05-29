@@ -7,8 +7,9 @@
 #include <exception>
 
 // Third party:
-// // - Bayeux/mygsl:
-// #include <mygsl/rng.h>
+// - Bayeux/datatools:
+#include <datatools/units.h>
+#include <datatools/clhep_units.h>
 
 // This project:
 #include <mctools/mcnp/geometry/surface.h>
@@ -27,7 +28,7 @@ int main(int /* argc_ */, char ** /* argv_ */)
       plane.set_name("P");
       plane.set_id(6);
       plane.set_type(m2g::SURF_PLANE_X);
-      plane.add_parameter("d", 16.0);
+      plane.add_parameter("D", 16.0 * CLHEP::mm, "length");
       plane.print_card(std::clog, mctools::mcnp::format::CARD_COMMENT);
     }
 

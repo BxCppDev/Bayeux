@@ -107,11 +107,13 @@ namespace mctools {
         //! Add a parameter
         template <class ParamType>
         void add_parameter(const std::string & name_,
-                           const ParamType & value_)
+                           const ParamType & value_,
+                           const std::string & dimension_ = "")
         {
           parameter_type param;
           param.name = name_;
           param.value = value_;
+          param.dimension = dimension_;
           _parameters_.push_back(param);
           return;
         }
