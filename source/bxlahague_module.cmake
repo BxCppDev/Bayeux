@@ -28,11 +28,10 @@ endforeach()
 
 # - In place defs for module CMake variables...
 # - Versioning
-set(lahague_VERSION_MAJOR 1)
-set(lahague_VERSION_MINOR 0)
+set(lahague_VERSION_MAJOR 0)
+set(lahague_VERSION_MINOR 1)
 set(lahague_VERSION_PATCH 0)
 set(lahague_VERSION "${lahague_VERSION_MAJOR}.${lahague_VERSION_MINOR}.${lahague_VERSION_PATCH}")
-
 
 # - configure special source file
 configure_file(${module_source_dir}/_lahague.cc.in
