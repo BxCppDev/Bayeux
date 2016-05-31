@@ -21,55 +21,58 @@
 # along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
+if(NOT BAYEUX_ENABLE_TESTING)
+  return()
+endif()
+
 include(ExternalProject)
 
 #-----------------------------------------------------------------------
 # Basic example
-# - Requires support for internal dependencies in ExternalProject
-if(CMAKE_VERSION VERSION_GREATER 2.8.10.99)
-  ExternalProject_Add(Bayeux_BasicVersionCheck
-    DEPENDS Bayeux
-    LIST_SEPARATOR @
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxversioning
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ${CMAKE_COMMAND}
-    -DCMAKE_PREFIX_PATH=${Bayeux_BUILDPRODUCT_DIR}
-    <SOURCE_DIR>
-    BUILD_COMMAND     make VERBOSE=1
-    TEST_COMMAND      make test
-    INSTALL_COMMAND   ""
-    )
-endif()
+ExternalProject_Add(Bayeux_BasicVersionCheck
+  DEPENDS Bayeux
+  LIST_SEPARATOR @
+  SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxversioning
+  DOWNLOAD_COMMAND ""
+  CONFIGURE_COMMAND ${CMAKE_COMMAND}
+  -DCMAKE_PREFIX_PATH=${BAYEUX_BUILDPRODUCT_DIR}
+  -DBAYEUX_WITH_QT_GUI=${BAYEUX_WITH_QT_GUI}
+  -DBAYEUX_QT5_VERSION=${BAYEUX_QT5_VERSION}
+  <SOURCE_DIR>
+  BUILD_COMMAND     make VERBOSE=1
+  TEST_COMMAND      make test
+  INSTALL_COMMAND   ""
+  )
 
 #-----------------------------------------------------------------------
 # Basic example
-# - Requires support for internal dependencies in ExternalProject
-if(CMAKE_VERSION VERSION_GREATER 2.8.10.99)
-  ExternalProject_Add(Bayeux_BasicModulesCheck
-    DEPENDS Bayeux
-    LIST_SEPARATOR @
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxexample01
-    DOWNLOAD_COMMAND ""
-    CONFIGURE_COMMAND ${CMAKE_COMMAND}
-    -DCMAKE_PREFIX_PATH=${Bayeux_BUILDPRODUCT_DIR}
-    <SOURCE_DIR>
-    BUILD_COMMAND     make VERBOSE=1
-    TEST_COMMAND      make test
-    INSTALL_COMMAND   ""
-    )
-endif()
+ExternalProject_Add(Bayeux_BasicModulesCheck
+  DEPENDS Bayeux
+  LIST_SEPARATOR @
+  SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxexample01
+  DOWNLOAD_COMMAND ""
+  CONFIGURE_COMMAND ${CMAKE_COMMAND}
+  -DCMAKE_PREFIX_PATH=${BAYEUX_BUILDPRODUCT_DIR}
+  -DBAYEUX_WITH_QT_GUI=${BAYEUX_WITH_QT_GUI}
+  -DBAYEUX_QT5_VERSION=${BAYEUX_QT5_VERSION}
+  <SOURCE_DIR>
+  BUILD_COMMAND     make VERBOSE=1
+  TEST_COMMAND      make test
+  INSTALL_COMMAND   ""
+  )
 
 #-----------------------------------------------------------------------
-# MCTools/Geant4 testc
-# - Requires support for internal dependencies in ExternalProject
-if(CMAKE_VERSION VERSION_GREATER 2.8.10.99 AND Bayeux_BUILD_GEANT4_MODULE)
+# MCTools/Geant4 test
+if(BAYEUX_WITH_GEANT4_MODULE)
   ExternalProject_Add(Bayeux_MCToolsGeant4Check
     DEPENDS Bayeux Bayeux_mctools_geant4
     LIST_SEPARATOR @
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/examples/bxmctools_geant4
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ${CMAKE_COMMAND}
-    -DCMAKE_PREFIX_PATH=${Bayeux_BUILDPRODUCT_DIR}
+    -DCMAKE_PREFIX_PATH=${BAYEUX_BUILDPRODUCT_DIR}
+    -DBAYEUX_WITH_QT_GUI=${BAYEUX_WITH_QT_GUI}
+    -DBAYEUX_QT5_VERSION=${BAYEUX_QT5_VERSION}
     <SOURCE_DIR>
     BUILD_COMMAND     make VERBOSE=1
     TEST_COMMAND      make test

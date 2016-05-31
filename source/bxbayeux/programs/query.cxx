@@ -83,16 +83,6 @@ int main(int argc_, char * argv_[])
        ->zero_tokens(),
        "Print data base directory. \n"
        )
-      ("docdir",
-       bpo::value<bool>()
-       ->zero_tokens(),
-       "Print documentation base directory.  \n"
-       )
-      ("exampledir",
-       bpo::value<bool>()
-       ->zero_tokens(),
-       "Print example base directory.  \n"
-       )
       ("resourcedir",
        bpo::value<bool>()
        ->zero_tokens(),
@@ -107,18 +97,6 @@ int main(int argc_, char * argv_[])
        bpo::value<std::string>()
        ->value_name("[module]"),
        "Print the description of a Bayeux's module. \n"
-       )
-      ("has-doc",
-       bpo::value<bool>()
-       ->zero_tokens(),
-       "Print 1 if Bayeux was built with documentation, \n"
-       "else print 0. \n"
-       )
-      ("has-examples",
-       bpo::value<bool>()
-       ->zero_tokens(),
-       "Print 1 if Bayeux was installed with examples, \n"
-       "else print 0. \n"
        )
       ("has-geant4-module",
        bpo::value<bool>()
@@ -171,32 +149,6 @@ int main(int argc_, char * argv_[])
       bool incdir = vm["incdir"].as<bool>();
       if (incdir) {
         std::cout << bayeux::get_prefix_dir() << '/' << "include" << std::endl;
-      }
-    } else if (vm.count("has-doc")) {
-      bool has_doc = vm["has-doc"].as<bool>();
-      if (has_doc) {
-        std::cout << BAYEUX_WITH_DOCS << std::endl;
-      }
-    } else if (vm.count("docdir")) {
-      bool docdir = vm["docdir"].as<bool>();
-      if (docdir) {
-        DT_THROW_IF (! BAYEUX_WITH_DOCS,
-                     std::logic_error,
-                     "Bayeux's documentation is not installed !");
-        std::cout << bayeux::get_doc_dir() << std::endl;
-      }
-    } else if (vm.count("has-examples")) {
-      bool has_examples = vm["has-examples"].as<bool>();
-      if (has_examples) {
-        std::cout << BAYEUX_WITH_EXAMPLES << std::endl;
-      }
-    } else if (vm.count("exampledir")) {
-      bool exdir = vm["exampledir"].as<bool>();
-      if (exdir) {
-        DT_THROW_IF (! BAYEUX_WITH_EXAMPLES,
-                     std::logic_error,
-                     "Bayeux's examples are not installed !");
-        std::cout << bayeux::get_example_dir() << std::endl;
       }
     } else if (vm.count("resourcedir")) {
       bool incdir = vm["resourcedir"].as<bool>();

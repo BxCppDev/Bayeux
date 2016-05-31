@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # Post-install script:
 
-bxocd_build_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_DOCUMENTATION_DIR@/API/html"
-bxocd_home_url="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_DOCUMENTATION_DIR@/API/html/index.html"
+bxocd_build_dir="@BAYEUX_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@BAYEUX_DOCUMENTATION_DIR@/API/html"
+bxocd_home_url="@BAYEUX_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@BAYEUX_DOCUMENTATION_DIR@/API/html/index.html"
 bxpandoc_exe="@Pandoc_EXECUTABLE@"
-bxpandoc_data_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@Bayeux_RESOURCE_DIR@/datatools/OCD/pandoc"
-bxocd_manual_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_manual"
-bxocd_sort_classnames_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_sort_classnames.py"
-bx_lib_dir="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_LIBDIR@"
-bxocd_make_doc_exe="@Bayeux_BUILDPRODUCT_DIR@/bin/bxocd_make_doc"
+bxpandoc_data_dir="@BAYEUX_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_DATAROOTDIR@/@BAYEUX_RESOURCE_DIR@/datatools/OCD/pandoc"
+bxocd_manual_exe="@BAYEUX_BUILDPRODUCT_DIR@/bin/bxocd_manual"
+bxocd_sort_classnames_exe="@BAYEUX_BUILDPRODUCT_DIR@/bin/bxocd_sort_classnames.py"
+bx_lib_dir="@BAYEUX_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_LIBDIR@"
+bxocd_make_doc_exe="@BAYEUX_BUILDPRODUCT_DIR@/bin/bxocd_make_doc"
 add_opts=
 with_g4=@_bxgeant4@
-export PATH="@Bayeux_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_BINDIR@:${PATH}"
+export PATH="@BAYEUX_BUILDPRODUCT_DIR@/@CMAKE_INSTALL_BINDIR@:${PATH}"
 
 add_opts="${add_opts} --load-dll \"Bayeux@${bx_lib_dir}\" "
 add_opts="${add_opts} --namespace datatools "
@@ -29,7 +29,7 @@ if [ ${with_g4} -eq 1 ]; then
     add_opts="${add_opts} --load-dll \"Bayeux_mctools_geant4@${bx_lib_dir}\" "
     add_opts="${add_opts} --namespace mctools::g4 "
 fi
-bxtmp_dir=@CMAKE_BINARY_DIR@/OCD_Temporary
+bxtmp_dir=@PROJECT_BINARY_DIR@/OCD_Temporary
 if [ ! -d ${bxtmp_dir} ]; then
     mkdir -p ${bxtmp_dir}
 fi

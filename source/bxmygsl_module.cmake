@@ -22,7 +22,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(mygsl_VERSION_MAJOR 6)
-set(mygsl_VERSION_MINOR 0)
+set(mygsl_VERSION_MINOR 1)
 set(mygsl_VERSION_PATCH 0)
 set(mygsl_VERSION "${mygsl_VERSION_MAJOR}.${mygsl_VERSION_MINOR}.${mygsl_VERSION_PATCH}")
 set(MYGSL_WITH_BIO ON)
@@ -32,11 +32,9 @@ set(MYGSL_WITH_BIO ON)
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/best_value.h
   ${module_include_dir}/${module_name}/best_value.ipp
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/constants.h
   ${module_include_dir}/${module_name}/datapoint.h
   ${module_include_dir}/${module_name}/datapoint.ipp
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/error.h
   ${module_include_dir}/${module_name}/math.h
   ${module_include_dir}/${module_name}/fft_real.h
@@ -87,8 +85,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/rng.h
   ${module_include_dir}/${module_name}/seed_manager.h
   ${module_include_dir}/${module_name}/tabulated_function.h
-  ${module_include_dir}/${module_name}/the_serializable.h
-  ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/von_neumann_method.h
   ${module_include_dir}/${module_name}/version.h.in
   )

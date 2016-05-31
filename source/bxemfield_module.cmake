@@ -21,7 +21,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(emfield_VERSION_MAJOR 2)
-set(emfield_VERSION_MINOR 0)
+set(emfield_VERSION_MINOR 1)
 set(emfield_VERSION_PATCH 0)
 set(emfield_VERSION "${emfield_VERSION_MAJOR}.${emfield_VERSION_MINOR}.${emfield_VERSION_PATCH}")
 

@@ -1,6 +1,6 @@
 # - Specify location of Doxygen HTML directory and tagfile
 #
 get_filename_component(__bayeux_docs_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
-get_filename_component(Bayeux_DOXYGEN_HTML_DIR "${__bayeux_docs_config_dir}/@Bayeux_DOXYGEN_HTML_DIR_RELATIVE@" ABSOLUTE)
-get_filename_component(Bayeux_DOXYGEN_TAGFILE "${__bayeux_docs_config_dir}/@Bayeux_DOXYGEN_TAGFILE_RELATIVE@" ABSOLUTE)
+get_filename_component(Bayeux_DOXYGEN_HTML_DIR "${__bayeux_docs_config_dir}/@BAYEUX_DOXYGEN_HTML_DIR_RELATIVE@" ABSOLUTE)
+get_filename_component(Bayeux_DOXYGEN_TAGFILE "${__bayeux_docs_config_dir}/@BAYEUX_DOXYGEN_TAGFILE_RELATIVE@" ABSOLUTE)
 

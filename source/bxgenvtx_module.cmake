@@ -23,7 +23,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(genvtx_VERSION_MAJOR 5)
-set(genvtx_VERSION_MINOR 0)
+set(genvtx_VERSION_MINOR 1)
 set(genvtx_VERSION_PATCH 0)
 set(genvtx_VERSION "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_VERSION_PATCH}")
 set(GENVTX_WITH_BIO 1)
@@ -36,6 +36,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/sphere_vg.h
   ${module_include_dir}/${module_name}/from_file_vg.h
   ${module_include_dir}/${module_name}/i_vertex_generator.h
+  ${module_include_dir}/${module_name}/i_from_model_vg.h
   ${module_include_dir}/${module_name}/placement_vg.h
   ${module_include_dir}/${module_name}/quadrangle_random_tools.h
   ${module_include_dir}/${module_name}/spot_vertex_generator.h
@@ -64,6 +65,7 @@ set(${module_name}_MODULE_HEADERS
 
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/i_vertex_generator.cc
+  ${module_source_dir}/i_from_model_vg.cc
   ${module_source_dir}/spot_vertex_generator.cc
   ${module_source_dir}/from_file_vg.cc
   ${module_source_dir}/placement_vg.cc
@@ -120,6 +122,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_ring_random_tools.cxx
   ${module_test_dir}/test_manager.cxx
   ${module_test_dir}/test_vertex_validation.cxx
+  ${module_test_dir}/test_dummy_vg.cxx
   )
 
 # - Applications
@@ -133,12 +136,12 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
+if(BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/genvtx_mkskelcfg.in
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenvtx_mkskelcfg @ONLY)
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenvtx_mkskelcfg @ONLY)
 
   install(FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenvtx_mkskelcfg
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenvtx_mkskelcfg
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS

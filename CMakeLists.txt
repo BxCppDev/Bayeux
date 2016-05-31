@@ -36,231 +36,121 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 #-----------------------------------------------------------------------
-# If the user specifies -DCMAKE_BUILD_TYPE on the command line, take their definition
-# and dump it in the cache along with proper documentation, otherwise set CMAKE_BUILD_TYPE
-# to Release prior to calling PROJECT()
-#
-IF(DEFINED CMAKE_BUILD_TYPE)
-   SET(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Choose the type of build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.")
-ELSE()
-   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.")
-ENDIF()
-
-#-----------------------------------------------------------------------
 # CMake/project requirements and configuration
 #
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
-# If Policy CMP0022 exists, use OLD because Bayeux still needs
-# to support versions of CMake < 2.8.12.
-# This relates to LINK_INTERFACE_LIBRARIES and can be removed once
-# minimum required CMake version reaches 2.8.12
-if(POLICY CMP0022)
-  cmake_policy(SET CMP0022 OLD)
-endif()
-
-project(Bayeux)
+cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+project(Bayeux VERSION "2.1.0")
 
 # - Load Custom Modules
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
+
+#-----------------------------------------------------------------------
+# Additional SVN Revision tracking for developers
 include(SVNUtilities)
-
-# - Versioning
-set(Bayeux_VERSION_MAJOR 2)
-set(Bayeux_VERSION_MINOR 0)
-set(Bayeux_VERSION_PATCH 1)
-set(Bayeux_VERSION "${Bayeux_VERSION_MAJOR}.${Bayeux_VERSION_MINOR}.${Bayeux_VERSION_PATCH}")
-
-# - Enforce all warnings, but ensure other flags are retained
-# Note that the added flags *won't* show up in the cache.
-# TODO : better way to do this with the "Make Override" system?
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  # Developers may need to mute warnings in order to track easily
-  # error and warning messages mixed up in the output stream with
-  # multi-threaded build. So we make this compiler flag an option,
-  # activated by default for a production build:
-  option(Bayeux_FORCE_CXX_ALL_WARNINGS "Force all C++ compiler warnings" ON)
-  if (Bayeux_FORCE_CXX_ALL_WARNINGS)
-    set(Bayeux_CXX_FLAGS "-W -Wall")
-    ### set(Bayeux_CXX_FLAGS "-W -Wall -Woverloaded-virtual")
-  endif()
-
-  # On clang, need larger template depth
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(Bayeux_CXX_FLAGS "${Bayeux_CXX_FLAGS} -ftemplate-depth=512")
-  endif()
-elseif(CMAKE_CXX_COMPILER MATCHES "icpc.*|icc.*")
-  # Needs more testing
-  set(Bayeux_CXX_FLAGS "-w2")
-endif()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Bayeux_CXX_FLAGS}")
-
-# - SVN Versioning, if available
 set(Bayeux_VERSION_REVISION 0)
 
 Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
-
 if(Bayeux_DIRECTORY_IS_WC)
   Subversion_WC_INFO(${PROJECT_SOURCE_DIR} Bayeux)
   set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
 endif()
 
-# - Standard UNIX Tool install paths, including relative paths for use
-# by applications requiring resources
-# Validate that certain paths are relative, otherwise relocation may fail
-include(GNUInstallDirs)
-foreach(_dir BINDIR LIBDIR INCLUDEDIR DATAROOTDIR)
-  if(IS_ABSOLUTE "${CMAKE_INSTALL_${_dir}}")
-    message(FATAL_ERROR "Absolute path for CMAKE_INSTALL_${_dir} not allowed")
-  endif()
-endforeach()
+#-----------------------------------------------------------------------
+# Include main settings file
+#
+include(BXCMakeSettings)
 
-# Add a path for CMake config files
-set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
-set(CMAKE_INSTALL_FULL_CMAKEDIR ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+# - Write compiler workaround header for features:
+#    cxx_thread_local           - OS X doesn't currently provide this
+#    cxx_attribute_deprecated   - C++14, but easy workaround for lesser standards
+include(WriteCompilerDetectionHeader)
+write_compiler_detection_header(
+  FILE "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/bayeux/datatools/compiler_detection.h"
+  PREFIX "DT"
+  EPILOG "#include \"datatools/compiler_macros.h\""
+  COMPILERS GNU Clang AppleClang MSVC
+  FEATURES cxx_thread_local cxx_attribute_deprecated
+  )
 
-
-# - Configure output paths for products to give inplace build that roughly
-#   matches install layout.
-#   We allow a parent project to change the output root so that Bayeux
-#   can be embedded in another project
-if(NOT Bayeux_EMBEDDED OR NOT Bayeux_BUILDPRODUCT_DIR)
-  set(Bayeux_BUILDPRODUCT_DIR "${PROJECT_BINARY_DIR}/BuildProducts")
+#-----------------------------------------------------------------------
+# Optional IWYU support
+option(BAYEUX_WITH_IWYU_CHECK "Run include-what-you-use on Bayeux sources" OFF)
+if(BAYEUX_WITH_IWYU_CHECK)
+  find_program(IWYU_EXECUTABLE
+    NAMES include-what-you use iwyu
+    DOC "Path to include-what-you-use-executable"
+    )
 endif()
-
-file(RELATIVE_PATH Bayeux_BINDIR_TO_RESOURCEDIR "${CMAKE_INSTALL_FULL_BINDIR}"  "${CMAKE_INSTALL_FULL_DATAROOTDIR}/Bayeux-${Bayeux_VERSION}")
-file(RELATIVE_PATH Bayeux_CMAKEDIR_TO_INCLUDEDIR "${CMAKE_INSTALL_FULL_CMAKEDIR}/Bayeux-${Bayeux_VERSION}"  "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
-
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 #-----------------------------------------------------------------------
 # Option for building/installing developer tools
 #
-option(Bayeux_BUILD_DEVELOPER_TOOLS "Build/install developer tools" ON)
-mark_as_advanced(Bayeux_BUILD_DEVELOPER_TOOLS)
+option(BAYEUX_WITH_DEVELOPER_TOOLS "Build/install developer tools" ON)
+mark_as_advanced(BAYEUX_WITH_DEVELOPER_TOOLS)
 
 #-----------------------------------------------------------------------
-# Use implicit Bayeux init/fini instruction
+# Optional dosimetry module
 #
-option(Bayeux_BUILD_IMPLICIT_INIT_FINI "Build implicit init/fini code for Bayeux" OFF)
-mark_as_advanced(Bayeux_BUILD_IMPLICIT_INIT_FINI)
-
-if (Bayeux_BUILD_IMPLICIT_INIT_FINI)
-  set(BAYEUX_WITH_IMPLICIT_INIT_FINI 1)
-else()
-  set(BAYEUX_WITH_IMPLICIT_INIT_FINI 0)
-endif()
+option(BAYEUX_WITH_LAHAGUE "Build Bayeux/lahague library module" OFF)
+mark_as_advanced(BAYEUX_WITH_LAHAGUE)
 
 #-----------------------------------------------------------------------
-# Option for enabling Geant4 module
+# Option for enabling Geant4 extension library module
 #
-option(Bayeux_BUILD_GEANT4_MODULE "Build Geant4 Monte-Carlo module (mctools/g4)" ON)
-mark_as_advanced(Bayeux_BUILD_GEANT4_MODULE)
+option(BAYEUX_WITH_GEANT4_MODULE "Build Bayeux/mctools Geant4 Monte-Carlo module" ON)
+mark_as_advanced(BAYEUX_WITH_GEANT4_MODULE)
 
-if (Bayeux_BUILD_GEANT4_MODULE)
-  set(BAYEUX_WITH_GEANT4_MODULE 1)
-else()
-  set(BAYEUX_WITH_GEANT4_MODULE 0)
-endif()
+#-----------------------------------------------------------------------
+# Option for enabling MCNP extension library module
+#
+option(BAYEUX_WITH_MCNP_MODULE "Build Bayeux/mctools MCNP Monte-Carlo module" OFF)
+mark_as_advanced(BAYEUX_WITH_MCNP_MODULE)
 
 #-----------------------------------------------------------------------
 # Option for enabling Qt GUI components
 #
-option(Bayeux_BUILD_QT_GUI "Build Qt-based GUI components" OFF)
-mark_as_advanced(Bayeux_BUILD_QT_GUI)
-if (Bayeux_BUILD_QT_GUI)
-  set(BAYEUX_WITH_QT_GUI 1)
-else()
-  set(BAYEUX_WITH_QT_GUI 0)
+option(BAYEUX_WITH_QT_GUI "Build Qt-based GUI components" OFF)
+mark_as_advanced(BAYEUX_WITH_QT_GUI)
+if (BAYEUX_WITH_QT_GUI)
+  # Minimal system Qt5 version from Ubuntu 14.04:
+  set(BAYEUX_QT5_VERSION "5.2.1")
+  # Qt5 version from cadfaelbrew (but conflict with system installation
+  # on Ubuntu 14.04 when running examples):
+  # set(BAYEUX_QT5_VERSION "5.6.0")
 endif()
 
 #-----------------------------------------------------------------------
 # Configure testing if required
 #
-option(Bayeux_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)
-mark_as_advanced(Bayeux_ENABLE_TESTING)
+option(BAYEUX_ENABLE_TESTING "Build unit testing system for Bayeux" OFF)
 
-if(Bayeux_ENABLE_TESTING)
+# - If testing required, *must* call enable_testing here!!
+if(BAYEUX_ENABLE_TESTING)
   enable_testing()
 endif()
 
 #-----------------------------------------------------------------------
-# - Parent subdirectory of all Bayeux data files: define the Bayeux_TAG variable:
-set(Bayeux_TAG "Bayeux-${Bayeux_VERSION}")
-
-#-----------------------------------------------------------------------
-# - Resource subdirectory: define the Bayeux_RESOURCE_DIR variable:
-set(Bayeux_RESOURCE_DIR "${Bayeux_TAG}/resources")
-
-#-----------------------------------------------------------------------
-# - Example subdirectory: define the Bayeux_EXAMPLE_DIR variable:
-set(Bayeux_EXAMPLE_DIR "${Bayeux_TAG}/examples")
-
-#-----------------------------------------------------------------------
-# - Documentation subdirectory: define the Bayeux_DOCUMENTATION_DIR:
-set(Bayeux_DOCUMENTATION_DIR "${Bayeux_TAG}/Documentation")
-
-#-----------------------------------------------------------------------
 # Optional for enabling documentation
 #
-set(Bayeux_DOCEXPORT_DIR "${PROJECT_BINARY_DIR}/doc")
-
-option(Bayeux_BUILD_DOCS "Build Bayeux documentation products" ON)
-mark_as_advanced(Bayeux_BUILD_DOCS)
-
-if(Bayeux_BUILD_DOCS)
-  set(BAYEUX_WITH_DOCS 1)
-else()
-  set(BAYEUX_WITH_DOCS 0)
-endif()
-
-if (Bayeux_BUILD_DOCS)
-  #-----------------------------------------------------------------------
-  # Build OCD documentation for Bayeux's classes
-  option(Bayeux_BUILD_OCD_DOCS "Build OCD documentation" ON)
-  mark_as_advanced(Bayeux_BUILD_OCD_DOCS)
-
-  if(Bayeux_BUILD_OCD_DOCS)
-    set(BAYEUX_WITH_OCD_DOCS 1)
-  else()
-    set(BAYEUX_WITH_OCD_DOCS 0)
-  endif()
-
-endif()
-
-#-----------------------------------------------------------------------
-# Optional for installing examples
-#
-option(Bayeux_WITH_EXAMPLES "Install Bayeux with examples" ON)
-mark_as_advanced(Bayeux_WITH_EXAMPLES)
-
-if(Bayeux_WITH_EXAMPLES)
-  set(BAYEUX_WITH_EXAMPLES 1)
-else()
-  set(BAYEUX_WITH_EXAMPLES 0)
-endif()
+include(CMakeDependentOption)
+option(BAYEUX_WITH_DOCS "Build Bayeux documentation products" ON)
+cmake_dependent_option(BAYEUX_WITH_DOCS_OCD "Build Plugin Module documentation" OFF "BAYEUX_WITH_DOCS" OFF)
+mark_as_advanced(BAYEUX_WITH_DOCS BAYEUX_WITH_DOCS_OCD)
 
 #-----------------------------------------------------------------------
 # Build the subdirectories
 #
 add_subdirectory(source)
 add_subdirectory(doc)
-
-if(Bayeux_ENABLE_TESTING)
-  add_subdirectory(examples)
-endif()
+add_subdirectory(examples)
 
 #-----------------------------------------------------------------------
 # Install common resources
-install(DIRECTORY ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATAROOTDIR}/${Bayeux_TAG}
+install(DIRECTORY ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_TAG}
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   )
 
 #-----------------------------------------------------------------------
 # Package Sources and Binaries - only if not embedded
 #
-if(NOT Bayeux_EMBEDDED)
-  include(BXCPack)
-endif()
+include(BXCPack)

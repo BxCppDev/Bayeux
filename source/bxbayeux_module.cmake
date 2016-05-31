@@ -60,7 +60,7 @@ configure_file(${module_source_dir}/BayeuxBinReloc.c.in
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/bayeux.cc
-  ${module_source_dir}/the_introspectable.cc
+  # ${module_source_dir}/the_introspectable.cc
   bx${module_name}/_bayeux.cc
   bx${module_name}/reloc.cc
   bx${module_name}/${module_name}/BayeuxBinReloc.h
@@ -69,27 +69,12 @@ set(${module_name}_MODULE_SOURCES
 
 set(${module_name}_ENDING_MODULE_SOURCES )
 
-set(BAYEUX_WITH_QT_GUI 0)
-if (Bayeux_BUILD_QT_GUI)
-  set(BAYEUX_WITH_QT_GUI 1)
-endif()
-
 # - Publish headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})
   string(REGEX REPLACE "\\.in$" "" _hdrout "${_hdrin}")
   string(REGEX REPLACE "^${module_include_dir}" "${MODULE_HEADER_ROOT}" _hdrout "${_hdrout}")
   configure_file(${_hdrin} ${_hdrout} @ONLY)
 endforeach()
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/..
-  ${CMAKE_CURRENT_BINARY_DIR}/bx${module_name}
-  )
-
-if (Bayeux_BUILD_IMPLICIT_INIT_FINI)
-  list(APPEND ${module_name}_ENDING_MODULE_SOURCES
-    bx${module_name}/_init_fini.cc
-    )
-endif()
 
 # - Applications
 set(${module_name}_MODULE_APPS
@@ -107,8 +92,6 @@ foreach(_rfin ${${module_name}_MODULE_RESOURCES})
 endforeach()
 
 # - Unit tests
-# set(Bayeux_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
-# set(${module_name}_TEST_ENVIRONMENT ${Bayeux_TEST_ENVIRONMENT})
 set(${module_name}_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS

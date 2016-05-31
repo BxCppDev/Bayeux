@@ -23,7 +23,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(brio_VERSION_MAJOR 6)
-set(brio_VERSION_MINOR 0)
+set(brio_VERSION_MINOR 1)
 set(brio_VERSION_PATCH 0)
 set(brio_VERSION "${brio_VERSION_MAJOR}.${brio_VERSION_MINOR}.${brio_VERSION_PATCH}")
 
@@ -54,18 +54,18 @@ set(${module_name}_MODULE_SOURCES
   )
 
 # - Generate ROOT headers
-#root_generate_dictionary("${module_include_dir}/${module_name}/detail/brio_record.h;${module_include_dir}/${module_name}/detail/TArrayCMod.h"
-#  "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
-#  "${PROJECT_BINARY_DIR}/brio_dict.cc"
-#  "${module_include_dir}"
-#  )
-#list(APPEND ${module_name}_MODULE_SOURCES ${PROJECT_BINARY_DIR}/brio_dict.cc)
 root_generate_dictionary(brio_dict
   ${module_include_dir}/${module_name}/detail/brio_record.h
   ${module_include_dir}/${module_name}/detail/TArrayCMod.h
   LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
+  OPTIONS "-I${module_include_dir}"
   )
 list(APPEND ${module_name}_MODULE_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx)
+if(CMAKE_CXX_COMPILER_ID MATCHES "(Apple)+Clang")
+  set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/brio_dict.cxx
+    PROPERTY COMPILE_FLAGS "-Wno-keyword-macro -Wno-c++11-long-long"
+    )
+endif()
 
 # - Published headers
 foreach(_hdrin ${${module_name}_MODULE_HEADERS})

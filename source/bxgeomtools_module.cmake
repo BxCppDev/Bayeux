@@ -25,7 +25,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(geomtools_VERSION_MAJOR 5)
-set(geomtools_VERSION_MINOR 0)
+set(geomtools_VERSION_MINOR 1)
 set(geomtools_VERSION_PATCH 0)
 set(geomtools_VERSION "${geomtools_VERSION_MAJOR}.${geomtools_VERSION_MINOR}.${geomtools_VERSION_PATCH}")
 
@@ -37,21 +37,17 @@ set(GEOMTOOLS_WITH_ROOT_DISPLAY 1)
 
 # - Readline (for the bxgeomtools_inspector application)
 find_package(Readline QUIET)
-if (Readline_FOUND)
-  # message (STATUS "bxgeomtools: Found readline library...")
-  # message (STATUS "bxgeomtools: Readline_INCLUDE_DIR = '${Readline_INCLUDE_DIR}' ")
-  # message (STATUS "bxgeomtools: Readline_LIBRARIES   = '${Readline_LIBRARIES}' ")
+if(Readline_FOUND)
   set(GEOMTOOLS_WITH_READLINE 1)
-else()
-  message (STATUS "bxgeomtools: Readline library not found!")
 endif()
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/address_set.h
+  ${module_include_dir}/${module_name}/angular_range.h
+  ${module_include_dir}/${module_name}/angular_range.ipp
   ${module_include_dir}/${module_name}/base_hit.h
   ${module_include_dir}/${module_name}/base_hit.ipp
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/blur_spot.h
   ${module_include_dir}/${module_name}/blur_spot.ipp
   ${module_include_dir}/${module_name}/box.h
@@ -70,7 +66,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/cylindrical_sector.h
   ${module_include_dir}/${module_name}/cylinder.h
   ${module_include_dir}/${module_name}/cylindric_extrusion_boxed_model.h
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/manager-inl.h
   ${module_include_dir}/${module_name}/detail/model_tools.h
   ${module_include_dir}/${module_name}/disk.h
@@ -173,8 +168,6 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/tessellation.h
   ${module_include_dir}/${module_name}/triangle.h
   ${module_include_dir}/${module_name}/quadrangle.h
-  ${module_include_dir}/${module_name}/the_serializable.h
-  ${module_include_dir}/${module_name}/the_serializable.ipp
   ${module_include_dir}/${module_name}/tube.h
   ${module_include_dir}/${module_name}/union_3d.h
   ${module_include_dir}/${module_name}/units.h
@@ -190,29 +183,28 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/base_hit-reflect.h
   ${module_include_dir}/${module_name}/blur_spot-reflect.h
   ${module_include_dir}/${module_name}/clhep-reflect.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/geom_id-reflect.h
   ${module_include_dir}/${module_name}/i_placement-reflect.h
   ${module_include_dir}/${module_name}/placement-reflect.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
-  ${module_include_dir}/${module_name}/the_introspectable.h
   ${module_include_dir}/${module_name}/utils-reflect.h
   ${module_include_dir}/${module_name}/resource.h
   ${module_include_dir}/${module_name}/overlapping.h
   ${module_include_dir}/${module_name}/model_with_internal_mesh_tools.h
   ${module_include_dir}/${module_name}/simple_polygon.h
   ${module_include_dir}/${module_name}/wall_solid.h
+  ${module_include_dir}/${module_name}/quadric.h
+  ${module_include_dir}/${module_name}/point_on_quadric_finder.h
+  ${module_include_dir}/${module_name}/foot_point_on_quadric_finder.h
+  ${module_include_dir}/${module_name}/toroid_nappe.h
+  #${module_include_dir}/${module_name}/torus.h
   )
-
-# - configure resources
-configure_file(${module_source_dir}/resource.cc.in
-               bx${module_name}/resource.cc)
 
 # - NB Order of sources appears to be important - taken from geomtools
 #   listing. Note that the_serializable.cc is added manually - not
 #   totally clear this is in the right place...
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/base_hit.cc
+  ${module_source_dir}/angular_range.cc
   ${module_source_dir}/blur_spot.cc
   ${module_source_dir}/address_set.cc
   ${module_source_dir}/extruded_box.cc
@@ -329,7 +321,13 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/model_with_internal_mesh_tools.cc
   ${module_source_dir}/simple_polygon.cc
   ${module_source_dir}/wall_solid.cc
-  bx${module_name}/resource.cc
+  ${module_source_dir}/quadric.cc
+  ${module_source_dir}/point_on_quadric_finder.cc
+  ${module_source_dir}/foot_point_on_quadric_finder.cc
+  ${module_source_dir}/toroid_nappe.cc
+  #${module_source_dir}/torus.cc
+  ${module_source_dir}/the_introspectable.cc
+  ${module_source_dir}/resource.cc
   )
 
 # - Published headers
@@ -344,6 +342,7 @@ set(${module_name}_TEST_ENVIRONMENT "GEOMTOOLS_RESOURCE_DIR=${module_resource_di
 
 set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_address_set.cxx
+  ${module_test_dir}/test_angular_range.cxx
   ${module_test_dir}/test_base_hit.cxx
   ${module_test_dir}/test_blur_spot.cxx
   ${module_test_dir}/test_box.cxx
@@ -422,6 +421,8 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_wires.cxx
   ${module_test_dir}/test_wires_2.cxx
   ${module_test_dir}/test_wall_solid.cxx
+  ${module_test_dir}/test_quadric.cxx
+  ${module_test_dir}/test_toroid_nappe.cxx
   )
 
 # - Applications
@@ -455,12 +456,12 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
+if(BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/geomtools_mkskelcfg.in
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg @ONLY)
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg @ONLY)
 
   install(FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgeomtools_mkskelcfg
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS

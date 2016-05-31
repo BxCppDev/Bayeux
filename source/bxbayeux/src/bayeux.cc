@@ -21,15 +21,19 @@
 // along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 
 // Standard library
-#include <iostream>
+#include <cstdlib>
 
 // Ourselves
-#include <bayeux/bayeux_config.h>
+#include <bayeux/bayeux_config.h> // IWYU pragma: keep
 #include <bayeux/bayeux.h>
 
 // This project
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
+
+// Third party
+#include <boost/smart_ptr/scoped_ptr.hpp>
+
 
 // Tests
 // #include <datatools/kernel.h>
@@ -49,20 +53,7 @@ namespace bayeux {
       // Special initialization code:
       ::bayeux::_special_initialize_impl();
 
-      // Tests :
-      // datatools::kernel & krnl = datatools::kernel::instance();
-      // if (krnl.has_library_info_register()) {
-      //   datatools::library_info & lib_info_reg
-      //     = krnl.grab_library_info_register();
-      //   lib_info_reg.tree_dump(std::cerr, "bayeux::initialize: Before special initialize", "DEVEL: ");
-      // }
-
       _init = true;
-    } else {
-#if BAYEUX_WITH_IMPLICIT_INIT_FINI == 0
-      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                     "Attempt to initialize the already initialized Bayeux library !");
-#endif
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
@@ -80,11 +71,6 @@ namespace bayeux {
       // Wrap datatools kernel termination:
       ::datatools::terminate();
       _terminate = true;
-    } else {
-#if BAYEUX_WITH_IMPLICIT_INIT_FINI == 0
-      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                     "Attempt to terminate the already terminated Bayeux library !");
-#endif
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;

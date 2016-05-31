@@ -2,8 +2,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2014 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2014 by Université de Caen
+// Copyright (c) 2014-2016 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2014-2016 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -21,43 +21,46 @@
 // along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 
 // Standard library
-#include <string>
+#include <iostream>
+#include <stdexcept>
 
 // This package
 #include <bayeux/bayeux_config.h>
 #include <bayeux/bayeux.h>
 #include <bayeux/version.h>
 
-// Submodules version & resource
+// Submodules version & resource management
+#include <datatools/exception.h>
+#include <datatools/logger.h>
+#include <datatools/properties.h>
 #include <datatools/version.h>
 #include <datatools/resource.h>
 #include <datatools/datatools_config.h>
 
-#include <cuts/version.h>
+// This project:
 
+#include <cuts/version.h>
+#include <brio/version.h>
+#include <dpp/version.h>
 #include <materials/version.h>
 #include <materials/resource.h>
 #include <materials/materials_config.h>
-
 #include <mygsl/version.h>
-
 #include <geomtools/version.h>
 #include <geomtools/resource.h>
 #include <geomtools/geomtools_config.h>
-
 #include <emfield/version.h>
-
 #include <genbb_help/version.h>
 #include <genbb_help/resource.h>
 #include <genbb_help/genbb_help_config.h>
-
 #include <genvtx/version.h>
-
-#include <brio/version.h>
-
-#include <dpp/version.h>
-
 #include <mctools/version.h>
+
+#if BAYEUX_WITH_LAHAGUE == 1
+#include <lahague/version.h>
+#include <lahague/resource.h>
+#include <lahague/lahague_config.h>
+#endif // BAYEUX_WITH_LAHAGUE == 1
 
 // This package
 #include <datatools/kernel.h>
@@ -94,7 +97,6 @@ namespace bayeux {
       lib_info_reg.registration("cuts",
                                 "Generic tools for making arbitrary data selections.",
                                 cuts::version::get_version());
-
       // materials:
       datatools::properties & materials_lib_infos
         = lib_info_reg.registration("materials",
@@ -108,12 +110,10 @@ namespace bayeux {
       materials_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                        std::string(MATERIALS_ENV_RESOURCE_DIR)
                                        );
-
       // mygsl:
       lib_info_reg.registration("mygsl",
                                 "C++ wrapper and extensions to the GNU Scientific Library.",
                                 mygsl::version::get_version());
-
       // geomtools:
       datatools::properties & geomtools_lib_infos
         = lib_info_reg.registration("geomtools",
@@ -127,22 +127,18 @@ namespace bayeux {
       geomtools_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                        std::string(GEOMTOOLS_ENV_RESOURCE_DIR)
                                        );
-
       // emfield:
       lib_info_reg.registration("emfield",
                                 "Electromagnetic field modelling and management.",
                                 emfield::version::get_version());
-
       // brio:
       lib_info_reg.registration("brio",
                                 "A Boost over ROOT I/O serialization system (extends datatools).",
                                 brio::version::get_version());
-
       // dpp:
       lib_info_reg.registration("dpp",
                                 "A basic data processing pipeline API.",
                                 dpp::version::get_version());
-
       // genbb_help:
       datatools::properties & genbb_help_lib_infos
         = lib_info_reg.registration("genbb_help",
@@ -156,16 +152,29 @@ namespace bayeux {
       genbb_help_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                         std::string(GENBB_HELP_ENV_RESOURCE_DIR)
                                         );
-
       // genvtx:
       lib_info_reg.registration("genvtx",
                                 "Vertex random generator tools for input to simulation applications.",
                                 genvtx::version::get_version());
-
       // mctools::
       lib_info_reg.registration("mctools",
                                 "Monte-Carlo utilities with a Geant4 interface.",
                                 mctools::version::get_version());
+
+#if BAYEUX_WITH_LAHAGUE == 1
+      // LaHague:
+      datatools::properties & lahague_lib_infos
+        = lib_info_reg.registration("lahague",
+                                    "Dosimetry and radioprotection tools.",
+                                    lahague::version::get_version()
+                                    );
+      lahague_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+                                     lahague::get_resource_dir(false)
+                                     );
+      lahague_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
+                                     std::string(LAHAGUE_ENV_RESOURCE_DIR)
+                                     );
+#endif // BAYEUX_WITH_LAHAGUE == 1
 
       // bayeux:
       datatools::properties& bayeux_lib_infos = lib_info_reg.registration("bayeux",
@@ -191,7 +200,7 @@ namespace bayeux {
       bayeux_lib_infos.store_integer(datatools::library_info::keys::version_patch(),
                                      bayeux::version::get_patch());
       bayeux_lib_infos.store_string(datatools::library_info::keys::modules(),
-                                    "@Bayeux_SUBMODULES@");
+                                    "@BAYEUX_SUBMODULES@");
       bayeux_lib_infos.store_string(datatools::library_info::keys::url(),
                                     "https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux");
       bayeux_lib_infos.store_string(datatools::library_info::keys::authors(),
@@ -222,25 +231,49 @@ namespace bayeux {
         // from the kernel's library info register:
         if (lib_info_reg.has("bayeux")) lib_info_reg.unregistration("bayeux");
 
+#if BAYEUX_WITH_LAHAGUE == 1
+        if (lib_info_reg.has("lahague")) lib_info_reg.unregistration("lahague");
+#endif // BAYEUX_WITH_LAHAGUE == 1
+
+#if BAYEUX_WITH_MCTOOLS == 1
         if (lib_info_reg.has("mctools")) lib_info_reg.unregistration("mctools");
+#endif // BAYEUX_WITH_MCTOOLS == 1
 
+#if BAYEUX_WITH_GENVTX == 1
         if (lib_info_reg.has("genvtx")) lib_info_reg.unregistration("genvtx");
+#endif // BAYEUX_WITH_GENVTX == 1
 
+#if BAYEUX_WITH_GENBB_HELP == 1
         if (lib_info_reg.has("genbb_help")) lib_info_reg.unregistration("genbb_help");
+#endif // BAYEUX_WITH_GENBB_HELP == 1
 
+#if BAYEUX_WITH_DPP == 1
         if (lib_info_reg.has("dpp")) lib_info_reg.unregistration("dpp");
+#endif // BAYEUX_WITH_DPP == 1
 
+#if BAYEUX_WITH_BRIO == 1
         if (lib_info_reg.has("brio")) lib_info_reg.unregistration("brio");
+#endif // BAYEUX_WITH_BRIO == 1
 
+#if BAYEUX_WITH_EMFIELD == 1
         if (lib_info_reg.has("emfield")) lib_info_reg.unregistration("emfield");
+#endif // BAYEUX_WITH_EMFIELD == 1
 
+#if BAYEUX_WITH_GEOMTOOLS == 1
         if (lib_info_reg.has("geomtools")) lib_info_reg.unregistration("geomtools");
+#endif // BAYEUX_WITH_GEOMTOOLS == 1
 
+#if BAYEUX_WITH_MYGSL == 1
         if (lib_info_reg.has("mygsl")) lib_info_reg.unregistration("mygsl");
+#endif // BAYEUX_WITH_MYGSL == 1
 
+#if BAYEUX_WITH_MATERIALS == 1
         if (lib_info_reg.has("materials")) lib_info_reg.unregistration("materials");
+#endif // BAYEUX_WITH_MATERIALS == 1
 
+#if BAYEUX_WITH_CUTS == 1
         if (lib_info_reg.has("cuts")) lib_info_reg.unregistration("cuts");
+#endif // BAYEUX_WITH_CUTS == 1
 
         if (lib_info_reg.has("datatools")) lib_info_reg.unregistration("datatools");
       }

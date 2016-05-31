@@ -24,7 +24,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(genbb_help_VERSION_MAJOR 6)
-set(genbb_help_VERSION_MINOR 0)
+set(genbb_help_VERSION_MINOR 1)
 set(genbb_help_VERSION_PATCH 0)
 set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_VERSION_PATCH}")
 
@@ -34,7 +34,6 @@ set(GENBB_HELP_WITH_REFLECTION 1)
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
-  ${module_include_dir}/${module_name}/bio_guard.h
   ${module_include_dir}/${module_name}/genbb_macros.h
   ${module_include_dir}/${module_name}/genbb_mgr.h
   ${module_include_dir}/${module_name}/genbb_utils.h
@@ -46,6 +45,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/primary_event.h
   ${module_include_dir}/${module_name}/primary_particle.h
   ${module_include_dir}/${module_name}/single_particle_generator.h
+  ${module_include_dir}/${module_name}/combined_particle_generator.h
   ${module_include_dir}/${module_name}/save_to_file_wrapper.h
   ${module_include_dir}/${module_name}/lorentz_boost_wrapper.h
   ${module_include_dir}/${module_name}/from_file_generator.h
@@ -62,29 +62,12 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/pdg_particle_tools.h
   ${module_include_dir}/${module_name}/primary_event.ipp
   ${module_include_dir}/${module_name}/primary_particle.ipp
-  ${module_include_dir}/${module_name}/the_serializable.ipp
-  ${module_include_dir}/${module_name}/the_serializable.h
-  ${module_include_dir}/${module_name}/genbb_help.h
   ${module_include_dir}/${module_name}/genbb_help_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
-  ${module_include_dir}/${module_name}/detail/bio_link_guard.h
   ${module_include_dir}/${module_name}/detail/pg_tools.h
   ${module_include_dir}/${module_name}/primary_particle-reflect.h
   ${module_include_dir}/${module_name}/primary_event-reflect.h
-  ${module_include_dir}/${module_name}/the_introspectable.h
-  ${module_include_dir}/${module_name}/reflection_guard.h
-  ${module_include_dir}/${module_name}/detail/reflection_link_guard.h
   ${module_include_dir}/${module_name}/resource.h
-  )
-
-# - configure special source file
-configure_file(${module_source_dir}/_genbb_help.cc.in
-  bx${module_name}/_genbb_help.cc
-  )
-
-# - configure resources
-configure_file(${module_source_dir}/resource.cc.in
-  bx${module_name}/resource.cc
   )
 
 set(${module_name}_LEGACY_DECAY0_MODULE_HEADERS
@@ -278,7 +261,6 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/manager.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/the_serializable.cc
-  ${module_source_dir}/genbb_help.cc
   ${module_source_dir}/decay0/Ac228.cc
   ${module_source_dir}/decay0/alpha.cc
   ${module_source_dir}/decay0/Am241.cc
@@ -428,9 +410,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/decay0/Zn65.cc
   ${module_source_dir}/decay0/Zr92low.cc
   ${module_source_dir}/decay0/Zr96.cc
-  bx${module_name}/resource.cc
-  bx${module_name}/_genbb_help.cc
-  #${module_source_dir}/the_introspectable.cc
+  ${module_source_dir}/the_introspectable.cc
+  ${module_source_dir}/resource.cc
   )
 
 # - Publish public headers only
@@ -535,12 +516,12 @@ set(${module_name}_MODULE_EXAMPLES
   )
 
 # - Utility script:
-if (Bayeux_BUILD_DEVELOPER_TOOLS)
+if(BAYEUX_WITH_DEVELOPER_TOOLS)
   configure_file(${module_app_dir}/genbb_mkskelcfg.in
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg @ONLY)
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg @ONLY)
 
   install(FILES
-    ${Bayeux_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg
+    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxgenbb_mkskelcfg
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS

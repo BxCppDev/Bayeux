@@ -55,6 +55,7 @@ Authors {#bxmainpage_authors}
   - Xavier Garrido (LAL, CNRS/IN2P3, Université Paris-Sud, Orsay, France)
   - Benoit Guillon (LPC Caen, CNRS/IN2P3, ENSICAEN, Caen, France)
   - Ben Morgan (The University of Warwick, Coventry, United Kingdom)
+  - Arnaud Chapon (CERAP, France)
 
 Acknowlegments {#bxmainpage_acknowlegments}
 ==============

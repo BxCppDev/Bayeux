@@ -3,7 +3,7 @@ Bayeux C++ Library for Experimental Particle/Nuclear Physics
 ============================================================
 
 :Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    2015-09-16
+:Date:    2016-03-16
 
 .. contents::
    :depth: 3
@@ -12,13 +12,18 @@ Bayeux C++ Library for Experimental Particle/Nuclear Physics
 About Bayeux
 ============
 
-Bayeux provides a collection of C++ classes and functions designed for
+.. _Bayeux: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux
+
+Bayeux_ provides a collection of C++ classes and functions designed for
 the  simulation,  recording  and  analysis of  data  for  experimental
 particle  and nuclear  physics projects.  This functionality  is split
 into several specialized submodules:
 
 - datatools :  Serializable data  structures based  on Boost  and core
    utilities.
+
+- brio  :  A  Boost  over   ROOT  I/O  serialization  system  (extends
+   datatools).
 
 - cuts : Generic tools for making arbitrary data selections.
 
@@ -27,15 +32,12 @@ into several specialized submodules:
 
 - mygsl : C++ wrapper and extensions to the GNU Scientific Library.
 
+- dpp : A basic data processing pipeline API.
+
 - geomtools : Generic tools for working with experiment geometries and
    provide input to simulation tools (i.e. GDML/Geant4).
 
 - emfield : Electromagnetic field modelling and management.
-
-- brio  :  A  Boost  over   ROOT  I/O  serialization  system  (extends
-   datatools).
-
-- dpp : A basic data processing pipeline API.
 
 - genbb_help : C++ port and  extensions to the Decay0/GENBB program by
    Vladimir Tretyak, for input to simulation applications.
@@ -44,7 +46,9 @@ into several specialized submodules:
    applications.
 
 - mctools : Utilities for particle and nuclear physics simulation with
-   a Geant4 interface.
+   an optional Geant4 interface.
+
+- lahague : Utilities for dosimetry and radioprotection.
 
 
 
@@ -55,8 +59,8 @@ Bayeux is  named thus  because it weaves  together several  threads of
 software developed in Normandy ;-).
 
 The use of the Bayeux name and logo (an extract of the lower frieze of
-the Bayeux Tapestry) have been  courteously authorized by the mayor of
-the  city  of Bayeux  in December  2014  at  the condition  the  Bayeux
+the Bayeux Tapestry) have been  courteously authorized by the Mayor of
+the  City of  Bayeux  in December  2014 at  the  condition the  Bayeux
 software tools are distributed under an open source software license.
 
 
@@ -70,9 +74,9 @@ conditions of use of Bayeux.
 Bayeux contains some code extracted  from the *Kitware System* library
 (OSI-approved BSD License),  the *BinReloc* library (Do  What The Fuck
 You Want To Public License, Version  2) and the *EOS portable archive*
-library (Boost Software License). Vladimir Tretyak has accepted that the
-C++ wrapper and port of the original GENBB/DECAY0 library is published
-under the GPL 3 within Bayeux.
+library (MIT License). Vladimir Tretyak  has accepted that
+the  C++ wrapper  and port  of  the original  GENBB/DECAY0 library  is
+published under the GPL 3 within Bayeux.
 
 
 Getting Help
@@ -83,47 +87,51 @@ of its submodules, please contact the SuperNEMO Software Working Group
 via  the  main   development  website  https://nemo.lpc-caen.in2p3.fr/
 (protected access, only available to authorized collaborators).
 
-You may ask to be registered in one of the protected Bayeux  users diffusion
-lists:
+You may  ask to  be registered  in one of  the protected  Bayeux users
+diffusion lists:
 
  * ``bayeux-users-l@in2p3.fr`` : general,
  * ``bayeux-geometry-l@in2p3.fr`` : dedicated to geometry modelling,
  * ``bayeux-simulation-l@in2p3.fr`` : dedicated to simulation and the Geant4 module.
 
-Please contact the Bayeux team at bayeux@lpccaen.in2p3.fr (in English or French).
+Please contact the Bayeux  team at bayeux@lpccaen.in2p3.fr (in English
+or French).
 
 
 
 Getting Bayeux
 ===============
 
-You can obtain the Bayeux source code from the main LPC Caen Subversion
-repository.
+You  can  obtain  the  Bayeux  source code  from  the  main  LPC  Caen
+Subversion repository.
 
-For example, to download Bayeux version 1.0.0, you may use:
+For example, to download Bayeux version 2.1.0, you may use:
 
 .. code:: sh
 
     $ cd ${HOME}
     $ mkdir -p ${HOME}/Software/Bayeux/Source
     $ cd ${HOME}/Software/Bayeux/Source
-    $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/tags/Bayeux-1.0.0 Bayeux-1.0.0
+    $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/tags/Bayeux-2.1.0 Bayeux-2.1.0
 
-The ``${HOME}/Software/Bayeux/Source/Bayeux-1.0.0`` source directory is thus created.
+The  ``${HOME}/Software/Bayeux/Source/Bayeux-2.1.0`` source  directory
+is thus created.
 
-If you want to download the development version (possibly unstable), use:
+If you want  to download the development  version (possibly unstable),
+use:
 
 .. code:: sh
 
     $ svn co [--username <your login>] https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/trunk Bayeux-trunk
 
-The ``${HOME}/Software/Bayeux/Source/Bayeux-trunk`` source directory is thus created.
+The  ``${HOME}/Software/Bayeux/Source/Bayeux-trunk`` source  directory
+is thus created.
 
-You can now  create a dedicated directory to  build Bayeux 1.0.0 (or *trunk*)
-following  the   guidelines  in   the  *Installing Bayeux*  section
-below.  Note that  different  versions of  Bayeux  may have slightly different
-build/installation   procedures,   so   you   should   read   carefully   the
-``README.rst`` file supplied with the source code.
+You can  now create a  dedicated directory  to build Bayeux  2.1.0 (or
+*trunk*) following  the guidelines in the  *Installing Bayeux* section
+below.   Note that  different  versions of  Bayeux  may have  slightly
+different build/installation procedures, so  you should read carefully
+the ``README.rst`` file supplied with the source code.
 
 
 Preparing Your System for Bayeux Installation
@@ -137,7 +145,7 @@ Prerequisite Software
 -  **UNIX Operating System**:
 
    -  Linux
-   -  Mac OS X 10.7 (Lion) or higher
+   -  Mac OS X 10.9 (Mavericks) or higher
 
 We expect  Bayeux to  work on  most modern BSD  based Unices  or Linux
 distributions  derived from  Fedora(RedHat)  and  Debian provided  the
@@ -152,13 +160,13 @@ though support will be on a best effort basis.
 
 -  **Core Software Required**:
 
-   -  CMake 2.8.0 or higher: http://www.cmake.org
+   -  CMake 3.3.0 or higher: http://www.cmake.org
    -  C/C++ compiler supporting at least C++03 standard
       (GNU/Clang/Intel)
 
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
-clusters) may  not provide CMake  2.8. If this  is the case,  then you
+clusters) may  not provide CMake  3.3. If this  is the case,  then you
 should download the latest Linux *binary .sh* file from:
 
 -  http://www.cmake.org/cmake/resources/software.html
@@ -177,7 +185,7 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 
 -  **Core Libraries Required**
 
-   -  Boost 1.53.0 or higher: http://www.boost.org
+   -  Boost 1.55.0 or higher: http://www.boost.org
        - with serialization, filesystem, system libraries.
    -  Camp 0.7.1 : https://github.com/tegesoft/camp
    -  GSL 1.15 or higher: http://www.gnu.org/s/gsl
@@ -191,14 +199,18 @@ clicking on the Downloads tab, and then installing Command Line Tools.
        * GDML,
        * OpenGL.
 
-For ease of use, LPC Caen provides the Cadfael SDK which bundles these
-libraries for  easy use by Bayeux  and clients of Bayeux.  You can use
-this bundle, or, at your discretion,  your own, or system, installs of
-these packages.
+For ease of use, the  SuperNEMO collaboration provides the Cadfaelbrew_
+SDK which bundles  these libraries for easy use by  Bayeux and clients
+of  Bayeux.  It  is  strongly  advised to  use  this  bundle. It  will
+provide, for Linux  and Mac systems, an  uniform software environement
+with a selected set of blessed software, including the C++ compiler.
+
+.. _Cadfael: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael
+.. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/brew
 
 -  **Additional Software Required**
 
-    - datatools requires the Qt4 library when the ``Bayeux_BUILD_QT_GUI``
+    - datatools requires the Qt4 library when the ``BAYEUX_WITH_QT_GUI``
       option is set.
 
       On Ubuntu 14.04, this implies the installation of the following packages:
@@ -215,7 +227,7 @@ these packages.
 
 		$ sudo apt-get install gnuplot gnuplot-doc gnuplot-mode
 
-   - geomtools uses the Readline library, if available:
+   - datatools and geomtools uses the Readline library, if available:
 
       * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
       * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
@@ -226,15 +238,24 @@ these packages.
 
 		$ sudo apt-get install libreadline-dev readline-common
 
-   - pandoc is useful to generate documentation in user friendly format:
-     http://johnmacfarlane.net/pandoc/
+   - pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
+     documentation in user friendly format:
+
+      On Ubuntu 14.04, this implies  the installation of the following
+      packages:
+
+      .. code:: sh
+
+	 $ sudo apt-get install pandoc pandoc-data
+
+   - docutils  (http://docutils.sourceforge.net/)  is also  useful  to
+     generate documentation from ReST format in user friendly format:
 
       On Ubuntu 14.04, this implies the installation of the following packages:
 
       .. code:: sh
 
-		$ sudo apt-get install pandoc pandoc-data
-
+	 $ sudo apt-get install docutils-common docutils-doc python-docutils
 
 
 Known Issues on Tested Platforms
@@ -297,37 +318,108 @@ to deal with the following three in most cases:
 
 -  ``CMAKE_BUILD_TYPE``
 
-   -  Build type, e.g. Release, Debug. You  will want this to be set to
-      Release in most  cases. Debug builds are only needed  if you are
-      needing  to  follow  debugging  symbols into  one  of  Cadfael's
-      binaries. It defaults to Release, so you will not need to change
-      it in most cases.
+   - Build type, e.g. ``Release``, ``Debug``. You will want this to be
+      set  to ``Release``  in most  cases. ``Debug``  builds are  only
+      needed if you  are needing to follow debugging  symbols into one
+      of Cadfael's binaries.  It defaults to ``Release``,  so you will
+      not need to change it in most cases.
 
 Bayeux Configuration Options
 ----------------------------
 
 These options control the core configuration of Bayeux.
 
--  ``Bayeux_ENABLE_TESTING``
+-  ``BAYEUX_CXX_STANDARD``
 
-   -  Build the collection of Bayeux's test programs. Default is OFF.
+   - Select the C++  Standard to compile against. Recognized values are:
 
--  ``Bayeux_WITH_GEANT4``
+     * ``98`` (default) : complete C++98 standard
+     * ``11`` : all features of the C++11 standard in GCC 4.9 (provided
+       for forward compatibility)
+     * ``14``  :  same  as  ``11``  plus at  least  one  C++14  feature
+       (provided for forward compatibility)
 
-   -  Build the Bayeux/mctools Geant4 extension module. Default is OFF.
+-  ``BAYEUX_COMPILER_ERROR_ON_WARNING``
 
--  ``Bayeux_WITH_EXAMPLES``
+   - Turn warnings into errors. Default is ON.
 
-   -  Install the Bayeux example projects. Default is ON.
+-  ``BAYEUX_WITH_IWYU_CHECK``
 
--  ``Bayeux_BUILD_DOCS``
+   - Run include-what-you-use on Bayeux sources. Default is OFF.
 
-   -  Build and install the documentation. Default is OFF.
-
--  ``Bayeux_BUILD_DEVELOPER_TOOLS``
+-  ``BAYEUX_WITH_DEVELOPER_TOOLS``
 
    -  Build and install additional tools for developers and *normal* users.
-      Default is OFF.
+      Default is ON.
+
+-  ``BAYEUX_WITH_BRIO``
+
+   - Build the Bayeux/brio library module. Default is ON.
+
+-  ``BAYEUX_WITH_CUTS``
+
+   - Build the Bayeux/cuts library module. Default is ON.
+
+-  ``BAYEUX_WITH_MYGSL``
+
+   - Build the Bayeux/mygsl library module. Default is ON.
+
+-  ``BAYEUX_WITH_DPP``
+
+   - Build the Bayeux/dpp library module. Default is ON.
+
+-  ``BAYEUX_WITH_MATERIALS``
+
+   - Build the Bayeux/materials library module. Default is ON.
+
+-  ``BAYEUX_WITH_GEOMTOOLS``
+
+   - Build the Bayeux/geomtools library module. Default is ON.
+
+-  ``BAYEUX_WITH_EMFIELD``
+
+   - Build the Bayeux/emfield library module. Default is ON.
+
+-  ``BAYEUX_WITH_GENBB_HELP``
+
+   - Build the Bayeux/genbb_help library module. Default is ON.
+
+-  ``BAYEUX_WITH_GENVTX``
+
+   - Build the Bayeux/genvtx library module. Default is ON.
+
+-  ``BAYEUX_WITH_MCTOOLS``
+
+   - Build the Bayeux/mctools library module. Default is ON.
+
+-  ``BAYEUX_WITH_GEANT4_MODULE``
+
+   - Build the Bayeux/mctools Geant4 library extension module. Default is ON.
+
+-  ``BAYEUX_WITH_MCNP_MODULE``
+
+   - Build the Bayeux/mctools MCNP library extension module (experimental). Default is OFF.
+
+-  ``BAYEUX_WITH_LAHAGUE``
+
+   - Build the Bayeux/lahague library module. Default is OFF.
+
+-  ``BAYEUX_WITH_QT_GUI``
+
+   - Build the Qt-based GUI components. Default is OFF.
+
+-  ``BAYEUX_ENABLE_TESTING``
+
+   -  Build unit testing system for Bayeux. Default is OFF.
+
+-  ``BAYEUX_WITH_DOCS``
+
+   -  Build Bayeux documentation products. Default is ON.
+
+-  ``BAYEUX_WITH_DOCS_OCD``
+
+   -  Build OCD documentation. Default is OFF. Implies ``BAYEUX_WITH_DOCS``.
+
 
 Building and Installing
 -----------------------
@@ -402,13 +494,10 @@ though many scientific software projects (badly mis)use it.
 To do
 =====
 
-* Implement support for configuration variants in the datatools module
-  (through  the datatools::properties  and datatools::multi_properties
-  classes).
 * Implement support for radioactive decays  using ENSDF from Geant4 in
   the genbb_help module.
-* Implement support  for mapped electromagnetic fields  in the emfield
-  module.
+* Implement the Bayeux/mctools MCNP extension library module and companion tools.
+* Implement the Bayeux/datatools bxvariant_inspector application.
 
 
 Acknowledgements
@@ -417,13 +506,14 @@ Acknowledgements
 The authors gratefully thank the following persons for their direct or
 indirect contributions to the Bayeux library:
 
-* Vladimir  Tretyak  is  the   author  of  the  original  *Decay0/GENBB*
+* Vladimir  Tretyak  is  the  author of  the  original  *Decay0/GENBB*
   generator  (written in  Fortran 77)  from  which large  part of  the
   genbb_help module is derived.
 * Christian Pfligersdorffer  is the author of  the Boost/Serialization
-  *based portable  binary archive* classes  which is supported  by the
-  I/O system of the datatools and brio modules.
-* Nicolas Devillard and Rajarshi Guha are the authors of the *Gnuplot pipe*
-  library that is embedded in geomtools.
-* Sylvette Lemagnen (Curator at the Bayeux Museum) and Patrick Gomont (mayor of the city of Bayeux)
-  for their authorization for the library's name and logo.
+  *portable  binary archive*  classes which  is supported  by the  I/O
+  *system of the datatools and brio modules.
+* Nicolas Devillard and Rajarshi Guha  are the authors of the *Gnuplot
+  pipe* library that is embedded in geomtools.
+* Sylvette Lemagnen (Curator at the  Bayeux Museum) and Patrick Gomont
+  (Mayor  of the  City  of  Bayeux) for  their  authorization for  the
+  library's name and logo.
