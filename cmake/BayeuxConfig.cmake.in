@@ -89,10 +89,10 @@ find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
 if(Bayeux_HAS_QT)
   # Make sure targets like "Qt5::Core", ... "Qt5::Svg" are recognized
   # in client package
-  find_package(Qt5Core REQUIRED)
-  find_package(Qt5Widgets REQUIRED)
-  find_package(Qt5Gui REQUIRED)
-  find_package(Qt5Svg REQUIRED)
+  find_package(Qt5Core @Qt5Core_VERSION@ EXACT REQUIRED PATHS "@Qt5Core_DIR@")
+  find_package(Qt5Widgets @Qt5Widgets_VERSION@ EXACT REQUIRED PATHS "@Qt5Widgets_DIR@")
+  find_package(Qt5Gui @Qt5Gui_VERSION@ EXACT REQUIRED PATHS "@Qt5Gui_DIR@")
+  find_package(Qt5Svg @Qt5Svg_VERSION@ EXACT REQUIRED PATHS "@Qt5Svg_DIR@")
 endif()
 
 #-----------------------------------------------------------------------
