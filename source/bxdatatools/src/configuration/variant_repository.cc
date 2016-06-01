@@ -732,7 +732,10 @@ namespace datatools {
       datatools::properties mgr_config;
       std::string mgr_config_filename = registry_manager_config_;
       datatools::fetch_path_with_env(mgr_config_filename);
-      datatools::properties::read_config(mgr_config_filename, mgr_config);
+      uint32_t options = 0;
+      // options = datatools::properties::config::RESOLVE_PATH;
+      options = datatools::properties::config::FORBID_VARIANTS;
+      datatools::properties::read_config(mgr_config_filename, mgr_config, options);
       if (!top_variant_name_.empty()) {
         // Force its top variant name if missing:
         mgr_ptr->set_top_variant_name(top_variant_name_);
