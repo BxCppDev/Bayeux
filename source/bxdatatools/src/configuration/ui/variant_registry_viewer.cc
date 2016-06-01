@@ -176,11 +176,13 @@ namespace datatools {
         //_registry_name_display_label_->setStyle(QStyleFactory::create("cleanlooks"));
         _registry_name_display_label_->setStyleSheet("QLabel { background-color : white; }");
         _registry_name_display_label_->setFrameStyle(QFrame::Sunken | QFrame::StyledPanel);
-        if (_registry_tree_model_->get_registry().has_display_name()) {
-          _registry_name_display_label_->setText(QString::fromStdString(_registry_tree_model_->get_registry().get_display_name()));
-        } else if (_registry_tree_model_->get_registry().has_name()) {
+        // if (_registry_tree_model_->get_registry().has_display_name()) {
+        //   _registry_name_display_label_->setText(QString::fromStdString(_registry_tree_model_->get_registry().get_display_name()));
+        // } else
+        if (_registry_tree_model_->get_registry().has_name()) {
           _registry_name_display_label_->setText(QString::fromStdString(_registry_tree_model_->get_registry().get_name()));
         }
+
         if (_registry_tree_model_->get_registry().has_terse_description()) {
           _registry_name_display_label_->setToolTip(QString::fromStdString(_registry_tree_model_->get_registry().get_terse_description()));
         }
