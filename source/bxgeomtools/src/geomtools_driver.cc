@@ -1226,7 +1226,7 @@ namespace geomtools {
         std::string option = token;
         if (option  == "-h" || option  == "--help") {
           out_ << "  Usage: \n";
-          out_ << "    display [OPTIONS...] [NAME] \n"
+          out_ << "    display [options...] [id] \n"
                << "\n";
           out_ << "  Options: \n";
           out_ << "    -h  | --help                Print this help\n"
@@ -1237,9 +1237,9 @@ namespace geomtools {
                << "    -3f | --visu-view-3d-free   Use 3D view (free scale)\n"
                << "    -e  | --force-show-envelope Force the display of volume envelope\n"
                << "    -E  | --force-hide-envelope Disable the display of volume envelope\n"
-               << "    -c  | --force-show-children Force the display of children volumes\n"
-               << "    -C  | --force-hide-children Disable the display of children volumes\n"
-               << "    -dd | --with-display-data   Display data are included in the scene.n"
+               << "    -c  | --force-show-children Force the display of daughter volume(s)\n"
+               << "    -C  | --force-hide-children Disable the display of daughter volume(s)\n"
+               << "    -dd | --with-display-data   Display data are included in the scene.\n"
                << "                                This works only with GID objects rendering.\n"
                << "    -DD | --without-display-data \n"
                << "                                Display data are not included in the scene\n"
@@ -1247,9 +1247,9 @@ namespace geomtools {
                << "    -L  | --no-labels           Do not display axis with labels\n"
                << "    -t  | --title               Display image title\n"
                << "    -T  | --no-title            Do not display image title\n"
-               << "    -o  | --output OUT_FILE     Print in the 'OUT_FILE' file\n"
-               << "    -g  | --add-rendering-option TAG\n"
-               << "                                Add shape rendering option labelled TAG.\n"
+               << "    -o  | --output [outfile]    Print in the 'outfile' file\n"
+               << "    -g  | --add-rendering-option [tag]\n"
+               << "                                Add shape rendering option labelled 'tag'.\n"
                << "                                Supported tags are:                 \n"
                << "                                 * 'grid'                           \n"
                << "                                 * 'grid.high_density'              \n"
@@ -1259,22 +1259,23 @@ namespace geomtools {
                << "                                 * 'angle.very_high_sampling'       \n"
                << "                                 * 'angle.huge_sampling'            \n"
                << "                                 * 'composite.boost_sampling'       \n"
-               << "    -p  | --rendering-option-daughters\n"
+               << "    -p  | --rendering-option-children\n"
                << "                                Apply current shape rendering options\n"
-               << "                                down to daughter volume.\n"
-               << "    -x  | --max-display-level DEPTH\n"
-               << "                                Display daughter volumes down to\n"
-               << "                                level DEPTH.\n"
+               << "                                down to daughter volume(s).\n"
+               << "    -x  | --max-display-level [depth]\n"
+               << "                                Display daughter volume(s) down to\n"
+               << "                                level 'depth'.\n"
             // << "    -r  | --terminal TERM    Use terminal 'TERM'\n"
             // << "    -R  | --terminal-options TERMOPT \n"
             // << "                           Use terminal options 'TERMOPT'\n"
                << "\n";
-          out_ << "  NAME : The name of the object to be displayed (optional)\n";
+          out_ << "  [id] : The identifier of the object to be displayed (optional)\n";
           out_ << "         It can be:                       \n";
           out_ << "         - the name of a geometry model,  \n";
           out_ << "         - the name of a logical volume,  \n";
           out_ << "         - the GID associated to a volume \n";
           out_ << "           by the active mapping.         \n";
+          out_ << "         If 'id' is missing, the last displayed object is reused.\n";
           out_ << std::flush;
           return -1;
         } else if (option == "-dd" || option == "--with-display-data") {
@@ -1311,7 +1312,7 @@ namespace geomtools {
         } else if (option == "-g" || option == "--add-rendering-option") {
           std::string rendering_tag_repr = argv_[argcount++];
           rendering_tags.insert(rendering_tag_repr);
-        } else if (option == "-p" || option == "--rendering-option-daughters") {
+        } else if (option == "-p" || option == "--rendering-option-children") {
           rendering_options_depth = 1;
         } else if (option == "-x" || option == "--max-display-level") {
           std::string level_repr = argv_[argcount++];
