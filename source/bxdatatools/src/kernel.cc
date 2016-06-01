@@ -8,6 +8,7 @@
 #include <string>
 #include <cstring>
 #include <clocale>
+#include <bitset>
 
 // Ourselves:
 #include <datatools/kernel.h>
@@ -720,9 +721,14 @@ namespace datatools {
         DT_LOG_TRACE(_logging_, "Variant configuration file '"
                      << config_filename << "'...");
         uint32_t reader_opts = 0;
-        reader_opts |= multi_properties::config::FORBID_VARIANTS;
+        reader_opts |= datatools::properties::config::RESOLVE_PATH;
+        reader_opts |= datatools::properties::config::FORBID_VARIANTS;
+        // std::bitset<12> optbs = reader_opts;
+        // DT_LOG_TRACE(_logging_, "Parser reader_opts = [" << optbs << "]");
         datatools::properties::config reader(reader_opts);
         reader.read(config_filename, config);
+        DT_LOG_TRACE(_logging_, "Variant configuration file '"
+                     << config_filename << "' has been parsed.");
         // _variant_repository_->set_organization("");
         // _variant_repository_->set_application("");
         _variant_repository_->unlock();
