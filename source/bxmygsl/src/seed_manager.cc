@@ -364,8 +364,7 @@ namespace mygsl {
   // static
   bool seed_manager::seed_is_valid (int32_t seed_)
   {
-    if (seed_ < random_utils::SEED_INVALID) return false;
-    return true;
+    return random_utils::is_valid_seed(seed_);
   }
 
   void seed_manager::get_labels (vector<string> & labels_) const
