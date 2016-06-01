@@ -137,7 +137,7 @@ namespace mctools {
 
         DT_LOG_DEBUG(get_logging_priority(), "Extra model parameters: ");
         if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
-          this->tree_dump(std::cerr, "", "[debug] ");
+          this->tree_dump(std::clog, "", "[debug]: ");
         }
 
         _initialized_ = true;

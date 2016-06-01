@@ -293,7 +293,7 @@ namespace mctools {
       DT_LOG_DEBUG(_logprio(), "Event data #" << event_id);
       DT_LOG_DEBUG(_logprio(), "Save this event = " << save_this_event);
       if (is_debug() && save_this_event) {
-        get_event_data().tree_dump(std::clog, "Saved event: ", "[debug] ");
+        get_event_data().tree_dump(std::clog, "Saved event: ", "[debug]: ");
       }
 
       _run_action_->increment_number_of_processed_events();

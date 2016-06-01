@@ -546,7 +546,7 @@ namespace mctools {
           em_xmodel.initialize(extra_model_config);
           DT_LOG_DEBUG(_logprio(), "EM extra model '" << em_xmodel_label << "' parameters are : ");
           if (_logprio() >= datatools::logger::PRIO_DEBUG) {
-            em_xmodel.tree_dump(std::cerr, "", "[debug] ");
+            em_xmodel.tree_dump(std::clog, "", "[debug]: ");
           }
         }
       }

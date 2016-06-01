@@ -261,7 +261,7 @@ namespace mctools {
       // More setup parameters can be added.
 
       if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-        _simulation_manager_params_.tree_dump(std::clog, "", "[trace:] ");
+        _simulation_manager_params_.tree_dump(std::clog, "", "[trace]: ");
       }
       // Parsing configuration stops here .
 
