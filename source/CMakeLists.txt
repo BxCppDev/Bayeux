@@ -84,9 +84,9 @@ if(BAYEUX_WITH_GEANT4_MODULE)
 endif()
 
 # - Core Includes for Bayeux + Third Party
-include_directories(${CLHEP_INCLUDE_DIRS})
-include_directories(${ROOT_INCLUDE_DIRS})
-include_directories(${CAMP_INCLUDE_DIRS})
+include_directories(SYSTEM ${CLHEP_INCLUDE_DIRS})
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
+#include_directories(${CAMP_INCLUDE_DIRS})
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
@@ -174,15 +174,18 @@ target_include_directories(Bayeux
    $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
-   # Also need to add, for now, include directories for deps
-   # that are not supplied as full imported targets
+  PRIVATE
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
+   )
+# Also need to add, for now, include directories for deps
+# that are not supplied as full imported targets
+target_include_directories(Bayeux SYSTEM
+  PUBLIC
    # ROOT
    ${ROOT_INCLUDE_DIRS}
    # CLHEP
    ${CLHEP_INCLUDE_DIRS}
-  PRIVATE
-   ${CMAKE_CURRENT_BINARY_DIR}
-   ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
    )
 target_link_libraries(Bayeux
   ${CMAKE_DL_LIBS}
