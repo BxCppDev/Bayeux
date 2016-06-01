@@ -268,7 +268,7 @@ ${module_source_dir}/ui/ihs.cc
 ${module_source_dir}/ui/base_command_interface.cc
 ${module_source_dir}/ui/base_command.cc
 ${module_source_dir}/ui/utils.cc
-${module_source_dir}/the_introspectable.cc
+#${module_source_dir}/the_introspectable.cc
 # bx${module_name}/_datatools.cc
 )
 

@@ -326,7 +326,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/foot_point_on_quadric_finder.cc
   ${module_source_dir}/toroid_nappe.cc
   #${module_source_dir}/torus.cc
-  ${module_source_dir}/the_introspectable.cc
+  #${module_source_dir}/the_introspectable.cc
   ${module_source_dir}/resource.cc
   )
 
