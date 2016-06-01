@@ -12,6 +12,8 @@
  * ...
  *
  */
+
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -19,6 +21,7 @@
 #include <exception>
 #include <stdexcept>
 
+// This project:
 #include <mygsl/seed_manager.h>
 #include <mygsl/random_utils.h>
 
@@ -36,9 +39,31 @@ void test0()
   SM.dump (clog);
 
   clog << endl << "Updating..." << endl;
-  SM.update_seed ("manager", mygsl::random_utils::SEED_INVALID);
+  SM.update_seed ("manager", 271828182);
   SM.add_seed ("smearing_processor", 76543);
   SM.dump (clog);
+
+  clog << endl << "Invalidating one..." << endl;
+  SM.invalidate_seed ("primary_generator");
+  SM.dump (clog);
+
+  try {
+    SM.add_seed ("smearing_processor", 666);
+  } catch (std::exception & error) {
+    std::cerr << "error: As expected: " << error.what() << std::endl;
+  }
+
+  try {
+    SM.add_seed ("007", 42);
+  } catch (std::exception & error) {
+    std::cerr << "error: As expected: " << error.what() << std::endl;
+  }
+
+  try {
+    SM.add_seed ("std::ran", 1234);
+  } catch (std::exception & error) {
+    std::cerr << "error: As expected: " << error.what() << std::endl;
+  }
 
   clog << "SM = " << SM << endl;
   return;

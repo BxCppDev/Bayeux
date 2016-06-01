@@ -19,6 +19,10 @@
  *
  */
 
+// Ourselves:
+#include <mygsl/seed_manager.h>
+
+// Standard library:
 #include <ctime>
 #include <stdexcept>
 #include <sstream>
@@ -28,6 +32,8 @@
 #include <cstdlib>
 //#include <random> /// only with new "-std=c++0x" support
 
+// Third party:
+// - Boost:
 // Wrap Boost's tokenizer header
 // This header, causes "unused parameter" warnings from its
 // static void assign(Iterator b, Iterator e, Token &t)
@@ -45,15 +51,15 @@
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-
 #include <boost/filesystem.hpp>
-
-#include <mygsl/seed_manager.h>
-#include <mygsl/random_utils.h>
-#include <mygsl/rng.h>
-
+// - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/logger.h>
+#include <datatools/utils.h>
+
+// This project:
+#include <mygsl/random_utils.h>
+#include <mygsl/rng.h>
 
 namespace mygsl {
 
@@ -339,20 +345,45 @@ namespace mygsl {
     if (found == _dict_.end()) {
       add_seed(label_, seed_);
     } else {
-      DT_THROW_IF(! seed_is_valid(seed_), std::logic_error, "Seed value '" << seed_ << "' is not allowed !");
+      DT_THROW_IF(! seed_is_valid(seed_),
+                  std::logic_error,
+                  "Seed value '" << seed_ << "' is not allowed for PRNG '" << label_ << "'!");
       found->second = seed_;
+    }
+    return;
+  }
+
+  void seed_manager::invalidate_seed(const std::string & label_)
+  {
+    dict_type::iterator found = _dict_.find(label_);
+    if (found == _dict_.end()) {
+      _set_seed(label_, random_utils::SEED_INVALID);
+    } else {
+      found->second = random_utils::SEED_INVALID;
     }
     return;
   }
 
   void seed_manager::add_seed(const std::string & label_, int32_t seed_)
   {
-    DT_THROW_IF(label_.empty(), std::logic_error, "Label '" << label_ << "' is empty !");
-    DT_THROW_IF(_dict_.find(label_) != _dict_.end(),
+    DT_THROW_IF(has_seed(label_),
                 std::logic_error, "Label '" << label_ << "' is already used !");
     DT_THROW_IF(! seed_is_valid(seed_), std::logic_error,
                 "Seed value '" << seed_ << "' is not allowed !");
-    _dict_[label_] = seed_;
+    _set_seed(label_, seed_);
+    return;
+  }
+
+  void seed_manager::_set_seed(const std::string & label_, int32_t seed_)
+  {
+    DT_THROW_IF(!datatools::name_validation(label_, datatools::NV_INSTANCE),
+                std::logic_error,
+                "Label '" << label_ << "' is not valid !");
+    int32_t seed = random_utils::SEED_INVALID;
+    if (seed_is_valid(seed_)) {
+      seed = seed_;
+    }
+    _dict_[label_] = seed;
     return;
   }
 
@@ -367,7 +398,6 @@ namespace mygsl {
     return _init_seed_flags_;
   }
 
-  // ctor:
   seed_manager::seed_manager()
   {
     _logging_priority_ = datatools::logger::PRIO_WARNING;
@@ -376,7 +406,6 @@ namespace mygsl {
     return;
   }
 
-  // dtor:
   seed_manager::~seed_manager()
   {
     return;
@@ -471,7 +500,7 @@ namespace mygsl {
         in_.setstate(std::ios::failbit);
         return in_;
       }
-      if (! seed_manager::seed_is_valid(seed)) {
+      if (! seed_manager::seed_is_valid(seed) && seed != random_utils::SEED_INVALID) {
         in_.setstate(std::ios::failbit);
         return in_;
       }
@@ -479,7 +508,7 @@ namespace mygsl {
         in_.setstate(std::ios::failbit);
         return in_;
       }
-      sm_.add_seed(label, seed);
+      sm_._set_seed(label, seed);
     }
 
     return in_;

@@ -52,7 +52,7 @@ namespace mygsl {
    *  a collection of seeds used to initialize a set
    *  of pseudo-random number generators (PRNG). As
    *  the PRNGs are all labelled with a unique name. The
-   *  seed manager uses an internal dictionnary to store
+   *  seed manager uses an internal dictionary to store
    *  the seeds. It is possible to force a seed value
    *  for a given PRNG as well as to use a seed determined
    *  by some specific PRNG initialized with the current time.
@@ -63,7 +63,7 @@ namespace mygsl {
   {
   public:
 
-    /// An alias for the embedded seed dictionnary container class
+    /// An alias for the embedded seed dictionary container class
     typedef std::map<std::string, int32_t> dict_type;
 
     /// \deprecated constant
@@ -106,6 +106,9 @@ namespace mygsl {
 
     /// Change the seed value associated to a PRNG with a given label
     void update_seed (const std::string & label_, int32_t seed_);
+
+    /// Invalidate the seed value associated to a PRNG with a given label
+    void invalidate_seed (const std::string & label_);
 
     /// Clear the list of stored seeds
     void clear ();
@@ -164,15 +167,17 @@ namespace mygsl {
 
     int32_t _set_seed_for_seeds ();
 
+    void _set_seed(const std::string & label_, int32_t seed_);
+
   private:
 
     void _set_init_seed_flags_ ();
 
   private:
 
-    datatools::logger::priority _logging_priority_; /// Logging priority
-    uint32_t  _init_seed_flags_;                    /// Seed initialization flags
-    dict_type _dict_;                               /// Dictionnary of seeds associated to PRNGs' labels
+    datatools::logger::priority _logging_priority_; ///< Logging priority
+    uint32_t  _init_seed_flags_;                    ///< Seed initialization flags
+    dict_type _dict_;                               ///< Dictionary of seeds associated to PRNGs' labels
 
   };
 
