@@ -151,11 +151,13 @@ namespace datatools {
 
   kernel::~kernel()
   {
+    // std::cerr << "DEVEL: kernel::~kernel: Entering." << std::endl;
     if (_initialized_) {
       this->shutdown();
     }
     DT_LOG_TRACE(_logging_, "Kernel is now destroyed.");
     _instance_ = 0;
+    // std::cerr << "DEVEL: kernel::~kernel: Exiting." << std::endl;
     return;
   }
 

@@ -1951,7 +1951,7 @@ namespace datatools {
       } // real/unit
 
       if (is_real() && has_real_unit_label()) {
-        out_ << indent_ << i_tree_dumpable::tag << "Unit label     : '"
+        out_ << indent_ << i_tree_dumpable::tag << "Unit label : '"
              << get_real_unit_label() << "'" << std::endl;
       } // real/unit
 
@@ -2462,44 +2462,70 @@ namespace datatools {
     }
 
     /// Print in ReST format
-    void parameter_model::print_rst(std::ostream & out_, const std::string & indent_) const
+    void parameter_model::print_rst(std::ostream & out_,
+                                    const std::string & indent_,
+                                    uint32_t flags_) const
     {
-      out_ << indent_ << std::endl;
-      out_ << indent_ << "Parameter model ``" << get_name() << "``" << std::endl;
-      out_ << indent_ << ".........................................................................."  << std::endl;
-      out_ << indent_ << std::endl;
-      std::string indent = indent_ + "   ";
-
-      if (has_terse_description()) {
-        print_multi_lines(out_, get_terse_description(), indent);
+      bool with_title = true;
+      bool with_description  = true;
+      if (flags_ & PRINT_RST_NO_TITLE) {
+        with_title = false;
+      }
+      if (flags_ & PRINT_RST_NO_DESC) {
+        with_description = false;
       }
 
-      if (has_documentation()) {
+      if (with_title) {
+        out_ << indent_ << "=======================================================================" << std::endl;
+        out_ << indent_ << "Parameter model ``" << get_name() << "``" << std::endl;
+        out_ << indent_ << "=======================================================================" << std::endl;
+        out_ << indent_ << std::endl;
+      }
+      std::string indent = indent_; // + "   ";
+
+      if (with_description) {
+        if (has_terse_description()) {
+          print_multi_lines(out_, get_terse_description(), indent);
+        }
+
+        if (has_documentation()) {
+          out_ << indent << std::endl;
+          print_multi_lines(out_, get_documentation(), indent);
+          out_ << indent << std::endl;
+        }
+
         out_ << indent << std::endl;
-        //out_ << indent << "* Documentation: " << std::endl;
-        print_multi_lines(out_, get_documentation(), indent);
-        out_ << indent << std::endl;
+        out_ << indent << "* Display name: ";
+        if (! has_display_name()) {
+          out_ << "<none provided>";
+        } else {
+          out_ << "``\"" << get_display_name() << "\"``";
+        }
+        out_ << std::endl;
       }
-
-      out_ << indent << std::endl;
-      out_ << indent << "* Display name: ";
-      if (! has_display_name()) {
-        out_ << "<none provided>";
-      } else {
-        out_ << "``\"" << get_display_name() << "\"``";
-      }
-      out_ << std::endl;
 
       out_ << indent << "* Type: ";
       if (! has_type()) {
         out_ << "<undefined>";
       } else {
-        //out_ << "``";
+        out_ << "``";
         out_ << ::datatools::get_label_from_type(_type_);
-        //out_ << "``";
+        out_ << "`` ";
+        if (is_path()) {
+          out_ << "(as ``";
+          if (is_path_input()) {
+            out_ << "input ";
+          } else if (is_path_output()) {
+            out_ << "output ";
+          } else if (is_path_input_output()) {
+            out_ << "input/output ";
+          }
+          out_ << "path``)";
+        }
       }
       out_ << std::endl;
 
+      // For real parameters:
       double unit = 1.0;
       std::string display_unit_symbol;
 
@@ -2509,13 +2535,13 @@ namespace datatools {
       } // real/unit
 
       if (is_real() && has_real_unit_label()) {
-        out_ << indent << "* " << "Unit label     : "
-             << get_real_unit_label() << "" << std::endl;
+        out_ << indent << "* " << "Unit label : ``\""
+             << get_real_unit_label() << "\"``" << std::endl;
       } // real/unit
 
       if (is_real() && has_real_preferred_unit()) {
-        out_ << indent << "* " << "Preferred unit : ``"
-             << get_real_preferred_unit() << "``" << std::endl;
+        out_ << indent << "* " << "Preferred unit : ``\""
+             << get_real_preferred_unit() << "\"``" << std::endl;
         display_unit_symbol = get_real_preferred_unit();
         unit = units::get_unit(get_real_preferred_unit());
       } // real/unit
@@ -2529,16 +2555,16 @@ namespace datatools {
         out_ << "``" << std::endl;
       } // real/precision
 
-      out_ << indent << "* Mutability: ";
+      out_ << indent << "* Mutability : ";
       if (is_variable() || is_fixed()) {
-        out_ << label_from_mutability(_mutability_);
+        out_ << "``" << label_from_mutability(_mutability_) << "``";
       } else {
         out_ << "<undefined>";
       }
       out_ << std::endl;
 
       if (is_fixed()) {
-        out_ << indent << "* Fixed value :";
+        out_ << indent << "* Fixed value : ";
         if (is_boolean()) {
           out_ << "``" << (get_fixed_boolean() ? "true" : "false") << "``";
         } else if (is_integer()) {
@@ -2555,27 +2581,26 @@ namespace datatools {
         out_ << std::endl;
       } // fixed
 
-      out_ << indent << "* Variants : ";
-      if (_variants_.size() == 0) {
-        out_ << "<none>";
-      }
-      out_ << std::endl;
-      for (variant_dict_type::const_iterator i = _variants_.begin();
-           i != _variants_.end();
-           i++) {
-        variant_dict_type::const_iterator j = i;
-        j++;
-        if (i == _variants_.begin()) {
-          out_ << std::endl;
-        }
-        out_ << indent << "  * Variant '" << i->first
-             << "' (model '" << i->second.get_model().get_name() << "')";
-        if (!i->second.has_terse_description()) {
-          out_ << " : " << i->second.get_terse_description();
-        }
+      if (_variants_.size()) {
+        out_ << indent << "* Associated variants : ";
         out_ << std::endl;
-        if (j == _variants_.end()) {
+        for (variant_dict_type::const_iterator i = _variants_.begin();
+             i != _variants_.end();
+             i++) {
+          variant_dict_type::const_iterator j = i;
+          j++;
+          if (i == _variants_.begin()) {
+            out_ << std::endl;
+          }
+          out_ << indent << "  * ``\"" << i->first
+               << "\"`` (variant model: ``\"" << i->second.get_model().get_name() << "\"``)";
+          if (!i->second.has_terse_description()) {
+            out_ << " : " << i->second.get_terse_description();
+          }
           out_ << std::endl;
+          if (j == _variants_.end()) {
+            out_ << std::endl;
+          }
         }
       }
 
@@ -2583,24 +2608,23 @@ namespace datatools {
         out_ << indent << "* Variable mode  : ``"
              << label_from_variable_mode(_variable_mode_) << "``" << std::endl;
 
-
         if (is_enumeration()) {
 
           if (is_boolean()) {
-            out_ << indent << "* Values:" << std::endl;
+            out_ << indent << "* Supported values:" << std::endl;
             out_ << std::endl;
-            out_ << indent <<  "  * Value : '" << "false" << "'";
+            out_ << indent <<  "  * ``" << "false" << "``";
             if (_false_variant_.empty()) {
-              out_ << " <no variant>";
+              // out_ << " <no variant>";
             } else {
-              out_ << " with variant '" << _false_variant_ << "'";
+              out_ << " associated to variant ``\"" << _false_variant_ << "\"``";
             }
             out_ << std::endl;
-            out_ << indent <<  "  * Value : '" << "true" << "'";
+            out_ << indent <<  "  * ``" << "true" << "``";
             if (_true_variant_.empty()) {
-              out_ << " <no variant>";
+              // out_ << " <no variant>";
             } else {
-              out_ << " with variant '" << _true_variant_ << "'";
+              out_ << " associated to variant ``\"" << _true_variant_ << "\"``";
             }
             out_ << std::endl;
             out_ << std::endl;
@@ -2626,11 +2650,11 @@ namespace datatools {
               }
               out_ << indent << "  * ";
               int value = iter_val->first;
-              out_ << "Value : '" << value << "'";
+              out_ << "``" << value << "``";
               if (!iter_val->second.empty()) {
-                out_ << " with variant ``\"" << iter_val->second << "\"``";
+                out_ << " associated to variant ``\"" << iter_val->second << "\"``";
               } else {
-                out_ << " without variant";
+                // out_ << " without variant";
               }
               out_ << std::endl;
               if (jter_val == _integer_enumeration_.end()) {
@@ -2659,15 +2683,15 @@ namespace datatools {
               }
               out_ << indent << "  * ";
               double value = iter_val->first;
-              out_ << "Value : ``" << value / unit;
+              out_ << "``" << value / unit;
               if (! display_unit_symbol.empty()) {
                 out_ << ' ' << display_unit_symbol;
               }
               out_ << "``";
               if (!iter_val->second.empty()) {
-                out_ << " with variant ``\"" << iter_val->second << "\"``";
+                out_ << " associated to variant ``\"" << iter_val->second << "\"``";
               } else {
-                out_ << " without variant";
+                // out_ << " without variant";
               }
               if (jter_val == _real_enumeration_.end()) {
                 out_ << std::endl;
@@ -2696,11 +2720,11 @@ namespace datatools {
               }
               out_ << indent << "  * ";
               const std::string & value = iter_val->first;
-              out_ << "Value : ``\"" << value << "\"``";
+              out_ << "``\"" << value << "\"``";
               if (!iter_val->second.empty()) {
-                out_ << " with variant ``\"" << iter_val->second << "\"``";
+                out_ << " associated to variant ``\"" << iter_val->second << "\"``";
               } else {
-                out_ << " without variant";
+                // out_ << " without variant";
               }
               if (jter_val == _string_enumeration_.end()) {
                 out_ << std::endl;
@@ -2714,10 +2738,10 @@ namespace datatools {
         // Regions associated to variants:
         if (is_integer()) {
           if (is_interval()) {
-            out_ << indent << "* Domain: " << get_integer_domain() << std::endl;
+            out_ << indent << "* Domain: ``" << get_integer_domain() << "``" << std::endl;
           } // variable/rinteger/interval
           if (_integer_r2v_.size()) {
-            out_ << indent << "* Regions with associated variant: " << std::endl;
+            out_ << indent << "* Regions with associated variants: " << std::endl;
           }
           for (std::map<integer_range, std::string>::const_iterator i = _integer_r2v_.begin();
                i != _integer_r2v_.end();
@@ -2727,8 +2751,8 @@ namespace datatools {
             if (i == _integer_r2v_.begin()) {
               out_ << std::endl;
             }
-            out_ << indent << "  * Range '" << i->first << "' is associated to variant '"
-                 << i->second << "'" << std::endl;
+            out_ << indent << "  * Range ``" << i->first << "`` is associated to variant ``\""
+                 << i->second << "\"``" << std::endl;
             if (j == _integer_r2v_.end()) {
               out_ << std::endl;
             }
@@ -2737,7 +2761,7 @@ namespace datatools {
 
         if (is_real()) {
           if (is_interval()) {
-            out_ << indent << "* Domain: " << get_real_domain() << std::endl;
+            out_ << indent << "* Domain: ``" << get_real_domain() << "``" << std::endl;
           } // variable/real/interval
           if (_real_r2v_.size()) {
             out_ << indent << "* Regions with associated variant: " << std::endl;
@@ -2750,8 +2774,8 @@ namespace datatools {
             if (i == _real_r2v_.begin()) {
               out_ << std::endl;
             }
-            out_ << indent << "  * Range '" << i->first << "' is associated to variant '"
-                 << i->second << "'" << std::endl;
+            out_ << indent << "  * Range ``" << i->first << "`` is associated to variant ``\""
+                 << i->second << "\"``" << std::endl;
             if (j == _real_r2v_.end()) {
               out_ << std::endl;
             }

@@ -80,21 +80,22 @@ namespace datatools {
           _qt_app_ = new QApplication(_argc_, _argv_);
           // Force numeric to basic locale:
           if (! QApplication::instance()) {
-            DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS,
-                         "Unable to initialize Qt!");
+            DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Unable to initialize Qt!");
           } else {
             _qt_initialized_ = true;
           }
           std::setlocale(LC_NUMERIC, "C");
-       }
+        }
       }
       return;
     }
 
     interface::~interface()
     {
+      // std::cerr << "DEVEL: qt::interface::~interface: Entering." << std::endl;
       if (_qt_initialized_) {
         if (_qt_app_) {
+          // QCoreApplication::sendPostedEvents(0, QEvent::DeferredDelete);
           // delete _qt_app_; // Core dump !!!
           _qt_app_ = 0;
         }
@@ -109,6 +110,7 @@ namespace datatools {
           free(_argv_);
         }
       }
+      // std::cerr << "DEVEL: qt::interface::~interface: Exiting." << std::endl;
       return;
     }
 

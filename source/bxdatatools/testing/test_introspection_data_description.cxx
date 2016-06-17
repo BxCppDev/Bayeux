@@ -25,6 +25,8 @@
 #include <exception>
 
 // Third party:
+// - Bayeux:
+#include <bayeux/bayeux.h>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/units.h>
@@ -38,7 +40,7 @@ void test_data_description_2();
 
 int main(int /* argc_ */, char ** /* argv_ */)
 {
-  DATATOOLS_INIT();
+  datatools::initialize();
   int error_code = EXIT_SUCCESS;
   try {
     std::clog << "Test program for the 'datatools::introspection::data_description' class."
@@ -61,7 +63,7 @@ int main(int /* argc_ */, char ** /* argv_ */)
     std::cerr << "error: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
-  DATATOOLS_FINI();
+  datatools::terminate();
   return (error_code);
 }
 

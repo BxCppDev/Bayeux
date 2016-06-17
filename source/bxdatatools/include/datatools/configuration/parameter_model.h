@@ -460,8 +460,15 @@ namespace datatools {
       /// OCD support
       static void init_ocd(datatools::object_configuration_description &);
 
+      enum rst_flags {
+        PRINT_RST_NO_TITLE = datatools::bit_mask::bit00,
+        PRINT_RST_NO_DESC  = datatools::bit_mask::bit01
+     };
+
       /// Print in ReST format
-      void print_rst(std::ostream & out_, const std::string & indent_ = "") const;
+      void print_rst(std::ostream & out_,
+                     const std::string & indent_ = "",
+                     uint32_t flags_ = 0) const;
 
     protected:
 

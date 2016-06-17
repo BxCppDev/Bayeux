@@ -1,9 +1,9 @@
 /// \file datatools/configuration/io.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-09-29
- * Last modified : 2014-11-29
+ * Last modified : 2016-06-14
  *
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ namespace datatools {
         IO_TITLE       = datatools::bit_mask::bit01, //!< Print title comment
         IO_TRACE       = datatools::bit_mask::bit02, //!< Trace/debug mode
         IO_NO_HEADER   = datatools::bit_mask::bit03, //!< Do not print header
+        IO_IGNORE_UNKNOWN_REGISTRY = datatools::bit_mask::bit04, //!< Do not load unknown registries from profile
         IO_DEFAULT     = 0                           //!< Default flags
       };
 
@@ -109,6 +110,7 @@ namespace datatools {
       bool _no_header_;           //!< Flag to inhibit header at begin of file
       bool _with_description_;    //!< Flag to print description meta comment
       bool _with_title_;          //!< Flag to print a title comment
+      bool _ignore_unknown_registries_; //!< Flag to ignore unknown registries
       logger::priority _logging_; //!< Logging priority
       datatools::version_id _format_version_; //!< Format version identifier
 

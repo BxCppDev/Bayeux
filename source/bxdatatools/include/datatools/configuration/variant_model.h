@@ -119,8 +119,14 @@ namespace datatools {
                              const std::string & indent_ = "",
                              bool inherit_ = false) const;
 
+      enum rst_flags {
+        PRINT_RST_NO_TITLE = datatools::bit_mask::bit00
+      };
+
       /// Print in ReST format
-      void print_rst(std::ostream & out_, const std::string & indent_) const;
+      void print_rst(std::ostream & out_,
+                     const std::string & indent_ = "",
+                     uint32_t flags_ = 0) const;
 
       /// Check initialization status
       bool is_initialized() const;

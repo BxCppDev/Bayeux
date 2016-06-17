@@ -82,7 +82,7 @@ namespace datatools {
 
       variant_repository_dialog::~variant_repository_dialog()
       {
-        DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Destruction.");
+        // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "Destruction.");
         return;
       }
 
@@ -199,6 +199,18 @@ namespace datatools {
         }
         if (_load_button_) {
           _load_button_->setEnabled(write_buttons_enabled);
+        }
+        if (_cancel_button_) {
+          // bool enabled = true;
+          // if (!_viewer_->has_repository()) {
+          //   enabled = false;
+          // } else {
+          //   if (_viewer_->get_repository().is_locked()) {
+          //     enabled = false;
+          //   }
+          // }
+          // _cancel_button_->setEnabled(enabled);
+          _cancel_button_->setEnabled(write_buttons_enabled);
         }
         return;
       }

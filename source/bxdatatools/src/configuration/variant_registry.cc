@@ -311,6 +311,41 @@ namespace datatools {
       return found->second;
     }
 
+    void variant_registry::list_of_parameters(std::vector<std::string> & paths_,
+                                              uint32_t flags_) const
+    {
+      if (flags_ & LIST_CLEAR) {
+        paths_.clear();
+      }
+      for (record_dict_type::const_iterator i = _records_.begin();
+           i != _records_.end();
+           i++) {
+        const variant_record & rec = i->second;
+        if (rec.is_parameter()) {
+          bool add_it = true;
+          if (flags_ & LIST_ACTIVE_ONLY) {
+            if (!rec.is_active()) {
+              add_it = false;
+            }
+          }
+          if (flags_ & LIST_NO_SET) {
+            if (rec.value_is_set()) {
+              add_it = false;
+            }
+          }
+          if (flags_ & LIST_NO_UNSET) {
+            if (!rec.value_is_set()) {
+              add_it = false;
+            }
+          }
+          if (add_it) {
+            paths_.push_back(rec.get_path());
+          }
+        }
+      }
+      return;
+    }
+
     void variant_registry::list_of_unset_parameters(std::vector<std::string> & unset_paths_) const
     {
       for (record_dict_type::const_iterator i = _records_.begin();

@@ -22,11 +22,18 @@
 // Ourselves:
 #include <datatools/configuration/variant_repository.h>
 
+// Standard library:
+#include <iomanip>
+
 // This project (Bayeux/datatools):
 #include <datatools/kernel.h>
 #include <datatools/exception.h>
+#include <datatools/ioutils.h>
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/variant_registry_manager.h>
+#include <datatools/configuration/variant_record.h>
+#include <datatools/configuration/parameter_model.h>
+#include <datatools/configuration/variant_model.h>
 
 namespace datatools {
 
@@ -274,14 +281,14 @@ namespace datatools {
 
     int variant_repository::get_rank(const std::string & registry_name_) const
     {
-       for (ranked_dict_type::const_iterator i = _ranked_.begin();
+      for (ranked_dict_type::const_iterator i = _ranked_.begin();
            i != _ranked_.end();
            i++) {
-         if (i->second == registry_name_) {
-           return i->first;
-         }
-       }
-       return -1;
+        if (i->second == registry_name_) {
+          return i->first;
+        }
+      }
+      return -1;
     }
 
     void variant_repository::build_ordered_registry_keys(std::vector<std::string> & keys_) const
@@ -351,10 +358,10 @@ namespace datatools {
 
     void variant_repository::_legacy_load_registries(const datatools::properties & config_)
     {
-       std::vector<std::string> registry_config_filenames;
-       if (config_.has_key("registries.config")) {
-          config_.fetch("registries.config", registry_config_filenames);
-       }
+      std::vector<std::string> registry_config_filenames;
+      if (config_.has_key("registries.config")) {
+        config_.fetch("registries.config", registry_config_filenames);
+      }
 
       // Configure:
       for (size_t i = 0; i < registry_config_filenames.size(); i++) {
@@ -376,10 +383,10 @@ namespace datatools {
         //  "@foo-label:resource-path-to-some-file"
         size_t apos = variant_config_registration.find('@');
         if (apos != std::string::npos) {
-          variant_name = variant_config_registration.substr(0, apos);
-          variant_mgr_config_file = variant_config_registration.substr(apos + 1);
+        variant_name = variant_config_registration.substr(0, apos);
+        variant_mgr_config_file = variant_config_registration.substr(apos + 1);
         } else {
-          variant_mgr_config_file = variant_config_registration;
+        variant_mgr_config_file = variant_config_registration;
         }
         */
         variant_mgr_config_file = variant_config_registration;
@@ -404,7 +411,7 @@ namespace datatools {
         // Deprecated:
         DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
                        "Legacy mode for variant registry loading is deprecated!");
-       _legacy_load_registries(config_);
+        _legacy_load_registries(config_);
       }
 
       // The set of variant registries to be loaded in the repository:
@@ -1053,6 +1060,161 @@ namespace datatools {
         const std::string & registry_name = i->first;
         if (krnl.has_external_configuration_registry(registry_name)) {
           krnl.clear_configuration_registry(registry_name);
+        }
+      }
+      return;
+    }
+
+    void variant_repository::print_rst(std::ostream & out_, uint32_t flags_) const
+    {
+      bool with_title = true;
+      if (flags_ & PRINT_RST_NO_TITLE) {
+        with_title = false;
+      }
+
+      if (with_title) {
+        std::ostringstream titleoss;
+        titleoss << "Variant repository ``" << get_name() << "``" << std::ends;
+        // std::cerr << "DEVEL: len = " << titleoss.str().length() << std::endl;
+        out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << titleoss.str() << std::endl;
+        out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << std::endl;
+      }
+
+      if (has_terse_description()) {
+        datatools::print_multi_lines(out_, get_terse_description(), "");
+        out_ << std::endl;
+      }
+
+      out_ << "General informations" << std::endl;
+      out_ << "====================" << std::endl;
+      out_ << std::endl;
+
+      {
+        std::size_t count = 0;
+
+        if (has_display_name()) {
+          out_ << "* Display name : ``" << get_display_name() << "``" << std::endl;
+          count++;
+        }
+
+        if (has_organization()) {
+          out_ << "* Organization : ``" << get_organization() << "``" << std::endl;
+          count++;
+        }
+
+        if (has_application()) {
+          out_ << "* Application : ``" << get_application() << "``" << std::endl;
+          count++;
+        }
+
+        out_ << "* Initialized: ``" << is_initialized() << "``" << std::endl;
+        count++;
+
+        out_ << "* Locked: ``" << is_locked() << "``" << std::endl;
+        count++;
+
+        if (count) {
+          out_ << std::endl;
+        }
+      }
+
+      out_ << "Registries" << std::endl;
+      out_ << "==========" << std::endl;
+      out_ << std::endl;
+
+      {
+        std::vector<std::string> vreg_keys;
+        build_ordered_registry_keys(vreg_keys);
+
+        for (std::size_t ivreg = 0;
+             ivreg < vreg_keys.size();
+             ivreg++) {
+          const std::string & vreg_key = vreg_keys[ivreg];
+          const variant_registry & vreg = get_registry(vreg_key);
+          std::ostringstream hdross;
+          hdross << "``\"" << vreg_key  << "\"`` (variant model: ``\"" << vreg.get_top_variant_name() << "\"``)" << std::ends;
+          out_ << hdross.str() << std::endl;
+          out_ << std::setw(hdross.str().length()) << std::setfill('-') << "" << std::endl;
+          out_ << std::endl;
+
+          if (has_terse_description()) {
+            datatools::print_multi_lines(out_, vreg.get_terse_description(), "");
+            out_ << std::endl;
+          }
+
+          {
+            std::size_t count = 0;
+
+            if (has_display_name()) {
+              out_ << "* Display name: ``" << '"' << vreg.get_display_name() << '"' << "``" << std::endl;
+              count++;
+            }
+
+            // Rank
+
+            // // XXX
+            // out_ << "*Depends on: "; //``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
+            // out_ << std::endl;
+            // count++;
+
+            out_ << "* Top variant name: ``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
+            count++;
+
+            out_ << "* Initialized: ``" << vreg.is_initialized() << "``" << std::endl;
+            count++;
+
+            std::vector<std::string> param_paths;
+            uint32_t list_flags = 0;
+            vreg.list_of_parameters(param_paths, list_flags);
+
+            out_ << "* Parameters: ``" << param_paths.size() << "``" << std::endl;
+            count++;
+
+            for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
+              const std::string & varParamName = param_paths[iparam];
+              if (iparam == 0) {
+                out_ << std::endl;
+              }
+              const variant_record & varParRec = vreg.get_parameter_record(varParamName);
+              const parameter_model & varParModel = varParRec.get_parameter_model();
+
+              out_ << "  * ``" << '"' << varParamName << '"'
+                   << "`` (parameter model: ``"
+                   << '"' << varParModel.get_name() << '"'
+                   << "``) :"
+                   << std::endl;
+              out_ << std::endl;
+
+              const std::string & varParLeafName = varParRec.get_leaf_name();
+              const variant_record & varParentRec = varParRec.get_parent();
+              const variant_model & varParentModel = varParentRec.get_variant_model();
+              const std::string & param_desc = varParentModel.get_parameter_description(varParLeafName);
+              if (!param_desc.empty()) {
+                out_ << "    * Description: ``";
+                out_ << param_desc;
+                out_ << "``" << std::endl;
+              }
+              // std::string value_format;
+              // command::returned_info cri = varParRec.value_to_string(value_format);
+              out_ << "    * Full path: ``" << '"' << vreg_key << ':' << varParamName << '"' << "``" << std::endl;
+              uint32_t varParModelRstOpt = 0;
+              varParModelRstOpt |= parameter_model::PRINT_RST_NO_TITLE;
+              varParModelRstOpt |= parameter_model::PRINT_RST_NO_DESC;
+              varParModel.print_rst(out_, "    ", varParModelRstOpt);
+              out_ << std::endl;
+            }
+            if (count) {
+              out_ << std::endl;
+            }
+          }
+
+          out_ << std::endl;
+
+          if (vreg_keys.size()) {
+            out_ << std::endl;
+          }
         }
       }
       return;

@@ -34,34 +34,23 @@
 // - Bayeux:
 #include <bayeux/bayeux.h>
 // - Bayeux/datatools:
-#include <datatools/kernel.h>
+//#include <datatools/kernel.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/utils.h>
 #include <datatools/version.h>
-#include <datatools/configuration/variant_registry_manager.h>
-#include <datatools/configuration/variant_registry.h>
+#include <datatools/configuration/variant_service.h>
 #include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/io.h>
-#if DATATOOLS_WITH_QT_GUI == 1
-// Third party:
-// - Qt:
-#include <QApplication>
-#include <QDialog>
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QStyleFactory>
-// - Bayeux/datatools/configuration/ui:
-#include <datatools/qt/interface.h>
-#include <datatools/configuration/ui/variant_registry_tree_model.h>
-#include <datatools/configuration/ui/variant_registry_dialog.h>
-#include <datatools/configuration/ui/variant_repository_viewer.h>
-#include <datatools/configuration/ui/variant_repository_dialog.h>
-#endif // DATATOOLS_WITH_QT_GUI == 1
+#include <datatools/ioutils.h>
+
+namespace bpo = boost::program_options;
+namespace dtc = datatools::configuration;
 
 //! Print application usage (supported options and arguments)
 void app_usage(std::ostream & out_,
-               const boost::program_options::options_description & desc_);
+               const bpo::options_description & desc_);
 
 //! Print application version
 void app_version(std::ostream & out_);
@@ -70,183 +59,150 @@ void app_version(std::ostream & out_);
 struct app_config_params {
   //! Default constructor
   app_config_params();
-  datatools::logger::priority logging; //!< Logging priority threshold
-  std::string variant_config_filename; //!< Name of the configuration file for variant parameters
-  bool do_gui;
+  std::string logging; //!< Logging label
+  std::string action; //!< Action
+  dtc::variant_service::config variants; //!< Variant support
 };
 
-int main(int argc_, char * argv_[])
+void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_);
+
+void app_print_rst(std::ostream & out_, const dtc::variant_repository & vrep_);
+
+void app_print_current_profile(std::ostream & out_, const dtc::variant_repository & vrep_);
+
+  int main(int argc_, char * argv_[])
 {
-  BAYEUX_INIT_MAIN(argc_, argv_);
+  bayeux::initialize(argc_, argv_);
   int error_code = EXIT_SUCCESS;
+  datatools::logger::priority logging;
+  app_config_params params;
+
+  namespace bpo = boost::program_options;
   try {
 
-    // The configurarion parameter sets:
-    app_config_params cfg;
+    // Declare options:
+    bpo::options_description optDesc("Options");
+    optDesc.add_options()
+      ("help,h",
+       "print this help message")
+      ("version,v",
+       "print version")
+      ("logging",
+       bpo::value<std::string>(&params.logging)
+       ->default_value("fatal")
+       ->value_name("[level]"),
+       "a value")
+      ("version,v",
+       "print version")
+      ("action",
+       bpo::value<std::string>(&params.action)
+       // ->default_value("doc")
+       ->value_name("[name]"),
+       "action name:\n"
+       " - 'doc' : print ReSt formatted documentation\n"
+       " - 'profile' : print the current variant profile\n")
+      ;
 
-    // Program options variables map:
-    namespace bpo = boost::program_options;
-    bpo::variables_map vm;
-    bpo::options_description all_opts;
+    // Declare options for variant support:
+    bpo::options_description optVariant("Variant support");
+    uint32_t po_init_flags = 0;
+    po_init_flags |= dtc::variant_service::NO_LABEL;
+    po_init_flags |= dtc::variant_service::NO_LOGGING;
+    po_init_flags |= dtc::variant_service::NO_PROFILE_LOAD_IGNORE_UNKNOWN;
+    po_init_flags |= dtc::variant_service::NO_TUI;
+    dtc::variant_service::init_options(optVariant,
+                                       params.variants,
+                                       po_init_flags);
 
+    // Aggregate options:
+    bpo::options_description optPublic;
+    optPublic.add(optDesc).add(optVariant);
+
+    // Parse options:
+    bpo::variables_map vMap;
     try {
-      // Describe command line arguments :
-      bpo::options_description opts("Allowed options");
-      opts.add_options()
-        ("help,h", "produce help message")
-
-        ("version,v", "print version")
-
-        ("logging-priority,L",
-         bpo::value<std::string>()
-         ->value_name("level"),
-         "set the logging priority")
-
-#if DATATOOLS_WITH_QT_GUI == 1
-        ("gui,G", "activate the GUI")
-#endif // DATATOOLS_WITH_QT_GUI == 1
-
-        ("config-variant,c",
-         bpo::value<std::string>(&cfg.variant_config_filename)
-         ->value_name("file"),
-         "set the name of the configuration file for the device manager")
-
-        ; // end of options description
-
-      bpo::positional_options_description args;
-      args.add("config-variant", 1);
-
-      // Describe Bayeux/datatools kernel options:
-      bpo::options_description kopts("Bayeux/datatools kernel options");
-      datatools::kernel::param_type kparams;
-      datatools::kernel::build_opt_desc(kopts, kparams);
-
-      // Collect all supported options in one container:
-      all_opts.add(opts);
-      all_opts.add(kopts);
-
-      // Configure the parser:
-      bpo::command_line_parser cl_parser(argc_, argv_);
-      cl_parser.options(all_opts);
-      cl_parser.positional(args);
-      // cl_parser.allow_unregistered();
-
-      // Parse:
-      bpo::parsed_options parsed = cl_parser.run();
-
-      // // Collect all other options & args:
-      // std::vector<std::string> unrecognized_opts;
-      // unrecognized_opts = bpo::collect_unrecognized(parsed.options,
-      //                                              bpo::include_positional);
-
-      // Fill and notify a variable map:
-      bpo::store(parsed, vm);
-      bpo::notify(vm);
-    }
-    catch (std::exception & po_error) {
-      app_usage(std::cerr, all_opts);
-      throw;
+      bpo::store(bpo::parse_command_line(argc_, argv_, optPublic), vMap);
+      bpo::notify(vMap);
+    } catch (const bpo::required_option& e) {
+      // We need to handle help even if required_option thrown
+      if (!vMap.count("help") && !vMap.count("version")) {
+        std::cerr << "[OptionsException] " << e.what() << std::endl;
+        throw std::logic_error(e.what());
+      }
+    } catch (const std::exception& e) {
+      std::cerr << "[OptionsException] " << e.what() << std::endl;
+      throw std::logic_error(e.what());
     }
 
-    // Use command line arguments :
-
-    if (vm.count("help")) {
-      app_usage(std::cout, all_opts);
-      return(error_code);
+    // Handle any non-bound options:
+    if (vMap.count("help")) {
+      app_usage(std::cout, optPublic);
+      return -1;
     }
 
-    if (vm.count("version")) {
+    if (vMap.count("version")) {
       app_version(std::cout);
-      return(error_code);
+      return -1;
     }
 
-#if DATATOOLS_WITH_QT_GUI == 1
-    if (vm.count("gui")) {
-      cfg.do_gui = true;
-    }
-#endif // DATATOOLS_WITH_QT_GUI == 1
-
-    // Fetch the verbosity level:
-    if (vm.count("logging-priority")) {
-      const std::string & logging_label = vm["logging-priority"].as<std::string>();
-      cfg.logging = datatools::logger::get_priority(logging_label);
-      DT_THROW_IF(cfg.logging == datatools::logger::PRIO_UNDEFINED, std::logic_error,
-                  "Invalid logging priority label '" << logging_label << "' !");
-    }
-
-    // Checks:
-    DT_THROW_IF(cfg.variant_config_filename.empty(), std::logic_error, "Missing variant manager configuration file!");
-    DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS,
-                  "Variant manager configuration file : '" << cfg.variant_config_filename << "'.");
-    datatools::fetch_path_with_env(cfg.variant_config_filename);
-    DT_THROW_IF(! boost::filesystem::exists(cfg.variant_config_filename),
-                std::runtime_error,
-                "Variant manager configuration file '" << cfg.variant_config_filename << "' does not exist!");
-
-    // datatools::configuration::variant_registry_manager vrmgr;
-    datatools::configuration::variant_repository vrep;
-    std::string vrep_config_filename = cfg.variant_config_filename;
-    datatools::fetch_path_with_env(vrep_config_filename);
-    datatools::properties vrep_config;
-    datatools::properties::read_config(vrep_config_filename, vrep_config);
-    vrep.initialize(vrep_config);
-    vrep.tree_dump(std::clog, "Variant repository: ");
-
-#if DATATOOLS_WITH_QT_GUI == 1
-    if (cfg.do_gui) {
-      // Launch a Qt based dialog for the variant repository:
-      const datatools::kernel & krnl = datatools::kernel::const_instance();
-      datatools::qt::interface & iqt = datatools::qt::interface::instance(krnl.get_argc(),
-                                                                          krnl.get_argv(),
-                                                                          krnl.get_application_name().c_str());
-      if (iqt.is_external_app()) {
-        DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "QT uses external application.");
+    if (vMap.count("logging")) {
+      datatools::logger::priority prio = datatools::logger::get_priority(params.logging);
+      if (prio != datatools::logger::PRIO_UNDEFINED) {
+        logging = prio;
+        params.logging = params.logging;
       }
+    }
 
-      datatools::configuration::ui::variant_repository_dialog vrep_dialog(vrep);
-      int ret = vrep_dialog.exec();
-      if (ret == QDialog::Rejected) {
-        DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "Variant repository dialog was rejected!");
+    // Set action:
+    bool print_doc = false;
+    bool print_profile = false;
+
+    if (params.action.empty()) {
+      params.action = "doc";
+    }
+
+    if (params.action == "doc") {
+      print_doc = true;
+    } else if (params.action == "profile") {
+      print_profile = true;
+    }
+
+    // Variant support:
+    try {
+      if (datatools::logger::is_debug(logging)) {
+        params.variants.print(std::cerr, "[debug] Variant parameters: ");
       }
+      if (params.variants.is_active()) {
+        dtc::variant_service vserv;
+        vserv.configure(params.variants);
 
-      /*
-        int argc = 1;
-      const char * argv[] = { "Bayeux - Configuration variant ins" };
-      QApplication::setStyle(QStyleFactory::create("plastique"));
-      QApplication app(argc, (char**) argv);
-
-      {
-        datatools::configuration::ui::variant_registry_tree_model vrtm;
-        vrtm.construct(dkvr.grab_registry("geometry"), "Geometry setup");
-        vrtm.tree_dump(std::clog, "Settings tree model:");
-        {
-          datatools::configuration::ui::variant_registry_dialog window(vrtm);
-          window.show();
-          int ret = app.exec();
+        // Action:
+        if (print_doc) {
+          app_print_rst(std::cout, vserv.get_repository());
+        } else if (print_profile) {
+          app_print_current_profile(std::cout, vserv.get_repository());
         }
-        dkvr.get_registry("geometry").tree_dump(std::clog, "Settings:");
+
+        if (datatools::logger::is_debug(logging)) {
+          debug_app_dump(std::cerr, vserv.get_repository());
+        }
+
+        // Start the variant service:
+        vserv.start();
+
+        // Nothing special here...
+
+        // Stop the variant service:
+        vserv.stop();
       }
 
-      {
-        QWidget * window = new QWidget;
-        QVBoxLayout * layout = new QVBoxLayout;
-        datatools::configuration::ui::variant_repository_viewer * vr_viewer
-          = new datatools::configuration::ui::variant_repository_viewer;
-        vr_viewer->set_repository(dkvr);
-        layout->addWidget(vr_viewer);
-        window->setLayout(layout);
-        window->show();
-        int ret = app.exec();
-      }
-
-      {
-        datatools::configuration::ui::variant_repository_dialog window(dkvr);
-        window.show();
-        int ret = app.exec();
-      }
-      */
+    } catch (std::exception& e) {
+      std::cerr << "[error] " << e.what()
+                << std::endl;
+      error_code = EXIT_FAILURE;
+      throw std::logic_error(e.what());
     }
-#endif // DATATOOLS_WITH_QT_GUI == 1
+
   }
   catch (const std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, error.what());
@@ -257,7 +213,7 @@ int main(int argc_, char * argv_[])
     error_code = EXIT_FAILURE;
   }
 
-  BAYEUX_FINI();
+  bayeux::terminate();
   return error_code;
 }
 
@@ -268,17 +224,81 @@ void app_version(std::ostream & out_)
   return;
 }
 
-void app_usage(std::ostream & out_,
-               const boost::program_options::options_description & opts_)
+void app_usage(std::ostream & out_, const bpo::options_description & opts_)
 {
+  out_ << "bxvariant_inspector - Browse/edit a variant repository" << std::endl;
   out_ << "Usage : " << std::endl;
+  out_ << "  bxvariant_inspector [options]..." << std::endl;
   out_ << opts_ << std::endl;
   return;
 }
 
 app_config_params::app_config_params()
 {
-  logging = datatools::logger::PRIO_FATAL;
-  do_gui = false;
+  logging = "";
+  action = "";
+  return;
+}
+
+void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_)
+{
+  out_ << "Variant repository : '" << vrep_.get_name() << "'" << std::endl;
+  out_ << "  Organization : '" << vrep_.get_organization() << "'" << std::endl;
+  out_ << "  Application  : '" << vrep_.get_application() << "'" << std::endl;
+  out_ << "  Description  : '" << vrep_.get_terse_description() << "'" << std::endl;
+  out_ << "  Accomplished : " << vrep_.is_accomplished() << "" << std::endl;
+  out_ << "  Locked       : " << vrep_.is_locked() << "'" << std::endl;
+  out_ << "  Registries   : [" << vrep_.get_registries().size() << "]" << std::endl;
+
+  std::vector<std::string> vreg_keys;
+  vrep_.build_ordered_registry_keys(vreg_keys);
+  for (std::size_t ivreg = 0;
+       ivreg < vreg_keys.size();
+       ivreg++) {
+    const std::string & vreg_key = vreg_keys[ivreg];
+    const dtc::variant_registry & vreg = vrep_.get_registry(vreg_key);
+    const std::string & vreg_name = vreg.get_name();
+    const std::string & vreg_display_name = vreg.get_display_name();
+    const std::string & vreg_description = vreg.get_terse_description();
+    bool vreg_accomplished = vreg.is_accomplished();
+    out_ << "  Variant register : '" << vreg_name << "'" << std::endl;
+    out_ << "    Description  : '" << vreg_description << "'" << std::endl;
+    out_ << "    Accomplished : " << vreg_accomplished << "" << std::endl;
+  }
+
+  return;
+}
+
+void app_print_current_profile(std::ostream & out_, const dtc::variant_repository & vrep_)
+{
+
+  std::clog << "Current variant profile is: " << std::endl;
+  std::clog << std::endl;
+  dtc::ascii_io rep_io(dtc::ascii_io::IO_DEFAULT);
+  rep_io.store_repository(out_, vrep_);
+  out_ << std::endl;
+  return;
+}
+
+void app_print_rst(std::ostream & out_, const dtc::variant_repository & vrep_)
+{
+  vrep_.print_rst(out_, 0);
+
+  // out_ << "Profile" << std::endl;
+  // out_ << "=======" << std::endl;
+  // out_ << std::endl;
+
+  // out_ << "Current variant profile is: " << std::endl;
+  // out_ << std::endl;
+  // std::ostringstream profile_oss;
+  // dtc::ascii_io rep_io(dtc::ascii_io::IO_DEFAULT);
+  // rep_io.store_repository(profile_oss, vrep_);
+  // out_ << "  ::" << std::endl;
+  // out_ << std::endl;
+  // datatools::print_multi_lines(out_, profile_oss.str(), "    ");
+  // out_ << std::endl;
+  // out_ << ".." << std::endl;
+  // out_ << std::endl;
+
   return;
 }

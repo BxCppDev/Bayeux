@@ -50,6 +50,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QFileDialog>
+// #include <QMessageBox>
 
 namespace datatools {
 
@@ -581,21 +582,57 @@ namespace datatools {
         if (! has_repository()) {
           return;
         }
-        const std::string * buf = buffer_;
-        if (!buf) {
-          if (!has_restore_buffer()) {
-            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "No available restore buffer!");
-            return;
-          }
-          buf =_restore_buffer_.get();
+        bool process = true;
+        if (this->get_repository().is_locked()) {
+          process = false;
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Repository is locked!");
+          // 2016-06-15 FM: The following segfaults after at button click!!!
+          // QMessageBox * msgBox = new QMessageBox(this);
+          // msgBox->setIcon(QMessageBox::Warning);
+          // msgBox->setText("The variant repository is locked.");
+          // msgBox->setInformativeText("Please unlock the repository before restoring its state from the restoration buffer!");
+          // // msgBox.setStandardButtons(QMessageBox::Ok);
+          // msgBox->show();
+          // process = false;
+          // int ret = msgBox->exec();
+          // switch (ret) {
+          // case QMessageBox::Ok:
+          //   // Ok was clicked
+          //   process = false;
+          //   break;
+          // default:
+          //   // should never be reached
+          //   process = false;
+          //   break;
+          // }
+          // delete msgBox;
         }
-        std::istringstream in(*buf);
-        ascii_io rep_io(ascii_io::IO_DEFAULT);
-        int error = rep_io.load_repository(in, this->grab_repository());
-        if (error) {
-          DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Failed to load repository from restore buffer!");
+        if (process) {
+          bool was_locked = this->get_repository().is_locked();
+          if (this->get_repository().is_locked()) {
+            this->grab_repository().unlock();
+          }
+          const std::string * buf = buffer_;
+          if (!buf) {
+            if (!has_restore_buffer()) {
+              DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "No available restore buffer!");
+              return;
+            }
+            buf =_restore_buffer_.get();
+          }
+          std::istringstream in(*buf);
+          ascii_io rep_io(ascii_io::IO_DEFAULT);
+          int error = rep_io.load_repository(in, this->grab_repository());
+          if (error) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Failed to load repository from restore buffer!");
+          } else {
+            emit sig_repository_changed();
+          }
+          if (was_locked) {
+            this->grab_repository().lock();
+          }
         } else {
-          emit sig_repository_changed();
+          std::cerr << "DEVEL: Do not process..." << std::endl;
         }
         return;
       }

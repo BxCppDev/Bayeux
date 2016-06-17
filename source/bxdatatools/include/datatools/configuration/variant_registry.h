@@ -122,6 +122,18 @@ namespace datatools {
                              const std::string & inden_ = "",
                              bool inherit_ = false) const;
 
+      /// \brief Flags for building the list of parameters
+      enum list_flags {
+        LIST_ACTIVE_ONLY = datatools::bit_mask::bit00,
+        LIST_NO_SET      = datatools::bit_mask::bit01,
+        LIST_NO_UNSET    = datatools::bit_mask::bit02,
+        LIST_CLEAR       = datatools::bit_mask::bit03
+      };
+
+      /// Compute the list of parameters
+      void list_of_parameters(std::vector<std::string> &_paths_,
+                              uint32_t flags_ = 0) const;
+
       /// Compute the list of unset parameters
       void list_of_unset_parameters(std::vector<std::string> & unset_paths_) const;
 
@@ -146,7 +158,7 @@ namespace datatools {
       /// Check if a variant exists
       command::returned_info
       cmd_has_variant(const std::string & variant_path_,
-                            bool & existing_) const;
+                      bool & existing_) const;
 
     protected:
 

@@ -73,6 +73,7 @@ namespace datatools {
       _no_header_        = false;
       _with_description_ = false;
       _with_title_       = false;
+      _ignore_unknown_registries_ = false;
       _logging_          = logger::PRIO_FATAL;
       if (flags_ & IO_NO_HEADER) {
         _no_header_ = true;
@@ -85,6 +86,9 @@ namespace datatools {
       }
       if (flags_ & IO_TRACE) {
         set_logging(logger::PRIO_TRACE);
+      }
+      if (flags_ & IO_IGNORE_UNKNOWN_REGISTRY) {
+        _ignore_unknown_registries_ = true;
       }
       return;
     }
@@ -412,8 +416,14 @@ namespace datatools {
                              << current_registry_name << "\"]' syntax !");
             }
             DT_LOG_TRACE(_logging_, "current_registry_name = '" << current_registry_name << "'");
-            DT_THROW_IF (!vrep_.has_registry(current_registry_name), std::logic_error,
-                         "Variant repository has no registry named '" << current_registry_name << "'!");
+            if (!vrep_.has_registry(current_registry_name)) {
+              if (_ignore_unknown_registries_) {
+                DT_LOG_WARNING(_logging_, "Ignoring profile section '" << current_registry_name << "' (unknown registry) while loading variant repository...");
+              } else {
+                DT_THROW (std::logic_error,
+                          "Variant repository has no known registry named '" << current_registry_name << "'!");
+              }
+            }
             current_registry_ptr = &vrep_.grab_registry(current_registry_name);
             int error = load_registry(in_, *current_registry_ptr);
             if (error) {

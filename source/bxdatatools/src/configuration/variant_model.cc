@@ -357,13 +357,22 @@ namespace datatools {
     }
 
     /// Print in ReST format
-    void variant_model::print_rst(std::ostream & out_, const std::string & indent_) const
+    void variant_model::print_rst(std::ostream & out_,
+                                  const std::string & indent_,
+                                  uint32_t flags_) const
     {
-      out_ << indent_ << std::endl;
-      out_ << indent_ << "Variant model ``" << get_name() << "``" << std::endl;
-      out_ << indent_ << ".........................................................................."  << std::endl;
-      out_ << indent_ << std::endl;
-      std::string indent = indent_ + "   ";
+      bool with_title = true;
+      if (flags_ & PRINT_RST_NO_TITLE) {
+        with_title = false;
+      }
+
+     if (with_title) {
+        out_ << indent_ << "=======================================================================" << std::endl;
+        out_ << indent_ << "Variant model ``" << get_name() << "``" << std::endl;
+        out_ << indent_ << "=======================================================================" << std::endl;
+        out_ << indent_ << std::endl;
+      }
+      std::string indent = indent_; // + "   ";
 
       if (has_terse_description()) {
         print_multi_lines(out_, get_terse_description(), indent);

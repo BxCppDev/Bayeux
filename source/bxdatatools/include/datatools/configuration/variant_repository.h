@@ -245,6 +245,14 @@ namespace datatools {
       cmd_is_active_registry(const std::string & registry_key_,
                              bool & active_) const;
 
+      enum rst_flags {
+        PRINT_RST_NO_TITLE = datatools::bit_mask::bit00
+      };
+
+      /// Print documentation
+      void print_rst(std::ostream & out_,
+                     uint32_t flags_ = 0) const;
+
       /// Export to the system variant repository
       void system_export(uint32_t flags_ = 0);
 
