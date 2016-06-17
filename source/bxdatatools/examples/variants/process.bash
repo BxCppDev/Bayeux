@@ -66,13 +66,13 @@ fi
 echo "INFO: The example program ex_variants with variants (2)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
-#   configuration file (foo_variance.conf),
+#   configuration file (foo_variants.conf),
 # - set some of the variant parameters from the command line ("algo:accuracy=4"...)
 # - launch a GUI dialog box to enable the (re)configuration of some of the variant parameters,
 #
 ./ex_variants --with-variants --variants-test 1 \
     --datatools::logging="fatal" \
-    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variance.conf" \
+    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
     --datatools::variant-set="core:gui=true" \
     --datatools::variant-set="core:operator=John Doe" \
     --datatools::variant-set="core:logging=warning" \
@@ -92,13 +92,13 @@ fi
 echo "INFO: The example program ex_variants with variants (3)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
-#   configuration file (foo_variance.conf),
+#   configuration file (foo_variants.conf),
 # - set some of the variant parameters from the command line ("algo:accuracy=4"...)
 # - store the variant settings in a file
 #
 ./ex_variants --with-variants --variants-test 1 \
     --datatools::logging="trace" \
-    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variance.conf" \
+    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
     --datatools::variant-set="core:gui=true" \
     --datatools::variant-set="core:operator=John Doe" \
     --datatools::variant-set="core:help=FullHelp" \
@@ -123,7 +123,7 @@ fi
 echo "INFO: The example program ex_variants with variants (4)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
-#   configuration file (foo_variance.conf),
+#   configuration file (foo_variants.conf),
 # - load variant parameters default values from a file (default.rep)
 # - set some of the variant parameters from the command line ("algo:accuracy=4"...)
 # - launch a GUI dialog box to enable the (re)configuration of some of the variant parameters,
@@ -131,7 +131,7 @@ echo "INFO: The example program ex_variants with variants (4)..." 1>&2
 #
 ./ex_variants --with-variants --variants-test 1 \
     --datatools::logging="fatal" \
-    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variance.conf" \
+    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
     --datatools::variant-load="${FOO_CONFIG_DIR}/variants/profiles/default.rep" \
     --datatools::variant-set="core:gui=true" \
     --datatools::variant-set="core:operator=John Doe" \

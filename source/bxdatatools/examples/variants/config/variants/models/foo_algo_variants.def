@@ -6,6 +6,45 @@
 #@meta_label  "type"
 
 
+##################################
+[name="value.PM" type="parameter"]
+
+#@config A parameter model describing the value
+
+#@description The display name of this parameter model
+display_name              : string = "Value"
+
+#@description A short description of the parameter model
+terse_description         : string = "The value"
+
+#@description The type of the parameter model
+type                      : string = "real"
+
+#@description The mutability of the parameter model
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter model
+variable.mode             : string = "enumeration"
+
+#@description The unit dimension label
+real.unit_label    : string = "length"
+
+#@description The preferred unit symbol
+real.preferred_unit : string = "mm"
+
+#@description The number of supported values
+real.enumerated.size    : integer = 4
+
+# The list of supported values:
+real.enumerated_0.value : real as length = 1.0 mm
+real.enumerated_1.value : real as length = 2.0 mm
+real.enumerated_2.value : real as length  = 1.0 cm
+real.enumerated_3.value : real as length = 1.0 m
+
+#@description The default value
+real.default            : real as length = 1 mm
+
+
 ###########################################
 [name="computing_time.PM" type="parameter"]
 
@@ -129,7 +168,7 @@ display_name       : string = "GUI setup"
 terse_description  : string = "The configuration parameters for the GUI"
 
 #@description The list of variant parameters
-parameters         : string[4] = "max_time" "accuracy" "nevents" "vt"
+parameters         : string[5] = "max_time" "accuracy" "nevents" "vt" "value"
 
 parameters.max_time.model       : string = "computing_time.PM"
 parameters.max_time.description : string = "Maximum computing time"
@@ -142,6 +181,9 @@ parameters.nevents.description  : string = "Number of events to be processed"
 
 parameters.vt.model             : string = "volume_tracker.PM"
 parameters.vt.description       : string = "Volume tracker"
+
+parameters.value.model             : string = "value.PM"
+parameters.value.description       : string = "Value"
 
 
 # end

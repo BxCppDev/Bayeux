@@ -41,8 +41,8 @@ Introduction
      for *variants*.  Some special directives  are added to allow some
      of  the  parameters to  be  modified  using the  Bayeux/datatools
      *configuration   variant*   mechanism.    This  file also  uses   the
-     ``datatools::properties`` ASCII format with additional *variance* directives.
-   * ``config/variants/foo_variance.conf`` :
+     ``datatools::properties`` ASCII format with additional *variants* directives.
+   * ``config/variants/foo_variants.conf`` :
      This is the main configuration file of the variant repository used by the application.
      This file refers to the ``config/variants/registries/foo_core_registry.conf``,
      ``config/variants/registries/foo_algo_registry.conf`` and ``config/variants/registries/foo_gui_registry.conf`` files below.
@@ -111,7 +111,30 @@ Quick start
       shell$ make install
       shell$ cd ..
 
-4. Run the example::
+4. Run the variant inspector:
+
+   Generate a ReST formatted documentation about the variant repository: ::
+
+      shell$ export FOO_CONFIG_DIR=./config
+      shell$ bxvariant_inspector \
+        --variant-label "Foo" \
+	--variant-config "${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
+	--variant-gui \
+	--variant-store "my_foo.profile" \
+	--action "doc" > foo.rst
+      shell$ pandoc -r rst foo.rst > foo.html
+      shell$ xdg-open foo.html &
+
+   Print the current profile associated to the variant repository: ::
+
+      shell$ bxvariant_inspector \
+        --variant-label "Foo" \
+	--variant-config "${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
+	--variant-load "my_foo.profile" \
+	--variant-gui \
+	--action "profile"
+
+5. Run the example::
 
       shell$ export FOO_CONFIG_DIR=./config
       shell$ ./ex_variants

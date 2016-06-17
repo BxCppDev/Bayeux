@@ -199,7 +199,7 @@ void test1()
   if (local_repository) {
     std::clog << "test1: Setup a configuration variants repository...\n";
     // Process the configuration of the variant repository:
-    std::string foo_rep_config_filename = "${FOO_CONFIG_DIR}/variants/foo_variance.conf";
+    std::string foo_rep_config_filename = "${FOO_CONFIG_DIR}/variants/foo_variants.conf";
     datatools::fetch_path_with_env(foo_rep_config_filename);
     datatools::properties foo_rep_config;
     foo_rep_config.read_configuration(foo_rep_config_filename);
@@ -258,7 +258,7 @@ void test2()
   {
     std::clog << "test2: Setup a configuration variants repository...\n";
     // Process the configuration of the variant repository:
-    std::string foo_rep_config_filename = "${FOO_CONFIG_DIR}/variants/foo_variance.conf";
+    std::string foo_rep_config_filename = "${FOO_CONFIG_DIR}/variants/foo_variants.conf";
     datatools::fetch_path_with_env(foo_rep_config_filename);
     datatools::properties foo_rep_config;
     foo_rep_config.read_configuration(foo_rep_config_filename);
