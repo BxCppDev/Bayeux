@@ -671,7 +671,6 @@ namespace datatools {
       for (registry_record_dict_type::const_iterator ireg = _registries_.begin();
            ireg != _registries_.end();
            ireg++) {
-        const std::string & variant_name = ireg->first;
         const registry_record & reg_rec = ireg->second;
         _repository_.registration_embedded(reg_rec.get_config_file(),
                                            "",
