@@ -136,6 +136,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/configuration/variant_record.h
   ${module_include_dir}/${module_name}/configuration/variant_registry.h
   ${module_include_dir}/${module_name}/configuration/variant_repository.h
+  ${module_include_dir}/${module_name}/configuration/variant_service.h
 
   ${module_include_dir}/${module_name}/introspection/data_type.h
   ${module_include_dir}/${module_name}/introspection/unit_support.h
@@ -245,6 +246,7 @@ ${module_source_dir}/configuration/variant_physical.cc
 ${module_source_dir}/configuration/variant_record.cc
 ${module_source_dir}/configuration/variant_registry.cc
 ${module_source_dir}/configuration/variant_repository.cc
+${module_source_dir}/configuration/variant_service.cc
 
 ${module_source_dir}/introspection/data_type.cc
 ${module_source_dir}/introspection/unit_support.cc
@@ -275,7 +277,7 @@ ${module_source_dir}/ui/utils.cc
 set(DATATOOLS_WITH_QT_GUI 0)
 if (BAYEUX_WITH_QT_GUI)
   set(DATATOOLS_WITH_QT_GUI 1)
-  # - QT4 moc headers
+  # - QT moc headers
   set(${module_name}_MODULE_HEADERS_QT_TO_BE_MOCCED
     ${module_include_dir}/${module_name}/qt/led.h
     ${module_include_dir}/${module_name}/configuration/ui/parameter_item_delegate.h
@@ -403,19 +405,24 @@ ${module_test_dir}/test_version_id.cxx
 ${module_test_dir}/test_configuration_parameter_model.cxx
 ${module_test_dir}/test_configuration_variant_model.cxx
 ${module_test_dir}/test_configuration_variant_api_0.cxx
+${module_test_dir}/test_configuration_variant_service.cxx
+)
 
 # Catastrophically broken on Mac
-#${module_test_dir}/test_ui_utils.cxx
-#${module_test_dir}/test_ui_ihs.cxx
-#${module_test_dir}/test_ui_base_command.cxx
-#${module_test_dir}/test_ui_base_command_interface.cxx
-#${module_test_dir}/test_ui_shell_command_interface.cxx
-#${module_test_dir}/test_ui_basic_shell.cxx
-# ${module_test_dir}/test_backward_things.cxx
-# ${module_test_dir}/test_introspection_data_description.cxx
-# ${module_test_dir}/test_introspection_argument.cxx
-# ${module_test_dir}/test_introspection_method.cxx
-)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  list(APPEND ${module_name}_MODULE_TESTS
+    ${module_test_dir}/test_ui_utils.cxx
+    ${module_test_dir}/test_ui_ihs.cxx
+    ${module_test_dir}/test_ui_base_command.cxx
+    ${module_test_dir}/test_ui_base_command_interface.cxx
+    ${module_test_dir}/test_ui_shell_command_interface.cxx
+    ${module_test_dir}/test_ui_basic_shell.cxx
+    ${module_test_dir}/test_backward_things.cxx
+    ${module_test_dir}/test_introspection_data_description.cxx
+    ${module_test_dir}/test_introspection_argument.cxx
+    ${module_test_dir}/test_introspection_method.cxx
+    )
+endif()
 
 # - Applications
 set(${module_name}_MODULE_APPS
@@ -434,10 +441,11 @@ set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/variants/models/basic/1.0/utils.def
   )
 
+list(APPEND ${module_name}_MODULE_APPS
+  ${module_app_dir}/variant_inspector.cxx
+  )
+
 if (BAYEUX_WITH_QT_GUI)
-  list(APPEND ${module_name}_MODULE_APPS
-    ${module_app_dir}/variant_inspector.cxx
-    )
 
   # - Special test program(s)
   list(APPEND ${module_name}_MODULE_TESTS
