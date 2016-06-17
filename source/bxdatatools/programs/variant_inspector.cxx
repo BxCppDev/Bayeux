@@ -74,7 +74,7 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
 {
   bayeux::initialize(argc_, argv_);
   int error_code = EXIT_SUCCESS;
-  datatools::logger::priority logging;
+  datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   app_config_params params;
 
   namespace bpo = boost::program_options;
@@ -258,7 +258,7 @@ void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_)
     const std::string & vreg_key = vreg_keys[ivreg];
     const dtc::variant_registry & vreg = vrep_.get_registry(vreg_key);
     const std::string & vreg_name = vreg.get_name();
-    const std::string & vreg_display_name = vreg.get_display_name();
+    // const std::string & vreg_display_name = vreg.get_display_name();
     const std::string & vreg_description = vreg.get_terse_description();
     bool vreg_accomplished = vreg.is_accomplished();
     out_ << "  Variant register : '" << vreg_name << "'" << std::endl;

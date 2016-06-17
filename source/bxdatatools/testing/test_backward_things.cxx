@@ -27,7 +27,7 @@ public:
                          bool a_inherit = false) const;
 
   //! Serialization interface
-  DATATOOLS_SERIALIZATION_DECLARATION();
+  DATATOOLS_SERIALIZATION_DECLARATION()
   DATATOOLS_SERIALIZATION_BACKWARD_SERIAL_TAG_SUPPORT()
 
 };
