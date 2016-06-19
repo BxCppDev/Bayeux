@@ -108,7 +108,7 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
     uint32_t po_init_flags = 0;
     po_init_flags |= dtc::variant_service::NO_LABEL;
     po_init_flags |= dtc::variant_service::NO_LOGGING;
-    po_init_flags |= dtc::variant_service::NO_PROFILE_LOAD_IGNORE_UNKNOWN;
+    // po_init_flags |= dtc::variant_service::PROFILE_LOAD_DONT_IGNORE_UNKNOWN;
     po_init_flags |= dtc::variant_service::NO_TUI;
     dtc::variant_service::init_options(optVariant,
                                        params.variants,

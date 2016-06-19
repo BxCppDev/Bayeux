@@ -56,6 +56,7 @@ namespace datatools {
 #if DATATOOLS_WITH_QT_GUI == 1
       gui = false;
 #endif // DATATOOLS_WITH_QT_GUI == 1
+      tui = false;
       return;
     }
 
@@ -132,7 +133,7 @@ namespace datatools {
       bool parse_registry_rules  = true;
       bool parse_registry_dependencies = true;
       bool parse_profile_load    = true;
-      bool parse_profile_load_ignore_unknown = true;
+      bool parse_profile_load_dont_ignore_unknown = true;
       bool parse_settings        = true;
       bool parse_profile_store   = true;
 
@@ -143,7 +144,7 @@ namespace datatools {
       if (flags_ & NO_REGISTRY_RULES) parse_registry_rules = false;
       if (flags_ & NO_REGISTRY_DEPENDENCIES) parse_registry_dependencies = false;
       if (flags_ & NO_PROFILE_LOAD) parse_profile_load = false;
-      if (flags_ & NO_PROFILE_LOAD_IGNORE_UNKNOWN) parse_profile_load_ignore_unknown = false;
+      if (flags_ & PROFILE_LOAD_DONT_IGNORE_UNKNOWN) parse_profile_load_dont_ignore_unknown = false;
       if (flags_ & NO_SETTINGS) parse_settings = false;
       if (flags_ & NO_PROFILE_STORE) parse_profile_store = false;
 #if DATATOOLS_WITH_QT_GUI == 1
@@ -189,12 +190,11 @@ namespace datatools {
                   "file from which to load a specific variant profile at startup");
       }
 
-      if (parse_profile_load_ignore_unknown) {
+      if (parse_profile_load_dont_ignore_unknown) {
         easy_init("variant-load-no-unknown",
                   bpo::value<bool>(&cfg_.profile_load_dont_ignore_unknown)->zero_tokens()->default_value(false),
                   "do not ignore unknown registry sections at variant profile loading");
       }
-
 
       if (parse_settings) {
         easy_init("variant-set",
@@ -233,7 +233,7 @@ namespace datatools {
 #endif // DATATOOLS_WITH_QT_GUI == 1
       _logging_ = datatools::logger::PRIO_FATAL;
       _started_ = false;
-      _ignore_unknown_at_load_ = false;
+      _dont_ignore_unknown_at_load_ = false;
       return;
     }
 
@@ -313,10 +313,10 @@ namespace datatools {
       return;
     }
 
-    void variant_service::set_ignore_unknown_at_load(bool flag_)
+    void variant_service::set_dont_ignore_unknown_at_load(bool flag_)
     {
       DT_THROW_IF(is_started(), std::logic_error, "Variant service is started!");
-      _ignore_unknown_at_load_ = flag_;
+      _dont_ignore_unknown_at_load_ = flag_;
       return;
     }
 
@@ -734,8 +734,8 @@ namespace datatools {
       }
       uint32_t rep_io_flags = 0;
       rep_io_flags |= datatools::configuration::ascii_io::IO_DEFAULT;
-      if (_ignore_unknown_at_load_) {
-        rep_io_flags |= datatools::configuration::ascii_io::IO_IGNORE_UNKNOWN_REGISTRY;
+      if (_dont_ignore_unknown_at_load_) {
+        rep_io_flags |= datatools::configuration::ascii_io::IO_DONT_IGNORE_UNKNOWN_REGISTRY;
       }
       datatools::configuration::ascii_io rep_io(rep_io_flags);
       bool was_locked = _repository_.is_locked();

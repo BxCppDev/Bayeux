@@ -61,7 +61,7 @@ namespace datatools {
         NO_REGISTRY_RULES         = datatools::bit_mask::bit03,
         NO_REGISTRY_DEPENDENCIES  = datatools::bit_mask::bit04,
         NO_PROFILE_LOAD           = datatools::bit_mask::bit05,
-        NO_PROFILE_LOAD_IGNORE_UNKNOWN = datatools::bit_mask::bit06,
+        PROFILE_LOAD_DONT_IGNORE_UNKNOWN = datatools::bit_mask::bit06,
         NO_SETTINGS               = datatools::bit_mask::bit07,
         NO_PROFILE_STORE          = datatools::bit_mask::bit08,
         NO_GUI                    = datatools::bit_mask::bit09,
@@ -183,7 +183,7 @@ namespace datatools {
       void set_input_profile(const std::string & ip_);
 
       //! Set the ignore unknown at load flag
-      void set_ignore_unknown_at_load(bool);
+      void set_dont_ignore_unknown_at_load(bool);
 
       //! Set the setting rules for variant parameters
       void set_settings(const std::vector<std::string> & setting_);
@@ -301,7 +301,7 @@ namespace datatools {
       std::string                 _input_profile_;     //!< Input variant profile (optional)
       std::vector<std::string>    _settings_;          //!< Collection of variant parameters setting rules (optional)
       std::string                 _output_profile_;    //!< Output variant profile (optional)
-      bool                        _ignore_unknown_at_load_; //! Ignore unknown registries at load
+      bool                        _dont_ignore_unknown_at_load_; //! Don't ignore unknown registries at load
  #if DATATOOLS_WITH_QT_GUI == 1
       bool                        _gui_;               //!< Qt GUI activation (optional)
 #endif // DATATOOLS_WITH_QT_GUI == 1

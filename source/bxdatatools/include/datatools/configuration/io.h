@@ -62,7 +62,7 @@ namespace datatools {
         IO_TITLE       = datatools::bit_mask::bit01, //!< Print title comment
         IO_TRACE       = datatools::bit_mask::bit02, //!< Trace/debug mode
         IO_NO_HEADER   = datatools::bit_mask::bit03, //!< Do not print header
-        IO_IGNORE_UNKNOWN_REGISTRY = datatools::bit_mask::bit04, //!< Do not load unknown registries from profile
+        IO_DONT_IGNORE_UNKNOWN_REGISTRY = datatools::bit_mask::bit04, //!< Do not load unknown registries from profile
         IO_DEFAULT     = 0                           //!< Default flags
       };
 
@@ -110,7 +110,7 @@ namespace datatools {
       bool _no_header_;           //!< Flag to inhibit header at begin of file
       bool _with_description_;    //!< Flag to print description meta comment
       bool _with_title_;          //!< Flag to print a title comment
-      bool _ignore_unknown_registries_; //!< Flag to ignore unknown registries
+      bool _dont_ignore_unknown_registries_; //!< Flag to ignore unknown registries
       logger::priority _logging_; //!< Logging priority
       datatools::version_id _format_version_; //!< Format version identifier
 

@@ -49,7 +49,7 @@ int main(int argc_, char ** argv_)
   bpo::options_description optVariant("Variant support");
   uint32_t po_init_flags = 0;
   // po_init_flags |= dtc::variant_service::NO_CONFIG_FILENAME;
-  po_init_flags |= dtc::variant_service::NO_PROFILE_LOAD_IGNORE_UNKNOWN;
+  po_init_flags |= dtc::variant_service::PROFILE_LOAD_DONT_IGNORE_UNKNOWN;
   dtc::variant_service::init_options(optVariant,
                                      params.variant,
                                      po_init_flags);

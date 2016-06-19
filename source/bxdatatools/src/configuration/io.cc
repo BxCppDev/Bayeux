@@ -73,7 +73,7 @@ namespace datatools {
       _no_header_        = false;
       _with_description_ = false;
       _with_title_       = false;
-      _ignore_unknown_registries_ = false;
+      _dont_ignore_unknown_registries_ = false;
       _logging_          = logger::PRIO_FATAL;
       if (flags_ & IO_NO_HEADER) {
         _no_header_ = true;
@@ -87,8 +87,8 @@ namespace datatools {
       if (flags_ & IO_TRACE) {
         set_logging(logger::PRIO_TRACE);
       }
-      if (flags_ & IO_IGNORE_UNKNOWN_REGISTRY) {
-        _ignore_unknown_registries_ = true;
+      if (flags_ & IO_DONT_IGNORE_UNKNOWN_REGISTRY) {
+        _dont_ignore_unknown_registries_ = true;
       }
       return;
     }
@@ -327,17 +327,22 @@ namespace datatools {
       DT_LOG_TRACE(_logging_, "Entering...");
       std::string line;
       std::string current_registry_name;
-      variant_registry * current_registry_ptr = 0;
       datatools::version_id in_format_version;
+      bool started_sections = false;
+      bool skip_section = false;
       while (in_) {
         int line_count = 0;
         std::getline(in_, line);
         line_count++;
         DT_LOG_TRACE(_logging_, "line = '" << line << "'");
         if (line.empty()) {
+          // Skip empty line:
           continue;
         } else if (line[0] == '#') {
+          // Process comment line:
           if (line.length() >= 2 && line[1] == '@') {
+            DT_THROW_IF(started_sections, std::logic_error,
+                        "Metacomment '" << line << "' is not allowed within a registry section!");
             unsigned long equal_pos = line.find('=');
             if (equal_pos != line.npos) {
               std::string tag = boost::trim_right_copy(line.substr(2, equal_pos - 2));
@@ -396,6 +401,10 @@ namespace datatools {
           }
           DT_LOG_TRACE(_logging_, "word = '" << word << "'");
           if (boost::starts_with(line, "[") && boost::ends_with(line, "]")) {
+            if (skip_section) {
+              skip_section = false;
+            }
+            // Detect a registry section:
             std::string reg_name_repr = line.substr(1, word.length()-2);
             unsigned int equal_pos = reg_name_repr.find('=');
             if (equal_pos > 0 && equal_pos < reg_name_repr.length()) {
@@ -417,17 +426,29 @@ namespace datatools {
             }
             DT_LOG_TRACE(_logging_, "current_registry_name = '" << current_registry_name << "'");
             if (!vrep_.has_registry(current_registry_name)) {
-              if (_ignore_unknown_registries_) {
-                DT_LOG_WARNING(_logging_, "Ignoring profile section '" << current_registry_name << "' (unknown registry) while loading variant repository...");
-              } else {
+              if (_dont_ignore_unknown_registries_) {
                 DT_THROW (std::logic_error,
                           "Variant repository has no known registry named '" << current_registry_name << "'!");
               }
+              DT_LOG_WARNING(_logging_,
+                             "Ignoring profile section '" << current_registry_name
+                             << "' (unknown registry) while loading variant repository...");
+              skip_section = true;
+            } else {
+              skip_section = false;
             }
-            current_registry_ptr = &vrep_.grab_registry(current_registry_name);
-            int error = load_registry(in_, *current_registry_ptr);
-            if (error) {
-              return 1;
+            started_sections = true;
+            if (!skip_section) {
+              variant_registry * current_registry_ptr = &vrep_.grab_registry(current_registry_name);
+              int error = load_registry(in_, *current_registry_ptr);
+              if (error) {
+                return 1;
+              }
+            }
+          } else {
+            // Not a start section line:
+            if (started_sections && skip_section) {
+              continue;
             }
           }
         }
