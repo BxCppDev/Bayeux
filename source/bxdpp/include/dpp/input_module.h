@@ -79,7 +79,7 @@ namespace dpp {
     /// Import a metadata section with given label from the input stream to the context service
     void import_context_metadata(const std::string &);
 
-    /// Import all metadata sections from the output stream to the context service
+    /// Import all metadata sections from the input stream to the context service
     void set_import_context_all(bool);
 
     /// Constructor
