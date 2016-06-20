@@ -25,7 +25,7 @@
 # Configure build of Bayeux library
 # - Packages
 # - Boost
-find_package(Boost 1.55.0
+find_package(Boost 1.60.0
   REQUIRED
   filesystem
   system

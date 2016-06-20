@@ -151,7 +151,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # - Allow choice of standard
 enum_option(BAYEUX_CXX_STANDARD
-  VALUES "98" "11" "14"
+  VALUES "11" "14"
   TYPE   STRING
   DOC    "Choose C++ Standard to compile against"
   )
