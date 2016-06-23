@@ -3,7 +3,7 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-05-25
+:Date:   2016-05-28
 
 In  this  document  we  propose  an  installation  procedure  for  the
 Bayeux_/trunk  library on  top  of Cadfaelbrew_  (2016.01) on  Xubuntu
@@ -341,6 +341,7 @@ or :
    $ cmake \
     -DCMAKE_BUILD_TYPE:STRING="Release" \
     -DCMAKE_INSTALL_PREFIX:FILEPATH="${BX11_DEV_INSTALL_DIR}" \
+    -DBAYEUX_CXX_STANDARD="11" \
     -DBAYEUX_WITH_IWYU_CHECK=ON \
     -DBAYEUX_WITH_DEVELOPER_TOOLS=ON \
     -DBAYEUX_WITH_LAHAGUE=ON \
