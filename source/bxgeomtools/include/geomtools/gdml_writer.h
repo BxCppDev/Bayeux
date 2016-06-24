@@ -46,6 +46,7 @@ namespace geomtools {
   class polyhedra;
   class right_polygonal_frustrum;
   class tube;
+  class torus;
   class cylinder;
   class tessellated_solid;
   class wall_solid;
@@ -382,6 +383,18 @@ namespace geomtools {
                   const std::string & lunit_str_ = "mm",
                   const std::string & aunit_str_ = "radian");
 
+    void add_gdml_torus(const std::string & name_,
+												double rsweep_,
+												double rmin_, double rmax,
+												double start_phi_, double delta_phi_,
+												const std::string & lunit_str_ = "mm",
+												const std::string & aunit_str_ = "radian");
+		
+    void add_torus(const std::string & name_,
+									 const torus & t_,
+									 const std::string & lunit_str_ = "mm",
+									 const std::string & aunit_str_ = "radian");
+		
     void add_cylinder(const std::string & name_,
                       const cylinder & c_,
                       const std::string & lunit_str_ = "mm",

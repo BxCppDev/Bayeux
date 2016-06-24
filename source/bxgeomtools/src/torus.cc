@@ -11,6 +11,8 @@
 #include <datatools/exception.h>
 #include <datatools/properties.h>
 #include <datatools/units.h>
+// - Bayeux/mygsl:
+#include <mygsl/min_max.h>
 
 // This project:
 #include <geomtools/circle.h>
@@ -48,7 +50,7 @@ namespace geomtools {
 
   double torus::get_ymax() const
   {
-   return +_sweep_radius_ + _outside_radius_;
+    return +_sweep_radius_ + _outside_radius_;
   }
 
   double torus::get_zmin() const
@@ -71,7 +73,9 @@ namespace geomtools {
   torus::set_sweep_radius(double sr_)
   {
     DT_THROW_IF(sr_ < 0.0, std::logic_error,
-                 "Invalid '" << sr_ << "' solid torus sweep radius value !");
+		"Invalid '" << sr_ << "' solid torus sweep radius value !");
+    DT_THROW_IF (datatools::is_valid(_outside_radius_) && (sr_ < _outside_radius_),
+                 std::domain_error, "Invalid sweep radius '" << sr_ << "' (< outside radius) !");
     _sweep_radius_ = sr_;
     return;
   }
@@ -91,7 +95,9 @@ namespace geomtools {
   torus::set_inside_radius(double inr_)
   {
     DT_THROW_IF(inr_ < 0.0, std::logic_error,
-                 "Invalid '" << inr_ << "' inside radius value !");
+		"Invalid '" << inr_ << "' inside radius value !");
+    DT_THROW_IF (datatools::is_valid(_outside_radius_) && (inr_ >= _outside_radius_),
+                 std::domain_error, "Invalid inside radius '" << inr_ << "' (> outside radius) !");
     _inside_radius_ = inr_;
     return;
   }
@@ -103,64 +109,73 @@ namespace geomtools {
   }
 
   void
-  torus::set_outside_radius(double inr_)
+  torus::set_outside_radius(double outr_)
   {
-    DT_THROW_IF(inr_ < 0.0, std::logic_error,
-                 "Invalid '" << inr_ << "' outside radius value !");
-    _outside_radius_ = inr_;
+    DT_THROW_IF(outr_ < 0.0, std::logic_error,
+		"Invalid '" << outr_ << "' outside radius value !");
+    DT_THROW_IF (datatools::is_valid(_inside_radius_) && (outr_ <= _inside_radius_),
+                 std::domain_error, "Invalid outside radius '" << outr_ << "' (< inside radius) !");
+    DT_THROW_IF (datatools::is_valid(_sweep_radius_) && (outr_ >= _sweep_radius_),
+                 std::domain_error, "Invalid outside radius '" << outr_ << "' (> sweep radius) !");
+    _outside_radius_ = outr_;
     return;
   }
 
   bool torus::has_partial_phi() const
   {
-    if(_delta_phi_ == 2 * M_PI) return false;
-    if(_start_phi_ > 0.0) return true;
-    return false;
+    return _phi_domain_.is_partial();
   }
 
   bool torus::has_start_phi() const
   {
-    return datatools::is_valid(_start_phi_);
+    return _phi_domain_.has_start_angle();
   }
 
   void torus::set_start_phi(double new_value_)
   {
-    DT_THROW_IF(new_value_ < 0.0 || new_value_ >= 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start phi value !");
-    _start_phi_ = new_value_;
+    _phi_domain_.set_start_angle(new_value_);
     return;
   }
 
   double torus::get_start_phi() const
   {
-    return _start_phi_;
+    return _phi_domain_.get_start_angle();
   }
 
   bool torus::has_delta_phi() const
   {
-    return datatools::is_valid(_delta_phi_);
+    return _phi_domain_.has_delta_angle();
   }
 
   void torus::set_delta_phi(double new_value_)
   {
-    DT_THROW_IF(new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' delta phi value !");
-    _delta_phi_ = new_value_;
+    _phi_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double torus::get_delta_phi() const
   {
-    return _delta_phi_;
+    return _phi_domain_.get_delta_angle();
   }
 
+  void torus::set_phi(double start_phi_, double delta_phi_)
+  {
+    _phi_domain_.set_partial_angles(start_phi_, delta_phi_);
+  }
+  
   void torus::set(double sweep_radius_, double outside_radius_, double inside_radius_)
   {
+    _set_defaults();
     set_sweep_radius(sweep_radius_);
     set_outside_radius(outside_radius_);
     set_inside_radius(inside_radius_);
+    return;
+  }
+
+  void torus::set(double sweep_radius_, double outside_radius_, double inside_radius_, double start_phi_, double delta_phi_)
+  {
+    set(sweep_radius_, outside_radius_, inside_radius_);
+    set_phi(start_phi_, delta_phi_);
     return;
   }
 
@@ -174,6 +189,13 @@ namespace geomtools {
   {
     _set_defaults();
     set(sweep_radius_, outside_radius_, inside_radius_);
+    return;
+  }
+
+  torus::torus(double sweep_radius_, double outside_radius_, double inside_radius_, double start_phi_, double delta_phi_)
+  {
+    _set_defaults();
+    set(sweep_radius_, outside_radius_, inside_radius_, start_phi_, delta_phi_);
     return;
   }
 
@@ -211,14 +233,12 @@ namespace geomtools {
     if (has_partial_phi()) {
       disk phi_face;
       placement dummy_placement;
-      compute_start_stop_phi_face(FACE_START_PHI,
-                                  phi_face,
-                                  dummy_placement);
+      compute_start_stop_phi_face(FACE_START_PHI, phi_face, dummy_placement);
       if(mask & FACE_START_PHI) {
-        s += phi_face.get_surface();
+	s += phi_face.get_surface();
       }
       if(mask & FACE_STOP_PHI) {
-        s += phi_face.get_surface();
+	s += phi_face.get_surface();
       }
     }
     return s;
@@ -259,8 +279,8 @@ namespace geomtools {
   torus::is_valid() const
   {
     return(datatools::is_valid(_sweep_radius_)
-            && datatools::is_valid(_inside_radius_)
-            && datatools::is_valid(_outside_radius_));
+	   && datatools::is_valid(_inside_radius_)
+	   && datatools::is_valid(_outside_radius_));
   }
 
   void torus::_set_defaults()
@@ -268,6 +288,8 @@ namespace geomtools {
     datatools::invalidate(_sweep_radius_);
     datatools::invalidate(_inside_radius_);
     datatools::invalidate(_outside_radius_);
+    _phi_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _phi_domain_.reset_partial_angles();
     return;
   }
 
@@ -291,18 +313,14 @@ namespace geomtools {
     double x = r - _sweep_radius_;
     double z = position_.z();
     double phi = position_.phi();
-    double start_phi = 0.0;
-    double delta_phi = 2 * M_PI;
-    if (has_start_phi()) {
-      start_phi = _start_phi_;
-      delta_phi = _delta_phi_;
-    }
-    if (!angle_is_in(phi,
-                     start_phi,
-                     delta_phi,
-                     angular_tolerance,
-                     true)) {
-      return false;
+    if (has_partial_phi()) {
+      if (!angle_is_in(phi,
+		       get_start_phi(),
+		       get_delta_phi(),
+		       angular_tolerance,
+		       true)) {
+	return false;
+      }
     }
     disk section;
     section.set_outer_r(_outside_radius_ - hskin);
@@ -327,23 +345,21 @@ namespace geomtools {
     double x = r - _sweep_radius_;
     double z = position_.z();
     double phi = position_.phi();
-    double start_phi = 0.0;
-    double delta_phi = 2 * M_PI;
-    if (has_start_phi()) {
-      start_phi = _start_phi_;
-      delta_phi = _delta_phi_;
-    }
-    if (!angle_is_in(phi,
-                     start_phi,
-                     delta_phi,
-                     angular_tolerance,
-                     true)) {
-      return true;
+    if (has_partial_phi()) {
+      if (!angle_is_in(phi,
+		       get_start_phi(),
+		       get_delta_phi(),
+		       angular_tolerance,
+		       true)) {
+	return true;
+      }
     }
     disk section;
     section.set_outer_r(_outside_radius_ + hskin);
     if (has_inside_radius()) {
-      section.set_inner_r(_inside_radius_ - hskin);
+      double ir = _inside_radius_ - hskin;
+      if (ir > 0.0)
+	section.set_inner_r(ir);
     }
     vector_3d pos(x, z, 0.0);
     if (!section.is_on_surface(pos, 0.0)) {
@@ -360,26 +376,26 @@ namespace geomtools {
     vector_3d normal;
     invalidate(normal);
     /*
-    switch(a_surface_bit.get_face_bits()) {
-    case FACE_INSIDE:
+      switch(a_surface_bit.get_face_bits()) {
+      case FACE_INSIDE:
       {
-        double phi = a_position.phi();
-        normal.set(std::cos(phi), std::sin(phi), 0.0);
+      double phi = a_position.phi();
+      normal.set(std::cos(phi), std::sin(phi), 0.0);
       }
       break;
-    case FACE_OUTSIDE:
+      case FACE_OUTSIDE:
       {
-        double phi = a_position.phi();
-        normal.set(std::cos(phi), std::sin(phi), 0.0);
+      double phi = a_position.phi();
+      normal.set(std::cos(phi), std::sin(phi), 0.0);
       }
       break;
-    case FACE_START_PHI:
+      case FACE_START_PHI:
       normal.set(0.0, 0.0, -1.0);
       break;
-    case FACE_STOP_PHI:
+      case FACE_STOP_PHI:
       normal.set(0.0, 0.0, +1.0);
       break;
-    }
+      }
     */
     return normal;
   }
@@ -402,8 +418,8 @@ namespace geomtools {
 
     const face_info_collection_type & faces = get_computed_faces();
     for(face_info_collection_type::const_iterator iface = faces.begin();
-         iface != faces.end();
-         iface++) {
+	iface != faces.end();
+	iface++) {
       const face_info & finfo = *iface;
       if(finfo.is_valid() && mask.has_face_bit(finfo.get_identifier().get_face_bits())) {
         vector_3d position_c;
@@ -428,15 +444,15 @@ namespace geomtools {
 
     double skin = compute_tolerance(a_skin);
 
-    const unsigned int NFACES = 3;
+    const unsigned int NFACES = 4;
     face_intercept_info intercepts[NFACES];
     unsigned int candidate_impact_counter = 0;
-
+    
     int face_counter = 0;
     const face_info_collection_type & faces = get_computed_faces();
     for(face_info_collection_type::const_iterator iface = faces.begin();
-         iface != faces.end();
-         iface++) {
+	iface != faces.end();
+	iface++) {
       const face_info & finfo = *iface;
       if(!finfo.is_valid()) {
         continue;
@@ -445,16 +461,16 @@ namespace geomtools {
       const placement & face_placement = finfo.get_positioning();
       const face_identifier & face_id = finfo.get_identifier();
       if(face.i_find_intercept::find_intercept(a_from,
-                                                a_direction,
-                                                face_placement,
-                                                intercepts[face_counter],
-                                                skin)) {
+					       a_direction,
+					       face_placement,
+					       intercepts[face_counter],
+					       skin)) {
         intercepts[face_counter].set_face_id(face_id);
         candidate_impact_counter++;
       }
       face_counter++;
     }
-
+    
     if(candidate_impact_counter > 0) {
       double min_length_to_impact = -1.0;
       for(unsigned int iface = 0; iface < NFACES; iface++) {
@@ -472,62 +488,71 @@ namespace geomtools {
     return a_intercept.is_ok();
   }
 
-  // std::ostream & operator<<(std::ostream & a_out, const torus & a_torus)
-  // {
-  //   a_out << '{' << torus::torus_label() << ' '
-  //         << a_torus._sweep_radius_ << ' '
-  //         << a_torus._inside_radius_<< ' '
-  //         << a_torus._outside_radius_ << '}';
-  //   return a_out;
-  // }
+  std::ostream & operator<<(std::ostream & a_out, const torus & a_torus)
+  {
+    a_out << '{' << torus::torus_label() << ' '
+          << a_torus._sweep_radius_ << ' '
+          << a_torus._inside_radius_<< ' '
+          << a_torus._outside_radius_ << ' '
+	  << a_torus._phi_domain_.get_start_angle() << ' '
+	  << a_torus._phi_domain_.get_delta_angle() << '}';
+    return a_out;
+  }
 
-  // std::istream & operator>>( std::istream & a_in, torus & a_torus)
-  // {
-  //   a_torus.reset();
-  //   char c = 0;
-  //   a_in.get(c);
-  //   if(c != '{')
-  //     {
-  //       a_in.clear(std::ios_base::failbit);
-  //       return a_in;
-  //     }
-  //   std::string name;
-  //   a_in >> name;
-  //   if(name != torus::torus_label())
-  //     {
-  //       a_in.clear(std::ios_base::failbit);
-  //       return a_in;
-  //     }
-  //   double sr, ir, outr;
-  //   a_in >> sr >> ir >> outr ;
-  //   if(! a_in)
-  //     {
-  //       a_in.clear(std::ios_base::failbit);
-  //       return a_in;
-  //     }
-  //   c = 0;
-  //   a_in.get(c);
-  //   if(c != '}')
-  //     {
-  //       a_in.clear(std::ios_base::failbit);
-  //       return a_in;
-  //     }
-  //   try
-  //     {
-  //       a_torus.set(ir, outr, sr);
-  //     }
-  //   catch(...)
-  //     {
-  //       a_torus.reset();
-  //       a_in.clear(std::ios_base::failbit);
-  //     }
-  //   return a_in;
-  // }
+  std::istream & operator>>( std::istream & a_in, torus & a_torus)
+  {
+    a_torus.reset();
+    char c = 0;
+    a_in.get(c);
+    if(c != '{')
+      {
+        a_in.clear(std::ios_base::failbit);
+        return a_in;
+      }
+    std::string name;
+    a_in >> name;
+    if(name != torus::torus_label())
+      {
+        a_in.clear(std::ios_base::failbit);
+        return a_in;
+      }
+    double sr, ir, outr;
+    a_in >> sr >> ir >> outr ;
+    if(! a_in)
+      {
+        a_in.clear(std::ios_base::failbit);
+        return a_in;
+      }
+    double start_phi, delta_phi;
+    a_in >> start_phi >> delta_phi;
+    if (! a_in)
+      {
+        a_in.clear (std::ios_base::failbit);
+        return a_in;
+      }
+    c = 0;
+    a_in.get(c);
+    if(c != '}')
+      {
+        a_in.clear(std::ios_base::failbit);
+        return a_in;
+      }
+    try
+      {
+        a_torus.set(sr, ir, outr, start_phi, delta_phi);
+      }
+    catch(...)
+      {
+        a_torus.reset();
+        a_in.clear(std::ios_base::failbit);
+      }
+    return a_in;
+  }
 
   void torus::tree_dump(std::ostream & a_out,
-                            const std::string & a_title,
-                            const std::string & a_indent,
-                            bool a_inherit) const
+			const std::string & a_title,
+			const std::string & a_indent,
+			bool a_inherit) const
   {
     i_object_3d::tree_dump(a_out, a_title, a_indent, true);
 
@@ -537,7 +562,7 @@ namespace geomtools {
     a_out << a_indent << datatools::i_tree_dumpable::tag
           << "Inside radius : " << get_inside_radius() / CLHEP::mm << " mm" << std::endl;
 
-    a_out << a_indent << datatools::i_tree_dumpable::inherit_tag(a_inherit)
+    a_out << a_indent << datatools::i_tree_dumpable::tag
           << "Outside radius : " << get_outside_radius() / CLHEP::mm << " mm" << std::endl;
 
     if (has_partial_phi()) {
@@ -589,27 +614,35 @@ namespace geomtools {
     return;
   }
 
-  void torus::compute_start_stop_phi_face(faces_mask_type /*face_id_*/,
+  void torus::compute_start_stop_phi_face(faces_mask_type face_id_,
                                           disk & face_,
                                           placement & face_placement_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Torus is not valid !");
     face_.reset();
     face_placement_.reset();
-    // switch(face_id_) {
-    // case FACE_START_PHI:
-    //   face_.set_r(get_r());
-    //   face_placement_.set(0.0, 0.0, -0.5 * _z_,
-    //                       0.0, 0.0, 0.0);
-    //   break;
-    // case FACE_STOP_PHI:
-    //   face_.set_r(get_r());
-    //   face_placement_.set(0.0, 0.0, +0.5 * _z_,
-    //                       0.0, 0.0, 0.0);
-    //   break;
-    // default:
-    //   break;
-    // }
+    switch(face_id_) {
+    case FACE_START_PHI:
+      face_.set_r(get_outside_radius());
+      face_.set_inner_r(get_inside_radius());
+      face_placement_.set_translation(get_sweep_radius() * cos(get_start_phi()),
+				      get_sweep_radius() * sin(get_start_phi()), 0.0);
+      face_placement_.set_orientation(get_special_rotation_angle(ROTATION_ANGLE_270),
+                                      get_special_rotation_angle(ROTATION_ANGLE_270) + get_start_phi(),
+                                      0.0, EULER_ANGLES_YXY);
+      break;
+    case FACE_STOP_PHI:
+      face_.set_r(get_outside_radius());
+      face_.set_inner_r(get_inside_radius());
+      face_placement_.set_translation(get_sweep_radius() * cos(get_start_phi() + get_delta_phi()),
+				      get_sweep_radius() * sin(get_start_phi() + get_delta_phi()), 0.0);
+      face_placement_.set_orientation(get_special_rotation_angle(ROTATION_ANGLE_270),
+                                      get_special_rotation_angle(ROTATION_ANGLE_270) + get_start_phi() + get_delta_phi(),
+                                      0.0, EULER_ANGLES_YXY);
+      break;
+    default:
+      break;
+    }
     return;
   }
 
@@ -689,11 +722,11 @@ namespace geomtools {
 
 
   void torus::generate_wires_self(wires_type & wires_,
-                                     uint32_t options_) const
+				  uint32_t options_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid solid torus!");
-    bool draw_inside      = !(options_ & WR_TORUS_NO_INSIDE_FACE);
-    bool draw_outside     = !(options_ & WR_TORUS_NO_OUTSIDE_FACE);
+    bool draw_inside    = !(options_ & WR_TORUS_NO_INSIDE_FACE);
+    bool draw_outside   = !(options_ & WR_TORUS_NO_OUTSIDE_FACE);
     bool draw_start_phi = !(options_ & WR_TORUS_NO_START_PHI_FACE);
     bool draw_stop_phi  = !(options_ & WR_TORUS_NO_STOP_PHI_FACE);
 
@@ -751,7 +784,7 @@ namespace geomtools {
   }
 
   void torus::initialize(const datatools::properties & config_,
-                            const handle_dict_type * objects_)
+			 const handle_dict_type * objects_)
   {
     this->i_shape_3d::_initialize(config_, objects_);
 
@@ -782,27 +815,84 @@ namespace geomtools {
       }
       DT_THROW_IF(! datatools::is_valid(outside_radius), std::logic_error, "Missing torus 'outside_radius' property !");
 
-      double inside_radius;
-      datatools::invalidate(inside_radius);
+      double inside_radius = 0.0;
       if(config_.has_key("inside_radius")) {
         inside_radius = config_.fetch_real("inside_radius");
         if(! config_.has_explicit_unit("inside_radius")) {
-         inside_radius *= lunit;
+	  inside_radius *= lunit;
         }
       }
 
       set(sweep_radius, outside_radius, inside_radius);
-
+      
+      double aunit = CLHEP::degree;
+      if (config_.has_key("angle_unit")) {
+	const std::string aunit_str = config_.fetch_string("angle_unit");
+	aunit = datatools::units::get_angle_unit_from(aunit_str);
+      }
+      double start_phi = 0.0;
+      double delta_phi = 2 * M_PI * CLHEP::radian;
+      bool not_full_phi = false;
+      if (config_.has_key ("start_phi")) {
+	start_phi = config_.fetch_real ("start_phi");
+	if (! config_.has_explicit_unit ("start_phi")) {
+	  start_phi *= aunit;
+	}
+	not_full_phi = true;
+      }
+      if (config_.has_key ("delta_phi")) {
+	delta_phi = config_.fetch_real ("delta_phi");
+	if (! config_.has_explicit_unit ("delta_phi")) {
+	  delta_phi *= aunit;
+	}
+	not_full_phi = true;
+      }
+      if (not_full_phi) {
+	set_phi(start_phi, delta_phi);
+      }
     }
     lock();
     return;
   }
-
+  
   void torus::_build_bounding_data()
   {
-    _grab_bounding_data().make_cylinder(get_sweep_radius() + get_outside_radius(),
-                                        -0.5 * get_outside_radius(),
-                                        +0.5 * get_outside_radius());
+    if (! has_partial_phi()) {
+      _grab_bounding_data().make_cylinder(get_sweep_radius() + get_outside_radius(),
+					  -get_outside_radius(),
+					  +get_outside_radius());
+    } else {
+      mygsl::min_max xrange;
+      mygsl::min_max yrange;
+      double dphi = std::min(0.5 * CLHEP::degree, get_delta_phi() / 100);
+      for (double phi = get_start_phi();
+           phi <  get_start_phi() + get_delta_phi();
+           phi += dphi) {
+        double cp = std::cos(phi);
+        double sp = std::sin(phi);
+	double inr = get_sweep_radius() - get_outside_radius();
+	double outr = get_sweep_radius() + get_outside_radius();
+        double xo = outr * cp;
+        if (xo > outr * 0.99)   xo = outr;
+        if (xo < - outr * 0.99) xo = -outr;
+        double yo = outr * sp;
+        if (yo > outr * 0.99)   yo = outr;
+        if (yo < - outr * 0.99) yo = -outr;
+	xrange.add(xo);
+        yrange.add(yo);
+        double xi = inr * cp;
+        if (xi > inr * 0.99)   xi = inr;
+        if (xi < - inr * 0.99) xi = -inr;
+        double yi = inr * sp;
+        if (yi > inr * 0.99)   yi = inr;
+        if (yi < - inr * 0.99) yi = -inr;
+	xrange.add(xi);
+        yrange.add(yi);
+      }
+      _grab_bounding_data().make_box(xrange.get_min(), xrange.get_max(),
+				     yrange.get_min(), yrange.get_max(),
+                                     get_zmin(), get_zmax());
+    }
     return;
   }
 

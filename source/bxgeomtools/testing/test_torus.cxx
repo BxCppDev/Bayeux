@@ -1,7 +1,7 @@
-// test_tube.cxx
+// test_torus.cxx
 
 // Ourselves:
-#include <geomtools/tube.h>
+#include <geomtools/torus.h>
 
 // Standard library:
 #include <cstdlib>
@@ -32,8 +32,6 @@ int main (int argc_, char ** argv_)
     bool inner = true;
     bool top = true;
     bool bottom = true;
-    bool stop = true;
-    bool start = true;
     bool bulk = false;
     bool do_identity = false;
     bool do_locate = true;
@@ -54,60 +52,52 @@ int main (int argc_, char ** argv_)
       if (arg == "-l" || arg == "--locate") do_locate = false;
       if (arg == "-i" || arg == "--no-inner") inner = false;
       if (arg == "-o" || arg == "--no-outer") outer = false;
-      if (arg == "-b" || arg == "--no-bottom") bottom = false;
-      if (arg == "-t" || arg == "--no-top") top = false;
-      if (arg == "-s" || arg == "--no-start") start = false;
-      if (arg == "-p" || arg == "--no-stop") stop = false;
 
       iarg++;
     }
 
     datatools::temp_file tmp_file;
     tmp_file.set_remove_at_destroy (true);
-    tmp_file.create ("/tmp", "test_tube_");
+    tmp_file.create ("/tmp", "test_torus_");
 
-    geomtools::tube my_tube;
-    my_tube.set(3.5 * CLHEP::mm,
-                5.2 * CLHEP::mm);
+    geomtools::torus my_torus;
+    my_torus.set(6.5 * CLHEP::mm,
+		 3.2 * CLHEP::mm);
     if (do_hole) {
-      my_tube.set_inner_r(2.0 * CLHEP::mm);
+      my_torus.set_inside_radius(1.3 * CLHEP::mm);
     }
     if (do_sector) {
-      my_tube.set_phi(M_PI / 6, 0.75 * M_PI);
+      my_torus.set_phi(M_PI / 6, 0.75 * M_PI);
     }
 
-    std::clog << "Tube     = " << my_tube << " " << std::endl;
+    std::clog << "Torus  = " << my_torus << " " << std::endl;
 
-    std::clog << "Volume   = " << my_tube.get_volume () / CLHEP::m3 << " m3" << std::endl;
+    std::clog << "Volume = " << my_torus.get_volume () / CLHEP::m3 << " m3" << std::endl;
 
     std::clog << "Outer side surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_OUTER_SIDE) / CLHEP::mm2
+              << my_torus.get_surface (geomtools::torus::FACE_OUTSIDE) / CLHEP::mm2
               << " mm2" << std::endl;
-
     std::clog << "Inner side surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_INNER_SIDE) / CLHEP::mm2
+              << my_torus.get_surface (geomtools::torus::FACE_INSIDE) / CLHEP::mm2
+              << " mm2" << std::endl;
+    
+    std::clog << "phi surface        = "
+              << my_torus.get_surface (geomtools::torus::FACE_START_PHI) / CLHEP::mm2
               << " mm2" << std::endl;
 
-    std::clog << "Top surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_TOP) / CLHEP::mm2
+    std::clog << "Full surface       = "
+              << my_torus.get_surface (geomtools::torus::FACE_ALL) / CLHEP::mm2
               << " mm2" << std::endl;
+    my_torus.tree_dump(std::clog, "Torus: ", "INFO: ");
 
-    std::clog << "Bottom surface = " << my_tube.get_surface (geomtools::tube::FACE_BOTTOM) / CLHEP::mm2
-              << " mm2" << std::endl;
-
-    std::clog << "Full surface = "
-              << my_tube.get_surface (geomtools::tube::FACE_ALL) / CLHEP::mm2
-              << " mm2" << std::endl;
-    my_tube.tree_dump(std::clog, "Tube: ", "INFO: ");
-
-    geomtools::placement tube_placement(0.2, 0.15, 0.1, M_PI / 7.0, M_PI / 6.0, 0.0);
+    geomtools::placement torus_placement(0.2, 0.15, 0.1, M_PI / 7.0, M_PI / 6.0, 0.0);
     if (do_identity) {
-      tube_placement.set_identity();
+      torus_placement.set_identity();
     }
 
     {
-      tmp_file.out() << "# tube (index 0): " << std::endl;
-      geomtools::gnuplot_draw::draw_tube(tmp_file.out(), tube_placement, my_tube);
+      tmp_file.out() << "# torus (index 0): " << std::endl;
+      geomtools::gnuplot_draw::draw_torus(tmp_file.out(), torus_placement, my_torus);
       tmp_file.out() << std::endl << std::endl;
     }
 
@@ -122,32 +112,18 @@ int main (int argc_, char ** argv_)
                                        dim * ( -1 + 2 * drand48 ()));
         double skin = 0.20 * CLHEP::mm;
         geomtools::vector_3d position_c;
-        tube_placement.mother_to_child(position, position_c);
+        torus_placement.mother_to_child(position, position_c);
         if (do_locate) {
-          if (outer && my_tube.is_on_surface(position_c,
-                                             geomtools::tube::FACE_OUTER_SIDE, skin)) {
+          if (outer && my_torus.is_on_surface(position_c,
+                                             geomtools::torus::FACE_OUTSIDE, skin)) {
             geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 3.0);
             counts++;
-          } else if (inner && my_tube.is_on_surface(position_c,
-                                                    geomtools::tube::FACE_INNER_SIDE, skin)) {
+          } else if (inner && my_torus.is_on_surface(position_c,
+                                                    geomtools::torus::FACE_INSIDE, skin)) {
             geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 4.0);
             counts++;
-          } else if (top && my_tube.is_on_surface(position_c,
-                                                  geomtools::tube::FACE_TOP, skin)) {
-            geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 5.0);
-            counts++;
-          } else if (bottom && my_tube.is_on_surface(position_c,
-                                                     geomtools::tube::FACE_BOTTOM, skin)) {
-            geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 6.0);
-            counts++;
-          } else if (bulk && my_tube.check_inside(position_c, skin)) {
+          } else if (bulk && my_torus.check_inside(position_c, skin)) {
             geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 2.0);
-            counts++;
-          } else if (start && my_tube.is_on_surface(position_c, geomtools::tube::FACE_START_ANGLE, skin)) {
-            geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 7.0);
-            counts++;
-          } else if (stop && my_tube.is_on_surface(position_c, geomtools::tube::FACE_STOP_ANGLE, skin)) {
-            geomtools::gnuplot_draw::basic_draw_point_with_color(tmp_file.out(), position, 8.0);
             counts++;
           }
         }
@@ -159,22 +135,17 @@ int main (int argc_, char ** argv_)
     }
 
     {
-      // Draw tube :
-      tmp_file.out() << "# tube (index 2):" << std::endl;
-      geomtools::wires_type tube_wires;
-      my_tube.generate_wires(tube_wires,
-                             tube_placement,
+      // Draw torus :
+      tmp_file.out() << "# torus (index 2):" << std::endl;
+      geomtools::wires_type torus_wires;
+      my_torus.generate_wires(torus_wires,
+                             torus_placement,
                              geomtools::i_wires_3d_rendering::WR_NONE
                              | geomtools::i_wires_3d_rendering::WR_BASE_GRID
                              | geomtools::i_wires_3d_rendering::WR_BASE_GRID_HIGH_DENSITY
                              | geomtools::i_wires_3d_rendering::WR_BASE_BOUNDINGS
-                             // | geomtools::i_wires_3d_rendering::WR_BASE_EXPLODE
-                             // | geomtools::tube::WR_TUBE_NO_BOTTOM_FACE
-                             | geomtools::tube::WR_TUBE_NO_TOP_FACE
-                             // | geomtools::tube::WR_TUBE_NO_INNER_FACE
-                             // | geomtools::tube::WR_TUBE_NO_OUTER_FACE
                              );
-      geomtools::gnuplot_draw::draw_wires(tmp_file.out(), tube_wires);
+      geomtools::gnuplot_draw::draw_wires(tmp_file.out(), torus_wires);
       tmp_file.out() << std::endl << std::endl;
     }
 
@@ -193,16 +164,16 @@ int main (int argc_, char ** argv_)
         geomtools::randomize_direction (drand48, dir);
 
         geomtools::vector_3d pos_c;
-        tube_placement.mother_to_child(pos, pos_c);
+        torus_placement.mother_to_child(pos, pos_c);
         geomtools::vector_3d dir_c;
-        tube_placement.mother_to_child_direction(dir, dir_c);
+        torus_placement.mother_to_child_direction(dir, dir_c);
 
         geomtools::face_intercept_info intercept_c;
 
-        if (my_tube.find_intercept (pos_c, dir_c, intercept_c)) {
+        if (my_torus.find_intercept (pos_c, dir_c, intercept_c)) {
           counts++;
           geomtools::vector_3d impact;
-          tube_placement.child_to_mother(intercept_c.get_impact(), impact);
+          torus_placement.child_to_mother(intercept_c.get_impact(), impact);
           geomtools::gnuplot_draw::basic_draw_point(tmp_file.out(), impact);
           if (debug) std::clog << "test 3: Intercept face="
                                << intercept_c.get_face_id()
@@ -218,33 +189,32 @@ int main (int argc_, char ** argv_)
       tmp_file.out() << std::endl << std::endl;
     }
 
-
     // if (interactive) {
-    //   std::clog << "Enter a tube (example: '{tube 900 1000 1000}'): ";
-    //   std::cin >> std::ws >> my_tube;
+    //   std::clog << "Enter a torus (example: '{torus 900 100 10 0 90}'): ";
+    //   std::cin >> std::ws >> my_torus;
     //   if (std::cin) {
-    //     std::clog << "Tube = " << my_tube << " " << std::endl;
+    //     std::clog << "Torus = " << my_torus << " " << std::endl;
     //   } else {
-    //     throw std::runtime_error ("Invalid input for tube!");
+    //     throw std::runtime_error ("Invalid input for torus!");
     //   }
     // }
 
     if (draw) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       Gnuplot g1;
-      g1.cmd ("set title 'Test geomtools::tube' ");
+      g1.cmd ("set title 'Test geomtools::torus' ");
       g1.cmd ("set grid");
       g1.cmd ("set size ratio -1");
       g1.cmd ("set view equal xyz");
-      g1.cmd("set xrange [-6:+6]");
-      g1.cmd("set yrange [-6:+6]");
+      g1.cmd("set xrange [-10:+10]");
+      g1.cmd("set yrange [-10:+10]");
       g1.cmd("set zrange [-8:+8]");
       g1.cmd("set xyplane at -8");
       // g1.cmd ("set xyplane at -10");
       g1.set_xlabel ("x").set_ylabel ("y").set_zlabel ("z");
       {
         std::ostringstream plot_cmd;
-        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Tube' with lines ";
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Torus' with lines ";
         plot_cmd << ", '' index 1 using 1:2:3:4 title 'Locate' with points pt 6 ps 0.3 linecolor variable ";
         g1.cmd (plot_cmd.str ());
         g1.showonscreen (); // window output
@@ -254,7 +224,7 @@ int main (int argc_, char ** argv_)
 
       {
         std::ostringstream plot_cmd;
-        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 2 title 'Tube (grid)' with lines ";
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 2 title 'Torus (grid)' with lines ";
         g1.cmd (plot_cmd.str ());
         g1.showonscreen (); // window output
         geomtools::gnuplot_drawer::wait_for_key ();
@@ -263,7 +233,7 @@ int main (int argc_, char ** argv_)
 
       {
         std::ostringstream plot_cmd;
-        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Tube' with lines ";
+        plot_cmd << "splot '" << tmp_file.get_filename () << "' index 0 title 'Torus' with lines ";
         plot_cmd << " , '' index 3 title 'Intercepts' with dots ";
         g1.cmd (plot_cmd.str ());
         g1.showonscreen (); // window output

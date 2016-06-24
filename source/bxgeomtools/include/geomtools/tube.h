@@ -300,7 +300,7 @@ namespace geomtools {
     double _z_;       //!< Length of the tube along the Z axis
     double _inner_r_; //!< Inner radius
     double _outer_r_; //!< Outer radius
-    angular_range _phi_domain_; //!< Angular spread of the elliptical sector (azimuthal)
+    angular_range _phi_domain_; //!< Angular spread of the tube
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(tube)

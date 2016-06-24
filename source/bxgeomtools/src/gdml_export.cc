@@ -37,6 +37,7 @@
 #include <geomtools/right_polygonal_frustrum.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
+#include <geomtools/torus.h>
 #include <geomtools/tessellation.h>
 #include <geomtools/wall_solid.h>
 #include <geomtools/union_3d.h>
@@ -381,6 +382,9 @@ namespace geomtools {
       } else if (shape_name == "tube") {
         const tube & t = dynamic_cast<const tube &> (shape_);
         _writer_.add_tube(solid_name_, t, _length_unit_, _angle_unit_);
+      } else if (shape_name == "torus") {
+        const torus & t = dynamic_cast<const torus &> (shape_);
+        _writer_.add_torus(solid_name_, t, _length_unit_, _angle_unit_);
       } else if (shape_name == "sphere") {
         const sphere & s = dynamic_cast<const sphere &> (shape_);
         _writer_.add_sphere(solid_name_, s, _length_unit_, _angle_unit_);

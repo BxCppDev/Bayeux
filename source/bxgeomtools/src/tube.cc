@@ -807,7 +807,7 @@ namespace geomtools {
       }
     try
       {
-        t_.set (in_r, out_r, z);
+        t_.set (in_r, out_r, z, start_phi, delta_phi);
       }
     catch (...)
       {

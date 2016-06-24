@@ -64,6 +64,7 @@ namespace geomtools {
   class extruded_box;
   class cylinder;
   class tube;
+  class torus;
   class sphere;
   class ellipsoid;
   class elliptical_cylinder;
@@ -872,6 +873,41 @@ namespace geomtools {
               const vector_3d &,
               const rotation_3d &,
               const tube &,
+              uint32_t options_ = DEFAULT_OPTIONS);
+
+    // Torus:
+
+    /// Draw a torus
+    static void
+    draw_torus(std::ostream &,
+              const torus &,
+              uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a torus
+    static void
+    draw_torus(std::ostream &,
+              const placement &,
+              const torus &,
+              uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a torus
+    static void
+    draw_torus(std::ostream &,
+              const vector_3d &,
+              const rotation_3d &,
+              const torus &,
+              uint32_t options_ = DEFAULT_OPTIONS);
+
+    /// Draw a torus
+    static void
+    draw_torus(std::ostream &,
+              const vector_3d &,
+              const rotation_3d &,
+              double,
+              double,
+              double,
+              double = 0.,
+              double = 2 * M_PI,
               uint32_t options_ = DEFAULT_OPTIONS);
 
     // Elliptical cylinder/tube:

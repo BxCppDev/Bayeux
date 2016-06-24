@@ -26,6 +26,7 @@
 // This project:
 #include <geomtools/i_shape_3d.h>
 #include <geomtools/i_stackable.h>
+#include <geomtools/angular_range.h>
 
 namespace datatools {
   // Forward class declaration:
@@ -46,9 +47,9 @@ namespace geomtools {
 
     /// \brief Masks used for the faces of the solid torus
     enum faces_mask_type {
-      FACE_NONE        = face_identifier::FACE_BITS_NONE,
-      FACE_INSIDE  = datatools::bit_mask::bit00,
-      FACE_OUTSIDE  = datatools::bit_mask::bit01,
+      FACE_NONE      = face_identifier::FACE_BITS_NONE,
+      FACE_INSIDE    = datatools::bit_mask::bit00,
+      FACE_OUTSIDE   = datatools::bit_mask::bit01,
       FACE_START_PHI = datatools::bit_mask::bit02,
       FACE_STOP_PHI  = datatools::bit_mask::bit03,
       FACE_ALL    = (FACE_INSIDE
@@ -112,6 +113,9 @@ namespace geomtools {
     /// Set the outside radius
     void set_outside_radius (double);
 
+    /// Set the dimensions and angular limits
+    void set(double sweep_radius_, double outside_radius_, double inside_radius_, double start_phi_, double delta_phi_);
+
     /// Set the radii
     void set(double sweep_radius_, double outside_radius_, double inside_radius_ = 0.0);
 
@@ -143,7 +147,10 @@ namespace geomtools {
     torus();
 
     /// Constructor
-    torus(double sweep_radius_, double outside_radius_, double inside_radius_ = 0.0);
+    torus(double sweep_radius_, double outside_radius_, double inside_radius_);
+
+    /// Constructor
+    torus(double sweep_radius_, double outside_radius_, double inside_radius_, double start_phi_, double delta_phi_);
 
     /// Destructor
     virtual ~torus();
@@ -193,11 +200,11 @@ namespace geomtools {
                                  face_intercept_info & intercept_,
                                  double skin_ = GEOMTOOLS_PROPER_TOLERANCE) const;
 
-    // friend std::ostream &
-    // operator<< (std::ostream &, const elliptical_cylinder &);
+    friend std::ostream &
+    operator<< (std::ostream &, const torus &);
 
-    // friend std::istream &
-    // operator>> (std::istream &, elliptical_cylinder &);
+    friend std::istream &
+    operator>> (std::istream &, torus &);
 
     /// Smart print
     virtual void tree_dump (std::ostream & out_         = std::clog,
@@ -238,8 +245,7 @@ namespace geomtools {
     double _sweep_radius_;   //!< Sweep radius of solid torus
     double _inside_radius_;  //!< Inside radius
     double _outside_radius_; //!< Outside radius
-    double _start_phi_;      //!< Start phi
-    double _delta_phi_;      //!< Delta phi
+    angular_range _phi_domain_; //!< Angular spread of the torus
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(torus)

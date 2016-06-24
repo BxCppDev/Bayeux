@@ -26,6 +26,7 @@
 #include <geomtools/right_polygonal_frustrum.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
+#include <geomtools/torus.h>
 #include <geomtools/wall_solid.h>
 #include <geomtools/tessellation.h>
 #include <geomtools/union_3d.h>
@@ -836,6 +837,7 @@ namespace geomtools {
       _supported_solid_types->insert("box");
       _supported_solid_types->insert("sphere");
       _supported_solid_types->insert("tube");
+      _supported_solid_types->insert("torus");
       _supported_solid_types->insert("cylinder");
       _supported_solid_types->insert("right_circular_conical_frustrum");
       _supported_solid_types->insert("ellipsoid");
@@ -1593,6 +1595,82 @@ namespace geomtools {
                   t_.get_delta_phi(),
                   lunit_str_,
                   aunit_str_);
+    return;
+  }
+
+
+  void gdml_writer::add_gdml_torus(const std::string & name_,
+				   double rsweep_,
+				   double rmin_, double rmax_,
+				   double start_phi_, double delta_phi_,
+				   const std::string & lunit_str_,
+				   const std::string & aunit_str_)
+  {
+    double lunit = datatools::units::get_length_unit_from(lunit_str_);
+    double aunit = datatools::units::get_angle_unit_from(aunit_str_);
+
+    std::ostringstream solids_stream;
+    solids_stream << "<" <<  "torus"
+                  << " name=" << '"' << to_html(name_) << '"';
+
+    if (datatools::is_valid(rmin_) && rmin_ > 0.0) {
+      solids_stream << " rmin=" << '"';
+      solids_stream.precision(15);
+      solids_stream << rmin_ / lunit << '"';
+    } else {
+      solids_stream << " rmin=" << '"' << "0" << '"';
+    }
+
+    solids_stream << " rmax=" << '"';
+    solids_stream.precision(15);
+    solids_stream << rmax_ / lunit << '"';
+
+    solids_stream << " rtor=" << '"';
+    solids_stream.precision(15);
+    solids_stream << rsweep_ / lunit << '"';
+
+    double startphi = 0.0;
+    double deltaphi = 2 * M_PI;
+    if (datatools::is_valid(start_phi_) && start_phi_ != 0.0) {
+      startphi = start_phi_;
+    }
+    solids_stream << " startphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << startphi / aunit << '"';
+
+    if (datatools::is_valid(delta_phi_)) {
+      DT_THROW_IF(delta_phi_ == 0.0, std::domain_error,
+                  "Invalid zero delta phi!");
+      DT_THROW_IF(startphi + delta_phi_ > 2 * M_PI, std::domain_error,
+                  "Delta phi is too large!");
+      deltaphi = delta_phi_;
+    }
+    solids_stream << " deltaphi=" << '"';
+    solids_stream.precision(15);
+    solids_stream << deltaphi / aunit << '"';
+
+    solids_stream << " lunit=" << '"' << lunit_str_ << '"';
+    solids_stream << " aunit=" << '"' << aunit_str_ << '"';
+
+    solids_stream << " />" << std::endl << std::endl;
+    _get_stream(solids_section()) << solids_stream.str();
+    return;
+  }
+
+
+  void gdml_writer::add_torus(const std::string & name_,
+                             const torus & t_,
+                             const std::string & lunit_str_,
+                             const std::string & aunit_str_)
+  {
+    add_gdml_torus(name_,
+		   t_.get_sweep_radius(),
+		   t_.get_inside_radius(),
+		   t_.get_outside_radius(),
+		   t_.get_start_phi(),
+		   t_.get_delta_phi(),
+		   lunit_str_,
+		   aunit_str_);
     return;
   }
 

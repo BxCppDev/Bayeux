@@ -49,6 +49,7 @@
 #include <geomtools/extruded_box.h>
 #include <geomtools/cylinder.h>
 #include <geomtools/tube.h>
+#include <geomtools/torus.h>
 #include <geomtools/sphere.h>
 #include <geomtools/ellipsoid.h>
 #include <geomtools/elliptical_cylinder.h>
@@ -1219,6 +1220,61 @@ namespace geomtools {
     tube t;
     t.set(inner_radius_, outer_radius_, height_, start_phi_, delta_phi_);
     draw_tube(out_, pos_, rot_, t, options_);
+    return;
+  }
+
+  // Torus:
+
+  void
+  gnuplot_draw::draw_torus(std::ostream & out_,
+                          const torus & t_,
+                          uint32_t options_)
+  {
+    wires_type wires;
+    t_.generate_wires_self(wires, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_torus(std::ostream & out_,
+                          const placement & pl_,
+                          const torus & t_,
+                          uint32_t options_)
+  {
+    wires_type wires;
+    t_.generate_wires(wires, pl_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_torus(std::ostream & out_,
+                          const vector_3d & pos_,
+                          const rotation_3d & rot_,
+                          const torus & t_,
+                          uint32_t options_)
+  {
+    wires_type wires;
+    t_.generate_wires(wires, pos_, rot_, options_);
+    gnuplot_draw::basic_draw_wires(out_, wires);
+    return;
+  }
+
+  void
+  gnuplot_draw::draw_torus(std::ostream & out_,
+                          const vector_3d & pos_,
+                          const rotation_3d & rot_,
+                          double sweep_radius_,
+                          double inner_radius_,
+                          double outer_radius_,
+                          double start_phi_,
+                          double delta_phi_,
+                          uint32_t options_)
+  {
+    torus t;
+    t.set(sweep_radius_, inner_radius_, outer_radius_, start_phi_, delta_phi_);
+    draw_torus(out_, pos_, rot_, t, options_);
     return;
   }
 

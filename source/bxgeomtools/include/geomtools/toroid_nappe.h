@@ -16,6 +16,7 @@
 
 // This project:
 #include <geomtools/i_shape_2d.h>
+#include <geomtools/angular_range.h>
 
 namespace geomtools {
 
@@ -136,8 +137,7 @@ namespace geomtools {
 
     double _sweep_radius_; //!< The sweep radius
     double _radius_;       //!< The radius
-    double _start_phi_;    //!< The starting phi angle
-    double _delta_phi_;    //!< The delta phi angle
+    angular_range _phi_domain_; //!< Angular spread of the toroid nappe
 
     // Registration interface :
     GEOMTOOLS_OBJECT_3D_REGISTRATION_INTERFACE(toroid_nappe)

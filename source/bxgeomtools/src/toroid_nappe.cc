@@ -48,8 +48,8 @@ namespace geomtools {
   {
     datatools::invalidate(_sweep_radius_);
     datatools::invalidate(_radius_);
-    datatools::invalidate(_start_phi_);
-    datatools::invalidate(_delta_phi_);
+    _phi_domain_.set_type(angular_range::RANGE_TYPE_AZIMUTHAL);
+    _phi_domain_.reset_partial_angles();
     return;
   }
 
@@ -157,66 +157,45 @@ namespace geomtools {
 
   bool toroid_nappe::has_partial_phi() const
   {
-    if (_delta_phi_ == 2 * M_PI) return false;
-    if (_start_phi_ > 0.0) return true;
-    return false;
+    return _phi_domain_.is_partial();
   }
 
   bool toroid_nappe::has_start_phi() const
   {
-    return datatools::is_valid(_start_phi_);
+    return _phi_domain_.has_start_angle();
   }
 
   void toroid_nappe::set_start_phi(double new_value_)
   {
-    DT_THROW_IF (new_value_ < 0.0 || new_value_ >= 2 * M_PI,
-                 std::domain_error,
-                 "Invalid '" << new_value_ << "' start phi value !");
-    _start_phi_ = new_value_;
+    _phi_domain_.set_start_angle(new_value_);
     return;
   }
 
   double toroid_nappe::get_start_phi() const
   {
-    return _start_phi_;
+    return _phi_domain_.get_start_angle();
   }
 
   bool toroid_nappe::has_delta_phi() const
   {
-    return datatools::is_valid(_delta_phi_);
+    return _phi_domain_.has_delta_angle();
   }
 
   void toroid_nappe::set_delta_phi(double new_value_)
   {
-    DT_THROW_IF(new_value_ < 0.0 || new_value_ > 2 * M_PI,
-                std::domain_error,
-                "Invalid '" << new_value_ << "' delta phi value !");
-    _delta_phi_ = new_value_;
+    _phi_domain_.set_delta_angle(new_value_);
     return;
   }
 
   double toroid_nappe::get_delta_phi() const
   {
-    return _delta_phi_;
+    return _phi_domain_.get_delta_angle();
   }
 
   bool toroid_nappe::is_valid() const
   {
-    if (!datatools::is_valid(_sweep_radius_)) {
-      return false;
-    }
-
-    if (!datatools::is_valid(_radius_)) {
-      return false;
-    }
-
-    if (has_start_phi()) {
-      if (!datatools::is_valid(_delta_phi_)) {
-        return false;
-      }
-    }
-
-    return true;
+    return(datatools::is_valid(_sweep_radius_)
+	   && datatools::is_valid(_radius_));
   }
 
   toroid_nappe::toroid_nappe()
@@ -260,7 +239,7 @@ namespace geomtools {
     if (is_valid()) {
       double delta_phi = 2 * M_PI;
       if (has_start_phi()) {
-        delta_phi = _delta_phi_;
+        delta_phi = get_delta_phi();
       }
       s = 2 * M_PI *_radius_ * _sweep_radius_ * delta_phi / (2 * M_PI);
     }
@@ -279,18 +258,14 @@ namespace geomtools {
       double x = r - _sweep_radius_;
       double z = position_.z();
       double phi = position_.phi();
-      double start_phi = 0.0;
-      double delta_phi = 2 * M_PI;
-      if (has_start_phi()) {
-        start_phi = _start_phi_;
-        delta_phi = _delta_phi_;
-      }
-      if (!angle_is_in(phi,
-                       start_phi,
-                       delta_phi,
-                       angular_tolerance,
-                       true)) {
-        return false;
+      if (has_partial_phi()) {
+	if (!angle_is_in(phi,
+			 get_start_phi(),
+			 get_delta_phi(),
+			 angular_tolerance,
+			 true)) {
+	  return false;
+	}
       }
       circle c(_radius_);
       vector_3d p(x, z, 0.0);
@@ -427,7 +402,7 @@ namespace geomtools {
     out_ << indent_ << datatools::i_tree_dumpable::tag
          << "Start phi : ";
     if (has_start_phi()) {
-      out_ << _start_phi_ / CLHEP::degree << " degree";
+      out_ << get_start_phi() / CLHEP::degree << " degree";
     } else {
       out_ << "<none>";
     }
@@ -436,7 +411,7 @@ namespace geomtools {
     out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
          << "Delta phi : ";
     if (has_delta_phi()) {
-      out_ << _delta_phi_ / CLHEP::degree << " degree";
+      out_ << get_delta_phi() / CLHEP::degree << " degree";
     } else {
       out_ << "<none>";
     }
@@ -463,8 +438,8 @@ namespace geomtools {
     double start_phi = 0.0;
     double delta_phi = 2.0 * M_PI;
     if (has_partial_phi()) {
-      start_phi = _start_phi_;
-      delta_phi = _delta_phi_;
+      start_phi = get_start_phi();
+      delta_phi = get_delta_phi();
     }
     double dphi = delta_phi / nsamples_phi;
 
@@ -514,8 +489,8 @@ namespace geomtools {
         double r_arc = _sweep_radius_ + _radius_ * std::cos(theta_arc);
         circle arc(r_arc);
         if (has_partial_phi()) {
-          arc.set_start_angle(_start_phi_);
-          arc.set_delta_angle(_delta_phi_);
+          arc.set_start_angle(get_start_phi());
+          arc.set_delta_angle(get_delta_phi());
         }
         placement arc_p(0.0, 0.0, z_arc);
         arc.generate_wires(wires_, arc_p, options);
