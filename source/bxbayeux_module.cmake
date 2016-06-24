@@ -95,6 +95,6 @@ endforeach()
 # - Unit tests
 set(${module_name}_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
 
-set(${module_name}_MODULE_TESTS
+set(${module_name}_MODULE_TESTS_CATCH
   ${module_test_dir}/test_bayeux.cxx
 )

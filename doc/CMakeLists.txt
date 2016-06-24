@@ -71,8 +71,8 @@ configure_file(BxOCD/BxOCD.md.in BxOCD/BxOCD.md @ONLY)
 
 set(BAYEUX_MARKDOWN_DOCS
   BxMainpage.md
-  Bayeux.1.md
   ${CMAKE_CURRENT_BINARY_DIR}/BxInstallationGuide.md
+  ${CMAKE_CURRENT_SOURCE_DIR}/BxDeveloper/UnitTestingWithCatch.md
   ${CMAKE_CURRENT_BINARY_DIR}/BxOCD/BxOCD.md
   )
 
@@ -85,9 +85,9 @@ if(BAYEUX_WITH_GEANT4_MODULE)
 endif()
 
 set(BAYEUX_ABSOLUTE_MARKDOWN_DOCS)
-foreach(_mdDoc ${Bayeux_MARKDOWN_DOCS})
+foreach(_mdDoc ${BAYEUX_MARKDOWN_DOCS})
   get_filename_component(_absMdDoc ${_mdDoc} ABSOLUTE)
-  set(BAYEUX_ABSOLUTE_MARKDOWN_DOCS "${Bayeux_ABSOLUTE_MARKDOWN_DOCS} ${_absMdDoc}")
+  set(BAYEUX_ABSOLUTE_MARKDOWN_DOCS "${BAYEUX_ABSOLUTE_MARKDOWN_DOCS} ${_absMdDoc}")
 endforeach()
 
 
