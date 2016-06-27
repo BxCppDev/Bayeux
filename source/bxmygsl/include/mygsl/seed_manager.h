@@ -81,7 +81,7 @@ namespace mygsl {
       INIT_SEED_FROM_RANDOM_DEVICE = datatools::bit_mask::bit03,
       INIT_SEED_FROM_USER          = datatools::bit_mask::bit04,
       INIT_SEED_FROM_CURRENT_TIME_AND_PID = INIT_SEED_FROM_CURRENT_TIME | INIT_SEED_FROM_CURRENT_PID ,
-      INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_RANDOM_DEVICE
+      INIT_SEED_FROM_DEFAULT       = INIT_SEED_FROM_RANDOM_DEVICE
     };
 
     /// Return true if the seed has a valid value
