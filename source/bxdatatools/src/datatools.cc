@@ -4,7 +4,7 @@
 #include <datatools/datatools.h>
 
 // Stdlib
-#include <stdlib.h>                        // for getenv
+#include <cstdlib>                        // for getenv
 
 // Third party:
 // - Boost:
@@ -18,7 +18,7 @@
 
 namespace datatools {
 
-  void initialize(int argc_, char * argv_[], uint32_t flags_)
+  void initialize(int argc_, char * argv_[], uint32_t /*flags_*/)
   {
     DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
     static bool _init = false;
