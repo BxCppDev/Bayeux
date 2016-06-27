@@ -347,7 +347,6 @@ ${module_test_dir}/test_binary_serialization.cxx
 ${module_test_dir}/test_cloneable_2.cxx
 ${module_test_dir}/test_cloneable.cxx
 ${module_test_dir}/test_data_serialization.cxx
-${module_test_dir}/test_datatools.cxx
 ${module_test_dir}/test_dummy_service.cxx
 ${module_test_dir}/test_event_id.cxx
 ${module_test_dir}/test_exception.cxx
@@ -425,6 +424,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     ${module_test_dir}/test_introspection_method.cxx
     )
 endif()
+
+# List new Catch based tests in this one
+set(${module_name}_MODULE_TESTS_CATCH
+  ${module_test_dir}/test_datatools.cxx
+  )
 
 # - Applications
 set(${module_name}_MODULE_APPS

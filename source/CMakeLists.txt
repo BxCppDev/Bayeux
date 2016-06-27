@@ -349,7 +349,7 @@ if(BAYEUX_ENABLE_TESTING)
     # - CATCH TESTS
     foreach(_catchtestsource ${${_m}_MODULE_TESTS_CATCH})
       get_filename_component(_testname "${_catchtestsource}" NAME_WE)
-      set(_testname "bayeux-${_testname}")
+      set(_testname "bx${_m}-${_testname}")
       add_executable(${_testname} ${_catchtestsource})
       # Output to testing subdirectory
       set_property(TARGET ${_testname}
