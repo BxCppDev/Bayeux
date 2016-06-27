@@ -37,7 +37,7 @@
 #include <datatools/configuration/parameter_model.h>
 #include <datatools/configuration/variant_model.h>
 #include <datatools/configuration/variant_repository.h>
-#include <datatools/command_utils.h>
+#include <datatools/detail/command_macros.h>
 
 namespace datatools {
 

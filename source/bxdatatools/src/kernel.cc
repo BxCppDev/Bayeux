@@ -41,6 +41,9 @@ namespace datatools {
   // static
   kernel * kernel::_instance_ = 0;
 
+  // static
+  const uint32_t kernel::init_mask;
+
 #if DATATOOLS_WITH_QT_GUI == 1
   // static
   bool kernel::is_qt_gui_activated() const
@@ -141,11 +144,11 @@ namespace datatools {
     return;
   }
 
-  kernel::kernel(int argc_, char * argv_[])
+  kernel::kernel(int argc_, char * argv_[], uint32_t flags_)
   {
     _initialized_ = false;
     _construct_();
-    initialize(argc_, argv_);
+    initialize(argc_, argv_, flags_);
     return;
   }
 
@@ -167,181 +170,216 @@ namespace datatools {
   }
 
   void kernel::build_opt_desc(boost::program_options::options_description & opts_,
-                              param_type & params_)
+                              param_type & params_,
+                              uint32_t flags_)
   {
     namespace po = boost::program_options;
+    po::options_description_easy_init easy_init = opts_.add_options();
 
-    opts_.add_options()
+    // Default behaviour: collecting all variant related options
+    bool parse_help            = true;
+    bool parse_splash          = true;
+    bool parse_locale_category = true;
+    bool parse_logging         = true;
+    bool parse_inhibit_libinfo = true;
+    bool parse_libinfo_logging = true;
+    bool parse_resource_path   = true;
+    bool parse_inhibit_variant = true;
+    bool parse_variant         = true;
+    bool parse_inhibit_qt_gui  = true;
 
-      ("datatools::help",
-       po::value<bool>(&params_.help)
-       ->zero_tokens()
-       ->default_value(false),
-       "Print help for the datatools kernel configuration options.  \n"
-       "Example :                                                   \n"
-       "  --datatools::help                                           "
-       )
+    // Inhibition of the parsinf for specific options:
+    if (flags_ & init_no_help)            parse_help = false;
+    if (flags_ & init_no_splash)          parse_splash = false;
+    if (flags_ & init_no_locale_category) parse_locale_category = false;
+    if (flags_ & init_no_logging)         parse_logging = false;
+    if (flags_ & init_no_inhibit_libinfo) parse_inhibit_libinfo = false;
+    if (flags_ & init_no_libinfo_logging) parse_libinfo_logging= false;
+    if (flags_ & init_no_resource_path)   parse_resource_path = false;
+    if (flags_ & init_no_inhibit_variant) parse_inhibit_variant = false;
+    if (flags_ & init_no_variant)         parse_variant = false;
+    if (flags_ & init_no_inhibit_qt_gui)  parse_inhibit_qt_gui = false;
 
-      ("datatools::splash",
-       po::value<bool>(&params_.splash)
-       ->zero_tokens()
-       ->default_value(false),
-       "Print splash screen at datatools kernel loading.            \n"
-       "Example :                                                   \n"
-       "  --datatools::splash                                         "
-       )
+    // Resource path registration:
+    if (parse_resource_path) {
+      easy_init("datatools::resource-path",
+                po::value< std::vector<std::string> >(&params_.resource_paths)
+                ->value_name("rule"),
+                "Register a resource path associated to a library or module.\n"
+                "Example : Register the \"path1/subdir1\" path as the root directory of the \"foo\" library and the \"path2/subdir2\" path as the root directory of the \"bar\" software module:\n"
+                "  --datatools::resource-path=\"foo@path1/subdir1\"\n"
+                "  --datatools::resource-path=\"bar@path2/subdir2\""
+                );
+    }
 
-      ("datatools::locale-category",
-       po::value<std::string>(&params_.locale_category)
-       ->value_name("locale"),
-       "Set the datatools kernel's local category.              \n"
-       "Example :                                               \n"
-       "  --datatools::locale-category=\"C\"                      "
-       )
+    // Inhibit variant support:
+    if (parse_inhibit_variant) {
+      easy_init("datatools::novariant",
+                po::value<bool>(&params_.inhibit_variant_repository)
+                ->zero_tokens()
+                ->default_value(false),
+                "Inhibit the use of the configuration variant repository.\n"
+                "Example :\n"
+                "  --datatools::novariant"
+                );
 
-      ("datatools::logging",
-       po::value<std::string>(&params_.logging_label)
-       ->value_name("level")
-       ->default_value("warning"),
-       "Set the datatools kernel's logging priority threshold.  \n"
-       "Example :                                               \n"
-       "  --datatools::logging=\"trace\"                          "
-       )
+    }
 
-      ("datatools::nolibinfo",
-       po::value<bool>(&params_.inhibit_library_info_register)
-       ->zero_tokens()
-       ->default_value(false),
-       "Inhibit the use of the library/component information register.  \n"
-       "Example :                                                       \n"
-       "  --datatools::nolibinfo                                          "
-       )
+    // Configure variant support:
+    if (parse_variant) {
 
-      ("datatools::libinfo::logging",
-       po::value<std::string>(&params_.library_info_logging_label)
-       ->value_name("level")
-       ->default_value("warning"),
-       "Set the datatools kernel's library info logging priority threshold.  \n"
-       "Example :                                                            \n"
-       "  --datatools::libinfo::logging=\"trace\"                              "
-       )
+      easy_init("datatools::variant-config",
+                po::value< std::string >(&params_.variant_config)
+                ->value_name("file"),
+                "The system variant repository configuration filename.\n"
+                "Example : Register the \"config/variance.conf\" file to initialize the repository for some application:\n"
+                " --datatools::variant-config=\"config/variance.conf\""
+                );
 
-      ("datatools::resource-path",
-       po::value< std::vector<std::string> >(&params_.resource_paths)
-       ->value_name("rule"),
-       "Register a resource path associated to a library or module.          \n"
-       "Example :                                                            \n"
-       "  Register the \"path1/subdir1\" path as the root directory of       \n"
-       "  the \"foo\" library and the \"path2/subdir2\" path as the          \n"
-       "  root directory of the \"bar\" software module:                     \n"
-       "    --datatools::resource-path=\"foo@path1/subdir1\"                 \n"
-       "    --datatools::resource-path=\"bar@path2/subdir2\"                   "
-       )
+      easy_init("datatools::variant-registry-config",
+                po::value< std::vector<std::string> >(&params_.variant_registry_configs)
+                ->value_name("file(s)"),
+                "Register a configuration variant registry in the system variant repository.\n"
+                "Example : Register the \"config/registry.conf\" file to initialize a registry of configuration variants for some \"foo\" application:\n"
+                "  --datatools::variant-registry-config=\"foo@config/registry.conf\"\n"
+                "or\n"
+                "  --datatools::variant-registry-config=\"config/registry.conf\"\n"
+                "if the file contains the registry name 'foo'."
+                );
 
-      ("datatools::resource_path",
-       po::value< std::vector<std::string> >()
-       ->value_name("rule"),
-       "Deprecated option, please use '--datatools::resource-path'    \n"
-       )
+      easy_init("datatools::variant-load",
+                po::value<std::string>(&params_.variant_load)
+                ->value_name("filename"),
+                "Load the values of the variant parameters from a file.\n"
+                "Example : Load parameters from the \"config/saved_variants.rep\" file\n"
+                "  --datatools::variant-load=\"config/saved_variants.rep\""
+                );
 
-      ("datatools::novariant",
-       po::value<bool>(&params_.inhibit_variant_repository)
-       ->zero_tokens()
-       ->default_value(false),
-       "Inhibit the use of the configuration variant repository.  \n"
-       "Example :                                                 \n"
-       "  --datatools::novariant                                    "
-       )
-
-      ("datatools::variant-config",
-       po::value< std::string >(&params_.variant_config)
-       ->value_name("file"),
-       "The system variant repository configuration filename.                \n"
-       "Example :                                                            \n"
-       "  Register the \"config/variance.conf\" file to initialize the       \n"
-       "  repository for some application:                                   \n"
-       "    --datatools::variant-config=\"config/variance.conf\"               "
-       )
-
-      ("datatools::variant-registry-config",
-       po::value< std::vector<std::string> >(&params_.variant_registry_configs)
-      ->value_name("file(s)"),
-       "Register a configuration variant registry in the system variant      \n"
-       "repository.                                                          \n"
-       "Example :                                                            \n"
-       "  Register the \"config/registry.conf\" file to initialize a         \n"
-       "  registry of configuration variants for some \"foo\" application:   \n"
-       "    --datatools::variant-registry-config=\"foo@config/registry.conf\"\n"
-       "  or                                                                 \n"
-       "    --datatools::variant-registry-config=\"config/registry.conf\"    \n"
-       "  if the file contains the registry name 'foo'.                        "
-       )
-
-      ("datatools::variant-load",
-       po::value<std::string>(&params_.variant_load)
-       ->value_name("file"),
-       "Load the values of the variant parameters from a file.               \n"
-       "Example :                                                            \n"
-       "  Load parameters' values from the \"config/saved_variants.rep\" file\n"
-       "    --datatools::variant-load=\"config/saved_variants.rep\"            "
-       )
-
-      ("datatools::variant-set",
-       po::value< std::vector<std::string> >(&params_.variant_sets)
-       ->value_name("rule(s)"),
-       "Set the values of a set of configuration variant parameters associated  \n"
-       "to some registry.                                                       \n"
-       "Example :                                                               \n"
-       "  Set the \"foo:detector0=1\" flag and the associated                   \n"
-       "  \"foo:detector0/if_detector/material\" and                            \n"
-       "  \"foo:detector0/if_detector/width\" parameters                        \n"
-       "  in the proper variant registry:                                       \n"
-       "    --datatools::variant-set=\"foo:detector0=1\"                        \n"
-       "    --datatools::variant-set=\"foo:detector0/if_detector/material=Silicium\" \n"
-       "    --datatools::variant-set=\"foo:detector0/if_detector/width=3 cm\"        "
-       )
+      easy_init("datatools::variant-set",
+                po::value< std::vector<std::string> >(&params_.variant_sets)
+                ->value_name("rule(s)"),
+                "Set the values of a set of configuration variant parameters associated to some registry.\n"
+                "Example : Set the \"foo:detector0\" boolean parameter and the associated \"foo:detector0/if_detector/material\" and \"foo:detector0/if_detector/width\" parameters in the proper variant registry:\n"
+                "  --datatools::variant-set=\"foo:detector0=true\"\n"
+                "  --datatools::variant-set=\"foo:detector0/if_detector/material=Silicium\"\n"
+                "  --datatools::variant-set=\"foo:detector0/if_detector/width=3 cm\""
+                );
 
 #if DATATOOLS_WITH_QT_GUI == 1
-      ("datatools::inhibit-qt-gui",
-       po::value<bool>(&params_.inhibit_qt_gui)
-       ->zero_tokens()
-       ->default_value(false),
-       "Inhibit Qt GUI:                                                     \n"
-       "Example :                                                           \n"
-       "   --datatools::inhibit-qt-gui                                        "
-       )
+      easy_init("datatools::variant-qt-gui",
+                po::value<bool>(&params_.variant_qt_gui)
+                ->zero_tokens()
+                ->default_value(false),
+                "Display the variant Qt GUI dialog:\n"
+                "Example :\n"
+                "  --datatools::variant-qt-gui"
+                );
+
+      easy_init("datatools::variant-qt-gui-style",
+                po::value<std::string>(&params_.variant_qt_gui_style)
+                // ->default_value(std::string("plastique"))
+                ->value_name("style"),
+                "Set the style of variant Qt GUI dialog:\n"
+                "Example :\n"
+                "  --datatools::variant-qt-gui-style=\"plastique\""
+                );
 #endif // DATATOOLS_WITH_QT_GUI == 1
+
+      easy_init("datatools::variant-store",
+                po::value<std::string>(&params_.variant_store)
+                ->value_name("filename"),
+                "Store the current selected values of the variant parameters in a file:\n"
+                "Example : Store parameters in the \"var/backup_variants.rep\" file\n"
+                "  --datatools::variant-store=\"var/backup_variants.rep\""
+                );
+    }
+
+
+    // Help:
+    if (parse_help) {
+      easy_init("datatools::help",
+                po::value<bool>(&params_.help)
+                ->zero_tokens()
+                ->default_value(false),
+                "Print help for the datatools kernel configuration options.\n"
+                "Example :\n"
+                "  --datatools::help"
+                );
+    }
+
+    // Splash:
+    if (parse_splash) {
+      easy_init("datatools::splash",
+                po::value<bool>(&params_.splash)
+                ->zero_tokens()
+                ->default_value(false),
+                "Print splash screen at datatools kernel loading.\n"
+                "Example :\n"
+                "  --datatools::splash"
+                );
+    }
+
+    // Locale category:
+    if (parse_locale_category) {
+      easy_init("datatools::locale-category",
+                po::value<std::string>(&params_.locale_category)
+                ->value_name("locale"),
+                "Set the datatools kernel's local category.\n"
+                "Example :\n"
+                "  --datatools::locale-category=\"C\""
+                );
+    }
+
+    // Logging:
+    if (parse_logging) {
+      easy_init("datatools::logging",
+                po::value<std::string>(&params_.logging_label)
+                ->value_name("level")
+                ->default_value("warning"),
+                "Set the datatools kernel's logging priority threshold.\n"
+                "Example :\n"
+                "  --datatools::logging=\"trace\""
+                );
+    }
+
+    // No library info:
+    if (parse_inhibit_libinfo) {
+      easy_init("datatools::nolibinfo",
+                po::value<bool>(&params_.inhibit_library_info_register)
+                ->zero_tokens()
+                ->default_value(false),
+                "Inhibit the use of the library/component information register.\n"
+                "Example :\n"
+                "  --datatools::nolibinfo"
+                );
+    }
+
+
+    // Library info logging:
+    if (parse_libinfo_logging) {
+      easy_init("datatools::libinfo::logging",
+                po::value<std::string>(&params_.library_info_logging_label)
+                ->value_name("level")
+                ->default_value("warning"),
+                "Set the datatools kernel's library info logging priority threshold.\n"
+                "Example :\n"
+                "  --datatools::libinfo::logging=\"trace\""
+                );
+    }
 
 #if DATATOOLS_WITH_QT_GUI == 1
-      ("datatools::variant-qt-gui",
-       po::value<bool>(&params_.variant_qt_gui)
-       ->zero_tokens()
-       ->default_value(false),
-       "Display the variant Qt GUI dialog:                                  \n"
-       "Example :                                                           \n"
-       "   --datatools::variant-qt-gui                                        "
-       )
-
-      ("datatools::variant-qt-gui-style",
-       po::value<std::string>(&params_.variant_qt_gui_style)
-       ->value_name("style"),
-       "Set the style of variant Qt GUI dialog:                             \n"
-       "Example :                                                           \n"
-       "   --datatools::variant-qt-gui-style=\"plastique\"                    "
-       )
-       //      ->default_value(std::string("plastique")),
+    // Inhibit Qt GUI:
+    if (parse_inhibit_qt_gui) {
+      easy_init("datatools::inhibit-qt-gui",
+                po::value<bool>(&params_.inhibit_qt_gui)
+                ->zero_tokens()
+                ->default_value(false),
+                "Inhibit Qt GUI:\n"
+                "Example :\n"
+                " --datatools::inhibit-qt-gui"
+                );
+    }
 #endif // DATATOOLS_WITH_QT_GUI == 1
-
-      ("datatools::variant-store",
-       po::value<std::string>(&params_.variant_store)
-       ->value_name("file"),
-       "Store the values of the variant parameters in a file:                \n"
-       "Example :                                                            \n"
-       "  Store parameters' values from the \"var/backup_variants.rep\" file \n"
-       "    --datatools::variant-store=\"var/backup_variants.rep\"             "
-       )
-
-      ;
 
     return;
   }
@@ -932,7 +970,7 @@ namespace datatools {
     return;
   }
 
-  void kernel::initialize(int argc_, char * argv_[])
+  void kernel::initialize(int argc_, char * argv_[], uint32_t flags_)
   {
     DT_LOG_TRACE_ENTERING(_logging_);
     if (_initialized_) return;
@@ -955,7 +993,7 @@ namespace datatools {
     // Parse command line options:
     namespace po = boost::program_options;
     po::options_description opts("datatools' kernel options ");
-    build_opt_desc(opts, _params_);
+    build_opt_desc(opts, _params_, flags_);
     po::positional_options_description args;
     po::variables_map vm;
     po::parsed_options parsed =

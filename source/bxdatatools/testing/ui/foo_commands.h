@@ -23,6 +23,7 @@
 
 // This project:
 #include <datatools/ui/base_command.h>
+#include <datatools/detail/command_macros.h>
 #include "foo.h"
 
 //! Command

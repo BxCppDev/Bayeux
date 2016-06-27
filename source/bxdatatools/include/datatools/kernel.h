@@ -1,11 +1,11 @@
 /// \file datatools/kernel.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-09-26
- * Last modified: 2014-09-28
+ * Last modified: 2016-06-25
  *
  * License:
  *
- * Copyright (C) 2013-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2013-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 // Third Party:
 #include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/cstdint.hpp>
 
 #ifdef __clang__
 #pragma clang diagnostic push
@@ -51,6 +52,7 @@
 #include <datatools/logger.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/datatools_config.h>
+#include <datatools/bit_mask.h>
 
 namespace datatools {
 
@@ -113,17 +115,34 @@ namespace datatools {
 
     };
 
+    /// Bit mask for the kernel initialization flags
+    static const uint32_t init_mask = datatools::bit_mask::nbits16;
+
+    /// Kernel initialization flags
+    enum init_flags {
+      init_no_help            = datatools::bit_mask::bit00,
+      init_no_splash          = datatools::bit_mask::bit01,
+      init_no_locale_category = datatools::bit_mask::bit02,
+      init_no_logging         = datatools::bit_mask::bit03,
+      init_no_inhibit_libinfo = datatools::bit_mask::bit04,
+      init_no_libinfo_logging = datatools::bit_mask::bit05,
+      init_no_resource_path   = datatools::bit_mask::bit06,
+      init_no_inhibit_variant = datatools::bit_mask::bit07,
+      init_no_variant         = datatools::bit_mask::bit08,
+      init_no_inhibit_qt_gui  = datatools::bit_mask::bit09
+    };
+
     /// Default constructor
     kernel();
 
     /// Constructor with on-the-fly initialization
-    kernel(int argc_, char * argv_[]);
+    kernel(int argc_, char * argv_[], uint32_t flags = 0);
 
     /// Destruction with on-the-fly shutdown if needed
     virtual ~kernel();
 
     /// Initialization from command line arguments
-    void initialize(int argc_, char * argv_[]);
+    void initialize(int argc_, char * argv_[], uint32_t flags_ = 0);
 
     /// Shutdown
     void shutdown();
@@ -183,7 +202,7 @@ namespace datatools {
     static const kernel & const_instance();
 
     /// Build description of options
-    static void build_opt_desc(boost::program_options::options_description &, param_type &);
+    static void build_opt_desc(boost::program_options::options_description &, param_type &, uint32_t flags_ = 0);
 
     /// Print splash screen
     static void print_splash(std::ostream & = std::clog);

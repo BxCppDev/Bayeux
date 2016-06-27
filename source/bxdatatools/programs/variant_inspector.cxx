@@ -44,6 +44,8 @@
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/io.h>
 #include <datatools/ioutils.h>
+#include <datatools/properties.h>
+#include <datatools/multi_properties.h>
 
 namespace bpo = boost::program_options;
 namespace dtc = datatools::configuration;
@@ -61,16 +63,21 @@ struct app_config_params {
   app_config_params();
   std::string logging; //!< Logging label
   std::string action; //!< Action
+  std::string input_filename; //!< Input file for test action
   dtc::variant_service::config variants; //!< Variant support
 };
 
 void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_);
 
-void app_print_rst(std::ostream & out_, const dtc::variant_repository & vrep_);
+void app_print_doc_rst(std::ostream & out_, const dtc::variant_repository & vrep_);
 
 void app_print_current_profile(std::ostream & out_, const dtc::variant_repository & vrep_);
 
-  int main(int argc_, char * argv_[])
+void app_test_config(std::ostream & out_, const std::string & config_file_);
+
+void app_test_multi_config(std::ostream & out_, const std::string & mconfig_file_);
+
+int main(int argc_, char * argv_[])
 {
   bayeux::initialize(argc_, argv_);
   int error_code = EXIT_SUCCESS;
@@ -87,20 +94,27 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
        "print this help message")
       ("version,v",
        "print version")
-      ("logging",
+      ("logging,l",
        bpo::value<std::string>(&params.logging)
        ->default_value("fatal")
        ->value_name("[level]"),
        "a value")
-      ("version,v",
-       "print version")
-      ("action",
+      ("action,a",
        bpo::value<std::string>(&params.action)
        // ->default_value("doc")
        ->value_name("[name]"),
        "action name:\n"
        " - 'doc' : print ReSt formatted documentation\n"
-       " - 'profile' : print the current variant profile\n")
+       " - 'profile' : print the current variant profile\n"
+       " - 'testcfg' : test a properties input file\n"
+       " - 'testmcfg' : test a multi-properties input file\n"
+       )
+      ("input-file,i",
+       bpo::value<std::string>(&params.input_filename)
+       ->value_name("[filename]"),
+       "input file to be parsed/tested.\n"
+       "Needed for action='testcfg' or action='testmcfg'.\n"
+       )
       ;
 
     // Declare options for variant support:
@@ -156,6 +170,8 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
     // Set action:
     bool print_doc = false;
     bool print_profile = false;
+    bool test_config = false;
+    bool test_mconfig = false;
 
     if (params.action.empty()) {
       params.action = "doc";
@@ -165,6 +181,10 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
       print_doc = true;
     } else if (params.action == "profile") {
       print_profile = true;
+    } else if (params.action == "testcfg") {
+      test_config = true;
+    } else if (params.action == "testmcfg") {
+      test_mconfig = true;
     }
 
     // Variant support:
@@ -176,13 +196,6 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
         dtc::variant_service vserv;
         vserv.configure(params.variants);
 
-        // Action:
-        if (print_doc) {
-          app_print_rst(std::cout, vserv.get_repository());
-        } else if (print_profile) {
-          app_print_current_profile(std::cout, vserv.get_repository());
-        }
-
         if (datatools::logger::is_debug(logging)) {
           debug_app_dump(std::cerr, vserv.get_repository());
         }
@@ -190,7 +203,22 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
         // Start the variant service:
         vserv.start();
 
-        // Nothing special here...
+        // Action:
+        if (print_doc) {
+          app_print_doc_rst(std::cout, vserv.get_repository());
+        } else if (print_profile) {
+          app_print_current_profile(std::cout, vserv.get_repository());
+        } else if (test_config) {
+          DT_THROW_IF(params.input_filename.empty(),
+                      std::logic_error,
+                      "Missing '--input-file' for testing a 'datatools::properties' configuration file!");
+          app_test_config(std::cout, params.input_filename);
+        } else if (test_mconfig) {
+          DT_THROW_IF(params.input_filename.empty(),
+                      std::logic_error,
+                      "Missing '--input-file' for testing a 'datatools::multi_properties' configuration file!");
+          app_test_multi_config(std::cout, params.input_filename);
+        }
 
         // Stop the variant service:
         vserv.stop();
@@ -280,25 +308,40 @@ void app_print_current_profile(std::ostream & out_, const dtc::variant_repositor
   return;
 }
 
-void app_print_rst(std::ostream & out_, const dtc::variant_repository & vrep_)
+void app_print_doc_rst(std::ostream & out_, const dtc::variant_repository & vrep_)
 {
   vrep_.print_rst(out_, 0);
+  return;
+}
 
-  // out_ << "Profile" << std::endl;
-  // out_ << "=======" << std::endl;
-  // out_ << std::endl;
+void app_test_config(std::ostream & out_, const std::string & config_file_)
+{
+  datatools::properties cfg;
+  {
+    uint32_t reader_options = 0;
+    datatools::properties::config reader(reader_options);
+    reader.read(config_file_, cfg);
+  }
+  {
+    uint32_t writer_options = 0;
+    datatools::properties::config writer(writer_options);
+    writer.write(out_, cfg);
+  }
+  return;
+}
 
-  // out_ << "Current variant profile is: " << std::endl;
-  // out_ << std::endl;
-  // std::ostringstream profile_oss;
-  // dtc::ascii_io rep_io(dtc::ascii_io::IO_DEFAULT);
-  // rep_io.store_repository(profile_oss, vrep_);
-  // out_ << "  ::" << std::endl;
-  // out_ << std::endl;
-  // datatools::print_multi_lines(out_, profile_oss.str(), "    ");
-  // out_ << std::endl;
-  // out_ << ".." << std::endl;
-  // out_ << std::endl;
-
+void app_test_multi_config(std::ostream & out_, const std::string & mconfig_file_)
+{
+  datatools::multi_properties mcfg;
+  {
+    uint32_t reader_options = 0;
+    datatools::multi_properties::config reader(reader_options);
+    reader.read(mconfig_file_, mcfg);
+  }
+  {
+    uint32_t writer_options = 0;
+    datatools::multi_properties::config writer(writer_options);
+    writer.write(out_, mcfg);
+  }
   return;
 }

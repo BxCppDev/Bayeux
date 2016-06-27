@@ -119,59 +119,54 @@ namespace datatools {
        "produce help message")
 
       ("logging-priority,P",
-       po::value<std::string>()->default_value("notice"),
+       po::value<std::string>()->default_value("notice")
+       ->value_name("level"),
        "set the logging priority threshold")
 
       ("dlls-config,L",
-       po::value<std::string>(&params_.dll_loader_config),
-       "set the DLL loader configuration file.      \n"
-       "Example :                                   \n"
-       " --dlls-config dlls.conf                    "
+       po::value<std::string>(&params_.dll_loader_config)
+       ->value_name("filename"),
+       "set the DLL loader configuration file. \n"
+       "Example :                              \n"
+       " --dlls-config dlls.conf                 "
        )
 
       ("load-dll,l",
-       po::value<std::vector<std::string> >(&params_.dlls),
-       "set a DLL to be loaded.                     \n"
-       "Example :                                   \n"
-       " --load-dll \"foo\"                         \n"
-       " --load-dll \"foo@/usr/local/foo/1.0/lib\"  \n"
+       po::value<std::vector<std::string> >(&params_.dlls)
+       ->value_name("libname@path"),
+       "set a DLL to be loaded.             \n"
+       "Example :                           \n"
+       " --load-dll \"foo\"                 \n"
+       " --load-dll \"foo@/opt/lib/foo/1.0\"  "
        )
 
       ("class-id,c",
-       po::value<std::string>(&params_.class_id),
-       "set the ID of the class to be investigated. \n"
-       "Example :                                   \n"
-       " --class-id genvtx::manager                 "
+       po::value<std::string>(&params_.class_id)
+       ->value_name("classname"),
+       "set the ID/name of the class to be investigated. \n"
+       "Example :                                        \n"
+       " --class-id genvtx::manager                        "
        )
 
       ("action,a",
-       po::value<std::string>(&params_.action),
-       "define the action to be performed.                \n"
-       "Actions:                                          \n"
-       " list     : list the registered classes by ID     \n"
-       "            May use '--load-dll DLL_NAME' option. \n"
-       " show     : print some description                \n"
-       "            of the configuration parameters       \n"
-       "            for class CLASS_ID.                   \n"
-       "            Needs '--class-id CLASS_ID' option.   \n"
-       " skeleton : print a sample skeleton configuration \n"
-       "            file for class CLASS_ID.              \n"
-       "            Needs '--class-id CLASS_ID' option.   \n"
-       "            May use '--output-file OUTPUT_FILE'   \n"
-       "            option.                               \n"
-       " validate : validate an input configuration       \n"
-       "            file for class CLASS_ID.              \n"
-       "            Needs '--class-id CLASS_ID' option.   \n"
-       "            Needs '--input-file INPUT_FILE'       \n"
-       "            option.                               "
+       po::value<std::string>(&params_.action)
+       ->value_name("action"),
+       "define the action to be performed.\n"
+       "Actions:\n"
+       " list     : \tlist the registered classes by ID May use '--load-dll LIBNAME' option.\n"
+       " show     : \tprint some description of the configuration parameters for class CLASSNAME. Needs '--class-id CLASSNAME' option.  \n"
+       " skeleton : \tprint a sample skeleton configuration file for class CLASSNAME. Needs '--class-id CLASSNAME' option. May use '--output-file OUTPUT_FILE' option. \n"
+       " validate : \tvalidate an input configuration file for class CLASSNAME. Needs '--class-id CLASSNAME' and '--input-file INPUTFILE' option.\n"
        )
 
       ("input-file,i",
-       po::value<std::string>(&params_.input_path),
+       po::value<std::string>(&params_.input_path)
+       ->value_name("file"),
        "set the name of an input filename.")
 
       ("output-file,o",
-       po::value<std::string>(&params_.output_path),
+       po::value<std::string>(&params_.output_path)
+       ->value_name("file"),
        "set the name of an output filename.")
 
       ; // end of options' description
@@ -183,7 +178,7 @@ namespace datatools {
   {
     const std::string APP_NAME = "bxocd_manual";
     out_ << "\n" << APP_NAME << " -- Object Configuration Description Manual" << std::endl;
-    out_ << "                     (datatools OCD support)" << std::endl;
+    out_ << "                (Bayeux/datatools OCD support)" << std::endl;
     out_ << std::endl;
     out_ << "Usage : " << std::endl;
     out_ << std::endl;

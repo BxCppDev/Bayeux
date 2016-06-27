@@ -22,6 +22,7 @@
 
 // This project:
 #include <datatools/ui/base_command_interface.h>
+#include <datatools/detail/command_macros.h>
 
 namespace datatools {
 

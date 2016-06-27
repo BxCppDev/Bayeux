@@ -40,6 +40,7 @@
 #include <datatools/logger.h>
 #include <datatools/utils.h>
 #include <datatools/multi_properties.h>
+#include <datatools/detail/command_macros.h>
 #include <datatools/ui/base_command.h>
 #include <datatools/ui/base_command_interface.h>
 #include <datatools/ui/shell_command_interface.h>

@@ -33,36 +33,61 @@ DATATOOLS_SERIALIZATION_EXT_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
                                                       "datatools::properties")
 
 // Support for old serialization tag :
-  DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
-                                                                 "datatools::utils::properties")
+DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::properties,
+                                                               "datatools::utils::properties")
 
-#define DT_PROP_CFG_READ_THROW_IF(Condition, ExceptionType,                          \
-                                  FileName,                                          \
-                                  SectionName, SectionLineNumber,                    \
-                                  LineNumber, Message)                               \
-  {                                                                                  \
-    if (Condition) {                                                                 \
-      std::stringstream sDT_THROW_IF_ONLY;                                           \
+#define DT_PROP_CFG_READ_THROW_IF(Condition, ExceptionType,             \
+                                  FileName,                             \
+                                  SectionName, SectionLineNumber,       \
+                                  LineNumber, Message)                  \
+  {                                                                     \
+    if (Condition) {                                                    \
+      std::stringstream sDT_THROW_IF_ONLY;                              \
       sDT_THROW_IF_ONLY << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": "; \
-      if (!FileName.empty()) {                                                       \
-        sDT_THROW_IF_ONLY << "in file '" << FileName << "': ";                       \
-      }                                                                              \
-      if (SectionName.empty()) {                                                     \
-        if (LineNumber > 0) {                                                        \
-          sDT_THROW_IF_ONLY << "at line #" << LineNumber << ": ";                    \
-        }                                                                            \
-      } else {                                                                       \
-        sDT_THROW_IF_ONLY << "in section '" << SectionName << "'";                   \
-        if (SectionLineNumber > 0) {                                                 \
-          sDT_THROW_IF_ONLY << " starting at line #" << SectionLineNumber;           \
-        }                                                                            \
-        sDT_THROW_IF_ONLY << ": ";                                                   \
-      }                                                                              \
-      sDT_THROW_IF_ONLY << Message << "]";                                           \
-      throw ExceptionType(sDT_THROW_IF_ONLY.str());                                  \
-    }                                                                                \
-  }                                                                                  \
-/**/
+      if (!FileName.empty()) {                                          \
+        sDT_THROW_IF_ONLY << "in file '" << FileName << "': ";          \
+      }                                                                 \
+      if (SectionName.empty()) {                                        \
+        if (LineNumber > 0) {                                           \
+          sDT_THROW_IF_ONLY << "at line #" << LineNumber << ": ";       \
+        }                                                               \
+      } else {                                                          \
+        sDT_THROW_IF_ONLY << "in section '" << SectionName << "'";      \
+        if (SectionLineNumber > 0) {                                    \
+          sDT_THROW_IF_ONLY << " starting at line #" << SectionLineNumber; \
+        }                                                               \
+        sDT_THROW_IF_ONLY << ": ";                                      \
+      }                                                                 \
+      sDT_THROW_IF_ONLY << Message << "]";                              \
+      throw ExceptionType(sDT_THROW_IF_ONLY.str());                     \
+    }                                                                   \
+  }                                                                     \
+  /**/
+
+#define DT_PROP_CFG_READ_LOG_NOTICE(LogLevel,FileName,                  \
+                                    SectionName, SectionLineNumber,     \
+                                    LineNumber, Message)                \
+  {                                                                     \
+    std::stringstream sDT_LOG;                                          \
+    sDT_LOG << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": "; \
+    if (!FileName.empty()) {                                            \
+      sDT_LOG << "in file '" << FileName << "': ";                      \
+    }                                                                   \
+    if (SectionName.empty()) {                                          \
+      if (LineNumber > 0) {                                             \
+        sDT_LOG << "at line #" << LineNumber << ": ";                   \
+      }                                                                 \
+    } else {                                                            \
+      sDT_LOG << "in section '" << SectionName << "'";                  \
+      if (SectionLineNumber > 0) {                                      \
+        sDT_LOG << " starting at line #" << SectionLineNumber;          \
+      }                                                                 \
+      sDT_LOG << ": ";                                                  \
+    }                                                                   \
+    sDT_LOG << Message << "]";                                          \
+    DT_LOG_NOTICE(LogLevel, sDT_LOG.str());                             \
+  }                                                                     \
+  /**/
 
 namespace {
 
@@ -2352,22 +2377,22 @@ namespace datatools {
   }
 
   /*
-  void properties::write_configuration(const std::string& filename,
-                                       bool a_use_smart_modulo,
-                                       bool a_write_public_only) const
-  {
+    void properties::write_configuration(const std::string& filename,
+    bool a_use_smart_modulo,
+    bool a_write_public_only) const
+    {
     DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Deprecated method!");
     uint32_t writer_opts = 0;
     if (a_use_smart_modulo) {
-      writer_opts |= config::SMART_MODULO;
+    writer_opts |= config::SMART_MODULO;
     }
     if (a_write_public_only)  {
-      writer_opts |= config::SKIP_PRIVATE;
+    writer_opts |= config::SKIP_PRIVATE;
     }
     config writer(writer_opts);
     writer.write(filename, *this);
     return;
-  }
+    }
   */
 
   void properties::read_configuration(const std::string& filename, uint32_t options)
@@ -2386,22 +2411,22 @@ namespace datatools {
   }
 
   /*
-  void properties::write_config(const std::string& a_filename,
-                                const properties& a_props,
-                                bool a_use_smart_modulo,
-                                bool a_write_public_only) {
+    void properties::write_config(const std::string& a_filename,
+    const properties& a_props,
+    bool a_use_smart_modulo,
+    bool a_write_public_only) {
     DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Deprecated method!");
     uint32_t writer_opts = 0;
     if (a_use_smart_modulo) {
-      writer_opts |= config::SMART_MODULO;
+    writer_opts |= config::SMART_MODULO;
     }
     if (a_write_public_only)  {
-      writer_opts |= config::SKIP_PRIVATE;
+    writer_opts |= config::SKIP_PRIVATE;
     }
     config writer(writer_opts);
     writer.write(a_filename, a_props);
     return;
-  }
+    }
   */
 
   // static
@@ -2425,8 +2450,8 @@ namespace datatools {
   void properties::config::set_section_info(const std::string & section_name,
                                             int section_start_line_number)
   {
-     _section_name_ = section_name;
-     _section_start_line_number_ = section_start_line_number;
+    _section_name_ = section_name;
+    _section_start_line_number_ = section_start_line_number;
     return;
   }
 
@@ -3557,76 +3582,86 @@ namespace datatools {
               DT_LOG_TRACE(logging, "VPP ==> variant_only_reverse='" << variant_only_reverse << "'");
             }
 
-            std::string pv_str = property_value_str;
-            boost::trim(pv_str);
-            DT_LOG_TRACE(logging, "pv_str='" << pv_str << "'");
-            std::string effective_property_values_line = property_value_str;
-            {
-              std::string effective_line;
-              command::returned_info cri = vpp.preprocess(pv_str, effective_line);
-              DT_PROP_CFG_READ_THROW_IF(cri.is_failure(),
-                                        std::logic_error,
-                                        _current_filename_,
-                                        _section_name_,
-                                        _section_start_line_number_,
-                                        _current_line_number_,
-                                        "Cannot preprocess variant in '" << pv_str << "' : "
-                                        << cri.get_error_message());
-              DT_LOG_TRACE(logging, "VPP ==> effective_line='" << effective_line << "'");
-              effective_property_values_line = effective_line;
+            // Process the line or not:
+            bool process_line = exhibit_property;
+            if (process_line) {
+              // variant_only may inhibit the property:
+              if (! variant_only.empty()) {
+                process_line = variant_only_found;
+                if (variant_only_reverse) {
+                  process_line = !variant_only_found;
+                }
+              }
             }
-            /*
-              if (scalar) {
-            */
 
-            DT_LOG_TRACE(logging, "--> effective_property_values_line='" << effective_property_values_line << "'");
-            std::istringstream iss(effective_property_values_line);
-            /***************
-             *   BOOLEAN   *
-             ***************/
-            if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
-              DT_LOG_TRACE(logging, "boolean: effective_property_values_line='" << effective_property_values_line << "'");
-              if (scalar) {
-                DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, a_boolean),
+            // Process the current line:
+            if (!process_line) {
+              DT_PROP_CFG_READ_LOG_NOTICE(datatools::logger::PRIO_ALWAYS,
+                                          _current_filename_,
+                                          _section_name_,
+                                          _section_start_line_number_,
+                                          _current_line_number_,
+                                          "Do not process property value repr '"
+                                          << property_value_str << "' for property '"
+                                          << prop_key << "'...");
+            } else {
+              std::string pv_str = property_value_str;
+              boost::trim(pv_str);
+              DT_LOG_TRACE(logging, "pv_str='" << pv_str << "'");
+              std::string effective_property_values_line = property_value_str;
+              {
+                std::string effective_line;
+                command::returned_info cri = vpp.preprocess(pv_str, effective_line);
+                DT_PROP_CFG_READ_THROW_IF(cri.is_failure(),
                                           std::logic_error,
                                           _current_filename_,
                                           _section_name_,
                                           _section_start_line_number_,
                                           _current_line_number_,
-                                          "Cannot read boolean value from '" << effective_property_values_line << "' for key '"
-                                          << prop_key << "' at line '" << line << "' !");
-                // iss >> a_boolean;
-                // DT_THROW_IF(!iss,
-                //              std::logic_error,
-                //              "Cannot read boolean value for key '"
-                // << prop_key << "' at line '" << line << "' !");
-              } else {
-                for (int i = 0; i < vsize; ++i) {
-                  bool b;
-                  DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, b),
+                                          "Cannot preprocess variant in '" << pv_str << "' : "
+                                          << cri.get_error_message());
+                DT_LOG_TRACE(logging, "VPP ==> effective_line='" << effective_line << "'");
+                effective_property_values_line = effective_line;
+              }
+
+              DT_LOG_TRACE(logging, "--> effective_property_values_line='" << effective_property_values_line << "'");
+              std::istringstream iss(effective_property_values_line);
+              /***************
+               *   BOOLEAN   *
+               ***************/
+              if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                DT_LOG_TRACE(logging, "boolean: effective_property_values_line='" << effective_property_values_line << "'");
+                if (scalar) {
+                  DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, a_boolean),
                                             std::logic_error,
                                             _current_filename_,
                                             _section_name_,
                                             _section_start_line_number_,
                                             _current_line_number_,
-                                            "Cannot read vector boolean value for key '"
+                                            "Cannot read boolean value from '" << effective_property_values_line << "' for key '"
                                             << prop_key << "' at line '" << line << "' !");
-                  // iss >> b;
-                  // DT_THROW_IF(!iss,
-                  //              std::logic_error,
-                  //              "Cannot read vector boolean value for key '"
-                  //              << prop_key << "' at line '" << line << "' !");
-                  v_booleans[i] = b;
+                } else {
+                  for (int i = 0; i < vsize; ++i) {
+                    bool b;
+                    DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, b),
+                                              std::logic_error,
+                                              _current_filename_,
+                                              _section_name_,
+                                              _section_start_line_number_,
+                                              _current_line_number_,
+                                              "Cannot read vector boolean value for key '"
+                                              << prop_key << "' at line '" << line << "' !");
+                    v_booleans[i] = b;
+                  }
                 }
               }
-            }
 
-            /***************
-             *   INTEGER   *
-             ***************/
-            if (type == properties::data::TYPE_INTEGER_SYMBOL) {
-              if (scalar) {
-                iss >> a_integer;
+              /***************
+               *   INTEGER   *
+               ***************/
+              if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                if (scalar) {
+                  iss >> a_integer;
                   DT_PROP_CFG_READ_THROW_IF(!iss,
                                             std::logic_error,
                                             _current_filename_,
@@ -3635,136 +3670,125 @@ namespace datatools {
                                             _current_line_number_,
                                             "Cannot read integer value for key '"
                                             << prop_key << "' at line '" << line << "' !");
-              } else {
-                for (int i = 0; i < vsize; ++i) {
-                  int k;
-                  iss >> k;
-                  DT_PROP_CFG_READ_THROW_IF(!iss,
-                                            std::logic_error,
-                                            _current_filename_,
-                                            _section_name_,
-                                            _section_start_line_number_,
-                                            _current_line_number_,
-                                            "Cannot read vector integer value for key '"
-                                            << prop_key << "' at line '" << line << "' !");
-                  v_integers[i] = k;
+                } else {
+                  for (int i = 0; i < vsize; ++i) {
+                    int k;
+                    iss >> k;
+                    DT_PROP_CFG_READ_THROW_IF(!iss,
+                                              std::logic_error,
+                                              _current_filename_,
+                                              _section_name_,
+                                              _section_start_line_number_,
+                                              _current_line_number_,
+                                              "Cannot read vector integer value for key '"
+                                              << prop_key << "' at line '" << line << "' !");
+                    v_integers[i] = k;
+                  }
                 }
               }
-            }
 
-            /**************
-             *    REAL    *
-             **************/
-            bool with_explicit_unit = false;
-            std::string unit_symbol;
-            double      unit_value = 1.0;
-            std::string unit_label;
-            if (type == properties::data::TYPE_REAL_SYMBOL) {
-              if (scalar) {
-                // Scalar real :
-                // Special mode to accept unit symbol after the real value :
-                bool normal_value = true;
-                DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, a_real, normal_value),
-                                          std::logic_error,
-                                          _current_filename_,
-                                          _section_name_,
-                                          _section_start_line_number_,
-                                          _current_line_number_,
-                                          "Cannot read vector real value for key '"
-                                          << prop_key << "' at line '" << line << "' (" << a_props.get_description() << ") !");
-                iss >> std::ws;
-                if (! iss.eof())  {
-                  std::string unit_word;
-                  iss >> unit_word >> std::ws;
-                  if (! unit_word.empty()) {
-                    if (unit_word[0] == _format::COMMENT_CHAR) {
-                      // Eat the end of the line:
-                      std::string trailing_bits;
-                      std::getline(iss, trailing_bits);
-                    } else {
-                      // Try to parse a unit symbol:
-                      DT_PROP_CFG_READ_THROW_IF(! enable_real_with_unit,
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Trailing token '" << unit_word << "' is not allowed for real value with key '"
-                                                << prop_key << "' at line '" << line
-                                                << "'; you should activate the 'real with unit' feature to support this syntax !");
-                      bool found_unit = datatools::units::find_unit(unit_word,
-                                                                    unit_value,
-                                                                    unit_label);
-                      DT_PROP_CFG_READ_THROW_IF(! found_unit,
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Invalid unit symbol for key '"
-                                                << prop_key
-                                                << "' in line '"
-                                                << line
-                                                << "' !");
-                      DT_PROP_CFG_READ_THROW_IF(! requested_unit_label.empty()
-                                                && unit_label != requested_unit_label,
-                                                std::logic_error,
-                                                _current_filename_,
-                                                _section_name_,
-                                                _section_start_line_number_,
-                                                _current_line_number_,
-                                                "Unit symbol '" << unit_word << "' in not compatible with requested unit label '"
-                                                << requested_unit_label << "' for real scalar property with key '"
-                                                << prop_key << "' at line '" << line << "' !");
-                      a_real *= unit_value;
-                      with_explicit_unit = true;
-                      unit_symbol = unit_word;
-                    }
-                  } // End of unit symbol parsing.
-                }
-              } else {
-                // Vector real:
-                for (int i = 0; i < vsize; ++i) {
-                  double x;
-                  bool normal_value;
-                  DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, x, normal_value),
+              /**************
+               *    REAL    *
+               **************/
+              bool with_explicit_unit = false;
+              std::string unit_symbol;
+              double      unit_value = 1.0;
+              std::string unit_label;
+              if (type == properties::data::TYPE_REAL_SYMBOL) {
+                if (scalar) {
+                  // Scalar real :
+                  // Special mode to accept unit symbol after the real value :
+                  bool normal_value = true;
+                  DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, a_real, normal_value),
                                             std::logic_error,
                                             _current_filename_,
                                             _section_name_,
                                             _section_start_line_number_,
                                             _current_line_number_,
                                             "Cannot read vector real value for key '"
-                                            << prop_key << "' at line '" << line << "' !");
-                  if (enable_real_with_unit && datatools::is_valid(requested_unit_value)) {
-                    x *= requested_unit_value;
-                    with_explicit_unit = true;
-                    unit_symbol = requested_unit_symbol;
+                                            << prop_key << "' at line '" << line << "' (" << a_props.get_description() << ") !");
+                  iss >> std::ws;
+                  if (! iss.eof())  {
+                    std::string unit_word;
+                    iss >> unit_word >> std::ws;
+                    if (! unit_word.empty()) {
+                      if (unit_word[0] == _format::COMMENT_CHAR) {
+                        // Eat the end of the line:
+                        std::string trailing_bits;
+                        std::getline(iss, trailing_bits);
+                      } else {
+                        // Try to parse a unit symbol:
+                        DT_PROP_CFG_READ_THROW_IF(! enable_real_with_unit,
+                                                  std::logic_error,
+                                                  _current_filename_,
+                                                  _section_name_,
+                                                  _section_start_line_number_,
+                                                  _current_line_number_,
+                                                  "Trailing token '" << unit_word << "' is not allowed for real value with key '"
+                                                  << prop_key << "' at line '" << line
+                                                  << "'; you should activate the 'real with unit' feature to support this syntax !");
+                        bool found_unit = datatools::units::find_unit(unit_word,
+                                                                      unit_value,
+                                                                      unit_label);
+                        DT_PROP_CFG_READ_THROW_IF(! found_unit,
+                                                  std::logic_error,
+                                                  _current_filename_,
+                                                  _section_name_,
+                                                  _section_start_line_number_,
+                                                  _current_line_number_,
+                                                  "Invalid unit symbol for key '"
+                                                  << prop_key
+                                                  << "' in line '"
+                                                  << line
+                                                  << "' !");
+                        DT_PROP_CFG_READ_THROW_IF(! requested_unit_label.empty()
+                                                  && unit_label != requested_unit_label,
+                                                  std::logic_error,
+                                                  _current_filename_,
+                                                  _section_name_,
+                                                  _section_start_line_number_,
+                                                  _current_line_number_,
+                                                  "Unit symbol '" << unit_word << "' in not compatible with requested unit label '"
+                                                  << requested_unit_label << "' for real scalar property with key '"
+                                                  << prop_key << "' at line '" << line << "' !");
+                        a_real *= unit_value;
+                        with_explicit_unit = true;
+                        unit_symbol = unit_word;
+                      }
+                    } // End of unit symbol parsing.
                   }
-                  v_reals[i] = x;
+                } else {
+                  // Vector real:
+                  for (int i = 0; i < vsize; ++i) {
+                    double x;
+                    bool normal_value;
+                    DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, x, normal_value),
+                                              std::logic_error,
+                                              _current_filename_,
+                                              _section_name_,
+                                              _section_start_line_number_,
+                                              _current_line_number_,
+                                              "Cannot read vector real value for key '"
+                                              << prop_key << "' at line '" << line << "' !");
+                    if (enable_real_with_unit && datatools::is_valid(requested_unit_value)) {
+                      x *= requested_unit_value;
+                      with_explicit_unit = true;
+                      unit_symbol = requested_unit_symbol;
+                    }
+                    v_reals[i] = x;
+                  }
+                  // if (requested_unit_symbol.empty()) {
+                  //   with_explicit_unit = true;
+                  // }
                 }
-                // if (requested_unit_symbol.empty()) {
-                //   with_explicit_unit = true;
-                // }
-              }
-            } // Real
+              } // Real
 
-            /**************
-             *   STRING   *
-             **************/
-            if (type == properties::data::TYPE_STRING_SYMBOL) {
-              if (scalar) {
-                DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, a_string),
-                                          std::logic_error,
-                                          _current_filename_,
-                                          _section_name_,
-                                          _section_start_line_number_,
-                                          _current_line_number_,
-                                          "Cannot read string value for key '"
-                                          << prop_key << "' at line '" << line << "' !");
-              } else {
-                for (int i = 0; i < vsize; ++i) {
-                  std::string str;
-                  DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, str),
+              /**************
+               *   STRING   *
+               **************/
+              if (type == properties::data::TYPE_STRING_SYMBOL) {
+                if (scalar) {
+                  DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, a_string),
                                             std::logic_error,
                                             _current_filename_,
                                             _section_name_,
@@ -3772,91 +3796,104 @@ namespace datatools {
                                             _current_line_number_,
                                             "Cannot read string value for key '"
                                             << prop_key << "' at line '" << line << "' !");
-                  v_strings[i] = str;
-                }
-              }
-            }
-
-            {
-              // Analyse the end of the line and search for spurious trailing bits:
-              std::string trailing_bits;
-              std::getline(iss, trailing_bits);
-              boost::trim(trailing_bits);
-              if (trailing_bits.length() > 0) {
-                if (trailing_bits[0] != _format::COMMENT_CHAR) {
-                  std::ostringstream message_oss;
-                  if (!_current_filename_.empty()) {
-                    message_oss << "File '" << _current_filename_ << "': ";
+                } else {
+                  for (int i = 0; i < vsize; ++i) {
+                    std::string str;
+                    DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, str),
+                                              std::logic_error,
+                                              _current_filename_,
+                                              _section_name_,
+                                              _section_start_line_number_,
+                                              _current_line_number_,
+                                              "Cannot read string value for key '"
+                                              << prop_key << "' at line '" << line << "' !");
+                    v_strings[i] = str;
                   }
-                  if (_section_name_.empty()) {
-                    if (_current_line_number_ > 0) {
-                      message_oss << "Line #" << _current_line_number_ << ": ";
+                }
+              }
+
+              {
+                // Analyse the end of the line and search for spurious trailing bits:
+                std::string trailing_bits;
+                std::getline(iss, trailing_bits);
+                boost::trim(trailing_bits);
+                if (trailing_bits.length() > 0) {
+                  if (trailing_bits[0] != _format::COMMENT_CHAR) {
+                    std::ostringstream message_oss;
+                    if (!_current_filename_.empty()) {
+                      message_oss << "File '" << _current_filename_ << "': ";
                     }
-                  } else {
-                    message_oss << "Section '" << _section_name_ << "'";
-                    if (_section_start_line_number_ > 0) {
-                      message_oss << " starting at line #" << _section_start_line_number_;
+                    if (_section_name_.empty()) {
+                      if (_current_line_number_ > 0) {
+                        message_oss << "Line #" << _current_line_number_ << ": ";
+                      }
+                    } else {
+                      message_oss << "Section '" << _section_name_ << "'";
+                      if (_section_start_line_number_ > 0) {
+                        message_oss << " starting at line #" << _section_start_line_number_;
+                      }
+                      message_oss << ": ";
                     }
-                    message_oss << ": ";
+                    message_oss << "There are unprocessed trailing characters '" << trailing_bits << "' after value record of property '"
+                                << prop_key << "'!";
+                    DT_LOG_WARNING(_logging_,message_oss.str());
                   }
-                  message_oss << "There are unprocessed trailing characters '" << trailing_bits << "' after value record of property '"
-                              << prop_key << "'!";
-                  DT_LOG_WARNING(_logging_,message_oss.str());
                 }
               }
-            }
 
-            bool store_it = exhibit_property;
-            if (store_it) {
-              if (! variant_only.empty()) {
-                store_it = variant_only_found;
-                if (variant_only_reverse) {
-                  store_it = !variant_only_found;
+              bool store_it = true;
+              // bool store_it = exhibit_property;
+              // if (store_it) {
+              //        if (! variant_only.empty()) {
+              //          store_it = variant_only_found;
+              //          if (variant_only_reverse) {
+              //            store_it = !variant_only_found;
+              //          }
+              //        }
+              // }
+
+              if (store_it) {
+                // scalar :
+                if (type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar) {
+                  a_props.store(prop_key, a_boolean, prop_description, locked);
                 }
-              }
-            }
+                if (type == properties::data::TYPE_INTEGER_SYMBOL && scalar) {
+                  a_props.store(prop_key, a_integer, prop_description, locked);
+                }
+                if (type == properties::data::TYPE_REAL_SYMBOL && scalar) {
+                  a_props.store(prop_key, a_real, prop_description, locked);
+                }
+                if (type == properties::data::TYPE_STRING_SYMBOL && scalar) {
+                  a_props.store(prop_key, a_string, prop_description, locked);
+                }
 
-            if (store_it) {
-              // scalar :
-              if (type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar) {
-                a_props.store(prop_key, a_boolean, prop_description, locked);
-              }
-              if (type == properties::data::TYPE_INTEGER_SYMBOL && scalar) {
-                a_props.store(prop_key, a_integer, prop_description, locked);
-              }
-              if (type == properties::data::TYPE_REAL_SYMBOL && scalar) {
-                a_props.store(prop_key, a_real, prop_description, locked);
-              }
-              if (type == properties::data::TYPE_STRING_SYMBOL && scalar) {
-                a_props.store(prop_key, a_string, prop_description, locked);
-              }
+                // vector :
+                if (type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar) {
+                  a_props.store(prop_key, v_booleans, prop_description, locked);
+                }
+                if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
+                  a_props.store(prop_key, v_integers, prop_description, locked);
+                }
+                if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
+                  a_props.store(prop_key, v_reals, prop_description, locked);
+                }
+                if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
+                  a_props.store(prop_key, v_strings, prop_description, locked);
+                }
 
-              // vector :
-              if (type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar) {
-                a_props.store(prop_key, v_booleans, prop_description, locked);
-              }
-              if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
-                a_props.store(prop_key, v_integers, prop_description, locked);
-              }
-              if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
-                a_props.store(prop_key, v_reals, prop_description, locked);
-              }
-              if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
-                a_props.store(prop_key, v_strings, prop_description, locked);
-              }
-
-              // Special flags:
-              if (type == properties::data::TYPE_STRING_SYMBOL && with_explicit_path) {
-                a_props.set_explicit_path(prop_key, true);
-              }
-              if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
-                a_props.set_explicit_unit(prop_key, true);
-              }
-              if (type == properties::data::TYPE_REAL_SYMBOL && !unit_symbol.empty()) {
-                a_props.set_unit_symbol(prop_key, unit_symbol);
-              }
-              prop_description.clear();
-            } // if (store_it)
+                // Special flags:
+                if (type == properties::data::TYPE_STRING_SYMBOL && with_explicit_path) {
+                  a_props.set_explicit_path(prop_key, true);
+                }
+                if (type == properties::data::TYPE_REAL_SYMBOL && with_explicit_unit) {
+                  a_props.set_explicit_unit(prop_key, true);
+                }
+                if (type == properties::data::TYPE_REAL_SYMBOL && !unit_symbol.empty()) {
+                  a_props.set_unit_symbol(prop_key, unit_symbol);
+                }
+                prop_description.clear();
+              } // if (store_it)
+            } // if (process_line)
 
             // Clear current requested variant only :
             if (! variant_only.empty()) {

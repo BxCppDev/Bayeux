@@ -28,6 +28,7 @@
 #include <datatools/ui/basic_shell.h>
 #include <datatools/service_manager.h>
 #include <datatools/properties.h>
+#include <datatools/detail/command_macros.h>
 
 namespace datatools {
 

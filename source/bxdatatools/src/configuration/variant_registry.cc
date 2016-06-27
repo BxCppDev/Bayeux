@@ -305,7 +305,7 @@ namespace datatools {
     const variant_record &
     variant_registry::get_parameter_record(const std::string & record_path_) const
     {
-     DT_THROW_IF(!has_parameter_record(record_path_), std::logic_error,
+      DT_THROW_IF(!has_parameter_record(record_path_), std::logic_error,
                   "Parameter record with path '" << record_path_ << "' does not exist!");
       record_dict_type::const_iterator found = _records_.find(record_path_);
       return found->second;
@@ -385,11 +385,11 @@ namespace datatools {
         cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
         // tree_dump(std::cerr, "Registry: ", "DEVEL: ***** ");
         DT_THROW_IF(!has_variant_record(variant_path_), std::logic_error,
-                    "Variant record with path '" << variant_path_ << "' does not exist!");
+                    "Variant record with path '" << variant_path_
+                    << "' does not exist in registry '" << get_name() << "'!!");
         const variant_record & variant_rec = get_variant_record(variant_path_);
         cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
         active_ = variant_rec.is_active();
-        // std::cerr << "DEVEL: *************** ACTIVE = " << active_ << std::endl;
         cri.set_error_code(command::CEC_SUCCESS);
       }
       catch (std::exception & x) {
@@ -404,42 +404,50 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
-        DT_THROW_IF(!has_parameter_record(param_path_), std::logic_error,
-                    "Parameter record with path '" << param_path_ << "' does not exist!");
+        if (! has_parameter_record(param_path_)) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
+          DT_THROW(std::logic_error,
+                   "Parameter record with path '" << param_path_ << "' does not exist "
+                   << "in registry '" << get_name() << "'!");
+        }
         const variant_record & param_rec = get_parameter_record(param_path_);
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF (!param_rec.is_active(), std::logic_error,
-                    "Parameter record '" << param_path_ << "' is not active!");
-
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+        if (!param_rec.is_active()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << param_path_ << "' is not active "
+                   << "in registry '" << get_name() << "'!");
+        }
         if (param_rec.get_parameter_model().is_boolean()) {
-
           std::ostringstream os;
           bool value = false;
           cri = param_rec.get_boolean_value(value);
-          DT_THROW_IF (cri.is_failure(), std::logic_error,
-                       "Boolean parameter '" << param_path_ << "' has no available value!");
+          if (cri.is_failure()) {
+            DT_THROW(std::logic_error,
+                     "Boolean parameter '" << param_path_ << "' has no available value"
+                     << "in registry '" << get_name() << "'!");
+          }
           io::write_boolean(os, value);
           value_token_ = os.str();
-
         } else if (param_rec.get_parameter_model().is_integer()) {
-
           std::ostringstream os;
           int value = 0;
           cri = param_rec.get_integer_value(value);
-          DT_THROW_IF (cri.is_failure(), std::logic_error,
-                       "Integer parameter '" << param_path_ << "' has no available value!");
+          if (cri.is_failure()) {
+            DT_THROW(std::logic_error,
+                     "Integer parameter '" << param_path_ << "' has no available value"
+                     << "in registry '" << get_name() << "'!");
+          }
           io::write_integer(os, value);
           value_token_ = os.str();
-
         } else if (param_rec.get_parameter_model().is_real()) {
-
           std::ostringstream os;
           double value;
           cri = param_rec.get_real_value(value);
-          DT_THROW_IF (cri.is_failure(), std::logic_error,
-                       "Real parameter '" << param_path_ << "' has no available value!");
+          if (cri.is_failure()) {
+            DT_THROW(std::logic_error,
+                     "Real parameter '" << param_path_ << "' has no available value"
+                     << "in registry '" << get_name() << "'!");
+          }
           io::write_real_number(os,
                                 value,
                                 15,
@@ -447,12 +455,9 @@ namespace datatools {
                                 param_rec.get_parameter_model().get_real_unit_label()
                                 );
           value_token_ = os.str();
-
           // value_token_ = "__REAL_VALUE__";
           // cri.set_error_message("Not implemented yet!");
-
         } else if (param_rec.get_parameter_model().is_string()) {
-
           std::ostringstream os;
           std::string value;
           cri = param_rec.get_string_value(value);
@@ -460,13 +465,13 @@ namespace datatools {
           value_token_ = os.str();
           // value_token_ = "__STRING_VALUE__";
           // cri.set_error_message("Not implemented yet!");
-
         } else {
-          DT_THROW_IF (true, std::logic_error,
-                       "Parameter '" << param_path_ << "' has no known type!");
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter '" << param_path_ << "' has no known type"
+                   << "in registry '" << get_name() << "'!");
         }
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -478,64 +483,84 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
-        DT_THROW_IF(!has_parameter_record(param_path_), std::logic_error,
-                    "Parameter record with path '" << param_path_ << "' does not exist!");
+        if (!has_parameter_record(param_path_)) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
+          DT_THROW(std::logic_error,
+                   "Parameter record with path '" << param_path_ << "' does not exist!");
+        }
         variant_record & param_rec = grab_parameter_record(param_path_);
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF (!param_rec.is_active(), std::logic_error,
-                    "Parameter record '" << param_path_ << "' is not active!");
-        DT_THROW_IF (param_rec.get_parameter_model().is_fixed(), std::logic_error,
-                     "Parameter record '" << param_path_ << "' has a fixed value!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+        if (!param_rec.is_active()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << param_path_ << "' is not active!");
+        }
+        if (param_rec.get_parameter_model().is_fixed()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << param_path_ << "' has a fixed value!");
+        }
         if (param_rec.get_parameter_model().is_boolean()) {
           std::istringstream inss(value_token_);
           bool value;
           bool parsed = io::read_boolean(inss, value);
-          DT_THROW_IF (!parsed, std::logic_error,
-                       "Boolean parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
-          // cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+          if (!parsed) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Boolean parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+          }
           cri = param_rec.set_boolean_value(value);
-          DT_THROW_IF (cri.is_failure(), std::logic_error,
-                       "Boolean parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
-          //cri.set_error_code(command::CEC_SUCCESS);
+          if (cri.is_failure()) {
+            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+            DT_THROW(std::logic_error,
+                     "Boolean parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+          }
         } else if (param_rec.get_parameter_model().is_integer()) {
           std::istringstream inss(value_token_);
           int value;
           bool parsed = io::read_integer(inss, value);
-          DT_THROW_IF (!parsed, std::logic_error,
-                       "Integer parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
-          // cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+          if (!parsed) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Integer parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+          }
           cri = param_rec.set_integer_value(value);
-          DT_THROW_IF (cri.is_failure(), std::logic_error,
-                       "Integer parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
-          //cri.set_error_code(command::CEC_SUCCESS);
+          if (cri.is_failure()) {
+            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+            DT_THROW(std::logic_error,
+                     "Integer parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+          }
         } else if (param_rec.get_parameter_model().is_real()) {
           std::istringstream inss(value_token_);
           double value;
           std::string unit_label;
           bool parsed = units::find_value_with_unit(value_token_, value, unit_label);
-          DT_THROW_IF (!parsed, std::logic_error,
-                       "Real parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+          if (!parsed) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Real parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+          }
           cri = param_rec.set_real_value(value);
-          DT_THROW_IF (cri.is_failure(), std::logic_error,
-                       "Real parameter '" << param_path_ << "' cannot accept value='" << value_token_ << "'!");
-          //cri.set_error_code(command::CEC_SUCCESS);
+          if (cri.is_failure()) {
+            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+            DT_THROW(std::logic_error,
+                     "Real parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+          }
         } else if (param_rec.get_parameter_model().is_string()) {
           std::string value = value_token_;
           cri = param_rec.set_string_value(value);
-          DT_THROW_IF (cri.is_failure(), std::logic_error,
-                       "String parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
-          //cri.set_error_code(command::CEC_SUCCESS);
+          if (cri.is_failure()) {
+            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+            DT_THROW(std::logic_error,
+                     "String parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+          }
         } else {
-          DT_THROW_IF (true, std::logic_error,
-                       "Parameter '" << param_path_ << "' has no known type!");
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter '" << param_path_ << "' has no known type!");
         }
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
-      // std::cerr << "DEVEL: CRI == " << cri << std::endl;
       return cri;
     }
 

@@ -242,37 +242,32 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        // std::cerr << "DEVEL: variant_record::set_fixed_value: "
-        //           << "Entering..."
-        //           << std::endl;
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        DT_THROW_IF(get_parameter_model().is_variable(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not fixed!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (get_parameter_model().is_variable()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not fixed!");
+        }
         if (get_parameter_model().is_boolean()) {
           cri = set_boolean_value(get_parameter_model().get_fixed_boolean());
         } else if (get_parameter_model().is_integer()) {
-          // std::cerr << "DEVEL: variant_record::set_fixed_value: "
-          //           << "--> fixed integer value = " << get_parameter_model().is_integer()
-          //           << std::endl;
           cri = set_integer_value(get_parameter_model().get_fixed_integer());
         } else if (get_parameter_model().is_real()) {
           cri = set_real_value(get_parameter_model().get_fixed_real());
         } else if (get_parameter_model().is_string()) {
           cri = set_string_value(get_parameter_model().get_fixed_string());
         } else {
-          DT_THROW_IF(true, std::logic_error,
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW( std::logic_error,
                     "Parameter record '" << _path_ << "' has no valid type!");
         }
-        // std::cerr << "DEVEL: ERROR: " << cri.get_error_message() << std::endl;
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
-      // std::cerr << "DEVEL: variant_record::set_fixed_value: "
-      //           << "Exiting."
-      //           << std::endl;
       return cri;
     }
 
@@ -281,14 +276,21 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
-                  "Parameter record '" << _path_ << "' is fixed!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF(! get_parameter_model().has_default_value(), std::logic_error,
-                    "Parameter record '" << _path_ << "' has no default value!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (get_parameter_model().is_fixed()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is fixed!");
+        }
+        if (! get_parameter_model().has_default_value()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' has no default value!");
+        }
         if (get_parameter_model().is_boolean()) {
           set_boolean_value(get_parameter_model().get_default_boolean());
         } else if (get_parameter_model().is_integer()) {
@@ -297,10 +299,12 @@ namespace datatools {
           set_real_value(get_parameter_model().get_default_real());
         } else if (get_parameter_model().is_string()) {
           set_string_value(get_parameter_model().get_default_string());
+        } else {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW( std::logic_error,
+                    "Parameter record '" << _path_ << "' has no valid type!");
         }
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -311,34 +315,25 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        // DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
-        //           "Parameter record '" << _path_ << "' is fixed!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_boolean(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not a boolean parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-        DT_THROW_IF(! get_parameter_model().is_boolean_valid(value_),
-                    std::logic_error,
-                    "Parameter record '" << _path_ << "' does not accept boolean value '" << value_ << "' !");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (! get_parameter_model().is_boolean()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not a boolean parameter!");
+        }
+        if (! get_parameter_model().is_boolean_valid(value_)) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' does not accept boolean value '" << value_ << "' !");
+        }
         _boolean_value_ = value_;
         _value_set_ = true;
-        /*
-        std::cerr << "DEVEL: " << "variant_record::set_boolean_value: "
-                  << "_boolean_value_=" <<_boolean_value_
-                  << std::endl;
-        */
         _update();
-        /*
-        std::cerr << "DEVEL: " << "variant_record::set_boolean_value: "
-                  << "_update done"
-                  << std::endl;
-        */
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -349,24 +344,27 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
         // DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
         //           "Parameter record '" << _path_ << "' is fixed!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_integer(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not a integer parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-        DT_THROW_IF(! get_parameter_model().is_integer_valid(value_),
-                    std::logic_error,
-                    "Parameter record '" << _path_ << "' does not accept integer value '" << value_ << "' !");
+        if (! get_parameter_model().is_integer()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                      "Parameter record '" << _path_ << "' is not a integer parameter!");
+        }
+        if (! get_parameter_model().is_integer_valid(value_)) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' does not accept integer value '" << value_ << "' !");
+        }
         _integer_value_ = value_;
         _value_set_ = true;
         _update();
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -377,24 +375,27 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
         // DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
         //           "Parameter record '" << _path_ << "' is fixed!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_real(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not a real parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-        DT_THROW_IF(! get_parameter_model().is_real_valid(value_),
-                    std::logic_error,
-                    "Parameter record '" << _path_ << "' does not accept real value '" << value_ << "' !");
+        if (! get_parameter_model().is_real()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not a real parameter!");
+        }
+        if (! get_parameter_model().is_real_valid(value_)) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' does not accept real value '" << value_ << "' !");
+        }
         _real_value_ = value_;
         _value_set_ = true;
         _update();
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -405,24 +406,27 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
         // DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
         //           "Parameter record '" << _path_ << "' is fixed!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_string(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not a string parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-        DT_THROW_IF(! get_parameter_model().is_string_valid(value_),
-                    std::logic_error,
-                    "Parameter record '" << _path_ << "' does not accept string value '" << value_ << "' !");
+        if (! get_parameter_model().is_string()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not a string parameter!");
+        }
+        if (! get_parameter_model().is_string_valid(value_)) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' does not accept string value '" << value_ << "' !");
+        }
         _string_value_ = value_;
         _value_set_ = true;
         _update();
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       // std::cerr << "DEVEL: CRI == " << cri << std::endl;
@@ -434,16 +438,16 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
         // DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
         //           "Parameter record '" << _path_ << "' is fixed!");
         _value_set_ = false;
         _update();
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -451,9 +455,7 @@ namespace datatools {
 
     void variant_record::_update()
     {
-      // std::cerr << "DEVEL: variant_record::_update: Entering..." << std::endl;
       if (is_parameter()) {
-        // std::cerr << "DEVEL: variant_record::_update: Parameter '" << get_path() << "'" << std::endl;
         // Deactivate all variants...
         for (daughter_dict_type::iterator i = _daughters_.begin();
              i != _daughters_.end();
@@ -466,8 +468,6 @@ namespace datatools {
 
         // Then search if some new variant is activated:
         if (value_is_set()) {
-          // std::cerr << "DEVEL: variant_record::_update: Parameter is set" << std::endl;
-
           std::string activated_variant_name;
           bool found_activable = false;
 
@@ -509,7 +509,6 @@ namespace datatools {
       } // is_parameter
 
       if (is_variant()) {
-        // std::cerr << "DEVEL: variant_record::_update: Variant '" << get_path() << "'" << std::endl;
         for (daughter_dict_type::iterator i = grab_daughters().begin();
              i != grab_daughters().end();
              i++) {
@@ -520,7 +519,6 @@ namespace datatools {
         }
       } // is_variant
 
-      // std::cerr << "DEVEL: variant_record::_update: Exiting." << std::endl;
       return;
     }
 
@@ -530,20 +528,24 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_FAILURE);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_boolean(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not a boolean value!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF(! value_is_set(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not set!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (! get_parameter_model().is_boolean()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not a boolean value!");
+        }
+        if (! value_is_set()) {
+          cri.set_error_code(command::CEC_PARAMETER_UNSET_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not set!");
+        }
         value_ = _boolean_value_;
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
-         cri.set_error_message(x.what());
+      } catch (std::exception & x) {
+        cri.set_error_message(x.what());
       }
       return cri;
     }
@@ -553,20 +555,24 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_FAILURE);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_integer(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not an integer value!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF(! value_is_set(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not set!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (! get_parameter_model().is_integer()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not an integer value!");
+        }
+        if (! value_is_set()) {
+          cri.set_error_code(command::CEC_PARAMETER_UNSET_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not set!");
+        }
         value_ = _integer_value_;
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
-         cri.set_error_message(x.what());
+      } catch (std::exception & x) {
+        cri.set_error_message(x.what());
       }
       return cri;
     }
@@ -576,20 +582,24 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_FAILURE);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_real(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not a real value!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF(! value_is_set(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not set!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (! get_parameter_model().is_real()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not a real value!");
+        }
+        if (! value_is_set()) {
+          cri.set_error_code(command::CEC_PARAMETER_UNSET_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not set!");
+        }
         value_ = _real_value_;
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
-         cri.set_error_message(x.what());
+      } catch (std::exception & x) {
+        cri.set_error_message(x.what());
       }
       return cri;
     }
@@ -599,20 +609,24 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_FAILURE);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-        DT_THROW_IF(! get_parameter_model().is_string(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not a string value!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF(! value_is_set(), std::logic_error,
-                    "Parameter record '" << _path_ << "' is not set!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (! get_parameter_model().is_string()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not a string value!");
+        }
+        if (! value_is_set()) {
+          cri.set_error_code(command::CEC_PARAMETER_UNSET_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is not set!");
+        }
         value_ = _string_value_;
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
-         cri.set_error_message(x.what());
+      } catch (std::exception & x) {
+        cri.set_error_message(x.what());
       }
       return cri;
     }
@@ -622,56 +636,68 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_FAILURE);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
-                    "Record '" << _path_ << "' is not a parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
-                  "Parameter record '" << _path_ << "' is fixed!");
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Record '" << _path_ << "' is not a parameter!");
+        }
+        if (get_parameter_model().is_fixed()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' is fixed!");
+        }
         std::istringstream value_iss(format_);
         if (get_parameter_model().is_boolean()) {
           bool value;
-          cri.set_error_code(command::CEC_PARSING_FAILURE);
-          DT_THROW_IF(!io::read_boolean(value_iss, value),
-                      std::logic_error,
-                      "Invalid format for boolean record '" << _path_ << "'!");
+          if (!io::read_boolean(value_iss, value)) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Invalid format '" << format_ << "' for boolean record '" << _path_ << "'!");
+          }
           cri = set_boolean_value(value);
-        }
-        if (get_parameter_model().is_integer()) {
+        } else if (get_parameter_model().is_integer()) {
           int value;
-          DT_THROW_IF(!io::read_integer(value_iss, value),
-                      std::logic_error,
-                      "Invalid format '" << format_ << "' for integer record '" << _path_ << "'!");
+          if (!io::read_integer(value_iss, value)) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Invalid format '" << format_ << " for integer record '" << _path_ << "'!");
+          }
           cri = set_integer_value(value);
-        }
-        if (get_parameter_model().is_real()) {
+        } else if (get_parameter_model().is_real()) {
           double value;
           std::string unit_symbol;
           std::string unit_label;
           bool ok = datatools::units::parse_value_with_unit(format_, value,
                                                             unit_symbol, unit_label);
-          DT_THROW_IF(!ok,
-                      std::logic_error,
-                      "Invalid format for real record '" << _path_ << "'!");
+          if (!ok) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Invalid format for real record '" << _path_ << "'!");
+          }
           if (get_parameter_model().has_real_unit_label()) {
-            DT_THROW_IF (unit_label != get_parameter_model().get_real_unit_label(),
-                         std::logic_error,
-                         "Invalid unit for real record '" << _path_ << "'!");
+            if (unit_label != get_parameter_model().get_real_unit_label()) {
+              cri.set_error_code(command::CEC_PARAMETER_INVALID_UNIT);
+              DT_THROW(std::logic_error,
+                       "Invalid unit for real record '" << _path_ << "'!");
+            }
           }
           // io::read_real_number(value_iss, value, 15,
           //                      unit_label, unit_symbol);
           cri = set_real_value(value);
-        }
-        if (get_parameter_model().is_string()) {
+        } else if (get_parameter_model().is_string()) {
           std::string value;
-          DT_THROW_IF(!io::read_quoted_string(value_iss, value),
-                      std::logic_error,
-                      "Invalid format for string record '" << _path_ << "'!");
+          if (!io::read_quoted_string(value_iss, value)) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Invalid format for string record '" << _path_ << "'!");
+          }
           cri = set_string_value(value);
+        } else {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
+          DT_THROW(std::logic_error,
+                   "Invalid parameter type for record '" << _path_ << "'!");
         }
-        cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -697,12 +723,16 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-        DT_THROW_IF(! is_parameter(), std::logic_error,
+        if (! is_parameter()) {
+          cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
+          DT_THROW( std::logic_error,
                     "Record '" << _path_ << "' is not a parameter!");
-        cri.set_error_code(command::CEC_PARAMETER_UNSET_VALUE);
-        DT_THROW_IF(! value_is_set(), std::logic_error,
-                    "Parameter record '" << _path_ << "' has no value set!");
+        }
+        if (! value_is_set()) {
+          cri.set_error_code(command::CEC_PARAMETER_UNSET_VALUE);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << _path_ << "' has no value set!");
+        }
         std::ostringstream value_oss;
         if (get_parameter_model().is_boolean()) {
           io::write_boolean(value_oss, _boolean_value_, true);
@@ -713,21 +743,12 @@ namespace datatools {
         if (get_parameter_model().is_real()) {
           std::string unit_label;
           std::string unit_symbol;
-          // std::cerr << "DEVEL: " << "variant_record::value_to_string: "
-          //           << "Real param model = " << get_parameter_model().get_name()
-          //           << std::endl;
           if (get_parameter_model().has_real_preferred_unit()) {
             unit_symbol = get_parameter_model().get_real_preferred_unit();
           }
           if (get_parameter_model().has_real_unit_label()) {
             unit_label = get_parameter_model().get_real_unit_label();
           }
-          // std::cerr << "DEVEL: " << "variant_record::value_to_string: "
-          //           << "unit_symbol = " << unit_symbol
-          //           << std::endl;
-          // std::cerr << "DEVEL: " << "variant_record::value_to_string: "
-          //           << "unit_label = " << unit_label
-          //           << std::endl;
           io::write_real_number(value_oss, _real_value_, 15,
                                 unit_symbol, unit_label);
         }
@@ -735,8 +756,6 @@ namespace datatools {
           io::write_quoted_string(value_oss, _string_value_);
         }
         format_ = value_oss.str();
-
-        cri.set_error_code(command::CEC_SUCCESS);
       }
       catch (std::exception & x) {
         cri.set_error_message(x.what());

@@ -1,6 +1,6 @@
 // datatools/configuration/io.cc
 /*
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 #include <datatools/utils.h>
 #include <datatools/units.h>
 #include <datatools/kernel.h>
+#include <datatools/detail/command_macros.h>
 
 namespace datatools {
 
@@ -656,77 +657,93 @@ namespace datatools {
     command::returned_info variant_preprocessor::preprocess_parameter(const std::string & parameter_token_,
                                                                       std::string & parameter_effective_token_) const
     {
-      static const std::string variant_default_sep = "|";
-      command::returned_info cri(command::CEC_SUCCESS);
       if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering");
-      parameter_effective_token_.clear();
-
+      static const std::string variant_default_sep = "|";
       // Working string:
       std::string effective_property_value_str;
-
-      std::vector<std::string> variant_tokens;
-      boost::split(variant_tokens, parameter_token_, boost::is_any_of(variant_default_sep));
-      if (variant_tokens.size() == 0) {
-        DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARSING_FAILURE,
-                                  "Cannot parse variant parameter path from '" << parameter_token_ << "' !");
-        return cri;
-      }
-
-      std::string variant_path = variant_tokens[0];
-      bool        has_variant_def_value = false;
-      std::string variant_def_value;
-      if (variant_tokens.size() > 1) {
-        variant_def_value = variant_tokens[1];
-        has_variant_def_value = true;
-      }
-      std::vector<std::string> variant_path_tokens;
-      boost::split(variant_path_tokens, variant_path, boost::is_any_of(":"));
-      DT_THROW_IF (variant_path_tokens.size() != 2,
-                   std::logic_error,
-                   "Cannot parse variant command token '"
-                   << parameter_token_ << "' !");
-      std::string variant_registry_name = variant_path_tokens[0];
-      std::string variant_parameter_path = variant_path_tokens[1];
-      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name  = '" << variant_registry_name << "'");
-      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_parameter_path = '" << variant_parameter_path << "'");
-      bool variant_parameter_found = false;
-      std::string variant_parameter_value;
-      // Search for registrated variant parameter in the associated variant repository:
-      if (has_repository()) {
-        const variant_repository & rep = get_repository();
-        command::returned_info cri2 = rep.cmd_get_parameter(variant_registry_name,
-                                                            variant_parameter_path, variant_parameter_value);
-        if (cri2.is_success()) {
-          effective_property_value_str = variant_parameter_value;
-          variant_parameter_found = true;
-          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found value for variant parameter '" << variant_path << "' = '"
-                                    << variant_parameter_value << "'");
-        } else {
-          // DT_LOG_WARNING(logging, "Bayeux/datatools kernel's variant repository could not provide the value of "
-          //                << "parameter '" << variant_path << "' : " << cri.get_error_message());
+      command::returned_info cri(command::CEC_SUCCESS);
+      try {
+        parameter_effective_token_.clear();
+        std::vector<std::string> variant_tokens;
+        boost::split(variant_tokens, parameter_token_, boost::is_any_of(variant_default_sep));
+        if (variant_tokens.size() == 0) {
+          DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARSING_FAILURE,
+                                    "Cannot parse variant parameter path from '" << parameter_token_ << "' !");
+          return cri;
         }
-      }
-      if (! variant_parameter_found) {
-        if (!has_variant_def_value) {
-          DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARAMETER_INVALID_CONTEXT,
-                                    "No available default value for variant parameter '" << variant_path << "' !");
-        } else {
-          effective_property_value_str = variant_def_value;
-          if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Use default value for variant parameter '" << variant_path << "' = '"
-                                    << effective_property_value_str << "'");
+        std::string variant_path = variant_tokens[0];
+        bool        has_variant_def_value = false;
+        std::string variant_def_value;
+        if (variant_tokens.size() > 1) {
+          variant_def_value = variant_tokens[1];
+          has_variant_def_value = true;
         }
-      }
-      if (cri.is_success()) {
-        parameter_effective_token_ = effective_property_value_str;
-        if (is_remove_quotes()) {
-          if (datatools::is_quoted(parameter_effective_token_, '"')) {
-            datatools::remove_quotes(parameter_effective_token_, '"');
-          } else if (datatools::is_quoted(parameter_effective_token_, '\'')) {
-            datatools::remove_quotes(parameter_effective_token_, '\'');
+        std::vector<std::string> variant_path_tokens;
+        boost::split(variant_path_tokens, variant_path, boost::is_any_of(":"));
+        if (variant_path_tokens.size() != 2) {
+          DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARSING_FAILURE,
+                                    "Cannot parse variant command token '" << parameter_token_ << "'!");
+          DT_THROW(std::logic_error,
+                   "Cannot parse variant command token '" << parameter_token_ << "'!");
+        }
+        std::string variant_registry_name  = variant_path_tokens[0];
+        std::string variant_parameter_path = variant_path_tokens[1];
+        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_registry_name  = '" << variant_registry_name << "'");
+        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "variant_parameter_path = '" << variant_parameter_path << "'");
+        bool variant_parameter_found = false;
+        std::string variant_parameter_value;
+        if (has_repository()) {
+          // Search for registrated variant parameter in the associated variant repository:
+          const variant_repository & rep = get_repository();
+          command::returned_info cri2 = rep.cmd_get_parameter(variant_registry_name,
+                                                              variant_parameter_path,
+                                                              variant_parameter_value);
+          if (cri2.is_success()) {
+            effective_property_value_str = variant_parameter_value;
+            variant_parameter_found = true;
+            if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Found value for variant parameter '" << variant_path << "' = '"
+                                      << variant_parameter_value << "'");
+          } else {
+            // DT_LOG_WARNING(logging, "Bayeux/datatools kernel's variant repository could not provide the value of "
+            //                << "parameter '" << variant_path << "' : " << cri.get_error_message());
+            // Handle error cases:
+            // * CEC_SCOPE_INVALID:             registry does not exists -> fallback to default value if any (see below)
+            // * CEC_FAILURE:                   fatal error -> cannot fallback to default value
+            // * CEC_PARAMETER_INVALID_KEY:     fatal error ->  cannot fallback to default value
+            // * CEC_PARAMETER_INVALID_CONTEXT: fatal error ->  cannot fallback to default value
+            // * CEC_PARAMETER_INVALID_TYPE:    fatal error ->  cannot fallback to default value
+            if (cri2.get_error_code() != command::CEC_SCOPE_INVALID) {
+              // All error cases but CEC_SCOPE_INVALID (missing variant registry) are considered
+              // as fatal error with no hope to fallback to a possible default value:
+              cri = cri2;
+            }
           }
         }
+        if (! variant_parameter_found && cri.is_success()) {
+          // If no error before, we try to fallback to a default value:
+          if (!has_variant_def_value) {
+            DT_COMMAND_RETURNED_ERROR(cri, command::CEC_PARAMETER_UNSET_VALUE,
+                                      "No available default value for variant parameter '" << variant_path << "' !");
+          } else {
+            effective_property_value_str = variant_def_value;
+            if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Use default value for variant parameter '" << variant_path << "' = '"
+                                      << effective_property_value_str << "'");
+          }
+        }
+        if (cri.is_success()) {
+          parameter_effective_token_ = effective_property_value_str;
+          if (is_remove_quotes()) {
+            if (datatools::is_quoted(parameter_effective_token_, '"')) {
+              datatools::remove_quotes(parameter_effective_token_, '"');
+            } else if (datatools::is_quoted(parameter_effective_token_, '\'')) {
+              datatools::remove_quotes(parameter_effective_token_, '\'');
+            }
+          }
+        }
+        if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
+      } catch (std::exception & error) {
+        cri.set_error_message(error.what());
       }
-      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
 

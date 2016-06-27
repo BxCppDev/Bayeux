@@ -900,13 +900,17 @@ namespace datatools {
     {
       command::returned_info cri;
       try {
-        cri.set_error_code(command::CEC_SCOPE_INVALID);
-        DT_THROW_IF(!has_registry(registry_key_), std::logic_error,
-                    "Variant repository has no registry named '" << registry_key_ << "' !");
-        const variant_registry & vreg = get_registry(registry_key_);
-        cri = vreg.cmd_get_parameter_value(param_path_, param_value_token_);
+        if (! has_registry(registry_key_)) {
+          // The repository has no registry named 'registry_key_' :
+          cri.set_error_code(command::CEC_SCOPE_INVALID);
+          cri.set_error_message("Variant repository has no registry named '" + registry_key_ + "' !");
+        } else {
+          const variant_registry & vreg = get_registry(registry_key_);
+          cri = vreg.cmd_get_parameter_value(param_path_, param_value_token_);
+        }
       } catch (std::exception & x) {
         std::string message = "Registry '" + registry_key_ + "' : " + x.what();
+        cri.set_error_code(command::CEC_FAILURE);
         cri.set_error_message(message);
       }
       return cri;
