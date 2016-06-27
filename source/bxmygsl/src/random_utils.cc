@@ -34,7 +34,7 @@ namespace mygsl {
   // static
   bool random_utils::is_valid_seed(int32_t seed_)
   {
-    if (seed_ < SEED_TIME) return false;
+    if (seed_ < SEED_AUTO) return false;
     if (seed_ > SEED_MAX) return false;
     return true;
   }
