@@ -32,6 +32,7 @@
 // Third Party:
 // - Boost:
 #include <boost/noncopyable.hpp>
+#include <boost/cstdint.hpp>
 
 // This project:
 #include <datatools/logger.h>
@@ -40,7 +41,9 @@
 namespace bayeux {
 
   /// Initialize the Bayeux library core functionnalities
-  void initialize(int argc_ = 0, char * argv_[] = 0);
+  void initialize(int argc_ = 0,
+                  char * argv_[] = nullptr,
+                  uint32_t flags_ = 0);
 
   /// Terminate the Bayeux library core functionnalities
   void terminate();
@@ -72,24 +75,10 @@ namespace bayeux {
       datatools::logger::priority _logging_; //!< Logging priority threshold
 
     };
+
   } // end of namespace detail
 
 }
-
-/// bayeux initialization macro using main function arguments
-#define BAYEUX_INIT_MAIN(Argc,Argv)   \
-  ::bayeux::initialize( Argc , Argv );    \
-  /**/
-
-/// bayeux initialization macro
-#define BAYEUX_INIT()       \
-  ::bayeux::initialize(0, 0);     \
-  /**/
-
-/// bayeux termination macro
-#define BAYEUX_FINI()       \
-  ::bayeux::terminate();      \
-  /**/
 
 #endif // BAYEUX_BAYEUX_H
 

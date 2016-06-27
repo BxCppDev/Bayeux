@@ -2,8 +2,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2013 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013 by Université de Caen
+// Copyright (c) 2013-2016 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2016 by Université de Caen Normandie
 //
 // This file is part of Bayeux.
 //
@@ -41,14 +41,14 @@
 
 namespace bayeux {
 
-  void initialize(int argc_, char * argv_[])
+  void initialize(int argc_, char * argv_[], uint32_t flags_)
   {
     DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
     static bool _init = false;
     if (! _init) {
 
       // Wrap datatools kernel initialization:
-      ::datatools::initialize(argc_, argv_);
+      ::datatools::initialize(argc_, argv_, flags_);
 
       // Special initialization code:
       ::bayeux::_special_initialize_impl();
@@ -82,9 +82,13 @@ namespace bayeux {
     {
       _logging_ = datatools::logger::PRIO_FATAL;
       {
-        char * e = getenv("BAYEUX_SYS_DEVEL");
+        char * e = getenv("BAYEUX_SYS_LOGGING");
         if (e) {
-          _logging_ = datatools::logger::PRIO_TRACE;
+          std::string level_label(e);
+          ::datatools::logger::priority prio = ::datatools::logger::get_priority(level_label);
+          if (prio != ::datatools::logger::PRIO_UNDEFINED) {
+            _logging_ = prio;
+          }
         }
       }
       return;

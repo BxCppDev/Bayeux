@@ -9,7 +9,7 @@
 
 // NB: These are true tests yet!
 TEST_CASE("Bayeux is setup", "[bayeux]") {
-  BAYEUX_INIT();
+  ::bayeux::initialize(0, 0, 0);
 
   SECTION("resource paths are valid") {
     std::clog << "  Version            : " << bayeux::version::get_version() << std::endl;
@@ -27,5 +27,5 @@ TEST_CASE("Bayeux is setup", "[bayeux]") {
     std::clog << "  Qt GUI             : " << BAYEUX_WITH_QT_GUI << std::endl;
   }
 
-  BAYEUX_FINI();
+  bayeux::terminate();
 }

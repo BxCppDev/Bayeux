@@ -42,7 +42,7 @@
 
 int main(int argc_, char * argv_[])
 {
-  BAYEUX_INIT_MAIN(argc_, argv_);
+  bayeux::initialize(argc_, argv_, 0); //datatools::kernel::init_mask);
   int error_code = EXIT_SUCCESS;
   try {
     namespace bpo = boost::program_options;
@@ -212,15 +212,13 @@ int main(int argc_, char * argv_[])
       throw std::logic_error(message.str());
     }
 
-  }
-  catch (std::exception & error) {
+  } catch (std::exception & error) {
     std::cerr << "ERROR: " << error.what() << std::endl;
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     std::cerr << "ERROR: " << "Unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
-  BAYEUX_FINI();
+  bayeux::terminate();
   return error_code;
 }
