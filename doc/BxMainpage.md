@@ -47,6 +47,13 @@ into several specialized submodules:
 :     Utilities for particle and nuclear physics simulation with
       a Geant4 interface.
 
+**lahague**
+:     Utilities for radioprotection and dosimetry.
+
+
+**catch**
+:     Unit testing framework based on Catch (https://github.com/philsquared/Catch).
+
 
 Authors {#bxmainpage_authors}
 =======
@@ -76,7 +83,7 @@ of the License, or (at your option) any later version.
 
 ~~~~~~~
 
- Copyright (C) 2008-2014 François Mauger, LPC Caen CNRS/IN2P3 and Université de Caen Basse-Normandie
+ Copyright (C) 2008-2016 François Mauger, LPC Caen CNRS/IN2P3 and Université de Caen Normandie
  Contact: mauger@lpccaen.in2p3.fr
 
  This file is part of the Bayeux library.
@@ -120,6 +127,9 @@ available to build client libraries and applications:
 **bxquery**
 :     Request system informations about Bayeux.
 
+**bxvariant_inspector**
+:     Explore and edit a configuration of variant parameters (class `datatools::variant_service`).
+
 **bxmaterials_inspector**
 :     Inspect the configuration of a manager of materials (class `materials::manager`).
 
@@ -142,10 +152,19 @@ available to build client libraries and applications:
 :     Inspect the configuration of a manager of vertex generators (class `genvtx::manager`).
 
 **bxdpp_processing**
-:     Run a pipeline of data processing modules (class `dpp::module_manager`)
+:     Run a pipeline of data processing modules (class `dpp::module_manager`).
+
+**libBayeux_mctools_geant4**
+:     This is the shared library plugin that embeds the Bayeux/mctools Geant4 interface.
+
+**bxg4_production**
+:     Run a Geant4 based simulation run (class `mctools::g4::manager`).
+
+**bxg4_seeds**
+:     Generate independant seeding sets for a bunch of Geant4 based simulation runs.
 
 **OCD support**
-:     [Object Configuration Description](@ref bxocd)
+:     [Object Configuration Description](@ref bxocd).
 
 User Guides {#bxmainpage_userguides}
 ===========
