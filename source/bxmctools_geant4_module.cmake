@@ -105,6 +105,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   # - Applications
   set(${module_name}_GEANT4_MODULE_APPS
     ${module_app_dir}/g4/g4_production.cxx
+    ${module_app_dir}/g4/g4_seeds.cxx
     )
 
   include_directories(SYSTEM ${Geant4_INCLUDE_DIRS})
