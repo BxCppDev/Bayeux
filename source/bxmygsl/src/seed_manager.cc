@@ -127,6 +127,8 @@ namespace mygsl {
           _init_seed_flags_ = INIT_SEED_FROM_CURRENT_PID;
         } else if (init_seed_from_env == "urandom") {
           _init_seed_flags_ = INIT_SEED_FROM_URANDOM;
+        } else if (init_seed_from_env == "random") {
+          _init_seed_flags_ = INIT_SEED_FROM_RANDOM_DEVICE;
         } else {
           DT_LOG_WARNING(get_logging_priority(),
                          "Invalid value ('" << init_seed_from_env << "') for the '" << init_seed_from_env_name() << "' environment variable !");
