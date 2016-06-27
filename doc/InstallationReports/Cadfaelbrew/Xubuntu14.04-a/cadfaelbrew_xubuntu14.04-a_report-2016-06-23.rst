@@ -1,27 +1,27 @@
 ===================================================================
-Installation report for CadfaelBrew on Xubuntu Linux 14.04 (LTS)
+Installation report for Cadfaelbrew on Xubuntu Linux 14.04 (LTS)
 ===================================================================
 
 :Author: F.Mauger
 :Version: 0.2
 :Contact: mauger@lpccaen.in2p3.fr
-:Date: 2016-06-23
+:Date: 2016-05-26
 
 This note  explains the Cadfaelbrew installation  procedure on Xubuntu
 Linux 14.04 (LTS) (64-bits). Cadfaelbrew is a package manager, derived
 from the  Linux/Homebrew projects.  It allows  you to  install various
 software *formulas*.  Thanks to the generic ``brew`` utility, you will
 be able to  install the *Cadfael* formula which  includes Boost, CAMP,
-CLHEP, ROOT, Geant4...  that is  all the software you need to run
+CLHEP, GSL, ROOT, Geant4...  that is  all the software you need to run
 Bayeux and the  SuperNEMO software.  Other formulas can  also be added
 (Bayeux, Falaise...).  This is out of the scope of this document which
 concentrates on the installation of the basic layer of Cadfaelbrew and
 Cadfael formulas.
 
-CadfaelBrew is hosted at https://github.com/SuperNEMO-DBD/.
+Cadfaelbrew is hosted at https://github.com/SuperNEMO-DBD/.
 
 Ben Morgan (Ben.Morgan@warwick.ac.uk) is  the developper and maintener
-of CadfaelBrew for the SuperNEMO collaboration.
+of Cadfaelbrew for the SuperNEMO collaboration.
 
 .. contents::
 
@@ -35,20 +35,20 @@ Preparation
 
    b. The working directory:
 
-      In this  report, the ``/data3/sw/SuperNEMO-DBD``  directory will
-      be used as  the base working directory to build  and install the
-      software.  You are  free to  choose any  other location  on your
-      system, provided there is enough space on it (~10 GB).
+      In this  report, the  ``/data3/sw`` directory will  be used  as the
+      base working  directory to build  and install the  software. You
+      are free to  choose any other location on  your system, provided
+      there is enough space on it (~10 GB).
 
 .. code:: sh
 
-   $ export SNSW_BASE_DIR="/data3/sw/SuperNEMO-DBD"
-   $ mkdir -p ${SNSW_BASE_DIR}
-   $ cd ${SNSW_BASE_DIR}
-   $ git clone https://github.com/SuperNEMO-DBD/brew.git ./CadfaelBrew
-   $ export PATH="${SNSW_BASE_DIR}/CadfaelBrew/bin:${PATH}"
-   $ export MANPATH="${SNSW_BASE_DIR}/CadfaelBrew/share/man:${MANPATH}"
-   $ export INFOPATH="${SNSW_BASE_DIR}/CadfaelBrew/share/info:${INFOPATH}"
+   bash$ export BREW_BASE_DIR=/data3/sw
+   bash$ mkdir -p ${BREW_BASE_DIR}
+   bash$ cd ${BREW_BASE_DIR}
+   bash$ git clone https://github.com/SuperNEMO-DBD/cadfaelbrew.git ./CadfaelBrew
+   bash$ export PATH="${BREW_BASE_DIR}/CadfaelBrew/bin:${PATH}"
+   bash$ export MANPATH="${BREW_BASE_DIR}/CadfaelBrew/share/man:${MANPATH}"
+   bash$ export INFOPATH="${BREW_BASE_DIR}/CadfaelBrew/share/info:${INFOPATH}"
 
 ..
 
@@ -56,31 +56,22 @@ Preparation
 
 .. code:: sh
 
-   bash$ LANG=C sudo apt-get install \
-	  build-essential \
-	  curl \
-	  git \
-	  m4 \
-	  ruby \
-	  texinfo \
-	  libbz2-dev \
-	  libcurl4-openssl-dev \
-	  libexpat-dev \
-	  libncurses-dev \
-	  zlib1g-dev
+   bash$ LANG=C sudo apt-get install build-essential curl git m4 \
+	  ruby texinfo libbz2-dev libcurl4-openssl-dev \
+	  libexpat-dev libncurses-dev zlib1g-dev
 ..
 
 Prepare the installation
 ==============================================
 
 The following  steps are  not mandatory. It  depends on  the available
-storage  on  your  filesystem.    By  default,  CadfaelBrew  uses  the
+storage  on  your  filesystem.    By  default,  Cadfaelbrew  uses  the
 ``~/.cache/Homebrew`` directory  as the download cache  directory.  If
 your home directory has not enough space left, you will need to define
 the ``HOMEBREW_CACHE``  environmental variable to another  location of
 your filesystem.
 
-Also CadfaelBrew uses the ``/tmp`` directory as the temporary location
+Also Cadfaelbrew uses the ``/tmp`` directory as the temporary location
 to build the  software.  If the disk partition  hosting this directory
 has   not  enough   space  left,   you   will  need   to  define   the
 ``HOMEBREW_TEMP`` environmental variable.
@@ -136,7 +127,7 @@ This is a  rather long process, particularly because  the GCC compiler
 (version 4.9) is built and installed (~35 min on this system).  Geant4
 and Root  are also  rather long  to build.  All  the software  will be
 installed   in  ``/data3/sw/CadfaelBrew``.
-The full installation uses approximatively 3 GB.
+It takes approximatively 3 GB.
 
 
 Install  formulas
@@ -153,6 +144,7 @@ on top of which Bayeux will be installed:
    bash$ export HOMEBREW_TEMP=/data3/var/tmp
    bash$ brew install supernemo-dbd/cadfael/boost
    bash$ brew install supernemo-dbd/cadfael/camp
+   bash$ brew install supernemo-dbd/cadfael/gsl
    bash$ brew install supernemo-dbd/cadfael/clhep
    bash$ brew install supernemo-dbd/cadfael/xerces-c
    bash$ brew install supernemo-dbd/cadfael/geant4 --with-opengl-x11
@@ -195,40 +187,97 @@ a. You can use the ``brew.sh`` script provided by Cadfaelbrew.
 ..
 
 
-b. Alternatively, you can define a specific Bash function in your ``~/.bashrc`` startup file:
+b. Alternatively, you can  define a specific Bash function in your ``~/.bashrc`` startup file:
 
 .. code:: sh
 
    function do_cadfaelbrew_setup()
    {
       if [ -n "${CADFAELBREW_INSTALL_DIR}" ]; then
-	  echo "WARNING: CadfaelBrew is already setup !" >&2
+	  echo "ERROR: CadfaelBrew is already setup !" >&2
 	  return 1
       fi
-      export CADFAELBREW_INSTALL_DIR="/data3/sw/CadfaelBrew"
+      export CADFAELBREW_INSTALL_DIR=\
+        "/data3/sw/CadfaelBrew"
+      export PATH="${CADFAELBREW_INSTALL_DIR}/bin:${PATH}"
       export MANPATH="${CADFAELBREW_INSTALL_DIR}/share/man:${MANPATH}"
       export INFOPATH="${CADFAELBREW_INSTALL_DIR}/share/info:${INFOPATH}"
-      mkdir -p /data3/var/cache/Homebrew
-      export HOMEBREW_CACHE=/data3/var/cache/Homebrew
-      mkdir -p /data3/var/tmp
-      export HOMEBREW_TEMP=/data3/var/tmp
-      ${CADFAELBREW_INSTALL_DIR}/bin/brew sh --cc=gcc-4.9
       echo "NOTICE: CadfaelBrew is now setup !" >&2
       return
    }
    export -f do_cadfaelbrew_setup
 ..
 
-   You can thus activate a CadfaelBrew shell :
+   You can activate thus CadfaelBrew from your shell with :
 
 .. code:: sh
 
    bash$ do_cadfaelbrew_setup
 ..
 
-   To leave this environment, type:
+Additional operations after installation of the ``cadfael`` formula
+======================================================================
+
+Geant4
+----------
+
+At the time  I have installed this version of  Cadfaelbrew, the Geant4
+version  shipped with  Cadfaelbrew was  not including  by default  the
+Geant4  OpenGL/X11 visualization  library  module on  Linux.  Ben  has
+added  an option  (``--with-opengl-x11``) and  I was  able to  rebuild
+Geant4  with   this  feature   explicitely  activated.    This  allows
+interactive Geant4 session with visualization.
+
+
+To rebuild Geant4 with brew:
 
 .. code:: sh
 
-   bash$ exit
+   bash$ export HOMEBREW_CACHE=/data3/var/cache/Homebrew
+   bash$ export HOMEBREW_TEMP=/data3/var/tmp
+   bash$ brewsh
+   bash$ brew reinstall geant4 --with-opengl-x11
+..
+
+Unfortunately, this operation rebuilds Geant4 from scratch, so it is rather long.
+
+
+
+
+
+
+obsolete....
+
+Download the Cadfael installer
+================================================================================
+
+The Cadfael installer utility  is available from the ``SuperNEMO-DBD``
+``git``  repository  (GitHub).  You  must  have  a recent  version  of
+``git`` installed  on your  system. The  installer will  first install
+Cadfaelbrew before the Cadfael software itself.
+
+   a. Clone the default Git branch to your local filesystem:
+
+.. code:: sh
+
+   bash$ LANG=C git clone https://github.com/SuperNEMO-DBD/cadfael-installer.git \
+            cadfael-installer.git
+   Cloning into 'cadfael-installer.git'...
+   remote: Counting objects: 295, done.
+   remote: Total 295 (delta 0), reused 0 (delta 0), pack-reused 295
+   Receiving objects: 100% (295/295), 55.80 KiB | 0 bytes/s, done.
+   Resolving deltas: 100% (156/156), done.
+   Checking connectivity... done.
+..
+
+   b. Explore what you have donwloaded:
+
+.. code:: sh
+
+   bash$ LANG=C tree -L 1 -F cadfael-installer.git/
+   cadfael-installer.git/
+   |-- LICENSE
+   |-- README.md
+   |-- cadfael-installer*
+   `-- containers/
 ..
