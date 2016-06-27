@@ -188,14 +188,14 @@ namespace mygsl {
 
   };
 
-  /// An alias
+  /// A type alias
   typedef seed_manager prng_seed_manager;
 
 }  // end of namespace mygsl
 
 #endif // MYGSL_SEED_MANAGER_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables:
+// mode: c++
+// coding: utf-8
+// End:
