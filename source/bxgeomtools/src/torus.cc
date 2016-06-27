@@ -25,7 +25,7 @@
 namespace geomtools {
 
   // Registration :
-  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(torus, "geomtools::torus");
+  GEOMTOOLS_OBJECT_3D_REGISTRATION_IMPLEMENT(torus, "geomtools::torus")
 
   const std::string & torus::torus_label()
   {
@@ -162,7 +162,7 @@ namespace geomtools {
   {
     _phi_domain_.set_partial_angles(start_phi_, delta_phi_);
   }
-  
+
   void torus::set(double sweep_radius_, double outside_radius_, double inside_radius_)
   {
     _set_defaults();
@@ -447,7 +447,7 @@ namespace geomtools {
     const unsigned int NFACES = 4;
     face_intercept_info intercepts[NFACES];
     unsigned int candidate_impact_counter = 0;
-    
+
     int face_counter = 0;
     const face_info_collection_type & faces = get_computed_faces();
     for(face_info_collection_type::const_iterator iface = faces.begin();
@@ -470,7 +470,7 @@ namespace geomtools {
       }
       face_counter++;
     }
-    
+
     if(candidate_impact_counter > 0) {
       double min_length_to_impact = -1.0;
       for(unsigned int iface = 0; iface < NFACES; iface++) {
@@ -824,7 +824,7 @@ namespace geomtools {
       }
 
       set(sweep_radius, outside_radius, inside_radius);
-      
+
       double aunit = CLHEP::degree;
       if (config_.has_key("angle_unit")) {
 	const std::string aunit_str = config_.fetch_string("angle_unit");
@@ -854,7 +854,7 @@ namespace geomtools {
     lock();
     return;
   }
-  
+
   void torus::_build_bounding_data()
   {
     if (! has_partial_phi()) {
