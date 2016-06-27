@@ -39,7 +39,7 @@
 
 int main (int /* argc_ */, char ** /* argv_*/)
 {
-  BAYEUX_INIT();
+  bayeux::initialize(0, nullptr, 0);
   // using namespace std;
   int error_code = EXIT_SUCCESS;
   try
@@ -102,6 +102,6 @@ int main (int /* argc_ */, char ** /* argv_*/)
       std::cerr << "error: " << "unexpected error !" << std::endl;
       error_code = EXIT_FAILURE;
     }
-  BAYEUX_FINI();
+  bayeux::terminate();
   return (error_code);
 }
