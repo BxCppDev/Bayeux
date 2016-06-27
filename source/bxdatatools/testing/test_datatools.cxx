@@ -1,5 +1,8 @@
 // test_datatools.cxx
 
+// The Catch API:
+#include "catch.hpp"
+
 // Ourselves:
 #include <datatools/datatools_config.h>
 #include <datatools/version.h>
@@ -8,22 +11,21 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <exception>
+#include <stdexcept>
 
-int main (/* int argc_, char ** argv_ */) {
-  try {
-    std::cerr << "Datatools version is: " << datatools::version::get_version() << std::endl;
-  }
-  catch (std::exception & x)
-  {
-    std::cerr << "error: " << x.what () << std::endl;
-    return EXIT_FAILURE;
-  }
-  catch (...)
-  {
-    std::cerr << "error: " << "unexpected error !" << std::endl;
-    return EXIT_FAILURE;
-  }
+void datatools_version()
+{
+  std::cerr << "Datatools version is: " << datatools::version::get_version() << std::endl;
+  return;
+}
 
-  return EXIT_SUCCESS;
+TEST_CASE("Test Bayeux/datatools version", "[bxdatatools][datatools]")
+{
+  datatools_version();
+  // try {
+  //   throw std::logic_error("A dummy error!");
+  // } catch (std::exception & x) {
+  //   std::cerr << "ERROR: " << x.what() << std::endl;
+  //   throw;
+  // }
 }
