@@ -5,7 +5,7 @@ Installation report for CadfaelBrew on Xubuntu Linux 14.04 (LTS)
 :Author: F.Mauger
 :Version: 0.2
 :Contact: mauger@lpccaen.in2p3.fr
-:Date: 2016-06-23
+:Date: 2016-06-27
 
 This note  explains the Cadfaelbrew installation  procedure on Xubuntu
 Linux 14.04 (LTS) (64-bits). Cadfaelbrew is a package manager, derived
