@@ -196,7 +196,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/point_on_quadric_finder.h
   ${module_include_dir}/${module_name}/foot_point_on_quadric_finder.h
   ${module_include_dir}/${module_name}/toroid_nappe.h
-  #${module_include_dir}/${module_name}/torus.h
+  ${module_include_dir}/${module_name}/torus.h
   )
 
 # - NB Order of sources appears to be important - taken from geomtools
@@ -325,7 +325,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/point_on_quadric_finder.cc
   ${module_source_dir}/foot_point_on_quadric_finder.cc
   ${module_source_dir}/toroid_nappe.cc
-  #${module_source_dir}/torus.cc
+  ${module_source_dir}/torus.cc
   #${module_source_dir}/the_introspectable.cc
   ${module_source_dir}/resource.cc
   )
@@ -423,6 +423,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_wall_solid.cxx
   ${module_test_dir}/test_quadric.cxx
   ${module_test_dir}/test_toroid_nappe.cxx
+  ${module_test_dir}/test_torus.cxx
   )
 
 # - Applications
