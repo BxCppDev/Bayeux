@@ -186,7 +186,9 @@ namespace datatools {
     bool parse_resource_path   = true;
     bool parse_inhibit_variant = true;
     bool parse_variant         = true;
+#if DATATOOLS_WITH_QT_GUI == 1
     bool parse_inhibit_qt_gui  = true;
+#endif
 
     // Inhibition of the parsinf for specific options:
     if (flags_ & init_no_help)            parse_help = false;
@@ -198,7 +200,9 @@ namespace datatools {
     if (flags_ & init_no_resource_path)   parse_resource_path = false;
     if (flags_ & init_no_inhibit_variant) parse_inhibit_variant = false;
     if (flags_ & init_no_variant)         parse_variant = false;
+#if DATATOOLS_WITH_QT_GUI == 1
     if (flags_ & init_no_inhibit_qt_gui)  parse_inhibit_qt_gui = false;
+#endif
 
     // Resource path registration:
     if (parse_resource_path) {
