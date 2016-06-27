@@ -46,6 +46,7 @@ namespace mygsl {
   public:
 
     static const int32_t SEED_INVALID = -1; //!< Constant that represents an invalid seed value
+    static const int32_t SEED_AUTO    =  0; //!< Constant that represents a seed that must be automatically initialized from some external 'random' source
     static const int32_t SEED_TIME    =  0; //!< Constant that represents a seed that must be initialized from some external 'random' source like the current time, the process ID or the /dev/urandom source (or combinaison of them)
     static const int32_t SEED_MAX     =  0x7FFFFFFF; //!< Constant that represents the maximum allowed seed value
 

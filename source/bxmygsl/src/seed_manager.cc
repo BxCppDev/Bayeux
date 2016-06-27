@@ -30,7 +30,7 @@
 #include <map>
 #include <limits>
 #include <cstdlib>
-//#include <random> /// only with new "-std=c++0x" support
+#include <random> /// only with new "-std=c++0x" support
 
 // Third party:
 // - Boost:
@@ -101,9 +101,15 @@ namespace mygsl {
 
   void seed_manager::all_time_seeds()
   {
+    all_auto_seeds();
+    return;
+  }
+
+  void seed_manager::all_auto_seeds()
+  {
     for (dict_type::iterator i = _dict_.begin();
          i != _dict_.end(); i++) {
-      i->second = random_utils::SEED_TIME;
+      i->second = random_utils::SEED_AUTO;
     }
     return;
   }
@@ -157,17 +163,15 @@ namespace mygsl {
       size_t sz = fread(&useed, sizeof(useed), 1, urandom);
       DT_THROW_IF(sz != 1, std::runtime_error,
                   "fread returned unexpected number of items (sz=" << sz << " != " << 1 << ") !");
-      seed += (int32_t) useed & 0x7FFFFFFF;
+      seed += (int32_t) useed & mygsl::random_utils::SEED_MAX;
       fclose(urandom);
       DT_LOG_TRACE(get_logging_priority(), "seed=" << seed << " (from '/dev/urandom')");
     }
-    // Not supported yet :
-    // if (_init_seed_flags_ | INIT_SEED_RANDOM_DEVICE )
-    //   {
-    //     std::random_device rd;
-    //     seed += (int32_t) rd ();
-    //   }
-    seed &= 0x7FFFFFFF;
+    if (_init_seed_flags_ | INIT_SEED_FROM_RANDOM_DEVICE) {
+      std::random_device rd;
+      seed += (int32_t) rd();
+    }
+    seed &= mygsl::random_utils::SEED_MAX;
     DT_LOG_TRACE(get_logging_priority(), "final seed=" << seed);
     return seed;
   }
@@ -178,8 +182,8 @@ namespace mygsl {
     mygsl::rng r;
     r.initialize(mygsl::rng::DEFAULT_RNG_TYPE, seed);
     for (dict_type::iterator i = _dict_.begin(); i != _dict_.end(); i++) {
-      // only SEED_TIME records are changed :
-      if (i->second == random_utils::SEED_TIME) {
+      // Only SEED_AUTO records are changed :
+      if (i->second == random_utils::SEED_AUTO) {
         // Randomize the seed :
         i->second = 1 + r.uniform_int(std::numeric_limits<int32_t>::max() / 2);
       }
@@ -214,9 +218,15 @@ namespace mygsl {
 
   bool seed_manager::has_time_seeds() const
   {
+    return has_auto_seeds();
+  }
+
+
+  bool seed_manager::has_auto_seeds() const
+  {
     for (dict_type::const_iterator i = _dict_.begin(); i != _dict_.end(); i++) {
       int32_t seed = i->second;
-      if (seed == random_utils::SEED_TIME) {
+      if (seed == random_utils::SEED_AUTO) {
         return true;
       }
     }
@@ -245,7 +255,7 @@ namespace mygsl {
     int32_t seed = (int32_t) time(0);
     mygsl::rng * r = random_;
     mygsl::rng r2;
-    if (r == 0) {
+    if (r == nullptr) {
       r = &r2;
     }
     if (! r->is_initialized()) {
@@ -279,7 +289,7 @@ namespace mygsl {
         for (it2 = keyRange.first; it2 != keyRange.second;  ++it2) {
           const std::string & prng_label = (*it2).second;
           bool do_it = false;
-          if (count > 0 || theKeySeed == random_utils::SEED_TIME) {
+          if (count > 0 || theKeySeed == random_utils::SEED_AUTO) {
             do_it = true;
           }
           if (do_it) {
@@ -293,7 +303,6 @@ namespace mygsl {
                 break;
               }
             }
-
           }
           count++;
         }
@@ -420,7 +429,7 @@ namespace mygsl {
       out_ << i->first << " : ";
       out_.width(10);
       out_ << i->second << " ";
-      if (i->second == mygsl::random_utils::SEED_TIME) {
+      if (i->second == mygsl::random_utils::SEED_AUTO) {
         out_ << "[set randomly]";
       } else if(i->second == mygsl::random_utils::SEED_INVALID) {
         out_ << "[undefined]";

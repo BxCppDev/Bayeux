@@ -74,13 +74,14 @@ namespace mygsl {
 
     /// \brief The entropy strategy used to choose a seed for randomization of seeds
     enum init_seed_from_type {
-      INIT_SEED_FROM_UNDEFINED    = 0,
-      INIT_SEED_FROM_CURRENT_TIME = datatools::bit_mask::bit00,
-      INIT_SEED_FROM_CURRENT_PID  = datatools::bit_mask::bit01,
+      INIT_SEED_FROM_UNDEFINED     = 0,
+      INIT_SEED_FROM_CURRENT_TIME  = datatools::bit_mask::bit00,
+      INIT_SEED_FROM_CURRENT_PID   = datatools::bit_mask::bit01,
+      INIT_SEED_FROM_URANDOM       = datatools::bit_mask::bit02,
+      INIT_SEED_FROM_RANDOM_DEVICE = datatools::bit_mask::bit03,
+      INIT_SEED_FROM_USER          = datatools::bit_mask::bit04,
       INIT_SEED_FROM_CURRENT_TIME_AND_PID = INIT_SEED_FROM_CURRENT_TIME | INIT_SEED_FROM_CURRENT_PID ,
-      INIT_SEED_FROM_URANDOM = datatools::bit_mask::bit02,
-      //INIT_SEED_FROM_RANDOM_DEVICE = datatools::bit_mask::bit03
-      INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_URANDOM
+      INIT_SEED_FROM_DEFAULT = INIT_SEED_FROM_RANDOM_DEVICE
     };
 
     /// Return true if the seed has a valid value
@@ -119,6 +120,9 @@ namespace mygsl {
     /// Make all seeds associated to all PRNGs set by the current time
     void all_time_seeds ();
 
+    /// Make all seeds associated to all PRNGs set automatically
+    void all_auto_seeds ();
+
     /// Compute the effective seeds' values from the current time
     void transform_time_seeds (bool allow_duplication_ = false);
 
@@ -127,6 +131,9 @@ namespace mygsl {
 
     /// Check if all valid seeds are differents :
     bool all_different_seeds () const;
+
+    /// Check if some valid seeds are 'auto' :
+    bool has_auto_seeds () const;
 
     /// Check if some valid seeds are 'time' :
     bool has_time_seeds () const;

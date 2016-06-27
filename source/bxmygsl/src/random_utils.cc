@@ -1,7 +1,7 @@
 // -*- mode: c++ ; -*-
 /* random_utils.cc
  *
- * Copyright 2007-2011 F. Mauger
+ * Copyright 2007-2016 F. Mauger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ namespace mygsl {
 
   // static
   const int32_t random_utils::SEED_INVALID;
+  const int32_t random_utils::SEED_AUTO;
   const int32_t random_utils::SEED_TIME;
   const int32_t random_utils::SEED_MAX;
 
