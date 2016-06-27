@@ -73,7 +73,7 @@ namespace mygsl {
 
     };
 
-    /// An alias for the embedded dictionnary container class
+    /// An alias for the embedded dictionary container class
     typedef std::map<std::string, record> dict_type;
 
   public:
@@ -172,9 +172,9 @@ namespace mygsl {
   private:
 
     int          _error_code_; //!< Current error code
-    std::string  _filename_; //!< The name of the file to store the PRNG internal states
-    int32_t      _counter_;  //!< A user counter
-    dict_type    _dict_;     //!< The dictionary of PRNG internal states
+    std::string  _filename_;   //!< The name of the file to store the PRNG internal states
+    int32_t      _counter_;    //!< A user counter
+    dict_type    _dict_;       //!< The dictionary of PRNG internal states
 
   };
 
