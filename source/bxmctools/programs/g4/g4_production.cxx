@@ -123,7 +123,14 @@ int main(int argc_, char ** argv_)
       // Describe Bayeux/datatools kernel options:
       po::options_description kopts("Bayeux/datatools kernel options");
       datatools::kernel::param_type kparams;
-      datatools::kernel::build_opt_desc(kopts, kparams);
+      uint32_t kinit_flags = 0;
+      // Inhibit some available switches provides by the API:
+      kinit_flags |= datatools::kernel::init_no_help;
+      kinit_flags |= datatools::kernel::init_no_splash;
+      kinit_flags |= datatools::kernel::init_no_inhibit_libinfo;
+      kinit_flags |= datatools::kernel::init_no_inhibit_variant;
+      kinit_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+      datatools::kernel::build_opt_desc(kopts, kparams, kinit_flags);
 
       // Collect all supported options in one container:
       all_opts.add(opts);
@@ -262,9 +269,8 @@ void ui::splash(std::ostream & out_)
   out_ << "     Version " << MCTOOLS_LIB_VERSION << "\n";
   out_ << "     " << APP_NAME << "\n";
   out_ << "\n"
-       << "     Copyright (C) 2011-2015\n"
-       << "     Francois Mauger, Xavier Garrido,\n"
-       << "     Ben Morgan and Arnaud Chapon\n"
+       << "     Copyright (C) 2011-2016\n"
+       << "     Francois Mauger, Xavier Garrido, Ben Morgan and Arnaud Chapon\n"
        << "\n";
   return;
 }
@@ -312,17 +318,20 @@ void ui::build_opts(boost::program_options::options_description & opts_,
 
     ("logging-priority,g",
      po::value<std::string>(&params_.logging)
-     ->default_value("fatal"),
+     ->default_value("fatal")
+     ->value_name("level"),
      "Set the logging priority threshold")
 
     ("number-of-events,n",
      po::value<uint32_t>(&params_.number_of_events)
-     ->default_value(mctools::g4::manager::constants::instance().NO_LIMIT),
+     ->default_value(mctools::g4::manager::constants::instance().NO_LIMIT)
+     ->value_name("integer"),
      "Set the number of events to be simulated")
 
     ("number-of-events-modulo,m",
      po::value<uint32_t>(&params_.number_of_events_modulo)
-     ->default_value(0),
+     ->default_value(0)
+     ->value_name("integer"),
      "Set the event print period (0 means no print)")
 
     ("interactive,i",
@@ -338,63 +347,82 @@ void ui::build_opts(boost::program_options::options_description & opts_,
      "Run simulation in batch mode")
 
     ("config,c",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("filename"),
      "Set the manager configuration file")
 
     ("vertex-generator-name",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("name"),
      "Set the name of the vertex generator")
 
     ("vertex-generator-seed",
      po::value<int>(&params_.vg_seed)
-     ->default_value(0),
-     "Set the seed of the vertex generator random number generator")
+     ->default_value(0)
+     ->value_name("integer"),
+     "Set the seed of the random number generator associated to the vertex generator")
 
     ("event-generator-name",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("name"),
      "Set the name of the event generator")
 
     ("event-generator-seed",
      po::value<int>(&params_.eg_seed)
-     ->default_value(0),
-     "Set the seed of the event generator random number generator")
+     ->default_value(0)
+     ->value_name("integer"),
+     "Set the seed of the random number generator associated to the event generator")
 
     ("shpf-seed",
      po::value<int>(&params_.shpf_seed)
-     ->default_value(0),
-     "Set the seed of the step hit processors random number generator")
+     ->default_value(0)
+     ->value_name("integer"),
+     "Set the seed of the random number generator associated to the step hit processors")
 
     ("g4-manager-seed",
      po::value<int>(&params_.mgr_seed)
-     ->default_value(0),
-     "Set the seed of the G4 manager random number generator")
+     ->default_value(0)
+     ->value_name("integer"),
+     "Set the seed of the random number generator associated to the G4 manager")
 
     ("input-prng-seeds-file",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("filename"),
      "Set the file from which to load the seeds of the random number generators")
 
     ("output-prng-seeds-file",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("filename"),
      "Set the file to store the seeds of the random number generators")
 
     ("input-prng-states-file",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("filename"),
      "Set the file from which to load the backuped internal states of the random number generators(PRNG)")
 
     ("output-prng-states-file",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("filename"),
      "Set the file to store/backup the internal states of the random number generators(PRNG)")
 
     ("output-data-file",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("filename"),
      "Set the file to store the generated simulated data")
 
     ("output-data-format",
-     po::value<std::string>(),
-     "Set the data format used for the generated simulated data")
+     po::value<std::string>()
+     ->value_name("format"),
+     "Set the data format used for the generated simulated data\n"
+     "Supported formats are:\n"
+     " \"bank\" : \tsimulated events are recorded within 'datatools::things' objects\n"
+     " \"plain\" : \tsimulated events are recorded as 'mctools::simulated_data' objects"
+     )
 
     ("output-data-bank",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->default_value("SD")
+     ->value_name("name"),
      "Set the data bank label used to host the generated simulated data (\"bank\" format only")
 
     ("g4-visu",
@@ -410,7 +438,8 @@ void ui::build_opts(boost::program_options::options_description & opts_,
      "No G4 visualization (only in interactive mode)")
 
     ("g4-macro",
-     po::value<std::string>(),
+     po::value<std::string>()
+     ->value_name("filename"),
      "Set the G4 macro file (only if interactive G4 visualization)")
 
     ("using-time-statistics",
@@ -423,39 +452,42 @@ void ui::build_opts(boost::program_options::options_description & opts_,
      po::value<bool>(&params_.forbid_private_hits)
      ->zero_tokens()
      ->default_value(false),
-     "Do not allow private (un-official)\nMC hits")
+     "Do not allow private (un-official) MC hits")
 
     ("dont-save-no-sensitive-hit-events",
      po::value<bool>(&params_.dont_save_no_sensitive_hit_events)
      ->zero_tokens()
      ->default_value(false),
-     "Do not save events without sensitive\nMC hits")
+     "Do not save events without sensitive MC hits")
 
     ("run-header-footer",
      po::value<bool>(&params_.use_run_header_footer)
      ->zero_tokens()
      ->default_value(false),
-     "store the run header and footer info\ntogether with the output data file")
+     "store the run header and footer info together with the output data file")
 
     ("output-profiles",
-     po::value<std::string>(),
-     "Set the rule for activated output profiles. \n"
-     "Example :                                   \n"
-     " --output-profiles \"calo_details\"           "
+     po::value<std::string>()
+     ->value_name("name"),
+     "Set the name for activated output profiles.\n"
+     "Example :\n"
+     "  --output-profiles \"calo_details\""
      )
 
     ("dlls-config,L",
-     po::value<std::string> (&params_.dll_loader_config),
-     "Set the DLL loader configuration file.      \n"
-     "Example :                                   \n"
-     " --dlls-config dlls.conf                    "
+     po::value<std::string> (&params_.dll_loader_config)
+     ->value_name("filename"),
+     "Set the DLL loader configuration file.\n"
+     "Example :\n"
+     "  --dlls-config \"dlls.conf\""
      )
 
     ("load-dll,l",
-     po::value<std::vector<std::string> >(&params_.dlls),
-     "Set a DLL to be loaded.                     \n"
-     "Example :                                   \n"
-     " --load-dll G4VisXXX                        "
+     po::value<std::vector<std::string> >(&params_.dlls)
+     ->value_name("libname@path"),
+     "Set a DLL to be loaded.\n"
+     "Example :\n"
+     "  --load-dll \"G4VisXXX\""
      )
 
     ; // end of options' description

@@ -14,6 +14,7 @@
 #include <datatools/properties.h>
 #include <datatools/utils.h>
 #include <datatools/exception.h>
+#include <datatools/detail/command_macros.h>
 // - Bayeux/materials :
 #include <materials/manager.h>
 // - Bayeux/geomtools :

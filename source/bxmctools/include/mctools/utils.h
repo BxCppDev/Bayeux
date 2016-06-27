@@ -95,7 +95,6 @@ namespace mctools {
       DATA_FORMAT_INVALID = 0, ///< Undefined output format
       DATA_FORMAT_PLAIN   = 1, ///< Plain output format: archives of "mctools::simulated_data" objects
       DATA_FORMAT_BANK    = 2  ///< Bank output format: archives of "datatools::things" objects
-      // DATA_FORMAT_USER      = X  ///< User data format (not supported yet)
     };
 
     static data_format_type label_to_data_format(const std::string &);
