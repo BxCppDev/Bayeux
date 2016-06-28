@@ -3,22 +3,19 @@ Bayeux/trunk installation report on (X)Ubuntu 14.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-05-28
+:Date:   2016-06-28
 
 In  this  document  we  propose  an  installation  procedure  for  the
-Bayeux_/trunk  library on  top  of Cadfaelbrew_  (2016.01) on  Xubuntu
-14.04 LTS (Trusty Tahr) for a system (64-bits).  By default, the build
-of Bayeux is done using the C++11 standard.
+Bayeux_/trunk  library on  top  of CadfaelBrew_ on  Xubuntu
+14.04 LTS (Trusty Tahr) for a system (64-bits).
 
 Notes:
 
- * Cadfaelbrew_ is only supported  on 64-bits systems. This constrains
+ * CadfaelBrew_ is only supported  on 64-bits systems. This constrains
    Bayeux_ installation to such architectures.
- * In a near future (spring 2016), C++11 will become the standard used
-   by default within Bayeux and C++98 will not be supported anymore.
  * The  (X)ubuntu  16.04  LTS  (Xenial Xerus)  will  become  the  main
    supported Ubuntu flavor. This will imply a few changes in process of
-   Cadfaelbrew and Bayeux installation.
+   CadfaelBrew and Bayeux installation.
  * Two build  systems are supported :  GNU/make and Ninja_, on  top of
    which CMake is used to build Bayeux_.
 
@@ -93,49 +90,63 @@ The target system
 
    \pagebreak
 
-Setup of Cadfaelbrew
+Setup of CadfaelBrew
 ===============================
 
 Links:
 
- * Cadfaelbrew_ repository (GitHub, public access)
+ * CadfaelBrew_ repository (GitHub, public access)
  * Cadfael_ (SuperNEMO Wiki, private access)
 
 .. _Cadfael: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael
-.. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/cadfaelbrew
+.. _CadfaelBrew: https://github.com/SuperNEMO-DBD/brew
 
 
-Please follow the instructions on the installation report at https://nemo.lpc-caen.in2p3.fr/browser/Bayeux/trunk/doc/InstallationReports/Cadfaelbrew/Xubuntu14.04-a/tagged/cadfaelbrew_xubuntu14.04-a_report-0.1.pdf
+Please follow the instructions on the installation report at https://nemo.lpc-caen.in2p3.fr/browser/Bayeux/trunk/doc/InstallationReports/Cadfaelbrew/Xubuntu14.04-a/tagged/cadfaelbrew_xubuntu14.04-a_report-0.2.pdf
 
 brew
 ------------
 
-Once you have installed Cadfaelbrew_, you should be able to run a *brew* session:
+Once you have installed CadfaelBrew_, you should be able to run a *brew* session:
 
 .. code:: sh
 
    $ brewsh
+   ...
+   $ echo $PATH
+   /data3/sw/SuperNEMO-DBD/CadfaelBrew/bin:/usr/local/sbin:/usr/local/bin:
+   /usr/sbin:/usr/bin:/sbin:/bin:/usr/games:
+   /data3/sw/SuperNEMO-DBD/CadfaelBrew/Library/Taps/supernemo-dbd/homebrew-cadfael/cmd:
+   /data3/sw/SuperNEMO-DBD/CadfaelBrew/Library/ENV/scm
 ..
 
 Note that, in this example, the ``brewsh`` is an alias for:
 
 .. code:: sh
 
-   $ /data3/sw/Cadfaelbrew/supernemo/cxx11/Cadfael.git/bin/brew sh --cc=gcc-4.9
+   $ /data3/sw/SuperNEMO-DBD/CadfaelBrew/bin/brew sh --cc=gcc-4.9
 ..
 
-where the ``brew`` utility has been installed by Cadfaelbrew_ on some arbitrary path on the system.
+where the ``brew`` utility has  been installed by CadfaelBrew_ on some
+arbitrary path on the system:
 
-This opens a new shell with all environmental variables activated to setup all the software tools
-managed through Cadfaelbrew_.
+.. code:: sh
+
+   $ which brew
+   /data3/sw/SuperNEMO-DBD/CadfaelBrew/bin/brew
+..
+
+This opens a  new shell with all environmental  variables activated to
+setup all the software tools managed through CadfaelBrew_.
 
 
-Alternatively you can use a dedicated setup function, but you should favor the first method above:
+Alternatively you can  use a dedicated setup function,  but you should
+favor the first method above:
 
 .. code:: sh
 
    $ do_cadfaelbrew_setup
-   NOTICE: Cadfaelbrew is now setup !
+   NOTICE: CadfaelBrew is now setup !
 ..
 
 You can check the location and version of core software utilities:
@@ -143,32 +154,31 @@ You can check the location and version of core software utilities:
 .. code:: sh
 
    $ which cmake
-   /path/to/Cadfaelbrew/install/supernemo/cxx11/Cadfael.git/bin/cmake
-..
-
-.. code:: sh
-
+   /data3/sw/SuperNEMO-DBD/CadfaelBrew/bin/cmake
    $ cmake --version
-   cmake version 3.4.0
+   cmake version 3.5.2
 ..
 
 .. code:: sh
 
-   $ g++ --version
-   g++ (Homebrew gcc49 4.9.2_2) 4.9.2
+   $ which g++
+   /data3/sw/SuperNEMO-DBD/CadfaelBrew/bin/g++
+   g++ (Homebrew gcc49 4.9.3) 4.9.3
 ..
 
 .. code:: sh
 
+   $ which doxygen
+   /usr/bin/doxygen
    $ doxygen --version
-   1.8.10
+   1.8.6
 ..
 
 Ninja
 -------------
 
 Ninja_ is  a build  system which  can be used  in place  of (GNU)make.
-Install Ninja_ through ``brew`` if it  was not already done before (you
+Install Ninja_ through ``brew`` if it was not already done before (you
 must setup the brew environment for that):
 
 .. _Ninja: https://ninja-build.org/
@@ -184,6 +194,8 @@ Then you can check your Ninja version:
 
 .. code:: sh
 
+   $ which ninja
+   /data3/sw/SuperNEMO-DBD/CadfaelBrew/bin/ninja
    $ ninja --version
    1.6.0
    $ exit
@@ -197,21 +209,26 @@ Then you can check your Ninja version:
 Qt5
 -------------
 
-Qt5 is used for the QS-based GUI components implemented in Bayeux (optional component).
-
+Qt5 is used for the Qt-based GUI components implemented in Bayeux (optional component).
 For now we use the system install of Qt5 (5.2.1 on Ubuntu 14.04):
 
 .. code:: sh
 
-   $ sudo apt-get install libqt5core5a
-	  libqt5gui5
-	  libqt5svg5
-	  libqt5svg5-dev
-	  libqt5svg5-private-dev
-	  libqt5widgets5
+   $ sudo apt-get install  \
+	  libqt5core5a \
+	  libqt5gui5 \
+	  libqt5svg5 \
+	  libqt5svg5-dev \
+	  libqt5svg5-private-dev \
+	  libqt5widgets5 \
+	  qtbase5-dev \
+	  qtbase5-dev-tools \
+	  libqt5svg-dev \
+	  qt5-default
+
 ..
 
-Brew is able to install a recent Qt5 (Qt5.6.0) but this is still broken wihtin Bayeux.
+Brew is able to install a recent Qt5 (Qt5.6.0) but this is still broken within Bayeux.
 Please do not use it as long as it is not fixed.
 
 .. .. code:: sh
@@ -308,20 +325,20 @@ Download Bayeux/trunk source files:
 Configure Bayeux
 --------------------------
 
-  1. Make sure Cadfaelbrew is setup on  your system. If you follow the
-     Cadfaelbrew installation  report available from the  Cadfael wiki
+  1. Make sure CadfaelBrew is setup on  your system. If you follow the
+     CadfaelBrew installation  report available from the  Cadfael wiki
      page, you just have to invoke:
 
 .. code:: sh
 
-      $ brewsh
+   $ brewsh
 ..
 
 or :
 
 .. code:: sh
 
-      $ do_cadfaelbrew_setup
+   $ do_cadfaelbrew_setup
 ..
 
   2. Create a build directory and cd in it:
@@ -401,11 +418,12 @@ Particularly, the shared libraries are:
    $ LANG=C tree -F BuildProducts/lib/
    BuildProducts/lib/
    |-- cmake/
-   |   `-- Bayeux-2.1.0/
+   |   `-- Bayeux-3.0.0/
    |       |-- BayeuxConfig.cmake
    |       |-- BayeuxConfigVersion.cmake
    |       |-- BayeuxDocs.cmake
    |       `-- BayeuxTargets.cmake
+   |-- libBXCatch.a
    |-- libBayeux.so*
    |-- libBayeux_mctools_geant4.so*
    `-- libBayeux_mctools_mcnp.so*
@@ -419,6 +437,7 @@ Executable are in:
    BuildProducts/bin/
    |-- bxdpp_processing*
    |-- bxg4_production*
+   |-- bxg4_seeds*
    |-- bxgenbb_inspector*
    |-- bxgenbb_mkskelcfg*
    |-- bxgenvtx_mkskelcfg*
@@ -432,7 +451,8 @@ Executable are in:
    |-- bxocd_manual*
    |-- bxocd_sort_classnames.py*
    |-- bxquery*
-   `-- bxtests/
+   |-- bxtests/
+   `-- bxvariant_inspector*
 ..
 
 These  directories  and  files  will be  copied  in  the  installation
@@ -454,14 +474,14 @@ Before to do the final installation, we run the test programs:
    [1/1] Running tests...
    Test project /data/sw/Bayeux/Binary/Bayeux-trunk/Build-gcc-cxx11-ninja-Linux-x86_64
            Start   1: datatools-test_reflection_0
-     1/303 Test   #1: datatools-test_reflection_0 .......   Passed    0.28 sec
+     1/322 Test   #1: datatools-test_reflection_0 .......   Passed    0.39 sec
    ...
-           Start 309: bayeux-test_bayeux
-   309/309 Test #309: bayeux-test_bayeux ................   Passed    0.13 sec
+           Start 322: bxbayeux-test_bayeux
+   322/322 Test #322: bxbayeux-test_bayeux ..............   Passed    0.15 sec
 
-   100% tests passed, 0 tests failed out of 309
+   100% tests passed, 0 tests failed out of 322
 
-   Total Test time (real) =  60.47 sec
+   Total Test time (real) =  68.27 sec
 ..
 
 .. raw:: latex
@@ -487,12 +507,12 @@ Browse the installation directory:
 
 .. code:: sh
 
-   $ LANG=C tree -L 3 -F \
-     ${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64
+   $ LANG=C tree -L 3 -F ${BX11_DEV_INSTALL_DIR}
    /data/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64
    |-- bin/
    |   |-- bxdpp_processing*
    |   |-- bxg4_production*
+   |   |-- bxg4_seeds*
    |   |-- bxgenbb_inspector*
    |   |-- bxgenbb_mkskelcfg*
    |   |-- bxgenvtx_mkskelcfg*
@@ -504,7 +524,8 @@ Browse the installation directory:
    |   |-- bxocd_make_doc*
    |   |-- bxocd_manual*
    |   |-- bxocd_sort_classnames.py*
-   |   `-- bxquery*
+   |   |-- bxquery*
+   |   `-- bxvariant_inspector*
    |-- include/
    |   `-- bayeux/
    |       |-- bayeux.h
@@ -525,11 +546,12 @@ Browse the installation directory:
    |       `-- version.h
    |-- lib/
    |   |-- cmake/
-   |   |   `-- Bayeux-2.1.0/
+   |   |   `-- Bayeux-3.0.0/
    |   |-- libBayeux.so
-   |   `-- libBayeux_mctools_geant4.so
+   |   |-- libBayeux_mctools_geant4.so
+   |   `-- libBayeux_mctools_mcnp.so
    `-- share/
-       `-- Bayeux-2.1.0/
+       `-- Bayeux-3.0.0/
            |-- Documentation/
            |-- examples/
            `-- resources/
@@ -594,7 +616,7 @@ Suggestions for a Bash setup (see below)
 
 .. code:: sh
 
-      $ cd ${SW_WORK_DIR}/Bayeux/Source/Bayeux-trunk/source/bxgeomtools/examples/ex01
+      $ cd /data/sw/Bayeux/Source/Bayeux-trunk/source/bxgeomtools/examples/ex01
       $ export CONFIG_DIR=$(pwd)/config
       $ bxgeomtools_inspector --manager-config config/manager.conf
 ..
@@ -658,7 +680,7 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
    export BX_DEV_BIN_DIR="${SW_WORK_DIR}/Bayeux/Binary/Bayeux-trunk"
 
    # The Bayeux/trunk setup function:
-   function do_bayeux_trunk_cxx11_setup()
+   function do_bayeux_trunk_setup()
    {
     do_cadfaelbrew_setup # Automatically load the Cadfaelbrew dependency
     if [ -n "${BX11_DEV_INSTALL_DIR}" ]; then
@@ -670,11 +692,10 @@ with a dedicated function defined in my ``~/.bashrc`` startup file:
     echo "NOTICE: Bayeux/trunk is now setup !" >&2
     return;
    }
-   export -f do_bayeux_trunk_cxx11_setup
+   export -f do_bayeux_trunk_setup
 
    # Special alias:
-   alias do_bayeux_dev11_setup="do_bayeux_trunk_cxx11_setup"
-   alias do_bayeux_dev_setup="do_bayeux_trunk_cxx11_setup"
+   alias do_bayeux_dev_setup="do_bayeux_trunk_setup"
 ..
 
 When one wants to use pieces of software from Bayeux, one runs:
@@ -703,14 +724,7 @@ Then all executable are usable from the Bayeux installation directory:
 Update the source code from the Bayeux/trunk
 ============================================
 
-1. Activate the Cadfaelbrew environment:
-
-.. code:: sh
-
-   $ do_cadfaelbrew_setup
-..
-
-   or enter a ``brew`` shell (recommended):
+1. Activate the CadfaelBrew environment:
 
 .. code:: sh
 
