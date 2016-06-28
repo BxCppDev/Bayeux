@@ -1,4 +1,4 @@
-/// \file datatools/configuration/ui/variant_registry_viewer.h
+/// \file datatools/configuration/ui/variant_registry_dialog.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-10-06
  * Last modified : 2014-10-06
@@ -56,7 +56,7 @@ namespace datatools {
       class variant_registry_tree_model;
       class variant_registry_viewer;
 
-     /// \brief A widget to browse/edit a configuration variant registry
+      /// \brief A widget to browse/edit a configuration variant registry
       class variant_registry_dialog : public QDialog
       {
         Q_OBJECT
