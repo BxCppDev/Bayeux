@@ -982,7 +982,6 @@ namespace mctools {
       // are initialized with some source of entropy :
       // 2012-06-08 FM : fix to make all seeds different (and
       // automatically randomize 'SEED_AUTO'):
-      _seed_manager_.set_logging_priority (get_logging_priority());
       _seed_manager_.ensure_different_seeds();
       if (is_debug()) {
         _seed_manager_.dump(std::clog);
