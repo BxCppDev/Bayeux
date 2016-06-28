@@ -179,6 +179,10 @@ if [ $do_simulation -eq 1 ]; then
 	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
+    echo "----------------------------------" 1>&2
+    echo "NOTICE: Seeds: " 1>&2
+    cat prng_seeds.save 1>&2
+    echo "----------------------------------" 1>&2
     # exit 0
 
     echo -e "\nSet LD_LIBRARY_PATH..." 1>&2
@@ -217,6 +221,10 @@ if [ $do_simulation -eq 1 ]; then
 	echo "ERROR: bxg4_production failed !" 1>&2
 	exit 1
     fi
+    echo "----------------------------------" 1>&2
+    echo "NOTICE: Seeds: " 1>&2
+    cat prng_seeds.save 1>&2
+    echo "----------------------------------" 1>&2
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
     ./ex00_read_plain_simdata \
 	--interactive \

@@ -263,7 +263,10 @@ namespace mctools {
         if (token == ".M") {
           std::string print_models_options;
           std::getline(command_iss, print_models_options);
-          int error = geomtools::model_factory::print_list_of_models(_geometry_manager_->get_factory(), std::cerr, print_models_options);
+          int error = geomtools::model_factory::print_list_of_models(_geometry_manager_->get_factory(),
+                                                                     "list_of_models",
+                                                                     print_models_options,
+                                                                     std::cerr);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                          "Invalid options '" << print_models_options << "' !");
@@ -271,7 +274,10 @@ namespace mctools {
         } else if (token == ".L") {
           std::string print_logical_options;
           std::getline(command_iss, print_logical_options);
-          int error = geomtools::model_factory::print_list_of_logicals(_geometry_manager_->get_factory(), std::cerr, print_logical_options);
+          int error = geomtools::model_factory::print_list_of_logicals(_geometry_manager_->get_factory(),
+                                                                       "list_of_logicals",
+                                                                       print_logical_options,
+                                                                       std::cerr);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                          "Invalid options '" << print_logical_options << "' !");
@@ -279,7 +285,10 @@ namespace mctools {
         } else if (token == ".G") {
           std::string print_gids_options;
           std::getline(command_iss, print_gids_options);
-          int error = geomtools::manager::print_list_of_gids(*_geometry_manager_, std::cerr, print_gids_options);
+          int error = geomtools::manager::print_list_of_gids(*_geometry_manager_,
+                                                             "list_of_gids",
+                                                             print_gids_options,
+                                                             std::cerr);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Invalid options '" << print_gids_options << "' !");
           }

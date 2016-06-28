@@ -46,7 +46,7 @@
 
 int main(int argc_, char **argv_)
 {
-  BAYEUX_INIT_MAIN(argc_, argv_);
+  bayeux::initialize(argc_, argv_, 0);
 
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
@@ -187,16 +187,13 @@ int main(int argc_, char **argv_)
     }
     std::clog << "Number of processed simulated data records: " << psd_count << std::endl;
 
-  }
-  catch(std::exception& x) {
+  } catch (std::exception& x) {
     DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
-  }
-  catch(...) {
+  } catch (...) {
     DT_LOG_FATAL(logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-
-  BAYEUX_FINI();
+  bayeux::terminate();
   return error_code;
 }

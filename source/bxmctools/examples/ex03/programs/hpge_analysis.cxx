@@ -84,7 +84,7 @@ struct app_config_params {
 //! Main program:
 int main(int argc_, char * argv_[])
 {
-  BAYEUX_INIT_MAIN(argc_, argv_);
+  bayeux::initialize(argc_, argv_, 0);
   int error_code = EXIT_SUCCESS;
   try {
 
@@ -366,7 +366,7 @@ int main(int argc_, char * argv_[])
     DT_LOG_FATAL(datatools::logger::PRIO_ALWAYS, "Unexpected error!");
     error_code = EXIT_FAILURE;
   }
-  BAYEUX_FINI();
+  bayeux::terminate();
   return error_code;
 }
 

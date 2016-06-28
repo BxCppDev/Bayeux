@@ -48,7 +48,7 @@
 #include <ex01_inspector.h>
 
 int main(int argc_, char **argv_) {
-  BAYEUX_INIT_MAIN(argc_, argv_);
+  bayeux::initialize(argc_, argv_, 0);
 
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
@@ -241,6 +241,6 @@ int main(int argc_, char **argv_) {
     error_code = EXIT_FAILURE;
   }
 
-  BAYEUX_FINI();
+  bayeux::terminate();
   return error_code;
 }
