@@ -32,6 +32,7 @@
 #include <exception>
 #include <random>
 #include <map>
+#include <memory>
 
 // Third party:
 // - Boost:
@@ -39,7 +40,6 @@
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/scoped_ptr.hpp>
 // - Bayeux:
 #include <bayeux/bayeux.h>
 // - Bayeux/datatools:
@@ -53,10 +53,8 @@
 #include <mctools/g4/manager.h>
 
 /// \brief Seed generator for the G4 simulation program
-class g4_seed_generator
-{
-public:
-
+class g4_seed_generator {
+ public:
   /// \brief Parameters for the application
   struct parameters
   {
@@ -74,7 +72,6 @@ public:
                             std::ostream & out_ = std::clog);
 
     // Attributes:
-    std::string logging;
     uint32_t    number_of_runs;
     uint32_t    run_start;
     std::string base_dir;
@@ -82,38 +79,24 @@ public:
     std::string list_file;
   };
 
+ public:
   /// Default constructor
-  g4_seed_generator();
+  g4_seed_generator(const parameters& p);
 
   /// Destructors
   ~g4_seed_generator();
 
-  /// Initialize
-  void initialize(const parameters & params_);
-
   /// Run
   void run();
 
-  /// Terminate
-  void terminate();
-
-protected:
-
-  void _run_generate();
-
-private:
-
-  datatools::logger::priority _logging_; ///< Logging proprity threshold
+ private:
   parameters _params_; ///< Parameters
-
 };
 
 int main(int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
 
-  bayeux::initialize(argc_, argv_, 0xFFFF);
   try {
     // Configuration parameters for the G4 manager:
     g4_seed_generator::parameters params;
@@ -138,8 +121,6 @@ int main(int argc_, char ** argv_)
       // Configure the parser:
       po::command_line_parser cl_parser(argc_, argv_);
       cl_parser.options(all_opts);
-      // cl_parser.positional(args);
-      // cl_parser.allow_unregistered();
 
       // Parse:
       po::parsed_options parsed = cl_parser.run();
@@ -159,39 +140,30 @@ int main(int argc_, char ** argv_)
       }
     }
 
-    g4_seed_generator app;
-    app.initialize(params);
+    g4_seed_generator app(params);
     app.run();
-    app.terminate();
 
   } catch (std::exception & x) {
-    DT_LOG_FATAL(logging, x.what());
+    std::cerr << "Seed generation failed with exception:\n" << x.what() << "\n";
     error_code = EXIT_FAILURE;
   } catch (...) {
-    DT_LOG_FATAL(logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-  DT_LOG_TRACE(logging, "g4_production ends here.");
 
-  bayeux::terminate();
   return error_code;
 }
 
 g4_seed_generator::parameters::parameters()
 {
   set_defaults();
-  return;
 }
 
 void g4_seed_generator::parameters::set_defaults()
 {
-  logging        = "fatal";
   number_of_runs = 1;
-  run_start      = 0;
-  base_dir       = ".";
+  base_dir       = "./bxg4_seed_set";
   pattern        = "seeds_%n.conf";
   list_file      = "runs.lis";
-  return;
 }
 
 void g4_seed_generator::parameters::print_usage(const boost::program_options::options_description & opts_,
@@ -207,7 +179,6 @@ void g4_seed_generator::parameters::print_usage(const boost::program_options::op
   out_ << std::endl;
   out_ << opts_ << std::endl;
   out_ << std::endl;
-  return;
 }
 
 
@@ -223,23 +194,11 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
      ->default_value(false),
      "Produce help message")
 
-    ("logging-priority,l",
-     po::value<std::string>(&params_.logging)
-     ->default_value("fatal")
-     ->value_name("level"),
-     "Set the logging priority threshold")
-
     ("number-of-runs,n",
      po::value<uint32_t>(&params_.number_of_runs)
      ->default_value(1)
      ->value_name("integer"),
      "Set the number of runs for which seeds are generated")
-
-    ("run-start,s",
-     po::value<uint32_t>(&params_.run_start)
-     ->default_value(0)
-     ->value_name("integer"),
-     "Set the number of the first run")
 
     ("base-dir,d",
      po::value<std::string>(&params_.base_dir)
@@ -257,31 +216,12 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
      po::value<std::string>(&params_.list_file)
      ->default_value("runs.lis")
      ->value_name("name"),
-     "Set the name of the run list file")
-
-    ;
-  return;
+     "Set the name of the run list file");
 }
 
-g4_seed_generator::g4_seed_generator()
-{
-  _logging_ = datatools::logger::PRIO_FATAL;
-  return;
-}
 
-g4_seed_generator::~g4_seed_generator()
+g4_seed_generator::g4_seed_generator(const parameters & params_)
 {
-  return;
-}
-
-void g4_seed_generator::initialize(const parameters & params_)
-{
-  {
-    datatools::logger::priority prio = datatools::logger::get_priority(params_.logging);
-    if (prio != datatools::logger::PRIO_UNDEFINED) {
-      _logging_ = prio;
-    }
-  }
   {
     bool exists = params_.base_dir.find("%n") != std::string::npos;
     DT_THROW_IF(exists, std::logic_error,
@@ -293,32 +233,24 @@ void g4_seed_generator::initialize(const parameters & params_)
                 "Missing '%n' directive in the output file pattern!");
   }
   _params_ = params_;
-  return;
+
+}
+
+g4_seed_generator::~g4_seed_generator()
+{
 }
 
 void g4_seed_generator::run()
 {
-  _run_generate();
-  return;
-}
-
-void g4_seed_generator::_run_generate()
-{
+  // GENERATE
   std::map<uint32_t, std::string> seeds_per_run;
   std::set<std::string> check_signatures;
   // std::string last;
   std::size_t max_count = 3;
-  for (std::size_t irun = _params_.run_start;
-       irun != _params_.run_start + _params_.number_of_runs;
+  for (std::size_t irun {0};
+       irun != _params_.number_of_runs;
        irun++) {
-    DT_LOG_DEBUG(_logging_, "Generate seeds for run #" << irun << "...");
     std::size_t count = 0;
-    // DT_LOG_NOTICE(_logging_, "  Last = '" << last << "'");
-    // for (std::set<std::string>::const_iterator icsig = check_signatures.begin();
-    //      icsig != check_signatures.end();
-    //      icsig++) {
-    //   DT_LOG_NOTICE(_logging_, "  Check signature = '" << *icsig << "'");
-    // }
     while (true) {
       int mgr_seed  = mygsl::random_utils::SEED_AUTO;
       int vg_seed   = mygsl::random_utils::SEED_AUTO;
@@ -335,29 +267,14 @@ void g4_seed_generator::_run_generate()
       smgr.add_seed(mctools::g4::manager::constants::instance().SHPF_LABEL,
                     shpf_seed);
       smgr.ensure_different_seeds();
-      if (datatools::logger::is_debug(_logging_)) {
-        smgr.dump(std::cerr);
-      }
       std::ostringstream seeds_repr;
       seeds_repr << smgr;
-      // if (!last.empty()) {
-      //   DT_LOG_NOTICE(_logging_, "  Using last seed set = '" << seeds_repr.str() << "'...");
-      //   seeds_repr << last;
-      // } else {
-      //   seeds_repr << smgr;
-      // }
-      DT_LOG_DEBUG(_logging_, "  Seed set = '" << seeds_repr.str() << "'");
       std::string signature = seeds_repr.str();
       if (check_signatures.count(signature) == 0) {
         seeds_per_run[irun] = signature;
-        DT_LOG_DEBUG(_logging_, "  Registering signature = '" << signature << "'...");
         check_signatures.insert(signature);
-        // last = signature;
         break;
       } else {
-        DT_LOG_WARNING(_logging_,
-                       "  Seed set '" << signature << "' is already used: "
-                       << "Generating a new one...");
         count++;
       }
       if (count > max_count) {
@@ -367,40 +284,36 @@ void g4_seed_generator::_run_generate()
     }
   }
 
+  // WRITE
+  // Require unique directory
+  DT_THROW_IF(boost::filesystem::exists(_params_.base_dir),
+              std::runtime_error,
+              "Requested output directory '" << _params_.base_dir << "' already exists");
+  DT_THROW_IF(!boost::filesystem::create_directories(_params_.base_dir),
+              std::runtime_error,
+              "Could not create directories '" << _params_.base_dir << "'");
+
   std::map<uint32_t, std::string> seedfiles_per_run;
   std::ostringstream list_out;
-  for (std::map<uint32_t, std::string>::const_iterator iseed = seeds_per_run.begin();
-       iseed != seeds_per_run.end();
-       iseed++) {
-    uint32_t irun = iseed->first;
+  for (const auto& iseed : seeds_per_run) {
+    uint32_t irun = iseed.first;
     std::string path_pattern = _params_.base_dir + "/" + _params_.pattern;
-    DT_LOG_DEBUG(_logging_, "  Original path for run #" << irun << " is '" << path_pattern << "'.");
     boost::replace_all(path_pattern, "//", "/");
     boost::replace_all(path_pattern, "%n", boost::lexical_cast<std::string>(irun));
-    DT_LOG_DEBUG(_logging_, "  Path for run #" << irun << " is '" << path_pattern << "'.");
-    boost::filesystem::path base_dir_path = boost::filesystem::path(path_pattern).parent_path();
-    if (!boost::filesystem::exists(base_dir_path)) {
-      DT_LOG_DEBUG(_logging_, "  Directory '" << base_dir_path.string() << "' does not exist!");
-      bool base_path_created = boost::filesystem::create_directories(base_dir_path);
-      DT_THROW_IF(!base_path_created, std::runtime_error, "Cannot create directory " << base_dir_path << "!");
-    } else {
-      DT_LOG_DEBUG(_logging_, "  Directory '" << base_dir_path.string() << "' already exists!");
-    }
     {
       std::string test_path = path_pattern;
       datatools::fetch_path_with_env(test_path);
       if (boost::filesystem::exists(test_path)) {
-        DT_THROW(std::logic_error, "File '" << path_pattern << "' already exists!");
+        DT_THROW(std::logic_error, "File '" << path_pattern << "' already exists");
       }
     }
     std::ofstream fout(path_pattern.c_str());
-    DT_THROW_IF(!fout, std::runtime_error, "Cannot open file '" << path_pattern << "'!");
-    fout << iseed->second << std::endl;
+    DT_THROW_IF(!fout, std::runtime_error, "Cannot open file '" << path_pattern << "'");
+    fout << iseed.second << std::endl;
     seedfiles_per_run[irun] = path_pattern;
   }
-  DT_LOG_NOTICE(_logging_, "Generated run seeding files from directory: '" << _params_.base_dir << "'");
 
-  boost::scoped_ptr<std::ofstream> flist;
+  std::unique_ptr<std::ofstream> flist;
   std::string list_file_path;
   if (!_params_.list_file.empty()) {
     bool full_list_path = false;
@@ -429,19 +342,12 @@ void g4_seed_generator::_run_generate()
     }
   }
 
-  if (flist.get() != nullptr) {
-    for (std::map<uint32_t, std::string>::const_iterator iseedfile = seedfiles_per_run.begin();
-       iseedfile != seedfiles_per_run.end();
-       iseedfile++) {
-      *flist.get() << iseedfile->first << ' ' << iseedfile->second << std::endl;
+  if (flist) {
+    for (const auto& iseedfile : seedfiles_per_run) {
+      *flist.get() << iseedfile.first << ' ' << iseedfile.second << std::endl;
     }
-    DT_LOG_NOTICE(_logging_, "Generated run seeding list file: '" << list_file_path << "'");
   }
 
-  return;
 }
 
-void g4_seed_generator::terminate()
-{
-  return;
-}
+
