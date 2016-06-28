@@ -7,15 +7,15 @@ Installation report for CadfaelBrew on Xubuntu Linux 14.04 (LTS)
 :Contact: mauger@lpccaen.in2p3.fr
 :Date: 2016-06-27
 
-This note  explains the Cadfaelbrew installation  procedure on Xubuntu
-Linux 14.04 (LTS) (64-bits). Cadfaelbrew is a package manager, derived
+This note  explains the CadfaelBrew installation  procedure on Xubuntu
+Linux 14.04 (LTS) (64-bits). CadfaelBrew is a package manager, derived
 from the  Linux/Homebrew projects.  It allows  you to  install various
 software *formulas*.  Thanks to the generic ``brew`` utility, you will
 be able to  install the *Cadfael* formula which  includes Boost, CAMP,
 CLHEP, ROOT, Geant4...  that is  all the software you need to run
 Bayeux and the  SuperNEMO software.  Other formulas can  also be added
 (Bayeux, Falaise...).  This is out of the scope of this document which
-concentrates on the installation of the basic layer of Cadfaelbrew and
+concentrates on the installation of the basic layer of CadfaelBrew and
 Cadfael formulas.
 
 CadfaelBrew is hosted at https://github.com/SuperNEMO-DBD/.
@@ -49,7 +49,6 @@ Preparation
    $ export PATH="${SNSW_BASE_DIR}/CadfaelBrew/bin:${PATH}"
    $ export MANPATH="${SNSW_BASE_DIR}/CadfaelBrew/share/man:${MANPATH}"
    $ export INFOPATH="${SNSW_BASE_DIR}/CadfaelBrew/share/info:${INFOPATH}"
-
 ..
 
    c. Install mandatory packages:
@@ -67,7 +66,11 @@ Preparation
 	  libcurl4-openssl-dev \
 	  libexpat-dev \
 	  libncurses-dev \
-	  zlib1g-dev
+	  zlib1g-dev \
+	  qtbase5-dev \
+	  qtbase5-dev-tools \
+	  libqt5svg-dev \
+	  qt5-default
 ..
 
 Prepare the installation
@@ -148,7 +151,6 @@ on top of which Bayeux will be installed:
 .. code:: sh
 
    bash$ brew sh --cc=gcc-4.9
-   bash$ brew search boost
    bash$ export HOMEBREW_CACHE=/data3/var/cache/Homebrew
    bash$ export HOMEBREW_TEMP=/data3/var/tmp
    bash$ brew install supernemo-dbd/cadfael/boost
@@ -169,7 +171,7 @@ Setup CadfaelBrew for your environment
 
 To activate CadfaelBrew in your environement, you have two possibilities:
 
-a. You can use the ``brew.sh`` script provided by Cadfaelbrew.
+a. You can use the ``brew.sh`` script provided by CadfaelBrew.
    In your ``~/.bashrc`` startup file, define:
 
 .. code:: sh
@@ -177,7 +179,7 @@ a. You can use the ``brew.sh`` script provided by Cadfaelbrew.
    alias brewsh='/data3/sw/CadfaelBrew/bin/brew sh --cc=gcc-4.9'
 ..
 
-   Then, each time you need to use Cadfaelbrew or some software managed by it, you
+   Then, each time you need to use CadfaelBrew or some software managed by it, you
    just type in your shell:
 
 .. code:: sh
@@ -186,7 +188,7 @@ a. You can use the ``brew.sh`` script provided by Cadfaelbrew.
    bash$ # ... you can now work with brewed software ...
 ..
 
-   This will start a dedicated shell with all Cadfaelbrew software activated.
+   This will start a dedicated shell with all CadfaelBrew software activated.
    To leave this environment, type:
 
 .. code:: sh
