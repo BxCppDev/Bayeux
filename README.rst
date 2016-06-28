@@ -461,7 +461,7 @@ WIP
 
 Using Bayeux
 ============
-See the projects under the examples directory.
+WIP
 
 
 Developing Bayeux

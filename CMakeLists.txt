@@ -142,7 +142,6 @@ mark_as_advanced(BAYEUX_WITH_DOCS BAYEUX_WITH_DOCS_OCD)
 #
 add_subdirectory(source)
 add_subdirectory(doc)
-add_subdirectory(examples)
 
 #-----------------------------------------------------------------------
 # Install common resources
