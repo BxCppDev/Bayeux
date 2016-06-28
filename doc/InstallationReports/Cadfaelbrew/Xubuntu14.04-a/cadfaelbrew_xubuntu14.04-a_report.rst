@@ -5,7 +5,7 @@ Installation report for CadfaelBrew on Xubuntu Linux 14.04 (LTS)
 :Author: F.Mauger
 :Version: 0.2
 :Contact: mauger@lpccaen.in2p3.fr
-:Date: 2016-06-27
+:Date: 2016-06-28
 
 This note  explains the CadfaelBrew installation  procedure on Xubuntu
 Linux 14.04 (LTS) (64-bits). CadfaelBrew is a package manager, derived
@@ -66,11 +66,7 @@ Preparation
 	  libcurl4-openssl-dev \
 	  libexpat-dev \
 	  libncurses-dev \
-	  zlib1g-dev \
-	  qtbase5-dev \
-	  qtbase5-dev-tools \
-	  libqt5svg-dev \
-	  qt5-default
+	  zlib1g-dev
 ..
 
 Prepare the installation
@@ -134,13 +130,11 @@ a. Brew it!
    ...
 ..
 
-
 This is a  rather long process, particularly because  the GCC compiler
 (version 4.9) is built and installed (~35 min on this system).  Geant4
 and Root  are also  rather long  to build.  All  the software  will be
 installed   in  ``/data3/sw/CadfaelBrew``.
 The full installation uses approximatively 3 GB.
-
 
 Install  formulas
 ====================================
@@ -161,6 +155,8 @@ on top of which Bayeux will be installed:
    bash$ brew install supernemo-dbd/cadfael/root5
 ..
 
+We do not install qt5 here. We will use Ubuntu Qt5 system install.
+
 .. raw:: latex
 
    \pagebreak
@@ -176,7 +172,7 @@ a. You can use the ``brew.sh`` script provided by CadfaelBrew.
 
 .. code:: sh
 
-   alias brewsh='/data3/sw/CadfaelBrew/bin/brew sh --cc=gcc-4.9'
+   alias brewsh='/data3/sw/SuperNEMO-DBD/CadfaelBrew/bin/brew sh --cc=gcc-4.9'
 ..
 
    Then, each time you need to use CadfaelBrew or some software managed by it, you
