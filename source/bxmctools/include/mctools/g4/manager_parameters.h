@@ -1,11 +1,11 @@
 /// \file mctools/g4/manager_parameters.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-02-16
- * Last modified: 2015-09-14
+ * Last modified: 2016-06-27
  *
  * License:
  *
- * Copyright (C) 2010-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2010-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,7 @@ namespace mctools {
       std::string output_prng_states_file; //!< Output file for PRNG's states
       int         prng_states_save_modulo; //!< Period saving the PRNG's internal states
       std::string input_prng_seeds_file;   //!< Input file for PRNG's seeds
+      std::string init_seed_method;        //!< Method to define the seed initialization
       std::string output_prng_seeds_file;  //!< Output file for PRNG's seeds
       std::string output_data_format;      //!< Output data file format
       std::string output_data_bank_label;  //!< Name of the data bank for the bank output format

@@ -1,11 +1,11 @@
 /// \file mctools/g4/manager.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-05-04
- * Last modified: 2015-09-14
+ * Last modified: 2016-06-28
  *
  * License:
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,8 +215,6 @@ namespace mctools {
 
       /// Set the interactive session flag
       void set_interactive(bool);
-
-      bool using_event_number_as_seed() const;
 
       bool has_input_prng_seeds_file() const;
 
@@ -432,13 +430,22 @@ namespace mctools {
       /// Return a non-mutable reference to a embeded event generator
       const genbb::i_genbb & get_event_generator() const;
 
+      /// Check if the method for seed initialization is set
+      bool has_init_seed_method() const;
+
+      /// Set the method used to set the initialization seed for the generation of seeds
+      void set_init_seed_method(const std::string &);
+
+      /// Return the method for seed initialization
+      const std::string & get_init_seed_method() const;
+
       /// Basic default print
       void dump(std::ostream & = std::clog) const;
 
       /// Basic print
       void dump_base(std::ostream & out_ = std::clog,
-                      const std::string & title_ = "",
-                      const std::string & indent_ = "") const;
+                     const std::string & title_ = "",
+                     const std::string & indent_ = "") const;
 
       /// Default constructor:
       manager();
@@ -523,15 +530,14 @@ namespace mctools {
       bool _initialized_; //!< Initializion flag
 
       // Configuration:
-      const datatools::multi_properties * _multi_config_;   //!< Setup parameters
+      const datatools::multi_properties * _multi_config_; //!< Setup parameters
 
       // User interface mode:
-      bool _interactive_; //!< Flag for interactive session
-      bool _g4_visualization_; //!< Flag to activate Geant4 visualization
-      bool _use_event_number_as_seed_; // not used
+      bool _interactive_;              //!< Flag for interactive session
+      bool _g4_visualization_;         //!< Flag to activate Geant4 visualization
 
       std::string       _simulation_ctrl_label_; //!< Label for simulation thread control
-      simulation_ctrl * _simulation_ctrl_; //!< Simulation thread control instance
+      simulation_ctrl * _simulation_ctrl_;       //!< Simulation thread control instance
 
       std::map<std::string,std::string> _supported_output_profile_ids_; //!< Supported simulation output profiles
       std::string           _output_profiles_activation_rule_; //!< Activation rule for output profiles
@@ -542,35 +548,35 @@ namespace mctools {
 
       // Geometry manager :
       const geomtools::manager  *  _external_geom_manager_; //!< External geometry manager
-      geomtools::manager           _geom_manager_; //!< Embeded geometry manager
+      geomtools::manager           _geom_manager_;          //!< Embeded geometry manager
 
       // Vertex generation manager :
-      int                          _vg_prng_seed_; //!< Seed for the embeded PRNG for vertex generation
-      mygsl::rng                   _vg_prng_; //!< Embeded PRNG for vertex generation
-      genvtx::manager              _vg_manager_; //!< Vertex generator manager
-      std::string                  _vg_name_; //!< Name of the active vertex generator
+      int                          _vg_prng_seed_;     //!< Seed for the embeded PRNG for vertex generation
+      mygsl::rng                   _vg_prng_;          //!< Embeded PRNG for vertex generation
+      genvtx::manager              _vg_manager_;       //!< Vertex generator manager
+      std::string                  _vg_name_;          //!< Name of the active vertex generator
       genvtx::i_vertex_generator * _vertex_generator_; //!< Active vertex generator
 
       // Event generation manager :
-      int              _eg_prng_seed_; //!< Seed for the embeded PRNG for event generation
-      mygsl::rng       _eg_prng_; //!< Embeded PRNG for event generation
-      genbb::manager   _eg_manager_; //!< Event generator manager
-      std::string      _eg_name_; //!< Name of the active event generator
+      int              _eg_prng_seed_;    //!< Seed for the embeded PRNG for event generation
+      mygsl::rng       _eg_prng_;         //!< Embeded PRNG for event generation
+      genbb::manager   _eg_manager_;      //!< Event generator manager
+      std::string      _eg_name_;         //!< Name of the active event generator
       genbb::i_genbb * _event_generator_; //!< Active event generator
 
       // Step hit processor factory PRNG :
-      int              _shpf_prng_seed_; //!< Seed for the embeded PRNG for step hit processor factories
-      mygsl::rng       _shpf_prng_;      //!< Embeded PRNG for step hit processor factory
+      int              _shpf_prng_seed_;  //!< Seed for the embeded PRNG for step hit processor factories
+      mygsl::rng       _shpf_prng_;       //!< Embeded PRNG for step hit processor factory
 
       // Main Geant4 PRNG :
       int         _mgr_prng_seed_; //!< Initial seed of the embeded PRNG
-      mygsl::rng  _mgr_prng_; //!< Embeded PRNG as the Geant4 main PRNG
-      g4_prng     _g4_prng_; //!< PRNG using the Geant4 interface
+      mygsl::rng  _mgr_prng_;      //!< Embedded PRNG as the Geant4 main PRNG
+      g4_prng     _g4_prng_;       //!< PRNG using the Geant4 interface
 
       // G4 objects:
       G4VSteppingVerbose * _g4_stepping_verbosity_; //!< Geant4 stepping verbosity instance
-      G4RunManager       * _g4_run_manager_;  //!< Geant4 run manager
-      G4UImanager        * _g4_UI_; //!< Geant4 UI manager
+      G4RunManager       * _g4_run_manager_;        //!< Geant4 run manager
+      G4UImanager        * _g4_UI_;                 //!< Geant4 UI manager
 
       // User specified G4 interfaces :
       mctools::g4::detector_construction * _user_detector_construction_;
@@ -589,33 +595,34 @@ namespace mctools {
 
 
       // A PRNG seed manager :
-      mygsl::prng_seed_manager  _seed_manager_; //!< PRNGs' seed manager
+      std::string               _init_seed_method_; //!< Initialization method of the seed manager
+      mygsl::prng_seed_manager  _seed_manager_;     //!< PRNGs' seed manager
 
       // A PRNG state manager :
-      mygsl::prng_state_manager _prng_state_manager_; //!< Manager for PRNGs' internal states
+      mygsl::prng_state_manager _prng_state_manager_;     //!< Manager for PRNGs' internal states
       int                       _prng_state_save_modulo_; //!< Event number modulo to backup PRNGs' internal states
 
       // Track historical infos :
       bool          _use_track_history_; //!< Flag to activate track history
-      track_history _track_history_; //!< Track history data structure
+      track_history _track_history_;     //!< Track history data structure
 
       // User:
-      std::string _input_prng_seeds_file_; //!< Input filename for loading of PRNG seeds
-      std::string _output_prng_seeds_file_; //!< Output filename for storage of PRNG seeds
-      std::string _input_prng_states_file_; //!< Input filename for loading of PRNG internal states
+      std::string _input_prng_seeds_file_;   //!< Input filename for loading of PRNG seeds
+      std::string _output_prng_seeds_file_;  //!< Output filename for storage of PRNG seeds
+      std::string _input_prng_states_file_;  //!< Input filename for loading of PRNG internal states
       std::string _output_prng_states_file_; //!< Output filename for storage of PRNG internal states
       io_utils::data_format_type _output_data_format_; //!< The data format of the output file ("plain" or "bank")
-      std::string _output_data_bank_label_; //!< The label of the data bank used to store simulated data ("bank" format only)
-      std::string _output_data_file_; //!< Full path of the output data filename
-      uint32_t    _number_of_events_; //!< Number of events to be processed
+      std::string _output_data_bank_label_;  //!< The label of the data bank used to store simulated data ("bank" format only)
+      std::string _output_data_file_;        //!< Full path of the output data filename
+      uint32_t    _number_of_events_;        //!< Number of events to be processed
       int         _number_of_events_modulo_; //!< Event number modulo for progression print
-      std::string _g4_macro_; //!< Geant4 macro to be processed
-      int         _g4_tracking_verbosity_; //!< Geant 4 tracking verbosity
-      bool        _forbid_private_hits_; //!< Flag to disable the storage of MC true hits from 'private' collection of hits
+      std::string _g4_macro_;                //!< Geant4 macro to be processed
+      int         _g4_tracking_verbosity_;   //!< Geant 4 tracking verbosity
+      bool        _forbid_private_hits_;     //!< Flag to disable the storage of MC true hits from 'private' collection of hits
       bool        _dont_save_no_sensitive_hit_events_; //!< Flag to store MC true hits from 'non-sensitive' volumes
       bool        _use_run_header_footer_; //!< Store run header/footer in output file
-      bool        _use_time_stat_; //!< Flag to activate CPU time statistics
-      CT_map      _CTs_;           //!< CPU time statistics
+      bool        _use_time_stat_;         //!< Flag to activate CPU time statistics
+      CT_map      _CTs_;                   //!< CPU time statistics
 
     };
 

@@ -1,6 +1,6 @@
 /// \file mctools/g4/manager.cc
 /*
- * Copyright (C) 2011-2013 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,9 +130,9 @@ namespace mctools {
     void manager::set_simulation_ctrl(simulation_ctrl & a_simulation_ctrl)
     {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-      DT_THROW_IF (has_simulation_ctrl(),
-                   std::logic_error,
-                   "Operation prohibited ! Manager already got a 'simulation ctrl' object !");
+      DT_THROW_IF(has_simulation_ctrl(),
+                  std::logic_error,
+                  "Operation prohibited ! Manager already got a 'simulation ctrl' object !");
       _simulation_ctrl_ = &a_simulation_ctrl;
       return;
     }
@@ -146,17 +146,17 @@ namespace mctools {
 
     const simulation_ctrl & manager::get_simulation_ctrl() const
     {
-      DT_THROW_IF (! has_simulation_ctrl(),
-                   std::logic_error,
-                   "Manager has no 'simulation ctrl' object !");
+      DT_THROW_IF(! has_simulation_ctrl(),
+                  std::logic_error,
+                  "Manager has no 'simulation ctrl' object !");
       return *_simulation_ctrl_;
     }
 
     simulation_ctrl & manager::grab_simulation_ctrl()
     {
-      DT_THROW_IF (! has_simulation_ctrl(),
-                   std::logic_error,
-                   "Manager has no 'simulation ctrl' object !");
+      DT_THROW_IF(! has_simulation_ctrl(),
+                  std::logic_error,
+                  "Manager has no 'simulation ctrl' object !");
       return *_simulation_ctrl_;
     }
 
@@ -191,15 +191,15 @@ namespace mctools {
 
     datatools::service_manager & manager::grab_service_manager()
     {
-      DT_THROW_IF (_service_manager_ == 0, std::logic_error,
-                   "No service manager is available !");
+      DT_THROW_IF(_service_manager_ == 0, std::logic_error,
+                  "No service manager is available !");
       return *_service_manager_;
     }
 
     const datatools::service_manager & manager::get_service_manager() const
     {
-      DT_THROW_IF (_service_manager_ == 0, std::logic_error,
-                   "No service manager is available !");
+      DT_THROW_IF(_service_manager_ == 0, std::logic_error,
+                  "No service manager is available !");
       return *_service_manager_;
     }
 
@@ -211,13 +211,13 @@ namespace mctools {
     void manager::set_external_geom_manager(const geomtools::manager & a_geometry_manager)
     {
       DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-      DT_THROW_IF (_geom_manager_.is_initialized(),
-                   std::logic_error,
-                   "Embedded geometry manager is already initialized ! "
-                   << "Cannot substitute another geometry manager !");
-      DT_THROW_IF (! a_geometry_manager.is_initialized(),
-                   std::logic_error,
-                   "External geometry manager is not initialized !");
+      DT_THROW_IF(_geom_manager_.is_initialized(),
+                  std::logic_error,
+                  "Embedded geometry manager is already initialized ! "
+                  << "Cannot substitute another geometry manager !");
+      DT_THROW_IF(! a_geometry_manager.is_initialized(),
+                  std::logic_error,
+                  "External geometry manager is not initialized !");
       _external_geom_manager_ = &a_geometry_manager;
       return;
     }
@@ -225,22 +225,20 @@ namespace mctools {
     const geomtools::manager & manager::get_geom_manager() const
     {
       if (has_external_geom_manager()) {
-        DT_THROW_IF (! _external_geom_manager_->is_initialized(),
-                     std::logic_error,
-                     "External geometry manager is not initialized !");
+        DT_THROW_IF(! _external_geom_manager_->is_initialized(),
+                    std::logic_error,
+                    "External geometry manager is not initialized !");
         return *_external_geom_manager_;
       }
-      DT_THROW_IF (! _geom_manager_.is_initialized(),
-                   std::logic_error, "Geometry manager is not initialized !");
+      DT_THROW_IF(! _geom_manager_.is_initialized(),
+                  std::logic_error, "Geometry manager is not initialized !");
       return _geom_manager_;
     }
-
 
     bool manager::forbids_private_hits() const
     {
       return _forbid_private_hits_;
     }
-
 
     void manager::set_forbid_private_hits(bool a_forbid)
     {
@@ -249,12 +247,10 @@ namespace mctools {
       return;
     }
 
-
     bool manager::dont_save_no_sensitive_hit_events() const
     {
       return _dont_save_no_sensitive_hit_events_;
     }
-
 
     void manager::set_dont_save_no_sensitive_hit_events(bool a_dont_save)
     {
@@ -263,18 +259,15 @@ namespace mctools {
       return;
     }
 
-
     const manager::CT_map & manager::get_CT_map() const
     {
       return _CTs_;
     }
 
-
     manager::CT_map & manager::grab_CT_map()
     {
       return _CTs_;
     }
-
 
     bool manager::is_interactive() const
     {
@@ -559,11 +552,10 @@ namespace mctools {
       _number_of_events_modulo_  = run_action::NUMBER_OF_EVENTS_MODULO_NONE;
       _g4_macro_                 = "";
       _g4_tracking_verbosity_    = 0;
-      _use_event_number_as_seed_ = false;
       _input_prng_states_file_   = "";
       _output_prng_states_file_  = "";
       _prng_state_save_modulo_   = constants::instance().DEFAULT_PRNG_STATES_SAVE_MODULO;
-
+      _init_seed_method_         = "";
       _input_prng_seeds_file_    = "";
       _output_prng_seeds_file_   = "";
 
@@ -663,8 +655,8 @@ namespace mctools {
 
     const genvtx::i_vertex_generator & manager::get_vertex_generator() const
     {
-      DT_THROW_IF (! has_vertex_generator(),
-                   std::logic_error, "No vertex generator is available !");
+      DT_THROW_IF(! has_vertex_generator(),
+                  std::logic_error, "No vertex generator is available !");
       return *_vertex_generator_;
     }
 
@@ -687,14 +679,9 @@ namespace mctools {
 
     const genbb::i_genbb & manager::get_event_generator() const
     {
-      DT_THROW_IF (! has_event_generator(), std::logic_error,
-                   "No event generator is available !");
+      DT_THROW_IF(! has_event_generator(), std::logic_error,
+                  "No event generator is available !");
       return *_event_generator_;
-    }
-
-    bool manager::using_event_number_as_seed() const
-    {
-      return _use_event_number_as_seed_;
     }
 
     void manager::reset_output_prng_seeds_file()
@@ -991,11 +978,11 @@ namespace mctools {
 
     void manager::_init_seeds()
     {
-      // All seeds being 'SEED_TIME'(see mygsl::seed_manager)
-      // are initialized with the current time :
-      // 2012-06-08 FM : fix to make all seeds different(and
-      // automatically randomize 'SEED_TIME'):
-      _seed_manager_.set_logging_priority (get_logging_priority ());
+      // All seeds being 'SEED_AUTO' (see mygsl::seed_manager)
+      // are initialized with some source of entropy :
+      // 2012-06-08 FM : fix to make all seeds different (and
+      // automatically randomize 'SEED_AUTO'):
+      _seed_manager_.set_logging_priority (get_logging_priority());
       _seed_manager_.ensure_different_seeds();
       if (is_debug()) {
         _seed_manager_.dump(std::clog);
@@ -1007,7 +994,7 @@ namespace mctools {
       if (_seed_manager_.has_seed(constants::instance().G4_MANAGER_LABEL)) {
         int seed = _seed_manager_.get_seed(constants::instance().G4_MANAGER_LABEL);
         set_mgr_prng_seed(seed);
-        DT_LOG_NOTICE(_logprio(),"Using registered seed for '"
+        DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
                       << constants::instance().G4_MANAGER_LABEL << "' : "
                       << seed);
       }
@@ -1039,6 +1026,20 @@ namespace mctools {
                       << seed);
       }
 
+      // Checks:
+      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_vg_prng_seed_),
+                  std::logic_error,
+                  "Invalid vertex generator seed value !");
+      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_eg_prng_seed_),
+                  std::logic_error,
+                  "Invalid event generator seed value !");
+      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_mgr_prng_seed_),
+                  std::logic_error,
+                  "Invalid G4 generator seed value !");
+      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_shpf_prng_seed_),
+                  std::logic_error,
+                  "Invalid SHPF generator seed value !");
+
       // Save a file with the content of the embedded 'seed_manager' :
       if (has_output_prng_seeds_file()) {
         std::string seeds_filename = get_output_prng_seeds_file();
@@ -1068,7 +1069,7 @@ namespace mctools {
 
     void manager::initialize(const datatools::multi_properties & multi_config_)
     {
-      DT_THROW_IF (_initialized_, std::logic_error, "Manager is already initialized !");
+      DT_THROW_IF(_initialized_, std::logic_error, "Manager is already initialized !");
       _multi_config_ = &multi_config_;
       _at_init();
       _initialized_ = true;
@@ -1077,11 +1078,27 @@ namespace mctools {
 
     void manager::reset()
     {
-      DT_THROW_IF (! _initialized_, std::logic_error, "Manager is not initialized !");
+      DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
       _initialized_ = false;
       _at_reset();
-      _init_defaults(); // XXX
+      _init_defaults();
       return;
+    }
+
+    bool manager::has_init_seed_method() const
+    {
+      return !_init_seed_method_.empty();
+    }
+
+    void manager::set_init_seed_method(const std::string & method_)
+    {
+      _init_seed_method_ = method_;
+      return;
+    }
+
+    const std::string & manager::get_init_seed_method() const
+    {
+      return _init_seed_method_;
     }
 
     void manager::_init_core()
@@ -1097,40 +1114,45 @@ namespace mctools {
         manager_config.tree_dump(std::clog);
       }
 
-      DT_LOG_NOTICE(_logprio(),"Main manager settings...");
+      DT_LOG_NOTICE(_logprio(), "Main manager settings...");
 
-      // Load a file with the content of the embedded 'seed_manager' :
+      // Load a file with the content of the embedded 'seed_manager' for PRNGs seeding:
       if (has_input_prng_seeds_file()) {
         DT_LOG_NOTICE(_logprio(),
-                      "PRNG seeds dictionary from '" << get_input_prng_seeds_file() << "'...");
+                      "PRNG seed dictionary from '" << get_input_prng_seeds_file() << "'...");
+        std::string input_prng_seeds_file = get_input_prng_seeds_file();
+        datatools::fetch_path_with_env(input_prng_seeds_file);
         if (has_output_prng_seeds_file()) {
           // Ensure the input/output seed files are different :
-          DT_THROW_IF (get_input_prng_seeds_file() == get_output_prng_seeds_file(),
-                       std::logic_error,
-                       "Input and output seeds dictionary file have the same path '"
-                       << get_input_prng_seeds_file() << "' !");
+          std::string test_output_prng_seeds_file = get_output_prng_seeds_file();
+          datatools::fetch_path_with_env(test_output_prng_seeds_file);
+          DT_THROW_IF(input_prng_seeds_file == test_output_prng_seeds_file,
+                      std::logic_error,
+                      "Input and output PRNG seed dictionary file have the same path '"
+                      << input_prng_seeds_file << "' !");
         }
-
-        std::string seeds_filename = get_input_prng_seeds_file();
-        datatools::fetch_path_with_env(seeds_filename);
-        if (boost::filesystem::exists(seeds_filename)) {
+        if (boost::filesystem::exists(input_prng_seeds_file)) {
           DT_LOG_NOTICE(_logprio(),
-                        "Loading seeds dictionary from '" << seeds_filename << "'...");
-          std::ifstream seeds_file(seeds_filename.c_str());
+                        "Loading seeds dictionary from '" << input_prng_seeds_file << "'...");
+          std::ifstream seeds_file(input_prng_seeds_file.c_str());
+          DT_THROW_IF(! seeds_file,
+                      std::runtime_error,
+                      "Cannot open the seeds dictionary file '" << input_prng_seeds_file << "' !");
           seeds_file >> _seed_manager_;
-          DT_THROW_IF (! seeds_file,
-                       std::runtime_error,
-                       "Invalid input or format ! Cannot load the seeds dictionary from '" << seeds_filename << "' !");
+          DT_THROW_IF(! seeds_file,
+                      std::runtime_error,
+                      "Invalid input or format ! "
+                      << "Cannot load the PRNG seed dictionary from file '" << input_prng_seeds_file << "' !");
         } else {
-          DT_LOG_NOTICE(_logprio(),
-                        "No seeds dictionary file to be loaded.");
+          DT_THROW(std::runtime_error,
+                   "No PRNG seed dictionary input file '" << input_prng_seeds_file << "' to be loaded.");
         }
       }
 
       // Begin of property parsing:
 
       // 2016-01-27 FM: add config property:
-      if (!dont_save_no_sensitive_hit_events()) {
+      if (! dont_save_no_sensitive_hit_events()) {
         // If not already set, we try to fetch this parameter:
         if (manager_config.has_key("dont_save_no_sensitive_hit_events")) {
           bool dont_save = manager_config.fetch_boolean("dont_save_no_sensitive_hit_events");
@@ -1138,30 +1160,39 @@ namespace mctools {
         }
       }
 
-      // 2014-07-04 XG : Get initialization method for seeds. If seeds are equal
-      // to 0 then their values may be initialized through 3 differents methods:
-      // - 'current_time' i.e. getting seed value from time in seconds,
-      // - 'current_pid'  i.e. getting seed value from the program PID,
-      // - 'urandom' the default one that set a seed value from /dev/urandom
-      // posix generator.
-      if (manager_config.has_key("init_seed_method")) {
-        const std::string method_name = manager_config.fetch_string("init_seed_method");
-        uint32_t flag = mygsl::seed_manager::INIT_SEED_FROM_UNDEFINED;
-        if (method_name == "current_time") {
-          flag = mygsl::seed_manager::INIT_SEED_FROM_CURRENT_TIME;
-        } else if (method_name == "current_pid") {
-          flag = mygsl::seed_manager::INIT_SEED_FROM_CURRENT_PID;
-        } else if (method_name == "urandom") {
-          flag = mygsl::seed_manager::INIT_SEED_FROM_URANDOM;
-        } else {
-          DT_THROW_IF(true, std::logic_error, "Initialization method '" << method_name << "' is unkown or not supported !");
+      if (! has_init_seed_method()) {
+        // 2014-07-04 XG : Get initialization method for seeds. If seeds are equal
+        // to 0 then their values may be initialized through 4 differents methods:
+        // - 'current_time' i.e. getting seed value from time in seconds,
+        // - 'current_pid'  i.e. getting seed value from the program PID,
+        // - 'urandom' i.e. getting seed value from /dev/urandom
+        // - 'random' i.e. getting seed value from the standard random pseudo device
+        if (manager_config.has_key("init_seed_method")) {
+          set_init_seed_method(manager_config.fetch_string("init_seed_method"));
         }
-        DT_LOG_DEBUG(_logprio(), "Initialization of PRNG seeds is based on '" << method_name << "' method");
-        _seed_manager_.set_init_seed_flags(flag);
       }
+      if (! has_init_seed_method()) {
+        set_init_seed_method("random");
+      }
+      uint32_t flag = mygsl::seed_manager::INIT_SEED_FROM_UNDEFINED;
+      if (get_init_seed_method() == "current_time") {
+        flag = mygsl::seed_manager::INIT_SEED_FROM_CURRENT_TIME;
+      } else if (get_init_seed_method() == "current_pid") {
+        flag = mygsl::seed_manager::INIT_SEED_FROM_CURRENT_PID;
+      } else if (get_init_seed_method() == "urandom") {
+        flag = mygsl::seed_manager::INIT_SEED_FROM_URANDOM;
+      } else if (get_init_seed_method() == "random") {
+        flag = mygsl::seed_manager::INIT_SEED_FROM_RANDOM_DEVICE;
+      } else {
+        DT_THROW(std::logic_error,
+                 "Initialization method '" << get_init_seed_method() << "' is unknown or not supported !");
+      }
+      DT_LOG_DEBUG(_logprio(),
+                   "Initialization of PRNG seeds is based on the '" << get_init_seed_method() << "' method");
+      _seed_manager_.set_init_seed_flags(flag);
 
       // 2011-02-26 FM : only search for the 'number_of_events' property
-      // if '_number_of_events' has not been set yet :
+      // if '_number_of_events_' has not been set yet :
       if (_number_of_events_ == manager::constants::instance().NO_LIMIT) {
         if (manager_config.has_key("number_of_events")) {
           int noevts = manager_config.fetch_integer("number_of_events");
@@ -1176,12 +1207,10 @@ namespace mctools {
       }
 
       // 2014-05-01 FM: add support for output profiles:
-
       // If no supported output profiles have been defined before,
       // search them from setup properties:
       if (_supported_output_profile_ids_.empty()) {
         DT_LOG_TRACE(_logprio(), "No supported output profiles are defined yet...");
-
         if (manager_config.has_key("output_profiles")) {
           DT_LOG_TRACE(_logprio(), "Fetch supported output profiles yet...");
           std::vector<std::string> sops;
@@ -1203,7 +1232,6 @@ namespace mctools {
       // search them from a setup property:
       if (! has_activated_output_profiles()) {
         DT_LOG_TRACE(_logprio(), "No activated output profiles is defined yet...");
-
         // If no activation rule for output profiles is defined for this session:
         if (_output_profiles_activation_rule_.empty()) {
           DT_LOG_TRACE(_logprio(), "No activation rule for output profiles is defined yet...");
@@ -1238,7 +1266,6 @@ namespace mctools {
           _g4_tracking_verbosity_ = tracking_verbosity;
         }
       }
-
       // End of property parsing.
 
       // Begin of special configuration:
@@ -1265,9 +1292,9 @@ namespace mctools {
       DT_LOG_NOTICE(_logprio(), "Geometry manager settings...");
       if (has_external_geom_manager()) {
         DT_LOG_NOTICE(_logprio(), "Use external geometry manager...");
-        DT_THROW_IF (! _external_geom_manager_->is_initialized(),
-                     std::logic_error,
-                     "External geometry manager is not initialized !");
+        DT_THROW_IF(! _external_geom_manager_->is_initialized(),
+                    std::logic_error,
+                    "External geometry manager is not initialized !");
       } else {
         DT_LOG_NOTICE(_logprio(), "Use embedded geometry manager...");
         const datatools::properties & geometry_config
@@ -1276,8 +1303,8 @@ namespace mctools {
           DT_LOG_DEBUG(_logprio(), "Geometry configuration : ");
           geometry_config.tree_dump(std::clog);
         }
-        DT_THROW_IF (! geometry_config.has_key("manager.config"),
-                     std::logic_error, "Missing geometry configuration !");
+        DT_THROW_IF(! geometry_config.has_key("manager.config"),
+                    std::logic_error, "Missing geometry configuration !");
         std::string geom_mgr_prop_filename = geometry_config.fetch_string("manager.config");
         datatools::fetch_path_with_env(geom_mgr_prop_filename);
         datatools::properties geom_mgr_config;
@@ -1327,10 +1354,10 @@ namespace mctools {
           DT_LOG_DEBUG(_logprio(),"Vertex generator manager : ");
           _vg_manager_.tree_dump(std::clog);
         }
-        DT_THROW_IF (! _vg_manager_.has_generator(_vg_name_),
-                     std::logic_error,
-                     "Cannot find vertex generator named '"
-                     + _vg_name_ + "' !");
+        DT_THROW_IF(! _vg_manager_.has_generator(_vg_name_),
+                    std::logic_error,
+                    "Cannot find vertex generator named '"
+                    + _vg_name_ + "' !");
         _vertex_generator_ = &_vg_manager_.grab(_vg_name_);
       } else {
         DT_LOG_WARNING(_logprio(), "No vertex generator settings.");
@@ -1343,9 +1370,9 @@ namespace mctools {
       // Event generator:
       DT_LOG_NOTICE(_logprio(), "Primary event generator settings...");
       datatools::properties primary_generator_config;
-      DT_THROW_IF (!_multi_config_->has_section("event_generator"),
-                   std::logic_error,
-                   "Missing primary event generator configuration !");
+      DT_THROW_IF(!_multi_config_->has_section("event_generator"),
+                  std::logic_error,
+                  "Missing primary event generator configuration !");
       primary_generator_config = _multi_config_->get("event_generator").get_properties();
       _eg_manager_.set_external_prng(_eg_prng_);
       if (primary_generator_config.has_key("manager.config")) {
@@ -1363,9 +1390,9 @@ namespace mctools {
       DT_THROW_IF(!_eg_manager_.is_initialized(),
                   std::logic_error,
                   "Primary event generator manager is not initialized !");
-      DT_THROW_IF (! _eg_manager_.has(_eg_name_),
-                   std::logic_error,
-                   "Cannot find primary event generator named '" << _eg_name_ << "' !");
+      DT_THROW_IF(! _eg_manager_.has(_eg_name_),
+                  std::logic_error,
+                  "Cannot find primary event generator named '" << _eg_name_ << "' !");
       _event_generator_ = &_eg_manager_.grab(_eg_name_);
       return;
     }
@@ -1374,9 +1401,9 @@ namespace mctools {
     {
       // Detector construction:
       DT_LOG_NOTICE(_logprio(), "Detector construction...");
-      DT_THROW_IF (! _multi_config_->has_section("detector_construction"),
-                   std::logic_error,
-                   "Missing detector construction configuration !");
+      DT_THROW_IF(! _multi_config_->has_section("detector_construction"),
+                  std::logic_error,
+                  "Missing detector construction configuration !");
       const datatools::properties & detector_construction_config
         = _multi_config_->get("detector_construction").get_properties();
       _user_detector_construction_ = new detector_construction(*this);
@@ -1390,9 +1417,9 @@ namespace mctools {
     void manager::_init_physics_list ()
     {
       DT_LOG_NOTICE(_logprio(), "Physics list initialization...");
-      DT_THROW_IF (! _multi_config_->has_section("physics_list"),
-                   std::logic_error,
-                   "Missing physics list configuration !");
+      DT_THROW_IF(! _multi_config_->has_section("physics_list"),
+                  std::logic_error,
+                  "Missing physics list configuration !");
       const datatools::properties & physics_list_config
         = _multi_config_->get("physics_list").get_properties();
       _user_physics_list_ = new physics_list;
@@ -1406,9 +1433,9 @@ namespace mctools {
     void manager::_init_run_action ()
     {
       DT_LOG_NOTICE(_logprio(), "Run action initialization...");
-      DT_THROW_IF (! _multi_config_->has_section("run_action"),
-                   std::logic_error,
-                   "Missing run action configuration !");
+      DT_THROW_IF(! _multi_config_->has_section("run_action"),
+                  std::logic_error,
+                  "Missing run action configuration !");
       const datatools::properties & run_action_config
         = _multi_config_->get("run_action").get_properties();
       _user_run_action_ = new run_action(*this);
@@ -1434,9 +1461,9 @@ namespace mctools {
     void manager::_init_event_action ()
     {
       DT_LOG_NOTICE(_logprio(), "Event action initialization...");
-      DT_THROW_IF (! _multi_config_->has_section("event_action"),
-                   std::logic_error,
-                   "Missing event action configuration !");
+      DT_THROW_IF(! _multi_config_->has_section("event_action"),
+                  std::logic_error,
+                  "Missing event action configuration !");
       const datatools::properties & event_action_config
         = _multi_config_->get("event_action").get_properties();
       _user_event_action_ = new event_action(*_user_run_action_,
@@ -1449,9 +1476,9 @@ namespace mctools {
     void manager::_init_primary_generator_action ()
     {
       DT_LOG_NOTICE(_logprio(), "Primary generator action initialization...");
-      DT_THROW_IF (!_multi_config_->has_section("primary_generator_action"),
-                   std::logic_error,
-                   "Missing primary event generator action configuration !");
+      DT_THROW_IF(!_multi_config_->has_section("primary_generator_action"),
+                  std::logic_error,
+                  "Missing primary event generator action configuration !");
       const datatools::properties & primary_generator_config
         = _multi_config_->get("primary_generator_action").get_properties();
 
@@ -1550,39 +1577,43 @@ namespace mctools {
 
     void manager::_init_prngs()
     {
-
       /****************************
        * RANDOM NUMBER GENERATORS *
        ****************************/
 
-      _mgr_prng_.initialize(DEFAULT_PRNG_ID, _mgr_prng_seed_);
-      _vg_prng_.initialize(DEFAULT_PRNG_ID, _vg_prng_seed_);
-      _eg_prng_.initialize(DEFAULT_PRNG_ID, _eg_prng_seed_);
+      _mgr_prng_.initialize(DEFAULT_PRNG_ID,  _mgr_prng_seed_);
+      _vg_prng_.initialize(DEFAULT_PRNG_ID,   _vg_prng_seed_);
+      _eg_prng_.initialize(DEFAULT_PRNG_ID,   _eg_prng_seed_);
       _shpf_prng_.initialize(DEFAULT_PRNG_ID, _shpf_prng_seed_);
 
-      bool needs_seed = true;
-      if (has_input_prng_states_file()) {
-        std::string rsf = get_input_prng_states_file();
-        datatools::fetch_path_with_env(rsf);
-        if (boost::filesystem::exists(rsf.c_str())) {
-          _prng_state_manager_.load();
-          DT_LOG_NOTICE(_logprio(), "Random Number Generator internal state was restored from file '"
-                        << rsf << "'...");
-          needs_seed = false;
-          if (_mgr_prng_seed_ != mygsl::random_utils::SEED_INVALID) {
-            DT_LOG_NOTICE(_logprio(),
-                          "Ignoring the seed for the Random Number Generator initialization !");
-          }
-          _mgr_prng_seed_ = mygsl::random_utils::SEED_INVALID;
-        }
-      }
+      // >>> 2016-06-27 FM: This part needs a review:
+      // bool needs_seed = true;
+      // if (has_input_prng_states_file()) {
+      //   std::string rsf = get_input_prng_states_file();
+      //   datatools::fetch_path_with_env(rsf);
+      //   if (boost::filesystem::exists(rsf.c_str())) {
+      //     _prng_state_manager_.load();
+      //     DT_LOG_NOTICE(_logprio(), "Random Number Generator internal state was restored from file '"
+      //                   << rsf << "'...");
+      //     needs_seed = false;
+      //     // if (_mgr_prng_seed_ != mygsl::random_utils::SEED_INVALID) {
+      //     //   DT_LOG_NOTICE(_logprio(),
+      //     //                 "Ignoring the seed for the Random Number Generator initialization !");
+      //     // }
+      //     // _mgr_prng_seed_ = mygsl::random_utils::SEED_INVALID;
+      //   } else {
+      //     DT_THROW(std::logic_error,
+      //              "Random Number Generator initial state file '" << rsf.c_str() << "' does not exist !");
+      //   }
+      // }
 
+      /*
       // if no status file was loaded, use a seed :
       if (needs_seed) {
-        DT_THROW_IF (_mgr_prng_seed_ == mygsl::random_utils::SEED_INVALID,
-                     std::logic_error,
-                     "No seed was provided for the Random Number Generator !");
-        if (_mgr_prng_seed_ == mygsl::random_utils::SEED_TIME) {
+        DT_THROW_IF(_mgr_prng_seed_ == mygsl::random_utils::SEED_INVALID,
+                    std::logic_error,
+                    "No seed was provided for the Random Number Generator !");
+        if (_mgr_prng_seed_ == mygsl::random_utils::SEED_AUTO) {
           int32_t time_seed =(int)(time(0) & 0xFFFFFFFF);
           _mgr_prng_.set_seed(time_seed);
         }
@@ -1591,6 +1622,8 @@ namespace mctools {
                       << _mgr_prng_seed_);
         _mgr_prng_.set_seed(_mgr_prng_seed_);
       }
+      */
+      // <<< 2016-06-27 FM.
 
       _g4_prng_.set_random(_mgr_prng_);
       CLHEP::HepRandom::setTheEngine(&_g4_prng_);
@@ -1611,7 +1644,6 @@ namespace mctools {
 
       // Main manager:
       _init_core();
-
 
       /********************
        * GEOMETRY MANAGER *
@@ -1708,7 +1740,6 @@ namespace mctools {
       return;
     } // end of manager::_at_init()
 
-
     void manager::_at_reset()
     {
       // std::cerr << "DEVEL: g4::manager::_at_reset(): Entering..." << std::endl;
@@ -1767,19 +1798,18 @@ namespace mctools {
 
     event_action & manager::grab_user_event_action()
     {
-      DT_THROW_IF (! _initialized_, std::logic_error, "Manager is not initialized !");
+      DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
       return * _user_event_action_;
     }
 
     void manager::run_simulation()
     {
-      DT_THROW_IF (! _initialized_, std::logic_error, "Manager is not initialized !");
+      DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
       DT_LOG_NOTICE(_logprio(),"Starting the simulation...");
       _at_run_simulation();
       DT_LOG_NOTICE(_logprio(),"Simulation stops !");
       return;
-    } // end of manager::run_simulation()
-
+    }
 
     void manager::_at_run_simulation()
     {
@@ -1868,10 +1898,10 @@ namespace mctools {
             if (! has_simulation_ctrl()) {
               effective_number_of_events = _number_of_events_;
             }
-            DT_THROW_IF ((effective_number_of_events == 0)
-                         ||(effective_number_of_events > constants::instance().NO_LIMIT),
-                         std::logic_error,
-                         "Invalid number of events for Geant4 !");
+            DT_THROW_IF((effective_number_of_events == 0)
+                        ||(effective_number_of_events > constants::instance().NO_LIMIT),
+                        std::logic_error,
+                        "Invalid number of events for Geant4 !");
             command_oss << effective_number_of_events;
             DT_LOG_NOTICE(_logprio(), "G4 command = " << command_oss.str());
             _g4_UI_->ApplyCommand(command_oss.str());
@@ -1980,7 +2010,6 @@ namespace mctools {
 
 } // end of namespace mctools
 
-
 /** Opening macro for implementation
  *  This macro must be used outside of any namespace.
  */
@@ -2061,7 +2090,6 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                             " * ``\"notice\"``      : print notice messages         \n"
                             " * ``\"information\"`` : print informational messages  \n"
                             " * ``\"debug\"``       : print debug messages          \n"
-                            "                                                       \n"
                             " * ``\"trace\"``       : print trace messages          \n"
                             )
       .add_example("Explicitly set the logging threshold: ::  \n"
@@ -2123,7 +2151,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                    "        \"tracker_details\"                                     \n"
                    "                                                                \n"
                    )
-       ;
+      ;
   }
 
   {
@@ -2152,7 +2180,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                    "        \"Detailed true hits from the tracker volume\"          \n"
                    "                                                                \n"
                    )
-       ;
+      ;
   }
 
   {
@@ -2179,7 +2207,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                    "        \"tracker_details\"                                     \n"
                    "  output_profiles.activation: string = \"ecalo_details + muons_details\" \n"
                    )
-       ;
+      ;
   }
 
   {
@@ -2378,7 +2406,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(mctools::g4::manager,ocd_)
                                "                                                                      \n"
                                "  # See OCD support for class ``mctools::g4::stacking_action``        \n"
                                "                                                                      \n"
-                             );
+                               );
 
   /** Set the validation support flag :
    *  we activate this if the description of all configuration

@@ -369,8 +369,8 @@ namespace mctools {
       }
 
       // Setup :
-      mctools::g4::manager_parameters::setup (_simulation_manager_params_,
-                                              *_simulation_manager_);
+      mctools::g4::manager_parameters::setup(_simulation_manager_params_,
+                                             *_simulation_manager_);
 
       return;
     }

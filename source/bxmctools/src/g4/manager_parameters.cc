@@ -59,6 +59,7 @@ namespace mctools {
       out_ << indent << datatools::i_tree_dumpable::tag << "number_of_events_modulo = " << number_of_events_modulo << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag << "mgr_seed                = " << mgr_seed << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag << "input_prng_states_file  = '" << input_prng_states_file << "'" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "init_seed_method        = '" << init_seed_method << "'" << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag << "output_prng_states_file = '" << output_prng_states_file << "'" << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag << "prng_states_save_modulo = " << prng_states_save_modulo << std::endl;
       out_ << indent << datatools::i_tree_dumpable::tag << "input_prng_seeds_file   = '" << input_prng_seeds_file << "'" << std::endl;
@@ -94,13 +95,14 @@ namespace mctools {
       this->output_prng_states_file.clear();
       this->prng_states_save_modulo = 0; // 0 == not used
       this->input_prng_seeds_file.clear();
+      this->init_seed_method.clear();
       this->output_prng_seeds_file.clear();
       this->output_data_format.clear();
       this->output_data_bank_label.clear();
       this->output_data_file.clear();
       this->vg_name.clear();
-      this->vg_seed = mygsl::random_utils::SEED_INVALID;
       this->eg_name.clear();
+      this->vg_seed = mygsl::random_utils::SEED_INVALID;
       this->eg_seed = mygsl::random_utils::SEED_INVALID;
       this->mgr_seed = mygsl::random_utils::SEED_INVALID;
       this->shpf_seed = mygsl::random_utils::SEED_INVALID;
@@ -116,18 +118,24 @@ namespace mctools {
                                    manager & a_manager)
     {
       // Setup:
-      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.vg_seed),
-                  std::logic_error,
-                  "Invalid vertex generator seed value !");
-      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.eg_seed),
-                  std::logic_error,
-                  "Invalid event generator seed value !");
-      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.mgr_seed),
-                  std::logic_error,
-                  "Invalid G4 generator seed value !");
-      DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.shpf_seed),
-                  std::logic_error,
-                  "Invalid SHPF generator seed value !");
+      if (!a_params.init_seed_method.empty()) {
+        a_manager.set_init_seed_method(a_params.init_seed_method);
+      }
+
+      if (a_params.input_prng_seeds_file.empty()) {
+        DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.vg_seed),
+                    std::logic_error,
+                    "Invalid vertex generator seed value !");
+        DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.eg_seed),
+                    std::logic_error,
+                    "Invalid event generator seed value !");
+        DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.mgr_seed),
+                    std::logic_error,
+                    "Invalid G4 generator seed value !");
+        DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(a_params.shpf_seed),
+                    std::logic_error,
+                    "Invalid SHPF generator seed value !");
+      }
 
       datatools::logger::priority mlogprio = datatools::logger::PRIO_WARNING;
       mlogprio = datatools::logger::get_priority(a_params.logging);
@@ -237,8 +245,6 @@ namespace mctools {
       a_manager.set_interactive(a_params.interactive);
       a_manager.set_g4_visualization(a_params.g4_visu);
 
-      //if (a_params.debug) a_manager.dump_base (clog, "mctools::g4::manager: ", "DEBUG: ");
-
       /*** Configuration file ***/
 
       DT_THROW_IF(a_params.manager_config_filename.empty (),
@@ -252,14 +258,14 @@ namespace mctools {
                   << manager_config_filename << "' does not exist ! ");
       datatools::multi_properties the_configuration("name",
                                                     "",
-                                                    "Configuration for the 'g4' simulation manager");
+                                                    "Configuration for the Geant4 simulation manager");
       the_configuration.read(manager_config_filename);
 
       /*** Initialization ***/
 
       DT_LOG_NOTICE(a_manager.get_logging_priority (),
                     "Initializing the simulation manager...");
-      a_manager.initialize (the_configuration);
+      a_manager.initialize(the_configuration);
       DT_LOG_NOTICE(a_manager.get_logging_priority (),
                     "Simulation manager has been configured and initialized.");
       return;
