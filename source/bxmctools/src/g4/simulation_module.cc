@@ -10,9 +10,6 @@
 #include <stdexcept>
 
 // Third party:
-// - Boost:
-#include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 // - Bayeux/datatools:
 #include <datatools/properties.h>
 #include <datatools/utils.h>
@@ -31,444 +28,356 @@
 #include <mctools/g4/simulation_ctrl.h>
 
 namespace mctools {
+namespace g4 {
 
-  namespace g4 {
+// Registration instantiation macro :
+DPP_MODULE_REGISTRATION_IMPLEMENT(simulation_module, "mctools::g4::simulation_module")
 
-    // Registration instantiation macro :
-    DPP_MODULE_REGISTRATION_IMPLEMENT(simulation_module, "mctools::g4::simulation_module")
 
-    void simulation_module::set_geo_label(const std::string & geo_)
-    {
-      DT_THROW_IF (is_initialized (), std::logic_error,
-                   "Module '" << get_name () << "' is already initialized !");
-      _Geo_label_ = geo_;
-      return;
+// Constructor :
+simulation_module::simulation_module (datatools::logger::priority logging_priority)
+  : dpp::base_module(logging_priority) {
+  geometryServiceName_ = "";
+  simdataBankName_ = "";
+  geometryManagerRef_ = 0;
+  geant4Simulation_ = 0;
+  geant4SimulationController_ = 0;
+}
+
+// Destructor :
+simulation_module::~simulation_module () {
+  // Make sure all internal resources are terminated
+  // before destruction :
+  if (is_initialized()) reset();
+}
+
+// Initialization :
+void simulation_module::initialize(const datatools::properties& config_,
+                                    datatools::service_manager& service_manager_,
+                                    dpp::module_handle_dict_type& /*module_dict_*/) {
+  DT_THROW_IF(is_initialized(),
+              std::logic_error,
+              "Module '" << get_name() << "' is already initialized !");
+
+  // Parsing configuration starts here :
+  this->_common_initialize(config_);
+
+  if (geometryServiceName_.empty()) {
+    if (config_.has_key("Geo_label")) {
+      geometryServiceName_ = config_.fetch_string("Geo_label");
     }
+  }
 
-    const std::string & simulation_module::get_geo_label() const
-    {
-      return _Geo_label_;
+  if (simdataBankName_.empty()) {
+    if (config_.has_key("SD_label")) {
+      simdataBankName_ = config_.fetch_string("SD_label");
     }
+  }
 
-    void simulation_module::set_sd_label(const std::string & sd_)
-    {
-      DT_THROW_IF (is_initialized (), std::logic_error,
-                   "Module '" << get_name () << "' is already initialized !");
-      _SD_label_ = sd_;
-      return;
+  // Special setup parameters for the mctools::g4 simulation manager :
+
+  // Force non-interactive parameters:
+  geant4Parameters_.interactive = false;
+  geant4Parameters_.g4_visu     = false;
+  geant4Parameters_.g4_macro    = "";
+  geant4Parameters_.output_data_file.clear();
+
+  if (geant4Parameters_.logging == "fatal") {
+    if (config_.has_flag("manager.logging.priority")) {
+      geant4Parameters_.logging = config_.fetch_string("manager.logging.priority");
+    } else if (config_.has_flag("manager.debug")) {
+      geant4Parameters_.logging = "debug";
+    } else if (config_.has_flag("manager.verbose")) {
+      geant4Parameters_.logging = "notice";
     }
+  }
 
-    const std::string & simulation_module::get_sd_label() const
-    {
-      return _SD_label_;
+  if (geant4Parameters_.manager_config_filename.empty()) {
+    if (config_.has_key("manager.configuration_filename")) {
+      geant4Parameters_.manager_config_filename
+          = config_.fetch_string("manager.configuration_filename");
     }
+  }
 
-    void simulation_module::set_erase_former_SD_bank(bool e_)
-    {
-      DT_THROW_IF (is_initialized (), std::logic_error,
-                   "Module '" << get_name () << "' is already initialized !");
-      _erase_former_SD_bank_ = e_;
-      return;
+  if (geant4Parameters_.mgr_seed == mygsl::random_utils::SEED_INVALID) {
+    if (config_.has_key("manager.seed")) {
+      geant4Parameters_.mgr_seed
+          = config_.fetch_integer("manager.seed");
     }
+  }
 
-    bool simulation_module::is_erase_former_SD_bank() const
-    {
-      return _erase_former_SD_bank_;
+  if (geant4Parameters_.vg_name.empty()) {
+    if (config_.has_key("manager.vertex_generator_name")) {
+      geant4Parameters_.vg_name
+          = config_.fetch_string("manager.vertex_generator_name");
     }
+  }
 
-    void simulation_module::set_geometry_manager (const geomtools::manager & geometry_manager_)
-    {
-      DT_THROW_IF (_geometry_manager_ != 0 && _geometry_manager_->is_initialized (),
-                   std::logic_error,
-                   "Embedded geometry manager is already initialized !");
-      _geometry_manager_ = &geometry_manager_;
-      return;
+  if (geant4Parameters_.vg_seed == mygsl::random_utils::SEED_INVALID) {
+    if (config_.has_key("manager.vertex_generator_seed")) {
+      geant4Parameters_.vg_seed
+          = config_.fetch_integer("manager.vertex_generator_seed");
     }
+  }
 
-    void simulation_module::set_simulation_manager_params(const manager_parameters & params_)
-    {
-      DT_THROW_IF (is_initialized (), std::logic_error,
-                   "Module '" << get_name () << "' is already initialized !");
-      _simulation_manager_params_ = params_;
-      return;
+  if (geant4Parameters_.eg_name.empty()) {
+    if (config_.has_key("manager.event_generator_name")) {
+      geant4Parameters_.eg_name
+          = config_.fetch_string("manager.event_generator_name");
     }
+  }
 
-    const manager_parameters & simulation_module::get_simulation_manager_params() const
-    {
-      return _simulation_manager_params_;
+  if (geant4Parameters_.eg_seed == mygsl::random_utils::SEED_INVALID) {
+    if (config_.has_key("manager.event_generator_seed")) {
+      geant4Parameters_.eg_seed
+          = config_.fetch_integer("manager.event_generator_seed");
     }
+  }
 
-    // Constructor :
-    simulation_module::simulation_module (datatools::logger::priority logging_priority)
-      : dpp::base_module(logging_priority)
-    {
-      _Geo_label_            = "";
-      _SD_label_             = "";
-      _erase_former_SD_bank_ = false;
-      _geometry_manager_     = 0;
-      _simulation_manager_   = 0;
-      _simulation_ctrl_      = 0;
-      return;
+  if (geant4Parameters_.shpf_seed == mygsl::random_utils::SEED_INVALID) {
+    if (config_.has_key("manager.shpf_seed")) {
+      geant4Parameters_.shpf_seed
+          = config_.fetch_integer("manager.shpf_seed");
     }
+  }
 
-    // Destructor :
-    simulation_module::~simulation_module ()
-    {
-      // Make sure all internal resources are terminated
-      // before destruction :
-      if (is_initialized ()) reset ();
-      return;
+  if (geant4Parameters_.input_prng_seeds_file.empty()) {
+    if (config_.has_key("manager.input_prng_seeds_file")) {
+      geant4Parameters_.input_prng_seeds_file
+          = config_.fetch_string("manager.input_prng_seeds_file");
     }
+  }
 
-    // Initialization :
-    void simulation_module::initialize (const datatools::properties  & config_,
-                                        datatools::service_manager   & service_manager_,
-                                        dpp::module_handle_dict_type & /*module_dict_*/)
-    {
-      DT_THROW_IF (is_initialized(), std::logic_error,
-                   "Module '" << get_name() << "' is already initialized !");
-
-      // Parsing configuration starts here :
-
-      _common_initialize(config_);
-
-      if (! _erase_former_SD_bank_) {
-        if (config_.has_flag ("erase_former_SD_bank")) {
-          _erase_former_SD_bank_ = true;
-        }
-      }
-      if (_Geo_label_.empty()) {
-        if (config_.has_key("Geo_label")) {
-          _Geo_label_ = config_.fetch_string("Geo_label");
-        }
-      }
-
-      if (_SD_label_.empty()) {
-        if (config_.has_key("SD_label")) {
-          _SD_label_ = config_.fetch_string("SD_label");
-        }
-      }
-
-      // Special setup parameters for the mctools::g4 simulation manager :
-
-      // Force non-interactive parameters:
-      _simulation_manager_params_.interactive = false;
-      _simulation_manager_params_.g4_visu     = false;
-      _simulation_manager_params_.g4_macro    = "";
-      _simulation_manager_params_.output_data_file.clear();
-
-      if (_simulation_manager_params_.logging == "fatal") {
-        if (config_.has_flag("manager.logging.priority")) {
-          _simulation_manager_params_.logging = config_.fetch_string("manager.logging.priority");
-        } else if (config_.has_flag("manager.debug")) {
-          _simulation_manager_params_.logging = "debug";
-        } else if (config_.has_flag("manager.verbose")) {
-          _simulation_manager_params_.logging = "notice";
-        }
-      }
-
-      if (_simulation_manager_params_.manager_config_filename.empty()) {
-        if (config_.has_key("manager.configuration_filename")) {
-          _simulation_manager_params_.manager_config_filename
-            = config_.fetch_string("manager.configuration_filename");
-        }
-      }
-
-      if (_simulation_manager_params_.mgr_seed == mygsl::random_utils::SEED_INVALID) {
-        if (config_.has_key("manager.seed")) {
-          _simulation_manager_params_.mgr_seed
-            = config_.fetch_integer("manager.seed");
-        }
-      }
-
-      if (_simulation_manager_params_.vg_name.empty()) {
-        if (config_.has_key("manager.vertex_generator_name")) {
-          _simulation_manager_params_.vg_name
-            = config_.fetch_string("manager.vertex_generator_name");
-        }
-      }
-
-      if (_simulation_manager_params_.vg_seed == mygsl::random_utils::SEED_INVALID) {
-        if (config_.has_key("manager.vertex_generator_seed")) {
-          _simulation_manager_params_.vg_seed
-            = config_.fetch_integer("manager.vertex_generator_seed");
-        }
-      }
-
-      if (_simulation_manager_params_.eg_name.empty()) {
-        if (config_.has_key("manager.event_generator_name")) {
-          _simulation_manager_params_.eg_name
-            = config_.fetch_string("manager.event_generator_name");
-        }
-      }
-
-      if (_simulation_manager_params_.eg_seed == mygsl::random_utils::SEED_INVALID) {
-        if (config_.has_key("manager.event_generator_seed")) {
-          _simulation_manager_params_.eg_seed
-            = config_.fetch_integer("manager.event_generator_seed");
-        }
-      }
-
-      if (_simulation_manager_params_.shpf_seed == mygsl::random_utils::SEED_INVALID) {
-        if (config_.has_key("manager.shpf_seed")) {
-          _simulation_manager_params_.shpf_seed
-            = config_.fetch_integer("manager.shpf_seed");
-        }
-      }
-
-      if (_simulation_manager_params_.input_prng_seeds_file.empty()) {
-        if (config_.has_key("manager.input_prng_seeds_file")) {
-          _simulation_manager_params_.input_prng_seeds_file
-            = config_.fetch_string("manager.input_prng_seeds_file");
-        }
-      }
-
-      if (_simulation_manager_params_.output_prng_seeds_file.empty()) {
-        if (config_.has_key("manager.output_prng_seeds_file")) {
-          _simulation_manager_params_.output_prng_seeds_file
-            = config_.fetch_string("manager.output_prng_seeds_file");
-        }
-      }
-
-      if (_simulation_manager_params_.input_prng_states_file.empty()) {
-        if (config_.has_key("manager.input_prng_states_file")) {
-          _simulation_manager_params_.input_prng_states_file
-            = config_.fetch_string("manager.input_prng_states_file");
-        }
-      }
-
-      if (_simulation_manager_params_.output_prng_states_file.empty()) {
-        if (config_.has_key("manager.output_prng_states_file")) {
-          _simulation_manager_params_.output_prng_states_file
-            = config_.fetch_string("manager.output_prng_states_file");
-        }
-      }
-
-      if (_simulation_manager_params_.prng_states_save_modulo == 0) {
-        if (config_.has_key("manager.prng_states_save_modulo")) {
-          _simulation_manager_params_.prng_states_save_modulo
-            = config_.fetch_integer("manager.prng_states_save_modulo");
-        }
-      }
-
-      if (_simulation_manager_params_.number_of_events_modulo == 0) {
-        if (config_.has_key("manager.number_of_events_modulo")) {
-          _simulation_manager_params_.number_of_events_modulo
-            = config_.fetch_integer("manager.number_of_events_modulo");
-        }
-      }
-
-      // More setup parameters can be added.
-
-      if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
-        _simulation_manager_params_.tree_dump(std::clog, "", "[trace]: ");
-      }
-      // Parsing configuration stops here .
-
-      // Initialization starts here :
-
-      if (_geometry_manager_ == 0)  {
-        // Access to the Geometry Service :
-        DT_THROW_IF (_Geo_label_.empty (), std::logic_error,
-                     "Module '" << get_name ()
-                     << "' has no valid '" << "Geo_label" << "' property !");
-        if (service_manager_.has(_Geo_label_)
-            && service_manager_.is_a<geomtools::geometry_service>(_Geo_label_)) {
-            // Fetch a reference to the geometry service :
-            geomtools::geometry_service & Geo
-              = service_manager_.grab<geomtools::geometry_service>(_Geo_label_);
-            // Request for a reference to the geometry manager and installation
-            // in the simulation manager :
-            this->set_geometry_manager (Geo.get_geom_manager ());
-          } else {
-          DT_THROW_IF (true, std::logic_error,
-                       "Module '" << get_name ()
-                       << "' has no '" << _Geo_label_ << "' geometry service !");
-        }
-      }
-
-      DT_THROW_IF (_geometry_manager_ == 0, std::logic_error, "Missing geometry manager !");
-
-      if (_SD_label_.empty ()) {
-        // Use the default label for the 'simulated data' bank :
-        _SD_label_ = ::mctools::event_utils::EVENT_DEFAULT_SIMULATED_DATA_LABEL; // "SD"
-      }
-
-      // Allocate internal resources :
-      _initialize_manager (service_manager_);
-
-      DT_LOG_NOTICE(get_logging_priority(), "Initialization done.");
-      // Initialization stops here.
-
-      _set_initialized (true);
-      return;
+  if (geant4Parameters_.output_prng_seeds_file.empty()) {
+    if (config_.has_key("manager.output_prng_seeds_file")) {
+      geant4Parameters_.output_prng_seeds_file
+          = config_.fetch_string("manager.output_prng_seeds_file");
     }
+  }
 
-    // Reset :
-    void simulation_module::reset ()
-    {
-      DT_LOG_TRACE_ENTERING(get_logging_priority());
-      DT_THROW_IF (! is_initialized (), std::logic_error,
-                   "Module '" << get_name () << "' is not initialized !");
-
-      _set_initialized (false);
-
-      if (_simulation_ctrl_ != 0) {
-        // Destruction of the thread synchronization object :
-        _simulation_ctrl_->set_stop_requested();
-        delete _simulation_ctrl_;
-        _simulation_ctrl_ = 0;
-      }
-
-      // Destroy internal resources :
-      _terminate_manager ();
-
-      // Blank the module with default neutral values :
-      _geometry_manager_ = 0;
-      _SD_label_  = "";
-      _Geo_label_ = "";
-      _erase_former_SD_bank_ = false;
-
-      DT_LOG_TRACE_EXITING(get_logging_priority());
-      return;
+  if (geant4Parameters_.input_prng_states_file.empty()) {
+    if (config_.has_key("manager.input_prng_states_file")) {
+      geant4Parameters_.input_prng_states_file
+          = config_.fetch_string("manager.input_prng_states_file");
     }
+  }
 
-    // Processing :
-    dpp::base_module::process_status
-    simulation_module::process(datatools::things & event_record_)
-    {
-      DT_THROW_IF (! is_initialized (), std::logic_error,
-                   "Module '" << get_name () << "' is not initialized !");
-      int status = _simulate_event(event_record_);
-      return status == 0 ? dpp::base_module::PROCESS_OK : dpp::base_module::PROCESS_FATAL;
+  if (geant4Parameters_.output_prng_states_file.empty()) {
+    if (config_.has_key("manager.output_prng_states_file")) {
+      geant4Parameters_.output_prng_states_file
+          = config_.fetch_string("manager.output_prng_states_file");
     }
+  }
 
-    void simulation_module::_initialize_manager(datatools::service_manager & smgr_)
-    {
-      // Allocate the simulation manager :
-      _simulation_manager_ = new manager;
-
-      // 2012-04-30 FM: add support for a handle to the service manager
-      _simulation_manager_->set_service_manager(smgr_);
-
-      // Install the geometry manager accessed from the
-      // Geometry service (bypassing the embedded geometry manager
-      // in the simulation manager) :
-      _simulation_manager_->set_external_geom_manager(*_geometry_manager_);
-
-      // Install a simulation controler in the manager :
-      if (_simulation_ctrl_ == 0) {
-        DT_LOG_TRACE(get_logging_priority(),
-                     "Allocating the 'simulation_ctrl' object...");
-        _simulation_ctrl_ = new simulation_ctrl(*_simulation_manager_);
-        DT_LOG_TRACE(get_logging_priority(),
-                     "Install the 'simulation_ctrl' object in the G4 simulation manager...");
-        _simulation_manager_->set_simulation_ctrl(*_simulation_ctrl_);
-        DT_LOG_TRACE(get_logging_priority(),
-                     "New 'simulation_ctrl' object is allocated.");
-      }
-
-      // Setup :
-      mctools::g4::manager_parameters::setup(_simulation_manager_params_,
-                                             *_simulation_manager_);
-
-      return;
+  if (geant4Parameters_.prng_states_save_modulo == 0) {
+    if (config_.has_key("manager.prng_states_save_modulo")) {
+      geant4Parameters_.prng_states_save_modulo
+          = config_.fetch_integer("manager.prng_states_save_modulo");
     }
+  }
 
-    void simulation_module::_terminate_manager ()
-    {
-
-      if (_simulation_ctrl_ != 0) {
-        delete _simulation_ctrl_;
-        _simulation_ctrl_ = 0;
-      }
-
-      if (_simulation_manager_ !=  0) {
-        delete _simulation_manager_;
-        _simulation_manager_ = 0;
-      }
-      _simulation_manager_params_.reset ();
-      return;
+  if (geant4Parameters_.number_of_events_modulo == 0) {
+    if (config_.has_key("manager.number_of_events_modulo")) {
+      geant4Parameters_.number_of_events_modulo
+          = config_.fetch_integer("manager.number_of_events_modulo");
     }
+  }
 
-    int simulation_module::_simulate_event (datatools::things & event_record_)
+  // More setup parameters can be added.
+
+  if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+    geant4Parameters_.tree_dump(std::clog, "", "[trace]: ");
+  }
+  // Parsing configuration stops here .
+
+  // Initialization starts here :
+
+  if (geometryManagerRef_ == 0)  {
+    // Access to the Geometry Service :
+    DT_THROW_IF (geometryServiceName_.empty (), std::logic_error,
+                 "Module '" << get_name ()
+                 << "' has no valid '" << "Geo_label" << "' property !");
+    if (service_manager_.has(geometryServiceName_)
+        && service_manager_.is_a<geomtools::geometry_service>(geometryServiceName_)) {
+      // Fetch a reference to the geometry service :
+      geomtools::geometry_service & Geo
+          = service_manager_.grab<geomtools::geometry_service>(geometryServiceName_);
+      // Request for a reference to the geometry manager and installation
+      // in the simulation manager :
+      this->set_geometry_manager (Geo.get_geom_manager ());
+    } else {
+      DT_THROW_IF (true, std::logic_error,
+                   "Module '" << get_name ()
+                   << "' has no '" << geometryServiceName_ << "' geometry service !");
+    }
+  }
+
+  DT_THROW_IF (geometryManagerRef_ == 0, std::logic_error, "Missing geometry manager !");
+
+  if (simdataBankName_.empty()) {
+    // Use the default label for the 'simulated data' bank :
+    simdataBankName_ = ::mctools::event_utils::EVENT_DEFAULT_SIMULATED_DATA_LABEL; // "SD"
+  }
+
+  // Allocate internal resources :
+  this->_initialize_manager(service_manager_);
+  this->_set_initialized(true);
+}
+
+// Reset :
+void simulation_module::reset() {
+  DT_THROW_IF(!is_initialized(), std::logic_error,
+               "Module '" << get_name () << "' is not initialized !");
+
+  _set_initialized (false);
+
+  if(geant4SimulationController_ != 0) {
+    // Destruction of the thread synchronization object :
+    geant4SimulationController_->set_stop_requested();
+    delete geant4SimulationController_;
+    geant4SimulationController_ = 0;
+  }
+
+  // Destroy internal resources :
+  _terminate_manager();
+
+  // Blank the module with default neutral values :
+  geometryManagerRef_ = 0;
+  simdataBankName_  = "";
+  geometryServiceName_ = "";
+}
+
+// Processing :
+dpp::base_module::process_status
+simulation_module::process(datatools::things & event_record_) {
+  DT_THROW_IF (!this->is_initialized (), std::logic_error,
+               "Module '" << get_name () << "' is not initialized !");
+  int status = this->_simulate_event(event_record_);
+  return status == 0 ? dpp::base_module::PROCESS_OK : dpp::base_module::PROCESS_FATAL;
+}
+
+
+void simulation_module::set_geo_label(const std::string & geo_) {
+  DT_THROW_IF (is_initialized (), std::logic_error,
+               "Module '" << get_name () << "' is already initialized !");
+  geometryServiceName_ = geo_;
+}
+
+const std::string & simulation_module::get_geo_label() const {
+  return geometryServiceName_;
+}
+
+void simulation_module::set_sd_label(const std::string & sd_) {
+  DT_THROW_IF (is_initialized (), std::logic_error,
+               "Module '" << get_name () << "' is already initialized !");
+  simdataBankName_ = sd_;
+}
+
+const std::string & simulation_module::get_sd_label() const {
+  return simdataBankName_;
+}
+
+
+void simulation_module::set_geometry_manager(const geomtools::manager & geometry_manager_) {
+  DT_THROW_IF (geometryManagerRef_ != 0 && geometryManagerRef_->is_initialized (),
+               std::logic_error,
+               "Embedded geometry manager is already initialized !");
+  geometryManagerRef_ = &geometry_manager_;
+}
+
+void simulation_module::set_geant4_parameters(const manager_parameters & params_) {
+  DT_THROW_IF (is_initialized (), std::logic_error,
+               "Module '" << get_name () << "' is already initialized !");
+  geant4Parameters_ = params_;
+}
+
+const manager_parameters& simulation_module::get_geant4_parameters() const {
+  return geant4Parameters_;
+}
+
+
+void simulation_module::_initialize_manager(datatools::service_manager& smgr_) {
+  // Allocate the simulation manager :
+  geant4Simulation_ = new manager;
+
+  // 2012-04-30 FM: add support for a handle to the service manager
+  geant4Simulation_->set_service_manager(smgr_);
+
+  // Install the geometry manager accessed from the
+  // Geometry service (bypassing the embedded geometry manager
+  // in the simulation manager) :
+  geant4Simulation_->set_external_geom_manager(*geometryManagerRef_);
+
+  // Install a simulation controler in the manager :
+  if(geant4SimulationController_ == 0) {
+    geant4SimulationController_ = new simulation_ctrl(*geant4Simulation_);
+    geant4Simulation_->set_simulation_ctrl(*geant4SimulationController_);
+  }
+
+  // Setup :
+  mctools::g4::manager_parameters::setup(geant4Parameters_,
+                                         *geant4Simulation_);
+}
+
+void simulation_module::_terminate_manager() {
+  if (geant4SimulationController_ != 0) {
+    delete geant4SimulationController_;
+    geant4SimulationController_ = 0;
+  }
+
+  if (geant4Simulation_ !=  0) {
+    delete geant4Simulation_;
+    geant4Simulation_ = 0;
+  }
+
+  geant4Parameters_.reset ();
+}
+
+int simulation_module::_simulate_event(datatools::things& workItem) {
+  // Bank name must be unique
+  DT_THROW_IF(workItem.has(simdataBankName_),
+              std::runtime_error,
+              "Work item input to module '" << this->get_name()
+              << "' already has data bank named '" << simdataBankName_ << "'");
+  auto& sdBank = workItem.add<mctools::simulated_data>(simdataBankName_);
+  geant4Simulation_->grab_user_event_action().set_external_event_data(sdBank);
+
+  {
     {
-      // Fetch the simulated data :
-      mctools::simulated_data * ptr_SD = 0;
-      bool former_SD = false;
-      if (event_record_.has(_SD_label_) &&
-          event_record_.is_a<mctools::simulated_data>(_SD_label_)) {
-        ptr_SD = &event_record_.grab<mctools::simulated_data>(_SD_label_);
-        former_SD = true;
-      } else {
-        DT_LOG_TRACE(get_logging_priority(),
-                     "Add the 'SD' bank in the event record...");
-        ptr_SD = &event_record_.add<mctools::simulated_data>(_SD_label_);
-      }
-      mctools::simulated_data & SD = *ptr_SD;
-      DT_THROW_IF(former_SD && ! _erase_former_SD_bank_,
-                  std::logic_error,
-                  "Module '" << get_name () << "' cannot remove former '"
-                  << _SD_label_ <<  "' bank from simulated data !");
-
       DT_LOG_TRACE(get_logging_priority(),
-                   "Clear the '" << _SD_label_ << "' bank from the event record...");
-      SD.clear();
+                   "Acquire the event control lock...");
+      boost::mutex::scoped_lock lock(*geant4SimulationController_->event_mutex);
 
-      DT_LOG_TRACE(get_logging_priority(),
-                  "Pass the 'simulated_data' '" << _SD_label_
-                   << "' object to the bank from the event record...");
-      _simulation_manager_->grab_user_event_action().set_external_event_data(SD);
-
-      {
-        // if (_simulation_ctrl_ == 0) {
-        //   DT_LOG_TRACE(get_logging_priority(),
-        //                "Allocating the 'simulation_ctrl' object...");
-        //   _simulation_ctrl_ = new simulation_ctrl (*_simulation_manager_);
-        //   DT_LOG_TRACE(get_logging_priority(),
-        //                "Install the 'simulation_ctrl' object in the G4 simulation manager...");
-        //   _simulation_manager_->set_simulation_ctrl (*_simulation_ctrl_);
-        //   DT_LOG_TRACE(get_logging_priority(),
-        //                "New 'simulation_ctrl' object is allocated.");
-        // }
-        {
-          DT_LOG_TRACE(get_logging_priority(),
-                       "Acquire the event control lock...");
-          boost::mutex::scoped_lock lock(*_simulation_ctrl_->event_mutex);
-
-          if (_simulation_ctrl_->simulation_thread == 0) {
-            DT_LOG_TRACE(get_logging_priority(),
-                         "Starting the G4 simulation manager from its own thread...");
-            _simulation_ctrl_->start();
-            DT_LOG_TRACE(get_logging_priority(),
-                         "G4 simulation manager thread started.");
-            DT_LOG_TRACE(get_logging_priority(),
-                         "Now wait for G4 to run an event...");
-          }
-          DT_LOG_TRACE(get_logging_priority(),
-                       "Notify that event control is now available for the G4 simulation thread...");
-          _simulation_ctrl_->event_availability_status = simulation_ctrl::AVAILABLE_FOR_G4;
-          _simulation_ctrl_->event_available_condition->notify_one();
-        }
-
-        // Wait for the release of the event control by the G4 process :
-        {
-          DT_LOG_TRACE(get_logging_priority(),
-                       "Wait for the release of the event control by the G4 simulation thread...");
-          boost::mutex::scoped_lock lock(*_simulation_ctrl_->event_mutex);
-          while (_simulation_ctrl_->event_availability_status == simulation_ctrl::AVAILABLE_FOR_G4) {
-            _simulation_ctrl_->event_available_condition->wait(*_simulation_ctrl_->event_mutex);
-          }
-          DT_LOG_TRACE(get_logging_priority(),
-                       "Ok ! The event control is released by the G4 simulation thread...");
-        }
-
+      if (geant4SimulationController_->simulation_thread == 0) {
+        DT_LOG_TRACE(get_logging_priority(),
+                     "Starting the G4 simulation manager from its own thread...");
+        geant4SimulationController_->start();
+        DT_LOG_TRACE(get_logging_priority(),
+                     "G4 simulation manager thread started.");
+        DT_LOG_TRACE(get_logging_priority(),
+                     "Now wait for G4 to run an event...");
       }
-      return 0;
+      DT_LOG_TRACE(get_logging_priority(),
+                   "Notify that event control is now available for the G4 simulation thread...");
+      geant4SimulationController_->event_availability_status = simulation_ctrl::AVAILABLE_FOR_G4;
+      geant4SimulationController_->event_available_condition->notify_one();
     }
 
-  }  // end of namespace g4
-
+    // Wait for the release of the event control by the G4 process :
+    {
+      DT_LOG_TRACE(get_logging_priority(),
+                   "Wait for the release of the event control by the G4 simulation thread...");
+      boost::mutex::scoped_lock lock(*geant4SimulationController_->event_mutex);
+      while (geant4SimulationController_->event_availability_status == simulation_ctrl::AVAILABLE_FOR_G4) {
+        geant4SimulationController_->event_available_condition->wait(*geant4SimulationController_->event_mutex);
+      }
+      DT_LOG_TRACE(get_logging_priority(),
+                   "Ok ! The event control is released by the G4 simulation thread...");
+    }
+  }
+  return 0;
+}
+}  // end of namespace g4
 }  // end of namespace mctools
 
 // OCD support for class 'mctools::g4::simulation_module' :

@@ -20,94 +20,82 @@
 #include <mctools/g4/manager_parameters.h>
 
 namespace geomtools {
-  // Forward declaration :
-  class manager;
+// Forward declaration :
+class manager;
 }
 
 namespace mctools {
+// Forward declaration :
+class simulated_data;
 
-  // Forward declaration :
-  class simulated_data;
+namespace g4 {
+// Foward declarations
+class manager;
+class simulation_ctrl;
 
-  namespace g4 {
+/// \brief The Geant4 simulation module based on Bayeux/dpp API
+class simulation_module : public dpp::base_module {
+ public:
+  /// Constructor
+  simulation_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
 
-    class manager;
-    class simulation_ctrl;
+  /// Destructor
+  virtual ~simulation_module();
 
-    /// \brief The Geant4 simulation module based on Bayeux/dpp API
-    class simulation_module : public dpp::base_module
-    {
-    public:
+  /// Initialization
+  virtual void initialize(const datatools::properties & /* config_ */,
+                          datatools::service_manager & /* service_mgr_ */,
+                          dpp::module_handle_dict_type & /* modules_map_ */);
 
-      /// Set the geometry service label (only used if no geometry manager is provided)
-      void set_geo_label(const std::string &);
+  /// Reset
+  virtual void reset();
 
-      /// Get the geometry service label (only used if no geometry manager is provided)
-      const std::string & get_geo_label() const;
+  /// Read/Process/Fill/Delete data
+  virtual dpp::base_module::process_status process(datatools::things & /* event_record_ */);
 
-      /// Set the SD bank label
-      void set_sd_label(const std::string &);
+  /// Set the geometry service label (only used if no geometry manager is provided)
+  void set_geo_label(const std::string &);
 
-      /// Get the SD bank label
-      const std::string & get_sd_label() const;
+  /// Get the geometry service label (only used if no geometry manager is provided)
+  const std::string& get_geo_label() const;
 
-      /// Set the flag to erased existing SD bank in the current event record
-      void set_erase_former_SD_bank(bool e_);
+  /// Set the SD bank label
+  void set_sd_label(const std::string &);
 
-      /// Check if existing SD bank should be erased in the current event record
-      bool is_erase_former_SD_bank() const;
+  /// Get the SD bank label
+  const std::string& get_sd_label() const;
 
-      /// Set the reference to some external geoemtry manager
-      void set_geometry_manager(const geomtools::manager & geometry_manager_);
+  /// Set the reference to an external geometry manager
+  void set_geometry_manager(const geomtools::manager& gm);
 
-      /// Set the simulation manager parameters
-      void set_simulation_manager_params(const manager_parameters &);
+  /// Set the simulation manager parameters
+  void set_geant4_parameters(const manager_parameters& params);
 
-      /// Return a non mutable reference to the simulation manager parameters
-      const manager_parameters & get_simulation_manager_params() const;
+  /// Return a non mutable reference to the simulation manager parameters
+  const manager_parameters& get_geant4_parameters() const;
 
-      /// Constructor
-      simulation_module(datatools::logger::priority logging_priority = datatools::logger::PRIO_FATAL);
+ protected :
+  void _initialize_manager(datatools::service_manager & /* smgr_ */);
 
-      /// Destructor
-      virtual ~simulation_module();
+  void _terminate_manager();
 
-      /// Initialization
-      virtual void initialize(const datatools::properties & /* config_ */,
-                              datatools::service_manager & /* service_mgr_ */,
-                              dpp::module_handle_dict_type & /* modules_map_ */);
+  int _simulate_event(datatools::things & /* event_record_ */);
 
-      /// Reset
-      virtual void reset();
+ private:
+  std::string geometryServiceName_;     //!< The label of the Geometry service to be accessed
+  std::string simdataBankName_;      //!< The label of the 'simulated_data' bank in the event record
 
-      /// Data record processing
-      virtual dpp::base_module::process_status process(datatools::things & /* event_record_ */);
+  const geomtools::manager* geometryManagerRef_; //!< Non-mutable reference to the geometry manager
 
-    protected :
+  manager_parameters geant4Parameters_;           //!< The configuration parameters for the GEANT4 simulation manager
+  manager*           geant4Simulation_;           //!< The embedded GEANT4 simulation manager
+  simulation_ctrl*   geant4SimulationController_; //!< The embedded control object for thread synchronization
 
-      void _initialize_manager(datatools::service_manager & /* smgr_ */);
+  // Registration of the module :
+  DPP_MODULE_REGISTRATION_INTERFACE(simulation_module)
+};
 
-      void _terminate_manager();
-
-      int _simulate_event(datatools::things & /* event_record_ */);
-
-    private:
-
-      std::string _Geo_label_;     //!< The label of the Geometry service to be accessed
-      std::string _SD_label_;      //!< The label of the 'simulated_data' bank in the event record
-      bool _erase_former_SD_bank_; //!< A flag to erase former 'simulated data' bank from the event record
-
-      manager_parameters _simulation_manager_params_; //!< The configuration parameters for the GEANT4 simulation manager
-      const geomtools::manager * _geometry_manager_;   //!< Non-mutable reference to the geometry manager
-      manager                  * _simulation_manager_; //!< The embedded GEANT4 simulation manager
-      simulation_ctrl          * _simulation_ctrl_;    //!< The embedded control object for thread synchronization
-
-      // Registration of the module :
-      DPP_MODULE_REGISTRATION_INTERFACE(simulation_module)
-
-    };
-
-  }  // end of namespace g4
+}  // end of namespace g4
 
 }  // end of namespace mctools
 
