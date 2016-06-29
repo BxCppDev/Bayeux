@@ -66,7 +66,8 @@ Preparation
 	  libcurl4-openssl-dev \
 	  libexpat-dev \
 	  libncurses-dev \
-	  zlib1g-dev
+	  zlib1g-dev \
+	  libxmu-dev
 ..
 
 Prepare the installation
