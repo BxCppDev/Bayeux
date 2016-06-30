@@ -64,29 +64,29 @@ DATATOOLS_SERIALIZATION_EXT_BACKWARD_SERIAL_TAG_IMPLEMENTATION(::datatools::prop
   }                                                                     \
   /**/
 
-#define DT_PROP_CFG_READ_LOG_NOTICE(LogLevel,FileName,                  \
-                                    SectionName, SectionLineNumber,     \
-                                    LineNumber, Message)                \
-  {                                                                     \
-    std::stringstream sDT_LOG;                                          \
+#define DT_PROP_CFG_READ_LOG_DEBUG(LogLevel,FileName,                    \
+                                   SectionName, SectionLineNumber,       \
+                                   LineNumber, Message)                  \
+  {                                                                      \
+    std::stringstream sDT_LOG;                                           \
     sDT_LOG << "[" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << ": "; \
-    if (!FileName.empty()) {                                            \
-      sDT_LOG << "in file '" << FileName << "': ";                      \
-    }                                                                   \
-    if (SectionName.empty()) {                                          \
-      if (LineNumber > 0) {                                             \
-        sDT_LOG << "at line #" << LineNumber << ": ";                   \
-      }                                                                 \
-    } else {                                                            \
-      sDT_LOG << "in section '" << SectionName << "'";                  \
-      if (SectionLineNumber > 0) {                                      \
-        sDT_LOG << " starting at line #" << SectionLineNumber;          \
-      }                                                                 \
-      sDT_LOG << ": ";                                                  \
-    }                                                                   \
-    sDT_LOG << Message << "]";                                          \
-    DT_LOG_NOTICE(LogLevel, sDT_LOG.str());                             \
-  }                                                                     \
+    if (!FileName.empty()) {                                             \
+      sDT_LOG << "in file '" << FileName << "': ";                       \
+    }                                                                    \
+    if (SectionName.empty()) {                                           \
+      if (LineNumber > 0) {                                              \
+        sDT_LOG << "at line #" << LineNumber << ": ";                    \
+      }                                                                  \
+    } else {                                                             \
+      sDT_LOG << "in section '" << SectionName << "'";                   \
+      if (SectionLineNumber > 0) {                                       \
+        sDT_LOG << " starting at line #" << SectionLineNumber;           \
+      }                                                                  \
+      sDT_LOG << ": ";                                                   \
+    }                                                                    \
+    sDT_LOG << Message << "]";                                           \
+    DT_LOG_DEBUG(LogLevel, sDT_LOG.str());                               \
+  }                                                                      \
   /**/
 
 namespace {
@@ -3596,14 +3596,14 @@ namespace datatools {
 
             // Process the current line:
             if (!process_line) {
-              DT_PROP_CFG_READ_LOG_NOTICE(datatools::logger::PRIO_ALWAYS,
-                                          _current_filename_,
-                                          _section_name_,
-                                          _section_start_line_number_,
-                                          _current_line_number_,
-                                          "Do not process property value repr '"
-                                          << property_value_str << "' for property '"
-                                          << prop_key << "'...");
+              DT_PROP_CFG_READ_LOG_DEBUG(logging,
+                                         _current_filename_,
+                                         _section_name_,
+                                         _section_start_line_number_,
+                                         _current_line_number_,
+                                         "Do not process property value repr '"
+                                         << property_value_str << "' for property '"
+                                         << prop_key << "'...");
             } else {
               std::string pv_str = property_value_str;
               boost::trim(pv_str);
