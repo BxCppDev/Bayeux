@@ -143,24 +143,283 @@ manager::~manager() {
 void manager::initialize(const datatools::multi_properties & multi_config_) {
   DT_THROW_IF(_initialized_, std::logic_error, "Manager is already initialized !");
   _multi_config_ = &multi_config_;
-  _at_init();
+  this->initialize_impl();
   _initialized_ = true;
 }
 
 void manager::reset() {
-  DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
+  DT_THROW_IF(!_initialized_, std::logic_error, "Manager is not initialized !");
   _initialized_ = false;
-  _at_reset();
+  this->reset_impl();
   _init_defaults();
 }
 
 void manager::run_simulation() {
   DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
   DT_LOG_NOTICE(_logprio(),"Starting the simulation...");
-  _at_run_simulation();
+  this->run_simulation_impl();
   DT_LOG_NOTICE(_logprio(),"Simulation stops !");
 }
 
+bool manager::is_initialized() const {
+  return _initialized_;
+}
+
+bool manager::is_automatic() const {
+  return is_batch() && _g4_macro_.empty();
+}
+
+//----------------------------------------------------------------------
+// Simulation Initializations (Geometry/Physics, possibly via services)
+//----------------------------------------------------------------------
+bool manager::has_service_manager() const {
+  return _service_manager_ != 0;
+}
+
+void manager::set_service_manager(datatools::service_manager& sm) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _service_manager_ = &sm;
+}
+
+datatools::service_manager & manager::grab_service_manager() {
+  DT_THROW_IF(_service_manager_ == 0, std::logic_error,
+              "No service manager is available !");
+  return *_service_manager_;
+}
+
+const datatools::service_manager & manager::get_service_manager() const {
+  DT_THROW_IF(_service_manager_ == 0, std::logic_error,
+              "No service manager is available !");
+  return *_service_manager_;
+}
+
+bool manager::has_external_geom_manager() const {
+  return _external_geom_manager_ != 0;
+}
+
+void manager::set_external_geom_manager(const geomtools::manager& gm) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  DT_THROW_IF(_geom_manager_.is_initialized(),
+              std::logic_error,
+              "Embedded geometry manager is already initialized ! "
+              << "Cannot substitute another geometry manager !");
+  DT_THROW_IF(!gm.is_initialized(),
+              std::logic_error,
+              "External geometry manager is not initialized !");
+  _external_geom_manager_ = &gm;
+}
+
+const geomtools::manager & manager::get_geom_manager() const {
+  if (has_external_geom_manager()) {
+    DT_THROW_IF(! _external_geom_manager_->is_initialized(),
+                std::logic_error,
+                "External geometry manager is not initialized !");
+    return *_external_geom_manager_;
+  }
+  DT_THROW_IF(! _geom_manager_.is_initialized(),
+              std::logic_error, "Geometry manager is not initialized !");
+  return _geom_manager_;
+}
+
+//----------------------------------------------------------------------
+// Simulation User Actions (EvtGen, Run, Event etc)
+//----------------------------------------------------------------------
+void manager::set_event_generator_name(const std::string & eg_name_) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _eg_name_ = eg_name_;
+}
+
+void manager::set_event_generator_seed(int seed_) {
+  if (_eg_prng_.is_initialized()) {
+    DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  }
+  _eg_prng_seed_ = seed_;
+}
+
+const genbb::manager& manager::get_eg_manager() const {
+  return _eg_manager_;
+}
+
+genbb::manager& manager::grab_eg_manager() {
+  return _eg_manager_;
+}
+
+bool manager::has_event_generator() const {
+  return _event_generator_ != 0;
+}
+
+const genbb::i_genbb& manager::get_event_generator() const {
+  DT_THROW_IF(!this->has_event_generator(),
+              std::logic_error,
+              "No event generator is available !");
+  return *_event_generator_;
+}
+
+void manager::set_vertex_generator_name(const std::string & vg_name_) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _vg_name_ = vg_name_;
+}
+
+void manager::set_vertex_generator_seed(int seed_) {
+  if (_vg_prng_.is_initialized()) {
+    DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  }
+  _vg_prng_seed_ = seed_;
+}
+
+const genvtx::manager& manager::get_vg_manager() const {
+  return _vg_manager_;
+}
+
+genvtx::manager& manager::grab_vg_manager() {
+  return _vg_manager_;
+}
+
+bool manager::has_vertex_generator() const {
+  return _vertex_generator_ != 0;
+}
+
+const genvtx::i_vertex_generator& manager::get_vertex_generator() const {
+  DT_THROW_IF(!this->has_vertex_generator(),
+              std::logic_error,
+              "No vertex generator is available !");
+  return *_vertex_generator_;
+}
+
+event_action& manager::grab_user_event_action() {
+  DT_THROW_IF( _initialized_, std::logic_error, "Manager is not initialized !");
+  return *_user_event_action_;
+}
+
+
+uint32_t manager::get_number_of_events() const {
+  return _number_of_events_;
+}
+
+void manager::set_number_of_events(uint32_t n) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  DT_THROW_IF(n < NUMBER_OF_EVENTS_LOWER_LIMIT,
+              std::domain_error,
+              "Invalid 'zero' number of events !");
+  DT_THROW_IF(n > NUMBER_OF_EVENTS_UPPER_LIMIT,
+              std::domain_error,
+              "Invalid 'too large' number of events !");
+  _number_of_events_ = n;
+  if (_number_of_events_ > NUMBER_OF_EVENTS_WARNING_LIMIT && !has_simulation_ctrl()) {
+    DT_LOG_WARNING(_logprio(), "Number of events is high = " << _number_of_events_);
+  }
+  DT_LOG_DEBUG(_logprio(), "Number of events = " << _number_of_events_);
+}
+
+
+bool manager::has_number_of_events_modulo() const {
+  return _number_of_events_modulo_ > run_action::NUMBER_OF_EVENTS_MODULO_NONE;
+}
+
+int manager::get_number_of_events_modulo() const {
+  return _number_of_events_modulo_;
+}
+
+void manager::set_number_of_events_modulo(int a_m) {
+  if (a_m <= run_action::NUMBER_OF_EVENTS_MODULO_NONE) {
+    _number_of_events_modulo_ = run_action::NUMBER_OF_EVENTS_MODULO_NONE;
+  } else {
+    _number_of_events_modulo_ = a_m;
+  }
+  DT_LOG_DEBUG(_logprio(), "Number of events modulo = " << _number_of_events_modulo_);
+}
+
+void manager::set_use_run_header_footer(bool a_use_run_header_footer) {
+  _use_run_header_footer_ = a_use_run_header_footer;
+}
+
+bool manager::using_run_header_footer() const {
+  return _use_run_header_footer_;
+}
+
+bool manager::is_batch() const {
+  return ! is_interactive();
+}
+
+bool manager::is_interactive() const {
+  return _interactive_;
+}
+
+void manager::set_interactive(bool new_value_) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _interactive_ = new_value_;
+  if (! _interactive_) _g4_visualization_ = false;
+}
+
+void manager::set_g4_visualization(bool new_value_) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+#ifdef G4VIS_USE
+  _g4_visualization_ = new_value_;
+  if (_g4_visualization_) _interactive_ = true;
+#else // ! G4VIS_USE
+  _g4_visualization_ = false;
+  if (new_value_) {
+    DT_LOG_WARNING(_logprio(), "G4 visualization is not available !");
+  }
+#endif // G4VIS_USE
+}
+
+bool manager::has_g4_visualization() const {
+  return is_interactive() && _g4_visualization_;
+}
+
+
+bool manager::has_g4_macro() const {
+  return ! _g4_macro_.empty();
+}
+
+const std::string& manager::get_g4_macro() const {
+  return _g4_macro_;
+}
+
+void manager::set_g4_macro(const std::string& g4_macro_) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _g4_macro_ = g4_macro_;
+}
+
+void manager::set_use_track_history(const bool use) {
+  _use_track_history_ = use;
+}
+
+bool manager::has_track_history() const {
+  return _use_track_history_;
+}
+
+const track_history& manager::get_track_history() const {
+  return _track_history_;
+}
+
+track_history& manager::grab_track_history() {
+  return _track_history_;
+}
+
+bool manager::forbids_private_hits() const {
+  return _forbid_private_hits_;
+}
+
+void manager::set_forbid_private_hits(bool a_forbid) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _forbid_private_hits_ = a_forbid;
+}
+
+void manager::set_dont_save_no_sensitive_hit_events(bool a_dont_save) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _dont_save_no_sensitive_hit_events_ = a_dont_save;
+}
+
+bool manager::dont_save_no_sensitive_hit_events() const {
+  return _dont_save_no_sensitive_hit_events_;
+}
+
+
+//----------------------------------------------------------------------
+// Multithreaded Control
+//----------------------------------------------------------------------
 bool manager::has_simulation_ctrl() const {
   return _simulation_ctrl_ != 0;
 }
@@ -192,8 +451,228 @@ simulation_ctrl& manager::grab_simulation_ctrl() {
   return *_simulation_ctrl_;
 }
 
-bool manager::is_initialized() const {
-  return _initialized_;
+//----------------------------------------------------------------------
+// Random number (over)control
+//----------------------------------------------------------------------
+mygsl::rng& manager::grab_vg_prng() {
+  return _vg_prng_;
+}
+
+mygsl::rng& manager::grab_eg_prng() {
+  return _eg_prng_;
+}
+
+mygsl::rng& manager::grab_shpf_prng() {
+  return _shpf_prng_;
+}
+
+const mygsl::rng& manager::get_mgr_prng() const {
+  return _mgr_prng_;
+}
+
+mygsl::rng& manager::grab_mgr_prng() {
+  return _mgr_prng_;
+}
+
+const g4_prng& manager::get_g4_prng() const {
+  return _g4_prng_;
+}
+
+g4_prng& manager::grab_g4_prng() {
+  return _g4_prng_;
+}
+
+
+const mygsl::seed_manager& manager::get_seed_manager() const {
+  return _seed_manager_;
+}
+
+mygsl::seed_manager& manager::grab_seed_manager() {
+  return _seed_manager_;
+}
+
+const mygsl::prng_state_manager& manager::get_state_manager() const {
+  return _prng_state_manager_;
+}
+
+mygsl::prng_state_manager& manager::grab_state_manager() {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  return _prng_state_manager_;
+}
+
+void manager::record_current_prng_states() {
+  // G4 PRNG :
+  _mgr_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().G4_MANAGER_LABEL).state_buffer);
+
+  // Vertex generator PRNG :
+  _vg_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().VERTEX_GENERATOR_LABEL).state_buffer);
+
+  // Event generator PRNG :
+  _eg_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().EVENT_GENERATOR_LABEL).state_buffer);
+
+  // PRNG of the Step Hit Processor Factory :
+  _shpf_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().SHPF_LABEL).state_buffer);
+
+  _prng_state_manager_.increment_counter(get_prng_state_save_modulo());
+  if (is_debug()) _prng_state_manager_.dump(std::clog);
+  _prng_state_manager_.store();
+}
+
+
+
+
+void manager::set_prng_state_save_modulo(int a_modulo) {
+  if (a_modulo < 1) {
+    _prng_state_save_modulo_ = 0;
+    return;
+  }
+  _prng_state_save_modulo_ = a_modulo;
+}
+
+int manager::get_prng_state_save_modulo() const {
+  return _prng_state_save_modulo_;
+}
+
+bool manager::has_prng_state_save_modulo() const {
+  return _prng_state_save_modulo_ > 0;
+}
+
+
+void manager::reset_output_prng_seeds_file() {
+  _output_prng_seeds_file_ = "";
+}
+
+void manager::reset_input_prng_seeds_file() {
+  _input_prng_seeds_file_ = "";
+}
+
+bool manager::has_input_prng_seeds_file() const {
+  return ! _input_prng_seeds_file_.empty();
+}
+
+const std::string& manager::get_input_prng_seeds_file() const {
+  return _input_prng_seeds_file_;
+}
+
+void manager::set_input_prng_seeds_file(const std::string & fn_) {
+  _input_prng_seeds_file_ = fn_;
+}
+
+bool manager::has_output_prng_seeds_file() const {
+  return ! _output_prng_seeds_file_.empty();
+}
+
+const std::string& manager::get_output_prng_seeds_file() const {
+  return _output_prng_seeds_file_;
+}
+
+void manager::set_output_prng_seeds_file(const std::string & fn_) {
+  _output_prng_seeds_file_ = fn_;
+}
+
+void manager::reset_output_prng_states_file() {
+  _output_prng_states_file_ = "";
+}
+
+const std::string & manager::get_output_prng_states_file() const {
+  return _output_prng_states_file_;
+}
+
+bool manager::has_output_prng_states_file() const {
+  return ! _output_prng_states_file_.empty();
+}
+
+void manager::set_output_prng_states_file(const std::string & fn_) {
+  _output_prng_states_file_ = fn_;
+}
+
+void manager::reset_input_prng_states_file() {
+  _input_prng_states_file_ = "";
+}
+
+const std::string & manager::get_input_prng_states_file() const {
+  return _input_prng_states_file_;
+}
+
+bool manager::has_input_prng_states_file() const {
+  return ! _input_prng_states_file_.empty();
+}
+
+void manager::set_input_prng_states_file(const std::string & fn_) {
+  _input_prng_states_file_ = fn_;
+}
+
+void manager::set_shpf_prng_seed(int seed_) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  _shpf_prng_seed_ = seed_;
+}
+
+void manager::set_mgr_prng_seed(int rseed_) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  if (rseed_ < 0) {
+    _mgr_prng_seed_ = mygsl::random_utils::SEED_INVALID;
+  } else {
+    _mgr_prng_seed_ = rseed_;
+  }
+}
+
+bool manager::has_mgr_prng_seed() const {
+  return _mgr_prng_seed_ != mygsl::random_utils::SEED_INVALID;
+}
+
+int manager::get_mgr_prng_seed() const {
+  return _mgr_prng_seed_;
+}
+
+bool manager::has_init_seed_method() const {
+  return !_init_seed_method_.empty();
+}
+
+void manager::set_init_seed_method(const std::string & method_) {
+  _init_seed_method_ = method_;
+}
+
+const std::string & manager::get_init_seed_method() const {
+  return _init_seed_method_;
+}
+
+//----------------------------------------------------------------------
+// I/O (over)control
+//----------------------------------------------------------------------
+void manager::set_output_data_format_by_label(const std::string & ff_) {
+  io_utils::data_format_type df = io_utils::label_to_data_format(ff_);
+  DT_THROW_IF(df == io_utils::DATA_FORMAT_INVALID, std::logic_error, "Invalid output data format '" << ff_ << "'!");
+  set_output_data_format(df);
+}
+
+void manager::reset_output_data_format() {
+  _output_data_format_ = io_utils::DATA_FORMAT_INVALID;
+}
+
+void manager::set_output_data_format(io_utils::data_format_type of_) {
+  _output_data_format_ = of_;
+  if (_output_data_format_ == io_utils::DATA_FORMAT_BANK) {
+    if (_output_data_bank_label_.empty()) {
+      set_output_data_bank_label(event_utils::event_default_simulated_data_label());
+    }
+  }
+}
+
+void manager::set_output_data_bank_label(const std::string & bl_) {
+  _output_data_bank_label_ = bl_;
+  if (_output_data_format_ != io_utils::DATA_FORMAT_INVALID) {
+    set_output_data_format(io_utils::DATA_FORMAT_BANK);
+  }
+  DT_THROW_IF(_output_data_format_ != io_utils::DATA_FORMAT_BANK, std::logic_error,
+              "Cannot set output data bank label with the plain output data format!");
+}
+
+io_utils::data_format_type manager::get_output_data_format() const {
+  return _output_data_format_;
+}
+
+void manager::set_output_data_file(const std::string & fn_) {
+  _output_data_file_ = fn_;
 }
 
 bool manager::using_time_stat() const {
@@ -205,101 +684,23 @@ void manager::set_using_time_stat(bool new_value_) {
   _use_time_stat_ = new_value_;
 }
 
-bool manager::has_service_manager() const {
-  return _service_manager_ != 0;
-}
-
-void manager::set_service_manager(datatools::service_manager& smgr_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _service_manager_ = &smgr_;
-}
-
-datatools::service_manager & manager::grab_service_manager() {
-  DT_THROW_IF(_service_manager_ == 0, std::logic_error,
-              "No service manager is available !");
-  return *_service_manager_;
-}
-
-const datatools::service_manager & manager::get_service_manager() const
-{
-  DT_THROW_IF(_service_manager_ == 0, std::logic_error,
-              "No service manager is available !");
-  return *_service_manager_;
-}
-
-bool manager::has_external_geom_manager() const {
-  return _external_geom_manager_ != 0;
-}
-
-void manager::set_external_geom_manager(const geomtools::manager& a_geometry_manager) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  DT_THROW_IF(_geom_manager_.is_initialized(),
-              std::logic_error,
-              "Embedded geometry manager is already initialized ! "
-              << "Cannot substitute another geometry manager !");
-  DT_THROW_IF(! a_geometry_manager.is_initialized(),
-              std::logic_error,
-              "External geometry manager is not initialized !");
-  _external_geom_manager_ = &a_geometry_manager;
-}
-
-const geomtools::manager & manager::get_geom_manager() const {
-  if (has_external_geom_manager()) {
-    DT_THROW_IF(! _external_geom_manager_->is_initialized(),
-                std::logic_error,
-                "External geometry manager is not initialized !");
-    return *_external_geom_manager_;
-  }
-  DT_THROW_IF(! _geom_manager_.is_initialized(),
-              std::logic_error, "Geometry manager is not initialized !");
-  return _geom_manager_;
-}
-
-bool manager::forbids_private_hits() const {
-  return _forbid_private_hits_;
-}
-
-void manager::set_forbid_private_hits(bool a_forbid) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _forbid_private_hits_ = a_forbid;
-}
-
-bool manager::dont_save_no_sensitive_hit_events() const {
-  return _dont_save_no_sensitive_hit_events_;
-}
-
-void manager::set_dont_save_no_sensitive_hit_events(bool a_dont_save) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _dont_save_no_sensitive_hit_events_ = a_dont_save;
-}
-
 const manager::CT_map & manager::get_CT_map() const {
   return _CTs_;
 }
 
-manager::CT_map & manager::grab_CT_map() {
+manager::CT_map& manager::grab_CT_map() {
   return _CTs_;
 }
 
-bool manager::is_interactive() const {
-  return _interactive_;
-}
-
-bool manager::is_batch() const {
-  return ! is_interactive();
-}
-
-void manager::set_interactive(bool new_value_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _interactive_ = new_value_;
-  if (! _interactive_) _g4_visualization_ = false;
-}
-
+//----------------------------------------------------------------------
+// Output Profiles
+//----------------------------------------------------------------------
 bool manager::has_supported_output_profile(const std::string & profile_id_) const {
   return _supported_output_profile_ids_.find(profile_id_) != _supported_output_profile_ids_.end();
 }
 
-void manager::add_supported_output_profile(const std::string & profile_id_, const std::string & description_) {
+void manager::add_supported_output_profile(const std::string& profile_id_,
+                                           const std::string& description_) {
   DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
   std::string profile_id = profile_id_;
   boost::trim(profile_id);
@@ -318,7 +719,7 @@ void manager::add_supported_output_profile(const std::string & profile_id_, cons
   DT_LOG_NOTICE(_logprio(), "Output profile '" << profile_id << "' is supported.");
 }
 
-const std::map<std::string, std::string> & manager::get_supported_output_profiles() const {
+const std::map<std::string, std::string>& manager::get_supported_output_profiles() const {
   return _supported_output_profile_ids_;
 }
 
@@ -326,165 +727,368 @@ bool manager::has_activated_output_profiles() const {
   return _activated_output_profile_ids_.size() > 0;
 }
 
-bool manager::has_activated_output_profile(const std::string & output_profile_id_) const {
-  return _activated_output_profile_ids_.count(output_profile_id_) == 1;
+bool manager::has_activated_output_profile(const std::string& id) const {
+  return _activated_output_profile_ids_.count(id) == 1;
 }
 
-void manager::set_output_profiles_activation_rule(const std::string & rule_) {
+void manager::activate_output_profile(const std::string& id) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  DT_THROW_IF(! has_supported_output_profile(id),
+              std::logic_error,
+              "Unsupported output profile '" << id << "' !");
+  _activated_output_profile_ids_.insert(id);
+  DT_LOG_NOTICE(_logprio(), "Activate the output profile '" << id << "'");
+}
+
+void manager::deactivate_output_profile(const std::string& id) {
+  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+  if (has_activated_output_profile(id)) {
+    _activated_output_profile_ids_.erase(id);
+  }
+}
+
+void manager::set_output_profiles_activation_rule(const std::string& rule_) {
   DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
   _output_profiles_activation_rule_ = rule_;
 }
 
-void manager::apply_output_profiles_activation_rule(const std::string & output_profiles_activation_rule_) {
+void manager::apply_output_profiles_activation_rule(const std::string& rule) {
   DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  if (output_profiles_activation_rule_.empty()) return;
+  if (rule.empty()) return;
   std::vector<std::string> activated_output_profile_ids;
-  boost::split(activated_output_profile_ids, output_profiles_activation_rule_,boost::is_any_of("+"));
-  for (int i = 0; i < (int) activated_output_profile_ids.size(); i++) {
+  boost::split(activated_output_profile_ids, rule, boost::is_any_of("+"));
+  for (size_t i {0}; i < activated_output_profile_ids.size(); ++i) {
     std::string profile_id = activated_output_profile_ids[i];
     boost::trim(profile_id);
     activate_output_profile(profile_id);
   }
 }
 
-void manager::activate_output_profile(const std::string & output_profile_id_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  DT_THROW_IF(! has_supported_output_profile(output_profile_id_),
-              std::logic_error,
-              "Unsupported output profile '" << output_profile_id_ << "' !");
-  _activated_output_profile_ids_.insert(output_profile_id_);
-  DT_LOG_NOTICE(_logprio(), "Activate the output profile '" << output_profile_id_ << "'");
-}
-
-void manager::deactivate_output_profile(const std::string & output_profile_id_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  if (has_activated_output_profile(output_profile_id_)) {
-    _activated_output_profile_ids_.erase(output_profile_id_);
+void manager::fetch_activated_output_profile_ids(std::vector<std::string>& ids) const {
+  for (const auto& i : _activated_output_profile_ids_) {
+    ids.push_back(i);
   }
 }
 
-void manager::fetch_activated_output_profile_ids(std::vector<std::string>& activated_output_profile_ids_) const {
-  for (std::set<std::string>::const_iterator i = _activated_output_profile_ids_.begin();
-       i != _activated_output_profile_ids_.end();
-       i++) {
-    activated_output_profile_ids_.push_back(*i);
-  }
-}
-
-const std::set<std::string> & manager::get_activated_output_profile_ids() const {
+const std::set<std::string>& manager::get_activated_output_profile_ids() const {
   return _activated_output_profile_ids_;
 }
 
-bool manager::has_g4_visualization() const {
-  return is_interactive() && _g4_visualization_;
+
+//----------------------------------------------------------------------
+// Dump-To-Stream
+//----------------------------------------------------------------------
+void manager::dump(std::ostream& os) const {
+  dump_base(os, "mctools::g4::manager: ", "");
 }
 
-const std::string & manager::get_g4_macro() const {
-  return _g4_macro_;
+void manager::dump_base(std::ostream& os,
+                        const std::string& title,
+                        const std::string& iIndent) const {
+  std::string indent;
+  if (!iIndent.empty()) indent = iIndent;
+  if (!title.empty()) {
+    os << indent << title << std::endl;
+  }
+  os << indent << "|-- Debug:        " << is_debug() << std::endl;
+  os << indent << "|-- Batch:        " << is_batch() << std::endl;
+  os << indent << "|-- Interactive:  " << is_interactive() << std::endl;
+  os << indent << "|-- Automatic:    " << is_automatic() << std::endl;
+  os << indent << "|-- G4 visu.:     " << has_g4_visualization() << std::endl;
+  os << indent << "|-- G4 macro:     '" << get_g4_macro() << "'" << std::endl;
+  os << indent << "|-- No events:    " << get_number_of_events() << std::endl;
+  os << indent << "|-- G4 PRNG seed: " << _mgr_prng_seed_ << " " << std::endl;
+  os << indent << "|-- G4 PRNG name: '"
+     << (get_mgr_prng().is_initialized()? get_mgr_prng().name(): "[none]")
+     << "' " << std::endl;
+  os << indent << "|-- PRNG seeds input file:   '"
+     << _input_prng_seeds_file_ << "' " << std::endl;
+  os << indent << "|-- PRNG seeds output file:  '"
+     << _output_prng_seeds_file_ << "' " << std::endl;
+  os << indent << "|-- PRNG states input file:  '"
+     << _input_prng_states_file_ << "' " << std::endl;
+  os << indent << "|-- PRNG states output file: '"
+     << _output_prng_states_file_ << "' " << std::endl;
+  os << indent << "|-- Supported output profiles = ";
+
+  if (_supported_output_profile_ids_.size()) {
+    os << _supported_output_profile_ids_.size() << std::endl;
+  } else {
+    os << "<none>" << std::endl;
+  }
+
+  for (auto i = _supported_output_profile_ids_.begin();
+       i != _supported_output_profile_ids_.end();
+       ++i) {
+    auto j = i;
+    j++;
+    os << "|   ";
+    if (j == _supported_output_profile_ids_.end()) {
+      os << "`-- ";
+    } else {
+      os << "|-- ";
+    }
+    os << "Profile : '" << i->first << "' : " << i->second << std::endl;
+  }
+
+  os << indent << "|-- Activated output profiles = ";
+  if (_activated_output_profile_ids_.size()) {
+    os << _activated_output_profile_ids_.size() << std::endl;
+  } else {
+    os << "<none>" << std::endl;
+  }
+
+  for (auto i = _activated_output_profile_ids_.begin();
+       i != _activated_output_profile_ids_.end();
+       ++i) {
+    auto j = i;
+    j++;
+    os << "|   ";
+    if (j == _activated_output_profile_ids_.end()) {
+      os << "`-- ";
+    } else {
+      os << "|-- ";
+    }
+    os << "Profile : '" << *i << std::endl;
+  }
+  os << indent << "`-- end" << std::endl;
 }
 
-bool manager::has_g4_macro() const {
-  return ! _g4_macro_.empty();
-}
 
-void manager::set_g4_macro(const std::string& g4_macro_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _g4_macro_ = g4_macro_;
-}
 
-void manager::set_g4_visualization(bool new_value_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+//----------------------------------------------------------------------
+// Private implementation details
+//----------------------------------------------------------------------
+void manager::initialize_impl() {
+  /****************
+   * MAIN MANAGER *
+   ****************/
+  _init_core();
+
+  /********************
+   * GEOMETRY MANAGER *
+   ********************/
+  _init_geometry();
+
+  /********************
+   * VERTEX GENERATOR *
+   ********************/
+  _init_vertex_generator();
+
+  /*******************
+   * EVENT GENERATOR *
+   *******************/
+  _init_event_generator();
+
+  /****************************
+   * USER ACTIONS FOR GEANT 4 *
+   ****************************/
+  // Run manager:
+  _g4_run_manager_ = new G4RunManager;
+
+  /*** User initializations ***/
+  // Detector construction:
+  _init_detector_construction ();
+
+  // Physics list:
+  _init_physics_list ();
+
 #ifdef G4VIS_USE
-  _g4_visualization_ = new_value_;
-  if (_g4_visualization_) _interactive_ = true;
-#else // ! G4VIS_USE
-  _g4_visualization_ = false;
-  if (new_value_) {
-    DT_LOG_WARNING(_logprio(), "G4 visualization is not available !");
+  // G4 visualization:
+  _g4_vis_manager_ = 0;
+  if (has_g4_visualization()) {
+    // std::cerr << "DEVEL: _g4_vis_manager_\n";
+    _g4_vis_manager_ = new G4VisExecutive;
+    _g4_vis_manager_->Initialize();
   }
-#endif // G4VIS_USE
-}
+#endif
 
-bool manager::is_automatic() const {
-  return is_batch() && _g4_macro_.empty();
-}
+  // User actions:
+  // Run action:
+  _init_run_action ();
 
-void manager::set_number_of_events(uint32_t nevents_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  DT_THROW_IF(nevents_ < NUMBER_OF_EVENTS_LOWER_LIMIT,
-              std::domain_error,
-              "Invalid 'zero' number of events !");
-  DT_THROW_IF(nevents_ > NUMBER_OF_EVENTS_UPPER_LIMIT,
-              std::domain_error,
-              "Invalid 'too large' number of events !");
-  _number_of_events_ = nevents_;
-  if (_number_of_events_ > NUMBER_OF_EVENTS_WARNING_LIMIT && !has_simulation_ctrl()) {
-    DT_LOG_WARNING(_logprio(), "Number of events is high = " << _number_of_events_);
+  // Event action:
+  _init_event_action ();
+
+  // Primary generator:
+  _init_primary_generator_action ();
+
+  // Tracking action:
+  _init_tracking_action ();
+
+  // Stepping action:
+  _init_stepping_action ();
+
+  // Stacking action:
+  _init_stacking_action ();
+
+  // G4 kernel initialization:
+  DT_LOG_NOTICE(_logprio(), "G4 kernel initialization...");
+  _g4_run_manager_->Initialize();
+
+  _g4_UI_ = G4UImanager::GetUIpointer();
+
+  /*****************
+   * FINAL ACTIONS *
+   *****************/
+  // init the dictionary of PRNG internal state records :
+  _init_prngs_states();
+} // end of manager::_at_init()
+
+void manager::reset_impl() {
+  if (_use_time_stat_) {
+    for (CT_map::iterator i = _CTs_.begin();
+         i != _CTs_.end();
+         i++) {
+      i->second.tree_dump(std::clog, i->first);
+      i->second.reset();
+    }
   }
-  DT_LOG_DEBUG(_logprio(), "Number of events = " << _number_of_events_);
-}
 
-const mygsl::seed_manager & manager::get_seed_manager() const {
-  return _seed_manager_;
-}
-
-mygsl::seed_manager & manager::grab_seed_manager() {
-  return _seed_manager_;
-}
-
-const mygsl::prng_state_manager & manager::get_state_manager() const {
-  return _prng_state_manager_;
-}
-
-mygsl::prng_state_manager & manager::grab_state_manager() {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  return _prng_state_manager_;
-}
-
-void manager::set_event_generator_seed(int seed_) {
-  if (_eg_prng_.is_initialized()) {
-    DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+#ifdef G4VIS_USE
+  if (_g4_vis_manager_) {
+    delete _g4_vis_manager_;
+    _g4_vis_manager_ = 0;
   }
-  _eg_prng_seed_ = seed_;
-}
-
-void manager::set_event_generator_name(const std::string & eg_name_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _eg_name_ = eg_name_;
-}
-
-void manager::set_vertex_generator_seed(int seed_) {
-  if (_vg_prng_.is_initialized()) {
-    DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
+#endif
+  if (_g4_run_manager_) {
+    delete _g4_run_manager_;
+    _g4_run_manager_ = 0;
   }
-  _vg_prng_seed_ = seed_;
+
+  if (_g4_stepping_verbosity_) {
+    delete _g4_stepping_verbosity_;
+    _g4_stepping_verbosity_ = 0;
+  }
+
+  if (has_event_generator()) {
+    _event_generator_ = 0;
+  }
+
+  if (has_vertex_generator()) {
+    _vertex_generator_ = 0;
+  }
+
+  _vg_prng_.reset();
+  _eg_prng_.reset();
+  _shpf_prng_.reset();
+  _mgr_prng_.reset();
+
+  reset_simulation_ctrl();
+
+  _track_history_.reset();
 }
 
-void manager::set_vertex_generator_name(const std::string & vg_name_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _vg_name_ = vg_name_;
-}
+void manager::run_simulation_impl() {
+  std::string g4_macro;
+  if (has_g4_macro()) {
+    g4_macro = _g4_macro_;
+    datatools::fetch_path_with_env(g4_macro);
+    if (! boost::filesystem::exists(g4_macro)) {
+      std::ostringstream message;
+      message << "Macro '" << g4_macro << "' does not exist !";
+      G4Exception("mctools::g4::manager::_at_run_simulation",
+                  "FileError",
+                  RunMustBeAborted,
+                  message.str().c_str());
+    }
+  }
 
-void manager::set_shpf_prng_seed(int seed_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  _shpf_prng_seed_ = seed_;
-}
+  // Interactive mode:
+  if (is_interactive()) {
+    DT_LOG_NOTICE(_logprio(), "Entering interactive mode...");
+#ifdef G4VIS_USE
+    if (has_g4_visualization()) {
+      if (_g4_vis_manager_) {
+        //_g4_vis_manager_->SetVerboseLevel("quiet");
+      }
+    }
+#endif
 
-void manager::set_use_track_history(const bool use_) {
-  _use_track_history_ = use_;
-}
+    // G4UIterminal is a(dumb) terminal.
+    G4UIsession * g4_session = 0;
 
-bool manager::has_track_history() const {
-  return _use_track_history_;
-}
+#ifdef G4UI_USE_TCSH
+    g4_session = new G4UIterminal(new G4UItcsh);
+#else
+    g4_session = new G4UIterminal();
+#endif
+    if (! g4_macro.empty()) {
+      std::ostringstream command_oss;
+      command_oss << "/control/execute ";
+      command_oss << g4_macro;
+      _g4_UI_->ApplyCommand(command_oss.str());
+    }
+    g4_session->SessionStart();
+    delete g4_session;
+  } else { // Batch mode:
+    DT_LOG_NOTICE(_logprio(),"Entering batch mode...");
 
-const track_history & manager::get_track_history() const {
-  return _track_history_;
-}
+#ifdef G4VIS_USE
+    if (has_g4_visualization()) {
+      if (_g4_vis_manager_) {
+        //_g4_vis_manager_->SetVerboseLevel("quiet");
+      }
+    }
+#endif
 
-track_history & manager::grab_track_history() {
-  return _track_history_;
-}
+    // pure automatic mode: no macro is executed, only beam on
+    if (is_automatic()) {
+      DT_LOG_NOTICE(_logprio(), "Entering automatic mode...");
+
+      /*    command = "/random/setSavingFlag true";
+            UI->ApplyCommand(command);
+            cout << "APPLYING RESET" << std::endl;
+            command = "/random/resetEngineFrom currentRun.rndm";
+            UI->ApplyCommand(command);
+            */
+
+      // set tracking verbosity:
+      {
+        std::ostringstream command_oss;
+        command_oss << "/tracking/verbose ";
+        command_oss << _g4_tracking_verbosity_;
+        _g4_UI_->ApplyCommand(command_oss.str());
+      }
+
+      // shoot events:
+      {
+        std::ostringstream command_oss;
+        command_oss << "/run/beamOn ";
+        uint32_t effective_number_of_events = constants::instance().NO_LIMIT;
+        /*
+           if (_number_of_events == constants::instance().NO_LIMIT)
+           {
+        //command_oss << _number_of_events;
+        }
+        */
+        if (! has_simulation_ctrl()) {
+          effective_number_of_events = _number_of_events_;
+        }
+        DT_THROW_IF((effective_number_of_events == 0)
+                    ||(effective_number_of_events > constants::instance().NO_LIMIT),
+                    std::logic_error,
+                    "Invalid number of events for Geant4 !");
+        command_oss << effective_number_of_events;
+        DT_LOG_NOTICE(_logprio(), "G4 command = " << command_oss.str());
+        _g4_UI_->ApplyCommand(command_oss.str());
+      }
+    } else {
+      std::ostringstream command_oss;
+      command_oss << "/control/execute ";
+      command_oss << g4_macro;
+      _g4_UI_->ApplyCommand(command_oss.str());
+    }
+  }
+
+  {
+    // 2011-03-03 FM :
+    DT_LOG_NOTICE(_logprio(),
+                  "Record the final PRNG internal states after the session has stopped normaly.");
+    this->record_current_prng_states();
+  }
+} // end of manager::_at_run_simulation()
+
 
 void manager::_init_defaults() {
   // Pointers:
@@ -540,404 +1144,6 @@ void manager::_init_defaults() {
   // - Data Libs:
   geant4_data_library dl;
   dl.configure_data();
-}
-
-void manager::set_use_run_header_footer(bool a_use_run_header_footer) {
-  _use_run_header_footer_ = a_use_run_header_footer;
-}
-
-bool manager::using_run_header_footer() const {
-  return _use_run_header_footer_;
-}
-
-bool manager::has_number_of_events_modulo() const {
-  return _number_of_events_modulo_ > run_action::NUMBER_OF_EVENTS_MODULO_NONE;
-}
-
-void manager::set_number_of_events_modulo(int a_m) {
-  if (a_m <= run_action::NUMBER_OF_EVENTS_MODULO_NONE) {
-    _number_of_events_modulo_ = run_action::NUMBER_OF_EVENTS_MODULO_NONE;
-  } else {
-    _number_of_events_modulo_ = a_m;
-  }
-  DT_LOG_DEBUG(_logprio(), "Number of events modulo = " << _number_of_events_modulo_);
-}
-
-int manager::get_number_of_events_modulo() const {
-  return _number_of_events_modulo_;
-}
-
-void manager::set_prng_state_save_modulo(int a_modulo) {
-  if (a_modulo < 1) {
-    _prng_state_save_modulo_ = 0;
-    return;
-  }
-  _prng_state_save_modulo_ = a_modulo;
-}
-
-int manager::get_prng_state_save_modulo() const {
-  return _prng_state_save_modulo_;
-}
-
-bool manager::has_prng_state_save_modulo() const {
-  return _prng_state_save_modulo_ > 0;
-}
-
-// Vertex generator:
-const genvtx::manager & manager::get_vg_manager() const {
-  return _vg_manager_;
-}
-
-genvtx::manager & manager::grab_vg_manager() {
-  return _vg_manager_;
-}
-
-bool manager::has_vertex_generator() const {
-  return _vertex_generator_ != 0;
-}
-
-const genvtx::i_vertex_generator & manager::get_vertex_generator() const {
-  DT_THROW_IF(! has_vertex_generator(),
-              std::logic_error, "No vertex generator is available !");
-  return *_vertex_generator_;
-}
-
-// Event generator:
-
-const genbb::manager & manager::get_eg_manager() const {
-  return _eg_manager_;
-}
-
-genbb::manager & manager::grab_eg_manager() {
-  return _eg_manager_;
-}
-
-bool manager::has_event_generator() const {
-  return _event_generator_ != 0;
-}
-
-const genbb::i_genbb & manager::get_event_generator() const {
-  DT_THROW_IF(! has_event_generator(), std::logic_error,
-              "No event generator is available !");
-  return *_event_generator_;
-}
-
-void manager::reset_output_prng_seeds_file() {
-  _output_prng_seeds_file_ = "";
-}
-
-void manager::reset_input_prng_seeds_file() {
-  _input_prng_seeds_file_ = "";
-}
-
-void manager::_init_prngs_states() {
-  // Load the PRNG internal states buffers :
-  if (has_input_prng_states_file()) {
-    DT_LOG_NOTICE(_logprio(),  "Loading PRNG internal states from file '"
-                  << get_input_prng_states_file() << "'...");
-    _prng_state_manager_.load(get_input_prng_states_file());
-  }
-
-  // Ensure the creation of all useful buffers :
-  // G4 PRNG :
-  if (! _prng_state_manager_.has_state(constants::instance().G4_MANAGER_LABEL)) {
-    _prng_state_manager_.add_state(constants::instance().G4_MANAGER_LABEL,
-                                   _mgr_prng_.get_internal_state_size());
-  }
-  // Vertex generator PRNG :
-  if (! _prng_state_manager_.has_state(constants::instance().VERTEX_GENERATOR_LABEL)) {
-    _prng_state_manager_.add_state(constants::instance().VERTEX_GENERATOR_LABEL,
-                                   _vg_prng_.get_internal_state_size());
-  }
-  // Event generator PRNG :
-  if (! _prng_state_manager_.has_state(constants::instance().EVENT_GENERATOR_LABEL)) {
-    _prng_state_manager_.add_state(constants::instance().EVENT_GENERATOR_LABEL,
-                                   _eg_prng_.get_internal_state_size());
-  }
-  // PRNG for Step Hit Processors :
-  if (! _prng_state_manager_.has_state(constants::instance().SHPF_LABEL)) {
-    _prng_state_manager_.add_state(constants::instance().SHPF_LABEL,
-                                   _shpf_prng_.get_internal_state_size());
-  }
-
-  // Setup the output file name for PRNG internal states backup :
-  if (has_output_prng_states_file()) {
-    DT_LOG_NOTICE(_logprio(), "Setting the file '" << get_output_prng_states_file()
-                  << "' for storing the PRNG internal states...");
-    _prng_state_manager_.set_filename(get_output_prng_states_file());
-  }
-
-  if (has_input_prng_states_file()) {
-    DT_LOG_NOTICE(_logprio(), "Initializing the PRNG internal states from the 'state manager'...");
-
-    // G4 PRNG :
-    _mgr_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().G4_MANAGER_LABEL).state_buffer);
-
-    // Vertex generator PRNG :
-    _vg_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().VERTEX_GENERATOR_LABEL).state_buffer);
-
-    // Event generator PRNG :
-    _eg_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().EVENT_GENERATOR_LABEL).state_buffer);
-
-    // PRNG for Step Hit Processors :
-    _shpf_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().SHPF_LABEL).state_buffer);
-  }
-}
-
-void manager::record_current_prng_states() {
-  // G4 PRNG :
-  _mgr_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().G4_MANAGER_LABEL).state_buffer);
-
-  // Vertex generator PRNG :
-  _vg_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().VERTEX_GENERATOR_LABEL).state_buffer);
-
-  // Event generator PRNG :
-  _eg_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().EVENT_GENERATOR_LABEL).state_buffer);
-
-  // PRNG of the Step Hit Processor Factory :
-  _shpf_prng_.to_buffer(_prng_state_manager_.get_state(constants::instance().SHPF_LABEL).state_buffer);
-
-  _prng_state_manager_.increment_counter(get_prng_state_save_modulo());
-  if (is_debug()) _prng_state_manager_.dump(std::clog);
-  _prng_state_manager_.store();
-}
-
-bool manager::has_input_prng_seeds_file() const {
-  return ! _input_prng_seeds_file_.empty();
-}
-
-const std::string & manager::get_input_prng_seeds_file() const {
-  return _input_prng_seeds_file_;
-}
-
-void manager::set_input_prng_seeds_file(const std::string & fn_) {
-  _input_prng_seeds_file_ = fn_;
-}
-
-bool manager::has_output_prng_seeds_file() const {
-  return ! _output_prng_seeds_file_.empty();
-}
-
-const std::string & manager::get_output_prng_seeds_file() const {
-  return _output_prng_seeds_file_;
-}
-
-void manager::set_output_prng_seeds_file(const std::string & fn_) {
-  _output_prng_seeds_file_ = fn_;
-}
-
-void manager::reset_output_prng_states_file() {
-  _output_prng_states_file_ = "";
-}
-
-const std::string & manager::get_output_prng_states_file() const {
-  return _output_prng_states_file_;
-}
-
-bool manager::has_output_prng_states_file() const {
-  return ! _output_prng_states_file_.empty();
-}
-
-void manager::set_output_prng_states_file(const std::string & fn_) {
-  _output_prng_states_file_ = fn_;
-}
-
-void manager::reset_input_prng_states_file() {
-  _input_prng_states_file_ = "";
-}
-
-const std::string & manager::get_input_prng_states_file() const {
-  return _input_prng_states_file_;
-}
-
-bool manager::has_input_prng_states_file() const {
-  return ! _input_prng_states_file_.empty();
-}
-
-void manager::set_input_prng_states_file(const std::string & fn_) {
-  _input_prng_states_file_ = fn_;
-}
-
-void manager::reset_output_data_format() {
-  _output_data_format_ = io_utils::DATA_FORMAT_INVALID;
-}
-
-void manager::set_output_data_format_by_label(const std::string & ff_) {
-  io_utils::data_format_type df = io_utils::label_to_data_format(ff_);
-  DT_THROW_IF(df == io_utils::DATA_FORMAT_INVALID, std::logic_error, "Invalid output data format '" << ff_ << "'!");
-  set_output_data_format(df);
-}
-
-void manager::set_output_data_format(io_utils::data_format_type of_) {
-  _output_data_format_ = of_;
-  if (_output_data_format_ == io_utils::DATA_FORMAT_BANK) {
-    if (_output_data_bank_label_.empty()) {
-      set_output_data_bank_label(event_utils::event_default_simulated_data_label());
-    }
-  }
-}
-
-io_utils::data_format_type manager::get_output_data_format() const {
-  return _output_data_format_;
-}
-
-void manager::set_output_data_bank_label(const std::string & bl_) {
-  _output_data_bank_label_ = bl_;
-  if (_output_data_format_ != io_utils::DATA_FORMAT_INVALID) {
-    set_output_data_format(io_utils::DATA_FORMAT_BANK);
-  }
-  DT_THROW_IF(_output_data_format_ != io_utils::DATA_FORMAT_BANK, std::logic_error,
-              "Cannot set output data bank label with the plain output data format!");
-}
-
-void manager::set_output_data_file(const std::string & fn_) {
-  _output_data_file_ = fn_;
-}
-
-void manager::set_mgr_prng_seed(int rseed_) {
-  DT_THROW_IF(_initialized_, std::logic_error, "Operation prohibited ! Manager is locked !");
-  if (rseed_ < 0) {
-    _mgr_prng_seed_ = mygsl::random_utils::SEED_INVALID;
-  } else {
-    _mgr_prng_seed_ = rseed_;
-  }
-}
-
-bool manager::has_mgr_prng_seed() const {
-  return _mgr_prng_seed_ != mygsl::random_utils::SEED_INVALID;
-}
-
-int manager::get_mgr_prng_seed() const {
-  return _mgr_prng_seed_;
-}
-
-const mygsl::rng & manager::get_mgr_prng() const {
-  return _mgr_prng_;
-}
-
-mygsl::rng & manager::grab_vg_prng() {
-  return _vg_prng_;
-}
-
-mygsl::rng & manager::grab_eg_prng() {
-  return _eg_prng_;
-}
-
-mygsl::rng & manager::grab_shpf_prng() {
-  return _shpf_prng_;
-}
-
-mygsl::rng & manager::grab_mgr_prng() {
-  return _mgr_prng_;
-}
-
-const g4_prng & manager::get_g4_prng() const {
-  return _g4_prng_;
-}
-
-g4_prng & manager::grab_g4_prng() {
-  return _g4_prng_;
-}
-
-
-void manager::_init_seeds() {
-  // All seeds being 'SEED_AUTO' (see mygsl::seed_manager)
-  // are initialized with some source of entropy :
-  // 2012-06-08 FM : fix to make all seeds different (and
-  // automatically randomize 'SEED_AUTO'):
-  _seed_manager_.ensure_different_seeds();
-  if (is_debug()) {
-    _seed_manager_.dump(std::clog);
-  }
-
-  // Then pickup the seed associated to each embedded component :
-
-  // the G4 manager itself :
-  if (_seed_manager_.has_seed(constants::instance().G4_MANAGER_LABEL)) {
-    int seed = _seed_manager_.get_seed(constants::instance().G4_MANAGER_LABEL);
-    set_mgr_prng_seed(seed);
-    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
-                  << constants::instance().G4_MANAGER_LABEL << "' : "
-                  << seed);
-  }
-
-  // the vertex generator :
-  if (_seed_manager_.has_seed(constants::instance().VERTEX_GENERATOR_LABEL)) {
-    int seed = _seed_manager_.get_seed(constants::instance().VERTEX_GENERATOR_LABEL);
-    set_vertex_generator_seed(seed);
-    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
-                  << constants::instance().VERTEX_GENERATOR_LABEL << "' : "
-                  << seed);
-  }
-
-  // the event generator :
-  if (_seed_manager_.has_seed(constants::instance().EVENT_GENERATOR_LABEL)) {
-    int seed = _seed_manager_.get_seed(constants::instance().EVENT_GENERATOR_LABEL);
-    set_event_generator_seed(seed);
-    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
-                  << constants::instance().EVENT_GENERATOR_LABEL << "' : "
-                  << seed);
-  }
-
-  // the step hit processor factory :
-  if (_seed_manager_.has_seed(constants::instance().SHPF_LABEL)) {
-    int seed = _seed_manager_.get_seed(constants::instance().SHPF_LABEL);
-    set_shpf_prng_seed(seed);
-    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
-                  << constants::instance().SHPF_LABEL << "' : "
-                  << seed);
-  }
-
-  // Checks:
-  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_vg_prng_seed_),
-              std::logic_error,
-              "Invalid vertex generator seed value !");
-  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_eg_prng_seed_),
-              std::logic_error,
-              "Invalid event generator seed value !");
-  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_mgr_prng_seed_),
-              std::logic_error,
-              "Invalid G4 generator seed value !");
-  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_shpf_prng_seed_),
-              std::logic_error,
-              "Invalid SHPF generator seed value !");
-
-  // Save a file with the content of the embedded 'seed_manager' :
-  if (has_output_prng_seeds_file()) {
-    std::string seeds_filename = get_output_prng_seeds_file();
-    datatools::fetch_path_with_env(seeds_filename);
-    if (boost::filesystem::exists(seeds_filename)) {
-      std::string backup_seeds_filename = seeds_filename + ".~backup~";
-      DT_LOG_NOTICE(_logprio(),
-                    "Backuping the former Random Number Generators seeds file '"
-                    << seeds_filename << "' to '" << backup_seeds_filename << "'...");
-      if (boost::filesystem::exists(backup_seeds_filename)) {
-        DT_LOG_NOTICE(_logprio(),
-                      "Deleting old backup Random Number Generators seeds file '"
-                      << backup_seeds_filename << "'...");
-        boost::filesystem::remove(backup_seeds_filename);
-      }
-      boost::filesystem::rename(seeds_filename, backup_seeds_filename);
-    }
-    DT_LOG_NOTICE(_logprio(),
-                  "Saving the Random Number Generator seeds in file '"
-                  << seeds_filename << "'...");
-    std::ofstream seeds_file(seeds_filename.c_str());
-    seeds_file << _seed_manager_ << std::endl;
-  }
-}
-
-
-bool manager::has_init_seed_method() const {
-  return !_init_seed_method_.empty();
-}
-
-void manager::set_init_seed_method(const std::string & method_) {
-  _init_seed_method_ = method_;
-}
-
-const std::string & manager::get_init_seed_method() const {
-  return _init_seed_method_;
 }
 
 void manager::_init_core() {
@@ -1342,46 +1548,144 @@ void manager::_init_stacking_action() {
   }
 }
 
-void manager::_init_time_stat() {
-  {
-    // Time statistics for "Event Action" :
-    CT_type ct;
-    _CTs_["EA"] = ct;
+void manager::_init_seeds() {
+  // All seeds being 'SEED_AUTO' (see mygsl::seed_manager)
+  // are initialized with some source of entropy :
+  // 2012-06-08 FM : fix to make all seeds different (and
+  // automatically randomize 'SEED_AUTO'):
+  _seed_manager_.ensure_different_seeds();
+  if (is_debug()) {
+    _seed_manager_.dump(std::clog);
   }
-  {
-    // Time statistics for "Run Action" :
-    CT_type ct;
-    _CTs_["RA"] = ct;
+
+  // Then pickup the seed associated to each embedded component :
+
+  // the G4 manager itself :
+  if (_seed_manager_.has_seed(constants::instance().G4_MANAGER_LABEL)) {
+    int seed = _seed_manager_.get_seed(constants::instance().G4_MANAGER_LABEL);
+    set_mgr_prng_seed(seed);
+    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
+                  << constants::instance().G4_MANAGER_LABEL << "' : "
+                  << seed);
   }
-  {
-    // Time statistics for "I/O operations" :
-    CT_type ct;
-    _CTs_["IO"] = ct;
+
+  // the vertex generator :
+  if (_seed_manager_.has_seed(constants::instance().VERTEX_GENERATOR_LABEL)) {
+    int seed = _seed_manager_.get_seed(constants::instance().VERTEX_GENERATOR_LABEL);
+    set_vertex_generator_seed(seed);
+    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
+                  << constants::instance().VERTEX_GENERATOR_LABEL << "' : "
+                  << seed);
   }
-  {
-    // Time statistics for "Sensitive detectors" :
-    CT_type ct;
-    _CTs_["SD"] = ct;
+
+  // the event generator :
+  if (_seed_manager_.has_seed(constants::instance().EVENT_GENERATOR_LABEL)) {
+    int seed = _seed_manager_.get_seed(constants::instance().EVENT_GENERATOR_LABEL);
+    set_event_generator_seed(seed);
+    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
+                  << constants::instance().EVENT_GENERATOR_LABEL << "' : "
+                  << seed);
   }
-  {
-    // Time statistics for "Hit processors" :
-    CT_type ct;
-    _CTs_["HP"] = ct;
+
+  // the step hit processor factory :
+  if (_seed_manager_.has_seed(constants::instance().SHPF_LABEL)) {
+    int seed = _seed_manager_.get_seed(constants::instance().SHPF_LABEL);
+    set_shpf_prng_seed(seed);
+    DT_LOG_NOTICE(_logprio(), "Using registered seed for '"
+                  << constants::instance().SHPF_LABEL << "' : "
+                  << seed);
   }
-  {
-    // Time statistics for "Geometry building" :
-    CT_type ct;
-    _CTs_["GB"] = ct;
+
+  // Checks:
+  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_vg_prng_seed_),
+              std::logic_error,
+              "Invalid vertex generator seed value !");
+  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_eg_prng_seed_),
+              std::logic_error,
+              "Invalid event generator seed value !");
+  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_mgr_prng_seed_),
+              std::logic_error,
+              "Invalid G4 generator seed value !");
+  DT_THROW_IF(! mygsl::seed_manager::seed_is_valid(_shpf_prng_seed_),
+              std::logic_error,
+              "Invalid SHPF generator seed value !");
+
+  // Save a file with the content of the embedded 'seed_manager' :
+  if (has_output_prng_seeds_file()) {
+    std::string seeds_filename = get_output_prng_seeds_file();
+    datatools::fetch_path_with_env(seeds_filename);
+    if (boost::filesystem::exists(seeds_filename)) {
+      std::string backup_seeds_filename = seeds_filename + ".~backup~";
+      DT_LOG_NOTICE(_logprio(),
+                    "Backuping the former Random Number Generators seeds file '"
+                    << seeds_filename << "' to '" << backup_seeds_filename << "'...");
+      if (boost::filesystem::exists(backup_seeds_filename)) {
+        DT_LOG_NOTICE(_logprio(),
+                      "Deleting old backup Random Number Generators seeds file '"
+                      << backup_seeds_filename << "'...");
+        boost::filesystem::remove(backup_seeds_filename);
+      }
+      boost::filesystem::rename(seeds_filename, backup_seeds_filename);
+    }
+    DT_LOG_NOTICE(_logprio(),
+                  "Saving the Random Number Generator seeds in file '"
+                  << seeds_filename << "'...");
+    std::ofstream seeds_file(seeds_filename.c_str());
+    seeds_file << _seed_manager_ << std::endl;
   }
-  {
-    // Time statistics for "Vertex generation" :
-    CT_type ct;
-    _CTs_["VG"] = ct;
+}
+
+void manager::_init_prngs_states() {
+  // Load the PRNG internal states buffers :
+  if (has_input_prng_states_file()) {
+    DT_LOG_NOTICE(_logprio(),  "Loading PRNG internal states from file '"
+                  << get_input_prng_states_file() << "'...");
+    _prng_state_manager_.load(get_input_prng_states_file());
   }
-  {
-    // Time statistics for "Event generation" :
-    CT_type ct;
-    _CTs_["EG"] = ct;
+
+  // Ensure the creation of all useful buffers :
+  // G4 PRNG :
+  if (! _prng_state_manager_.has_state(constants::instance().G4_MANAGER_LABEL)) {
+    _prng_state_manager_.add_state(constants::instance().G4_MANAGER_LABEL,
+                                   _mgr_prng_.get_internal_state_size());
+  }
+  // Vertex generator PRNG :
+  if (! _prng_state_manager_.has_state(constants::instance().VERTEX_GENERATOR_LABEL)) {
+    _prng_state_manager_.add_state(constants::instance().VERTEX_GENERATOR_LABEL,
+                                   _vg_prng_.get_internal_state_size());
+  }
+  // Event generator PRNG :
+  if (! _prng_state_manager_.has_state(constants::instance().EVENT_GENERATOR_LABEL)) {
+    _prng_state_manager_.add_state(constants::instance().EVENT_GENERATOR_LABEL,
+                                   _eg_prng_.get_internal_state_size());
+  }
+  // PRNG for Step Hit Processors :
+  if (! _prng_state_manager_.has_state(constants::instance().SHPF_LABEL)) {
+    _prng_state_manager_.add_state(constants::instance().SHPF_LABEL,
+                                   _shpf_prng_.get_internal_state_size());
+  }
+
+  // Setup the output file name for PRNG internal states backup :
+  if (has_output_prng_states_file()) {
+    DT_LOG_NOTICE(_logprio(), "Setting the file '" << get_output_prng_states_file()
+                  << "' for storing the PRNG internal states...");
+    _prng_state_manager_.set_filename(get_output_prng_states_file());
+  }
+
+  if (has_input_prng_states_file()) {
+    DT_LOG_NOTICE(_logprio(), "Initializing the PRNG internal states from the 'state manager'...");
+
+    // G4 PRNG :
+    _mgr_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().G4_MANAGER_LABEL).state_buffer);
+
+    // Vertex generator PRNG :
+    _vg_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().VERTEX_GENERATOR_LABEL).state_buffer);
+
+    // Event generator PRNG :
+    _eg_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().EVENT_GENERATOR_LABEL).state_buffer);
+
+    // PRNG for Step Hit Processors :
+    _shpf_prng_.from_buffer(_prng_state_manager_.get_state(constants::instance().SHPF_LABEL).state_buffer);
   }
 }
 
@@ -1441,324 +1745,23 @@ void manager::_init_prngs() {
                 "Setting the HepRandomEngine to '" << _g4_prng_.name() << "'...");
 }
 
-void manager::_at_init() {
-  /****************
-   * MAIN MANAGER *
-   ****************/
-
-  // Main manager:
-  _init_core();
-
-  /********************
-   * GEOMETRY MANAGER *
-   ********************/
-
-  _init_geometry();
-
-  /********************
-   * VERTEX GENERATOR *
-   ********************/
-
-  _init_vertex_generator();
-
-  /*******************
-   * EVENT GENERATOR *
-   *******************/
-
-  _init_event_generator();
-
-  /****************************
-   * USER ACTIONS FOR GEANT 4 *
-   ****************************/
-
-  // Run manager:
-  _g4_run_manager_ = new G4RunManager;
-
-  /*** User initializations ***/
-  // Detector construction:
-  _init_detector_construction ();
-
-  // Physics list:
-  _init_physics_list ();
-
-#ifdef G4VIS_USE
-  // G4 visualization:
-  _g4_vis_manager_ = 0;
-  if (has_g4_visualization()) {
-    // std::cerr << "DEVEL: _g4_vis_manager_\n";
-    _g4_vis_manager_ = new G4VisExecutive;
-    _g4_vis_manager_->Initialize();
-  }
-#endif
-
-  // User actions:
-  // Run action:
-  _init_run_action ();
-
-  // Event action:
-  _init_event_action ();
-
-  // Primary generator:
-  _init_primary_generator_action ();
-
-  // Tracking action:
-  _init_tracking_action ();
-
-  // Stepping action:
-  _init_stepping_action ();
-
-  // Stacking action:
-  _init_stacking_action ();
-
-  // G4 kernel initialization:
-  DT_LOG_NOTICE(_logprio(), "G4 kernel initialization...");
-  _g4_run_manager_->Initialize();
-
-  _g4_UI_ = G4UImanager::GetUIpointer();
-
-  /*****************
-   * FINAL ACTIONS *
-   *****************/
-
-  // init the dictionary of PRNG internal state records :
-  _init_prngs_states();
-} // end of manager::_at_init()
-
-void manager::_at_reset() {
-  if (_use_time_stat_) {
-    for (CT_map::iterator i = _CTs_.begin();
-         i != _CTs_.end();
-         i++) {
-      i->second.tree_dump(std::clog, i->first);
-      i->second.reset();
-    }
-  }
-
-#ifdef G4VIS_USE
-  if (_g4_vis_manager_) {
-    delete _g4_vis_manager_;
-    _g4_vis_manager_ = 0;
-  }
-#endif
-  if (_g4_run_manager_) {
-    delete _g4_run_manager_;
-    _g4_run_manager_ = 0;
-  }
-
-  if (_g4_stepping_verbosity_) {
-    delete _g4_stepping_verbosity_;
-    _g4_stepping_verbosity_ = 0;
-  }
-
-  if (has_event_generator()) {
-    _event_generator_ = 0;
-  }
-
-  if (has_vertex_generator()) {
-    _vertex_generator_ = 0;
-  }
-
-  _vg_prng_.reset();
-  _eg_prng_.reset();
-  _shpf_prng_.reset();
-  _mgr_prng_.reset();
-
-  reset_simulation_ctrl();
-
-  _track_history_.reset();
-}
-
-event_action& manager::grab_user_event_action() {
-  DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
-  return *_user_event_action_;
-}
-
-
-void manager::_at_run_simulation() {
-  std::string g4_macro;
-  if (has_g4_macro()) {
-    g4_macro = _g4_macro_;
-    datatools::fetch_path_with_env(g4_macro);
-    if (! boost::filesystem::exists(g4_macro)) {
-      std::ostringstream message;
-      message << "Macro '" << g4_macro << "' does not exist !";
-      G4Exception("mctools::g4::manager::_at_run_simulation",
-                  "FileError",
-                  RunMustBeAborted,
-                  message.str().c_str());
-    }
-  }
-
-  // Interactive mode:
-  if (is_interactive()) {
-    DT_LOG_NOTICE(_logprio(), "Entering interactive mode...");
-#ifdef G4VIS_USE
-    if (has_g4_visualization()) {
-      if (_g4_vis_manager_) {
-        //_g4_vis_manager_->SetVerboseLevel("quiet");
-      }
-    }
-#endif
-
-    // G4UIterminal is a(dumb) terminal.
-    G4UIsession * g4_session = 0;
-
-#ifdef G4UI_USE_TCSH
-    g4_session = new G4UIterminal(new G4UItcsh);
-#else
-    g4_session = new G4UIterminal();
-#endif
-    if (! g4_macro.empty()) {
-      std::ostringstream command_oss;
-      command_oss << "/control/execute ";
-      command_oss << g4_macro;
-      _g4_UI_->ApplyCommand(command_oss.str());
-    }
-    g4_session->SessionStart();
-    delete g4_session;
-  } else { // Batch mode:
-    DT_LOG_NOTICE(_logprio(),"Entering batch mode...");
-
-#ifdef G4VIS_USE
-    if (has_g4_visualization()) {
-      if (_g4_vis_manager_) {
-        //_g4_vis_manager_->SetVerboseLevel("quiet");
-      }
-    }
-#endif
-
-    // pure automatic mode: no macro is executed, only beam on
-    if (is_automatic()) {
-      DT_LOG_NOTICE(_logprio(), "Entering automatic mode...");
-
-      /*    command = "/random/setSavingFlag true";
-            UI->ApplyCommand(command);
-            cout << "APPLYING RESET" << std::endl;
-            command = "/random/resetEngineFrom currentRun.rndm";
-            UI->ApplyCommand(command);
-            */
-
-      // set tracking verbosity:
-      {
-        std::ostringstream command_oss;
-        command_oss << "/tracking/verbose ";
-        command_oss << _g4_tracking_verbosity_;
-        _g4_UI_->ApplyCommand(command_oss.str());
-      }
-
-      // shoot events:
-      {
-        std::ostringstream command_oss;
-        command_oss << "/run/beamOn ";
-        uint32_t effective_number_of_events = constants::instance().NO_LIMIT;
-        /*
-           if (_number_of_events == constants::instance().NO_LIMIT)
-           {
-        //command_oss << _number_of_events;
-        }
-        */
-        if (! has_simulation_ctrl()) {
-          effective_number_of_events = _number_of_events_;
-        }
-        DT_THROW_IF((effective_number_of_events == 0)
-                    ||(effective_number_of_events > constants::instance().NO_LIMIT),
-                    std::logic_error,
-                    "Invalid number of events for Geant4 !");
-        command_oss << effective_number_of_events;
-        DT_LOG_NOTICE(_logprio(), "G4 command = " << command_oss.str());
-        _g4_UI_->ApplyCommand(command_oss.str());
-      }
-    } else {
-      std::ostringstream command_oss;
-      command_oss << "/control/execute ";
-      command_oss << g4_macro;
-      _g4_UI_->ApplyCommand(command_oss.str());
-    }
-  }
-
-  {
-    // 2011-03-03 FM :
-    DT_LOG_NOTICE(_logprio(),
-                  "Record the final PRNG internal states after the session has stopped normaly.");
-    this->record_current_prng_states();
-  }
-} // end of manager::_at_run_simulation()
-
-void manager::dump_base(std::ostream & out_,
-                        const std::string & title_ ,
-                        const std::string & indent_) const {
-  std::string indent;
-  if (! indent_.empty()) indent = indent_;
-  if (! title_.empty()) {
-    out_ << indent << title_ << std::endl;
-  }
-  out_ << indent << "|-- Debug:        " << is_debug() << std::endl;
-  out_ << indent << "|-- Batch:        " << is_batch() << std::endl;
-  out_ << indent << "|-- Interactive:  " << is_interactive() << std::endl;
-  out_ << indent << "|-- Automatic:    " << is_automatic() << std::endl;
-  out_ << indent << "|-- G4 visu.:     " << has_g4_visualization() << std::endl;
-  out_ << indent << "|-- G4 macro:     '" << get_g4_macro() << "'" << std::endl;
-  out_ << indent << "|-- No events:    " << get_number_of_events() << std::endl;
-  out_ << indent << "|-- G4 PRNG seed: " << _mgr_prng_seed_ << " " << std::endl;
-  out_ << indent << "|-- G4 PRNG name: '"
-      <<(get_mgr_prng().is_initialized()? get_mgr_prng().name(): "[none]")
-      << "' " << std::endl;
-  out_ << indent << "|-- PRNG seeds input file:   '"
-      << _input_prng_seeds_file_ << "' " << std::endl;
-  out_ << indent << "|-- PRNG seeds output file:  '"
-      << _output_prng_seeds_file_ << "' " << std::endl;
-  out_ << indent << "|-- PRNG states input file:  '"
-      << _input_prng_states_file_ << "' " << std::endl;
-  out_ << indent << "|-- PRNG states output file: '"
-      << _output_prng_states_file_ << "' " << std::endl;
-  out_ << indent << "|-- Supported output profiles = ";
-  if (_supported_output_profile_ids_.size()) {
-    out_ << _supported_output_profile_ids_.size() << std::endl;
-  } else {
-    out_ << "<none>" << std::endl;
-  }
-  for (std::map<std::string,std::string>::const_iterator i = _supported_output_profile_ids_.begin();
-       i != _supported_output_profile_ids_.end();
-       i++) {
-    std::map<std::string,std::string>::const_iterator j = i;
-    j++;
-    out_ << "|   ";
-    if (j == _supported_output_profile_ids_.end()) {
-      out_ << "`-- ";
-    } else {
-      out_ << "|-- ";
-    }
-    out_ << "Profile : '" << i->first << "' : " << i->second << std::endl;
-  }
-
-  out_ << indent << "|-- Activated output profiles = ";
-  if (_activated_output_profile_ids_.size()) {
-    out_ << _activated_output_profile_ids_.size() << std::endl;
-  } else {
-    out_ << "<none>" << std::endl;
-  }
-  for (std::set<std::string>::const_iterator i = _activated_output_profile_ids_.begin();
-       i != _activated_output_profile_ids_.end();
-       i++) {
-    std::set<std::string>::const_iterator j = i;
-    j++;
-    out_ << "|   ";
-    if (j == _activated_output_profile_ids_.end()) {
-      out_ << "`-- ";
-    } else {
-      out_ << "|-- ";
-    }
-    out_ << "Profile : '" << *i << std::endl;
-  }
-  out_ << indent << "`-- end" << std::endl;
-}
-
-void manager::dump(std::ostream& out_) const {
-  dump_base(out_, "mctools::g4::manager: ", "");
-}
-
-uint32_t manager::get_number_of_events() const {
-  return _number_of_events_;
+void manager::_init_time_stat() {
+  // Time statistics for "Event Action" :
+  _CTs_["EA"] = CT_type {};
+  // Time statistics for "Run Action" :
+  _CTs_["RA"] = CT_type {};
+  // Time statistics for "I/O operations" :
+  _CTs_["IO"] = CT_type {};
+  // Time statistics for "Sensitive detectors" :
+  _CTs_["SD"] =  CT_type {};
+  // Time statistics for "Hit processors" :
+  _CTs_["HP"] = CT_type {};
+  // Time statistics for "Geometry building" :
+  _CTs_["GB"] = CT_type {};
+  // Time statistics for "Vertex generation" :
+  _CTs_["VG"] = CT_type {};
+  // Time statistics for "Event generation" :
+  _CTs_["EG"] = CT_type {};
 }
 } // end of namespace g4
 } // end of namespace mctools

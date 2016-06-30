@@ -144,6 +144,151 @@ class manager : public loggable_support {
   /// Run the simulation session
   void run_simulation();
 
+  /// Return true if the simulation is fully initialized
+  bool is_initialized() const;
+
+  /// Return true if simulation will run in batch mode sans macro file
+  bool is_automatic() const;
+
+  //----------------------------------------------------------------------
+  // Simulation Initializations (Geometry/Physics, possibly via services)
+  //----------------------------------------------------------------------
+  /// Check is an external service manager plugged
+  bool has_service_manager() const;
+
+  /// Return a mutable service manager reference
+  datatools::service_manager& grab_service_manager();
+
+  /// Return a non-mutable service manager reference
+  const datatools::service_manager& get_service_manager() const;
+
+  /// Plug an external service manager
+  void set_service_manager(datatools::service_manager& sm);
+
+  /// Check if an external service manager is plugged
+  bool has_external_geom_manager() const;
+
+  /// Plug an external geometry manager
+  void set_external_geom_manager(const geomtools::manager& gm);
+
+  /// Get a non-mutable reference to the geometry manager
+  const geomtools::manager& get_geom_manager() const;
+
+  //----------------------------------------------------------------------
+  // Simulation User Actions (EvtGen, Run, Event etc)
+  //----------------------------------------------------------------------
+  /// Set the name of the active event generator
+  void set_event_generator_name(const std::string &);
+
+  /// Set the seed for the event generator's PRNG
+  void set_event_generator_seed(int);
+
+  /// Get a non-mutable reference to the embeded event generator
+  const genbb::manager& get_eg_manager() const;
+
+  /// Get a mutable reference to the embeded event generator
+  genbb::manager& grab_eg_manager();
+
+  /// Check if an event generator is available
+  bool has_event_generator() const;
+
+  /// Return a non-mutable reference to a embeded event generator
+  const genbb::i_genbb& get_event_generator() const;
+
+  /// Set the name of the active vertex generator
+  void set_vertex_generator_name(const std::string&);
+
+  /// Set the seed for the vertex generator's PRNG
+  void set_vertex_generator_seed(int);
+
+  /// Get a non-mutable reference to the vertex generator manager
+  const genvtx::manager& get_vg_manager() const;
+
+  /// Get a mutable reference to the vertex generator manager
+  genvtx::manager& grab_vg_manager();
+
+  /// Check if a vertex generator is available
+  bool has_vertex_generator() const;
+
+  /// Return a non-mutable reference to a embeded vertex generator
+  const genvtx::i_vertex_generator& get_vertex_generator() const;
+
+  /// Return a mutable event_action reference
+  event_action& grab_user_event_action();
+
+  // Run
+  /// Return the number of events to be generated
+  uint32_t get_number_of_events() const;
+
+  /// Set the number of events to be generated
+  void set_number_of_events(uint32_t);
+
+  /// Check if a modulo on number of events is defined
+  bool has_number_of_events_modulo() const;
+
+  /// Return the number of events modulo
+  int get_number_of_events_modulo() const;
+
+  /// Set the number of events modulo
+  void set_number_of_events_modulo(int);
+
+  void set_use_run_header_footer(bool a_use_run_header_footer);
+
+  bool using_run_header_footer() const;
+
+  /// Return true if the simulation will run in batch mode
+  bool is_batch() const;
+
+  /// Return true if the simulation is interactive via a CLI/GUI
+  bool is_interactive() const;
+
+  /// Set the simulation to be interactive
+  void set_interactive(bool);
+
+  /// Set the Geant4 visualization flag
+  void set_g4_visualization(bool);
+
+  /// Check the Geant4 visualization flag
+  bool has_g4_visualization() const;
+
+  /// Check if the manager has a Geant4 macro
+  bool has_g4_macro() const;
+
+  /// Return the filename of the Geant4 macro
+  const std::string& get_g4_macro() const;
+
+  /// Set the Geant4 macro
+  void set_g4_macro(const std::string& macroFile);
+
+  // Track history management:
+  /// (De)Activate the track history object
+  void set_use_track_history(const bool);
+
+  /// Check if a track history object is available
+  bool has_track_history() const;
+
+  /// Get a non-mutable reference to the track history object
+  const track_history& get_track_history() const;
+
+  /// Get a mutable reference to the track history object
+  track_history& grab_track_history();
+
+  // Hit control ? Not clear yet where this belongs, but since it relates to
+  // sensitive detectors, probably part of User Actions
+  bool forbids_private_hits() const;
+  void set_forbid_private_hits(bool a_forbid);
+
+  void set_dont_save_no_sensitive_hit_events(bool a_dont_save);
+  bool dont_save_no_sensitive_hit_events() const;
+
+
+  //----------------------------------------------------------------------
+  // Multithreaded Control
+  //----------------------------------------------------------------------
+  // NB: This is *not* Geant4 MT mode and is completely incompatible with it
+  // It simply allows the simulation to be run in a pipeline with polling to
+  // grab events as required.
+
   /// Check if an external thread simulation control is plugged
   bool has_simulation_ctrl() const;
 
@@ -159,39 +304,45 @@ class manager : public loggable_support {
   /// Return a mutable thread simulation control reference
   simulation_ctrl& grab_simulation_ctrl();
 
-  /// Check is an external service manager plugged
-  bool has_service_manager() const;
 
-  /// Return a mutable service manager reference
-  datatools::service_manager & grab_service_manager();
+  //----------------------------------------------------------------------
+  // Random number (over)control
+  //----------------------------------------------------------------------
+  /// Return a mutable reference to the vertex generator's PRNG
+  mygsl::rng& grab_vg_prng();
 
-  /// Return a non-mutable service manager reference
-  const datatools::service_manager & get_service_manager() const;
+  /// Return a mutable reference to the event generator's PRNG
+  mygsl::rng& grab_eg_prng();
 
-  /// Plug an external service manager
-  void set_service_manager(datatools::service_manager & smgr_);
+  /// Return a mutable reference to the Step Hit Processor Factory's PRNG
+  mygsl::rng& grab_shpf_prng();
 
-  /// Check if an external service manager is plugged
-  bool has_external_geom_manager() const;
+  /// Return a non mutable reference to the Geant4 engine's PRNG
+  const mygsl::rng& get_mgr_prng() const;
 
-  /// Plug an external geometry manager
-  void set_external_geom_manager(const geomtools::manager & a_geometry_manager);
+  /// Return a mutable reference to the Geant4 engine's PRNG
+  mygsl::rng& grab_mgr_prng();
 
-  /// Return a mutable event_action reference
-  event_action & grab_user_event_action();
+  /// Return a non mutable reference to the Geant4 engine's PRNG
+  const g4_prng& get_g4_prng() const;
 
-  /// Check if a modulo on number of events is defined
-  bool has_number_of_events_modulo() const;
+  /// Return a mutable reference to the Geant4 engine's PRNG
+  g4_prng& grab_g4_prng();
 
-  /// Set the number of events modulo
-  void set_number_of_events_modulo(int);
+  /// Return a non mutable reference to the manager of PRNG's seeds
+  const mygsl::seed_manager& get_seed_manager() const;
 
-  /// Return the number of events modulo
-  int get_number_of_events_modulo() const;
+  /// Return a mutable reference to the manager of PRNG's seeds
+  mygsl::seed_manager& grab_seed_manager();
 
-  void set_use_run_header_footer(bool a_use_run_header_footer);
+  /// Return a non mutable reference to the manager of PRNG's states
+  const mygsl::prng_state_manager& get_state_manager() const;
 
-  bool using_run_header_footer() const;
+  /// Return a mutable reference to the manager of PRNG's states
+  mygsl::prng_state_manager& grab_state_manager();
+
+  /// Record the current states of all PRNGs
+  void record_current_prng_states();
 
   void set_prng_state_save_modulo(int a_modulo);
 
@@ -199,41 +350,11 @@ class manager : public loggable_support {
 
   bool has_prng_state_save_modulo() const;
 
-  bool using_time_stat() const;
-
-  void set_using_time_stat(bool);
-
-  bool forbids_private_hits() const;
-
-  void set_dont_save_no_sensitive_hit_events(bool a_dont_save);
-
-  bool dont_save_no_sensitive_hit_events() const;
-
-  void set_forbid_private_hits(bool a_forbid);
-
-  const CT_map & get_CT_map() const;
-
-  CT_map & grab_CT_map();
-
-  /// Check the initialization flag
-  bool is_initialized() const;
-
-  bool is_automatic() const;
-
-  /// Check the interactive session flag
-  bool is_interactive() const;
-
-  /// Check the non interactive session flag
-  bool is_batch() const;
-
-  /// Set the interactive session flag
-  void set_interactive(bool);
-
   bool has_input_prng_seeds_file() const;
 
   void reset_input_prng_seeds_file();
 
-  void set_input_prng_seeds_file(const std::string &);
+  void set_input_prng_seeds_file(const std::string&);
 
   const std::string & get_input_prng_seeds_file() const;
 
@@ -241,7 +362,7 @@ class manager : public loggable_support {
 
   void reset_output_prng_seeds_file();
 
-  void set_output_prng_seeds_file(const std::string &);
+  void set_output_prng_seeds_file(const std::string&);
 
   const std::string & get_output_prng_seeds_file() const;
 
@@ -249,7 +370,7 @@ class manager : public loggable_support {
 
   bool has_output_prng_states_file() const;
 
-  void set_output_prng_states_file(const std::string &);
+  void set_output_prng_states_file(const std::string&);
 
   const std::string & get_output_prng_states_file() const;
 
@@ -257,7 +378,7 @@ class manager : public loggable_support {
 
   bool has_input_prng_states_file() const;
 
-  void set_input_prng_states_file(const std::string &);
+  void set_input_prng_states_file(const std::string&);
 
   const std::string & get_input_prng_states_file() const;
 
@@ -268,8 +389,23 @@ class manager : public loggable_support {
   int get_mgr_prng_seed() const;
 
   /// Set the seed of the G4 simulation engine
-  void set_mgr_prng_seed(int rseed_);
+  void set_mgr_prng_seed(int seed);
 
+  /// Set the seed for the Step Hit Processor Factory's PRNG
+  void set_shpf_prng_seed(int);
+
+  /// Check if the method for seed initialization is set
+  bool has_init_seed_method() const;
+
+  /// Set the method used to set the initialization seed for the generation of seeds
+  void set_init_seed_method(const std::string&);
+
+  /// Return the method for seed initialization
+  const std::string& get_init_seed_method() const;
+
+  //----------------------------------------------------------------------
+  // I/O (over)control
+  //----------------------------------------------------------------------
   /// Set the output data file format
   void set_output_data_format_by_label(const std::string &);
 
@@ -288,84 +424,18 @@ class manager : public loggable_support {
   /// Set the output data file name
   void set_output_data_file(const std::string &);
 
-  /// Set the number of events to be generated
-  void set_number_of_events(uint32_t);
+  // CPU/Wall Time Statistics
+  bool using_time_stat() const;
 
-  /// Return the number of events to be generated
-  uint32_t get_number_of_events() const;
+  void set_using_time_stat(bool);
 
-  // G4 visualization:
+  const CT_map& get_CT_map() const;
 
-  /// Set the Geant4 visualization flag
-  void set_g4_visualization(bool);
+  CT_map& grab_CT_map();
 
-  /// Check the Geant4 visualization flag
-  bool has_g4_visualization() const;
-
-  // G4 macro:
-
-  /// Set the Geant4 macro
-  void set_g4_macro(const std::string & g4_macro_);
-
-  /// Return the Geant4 macro
-  const std::string & get_g4_macro() const;
-
-  /// Check if the manager has a Geant4 macro
-  bool has_g4_macro() const;
-
-  // PRNG management:
-
-  /// Return a mutable reference to the vertex generator's PRNG
-  mygsl::rng & grab_vg_prng();
-
-  /// Return a mutable reference to the event generator's PRNG
-  mygsl::rng & grab_eg_prng();
-
-  /// Return a mutable reference to the Step Hit Processor Factory's PRNG
-  mygsl::rng & grab_shpf_prng();
-
-  /// Return a non mutable reference to the Geant4 engine's PRNG
-  const mygsl::rng & get_mgr_prng() const;
-
-  /// Return a mutable reference to the Geant4 engine's PRNG
-  mygsl::rng & grab_mgr_prng();
-
-  /// Return a non mutable reference to the Geant4 engine's PRNG
-  const g4_prng & get_g4_prng() const;
-
-  /// Return a mutable reference to the Geant4 engine's PRNG
-  g4_prng & grab_g4_prng();
-
-  /// Return a non mutable reference to the manager of PRNG's seeds
-  const mygsl::seed_manager & get_seed_manager() const;
-
-  /// Return a mutable reference to the manager of PRNG's seeds
-  mygsl::seed_manager & grab_seed_manager();
-
-  /// Return a non mutable reference to the manager of PRNG's states
-  const mygsl::prng_state_manager & get_state_manager() const;
-
-  /// Return a mutable reference to the manager of PRNG's states
-  mygsl::prng_state_manager & grab_state_manager();
-
-  /// Record the current states of all PRNGs
-  void record_current_prng_states();
-
-  /// Set the name of the active event generator
-  void set_event_generator_name(const std::string &);
-
-  /// Set the seed for the event generator's PRNG
-  void set_event_generator_seed(int);
-
-  /// Set the name of the active vertex generator
-  void set_vertex_generator_name(const std::string &);
-
-  /// Set the seed for the vertex generator's PRNG
-  void set_vertex_generator_seed(int);
-
-  /// Set the seed for the Step Hit Processor Factory's PRNG
-  void set_shpf_prng_seed(int);
-
+  //----------------------------------------------------------------------
+  // Output Profiles
+  //----------------------------------------------------------------------
   /// Check if some output profile is officially supported by the manager
   bool has_supported_output_profile(const std::string & profile_id_) const;
 
@@ -374,7 +444,7 @@ class manager : public loggable_support {
                                     const std::string & description_);
 
   /// Return the dictionary of supported output profiles
-  const std::map<std::string, std::string> & get_supported_output_profiles() const;
+  const std::map<std::string, std::string>& get_supported_output_profiles() const;
 
   /// Check if some output profiles are activated
   bool has_activated_output_profiles() const;
@@ -398,60 +468,11 @@ class manager : public loggable_support {
   void fetch_activated_output_profile_ids(std::vector<std::string> & activated_output_profile_ids_) const;
 
   /// Return the set of activated output profiles' Ids
-  const std::set<std::string> & get_activated_output_profile_ids() const;
+  const std::set<std::string>& get_activated_output_profile_ids() const;
 
-  // Track history management:
-
-  /// (De)Activate the track history object
-  void set_use_track_history(const bool);
-
-  /// Check if a track history object is available
-  bool has_track_history() const;
-
-  /// Get a non-mutable reference to the track history object
-  const track_history & get_track_history() const;
-
-  /// Get a mutable reference to the track history object
-  track_history & grab_track_history();
-
-  /// Get a non-mutable reference to the geometry manager
-  const geomtools::manager & get_geom_manager() const;
-
-  // Vertex/Event generation:
-
-  /// Get a non-mutable reference to the vertex generator manager
-  const genvtx::manager & get_vg_manager() const;
-
-  /// Get a mutable reference to the vertex generator manager
-  genvtx::manager & grab_vg_manager();
-
-  /// Check if a vertex generator is available
-  bool has_vertex_generator() const;
-
-  /// Return a non-mutable reference to a embeded vertex generator
-  const genvtx::i_vertex_generator & get_vertex_generator() const;
-
-  /// Get a non-mutable reference to the embeded event generator
-  const genbb::manager & get_eg_manager() const;
-
-  /// Get a mutable reference to the embeded event generator
-  genbb::manager & grab_eg_manager();
-
-  /// Check if an event generator is available
-  bool has_event_generator() const;
-
-  /// Return a non-mutable reference to a embeded event generator
-  const genbb::i_genbb & get_event_generator() const;
-
-  /// Check if the method for seed initialization is set
-  bool has_init_seed_method() const;
-
-  /// Set the method used to set the initialization seed for the generation of seeds
-  void set_init_seed_method(const std::string &);
-
-  /// Return the method for seed initialization
-  const std::string & get_init_seed_method() const;
-
+  //----------------------------------------------------------------------
+  // Dump-To-Stream
+  //----------------------------------------------------------------------
   /// Basic default print
   void dump(std::ostream & = std::clog) const;
 
@@ -461,6 +482,15 @@ class manager : public loggable_support {
                  const std::string & indent_ = "") const;
 
  protected:
+  /// Initialization actions
+  virtual void initialize_impl();
+
+  /// Termination actions
+  virtual void reset_impl();
+
+  /// Simulation actions
+  virtual void run_simulation_impl();
+
   /// Initialize attirbutes' default values
   void _init_defaults();
 
@@ -512,53 +542,44 @@ class manager : public loggable_support {
   /// Initialize the time statistics
   virtual void _init_time_stat();
 
-  /// Initialization actions
-  virtual void _at_init();
-
-  /// Termination actions
-  virtual void _at_reset();
-
-  /// Simulation actions
-  virtual void _at_run_simulation();
-
  private:
   // Controls:
   bool _initialized_; //!< Initializion flag
 
   // Configuration:
-  const datatools::multi_properties * _multi_config_; //!< Setup parameters
+  const datatools::multi_properties* _multi_config_; //!< Setup parameters
 
   // User interface mode:
   bool _interactive_;              //!< Flag for interactive session
   bool _g4_visualization_;         //!< Flag to activate Geant4 visualization
 
-  std::string       _simulation_ctrl_label_; //!< Label for simulation thread control
-  simulation_ctrl * _simulation_ctrl_;       //!< Simulation thread control instance
+  std::string      _simulation_ctrl_label_; //!< Label for simulation thread control
+  simulation_ctrl* _simulation_ctrl_;       //!< Simulation thread control instance
 
   std::map<std::string,std::string> _supported_output_profile_ids_; //!< Supported simulation output profiles
   std::string           _output_profiles_activation_rule_; //!< Activation rule for output profiles
   std::set<std::string> _activated_output_profile_ids_;    //!< Activated simulation output profile Ids
 
   // Service manager :
-  datatools::service_manager * _service_manager_; //!< Service manager
+  datatools::service_manager* _service_manager_; //!< Service manager
 
   // Geometry manager :
-  const geomtools::manager  *  _external_geom_manager_; //!< External geometry manager
-  geomtools::manager           _geom_manager_;          //!< Embeded geometry manager
+  const geomtools::manager*  _external_geom_manager_; //!< External geometry manager
+  geomtools::manager         _geom_manager_;          //!< Embeded geometry manager
 
   // Vertex generation manager :
   int                          _vg_prng_seed_;     //!< Seed for the embeded PRNG for vertex generation
-  mygsl::rng                   _vg_prng_;          //!< Embeded PRNG for vertex generation
-  genvtx::manager              _vg_manager_;       //!< Vertex generator manager
-  std::string                  _vg_name_;          //!< Name of the active vertex generator
-  genvtx::i_vertex_generator * _vertex_generator_; //!< Active vertex generator
+  mygsl::rng                  _vg_prng_;          //!< Embeded PRNG for vertex generation
+  genvtx::manager             _vg_manager_;       //!< Vertex generator manager
+  std::string                 _vg_name_;          //!< Name of the active vertex generator
+  genvtx::i_vertex_generator* _vertex_generator_; //!< Active vertex generator
 
   // Event generation manager :
   int              _eg_prng_seed_;    //!< Seed for the embeded PRNG for event generation
   mygsl::rng       _eg_prng_;         //!< Embeded PRNG for event generation
   genbb::manager   _eg_manager_;      //!< Event generator manager
   std::string      _eg_name_;         //!< Name of the active event generator
-  genbb::i_genbb * _event_generator_; //!< Active event generator
+  genbb::i_genbb*  _event_generator_; //!< Active event generator
 
   // Step hit processor factory PRNG :
   int              _shpf_prng_seed_;  //!< Seed for the embeded PRNG for step hit processor factories
@@ -570,19 +591,19 @@ class manager : public loggable_support {
   g4_prng     _g4_prng_;       //!< PRNG using the Geant4 interface
 
   // G4 objects:
-  G4VSteppingVerbose * _g4_stepping_verbosity_; //!< Geant4 stepping verbosity instance
-  G4RunManager       * _g4_run_manager_;        //!< Geant4 run manager
-  G4UImanager        * _g4_UI_;                 //!< Geant4 UI manager
+  G4VSteppingVerbose* _g4_stepping_verbosity_; //!< Geant4 stepping verbosity instance
+  G4RunManager*       _g4_run_manager_;        //!< Geant4 run manager
+  G4UImanager*        _g4_UI_;                 //!< Geant4 UI manager
 
   // User specified G4 interfaces :
-  mctools::g4::detector_construction * _user_detector_construction_;
-  mctools::g4::physics_list          * _user_physics_list_;
-  mctools::g4::primary_generator     * _user_primary_generator_;
-  mctools::g4::run_action            * _user_run_action_;
-  mctools::g4::event_action          * _user_event_action_;
-  mctools::g4::tracking_action       * _user_tracking_action_;
-  mctools::g4::stepping_action       * _user_stepping_action_;
-  mctools::g4::stacking_action       * _user_stacking_action_;
+  mctools::g4::detector_construction* _user_detector_construction_;
+  mctools::g4::physics_list*          _user_physics_list_;
+  mctools::g4::primary_generator*     _user_primary_generator_;
+  mctools::g4::run_action*            _user_run_action_;
+  mctools::g4::event_action*          _user_event_action_;
+  mctools::g4::tracking_action*       _user_tracking_action_;
+  mctools::g4::stepping_action*       _user_stepping_action_;
+  mctools::g4::stacking_action*       _user_stacking_action_;
 
 #ifdef G4VIS_USE
   // G4 visualization, if you choose to have it!
