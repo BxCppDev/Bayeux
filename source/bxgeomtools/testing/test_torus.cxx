@@ -30,8 +30,6 @@ int main (int argc_, char ** argv_)
     bool debug = false;
     bool outer = true;
     bool inner = true;
-    bool top = true;
-    bool bottom = true;
     bool bulk = false;
     bool do_identity = false;
     bool do_locate = true;
@@ -80,7 +78,7 @@ int main (int argc_, char ** argv_)
     std::clog << "Inner side surface = "
               << my_torus.get_surface (geomtools::torus::FACE_INSIDE) / CLHEP::mm2
               << " mm2" << std::endl;
-    
+
     std::clog << "phi surface        = "
               << my_torus.get_surface (geomtools::torus::FACE_START_PHI) / CLHEP::mm2
               << " mm2" << std::endl;
