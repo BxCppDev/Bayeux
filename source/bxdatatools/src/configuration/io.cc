@@ -892,7 +892,7 @@ namespace datatools {
         target_ = target_out.str();
       }
       if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "target_ = '" << target_ << "'");
-      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "cri = '" << cri  << "'");
+      if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "cri = '" << cri << "'");
       if (_trace_) DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Exiting.");
       return cri;
     }
