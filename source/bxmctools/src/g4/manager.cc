@@ -287,7 +287,7 @@ const genvtx::i_vertex_generator& manager::get_vertex_generator() const {
 }
 
 event_action& manager::grab_user_event_action() {
-  DT_THROW_IF( _initialized_, std::logic_error, "Manager is not initialized !");
+  DT_THROW_IF(! _initialized_, std::logic_error, "Manager is not initialized !");
   return *_user_event_action_;
 }
 
