@@ -82,8 +82,8 @@ class simulation_module : public dpp::base_module {
   int _simulate_event(datatools::things & /* event_record_ */);
 
  private:
-  std::string geometryServiceName_;     //!< The label of the Geometry service to be accessed
-  std::string simdataBankName_;      //!< The label of the 'simulated_data' bank in the event record
+  std::string geometryServiceName_; //!< The label of the Geometry service to be accessed
+  std::string simdataBankName_;     //!< The label of the 'simulated_data' bank in the event record
 
   const geomtools::manager* geometryManagerRef_; //!< Non-mutable reference to the geometry manager
 
