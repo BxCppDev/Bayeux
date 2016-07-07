@@ -128,7 +128,12 @@ internal_item.model.BoxA       : string  = "blue_box0.model"
 # geometry manager is relevant.
 
 #@description The placement of the "BoxA" daughter volume
-internal_item.placement.BoxA   : string  = "-40 40 -40 (cm)"
+# The placement is computed from a compact string representation
+# which specifies the translation of the origin of the daughter
+# volume with respect to the origin of the mother volume.
+# Additional parameters for the rotation of the daughter volume are also
+# given (with explicit units).
+internal_item.placement.BoxA   : string  = "-40 40 -40 (cm) / z 10 (degree)"
 
 # We give here the placement  for the "BoxA" daughter physical volume.
 # There is no rotation in this case, only the translation with respect
@@ -141,7 +146,7 @@ internal_item.model.BoxB       : string  = "blue_box0.model"
 # the daughter physical volume named "BoxB".
 
 #@description The placement of the "BoxB" daughter volume
-internal_item.placement.BoxB   : string  = "-40 30 -40 (cm) / z 30 (degree) "
+internal_item.placement.BoxB   : string  = "-40 30 -40 (cm)"
 
 # We give here the placement  for the "BoxB" daughter physical volume.
 # There is not only the translation  with respect to the mother volume
@@ -178,11 +183,12 @@ internal_item.model.CircleBoxes     : string  = "box0_circular_chain.model"
 
 # #@description The placement of the "CircleBoxes" daughter volume
 # internal_item.placement.CircleBoxes : string  = "-5 -20 -40 (cm) "
+
 internal_item.placement.CircleBoxes.x     : real as length = 35 cm
 # internal_item.placement.CircleBoxes.y     : real as length = 0 cm
-internal_item.placement.CircleBoxes.z     : real as length = -40 cm
 internal_item.placement.CircleBoxes.y.gap_mode     : string = "min_to_min"
 internal_item.placement.CircleBoxes.y.gap_distance : real as length = 0 mm
+# internal_item.placement.CircleBoxes.z     : real as length = -40 cm
 internal_item.placement.CircleBoxes.z.gap_mode     : string = "max_to_max"
 internal_item.placement.CircleBoxes.z.gap_distance : real as length = 0 mm
 
