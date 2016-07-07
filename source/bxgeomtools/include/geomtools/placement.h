@@ -1,7 +1,7 @@
 /// \file geomtools/placement.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2015-02-24
+ * Last modified: 2016-07-06
  *
  * License:
  *
@@ -21,10 +21,14 @@
 #include <vector>
 
 // This project:
+#include <datatools/properties.h>
+#include <datatools/bit_mask.h>
 #include <geomtools/i_placement.h>
 #include <geomtools/geomtools_config.h>
 
 namespace geomtools {
+
+  class stackable_data;
 
   /// \brief The placement for a geometry volume with its translation and rotation
   ///        with respect to some mother reference frame
@@ -32,6 +36,112 @@ namespace geomtools {
   {
 
   public:
+
+    /// \brief Construct a placement
+    ///
+    /// Example of properties:
+    /// \code
+    /// x             : real as length =  2.0 mm
+    /// y             : real as length =  0.0 mm
+    /// z             : real as length =  0.0 mm
+    /// rotation_axis : string         = "z"
+    /// angle         : real as angle  = 45.0 degree
+    /// \endcode
+    ///
+    /// Example of properties:
+    /// \code
+    /// x     : real as length =  2.0 mm
+    /// y     : real as length =  0.0 mm
+    /// z     : real as length =  0.0 mm
+    /// phi   : real as angle  = 45.0 degree
+    /// theta : real as angle  = 25.0 degree
+    /// delta : real as angle  = 10.0 degree
+    /// \endcode
+    ///
+    /// Example of properties:
+    /// \code
+    /// x.gap_mode     : string = "min_to_min"
+    /// x.gap_distance : real as length =  2.0 mm
+    /// y              : real as length = 10.0 mm
+    /// z              : real as length = 10.0 mm
+    /// rotation_axis  : string         =  "z"
+    /// angle          : real as angle  = 45.0 degree
+    /// \endcode
+    ///
+    /// \code
+    /// geommtools::placement::builder b;
+    /// b.set_mother_stackable(mother_stacking_info);
+    /// b.set_child_stackable(child_stacking_info);
+    /// geomtools::placement p;
+    /// b.build(config, p);
+    /// \endcode
+    class builder
+    {
+    public:
+
+      enum init_flags {
+        no_child_to_mother_gap = datatools::bit_mask::bit00, //!< Inhibit the child/mother gap build modes
+        no_rotation            = datatools::bit_mask::bit01  //!< Inhibit rotation
+      };
+
+      /// \brief Child to mother gap mode:
+      enum child_to_mother_gap_mode {
+        gap_undefined     = 0, //!< Undefined gap mode
+        gap_center_to_min = 1, //!< Gap between the child origin to mother minimum border
+        gap_center_to_max = 2, //!< Gap between the child origin to mother maximum border
+        gap_min_to_min    = 3, //!< Gap between the child minimum border to mother minimum border
+        gap_min_to_max    = 4, //!< Gap between the child minimum border to mother maximum border
+        gap_max_to_min    = 5, //!< Gap between the child maximum border to mother minimum border
+        gap_max_to_max    = 6  //!< Gap between the child maximum border to mother maximum border
+      };
+
+      /// Return child/mother gap mode from a label
+      static child_to_mother_gap_mode get_gap_mode(const std::string & label_);
+
+      /// Return the label associated ti a given child/mother gap mode
+      static std::string get_gap_mode_label(child_to_mother_gap_mode);
+
+      /// Check if a given child/mother gap mode needs child stackable informations
+      static bool needs_stackable_child(child_to_mother_gap_mode);
+
+      /// Constructor from initialization flags
+      builder(uint32_t flags_ = 0);
+
+      bool has_mother_stackable() const;
+
+      void set_mother_stackable(const stackable_data &);
+
+      bool has_child_stackable() const;
+
+      void set_child_stackable(const stackable_data &);
+
+      bool use_child_to_mother_gap() const;
+
+      bool allowed_rotation() const;
+
+      /// Configure from flags
+      void configure(uint32_t flags_ = 0);
+
+      /// Reset the builder
+      void reset();
+
+      /// Build a placement object from a set of parameters
+      void build(const datatools::properties & config_,
+                 placement & p_) const;
+
+    protected:
+
+      void _build(const datatools::properties & config_,
+                  placement & p_) const;
+
+    private:
+
+      bool  _no_child_to_mother_gap_            = false;
+      bool  _no_rotation_                       = false;
+      const stackable_data * _mother_stackable_ = nullptr;
+      const stackable_data * _child_stackable_  = nullptr;
+
+    };
 
     /// Check validity
     bool is_valid() const;
@@ -233,32 +343,32 @@ namespace geomtools {
               const rotation_3d & rotation_);
 
     /// Destructor
-    virtual ~placement ();
+    virtual ~placement();
 
     /// Reset
-    virtual void reset ();
+    virtual void reset();
 
     // Transformation methods:
 
-    void mother_to_child (const vector_3d &, vector_3d &) const;
+    void mother_to_child(const vector_3d &, vector_3d &) const;
 
-    vector_3d mother_to_child (const vector_3d &) const;
+    vector_3d mother_to_child(const vector_3d &) const;
 
-    void child_to_mother (const vector_3d &, vector_3d &) const;
+    void child_to_mother(const vector_3d &, vector_3d &) const;
 
-    vector_3d child_to_mother (const vector_3d &) const;
+    vector_3d child_to_mother(const vector_3d &) const;
 
-    void mother_to_child_direction (const vector_3d &, vector_3d &) const;
+    void mother_to_child_direction(const vector_3d &, vector_3d &) const;
 
-    vector_3d mother_to_child_direction (const vector_3d &) const;
+    vector_3d mother_to_child_direction(const vector_3d &) const;
 
-    void child_to_mother_direction (const vector_3d &, vector_3d &) const;
+    void child_to_mother_direction(const vector_3d &, vector_3d &) const;
 
-    vector_3d child_to_mother_direction (const vector_3d &) const;
+    vector_3d child_to_mother_direction(const vector_3d &) const;
 
-    //void mother_to_child (const placement &, placement &) const;
+    //void mother_to_child(const placement &, placement &) const;
 
-    void child_to_mother (const placement &, placement &) const;
+    void child_to_mother(const placement &, placement &) const;
 
 
     /** Given two placements P1 and  P2 expressed in  some mother
@@ -271,24 +381,26 @@ namespace geomtools {
      *   P1.relocate (P2, P2_1);
      *
      */
-    void relocate (const placement &, placement &) const;
+    void relocate(const placement &, placement &) const;
+
+    void initialize(const datatools::properties & config_, uint32_t flags_ = 0);
 
     /// Smart print
-    virtual void tree_dump (std::ostream & out_  = std::clog,
-                            const std::string & title_ = "",
-                            const std::string & indent_ = "",
-                            bool inherit_ = false) const;
+    virtual void tree_dump(std::ostream & out_  = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
     /// Basic print
-    void dump (std::ostream      & out_    = std::clog,
+    void dump(std::ostream      & out_    = std::clog,
                const std::string & title_  = "geomutils::placement",
                const std::string & indent_ = "") const;
 
     /// Parse from a description string
-    static bool from_string (const std::string &, placement &);
+    static bool from_string(const std::string &, placement &);
 
     /// Convert to a description string
-    static void to_string (std::string &, const placement &);
+    static void to_string(std::string &, const placement &);
 
     /// Test method
     void test() const;
@@ -325,6 +437,7 @@ namespace geomtools {
 
 // Activate reflection layer :
 DR_CLASS_INIT(::geomtools::placement)
+
 
 /*
 // Class version:

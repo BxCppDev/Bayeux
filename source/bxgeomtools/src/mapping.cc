@@ -131,23 +131,21 @@ namespace geomtools {
     DT_THROW_IF (is_initialized (), std::logic_error, "Mapping is already initialized !");
 
     { // Logging priority :
-      datatools::properties logging_config;
-      config_.export_and_rename_starting_with(logging_config, "mapping.", "");
       datatools::logger::priority lp
-        = datatools::logger::extract_logging_configuration(logging_config,
+        = datatools::logger::extract_logging_configuration(config_,
                                                            datatools::logger::PRIO_WARNING);
       DT_THROW_IF (lp == datatools::logger::PRIO_UNDEFINED, std::logic_error,
                    "Invalid logging priority value for mapping !");
       set_logging_priority(lp);
     }
 
-    if (config_.has_flag ("mapping.no_world_mapping")) {
+    if (config_.has_flag ("no_world_mapping")) {
       _world_mapping_ = false;
     }
 
     set_build_mode(BUILD_MODE_STRICT_MOTHERSHIP);
-    if (config_.has_key ("mapping.build_mode")) {
-      std::string build_mode = config_.fetch_string ("mapping.build_mode");
+    if (config_.has_key ("build_mode")) {
+      std::string build_mode = config_.fetch_string ("build_mode");
       if (build_mode == "strict_mothership") {
         set_build_mode(BUILD_MODE_STRICT_MOTHERSHIP);
         /*
@@ -162,28 +160,28 @@ namespace geomtools {
       }
     }
 
-    if (config_.has_key ("mapping.max_depth")) {
-      int mdepth = config_.fetch_integer ("mapping.max_depth");
+    if (config_.has_key ("max_depth")) {
+      int mdepth = config_.fetch_integer ("max_depth");
       if (mdepth > 0) {
         set_max_depth (mdepth);
       }
     }
 
     bool has_only = false;
-    if (config_.has_key ("mapping.only_categories")){
+    if (config_.has_key ("only_categories")){
       has_only = true;
       std::vector<std::string> only;
-      config_.fetch ("mapping.only_categories", only);
+      config_.fetch ("only_categories", only);
       for (size_t i = 0; i < only.size (); i++) {
         add_only (only[i]);
       }
     }
 
-    if (config_.has_key ("mapping.excluded_categories")) {
+    if (config_.has_key ("excluded_categories")) {
       DT_THROW_IF (has_only, std::logic_error,
-                   "The 'mapping.excluded_categories' property is not compatible with 'mapping.only_categories' property !");
+                   "The 'excluded_categories' property is not compatible with 'only_categories' property !");
       std::vector<std::string> excluded;
-      config_.fetch ("mapping.excluded_categories", excluded);
+      config_.fetch ("excluded_categories", excluded);
       for (size_t i = 0; i < excluded.size (); i++) {
         add_excluded (excluded[i]);
       }
@@ -360,71 +358,62 @@ namespace geomtools {
       }
       out_ << "Type = " << type << " : " << col.size () << " items" << std::endl;
     }
-
     return;
   }
 
   void mapping::_build_ ()
   {
     DT_LOG_TRACE(_logging, "Entering...");
-    std::string world_cat_name = id_mgr::default_world_category();
-    DT_THROW_IF (! _get_id_manager ().has_category_info (world_cat_name),
+    std::string world_cat_name = _get_id_manager().get_world_category();
+    DT_THROW_IF(! _get_id_manager().has_category_info(world_cat_name),
                  std::logic_error,
-                 "Unknown 'world' category '" << world_cat_name << "' !");
+                 "Unknown world category '" << world_cat_name << "' !");
     {
       const id_mgr::category_info & world_cat_info
-        = _get_id_manager ().get_category_info (world_cat_name);
+        = _get_id_manager().get_category_info(world_cat_name);
       DT_LOG_TRACE(_logging, "Category info: ");
-      if (_logging >= datatools::logger::PRIO_TRACE) world_cat_info.tree_dump (std::cerr);
+      if (_logging >= datatools::logger::PRIO_TRACE) world_cat_info.tree_dump(std::cerr);
       geom_id world_id;
-      world_cat_info.create (world_id);
-      world_id.set_address (0);
-      DT_LOG_TRACE (_logging, "World ID = " << world_id << ' '
-                    << (world_id.is_valid () ? "[Valid]": "[Invalid]"));
-      placement top_placement (vector_3d (0.0, 0.0, 0.0),
-                               0,
-                               0.0);
-      //        const logical_volume * world_log
-      //  = _factory_->get_logicals ().find ()->second;
-      geom_info world_gi (world_id,
+      world_cat_info.create(world_id);
+      world_id.set_address(0);
+      DT_LOG_TRACE(_logging, "World ID = " << world_id << ' '
+                    << (world_id.is_valid() ? "[Valid]": "[Invalid]"));
+      placement top_placement(vector_3d(0.0, 0.0, 0.0), 0, 0.0);
+      geom_info world_gi(world_id,
                           top_placement,
                           *_top_logical_);
-      //dump_dictionnary (std::clog);
-
       // Add world volume mapping info :
       if (_world_mapping_)  {
-        _get_geom_infos ()[world_id] = world_gi;
+        _get_geom_infos()[world_id] = world_gi;
       }
-      if (is_build_mode_strict_mothership ()) {
-        _build_logical_children_ (*_top_logical_, top_placement, world_id);
-      } else if (is_build_mode_lazy_mothership ()) {
+      if (is_build_mode_strict_mothership()) {
+        _build_logical_children_(*_top_logical_, top_placement, world_id);
+      } else if (is_build_mode_lazy_mothership()) {
         std::vector<geom_id> parent_ids;
         parent_ids.push_back(world_id);
-        _build_logical_children_2_ (*_top_logical_, top_placement, parent_ids);
+        _build_logical_children_2_(*_top_logical_, top_placement, parent_ids);
       }
     }
-    //dump_dictionnary (std::clog);
     DT_LOG_TRACE(_logging, "Exiting.");
     return;
   }
 
-  void mapping::_build_logical_children_ (const logical_volume & log_,
+  void mapping::_build_logical_children_(const logical_volume & log_,
                                           const placement & mother_world_placement_,
                                           const geom_id & mother_id_)
   {
-    _indenter_ (++_depth_);
-    DT_LOG_TRACE (get_logging_priority (), _indenter_ << "Entering...");
+    _indenter_(++_depth_);
+    DT_LOG_TRACE(get_logging_priority(), _indenter_ << "Entering...");
 
     const logical_volume & log = log_;
-    DT_LOG_TRACE (get_logging_priority (), _indenter_ << "Log = `" << log.get_name () << "'");
-    if (log.get_physicals ().size () == 0) {
-      DT_LOG_TRACE (get_logging_priority (), _indenter_ << "Exiting.");
-      _indenter_ (--_depth_);
+    DT_LOG_TRACE(get_logging_priority(), _indenter_ << "Log = `" << log.get_name() << "'");
+    if (log.get_physicals().size() == 0) {
+      DT_LOG_TRACE(get_logging_priority(), _indenter_ << "Exiting.");
+      _indenter_(--_depth_);
       return;
     }
 
     // Loop on children physical volumes:
-    //std::cerr << "DEVEL: mapping: ************ Logical = '" << log.get_name() << "' \n";
     for (logical_volume::physicals_col_type::const_iterator i
            = log.get_physicals ().begin ();
          i != log.get_physicals ().end ();
@@ -433,14 +422,10 @@ namespace geomtools {
       const physical_volume & phys_vol = *(i->second);
       DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
                     "Physical '" << phys_name << "' : " << "'" << phys_vol.get_name () << "'");
-
-      //std::cerr << "DEVEL: mapping: ************ -> physical = '" << phys_vol.get_name () << "' \n";
-
       const std::string daughter_label
         = i_model::extract_label_from_physical_volume_name (phys_vol.get_name ());
       DT_LOG_TRACE (get_logging_priority (), _indenter_ <<
                     "Daughter label = '" << daughter_label << "' ");
-      //std::cerr << "DEVEL: mapping: ************   -> daughter_label = '" << daughter_label << "' \n";
       std::string daughter_category_info;
       if (mapping_utils::has_daughter_id (log.get_parameters (),
                                           daughter_label)) {
@@ -461,7 +446,6 @@ namespace geomtools {
       // Loop on replicated children physical volumes:
       for (size_t item = 0; item < phys_placement.get_number_of_items (); item++) {
         DT_LOG_TRACE (get_logging_priority (), _indenter_ << "-> item #" << item << ": ");
-
         // get the current item placement in the mother coordinates system:
         placement item_placement;
         phys_placement.get_placement (item, item_placement);
@@ -470,7 +454,6 @@ namespace geomtools {
           placement::to_string (tmp, item_placement);
           DT_LOG_TRACE (get_logging_priority (), _indenter_ << "-> child placement " << tmp);
         }
-
         // compute the current item placement
         // in the world coordinates system:
         placement world_item_placement;
@@ -489,7 +472,6 @@ namespace geomtools {
           DT_LOG_NOTICE(get_logging_priority (), "Found daughter category information for daughter volume with label '"
                          << daughter_label << "'.");
           geom_id item_id;
-
           // compute the vector of sub-addresses:
           std::vector<uint32_t> items_index;
           phys_placement.compute_index_map (items_index, item);
@@ -752,61 +734,61 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("mapping.no_world_mapping")
+    cpd.set_name_pattern("no_world_mapping")
       .set_terse_description("Inhibition of the mapping of the world volume")
       .set_traits(datatools::TYPE_BOOLEAN)
       .set_mandatory(false)
       .set_default_value_boolean(false)
-      .add_example("Use the default build mode::                \n"
-                   "                                            \n"
-                   "  mapping.no_world_mapping : boolean = 1    \n"
-                   "                                            \n"
+      .add_example("Use the default build mode::        \n"
+                   "                                    \n"
+                   "  no_world_mapping : boolean = 1    \n"
+                   "                                    \n"
                    )
       ;
   }
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("mapping.build_mode")
+    cpd.set_name_pattern("build_mode")
       .set_terse_description("The mapping build mode")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_default_value_string("strict_mothership")
-      .set_long_description("This property sets the build mode of the mapping.         \n"
+      .set_long_description("This property sets the build mode of the mapping.        \n"
                             "The only supported mode is ``strict_mothership``.        \n"
                             "The ``strict_mothership`` mode implies that daughter     \n"
                             "volume GIDs are built from their strict inheritance      \n"
                             "hierarchical relationship with their mother volume.      \n"
                             )
-      .add_example("Use the default build mode::                              \n"
-                   "                                                          \n"
-                   "  mapping.build_mode : string = \"strict_mothership\"     \n"
-                   "                                                          \n"
+      .add_example("Use the default build mode::                  \n"
+                   "                                              \n"
+                   "  build_mode : string = \"strict_mothership\" \n"
+                   "                                              \n"
                    )
       ;
   }
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("mapping.max_depth")
+    cpd.set_name_pattern("max_depth")
       .set_terse_description("The mapping maximum depth")
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
       .set_default_value_integer(0)
       .set_long_description("This property sets the maximum depth of the mapping. \n"
-                            "Value ``0`` means infinite depth.                   \n"
+                            "Value ``0`` means infinite depth.                    \n"
                             )
       .add_example("Use depth up to 10 hierarchical levels: :: \n"
-                   "                                       \n"
-                   "  mapping.max_depth : integer = 10     \n"
-                   "                                       \n"
+                   "                                           \n"
+                   "  max_depth : integer = 10                 \n"
+                   "                                           \n"
                    )
       ;
   }
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("mapping.only_categories")
+    cpd.set_name_pattern("only_categories")
       .set_terse_description("The list of categories to be processed by the mapping algorithm")
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
@@ -817,7 +799,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
                             )
       .add_example("Process only two categories: ::                                \n"
                    "                                                               \n"
-                   "  mapping.only_categories : string[2] = \"calo\" \"tracker\"   \n"
+                   "  only_categories : string[2] = \"calo\" \"tracker\"   \n"
                    "                                                               \n"
                    )
       ;
@@ -825,7 +807,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
 
   {
     datatools::configuration_property_description & cpd = ocd_.add_configuration_property_info();
-    cpd.set_name_pattern("mapping.excluded_categories")
+    cpd.set_name_pattern("excluded_categories")
       .set_terse_description("The list of categories not to be processed by the mapping algorithm")
       .set_traits(datatools::TYPE_STRING,
                   datatools::configuration_property_description::ARRAY)
@@ -836,7 +818,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
                             )
       .add_example("Exclude two specific categories: ::                            \n"
                    "                                                               \n"
-                   "  mapping.excluded_categories : string[2] = \"screw\" \"rivet\"\n"
+                   "  excluded_categories : string[2] = \"screw\" \"rivet\"\n"
                    "                                                               \n"
                    )
       ;
@@ -847,29 +829,29 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::mapping, ocd_)
                                "                                                                         \n"
                                "Example: build all possible GIDs but world volume::                      \n"
                                "                                                                         \n"
-                               "  mapping.no_world_mapping    : boolean = 1                              \n"
-                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
-                               "  mapping.max_depth           : integer = 0                              \n"
+                               "  no_world_mapping    : boolean = 1                              \n"
+                               "  build_mode          : string = \"strict_mothership\"           \n"
+                               "  max_depth           : integer = 0                              \n"
                                "                                                                         \n"
                                "Example: build all possible GIDs up to depth 4 in the geometry hierarchy::\n"
                                "                                                                         \n"
-                               "  mapping.no_world_mapping    : boolean = 0                              \n"
-                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
-                               "  mapping.max_depth           : integer = 4                              \n"
+                               "  no_world_mapping    : boolean = 0                              \n"
+                               "  build_mode          : string = \"strict_mothership\"           \n"
+                               "  max_depth           : integer = 4                              \n"
                                 "                                                                        \n"
                                "Example: build only GIDs for geometry categories given by their names::  \n"
                                "                                                                         \n"
-                               "  mapping.no_world_mapping    : boolean = 0                              \n"
-                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
-                               "  mapping.only_categories     : string[2] = \"calorimeter\" \"tracker\"  \n"
+                               "  no_world_mapping    : boolean = 0                              \n"
+                               "  build_mode          : string = \"strict_mothership\"           \n"
+                               "  only_categories     : string[2] = \"calorimeter\" \"tracker\"  \n"
                                "                                                                         \n"
                                "Example: build all possible GIDs up to depth 10 in the geometry hierarchy,  \n"
                                "excluding GIDs associated to some geometry categories given by their names::\n"
                                "                                                                         \n"
-                               "  mapping.no_world_mapping    : boolean = 0                              \n"
-                               "  mapping.build_mode          : string = \"strict_mothership\"           \n"
-                               "  mapping.max_depth           : integer = 10                             \n"
-                               "  mapping.excluded_categories : string[2] = \"screw\" \"rivet\"          \n"
+                               "  no_world_mapping    : boolean = 0                              \n"
+                               "  build_mode          : string = \"strict_mothership\"           \n"
+                               "  max_depth           : integer = 10                             \n"
+                               "  excluded_categories : string[2] = \"screw\" \"rivet\"          \n"
                                "                                                                         \n"
                                );
 

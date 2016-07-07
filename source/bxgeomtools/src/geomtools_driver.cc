@@ -317,47 +317,47 @@ namespace geomtools {
 
     if (! _params_.geo_mgr_config_file.empty()) {
       _geo_mgr_.reset(new manager);
-      _geo_mgr_.get()->set_logging_priority (_params_.logging);
+      _geo_mgr_.get()->set_logging_priority(_params_.logging);
       std::string geo_mgr_config_file = _params_.geo_mgr_config_file;
       DT_THROW_IF(! datatools::fetch_path_with_env(geo_mgr_config_file),
                   std::runtime_error,
                   "Cannot fetch path from geometry manager configuration file '"
                   << geo_mgr_config_file << "' !");
       datatools::properties geo_mgr_config;
-      datatools::properties::read_config (geo_mgr_config_file,
-                                          geo_mgr_config);
-      _geo_mgr_.get()->initialize (geo_mgr_config);
-      _geo_factory_ref_ = &_geo_mgr_.get()->get_factory ();
+      datatools::properties::read_config(geo_mgr_config_file,
+                                         geo_mgr_config);
+      _geo_mgr_.get()->initialize(geo_mgr_config);
+      _geo_factory_ref_ = &_geo_mgr_.get()->get_factory();
     } else {
       _geo_factory_.reset(new model_factory);
       _geo_factory_.get()->set_debug (_params_.logging >= datatools::logger::PRIO_DEBUG);
-      DT_THROW_IF (_params_.setup_filenames.size () == 0,
+      DT_THROW_IF (_params_.setup_filenames.size() == 0,
                    std::logic_error,
                    "Missing list of geometry models configuration files or geometry manager configuration file!");
       for (size_t i = 0; i  < _params_.setup_filenames.size(); i++) {
         std::string geom_filename = _params_.setup_filenames[i];
-        datatools::fetch_path_with_env (geom_filename);
-        _geo_factory_.get()->load (geom_filename);
+        datatools::fetch_path_with_env(geom_filename);
+        _geo_factory_.get()->load(geom_filename);
       }
-      _geo_factory_.get()->lock ();
+      _geo_factory_.get()->lock();
       _geo_factory_ref_ = _geo_factory_.get();
     }
 
     const model_factory & geometry_factory = *_geo_factory_ref_;
     if (_params_.logging >= datatools::logger::PRIO_DEBUG) {
-      _geo_factory_ref_->tree_dump (std::clog, "Geometry model factory:");
+      _geo_factory_ref_->tree_dump(std::clog, "Geometry model factory:");
     }
 
     // Default model :
     //bool _has_world_ = false;
     for (models_col_type::const_iterator i
-           = geometry_factory.get_models ().begin ();
-         i != geometry_factory.get_models ().end ();
+           = geometry_factory.get_models().begin();
+         i != geometry_factory.get_models().end();
          i++) {
-      if (i->second->get_name () == geomtools::model_factory::default_world_label()) {
+      if (i->second->get_name() == geomtools::model_factory::default_world_label()) {
         //_has_world_ = true;
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-        if (_params_.visu_object_name.empty ()) {
+        if (_params_.visu_object_name.empty()) {
           _params_.visu_object_name = geomtools::model_factory::default_world_label();
         }
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
@@ -368,6 +368,7 @@ namespace geomtools {
     _initialized_ = true;
     return;
   }
+
   int geomtools_driver::command_initialize(const std::vector<std::string> & argv_,
                                            std::ostream & /*out_*/)
   {

@@ -1,10 +1,13 @@
-/* i_stackable.cc
- */
+// i_stackable.cc
 
+// Ourselves:
 #include <geomtools/i_stackable.h>
+
+// Standard Library:
 #include <sstream>
 #include <stdexcept>
 
+// This project:
 #include <datatools/clhep_units.h>
 #include <datatools/units.h>
 
@@ -353,6 +356,16 @@ namespace geomtools {
   bool stackable_data::is_valid () const
   {
     return is_valid_x () && is_valid_y () && is_valid_z ();
+  }
+
+  bool stackable_data::is_valid_by_axis(axis_type axis_) const
+  {
+    DT_THROW_IF(axis_ == AXIS_INVALID, std::logic_error, "Invalid axis!");
+    switch (axis_) {
+    case AXIS_X: return is_valid_x();
+    case AXIS_Y: return is_valid_y();
+    default: return is_valid_z();
+    }
   }
 
   bool stackable_data::is_valid_weak () const

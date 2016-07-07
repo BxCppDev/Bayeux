@@ -16,13 +16,13 @@
 #  * "bolt.gc" : the category for all physical volumes representing a bolt (at
 #     a given hierarchy level).
 
-###########################
-[category="world" type="0"]
+# ###########################
+# [category="world" type="0"]
 
-#@config The mandatory geometry category of the top-level world volume
+# #@config The mandatory geometry category of the top-level world volume
 
-#@description The GID address of the world volume is characterized by its 'world' number
-addresses : string[1] = "world"
+# #@description The GID address of the world volume is characterized by its 'world' number
+# addresses : string[1] = "world"
 
 # This is mandatory in the library, by convention the category name is 'world' (reserved name)
 # and the associated type ID is 0 (reserved type).

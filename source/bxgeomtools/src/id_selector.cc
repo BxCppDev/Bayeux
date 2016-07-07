@@ -87,9 +87,9 @@ namespace geomtools {
                 "Unknown category name '" << category << "' !");
 
     _cat_info_ = &(_id_mgr_->get_category_info(category));
-    for (size_t addr_index = 0; addr_index < _cat_info_->addresses.size(); addr_index++) {
+    for (size_t addr_index = 0; addr_index < _cat_info_->get_addresses().size(); addr_index++) {
       bool addr_processed = false;
-      const std::string & addr_name = _cat_info_->addresses[addr_index];
+      const std::string & addr_name = _cat_info_->get_addresses()[addr_index];
       {
         // Search for a unique value for a given address, examples:
         //   address.row    : integer = 3
@@ -167,7 +167,7 @@ namespace geomtools {
     DT_THROW_IF(! _id_mgr_->has_category_info (category), logic_error,
                 "Unknown category name '" << category << "' !");
 
-    _cat_info_ = &(_id_mgr_->get_category_info  (category));
+    _cat_info_ = &(_id_mgr_->get_category_info(category));
     size_t parsed_addr_rules = 0;
     while (! rules_iss.eof () && (parsed_addr_rules < _cat_info_->get_depth ())) {
       string addr_token;
@@ -187,8 +187,8 @@ namespace geomtools {
       DT_THROW_IF(addr_rule.empty (), logic_error, "Address rule is empty !");
 
       int addr_index = -1;
-      for (size_t i = 0; i < _cat_info_->addresses.size (); i++) {
-        if (_cat_info_->addresses[i] == addr_name) {
+      for (size_t i = 0; i < _cat_info_->get_addresses().size (); i++) {
+        if (_cat_info_->get_addresses()[i] == addr_name) {
           addr_index = i;
           break;
         }
@@ -248,7 +248,7 @@ namespace geomtools {
         out_ << "|-- ";
       }
       out_ << "Address index=" << i->first
-           << " (" << _cat_info_->addresses[i->first] << ")"
+           << " (" << _cat_info_->get_addresses()[i->first] << ")"
            << " : address set=" << i->second
            << endl;
     }

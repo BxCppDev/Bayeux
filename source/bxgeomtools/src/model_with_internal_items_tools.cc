@@ -140,7 +140,7 @@ namespace geomtools {
 
   model_with_internal_items_tools::~model_with_internal_items_tools ()
   {
-    _items_.clear ();
+    _items_.clear();
     return;
   }
 
@@ -148,67 +148,184 @@ namespace geomtools {
                                                               logical_volume & log_,
                                                               models_col_type * models_)
   {
+    // Logging:
+    datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+    {
+      std::ostringstream logging_key_oss;
+      logging_key_oss << INTERNAL_ITEM_PREFIX << "logging";
+      if (config_.has_key(logging_key_oss.str())) {
+        std::string log_level = config_.fetch_string(logging_key_oss.str());
+        datatools::logger::priority p = datatools::logger::get_priority(log_level);
+        if (p != datatools::logger::PRIO_UNDEFINED) {
+          logging = p;
+        }
+      }
+    }
+    DT_LOG_DEBUG(logging,
+                 "Processing internal items for logical volume '" << log_.get_name() << "'...");
+
     std::vector<std::string> labels;
-    if (config_.has_key (INTERNAL_ITEM_LABELS_KEY)) {
-      config_.fetch (INTERNAL_ITEM_LABELS_KEY, labels);
+    if (config_.has_key(INTERNAL_ITEM_LABELS_KEY)) {
+      config_.fetch(INTERNAL_ITEM_LABELS_KEY, labels);
     }
 
-    if (labels.size () == 0) {
+    if (labels.size() == 0) {
       // no internal item within the 'logical_volume' mother envelope:
       return;
     }
 
-    DT_THROW_IF (! models_, std::logic_error, "Missing dictionary of models !");
+    DT_THROW_IF(! models_, std::logic_error, "Missing dictionary of models !");
 
-    //std::cerr << "DEVEL: MWIIT: ************ Logical = '" << log_.get_name() << "' \n";
-    for (std::vector<std::string>::const_iterator i = labels.begin ();
-         i != labels.end ();
+    for (std::vector<std::string>::const_iterator i = labels.begin();
+         i != labels.end();
          i++) {
-        const std::string item_label = *i;
-        placement item_placement;
-        // extract placement:
-        {
-          std::ostringstream item_placement_oss;
-          item_placement_oss << INTERNAL_ITEM_PLACEMENT_PREFIX << item_label;
-          DT_THROW_IF (! config_.has_key (item_placement_oss.str ()),
-                       std::logic_error,
-                       "Missing '" << item_placement_oss.str () << "' property !");
-          const std::string item_placement_str = config_.fetch_string (item_placement_oss.str ());
-          // parse placement:
+      const std::string item_label = *i;
+      DT_LOG_DEBUG(logging,
+                   "Processing internal item '" << item_label << "' in logical volume '" << log_.get_name() << "'...");
+      placement item_placement;
+      item_placement.invalidate();
+
+      // Logging:
+      datatools::logger::priority item_logging = datatools::logger::PRIO_FATAL;
+      {
+        std::ostringstream item_logging_key_oss;
+        item_logging_key_oss << INTERNAL_ITEM_PREFIX << "logging." << item_label;
+        if (config_.has_key(item_logging_key_oss.str())) {
+          std::string log_level = config_.fetch_string(item_logging_key_oss.str());
+          datatools::logger::priority p = datatools::logger::get_priority(log_level);
+          if (p != datatools::logger::PRIO_UNDEFINED) {
+            item_logging = p;
+          }
+        }
+      }
+
+      // First we extract the daughter's model:
+      const i_model * item_model = nullptr;
+      {
+        std::ostringstream item_model_key_oss;
+        item_model_key_oss << INTERNAL_ITEM_MODEL_PREFIX << item_label;
+        DT_THROW_IF (! config_.has_key (item_model_key_oss.str ()),
+                     std::logic_error,
+                     "Missing '" << item_model_key_oss.str () << "' property !");
+        const std::string item_model_name = config_.fetch_string (item_model_key_oss.str ());
+        models_col_type::const_iterator found = models_->find (item_model_name);
+        DT_THROW_IF (found == models_->end (),
+                     std::logic_error,
+                     "Cannot find model with name '" << item_model_name << "' !");
+        item_model = found->second;
+      }
+      DT_THROW_IF(item_model == nullptr, std::logic_error,
+                  "Missing model for internal item '" << item_label << "' in logical volume '"
+                  << log_.get_name() << "'!");
+
+      // Next we extract the daughter's placement from compact representation:
+      if (!item_placement.is_valid()) {
+        std::ostringstream item_placement_oss;
+        item_placement_oss << INTERNAL_ITEM_PLACEMENT_PREFIX << item_label;
+        if (config_.has_key (item_placement_oss.str())) {
+          const std::string item_placement_str = config_.fetch_string(item_placement_oss.str());
+          DT_LOG_DEBUG(item_logging, "Found '" << item_label << "' item placement compact representation: '" << item_placement_str << "'");
+          // Parse placement:
           bool res_parsing = true;
           try {
-            res_parsing = placement::from_string (item_placement_str, item_placement);
-          }
-          catch (...) {
+            res_parsing = placement::from_string(item_placement_str, item_placement);
+          } catch (...) {
             res_parsing = false;
           }
-          DT_THROW_IF (! res_parsing, std::logic_error, "Item's placement parsing failed !");
+          DT_THROW_IF (! res_parsing, std::logic_error,
+                       "Placement parsing error for internal item '" << item_label
+                       << "' in logical volume '"
+                       << log_.get_name() << "'!");
         }
-
-        // extract model:
-        const i_model * item_model = 0;
-        {
-          std::ostringstream item_model_key_oss;
-          item_model_key_oss << INTERNAL_ITEM_MODEL_PREFIX << item_label;
-          DT_THROW_IF (! config_.has_key (item_model_key_oss.str ()),
-                       std::logic_error,
-                       "Missing '" << item_model_key_oss.str () << "' property !");
-          const std::string item_model_name = config_.fetch_string (item_model_key_oss.str ());
-          models_col_type::const_iterator found = models_->find (item_model_name);
-          DT_THROW_IF (found == models_->end (),
-                       std::logic_error,
-                       "Cannot find model with name '" << item_model_name << "' !");
-          item_model = found->second;
-        }
-        //std::cerr << "DEVEL: MWIIT: ************ -> item_label = '" << item_label << "' \n";
-        add_item (item_label, *item_model, item_placement);
-        physical_volume & item_phys = grab_item (item_label).grab_physical_volume ();
-        const placement & item_plcmt = get_item (item_label).get_placement ();
-        item_phys.set_name (i_model::make_physical_volume_name (item_label));
-        item_phys.set_placement (item_plcmt);
-        item_phys.set_logical (item_model->get_logical ());
-        item_phys.set_mother (log_);
       }
+
+      // Also, if the former method failed, we try another method to extract the daughter's placement:
+      if (!item_placement.is_valid()) {
+        datatools::properties pl_config;
+        config_.export_and_rename_starting_with(pl_config,
+                                                INTERNAL_ITEM_PLACEMENT_PREFIX + item_label + ".",
+                                                "");
+        if (datatools::logger::is_debug(item_logging)) {
+          pl_config.tree_dump(std::cerr,
+                              "Placement configuration for item '" + item_label + "': "
+                              + "' in logical volume '"
+                              + log_.get_name() + "'!",
+                              "[debug]: ");
+        }
+        if (pl_config.size() > 0) {
+           try {
+            uint32_t builder_flags = 0;
+            placement::builder b(builder_flags);
+
+            // Fetch stackable info from the mother logical volume:
+            stackable_data mother_stacking_info;
+            if (!i_shape_3d::pickup_stackable(log_.get_shape(),
+                                             mother_stacking_info)) {
+              // Fallback to bounding box:
+             DT_LOG_DEBUG(item_logging, "Cannot pickup mother stacking info: fallback to mother bounding box...");
+              const bounding_data & mother_bb = log_.get_shape().get_bounding_data();
+              mother_bb.build_stackable(mother_stacking_info);
+            }
+            if (mother_stacking_info.is_valid()) {
+              DT_LOG_DEBUG(item_logging, "Set mother stacking info...");
+              b.set_mother_stackable(mother_stacking_info);
+            }
+
+            // Fetch stackable info from the child logical volume:
+            stackable_data child_stacking_info;
+            if (!i_shape_3d::pickup_stackable(item_model->get_logical().get_shape(),
+                                              child_stacking_info)) {
+              // Fallback to bounding box:
+              DT_LOG_DEBUG(item_logging, "Cannot pickup child stacking info: fallback to child bounding box...");
+              const bounding_data & child_bb = item_model->get_logical().get_shape().get_bounding_data();
+              child_bb.build_stackable(child_stacking_info);
+            }
+            if (child_stacking_info.is_valid()) {
+              DT_LOG_DEBUG(item_logging, "Set child stacking info...");
+              b.set_child_stackable(child_stacking_info);
+            }
+            DT_LOG_DEBUG(item_logging, "Building placement...");
+            b.build(pl_config, item_placement);
+          } catch (std::exception & builder_error) {
+            DT_THROW(std::logic_error,
+                     "Cannot build placement for daughter '" << item_label << "' in logical volume '"
+                     << log_.get_name() << "': " << builder_error.what());
+          }
+        }
+      }
+
+      // // Also, if the former method failed, we try another method to extract the daughter's placement:
+      // if (!item_placement.is_valid()) {
+      //   std::ostringstream item_placement_oss;
+      //   item_placement_oss << INTERNAL_ITEM_PLACEMENT_PREFIX << item_label;
+      //   DT_THROW_IF(! config_.has_key (item_placement_oss.str()),
+      //                std::logic_error,
+      //                "Missing '" << item_placement_oss.str() << "' property !");
+      //   const std::string item_placement_str = config_.fetch_string(item_placement_oss.str());
+      //   // Parse placement:
+      //   bool res_parsing = true;
+      //   try {
+      //     res_parsing = placement::from_string(item_placement_str, item_placement);
+      //   } catch (...) {
+      //     res_parsing = false;
+      //   }
+      //   DT_THROW_IF (! res_parsing, std::logic_error,
+      //                "Placement parsing error for internal item '" << item_label
+      //                << "' in logical volume '"
+      //                << log_.get_name() << "'!");
+      // }
+      DT_THROW_IF (!item_placement.is_valid(), std::logic_error,
+                   "Missing placement for internal item '" << item_label << "' in logical volume '"
+                   << log_.get_name() << "'!");
+
+      add_item(item_label, *item_model, item_placement);
+      physical_volume & item_phys = grab_item(item_label).grab_physical_volume();
+      const placement & item_plcmt = get_item(item_label).get_placement();
+      item_phys.set_name(i_model::make_physical_volume_name(item_label));
+      item_phys.set_placement(item_plcmt);
+      item_phys.set_logical(item_model->get_logical());
+      item_phys.set_mother(log_);
+    }
 
     return;
   }

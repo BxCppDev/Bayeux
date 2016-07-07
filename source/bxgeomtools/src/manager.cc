@@ -643,21 +643,24 @@ namespace geomtools {
       _plugins_force_initialization_at_load_ = true;
     }
 
-    if (config_.has_flag ("id_mgr.logging.priority")) {
-      const std::string factory_priority = config_.fetch_string ("id_mgr.logging.priority");
-      datatools::logger::priority lp = datatools::logger::get_priority (factory_priority);
-      DT_THROW_IF (lp == datatools::logger::PRIO_UNDEFINED,
-                   std::logic_error,
-                   "Invalid logging priority label '" << factory_priority << "' !");
-      _id_manager_.set_logging_priority (lp);
-    }
+    datatools::properties id_mgr_config;
+    config_.export_and_rename_starting_with(id_mgr_config, "id_mgr.", "");
 
-    if (config_.has_key ("id_mgr.categories_list")) {
-      std::string categories_list = config_.fetch_string("id_mgr.categories_list");
-      categories_lists.push_back(categories_list);
-    } else if (config_.has_key ("id_mgr.categories_lists")) {
-      config_.fetch("id_mgr.categories_lists", categories_lists);
-    }
+    // if (config_.has_flag ("id_mgr.logging.priority")) {
+    //   const std::string factory_priority = config_.fetch_string ("id_mgr.logging.priority");
+    //   datatools::logger::priority lp = datatools::logger::get_priority (factory_priority);
+    //   DT_THROW_IF (lp == datatools::logger::PRIO_UNDEFINED,
+    //                std::logic_error,
+    //                "Invalid logging priority label '" << factory_priority << "' !");
+    //   _id_manager_.set_logging_priority (lp);
+    // }
+
+    // if (config_.has_key ("id_mgr.categories_list")) {
+    //   std::string categories_list = config_.fetch_string("id_mgr.categories_list");
+    //   categories_lists.push_back(categories_list);
+    // } else if (config_.has_key ("id_mgr.categories_lists")) {
+    //   config_.fetch("id_mgr.categories_lists", categories_lists);
+    // }
 
     // Initialize the shape factory:
     datatools::properties shape_factory_config;
@@ -707,10 +710,17 @@ namespace geomtools {
     }
 
     if (is_mapping_requested()) {
-      if (config_.has_key ("external_mapping_rules")) {
-        // List of files where to find external mapping rules associated to geometry models:
-        std::vector<std::string> mapping_rules_files;
+      // List of files where to find external mapping rules associated to geometry models:
+      std::vector<std::string> mapping_rules_files;
+      if (config_.has_key ("mapping.external_rules")) {
+        config_.fetch("mapping.external_rules", mapping_rules_files);
+      } else if (config_.has_key ("external_mapping_rules")) {
+        DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
+                       "Property '" << "external_mapping_rules"
+                       << "' is deprecated. Please use '" << "mapping.external_rules" << "'!");
         config_.fetch("external_mapping_rules", mapping_rules_files);
+      }
+      if (mapping_rules_files.size()) {
         _external_mapping_rules_.set_key_label("model");
         _external_mapping_rules_.set_meta_label("policy");
         for (size_t i = 0; i < mapping_rules_files.size(); i++) {
@@ -725,12 +735,12 @@ namespace geomtools {
     DT_LOG_DEBUG(_logging, "Properties are parsed...");
 
     // initializations:
-    set_setup_label (setup_label);
-    if (! setup_version.empty ()) {
-      set_setup_version (setup_version);
+    set_setup_label(setup_label);
+    if (! setup_version.empty()) {
+      set_setup_version(setup_version);
     }
-    if (! setup_description.empty ()) {
-      set_setup_description (setup_description);
+    if (! setup_description.empty()) {
+      set_setup_description(setup_description);
     }
 
     /************************************************
@@ -745,9 +755,10 @@ namespace geomtools {
     default_factory_preserved_property_prefixes.push_back(material::material_prefix());
     default_factory_preserved_property_prefixes.push_back(sensitive::constants::instance().SENSITIVE_PREFIX);
 
-    std::vector<std::string> effective_factory_preserved_property_prefixes = default_factory_preserved_property_prefixes;
+    std::vector<std::string> effective_factory_preserved_property_prefixes
+      = default_factory_preserved_property_prefixes;
 
-    for (size_t i = 0; i < factory_preserved_property_prefixes.size (); i++) {
+    for (size_t i = 0; i < factory_preserved_property_prefixes.size(); i++) {
       const std::string & prefix = factory_preserved_property_prefixes[i];
       if (prefix.empty()) {
         continue;
@@ -759,7 +770,7 @@ namespace geomtools {
       }
     }
 
-    for (size_t i = 0; i < effective_factory_preserved_property_prefixes.size (); i++) {
+    for (size_t i = 0; i < effective_factory_preserved_property_prefixes.size(); i++) {
       const std::string & prefix = effective_factory_preserved_property_prefixes[i];
       DT_THROW_IF(prefix.empty(),
                   std::logic_error,
@@ -870,13 +881,13 @@ namespace geomtools {
      * Initialization of the geometry ID manager *
      *********************************************/
     DT_LOG_NOTICE(_logging, "Initialization of the geometry ID manager...");
-
-    for (size_t i(0); i < categories_lists.size(); ++i) {
-      std::string categories_list = categories_lists[i];
-      datatools::fetch_path_with_env(categories_list);
-      _id_manager_.load(categories_list);
-    }
-    if (_id_manager_.get_logging_priority () == datatools::logger::PRIO_DEBUG) {
+    _id_manager_.initialize(id_mgr_config);
+    // for (size_t i(0); i < categories_lists.size(); ++i) {
+    //   std::string categories_list = categories_lists[i];
+    //   datatools::fetch_path_with_env(categories_list);
+    //   _id_manager_.load(categories_list);
+    // }
+    if (datatools::logger::is_debug(_id_manager_.get_logging_priority())) {
       DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Geometry manager's ID manager:");
       _id_manager_.tree_dump (std::clog);
     }
@@ -886,8 +897,9 @@ namespace geomtools {
     if (is_mapping_requested ()) {
       DT_LOG_NOTICE(_logging, "The building of the general mapping has been requested...");
       datatools::properties mapping_config;
-      geomtools::mapping::extract (config_, mapping_config);
-      build_mapping (mapping_config);
+      config_.export_and_rename_starting_with(mapping_config, "mapping.", "");
+      // geomtools::mapping::extract(config_, mapping_config);
+      build_mapping(mapping_config);
     }
 
     // Plugins initialization :
@@ -1476,7 +1488,7 @@ namespace geomtools {
       } else {
         out_ << gid << " as '" << category << "' with addresses: ";
         for (size_t j = 0; j < cat_info->get_depth(); j++) {
-          out_ << ' ' << cat_info->addresses[j];
+          out_ << ' ' << cat_info->get_addresses()[j];
           if (j < cat_info->get_depth()-1) out_ << ',';
         }
         out_ << std::endl;

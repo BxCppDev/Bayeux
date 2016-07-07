@@ -254,6 +254,28 @@ namespace geomtools {
     return;
   }
 
+  void bounding_data::build_stackable(stackable_data & stackable_info_) const
+  {
+    stackable_info_.invalidate();
+    if (!is_valid()) return;
+    if (is_box()) {
+      stackable_info_.xmin = _xmin_;
+      stackable_info_.xmax = _xmax_;
+      stackable_info_.ymin = _ymin_;
+      stackable_info_.ymax = _ymax_;
+      stackable_info_.zmin = _zmin_;
+      stackable_info_.zmax = _zmax_;
+    } else if (is_cylinder()) {
+      stackable_info_.xmin = -_rmax_;
+      stackable_info_.xmax = _rmax_;
+      stackable_info_.ymin = -_rmax_;
+      stackable_info_.ymax = _rmax_;
+      stackable_info_.zmin = _zmin_;
+      stackable_info_.zmax = _zmax_;
+    }
+    return;
+  }
+
   void bounding_data::compute_bounding_box_vertexes(std::vector<vector_3d> & vertexes_, double /*safe_skin_*/) const
   {
     vertexes_.clear();

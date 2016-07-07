@@ -7,7 +7,7 @@
  *
  * Description:
  *
- *   Abstract interface for stackable shape.
+ *   Abstract interface for stackable shape objects.
  *
  * History:
  *
@@ -25,6 +25,9 @@
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
+
+// This project:
+#include <geomtools/utils.h>
 
 namespace geomtools {
 
@@ -154,6 +157,9 @@ namespace geomtools {
 
     /// Check the validity of stacking information
     bool is_valid() const;
+
+    /// Check the validity of stacking information
+    bool is_valid_by_axis(axis_type) const;
 
     /// Check the validity of stacking information
     bool is_valid_weak() const;

@@ -64,7 +64,7 @@ shape_type : string = "box"
 #   shell$ bxocd_manual --action show geomtools::box
 
 #@description The world volume X dimension (box)
-x          : real as length = 1500.0 mm
+x          : real as length = 2000.0 mm
 # Here the type of physical quantity as well as the unit are explicitely set.
 
 #@description The world volume Y dimension (box)
@@ -89,6 +89,9 @@ material.ref : string = "vacuum"
 ###################
 # Daughter volume #
 ###################
+
+#@description Debugging the support for internal items
+internal_item.logging : string = "debug"
 
 #@description The list of daughter volumes by labels
 internal_item.labels : string[31] = \
@@ -173,8 +176,16 @@ internal_item.placement.ManyBoxes   : string  = "-40 -25 -40 (cm) "
 #@description The model of the "CircleBoxes" daughter volume
 internal_item.model.CircleBoxes     : string  = "box0_circular_chain.model"
 
-#@description The placement of the "CircleBoxes" daughter volume
-internal_item.placement.CircleBoxes : string  = "-5 -20 -40 (cm) "
+# #@description The placement of the "CircleBoxes" daughter volume
+# internal_item.placement.CircleBoxes : string  = "-5 -20 -40 (cm) "
+internal_item.placement.CircleBoxes.x     : real as length = 35 cm
+# internal_item.placement.CircleBoxes.y     : real as length = 0 cm
+internal_item.placement.CircleBoxes.z     : real as length = -40 cm
+internal_item.placement.CircleBoxes.y.gap_mode     : string = "min_to_min"
+internal_item.placement.CircleBoxes.y.gap_distance : real as length = 0 mm
+internal_item.placement.CircleBoxes.z.gap_mode     : string = "max_to_max"
+internal_item.placement.CircleBoxes.z.gap_distance : real as length = 0 mm
+
 
 #@description The model of the "WallBricks" daughter volume
 internal_item.model.WallBricks      : string  = "box0_yz_grid.model"
@@ -245,8 +256,13 @@ internal_item.placement.CylSubGrid  : string  = "10 45 20 (cm)"
 #@description The model of the "DetStack0" daughter volume
 internal_item.model.DetStack0      : string  = "detector_stack.model"
 
-#@description The placement of the "DetStack0" daughter volume
-internal_item.placement.DetStack0  : string  = "35 -20 10 (cm) / x -90 (degree)"
+# #@description The placement of the "DetStack0" daughter volume
+# internal_item.placement.DetStack0  : string  = "35 -20 10 (cm) / x -90 (degree)"
+internal_item.placement.DetStack0.x     : real as length = 35 cm
+internal_item.placement.DetStack0.y.gap_mode     : string = "min_to_min"
+internal_item.placement.DetStack0.y.gap_distance : real as length = 0 mm
+internal_item.placement.DetStack0.z.gap_mode     : string = "min_to_min"
+internal_item.placement.DetStack0.z.gap_distance : real as length = 0 mm
 
 #@description The model of the "DetStack1" daughter volume
 internal_item.model.DetStack1      : string  = "detector_stack.model"
@@ -287,8 +303,13 @@ internal_item.placement.Bar1  : string  = "0 0 -10 (cm)"
 #@description The model of the "Dummy1" daughter volume
 internal_item.model.Dummy1      : string  = "dummy.model"
 
-#@description The placement of the "Dummy1" daughter volume
-internal_item.placement.Dummy1  : string  = "0 10 -10 (cm)"
+# #@description The placement of the "Dummy1" daughter volume
+# internal_item.placement.Dummy1  : string  = "0 10 -100 (cm)"
+internal_item.placement.Dummy1.x.gap_mode : string  = "min_to_min"
+internal_item.placement.Dummy1.x.gap_distance : real as length = 0.0 mm
+internal_item.placement.Dummy1.y : real as length = 10.0 cm
+internal_item.placement.Dummy1.z.gap_mode : string  = "min_to_min"
+internal_item.placement.Dummy1.z.gap_distance : real as length = 0.0 mm
 
 #@description The model of the "Tessella1" daughter volume
 internal_item.model.Tessella1      : string  = "tessella.model"
@@ -305,20 +326,59 @@ internal_item.placement.Tessella2  : string  = "-10 0 -10 (cm)"
 #@description The model of the "MeshedBox0" daughter volume
 internal_item.model.MeshedBox0      : string  = "large_green_box.model"
 
-#@description The placement of the "MeshedBox0" daughter volume
-internal_item.placement.MeshedBox0  : string  = "+35 0 -40 (cm)"
+# #@description The placement of the "MeshedBox0" daughter volume
+# internal_item.placement.MeshedBox0  : string  = "+35 0 -40 (cm)"
+internal_item.placement.MeshedBox0.x     : real as length = 35 cm
+internal_item.placement.MeshedBox0.y     : real as length = 0 cm
+internal_item.placement.MeshedBox0.z.gap_mode     : string = "min_to_min"
+internal_item.placement.MeshedBox0.z.gap_distance : real as length = 0 mm
+
+#####################################################################
+
+#@description Debugging the "Wall1" daughter volume
+internal_item.logging.Wall1    : string  = "debug"
 
 #@description The model of the "Wall1" daughter volume
 internal_item.model.Wall1      : string  = "wall1.model"
 
-#@description The placement of the "Wall1" daughter volume
-internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
+# #@description The placement of the "Wall1" daughter volume
+# internal_item.placement.Wall1  : string  = "0 20 -40 (cm) / z 90 (degree)"
+
+#internal_item.placement.Wall1.x : real as length = 0 mm
+internal_item.placement.Wall1.x.gap_mode     : string = "min_to_min"
+internal_item.placement.Wall1.x.gap_distance : real as length = 20 mm
+
+internal_item.placement.Wall1.y.gap_mode     : string = "center_to_min"
+internal_item.placement.Wall1.y.gap_distance : real as length = 30 cm
+
+# internal_item.placement.Wall1.z.gap_mode     : string = "min_to_min"
+internal_item.placement.Wall1.z.gap_mode     : string = "max_to_max"
+internal_item.placement.Wall1.z.gap_distance : real as length = 0 mm
+
+#####################################################################
 
 #@description The model of the "SIB" daughter volume
 internal_item.model.SIB      : string  = "SIB1.model"
 
-#@description The placement of the "SIB" daughter volume
-internal_item.placement.SIB  : string  = "600 600 -600 (mm)"
+#@description Debugging the "SIB" daughter volume
+internal_item.logging.SIB    : string  = "debug"
+
+# #@description The placement of the "SIB" daughter volume
+# internal_item.placement.SIB  : string  = "600 600 -600 (mm)"
+
+# internal_item.placement.SIB.x : real as length = 600 mm
+internal_item.placement.SIB.x.gap_mode    : string = "max_to_max"
+internal_item.placement.SIB.x.gap_distance: real as length = 50 mm
+
+internal_item.placement.SIB.y : real as length =    0 mm
+
+# internal_item.placement.SIB.z : real as length = -600 mm
+# internal_item.placement.SIB.z.gap_mode     : string = "min_to_min"
+internal_item.placement.SIB.z.gap_mode     : string = "max_to_max"
+internal_item.placement.SIB.z.gap_distance : real as length = 0 mm
+
+# internal_item.placement.SIB.rotation_axis  : string        = "z"
+# internal_item.placement.SIB.rotation_angle : real as angle = 45 degree
 
 ###########
 # Mapping #

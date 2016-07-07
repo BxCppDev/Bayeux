@@ -113,6 +113,9 @@ namespace geomtools {
     /// Build a bounding data from a collection of points
     void make_box_from_points(const std::vector<vector_3d> & points_);
 
+    /// Build a stackable daat object
+    void build_stackable(stackable_data & stackable_info_) const;
+
     /// Smart print
     virtual void tree_dump(std::ostream & a_out         = std::clog,
                            const std::string & a_title  = "",

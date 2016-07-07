@@ -20,11 +20,13 @@
 #include <boost/regex.hpp>
 // - Bayeux/datatools:
 #include <datatools/exception.h>
+#include <datatools/utils.h>
 
 namespace geomtools {
 
   // static
   const uint32_t id_mgr::WORD_TYPE;
+  const uint32_t id_mgr::PLAIN_TYPE;
 
   // static
   const std::string & id_mgr::category_key_label()
@@ -45,107 +47,245 @@ namespace geomtools {
     return token;
   }
 
-  bool id_mgr::category_info::is_valid () const
+  const std::string & id_mgr::default_plain_category()
   {
-    return type != geom_id::INVALID_TYPE;
+    static std::string token = "plain";
+    return token;
   }
 
-  bool id_mgr::category_info::has_subaddress (const std::string & a_label, int /*a_count*/) const
+  const std::string & id_mgr::plain_item_address()
   {
-    for (size_t i = 0; i < addresses.size (); i++) {
-      if (addresses[i] == a_label) return true;
+    static std::string token = "item";
+    return token;
+  }
+
+  bool id_mgr::category_info::is_locked() const
+  {
+    return _locked_;
+  }
+
+  void id_mgr::category_info::lock()
+  {
+    _locked_ = true;
+    return;
+  }
+
+  bool id_mgr::category_info::is_valid() const
+  {
+    return _type_ != geom_id::INVALID_TYPE;
+  }
+
+  bool id_mgr::category_info::has_group() const
+  {
+    return ! _group_.empty();
+  }
+
+  void id_mgr::category_info::set_group(const std::string & grp_)
+  {
+    _group_ = grp_;
+    return;
+  }
+
+  const std::string & id_mgr::category_info::get_group() const
+  {
+    return _group_;
+  }
+
+  bool id_mgr::category_info::is_final_category() const
+  {
+    return _final_category_;
+  }
+
+  void id_mgr::category_info::set_final_category(bool fc_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    _final_category_ = fc_;
+    return;
+  }
+
+  bool id_mgr::category_info::has_subaddress(const std::string & a_label, int /*a_count*/) const
+  {
+    for (size_t i = 0; i < _addresses_.size (); i++) {
+      if (_addresses_[i] == a_label) return true;
     }
     return false;
   }
 
-  int id_mgr::category_info::get_subaddress_index (const std::string & a_label, int /*a_count*/) const
+  int id_mgr::category_info::get_subaddress_index(const std::string & a_label, int /*a_count*/) const
   {
-    for (size_t i = 0; i < addresses.size (); i++) {
-      if (addresses[i] == a_label) return i;
+    for (size_t i = 0; i < _addresses_.size (); i++) {
+      if (_addresses_[i] == a_label) return i;
     }
     return -1;
   }
 
-  const std::string & id_mgr::category_info::get_category () const
+  void id_mgr::category_info::set_type(uint32_t t_)
   {
-    return category;
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    _type_ = t_;
+    return;
   }
 
-  bool id_mgr::category_info::has_ancestor (const std::string & cat_) const
+  void id_mgr::category_info::set_category(const std::string & cat_)
   {
-    return (std::find (ancestors.begin (), ancestors.end(), cat_)
-            != ancestors.end ());
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    _category_ = cat_;
+    return;
   }
 
-  void id_mgr::category_info::add_ancestor (const std::string & cat_)
+  const std::string & id_mgr::category_info::get_category() const
   {
-    if (! has_ancestor (cat_)) {
-      ancestors.push_back (cat_);
+    return _category_;
+  }
+
+  bool id_mgr::category_info::has_ancestor(const std::string & cat_) const
+  {
+    return (std::find (_ancestors_.begin (), _ancestors_.end(), cat_)
+            != _ancestors_.end ());
+  }
+
+  void id_mgr::category_info::add_ancestor(const std::string & cat_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    if (! has_ancestor(cat_)) {
+      _ancestors_.push_back(cat_);
     }
     return;
   }
 
-  const std::string & id_mgr::category_info::get_inherits () const
+  const std::string & id_mgr::category_info::get_inherits() const
   {
-    return inherits;
+    return _inherits_;
   }
 
-  bool id_mgr::category_info::is_inherited () const
+  void id_mgr::category_info::set_inherits(const std::string & p_)
   {
-    return ! inherits.empty ();
-  }
-
-  bool id_mgr::category_info::is_extension () const
-  {
-    return ! extends.empty ();
-  }
-
-  const std::string & id_mgr::category_info::get_extends () const
-  {
-    return extends;
-  }
-
-  uint32_t id_mgr::category_info::get_type () const
-  {
-    return type;
-  }
-
-  id_mgr::category_info::category_info ()
-  {
-    category = "";
-    type = geom_id::INVALID_TYPE;
-    extends = "";
-    inherits = "";
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    _inherits_ = p_;
     return;
   }
 
-  id_mgr::category_info::~category_info ()
+  bool id_mgr::category_info::is_inherited() const
   {
-    ancestors.clear();
-    extends_by.clear();
-    addresses.clear();
-    nbits.clear();
-    category = "";
-    type = geom_id::INVALID_TYPE;
-    extends = "";
-    inherits = "";
+    return ! _inherits_.empty ();
+  }
+
+  void id_mgr::category_info::set_extends(const std::string & p_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    _extends_ = p_;
     return;
   }
 
-  size_t id_mgr::category_info::get_depth () const
+  bool id_mgr::category_info::is_extension() const
   {
-    return addresses.size ();
+    return ! _extends_.empty ();
   }
 
-  size_t id_mgr::category_info::get_by_depth () const
+  const std::string & id_mgr::category_info::get_extends() const
   {
-    return extends_by.size ();
+    return _extends_;
   }
 
-  void id_mgr::category_info::tree_dump (std::ostream & out_,
-                                         const std::string & title_,
-                                         const std::string & indent_,
-                                         bool inherit_) const
+  uint32_t id_mgr::category_info::get_type() const
+  {
+    return _type_;
+  }
+
+  void id_mgr::category_info::add_address(const std::string & address_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    _addresses_.push_back(address_);
+    return;
+  }
+
+  void id_mgr::category_info::add_extends_by(const std::string & by_)
+  {
+    DT_THROW_IF(is_locked(), std::logic_error, "Geometry category is locked!");
+    _extends_by_.push_back(by_);
+    return;
+  }
+
+  id_mgr::category_info::category_info()
+  {
+    _locked_ = false;
+    _category_ = "";
+    _type_ = geom_id::INVALID_TYPE;
+    _final_category_ = false;
+    _extends_ = "";
+    _inherits_ = "";
+    return;
+  }
+
+  id_mgr::category_info::~category_info()
+  {
+    reset();
+    return;
+  }
+
+  void id_mgr::category_info::reset()
+  {
+    _locked_ = false;
+    _ancestors_.clear();
+    _extends_by_.clear();
+    _addresses_.clear();
+    _nbits_.clear();
+    _category_ = "";
+    _type_ = geom_id::INVALID_TYPE;
+    _extends_ = "";
+    _inherits_ = "";
+    _final_category_ = false;
+    _group_.clear();
+    return;
+  }
+
+  size_t id_mgr::category_info::get_depth() const
+  {
+    return _addresses_.size ();
+  }
+
+  size_t id_mgr::category_info::get_by_depth() const
+  {
+    return _extends_by_.size ();
+  }
+
+  void id_mgr::category_info::set_ancestors(const std::vector<std::string> & a_)
+  {
+    _ancestors_ = a_;
+    return;
+  }
+
+  const std::vector<std::string> & id_mgr::category_info::get_ancestors() const
+  {
+    return _ancestors_;
+  }
+
+  void id_mgr::category_info::set_extends_by(const std::vector<std::string> & e_)
+  {
+    _extends_by_ = e_;
+    return;
+  }
+
+  const std::vector<std::string> & id_mgr::category_info::get_extends_by() const
+  {
+    return _extends_by_;
+  }
+
+  void id_mgr::category_info::set_addresses(const std::vector<std::string> & a_)
+  {
+    _addresses_ = a_;
+    return;
+  }
+
+  const std::vector<std::string> & id_mgr::category_info::get_addresses() const
+  {
+    return _addresses_;
+  }
+
+  void id_mgr::category_info::tree_dump(std::ostream & out_,
+                                        const std::string & title_,
+                                        const std::string & indent_,
+                                        bool inherit_) const
   {
     std::string indent;
     if (! indent_.empty ()) indent = indent_;
@@ -154,63 +294,106 @@ namespace geomtools {
     }
 
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Category  : \"" << category << "\"" << std::endl;
+         << "Category  : '" << _category_ << "'" << std::endl;
+
     out_ << indent << datatools::i_tree_dumpable::tag
-         << "Type      : " << type << std::endl;
-    if (! inherits.empty ()) {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Inherits  : \"" << inherits << "\"" << std::endl;
-    }
-    if (! ancestors.empty ()) {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Ancestors ["
-           <<  ancestors.size () << "] :";
-      for (size_t i = 0; i < ancestors.size (); i++) {
-        out_ << ' ' << '"' << ancestors[i] << '"';
-      }
-      out_ << std::endl;
-    }
-    if (! extends.empty ()) {
-      out_ << indent << datatools::i_tree_dumpable::tag
-           << "Extends   : \"" << extends << "\" by ["
-           <<  extends_by.size () << "] : ";
-      for (size_t i = 0; i < extends_by.size (); i++) {
-        out_ << ' ' << '"' << extends_by[i] << '"';
-      }
-      out_ << std::endl;
-    }
-    out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "Addresses [" << get_depth () << "] :";
-    for (size_t i = 0; i < addresses.size (); i++) {
-      out_ << ' ' << '"' << addresses[i] << '"';
+         << "Type      : " << _type_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Group     : ";
+    if (has_group()) {
+      out_ << "'" << _group_ << "'";
+    } else {
+      out_ << "<none>";
     }
     out_ << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Final     : " << _final_category_ << std::endl;
+
+    if (! _inherits_.empty()) {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Inherits  : \"" << _inherits_ << "\"" << std::endl;
+    }
+    if (! _ancestors_.empty()) {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Ancestors ["
+           <<  _ancestors_.size() << "] :";
+      for (size_t i = 0; i < _ancestors_.size(); i++) {
+        out_ << ' ' << '"' << _ancestors_[i] << '"';
+      }
+      out_ << std::endl;
+    }
+
+    if (! _extends_.empty()) {
+      out_ << indent << datatools::i_tree_dumpable::tag
+           << "Extends   : \"" << _extends_ << "\" by ["
+           << _extends_by_.size() << "] : ";
+      for (size_t i = 0; i < _extends_by_.size(); i++) {
+        out_ << ' ' << '"' << _extends_by_[i] << '"';
+      }
+      out_ << std::endl;
+    }
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Addresses [" << get_depth() << "] :";
+    for (size_t i = 0; i < _addresses_.size(); i++) {
+      out_ << ' ' << '"' << _addresses_[i] << '"';
+    }
+    out_ << std::endl;
+
     /*
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-      << "Nbits [" << nbits.size () << "] :";
-      for (size_t i = 0; i < nbits.size (); i++)
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+      << "Nbits [" << _nbits_.size() << "] :";
+      for (size_t i = 0; i < _nbits_.size(); i++)
       {
-      out_ << ' ' << '"' << nbits[i] << '"';
+      out_ << ' ' << '"' << _nbits_[i] << '"';
       }
       out_ << std::endl;
     */
+
+    out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Locked    : " << is_locked() << std::endl;
+
     return;
   }
 
-  void id_mgr::category_info::dump (std::ostream & out_) const
+  void id_mgr::category_info::dump(std::ostream & out_) const
   {
     tree_dump (out_, "id_mgr::category_info: ");
     return;
   }
 
-  void id_mgr::category_info::create (geom_id & id_) const
+  void id_mgr::category_info::create(geom_id & id_) const
   {
-    id_.reset ();
-    id_.make (type, get_depth ());
+    id_.reset();
+    id_.make(_type_, get_depth());
     return;
   }
 
   /***************************************/
+
+  void id_mgr::set_world_category(const std::string & n_)
+  {
+    _world_category_ = n_;
+    return;
+  }
+
+  const std::string & id_mgr::get_world_category() const
+  {
+    return _world_category_;
+  }
+
+  void id_mgr::set_plain_category(const std::string & n_)
+  {
+    _plain_category_ = n_;
+    return;
+  }
+
+  const std::string & id_mgr::get_plain_category() const
+  {
+    return _plain_category_;
+  }
 
   datatools::logger::priority id_mgr::get_logging_priority () const
   {
@@ -225,7 +408,7 @@ namespace geomtools {
 
   bool id_mgr::is_debug () const
   {
-    return _logging_priority_ >= datatools::logger::PRIO_DEBUG;
+    return datatools::logger::is_debug(_logging_priority_);
   }
 
   void id_mgr::set_debug (bool new_value_)
@@ -248,158 +431,300 @@ namespace geomtools {
     return _categories_by_name_;
   }
 
-  // Constructor:
   id_mgr::id_mgr ()
   {
     _logging_priority_ = datatools::logger::PRIO_FATAL;
+    _initialized_ = false;
+    _force_world_ = true;
+    _force_plain_ = false;
+    _world_category_ = default_world_category();
+    _plain_category_ = default_plain_category();
     return;
   }
 
-  // dtor:
   id_mgr::~id_mgr ()
   {
     return;
   }
 
-  void id_mgr::initialize (const datatools::multi_properties & mp_)
+  bool id_mgr::is_initialized() const
   {
-    init_from (mp_);
+    return _initialized_;
+  }
+
+  void id_mgr::set_force_world(bool fw_)
+  {
+    _force_world_ = fw_;
     return;
   }
 
-  void id_mgr::init_from (const datatools::multi_properties & mp_)
+  bool id_mgr::is_force_world() const
   {
-    DT_THROW_IF (mp_.get_key_label () != id_mgr::category_key_label(),
-                 std::logic_error,
-                 "Key label '" << mp_.get_key_label () << "' is not valid !");
+    return _force_world_;
+  }
 
-    DT_THROW_IF (mp_.get_meta_label () != id_mgr::type_meta_label(),
-                 std::logic_error,
-                 "Meta label '" << mp_.get_meta_label () << "' is not valid !");
-
-    for (datatools::multi_properties::entries_ordered_col_type::const_iterator iter =
-           mp_.ordered_entries ().begin ();
-         iter != mp_.ordered_entries ().end ();
-         iter++) {
-      const datatools::multi_properties::entry & the_entry = *(*iter);
-      DT_LOG_TRACE (get_logging_priority (), "Entry: ");
-      if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
-        the_entry.tree_dump (std::cerr);
-      }
-
-      const std::string & category = the_entry.get_key ();
-      const std::string & type_meta = the_entry.get_meta ();
-      const datatools::properties & props = the_entry.get_properties ();
-
-      DT_THROW_IF (_categories_by_name_.find (category) != _categories_by_name_.end (),
-                   std::logic_error,
-                   "Category '" << category << "' already exists !");
-
-      DT_THROW_IF (type_meta.empty (),
-                   std::logic_error,
-                   "Missing '" << type_meta_label() << "' info !");
-
-      int type = geom_id::INVALID_TYPE;
-      {
-        std::istringstream iss (type_meta);
-        iss >> type;
-        DT_THROW_IF (! iss,std::logic_error,"Invalid format for type '" << type_meta << "' !");
-        DT_THROW_IF (type < 0,std::logic_error,"Invalid value for type '" << type << "' !");
-      }
-
-      DT_THROW_IF (_categories_by_type_.find (type) != _categories_by_type_.end (),
-                   std::logic_error, "Type '" << type << "' already exists !");
-
-      category_info cat_entry;
-      cat_entry.category = category;
-      cat_entry.type     = type;
-      std::vector<std::string> addresses_with_nbits;
-      if (props.has_key ("addresses")) {
-        if (props.has_key ("addresses")) {
-          props.fetch ("addresses", cat_entry.addresses);
-        }
-      } else {
-        if (props.has_key ("inherits")) {
-          DT_LOG_TRACE (get_logging_priority (), "Inherits...");
-          const std::string local_inherits = props.fetch_string ("inherits");
-          categories_by_name_col_type::const_iterator i_inherits
-            = _categories_by_name_.find (local_inherits);
-          DT_LOG_TRACE (get_logging_priority (), "inherits='" << local_inherits << "'");
-          DT_THROW_IF (i_inherits == _categories_by_name_.end (),
-                       std::logic_error,
-                       "Category '" << local_inherits << "' does not exist !");
-          const category_info & inherits_entry = i_inherits->second;
-          cat_entry.inherits = local_inherits;
-          cat_entry.addresses = inherits_entry.addresses;
-          cat_entry.ancestors = inherits_entry.ancestors;
-          cat_entry.add_ancestor (local_inherits);
-        } else if (props.has_key ("extends")) {
-          const std::string extends = props.fetch_string ("extends");
-          DT_LOG_TRACE (get_logging_priority (), "extends category '" << extends << "'");
-          categories_by_name_col_type::const_iterator i_extends
-            = _categories_by_name_.find (extends);
-          DT_THROW_IF (i_extends == _categories_by_name_.end (),
-                       std::logic_error, "Category '" << extends << "' does not exist !");
-          const category_info & extends_entry = i_extends->second;
-          DT_LOG_TRACE (get_logging_priority (), "Found category: ");
-          if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
-            extends_entry.dump ();
-          }
-          cat_entry.addresses = extends_entry.addresses;
-          cat_entry.ancestors = extends_entry.ancestors;
-          cat_entry.add_ancestor (extends);
-          DT_THROW_IF (! props.has_key ("by"),
-                       std::logic_error, "Missing 'by' address extension property !");
-          cat_entry.extends = extends;
-          std::vector<std::string> by;
-          props.fetch ("by", by);
-          for (size_t i = 0; i < by.size (); i++) {
-            cat_entry.extends_by.push_back (by[i]);
-            cat_entry.addresses.push_back (by[i]);
-          }
-          DT_LOG_TRACE (get_logging_priority (), "Category entry: ");
-          if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
-            cat_entry.dump (std::cerr);
-          }
-        }
-      }
-      _categories_by_name_[cat_entry.category] = cat_entry;
-      categories_by_name_col_type::const_iterator i_entry
-        = _categories_by_name_.find (cat_entry.category);
-      _categories_by_type_[cat_entry.type] = &(i_entry->second);
-    } // for
+  void id_mgr::set_force_plain(bool fp_)
+  {
+    _force_plain_ = fp_;
     return;
   }
 
-  void id_mgr::load (const std::string & filename_)
+  bool id_mgr::is_force_plain() const
   {
-    datatools::multi_properties mp(category_key_label(), type_meta_label());
-    std::string fn = filename_;
-    datatools::fetch_path_with_env(fn);
-    mp.read(fn);
-    init_from(mp);
+    return _force_plain_;
+  }
+
+  void id_mgr::initialize(const datatools::properties & config_)
+  {
+    std::vector<std::string> categories_lists;
+
+    if (config_.has_key("logging.priority")) {
+      const std::string & log_label = config_.fetch_string("logging.priority");
+      datatools::logger::priority p = datatools::logger::get_priority(log_label);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority '" << log_label << "'!");
+      set_logging_priority(p);
+    }
+
+    if (config_.has_key("force_world")) {
+      bool fw = config_.fetch_boolean("force_world");
+      set_force_world(fw);
+    }
+    DT_LOG_DEBUG(get_logging_priority(), "force_world = " << _force_world_);
+
+    if (config_.has_key("world_category")) {
+      const std::string & wc = config_.fetch_string("world_category");
+      set_world_category(wc);
+    }
+    DT_LOG_DEBUG(get_logging_priority(), "world_category = '" << _world_category_ << "'");
+
+    if (config_.has_key("force_plain")) {
+      bool fp = config_.fetch_boolean("force_plain");
+      set_force_plain(fp);
+    }
+    DT_LOG_DEBUG(get_logging_priority(), "force_plain = " << _force_plain_);
+
+    if (config_.has_key("plain_category")) {
+      const std::string & pc = config_.fetch_string("plain_category");
+      set_plain_category(pc);
+    }
+    DT_LOG_DEBUG(get_logging_priority(), "plain_category = '" << _plain_category_ << "'");
+
+    if (config_.has_key("categories_list")) {
+      const std::string & categories_list = config_.fetch_string("categories_list");
+      _categories_lists_.push_back(categories_list);
+    } else if (config_.has_key("categories_lists")) {
+      config_.fetch("categories_lists", _categories_lists_);
+    }
+
+    _at_initialize();
+
+    _initialized_ = true;
     return;
   }
 
-  void id_mgr::reset ()
+  void id_mgr::_at_initialize()
   {
+    for (size_t i(0); i < _categories_lists_.size(); ++i) {
+      std::string categories_list = _categories_lists_[i];
+      datatools::fetch_path_with_env(categories_list);
+      load(categories_list);
+    }
+
+    // Check world category:
+    if (!has_category_info(WORD_TYPE) && _force_world_) {
+      category_info world_cat;
+      world_cat.set_type(WORD_TYPE);
+      world_cat.set_category(_world_category_);
+      world_cat.add_address(_world_category_);
+      _categories_by_name_[world_cat.get_category()] = world_cat;
+      categories_by_name_col_type::const_iterator found
+        = _categories_by_name_.find(world_cat.get_category());
+      _categories_by_type_[world_cat.get_type()] = &(found->second);
+    }
+
+    // Check plain category:
+    if (!has_category_info(PLAIN_TYPE) && _force_plain_) {
+      category_info plain_cat;
+      plain_cat.set_type(PLAIN_TYPE);
+      plain_cat.set_category(_plain_category_);
+      plain_cat.add_address(plain_item_address());
+      plain_cat.set_final_category(true);
+      _categories_by_name_[plain_cat.get_category()] = plain_cat;
+      categories_by_name_col_type::const_iterator found
+        = _categories_by_name_.find(plain_cat.get_category());
+      _categories_by_type_[plain_cat.get_type()] = &(found->second);
+    }
+
+    return;
+  }
+
+  void id_mgr::reset()
+  {
+    _initialized_ = false;
     _categories_by_type_.clear ();
     _categories_by_name_.clear ();
+    _world_category_   = default_world_category();
+    _plain_category_   = default_plain_category();
     _logging_priority_ = datatools::logger::PRIO_FATAL;
     return;
   }
 
-  void id_mgr::tree_dump (std::ostream & out_,
-                          const std::string & title_,
-                          const std::string & indent_,
-                          bool inherit_) const
+  void id_mgr::init_from(const datatools::multi_properties & mp_)
+  {
+    DT_THROW_IF(mp_.get_key_label() != id_mgr::category_key_label(),
+                std::logic_error,
+                "Key label '" << mp_.get_key_label() << "' is not valid !");
+
+    DT_THROW_IF(mp_.get_meta_label() != id_mgr::type_meta_label(),
+                std::logic_error,
+                "Meta label '" << mp_.get_meta_label() << "' is not valid !");
+
+    for (datatools::multi_properties::entries_ordered_col_type::const_iterator iter =
+           mp_.ordered_entries().begin();
+         iter != mp_.ordered_entries().end();
+         iter++) {
+      const datatools::multi_properties::entry & the_entry = *(*iter);
+      DT_LOG_TRACE(get_logging_priority(), "Entry: ");
+      if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+        the_entry.tree_dump(std::cerr);
+      }
+
+      const std::string & category = the_entry.get_key();
+      const std::string & type_meta = the_entry.get_meta();
+      const datatools::properties & props = the_entry.get_properties();
+
+      DT_THROW_IF(_categories_by_name_.find(category) != _categories_by_name_.end(),
+                  std::logic_error,
+                  "Category '" << category << "' already exists !");
+
+      DT_THROW_IF(type_meta.empty(),
+                  std::logic_error,
+                  "Missing '" << type_meta_label() << "' info !");
+
+      int type = geom_id::INVALID_TYPE;
+      {
+        std::istringstream iss(type_meta);
+        iss >> type;
+        DT_THROW_IF(! iss,std::logic_error,"Invalid format for type '" << type_meta << "' !");
+        DT_THROW_IF(type < 0,std::logic_error,"Invalid value for type '" << type << "' !");
+      }
+
+      DT_THROW_IF(_categories_by_type_.find(type) != _categories_by_type_.end(),
+                  std::logic_error, "Type '" << type << "' already exists !");
+
+      category_info cat_entry;
+      cat_entry.set_category(category);
+      cat_entry.set_type(type);
+
+      if (props.has_flag("final")) {
+        cat_entry.set_final_category(true);
+      }
+
+      if (props.has_key("group")) {
+        cat_entry.set_group(props.fetch_string("group"));
+      }
+
+      std::vector<std::string> addresses_with_nbits;
+      if (props.has_key("addresses")) {
+        std::vector<std::string> addresses;
+        props.fetch("addresses", addresses);
+        cat_entry.set_addresses(addresses);
+      } else {
+        if (props.has_key("inherits")) {
+          DT_LOG_TRACE(get_logging_priority(), "Inherits...");
+          const std::string local_inherits = props.fetch_string("inherits");
+          categories_by_name_col_type::const_iterator i_inherits
+            = _categories_by_name_.find(local_inherits);
+          DT_LOG_TRACE(get_logging_priority(), "inherits='" << local_inherits << "'");
+          DT_THROW_IF(i_inherits == _categories_by_name_.end(),
+                      std::logic_error,
+                      "Category '" << local_inherits << "' does not exist !");
+          const category_info & inherits_entry = i_inherits->second;
+          DT_THROW_IF(inherits_entry.is_final_category(),
+                      std::logic_error,
+                      "Category '" << local_inherits << "' cannot be inherited!");
+          cat_entry.set_inherits(local_inherits);
+          cat_entry.set_addresses(inherits_entry.get_addresses());
+          cat_entry.set_ancestors(inherits_entry.get_ancestors());
+          cat_entry.add_ancestor(local_inherits);
+        } else if (props.has_key("extends")) {
+          const std::string extends = props.fetch_string("extends");
+          DT_LOG_TRACE(get_logging_priority(), "extends category '" << extends << "'");
+          categories_by_name_col_type::const_iterator i_extends
+            = _categories_by_name_.find(extends);
+          DT_THROW_IF(i_extends == _categories_by_name_.end(),
+                      std::logic_error, "Category '" << extends << "' does not exist !");
+          const category_info & extends_entry = i_extends->second;
+          DT_LOG_TRACE(get_logging_priority(), "Found category: ");
+          if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+            extends_entry.dump();
+          }
+          DT_THROW_IF(extends_entry.is_final_category(),
+                      std::logic_error,
+                      "Category '" << extends << "' cannot be extended!");
+          cat_entry.set_addresses(extends_entry.get_addresses());
+          cat_entry.set_ancestors(extends_entry.get_ancestors());
+          cat_entry.add_ancestor(extends);
+          DT_THROW_IF(! props.has_key("by"),
+                      std::logic_error, "Missing 'by' address extension property !");
+          cat_entry.set_extends(extends);
+          std::vector<std::string> by;
+          props.fetch("by", by);
+          for (size_t i = 0; i < by.size(); i++) {
+            cat_entry.add_extends_by(by[i]);
+            cat_entry.add_address(by[i]);
+          }
+          DT_LOG_TRACE(get_logging_priority(), "Category entry: ");
+          if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+            cat_entry.dump(std::cerr);
+          }
+        }
+      }
+      cat_entry.lock();
+      _categories_by_name_[cat_entry.get_category()] = cat_entry;
+      categories_by_name_col_type::const_iterator found
+        = _categories_by_name_.find(cat_entry.get_category());
+      _categories_by_type_[cat_entry.get_type()] = &(found->second);
+    } // for
+    return;
+  }
+
+  void id_mgr::load(const std::string & filename_)
+  {
+    datatools::multi_properties mp(category_key_label(), type_meta_label());
+    uint32_t reader_opts = 0;
+    reader_opts |= datatools::multi_properties::config::RESOLVE_PATH;
+    datatools::multi_properties::config reader(reader_opts);
+    reader.read(filename_, mp);
+    init_from(mp);
+    return;
+  }
+
+  void id_mgr::tree_dump(std::ostream & out_,
+                         const std::string & title_,
+                         const std::string & indent_,
+                         bool inherit_) const
   {
     std::string indent;
-    if (! indent_.empty ()) indent = indent_;
+    if (! indent_.empty()) indent = indent_;
     if (! title_.empty ())   out_ << indent << title_ << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::tag
          << "Logging priority  : " <<  datatools::logger::get_priority_label(_logging_priority_) << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "World category : '" << _world_category_ << "'" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Plain category : '" << _plain_category_ << "'" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Force world category : '" << _force_world_ << "'" << std::endl;
+
+    out_ << indent << datatools::i_tree_dumpable::tag
+         << "Force plain category : '" << _force_plain_ << "'" << std::endl;
 
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Categories      : ";
@@ -548,8 +873,8 @@ namespace geomtools {
     categories_by_type_col_type::const_iterator found =
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
-    for (size_t j = 0; j < ci.addresses.size (); j++) {
-      if (ci.addresses[j] == what_) {
+    for (size_t j = 0; j < ci.get_addresses().size (); j++) {
+      if (ci.get_addresses()[j] == what_) {
         return true;
       }
     }
@@ -564,7 +889,7 @@ namespace geomtools {
     DT_THROW_IF (found == _categories_by_type_.end (), std::logic_error,
                  "No category associated to ID '" << id_ << "' !");
     const category_info & ci = *found->second;
-    return ci.get_category ();
+    return ci.get_category();
   }
 
 
@@ -575,8 +900,8 @@ namespace geomtools {
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
-    for (size_t j = 0; j < ci.addresses.size (); j++) {
-      if (ci.addresses[j] == what_) {
+    for (size_t j = 0; j < ci.get_addresses().size (); j++) {
+      if (ci.get_addresses()[j] == what_) {
         i = j;
         break;
       }
@@ -585,7 +910,7 @@ namespace geomtools {
       return id_.get (i);
     } else {
       DT_THROW_IF(true,std::logic_error, "Invalid address label '" << what_ << "' "
-                  << "for category '" << ci.category << "' !");
+                  << "for category '" << ci.get_category() << "' !");
     }
     return geom_id::INVALID_ADDRESS;
   }
@@ -597,9 +922,9 @@ namespace geomtools {
       _categories_by_type_.find (id_type);
     const category_info & ci = *found->second;
     int i = -1;
-    for (size_t j = 0; j < ci.addresses.size (); j++) {
+    for (size_t j = 0; j < ci.get_addresses().size (); j++) {
       DT_LOG_TRACE (get_logging_priority (), "what=" << what_);
-      if (ci.addresses[j] == what_) {
+      if (ci.get_addresses()[j] == what_) {
         i = j;
         DT_LOG_TRACE (get_logging_priority (), "break!");
         break;
@@ -609,7 +934,7 @@ namespace geomtools {
       return id_.set (i, value_);
     } else {
       DT_THROW_IF(true,std::logic_error, "Invalid address label '" << what_ << "' "
-                  << "for category '" << ci.category << "' !");
+                  << "for category '" << ci.get_category() << "' !");
     }
     return;
   }
@@ -635,10 +960,10 @@ namespace geomtools {
         }
       }
     } else {
-      const category_info & ci = get_category_info (id_.get_type ());
-      oss << "category=`" << ci.category << "' : ";
+      const category_info & ci = get_category_info (id_.get_type());
+      oss << "category=`" << ci.get_category() << "' : ";
       for (size_t i = 0; i < id_.get_depth (); i++) {
-        oss << ' ' << ci.addresses[i] << "=";
+        oss << ' ' << ci.get_addresses()[i] << "=";
         if (id_.get (i) == geom_id::INVALID_ADDRESS) {
           oss << geom_id::IO_ADDRESS_INVALID;
         } else {
@@ -765,8 +1090,8 @@ namespace geomtools {
       addresses_token = split_vec[1];
       boost::trim (addresses_token);
       if (! addresses_token.empty ()) {
-          parse_address = true;
-        }
+        parse_address = true;
+      }
     }
     if (parse_address) {
       /* Format :
@@ -826,9 +1151,9 @@ namespace geomtools {
                      "Invalid address information `" << add_info << "' for ID info `"
                      << id_info_ << "' !");
         std::string addr_label = split_add_info[0];
-        DT_THROW_IF (ci.addresses[i + current_address_index] != addr_label, std::logic_error,
+        DT_THROW_IF (ci.get_addresses()[i + current_address_index] != addr_label, std::logic_error,
                      "Invalid address label `" << addr_label << "' for category '"
-                     << ci.get_category () << "' for ID info `"
+                     << ci.get_category() << "' for ID info `"
                      << id_info_ << "' !");
         std::string addr_val_str = split_add_info[1];
         boost::trim (addr_val_str);
@@ -888,7 +1213,7 @@ namespace geomtools {
                << "    -T | --without-title    Do not print a title line\n"
                << "    -p | --pattern PATTERN  Select categories matching pattern PATTERN\n"
                << "\n";
-           out_ << std::flush;
+          out_ << std::flush;
           return -1;
         } else if (option == "--with-type" || option=="-y") {
           with_type = true;

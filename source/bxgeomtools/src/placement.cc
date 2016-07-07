@@ -16,6 +16,7 @@
 
 // This project:
 #include <geomtools/utils.h>
+#include <geomtools/i_stackable.h>
 
 namespace geomtools {
 
@@ -23,6 +24,327 @@ namespace geomtools {
 
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(placement, "geomtools::placement")
 
+  // static
+  placement::builder::child_to_mother_gap_mode placement::builder::get_gap_mode(const std::string & label_)
+  {
+    if (label_ == "center_to_min") return gap_center_to_min;
+    if (label_ == "center_to_max") return gap_center_to_max;
+    if (label_ == "min_to_min") return gap_min_to_min;
+    if (label_ == "min_to_max") return gap_min_to_max;
+    if (label_ == "max_to_min") return gap_max_to_min;
+    if (label_ == "max_to_max") return gap_max_to_max;
+    return gap_undefined;
+  }
+
+  // static
+  std::string placement::builder::get_gap_mode_label(child_to_mother_gap_mode mode_)
+  {
+    switch(mode_) {
+    case gap_center_to_min: return std::string("center_to_min");
+    case gap_center_to_max: return std::string("center_to_max");
+    case gap_min_to_min: return std::string("min_to_min");
+    case gap_min_to_max: return std::string("min_to_max");
+    case gap_max_to_min: return std::string("max_to_min");
+    case gap_max_to_max: return std::string("max_to_max");
+    default: return std::string("");
+    }
+  }
+
+  // static
+  bool placement::builder::needs_stackable_child(child_to_mother_gap_mode mode_)
+  {
+    switch(mode_) {
+    case gap_center_to_min: return false;
+    case gap_center_to_max: return false;
+    case gap_min_to_min: return true;
+    case gap_min_to_max: return true;
+    case gap_max_to_min: return true;
+    case gap_max_to_max: return true;
+    }
+    return false;
+  }
+
+  placement::builder::builder(uint32_t flags_)
+  {
+    configure(flags_);
+    return;
+  }
+
+  bool placement::builder::use_child_to_mother_gap() const
+  {
+    if (_no_child_to_mother_gap_) return false;
+    return true;
+  }
+
+  bool placement::builder::allowed_rotation() const
+  {
+    if (_no_rotation_) return false;
+    return true;
+  }
+
+  void placement::builder::configure(uint32_t flags_)
+  {
+    if (flags_ & no_child_to_mother_gap) {
+      _no_child_to_mother_gap_ = true;
+    }
+    if (flags_ & no_rotation) {
+      _no_rotation_ = true;
+    }
+    return;
+  }
+
+  void placement::builder::reset()
+  {
+    _no_child_to_mother_gap_ = false;
+    _no_rotation_            = false;
+    _mother_stackable_       = nullptr;
+    _child_stackable_        = nullptr;
+    return;
+  }
+
+  bool placement::builder::has_child_stackable() const
+  {
+    return _child_stackable_ != nullptr;
+  }
+
+  void placement::builder::set_child_stackable(const stackable_data & child_stackable_)
+  {
+    _child_stackable_ = &child_stackable_;
+    return;
+  }
+
+  bool placement::builder::has_mother_stackable() const
+  {
+    return _mother_stackable_ != nullptr;
+  }
+
+  void placement::builder::set_mother_stackable(const stackable_data & mother_stackable_)
+  {
+    _mother_stackable_ = &mother_stackable_;
+    return;
+  }
+
+  void placement::builder::build(const datatools::properties & config_,
+                                 placement & p_) const
+  {
+    _build(config_, p_);
+    return;
+  }
+
+  void placement::builder::_build(const datatools::properties & config_,
+                                  placement & p_) const
+  {
+    p_.invalidate();
+    // Translation parameters:
+    double length_unit = CLHEP::mm;
+    double pos[3]; // (x, y, z)
+    for (int iaxis = AXIS_X; iaxis <= AXIS_Z; iaxis++) {
+      pos[iaxis] = datatools::invalid_real();
+    }
+    // General rotation parameters:
+    double angle_unit = CLHEP::degree;
+    double phi (0.0), theta (0.0), delta (0.0);
+    // Simple rotation parameters:
+    bool   simple_rotation = false;
+    int    simple_rotation_axis = ROTATION_AXIS_INVALID;
+    double simple_rotation_angle = datatools::invalid_real();
+
+    static const std::string axis_symbol[3] = { "x", "y", "z" };
+
+    // Fetch default length unit:
+    if (config_.has_key("length_unit")) {
+      if (config_.has_key("length_unit")) {
+        const std::string lunit_str = config_.fetch_string("length_unit");
+        length_unit = datatools::units::get_length_unit_from(lunit_str);
+      }
+    }
+
+    // Fetch default angle unit:
+    if (config_.has_key("angle_unit")) {
+      if (config_.has_key("angle_unit")) {
+        const std::string aunit_str = config_.fetch_string("angle_unit");
+        angle_unit = datatools::units::get_angle_unit_from(aunit_str);
+      }
+    }
+
+    // Handle translation:
+    if (use_child_to_mother_gap()) {
+
+      // Child to mother gap mode:
+      for (int iaxis = (int) AXIS_X; iaxis <= (int) AXIS_Z; iaxis++) {
+        const std::string sym = axis_symbol[iaxis];
+        child_to_mother_gap_mode gap_mode = gap_undefined;
+        double gap_dist = datatools::invalid_real();
+
+        // Gap mode:
+        {
+          std::string gap_mode_key = sym + ".gap_mode";
+          if (config_.has_key(gap_mode_key)) {
+            const std::string & gap_mode_label = config_.fetch_string(gap_mode_key);
+            gap_mode = get_gap_mode(gap_mode_label);
+            DT_THROW_IF(gap_mode == gap_undefined, std::logic_error,
+                        "Invalid placement '" << sym << "' gap mode '" << gap_mode_label << "'!");
+          }
+        }
+
+        // Gap distance:
+        if (gap_mode != gap_undefined) {
+          std::string gap_dist_key = sym + ".gap_distance";
+          if (config_.has_key(gap_dist_key)) {
+            gap_dist = config_.fetch_real(gap_dist_key);
+            if (! config_.has_explicit_unit(gap_dist_key)) {
+              gap_dist *= length_unit;
+            }
+            DT_THROW_IF(!datatools::is_valid(gap_dist), std::logic_error,
+                        "Invalid placement '" << sym << "' gap distance for mode '" << get_gap_mode_label(gap_mode) << "'!");
+          }
+        }
+
+        // Check mother/child stackable information for specific gap modes:
+        if (gap_mode != gap_undefined) {
+          DT_THROW_IF(! has_mother_stackable(),
+                      std::logic_error,
+                      "Found child to mother gap mode but mother has no stackable data for gap mode '" << get_gap_mode_label(gap_mode) << "'!");
+
+          DT_THROW_IF(!_mother_stackable_->is_valid_by_axis(static_cast<axis_type>(iaxis)),
+                      std::logic_error,
+                      "Mother is not stackable on '" << sym << "' axis!");
+          if (placement::builder::needs_stackable_child(gap_mode)) {
+            DT_THROW_IF(! has_child_stackable(),
+                        std::logic_error,
+                        "Found child to mother gap mode but child has no stackable data for gap mode '" << get_gap_mode_label(gap_mode) << "'!");
+            DT_THROW_IF(!_child_stackable_->is_valid_by_axis(static_cast<axis_type>(iaxis)),
+                        std::logic_error,
+                        "Child is not stackable on '" << sym << "' axis!");
+          }
+          double mother_pos_min = datatools::invalid_real();
+          double mother_pos_max = datatools::invalid_real();
+          double child_pos_min  = 0.0; // default value (child has no dimension)
+          double child_pos_max  = 0.0; // default value (child has no dimension)
+          if (iaxis == AXIS_X) {
+            mother_pos_min = _mother_stackable_->get_xmin();
+            mother_pos_max = _mother_stackable_->get_xmax();
+            if (has_child_stackable()) {
+              child_pos_min = _child_stackable_->get_xmin();
+              child_pos_max = _child_stackable_->get_xmax();
+            }
+          } else if (iaxis == AXIS_Y) {
+            mother_pos_min = _mother_stackable_->get_ymin();
+            mother_pos_max = _mother_stackable_->get_ymax();
+            if (has_child_stackable()) {
+              child_pos_min = _child_stackable_->get_ymin();
+              child_pos_max = _child_stackable_->get_ymax();
+            }
+          } else if (iaxis == AXIS_Z) {
+            mother_pos_min = _mother_stackable_->get_zmin();
+            mother_pos_max = _mother_stackable_->get_zmax();
+            if (has_child_stackable()) {
+              child_pos_min = _child_stackable_->get_zmin();
+              child_pos_max = _child_stackable_->get_zmax();
+            }
+          }
+
+          if (datatools::is_valid(gap_dist)) {
+            DT_THROW_IF(gap_dist < 0.0, std::domain_error, "Invalid negative child to mother gap!");
+          }
+
+          // Compute position:
+          switch (gap_mode) {
+          case gap_center_to_min:
+            pos[iaxis] = gap_dist + mother_pos_min;
+            break;
+          case gap_min_to_min:
+            pos[iaxis] = gap_dist - child_pos_min + mother_pos_min;
+            break;
+          case gap_max_to_min:
+            pos[iaxis] = gap_dist - child_pos_max + mother_pos_max;
+            break;
+          case gap_center_to_max:
+            pos[iaxis] = mother_pos_max - gap_dist;
+            break;
+          case gap_min_to_max:
+            pos[iaxis] = mother_pos_max - child_pos_min - gap_dist;
+            break;
+          case gap_max_to_max:
+            pos[iaxis] = mother_pos_max - child_pos_max - gap_dist;
+            break;
+          } // switch (gap_mode)
+        } // if (stackable_mother)
+      } // for (int iaxis)
+    } // if (use_child_to_mother_gap())
+
+    // Explicit position:
+    for (int iaxis = AXIS_X; iaxis <= AXIS_Z; iaxis++) {
+      if (! datatools::is_valid(pos[iaxis])) {
+        if (config_.has_key(axis_symbol[iaxis])) {
+          pos[iaxis] = config_.fetch_real(axis_symbol[iaxis]);
+          if (! config_.has_explicit_unit(axis_symbol[iaxis])) {
+            pos[iaxis] *= length_unit;
+          }
+        }
+      }
+      DT_THROW_IF(!datatools::is_valid(pos[iaxis]),
+                  std::logic_error,
+                  "Invalid position on '" << axis_symbol[iaxis] << "' axis!");
+    } // for (int iaxis)
+
+    // Handle rotation:
+    bool has_rotation = false;
+    if (config_.has_key("rotation_axis")) {
+      const std::string simple_rotation_axis_label = config_.fetch_string("rotation_axis");
+      simple_rotation_axis = get_rotation_axis_from_label(simple_rotation_axis_label);
+      DT_THROW_IF(simple_rotation_axis == ROTATION_AXIS_INVALID,
+                  std::logic_error,
+                  "Invalid simple rotation axis '" << simple_rotation_axis_label << "'!");
+      has_rotation = true;
+      simple_rotation = true;
+      if (config_.has_key("rotation_angle")) {
+        simple_rotation_angle = config_.fetch_real("rotation_angle");
+        if (! config_.has_explicit_unit("rotation_angle")) {
+          simple_rotation_angle *= angle_unit;
+        }
+        has_rotation = true;
+      }
+      DT_THROW_IF(!datatools::is_valid(simple_rotation_angle),
+                  std::logic_error,
+                  "Missing simple rotation 'angle'!");
+    } else {
+      // General rotation 'ZYZ':
+      if (config_.has_key("phi")) {
+        phi = config_.fetch_real("phi");
+        if (! config_.has_explicit_unit("phi")) {
+          phi *= angle_unit;
+        }
+        has_rotation = true;
+      }
+      if (config_.has_key("theta")) {
+        theta = config_.fetch_real("theta");
+        if (! config_.has_explicit_unit("theta")) {
+          theta *= angle_unit;
+        }
+        has_rotation = true;
+      }
+      if (config_.has_key("delta")) {
+        delta = config_.fetch_real("delta");
+        if (! config_.has_explicit_unit("delta")) {
+          delta *= angle_unit;
+        }
+        has_rotation = true;
+      }
+    }
+
+    // Check:
+    if (has_rotation) {
+      DT_THROW_IF(!allowed_rotation(), std::logic_error, "Placement builder forbids rotation parameters!");
+    }
+    // Final settings:
+    if (! simple_rotation) {
+      p_.set(pos[AXIS_X], pos[AXIS_Y], pos[AXIS_Z], phi, theta, delta);
+    } else {
+      p_.set(pos[AXIS_X], pos[AXIS_Y], pos[AXIS_Z], simple_rotation_axis, simple_rotation_angle);
+    }
+    return;
+  }
 
   bool placement::is_replica () const
   {
@@ -492,6 +814,13 @@ namespace geomtools {
     return;
   }
 
+  void placement::initialize(const datatools::properties & config_, uint32_t flags_)
+  {
+    builder b(flags_);
+    b.build(config_, *this);
+    return;
+  }
+
   void placement::reset ()
   {
     set_identity();
@@ -762,44 +1091,43 @@ namespace geomtools {
     bool simple_rotation = false;
     iss >> std::ws;
     if (! iss.eof ()) {
-        char pr_sep = iss.peek ();
-        if (pr_sep != '@' && pr_sep != '/') {
+      char pr_sep = iss.peek ();
+      if (pr_sep != '@' && pr_sep != '/') {
+        return false;
+      }
+      iss.get ();
+      if (pr_sep == '@' ) {
+        iss >> phi >> theta >> delta >> std::ws;
+      }
+      if (pr_sep == '/' )
+        {
+          simple_rotation = true;
+          iss >> rotation_axis_label >> phi >> std::ws;
+          rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
+        }
+      // extract angle unit:
+      if (! iss.eof ()) {
+        char open = iss.peek ();
+        if (open == '(') {
+          std::string angle_unit_str;
+          iss.get ();
+          getline (iss, angle_unit_str, ')');
+          if (! iss) {
             return false;
           }
-        iss.get ();
-        if (pr_sep == '@' ) {
-            iss >> phi >> theta >> delta >> std::ws;
-          }
-        if (pr_sep == '/' )
-          {
-            simple_rotation = true;
-            iss >> rotation_axis_label >> phi >> std::ws;
-            rotation_axis = get_rotation_axis_from_label (rotation_axis_label);
-          }
-        // extract angle unit:
-        if (! iss.eof ()) {
-            char open = iss.peek ();
-            if (open == '(') {
-                std::string angle_unit_str;
-                iss.get ();
-                getline (iss, angle_unit_str, ')');
-                if (! iss) {
-                    return false;
-                  }
-                angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
-              }
-            iss >> std::ws;
-          }
-
+          angle_unit = datatools::units::get_angle_unit_from (angle_unit_str);
+        }
+        iss >> std::ws;
       }
+    }
     phi *= angle_unit;
     if (! simple_rotation) {
-        theta *= angle_unit;
-        delta *= angle_unit;
-        pl_.set (x, y, z, phi, theta, delta);
-      } else {
-        pl_.set (x, y, z, rotation_axis, phi);
-      }
+      theta *= angle_unit;
+      delta *= angle_unit;
+      pl_.set (x, y, z, phi, theta, delta);
+    } else {
+      pl_.set (x, y, z, rotation_axis, phi);
+    }
     return true;
   }
 
