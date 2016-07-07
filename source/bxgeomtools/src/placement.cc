@@ -60,6 +60,7 @@ namespace geomtools {
     case gap_min_to_max: return true;
     case gap_max_to_min: return true;
     case gap_max_to_max: return true;
+    default: break;
     }
     return false;
   }
@@ -267,6 +268,8 @@ namespace geomtools {
             break;
           case gap_max_to_max:
             pos[iaxis] = mother_pos_max - child_pos_max - gap_dist;
+            break;
+          default:
             break;
           } // switch (gap_mode)
         } // if (stackable_mother)
