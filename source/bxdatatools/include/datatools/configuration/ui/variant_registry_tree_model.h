@@ -69,7 +69,6 @@ namespace datatools {
           CI_KEY   = 0,  //!< The index of the 'Key' column
           CI_TYPE  = 1,  //!< The index of the 'Type' column
           CI_VALUE = 2,  //!< The index of the 'Value' column
-          // CI_EDIT  = 3, //!< The index of the 'Edit' column
           CI_DESCRIPTION = 3 //!< The index of the 'Description' column
         };
 
