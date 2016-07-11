@@ -69,8 +69,8 @@ namespace datatools {
   public:
     //! Constructor
     service_manager(const std::string& name = "",
-        const std::string & description = "",
-        uint32_t flag = BLANK);
+                    const std::string & description = "",
+                    uint32_t flag = BLANK);
 
     //! Destructor
     virtual ~service_manager();
