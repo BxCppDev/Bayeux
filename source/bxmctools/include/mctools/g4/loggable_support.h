@@ -24,11 +24,16 @@ namespace mctools {
 
     public:
 
+      /// Default constructor
       loggable_support();
 
+      /// Constructor from logging priority level
       explicit loggable_support(datatools::logger::priority);
 
       datatools::logger::priority get_logging_priority() const;
+
+      /// Destructor
+      virtual ~loggable_support();
 
       void set_logging_priority(const std::string & priority_label_);
 
@@ -60,9 +65,7 @@ namespace mctools {
 
 #endif // MCTOOLS_G4_LOGGABLE_SUPPORT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// End: --
