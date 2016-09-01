@@ -155,18 +155,10 @@ int main(int argc_, char ** argv_)
     }
 
     /*
-    po::parsed_options parsed =
-      po::command_line_parser(preprocessed_arguments)
-      .options(opts)
-      .allow_unregistered()
-      .run();
-
     // Collect all other options & args for the driver session:
     std::vector<std::string> unrecognized_opts;
     unrecognized_opts = po::collect_unrecognized(parsed.options,
                                                  po::include_positional);
-    po::store(parsed, vm);
-    po::notify(vm);
     */
 
     // Parse specific options:
@@ -241,16 +233,15 @@ int main(int argc_, char ** argv_)
       if (sim_manager.is_initialized()) {
         sim_manager.reset();
       }
+
       DT_LOG_NOTICE(logging, "Simulation manager is terminated.");
     } // Destructor is invoked here.
 
     DT_LOG_TRACE(logging, "The end.");
-  }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_FATAL(logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
@@ -324,7 +315,7 @@ void ui::build_opts(boost::program_options::options_description & opts_,
 
     ("number-of-events,n",
      po::value<uint32_t>(&params_.number_of_events)
-     ->default_value(mctools::g4::manager::constants::instance().NO_LIMIT)
+     ->default_value(mctools::g4::manager::NO_LIMIT)
      ->value_name("integer"),
      "Set the number of events to be simulated")
 
