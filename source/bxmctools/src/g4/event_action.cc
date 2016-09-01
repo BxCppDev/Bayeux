@@ -195,7 +195,7 @@ namespace mctools {
         std::string message_head;
         if (!print_it
             && _run_action_->get_manager().get_number_of_events() != manager::NO_LIMIT
-            && event_id == _run_action_->get_manager().get_number_of_events() - 1) {
+            && event_id == (int)_run_action_->get_manager().get_number_of_events() - 1) {
           print_it = true;
           message_head = "Last event #";
         }
