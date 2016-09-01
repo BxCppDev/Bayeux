@@ -477,14 +477,12 @@ namespace dpp {
     DT_THROW_IF(!has_metadata_store(),
                 std::logic_error,
                 "No embedded metadata store exists!");
-    input_module * mutable_this = const_cast<input_module*>(this);
-    io_common & ioc = mutable_this->_grab_common();
-    return ioc.get_metadata_store();
+    return _common_->get_metadata_store();
   }
 
   void input_module::clear_metadata_store()
   {
-    if (_common_) {
+    if (has_metadata_store()) {
       _common_->clear_metadata_store();
     }
     return;
