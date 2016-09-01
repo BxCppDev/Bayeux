@@ -20,6 +20,11 @@ namespace mctools {
       _logging_priority = datatools::logger::PRIO_FATAL;
     }
 
+    loggable_support::~loggable_support()
+    {
+      return;
+    }
+
     loggable_support::loggable_support(datatools::logger::priority p)
     {
       _logging_priority = p;
