@@ -192,18 +192,18 @@ namespace mctools {
 
   private:
 
-    base_step_hit_processor::factory_register_type _factory_register_; /// The factory register for 'Step Hit Processor' classes
+    base_step_hit_processor::factory_register_type _factory_register_; ///< The factory register for 'Step Hit Processor' classes
 
-    bool                         _initialized_;     /// Initialized flag
-    datatools::logger::priority  _logging_priority_;/// Logging priority threshold
-    std::string                  _description_;     /// Description
-    datatools::service_manager * _service_manager_; /// Service manager
-    const geomtools::manager   * _geom_manager_;    /// Geometry manager
-    mygsl::rng                 * _external_prng_;   /// External PRNG
-    std::set<std::string>        _output_profiles_; /// Set of activated output profile ids
-    bool                         _instantiate_at_loading_; /// Flag to instantiate processors at load stage
-    processor_entry_dict_type    _entries_;         /// The main dictionnary of processor entries
-    processor_dict_type          _processors_;      /// Dictionnary of pointers to instantiated processors
+    bool                         _initialized_ = false;     ///< Initialized flag
+    datatools::logger::priority  _logging_priority_;///< Logging priority threshold
+    std::string                  _description_;     ///< Description
+    datatools::service_manager * _service_manager_ = nullptr; ///< Service manager
+    const geomtools::manager   * _geom_manager_ = nullptr;    ///< Geometry manager
+    mygsl::rng                 * _external_prng_ = nullptr;   ///< External PRNG
+    std::set<std::string>        _output_profiles_; ///< Set of activated output profile ids
+    bool                         _instantiate_at_loading_ = false; ///< Flag to instantiate processors at load stage
+    processor_entry_dict_type    _entries_;         ///< The main dictionnary of processor entries
+    processor_dict_type          _processors_;      ///< Dictionnary of pointers to instantiated processors
 
   };
 
