@@ -181,103 +181,18 @@ namespace datatools {
   };
 } // namespace datatools
 
-//! Log Message if Priority is greater or equal to PRIO_FATAL
-#define DT_LOG_FATAL(Priority, Message)         \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_FATAL) { \
-      std::cerr << "[fatal:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log Message if Priority is greater or equal to PRIO_CRITICAL
-#define DT_LOG_CRITICAL(Priority, Message)        \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_CRITICAL) { \
-      std::cerr << "[critical:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log Message if Priority is greater or equal to PRIO_ERROR
-#define DT_LOG_ERROR(Priority, Message)         \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p  >= ::datatools::logger::PRIO_ERROR) { \
-      std::cerr << "[error:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log Message if Priority is greater or equal to PRIO_WARNING
-#define DT_LOG_WARNING(Priority, Message)       \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_WARNING) { \
-      std::cerr << "[warning:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log Message if Priority is greater or equal to PRIO_NOTICE
-#define DT_LOG_NOTICE(Priority, Message)        \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_NOTICE) { \
-      std::clog << "[notice:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log Message if Priority is greater or equal to PRIO_INFORMATION
-#define DT_LOG_INFORMATION(Priority, Message)       \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_INFORMATION) { \
-      std::clog << "[information:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log Message if Priority is greater or equal to PRIO_DEBUG
-#define DT_LOG_DEBUG(Priority, Message)         \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_DEBUG) { \
-      std::clog << "[debug:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log Message if Priority is greater or equal to PRIO_TRACE
-#define DT_LOG_TRACE(Priority, Message)         \
-  {                 \
-    ::datatools::logger::priority _dt_xxx_p = Priority;     \
-    if (_dt_xxx_p == ::datatools::logger::PRIO_ALWAYS || _dt_xxx_p >= ::datatools::logger::PRIO_TRACE) { \
-      std::cerr << "[trace:" << BOOST_CURRENT_FUNCTION << ":" << __LINE__ << "] " << Message << std::endl; \
-    }                 \
-  }
-
-//! Log an entering message if Priority is greater or equal to PRIO_TRACE
-#define DT_LOG_TRACE_ENTERING(Priority)   \
-  {           \
-    DT_LOG_TRACE(Priority, "Entering...");  \
-  }
-
-//! Log an exiting message if Priority is greater or equal to PRIO_TRACE
-#define DT_LOG_TRACE_EXITING(Priority)    \
-  {           \
-    DT_LOG_TRACE(Priority, "Exiting.");   \
-  }
-
-
 #ifndef Q_MOC_RUN
 // Activate reflection layer for the 'datatools::logger::priority' enum:
 DR_TYPE_INIT(::datatools::logger) // mandatory to access the embedded enum
 DR_TYPE_INIT(::datatools::logger::priority)
 #endif // Q_MOC_RUN
 
+#include <datatools/detail/logger_macros.h>
+
 #endif // DATATOOLS_LOGGER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
