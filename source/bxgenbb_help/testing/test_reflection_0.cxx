@@ -23,13 +23,45 @@
 #include <genbb_help/primary_particle.h>
 #include <genbb_help/primary_event.h>
 
+void test_primary_particle();
+void test_primary_event();
 
+int main (int /* argc_ */, char ** /* argv_ */)
+{
+  datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+  int error_code = EXIT_SUCCESS;
+
+  {
+    // trick to force linking to Bayeux:
+    genbb::primary_particle dummy;
+  }
+
+  try {
+
+    DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
+
+    for (int i = 0; i < (int) camp::classCount(); i++) {
+      const camp::Class & c = camp::classByIndex(i);
+      DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
+    }
+
+    DT_LOG_NOTICE(logging, "Running test_primary_particle...");
+    test_primary_particle();
+
+    DT_LOG_NOTICE(logging, "Running test_primary_event...");
+    test_primary_event();
+
+  } catch (std::exception & x) {
+    DT_LOG_ERROR(datatools::logger::PRIO_ERROR, x.what());
+    error_code = EXIT_FAILURE;
+  }
+  return error_code;
+}
 
 void test_primary_particle()
 {
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
   const camp::Class & ppMetaClass  = camp::classByName("genbb::primary_particle");
-
 
   camp::UserObject partObj0 = ppMetaClass.construct();
   DT_LOG_NOTICE(logging, "Initializing the primary particle object...");
@@ -64,32 +96,5 @@ void test_primary_event()
 }
 
 #include <camp/classget.hpp>
-
-int main (int /* argc_ */, char ** /* argv_ */)
-{
-  datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
-  int error_code = EXIT_SUCCESS;
-  try {
-
-    DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
-
-    for (int i = 0; i < (int) camp::classCount(); i++) {
-      const camp::Class & c = camp::classByIndex(i);
-      DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
-    }
-
-    DT_LOG_NOTICE(logging, "Running test_primary_particle...");
-    test_primary_particle();
-
-    DT_LOG_NOTICE(logging, "Running test_primary_event...");
-    test_primary_event();
-
-  }
-  catch (std::exception & x) {
-    DT_LOG_ERROR(datatools::logger::PRIO_ERROR, x.what());
-    error_code = EXIT_FAILURE;
-  }
-  return error_code;
-}
 
 /* end of test_reflection_0.cxx */
