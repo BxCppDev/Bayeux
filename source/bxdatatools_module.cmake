@@ -185,7 +185,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/reflection_version.h
   ${module_include_dir}/${module_name}/detail/reflection_macros.h
   ${module_include_dir}/${module_name}/detail/command_macros.h
-  # ${module_include_dir}/${module_name}/detail/logger_macros.h
+  ${module_include_dir}/${module_name}/detail/logger_macros.h
 )
 
 # - configure special source file
