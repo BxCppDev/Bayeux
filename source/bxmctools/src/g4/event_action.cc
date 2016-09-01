@@ -188,12 +188,25 @@ namespace mctools {
     {
       DT_LOG_TRACE_ENTERING(_logprio());
 
-      G4int event_id = event_->GetEventID ();
+      G4int event_id = event_->GetEventID();
       DT_LOG_DEBUG(_logprio(), "Event #" << event_id << " starts.");
-      if (_run_action_->has_number_of_events_modulo ()) {
-        if ((event_id % _run_action_->get_number_of_events_modulo ()) == 0) {
+      if (_run_action_->has_number_of_events_modulo()) {
+        bool print_it = false;
+        std::string message_head;
+        if (!print_it
+            && _run_action_->get_manager().get_number_of_events() != manager::NO_LIMIT
+            && event_id == _run_action_->get_manager().get_number_of_events() - 1) {
+          print_it = true;
+          message_head = "Last event #";
+        }
+        if (!print_it
+             && (event_id % _run_action_->get_number_of_events_modulo ()) == 0) {
+          print_it = true;
+          message_head = "Event #";
+        }
+        if (print_it) {
           // Trace explicitely the event number :
-          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, "Event #" << event_id);
+          DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, message_head << event_id);
         }
       }
       if (is_aborted_event()) {
