@@ -21,6 +21,10 @@
 # along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
+#add_definitions("-fstack-protector")
+#add_definitions("-Wstack-protector")
+
+
 #-----------------------------------------------------------------------
 # Configure build of Bayeux library
 # - Packages
@@ -78,6 +82,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
       list(APPEND MCTOOLS_G4_DATA_ASSIGNMENTS "(\"${Geant4_DATASET_${_ds}_ENVVAR}\", \"${Geant4_DATASET_${_ds}_PATH}\")")
     endforeach()
     string(REPLACE ";" "" MCTOOLS_G4_DATA_ASSIGNMENTS ${MCTOOLS_G4_DATA_ASSIGNMENTS})
+    # message (STATUS  "Geant4_DEFINITIONS='${Geant4_DEFINITIONS}'")
   endif()
   # Also need Boost.Thread, ugh
   find_package(Boost REQUIRED thread)
@@ -259,6 +264,9 @@ foreach(_bxapp IN LISTS BAYEUX_ALL_APPS)
   if(BAYEUX_WITH_GEANT4_MODULE)
     list(FIND Bayeux_GEANT4_APPS ${_bxapp} _g4app_found)
     if (_g4app_found GREATER -1)
+      set_target_properties(bx${_app_basename}
+        PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
+      )
       target_link_libraries(bx${_app_basename} Bayeux_mctools_geant4)
     endif()
   endif()
@@ -344,6 +352,11 @@ if(BAYEUX_ENABLE_TESTING)
   add_library(BXCatch STATIC bxcatch/catch.hpp bxcatch/bxcatch-main.cpp)
   target_include_directories(BXCatch PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bxcatch)
 
+  # message (STATUS "DEBUG: Add special compiler option...")
+  # SET(GCC_MY_COMPILE_FLAGS "-fno-stack-protector")
+  # SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_MY_COMPILE_FLAGS}" )
+  # add_definitions("-fno-stack-protector")
+
   # All submodules...
   foreach(_m ${BAYEUX_SUBMODULES} bayeux)
     # - CATCH TESTS
@@ -383,10 +396,19 @@ if(BAYEUX_ENABLE_TESTING)
       ### G4 specific link for some test progs
       if(BAYEUX_WITH_GEANT4_MODULE)
         string(REGEX MATCH "mctools-test_g4_*" _test_g4_res ${_testname})
+
         # message( STATUS "    _test_g4_res = '${_test_g4_res}'")
         if(NOT "x${_test_g4_res}" STREQUAL "x" )
           message( STATUS "Special link to the Bayeux Geant4 module for test program '${_testname}'")
+	  set_target_properties(${_testname}
+    	    PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
+    	  )
+
           target_link_libraries(${_testname} Bayeux_mctools_geant4)
+	  # Debug:
+	  # target_compile_options(${_testname} PRIVATE -Wall -Wextra -g)
+	  # target_compile_options(${_testname} PRIVATE -fstack-protector -D_FORTIFY_SOURCE=2)
+	  # target_compile_options(${_testname} PRIVATE -fno-stack-protector)
         endif()
       endif()
 
