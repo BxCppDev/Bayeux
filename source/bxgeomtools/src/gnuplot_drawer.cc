@@ -433,8 +433,8 @@ namespace geomtools {
     _yrange_.set_axis ('y');
     _zrange_.set_axis ('z');
     _drawing_display_data_ = true;
-    reset_output ();
-    reset_terminal ();
+    reset_output();
+    reset_terminal();
     _rendering_options_current_ = 0;
     _rendering_options_depth_ = 0;
     return;
@@ -711,14 +711,11 @@ namespace geomtools {
           _rendering_options_depth_++;
         }
       }
-    }
-    catch (GnuplotException ge) {
+    } catch (GnuplotException ge) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << ge.what());
-    }
-    catch (std::exception & x) {
+    } catch (std::exception & x) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << x.what());
-    }
-    catch (...) {
+    } catch (...) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Logical '" << log.get_name() << "' : " << "Unexpected error !");
     }
     DT_LOG_TRACE (local_priority, "Exiting.");
@@ -829,17 +826,19 @@ namespace geomtools {
     if (! _terminal_options_.empty()) {
       set_term_args += " " + _terminal_options_;
     }
+    // std::cerr << "DEVEL: gnuplot_drawer::draw: set_term_args = '" << set_term_args << "'" << std::endl;
     g1.cmd (set_term_args);
 
     if (! _output_.empty()) {
       std::string output = _output_;
+      // std::cerr << "DEVEL: gnuplot_drawer::draw: output = '" << output << "'" << std::endl;
       datatools::fetch_path_with_env(output);
       std::string set_output_args = "set output ";
       set_output_args += "'" + output + "'";
       g1.cmd(set_output_args);
     }
 
-    g1.cmd ("set size ratio -1");
+    g1.cmd("set size ratio -1");
     if (use_title()) {
       std::ostringstream title_oss;
       if (! title_.empty()) {
@@ -847,7 +846,7 @@ namespace geomtools {
       } else {
         title_oss << "Instance of logical volume '" << log_.get_name() << "'";
       }
-      if (!title_oss.str ().empty()) {
+      if (!title_oss.str().empty()) {
         g1.set_title(title_oss.str ());
       }
     }
@@ -959,8 +958,63 @@ namespace geomtools {
           cmdstr << ":" << col3;
         }
         cmdstr << " notitle";
-        cmdstr << " with lines lt " << local_color << ' ' ;
-        cmdstr << " lw " << 0.5 << ' ' ;
+        bool color_rgb = false;
+        std::string color_repr;
+        switch (local_color) {
+        case color::COLOR_BLACK:
+          color_rgb = true;
+          color_repr = "black";
+          break;
+        case color::COLOR_GREY:
+          color_rgb = true;
+          color_repr = "grey";
+          // color_repr = "0";
+          break;
+        case color::COLOR_RED:
+          color_rgb = true;
+          color_repr = "red";
+          break;
+        case color::COLOR_GREEN:
+          color_rgb = true;
+          color_repr = "green";
+          break;
+        case color::COLOR_BLUE:
+          color_rgb = true;
+          color_repr = "blue";
+          break;
+        case color::COLOR_MAGENTA:
+          color_rgb = true;
+          color_repr = "magenta";
+          break;
+        case color::COLOR_CYAN:
+          color_rgb = true;
+          color_repr = "cyan";
+          break;
+        case color::COLOR_YELLOW:
+          color_rgb = true;
+          color_repr = "yellow";
+          break;
+        case color::COLOR_BROWN:
+          color_rgb = true;
+          color_repr = "brown";
+          break;
+        case color::COLOR_ORANGE:
+          color_rgb = true;
+          color_repr = "orange";
+          break;
+        default:
+          color_repr = "0";
+        }
+        cmdstr << " with lines lt ";
+        if (color_rgb) {
+          cmdstr << "rgb \"";
+        }
+        cmdstr << color_repr;
+        if (color_rgb) {
+          cmdstr << '\"';
+        }
+        cmdstr << ' ';
+        cmdstr << "lw " << 0.5 << ' ' ;
 
         // if there is another one:
         {
@@ -1211,6 +1265,8 @@ namespace geomtools {
   void gnuplot_drawer::set_terminal (const std::string & terminal_,
                                      const std::string & terminal_options_)
   {
+    // std::cerr << "DEVEL: gnuplot_drawer::set_terminal: terminal = '" << terminal_ << "'" << std::endl;
+    // std::cerr << "DEVEL: gnuplot_drawer::set_terminal: terminal options = '" << terminal_options_ << "'" << std::endl;
     _terminal_ = terminal_;
     _terminal_options_ = terminal_options_;
     return;
@@ -1218,16 +1274,19 @@ namespace geomtools {
 
   void gnuplot_drawer::reset_terminal ()
   {
+    reset_output();
     _terminal_ = "x11";
-    _terminal_options_ = "persist size 500,500";
-    _output_.clear();
+    _terminal_options_ = "noenhanced";
+    // _terminal_options_ = "persist noenhanced size 500,500";
     return;
   }
 
-  int gnuplot_drawer::set_output_medium (const std::string & file_,
-                                         const std::string & terminal_,
-                                         const std::string & terminal_options_)
+  int gnuplot_drawer::set_output_medium(const std::string & file_,
+                                        const std::string & terminal_,
+                                        const std::string & terminal_options_)
   {
+    std::string requested_terminal = terminal_;
+    std::string requested_terminal_options = terminal_options_;
     std::string output;
     std::string terminal;
     std::string terminal_options;
@@ -1245,22 +1304,26 @@ namespace geomtools {
       const std::string ext = output_ext.string();
       if (ext == ".jpeg" || ext == ".jpg") {
         terminal = "jpeg";
-        terminal_options = "enhanced nointerlace large size 500,500 background rgb \"#FFFFFF\"";
+        terminal_options = "noenhanced nointerlace large size 500,500 background rgb \"#FFFFFF\"";
       } else if (ext == ".png") {
         terminal = "png";
-        terminal_options = "enhanced notransparent nointerlace medium background rgb \"#FFFFFF\"";
+        terminal_options = "noenhanced notransparent nointerlace medium background rgb \"#FFFFFF\"";
       } else if (ext == ".eps") {
         terminal = "postscript";
-        terminal_options = "eps enhanced color solid size 15cm,15cm";
+        terminal_options = "eps noenhanced color background rgb \"#FFFFFF\" size 15cm,15cm";
       } else if (ext == ".fig") {
         terminal = "fig";
         terminal_options = "color landscape size 20 20 metric pointsmax 1000 solid textspecial depth 50";
+      } else if (ext == ".svg") {
+        terminal = "svg";
+        terminal_options = "size 20,20 dynamic noenhanced solid background rgb \"#FFFFFF\"";
       } else {
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
                      "Cannot extract terminal type from file '" << file_ << "' !");
         return 1;
       }
     }
+    // std::cerr << "DEVEL:  gnuplot_drawer::set_output_medium: terminal = '" << terminal << "'" << std::endl;
     if (! terminal_.empty()) {
       if (terminal != terminal_) {
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
@@ -1273,7 +1336,6 @@ namespace geomtools {
     if (! terminal_options_.empty()) {
       terminal_options = terminal_options_;
     }
-
     if (terminal == "x11") {
       reset_terminal();
       reset_output();
