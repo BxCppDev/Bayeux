@@ -190,32 +190,32 @@ namespace mctools {
 
     private:
 
-      bool _initialized_;                     //!< Initialization flag
-      bool _use_run_header_footer_;           //!< Flag to save run header and footer
-      int  _number_of_events_modulo_;         //!< Event modulo for printing
-      int32_t   _number_of_processed_events_; //!< Number of processed events
-      int32_t   _number_of_saved_events_;     //!< Number of saved events
-      manager * _manager_;                    //!< Handle to the simulation manager
-      datatools::properties _run_header_;     //!< Run header
-      datatools::properties _run_footer_;     //!< Run footer
+      bool _initialized_ = false;                 //!< Initialization flag
+      bool _use_run_header_footer_ = false;       //!< Flag to save run header and footer
+      int  _number_of_events_modulo_ = 0;         //!< Event modulo for printing
+      int32_t   _number_of_processed_events_ = 0; //!< Number of processed events
+      int32_t   _number_of_saved_events_ = 0;     //!< Number of saved events
+      manager * _manager_ = nullptr;              //!< Handle to the simulation manager
+      datatools::properties _run_header_;         //!< Run header
+      datatools::properties _run_footer_;         //!< Run footer
 
       // I/O :
-      bool        _save_data_; //!< Flag to save event data
+      bool        _save_data_= false; //!< Flag to save event data
       io_utils::data_format_type _output_data_format_; //!< The data format of the output file ("plain" or "bank")
       std::string _output_data_bank_label_; //!< The label of the data bank used to store simulated data ("bank" format only)
-      bool        _output_file_preserve_;    //!< Flag to preserve an existing data file
+      bool        _output_file_preserve_ = true; //!< Flag to preserve an existing data file
       std::string _output_file_dir_;         //!< Directory where to store the output data file
       std::string _output_file_prefix_;      //!< Prefix of the output data file
       std::string _output_file_format_;      //!< Format of the output data file
       std::string _output_file_compression_; //!< Compression of the output data file
       std::string _output_file_;             //!< Full path of the output data file
-      std::string _brio_general_info_store_label_;         // default "GI"
-      std::string _brio_plain_simulated_data_store_label_; // default "PSD"
-      event_action * _event_action_; //!< Handle to the event action
+      std::string _brio_general_info_store_label_;         //!< default "GI"
+      std::string _brio_plain_simulated_data_store_label_; //!< default "PSD"
+      event_action * _event_action_ = nullptr; //!< Handle to the event action
 
       /// \brief PIMPL-ized I/O working resources:
       struct io_work_type;
-      boost::scoped_ptr<io_work_type> _io_work_; //!< I/O XXX
+      boost::scoped_ptr<io_work_type> _io_work_; //!< I/O
 
     };
 
