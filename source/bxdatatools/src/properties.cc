@@ -3596,14 +3596,14 @@ namespace datatools {
 
             // Process the current line:
             if (!process_line) {
-              DT_PROP_CFG_READ_LOG_NOTICE(logging,
-                                          _current_filename_,
-                                          _section_name_,
-                                          _section_start_line_number_,
-                                          _current_line_number_,
-                                          "Do not process property value repr '"
-                                          << property_value_str << "' for property '"
-                                          << prop_key << "'...");
+              DT_PROP_CFG_READ_LOG_DEBUG(logging,
+                                         _current_filename_,
+                                         _section_name_,
+                                         _section_start_line_number_,
+                                         _current_line_number_,
+                                         "Do not process property value repr '"
+                                         << property_value_str << "' for property '"
+                                         << prop_key << "'...");
             } else {
               std::string pv_str = property_value_str;
               boost::trim(pv_str);
