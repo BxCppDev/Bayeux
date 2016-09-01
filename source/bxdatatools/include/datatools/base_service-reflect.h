@@ -29,6 +29,10 @@ namespace datatools {
         // Declare and populate the reflection metaclass for the 'datatools::base_service' class:
         DR_CLASS_DECLARE(::datatools::base_service)
           .DR_CLASS_BASE(::datatools::enriched_base)
+          // .DR_CLASS_METHOD_CONST("is_initialized",
+          //                   ::datatools::base_service,
+          //                   ::datatools::base_service::is_initialized,
+          //                   bool)
           .DR_CLASS_METHOD("initialize_simple",
                             ::datatools::base_service,
                             ::datatools::base_service::initialize_simple,
@@ -42,7 +46,11 @@ namespace datatools {
                            ::datatools::base_service,
                            ::datatools::base_service::service_class_id,
                            std::string)
-          ;
+          // .DR_CLASS_METHOD("reset",
+          //                   ::datatools::base_service,
+          //                   ::datatools::base_service::reset,
+          // int)
+           ;
         return;
       }
 
@@ -52,10 +60,8 @@ namespace datatools {
 
 #endif // DATATOOLS_BASE_SERVICE_REFLECT_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
