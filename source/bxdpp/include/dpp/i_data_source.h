@@ -75,21 +75,6 @@ namespace dpp {
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
 
-  protected:
-
-    void _set_defaults(datatools::logger::priority a_priority);
-
-    virtual void _check_next_record() = 0;
-
-    // Default failing load method :
-    virtual bool _load_record(datatools::things & a_event_record,
-                               int64_t a_entry);
-
-    // Default failing getter method :
-    virtual int64_t _get_number_of_entries() const;
-
-  public:
-
     virtual bool is_open() const;
 
     virtual bool is_sequential() const;
@@ -130,6 +115,19 @@ namespace dpp {
 
     /// Destructor:
     virtual ~i_data_source();
+
+  protected:
+
+    void _set_defaults(datatools::logger::priority a_priority);
+
+    virtual void _check_next_record() = 0;
+
+    // Default failing load method :
+    virtual bool _load_record(datatools::things & a_event_record,
+                               int64_t a_entry);
+
+    // Default failing getter method :
+    virtual int64_t _get_number_of_entries() const;
 
   protected:
 
