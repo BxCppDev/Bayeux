@@ -258,13 +258,13 @@ void g4_seed_generator::run()
       int shpf_seed = mygsl::random_utils::SEED_AUTO;
       mygsl::seed_manager smgr;
       smgr.set_init_seed_flags(mygsl::seed_manager::INIT_SEED_FROM_RANDOM_DEVICE);
-      smgr.add_seed(mctools::g4::manager::constants::instance().G4_MANAGER_LABEL,
+      smgr.add_seed(mctools::g4::manager::g4_manager_label(),
                     mgr_seed);
-      smgr.add_seed(mctools::g4::manager::constants::instance().VERTEX_GENERATOR_LABEL,
+      smgr.add_seed(mctools::g4::manager::vertex_generator_label(),
                     vg_seed);
-      smgr.add_seed(mctools::g4::manager::constants::instance().EVENT_GENERATOR_LABEL,
+      smgr.add_seed(mctools::g4::manager::event_generator_label(),
                     eg_seed);
-      smgr.add_seed(mctools::g4::manager::constants::instance().SHPF_LABEL,
+      smgr.add_seed(mctools::g4::manager::shpf_label(),
                     shpf_seed);
       smgr.ensure_different_seeds();
       std::ostringstream seeds_repr;
@@ -349,5 +349,3 @@ void g4_seed_generator::run()
   }
 
 }
-
-
