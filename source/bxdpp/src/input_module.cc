@@ -116,11 +116,24 @@ namespace dpp {
     return;
   }
 
+  bool input_module::has_source() const
+  {
+    return _source_ != nullptr;
+  }
+
+  const i_data_source & input_module::get_source() const
+  {
+    DT_THROW_IF(_source_ == nullptr,
+                std::logic_error,
+                "Input Module '" << get_name () << "' has no source !");
+    return *_source_;
+  }
+
   void input_module::set_context_label(const std::string & label_)
   {
     DT_THROW_IF(is_initialized (),
                 std::logic_error,
-                "Input Module '" << get_name () << "' is already initialized ! ");
+                "Input Module '" << get_name () << "' is already initialized !");
     io_common & ioc = _grab_common();
     ioc.set_context_label(label_);
     return;
@@ -179,7 +192,7 @@ namespace dpp {
   void input_module::_set_defaults()
   {
     _clear_record_ = false;
-    _source_ = 0;
+    _source_ = nullptr;
     _metadata_updated_ = false;
     //_metadata_preload_ = true;
     return;
@@ -310,7 +323,7 @@ namespace dpp {
   base_module::process_status
   input_module::_open_source()
   {
-    while (_source_ == 0) {
+    while (_source_ == nullptr) {
       _grab_common().set_file_record_counter(0);
       _grab_common().set_file_index(get_common().get_file_index()+1);
       DT_LOG_TRACE(_logging, "file_index = " << get_common().get_file_index());
@@ -345,7 +358,7 @@ namespace dpp {
         DT_LOG_TRACE(_logging, "NO NEXT RECORD.");
         _source_->reset();
         delete _source_;
-        _source_ = 0;
+        _source_ = nullptr;
       }
     }
     return PROCESS_OK;
@@ -357,7 +370,7 @@ namespace dpp {
     DT_LOG_TRACE(_logging, "Entering...");
     process_status load_status = PROCESS_OK;
     if (get_common().get_filenames().is_ranged()) {
-      DT_LOG_TRACE(_logging, "filenames.size () = " << get_common().get_filenames().size());
+      DT_LOG_TRACE(_logging, "filenames.size() = " << get_common().get_filenames().size());
     }
     if (!_source_) {
       // attempt to open a source file of event records :
@@ -374,14 +387,14 @@ namespace dpp {
     bool load_it = true;
     // Load action :
     if (load_it) {
-      // Make sure the input data record is empty:
+      // Make sure the input data record is empty :
       if ((a_data_record.size() > 0)) {
-        DT_LOG_TRACE(_logging, "Data record is not empty!");
+        DT_LOG_TRACE(_logging, "Data record is not empty [size=" << a_data_record.size()<< "]!");
         load_status = PROCESS_ERROR;
         return load_status;
       }
       a_data_record.clear();
-      DT_THROW_IF(_source_ == 0,
+      DT_THROW_IF(_source_ == nullptr,
                   std::logic_error,
                   "Input module '" << get_name()
                   << "' : No available data source ! This is a bug !");
@@ -423,15 +436,15 @@ namespace dpp {
       }
     }
     // check the end of the input file :
-    if ((_source_ != 0) && (! _source_->has_next_record ())) {
+    if ((_source_ != nullptr) && (! _source_->has_next_record ())) {
       stop_file = true;
     }
     // manage the end of the input file :
     if (stop_file) {
-      if (_source_ != 0) {
+      if (_source_ != nullptr) {
         _source_->reset ();
         delete _source_;
-        _source_ = 0;
+        _source_ = nullptr;
       }
       _grab_common().set_file_record_counter(0);
       int effective_max_files = get_common().get_max_files();
@@ -500,7 +513,7 @@ namespace dpp {
     int64_t nmetadata = _source_->get_number_of_metadata ();
     // std::cerr << "DEVEL: dpp::input_module::_load_metadata_: #metadata = "
     //           << nmetadata << std::endl;
-    datatools::multi_properties * ctx_store = 0;
+    datatools::multi_properties * ctx_store = nullptr;
     const std::vector<std::string> & ctx_md_labels = get_common().get_context_metadata();
     if (get_common().has_context_service()) {
       // We define a handle to store embedded in the context service:

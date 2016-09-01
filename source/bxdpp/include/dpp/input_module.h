@@ -132,6 +132,12 @@ namespace dpp {
     /// Check is metadata has been possibly updated after last data record processing
     bool metadata_was_updated() const;
 
+    /// Check source
+    bool has_source() const;
+
+    /// Get source
+    const i_data_source & get_source() const;
+
   protected:
 
     /// Load a data record
@@ -158,9 +164,9 @@ namespace dpp {
 
     bool                         _clear_record_; //!< A flag to automatically clear the data record before processing
     boost::scoped_ptr<io_common> _common_; //!< Common data structure
-    i_data_source              * _source_; //!< Abstract data reader
+    i_data_source              * _source_ = nullptr; //!< Abstract data reader
+    bool                         _metadata_updated_ = false; //!< Flag for possible metadata update
     // bool                         _metadata_preload_; //!< Preload metadata before processing data records
-    bool                         _metadata_updated_; //!< Flag for possible metadata update
 
     // Macro to automate the registration of the module :
     DPP_MODULE_REGISTRATION_INTERFACE(input_module)
@@ -171,10 +177,8 @@ namespace dpp {
 
 #endif // DPP_INPUT_MODULE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
