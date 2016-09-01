@@ -34,7 +34,6 @@ if [ ! -d ${bxtmp_dir} ]; then
     mkdir -p ${bxtmp_dir}
 fi
 
-
 cmd=" \
 ${bxocd_make_doc_exe}                                  \
     --build-dir \"${bxocd_build_dir}\"                 \
@@ -55,6 +54,6 @@ cmd_script=`mktemp ${bxtmp_dir}/_bxocd_build.bash.XXXXXX`
 echo $cmd > ${cmd_script}
 bash ${cmd_script}
 rm -f ${cmd_script}
-rm -fr ${bxtmp_dir}
+# rm -fr ${bxtmp_dir}
 
 exit 0
