@@ -145,11 +145,18 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/introspection/data_description.h
   ${module_include_dir}/${module_name}/introspection/argument.h
   ${module_include_dir}/${module_name}/introspection/method.h
+  ${module_include_dir}/${module_name}/introspection/builder.h
 
   ${module_include_dir}/${module_name}/ui/utils.h
   ${module_include_dir}/${module_name}/ui/ihs.h
   ${module_include_dir}/${module_name}/ui/base_command.h
+  ${module_include_dir}/${module_name}/ui/target_command.h
+  ${module_include_dir}/${module_name}/ui/reflective_command.h
+  ${module_include_dir}/${module_name}/ui/reflective_command-inl.h
   ${module_include_dir}/${module_name}/ui/base_command_interface.h
+  ${module_include_dir}/${module_name}/ui/target_command_interface.h
+  ${module_include_dir}/${module_name}/ui/reflective_command_interface.h
+  ${module_include_dir}/${module_name}/ui/reflective_command_interface-inl.h
   ${module_include_dir}/${module_name}/ui/basic_shell.h
   ${module_include_dir}/${module_name}/ui/shell_commands.h
   ${module_include_dir}/${module_name}/ui/shell_command_interface.h
@@ -161,10 +168,13 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/ui/shell_tree_command.h
   ${module_include_dir}/${module_name}/ui/shell_load_command.h
   ${module_include_dir}/${module_name}/ui/shell_help_command.h
+  ${module_include_dir}/${module_name}/ui/wrappers.h
+  ${module_include_dir}/${module_name}/ui/validators.h
 
   ${module_include_dir}/${module_name}/i_serializable-reflect.h
   ${module_include_dir}/${module_name}/i_tree_dump-reflect.h
   ${module_include_dir}/${module_name}/logger-reflect.h
+  ${module_include_dir}/${module_name}/command_utils-reflect.h
   ${module_include_dir}/${module_name}/enriched_base-reflect.h
   ${module_include_dir}/${module_name}/base_service-reflect.h
   ${module_include_dir}/${module_name}/event_id-reflect.h
@@ -257,6 +267,7 @@ ${module_source_dir}/introspection/data_layout.cc
 ${module_source_dir}/introspection/data_description.cc
 ${module_source_dir}/introspection/argument.cc
 ${module_source_dir}/introspection/method.cc
+${module_source_dir}/introspection/builder.cc
 
 ${module_source_dir}/ui/basic_shell.cc
 ${module_source_dir}/ui/shell_command_interface.cc
@@ -272,6 +283,8 @@ ${module_source_dir}/ui/ihs.cc
 ${module_source_dir}/ui/base_command_interface.cc
 ${module_source_dir}/ui/base_command.cc
 ${module_source_dir}/ui/utils.cc
+${module_source_dir}/ui/validators.cc
+${module_source_dir}/ui/wrappers.cc
 #${module_source_dir}/the_introspectable.cc
 # bx${module_name}/_datatools.cc
 )
@@ -414,9 +427,12 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     ${module_test_dir}/test_ui_utils.cxx
     ${module_test_dir}/test_ui_ihs.cxx
     ${module_test_dir}/test_ui_base_command.cxx
+    ${module_test_dir}/test_ui_reflective_command.cxx
     ${module_test_dir}/test_ui_base_command_interface.cxx
     ${module_test_dir}/test_ui_shell_command_interface.cxx
     ${module_test_dir}/test_ui_basic_shell.cxx
+    ${module_test_dir}/test_ui_regex.cxx
+    ${module_test_dir}/test_ui_validators.cxx
     ${module_test_dir}/test_backward_things.cxx
     ${module_test_dir}/test_introspection_data_description.cxx
     ${module_test_dir}/test_introspection_argument.cxx
