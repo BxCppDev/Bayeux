@@ -1131,8 +1131,7 @@ namespace geomtools {
     out_ << "          It can be:                       \n";
     out_ << "          - the name of a geometry model,  \n";
     out_ << "          - the name of a logical volume,  \n";
-    out_ << "          - the GID associated to a volume \n";
-    out_ << "            by the active mapping.         \n";
+    out_ << "          - the GID associated to a volume by the active mapping.\n";
     out_ << std::flush;
     return -1;
     } else if (option  == "--invisible") {
@@ -1266,19 +1265,24 @@ namespace geomtools {
                << "    -x  | --max-display-level [depth]\n"
                << "                                Display daughter volume(s) down to\n"
                << "                                level 'depth'.\n"
-            // << "    -r  | --terminal TERM    Use terminal 'TERM'\n"
-            // << "    -R  | --terminal-options TERMOPT \n"
-            // << "                           Use terminal options 'TERMOPT'\n"
+               << "    -r  | --terminal TERM    Use terminal 'TERM'\n"
+               << "    -R  | --terminal-options TERMOPT \n"
+               << "                           Use terminal options 'TERMOPT'\n"
                << "\n";
           out_ << "  [id] : The identifier of the object to be displayed (optional)\n";
           out_ << "         It can be:                       \n";
           out_ << "         - the name of a geometry model,  \n";
           out_ << "         - the name of a logical volume,  \n";
-          out_ << "         - the GID associated to a volume \n";
-          out_ << "           by the active mapping.         \n";
+          out_ << "         - the GID associated to a volume by the active mapping.\n";
           out_ << "         If 'id' is missing, the last displayed object is reused.\n";
           out_ << std::flush;
           return -1;
+        } else if (option == "-r" || option == "--terminal") {
+          terminal = argv_[argcount++];
+          datatools::remove_quotes(terminal);
+        } else if (option == "-R" || option == "--terminal-options") {
+          terminal_options = argv_[argcount++];
+          datatools::remove_quotes(terminal_options);
         } else if (option == "-dd" || option == "--with-display-data") {
           process_display_data = true;
         } else if (option == "-DD" || option == "--without-display-data") {
@@ -1394,7 +1398,14 @@ namespace geomtools {
       if (rendering_tag == "composite.boost_sampling") {
         rendering_options |= i_composite_shape_3d::WR_COMPOSITE_BOOST_SAMPLING;
       }
-   }
+    }
+    if (terminal.empty()) {
+      terminal = "x11";
+    }
+    if (terminal_options.empty() && terminal == "x11") {
+      terminal_options = "noenhanced";
+      // terminal_options = "nopersist size 500,500";
+    }
     geomtools::gnuplot_drawer GPD;
     GPD.set_rendering_options_current(rendering_options);
     GPD.set_rendering_options_depth(rendering_options_depth);
@@ -1419,14 +1430,25 @@ namespace geomtools {
     }
     GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
     GPD.set_view(_params_.visu_drawer_view);
-    if (! output.empty() || ! terminal.empty()) {
-      GPD.set_output_medium(output, terminal, terminal_options);
-    }
     GPD.set_using_title(using_title);
     GPD.set_drawing_display_data(true);
     GPD.set_labels(_params_.visu_drawer_labels);
     if (_params_.logging >= datatools::logger::PRIO_DEBUG) {
       GPD.print(std::clog);
+    }
+    // std::cerr << "DEVEL: geomtools_driver::command_gnuplot_display: terminal = '" << terminal << "'" << std::endl;
+    // std::cerr << "DEVEL: geomtools_driver::command_gnuplot_display: terminal_options = '" << terminal_options << "'" << std::endl;
+    if (! terminal.empty()) {
+      // std::cerr << "DEVEL: geomtools_driver::command_gnuplot_display: call GPD.set_terminal" << std::endl;
+      GPD.set_terminal(terminal, terminal_options);
+    }
+    //if (! output.empty() || ! terminal.empty()) {
+    // std::cerr << "DEVEL: geomtools_driver::command_gnuplot_display: output = '" << output << "'" << std::endl;
+    if (! output.empty()) {
+      terminal.clear();
+      terminal_options.clear();
+      // std::cerr << "DEVEL: geomtools_driver::command_gnuplot_display: call GPD.set_output_medium" << std::endl;
+      GPD.set_output_medium(output, terminal, terminal_options);
     }
     if (has_manager()) {
       int code = GPD.draw(*_geo_mgr_.get(),
@@ -1450,13 +1472,11 @@ namespace geomtools {
                        root_plcmt,
                        max_display_level); // geomtools::gnuplot_drawer::DISPLAY_LEVEL_NO_LIMIT);
         _params_.visu_object_name = visu_object_name;
-      }
-      catch (std::exception & error) {
+      } catch (std::exception & error) {
         DT_LOG_ERROR(_params_.logging, error.what());
         _params_.visu_object_name.clear();
         error_code = 1;
-      }
-      catch (...) {
+      } catch (...) {
         DT_LOG_ERROR(_params_.logging, "Unexpected error !");
         _params_.visu_object_name.clear();
         error_code = 1;
