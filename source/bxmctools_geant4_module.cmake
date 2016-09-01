@@ -100,6 +100,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
     ${module_test_dir}/test_g4_prng.cxx
     ${module_test_dir}/test_g4_processes_em_model_factory.cxx
     ${module_test_dir}/test_g4_detector_construction.cxx
+    ${module_test_dir}/test_g4_manager.cxx
     )
 
   # - Applications
@@ -127,6 +128,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
     string(REGEX REPLACE "^-D" "" _bxdef ${_def})
     list(APPEND Bayeux_Geant4_DEFINITIONS ${_bxdef})
   endforeach()
+  # message (STATUS  "Bayeux_Geant4_DEFINITIONS='${Bayeux_Geant4_DEFINITIONS}'")
 
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
