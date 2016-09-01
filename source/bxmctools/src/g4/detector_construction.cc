@@ -82,14 +82,14 @@ namespace mctools {
     const manager &
     detector_construction::get_manager() const
     {
-      DT_THROW_IF (_g4_manager_ == 0, std::logic_error, "Operation prohibited !");
+      DT_THROW_IF (_g4_manager_ == nullptr, std::logic_error, "Operation prohibited !");
       return *_g4_manager_;
     }
 
     manager &
     detector_construction::grab_manager()
     {
-      DT_THROW_IF (_g4_manager_ == 0, std::logic_error, "Operation prohibited !");
+      DT_THROW_IF (_g4_manager_ == nullptr, std::logic_error, "Operation prohibited !");
       return *_g4_manager_;
     }
 
@@ -103,8 +103,8 @@ namespace mctools {
     {
       _abort_on_error_ = true;
 
-      _g4_manager_ = 0;
-      _geom_manager_ = 0;
+      _g4_manager_ = nullptr;
+      _geom_manager_ = nullptr;
       _materials_geom_plugin_name_ = "";
 
       _generate_gdml_file_ = true;
@@ -119,13 +119,21 @@ namespace mctools {
       _using_sensitive_detectors_ = true;
       _using_em_field_            = false;
       _using_biasing_             = false;
-      _em_field_manager_          = 0;
+      _em_field_manager_          = nullptr;
       _miss_distance_unit_        = CLHEP::mm;
       _general_miss_distance_     = DEFAULT_MISS_DISTANCE;
       _SD_params_.set_key_label("name");
       _SD_params_.set_meta_label("type");
       _SD_params_.set_description("Sensitive detectors' configuration (mctools::g4::detector_construction)");
-     return;
+      return;
+    }
+
+    detector_construction::detector_construction()
+    {
+      _initialized_ = false;
+      _set_default();
+      _g4_manager_ = nullptr;
+      return;
     }
 
     detector_construction::detector_construction(manager & g4_mgr_)
@@ -891,7 +899,11 @@ namespace mctools {
           DT_LOG_NOTICE(_logprio(), "Create a new sensitive detector with category '"
                         << sensitive_category << "'");
           SD = new sensitive_detector(sensitive_category);
-          SD->set_manager(*_g4_manager_);
+          if (_g4_manager_ != nullptr) {
+            SD->set_manager(*_g4_manager_);
+          } else {
+            DT_LOG_FATAL(_logprio(), "Missing G4 manager for sensitive detectors!");
+          }
           SDman->AddNewDetector(SD);
           _sensitive_detectors_[sensitive_category] = SD;
         } else {
@@ -942,7 +954,11 @@ namespace mctools {
       }
 
       // Set the set of activated output profiles from the manager:
-      _SHPF_.set_output_profiles(_g4_manager_->get_activated_output_profile_ids());
+      if (_g4_manager_ != nullptr) {
+        _SHPF_.set_output_profiles(_g4_manager_->get_activated_output_profile_ids());
+      } else {
+        DT_LOG_FATAL(_logprio(), "Missing G4 manager for output profiles!");
+      }
 
       std::vector<std::string> config_files;
       if (_SHPF_config_.has_key("definitions")) {
@@ -988,14 +1004,18 @@ namespace mctools {
            ++iSHP) {
         const base_step_hit_processor * processor = iSHP->second;
         const std::string & hit_category = processor->get_hit_category();
-        if (_g4_manager_->forbids_private_hits()) {
-          if (boost::starts_with(hit_category, "_")) {
-            DT_LOG_WARNING(_logprio(),
-                           "SHPF: Sensitive detector '" << processor->get_name()
-                           << "' initialized with private hit category '"
-                           << hit_category << "' is not used !");
-            continue;
+        if (_g4_manager_ != nullptr) {
+          if (_g4_manager_->forbids_private_hits()) {
+            if (boost::starts_with(hit_category, "_")) {
+              DT_LOG_WARNING(_logprio(),
+                             "SHPF: Sensitive detector '" << processor->get_name()
+                             << "' initialized with private hit category '"
+                             << hit_category << "' is not used !");
+              continue;
+            }
           }
+        } else {
+          DT_LOG_FATAL(_logprio(), "Missing G4 manager!!!");
         }
 
         const std::string & from_processor_sensitive_category = iSHP->second->get_sensitive_category();
@@ -1017,7 +1037,11 @@ namespace mctools {
                         << from_processor_sensitive_category << "'");
 
           sensitive_detector * SD = new sensitive_detector(from_processor_sensitive_category);
-          SD->set_manager(*_g4_manager_);
+          if (_g4_manager_ != nullptr) {
+            SD->set_manager(*_g4_manager_);
+          } else {
+            DT_LOG_FATAL(_logprio(), "Missing G4 manager for sensitive detectors!!!");
+          }
 
           // Setup special behaviour of the sensitive detector:
           SD->configure(processor->get_auxiliaries());
@@ -1205,13 +1229,17 @@ namespace mctools {
         const std::string & processor_name = iSHP->first;
         base_step_hit_processor * processor = iSHP->second;
         const std::string & hit_category = processor->get_hit_category();
-        if (_g4_manager_->forbids_private_hits()) {
-          if (boost::starts_with(hit_category, "_")) {
-            DT_LOG_WARNING(_logprio(), "SHPF: Sensitive detector '" << processor->get_name()
-                           << "' initialized from SHPF with private hit category '"
-                           << hit_category << "' is not used !");
-            continue;
+        if (_g4_manager_ != nullptr) {
+          if (_g4_manager_->forbids_private_hits()) {
+            if (boost::starts_with(hit_category, "_")) {
+              DT_LOG_WARNING(_logprio(), "SHPF: Sensitive detector '" << processor->get_name()
+                             << "' initialized from SHPF with private hit category '"
+                             << hit_category << "' is not used !");
+              continue;
+            }
           }
+        } else {
+          DT_LOG_FATAL(_logprio(), "Missing G4 manager!!!");
         }
         const std::string & from_processor_sensitive_category = processor->get_sensitive_category();
         sensitive_detector_dict_type::iterator iSD
