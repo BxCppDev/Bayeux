@@ -89,7 +89,7 @@ namespace mctools {
       this->interactive = false;
       this->g4_macro.clear();
       this->g4_visu = false;
-      this->number_of_events = mctools::g4::manager::constants::instance().NO_LIMIT;
+      this->number_of_events = mctools::g4::manager::NO_LIMIT;
       this->number_of_events_modulo = 0; // 0 == not used
       this->input_prng_states_file.clear();
       this->output_prng_states_file.clear();
@@ -161,22 +161,22 @@ namespace mctools {
       // PRNG seeding :
       if (a_params.mgr_seed != mygsl::random_utils::SEED_INVALID) {
         // register the G4 manager seed :
-        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().G4_MANAGER_LABEL, a_params.mgr_seed);
+        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::g4_manager_label(), a_params.mgr_seed);
       }
 
       if (a_params.vg_seed != mygsl::random_utils::SEED_INVALID) {
         // register the vertex generator's seed :
-        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().VERTEX_GENERATOR_LABEL, a_params.vg_seed);
+        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::vertex_generator_label(), a_params.vg_seed);
       }
 
       if (a_params.eg_seed != mygsl::random_utils::SEED_INVALID) {
         // register the event generator's seed :
-        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().EVENT_GENERATOR_LABEL, a_params.eg_seed);
+        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::event_generator_label(), a_params.eg_seed);
       }
 
       if (a_params.shpf_seed != mygsl::random_utils::SEED_INVALID) {
         // register the SHPF PRNG's seed :
-        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::constants::instance().SHPF_LABEL, a_params.shpf_seed);
+        a_manager.grab_seed_manager().update_seed(mctools::g4::manager::shpf_label(), a_params.shpf_seed);
       }
 
       if (! a_params.input_prng_seeds_file.empty()) {
@@ -219,7 +219,7 @@ namespace mctools {
         a_manager.set_event_generator_name(a_params.eg_name);
       }
 
-      if (a_params.number_of_events <= mctools::g4::manager::constants::instance().NO_LIMIT) {
+      if (a_params.number_of_events <= mctools::g4::manager::NO_LIMIT) {
         a_manager.set_number_of_events(a_params.number_of_events);
       }
 
