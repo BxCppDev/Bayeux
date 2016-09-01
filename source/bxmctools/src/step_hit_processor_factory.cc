@@ -333,6 +333,9 @@ namespace mctools {
     _entries_.clear();
     _output_profiles_.clear ();
     _instantiate_at_loading_ = false;
+    _service_manager_ = nullptr;
+    _geom_manager_ = nullptr;
+    _external_prng_ = nullptr;
     DT_LOG_TRACE(logging,"Exiting.");
     return;
   }
@@ -345,7 +348,9 @@ namespace mctools {
     _factory_register_.set_label ("mctools::base_step_hit_processor/factory");
     _factory_register_.set_logging_priority (logging_);
     _instantiate_at_loading_ = false;
-    _external_prng_ = 0;
+    _service_manager_ = nullptr;
+    _geom_manager_ = nullptr;
+    _external_prng_ = nullptr;
     bool preload = true;
     if (preload) {
       _factory_register_.import (DATATOOLS_FACTORY_GET_SYSTEM_REGISTER (::mctools::base_step_hit_processor));
@@ -409,8 +414,8 @@ namespace mctools {
   base_step_hit_processor * step_hit_processor_factory::_create(const std::string & name_)
   {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
-    base_step_hit_processor * proc = 0;
-    DT_THROW_IF (name_.empty (), std::logic_error,
+    base_step_hit_processor * proc = nullptr;
+    DT_THROW_IF (name_.empty(), std::logic_error,
                  "Missing step hit processor name !");
     processor_entry_dict_type::iterator found = _entries_.find(name_);
     DT_THROW_IF (found == _entries_.end(), std::logic_error,
@@ -446,9 +451,9 @@ namespace mctools {
       }
 
       if (has_service_manager()) {
-        proc->initialize (pe.config, *_service_manager_);
+        proc->initialize(pe.config, *_service_manager_);
       } else {
-        proc->initialize (pe.config);
+        proc->initialize(pe.config);
       }
       // Initialize the handle with the newly created processor:
       pe.handle.reset(proc);
