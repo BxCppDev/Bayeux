@@ -23,7 +23,6 @@ int main(int argc_, char ** argv_)
     int iarg = 1;
     while (iarg < argc_) {
       std::string token = argv_[iarg];
-
       if (token[0] == '-') {
         std::string option = token;
         if ((option == "-d") || (option == "--debug")) {
@@ -87,12 +86,10 @@ int main(int argc_, char ** argv_)
     }
 
     std::clog << "debug: " << "The end." << std::endl;
-  }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     std::cerr << "error: " << x.what() << std::endl;
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     std::cerr << "error: " << "unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
