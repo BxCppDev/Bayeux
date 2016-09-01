@@ -23,7 +23,7 @@
 
 // This project:
 #include <datatools/command_utils.h>
-#include <datatools/ui/base_command.h>
+#include <datatools/ui/target_command.h>
 #include <datatools/ui/basic_shell.h>
 
 namespace datatools {

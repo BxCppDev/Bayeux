@@ -28,7 +28,6 @@
 
 // Third party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 // - Bayeux/datatools:
@@ -68,17 +67,32 @@ namespace datatools {
     }
 
     void variant_service::config::print(std::ostream & out_,
-                                         const std::string & title_,
-                                         const std::string & indent_) const
+                                        const std::string & title_,
+                                        const std::string & indent_) const
     {
       if (!title_.empty()) {
         out_ << indent_ << title_ << std::endl;
       }
       static const std::string item_tag = "|-- ";
       static const std::string item_ltag = "`-- ";
-      out_ << indent_ << item_tag << "Label : '" << label << "'\n";
+
+      out_ << indent_ << item_tag << "Label : ";
+      if (!label.empty()) {
+        out_ << "'" << label << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << "\n";
+
       out_ << indent_ << item_tag << "Logging : '" << logging << "'\n";
-      out_ << indent_ << item_tag << "Configuration file : '" << config_filename << "'\n";
+
+      out_ << indent_ << item_tag << "Configuration file : ";
+      if (!config_filename.empty()) {
+        out_ << "'" << config_filename << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << "\n";
 
       out_ << indent_ << item_tag << "Additional registries : ";
       if (registry_rules.size()) {
@@ -96,11 +110,17 @@ namespace datatools {
       }
       out_ << std::endl;
 
-      out_ << indent_ << item_tag << "Load profile : '" << profile_load;
-      if (profile_load_dont_ignore_unknown) {
-        out_ << " (ignore unknown)";
+      out_ << indent_ << item_tag << "Load profile : ";
+      if (!profile_load.empty()) {
+        out_ << "'" << profile_load << "'";
+        if (profile_load_dont_ignore_unknown) {
+          out_ << " (ignore unknown)";
+        }
+      } else {
+        out_ << "<none>";
       }
-      out_ << "'\n";
+      out_ << "\n";
+
       out_ << indent_ << item_tag << "Settings : ";
       if (settings.size()) {
         out_ << "[" << settings.size() << "]";
@@ -110,10 +130,28 @@ namespace datatools {
       out_ << std::endl;
 
 #if DATATOOLS_WITH_QT_GUI == 1
-      out_ << indent_ << item_tag << "GUI : " << gui << "'\n";
+      out_ << indent_ << item_tag << "GUI : " << (gui ? "yes" : "no") << "\n";
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
-      out_ << indent_ << item_ltag << "Store profile : '" << profile_store << "'\n";
+      out_ << indent_ << item_tag << "TUI : " << (tui ? "yes" : "no") << "\n";
+
+      out_ << indent_ << item_tag << "Store profile : ";
+      if (!profile_store.empty()) {
+        out_ << "'" << profile_store << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << "\n";
+
+      out_ << indent_ << item_tag << "Reporting file : ";
+      if (!reporting_filename.empty()) {
+        out_ << "'" << reporting_filename << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << "\n";
+
+      out_ << indent_ << item_ltag << "Active : " << (is_active() ? "yes" : "no") << "\n";
 
       return;
     }
@@ -136,6 +174,7 @@ namespace datatools {
       bool parse_profile_load_dont_ignore_unknown = true;
       bool parse_settings        = true;
       bool parse_profile_store   = true;
+      bool parse_reporting       = true;
 
       // Inhibition of the parsinf for specific options:
       if (flags_ & NO_LABEL) parse_label = false;
@@ -147,6 +186,7 @@ namespace datatools {
       if (flags_ & PROFILE_LOAD_DONT_IGNORE_UNKNOWN) parse_profile_load_dont_ignore_unknown = false;
       if (flags_ & NO_SETTINGS) parse_settings = false;
       if (flags_ & NO_PROFILE_STORE) parse_profile_store = false;
+      if (flags_ & NO_REPORTING) parse_reporting = false;
 #if DATATOOLS_WITH_QT_GUI == 1
       bool parse_gui = true;
       if (flags_ & NO_GUI) parse_gui = false;
@@ -220,6 +260,12 @@ namespace datatools {
         easy_init("variant-store",
                   bpo::value<std::string>(&cfg_.profile_store)->value_name("[file]"),
                   "file in which to store the effective current variant profile");
+      }
+
+      if (parse_reporting) {
+        easy_init("variant-reporting",
+                  bpo::value<std::string>(&cfg_.reporting_filename)->value_name("[file]"),
+                  "file in which to print the variant usage report");
       }
 
       return;
@@ -324,6 +370,17 @@ namespace datatools {
     {
       DT_THROW_IF(is_started(), std::logic_error, "Variant service is started!");
       _output_profile_ = op_;
+      return;
+    }
+
+    bool variant_service::has_reporting_file() const
+    {
+      return !_reporting_file_.empty();
+    }
+
+    void variant_service::set_reporting_file(const std::string & urf_)
+    {
+      _reporting_file_ = urf_;
       return;
     }
 
@@ -501,13 +558,15 @@ namespace datatools {
         const std::string & reg_dep = cfg_.registry_dependencies[i];
         add_registry_dependency(reg_dep);
       }
-
       set_input_profile(cfg_.profile_load);
       set_settings(cfg_.settings);
       set_output_profile(cfg_.profile_store);
 #if DATATOOLS_WITH_QT_GUI == 1
       set_gui(cfg_.gui);
 #endif // DATATOOLS_WITH_QT_GUI == 1
+      if (!cfg_.reporting_filename.empty()) {
+        set_reporting_file(cfg_.reporting_filename);
+      }
       _do_build_();
       if (lock_) {
         if (!_repository_.is_locked()) {
@@ -558,6 +617,11 @@ namespace datatools {
       return _repository_;
     }
 
+    bool variant_service::is_reporting() const
+    {
+      return ! _reporting_file_.empty();
+    }
+
     void variant_service::start()
     {
       DT_LOG_TRACE_ENTERING(_logging_); //, "Instantation of the variant_service singleton.")
@@ -584,7 +648,44 @@ namespace datatools {
       // in order to make the variant service accessible from
       // each software component:
       _do_variant_system_export_();
+
+      if (is_reporting()) {
+        DT_LOG_TRACE(_logging_, "variant service is_reporting!!!");
+        _do_variant_reporting_init_();
+      }
+
       _started_ = true;
+      DT_LOG_TRACE_EXITING(_logging_);
+      return;
+    }
+
+    void variant_service::_do_variant_reporting_init_()
+    {
+      DT_LOG_TRACE_ENTERING(_logging_);
+      _reporting_.set_logging(_logging_);
+      _reporting_.set_repository(_repository_);
+      _repository_.set_reporting(_reporting_);
+      if (datatools::logger::is_trace(_logging_)) {
+        _reporting_.dump(std::cerr);
+      }
+      DT_LOG_TRACE_EXITING(_logging_);
+      return;
+    }
+
+    void variant_service::_do_variant_reporting_fini_()
+    {
+      DT_LOG_TRACE_ENTERING(_logging_);
+      std::ofstream reporting_out;
+      std::string rep_out_path = _reporting_file_;
+      datatools::fetch_path_with_env(rep_out_path);
+      reporting_out.open(rep_out_path.c_str());
+      DT_THROW_IF(!reporting_out,
+                  std::runtime_error,
+                  "Cannot open variant usage reporting file '" << rep_out_path << "'!");
+      DT_LOG_NOTICE(_logging_, "Saving variant usage report in file '" << rep_out_path << "'...");
+      _reporting_.print_report(reporting_out);
+      _repository_.reset_reporting();
+      _reporting_.reset_repository();
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
@@ -597,21 +698,14 @@ namespace datatools {
       }
       // Clean the datatools' kernel from the application variant repository:
       _started_ = false;
-      _do_variant_system_discard_();
+      if (is_reporting()) {
+        DT_LOG_TRACE(_logging_, "Variant service is reporting.");
+        _do_variant_reporting_fini_();
+      }
+       _do_variant_system_discard_();
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
-
-    // // static
-    // variant_service & variant_service::instance()
-    // {
-    //   static boost::scoped_ptr<variant_service> _vctrl;
-    //   if (_vctrl.get() == 0) {
-    //     // Instantiate the variant repository:
-    //     _vctrl.reset(new variant_service);
-    //   }
-    //   return *_vctrl.get();
-    // }
 
     int32_t variant_service::get_max_rank() const
     {
@@ -862,10 +956,15 @@ namespace datatools {
     void variant_service::_do_variant_system_export_()
     {
       DT_LOG_TRACE_ENTERING(_logging_);
-      const datatools::kernel & krnl = datatools::kernel::const_instance();
-      if (krnl.is_initialized() && krnl.has_variant_repository()) {
-        DT_LOG_TRACE(_logging_, "Datatools' kernel system variant repository is instantiated.");
-        _repository_.system_export();
+      datatools::kernel & krnl = datatools::kernel::instance();
+      if (krnl.is_initialized()) {
+        DT_THROW_IF(krnl.has_variant_service(), std::logic_error,
+                    "Kernel already has a variant service!");
+        krnl.set_variant_service(*this);
+        // if (krnl.is_initialized() && krnl.has_variant_repository()) {
+        //   DT_LOG_TRACE(_logging_,
+        //                "Datatools' kernel system variant repository is instantiated.");
+        //   _repository_.system_export();
       } else {
         throw variant_exception("Datatools' kernel system variant repository is not instantiated.");
       }
@@ -876,18 +975,29 @@ namespace datatools {
     void variant_service::_do_variant_system_discard_()
     {
       DT_LOG_TRACE_ENTERING(_logging_);
-      const datatools::kernel & krnl = datatools::kernel::const_instance();
+      datatools::kernel & krnl = datatools::kernel::instance();
+      if (krnl.is_initialized()) {
+        // DT_THROW_IF(!krnl.has_variant_service(), std::logic_error,
+        //             "Kernel has no variant service!");
+        if (krnl.has_variant_service() && this == &krnl.get_variant_service()) {
+          krnl.reset_variant_service();
+        }
+      } else {
+        // The datatools' kernel has shutdown. No need to unregister the application variant repository.
+        DT_LOG_TRACE(_logging_, "Datatools' kernel system variant repository is NOT instantiated.");
+      }
       // Here there is potentially an issue with the order of termination for
       // the static system variant repository in the datatools' kernel.
       // So we first check if it is still present before to attempt to discard
       // user defined variant registries from it.
-      if (krnl.is_initialized() && krnl.has_variant_repository()) {
-        DT_LOG_TRACE(_logging_, "Datatools' kernel system variant repository is instantiated.");
-        _repository_.system_discard();
-      } else {
-        // The datatools' kernel has shutdown... no need to unregister the application variant repository.
-        DT_LOG_TRACE(_logging_, "Datatools' kernel system variant repository is NOT instantiated.");
-      }
+      // const datatools::kernel & krnl = datatools::kernel::const_instance();
+      // if (krnl.is_initialized() && krnl.has_variant_repository()) {
+      //   DT_LOG_TRACE(_logging_, "Datatools' kernel system variant repository is instantiated.");
+      //   _repository_.system_discard();
+      // } else {
+      //   // The datatools' kernel has shutdown... no need to unregister the application variant repository.
+      //   DT_LOG_TRACE(_logging_, "Datatools' kernel system variant repository is NOT instantiated.");
+      // }
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }

@@ -525,6 +525,7 @@ void service_manager::create_service(service_entry& entry) {
     const FactoryType& the_factory = factory_register_.get(entry.get_service_id());
     base_service* ptr = the_factory();
     entry.grab_service_handle().reset(ptr);
+    ptr->set_name(entry.get_service_name());
     entry.update_service_status(service_entry::STATUS_CREATED);
     DT_LOG_DEBUG(get_logging_priority(),
                  "Service named '" <<  entry.get_service_name() << "' has been created !");
@@ -545,6 +546,7 @@ void service_manager::initialize_service(service_entry& entry) {
                  << entry.get_service_name()
                  << "'...");
     base_service& the_service = entry.grab_service_handle().grab();
+    // the_service.set_name(entry.get_service_name());
     the_service.initialize(entry.get_service_config(), services_);
     entry.update_service_status(service_entry::STATUS_INITIALIZED);
   }

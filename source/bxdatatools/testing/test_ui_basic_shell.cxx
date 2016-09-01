@@ -36,10 +36,12 @@
 int main(int argc_, char * argv_[])
 {
   int error_code = EXIT_SUCCESS;
+
   bool interactive = false;
   if (argc_ > 1 && std::string(argv_[1]) == "-i") {
     interactive = true;
   }
+
   try {
 
     // The objects:
@@ -73,6 +75,8 @@ int main(int argc_, char * argv_[])
     fooIHS.add_interface("/", "test");
     fooIHS.add_interface("/test", joeCmdInter);
     fooIHS.add_interface("/", "dummy");
+    fooIHS.add_interface("/", "void");
+    // fooIHS.add_interface("/", "-bad");
     fooIHS.add_interface("/dummy", ".what");
     fooIHS.add_interface("/dummy/.what", jamesCmdInter);
     fooIHS.tree_dump(std::clog, fooIHS.get_display_name());
@@ -103,10 +107,10 @@ int main(int argc_, char * argv_[])
     std::ostringstream omacro;
     omacro << "pwd" << std::endl;
     omacro << "ls" << std::endl;
-    omacro << "tree /" << std::endl;
+    omacro << "tree --all --color /" << std::endl;
     omacro << "cd /bar" << std::endl;
     omacro << "pwd" << std::endl;
-    omacro << "ls -l" << std::endl;
+    omacro << "ls --long" << std::endl;
     omacro << "set_value 2" << std::endl;
     omacro << "get_value" << std::endl;
     omacro << "cd /test/joe" << std::endl;
@@ -120,7 +124,10 @@ int main(int argc_, char * argv_[])
 
     std::istringstream * in = &imacro;
     if (interactive) {
+      std::clog << "NOTICE: Interactive mode..." << std::endl;
       in = 0;
+    } else {
+      std::clog << "NOTICE: Batch mode..." << std::endl;
     }
     // Run the shell session:
     error_code = fooShell.run(in);

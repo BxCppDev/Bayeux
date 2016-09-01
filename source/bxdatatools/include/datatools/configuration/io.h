@@ -34,6 +34,9 @@
 // Standard library:
 #include <iostream>
 #include <vector>
+#include <string>
+#include <iostream>
+#include <map>
 
 // This project (Bayeux/datatools):
 #include <datatools/bit_mask.h>
@@ -116,6 +119,61 @@ namespace datatools {
 
     };
 
+    /// \brief variant processing reporting
+    class variant_reporting
+    {
+    public:
+      typedef std::map<std::string, std::size_t> statistics_type;
+
+      /// Default constructor
+      variant_reporting();
+
+      /// Destructor
+      ~variant_reporting();
+
+      /// Check if a variant configuration repository is used
+      bool has_repository() const;
+
+      /// Set the variant configuration repository
+      void set_repository(const variant_repository & repository_);
+
+      /// Reset the variant configuration repository
+      void reset_repository();
+
+      /// Get the variant configuration repository
+      const variant_repository & get_repository() const;
+
+      /// Reset the counters
+      void reset();
+
+      /// Print the statistic report
+      void print_report(std::ostream & out_, uint32_t flags_ = 0) const;
+
+      /// Increment the counter associated to a processed variant parameter
+      void add(const std::string & path_, std::size_t increment_ = 1);
+
+      /// Print
+      void dump(std::ostream & out_ = std::cerr) const;
+
+      /// Return the logging priority
+      logger::priority get_logging() const;
+
+      /// Set the logging priority
+      void set_logging(logger::priority);
+
+    private:
+
+      /// Specific initialization when repository is set
+      void _init_repository_();
+
+    private:
+
+      logger::priority _logging_; //!< Logging priority
+      const variant_repository * _repository_ = nullptr; //!< Variant configuration repository handle
+      statistics_type _stats_; ///< Processing counters associated to variant parameters
+
+    };
+
     /// \brief Configuration variant string preprocessor
     class variant_preprocessor
     {
@@ -126,12 +184,6 @@ namespace datatools {
         FLAG_TRACE         = datatools::bit_mask::bit00, //!< Flag to print trace messages
         FLAG_REMOVE_QUOTES = datatools::bit_mask::bit01  //!< Flag to remove quotes around string parameters
       };
-
-      /// Check the trace flag
-      bool is_trace() const;
-
-      /// Set the trace flag
-      void set_trace(bool);
 
       /// Check the remove quotes flag
       bool is_remove_quotes() const;
@@ -147,6 +199,9 @@ namespace datatools {
 
       /// Set the variant configuration repository
       void set_repository(const variant_repository & repository_);
+
+      /// Reset the variant configuration repository
+      void reset_repository();
 
       /// Get the variant configuration repository
       const variant_repository & get_repository() const;
@@ -193,7 +248,7 @@ namespace datatools {
 
         Case 1:
         @code
-          geometry:has_detector_0/if_detector
+        geometry:has_detector_0/if_detector
         @endcode
         The 'variant_active_' value is set to true if the 'geometry:has_detector_0/if_detector'
         variant is found activated from the variant repository. The 'variant_reverse_' flag
@@ -201,7 +256,7 @@ namespace datatools {
 
         Case 2:
         @code
-          geometry:has_detector_0/if_detector|true
+        geometry:has_detector_0/if_detector|true
         @endcode
         The 'variant_active_' value is set to true if the 'geometry:has_detector_0/if_detector'
         variant is found activated from the variant repository. The 'variant_reverse_' flag
@@ -211,7 +266,7 @@ namespace datatools {
 
         Case 3:
         @code
-          !geometry:has_detector_0/if_detector
+        !geometry:has_detector_0/if_detector
         @endcode
         The 'variant_active_' value is set to true if the 'geometry:has_detector_0/if_detector'
         variant is found activated from the variant repository, false elsewhere.
@@ -222,6 +277,12 @@ namespace datatools {
                                              bool & variant_active_,
                                              bool & variant_reverse_) const;
 
+      /// Return the logging priority
+      logger::priority get_logging() const;
+
+      /// Set the logging priority
+      void set_logging(logger::priority);
+
     private:
 
       /// Install the kernel repository as the default one referenced by the preprocessor
@@ -229,9 +290,9 @@ namespace datatools {
 
     private:
 
-      bool _trace_; //!< Trace flag
-      bool _remove_quotes_; //!< Flag to remove quotes around string parameters
-      const variant_repository * _repository_; //!< Variant configuration repository handle
+      logger::priority _logging_; //!< Logging priority
+      bool _remove_quotes_ = false; //!< Flag to remove quotes around string parameters
+      const variant_repository * _repository_ = nullptr; //!< Variant configuration repository handle
 
     };
 
@@ -241,10 +302,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_IO_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

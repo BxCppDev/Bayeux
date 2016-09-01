@@ -564,12 +564,15 @@ namespace datatools {
     _skip_private_properties_ = false;
     _forbid_variants_ = false;
     _header_footer_ = false;
+    _requested_topic_ = false;
+    _resolve_path_ = false;
     _current_line_number_ = -1;
     return;
   }
 
   void multi_properties::config::reset()
   {
+    _topic_.clear();
     _current_filename_.clear();
     _init_defaults();
     return;
@@ -865,7 +868,8 @@ namespace datatools {
             } else if (token == "@key_label" && mprop_key_label.empty()) {
               iss >> std::ws;
               std::string key_label;
-              DT_THROW_IF (!io::read_quoted_string(iss, key_label),
+              uint32_t reader_flags = 0;
+              DT_THROW_IF (!io::read_quoted_string(iss, key_label, reader_flags),
                            std::logic_error,
                            (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
                            "Line " << _current_line_number_ << ": "
@@ -891,7 +895,8 @@ namespace datatools {
             } else if (token == "@meta_label" && mprop_meta_label.empty()) {
               iss >> std::ws;
               std::string meta_label;
-              DT_THROW_IF (!io::read_quoted_string(iss, meta_label),
+              uint32_t reader_flags = 0;
+              DT_THROW_IF (!io::read_quoted_string(iss, meta_label, reader_flags),
                            std::logic_error,
                            (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
                            "Line " << _current_line_number_ << ": "
@@ -959,6 +964,7 @@ namespace datatools {
           char c = 0;
           iss_line >> c >> std::ws;
           // Search for 'key/meta' line:
+          // XXX
           if (c == _format::OPEN_CHAR) {
             if (! blocks_started) {
               blocks_started = true;
@@ -983,7 +989,8 @@ namespace datatools {
                          << "' with required '"
                          << target_.key_label_ << "' !");
             new_key.clear();
-            DT_THROW_IF (! io::read_quoted_string(iss_line, new_key),
+            uint32_t key_reader_flags = datatools::io::reader_allow_trailing_characters;
+            DT_THROW_IF (! io::read_quoted_string(iss_line, new_key, key_reader_flags),
                          std::logic_error,
                          (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
                          "Line " << _current_line_number_ << ": "
@@ -1005,7 +1012,8 @@ namespace datatools {
                              << meta_label
                              << "' with required '"
                              << target_.meta_label_ << "' !");
-                DT_THROW_IF (!io::read_quoted_string(iss_line, new_meta),
+                uint32_t meta_reader_flags = datatools::io::reader_allow_trailing_characters;
+                DT_THROW_IF (!io::read_quoted_string(iss_line, new_meta, meta_reader_flags),
                              std::logic_error,
                              (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
                              "Line " << _current_line_number_ << ": "
@@ -1110,7 +1118,7 @@ namespace datatools {
         }
         if (!current_key.empty()) {
           bool load_it = true;
-          bool variant_section_devel = vpp.is_trace();
+          bool variant_section_devel = logger::is_trace(vpp.get_logging());
           bool variant_section_only_found = false;
           bool variant_section_only_reverse = false;
           if (!variant_section_only.empty()) {

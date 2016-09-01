@@ -68,7 +68,7 @@ namespace datatools {
          "Use a long listing format"
          )
 
-        ("color,C",
+        ("color",
          "Use colored output"
          )
 

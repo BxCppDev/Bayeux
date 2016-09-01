@@ -27,7 +27,7 @@
 #include <datatools/properties.h>
 #include <datatools/version_id.h>
 #include <datatools/ui/base_command.h>
-#include <datatools/ui/base_command_interface.h>
+#include <datatools/ui/target_command_interface.h>
 
 namespace datatools {
 
@@ -41,13 +41,16 @@ namespace datatools {
     public:
 
       //! Default constructor
-      shell_command_interface(const std::string & name_ = "",
+      shell_command_interface();
+
+      //! Default constructor
+      shell_command_interface(const std::string & name_ ,
                               const std::string & description_ = "",
                               const datatools::version_id & vid_ = datatools::version_id::invalid());
 
       //! Constructor
       shell_command_interface(basic_shell & sh_,
-                              const std::string & name_ = "",
+                              const std::string & name_,
                               const std::string & description_ = "",
                               const datatools::version_id & vid_ = datatools::version_id::invalid());
 
@@ -96,12 +99,13 @@ namespace datatools {
     private:
 
       // Management:
-      bool _initialized_; //!< Initialization flag
+      bool _initialized_ = false; //!< Initialization flag
 
       // Configuration:
-      bool _inhibit_cd_;   //!< Inhibition flag for the cd command
-      bool _inhibit_load_; //!< Inhibition flag for the load command
+      bool _inhibit_cd_ = false;   //!< Inhibition flag for the cd command
+      bool _inhibit_load_ = false; //!< Inhibition flag for the load command
 
+      // Factory registration:
       DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(base_command_interface,
                                                            shell_command_interface)
 

@@ -165,7 +165,7 @@ boolean.default                  : boolean = 0
 variants                         : string[1] = "if_detector"
 variants.if_detector.model       : string = "if_detector.VM"
 variants.if_detector.description : string = "Variant activated by the use of the detector"
-boolean.variant.true             : string = "if_detector"
+boolean.true.variant             : string = "if_detector"
 
 
 ######################################

@@ -5,6 +5,7 @@
 
 // Stdlib
 #include <cstdlib>                        // for getenv
+#include <iostream>
 
 // Third party:
 // - Boost:
@@ -20,6 +21,8 @@ namespace datatools {
 
   void initialize(int argc_, char * argv_[], uint32_t /*flags_*/)
   {
+    // std::cerr << "DEVEL: datatools::initialize: Entering..." << std::endl;
+
     DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
     static bool _init = false;
     if (!_init) {
@@ -36,14 +39,16 @@ namespace datatools {
           }
         }
       }
-      _init = true;
+      _init =  true;
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
+    //std::cerr << "DEVEL: datatools::initialize: Exiting." << std::endl;
     return;
   }
 
   void terminate()
   {
+    //std::cerr << "DEVEL: datatools::terminate: Entering..." << std::endl;
     DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
     static bool _terminate = false;
     if (!_terminate) {
@@ -56,6 +61,7 @@ namespace datatools {
       _terminate = true;
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
+    //std::cerr << "DEVEL: datatools::terminate: Exiting." << std::endl;
     return;
   }
 
@@ -67,6 +73,7 @@ namespace datatools {
       {
         char * e = getenv("DATATOOLS_SYS_DEVEL");
         if (e) {
+          // std::cerr << "DEVEL: datatools::detail::sys: TRACE" << std::endl;
           _logging_ = logger::PRIO_TRACE;
         }
       }

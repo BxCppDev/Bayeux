@@ -98,6 +98,9 @@ namespace datatools {
       //! Reset the unit info
       void reset_unit_info();
 
+      //! Check if real data is dimensionless
+      bool is_dimensionless() const;
+
       //! Check if the (real) data is stored using an implicit unit (ex: "volt", "ns", "mA"...)
       bool has_implicit_unit() const;
 
@@ -115,6 +118,9 @@ namespace datatools {
 
       //! Return the (real) data preferred unit (ex: "volt", "ns", "mA"...)
       const std::string & get_preferred_unit_symbol() const;
+
+      //! Return the unit dimension label
+      std::string get_unit_dimension_label() const;
 
       //! Check if the data has a type identifier (for enumeration and class)
       bool has_type_id() const;

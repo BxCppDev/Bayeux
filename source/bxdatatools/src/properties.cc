@@ -3044,10 +3044,10 @@ namespace datatools {
                                         _current_line_number_,
                                         "Variant directives are forbidden!");
               if (token == "@variant_devel") {
-                vpp.set_trace(true);
+                vpp.set_logging(logger::PRIO_TRACE);
               }
               if (token == "@variant_no_devel") {
-                vpp.set_trace(false);
+                vpp.set_logging(logger::PRIO_FATAL);
               }
               if (token == "@variant_remove_quotes") {
                 vpp.set_remove_quotes(true);
@@ -3596,14 +3596,14 @@ namespace datatools {
 
             // Process the current line:
             if (!process_line) {
-              DT_PROP_CFG_READ_LOG_DEBUG(logging,
-                                         _current_filename_,
-                                         _section_name_,
-                                         _section_start_line_number_,
-                                         _current_line_number_,
-                                         "Do not process property value repr '"
-                                         << property_value_str << "' for property '"
-                                         << prop_key << "'...");
+              DT_PROP_CFG_READ_LOG_NOTICE(logging,
+                                          _current_filename_,
+                                          _section_name_,
+                                          _section_start_line_number_,
+                                          _current_line_number_,
+                                          "Do not process property value repr '"
+                                          << property_value_str << "' for property '"
+                                          << prop_key << "'...");
             } else {
               std::string pv_str = property_value_str;
               boost::trim(pv_str);
@@ -3632,7 +3632,9 @@ namespace datatools {
               if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
                 DT_LOG_TRACE(logging, "boolean: effective_property_values_line='" << effective_property_values_line << "'");
                 if (scalar) {
-                  DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, a_boolean),
+                  uint32_t read_flags = 0;
+                  read_flags |= ::datatools::io::reader_allow_trailing_characters;
+                  DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, a_boolean, read_flags),
                                             std::logic_error,
                                             _current_filename_,
                                             _section_name_,
@@ -3641,9 +3643,11 @@ namespace datatools {
                                             "Cannot read boolean value from '" << effective_property_values_line << "' for key '"
                                             << prop_key << "' at line '" << line << "' !");
                 } else {
+                  uint32_t read_flags = 0;
+                  read_flags |= ::datatools::io::reader_allow_trailing_characters;
                   for (int i = 0; i < vsize; ++i) {
-                    bool b;
-                    DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, b),
+                    bool boolean_value;
+                    DT_PROP_CFG_READ_THROW_IF(!io::read_boolean(iss, boolean_value, read_flags),
                                               std::logic_error,
                                               _current_filename_,
                                               _section_name_,
@@ -3651,7 +3655,7 @@ namespace datatools {
                                               _current_line_number_,
                                               "Cannot read vector boolean value for key '"
                                               << prop_key << "' at line '" << line << "' !");
-                    v_booleans[i] = b;
+                    v_booleans[i] = boolean_value;
                   }
                 }
               }
@@ -3661,8 +3665,9 @@ namespace datatools {
                ***************/
               if (type == properties::data::TYPE_INTEGER_SYMBOL) {
                 if (scalar) {
-                  iss >> a_integer;
-                  DT_PROP_CFG_READ_THROW_IF(!iss,
+                  uint32_t read_flags = 0;
+                  read_flags |= ::datatools::io::reader_allow_trailing_characters;
+                  DT_PROP_CFG_READ_THROW_IF(!io::read_integer(iss, a_integer, read_flags),
                                             std::logic_error,
                                             _current_filename_,
                                             _section_name_,
@@ -3671,10 +3676,11 @@ namespace datatools {
                                             "Cannot read integer value for key '"
                                             << prop_key << "' at line '" << line << "' !");
                 } else {
+                  uint32_t read_flags = 0;
+                  read_flags |= ::datatools::io::reader_allow_trailing_characters;
                   for (int i = 0; i < vsize; ++i) {
-                    int k;
-                    iss >> k;
-                    DT_PROP_CFG_READ_THROW_IF(!iss,
+                    int int_value = 0;
+                    DT_PROP_CFG_READ_THROW_IF(!io::read_integer(iss, int_value, read_flags),
                                               std::logic_error,
                                               _current_filename_,
                                               _section_name_,
@@ -3682,7 +3688,7 @@ namespace datatools {
                                               _current_line_number_,
                                               "Cannot read vector integer value for key '"
                                               << prop_key << "' at line '" << line << "' !");
-                    v_integers[i] = k;
+                    v_integers[i] = int_value;
                   }
                 }
               }
@@ -3698,8 +3704,10 @@ namespace datatools {
                 if (scalar) {
                   // Scalar real :
                   // Special mode to accept unit symbol after the real value :
-                  bool normal_value = true;
-                  DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, a_real, normal_value),
+                  bool normal_value = false;
+                  uint32_t read_flags = 0;
+                  read_flags |= ::datatools::io::reader_allow_trailing_characters;
+                  DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, a_real, normal_value, read_flags),
                                             std::logic_error,
                                             _current_filename_,
                                             _section_name_,
@@ -3760,9 +3768,11 @@ namespace datatools {
                 } else {
                   // Vector real:
                   for (int i = 0; i < vsize; ++i) {
-                    double x;
-                    bool normal_value;
-                    DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, x, normal_value),
+                    double real_value;
+                    bool normal_value = false;
+                    uint32_t reader_flags = datatools::io::reader_allow_trailing_characters;
+                    // No unit is allowed after the real value in vector mode:
+                    DT_PROP_CFG_READ_THROW_IF(! datatools::io::read_real_number(iss, real_value, normal_value, reader_flags),
                                               std::logic_error,
                                               _current_filename_,
                                               _section_name_,
@@ -3771,15 +3781,12 @@ namespace datatools {
                                               "Cannot read vector real value for key '"
                                               << prop_key << "' at line '" << line << "' !");
                     if (enable_real_with_unit && datatools::is_valid(requested_unit_value)) {
-                      x *= requested_unit_value;
+                      real_value *= requested_unit_value;
                       with_explicit_unit = true;
                       unit_symbol = requested_unit_symbol;
                     }
-                    v_reals[i] = x;
+                    v_reals[i] = real_value;
                   }
-                  // if (requested_unit_symbol.empty()) {
-                  //   with_explicit_unit = true;
-                  // }
                 }
               } // Real
 
@@ -3788,7 +3795,8 @@ namespace datatools {
                **************/
               if (type == properties::data::TYPE_STRING_SYMBOL) {
                 if (scalar) {
-                  DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, a_string),
+                  uint32_t reader_flags = datatools::io::reader_allow_trailing_characters;
+                  DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, a_string, reader_flags),
                                             std::logic_error,
                                             _current_filename_,
                                             _section_name_,
@@ -3798,8 +3806,9 @@ namespace datatools {
                                             << prop_key << "' at line '" << line << "' !");
                 } else {
                   for (int i = 0; i < vsize; ++i) {
+                    uint32_t reader_flags = datatools::io::reader_allow_trailing_characters;
                     std::string str;
-                    DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, str),
+                    DT_PROP_CFG_READ_THROW_IF(!io::read_quoted_string(iss, str, reader_flags),
                                               std::logic_error,
                                               _current_filename_,
                                               _section_name_,
@@ -3853,34 +3862,33 @@ namespace datatools {
               // }
 
               if (store_it) {
-                // scalar :
-                if (type == properties::data::TYPE_BOOLEAN_SYMBOL && scalar) {
-                  a_props.store(prop_key, a_boolean, prop_description, locked);
+                if (scalar) {
+                  if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                    a_props.store(prop_key, a_boolean, prop_description, locked);
+                  }
+                  if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                    a_props.store(prop_key, a_integer, prop_description, locked);
+                  }
+                  if (type == properties::data::TYPE_REAL_SYMBOL) {
+                    a_props.store(prop_key, a_real, prop_description, locked);
+                  }
+                  if (type == properties::data::TYPE_STRING_SYMBOL) {
+                    a_props.store(prop_key, a_string, prop_description, locked);
+                  }
+                } else {
+                  if (type == properties::data::TYPE_BOOLEAN_SYMBOL) {
+                    a_props.store(prop_key, v_booleans, prop_description, locked);
+                  }
+                  if (type == properties::data::TYPE_INTEGER_SYMBOL) {
+                    a_props.store(prop_key, v_integers, prop_description, locked);
+                  }
+                  if (type == properties::data::TYPE_REAL_SYMBOL) {
+                    a_props.store(prop_key, v_reals, prop_description, locked);
+                  }
+                  if (type == properties::data::TYPE_STRING_SYMBOL) {
+                    a_props.store(prop_key, v_strings, prop_description, locked);
+                  }
                 }
-                if (type == properties::data::TYPE_INTEGER_SYMBOL && scalar) {
-                  a_props.store(prop_key, a_integer, prop_description, locked);
-                }
-                if (type == properties::data::TYPE_REAL_SYMBOL && scalar) {
-                  a_props.store(prop_key, a_real, prop_description, locked);
-                }
-                if (type == properties::data::TYPE_STRING_SYMBOL && scalar) {
-                  a_props.store(prop_key, a_string, prop_description, locked);
-                }
-
-                // vector :
-                if (type == properties::data::TYPE_BOOLEAN_SYMBOL && !scalar) {
-                  a_props.store(prop_key, v_booleans, prop_description, locked);
-                }
-                if (type == properties::data::TYPE_INTEGER_SYMBOL && !scalar) {
-                  a_props.store(prop_key, v_integers, prop_description, locked);
-                }
-                if (type == properties::data::TYPE_REAL_SYMBOL && !scalar) {
-                  a_props.store(prop_key, v_reals, prop_description, locked);
-                }
-                if (type == properties::data::TYPE_STRING_SYMBOL && !scalar) {
-                  a_props.store(prop_key, v_strings, prop_description, locked);
-                }
-
                 // Special flags:
                 if (type == properties::data::TYPE_STRING_SYMBOL && with_explicit_path) {
                   a_props.set_explicit_path(prop_key, true);

@@ -42,6 +42,7 @@ int main(/*int argc_, char * argv_[]*/)
 
     // The shell command interface:
     datatools::ui::shell_command_interface shellCmdInter(aShell, "shellCmdInter");
+    shellCmdInter.initialize_simple();
     shellCmdInter.tree_dump(std::clog, shellCmdInter.get_name());
     std::clog << std::endl;
 

@@ -67,6 +67,9 @@ namespace datatools {
       return;
     }
 
+    // static
+    const unsigned int basic_shell::DEFAULT_HISTORY_TRUNCATE;
+
     //! \brief Private implementation working data
     struct basic_shell::pimpl_type
     {
@@ -137,7 +140,7 @@ namespace datatools {
 
     void basic_shell::_set_defaults()
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _name_.clear();
       _version_.reset();
       _prompt_  = default_prompt();
@@ -160,6 +163,11 @@ namespace datatools {
       _current_working_path_ = ::datatools::ui::path::root_path();
       _external_system_interface_ = 0;
       return;
+    }
+
+    bool basic_shell::has_current_path() const
+    {
+      return !_current_working_path_.empty();
     }
 
     void basic_shell::set_current_path(const std::string & p_)
@@ -208,7 +216,7 @@ namespace datatools {
 
     void basic_shell::set_name(const std::string & name_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       DT_THROW_IF(!datatools::ui::path::is_valid_name(name_),
                   std::logic_error,
                   "Invalid shell name '" << name_ << "'!");
@@ -233,7 +241,7 @@ namespace datatools {
 
     void basic_shell::set_version(const ::datatools::version_id & version_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _version_ = version_;
       return;
     }
@@ -245,7 +253,7 @@ namespace datatools {
 
     void basic_shell::set_prompt(const std::string & prompt_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _prompt_ = prompt_;
       if (_prompt_.empty()) {
         _prompt_ = default_prompt();
@@ -262,7 +270,7 @@ namespace datatools {
 
     void basic_shell::set_continuation_prompt(const std::string & p_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _continuation_prompt_ = p_;
       if (_continuation_prompt_.empty()) {
         _continuation_prompt_ = default_prompt();
@@ -285,7 +293,7 @@ namespace datatools {
 
     void basic_shell::set_default_path(const std::string & default_path_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       if (_ihs_ == 0) {
         DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
                        "No IHS is defined! Default path maybe not valid!");
@@ -336,7 +344,7 @@ namespace datatools {
 
     void basic_shell::set_exit_on_error(bool aoe_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _exit_on_error_ = aoe_;
       return;
     }
@@ -348,7 +356,7 @@ namespace datatools {
 
     void basic_shell::set_using_splash(bool s_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _using_splash_ = s_;
       return;
     }
@@ -360,7 +368,7 @@ namespace datatools {
 
     void basic_shell::set_using_readline(bool s_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _using_readline_ = s_;
       return;
     }
@@ -372,7 +380,7 @@ namespace datatools {
 
     void basic_shell::set_using_history(bool s_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _using_history_ = s_;
       return;
     }
@@ -384,7 +392,7 @@ namespace datatools {
 
     void basic_shell::set_history_filename(const std::string & history_filename_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _history_filename_ = history_filename_;
       return;
     }
@@ -396,7 +404,7 @@ namespace datatools {
 
     void basic_shell::set_history_truncate(unsigned int t_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _history_truncate_ = t_;
       return;
     }
@@ -408,7 +416,7 @@ namespace datatools {
 
     void basic_shell::set_history_add_only_on_success(bool f_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _history_add_only_on_success_ = f_;
       return;
     }
@@ -425,7 +433,7 @@ namespace datatools {
 
     void basic_shell::set_services(datatools::service_manager & services_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _services_ = &services_;
       return;
     }
@@ -487,7 +495,6 @@ namespace datatools {
       return *_system_interface_.get();
     }
 
-
     bool basic_shell::has_ihs() const
     {
       return _ihs_ != 0;
@@ -495,7 +502,7 @@ namespace datatools {
 
     void basic_shell::set_ihs(ihs & ihs_)
     {
-      DT_THROW_IF (is_initialized(), std::logic_error, "Shell is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _ihs_ = &ihs_;
       if (!_ihs_->is_interface(_default_path_)) {
         DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS,
@@ -527,14 +534,16 @@ namespace datatools {
 
     bool basic_shell::has_builtin_command(const std::string & cmd_name_) const
     {
-      DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell '" << get_name() << "' has no system interface!");
+      DT_THROW_IF(!has_system_interface(), std::logic_error,
+                  "Shell '" << get_name() << "' has no system interface!");
       const shell_command_interface_type & sci = _get_system_interface();
       return sci.has_command(cmd_name_);
     }
 
     const base_command & basic_shell::get_builtin_command(const std::string & cmd_name_) const
     {
-      DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell '" << get_name() << "' has no system interface!");
+      DT_THROW_IF(!has_system_interface(), std::logic_error,
+                  "Shell '" << get_name() << "' has no system interface!");
       const shell_command_interface_type & sci = _get_system_interface();
       return sci.get_command(cmd_name_);
     }
@@ -560,7 +569,6 @@ namespace datatools {
       }
 
       // Fetch configuration parameters:
-
       datatools::logger::priority p
         = datatools::logger::extract_logging_configuration(config_,
                                                            _logging_,
@@ -655,7 +663,7 @@ namespace datatools {
         }
 
         if (_history_truncate_ == 0) {
-          _history_truncate_ = 200;
+          _history_truncate_ = DEFAULT_HISTORY_TRUNCATE;
         }
 
       }

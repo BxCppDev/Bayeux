@@ -49,7 +49,7 @@ namespace datatools {
       // Arguments description:
       _grab_opts().add_options()
 
-        ("path,p",
+        ("path",
          boost::program_options::value<std::string>()
          ->value_name("path"),
          "Path to be listed\n"

@@ -115,21 +115,21 @@ int main(int argc_, char ** argv_)
     try {
       my_dict.store ("007", "James Bond");
     }
-    catch (exception & x) {
+    catch (std::exception & x) {
       clog << "ERROR: " << x.what () << endl;
     }
 
     try {
       my_dict.store ("", "Money Penny");
     }
-    catch (exception & x) {
+    catch (std::exception & x) {
       clog << "ERROR: " << x.what () << endl;
     }
 
     try {
       my_dict.store ("bad_token", "a bad \"char\"");
     }
-    catch (exception & x) {
+    catch (std::exception & x) {
       clog << "ERROR: " << x.what () << endl;
     }
 
@@ -142,7 +142,7 @@ int main(int argc_, char ** argv_)
 
     my_dict.store ("male", true);
 
-    vector<double> coeffs;
+    std::vector<double> coeffs;
     coeffs.push_back (1.0);
     coeffs.push_back (2.0);
     coeffs.push_back (3.0);
@@ -150,7 +150,7 @@ int main(int argc_, char ** argv_)
     my_dict.dump (clog);
     clog << endl;
 
-    vector<double> vals;
+    std::vector<double> vals;
     vals.push_back (1.0 * CLHEP::cm);
     vals.push_back (2.0 * CLHEP::cm);
     vals.push_back (3.0 * CLHEP::cm);
@@ -176,7 +176,7 @@ int main(int argc_, char ** argv_)
     my_dict.fetch ("position", vals1);
     clog << endl;
 
-    vector<double> vals2;
+    std::vector<double> vals2;
     double s = M_PI;
     for (int i = 1; i < 13; i++) {
       s /= i;
@@ -188,21 +188,21 @@ int main(int argc_, char ** argv_)
     if (debug) my_dict.tree_dump (clog, "datatools::properties", "DEBUG: ***** ");
     clog << endl;
 
-    vector<bool> bits;
+    std::vector<bool> bits;
     for (int i = 0; i < 23; i++) bits.push_back (drand48 () > 0.6? true: false);
     my_dict.store ("bits", bits);
     clog << endl;
 
-    vector<string> tokens;
+    std::vector<std::string> tokens;
     for (int i = 0; i < 12; i++) {
-      ostringstream tok;
+      std::ostringstream tok;
       tok << "token_" << i;
       tokens.push_back (tok.str ());
     }
     tokens.push_back (">DEBUG<");
     my_dict.store ("tokens", tokens);
 
-    vector<int> counts;
+    std::vector<int> counts;
     my_dict.store ("counts", counts, "Event counts");
     my_dict.update ("phantom", 5);
 
@@ -272,18 +272,19 @@ int main(int argc_, char ** argv_)
 
     clog << "Enter a list of double-quoted strings (ex: \"my\" \"favorite\" \"color\" \"is\" \"blue\"): "
          << endl;
-    string as;
+    std::string as;
     std::istringstream s_in("\"my\" \"favorite\" \"color\" \"is\" \"blue\"");
-    getline(s_in, as);
+    std::getline(s_in, as);
 
-    string s2;
-    istringstream iss (as);
+    std::string s2;
+    std::istringstream iss (as);
 
     do {
-      iss >> ws;
+      iss >> std::ws;
       if (iss.eof()) break;
       s2 = "";
-      if (datatools::io::read_quoted_string(iss, s2)) {
+      uint32_t reader_flags = datatools::io::reader_allow_trailing_characters;
+      if (datatools::io::read_quoted_string(iss, s2, reader_flags)) {
         clog << "String = '" << s2 << "'" << endl;
       } else {
         clog << "Cannot parse quoted string from '" << as
@@ -294,7 +295,7 @@ int main(int argc_, char ** argv_)
     clog << "========================================" << endl;
 
     clog << "Example of an invalid string: " << endl;
-    string s3 = "aze\"rty";
+    std::string s3 = "aze\"rty";
     clog << "s3='" << s3 << "'" << endl;
     if (datatools::properties::data::has_forbidden_char (s3)) {
       clog << "Oops! As expected, there are forbidden chars found in s3='" << s3 << "' !"
@@ -304,7 +305,7 @@ int main(int argc_, char ** argv_)
     }
 
     clog << "Example of a valid string: " << endl;
-    string s4 = "azerty";
+    std::string s4 = "azerty";
     clog << "s4='" << s4 << "'" << endl;
     if (datatools::properties::data::has_forbidden_char (s4)) {
       clog << "Oops! As expected, there are forbidden chars found in s4='" << s4 << "' !"
@@ -314,7 +315,7 @@ int main(int argc_, char ** argv_)
     }
 
   }
-  catch (exception & x) {
+  catch (std::exception & x) {
     clog << "error: " << x.what () << endl;
     error_code = EXIT_FAILURE;
   }

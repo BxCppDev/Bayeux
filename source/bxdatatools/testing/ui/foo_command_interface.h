@@ -22,7 +22,7 @@
 #define DATATOOLS_TESTING_UI_FOO_COMMAND_INTERFACE_H
 
 // This project:
-#include <datatools/ui/base_command_interface.h>
+#include <datatools/ui/target_command_interface.h>
 #include "foo.h"
 #include "foo_commands.h"
 

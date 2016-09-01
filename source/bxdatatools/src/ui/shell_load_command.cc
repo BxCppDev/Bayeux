@@ -49,7 +49,7 @@ namespace datatools {
       // Arguments description:
       _grab_opts().add_options()
 
-        ("macro,m",
+        ("macro",
          boost::program_options::value<std::string>()
          ->value_name("macro"),
          "Macro to be executed\n"
@@ -58,7 +58,7 @@ namespace datatools {
          "  load ~/config/commands.mac"
          )
 
-        ("exit-on-error,x",
+        ("exit-on-error",
          "Exit the macro on first error"
          )
 

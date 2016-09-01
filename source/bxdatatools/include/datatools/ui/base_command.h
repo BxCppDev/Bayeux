@@ -24,6 +24,7 @@
 // Standard library:
 #include <string>
 #include <vector>
+#include <memory>
 
 // Third party:
 // - Boost:
@@ -54,8 +55,14 @@ namespace datatools {
       typedef boost::program_options::positional_options_description args_type;
       typedef boost::program_options::variables_map                  vmap_type;
 
+      //! Check if a name is valid
+      virtual bool is_name_valid(const std::string & candidate_name_) const;
+
       //! Default constructor
-      base_command(const std::string & name_ = "",
+      base_command();
+
+      //! Constructor
+      base_command(const std::string & name_,
                    const std::string & description_ = "",
                    const version_id & vid_ = version_id::invalid());
 
@@ -68,6 +75,12 @@ namespace datatools {
       //! Return the description of generic options
       const opts_type & get_generic_opts() const;
 
+      //! Check if generic options are used
+      bool use_generic_options() const;
+
+      //! Check if generic help are used
+      bool use_generic_help() const;
+
       //! Check if some options are described
       bool has_opts() const;
 
@@ -77,11 +90,17 @@ namespace datatools {
       //! Check if some positional options are set
       bool has_args() const;
 
+      //! Check if short UI options are allowed
+      bool has_short_ui_options() const;
+
       //! Check if the version is available
       bool has_version() const;
 
       //! Return the version of the command
       const datatools::version_id & get_version() const;
+
+      //! Set the version of the command
+      void set_version(const datatools::version_id &);
 
       //! Check validity
       virtual bool is_valid() const;
@@ -181,178 +200,25 @@ namespace datatools {
 
       void _free_vmap();
 
+      void _forbid_short_ui_options();
+
     protected:
 
       // Management:
-      bool _initialized_; //!< Initialization flag
+      bool _initialized_ = false; //!< Initialization flag
 
       // Configuration:
+      bool _no_short_ui_options_ = false;
+      bool _no_generic_options_ = false;
+      bool _no_generic_help_ = false;
       boost::optional<datatools::version_id> _version_; //!< Optional version
       boost::scoped_ptr<opts_type> _generic_opts_; //!< Description of generic options
       boost::scoped_ptr<opts_type> _opts_; //!< Description of options
       boost::scoped_ptr<args_type> _args_; //!< Description of positional options
-      base_command_interface * _parent_interface_; //!< Reference to the parent interface (optional)
+      base_command_interface * _parent_interface_ = nullptr; //!< Reference to the parent interface (optional)
 
       // Working data:
       boost::scoped_ptr<vmap_type> _vmap_; //!< Description of variables map
-
-    };
-
-    //! \brief Base command for a target object
-    template <typename Type>
-    class target_command : public base_command
-    {
-    public:
-
-      //! Default constructor
-      target_command(Type & target_,
-                     const std::string & name_ = "",
-                     const std::string & description_ = "",
-                     const version_id & vid_ = version_id::invalid())
-        : base_command(name_, description_, vid_),
-          _target_(0)
-      {
-        _set_target(target_);
-        return;
-      }
-
-      //! Destructor
-      virtual ~target_command()
-      {
-        return;
-      }
-
-      //! Check validity
-      virtual bool is_valid() const
-      {
-        return base_command::is_valid() && has_target();
-      }
-
-      bool has_target() const
-      {
-        return _target_ != 0;
-      }
-
-      //! Return the target
-      const Type & get_target() const
-      {
-        return *_target_;
-      }
-
-      //! Return the target
-      Type & grab_target()
-      {
-        return _grab_target();
-      }
-
-      //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_  = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const
-      {
-        this->base_command::tree_dump(out_, title_, indent_, true);
-
-        out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-             << "Target : [@" << _target_ << "]" << std::endl;
-
-        return;
-      }
-
-    protected:
-
-      //! Return the target
-      Type & _grab_target()
-      {
-        return *_target_;
-      }
-
-      //! Set the target
-      void _set_target(Type & target_)
-      {
-        _target_ = &target_;
-        return;
-      }
-
-    private:
-
-      Type * _target_; //!< The reference to the target object
-
-    };
-
-    //! \brief Base command for a const target object
-    template <typename Type>
-    class const_target_command : public base_command
-    {
-    public:
-
-      //! Default constructor
-      const_target_command(const Type & target_,
-                           const std::string & name_ = "",
-                           const std::string & description_ = "",
-                           const version_id & vid_ = version_id::invalid())
-        : base_command(name_, description_, vid_),
-          _target_(0)
-      {
-        _set_target(target_);
-        return;
-      }
-
-      //! Destructor
-      virtual ~const_target_command()
-      {
-        return;
-      }
-
-      //! Check validity
-      virtual bool is_valid() const
-      {
-        return base_command::is_valid() && has_target();
-      }
-
-      bool has_target() const
-      {
-        return _target_ != 0;
-      }
-
-      //! Return the target
-      const Type & get_target() const
-      {
-        return *_target_;
-      }
-
-      //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_  = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const
-      {
-        this->base_command::tree_dump(out_, title_, indent_, true);
-
-        out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-             << "Target : [@" << _target_ << "]" << std::endl;
-
-        return;
-      }
-
-    protected:
-
-      //! Return the target
-      const Type & _get_target() const
-      {
-        return *_target_;
-      }
-
-      //! Set the target
-      void _set_target(const Type & target_)
-      {
-        _target_ = &target_;
-        return;
-      }
-
-    private:
-
-      const Type * _target_; //!< The reference to the const target object
 
     };
 
@@ -362,10 +228,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_BASIC_COMMAND_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

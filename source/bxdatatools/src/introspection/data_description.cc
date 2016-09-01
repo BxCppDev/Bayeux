@@ -159,6 +159,13 @@ namespace datatools {
       return;
     }
 
+    bool data_description::is_dimensionless() const
+    {
+      if (has_implicit_unit()) return false;
+      if (has_explicit_unit_dimension()) return false;
+      return true;
+    }
+
     bool data_description::has_implicit_unit() const
     {
       return has_unit_info() && get_unit_info().has_implicit_unit();
@@ -190,6 +197,18 @@ namespace datatools {
     {
       DT_THROW_IF(!has_unit_info(), std::logic_error, "No unit info is available!");
       return get_unit_info().get_preferred_unit_symbol();
+    }
+
+    std::string data_description::get_unit_dimension_label() const
+    {
+      DT_THROW_IF(is_dimensionless(), std::logic_error,
+                  "Data is dimensionless!");
+      if (has_explicit_unit_dimension()) {
+        return get_explicit_unit_dimension_label();
+      }
+      const datatools::units::unit & u =
+        datatools::units::registry::const_system_registry().get_unit_from_symbol(get_implicit_unit_symbol());
+      return u.get_dimension_label();
     }
 
     bool data_description::has_type_id() const

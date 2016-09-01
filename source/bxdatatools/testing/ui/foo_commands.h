@@ -22,7 +22,7 @@
 #define DATATOOLS_TESTING_UI_FOO_COMMANDS_H
 
 // This project:
-#include <datatools/ui/base_command.h>
+#include <datatools/ui/target_command.h>
 #include <datatools/detail/command_macros.h>
 #include "foo.h"
 
@@ -44,6 +44,8 @@ public:
     }
     return;
   }
+
+protected:
 
   virtual void _run(datatools::command::returned_info & cri_, uint32_t /*flags_ = 0*/)
   {
@@ -94,7 +96,7 @@ protected:
     // Arguments description:
     _grab_opts().add_options()
 
-      ("value,V",
+      ("value",
        boost::program_options::value<int>()
        ->value_name("value"),
        "Integer value to be set\n"
@@ -138,7 +140,7 @@ protected:
         DT_LOG_TRACE(get_logging_priority(), "Decoding the value...");
         value = _grab_vmap()["value"].as<int>();
         DT_LOG_TRACE(get_logging_priority(), "Setting the value...");
-        _grab_target().set(value);
+        _grab_target().set_value(value);
       }
 
     }
@@ -181,7 +183,7 @@ protected:
     // Arguments description:
     _grab_opts().add_options()
 
-      ("values,V",
+      ("values",
        boost::program_options::value<std::vector<int> >()
        ->multitoken()
        ->value_name("values"),
@@ -243,11 +245,11 @@ protected:
 };
 
 //! Command
-class foo_get_value : public datatools::ui::target_command<foo>
+class foo_get_value : public datatools::ui::const_target_command<foo>
 {
 public:
 
-  foo_get_value(foo & foo_) : datatools::ui::target_command<foo>(foo_,
+  foo_get_value(foo & foo_) : datatools::ui::const_target_command<foo>(foo_,
                                                                  "get_value",
                                                                  "Get the value",
                                                                  datatools::version_id(1, 0))
@@ -284,7 +286,7 @@ protected:
     DT_LOG_TRACE(get_logging_priority(), "Running command '" << get_name() << "'...");
     try {
       DT_LOG_TRACE(get_logging_priority(), "Getting the value...");
-      int the_value = _grab_target().get();
+      int the_value = _get_target().get_value();
       std::cout << the_value << std::endl;
     }
     catch (std::exception & error) {
@@ -344,10 +346,8 @@ protected:
 
 #endif // DATATOOLS_TESTING_UI_FOO_COMMANDS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

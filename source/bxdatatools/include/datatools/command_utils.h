@@ -31,6 +31,11 @@
 // Standard library:
 #include <iostream>
 
+// This project:
+#ifndef Q_MOC_RUN
+#include <datatools/reflection_interface.h>
+#endif // Q_MOC_RUN
+
 namespace datatools {
 
   /// \brief Generic command utilities
@@ -40,12 +45,17 @@ namespace datatools {
 
     /// \brief Command error codes
     enum error_code_type {
+      // Special non-error values:
+      CEC_DEPRECATED                   = -3, //!< Deprecated context without error
       CEC_STOP                         = -2, //!< Stop without error (can be used to stop a loop or a pipeline)
       CEC_CONTINUE                     = -1, //!< Continue without error (can be used to continue a loop or a pipeline)
+      // Sucess:
       CEC_SUCCESS                      =  0, //!< Generic success
+      // Failures:
       CEC_FAILURE                      =  1, //!< Generic failure
       CEC_PARSING_FAILURE              =  2, //!< Generic parsing error
       CEC_CONTEXT_INVALID              =  3, //!< Invalid context
+      CEC_NOT_IMPLEMENTED              =  8, //!< Not implemented feature
       CEC_ABORT                        =  9, //!< Abort (can be used to abort a loop or a pipeline)
       CEC_SCOPE_INVALID                = 10, //!< Invalid scope (wrong namespace or general context)
       CEC_COMMAND_INVALID              = 20, //!< Invalid command (unrecognized command name)
@@ -77,6 +87,9 @@ namespace datatools {
       /// Constructor of a failed command returned info
       returned_info(error_code_type code_, const std::string & message_ = "");
 
+      /// Destructor
+      ~returned_info();
+
       /// Set continue code
       void set_continue();
 
@@ -89,8 +102,17 @@ namespace datatools {
       /// Set error code and message
       void set_failure(error_code_type code_, const std::string & message_ = "");
 
-      /// Check success
+      /// Check stop
       bool is_stop() const;
+
+      /// Check continue
+      bool is_continue() const;
+
+      /// Check deprecation
+      bool is_deprecated() const;
+
+      /// Check special case
+      bool is_special() const;
 
       /// Check success
       bool is_success() const;
@@ -137,11 +159,22 @@ namespace datatools {
       std::string     _error_message_; //!< Error message
       std::string     _output_;        //!< Output
 
+      DR_CLASS_RTTI()
+
     };
+
+    DR_CLASS_RTTI()
 
   };
 
 } // end of namespace datatools
+
+#ifndef Q_MOC_RUN
+// Activate reflection layer:
+DR_TYPE_INIT(::datatools::command) // mandatory to access the embedded enum
+DR_TYPE_INIT(::datatools::command::error_code_type)
+DR_TYPE_INIT(::datatools::command::returned_info)
+#endif // Q_MOC_RUN
 
 #endif // DATATOOLS_COMMAND_UTILS_H
 

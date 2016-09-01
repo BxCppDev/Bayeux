@@ -53,6 +53,7 @@ namespace datatools {
 
     class variant_registry;
     class variant_registry_manager;
+    class variant_reporting;
 
     /// \brief Variant repository
     class variant_repository : public datatools::enriched_base
@@ -250,14 +251,25 @@ namespace datatools {
       };
 
       /// Print documentation
-      void print_rst(std::ostream & out_,
-                     uint32_t flags_ = 0) const;
+      void print_rst(std::ostream & out_, uint32_t flags_ = 0) const;
 
       /// Export to the system variant repository
       void system_export(uint32_t flags_ = 0);
 
       /// Discard from the system variant repository
       void system_discard() const;
+
+      /// Check if a variant usage reporting is attached
+      bool has_reporting() const;
+
+      /// Attach a variant usage reporting
+      void set_reporting(variant_reporting &);
+
+      /// Detach a variant usage reporting (if any)
+      void reset_reporting();
+
+      /// Access to the variant usage reporting (if any)
+      variant_reporting & grab_reporting();
 
     protected:
 
@@ -275,6 +287,7 @@ namespace datatools {
       registry_dict_type _registries_;   //!< Dictionary of configuration variant registries
       ranked_dict_type   _ranked_;       //!< Dictionary of ranked configuration variant registries
       std::vector<std::string> _unranked_; //!< List of unranked configuration variant registries
+      variant_reporting * _reporting_ = nullptr; //!< Handle to a reporting object
 
     };
 
@@ -284,10 +297,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_REPOSITORY_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

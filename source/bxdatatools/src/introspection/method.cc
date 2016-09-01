@@ -230,6 +230,36 @@ namespace datatools {
       return;
     }
 
+    bool method::has_input_arguments() const
+    {
+      std::vector<std::string> input_arg_names;
+      build_list_of_input_argument_names(input_arg_names);
+      return input_arg_names.size() > 0;
+    }
+
+    bool method::has_output_arguments() const
+    {
+      std::vector<std::string> output_arg_names;
+      build_list_of_output_argument_names(output_arg_names);
+      return output_arg_names.size() > 0;
+    }
+
+    bool method::has_unique_returned() const
+    {
+      std::vector<std::string> output_arg_names;
+      build_list_of_output_argument_names(output_arg_names);
+      return output_arg_names.size() == 1;
+    }
+
+    const argument & method::get_unique_returned() const
+    {
+      std::vector<std::string> output_arg_names;
+      build_list_of_output_argument_names(output_arg_names);
+      DT_THROW_IF(output_arg_names.size() != 1, std::logic_error,
+                  "Method '" << get_name() << "' has no unique returned argument!");
+      return get_argument_by_name(output_arg_names[0]);
+    }
+
     void method::build_list_of_output_argument_names(std::vector<std::string> & output_arg_names_) const
     {
       output_arg_names_.clear();

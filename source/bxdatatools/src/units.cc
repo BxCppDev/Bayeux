@@ -30,6 +30,8 @@
 #include <datatools/utils.h>
 #include <datatools/clhep_units.h>
 #include <datatools/exception.h>
+#include <datatools/ioutils.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
@@ -488,33 +490,6 @@ namespace datatools {
         unit_label = found_unit->get_dimension_label();
         return true;
       }
-      /*
-      const std::vector<std::string>& ulabels = get_unit_labels_registry();
-      double val = std::numeric_limits<double>::quiet_NaN();
-      int count = -1;
-      for (std::vector<std::string>::const_iterator i = ulabels.begin();
-           i != ulabels.end();
-           ++i) {
-        try {
-          count++;
-          unit_label = *i;
-          val = get_unit_from(*i, unit_str);
-          break;
-        }
-        catch (std::exception& x) {
-          val = std::numeric_limits<double>::quiet_NaN();
-        }
-      }
-
-      if (!std::isnormal(val)) {
-        unit_label = "";
-        unit_value = val;
-        return false;
-      }
-      unit_label = ulabels[count];
-      unit_value = val;
-      return true;
-      */
       return false;
     }
 
@@ -533,32 +508,83 @@ namespace datatools {
     bool parse_value_with_unit(const std::string & word,
                                double & value,
                                std::string & unit_symbol,
-                               std::string & unit_label)
+                               std::string & unit_label,
+                               uint32_t flags)
     {
+      // Default output:
       value = std::numeric_limits<double>::quiet_NaN();
-      unit_label = "";
-      double val;
+      unit_symbol.clear();
+      unit_label.clear();
+      // Process flags:
+      datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+      bool allow_trailing_characters = false;
+      if (flags & datatools::io::reader_debug) {
+        logging = datatools::logger::PRIO_DEBUG;
+      }
+      if (flags & datatools::io::reader_allow_trailing_characters) {
+        allow_trailing_characters = true;
+      }
+      // Working data:
+      double      real_value = datatools::invalid_real();
+      bool        real_normal_value = false;
+      std::string real_unit_symbol;
+      std::string real_unit_label;
+
+      DT_LOG_DEBUG(logging, "word = '" << word << "'");
       std::istringstream iss(word);
-      iss >> val;
-      if (!iss) {
-        // std::ostringstream message;
-        // message << "datatools::find_value_with_unit: Format error while reading a double value !";
+
+      // Parse the value field:
+      std::string value_token;
+      iss >> value_token;
+      if (value_token.empty()) {
         return false;
       }
-      iss >> std::ws;
-      if (!iss.eof()) {
-        std::string ustr;
-        iss >> ustr;
-        if (ustr.empty()) return false;
+      DT_LOG_DEBUG(logging, "Reading real number...");
+      uint32_t read_flag = 0;
+      if (datatools::logger::is_debug(logging)) {
+        read_flag |= ::datatools::io::reader_debug;
+      }
+      if (!datatools::io::read_real_number(value_token, real_value, real_normal_value, read_flag)) {
+        DT_LOG_DEBUG(logging, "Cannot parse a real number...");
+        return false;
+      }
+      DT_LOG_DEBUG(logging, "real_value=" << real_value << " real_normal_value=" << real_normal_value);
+
+      // Parse the unit field:
+      std::string unit_token;
+      iss >> unit_token;
+      DT_LOG_DEBUG(logging, "unit_token=" << unit_token);
+      if (! unit_token.empty()) {
         double any_unit_value;
         std::string any_unit_label;
-        bool res = find_unit(ustr, any_unit_value, any_unit_label);
-        if (!res) return false;
-        val *= any_unit_value;
-        unit_symbol = ustr;
-        unit_label = any_unit_label;
+        bool res = find_unit(unit_token, any_unit_value, any_unit_label);
+        if (!res) {
+          DT_LOG_DEBUG(logging, "No valid unit from '" << unit_token << "'");
+          return false;
+        }
+        DT_LOG_DEBUG(logging, "any_unit_value = [" << any_unit_value << "]");
+        DT_LOG_DEBUG(logging, "any_unit_label = '" << any_unit_label << "'");
+        if (real_normal_value) {
+          real_value *= any_unit_value;
+        }
+        real_unit_symbol = unit_token;
+        real_unit_label = any_unit_label;
+      } else {
+        DT_LOG_DEBUG(logging, "No unit token!");
       }
-      value = val;
+
+      // Search for trailing tokens:
+      std::string more_token;
+      iss >> more_token;
+      if (! more_token.empty()) {
+        if (!allow_trailing_characters) {
+          return false;
+        }
+      }
+      // Output:
+      value       = real_value;
+      unit_symbol = real_unit_symbol;
+      unit_label  = real_unit_label;
       return true;
     }
 

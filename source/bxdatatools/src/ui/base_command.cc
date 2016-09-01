@@ -23,17 +23,31 @@
 // This project:
 #include <datatools/ui/base_command_interface.h>
 #include <datatools/detail/command_macros.h>
+#include <datatools/utils.h>
 
 namespace datatools {
 
   namespace ui {
+
+    // virtual
+    bool base_command::is_name_valid(const std::string & candidate_name_) const
+    {
+      return ::datatools::name_validation(candidate_name_, ::datatools::NV_INSTANCE);
+    }
+
+    base_command::base_command()
+    {
+      _initialized_ = false;
+      _parent_interface_ = nullptr;
+      return;
+    }
 
     base_command::base_command(const std::string & name_,
                                const std::string & description_,
                                const version_id & vid_)
     {
       _initialized_ = false;
-      _parent_interface_ = 0;
+      _parent_interface_ = nullptr;
       set_name(name_);
       set_terse_description(description_);
       if (vid_.is_valid()) {
@@ -68,8 +82,8 @@ namespace datatools {
 
     void base_command::set_parent_interface(base_command_interface & pi_)
     {
-       DT_THROW_IF(is_initialized(), std::logic_error,
-                   "Command '" << get_name() << "' is already initialized!");
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Command '" << get_name() << "' is already initialized!");
       _parent_interface_ = &pi_;
       return;
     }
@@ -77,6 +91,12 @@ namespace datatools {
     bool base_command::has_version() const
     {
       return _version_ != boost::none;
+    }
+
+    void base_command::set_version(const datatools::version_id & version_)
+    {
+      _set_version(version_);
+      return;
     }
 
     void base_command::_set_version(const datatools::version_id & version_)
@@ -142,9 +162,19 @@ namespace datatools {
       return;
     }
 
+    bool base_command::use_generic_options() const
+    {
+      return !_no_generic_options_;
+    }
+
+    bool base_command::use_generic_help() const
+    {
+      return !_no_generic_help_;
+    }
+
     bool base_command::has_generic_opts() const
     {
-      return _generic_opts_ != 0 && _generic_opts_->options().size();
+      return _generic_opts_.get() != nullptr && _generic_opts_->options().size();
     }
 
     const base_command::opts_type & base_command::get_generic_opts() const
@@ -155,7 +185,7 @@ namespace datatools {
 
     bool base_command::has_opts() const
     {
-      return _opts_ != 0 && _opts_->options().size();
+      return _opts_.get() != nullptr && _opts_->options().size();
     }
 
     const base_command::opts_type & base_command::get_opts() const
@@ -166,7 +196,12 @@ namespace datatools {
 
     bool base_command::has_args() const
     {
-      return _args_ != 0;
+      return _args_.get() != nullptr;
+    }
+
+    bool base_command::has_short_ui_options() const
+    {
+      return !_no_short_ui_options_;
     }
 
     void base_command::print_version(std::ostream & out_,
@@ -211,9 +246,15 @@ namespace datatools {
       return;
     }
 
+    void base_command::_forbid_short_ui_options()
+    {
+      _no_short_ui_options_ = true;
+      return;
+    }
+
     base_command::opts_type & base_command::_grab_generic_opts()
     {
-      if (_generic_opts_ == 0) {
+      if (_generic_opts_.get() == nullptr) {
         _alloc_generic_opts();
       }
       return *_generic_opts_.get();
@@ -227,13 +268,13 @@ namespace datatools {
 
     void base_command::_free_generic_opts()
     {
-      if (_generic_opts_ != 0) _generic_opts_.reset();
+      if (_generic_opts_.get() != nullptr) _generic_opts_.reset();
       return;
     }
 
     base_command::opts_type & base_command::_grab_opts()
     {
-      if (_opts_ == 0) {
+      if (_opts_.get() == nullptr) {
         _alloc_opts("Arguments");
       }
       return *_opts_.get();
@@ -241,7 +282,7 @@ namespace datatools {
 
     base_command::vmap_type & base_command::_grab_vmap()
     {
-      if (_vmap_ == 0) {
+      if (_vmap_.get() == nullptr) {
         _alloc_vmap();
       }
       return *_vmap_.get();
@@ -249,10 +290,10 @@ namespace datatools {
 
     base_command::args_type & base_command::_grab_args()
     {
-      if (_args_ == 0) {
+      if (_args_.get() == nullptr) {
         _alloc_args();
       }
-       return *_args_.get();
+      return *_args_.get();
     }
 
     void base_command::_alloc_opts(const std::string & opts_title_)
@@ -263,7 +304,7 @@ namespace datatools {
 
     void base_command::_free_opts()
     {
-      if (_opts_ != 0) _opts_.reset();
+      if (_opts_.get() != nullptr) _opts_.reset();
       return;
     }
 
@@ -275,7 +316,7 @@ namespace datatools {
 
     void base_command::_free_args()
     {
-      if (_args_ != 0) _args_.reset();
+      if (_args_.get() != nullptr) _args_.reset();
       return;
     }
 
@@ -287,7 +328,7 @@ namespace datatools {
 
     void base_command::_free_vmap()
     {
-      if (_vmap_ != 0) _vmap_.reset();
+      if (_vmap_.get() != nullptr) _vmap_.reset();
       return;
     }
 
@@ -296,38 +337,50 @@ namespace datatools {
     {
       namespace po = boost::program_options;
 
-      bool use_generic_opts = true;
-
       if (config_.has_key("no_generic_options")) {
-        use_generic_opts = config_.fetch_boolean("no_generic_options");
+        _no_generic_options_ = config_.fetch_boolean("no_generic_options");
       }
 
-      if (use_generic_opts) {
+      if (config_.has_key("no_generic_help")) {
+        _no_generic_help_ = config_.fetch_boolean("no_generic_help");
+      }
+
+      if (config_.has_key("no_short_ui_options")) {
+        _no_short_ui_options_ = config_.fetch_boolean("no_short_ui_options");
+      }
+
+      if (use_generic_options()) {
+
         // Options description:
-        _grab_generic_opts().add_options()
+        po::options_description_easy_init easy_init
+          = _grab_generic_opts().add_options();
 
-          ("help",
-           "Produce help message")
+        if (use_generic_help()) {
+          easy_init("help",
+                    "Produce help message");
+        }
 
-          ("version",
-           "Print version")
+        if (has_version()) {
+            easy_init("version",
+                      "Print version");
+        }
 
-          ("logging-priority",
-           po::value<std::string>()
-           ->value_name("level"),
-           "Set the logging priority\n"
-           "Allowed values are:\n"
-           "  - \"trace\"       : \tHeavy development messages\n"
-           "  - \"debug\"       : \tDebug messages\n"
-           "  - \"information\" : \tInformation messages\n"
-           "  - \"notice\"      : \tNotice messages\n"
-           "  - \"warning\"     : \tWarning messages\n"
-           "  - \"error\"       : \tError messages\n"
-           "  - \"critical\"    : \tCritical error messages\n"
-           "  - \"fatal\"       : \tFatal error messages"
-           )
+        easy_init("logging",
+                  po::value<std::string>()
+                  ->value_name("level"),
+                  "Set the logging priority\n"
+                  "Allowed values are:\n"
+                  "  - \"trace\"       : \tHeavy development messages\n"
+                  "  - \"debug\"       : \tDebug messages\n"
+                  "  - \"information\" : \tInformation messages\n"
+                  "  - \"notice\"      : \tNotice messages\n"
+                  "  - \"warning\"     : \tWarning messages\n"
+                  "  - \"error\"       : \tError messages\n"
+                  "  - \"critical\"    : \tCritical error messages\n"
+                  "  - \"fatal\"       : \tFatal error messages"
+                  );
 
-          ; // end of options description
+        // end of options description
       }
 
       return;
@@ -351,36 +404,43 @@ namespace datatools {
       cri_.reset();
       cri_.set_error_code(datatools::command::CEC_SUCCESS);
 
-      if (_grab_vmap().count("help")) {
-        print_usage(std::cout);
-        cri_.set_error_code(datatools::command::CEC_STOP);
-        return;
-      }
+      if (use_generic_options()) {
 
-      if (_grab_vmap().count("version")) {
+        if (use_generic_help()) {
+          if (_grab_vmap().count("help")) {
+            print_usage(std::cout);
+            cri_.set_error_code(datatools::command::CEC_STOP);
+            return;
+          }
+        }
 
         if (has_version()) {
-          print_version(std::cout);
-          cri_.set_error_code(datatools::command::CEC_STOP);
-        } else {
-          DT_COMMAND_RETURNED_ERROR(cri_,
-                                    datatools::command::CEC_FAILURE,
-                                    "Command '" << get_name() << "' has no available version information!");
-        }
-        return;
-      }
+          if (_grab_vmap().count("version")) {
 
-      // Fetch the verbosity level:
-      if (_grab_vmap().count("logging-priority")) {
-        const std::string & logging_label = _grab_vmap()["logging-priority"].as<std::string>();
-        datatools::logger::priority logging = datatools::logger::get_priority(logging_label);
-        if (logging == datatools::logger::PRIO_UNDEFINED) {
-          DT_COMMAND_RETURNED_ERROR(cri_,
-                                    datatools::command::CEC_FAILURE,
-                                    "Invalid logging priority label '" << logging_label << "' !");
-          return;
+            if (has_version()) {
+              print_version(std::cout);
+              cri_.set_error_code(datatools::command::CEC_STOP);
+            } else {
+              DT_COMMAND_RETURNED_ERROR(cri_,
+                                        datatools::command::CEC_FAILURE,
+                                        "Command '" << get_name() << "' has no available version information!");
+            }
+            return;
+          }
         }
-        set_logging_priority(logging);
+
+        // Fetch the verbosity level:
+        if (_grab_vmap().count("logging")) {
+          const std::string & logging_label = _grab_vmap()["logging"].as<std::string>();
+          datatools::logger::priority logging = datatools::logger::get_priority(logging_label);
+          if (logging == datatools::logger::PRIO_UNDEFINED) {
+            DT_COMMAND_RETURNED_ERROR(cri_,
+                                      datatools::command::CEC_FAILURE,
+                                      "Invalid logging priority label '" << logging_label << "' !");
+            return;
+          }
+          set_logging_priority(logging);
+        }
       }
 
       return;
@@ -399,6 +459,11 @@ namespace datatools {
                                  uint32_t flags_)
     {
       DT_THROW_IF(!is_active(), std::logic_error, "Command '" << get_name() << "' is not active!");
+
+      DT_LOG_TRACE(get_logging_priority(), "Running command '" << get_name() << "'...");
+      for (auto arg : argv_) {
+        DT_LOG_TRACE(get_logging_priority(), "  With arg = '" << arg << "'");
+      }
       cri_.reset();
       cri_.set_error_code(datatools::command::CEC_SUCCESS);
 
@@ -408,28 +473,38 @@ namespace datatools {
       try {
         // Parse command line:
         namespace po = boost::program_options;
-        po::command_line_parser cl_parser(argv_);
+        // Build options:
         po::options_description cl_options;
         if (has_generic_opts()) {
           cl_options.add(*_generic_opts_.get());
         }
         if (has_opts()) {
           cl_options.add(*_opts_.get());
-          if (_args_ != 0) {
-            cl_parser.positional(*_args_.get());
-          }
         }
+        // Build parser from options and positional args :
+        po::command_line_parser cl_parser(argv_);
         cl_parser.options(cl_options);
+        if (_args_.get() != nullptr) {
+          cl_parser.positional(*_args_.get());
+        }
+        uint32_t cl_style = po::command_line_style::unix_style;
+        if (!has_short_ui_options()) {
+          cl_style ^= po::command_line_style::allow_short;
+        }
+        cl_parser.style(cl_style);
+        // cl_parser.style(po::command_line_style::unix_style ^ po::command_line_style::allow_short);
+        // cl_parser.allow_unregistered();
+        po::parsed_options parsed = cl_parser.run();
+        // std::vector<std::string> unrecog = po::collect_unrecognized(parsed.options,
+        //                                                          po::exclude_positional);
         // And store options in the variables map:
-        po::store(cl_parser.run(), *_vmap_.get());
-        po::notify(*_vmap_);
-      }
-      catch (std::exception & error) {
+        po::store(parsed, *_vmap_.get());
+        po::notify(*_vmap_.get());
+      } catch (std::exception & error) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_COMMAND_INVALID_SYNTAX,
                                   get_name() + ": " + error.what());
-      }
-      catch (...) {
+      } catch (...) {
         DT_COMMAND_RETURNED_ERROR(cri_,
                                   datatools::command::CEC_FAILURE,
                                   get_name() + ": " + "Unexpected error!");
@@ -445,13 +520,11 @@ namespace datatools {
             _run(cri_, flags_);
           }
           set_logging_priority(datatools::logger::PRIO_FATAL);
-        }
-        catch (std::exception & error) {
+        } catch (std::exception & error) {
           DT_COMMAND_RETURNED_ERROR(cri_,
                                     datatools::command::CEC_COMMAND_INVALID_SYNTAX,
                                     get_name() + ": " + error.what());
-        }
-        catch (...) {
+        } catch (...) {
           DT_COMMAND_RETURNED_ERROR(cri_,
                                     datatools::command::CEC_FAILURE,
                                     get_name() + ": " + "Unexpected error!");
@@ -499,7 +572,7 @@ namespace datatools {
              << "Options   : [" << get_opts().options().size() << "]" << std::endl;
 
         out_ << indent_ << i_tree_dumpable::tag
-             << "Positional options   : " << has_args() << std::endl;
+             << "Positional options  : " << ( has_args() ? "yes" : "no" )  << std::endl;
       }
 
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
@@ -507,7 +580,6 @@ namespace datatools {
 
       return;
     }
-
 
   } // namespace ui
 

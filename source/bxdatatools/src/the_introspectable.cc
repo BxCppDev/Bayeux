@@ -3,6 +3,7 @@
 // Ourselves :
 #include <datatools/datatools_config.h>
 #include <datatools/logger-reflect.h>
+#include <datatools/command_utils-reflect.h>
 #include <datatools/i_serializable-reflect.h>
 #include <datatools/i_tree_dump-reflect.h>
 #include <datatools/event_id-reflect.h>
@@ -16,4 +17,3 @@
 #include <datatools/introspection/unit_support-reflect.h>
 #include <datatools/introspection/access_type-reflect.h>
 #include <datatools/introspection/data_layout-reflect.h>
-

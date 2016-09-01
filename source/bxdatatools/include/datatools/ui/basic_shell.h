@@ -28,6 +28,7 @@
 #include <sstream>
 #include <exception>
 #include <vector>
+#include <memory>
 
 // Third Party:
 // - Boost:
@@ -44,7 +45,7 @@
 #include <datatools/multi_properties.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/ui/ihs.h>
-#include <datatools/ui/base_command_interface.h>
+#include <datatools/ui/target_command_interface.h>
 
 namespace datatools {
 
@@ -67,6 +68,8 @@ namespace datatools {
         RC_INHIBIT_READLINE = 2, //!< Inhibit readline (only interactive session)
         RC_EXIT_ON_ERROR    = 3  //!< Force the shell to exit when an error is met
       };
+
+      static const unsigned int DEFAULT_HISTORY_TRUNCATE = 200;
 
       //! Retour the name of the system interface
       static const std::string & system_interface_name();
@@ -187,6 +190,9 @@ namespace datatools {
 
       //! Return the default path
       const std::string & get_default_path() const;
+
+      //! Check if the current path is set
+      bool has_current_path() const;
 
       //! Set the current path
       void set_current_path(const std::string & p_);
@@ -343,7 +349,7 @@ namespace datatools {
       // Working data:
       ihs * _ihs_; //!< Handle to the IHS
       std::string _current_working_path_; //!< Current working interface path
-      boost::scoped_ptr<shell_command_interface_type> _system_interface_; //!< Embedded system interface for this shell
+      std::unique_ptr<shell_command_interface_type> _system_interface_; //!< Embedded system interface for this shell
       shell_command_interface_type * _external_system_interface_; //! External system interface for this shell
 
       // Private data:

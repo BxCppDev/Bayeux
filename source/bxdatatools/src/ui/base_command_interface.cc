@@ -116,17 +116,17 @@ namespace datatools {
       return const_cast<pimpl_type&>(mutable_this->_grab_pimpl());
     }
 
+
+    base_command_interface::base_command_interface()
+    {
+      return;
+    }
+
     base_command_interface::base_command_interface(const std::string & name_,
                                                    const std::string & description_,
                                                    const version_id & vid_)
     {
-      if (! name_.empty()) {
-        set_name(name_);
-      }
-      set_terse_description(description_);
-      if (vid_.is_valid()) {
-        _set_version(vid_);
-      }
+      _base_setup(name_, description_, vid_);
       return;
     }
 
@@ -140,13 +140,11 @@ namespace datatools {
       return _version_ != boost::none;
     }
 
-    void base_command_interface::_set_version(const datatools::version_id & version_)
+    void base_command_interface::set_version(const datatools::version_id & version_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Command interface '" << get_name() << "' is initialized!");
-      DT_THROW_IF(! version_.is_valid(), std::logic_error,
-                  "Version ID '" << get_name() << "' is not valid!");
-      _version_ = version_;
+      _set_version(version_);
       return;
     }
 
@@ -272,6 +270,12 @@ namespace datatools {
       return *this;
     }
 
+    void base_command_interface::remove_all_commands()
+    {
+      _grab_pimpl().commands.clear();
+      return;
+    }
+
     void base_command_interface::remove_command(const std::string & command_name_)
     {
       command_dict_type::iterator found = _grab_pimpl().commands.find(command_name_);
@@ -297,6 +301,22 @@ namespace datatools {
       return;
     }
 
+    void base_command_interface::_base_setup(const std::string & name_,
+                                             const std::string & description_,
+                                             const version_id & vid_)
+    {
+      if (! name_.empty()) {
+        set_name(name_);
+      }
+      if (! description_.empty()) {
+        set_terse_description(description_);
+      }
+      if (vid_.is_valid()) {
+        _set_version(vid_);
+      }
+      return;
+    }
+
     void base_command_interface::_base_initialize(const datatools::properties & config_)
     {
       this->enriched_base::initialize(config_, false);
@@ -305,7 +325,16 @@ namespace datatools {
 
     void base_command_interface::_base_reset()
     {
+      remove_all_commands();
       this->enriched_base::reset();
+      return;
+    }
+
+    void base_command_interface::_set_version(const datatools::version_id & version_)
+    {
+      DT_THROW_IF(! version_.is_valid(), std::logic_error,
+                  "Version ID '" << get_name() << "' is not valid!");
+      _version_ = version_;
       return;
     }
 

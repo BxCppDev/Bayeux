@@ -37,6 +37,7 @@
 #include <bayeux/bayeux.h>
 // - Bayeux/datatools:
 #include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/io.h>
 
 namespace datatools {
 
@@ -66,6 +67,7 @@ namespace datatools {
         NO_PROFILE_STORE          = datatools::bit_mask::bit08,
         NO_GUI                    = datatools::bit_mask::bit09,
         NO_TUI                    = datatools::bit_mask::bit10,
+        NO_REPORTING              = datatools::bit_mask::bit11
       };
 
       /// \brief Variant service configuration parameters
@@ -91,14 +93,14 @@ namespace datatools {
         std::vector<std::string>        registry_rules;  //!< Variant registry definitions
         std::vector<std::string>        registry_dependencies; //!< Variant registry dependencies
         std::string                     profile_load;    //!< Variant profile load
-        bool                            profile_load_dont_ignore_unknown; //!< Flag to ignore unknown registry at profile load
+        bool                            profile_load_dont_ignore_unknown = false; //!< Flag to ignore unknown registry at profile load
         std::vector<std::string>        settings;        //!< List of variant settings
         std::string                     profile_store;   //!< Variant profile store
 #if DATATOOLS_WITH_QT_GUI == 1
-        bool                            gui;             //!< Launch the variant GUI editor
+        bool                            gui = false;        //!< Launch the variant GUI editor
 #endif // DATATOOLS_WITH_QT_GUI == 1
-        bool                            tui;             //!< Launch the variant TUI editor
-
+        bool                            tui = false;        //!< Launch the variant TUI editor
+        std::string                     reporting_filename; //!< Variant usage reporting file
       };
 
       /// Initialize options description associated to a config structure
@@ -191,6 +193,15 @@ namespace datatools {
       //! Set the optional output variant profile filename
       void set_output_profile(const std::string & op_);
 
+      //! Check is reporting is used
+      bool is_reporting() const;
+
+      //! Check for a usage reporting filename
+      bool has_reporting_file() const;
+
+      //! Set the usage reporting filename
+      void set_reporting_file(const std::string & urf_);
+
       //! Configure the service with a set of parameters
       void configure(const config & cfg_, bool lock_ = true);
 
@@ -230,9 +241,6 @@ namespace datatools {
 
       //!< Return a handle to the variant repository
       const variant_repository & get_repository() const;
-
-      // //! Accessor to the variant service singleton:
-      // static variant_service & instance();
 
     private:
 
@@ -290,6 +298,14 @@ namespace datatools {
       //! in the Bayeux/datatools' kernel.
       void _do_variant_system_discard_();
 
+      //----------------------------------------------------------------------
+      //! Initialize the variant usage reporting mechanism
+      void _do_variant_reporting_init_();
+
+      //----------------------------------------------------------------------
+      //! Terminate the variant usage reporting mechanism
+      void _do_variant_reporting_fini_();
+
     private:
 
       // Configuration:
@@ -301,16 +317,18 @@ namespace datatools {
       std::string                 _input_profile_;     //!< Input variant profile (optional)
       std::vector<std::string>    _settings_;          //!< Collection of variant parameters setting rules (optional)
       std::string                 _output_profile_;    //!< Output variant profile (optional)
-      bool                        _dont_ignore_unknown_at_load_; //! Don't ignore unknown registries at load
+      bool                        _dont_ignore_unknown_at_load_ = false; //! Don't ignore unknown registries at load
  #if DATATOOLS_WITH_QT_GUI == 1
-      bool                        _gui_;               //!< Qt GUI activation (optional)
+      bool                        _gui_ = false;       //!< Qt GUI activation (optional)
 #endif // DATATOOLS_WITH_QT_GUI == 1
-      bool                        _tui_;               //!< TUI activation (optional, not implemented yet)
+      bool                        _tui_ = false;       //!< TUI activation (optional, not implemented yet)
+      std::string                 _reporting_file_;    //!< Reporting filename (optional)
 
       // Embedded working data:
       bool                      _started_;    //!< Start flag
       registry_record_dict_type _registries_; //!< Registry records
       variant_repository        _repository_; //!< Application variant repository
+      variant_reporting         _reporting_;  //!< Processing reporting
 
     };
 

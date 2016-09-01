@@ -32,6 +32,14 @@ namespace datatools {
                                                               shell_command_interface,
                                                               "datatools::ui::shell_command_interface")
 
+    shell_command_interface::shell_command_interface()
+      : datatools::ui::target_command_interface<basic_shell>()
+    {
+      _initialized_  = false;
+      _inhibit_cd_   = false;
+      _inhibit_load_ = false;
+      return;
+    }
 
     shell_command_interface::shell_command_interface(const std::string & name_,
                                                      const std::string & description_,
@@ -210,6 +218,7 @@ namespace datatools {
       remove_command("ls");
       remove_command("tree");
       remove_command("load");
+      remove_command("help");
       return;
     }
 

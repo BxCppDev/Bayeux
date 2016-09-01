@@ -55,7 +55,10 @@ namespace datatools {
     public:
 
       //! Default constructor
-      base_command_interface(const std::string & name_ = "",
+      base_command_interface();
+
+      //! Constructor
+      base_command_interface(const std::string & name_,
                              const std::string & description_ = "",
                              const version_id & vid_ = version_id::invalid());
 
@@ -64,6 +67,9 @@ namespace datatools {
 
       //! Check if the version is set
       bool has_version() const;
+
+      //! Set the version
+      void set_version(const datatools::version_id & version_);
 
       //! Return the version
       const datatools::version_id & get_version() const;
@@ -92,6 +98,9 @@ namespace datatools {
       //! Remove a command
       void remove_command(const std::string & command_name_);
 
+      //! Remove all commands
+      void remove_all_commands();
+
       //! Build the list of command names
       void build_command_names(std::vector<std::string> & names_) const;
 
@@ -104,7 +113,7 @@ namespace datatools {
       //! Check if the parser is initialized
       virtual bool is_initialized() const = 0;
 
-      //! Initialize the device model using a list of properties with access to service manager
+      //! Initialize the parser using a list of properties with access to a service manager
       virtual void initialize(const datatools::properties & config_,
                               const datatools::service_manager & services_) = 0;
 
@@ -140,6 +149,11 @@ namespace datatools {
 
     protected:
 
+      //! Basic setup
+      void _base_setup(const std::string & name_,
+                       const std::string & description_,
+                       const version_id & vid_);
+
       //! Set the version
       void _set_version(const datatools::version_id &);
 
@@ -161,207 +175,14 @@ namespace datatools {
       boost::optional<datatools::version_id> _version_; //!< Optional version
 
       // Private data:
+
       struct pimpl_type;
-      boost::scoped_ptr<pimpl_type> _pimpl_;
       pimpl_type & _grab_pimpl();
       const pimpl_type & _get_pimpl() const;
+      boost::scoped_ptr<pimpl_type> _pimpl_; //!< Pimpl-ized data
 
       // Factory stuff :
       DATATOOLS_FACTORY_SYSTEM_REGISTER_INTERFACE(base_command_interface)
-
-    };
-
-    //! \brief Base command interface for a target object
-    //!
-    //! The target object (of arbitrary template type)
-    //! cannot be set after the command interface object
-    //! has been initialized.
-    template <typename Type>
-    class target_command_interface : public base_command_interface
-    {
-    public:
-
-      //! Default constructor
-      target_command_interface(const std::string & name_ = "",
-                               const std::string & description_ = "",
-                               const version_id & vid_ = version_id::invalid())
-        : base_command_interface(name_, description_, vid_),
-          _target_(0)
-      {
-        return;
-      }
-
-      //! Constructor
-      target_command_interface(Type & target_,
-                               const std::string & name_ = "",
-                               const std::string & description_ = "",
-                               const version_id & vid_ = version_id::invalid())
-        : base_command_interface(name_, description_, vid_),
-          _target_(0)
-      {
-        _set_target(target_);
-        return;
-      }
-
-      //! Destructor
-      virtual ~target_command_interface()
-      {
-        return;
-      }
-
-      //! Check if the target is set
-      bool has_target() const
-      {
-        return _target_ != 0;
-      }
-
-      //! Set the target object
-      void set_target(Type & target_)
-      {
-        DT_THROW_IF(is_initialized(), std::logic_error,
-                    "Target command interface is already initialized!");
-        _set_target(target_);
-        return;
-      }
-
-      //! Return the target
-      const Type & get_target() const
-      {
-        return *_target_;
-      }
-
-      //! Return the target
-      Type & grab_target()
-      {
-        return _grab_target();
-      }
-
-      //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_  = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const
-      {
-        this->base_command_interface::tree_dump(out_, title_, indent_, true);
-
-        out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-             << "Target : [@" << _target_ << "]" << std::endl;
-
-        return;
-      }
-
-    protected:
-
-      //! Return the target
-      Type & _grab_target()
-      {
-        return *_target_;
-      }
-
-      //! Set the target
-      void _set_target(Type & target_)
-      {
-        _target_ = &target_;
-        return;
-      }
-
-    private:
-
-      Type * _target_; //!< The reference to the target object
-
-    };
-
-    //! \brief Base command interface for a const target object
-    //!
-    //! The target object (of arbitrary template type)
-    //! cannot be set after the command interface object
-    //! has been initialized.
-    template <typename Type>
-    class const_target_command_interface : public base_command_interface
-    {
-    public:
-
-      //! Default constructor
-      const_target_command_interface(const std::string & name_ = "",
-                                     const std::string & description_ = "",
-                                     const version_id & vid_ = version_id::invalid())
-        : base_command_interface(name_, description_, vid_),
-          _target_(0)
-      {
-        return;
-      }
-
-      //! Constructor
-      const_target_command_interface(const Type & target_,
-                                     const std::string & name_ = "",
-                                     const std::string & description_ = "",
-                                     const version_id & vid_ = version_id::invalid())
-        : base_command_interface(name_, description_, vid_),
-          _target_(0)
-      {
-        _set_target(target_);
-        return;
-      }
-
-      //! Destructor
-      virtual ~const_target_command_interface()
-      {
-        return;
-      }
-
-      //! Check if the target is set
-      bool has_target() const
-      {
-        return _target_ != 0;
-      }
-
-      //! Set the target object
-      void set_target(const Type & target_)
-      {
-        DT_THROW_IF(is_initialized(), std::logic_error,
-                    "Target command interface is already initialized!");
-        _set_target(target_);
-        return;
-      }
-
-      //! Return the target
-      const Type & get_target() const
-      {
-        return *_target_;
-      }
-
-      //! Smart print
-      virtual void tree_dump(std::ostream & out_ = std::clog,
-                             const std::string & title_  = "",
-                             const std::string & indent_ = "",
-                             bool inherit_ = false) const
-      {
-        this->base_command_interface::tree_dump(out_, title_, indent_, true);
-
-        out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-             << "Target : [@" << _target_ << "]" << std::endl;
-
-        return;
-      }
-
-    protected:
-
-      //! Return the target
-      const Type & _get_target()
-      {
-        return *_target_;
-      }
-
-      //! Set the target
-      void _set_target(const Type & target_)
-      {
-        _target_ = &target_;
-        return;
-      }
-
-    private:
-
-      const Type * _target_; //!< The reference to the const target object
 
     };
 
@@ -371,10 +192,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_BASE_COMMAND_INTERFACE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

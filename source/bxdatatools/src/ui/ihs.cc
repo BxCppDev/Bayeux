@@ -54,8 +54,10 @@ namespace datatools {
     {
       _ihs_ = 0;
       _type_ = NODE_INVALID;
-      _external_interface_ = 0;
-      _external_command_ = 0;
+      _owned_interface_ = false;
+      _interface_ = 0;
+      _owned_command_ = false;
+      _command_ = 0;
       _parent_node_ = 0;
       return;
     }
@@ -64,11 +66,47 @@ namespace datatools {
     {
       _ihs_ = 0;
       _type_ = NODE_INVALID;
-      _external_interface_ = 0;
-      _external_command_ = 0;
+      _owned_interface_ = false;
+      _interface_ = 0;
+      _owned_command_ = false;
+      _command_ = 0;
       _parent_node_ = 0;
       set_type(type_);
       set_full_path(full_path_);
+      return;
+    }
+
+    ihs::node::~node()
+    {
+      reset();
+      return;
+    }
+
+    void ihs::node::reset()
+    {
+      _ihs_ = nullptr;
+      reset_interface();
+      reset_command();
+      return;
+    }
+
+    void ihs::node::reset_command()
+    {
+      if (_owned_command_ && _command_ != nullptr) {
+        delete _command_;
+        _command_ = nullptr;
+      }
+      _owned_command_ = false;
+      return;
+    }
+
+    void ihs::node::reset_interface()
+    {
+      if (_owned_interface_ && _interface_ != nullptr) {
+        delete _interface_;
+        _interface_ = nullptr;
+      }
+      _owned_interface_ = false;
       return;
     }
 
@@ -108,7 +146,7 @@ namespace datatools {
 
     bool ihs::node::has_interface() const
     {
-      return _external_interface_ != 0;
+      return _interface_ != 0;
     }
 
     bool ihs::node::is_command() const
@@ -118,7 +156,7 @@ namespace datatools {
 
     bool ihs::node::has_command() const
     {
-      return _external_command_ != 0;
+      return _command_ != 0;
     }
 
     datatools::properties & ihs::node::grab_metadata()
@@ -154,7 +192,32 @@ namespace datatools {
       }
       DT_THROW_IF(! is_interface(), std::logic_error,
                   "Invalid node type for command interface '" << ci_.get_name() << "'!");
-      _external_interface_ = &ci_;
+      _owned_interface_ = false;
+      _interface_ = &ci_;
+      return;
+    }
+
+    void ihs::node::set_interface(base_command_interface * ci_)
+    {
+      if (_type_ == NODE_INVALID) {
+        _type_ = NODE_INTERFACE;
+      }
+      DT_THROW_IF(! is_interface(), std::logic_error,
+                  "Invalid node type for command interface '" << ci_->get_name() << "'!");
+      _owned_interface_ = true;
+      _interface_ = ci_;
+      return;
+    }
+
+    void ihs::node::set_command(base_command * cmd_)
+    {
+      if (_type_ == NODE_INVALID) {
+        _type_ = NODE_COMMAND;
+      }
+      DT_THROW_IF(! is_command(), std::logic_error,
+                  "Invalid node type for command '" << cmd_->get_name() << "'!");
+      _owned_command_ = true;
+      _command_ = cmd_;
       return;
     }
 
@@ -165,7 +228,8 @@ namespace datatools {
       }
       DT_THROW_IF(! is_command(), std::logic_error,
                   "Invalid node type for command '" << cmd_.get_name() << "'!");
-      _external_command_ = &cmd_;
+      _owned_command_ = false;
+      _command_ = &cmd_;
       return;
     }
 
@@ -173,28 +237,28 @@ namespace datatools {
     {
       DT_THROW_IF(!has_interface(), std::logic_error,
                   "Node '" << _full_path_ << "' is not an interface!");
-      return *_external_interface_;
+      return *_interface_;
     }
 
     const base_command_interface & ihs::node::get_interface() const
     {
       DT_THROW_IF(!has_interface(), std::logic_error,
                   "Node '" << _full_path_ << "' is not an interface!");
-      return *_external_interface_;
+      return *_interface_;
     }
 
     base_command & ihs::node::grab_command()
     {
       DT_THROW_IF(!has_command(), std::logic_error,
                   "Node '" << _full_path_ << "' is not a command!");
-      return *_external_command_;
+      return *_command_;
     }
 
     const base_command & ihs::node::get_command() const
     {
       DT_THROW_IF(!has_command(), std::logic_error,
                   "Node '" << _full_path_ << "' is not a command!");
-      return *_external_command_;
+      return *_command_;
     }
 
     bool ihs::node::is_child_of(node & node_) const
@@ -310,12 +374,12 @@ namespace datatools {
 
       if (is_interface() && has_interface()) {
         out_ << indent_ << i_tree_dumpable::tag
-             << "Interface : " << "[@" << _external_interface_ << ']' << std::endl;
+             << "Interface : " << "[@" << _interface_ << ']' << std::endl;
       }
 
       if (is_command() && has_command()) {
         out_ << indent_ << i_tree_dumpable::tag
-             << "Command : " << "[@" << _external_interface_ << ']' << std::endl;
+             << "Command : " << "[@" << _command_ << ']' << std::endl;
       }
 
       if (has_parent_node()) {
@@ -469,6 +533,34 @@ namespace datatools {
     }
 
     void ihs::add_command(const std::string & parent_path_,
+                          base_command * cmd_)
+    {
+      DT_THROW_IF(! exists(parent_path_),
+                  std::logic_error,
+                  "Node with path '" << parent_path_ << "' already exist!");
+      const node & parent_node = _get_node(parent_path_);
+      DT_THROW_IF(! parent_node.is_interface(),
+                  std::logic_error,
+                  "Parent node '" << parent_path_ << "' is not an interface node!");
+      std::string command_full_path;
+      datatools::ui::path::build_leaf_full_path(parent_path_,
+                                                cmd_->get_name(),
+                                                command_full_path);
+      // Create the command node and add it in the parent node
+      {
+        node dummy_node;
+        _nodes_[command_full_path] = dummy_node;
+      }
+      node & cmd_node = _nodes_.find(command_full_path)->second;
+      cmd_node.set_full_path(command_full_path);
+      cmd_node.set_type(NODE_COMMAND);
+      cmd_node.set_command(cmd_);
+      cmd_node.set_parent_node(const_cast<node&>(parent_node));
+      cmd_node.set_ihs(*this);
+      return;
+    }
+
+    void ihs::add_command(const std::string & parent_path_,
                           base_command & cmd_)
     {
       DT_THROW_IF(! exists(parent_path_),
@@ -596,6 +688,44 @@ namespace datatools {
       interface_node.set_full_path(interface_full_path);
       interface_node.set_parent_node(const_cast<node&>(parent_node));
       interface_node.set_ihs(*this);
+      return;
+    }
+
+    void ihs::add_interface(const std::string & parent_path_,
+                            base_command_interface * interface_)
+    {
+
+      DT_THROW_IF(! exists(parent_path_), std::logic_error,
+                  "Node with path '" << parent_path_ << "' does not exists!");
+      const node & parent_node = _get_node(parent_path_);
+      DT_THROW_IF(! parent_node.is_interface(),
+                  std::logic_error,
+                  "Parent node '" << parent_path_ << "' is not an interface node!");
+      std::string interface_full_path;
+      datatools::ui::path::build_leaf_full_path(parent_path_,
+                                                interface_->get_name(),
+                                                interface_full_path);
+      // Create and add the interface node:
+      {
+        node dummy_node;
+        _nodes_[interface_full_path] = dummy_node;
+      }
+      node & interface_node = _nodes_.find(interface_full_path)->second;;
+      interface_node.set_type(NODE_INTERFACE);
+      interface_node.set_full_path(interface_full_path);
+      interface_node.set_interface(interface_);
+      interface_node.set_parent_node(const_cast<node&>(parent_node));
+      interface_node.set_ihs(*this);
+
+      // Create and add the command nodes from the interface's published commands:
+      std::vector<std::string> cmd_names;
+      interface_->build_command_names(cmd_names);
+      for (int icmd = 0; icmd < (int) cmd_names.size(); icmd++) {
+        const std::string & cmd_name = cmd_names[icmd];
+        base_command & cmd = interface_->grab_command(cmd_name);
+        add_command(interface_full_path, cmd);
+      }
+
       return;
     }
 

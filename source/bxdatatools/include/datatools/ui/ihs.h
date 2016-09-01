@@ -74,6 +74,12 @@ namespace datatools {
         //! Constructor
         node(node_type type_, const std::string & full_path_);
 
+        //! Destructor
+        virtual ~node();
+
+        //! Reset the node
+        void reset();
+
         //! Set the node type
         void set_type(node_type type_);
 
@@ -110,8 +116,20 @@ namespace datatools {
         //! Set the full path
         void set_full_path(const std::string &);
 
+        //! Set the command interface
+        void set_interface(base_command_interface *);
+
         //! Set the external command interface
         void set_external_interface(base_command_interface &);
+
+        //! Reset interface
+        void reset_interface();
+
+        //! Set the command
+        void set_command(base_command *);
+
+        //! Reset command
+        void reset_command();
 
         //! Set the external command
         void set_external_command(base_command &);
@@ -173,8 +191,10 @@ namespace datatools {
         node_type                _type_; //!< Node type
         datatools::properties    _metadata_; //!< Metadata associated to the node
         std::string              _full_path_; //!< Full path
-        base_command_interface * _external_interface_; //!< Handle to an external command interface
-        base_command           * _external_command_;   //!< Handle to an external command
+        bool                     _owned_interface_ = false; //!< Interface ownership flag
+        base_command_interface * _interface_; //!< Handle to an external command interface
+        bool                     _owned_command_ = false; //!< Command ownership flag
+        base_command           * _command_;   //!< Handle to an external command
         node *                   _parent_node_; //!< Handle to the parent node
         std::set<node *>         _children_; //! Collection of child nodes
 
@@ -196,6 +216,10 @@ namespace datatools {
 
       //! Add a command interface given its parent's full path
       void add_interface(const std::string & parent_path_,
+                         base_command_interface * interface_);
+
+      //! Add a command interface given its parent's full path
+      void add_interface(const std::string & parent_path_,
                          base_command_interface & interface_);
 
       //! Remove a command interface given its full path
@@ -204,6 +228,10 @@ namespace datatools {
       //! Add a command given its parent's full path
       void add_command(const std::string & parent_path_,
                        base_command & cmd_);
+
+      //! Add a command given its parent's full path
+      void add_command(const std::string & parent_path_,
+                       base_command * cmd_);
 
       //! Remove a command given its full path
       void remove_command(const std::string & command_path_);

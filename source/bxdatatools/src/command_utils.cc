@@ -30,6 +30,11 @@ namespace datatools {
     return;
   }
 
+  command::returned_info::~returned_info()
+  {
+    return;
+  }
+
   void command::returned_info::set_continue()
   {
     _error_code_ = CEC_CONTINUE;
@@ -57,6 +62,21 @@ namespace datatools {
     set_error_message(message_);
     _output_.clear();
     return;
+  }
+
+  bool command::returned_info::is_deprecated() const
+  {
+    return _error_code_ == CEC_DEPRECATED;
+  }
+
+  bool command::returned_info::is_special() const
+  {
+    return _error_code_ < CEC_SUCCESS;
+  }
+
+  bool command::returned_info::is_continue() const
+  {
+    return _error_code_ == CEC_CONTINUE;
   }
 
   bool command::returned_info::is_stop() const

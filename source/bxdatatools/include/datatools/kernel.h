@@ -63,6 +63,7 @@ namespace datatools {
 
     // Forward declaration:
     class variant_repository;
+    class variant_service;
 
   }
 
@@ -174,6 +175,30 @@ namespace datatools {
     /// Return a mutable reference to the configuration variant repository
     configuration::variant_repository & grab_variant_repository();
 
+    /// Check if a configuration variant service is available
+    bool has_variant_service() const;
+
+    /// Return a non mutable reference to the configuration variant service
+    const configuration::variant_service & get_variant_service() const;
+
+    /// Return a mutable reference to the configuration variant service
+    configuration::variant_service & grab_variant_service();
+
+    /// Set a variant service
+    void set_variant_service(configuration::variant_service & var_serv_);
+
+    /// Reset variant service
+    void reset_variant_service();
+
+    /// Check if the effective configuration variant repository is available
+    bool has_effective_variant_repository() const;
+
+    /// Return a non mutable reference to the effective configuration variant repository
+    const configuration::variant_repository & get_effective_variant_repository() const;
+
+    /// Return a mutable reference to the effective configuration variant repository
+    configuration::variant_repository & grab_effective_variant_repository();
+
     /// Check if a specific locale_category is defined
     bool has_locale_category() const;
 
@@ -230,8 +255,11 @@ namespace datatools {
     /// Check if the library info register is activated
     bool is_library_info_register_activated() const;
 
-    /// Check if the library info register is activated
+    /// Check if the variant repository is activated
     bool is_variant_repository_activated() const;
+
+    /// Check if the variant service is allowed
+    bool is_variant_service_allowed() const;
 
     /// Smart print
     void tree_dump(std::ostream& out_ = std::clog,
@@ -291,20 +319,22 @@ namespace datatools {
 
   private:
 
-    bool             _initialized_;      //!< Initialization flag
+    bool             _initialized_ = false; //!< Initialization flag
     param_type       _params_;           //!< Setup parameters
     logger::priority _logging_;          //!< Logging priority
     std::string      _locale_category_;  //!< Locale category
     std::string      _application_name_; //!< The name of the current application
-    int              _argc_;             //!< Command line argument count
-    char **          _argv_;             //!< Command line arguments
+    int              _argc_ = 0;             //!< Command line argument count
+    char **          _argv_ = nullptr;       //!< Command line arguments
     std::vector<std::string> _unrecognized_args_; //!< List of unrecognized arguments
-    bool             _activate_library_info_register_; //!< Activation flag for Library/component information register
-    bool             _activate_variant_repository_;    //!< Activation flag for configuration variant repository
-    boost::scoped_ptr<library_info> _library_info_register_; //!< Library/component information register
+    bool             _activate_library_info_register_ = true; //!< Activation flag for Library/component information register
+    bool             _activate_variant_repository_ = true;    //!< Activation flag for configuration variant repository
+    bool             _allowed_variant_service_ = true;        //!< Allow flag for configuration variant service
+    boost::scoped_ptr<library_info> _library_info_register_;  //!< Library/component information register
     boost::scoped_ptr<configuration::variant_repository> _variant_repository_; //!< Variant repository
+    configuration::variant_service * _variant_service_ = nullptr; //!< handle to an external variant service
 #if DATATOOLS_WITH_QT_GUI == 1
-    bool            _activate_qt_gui_;     //!< Flag to activate the Qt GUI
+    bool            _activate_qt_gui_ = true; //!< Flag to activate the Qt GUI
     //    QApplication  * _qapp_; //!< Handle to the Qt application
 #endif // DATATOOLS_WITH_QT_GUI == 1
     static kernel * _instance_;         //!< Singleton handle
@@ -315,10 +345,8 @@ namespace datatools {
 
 #endif // DATATOOLS_KERNEL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

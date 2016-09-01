@@ -25,8 +25,62 @@
 #include <datatools/multi_properties.h>
 #include <datatools/things.h>
 
-void test_things (bool // debug_
-                  )
+void test_things(bool /*debug_*/);
+void test_multi_properties(bool /*debug_*/);
+void test_properties(bool /*debug_*/);
+void test_event_id(bool /*debug_*/);
+void test_logger(bool /*debug_*/);
+
+int main (int /*argc_*/, char ** /*argv_*/)
+{
+  datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
+  try {
+    bool debug = false;
+    long seed  = 12345;
+
+    {
+      // 2016-08-12 FM: Trick to force linkage to libBayeux:
+      datatools::properties force_bx_linkage;
+    }
+
+    srand48(seed);
+
+    DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
+    for (int i = 0; i < (int) camp::classCount(); i++) {
+      const camp::Class & c = camp::classByIndex(i);
+      DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
+    }
+
+    DT_LOG_NOTICE(logging, "Number of metaenums = " << camp::enumCount());
+    for (int i = 0; i < (int) camp::enumCount(); i++) {
+      const camp::Enum & e = camp::enumByIndex(i);
+      DT_LOG_NOTICE(logging, "Metaenum #" << i << " : " << e.name());
+    }
+
+    test_logger(debug);
+
+    test_event_id(debug);
+
+    test_properties(debug);
+
+    test_multi_properties(debug);
+
+    test_things(debug);
+
+    std::clog << "The end" << std::endl;
+  } catch (camp::BadType & ic) {
+    std::cerr << "ERROR: test_reflection_0: " << ic.what () << std::endl;
+    exit (EXIT_FAILURE);
+  }
+  catch (std::exception & x) {
+    std::cerr << "ERROR: test_reflection_0: " << x.what () << std::endl;
+    exit (EXIT_FAILURE);
+  }
+
+  return (EXIT_SUCCESS);
+}
+
+void test_things (bool /*debug_*/)
 {
   std::clog << "*** test_things : " << std::endl;
 
@@ -56,17 +110,17 @@ void test_things (bool // debug_
     // Now automagically allocate and store a new bank named 'EH'
     // of the serialization type 'properties' :
     camp::Value ehVal = erObj.call("add_entry", camp::Args ("EH",
-                                                          "datatools::properties",
-                                                          "The event header", false));
+                                                            "datatools::properties",
+                                                            "The event header", false));
 
     std::clog << "EH was added. " << std::endl;
 
     // More with a new bank named 'GC'
     // of the serialization type 'multi_properties' :
     camp::Value gcVal = erObj.call ("add_entry", camp::Args ("GC",
-                                                          "datatools::multi_properties",
-                                                          "The global configuration",
-                                                          false));
+                                                             "datatools::multi_properties",
+                                                             "The global configuration",
+                                                             false));
     std::clog << "GC was added. " << std::endl;
 
     // Manipulate the 'EH' bank :
@@ -91,8 +145,7 @@ void test_things (bool // debug_
   }
 }
 
-void test_multi_properties (bool // debug_
-                            )
+void test_multi_properties (bool /*debug_*/)
 {
   std::clog << "*** test_multi_properties : " << std::endl;
   const camp::Class & mpropsMetaClass = camp::classByName("datatools::multi_properties");
@@ -149,8 +202,7 @@ void test_multi_properties (bool // debug_
 }
 
 
-void test_properties (bool // debug_
-                      )
+void test_properties (bool /*debug_*/)
 {
   std::clog << "*** test_properties : " << std::endl;
   const camp::Class & propsMetaClass = camp::classByName("datatools::properties");
@@ -194,8 +246,7 @@ void test_properties (bool // debug_
 }
 
 
-void test_event_id (bool // debug_
-                    )
+void test_event_id (bool /*debug_*/)
 {
   std::clog << "*** test_event_id : " << std::endl;
   const camp::Class & evIdMetaClass = camp::classByName("datatools::event_id");
@@ -228,8 +279,7 @@ void test_event_id (bool // debug_
 }
 
 
-void test_logger (bool // debug_
-                  )
+void test_logger (bool /*debug_*/)
 {
   std::clog << "*** test_logger : " << std::endl;
   {
@@ -258,52 +308,4 @@ void test_logger (bool // debug_
   }
 
   return;
-}
-
-
-int main (// int argc_, char ** argv_
-         )
-{
-  datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
-  try
-    {
-      bool debug = false;
-      long seed  = 12345;
-
-      srand48(seed);
-
-      DT_LOG_NOTICE(logging, "Number of metaclasses = " << camp::classCount());
-      for (int i = 0; i < (int) camp::classCount(); i++) {
-        const camp::Class & c = camp::classByIndex(i);
-        DT_LOG_NOTICE(logging, "Metaclass #" << i << " : " << c.name());
-      }
-
-      DT_LOG_NOTICE(logging, "Number of metaenums = " << camp::enumCount());
-      for (int i = 0; i < (int) camp::enumCount(); i++) {
-        const camp::Enum & e = camp::enumByIndex(i);
-        DT_LOG_NOTICE(logging, "Metaenum #" << i << " : " << e.name());
-      }
-
-      test_logger(debug);
-
-      test_event_id(debug);
-
-      test_properties(debug);
-
-      test_multi_properties(debug);
-
-      test_things(debug);
-
-      std::clog << "The end" << std::endl;
-    }
-  catch (camp::BadType & ic) {
-    std::cerr << "ERROR: test_reflection_0: " << ic.what () << std::endl;
-    exit (EXIT_FAILURE);
-  }
-  catch (std::exception & x) {
-    std::cerr << "ERROR: test_reflection_0: " << x.what () << std::endl;
-    exit (EXIT_FAILURE);
-  }
-
-  return (EXIT_SUCCESS);
 }

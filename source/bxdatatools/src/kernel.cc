@@ -9,6 +9,7 @@
 #include <cstring>
 #include <clocale>
 #include <bitset>
+#include <memory>
 
 // Ourselves:
 #include <datatools/kernel.h>
@@ -21,6 +22,7 @@
 // This project:
 #include <datatools/library_info.h>
 #include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/variant_service.h>
 #include <datatools/configuration/io.h>
 #include <datatools/configuration/utils.h>
 #include <datatools/exception.h>
@@ -39,7 +41,7 @@
 namespace datatools {
 
   // static
-  kernel * kernel::_instance_ = 0;
+  kernel * kernel::_instance_ = nullptr;
 
   // static
   const uint32_t kernel::init_mask;
@@ -79,6 +81,11 @@ namespace datatools {
     return _activate_variant_repository_;
   }
 
+  bool kernel::is_variant_service_allowed() const
+  {
+    return _allowed_variant_service_;
+  }
+
   void kernel::_set_defaults()
   {
     _logging_ = datatools::logger::PRIO_FATAL;
@@ -108,9 +115,10 @@ namespace datatools {
     }
 
     _argc_ = 0;
-    _argv_ = NULL;
+    _argv_ = nullptr;
     _activate_variant_repository_ = true;
     _activate_library_info_register_ = true;
+    _allowed_variant_service_ = true;
 #if DATATOOLS_WITH_QT_GUI == 1
     _activate_qt_gui_ = true;
     {
@@ -121,8 +129,7 @@ namespace datatools {
       }
     }
 #endif // DATATOOLS_WITH_QT_GUI == 1
-    _activate_library_info_register_ = true;
-    _activate_variant_repository_ = true;
+    _variant_service_ = nullptr;
     return;
   }
 
@@ -159,7 +166,7 @@ namespace datatools {
       this->shutdown();
     }
     DT_LOG_TRACE(_logging_, "Kernel is now destroyed.");
-    _instance_ = 0;
+    _instance_ = nullptr;
     // std::cerr << "DEVEL: kernel::~kernel: Exiting." << std::endl;
     return;
   }
@@ -487,11 +494,16 @@ namespace datatools {
                                               "activated" : "no") << "\n";
     out_ << "   Configuration variant repository : " << (kern.has_variant_repository()?
                                               "activated" : "no") << "\n";
+    out_ << "   Configuration variant service : " << (kern.has_variant_service()?
+                                              "activated" : "no") << "\n";
     if (kern.has_library_info_register()) {
       // On board registered libraries...
     }
     if (kern.has_variant_repository()) {
       // On board variant repository...
+    }
+    if (kern.has_variant_service()) {
+      // On board variant service...
     }
     out_ << "\n";
     return;
@@ -642,7 +654,6 @@ namespace datatools {
     } else {
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is not created.");
     }
-
     DT_LOG_TRACE_EXITING(_logging_);
     return;
   }
@@ -1083,9 +1094,39 @@ namespace datatools {
     return *_library_info_register_;
   }
 
+  bool kernel::has_effective_variant_repository() const
+  {
+    if (has_variant_service()) {
+      return true;
+    } else if (has_variant_repository()) {
+      return true;
+    }
+    return false;
+  }
+
+  const configuration::variant_repository & kernel::get_effective_variant_repository() const
+  {
+    DT_THROW_IF(!has_effective_variant_repository(), std::logic_error,
+                "The datatools kernel has no effective variant repository !");
+    if (has_variant_service()) {
+      return get_variant_service().get_repository();
+    }
+    return *_variant_repository_;
+  }
+
+  configuration::variant_repository & kernel::grab_effective_variant_repository()
+  {
+    DT_THROW_IF(!has_effective_variant_repository(), std::logic_error,
+                "The datatools kernel has no effective variant repository !");
+    if (has_variant_service()) {
+      return grab_variant_service().grab_repository();
+    }
+    return *_variant_repository_;
+  }
+
   bool kernel::has_variant_repository() const
   {
-    return _variant_repository_.get() != 0;
+    return _variant_repository_.get() != nullptr;
   }
 
   const configuration::variant_repository & kernel::get_variant_repository() const
@@ -1100,6 +1141,41 @@ namespace datatools {
     DT_THROW_IF(!_variant_repository_, std::logic_error,
                 "The datatools kernel has no configuration variant repository !");
     return *_variant_repository_;
+  }
+
+  bool kernel::has_variant_service() const
+  {
+    return _variant_service_ != nullptr;
+  }
+
+  void kernel::reset_variant_service()
+  {
+    DT_THROW_IF(!has_variant_service(), std::logic_error,
+                "The datatools kernel already has no configuration variant service !");
+    _variant_service_ = nullptr;
+    return;
+  }
+
+  void kernel::set_variant_service(configuration::variant_service & var_serv_)
+  {
+    DT_THROW_IF(has_variant_service(), std::logic_error,
+                "The datatools kernel already has a configuration variant service !");
+    _variant_service_ = &var_serv_;
+    return;
+  }
+
+  const configuration::variant_service & kernel::get_variant_service() const
+  {
+    DT_THROW_IF(!_variant_service_, std::logic_error,
+                "The datatools kernel has no configuration variant service !");
+    return *_variant_service_;
+  }
+
+  configuration::variant_service & kernel::grab_variant_service()
+  {
+    DT_THROW_IF(!_variant_service_, std::logic_error,
+                "The datatools kernel has no configuration variant service !");
+    return *_variant_service_;
   }
 
   void kernel::tree_dump(std::ostream& out_,
@@ -1161,6 +1237,15 @@ namespace datatools {
       indent2 << indent << i_tree_dumpable::skip_tag;
       get_variant_repository().tree_dump(out_, "", indent2.str());
     }
+
+    out_ << indent << i_tree_dumpable::tag
+         << "Configuration variant service : "
+         << (has_variant_service() ? "<yes>" : "<no>") << std::endl;
+    // if (has_variant_service()) {
+    //   std::ostringstream indent2;
+    //   indent2 << indent << i_tree_dumpable::skip_tag;
+    //   get_variant_service().tree_dump(out_, "", indent2.str());
+    // }
 
 #if DATATOOLS_WITH_QT_GUI == 1
     out_ << indent << i_tree_dumpable::tag
@@ -1270,7 +1355,7 @@ namespace datatools {
   // static
   bool kernel::is_instantiated()
   {
-    return _instance_ != 0;
+    return _instance_ != nullptr;
   }
 
   // static

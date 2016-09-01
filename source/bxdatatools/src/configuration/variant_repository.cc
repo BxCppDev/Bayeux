@@ -34,6 +34,7 @@
 #include <datatools/configuration/variant_record.h>
 #include <datatools/configuration/parameter_model.h>
 #include <datatools/configuration/variant_model.h>
+#include <datatools/configuration/io.h>
 
 namespace datatools {
 
@@ -174,6 +175,7 @@ namespace datatools {
     {
       _initialized_ = false;
       _locked_ = false;
+      _reporting_ = nullptr;
       return;
     }
 
@@ -343,6 +345,31 @@ namespace datatools {
                   "Application name cannot contains the '/' character!");
       _application_ = a_;
       return;
+    }
+
+    bool variant_repository::has_reporting() const
+    {
+      return _reporting_ != nullptr;
+    }
+
+    void variant_repository::set_reporting(variant_reporting & rpt_)
+    {
+      DT_THROW_IF(has_reporting(), std::logic_error, "Repository already has an attached reporting object!");
+      _reporting_ = &rpt_;
+      return;
+    }
+
+    void variant_repository::reset_reporting()
+    {
+      DT_THROW_IF(!has_reporting(), std::logic_error, "Repository has no attached reporting object!");
+      _reporting_ = nullptr;
+      return;
+    }
+
+    variant_reporting & variant_repository::grab_reporting()
+    {
+      DT_THROW_IF(!has_reporting(), std::logic_error, "Repository has no attached reporting object!");
+      return *_reporting_;
     }
 
     bool variant_repository::is_initialized() const
@@ -556,8 +583,8 @@ namespace datatools {
           the_registry_rank = registry_ranks.find(the_registry_name)->second;
         }
         DT_LOG_DEBUG(get_logging_priority(),
-                     "Register variant registry '" << the_registry_name << "' from configuration file '"
-                     << the_registry_variant_mgr_config_file << "' registration...");
+                     "Registration of variant registry '" << the_registry_name << "' from configuration file '"
+                     << the_registry_variant_mgr_config_file << "'...");
         this->registration_embedded(the_registry_variant_mgr_config_file,
                                     the_registry_top_variant_name,
                                     the_registry_name,
@@ -659,6 +686,9 @@ namespace datatools {
       _initialized_ = false;
       if (is_locked()) {
         unlock();
+      }
+      if (has_reporting()) {
+        reset_reporting();
       }
       clear_registries();
       _application_.clear();
@@ -1050,6 +1080,12 @@ namespace datatools {
                   "Kernel is not instantiated!");
       datatools::kernel & krnl = kernel::instance();
       krnl.import_configuration_repository(*this);
+      if (has_reporting()) {
+        // Attach the variant usage reporting object to the kernel variant repository:
+        configuration::variant_repository & k_var_rap = krnl.grab_variant_repository();
+        DT_THROW_IF(k_var_rap.has_reporting(), std::logic_error, "Kernel variant repository already has an attached variant reporting!");
+        k_var_rap.set_reporting(*_reporting_);
+      }
       return;
     }
 
@@ -1058,6 +1094,15 @@ namespace datatools {
       DT_THROW_IF(! datatools::kernel::is_instantiated(), std::logic_error,
                   "Kernel is not instantiated!");
       datatools::kernel & krnl = kernel::instance();
+      if (has_reporting()) {
+        configuration::variant_repository & k_var_rap = krnl.grab_variant_repository();
+        // DT_THROW_IF(!k_var_rap.has_reporting(), std::logic_error, "Kernel variant repository has no attached variant reporting!");
+        if (k_var_rap.has_reporting()) {
+          // Detach the variant usage reporting object from the kernel variant repository:
+          k_var_rap.reset_reporting();
+        }
+      }
+
       for (registry_dict_type::const_iterator i = _registries_.begin();
            i != _registries_.end();
            i++) {

@@ -48,15 +48,15 @@ namespace datatools {
       // Arguments description:
       _grab_opts().add_options()
 
-        ("no-description,D",
+        ("no-description",
          "Do not print description if available"
          )
 
-        ("no-title,T",
+        ("no-title",
          "Do not print title"
          )
 
-        ("color,C",
+        ("color",
          "Use colored output"
          )
 

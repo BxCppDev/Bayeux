@@ -8,10 +8,12 @@
 #include <string>
 #include <stdexcept>
 
+// This project:
+#include <datatools/properties.h>
+
 /// Parameters for the application
 struct app_config
 {
-  int value;
   datatools::configuration::variant_service::config variant;
 };
 
@@ -19,7 +21,7 @@ struct app_config
 struct processing
 {
   processing();
-  void initialize(int value_);
+  void initialize(const datatools::properties & config_);
   void run();
   void reset();
 };
@@ -38,11 +40,11 @@ int main(int argc_, char ** argv_)
   optDesc.add_options()
     ("help,h",
      "print this help message")
-    ("value",
-     bpo::value<int>(&params.value)
-     ->default_value(42)
-     ->value_name("[value]"),
-     "a value")
+    // ("value",
+    //  bpo::value<int>(&params.value)
+    //  ->default_value(42)
+    //  ->value_name("[value]"),
+    //  "a value")
     ;
 
   // Declare options for variant support:
@@ -84,6 +86,9 @@ int main(int argc_, char ** argv_)
 
     // Variant support:
     try {
+      if (params.variant.config_filename.empty()) {
+        params.variant.config_filename = "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_repository.conf";
+      }
       params.variant.print(std::clog, "Variant parameters: ");
       dtc::variant_service app_var_serv;
       if (params.variant.is_active()) {
@@ -91,10 +96,23 @@ int main(int argc_, char ** argv_)
         app_var_serv.start();
       }
 
-      processing p;
-      p.initialize(params.value);
-      p.run();
-      p.reset();
+      // Application scope:
+      {
+        datatools::properties pconfig;
+        {
+          std::string config_name = "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_service.conf";
+          uint32_t reader_opts = 0;
+          reader_opts |= datatools::properties::config::RESOLVE_PATH;
+          datatools::properties::config reader(reader_opts);
+          reader.read(config_name,pconfig);
+          pconfig.tree_dump(std::clog, "Configuration parameters after variant processing: ");
+        }
+
+        processing p;
+        p.initialize(pconfig);
+        p.run();
+        p.reset();
+      }
 
       // Terminate variant service:
       app_var_serv.stop();
@@ -106,8 +124,8 @@ int main(int argc_, char ** argv_)
       throw std::logic_error(e.what());
     }
 
-    std::cerr << "DEVEL: Terminate variant service..." << std::endl;
-    std::cerr << "DEVEL: Done." << std::endl;
+    // std::cerr << "DEVEL: Terminate variant service..." << std::endl;
+    // std::cerr << "DEVEL: Done." << std::endl;
 
   }
   bayeux::terminate();
@@ -120,9 +138,9 @@ processing::processing()
   return;
 }
 
-void processing::initialize(int value_)
+void processing::initialize(const datatools::properties & config_)
 {
-  std::clog << "Initializing processing with value=[" << value_ << "]...\n";
+  std::clog << "Initializing processing .\n";
   return;
 }
 

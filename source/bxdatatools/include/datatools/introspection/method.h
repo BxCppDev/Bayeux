@@ -79,6 +79,18 @@ namespace datatools {
       //! Check if the method has arguments
       bool has_arguments() const;
 
+      //! Check if the method has input arguments
+      bool has_input_arguments() const;
+
+      //! Check if the method has output arguments
+      bool has_output_arguments() const;
+
+      //! Check if the method has a single returned value/argument
+      bool has_unique_returned() const;
+
+      //! Return the unique returned argument (if any)
+      const argument & get_unique_returned() const;
+
       //! Add an argument
       void add_argument(const argument & arg_, const std::string & arg_name_ = "");
 
@@ -170,10 +182,8 @@ namespace datatools {
 
 #endif // DATATOOLS_INTROSPECTION_METHOD_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

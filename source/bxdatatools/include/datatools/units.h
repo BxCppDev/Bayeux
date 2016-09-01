@@ -362,7 +362,8 @@ namespace datatools {
     bool parse_value_with_unit(const std::string& word,
                                double& value,
                                std::string& unit_symbol,
-                               std::string& unit_label);
+                               std::string& unit_label,
+                               uint32_t flags = 0);
 
     //! \brief The description of an unit
     class unit : public i_tree_dumpable {
