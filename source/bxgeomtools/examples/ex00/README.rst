@@ -41,7 +41,7 @@ Quick start
 1. Build, install and setup the Bayeux/geomtools library
 2. Make a copy of the example directory and move to this duplicated directory::
 
-      $ cp -a $(bxquery --exampledir)/geomtools/examples/ex00 /tmp/geomtools_ex00
+      $ cp -a $(bxquery --datadir)/examples/geomtools/ex00 /tmp/geomtools_ex00
       $ cd /tmp/geomtools_ex00
 
 3. Run the ``bxgeomtools_inspector`` ::
