@@ -25,8 +25,6 @@ int main (int /* argc_ */, char ** /* argv_ */)
   try {
     std::clog << "Test of the 'ioutils' class..." << std::endl;
 
-    bool color = false;
-
     // int iarg = 1;
     // while (iarg <  argc_) {
     //   std::string arg = argv_[iarg];
@@ -212,7 +210,6 @@ void test_string()
   std::clog << "\ntest_string:\n";
   std::vector<std::string> reprs = { "\"abc\"" , "'abc'", "'a b c'", "abc", "a b c", " a b c", "\"a b c\"", "\" a b c\"", "", "''", "'", "\"'\"", "\"'", "' '", "\"\"", "\"   \"" };
   for (auto repr : reprs) {
-    uint32_t reader_flags = 0;
     std::string value;
     if (datatools::io::read_quoted_string(repr,value)) {
       std::clog << "String from [" << repr << "] = ";

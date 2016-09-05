@@ -70,7 +70,7 @@ int main(int argc_, char * argv_[])
   return EXIT_SUCCESS;
 }
 
-void test_0(bool interactive_)
+void test_0(bool /*interactive_*/)
 {
   std::clog << "\ntest_0..." << std::endl;
 

@@ -33,7 +33,7 @@
 /* Define a completely non-sensical class. */
 struct magic_number {
 public:
-  magic_number(int n) : n(n) {}
+  magic_number(int n_) : n(n_) {}
   int n;
 };
 

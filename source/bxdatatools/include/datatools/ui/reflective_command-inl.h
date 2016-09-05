@@ -89,7 +89,7 @@ namespace datatools {
       }
 
       try {
-        const camp::Class & metaclass = camp::classByName(classname);
+        camp::classByName(classname);
       } catch (std::exception & error) {
         DT_THROW(std::logic_error,
                  "No class '" << classname << "' with reflection support: " << error.what());
@@ -280,7 +280,7 @@ namespace datatools {
     template <class Type>
     void reflective_command<Type>::_fini()
     {
-      datatools::logger::priority logging = this->reflective_command<Type>::get_logging_priority();
+      // datatools::logger::priority logging = this->reflective_command<Type>::get_logging_priority();
       _method_.reset();
       _func_ = nullptr;
       _func_name_.clear();
@@ -290,7 +290,7 @@ namespace datatools {
 
     template <class Type>
     void reflective_command<Type>::_run(datatools::command::returned_info & cri_,
-                                        uint32_t flags_)
+                                        uint32_t /*flags_*/)
     {
       datatools::logger::priority logging = this->reflective_command<Type>::get_logging_priority();
       DT_LOG_TRACE_ENTERING(logging);

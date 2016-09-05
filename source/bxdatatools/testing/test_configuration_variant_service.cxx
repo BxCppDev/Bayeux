@@ -138,7 +138,7 @@ processing::processing()
   return;
 }
 
-void processing::initialize(const datatools::properties & config_)
+void processing::initialize(const datatools::properties & /*config_*/)
 {
   std::clog << "Initializing processing .\n";
   return;

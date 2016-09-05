@@ -212,7 +212,7 @@ public:
 
   int get_count(int index_) const
   {
-    DT_THROW_IF(index_ < 0 || index_ >= _counts_.size(),
+    DT_THROW_IF(index_ < 0 || index_ >= (int)_counts_.size(),
                 std::range_error, "Invalid count index [" << index_ << "] !");
     return _counts_[index_];
   }
