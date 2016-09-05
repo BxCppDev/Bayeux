@@ -180,7 +180,6 @@ namespace datatools {
                                                           data_description & param_dd_)
     {
       param_dd_.reset();
-      bool param_is_arg = false;
       std::string param_what = "returned";
       std::string param_tag_prefix;
       if (param_index_ == std::numeric_limits<std::size_t>::max()) {
@@ -189,16 +188,13 @@ namespace datatools {
       } else {
         // parameter is an input argument
         param_tag_prefix = function_arg_prefix(param_index_);
-        param_is_arg = true;
         param_what = "argument #" + boost::lexical_cast<std::string>(param_index_);
       }
-      bool param_scalar = true;
       if (param_type_ == camp::userType) {
         DT_THROW(std::logic_error,
                  "Unsupported user type for " << param_what << " in " << _func_what_ << " '" << _func_full_name_ << "'");
       }
       if (param_type_ == camp::arrayType) {
-        param_scalar = false;
         DT_THROW(std::logic_error,
                  "Unsupported non scalar type for " << param_what << " in " << _func_what_ << " '" << _func_full_name_ << "'");
       }
@@ -552,13 +548,11 @@ namespace datatools {
 
         if (is_real(arg_type)) {
           DT_LOG_DEBUG(logging, " Processing real argument/option '" << arg_name << "'...");
-          bool with_unit = arg.get_data_description().is_dimensionless();
           if (arg.get_data_description().is_dimensionless()) {
             DT_LOG_DEBUG(logging, " Processing real without unit from argument/option '" << arg_name << "'...");
             datatools::ui::wrapped_real_without_unit wrwou
               = (*_vmap_)[arg_name].as<datatools::ui::wrapped_real_without_unit>();
             double a_value  = wrwou.value;
-            bool   a_normal = wrwou.normal;
             DT_LOG_DEBUG(logging, " Parsed real without unit = [" << a_value << "]");
             arg_val = a_value;
           } else {

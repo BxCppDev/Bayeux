@@ -100,8 +100,8 @@ namespace datatools {
                   const std::vector<std::string>& values,
                   datatools::ui::wrapped_real_with_unit *, int)
     {
-      datatools::logger::priority logging = datatools::logger::PRIO_DEBUG;
       using namespace boost::program_options;
+      // datatools::logger::priority logging = datatools::logger::PRIO_DEBUG;
       // for (auto token : values) {
       //   DT_LOG_DEBUG(logging, "Token is '" << token << "'");
       // }
@@ -152,7 +152,6 @@ namespace datatools {
         double value = datatools::invalid_real();
         std::string unit_symbol;
         std::string unit_label;
-        uint32_t read_flags = 0;
         if (!datatools::units::parse_value_with_unit(token, value, unit_symbol, unit_label)) {
           throw validation_error(validation_error::invalid_option_value);
         }
