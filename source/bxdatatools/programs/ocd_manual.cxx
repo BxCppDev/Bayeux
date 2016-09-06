@@ -171,12 +171,12 @@ namespace datatools {
        "\"list\" : \tlist the registered classes by ID. "
        "May use the '--load-dll LIBNAME' option.\n"
        "\"show\" : \tprint some description of the configuration parameters for class CLASSNAME. "
-       "Needs '--class-id CLASSNAME' option.\n"
+       "Needs the '--class-id CLASSNAME' option.\n"
        "\"skeleton\" : \tprint a sample skeleton configuration file for class CLASSNAME. "
-       "  Needs '--class-id CLASSNAME' option. "
+       "  Needs the '--class-id CLASSNAME' option. "
        "  May use the '--output-file OUTPUT_FILE' option. \n"
        "\"validate\" : \tvalidate an input configuration file for class CLASSNAME. "
-       "  Needs '--class-id CLASSNAME' and '--input-file INPUTFILE' option."
+       "  Needs the '--class-id CLASSNAME' and '--input-file INPUTFILE' options."
        )
 
       ("input-file,i",
