@@ -303,7 +303,7 @@ namespace datatools {
                 "Example : Store parameters in the \"var/backup_variants.rep\" file\n"
                 "  --datatools::variant-store=\"var/backup_variants.rep\""
                 );
-    }
+    } // if (parse_variant)
 
 
     // Help:
@@ -346,7 +346,7 @@ namespace datatools {
       easy_init("datatools::logging",
                 po::value<std::string>(&params_.logging_label)
                 ->value_name("level")
-                ->default_value("warning"),
+                ->default_value("fatal"),
                 "Set the datatools kernel's logging priority threshold.\n"
                 "Example :\n"
                 "  --datatools::logging=\"trace\""
