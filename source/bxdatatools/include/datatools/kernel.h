@@ -93,12 +93,12 @@ namespace datatools {
 
     public:
 
-      bool                     help;            //!< Flag to print the help about datatools' command line options
-      std::string              logging_label;   //!< Logging priority label
+      bool                     help = false;            //!< Flag to print the help about datatools' command line options
+      std::string              logging_label = "fatal";   //!< Logging priority label
       std::string              locale_category; //!< The locale category
-      std::string              library_info_logging_label;    //!< Logging priority label for the embedded library information registry
-      bool                     inhibit_library_info_register; //!< Flag to inhibit the use of the embedded library information registry
-      bool                     inhibit_variant_repository;    //!< Flag to inhibit the use of the variant repository
+      std::string              library_info_logging_label = "fatal";  //!< Logging priority label for the embedded library information registry
+      bool                     inhibit_library_info_register = false; //!< Flag to inhibit the use of the embedded library information registry
+      bool                     inhibit_variant_repository = false;    //!< Flag to inhibit the use of the variant repository
       std::vector<std::string> unrecognized_args; //!< List of unrecognized arguments
       std::vector<std::string> resource_paths;    //!< List of resource paths directives
       std::string              variant_config;    //!< The configuration file for the system variant repository
@@ -107,11 +107,11 @@ namespace datatools {
       std::string              variant_store;  //!< Path to the file where one stores the values of the variant parameters
       std::vector<std::string> variant_sets;   //!< List of directives to set the values of the variant parameters
 
-      bool                     splash;         //!< Flag to display the datatools splash screen
+      bool                     splash = false;         //!< Flag to display the datatools splash screen
 #if DATATOOLS_WITH_QT_GUI == 1
-      bool                     inhibit_qt_gui; //!< Flag to inhibit GUI
-      bool                     variant_qt_gui; //!< Flag to run the variant GUI
-      std::string              variant_qt_gui_style; //!< Qt style
+      bool                     inhibit_qt_gui = false; //!< Flag to inhibit GUI
+      bool                     variant_qt_gui = false; //!< Flag to run the variant GUI
+      std::string              variant_qt_gui_style = "plastique"; //!< Qt style
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
     };
