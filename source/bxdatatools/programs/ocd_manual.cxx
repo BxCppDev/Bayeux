@@ -18,6 +18,7 @@
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/ocd_driver.h>
+#include <datatools/kernel.h>
 
 namespace datatools {
 
@@ -35,12 +36,15 @@ namespace datatools {
 
 }
 
+// Return kernel initialization flags for this application:
+uint32_t app_kernel_init_flags();
+
 /****************
  * Main program *
  ****************/
 int main(int argc_, char ** argv_)
 {
-  bayeux::initialize(argc_, argv_);
+  bayeux::initialize(argc_, argv_, app_kernel_init_flags());
 
   int error_code = EXIT_SUCCESS;
   datatools::ocd_driver_params params;
@@ -50,6 +54,17 @@ int main(int argc_, char ** argv_)
 
     datatools::ui::build_options(opts, params);
 
+    // Declare options for kernel:
+    po::options_description optKernel("Kernel options");
+    datatools::kernel::param_type paramsKernel;
+    datatools::kernel::build_opt_desc(optKernel,
+                                      paramsKernel,
+                                      app_kernel_init_flags());
+
+    // Aggregate options:
+    po::options_description optPublic;
+    optPublic.add(opts).add(optKernel);
+
     // Describe command line arguments :
     po::positional_options_description args;
     args.add("class-id", 1);
@@ -57,7 +72,7 @@ int main(int argc_, char ** argv_)
     po::variables_map vm;
     po::parsed_options parsed =
       po::command_line_parser(argc_, argv_)
-      .options(opts)
+      .options(optPublic)
       .positional(args)
       .allow_unregistered()
       .run();
@@ -70,7 +85,7 @@ int main(int argc_, char ** argv_)
     // Fetch the opts/args :
     if (vm.count("help")) {
       if (vm["help"].as<bool>()) {
-        datatools::ui::print_usage(opts, std::cout);
+        datatools::ui::print_usage(optPublic, std::cout);
         return (1);
       }
     }
@@ -90,12 +105,10 @@ int main(int argc_, char ** argv_)
     ocdd.run();
     ocdd.reset();
 
-  }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     DT_LOG_FATAL(params.logging, x.what ());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_FATAL(params.logging, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
@@ -119,24 +132,26 @@ namespace datatools {
        "produce help message")
 
       ("logging-priority,P",
-       po::value<std::string>()->default_value("notice")
+       po::value<std::string>()->default_value("fatal")
        ->value_name("level"),
-       "set the logging priority threshold")
-
+       "set the logging priority threshold.\n"
+       "Example : \n"
+       " --logging-priority \"debug\""
+      )
       ("dlls-config,L",
        po::value<std::string>(&params_.dll_loader_config)
-       ->value_name("filename"),
-       "set the DLL loader configuration file. \n"
-       "Example :                              \n"
-       " --dlls-config dlls.conf                 "
+       ->value_name("file"),
+       "set the DLL loader configuration file.\n"
+       "Example : \n"
+       " --dlls-config \"dlls.conf\""
        )
 
       ("load-dll,l",
        po::value<std::vector<std::string> >(&params_.dlls)
-       ->value_name("libname@path"),
-       "set a DLL to be loaded.             \n"
-       "Example :                           \n"
-       " --load-dll \"foo\"                 \n"
+       ->value_name("name[@path]"),
+       "set a DLL to be loaded.\n"
+       "Example : \n"
+       " --load-dll \"foo\" \n"
        " --load-dll \"foo@/opt/lib/foo/1.0\"  "
        )
 
@@ -144,30 +159,35 @@ namespace datatools {
        po::value<std::string>(&params_.class_id)
        ->value_name("classname"),
        "set the ID/name of the class to be investigated. \n"
-       "Example :                                        \n"
-       " --class-id genvtx::manager                        "
+       "Example :\n"
+       " --class-id \"genvtx::manager\""
        )
 
       ("action,a",
        po::value<std::string>(&params_.action)
        ->value_name("action"),
        "define the action to be performed.\n"
-       "Actions:\n"
-       " list     : \tlist the registered classes by ID May use '--load-dll LIBNAME' option.\n"
-       " show     : \tprint some description of the configuration parameters for class CLASSNAME. Needs '--class-id CLASSNAME' option.  \n"
-       " skeleton : \tprint a sample skeleton configuration file for class CLASSNAME. Needs '--class-id CLASSNAME' option. May use '--output-file OUTPUT_FILE' option. \n"
-       " validate : \tvalidate an input configuration file for class CLASSNAME. Needs '--class-id CLASSNAME' and '--input-file INPUTFILE' option.\n"
+       "Supported actions:\n"
+       "\"list\" : \tlist the registered classes by ID. "
+       "May use the '--load-dll LIBNAME' option.\n"
+       "\"show\" : \tprint some description of the configuration parameters for class CLASSNAME. "
+       "Needs '--class-id CLASSNAME' option.\n"
+       "\"skeleton\" : \tprint a sample skeleton configuration file for class CLASSNAME. "
+       "  Needs '--class-id CLASSNAME' option. "
+       "  May use the '--output-file OUTPUT_FILE' option. \n"
+       "\"validate\" : \tvalidate an input configuration file for class CLASSNAME. "
+       "  Needs '--class-id CLASSNAME' and '--input-file INPUTFILE' option."
        )
 
       ("input-file,i",
        po::value<std::string>(&params_.input_path)
        ->value_name("file"),
-       "set the name of an input filename.")
+       "set the input file name.")
 
       ("output-file,o",
        po::value<std::string>(&params_.output_path)
        ->value_name("file"),
-       "set the name of an output filename.")
+       "set the output file name.")
 
       ; // end of options' description
     return;
@@ -182,46 +202,62 @@ namespace datatools {
     out_ << std::endl;
     out_ << "Usage : " << std::endl;
     out_ << std::endl;
-    out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
+    out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] " << std::endl;
     out_ << opts_ << std::endl;
     out_ << "Examples : " << std::endl;
-    out_ << "                                                        " << std::endl;
-    out_ << "  " << APP_NAME << " --help                             " << std::endl;
-    out_ << "                                                        " << std::endl;
-    out_ << "  " << APP_NAME << " --action list                      " << std::endl;
-    out_ << "                                                        " << std::endl;
-    out_ << "  " << APP_NAME << " --action list | grep ^datatools::  " << std::endl;
-    out_ << "                                                        " << std::endl;
-    out_ << "  " << APP_NAME << " --load-dll foo --action list       " << std::endl;
-    out_ << "                                                        " << std::endl;
+    out_ << std::endl;
+    out_ << "  " << APP_NAME << " --help" << std::endl;
+    out_ << std::endl;
+    out_ << "  " << APP_NAME << " --action \"list\" " << std::endl;
+    out_ << std::endl;
+    out_ << "  " << APP_NAME << " --action \"list\" | grep ^datatools:: " << std::endl;
+    out_ << std::endl;
+    out_ << "  " << APP_NAME << " --load-dll \"foo\" --action \"list\"" << std::endl;
+    out_  << std::endl;
     out_ << "  " << APP_NAME << " \\" << std::endl
-         << "             --class-id datatools::service_manager    \\" << std::endl
-         << "             --action show [--no-configuration-infos] \\" << std::endl
-         << "                           [--no-title]               \\" << std::endl
-         << "             | pandoc -r rst -w plain                 \\" << std::endl
-         << "             | less                                     " << std::endl;
-    out_ << "                                                        " << std::endl;
+         << "    --class-id \"datatools::service_manager\" \\" << std::endl
+         << "    --action \"show\" \\" << std::endl
+         << "    [--no-configuration-infos] \\" << std::endl
+         << "    [--no-title] \\" << std::endl
+         << "    | pandoc -r rst -w plain \\" << std::endl
+         << "    | less" << std::endl;
+    out_ << std::endl;
     out_ << "  " << APP_NAME << " \\" << std::endl
-         << "             --class-id datatools::service_manager    \\" << std::endl
-         << "             --action show [--no-configuration-infos] \\" << std::endl
-         << "                           [--no-title]               \\" << std::endl
-         << "             | pandoc -T=\"datatools::service_manager\" \\" << std::endl
-         << "                      -r rst -w html                    \\" << std::endl
-         << "                      -o \"datatools__service_manager.html\" " << std::endl;
-    out_ << "                                                             " << std::endl;
+         << "    --class-id \"datatools::service_manager\" \\" << std::endl
+         << "    --action \"show\" \\" << std::endl
+         << "    [--no-configuration-infos] \\" << std::endl
+         << "    [--no-title] \\" << std::endl
+         << "    | pandoc -T=\"datatools::service_manager\" \\" << std::endl
+         << "             -r rst -w html \\" << std::endl
+         << "             -o \"datatools_service_manager.html\" " << std::endl;
+    out_ << std::endl;
     out_ << "  " << APP_NAME << " \\" << std::endl
-         << "             --class-id datatools::service_manager \\" << std::endl
-         << "             --action skeleton                     \\" << std::endl
-         << "             [--no-additional-infos]               \\" << std::endl
-         << "             [--no-configuration-hints]            \\" << std::endl
-         << "             --output-file sm.conf                   " << std::endl;
-    out_ << "                                                     " << std::endl;
+         << "    --class-id \"datatools::service_manager\" \\" << std::endl
+         << "    --action \"skeleton\" \\" << std::endl
+         << "    [--no-additional-infos] \\" << std::endl
+         << "    [--no-configuration-hints] \\" << std::endl
+         << "    --output-file \"sm.conf\" " << std::endl;
+    out_ << std::endl;
     out_ << "  " << APP_NAME << " \\" << std::endl
-         << "             --class-id datatools::service_manager \\" << std::endl
-         << "             --action validate --input-file sm.conf          " << std::endl;
-    out_ << "                                                             " << std::endl;
+         << "    --class-id \"datatools::service_manager\" \\" << std::endl
+         << "    --action \"validate\" \\" << std::endl
+         << "    --input-file \"sm.conf\" " << std::endl;
     out_ << std::endl;
     return;
   }
 
+}
+
+uint32_t app_kernel_init_flags()
+{
+  uint32_t kernel_init_flags = 0;
+  kernel_init_flags |= datatools::kernel::init_no_help;
+  kernel_init_flags |= datatools::kernel::init_no_splash;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_libinfo;
+  kernel_init_flags |= datatools::kernel::init_no_libinfo_logging;
+  kernel_init_flags |= datatools::kernel::init_no_variant;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_variant;
+  kernel_init_flags |= datatools::kernel::init_no_locale_category;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+  return kernel_init_flags;
 }
