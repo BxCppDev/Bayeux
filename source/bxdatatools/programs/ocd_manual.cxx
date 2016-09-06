@@ -129,19 +129,20 @@ namespace datatools {
        po::value<bool>()
        ->zero_tokens()
        ->default_value(false),
-       "produce help message")
+       "Produce help message")
 
       ("logging-priority,P",
        po::value<std::string>()->default_value("fatal")
        ->value_name("level"),
-       "set the logging priority threshold.\n"
+       "Set the logging priority threshold.\n"
        "Example : \n"
        " --logging-priority \"debug\""
       )
+
       ("dlls-config,L",
        po::value<std::string>(&params_.dll_loader_config)
        ->value_name("file"),
-       "set the DLL loader configuration file.\n"
+       "Set the DLL loader configuration file.\n"
        "Example : \n"
        " --dlls-config \"dlls.conf\""
        )
@@ -149,7 +150,7 @@ namespace datatools {
       ("load-dll,l",
        po::value<std::vector<std::string> >(&params_.dlls)
        ->value_name("name[@path]"),
-       "set a DLL to be loaded.\n"
+       "Set a DLL to be loaded.\n"
        "Example : \n"
        " --load-dll \"foo\" \n"
        " --load-dll \"foo@/opt/lib/foo/1.0\"  "
@@ -158,7 +159,7 @@ namespace datatools {
       ("class-id,c",
        po::value<std::string>(&params_.class_id)
        ->value_name("classname"),
-       "set the ID/name of the class to be investigated. \n"
+       "Set the ID/name of the class to be investigated. \n"
        "Example :\n"
        " --class-id \"genvtx::manager\""
        )
@@ -166,7 +167,7 @@ namespace datatools {
       ("action,a",
        po::value<std::string>(&params_.action)
        ->value_name("action"),
-       "define the action to be performed.\n"
+       "Define the action to be performed.\n"
        "Supported actions:\n"
        "\"list\" : \tlist the registered classes by ID. "
        "May use the '--load-dll LIBNAME' option.\n"
@@ -182,12 +183,14 @@ namespace datatools {
       ("input-file,i",
        po::value<std::string>(&params_.input_path)
        ->value_name("file"),
-       "set the input file name.")
+       "set the input file name."
+       )
 
       ("output-file,o",
        po::value<std::string>(&params_.output_path)
        ->value_name("file"),
-       "set the output file name.")
+       "set the output file name."
+       )
 
       ; // end of options' description
     return;
