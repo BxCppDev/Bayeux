@@ -19,7 +19,7 @@
 
 namespace datatools {
 
-  void initialize(int argc_, char * argv_[], uint32_t /*flags_*/)
+  void initialize(int argc_, char * argv_[], uint32_t flags_)
   {
     // std::cerr << "DEVEL: datatools::initialize: Entering..." << std::endl;
 
@@ -33,9 +33,9 @@ namespace datatools {
         datatools::kernel & krnl = datatools::kernel::instance();
         if (! krnl.is_initialized()) {
           if (argc_ && argv_) {
-            krnl.initialize(argc_, argv_);
+            krnl.initialize(argc_, argv_, flags_);
           } else {
-            krnl.initialize(0, 0);
+            krnl.initialize(0, 0, flags_);
           }
         }
       }
