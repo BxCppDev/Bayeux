@@ -23,6 +23,7 @@
 #include <string>
 #include <iostream>
 #include <exception>
+#include <vector>
 
 // Third Party:
 // - Boost++:
@@ -34,7 +35,7 @@
 // - Bayeux:
 #include <bayeux/bayeux.h>
 // - Bayeux/datatools:
-//#include <datatools/kernel.h>
+#include <datatools/kernel.h>
 #include <datatools/logger.h>
 #include <datatools/exception.h>
 #include <datatools/utils.h>
@@ -46,6 +47,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
+#include <datatools/library_loader.h>
 
 namespace bpo = boost::program_options;
 namespace dtc = datatools::configuration;
@@ -65,6 +67,8 @@ struct app_config_params {
   std::string action; //!< Action
   std::string input_filename; //!< Input file for test action
   dtc::variant_service::config variants; //!< Variant support
+  std::string LL_config;
+  std::vector<std::string> LL_dlls;
 };
 
 void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_);
@@ -77,9 +81,12 @@ void app_test_config(std::ostream & out_, const std::string & config_file_);
 
 void app_test_multi_config(std::ostream & out_, const std::string & mconfig_file_);
 
+// Return kernel initialization flags for this application:
+uint32_t app_kernel_init_flags();
+
 int main(int argc_, char * argv_[])
 {
-  bayeux::initialize(argc_, argv_);
+  bayeux::initialize(argc_, argv_, app_kernel_init_flags());
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   app_config_params params;
@@ -98,7 +105,24 @@ int main(int argc_, char * argv_[])
        bpo::value<std::string>(&params.logging)
        ->default_value("fatal")
        ->value_name("[level]"),
-       "a value")
+       "a value\n"
+       "Example: \n"
+       "  --logging \"debug\""
+       )
+      ("load-dll,L",
+       bpo::value<std::vector<std::string>>(&params.LL_dlls)
+       ->value_name("[library]"),
+       "a library to be loaded\n"
+       "Example: \n"
+       "  --load-dll \"my@library/installation/path\""
+       )
+      ("dll-config",
+       bpo::value<std::string>(&params.LL_config)
+       ->value_name("[file]"),
+       "a configuration file for the library loader\n"
+       "Example: \n"
+       "  --dll-config \"${HOME}/config/mydlls.conf\""
+       )
       ("action,a",
        bpo::value<std::string>(&params.action)
        // ->default_value("doc")
@@ -108,12 +132,16 @@ int main(int argc_, char * argv_[])
        " - 'profile' : print the current variant profile\n"
        " - 'testcfg' : test a properties input file\n"
        " - 'testmcfg' : test a multi-properties input file\n"
+       "Example:\n"
+       "  --action \"doc\""
        )
       ("input-file,i",
        bpo::value<std::string>(&params.input_filename)
        ->value_name("[filename]"),
        "input file to be parsed/tested.\n"
        "Needed for action='testcfg' or action='testmcfg'.\n"
+       "Example:\n"
+       "  --action \"testcfg\" --input-file \"my_parameters.conf\""
        )
       ;
 
@@ -128,9 +156,16 @@ int main(int argc_, char * argv_[])
                                        params.variants,
                                        po_init_flags);
 
+    // Declare options for kernel:
+    bpo::options_description optKernel("Kernel options");
+    datatools::kernel::param_type paramsKernel;
+    datatools::kernel::build_opt_desc(optKernel,
+                                      paramsKernel,
+                                      app_kernel_init_flags());
+
     // Aggregate options:
     bpo::options_description optPublic;
-    optPublic.add(optDesc).add(optVariant);
+    optPublic.add(optDesc).add(optVariant).add(optKernel);
 
     // Parse options:
     bpo::variables_map vMap;
@@ -163,8 +198,16 @@ int main(int argc_, char * argv_[])
       datatools::logger::priority prio = datatools::logger::get_priority(params.logging);
       if (prio != datatools::logger::PRIO_UNDEFINED) {
         logging = prio;
-        params.logging = params.logging;
       }
+    }
+
+    // Load dynamic libraries, if any are requested:
+    datatools::library_loader LL(params.LL_config);
+    for (auto dll_name : params.LL_dlls) {
+      DT_LOG_NOTICE(logging, "Loading DLL '" << dll_name << "'...");
+      DT_THROW_IF (LL.load(dll_name) != EXIT_SUCCESS,
+                   std::runtime_error,
+                   "Loading DLL '" << dll_name << "' failed !");
     }
 
     // Set action:
@@ -224,19 +267,17 @@ int main(int argc_, char * argv_[])
         vserv.stop();
       }
 
-    } catch (std::exception& e) {
-      std::cerr << "[error] " << e.what()
+    } catch (std::exception & error) {
+      std::cerr << "[error] " << error.what()
                 << std::endl;
       error_code = EXIT_FAILURE;
       throw std::logic_error(e.what());
     }
 
-  }
-  catch (const std::exception & error) {
+  } catch (const std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, error.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Unexpected Exception !");
     error_code = EXIT_FAILURE;
   }
@@ -344,4 +385,18 @@ void app_test_multi_config(std::ostream & out_, const std::string & mconfig_file
     writer.write(out_, mcfg);
   }
   return;
+}
+
+uint32_t app_kernel_init_flags()
+{
+  uint32_t kernel_init_flags = 0;
+  kernel_init_flags |= datatools::kernel::init_no_help;
+  kernel_init_flags |= datatools::kernel::init_no_splash;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_libinfo;
+  kernel_init_flags |= datatools::kernel::init_no_libinfo_logging;
+  kernel_init_flags |= datatools::kernel::init_no_variant;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_variant;
+  kernel_init_flags |= datatools::kernel::init_no_locale_category;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+  return kernel_init_flags;
 }
