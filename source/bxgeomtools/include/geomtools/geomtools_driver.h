@@ -1,7 +1,7 @@
 /// \file geomtools/geomtools_driver.h
-/* Author (s) :   Francois Mauger <mauger@lpccaen.in2p3.fr>
+/* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2013-08-24
- * Last modified: 2013-08-24
+ * Last modified: 2016-09-07
  *
  * License:
  *
@@ -14,17 +14,18 @@
  */
 
 #ifndef GEOMTOOLS_GEOMTOOLS_DRIVER_H
-#define GEOMTOOLS_GEOMTOOLS_DRIVER_H 1
+#define GEOMTOOLS_GEOMTOOLS_DRIVER_H
 
 // Standard Library:
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 // Third Party:
 // - Boost:
 #include <boost/cstdint.hpp>
-#include <boost/scoped_ptr.hpp>
+// #include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 
@@ -189,14 +190,14 @@ namespace geomtools {
 
   private:
 
-    bool _initialized_; //!< Initialization flag
+    bool _initialized_ = false; //!< Initialization flag
     geomtools_driver_params          _params_;   //!< Configuration and dynamic parameters
 
     // Geometry setup model:
-    boost::scoped_ptr<manager>       _geo_mgr_;         //!< Geometry manager handle
-    boost::scoped_ptr<model_factory> _geo_factory_;     //!< Geometry model factory handle
-    const model_factory *            _geo_factory_ref_; //!< Geometry model factory effective handle
-    bool                             _has_world_;       //!< Flag for a 'world' top-level volume/model
+    std::unique_ptr<manager>       _geo_mgr_;         //!< Geometry manager handle
+    std::unique_ptr<model_factory> _geo_factory_;     //!< Geometry model factory handle
+    const model_factory *          _geo_factory_ref_ = nullptr; //!< Geometry model factory effective handle
+    bool                           _has_world_ = false;       //!< Flag for a 'world' top-level volume/model
     // std::map<std::string, datatools::properties> _ropts_; //!< Rendering options associated to displayed objects
     std::map<std::string, display_data> _dds_; //!< Embedded display data objects
 
@@ -206,10 +207,8 @@ namespace geomtools {
 
 #endif // GEOMTOOLS_GEOMTOOLS_DRIVER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

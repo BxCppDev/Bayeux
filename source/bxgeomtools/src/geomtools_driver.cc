@@ -150,7 +150,7 @@ namespace geomtools {
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
           out_ << "\n";
           out_ << "  MGRCFG_FILE : Set the configuration file for the geometry       \n"
-               << "                manager (optional, see also '--manager-config')   \n";
+               << "                manager (see also '--manager-config')   \n";
           out_ << std::flush;
           code = -1;
           break;
@@ -262,7 +262,7 @@ namespace geomtools {
   geomtools_driver::geomtools_driver()
   {
     _initialized_ = false;
-    _geo_factory_ref_    = 0;
+    _geo_factory_ref_ = nullptr;
     _has_world_   = false;
     return;
   }
@@ -283,7 +283,7 @@ namespace geomtools {
     _initialized_ = false;
 
     _has_world_ = false;
-    _geo_factory_ref_ = 0;
+    _geo_factory_ref_ = nullptr;
     if (_geo_mgr_) _geo_mgr_.reset(0);
     if (_geo_factory_) _geo_factory_.reset(0);
 
