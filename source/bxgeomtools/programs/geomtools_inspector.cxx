@@ -581,9 +581,9 @@ app_config_params::app_config_params()
   without_readline = false;
   history_filename = "~/.bxgeomtools_inspector.history";
 #endif // GEOMTOOLS_WITH_READLINE
-  bool no_splash = false;
-  std::string prompt = "geomtools> ";
-  std::string prompt_continue = "> ";
+  no_splash = false;
+  prompt = "geomtools> ";
+  prompt_continue = "> ";
   return;
 }
 
