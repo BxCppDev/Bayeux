@@ -200,8 +200,8 @@ namespace datatools {
     // Inhibition of the parsinf for specific options:
     if (flags_ & init_no_help)            parse_help = false;
     if (flags_ & init_no_splash)          parse_splash = false;
-    if (flags_ & init_no_locale_category) parse_locale_category = false;
     if (flags_ & init_no_logging)         parse_logging = false;
+    if (flags_ & init_no_locale_category) parse_locale_category = false;
     if (flags_ & init_no_inhibit_libinfo) parse_inhibit_libinfo = false;
     if (flags_ & init_no_libinfo_logging) parse_libinfo_logging= false;
     if (flags_ & init_no_resource_path)   parse_resource_path = false;
@@ -211,12 +211,24 @@ namespace datatools {
     if (flags_ & init_no_inhibit_qt_gui)  parse_inhibit_qt_gui = false;
 #endif
 
+    // Logging:
+    if (parse_logging) {
+      easy_init("datatools::logging",
+                po::value<std::string>(&params_.logging_label)
+                ->value_name("level")
+                ->default_value("fatal"),
+                "Set the datatools kernel's logging priority threshold.\n"
+                "Example :\n"
+                "  --datatools::logging=\"trace\""
+                );
+    }
+
     // Resource path registration:
     if (parse_resource_path) {
       easy_init("datatools::resource-path",
                 po::value< std::vector<std::string> >(&params_.resource_paths)
                 ->value_name("rule"),
-                "Register a resource path associated to a library or module.\n"
+                "Register a resource path mounted through an identifier (library or module name).\n"
                 "Example : Register the \"path1/subdir1\" path as the root directory of the \"foo\" library and the \"path2/subdir2\" path as the root directory of the \"bar\" software module:\n"
                 "  --datatools::resource-path=\"foo@path1/subdir1\"\n"
                 "  --datatools::resource-path=\"bar@path2/subdir2\""
@@ -233,7 +245,6 @@ namespace datatools {
                 "Example :\n"
                 "  --datatools::novariant"
                 );
-
     }
 
     // Configure variant support:
@@ -277,6 +288,7 @@ namespace datatools {
                 );
 
 #if DATATOOLS_WITH_QT_GUI == 1
+
       easy_init("datatools::variant-qt-gui",
                 po::value<bool>(&params_.variant_qt_gui)
                 ->zero_tokens()
@@ -294,6 +306,7 @@ namespace datatools {
                 "Example :\n"
                 "  --datatools::variant-qt-gui-style=\"plastique\""
                 );
+
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
       easy_init("datatools::variant-store",
@@ -303,8 +316,8 @@ namespace datatools {
                 "Example : Store parameters in the \"var/backup_variants.rep\" file\n"
                 "  --datatools::variant-store=\"var/backup_variants.rep\""
                 );
-    } // if (parse_variant)
 
+    } // if (parse_variant)
 
     // Help:
     if (parse_help) {
@@ -338,18 +351,6 @@ namespace datatools {
                 "Set the datatools kernel's local category.\n"
                 "Example :\n"
                 "  --datatools::locale-category=\"C\""
-                );
-    }
-
-    // Logging:
-    if (parse_logging) {
-      easy_init("datatools::logging",
-                po::value<std::string>(&params_.logging_label)
-                ->value_name("level")
-                ->default_value("fatal"),
-                "Set the datatools kernel's logging priority threshold.\n"
-                "Example :\n"
-                "  --datatools::logging=\"trace\""
                 );
     }
 
