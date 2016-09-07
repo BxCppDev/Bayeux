@@ -270,8 +270,8 @@ namespace geomtools {
   geomtools_driver::~geomtools_driver()
   {
     if (is_initialized()) {
-      if (_geo_mgr_) _geo_mgr_.reset(0);
-      if (_geo_factory_) _geo_factory_.reset(0);
+      if (_geo_mgr_) _geo_mgr_.reset();
+      if (_geo_factory_) _geo_factory_.reset();
       //reset();
     }
     return;
@@ -284,8 +284,8 @@ namespace geomtools {
 
     _has_world_ = false;
     _geo_factory_ref_ = nullptr;
-    if (_geo_mgr_) _geo_mgr_.reset(0);
-    if (_geo_factory_) _geo_factory_.reset(0);
+    if (_geo_mgr_) _geo_mgr_.reset();
+    if (_geo_factory_) _geo_factory_.reset();
 
     _params_.reset();
 
