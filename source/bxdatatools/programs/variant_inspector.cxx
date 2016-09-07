@@ -271,7 +271,7 @@ int main(int argc_, char * argv_[])
       std::cerr << "[error] " << error.what()
                 << std::endl;
       error_code = EXIT_FAILURE;
-      throw std::logic_error(e.what());
+      throw std::logic_error(error.what());
     }
 
   } catch (const std::exception & error) {
