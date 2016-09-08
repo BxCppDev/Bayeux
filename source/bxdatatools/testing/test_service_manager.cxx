@@ -286,6 +286,15 @@ int main(int argc_, char ** argv_)
         std::cerr << "error: " << "as expected: " << dyn_serv_error.what() << std::endl;
       }
 
+      std::vector<std::string> serv_names;
+      uint32_t serv_filter = 0;
+      SM.build_list_of_services(serv_names, serv_filter);
+      std::clog << "Current list of services:\n";
+      for (auto name : serv_names) {
+        std::clog << " - " << name << '\n';
+      }
+      std::clog << '\n';
+
       SM.tree_dump(std::clog, "Service manager : ", "");
       if (SM.can_drop("test_2")) {
         // Remove an existing service :
