@@ -262,6 +262,7 @@ Then create a few working directories:
 
    $ mkdir -p ${SW_WORK_DIR}
    $ mkdir -p ${SW_WORK_DIR}/Bayeux         # base working directory for Bayeux
+   $ mkdir -p ${SW_WORK_DIR}/Bayeux/Source  # hosts the source directories
    $ mkdir -p ${SW_WORK_DIR}/Bayeux/Binary  # hosts the build/installation directories
 ..
 
@@ -270,11 +271,12 @@ Download Bayeux
 
 Download Bayeux/trunk source files:
 
+.. $ export BX_SOURCE_BASE_DIR="${HOME}/Documents/Private/Software/Bayeux/Source"
+
 .. code:: sh
 
-   $ export BX_SOURCE_BASE_DIR="${HOME}/Documents/Private/Software/Bayeux/Source"
+   $ export BX_SOURCE_BASE_DIR="${SW_WORK_DIR}/Bayeux/Source"
    $ export BX_DEV_SOURCE_DIR=${BX_SOURCE_BASE_DIR}/Bayeux-trunk
-   $ mkdir -p ${BX_SOURCE_BASE_DIR}
    $ cd ${BX_SOURCE_BASE_DIR}
    $ svn co https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/trunk Bayeux-trunk
    $ cd Bayeux-trunk
@@ -310,7 +312,6 @@ Configure Bayeux
 
    $ brewsh
 ..
-
 
   2. Create a build directory and cd in it:
 
