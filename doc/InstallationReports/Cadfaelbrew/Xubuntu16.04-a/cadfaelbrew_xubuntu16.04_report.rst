@@ -215,9 +215,11 @@ Installation
    $ brew install supernemo-dbd/cadfael/camp
    $ brew install supernemo-dbd/cadfael/clhep
    $ brew install supernemo-dbd/cadfael/xerces-c
-   $ brew install supernemo-dbd/cadfael/geant4 --with-opengl-x11
+   $ brew install supernemo-dbd/cadfael/geant4
    $ brew install supernemo-dbd/cadfael/root5
 ..
+
+.. $ brew install supernemo-dbd/cadfael/geant4 --with-opengl-x11
 
 Setup
 ======
