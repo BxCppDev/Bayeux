@@ -275,11 +275,8 @@ namespace datatools {
             << std::endl;
       }
     }
-    out << indent << i_tree_dumpable::tag
-        << "Can be dropped   : "
-        << this->can_be_dropped() << std::endl;
 
-    out << indent << i_tree_dumpable::inherit_tag (a_inherit)
+    out << indent << i_tree_dumpable::tag
         << "Service status   : "
         << service_status;
     {
@@ -302,7 +299,11 @@ namespace datatools {
       }
     }
     out << std::endl;
-  }
+
+    out << indent << i_tree_dumpable::inherit_tag (a_inherit)
+        << "Can be dropped   : "
+        << this->can_be_dropped() << std::endl;
+ }
 
   bool find_service_name_with_id(const service_dict_type & services_,
                                  const std::string & service_id_,

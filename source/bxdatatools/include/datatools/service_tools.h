@@ -44,6 +44,7 @@
 #include <datatools/handle.h>
 #include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
+#include <datatools/bit_mask.h>
 
 namespace datatools {
 
@@ -85,34 +86,34 @@ namespace datatools {
 
     //! \brief Service status flags
     enum status_type {
-      STATUS_BLANK             = 0x0, //!< Empty flag set
-      STATUS_CREATED           = 0x1, //!< Instantiation flag
-      STATUS_INITIALIZED       = 0x2, //!< Initialization flag
-      STATUS_BROKEN_DEPENDENCY = 0x4  //!< Broken dependency flag
+      STATUS_BLANK             = 0, //!< Empty flag set
+      STATUS_CREATED           = datatools::bit_mask::bit00, //!< Creation/instantiation flag
+      STATUS_INITIALIZED       = datatools::bit_mask::bit01, //!< Initialization flag
+      STATUS_BROKEN_DEPENDENCY = datatools::bit_mask::bit02  //!< Broken dependency flag
     };
 
   public:
 
     //! Return the service name
-    const std::string & get_service_name () const;
+    const std::string & get_service_name() const;
 
     //! Set the service name
-    void set_service_name (const std::string &);
+    void set_service_name(const std::string &);
 
     //! Return the service identifier
-    const std::string & get_service_id () const;
+    const std::string & get_service_id() const;
 
     //! Set the service identifier
-    void set_service_id (const std::string &);
+    void set_service_id(const std::string &);
 
     //! Return a reference to the non mutable service configuration
-    const datatools::properties & get_service_config () const;
+    const datatools::properties & get_service_config() const;
 
     //! Return a reference to the mutable service configuration
-    datatools::properties & grab_service_config ();
+    datatools::properties & grab_service_config();
 
     //! Set the service configuration
-    void set_service_config (const datatools::properties &);
+    void set_service_config(const datatools::properties &);
 
     //! Default constructor
     service_entry();
@@ -184,10 +185,8 @@ namespace datatools {
 
 #endif // DATATOOLS_SERVICE_TOOLS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

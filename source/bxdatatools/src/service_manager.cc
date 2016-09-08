@@ -96,13 +96,16 @@ bool service_manager::is_initialized() const {
 void service_manager::load(const std::string& name,
                            const std::string& id,
                            const datatools::properties& config) {
+  DT_THROW_IF(!allow_dynamic_services() && this->is_initialized(),
+              std::logic_error, "Service manager is already initialized and does not allow service '" << name << "' to be loaded dynamically !");
   this->load_service(name, id, config);
 }
 
 
 void service_manager::load(const datatools::multi_properties& config) {
   DT_LOG_TRACE(get_logging_priority(), "Entering...");
-  DT_THROW_IF(this->is_initialized(), std::logic_error, "Service manager is already initialized !");
+  DT_THROW_IF(!allow_dynamic_services() && this->is_initialized(),
+              std::logic_error, "Service manager is already initialized and does not allow dynamic load of services !");
   for (multi_properties::entries_ordered_col_type::const_iterator i = config.ordered_entries().begin();
        i != config.ordered_entries().end();
        ++i) {
@@ -159,6 +162,12 @@ void service_manager::initialize(const datatools::properties& config) {
     }
   }
 
+  if (!allow_dynamic_services_) {
+    if (config.has_key("allow_dynamic_services")) {
+      allow_dynamic_services_ = config.fetch_boolean("allow_dynamic_services");
+    }
+  }
+
   // services :
   {
     typedef std::vector<std::string> CFList;
@@ -194,6 +203,7 @@ void service_manager::initialize() {
 void service_manager::reset() {
   DT_LOG_TRACE(get_logging_priority(),"Entering...");
   DT_THROW_IF(!initialized_,std::logic_error,"Manager is not initialized !");
+  initialized_ = false;
   size_t count = services_.size();
   size_t initial_size = services_.size();
   while (services_.size() > 0) {
@@ -201,7 +211,6 @@ void service_manager::reset() {
          it != services_.end();
          ++it) {
       service_entry& entry = it->second;
-
       if (entry.can_be_dropped()) {
         DT_LOG_DEBUG(get_logging_priority(),"Removing service '" << entry.get_service_name ()  << "'...");
         this->reset_service(entry);
@@ -221,7 +230,6 @@ void service_manager::reset() {
   factory_register_.reset();
   force_initialization_at_load_ = false;
   preload_ = true;
-  initialized_ = false;
   DT_LOG_TRACE(get_logging_priority(),"Exiting.");
 }
 
@@ -237,11 +245,16 @@ service_manager::service_manager(const std::string& name,
   this->set_name(name);
   this->set_description(description);
 
-  set_logging_priority(datatools::logger::PRIO_WARNING);
+  set_logging_priority(datatools::logger::PRIO_FATAL);
   force_initialization_at_load_ = false;
+  allow_dynamic_services_ = false;
 
   if (flag & FORCE_INITIALIZATION_AT_LOAD) {
     force_initialization_at_load_ = true;
+  }
+
+  if (flag & ALLOW_DYNAMIC_SERVICES) {
+    allow_dynamic_services_ = true;
   }
 
   bool preload = true;
@@ -262,6 +275,39 @@ service_manager::~service_manager () {
 /****************
  *   SERVICES   *
  ****************/
+
+void service_manager::build_list_of_services(std::vector<std::string> & list_, uint32_t flags_)
+{
+  bool clear = true;
+  bool select_initialized = true;
+  bool select_uninitialized = true;
+  if (flags_ & FILTER_NO_CLEAR) {
+    clear = false;
+  }
+  if (flags_ & FILTER_NO_INITIALIZED) {
+    select_initialized = false;
+  }
+  if (flags_ & FILTER_NO_UNINITIALIZED) {
+    select_uninitialized = false;
+  }
+  if (clear) {
+    list_.clear();
+  }
+  for (service_dict_type::const_iterator iserv = services_.begin();
+       iserv != services_.end();
+       iserv++) {
+    const service_entry & serventry = iserv->second;
+    bool selected = true;
+    if (serventry.is_initialized()) {
+      if (!select_initialized) selected = false;
+    } else {
+      if (!select_uninitialized) selected = false;
+    }
+    if (selected) {
+      list_.push_back(iserv->first);
+    }
+  }
+}
 
 bool service_manager::has(const std::string& name) const {
   // DT_LOG_DEBUG(get_logging_priority(), "name='" << name << "'");
@@ -286,7 +332,10 @@ service_dict_type& service_manager::grab_services() {
   return services_;
 }
 
-bool service_manager::can_drop(const std::string& name) {
+bool service_manager::can_drop(const std::string& name) const {
+  if (!allow_dynamic_services() && this->is_initialized()) {
+    return false;
+  }
   service_dict_type::const_iterator found = services_.find(name);
   DT_THROW_IF (found == services_.end(),
                std::logic_error,
@@ -295,6 +344,8 @@ bool service_manager::can_drop(const std::string& name) {
 }
 
 void service_manager::drop(const std::string& name) {
+  DT_THROW_IF(!allow_dynamic_services() && this->is_initialized(),
+              std::logic_error, "Service manager is already initialized and does not allow service '" << name << "' to be dropped dynamically!");
   service_dict_type::iterator found = services_.find(name);
   DT_THROW_IF (found == services_.end(),
                std::logic_error,
@@ -364,6 +415,10 @@ void service_manager::unregister_service_type(const std::string& id) {
   factory_register_.unregistration(id);
 }
 
+bool service_manager::allow_dynamic_services() const
+{
+  return allow_dynamic_services_;
+}
 
 void service_manager::tree_dump(std::ostream& out,
                                 const std::string& title,
@@ -396,6 +451,11 @@ void service_manager::tree_dump(std::ostream& out,
   out << indent << i_tree_dumpable::tag
       << "Force initialization : "
       << force_initialization_at_load_
+      << std::endl;
+
+  out << indent << i_tree_dumpable::tag
+      << "Allow dynamic services : "
+      << allow_dynamic_services_
       << std::endl;
 
   out << indent << i_tree_dumpable::tag

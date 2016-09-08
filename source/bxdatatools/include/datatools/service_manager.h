@@ -60,10 +60,11 @@ namespace datatools {
   class service_manager : public datatools::i_tree_dumpable {
   public:
     enum flag_type {
-      BLANK              = 0,
-      NO_PRELOAD         = datatools::bit_mask::bit00,
-      FORCE_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01,
-      FACTORY_VERBOSE    = datatools::bit_mask::bit02
+      BLANK                        = 0,                          ///< No special configuration flags
+      NO_PRELOAD                   = datatools::bit_mask::bit00, ///< Do not preload service types from the system register
+      FORCE_INITIALIZATION_AT_LOAD = datatools::bit_mask::bit01, ///< Force initialization of service instance at load rather than at first use
+      FACTORY_VERBOSE              = datatools::bit_mask::bit02, ///< Activate factory verbosity (debug)
+      ALLOW_DYNAMIC_SERVICES       = datatools::bit_mask::bit03  ///< Allow dynamic services
     };
 
   public:
@@ -105,6 +106,9 @@ namespace datatools {
     //! Reset the manager
     void reset();
 
+    //! Check if dynamix services are allowed
+    bool allow_dynamic_services() const;
+
     //! Check if a service identifier/type is supported
     bool has_service_type(const std::string& id) const;
 
@@ -114,6 +118,17 @@ namespace datatools {
 
     //! Unregister a service factory
     void unregister_service_type(const std::string& id);
+
+    //! \brief Special flag to build the list of service names
+    enum service_filter_flag {
+       FILTER_NONE             = 0,                          ///< No special filter flags
+       FILTER_NO_INITIALIZED   = datatools::bit_mask::bit00, ///< Flag to skip initialized services
+       FILTER_NO_UNINITIALIZED = datatools::bit_mask::bit01, ///< Flag to skip uninitialized services
+       FILTER_NO_CLEAR         = datatools::bit_mask::bit02  ///< Flag to skip clear the list
+    };
+
+    //! Build the list of services names
+    void build_list_of_services(std::vector<std::string> & list_, uint32_t flags_ = 0);
 
     /**  @param name The name of the service to be checked
      *   @return true if the manager hosts the service requested by name
@@ -155,7 +170,7 @@ namespace datatools {
     const base_service & get_service(const std::string& name) const;
 
     //! Check if a service with given name can be dropped
-    bool can_drop(const std::string& name);
+    bool can_drop(const std::string& name) const;
 
     //! Drop a service given its name
     void drop(const std::string& name);
@@ -217,12 +232,13 @@ namespace datatools {
 
   private:
 
-    datatools::logger::priority _logging_priority; //!< Logging priority threshold
-    bool         initialized_; //!< Initialization flag
+    datatools::logger::priority _logging_priority = datatools::logger::PRIO_FATAL; //!< Logging priority threshold
+    bool         initialized_ = false; //!< Initialization flag
     std::string  name_; //!< Manager's name
     std::string  description_; //!< Manager's description
-    bool         preload_; //!< Factory preload flag
-    bool         force_initialization_at_load_; //!< Flag for triggering service  initialization at load (rather than first use)
+    bool         preload_ = false; //!< Factory preload flag
+    bool         force_initialization_at_load_ = false; //!< Flag for triggering service  initialization at load (rather than first use)
+    bool         allow_dynamic_services_ = false; //!< Flag to allow dynamix services
 
     // 2012-04-09 FM : support for datatools::factory system :
     base_service::factory_register_type  factory_register_;
