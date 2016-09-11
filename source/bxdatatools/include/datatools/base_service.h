@@ -90,6 +90,9 @@ namespace datatools {
     /// Initialize the service using only a list of properties without the needs of other services
     virtual int initialize_standalone(const datatools::properties& config);
 
+    /// Initialize the service using with access to a dictionary of other services
+    virtual int initialize_with_services(service_dict_type& service_dict);
+
     /// Initialize the service using a list of properties with access to a dictionary of other services
     virtual int initialize(const datatools::properties& config,
                            service_dict_type& service_dict) = 0;
@@ -103,14 +106,14 @@ namespace datatools {
     /// Return the service class
     virtual std::string service_class_id() const = 0;
 
-    /// Basic OCD support shared by all inherited modules
-    static void common_ocd(datatools::object_configuration_description & ocd_);
-
     /// Smart print
     virtual void tree_dump(std::ostream& out = std::clog,
                            const std::string & title = "",
                            const std::string & indent = "",
                            bool inherit = false) const;
+
+    /// Basic OCD support shared by all inherited modules
+    static void common_ocd(datatools::object_configuration_description & ocd_);
 
   protected:
 

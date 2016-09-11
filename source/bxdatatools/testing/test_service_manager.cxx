@@ -67,6 +67,9 @@ public:
   /// Reset the service
   virtual int reset();
 
+  /// Use the service
+  void use_me_after_initialization();
+
   /// Smart print
   virtual void tree_dump(std::ostream& out = std::clog,
                          const std::string & title = "",
@@ -75,7 +78,8 @@ public:
 
 private:
 
-  std::string label_;
+  bool initialized_ = false; //!< Initialization flag
+  std::string label_;        //!< Configuration parameter
 
   /* Macro to declare the registration interface of this service
    * in the database with a default creator :
@@ -90,6 +94,7 @@ const std::string test_service::DEFAULT_LABEL = "test_service::label";
 
 void test_service::set_label(const std::string & a_label)
 {
+  DT_THROW_IF(is_initialized(), std::logic_error, "Cannot change the label after initialization!");
   label_ = a_label;
   return;
 }
@@ -105,6 +110,7 @@ test_service::test_service()
                             "A test service",
                             "0.1")
 {
+  initialized_ = false;
   label_ = "";
   return;
 }
@@ -117,15 +123,19 @@ test_service::~test_service()
 
 bool test_service::is_initialized() const
 {
-  return ! label_.empty();
+  return initialized_;
 }
 
 // Initialization hook :
 int test_service::initialize(const datatools::properties& a_config,
                              datatools::service_dict_type& /*a_dictionnary*/)
 {
+  DT_THROW_IF(is_initialized(), std::logic_error, "Service is already initialized!");
+  common_initialize(a_config);
 
-  if (!is_initialized()) {
+  DT_LOG_DEBUG(get_logging_priority(), "Initializing service '" << get_name() << "'...");
+
+  if (label_.empty()) {
     // If the label is not setup yet, pickup from the configuration list:
     if (a_config.has_key("label")) {
       std::string label = a_config.fetch_string("label");
@@ -134,18 +144,31 @@ int test_service::initialize(const datatools::properties& a_config,
   }
 
   // Default label is none is setup :
-  if (label_.empty ()) {
+  if (label_.empty()) {
     label_ = DEFAULT_LABEL;
   }
 
+  DT_LOG_DEBUG(get_logging_priority(), "Service '" << get_name() << "' label is '" << label_ << "'");
+
+  initialized_ = true;
+  DT_LOG_DEBUG(get_logging_priority(), "Initialization of service '" << get_name() << "' is done.");
   return datatools::SUCCESS;
 }
 
 // Reset hook :
 int test_service::reset()
 {
+  DT_THROW_IF(!is_initialized(), std::logic_error, "Service is not initialized!");
+  initialized_ = false;
   label_ = "";
   return datatools::SUCCESS;
+}
+
+void test_service::use_me_after_initialization()
+{
+  DT_THROW_IF(!is_initialized(), std::logic_error, "Service is not initialized!");
+  DT_LOG_NOTICE(datatools::logger::PRIO_ALWAYS, "Using '" << get_name() << "'...");
+  return;
 }
 
 void test_service::tree_dump(std::ostream& a_out,
@@ -271,8 +294,8 @@ int main(int argc_, char ** argv_)
       }
       if (SM.has("test_2") && SM.is_a<test_service>("test_2")) {
         // Access to a service by mutable reference through its name and class :
-        test_service & TS =  SM.grab<test_service>("test_2");
-        TS.set_label("new");
+        test_service & TS = SM.grab<test_service>("test_2");
+        TS.use_me_after_initialization();
         std::clog << "Test service 'test_2' has new label '" << TS.get_label() << "'" << std::endl;
       }
 
@@ -282,6 +305,34 @@ int main(int argc_, char ** argv_)
         foo1_config.store("label", "foo1::label");
         SM.load("foo1", "test_service", foo1_config);
         SM.tree_dump(std::clog, "Service manager (loaded foo1) : ", "");
+      } catch (std::exception & dyn_serv_error) {
+        std::cerr << "error: " << "as expected: " << dyn_serv_error.what() << std::endl;
+      }
+
+      try {
+        std::clog << "Loading test service 'foo3' without initialization..." << std::endl;
+        {
+          test_service & foo3
+            = dynamic_cast<test_service&>(SM.load_no_init("foo3", "test_service"));
+          std::clog << "Manually configure service 'foo3'..." << std::endl;
+          foo3.set_label("foo3::label");
+          std::clog << "Pass configuration to service 'foo3'..." << std::endl;
+          datatools::properties foo3_config;
+          foo3_config.store("logging.priority", "debug");
+          // foo3_config.store("label", "bar");
+          SM.configure_no_init("foo3", foo3_config);
+        }
+        SM.tree_dump(std::clog, "Service manager (loaded/configured foo3) : ", "");
+        // {
+        //  std::clog << "Manually initialize service 'foo3'..." << std::endl;
+        //  foo3.initialize_with_services(SM.grab_services());
+        // }
+        {
+          std::clog << "Automatically grab and initialize service 'foo3'..." << std::endl;
+          test_service & foo3 = SM.grab<test_service>("foo3");
+          std::clog << "Use service 'foo3' after initialization..." << std::endl;
+          foo3.use_me_after_initialization();
+        }
       } catch (std::exception & dyn_serv_error) {
         std::cerr << "error: " << "as expected: " << dyn_serv_error.what() << std::endl;
       }

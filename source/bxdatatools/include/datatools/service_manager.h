@@ -55,8 +55,6 @@ namespace datatools {
   class multi_properties;
 
   //! \brief Service management class
-  //!
-  //!
   class service_manager : public datatools::i_tree_dumpable {
   public:
     enum flag_type {
@@ -94,6 +92,18 @@ namespace datatools {
     //! Set the debug flag
     void set_debug(bool debug = true);
 
+    //! Set the flag to allow_dynamic_services
+    void set_allow_dynamic_services(bool);
+
+    //! Check if dynamic services are allowed
+    bool is_allow_dynamic_services() const;
+
+    //! Set the flag to force initialization of services at load
+    void set_force_initialization_at_load(bool);
+
+    //! Check if the flag to force initialization of services at load is set
+    bool is_force_initialization_at_load() const;
+
     //! Check the initialization flag
     bool is_initialized() const;
 
@@ -105,9 +115,6 @@ namespace datatools {
 
     //! Reset the manager
     void reset();
-
-    //! Check if dynamix services are allowed
-    bool allow_dynamic_services() const;
 
     //! Check if a service identifier/type is supported
     bool has_service_type(const std::string& id) const;
@@ -180,6 +187,20 @@ namespace datatools {
               const std::string& id,
               const datatools::properties& config);
 
+    //! Load a service with given name and identifier and without initialization
+    //!
+    //! Initialization must be manually done later through the returned reference
+    //! This method is reserved for experts only because it uses the
+    //! interface of the service manager in a very special way.
+    base_service & load_no_init(const std::string& name,
+                                const std::string& id);
+
+    //! Configure an uninitialized service
+    //!
+    //! This method is reserved for experts only because it uses the
+    //! interface of the service manager in a very special way.
+    void configure_no_init(const std::string& name, const datatools::properties& config);
+
     //! Load a set of services from a multi-service configuration
     void load(const datatools::multi_properties& config);
 
@@ -196,9 +217,9 @@ namespace datatools {
 
     //! Smart print
     virtual void tree_dump(std::ostream& out         = std::clog,
-         const std::string& title  = "",
-         const std::string& indent = "",
-         bool inherit              = false) const;
+                           const std::string& title  = "",
+                           const std::string& indent = "",
+                           bool inherit              = false) const;
 
     //! Set the logging priority threshold
     void set_logging_priority(datatools::logger::priority);
@@ -213,6 +234,11 @@ namespace datatools {
                       const std::string& id,
                       const datatools::properties& config);
 
+    //! Load a service with or without initialization
+    void load_service(const std::string& name,
+                      const std::string& id,
+                      const datatools::properties* config_ptr);
+
     //! Preload the factory register from service factory system register
     void preload_global_dict();
 
@@ -224,6 +250,21 @@ namespace datatools {
 
     //! Reset a service from its entry
     void reset_service(service_entry& entry);
+
+    //! Destroy a service from its entry
+    void destroy_service(service_entry& entry);
+
+    //! Action done at service creation
+    void at_service_creation(const std::string & service_name_, const std::string & service_type_id_);
+
+    //! Action done at service initialization
+    void at_service_initialization(const std::string & service_name_);
+
+    //! Action done at service reset
+    void at_service_reset(const std::string & service_name_);
+
+    //! Action done at service drop
+    void at_service_drop(const std::string & service_name_);
 
   private:
 
@@ -243,6 +284,8 @@ namespace datatools {
     // 2012-04-09 FM : support for datatools::factory system :
     base_service::factory_register_type  factory_register_;
     service_dict_type                    services_; //!< Dictionary of services
+
+    friend class service_entry;
   };
 
 }  // end of namespace datatools
@@ -257,10 +300,8 @@ DOCD_CLASS_DECLARATION(datatools::service_manager)
 
 #endif // DATATOOLS_SERVICE_MANAGER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

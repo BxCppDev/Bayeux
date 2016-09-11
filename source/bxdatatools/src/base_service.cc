@@ -66,6 +66,12 @@ int base_service::initialize_simple() {
   return this->initialize_standalone(dummy);
 }
 
+int base_service::initialize_with_services(
+    service_dict_type& service_dict) {
+  datatools::properties dummy;
+  return this->initialize(dummy, service_dict);
+}
+
 int base_service::initialize_standalone(
     const datatools::properties& config) {
   service_dict_type dummy;
@@ -73,14 +79,7 @@ int base_service::initialize_standalone(
 }
 
 void base_service::common_initialize(const datatools::properties& config) {
-
   this->enriched_base::initialize(config, false);
-
-}
-
-void base_service::common_ocd(datatools::object_configuration_description& ocd)
-{
-  enriched_base::init_ocd(ocd);
 }
 
 void base_service::tree_dump(std::ostream& a_out,
@@ -93,6 +92,10 @@ void base_service::tree_dump(std::ostream& a_out,
   a_out << a_indent << i_tree_dumpable::inherit_tag(a_inherit)
       << "Service is initialized  : "
       << this->is_initialized() << std::endl;
+}
+
+void base_service::common_ocd(datatools::object_configuration_description& ocd) {
+  enriched_base::init_ocd(ocd);
 }
 
 }  // end of namespace datatools

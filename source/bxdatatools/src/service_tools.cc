@@ -37,7 +37,7 @@ namespace datatools {
     level = DEPENDENCY_STRICT;
   }
 
-  void  dependency_info_type::reset() {
+  void dependency_info_type::reset() {
     id.clear();
     version.clear();
     meta.clear();
@@ -52,56 +52,72 @@ namespace datatools {
   void service_entry::update_service_status(uint32_t bits)
   {
     service_status |= bits;
+    if (has_service_manager()) {
+      if (bits & STATUS_CREATED) {
+        manager->at_service_creation(service_name, service_id);
+      }
+      if (bits & STATUS_INITIALIZED) {
+        manager->at_service_initialization(service_name);
+      }
+    }
     return;
   }
 
   void service_entry::reset_service_status(uint32_t bits)
   {
     service_status ^= bits;
+    if (has_service_manager()) {
+      if (bits & STATUS_INITIALIZED) {
+        manager->at_service_reset(service_name);
+      }
+      if (bits & STATUS_CREATED) {
+        manager->at_service_drop(service_name);
+      }
+    }
     return;
   }
 
-  const datatools::properties & service_entry::get_service_config () const
+  const datatools::properties & service_entry::get_service_config() const
   {
     return service_config;
   }
 
-  datatools::properties & service_entry::grab_service_config ()
+  datatools::properties & service_entry::grab_service_config()
   {
-    DT_THROW_IF (service_status != STATUS_BLANK,
+    DT_THROW_IF(is_initialized(),
                  std::logic_error,
-                 "Cannot modify the configuration of service named '" << get_service_name () << "' !");
+                 "Cannot modify the configuration of service named '" << get_service_name() << "' !");
     return service_config;
   }
 
-  void service_entry::set_service_config (const datatools::properties & sc_)
+  void service_entry::set_service_config(const datatools::properties & sc_)
   {
-    DT_THROW_IF (service_status != STATUS_BLANK,
+    DT_THROW_IF(is_initialized(),
                  std::logic_error,
-                 "Cannot modify the configuration of service named '" << get_service_name () << "' !");
+                 "Cannot modify the configuration of the initialized service named '" << get_service_name() << "' !");
     service_config = sc_;
     return;
   }
 
-  const std::string & service_entry::get_service_id () const
+  const std::string & service_entry::get_service_id() const
   {
     return service_id;
   }
 
-  void service_entry::set_service_id (const std::string & sid_)
+  void service_entry::set_service_id(const std::string & sid_)
   {
-    DT_THROW_IF (sid_.empty(), std::logic_error,"Empty service ID is not allowed !");
+    DT_THROW_IF(sid_.empty(), std::logic_error,"Empty service ID is not allowed !");
     service_id = sid_;
   }
 
-  const std::string & service_entry::get_service_name () const
+  const std::string & service_entry::get_service_name() const
   {
     return service_name;
   }
 
-  void service_entry::set_service_name (const std::string & sn_)
+  void service_entry::set_service_name(const std::string & sn_)
   {
-    DT_THROW_IF (sn_.empty(),std::logic_error, "Empty service name is not allowed !");
+    DT_THROW_IF(sn_.empty(),std::logic_error, "Empty service name is not allowed !");
     service_name = sn_;
     return;
   }
@@ -118,7 +134,7 @@ namespace datatools {
 
   bool service_entry::has_service_manager() const
   {
-    return manager != 0;
+    return manager != nullptr;
   }
 
   void service_entry::set_service_manager(service_manager & smgr)
@@ -138,11 +154,26 @@ namespace datatools {
     return *manager;
   }
 
-
   service_entry::service_entry() {
     service_status = STATUS_BLANK;
-    service_handle.reset();
-    manager = 0;
+    manager = nullptr;
+  }
+
+  service_entry::service_entry(const std::string & name_, service_manager & mgr_) {
+    service_status = STATUS_BLANK;
+    manager = &mgr_;
+    set_service_name(name_);
+  }
+
+  service_entry::~service_entry() {
+    // if (manager != nullptr) {
+    //   manager->destroy_service(*this);
+    // }
+  }
+
+  bool service_entry::has_master(const std::string& name) const {
+    service_dependency_dict_type::const_iterator found = service_masters.find(name);
+    return (found != service_masters.end());
   }
 
   bool service_entry::has_slave(const std::string& name) const {
@@ -175,7 +206,27 @@ namespace datatools {
 
   bool service_entry::is_initialized() const
   {
-    return service_status & STATUS_INITIALIZED;
+    if (!is_created()) {
+      return false;
+    }
+    if (service_status & STATUS_INITIALIZED) {
+      if (!service_handle.get().is_initialized()) {
+        // update the status:
+        service_entry * mutable_this = const_cast<service_entry*>(this);
+        mutable_this->reset_service_status(service_entry::STATUS_INITIALIZED);
+        return false;
+      }
+      return true;
+    }
+    if (is_created()) {
+      if (service_handle.get().is_initialized()) {
+        // update the status:
+        service_entry * mutable_this = const_cast<service_entry*>(this);
+        mutable_this->update_service_status(service_entry::STATUS_INITIALIZED);
+        return true;
+      }
+    }
+    return false;
   }
 
   void service_entry::tree_dump(std::ostream& out,
@@ -196,6 +247,15 @@ namespace datatools {
         << "Service ID       : '"
         << service_id
         << "'" << std::endl;
+
+    out << indent << i_tree_dumpable::tag
+        << "Service configuration : ";
+    if (service_config.size()) {
+      out << '[' << service_config.size() << " propertie(s)]";
+    } else {
+      out << "<none>";
+    }
+    out << std::endl;
 
     out << indent << i_tree_dumpable::tag
         << "Service manager  : ";
@@ -300,7 +360,7 @@ namespace datatools {
     }
     out << std::endl;
 
-    out << indent << i_tree_dumpable::inherit_tag (a_inherit)
+    out << indent << i_tree_dumpable::inherit_tag(a_inherit)
         << "Can be dropped   : "
         << this->can_be_dropped() << std::endl;
  }

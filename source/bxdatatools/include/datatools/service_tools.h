@@ -1,9 +1,9 @@
 /// \file datatools/service_tools.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-07
- * Last modified : 2016-12-18
+ * Last modified : 2016-09-09
  *
- * Copyright (C) 2011-2018 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +94,15 @@ namespace datatools {
 
   public:
 
+    //! Default constructor
+    service_entry();
+
+    //! Constructor
+    service_entry(const std::string & name_, service_manager & mgr_);
+
+    //! Destructor
+    ~service_entry();
+
     //! Return the service name
     const std::string & get_service_name() const;
 
@@ -115,9 +124,6 @@ namespace datatools {
     //! Set the service configuration
     void set_service_config(const datatools::properties &);
 
-    //! Default constructor
-    service_entry();
-
     //! Check if service can be dropped
     bool can_be_dropped() const;
 
@@ -138,6 +144,9 @@ namespace datatools {
 
     //! Check if the service object has slave service with given name
     bool has_slave(const std::string& name) const;
+
+    //! Check if the service object has master service with given name
+    bool has_master(const std::string& name) const;
 
     //! Remove slave service with given name
     void remove_slave(const std::string& name);
@@ -168,12 +177,13 @@ namespace datatools {
 
   private:
     std::string           service_name;   //!< The name of the service
+    service_manager *     manager = nullptr; //!< The handle to the host service manager
     std::string           service_id;     //!< The ID (type) of the service
     datatools::properties service_config; //!< The configuration of the service
-    uint32_t              service_status; //!< The status of the service
+    uint32_t              service_status = STATUS_BLANK; //!< The status of the service
     service_handle_type   service_handle; //!< The handle for the allocated service
-    service_manager *     manager;        //!< The handle to the host service manager
   public:
+    // Not supported for now:
     service_dependency_dict_type service_masters; //!< The list of services the service depends on (by names)
     dependency_level_dict_type   service_slaves;  //!< The list of depending services (by names)
   };
