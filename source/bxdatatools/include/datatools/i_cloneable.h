@@ -78,7 +78,7 @@ namespace datatools {
      * A pure virtual member.
      * @return a pointer to a new instance of a cloneable class.
      */
-    virtual i_cloneable* clone(void /*something*/) const = 0;
+    virtual i_cloneable* clone(void) const = 0;
 
     /** The virtual destructor
      */
@@ -98,15 +98,22 @@ namespace datatools {
 //----------------------------------------------------------------------
 // i_cloneable macros
 
-#define DATATOOLS_CLONEABLE_DECLARATION(Cloneable)  \
-  public:                                           \
-  virtual Cloneable* clone(void) const;             \
+#define DATATOOLS_CLONEABLE_DECLARATION(Copyable)       \
+  public:                                               \
+  virtual ::datatools::i_cloneable* clone(void) const;  \
   /**/
 
-#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)  \
-  Copyable* Copyable::clone(void) const {             \
-    return datatools::i_cloneable::clone_it(*this);   \
-  }                                                   \
+#define DATATOOLS_CLONEABLE_INLINE(Copyable)                  \
+  public:                                                     \
+  virtual ::datatools::i_cloneable* clone(void) const {       \
+    return datatools::i_cloneable::clone_it<Copyable>(*this); \
+  }
+  /**/
+
+#define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)          \
+  ::datatools::i_cloneable* Copyable::clone(void) const {     \
+    return datatools::i_cloneable::clone_it<Copyable>(*this); \
+  }                                                           \
   /**/
 
 #define DATATOOLS_CLONEABLE_TO_SERIALIZABLE_CASTER_DECLARATION(Cloneable) \
@@ -119,10 +126,8 @@ namespace datatools {
 
 #endif // DATATOOLS_I_CLONEABLE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
