@@ -15,7 +15,8 @@
 namespace datatools {
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(event_id, archive, version)
+  template<class Archive>
+  void event_id::serialize(Archive & archive, const unsigned int version)
   {
     if (version > 0) {
       archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
@@ -28,10 +29,8 @@ namespace datatools {
 
 #endif // DATATOOLS_EVENT_ID_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
