@@ -121,6 +121,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_check.h
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/version_id.h
+  ${module_include_dir}/${module_name}/version_id.ipp
 
   ${module_include_dir}/${module_name}/configuration/i_occurrence.h
   ${module_include_dir}/${module_name}/configuration/single_occurrence.h
