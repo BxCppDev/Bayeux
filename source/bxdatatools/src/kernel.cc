@@ -161,13 +161,11 @@ namespace datatools {
 
   kernel::~kernel()
   {
-    // std::cerr << "DEVEL: kernel::~kernel: Entering." << std::endl;
     if (_initialized_) {
       this->shutdown();
     }
     DT_LOG_TRACE(_logging_, "Kernel is now destroyed.");
     _instance_ = nullptr;
-    // std::cerr << "DEVEL: kernel::~kernel: Exiting." << std::endl;
     return;
   }
 
@@ -197,7 +195,7 @@ namespace datatools {
     bool parse_inhibit_qt_gui  = true;
 #endif
 
-    // Inhibition of the parsinf for specific options:
+    // Inhibition of the parsing for specific options:
     if (flags_ & init_no_help)            parse_help = false;
     if (flags_ & init_no_splash)          parse_splash = false;
     if (flags_ & init_no_logging)         parse_logging = false;
