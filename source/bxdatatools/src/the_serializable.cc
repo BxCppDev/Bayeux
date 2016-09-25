@@ -14,6 +14,7 @@
 #include <datatools/multi_properties.ipp>
 #include <datatools/things.ipp>
 #include <datatools/event_id.ipp>
+#include <datatools/version_id.ipp>
 
 /** Macros to automatically instantiate Boost/Serialization-based
  * code associated to serializable classes.
@@ -35,7 +36,7 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::properties)
  * datatools::multi_properties        *
  **************************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::multi_properties)
-  BOOST_CLASS_EXPORT_IMPLEMENT(datatools::multi_properties)
+BOOST_CLASS_EXPORT_IMPLEMENT(datatools::multi_properties)
 
 /****************************
  * datatools::things        *
@@ -48,4 +49,7 @@ BOOST_CLASS_EXPORT_IMPLEMENT(datatools::things)
  *********************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::event_id)
 
-
+/*********************************
+ * datatools::version_id         *
+ *********************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::version_id)
