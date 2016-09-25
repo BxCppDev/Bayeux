@@ -13,6 +13,8 @@
 
 namespace datatools {
 
+  DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(version_id,"datatools::version_id")
+
   const int32_t version_id::INVALID_NUMBER    = -1;
   const char    version_id::INVALID_SYMBOL    = '?';
   const char    version_id::NUMERIC_SEPARATOR = '.';
