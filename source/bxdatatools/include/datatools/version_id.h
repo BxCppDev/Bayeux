@@ -11,6 +11,9 @@
 // - Boost:
 #include <boost/cstdlib.hpp>
 
+// Datatools:
+#include <datatools/i_serializable.h>
+
 namespace datatools {
   /*! \brief A class representing a version ID :
    *
@@ -60,7 +63,9 @@ namespace datatools {
    *  Version ID can be invalidated : format is then "?"
    *
    */
-  class version_id {
+  class version_id :
+    public datatools::i_serializable
+  {
   public:
     // TODO: could probably all be private or in an PImpl...
     static const int32_t INVALID_NUMBER;    // = -1;
@@ -177,16 +182,17 @@ namespace datatools {
     int32_t revision_;   //!< The revision number
     std::string tag_;    //!< An additional tag (string)
     int32_t tag_number_; //!< An additional tag number (numeric)
+
+    //! Support for Boost-based serialization
+    DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(version_id)
   };
 
 } // namespace datatools
 
 #endif // DATATOOLS_VERSION_ID_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
