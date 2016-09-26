@@ -14,6 +14,7 @@
 // - Bayeux/datatools:
 #include <datatools/ioutils.h>
 #include <datatools/utils.h>
+#include <datatools/units.h>
 #include <datatools/exception.h>
 #include <datatools/properties.h>
 
@@ -223,13 +224,15 @@ namespace mygsl {
     return this->eval(x_);
   }
 
-  void i_unary_function::write_ascii(std::ostream & out_,
-                                     double min_, double max_,
-                                     unsigned int nsamples_,
-                                     int x_precision_,
-                                     int fx_precision_,
-                                     uint32_t options_) const
+  void i_unary_function::write_ascii_with_units(std::ostream & out_,
+                                                double min_, double max_, unsigned int nsamples_,
+                                                double x_unit_,
+                                                double fx_unit_,
+                                                int x_precision_,
+                                                int fx_precision_,
+                                                uint32_t options_) const
   {
+    // std::cerr << "DEVEL: i_unary_function::write_ascii_with_units: fx_unit_ = " << fx_unit_ << std::endl;
     int xprecision = x_precision_;
     if (xprecision <= 0) xprecision = datatools::io::REAL_PRECISION;
     int fxprecision = fx_precision_;
@@ -257,12 +260,67 @@ namespace mygsl {
       if (std::isinf(y)) {
         if (options_ & wo_skip_inf) continue;
       }
-      datatools::io::write_real_number(out_, x, xprecision);
+      datatools::io::write_real_number(out_, x / x_unit_, xprecision);
       out_ << ' ';
-      datatools::io::write_real_number(out_, y, fxprecision);
+      // if (std::abs(y) > 1e-40) {
+      //   std::cerr << "DEVEL: i_unary_function::write_ascii_with_units: y      = " << y  << std::endl;
+      //   std::cerr << "DEVEL: i_unary_function::write_ascii_with_units: y(out) = " << y / fx_unit_  << std::endl;
+      // }
+      datatools::io::write_real_number(out_, y / fx_unit_, fxprecision);
       out_ << '\n';
     }
     if (options_ & wo_data_index) out_ << '\n' << '\n';
+    return;
+  }
+
+
+  void i_unary_function::write_ascii(std::ostream & out_,
+                                     double min_, double max_,
+                                     unsigned int nsamples_,
+                                     int x_precision_,
+                                     int fx_precision_,
+                                     uint32_t options_) const
+  {
+    write_ascii_with_units(out_, min_, max_, nsamples_,
+                           1.0, 1.0,
+                           x_precision_, fx_precision_,
+                           options_);
+    return;
+  }
+
+
+  void i_unary_function::write_ascii_file_with_units(const std::string & filename_,
+                                                     double min_, double max_, unsigned int nsamples_,
+                                                     const std::string & x_unit_label_,
+                                                     const std::string & fx_unit_label_,
+                                                     int x_precision_,
+                                                     int fx_precision_,
+                                                     uint32_t options_) const
+  {
+    std::string filename = filename_;
+    datatools::fetch_path_with_env(filename);
+    std::ofstream fout;
+    std::ios_base::openmode flags = std::ios_base::out;
+    if (options_ & wo_append) flags |= std::ios::app;
+    fout.open(filename.c_str(), flags);
+    DT_THROW_IF (! fout, std::runtime_error, "Cannot open output file '" << filename << "' !");
+    double x_unit = 1.0;
+    double fx_unit = 1.0;
+    if (!x_unit_label_.empty()) {
+      x_unit = datatools::units::get_unit(x_unit_label_);
+      fout << "#@x_unit=" << x_unit_label_ << std::endl;
+      // fout << "#@x_unit.value=" << x_unit << std::endl;
+    }
+    if (!fx_unit_label_.empty()) {
+      fx_unit = datatools::units::get_unit(fx_unit_label_);
+      fout << "#@fx_unit=" << fx_unit_label_ << std::endl;
+      // fout << "#@fx_unit.value=" << fx_unit << std::endl;
+    }
+    fout << "#@x_min=" << min_ / x_unit << ' ' << x_unit_label_ << std::endl;
+    fout << "#@x_max=" << max_ / x_unit << ' ' << x_unit_label_ << std::endl;
+    fout << "#@nsamples=" << nsamples_ << std::endl;
+    write_ascii_with_units(fout, min_, max_, nsamples_, x_unit, fx_unit, x_precision_, fx_precision_, options_);
+    fout.close();
     return;
   }
 
@@ -272,15 +330,17 @@ namespace mygsl {
                                           int fx_precision_,
                                           uint32_t options_) const
   {
-    std::string filename = filename_;
-    datatools::fetch_path_with_env(filename);
-    std::ofstream fout;
-    std::ios_base::openmode flags = std::ios_base::out;
-    if (options_ & wo_append) flags |= std::ios::app;
-    fout.open(filename.c_str(), flags);
-    DT_THROW_IF (! fout, std::runtime_error, "Cannot open output file '" << filename << "' !");
-    write_ascii(fout, min_, max_, nsamples_, x_precision_, fx_precision_, options_);
-    fout.close();
+    write_ascii_file_with_units(filename_,  min_, max_, nsamples_, "", "", x_precision_, fx_precision_, options_);
+
+    // std::string filename = filename_;
+    // datatools::fetch_path_with_env(filename);
+    // std::ofstream fout;
+    // std::ios_base::openmode flags = std::ios_base::out;
+    // if (options_ & wo_append) flags |= std::ios::app;
+    // fout.open(filename.c_str(), flags);
+    // DT_THROW_IF (! fout, std::runtime_error, "Cannot open output file '" << filename << "' !");
+    // write_ascii(fout, min_, max_, nsamples_, x_precision_, fx_precision_, options_);
+    // fout.close();
     return;
   }
 

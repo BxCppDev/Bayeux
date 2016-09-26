@@ -28,17 +28,6 @@ namespace datatools {
   class properties;
 }
 
-// Registration:
-
-#define MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(UNARY_FUNCTOR_CLASS) \
-  private:                                                              \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::mygsl::i_unary_function, UNARY_FUNCTOR_CLASS) \
-  /**/
-
-#define MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(UNARY_FUNCTOR_CLASS, UNARY_FUNCTOR_CLASS_ID) \
-  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::mygsl::i_unary_function, UNARY_FUNCTOR_CLASS, UNARY_FUNCTOR_CLASS_ID) \
-  /**/
-
 namespace mygsl {
 
   // Forward class declaration:
@@ -126,12 +115,30 @@ namespace mygsl {
                      int fx_precision_ = 16,
                      uint32_t options_ = wo_default) const;
 
+    //! Write the (x,y=f(x)) value pairs in an ASCII stream :
+    void write_ascii_with_units(std::ostream & fout_,
+                                double min_, double max_, unsigned int nsamples_,
+                                double x_unit_,
+                                double fx_unit_,
+                                int x_precision_ = 16,
+                                int fx_precision_ = 16,
+                                uint32_t options_ = wo_default) const;
+
     //! Write the (x,y=f(x)) value pairs in an ASCII file (typical Gnuplot input) :
     void write_ascii_file(const std::string & filename_,
                           double min_, double max_, unsigned int nsamples_,
                           int x_precision_ = 16,
                           int fx_precision_ = 16,
                           uint32_t options_ = wo_default) const;
+
+    //! Write the (x,y=f(x)) value pairs in an ASCII file (typical Gnuplot input) :
+    void write_ascii_file_with_units(const std::string & filename_,
+                                     double min_, double max_, unsigned int nsamples_,
+                                     const std::string & x_unit_label_,
+                                     const std::string & fx_unit_label_,
+                                     int x_precision_ = 16,
+                                     int fx_precision_ = 16,
+                                     uint32_t options_ = wo_default) const;
 
     //! A generic static function to feed the GSL gsl_function interface:
     static double g_function(double x_, void * functor_);
@@ -188,6 +195,20 @@ namespace mygsl {
 
   };
 
+} // namespace mygsl
+
+// Registration macros:
+#define MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(UnaryFunctorClass)   \
+  private:                                                              \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_INTERFACE(::mygsl::i_unary_function, UnaryFunctorClass ) \
+  /**/
+
+#define MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(UnaryFunctorClass,UnaryFunctorClassId) \
+  DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::mygsl::i_unary_function, UnaryFunctorClass , UnaryFunctorClassId ) \
+  /**/
+
+namespace mygsl {
+
   //! \brief The identity function
   class identity_function : public i_unary_function
   {
@@ -215,7 +236,8 @@ namespace mygsl {
 
 #endif // MYGSL_I_UNARY_FUNCTION_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
