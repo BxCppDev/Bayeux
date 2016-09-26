@@ -1,7 +1,7 @@
 // utils.cc
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2015-04-10
- * Last modified : 2015-04-10
+ * Last modified : 2016-09-27
  *
  * Copyright (C) 2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -31,14 +31,14 @@ namespace mctools {
 
     bool polarity_is_valid(polarity_type pol_)
     {
-      if (pol_ == POL_INVALID) return false;
+      if (pol_ == POLARITY_INVALID) return false;
       return true;
     }
 
     bool polarity_is_set(polarity_type pol_)
     {
-      if (pol_ == POL_POSITIVE) return true;
-      if (pol_ == POL_NEGATIVE) return true;
+      if (pol_ == POLARITY_POSITIVE) return true;
+      if (pol_ == POLARITY_NEGATIVE) return true;
       return false;
     }
 
