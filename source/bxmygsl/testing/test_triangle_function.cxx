@@ -12,12 +12,17 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/properties.h>
+#include <datatools/clhep_units.h>
 
 int main(/*int argc_ , char ** argv_*/)
 {
   try {
 
-    mygsl::triangle_function tf(0.2, 0.5, 0.8, 1.0);
+    double head_width = 0.2 * CLHEP::nanosecond;
+    double tail_width = 0.5 * CLHEP::nanosecond;
+    double center = 0.8 * CLHEP::nanosecond;
+    double amplitude = 1.2 * CLHEP::volt;
+    mygsl::triangle_function tf(head_width, tail_width, center, amplitude);
     tf.initialize_simple();
     tf.tree_dump(std::clog, "Triangle function: ");
 
