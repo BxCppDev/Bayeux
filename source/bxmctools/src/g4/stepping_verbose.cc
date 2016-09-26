@@ -41,22 +41,21 @@ namespace mctools {
       if (verboseLevel >= 1)
         {
           if (verboseLevel >= 4) VerboseTrack ();
-          if (verboseLevel >= 3)
-            {
-              std::clog << std::endl;
-              std::clog << "mctools::g4::stepping_verbose::StepInfo " << std::endl
-                        << std::setw ( 6) << "Step num"
-                        << std::setw ( 6) << "X"          << "    "
-                        << std::setw ( 6) << "Y"          << "    "
-                        << std::setw ( 6) << "Z"          << "    "
-                        << std::setw ( 9) << "KineE"      << " "
-                        << std::setw ( 9) << "dEStep"     << " "
-                        << std::setw (10) << "StepLeng"
-                        << std::setw (10) << "TrakLeng"  << "  "
-                        << std::setw (20) << "Volume"    << "  "
-                        << std::setw (10) << "Material"
-                        << std::setw (10) << "Process"   << std::endl;
-            }
+          if (verboseLevel >= 3) {
+            std::clog << std::endl;
+            std::clog << "mctools::g4::stepping_verbose::StepInfo " << std::endl
+                      << std::setw ( 6) << "Step num"
+                      << std::setw ( 6) << "X"          << "    "
+                      << std::setw ( 6) << "Y"          << "    "
+                      << std::setw ( 6) << "Z"          << "    "
+                      << std::setw ( 9) << "KineE"      << " "
+                      << std::setw ( 9) << "dEStep"     << " "
+                      << std::setw (10) << "StepLeng"
+                      << std::setw (10) << "TrakLeng"  << "  "
+                      << std::setw (20) << "Volume"    << "  "
+                      << std::setw (10) << "Material"
+                      << std::setw (10) << "Process"   << std::endl;
+          }
 
           std::clog << std::setw (5) << fTrack->GetCurrentStepNumber () << " "
                     << std::setw (6) << G4BestUnit (fTrack->GetPosition ().x (), "Length")
