@@ -1,7 +1,7 @@
 /// \file mctools/signal/triangle_signal_shape.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2015-04-10
- * Last modified : 2015-04-10
+ * Last modified : 2016-09-27
  *
  * Copyright (C) 2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -22,8 +22,8 @@
  *
  * Description:
  *
- *   A class representing a triangular signal shape with arbitrary polarity, rise and fall times
- *   and using external parameters for timing and amplitude
+ *   A class representing a triangular signal shape with arbitrary polarity, rise and fall times,
+ *   starting time and charge
  *
  * History:
  *
@@ -33,20 +33,12 @@
 #define MCTOOLS_SIGNAL_TRIANGLE_SIGNAL_SHAPE_H
 
 // Third party:
-// - Boost/mygsl:
-#include <boost/scoped_ptr.hpp>
 // - Bayeux/mygsl:
-#include <mygsl/i_unary_function_with_parameters.h>
+#include <mygsl/i_unary_function.h>
+#include <mygsl/triangle_function.h>
 
 //  This project:
 #include <mctools/signal/utils.h>
-
-namespace mygsl {
-
-  // Forward class declaration:
-  class triangle_function;
-
-}
 
 namespace mctools {
 
@@ -72,7 +64,7 @@ namespace mctools {
      * @endcode
      *
      */
-    class triangle_signal_shape : public mygsl::i_unary_function_with_parameters
+    class triangle_signal_shape : public mygsl::i_unary_function
     {
     public:
 
@@ -101,6 +93,9 @@ namespace mctools {
       //! Return the polarity of the signal
       polarity_type get_polarity() const;
 
+      //! Reset the polarity of the signal
+      void reset_polarity();
+
       //! Set the rise time of the signal
       void set_rise_time(double);
 
@@ -113,6 +108,18 @@ namespace mctools {
       //! Return the fall time of the signal
       double get_fall_time() const;
 
+      //! Set the charge of the signal
+      void set_q(double);
+
+      //! Return the charge of the signal
+      double get_q() const;
+
+      //! Set the starting time of the signal
+      void set_t0(double);
+
+      //! Return the starting time of the signal
+      double get_t0() const;
+
       //! The minimum bound of the non-zero domain (default is minus infinity)
       virtual double get_non_zero_domain_min() const;
 
@@ -122,10 +129,7 @@ namespace mctools {
       //! Return the amplitude of the signal
       double get_amplitude() const;
 
-      //! Return the start time of the signal
-      double get_t0() const;
-
-      //! Return the start time of the signal
+      //! Return the stop time of the signal
       double get_t1() const;
 
       //! Return the width of the signal
@@ -145,34 +149,29 @@ namespace mctools {
       //! Set default attributes
       void _set_defaults();
 
-      //! Update internal/working data when parameters change
-      void _at_parameters_change();
+      //! Automatically compute working data parameters
+      void _compute_parameters();
 
       //! Evaluation from parameters
-      double _eval_from_parameters(double x_) const;
+      double _eval(double x_) const;
 
     private:
 
       // Configuration:
-      polarity_type _polarity_;   //!< Polarity of the signal
+      polarity_type _polarity_ = POLARITY_UNKNOWN; //!< Polarity of the signal
       double        _rise_time_;  //!< Signal rise time (10%-90%)
       double        _fall_time_;  //!< Signal fall time (10%-90%)
-
-      // Extracted parameters:
-      int _iq_;     //!< Index of the 'q' charge parameter extracted from a store
-      int _it0_;    //!< Index of the 't0' start time parameter extracted from a store
-      double _q_;   //!< Current value of the charge parameter extracted from a store
-      double _t0_;  //!< Current value of the start time parameter extracted from a store
+      double        _q_;          //!< Charge
+      double        _t0_;         //!< Start time
 
       // Working data:
       double _tpeak_;     //! Peak time of the signal
       double _t1_;        //! Stop time of the signal
       double _amplitude_; //! Amplitude of the signal
-      boost::scoped_ptr<mygsl::triangle_function> _shape_; //!< Shape of the signal
+      mygsl::triangle_function _triangle_shape_; //!< Triangle shape of the signal
 
       //! Registration of the functor class
       MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(triangle_signal_shape)
-
 
     };
 
@@ -182,10 +181,8 @@ namespace mctools {
 
 #endif // MCTOOLS_SIGNAL_TRIANGLE_SIGNAL_SHAPE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

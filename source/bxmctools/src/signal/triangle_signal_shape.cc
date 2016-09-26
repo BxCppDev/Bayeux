@@ -1,7 +1,7 @@
 // triangle_signal_shape.cc
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2015-04-10
- * Last modified : 2015-04-10
+ * Last modified : 2016-09-27
  *
  * Copyright (C) 2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -43,12 +43,9 @@ namespace mctools {
 
     void triangle_signal_shape::_set_defaults()
     {
-      _polarity_ = POL_INVALID;
+      _polarity_ = POLARITY_INVALID;
       datatools::invalidate(_rise_time_);
       datatools::invalidate(_fall_time_);
-
-      _iq_  = mygsl::parameter_store::INVALID_INDEX;
-      _it0_ = mygsl::parameter_store::INVALID_INDEX;
       datatools::invalidate(_q_);
       datatools::invalidate(_t0_);
 
@@ -58,9 +55,15 @@ namespace mctools {
       return;
     }
 
+    void triangle_signal_shape::reset_polarity()
+    {
+      _polarity_ = POLARITY_INVALID;
+      return;
+    }
+
     void triangle_signal_shape::set_polarity(polarity_type p_)
     {
-      DT_THROW_IF(p_ == POL_INVALID, std::logic_error, "Invalid polarity!");
+      DT_THROW_IF(p_ == POLARITY_INVALID, std::logic_error, "Invalid polarity!");
       _polarity_ = p_;
       return;
     }
@@ -92,6 +95,24 @@ namespace mctools {
     double triangle_signal_shape::get_fall_time() const
     {
       return _fall_time_;
+    }
+
+    void triangle_signal_shape::set_q(double q_)
+    {
+      DT_THROW_IF(q_ <= 0.0, std::logic_error, "Invalid charge!");
+      _q_ = q_;
+      return;
+    }
+
+    double triangle_signal_shape::get_q() const
+    {
+      return _q_;
+    }
+
+    void triangle_signal_shape::set_t0(double t0_)
+    {
+      _t0_ = t0_;
+      return;
     }
 
     double triangle_signal_shape::get_t0() const
@@ -147,7 +168,6 @@ namespace mctools {
     {
       return datatools::is_valid(_t0_)
         && datatools::is_valid(_q_)
-        && datatools::is_valid(_amplitude_)
         && datatools::is_valid(_rise_time_)
         && datatools::is_valid(_fall_time_)
         && polarity_is_set(_polarity_);
@@ -155,36 +175,39 @@ namespace mctools {
 
     void triangle_signal_shape::reset()
     {
-      _shape_.reset();
+      _triangle_shape_.reset();
+      reset_polarity();
       _set_defaults();
-      this->i_unary_function_with_parameters::reset();
+      this->i_unary_function::reset();
       return;
     }
 
     bool triangle_signal_shape::is_initialized() const
     {
-      return this->i_unary_function_with_parameters::is_initialized()
-        && (_iq_ != mygsl::parameter_store::INVALID_INDEX)
-        && (_it0_ != mygsl::parameter_store::INVALID_INDEX)
+      return this->i_unary_function::is_initialized()
         && polarity_is_set(_polarity_)
+        && datatools::is_valid(_rise_time_)
         && datatools::is_valid(_fall_time_)
-        && datatools::is_valid(_rise_time_);
+        && datatools::is_valid(_q_)
+        && datatools::is_valid(_t0_);
     }
 
     void triangle_signal_shape::initialize(const datatools::properties & config_,
                                            mygsl::unary_function_dict_type & functors_)
     {
-      this->mygsl::i_unary_function_with_parameters::initialize(config_, functors_);
+      this->mygsl::i_unary_function::_base_initialize(config_, functors_);
 
-      double default_time_unit = CLHEP::nanosecond;
+      static const double default_time_unit = CLHEP::nanosecond;
+      static const double default_charge_unit = CLHEP::nanosecond * CLHEP::volt;
+      static const double default_voltage_unit = CLHEP::volt;
 
       if (!polarity_is_set(_polarity_)) {
         if (config_.has_key("polarity")) {
           const std::string & pol_label =  config_.fetch_string("polarity");
           if (pol_label == "+") {
-            set_polarity(POL_POSITIVE);
+            set_polarity(POLARITY_POSITIVE);
           } else if (pol_label == "-") {
-            set_polarity(POL_NEGATIVE);
+            set_polarity(POLARITY_NEGATIVE);
           } else {
             DT_THROW(std::logic_error, "Invalid polarity label '" << pol_label << "'!");
           }
@@ -211,48 +234,64 @@ namespace mctools {
         }
       }
 
+      if (!datatools::is_valid(_q_)) {
+        if (config_.has_key("q")) {
+          double q = config_.fetch_real("q");
+          if (!config_.has_explicit_unit("q")) {
+            q *= default_charge_unit;
+          }
+          set_q(q);
+        }
+      }
+
+      if (!datatools::is_valid(_t0_)) {
+        if (config_.has_key("t0")) {
+          double t0 = config_.fetch_real("t0");
+          if (!config_.has_explicit_unit("t0")) {
+            t0 *= default_time_unit;
+          }
+          set_t0(t0);
+        }
+      }
+
       DT_THROW_IF(!polarity_is_set(_polarity_), std::logic_error,
-                  "polarity is not set!")
+                  "polarity is not set!");
 
       DT_THROW_IF(!datatools::is_valid(_rise_time_), std::logic_error,
-                  "Rise time is not set!")
+                  "Rise time is not set!");
 
       DT_THROW_IF(!datatools::is_valid(_fall_time_), std::logic_error,
-                  "Fall time is not set!")
+                  "Fall time is not set!");
 
-      _shape_.reset(new mygsl::triangle_function);
-      _iq_ = get_parameter_index("q");
-      _it0_ = get_parameter_index("t0");
-      _at_parameters_change();
+      DT_THROW_IF(!datatools::is_valid(_q_), std::logic_error,
+                  "Charge is not set!");
+
+      DT_THROW_IF(!datatools::is_valid(_t0_), std::logic_error,
+                  "Start time is not set!");
+
+      _compute_parameters();
 
       return;
     }
 
-    void triangle_signal_shape::_at_parameters_change()
+    void triangle_signal_shape::_compute_parameters()
     {
-      // Parameters:
-      if (is_parameter_set(_iq_)) {
-        fetch_parameter(_iq_, _q_);
-      }
-      if (is_parameter_set(_it0_)) {
-        fetch_parameter(_it0_, _t0_);
-      }
       double tr = _rise_time_ / 0.8;
       double tf = _fall_time_ / 0.8;
       _tpeak_ = _t0_ + tr;
       _t1_ = _tpeak_ + tf;
       _amplitude_ = _q_ * 2 / (tr + tf);
-      _shape_->set_amplitude(_amplitude_);
-      _shape_->set_head_width(tr);
-      _shape_->set_tail_width(tf);
-      _shape_->set_center(_tpeak_);
+      _triangle_shape_.set_amplitude(_amplitude_);
+      _triangle_shape_.set_head_width(tr);
+      _triangle_shape_.set_tail_width(tf);
+      _triangle_shape_.set_center(_tpeak_);
       return;
     }
 
-    double triangle_signal_shape::_eval_from_parameters(double x_) const
+    double triangle_signal_shape::_eval(double x_) const
     {
-      double res = _shape_->eval(x_);
-      if (_polarity_ == POL_NEGATIVE) {
+      double res = _triangle_shape_.eval(x_);
+      if (_polarity_ == POLARITY_NEGATIVE) {
         res *= -1.0;
       }
       return res;
@@ -263,7 +302,7 @@ namespace mctools {
                                           const std::string & indent_,
                                           bool inherit_) const
     {
-      this->i_unary_function_with_parameters::tree_dump(out_, title_, indent_, true);
+      this->i_unary_function::tree_dump(out_, title_, indent_, true);
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Polarity: " << _polarity_ << std::endl;
@@ -273,12 +312,6 @@ namespace mctools {
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Fall time (10-90%): " << _fall_time_ / CLHEP::ns << " ns" << std::endl;
-
-      out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Index for q: " << _iq_ << std::endl;
-
-      out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Index for t0: " << _it0_ << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Current value q : " << _q_ / (CLHEP::volt * CLHEP::ns) << " nV.s" << std::endl;
@@ -296,39 +329,16 @@ namespace mctools {
            << "Current value t1 : " << _t1_ / (CLHEP::ns) << " ns" << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << "Shape : ";
-      if (_shape_) {
-        out_ << "[@" << _shape_.get()  << "]";
+           << "Triangle shape embedded function: ";
+      if (_triangle_shape_.is_initialized()) {
+        out_ << "<yes>";
       } else {
         out_ << "<none>";
       }
       out_ << std::endl;
 
-
-
       return;
     }
-
-    /*
-    double triangle_signal_shape::_eval(double t_) const
-    {
-      DT_THROW_IF(!is_valid(), std::logic_error, "Signal shape is not valid!");
-      double res = 0.0;
-      if ((t_ >= _t0_) && (t_ <= _t0_ + _duration_)) {
-        double t1 = _t0_ + 0.5 * _duration_;
-        if (t_ < t1) {
-          res = _amplitude_ * 2 * (t_ - _t0_) / _duration_;
-        } else {
-          double t2 = 2 * _t0_ + _duration_ - t_;
-          res = _amplitude_ * 2 * (t2 - _t0_) / _duration_;
-        }
-      }
-      if (_polarity_ == POL_NEGATIVE) {
-        res *= -1.0;
-      }
-      return res;
-    }
-    */
 
   } // end of namespace signal
 
