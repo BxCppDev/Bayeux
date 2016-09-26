@@ -76,6 +76,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/biasing/primary_event_bias.h
   ${module_include_dir}/${module_name}/signal/utils.h
   ${module_include_dir}/${module_name}/signal/base_signal.h
+  ${module_include_dir}/${module_name}/signal/base_signal.ipp
   ${module_include_dir}/${module_name}/signal/triangle_signal_shape.h
   )
 
@@ -119,6 +120,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_simulated_data_input_module_2.cxx
   ${module_test_dir}/test_biasing_primary_event_bias.cxx
   ${module_test_dir}/test_signal_triangle_signal_shape.cxx
+  ${module_test_dir}/test_signal_base_signal.cxx
   )
 
 #-----------------------------------------------------------------------
