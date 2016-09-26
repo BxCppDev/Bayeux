@@ -2016,6 +2016,9 @@ namespace datatools {
       registration(unit("kilovolt",  "kV",    "electric_potential",         CLHEP::kilovolt));
       registration(unit("megavolt",  "MV",    "electric_potential",         CLHEP::megavolt));
 
+      // Electric signal integral (nV.s) :
+      registration(unit("nV.s", "electric_signal_integral;[M][L2][T-2][I-1]", CLHEP::nanosecond * CLHEP::volt, true));
+
       // Electric resistance ( Ω = V/A = kg·m2·s−3·A−2) :
       registration(unit("ohm",       "O",   "electric_resistance;[M][L2][T-3][I-2]", CLHEP::ohm, true));
       registration(unit("kiloohm",  "kO;kOhm",   "electric_resistance", kilo() * CLHEP::ohm));
