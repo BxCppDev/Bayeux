@@ -40,13 +40,13 @@ namespace mygsl {
     //! Constructor
     triangle_function(double width_,
                       double center_ = 0.0,
-                      double amplitude_= std::numeric_limits<double>::quiet_NaN());
+                      double amplitude_ = std::numeric_limits<double>::quiet_NaN());
 
     //! Constructor
     triangle_function(double head_width_,
                       double tail_width_,
                       double center_ = 0.0,
-                      double amplitude_= std::numeric_limits<double>::quiet_NaN());
+                      double amplitude_ = std::numeric_limits<double>::quiet_NaN());
 
     //! Destructor
     virtual ~triangle_function();
@@ -85,7 +85,7 @@ namespace mygsl {
                            const std::string & indent_ = "",
                            bool inherit_ = false) const;
 
-  protected :
+  protected:
 
     //! Evaluation
     double _eval(double x_) const;
@@ -93,12 +93,12 @@ namespace mygsl {
     //! Set default attributes values
     void _set_defaults();
 
-   private:
+  private:
 
     double _center_;     //!< Center
     double _head_width_; //!< Width of the head part
     double _tail_width_; //!< Width of the tail part
-    double _amplitude_;  //!< Amplitude of the gate
+    double _amplitude_;  //!< Max amplitude
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(triangle_function)
@@ -109,7 +109,8 @@ namespace mygsl {
 
 #endif // MYGSL_TRIANGLE_FUNCTION_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
