@@ -702,7 +702,7 @@ namespace datatools {
         unit_symbol = get_unit_symbol();
         a_out << "='" << unit_symbol << "'";
         if (!units::find_unit(unit_symbol, unit_value, unit_label)) {
-          a_out << "<invalid unit symbol '" << unit_symbol << "'>";
+          a_out << " <invalid unit symbol>";
           unit_value = 1.0;
         }
       }
