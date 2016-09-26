@@ -1,7 +1,7 @@
 /// \file mctools/signal/base_signal.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2015-04-01
- * Last modified : 2015-04-01
+ * Last modified : 2016-09-27
  *
  * Copyright (C) 2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -33,15 +33,11 @@
 
 // Third party:
 // - Bayeux/datatools:
-#include <datatools/handle.h>
-
+#include <datatools/properties.h>
+// - Bayeux/mygsl:
+#include <mygsl/i_unary_function.h>
 // This project:
 #include <geomtools/base_hit.h>
-
-namespace mygsl {
-  // Forward class declaration:
-  class i_unary_function;
-}
 
 namespace mctools {
 
@@ -52,30 +48,135 @@ namespace mctools {
     {
     public:
 
+      static const std::string & shape_parameter_prefix();
+
       //! Default constructor
       base_signal();
 
       //! Destructor
       virtual ~base_signal();
 
-      //! Check if a shape is available
-      bool has_shape() const;
+      //! Check signal hit validity
+      virtual bool is_valid() const;
+
+      //! Check the shape type identifier
+      bool has_shape_type_id() const;
+
+      //! Return the shape type identifier
+      const std::string & get_shape_type_id() const;
+
+      //! Set the shape type identifier
+      void set_shape_type_id(const std::string &);
+
+      //! Set a boolean parameter for the shape object
+      void set_shape_boolean_parameter(const std::string & key_,
+                                       const bool value_,
+                                       const std::string & desc_ = "");
+
+      //! Set a vector of boolean parameters for the shape object
+      void set_shape_boolean_parameters(const std::string & key_,
+                                        const std::vector<bool> & values_,
+                                        const std::string & desc_ = "");
+
+      //! Set a integer parameter for the shape object
+      void set_shape_integer_parameter(const std::string & key_,
+                                       const int value_,
+                                       const std::string & desc_ = "");
+
+      //! Set a vector of integer parameters for the shape object
+      void set_shape_integer_parameters(const std::string & key_,
+                                        const std::vector<int> & values_,
+                                        const std::string & desc_ = "");
+
+      //! Set a string parameter for the shape object
+      void set_shape_string_parameter(const std::string & key_,
+                                      const std::string & value_,
+                                      const std::string & desc_ = "");
+
+      //! Set a vector of string parameters for the shape object
+      void set_shape_string_parameters(const std::string & key_,
+                                       const std::vector<std::string> & values_,
+                                       const std::string & desc_ = "");
+
+      //! Set a real parameter for the shape object
+      void set_shape_real_parameter(const std::string & key_,
+                                    const double value_,
+                                    const std::string & desc_ = "");
+
+      //! Set a vector of real parameters for the shape object
+      void set_shape_real_parameters(const std::string & key_,
+                                     const std::vector<double> & values_,
+                                     const std::string & desc_ = "");
+
+      //! Set a real parameter for the shape object (with explicit unit)
+      void set_shape_real_parameter_with_explicit_unit(const std::string & key_,
+                                                       const double value_,
+                                                       const std::string & unit_symbol_,
+                                                       const std::string & desc_ = "");
+
+      //! Set a vector of real parameters for the shape object (with explicit unit)
+      void set_shape_real_parameters_with_explicit_unit(const std::string & key_,
+                                                        const std::vector<double> & values_,
+                                                        const std::string & unit_symbol_,
+                                                        const std::string & desc_ = "");
+
+      //! Check if a shape is instantiated
+      bool is_shape_instantiated() const;
 
       //! Return a const reference to the embedded signal shape
       const mygsl::i_unary_function & get_shape() const;
+
+      //! Return a mutable reference to the embedded signal shape
+      mygsl::i_unary_function & grab_shape();
 
       //! Discard the embedded signal shape object
       void reset_shape();
 
       //! Set the embedded signal shape object
-      void set_shape(const datatools::handle<mygsl::i_unary_function> &);
+      void set_shape(mygsl::i_unary_function & shape_);
+
+      //! Set the embedded signal shape object
+      void set_shape(mygsl::i_unary_function * shape_ptr_);
+
+      //! Check initialization
+      bool is_initialized() const;
+
+      //! Initialize the signal
+      void initialize_simple();
+
+      //! Initialize the signal
+      void initialize(const datatools::properties & config_);
 
       //! Reset the signal
       void reset();
 
+      /// Smart print
+      virtual void tree_dump (std::ostream & out_         = std::clog,
+                              const std::string & title_  = "",
+                              const std::string & indent_ = "",
+                              bool inherit_               = false) const;
+
     protected:
 
-      datatools::handle<mygsl::i_unary_function> _shape_; //!< Handle to an embedded signal shape object
+      //! Factory method for the embedded shape object
+      mygsl::i_unary_function & _grab_shape();
+
+    private:
+
+      // Management:
+      bool _initialized_ = false; //!< Initialization flag
+
+      // Configuration:
+      std::string _shape_type_id_; //!< Shape type identifier
+
+      // Working data:
+      bool _owned_shape_ = false; //!< Ownership flag for the embedded signal shape object
+      mygsl::i_unary_function * _shape_ = nullptr; //!< Handle to an embedded signal shape object
+
+      DATATOOLS_SERIALIZATION_DECLARATION()
+
+      //! Reflection interface
+      DR_CLASS_RTTI()
 
     };
 
@@ -83,12 +184,13 @@ namespace mctools {
 
 } // end of namespace mctools
 
+// Activate reflection layer :
+DR_CLASS_INIT(::mctools::signal::base_signal)
+
 #endif // MCTOOLS_SIGNAL_BASE_SIGNAL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
