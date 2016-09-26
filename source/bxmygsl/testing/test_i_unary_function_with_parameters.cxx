@@ -57,7 +57,7 @@ private:
   int _iN_; //!< Index of the 'n' parameter extracted from a store
   double _a_;
   double _b_;
-  int _n_;
+  int    _n_;
 
 };
 
