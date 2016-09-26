@@ -113,7 +113,7 @@ namespace mygsl {
 
   private:
 
-    const parameter_store * _params_; //!< Address of an external store of parameters
+    const parameter_store * _params_ = nullptr; //!< Address of an external store of parameters
     std::map<std::string, datatools::basic_type> _requested_parameters_;
 
   };
@@ -122,7 +122,8 @@ namespace mygsl {
 
 #endif // MYGSL_I_UNARY_FUNCTION_WITH_PARAMETERS_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
