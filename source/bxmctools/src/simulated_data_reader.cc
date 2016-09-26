@@ -444,9 +444,7 @@ namespace mctools {
     if (_terminated_) {
       return 1;
     }
-
     std::string source_label = _filenames_[_file_index_];
-
     // Force loading of the current event record :
     bool load_it = LOAD_ERROR;
     // Load action :
