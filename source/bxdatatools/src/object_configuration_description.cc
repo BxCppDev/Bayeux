@@ -1158,7 +1158,9 @@ namespace datatools {
       out_ << indent_ << std::endl;
     }
 
-    out_ << indent_ << ".. contents:: :depth: 2" << std::endl;
+    // out_ << indent_ << ".. contents:: " << std::endl;
+    // out_ << indent_ << "   :depth: 2" << std::endl;
+    // out_ << indent_ << "   :backlinks: top" << std::endl;
     out_ << indent_ << std::endl;
 
     out_ << indent_ << std::endl;
