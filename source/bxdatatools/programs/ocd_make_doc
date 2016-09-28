@@ -523,6 +523,7 @@ EOF
 	    ${add_opts} \
 	    -o ${_class_build_dir}/${_class_html_filename} \
             ${_class_rst_filename} "
+    # echo "==== DEVEL: bxocd_make_doc: process_class: pandoc_cmd='${pandoc_cmd}'" >&2
     pandoc_cmd_script=`mktemp ${tmp_dir}/pandoc_cmd.XXXXXX`
     echo ${pandoc_cmd} > ${pandoc_cmd_script}
     if [ ${debug} -eq 1 ]; then
@@ -638,7 +639,7 @@ fi
 
 test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: add_opts='${add_opts}'" >&2
 
-pandoc_cmd="${pandoc_exe} --toc --standalone \
+pandoc_cmd="${pandoc_exe} --toc --toc-depth=2 --standalone \
             ${template_opts} \
 	    -w html \
 	    -r rst  \
