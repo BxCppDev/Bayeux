@@ -91,27 +91,34 @@ namespace datatools {
     static Copyable* clone_it(const Copyable& a_copyable) {
       return new Copyable(a_copyable);
     }
+    template<class CandidateType>
+    bool is_cloneable(const CandidateType & candidate_)
+    {
+      const datatools::i_cloneable * tc = dynamic_cast<const datatools::i_cloneable *>(&candidate_);
+      return tc != nullptr;
+    }
   };
+
 
 } // end of namespace datatools
 
 //----------------------------------------------------------------------
 // i_cloneable macros
 
-#define DATATOOLS_CLONEABLE_DECLARATION(Copyable)       \
-  public:                                               \
-  virtual ::datatools::i_cloneable* clone(void) const;  \
+#define DATATOOLS_CLONEABLE_DECLARATION(Copyable) \
+  public:                                         \
+  virtual Copyable* clone(void) const;            \
   /**/
 
 #define DATATOOLS_CLONEABLE_INLINE(Copyable)                  \
   public:                                                     \
-  virtual ::datatools::i_cloneable* clone(void) const {       \
+  virtual Copyable* clone(void) const {                       \
     return datatools::i_cloneable::clone_it<Copyable>(*this); \
   }
-  /**/
+/**/
 
 #define DATATOOLS_CLONEABLE_IMPLEMENTATION(Copyable)          \
-  ::datatools::i_cloneable* Copyable::clone(void) const {     \
+  Copyable* Copyable::clone(void) const {                     \
     return datatools::i_cloneable::clone_it<Copyable>(*this); \
   }                                                           \
   /**/
