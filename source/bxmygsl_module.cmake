@@ -57,6 +57,10 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/gate_function.h
   ${module_include_dir}/${module_name}/triangle_function.h
   ${module_include_dir}/${module_name}/gaussian_function.h
+  ${module_include_dir}/${module_name}/logistic_function.h
+  ${module_include_dir}/${module_name}/gompertz_function.h
+  ${module_include_dir}/${module_name}/rectangular_function.h
+  ${module_include_dir}/${module_name}/heaviside_function.h
   ${module_include_dir}/${module_name}/linear_combination_function.h
   ${module_include_dir}/${module_name}/plain_function_wrapper.h
   ${module_include_dir}/${module_name}/function_with_domain.h
@@ -112,6 +116,10 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/gate_function.cc
   ${module_source_dir}/gaussian_function.cc
   ${module_source_dir}/triangle_function.cc
+  ${module_source_dir}/logistic_function.cc
+  ${module_source_dir}/gompertz_function.cc
+  ${module_source_dir}/rectangular_function.cc
+  ${module_source_dir}/heaviside_function.cc
   ${module_source_dir}/linear_combination_function.cc
   ${module_source_dir}/linear_regression.cc
   ${module_source_dir}/linear_system_solver.cc
@@ -196,6 +204,10 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_tabulated_function.cxx
   ${module_test_dir}/test_von_neumann.cxx
   ${module_test_dir}/test_parameter_store.cxx
+  ${module_test_dir}/test_rectangular_function.cxx
+  ${module_test_dir}/test_logistic_function.cxx
+  ${module_test_dir}/test_gompertz_function.cxx
+  ${module_test_dir}/test_heaviside_function.cxx
   )
 
 # - Examples dir
