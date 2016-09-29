@@ -33,7 +33,7 @@
 
 namespace mygsl {
 
-  //! \brief Triangle function
+  //! \brief General asymmetric triangle function
   //!
   //!  @code
   //!     ^
