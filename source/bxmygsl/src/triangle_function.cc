@@ -23,12 +23,13 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/exception.h>
-#include <datatools/properties.h>
 
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(triangle_function,
                                              "mygsl::triangle_function")
+
+  DATATOOLS_CLONEABLE_IMPLEMENTATION(triangle_function)
 
   void triangle_function::_set_defaults()
   {
@@ -45,11 +46,13 @@ namespace mygsl {
     return;
   }
 
-  triangle_function::triangle_function(double width_, double center_, double amplitude_)
+  triangle_function::triangle_function(double full_width_,
+                                       double center_,
+                                       double amplitude_)
   {
     _set_defaults();
-    set_head_width(0.5 * width_);
-    set_tail_width(0.5 * width_);
+    set_head_width(0.5 * full_width_);
+    set_tail_width(0.5 * full_width_);
     set_center(center_);
     if (datatools::is_valid(amplitude_)) {
       set_amplitude(amplitude_);
@@ -86,8 +89,10 @@ namespace mygsl {
   }
 
   void triangle_function::initialize(const datatools::properties & config_,
-                                     unary_function_dict_type & /*functors_*/)
+                                     unary_function_dict_type & functors_)
   {
+    this->i_unary_function::_base_initialize(config_, functors_);
+
     // Parse configuration:
     if (!datatools::is_valid(_head_width_)) {
       if (config_.has_key("head_width")) {
@@ -118,22 +123,18 @@ namespace mygsl {
     }
 
     // Checks:
-
-    if (!datatools::is_valid(_center_)) {
-      set_center(0.0);
-    }
-
-    if (!datatools::is_valid(_head_width_)) {
-      set_head_width(0.5);
-    }
-
-    if (!datatools::is_valid(_tail_width_)) {
-      set_tail_width(0.5);
-    }
-
-    if (!datatools::is_valid(_amplitude_)) {
-      set_amplitude(2.0 / (_head_width_ + _tail_width_));
-    }
+    DT_THROW_IF(!datatools::is_valid(_center_),
+                std::logic_error,
+                "Invalid center!");
+    DT_THROW_IF(!datatools::is_valid(_head_width_),
+                std::logic_error,
+                "Invalid head width!");
+    DT_THROW_IF(!datatools::is_valid(_tail_width_),
+                std::logic_error,
+                "Invalid tail width!");
+    DT_THROW_IF(!datatools::is_valid(_amplitude_),
+                std::logic_error,
+                "Invalid amplitude!");
 
     return;
   }
@@ -141,6 +142,7 @@ namespace mygsl {
   void triangle_function::reset()
   {
     _set_defaults();
+    this->i_unary_function::_base_reset();
     return;
   }
 
@@ -154,6 +156,11 @@ namespace mygsl {
     return;
   }
 
+  double triangle_function::get_head_width() const
+  {
+    return _head_width_;
+  }
+
   void triangle_function::set_tail_width(double tail_width_)
   {
     DT_THROW_IF(!datatools::is_valid(tail_width_), std::logic_error,
@@ -164,12 +171,22 @@ namespace mygsl {
     return;
   }
 
+  double triangle_function::get_tail_width() const
+  {
+    return _tail_width_;
+  }
+
   void triangle_function::set_center(double center_)
   {
     DT_THROW_IF(!datatools::is_valid(center_), std::logic_error,
                 "Invalid center!");
     _center_ = center_;
     return;
+  }
+
+  double triangle_function::get_center() const
+  {
+    return _center_;
   }
 
   void triangle_function::set_amplitude(double amplitude_)
@@ -180,6 +197,11 @@ namespace mygsl {
                 "Invalid negative or null amplitude!");
     _amplitude_ = amplitude_;
     return;
+  }
+
+  double triangle_function::get_amplitude() const
+  {
+    return _amplitude_;
   }
 
   double triangle_function::_eval(double x_) const

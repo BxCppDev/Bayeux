@@ -24,25 +24,45 @@
 // Standard library:
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools :
+#include <datatools/i_cloneable.h>
+
 // This project:
 #include <mygsl/i_unary_function.h>
 
 namespace mygsl {
 
   //! \brief Triangle function
-  class triangle_function : public i_unary_function
+  //!
+  //!  @code
+  //!     ^
+  //!     :      head     tail
+  //!     :     width     width
+  //!     :       :<-->+<--->:      ^
+  //!     :       :   /:`    :      :
+  //!     :       :  / : `   :      :
+  //!     :       : /  :  `  :      : amplitude
+  //!     :       :/   :   ` :      :
+  //!  ---+-------+....+.....+------v-----> x
+  //!    O:          center
+  //!     :
+  //!  @endcode
+  class triangle_function
+    : public i_unary_function,
+      public datatools::i_cloneable
   {
   public:
 
     //! Default constructor
     triangle_function();
 
-    //! Constructor
-    triangle_function(double width_,
+    //! Constructor of a symmetric triangle function
+    triangle_function(double full_width_,
                       double center_ = 0.0,
                       double amplitude_ = std::numeric_limits<double>::quiet_NaN());
 
-    //! Constructor
+    //! Constructor of a generic asymmetric triangle function
     triangle_function(double head_width_,
                       double tail_width_,
                       double center_ = 0.0,
@@ -62,16 +82,28 @@ namespace mygsl {
     void reset();
 
     //! Set the head width
-    void set_head_width(double width_);
+    void set_head_width(double head_width_);
+
+    //! Return the head width
+    double get_head_width() const;
 
     //! Set the tail width
-    void set_tail_width(double width_);
+    void set_tail_width(double tail_width_);
+
+    //! Return the tail width
+    double get_tail_width() const;
 
     //! Set the center
     void set_center(double center_);
 
+    //! Return the center
+    double get_center() const;
+
     //! Set the amplitude
     void set_amplitude(double amplitude_);
+
+    //! Return the amplitude
+    double get_amplitude() const;
 
     //! The minimum bound of the non-zero domain (default is plus infinity)
     double get_non_zero_domain_min() const;
@@ -102,6 +134,9 @@ namespace mygsl {
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(triangle_function)
+
+    //! Cloneable interface
+    DATATOOLS_CLONEABLE_DECLARATION(triangle_function)
 
   };
 

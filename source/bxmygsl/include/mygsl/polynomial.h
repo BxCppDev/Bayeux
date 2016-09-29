@@ -9,6 +9,7 @@
 // Third party:
 // - Bayeux/datatools :
 #include <datatools/i_serializable.h>
+#include <datatools/i_cloneable.h>
 
 // This project:
 #include <mygsl/i_unary_function.h>
@@ -18,7 +19,9 @@ namespace mygsl {
   //! \brief A real polynomial of arbitrary degree
   class polynomial :
     public i_unary_function,
-    public datatools::i_serializable {
+    public datatools::i_serializable,
+    public datatools::i_cloneable
+  {
   public:
 
     //! Check validity of the polynomial
@@ -58,7 +61,7 @@ namespace mygsl {
 
     double get_coeff(unsigned int i_) const;
 
-    void set_coeff(unsigned int i_, double c_);
+    void set_coeff(unsigned int i_, double coeff_);
 
     void print(std::ostream& out_ = std::clog,
                int format_ = 0,
@@ -117,6 +120,12 @@ namespace mygsl {
     bool make_parabola(double x1_, double x2_, double x3_,
                        double y1_, double y2_, double y3_);
 
+    //! Smart printing
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
+
   protected :
 
     double _eval(double x_) const;
@@ -151,13 +160,19 @@ namespace mygsl {
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(polynomial)
 
+    //! Cloneable interface
+    DATATOOLS_CLONEABLE_DECLARATION(polynomial)
+
   };
 
-}
+  typedef polynomial polynomial_function;
+
+} // namespace mygsl
 
 #endif // MYGSL_POLYNOMIAL_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

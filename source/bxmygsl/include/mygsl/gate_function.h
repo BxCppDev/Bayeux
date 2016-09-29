@@ -24,13 +24,33 @@
 // Standard library:
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools :
+#include <datatools/i_cloneable.h>
+
 // This project:
 #include <mygsl/i_unary_function.h>
 
 namespace mygsl {
 
   //! \brief Gate function
-  class gate_function : public i_unary_function
+  //!
+  //!  @code
+  //!     ^
+  //!     :
+  //!     :           width
+  //!     :       <- - - - - ->
+  //!     :       +-----------+   ^
+  //!     :       |           |   :
+  //!     :       |           |   : amplitude
+  //!     :       |           |   :
+  //!  ---+-------+.....+.....+------------> x
+  //!    O:            center
+  //!     :
+  //!  @endcode
+  class gate_function
+    : public i_unary_function,
+      public datatools::i_cloneable
   {
   public:
 
@@ -53,16 +73,25 @@ namespace mygsl {
                             unary_function_dict_type & functors_);
 
     //! Reset the function
-    void reset();
+    virtual void reset();
 
     //! Set the width
     void set_width(double width_);
 
+    //! Return the width
+    double get_width() const;
+
     //! Set the center
     void set_center(double center_);
 
+    //! Return the enter
+    double get_center() const;
+
     //! Set the amplitude
     void set_amplitude(double amplitude_);
+
+    //! Return the mplitude
+    double get_amplitude() const;
 
     //! The minimum bound of the non-zero domain (default is plus infinity)
     double get_non_zero_domain_min() const;
@@ -92,13 +121,18 @@ namespace mygsl {
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(gate_function)
+
+    //! Cloneable interface
+    DATATOOLS_CLONEABLE_DECLARATION(gate_function)
+
   };
 
 } // end of namespace mygsl
 
 #endif // MYGSL_GATE_FUNCTION_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

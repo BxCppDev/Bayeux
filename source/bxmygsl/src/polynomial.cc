@@ -21,12 +21,12 @@
 
 namespace mygsl {
 
-  // using namespace std;
-
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION(polynomial, "mygsl::polynomial")
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(polynomial,
                                              "mygsl::polynomial")
+
+  DATATOOLS_CLONEABLE_IMPLEMENTATION(polynomial)
 
   bool polynomial::is_valid() const {
     return _c_.size() > 0;
@@ -108,18 +108,65 @@ namespace mygsl {
   }
 
   void polynomial::initialize(const datatools::properties & config_,
-                              unary_function_dict_type & /* functors_ */)
+                              unary_function_dict_type & functors_)
   {
-    // DT_THROW_IF(is_initialized(), std::logic_error,
-    //             "Functor is already initialized!");
+    this->i_unary_function::_base_initialize(config_, functors_);
 
-    // this->i_unary_function::_base_initialize(config_, functors_);
-
+    // Build from an array of coefficients:
     if (_c_.size() == 0) {
       if (config_.has_key("coefficients")) {
         std::vector<double> coeffs;
         config_.fetch("coefficients", coeffs);
+        DT_THROW_IF(coeffs.size() == 0, std::logic_error,
+                    "Empty array of coefficients!");
         set_coefficients(coeffs);
+      }
+    }
+
+    // Build from individual coefficients given by power:
+    if (_c_.size() == 0) {
+      int max_power = -1;
+      if (config_.has_key("max_power")) {
+        max_power = config_.fetch_integer("max_power");
+        DT_THROW_IF(max_power < 0, std::range_error, "Invalid max power !");
+        for (int ipow = 0; ipow <= max_power; ipow++) {
+          double coeff = 0.0;
+          std::ostringstream coeff_key;
+          coeff_key << "coefficient_" << ipow;
+          if (config_.has_key(coeff_key.str())) {
+            coeff = config_.fetch_real(coeff_key.str());
+            DT_THROW_IF(datatools::is_valid(coeff),
+                        std::logic_error,
+                        "Invalid coefficient at power [" << ipow << "]!");
+          }
+          set_coeff((unsigned int) ipow, coeff);
+        }
+      }
+    }
+
+    // Build from 3 points which define a parabola:
+    if (_c_.size() == 0) {
+      datatools::properties parabola_config;
+      config_.export_and_rename_starting_with(parabola_config, "parabola.", "");
+      if (parabola_config.size()) {
+        double x[3];
+        double y[3];
+        for (int i = 0; i < 3; i++) {
+          x[i] = datatools::invalid_real();
+          y[i] = datatools::invalid_real();
+          std::ostringstream x_key;
+          x_key << "x" << i;
+          std::ostringstream y_key;
+          y_key << "y" << i;
+          if (parabola_config.has_key(x_key.str())) {
+            x[i] = parabola_config.fetch_real(x_key.str());
+          }
+          if (parabola_config.has_key(y_key.str())) {
+            y[i] = parabola_config.fetch_real(y_key.str());
+          }
+        }
+        bool mkp = make_parabola(x[0], x[1], x[2], y[0], y[1], y[2]);
+        DT_THROW_IF(!mkp, std::logic_error, "Cannot build a parabola polynomial!");
       }
     }
 
@@ -131,11 +178,8 @@ namespace mygsl {
 
   void polynomial::reset()
   {
-    // DT_THROW_IF(!is_initialized(), std::logic_error,
-    //             "Functor is not initialized!");
     _c_.clear();
-
-    // this->i_unary_function::_base_reset(config_, functors_);
+    this->i_unary_function::_base_reset();
     return;
   }
 
@@ -146,6 +190,31 @@ namespace mygsl {
       first_arg = &(_c_[0]);
     }
     return gsl_poly_eval(first_arg, sz, x_);
+  }
+
+  void polynomial::tree_dump(std::ostream & out_,
+                             const std::string & title_,
+                             const std::string & indent_,
+                             bool inherit_) const
+  {
+    this->i_unary_function::tree_dump(out_, title_, indent_, true);
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Degree :  [" << get_degree() << "]" << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+         << "Coefficients :  [" << get_ncoeffs() << "]" << std::endl;
+    for (std::size_t ipow = 0; ipow < _c_.size(); ipow++) {
+      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_);
+      if (ipow == _c_.size() - 1) {
+        out_ << i_tree_dumpable::last_tag;
+      } else {
+        out_ << i_tree_dumpable::tag;
+      }
+      out_ << "Power [" << ipow << "] = " << _c_[ipow] << std::endl;
+    }
+
+    return;
   }
 
   void polynomial::print(std::ostream & out_, int format_, bool eol_) const {

@@ -18,15 +18,11 @@
 #include <datatools/handle.h>
 #include <datatools/factory_macros.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/properties.h>
 
 // This project:
 #include <mygsl/ioutils.h>
 #include <mygsl/interval.h>
-
-namespace datatools {
-  // Forward class declaration:
-  class properties;
-}
 
 namespace mygsl {
 
@@ -229,6 +225,9 @@ namespace mygsl {
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(identity_function)
+
+    //! Cloneable interface
+    DATATOOLS_CLONEABLE_DECLARATION(identity_function)
 
   };
 

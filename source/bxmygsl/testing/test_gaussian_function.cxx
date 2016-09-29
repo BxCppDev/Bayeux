@@ -17,7 +17,7 @@ int main(/*int argc_ , char ** argv_*/)
 {
   try {
 
-    mygsl::gaussian_function gf(0.6, 2.3);
+    mygsl::gaussian_function gf(0.6, 2.3, 1.5);
     gf.initialize_simple();
     gf.tree_dump(std::clog, "Gaussian function: ");
 
@@ -30,8 +30,7 @@ int main(/*int argc_ , char ** argv_*/)
       std::cout << std::endl << std::endl;
     }
 
-  }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     std::cerr << "ERROR: " << x.what () << std::endl;
     return (EXIT_FAILURE);
   }

@@ -25,39 +25,41 @@ namespace mygsl {
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(tabulated_function,
                                              "mygsl::tabulated_function")
 
+  DATATOOLS_CLONEABLE_IMPLEMENTATION(tabulated_function)
+
   const std::string & tabulated_function::linear_interp_name()
   {
-    static std::string name = "linear";
+    static const std::string name("linear");
     return name;
   }
 
   const std::string & tabulated_function::polynomial_interp_name()
   {
-    static std::string name = "polynomial";
+    static const std::string name("polynomial");
     return name;
   }
 
   const std::string & tabulated_function::cspline_interp_name()
   {
-    static std::string name = "cspline";
+    static const std::string name("cspline");
     return name;
   }
 
   const std::string & tabulated_function::cspline_periodic_interp_name()
   {
-    static std::string name = "cspline_periodic";
+    static const std::string name("cspline_periodic");
     return name;
   }
 
   const std::string & tabulated_function::akima_interp_name()
   {
-    static std::string name = "akima";
+    static const std::string name("akima");
     return name;
   }
 
   const std::string & tabulated_function::akima_periodic_interp_name()
   {
-    static std::string name = "akima_periodic";
+    static const std::string name("akima_periodic");
     return name;
   }
 
@@ -364,8 +366,9 @@ namespace mygsl {
   }
 
   void tabulated_function::initialize(const datatools::properties & config_,
-                                      unary_function_dict_type & /* functors_ */)
+                                      unary_function_dict_type & functors_)
   {
+    this->i_unary_function::_base_initialize(config_, functors_);
     double x_unit = 1.0;
     double f_unit = 1.0;
 
@@ -437,6 +440,7 @@ namespace mygsl {
     unlock_table();
     pImpl->_points_.clear();
     pImpl->_interpolator_name_ = default_interp_name();
+    this->i_unary_function::_base_reset();
   }
 
   tabulated_function::~tabulated_function() {
@@ -547,6 +551,33 @@ namespace mygsl {
     if (!footer_comment_.empty()) {
       out_ << "# " << footer_comment_ << std::endl;
     }
+  }
+
+  void tabulated_function::tree_dump(std::ostream & out_,
+                                    const std::string & title_,
+                                    const std::string & indent_,
+                                    bool inherit_) const
+  {
+    this->i_unary_function::tree_dump(out_, title_, indent_, true);
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Number of points : [" << size() << "]" << std::endl;
+
+    if (size()) {
+      out_ << indent_ << i_tree_dumpable::tag
+           << "X min : " << x_min() << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "X max : " << x_max() << std::endl;
+    }
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Interpolator : '" << interpolator_name() << "'" << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+         << "Locked table : " << is_table_locked() << std::endl;
+
+    return;
   }
 
 } // end of namespace mygsl

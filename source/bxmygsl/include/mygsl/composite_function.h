@@ -35,7 +35,8 @@ namespace mygsl {
    *
    *
    */
-  class composite_function : public i_unary_function
+  class composite_function
+    : public i_unary_function
   {
   public:
 
@@ -97,13 +98,15 @@ namespace mygsl {
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(composite_function)
+
   };
 
 } // end of namespace mygsl
 
 #endif // MYGSL_COMPOSITE_FUNCTION_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

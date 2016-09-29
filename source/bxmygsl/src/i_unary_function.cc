@@ -23,7 +23,7 @@ namespace mygsl {
   DATATOOLS_FACTORY_SYSTEM_REGISTER_IMPLEMENTATION(i_unary_function,
                                                    "mygsl::i_unary_function/__system__")
 
-  const double i_unary_function::DEFAULT_EPSILON = 1.0e-7;
+  const double i_unary_function::DEFAULT_EPSILON = std::numeric_limits<double>::epsilon();
   const double i_unary_function::AUTO_EPSILON    = 0.0;
 
   void i_unary_function::_set_defaults()
@@ -34,8 +34,8 @@ namespace mygsl {
 
   void i_unary_function::set_epsilon(double eps_)
   {
-    if (eps_ <= 0.0) {
-      _epsilon_ = 0.0;
+    if (eps_ <= AUTO_EPSILON) {
+      _epsilon_ = AUTO_EPSILON;
     } else {
       _epsilon_ = eps_;
     }
@@ -66,6 +66,9 @@ namespace mygsl {
 
   double i_unary_function::get_epsilon() const
   {
+    if (!datatools::is_valid(_epsilon_)) {
+      const_cast<i_unary_function *>(this)->_epsilon_ = AUTO_EPSILON;
+    }
     if (_epsilon_ == AUTO_EPSILON) {
       const_cast<i_unary_function *>(this)->_compute_auto_epsilon();
     }
@@ -131,7 +134,6 @@ namespace mygsl {
                                     unary_function_dict_type & functors_)
   {
     _base_initialize(config_, functors_);
-
     return;
   }
 
@@ -378,7 +380,7 @@ namespace mygsl {
     }
 
     out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-         << "Initialized : " << is_initialized() << std::endl;
+         << "Initialized : " << (is_initialized()  ? "<yes>" : "<no>") << std::endl;
 
     return;
   }
@@ -392,6 +394,8 @@ namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(identity_function,
                                              "mygsl::identity_function")
+
+  DATATOOLS_CLONEABLE_IMPLEMENTATION(identity_function)
 
   identity_function::identity_function()
   {
@@ -409,8 +413,3 @@ namespace mygsl {
   }
 
 } // namespace mygsl
-
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */

@@ -30,6 +30,8 @@ namespace mygsl {
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(gate_function,
                                              "mygsl::gate_function")
 
+  DATATOOLS_CLONEABLE_IMPLEMENTATION(gate_function)
+
   void gate_function::_set_defaults()
   {
     datatools::invalidate(_center_);
@@ -68,8 +70,10 @@ namespace mygsl {
   }
 
   void gate_function::initialize(const datatools::properties & config_,
-                                 unary_function_dict_type & /*functors_*/)
+                                 unary_function_dict_type & functors_)
   {
+    this->i_unary_function::_base_initialize(config_, functors_);
+
     // Parse configuration:
     if (!datatools::is_valid(_width_)) {
       if (config_.has_key("width")) {
@@ -93,18 +97,15 @@ namespace mygsl {
     }
 
     // Checks:
-
-    if (!datatools::is_valid(_center_)) {
-      set_center(0.0);
-    }
-
-    if (!datatools::is_valid(_width_)) {
-      set_width(1.0);
-    }
-
-    if (!datatools::is_valid(_amplitude_)) {
-      set_amplitude(1.0 / _width_);
-    }
+    DT_THROW_IF(!datatools::is_valid(_center_),
+                std::logic_error,
+                "Invalid center!");
+    DT_THROW_IF(!datatools::is_valid(_width_),
+                std::logic_error,
+                "Invalid width!");
+    DT_THROW_IF(!datatools::is_valid(_amplitude_),
+                std::logic_error,
+                "Invalid amplitude!");
 
     return;
   }
@@ -112,6 +113,7 @@ namespace mygsl {
   void gate_function::reset()
   {
     _set_defaults();
+    this->i_unary_function::_base_reset();
     return;
   }
 
@@ -125,12 +127,22 @@ namespace mygsl {
     return;
   }
 
+  double gate_function::get_width() const
+  {
+    return _width_;
+  }
+
   void gate_function::set_center(double center_)
   {
     DT_THROW_IF(!datatools::is_valid(center_), std::logic_error,
                 "Invalid center!");
     _center_ = center_;
     return;
+  }
+
+  double gate_function::get_center() const
+  {
+    return _center_;
   }
 
   void gate_function::set_amplitude(double amplitude_)
@@ -143,13 +155,18 @@ namespace mygsl {
     return;
   }
 
-  double gate_function::_eval(double /*x_*/) const
+  double gate_function::get_amplitude() const
+  {
+    return _amplitude_;
+  }
+
+  double gate_function::_eval(double x_) const
   {
     double res = _amplitude_;
-    if (res < _center_ - 0.5 * _width_) {
+    if (x_ < _center_ - 0.5 * _width_) {
       return 0.0;
     }
-    if (res > _center_ + 0.5 * _width_) {
+    if (x_ > _center_ + 0.5 * _width_) {
       return 0.0;
     }
     return _amplitude_;

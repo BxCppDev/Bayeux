@@ -24,13 +24,19 @@
 // Standard library:
 #include <limits>
 
+// Third party:
+// - Bayeux/datatools :
+#include <datatools/i_cloneable.h>
+
 // This project:
 #include <mygsl/i_unary_function.h>
 
 namespace mygsl {
 
   //! \brief Gaussian function
-  class gaussian_function : public i_unary_function
+  class gaussian_function
+    : public i_unary_function,
+      public datatools::i_cloneable
   {
   public:
 
@@ -39,8 +45,8 @@ namespace mygsl {
 
     //! Constructor
     gaussian_function(double sigma_,
-                      double mu_ = 0.0,
-                      double amplitude_= std::numeric_limits<double>::quiet_NaN());
+                      double mu_,
+                      double amplitude_);
 
     //! Destructor
     virtual ~gaussian_function();
@@ -58,11 +64,20 @@ namespace mygsl {
     //! Set the sigma
     void set_sigma(double sigma_);
 
+    //! Return the sigma
+    double get_sigma() const;
+
     //! Set the center
     void set_mu(double mu_);
 
+    //! Return the mu
+    double get_mu() const;
+
     //! Set the amplitude
     void set_amplitude(double amplitude_);
+
+    //! Return the amplitude
+    double get_amplitude() const;
 
     //! Smart printing
     virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -87,13 +102,17 @@ namespace mygsl {
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(gaussian_function)
 
+    //! Cloneable interface
+    DATATOOLS_CLONEABLE_DECLARATION(gaussian_function)
+
   };
 
 } // end of namespace mygsl
 
 #endif // MYGSL_GAUSSIAN_FUNCTION_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

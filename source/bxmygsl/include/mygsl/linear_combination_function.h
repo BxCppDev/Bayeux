@@ -38,9 +38,10 @@ namespace mygsl {
   {
   public:
 
+    //! \brief Record describing one term if the linear combination
     struct term_type {
-      double weight; //!< Weight
-      const i_unary_function * functor; //!< Weighted functor
+      double weight = 0.0; //!< Weight
+      const i_unary_function * functor = nullptr; //!< Weighted functor
     };
 
     //! Default constructor

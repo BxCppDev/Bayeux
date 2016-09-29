@@ -66,9 +66,11 @@ namespace mygsl {
     return _terms_.size() > 0;
   }
 
-  void linear_combination_function::initialize(const datatools::properties & /*config_*/,
-                                               unary_function_dict_type & /*functors_*/)
+  void linear_combination_function::initialize(const datatools::properties & config_,
+                                               unary_function_dict_type & functors_)
   {
+    this->i_unary_function::_base_initialize(config_, functors_);
+
     // Parse configuration:
     if (_terms_.size() == 0) {
       /*
@@ -104,6 +106,7 @@ namespace mygsl {
   {
     _terms_.clear();
     _set_defaults();
+    this->i_unary_function::_base_reset();
     return;
   }
 
@@ -230,6 +233,7 @@ namespace mygsl {
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Explicit domain of definition : " << _explicit_domain_of_definition_ << std::endl;
+
     out_ << indent_ << i_tree_dumpable::tag
          << "Non-zero domain min : " << _non_zero_domain_min_ << std::endl;
 

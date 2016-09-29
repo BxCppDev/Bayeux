@@ -25,12 +25,13 @@
 #include <gsl/gsl_randist.h>
 // - Bayeux/datatools:
 #include <datatools/exception.h>
-#include <datatools/properties.h>
 
 namespace mygsl {
 
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(gaussian_function,
                                              "mygsl::gaussian_function")
+
+  DATATOOLS_CLONEABLE_IMPLEMENTATION(gaussian_function)
 
   void gaussian_function::_set_defaults()
   {
@@ -51,9 +52,7 @@ namespace mygsl {
     _set_defaults();
     set_sigma(sigma_);
     set_mu(mu_);
-    if (datatools::is_valid(amplitude_)) {
-      set_amplitude(amplitude_);
-    }
+    set_amplitude(amplitude_);
     return;
   }
 
@@ -70,8 +69,10 @@ namespace mygsl {
   }
 
   void gaussian_function::initialize(const datatools::properties & config_,
-                                     unary_function_dict_type & /*functors_*/)
+                                     unary_function_dict_type & functors_)
   {
+    this->i_unary_function::_base_initialize(config_, functors_);
+
     // Parse configuration:
     if (!datatools::is_valid(_sigma_)) {
       if (config_.has_key("sigma")) {
@@ -95,54 +96,60 @@ namespace mygsl {
     }
 
     // Checks:
-
-    if (!datatools::is_valid(_mu_)) {
-      set_mu(0.0);
-    }
-
-    if (!datatools::is_valid(_sigma_)) {
-      set_sigma(1.0);
-    }
-
-    if (!datatools::is_valid(_amplitude_)) {
-      set_amplitude(1.0);
-    }
-
+    DT_THROW_IF(!datatools::is_valid(_mu_),
+                std::logic_error,
+                "Invalid mu!");
+    DT_THROW_IF(!datatools::is_valid(_sigma_),
+                std::logic_error,
+                "Invalid sigma!");
+    DT_THROW_IF(!datatools::is_valid(_amplitude_),
+                std::logic_error,
+                "Invalid amplitude!");
     return;
   }
 
   void gaussian_function::reset()
   {
     _set_defaults();
+    this->i_unary_function::_base_reset();
     return;
   }
 
   void gaussian_function::set_sigma(double sigma_)
   {
-    DT_THROW_IF(!datatools::is_valid(sigma_), std::logic_error,
-                "Invalid sigma!");
-    DT_THROW_IF(sigma_ <= 0.0, std::logic_error,
+    DT_THROW_IF(datatools::is_valid(sigma_) && sigma_ <= 0.0, std::logic_error,
                 "Invalid negative or null sigma!");
     _sigma_ = sigma_;
     return;
   }
 
+  double gaussian_function::get_sigma() const
+  {
+    return _sigma_;
+  }
+
   void gaussian_function::set_mu(double mu_)
   {
-    DT_THROW_IF(!datatools::is_valid(mu_), std::logic_error,
-                "Invalid mu!");
-    _mu_ = mu_;
+     _mu_ = mu_;
     return;
+  }
+
+  double gaussian_function::get_mu() const
+  {
+    return _mu_;
   }
 
   void gaussian_function::set_amplitude(double amplitude_)
   {
-    DT_THROW_IF(!datatools::is_valid(amplitude_), std::logic_error,
-                "Invalid amplitude!");
-    DT_THROW_IF(amplitude_ <= 0.0, std::logic_error,
+    DT_THROW_IF(datatools::is_valid(amplitude_) && amplitude_ <= 0.0, std::logic_error,
                 "Invalid negative or null amplitude!");
     _amplitude_ = amplitude_;
     return;
+  }
+
+  double gaussian_function::get_amplitude() const
+  {
+    return _amplitude_;
   }
 
   double gaussian_function::_eval(double x_) const
