@@ -418,10 +418,9 @@ namespace mctools {
                    "Invalid hit index in category '" << a_category << "' !");
       DT_THROW_IF (! found->second[a_hit_index].has_data (),
                    std::logic_error,
-                   "Null handle at index " << a_hit_index << " in category '" << a_category << "' !");
+                   "Null hit handle at index " << a_hit_index << " in category '" << a_category << "' !");
       bsh = &found->second[a_hit_index].grab ();
-    }
-    else if (use_plain_hit_collection ()) {
+    } else if (use_plain_hit_collection ()) {
       plain_step_hits_dict_type::iterator found
         = _plain_step_hits_dict_.find (a_category);
       DT_THROW_IF (found == _plain_step_hits_dict_.end (),
@@ -431,8 +430,7 @@ namespace mctools {
                    std::logic_error,
                    "Invalid hit index in category '" << a_category << "' !");
       bsh = &found->second[a_hit_index];
-    }
-    else {
+    } else {
       DT_THROW_IF (true, std::logic_error, "Simulation must either use 'handle' or 'plain' hit collection!");
     }
     return *bsh;

@@ -51,12 +51,79 @@ namespace mctools {
       return;
     }
 
+    base_signal::base_signal(const base_signal & sig_)
+      : geomtools::base_hit(sig_)
+    {
+      _copy(sig_);
+      return;
+    }
+
     base_signal::~base_signal()
     {
       if (is_initialized()) {
         reset();
       }
       return;
+    }
+
+    void base_signal::_copy(const base_signal & sig_)
+    {
+      if (this == &sig_) return;
+      this->geomtools::base_hit::operator=(sig_);
+      _initialized_ = sig_._initialized_;
+      _shape_type_id_ = sig_._shape_type_id_;
+      if (!_shape_type_id_.empty()) {
+        // If a shape ID is available, then the object
+        // can be restored by the embedded factory using
+        // shape configuration parameters stored in the
+        // auxiliaries container:
+        _reset_shape();
+        _owned_shape_ = false;
+        _shape_ = nullptr;
+      } else {
+        if (sig_._shape_ != nullptr) {
+          // TO BE DONE: use shape cloneable interface if available:
+          // if (datatools::i_cloneable::is_cloneable(*sig_._shape_)) {
+          //   _shape_ = sig_.get_shape()->clone();
+          //   _owned_shape_ = true;
+          // }
+        }
+      }
+      return;
+    }
+
+    bool base_signal::is_copyable() const
+    {
+      if (has_shape_type_id()) {
+        return true;
+      }
+      if (_shape_ != nullptr) {
+         datatools::i_cloneable * test_cloneable
+           = dynamic_cast<datatools::i_cloneable *>(_shape_);
+         if (test_cloneable) {
+           return true;
+         }
+      }
+      return false;
+    }
+
+    base_signal & base_signal::operator=(const base_signal & sig_)
+    {
+      if (&sig_ == this) {
+        return *this;
+      }
+      DT_THROW_IF(!sig_.is_copyable(), std::runtime_error,
+                  "Source signal cannot be copied!");
+      this->geomtools::base_hit::operator=(sig_);
+      _initialized_ = sig_._initialized_;
+      if (sig_.has_shape_type_id()) {
+        _shape_type_id_ = sig_._shape_type_id_;
+      } else {
+        // XXX
+      }
+      _owned_shape_ = false;
+      _shape_ = nullptr;
+      return *this;
     }
 
     bool base_signal::is_valid() const
@@ -195,7 +262,13 @@ namespace mctools {
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Signal is initialized and locked!");
-      if (_shape_ != nullptr) {
+      _reset_shape();
+      return;
+    }
+
+    void base_signal::_reset_shape()
+    {
+     if (_shape_ != nullptr) {
         if (_owned_shape_) {
           delete _shape_;
         }
@@ -212,7 +285,7 @@ namespace mctools {
       if (shape_ptr_ == _shape_) {
         return;
       }
-      reset_shape();
+      _reset_shape();
       _owned_shape_ = false;
       _shape_ = shape_ptr_;
       return;
@@ -225,7 +298,7 @@ namespace mctools {
       if (&shape_ == _shape_) {
         return;
       }
-      reset_shape();
+      _reset_shape();
       _owned_shape_ = false;
       _shape_ = &shape_;
       return;
@@ -293,6 +366,11 @@ namespace mctools {
         _shape_->initialize_standalone(shape_config);
       }
       return *_shape_;
+    }
+
+    double base_signal::compute_shape(double time_) const
+    {
+      return get_shape().eval(time_);
     }
 
     void base_signal::tree_dump(std::ostream & out_,

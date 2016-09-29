@@ -74,18 +74,18 @@ void test_base_signal_1(bool draw_)
     hitSig.grab_auxiliaries().store("test", 42);
     hitSig.set_shape_type_id("mctools::signal::triangle_signal_shape");
     hitSig.set_shape_string_parameter("polarity", "-");
-    hitSig.set_shape_real_parameter_with_explicit_unit("rise_time",
-                                                       8.0 * CLHEP::nanosecond,
-                                                       "ns");
-    hitSig.set_shape_real_parameter_with_explicit_unit("fall_time",
-                                                       16.0 * CLHEP::nanosecond,
-                                                       "ns");
     hitSig.set_shape_real_parameter_with_explicit_unit("t0",
                                                        10.0 * CLHEP::nanosecond,
                                                        "ns");
-    hitSig.set_shape_real_parameter_with_explicit_unit("q",
-                                                       60.0 * nVs,
-                                                       "nV.s");
+    hitSig.set_shape_real_parameter_with_explicit_unit("t1",
+                                                       16.0 * CLHEP::nanosecond,
+                                                       "ns");
+    hitSig.set_shape_real_parameter_with_explicit_unit("t2",
+                                                       28.0 * CLHEP::nanosecond,
+                                                       "ns");
+    hitSig.set_shape_real_parameter_with_explicit_unit("amplitude",
+                                                       600.0 * mV,
+                                                       "mV");
     hitSig.initialize_simple();
     hitSig.tree_dump(std::clog, "Hit signal: ");
 
@@ -94,15 +94,15 @@ void test_base_signal_1(bool draw_)
     tmp_file.create("/tmp", "test_signal_base_signal_");
 
     tmp_file.out() << "#signal_1:\n";
-    hitSig.grab_shape().write_ascii_file_with_units(tmp_file.get_filename(),
-                                                    -10.0 * CLHEP::nanosecond,
-                                                    +60.0 * CLHEP::nanosecond,
-                                                    3000,
-                                                    "ns",
-                                                    "volt",
-                                                    16, 16,
-                                                    mygsl::i_unary_function::wo_append
-                                                    );
+    hitSig.get_shape().write_ascii_file_with_units(tmp_file.get_filename(),
+                                                   -10.0 * CLHEP::nanosecond,
+                                                   +50.0 * CLHEP::nanosecond,
+                                                   600,
+                                                   "ns",
+                                                   "volt",
+                                                   16, 16,
+                                                   mygsl::i_unary_function::wo_append
+                                                   );
 
     if (draw_) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
@@ -122,7 +122,7 @@ void test_base_signal_1(bool draw_)
         // cmd3 << "nVs=nanosecond*volt";
         // g1.cmd(cmd3.str());
       }
-      g1.cmd("set yrange [-5:+0.5]");
+      g1.cmd("set yrange [-1:+0.1]");
       g1.set_xlabel("time (ns)").set_ylabel("Signal (V)");
 
       {
@@ -151,7 +151,6 @@ void test_base_signal_1(bool draw_)
 
   {
     mctools::signal::base_signal hitSig;
-
     {
       // Deserialization:
       datatools::data_reader reader("test_signal_base_signal.xml",

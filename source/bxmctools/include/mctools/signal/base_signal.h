@@ -22,7 +22,7 @@
  *
  * Description:
  *
- *   An abstract base class representing the signal of a hit detector.
+ *   A base class representing an analog signal associated to a hit detector.
  *
  * History:
  *
@@ -43,7 +43,11 @@ namespace mctools {
 
   namespace signal {
 
-    //! \brief Abstract base class representing the signal of a hit detector.
+    //! \brief Abstract base class representing an analog signal of a hit detector.
+    //!
+    //! The signal is modelled has a [voltage = f(time)] arbitrary function.
+    //! It uses a functor to describe the shape of the electric signal as expected
+    //! from an analog measurement.
     class base_signal : public geomtools::base_hit
     {
     public:
@@ -53,8 +57,17 @@ namespace mctools {
       //! Default constructor
       base_signal();
 
+      //! Copy constructor
+      base_signal(const base_signal &);
+
       //! Destructor
       virtual ~base_signal();
+
+      //! Assignment operator
+      base_signal & operator=(const base_signal &);
+
+      //! Check if object can be copied
+      bool is_copyable() const;
 
       //! Check signal hit validity
       virtual bool is_valid() const;
@@ -150,16 +163,25 @@ namespace mctools {
       //! Reset the signal
       void reset();
 
-      /// Smart print
+      //! Smart print
       virtual void tree_dump (std::ostream & out_         = std::clog,
                               const std::string & title_  = "",
                               const std::string & indent_ = "",
                               bool inherit_               = false) const;
 
+      //! Compute shape
+      double compute_shape(double time_) const;
+
     protected:
 
       //! Factory method for the embedded shape object
       mygsl::i_unary_function & _grab_shape();
+
+      //! Discard the embedded signal shape object
+      void _reset_shape();
+
+      //! Copy from another signal hit
+      void _copy(const base_signal & sig_);
 
     private:
 

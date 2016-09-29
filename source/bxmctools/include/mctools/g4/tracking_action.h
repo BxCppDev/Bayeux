@@ -40,19 +40,19 @@ namespace mctools {
     public:
 
       /// Constructor
-      tracking_action ();
+      tracking_action();
 
       /// Destructor
-      virtual ~tracking_action ();
+      virtual ~tracking_action();
 
       /// Initialize from properties
-      void initialize (const datatools::properties & config_);
+      void initialize(const datatools::properties & config_);
 
       /// Pre-tracking action for the Geant4 interface
-      virtual void PreUserTrackingAction (const G4Track*);
+      virtual void PreUserTrackingAction(const G4Track*);
 
       /// Post-tracking action for the Geant4 interface
-      virtual void PostUserTrackingAction (const G4Track*);
+      virtual void PostUserTrackingAction(const G4Track*);
 
     };
 
@@ -66,10 +66,8 @@ DOCD_CLASS_DECLARATION(mctools::g4::tracking_action)
 
 #endif // MCTOOLS_G4_TRACKING_ACTION_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

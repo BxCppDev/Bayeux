@@ -42,6 +42,21 @@ namespace mctools {
       return false;
     }
 
+    const datatools::units::unit & default_time_unit()
+    {
+      return datatools::units::registry::const_system_registry().get_unit_from_any("ns");
+    }
+
+    const datatools::units::unit & default_voltage_unit()
+    {
+      return datatools::units::registry::const_system_registry().get_unit_from_any("volt");
+    }
+
+    const datatools::units::unit & default_charge_unit()
+    {
+      return datatools::units::registry::const_system_registry().get_unit_from_any("nV.s");
+    }
+
   } // end of namespace signal
 
 } // end of namespace mctools

@@ -31,6 +31,10 @@
 #ifndef MCTOOLS_SIGNAL_UTILS_H
 #define MCTOOLS_SIGNAL_UTILS_H
 
+// Third party:
+// - Bayeux/datatools :
+#include <datatools/units.h>
+
 namespace mctools {
 
   namespace signal {
@@ -46,16 +50,23 @@ namespace mctools {
 
     bool polarity_is_set(polarity_type);
 
+    // nanosecond
+    const datatools::units::unit & default_time_unit();
+
+    // Volt
+    const datatools::units::unit & default_voltage_unit();
+
+    // electric_signal_integral (nV.s)
+    const datatools::units::unit & default_charge_unit();
+
   } // end of namespace signal
 
 } // end of namespace mctools
 
 #endif // MCTOOLS_SIGNAL_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

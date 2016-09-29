@@ -192,22 +192,22 @@ namespace mctools {
     void reset();
 
     /// Default constructor
-    simulated_data ();
+    simulated_data();
 
     /// Constructor
-    simulated_data (int a_collection_type);
+    simulated_data(int a_collection_type);
 
     /// Destructor
-    virtual ~simulated_data ();
+    virtual ~simulated_data();
 
     /// Reset the internal data
-    virtual void clear ();
+    virtual void clear();
 
     /// Smart print
-    virtual void tree_dump (std::ostream & a_out         = std::clog,
-                            const std::string & a_title  = "",
-                            const std::string & a_indent = "",
-                            bool a_inherit          = false) const;
+    virtual void tree_dump(std::ostream & a_out         = std::clog,
+                           const std::string & a_title  = "",
+                           const std::string & a_indent = "",
+                           bool a_inherit          = false) const;
 
   protected:
 

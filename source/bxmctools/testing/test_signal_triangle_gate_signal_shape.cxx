@@ -1,4 +1,4 @@
-// test_signal_triangle_signal_shape.cxx
+// test_signal_triangle_gate_signal_shape.cxx
 
 // Standard library:
 #include <cstdlib>
@@ -21,13 +21,13 @@
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
 // This project:
-#include <mctools/signal/triangle_signal_shape.h>
+#include <mctools/signal/triangle_gate_signal_shape.h>
 
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "Test program for class 'mctools::signal::triangle_signal_shape'!" << std::endl;
+    std::clog << "Test program for class 'mctools::signal::triangle_gate_signal_shape'!" << std::endl;
 
     bool draw = false;
 
@@ -46,25 +46,27 @@ int main (int argc_, char ** argv_)
     std::clog << "mV         = " << mV << std::endl;
     std::clog << "nV.s       = " << nVs << std::endl;
 
-    mctools::signal::triangle_signal_shape tss1;
+    mctools::signal::triangle_gate_signal_shape tss1;
     tss1.set_polarity(mctools::signal::POLARITY_NEGATIVE);
     tss1.set_amplitude(350.0 * mV);
     tss1.set_t0(10.0 * CLHEP::nanosecond);
-    tss1.set_t1(20.0 * CLHEP::nanosecond);
-    tss1.set_t2(40.0 * CLHEP::nanosecond);
+    tss1.set_t1(13.0 * CLHEP::nanosecond);
+    tss1.set_t2(39.0 * CLHEP::nanosecond);
+    tss1.set_t3(55.0 * CLHEP::nanosecond);
     tss1.initialize_simple();
 
-    mctools::signal::triangle_signal_shape tss2;
+    mctools::signal::triangle_gate_signal_shape tss2;
     tss2.set_polarity(mctools::signal::POLARITY_NEGATIVE);
-    tss2.set_amplitude(350.0 * mV);
-    tss2.set_t0(6.0 * CLHEP::nanosecond);
-    tss2.set_t1(10.0 * CLHEP::nanosecond);
-    tss2.set_t2(22.0 * CLHEP::nanosecond);
+    tss2.set_amplitude(550.0 * mV);
+    tss2.set_t0(13.0 * CLHEP::nanosecond);
+    tss2.set_t1(17.0 * CLHEP::nanosecond);
+    tss2.set_t2(28.0 * CLHEP::nanosecond);
+    tss2.set_t3(45.0 * CLHEP::nanosecond);
     tss2.initialize_simple();
 
     datatools::temp_file tmp_file;
     tmp_file.set_remove_at_destroy(true);
-    tmp_file.create("/tmp", "test_signal_triangle_signal_shape_");
+    tmp_file.create("/tmp", "test_signal_triangle_gate_signal_shape_");
 
     tmp_file.out() << "#signal_1:\n";
     tss1.write_ascii(tmp_file.out(),
@@ -86,7 +88,7 @@ int main (int argc_, char ** argv_)
     if (draw) {
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
       Gnuplot g1;
-      g1.cmd("set title 'Test mygsl::signal::triangle_signal_shape' ");
+      g1.cmd("set title 'Test mygsl::signal::triangle_gate_signal_shape' ");
       g1.cmd("set grid");
       g1.cmd("set key out");
       g1.cmd("set xrange [0:100]");
