@@ -108,7 +108,7 @@ namespace snemo {
         this->mygsl::i_unary_function::_base_initialize(config_, functors_);
 
         static const double the_default_time_unit = mctools::signal::default_time_unit().get_value();
-        static const double the_default_charge_unit = mctools::signal::default_charge_unit().get_value();
+        // static const double the_default_charge_unit = mctools::signal::default_charge_unit().get_value();
         static const double the_default_voltage_unit = mctools::signal::default_voltage_unit().get_value();
 
         // Parse configuration:

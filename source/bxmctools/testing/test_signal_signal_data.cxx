@@ -67,13 +67,13 @@ void test_signal_data_1(bool draw_)
   const double effective_tracker_cell_length = 2.70 * CLHEP::meter;
   const int tracker_cell_category = 1023;
   const int tracker_cell_anode_category = 1024;
-  const int tracker_cell_cathode_category = 1025;
+  // const int tracker_cell_cathode_category = 1025;
   const double cm_per_us = CLHEP::cm/CLHEP::microsecond;
   const double millivolt = 1e-3 * CLHEP::volt;
   const double mV = millivolt;
   const int cathode_bottom = 0;
   const int cathode_top = 1;
-  const int cathode_index = 4;
+  // const int cathode_index = 4;
 
   // Loop on Geiger hits:
   for (int icell = 0; icell < 5; icell++) {
@@ -103,7 +103,6 @@ void test_signal_data_1(bool draw_)
     double t0 = t_hit + anode_drift_time;
     double t_rise = 200.0 * CLHEP::nanosecond;
     double amplitude = (400.0 + drand48() * 200.0) * mV;
-    double anode_noise_amplitude = 0.0 * mV;
     double t1 = datatools::invalid_real();
     double t2 = datatools::invalid_real();
     if (has_cathodes[cathode_bottom]) {
@@ -114,7 +113,6 @@ void test_signal_data_1(bool draw_)
     }
 
     int anode_sig_counter = 0;
-    int cathode_sig_counter = 0;
     {
       // Anode signal:
       mctools::signal::base_signal & sig = signals.add_signal("gg.anode");
@@ -166,7 +164,7 @@ void test_signal_data_1(bool draw_)
   tmp_file.set_remove_at_destroy(true);
   tmp_file.create("/tmp", "test_signal_signal_data_");
 
-  for (int isig = 0; isig < signals.get_number_of_signals("gg.anode"); isig++) {
+  for (size_t isig = 0; isig < signals.get_number_of_signals("gg.anode"); isig++) {
     const mctools::signal::base_signal & hsig = signals.get_signal("gg.anode", isig);
     hsig.get_shape().write_ascii_file_with_units(tmp_file.get_filename(),
                                                  -10.0 * CLHEP::microsecond,
@@ -200,7 +198,7 @@ void test_signal_data_1(bool draw_)
     {
       std::ostringstream plot_cmd;
       plot_cmd << "plot ";
-      for (int isig = 0; isig < signals.get_number_of_signals("gg.anode"); isig++) {
+      for (size_t isig = 0; isig < signals.get_number_of_signals("gg.anode"); isig++) {
         if (isig != 0) plot_cmd << ", ";
         plot_cmd << "'" << tmp_file.get_filename() << "' "
                  << " index " << isig << " using (column(1)"
