@@ -162,7 +162,6 @@ namespace mygsl {
 
   double gate_function::_eval(double x_) const
   {
-    double res = _amplitude_;
     if (x_ < _center_ - 0.5 * _width_) {
       return 0.0;
     }
