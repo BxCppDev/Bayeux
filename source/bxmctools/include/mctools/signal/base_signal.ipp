@@ -38,16 +38,16 @@ namespace mctools {
     void base_signal::serialize(Archive & ar_,
                                 const unsigned int /* version */)
     {
-      // inherit from the 'base_hit' mother class:
+      // inherit from the 'geomtools::base_hit' mother class:
       ar_ & boost::serialization::make_nvp("geomtools__base_hit",
                                            boost::serialization::base_object<geomtools::base_hit>(*this));
       ar_ & boost::serialization::make_nvp("initialized", _initialized_);
       if (_initialized_) {
         ar_ & boost::serialization::make_nvp("shape_type_id", _shape_type_id_);
       }
-      // if (Archive::is_saving()) {
+      // if (Archive::is_saving::value) {
       // }
-      // if (Archive::is_loading()) {
+      // if (Archive::is_loading::value) {
       // }
 
       return;

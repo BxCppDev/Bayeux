@@ -1,9 +1,9 @@
 /// \file mctools/signal/base_signal.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
- * Creation date : 2015-04-01
+ * Creation date : 2016-09-27
  * Last modified : 2016-09-27
  *
- * Copyright (C) 2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,10 +164,10 @@ namespace mctools {
       void reset();
 
       //! Smart print
-      virtual void tree_dump (std::ostream & out_         = std::clog,
-                              const std::string & title_  = "",
-                              const std::string & indent_ = "",
-                              bool inherit_               = false) const;
+      virtual void tree_dump(std::ostream & out_         = std::clog,
+                             const std::string & title_  = "",
+                             const std::string & indent_ = "",
+                             bool inherit_               = false) const;
 
       //! Compute shape
       double compute_shape(double time_) const;
