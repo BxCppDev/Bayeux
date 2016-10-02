@@ -58,10 +58,21 @@ int main (int argc_, char ** argv_)
 
 void test_adc_1(bool draw_)
 {
+
+  std::clog << "INVALID_CHANNEL = "
+            << std::hex << mctools::digitization::simple_linear_adc::INVALID_CHANNEL
+            << std::endl;
+  std::clog << "INVALID_CHANNEL = "
+            << std::dec << mctools::digitization::simple_linear_adc::INVALID_CHANNEL
+            << std::endl;
+
   mctools::digitization::simple_linear_adc adc;
   adc.set_nbits(3);
   adc.set_v_ref_low(-6.0 * CLHEP::volt);
   adc.set_v_ref_high(+1.0 * CLHEP::volt);
+  adc.set_no_underflow(true);
+  // adc.set_underflow_channel(-1);
+  adc.set_overflow_channel(15);
   adc.initialize_simple();
   adc.tree_dump(std::clog, "ADC: ");
 
@@ -70,20 +81,30 @@ void test_adc_1(bool draw_)
     $ gnuplot
     gnuplot> set grid
     gnuplot> set key out
-    gnuplot> set xrange [-8:+3]
+    gnuplot> set xrange [-10:+3]
     gnuplot> set xlabel "Voltage (volt)"
-    gnuplot> set yrange [-2:10]
+    gnuplot> set yrange [-2:16]
     gnuplot> set ylabel "Channel"
-    gnuplot> plot 'a.data' i 0 u 1:2 w steps
+    gnuplot> plot 'a.data' i 1 u 1:2 w points pt 6 ps 0.5, \
+                  ''  i 1 u 1:2 w histeps, \
+                  ''  i 0 u 1:2 w points pt 4 ps 0.5
 
     gnuplot> set xrange [0:10]
     gnuplot> set xlabel "Time (ns)"
     gnuplot> set yrange [-10.5:2.5]
     gnuplot> set ylabel "Voltage (volt)"
-    gnuplot> plot 'a.data' i 1 u 1:2 w l, '' i 1 u 1:4 w steps
-    gnuplot> set yrange [-3:10]
+    gnuplot> plot 'a.data' i 2 u 1:2 w l, '' i 2 u 1:4 w points pt 4 ps 0.5
 
    */
+  std::cout.precision(15);
+  double delta_v = 0.01 * CLHEP::volt;
+  for (double voltage = -8.0 * CLHEP::volt;
+       voltage < +3 * CLHEP::volt;
+       voltage += delta_v) {
+    int32_t channel = adc.quantize(voltage);
+    std::cout << voltage / CLHEP::volt << ' ' << channel << std::endl;
+  }
+  std::cout << std::endl << std::endl;
 
   for (int ich = adc.get_min_channel(); ich <= adc.get_max_channel(); ich++) {
     std::cout << adc.compute_sampled_voltage(ich) / CLHEP::volt

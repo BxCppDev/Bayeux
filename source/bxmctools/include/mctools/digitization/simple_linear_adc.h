@@ -1,7 +1,7 @@
 /// \file mctools/digitization/simple_linear_adc.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2016-10-01
- * Last modified : 2016-10-01
+ * Last modified : 2016-10-02
  *
  * Copyright (C) 2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -22,7 +22,7 @@
  *
  * Description:
  *
- *   Simple linear ADC (Analog Digital Converter).
+ *   Simple linear ADC (Analog/Digital Converter).
  *
  * History:
  *
@@ -30,6 +30,9 @@
 
 #ifndef MCTOOLS_DIGITIZATION_SIMPLE_LINEAR_ADC_H
 #define MCTOOLS_DIGITIZATION_SIMPLE_LINEAR_ADC_H
+
+// Standard library:
+#include <limits>
 
 // Third party:
 // - Bayeux/datatools:
@@ -43,21 +46,20 @@ namespace mctools {
 
   namespace digitization {
 
-    //! \brief A simple linear ADC (Analog Digital Converter)
+    //! \brief A simple linear ADC (Analog/Digital Converter)
     class simple_linear_adc
       : public i_adc,
         public datatools::i_tree_dumpable
     {
     public:
 
+      static const int32_t INVALID_CHANNEL = std::numeric_limits<int32_t>::min();
+
       //! Default constructor
       simple_linear_adc();
 
       //! Destructor
       virtual ~simple_linear_adc();
-
-      //! Check validity
-      bool is_valid() const;
 
       //! Set the low voltage reference value
       void set_v_ref_low(const double);
@@ -80,8 +82,35 @@ namespace mctools {
       //! Set the signed codes flag
       void set_signed(bool);
 
+      //! Set the no underflow flag
+      void set_no_underflow(bool n_);
+
+      //! Check the no underflow flag
+      bool is_no_underflow() const;
+
+      //! Set the no overflow flag
+      void set_no_overflow(bool n_);
+
+      //! Check the no overflow flag
+      bool is_no_overflow() const;
+
+      //! Set the underflow channel
+      void set_underflow_channel(int32_t);
+
+      //! Return the underflow code
+      int32_t get_underflow_channel() const;
+
+      //! Set the overflow channel
+      void set_overflow_channel(int32_t);
+
+      //! Return the overflow code
+      int32_t get_overflow_channel() const;
+
       //! Check the signed codes flag
       bool is_signed() const;
+
+      //! Check the initialization flag
+      bool is_initialized() const;
 
       //! Initialization
       void initialize_simple();
@@ -104,6 +133,12 @@ namespace mctools {
       //! Return the maximum channel
       int32_t get_max_channel() const;
 
+      //! Return the number of voltage intervals
+      uint32_t get_number_of_voltage_intervals() const;
+
+      //! Return the voltage resolution
+      double get_voltage_resolution() const;
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
@@ -123,14 +158,18 @@ namespace mctools {
 
     private:
 
+      // Management
+      bool _initialized_ = false;
+
       // Configuration parameters:
       double   _v_ref_low_;         ///< Reference voltage (low value)
       double   _v_ref_high_;        ///< Reference voltage (high value)
-      uint16_t _nbits_;             ///< Number of coding bits (resolution)
-      bool     _signed_;            ///< Flag to use signed channel codes
+      uint16_t _nbits_ = 0;         ///< Number of coding bits (resolution)
+      bool     _signed_ = false;    ///< Flag to use signed channel codes
+      bool     _no_underflow_ = false; ///< Flag is set if underflow matches the min code
+      bool     _no_overflow_ = false; ///< Flag is set if overflow matches the max code
       int32_t  _underflow_channel_; ///< Conventional value for underflow channel
       int32_t  _overflow_channel_;  ///< Conventional value for overflow channel
-      int32_t  _invalid_channel_;   ///< Conventional value for invalid channel
 
       // Working data:
       int32_t _min_channel_; ///< Conventional minimum channel

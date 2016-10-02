@@ -1,7 +1,7 @@
 /// \file mctools/digitization/simple_linear_adc.cc
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2016-10-01
- * Last modified : 2016-10-01
+ * Last modified : 2016-10-02
  *
  * Copyright (C) 2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -35,15 +35,19 @@ namespace mctools {
 
   namespace digitization {
 
+    // static
+    const int32_t simple_linear_adc::INVALID_CHANNEL;
+
     void simple_linear_adc::_set_defaults()
     {
       datatools::invalidate(_v_ref_low_);
       datatools::invalidate(_v_ref_high_);
       _nbits_ = 0;
       _signed_ = false;
-      _underflow_channel_ = 0xFFFFFFFF;
-      _overflow_channel_  = 0xFFFFFFFE;
-      _invalid_channel_   = 0xFFFFFFFD;
+      _no_underflow_ = false;
+      _no_overflow_ = false;
+      _underflow_channel_ = INVALID_CHANNEL;
+      _overflow_channel_  = INVALID_CHANNEL;
       _number_of_voltage_intervals_ = 0;
       datatools::invalidate(_q_);
       datatools::invalidate(_v0_);
@@ -61,17 +65,9 @@ namespace mctools {
       return;
     }
 
-    bool simple_linear_adc::is_valid() const
-    {
-      if (!datatools::is_valid(_v_ref_low_)) return false;
-      if (!datatools::is_valid(_v_ref_high_)) return false;
-      if (_nbits_ < 1) return false;
-      if (!datatools::is_valid(_q_)) return false;
-      return true;
-    }
-
     void simple_linear_adc::set_v_ref_low(const double v_)
     {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
       _v_ref_low_ = v_;
       return;
     }
@@ -83,6 +79,7 @@ namespace mctools {
 
     void simple_linear_adc::set_v_ref_high(const double v_)
     {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
       _v_ref_high_ = v_;
       return;
     }
@@ -94,6 +91,8 @@ namespace mctools {
 
     void simple_linear_adc::set_nbits(const uint16_t nbits_)
     {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
+      DT_THROW_IF(nbits_ > 24, std::range_error, "Number of bits is too large!");
       _nbits_ = nbits_;
       return;
     }
@@ -105,6 +104,7 @@ namespace mctools {
 
     void simple_linear_adc::set_signed(bool s_)
     {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
       _signed_ = s_;
       return;
     }
@@ -114,6 +114,54 @@ namespace mctools {
       return _signed_;
     }
 
+    void simple_linear_adc::set_no_underflow(bool n_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
+      _no_underflow_ = n_;
+      return;
+    }
+
+    bool simple_linear_adc::is_no_underflow() const
+    {
+      return _no_underflow_;
+    }
+
+    void simple_linear_adc::set_no_overflow(bool n_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
+      _no_overflow_ = n_;
+      return;
+    }
+
+    bool simple_linear_adc::is_no_overflow() const
+    {
+      return _no_overflow_;
+    }
+
+    void simple_linear_adc::set_underflow_channel(int32_t ch_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
+      _underflow_channel_ = ch_;
+      return;
+    }
+
+    int32_t simple_linear_adc::get_underflow_channel() const
+    {
+      return _underflow_channel_;
+    }
+
+    void simple_linear_adc::set_overflow_channel(int32_t ch_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized and locked!");
+      _overflow_channel_ = ch_;
+      return;
+    }
+
+    int32_t simple_linear_adc::get_overflow_channel() const
+    {
+      return _overflow_channel_;
+    }
+
     void simple_linear_adc::initialize_simple()
     {
       datatools::properties dummy_cfg;
@@ -121,8 +169,14 @@ namespace mctools {
       return;
     }
 
+    bool simple_linear_adc::is_initialized() const
+    {
+      return _initialized_;
+    }
+
     void simple_linear_adc::initialize(const datatools::properties & config_)
     {
+      DT_THROW_IF(is_initialized(), std::logic_error, "ADC is already initialized!");
 
       if (_nbits_ < 1) {
         if (config_.has_key("nbits")) {
@@ -132,6 +186,7 @@ namespace mctools {
           set_nbits((uint32_t) nbits);
         }
       }
+      DT_THROW_IF(_nbits_ == 0, std::range_error, "Number of coding bits is not set!");
 
       if (!datatools::is_valid(_v_ref_low_)) {
         if (config_.has_key("v_ref_low")) {
@@ -141,6 +196,8 @@ namespace mctools {
           set_v_ref_low(v_ref_low);
         }
       }
+      DT_THROW_IF(!datatools::is_valid(_v_ref_low_), std::logic_error,
+                  "Low voltage reference value is not set!");
 
       if (!datatools::is_valid(_v_ref_high_)) {
         if (config_.has_key("v_ref_high")) {
@@ -150,14 +207,55 @@ namespace mctools {
           set_v_ref_high(v_ref_high);
         }
       }
+      DT_THROW_IF(!datatools::is_valid(_v_ref_high_), std::logic_error,
+                  "High voltage reference value is not set!");
+      DT_THROW_IF(_v_ref_high_ <= _v_ref_low_, std::range_error,
+                  "Invalid low/high voltage reference value range!");
 
       if (config_.has_key("signed")) {
         bool s = config_.fetch_boolean("signed");
         set_signed(s);
       }
 
+      if (config_.has_key("no_underflow")) {
+        bool n = config_.fetch_boolean("no_underflow");
+        set_no_underflow(n);
+      }
+
+      if (config_.has_key("no_overflow")) {
+        bool n = config_.fetch_boolean("no_overflow");
+        set_no_overflow(n);
+      }
+
+      if (!is_no_underflow()) {
+        if (_underflow_channel_ == INVALID_CHANNEL) {
+          if (config_.has_key("underflow_channel")) {
+            int ch = config_.fetch_integer("underflow_channel");
+            set_underflow_channel(ch);
+          }
+        }
+      }
+
+      if (!is_no_overflow()) {
+        if (_overflow_channel_ == INVALID_CHANNEL) {
+          if (config_.has_key("overflow_channel")) {
+            int ch = config_.fetch_integer("overflow_channel");
+            set_overflow_channel(ch);
+          }
+        }
+      }
+
       _compute_working_data();
 
+      _initialized_ = true;
+      return;
+    }
+
+    void simple_linear_adc::reset()
+    {
+      DT_THROW_IF(!is_initialized(), std::logic_error, "ADC is not initialized!");
+      _initialized_ = false;
+      _set_defaults();
       return;
     }
 
@@ -173,50 +271,64 @@ namespace mctools {
         _min_channel_ = - (_max_channel_ + 1) / 2;
         _max_channel_ = - _min_channel_ -1;
       }
-      _underflow_channel_ = _min_channel_ - 1;
-      _overflow_channel_ = _max_channel_ + 1;
-      _invalid_channel_ = 0xFFFFFFF;
-      return;
-    }
-
-    void simple_linear_adc::reset()
-    {
-      _set_defaults();
+      if (_no_underflow_) {
+        _underflow_channel_ = _min_channel_;
+      } else {
+        if (_underflow_channel_ == INVALID_CHANNEL) {
+          _underflow_channel_ = _min_channel_ - 1;
+        } else {
+          DT_THROW_IF((_underflow_channel_ >= _min_channel_) && (_underflow_channel_ <= _max_channel_),
+                      std::range_error,
+                      "Underflow channel [" << _underflow_channel_ << "] lies in the coding range ["
+                      << _min_channel_ << ":" << _max_channel_ << "]!");
+        }
+      }
+      if (_no_overflow_) {
+        _overflow_channel_ = _max_channel_;
+      } else {
+        if (_overflow_channel_ == INVALID_CHANNEL) {
+          _overflow_channel_ = _max_channel_ + 1;
+        } else {
+          DT_THROW_IF((_overflow_channel_ >= _min_channel_) && (_overflow_channel_ <= _max_channel_),
+                      std::range_error,
+                      "Overflow channel [" << _overflow_channel_ << "] lies in the coding range ["
+                      << _min_channel_ << ":" << _max_channel_ << "]!");
+        }
+      }
       return;
     }
 
     // virtual
     int32_t simple_linear_adc::quantize(const double vinput_) const
     {
-      DT_THROW_IF(!std::isfinite(_q_), std::range_error,
-                  "ADC is not configured!");
-      // std::cerr << "DEVEL: simple_linear_adc::quantize: vinput = " << vinput_ / CLHEP::volt << " V\n";
-      // std::cerr << "DEVEL: simple_linear_adc::quantize:   v_ref_low = " << _v_ref_low_ / CLHEP::volt << " V\n";
-      // std::cerr << "DEVEL: simple_linear_adc::quantize:   v_ref_high = " << _v_ref_high_ / CLHEP::volt << " V\n";
+      DT_THROW_IF(!is_initialized(), std::logic_error, "ADC is not initialized!");
       double eps = std::numeric_limits<double>::epsilon();
       if (vinput_ < _v_ref_low_ - eps) {
-        // std::cerr << "DEVEL: simple_linear_adc::quantize:   !!!underflow!!!\n";
         return _underflow_channel_;
       } else if (vinput_ > _v_ref_high_) {
-        // std::cerr << "DEVEL: simple_linear_adc::quantize:   !!!overflow!!!\n";
         return _overflow_channel_;
       }
       int32_t channel = (int32_t) ((vinput_ - _v0_) / _q_);
-      // std::cerr << "DEVEL: simple_linear_adc::quantize:   channel = " << channel << "\n";
       return _min_channel_ + channel;
     }
 
-    double simple_linear_adc::compute_sampled_voltage(int32_t channel_, bool ignore_out_) const
+    double simple_linear_adc::compute_sampled_voltage(int32_t channel_,
+                                                      bool ignore_out_) const
     {
-      if (channel_ == _underflow_channel_) {
-        if (ignore_out_) return -std::numeric_limits<double>::infinity();
-        return _v_ref_low_ - _q_;
+      DT_THROW_IF(!is_initialized(), std::logic_error, "ADC is not initialized!");
+      if (!is_no_underflow()) {
+        if (channel_ == _underflow_channel_) {
+          if (ignore_out_) return -std::numeric_limits<double>::infinity();
+          return _v_ref_low_ - _q_;
+        }
       }
-      if (channel_ == _overflow_channel_) {
-        if (ignore_out_) return std::numeric_limits<double>::infinity();
-        return _v_ref_high_ + _q_;
+      if (!is_no_overflow()) {
+        if (channel_ == _overflow_channel_) {
+          if (ignore_out_) return std::numeric_limits<double>::infinity();
+          return _v_ref_high_ + _q_;
+        }
       }
-      return channel_ * _q_ + _v0_;
+      return channel_ * _q_ + _v_ref_low_;
     }
 
     int32_t simple_linear_adc::get_min_channel() const
@@ -227,6 +339,16 @@ namespace mctools {
     int32_t simple_linear_adc::get_max_channel() const
     {
       return _max_channel_;
+    }
+
+    uint32_t simple_linear_adc::get_number_of_voltage_intervals() const
+    {
+      return _number_of_voltage_intervals_;
+    }
+
+    double simple_linear_adc::get_voltage_resolution() const
+    {
+      return _q_;
     }
 
     void simple_linear_adc::tree_dump(std::ostream & out_,
@@ -252,6 +374,14 @@ namespace mctools {
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Signed : " << _signed_
+           << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "No underflow : " << _no_underflow_
+           << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "No overflow : " << _no_overflow_
            << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
@@ -283,7 +413,7 @@ namespace mctools {
            << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
-           << "Validity : " << ( is_valid() ? "<yes>" : "<no>" )
+           << "Initialized : " << ( is_initialized() ? "<yes>" : "<no>" )
            << std::endl;
 
       return;
