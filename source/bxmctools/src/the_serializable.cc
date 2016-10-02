@@ -16,6 +16,9 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mctools::base_step_hit)
 #include <mctools/signal/base_signal.ipp>
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mctools::signal::base_signal)
 
+#include <mctools/digitization/sampled_signal.ipp>
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mctools::digitization::sampled_signal)
+
 #include <mctools/simulated_data.ipp>
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(mctools::simulated_data)
 BOOST_CLASS_EXPORT_IMPLEMENT(mctools::simulated_data)
