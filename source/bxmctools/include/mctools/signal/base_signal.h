@@ -36,7 +36,7 @@
 #include <datatools/properties.h>
 // - Bayeux/mygsl:
 #include <mygsl/i_unary_function.h>
-// This project:
+// - Bayeux/geomtools:
 #include <geomtools/base_hit.h>
 
 namespace mctools {
