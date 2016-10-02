@@ -81,6 +81,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/signal/triangle_gate_signal_shape.h
   ${module_include_dir}/${module_name}/signal/signal_data.h
   ${module_include_dir}/${module_name}/signal/signal_data.ipp
+  ${module_include_dir}/${module_name}/digitization/i_adc.h
+  ${module_include_dir}/${module_name}/digitization/simple_linear_adc.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -102,6 +104,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/signal/triangle_signal_shape.cc
   ${module_source_dir}/signal/triangle_gate_signal_shape.cc
   ${module_source_dir}/signal/signal_data.cc
+  ${module_source_dir}/digitization/simple_linear_adc.cc
   )
 
 # - Published headers
@@ -128,6 +131,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_signal_triangle_gate_signal_shape.cxx
   ${module_test_dir}/test_signal_base_signal.cxx
   ${module_test_dir}/test_signal_signal_data.cxx
+  ${module_test_dir}/test_digitization_simple_linear_adc.cxx
   )
 
 #-----------------------------------------------------------------------
