@@ -124,6 +124,8 @@ void test_ss_1(bool draw_)
       writer.store(digi_sig);
     }
 
+    digi_sig.print_ascii(std::cout);
+
   }
 
   {

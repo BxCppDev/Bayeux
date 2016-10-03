@@ -60,26 +60,29 @@ namespace mctools {
       static const int32_t OVERFLOW_SAMPLE  = std::numeric_limits<int32_t>::max();
 
       /// Check if a sample value is normal (nor invalid, underflow or overflow)
-      static bool sample_is_normal(int32_t);
+      static bool sample_is_normal(const int32_t);
 
       /// Check if a sample value is invalid
-      static bool sample_is_invalid(int32_t);
+      static bool sample_is_invalid(const int32_t);
 
       /// Check if a sample value is underflow
-      static bool sample_is_underflow(int32_t);
+      static bool sample_is_underflow(const int32_t);
 
       /// Check if a sample value is overflow
-      static bool sample_is_overflow(int32_t);
+      static bool sample_is_overflow(const int32_t);
 
-      enum sample_status_index
-        {
-          SS_INVALID   = 0, ///< Index of the invalid/uninitialized samples bit
-          SS_UNDERFLOW = 1, ///< Index of the underflow samples bit
-          SS_OVERFLOW  = 2  ///< Index of the overflow samples bit
-        };
+      /// \brief Indexes of sampling status bits
+      enum sampling_status_index {
+        SS_INVALID   = 0, ///< Index of the invalid/uninitialized samples bit
+        SS_UNDERFLOW = 1, ///< Index of the underflow samples bit
+        SS_OVERFLOW  = 2  ///< Index of the overflow samples bit
+      };
 
       //! Default constructor
       sampled_signal();
+
+      //! Constructor
+      sampled_signal(const double sampling_frequency_, const std::size_t nsamples_, const int32_t value_ = INVALID_SAMPLE);
 
       //! Destructor
       virtual ~sampled_signal();
@@ -105,8 +108,20 @@ namespace mctools {
       //! Return the sampling period
       double get_sampling_period() const;
 
+      //! Return the number of sampling time intervals
+      std::size_t get_number_of_sampling_time_intervals() const;
+
+      //! Return the sampling duration
+      double get_sampling_duration() const;
+
+      //! Return the minimum sampling time
+      double get_min_sampling_time() const;
+
+      //! Return the maximum sampling time
+      double get_max_sampling_time() const;
+
       //! Set the number of samples
-      void set_number_of_samples(const std::size_t);
+      void set_number_of_samples(const std::size_t nsamples_, const int32_t value_ = INVALID_SAMPLE);
 
       //! Reset the number of samples
       void reset_number_of_samples();
@@ -145,25 +160,43 @@ namespace mctools {
       void reset();
 
       //! Set the array of samples
-      void set_samples(const std::vector<int32_t> &, bool update_ = true);
+      void set_samples(const std::vector<int32_t> &, const bool update_ = true);
 
       //! Return a const reference to the array of samples
       const std::vector<int32_t> & get_samples() const;
 
       //! Set the sample value at given time index
-      void set_sample(uint32_t index_, int32_t sample_, bool update_ = false);
+      void set_sample(const uint32_t index_, const int32_t sample_, const bool update_ = false);
 
       //! Return the sample value at given time index
-      uint32_t get_sample(uint32_t index_) const;
+      uint32_t get_sample(const uint32_t index_) const;
+
+      //! Check if a sample at given time index has a normal value
+      bool is_normal(const uint32_t index_) const;
+
+      //! Check if a sample at given time index has an invalid value
+      bool is_invalid(const uint32_t index_) const;
+
+      //! Check if a sample at given time index has an underflow value
+      bool is_underflow(const uint32_t index_) const;
+
+      //! Check if a sample at given time index has an overflow value
+      bool is_overflow(const uint32_t index_) const;
+
+      //! Return the time associated to a given sample
+      double get_time(const uint32_t index_) const;
+
+      //! Return the sample index associated to a given time
+      uint32_t get_index(const double time_) const;
 
       //! Force the sample value at given time index to be invalid
-      void unset_sample(uint32_t index_, bool update_ = false);
+      void unset_sample(const uint32_t index_, const bool update_ = false);
 
       //! Force the sample value at given time index to be underflow
-      void set_underflow_sample(uint32_t index_, bool update_ = false);
+      void set_underflow_sample(const uint32_t index_, const bool update_ = false);
 
       //! Force the sample value at given time index to be overflow
-      void set_overflow_sample(uint32_t index_, bool update_ = false);
+      void set_overflow_sample(const uint32_t index_, const bool update_ = false);
 
       //! Smart print
       virtual void tree_dump(std::ostream & out_         = std::clog,
@@ -174,6 +207,7 @@ namespace mctools {
       //! Update internal data
       void update();
 
+      //! \brief Special flags for signal slicing
       enum slicing_bits {
         SLICING_HIT_ID      = datatools::bit_mask::bit00,
         SLICING_GEOM_ID     = datatools::bit_mask::bit01,
@@ -190,6 +224,19 @@ namespace mctools {
                          const std::size_t first_,
                          const std::size_t last_,
                          const uint32_t flags_ = 0) const;
+
+      //! \brief Special flags for ASCII dump
+      enum print_ascii_bits {
+        PRINT_ASCII_NOHEADER = datatools::bit_mask::bit00,
+        PRINT_ASCII_TIME_IN_NS = datatools::bit_mask::bit01,
+        PRINT_ASCII_NODATABLOCKSEP = datatools::bit_mask::bit02
+      };
+
+      //! Simple ASCII terminal dump
+      void print_ascii(std::ostream & out_, const uint32_t flags_ = 0) const;
+
+      // //! Simple ASCII terminal plot
+      // void plot_ascii(std::ostream & out_, const uint32_t flags_ = 0) const;
 
     protected:
 
