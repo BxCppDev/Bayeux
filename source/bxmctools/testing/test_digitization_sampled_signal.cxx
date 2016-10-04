@@ -58,7 +58,7 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-void test_ss_1(bool draw_)
+void test_ss_1(bool /*draw_*/)
 {
 
   {

@@ -56,7 +56,7 @@ int main (int argc_, char ** argv_)
   return (error_code);
 }
 
-void test_adc_1(bool draw_)
+void test_adc_1(bool /*draw_*/)
 {
 
   std::clog << "INVALID_CHANNEL = "
