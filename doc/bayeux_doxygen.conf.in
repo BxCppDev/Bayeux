@@ -128,7 +128,7 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH        = @BAYEUX_BUILDPRODUCT_DIR@/include
+STRIP_FROM_PATH        = @BAYEUX_BUILD_INCLUDEDIR@
 
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
@@ -138,7 +138,7 @@ STRIP_FROM_PATH        = @BAYEUX_BUILDPRODUCT_DIR@/include
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = @BAYEUX_BUILDPRODUCT_DIR@/include
+STRIP_FROM_INC_PATH    = @BAYEUX_BUILD_INCLUDEDIR@
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful if your file system
@@ -643,7 +643,7 @@ WARN_LOGFILE           =
 
 INPUT                  = @BAYEUX_ABSOLUTE_MARKDOWN_DOCS@ \
                          @BAYEUX_DOCEXPORT_DIR@ \
-                         @PROJECT_SOURCE_DIR@/doc @BAYEUX_BUILDPRODUCT_DIR@/include/bayeux
+                         @PROJECT_SOURCE_DIR@/doc @BAYEUX_BUILD_INCLUDEDIR@/bayeux
 
 
 # This tag can be used to specify the character encoding of the source files

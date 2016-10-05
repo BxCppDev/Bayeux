@@ -38,15 +38,19 @@ endif()
 #-----------------------------------------------------------------------
 # CMake/project requirements and configuration
 #
-cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(Bayeux VERSION "3.0.0")
 
 # - Load Custom Modules
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
 #-----------------------------------------------------------------------
-# Additional SVN Revision tracking for developers
-include(SVNUtilities)
+# Common LPC utilities
+#
+include(LPCCMakeSettings)
+
+# - SVN revision number for dev builds
+include(LPCSVNUtilities)
 set(Bayeux_VERSION_REVISION 0)
 
 Subversion_DIRECTORY_IS_WC(${PROJECT_SOURCE_DIR} Bayeux)
@@ -55,17 +59,12 @@ if(Bayeux_DIRECTORY_IS_WC)
   set(Bayeux_VERSION_REVISION ${Bayeux_WC_REVISION})
 endif()
 
-#-----------------------------------------------------------------------
-# Include main settings file
-#
-include(BXCMakeSettings)
-
 # - Write compiler workaround header for features:
 #    cxx_thread_local           - OS X doesn't currently provide this
 #    cxx_attribute_deprecated   - C++14, but easy workaround for lesser standards
 include(WriteCompilerDetectionHeader)
 write_compiler_detection_header(
-  FILE "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/bayeux/datatools/compiler_detection.h"
+  FILE "${BAYEUX_BUILD_INCLUDEDIR}/bayeux/datatools/compiler_detection.h"
   PREFIX "DT"
   EPILOG "#include \"datatools/compiler_macros.h\""
   COMPILERS GNU Clang AppleClang MSVC
@@ -145,11 +144,8 @@ add_subdirectory(doc)
 
 #-----------------------------------------------------------------------
 # Install common resources
-install(DIRECTORY ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_TAG}
+install(DIRECTORY ${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_TAG}
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}
   )
 
-#-----------------------------------------------------------------------
-# Package Sources and Binaries - only if not embedded
-#
-include(BXCPack)
+

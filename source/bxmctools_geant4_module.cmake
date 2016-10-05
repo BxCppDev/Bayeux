@@ -109,18 +109,18 @@ if(BAYEUX_WITH_GEANT4_MODULE)
     ${module_app_dir}/g4/g4_seeds.cxx
     )
 
-  include_directories(SYSTEM ${Geant4_INCLUDE_DIRS})
 
   add_library(Bayeux_mctools_geant4 SHARED ${mctools_GEANT4_SOURCES} ${mctool_GEANT4_HEADERS})
   target_compile_features(Bayeux_mctools_geant4 PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
   target_include_directories(Bayeux_mctools_geant4
     PUBLIC
-     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include>
-     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
+    $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}>
+    $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}/bayeux>
      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
      $<BUILD_INTERFACE:${module_include_dir}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+     ${Geant4_INCLUDE_DIRS}
      )
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_Geant4_DEFINITIONS)
@@ -133,7 +133,12 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   set_target_properties(Bayeux_mctools_geant4
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     )
-  target_link_libraries(Bayeux_mctools_geant4 ${Geant4_LIBRARIES} ${Boost_THREAD_LIBRARY})
+
+  target_link_libraries(Bayeux_mctools_geant4
+    PUBLIC
+      ${Geant4_LIBRARIES} Boost::thread
+    PRIVATE
+      Bayeux)
 
   # - Set RPATH as needed
   set_target_properties(Bayeux_mctools_geant4 PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)

@@ -21,14 +21,11 @@
 # along with Bayeux.  If not, see <http://www.gnu.org/licenses/>.
 #-----------------------------------------------------------------------
 
-#add_definitions("-fstack-protector")
-#add_definitions("-Wstack-protector")
-
-
 #-----------------------------------------------------------------------
 # Configure build of Bayeux library
 # - Packages
 # - Boost
+set(Boost_NO_BOOST_CMAKE ON)
 find_package(Boost 1.60.0
   REQUIRED
   filesystem
@@ -38,22 +35,18 @@ find_package(Boost 1.60.0
   program_options
   regex
   # thread
-  NO_MODULE
   )
 set(Bayeux_Boost_LIBRARIES
-  ${Boost_FILESYSTEM_LIBRARY}
-  ${Boost_SYSTEM_LIBRARY}
-  ${Boost_SERIALIZATION_LIBRARY}
-  ${Boost_IOSTREAMS_LIBRARY}
-  ${Boost_PROGRAM_OPTIONS_LIBRARY}
-  ${Boost_REGEX_LIBRARY}
+  Boost::filesystem
+  Boost::system
+  Boost::serialization
+  Boost::iostreams
+  Boost::program_options
+  Boost::regex
   )
 
 # - Camp
 find_package(CAMP 0.7.1 REQUIRED NO_MODULE)
-
-# - CLHEP
-find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
 
 # - GSL
 find_package(GSL 1.15 REQUIRED)
@@ -64,7 +57,7 @@ find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
 include(RootNewMacros)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
-if (BAYEUX_WITH_QT_GUI)
+if(BAYEUX_WITH_QT_GUI)
   find_package(Qt5Core ${BAYEUX_QT5_VERSION} REQUIRED)
   find_package(Qt5Gui ${BAYEUX_QT5_VERSION} REQUIRED)
   find_package(Qt5Widgets ${BAYEUX_QT5_VERSION} REQUIRED)
@@ -82,18 +75,23 @@ if(BAYEUX_WITH_GEANT4_MODULE)
       list(APPEND MCTOOLS_G4_DATA_ASSIGNMENTS "(\"${Geant4_DATASET_${_ds}_ENVVAR}\", \"${Geant4_DATASET_${_ds}_PATH}\")")
     endforeach()
     string(REPLACE ";" "" MCTOOLS_G4_DATA_ASSIGNMENTS ${MCTOOLS_G4_DATA_ASSIGNMENTS})
-    # message (STATUS  "Geant4_DEFINITIONS='${Geant4_DEFINITIONS}'")
   endif()
   # Also need Boost.Thread, ugh
   find_package(Boost REQUIRED thread)
 endif()
 
-# - Core Includes for Bayeux + Third Party
-include_directories(SYSTEM ${CLHEP_INCLUDE_DIRS})
-include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
-#include_directories(${CAMP_INCLUDE_DIRS})
+# - CLHEP
+# Find this at the end because ROOT/Geant4 may depend on it
+# and thus refind it for us. We don't want to override their
+# found version for compatibility reasons.
+find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
 
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
+# - Core Includes for Bayeux + Third Party
+#include_directories(SYSTEM ${CLHEP_INCLUDE_DIRS})
+#include_directories(SYSTEM ${ROOT_INCLUDE_DIRS})
+#include_directories(${CAMP_INCLUDE_DIRS})
+#include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------
 # Set variable to hold addons for later export
@@ -130,11 +128,11 @@ if(BAYEUX_WITH_LAHAGUE)
 endif()
 
 # - Base build dir for resource and example files
-set(MODULE_RESOURCE_ROOT_BASE "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${BAYEUX_RESOURCE_DIR}")
-set(MODULE_EXAMPLE_ROOT_BASE "${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_DATADIR}/${BAYEUX_EXAMPLE_DIR}")
+set(MODULE_RESOURCE_ROOT_BASE "${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_RESOURCE_DIR}")
+set(MODULE_EXAMPLE_ROOT_BASE "${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_EXAMPLE_DIR}")
 
 # - Configure Bayeux submodule first
-set(MODULE_HEADER_ROOT    "${BAYEUX_BUILDPRODUCT_DIR}/include")
+set(MODULE_HEADER_ROOT    "${BAYEUX_BUILD_INCLUDEDIR}")
 set(MODULE_RESOURCE_ROOT  "${MODULE_RESOURCE_ROOT_BASE}/bayeux")
 set(MODULE_EXAMPLE_ROOT   "${MODULE_EXAMPLE_ROOT_BASE}/bayeux")
 include(bxbayeux_module.cmake)
@@ -145,7 +143,7 @@ set(Bayeux_RESOURCES ${bayeux_MODULE_RESOURCES})
 list(APPEND Bayeux_APPS ${bayeux_MODULE_APPS})
 
 foreach(_m ${BAYEUX_SUBMODULES})
-  set(MODULE_HEADER_ROOT   "${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux")
+  set(MODULE_HEADER_ROOT   "${BAYEUX_BUILD_INCLUDEDIR}/bayeux")
   set(MODULE_RESOURCE_ROOT "${MODULE_RESOURCE_ROOT_BASE}/${_m}")
   set(MODULE_EXAMPLE_ROOT  "${MODULE_EXAMPLE_ROOT_BASE}/${_m}")
   include(bx${_m}_module.cmake)
@@ -175,10 +173,10 @@ add_library(Bayeux SHARED ${Bayeux_HEADERS} ${Bayeux_SOURCES})
 target_compile_features(Bayeux PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
 target_include_directories(Bayeux
   PUBLIC
-   $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include>
-   $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
-   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+    $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}>
+    $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}/bayeux>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
   PRIVATE
    ${CMAKE_CURRENT_BINARY_DIR}
    ${CMAKE_CURRENT_BINARY_DIR}/bxbayeux
@@ -187,21 +185,21 @@ target_include_directories(Bayeux
 # that are not supplied as full imported targets
 target_include_directories(Bayeux SYSTEM
   PUBLIC
-   # ROOT
    ${ROOT_INCLUDE_DIRS}
-   # CLHEP
    ${CLHEP_INCLUDE_DIRS}
    )
 target_link_libraries(Bayeux
-  ${CMAKE_DL_LIBS}
-  ${Bayeux_Boost_LIBRARIES}
-  ${CAMP_LIBRARIES}
-  GSL::gsl
-  ${CLHEP_LIBRARIES}
-  ${ROOT_LIBRARIES}
+  PUBLIC
+    ${Bayeux_Boost_LIBRARIES}
+    camp::camp
+    GSL::gsl
+    ${CLHEP_LIBRARIES}
+    ${ROOT_LIBRARIES}
+  PRIVATE
+    ${CMAKE_DL_LIBS}
   )
 if(BAYEUX_WITH_QT_GUI)
-  target_link_libraries(Bayeux Qt5::Core Qt5::Widgets Qt5::Gui Qt5::Svg)
+  target_link_libraries(Bayeux PUBLIC Qt5::Core Qt5::Widgets Qt5::Gui Qt5::Svg)
 endif()
 
 # - Use IWYU, if available
@@ -283,7 +281,7 @@ foreach(_bxapp IN LISTS BAYEUX_ALL_APPS)
   # - Use Readline
   if(DATATOOLS_WITH_READLINE AND NOT READLINE_ALREADY_LINKED_TO_BAYEUX)
     include_directories(${Readline_INCLUDE_DIR})
-    target_link_libraries(Bayeux ${Readline_LIBRARIES})
+    target_link_libraries(Bayeux PRIVATE ${Readline_LIBRARIES})
     set(READLINE_ALREADY_LINKED_TO_BAYEUX 1)
   endif()
 
@@ -309,7 +307,7 @@ install(TARGETS Bayeux ${Bayeux_ADDON_TARGETS}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
-install(DIRECTORY ${BAYEUX_BUILDPRODUCT_DIR}/include/
+install(DIRECTORY ${BAYEUX_BUILD_INCLUDEDIR}/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   )
 
@@ -317,26 +315,40 @@ install(DIRECTORY ${BAYEUX_BUILDPRODUCT_DIR}/include/
 # Configure/Install support files
 # Done here so that external package variables are visible
 #
-# - Targets
-export(TARGETS Bayeux ${Bayeux_ADDON_TARGETS} FILE ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}/BayeuxTargets.cmake)
+include(CMakePackageConfigHelpers)
+
+# - Versioning file is the same for the build and install trees
+write_basic_package_version_file(
+  ${BAYEUX_BUILD_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfigVersion.cmake
+  COMPATIBILITY SameMajorVersion
+  )
+
+# - Config file is also the same as we use sam e layout
+configure_package_config_file(
+  ${PROJECT_SOURCE_DIR}/cmake/BayeuxConfig.cmake.in
+  ${BAYEUX_BUILD_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfig.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_CMAKEDIR}/${PROJECT_TAG}
+  PATH_VARS
+    CMAKE_INSTALL_BINDIR
+    CMAKE_INSTALL_LIBDIR
+    CMAKE_INSTALL_INCLUDEDIR
+    CMAKE_INSTALL_DATAROOTDIR
+    )
+
+# - Targets (build tree)
+export(EXPORT BayeuxTargets
+  NAMESPACE Bayeux::
+  FILE ${BAYEUX_BUILD_CMAKEDIR}/${BAYEUX_TAG}/BayeuxTargets.cmake
+  )
+
+# - Targets (install tree)
 install(EXPORT BayeuxTargets DESTINATION ${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG})
 
-# - Versioning (build and install trees)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfigVersion.cmake.in
-  ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfigVersion.cmake
-  @ONLY
-  )
-
-# - Config (build and install trees *at present*)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/BayeuxConfig.cmake.in
-  ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfig.cmake
-  @ONLY
-  )
-
+# - Installation of, well, install tree files
 install(
   FILES
-    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfigVersion.cmake
-    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfig.cmake
+    ${PROJECT_BUILD_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfigVersion.cmake
+    ${PROJECT_BUILD_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfig.cmake
   DESTINATION
     ${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}
   )
@@ -351,11 +363,6 @@ if(BAYEUX_ENABLE_TESTING)
   # transmit usage requirements like include paths to clients)
   add_library(BXCatch STATIC bxcatch/catch.hpp bxcatch/bxcatch-main.cpp)
   target_include_directories(BXCatch PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bxcatch)
-
-  # message (STATUS "DEBUG: Add special compiler option...")
-  # SET(GCC_MY_COMPILE_FLAGS "-fno-stack-protector")
-  # SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_MY_COMPILE_FLAGS}" )
-  # add_definitions("-fno-stack-protector")
 
   # All submodules...
   foreach(_m ${BAYEUX_SUBMODULES} bayeux)
@@ -405,10 +412,6 @@ if(BAYEUX_ENABLE_TESTING)
     	  )
 
           target_link_libraries(${_testname} Bayeux_mctools_geant4)
-	  # Debug:
-	  # target_compile_options(${_testname} PRIVATE -Wall -Wextra -g)
-	  # target_compile_options(${_testname} PRIVATE -fstack-protector -D_FORTIFY_SOURCE=2)
-	  # target_compile_options(${_testname} PRIVATE -fno-stack-protector)
         endif()
       endif()
 

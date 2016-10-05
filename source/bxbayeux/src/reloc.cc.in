@@ -107,7 +107,6 @@ std::string get_data_dir() {
 std::string get_resource_dir() {
   init_directories();
   boost::filesystem::path tmpPath(get_data_dir());
-  tmpPath /= "resources";
   return tmpPath.string();
 }
 

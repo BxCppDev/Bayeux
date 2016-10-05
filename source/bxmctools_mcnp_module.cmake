@@ -69,8 +69,8 @@ if(BAYEUX_WITH_MCNP_MODULE)
   target_compile_features(Bayeux_mctools_mcnp PUBLIC ${BAYEUX_CXX_COMPILE_FEATURES})
   target_include_directories(Bayeux_mctools_mcnp
     PUBLIC
-     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include>
-     $<BUILD_INTERFACE:${BAYEUX_BUILDPRODUCT_DIR}/include/bayeux>
+    $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}>
+     $<BUILD_INTERFACE:${BAYEUX_BUILD_INCLUDEDIR}/bayeux>
      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
      $<BUILD_INTERFACE:${module_include_dir}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
@@ -86,7 +86,7 @@ if(BAYEUX_WITH_MCNP_MODULE)
   set_target_properties(Bayeux_mctools_mcnp
     PROPERTIES COMPILE_DEFINITIONS "${Bayeux_MCNP_DEFINITIONS}"
     )
-  target_link_libraries(Bayeux_mctools_mcnp)
+  target_link_libraries(Bayeux_mctools_mcnp Boost::boost)
 
   # - Set RPATH as needed
   set_target_properties(Bayeux_mctools_mcnp PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)

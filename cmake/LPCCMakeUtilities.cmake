@@ -88,7 +88,7 @@ endmacro()
   the interactive CMake interfaces.
 
   If ``DEFAULT`` is provided, its ``<value>`` argument will be used as
-  the value to which `<option>` should default to if not yet set.
+  the the value to which `<option>` should default to if not yet set.
   Otherwise, the first entry in VALUES is used as the
   default. Obviously, ``<value>`` must occur in the ``VALUES`` list.
 
@@ -178,3 +178,4 @@ function(enum_option _var)
     endif()
   endif()
 endfunction()
+

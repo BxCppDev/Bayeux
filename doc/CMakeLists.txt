@@ -59,7 +59,7 @@ endif()
 set(BAYEUX_DOXYFILE_IN bayeux_doxygen.conf.in)
 set(BAYEUX_DOCEXPORT_DIR "${PROJECT_BINARY_DIR}/doc")
 set(BAYEUX_DOXYFILE_OUT ${BAYEUX_DOCEXPORT_DIR}/bayeux_doxygen.conf)
-set(BAYEUX_DOXYGEN_OUTPUT_DIR ${BAYEUX_BUILDPRODUCT_DIR}/share/${BAYEUX_DOCUMENTATION_DIR}/API)
+set(BAYEUX_DOXYGEN_OUTPUT_DIR ${BAYEUX_BUILD_DATAROOTDIR}/${BAYEUX_DOCUMENTATION_DIR}/API)
 set(BAYEUX_DOXYGEN_OUTPUT_FILE ${BAYEUX_DOXYGEN_OUTPUT_DIR}/html/index.html)
 set(BAYEUX_DOXYGEN_OUTPUT_IMAGE_DIR ${BAYEUX_DOXYGEN_OUTPUT_DIR}/html/images)
 
@@ -119,16 +119,13 @@ endif()
 
 add_custom_target(bayeux_docs ALL DEPENDS ${BAYEUX_DOXYGEN_OUTPUT_FILE} ${BAYEUX_OCD_OUTPUT_FILE})
 
-set(__doc_cmake_dir ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/${BAYEUX_TAG})
+set(__doc_cmake_dir ${BAYEUX_BUILD_CMAKEDIR}/${BAYEUX_TAG})
 
 file(RELATIVE_PATH BAYEUX_DOXYGEN_HTML_DIR_RELATIVE ${__doc_cmake_dir} ${BAYEUX_DOXYGEN_OUTPUT_DIR}/html)
 file(RELATIVE_PATH BAYEUX_DOXYGEN_TAGFILE_RELATIVE ${__doc_cmake_dir} ${BAYEUX_DOXYGEN_OUTPUT_DIR}/bayeux.doxy.tag)
 
 configure_file(BayeuxDocs.cmake.in ${__doc_cmake_dir}/BayeuxDocs.cmake @ONLY)
 
-install(
-  FILES
-    ${__doc_cmake_dir}/BayeuxDocs.cmake
-  DESTINATION
-    ${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}
+install(FILES ${__doc_cmake_dir}/BayeuxDocs.cmake
+  DESTINATION ${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}
   )

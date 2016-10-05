@@ -156,10 +156,10 @@ set(${module_name}_MODULE_EXAMPLES
 if(BAYEUX_WITH_DEVELOPER_TOOLS AND BAYEUX_WITH_GEANT4_MODULE)
   # - Utility script:
   configure_file(${module_app_dir}/g4/mctools_g4_mkskelcfg.in
-    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxmctools_g4_mkskelcfg @ONLY)
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxmctools_g4_mkskelcfg @ONLY)
 
   install(FILES
-    ${BAYEUX_BUILDPRODUCT_DIR}/${CMAKE_INSTALL_BINDIR}/bxmctools_g4_mkskelcfg
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxmctools_g4_mkskelcfg
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS

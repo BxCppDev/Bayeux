@@ -1,15 +1,10 @@
 # - Config file for the Bayeux package
 # It defines the following variables
-#  Bayeux_INCLUDE_DIRS - include directories for Bayeux
-#  Bayeux_DEFINITIONS  - compile definitions needed to use Bayeux
-#  Bayeux_LIBRARIES    - libraries to link against
 #
 #  Bayeux_DOXYGEN_HTML_DIR - path to directory holding Doxygen docs
 #                            for Bayeux. Empty if docs were not built
 #  Bayeux_DOXYGEN_TAGFILE  - path to Doxygen tagfile for Bayeux's docs
 #                            Empty if docs were not built
-#  Bayeux_HAS_QT       - compile definitions needed to use Bayeux
-#
 
 #----------------------------------------------------------------------
 # This program is free software: you can redistribute it and/or modify
@@ -26,108 +21,86 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------
 
-#-----------------------------------------------------------------------
-# Locate ourselves, since all our config files should have been installed
-# alongside us...
-#
-get_filename_component(__bayeux_config_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+# - Core API version
+set(Bayeux_VERSION "@Bayeux_VERSION@")
+# - Development Tag
+set(Bayeux_VERSION_REVISION "@Bayeux_VERSION_REVISION@")
+
+# Component Availability
+set(Bayeux_qt_FOUND "@BAYEUX_WITH_QT_GUI@")
+set(Bayeux_geant4_FOUND "@BAYEUX_WITH_GEANT4_MODULE@")
+set(Bayeux_mcnp_FOUND "@BAYEUX_WITH_MCNP_MODULE@")
 
 #-----------------------------------------------------------------------
-# Hard code paths to headers for now...
-#
-set(Bayeux_INCLUDE_DIR "${__bayeux_config_dir}/@BAYEUX_CMAKEDIR_TO_INCLUDEDIR@")
-
-mark_as_advanced(Bayeux_INCLUDE_DIR)
-set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux")
-
-set(Bayeux_DEFINITIONS)
-set(Bayeux_HAS_QT @BAYEUX_WITH_QT_GUI@)
+# Start of CMake Generated
+@PACKAGE_INIT@
+# END OF CMAKE GENERATED
 
 #-----------------------------------------------------------------------
-# Handle paths/targets for third party deps here...
-# At present, simply hard code paths that Cadfael will have supplied.
-# Basic, but gets the job done for now. Later on we can provide better
-# fallback functionality to allow other sources than Cadfael.
-
+# - Refind third party deps here to regenerate imported targets
+#   Use exact versions to guarantee(*) binary compatibilty
+#   (*) at least at the API versioning level...
 # - Boost
-find_package(Boost @Boost_VERSION@ EXACT REQUIRED
-  COMPONENTS filesystem system serialization iostreams
-  NO_MODULE
-  PATHS @Boost_DIR@
-  NO_DEFAULT_PATH
+set(Boost_NO_BOOST_CMAKE ON)
+find_package(Boost @Boost_MAJOR_VERSION@.@Boost_MINOR_VERSION@ EXACT REQUIRED
+  COMPONENTS
+    filesystem
+    system
+    serialization
+    iostreams
+    program_options
+    thread
   )
 
 # - CLHEP
 find_package(CLHEP @CLHEP_VERSION@ EXACT REQUIRED
   NO_MODULE
-  PATHS @CLHEP_DIR@
-  NO_DEFAULT_PATH
   )
 
 # - GSL
 find_package(GSL @GSL_VERSION@ EXACT REQUIRED)
 
 # - ROOT
+# ROOT can F-up the module path and insert it's own
+# modules. Prevent it doing this.
+set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
 find_package(ROOT @ROOT_VERSION@ EXACT REQUIRED
   COMPONENTS RIO Tree
-  NO_MODULE
-  PATHS @ROOT_DIR@
-  NO_DEFAULT_PATH
   )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
+
 
 # - CAMP
-find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED
-  NO_MODULE
-  PATHS @CAMP_DIR@
-  NO_DEFAULT_PATH
-  )
+find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED)
 
-# - NB, nothing for Geant4 yet because it's not an interface of
-# the plugin
+# - Geant4 is NOT here because we don't expose it to clients
 
 # - Qt
 if(Bayeux_HAS_QT)
   # Make sure targets like "Qt5::Core", ... "Qt5::Svg" are recognized
   # in client package
-  find_package(Qt5Core @Qt5Core_VERSION@ EXACT REQUIRED PATHS "@Qt5Core_DIR@")
-  find_package(Qt5Widgets @Qt5Widgets_VERSION@ EXACT REQUIRED PATHS "@Qt5Widgets_DIR@")
-  find_package(Qt5Gui @Qt5Gui_VERSION@ EXACT REQUIRED PATHS "@Qt5Gui_DIR@")
-  find_package(Qt5Svg @Qt5Svg_VERSION@ EXACT REQUIRED PATHS "@Qt5Svg_DIR@")
+  find_package(Qt5Core @Qt5Core_VERSION@ EXACT REQUIRED)       #PATHS "@Qt5Core_DIR@")
+  find_package(Qt5Widgets @Qt5Widgets_VERSION@ EXACT REQUIRED) #PATHS "@Qt5Widgets_DIR@")
+  find_package(Qt5Gui @Qt5Gui_VERSION@ EXACT REQUIRED)         #PATHS "@Qt5Gui_DIR@")
+  find_package(Qt5Svg @Qt5Svg_VERSION@ EXACT REQUIRED)         #PATHS "@Qt5Svg_DIR@")
 endif()
-
-#-----------------------------------------------------------------------
-# Append third party include directories to Bayeux's so exposed
-# headers are visible
-#
-list(APPEND Bayeux_INCLUDE_DIRS
-  ${Boost_INCLUDE_DIRS}
-  ${CLHEP_INCLUDE_DIRS}
-  ${GSL_INCLUDE_DIRS}
-  ${ROOT_INCLUDE_DIRS}
-  )
 
 #-----------------------------------------------------------------------
 # Include the file listing all the imported targets.
 # This is installed in the same location as us...
 #
 if(NOT Bayeux_TARGETS_LOADED)
-  include("${__bayeux_config_dir}/BayeuxTargets.cmake")
+  include("${CMAKE_CURRENT_LIST_DIR}/BayeuxTargets.cmake")
   set(Bayeux_TARGETS_LOADED 1)
-endif()
-
-# - Bayeux itself
-set(Bayeux_LIBRARY Bayeux CACHE FILE "Bayeux library (imported)")
-set(Bayeux_LIBRARIES ${Bayeux_LIBRARY})
-mark_as_advanced(Bayeux_LIBRARY)
-
-# - Optional Geant4 MC Module
-if(TARGET Bayeux_mctools_geant4)
-  set(Bayeux_MCTOOLS_GEANT4_FOUND 1)
-  set(Bayeux_MCTOOLS_GEANT4_LIBRARY Bayeux_mctools_geant4 CACHE FILE "Bayeux mctools/geant4 module (imported)")
-  mark_as_advanced(Bayeux_MCTOOLS_GEANT4_LIBRARY)
 endif()
 
 #-----------------------------------------------------------------------
 # Documentation - loaded optionally from its own file
 #
-include("${__bayeux_config_dir}/BayeuxDocs.cmake" OPTIONAL)
+include("${CMAKE_CURRENT_LIST_DIR}/BayeuxDocs.cmake" OPTIONAL)
+
+#-----------------------------------------------------------------------
+# Component validation
+#
+check_required_components(Bayeux)
+
