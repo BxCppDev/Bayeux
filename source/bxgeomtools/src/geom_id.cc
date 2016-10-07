@@ -11,8 +11,6 @@
 
 namespace geomtools {
 
-  using namespace std;
-
   DATATOOLS_SERIALIZATION_SERIAL_TAG_IMPLEMENTATION (geom_id,"geomtools::geom_id")
 
   const uint32_t geom_id::INVALID_TYPE; //           = 0xFFFFFFFF;
@@ -71,7 +69,7 @@ namespace geomtools {
 
   void geom_id::set (int i_, uint32_t val_)
   {
-    DT_THROW_IF (i_ < 0, logic_error, "Invalid sub-address index !");
+    DT_THROW_IF (i_ < 0, std::logic_error, "Invalid sub-address index !");
     if (i_ < (int)_addresses_.size ()) {
       _addresses_[i_] = val_;
     } else {
@@ -306,7 +304,7 @@ namespace geomtools {
   void geom_id::inherits_from (const geom_id & source_)
   {
     DT_THROW_IF (this->_addresses_.size () < source_._addresses_.size (),
-                 logic_error, "Incompatible address depth !");
+                 std::logic_error, "Incompatible address depth !");
     for (size_t i = 0; i < source_._addresses_.size (); i++) {
       set (i, source_._addresses_[i]);
     }
@@ -316,7 +314,7 @@ namespace geomtools {
   void geom_id::extract_to (geom_id & target_) const
   {
     DT_THROW_IF (this->_addresses_.size () < target_._addresses_.size (),
-                 logic_error, "Incompatible address depth !");
+                 std::logic_error, "Incompatible address depth !");
     for (size_t i = 0; i < target_._addresses_.size (); i++) {
       target_.set (i, this->_addresses_[i]);
     }
@@ -329,7 +327,7 @@ namespace geomtools {
     return;
   }
 
-  ostream & operator<< (ostream & out_, const geom_id & id_)
+  std::ostream & operator<< (std::ostream & out_, const geom_id & id_)
   {
     out_ << geom_id::IO_ID_OPEN;
 
@@ -357,14 +355,14 @@ namespace geomtools {
     return out_;
   }
 
-  istream & operator>> (istream & in_, geom_id & id_)
+  std::istream & operator>> (std::istream & in_, geom_id & id_)
   {
     char open = in_.peek ();
     if (in_.eof ()) {
       return in_;
     }
     if (open != geom_id::IO_ID_OPEN) {
-      in_.setstate (ios::failbit);
+      in_.setstate (std::ios::failbit);
       return in_;
     } else {
       in_.get ();
@@ -372,7 +370,7 @@ namespace geomtools {
 
     char check = in_.peek ();
     if (in_.eof ()){
-      in_.setstate (ios::failbit);
+      in_.setstate (std::ios::failbit);
       return in_;
     }
     if (check != geom_id::IO_TYPE_INVALID) {
@@ -388,12 +386,12 @@ namespace geomtools {
     char separator = in_.peek ();
     if (in_.eof ())
       {
-        in_.setstate (ios::failbit);
+        in_.setstate (std::ios::failbit);
         return in_;
       }
     if (separator != geom_id::IO_ID_SEPARATOR)
       {
-        in_.setstate (ios::failbit);
+        in_.setstate (std::ios::failbit);
         return in_;
       }
     else
@@ -434,7 +432,7 @@ namespace geomtools {
         char sep = in_.peek ();
         if (in_.eof ())
           {
-            in_.setstate (ios::failbit);
+            in_.setstate (std::ios::failbit);
             return in_;
           }
         if (sep == geom_id::IO_ID_CLOSE)
@@ -444,7 +442,7 @@ namespace geomtools {
           }
         else if (sep != geom_id::IO_ADDRESS_SEPARATOR)
           {
-            in_.setstate (ios::failbit);
+            in_.setstate (std::ios::failbit);
             return in_;
           }
         else
@@ -454,7 +452,7 @@ namespace geomtools {
         count++;
         if (count == 100)
           {
-            in_.setstate (ios::failbit);
+            in_.setstate (std::ios::failbit);
             return in_;
           }
       }
