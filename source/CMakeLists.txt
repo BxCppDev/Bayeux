@@ -323,7 +323,7 @@ write_basic_package_version_file(
   COMPATIBILITY SameMajorVersion
   )
 
-# - Config file is also the same as we use sam e layout
+# - Config file is also the same in build/install trees as we use same layout
 configure_package_config_file(
   ${PROJECT_SOURCE_DIR}/cmake/BayeuxConfig.cmake.in
   ${BAYEUX_BUILD_CMAKEDIR}/${BAYEUX_TAG}/BayeuxConfig.cmake
@@ -342,7 +342,10 @@ export(EXPORT BayeuxTargets
   )
 
 # - Targets (install tree)
-install(EXPORT BayeuxTargets DESTINATION ${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG})
+install(EXPORT BayeuxTargets
+  NAMESPACE Bayeux::
+  DESTINATION ${CMAKE_INSTALL_CMAKEDIR}/${BAYEUX_TAG}
+  )
 
 # - Installation of, well, install tree files
 install(
