@@ -293,7 +293,7 @@ namespace mctools {
     {
       DT_THROW_IF(!is_sampling_initialized(), std::logic_error,
                   "Array of samples is not initialized!");
-      DT_THROW_IF(index_ < 0 || index_ >= _samples_.size(),
+      DT_THROW_IF(index_ >= _samples_.size(),
                   std::range_error,
                   "Sample index [" << index_ << "] is out of range!");
       return _samples_[index_];
@@ -323,7 +323,7 @@ namespace mctools {
     {
       DT_THROW_IF(!is_sampling_initialized(), std::logic_error,
                   "Array of samples is not initialized!");
-      DT_THROW_IF(index_ < 0 || index_ >= _samples_.size(),
+      DT_THROW_IF(index_ >= _samples_.size(),
                   std::range_error,
                   "Sample index [" << index_ << "] is out of range!");
       return index_ / _sampling_frequency_;
@@ -344,7 +344,7 @@ namespace mctools {
     {
       DT_THROW_IF(!is_sampling_initialized(), std::logic_error,
                   "Array of samples is not initialized!");
-      DT_THROW_IF(index_ < 0 || index_ >= _samples_.size(),
+      DT_THROW_IF(index_ >= _samples_.size(),
                   std::range_error,
                   "Sample index [" << index_ << "] is out of range!");
       _samples_[index_] = sample_;
