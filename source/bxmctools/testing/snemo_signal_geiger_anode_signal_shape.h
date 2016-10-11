@@ -247,11 +247,11 @@ namespace snemo {
     private:
 
       // Configuration:
-      double _t0_;         ///< Anode time
-      double _t_rise_;     ///< Front edge anode rising time
-      double _t1_;         ///< Bottom cathode time
-      double _t2_;         ///< Top cathode time
-      double _amplitude_;  ///< Amplitude
+      double _t0_;        ///< Anode time
+      double _t_rise_;    ///< Front edge anode rising time
+      double _t1_;        ///< Bottom cathode time
+      double _t2_;        ///< Top cathode time
+      double _amplitude_; ///< Amplitude
 
       // Working:
       mctools::signal::triangle_gate_signal_shape _bottom_cathode_shape_;
