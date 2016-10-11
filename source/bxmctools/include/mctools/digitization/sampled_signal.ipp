@@ -45,10 +45,15 @@ namespace mctools {
       ar_ & boost::serialization::make_nvp("geomtools__base_hit",
                                            boost::serialization::base_object<geomtools::base_hit>(*this));
 
-      ar_ & boost::serialization::make_nvp("sampling_frequency", _sampling_frequency_);
-      ar_ & boost::serialization::make_nvp("samples", _samples_);
+      if (_store & STORE_SAMPLING_FREQUENCY) {
+        ar_ & boost::serialization::make_nvp("sampling_frequency", _sampling_frequency_);
+      }
+      if (_store & STORE_SAMPLES) {
+        ar_ & boost::serialization::make_nvp("samples", _samples_);
+      }
 
       if (Archive::is_loading::value) {
+        // Working data are never stored in archives but are recomputed ar reload:
         update();
       }
 

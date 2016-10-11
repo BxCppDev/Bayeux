@@ -54,6 +54,12 @@ namespace mctools {
     {
     public:
 
+      /// Masks to automatically tag the attributes to be stored
+      enum more_store_mask_type {
+        STORE_SAMPLING_FREQUENCY = datatools::bit_mask::bit03, //!< Serialization mask for the sampling frequency
+        STORE_SAMPLES            = datatools::bit_mask::bit04  //!< Serialization mask for the samples
+      };
+
       // Special sample values:
       static const int32_t INVALID_SAMPLE   = std::numeric_limits<int32_t>::min();
       static const int32_t UNDERFLOW_SAMPLE = std::numeric_limits<int32_t>::min() + 1;

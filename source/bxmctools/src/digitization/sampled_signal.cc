@@ -1,7 +1,7 @@
 /// \file mctools/digitization/sampled_signal.cc
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2016-10-02
- * Last modified : 2016-10-02
+ * Last modified : 2016-10-11
  *
  * Copyright (C) 2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
@@ -129,6 +129,7 @@ namespace mctools {
     {
       DT_THROW_IF(!std::isfinite(fs_) || fs_ <= std::numeric_limits<double>::epsilon(),
                   std::domain_error, "Invalid sampling frequency!");
+      _store_set(STORE_SAMPLING_FREQUENCY);
       _sampling_frequency_ = fs_;
       return;
     }
@@ -136,6 +137,7 @@ namespace mctools {
     void sampled_signal::reset_sampling_frequency()
     {
       datatools::invalidate(_sampling_frequency_);
+      _store_unset(STORE_SAMPLING_FREQUENCY);
       return;
     }
 
@@ -178,6 +180,7 @@ namespace mctools {
     void sampled_signal::set_number_of_samples(const std::size_t ns_, const int32_t value_)
     {
       reset_number_of_samples();
+      _store_set(STORE_SAMPLES);
       _samples_.assign(ns_, value_);
       return;
     }
@@ -186,7 +189,8 @@ namespace mctools {
     {
       _set_default_working_data();
       _samples_.clear();
-      return;
+      _store_unset(STORE_SAMPLES);
+     return;
     }
 
     std::size_t sampled_signal::get_number_of_samples() const
@@ -253,6 +257,7 @@ namespace mctools {
 
     void sampled_signal::set_samples(const std::vector<int32_t> & s_, const bool update_)
     {
+      _store_set(STORE_SAMPLES);
       _samples_ = s_;
       if (update_) {
         update();
