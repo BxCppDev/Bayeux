@@ -193,7 +193,7 @@ namespace geomtools {
     if (has_hit_id()) {
       a_out << _hit_id_;
     } else {
-      a_out << "No";
+      a_out << "<none>";
     }
     a_out << std::endl;
     a_out << indent << datatools::i_tree_dumpable::tag
@@ -201,7 +201,7 @@ namespace geomtools {
     if (_geom_id_.is_valid()) {
       a_out << _geom_id_;
     } else {
-      a_out << "No";
+      a_out << "<none>";
     }
     a_out << std::endl;
 
@@ -211,7 +211,7 @@ namespace geomtools {
       a_out << "<empty>";
     }
     a_out << std::endl;
-    {
+    if (!_auxiliaries_.empty()) {
       std::ostringstream indent_oss;
       indent_oss << indent;
       indent_oss << datatools::i_tree_dumpable::inherit_skip_tag(a_inherit) ;
