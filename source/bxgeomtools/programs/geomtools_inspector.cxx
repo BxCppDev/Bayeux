@@ -37,19 +37,22 @@
 
 namespace dtc = datatools::configuration;
 
+//! Return the application name
+std::string app_name();
+
 //! Print application splash screen
-void print_splash(std::ostream & out_ = std::clog);
+void app_print_splash(std::ostream & out_ = std::clog);
 
 //! Print application usage (supported options and arguments)
-void print_help(const boost::program_options::options_description & opts_,
+void app_print_help(const boost::program_options::options_description & opts_,
                 std::ostream & out_ = std::clog);
 
 //! Print application shell usage (supported commands)
-void print_shell_help(geomtools::geomtools_driver & gd_,
+void app_print_shell_help(geomtools::geomtools_driver & gd_,
                       std::ostream & out_ = std::clog);
 
 //! Build a list of args/opts from an input string stream
-void build_argv(std::istringstream & command_in_, std::vector<std::string> & argv_);
+void app_build_argv(std::istringstream & command_in_, std::vector<std::string> & argv_);
 
 // Return kernel initialization flags for this application:
 uint32_t app_kernel_init_flags();
@@ -74,13 +77,12 @@ struct app_config_params {
 int main(int argc_, char ** argv_)
 {
   bayeux::initialize(argc_, argv_, app_kernel_init_flags());
-  const std::string APP_NAME = "bxgeomtools_inspector";
 
   int error_code = EXIT_SUCCESS;
-  namespace po  = boost::program_options;
   namespace dtc = datatools::configuration;
   app_config_params params;
 
+  namespace po  = boost::program_options;
   po::options_description optPublic;
   po::options_description optDesc("General configuration parameters");
   try {
@@ -172,7 +174,7 @@ int main(int argc_, char ** argv_)
     po::notify(vm);
 
     if (help) {
-      print_help(optPublic, std::cout);
+      app_print_help(optPublic, std::cout);
       run = false;
       return (1);
     }
@@ -187,7 +189,7 @@ int main(int argc_, char ** argv_)
     if (boost::filesystem::exists(params.history_filename)) {
       int error = read_history(params.history_filename.c_str());
       if (error) {
-        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, APP_NAME << ": "
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, app_name() << ": "
                      << "Cannot read history file '" << params.history_filename << "'!");
       }
     }
@@ -195,7 +197,7 @@ int main(int argc_, char ** argv_)
 #endif // GEOMTOOLS_WITH_READLINE
 
     if (! params.no_splash) {
-      print_splash(std::cerr);
+      app_print_splash(std::cerr);
     }
 
     // Variant service:
@@ -301,12 +303,12 @@ int main(int argc_, char ** argv_)
         std::string command;
         command_iss >> command >> std::ws;
         if (command == "h" || command == "help") {
-          print_shell_help(GD, std::cerr);
+          app_print_shell_help(GD, std::cerr);
         } else if (command == "q" || command == "quit") {
           go_on = false;
         } else if (command == "i" || command == "initialize") {
           std::vector<std::string> argv;
-          build_argv(command_iss, argv);
+          app_build_argv(command_iss, argv);
           int error = GD.command_initialize(argv, std::clog);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot initialize the geometry driver ! ");
@@ -380,7 +382,7 @@ int main(int argc_, char ** argv_)
         } else if (command == "x" || command == "export_gdml") {
           if (GD.has_manager()) {
             std::vector<std::string> argv;
-            build_argv(command_iss, argv);
+            app_build_argv(command_iss, argv);
             int error = GD.command_export_gdml(argv);
             if (error > 0) {
               DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot export GDML file !");
@@ -391,7 +393,7 @@ int main(int argc_, char ** argv_)
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
         } else if (command == "d" || command == "display") {
           std::vector<std::string> argv;
-          build_argv(command_iss, argv);
+          app_build_argv(command_iss, argv);
           int error = GD.command_gnuplot_display(argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot display the geometry setup !");
@@ -399,35 +401,35 @@ int main(int argc_, char ** argv_)
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
         } else if (command == "C" || command == "list_of_categories") {
           std::vector<std::string> argv;
-          build_argv(command_iss, argv);
+          app_build_argv(command_iss, argv);
           int error = GD.command_print_list_of_categories(std::cout, argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot print the list of geometry categories !");
           }
         } else if (command == "lsdd" || command == "list_of_display_data") {
           std::vector<std::string> argv;
-          build_argv(command_iss, argv);
+          app_build_argv(command_iss, argv);
           int error = GD.command_print_list_of_display_data(std::cout, argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot print the list of display data !");
           }
         } else if (command == "ldd" || command == "load_display_data") {
           std::vector<std::string> argv;
-          build_argv(command_iss, argv);
+          app_build_argv(command_iss, argv);
           int error = GD.command_load_display_data(argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot load display data !");
           }
         } else if (command == "udd" || command == "unload_display_data") {
           std::vector<std::string> argv;
-          build_argv(command_iss, argv);
+          app_build_argv(command_iss, argv);
           int error = GD.command_unload_display_data(argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot unload display data !");
           }
         } else if (command == "cdd" || command == "clear_display_data") {
           std::vector<std::string> argv;
-          build_argv(command_iss, argv);
+          app_build_argv(command_iss, argv);
           int error = GD.command_clear_display_data(argv);
           if (error > 0) {
             DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Cannot clear display data !");
@@ -447,12 +449,12 @@ int main(int argc_, char ** argv_)
     } // End of browser main loop.
 
 #if GEOMTOOLS_WITH_READLINE == 1
-    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, APP_NAME << ": "
+    DT_LOG_NOTICE(datatools::logger::PRIO_NOTICE, app_name() << ": "
                   << "Saving history file '" << params.history_filename << "'...");
     int error = write_history(params.history_filename.c_str());
     if (error) {
       DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                   APP_NAME << ": " << "Cannot write history file '" << params.history_filename << "' !");
+                   app_name() << ": " << "Cannot write history file '" << params.history_filename << "' !");
     }
     history_truncate_file(params.history_filename.c_str(), 200);
     clear_history();
@@ -465,11 +467,11 @@ int main(int argc_, char ** argv_)
     }
 
   } catch (std::exception & x) {
-    print_help(optPublic);
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, APP_NAME << ": " << x.what());
+    app_print_help(optPublic);
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, app_name() << ": " << x.what());
     error_code = EXIT_FAILURE;
   } catch (...) {
-    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, APP_NAME << ": " << "Unexpected error !");
+    DT_LOG_FATAL(datatools::logger::PRIO_FATAL, app_name() << ": " << "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
 
@@ -477,7 +479,13 @@ int main(int argc_, char ** argv_)
   return (error_code);
 }
 
-void print_splash(std::ostream & out_)
+//! Return the application name
+std::string app_name()
+{
+  return "bxgeomtools_inspector";
+}
+
+void app_print_splash(std::ostream & out_)
 {
   out_ << "                                                   \n"
        << "\tG E O M T O O L S    I N S P E C T O R           \n"
@@ -499,14 +507,13 @@ void print_splash(std::ostream & out_)
   return;
 }
 
-void print_help(const boost::program_options::options_description & opts_,
+void app_print_help(const boost::program_options::options_description & opts_,
                 std::ostream & out_)
 {
-  const std::string APP_NAME = "bxgeomtools_inspector";
-  out_ << APP_NAME << " -- Inspect and display a virtual geometry" << std::endl;
+  out_ << app_name() << " -- Inspect and display a virtual geometry" << std::endl;
   out_ << "\n";
   out_ << "Usage: \n\n";
-  out_ << "  " << APP_NAME << " [OPTIONS...] [MGRCFG_FILE]\n";
+  out_ << "  " << app_name() << " [OPTIONS...] [MGRCFG_FILE]\n";
   out_ << opts_;
   {
     out_ << "\nGeometry inspector options: \n";
@@ -517,11 +524,11 @@ void print_help(const boost::program_options::options_description & opts_,
   }
   out_ << "\n";
   out_ << "Examples:\n\n";
-  out_ << "  " << APP_NAME << " --manager-config config/geometry/setup-1.0/manager.conf \n\n";
+  out_ << "  " << app_name() << " --manager-config=\"config/geometry/setup-1.0/manager.conf\" \n\n";
   return;
 }
 
-void print_shell_help(geomtools::geomtools_driver & gd_, std::ostream & out_)
+void app_print_shell_help(geomtools::geomtools_driver & gd_, std::ostream & out_)
 {
   out_ <<  "  h | help                         : Print this help                                  \n";
   out_ <<  "  s | status                       : Print the status of the geometry driver          \n";
@@ -561,7 +568,7 @@ void print_shell_help(geomtools::geomtools_driver & gd_, std::ostream & out_)
   return;
 }
 
-void build_argv(std::istringstream & command_in_, std::vector<std::string> & argv_)
+void app_build_argv(std::istringstream & command_in_, std::vector<std::string> & argv_)
 {
   while (command_in_) {
     std::string token;

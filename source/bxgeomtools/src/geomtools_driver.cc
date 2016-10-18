@@ -113,40 +113,41 @@ namespace geomtools {
             out_ << "    initialize [OPTIONS...] [MGRCFG_FILE] \n"
                  << "                                          \n";
             out_ << "  Options:                                \n";
-            out_ << "    -h  | --help            Print this help \n";
-            out_ << "    -hs | --help-short      Print this help (short version) \n";
-            out_ << "    -u  | --mute            Mute mode (inhibit message)     \n";
+            out_ << "    -h  [ --help ]       Print this help \n";
+            out_ << "    -hs [ --help-short ] Print this help (short version) \n";
+            out_ << "    -u  [ --mute ]       Mute mode (inhibit message)     \n";
           }
-          out_ << "  -G  | --logging LOGPRIO  Set the logging priority threshold 'LOGPRIO'    \n"
+          out_ << "  -G  [ --logging ] LOGPRIO\n"
+               << "                        Set the logging priority threshold 'LOGPRIO'\n"
                << "                        Accepted values are: 'trace', 'debug',          \n"
                << "                          'information', 'notice', 'warning',           \n"
                << "                          'error', 'critical', 'fatal'                  \n"
-               << "  -B  | --batch            Run in batch mode (no user interaction)         \n"
-               << "  -I  | --interactive      Run in interactive mode (with user interaction) \n"
-               << "  -c  | --manager-config MGRCFG_FILE                                       \n"
+               << "  -B  [ --batch ]           Run in batch mode (no user interaction)        \n"
+               << "  -I  [ --interactive ]     Run in interactive mode (with user interaction)\n"
+               << "  -c  [ --manager-config ] MGRCFG_FILE                                     \n"
                << "                        Use the configuration file named 'MGRCFG_FILE'  \n"
                << "                        for the geometry manager                        \n"
                << "                        (incompatible with '--geometry-file')           \n"
-               << "  -MP | --materials-plugin MATPLG                                         \n"
+               << "  -MP [ --materials-plugin ] MATPLG                                     \n"
                << "                        Use the materials plugin named 'MATPLG'         \n"
-               << "  -g  | --geometry-file GEOM_FILE                                          \n"
+               << "  -g  [ --geometry-file ] GEOM_FILE                                     \n"
                << "                        Use the geometry file named 'GEOM_FILE'         \n"
                << "                        for the plain model factory                     \n"
                << "                        (incompatible with '--manager-config')          \n"
-               << "  -l  | --load-dll DLL     Load the shared library named 'DLL'             \n";
+               << "  -l  [ --load-dll ] DLL     Load the shared library named 'DLL'        \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-          out_ << "  +V  | --with-visu        Visualize the geometry setup                     \n";
-          out_ << "  -V  | --without-visu     Do not visualize the geometry setup (default)    \n";
-          out_ << "  -xy | --visu-view-xy    Visualization defaults to XY view                \n";
-          out_ << "  -yz | --visu-view-yz    Visualization defaults to YZ view                \n";
-          out_ << "  -xz | --visu-view-xz    Visualization defaults to XZ view                \n";
-          out_ << "  -3d | --visu-view-3d    Visualization defaults to 3D view (default)      \n";
-          out_ << "  +VL | --visu-labels     Visualization shows axis and labels (default)    \n";
-          out_ << "  -VL | --visu-no-labels  Visualization does not show axis and labels      \n";
-          out_ << "  -VO | --visu-object MODEL_NAME|VOLUME_GID                                \n";
-          out_ << "                        Visualization displays a specific geometry model \n"
-               << "                        by name, a logical volume by name or a physical  \n";
-          out_ << "                        volume by GID (default: autodetected)            \n";
+          out_ << "  +V  [ --with-visu ]      Visualize the geometry setup                     \n";
+          out_ << "  -V  [ --without-visu ]   Do not visualize the geometry setup (default)    \n";
+          out_ << "  -xy [ --visu-view-xy ]   Visualization defaults to XY view                \n";
+          out_ << "  -yz [ --visu-view-yz ]   Visualization defaults to YZ view                \n";
+          out_ << "  -xz [ --visu-view-xz ]   Visualization defaults to XZ view                \n";
+          out_ << "  -3d [ --visu-view-3d ]   Visualization defaults to 3D view (default)      \n";
+          out_ << "  +VL [ --visu-labels ]    Visualization shows axis and labels (default)    \n";
+          out_ << "  -VL [ --visu-no-labels ] Visualization does not show axis and labels      \n";
+          out_ << "  -VO [ --visu-object ] MODEL_NAME|VOLUME_GID                               \n";
+          out_ << "                           Visualization displays a specific geometry model \n"
+               << "                           by name, a logical volume by name or a physical  \n";
+          out_ << "                           volume by GID (default: autodetected)            \n";
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
           out_ << "\n";
           out_ << "  MGRCFG_FILE : Set the configuration file for the geometry       \n"
@@ -281,14 +282,11 @@ namespace geomtools {
   {
     DT_THROW_IF(! is_initialized(), std::logic_error, "Driver is not initialized !");
     _initialized_ = false;
-
     _has_world_ = false;
     _geo_factory_ref_ = nullptr;
     if (_geo_mgr_) _geo_mgr_.reset();
     if (_geo_factory_) _geo_factory_.reset();
-
     _params_.reset();
-
     return;
   }
 
@@ -775,9 +773,9 @@ namespace geomtools {
           out_ << "     display [OPTIONS...]  \n"
                << "\n";
           out_ << "   Options: \n";
-          out_ << "     -h | --help          Print this help\n"
-               << "     -t | --with-title    Print a title line\n"
-               << "     -T | --without-title Do not print a title line\n"
+          out_ << "     -h [ --help ]          Print this help\n"
+               << "     -t [ --with-title ]    Print a title line\n"
+               << "     -T [ --without-title ] Do not print a title line\n"
                << "\n";
           out_ << std::flush;
           return -1;
@@ -833,10 +831,10 @@ namespace geomtools {
           out_ << "     display [OPTIONS...] [NAME] \n"
                << "\n";
           out_ << "   Options: \n";
-          out_ << "     -h | --help          Print this help\n"
-               << "     -n | --name NAME     Select the name of the display data object\n"
-               << "     -i | --input IN_FILE Select the input file from which to load \n"
-               << "                        the display data object\n"
+          out_ << "     -h [ --help ]          Print this help\n"
+               << "     -n [ --name ] NAME     Select the name of the display data object\n"
+               << "     -i [ --input ] IN_FILE Select the input file from which to load \n"
+               << "                            the display data object\n"
                << "\n";
           out_ << "   NAME : The name of the display data object to be loaded\n";
           out_ << "   FROM : The file name of the display data object to be loaded\n";
@@ -924,8 +922,8 @@ namespace geomtools {
           out_ << "     display [OPTIONS...] [NAME] \n"
                << "\n";
           out_ << "   Options: \n";
-          out_ << "     -h | --help          Print this help\n"
-               << "     -n | --name NAME     Select the name of the display data object\n"
+          out_ << "     -h [ --help ]       Print this help\n"
+               << "     -n [ --name ] NAME  Select the name of the display data object\n"
                << "\n";
           out_ << "   NAME : The name of the display data object to be loaded\n";
           out_ << std::flush;
@@ -1002,15 +1000,15 @@ namespace geomtools {
           out_ << "    export_gdml [OPTIONS...] [GDML_FILE] \n"
                << "\n";
           out_ << "  Options: \n";
-          out_ << "    -h | --help           Print this help\n"
-               << "    -r | --with-replica        With replica support\n"
-               << "    -R | --without-replica     Without replica support\n"
-               << "    --no-root-display     Do not display the GDML geometry from ROOT\n"
-               << "    --root-display        Display the GDML geometry from ROOT\n"
-               << "                          (interactive mode only)\n"
-               << "    --root-vis-option OPT Use ROOT visualization option OPT\n"
-               << "    --root-vis-level LVL  Use ROOT visualization level LVL\n"
-               << "    --root-top-volume VOL ROOT visualization of the volume VOL\n"
+          out_ << "    -h [ --help ]            Print this help\n"
+               << "    -r [ --with-replica ]    With replica support\n"
+               << "    -R [ --without-replica ] Without replica support\n"
+               << "    --no-root-display        Do not display the GDML geometry from ROOT\n"
+               << "    --root-display           Display the GDML geometry from ROOT\n"
+               << "                             (interactive mode only)\n"
+               << "    --root-vis-option OPT    Use ROOT visualization option OPT\n"
+               << "    --root-vis-level LVL     Use ROOT visualization level LVL\n"
+               << "    --root-top-volume VOL    ROOT visualization of the volume VOL\n"
                << "\n";
           out_ << "  GDML_FILE : The name of the GDML file to be generated (optional)\n";
           out_ << std::flush;
@@ -1229,26 +1227,26 @@ namespace geomtools {
           out_ << "    display [options...] [id] \n"
                << "\n";
           out_ << "  Options: \n";
-          out_ << "    -h  | --help                Print this help\n"
-               << "    -xy | --visu-view-xy        Use X-Y 2D projection\n"
-               << "    -xz | --visu-view-xz        Use X-Z 2D projection\n"
-               << "    -yz | --visu-view-yz        Use Y-Z 2D projection\n"
-               << "    -3d | --visu-view-3d        Use 3D view \n"
-               << "    -3f | --visu-view-3d-free   Use 3D view (free scale)\n"
-               << "    -e  | --force-show-envelope Force the display of volume envelope\n"
-               << "    -E  | --force-hide-envelope Disable the display of volume envelope\n"
-               << "    -c  | --force-show-children Force the display of daughter volume(s)\n"
-               << "    -C  | --force-hide-children Disable the display of daughter volume(s)\n"
-               << "    -dd | --with-display-data   Display data are included in the scene.\n"
-               << "                                This works only with GID objects rendering.\n"
-               << "    -DD | --without-display-data \n"
-               << "                                Display data are not included in the scene\n"
-               << "    -l  | --labels              Display axis with labels\n"
-               << "    -L  | --no-labels           Do not display axis with labels\n"
-               << "    -t  | --title               Display image title\n"
-               << "    -T  | --no-title            Do not display image title\n"
-               << "    -o  | --output [outfile]    Print in the 'outfile' file\n"
-               << "    -g  | --add-rendering-option [tag]\n"
+          out_ << "    -h  [ --help ]                 Print this help\n"
+               << "    -xy [ --visu-view-xy ]         Use X-Y 2D projection\n"
+               << "    -xz [ --visu-view-xz ]         Use X-Z 2D projection\n"
+               << "    -yz [ --visu-view-yz ]         Use Y-Z 2D projection\n"
+               << "    -3d [ --visu-view-3d ]         Use 3D view \n"
+               << "    -3f [ --visu-view-3d-free ]    Use 3D view (free scale)\n"
+               << "    -e  [ --force-show-envelope ]  Force the display of volume envelope\n"
+               << "    -E  [ --force-hide-envelope ]  Disable the display of volume envelope\n"
+               << "    -c  [ --force-show-children ]  Force the display of daughter volume(s)\n"
+               << "    -C  [ --force-hide-children ]  Disable the display of daughter volume(s)\n"
+               << "    -dd [ --with-display-data ]    Display data are included in the scene.\n"
+               << "                                   This works only with GID objects rendering.\n"
+               << "    -DD [ --without-display-data ]  \n"
+               << "                                   Display data are not included in the scene\n"
+               << "    -l  [ --labels ]               Display axis with labels\n"
+               << "    -L  [ --no-labels ]            Do not display axis with labels\n"
+               << "    -t  [ --title ]                Display image title\n"
+               << "    -T  [ --no-title ]             Do not display image title\n"
+               << "    -o  [ --output ] [outfile]     Print in the 'outfile' file\n"
+               << "    -g  [ --add-rendering-option ]  [tag]\n"
                << "                                Add shape rendering option labelled 'tag'.\n"
                << "                                Supported tags are:                 \n"
                << "                                 * 'grid'                           \n"
@@ -1259,15 +1257,15 @@ namespace geomtools {
                << "                                 * 'angle.very_high_sampling'       \n"
                << "                                 * 'angle.huge_sampling'            \n"
                << "                                 * 'composite.boost_sampling'       \n"
-               << "    -p  | --rendering-option-children\n"
+               << "    -p  [ --rendering-option-children ]\n"
                << "                                Apply current shape rendering options\n"
                << "                                down to daughter volume(s).\n"
-               << "    -x  | --max-display-level [depth]\n"
+               << "    -x  [ --max-display-level ] [depth]\n"
                << "                                Display daughter volume(s) down to\n"
                << "                                level 'depth'.\n"
-               << "    -r  | --terminal TERM    Use terminal 'TERM'\n"
-               << "    -R  | --terminal-options TERMOPT \n"
-               << "                           Use terminal options 'TERMOPT'\n"
+               << "    -r  [ --terminal ] TERM     Use terminal 'TERM'\n"
+               << "    -R  [ --terminal-options ] TERMOPT \n"
+               << "                                Use terminal options 'TERMOPT'\n"
                << "\n";
           out_ << "  [id] : The identifier of the object to be displayed (optional)\n";
           out_ << "         It can be:                       \n";
