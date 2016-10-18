@@ -52,6 +52,9 @@
 namespace bpo = boost::program_options;
 namespace dtc = datatools::configuration;
 
+//! Return the application name
+std::string app_name();
+
 //! Print application usage (supported options and arguments)
 void app_usage(std::ostream & out_,
                const bpo::options_description & desc_);
@@ -71,7 +74,7 @@ struct app_config_params {
   std::vector<std::string> LL_dlls;
 };
 
-void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_);
+void app_dump_debug(std::ostream & out_, const dtc::variant_repository & vrep_);
 
 void app_print_doc_rst(std::ostream & out_, const dtc::variant_repository & vrep_);
 
@@ -240,7 +243,7 @@ int main(int argc_, char * argv_[])
         vserv.configure(params.variants);
 
         if (datatools::logger::is_debug(logging)) {
-          debug_app_dump(std::cerr, vserv.get_repository());
+          app_dump_debug(std::cerr, vserv.get_repository());
         }
 
         // Start the variant service:
@@ -287,17 +290,22 @@ int main(int argc_, char * argv_[])
 }
 
 // Definitions:
+std::string app_name()
+{
+  return "bxvariant_inspector";
+}
+
 void app_version(std::ostream & out_)
 {
-  out_ << "bxvariant_inspector " << datatools::version::get_version() << std::endl;
+  out_ << app_name() << " " << datatools::version::get_version() << std::endl;
   return;
 }
 
 void app_usage(std::ostream & out_, const bpo::options_description & opts_)
 {
-  out_ << "bxvariant_inspector - Browse/edit a variant repository" << std::endl;
+  out_ << app_name() << " - Browse/edit a variant repository" << std::endl;
   out_ << "Usage : " << std::endl;
-  out_ << "  bxvariant_inspector [options]..." << std::endl;
+  out_ << "  " << app_name() << " [options]..." << std::endl;
   out_ << opts_ << std::endl;
   return;
 }
@@ -309,7 +317,7 @@ app_config_params::app_config_params()
   return;
 }
 
-void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_)
+void app_dump_debug(std::ostream & out_, const dtc::variant_repository & vrep_)
 {
   out_ << "Variant repository : '" << vrep_.get_name() << "'" << std::endl;
   out_ << "  Organization : '" << vrep_.get_organization() << "'" << std::endl;
@@ -321,9 +329,7 @@ void debug_app_dump(std::ostream & out_, const dtc::variant_repository & vrep_)
 
   std::vector<std::string> vreg_keys;
   vrep_.build_ordered_registry_keys(vreg_keys);
-  for (std::size_t ivreg = 0;
-       ivreg < vreg_keys.size();
-       ivreg++) {
+  for (std::size_t ivreg = 0; ivreg < vreg_keys.size(); ivreg++) {
     const std::string & vreg_key = vreg_keys[ivreg];
     const dtc::variant_registry & vreg = vrep_.get_registry(vreg_key);
     const std::string & vreg_name = vreg.get_name();

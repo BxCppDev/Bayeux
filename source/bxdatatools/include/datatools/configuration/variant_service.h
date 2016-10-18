@@ -43,7 +43,7 @@ namespace datatools {
 
   namespace configuration {
 
-    //! \brief Variant service
+    //! \brief Variant user interface service
     class variant_service
     {
     public:
