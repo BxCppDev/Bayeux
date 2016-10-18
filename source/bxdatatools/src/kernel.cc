@@ -624,8 +624,8 @@ namespace datatools {
       _library_info_register_->set_logging(datatools::logger::get_priority(_params_.library_info_logging_label));
       _library_info_register_->initialize();
       DT_LOG_TRACE(_logging_, "Kernel's library info register is now created.");
-      if (_logging_ == logger::PRIO_TRACE) {
-        _library_info_register_->tree_dump(std::cerr, "Kernel's library info register:", "TRACE: ");
+      if (datatools::logger::is_trace(_logging_)) {
+        _library_info_register_->tree_dump(std::cerr, "Kernel's library info register:", "[trace] ");
       }
     } else {
       DT_LOG_TRACE(_logging_, "Kernel's library info register is not created.");
