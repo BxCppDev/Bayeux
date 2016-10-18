@@ -95,7 +95,7 @@ int main(int argc_, char ** argv_)
        po::value<bool>(&help)
        ->zero_tokens()
        ->default_value(false),
-       "Print help then exit.  \n"
+       "Print help then exit."
        )
 
 #if GEOMTOOLS_WITH_READLINE == 1
@@ -103,7 +103,7 @@ int main(int argc_, char ** argv_)
        po::value<bool>(&params.without_readline)
        ->zero_tokens()
        ->default_value(false),
-       "Deactivate readline.\n"
+       "Deactivate readline."
        )
 #endif // GEOMTOOLS_WITH_READLINE
 
@@ -513,7 +513,7 @@ void app_print_help(const boost::program_options::options_description & opts_,
   out_ << app_name() << " -- Inspect and display a virtual geometry" << std::endl;
   out_ << "\n";
   out_ << "Usage: \n\n";
-  out_ << "  " << app_name() << " [OPTIONS...] [MGRCFG_FILE]\n";
+  out_ << "  " << app_name() << " [OPTIONS...] [FILE]\n";
   out_ << opts_;
   {
     out_ << "\nGeometry inspector options: \n";
@@ -523,48 +523,48 @@ void app_print_help(const boost::program_options::options_description & opts_,
     GDP.parse(options, out_);
   }
   out_ << "\n";
-  out_ << "Examples:\n\n";
+  out_ << "Example:\n\n";
   out_ << "  " << app_name() << " --manager-config=\"config/geometry/setup-1.0/manager.conf\" \n\n";
   return;
 }
 
 void app_print_shell_help(geomtools::geomtools_driver & gd_, std::ostream & out_)
 {
-  out_ <<  "  h | help                         : Print this help                                  \n";
-  out_ <<  "  s | status                       : Print the status of the geometry driver          \n";
+  out_ <<  "  h [ help ]                         : Print this help                                  \n";
+  out_ <<  "  s [ status ]                       : Print the status of the geometry driver          \n";
   if (!gd_.is_initialized()) {
-    out_ <<  "  i | initialize [OPTIONS] FILE    : Initialize the geometry driver                   \n";
+    out_ <<  "  i [ initialize ] [OPTIONS] FILE  : Initialize the geometry driver                   \n";
     out_ <<  "                                     Use 'initialize --help' for the online help.     \n";
   } else {
-    out_ <<  "  r | reset                        : Reset the geometry driver                      \n";
+    out_ <<  "  r [ reset ]                      : Reset the geometry driver                        \n";
   }
-  out_ <<  "  P | print_manager                : Print the embedded geometry manager              \n";
-  out_ <<  "  F | print_factory                : Print the embedded geometry model factory        \n";
-  out_ <<  "  C | list_of_categories [OPTIONS] : Print the list of geometry categories.         \n";
-  out_ <<  "                                     Use 'list_of_categories --help' for the list of options.\n";
-  out_ <<  "  M | list_of_models [OPTIONS]     : Print the list of geometry models.                      \n";
-  out_ <<  "                                     Use 'list_of_models --help' for the list of options.    \n";
-  out_ <<  "  L | list_of_logicals [OPTIONS]   : Print the list of logical volumes.                      \n";
-  out_ <<  "                                     Use 'list_of_logicals --help' for the list of options.  \n";
-  out_ <<  "  A | print_mapping [NAME]         : Print the embedded mapping object                       \n";
-  out_ <<  "  G | list_of_gids  [OPTIONS]      : Print the list of geometry identifiers (GID).           \n";
-  out_ <<  "                                     Use 'list_of_gids --help' for the list of options.      \n";
-  out_ <<  "  m | model MODEL_NAME             : Print the geometry model named 'MODEL_NAME'             \n";
-  out_ <<  "  l | logical LOGICAL_NAME         : Print the logical volume named 'LOGICAL_NAME'           \n";
-  out_ <<  "  ldd | load_display_data [OPTIONS] [NAME] [INFILE] : \n";
-  out_ <<  "                                     Load a display data object  \n";
-  out_ <<  "  udd | unload_display_data [OPTIONS] [NAME] : \n";
-  out_ <<  "                                     Unload a display data object \n";
-  out_ <<  "  cdd | clear_display_data         : Clear display data objects \n";
-  out_ <<  "  pdd | print_display_data         : Print the list of display data objects \n";
+  out_ <<  "  P [ print_manager ]                : Print the embedded geometry manager              \n";
+  out_ <<  "  F [ print_factory ]                : Print the embedded geometry model factory        \n";
+  out_ <<  "  C [ list_of_categories ] [OPTIONS] : Print the list of geometry categories.           \n";
+  out_ <<  "                                       Use 'list_of_categories --help' for the list of options.\n";
+  out_ <<  "  M [ list_of_models ] [OPTIONS]     : Print the list of geometry models.                      \n";
+  out_ <<  "                                       Use 'list_of_models --help' for the list of options.    \n";
+  out_ <<  "  L [ list_of_logicals ] [OPTIONS]   : Print the list of logical volumes.                      \n";
+  out_ <<  "                                       Use 'list_of_logicals --help' for the list of options.  \n";
+  out_ <<  "  A [ print_mapping ] [NAME]         : Print the embedded mapping object                       \n";
+  out_ <<  "  G [ list_of_gids ] [OPTIONS]       : Print the list of geometry identifiers (GID).           \n";
+  out_ <<  "                                       Use 'list_of_gids --help' for the list of options.      \n";
+  out_ <<  "  m [ model ] MODEL_NAME             : Print the geometry model named 'MODEL_NAME'             \n";
+  out_ <<  "  l [ logical ] LOGICAL_NAME         : Print the logical volume named 'LOGICAL_NAME'           \n";
+  out_ <<  "  ldd [ load_display_data ] [OPTIONS] [NAME] [FILE] :                             \n";
+  out_ <<  "                                       Load a display data object                 \n";
+  out_ <<  "  udd [ unload_display_data ] [OPTIONS] [NAME] :                                  \n";
+  out_ <<  "                                       Unload a display data object               \n";
+  out_ <<  "  cdd [ clear_display_data ]         : Clear display data objects                 \n";
+  out_ <<  "  pdd [ print_display_data ]         : Print the list of display data objects     \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-  out_ <<  "  d | display [OPTIONS] [NAME]     : Gnuplot display of the geometry setup         \n";
-  out_ <<  "                                     Use 'display --help' for the online help.     \n";
+  out_ <<  "  d [ display ] [OPTIONS] [NAME]     : Gnuplot display of the geometry setup      \n";
+  out_ <<  "                                       Use 'display --help' for the online help.  \n";
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-  out_ <<  "  x | export_gdml  [OPTIONS] [GDML_FILENAME] :                                   \n"
-       <<  "                                     Export the geometry setup to a GDML file      \n";
-  out_ <<  "                                     Use 'export_gdml --help' for the online help. \n";
-  out_ <<  "  q | quit                         : Quit                                          \n";
+  out_ <<  "  x [ export_gdml ] [OPTIONS] [FILE] :                                            \n"
+       <<  "                                     Export the geometry setup to a GDML file     \n";
+  out_ <<  "                                     Use 'export_gdml --help' for the online help.\n";
+  out_ <<  "  q [ quit ]                         : Quit                                       \n";
   return;
 }
 

@@ -109,35 +109,36 @@ namespace geomtools {
         std::string option = token;
         if ((option == "-h") || (option == "--help") || (option == "-hs") || (option == "--help-short")) {
           if ((option == "-h") || (option == "--help")) {
-            out_ << "  Usage:                                  \n";
-            out_ << "    initialize [OPTIONS...] [MGRCFG_FILE] \n"
-                 << "                                          \n";
-            out_ << "  Options:                                \n";
-            out_ << "    -h  [ --help ]       Print this help \n";
+            out_ << "  Usage:                                 \n";
+            out_ << "    initialize [OPTIONS...] [FILE]       \n"
+                 << "                                         \n";
+            out_ << "    FILE : Set the configuration file for the geometry   \n"
+                 << "           manager (see also '--manager-config')         \n";
+            out_ << "  Options:                                               \n";
+            out_ << "    -h  [ --help ]       Print this help                 \n";
             out_ << "    -hs [ --help-short ] Print this help (short version) \n";
             out_ << "    -u  [ --mute ]       Mute mode (inhibit message)     \n";
           }
-          out_ << "  -G  [ --logging ] LOGPRIO\n"
-               << "                        Set the logging priority threshold 'LOGPRIO'\n"
-               << "                        Accepted values are: 'trace', 'debug',          \n"
-               << "                          'information', 'notice', 'warning',           \n"
-               << "                          'error', 'critical', 'fatal'                  \n"
-               << "  -B  [ --batch ]           Run in batch mode (no user interaction)        \n"
-               << "  -I  [ --interactive ]     Run in interactive mode (with user interaction)\n"
-               << "  -c  [ --manager-config ] MGRCFG_FILE                                     \n"
-               << "                        Use the configuration file named 'MGRCFG_FILE'  \n"
-               << "                        for the geometry manager                        \n"
-               << "                        (incompatible with '--geometry-file')           \n"
-               << "  -MP [ --materials-plugin ] MATPLG                                     \n"
-               << "                        Use the materials plugin named 'MATPLG'         \n"
-               << "  -g  [ --geometry-file ] GEOM_FILE                                     \n"
-               << "                        Use the geometry file named 'GEOM_FILE'         \n"
-               << "                        for the plain model factory                     \n"
-               << "                        (incompatible with '--manager-config')          \n"
-               << "  -l  [ --load-dll ] DLL     Load the shared library named 'DLL'        \n";
+          out_ << "  -G  [ --logging ] PRIO   Set the logging priority threshold 'PRIO'        \n"
+               << "                           Accepted values are: 'trace', 'debug',           \n"
+               << "                           'information', 'notice', 'warning',              \n"
+               << "                           'error', 'critical', 'fatal'                     \n"
+               << "  -I  [ --interactive ]    Run in interactive mode (default)                \n"
+               << "  -B  [ --batch ]          Run in batch mode (no user interaction)          \n"
+               << "  -c  [ --manager-config ] FILE                                             \n"
+               << "                           Use the configuration file named 'FILE'          \n"
+               << "                           for the geometry manager                         \n"
+               << "                           (incompatible with '--geometry-file')            \n"
+               << "  -MP [ --materials-plugin ] NAME                                           \n"
+               << "                           Use the materials plugin named 'NAME'            \n"
+               << "  -g  [ --geometry-file ] FILE                                              \n"
+               << "                           Use the geometry file named 'FILE'               \n"
+               << "                           for the plain model factory                      \n"
+               << "                           (incompatible with '--manager-config')           \n"
+               << "  -l  [ --load-dll ] DLL   Load the shared library named 'DLL'              \n";
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-          out_ << "  +V  [ --with-visu ]      Visualize the geometry setup                     \n";
-          out_ << "  -V  [ --without-visu ]   Do not visualize the geometry setup (default)    \n";
+          out_ << "  +V  [ --with-visu ]      Visualize the geometry setup (default)           \n";
+          out_ << "  -V  [ --without-visu ]   Do not visualize the geometry setup              \n";
           out_ << "  -xy [ --visu-view-xy ]   Visualization defaults to XY view                \n";
           out_ << "  -yz [ --visu-view-yz ]   Visualization defaults to YZ view                \n";
           out_ << "  -xz [ --visu-view-xz ]   Visualization defaults to XZ view                \n";
@@ -149,9 +150,6 @@ namespace geomtools {
                << "                           by name, a logical volume by name or a physical  \n";
           out_ << "                           volume by GID (default: autodetected)            \n";
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-          out_ << "\n";
-          out_ << "  MGRCFG_FILE : Set the configuration file for the geometry       \n"
-               << "                manager (see also '--manager-config')   \n";
           out_ << std::flush;
           code = -1;
           break;
