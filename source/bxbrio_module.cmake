@@ -54,7 +54,7 @@ set(${module_name}_MODULE_SOURCES
   )
 
 # - Generate ROOT headers
-if(ROOT_VERSION VERSION_GREATER 5)
+if(ROOT_VERSION VERSION_GREATER 5.99)
   # Need a dummy incdir as root_generate_dictionary doesn't understand genexps
   # and requires a nonempty INCLUDE_DIRECTORIES property
   # create a random dir that shouldn't exist to create at leats one entry.
