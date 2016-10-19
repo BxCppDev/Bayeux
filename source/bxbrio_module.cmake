@@ -54,9 +54,21 @@ set(${module_name}_MODULE_SOURCES
   )
 
 # - Generate ROOT headers
+if(ROOT_VERSION VERSION_GREATER 5)
+  # Need a dummy incdir as root_generate_dictionary doesn't understand genexps
+  # and requires a nonempty INCLUDE_DIRECTORIES property
+  # create a random dir that shouldn't exist to create at leats one entry.
+  # This shouldn't interfere with any other path.
+  string(RANDOM LENGTH 20 __dummy_path_for_root_incdirs)
+  include_directories(${__dummy_path_for_root_incdirs})
+
+  # ROOT6 dictionary generation requires a MODULE arg
+  set(__BRIO_MODULE_ARG MODULE Bayeux)
+endif()
 root_generate_dictionary(brio_dict
   ${module_include_dir}/${module_name}/detail/brio_record.h
   ${module_include_dir}/${module_name}/detail/TArrayCMod.h
+  ${__BRIO_MODULE_ARG}
   LINKDEF "${PROJECT_SOURCE_DIR}/source/brio_linkdef.h"
   OPTIONS "-I${module_include_dir}"
   )

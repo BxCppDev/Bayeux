@@ -54,7 +54,11 @@ find_package(GSL 1.15 REQUIRED)
 # - ROOT
 set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
-include(RootNewMacros)
+if(ROOT_VERSION VERSION_LESS 6)
+  include(RootNewMacros)
+else()
+  include(${ROOT_DIR}/modules/RootNewMacros.cmake)
+endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
 if(BAYEUX_WITH_QT_GUI)
