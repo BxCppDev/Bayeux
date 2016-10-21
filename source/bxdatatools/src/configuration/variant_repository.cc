@@ -1158,11 +1158,11 @@ namespace datatools {
           count++;
         }
 
-        out_ << "* Initialized: ``" << is_initialized() << "``" << std::endl;
-        count++;
+        // out_ << "* Initialized: ``" << is_initialized() << "``" << std::endl;
+        // count++;
 
-        out_ << "* Locked: ``" << is_locked() << "``" << std::endl;
-        count++;
+        // out_ << "* Locked: ``" << is_locked() << "``" << std::endl;
+        // count++;
 
         if (count) {
           out_ << std::endl;
@@ -1211,8 +1211,8 @@ namespace datatools {
             out_ << "* Top variant name: ``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
             count++;
 
-            out_ << "* Initialized: ``" << vreg.is_initialized() << "``" << std::endl;
-            count++;
+            // out_ << "* Initialized: ``" << vreg.is_initialized() << "``" << std::endl;
+            // count++;
 
             std::vector<std::string> param_paths;
             uint32_t list_flags = 0;
