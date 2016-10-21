@@ -1177,6 +1177,18 @@ namespace datatools {
         std::vector<std::string> vreg_keys;
         build_ordered_registry_keys(vreg_keys);
 
+        out_ << "There";
+        if (vreg_keys.size() == 1) {
+          out_ << " is only one variant registry";
+        } else if (vreg_keys.size() > 1) {
+          out_ << " are " << vreg_keys.size() << " variant registries";
+        } else {
+          out_ << " is no variant registry";
+        }
+        out_ << " in this repository.";
+        out_ << std::endl;
+        out_ << std::endl;
+
         for (std::size_t ivreg = 0;
              ivreg < vreg_keys.size();
              ivreg++) {
