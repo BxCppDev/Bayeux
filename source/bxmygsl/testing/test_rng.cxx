@@ -1,10 +1,12 @@
 // test_rng.cxx
 
+// Standard library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 
+// This project:
 #include <mygsl/rng.h>
 
 int main(/*int argc_ , char ** argv_*/)
@@ -90,14 +92,12 @@ int main(/*int argc_ , char ** argv_*/)
       cerr << endl << "Another PRNG with invalid initialization : " << endl;
       mygsl::rng r3;
       r3.initialize();
-    }
-    catch (exception & xx) {
+    } catch (exception & xx) {
       clog << "NOTICE: "
            << "As expected, the PRNG's initialization failed : "
            << xx.what() << endl;
     }
-  }
-  catch (exception & x) {
+  } catch (exception & x) {
     cerr << "ERROR: " << x.what() << endl;
     return(EXIT_FAILURE);
   }

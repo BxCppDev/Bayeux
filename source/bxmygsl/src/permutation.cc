@@ -1,13 +1,17 @@
-// mygsl::permutation.cc
+// mygsl/permutation.cc
 
+// Ourselves:
 #include <mygsl/permutation.h>
 
+// Standard library:
 #include <stdexcept>
 #include <sstream>
 #include <list>
 
+// Third party:
 #include <gsl/gsl_permutation.h>
 
+// This project:
 #include <datatools/exception.h>
 
 namespace mygsl {
