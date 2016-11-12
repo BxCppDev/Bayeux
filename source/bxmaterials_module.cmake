@@ -46,6 +46,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/materials_config.h.in
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/resource.h
+  ${module_include_dir}/${module_name}/refractive_index.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -58,6 +59,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/materials_driver.cc
   ${module_source_dir}/version.cc
   ${module_source_dir}/resource.cc
+  ${module_source_dir}/refractive_index.cc
   )
 
 # - Published headers
@@ -81,6 +83,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_materials.cxx
   ${module_test_dir}/test_resource.cxx
   ${module_test_dir}/test_version.cxx
+  ${module_test_dir}/test_refractive_index.cxx
   )
 
 # - Applications
@@ -108,7 +111,28 @@ set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/data/basic/1.0/material_aliases.def
   ${module_resource_dir}/data/tissue/README.rst
   ${module_resource_dir}/data/tissue/1.0/README.rst
-  )
+  ${module_resource_dir}/data/optical/1.0/Gas/Air/Air.conf
+  ${module_resource_dir}/data/optical/1.0/Glass/FusedQuartz/FusedQuartz.conf
+  ${module_resource_dir}/data/optical/1.0/Glass/N-BK7/N-BK7.conf
+  ${module_resource_dir}/data/optical/1.0/Glass/N-BK7/N-BK7_k.data
+  ${module_resource_dir}/data/optical/1.0/Glass/N-BK7/N-BK7_n.data
+  ${module_resource_dir}/data/optical/1.0/Glass/N-BK7/N-BK7_n_2.data
+  ${module_resource_dir}/data/optical/1.0/Glass/N-BK7/README.rst
+  ${module_resource_dir}/data/optical/1.0/Liquid/Water/Water.conf
+  ${module_resource_dir}/data/optical/1.0/Liquid/Water/Water_k.data
+  ${module_resource_dir}/data/optical/1.0/Liquid/Water/Water_n.data
+  ${module_resource_dir}/data/optical/1.0/Liquid/Water/Water_n_k.data
+  ${module_resource_dir}/data/optical/1.0/Miscellaneous/CsI/CsI.conf
+  ${module_resource_dir}/data/optical/1.0/Miscellaneous/Ice/Ice.conf
+  ${module_resource_dir}/data/optical/1.0/Miscellaneous/NaI/NaI.conf
+  ${module_resource_dir}/data/optical/1.0/Miscellaneous/Vacuum/Vacuum.conf
+  ${module_resource_dir}/data/optical/1.0/Organic/PMMA/PMMA2.conf
+  ${module_resource_dir}/data/optical/1.0/Organic/PMMA/PMMA3.conf
+  ${module_resource_dir}/data/optical/1.0/Organic/PMMA/PMMA.conf
+  ${module_resource_dir}/data/optical/1.0/Organic/Polycarbonate/Polycarbonate.conf
+  ${module_resource_dir}/data/optical/1.0/Organic/Polystyrene/Polystyrene.conf
+  ${module_resource_dir}/data/optical/1.0/README.rst
+)
 
 # - Publish resource files
 foreach(_rfin ${${module_name}_MODULE_RESOURCES})
