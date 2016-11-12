@@ -545,7 +545,7 @@ namespace geomtools {
 
         return;
       } else {
-        DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Cannot render this intersection_3d shape!");
+        DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Cannot render this subtraction_3d shape!");
       }
     }
 
@@ -581,7 +581,7 @@ namespace geomtools {
       }
     }
 
-    DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Cannot render this intersection_3d shape!");
+    DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS, "Cannot render this subtraction_3d shape!");
 
     return;
   }
