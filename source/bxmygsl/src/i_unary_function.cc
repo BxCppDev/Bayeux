@@ -392,24 +392,4 @@ namespace mygsl {
     return f->eval(x_);
   }
 
-  MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(identity_function,
-                                             "mygsl::identity_function")
-
-  DATATOOLS_CLONEABLE_IMPLEMENTATION(identity_function)
-
-  identity_function::identity_function()
-  {
-    return;
-  }
-
-  identity_function::~identity_function()
-  {
-    return;
-  }
-
-  double identity_function::_eval(double x_) const
-  {
-    return x_;
-  }
-
 } // namespace mygsl

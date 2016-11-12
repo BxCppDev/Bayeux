@@ -203,36 +203,6 @@ namespace mygsl {
   DATATOOLS_FACTORY_SYSTEM_AUTO_REGISTRATION_IMPLEMENTATION(::mygsl::i_unary_function, UnaryFunctorClass , UnaryFunctorClassId ) \
   /**/
 
-namespace mygsl {
-
-  //! \brief The identity function
-  class identity_function : public i_unary_function
-  {
-  public:
-
-    //! Default constructor
-    identity_function();
-
-    //! Destructor
-    virtual ~identity_function();
-
-  protected:
-
-    //! Evaluation method
-    virtual double _eval(double x_) const;
-
-  private:
-
-    //! Registration of the functor class
-    MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(identity_function)
-
-    //! Cloneable interface
-    DATATOOLS_CLONEABLE_DECLARATION(identity_function)
-
-  };
-
-} // namespace mygsl
-
 #endif // MYGSL_I_UNARY_FUNCTION_H
 
 // Local Variables: --

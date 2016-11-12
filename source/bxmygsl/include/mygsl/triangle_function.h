@@ -59,14 +59,14 @@ namespace mygsl {
 
     //! Constructor of a symmetric triangle function
     triangle_function(double full_width_,
-                      double center_ = 0.0,
-                      double amplitude_ = std::numeric_limits<double>::quiet_NaN());
+                      double center_,
+                      double amplitude_);
 
     //! Constructor of a generic asymmetric triangle function
     triangle_function(double head_width_,
                       double tail_width_,
-                      double center_ = 0.0,
-                      double amplitude_ = std::numeric_limits<double>::quiet_NaN());
+                      double center_,
+                      double amplitude_);
 
     //! Destructor
     virtual ~triangle_function();
