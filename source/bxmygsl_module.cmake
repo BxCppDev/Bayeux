@@ -89,6 +89,9 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/rng.h
   ${module_include_dir}/${module_name}/seed_manager.h
   ${module_include_dir}/${module_name}/tabulated_function.h
+  ${module_include_dir}/${module_name}/convolution_function.h
+  ${module_include_dir}/${module_name}/zero_function.h
+  ${module_include_dir}/${module_name}/identity_function.h
   ${module_include_dir}/${module_name}/von_neumann_method.h
   ${module_include_dir}/${module_name}/version.h.in
   )
@@ -143,6 +146,9 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/rng.cc
   ${module_source_dir}/seed_manager.cc
   ${module_source_dir}/tabulated_function.cc
+  ${module_source_dir}/convolution_function.cc
+  ${module_source_dir}/identity_function.cc
+  ${module_source_dir}/zero_function.cc
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/von_neumann_method.cc
   ${module_source_dir}/version.cc
@@ -208,6 +214,8 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_logistic_function.cxx
   ${module_test_dir}/test_gompertz_function.cxx
   ${module_test_dir}/test_heaviside_function.cxx
+  ${module_test_dir}/test_convolution_function.cxx
+  #${module_test_dir}/test_bspline.cxx
   )
 
 # - Examples dir
