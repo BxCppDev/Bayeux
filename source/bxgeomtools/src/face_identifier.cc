@@ -11,6 +11,7 @@
 #include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools:
 #include <datatools/exception.h>
+#include <datatools/ioutils.h>
 
 namespace geomtools {
 
@@ -271,11 +272,9 @@ namespace geomtools {
 
   void face_identifier::set_face_bits(uint32_t bits_)
   {
-    // std::cerr << "DEVEL: face_identifier::set_face_bits: Entering." << std::endl;
     reset_face_index();
     _mode_ = MODE_FACE_BITS;
     _face_bits_ = bits_;
-    // std::cerr << "DEVEL: face_identifier::set_face_bits: Exiting." << std::endl;
     return;
   }
 
@@ -287,12 +286,9 @@ namespace geomtools {
 
   void face_identifier::set_face_bit(uint32_t bit_)
   {
-    // std::cerr << "DEVEL: face_identifier::set_face_bit: Entering." << std::endl;
     std::bitset<31> bs(bit_);
     DT_THROW_IF(bs.count() != 1, std::logic_error, "Not a single bit [" << bs << "]!");
-    // std::cerr << "DEVEL: face_identifier::set_face_bit: Found a single active face bit." << std::endl;
     set_face_bits(bit_);
-    // std::cerr << "DEVEL: face_identifier::set_face_bit: Exiting." << std::endl;
     return;
   }
 
@@ -437,6 +433,13 @@ namespace geomtools {
     return _face_index_ == index_ || _face_index_ == FACE_INDEX_ANY;
   }
 
+  bool face_identifier::parse(const std::string & from_)
+  {
+    invalidate();
+    DT_THROW(std::runtime_error, "Method not implemented yet!");
+    return false;
+  }
+
   void face_identifier::to_string(std::string & word_) const
   {
     std::ostringstream oss;
@@ -445,8 +448,9 @@ namespace geomtools {
     } else {
       oss << "[";
       if (has_parts()) {
+        oss << "part=";
         for (size_t ipart = 0; ipart < _parts_.size(); ipart++) {
-          uint32_t part = _parts_[ipart];
+           uint32_t part = _parts_[ipart];
           if (part == PART_INDEX_NONE) {
             oss << "!";
           } else if (part == PART_INDEX_ANY) {
@@ -461,15 +465,18 @@ namespace geomtools {
         oss << ':';
       }
       if (is_face_bits_mode()) {
+        oss << "bits=";
         if (_face_bits_ == FACE_BITS_NONE) {
           oss << '!';
         } else if (_face_bits_ == FACE_BITS_ANY) {
           oss << '*';
         } else {
-          std::bitset<31> bits(_face_bits_);
-          oss << bits;
+          // std::bitset<31> bits(_face_bits_);
+          // oss << bits;
+          oss << datatools::io::to_binary_2(_face_bits_);
         }
       } else if (is_face_index_mode()) {
+        oss << "index=";
         if (_face_index_ == FACE_INDEX_NONE) {
           oss << '!';
         } else if (_face_index_ == FACE_INDEX_ANY) {

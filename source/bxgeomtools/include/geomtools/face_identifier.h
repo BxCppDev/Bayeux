@@ -1,15 +1,13 @@
 /// \file geomtools/face_identifier.h
 /* Author(s):     François Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2015-03-16
- * Last modified: 2015-03-17
+ * Last modified: 2016-11-12
  *
- * License:
+ * License: GPL3
  *
  * Description:
  *
- *  The identifier of a face in a shape
- *
- * History:
+ *  The identifier of a face in a simple or composite shape
  *
  */
 
@@ -68,7 +66,7 @@ namespace geomtools {
     //! Check the validity of the identifier
     bool is_valid() const;
 
-    //! Check the identifier is valid and address an unique face
+    //! Check if the identifier is valid and addresses an unique face
     bool is_unique() const;
 
     //! Invalidate the identifier
@@ -198,6 +196,9 @@ namespace geomtools {
     //! Return a string
     std::string to_string() const;
 
+    //! Parse
+    bool parse(const std::string & from_);
+
     //! Check if a given face identifier matches the signature
     bool match(const face_identifier & fid_) const;
 
@@ -220,8 +221,8 @@ namespace geomtools {
 
   private:
 
-    mode_type _mode_; //!< Mode for face identification
-    std::vector<uint32_t> _parts_;      //!< Parts' numbers
+    mode_type             _mode_;       //!< Mode for face identification
+    std::vector<uint32_t> _parts_;      //!< Part identifiers
     uint32_t              _face_bits_;  //!< Face bits
     uint32_t              _face_index_; //!< Face index
 
