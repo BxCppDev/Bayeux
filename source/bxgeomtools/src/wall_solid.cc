@@ -382,6 +382,7 @@ namespace geomtools {
                                               const face_identifier & surface_bit_) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid wall solid!");
+    // DT_THROW_IF(! surface_bit_.is_unique(), std::logic_error, "Invalid face identifier!");
     vector_3d normal;
     geomtools::invalidate(normal);
     switch(surface_bit_.get_face_bits()) {
@@ -433,7 +434,6 @@ namespace geomtools {
     const unsigned int NFACES = 3;
     face_intercept_info intercepts[NFACES];
     unsigned int candidate_impact_counter = 0;
-
 
     int face_counter = 0;
     const face_info_collection_type & faces = get_computed_faces();

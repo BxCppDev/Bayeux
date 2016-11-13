@@ -633,6 +633,7 @@ namespace geomtools {
                                const face_identifier & a_surface_bit) const
   {
     DT_THROW_IF(! is_valid(), std::logic_error, "Invalid tube!");
+    // DT_THROW_IF(! a_surface_bit.is_unique(), std::logic_error, "Invalid face identifier!");
     vector_3d normal;
     geomtools::invalidate(normal);
     switch(a_surface_bit.get_face_bits()) {
