@@ -9,9 +9,171 @@
 // Third party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
+#include <boost/spirit/include/qi.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/variant/recursive_variant.hpp>
+#include <boost/spirit/include/phoenix_core.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_fusion.hpp>
+#include <boost/spirit/include/phoenix_stl.hpp>
+#include <boost/spirit/include/qi_grammar.hpp>
+#include <boost/phoenix/phoenix.hpp>
+#include <boost/lexical_cast.hpp>
+
 // - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/ioutils.h>
+
+namespace geomtools {
+
+  namespace parsing {
+
+    struct face_identifier_repr
+    {
+      std::vector<std::string> parts;
+      std::string mode;
+      std::string face_repr;
+
+      void to_face_identifier(face_identifier &) const;
+    };
+
+    void face_identifier_repr::to_face_identifier(face_identifier & fi_) const
+    {
+      // std::cerr << "DEBUG: Representation:\n";
+      // std::cerr << "DEBUG:   mode = '" << this->mode << "'\n";
+      // std::cerr << "DEBUG:   face_repr = '" << this->face_repr << "'\n";
+      // for (auto part : this->parts) {
+      //   std::cerr << "DEBUG:   part = '" << part << "'\n";
+      // }
+      if (this->mode == "invalid") {
+      } else {
+        if (this->mode == "bits") {
+          DT_THROW_IF(this->face_repr.length() > 31 || this->face_repr.length() < 1,
+                      std::range_error,
+                      "Invalid face bits representation (" << this->face_repr << ")");
+          std::bitset<31> bs(this->face_repr);
+          fi_.set_face_bits((uint32_t) bs.to_ulong());
+        } else if (this->mode == "index") {
+          uint32_t index = face_identifier::FACE_INDEX_NONE;
+          if (this->face_repr == "!") {
+            index = face_identifier::FACE_INDEX_NONE;
+          } else if (this->face_repr == "*") {
+            index = face_identifier::FACE_INDEX_ANY;
+          } else {
+            // std::cerr << "DEBUG: casting face index '" << this->face_repr << "'...\n";
+            index = boost::lexical_cast<uint32_t>(this->face_repr);
+          }
+          fi_.set_face_index(index);
+        } else {
+          DT_THROW(std::logic_error, "Unknown mode '" << this->mode << "'!");
+        }
+        for (const std::string & part_repr : this->parts) {
+          uint32_t part = face_identifier::PART_INDEX_NONE;
+          if (part_repr == "!") {
+            // std::cerr << "DEBUG: found NONE part number\n";
+            part = face_identifier::PART_INDEX_NONE;
+          } else if (part_repr == "*") {
+            // std::cerr << "DEBUG: found ANY part number\n";
+            part = face_identifier::PART_INDEX_ANY;
+          } else {
+            // std::cerr << "DEBUG: casting part number '" << part_repr << "'...\n";
+            part = boost::lexical_cast<uint32_t>(part_repr);
+          }
+          fi_.append_part(part);
+        }
+      }
+
+      return;
+    }
+
+  } // end of namespace parsing
+
+} // end of namespace geomtools
+
+BOOST_FUSION_ADAPT_STRUCT(geomtools::parsing::face_identifier_repr,
+                          (std::vector<std::string>, parts)
+                          (std::string, mode)
+                          (std::string, face_repr)
+                          )
+
+namespace geomtools {
+
+  namespace parsing {
+
+    namespace qi = boost::spirit::qi;
+
+    /// \brief Gramme for a face_identifier
+    template <typename Iterator>
+    struct face_identifier_grammar
+      : boost::spirit::qi::grammar<Iterator,
+                                   face_identifier_repr()>
+    {
+      face_identifier_grammar()
+        : face_identifier_grammar::base_type(start)
+      {
+        using boost::phoenix::at_c;
+
+        // "0", "1"... "9"  or "1..0", "1..9"
+        gaddress =
+          qi::string("0") |
+          (
+           qi::char_("1-9") >> *qi::char_("0-9")
+           );
+
+        // "!", "*"... "12"
+        gpart = qi::string("!") | qi::string("*") | gaddress;
+
+        // "1.0", "12.!.42", "*.12.42"
+        gparts = ( gpart % '.');
+
+        // "0" or "1"
+        gbit = qi::char_("01");
+
+        // "0", "1", "10", ... "01001"
+        gbits = +gbit;
+
+        // "!", "*"... "01001"
+        gindex = qi::string("!") | qi::string("*") | gaddress;
+
+        // Rule definitions:
+        start = ( qi::lit("[")
+                  >> (qi::string("!")           [at_c<1>(qi::_val) = "invalid"]
+                      | (
+                         -( qi::lit("parts=")
+                            >> gparts              [at_c<0>(qi::_val) = qi::_1]
+                            >> qi::lit(":")
+                            )
+                         >> (
+                             (qi::string("bits=")  [at_c<1>(qi::_val) = "bits"]
+                              >> gbits             [at_c<2>(qi::_val) = qi::_1]
+                              )
+                             |
+                             (qi::string("index=") [at_c<1>(qi::_val) = "index"]
+                              >> gindex            [at_c<2>(qi::_val) = qi::_1]
+                              )
+                             )
+                         )
+                      )
+                  >> qi::lit("]")
+                  );
+
+        return;
+      }
+
+      // Rules:
+      qi::rule<Iterator, face_identifier_repr()> start;
+      qi::rule<Iterator, std::string()> gpart;
+      qi::rule<Iterator, std::vector<std::string>()> gparts;
+      qi::rule<Iterator, char()>        gbit;
+      qi::rule<Iterator, std::string()> gbits;
+      qi::rule<Iterator, std::string()> gaddress;
+      qi::rule<Iterator, std::string()> gindex;
+
+    };
+
+  } // end of namespace parsing
+
+} // end of namespace geomtools
 
 namespace geomtools {
 
@@ -63,6 +225,53 @@ namespace geomtools {
     return _mode_ != MODE_FACE_INVALID;
   }
 
+  bool face_identifier::is_many() const
+  {
+    if (!has_mode()) {
+      return false;
+    }
+
+    bool many_faces = false;
+    if (is_face_bits_mode()) {
+      //std::cerr << "DEVEL: is_face_bits_mode\n";
+      if (_face_bits_ == FACE_BITS_NONE) {
+        //std::cerr << "DEVEL: FACE_BITS_NONE\n";
+        return false;
+      } else if (_face_bits_ != FACE_BITS_ANY) {
+        std::bitset<31> bs(_face_bits_);
+        //std::cerr << "DEVEL: !FACE_BITS_ANY: bs = " << bs.to_string() << "\n";
+        //std::cerr << "DEVEL:   bs.count = " << bs.count() << "\n";
+        if (bs.count() > 1) many_faces = true;
+      }
+    } else if (is_face_index_mode()) {
+      //std::cerr << "DEVEL: is_face_index_mode\n";
+      if (_face_index_ == FACE_INDEX_NONE) {
+        //std::cerr << "DEVEL: FACE_INDEX_NONE\n";
+        return false;
+      } else if (_face_index_ != FACE_INDEX_ANY) {
+        //std::cerr << "DEVEL: !FACE_INDEX_ANY" << "\n";
+      } else {
+        many_faces = true;
+      }
+    }
+
+    bool many_parts = false;
+    if (has_parts()) {
+      //std::cerr << "DEVEL: has_parts" << "\n";
+      for (unsigned int i = 0; i < _parts_.size(); i++) {
+        if (is_invalid_part(i)) {
+          return false;
+        } else {
+          if (is_any_part(i)) {
+            many_parts = true;
+          }
+        }
+      }
+    }
+
+    return many_faces || many_parts;
+  }
+
   bool face_identifier::is_unique() const
   {
     if (!has_mode()) {
@@ -81,6 +290,8 @@ namespace geomtools {
       if (_face_bits_ == FACE_BITS_ANY || _face_bits_ == FACE_BITS_NONE) {
         return false;
       }
+      std::bitset<31> bs(_face_bits_);
+      if (bs.count() != 1) return false;
     } else if (is_face_index_mode()) {
       if (_face_index_ == FACE_INDEX_ANY || _face_index_ == FACE_INDEX_NONE) {
         return false;
@@ -90,11 +301,36 @@ namespace geomtools {
     return true;
   }
 
+  bool face_identifier::is_none() const
+  {
+    if (!is_valid()) {
+      return true;
+    }
+    if (is_face_bits_mode()) {
+      if (_face_bits_ == FACE_BITS_NONE) {
+        return true;
+      }
+    } else if (is_face_index_mode()) {
+      if (_face_index_ == FACE_INDEX_NONE) {
+        return true;
+      }
+    }
+    if (has_parts()) {
+      for (unsigned int i = 0; i < _parts_.size(); i++) {
+        if (is_invalid_part(i)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool face_identifier::is_valid() const
   {
     if (!has_mode()) {
       return false;
     }
+    /*
     if (is_face_bits_mode()) {
       if (_face_bits_ == FACE_BITS_NONE) {
         return false;
@@ -112,12 +348,33 @@ namespace geomtools {
         }
       }
     }
+    */
     return true;
   }
 
   bool face_identifier::is_ok() const
   {
-    return is_valid();
+    // equivalent to: is_valid() && !is_none();
+    if (!has_mode()) {
+      return false;
+    }
+    if (is_face_bits_mode()) {
+      if (_face_bits_ == FACE_BITS_NONE) {
+        return false;
+      }
+    } else if (is_face_index_mode()) {
+      if (_face_index_ == FACE_INDEX_NONE) {
+        return false;
+      }
+    }
+    if (has_parts()) {
+      for (unsigned int i = 0; i < _parts_.size(); i++) {
+        if (is_invalid_part(i)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   void face_identifier::reset()
@@ -435,9 +692,34 @@ namespace geomtools {
 
   bool face_identifier::parse(const std::string & from_)
   {
-    invalidate();
-    DT_THROW(std::runtime_error, "Method not implemented yet!");
-    return false;
+    this->invalidate();
+    namespace qi = boost::spirit::qi;
+    try {
+      std::string::const_iterator str_iter = from_.begin();
+      std::string::const_iterator end_iter = from_.end();
+      geomtools::parsing::face_identifier_grammar<std::string::const_iterator> fig;
+      geomtools::parsing::face_identifier_repr repr;
+      bool res = boost::spirit::qi::phrase_parse(str_iter,
+                                                 end_iter,
+                                                 // Begin grammar:
+                                                 (
+                                                  fig[boost::phoenix::ref(repr) = boost::spirit::qi::_1]
+                                                  )
+                                                 // End grammar
+                                                 ,
+                                               boost::spirit::ascii::space);
+      if (!res || str_iter != end_iter) {
+        // std::cerr << "ERROR: parse error at '" << *str_iter << "'!\n";
+        return false;
+      } else {
+        repr.to_face_identifier(*this);
+      }
+    } catch (std::exception & error) {
+      // std::cerr << "ERROR: parse error : " << error.what() << "\n";
+      this->invalidate();
+      return false;
+    }
+    return true;
   }
 
   void face_identifier::to_string(std::string & word_) const
@@ -537,6 +819,98 @@ namespace geomtools {
   {
     out_ << face_id_.to_string();
     return out_;
+  }
+
+  void face_identifier::tree_dump(std::ostream & out_,
+                                  const std::string & title_,
+                                  const std::string & indent_,
+                                  bool inherit_) const
+  {
+    if (!title_.empty()) {
+      out_ << indent_ << title_ << std::endl;
+    }
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Mode : ";
+    if (_mode_ == MODE_FACE_INVALID) {
+      out_ << "<invalid>";
+    } else if (_mode_ == MODE_FACE_BITS) {
+      out_ << "'bits'";
+    } else if (_mode_ == MODE_FACE_INDEX) {
+      out_ << "'index'";
+    } else {
+      out_ << "<any>";
+    }
+    out_ << std::endl;
+
+    if (_mode_ == MODE_FACE_BITS || _mode_ == MODE_FACE_ANY) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Face bits : ";
+      if (_face_bits_ == FACE_BITS_NONE) {
+        out_ << "<none>";
+      } else if (_face_bits_ == FACE_BITS_ANY) {
+        out_ << "<any>";
+      } else {
+        std::bitset<31> bs(_face_bits_);
+        out_ << bs.to_string();
+      }
+      out_ << std::endl;
+    }
+
+    if (_mode_ == MODE_FACE_INDEX || _mode_ == MODE_FACE_ANY) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Face index : ";
+      if (_face_index_ == FACE_INDEX_ANY) {
+        out_ << "<any>";
+      } else if (_face_index_ == FACE_INDEX_NONE) {
+        out_ << "<none>";
+      } else {
+        out_ << _face_index_;
+      }
+      out_ << std::endl;
+    }
+
+    if (has_parts()) {
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Parts : ";
+      out_ << "<depth=" << _parts_.size() << ">";
+      out_ << std::endl;
+      for (std::size_t ip = 0; ip < _parts_.size(); ip++) {
+        out_ << indent_ << datatools::i_tree_dumpable::skip_tag;
+        if (ip + 1 == _parts_.size()) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+        }
+        out_ << "Part at depth [" << ip << "] = ";
+        uint32_t part = _parts_[ip];
+        if (part == PART_INDEX_ANY) {
+          out_ << "<any>";
+        } else if (part == PART_INDEX_NONE) {
+          out_ << "<none>";
+        } else {
+          out_ << part;
+        }
+        out_ << std::endl;
+      }
+    }
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Valid  : " << (is_valid()? "<yes>": "<no>") << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "None   : " << (is_none()? "<yes>": "<no>") << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Unique : " << (is_unique()? "<yes>": "<no>") << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::tag
+         << "Many   : " << (is_many()? "<yes>": "<no>") << std::endl;
+
+    out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
+         << "Ok     : " << (is_ok()? "<yes>": "<no>") << std::endl;
+
+    return;
   }
 
 } // end of namespace geomtools

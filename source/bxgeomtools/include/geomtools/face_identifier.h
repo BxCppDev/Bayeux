@@ -24,29 +24,34 @@
 #include <boost/cstdint.hpp>
 // - Bayeux/datatools:
 #include <datatools/bit_mask.h>
+#include <datatools/i_tree_dump.h>
 
 namespace geomtools {
 
   //! \brief Identifier of a face attached to a solid shape
-  class face_identifier {
+  class face_identifier
+    : public datatools::i_tree_dumpable
+  {
   public:
 
     //! \brief Face identification mode
     enum mode_type {
-      MODE_FACE_INVALID    = 0x0,                             //!< Invalid face identification mode
-      MODE_FACE_BITS       = datatools::bit_mask::bit00,      //!< Face identification uses identification bits
-      MODE_FACE_INDEX      = datatools::bit_mask::bit01,      //!< Face identification uses indexing
-      MODE_FACE_ANY        = MODE_FACE_BITS | MODE_FACE_INDEX //!< Face identification uses any mode
+      MODE_FACE_INVALID = 0x0,                             //!< Invalid face identification mode
+      MODE_FACE_BITS    = datatools::bit_mask::bit00,      //!< Face identification uses identification bits
+      MODE_FACE_INDEX   = datatools::bit_mask::bit01,      //!< Face identification uses indexing
+      MODE_FACE_ANY     = MODE_FACE_BITS | MODE_FACE_INDEX //!< Face identification uses any mode
     };
 
     static const uint32_t FACE_BITS_NONE  = 0x0;        //!< No valid or known face bit
     static const uint32_t FACE_BITS_ANY   = 0xFFFFFFFF; //!< All faces are selected
 
+    // Range [0,1,2.... MAX, ANY, NONE]
     static const uint32_t FACE_INDEX_NONE = 0xFFFFFFFF; //!< Special value for undefined/invalid face index
     static const uint32_t FACE_INDEX_MIN  = 0;          //!< Special value for min face index
     static const uint32_t FACE_INDEX_MAX  = 0xFFFFFFFD; //!< Special value for max face index
     static const uint32_t FACE_INDEX_ANY  = 0xFFFFFFFE; //!< Special value for any face index (wildcard)
 
+    // Range [0,1,2.... MAX, ANY, NONE]
     static const uint32_t PART_INDEX_NONE = 0xFFFFFFFF; //!< Special value for undefined/invalid part index
     static const uint32_t PART_INDEX_MIN  = 0;          //!< Special value for min part index
     static const uint32_t PART_INDEX_DEFAULT = PART_INDEX_MIN; //!< Special value for default part index
@@ -60,14 +65,19 @@ namespace geomtools {
     face_identifier(uint32_t face_info_, mode_type mode_ = MODE_FACE_BITS);
 
     //! Check the validity of the identifier
-    //! @see is_valid
-    bool is_ok() const;
-
-    //! Check the validity of the identifier
     bool is_valid() const;
 
-    //! Check if the identifier is valid and addresses an unique face
+    //! Check if the identifier identifies some faces (unique or several/many)
+    bool is_ok() const;
+
+    //! Check if the identifier is valid and identifies an unique face
     bool is_unique() const;
+
+    //! Check if the identifier is valid and identifies several faces
+    bool is_many() const;
+
+    //! Check if the identifier is invalid or valid but identifies no face
+    bool is_none() const;
 
     //! Invalidate the identifier
     //! @see reset
@@ -214,6 +224,12 @@ namespace geomtools {
     //! Output streaming
     friend std::ostream & operator<<(std::ostream & out_, const face_identifier & face_id_);
 
+    //! Smart print
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_ = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
+
   protected:
 
     //! Set default attributes values
@@ -223,7 +239,7 @@ namespace geomtools {
 
     mode_type             _mode_;       //!< Mode for face identification
     std::vector<uint32_t> _parts_;      //!< Part identifiers
-    uint32_t              _face_bits_;  //!< Face bits
+    uint32_t              _face_bits_;  //!< Face bits (31 bits max)
     uint32_t              _face_index_; //!< Face index
 
   };
@@ -232,10 +248,8 @@ namespace geomtools {
 
 #endif // GEOMTOOLS_FACE_IDENTIFIER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
