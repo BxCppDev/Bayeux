@@ -2168,6 +2168,55 @@ namespace datatools {
     return value;
   }
 
+  int properties::fetch_range_integer(const std::string& a_key, int min_, int max_, int index) const
+  {
+    int value;
+    this->fetch(a_key, value, index);
+    DT_THROW_IF(value < min_ || value > max_, std::range_error,
+                "Out of [" << min_ << ";" << max_ << "] range integer value [" << value << "]!");
+    return value;
+  }
+
+  unsigned int properties::fetch_positive_integer(const std::string& a_key, int index) const {
+    int value;
+    this->fetch(a_key, value, index);
+    DT_THROW_IF(value < 0, std::domain_error, "Unexpected integer negative value [" << value << "]!");
+    return (unsigned int) value;
+  }
+
+  unsigned int properties::fetch_strict_positive_integer(const std::string& a_key, int index) const {
+    int value;
+    this->fetch(a_key, value, index);
+    DT_THROW_IF(value <= 0, std::domain_error, "Unexpected integer negative/zero value [" << value << "]!");
+    return (unsigned int) value;
+  }
+
+  double properties::fetch_real_with_explicit_dimension(const std::string& a_key,
+                                                        const std::string& a_dimension,
+                                                        int index) const
+  {
+    double q = fetch_real_with_explicit_unit(a_key, index);
+    double unit_value = 1.0;
+    std::string unit_symbol;
+    std::string unit_label;
+    if (!units::find_unit(get_unit_symbol(a_key), unit_value, unit_label)) {
+      DT_THROW_IF(unit_label != a_dimension,
+                  std::logic_error,
+                  "Property '" << a_key << "' has no '" << a_dimension << "' unit; found '" << unit_label << "'!");
+      unit_value = 1.0;
+    }
+    return q;
+  }
+
+  double properties::fetch_real_with_explicit_unit(const std::string& a_key,
+                                                   int index) const {
+    double value;
+    this->fetch(a_key, value, index);
+    DT_THROW_IF(!has_explicit_unit(a_key),
+                std::logic_error,
+                "Property '" << a_key << "' has no explicit unit!");
+    return value;
+  }
 
   double properties::fetch_dimensionless_real(const std::string& a_key,
                                               int index) const {
@@ -2298,6 +2347,39 @@ namespace datatools {
       DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
                   std::logic_error,
                   "Duplicated string value '" << value << "' at key '" << a_key << "'!");
+      values.insert(value);
+    }
+  }
+
+  void properties::fetch(const std::string& a_key,
+                         std::set<int>& values,
+                         bool allow_duplication_) const
+  {
+    std::vector<int> vvalues;
+    this->fetch(a_key, vvalues);
+    for (int i = 0; i < (int) vvalues.size(); i++) {
+      const int & value = vvalues[i];
+      DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
+                  std::logic_error,
+                  "Duplicated integer value [" << value << "] at key '" << a_key << "'!");
+      values.insert(value);
+    }
+  }
+
+  void properties::fetch_positive(const std::string& a_key,
+                                  std::set<unsigned int>& values,
+                                  bool allow_duplication_) const
+  {
+    std::vector<int> vvalues;
+    this->fetch(a_key, vvalues);
+    for (int i = 0; i < (int) vvalues.size(); i++) {
+      const int & value = vvalues[i];
+      DT_THROW_IF(value < 0,
+                  std::logic_error,
+                  "Unauthorized negative integer value [" << value << "] at key '" << a_key << "'!");
+      DT_THROW_IF(values.count(value) != 0 && ! allow_duplication_,
+                  std::logic_error,
+                  "Duplicated integer value [" << value << "] at key '" << a_key << "'!");
       values.insert(value);
     }
   }

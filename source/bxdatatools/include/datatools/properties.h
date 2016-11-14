@@ -1016,8 +1016,14 @@ namespace datatools {
     //! Fetch the string vector value stored with a given key/name
     void fetch(const std::string& key, data::vstring& values) const;
 
-    //! Fetch a string set value from the vector value stored with a given key/name
+    //! Fetch a set of string values from the vector value stored with a given key/name
     void fetch(const std::string& key, std::set<std::string>& values, bool allow_duplication_ = false) const;
+
+    //! Fetch a set of integer values from the vector value stored with a given key/name
+    void fetch(const std::string& key, std::set<int>& values, bool allow_duplication_ = false) const;
+
+    //! Fetch a set of unsigned integer values from the vector value stored with a given key/name
+    void fetch_positive(const std::string& key, std::set<unsigned int>& values, bool allow_duplication_ = false) const;
 
     //! Fetch the boolean value stored with a given key/name and index
     bool fetch_boolean(const std::string&, int index = 0) const;
@@ -1031,6 +1037,15 @@ namespace datatools {
     //! Fetch the integer value stored with a given key/name and index
     int fetch_integer(const std::string& name, int index = 0) const;
 
+    //! Fetch the positive integer value stored with a given key/name and index
+    unsigned int fetch_positive_integer(const std::string& name, int index = 0) const;
+
+    //! Fetch the strict positive integer value stored with a given key/name and index
+    unsigned int fetch_strict_positive_integer(const std::string& name, int index = 0) const;
+
+    //! Fetch the ranged integer value stored with a given key/name and index
+    int fetch_range_integer(const std::string& name, int min_, int max_, int index = 0) const;
+
     //! Fetch the integer scalar value stored with a given key/name
     int fetch_integer_scalar(const std::string& name) const;
 
@@ -1042,6 +1057,12 @@ namespace datatools {
 
     //! Fetch the dimensionless real value stored with a given key/name and index
     double fetch_dimensionless_real(const std::string& name, int index = 0) const;
+
+    //! Fetch the physical quantity (with its explicit unit) value stored with a given key/name and index
+    double fetch_real_with_explicit_unit(const std::string& name, int index = 0) const;
+
+    //! Fetch the physical quantity (with its explicit dimension) value stored with a given key/name and index
+    double fetch_real_with_explicit_dimension(const std::string& name, const std::string& dimension, int index = 0) const;
 
     //! Fetch the real scalar value stored with a given key/name
     double fetch_real_scalar(const std::string& name) const;
