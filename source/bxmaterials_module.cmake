@@ -124,6 +124,9 @@ set(${module_name}_MODULE_RESOURCES
   ${module_resource_dir}/data/optical/1.0/Liquid/Water/Water_n_k.data
   ${module_resource_dir}/data/optical/1.0/Miscellaneous/CsI/CsI.conf
   ${module_resource_dir}/data/optical/1.0/Miscellaneous/Ice/Ice.conf
+  ${module_resource_dir}/data/optical/1.0/Miscellaneous/Ice/Ice_n.data
+  ${module_resource_dir}/data/optical/1.0/Miscellaneous/Ice/Ice_k.data
+  ${module_resource_dir}/data/optical/1.0/Miscellaneous/Ice/README.rst
   ${module_resource_dir}/data/optical/1.0/Miscellaneous/NaI/NaI.conf
   ${module_resource_dir}/data/optical/1.0/Miscellaneous/Vacuum/Vacuum.conf
   ${module_resource_dir}/data/optical/1.0/Organic/PMMA/PMMA2.conf
