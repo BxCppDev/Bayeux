@@ -401,8 +401,8 @@ namespace materials {
   double refractive_index::_eval_n(double lambda_) const
   {
     static const double epsilon = std::numeric_limits<double>::epsilon();
-    double l = lambda_ / CLHEP::micrometer;
-    double l2 = l * l;
+    const double l = lambda_ / CLHEP::micrometer;
+    const double l2 = l * l ;
     double n = datatools::invalid_real();
     const coeff_dict_type & C = _rii_c_;
     switch (_formula_) {
@@ -442,7 +442,6 @@ namespace materials {
         if (has_rii_coeff(1)) {
           n2 += C.at(1);
         }
-        double l2 = l * l ;
         for (std::size_t iterm = 2; iterm < 18; iterm += 2) {
           if (has_rii_coeff(iterm)) {
             double c = C.at(iterm);
@@ -497,7 +496,7 @@ namespace materials {
       }
     case FORMULA_DISPERSION_RII_CAUCHY:
       {
-        double n = 0.0;
+        n = 0.0;
         if (has_rii_coeff(1)) {
           n += C.at(1);
         }
@@ -513,7 +512,7 @@ namespace materials {
       }
     case FORMULA_DISPERSION_RII_GASES:
       {
-        double n = 0.0;
+        n = 0.0;
         if (has_rii_coeff(1)) {
           n += C.at(1);
         }
@@ -530,7 +529,7 @@ namespace materials {
       }
     case FORMULA_DISPERSION_RII_HERZBERGER:
       {
-        double n = 0.0;
+        n = 0.0;
         if (has_rii_coeff(1)) {
           n += C.at(1);
         }
