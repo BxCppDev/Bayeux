@@ -232,6 +232,8 @@ namespace datatools {
 
     static std::string to_binary(const uint32_t& val, bool show_all = false);
 
+    static std::string to_binary_2(const uint32_t& val);
+
     // Return singleton indenter
     static indenter & indent();
 

@@ -764,4 +764,18 @@ namespace datatools {
     return oss.str();
   }
 
+  std::string io::to_binary_2(const uint32_t& val) {
+    std::ostringstream oss;
+    size_t nbits = sizeof(val) * 8;
+    bool start = false;
+    for (int i = (nbits - 1); i >= 0; i--) {
+      bool abit;
+      abit = (val >> i) & 0x1;
+      if (!start & abit) start = true;
+      if (!abit && !start) continue;
+      oss << abit;
+    }
+    return oss.str();
+  }
+
 } // namespace datatools
