@@ -164,6 +164,7 @@ int main(int argc_, char ** argv_)
       vserv.reset(new dtc::variant_service);
       vserv->configure(params.variants);
       vserv->start();
+      // vserv->get_repository().tree_dump(std::cerr, "Repository:");
     }
 
     if (params.run_session) {

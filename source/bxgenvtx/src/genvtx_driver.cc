@@ -323,11 +323,11 @@ namespace genvtx {
       GPD.grab_properties().store(geomtools::gnuplot_drawer::world_name_key(),
                                   _geo_mgr_->get_world_name());
       geomtools::placement dd_pl;
-      dd_pl.set_translation (0.0, 0.0*CLHEP::cm, 0.0);
-      GPD.add_display_data (dd, dd_pl);
-      GPD.set_drawing_display_data (true);
-      GPD.set_view (geomtools::gnuplot_drawer::view_3d());
-      GPD.set_mode (geomtools::gnuplot_drawer::mode_wired());
+      dd_pl.set_translation(0.0, 0.0, 0.0);
+      GPD.add_display_data(dd, dd_pl);
+      GPD.set_drawing_display_data(true);
+      GPD.set_view(geomtools::gnuplot_drawer::view_3d());
+      GPD.set_mode(geomtools::gnuplot_drawer::mode_wired());
       int visu_depth = 100;
       int view_code = GPD.draw(*_geo_mgr_, _params_.visu_object, visu_depth);
       if (view_code != 0) {
@@ -380,7 +380,7 @@ namespace genvtx {
     datatools::library_loader LL(_params_.LL_config);
     for (const auto & dll_name : _params_.LL_dlls) {
       DT_LOG_NOTICE(_logging_,"Loading DLL '" << dll_name << "'...");
-      DT_THROW_IF (LL.load(dll_name) != EXIT_SUCCESS,
+      DT_THROW_IF(LL.load(dll_name) != EXIT_SUCCESS,
                    std::runtime_error,
                    "Loading DLL '" << dll_name << "' failed !");
     }
@@ -404,10 +404,10 @@ namespace genvtx {
 
     // Geometry manager :
     _geo_mgr_.reset(new geomtools::manager);
-    datatools::fetch_path_with_env (_params_.GeoMgrConfigFile);
+    datatools::fetch_path_with_env(_params_.GeoMgrConfigFile);
     datatools::properties GeoMgrConfig;
-    datatools::properties::read_config (_params_.GeoMgrConfigFile, GeoMgrConfig);
-    _geo_mgr_->initialize (GeoMgrConfig);
+    datatools::properties::read_config(_params_.GeoMgrConfigFile, GeoMgrConfig);
+    _geo_mgr_->initialize(GeoMgrConfig);
     if (_logging_ >= datatools::logger::PRIO_DEBUG) {
       _geo_mgr_->tree_dump(std::clog, "Geometry manager embedded in the vertex generator manager: ");
     }
@@ -415,7 +415,7 @@ namespace genvtx {
     /*
       if (_params_.dump_gids) {
       DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "The embedded GID mapping : ");
-      _geo_mgr_->get_mapping ().dump_dictionnary (std::clog);
+      _geo_mgr_->get_mapping().dump_dictionnary(std::clog);
       }
     */
 
@@ -457,7 +457,7 @@ namespace genvtx {
     }
     if (_params_.action_shoot) {
       _action_ |= genvtx_driver::ACTION_SHOOT;
-      DT_THROW_IF (_params_.prng_seed <= mygsl::random_utils::SEED_INVALID,
+      DT_THROW_IF(_params_.prng_seed <= mygsl::random_utils::SEED_INVALID,
                    std::logic_error,
                    "Invalid PRNG seed (" << _params_.prng_seed << ") ! ");
     }
@@ -484,7 +484,7 @@ namespace genvtx {
 
   void genvtx_driver::reset()
   {
-    DT_THROW_IF (!is_initialized(), std::logic_error, "Driver is not initialized !");
+    DT_THROW_IF(!is_initialized(), std::logic_error, "Driver is not initialized !");
     _initialized_ = false;
     _action_ = ACTION_UNDEFINED;
     _prng_.reset();

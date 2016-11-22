@@ -14,7 +14,6 @@
 // Third party
 // - Boost:
 #include <boost/cstdint.hpp>
-//#include <boost/scoped_ptr.hpp>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 
