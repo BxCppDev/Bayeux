@@ -9,7 +9,7 @@
 // This project:
 #include <materials/refractive_index.h>
 
-int main(int argc_, char ** argv_) {
+int main(/* int argc_, char ** argv_ */) {
   try {
 
     double l1  =  300.0 * CLHEP::nm;
