@@ -1,11 +1,14 @@
 // mygsl/best_value.cc
 
+// Ourselves:
 #include <mygsl/best_value.h>
 
+// Standard library;
 #include <limits>
 #include <stdexcept>
 #include <cmath>
 
+// Datatools:
 #include <datatools/exception.h>
 
 namespace mygsl {
@@ -216,11 +219,5 @@ namespace mygsl {
       }
     return out_;
   }
-}
 
-// end of mygsl/best_value.cc
-
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+} // namespace mygsl
