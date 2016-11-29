@@ -94,6 +94,11 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/identity_function.h
   ${module_include_dir}/${module_name}/von_neumann_method.h
   ${module_include_dir}/${module_name}/version.h.in
+  ${module_include_dir}/${module_name}/compare_value.h
+  ${module_include_dir}/${module_name}/sampling_utils.h
+  ${module_include_dir}/${module_name}/base_sampling.h
+  ${module_include_dir}/${module_name}/linear_sampling.h
+  ${module_include_dir}/${module_name}/tabulated_sampling.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -152,6 +157,11 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/the_serializable.cc
   ${module_source_dir}/von_neumann_method.cc
   ${module_source_dir}/version.cc
+  ${module_source_dir}/compare_value.cc
+  ${module_source_dir}/sampling_utils.cc
+  ${module_source_dir}/base_sampling.cc
+  ${module_source_dir}/linear_sampling.cc
+  ${module_source_dir}/tabulated_sampling.cc
   )
 
 # - Published headers
@@ -215,6 +225,8 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_gompertz_function.cxx
   ${module_test_dir}/test_heaviside_function.cxx
   ${module_test_dir}/test_convolution_function.cxx
+  ${module_test_dir}/test_linear_sampling.cxx
+  ${module_test_dir}/test_tabulated_sampling.cxx
   #${module_test_dir}/test_bspline.cxx
   )
 
