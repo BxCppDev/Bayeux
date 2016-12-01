@@ -22,8 +22,8 @@
  *
  * Description:
  *
- *   A class representing a gate signal shape with arbitrary polarity, rise and fall times,
- *   starting time and charge. Edges have triangular shapes.
+ *   A class representing a gate signal shape with arbitrary polarity, rise
+ *   and fall times, starting time and charge. Edges have triangular shapes.
  *
  * History:
  *
@@ -82,7 +82,7 @@ namespace mctools {
 
       //! Initialization
       virtual void initialize(const datatools::properties & config_,
-                              mygsl::unary_function_dict_type & functors_);
+                              const mygsl::unary_function_dict_type & functors_);
 
       //! Reset
       virtual void reset();

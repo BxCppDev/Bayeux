@@ -210,7 +210,7 @@ namespace mctools {
     }
 
     void triangle_gate_signal_shape::initialize(const datatools::properties & config_,
-                                                mygsl::unary_function_dict_type & functors_)
+                                                const mygsl::unary_function_dict_type & functors_)
     {
       this->mygsl::i_unary_function::_base_initialize(config_, functors_);
 

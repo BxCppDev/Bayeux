@@ -33,6 +33,7 @@
 
 // Third party:
 // - Bayeux/datatools:
+#include <datatools/logger.h>
 #include <datatools/properties.h>
 // - Bayeux/mygsl:
 #include <mygsl/i_unary_function.h>
@@ -43,11 +44,14 @@ namespace mctools {
 
   namespace signal {
 
-    //! \brief Abstract base class representing an analog signal of a hit detector.
+    class signal_shape_builder;
+
+    //! \brief Abstract base class representing an analog signal associated to a hit detector.
     //!
     //! The signal is modelled has a [voltage = f(time)] arbitrary function.
     //! It uses a functor to describe the shape of the electric signal as expected
-    //! from an analog measurement.
+    //! from an analog measurement. This object contains all informations needed
+    //! to build/instantiate a signal shape object.
     class base_signal : public geomtools::base_hit
     {
     public:
@@ -72,6 +76,24 @@ namespace mctools {
       //! Check signal hit validity
       virtual bool is_valid() const;
 
+      //! Return the logging priority
+      datatools::logger::priority get_logging() const;
+
+      //! Set the logging priority
+      void set_logging(const datatools::logger::priority);
+
+      //! Check if a shape builder is set
+      bool has_shape_builder() const;
+
+      //! Return a handle to a shape builder
+      const signal_shape_builder & get_shape_builder() const;
+
+      //! Return a handle to a shape builder
+      signal_shape_builder & grab_shape_builder();
+
+      //! Set a handle to a shape builder
+      void set_shape_builder(signal_shape_builder &);
+
       //! Check the shape type identifier
       bool has_shape_type_id() const;
 
@@ -80,6 +102,15 @@ namespace mctools {
 
       //! Set the shape type identifier
       void set_shape_type_id(const std::string &);
+
+      //! Set the full set of parameters for the shape object
+      void set_shape_parameters(const datatools::properties & params_);
+
+      //! Erase the full set of parameters for the shape object
+      void reset_shape_parameters();
+
+      //! Erase one specific parameter for the shape object
+      void reset_shape_parameter(const std::string & key_);
 
       //! Set a boolean parameter for the shape object
       void set_shape_boolean_parameter(const std::string & key_,
@@ -139,17 +170,20 @@ namespace mctools {
       //! Return a const reference to the embedded signal shape
       const mygsl::i_unary_function & get_shape() const;
 
-      //! Return a mutable reference to the embedded signal shape
-      mygsl::i_unary_function & grab_shape();
-
       //! Discard the embedded signal shape object
       void reset_shape();
 
-      //! Set the embedded signal shape object
-      void set_shape(mygsl::i_unary_function & shape_);
+      //! Set the embedded signal shape object without ownership
+      void set_shape(const mygsl::i_unary_function & shape_);
 
-      //! Set the embedded signal shape object
-      void set_shape(mygsl::i_unary_function * shape_ptr_);
+      //! Set the embedded signal shape object with transfered ownership
+      void set_shape_owned(const mygsl::i_unary_function * shape_ptr_);
+
+      //! Unlock
+      void unlock();
+
+      //! Relock
+      void relock();
 
       //! Check initialization
       bool is_initialized() const;
@@ -172,28 +206,45 @@ namespace mctools {
       //! Compute shape
       double compute_shape(double time_) const;
 
-    protected:
+      //! Build the signal shape from a builder
+      static bool build_signal_shape(signal_shape_builder & builder_,
+                                     const std::string & key_,
+                                     base_signal & signal_,
+                                     const datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
+
+    private:
 
       //! Factory method for the embedded shape object
-      mygsl::i_unary_function & _grab_shape();
-
-      //! Discard the embedded signal shape object
-      void _reset_shape();
+      const mygsl::i_unary_function & _get_shape_();
 
       //! Copy from another signal hit
-      void _copy(const base_signal & sig_);
+      void _copy_(const base_signal & sig_);
+
+      //! Discard the embedded signal shape object
+      void _reset_shape_();
+
+      //! Set the embedded signal shape object
+      void _set_shape_(const mygsl::i_unary_function &, bool owned_);
+
+      //! Private initialization
+      void _init_();
+
+      //! Private reset
+      void _reset_();
 
     private:
 
       // Management:
-      bool _initialized_ = false; //!< Initialization flag
+      bool                         _initialized_ = false; //!< Initialization flag
+      datatools::logger::priority  _logging_;             //!< Logging priority threshold
+      signal_shape_builder *       _shape_builder_ = nullptr; //!< Handle to an external shape builder
 
       // Configuration:
       std::string _shape_type_id_; //!< Shape type identifier
 
       // Working data:
       bool _owned_shape_ = false; //!< Ownership flag for the embedded signal shape object
-      mygsl::i_unary_function * _shape_ = nullptr; //!< Handle to an embedded signal shape object
+      const mygsl::i_unary_function * _shape_ = nullptr; //!< Handle to an embedded signal shape object
 
       DATATOOLS_SERIALIZATION_DECLARATION()
 
