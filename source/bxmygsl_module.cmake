@@ -99,6 +99,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/base_sampling.h
   ${module_include_dir}/${module_name}/linear_sampling.h
   ${module_include_dir}/${module_name}/tabulated_sampling.h
+  ${module_include_dir}/${module_name}/unary_function_utils.h
   )
 
 set(${module_name}_MODULE_SOURCES
@@ -162,6 +163,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/base_sampling.cc
   ${module_source_dir}/linear_sampling.cc
   ${module_source_dir}/tabulated_sampling.cc
+  ${module_source_dir}/unary_function_utils.cc
   )
 
 # - Published headers
