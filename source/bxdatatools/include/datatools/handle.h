@@ -32,6 +32,7 @@
 // Standard Library:
 #include <iostream>
 #include <stdexcept>
+#include <type_traits>
 
 // Third Party:
 // - Boost:
@@ -99,7 +100,7 @@ namespace datatools {
      */
     //handle() : sp_ (new T)
     /*
-      handle() : sp_ (0) {}
+      handle() : sp_ (nullptr) {}
     */
 
     //! A constructor from a pointer to some on-the-fly allocated instance.
@@ -109,22 +110,44 @@ namespace datatools {
      *
      * Example:
      * \code
-     * datatools::handle<int> h (new int (3));
+     * datatools::handle<int> h(new int(3));
      * \endcode
      * or
      * \code
-     * int * pi = new int (3);
-     * datatools::handle<int> h (pi);
+     * int * pi = new int(3);
+     * datatools::handle<int> h(pi);
      * \endcode
      *
      * \warning Never use such kind of mechanism to initialize a handle:
      * \code
      * int i = 3;
-     * datatools::handle<int> h (&i);
+     * datatools::handle<int> h(&i);
      * \endcode
      *
      */
-    handle(T* held = 0) : sp_(held) {}
+    handle(T* held = nullptr) : sp_(held) {}
+
+    //! A constructor from a pointer to some on-the-fly allocated instance.
+    /*!
+     * This constructor is given a pointer to some dynamically
+     * allocated instance and pass it to the internal shared const pointer.
+     * This means that the handle does not allow to modify the
+     * element it handles.
+     *
+     * Example:
+     * \code
+     * datatools::handle<const int> h(new int(3));
+     * \endcode
+     */
+    template<typename Q,
+             typename = std::enable_if<
+               std::is_same<const Q, T>::value &&
+               std::is_const<T>::value &&
+               !std::is_const<Q>::value>>
+      handle(Q* held = nullptr) : sp_(const_cast<Q*>(held)) {}
+
+    //! Constructor on a boost shared_ptr
+    handle(const boost::shared_ptr<T> & sp) : sp_(sp) {}
 
     //! Destructor
     virtual ~handle() {
@@ -139,12 +162,12 @@ namespace datatools {
     //! Return true if the internal shared pointer holds something.
     // 2013-05-12 FM : Preserved until all client code use the corresponding 'operator bool'.
     bool has_data() const {
-      return sp_.get() != 0;
+      return sp_.get() != nullptr;
     }
 
     //! Return true if the internal shared pointer holds something.
     operator bool() const {
-      return sp_.get() != 0;
+      return sp_.get() != nullptr;
     }
 
     void swap(handle<T>& other) {
@@ -157,15 +180,39 @@ namespace datatools {
       DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
     }
 
+    // 2016-12-01, FM: original version is inhibited when T is const:
+    // //! Return a non-const reference to the hosted instance.
+    // T& grab() {
+    //   if (sp_) return *sp_;
+    //   DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
+    // }
+
     //! Return a non-const reference to the hosted instance.
-    T& grab() {
+    template<typename Q = T>
+    typename std::enable_if<
+      std::is_same<Q, T>::value &&
+      !std::is_const<Q>::value &&
+      !std::is_const<T>::value,
+      Q&>::type grab() {
       if (sp_) return *sp_;
       DT_THROW_IF(true, std::logic_error, "Handle holds no data!");
     }
 
     //! Reset the internal shared pointer with a new instance.
-    void reset(T* elem = 0) {
+    void reset(T* elem = nullptr) {
       sp_.reset(elem);
+    }
+
+    //! Return a handle instance that hosts the const instance
+    template<typename Q = T>
+    typename std::enable_if<
+      std::is_same<Q, T>::value &&
+      !std::is_const<Q>::value &&
+      !std::is_const<T>::value,
+      handle<const Q> >::type to_const() const
+    {
+      boost::shared_ptr<const T> csp = boost::const_pointer_cast<const T, T>(sp_);
+      return handle<const T>(csp);
     }
 
   private:
@@ -178,7 +225,6 @@ namespace datatools {
   private:
     boost::shared_ptr<T> sp_; /*!< The embedded shared pointer. */
   };
-
 
   /*! \brief Templatized predicate class associated to handle instance.
    *
