@@ -88,29 +88,29 @@ int main(int argc_, char ** argv_)
 
     clog << "========================================" << endl;
 
-    datatools::properties my_dict ("a list of user properties");
+    datatools::properties my_dict("A list of user properties; group=Foo; date=01-02-2016");
     if (! use_validator) {
-      my_dict.unset_key_validator ();
+      my_dict.unset_key_validator();
     }
-    my_dict.dump (clog);
+    my_dict.dump(clog);
     clog << endl;
     clog << "========================================" << endl;
 
     //datatools::properties::g_debug=true;
-    my_dict.store ("name","my name");
+    my_dict.store("name","my name");
     clog << "========================================" << endl;
-    my_dict.store ("firstname","my firstname");
+    my_dict.store("firstname","my firstname");
     clog << "========================================" << endl;
-    my_dict.store (datatools::properties::make_private_key ("private"),
-                   "a private data", "Confidential stuff");
+    my_dict.store(datatools::properties::make_private_key ("private"),
+                  "a private data", "Confidential stuff");
 
     try {
-      my_dict.store ("#number", 666);
+      my_dict.store("#number", 666);
     }
     catch (exception & x) {
-      clog << "ERROR: " << x.what () << endl;
+      clog << "ERROR: " << x.what() << endl;
     }
-    my_dict.store ("age", 24, "the age of the captain");
+    my_dict.store("age", 24, "the age of the captain");
 
     try {
       my_dict.store ("007", "James Bond");
@@ -314,13 +314,14 @@ int main(int argc_, char ** argv_)
       clog << "'s4' is ok!" << endl;
     }
 
-  }
-  catch (std::exception & x) {
-    clog << "error: " << x.what () << endl;
+    datatools::properties cfg("Configuration set;author=John Doe;date=2016-11-15;group=admin");
+    cfg.tree_dump(std::clog, "Cfg");
+
+  } catch (std::exception & x) {
+    std::clog << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
-    cerr << "error: " << "unexpected error!" << endl;
+  } catch (...) {
+    std::cerr << "error: " << "unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
   return error_code;
