@@ -767,6 +767,7 @@ namespace datatools {
     }
     configuration::variant_preprocessor vpp(vpp_flags);
 
+    bool blocks_started  = false;
     while (in_) {
       bool append_block_line = true;
       std::string line_get;
@@ -778,155 +779,200 @@ namespace datatools {
         line_continue = true;
         line_get = line_get.substr(0, sz - 1);
       }
-
       if (line_goon) {
         line_in += line_get;
       } else {
-        // a new line
+        // A new line:
         line_in = line_get;
         line_count++;
       }
       line_goon = false;
-
       // Check if line should go on:
       if (line_continue) line_goon = true;
-
-      bool blocks_started = false;
-      bool process_block = false;
-      std::string new_key = "";
+      // bool blocks_started  = false;
+      bool process_block   = false;
+      std::string new_key  = "";
       std::string new_meta = "";
-
       if (!line_goon) {
         bool skip_line = false;
         std::string line = line_in;
-
         // Check if line is blank:
         std::istringstream check_iss(line_in);
         std::string check_word;
         check_iss >> std::ws >> check_word;
-
         if (check_word.empty()) skip_line = true;
-
         // Check if line is a comment:
         if (!skip_line) {
           std::istringstream iss(line);
           char c = 0;
           iss >> c;
-
           if (c == '#') {
             iss >> std::ws;
             std::string token;
             iss >> token;
-
-            if (token == "@variant_section_only") {
-              DT_THROW_IF(!enable_variants, std::logic_error,
-                          (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                          "Line " << _current_line_number_ << ": "
-                          << "Variant directives are forbidden!");
-              DT_THROW_IF(!can_variant_section_only, std::logic_error,
-                          (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                          "Line " << _current_line_number_ << ": "
-                          << "'@variant_section_only' directive can only be set at section start!");
-              std::string variant_path_rule;
-              iss >> std::ws >> variant_path_rule;
-              variant_section_only = variant_path_rule;
-              DT_LOG_DEBUG(_logging_,
-                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                           "Line " << _current_line_number_ << ": "
-                           << "Next section is active only with variant '"
-                           << variant_section_only << "'");
-              append_block_line = false;
-              can_variant_section_only = false;
-              DT_LOG_TRACE(_logging_,
-                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                           "Line " << _current_line_number_ << ": "
-                           << "'can_variant_section_only' is inhibited just after parsing a '@variant_section_only' directive.");
-            }
-
-            if (token == "@format" && mprop_format.empty()) {
-              iss >> std::ws;
-              std::string format;
-              std::getline(iss, format);
-              if (!format.empty()) {
-                mprop_format = format;
-                DT_THROW_IF(mprop_format != "datatools::multi_properties",
-                            std::logic_error,
+            // std::cerr << "***************** DEVEL: token='" << token << "'" << std::endl;
+            // std::cerr << "***************** DEVEL: with blocks_started = [" << blocks_started << "]" << std::endl;
+            if (token.size() > 1 && token[0] == '@') {
+              if (token == "@variant_section_only") {
+                DT_THROW_IF(!enable_variants, std::logic_error,
                             (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
                             "Line " << _current_line_number_ << ": "
-                            << "The '@format' directive does not match the expected 'datatools::multi_properties'!");
-              }
-              append_block_line = false;
-            } else if (token == "@description" && mprop_description.empty()) {
-              iss >> std::ws;
-              std::string desc;
-              std::getline(iss, desc);
-              if (!desc.empty()) {
-                mprop_description = desc;
-                target_.set_description(mprop_description);
-              }
-              append_block_line = false;
-            } else if (token == "@key_label" && mprop_key_label.empty()) {
-              iss >> std::ws;
-              std::string key_label;
-              uint32_t reader_flags = 0;
-              DT_THROW_IF (!io::read_quoted_string(iss, key_label, reader_flags),
-                           std::logic_error,
-                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                           "Line " << _current_line_number_ << ": "
-                           << "Unquoted value for '@key_label'");
-              std::string tmp;
-              std::getline(iss, tmp);
-              if (!key_label.empty()) {
-                mprop_key_label = key_label;
-                if (target_.get_key_label().empty()) {
-                  target_.set_key_label(mprop_key_label);
-                } else {
-                  DT_THROW_IF (target_.key_label_ != mprop_key_label,
-                               std::logic_error,
-                               (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                               "Line " << _current_line_number_ << ": "
-                               << "Incompatible key label '"
-                               << mprop_key_label
-                               << "' with required '"
-                               << target_.key_label_ << "' !");
-                }
-              }
-              append_block_line = false;
-            } else if (token == "@meta_label" && mprop_meta_label.empty()) {
-              iss >> std::ws;
-              std::string meta_label;
-              uint32_t reader_flags = 0;
-              DT_THROW_IF (!io::read_quoted_string(iss, meta_label, reader_flags),
-                           std::logic_error,
-                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                           "Line " << _current_line_number_ << ": "
-                           << "Unquoted value for '@meta_label'");
-              std::string tmp;
-              std::getline(iss, tmp);
-              if (meta_label.empty()) {
-                DT_THROW_IF (!target_.meta_label_.empty(),
-                             std::logic_error,
+                            << "Variant directives are forbidden!");
+                DT_THROW_IF(!can_variant_section_only, std::logic_error,
+                            (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                            "Line " << _current_line_number_ << ": "
+                            << "'@variant_section_only' directive can only be set at section start!");
+                std::string variant_path_rule;
+                iss >> std::ws >> variant_path_rule;
+                variant_section_only = variant_path_rule;
+                // std::cerr << "***************** DEVEL: variant_section_only = '" << variant_section_only << "'" << std::endl;
+                DT_LOG_DEBUG(_logging_,
                              (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
                              "Line " << _current_line_number_ << ": "
-                             << "Missing meta label with setup '"
-                             << target_.meta_label_ << "' !");
-              } else {
-                mprop_meta_label = meta_label;
-                if (target_.meta_label_.empty()) {
-                  target_.set_meta_label(mprop_meta_label);
+                             << "Next section is active only with variant '"
+                             << variant_section_only << "'");
+                append_block_line = false;
+                can_variant_section_only = false;
+                DT_LOG_TRACE(_logging_,
+                             (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                             "Line " << _current_line_number_ << ": "
+                             << "'can_variant_section_only' is inhibited just after parsing a '@variant_section_only' directive.");
+              }
+              if (token == "@format") {
+                if (!blocks_started) {
+                  if (mprop_format.empty()) {
+                    iss >> std::ws;
+                    std::string format;
+                    std::getline(iss, format);
+                    if (!format.empty()) {
+                      mprop_format = format;
+                      DT_THROW_IF(mprop_format != "datatools::multi_properties",
+                                  std::logic_error,
+                                  (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                                  "Line " << _current_line_number_ << ": "
+                                  << "The '@format' directive does not match the expected 'datatools::multi_properties'!");
+                    } else {
+                      DT_THROW(std::logic_error, "Empty format string!");
+                    }
+                    append_block_line = false;
+                  } else {
+                    DT_THROW(std::logic_error, "Directive '" << token << "' was already used!");
+                  }
+                }
+              } else if (token == "@description") {
+                if (!blocks_started) {
+                  if (mprop_description.empty()) {
+                    iss >> std::ws;
+                    std::string desc;
+                    std::getline(iss, desc);
+                    if (!desc.empty()) {
+                      mprop_description = desc;
+                      target_.set_description(mprop_description);
+                    }
+                    append_block_line = false;
+                  } else {
+                    DT_THROW(std::logic_error, "Directive '" << token << "' was already used!");
+                  }
                 } else {
-                  DT_THROW_IF (target_.meta_label_ != mprop_meta_label,
-                               std::logic_error,
-                               (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
-                               "Line " << _current_line_number_ << ": "
-                               << "Incompatible meta label '"
-                               << mprop_meta_label
-                               << "' with required '"
-                               << target_.meta_label_ << "' !");
+                  append_block_line = true;
+                }
+              } else if (token == "@variant_devel") {
+                DT_THROW_IF(!enable_variants, std::logic_error,
+                            (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                            "Line " << _current_line_number_ << ": "
+                            << "Variant directives are forbidden!");
+                if (!blocks_started) {
+                  vpp.set_logging(logger::PRIO_TRACE);
+                  append_block_line = false;
+                } else {
+                  append_block_line = true;
+                }
+              } else if (token == "@key_label") {
+                if (!blocks_started) {
+                  if (mprop_key_label.empty()) {
+                    iss >> std::ws;
+                    std::string key_label;
+                    uint32_t reader_flags = 0;
+                    DT_THROW_IF (!io::read_quoted_string(iss, key_label, reader_flags),
+                                 std::logic_error,
+                                 (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                                 "Line " << _current_line_number_ << ": "
+                                 << "Unquoted value for '@key_label'");
+                    std::string tmp;
+                    std::getline(iss, tmp);
+                    if (!key_label.empty()) {
+                      mprop_key_label = key_label;
+                      if (target_.get_key_label().empty()) {
+                        target_.set_key_label(mprop_key_label);
+                      } else {
+                        DT_THROW_IF (target_.key_label_ != mprop_key_label,
+                                     std::logic_error,
+                                     (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                                     "Line " << _current_line_number_ << ": "
+                                     << "Incompatible key label '"
+                                     << mprop_key_label
+                                     << "' with required '"
+                                     << target_.key_label_ << "' !");
+                      }
+                    }
+                    append_block_line = false;
+                  } else {
+                    DT_THROW(std::logic_error, "Directive '" << token << "' was already used!");
+                  }
+                } else {
+                  DT_THROW(std::logic_error,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "Unsupported token '" << token << "' with required '" << target_.key_label_ << "'!");
+                }
+              } else if (token == "@meta_label") {
+                if (!blocks_started) {
+                  if (mprop_meta_label.empty()) {
+                    iss >> std::ws;
+                    std::string meta_label;
+                    uint32_t reader_flags = 0;
+                    DT_THROW_IF (!io::read_quoted_string(iss, meta_label, reader_flags),
+                                 std::logic_error,
+                                 (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                                 "Line " << _current_line_number_ << ": "
+                                 << "Unquoted value for '@meta_label'");
+                    std::string tmp;
+                    std::getline(iss, tmp);
+                    if (meta_label.empty()) {
+                      DT_THROW_IF (!target_.meta_label_.empty(),
+                                   std::logic_error,
+                                   (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                                   "Line " << _current_line_number_ << ": "
+                                   << "Missing meta label with setup '"
+                                   << target_.meta_label_ << "' !");
+                    } else {
+                      mprop_meta_label = meta_label;
+                      if (target_.meta_label_.empty()) {
+                        target_.set_meta_label(mprop_meta_label);
+                      } else {
+                        DT_THROW_IF (target_.meta_label_ != mprop_meta_label,
+                                     std::logic_error,
+                                     (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                                     "Line " << _current_line_number_ << ": "
+                                     << "Incompatible meta label '"
+                                     << mprop_meta_label
+                                     << "' with required '"
+                                     << target_.meta_label_ << "' !");
+                      }
+                    }
+                    append_block_line = false;
+                  } else {
+                    DT_THROW(std::logic_error, "Directive '" << token << "' was already used!");
+                  }
+                } else {
+                  DT_THROW(std::logic_error,
+                           (_current_filename_.empty() ? "" : "File '" +_current_filename_ + "': ") <<
+                           "Line " << _current_line_number_ << ": "
+                           << "Unsupported token '" << token << "' with required '" << target_.key_label_ << "'!");
                 }
               }
-              append_block_line = false;
             }
+
             skip_line = true;
             {
               std::istringstream local_iss(line);
@@ -947,7 +993,7 @@ namespace datatools {
                            "Line " << _current_line_number_ << ": "
                            << "Do not skip line  '" << line << "'");
             }
-          }
+          } // if (c == '#')
         } // if ( ! skip_line )
 
         DT_LOG_TRACE(_logging_,
@@ -964,11 +1010,11 @@ namespace datatools {
           char c = 0;
           iss_line >> c >> std::ws;
           // Search for 'key/meta' line:
-          // XXX
           if (c == _format::OPEN_CHAR) {
             if (! blocks_started) {
               blocks_started = true;
-              // std::cerr << "DEVEL: " << "blocks_started: new_section_first_line_number = [" << new_section_first_line_number << "]..." << std::endl;
+              // std::cerr << "DEVEL: " << "Setting blocks_started = [" << blocks_started << "]" << std::endl;
+              // std::cerr << "DEVEL: " << "blocks_started: new_section_first_line_number = [" << new_section_first_line_number << "]" << std::endl;
               if (new_section_first_line_number > 0) {
                 closed_section_first_line_number = new_section_first_line_number;
                 // std::cerr << "DEVEL: " << "Previous SECTION started at line [" << closed_section_first_line_number << "]..." << std::endl;
@@ -1149,8 +1195,11 @@ namespace datatools {
               load_it = false;
             }
           }
+          //std::cerr << "*********** DEVEL: load_it = [" << load_it << "]" << std::endl;
 
           if (load_it) {
+            //std::cerr << "*********** DEVEL: load_it = [" << load_it << "]" << std::endl;
+            DT_LOG_TRACE(_logging_,"load_it = [" << load_it << "]");
             DT_LOG_TRACE(_logging_, "load the current section '" << current_key << "' with meta='" << current_meta << "'");
             target_.add(current_key, current_meta);
             multi_properties::entry & e = target_.grab(current_key);
@@ -1160,13 +1209,16 @@ namespace datatools {
               pcr_options |= properties::config::SKIP_PRIVATE;
             }
             properties::config pcr(pcr_options);
-            pcr.set_reader_input(_current_filename_); //, closed_section_first_line_number);
+            pcr.set_reader_input(_current_filename_);
             pcr.set_section_info(current_key, closed_section_first_line_number);
             std::istringstream block_iss(current_block_oss.str());
             pcr.read(block_iss, e.grab_properties());
-            // Reset the current block stream:
-            current_block_oss.str("");
+            // std::cerr << "*********** DEVEL: load_it is done" << std::endl;
+            DT_LOG_TRACE(_logging_,"load_it = [" << load_it << "] is done.");
           }
+          // Reset the current block stream:
+          current_block_oss.str("");
+          // std::cerr << "*********** DEVEL: current_block_oss = '" << current_block_oss.str() << "'"  << std::endl;
         }
         // update new key/meta values:
         current_key = new_key;
