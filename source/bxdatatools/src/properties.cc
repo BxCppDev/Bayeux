@@ -15,6 +15,7 @@
 // Third Party:
 // - Boost:
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -229,6 +230,7 @@ namespace datatools {
   }
 
   void properties::data::set_description(const std::string& a_description) {
+    // #@config short-description-text;metadata0;metadata1;metadata2
     _description_ = a_description;
   }
 
@@ -810,6 +812,56 @@ namespace datatools {
 
   const std::string & properties::get_description() const {
     return _description_;
+  }
+
+
+  bool properties::fetch_short_description(std::string & short_desc_) const
+  {
+    short_desc_.clear();
+    std::vector<std::string> desc_parts;
+    boost::split(desc_parts, _description_, boost::is_any_of(";"));
+    if (desc_parts.size()) {
+      short_desc_ = desc_parts.front();
+      boost::trim(short_desc_);
+    }
+    return short_desc_.size() > 0;
+  }
+
+
+  bool properties::has_short_description() const {
+    std::string tmp;
+    return fetch_short_description(tmp);
+  }
+
+
+  std::string properties::get_short_description() const {
+    std::string tmp;
+    fetch_short_description(tmp);
+    return tmp;
+  }
+
+
+  bool properties::has_auxiliary_descriptions() const {
+    std::vector<std::string> aux;
+    return fetch_auxiliary_descriptions(aux);
+  }
+
+
+  bool properties::fetch_auxiliary_descriptions(std::vector<std::string> & aux_) const
+  {
+    aux_.clear();
+    std::vector<std::string> desc_parts;
+    boost::split(desc_parts, _description_, boost::is_any_of(";"));
+    if (desc_parts.size() > 1) {
+      for (std::size_t iaux = 1; iaux < desc_parts.size(); iaux++) {
+        std::string aux_desc = desc_parts[iaux];
+        boost::trim(aux_desc);
+        if (!aux_desc.empty()) {
+          aux_.push_back(aux_desc);
+        }
+      }
+    }
+    return aux_.size() > 0;
   }
 
 
@@ -2234,6 +2286,14 @@ namespace datatools {
     return value;
   }
 
+  char properties::fetch_one_character(const std::string& a_key, int index) const
+  {
+    std::string value;
+    this->fetch(a_key, value, index);
+    DT_THROW_IF(value.length() != 1, std::logic_error,
+                "String property named '" << a_key << "' with value '" << value << "' does not contain one single character!");
+    return value[0];
+  }
 
   std::string properties::fetch_string(const std::string& a_key,
                                        int index) const {
@@ -2416,6 +2476,31 @@ namespace datatools {
     if (!_description_.empty()) {
       out << indent << i_tree_dumpable::tag
           << "Description  : '" << this->get_description() << "'" << std::endl;
+      std::string short_desc;
+      out << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::tag
+          << "Short description : ";
+      if (fetch_short_description(short_desc)) {
+        out << "'" << short_desc << "'";
+      } else {
+        out << "<none>";
+      }
+      out << std::endl;
+      out << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::last_tag
+          << "Auxiliary descriptions : ";
+      std::vector<std::string> aux;
+      fetch_auxiliary_descriptions(aux);
+      if (aux.size() == 0) out << "<none>";
+      out << std::endl;
+      for (std::size_t iaux = 0; iaux < aux.size(); iaux++) {
+        out << indent << i_tree_dumpable::skip_tag << i_tree_dumpable::last_skip_tag;
+        if (iaux + 1 == aux.size()) {
+          out << i_tree_dumpable::last_tag;
+        } else {
+          out << i_tree_dumpable::tag;
+        }
+        out << "Aux: '" << aux[iaux] << "'";
+        out << std::endl;
+      }
     }
 
     if (_props_.size() == 0) {
@@ -3042,6 +3127,7 @@ namespace datatools {
     configuration::variant_preprocessor vpp(vpp_flags);
 
     while (a_in) {
+      DT_LOG_DEBUG_SHORT(logging, "");
       DT_LOG_DEBUG(logging, "Loop on input stream...");
       std::string line_get;
       std::getline(a_in, line_get);

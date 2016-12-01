@@ -570,10 +570,45 @@ namespace datatools {
     bool empty() const;
 
     /// Set the description string of the properties container
+    ///
+    /// The description is a single line of text possibly splitted
+    /// in subparts separated by the semicolon (';') character.
+    ///
+    /// Examples:
+    /// \code
+    /// Head
+    /// Head;Text;...;Text;...
+    /// ;Text;...;Text;...
+    /// \endcode
+    /// The leading (optional) subpart corresponds to a short text
+    /// which describes the container of properties.
+    /// The other subparts are optional and possibly add some auxiliary informations
+    /// about the container of properties.
+    ///
+    /// Examples:
+    /// \code
+    /// My beautiful set of configuration parameter; group=geometry ; price=100 credits ; company=ACME
+    /// \endcode
+    /// The leading (optional) subpart corresponds to a short text
     void set_description(const std::string&);
 
     /// Returns the description string of the properties container
     const std::string& get_description() const;
+
+    /// Fetch the short description string associated to the container
+    bool fetch_short_description(std::string &) const;
+
+    /// Check if a short description string is associated to the container
+    bool has_short_description() const;
+
+    /// Get the short description string associated to the container
+    std::string get_short_description() const;
+
+    /// Check if some auxiliary descriptions are set
+    bool has_auxiliary_descriptions() const;
+
+    /// Fetch the auxiliary description strings associated to the container
+    bool fetch_auxiliary_descriptions(std::vector<std::string> &) const;
 
     /// Unset the current key validator
     void unset_key_validator();
@@ -1073,6 +1108,9 @@ namespace datatools {
     //! Fetch the string value stored with a given key/name and index
     std::string fetch_string(const std::string& name, int index = 0) const;
 
+    //! Fetch a single character value stored with a given key/name and index
+    char fetch_one_character(const std::string& name, int index = 0) const;
+
     //! Fetch the string scalar value stored with a given key/name
     std::string fetch_string_scalar(const std::string& name) const;
 
@@ -1248,10 +1286,8 @@ BOOST_CLASS_VERSION(datatools::properties, 2)
 
 #endif // DATATOOLS_PROPERTIES_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
