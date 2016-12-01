@@ -25,7 +25,7 @@ public:
 
   //! Initialization
   virtual void initialize(const datatools::properties & config_,
-                          mygsl::unary_function_dict_type & functors_);
+                          const mygsl::unary_function_dict_type & functors_);
 
   //! Reset
   virtual void reset();
@@ -104,7 +104,7 @@ void my_functor::_at_parameters_change()
 }
 
 void my_functor::initialize(const datatools::properties & config_,
-                            mygsl::unary_function_dict_type & functors_)
+                            const mygsl::unary_function_dict_type & functors_)
 {
   this->i_unary_function_with_parameters::initialize(config_, functors_);
 

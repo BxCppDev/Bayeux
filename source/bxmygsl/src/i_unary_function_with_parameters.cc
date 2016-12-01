@@ -51,7 +51,7 @@ namespace mygsl {
   }
 
   void i_unary_function_with_parameters::initialize(const datatools::properties & config_,
-                                                    unary_function_dict_type & functors_)
+                                                    const unary_function_dict_type & functors_)
   {
     this->i_unary_function::initialize(config_, functors_);
 

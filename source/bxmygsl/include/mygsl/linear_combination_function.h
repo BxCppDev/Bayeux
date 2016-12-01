@@ -31,27 +31,21 @@ namespace mygsl {
    *  h(x) = a * f(x) + b * g(x) + ... + c * j(x)
    *
    * where f(x), g(x)... j(x) are functors
-   * and a, b.... c are weighting factors.
+   * and a, b... c are weighting factors.
    *
    */
   class linear_combination_function : public i_unary_function
   {
   public:
 
-    //! \brief Record describing one term if the linear combination
-    struct term_type {
-      double weight = 0.0; //!< Weight
-      const i_unary_function * functor = nullptr; //!< Weighted functor
-    };
-
     //! Default constructor
     linear_combination_function();
 
     //! Constructor
     linear_combination_function(double w1_,
-                                const i_unary_function & f1_,
+                                const const_unary_function_handle_type & f1_,
                                 double w2_,
-                                const i_unary_function & f2_);
+                                const const_unary_function_handle_type & f2_);
 
     //! Destructor
     virtual ~linear_combination_function();
@@ -61,25 +55,31 @@ namespace mygsl {
 
     //! Initialization from a container of parameters and a dictionary of functors
     virtual void initialize(const datatools::properties & config_,
-                            unary_function_dict_type & functors_);
+                            const unary_function_dict_type & functors_);
 
     //! Reset the composite function
     void reset();
 
     //! Add a weighted term
-    int add(double weight_, const i_unary_function &);
+    std::size_t add(double weight_, const i_unary_function &);
+
+    //! Add a weighted term
+    std::size_t add(double weight_, const const_unary_function_handle_type &);
 
     //! Change weight
     void change_weight(int term_index_, double weight_);
 
     //! Check if the function has an explicit domain of definition (default: false)
-    /* virtual */ bool has_explicit_domain_of_definition() const;
+    virtual bool has_explicit_domain_of_definition() const;
 
-    /* virtual */ bool is_in_domain_of_definition(double x_) const;
+    //! Check if a value is in the explicit domain of definition (default: true)
+    virtual bool is_in_domain_of_definition(double x_) const;
 
-    /* virtual */ double get_non_zero_domain_min() const;
+    //! The minimum bound of the non-zero domain (default is minus infinity)
+    virtual double get_non_zero_domain_min() const;
 
-    /* virtual */ double get_non_zero_domain_max() const;
+    //! The maximum bound of the non-zero domain (default is plus infinity)
+    virtual double get_non_zero_domain_max() const;
 
     //! Smart printing
     virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -95,11 +95,15 @@ namespace mygsl {
     //! Set default attributes values
     void _set_defaults();
 
+  private:
+
     //! Recompute internals
-    void _recompute();
+    void _recompute_();
 
-   private:
+  private:
 
+    // Working data:
+    struct term_type;
     std::vector<term_type> _terms_; //!< Array of weighted functors
     bool _explicit_domain_of_definition_; //!< Flag for explicit domain of definition
     double _non_zero_domain_min_; //!< Non zero domain minimum bound
@@ -114,7 +118,7 @@ namespace mygsl {
 
 #endif // MYGSL_LINEAR_COMBINATION_FUNCTION_H
 
-/* Local Variables: */
-/* mode: c++        */
-/* coding: utf-8    */
-/* End:             */
+// Local Variables:
+// mode: c++
+// coding: utf-8
+// End:

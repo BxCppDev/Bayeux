@@ -32,16 +32,22 @@ namespace mygsl {
 
   composite_function::composite_function()
   {
-    _f_ = 0;
-    _g_ = 0;
     return;
   }
 
   composite_function::composite_function(const i_unary_function & f_,
                                          const i_unary_function & g_)
+    : _f_(f_)
+    , _g_(g_)
   {
-    set_f(f_);
-    set_g(g_);
+    return;
+  }
+
+  composite_function::composite_function(const const_unary_function_handle_type & hcf_,
+                                         const const_unary_function_handle_type & hcg_)
+    : _f_(hcf_)
+    , _g_(hcg_)
+  {
     return;
   }
 
@@ -52,47 +58,51 @@ namespace mygsl {
 
   bool composite_function::is_initialized() const
   {
-    return _f_ != 0 && _g_ != 0;
+    return ! _f_.is_null() && ! _g_.is_null();
   }
 
   void composite_function::initialize(const datatools::properties & config_,
-                                      unary_function_dict_type & functors_)
+                                      const unary_function_dict_type & functors_)
   {
     // Parse configuration:
-    if (_f_ == 0) {
+    if (_f_.is_null()) {
       if (config_.has_key("first_functor")) {
         const std::string & functor_name = config_.fetch_string("first_functor");
         unary_function_dict_type::const_iterator found = functors_.find(functor_name);
         DT_THROW_IF(found == functors_.end(), std::logic_error,
                     "No functor with name '" << functor_name << "'!");
-        const i_unary_function & func = found->second.get();
-        set_f(func);
+        _f_.reset(found->second.to_const());
       }
     }
 
-    if (_g_ == 0) {
+    if (_g_.is_null()) {
       if (config_.has_key("second_functor")) {
         const std::string & functor_name = config_.fetch_string("second_functor");
         unary_function_dict_type::const_iterator found = functors_.find(functor_name);
         DT_THROW_IF(found == functors_.end(), std::logic_error,
                     "No functor with name '" << functor_name << "'!");
-        const i_unary_function & func = found->second.get();
-        set_g(func);
+        _g_.reset(found->second.to_const());
       }
     }
 
+    _init_();
+    return;
+  }
+
+  void composite_function::_init_()
+  {
     // Checking...
-    DT_THROW_IF(_f_ == 0, std::logic_error,
+    DT_THROW_IF(_f_.is_null(), std::logic_error,
                 "Missing first functor !");
-    DT_THROW_IF(_g_ == 0, std::logic_error,
+    DT_THROW_IF(_g_.is_null(), std::logic_error,
                 "Missing second functor !");
     return;
   }
 
   void composite_function::reset()
   {
-    _f_ = 0;
-    _g_ = 0;
+    _f_.reset();
+    _g_.reset();
     return;
   }
 
@@ -100,7 +110,7 @@ namespace mygsl {
   {
     DT_THROW_IF(!f_.is_initialized(), std::logic_error,
                 "First functor is not initialized!");
-    _f_ = &f_;
+    _f_.reset(f_);
     return;
   }
 
@@ -108,52 +118,52 @@ namespace mygsl {
   {
     DT_THROW_IF(!g_.is_initialized(), std::logic_error,
                 "Second functor is not initialized!");
-    _g_ = &g_;
-    return;
+    _g_.reset(g_);
+     return;
   }
 
   bool composite_function::has_f() const
   {
-    return _f_ != 0;
+    return !_f_.is_null();
   }
 
   bool composite_function::has_g() const
   {
-    return _g_ != 0;
+    return !_g_.is_null();
   }
 
   double composite_function::_eval(double x_) const
   {
-    double tmp = _g_->eval(x_);
-    return _f_->eval(tmp);
+    double tmp = _g_.func().eval(x_);
+    return _f_.func().eval(tmp);
   }
 
   bool composite_function::has_explicit_domain_of_definition() const
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Composite function is not initialized!");
-    return _g_->has_explicit_domain_of_definition();
+    return _g_.func().has_explicit_domain_of_definition();
   }
 
   bool composite_function::is_in_domain_of_definition(double x_) const
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Composite function is not initialized!");
-    return _g_->is_in_domain_of_definition(x_);
+    return _g_.func().is_in_domain_of_definition(x_);
   }
 
   double composite_function::get_non_zero_domain_min() const
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Composite function is not initialized!");
-    return _g_->get_non_zero_domain_min();
+    return _g_.func().get_non_zero_domain_min();
   }
 
   double composite_function::get_non_zero_domain_max() const
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Composite function is not initialized!");
-    return _g_->get_non_zero_domain_max();
+    return _g_.func().get_non_zero_domain_max();
   }
 
   void composite_function::tree_dump(std::ostream & out_,
@@ -166,7 +176,7 @@ namespace mygsl {
     out_ << indent_ << i_tree_dumpable::tag
          << "First functor :";
     if (has_f()) {
-      out_ << "@[" << _f_ << "]";
+      out_ << "@[" << &_f_.func() << "]";
     } else {
       out_ << "<none>";
     }
@@ -175,7 +185,7 @@ namespace mygsl {
     out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
          << "Second functor :";
     if (has_g()) {
-      out_ << "@[" << _g_ << "]";
+      out_ << "@[" << &_g_.func() << "]";
     } else {
       out_ << "<none>";
     }

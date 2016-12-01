@@ -54,8 +54,7 @@ int main(/*int argc_ , char ** argv_*/)
       std::cout << std::endl << std::endl;
     }
 
-  }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     std::cerr << "ERROR: " << x.what () << std::endl;
     return (EXIT_FAILURE);
   }

@@ -44,7 +44,12 @@ namespace mygsl {
     composite_function();
 
     //! Constructor
-    composite_function(const i_unary_function & f_, const i_unary_function & g_);
+    composite_function(const i_unary_function & f_,
+                       const i_unary_function & g_);
+
+    //! Constructor
+    composite_function(const const_unary_function_handle_type & hcf_,
+                       const const_unary_function_handle_type & hcg_);
 
     //! Destructor
     virtual ~composite_function();
@@ -54,7 +59,7 @@ namespace mygsl {
 
     //! Initialization from a container of parameters and a dictionary of functors
     virtual void initialize(const datatools::properties & config_,
-                            unary_function_dict_type & functors_);
+                            const unary_function_dict_type & functors_);
 
     //! Reset the composite function
     void reset();
@@ -91,10 +96,15 @@ namespace mygsl {
     //! Evaluation
     double _eval(double x_) const;
 
+  private:
+
+    //! Private initialization
+    void _init_();
+
    private:
 
-    const i_unary_function * _f_; //!< First functor
-    const i_unary_function * _g_; //!< Second functor
+    unary_function_handle _f_; //!< First functor
+    unary_function_handle _g_; //!< Second functor
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(composite_function)

@@ -45,6 +45,10 @@ namespace mygsl {
 
     //! Constructor
     gaussian_function(double sigma_,
+                      double mu_);
+
+    //! Constructor
+    gaussian_function(double sigma_,
                       double mu_,
                       double amplitude_);
 
@@ -56,7 +60,7 @@ namespace mygsl {
 
     //! Initialization from a container of parameters and a dictionary of functors
     virtual void initialize(const datatools::properties & config_,
-                            unary_function_dict_type & functors_);
+                            const unary_function_dict_type & functors_);
 
     //! Reset the function
     void reset();
@@ -73,11 +77,17 @@ namespace mygsl {
     //! Return the mu
     double get_mu() const;
 
+    //! Check if amplitude is forced
+    bool has_amplitude() const;
+
     //! Set the amplitude
     void set_amplitude(double amplitude_);
 
     //! Return the amplitude
     double get_amplitude() const;
+
+    //! Reset the amplitude
+    void reset_amplitude();
 
     //! Smart printing
     virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -85,7 +95,7 @@ namespace mygsl {
                            const std::string & indent_ = "",
                            bool inherit_ = false) const;
 
-  protected :
+  protected:
 
     //! Evaluation
     double _eval(double x_) const;
@@ -93,11 +103,21 @@ namespace mygsl {
     //! Set default attributes values
     void _set_defaults();
 
-   private:
+  private:
 
+    //! Private initialization
+    void _init_();
+
+  private:
+
+    // Configuration:
     double _mu_;        //!< Mean
     double _sigma_;     //!< Sigma
-    double _amplitude_; //!< Amplitude
+    double _amplitude_; //!< Peak amplitude at x=mean (optional)
+
+    // Working data:
+    double _factor_; //!< Scaling factor
+
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(gaussian_function)

@@ -38,6 +38,7 @@ namespace mygsl {
     datatools::invalidate(_mu_);
     datatools::invalidate(_sigma_);
     datatools::invalidate(_amplitude_);
+    datatools::invalidate(_factor_);
     return;
   }
 
@@ -47,12 +48,22 @@ namespace mygsl {
     return;
   }
 
+  gaussian_function::gaussian_function(double sigma_, double mu_)
+  {
+    _set_defaults();
+    set_sigma(sigma_);
+    set_mu(mu_);
+    _init_();
+    return;
+  }
+
   gaussian_function::gaussian_function(double sigma_, double mu_, double amplitude_)
   {
     _set_defaults();
     set_sigma(sigma_);
     set_mu(mu_);
     set_amplitude(amplitude_);
+    _init_();
     return;
   }
 
@@ -63,13 +74,11 @@ namespace mygsl {
 
   bool gaussian_function::is_initialized() const
   {
-    return datatools::is_valid(_sigma_)
-      && datatools::is_valid(_mu_)
-      && datatools::is_valid(_amplitude_);
+    return datatools::is_valid(_factor_);
   }
 
   void gaussian_function::initialize(const datatools::properties & config_,
-                                     unary_function_dict_type & functors_)
+                                     const unary_function_dict_type & functors_)
   {
     this->i_unary_function::_base_initialize(config_, functors_);
 
@@ -95,6 +104,12 @@ namespace mygsl {
       }
     }
 
+    _init_();
+    return;
+  }
+
+  void gaussian_function::_init_()
+  {
     // Checks:
     DT_THROW_IF(!datatools::is_valid(_mu_),
                 std::logic_error,
@@ -102,9 +117,10 @@ namespace mygsl {
     DT_THROW_IF(!datatools::is_valid(_sigma_),
                 std::logic_error,
                 "Invalid sigma!");
-    DT_THROW_IF(!datatools::is_valid(_amplitude_),
-                std::logic_error,
-                "Invalid amplitude!");
+    _factor_ = 1.0;
+    if (datatools::is_valid(_amplitude_)) {
+      _factor_ = _amplitude_ / gsl_ran_gaussian_pdf(0.0, _sigma_);
+    }
     return;
   }
 
@@ -141,10 +157,15 @@ namespace mygsl {
 
   void gaussian_function::set_amplitude(double amplitude_)
   {
-    DT_THROW_IF(datatools::is_valid(amplitude_) && amplitude_ <= 0.0, std::logic_error,
-                "Invalid negative or null amplitude!");
+    DT_THROW_IF(!datatools::is_valid(amplitude_), std::logic_error,
+                "Invalid amplitude!");
     _amplitude_ = amplitude_;
     return;
+  }
+
+  bool gaussian_function::has_amplitude() const
+  {
+    return datatools::is_valid(_amplitude_);
   }
 
   double gaussian_function::get_amplitude() const
@@ -152,9 +173,17 @@ namespace mygsl {
     return _amplitude_;
   }
 
+  void gaussian_function::reset_amplitude()
+  {
+    datatools::invalidate(_amplitude_);
+    datatools::invalidate(_factor_);
+    // _factor_ = 1.0;
+    return;
+  }
+
   double gaussian_function::_eval(double x_) const
   {
-    return _amplitude_ * gsl_ran_gaussian_pdf(x_ - _mu_, _sigma_);
+    return _factor_ * gsl_ran_gaussian_pdf(x_ - _mu_, _sigma_);
   }
 
   void gaussian_function::tree_dump(std::ostream & out_,

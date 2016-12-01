@@ -89,7 +89,7 @@ namespace mygsl {
   }
 
   void triangle_function::initialize(const datatools::properties & config_,
-                                     unary_function_dict_type & functors_)
+                                     const unary_function_dict_type & functors_)
   {
     this->i_unary_function::_base_initialize(config_, functors_);
 

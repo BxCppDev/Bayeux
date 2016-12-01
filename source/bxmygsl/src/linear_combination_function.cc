@@ -30,6 +30,41 @@ namespace mygsl {
   MYGSL_UNARY_FUNCTOR_REGISTRATION_IMPLEMENT(linear_combination_function,
                                              "mygsl::linear_combination_function")
 
+  //! \brief Record describing one term if the linear combination
+  struct linear_combination_function::term_type
+    : public unary_function_handle
+  {
+     term_type(const const_unary_function_handle_type & hcfunc_,
+              const double weight_)
+      : unary_function_handle(hcfunc_)
+      , _weight_(weight_)
+    {
+    }
+    term_type(const unary_function_handle_type & hfunc_,
+              const double weight_)
+      : unary_function_handle(hfunc_.to_const())
+      , _weight_(weight_)
+    {
+    }
+    term_type(const mygsl::i_unary_function & func_,
+              const double weight_)
+      : unary_function_handle(func_)
+      , _weight_(weight_)
+    {
+    }
+    void set_weight(const double w_)
+    {
+      _weight_ = w_;
+      return;
+    }
+    double get_weight() const
+    {
+      return _weight_;
+    }
+  private:
+    double _weight_ = 1.0; //!< Weight
+  };
+
   void linear_combination_function::_set_defaults()
   {
     _explicit_domain_of_definition_ = false;
@@ -45,9 +80,9 @@ namespace mygsl {
   }
 
   linear_combination_function::linear_combination_function(double w1_,
-                                                           const i_unary_function & f1_,
+                                                           const const_unary_function_handle_type & f1_,
                                                            double w2_,
-                                                           const i_unary_function & f2_)
+                                                           const const_unary_function_handle_type & f2_)
   {
     _set_defaults();
     add(w1_, f1_);
@@ -67,34 +102,41 @@ namespace mygsl {
   }
 
   void linear_combination_function::initialize(const datatools::properties & config_,
-                                               unary_function_dict_type & functors_)
+                                               const unary_function_dict_type & functors_)
   {
     this->i_unary_function::_base_initialize(config_, functors_);
 
     // Parse configuration:
     if (_terms_.size() == 0) {
-      /*
-      if (config_.has_key("first_functor")) {
-        const std::string & functor_name = config_.fetch_string("first_functor");
-        unary_function_dict_type::const_iterator found = functors_.find(functor_name);
-        DT_THROW_IF(found == functors_.end(), std::logic_error,
-                    "No functor with name '" << functor_name << "'!");
-        const i_unary_function & func = found->second.get();
-        set_f(func);
-      }
-    }
 
-    if (_g_ == 0) {
-      if (config_.has_key("second_functor")) {
-        const std::string & functor_name = config_.fetch_string("second_functor");
-        unary_function_dict_type::const_iterator found = functors_.find(functor_name);
-        DT_THROW_IF(found == functors_.end(), std::logic_error,
-                    "No functor with name '" << functor_name << "'!");
-        const i_unary_function & func = found->second.get();
-        set_g(func);
+      std::set<std::string> term_labels;
+      if (config_.has_key("terms")) {
+        config_.fetch("terms", term_labels);
       }
-    }
-      */
+
+      for (const auto & term_label : term_labels) {
+        std::string term_key;
+        double term_weight = 1.0;
+        {
+          std::ostringstream term_key_oss;
+          term_key_oss << "terms." << term_label << ".key";
+          DT_THROW_IF(!config_.has_key(term_key_oss.str()), std::logic_error,
+                      "Missing '" << term_key_oss.str() << "' property!");
+          term_key = config_.fetch_string(term_key_oss.str());
+        }
+        {
+          std::ostringstream term_weight_oss;
+          term_weight_oss << "terms." << term_label << ".weight";
+          if (config_.has_key(term_weight_oss.str())) {
+            term_weight = config_.fetch_dimensionless_real(term_weight_oss.str());
+          }
+        }
+        DT_THROW_IF(!functors_.count(term_key), std::domain_error,
+                    "No term functor with key '"
+                    << term_key << "' is available from the pool of functors!");
+        mygsl::const_unary_function_handle_type cf = functors_.find(term_key)->second.to_const();
+        add(term_weight, cf);
+      }
     }
 
     // Checking...
@@ -110,18 +152,29 @@ namespace mygsl {
     return;
   }
 
-  int linear_combination_function::add(double w_, const i_unary_function & f_)
+  std::size_t linear_combination_function::add(double w_,
+                                               const i_unary_function & f_)
   {
 
     DT_THROW_IF(!datatools::is_valid(w_), std::logic_error, "Invalid functor weight !");
     DT_THROW_IF(!f_.is_initialized(), std::logic_error,
                 "Functor is not initialized!");
-    int idx = _terms_.size();
-    term_type tt;
-    tt.weight = w_;
-    tt.functor = &f_;
-    _terms_.push_back(tt);
-    _recompute();
+    std::size_t idx = _terms_.size();
+    _terms_.push_back(term_type(f_, w_));
+    _recompute_();
+    return idx;
+  }
+
+  std::size_t linear_combination_function::add(double w_,
+                                               const const_unary_function_handle_type & f_)
+  {
+
+    DT_THROW_IF(!datatools::is_valid(w_), std::logic_error, "Invalid functor weight !");
+    DT_THROW_IF(!f_.get().is_initialized(), std::logic_error,
+                "Functor is not initialized!");
+    std::size_t idx = _terms_.size();
+    _terms_.push_back(term_type(f_, w_));
+    _recompute_();
     return idx;
   }
 
@@ -130,7 +183,7 @@ namespace mygsl {
     DT_THROW_IF(term_index_ < 0 || term_index_ >= (int)_terms_.size(),
                 std::range_error, "Invalid functor term index !");
     DT_THROW_IF(!datatools::is_valid(weight_), std::logic_error, "Invalid functor weight !");
-    _terms_[term_index_].weight = weight_;
+    _terms_[term_index_].set_weight(weight_);
     return;
   }
 
@@ -138,26 +191,29 @@ namespace mygsl {
   {
     double tmp = 0.0;
     for (int i = 0; i < (int) _terms_.size(); i++) {
-      tmp += _terms_[i].weight * _terms_[i].functor->eval(x_);
+      tmp += _terms_[i].get_weight() * _terms_[i].func().eval(x_);
     }
     return tmp;
   }
 
-  void linear_combination_function::_recompute()
+  void linear_combination_function::_recompute_()
   {
-    _set_defaults();
+    _explicit_domain_of_definition_ = false;
+    datatools::invalidate(_non_zero_domain_min_);
+    datatools::invalidate(_non_zero_domain_max_);
+
     for (int i = 0; i < (int) _terms_.size(); i++) {
-      if (_terms_[i].functor->has_explicit_domain_of_definition()) {
-       _explicit_domain_of_definition_ = true;
-       break;
+      if (_terms_[i].func().has_explicit_domain_of_definition()) {
+        _explicit_domain_of_definition_ = true;
+        break;
       }
     }
 
     for (int i = 0; i < (int) _terms_.size(); i++) {
-      if (_terms_[i].functor->has_non_zero_domain_min()) {
+      if (_terms_[i].func().has_non_zero_domain_min()) {
         if (!datatools::is_valid(_non_zero_domain_min_)
-            || _terms_[i].functor->get_non_zero_domain_min() > _non_zero_domain_min_) {
-          _non_zero_domain_min_ = _terms_[i].functor->get_non_zero_domain_min();
+            || _terms_[i].func().get_non_zero_domain_min() > _non_zero_domain_min_) {
+          _non_zero_domain_min_ = _terms_[i].func().get_non_zero_domain_min();
         }
       } else {
         datatools::invalidate(_non_zero_domain_min_);
@@ -166,10 +222,10 @@ namespace mygsl {
     }
 
     for (int i = 0; i < (int) _terms_.size(); i++) {
-      if (_terms_[i].functor->has_non_zero_domain_max()) {
+      if (_terms_[i].func().has_non_zero_domain_max()) {
         if (!datatools::is_valid(_non_zero_domain_max_)
-            || _terms_[i].functor->get_non_zero_domain_max() < _non_zero_domain_max_) {
-          _non_zero_domain_max_ = _terms_[i].functor->get_non_zero_domain_max();
+            || _terms_[i].func().get_non_zero_domain_max() < _non_zero_domain_max_) {
+          _non_zero_domain_max_ = _terms_[i].func().get_non_zero_domain_max();
         }
       } else {
         datatools::invalidate(_non_zero_domain_max_);
@@ -193,8 +249,8 @@ namespace mygsl {
                 "Linear combination function is not initialized!");
     bool in_dod = true;
     for (int i = 0; i < (int) _terms_.size(); i++) {
-      if (_terms_[i].functor->has_explicit_domain_of_definition()) {
-        if (!_terms_[i].functor->is_in_domain_of_definition(x_)) {
+      if (_terms_[i].func().has_explicit_domain_of_definition()) {
+        if (!_terms_[i].func().is_in_domain_of_definition(x_)) {
           in_dod = false;
           break;
         }
@@ -226,8 +282,8 @@ namespace mygsl {
 
     for (int i = 0; i < (int) _terms_.size(); i++) {
       out_ << indent_ << i_tree_dumpable::tag
-           << "Functor @[" << _terms_[i].functor << "] with weight = "
-           << _terms_[i].weight
+           << "Functor @[" << &_terms_[i].func() << "] with weight = "
+           << _terms_[i].get_weight()
            << std::endl;
     }
 

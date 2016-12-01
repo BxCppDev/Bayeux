@@ -132,7 +132,7 @@ namespace mygsl {
 
     //! Initialization from a container of parameters and a dictionary of functors
     virtual void initialize(const datatools::properties & config_,
-                            unary_function_dict_type & functors_);
+                            const unary_function_dict_type & functors_);
 
     //! Reset the functor
     void reset();

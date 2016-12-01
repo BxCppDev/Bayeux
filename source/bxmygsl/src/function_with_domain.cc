@@ -107,7 +107,7 @@ namespace mygsl {
   }
 
   void function_with_domain::initialize(const datatools::properties & config_,
-                                        unary_function_dict_type & functors_)
+                                        const unary_function_dict_type & functors_)
   {
     if (!has_functor()) {
       if (config_.has_key("functor")) {

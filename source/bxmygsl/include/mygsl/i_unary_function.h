@@ -23,21 +23,27 @@
 // This project:
 #include <mygsl/ioutils.h>
 #include <mygsl/interval.h>
+#include <mygsl/unary_function_utils.h>
 
 namespace mygsl {
 
-  // Forward class declaration:
-  class i_unary_function;
+  // // Forward class declaration:
+  // class i_unary_function;
 
-  //! Alias for a handle to an unary function object
-  typedef datatools::handle<i_unary_function> unary_function_handle_type;
+  // //! Alias for a handle to an unary function object
+  // typedef datatools::handle<i_unary_function> unary_function_handle_type;
 
-  //! Alias for disctionary of handles to unary function objects
-  typedef std::map<std::string, unary_function_handle_type> unary_function_dict_type;
+  // //! Alias for a handle to a const unary function object
+  // typedef datatools::handle<const i_unary_function> const_unary_function_handle_type;
+
+  // //! Alias for dictionary of handles to unary function objects
+  // // typedef std::map<std::string, unary_function_handle_type> unary_function_dict_type;
+  // typedef std::map<std::string, unary_function_handle_type> unary_function_dict_type;
 
   //! \brief Abstract interface for unary functions : R -> R
-  class i_unary_function : public std::unary_function<double,double>,
-                           public datatools::i_tree_dumpable
+  class i_unary_function
+    : public std::unary_function<double,double>
+    , public datatools::i_tree_dumpable
   {
   public:
 
@@ -152,8 +158,11 @@ namespace mygsl {
     void initialize_standalone(const datatools::properties & config_);
 
     //! Initialization from a container of parameters and a dictionary of functors
+    //!
+    //! ISSUE: FM 2016-11-30: the functors_ dictionnary implicitely gives write access to
+    //! each functors in the list. This is basicaly a problem.
     virtual void initialize(const datatools::properties & config_,
-                            unary_function_dict_type & functors_);
+                            const unary_function_dict_type & functors_);
 
     //! Reset the functor
     virtual void reset();
@@ -173,7 +182,7 @@ namespace mygsl {
     virtual double _eval(double x_) const = 0;
 
     void _base_initialize(const datatools::properties & config_,
-                          unary_function_dict_type & functors_);
+                          const unary_function_dict_type & functors_);
 
     void _base_reset();
 

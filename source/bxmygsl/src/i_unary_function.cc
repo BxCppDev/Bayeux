@@ -88,7 +88,7 @@ namespace mygsl {
   }
 
   void i_unary_function::_base_initialize(const datatools::properties & config_,
-                                          unary_function_dict_type & /*functors_*/)
+                                          const unary_function_dict_type & /*functors_*/)
   {
     if (! datatools::is_valid(_epsilon_)) {
       if (config_.has_key("epsilon")) {
@@ -131,7 +131,7 @@ namespace mygsl {
   }
 
   void i_unary_function::initialize(const datatools::properties & config_,
-                                    unary_function_dict_type & functors_)
+                                    const unary_function_dict_type & functors_)
   {
     _base_initialize(config_, functors_);
     return;
@@ -156,33 +156,31 @@ namespace mygsl {
   double i_unary_function::get_non_zero_domain_min() const
   {
     return -std::numeric_limits<double>::infinity();
-    //return std::numeric_limits<double>::quiet_NaN();
   }
 
   bool i_unary_function::has_non_zero_domain_min() const
   {
     double nzdmin = get_non_zero_domain_min();
     if (!datatools::is_valid(nzdmin)) return false;
-    return nzdmin != -std::numeric_limits<double>::infinity();
+    return !datatools::is_infinity(nzdmin);
   }
 
   double i_unary_function::get_non_zero_domain_max() const
   {
     return +std::numeric_limits<double>::infinity();
-    //return std::numeric_limits<double>::quiet_NaN();
   }
 
   bool i_unary_function::has_non_zero_domain_max() const
   {
     double nzdmax = get_non_zero_domain_max();
     if (!datatools::is_valid(nzdmax)) return false;
-    return nzdmax != +std::numeric_limits<double>::infinity();
+    return !datatools::is_infinity(nzdmax);
   }
 
   bool i_unary_function::is_in_non_zero_domain(double x_) const
   {
-    if (x_ < get_non_zero_domain_min()) return false;
-    if (x_ > get_non_zero_domain_max()) return false;
+    if (has_non_zero_domain_min() && x_ < get_non_zero_domain_min()) return false;
+    if (has_non_zero_domain_max() && x_ > get_non_zero_domain_max()) return false;
     return true;
   }
 
@@ -271,7 +269,7 @@ namespace mygsl {
       datatools::io::write_real_number(out_, y / fx_unit_, fxprecision);
       out_ << '\n';
     }
-    if (options_ & wo_data_index) out_ << '\n' << '\n';
+    if (options_ & wo_data_index) out_ << '\n' << '\n' << std::flush;
     return;
   }
 
@@ -333,16 +331,6 @@ namespace mygsl {
                                           uint32_t options_) const
   {
     write_ascii_file_with_units(filename_,  min_, max_, nsamples_, "", "", x_precision_, fx_precision_, options_);
-
-    // std::string filename = filename_;
-    // datatools::fetch_path_with_env(filename);
-    // std::ofstream fout;
-    // std::ios_base::openmode flags = std::ios_base::out;
-    // if (options_ & wo_append) flags |= std::ios::app;
-    // fout.open(filename.c_str(), flags);
-    // DT_THROW_IF (! fout, std::runtime_error, "Cannot open output file '" << filename << "' !");
-    // write_ascii(fout, min_, max_, nsamples_, x_precision_, fx_precision_, options_);
-    // fout.close();
     return;
   }
 

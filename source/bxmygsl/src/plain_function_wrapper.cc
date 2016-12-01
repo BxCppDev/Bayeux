@@ -102,7 +102,7 @@ namespace mygsl {
   }
 
   void plain_function_wrapper::initialize(const datatools::properties & config_,
-                                          unary_function_dict_type & /* functors_ */)
+                                          const unary_function_dict_type & /* functors_ */)
   {
     std::string plain_function_name;
     if (!has_plain_function()) {

@@ -56,7 +56,7 @@ namespace mygsl {
   }
 
   void product_function::initialize(const datatools::properties & config_,
-                                      unary_function_dict_type & functors_)
+                                    const unary_function_dict_type & functors_)
   {
     // Parse configuration:
     if (_f_ == 0) {
