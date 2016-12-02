@@ -148,7 +148,7 @@ namespace materials {
   }
 
   void refractive_index::initialize(const datatools::properties & config_,
-                                    mygsl::unary_function_dict_type & /* functors_ */)
+                                    const mygsl::unary_function_dict_type & /* functors_ */)
   {
     if (is_initialized()) return;
 
