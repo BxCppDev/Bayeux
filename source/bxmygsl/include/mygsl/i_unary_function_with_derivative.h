@@ -86,7 +86,7 @@ namespace mygsl {
 
   private:
 
-    const i_unary_function * _functor_; //!< Address of an external unary function
+    unary_function_handle _functor_; //!< Handle to an external unary function
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(unary_function_promoted_with_numeric_derivative)

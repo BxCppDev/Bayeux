@@ -342,6 +342,9 @@ namespace mygsl {
     if (! title_.empty()) out_ << indent_ << title_ << std::endl;
 
     out_ << indent_ << i_tree_dumpable::tag
+         << "Address : [@" << this << ']' << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::tag
          << "Epsilon : " << _epsilon_ << std::endl;
 
     if (is_initialized()) {

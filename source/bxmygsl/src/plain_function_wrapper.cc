@@ -35,15 +35,9 @@ namespace mygsl {
 
   void plain_function_wrapper::set_plain_function_by_name(const std::string & plain_func_name_)
   {
-    // std::cerr << "DEVEL: plain_function_wrapper::set_plain_function_by_name: "
-    //           << "set plain function with name='" << plain_func_name_ << "'"
-    //           << std::endl;
     DT_THROW_IF(!plain_function_is_known(plain_func_name_), std::logic_error,
                 "Unknown plain function with name '" << plain_func_name_ << "'");
     set_plain_function(get_simple_function(plain_func_name_));
-    // std::cerr << "DEVEL: plain_function_wrapper::set_plain_function_by_name: "
-    //           << "plain function address=[" << (void*) _plain_function_ << "]"
-    //           << std::endl;
     return;
   }
 
@@ -55,18 +49,18 @@ namespace mygsl {
 
   bool plain_function_wrapper::has_plain_function() const
   {
-    return _plain_function_ != 0;
+    return _plain_function_ != nullptr;
   }
 
   plain_function_wrapper::plain_function_wrapper()
   {
-    _plain_function_ = 0;
+    _plain_function_ = nullptr;
     return;
   }
 
   plain_function_wrapper::plain_function_wrapper(const std::string & plain_func_name_)
   {
-    _plain_function_ = 0;
+    _plain_function_ = nullptr;
     set_plain_function_by_name(plain_func_name_);
     return;
   }
@@ -79,7 +73,7 @@ namespace mygsl {
 
   plain_function_wrapper::~plain_function_wrapper()
   {
-    _plain_function_ = 0;
+    _plain_function_ = nullptr;
     return;
   }
 
@@ -92,12 +86,12 @@ namespace mygsl {
 
   bool plain_function_wrapper::is_initialized() const
   {
-    return _plain_function_ != 0;
+    return _plain_function_ != nullptr;
   }
 
   void plain_function_wrapper::reset()
   {
-    _plain_function_ = 0;
+    _plain_function_ = nullptr;
     return;
   }
 

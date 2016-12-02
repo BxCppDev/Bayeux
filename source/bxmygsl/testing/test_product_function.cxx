@@ -22,6 +22,8 @@ int main(/*int argc_ , char ** argv_*/)
 
     mygsl::plain_function_wrapper f0("cos");
     mygsl::plain_function_wrapper f1("sin");
+    f0.tree_dump(std::clog, "f0 function: ");
+    f1.tree_dump(std::clog, "f1 function: ");
 
     mygsl::product_function pf(f0, f1);
     pf.tree_dump(std::clog, "Product function: ");

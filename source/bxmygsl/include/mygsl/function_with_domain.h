@@ -87,8 +87,8 @@ namespace mygsl {
 
   private:
 
-    const i_unary_function * _functor_; //!< Address of an external unary function
-    interval                 _domain_of_definition_; //!< Interval of definition
+    unary_function_handle _functor_; //!< Address of an external unary function
+    interval              _domain_of_definition_; //!< Interval of definition
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(function_with_domain)

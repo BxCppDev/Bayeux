@@ -90,10 +90,14 @@ namespace mygsl {
     //! Evaluation
     double _eval(double x_) const;
 
-   private:
+  private:
 
-    const i_unary_function * _f_; //!< First functor
-    const i_unary_function * _g_; //!< Second functor
+    void _at_init();
+
+  private:
+
+    unary_function_handle _f_; //!< First functor
+    unary_function_handle _g_; //!< Second functor
 
     //! Registration of the functor class
     MYGSL_UNARY_FUNCTOR_REGISTRATION_INTERFACE(product_function)

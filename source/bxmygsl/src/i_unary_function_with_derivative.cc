@@ -36,13 +36,13 @@ namespace mygsl {
 
   double i_unary_function_with_derivative::eval_df (double x_) const
   {
-    return _eval_df_numeric (x_, get_epsilon());
+    return _eval_df_numeric(x_, get_epsilon());
   }
 
   void i_unary_function_with_derivative::eval_fdf (double x_, double & f_, double & df_) const
   {
-    f_ = this->eval_f (x_);
-    df_ = this->eval_df (x_);
+    f_ = this->eval_f(x_);
+    df_ = this->eval_df(x_);
     return;
   }
 
@@ -96,62 +96,60 @@ namespace mygsl {
 
   bool unary_function_promoted_with_numeric_derivative::has_functor() const
   {
-    return _functor_ != 0;
+    return !_functor_.is_null();
   }
 
   void unary_function_promoted_with_numeric_derivative::set_functor(const i_unary_function & functor_)
   {
-    DT_THROW_IF(!functor_.is_initialized(), std::logic_error,
-                "Functor is not initialized!");
-    _functor_ = &functor_;
+    _functor_.reset(functor_);
     return;
   }
 
   unary_function_promoted_with_numeric_derivative::unary_function_promoted_with_numeric_derivative()
+    : _functor_()
   {
-    _functor_ = 0;
     return;
   }
 
   unary_function_promoted_with_numeric_derivative::unary_function_promoted_with_numeric_derivative (const i_unary_function & functor_)
+    : _functor_(functor_)
   {
-    set_functor(functor_);
     return;
   }
 
   bool unary_function_promoted_with_numeric_derivative::is_in_domain_of_definition(double x_) const
   {
-    return _functor_->is_in_domain_of_definition(x_);
+    return _functor_.func().is_in_domain_of_definition(x_);
   }
 
   bool unary_function_promoted_with_numeric_derivative::has_explicit_domain_of_definition() const
   {
-    return _functor_->has_explicit_domain_of_definition();
+    return _functor_.func().has_explicit_domain_of_definition();
   }
 
   double unary_function_promoted_with_numeric_derivative::get_non_zero_domain_min() const
   {
-    return _functor_->get_non_zero_domain_min();
+    return _functor_.func().get_non_zero_domain_min();
   }
 
   double unary_function_promoted_with_numeric_derivative::get_non_zero_domain_max() const
   {
-    return _functor_->get_non_zero_domain_max();
+    return _functor_.func().get_non_zero_domain_max();
   }
 
   double unary_function_promoted_with_numeric_derivative::_eval (double x_) const
   {
-    return _functor_->eval(x_);
+    return _functor_.func().eval(x_);
   }
 
   bool unary_function_promoted_with_numeric_derivative::is_initialized() const
   {
-    return _functor_ != 0;
+    return !_functor_.is_null();
   }
 
   void unary_function_promoted_with_numeric_derivative::reset()
   {
-    _functor_ = 0;
+    _functor_.reset();
     return;
   }
 

@@ -48,41 +48,42 @@ namespace mygsl {
 
   bool function_with_domain::has_functor() const
   {
-    return _functor_ != 0;
+    return !_functor_.is_null();
   }
 
   void function_with_domain::set_functor(const i_unary_function & functor_)
   {
-    DT_THROW_IF(!functor_.is_initialized(), std::logic_error,
-                "Functor is not initialized!");
-    _functor_ = &functor_;
+    _functor_.reset(functor_);
     return;
   }
 
   function_with_domain::function_with_domain()
+    : _functor_()
   {
-    _functor_ = 0;
     _domain_of_definition_ = interval::make_no_limit();
     return;
   }
 
   function_with_domain::function_with_domain(const i_unary_function & functor_,
                                              const interval & domain_)
+    : _functor_(functor_)
   {
-    set_functor(functor_);
     set_domain_of_definition(domain_);
     return;
   }
 
   function_with_domain::function_with_domain(const i_unary_function & functor_)
+    : _functor_(functor_)
   {
-    set_functor(functor_);
     _domain_of_definition_ = interval::make_no_limit ();
     return;
   }
 
   function_with_domain::~function_with_domain()
   {
+    if (is_initialized()) {
+      reset();
+    }
     return;
   }
 
@@ -93,12 +94,12 @@ namespace mygsl {
 
   bool function_with_domain::is_in_domain_of_definition(double x_) const
   {
-    return _domain_of_definition_.is_in (x_);
+    return _domain_of_definition_.is_in(x_);
   }
 
   double function_with_domain::_eval(double x_) const
   {
-    return _functor_->eval(x_);
+    return _functor_.func().eval(x_);
   }
 
   bool function_with_domain::is_initialized() const
@@ -115,8 +116,7 @@ namespace mygsl {
         unary_function_dict_type::const_iterator found = functors_.find(functor_name);
         DT_THROW_IF(found == functors_.end(), std::logic_error,
                     "No functor with name '" << functor_name << "'!");
-        const i_unary_function & func = found->second.get();
-        set_functor(func);
+        _functor_.reset(found->second.to_const());
       }
     }
 
@@ -128,7 +128,7 @@ namespace mygsl {
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Functor is not initialized!");
-    _functor_ = 0;
+    _functor_ .reset();
     _domain_of_definition_.reset();
     return;
   }

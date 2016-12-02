@@ -24,6 +24,9 @@
 // This project:
 #include <mygsl/i_unary_function.h>
 
+// Third party:
+#include <boost/noncopyable.hpp>
+
 namespace mygsl {
 
   //! \brief Convolution function
@@ -39,6 +42,7 @@ namespace mygsl {
   /// \brief Convoluted signal
   class convolution_function
     : public i_unary_function
+    , private boost::noncopyable
   {
   public:
 
@@ -48,6 +52,11 @@ namespace mygsl {
     //! Constructor
     convolution_function(const i_unary_function & f_,
                          const i_unary_function & g_,
+                         std::size_t size_ = 1000);
+
+    //! Constructor
+    convolution_function(const const_unary_function_handle_type & hcf_,
+                         const const_unary_function_handle_type & hcg_,
                          std::size_t size_ = 1000);
 
     //! Destructor
@@ -138,9 +147,9 @@ namespace mygsl {
 
   private:
 
-    const i_unary_function * _f_; //!< First functor
-    const i_unary_function * _g_; //!< Second functor
-    std::size_t              _limit_ = 0; //!< Size of the working space
+    unary_function_handle _f_; //!< First functor
+    unary_function_handle _g_; //!< Second functor
+    std::size_t           _limit_ = 0; //!< Size of the working space
 
     //! Forward declaration of the private Pimpl
     class gsl_pimpl;

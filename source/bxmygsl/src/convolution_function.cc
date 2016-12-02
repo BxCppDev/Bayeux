@@ -108,23 +108,20 @@ namespace mygsl {
   }
 
   convolution_function::convolution_function()
+    : _f_()
+    , _g_()
+    , _limit_(0)
   {
-    _f_ = nullptr;
-    _g_ = nullptr;
-    _limit_ = 0;
     return;
   }
 
   convolution_function::convolution_function(const i_unary_function & f_,
                                              const i_unary_function & g_,
                                              size_t limit_)
+    : _f_(f_)
+    , _g_(g_)
+    , _limit_(limit_)
   {
-    _f_ = nullptr;
-    _g_ = nullptr;
-    _limit_ = 0;
-    set_f(f_);
-    set_g(g_);
-    set_limit(limit_);
     return;
   }
 
@@ -138,32 +135,30 @@ namespace mygsl {
 
   bool convolution_function::is_initialized() const
   {
-    return _f_ != nullptr && _g_ != nullptr && _limit_ > 0 && _gsl_work_ != nullptr;
+    return ! _f_.is_null() && ! _g_.is_null() && _limit_ > 0 && _gsl_work_ != nullptr;
   }
 
   void convolution_function::initialize(const datatools::properties & config_,
                                         const unary_function_dict_type & functors_)
   {
     // Parse configuration:
-    if (_f_ == nullptr) {
+    if (_f_.is_null()) {
       if (config_.has_key("first_functor")) {
         const std::string & functor_name = config_.fetch_string("first_functor");
         unary_function_dict_type::const_iterator found = functors_.find(functor_name);
         DT_THROW_IF(found == functors_.end(), std::logic_error,
                     "No functor with name '" << functor_name << "'!");
-        const i_unary_function & func = found->second.get();
-        set_f(func);
+        _f_.reset(found->second.to_const());
       }
     }
 
-    if (_g_ == nullptr) {
+    if (_g_.is_null()) {
       if (config_.has_key("second_functor")) {
         const std::string & functor_name = config_.fetch_string("second_functor");
         unary_function_dict_type::const_iterator found = functors_.find(functor_name);
         DT_THROW_IF(found == functors_.end(), std::logic_error,
                     "No functor with name '" << functor_name << "'!");
-        const i_unary_function & func = found->second.get();
-        set_g(func);
+        _g_.reset(found->second.to_const());
       }
     }
 
@@ -176,14 +171,6 @@ namespace mygsl {
       }
     }
 
-    // Checking...
-    DT_THROW_IF(_f_ == nullptr, std::logic_error,
-                "Missing first functor !");
-    DT_THROW_IF(_g_ == nullptr, std::logic_error,
-                "Missing second functor !");
-    if (_limit_ == 0) {
-      set_limit(1000);
-    }
     _at_init();
     return;
   }
@@ -191,14 +178,19 @@ namespace mygsl {
   void convolution_function::reset()
   {
     _at_reset();
-    _limit_ = 0;
-    _f_ = nullptr;
-    _g_ = nullptr;
     return;
   }
 
   void convolution_function::_at_init()
   {
+    // Checking...
+    DT_THROW_IF(_f_.is_null(), std::logic_error,
+                "Missing first functor !");
+    DT_THROW_IF(_g_.is_null(), std::logic_error,
+                "Missing second functor !");
+    if (_limit_ == 0) {
+      set_limit(1000);
+    }
     _gsl_work_ = new convolution_function::gsl_pimpl(_limit_);
     return;
   }
@@ -207,33 +199,33 @@ namespace mygsl {
   {
     if (_gsl_work_) {
       delete _gsl_work_;
+      _gsl_work_ = nullptr;
     }
+    _limit_ = 0;
+    _f_.reset();
+    _g_.reset();
     return;
   }
 
   bool convolution_function::has_f() const
   {
-    return _f_ != nullptr;
+    return !_f_.is_null();
   }
 
   bool convolution_function::has_g() const
   {
-    return _g_ != nullptr;
+    return! _g_.is_null();
   }
 
   void convolution_function::set_f(const i_unary_function & f_)
   {
-    DT_THROW_IF(!f_.is_initialized(), std::logic_error,
-                "First functor is not initialized!");
-    _f_ = &f_;
+    _f_.reset(f_);
     return;
   }
 
   void convolution_function::set_g(const i_unary_function & g_)
   {
-    DT_THROW_IF(!g_.is_initialized(), std::logic_error,
-                "Second functor is not initialized!");
-    _g_ = &g_;
+    _g_.reset(g_);
     return;
   }
 
@@ -241,18 +233,20 @@ namespace mygsl {
   {
     DT_THROW_IF(!has_f(), std::logic_error,
                 "Convolution function is not initialized!");
-    return *_f_;
+    return _f_.func();
   }
 
   const i_unary_function & convolution_function::get_g() const
   {
     DT_THROW_IF(!has_g(), std::logic_error,
                 "Convolution function is not initialized!");
-    return *_g_;
+    return _g_.func();
   }
 
   void convolution_function::set_limit(std::size_t limit_)
   {
+    DT_THROW_IF(_gsl_work_ != nullptr, std::logic_error,
+                "Convolution function is already initialized!");
     _limit_ = limit_;
     return;
   }
@@ -272,7 +266,7 @@ namespace mygsl {
     out_ << indent_ << i_tree_dumpable::tag
          << "First functor  : ";
     if (has_f()) {
-      out_ << "@[" << _f_ << "]";
+      out_ << "@[" << &_f_.func() << "]";
     } else {
       out_ << "<none>";
     }
@@ -281,7 +275,7 @@ namespace mygsl {
     out_ << indent_ << i_tree_dumpable::tag
          << "Second functor : ";
     if (has_g()) {
-      out_ << "@[" << _g_ << "]";
+      out_ << "@[" << &_g_.func() << "]";
     } else {
       out_ << "<none>";
     }
@@ -328,7 +322,7 @@ namespace mygsl {
   }
 
   void convolution_function::convolution_term::print(std::ostream & out_,
-                                                  const std::string & title_) const
+                                                     const std::string & title_) const
   {
     if (! title_.empty()) {
       out_ << title_ << " : \n";
