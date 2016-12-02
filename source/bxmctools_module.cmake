@@ -77,6 +77,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/signal/utils.h
   ${module_include_dir}/${module_name}/signal/base_signal.h
   ${module_include_dir}/${module_name}/signal/base_signal.ipp
+  ${module_include_dir}/${module_name}/signal/signal_shape_builder.h
+  ${module_include_dir}/${module_name}/signal/multi_signal_shape.h
   ${module_include_dir}/${module_name}/signal/triangle_signal_shape.h
   ${module_include_dir}/${module_name}/signal/triangle_gate_signal_shape.h
   ${module_include_dir}/${module_name}/signal/signal_data.h
@@ -103,6 +105,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/biasing/primary_event_bias.cc
   ${module_source_dir}/signal/utils.cc
   ${module_source_dir}/signal/base_signal.cc
+  ${module_source_dir}/signal/signal_shape_builder.cc
+  ${module_source_dir}/signal/multi_signal_shape.cc
   ${module_source_dir}/signal/triangle_signal_shape.cc
   ${module_source_dir}/signal/triangle_gate_signal_shape.cc
   ${module_source_dir}/signal/signal_data.cc
@@ -133,6 +137,7 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_signal_triangle_signal_shape.cxx
   ${module_test_dir}/test_signal_triangle_gate_signal_shape.cxx
   ${module_test_dir}/test_signal_base_signal.cxx
+  ${module_test_dir}/test_signal_shape_builder.cxx
   ${module_test_dir}/test_signal_signal_data.cxx
   ${module_test_dir}/test_digitization_simple_linear_adc.cxx
   ${module_test_dir}/test_digitization_sampled_signal.cxx
