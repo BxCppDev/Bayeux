@@ -224,9 +224,6 @@ namespace mctools {
       DT_THROW_IF(is_initialized(), std::logic_error, "Multi signal shape is already initialized!");
       this->mygsl::i_unary_function::_base_initialize(config_, functors_);
 
-      static const double the_default_time_unit = mctools::signal::default_time_unit().get_value();
-      static const double the_default_voltage_unit = mctools::signal::default_voltage_unit().get_value();
-
       std::set<std::string> comp_labels;
       if (config_.has_key("components")) {
         config_.fetch("components", comp_labels);

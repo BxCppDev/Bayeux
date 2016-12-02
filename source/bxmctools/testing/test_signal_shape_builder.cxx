@@ -58,7 +58,6 @@ int main (int argc_, char ** argv_)
 
 void test_ssb_1(bool draw_)
 {
-  static const double nVs = CLHEP::nanosecond * CLHEP::volt;
   static const double mV  = 1e-3 * CLHEP::volt;
 
   mctools::signal::signal_shape_builder ssb;
