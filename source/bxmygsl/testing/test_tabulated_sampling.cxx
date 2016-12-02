@@ -62,7 +62,7 @@ void test0()
   ts.lock();
 
   {
-    for (auto i = 0; i < ts.get_nsamples(); i++) {
+    for (std::size_t i = 0; i < ts.get_nsamples(); i++) {
       double x;
       mygsl::sampling::index_classification_type ic
         = ts.index_to_value(i, x);

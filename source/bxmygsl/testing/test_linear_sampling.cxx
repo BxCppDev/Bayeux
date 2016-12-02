@@ -50,7 +50,7 @@ void test0()
 
   {
     ls.make_range(1.5, 3.5, 10, abseps);
-    for (auto i = 0; i < ls.get_nsamples(); i++) {
+    for (std::size_t i = 0; i < ls.get_nsamples(); i++) {
       double x;
       mygsl::sampling::index_classification_type ic
         = ls.index_to_value(i, x);
