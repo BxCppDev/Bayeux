@@ -31,13 +31,17 @@ string.enumerated.size    : integer = 8
 
 # The list of supported values:
 string.enumerated_0.value : string = "fatal"
+string.enumerated_0.group : string = "Robot"
 string.enumerated_1.value : string = "critical"
+string.enumerated_1.group : string = "Robot"
 string.enumerated_2.value : string = "error"
 string.enumerated_3.value : string = "warning"
 string.enumerated_4.value : string = "notice"
 string.enumerated_5.value : string = "information"
 string.enumerated_6.value : string = "debug"
+string.enumerated_6.group : string = "Expert"
 string.enumerated_7.value : string = "trace"
+string.enumerated_7.group : string = "Expert"
 
 #@description The default value
 string.default            : string = "fatal"

@@ -1,6 +1,6 @@
 // datatools/configuration/parameter_model.cc
 /*
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,15 @@
 
 // Standard library:
 #include <sstream>
+#include <fstream>
+#include <cmath>
+#include <unistd.h>
+
+// Third party:
+// - Boost:
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/regex.hpp>
 
 // This project:
 #include <datatools/exception.h>
@@ -33,6 +42,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/configuration/variant_model.h>
 #include <datatools/configuration/variant_physical.h>
+#include <datatools/configuration/variant_repository.h>
 
 namespace datatools {
 
@@ -46,7 +56,7 @@ namespace datatools {
     }
 
     // static
-    std::string parameter_model::label_from_mutability(mutability_type mutability_)
+    std::string parameter_model::label_from_mutability(const mutability_type mutability_)
     {
       switch (mutability_) {
       case MUTABILITY_FIXED :
@@ -70,7 +80,7 @@ namespace datatools {
     }
 
     // static
-    std::string parameter_model::label_from_variable_mode(variable_mode_type variable_mode_)
+    std::string parameter_model::label_from_variable_mode(const variable_mode_type variable_mode_)
     {
       switch (variable_mode_) {
       case VARIABLE_MODE_FREE :
@@ -104,7 +114,7 @@ namespace datatools {
 
     // static
     std::string
-    parameter_model::label_from_path_io(path_io_type path_io_)
+    parameter_model::label_from_path_io(const path_io_type path_io_)
     {
       switch (path_io_) {
       case PATH_INPUT :
@@ -138,6 +148,257 @@ namespace datatools {
     {
       static std::string _prefix("aux.");
       return _prefix;
+    }
+
+    bool parameter_model::base_enum_metadata::has_group_support() const
+    {
+      return !_no_group_support_;
+    }
+
+    parameter_model::base_enum_metadata::base_enum_metadata(uint32_t flags_)
+    {
+      _no_group_support_ = false;
+      if (flags_ & CTOR_NO_GROUP_SUPPORT) {
+        _no_group_support_ = true;
+      }
+      return;
+    }
+
+    bool parameter_model::base_enum_metadata::has_documentation() const
+    {
+      return !_documentation.empty();
+    }
+
+    void parameter_model::base_enum_metadata::set_documentation(const std::string & doc_)
+    {
+      _documentation = doc_;
+      return;
+    }
+
+    const std::string & parameter_model::base_enum_metadata::get_documentation() const
+    {
+      DT_THROW_IF(_documentation.empty(), std::logic_error, "No documentation!");
+      return _documentation;
+    }
+
+    bool parameter_model::base_enum_metadata::has_variants() const
+    {
+      return _variants.size() > 0;
+    }
+
+    bool parameter_model::base_enum_metadata::has_variant(const std::string & variant_name_) const
+    {
+      return _variants.count(variant_name_) == 1 ;
+    }
+
+    void parameter_model::base_enum_metadata::add_variant(const std::string & variant_name_)
+    {
+      _variants.insert(variant_name_);
+      return;
+    }
+
+    void parameter_model::base_enum_metadata::remove_variant(const std::string & variant_name_)
+    {
+      _variants.erase(variant_name_);
+      return;
+    }
+
+    void parameter_model::base_enum_metadata::remove_variants()
+    {
+      _variants.clear();
+      return;
+    }
+
+    const std::set<std::string> & parameter_model::base_enum_metadata::get_variants() const
+    {
+      return _variants;
+    }
+
+    bool parameter_model::base_enum_metadata::has_group() const
+    {
+      return !_group.empty();
+    }
+
+    void parameter_model::base_enum_metadata::set_group(const std::string & group_name_)
+    {
+      _group = group_name_;
+      return;
+    }
+
+    bool parameter_model::base_enum_metadata::match_group(const std::string & group_name_) const
+    {
+      if (group_name_.empty()) {
+        if (_group.empty()) {
+          return true;
+        }
+        return false;
+      }
+      if (_group != group_name_) return false;
+      return true;
+    }
+
+    const std::string & parameter_model::base_enum_metadata::get_group() const
+    {
+      DT_THROW_IF(_group.empty(), std::logic_error, "No group!");
+      return _group;
+    }
+
+    void parameter_model::base_enum_metadata::reset()
+    {
+      _documentation.clear();
+      _variants.clear();
+      _group.clear();
+      return;
+    }
+
+    void parameter_model::base_enum_metadata::initialize(const datatools::properties & config_,
+                                                         parameter_model & parmod_)
+    {
+      // DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_TRACE);
+
+      // Fetch documentation:
+      if (config_.has_key("documentation")) {
+        const std::string & doc = config_.fetch_string("documentation");
+        DT_THROW_IF(doc.empty(), std::logic_error, "Invalid empty documentation!");
+        set_documentation(doc);
+      }
+
+      if (has_group_support()) {
+        // Fetch group:
+        // DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+        //              "Fetching groups for parameter model '" << parmod_.get_name() << "'...");
+        if (config_.has_key("group")) {
+          const std::string & group_name = config_.fetch_string("group");
+          DT_THROW_IF(group_name.empty(), std::logic_error, "Invalid empty group name!");
+          set_group(group_name);
+          if (!parmod_.has_group(group_name)) {
+            parmod_.add_group(group_name);
+          }
+        }
+      }
+
+      // Fetch associated variants:
+      {
+        // DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+        //              "Fetching associated variants for parameter model '" << parmod_.get_name() << "'...");
+        std::set<std::string> variants_names;
+        if (config_.has_key("variants")) {
+          // A set of variants:
+          config_.fetch("variants", variants_names);
+        } else if (config_.has_key("variant")) {
+          // A single variant (usual case):
+          const std::string & variant_name = config_.fetch_string("variant");
+          // DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
+          //              "Found single variant '" << variant_name << "' for parameter model '" << parmod_.get_name() << "'");
+          DT_THROW_IF(variant_name.empty(), std::logic_error, "Invalid empty variant name!");
+          variants_names.insert(variant_name);
+        }
+        // Check if variants exist:
+        for (const auto & variant_name : variants_names) {
+          DT_THROW_IF(!parmod_.has_variant(variant_name), std::logic_error,
+                      "Parameter model has no variant name '" << variant_name << "'!");
+          add_variant(variant_name);
+        }
+      }
+
+      // DT_LOG_TRACE_EXITING(datatools::logger::PRIO_TRACE);
+      return;
+    }
+
+    void parameter_model::base_enum_metadata::print_rst(std::ostream & out_,
+                                                        const std::string & indent_,
+                                                        const uint32_t /*flags_*/) const
+    {
+      std::string indent = indent_;
+
+      out_ << indent << "* Documentation : ";
+      if (has_documentation()) {
+        out_ << indent << std::endl;
+        print_multi_lines(out_, get_documentation(), indent);
+        out_ << indent << std::endl;
+      } else {
+         out_ << "<none>" << std::endl;
+      }
+
+      out_ << indent_ << "* Variants : ";
+      if (_variants.size() == 0) {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+      if (_variants.size()) {
+        out_ << indent_ << std::endl;
+        for (const auto & varname : _variants) {
+          out_ << indent_ << "  * Variant : '" << varname << "'" << std::endl;
+        }
+        out_ << indent_ << std::endl;
+      }
+
+      if (has_group_support()) {
+        out_ << indent_ << "* Group : ";
+        if (has_group()) {
+          out_ << "'" << _group << "'";
+        } else {
+          out_ << "<none>";
+        }
+        out_ << std::endl;
+      }
+
+      return;
+    }
+
+    void parameter_model::base_enum_metadata::tree_dump(std::ostream & out_,
+                                                        const std::string & title_,
+                                                        const std::string & indent_,
+                                                        bool inherit_) const
+    {
+      if (!title_.empty()) {
+        out_ << indent_ << title_ << std::endl;
+      }
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Documentation  : ";
+      if (has_documentation()) {
+        out_ << "'" << _documentation << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Variants  : ";
+      if (_variants.size() == 0) {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+      {
+        std::size_t variant_counter = 0;
+        for (const auto & varname : _variants) {
+          out_ << indent_ << i_tree_dumpable::skip_tag;
+          if (++variant_counter == _variants.size()) {
+            out_ << i_tree_dumpable::last_tag;
+          } else {
+            out_ << i_tree_dumpable::tag;
+          }
+          out_ << "Variant : '" << varname << "'" << std::endl;
+        }
+      }
+
+      out_ << indent_ << i_tree_dumpable:: i_tree_dumpable::inherit_tag(inherit_)
+           << "Group  : ";
+      if (has_group()) {
+        out_ << "'" << _group << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
+      return;
+    }
+
+    parameter_model::boolean_enum_value_metadata::boolean_enum_value_metadata()
+      : base_enum_metadata(CTOR_NO_GROUP_SUPPORT)
+    {
+      return;
     }
 
     parameter_model::parameter_model()
@@ -178,7 +439,7 @@ namespace datatools {
       return _type_ != TYPE_NONE;
     }
 
-    void parameter_model::set_type(basic_type type_)
+    void parameter_model::set_type(const basic_type type_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       _type_ = type_;
@@ -235,7 +496,7 @@ namespace datatools {
       return is_path() && (_path_io_ & PATH_INPUT_OUTPUT);
     }
 
-    void parameter_model::set_path_io(path_io_type io_)
+    void parameter_model::set_path_io(const path_io_type io_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       _path_io_ = io_;
@@ -249,7 +510,7 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::set_path(bool p_)
+    void parameter_model::set_path(const bool p_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       if (!has_type()) {
@@ -261,7 +522,7 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::set(basic_type type_, variable_mode_type variable_mode_)
+    void parameter_model::set(const basic_type type_, const variable_mode_type variable_mode_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       set_type(type_);
@@ -279,7 +540,7 @@ namespace datatools {
       return _variable_mode_ != VARIABLE_MODE_UNDEFINED;
     }
 
-    void parameter_model::set_variable_mode(variable_mode_type variable_mode_)
+    void parameter_model::set_variable_mode(const variable_mode_type variable_mode_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       DT_THROW_IF(!has_type(),
@@ -304,7 +565,7 @@ namespace datatools {
       return _mutability_ != MUTABILITY_UNDEFINED;
     }
 
-    void parameter_model::set_mutability(mutability_type mutability_)
+    void parameter_model::set_mutability(const mutability_type mutability_)
     {
       _mutability_ = mutability_;
       return;
@@ -355,7 +616,7 @@ namespace datatools {
       return _string_fixed_;
     }
 
-    void parameter_model::set_fixed_boolean(bool value_)
+    void parameter_model::set_fixed_boolean(const bool value_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       if (! has_type()) {
@@ -372,7 +633,7 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::set_fixed_integer(int value_)
+    void parameter_model::set_fixed_integer(const int value_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       if (! has_type()) {
@@ -389,7 +650,7 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::set_fixed_real(double value_)
+    void parameter_model::set_fixed_real(const double value_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       if (! has_type()) {
@@ -439,7 +700,6 @@ namespace datatools {
       return _variable_mode_ == VARIABLE_MODE_ENUM;
     }
 
-
     bool parameter_model::has_integer_domain() const
     {
       return _integer_domain_.is_valid();
@@ -462,7 +722,6 @@ namespace datatools {
       _integer_domain_ = ir_;
       return;
     }
-
 
     const integer_range & parameter_model::get_integer_domain() const
     {
@@ -512,7 +771,7 @@ namespace datatools {
       }
 
       datatools::invalidate(_real_default_);
-      _real_r2v_.clear();
+      _real_ranges_.clear();
       _real_domain_ = rr_;
       return;
     }
@@ -541,7 +800,7 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::set_default_boolean(bool value_)
+    void parameter_model::set_default_boolean(const bool value_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       if (! has_type()) {
@@ -564,7 +823,7 @@ namespace datatools {
       return _boolean_default_;
     }
 
-    void parameter_model::set_default_integer(int value_)
+    void parameter_model::set_default_integer(const int value_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       if (! has_type()) {
@@ -608,14 +867,17 @@ namespace datatools {
       return std::isfinite(_real_precision_);
     }
 
-    void parameter_model::set_real_precision(double prec_)
+    void parameter_model::set_real_precision(const double prec_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       if (! has_type()) {
         set_type(TYPE_REAL);
       }
       DT_THROW_IF(! is_real(), std::logic_error, "Parameter model '" << get_name() << "' is not of real type!");
-      DT_THROW_IF(prec_ < 0.0, std::domain_error, "Real parameter model '" << get_name() << "' cannot use a negative precision in interval/enumeration variable_mode!");
+      DT_THROW_IF(!std::isfinite(prec_), std::domain_error,
+                  "Invalid precision value for real parameter model '" << get_name() << "'!");
+      DT_THROW_IF(prec_ < 0.0, std::domain_error,
+                  "Real parameter model '" << get_name() << "' cannot use a negative precision in interval/enumeration variable mode!");
       _real_precision_ = prec_;
       if (is_variable() && is_interval()) {
         _update_real_domain_();
@@ -629,13 +891,20 @@ namespace datatools {
       return;
     }
 
+    double parameter_model::get_real_effective_precision() const
+    {
+      DT_THROW_IF(! is_real(), std::logic_error, "Not a real parameter_model!");
+      if (std::isfinite(_real_precision_)) return _real_precision_;
+      return std::numeric_limits<double>::epsilon();
+    }
+
     double parameter_model::get_real_precision() const
     {
       DT_THROW_IF(! is_real(), std::logic_error, "Not a real parameter_model!");
       return _real_precision_;
     }
 
-    void parameter_model::set_default_real(double value_)
+    void parameter_model::set_default_real(const double value_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Parameter model '" << get_name() << "' is locked!");
@@ -661,7 +930,7 @@ namespace datatools {
         _has_default_value_ = true;
       } else if (is_enumeration()) {
         double value;
-        bool found = find_enumerated_value_real(value_, value);
+        bool found = find_enumerated_real_value(value_, value);
         DT_THROW_IF(!found, std::range_error,
                     "Default logic value '" << value_ << "' for parameter model '"
                     << get_name() << "' is not in the supported enumeration !");
@@ -693,6 +962,10 @@ namespace datatools {
         _string_default_ = value_;
         _has_default_value_ = true;
       } else if (is_enumeration()) {
+        // DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Parameter model = '" << get_name() << "' : ");
+        // for (const auto & sep : _string_enumeration_) {
+        //   DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "  --> Supported enumeration string value = '" << sep.first << "'");
+        // }
         DT_THROW_IF(_string_enumeration_.find(value_) == _string_enumeration_.end(), std::range_error,
                     "Default logic value '" << value_ << "' for parameter model '" << get_name() << "' is not in the supported enumeration !");
         _string_default_ = value_;
@@ -801,48 +1074,128 @@ namespace datatools {
       return false;
     }
 
-    bool parameter_model::has_enumerated_value_integer(int value_) const
+    // Boolean
+
+    void parameter_model::set_enumerated_boolean_value_metadata(const bool value_,
+                                                                const boolean_enum_value_metadata & metadata_)
+    {
+      if (value_) _true_metadata_ = metadata_;
+      else _false_metadata_ = metadata_;
+      return;
+    }
+
+    const parameter_model::boolean_enum_value_metadata &
+    parameter_model::get_enumerated_boolean_value_metadata(const bool value_) const
+    {
+      if (value_) return _true_metadata_;
+      return _false_metadata_;
+    }
+
+    parameter_model::boolean_enum_value_metadata &
+    parameter_model::grab_enumerated_boolean_value_metadata(const bool value_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is locked!");
+      if (value_) return _true_metadata_;
+      return _false_metadata_;
+    }
+
+    bool parameter_model::enumerated_boolean_value_has_group(const bool value_) const
+    {
+      if (value_) {
+        return _true_metadata_.has_group();
+      } else {
+        return _false_metadata_.has_group();
+      }
+    }
+
+    const std::string & parameter_model::get_enumerated_boolean_value_group(const bool value_) const
+    {
+      if (value_) {
+        DT_THROW_IF(!_true_metadata_.has_group(),
+                    std::logic_error,
+                    "Value '" << value_ << "' has no associated group!");
+        return _true_metadata_.get_group();
+      } else {
+        DT_THROW_IF(!_false_metadata_.has_group(),
+                    std::logic_error,
+                    "Value '" << value_ << "' has no associated group!");
+        return _false_metadata_.get_group();
+      }
+    }
+
+    void parameter_model::build_list_of_enumerated_boolean_groups(std::set<std::string> & groups_) const
+    {
+      groups_.clear();
+      if (_true_metadata_.has_group()) {
+         groups_.insert(_true_metadata_.get_group());
+      }
+      if (_false_metadata_.has_group()) {
+         groups_.insert(_false_metadata_.get_group());
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_boolean_values_in_group(const std::string & group_,
+                                                                           std::set<bool> & values_) const
+    {
+      values_.clear();
+      if (_true_metadata_.match_group(group_)) {
+         values_.insert(true);
+      }
+      if (_false_metadata_.match_group(group_)) {
+         values_.insert(false);
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_boolean_values(std::set<bool> & values_) const
+    {
+      values_.clear();
+      values_.insert(true);
+      values_.insert(false);
+      return;
+    }
+
+    // Integer enumerated
+
+    bool parameter_model::has_enumerated_integer_value(const int value_) const
     {
       return _integer_enumeration_.find(value_) != _integer_enumeration_.end();
     }
 
-    void parameter_model::add_enumerated_value_integer(int value_, bool default_)
+    void parameter_model::add_enumerated_integer_value(const int value_,
+                                                       const bool default_)
+    {
+      integer_enum_value_metadata null;
+      add_enumerated_integer_value(value_, null, default_);
+      return;
+    }
+
+    void parameter_model::add_enumerated_integer_value(const int value_,
+                                                       const integer_enum_value_metadata & metadata_,
+                                                       const bool default_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       DT_THROW_IF(! is_integer(), std::logic_error, "Parameter model '" << get_name() << "' is not of integer type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable_mode!");
-      DT_THROW_IF(has_enumerated_value_integer(value_),
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      DT_THROW_IF(has_enumerated_integer_value(value_),
                   std::logic_error,
-                  "Integer parameter_model '" << get_name() << "' "
+                  "Integer parameter model '" << get_name() << "' "
                   << "already has enumeration value '" << value_ << "' !");
-      {
-        std::string null;
-        _integer_enumeration_[value_] = null;
-      }
+      _integer_enumeration_[value_] = metadata_;
       if (default_) {
         set_default_integer(value_);
       }
       return;
     }
 
-    void parameter_model::fetch_string_enumeration(std::vector<std::string> & senums_) const
-    {
-      DT_THROW_IF(! is_string(), std::logic_error, "Parameter model '" << get_name() << "' is not of string type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "String parameter model '" << get_name() << "' does not use enumeration variable_mode!");
-      senums_.clear();
-      for (std::map<std::string, std::string>::const_iterator i = _string_enumeration_.begin();
-           i != _string_enumeration_.end();
-           i++) {
-        senums_.push_back(i->first);
-      }
-      return;
-    }
-
     void parameter_model::fetch_integer_enumeration(std::vector<int> & ienums_) const
     {
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable_mode!");
+      DT_THROW_IF(! is_integer(), std::logic_error, "Parameter model '" << get_name() << "' is not of integer type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
       ienums_.clear();
-      for (std::map<int, std::string>::const_iterator i = _integer_enumeration_.begin();
+      for (integer_enum_dict_type::const_iterator i = _integer_enumeration_.begin();
            i != _integer_enumeration_.end();
            i++) {
         ienums_.push_back(i->first);
@@ -850,27 +1203,105 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::fetch_real_enumeration(std::vector<double> & renums_) const
+    parameter_model::integer_enum_value_metadata &
+    parameter_model::grab_enumerated_integer_value_metadata(const int value_)
     {
-      DT_THROW_IF(! is_real(), std::logic_error, "Parameter model '" << get_name() << "' is not of real type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable_mode!");
-      renums_.clear();
-      for (std::map<double, std::string>::const_iterator i = _real_enumeration_.begin();
-           i != _real_enumeration_.end();
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is locked!");
+      DT_THROW_IF(! is_integer(), std::logic_error, "Parameter model '" << get_name() << "' is not of integer type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      integer_enum_dict_type::iterator found = _integer_enumeration_.find(value_);
+      DT_THROW_IF(found == _integer_enumeration_.end(),
+                  std::logic_error,
+                  "Integer parameter model '" << get_name() << "' has no enumerated value '" << value_ << "'!");
+      return found->second;
+    }
+
+    const parameter_model::integer_enum_value_metadata &
+    parameter_model::get_enumerated_integer_value_metadata(const int value_) const
+    {
+      DT_THROW_IF(! is_integer(), std::logic_error, "Parameter model '" << get_name() << "' is not of integer type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      integer_enum_dict_type::const_iterator found = _integer_enumeration_.find(value_);
+      DT_THROW_IF(found == _integer_enumeration_.end(),
+                  std::logic_error,
+                  "Integer parameter model '" << get_name() << "' has no enumerated value '" << value_ << "'!");
+      return found->second;
+    }
+
+    bool parameter_model::enumerated_integer_value_has_group(const int value_) const
+    {
+      DT_THROW_IF(! is_integer(), std::logic_error, "Parameter model '" << get_name() << "' is not of integer type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
+       const auto & found = _integer_enumeration_.find(value_);
+      DT_THROW_IF(found == _integer_enumeration_.end(),
+                  std::domain_error,
+                  "Value '" << value_ << "' is not supported!");
+      const integer_enum_value_metadata & md = found->second;
+      return md.has_group();
+    }
+
+    const std::string & parameter_model::get_enumerated_integer_value_group(const int value_) const
+    {
+      DT_THROW_IF(! is_integer(), std::logic_error, "Parameter model '" << get_name() << "' is not of integer type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
+       const auto & found = _integer_enumeration_.find(value_);
+      DT_THROW_IF(found == _integer_enumeration_.end(),
+                  std::domain_error,
+                  "Value '" << value_ << "' is not supported!");
+      const integer_enum_value_metadata & md = found->second;
+      DT_THROW_IF(!md.has_group(),
+                  std::logic_error,
+                  "Value '" << value_ << "' has no associated group!");
+      return md.get_group();
+    }
+
+    void parameter_model::build_list_of_enumerated_integer_groups(std::set<std::string> & groups_) const
+    {
+      groups_.clear();
+      for (integer_enum_dict_type::const_iterator i = _integer_enumeration_.begin();
+           i != _integer_enumeration_.end();
            i++) {
-        renums_.push_back(i->first);
+        if (!i->second.has_group()) {
+          groups_.insert(i->second.get_group());
+        }
       }
       return;
     }
 
-    bool parameter_model::has_enumerated_value_real(double value_) const
+    void parameter_model::build_list_of_enumerated_integer_values_in_group(const std::string & group_,
+                                                                           std::set<int> & values_) const
+    {
+      values_.clear();
+      for (integer_enum_dict_type::const_iterator i = _integer_enumeration_.begin();
+           i != _integer_enumeration_.end();
+           i++) {
+        if (i->second.match_group(group_)) {
+          values_.insert(i->first);
+        }
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_integer_values(std::set<int> & values_) const
+    {
+      values_.clear();
+      for (integer_enum_dict_type::const_iterator i = _integer_enumeration_.begin();
+           i != _integer_enumeration_.end();
+           i++) {
+        values_.insert(i->first);
+       }
+      return;
+    }
+
+    bool parameter_model::has_enumerated_real_value(const double value_) const
     {
       bool has = false;
       if (! has_real_precision()) {
         has = _real_enumeration_.find(value_) != _real_enumeration_.end();
       } else {
         double prec = 0.5 * get_real_precision();
-        for (std::map<double, std::string>::const_iterator i = _real_enumeration_.begin();
+        for (real_enum_dict_type::const_iterator i = _real_enumeration_.begin();
              i != _real_enumeration_.end();
              i++) {
           double val = i->first;
@@ -882,20 +1313,15 @@ namespace datatools {
       return has;
     }
 
-    bool parameter_model::find_enumerated_value_real(double value_, double & enum_value_) const
+    bool parameter_model::find_enumerated_real_value(const double value_, double & enum_value_) const
     {
       bool has = false;
       datatools::invalidate(enum_value_);
       double prec = 0.5 * get_real_precision();
-      // std::cerr << "DEVEL: fevr: prec=" << prec << '\n';
-      // std::cerr << "DEVEL: fevr: re.size=" << _real_enumeration_.size() << '\n';
-      for (std::map<double, std::string>::const_iterator i = _real_enumeration_.begin();
+      for (real_enum_dict_type::const_iterator i = _real_enumeration_.begin();
            i != _real_enumeration_.end();
            i++) {
         double val = i->first;
-        // std::cerr << "DEVEL: fevr: value_=" << value_ << '\n';
-        // std::cerr << "DEVEL: fevr: val - prec=" << val - prec << '\n';
-        // std::cerr << "DEVEL: fevr: val + prec=" << val + prec << '\n';
         if ((value_ >= val - prec) && (value_ <= val + prec)) {
           enum_value_ = val;
           has = true;
@@ -904,48 +1330,310 @@ namespace datatools {
       return has;
     }
 
-    void parameter_model::add_enumerated_value_real(double value_, bool default_)
+    bool parameter_model::enumerated_real_value_has_group(const double value_) const
     {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Description of parameter model '" << get_name() << "' is locked!");
       DT_THROW_IF(! is_real(), std::logic_error, "Parameter model '" << get_name() << "' is not of real type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "Real parameter model '" << get_name() << "' does not use enumeration variable_mode!");
-      DT_THROW_IF(has_enumerated_value_real(value_),
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Real parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      double value = datatools::invalid_real();
+      for (const auto & re_pair : _real_enumeration_) {
+        if (std::abs(value_ - re_pair.first) <= get_real_effective_precision()) {
+          value = re_pair.first;
+        }
+      }
+      DT_THROW_IF(!datatools::is_valid(value),
+                  std::domain_error,
+                  "Value '" << value_ << "' is not supported!");
+      const auto & found = _real_enumeration_.find(value);
+      const real_enum_value_metadata & md = found->second;
+      return md.has_group();
+    }
+
+    const std::string & parameter_model::get_enumerated_real_value_group(const double value_) const
+    {
+      DT_THROW_IF(! is_real(), std::logic_error, "Parameter model '" << get_name() << "' is not of real type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Real parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      double value = datatools::invalid_real();
+      for (const auto & re_pair : _real_enumeration_) {
+        if (std::abs(value_ - re_pair.first) <= get_real_effective_precision()) {
+          value = re_pair.first;
+        }
+      }
+      DT_THROW_IF(!datatools::is_valid(value),
+                  std::domain_error,
+                  "Real parameter model '" << get_name() << "' has no enumerated value '" << value_ << "'!");
+      const auto & found = _real_enumeration_.find(value);
+      const real_enum_value_metadata & md = found->second;
+      DT_THROW_IF(!md.has_group(),
+                  std::logic_error,
+                  "Value '" << value_ << "' has no associated group!");
+      return md.get_group();
+    }
+
+    const parameter_model::real_enum_value_metadata &
+    parameter_model::get_enumerated_real_value_metadata(const double value_) const
+    {
+      DT_THROW_IF(! is_real(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is not of real type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error,
+                  "Real parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      double value = datatools::invalid_real();
+      for (const auto & re_pair : _real_enumeration_) {
+        if (std::abs(value_ - re_pair.first) <= get_real_effective_precision()) {
+          value = re_pair.first;
+        }
+      }
+      DT_THROW_IF(!datatools::is_valid(value),
+                  std::domain_error,
+                  "Real parameter model '" << get_name() << "' has no enumerated value '" << value_ << "'!");
+      const auto & found = _real_enumeration_.find(value);
+      const real_enum_value_metadata & md = found->second;
+      return found->second;
+    }
+
+    parameter_model::real_enum_value_metadata &
+    parameter_model::grab_enumerated_real_value_metadata(const double value_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is locked!");
+      const auto & const_this = const_cast<parameter_model*>(this);
+      const auto & md = const_this->get_enumerated_real_value_metadata(value_);
+      return const_cast<parameter_model::real_enum_value_metadata &>(md);
+    }
+
+    void parameter_model::add_enumerated_real_value(const double value_,
+                                                    const bool default_)
+    {
+      real_enum_value_metadata null;
+      add_enumerated_real_value(value_, null, default_);
+      return;
+    }
+
+    void parameter_model::add_enumerated_real_value(const double value_,
+                                                    const real_enum_value_metadata & metadata_,
+                                                    const bool default_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
+      DT_THROW_IF(! is_real(), std::logic_error, "Parameter model '" << get_name() << "' is not of real type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      DT_THROW_IF(has_enumerated_real_value(value_),
                   std::logic_error,
                   "Real parameter model '" << get_name() << "' "
                   << "already has enumeration value '" << value_ << "' !");
-      {
-        std::string null;
-        _real_enumeration_[value_] = null;
-      }
+      _real_enumeration_[value_] = metadata_;
       if (default_) {
         set_default_real(value_);
       }
       return;
     }
 
-    bool parameter_model::has_enumerated_value_string(const std::string & value_) const
+    void parameter_model::fetch_real_enumeration(std::vector<double> & renums_) const
+    {
+      DT_THROW_IF(! is_real(), std::logic_error, "Parameter model '" << get_name() << "' is not of real type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      renums_.clear();
+      for (real_enum_dict_type::const_iterator i = _real_enumeration_.begin();
+           i != _real_enumeration_.end();
+           i++) {
+        renums_.push_back(i->first);
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_real_groups(std::set<std::string> & groups_) const
+    {
+      groups_.clear();
+      for (real_enum_dict_type::const_iterator i = _real_enumeration_.begin();
+           i != _real_enumeration_.end();
+           i++) {
+        if (i->second.has_group()) {
+          groups_.insert(i->second.get_group());
+        }
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_real_values_in_group(const std::string & group_,
+                                                                        std::set<double> & values_) const
+    {
+      values_.clear();
+      for (real_enum_dict_type::const_iterator i = _real_enumeration_.begin();
+           i != _real_enumeration_.end();
+           i++) {
+        if (i->second.match_group(group_)) {
+          values_.insert(i->first);
+        }
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_real_values(std::set<double> & values_) const
+    {
+      values_.clear();
+      for (real_enum_dict_type::const_iterator i = _real_enumeration_.begin();
+           i != _real_enumeration_.end();
+           i++) {
+        values_.insert(i->first);
+       }
+      return;
+    }
+
+    bool parameter_model::has_enumerated_string_value(const std::string & value_) const
     {
       return _string_enumeration_.find(value_) != _string_enumeration_.end();
     }
 
-    void parameter_model::add_enumerated_value_string(const std::string & value_, bool default_)
+    bool parameter_model::enumerated_string_value_has_group(const std::string & value_) const
     {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Description of parameter_model '" << get_name() << "' is locked!");
+      const auto & found = _string_enumeration_.find(value_);
+      DT_THROW_IF(found == _string_enumeration_.end(),
+                  std::domain_error,
+                  "Value '" << value_ << "' is not supported!");
+      const string_enum_value_metadata & md = found->second;
+      return md.has_group();
+    }
+
+    const std::string & parameter_model::get_enumerated_string_value_group(const std::string & value_) const
+    {
+      const auto & found = _string_enumeration_.find(value_);
+      DT_THROW_IF(found == _string_enumeration_.end(),
+                  std::domain_error,
+                  "Value '" << value_ << "' is not supported!");
+      const string_enum_value_metadata & md = found->second;
+      DT_THROW_IF(!md.has_group(),
+                  std::logic_error,
+                  "Value '" << value_ << "' has no associated group!");
+      return md.get_group();
+    }
+
+    void parameter_model::add_enumerated_string_value(const std::string & value_,
+                                                      const bool default_)
+    {
+      string_enum_value_metadata null;
+      add_enumerated_string_value(value_, null, default_);
+      return;
+    }
+
+    void parameter_model::add_enumerated_string_value(const std::string & value_,
+                                                      const string_enum_value_metadata & metadata_,
+                                                      const bool default_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
       DT_THROW_IF(! is_string(), std::logic_error, "Parameter model '" << get_name() << "' is not of string type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "String parameter model '" << get_name() << "' does not use enumeration variable_mode!");
-      DT_THROW_IF(has_enumerated_value_string(value_),
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "String parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      DT_THROW_IF(has_enumerated_string_value(value_),
                   std::logic_error,
                   "String parameter model '" << get_name() << "' "
                   << "already has enumeration value '" << value_ << "' !");
-      {
-        std::string null;
-        _string_enumeration_[value_] = null;
-      }
+      _string_enumeration_[value_] = metadata_;
       if (default_) {
         set_default_string(value_);
       }
       return;
     }
+
+    const parameter_model::string_enum_value_metadata &
+    parameter_model::get_enumerated_string_value_metadata(const std::string & value_) const
+    {
+      DT_THROW_IF(! is_string(), std::logic_error, "Parameter model '" << get_name() << "' is not of string type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "String parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      string_enum_dict_type::const_iterator found = _string_enumeration_.find(value_);
+      DT_THROW_IF(found == _string_enumeration_.end(),
+                  std::logic_error,
+                  "String parameter model '" << get_name() << "' has no enumerated value '" << value_ << "'!");
+      return found->second;
+    }
+
+    parameter_model::string_enum_value_metadata &
+    parameter_model::grab_enumerated_string_value_metadata(const std::string & value_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is locked!");
+      DT_THROW_IF(! is_string(), std::logic_error, "Parameter model '" << get_name() << "' is not of string type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "String parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      string_enum_dict_type::iterator found = _string_enumeration_.find(value_);
+      DT_THROW_IF(found == _string_enumeration_.end(),
+                  std::logic_error,
+                  "String parameter model '" << get_name() << "' has no enumerated value '" << value_ << "'!");
+      return found->second;
+    }
+
+    void parameter_model::build_list_of_enumerated_string_groups(std::set<std::string> & groups_) const
+    {
+      groups_.clear();
+      for (string_enum_dict_type::const_iterator i = _string_enumeration_.begin();
+           i != _string_enumeration_.end();
+           i++) {
+        if (i->second.has_group()) {
+          groups_.insert(i->second.get_group());
+        }
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_string_values_in_group(const std::string & group_,
+                                                                          std::set<std::string> & values_) const
+    {
+      values_.clear();
+      for (string_enum_dict_type::const_iterator i = _string_enumeration_.begin();
+           i != _string_enumeration_.end();
+           i++) {
+        if (i->second.match_group(group_)) {
+          values_.insert(i->first);
+        }
+      }
+      return;
+    }
+
+    void parameter_model::build_list_of_enumerated_string_values(std::set<std::string> & values_) const
+    {
+      DT_THROW_IF(! is_string(), std::logic_error, "Parameter model '" << get_name() << "' is not of string type!");
+      DT_THROW_IF(! is_enumeration(), std::logic_error, "String parameter model '" << get_name() << "' does not use enumeration variable mode!");
+      values_.clear();
+      for (string_enum_dict_type::const_iterator i = _string_enumeration_.begin();
+           i != _string_enumeration_.end();
+           i++) {
+        values_.insert(i->first);
+       }
+      return;
+    }
+
+    //
+    // Groups
+    //
+
+    bool parameter_model::has_groups() const
+    {
+      return _groups_.size() > 0;
+    }
+
+    bool parameter_model::has_group(const std::string & group_name_) const
+    {
+      return _groups_.count(group_name_);
+    }
+
+    void parameter_model::add_group(const std::string & group_name_,
+                                    const std::string & doc_)
+    {
+      if (_groups_.count(group_name_) == 1) return;
+      DT_THROW_IF(!::datatools::configuration::validate_instance_name(group_name_),
+                  std::domain_error,
+                  "Invalid group name '" << group_name_ << "'!");
+      _groups_[group_name_] = doc_;
+      return;
+    }
+
+    void parameter_model::build_set_of_groups(std::set<std::string> & groups_) const
+    {
+      groups_.clear();
+      for (const auto & group_pair : _groups_) {
+        groups_.insert(group_pair.first);
+      }
+      return;
+    }
+
+    //
+    // Variants:
+    //
 
     bool parameter_model::has_variant(const std::string & variant_name_) const
     {
@@ -988,30 +1676,30 @@ namespace datatools {
                   << "does not have a variant named '" << variant_name_ << "' !");
 
       if (is_boolean()) {
-        if (_false_variant_ == variant_name_) {
-          unlink_variant_from_boolean(false);
+        if (_false_metadata_.has_variant(variant_name_)) {
+          _false_metadata_.remove_variant(variant_name_);
         }
-        if (_true_variant_ == variant_name_) {
-          unlink_variant_from_boolean(true);
+        if (_true_metadata_.has_variant(variant_name_)) {
+          _true_metadata_.remove_variant(variant_name_);
         }
       }
 
       if (is_integer()) {
         if (is_enumeration()) {
-          for (std::map<int, std::string>::iterator i = _integer_enumeration_.begin();
+          for (integer_enum_dict_type::iterator i = _integer_enumeration_.begin();
                i != _integer_enumeration_.end();
                i++) {
-            if ( i->second == variant_name_) {
-              unlink_variant_from_integer(i->first);
+            if ( i->second.has_variant(variant_name_)) {
+              i->second.remove_variant(variant_name_);
             }
           }
         }
         if (is_interval()) {
-          for (std::map<integer_range, std::string>::iterator i = _integer_r2v_.begin();
-               i != _integer_r2v_.end();
+          for (integer_range_enum_dict_type::iterator i = _integer_ranges_.begin();
+               i != _integer_ranges_.end();
                i++) {
-            if ( i->second == variant_name_) {
-              unlink_variant_from_integer_range(i->first);
+            if ( i->second.has_variant(variant_name_)) {
+               i->second.remove_variant(variant_name_);
             }
           }
         }
@@ -1019,20 +1707,20 @@ namespace datatools {
 
       if (is_real()) {
         if (is_enumeration()) {
-          for (std::map<double, std::string>::iterator i = _real_enumeration_.begin();
+          for (real_enum_dict_type::iterator i = _real_enumeration_.begin();
                i != _real_enumeration_.end();
                i++) {
-            if ( i->second == variant_name_) {
-              unlink_variant_from_integer(i->first);
+            if ( i->second.has_variant(variant_name_)) {
+              i->second.remove_variant(variant_name_);
             }
           }
         }
         if (is_interval()) {
-          for (std::map<real_range, std::string>::iterator i = _real_r2v_.begin();
-               i != _real_r2v_.end();
+          for (real_range_enum_dict_type::iterator i = _real_ranges_.begin();
+               i != _real_ranges_.end();
                i++) {
-            if ( i->second == variant_name_) {
-              unlink_variant_from_real_range(i->first);
+            if ( i->second.has_variant(variant_name_)) {
+              i->second.remove_variant(variant_name_);
             }
           }
         }
@@ -1040,12 +1728,12 @@ namespace datatools {
 
       if (is_string()) {
         if (is_enumeration()) {
-          for (std::map<std::string, std::string>::iterator i = _string_enumeration_.begin();
+          for (string_enum_dict_type::iterator i = _string_enumeration_.begin();
                i != _string_enumeration_.end();
                i++) {
-            if ( i->second == variant_name_) {
-              unlink_variant_from_string(i->first);
-            }
+            if ( i->second.has_variant(variant_name_)) {
+              i->second.remove_variant(variant_name_);
+             }
           }
         }
       }
@@ -1085,7 +1773,7 @@ namespace datatools {
       return found_variant->second.get_model_handle();
     }
 
-    void parameter_model::associate_variant_to_boolean(bool value_, const std::string & variant_name_)
+    void parameter_model::associate_variant_to_boolean(const bool value_, const std::string & variant_name_)
     {
       DT_THROW_IF(is_initialized(),
                   std::logic_error,
@@ -1098,28 +1786,14 @@ namespace datatools {
                   "Boolean parameter model '" << get_name() << "' "
                   << "has no variant labelled '" << variant_name_ << "' !");
       if (value_) {
-        _true_variant_ = variant_name_;
+        _true_metadata_.add_variant(variant_name_);
       } else {
-        _false_variant_ = variant_name_;
+        _false_metadata_.add_variant(variant_name_);
       }
       return;
     }
 
-    void parameter_model::unlink_variant_from_boolean(bool value_)
-    {
-      DT_THROW_IF(is_initialized(), std::logic_error,
-                  "Parameter model '" << get_name() << "' is locked!");
-      DT_THROW_IF(! is_boolean(), std::logic_error,
-                  "Parameter model '" << get_name() << "' is not of boolean type!");
-      if (value_) {
-        _true_variant_.clear();
-      } else {
-        _false_variant_.clear();
-      }
-      return;
-    }
-
-    void parameter_model::associate_variant_to_integer(int value_, const std::string & variant_name_)
+    void parameter_model::associate_variant_to_integer(const int value_, const std::string & variant_name_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Parameter model '" << get_name() << "' is locked!");
@@ -1127,7 +1801,7 @@ namespace datatools {
                   "Parameter model '" << get_name() << "' is not of integer type!");
       DT_THROW_IF(! is_enumeration(), std::logic_error,
                   "Integer parameter model '" << get_name() << "' does not use enumeration variable mode!");
-      DT_THROW_IF(! has_enumerated_value_integer(value_),
+      DT_THROW_IF(! has_enumerated_integer_value(value_),
                   std::logic_error,
                   "Integer parameter model '" << get_name() << "' "
                   << "has no enumeration value '" << value_ << "' !");
@@ -1135,24 +1809,27 @@ namespace datatools {
                   std::logic_error,
                   "Integer parameter model '" << get_name() << "' "
                   << "has no variant labelled '" << variant_name_ << "' !");
-      std::map<int, std::string>::iterator found =
+      integer_enum_dict_type::iterator found =
         _integer_enumeration_.find(value_);
-      found->second = variant_name_;
+      found->second.add_variant(variant_name_);
       return;
     }
 
-    void parameter_model::unlink_variant_from_integer(int value_)
+    void parameter_model::add_integer_range(const integer_range & ir_,
+                                            const integer_range_enum_metadata & ir_data_)
     {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is locked!");
-      DT_THROW_IF(! is_integer(), std::logic_error, "Parameter model '" << get_name() << "' is not of integer type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error,
-                  "Integer parameter model '" << get_name() << "' does not use enumeration variable_mode!");
-      std::map<int, std::string>::iterator found =
-        _integer_enumeration_.find(value_);
-      DT_THROW_IF(found->second.empty(), std::logic_error,
-                  "Integer parameter model '" << get_name() << "' has no associated variant for value '"
-                  << value_ << "'!");
-      found->second.clear();
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is locked!");
+      DT_THROW_IF(! is_integer(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is not of integer type!");
+      if (is_enumeration()) {
+        // We should check that the given range contains at least one enumerated value...
+        // Not implemented yet!
+      }
+      _integer_ranges_[ir_] = ir_data_;
+      if (ir_data_.has_group()) {
+        add_group(ir_data_.get_group());
+      }
       return;
     }
 
@@ -1164,11 +1841,7 @@ namespace datatools {
       DT_THROW_IF(! is_integer(), std::logic_error,
                   "Parameter model '" << get_name() << "' is not of integer type!");
       // In principle, this kind of association should work in free, enumeration and interval mutability mode:
-
       // So we do not force the parameter to be in interval mode only...
-      // DT_THROW_IF(! is_interval(), std::logic_error,
-      //             "Integer parameter_model '" << get_name() << "' does not use integer variable mode!");
-
       if (is_interval()) {
         // In interval mode, the given range must be contained in the domain:
         DT_THROW_IF(! _integer_domain_.has(ir_),
@@ -1176,40 +1849,46 @@ namespace datatools {
                     "Integer parameter model '" << get_name() << "' "
                     << "domain does not contain range '" << ir_ << "' !");
       }
-      if (is_enumeration()) {
-        // We should check that the given range contains at least one enumerated value...
-        // Not implemented yet!
-      }
       DT_THROW_IF(! has_variant(variant_name_),
                   std::logic_error,
                   "Integer parameter model '" << get_name() << "' "
                   << "has no variant labelled '" << variant_name_ << "' !");
-      _integer_r2v_[ir_] = variant_name_;
+      integer_range_enum_dict_type::iterator found_ir = _integer_ranges_.find(ir_);
+      if (found_ir == _integer_ranges_.end()) {
+        integer_range_enum_metadata ie_data;
+        ie_data.add_variant(variant_name_);
+        add_integer_range(ir_,ie_data);
+      } else {
+        found_ir->second.add_variant(variant_name_);
+      }
       return;
     }
 
-
-    void parameter_model::unlink_variant_from_integer_range(const integer_range & ir_)
+    void parameter_model::add_real_range(const real_range & rr_,
+                                         const real_range_enum_metadata & rr_data_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
-                  "Description of parameter model '" << get_name() << "' is locked!");
-      DT_THROW_IF(! is_integer(), std::logic_error,
-                  "Parameter model '" << get_name() << "' is not of integer type!");
-      std::map<integer_range, std::string>::iterator found = _integer_r2v_.find(ir_);
-      DT_THROW_IF(found == _integer_r2v_.end(), std::logic_error,
-                  "Integer range '" << ir_ << "' is not associated to any variant in parameter model '" << get_name() << "' !");
-      _integer_r2v_.erase(found);
+                  "Parameter model '" << get_name() << "' is locked!");
+      DT_THROW_IF(! is_real(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is not of real type!");
+      if (is_enumeration()) {
+        // We should check that the given range contains at least one enumerated value...
+        // Not implemented yet!
+      }
+      _real_ranges_[rr_] = rr_data_;
+      if (rr_data_.has_group()) {
+        add_group(rr_data_.get_group());
+      }
       return;
     }
 
-
-    void parameter_model::associate_variant_to_real(double value_, const std::string & variant_name_)
+    void parameter_model::associate_variant_to_real(const double value_, const std::string & variant_name_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Description of parameter_model '" << get_name() << "' is locked!");
       DT_THROW_IF(! is_real(), std::logic_error, "Parameter_Model '" << get_name() << "' is not of real type!");
       DT_THROW_IF(! is_enumeration(), std::logic_error, "Real parameter_model '" << get_name() << "' does not use enumeration variable_mode!");
       double enum_value;
-      bool found = find_enumerated_value_real(value_, enum_value);
+      bool found = find_enumerated_real_value(value_, enum_value);
       DT_THROW_IF(! found,
                   std::logic_error,
                   "Real parameter_model '" << get_name() << "' "
@@ -1218,29 +1897,9 @@ namespace datatools {
                   std::logic_error,
                   "Real parameter_model '" << get_name() << "' "
                   << "has no variant labelled '" << variant_name_ << "' !");
-      std::map<double, std::string>::iterator real_found =
+      real_enum_dict_type::iterator real_found =
         _real_enumeration_.find(enum_value);
-      real_found->second = variant_name_;
-      return;
-    }
-
-    void parameter_model::unlink_variant_from_real(double value_)
-    {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Description of parameter_model '" << get_name() << "' is locked!");
-      DT_THROW_IF(! is_real(), std::logic_error, "Parameter_Model '" << get_name() << "' is not of real type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "Real parameter_model '" << get_name() << "' does not use enumeration variable_mode!");
-      double enum_value;
-      bool found = find_enumerated_value_real(value_, enum_value);
-      DT_THROW_IF(! found,
-                  std::logic_error,
-                  "Real parameter_model '" << get_name() << "' "
-                  << "has no enumeration value '" << value_ << "' !");
-      std::map<double, std::string>::iterator real_found =
-        _real_enumeration_.find(enum_value);
-      DT_THROW_IF(real_found->second.empty(), std::logic_error,
-                  "Real parameter_model '" << get_name() << "' has no associated variant for value '"
-                  << value_ << "'!");
-      real_found->second.clear();
+      real_found->second.add_variant(variant_name_);
       return;
     }
 
@@ -1248,61 +1907,30 @@ namespace datatools {
                                                           const std::string & variant_name_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
-                  "Description of parameter model '" << get_name() << "' is locked!");
+                  "Parameter model '" << get_name() << "' is locked!");
       DT_THROW_IF(! is_real(), std::logic_error,
                   "Parameter model '" << get_name() << "' is not of real type!");
-
-      // We do not force the parameter to be in interval mode only...
-      // DT_THROW_IF(! is_interval(), std::logic_error,
-      //             "Real parameter_model '" << get_name() << "' does not use real variable mode!");
-
+      // In principle, this kind of association should work in free, enumeration and interval mutability mode:
+      // So we do not force the parameter to be in interval mode only...
       if (is_interval()) {
         // In interval mode, the given range must be contained in the domain:
-        DT_THROW_IF(! _real_domain_.has(rr_, _real_precision_),
+        DT_THROW_IF(! _real_domain_.has(rr_),
                     std::logic_error,
-                    "Domain '" << _real_domain_ << "' for real parameter model '" << get_name() << "' "
-                    << "interval does not contain range '" << rr_ << "' !");
+                    "Real parameter model '" << get_name() << "' "
+                    << "domain does not contain range '" << rr_ << "' !");
       }
-      if (is_enumeration()) {
-        // We should check that the given range contains at least one enumerated value...
-        // Not implemented yet!
-      }
-      real_range rr = rr_;
-      if (has_real_unit_label()) {
-        if (!rr.has_unit_label()) {
-          rr.set_unit_label(get_real_unit_label());
-        } else {
-          DT_THROW_IF(get_real_unit_label() != rr.get_unit_label(),
-                      std::logic_error,
-                      "Unit label for real parameter model '" << get_name() << "' "
-                      << "does not match unit label for region '" << rr << "' !");
-        }
-      }
-      if (has_real_preferred_unit()) {
-        rr.set_preferred_unit(get_real_preferred_unit());
-      }
-      if (has_real_precision()) {
-        //rr.set_absolute_precision(get_real_precision());
-      }
-
       DT_THROW_IF(! has_variant(variant_name_),
                   std::logic_error,
                   "Real parameter model '" << get_name() << "' "
                   << "has no variant labelled '" << variant_name_ << "' !");
-      _real_r2v_[rr] = variant_name_;
-      return;
-    }
-
-    void parameter_model::unlink_variant_from_real_range(const real_range & rr_)
-    {
-      DT_THROW_IF(is_initialized(), std::logic_error,
-                  "Description of parameter model '" << get_name() << "' is locked!");
-      DT_THROW_IF(! is_real(), std::logic_error,
-                  "Parameter model '" << get_name() << "' is not of real type!");
-      std::map<real_range, std::string>::iterator found = _real_r2v_.find(rr_);
-      DT_THROW_IF(found == _real_r2v_.end(), std::logic_error,
-                  "Real range '" << rr_ << "' is not associated to any variant in parameter model '" << get_name() << "' !");
-      _real_r2v_.erase(found);
+      real_range_enum_dict_type::iterator found_rr = _real_ranges_.find(rr_);
+      if (found_rr == _real_ranges_.end()) {
+        real_range_enum_metadata re_data;
+        re_data.add_variant(variant_name_);
+        add_real_range(rr_,re_data);
+      } else {
+        found_rr->second.add_variant(variant_name_);
+      }
       return;
     }
 
@@ -1313,9 +1941,9 @@ namespace datatools {
                   "Description of parameter model '" << get_name() << "' is locked!");
       DT_THROW_IF(! is_string(), std::logic_error,
                   "Parameter model '" << get_name() << "' is not of string type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error,
-                  "String parameter model '" << get_name() << "' does not use enumeration variable mode!");
-      DT_THROW_IF(! has_enumerated_value_string(value_),
+      DT_THROW_IF(! is_enumeration() && ! is_free(), std::logic_error,
+                  "String parameter model '" << get_name() << "' does not use enumeration or free variable mode!");
+      DT_THROW_IF(! has_enumerated_string_value(value_),
                   std::logic_error,
                   "String parameter model '" << get_name() << "' "
                   << "has no enumeration value '" << value_ << "' !");
@@ -1323,24 +1951,21 @@ namespace datatools {
                   std::logic_error,
                   "String parameter model '" << get_name() << "' "
                   << "has no variant labelled '" << variant_name_ << "' !");
-      std::map<std::string, std::string>::iterator found =
-        _string_enumeration_.find(value_);
-      found->second = variant_name_;
+      string_enum_dict_type::iterator found = _string_enumeration_.find(value_);
+      found->second.add_variant(variant_name_);
       return;
     }
 
-    void parameter_model::unlink_variant_from_string(const std::string & value_)
+    const parameter_model::integer_range_enum_dict_type &
+    parameter_model::get_integer_ranges() const
     {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Description of parameter model '" << get_name() << "' is locked!");
-      DT_THROW_IF(! is_string(), std::logic_error, "Parameter model '" << get_name() << "' is not of string type!");
-      DT_THROW_IF(! is_enumeration(), std::logic_error, "String parameter model '" << get_name() << "' does not use enumeration variable mode!");
-      std::map<std::string, std::string>::iterator found =
-        _string_enumeration_.find(value_);
-      DT_THROW_IF(found->second.empty(), std::logic_error,
-                  "String parameter model '" << get_name() << "' has no associated variant for value '"
-                  << value_ << "'!");
-      found->second.clear();
-      return;
+      return _integer_ranges_;
+    }
+
+    const parameter_model::real_range_enum_dict_type &
+    parameter_model::get_real_ranges() const
+    {
+      return _real_ranges_;
     }
 
     bool parameter_model::is_initialized() const
@@ -1350,7 +1975,8 @@ namespace datatools {
 
     void parameter_model::reset()
     {
-      DT_THROW_IF(! is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is not initialized!");
+      DT_THROW_IF(! is_initialized(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is not initialized!");
       _initialized_ = false;
       _set_default();
       this->enriched_base::clear();
@@ -1359,8 +1985,16 @@ namespace datatools {
 
     void parameter_model::initialize(const properties & setup_, item_dict_type & items_)
     {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is already initialized!");
+      // std::cerr << "===> DEVEL: parameter_model::initialize: "
+      //           << "Initializing parameter model '" << get_name() << "'...\n";
+      // setup_.tree_dump(std::cerr, "Setup: ", "===> DEVEL: ");
+
+      DT_THROW_IF(is_initialized(), std::logic_error,
+                  "Parameter model '" << get_name() << "' is already initialized!");
       enriched_base::initialize(setup_);
+
+      DT_LOG_TRACE(get_logging_priority(),
+                   "Initializing parameter model '" << get_name() << "'...");
 
       // Parse type if needed:
       if (!has_type()) {
@@ -1377,7 +2011,6 @@ namespace datatools {
       // Mandatory type:
       DT_THROW_IF(!has_type(), std::logic_error, "Undefined type !");
 
-      // std::cerr << "DEVEL: " << "parameter_model::initialize: TEST 1" << std::endl;
       // Special string case: path
       if (is_string()) {
 
@@ -1408,7 +2041,6 @@ namespace datatools {
         }
 
       }
-      // std::cerr << "DEVEL: " << "parameter_model::initialize: TEST 2" << std::endl;
 
       // Parse mutability if needed:
       if (!has_mutability()) {
@@ -1416,7 +2048,8 @@ namespace datatools {
         if (setup_.has_key("mutability")) {
           const std::string & mutability_label = setup_.fetch_string("mutability");
           mutability = (mutability_type) mutability_from_label(mutability_label);
-          DT_THROW_IF(mutability == MUTABILITY_UNDEFINED, std::logic_error, "Unsupported mutability '" << mutability_label << "' !");
+          DT_THROW_IF(mutability == MUTABILITY_UNDEFINED, std::logic_error,
+                      "Unsupported mutability '" << mutability_label << "' !");
         }
         if (mutability == MUTABILITY_UNDEFINED) {
           mutability = MUTABILITY_DEFAULT;
@@ -1495,6 +2128,24 @@ namespace datatools {
         DT_THROW_IF(!has_variable_mode(),std::logic_error,
                     "Parameter model '" <<  get_name() << "' has no variable mode!");
 
+        // Groups:
+        if (setup_.has_key("groups")) {
+          std::set<std::string> group_names;
+          setup_.fetch("groups", group_names);
+          for (const auto & group_name : group_names) {
+            std::string group_doc;
+            {
+              // Parse group documentation:
+              std::ostringstream group_doc_ss;
+              group_doc_ss << "groups." << group_name << ".documentation";
+              if (setup_.has_key(group_doc_ss.str())) {
+                group_doc = setup_.fetch_string(group_doc_ss.str());
+              }
+            }
+            add_group(group_name, group_doc);
+          }
+        }
+
         // Referenced variants:
         /* Example with 3 embedded variants:
          *
@@ -1538,13 +2189,26 @@ namespace datatools {
         // Boolean
         if (is_boolean()) {
           // Variants associated to boolean values:
-          if (setup_.has_key("boolean.true.variant")) {
-            std::string bvt_str = setup_.fetch_string("boolean.true.variant");
-            associate_variant_to_boolean(true, bvt_str);
+          {
+            datatools::properties true_setup;
+            setup_.export_and_rename_starting_with(true_setup, "boolean.true.", "");
+            if (datatools::logger::is_trace(get_logging_priority())) {
+              true_setup.tree_dump(std::cerr, "True setup:", "[trace] ");
+            }
+            // DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Parameter model = '" << get_name() << "' : ");
+            boolean_enum_value_metadata true_metadata;
+            true_metadata.initialize(true_setup, *this);
+            set_enumerated_boolean_value_metadata(true, true_metadata);
           }
-          if (setup_.has_key("boolean.false.variant")) {
-            std::string bvf_str = setup_.fetch_string("boolean.false.variant");
-            associate_variant_to_boolean(false, bvf_str);
+          {
+            datatools::properties false_setup;
+            setup_.export_and_rename_starting_with(false_setup, "boolean.false.", "");
+            if (datatools::logger::is_trace(get_logging_priority())) {
+              false_setup.tree_dump(std::cerr, "False setup:", "[trace] ");
+            }
+            boolean_enum_value_metadata false_metadata;
+            false_metadata.initialize(false_setup, *this);
+            set_enumerated_boolean_value_metadata(false, false_metadata);
           }
         }
 
@@ -1578,23 +2242,31 @@ namespace datatools {
              *
              *  integer.domain : string = "[1,10]"
              *  integer.ranges : string[3] = "small" "medium" " large"
+             *
              *  integer.ranges.small.range    : string = "[1,4)"
+             *  integer.ranges.small.documentation : string = "Domain of small values"
              *  integer.ranges.small.variant  : string = "small_regime"
+             *
              *  integer.ranges.medium.range   : string = "[4,8)"
+             *  integer.ranges.medium.documentation : string = "Domain of intermediate values"
              *  integer.ranges.medium.variant : string = "medium_regime"
+             *
              *  integer.ranges.large.range    : string = "[8,10]"
+             *  integer.ranges.large.documentation : string = "Domain of large values"
              *  integer.ranges.large.variant  : string = "large_regime"
              *
              */
             if (setup_.has_key("integer.ranges")) {
-              std::vector<std::string> ii_r2v_labels;
-              setup_.fetch("integer.ranges", ii_r2v_labels);
-              for (int i = 0; i < (int) ii_r2v_labels.size(); i++) {
-                std::string ii_r2v_label = ii_r2v_labels[i];
+              std::vector<std::string> ii_ranges_labels;
+              setup_.fetch("integer.ranges", ii_ranges_labels);
+              for (int i = 0; i < (int) ii_ranges_labels.size(); i++) {
+                std::string ii_ranges_label = ii_ranges_labels[i];
                 integer_range ir;
-                std::string ir_variant_name;
+                std::ostringstream ii_prefix_ss;
+                ii_prefix_ss << "integer.ranges." << ii_ranges_label << ".";
+
                 std::ostringstream ii_r_ss;
-                ii_r_ss << "integer.ranges." << ii_r2v_label << ".range";
+                ii_r_ss << ii_prefix_ss.str() << "range";
                 {
                   DT_THROW_IF(!setup_.has_key(ii_r_ss.str()),
                               std::logic_error,
@@ -1605,17 +2277,11 @@ namespace datatools {
                   DT_THROW_IF(!ir_iss, std::logic_error,
                               "Invalid integer range format for '" << ii_r_str << "' !");
                 }
-
-                std::ostringstream ii_v_ss;
-                ii_v_ss << "integer.ranges." << ii_r2v_label << ".variant";
-                {
-                  DT_THROW_IF(!setup_.has_key(ii_v_ss.str()),
-                              std::logic_error,
-                              "Missing key '" << ii_v_ss.str()<< "' (variant name) !");
-                  ir_variant_name = setup_.fetch_string(ii_v_ss.str());
-                }
-
-                associate_variant_to_integer_range(ir, ir_variant_name);
+                datatools::properties ir_setup;
+                setup_.export_and_rename_starting_with(ir_setup, ii_prefix_ss.str(), "");
+                integer_range_enum_metadata ir_entry;
+                ir_entry.initialize(ir_setup, *this);
+                add_integer_range(ir, ir_entry);
 
               } // for integer range-to-variant associations
 
@@ -1659,14 +2325,15 @@ namespace datatools {
              *
              */
             if (setup_.has_key("real.ranges")) {
-              std::vector<std::string> ri_r2v_labels;
-              setup_.fetch("real.ranges", ri_r2v_labels);
-              for (int i = 0; i < (int) ri_r2v_labels.size(); i++) {
-                std::string ri_r2v_label = ri_r2v_labels[i];
+              std::vector<std::string> ri_ranges_labels;
+              setup_.fetch("real.ranges", ri_ranges_labels);
+              for (int i = 0; i < (int) ri_ranges_labels.size(); i++) {
+                std::string ri_ranges_label = ri_ranges_labels[i];
                 real_range rr;
-                std::string rr_variant_name;
+                std::ostringstream ri_prefix_ss;
+                ri_prefix_ss << "real.ranges." << ri_ranges_label << ".";
                 std::ostringstream ri_r_ss;
-                ri_r_ss << "real.ranges." << ri_r2v_label << ".range";
+                ri_r_ss << ri_prefix_ss.str() << "range";
                 {
                   DT_THROW_IF(!setup_.has_key(ri_r_ss.str()),
                               std::logic_error,
@@ -1677,18 +2344,11 @@ namespace datatools {
                   DT_THROW_IF(!rr_iss, std::logic_error,
                               "Invalid real range format for '" << ri_r_str << "' !");
                 }
-
-                std::ostringstream ri_v_ss;
-                ri_v_ss << "real.ranges." << ri_r2v_label << ".variant";
-                {
-                  DT_THROW_IF(!setup_.has_key(ri_v_ss.str()),
-                              std::logic_error,
-                              "Missing key '" << ri_v_ss.str()<< "' (variant name) !");
-                  rr_variant_name = setup_.fetch_string(ri_v_ss.str());
-                }
-
-                associate_variant_to_real_range(rr, rr_variant_name);
-
+                datatools::properties rr_setup;
+                setup_.export_and_rename_starting_with(rr_setup, ri_prefix_ss.str(), "");
+                real_range_enum_metadata rr_entry;
+                rr_entry.initialize(rr_setup, *this);
+                add_real_range(rr, rr_entry);
               } // for real range-to-variant associations
 
             } // real range-to-variant associations
@@ -1704,6 +2364,8 @@ namespace datatools {
              *
              *   integer.enumerated.size      : integer = 4
              *   integer.enumerated_0.value   : integer = 1
+             *   integer.enumerated_0.group   : string  = "Small"
+             *   integer.enumerated_0.default : boolean = true"
              *   integer.enumerated_0.variant : string  = "regime.none"
              *   integer.enumerated_1.value   : integer = 2
              *   integer.enumerated_1.variant : string  = "regime.single"
@@ -1713,28 +2375,46 @@ namespace datatools {
              *   integer.enumerated_3.variant : string  = "regime.several"
              *
              */
-            int number_of_enumerated = 0;
-            if (setup_.has_key("integer.enumerated.size")) {
-              number_of_enumerated = setup_.fetch_integer("integer.enumerated.size");
-            }
-            for (int i = 0; i < number_of_enumerated; i++) {
-              std::ostringstream ie_value_ss;
-              ie_value_ss << "integer.enumerated_" <<  i << ".value";
-              DT_THROW_IF(!setup_.has_key(ie_value_ss.str()),
-                          std::logic_error,
-                          "Missing key '" << ie_value_ss.str()<< "' (integer enumerated value #" << i << ") !");
-              int ie_value = setup_.fetch_integer(ie_value_ss.str());
-              add_enumerated_value_integer(ie_value);
-              {
-                std::ostringstream ie_variant_ss;
-                ie_variant_ss << "integer.enumerated_" <<  i << ".variant";
-                std::string ie_variant;
-                if (setup_.has_key(ie_variant_ss.str())) {
-                  ie_variant = setup_.fetch_string(ie_variant_ss.str());
-                  associate_variant_to_integer(ie_value, ie_variant);
+            if (_integer_enumeration_.size() == 0) {
+              bool default_is_set = false;
+              int number_of_enumerated = 0;
+              if (setup_.has_key("integer.enumerated.size")) {
+                number_of_enumerated = setup_.fetch_positive_integer("integer.enumerated.size");
+              }
+              for (int i = 0; i < number_of_enumerated; i++) {
+                bool this_as_default = false;
+                std::ostringstream ie_prefix_ss;
+                ie_prefix_ss <<  "integer.enumerated_" <<  i << ".";
+                std::ostringstream ie_value_ss;
+                ie_value_ss << ie_prefix_ss.str() << "value";
+                DT_THROW_IF(!setup_.has_key(ie_value_ss.str()),
+                            std::logic_error,
+                            "Missing key '" << ie_value_ss.str()<< "' (integer enumerated value #" << i << ") !");
+                int ie_value = setup_.fetch_integer(ie_value_ss.str());
+
+                datatools::properties ie_setup;
+                setup_.export_and_rename_starting_with(ie_setup, ie_prefix_ss.str(), "");
+                integer_enum_value_metadata int_ev_metadata;
+                int_ev_metadata.initialize(ie_setup, *this);
+
+                {
+                  std::ostringstream ie_default_by_ss;
+                  ie_default_by_ss << ie_prefix_ss.str() << "default";
+                  if (setup_.has_key(ie_default_by_ss.str())) {
+                    DT_THROW_IF(default_is_set, std::logic_error,
+                                "Default enumerated integer value is already set!");
+                    bool def = setup_.fetch_boolean(ie_default_by_ss.str());
+                    if (def) {
+                      default_is_set = true;
+                      this_as_default = true;
+                    }
+                  }
                 }
+                add_enumerated_integer_value(ie_value, int_ev_metadata, this_as_default);
               }
             }
+            DT_THROW_IF(_integer_enumeration_.size() == 0, std::logic_error,
+                        "Missing explicit supported enumeration of integer values!");
           } // variable/enumeration/integer
 
           if (is_real()) {
@@ -1749,94 +2429,213 @@ namespace datatools {
              *   real.enumerated_2.variant : string  = "regime.slow"
              *
              */
-            int number_of_enumerated = 0;
-            if (setup_.has_key("real.enumerated.size")) {
-              number_of_enumerated = setup_.fetch_integer("real.enumerated.size");
-            }
-            for (int i = 0; i < number_of_enumerated; i++) {
-              std::ostringstream re_value_ss;
-              re_value_ss << "real.enumerated_" <<  i << ".value";
-              DT_THROW_IF(!setup_.has_key(re_value_ss.str()),
-                          std::logic_error,
-                          "Missing key '" << re_value_ss.str()<< "' (real enumerated value #" << i << ") !");
-              double re_value = setup_.fetch_real(re_value_ss.str());
-              if (! setup_.has_explicit_unit(re_value_ss.str())) {
-                re_value *= real_default_unit;
+            if (_real_enumeration_.size() == 0) {
+              bool default_is_set = false;
+              int number_of_enumerated = 0;
+              if (setup_.has_key("real.enumerated.size")) {
+                number_of_enumerated = setup_.fetch_positive_integer("real.enumerated.size");
               }
-              add_enumerated_value_real(re_value);
-              {
-                std::ostringstream re_variant_ss;
-                re_variant_ss << "real.enumerated_" <<  i << ".variant";
-                std::string re_variant;
-                if (setup_.has_key(re_variant_ss.str())) {
-                  re_variant = setup_.fetch_string(re_variant_ss.str());
-                  associate_variant_to_real(re_value, re_variant);
+              for (int i = 0; i < number_of_enumerated; i++) {
+                bool this_as_default = false;
+                std::ostringstream re_prefix_ss;
+                re_prefix_ss <<  "real.enumerated_" <<  i << ".";
+                std::ostringstream re_value_ss;
+                re_value_ss << re_prefix_ss.str() << "value";
+                DT_THROW_IF(!setup_.has_key(re_value_ss.str()),
+                            std::logic_error,
+                            "Missing key '" << re_value_ss.str()<< "' (real enumerated value #" << i << ") !");
+                double re_value = setup_.fetch_real(re_value_ss.str());
+
+                datatools::properties re_setup;
+                setup_.export_and_rename_starting_with(re_setup, re_prefix_ss.str(), "");
+                real_enum_value_metadata real_ev_metadata;
+                real_ev_metadata.initialize(re_setup, *this);
+
+                {
+                  std::ostringstream re_default_by_ss;
+                  re_default_by_ss << re_prefix_ss.str() << "default";
+                  if (setup_.has_key(re_default_by_ss.str())) {
+                    DT_THROW_IF(default_is_set, std::logic_error,
+                                "Default enumerated real value is already set!");
+                    bool def = setup_.fetch_boolean(re_default_by_ss.str());
+                    if (def) {
+                      this_as_default = true;
+                      default_is_set = true;
+                    }
+                  }
                 }
+                add_enumerated_real_value(re_value, real_ev_metadata, this_as_default);
               }
             }
+
+            DT_THROW_IF(_real_enumeration_.size() == 0, std::logic_error,
+                        "Missing explicit supported enumeration of real values!");
           } // variable/enumeration/real
 
           if (is_string()) {
             /* Example:
              *
-             *   string.enumerated.size      : integer = 3
-             *   string.enumerated_0.value   : string = "Atlas"
-             *   string.enumerated_0.variant : string = "Setup.Atlas"
-             *   string.enumerated_1.value   : string = "CMS"
-             *   string.enumerated_1.variant : string = "Setup.CMS"
-             *   string.enumerated_2.value   : string = "LHCb"
-             *   string.enumerated_2.variant : string = "Setup.LHCb"
+             *   string.enumerated.size : integer = 4
+             *
+             *   string.enumerated_0.value         : string = "Atlas"
+             *   string.enumerated_0.documentation : string = "The Atlas experiment"
+             *   string.enumerated_0.group         : string = "HighEnergy"
+             *   string.enumerated_0.variant       : string = "if_atlas"
+             *
+             *   string.enumerated_1.value         : string = "CMS"
+             *   string.enumerated_1.variant       : string = "Setup.CMS"
+             *   string.enumerated_1.group         : string = "HighEnergy"
+             *   string.enumerated_1.default       : boolean = true
+             *
+             *   string.enumerated_2.value         : string = "LHCb"
+             *   string.enumerated_2.variant       : string = "Setup.LHCb"
+             *   string.enumerated_2.group         : string = "HighEnergy"
+             *
+             *   string.enumerated_3.value         : string = "SuperNEMO"
+             *   string.enumerated_3.variant       : string = "Setup.SuperNEMO"
+             *   string.enumerated_3.group         : string = "LowEnergy"
              *
              */
-            int number_of_enumerated = 0;
-            if (setup_.has_key("string.enumerated.size")) {
-              number_of_enumerated = setup_.fetch_integer("string.enumerated.size");
-            }
-            for (int i = 0; i < number_of_enumerated; i++) {
-              std::ostringstream se_value_ss;
-              se_value_ss << "string.enumerated_" <<  i << ".value";
-              DT_THROW_IF(!setup_.has_key(se_value_ss.str()),
-                          std::logic_error,
-                          "Missing key '" << se_value_ss.str()<< "' (string enumerated value #" << i << ") !");
-              std::string se_value = setup_.fetch_string(se_value_ss.str());
-              add_enumerated_value_string(se_value);
-              {
-                std::ostringstream se_variant_ss;
-                se_variant_ss << "string.enumerated_" <<  i << ".variant";
-                std::string se_variant;
-                if (setup_.has_key(se_variant_ss.str())) {
-                  se_variant = setup_.fetch_string(se_variant_ss.str());
-                  associate_variant_to_string(se_value, se_variant);
+            if (_string_enumeration_.size() == 0) {
+              bool default_is_set = false;
+              // Explicit list of supported string values:
+              int number_of_enumerated = 0;
+              if (setup_.has_key("string.enumerated.size")) {
+                number_of_enumerated = setup_.fetch_positive_integer("string.enumerated.size");
+              }
+              for (int i = 0; i < number_of_enumerated; i++) {
+                bool this_as_default = false;
+                std::ostringstream se_prefix_ss;
+                se_prefix_ss <<  "string.enumerated_" <<  i << ".";
+                std::ostringstream se_value_ss;
+                se_value_ss << se_prefix_ss.str() << "value";
+                DT_THROW_IF(!setup_.has_key(se_value_ss.str()),
+                            std::logic_error,
+                            "Missing key '" << se_value_ss.str()<< "' (string enumerated value #" << i << ") !");
+                std::string se_value = setup_.fetch_string(se_value_ss.str());
+
+                datatools::properties se_setup;
+                setup_.export_and_rename_starting_with(se_setup, se_prefix_ss.str(), "");
+                string_enum_value_metadata string_ev_metadata;
+                string_ev_metadata.initialize(se_setup, *this);
+
+                {
+                  std::ostringstream se_default_by_ss;
+                  se_default_by_ss << se_prefix_ss.str() << "default";
+                  if (setup_.has_key(se_default_by_ss.str())) {
+                    DT_THROW_IF(default_is_set, std::logic_error,
+                                "Default enumerated string value is already set!");
+                    bool def = setup_.fetch_boolean(se_default_by_ss.str());
+                    if (def) {
+                      this_as_default = true;
+                      default_is_set = true;
+                    }
+                  }
                 }
+                add_enumerated_string_value(se_value, string_ev_metadata, this_as_default);
               }
             }
+
+            if (_string_enumeration_.size() == 0) {
+              // Load the list of supported string values from a CSV file:
+              if (setup_.has_key("string.enumerated.csv_file")) {
+                const std::string & enum_csv = setup_.fetch_string("string.enumerated.csv_file");
+                char csv_separator = ':';
+                char csv_subseparator = ';';
+                std::string regex_name_selector;
+                std::string regex_group_selector;
+                if (setup_.has_key("string.enumerated.csv_file.separator")) {
+                  csv_separator = setup_.fetch_one_character("string.enumerated.csv_file.separator");
+                }
+                if (setup_.has_key("string.enumerated.csv_file.subseparator")) {
+                  csv_subseparator = setup_.fetch_one_character("string.enumerated.csv_file.subseparator");
+                }
+                if (setup_.has_key("string.enumerated.csv_file.name_regex")) {
+                  regex_name_selector = setup_.fetch_string("string.enumerated.csv_file.name_regex");
+                }
+                if (setup_.has_key("string.enumerated.csv_file.group_regex")) {
+                  regex_group_selector = setup_.fetch_string("string.enumerated.csv_file.group_regex");
+                }
+                _parse_string_enumeration_from_csv_file(enum_csv,
+                                                        csv_separator,
+                                                        csv_subseparator,
+                                                        regex_name_selector,
+                                                        regex_group_selector);
+                DT_THROW_IF(_string_enumeration_.size() == 0, std::logic_error,
+                            "No string value was selected from the CSV file!");
+              }
+            }
+
+            DT_THROW_IF(_string_enumeration_.size() == 0, std::logic_error,
+                        "Missing explicit supported enumeration of string values!");
+
           } // variable/enumeration/string
 
         } // variable/enumeration
 
-        // Parse default value:
-        if (is_boolean()) {
-          if (setup_.has_key("boolean.default")) {
-            bool boolean_def_val = setup_.fetch_boolean("boolean.default");
-            set_default_boolean(boolean_def_val);
-          }
-        } else if (is_integer()) {
-          if (setup_.has_key("integer.default")) {
-            int integer_def_val = setup_.fetch_integer("integer.default");
-            set_default_integer(integer_def_val);
-          }
-        } else if (is_real()) {
-          if (setup_.has_key("real.default")) {
-            double real_def_val = setup_.fetch_real("real.default");
-            if (! setup_.has_explicit_unit("real.default")) {
-              real_def_val *= real_default_unit;
+        if (is_free()) {
+
+          if (is_string()) {
+
+            // /* Example:
+            //  *
+            //  *   string.special.size      : integer = 1
+            //  *   string.special_0.value   : string  = "Atlas"
+            //  *   string.special_0.variant : string  = "Setup.Atlas"
+            //  */
+            // int number_of_special = 0;
+            //  if (setup_.has_key("string.special.size")) {
+            //    number_of_special = setup_.fetch_integer("string.special.size");
+            //  }
+            //  for (int i = 0; i < number_of_special; i++) {
+            //    std::ostringstream se_value_ss;
+            //    se_value_ss << "string.special_" <<  i << ".value";
+            //    DT_THROW_IF(!setup_.has_key(se_value_ss.str()),
+            //                std::logic_error,
+            //                "Missing key '" << se_value_ss.str()
+            //                << "' (string special value #" << i << ") !");
+            //    std::string se_value = setup_.fetch_string(se_value_ss.str());
+            //    add_enumerated_string_value(se_value);
+            //    {
+            //      std::ostringstream se_variant_ss;
+            //      se_variant_ss << "string.special_" <<  i << ".variant";
+            //      std::string se_variant;
+            //      if (setup_.has_key(se_variant_ss.str())) {
+            //        se_variant = setup_.fetch_string(se_variant_ss.str());
+            //        associate_variant_to_string(se_value, se_variant);
+            //      }
+            //    }
+            // }
+
+          } // variable/free/string
+
+        } // variable/free
+
+        // Parse default value if not already set:
+        if (!has_default_value()) {
+          if (is_boolean()) {
+            if (setup_.has_key("boolean.default")) {
+              bool boolean_def_val = setup_.fetch_boolean("boolean.default");
+              set_default_boolean(boolean_def_val);
             }
-            set_default_real(real_def_val);
-          }
-        } else if (is_string()) {
-          if (setup_.has_key("string.default")) {
-            std::string string_def_val = setup_.fetch_string("string.default");
-            set_default_string(string_def_val);
+          } else if (is_integer()) {
+            if (setup_.has_key("integer.default")) {
+              int integer_def_val = setup_.fetch_integer("integer.default");
+              set_default_integer(integer_def_val);
+            }
+          } else if (is_real()) {
+            if (setup_.has_key("real.default")) {
+              double real_def_val = setup_.fetch_real("real.default");
+              if (! setup_.has_explicit_unit("real.default")) {
+                real_def_val *= real_default_unit;
+              }
+              set_default_real(real_def_val);
+            }
+          } else if (is_string()) {
+            if (setup_.has_key("string.default")) {
+              std::string string_def_val = setup_.fetch_string("string.default");
+              set_default_string(string_def_val);
+            }
           }
         }
       } // variable
@@ -1868,6 +2667,7 @@ namespace datatools {
             set_fixed_string(string_fixed_val);
           }
         }
+
       } // fixed
 
       // Checks
@@ -1896,12 +2696,13 @@ namespace datatools {
 
       // Variants:
 
-      // XXX
-
       // Import auxiliary properties:
       setup_.export_and_rename_starting_with(grab_auxiliaries(), aux_prefix(), "");
 
       _initialized_ = true;
+      if (datatools::logger::is_trace(get_logging_priority())) {
+        this->tree_dump(std::cerr, "Parameter model '" + get_name() + "' : ", "[trace] ");
+      }
       return;
     }
 
@@ -1919,6 +2720,136 @@ namespace datatools {
       return;
     }
 
+    void parameter_model::_parse_string_enumeration_from_csv_file(const std::string & csv_filename_,
+                                                                  const char csv_separator_,
+                                                                  const char csv_subseparator_,
+                                                                  const std::string & value_regex_,
+                                                                  const std::string & group_regex_)
+    {
+      datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+      // logging = datatools::logger::PRIO_DEBUG;
+      std::string filename = csv_filename_;
+      datatools::fetch_path_with_env(filename);
+      std::ifstream fin(filename.c_str());
+      DT_THROW_IF(!fin, std::runtime_error, "Cannot open string enumerated CSV file '" << csv_filename_ << "'!");
+      std::string default_value;
+      std::string csv_separators;
+      csv_separators.push_back(csv_separator_);
+      std::size_t line_counter = 0;
+      while (fin && !fin.eof()) {
+        bool default_value_flag = false;
+        std::string line;
+        std::getline(fin, line);
+        line_counter++;
+        boost::algorithm::trim(line);
+        if (line.length() == 0) {
+          DT_LOG_DEBUG(logging, "Skipping blank line #" <<  line_counter);
+          continue;
+        } else if (line[0] == '#') {
+          DT_LOG_DEBUG(logging, "Skipping comment line #" <<  line_counter);
+          std::string meta_comment;
+          std::istringstream liss(line);
+          liss >> meta_comment;
+          if (meta_comment == "#@debug") {
+            logging = datatools::logger::PRIO_DEBUG;
+            DT_LOG_DEBUG(logging, "Activate debug mode");
+          } else if (meta_comment == "#@nodebug") {
+            DT_LOG_DEBUG(logging, "Deactivate debug mode");
+            logging = datatools::logger::PRIO_FATAL;
+          } else {
+            continue;
+          }
+        }
+        if (line[0] == '*') {
+          line = line.substr(1);
+          DT_THROW_IF(!default_value.empty(), std::logic_error, "Default string enumerated value is already set!");
+          DT_LOG_DEBUG(logging, "Found the default value mark at line #" <<  line_counter);
+          default_value_flag = true;
+        }
+        std::vector<std::string> tokens;
+        boost::algorithm::split(tokens, line, boost::is_any_of(csv_separators)); // , boost::token_compress_on);
+        std::string se_value;
+        if (tokens.size() > 0) {
+          // CSV column 0:
+          se_value = tokens[0];
+          boost::algorithm::trim(se_value);
+        }
+        DT_THROW_IF(se_value.empty(), std::logic_error, "Empty enumerated string value!");
+        if (!value_regex_.empty()) {
+          static const boost::regex e(value_regex_, boost::regex::extended);
+          if (!boost::regex_match(se_value, e)) {
+            DT_LOG_DEBUG(logging, "Skipping value '" << se_value << "' at line #" <<  line_counter);
+            continue;
+          }
+        }
+        std::string se_doc;
+        if (tokens.size() > 1) {
+          // CSV column 1:
+          se_doc = tokens[1];
+          boost::algorithm::trim(se_doc);
+        }
+        std::string se_group;
+        if (tokens.size() > 2) {
+          // CSV column 2:
+          se_group = tokens[2];
+          boost::algorithm::trim(se_group);
+        }
+        if (!group_regex_.empty()) {
+          static const boost::regex e(group_regex_, boost::regex::extended);
+          if (!boost::regex_match(se_group, e)) {
+            DT_LOG_DEBUG(logging, "Skipping value '" << se_value << "' with unselected group '" << se_group << "' at line #" <<  line_counter);
+            continue;
+          }
+        }
+        std::string se_variants;
+        if (tokens.size() > 3) {
+          // CSV column 3:
+          se_variants = tokens[3];
+          boost::algorithm::trim(se_variants);
+        }
+        // Process:
+        string_enum_value_metadata strmetadata;
+        DT_LOG_DEBUG(logging, "Adding a new string value '" << se_value << "'...");
+        if (default_value_flag) {
+          DT_LOG_DEBUG(logging,
+                       "Make it the default value '" << se_value << "'...");
+          default_value = se_value;
+        }
+        if (!se_doc.empty()) {
+          DT_LOG_DEBUG(logging,
+                       "Setting documentation '" << se_doc << "' to value '" << se_value << "'...");
+          strmetadata.set_documentation(se_doc);
+        }
+        if (!se_group.empty()) {
+          DT_LOG_DEBUG(logging,
+                       "Setting group '" << se_group << "' to value '" << se_value << "'...");
+          strmetadata.set_group(se_group);
+          add_group(se_group);
+        }
+        if (!se_variants.empty()) {
+          std::vector<std::string> variants;
+          std::string csv_subseparators;
+          csv_subseparators.push_back(csv_subseparator_);
+          boost::split(variants, se_variants, boost::is_any_of(csv_subseparators));
+          for (std::size_t iv = 0; iv < variants.size(); iv++) {
+            std::string se_variant = variants[iv];
+            boost::algorithm::trim(se_variant);
+            if (!se_variant.empty()) {
+              DT_LOG_DEBUG(logging,
+                           "Associating variant '" << se_variant << "' to value '" << se_value << "'...");
+              strmetadata.add_variant(se_variant);
+            }
+          }
+        }
+        add_enumerated_string_value(se_value, strmetadata, default_value_flag);
+        fin >> std::ws;
+      }
+      // if (!default_value.empty()) {
+      //   set_default_string(default_value);
+      // }
+      return;
+    }
+
     void parameter_model::tree_dump(std::ostream & out_,
                                     const std::string & title_,
                                     const std::string & indent_,
@@ -1928,7 +2859,9 @@ namespace datatools {
 
       out_ << indent_ << i_tree_dumpable::tag << "Documentation  : ";
       if (has_documentation()) {
-        out_ << "yes";
+        out_ << "'" << _documentation_ << "'";
+      } else {
+        out_ << "<no>";
       }
       out_ << std::endl;
 
@@ -1938,7 +2871,7 @@ namespace datatools {
 
       if (is_path()) {
         out_ << indent_ << i_tree_dumpable::tag
-             << "Path         : '" <<  label_from_path_io(_path_io_) << "'"
+             << "Path         : '" << label_from_path_io(_path_io_) << "'"
              << std::endl;
       }
 
@@ -2027,20 +2960,21 @@ namespace datatools {
           if (is_boolean()) {
             out_ << indent_ << i_tree_dumpable::tag << "Boolean enumeration : ";
             out_ << std::endl;
-            out_ << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::tag << "Value : '" << "false" << "'";
-            if (_false_variant_.empty()) {
-              out_ << " <no variant>";
-            } else {
-              out_ << " with variant '" << _false_variant_ << "'";
-            }
+            out_ << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::tag << "Value '" << "false" << "' : ";
             out_ << std::endl;
-            out_ << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::last_tag << "Value : '" << "true" << "'";
-            if (_true_variant_.empty()) {
-              out_ << " <no variant>";
-            } else {
-              out_ << " with variant '" << _true_variant_ << "'";
+            {
+              std::ostringstream indent2;
+              indent2 << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::skip_tag;
+              _false_metadata_.tree_dump(out_, "", indent2.str());
             }
+
+            out_ << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::last_tag << "Value '" << "true" << "'";
             out_ << std::endl;
+            {
+              std::ostringstream indent2;
+              indent2 << indent_ << i_tree_dumpable::skip_tag << i_tree_dumpable::last_skip_tag;
+              _true_metadata_.tree_dump(out_, "", indent2.str());
+            }
           } // variable/enumeration/boolean
 
           if (is_integer()) {
@@ -2049,25 +2983,25 @@ namespace datatools {
               out_ << "<none>";
             }
             out_ << std::endl;
-            for (std::map<int,std::string>::const_iterator iter_val = _integer_enumeration_.begin();
+            for (integer_enum_dict_type::const_iterator iter_val = _integer_enumeration_.begin();
                  iter_val != _integer_enumeration_.end();
                  iter_val++) {
-              std::map<int,std::string>::const_iterator jter_val = iter_val;
+              integer_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               out_ << indent_ << i_tree_dumpable::skip_tag;
+              std::ostringstream indent2;
+              indent2 << indent_ << i_tree_dumpable::skip_tag;
               if (jter_val == _integer_enumeration_.end()) {
                 out_ << i_tree_dumpable::last_tag;
+                indent2 << i_tree_dumpable::last_skip_tag;
               } else {
                 out_ << i_tree_dumpable::tag;
+                indent2 << i_tree_dumpable::skip_tag;
               }
               int value = iter_val->first;
-              out_ << "Value : '" << value << "'";
-              if (!iter_val->second.empty()) {
-                out_ << " with variant '" << iter_val->second << "'";
-              } else {
-                out_ << " <no variant>";
-              }
+              out_ << "Value '" << value << "': ";
               out_ << std::endl;
+              iter_val->second.tree_dump(out_, "", indent2.str());
             }
           } // variable/enumeration/integer
 
@@ -2077,29 +3011,29 @@ namespace datatools {
               out_ << "<none>";
             }
             out_ << std::endl;
-            for (std::map<double,std::string>::const_iterator iter_val
+            for (real_enum_dict_type::const_iterator iter_val
                    = _real_enumeration_.begin();
                  iter_val != _real_enumeration_.end();
                  iter_val++) {
-              std::map<double,std::string>::const_iterator jter_val = iter_val;
+              real_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               out_ << indent_ << i_tree_dumpable::skip_tag;
+              std::ostringstream indent2;
+              indent2 << indent_ << i_tree_dumpable::skip_tag;
               if (jter_val == _real_enumeration_.end()) {
                 out_ << i_tree_dumpable::last_tag;
+                indent2 << i_tree_dumpable::last_skip_tag;
               } else {
                 out_ << i_tree_dumpable::tag;
+                indent2 << i_tree_dumpable::skip_tag;
               }
               double value = iter_val->first;
-              out_ << "Value : " << value / unit;
+              out_ << "Value " << value / unit;
               if (! display_unit_symbol.empty()) {
                 out_ << ' ' << display_unit_symbol;
               }
-              if (! iter_val->second.empty()) {
-                out_ << " with variant '" << iter_val->second << "'";
-              } else {
-                out_ << " <no variant>";
-              }
-              out_ << std::endl;
+              out_ << " : " << std::endl;
+              iter_val->second.tree_dump(out_, "", indent2.str());
             }
           } // variable/enumeration/real
 
@@ -2109,25 +3043,24 @@ namespace datatools {
               out_ << "<none>";
             }
             out_ << std::endl;
-            for (std::map<std::string,std::string>::const_iterator iter_val = _string_enumeration_.begin();
+            for (string_enum_dict_type::const_iterator iter_val = _string_enumeration_.begin();
                  iter_val != _string_enumeration_.end();
                  iter_val++) {
-              std::map<std::string,std::string>::const_iterator jter_val = iter_val;
+              string_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               out_ << indent_ << i_tree_dumpable::skip_tag;
+              std::ostringstream indent2;
+              indent2 << indent_ << i_tree_dumpable::skip_tag;
               if (jter_val == _string_enumeration_.end()) {
                 out_ << i_tree_dumpable::last_tag;
+                indent2 << i_tree_dumpable::last_skip_tag;
               } else {
                 out_ << i_tree_dumpable::tag;
+                indent2 << i_tree_dumpable::skip_tag;
               }
               const std::string & value = iter_val->first;
-              out_ << "Value : '" << value << "'";
-              if (!iter_val->second.empty()) {
-                out_ << " with variant '" << iter_val->second << "'";
-              } else {
-                out_ << " <no variant>";
-              }
-              out_ << std::endl;
+              out_ << "Value '" << value << "' : " << std::endl;
+              iter_val->second.tree_dump(out_, "", indent2.str());
             }
           } // variable/enumeration/string
 
@@ -2139,22 +3072,26 @@ namespace datatools {
             out_ << indent_ << i_tree_dumpable::tag << "Domain         : "
                  << get_integer_domain() << std::endl;
           } // variable/integer/variable
-          if (_integer_r2v_.size()) {
+          if (_integer_ranges_.size()) {
             out_ << indent_ << i_tree_dumpable::tag << "Regions with associated variant: " << std::endl;
           }
-          for (std::map<integer_range, std::string>::const_iterator i = _integer_r2v_.begin();
-               i != _integer_r2v_.end();
+          for (integer_range_enum_dict_type::const_iterator i = _integer_ranges_.begin();
+               i != _integer_ranges_.end();
                i++) {
-            std::map<integer_range, std::string>::const_iterator j = i;
+            integer_range_enum_dict_type::const_iterator j = i;
             j++;
             out_ << indent_ << i_tree_dumpable::skip_tag;
-            if (j == _integer_r2v_.end()) {
-                out_ << i_tree_dumpable::last_tag;
+            std::ostringstream indent2;
+            indent2 << indent_ << i_tree_dumpable::skip_tag;
+            if (j == _integer_ranges_.end()) {
+              out_ << i_tree_dumpable::last_tag;
+              indent2 << i_tree_dumpable::last_skip_tag;
             } else {
               out_ << i_tree_dumpable::tag;
+              indent2 << i_tree_dumpable::skip_tag;
             }
-            out_ << "Range '" << i->first << "' is associated to variant '"
-                 << i->second << "'" << std::endl;
+            out_ << "Integer range '" << i->first << "' : " << std::endl;
+            i->second.tree_dump(out_, "", indent2.str());
           }
         } // variable/integer
 
@@ -2163,22 +3100,26 @@ namespace datatools {
             out_ << indent_ << i_tree_dumpable::tag << "Domain         : "
                  << get_real_domain() << std::endl;
           } // variable/real/variable
-          if (_real_r2v_.size()) {
+          if (_real_ranges_.size()) {
             out_ << indent_ << i_tree_dumpable::tag << "Regions with associated variant: " << std::endl;
           }
-          for (std::map<real_range, std::string>::const_iterator i = _real_r2v_.begin();
-               i != _real_r2v_.end();
+          for (real_range_enum_dict_type::const_iterator i = _real_ranges_.begin();
+               i != _real_ranges_.end();
                i++) {
-            std::map<real_range, std::string>::const_iterator j = i;
+            real_range_enum_dict_type::const_iterator j = i;
             j++;
             out_ << indent_ << i_tree_dumpable::skip_tag;
-            if (j == _real_r2v_.end()) {
+            std::ostringstream indent2;
+            indent2 << indent_ << i_tree_dumpable::skip_tag;
+            if (j == _real_ranges_.end()) {
               out_ << i_tree_dumpable::last_tag;
+              indent2 << i_tree_dumpable::last_skip_tag;
             } else {
               out_ << i_tree_dumpable::tag;
+              indent2 << i_tree_dumpable::skip_tag;
             }
-            out_ << "Range '" << i->first << "' is associated to variant '"
-                 << i->second << "'" << std::endl;
+            out_ << "Real range '" << i->first << "' : " << std::endl;
+            i->second.tree_dump(out_, "", indent2.str());
           }
 
         } // variable/real
@@ -2210,17 +3151,19 @@ namespace datatools {
       return;
     }
 
-    bool parameter_model::is_boolean_valid(bool /* value_ */) const
+    bool parameter_model::is_boolean_valid(const bool value_) const
     {
+      if (is_fixed()) {
+        return value_ == get_fixed_boolean();
+      }
       return true;
     }
 
-    bool parameter_model::is_integer_valid(int value_) const
+    bool parameter_model::is_integer_valid(const int value_) const
     {
       if (is_fixed()) {
-        return true;
-      }
-      if (is_free()) {
+        return value_ == get_fixed_integer();
+      } else if (is_free()) {
         return true;
       } else if (is_interval()) {
         return _integer_domain_.has(value_);
@@ -2230,17 +3173,25 @@ namespace datatools {
       return false;
     }
 
-    bool parameter_model::is_real_valid(double value_) const
+    // XXX
+    bool parameter_model::is_real_valid(const double value_) const
     {
-      if (is_fixed()) {
-        return true;
+      double epsilon = std::numeric_limits<double>::epsilon();
+      if (has_real_precision()) {
+        epsilon = get_real_precision();
       }
-      if (is_free()) {
+      if (is_fixed()) {
+        return std::abs(value_ - get_fixed_real()) <= epsilon;
+      } else if (is_free()) {
         return true;
       } else if (is_interval()) {
         return _real_domain_.has(value_);
       } else if (is_enumeration()) {
-        return _real_enumeration_.count(value_) != 0;
+        for (const auto & re_pair : _real_enumeration_) {
+          if (std::abs(value_ - re_pair.first) <= epsilon) {
+            return true;
+          }
+        }
       }
       return false;
     }
@@ -2248,9 +3199,8 @@ namespace datatools {
     bool parameter_model::is_string_valid(const std::string & value_) const
     {
       if (is_fixed()) {
-        return true;
-      }
-      if (is_free()) {
+        return value_ == get_fixed_string();
+      } else if (is_free()) {
         return true;
       } else if (is_enumeration()) {
         return _string_enumeration_.count(value_) != 0;
@@ -2263,109 +3213,110 @@ namespace datatools {
       return _variants_;
     }
 
-    bool parameter_model::find_variant_associated_to_boolean(bool value_, std::string & variant_name_) const
+    bool parameter_model::find_variants_associated_to_boolean(const bool value_, std::set<std::string> & variants_) const
     {
-      variant_name_.clear();
+      variants_.clear();
       if (value_) {
-        variant_name_ = _true_variant_;
-        return !_true_variant_.empty();
+        if (_true_metadata_.has_variants()) {
+          variants_ = _true_metadata_.get_variants();
+        }
       } else {
-        variant_name_ = _false_variant_;
-        return !_false_variant_.empty();
+        if (_false_metadata_.has_variants()) {
+          variants_ = _false_metadata_.get_variants();
+        }
       }
-      return false;
+      return variants_.size() > 0;
     }
 
-    bool parameter_model::find_variant_associated_to_integer(int value_, std::string & variant_name_) const
+    bool parameter_model::find_variants_associated_to_integer(const int value_, std::set<std::string> & variants_) const
     {
-      variant_name_.clear();
+      variants_.clear();
       if (is_enumeration()) {
-        std::map<int, std::string>::const_iterator found = _integer_enumeration_.find(value_);
+        integer_enum_dict_type::const_iterator found = _integer_enumeration_.find(value_);
         DT_THROW_IF (found == _integer_enumeration_.end(), std::logic_error,
                      "Integer value '" << value_ << " is not valid for parameter model '" << get_name() << "' !");
-        if (!found->second.empty()) {
-          variant_name_ = found->second;
-          return true;
+        if (found->second.has_variants()) {
+          variants_ = found->second.get_variants();
         }
       }
-      // Check for value in the domain:
-      DT_THROW_IF (is_interval() && !_integer_domain_.has(value_), std::logic_error,
-                   "Integer value '" << value_ << " is not valid for parameter model '" << get_name() << "' !");
-      for (std::map<integer_range, std::string>::const_iterator i = _integer_r2v_.begin();
-           i != _integer_r2v_.end();
+      if (is_interval()) {
+        // Check for value in the domain:
+        DT_THROW_IF(!_integer_domain_.has(value_), std::logic_error,
+                    "Integer value '" << value_ << " is not valid for parameter model '" << get_name() << "' !");
+      }
+      for (integer_range_enum_dict_type::const_iterator i = _integer_ranges_.begin();
+           i != _integer_ranges_.end();
            i++) {
         if (i->first.has(value_)) {
-          variant_name_ = i->second;
-          return true;
+          if (!i->second.has_variants()) {
+            for (const auto & variant_name : i->second.get_variants()) {
+              variants_.insert(variant_name);
+            }
+          }
         }
       }
-      return false;
+      return variants_.size() > 0;
     }
 
-    bool parameter_model::find_variant_associated_to_real(double value_, std::string & variant_name_) const
+    bool parameter_model::find_variants_associated_to_real(const double value_, std::set<std::string> & variants_) const
     {
-      variant_name_.clear();
+      variants_.clear();
       if (is_enumeration()) {
-        std::map<double, std::string>::const_iterator found = _real_enumeration_.find(value_);
-        DT_THROW_IF (found == _real_enumeration_.end(), std::logic_error,
+        double value = datatools::invalid_real();
+        for (const auto & re_pair : _real_enumeration_) {
+          if (std::abs(value_ - re_pair.first) <= get_real_effective_precision()) {
+            value = re_pair.first;
+          }
+        }
+        DT_THROW_IF (!datatools::is_valid(value),
+                     std::domain_error,
                      "Real value '" << value_ << " is not valid for parameter model '" << get_name() << "' !");
-        if (!found->second.empty()) {
-          variant_name_ = found->second;
-          return true;
+        real_enum_dict_type::const_iterator found = _real_enumeration_.find(value);
+        if (found->second.has_variants()) {
+          variants_ = found->second.get_variants();
         }
       }
-      // Check for value in the domain
-      DT_THROW_IF (is_interval() && !_integer_domain_.has(value_), std::logic_error,
-                   "Real value '" << value_ << " is not valid for parameter model '" << get_name() << "' !");
-      for (std::map<real_range, std::string>::const_iterator i = _real_r2v_.begin();
-           i != _real_r2v_.end();
+      if (is_interval()) {
+        // Check for value in the domain:
+        DT_THROW_IF(!_real_domain_.has(value_),
+                    std::domain_error,
+                    "Real value '" << value_ << " is not valid for parameter model '" << get_name() << "' !");
+      }
+      for (real_range_enum_dict_type::const_iterator i = _real_ranges_.begin();
+           i != _real_ranges_.end();
            i++) {
-        // std::cerr << "DEVEL: parameter_model::find_variant_associated_to_real: "
-        //           << "value=" << value_ / CLHEP::mm << " mm   region=" << i->first << "." << std::endl;
         if (i->first.has(value_)) {
-          variant_name_ = i->second;
-          return true;
+          if (!i->second.has_variants()) {
+            for (const auto & variant_name : i->second.get_variants()) {
+              variants_.insert(variant_name);
+            }
+          }
         }
       }
-      return false;
+      return variants_.size() > 0;
     }
 
-    bool parameter_model::find_variant_associated_to_string(const std::string & value_, std::string & variant_name_) const
+    bool parameter_model::find_variants_associated_to_string(const std::string & value_, std::set<std::string> & variants_) const
     {
-      // std::cerr << "DEVEL: parameter_model::find_variant_associated_to_string: value='" << value_ << "'" << std::endl;
-      // this->tree_dump(std::cerr, "Parameter model: ", "DEVEL: ");
-      variant_name_.clear();
+      variants_.clear();
       if (is_enumeration()) {
-        /*
-        for (std::map<std::string, std::string>::const_iterator i = _string_enumeration_.begin();
-             i != _string_enumeration_.end();
-             i++) {
-          std::cerr << "DEVEL: parameter_model::find_variant_associated_to_string: value='" << i->first << "' "
-                    << "variant='" << i->second << "'"
-                    << std::endl;
-        }
-        */
-        std::map<std::string, std::string>::const_iterator found = _string_enumeration_.find(value_);
+        string_enum_dict_type::const_iterator found = _string_enumeration_.find(value_);
         DT_THROW_IF (found == _string_enumeration_.end(), std::logic_error,
                      "String value '" << value_ << " is not valid for parameter model '" << get_name() << "' !");
-        if (!found->second.empty()) {
-          variant_name_ = found->second;
-          return true;
+        if (found->second.has_variants()) {
+          variants_ = found->second.get_variants();
         }
+      } else if (is_free()) {
+        // Nothing for now
       }
-      if (is_free()) {
-        return true;
-      }
-
-      return false;
-   }
+      return variants_.size() > 0;
+    }
 
     // static
     void parameter_model::init_ocd(datatools::object_configuration_description & ocd_)
     {
 
       enriched_base::init_ocd(ocd_);
-
 
       {
         configuration_property_description & cpd = ocd_.add_configuration_property_info();
@@ -2374,15 +3325,16 @@ namespace datatools {
           .set_terse_description("Set the type of the parameter_model")
           .set_traits(datatools::TYPE_STRING)
           .set_mandatory(false)
-          .set_long_description("Type is choosen among:                    \n"
-                                "                                          \n"
-                                " * \"``boolean``\" : boolean value        \n"
-                                " * \"``integer``\" : signed integer value     \n"
-                                " * \"``real``\" : double precision floating point real value \n"
-                                " * \"``string``\" : character string      \n"
-                                "                                          \n"
+          .set_long_description("Type is choosen among:                      \n"
+                                "                                            \n"
+                                " * \"``boolean``\" : boolean value          \n"
+                                " * \"``integer``\" : signed integer value   \n"
+                                " * \"``real``\" : double precision floating \n"
+                                "   point real value                         \n"
+                                " * \"``string``\" : character string        \n"
+                                "                                            \n"
                                 )
-          .add_example("Set a real parameter_model::                             \n"
+          .add_example("Set a real parameter_model::              \n"
                        "                                          \n"
                        "  type : string = \"real\"                \n"
                        "                                          \n"
@@ -2399,8 +3351,8 @@ namespace datatools {
           .set_mandatory(false)
           .set_long_description("Type is choosen among:                    \n"
                                 "                                          \n"
-                                " * \"``fixed``\" : parameter_model is a constant\n"
-                                " * \"``variable``\" : parameter_model's value can be chnaged \n"
+                                " * \"``fixed``\" : parameter is a constant\n"
+                                " * \"``variable``\" : parameter value can be chnaged \n"
                                 "                                          \n"
                                 )
           .add_example("Set a variable parameter_model::                \n"
@@ -2415,7 +3367,7 @@ namespace datatools {
         configuration_property_description & cpd = ocd_.add_configuration_property_info();
         cpd.set_name_pattern("real.unit_label")
           .set_from("datatools::configuration::parameter_model")
-          .set_terse_description("Set the unit label for a real parameter_model")
+          .set_terse_description("Set the unit label for a real parameter")
           .set_traits(datatools::TYPE_STRING)
           .set_mandatory(false)
           .set_long_description("The unit label is choosen from:              \n"
@@ -2438,7 +3390,7 @@ namespace datatools {
         configuration_property_description & cpd = ocd_.add_configuration_property_info();
         cpd.set_name_pattern("real.preferred_unit")
           .set_from("datatools::configuration::parameter_model")
-          .set_terse_description("Set the preferred unit for a real parameter_model")
+          .set_terse_description("Set the preferred unit for a real parameter")
           .set_traits(datatools::TYPE_STRING)
           .set_mandatory(false)
           .set_long_description("The preferred unit is choosen from a list of supported \n"
@@ -2458,13 +3410,15 @@ namespace datatools {
           ;
       }
 
+
+
       return;
     }
 
     /// Print in ReST format
     void parameter_model::print_rst(std::ostream & out_,
                                     const std::string & indent_,
-                                    uint32_t flags_) const
+                                    const uint32_t flags_) const
     {
       bool with_title = true;
       bool with_description  = true;
@@ -2502,7 +3456,7 @@ namespace datatools {
           out_ << "``\"" << get_display_name() << "\"``";
         }
         out_ << std::endl;
-      }
+      } // with description
 
       out_ << indent << "* Type: ";
       if (! has_type()) {
@@ -2581,6 +3535,30 @@ namespace datatools {
         out_ << std::endl;
       } // fixed
 
+      if (_groups_.size()) {
+        out_ << indent << "* Associated groups : ";
+        out_ << std::endl;
+        for (group_dict_type::const_iterator i = _groups_.begin();
+             i != _groups_.end();
+             i++) {
+          group_dict_type::const_iterator j = i;
+          j++;
+          if (i == _groups_.begin()) {
+            out_ << std::endl;
+          }
+          out_ << indent << "  * ``\"" << i->first
+               << "\"`` ";
+          const std::string & group_documentation = i->second;
+          if (!group_documentation.empty()) {
+            out_ << " : " << group_documentation;
+          }
+          out_ << std::endl;
+          if (j == _groups_.end()) {
+            out_ << std::endl;
+          }
+        }
+      }
+
       if (_variants_.size()) {
         out_ << indent << "* Associated variants : ";
         out_ << std::endl;
@@ -2613,50 +3591,30 @@ namespace datatools {
           if (is_boolean()) {
             out_ << indent << "* Supported values:" << std::endl;
             out_ << std::endl;
-            out_ << indent <<  "  * ``" << "false" << "``";
-            if (_false_variant_.empty()) {
-              // out_ << " <no variant>";
-            } else {
-              out_ << " associated to variant ``\"" << _false_variant_ << "\"``";
-            }
-            out_ << std::endl;
-            out_ << indent <<  "  * ``" << "true" << "``";
-            if (_true_variant_.empty()) {
-              // out_ << " <no variant>";
-            } else {
-              out_ << " associated to variant ``\"" << _true_variant_ << "\"``";
-            }
-            out_ << std::endl;
+            out_ << indent <<  "  * ``" << "false" << "`` :" << std::endl;
+            _false_metadata_.print_rst(out_, indent + "  ");
+
+            out_ << indent <<  "  * ``" << "true" << "`` :" << std::endl;
+            _true_metadata_.print_rst(out_, indent + "  ");
+
             out_ << std::endl;
           } // variable/enumeration/boolean
 
           if (is_integer()) {
-            /*
-              out_ << indent << "  * Integer enumeration : ";
-              if (_integer_enumeration_.size() == 0) {
-              out_ << "<none>";
-              }
-              out_ << std::endl;
-            */
-            for (std::map<int,std::string>::const_iterator iter_val
+            for (integer_enum_dict_type::const_iterator iter_val
                    = _integer_enumeration_.begin();
                  iter_val != _integer_enumeration_.end();
                  iter_val++) {
-              std::map<int,std::string>::const_iterator jter_val = iter_val;
+              integer_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               if (iter_val == _integer_enumeration_.begin()) {
                 out_ << indent << "* Supported values:" << std::endl;
                 out_ << std::endl;
               }
-              out_ << indent << "  * ";
               int value = iter_val->first;
-              out_ << "``" << value << "``";
-              if (!iter_val->second.empty()) {
-                out_ << " associated to variant ``\"" << iter_val->second << "\"``";
-              } else {
-                // out_ << " without variant";
-              }
+              out_ << indent << "  * ``" << value << "`` : ";
               out_ << std::endl;
+              iter_val->second.print_rst(out_, indent + "    ");
               if (jter_val == _integer_enumeration_.end()) {
                 out_ << std::endl;
               }
@@ -2664,72 +3622,48 @@ namespace datatools {
           } // variable/enumeration/integer
 
           if (is_real()) {
-            /*
-              out_ << indent << "  * Real enumeration : ";
-              if (_real_enumeration_.size() == 0) {
-              out_ << "<none>";
-              }
-              out_ << std::endl;
-            */
-            for (std::map<double,std::string>::const_iterator iter_val
+            for (real_enum_dict_type::const_iterator iter_val
                    = _real_enumeration_.begin();
                  iter_val != _real_enumeration_.end();
                  iter_val++) {
-              std::map<double,std::string>::const_iterator jter_val = iter_val;
+              real_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               if (iter_val == _real_enumeration_.begin()) {
                 out_ << indent << "* Supported values:" << std::endl;
                 out_ << std::endl;
               }
-              out_ << indent << "  * ";
               double value = iter_val->first;
-              out_ << "``" << value / unit;
+              out_ << indent << "  * ``" << value / unit;
               if (! display_unit_symbol.empty()) {
                 out_ << ' ' << display_unit_symbol;
               }
-              out_ << "``";
-              if (!iter_val->second.empty()) {
-                out_ << " associated to variant ``\"" << iter_val->second << "\"``";
-              } else {
-                // out_ << " without variant";
-              }
+              out_ << "`` : ";
+              out_ << std::endl;
+              iter_val->second.print_rst(out_, indent + "    ");
               if (jter_val == _real_enumeration_.end()) {
                 out_ << std::endl;
               }
-              out_ << std::endl;
             }
           } // variable/enumeration/real
 
           if (is_string()) {
-            /*
-              out_ << indent_ << i_tree_dumpable::tag << "* String enumeration : ";
-              if (_string_enumeration_.size() == 0) {
-              out_ << "<none>";
-              }
-              out_ << std::endl;
-            */
-            for (std::map<std::string,std::string>::const_iterator iter_val
+            for (string_enum_dict_type::const_iterator iter_val
                    = _string_enumeration_.begin();
                  iter_val != _string_enumeration_.end();
                  iter_val++) {
-              std::map<std::string,std::string>::const_iterator jter_val = iter_val;
+              string_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               if (iter_val == _string_enumeration_.begin()) {
                 out_ << indent << "* Supported values:" << std::endl;
                 out_ << std::endl;
               }
-              out_ << indent << "  * ";
               const std::string & value = iter_val->first;
-              out_ << "``\"" << value << "\"``";
-              if (!iter_val->second.empty()) {
-                out_ << " associated to variant ``\"" << iter_val->second << "\"``";
-              } else {
-                // out_ << " without variant";
-              }
+              out_ << indent << "  * ``\"" << value << "\"`` ";
+              out_ << " : " << std::endl;
+              iter_val->second.print_rst(out_, indent + "    ");
               if (jter_val == _string_enumeration_.end()) {
                 out_ << std::endl;
               }
-              out_ << std::endl;
             }
           } // variable/enumeration/string
 
@@ -2737,46 +3671,52 @@ namespace datatools {
 
         // Regions associated to variants:
         if (is_integer()) {
+
           if (is_interval()) {
             out_ << indent << "* Domain: ``" << get_integer_domain() << "``" << std::endl;
           } // variable/rinteger/interval
-          if (_integer_r2v_.size()) {
-            out_ << indent << "* Regions with associated variants: " << std::endl;
+
+          if (_integer_ranges_.size()) {
+            out_ << indent << "* Subdomains of interest: " << std::endl;
           }
-          for (std::map<integer_range, std::string>::const_iterator i = _integer_r2v_.begin();
-               i != _integer_r2v_.end();
+          for (integer_range_enum_dict_type::const_iterator i = _integer_ranges_.begin();
+               i != _integer_ranges_.end();
                i++) {
-            std::map<integer_range, std::string>::const_iterator j = i;
+            integer_range_enum_dict_type::const_iterator j = i;
             j++;
-            if (i == _integer_r2v_.begin()) {
+            if (i == _integer_ranges_.begin()) {
               out_ << std::endl;
             }
-            out_ << indent << "  * Range ``" << i->first << "`` is associated to variant ``\""
-                 << i->second << "\"``" << std::endl;
-            if (j == _integer_r2v_.end()) {
+            out_ << indent << "  * Range ``" << i->first << "`` : " << std::endl;
+            out_ << std::endl;
+            i->second.print_rst(out_, indent + "    ");
+            if (j == _integer_ranges_.end()) {
               out_ << std::endl;
             }
           }
         } // variable/integer
 
         if (is_real()) {
+
           if (is_interval()) {
             out_ << indent << "* Domain: ``" << get_real_domain() << "``" << std::endl;
           } // variable/real/interval
-          if (_real_r2v_.size()) {
-            out_ << indent << "* Regions with associated variant: " << std::endl;
+
+          if (_real_ranges_.size()) {
+            out_ << indent << "* Subdomains of interest: " << std::endl;
           }
-          for (std::map<real_range, std::string>::const_iterator i = _real_r2v_.begin();
-               i != _real_r2v_.end();
+          for (real_range_enum_dict_type::const_iterator i = _real_ranges_.begin();
+               i != _real_ranges_.end();
                i++) {
-            std::map<real_range, std::string>::const_iterator j = i;
+            real_range_enum_dict_type::const_iterator j = i;
             j++;
-            if (i == _real_r2v_.begin()) {
+            if (i == _real_ranges_.begin()) {
               out_ << std::endl;
             }
-            out_ << indent << "  * Range ``" << i->first << "`` is associated to variant ``\""
-                 << i->second << "\"``" << std::endl;
-            if (j == _real_r2v_.end()) {
+            out_ << indent << "  * Range ``" << i->first << "`` : " << std::endl;
+            out_ << std::endl;
+            i->second.print_rst(out_, indent + "    ");
+            if (j == _real_ranges_.end()) {
               out_ << std::endl;
             }
           }
@@ -2805,7 +3745,7 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::_set_variable_mode(variable_mode_type variable_mode_)
+    void parameter_model::_set_variable_mode(const variable_mode_type variable_mode_)
     {
       if (variable_mode_ == VARIABLE_MODE_DEFAULT) {
         if (is_boolean()) {
@@ -2837,19 +3777,20 @@ namespace datatools {
       _variable_mode_     = VARIABLE_MODE_UNDEFINED;
       _mutability_        = MUTABILITY_UNDEFINED;
       _has_default_value_ = false;
-      _has_fixed_value_ = false;
+      _has_fixed_value_   = false;
       _variants_.clear();
+      _groups_.clear();
 
       _boolean_default_ = false;
       _boolean_fixed_   = false;
-      _false_variant_.clear();
-      _true_variant_.clear();
+      _false_metadata_.reset();
+      _true_metadata_.reset();
 
       _integer_domain_.reset();
       _integer_default_   = 0;
       _integer_fixed_     = 0;
       _integer_enumeration_.clear();
-      _integer_r2v_.clear();
+      _integer_ranges_.clear();
 
       _real_domain_.reset();
       datatools::invalidate(_real_precision_);
@@ -2858,7 +3799,7 @@ namespace datatools {
       _real_unit_label_.clear();
       _real_preferred_unit_.clear();
       _real_enumeration_.clear();
-      _real_r2v_.clear();
+      _real_ranges_.clear();
 
       _string_default_.clear();
       _string_fixed_.clear();
@@ -2933,7 +3874,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(datatools::configuration::parameter_model, ocd_)
   // ocd_.set_from ("datatools::configuration::parameter_model");
 
   // The class terse description :
-  ocd_.set_class_description ("The model of a configuration parameter model");
+  ocd_.set_class_description ("The model of a configuration parameter");
 
   // The library the class belongs to :
   ocd_.set_class_library ("datatools");

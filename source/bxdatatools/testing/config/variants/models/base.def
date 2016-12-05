@@ -1,0 +1,104 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of definitions for variants
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#############################################
+[name="logging_priority.PM" type="parameter"]
+
+#@config Logging priority parameter model
+
+#@description The display name of this parameter
+display_name              : string = "Logging priority"
+
+#@description A short description of the parameter
+terse_description         : string = "The logging priority threshold"
+
+#@description The type of the parameter
+type                      : string = "string"
+
+#@description The mutability of the parameter
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode             : string = "enumeration"
+
+#@description The number of supported values
+string.enumerated.size    : integer = 8
+
+# The list of supported values:
+string.enumerated_0.value : string = "fatal"
+string.enumerated_0.group : string = "Error"
+string.enumerated_0.default : boolean = true
+
+string.enumerated_1.value : string = "critical"
+string.enumerated_1.group : string = "Error"
+
+string.enumerated_2.value : string = "error"
+string.enumerated_2.group : string = "Error"
+
+string.enumerated_3.value : string = "warning"
+
+string.enumerated_4.value : string = "notice"
+string.enumerated_4.group : string = "Verbose"
+
+string.enumerated_5.value : string = "information"
+string.enumerated_5.group : string = "Verbose"
+
+string.enumerated_6.value : string = "debug"
+string.enumerated_6.group : string = "Expert"
+
+string.enumerated_7.value : string = "trace"
+string.enumerated_7.group : string = "Expert"
+
+
+###################################
+[name="on_off.PM" type="parameter"]
+
+#@config On/Off status flag parameter model
+
+#@description logging priority threshold
+logging.priority : string = "trace"
+
+display_name              : string = "On/Off flag"
+terse_description         : string = "The activation flag"
+type                      : string = "boolean"
+mutability                : string = "variable"
+boolean.default           : boolean = true
+
+variants : string[2] = "is_on" "is_off"
+
+variants.is_on.model  : string = "datatools::basic::is_on.VM"
+variants.is_off.model : string = "datatools::basic::is_off.VM"
+
+boolean.true.variant  : string = "is_on"
+boolean.false.variant : string = "is_off"
+
+
+###################################
+[name="off_on.PM" type="parameter"]
+
+#@config Off/On status flag parameter model
+
+#@description logging priority threshold
+logging.priority : string = "trace"
+
+display_name              : string = "Off/On flag"
+terse_description         : string = "The activation flag"
+type                      : string = "boolean"
+mutability                : string = "variable"
+boolean.default           : boolean = false
+
+variants : string[2] = "is_on" "is_off"
+
+variants.is_on.model  : string = "datatools::basic::is_on.VM"
+variants.is_off.model : string = "datatools::basic::is_off.VM"
+
+boolean.true.variant  : string = "is_on"
+boolean.false.variant : string = "is_off"
+
+
+# end of base.def

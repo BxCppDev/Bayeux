@@ -35,6 +35,7 @@
 #include <datatools/configuration/parameter_physical.h>
 #include <datatools/configuration/variant_registry_manager.h>
 #include <datatools/configuration/variant_record.h>
+#include <datatools/configuration/variant_object_info.h>
 #include <datatools/configuration/i_occurrence.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
@@ -54,7 +55,6 @@ namespace datatools {
     // virtual
     bool variant_registry::is_name_valid(const std::string & name_) const
     {
-      // std::cerr << "DEVEL: variant_registry::is_name_valid: name = '" << name_ << "'" << std::endl;
       return ::datatools::configuration::validate_instance_name(name_);
     }
 
@@ -82,6 +82,28 @@ namespace datatools {
       return _records_;
     }
 
+    bool variant_registry::has_dependency_model() const
+    {
+      return _dependency_model_.get() != nullptr;
+    }
+
+    const variant_dependency_model & variant_registry::get_dependency_model() const
+    {
+      DT_THROW_IF(_dependency_model_.get() == nullptr,
+                  std::logic_error,
+                  "Repository '" << get_name() << "' has no dependency model!");
+      return *_dependency_model_.get();
+    }
+
+    void variant_registry::load_local_dependency_model(const datatools::properties & ldm_config_)
+    {
+      DT_THROW_IF(!is_initialized(), std::logic_error, "Registry is locked!");
+      DT_LOG_DEBUG(get_logging_priority(), "Loading local dependency model for registry '" << get_name() << "'...");
+      _dependency_model_.reset(new variant_dependency_model(*this));
+      _dependency_model_->initialize(ldm_config_);
+      return;
+    }
+
     bool variant_registry::is_initialized() const
     {
       return _initialized_;
@@ -89,8 +111,10 @@ namespace datatools {
 
     void variant_registry::reset()
     {
-      DT_THROW_IF(!is_initialized(), std::logic_error,
-                  "Registry is not initialized!");
+      DT_THROW_IF(!is_initialized(), std::logic_error, "Registry is not initialized!");
+      if (has_dependency_model()) {
+        _dependency_model_.reset();
+      }
       _initialized_ = false;
       _top_variant_name_.clear();
       _records_.clear();
@@ -140,6 +164,18 @@ namespace datatools {
         // out_ << std::endl;
       }
 
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Dependency model : ";
+      if (!has_dependency_model()) {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+      if (has_dependency_model()) {
+        std::ostringstream indent2_oss;
+        indent2_oss << indent_ << i_tree_dumpable::skip_tag;
+        _dependency_model_->tree_dump(out_, "", indent2_oss.str());
+      }
+
       std::vector<std::string> unset_params;
       list_of_unset_parameters(unset_params);
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
@@ -173,6 +209,45 @@ namespace datatools {
       DT_THROW_IF(!is_initialized(), std::logic_error,
                   "Registry is not initialized!");
       return get_variant_record("");
+    }
+
+    bool variant_registry::is_mounted() const
+    {
+      return has_parent_repository();
+    }
+
+    const std::string & variant_registry::get_mounting_name() const
+    {
+      return _mounting_name_;
+    }
+
+    bool variant_registry::has_parent_repository() const
+    {
+      return _parent_repository_ != nullptr;
+    }
+
+    void variant_registry::set_parent_repository(const variant_repository & rep_,
+                                                 const std::string & mounting_name_)
+    {
+      DT_THROW_IF(mounting_name_.empty(), std::logic_error,
+                  "Invalid empty registry mounting name!");
+      _parent_repository_ = &rep_;
+      _mounting_name_ = mounting_name_;
+      return;
+    }
+
+    void variant_registry::reset_parent_repository()
+    {
+      _parent_repository_ = nullptr;
+      _mounting_name_.clear();
+      return;
+    }
+
+    const variant_repository & variant_registry::get_parent_repository() const
+    {
+      DT_THROW_IF(!has_parent_repository(), std::logic_error,
+                  "Registry has no parent repository!");
+      return *_parent_repository_;
     }
 
     void variant_registry::initialize_from(const variant_registry_manager & mgr_,
@@ -249,8 +324,8 @@ namespace datatools {
 
     variant_record & variant_registry::add_record(const std::string & record_path_)
     {
-      // DT_THROW_IF(record_path_.empty(), std::logic_error,
-      //             "Empty record path is not allowed!");
+      DT_THROW_IF(record_path_.empty(), std::logic_error,
+                  "Empty record path is not allowed!");
       record_dict_type::const_iterator found = _records_.find(record_path_);
       DT_THROW_IF(found != _records_.end(), std::logic_error,
                   "Record with path '" << record_path_ << "' already exists!");
@@ -260,6 +335,7 @@ namespace datatools {
       }
       variant_record & rec = _records_.find(record_path_)->second;
       rec.set_path(record_path_);
+      rec.set_parent_registry(*this);
       return rec;
     }
 
@@ -287,10 +363,43 @@ namespace datatools {
       return found->second;
     }
 
+    bool variant_registry::is_active_variant(const std::string & variant_path_) const
+    {
+      const variant_record & variant_rec = get_variant_record(variant_path_);
+      return variant_rec.is_active();
+    }
+
     bool variant_registry::has_parameter_record(const std::string & record_path_) const
     {
       record_dict_type::const_iterator found = _records_.find(record_path_);
       return found != _records_.end() && found->second.is_parameter();
+    }
+
+    bool variant_registry::has_parameter_record_value_group(const std::string & param_value_group_path_) const
+    {
+      variant_object_info voi;
+      uint32_t parsing_flag = 0;
+      parsing_flag |= variant_object_info::PARSE_NO_GLOBAL;
+      DT_THROW_IF(!voi.parse_from_string(param_value_group_path_, parsing_flag),
+                  std::logic_error,
+                  "Invalid variant object path format '" << param_value_group_path_ << "'!");
+      DT_THROW_IF(!voi.is_local(),
+                  std::logic_error,
+                  "Variant path '" << param_value_group_path_ << "' is not local!");
+      DT_THROW_IF(!voi.is_parameter_value_group(),
+                  std::logic_error,
+                  "Variant object path '" << param_value_group_path_ << "' is not a parameter value group!");
+      record_dict_type::const_iterator found = _records_.find(voi.get_parameter_local_path());
+      if (found == _records_.end()) {
+        return false;
+      }
+      const std::string & group_name = voi.get_parameter_value_group_name();
+      const variant_record & vrec = found->second;
+      const parameter_model & parmod = vrec.get_parameter_model();
+      if (!parmod.has_group(group_name)) {
+        return false;
+      }
+      return true;
     }
 
     variant_record &
@@ -366,6 +475,7 @@ namespace datatools {
       return unset_paths.size() == 0;
     }
 
+    /*
     command::returned_info
     variant_registry::cmd_has_variant(const std::string & variant_path_,
                                       bool & existing_) const
@@ -373,6 +483,16 @@ namespace datatools {
       command::returned_info cri;
       cri.set_error_code(command::CEC_SUCCESS);
       existing_ = has_variant_record(variant_path_);
+      return cri;
+    }
+
+    command::returned_info
+    variant_registry::cmd_has_parameter(const std::string & parameter_path_,
+                                        bool & existing_) const
+    {
+      command::returned_info cri;
+      cri.set_error_code(command::CEC_SUCCESS);
+      existing_ = has_parameter_record(parameter_path_);
       return cri;
     }
 
@@ -391,8 +511,7 @@ namespace datatools {
         cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
         active_ = variant_rec.is_active();
         cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -478,6 +597,51 @@ namespace datatools {
     }
 
     command::returned_info
+    variant_registry::cmd_is_parameter_value_enabled(const std::string & param_path_,
+                                                     const std::string & value_token_,
+                                                     bool & enabled_)
+    {
+      command::returned_info cri;
+      try {
+        enabled_ = false;
+        if (!has_parameter_record(param_path_)) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
+          DT_THROW(std::logic_error,
+                   "Parameter record with path '" << param_path_ << "' does not exist!");
+        }
+        variant_record & param_rec = grab_parameter_record(param_path_);
+        if (!param_rec.is_active()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << param_path_ << "' is not active!");
+        }
+        const parameter_model & parmod = param_rec.get_parameter_model();
+        if (parmod.is_fixed()) {
+          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
+          DT_THROW(std::logic_error,
+                   "Parameter record '" << param_path_ << "' has a fixed value!");
+        }
+
+        if (parmod.is_boolean()) {
+          // Boolean value:
+          std::istringstream inss(value_token_);
+          bool value;
+          bool parsed = io::read_boolean(inss, value);
+          if (!parsed) {
+            cri.set_error_code(command::CEC_PARSING_FAILURE);
+            DT_THROW(std::logic_error,
+                     "Boolean value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+          }
+          enabled_ = param_rec.is_boolean_valid(value);
+        }
+
+      } catch (std::exception & x) {
+        cri.set_error_message(x.what());
+      }
+      return cri;
+    }
+
+    command::returned_info
     variant_registry::cmd_set_parameter_value(const std::string & param_path_,
                                               const std::string & value_token_)
     {
@@ -494,42 +658,43 @@ namespace datatools {
           DT_THROW(std::logic_error,
                    "Parameter record '" << param_path_ << "' is not active!");
         }
-        if (param_rec.get_parameter_model().is_fixed()) {
+        const parameter_model & parmod = param_rec.get_parameter_model();
+        if (parmod.is_fixed()) {
           cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
           DT_THROW(std::logic_error,
                    "Parameter record '" << param_path_ << "' has a fixed value!");
         }
-        if (param_rec.get_parameter_model().is_boolean()) {
+        if (parmod.is_boolean()) {
           std::istringstream inss(value_token_);
           bool value;
           bool parsed = io::read_boolean(inss, value);
           if (!parsed) {
             cri.set_error_code(command::CEC_PARSING_FAILURE);
             DT_THROW(std::logic_error,
-                     "Boolean parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+                     "Boolean value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
           }
           cri = param_rec.set_boolean_value(value);
           if (cri.is_failure()) {
             cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
             DT_THROW(std::logic_error,
-                     "Boolean parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+                     "Boolean value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
           }
-        } else if (param_rec.get_parameter_model().is_integer()) {
+        } else if (parmod.is_integer()) {
           std::istringstream inss(value_token_);
           int value;
           bool parsed = io::read_integer(inss, value);
           if (!parsed) {
             cri.set_error_code(command::CEC_PARSING_FAILURE);
             DT_THROW(std::logic_error,
-                     "Integer parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+                     "Integer value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
           }
           cri = param_rec.set_integer_value(value);
           if (cri.is_failure()) {
             cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
             DT_THROW(std::logic_error,
-                     "Integer parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+                     "Integer value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
           }
-        } else if (param_rec.get_parameter_model().is_real()) {
+        } else if (parmod.is_real()) {
           std::istringstream inss(value_token_);
           double value;
           std::string unit_label;
@@ -537,21 +702,31 @@ namespace datatools {
           if (!parsed) {
             cri.set_error_code(command::CEC_PARSING_FAILURE);
             DT_THROW(std::logic_error,
-                     "Real parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
+                     "Real value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
           }
           cri = param_rec.set_real_value(value);
           if (cri.is_failure()) {
             cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
             DT_THROW(std::logic_error,
-                     "Real parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+                     "Real value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
           }
-        } else if (param_rec.get_parameter_model().is_string()) {
+        } else if (parmod.is_string()) {
           std::string value = value_token_;
-          cri = param_rec.set_string_value(value);
-          if (cri.is_failure()) {
+          bool enabled_value = true;
+          if (has_parent_repository()) {
+            // Dynamically enabled value:
+          }
+          if (enabled_value) {
+            cri = param_rec.set_string_value(value);
+            if (cri.is_failure()) {
+              cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
+              DT_THROW(std::logic_error,
+                       "String value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+            }
+          } else {
             cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
             DT_THROW(std::logic_error,
-                     "String parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
+                     "String value for parameter '" << param_path_ << "' cannot accept dynamically disabled value='" << value << "'!");
           }
         } else {
           cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
@@ -563,6 +738,7 @@ namespace datatools {
       }
       return cri;
     }
+    */
 
     void variant_registry::_build_parameter_records_from_variant(const variant_model & variant_model_,
                                                                  variant_record * parent_variant_record_)
@@ -573,7 +749,7 @@ namespace datatools {
            i != variant_model_.get_parameters().end();
            i++) {
         const std::string & param_name = i->first;
-        const parameter_physical & pe = i->second;
+        const parameter_physical & pe = i->second.physical;
         std::string param_path_prefix;
         if (parent_variant_record_ != 0) {
           if (parent_variant_record_->get_path() != default_top_variant_name()) {

@@ -61,6 +61,8 @@ namespace datatools {
 
   namespace configuration {
 
+    class variant_registry;
+
     namespace ui {
 
       // Forward declarations:
@@ -91,6 +93,9 @@ namespace datatools {
 
         /// Return a reference to the non mutable registry tree model
         const variant_registry_tree_model & get_registry_tree_model() const;
+
+        /// Return a reference to the non mutable registry
+        const datatools::configuration::variant_registry & get_registry() const;
 
         /// Set the logging priority
         void set_logging(datatools::logger::priority p_);

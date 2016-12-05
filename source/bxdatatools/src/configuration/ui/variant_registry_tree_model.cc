@@ -1,6 +1,6 @@
 // datatools/configuration/ui/variant_registry_tree_model.cc
 /*
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,6 +149,17 @@ namespace datatools {
       {
         _parent_ = parent_;
         return;
+      }
+
+      void tree_item::set_logging(datatools::logger::priority p_)
+      {
+        _logging_ = p_;
+        return;
+      }
+
+      datatools::logger::priority tree_item::get_logging() const
+      {
+        return _logging_;
       }
 
       tree_item * tree_item::grab_child(int row_)
@@ -316,23 +327,47 @@ namespace datatools {
         return QVariant();
       }
 
+      bool tree_item::unsetData(int column_)
+      {
+        DT_LOG_TRACE_ENTERING(_logging_);
+        int error = 0;
+        if (column_ == CI_VALUE) {
+          if (_record_->is_parameter()) {
+            const parameter_model & par_mod = _record_->get_parameter_model();
+            command::returned_info cri = _record_->unset_value();
+            if (!cri.is_success()) {
+              error = cri.get_error_code();
+              // Error signal
+              DT_LOG_ERROR(_logging_, cri.get_error_message());
+            }
+          } // _record_->is_parameter()
+        } // column_ == CI_VALUE
+        DT_LOG_TRACE_EXITING(_logging_);
+        return (error == 0);
+      }
+
       bool tree_item::setData(int column_, const QVariant & value_)
       {
+        DT_LOG_TRACE_ENTERING(_logging_);
         int error = 0;
         if (column_ == CI_VALUE) {
           if (_record_->is_parameter()) {
             const parameter_model & par_mod = _record_->get_parameter_model();
 
             if (par_mod.is_boolean()) {
+              DT_LOG_DEBUG(_logging_, "Boolean...");
               bool val = value_.toBool();
               command::returned_info cri = _record_->set_boolean_value(val);
               if (!cri.is_success()) {
                 error = cri.get_error_code();
                 // Error signal
+                DT_LOG_ERROR(_logging_, cri.get_error_message());
               }
+
             } // boolean
 
             if (par_mod.is_integer()) {
+              DT_LOG_DEBUG(_logging_, "Integer...");
               bool  ok = false;
               int val = value_.toInt(&ok);
               if (ok) {
@@ -340,6 +375,7 @@ namespace datatools {
                 if (!cri.is_success()) {
                   error = cri.get_error_code();
                   // Error signal
+                  DT_LOG_ERROR(_logging_, cri.get_error_message());
                 }
               } else {
                 // Error signal
@@ -347,38 +383,34 @@ namespace datatools {
             } // integer
 
             if (par_mod.is_real()) {
+              DT_LOG_DEBUG(_logging_, "Real...");
+              auto old_logging = _record_->get_logging();
+              if (datatools::logger::is_debug(_logging_)) {
+                _record_->set_logging(datatools::logger::PRIO_DEBUG);
+              }
               std::string val_str = value_.toString().toStdString();
+              DT_LOG_DEBUG(_logging_, "Real value repr = '" << val_str << "'");
               command::returned_info cri = _record_->string_to_value(val_str);
               if (!cri.is_success()) {
                 error = cri.get_error_code();
                 // Error signal
+                DT_LOG_ERROR(_logging_, cri.get_error_message());
               }
-              /*
-              bool ok = false;
-              double val = value_.toDouble(&ok);
-              if (ok) {
-                command::returned_info cri = _record_->set_real_value(val);
-                if (!cri.is_success()) {
-                  error = cri.get_error_code();
-                  // Error signal
-                }
-              } else {
-                std::string val_str = value_.toString().toStdString();
-                command::returned_info cri = _record_->string_to_value(val_str);
-                if (!cri.is_success()) {
-                  error = cri.get_error_code();
-                  // Error signal
-                }
+              DT_LOG_DEBUG(_logging_, "Real parameter record: ");
+              if (datatools::logger::is_debug(_logging_)) {
+                _record_->tree_dump(std::cerr, "", "[debug] ");
+                _record_->set_logging(old_logging);
               }
-              */
             } // real
 
             if (par_mod.is_string()) {
+              DT_LOG_DEBUG(_logging_, "String...");
               std::string val = value_.toString().toStdString();
               command::returned_info cri = _record_->set_string_value(val);
               if (!cri.is_success()) {
                 error = cri.get_error_code();
                 // Error signal
+                DT_LOG_ERROR(_logging_, cri.get_error_message());
               }
             } // string
 
@@ -386,6 +418,7 @@ namespace datatools {
 
         } // column_ == CI_VALUE
 
+        DT_LOG_TRACE_EXITING(_logging_);
         return (error == 0);
       }
 
@@ -819,10 +852,44 @@ namespace datatools {
         return QVariant();
       }
 
+      bool variant_registry_tree_model::unsetData(const QModelIndex & index_,
+                                                  int role_)
+      {
+        DT_LOG_TRACE_ENTERING(_logging_);
+        bool devel = false;
+        tree_item * a_node = _node_from_index_(index_);
+        if (!a_node) {
+          return false;
+        }
+        if (index_.column() != tree_item::CI_VALUE) {
+          return false;
+        }
+
+        int error = 0;
+        if (role_ == Qt::EditRole) {
+          if (a_node->get_record().is_parameter()) {
+            const parameter_model & par_mod = a_node->get_record().get_parameter_model();
+            if (par_mod.is_variable()) {
+              bool ok = a_node->unsetData(tree_item::CI_VALUE);
+              if (!ok) {
+                DT_LOG_ERROR(_logging_, "unsetData failed!");
+                error = 1;
+              }
+            } // par_mod.is_variable()
+          } // is_parameter
+        }
+        if (error == 0) {
+          emit dataChanged(index_, index_);
+        }
+        return error == 0;
+      }
+
+
       bool variant_registry_tree_model::setData(const QModelIndex & index_,
                                                 const QVariant & value_,
                                                 int role_)
       {
+        DT_LOG_TRACE_ENTERING(_logging_);
         bool devel = false;
         tree_item * a_node = _node_from_index_(index_);
         if (!a_node) {
@@ -843,12 +910,10 @@ namespace datatools {
 
               // Boolean:
               if (par_mod.is_boolean()) {
-                if (devel) std::cerr << "DEVEL: "
-                          << "variant_registry_tree_model::setData: "
-                          << "Boolean = " << value_.toString().toStdString()
-                          << std::endl;
+                DT_LOG_TRACE(_logging_, "Boolean = " << value_.toString().toStdString());
                 bool ok = a_node->setData(tree_item::CI_VALUE, value_);
                 if (!ok) {
+                  DT_LOG_ERROR(_logging_, "setData boolean failed!");
                   error = 1;
                 }
                 // Booleans could be handled through the CheckStateRole through QCheckBox...
@@ -856,40 +921,30 @@ namespace datatools {
 
               // Integer:
               if (par_mod.is_integer()) {
-                if (devel) std::cerr << "DEVEL: "
-                          << "variant_registry_tree_model::setData: "
-                          << "Integer = " << value_.toString().toStdString()
-                          << std::endl;
+                DT_LOG_TRACE(_logging_, "Integer = " << value_.toString().toStdString());
                 bool ok = a_node->setData(tree_item::CI_VALUE, value_);
                 if (!ok) {
+                  DT_LOG_ERROR(_logging_, "setData integer failed!");
                   error = 1;
                 }
               } // integer
 
               // Real:
               if (par_mod.is_real()) {
-                if (devel) std::cerr << "DEVEL: "
-                          << "variant_registry_tree_model::setData: "
-                          << "Real = " << value_.toString().toStdString()
-                          << std::endl;
+                DT_LOG_TRACE(_logging_, "Real = " << value_.toString().toStdString());
                 bool ok = a_node->setData(tree_item::CI_VALUE, value_);
                 if (!ok) {
-                  if (devel) std::cerr << "ERROR: "
-                            << "variant_registry_tree_model::setData: "
-                            << "setData failed!"
-                            << std::endl;
+                  DT_LOG_ERROR(_logging_, "setData real failed!");
                   error = 1;
                 }
               } // real
 
               // String:
               if (par_mod.is_string()) {
-                if (devel) std::cerr << "DEVEL: "
-                          << "variant_registry_tree_model::setData: "
-                          << "String = '" << value_.toString().toStdString() << "'"
-                          << std::endl;
+                DT_LOG_TRACE(_logging_, "String = '" << value_.toString().toStdString() << "'");
                 bool ok = a_node->setData(tree_item::CI_VALUE, value_);
                 if (!ok) {
+                  DT_LOG_ERROR(_logging_, "setData string failed!");
                   error = 1;
                 }
               } // string
@@ -962,12 +1017,13 @@ namespace datatools {
           DT_LOG_TRACE(_logging_, "Constructing variant node '" << record_.get_path() << "'...");
           DT_LOG_TRACE(_logging_, " -> number of parameter variants = " << record_.get_daughters().size());
           the_node = new tree_item(record_);
-          for (variant_record::daughter_dict_type::iterator i
-                 = record_.grab_daughters().begin();
-               i != record_.grab_daughters().end();
-               i++) {
-            DT_LOG_TRACE(_logging_, " -> parameter child = '" << i->first << "'");
-            variant_record * child_param = i->second;
+          // Build the tree node using the ranked parameters:
+          std::vector<std::string> ranked_param_records;
+          record_.build_list_of_ranked_parameter_records(ranked_param_records);
+          for (std::size_t irank = 0; irank < ranked_param_records.size(); irank++) {
+            const std::string & param_child_leaf_name = ranked_param_records[irank];
+            variant_record * child_param = record_.grab_daughters().find(param_child_leaf_name)->second;
+            DT_LOG_TRACE(_logging_, " -> parameter child = '" << param_child_leaf_name << "'");
             if (!child_param) {
               continue;
             }
@@ -1056,7 +1112,7 @@ namespace datatools {
 
       bool variant_registry_tree_model::has_registry() const
       {
-        return _registry_ != 0;
+        return _registry_ != nullptr;
       }
 
       variant_registry & variant_registry_tree_model::grab_registry()

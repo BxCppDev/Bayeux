@@ -31,7 +31,7 @@
 #include <datatools/multi_properties.h>
 #include <datatools/ioutils.h>
 #include <datatools/configuration/parameter_model.h>
-#include <datatools/configuration/parameter_physical.h>
+// #include <datatools/configuration/parameter_physical.h>
 
 namespace datatools {
 
@@ -63,7 +63,7 @@ namespace datatools {
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Parameter model '" << get_name() << "' is not initialized!");
       _initialized_ = false;
-      _ranked_parameters_.clear();
+      // _ranked_parameters_.clear();
       _parameters_.clear();
       this->enriched_base::clear();
       _set_default();
@@ -91,31 +91,64 @@ namespace datatools {
       return _documentation_;
     }
 
-    bool variant_model::is_ranked_parameter(const std::string & parameter_name_) const
+    bool variant_model::is_rank_used(int rank_) const
     {
-      if (_ranked_parameters_.find(parameter_name_) != _ranked_parameters_.end()) {
-        return true;
+      if (rank_ >= 0) {
+        for (const auto & parrec : _parameters_) {
+          if (parrec.second.rank == rank_) return true;
+        }
       }
       return false;
     }
 
+    bool variant_model::is_ranked_parameter(const std::string & parameter_name_) const
+    {
+      parameter_dict_type::const_iterator found = _parameters_.find(parameter_name_);
+      DT_THROW_IF(found == _parameters_.end(), std::logic_error,
+                  "No parameter with name '" << parameter_name_ << "'!");
+      return found->second.rank >= 0;
+    }
+
+    void variant_model::build_list_of_ranked_parameters(std::vector<std::string> & ranked_params_) const
+    {
+      ranked_params_.clear();
+      std::map<int, std::string> ranked;
+      std::set<std::string> unranked;
+      for (const auto & parrec : _parameters_) {
+        int rk = parrec.second.rank;
+        if (rk >= 0) {
+          ranked[rk] = parrec.first;
+        } else {
+          unranked.insert(parrec.first);
+        }
+      }
+      ranked_params_.reserve(ranked.size() + unranked.size());
+      for (const auto & rk : ranked) {
+        ranked_params_.push_back(rk.second);
+      }
+      for (const auto & urk : unranked) {
+        ranked_params_.push_back(urk);
+      }
+      return;
+    }
+
     void variant_model::set_parameter_rank(const std::string & parameter_name_, int rank_)
     {
-      DT_THROW_IF(!has_parameter(parameter_name_), std::logic_error,
+      parameter_dict_type::iterator found = _parameters_.find(parameter_name_);
+      DT_THROW_IF(found == _parameters_.end(), std::logic_error,
                   "No parameter with name '" << parameter_name_ << "'!");
-      DT_THROW_IF(rank_ <0, std::domain_error,
+      DT_THROW_IF(rank_ < 0, std::domain_error,
                   "Invalid rank for parameter named '" << parameter_name_ << "'!");
-      _ranked_parameters_[parameter_name_] = rank_;
+      found->second.rank = rank_;
       return;
     }
 
     int variant_model::get_parameter_rank(const std::string & parameter_name_) const
     {
-      ranked_parameter_dict_type::const_iterator found = _ranked_parameters_.find(parameter_name_);
-      if (found != _ranked_parameters_.end()) {
-        return found->second;
-      }
-      return -1;
+      parameter_dict_type::const_iterator found = _parameters_.find(parameter_name_);
+      DT_THROW_IF(found == _parameters_.end(), std::logic_error,
+                  "No parameter with name '" << parameter_name_ << "'!");
+      return found->second.rank;
     }
 
     bool variant_model::has_parameter(const std::string & parameter_name_) const
@@ -139,7 +172,8 @@ namespace datatools {
     void variant_model::add_parameter(const std::string & parameter_name_,
                                       const pm_handle_type & parameter_model_handle_,
                                       const std::string & description_,
-                                      const std::string & occurrence_def_)
+                                      const std::string & occurrence_def_,
+                                      int rank_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Configuration variant model '" << get_name() << "' is locked !");
@@ -153,13 +187,20 @@ namespace datatools {
       DT_THROW_IF(found_parameter != _parameters_.end(), std::logic_error,
                   "Configuration variant model '" << get_name() << "' "
                   << "already has a parameter named '" << parameter_name_ << "' !");
+      DT_THROW_IF(is_rank_used(rank_), std::logic_error,
+                  "Configuration variant model '" << get_name() << "' "
+                  << "already has a parameter with rank [" << rank_ << "]!");
       {
-        parameter_physical dummy;
-        _parameters_[parameter_name_] = dummy;
+        parameter_record dummy;
+        _parameters_.insert(std::pair<std::string, parameter_record>(parameter_name_, dummy));
       }
-      parameter_physical & pp = _parameters_.find(parameter_name_)->second;
-      pp.set(parameter_name_, description_, parameter_model_handle_);
-      pp.install_occurrence(occurrence_def_);
+      parameter_record & pp = _parameters_.find(parameter_name_)->second;
+      pp.description = description_;
+      pp.physical.set(parameter_name_, pp.description, parameter_model_handle_);
+      pp.physical.install_occurrence(occurrence_def_);
+      if (rank_ >= 0) {
+        pp.rank = rank_;
+      }
       return;
     }
 
@@ -171,7 +212,7 @@ namespace datatools {
                   std::logic_error,
                   "Variant model '" << get_name() << "' has no parameter named '"
                   << parameter_name_ << "' !");
-      return found_parameter->second.get_terse_description();
+      return found_parameter->second.description;
     }
 
     const parameter_model &
@@ -182,7 +223,7 @@ namespace datatools {
                   std::logic_error,
                   "Variant model '" << get_name() << "' has no parameter named '"
                   << parameter_name_ << "' !");
-      return found_parameter->second.get_model();
+      return found_parameter->second.physical.get_model();
     }
 
     pm_handle_type
@@ -192,7 +233,7 @@ namespace datatools {
       DT_THROW_IF(found_parameter == _parameters_.end(),
                   std::logic_error, "Variant model '" << get_name() << "' has no parameter named '"
                   << parameter_name_ << "' !");
-      return found_parameter->second.get_model_handle();
+      return found_parameter->second.physical.get_model_handle();
     }
 
     bool variant_model::is_initialized() const
@@ -225,11 +266,14 @@ namespace datatools {
       /* Example with 3 embedded parameters using the same parameter model:
        *
        *  parameters : string[3] = "length" "width" "boxes"
+       *
        *  parameters.length.model       : string = "distance.PM"
        *  parameters.length.description : string = "Length of the plate"
        *  parameters.length.occurence   : string = "single"
+       *
        *  parameters.width.model        : string = "distance.PM"
        *  parameters.width.description  : string = "Width of the plate"
+       *
        *  parameters.boxes.model        : string = "distance.PM"
        *  parameters.boxes.description  : string = "Width of the plate"
        *  parameters.boxes.occurence    : string = "array size=4 start_id=0"
@@ -278,7 +322,10 @@ namespace datatools {
           DT_THROW_IF (par_rank < 0, std::logic_error, "Invalid rank for parameter '" << par_name << "'!");
           DT_THROW_IF (ranks.count(par_rank) > 0, std::logic_error, "Rank '" << par_rank << "' for parameter '" << par_name << "' is already used!");
 
-          add_parameter(par_name, par_item.get_parameter_handle(), par_desc, par_occ_def);
+          add_parameter(par_name,
+                        par_item.get_parameter_handle(),
+                        par_desc,
+                        par_occ_def);
           if (par_rank >= 0) {
             set_parameter_rank(par_name, par_rank);
           }
@@ -288,11 +335,6 @@ namespace datatools {
 
       _initialized_ = true;
       return;
-    }
-
-    const variant_model::ranked_parameter_dict_type & variant_model::get_ranked_parameters() const
-    {
-      return _ranked_parameters_;
     }
 
     const variant_model::parameter_dict_type & variant_model::get_parameters() const
@@ -337,9 +379,12 @@ namespace datatools {
           out_ << i_tree_dumpable::tag;
           indent_2 << i_tree_dumpable::skip_tag;
         }
-        out_ << "Parameter '" << i->first << "' (model '" << i->second.get_model().get_name() << "')";
-        if (!i->second.has_terse_description()) {
-          out_ << " : " << i->second.get_terse_description();
+        out_ << "Parameter '" << i->first << "' (model '" << i->second.physical.get_model().get_name() << "')";
+        if (!i->second.description.empty()) {
+          out_ << " : " << i->second.description;
+        }
+        if (!i->second.rank >= 0) {
+          out_ << " [rank=" << i->second.rank << "]";
         }
         out_ << std::endl;
         // const std::string & param_name = i->first;
@@ -408,9 +453,9 @@ namespace datatools {
           out_ << std::endl;
         }
         out_ << indent << "  * Parameter '" << i->first
-             << "' : model '" << i->second.get_model().get_name() << "'";
-        if (!i->second.has_terse_description()) {
-          out_ << " : " << i->second.get_terse_description();
+             << "' : model '" << i->second.physical.get_model().get_name() << "'";
+        if (!i->second.description.empty()) {
+          out_ << " : " << i->second.description;
         }
         out_ << std::endl;
         if (j == _parameters_.end()) {

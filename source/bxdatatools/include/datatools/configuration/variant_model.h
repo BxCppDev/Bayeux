@@ -24,8 +24,6 @@
  *
  *   The description of a configuration variant.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_VARIANT_MODEL_H
@@ -44,6 +42,7 @@
 #include <datatools/types.h>
 #include <datatools/configuration/utils.h>
 #include <datatools/object_configuration_description.h>
+#include <datatools/configuration/parameter_physical.h>
 
 namespace datatools {
 
@@ -64,9 +63,15 @@ namespace datatools {
       /// Check if a name is valid
       virtual bool is_name_valid(const std::string & name_) const;
 
+      /// \brief Parameter record
+      struct parameter_record {
+        parameter_physical physical;
+        std::string        description;
+        int                rank = -1;
+      };
+
       /// Dictionary of parameter physicals
-      typedef std::map<std::string, parameter_physical> parameter_dict_type;
-      typedef std::map<std::string, int> ranked_parameter_dict_type;
+      typedef std::map<std::string, parameter_record> parameter_dict_type;
 
       /// Default constructor
       variant_model();
@@ -90,12 +95,16 @@ namespace datatools {
       void add_parameter(const std::string &    parameter_name_,
                          const pm_handle_type & parameter_model_handle_,
                          const std::string &    description_ = "",
-                         const std::string &    occurence_def_ = "");
+                         const std::string &    occurence_def_ = "",
+                         int rank_ = -1);
 
       /// Remove parameter
       void remove_parameter(const std::string & parameter_name_);
 
-      // Check ranked parameter
+      /// Check if a rank is already used
+      bool is_rank_used(int rank_) const;
+
+      /// Check ranked parameter
       bool is_ranked_parameter(const std::string & parameter_name_) const;
 
       /// Return the rank of a parameter
@@ -103,6 +112,9 @@ namespace datatools {
 
       /// Set the rank of a parameter
       void set_parameter_rank(const std::string & parameter_name_, int rank_);
+
+      /// Build list of ranked parameters
+      void build_list_of_ranked_parameters(std::vector<std::string> &) const;
 
       /// Return a description string associated to a given parameter
       const std::string & get_parameter_description(const std::string & parameter_name_) const;
@@ -119,6 +131,7 @@ namespace datatools {
                              const std::string & indent_ = "",
                              bool inherit_ = false) const;
 
+      /// \brief ReST formating flags
       enum rst_flags {
         PRINT_RST_NO_TITLE = datatools::bit_mask::bit00
       };
@@ -146,9 +159,6 @@ namespace datatools {
       /// Return the dictionary of children parameters
       const parameter_dict_type & get_parameters() const;
 
-      /// Return the dictionary of ranked parameters
-      const ranked_parameter_dict_type & get_ranked_parameters() const;
-
       /// OCD support
       static void init_ocd(datatools::object_configuration_description &);
 
@@ -162,7 +172,6 @@ namespace datatools {
       bool                _initialized_;   //!< Initialization flag
       std::string         _documentation_; //!< Documentation
       parameter_dict_type _parameters_;    //!< Dictionary of children parameters
-      ranked_parameter_dict_type _ranked_parameters_; //!< Ranked dictionary of parameters
 
     };
 

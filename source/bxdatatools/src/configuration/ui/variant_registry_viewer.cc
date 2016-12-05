@@ -72,11 +72,9 @@ namespace datatools {
         _tree_view_ = new QTreeView(this);
         _tree_view_->setDragEnabled(false);
         _tree_view_->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-        _value_delegate_ = 0;
         _value_delegate_ = new parameter_item_delegate(parent_);
         _tree_view_->setItemDelegateForColumn(2, _value_delegate_);
         //_tree_view_->header()->setResizeMode(1, QHeaderView::Stretch); // QHeaderView::ResizeToContents
-
         _expand_only_active_button_ = new QPushButton("Expand only &active", this);
         _expand_all_button_ = new QPushButton("&Expand all", this);
         _collapse_all_button_ = new QPushButton("&Collapse all", this);
@@ -143,6 +141,9 @@ namespace datatools {
         _devel_mode_ = devel_mode_;
         _registry_tree_model_ = &rtm_;
         _registry_tree_model_->set_read_only(true);
+        if (get_registry().has_parent_repository()) {
+          _value_delegate_->set_parent_repository(get_registry().get_parent_repository());
+        }
         _construct();
         return;
       }
@@ -159,6 +160,11 @@ namespace datatools {
         DT_THROW_IF(!has_registry_tree_model(), std::logic_error,
                     "Viewer has no registry model!");
         return *_registry_tree_model_;
+      }
+
+      const datatools::configuration::variant_registry & variant_registry_viewer::get_registry() const
+      {
+        return get_registry_tree_model().get_registry();
       }
 
       void variant_registry_viewer::_construct()
@@ -277,7 +283,8 @@ namespace datatools {
       {
         if (_registry_tree_model_) {
           bool cia = _registry_tree_model_->get_registry().is_accomplished();
-          // std::cerr << "DEVEL: variant_registry_viewer::slot_update_leds: cia=" << cia << "\n";
+          // std::cerr << "DEVEL: variant_registry_viewer::slot_update_leds: "
+          //           << "Registry '" <<  _registry_tree_model_->get_registry().get_name() << "' : cia=" << cia << "\n";
           if (_accomplished_led_) {
             if (cia) {
               _accomplished_led_->set_value(true);

@@ -1,0 +1,174 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of models definitions for the management registry
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#################################
+[name="user.PM" type="parameter"]
+
+#@config Definition of the user parameter model
+
+display_name  : string = "User"
+description   : string = "The user identifier"
+type          : string = "string"
+mutability    : string = "variable"
+variable.mode : string = "enumeration"
+
+#@description List of variants
+variants : string[1] = "if_expert"
+
+variants.if_expert.model       : string = "datatools::basic::is_on.VM"
+variants.if_expert.description : string = "Expert group"
+
+# Supported values:
+string.enumerated.size : integer = 10
+
+string.enumerated_0.value   : string = "Samantha"
+string.enumerated_0.variant : string = "if_expert"
+string.enumerated_0.group   : string = "Venus"
+
+string.enumerated_1.value   : string = "Nadya"
+string.enumerated_1.variant : string = "if_expert"
+string.enumerated_1.group   : string = "Venus"
+
+string.enumerated_2.value   : string = "Roberto"
+string.enumerated_2.variant : string = "if_expert"
+string.enumerated_2.group   : string = "Mars"
+
+string.enumerated_3.value   : string = "Samir"
+string.enumerated_3.group   : string = "Mars"
+
+string.enumerated_4.value   : string = "Mulan"
+string.enumerated_4.group   : string = "Venus"
+string.enumerated_4.default : boolean = true
+
+string.enumerated_5.value   : string = "Muchu"
+string.enumerated_5.group   : string = "Mars"
+
+string.enumerated_6.value   : string = "Haruki"
+string.enumerated_6.group   : string = "Mars"
+
+string.enumerated_7.value   : string = "Vadim"
+string.enumerated_7.group   : string = "Mars"
+
+string.enumerated_8.value   : string = "Alceste"
+string.enumerated_8.group   : string = "Mars"
+
+string.enumerated_9.value   : string = "Bruce"
+string.enumerated_9.group   : string = "Mars"
+
+
+#################################
+[name="role.PM" type="parameter"]
+
+#@config Definition of the role parameter model
+
+display_name  : string = "Role"
+description   : string = "The role identifier"
+type          : string = "string"
+mutability    : string = "variable"
+variable.mode : string = "enumeration"
+
+#@description List of variants
+variants : string[3] = "if_shifter" "if_coordinator" "if_maintainer"
+
+variants.if_shifter.model           : string = "datatools::basic::is_on.VM"
+variants.if_shifter.description     : string = "The shifter case"
+
+variants.if_coordinator.model       : string = "datatools::basic::is_on.VM"
+variants.if_coordinator.description : string = "The coordinator case"
+
+variants.if_maintainer.model        : string = "datatools::basic::is_on.VM"
+variants.if_maintainer.description  : string = "The maintainer case"
+
+# Supported values:
+string.enumerated.size : integer = 3
+
+string.enumerated_0.value   : string  = "shifter"
+string.enumerated_0.variant : string  = "if_shifter"
+string.enumerated_0.default : boolean = true
+
+string.enumerated_1.value   : string  = "coordinator"
+string.enumerated_1.variant : string  = "if_coordinator"
+
+string.enumerated_2.value   : string  = "maintainer"
+string.enumerated_2.variant : string  = "if_maintainer"
+string.enumerated_2.group   : string  = "Expert"
+
+
+###############################################
+[name="experimental_phase.PM" type="parameter"]
+
+#@config Definition of the experimental phase parameter model
+
+display_name  : string = "Phase"
+description   : string = "The experimental phase"
+type          : string = "string"
+mutability    : string = "variable"
+variable.mode : string = "enumeration"
+
+#@description List of variants
+variants : string[3] = "if_devel" "if_commissioning" "if_production"
+
+variants.if_devel.model               : string = "datatools::basic::is_on.VM"
+variants.if_devel.description         : string = "The R&D case"
+
+variants.if_commissioning.model       : string = "datatools::basic::is_on.VM"
+variants.if_commissioning.description : string = "The commissioning case"
+
+variants.if_production.model          : string = "datatools::basic::is_on.VM"
+variants.if_production.description    : string = "The production case"
+
+# Supported values:
+string.enumerated.size : integer = 3
+
+string.enumerated_0.value   : string = "Production"
+string.enumerated_0.variant : string = "if_production"
+string.enumerated_0.default : boolean = true
+
+string.enumerated_1.value   : string = "Commissioning"
+string.enumerated_1.variant : string = "if_commissioning"
+string.enumerated_1.group   : string = "Expert"
+
+string.enumerated_2.value   : string = "Devel"
+string.enumerated_2.variant : string = "if_devel"
+string.enumerated_2.group   : string = "Expert"
+
+
+#####################################
+[name="management.VM" type="variant"]
+
+#@config Definition of the management variant model
+
+#@description Display name
+display_name    : string = "Management variant model"
+
+#@description Short documentation
+description     : string = "The parameters of the management"
+
+#@description List of parameters
+parameters : string[5] = "user" "role" "phase" "my_plugin" "logging"
+
+parameters.user.model        : string = "user.PM"
+parameters.user.description  : string = "User"
+parameters.user.rank         : integer = 0
+
+parameters.role.model        : string = "role.PM"
+parameters.role.description  : string = "User role"
+parameters.role.rank         : integer = 1
+
+parameters.phase.model       : string = "experimental_phase.PM"
+parameters.phase.description : string = "Experimental phase"
+parameters.phase.rank        : integer = 2
+
+parameters.my_plugin.model       : string = "datatools::basic::off_on.PM"
+parameters.my_plugin.description : string = "My plugin activation"
+
+parameters.logging.model       : string = "logging_priority.PM"
+parameters.logging.description : string = "Logging priority threshold"
+
+
+# end of management.def

@@ -1,9 +1,9 @@
 /// \file datatools/configuration/ui/parameter_item_delegate.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-10-06
- * Last modified : 2014-10-06
+ * Last modified : 2016-11-15
  *
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,7 @@
  *
  * Description:
  *
- *   Qt-based parameter item delegate for a tree view.
- *
- * History:
+ *   Qt-based parameter item delegate for a tree view of a variant registry.
  *
  */
 
@@ -59,6 +57,7 @@ namespace datatools {
     // Forward declaration:
     class parameter_model;
     class variant_record;
+    class variant_repository;
 
     namespace ui {
 
@@ -95,12 +94,16 @@ namespace datatools {
 
         void signal_launch_real_dialog(const QModelIndex & index_);
 
+      public:
+
+        datatools::logger::priority logging = datatools::logger::PRIO_FATAL; //!< Logging priority
+
       private:
 
-        const QModelIndex * _index_; //!< The model index of the real parameter tree node
-        QInputDialog  * _real_dialog_; //!< Input dialog used to choose the real value
-        const variant_record * _real_record_;  //!< Handle to the real parameter record
-        const parameter_model * _param_model_; //!< Handle to the parameter model
+        const QModelIndex *     _index_       = nullptr; //!< The model index of the real parameter tree node
+        QInputDialog  *         _real_dialog_ = nullptr; //!< Input dialog used to choose the real value
+        const variant_record *  _real_record_ = nullptr; //!< Handle to the real parameter record
+        const parameter_model * _param_model_ = nullptr; //!< Handle to the associated parameter model
         std::string _unit_label_;   //!< The unit label
         std::string _unit_symbol_;  //!< The unit symbol
         double      _unit_value_;   //!< The unit value
@@ -138,14 +141,18 @@ namespace datatools {
 
         void signal_launch_file_dialog(const QModelIndex & index_);
 
+      public:
+
+        datatools::logger::priority logging = datatools::logger::PRIO_FATAL; //!< Logging priority
+
       private:
 
-        QFileDialog::AcceptMode _accept_mode_; //!< The accept mode
-        const QModelIndex *     _index_;       //!< The model index of the path parameter tree node
-        QFileDialog * _path_dialog_; //!< File dialog used to choose the file path
-        const variant_record * _path_record_; //!< Handle to the path parameter record
-        const parameter_model * _param_model_; //!< Handle to the parameter model
-        QString _path_; //!< File path
+        QFileDialog::AcceptMode _accept_mode_;           //!< The accept mode
+        const QModelIndex *     _index_ = nullptr;       //!< The model index of the path parameter tree node
+        QFileDialog *           _path_dialog_ = nullptr; //!< File dialog used to choose the file path
+        const variant_record *  _path_record_ = nullptr; //!< Handle to the path parameter record
+        const parameter_model * _param_model_ = nullptr; //!< Handle to the parameter model
+        QString                 _path_;                  //!< File path
 
       };
 
@@ -158,10 +165,22 @@ namespace datatools {
       public:
 
         /// Default constructor
-        parameter_item_delegate(QObject *parent = 0);
+        parameter_item_delegate(QObject * parent_ = 0);
 
         /// Desstructor
         virtual ~parameter_item_delegate();
+
+        /// Check if the parent repository is set
+        bool has_parent_repository() const;
+
+        /// Set the parent repository
+        void set_parent_repository(const datatools::configuration::variant_repository &);
+
+        /// Return the parent repository
+        const datatools::configuration::variant_repository & get_parent_repository() const;
+
+        /// Check if dynamically enabled values is allowed
+        bool allowed_dynamically_enabled_values() const;
 
         /// Create editor widget
         virtual QWidget *createEditor(QWidget * parent_,
@@ -171,6 +190,10 @@ namespace datatools {
         /// Set the initial value in the editor at given index
         virtual void setEditorData(QWidget * editor_,
                                    const QModelIndex & index_) const;
+
+        /// Set the initial value in the editor at given index
+        void setEditorData2(QWidget * editor_,
+                            const QModelIndex & index_) const;
 
         // Set the model data
         virtual void setModelData(QWidget * editor_,
@@ -197,11 +220,48 @@ namespace datatools {
 
       private slots:
 
+        QWidget * _create_boolean_editor(QWidget * parent_,
+                                         const QStyleOptionViewItem & option_,
+                                         const QModelIndex & index_,
+                                         const variant_record & var_rec_) const;
+
+        QWidget * _create_integer_editor(QWidget * parent_,
+                                         const QStyleOptionViewItem & option_,
+                                         const QModelIndex & index_,
+                                         const variant_record & var_rec_) const;
+
+        QWidget * _create_real_editor(QWidget * parent_,
+                                      const QStyleOptionViewItem & option_,
+                                      const QModelIndex & index_,
+                                      const variant_record & var_rec_) const;
+
+        QWidget * _create_string_editor(QWidget * parent_,
+                                        const QStyleOptionViewItem & option_,
+                                        const QModelIndex & index_,
+                                        const variant_record & var_rec_) const;
+
+        bool _set_boolean_editor_data(QWidget * editor_,
+                                      const QModelIndex & index_,
+                                      const variant_record & var_rec_) const;
+
+        bool _set_integer_editor_data(QWidget * editor_,
+                                      const QModelIndex & index_,
+                                      const variant_record & var_rec_) const;
+
+        bool _set_real_editor_data(QWidget * editor_,
+                                   const QModelIndex & index_,
+                                   const variant_record & var_rec_) const;
+
+        bool _set_string_editor_data(QWidget * editor_,
+                                     const QModelIndex & index_,
+                                     const variant_record & var_rec_) const;
+
         // void _slot_path_edit_(const QModelIndex & index_);
 
       private:
 
-       datatools::logger::priority  _logging_; //!< Logging priority
+        datatools::logger::priority _logging_ = datatools::logger::PRIO_FATAL; //!< Logging priority
+        const variant_repository *  _parent_repository_ = nullptr; //!< Handle to the parent repository
 
       };
 
@@ -213,10 +273,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_UI_PARAMETER_ITEM_DELEGATE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

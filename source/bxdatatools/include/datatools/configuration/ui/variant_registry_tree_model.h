@@ -1,9 +1,9 @@
 /// \file datatools/configuration/ui/variant_registry_tree_model.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-10-06
- * Last modified : 2014-10-06
+ * Last modified : 2016-11-16
  *
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,7 @@
  *
  * Description:
  *
- *   Qt-based tree model for variant registry.
- *
- * History:
- *
+ *   Qt-based tree model for a variant registry.
  */
 
 #ifndef DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_TREE_MODEL_H
@@ -122,11 +119,17 @@ namespace datatools {
         /// Set the data stored at a given column
         bool setData(int column_, const QVariant & value_);
 
+        /// Unset the data stored at a given column
+        bool unsetData(int column_);
+
         /// Set the parent tree item
         void set_parent(tree_item * parent_);
 
         /// Set the logging priority
         void set_logging(datatools::logger::priority p_);
+
+        /// Return the logging priority
+        datatools::logger::priority get_logging() const;
 
         /// Return the mutable list of children
         QList<tree_item *> & grab_children();
@@ -143,7 +146,7 @@ namespace datatools {
       private:
 
         datatools::logger::priority _logging_;  //!< Logging priority
-        variant_record *            _record_;   //!< handled variant record
+        variant_record *            _record_;   //!< Handled variant record
         tree_item *                 _parent_;   //!< Parent node/item
         QList<tree_item *>          _children_; //!< Collection of children nodes/items
 
@@ -205,6 +208,10 @@ namespace datatools {
 
         /// Set the value of the data associated to a given model index and role
         bool setData(const QModelIndex & index_, const QVariant & value_, int role_ = Qt::EditRole);
+
+        /// Unset the value of the data associated to a given model index and role
+        bool unsetData(const QModelIndex & index_, int role_ = Qt::EditRole);
+
 
         /// Return the value of the header data associated to a given role
         QVariant headerData(int section_,
@@ -313,10 +320,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_UI_VARIANT_REGISTRY_TREE_MODEL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -9,14 +9,27 @@
 ################################################
 [name="radioactive.isotope.PM" type="parameter"]
 display_name    : string = "Radioisotope"
-description     : string = "The radioisotope contaminating a material"
+description     : string = "The radioisotope"
 type            : string = "string"
 mutability      : string = "variable"
 variable.mode   : string = "enumeration"
-string.enumerated.size : integer = 3
+string.enumerated.size : integer = 5
+
 string.enumerated_0.value : string = "Bi214"
+string.enumerated_0.group : string = "Background"
+
 string.enumerated_1.value : string = "K40"
+string.enumerated_1.group : string = "Background"
+
 string.enumerated_2.value : string = "Tl208"
+string.enumerated_2.group : string = "Background"
+
+string.enumerated_3.value : string = "Bi2107"
+string.enumerated_3.group : string = "Calibration"
+
+string.enumerated_4.value : string = "Sr90"
+string.enumerated_4.group : string = "Calibration"
+
 string.default  : string = "Bi214"
 
 
@@ -36,8 +49,8 @@ real.default    : real   = 1 mBq/kg
 
 #########################################
 [name="if_radioactive.VM" type="variant"]
-display_name    : string = "Contamination"
-description     : string = "The parameters of some material contamination"
+display_name    : string = "Radioactivity characteristics"
+description     : string = "The characteristics of the material radioactivity"
 parameters : string[2] = "isotope" "mass_activity"
 parameters.isotope.model             : string = "radioactive.isotope.PM"
 parameters.isotope.description       : string = "The radioactive isotope"
@@ -69,13 +82,23 @@ real.unit_label : string = "length"
 real.preferred_unit : string = "cm"
 real.precision  : real   = 0.1 mm
 variable.mode   : string = "enumeration"
-real.enumerated.size    : integer = 5
-real.enumerated_0.value : real =  1.5 mm
-real.enumerated_1.value : real =  5.0 mm
-real.enumerated_2.value : real =  2.0 cm
-real.enumerated_3.value : real =  5.0 cm
-real.enumerated_4.value : real = 10.0 cm
-real.default            : real =  2.0 cm
+
+# Supported values:
+real.enumerated.size : integer = 5
+
+real.enumerated_0.value   : real   =  1.5 mm
+real.enumerated_0.group   : string =  "Thin"
+
+real.enumerated_1.value   : real   =  5.0 mm
+real.enumerated_1.group   : string =  "Thin"
+
+real.enumerated_2.value   : real   =  2.0 cm
+real.enumerated_2.default : boolean =  true
+
+real.enumerated_3.value   : real   =  5.0 cm
+
+real.enumerated_4.value   : real   = 10.0 cm
+real.enumerated_4.group   : string =  "Thick"
 
 
 #########################################
@@ -129,10 +152,16 @@ type            : string = "string"
 mutability      : string = "variable"
 variable.mode   : string = "enumeration"
 string.enumerated.size : integer = 3
-string.default  : string = "Silicium"
+
 string.enumerated_0.value : string = "Silicium"
+string.enumerated_0.group : string = "Expensive"
+
 string.enumerated_1.value : string = "NaI"
+
 string.enumerated_2.value : string = "Germanium"
+string.enumerated_2.group : string = "Expensive"
+
+string.default  : string = "Silicium"
 
 variants : string[1] = "if_radioactive"
 variants.if_radioactive.model       : string = "if_radioactive.VM"
@@ -170,17 +199,32 @@ boolean.true.variant             : string = "if_detector"
 
 ######################################
 [name="firstname.PM" type="parameter"]
-display_name              : string = "Logging priority"
-description               : string = "The logging priority"
+display_name              : string = "Firstname"
+description               : string = "The firstname"
 type                      : string = "string"
 mutability                : string = "variable"
 variable.mode             : string = "enumeration"
-string.enumerated.size    : integer = 4
+string.enumerated.size    : integer = 5
+
 string.enumerated_0.value : string = "John"
+string.enumerated_0.group : string = "Male"
+
 string.enumerated_1.value : string = "Billy"
+string.enumerated_1.group : string = "Male"
+
 string.enumerated_2.value : string = "Mickael"
+string.enumerated_2.group : string = "Male"
+
 string.enumerated_3.value : string = "Betty"
+string.enumerated_3.group : string = "Female"
+
+string.enumerated_4.value : string = "Nelly"
+string.enumerated_4.group : string = "Female"
+
 string.default            : string = "John"
+
+variants : string[1] = "if_betty"
+variants.if_betty.model : string = "datatools::basic::is_on.VM"
 
 
 ###################################
@@ -225,9 +269,9 @@ integer.enumerated.size    : integer = 5
 integer.enumerated_0.value : integer = 1
 integer.enumerated_1.value : integer = 2
 integer.enumerated_2.value : integer = 4
+integer.enumerated_2.default : boolean = true
 integer.enumerated_3.value : integer = 8
 integer.enumerated_4.value : integer = 16
-integer.default : integer = 4
 
 
 #########################################

@@ -158,22 +158,22 @@ void test1ter()
   CP.set_real_precision(0.1 * CLHEP::mm);
   CP.set_mutability(datatools::configuration::parameter_model::MUTABILITY_VARIABLE);
   CP.set_variable_mode(datatools::configuration::parameter_model::VARIABLE_MODE_ENUM);
-  CP.add_enumerated_value_real(-5 * CLHEP::m);
-  CP.add_enumerated_value_real(-1 * CLHEP::m);
-  CP.add_enumerated_value_real(-50 * CLHEP::cm);
-  CP.add_enumerated_value_real(-20 * CLHEP::cm);
-  CP.add_enumerated_value_real(-10 * CLHEP::cm);
-  CP.add_enumerated_value_real(-5 * CLHEP::cm);
-  CP.add_enumerated_value_real(-2 * CLHEP::cm);
-  CP.add_enumerated_value_real(-1 * CLHEP::cm);
-  CP.add_enumerated_value_real(+1 * CLHEP::cm);
-  CP.add_enumerated_value_real(+2 * CLHEP::cm, true);
-  CP.add_enumerated_value_real(+5 * CLHEP::cm);
-  CP.add_enumerated_value_real(+10 * CLHEP::cm);
-  CP.add_enumerated_value_real(+20 * CLHEP::cm);
-  CP.add_enumerated_value_real(+50 * CLHEP::cm);
-  CP.add_enumerated_value_real(+1 * CLHEP::m);
-  CP.add_enumerated_value_real(+5 * CLHEP::m);
+  CP.add_enumerated_real_value(-5 * CLHEP::m);
+  CP.add_enumerated_real_value(-1 * CLHEP::m);
+  CP.add_enumerated_real_value(-50 * CLHEP::cm);
+  CP.add_enumerated_real_value(-20 * CLHEP::cm);
+  CP.add_enumerated_real_value(-10 * CLHEP::cm);
+  CP.add_enumerated_real_value(-5 * CLHEP::cm);
+  CP.add_enumerated_real_value(-2 * CLHEP::cm);
+  CP.add_enumerated_real_value(-1 * CLHEP::cm);
+  CP.add_enumerated_real_value(+1 * CLHEP::cm);
+  CP.add_enumerated_real_value(+2 * CLHEP::cm, true);
+  CP.add_enumerated_real_value(+5 * CLHEP::cm);
+  CP.add_enumerated_real_value(+10 * CLHEP::cm);
+  CP.add_enumerated_real_value(+20 * CLHEP::cm);
+  CP.add_enumerated_real_value(+50 * CLHEP::cm);
+  CP.add_enumerated_real_value(+1 * CLHEP::m);
+  CP.add_enumerated_real_value(+5 * CLHEP::m);
 
   CP.add_variant("far_negative",  iCV1.get_variant_handle(), "Variant for large negative Z positions");
   CP.add_variant("near_zero",     iCV2.get_variant_handle(), "Variant for near zero Z positions");
@@ -204,15 +204,16 @@ void test1ter()
   double z = -10 * CLHEP::cm;
   if (CP.is_real_valid(z)) {
     std::clog << "z = " << z / CLHEP::cm << " cm is valid." << std::endl;
-    std::string variant_name;
-    if(CP.find_variant_associated_to_real(z, variant_name)) {
-      std::clog << "z = " << z / CLHEP::cm << " cm is associated to variant '"
-                << variant_name << "'." << std::endl;
-      const datatools::configuration::variant_model & vm = CP.get_variant_model(variant_name);
-      const std::string   & vd = CP.get_variant_description(variant_name);
-      std::clog << "Variant '" << variant_name << "' has model '" << vm.get_name() << "'" << std::endl;
-      std::clog << "  with description : '" << vd << "'" << std::endl;
-
+    std::set<std::string> variant_names;
+    if(CP.find_variants_associated_to_real(z, variant_names)) {
+      for (const auto & variant_name: variant_names) {
+        std::clog << "z = " << z / CLHEP::cm << " cm is associated to variant '"
+                  << variant_name << "'." << std::endl;
+        const datatools::configuration::variant_model & vm = CP.get_variant_model(variant_name);
+        const std::string   & vd = CP.get_variant_description(variant_name);
+        std::clog << "Variant '" << variant_name << "' has model '" << vm.get_name() << "'" << std::endl;
+        std::clog << "  with description : '" << vd << "'" << std::endl;
+      }
     }
   }
   return;
@@ -231,10 +232,10 @@ void test2()
   CP.set_terse_description("The name of a physics experiment at LHC");
   CP.set(datatools::TYPE_STRING,
          datatools::configuration::parameter_model::VARIABLE_MODE_ENUM);
-  CP.add_enumerated_value_string("Atlas", true);
-  CP.add_enumerated_value_string("CMS");
-  CP.add_enumerated_value_string("LHCb");
-  CP.add_enumerated_value_string("Alice");
+  CP.add_enumerated_string_value("Atlas", true);
+  CP.add_enumerated_string_value("CMS");
+  CP.add_enumerated_string_value("LHCb");
+  CP.add_enumerated_string_value("Alice");
   CP.initialize_simple();
   CP.tree_dump(std::clog, "A configuration parameter : ", "");
   CP.print_rst(std::cout, "");

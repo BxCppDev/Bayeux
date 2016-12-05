@@ -1,9 +1,9 @@
 /// \file datatools/configuration/variant_registry.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-09-22
- * Last modified : 2014-09-22
+ * Last modified : 2016-10-31
  *
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +35,13 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 // This project (Bayeux/datatools):
 #include <datatools/configuration/utils.h>
-#include <datatools/command_utils.h>
+// #include <datatools/command_utils.h>
 #include <datatools/enriched_base.h>
+#include <datatools/configuration/variant_dependency_model.h>
 
 namespace datatools {
 
@@ -79,6 +81,24 @@ namespace datatools {
       /// Return a reference to the non-mutable dictionary of records
       const record_dict_type & get_records() const;
 
+      /// Check if the registry is mounted in some parent repository
+      bool is_mounted() const;
+
+      /// Return the mounting name
+      const std::string & get_mounting_name() const;
+
+      /// Check the parent repository
+      bool has_parent_repository() const;
+
+      /// Set the parent repository
+      void set_parent_repository(const variant_repository &, const std::string & mounting_name_);
+
+      /// Reset the parent repository
+      void reset_parent_repository();
+
+      /// Return the handle to the parent repository
+      const variant_repository & get_parent_repository() const;
+
       /// Check initialization
       bool is_initialized() const;
 
@@ -101,11 +121,17 @@ namespace datatools {
       /// Return a reference to a mutable variant record
       variant_record & grab_variant_record(const std::string & record_path_);
 
+      /// Check if a variant is active
+      bool is_active_variant(const std::string & variant_path_) const;
+
       /// Return a reference to a non mutable variant record
       const variant_record & get_variant_record(const std::string & record_path_) const;
 
       /// Check if a parameter record exists
       bool has_parameter_record(const std::string & record_path_) const;
+
+      /// Check if a parameter record group exists
+      bool has_parameter_record_value_group(const std::string & param_group_path_) const;
 
       /// Return a reference to a mutable parameter record
       variant_record & grab_parameter_record(const std::string & record_path_);
@@ -115,6 +141,15 @@ namespace datatools {
 
       /// Return a reference to the non mutable top variant record
       const variant_record & get_top_variant_record() const;
+
+      /// Check if a dependency model is set
+      bool has_dependency_model() const;
+
+      /// Return the dependency model
+      const variant_dependency_model & get_dependency_model() const;
+
+      /// Load local dependency model
+      void load_local_dependency_model(const datatools::properties & ldm_config_);
 
       /// Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -140,6 +175,13 @@ namespace datatools {
       /// Check if all parameters are set
       bool is_accomplished() const;
 
+      /*
+      /// Command to check if the value of a parameter is enabled
+      command::returned_info
+      cmd_is_parameter_value_enabled(const std::string & param_path_,
+                                     const std::string & value_token_,
+                                     bool & enabled_);
+
       /// Command to set the value of a parameter from a string
       command::returned_info
       cmd_set_parameter_value(const std::string & param_path_,
@@ -160,6 +202,13 @@ namespace datatools {
       cmd_has_variant(const std::string & variant_path_,
                       bool & existing_) const;
 
+      /// Check if a parameter exists
+      command::returned_info
+      cmd_has_parameter(const std::string & parameter_path_,
+                        bool & existing_) const;
+
+      */
+
     protected:
 
       void _build_parameter_records_from_variant(const variant_model & varmod_,
@@ -170,9 +219,12 @@ namespace datatools {
 
     private:
 
-      bool             _initialized_;      //!< Initialization flag
-      std::string      _top_variant_name_; //!< The name of the top variant used at initialization stage
-      record_dict_type _records_;          //!< Dictionary of configuration variant records
+      bool             _initialized_ = false; //!< Initialization flag
+      std::string      _top_variant_name_;    //!< The name of the top variant used at initialization stage
+      record_dict_type _records_;             //!< Dictionary of configuration variant records
+      const variant_repository * _parent_repository_ = nullptr;     //!< Handle to the parent repository
+      std::string      _mounting_name_; //!< Mounting name of the registry
+      std::unique_ptr<variant_dependency_model> _dependency_model_; //!< Model of dependencies
 
     };
 
@@ -182,10 +234,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_REGISTRY_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

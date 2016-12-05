@@ -67,10 +67,10 @@ void test2()
     SNSM_CP.set_type(datatools::TYPE_STRING);
     SNSM_CP.set_terse_description("Material of a source foil");
     SNSM_CP.set_variable_mode(datatools::configuration::parameter_model::VARIABLE_MODE_ENUM);
-    SNSM_CP.add_enumerated_value_string("selenium_composite", true);
-    SNSM_CP.add_enumerated_value_string("selenium_metallic");
-    SNSM_CP.add_enumerated_value_string("neodynium_metallic");
-    SNSM_CP.add_enumerated_value_string("calcium_composite");
+    SNSM_CP.add_enumerated_string_value("selenium_composite", true);
+    SNSM_CP.add_enumerated_string_value("selenium_metallic");
+    SNSM_CP.add_enumerated_string_value("neodynium_metallic");
+    SNSM_CP.add_enumerated_string_value("calcium_composite");
     SNSM_CP.grab_auxiliaries().store("group", "geometry");
     SNSM_CP.initialize_simple();
   }
@@ -125,10 +125,10 @@ void test2()
     SNVV_CP.add_variant("view_3d", vVisu3d.get_variant_handle());
     SNVV_CP.add_variant("view_2d", vVisu2d.get_variant_handle());
 
-    SNVV_CP.add_enumerated_value_string("3d", true);
-    SNVV_CP.add_enumerated_value_string("xy");
-    SNVV_CP.add_enumerated_value_string("yz");
-    SNVV_CP.add_enumerated_value_string("xz");
+    SNVV_CP.add_enumerated_string_value("3d", true);
+    SNVV_CP.add_enumerated_string_value("xy");
+    SNVV_CP.add_enumerated_string_value("yz");
+    SNVV_CP.add_enumerated_string_value("xz");
 
     SNVV_CP.associate_variant_to_string("3d", "view_3d");
     SNVV_CP.associate_variant_to_string("xy", "view_2d");
@@ -193,9 +193,9 @@ void test3()
       datatools::configuration::item::add_parameter_item(items, "visu.view_mode.PM");
     p1.set(datatools::TYPE_STRING,
            datatools::configuration::parameter_model::VARIABLE_MODE_ENUM);
-    p1.add_enumerated_value_string("3D", true);
-    p1.add_enumerated_value_string("XY");
-    p1.add_enumerated_value_string("XZ");
+    p1.add_enumerated_string_value("3D", true);
+    p1.add_enumerated_string_value("XY");
+    p1.add_enumerated_string_value("XZ");
 
     datatools::configuration::parameter_model & p2 =
       datatools::configuration::item::add_parameter_item(items, "visu.zoom_factor.PM");

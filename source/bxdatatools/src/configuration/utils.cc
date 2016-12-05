@@ -473,9 +473,7 @@ namespace datatools {
                            const std::string & indent_,
                            bool inherit_)
     {
-      std::string indent;
-      if (! indent_.empty()) indent = indent_;
-      if (! title_.empty()) out_ << indent << title_ << std::endl;
+      if (! title_.empty()) out_ << indent_ << title_ << std::endl;
 
       /*
       if (dict_.size() == 0) out_ << "<none>";
@@ -486,9 +484,9 @@ namespace datatools {
            i++) {
         item_dict_type::const_iterator j = i;
         j++;
-        out_ << indent << i_tree_dumpable::inherit_skip_tag(inherit_);
+        out_ << indent_; // << i_tree_dumpable::inherit_skip_tag(inherit_);
         std::ostringstream indent2_ss;
-        indent2_ss << indent << i_tree_dumpable::inherit_skip_tag(inherit_);
+        indent2_ss << indent_; // << i_tree_dumpable::inherit_skip_tag(inherit_);
         if (j == dict_.end()) {
           out_  << i_tree_dumpable::last_tag;
           indent2_ss << i_tree_dumpable::last_skip_tag;

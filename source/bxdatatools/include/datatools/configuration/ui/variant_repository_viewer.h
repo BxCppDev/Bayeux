@@ -49,6 +49,7 @@ class QCheckBox;
 class QPushButton;
 class QComboBox;
 class QTabWidget;
+class QIcon;
 
 // This project:
 #include <datatools/logger.h>
@@ -221,25 +222,27 @@ namespace datatools {
 
       private:
 
-        bool _devel_mode_; //!< Development mode flag
-        datatools::logger::priority _logging_;       //!< Logging priority
-        variant_repository * _repository_;           //!< Handle to a variant repository
-        bool                 _read_only_;            //!< Read-only flag
-        model_dict_type _models_;                    //!< Dictionary of registry tree models
-        QLabel *      _repository_name_title_label_; //!< Label for the title of the repository name
+        bool _devel_mode_;                             //!< Development mode flag
+        datatools::logger::priority _logging_;         //!< Logging priority
+        variant_repository * _repository_;             //!< Handle to a variant repository
+        bool                 _read_only_;              //!< Read-only flag
+        model_dict_type _models_;                      //!< Dictionary of registry tree models
+        QLabel *      _repository_name_title_label_;   //!< Label for the title of the repository name
         QLabel *      _repository_name_display_label_; //!< Display the repository name
-        QLabel *      _repository_org_title_label_; //!< Label for the title of the organization name
-        QLabel *      _repository_org_display_label_; //!< Display the organization name
-        QLabel *      _repository_app_title_label_; //!< Label for the title of the application name
-        QLabel *      _repository_app_display_label_; //!< Display the application name
-        QLabel *      _accomplished_label_;      //!< Label for accomplished status
-        datatools::qt::led * _accomplished_led_; //!< LED for accomplished status
-        QCheckBox *   _read_only_cb_;            //!< Check box for the read-only lock
-        QTabWidget *  _registry_tabs_;           //!< Tabs for registry
+        QLabel *      _repository_org_title_label_;    //!< Label for the title of the organization name
+        QLabel *      _repository_org_display_label_;  //!< Display the organization name
+        QLabel *      _repository_app_title_label_;    //!< Label for the title of the application name
+        QLabel *      _repository_app_display_label_;  //!< Display the application name
+        QLabel *      _accomplished_label_;       //!< Label for accomplished status
+        datatools::qt::led * _accomplished_led_;  //!< LED for accomplished status
+        QCheckBox *   _read_only_cb_;             //!< Check box for the read-only lock
+        QTabWidget *  _registry_tabs_;            //!< Tabs for registry
         std::map<std::string, int> _tab_indexes_; //!< Tab indexes
-        QPushButton * _dump_button_;             //!< Button for dump
-        QLabel *      _logging_label_;           //!< Label for logging
-        QComboBox *   _logging_combo_;           //!< Combo to select the logging prority
+        QPushButton * _dump_button_;              //!< Button for dump
+        QLabel *      _logging_label_;            //!< Label for logging
+        QComboBox *   _logging_combo_;            //!< Combo to select the logging prority
+        QIcon *       _unaccomplished_icon_;      //!< Unaccomplished icon
+        QIcon *       _null_icon_;                //!< Null icon
         boost::scoped_ptr<std::string> _restore_buffer_; //!< Handle to the restore buffer
 
       };

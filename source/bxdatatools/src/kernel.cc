@@ -22,6 +22,7 @@
 // This project:
 #include <datatools/library_info.h>
 #include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/ui/variant_repository_cli.h>
 #include <datatools/configuration/variant_service.h>
 #include <datatools/configuration/io.h>
 #include <datatools/configuration/utils.h>
@@ -915,10 +916,11 @@ namespace datatools {
           DT_LOG_TRACE(_logging_, "vps.registry_key    : '" << vps.registry_key << "'");
           DT_LOG_TRACE(_logging_, "vps.param_key       : '" << vps.param_key << "'");
           DT_LOG_TRACE(_logging_, "vps.param_value_str : '" << vps.param_value_str << "'");
+          configuration::ui::variant_repository_cli vrepCli(*_variant_repository_);
           command::returned_info cri =
-            _variant_repository_->cmd_set_parameter(vps.registry_key,
-                                                    vps.param_key,
-                                                    vps.param_value_str);
+            vrepCli.cmd_set_parameter(vps.registry_key,
+                                      vps.param_key,
+                                      vps.param_value_str);
           DT_THROW_IF(cri.is_failure(),
                       std::logic_error,
                       cri.get_error_message());

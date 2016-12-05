@@ -1,9 +1,9 @@
 /// \file datatools/configuration/variant_record.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-09-22
- * Last modified : 2014-09-22
+ * Last modified : 2016-11-03
  *
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,6 @@
  *   A record for a variant parameter or variant in a registry of
  *   configuration variants and associated parameters.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_VARIANT_RECORD_H
@@ -43,10 +41,13 @@
 #include <datatools/enriched_base.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
+#include <datatools/logger.h>
 
 namespace datatools {
 
   namespace configuration {
+
+    class variant_registry;
 
     /// \brief Registry record
     class variant_record : public enriched_base
@@ -65,6 +66,12 @@ namespace datatools {
       /// Destructor
       virtual ~variant_record();
 
+      /// Return the logging priority threshold
+      datatools::logger::priority get_logging() const;
+
+      /// Set the logging priority threshold
+      void set_logging(const datatools::logger::priority);
+
       /// Check if the record is valid
       bool is_valid() const;
 
@@ -80,6 +87,24 @@ namespace datatools {
       /// Return the leaf name
       std::string get_leaf_name() const;
 
+      /// Check if the parent registry handle is set
+      bool has_parent_registry() const;
+
+      /// Set the parent registry handle
+      void set_parent_registry(const variant_registry & rep_);
+
+      /// Return the parent registry handle
+      const variant_registry & get_parent_registry() const;
+
+      /// Check if the parent repository
+      bool has_parent_repository() const;
+
+      /// Return the parent repository
+      const variant_repository & get_parent_repository() const;
+
+      /// Check if the record is a top variant
+      bool is_top_variant() const;
+
       /// Check if the record has a parent
       bool has_parent() const;
 
@@ -92,11 +117,17 @@ namespace datatools {
       /// Return the parent
       variant_record & grab_parent();
 
+      /// Check if the variant record has daughter records
+      bool has_daughters() const;
+
       /// Return the dictionary of daughter records
       daughter_dict_type & grab_daughters();
 
       /// Return the dictionary of daughter records
       const daughter_dict_type & get_daughters() const;
+
+      /// Return a daughter record given its name
+      const variant_record & get_daughter(const std::string &) const;
 
       /// Check if the record is associated to a parameter model
       bool has_parameter_model() const;
@@ -137,20 +168,41 @@ namespace datatools {
       /// Check if a parameter value is set to default
       bool default_value_is_set() const;
 
+      /// Check if a parameter is enabled
+      bool check_enabled_parameter() const;
+
+      /// Check if a value is enabled
+      bool check_enabled_value(const parameter_value_type & value_) const;
+
+      /// Check is a group is enabled
+      bool check_enabled_group(const std::string & group_name_) const;
+
       /// Set default value
       command::returned_info set_default_value();
 
       /// Set fixed value
       command::returned_info set_fixed_value();
 
+      /// Validate boolean value
+      bool is_boolean_valid(const bool) const;
+
       /// Set boolean value
       command::returned_info set_boolean_value(bool);
+
+      /// Validate integer value
+      bool is_integer_valid(const int) const;
 
       /// Set integer value
       command::returned_info set_integer_value(int);
 
+      /// Validate real value
+      bool is_real_valid(const double) const;
+
       /// Set real value
       command::returned_info set_real_value(double);
+
+      /// Validate string value
+      bool is_string_valid(const std::string &) const;
 
       /// Set string value
       command::returned_info set_string_value(const std::string &);
@@ -179,6 +231,9 @@ namespace datatools {
       /// Set the value from a formatted string
       command::returned_info string_to_value(const std::string & format_);
 
+      /// Build the list of ranked parameters
+      void build_list_of_ranked_parameter_records(std::vector<std::string> & ranked_) const;
+
       /// Reset the record
       void reset();
 
@@ -193,20 +248,32 @@ namespace datatools {
       /// Update the status
       void _update();
 
+      /// Fix
+      void _fix();
+
+      /// Fix parameter value
+      void _fix_parameter_value();
+
+      /// Fix dependers
+      void _fix_dependers_on_this_variant();
+
     private:
 
-      std::string             _path_;            //!< Full path of the record
-      const parameter_model * _parameter_model_; //!< Handle to a parameter model
-      const variant_model   * _variant_model_;   //!< Handle to a variant model
-      variant_record *        _parent_;          //!< Parent record
-      daughter_dict_type      _daughters_;       //!< Dictionary of pointers to daughter records
-      bool        _active_;           //!< Active flag of the record
+      datatools::logger::priority _logging_ = datatools::logger::PRIO_FATAL; //! Logging priority threshold
+      std::string              _path_;                      //!< Full path of the record
+      const variant_registry * _parent_registry_ = nullptr; //!< Handle to the parent registry
+      const parameter_model *  _parameter_model_ = nullptr; //!< Handle to a parameter model
+      const variant_model   *  _variant_model_ = nullptr;   //!< Handle to a variant model
+      variant_record *         _parent_ = nullptr;          //!< Parent record
+      daughter_dict_type       _daughters_;                 //!< Dictionary of pointers to daughter records
+      bool                     _active_ = false;            //!< Active flag of the record
+
       // For parameters only:
-      bool        _value_set_;        //!< Value set flag
-      bool        _boolean_value_;    //!< Current boolean parameter value
-      int32_t     _integer_value_;    //!< Current integer parameter value
-      double      _real_value_;       //!< Current real parameter value
-      std::string _string_value_;     //!< Current string parameter value
+      bool        _value_set_ = false; //!< Value set flag
+      bool        _boolean_value_;     //!< Current boolean parameter value
+      int32_t     _integer_value_;     //!< Current integer parameter value
+      double      _real_value_;        //!< Current real parameter value
+      std::string _string_value_;      //!< Current string parameter value
 
     };
 
@@ -216,10 +283,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_RECORD_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

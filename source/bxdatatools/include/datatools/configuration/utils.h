@@ -35,6 +35,9 @@
 #include <string>
 #include <map>
 
+// Third party:
+#include <boost/variant.hpp>
+
 // This project (Bayeux/datatools):
 #include <datatools/handle.h>
 #include <datatools/properties.h>
@@ -257,6 +260,8 @@ namespace datatools {
       bool operator()(const std::string & vs1_, const std::string & vs2_) const;
       variant_repository * _repository_;
     };
+
+    typedef boost::variant<bool, int, double, std::string> parameter_value_type;
 
   }  // end of namespace configuration
 

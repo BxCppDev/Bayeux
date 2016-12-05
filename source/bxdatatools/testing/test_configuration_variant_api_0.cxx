@@ -4,6 +4,8 @@
 #include <datatools/configuration/variant_registry_manager.h>
 #include <datatools/configuration/variant_registry.h>
 #include <datatools/configuration/variant_repository.h>
+#include <datatools/configuration/ui/variant_registry_cli.h>
+#include <datatools/configuration/ui/variant_repository_cli.h>
 #include <datatools/configuration/io.h>
 
 // Standard library:
@@ -69,12 +71,10 @@ int main(int argc_, char ** argv_)
 
     if (do_test1) test1(debug, do_gui);
 
-  }
-  catch (std::exception & error) {
+  } catch (std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, error.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...){
+  } catch (...){
     DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
@@ -111,13 +111,16 @@ void test0(bool debug_)
   if (debug_) vreg2.tree_dump(std::clog, "Variant registry 2: ");
 
   {
+    // Command line interface tool for a variant registry:
+    datatools::configuration::ui::variant_registry_cli vreg2Cli(vreg2);
+
     datatools::command::returned_info ri =
-      vreg2.cmd_set_parameter_value("has_detector_0", "1");
+      vreg2Cli.cmd_set_parameter_value("has_detector_0", "1");
     ri =
-      vreg2.cmd_set_parameter_value("has_detector_1", "1");
+      vreg2Cli.cmd_set_parameter_value("has_detector_1", "1");
     ri =
-      vreg2.cmd_set_parameter_value("has_detector_1/if_detector/thickness",
-                                    "0.00029 m");
+      vreg2Cli.cmd_set_parameter_value("has_detector_1/if_detector/thickness",
+                                       "0.00029 m");
   }
   datatools::configuration::ascii_io aio;
   std::clog << std::endl << "Dump of the first registry:" << std::endl;
@@ -132,7 +135,7 @@ void test1(bool debug_, bool
 #if DATATOOLS_WITH_QT_GUI == 1
            gui_
 #endif // DATATOOLS_WITH_QT_GUI == 1
-)
+           )
 {
   std::clog << "\nTest 1:\n";
 
@@ -145,7 +148,9 @@ void test1(bool debug_, bool
   mgr.add_property_prefix("visu");
   mgr.add_property_prefix("alarm");
   std::string base_def_file     = "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_base.defs";
+  datatools::fetch_path_with_env(base_def_file);
   std::string geometry_def_file = "${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_geometry.defs";
+  datatools::fetch_path_with_env(geometry_def_file);
   mgr.load(base_def_file);
   mgr.load(geometry_def_file);
   mgr.initialize_simple();
@@ -201,9 +206,12 @@ void test1(bool debug_, bool
   datatools::configuration::variant_registry & active_vreg2 =
     vrep.grab_registry("radioactivity");
 
+  // Command line interface tool for a variant registry:
+  datatools::configuration::ui::variant_registry_cli vregCli(active_vreg);
+
   {
     datatools::command::returned_info ri
-      = active_vreg.cmd_set_parameter_value("logging", "trace");
+      = vregCli.cmd_set_parameter_value("logging", "trace");
     if (ri.is_success()) {
       std::clog << "Command was successful!" << std::endl;
       if (debug_) active_vreg.tree_dump(std::clog, "Variant registry: ");
@@ -215,7 +223,8 @@ void test1(bool debug_, bool
 
   {
     datatools::command::returned_info ri
-      = active_vreg.cmd_set_parameter_value("has_detector_1/if_detector/length","1 mm");
+      = vregCli.cmd_set_parameter_value("has_detector_1/if_detector/length",
+                                        "1 mm");
     if (ri.is_success()) {
       std::clog << "Command was successful!" << std::endl;
       if (debug_) active_vreg.tree_dump(std::clog, "Variant registry: ");
@@ -227,7 +236,7 @@ void test1(bool debug_, bool
 
   {
     datatools::command::returned_info ri
-      = active_vreg.cmd_set_parameter_value("has_detector_1","1");
+      = vregCli.cmd_set_parameter_value("has_detector_1","1");
     if (ri.is_success()) {
       std::clog << "Command was successful!" << std::endl;
       if (debug_) active_vreg.tree_dump(std::clog, "Variant registry: ");
@@ -239,7 +248,7 @@ void test1(bool debug_, bool
 
   {
     datatools::command::returned_info ri
-      = active_vreg.cmd_set_parameter_value("has_detector_1/if_detector/length","1 mm");
+      = vregCli.cmd_set_parameter_value("has_detector_1/if_detector/length","1 mm");
     if (ri.is_success()) {
       std::clog << "Command was successful!" << std::endl;
       if (debug_) active_vreg.tree_dump(std::clog, "Variant registry: ");
@@ -251,7 +260,7 @@ void test1(bool debug_, bool
 
   {
     datatools::command::returned_info ri
-      = active_vreg.cmd_set_parameter_value("has_detector_1/if_detector/length","4 cm");
+      = vregCli.cmd_set_parameter_value("has_detector_1/if_detector/length","4 cm");
     if (ri.is_success()) {
       std::clog << "Command was successful!" << std::endl;
       if (debug_) active_vreg.tree_dump(std::clog, "Variant registry: ");
@@ -263,7 +272,7 @@ void test1(bool debug_, bool
 
   {
     datatools::command::returned_info ri
-      = active_vreg.cmd_set_parameter_value("has_detector_1/if_detector/material", "Germanium");
+      = vregCli.cmd_set_parameter_value("has_detector_1/if_detector/material", "Germanium");
     if (ri.is_success()) {
       std::clog << "Command was successful!" << std::endl;
       if (debug_) active_vreg.tree_dump(std::clog, "Variant registry: ");
@@ -307,12 +316,15 @@ void test1(bool debug_, bool
       std::clog << "---------------------------------------------------------------" << std::endl;
       std::clog << std::endl;
 
+      datatools::configuration::ui::variant_repository_cli kvrepCli(dkvr);
+
+
       // Modify the value of a variant parameter:
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_1/if_detector/length",
-                                 "5.2 cm");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_1/if_detector/length",
+                                     "5.2 cm");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -321,9 +333,9 @@ void test1(bool debug_, bool
       // Modify the value of a variant parameter:
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_1/if_detector/material",
-                                 "Silicium");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_1/if_detector/material",
+                                     "Silicium");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -332,9 +344,9 @@ void test1(bool debug_, bool
       // Modify the value of a variant parameter:
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_1",
-                                 "0");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_1",
+                                     "0");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -343,9 +355,9 @@ void test1(bool debug_, bool
       // Modify the value of a variant parameter:
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_0",
-                                 "1");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_0",
+                                     "1");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -354,9 +366,9 @@ void test1(bool debug_, bool
       // Modify the value of a variant parameter:
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_0/if_detector/material",
-                                 "Betty");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_0/if_detector/material",
+                                     "Betty");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -365,9 +377,9 @@ void test1(bool debug_, bool
       // Modify the value of a variant parameter:
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "firstname",
-                                 "Betty");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "firstname",
+                                     "Betty");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -383,9 +395,9 @@ void test1(bool debug_, bool
       // Modify the value of a variant parameter:
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_0/if_detector/material",
-                                 "Germanium");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_0/if_detector/material",
+                                     "Germanium");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -421,9 +433,77 @@ void test1(bool debug_, bool
           aw.store_repository(std::clog, dkvr);
           std::clog << std::endl;
         } else {
+          std::cerr << "DEVEL: Failed to load the kernel repository!" << std::endl;
+        }
+      }
+
+      {
+        std::ofstream vo("variants2.rep");
+        aw.store_repository(vo, vrep);
+        vo.close();
+        std::clog << std::endl;
+      }
+
+      {
+        std::ifstream vi("variants2.rep");
+        int error = aw.load_repository(vi, vrep);
+        if (error == 0) {
+          vi.close();
+          aw.store_repository(std::clog, vrep);
+          std::clog << std::endl;
+        } else {
           std::cerr << "DEVEL: Failed to load the repository!" << std::endl;
         }
       }
+
+
+      std::clog << std::endl
+                << "NOTICE: Checking export/import variant repository functionalities..." << std::endl;
+      std::string variant_profile_backup;
+      {
+        std::clog << std::endl
+                  << "...backuping  profile..." << std::endl;
+        std::ostringstream vo;
+        aw.store_repository(vo, vrep);
+        variant_profile_backup = vo.str();
+      }
+
+      {
+        vrep.tree_dump(std::clog, "Imported variant repository:");
+        datatools::properties xp;
+        uint32_t xflags = datatools::configuration::variant_repository::exporter::EXPORT_DEBUG;
+        datatools::configuration::variant_repository::exporter x(xp, xflags);
+        x(vrep);
+        xp.tree_dump(std::clog, "Exported variant repository: ");
+        xp.write_configuration("varprofile.conf");
+      }
+
+      {
+        datatools::properties xp;
+        xp.read_configuration("varprofile.conf");
+        xp.tree_dump(std::clog, "Imported variant repository: ");
+        uint32_t iflags = datatools::configuration::variant_repository::importer::IMPORT_DEBUG;
+        datatools::configuration::variant_repository::importer i(xp, iflags);
+        i(vrep);
+        vrep.tree_dump(std::clog, "Imported variant repository:");
+      }
+
+      {
+        std::clog << std::endl
+                  << "...restore profile..." << std::endl;
+        std::string variant_profile_restore;
+        std::ostringstream vo;
+        aw.store_repository(vo, vrep);
+        variant_profile_restore = vo.str();
+        if (variant_profile_restore == variant_profile_backup) {
+          std::clog << "NOTICE: backup vs restore profile match!" << std::endl;
+          std::clog << "Profile:\n" << variant_profile_restore << std::endl;
+        } else {
+          std::cerr << "ERROR: backup vs restore profile don't match!" << std::endl;
+        }
+      }
+
+      std::clog << "NOTICE: Export/import is done." << std::endl;
 
       // {
       //   std::clog << "DEVEL: From file..." << std::endl;
@@ -447,12 +527,14 @@ void test1(bool debug_, bool
       //   }
       // }
 
-      std::clog << std::endl << std::endl;
       // Load a new registry (math):
       dkvr.registration_embedded("${DATATOOLS_TESTING_DIR}/config/test_configuration_variant_registry_manager_3.conf");
-      if (debug_) dkvr.tree_dump(std::clog, "Datatools' kernel variant repository (with 'math'): ");
+      dkvr.tree_dump(std::clog, "Datatools' kernel variant repository (with 'math'): ");
       std::clog << std::endl << std::endl;
       dkvr.lock();
+
+      datatools::configuration::variant_reporting var_report;
+      dkvr.set_reporting(var_report);
 
       {
         // Parse a property file:
@@ -518,9 +600,9 @@ void test1(bool debug_, bool
 
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_0",
-                                 "true");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_0",
+                                     "true");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }
@@ -528,9 +610,9 @@ void test1(bool debug_, bool
 
       {
         datatools::command::returned_info ri =
-          dkvr.cmd_set_parameter("geometry",
-                                 "has_detector_0/if_detector/length",
-                                 "2 cm");
+          kvrepCli.cmd_set_parameter("geometry",
+                                     "has_detector_0/if_detector/length",
+                                     "2 cm");
         if (ri.is_failure()) {
           std::cerr << "ERROR: Command failed: " << ri.get_error_message() << std::endl;
         }

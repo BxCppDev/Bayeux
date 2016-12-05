@@ -354,7 +354,6 @@ namespace datatools {
       {
         out_ << indent_ << datatools::i_tree_dumpable::tag
              << "Configuration items : ";
-
         out_ << std::endl;
         std::ostringstream indent_ss;
         indent_ss << indent_ << datatools::i_tree_dumpable::skip_tag;

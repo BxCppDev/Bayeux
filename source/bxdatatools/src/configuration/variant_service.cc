@@ -18,7 +18,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Falaise.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // - Ourselves:
 #include <datatools/configuration/variant_service.h>
 
@@ -34,6 +33,7 @@
 #include <datatools/properties.h>
 #include <datatools/configuration/io.h>
 #include <datatools/kernel.h>
+#include <datatools/configuration/ui/variant_repository_cli.h>
 
 #if DATATOOLS_WITH_QT_GUI == 1
 // Specific GUI support:
@@ -102,13 +102,13 @@ namespace datatools {
       }
       out_ << std::endl;
 
-      out_ << indent_ << item_tag << "Dependencies for additional registries : ";
-      if (registry_dependencies.size()) {
-        out_ << "[" << registry_dependencies.size() << "]";
-      } else {
-        out_ << "<none>";
-      }
-      out_ << std::endl;
+      // out_ << indent_ << item_tag << "Dependencies for additional registries : ";
+      // if (registry_dependencies.size()) {
+      //   out_ << "[" << registry_dependencies.size() << "]";
+      // } else {
+      //   out_ << "<none>";
+      // }
+      // out_ << std::endl;
 
       out_ << indent_ << item_tag << "Load profile : ";
       if (!profile_load.empty()) {
@@ -220,7 +220,7 @@ namespace datatools {
 
       if (parse_registry_dependencies) {
         easy_init("variant-registry-dependencies",
-                  bpo::value<std::vector<std::string> >(&cfg_.registry_dependencies)->value_name("[dependee]"),
+                  bpo::value<std::vector<std::string> >(&cfg_.registry_dependencies)->value_name("[rule]"),
                   "dependencies for additional variant registries");
       }
 
@@ -490,22 +490,22 @@ namespace datatools {
 
     int variant_service::registry_record::add_dependency(const std::string & variant_dep_rule_)
     {
-      std::string variant_name;
+      std::string registry_name;
       std::string variant_dependency;
       size_t apos = variant_dep_rule_.find('=');
       DT_THROW_IF(apos == std::string::npos, std::logic_error,
                   "Invalid variant dependency rule '" << variant_dep_rule_ << "'!");
       {
-        variant_name = variant_dep_rule_.substr(0, apos);
-        boost::trim(variant_name);
-        if (_name_ != variant_name) {
+        registry_name = variant_dep_rule_.substr(0, apos);
+        boost::trim(registry_name);
+        if (_name_ != registry_name) {
           return 1;
         }
         variant_dependency = variant_dep_rule_.substr(apos + 1);
         boost::trim(variant_dependency);
         DT_THROW_IF(variant_dependency.empty(),
                     std::logic_error,
-                    "Missing variant dependency for registry '" << variant_name << "'!");
+                    "Missing variant dependency for registry '" << registry_name << "'!");
         _dependencies_.push_back(variant_dependency);
       }
       return 0;
@@ -537,7 +537,7 @@ namespace datatools {
     }
 
     const std::vector<std::string> &
-      variant_service::registry_record::get_dependencies() const
+    variant_service::registry_record::get_dependencies() const
     {
       return _dependencies_;
     }
@@ -751,6 +751,7 @@ namespace datatools {
         reg_rec.init_registry(max_rank, reg_rule);
         {
           registry_record & new_reg_rec = _add_registry_record(reg_rec);
+          /*
           for (size_t j = 0; j < _registry_deps_.size(); j++) {
             const std::string & reg_dep_rule = _registry_deps_[j];
             int ret = new_reg_rec.add_dependency(reg_dep_rule);
@@ -758,6 +759,7 @@ namespace datatools {
               DT_LOG_TRACE(_logging_, "Add dependency to registry '" << new_reg_rec.get_name() << "'!");
             }
           }
+          */
         }
       }
 
@@ -772,13 +774,14 @@ namespace datatools {
                                            reg_rec.get_display_name(),
                                            "",
                                            reg_rec.get_rank());
-        // Add registry dependency:
-        for (std::size_t idep = 0;
-             idep < reg_rec.get_dependencies().size();
-             idep++) {
-          const std::string & reg_depend = reg_rec.get_dependencies()[idep];
-          _repository_.add_registry_dependency(reg_rec.get_name(), reg_depend);
-        }
+        // // Add registry dependency:
+        // for (std::size_t idep = 0;
+        //      idep < reg_rec.get_dependencies().size();
+        //      idep++) {
+        //   const std::string & reg_depend = reg_rec.get_dependencies()[idep];
+        //   // 2016-11-02, FM : NOT SUPPORTED ANYMORE
+        //   _repository_.add_registry_dependency(reg_rec.get_name(), reg_depend);
+        // }
       }
 
       if (was_locked) {
@@ -800,6 +803,7 @@ namespace datatools {
       datatools::properties rep_config;
       rep_config.read_configuration(config_filename);
       DT_LOG_TRACE(_logging_, "Initializing application variant repository from '" << config_filename << "'...");
+      _repository_.set_logging_priority(_logging_);
       _repository_.initialize(rep_config);
 
       // Additional registries:
@@ -880,9 +884,10 @@ namespace datatools {
       if (was_locked) {
         _repository_.unlock();
       }
-      cri = _repository_.cmd_set_parameter(vps.registry_key,
-                                           vps.param_key,
-                                           vps.param_value_str);
+      datatools::configuration::ui::variant_repository_cli vrepCli(_repository_);
+      cri = vrepCli.cmd_set_parameter(vps.registry_key,
+                                      vps.param_key,
+                                      vps.param_value_str);
       if (was_locked) {
         _repository_.lock();
       }

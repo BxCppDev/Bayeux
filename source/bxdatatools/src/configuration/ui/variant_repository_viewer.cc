@@ -50,6 +50,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QFileDialog>
+#include <QIcon>
 // #include <QMessageBox>
 
 namespace datatools {
@@ -361,8 +362,6 @@ namespace datatools {
                            this,       SLOT(slot_at_registry_changed(std::string)));
         }
 
-
-
         QObject::connect(this, SIGNAL(sig_read_only_changed(bool)),
                          this, SLOT(slot_update_read_only_cb(bool))
                          );
@@ -379,6 +378,16 @@ namespace datatools {
         main_layout->addLayout(top_layout);
         main_layout->addLayout(top_layout2);
         main_layout->addWidget(_registry_tabs_);
+
+        {
+          _null_icon_ = new QIcon;
+          _unaccomplished_icon_ = new QIcon;
+          std::string icon_filename("@datatools:qt/led/square_red.svg");
+          datatools::fetch_path_with_env(icon_filename);
+          QString s(icon_filename.c_str());
+          QSize sz(14, 14);
+          _unaccomplished_icon_->addFile(s, sz, QIcon::Normal, QIcon::Off);
+        }
 
         slot_update();
 
@@ -426,6 +435,19 @@ namespace datatools {
           //           << (active? "Enable" : "Disable") << " tab at index [" << reg_tab_index << "] for registry '" << the_registry_name << "'!"
           //           << std::endl;
           _registry_tabs_->setTabEnabled(reg_tab_index, active);
+          const variant_registry & vreg = ireg->second.get_registry();
+          if (!vreg.is_accomplished()) {
+            _registry_tabs_->setTabIcon(reg_tab_index, *_unaccomplished_icon_);
+          } else {
+            _registry_tabs_->setTabIcon(reg_tab_index, *_null_icon_);
+          }
+          if (active) {
+            if (_repository_->has_dependency_model()) {
+              QWidget * w = _registry_tabs_->widget(reg_tab_index);
+              variant_registry_viewer * reg_viewer = dynamic_cast<variant_registry_viewer*>(w);
+              reg_viewer->slot_update_leds();
+            }
+          }
         }
         return;
       }
@@ -433,55 +455,35 @@ namespace datatools {
       void variant_repository_viewer::slot_at_registry_data_changed(std::string changed_registry_name_,
                                                                     std::string changed_data_path_)
       {
-        // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
-        //           << "Data '" << changed_data_path_ << "' in registry '" << changed_registry_name_ << "' has changed!"
-        //           << std::endl;
+        DT_LOG_TRACE_ENTERING(_logging_);
+        DT_LOG_TRACE(_logging_,
+                     "Data '" << changed_data_path_ << "' in registry '"
+                     << changed_registry_name_ << "' has changed!");
+
         // Compute consequence on depender registries...
-        for (variant_repository::registry_dict_type::const_iterator ireg = _repository_->get_registries().begin();
+        for (variant_repository::registry_dict_type::const_iterator ireg
+               = _repository_->get_registries().begin();
              ireg != _repository_->get_registries().end();
              ireg++) {
           const std::string & the_registry_name = ireg->first;
           if (the_registry_name == changed_registry_name_) {
+            // Do not process the changed registry itself:
             continue;
           }
           const variant_repository::registry_entry & re = ireg->second;
-          if (!re.has_dependencies()) {
+          const variant_registry & vreg = re.get_registry();
+          if (!vreg.has_dependency_model()) {
+            // No dependency model for this registry:
             continue;
           }
-          const std::list<std::string> & the_registry_dependencies = re.get_dependencies();
-          for (std::list<std::string>::const_iterator idep = the_registry_dependencies.begin();
-               idep != the_registry_dependencies.end();
-               idep++) {
-            const std::string & the_registry_dependency = *idep;
-            int found_colon = the_registry_dependency.find(':');
-            std::string dependee_registry = the_registry_dependency.substr(0, found_colon);
-            std::string local_variant_path = the_registry_dependency.substr(found_colon + 1);
-            if (dependee_registry != changed_registry_name_) {
-              continue;
-            }
-            // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
-            //           << "Registry '" << the_registry_name << "' has some dependency from changed registry '" << changed_registry_name_ << "'!"
-            //           << std::endl;
-            if (boost::starts_with(local_variant_path, changed_data_path_+ "/")) {
-              bool active = _repository_->is_active_registry(the_registry_name);
-              // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
-              //           << "Registry '" << the_registry_name << "' is" << (active? "" : " not") << " active!"
-              //           << std::endl;
-              int reg_tab_index = _tab_indexes_.find(the_registry_name)->second;
-              // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_at_registry_data_changed: "
-              //           << (active? "Enable" : "Disable") << " tab at index [" << reg_tab_index << "] for registry '" << the_registry_name << "'!"
-              //           << std::endl;
-              _registry_tabs_->setTabEnabled(reg_tab_index, active);
-            }
-          }
-
         }
+        DT_LOG_TRACE_EXITING(_logging_);
         return;
       }
 
       void variant_repository_viewer::slot_update_read_only_from_check_state(int check_state_)
       {
-        DT_LOG_TRACE(_logging_, "Entering...");
+        DT_LOG_TRACE_ENTERING(_logging_);
         if (check_state_ == Qt::Checked ) {
           DT_LOG_TRACE(_logging_, "Read-only ON");
           set_read_only(true);
@@ -490,13 +492,13 @@ namespace datatools {
           set_read_only(false);
         }
         DT_LOG_TRACE(_logging_, "Read-only = " << is_read_only());
-        DT_LOG_TRACE(_logging_, "Exiting.");
+        DT_LOG_TRACE_EXITING(_logging_);
         return;
       }
 
       void variant_repository_viewer::slot_update_read_only_cb(bool ro_)
       {
-        DT_LOG_TRACE(_logging_, "Entering...");
+        DT_LOG_TRACE_ENTERING(_logging_);
         if (_read_only_cb_) {
           if (ro_) {
             _read_only_cb_->setCheckState(Qt::Checked);
@@ -504,12 +506,13 @@ namespace datatools {
             _read_only_cb_->setCheckState(Qt::Unchecked);
           }
         }
-        DT_LOG_TRACE(_logging_, "Exiting.");
+        DT_LOG_TRACE_EXITING(_logging_);
         return;
       }
 
       void variant_repository_viewer::slot_at_set_read_only(bool ro_)
       {
+        DT_LOG_TRACE_ENTERING(_logging_);
         for (variant_repository::registry_dict_type::iterator i
                = _repository_->grab_registries().begin();
              i != _repository_->grab_registries().end();
