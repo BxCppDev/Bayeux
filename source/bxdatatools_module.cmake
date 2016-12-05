@@ -138,6 +138,16 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/configuration/variant_registry.h
   ${module_include_dir}/${module_name}/configuration/variant_repository.h
   ${module_include_dir}/${module_name}/configuration/variant_service.h
+  ${module_include_dir}/${module_name}/configuration/variant_dependency_utils.h
+  ${module_include_dir}/${module_name}/configuration/variant_dependency_logic_parsing.h
+  ${module_include_dir}/${module_name}/configuration/variant_dependency_logic_builder.h
+  ${module_include_dir}/${module_name}/configuration/variant_dependency_logic.h
+  ${module_include_dir}/${module_name}/configuration/variant_dependency.h
+  ${module_include_dir}/${module_name}/configuration/variant_dependency_model.h
+  ${module_include_dir}/${module_name}/configuration/variant_object_info.h
+  ${module_include_dir}/${module_name}/configuration/ui/variant_registry_cli.h
+  ${module_include_dir}/${module_name}/configuration/ui/variant_repository_cli.h
+  ${module_include_dir}/${module_name}/configuration/parsers.h
 
   ${module_include_dir}/${module_name}/introspection/data_type.h
   ${module_include_dir}/${module_name}/introspection/unit_support.h
@@ -260,6 +270,14 @@ ${module_source_dir}/configuration/variant_record.cc
 ${module_source_dir}/configuration/variant_registry.cc
 ${module_source_dir}/configuration/variant_repository.cc
 ${module_source_dir}/configuration/variant_service.cc
+${module_source_dir}/configuration/variant_object_info.cc
+${module_source_dir}/configuration/variant_dependency_logic.cc
+${module_source_dir}/configuration/variant_dependency_logic_parsing.cc
+${module_source_dir}/configuration/variant_dependency_logic_builder.cc
+${module_source_dir}/configuration/variant_dependency.cc
+${module_source_dir}/configuration/variant_dependency_model.cc
+${module_source_dir}/configuration/ui/variant_registry_cli.cc
+${module_source_dir}/configuration/ui/variant_repository_cli.cc
 
 ${module_source_dir}/introspection/data_type.cc
 ${module_source_dir}/introspection/unit_support.cc
@@ -420,6 +438,9 @@ ${module_test_dir}/test_configuration_parameter_model.cxx
 ${module_test_dir}/test_configuration_variant_model.cxx
 ${module_test_dir}/test_configuration_variant_api_0.cxx
 ${module_test_dir}/test_configuration_variant_service.cxx
+${module_test_dir}/test_configuration_variant_service_2.cxx
+${module_test_dir}/test_configuration_variant_dependency.cxx
+${module_test_dir}/test_configuration_parsers.cxx
 )
 
 # Catastrophically broken on Mac
@@ -532,10 +553,13 @@ if(BAYEUX_WITH_DEVELOPER_TOOLS)
     ${BAYEUX_BUILD_BINDIR}/bxocd_make_doc @ONLY)
   configure_file(${module_app_dir}/ocd_sort_classnames.py
     ${BAYEUX_BUILD_BINDIR}/bxocd_sort_classnames.py @ONLY)
+  configure_file(${module_app_dir}/extract_table_of_objects
+    ${BAYEUX_BUILD_BINDIR}/bxextract_table_of_objects @ONLY)
 
   install(FILES
     ${BAYEUX_BUILD_BINDIR}/bxocd_make_doc
     ${BAYEUX_BUILD_BINDIR}/bxocd_sort_classnames.py
+    ${BAYEUX_BUILD_BINDIR}/bxextract_table_of_objects
     DESTINATION
     ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS
