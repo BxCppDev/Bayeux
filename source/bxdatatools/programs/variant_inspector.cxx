@@ -152,7 +152,7 @@ int main(int argc_, char * argv_[])
     bpo::options_description optVariant("Variant support");
     uint32_t po_init_flags = 0;
     po_init_flags |= dtc::variant_service::NO_LABEL;
-    po_init_flags |= dtc::variant_service::NO_LOGGING;
+    // po_init_flags |= dtc::variant_service::NO_LOGGING;
     // po_init_flags |= dtc::variant_service::PROFILE_LOAD_DONT_IGNORE_UNKNOWN;
     po_init_flags |= dtc::variant_service::NO_TUI;
     dtc::variant_service::init_options(optVariant,
@@ -219,9 +219,9 @@ int main(int argc_, char * argv_[])
     bool test_config = false;
     bool test_mconfig = false;
 
-    if (params.action.empty()) {
-      params.action = "doc";
-    }
+    // if (params.action.empty()) {
+    //   params.action = "doc";
+    // }
 
     if (params.action == "doc") {
       print_doc = true;
