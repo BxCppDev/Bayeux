@@ -80,7 +80,9 @@ namespace datatools {
 
   void real_range::set_lower(double a_from, range_bound_info_type a_policy)
   {
-    DT_THROW_IF(!datatools::is_valid(a_from), std::logic_error, "Invalid lower bound !");
+    DT_THROW_IF(!datatools::is_valid(a_from),
+                std::logic_error,
+                "Invalid lower bound !");
     DT_THROW_IF(a_policy == range_bound_undefined, std::logic_error, "Invalid lower bound policy !");
     if (a_policy == range_bound_unbounded) {
       // "(,..."
