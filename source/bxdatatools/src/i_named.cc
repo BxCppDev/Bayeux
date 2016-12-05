@@ -5,31 +5,36 @@
 
 namespace datatools {
 
-// static
-const std::string & i_named::constants::anonymous_label()
-{
-  static std::string lbl;
-  if (lbl.empty()) {
-    lbl = "__anonymous__";
-  }
-  return lbl;
-}
-
-bool i_named::has_a_name(const i_named& a_named) {
-  if (const_cast<i_named&>(a_named).get_name().empty()) {
-    return false;
+  // static
+  const std::string & i_named::explicit_anonymous_label()
+  {
+    static const std::string lbl("__anonymous__");
+    return lbl;
   }
 
-  if (const_cast<i_named&>(a_named).get_name()
-      == i_named::constants::anonymous_label()) {
-    return false;
+  // static
+  bool i_named::is_named(const i_named & named_)
+  {
+    std::string name = named_.fetch_name();
+    return !name.empty() && name != explicit_anonymous_label();
   }
-  return true;
-}
 
-bool i_named::is_anonymous(const i_named& a_named) {
-  return const_cast<i_named&>(a_named).get_name()
-    == i_named::constants::anonymous_label();
-}
+  // static
+  bool i_named::is_unnamed(const i_named & named_)
+  {
+    return !is_named(named_);
+  }
+
+  // static
+  bool i_named::is_nameless(const i_named & named_)
+  {
+    return !is_named(named_);
+  }
+
+  // static
+  bool i_named::is_anonymous(const i_named & named_)
+  {
+    return is_nameless(named_) || named_.fetch_name() == explicit_anonymous_label();
+  }
 
 } // end of namespace datatools
