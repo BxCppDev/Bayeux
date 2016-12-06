@@ -71,6 +71,7 @@
 #include <datatools/kernel.h>
 #include <datatools/io_factory.h>
 #include <datatools/configuration/io.h>
+#include <datatools/configuration/variant_service.h>
 // - Bayeux/mygsl:
 #include <mygsl/histogram_pool.h>
 #include <mygsl/histogram_1d.h>
@@ -86,7 +87,10 @@
 #include <genbb_help/primary_event.h>
 // 2015-02-11, FM: Fix bug : add the .ipp header to use the BOOST_CLASS_VERSION macro
 #include <genbb_help/primary_event.ipp>
+#include <genbb_help/version.h>
 #include <genbb_help/resource.h>
+
+namespace dtc = datatools::configuration;
 
 namespace genbb {
 
@@ -96,7 +100,9 @@ namespace genbb {
     inspector_params();
     void reset();
     void dump(std::ostream & = std::clog) const;
+    // Parameters:
     bool debug;                                    //!< Debug flag
+    bool no_splash = false;
     int trace_index;                               //!< Index associated to tracing messages
     bool interactive;                              //!< Interactive flag
     std::vector<std::string> unrecognized_options; //!< Unrecognized options
@@ -113,13 +119,14 @@ namespace genbb {
     int prng_seed;                                 //!< PRNG seed
     int prng_trunc;                                //!< PRNG hack
     std::string prng_tracker;                      //!< PRNG tracker output file
-    double prompt_time_limit; // Prompt time limit (in ns)
+    double prompt_time_limit;                      //!< Prompt time limit (in ns)
     std::vector<std::string> histos_definitions;   //!< Histograms' definition files
     bool prompt;                                   //!< Flag to analyze prompt event
     bool delayed;                                  //!< Flag to analyze delayed event
     std::vector<std::string> histo_groups;         //!< Group of histograms
     std::string title_prefix;                      //!< User title prefix for histograms
     std::string name_suffix;                       //!< User name suffix for histograms
+    dtc::variant_service::config variants;         //!< Variant support
   };
 
   void inspector_params::dump(std::ostream & out_) const
@@ -1269,16 +1276,27 @@ namespace datatools {
   }
 }
 
-void usage (const boost::program_options::options_description &,
-            std::ostream & = std::clog);
+//! Return the application name
+std::string app_name();
+
+//! Print application splash screen
+void app_print_splash(std::ostream & out_);
+
+//! Print application usage (supported options and arguments)
+void app_print_help(const boost::program_options::options_description & opts_,
+                    std::ostream & out_ = std::clog);
+
+// Return kernel initialization flags for this application:
+uint32_t app_kernel_init_flags();
 
 int main (int argc_, char ** argv_)
 {
-  bayeux::initialize(argc_, argv_);
+  bayeux::initialize(argc_, argv_, app_kernel_init_flags());
 
   int error_code = EXIT_SUCCESS;
   genbb::inspector_params params;
   namespace po = boost::program_options;
+  po::options_description optPublic;
   po::options_description opts("Allowed options");
   po::positional_options_description args;
   try {
@@ -1290,37 +1308,46 @@ int main (int argc_, char ** argv_)
        po::value<bool>()
        ->zero_tokens()
        ->default_value(false),
-       "produce help message"
+       "Produce help message"
        )
 
       ("load-dll,l",
        po::value<std::vector<std::string> > (),
-       "load a dynamic library"
+       "Load a dynamic library"
        )
 
       ("dll-config",
        po::value<std::vector<std::string> > (),
-       "load a configuration file for dynamic library loading"
+       "Load a configuration file for dynamic library loading"
+       )
+
+      ("no-splash,S",
+       po::value<bool>(&params.no_splash)
+       ->zero_tokens()
+       ->default_value(false),
+       "Do not print the splash screen.\n"
+       "Example : \n"
+       "  --no-splash "
        )
 
       ("debug,d",
        po::value<bool>(&params.debug)
        ->zero_tokens()
        ->default_value(false),
-       "produce debug logging"
+       "Produce debug logging"
        )
 
       ("interactive,I",
        po::value<bool>(&params.interactive)
        ->zero_tokens()
        ->default_value (false),
-       "run in interactive mode (not implemented)"
+       "Run in interactive mode (not implemented)"
        )
 
       ("number-of-events,n",
        po::value<int>(&params.number_of_events)
        ->default_value (0),
-       "set the number of generated events. \n"
+       "Set the number of generated events. \n"
        "Example :                           \n"
        " --number-of-events 10000             "
        )
@@ -1328,52 +1355,55 @@ int main (int argc_, char ** argv_)
       ("modulo,%",
        po::value<int>(&params.print_modulo)
        ->default_value(100),
-       "set the modulo print period of generated events. \n"
-       "Example :                                        \n"
-       " --modulo 100                                      "
+       "Set the modulo print period of \n"
+       "generated events.              \n"
+       "Example :                      \n"
+       " --modulo 100                    "
        )
 
       ("trace-index,x",
        po::value<int>(&params.trace_index)
        ->default_value (0),
-       "set the trace index. \n"
-       "Example :                           \n"
-       " --trace-index 10000                  "
+       "Set the trace index. \n"
+       "Example :            \n"
+       " --trace-index 10000   "
        )
 
       ("prng-trunc,u",
        po::value<int>(&params.prng_trunc)
        ->default_value (0),
-       "set the trunc index of the random number generator (PRNG). \n"
-       "Example :                           \n"
+       "Set the trunc index of the random \n"
+       "number generator (PRNG).          \n"
+       "Example :                         \n"
        " --prng-trunc 7                     "
        )
 
       ("prng-seed,s",
        po::value<int>(&params.prng_seed)
        ->default_value (0),
-       "set the seed of the random number generator (PRNG). \n"
-       "Example :                                       \n"
-       " --prng-seed 314159                               "
+       "Set the seed of the random number \n"
+       "generator (PRNG).    \n"
+       "Example :            \n"
+       " --prng-seed 314159    "
        )
 
       ("prng-tracker,K",
        po::value<std::string> (&params.prng_tracker),
-       "set the PRNG tracker file. \n"
-       "Example :                                   \n"
+       "Set the PRNG tracker file. \n"
+       "Example :    \n"
        " --prng-tracker \"genbb_inspector_prng.trk\"  "
        )
 
       ("configuration,c",
        po::value<std::string> (&params.configuration),
-       "set the genbb manager configuration file. \n"
+       "Set the genbb manager configuration file. \n"
        "Example :                                 \n"
        " --configuration \"genbb.conf\"             "
        )
 
       ("action,a",
        po::value<std::string> (&params.action),
-       "set the action.         \n"
+       "Set the action.         \n"
        "Examples :              \n"
        " --action \"list\"      \n"
        " --action \"shoot\"     "
@@ -1381,17 +1411,18 @@ int main (int argc_, char ** argv_)
 
       ("list-print-mode",
        po::value<std::string> (&params.list_print_mode),
-       "set the print mode for list action.            \n"
-       "Examples :                                     \n"
-       " --action \"list\" --list-print-mode \"tree\"  \n"
-       " --action \"list\" --list-print-mode \"raw\"     "
+       "Set the print mode for list action.          \n"
+       "Examples :                                   \n"
+       " --action \"list\" --list-print-mode \"tree\"\n"
+       " --action \"list\" --list-print-mode \"raw\" "
        )
 
       ("generator,g",
        po::value<std::string> (&params.generator),
-       "set the particle generator in 'shoot' mode. \n"
-       "Example :                   \n"
-       " --generator \"Bi207\"        "
+       "Set the particle generator in 'shoot'\n"
+       "mode. \n"
+       "Example :              \n"
+       " --generator \"Bi207\"   "
        )
 
       ("histo-def,H",
@@ -1401,7 +1432,7 @@ int main (int argc_, char ** argv_)
 
       ("output-mode,m",
        po::value<std::string> (&params.output_mode),
-       "set the genbb manager output mode.      \n"
+       "Set the genbb manager output mode.      \n"
        "Example :                               \n"
        " --output-mode \"histograms\"           \n"
        "or :                                    \n"
@@ -1419,33 +1450,34 @@ int main (int argc_, char ** argv_)
 
       ("output-bank-max-records,x",
        po::value<int> (&params.output_bank_max_records),
-       "set the maximum records per file in 'bank' output mode.\n"
-       "Example :                                              \n"
-       " --output-bank-max-records 100                           "
+       "Set the maximum records per file \n"
+       "in 'bank' output mode.           \n"
+       "Example :                        \n"
+       " --output-bank-max-records 100     "
        )
 
       ("output-file,o",
        po::value<std::vector<std::string> > (),
-       "set the name of an output filename."
+       "Set the name of an output filename."
        )
 
       ("prompt-time-limit,t",
        po::value<double> (&params.prompt_time_limit),
-       "set the limit on prompt time in ns."
+       "Set the limit on prompt time in ns."
        )
 
       ("prompt,P",
        po::value<bool>(&params.prompt)
        ->zero_tokens()
        ->default_value (true),
-       "analyze prompt particles"
+       "Analyze prompt particles"
        )
 
       ("delayed,D",
        po::value<bool>(&params.delayed)
        ->zero_tokens()
        ->default_value (false),
-       "analyze delayed particles"
+       "Analyze delayed particles"
        )
 
       // ("histo-group,G",
@@ -1455,15 +1487,33 @@ int main (int argc_, char ** argv_)
 
       ("title-prefix,T",
        po::value<std::string>(&params.title_prefix),
-       "set a title prefix for exported histograms"
+       "Set a title prefix for exported histograms"
        )
 
       ("name-suffix,S",
        po::value<std::string>(&params.name_suffix),
-       "set a name suffix for exported histograms"
+       "Set a name suffix for exported histograms"
        )
 
       ; // end of options description
+
+    // Declare options for variant support:
+    po::options_description optVariant("Variant support");
+    uint32_t po_init_flags = 0;
+    po_init_flags |= dtc::variant_service::NO_LABEL;
+    po_init_flags |= dtc::variant_service::NO_LOGGING;
+    // po_init_flags |= dtc::variant_service::PROFILE_LOAD_DONT_IGNORE_UNKNOWN;
+    po_init_flags |= dtc::variant_service::NO_TUI;
+    dtc::variant_service::init_options(optVariant,
+                                       params.variants,
+                                       po_init_flags);
+
+    po::options_description optKernel("Kernel options");
+    datatools::kernel::param_type paramsKernel;
+    datatools::kernel::build_opt_desc(optKernel, paramsKernel, app_kernel_init_flags());
+
+    // Aggregate options:
+    optPublic.add(opts).add(optVariant).add(optKernel);
 
     // Preprocessor for command line arguments:
     unsigned int vpp_flags = 0;
@@ -1486,7 +1536,7 @@ int main (int argc_, char ** argv_)
 
     // Fetch the opts/args :
     if (vm["help"].as<bool>()) {
-      usage(opts, std::cout);
+      app_print_help(optPublic, std::cout);
       return error_code;
     }
 
@@ -1514,20 +1564,40 @@ int main (int argc_, char ** argv_)
       params.histos_definitions = vm["histo-def"].as<std::vector<std::string> > ();
     }
 
+    if (! params.no_splash) {
+      app_print_splash(std::cerr);
+    }
+
+    // Variant service:
+    std::unique_ptr<dtc::variant_service> vserv;
+    if (params.variants.is_active()) {
+      // Create and start the variant service:
+      vserv.reset(new dtc::variant_service);
+      vserv->configure(params.variants);
+      vserv->start();
+    }
+
     if (params.debug) {
       params.dump(std::clog);
     }
-    genbb::inspector GI;
-    GI.initialize(params);
-    GI.run();
-    GI.reset();
 
-  }
-  catch (std::exception & x) {
+    {
+      genbb::inspector GI;
+      GI.initialize(params);
+      GI.run();
+      GI.reset();
+    }
+
+    if (vserv) {
+      // Stop the variant service:
+      vserv->stop();
+      vserv.reset();
+    }
+
+  } catch (std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
@@ -1536,43 +1606,55 @@ int main (int argc_, char ** argv_)
   return error_code;
 }
 
-void usage (const boost::program_options::options_description & options_,
-            std::ostream & out_)
+//! Return the application name
+std::string app_name()
 {
-  const std::string APP_NAME = "bxgenbb_inspector";
-  out_ << "\n " << APP_NAME << " -- Inspector for GENBB primary event generators" << std::endl;
+  return "bxgenbb_inspector";
+}
+
+void app_print_splash(std::ostream & out_)
+{
+  out_ << "                                                   \n"
+       << "\tG E N B B    I N S P E C T O R                   \n"
+       << "\tVersion " << GENBB_HELP_LIB_VERSION << "         \n"
+       << "                                                   \n"
+       << "\tCopyright (C) 2009-2016                          \n"
+       << "\tFrancois Mauger                                  \n"
+       << "                                                   \n";
+  return;
+}
+
+void app_print_help(const boost::program_options::options_description & options_,
+                    std::ostream & out_)
+{
+  out_ << "\n " << app_name() << " -- Inspector for GENBB primary event generators" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
   out_ << std::endl;
-  out_ << "  " << APP_NAME << " [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
+  out_ << "  " << app_name() << " [OPTIONS] [ARGUMENTS] " << std::endl << std::endl;
   out_ << options_ << std::endl;
-  boost::program_options::options_description datatools_kernel_options("Special options for the datatools' kernel") ;
-  datatools::kernel::param_type datatools_kernel_params;
-  datatools::kernel::build_opt_desc(datatools_kernel_options, datatools_kernel_params);
-  out_ << std::endl;
-  out_ << datatools_kernel_options << std::endl;
   out_ << std::endl;
   out_ << "Examples : " << std::endl;
 
   out_ << "" << std::endl;
-  out_ << "  " << APP_NAME << " --help\n";
+  out_ << "  " << app_name() << " --help\n";
   out_ << "" << std::endl;
 
-  out_ << "  " << APP_NAME << " \\\n";
+  out_ << "  " << app_name() << " \\\n";
   out_ << "    --configuration \""
        << "@genbb_help:manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
   out_ << "    --action \"list\"  \n";
   out_ << "" << std::endl;
 
-  out_ << "  " << APP_NAME << " \\\n";
+  out_ << "  " << app_name() << " \\\n";
   out_ << "    --load-dll \"foo\" \\\n";
   out_ << "    --datatools::resource-path \"foo@${FOO_INSTALLATION_DIR}/share/foo-1.0.0/resources\" \\\n";
   out_ << "    --configuration \"@foo:config/event_generation/1.0/manager.conf\" \\\n";
   out_ << "    --action \"list\"  \n";
   out_ << "" << std::endl;
 
-  out_ << "  " << APP_NAME << "  \\\n";
+  out_ << "  " << app_name() << "  \\\n";
   out_ << "    --configuration \""
        << "@genbb_help:manager/config/pro-1.0/manager.conf"
        << "\" \\\n";
@@ -2266,4 +2348,18 @@ namespace genbb {
     return;
   }
 
+}
+
+uint32_t app_kernel_init_flags()
+{
+  uint32_t kernel_init_flags = 0;
+  kernel_init_flags |= datatools::kernel::init_no_help;
+  kernel_init_flags |= datatools::kernel::init_no_splash;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_libinfo;
+  kernel_init_flags |= datatools::kernel::init_no_libinfo_logging;
+  kernel_init_flags |= datatools::kernel::init_no_variant;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_variant;
+  kernel_init_flags |= datatools::kernel::init_no_locale_category;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+  return kernel_init_flags;
 }
