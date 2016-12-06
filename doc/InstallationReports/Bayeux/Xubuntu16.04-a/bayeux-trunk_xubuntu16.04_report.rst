@@ -3,17 +3,17 @@ Bayeux/trunk installation report on (X)Ubuntu 16.04 LTS (64bits)
 ====================================================================
 
 :Author: François Mauger, LPC Caen <mauger@lpccaen.in2p3.fr>
-:Date:   2016-08-25
+:Date:   2016-12-06
 
 In  this  document  we  propose  an  installation  procedure  for  the
 Bayeux_/trunk  library on  top  of CadfaelBrew_ on  Xubuntu
-16.04 LTS (Xenial Xerus) for a system (64-bits).
+16.04 LTS (Xenial Xerus) for a 64-bits system.
 
 Notes:
 
- * Cadfaelbrew_ is only supported  on 64-bits systems. This constrains
- * Two build  systems are supported :  GNU/make and Ninja_, on  top of
-   which CMake is used to build Bayeux_.
+* Cadfaelbrew_ is only supported  on 64-bits systems.
+* Two build  systems are supported :  GNU/make and Ninja_, on  top of
+  which CMake is used to build Bayeux_.
 
 .. contents::
 
@@ -75,9 +75,17 @@ The target system
    aaaZZZ
 ..
 
+Important notice:
+You have to check carefully both environment variables above because it is frequent that some system
+administrators use them to setup by default some third party software. The keyword here is
+*by default* which means something you didn't ask for. Unfortunately, the excessive/improper
+usage of these environs (mostly ``LD_LIBRARY_PATH``) may ends to conflict while building
+Cadfael and/or Bayeux.
+
+
 * Dependencies:
 
-  It may be  useful to install additional system  packages to properly
+  It is be  mandatory (or maybe useful) to install additional system  packages to properly
   build Bayeux and  activate some of its features.  This is documented
   below.
 
@@ -120,7 +128,8 @@ Once you have installed Cadfaelbrew_, you should be able to run a *brew* session
 ..
 
 This opens a  new shell with all environmental  variables activated to
-setup all the software tools managed through Cadfaelbrew_.
+setup all the software  tools managed through Cadfaelbrew_ (utilities,
+compiler(s), Boost, Root, Geant4...).
 
 You can check the location and version of core software utilities:
 
@@ -185,7 +194,7 @@ Qt5
 -------------
 
 Qt5 is used for the Qt-based GUI components implemented in Bayeux (optional component).
-For now we use the system install of Qt5 (5.2.1 on Ubuntu 14.04):
+For now we use the system install of Qt5 (5.5.1 on Ubuntu 16.04):
 
 .. code:: sh
 
@@ -201,8 +210,8 @@ For now we use the system install of Qt5 (5.2.1 on Ubuntu 14.04):
 
 ..
 
-Brew is able to install a recent Qt5 (Qt5.6.0) but this is still broken within Bayeux.
-Please do not use it as long as it is not fixed.
+Brew is able to install a recent Qt5 (Qt5.6.0) but it seems to be broken
+within Bayeux. Please do not use it as long as it is not fixed.
 
 .. .. code:: sh
 
@@ -223,14 +232,14 @@ Links:
 System dependencies
 ---------------------------
 
-Install dependencies:
+Install dependencies and useful utilities:
 
 .. code:: sh
 
    $ sudo apt-get install gnuplot gnuplot-doc gnuplot-mode
    $ sudo apt-get install libreadline-dev readline-common
    $ sudo apt-get install pandoc pandoc-data
-   $ sudo apt-get install python-docutils
+   $ sudo apt-get install python-docutils rst2pdf
 ..
 
 See above for Qt5 components.
@@ -406,6 +415,7 @@ Executable are in:
    $ LANG=C tree -L 1 -F BuildProducts/bin/
    BuildProducts/bin/
    |-- bxdpp_processing*
+   |-- bxextract_table_of_objects*
    |-- bxg4_production*
    |-- bxg4_seeds*
    |-- bxgenbb_inspector*
@@ -426,7 +436,8 @@ Executable are in:
 ..
 
 These  directories  and  files  will be  copied  in  the  installation
-directory (but ``bxtests``).
+directory (but  ``bxtests/`` which contains test  programs usable only
+at build stage).
 
 ..
     .. raw:: latex
@@ -446,8 +457,8 @@ Before to do the final installation, we run the test programs:
            Start   1: datatools-test_reflection_0
      1/326 Test   #1: datatools-test_reflection_0 .......   Passed    0.10 sec
    ...
-	   Start 326: bxbayeux-test_bayeux
-   326/326 Test #326: bxbayeux-test_bayeux ..............   Passed    0.07 sec
+	   Start 343: bxbayeux-test_bayeux
+   343/343 Test #343: bxbayeux-test_bayeux ..............   Passed    0.07 sec
 
    100% tests passed, 0 tests failed out of 326
 
@@ -477,10 +488,11 @@ Browse the installation directory:
 
 .. code:: sh
 
-   $ LANG=C tree -L 3 -F ${FL_DEV_INSTALL_DIR}
+   $ LANG=C tree -L 3 -F ${BX_DEV_INSTALL_DIR}
    /opt/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64
    |-- bin/
    |   |-- bxdpp_processing*
+   |   |-- bxextract_table_of_objects*
    |   |-- bxg4_production*
    |   |-- bxg4_seeds*
    |   |-- bxgenbb_inspector*
@@ -536,7 +548,7 @@ Browse the installation directory:
 Suggestions for a Bash setup (see below)
 ----------------------------------------------------
 
- 1. Define convenient environmental variables:
+ 1. Define convenient environment variables:
 
 .. code:: sh
 
@@ -553,7 +565,7 @@ Suggestions for a Bash setup (see below)
 ..
 
     There is no need to update the ``LD_LIBRARY_PATH`` environment variable because Bayeux
-    uses RPATH. So you **should NOT** use the following:
+    uses RPATH. So you should **NOT** use the following:
 
 .. code:: sh
 
@@ -569,7 +581,7 @@ Suggestions for a Bash setup (see below)
    /opt/sw/Bayeux/Binary/Bayeux-trunk/Install-gcc-cxx11-Linux-x86_64/bin/bxquery
 ..
 
-    Check datatools' OCD tool:
+    Check Bayeux/datatools' OCD tool (Object Configuration Documentation):
 
 .. code:: sh
 
@@ -699,6 +711,8 @@ Then all executable are usable from the Bayeux installation directory:
    ...
 ..
 
+as well as package management utilities (CMake scripts...).
+
 .. raw:: latex
 
    \pagebreak
@@ -717,7 +731,7 @@ Update the source code from the Bayeux/trunk
 
 .. code:: sh
 
-   $ cd ${HOME}/Documents/Software/Bayeux/Source/Falaise-trunk
+   $ cd ${HOME}/Documents/Software/Bayeux/Source/Bayeux-trunk
 
 ..
 
@@ -743,7 +757,7 @@ Update the source code from the Bayeux/trunk
    $ ninja clean
 ..
 
-   and even to completely delete it to rebuild from scratch:
+   and even to completely delete and rebuild it from scratch:
 
 .. code:: sh
 
@@ -762,7 +776,7 @@ Update the source code from the Bayeux/trunk
    $ rm -fr ${BX_DEV_BIN_DIR}/Install-gcc-cxx11-Linux-x86_64
 ..
 
-7. Rebuild, test and install:
+7. Rebuild, test and (re)install:
 
 .. code:: sh
 

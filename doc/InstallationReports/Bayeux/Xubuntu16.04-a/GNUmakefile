@@ -1,7 +1,7 @@
 # -*- mode: make; -*-
 
 bx_report_label=xubuntu16.04
-bx_report_version=1.0
+bx_report_version=2.0
 bx_report_name=bayeux-trunk_$(bx_report_label)_report
 bx_tagged_report_name=bayeux-trunk_$(bx_report_label)_report-$(bx_report_version)
 
