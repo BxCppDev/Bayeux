@@ -47,6 +47,23 @@ namespace genbb {
     else set_logging_priority(datatools::logger::PRIO_WARNING);
   }
 
+  void manager::set_default_generator(const std::string & def_gen_)
+  {
+    DT_THROW_IF (is_initialized(), std::logic_error, "Manager is already initialized !");
+    _default_generator_ = def_gen_;
+    return;
+  }
+
+  bool manager::has_default_generator() const
+  {
+    return !_default_generator_.empty();
+  }
+
+  const std::string & manager::get_default_generator() const
+  {
+    return _default_generator_;
+  }
+
 
   bool manager::is_initialized() const {
     return _initialized_;
@@ -181,17 +198,23 @@ namespace genbb {
     }
 
     if (has_external_prng()) {
-        DT_THROW_IF (! _external_prng_->is_initialized(),
-                     std::logic_error,
-                     "External PRNG is not initialized !");
-      } else {
-        if (config.has_key("seed")) {
-          int seed = config.fetch_integer("seed");
-          set_embedded_prng_seed(seed);
-        }
-
-        _embedded_prng_.initialize("taus2", _embedded_prng_seed_);
+      DT_THROW_IF (! _external_prng_->is_initialized(),
+                   std::logic_error,
+                   "External PRNG is not initialized !");
+    } else {
+      if (config.has_key("seed")) {
+        int seed = config.fetch_integer("seed");
+        set_embedded_prng_seed(seed);
       }
+
+      _embedded_prng_.initialize("taus2", _embedded_prng_seed_);
+    }
+
+    if (config.has_key("generator")) {
+      std::string def_gen = config.fetch_string("generator");
+      DT_THROW_IF(!has(def_gen), std::logic_error, "Default generator '" << def_gen << "' is not known!");
+      set_default_generator(def_gen);
+    }
 
     _initialized_ = true;
     return;
@@ -202,6 +225,7 @@ namespace genbb {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
     DT_THROW_IF (!_initialized_, std::logic_error, "Manager is not initialized !");
 
+    _initialized_ = false;
     size_t count = _particle_generators_.size();
     size_t initial_size = _particle_generators_.size();
     while (_particle_generators_.size() > 0) {
@@ -227,25 +251,25 @@ namespace genbb {
     _preload_ = true;
 
     if (_embedded_prng_.is_initialized()) {
-        _embedded_prng_.reset();
-        _embedded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
-      }
-    _external_prng_ = 0;
+      _embedded_prng_.reset();
+      _embedded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
+    }
+    _external_prng_ = nullptr;
+    _default_generator_.clear();
 
-    _initialized_ = false;
-    DT_LOG_TRACE (get_logging_priority (), "Exiting.");
+     DT_LOG_TRACE (get_logging_priority (), "Exiting.");
     return;
   }
 
 
   bool manager::has_service_manager() const
   {
-    return _service_mgr_ != 0;
+    return _service_mgr_ != nullptr;
   }
 
   void manager::reset_service ()
   {
-    _service_mgr_ = 0;
+    _service_mgr_ = nullptr;
     return;
   }
 
@@ -260,7 +284,7 @@ namespace genbb {
     : _factory_register_("genbb::i_genbb/pg_factory",
                          p >= datatools::logger::PRIO_NOTICE ?
                          i_genbb::factory_register_type::verbose : 0) {
-    _service_mgr_ = 0;
+    _service_mgr_ = nullptr;
     _initialized_ = false;
     set_logging_priority(p);
 
@@ -274,7 +298,7 @@ namespace genbb {
       preload = false;
     }
 
-    _external_prng_ = 0;
+    _external_prng_ = nullptr;
     _embedded_prng_seed_ = mygsl::random_utils::SEED_INVALID;
 
     this->_set_preload_(preload);
@@ -372,8 +396,8 @@ namespace genbb {
   }
 
   void manager::dump_particle_generators(std::ostream& out,
-                                          const std::string& title,
-                                          const std::string& an_indent) const {
+                                         const std::string& title,
+                                         const std::string& an_indent) const {
 
     print_particle_generators(out, title, an_indent, "tree");
     return;
@@ -505,6 +529,15 @@ namespace genbb {
       }
     }
 
+    out << indent << i_tree_dumpable::tag
+        << "Default generator  : ";
+    if (!has_default_generator()) {
+      out << "<none>";
+    } else {
+      out << "'" << get_default_generator() << "'";
+    }
+    out << std::endl;
+
     out << indent << i_tree_dumpable::inherit_tag(inherit)
         << "Initialized    : "
         << this->is_initialized()
@@ -527,8 +560,8 @@ namespace genbb {
   //
 
   void manager::_load_pg(const std::string& name,
-                             const std::string& id,
-                             const datatools::properties& config) {
+                         const std::string& id,
+                         const datatools::properties& config) {
     DT_LOG_TRACE (get_logging_priority (), "Entering...");
     DT_THROW_IF (this->has(name), std::logic_error,
                  "Particle generator '" << name << "' already exists !");
@@ -636,7 +669,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
                                "The manager can provide its own pseudo random number   \n"
                                "generator (PRNG) or accept an external PRNG provided by\n"
                                "the user.                                              \n"
-                              );
+                               );
 
   {
     configuration_property_description & cpd = ocd_.add_property_info();
@@ -720,7 +753,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::manager,ocd_)
                             "because some generators may depend on other ones            \n"
                             "which should thus be defined **before** their               \n"
                             "dependers.                                                  \n"
-                          )
+                            )
       ;
   }
 

@@ -1754,19 +1754,25 @@ namespace genbb {
     }
 
     if (_params_.action == "shoot") {
-      DT_THROW_IF (_params_.generator.empty(), std::logic_error,
-                   "Missing generator name !");
-      std::string effective_generator = _params_.generator;
-      datatools::command::returned_info cri =
-        vpp.preprocess(_params_.generator, effective_generator);
-      DT_THROW_IF(! cri.is_success(),  std::logic_error,
-                  "Failed preprocessing of generator directive '"
-                  << _params_.generator << "' : "
-                  << cri.get_error_message());
+      std::string effective_generator;
+      if (!_params_.generator.empty()) {
+        datatools::command::returned_info cri =
+          vpp.preprocess(_params_.generator, effective_generator);
+        DT_THROW_IF(! cri.is_success(),  std::logic_error,
+                    "Failed preprocessing of generator directive '"
+                    << _params_.generator << "' : "
+                    << cri.get_error_message());
+        // effective_generator = _params_.generator;
+      } else {
+        if (_manager_.has_default_generator()) {
+          effective_generator = _manager_.get_default_generator();
+        }
+      }
       datatools::remove_quotes(effective_generator, '"');
+      DT_THROW_IF(effective_generator.empty(), std::logic_error,
+                  "Missing generator name !");
       DT_THROW_IF (! _manager_.has(effective_generator), std::logic_error,
-                   "Generator named '"
-                   << effective_generator << "' does not exist !");
+                   "Generator named '" << effective_generator << "' does not exist !");
       _generator_ = &_manager_.grab(effective_generator);
 
       if (_params_.output_mode.empty()) {

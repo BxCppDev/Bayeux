@@ -79,9 +79,9 @@ namespace genbb {
 
     bool has_service_manager() const;
 
-    void set_service_manager (datatools::service_manager & service_mgr_);
+    void set_service_manager(datatools::service_manager & service_mgr_);
 
-    void reset_service ();
+    void reset_service();
 
     /// Constructor
     manager(datatools::logger::priority p_ = datatools::logger::PRIO_WARNING, int flags_ = 0);
@@ -96,34 +96,43 @@ namespace genbb {
     void set_debug(bool debug = true);
 
     /// Check the use of some external PRNG
-    bool has_external_prng () const;
+    bool has_external_prng() const;
 
     /// Set the external PRNG
-    void set_external_prng (mygsl::rng &);
+    void set_external_prng(mygsl::rng &);
 
     /// Reset the external PRNG
-    void reset_external_prng ();
+    void reset_external_prng();
 
     /// Return a mutable reference to the external PRNG
-    mygsl::rng & grab_external_prng ();
+    mygsl::rng & grab_external_prng();
 
     /// Return a non-mutable reference to the external PRNG
-    const mygsl::rng & get_external_prng () const;
+    const mygsl::rng & get_external_prng() const;
 
     /// Return a mutable reference to the embedded PRNG
-    mygsl::rng & grab_embedded_prng ();
+    mygsl::rng & grab_embedded_prng();
 
     /// Return a non-mutable reference to the embedded PRNG
-    const mygsl::rng & get_embedded_prng () const;
+    const mygsl::rng & get_embedded_prng() const;
 
     /// Set the seed of the embedded PRNG
     void set_embedded_prng_seed(int seed_);
 
     /// Return a mutable reference to the active PRNG
-    mygsl::rng & grab_prng ();
+    mygsl::rng & grab_prng();
 
     /// Return a non-mutable reference to the active PRNG
-    const mygsl::rng & get_prng () const;
+    const mygsl::rng & get_prng() const;
+
+    /// Check is a default generator is set
+    bool has_default_generator() const;
+
+    /// Set the default generator name
+    void set_default_generator(const std::string &);
+
+    /// Return the default generator name
+    const std::string & get_default_generator() const;
 
     /// Check the initialization flag
     bool is_initialized() const;
@@ -213,6 +222,8 @@ namespace genbb {
 
   protected:
 
+    // Note: move to private ASAP
+
     void _load_pg(const std::string& name,
                   const std::string& id,
                   const datatools::properties& config);
@@ -232,19 +243,21 @@ namespace genbb {
 
   private:
 
-    datatools::service_manager * _service_mgr_;
+    datatools::service_manager * _service_mgr_;     ///< Handle to a service manager
 
-    bool         _initialized_; /// Initialization flag
-    datatools::logger::priority _logging_priority_; /// Logging priority threshold
-    bool         _preload_;     /// Factory preload flag
-    bool         _force_initialization_at_load_; /// Flag for triggering PG initialization at load (rather than first use)
+    bool         _initialized_;                     ///< Initialization flag
+    datatools::logger::priority _logging_priority_; ///< Logging priority threshold
+    bool         _preload_;                         ///< Factory preload flag
+    bool         _force_initialization_at_load_;    ///< Flag for triggering PG initialization at load (rather than first use)
+    std::string   _default_generator_; ///< Default generator
 
-    mygsl::rng * _external_prng_;     /// Handle to an external PRNG (supersedes the embedded)
-    int          _embedded_prng_seed_; /// Embedded PRNG seed
-    mygsl::rng   _embedded_prng_;      /// Embedded PRNG
+    mygsl::rng * _external_prng_;      ///< Handle to an external PRNG (supersedes the embedded)
+    int          _embedded_prng_seed_; ///< Embedded PRNG seed
+    mygsl::rng   _embedded_prng_;      ///< Embedded PRNG
 
-    datatools::factory_register<i_genbb> _factory_register_;    /// Particle generator factory
-    detail::pg_dict_type                 _particle_generators_; /// Dictionary of particle generators
+    datatools::factory_register<i_genbb> _factory_register_;    ///< Particle generator factory
+    detail::pg_dict_type                 _particle_generators_; ///< Dictionary of particle generators
+
   };
 
 

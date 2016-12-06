@@ -1,22 +1,21 @@
-// -*- mode: c++ ; -*-
 // test_manager.cxx
 //
 // Run from the build dir:
 //  $ GENBB_HELP_TESTING_DIR=<Bayeux source dir>/source/bxgenbb_help/testing ./BuildProducts/bin/bxtests/genbb_help-test_manager  -g to_file
 
-//
-
+// Standard Library:
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 
+// Third Party:
 #include <datatools/units.h>
-
 #include <mygsl/rng.h>
 #include <mygsl/histogram.h>
 
+// This Project:
 #include <genbb_help/genbb_help_config.h>
 #include <genbb_help/manager.h>
 #include <genbb_help/primary_event.h>
