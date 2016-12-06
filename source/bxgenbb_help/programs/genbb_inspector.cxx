@@ -101,8 +101,8 @@ namespace genbb {
     void reset();
     void dump(std::ostream & = std::clog) const;
     // Parameters:
-    bool debug;                                    //!< Debug flag
-    bool no_splash = false;
+    bool debug = false;                            //!< Debug flag
+    bool no_splash = false;                        //!< No splash flag
     int trace_index;                               //!< Index associated to tracing messages
     bool interactive;                              //!< Interactive flag
     std::vector<std::string> unrecognized_options; //!< Unrecognized options
@@ -548,7 +548,6 @@ namespace genbb {
   }
 
   /***/
-
 
   double inspector_data::get_electron_cos_theta(int i_) const
   {
