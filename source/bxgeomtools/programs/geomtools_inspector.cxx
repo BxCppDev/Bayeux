@@ -45,11 +45,11 @@ void app_print_splash(std::ostream & out_ = std::clog);
 
 //! Print application usage (supported options and arguments)
 void app_print_help(const boost::program_options::options_description & opts_,
-                std::ostream & out_ = std::clog);
+                    std::ostream & out_ = std::clog);
 
 //! Print application shell usage (supported commands)
 void app_print_shell_help(geomtools::geomtools_driver & gd_,
-                      std::ostream & out_ = std::clog);
+                          std::ostream & out_ = std::clog);
 
 //! Build a list of args/opts from an input string stream
 void app_build_argv(std::istringstream & command_in_, std::vector<std::string> & argv_);
