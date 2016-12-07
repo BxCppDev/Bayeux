@@ -1395,7 +1395,7 @@ namespace mctools {
         _vg_manager_.set_geometry_manager(get_geom_manager());
         _vg_manager_.set_generator_name(_vg_name_);
         if (vertex_generator_config.has_key("manager.config")) {
-          // using an external configuration file:
+          // Using an external configuration file:
           std::string vtx_gtor_prop_filename
             = vertex_generator_config.fetch_string("manager.config");
           datatools::fetch_path_with_env(vtx_gtor_prop_filename);
@@ -1414,11 +1414,18 @@ namespace mctools {
           DT_LOG_DEBUG(_logprio(),"Vertex generator manager : ");
           _vg_manager_.tree_dump(std::clog);
         }
-        DT_THROW_IF(! _vg_manager_.has_generator(_vg_name_),
+        std::string vg_name = _vg_name_;
+        if (vg_name.empty()) {
+          // Search for a default/current generator from the manager:
+          if (_vg_manager_.has_generator_name()) {
+            vg_name = _vg_manager_.get_generator_name();
+          }
+        }
+        DT_THROW_IF(! _vg_manager_.has_generator(vg_name),
                     std::logic_error,
                     "Cannot find vertex generator named '"
-                    + _vg_name_ + "' !");
-        _vertex_generator_ = &_vg_manager_.grab(_vg_name_);
+                    + vg_name + "' !");
+        _vertex_generator_ = &_vg_manager_.grab(vg_name);
       } else {
         DT_LOG_WARNING(_logprio(), "No vertex generator settings.");
       }
@@ -1437,7 +1444,7 @@ namespace mctools {
         _eg_manager_.set_service_manager(grab_service_manager());
       }
       if (primary_generator_config.has_key("manager.config")) {
-        // using an external configuration file:
+        // Using an external configuration file:
         std::string event_gtor_prop_filename
           = primary_generator_config.fetch_string("manager.config");
         datatools::fetch_path_with_env(event_gtor_prop_filename);
@@ -1451,10 +1458,17 @@ namespace mctools {
       DT_THROW_IF(!_eg_manager_.is_initialized(),
                   std::logic_error,
                   "Primary event generator manager is not initialized !");
-      DT_THROW_IF(! _eg_manager_.has(_eg_name_),
+      std::string eg_name = _eg_name_;
+      if (eg_name.empty()) {
+         // Search for a default/current generator from the manager:
+         if (_eg_manager_.has_default_generator()) {
+          eg_name = _eg_manager_.get_default_generator();
+        }
+      }
+      DT_THROW_IF(! _eg_manager_.has(eg_name),
                   std::logic_error,
-                  "Cannot find primary event generator named '" << _eg_name_ << "' !");
-      _event_generator_ = &_eg_manager_.grab(_eg_name_);
+                  "Cannot find primary event generator named '" << eg_name << "' !");
+      _event_generator_ = &_eg_manager_.grab(eg_name);
     }
 
     void manager::_init_detector_construction() {
