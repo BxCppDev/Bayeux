@@ -1,7 +1,7 @@
 # -*- mode: make; -*-
 
 cb_report_label=xubuntu16.04
-cb_report_version=1.0
+cb_report_version=2.0
 cb_report_name=cadfaelbrew_$(cb_report_label)_report
 cb_tagged_report_name=cadfaelbrew_$(cb_report_label)_report-$(cb_report_version)
 

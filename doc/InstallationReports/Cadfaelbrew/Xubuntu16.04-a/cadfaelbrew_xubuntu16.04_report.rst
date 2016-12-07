@@ -3,7 +3,7 @@ Installation of Cadfaelbrew on Xubuntu Linux 16.04 LTS
 ======================================================
 
 :author: F.Mauger
-:date: 2016-08-09
+:date: 2016-12-06
 
 This note reports how I have built and installed Cadfaelbrew
 on my Xubuntu Linux 16.04 LTS (xenial) system.
@@ -223,7 +223,6 @@ Installation
 
 Setup
 ======
-
 
 In Bash (``~/.bashrc``) :
 
