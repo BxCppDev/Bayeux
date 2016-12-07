@@ -26,8 +26,6 @@
  *
  *   Vertex generator factory and manager
  *
- * History:
- *
  */
 
 #ifndef GENVTX_MANAGER_H
