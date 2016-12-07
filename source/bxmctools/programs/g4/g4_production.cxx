@@ -5,7 +5,7 @@
  *
  * Licence :
  *
- * Copyright (C) 2011-2015 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@
 #include <datatools/exception.h>
 #include <datatools/kernel.h>
 #include <datatools/configuration/io.h>
+#include <datatools/configuration/variant_service.h>
 // - Bayeux/mygsl:
 #include <mygsl/random_utils.h>
 // - Bayeux/geomtools:
@@ -89,25 +90,52 @@ struct ui {
 
 };
 
+namespace dtc = datatools::configuration;
+
+/// Return kernel initialization flags for this application
+uint32_t app_kernel_init_flags();
+
 int main(int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-  bayeux::initialize(argc_, argv_);
+  bayeux::initialize(argc_, argv_, app_kernel_init_flags());
   try {
 
     // Configuration parameters for the G4 manager:
     mctools::g4::manager_parameters params;
     params.set_defaults();
+    dtc::variant_service::config    variants_params;
 
     // Shortcut for Boost/program_options namespace :
     namespace po = boost::program_options;
 
     // Variables map:
     po::variables_map vm;
-    po::options_description all_opts;
+    po::options_description optPublic;
+    po::options_description optVariant("Variant support");
 
     try {
+
+      // Declare options for variant support:
+      uint32_t po_init_flags = 0;
+      po_init_flags |= dtc::variant_service::NO_LABEL;
+      po_init_flags |= dtc::variant_service::NO_LOGGING;
+      // po_init_flags |= dtc::variant_service::PROFILE_LOAD_DONT_IGNORE_UNKNOWN;
+      po_init_flags |= dtc::variant_service::NO_TUI;
+      dtc::variant_service::init_options(optVariant,
+                                         variants_params,
+                                         po_init_flags);
+
+      // Describe command line switches :
+      po::options_description opts("Allowed options");
+      ui::build_opts(opts, params);
+
+      // Describe Bayeux/datatools kernel options:
+      po::options_description optKernel("Kernel options");
+      datatools::kernel::param_type kparams;
+      datatools::kernel::build_opt_desc(optKernel, kparams, app_kernel_init_flags());
+
       // Preprocessor for command line arguments:
       unsigned int vpp_flags = 0;
       // vpp_flags |= datatools::configuration::variant_preprocessor::FLAG_TRACE;
@@ -116,29 +144,14 @@ int main(int argc_, char ** argv_)
       std::vector<std::string> preprocessed_arguments;
       vpp.preprocess_args_options(argc_, argv_, preprocessed_arguments);
 
-      // Describe command line switches :
-      po::options_description opts("Allowed options");
-      ui::build_opts(opts, params);
-
-      // Describe Bayeux/datatools kernel options:
-      po::options_description kopts("Bayeux/datatools kernel options");
-      datatools::kernel::param_type kparams;
-      uint32_t kinit_flags = 0;
-      // Inhibit some available switches provides by the API:
-      kinit_flags |= datatools::kernel::init_no_help;
-      kinit_flags |= datatools::kernel::init_no_splash;
-      kinit_flags |= datatools::kernel::init_no_inhibit_libinfo;
-      kinit_flags |= datatools::kernel::init_no_inhibit_variant;
-      kinit_flags |= datatools::kernel::init_no_inhibit_qt_gui;
-      datatools::kernel::build_opt_desc(kopts, kparams, kinit_flags);
-
       // Collect all supported options in one container:
-      all_opts.add(opts);
-      all_opts.add(kopts);
+      optPublic.add(opts);
+      optPublic.add(optVariant);
+      optPublic.add(optKernel);
 
       // Configure the parser:
       po::command_line_parser cl_parser(argc_, argv_);
-      cl_parser.options(all_opts);
+      cl_parser.options(optPublic);
       // cl_parser.positional(args);
       // cl_parser.allow_unregistered();
 
@@ -148,9 +161,8 @@ int main(int argc_, char ** argv_)
       // Fill and notify a variable map:
       po::store(parsed, vm);
       po::notify(vm);
-    }
-    catch (std::exception & po_error) {
-      ui::print_usage(all_opts, std::cerr);
+    } catch (std::exception & po_error) {
+      ui::print_usage(optPublic, std::cerr);
       throw;
     }
 
@@ -185,13 +197,13 @@ int main(int argc_, char ** argv_)
 
     if (vm.count("help")) {
       if (vm["help"].as<bool>()) {
-        ui::print_usage(all_opts, std::cout);
+        ui::print_usage(optPublic, std::cout);
         return(0);
       }
     }
 
     // Fill the configuration data structure from program options:
-    ui::process_opts(vm, all_opts, params);
+    ui::process_opts(vm, optPublic, params);
 
     // DLL loading:
     datatools::library_loader dll_loader(params.dll_loader_config);
@@ -212,6 +224,16 @@ int main(int argc_, char ** argv_)
       DT_THROW_IF (dll_loader.load (dll_name) != EXIT_SUCCESS,
                    std::logic_error,
                    "Loading DLL '" << dll_name << "' failed !");
+    }
+
+    // Variant service:
+    std::unique_ptr<dtc::variant_service> vserv;
+    if (variants_params.is_active()) {
+      // Create and start the variant service:
+      vserv.reset(new dtc::variant_service);
+      vserv->configure(variants_params);
+      vserv->start();
+      // vserv->get_repository().tree_dump(std::cerr, "Repository:");
     }
 
     {
@@ -236,6 +258,12 @@ int main(int argc_, char ** argv_)
 
       DT_LOG_NOTICE(logging, "Simulation manager is terminated.");
     } // Destructor is invoked here.
+
+    if (vserv) {
+      // Stop the variant service:
+      vserv->stop();
+      vserv.reset();
+    }
 
     DT_LOG_TRACE(logging, "The end.");
   } catch (std::exception & x) {
@@ -617,4 +645,18 @@ void ui::print_examples (std::ostream & a_out,
   a_out << std::endl;
 
   return;
+}
+
+uint32_t app_kernel_init_flags()
+{
+  uint32_t kernel_init_flags = 0;
+  kernel_init_flags |= datatools::kernel::init_no_help;
+  kernel_init_flags |= datatools::kernel::init_no_splash;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_libinfo;
+  kernel_init_flags |= datatools::kernel::init_no_libinfo_logging;
+  kernel_init_flags |= datatools::kernel::init_no_variant;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_variant;
+  kernel_init_flags |= datatools::kernel::init_no_locale_category;
+  kernel_init_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+  return kernel_init_flags;
 }
