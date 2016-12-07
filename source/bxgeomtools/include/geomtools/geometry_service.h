@@ -85,7 +85,7 @@ namespace geomtools {
     geomtools::manager * _geom_manager_; //!< Handle to the geometry manager
 
     // Registration :
-    DATATOOLS_SERVICE_REGISTRATION_INTERFACE (geometry_service)
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(geometry_service)
 
   };
 
