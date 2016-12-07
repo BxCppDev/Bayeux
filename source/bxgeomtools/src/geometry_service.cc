@@ -117,13 +117,14 @@ namespace geomtools {
     DT_THROW_IF(! is_initialized(),
                 std::logic_error,
                 "Geometry service '" << get_name() << "' is not initialized ! ");
+    _initialized_ = false;
     if(_geom_manager_ != 0) {
       delete _geom_manager_;
       _geom_manager_ = 0;
     }
-    _initialized_ = false;
     return EXIT_SUCCESS;
   }
+
   void geometry_service::tree_dump(std::ostream & a_out ,
                                    const std::string & a_title,
                                    const std::string & a_indent,
