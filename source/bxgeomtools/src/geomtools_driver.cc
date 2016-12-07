@@ -46,7 +46,7 @@ namespace geomtools {
 
   geomtools_driver_params::geomtools_driver_params()
   {
-    logging = datatools::logger::PRIO_WARNING;
+    logging = datatools::logger::PRIO_ERROR;
     mute = false;
     interactive = true;
     mapping_requested = false;
@@ -63,7 +63,7 @@ namespace geomtools {
 
   void geomtools_driver_params::reset()
   {
-    logging = datatools::logger::PRIO_WARNING;
+    logging = datatools::logger::PRIO_ERROR;
     interactive = true;
     mute = false;
     LL_dlls.clear();
