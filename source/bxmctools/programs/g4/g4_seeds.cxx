@@ -54,7 +54,7 @@
 
 /// \brief Seed generator for the G4 simulation program
 class g4_seed_generator {
- public:
+public:
   /// \brief Parameters for the application
   struct parameters
   {
@@ -77,9 +77,10 @@ class g4_seed_generator {
     std::string base_dir;
     std::string pattern;
     std::string list_file;
+    std::string list_mount_point;
   };
 
- public:
+public:
   /// Default constructor
   g4_seed_generator(const parameters& p);
 
@@ -89,7 +90,7 @@ class g4_seed_generator {
   /// Run
   void run();
 
- private:
+private:
   parameters _params_; ///< Parameters
 };
 
@@ -161,9 +162,11 @@ g4_seed_generator::parameters::parameters()
 void g4_seed_generator::parameters::set_defaults()
 {
   number_of_runs = 1;
-  base_dir       = "./bxg4_seed_set";
+  run_start      = 0;
+  base_dir       = "bxg4_seed_set";
   pattern        = "seeds_%n.conf";
   list_file      = "runs.lis";
+  list_mount_point = "";
 }
 
 void g4_seed_generator::parameters::print_usage(const boost::program_options::options_description & opts_,
@@ -200,9 +203,15 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
      ->value_name("integer"),
      "Set the number of runs for which seeds are generated")
 
+    // ("run-start,s",
+    //  po::value<uint32_t>(&params_.run_start)
+    //  ->default_value(0)
+    //  ->value_name("integer"),
+    //  "Set the number of the first run")
+
     ("base-dir,d",
      po::value<std::string>(&params_.base_dir)
-     ->default_value(".")
+     // ->default_value(".")
      ->value_name("dirname"),
      "Set the base directory where seed file is generated")
 
@@ -216,9 +225,17 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
      po::value<std::string>(&params_.list_file)
      ->default_value("runs.lis")
      ->value_name("name"),
-     "Set the name of the run list file");
-}
+     "Set the name of the run list file")
 
+    // ("mount,m",
+    //  po::value<std::string>(&params_.list_mount_point)
+    //  ->default_value("")
+    //  ->value_name("env"),
+    //  "Set the mount point of the listed seed files.\n"
+    //  "Examples: \"@work\" \"${WORK_DIR}\" \"$WORK_DIR\" \n"
+    //  )
+    ;
+}
 
 g4_seed_generator::g4_seed_generator(const parameters & params_)
 {
@@ -228,12 +245,37 @@ g4_seed_generator::g4_seed_generator(const parameters & params_)
                 "Base directory has a forbidden '%n' directive!");
   }
   {
+    DT_THROW_IF(params_.number_of_runs == 0, std::logic_error,
+                "Invalid null number of runs!");
+  }
+  if (params_.number_of_runs > 1) {
     bool exists = params_.pattern.find("%n") != std::string::npos;
     DT_THROW_IF(!exists, std::logic_error,
                 "Missing '%n' directive in the output file pattern!");
   }
+  if (!params_.list_mount_point.empty()) {
+    const char open = params_.list_mount_point[0];
+    if (open == '@') {
+      std::string name = params_.list_mount_point.substr(1);
+      DT_THROW_IF(!datatools::name_validation(name, datatools::NV_INSTANCE),
+                  std::logic_error,
+                  "Invalid mounting point '" << name << "' for seed files!");
+    } else if (open == '$') {
+      std::string envpath = params_.list_mount_point.substr(1);
+      if (envpath.length() > 2) {
+        if (envpath[0] == '{' && envpath.back() == '}') {
+          envpath = envpath.substr(1, envpath.length() - 2);
+        }
+      }
+      DT_THROW_IF(!datatools::name_validation(envpath, datatools::NV_INSTANCE),
+                  std::logic_error,
+                  "Invalid environment path '" << envpath << "' for seed files!");
+    } else {
+      DT_THROW(std::logic_error,
+               "Invalid list mount point '" << params_.list_mount_point << "' for seed files!");
+    }
+  }
   _params_ = params_;
-
 }
 
 g4_seed_generator::~g4_seed_generator()
@@ -245,10 +287,10 @@ void g4_seed_generator::run()
   // GENERATE
   std::map<uint32_t, std::string> seeds_per_run;
   std::set<std::string> check_signatures;
-  // std::string last;
   std::size_t max_count = 3;
-  for (std::size_t irun {0};
-       irun != _params_.number_of_runs;
+  std::size_t last_run = _params_.run_start + _params_.number_of_runs;
+  for (std::size_t irun {_params_.run_start};
+       irun != last_run;
        irun++) {
     std::size_t count = 0;
     while (true) {
@@ -344,7 +386,13 @@ void g4_seed_generator::run()
 
   if (flist) {
     for (const auto& iseedfile : seedfiles_per_run) {
-      *flist.get() << iseedfile.first << ' ' << iseedfile.second << std::endl;
+      *flist.get() << iseedfile.first << ' ';
+      if (!_params_.list_mount_point.empty()) {
+        *flist.get() << _params_.list_mount_point;
+        if (_params_.list_mount_point[0] == '@') *flist.get() << ':';
+        if (_params_.list_mount_point[0] == '$') *flist.get() << '/';
+      }
+      *flist.get() << iseedfile.second << std::endl;
     }
   }
 
