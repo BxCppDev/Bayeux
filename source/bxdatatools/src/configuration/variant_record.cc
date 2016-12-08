@@ -114,7 +114,7 @@ namespace datatools {
                   DT_LOG_DEBUG(logging, "Fetch depender registry '" << depender_voi.get_registry_name() << "'...");
                   variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
                   DT_LOG_DEBUG(logging, "Fetch depender record '" << depender_voi.get_parameter_local_path() << "'...");
-                  vreg.tree_dump(std::cerr, "Depender's variant registry:", "[debug] ");
+                  // vreg.tree_dump(std::cerr, "Depender's variant registry:", "[debug] ");
                   variant_record & depender_record = vreg.grab_parameter_record(depender_voi.get_parameter_local_path());
                   // Make sure the value of the parameter to which the group is associated is still valid or needs to be
                   // fixed:

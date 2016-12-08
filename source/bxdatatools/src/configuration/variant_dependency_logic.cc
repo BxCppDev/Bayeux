@@ -206,7 +206,7 @@ namespace datatools {
     bool base_dependency_logic::check_active_variant(const variant_object_info & voinfo_) const
     {
       bool checked = false;
-      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "VO info = '" << voinfo_ << "'!");
+      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "VO info = '" << voinfo_ << "'!");
       DT_THROW_IF(!voinfo_.is_variant(), std::logic_error, "Only variant are supported!");
 
       if (_owner_dependency_->has_local_scope()) {
