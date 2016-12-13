@@ -137,7 +137,10 @@ namespace dpp {
     /// Initialize the module without external resource
     virtual void initialize_simple();
 
-    /// Initialize the module using a set of parameters
+    /// Initialize the module with a service manager only
+    virtual void initialize_simple_with_service(datatools::service_manager & a_service_manager);
+
+    /// Initialize the module only using a set of parameters
     virtual void initialize_standalone(const datatools::properties & a_config);
 
     /// Initialize the module using a set of parameters and a service manager
@@ -202,7 +205,7 @@ namespace dpp {
     std::string _description;    //!< The description of the module
     datatools::logger::priority _logging; //!< The logging priority threshold
 
-    bool        _initialized;    //!< The initialization flag
+    bool        _initialized;        //!< The initialization flag
     std::string _last_error_message; //!< Last error message (questionable)
 
     // Factory stuff :

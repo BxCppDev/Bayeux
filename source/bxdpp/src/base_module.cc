@@ -281,6 +281,16 @@ namespace dpp {
     return;
   }
 
+  void base_module::initialize_simple_with_service(datatools::service_manager & a_service_manager)
+  {
+    DT_LOG_DEBUG(_logging, "Entering...");
+    datatools::properties dummy_config;
+    module_handle_dict_type dummy_module_dict;
+    initialize(dummy_config, a_service_manager, dummy_module_dict);
+    DT_LOG_DEBUG(_logging, "Exiting.");
+    return;
+  }
+
   void base_module::initialize_with_service(const datatools::properties & a_config,
                                             datatools::service_manager & a_service_manager)
   {
