@@ -62,12 +62,12 @@ namespace mygsl {
     /// Reset/invalidate the sampling
     virtual void reset() = 0;
 
-    /// Return the index and a classification associated to a value
+    /// Return the left index and a classification associated to a value
     virtual bool value_to_index(const double x_,
                                 std::size_t & index_,
                                 sampling::index_classification_type & classification_) const = 0;
 
-    /// Return the index associated to a value
+    /// Return the left index associated to a value
     bool value_to_index(const double x_,  std::size_t & index_) const;
 
     /// Return the value associated to a given index
