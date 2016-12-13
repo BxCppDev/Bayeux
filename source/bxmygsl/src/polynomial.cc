@@ -329,6 +329,35 @@ namespace mygsl {
     return success;
   }
 
+  bool polynomial::make_line(double x1_, double x2_,
+                             double y1_, double y2_)
+  {
+    this->reset();
+    std::vector<double> cba;
+    cba.assign(2, 0.0);
+    bool success = compute_line(x1_, x2_, y1_, y2_, cba[1], cba[0]);
+    if (success) {
+      this->set_coefficients(cba);
+    }
+    return success;
+  }
+
+  // static
+  bool polynomial::compute_line(double x1_, double x2_,
+                                double y1_, double y2_,
+                                double & p1_, double & p0_)
+  {
+    bool success = false;
+    datatools::invalidate(p1_);
+    datatools::invalidate(p0_);
+    {
+      double term = 1. / (x2_ - x1_);
+      p0_ = (x2_ * y1_ - x1_ * y2_) * term;
+      p1_ = (y2_ - y1_) * term;
+      success = true;
+    }
+    return success;
+  }
 
   // static
   bool polynomial::compute_parabola(double x1_, double x2_, double x3_,
@@ -367,12 +396,14 @@ namespace mygsl {
     double D1 = y1_;
     double D2 = y2_;
     double D3 = y3_;
-
-    double D = t1 * (t3 * t3 - t2 * t2) - t2 * t3 * t3 + t2 * t2 * t3 + t1 * t1 * (t2 - t3);
+    double st1 = t1 * t1;
+    double st2 = t2 * t2;
+    double st3 = t3 * t3;
+    double D = t1 * (st3 - st2) - t2 * st3 + st2 * t3 + st1 * (t2 - t3);
     if (D != 0.0) {
       a_ = t1 * (D3 - D2) - t2 * D3 + t3 * D2 + (t2 - t3) * D1;
-      b_ = - (t1 * t1 * (D3 - D2) - t2 * t2 * D3 + t3 *t3 * D2 + (t2 * t2 - t3 * t3) * D1);
-      c_ = t1 * (t3 * t3 * D2 - t2 * t2 * D3) + t1 * t1 * (t2 * D3 - t3 * D2) + (t2 * t2 * t3 - t2 * t3 * t3) * D1;
+      b_ = - (st1 * (D3 - D2) - st2 * D3 + st3 * D2 + (st2 - st3) * D1);
+      c_ = t1 * (st3 * D2 - st2 * D3) + st1 * (t2 * D3 - t3 * D2) + (st2 * t3 - t2 * st3) * D1;
       a_ /= D;
       b_ /= D;
       c_ /= D;

@@ -111,11 +111,24 @@ namespace mygsl {
      *  coefficients of the polynomial of degree 2 (parabola) that matches
      *  the points:
      *
-     *    P(x) = a x^2 + b x + c
+     *    P(x) = p0 + p1 x^1 + p2 x^2
      */
     static bool compute_parabola(double x1_, double x2_, double x3_,
                                  double y1_, double y2_, double y3_,
-                                 double & a_, double & b_, double & c_);
+                                 double & p2_, double & p1_, double & p0_);
+
+    /** Given two doublets (x1, y1), (x2, y2), compute the
+     *  coefficients of the polynomial of degree 1 (line) that matches
+     *  the points:
+     *
+     *    P(x) = p0 + p1 x^1
+     */
+    static bool compute_line(double x1_, double x2_,
+                             double y1_, double y2_,
+                             double & p1_, double & p0_);
+
+    bool make_line(double x1_, double x2_,
+                   double y1_, double y2_);
 
     bool make_parabola(double x1_, double x2_, double x3_,
                        double y1_, double y2_, double y3_);
