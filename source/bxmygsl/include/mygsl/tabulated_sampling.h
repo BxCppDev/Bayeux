@@ -1,5 +1,5 @@
 //! \file  mygsl/tabulated_sampling.h
-//! \brief Linear sampling
+//! \brief Tabulated sampling
 //
 // Copyright (c) 2016 by François Mauger <mauger@lpccaen.in2p3.fr>
 //
@@ -29,7 +29,7 @@
 
 namespace mygsl {
 
-  /// \brief Linear sampling model
+  /// \brief Tabulated sampling model
   class tabulated_sampling
     : public base_sampling
   {
