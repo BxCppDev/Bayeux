@@ -37,7 +37,7 @@ int main(int /* argc_ */, char ** /* argv_ */)
   try {
     test0();
   } catch (std::exception & x) {
-    std::cerr << "ERROR: " << x.what () << std::endl;
+    std::cerr << "error: " << x.what () << std::endl;
     return (EXIT_FAILURE);
   }
   return (EXIT_SUCCESS);
