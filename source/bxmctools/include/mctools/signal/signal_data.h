@@ -24,8 +24,6 @@
  *
  *   A container hosting collections of signal hits.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_SIGNAL_SIGNAL_DATA_H
