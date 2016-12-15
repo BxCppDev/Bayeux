@@ -29,6 +29,7 @@
 // - Bayeux/datatools:
 #include <datatools/exception.h>
 #include <datatools/factory.h>
+#include <datatools/clhep_units.h>
 // - Bayeux/mygsl:
 #include <mygsl/i_unary_function.h>
 
@@ -148,12 +149,37 @@ namespace mctools {
       if (!this->geomtools::base_hit::is_valid()) {
         return false;
       }
+      if (!datatools::is_valid(_time_ref_)) {
+        return false;
+      }
       if (!is_shape_instantiated()) {
         if (!has_shape_type_id()) {
           return false;
         }
       }
       return true;
+    }
+
+    bool base_signal::has_time_ref() const
+    {
+      return datatools::is_valid(_time_ref_);
+    }
+
+    double base_signal::get_time_ref() const
+    {
+      return _time_ref_;
+    }
+
+    void base_signal::set_time_ref(const double tref_)
+    {
+      _time_ref_ = tref_;
+      return;
+    }
+
+    void base_signal::reset_time_ref()
+    {
+      datatools::invalidate(_time_ref_);
+      return;
     }
 
     bool base_signal::has_shape_builder() const
@@ -425,7 +451,12 @@ namespace mctools {
     {
       DT_THROW_IF(!has_shape_type_id(), std::logic_error,
                   "Missing shape type identifier!");
-
+      if (has_shape_builder()) {
+        DT_THROW_IF(!get_shape_builder().has_registered_shape_type_id(get_shape_type_id()),
+                    std::logic_error, "Signal shape type ID '" << get_shape_type_id() << "' is not registered in the shape builder!");
+      } else {
+        // No check
+      }
       _initialized_ = true;
       return;
     }
@@ -454,6 +485,7 @@ namespace mctools {
     {
       _initialized_ = false;
       reset_shape();
+      reset_time_ref();
       _shape_type_id_.clear();
       this->geomtools::base_hit::reset();
       return;
@@ -540,6 +572,24 @@ namespace mctools {
                                 bool inherit_) const
     {
       this->geomtools::base_hit::tree_dump(out_, title_, indent_, true);
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Time reference : ";
+      if (has_time_ref()) {
+        out_ << _time_ref_ / CLHEP::ns << " [ns]";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Shape builder : ";
+      if (has_shape_builder()) {
+        out_ << "'" << _shape_builder_->get_category() << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Signal shape type ID : ";

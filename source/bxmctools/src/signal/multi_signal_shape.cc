@@ -186,10 +186,11 @@ namespace mctools {
         }
         if (!datatools::is_valid(_non_zero_domain_min_)) {
           _non_zero_domain_min_ = func.get_non_zero_domain_min() + crec.get_time_shift();
-        } else if (func.get_non_zero_domain_min() + crec.get_time_shift() > _non_zero_domain_min_) {
+        } else if (func.get_non_zero_domain_min() + crec.get_time_shift() < _non_zero_domain_min_) {
           _non_zero_domain_min_ = func.get_non_zero_domain_min() + crec.get_time_shift();
         }
       }
+
       for (const auto & crec : _components_) {
         if (crec.get_scaling() == 0.0) continue;
         const mygsl::i_unary_function & func = crec.sh();
@@ -201,7 +202,7 @@ namespace mctools {
         }
         if (!datatools::is_valid(_non_zero_domain_max_)) {
           _non_zero_domain_max_ = func.get_non_zero_domain_max() + crec.get_time_shift();
-        } else if (func.get_non_zero_domain_max() + crec.get_time_shift() < _non_zero_domain_max_) {
+        } else if (func.get_non_zero_domain_max() + crec.get_time_shift() > _non_zero_domain_max_) {
           _non_zero_domain_max_ = func.get_non_zero_domain_max() + crec.get_time_shift();
         }
       }

@@ -82,6 +82,18 @@ namespace mctools {
       //! Set the logging priority
       void set_logging(const datatools::logger::priority);
 
+      //! Check is time reference is set
+      bool has_time_ref() const;
+
+      //! Return the time reference
+      double get_time_ref() const;
+
+      //! Set the time reference
+      void set_time_ref(const double);
+
+      //! Reset the time reference
+      void reset_time_ref();
+
       //! Check if a shape builder is set
       bool has_shape_builder() const;
 
@@ -238,6 +250,8 @@ namespace mctools {
       bool                         _initialized_ = false; //!< Initialization flag
       datatools::logger::priority  _logging_;             //!< Logging priority threshold
       signal_shape_builder *       _shape_builder_ = nullptr; //!< Handle to an external shape builder
+      double                       _time_ref_; //!< Time reference
+
 
       // Configuration:
       std::string _shape_type_id_; //!< Shape type identifier

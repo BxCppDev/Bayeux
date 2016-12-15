@@ -43,6 +43,7 @@ namespace mctools {
                                            boost::serialization::base_object<geomtools::base_hit>(*this));
       ar_ & boost::serialization::make_nvp("initialized", _initialized_);
       if (_initialized_) {
+        ar_ & boost::serialization::make_nvp("time_ref", _time_ref_);
         ar_ & boost::serialization::make_nvp("shape_type_id", _shape_type_id_);
       }
       // if (Archive::is_saving::value) {
