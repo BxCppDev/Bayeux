@@ -7,17 +7,15 @@
  */
 
 #ifndef RAW_HIT_H
-#define RAW_HIT_H 1
+#define RAW_HIT_H
 
 // Standard library:
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 // Third party:
-// - Boost:
-// Portable integral types (mandatory):
-#include <boost/cstdint.hpp>
 // - Bayeux/datatools:
 // Interface base class from datatools to support serialization tools:
 #include <datatools/i_serializable.h>
@@ -25,7 +23,8 @@
 #include <datatools/properties.h>
 
 /// \brief ``raw_hit`` is a serializable class using datatools serialization
-class raw_hit : public datatools::i_serializable
+class raw_hit
+  : public datatools::i_serializable
 {
 public:
 

@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 /// the_serializable.h
 #ifndef THE_SERIALIZABLE_H
-#define THE_SERIALIZABLE_H 1
+#define THE_SERIALIZABLE_H
 
 // Third Party
 // - Boost:

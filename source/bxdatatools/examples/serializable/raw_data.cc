@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /// raw_data.cc
 
 // Ourselves:

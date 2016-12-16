@@ -1,4 +1,3 @@
-// -*- mode: c++ ; -*-
 /* ex_serializable_1.cxx
  *
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
@@ -451,12 +450,10 @@ int main (int argc_, char ** argv_)
     ex_raw_hit_9(logging);
 
     DT_LOG_INFORMATION(logging, "The end.");
-  }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }

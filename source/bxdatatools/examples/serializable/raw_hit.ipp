@@ -2,7 +2,7 @@
 /// \file raw_hit.ipp
 
 #ifndef RAW_HIT_IPP
-#define RAW_HIT_IPP 1
+#define RAW_HIT_IPP
 
 // Ourselves:
 #include <raw_hit.h>
