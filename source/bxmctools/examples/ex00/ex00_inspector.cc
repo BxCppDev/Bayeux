@@ -5,15 +5,15 @@
 
 // Third party:
 // - Bayeux/geomtools:
-#include <geomtools/manager.h>
-#include <geomtools/gnuplot_draw.h>
-#include <geomtools/gnuplot_drawer.h>
-#include <geomtools/display_data.h>
-#include <geomtools/line_3d.h>
-#include <geomtools/box.h>
-#include <geomtools/blur_spot.h>
+#include <bayeux/geomtools/manager.h>
+#include <bayeux/geomtools/gnuplot_draw.h>
+#include <bayeux/geomtools/gnuplot_drawer.h>
+#include <bayeux/geomtools/display_data.h>
+#include <bayeux/geomtools/line_3d.h>
+#include <bayeux/geomtools/box.h>
+#include <bayeux/geomtools/blur_spot.h>
 // - Bayeux/mctools:
-#include <mctools/simulated_data.h>
+#include <bayeux/mctools/simulated_data.h>
 
 namespace mctools {
 

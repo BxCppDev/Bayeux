@@ -9,10 +9,10 @@
 
 // Third party:
 // - Bayeux/geomtools:
-#include <geomtools/manager.h>
-#include <geomtools/utils.h>
+#include <bayeux/geomtools/manager.h>
+#include <bayeux/geomtools/utils.h>
 // - Bayeux/mctools:
-#include <mctools/simulated_data.h>
+#include <bayeux/mctools/simulated_data.h>
 
 namespace mctools {
 

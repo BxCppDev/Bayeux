@@ -123,8 +123,7 @@ int main(int argc_, char **argv_)
     sim_mod.set_sd_label("SD");
     // sim_mod.set_geo_label("Geo"); // Not used here because of the Geometry manager above
     sim_mod.set_geometry_manager(geo_mgr);
-    sim_mod.set_erase_former_SD_bank(false);
-    sim_mod.set_simulation_manager_params(sim_mod_params);
+    sim_mod.set_geant4_parameters(sim_mod_params);
     sim_mod.initialize_simple();
 
     // Setup the output module:
