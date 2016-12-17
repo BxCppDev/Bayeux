@@ -51,9 +51,6 @@ target_link_libraries(ex00_run_sim_module
   Bayeux::Bayeux
   Bayeux::Bayeux_mctools_geant4
   Boost::program_options
-  # ${Bayeux_MCTOOLS_GEANT4_LIBRARY}
-  # ${_libs}
-  # ${Boost_LIBRARIES}
   )
 
 install ( FILES
@@ -72,8 +69,6 @@ target_link_libraries(ex00_read_plain_simdata
   Bayeux::Bayeux
   Bayeux::Bayeux_mctools_geant4
   Boost::program_options
-  # ${_libs}
-  # ${Boost_LIBRARIES}
   )
 
 install ( FILES
@@ -90,7 +85,7 @@ add_executable(ex00_read_pipeline_simdata ex00_read_pipeline_simdata.cxx)
 target_link_libraries(ex00_read_pipeline_simdata
   mctools_ex00
   Bayeux::Bayeux
-  ${Boost_LIBRARIES}
+  Boost::program_options
   )
 
 install ( FILES
