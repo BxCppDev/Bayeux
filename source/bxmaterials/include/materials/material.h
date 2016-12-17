@@ -13,12 +13,10 @@
  *   Some useful data here:
  *     http://www.nucsafe.com/cms/Selecting+Gamma+Detector/43.html
  *
- * History:
- *
  */
 
 #ifndef MATERIALS_MATERIAL_H
-#define MATERIALS_MATERIAL_H 1
+#define MATERIALS_MATERIAL_H
 
 // Standard Library:
 #include <iostream>
