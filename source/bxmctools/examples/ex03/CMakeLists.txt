@@ -20,11 +20,17 @@ find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
 find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
 
 # - Bayeux :
-find_package(Bayeux 2.1.0 REQUIRED)
-set(_incs ${Bayeux_INCLUDE_DIRS})
-set(_libs ${Bayeux_LIBRARIES})
+find_package(Bayeux 3.0.0 REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR} ${_incs})
+include_directories(${PROJECT_SOURCE_DIR})
+get_target_property(Bayeux_COMPILE_FEATURES Bayeux::Bayeux INTERFACE_COMPILE_FEATURES)
+get_target_property(Bayeux_INCLUDE_DIRS Bayeux::Bayeux INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(Bayeux_LINK_LIBRARIES Bayeux::Bayeux INTERFACE_LINK_LIBRARIES)
+message(STATUS "Bayeux_COMPILE_FEATURES = '${Bayeux_INTERFACE_COMPILE_FEATURES}'")
+message(STATUS "Bayeux_INCLUDE_DIRS     = '${Bayeux_INCLUDE_DIRS}'")
+message(STATUS "Bayeux_LINK_LIBRARIES   = '${Bayeux_LINK_LIBRARIES}'")
+include_directories(${Bayeux_INCLUDE_DIRS})
+add_definitions(-std=c++11)
 
 set(mctools_hpge_SOURCES
   hpge/calorimetry.cc
@@ -44,8 +50,10 @@ install( FILES
 add_executable(hpge_analysis programs/hpge_analysis.cxx)
 
 target_link_libraries(hpge_analysis mctools_hpge
-  ${_libs}
-  ${Boost_LIBRARIES}
+  mctools_hpge
+  Bayeux::Bayeux
+  Bayeux::Bayeux_mctools_geant4
+  Boost::program_options
   )
 
 install ( FILES
