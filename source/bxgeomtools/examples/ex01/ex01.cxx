@@ -13,7 +13,7 @@
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
 // - Bayeux/materials:
-#include <materials/materials.h>
+#include <materials/manager.h>
 
 // This project:
 #include <geomtools/manager.h>
@@ -22,10 +22,8 @@
 int main(int argc_, char ** argv_)
 {
   bayeux::initialize(argc_, argv_);
-
   int error_code = EXIT_SUCCESS;
   datatools::logger::priority logging = datatools::logger::PRIO_NOTICE;
-
   try {
 
     if (argc_>1) {
@@ -61,16 +59,13 @@ int main(int argc_, char ** argv_)
     int view_code = GPD.draw (GM,
                               "world",
                               geomtools::gnuplot_drawer::display_level_no_limit());
-  }
-  catch(std::exception & x) {
+  } catch(std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, x.what());
     error_code = EXIT_FAILURE;
-  }
-  catch(...) {
+  } catch(...) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL, "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
-
   bayeux::terminate();
   return error_code;
 }
