@@ -35,6 +35,9 @@ terse_description         : string = "YMCK color mode"
 
 #@config A parameter model describing the palette identifier
 
+# XXX
+logging.priority : string  = "trace"
+
 #@description The display name of this variant
 display_name       : string = "Palette Id"
 
@@ -57,26 +60,26 @@ integer.domain     : string = "[0, 8)"
 integer.default    : integer = 0
 
 #@description The variants associated to supported values
-variants : string[2] = "rgba" "ymck"
+variants : string[2] = "if_rgba" "if_ymck"
 
-variants.rgba.model       : string = "rgba.VM"
-variants.rgba.description : string = "Parameters of the 'rgba' color mode"
+variants.if_rgba.model       : string = "rgba.VM"
+variants.if_rgba.description : string = "Parameters of the 'rgba' color mode"
 
-variants.ymck.model       : string = "ymck.VM"
-variants.ymck.description : string = "Parameters of the 'ymck' color mode"
+variants.if_ymck.model       : string = "ymck.VM"
+variants.if_ymck.description : string = "Parameters of the 'ymck' color mode"
 
 #@description The integer subranges
-integer.ranges  :  string[3] = "A" "B" "C"
+integer.ranges  :  string[3] = "Low" "Medium" "High"
 
 # Description of subranges and their associated variants
-integer.ranges.A.range    : string = "[0, 3)"
-integer.ranges.A.variant  : string = "rgba"
+integer.ranges.Low.range      : string = "[0, 3)"
+integer.ranges.Low.variant    : string = "if_rgba"
 
-integer.ranges.B.range    : string = "[3, 6)"
-integer.ranges.B.variant  : string = "ymck"
+integer.ranges.Medium.range   : string = "[3, 6)"
+integer.ranges.Medium.variant : string = "if_ymck"
 
-integer.ranges.C.range    : string = "[6, 8)"
-integer.ranges.C.variant  : string = "rgba"
+integer.ranges.High.range     : string = "[6, 8)"
+integer.ranges.High.variant   : string = "if_rgba"
 
 
 ####################################
@@ -191,7 +194,7 @@ display_name       : string = "GUI setup"
 #@description A short description of the variant
 terse_description  : string = "The configuration parameters for the GUI"
 
-#@description The list of variant parameters
+#@description The ordered list of variant parameters
 parameters         : string[3] = "logging" "color" "antialiasing"
 
 parameters.logging.model       : string = "datatools::basic::logging_priority.PM"

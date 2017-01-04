@@ -210,7 +210,6 @@ namespace datatools {
         QObject::connect(this, SIGNAL(sig_logging_changed(datatools::logger::priority)),
                          this, SLOT(slot_update_logging_combo(datatools::logger::priority)));
 
-        // XXX
         QObject::connect(_registry_tree_model_, SIGNAL(sig_registry_data_changed(std::string,std::string)),
                          this,                  SLOT(slot_update_leds()));
 

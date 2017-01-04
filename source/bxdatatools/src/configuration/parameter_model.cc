@@ -1983,7 +1983,7 @@ namespace datatools {
       return;
     }
 
-    void parameter_model::initialize(const properties & setup_, item_dict_type & items_)
+    void parameter_model::initialize(const properties & setup_, model_item_dict_type & items_)
     {
       // std::cerr << "===> DEVEL: parameter_model::initialize: "
       //           << "Initializing parameter model '" << get_name() << "'...\n";
@@ -2170,10 +2170,10 @@ namespace datatools {
             DT_THROW_IF(!setup_.has_key(var_model_ss.str()), std::logic_error,
                         "Property '" << var_model_ss.str() << "' is missing!");
             const std::string & var_model = setup_.fetch_string(var_model_ss.str());
-            item_dict_type::const_iterator found = items_.find(var_model);
+            model_item_dict_type::const_iterator found = items_.find(var_model);
             DT_THROW_IF(found == items_.end(), std::logic_error,
                         "Item '" << var_model << "' does not exist!");
-            const item & var_item = found->second;
+            const model_item & var_item = found->second;
             DT_THROW_IF(! var_item.is_variant(), std::logic_error,
                         "Item '" << var_model << "' is not a variant!");
             std::ostringstream var_desc_ss;
@@ -2259,7 +2259,7 @@ namespace datatools {
             if (setup_.has_key("integer.ranges")) {
               std::vector<std::string> ii_ranges_labels;
               setup_.fetch("integer.ranges", ii_ranges_labels);
-              for (int i = 0; i < (int) ii_ranges_labels.size(); i++) {
+              for (size_t i = 0; i < ii_ranges_labels.size(); i++) {
                 std::string ii_ranges_label = ii_ranges_labels[i];
                 integer_range ir;
                 std::ostringstream ii_prefix_ss;
@@ -2309,7 +2309,6 @@ namespace datatools {
                 DT_THROW_IF(true, std::logic_error, "Missing '" << "interval.integer_domain" << "' property!");
               }
             }
-
 
             // Parse integer range-to-variant associations:
             /* Example:
@@ -2708,7 +2707,7 @@ namespace datatools {
 
     void parameter_model::initialize_standalone(const properties & setup_)
     {
-      item_dict_type dummy_dict;
+      model_item_dict_type dummy_dict;
       initialize(setup_, dummy_dict);
       return;
     }
@@ -3173,13 +3172,9 @@ namespace datatools {
       return false;
     }
 
-    // XXX
     bool parameter_model::is_real_valid(const double value_) const
     {
-      double epsilon = std::numeric_limits<double>::epsilon();
-      if (has_real_precision()) {
-        epsilon = get_real_precision();
-      }
+      double epsilon = get_real_effective_precision();
       if (is_fixed()) {
         return std::abs(value_ - get_fixed_real()) <= epsilon;
       } else if (is_free()) {
@@ -3247,10 +3242,13 @@ namespace datatools {
       for (integer_range_enum_dict_type::const_iterator i = _integer_ranges_.begin();
            i != _integer_ranges_.end();
            i++) {
+        DT_LOG_DEBUG(get_logging_priority(), "Integer range : " << i->first);
         if (i->first.has(value_)) {
-          if (!i->second.has_variants()) {
+          DT_LOG_DEBUG(get_logging_priority(), "Value [" << value_ << "] is in " << i->first);
+          if (i->second.has_variants()) {
             for (const auto & variant_name : i->second.get_variants()) {
               variants_.insert(variant_name);
+              DT_LOG_DEBUG(get_logging_priority(), "Associated variants : '" << variant_name << "'");
             }
           }
         }
@@ -3286,7 +3284,7 @@ namespace datatools {
            i != _real_ranges_.end();
            i++) {
         if (i->first.has(value_)) {
-          if (!i->second.has_variants()) {
+          if (i->second.has_variants()) {
             for (const auto & variant_name : i->second.get_variants()) {
               variants_.insert(variant_name);
             }
@@ -3674,7 +3672,7 @@ namespace datatools {
 
           if (is_interval()) {
             out_ << indent << "* Domain: ``" << get_integer_domain() << "``" << std::endl;
-          } // variable/rinteger/interval
+          } // variable/integer/interval
 
           if (_integer_ranges_.size()) {
             out_ << indent << "* Subdomains of interest: " << std::endl;
@@ -3886,7 +3884,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(datatools::configuration::parameter_model, ocd_)
   datatools::configuration::parameter_model::init_ocd(ocd_);
 
   // Set validation support
-  ocd_.set_validation_support(true);
+  ocd_.set_validation_support(false);
 
   // Lock the description:
   ocd_.lock();

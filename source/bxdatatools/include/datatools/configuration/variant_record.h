@@ -38,7 +38,7 @@
 // This project (Bayeux/datatools):
 #include <datatools/configuration/utils.h>
 #include <datatools/command_utils.h>
-#include <datatools/enriched_base.h>
+// #include <datatools/enriched_base.h>
 #include <datatools/ioutils.h>
 #include <datatools/units.h>
 #include <datatools/logger.h>
@@ -49,16 +49,31 @@ namespace datatools {
 
     class variant_registry;
 
-    /// \brief Registry record
-    class variant_record : public enriched_base
+    /// \brief Variant registry record node
+    class variant_record
     {
     public:
 
-      /// Check if a name is valid
-      virtual bool is_name_valid(const std::string & name_) const;
+      // \brief Record for daughter variant record
+      class daughter_type {
+      public:
+        daughter_type(const std::string & name_, variant_record & vrec_, const int rank_ = -1)
+          : _name_(name_)
+          , _handle_(&vrec_)
+          , _rank_((rank_< 0) ? -1 : rank_) {}
+        const std::string & get_name() const { return _name_; }
+        const variant_record & get_record() const { return *_handle_;}
+        variant_record & grab_record() { return *_handle_;}
+        bool is_ranked() const { return _rank_ >= 0; }
+        int get_rank() const { return _rank_; }
+      private:
+        std::string      _name_;
+        variant_record * _handle_ = nullptr;
+        int              _rank_ = -1;
+      };
 
       /// Array of pointers to daughter records
-      typedef std::map<std::string, variant_record *> daughter_dict_type;
+      typedef std::map<std::string, daughter_type> daughter_dict_type;
 
       /// Default constructor
       variant_record();
@@ -83,6 +98,12 @@ namespace datatools {
 
       /// Return the path
       const std::string & get_path() const;
+
+      /// Set with update
+      void set_with_update(bool);
+
+      /// Check if the with update flag is set
+      bool has_with_update() const;
 
       /// Return the leaf name
       std::string get_leaf_name() const;
@@ -109,7 +130,7 @@ namespace datatools {
       bool has_parent() const;
 
       /// Set the parent record and register itself as a daughter of the parent record
-      void set_parent(variant_record & parent_, const std::string & daughter_name_);
+      void set_parent(variant_record & parent_, const std::string & daughter_name_, int rank_ = -1);
 
       /// Return the parent
       const variant_record & get_parent() const;
@@ -128,6 +149,9 @@ namespace datatools {
 
       /// Return a daughter record given its name
       const variant_record & get_daughter(const std::string &) const;
+
+      /// Return a daughter record given its name
+      variant_record & grab_daughter(const std::string &);
 
       /// Check if the record is associated to a parameter model
       bool has_parameter_model() const;
@@ -157,7 +181,7 @@ namespace datatools {
       bool is_fixed_parameter() const;
 
       /// Set the active flag
-      void set_active(bool);
+      void set_active(bool active_);
 
       /// Check if record is active (parameter or variant)
       bool is_active() const;
@@ -231,7 +255,12 @@ namespace datatools {
       /// Set the value from a formatted string
       command::returned_info string_to_value(const std::string & format_);
 
-      /// Build the list of ranked parameters
+      /// Build and finalize the internals of the record
+      void build();
+
+      /// Build the list of effectively ranked parameters
+      /// The explicitely ranked params are listed first, then come
+      /// unranked params in arbitrary order
       void build_list_of_ranked_parameter_records(std::vector<std::string> & ranked_) const;
 
       /// Reset the record
@@ -243,32 +272,53 @@ namespace datatools {
                              const std::string & indent_ = "",
                              bool inherit_ = false) const;
 
-    protected:
-
-      /// Update the status
-      void _update();
-
-      /// Fix
-      void _fix();
-
-      /// Fix parameter value
-      void _fix_parameter_value();
-
-      /// Fix dependers
-      void _fix_dependers_on_this_variant();
+      /// Update
+      void update();
 
     private:
 
+      // FUTURE: better to have this method
+      // void _add_daughter_(variant_record &, name, rank... );
+
+      ///  Recompute ranked/unranked daughters
+      void _compute_ranked_unranked_daughters_();
+
+      /// Update the status
+      void _update_();
+
+      /// Update the variant
+      void _update_parameter_();
+
+      /// Update the variant
+      void _update_variant_();
+
+      /// Fix
+      void _fix_();
+
+      /// Fix parameter value
+      void _fix_parameter_value_();
+
+      /// Fix dependers
+      void _fix_dependers_on_this_variant_();
+
+    private:
+
+      // Management:
       datatools::logger::priority _logging_ = datatools::logger::PRIO_FATAL; //! Logging priority threshold
+      bool                        _with_update_ = false;       //!< Update flag
+
+      // Configuration:
       std::string              _path_;                      //!< Full path of the record
       const variant_registry * _parent_registry_ = nullptr; //!< Handle to the parent registry
       const parameter_model *  _parameter_model_ = nullptr; //!< Handle to a parameter model
       const variant_model   *  _variant_model_ = nullptr;   //!< Handle to a variant model
       variant_record *         _parent_ = nullptr;          //!< Parent record
       daughter_dict_type       _daughters_;                 //!< Dictionary of pointers to daughter records
-      bool                     _active_ = false;            //!< Active flag of the record
+      std::vector<std::string> _ranked_daughters_;          //!< Ranked daughters
+      std::vector<std::string> _unranked_daughters_;        //!< Unranked daughters
 
-      // For parameters only:
+      // Working data:
+      bool        _active_ = false;    //!< Active flag of the record
       bool        _value_set_ = false; //!< Value set flag
       bool        _boolean_value_;     //!< Current boolean parameter value
       int32_t     _integer_value_;     //!< Current integer parameter value

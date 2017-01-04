@@ -141,7 +141,7 @@ namespace datatools {
             if (cri.is_failure()) {
               DT_THROW(std::logic_error,
                        "Real parameter '" << param_path_ << "' has no available value"
-                       << "in registry '" << _registry_.get_name() << "'!");
+                       << " in registry '" << _registry_.get_name() << "'!");
             }
             io::write_real_number(os,
                                   value,

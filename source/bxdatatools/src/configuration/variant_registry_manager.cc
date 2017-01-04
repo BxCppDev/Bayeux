@@ -247,7 +247,7 @@ namespace datatools {
       return;
     }
 
-    const item_dict_type &variant_registry_manager::get_configuration_items() const
+    const model_item_dict_type &variant_registry_manager::get_configuration_items() const
     {
       return _configuration_items_;
     }
@@ -266,7 +266,7 @@ namespace datatools {
                       "No definition for configuration item named '" << _top_variant_name_ << "' !");
           const datatools::multi_properties::entry & top_variant_entry = _mp_.get(_top_variant_name_);
           const std::string & top_variant_type = top_variant_entry.get_meta();
-          DT_THROW_IF(top_variant_type != item::label_from_model_type(item::MODEL_VARIANT),
+          DT_THROW_IF(top_variant_type != model_item::label_from_model_type(model_item::MODEL_VARIANT),
                       std::logic_error,
                       "Definition for configuration item named '"
                       << _top_variant_name_ << "' does not correspond to a variant !");
@@ -281,22 +281,22 @@ namespace datatools {
         const std::string & item_name = mpe.get_key();
         const std::string & item_model = mpe.get_meta();
         const properties & item_config = mpe.get_properties();
-        item::model_type type = item::model_type_from_label(item_model);
+        model_item::model_type type = model_item::model_type_from_label(item_model);
         /*
-          item::model_type type = item::MODEL_UNDEFINED;
+          model_item::model_type type = model_item::MODEL_UNDEFINED;
           if (item_model == "datatools::configuration::parameter_model") {
-          type = item::MODEL_PARAMETER;
+          type = model_item::MODEL_PARAMETER;
           } else if (item_model == "datatools::configuration::variant_model") {
-          type = item::MODEL_VARIANT;
+          type = model_item::MODEL_VARIANT;
           }
         */
-        DT_THROW_IF(type == item::MODEL_UNDEFINED, std::logic_error,
+        DT_THROW_IF(type == model_item::MODEL_UNDEFINED, std::logic_error,
                     "Invalid model type '" << item_model << "' !");
-        if (type == item::MODEL_VARIANT) {
-          variant_model & a_variant = item::add_variant_item(_configuration_items_, item_name);
+        if (type == model_item::MODEL_VARIANT) {
+          variant_model & a_variant = model_item::add_variant_item(_configuration_items_, item_name);
           a_variant.initialize(item_config, _configuration_items_);
-        } else if (type == item::MODEL_PARAMETER) {
-          parameter_model & a_parameter = item::add_parameter_item(_configuration_items_, item_name);
+        } else if (type == model_item::MODEL_PARAMETER) {
+          parameter_model & a_parameter = model_item::add_parameter_item(_configuration_items_, item_name);
           a_parameter.initialize(item_config, _configuration_items_);
         }
       }
@@ -317,7 +317,7 @@ namespace datatools {
 
       {
         out_ << indent_ << datatools::i_tree_dumpable::tag
-             << "Definition for configuration items : ";
+             << "Definition for configuration model items : ";
         out_ << std::endl;
         for (multi_properties::entries_ordered_col_type::const_iterator i = _mp_.ordered_entries().begin();
              i != _mp_.ordered_entries().end();
@@ -353,11 +353,11 @@ namespace datatools {
 
       {
         out_ << indent_ << datatools::i_tree_dumpable::tag
-             << "Configuration items : ";
+             << "Configuration model items : ";
         out_ << std::endl;
         std::ostringstream indent_ss;
         indent_ss << indent_ << datatools::i_tree_dumpable::skip_tag;
-        item::print_items(_configuration_items_, out_, "", indent_ss.str());
+        model_item::print_items(_configuration_items_, out_, "", indent_ss.str());
       }
 
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)

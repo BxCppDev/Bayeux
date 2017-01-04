@@ -166,7 +166,8 @@ namespace datatools {
     void variant_dependency_model::add_dependency_record(const std::string & name_,
                                                          const std::string & depender_path_,
                                                          const std::set<unsigned int> & input_slots_,
-                                                         const std::string & logic_expression_)
+                                                         const std::string & logic_expression_,
+                                                         const datatools::logger::priority logging_)
     {
       DT_THROW_IF(name_.empty(), std::logic_error,
                   "Empty dependency name!");
@@ -181,6 +182,7 @@ namespace datatools {
       dep_rec.depender_path = depender_path_;
       dep_rec.input_slots   = input_slots_;
       dep_rec.logic_expression = logic_expression_;
+      dep_rec.logging = logging_;
       _dependency_records_[name_] = dep_rec;
       return;
     }
@@ -211,6 +213,7 @@ namespace datatools {
           set_logging(prio);
         }
       }
+      DT_LOG_TRACE_ENTERING(_logging_);
 
       // Build the set of slots to be attached to dependee variants:
       std::set<unsigned int> slots;
@@ -262,21 +265,36 @@ namespace datatools {
               deprec.logic_expression = config_.fetch_string(dep_logexpr_key);
             }
           }
+          {
+            std::ostringstream dep_logging_key_oss;
+            dep_logging_key_oss << "dependencies." << depname << ".logging";
+            std::string dep_logging_key = dep_logging_key_oss.str();
+            if (config_.has_key(dep_logging_key)) {
+              datatools::logger::priority logging =
+                datatools::logger::get_priority(config_.fetch_string(dep_logging_key));
+              if (logging != datatools::logger::PRIO_UNDEFINED) {
+                deprec.logging = logging;
+              }
+            }
+          }
           add_dependency_record(depname,
                                 deprec.depender_path,
                                 deprec.input_slots,
-                                deprec.logic_expression);
+                                deprec.logic_expression,
+                                deprec.logging);
         }
       }
 
       _at_init();
 
       _initialized_ = true;
+      DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
 
     void variant_dependency_model::reset()
     {
+      DT_LOG_TRACE_ENTERING(_logging_);
       DT_THROW_IF(!is_initialized(), std::logic_error, "Model is not initialized!");
       _initialized_ = false;
       _at_reset();
@@ -285,6 +303,7 @@ namespace datatools {
 
     void variant_dependency_model::_at_init()
     {
+      DT_LOG_TRACE_ENTERING(_logging_);
       for (const auto & dep_pair_rec : _dependency_records_) {
         const dependency_record & dep_rec = dep_pair_rec.second;
         // Build a new variant dependency from the record:
@@ -295,6 +314,7 @@ namespace datatools {
           dep_ptr.reset(new variant_dependency(*_repository_));
         }
         variant_dependency & vdep = *dep_ptr.get();
+        vdep.set_logging(dep_rec.logging);
         std::string depender_path = dep_rec.depender_path;
         bool registry_scope = false;
         if (is_local()) {
@@ -319,6 +339,7 @@ namespace datatools {
 
       _at_init_build_table_of_dependers_();
 
+      DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
 

@@ -24,8 +24,6 @@
  *
  *   Some utilities for the description of configuration variants and parameters.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_UTILS_H
@@ -52,7 +50,7 @@ namespace datatools {
     class parameter_model;
     class variant_repository;
     class variant_model;
-    class item;
+    class model_item;
 
     /// Handle on variant model
     typedef handle<variant_model> vm_handle_type;
@@ -61,7 +59,7 @@ namespace datatools {
     typedef handle<parameter_model> pm_handle_type;
 
     /// Dictionary of items
-    typedef std::map<std::string, item> item_dict_type;
+    typedef std::map<std::string, model_item> model_item_dict_type;
 
     /// \deprecated
     /// \see validate_instance_name
@@ -74,7 +72,8 @@ namespace datatools {
     bool validate_model_name(const std::string &);
 
     /// \brief Configuration item with an embedded parameter or variant model handle through a smart pointer
-    class item {
+    // class item {
+    class model_item {
     public:
 
       /// \brief Type of item (parameter or variant)
@@ -97,10 +96,10 @@ namespace datatools {
       static const std::string & parameter_suffix();
 
       /// Default constructor
-      item();
+      model_item();
 
       /// Destructor
-      virtual ~item();
+      virtual ~model_item();
 
       /// Reset the item
       void reset();
@@ -154,7 +153,7 @@ namespace datatools {
       bool is_instantiated() const;
 
       /// Instantiate the embedded item
-      void instantiate(item_dict_type &);
+      void instantiate(model_item_dict_type &);
 
       /// Destroy the embedded item
       void destroy();
@@ -186,32 +185,32 @@ namespace datatools {
       // Methods to manipulate dictionaries of configuration items:
 
       /// Add a parameter item in a dictionary
-      static parameter_model & add_parameter_item(item_dict_type & dict_,
+      static parameter_model & add_parameter_item(model_item_dict_type & dict_,
                                                   const std::string & name_);
 
       /// Add a variant item in a dictionary
-      static variant_model & add_variant_item(item_dict_type & dict_,
+      static variant_model & add_variant_item(model_item_dict_type & dict_,
                                               const std::string & name_);
 
       /// Check if item with given name exists in a dictionary
-      static bool has_item(const item_dict_type & dict_,
+      static bool has_item(const model_item_dict_type & dict_,
                            const std::string & name_,
-                           item::model_type t_ = MODEL_UNDEFINED);
+                           model_item::model_type t_ = MODEL_UNDEFINED);
 
       /// Return a parameter model from a dictionary
-      static const parameter_model & get_parameter_model(const item_dict_type & dict_,
-                                                   const std::string & name_);
+      static const parameter_model & get_parameter_model(const model_item_dict_type & dict_,
+                                                         const std::string & name_);
 
       /// Return a variant model from a dictionary
-      static const variant_model & get_variant_model(const item_dict_type & dict_,
-                                               const std::string & name_);
+      static const variant_model & get_variant_model(const model_item_dict_type & dict_,
+                                                     const std::string & name_);
 
       /// Remove an item from a dictionary
-      static void remove_item(item_dict_type & dict_,
+      static void remove_item(model_item_dict_type & dict_,
                               const std::string & name_);
 
       /// Smart print of a dictionary
-      static void print_items(const item_dict_type & dict_,
+      static void print_items(const model_item_dict_type & dict_,
                               std::ostream & out_ = std::clog,
                               const std::string & title_ = "",
                               const std::string & indent_ = "",
@@ -254,11 +253,13 @@ namespace datatools {
     };
 
     /// \brief Comparator functor used to sort variant parameters by registry and path
-    struct variant_parameter_set_comparator {
+    class variant_parameter_set_comparator {
+    public:
       variant_parameter_set_comparator();
       variant_parameter_set_comparator(variant_repository &);
       bool operator()(const std::string & vs1_, const std::string & vs2_) const;
-      variant_repository * _repository_;
+    private:
+      variant_repository * _repository_ = nullptr;
     };
 
     typedef boost::variant<bool, int, double, std::string> parameter_value_type;
@@ -269,10 +270,8 @@ namespace datatools {
 
 #endif // DATATOOLS_CONFIGURATION_UTILS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

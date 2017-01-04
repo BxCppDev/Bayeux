@@ -206,11 +206,18 @@ namespace datatools {
     bool base_dependency_logic::check_active_variant(const variant_object_info & voinfo_) const
     {
       bool checked = false;
-      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "VO info = '" << voinfo_ << "'!");
+      datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
+      // logging = datatools::logger::PRIO_DEBUG;
+      DT_LOG_DEBUG(logging, "VO info = '" << voinfo_ << "'");
       DT_THROW_IF(!voinfo_.is_variant(), std::logic_error, "Only variant are supported!");
 
       if (_owner_dependency_->has_local_scope()) {
+        DT_LOG_DEBUG(logging, " => Local scope");
+        if (!voinfo_.is_local()) {
+          DT_LOG_DEBUG(logging, " => Not a local variant");
+        }
         DT_THROW_IF(!voinfo_.is_local(), std::logic_error, "Only local variants are supported!");
+        DT_LOG_DEBUG(logging, " => Compute active_variant...");
         bool active_variant =
           _owner_dependency_->get_registry().is_active_variant(voinfo_.get_variant_local_path());
         if (active_variant) {
@@ -219,6 +226,7 @@ namespace datatools {
       }
 
       if (_owner_dependency_->has_global_scope()) {
+        DT_LOG_DEBUG(logging, " => Global scope");
         DT_THROW_IF(!voinfo_.is_global(), std::logic_error, "Only global variants are supported!");
         bool active_variant = _repository->is_active_variant(voinfo_.get_registry_name(),
                                                              voinfo_.get_variant_local_path());
@@ -227,6 +235,7 @@ namespace datatools {
         }
       }
 
+      DT_LOG_DEBUG(logging, " => checked = " << checked);
       return checked;
     }
 
@@ -260,6 +269,7 @@ namespace datatools {
       DT_THROW_IF(!is_valid(), std::logic_error, "Invalid logic!");
       const variant_object_info & dependee = get_owner_dependency().get_dependee(_dependee_slot_);
       bool checked = this->check_active_variant(dependee);
+      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Checked = " << checked);
       return checked;
     }
 

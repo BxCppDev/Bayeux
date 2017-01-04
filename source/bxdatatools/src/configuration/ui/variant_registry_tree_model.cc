@@ -315,11 +315,11 @@ namespace datatools {
         } else if (column_ == tree_item::CI_DESCRIPTION) {
 
           if (_record_->is_parameter()) {
-            return QString::fromStdString(_record_->get_terse_description());
+            return QString::fromStdString(_record_->get_parameter_model().get_terse_description());
           }
 
           if (_record_->is_variant()) {
-            return QString::fromStdString(_record_->get_terse_description());
+            return QString::fromStdString(_record_->get_parameter_model().get_terse_description());
           }
 
         }
@@ -834,7 +834,14 @@ namespace datatools {
 
           } else if (index_.column() == tree_item::CI_DESCRIPTION) {
 
-            return QString::fromStdString(a_node->get_record().get_terse_description());
+            if (a_node->get_record().is_parameter()) {
+              return QString::fromStdString(a_node->get_record().get_parameter_model().get_terse_description());
+            } // is_parameter
+
+            if (a_node->get_record().is_variant()) {
+              return QString::fromStdString(a_node->get_record().get_variant_model().get_terse_description());
+            } // is_variant
+
             /*
             if (a_node->get_record().is_parameter()) {
 
@@ -846,6 +853,7 @@ namespace datatools {
 
             } // is_parameter
             */
+            // return QString::fromStdString(a_node->get_record().get_terse_description());
           }
 
         }
@@ -1022,15 +1030,15 @@ namespace datatools {
           record_.build_list_of_ranked_parameter_records(ranked_param_records);
           for (std::size_t irank = 0; irank < ranked_param_records.size(); irank++) {
             const std::string & param_child_leaf_name = ranked_param_records[irank];
-            variant_record * child_param = record_.grab_daughters().find(param_child_leaf_name)->second;
+            variant_record & child_param = record_.grab_daughters().find(param_child_leaf_name)->second.grab_record();
             DT_LOG_TRACE(_logging_, " -> parameter child = '" << param_child_leaf_name << "'");
-            if (!child_param) {
-              continue;
-            }
-            if (!child_param->is_parameter()) {
-              continue;
-            }
-            tree_item * child_node = _construct_node_(registry_, *child_param);
+            // if (!child_param) {
+            //   continue;
+            // }
+            // if (!child_param->is_parameter()) {
+            //   continue;
+            // }
+            tree_item * child_node = _construct_node_(registry_, child_param);
             if (child_node) {
               the_node->append_child(child_node);
             }
@@ -1048,14 +1056,14 @@ namespace datatools {
                i != record_.grab_daughters().end();
                i++) {
             DT_LOG_TRACE(_logging_, " -> variant child = '" << i->first << "'");
-            variant_record * child_variant = i->second;
-            if (!child_variant) {
-              continue;
-            }
-            if (!child_variant->is_variant()) {
-              continue;
-            }
-            tree_item * child_node = _construct_node_(registry_, *child_variant);
+            variant_record & child_variant = i->second.grab_record();
+            // if (!child_variant) {
+            //   continue;
+            // }
+            // if (!child_variant->is_variant()) {
+            //   continue;
+            // }
+            tree_item * child_node = _construct_node_(registry_, child_variant);
             if (child_node) {
               the_node->append_child(child_node);
             }

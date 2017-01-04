@@ -320,19 +320,6 @@ namespace datatools {
         for (unsigned int ikey = 0; ikey < registry_keys.size(); ikey++) {
           const std::string & reg_name = registry_keys[ikey];
           variant_registry & var_reg = _repository_->grab_registry(reg_name);
-          /*
-          // XXX
-          for (variant_repository::registry_dict_type::iterator i
-               = _repository_->grab_registries().begin();
-             i != _repository_->grab_registries().end();
-             i++) {
-          // Access to the registry:
-          const std::string & reg_name = i->first;
-          variant_repository::registry_entry & reg_entry = i->second;
-          DT_THROW_IF(!reg_entry.is_valid(), std::logic_error,
-                      "Invalid registry entry '" << reg_name << "'!");
-          variant_registry & var_reg = reg_entry.grab_registry();
-          */
           // Add a new registry UI wrapper in the viewer:
           {
             registry_model_wrapper dummy(this);
@@ -425,17 +412,15 @@ namespace datatools {
 
       void variant_repository_viewer::slot_update_tabs()
       {
-        for (variant_repository::registry_dict_type::const_iterator ireg = _repository_->get_registries().begin();
-             ireg != _repository_->get_registries().end();
-             ireg++) {
-          const std::string & the_registry_name = ireg->first;
+        DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
+        std::vector<std::string> registry_keys;
+        _repository_->build_ordered_registry_keys(registry_keys);
+        for (unsigned int ikey = 0; ikey < registry_keys.size(); ikey++) {
+          const std::string & the_registry_name = registry_keys[ikey];
+          const variant_registry & vreg = _repository_->get_registry(the_registry_name);
           int reg_tab_index = _tab_indexes_.find(the_registry_name)->second;
           bool active = _repository_->is_active_registry(the_registry_name);
-          // std::cerr << "DEVEL: " << "variant_repository_viewer::slot_update_tabs: "
-          //           << (active? "Enable" : "Disable") << " tab at index [" << reg_tab_index << "] for registry '" << the_registry_name << "'!"
-          //           << std::endl;
           _registry_tabs_->setTabEnabled(reg_tab_index, active);
-          const variant_registry & vreg = ireg->second.get_registry();
           if (!vreg.is_accomplished()) {
             _registry_tabs_->setTabIcon(reg_tab_index, *_unaccomplished_icon_);
           } else {
@@ -449,6 +434,7 @@ namespace datatools {
             }
           }
         }
+        DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
         return;
       }
 
@@ -460,20 +446,21 @@ namespace datatools {
                      "Data '" << changed_data_path_ << "' in registry '"
                      << changed_registry_name_ << "' has changed!");
 
+        std::vector<std::string> registry_keys;
+        _repository_->build_ordered_registry_keys(registry_keys);
+
         // Compute consequence on depender registries...
-        for (variant_repository::registry_dict_type::const_iterator ireg
-               = _repository_->get_registries().begin();
-             ireg != _repository_->get_registries().end();
-             ireg++) {
-          const std::string & the_registry_name = ireg->first;
+        for (unsigned int ikey = 0; ikey < registry_keys.size(); ikey++) {
+          const std::string & the_registry_name = registry_keys[ikey];
+          const variant_registry & var_reg = _repository_->grab_registry(the_registry_name);
           if (the_registry_name == changed_registry_name_) {
             // Do not process the changed registry itself:
             continue;
           }
-          const variant_repository::registry_entry & re = ireg->second;
-          const variant_registry & vreg = re.get_registry();
-          if (!vreg.has_dependency_model()) {
-            // No dependency model for this registry:
+          // const variant_repository::registry_entry & re = ireg->second;
+          // const variant_registry & vreg = re.get_registry();
+          if (!var_reg.has_dependency_model()) {
+            // No local dependency model for this registry:
             continue;
           }
         }
@@ -513,13 +500,11 @@ namespace datatools {
       void variant_repository_viewer::slot_at_set_read_only(bool ro_)
       {
         DT_LOG_TRACE_ENTERING(_logging_);
-        for (variant_repository::registry_dict_type::iterator i
-               = _repository_->grab_registries().begin();
-             i != _repository_->grab_registries().end();
-             i++) {
-          const std::string & reg_name = i->first;
-          // variant_repository::registry_entry & reg_entry = i->second;
-          // variant_registry & var_reg = reg_entry.grab_registry();
+
+        std::vector<std::string> registry_keys;
+        _repository_->build_ordered_registry_keys(registry_keys);
+        for (unsigned int ikey = 0; ikey < registry_keys.size(); ikey++) {
+          const std::string & reg_name = registry_keys[ikey];
           registry_model_wrapper & reg_model_wrap = _models_.find(reg_name)->second;
           variant_registry_viewer & reg_viewer = reg_model_wrap.grab_viewer();
           reg_viewer.grab_registry_tree_model().set_read_only(ro_);
@@ -652,20 +637,32 @@ namespace datatools {
         if (rep_file_name.empty()) {
            return;
         }
-        std::ifstream rep_file;
-        rep_file.open(rep_file_name.c_str());
-        if (!rep_file) {
-          DT_THROW_IF(true, std::runtime_error, "Cannot open file '"  << rep_file_name << "'!");
+        bool save_rep_lock = this->get_repository().is_locked();
+        if (save_rep_lock) {
+          this->grab_repository().unlock();
         }
-        //this->beginResetModel();
-        ascii_io rep_io(ascii_io::IO_DEFAULT);
-        // rep_io.set_logging(logger::PRIO_TRACE);
-        int error = rep_io.load_repository(rep_file, this->grab_repository());
-        if (error) {
-          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
-                       "Failed to load repository from file '" << rep_file_name << "'");
-        } else {
-          emit sig_repository_changed();
+        try {
+          std::ifstream rep_file;
+          rep_file.open(rep_file_name.c_str());
+          if (!rep_file) {
+            DT_THROW_IF(true, std::runtime_error, "Cannot open file '"  << rep_file_name << "'!");
+          }
+          //this->beginResetModel();
+          ascii_io rep_io(ascii_io::IO_DEFAULT);
+          // rep_io.set_logging(logger::PRIO_TRACE);
+          int error = rep_io.load_repository(rep_file, this->grab_repository());
+          if (error) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                         "Failed to load repository from file '" << rep_file_name << "'");
+          } else {
+            emit sig_repository_changed();
+          }
+        } catch (std::exception & error) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                         "Failed to load repository : " << error.what());
+        }
+        if (save_rep_lock) {
+          this->grab_repository().lock();
         }
         // std::cerr << "DEVEL: repository was loaded from file '" << rep_file_name << "'" << std::endl;
         //this->endResetModel();
@@ -684,16 +681,21 @@ namespace datatools {
         if (rep_file_name.empty()) {
           return;
         }
-        std::ofstream rep_file;
-        rep_file.open(rep_file_name.c_str());
-        if (!rep_file) {
-          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Cannot open file '"  << rep_file_name << "'!");
-          return;
+        try {
+          std::ofstream rep_file;
+          rep_file.open(rep_file_name.c_str());
+          if (!rep_file) {
+            DT_LOG_ERROR(datatools::logger::PRIO_ERROR,"Cannot open file '"  << rep_file_name << "'!");
+            return;
+          }
+          // std::cerr << "DEVEL: variant_repository_viewer::slot_store_to_file: ..." << std::endl;
+          ascii_io rep_io(ascii_io::IO_DEFAULT);
+          rep_io.store_repository(rep_file, this->get_repository());
+          //std::cerr << "DEVEL: repository was stored in file '" << rep_file_name << "'" << std::endl;
+        } catch (std::exception & error) {
+          DT_LOG_ERROR(datatools::logger::PRIO_ERROR,
+                       "Failed to load repository : " << error.what());
         }
-        // std::cerr << "DEVEL: variant_repository_viewer::slot_store_to_file: ..." << std::endl;
-        ascii_io rep_io(ascii_io::IO_DEFAULT);
-        rep_io.store_repository(rep_file, this->get_repository());
-        //std::cerr << "DEVEL: repository was stored in file '" << rep_file_name << "'" << std::endl;
         return;
       }
 

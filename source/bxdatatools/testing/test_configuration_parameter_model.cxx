@@ -17,15 +17,15 @@ void test1()
   std::clog << "\nTest 1:\n";
 
   // Create 3 dummy variant models:
-  datatools::configuration::item iCV1;
+  datatools::configuration::model_item iCV1;
   datatools::configuration::variant_model & CV1 = iCV1.make_variant("small_foil_thickness");
   CV1.set_documentation("Variant model associated to small values of the source foil thickness");
 
-  datatools::configuration::item iCV2;
+  datatools::configuration::model_item iCV2;
   datatools::configuration::variant_model & CV2 = iCV2.make_variant("medium_foil_thickness");
   CV2.set_documentation("Variant model associated to medium values of the source foil thickness");
 
-  datatools::configuration::item iCV3;
+  datatools::configuration::model_item iCV3;
   datatools::configuration::variant_model & CV3 = iCV3.make_variant("large_foil_thickness");
   CV3.set_documentation("Variant model associated to large values of the source foil thickness");
 
@@ -74,15 +74,15 @@ void test1bis()
 {
   std::clog << "\nTest 1 (bis):\n";
 
-  datatools::configuration::item iCV1;
+  datatools::configuration::model_item iCV1;
   datatools::configuration::variant_model & CV1 = iCV1.make_variant("far_negative_z_position");
   CV1.set_documentation("Variant model associated to large negative Z positions");
 
-  datatools::configuration::item iCV2;
+  datatools::configuration::model_item iCV2;
   datatools::configuration::variant_model & CV2 = iCV2.make_variant("near_zero_Z_position");
   CV2.set_documentation("Variant model associated to medium negative Z positions");
 
-  datatools::configuration::item iCV3;
+  datatools::configuration::model_item iCV3;
   datatools::configuration::variant_model & CV3 = iCV3.make_variant("far_positive_z_position");
   CV3.set_documentation("Variant model associated to large negative Z positions");
 
@@ -133,15 +133,15 @@ void test1ter()
 {
   std::clog << "\nTest 1 (ter):\n";
 
-  datatools::configuration::item iCV1;
+  datatools::configuration::model_item iCV1;
   datatools::configuration::variant_model & CV1 = iCV1.make_variant("far_negative_z_position");
   CV1.set_documentation("Variant model associated to large negative Z positions");
 
-  datatools::configuration::item iCV2;
+  datatools::configuration::model_item iCV2;
   datatools::configuration::variant_model & CV2 = iCV2.make_variant("near_zero_Z_position");
   CV2.set_documentation("Variant model associated to medium negative Z positions");
 
-  datatools::configuration::item iCV3;
+  datatools::configuration::model_item iCV3;
   datatools::configuration::variant_model & CV3 = iCV3.make_variant("far_positive_z_position");
   CV3.set_documentation("Variant model associated to large negative Z positions");
 

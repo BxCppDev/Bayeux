@@ -26,9 +26,8 @@
  *
  *   Real range/interval class.
  *
- * History:
- *
  */
+
 #ifndef DATATOOLS_REAL_RANGE_H
 #define DATATOOLS_REAL_RANGE_H
 

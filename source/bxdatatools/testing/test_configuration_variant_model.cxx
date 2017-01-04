@@ -31,14 +31,14 @@ void test2()
   std::clog << "\nTest 2:\n";
 
   // Variant for the SuperNEMO demonstrator setup:
-  datatools::configuration::item vSnDemoSetup;
+  datatools::configuration::model_item vSnDemoSetup;
   datatools::configuration::variant_model & sndemo_setup_CV
     = vSnDemoSetup.make_variant("snemo.demonstrator");
   sndemo_setup_CV.set_display_name("SNDemo");
   sndemo_setup_CV.set_terse_description("SuperNEMO demonstrator variant setup");
 
   // Create a parameter model:
-  datatools::configuration::item pSNST;
+  datatools::configuration::model_item pSNST;
   {
     datatools::configuration::parameter_model & SNST_CP
       = pSNST.make_parameter("source_thickness");
@@ -59,7 +59,7 @@ void test2()
   }
 
   // Create another parameter model:
-  datatools::configuration::item pSNSM;
+  datatools::configuration::model_item pSNSM;
   {
     datatools::configuration::parameter_model & SNSM_CP
       = pSNSM.make_parameter("source_material");
@@ -98,7 +98,7 @@ void test2()
                                 "Material of the source foil 2");
 
   // Variant for the '3D' visualization view:
-  datatools::configuration::item vVisu3d;
+  datatools::configuration::model_item vVisu3d;
   datatools::configuration::variant_model & visu_3d_CV =
     vVisu3d.make_variant("visu.3d");
   visu_3d_CV.set_display_name("Visu3D");
@@ -107,7 +107,7 @@ void test2()
   visu_3d_CV.tree_dump(std::clog, "visu_3d : ", "");
 
   // Variant for the '2D' visualization view:
-  datatools::configuration::item vVisu2d;
+  datatools::configuration::model_item vVisu2d;
   datatools::configuration::variant_model & visu_2d_CV =
     vVisu2d.make_variant("visu.2d");
   visu_2d_CV.set_display_name("Visu2D");
@@ -115,7 +115,7 @@ void test2()
   visu_2d_CV.initialize_simple();
   visu_2d_CV.tree_dump(std::clog, "visu_2d : ", "");
 
-  datatools::configuration::item pSNVV;
+  datatools::configuration::model_item pSNVV;
   {
     datatools::configuration::parameter_model & SNVV_CP
       = pSNVV.make_parameter("visu_view");
@@ -143,7 +143,7 @@ void test2()
                                 "Visualization view");
 
   // Variant for the 'wire' visualization mode:
-  datatools::configuration::item vVisuWire;
+  datatools::configuration::model_item vVisuWire;
   datatools::configuration::variant_model & visu_wire_CV
     = vVisuWire.make_variant("visu.wire");
   visu_wire_CV.set_display_name("VisuWire");
@@ -152,7 +152,7 @@ void test2()
   visu_wire_CV.tree_dump(std::clog, "visu_wire : ", "");
 
   // Variant for the 'solid' visualization mode:
-  datatools::configuration::item vVisuSolid;
+  datatools::configuration::model_item vVisuSolid;
   datatools::configuration::variant_model & visu_solid_CV
     = vVisuSolid.make_variant("visu.solid");
   visu_solid_CV.set_display_name("VisuSolid");
@@ -160,7 +160,7 @@ void test2()
   visu_solid_CV.initialize_simple();
   visu_solid_CV.tree_dump(std::clog, "visu_solid : ", "");
 
-  datatools::configuration::item pSNVS;
+  datatools::configuration::model_item pSNVS;
   {
     datatools::configuration::parameter_model & SNVS_CP
       = pSNVS.make_parameter("visu_solid");
@@ -186,11 +186,11 @@ void test3()
 {
   std::clog << "\nTest 3:\n";
 
-  datatools::configuration::item_dict_type items;
+  datatools::configuration::model_item_dict_type items;
   // Load a few descriptions of parameters in the dictionary of items:
   {
     datatools::configuration::parameter_model & p1 =
-      datatools::configuration::item::add_parameter_item(items, "visu.view_mode.PM");
+      datatools::configuration::model_item::add_parameter_item(items, "visu.view_mode.PM");
     p1.set(datatools::TYPE_STRING,
            datatools::configuration::parameter_model::VARIABLE_MODE_ENUM);
     p1.add_enumerated_string_value("3D", true);
@@ -198,7 +198,7 @@ void test3()
     p1.add_enumerated_string_value("XZ");
 
     datatools::configuration::parameter_model & p2 =
-      datatools::configuration::item::add_parameter_item(items, "visu.zoom_factor.PM");
+      datatools::configuration::model_item::add_parameter_item(items, "visu.zoom_factor.PM");
     p2.set(datatools::TYPE_REAL,
            datatools::configuration::parameter_model::VARIABLE_MODE_INTERVAL);
     p2.set_real_precision(0.005);
@@ -207,14 +207,14 @@ void test3()
     p2.set_default_real(1.0);
 
     datatools::configuration::parameter_model & p3 =
-      datatools::configuration::item::add_parameter_item(items, "visu.textures_path.PM");
+      datatools::configuration::model_item::add_parameter_item(items, "visu.textures_path.PM");
     p3.set(datatools::TYPE_STRING,
            datatools::configuration::parameter_model::VARIABLE_MODE_FREE);
     p3.set_default_string("default_textures.conf");
   }
 
   datatools::configuration::variant_model & visu_CV =
-    datatools::configuration::item::add_variant_item(items, "visu.VM");
+    datatools::configuration::model_item::add_variant_item(items, "visu.VM");
 
   datatools::properties visu_CV_setup;
   visu_CV_setup.store_string("logging.priority", "debug");
@@ -236,12 +236,12 @@ void test3()
   visu_CV_setup.store_string("parameters.textures_path.model",       "visu.textures_path.PM");
   visu_CV_setup.store_string("parameters.textures_path.description", "Path to the decription of rendering textures");
 
-  datatools::configuration::item::print_items(items, std::cout, "Dictionary of items:", "--> ");
+  datatools::configuration::model_item::print_items(items, std::cout, "Dictionary of items:", "--> ");
 
   visu_CV.initialize(visu_CV_setup, items);
   visu_CV.tree_dump(std::clog, "A configuration variant : ");
 
-  datatools::configuration::item::print_items(items, std::cout, "Dictionary of items:", "--> ");
+  datatools::configuration::model_item::print_items(items, std::cout, "Dictionary of items:", "--> ");
 
   return;
 }

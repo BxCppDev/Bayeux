@@ -544,6 +544,7 @@ namespace datatools {
 
     void variant_service::configure(const config & cfg_, bool lock_)
     {
+      DT_LOG_TRACE_ENTERING(_logging_);
       DT_THROW_IF(is_started(), std::logic_error, "variant service is already started!");
       datatools::logger::priority prio = datatools::logger::get_priority(cfg_.logging);
       if (prio != datatools::logger::PRIO_UNDEFINED) {
@@ -577,11 +578,13 @@ namespace datatools {
           _repository_.unlock();
         }
       }
+      DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
 
     void variant_service::_do_build_()
     {
+      DT_LOG_TRACE_ENTERING(_logging_);
       // Initialize the repository:
       _do_variant_config_();
 
@@ -603,6 +606,7 @@ namespace datatools {
         _do_variant_launch_tui_();
       }
 
+      DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
 
@@ -802,7 +806,7 @@ namespace datatools {
       datatools::fetch_path_with_env(config_filename);
       datatools::properties rep_config;
       rep_config.read_configuration(config_filename);
-      DT_LOG_TRACE(_logging_, "Initializing application variant repository from '" << config_filename << "'...");
+      DT_LOG_DEBUG(_logging_, "Initializing application variant repository from '" << config_filename << "'...");
       _repository_.set_logging_priority(_logging_);
       _repository_.initialize(rep_config);
 
@@ -810,9 +814,8 @@ namespace datatools {
       if (_registry_rules_.size()) {
         _do_variant_additional_registries_setup_();
       }
-
-      DT_LOG_TRACE(_logging_, "Application variant repository locked = " << _repository_.is_locked());
-      DT_LOG_TRACE(_logging_, "Done.");
+      _repository_.update();
+      DT_LOG_DEBUG(_logging_, "Application variant repository locked = " << _repository_.is_locked());
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
@@ -824,7 +827,7 @@ namespace datatools {
       boost::trim(profile_filename);
       if (profile_filename.empty()) return;
       datatools::fetch_path_with_env(profile_filename);
-      DT_LOG_TRACE(_logging_, "Loading profile for application variant repository from '" << profile_filename << "'...");
+      DT_LOG_DEBUG(_logging_, "Loading profile for application variant repository from '" << profile_filename << "'...");
       std::ifstream rep_file;
       rep_file.open(profile_filename.c_str());
       if (!rep_file) {
@@ -834,6 +837,9 @@ namespace datatools {
       rep_io_flags |= datatools::configuration::ascii_io::IO_DEFAULT;
       if (_dont_ignore_unknown_at_load_) {
         rep_io_flags |= datatools::configuration::ascii_io::IO_DONT_IGNORE_UNKNOWN_REGISTRY;
+      }
+      if (datatools::logger::is_trace(_logging_)) {
+        rep_io_flags |= datatools::configuration::ascii_io::IO_TRACE;
       }
       datatools::configuration::ascii_io rep_io(rep_io_flags);
       bool was_locked = _repository_.is_locked();
@@ -949,10 +955,11 @@ namespace datatools {
                                                                           krnl.get_argv(),
                                                                           "Bayeux Variant Service");
       datatools::configuration::ui::variant_repository_dialog vrep_dialog(_repository_);
-      int ret = vrep_dialog.exec();
-      if (ret) {
-        // throw variant_exception("Variant GUI editor failed");
-      }
+      vrep_dialog.exec();
+      // int ret = vrep_dialog.exec();
+      // if (ret) {
+      //   // throw variant_exception("Variant GUI editor failed");
+      // }
       DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
@@ -966,10 +973,6 @@ namespace datatools {
         DT_THROW_IF(krnl.has_variant_service(), std::logic_error,
                     "Kernel already has a variant service!");
         krnl.set_variant_service(*this);
-        // if (krnl.is_initialized() && krnl.has_variant_repository()) {
-        //   DT_LOG_TRACE(_logging_,
-        //                "Datatools' kernel system variant repository is instantiated.");
-        //   _repository_.system_export();
       } else {
         throw variant_exception("Datatools' kernel system variant repository is not instantiated.");
       }
@@ -982,8 +985,6 @@ namespace datatools {
       DT_LOG_TRACE_ENTERING(_logging_);
       datatools::kernel & krnl = datatools::kernel::instance();
       if (krnl.is_initialized()) {
-        // DT_THROW_IF(!krnl.has_variant_service(), std::logic_error,
-        //             "Kernel has no variant service!");
         if (krnl.has_variant_service() && this == &krnl.get_variant_service()) {
           krnl.reset_variant_service();
         }

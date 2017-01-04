@@ -75,7 +75,7 @@ namespace datatools {
     {
       _rank_ = -1;
       _external_registry_ = nullptr;
-      // _external_backup_repository_ = nullptr;
+      _last_active_ = false;
       return;
     }
 
@@ -104,9 +104,6 @@ namespace datatools {
       _external_registry_ = &reg_;
       DT_THROW_IF(reg_.is_mounted(), std::logic_error,
                   "Cannot mount a registry already mounted in another repository!");
-      // if (_external_registry_->has_parent_repository()) {
-      //   _external_backup_repository_ = &_external_registry_->get_parent_repository();
-      // }
       _external_registry_->set_parent_repository(*_parent_repository_, _name_);
       return;
     }
@@ -114,12 +111,7 @@ namespace datatools {
     void variant_repository::registry_entry::reset_external_registry()
     {
       if (is_external()) {
-        // if (_external_backup_repository_ != nullptr) {
-        //   _external_registry_->set_parent_repository(*_external_backup_repository_);
-        //   _external_backup_repository_ = nullptr;
-        // } else {
         _external_registry_->reset_parent_repository();
-        // }
       }
       return;
     }
@@ -160,12 +152,13 @@ namespace datatools {
         _embedded_manager_.reset();
       }
       _rank_ = -1;
+      _last_active_ = false;
       return;
     }
 
     void variant_repository::registry_entry::set_rank(int rank_)
     {
-      _rank_ = rank_;
+      _rank_ = (rank_ < 0 ? -1 : rank_);
       return;
     }
 
@@ -264,18 +257,16 @@ namespace datatools {
         dummy_entry.set_name(registry_name_);
         _registries_.insert(std::pair<std::string, registry_entry>(registry_name_, dummy_entry));
       }
-      registry_entry & e = _registries_.find(registry_name_)->second;
+      registry_entry & re = _registries_.find(registry_name_)->second;
       if (rank_ >= 0) {
-        DT_THROW_IF(_ranked_.find(rank_) != _ranked_.end(),
+        DT_THROW_IF(rank_is_used(rank_),
                     std::logic_error,
-                    "Rank [" << rank_ << "] is always used by registry '"
+                    "Rank [" << rank_ << "] is already used by registry '"
                     << _ranked_.find(rank_)->second << "'!");
-        e.set_rank(rank_);
-        _ranked_[rank_] = registry_name_;
-      } else {
-        _unranked_.push_back(registry_name_);
+        re.set_rank(rank_);
       }
-      return e;
+      _compute_ranked_unranked_();
+      return re;
     }
 
     const variant_repository::registry_dict_type &
@@ -317,6 +308,7 @@ namespace datatools {
     void variant_repository::build_ordered_registry_keys(std::vector<std::string> & keys_) const
     {
       keys_.clear();
+      keys_.reserve(_ranked_.size() + _unranked_.size());
       for (ranked_dict_type::const_iterator i = _ranked_.begin();
            i != _ranked_.end();
            i++) {
@@ -342,6 +334,7 @@ namespace datatools {
 
     void variant_repository::set_organization(const std::string & o_)
     {
+      if (has_organization() && o_ == _organization_) return;
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       DT_THROW_IF(o_.find("/") != std::string::npos, std::logic_error,
                   "Organization name cannot contain the '/' character!");
@@ -361,6 +354,7 @@ namespace datatools {
 
     void variant_repository::set_application(const std::string & a_)
     {
+      if (has_application() && a_ == _application_) return;
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       DT_THROW_IF(a_.find("/") != std::string::npos, std::logic_error,
                   "Application name cannot contains the '/' character!");
@@ -559,7 +553,7 @@ namespace datatools {
             cri = vrec_.string_to_value(value_str);
             DT_THROW_IF(! cri.is_success(),
                         std::logic_error,
-                        "Failed to convert variant parameter '" << vrec_.get_name()
+                        "Failed to convert variant parameter '" << vrec_.get_path()
                         << "' from '" << value_str << "' : "
                         << cri.get_error_message());
           }
@@ -568,8 +562,8 @@ namespace datatools {
            for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
                  i != vrec_.grab_daughters().end();
                  i++) {
-              variant_record * rec = i->second;
-              _process_record(*rec);
+             variant_record & vrec = i->second.grab_record();
+             _process_record(vrec);
             }
           }
         }
@@ -579,14 +573,19 @@ namespace datatools {
                        "Processing variant '" << vrec_.get_path()
                        << "' in registry '" << _current_registry_name_ << "'...");
           // Traverse the daughter parameters:
-          for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
-               i != vrec_.grab_daughters().end();
-               i++) {
+          std::vector<std::string> ranked;
+          vrec_.build_list_of_ranked_parameter_records(ranked);
+          for (std::size_t irank = 0; irank < ranked.size(); irank++) {
+            const std::string & param_name = ranked[irank];
+          // for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
+          //      i != vrec_.grab_daughters().end();
+          //      i++) {
+
             DT_LOG_DEBUG(_logging_,
-                         "Processing daughter '" << i->first << "' in variant '" << vrec_.get_path()
+                         "Processing daughter '" << param_name << "' in variant '" << vrec_.get_path()
                          << "' in registry '" << _current_registry_name_ << "'...");
-            variant_record * rec = i->second;
-            _process_record(*rec);
+            variant_record & vrec = vrec_.grab_daughters().find(param_name)->second.grab_record();
+            _process_record(vrec);
           }
         }
       }
@@ -658,8 +657,8 @@ namespace datatools {
             for (variant_record::daughter_dict_type::const_iterator i = vrec_.get_daughters().begin();
                  i != vrec_.get_daughters().end();
                  i++) {
-              const variant_record * rec = i->second;
-              _process_record(*rec);
+              const variant_record & dvrec = i->second.get_record();
+              _process_record(dvrec);
             }
           } else {
             // Publish the unset value:
@@ -673,14 +672,15 @@ namespace datatools {
                        "Processing variant '" << vrec_.get_path()
                        << "' in registry '" << _current_registry_name_ << "'...");
           // Traverse the daughter parameters:
-          for (variant_record::daughter_dict_type::const_iterator i = vrec_.get_daughters().begin();
-               i != vrec_.get_daughters().end();
-               i++) {
+          std::vector<std::string> ranked;
+          vrec_.build_list_of_ranked_parameter_records(ranked);
+          for (std::size_t irank = 0; irank < ranked.size(); irank++) {
+            const std::string & param_name = ranked[irank];
             DT_LOG_DEBUG(_logging_,
-                         "Processing daughter '" << i->first << "' in variant '" << vrec_.get_path()
+                         "Processing daughter '" << param_name << "' in variant '" << vrec_.get_path()
                          << "' in registry '" << _current_registry_name_ << "'...");
-            const variant_record * rec = i->second;
-            _process_record(*rec);
+            const variant_record & dvrec = vrec_.get_daughters().find(param_name)->second.get_record();
+            _process_record(dvrec);
           }
         }
       }
@@ -710,12 +710,6 @@ namespace datatools {
     bool variant_repository::is_initialized() const
     {
       return _initialized_;
-    }
-
-    void variant_repository::initialize_simple()
-    {
-      datatools::properties dummy;
-      initialize(dummy);
     }
 
     void variant_repository::_legacy_load_registries(const datatools::properties & config_)
@@ -767,14 +761,17 @@ namespace datatools {
 
     void variant_repository::load_global_dependency_model(const datatools::properties & gdm_config_)
     {
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       _dependency_model_.reset(new variant_dependency_model(*this));
       _dependency_model_->initialize(gdm_config_);
+      DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
 
     void variant_repository::load_registries(const datatools::properties & config_)
     {
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
 
       if (config_.has_flag("legacy_load")) {
@@ -785,9 +782,19 @@ namespace datatools {
       }
 
       // The set of variant registries to be loaded in the repository:
-      std::set<std::string> registry_names;
+      std::vector<std::string> registry_names;
       if (config_.has_key("registries")) {
-        config_.fetch("registries", registry_names, false);
+        config_.fetch("registries", registry_names);
+      }
+      {
+        // Check for duplicates:
+        std::set<std::string> check_reg_names;
+        for (const std::string & name : registry_names) {
+          DT_THROW_IF(check_reg_names.count(name) > 0,
+                      std::logic_error,
+                      "Duplicated name '" << name << "' is not allowed!");
+          check_reg_names.insert(name);
+        }
       }
 
       // Temporary building records:
@@ -797,16 +804,18 @@ namespace datatools {
       std::map<std::string, std::string> registry_descriptions;
       std::map<std::string, int> registry_ranks;
       std::map<std::string, std::set<std::string> > registry_dependencies;
+      std::map<std::string, datatools::logger::priority> registry_loggings;
 
       // Parsing:
       {
         std::map<int, std::string> parsed_ranks; // ensure ranks are unique
-
         // Scan configuration info for all registries:
-        for (std::set<std::string>::const_iterator ireg = registry_names.begin();
+        std::size_t registry_counter = 0;
+        for (std::vector<std::string>::const_iterator ireg = registry_names.begin();
              ireg != registry_names.end();
              ireg++) {
           const std::string & reg_name = *ireg;
+          int reg_rank = -1;
 
           {
             // Parse variant registry config:
@@ -823,21 +832,28 @@ namespace datatools {
           }
 
           {
-            // Parse variant registry ranks:
-            std::ostringstream reg_rank_oss;
-            reg_rank_oss << "registries." << reg_name << ".rank";
-            if (config_.has_key(reg_rank_oss.str())) {
-              int rank = config_.fetch_integer(reg_rank_oss.str());
-              DT_THROW_IF(rank < 0,
-                          std::range_error,
-                          "Rank [" << rank << "] is not valid for registry '" << reg_name << "'!");
-              DT_THROW_IF(parsed_ranks.count(rank) != 0,
-                          std::range_error,
-                          "Rank [" << rank << "] for registry '"
-                          << reg_name << "' is already used by registry '"
-                          << parsed_ranks.find(rank)->second << "'!");
-              parsed_ranks[rank] = reg_name;
-              registry_ranks[reg_name] = rank;
+            // Automatic registry ranking;
+            //   // Parse variant registry ranks:
+            //   std::ostringstream reg_rank_oss;
+            //   reg_rank_oss << "registries." << reg_name << ".rank";
+            //   if (config_.has_key(reg_rank_oss.str())) {
+            //     int rank = config_.fetch_integer(reg_rank_oss.str());
+            //     DT_THROW_IF(rank < 0,
+            //                 std::range_error,
+            //                 "Rank [" << rank << "] is not valid for registry '" << reg_name << "'!");
+            //     DT_THROW_IF(parsed_ranks.count(rank) != 0,
+            //                 std::range_error,
+            //                 "Rank [" << rank << "] for registry '"
+            //                 << reg_name << "' is already used by registry '"
+            //                 << parsed_ranks.find(rank)->second << "'!");
+            //     reg_rank = rank;
+            //   }
+            if (reg_rank < 0) {
+              reg_rank = registry_counter++;
+            }
+            if (reg_rank >= 0) {
+              parsed_ranks[reg_rank] = reg_name;
+              registry_ranks[reg_name] = reg_rank;
             }
           }
 
@@ -883,32 +899,47 @@ namespace datatools {
             }
           }
 
-          // {
-          //   // Parse variant registry dependencies:
-          //   std::ostringstream reg_dependencies_oss;
-          //   reg_dependencies_oss << "registries." << reg_name << ".dependencies";
-          //   if (config_.has_key(reg_dependencies_oss.str())) {
-          //     std::set<std::string> reg_dependencies;
-          //     config_.fetch(reg_dependencies_oss.str(), reg_dependencies, false);
-          //     if (reg_dependencies.size()) {
-          //       registry_dependencies[reg_name] = reg_dependencies;
-          //     }
-          //   }
-          // }
-
+          {
+            // Parse variant registry logging:
+            std::ostringstream reg_logging_oss;
+            reg_logging_oss << "registries." << reg_name << ".logging";
+            std::string reg_logging;
+            if (config_.has_key(reg_logging_oss.str())) {
+              reg_logging = config_.fetch_string(reg_logging_oss.str());
+              DT_THROW_IF(datatools::logger::get_priority(reg_logging)
+                          == datatools::logger::PRIO_UNDEFINED,
+                          std::logic_error,
+                          "Invalid logging priority '"
+                          << reg_logging << "' for registry '" << reg_name << "'!");
+            }
+            if (!reg_logging.empty()) {
+              registry_loggings[reg_name] = datatools::logger::get_priority(reg_logging);
+            } else {
+              registry_loggings[reg_name] = datatools::logger::PRIO_UNDEFINED;
+            }
+          }
         }
       }
 
+      for (const auto & reg_name: registry_loggings) {
+        DT_LOG_DEBUG(get_logging_priority(),
+                     "Registry '" << reg_name.first << "'"
+                     << " has logging '"
+                     << datatools::logger::get_priority_label(reg_name.second) << "'.");
+      }
+
       // Registration and configuration of all embedded registries:
-      for (std::set<std::string>::const_iterator ireg = registry_names.begin();
+      for (std::vector<std::string>::const_iterator ireg = registry_names.begin();
            ireg != registry_names.end();
            ireg++) {
         const std::string & the_registry_name = *ireg;
+        DT_LOG_DEBUG(get_logging_priority(), "Processing registry '" << the_registry_name << "'...");
         std::string the_registry_top_variant_name;
         std::string the_registry_display_name;
         std::string the_registry_terse_description;
         std::string the_registry_variant_mgr_config_file;
-        int the_registry_rank = -1;
+        int         the_registry_rank = -1;
+        datatools::logger::priority the_registry_logging = datatools::logger::PRIO_UNDEFINED;
 
         // Extract specific informations from temporary records:
         the_registry_variant_mgr_config_file = registry_configs.find(the_registry_name)->second;
@@ -925,6 +956,9 @@ namespace datatools {
         if (registry_ranks.count(the_registry_name)) {
           the_registry_rank = registry_ranks.find(the_registry_name)->second;
         }
+        if (registry_loggings.count(the_registry_name)) {
+          the_registry_logging = registry_loggings.find(the_registry_name)->second;
+        }
         DT_LOG_DEBUG(get_logging_priority(),
                      "Registration of variant registry '" << the_registry_name << "' from configuration file '"
                      << the_registry_variant_mgr_config_file << "'...");
@@ -933,42 +967,26 @@ namespace datatools {
                                     the_registry_name,
                                     the_registry_display_name,
                                     the_registry_terse_description,
-                                    the_registry_rank);
+                                    the_registry_rank,
+                                    the_registry_logging);
       }
 
-      // // New dependency model:
-      // {
-      //   std::set<unsigned int> slots;
-      //   if (config_.has_key("dependees.slots")) {
-      //     config_.fetch_positive("dependees.slots", slots);
-      //   } else if (config_.has_key("dependees.number_of_slots")) {
-      //     unsigned int noslots = config_.fetch_positive_integer("dependees.number_of_slots");
-      //     for (unsigned int islot = 0; islot < noslots; islot++) {
-      //       slots.insert(islot);
-      //     }
-      //   }
-      //   std::map<unsigned int, std::string> dependee_slots;
-      //   for (auto islot : slots) {
-      //     std::ostringstream slot_variant_key_oss;
-      //     slot_variant_key_oss << "dependees.slot_" << islot << ".variant";
-      //     std::string slot_variant_key = slot_variant_key_oss.str();
-      //     DT_THROW_IF(!config_.has_key(slot_variant_key), std::logic_error,
-      //                 "Missing '" << slot_variant_key << "' property!");
-      //     std::string dependee_variant = config_.fetch_string(slot_variant_key);
-      //     dependee_slots[islot] = dependee_variant;
-      //   }
-      // }
+      DT_LOG_TRACE_EXITING(get_logging_priority());
+      return;
+    }
 
+    void variant_repository::initialize_simple()
+    {
+      _at_init_();
       return;
     }
 
     void variant_repository::initialize(const datatools::properties & config_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Repository '" << get_name() << "' is already initialized!");
-
       bool requested_lock = false;
-
       this->enriched_base::initialize(config_, false);
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
 
       // Parse configuration parameters:
       if (!has_organization()) {
@@ -986,7 +1004,7 @@ namespace datatools {
       }
 
       if (config_.has_flag("lock")) {
-        requested_lock = true;
+        set_requested_lock(true);
       }
 
       load_registries(config_);
@@ -1004,14 +1022,19 @@ namespace datatools {
           config_.export_and_rename_starting_with(gdm_config, "gdm.", "");
         }
         if (gdm_config.size()) {
+          DT_LOG_DEBUG(get_logging_priority(), "Loading global dependency model...");
           load_global_dependency_model(gdm_config);
         }
       }
 
-      if (requested_lock) {
-        lock();
-      }
+      _at_init_();
+      DT_LOG_TRACE_EXITING(get_logging_priority());
+      return;
+    }
 
+    void variant_repository::_at_init_()
+    {
+      // Checks:
       bool has_warnings = false;
       if (!has_name()) {
         has_warnings = true;
@@ -1042,18 +1065,34 @@ namespace datatools {
         DT_LOG_WARNING(get_logging_priority(), "You configuration setup (file/multi_properties) for variant repository '" << get_name()
                        << "' seems not to be valid!");
       }
-
-      _initialized_ = true;
+      _compute_ranked_unranked_();
+      if (_requested_lock_) {
+        lock();
+      }
+      update();
+      if (!_initialized_) _initialized_ = true;
       return;
     }
 
-    void variant_repository::reset()
+    void variant_repository::set_requested_lock(bool rl_)
     {
-      DT_THROW_IF(! is_initialized(), std::logic_error, "Repository is not initialized!");
-      _initialized_ = false;
+      DT_THROW_IF(is_initialized(), std::logic_error, "Repository '" << get_name() << "' is already initialized!");
+      _requested_lock_ = rl_;
+      return;
+    }
+
+    bool variant_repository::is_requested_lock() const
+    {
+      return _requested_lock_;
+    }
+
+    void variant_repository::_at_reset_()
+    {
+      if (_initialized_) _initialized_ = false;
       if (is_locked()) {
         unlock();
       }
+      _requested_lock_ = false;
       if (_dependency_model_.get() == nullptr) {
         _dependency_model_.reset();
       }
@@ -1066,17 +1105,46 @@ namespace datatools {
       return;
     }
 
+    void variant_repository::reset()
+    {
+      DT_THROW_IF(! is_initialized(), std::logic_error, "Repository is not initialized!");
+      _at_reset_();
+      return;
+    }
+
     void variant_repository::clear_registries()
     {
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
+      _unranked_.clear();
+      _ranked_.clear();
       _registries_.clear();
+      return;
+    }
+
+    void variant_repository::_compute_ranked_unranked_()
+    {
+      DT_LOG_DEBUG(get_logging_priority(), "Recomputing ranked/unranked registries...");
+      _unranked_.clear();
+      _ranked_.clear();
+      for (registry_dict_type::const_iterator ireg = _registries_.begin();
+           ireg != _registries_.end();
+           ireg++) {
+        const std::string & rkey = ireg->first;
+        const registry_entry & re = ireg->second;
+        if (re.has_rank()) {
+          _ranked_[re.get_rank()] = rkey;
+        } else {
+          _unranked_.push_back(rkey);
+        }
+      }
+      DT_LOG_DEBUG(get_logging_priority(), "  Number of ranked registries   = " << _ranked_.size());
+      DT_LOG_DEBUG(get_logging_priority(), "  Number of unranked registries = " << _unranked_.size());
       return;
     }
 
     void variant_repository::external_registries_unregistration()
     {
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
-      //_registries_.clear();
       std::vector<std::string> external_registry_keys;
       for (registry_dict_type::const_iterator i = _registries_.begin();
            i != _registries_.end();
@@ -1107,6 +1175,7 @@ namespace datatools {
                                                    const std::string & registry_key_,
                                                    int rank_)
     {
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       std::string registry_name = registry_key_;
       if (registry_name.empty()) {
@@ -1118,10 +1187,17 @@ namespace datatools {
                   "Invalid registry name!");
       DT_THROW_IF(has_registry(registry_name), std::logic_error,
                   "Repository already has a registry named '" << registry_name << "'!");
-      DT_THROW_IF(external_registry_.has_parent_repository(), std::logic_error,
-                  "Registry named '" << registry_name << "' already has a parent repository!");
+      bool allow_multi_parent = false;
+      // if (get_auxiliaries().has_flag("__variant.repository.allow_multi_parent")) {
+      //   allow_multi_parent = true;
+      // }
+      if (! allow_multi_parent) {
+        DT_THROW_IF(external_registry_.has_parent_repository(), std::logic_error,
+                    "Registry named '" << registry_name << "' already has a parent repository!");
+      }
       registry_entry & re = _add_entry(registry_name, rank_);
       re.set_external_registry(external_registry_);
+      DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
 
@@ -1130,8 +1206,10 @@ namespace datatools {
                                                    const std::string & registry_key_,
                                                    const std::string & registry_display_name_,
                                                    const std::string & registry_terse_description_,
-                                                   int rank_)
+                                                   int registry_rank_,
+                                                   const datatools::logger::priority registry_logging_)
     {
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       // std::cerr << "DEVEL: Registration of variant : '" << registry_key_ << "'" << std::endl;
       // std::cerr << "DEVEL: Manager configuration file is : '" << registry_manager_config_ << "'" << std::endl;
@@ -1172,20 +1250,25 @@ namespace datatools {
         registry_terse_description = mgr_ptr->get_terse_description();
       }
 
-      registry_entry & re = _add_entry(registry_name, rank_);
+      DT_LOG_DEBUG(get_logging_priority(), "Adding registry '" << registry_name << "'...");
+      registry_entry & re = _add_entry(registry_name, registry_rank_);
       re._embedded_manager_ = mgr_ptr;
       re._embedded_registry_.reset(new variant_registry);
       variant_registry & vreg = *re._embedded_registry_;
-      vreg.set_logging_priority(re._embedded_manager_->get_logging_priority());
+      datatools::logger::priority registry_logging = re._embedded_manager_->get_logging_priority();
+      if (registry_logging_ != datatools::logger::PRIO_UNDEFINED) {
+        registry_logging = registry_logging_;
+      }
+      vreg.set_logging_priority(registry_logging);
       vreg.set_name(registry_name);
       vreg.set_display_name(registry_display_name);
       vreg.set_terse_description(registry_terse_description);
       vreg.set_parent_repository(*this, registry_name);
       vreg.initialize_from(*re._embedded_manager_);
+      DT_LOG_DEBUG(get_logging_priority(), "Registry '" << registry_name << "' is set.");
 
       // Load local dependency model:
       {
-        DT_LOG_DEBUG(get_logging_priority(), "Attempt to load a local dependency model for registry '" << registry_name << "'...");
         datatools::properties ldm_config;
         if (mgr_config.has_key("load_local_dependency_model")) {
           // Load local dependency model from a file:
@@ -1197,10 +1280,12 @@ namespace datatools {
           mgr_config.export_and_rename_starting_with(ldm_config, "ldm.", "");
         }
         if (ldm_config.size()) {
+          DT_LOG_DEBUG(get_logging_priority(), "Attempt to load a local dependency model for registry '" << registry_name << "'...");
           vreg.load_local_dependency_model(ldm_config);
         }
       }
 
+      DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
 
@@ -1234,67 +1319,6 @@ namespace datatools {
       reversed_      = reversed;
       return true;
     }
-
-    /*
-
-    void variant_repository::add_registry_dependency(const std::string & registry_name_,
-                                                     const std::string & dependee_variant_path_)
-    {
-      registry_dict_type::iterator found = _registries_.find(registry_name_);
-      DT_THROW_IF(found == _registries_.end(),
-                  std::logic_error,
-                  "Registry '" << registry_name_ << "' does not exist!");
-      registry_entry & re = found->second;
-      DT_THROW_IF(re.depends_on(dependee_variant_path_),
-                  std::logic_error,
-                  "Registry '" << registry_name_ << "' already depends on variant '"
-                  << dependee_variant_path_ << "'!");
-      std::string dependee_registry;
-      std::string local_variant_path;
-      bool        reversed;
-      bool parsed = parse_variant_path(dependee_variant_path_,
-                                       dependee_registry,
-                                       local_variant_path,
-                                       reversed);
-      DT_THROW_IF(!parsed, std::logic_error, "Bad variant path format!");
-      DT_THROW_IF(!has_registry(dependee_registry), std::logic_error, "No variant registry '" << dependee_registry << "'!");
-      DT_THROW_IF(!get_registry(dependee_registry).has_variant_record(local_variant_path),
-                  std::logic_error,
-                  "Dependee variant path '" << dependee_variant_path_ << "' does not exist!");
-      re.add_dependency(dependee_variant_path_);
-      return;
-    }
-
-    void variant_repository::remove_registry_dependency(const std::string & registry_name_,
-                                                        const std::string & variant_path_)
-    {
-      registry_dict_type::iterator found = _registries_.find(registry_name_);
-      DT_THROW_IF(found == _registries_.end(),
-                  std::logic_error,
-                  "Registry '" << registry_name_ << "' does not exist!");
-      registry_entry & re = found->second;
-      DT_THROW_IF(!re.depends_on(variant_path_),
-                  std::logic_error,
-                  "Registry '" << registry_name_ << "' does not depends on variant '"
-                  << variant_path_ << "'!");
-      re.remove_dependency(variant_path_);
-      return;
-    }
-
-    bool variant_repository::has_registry_dependency(const std::string & registry_name_,
-                                                     const std::string & variant_path_) const
-    {
-      registry_dict_type::const_iterator found = _registries_.find(registry_name_);
-      DT_THROW_IF(found == _registries_.end(),
-                  std::logic_error,
-                  "Registry '" << registry_name_ << "' does not exist!");
-      const registry_entry & re = found->second;
-      if (re.depends_on(variant_path_)) {
-        return true;
-      }
-      return false;
-    }
-    */
 
     bool variant_repository::is_accomplished() const
     {
@@ -1344,80 +1368,6 @@ namespace datatools {
       return vreg.has_parameter_record(variant_parameter_path_);
     }
 
-    /*
-    command::returned_info
-    variant_repository::cmd_set_parameter(const std::string & registry_key_,
-                                          const std::string & param_path_,
-                                          const std::string & param_value_token_)
-    {
-      command::returned_info cri;
-      try {
-        cri.set_error_code(command::CEC_SCOPE_INVALID);
-        bool registry_active = is_active_registry(registry_key_);
-        if (! registry_active) {
-          cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
-          std::string message = "Registry '" + registry_key_ + "' is not active";
-          cri.set_error_message(message);
-        } else {
-          variant_registry & vreg = grab_registry(registry_key_);
-          cri = vreg.cmd_set_parameter_value(param_path_, param_value_token_);
-        }
-      } catch (std::exception & x) {
-        std::string message = "Registry '" + registry_key_ + "' : " + x.what();
-        cri.set_error_message(message);
-      }
-      return cri;
-    }
-
-    command::returned_info
-    variant_repository::cmd_get_parameter(const std::string & registry_key_,
-                                          const std::string & param_path_,
-                                          std::string & param_value_token_) const
-    {
-      command::returned_info cri;
-      try {
-        if (! has_registry(registry_key_)) {
-          // The repository has no registry named 'registry_key_' :
-          cri.set_error_code(command::CEC_SCOPE_INVALID);
-          cri.set_error_message("Variant repository has no registry named '" + registry_key_ + "' !");
-        } else {
-          const variant_registry & vreg = get_registry(registry_key_);
-          cri = vreg.cmd_get_parameter_value(param_path_, param_value_token_);
-        }
-      } catch (std::exception & x) {
-        std::string message = "Registry '" + registry_key_ + "' : " + x.what();
-        cri.set_error_code(command::CEC_FAILURE);
-        cri.set_error_message(message);
-      }
-      return cri;
-    }
-
-    command::returned_info
-    variant_repository::cmd_has_parameter(const std::string & registry_key_,
-                                          const std::string & param_path_,
-                                          bool & present_) const
-    {
-      command::returned_info cri;
-      present_ = false;
-      try {
-        if (! has_registry(registry_key_)) {
-          // The repository has no registry named 'registry_key_' :
-          cri.set_error_code(command::CEC_SCOPE_INVALID);
-          cri.set_error_message("Variant repository has no registry named '" + registry_key_ + "' !");
-        } else {
-          const variant_registry & vreg = get_registry(registry_key_);
-          present_ = vreg.has_parameter_record(param_path_);
-        }
-      } catch (std::exception & x) {
-        std::string message = "Registry '" + registry_key_ + "' : " + x.what();
-        cri.set_error_code(command::CEC_FAILURE);
-        cri.set_error_message(message);
-        present_ = false;
-      }
-      return cri;
-    }
-    */
-
     bool variant_repository::is_active_variant(const std::string & registry_key_,
                                                const std::string & variant_path_) const
     {
@@ -1432,10 +1382,13 @@ namespace datatools {
     {
       registry_dict_type::const_iterator found = _registries_.find(registry_key_);
       DT_THROW_IF(found == _registries_.end(), std::logic_error,
-                  "Variant repository has no registry named '" << registry_key_ << "' !");
+                  "Variant repository has no registry named '" << registry_key_ << "'!");
+      // Default is active:
       bool active = true;
       if (has_dependency_model()) {
+        // If a global dependency model is set, it may make the registry temporarily deactivated:
         if (get_dependency_model().has_dependency(registry_key_)) {
+          // Check if the registry is a depender:
           const variant_dependency & dep = get_dependency_model().get_dependency(registry_key_);
           active = false;
           if (dep()) {
@@ -1443,93 +1396,32 @@ namespace datatools {
           }
         }
       }
-      /*
-      const registry_entry & re = found->second;
-      bool active = true;
-      if (re.has_dependency_model()) {
-        if (re.get_dependency_model().has_dependency(":")) {
-          const variant_dependency & dep = re.get_dependency_model().get_dependency(":");
-          active = false;
-          if (dep()) {
-            active = true;
-          }
-        }
+      registry_entry & re = const_cast<registry_entry&>(found->second);
+      if (re._last_active_ != active) {
+        re._last_active_ = active;
+        DT_LOG_DEBUG(get_logging_priority(), "Updating registry '" << registry_key_ << "'...");
+        re.grab_registry().update();
       }
-      */
-
-        /*
-      for (std::list<std::string>::const_iterator iter = re._dependencies_.begin();
-           iter !=  re._dependencies_.end();
-           iter++) {
-        const std::string & variant_path = *iter;
-        std::string dependee_registry;
-        std::string local_variant_path;
-        bool        reversed;
-        bool parsed = parse_variant_path(variant_path,
-                                         dependee_registry,
-                                         local_variant_path,
-                                         reversed);
-        bool variant_active = false;
-        command::returned_info cri = cmd_is_active_variant(dependee_registry,
-                                                           local_variant_path,
-                                                           variant_active);
-        DT_THROW_IF(cri.is_failure(), std::logic_error, cri.get_error_message());
-        if (!variant_active) {
-          active = false;
-        }
-        if (reversed) {
-          active = !active;
-        }
-        if (!active) {
-          break;
-        }
-      }
-
-      }
-        */
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "Registry '" << registry_key_ << "' is " << (active ? "": "not ") << "active.");
       return active;
     }
 
-    /*
-    command::returned_info
-    variant_repository::cmd_is_active_registry(const std::string & registry_key_,
-                                               bool & active_) const
+    void variant_repository::update()
     {
-      active_ = false;
-      command::returned_info cri;
-      try {
-        cri.set_error_code(command::CEC_SCOPE_INVALID);
-        bool active_registry = is_active_registry(registry_key_);
-        active_ = active_registry;
-        cri.set_success();
-      } catch (std::exception & x) {
-        std::string message = "Registry '" + registry_key_ + "' : " + x.what();
-        cri.set_error_message(message);
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
+      std::vector<std::string> registry_keys;
+      build_ordered_registry_keys(registry_keys);
+      for (const auto & registry_key : registry_keys) {
+        DT_LOG_DEBUG(get_logging_priority(), "Updating registry '" << registry_key << "'...");
+        if (is_active_registry(registry_key)) {
+          variant_registry & vreg = grab_registry(registry_key);
+          vreg.update();
+        }
       }
-      return cri;
+      DT_LOG_TRACE_EXITING(get_logging_priority());
+      return;
     }
-
-    command::returned_info
-    variant_repository::cmd_is_active_variant(const std::string & registry_key_,
-                                              const std::string & variant_path_,
-                                              bool & active_) const
-    {
-      active_ = false;
-      command::returned_info cri;
-      try {
-        cri.set_error_code(command::CEC_SCOPE_INVALID);
-        DT_THROW_IF(!has_registry(registry_key_), std::logic_error,
-                    "Variant repository has no registry named '" << registry_key_ << "' !");
-        const variant_registry & vreg = get_registry(registry_key_);
-        cri = vreg.cmd_is_active_variant(variant_path_, active_);
-      }
-      catch (std::exception & x) {
-        std::string message = "Registry '" + registry_key_ + "' : " + x.what();
-        cri.set_error_message(message);
-      }
-      return cri;
-    }
-    */
 
     void variant_repository::tree_dump(std::ostream & out_,
                                        const std::string & title_,
@@ -1668,7 +1560,6 @@ namespace datatools {
           k_var_rap.reset_reporting();
         }
       }
-
       for (registry_dict_type::const_iterator i = _registries_.begin();
            i != _registries_.end();
            i++) {
@@ -1690,7 +1581,6 @@ namespace datatools {
       if (with_title) {
         std::ostringstream titleoss;
         titleoss << "Variant repository ``" << get_name() << "``" << std::ends;
-        // std::cerr << "DEVEL: len = " << titleoss.str().length() << std::endl;
         out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
         out_ << titleoss.str() << std::endl;
         out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
@@ -1755,13 +1645,12 @@ namespace datatools {
         out_ << std::endl;
         out_ << std::endl;
 
-        for (std::size_t ivreg = 0;
-             ivreg < vreg_keys.size();
-             ivreg++) {
+        for (std::size_t ivreg = 0; ivreg < vreg_keys.size(); ivreg++) {
           const std::string & vreg_key = vreg_keys[ivreg];
           const variant_registry & vreg = get_registry(vreg_key);
           std::ostringstream hdross;
-          hdross << "``\"" << vreg_key  << "\"`` (variant model: ``\"" << vreg.get_top_variant_name() << "\"``)" << std::ends;
+          hdross << "``\"" << vreg_key  << "\"`` (variant model: ``\""
+                 << vreg.get_top_variant_name() << "\"``)" << std::ends;
           out_ << hdross.str() << std::endl;
           out_ << std::setw(hdross.str().length()) << std::setfill('-') << "" << std::endl;
           out_ << std::endl;
@@ -1781,20 +1670,13 @@ namespace datatools {
 
             // Rank
 
-            // // XXX
-            // out_ << "*Depends on: "; //``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
-            // out_ << std::endl;
-            // count++;
-
             out_ << "* Top variant name: ``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
             count++;
 
-            // out_ << "* Initialized: ``" << vreg.is_initialized() << "``" << std::endl;
-            // count++;
-
             std::vector<std::string> param_paths;
-            uint32_t list_flags = 0;
-            vreg.list_of_parameters(param_paths, list_flags);
+            vreg.list_of_ranked_parameters(param_paths);
+            // uint32_t list_flags = 0;
+            // vreg.list_of_parameters(param_paths, list_flags);
 
             out_ << "* Parameters: ``" << param_paths.size() << "``" << std::endl;
             count++;

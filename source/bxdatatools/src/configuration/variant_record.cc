@@ -38,7 +38,7 @@ namespace datatools {
 
   namespace configuration {
 
-    void variant_record::_fix_dependers_on_this_variant()
+    void variant_record::_fix_dependers_on_this_variant_()
     {
       datatools::logger::priority logging = _logging_;
       // logging = datatools::logger::PRIO_TRACE;
@@ -76,7 +76,7 @@ namespace datatools {
                 variant_record & depender_record = vreg.grab_parameter_record(depender_voi.get_parameter_local_path());
                 // Make sure the value of the parameter to which the group is associated is still valid or needs to be
                 // fixed:
-                depender_record._fix_parameter_value();
+                depender_record._fix_parameter_value_();
               }
             }
           }
@@ -106,7 +106,7 @@ namespace datatools {
                   variant_repository & vrep = const_cast<variant_repository &>(get_parent_repository());
                   variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
                   variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
-                  //depender_record._fix_parameter_value();
+                  //depender_record._fix_parameter_value_();
                 }
                 if (depender_voi.is_parameter_value_group()) {
                   DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter group of values...");
@@ -119,7 +119,7 @@ namespace datatools {
                   // Make sure the value of the parameter to which the group is associated is still valid or needs to be
                   // fixed:
                   DT_LOG_DEBUG(logging, "Fix the value of the associated parameter '" << depender_record.get_path() << "'...");
-                  depender_record._fix_parameter_value();
+                  depender_record._fix_parameter_value_();
                  }
               }
             } else {
@@ -188,12 +188,13 @@ namespace datatools {
       } // has parent registry
 
       DT_LOG_TRACE_EXITING(_logging_);
-      return false;
+      return enabled;
     }
 
     bool variant_record::check_enabled_group(const std::string & group_name_) const
     {
       DT_LOG_TRACE_ENTERING(_logging_);
+      DT_LOG_DEBUG(_logging_, "Checking enabled group '" << group_name_ << "'");
       const parameter_model & parmod = get_parameter_model();
       DT_THROW_IF(!parmod.has_group(group_name_),
                   std::domain_error,
@@ -243,17 +244,22 @@ namespace datatools {
                 enabled = false;
               }
             } // has associated group with dependency
+            else {
+              DT_LOG_DEBUG(_logging_, "Group '" << group_name_ << "' has no dependency!");
+            }
           } // has global dependency model
         } // mounted registry
 
       } // has parent registry
+      DT_LOG_DEBUG(_logging_, "Group '" << group_name_ << "' enabled = " << enabled);
       DT_LOG_TRACE_EXITING(_logging_);
       return enabled;
     }
 
     bool variant_record::check_enabled_value(const parameter_value_type & value_) const
     {
-      DT_LOG_TRACE_ENTERING(_logging_);
+      datatools::logger::priority logging = _logging_;
+      DT_LOG_TRACE_ENTERING(logging);
       bool enabled = true;
       const parameter_model & parmod = get_parameter_model();
       if (enabled && parmod.is_boolean() && ! parmod.is_boolean_valid(boost::get<bool>(value_))) {
@@ -268,16 +274,15 @@ namespace datatools {
       if (enabled && parmod.is_string() && ! parmod.is_string_valid(boost::get<std::string>(value_))) {
         enabled = false;
       }
+      DT_LOG_DEBUG(logging, "Record '" << get_path() << "' is preliminary enabled!");
 
       if (enabled && has_parent_registry()) {
 
         if (enabled && get_parent_registry().has_dependency_model()) {
-
           // Local dependency model:
-          DT_LOG_DEBUG(_logging_, "Registry '" << get_parent_registry().get_name()
+          DT_LOG_DEBUG(logging, "Registry '" << get_parent_registry().get_name()
                        << "' has a local dependency model!");
           const variant_dependency_model & ldepmod = get_parent_registry().get_dependency_model();
-
           // Search group associated to the value:
           if (enabled) {
             bool has_group = false;
@@ -301,19 +306,27 @@ namespace datatools {
             // Search group-based dependency associated to the value:
             if (has_group) {
               // Fetch group associated to the value:
-              DT_LOG_DEBUG(_logging_, "Value [" << value_ << "] has group '" <<  group_name << "'!");
+              DT_LOG_DEBUG(logging, "Value [" << value_ << "] for record '" << get_path() << "' has group '" <<  group_name << "'!");
               // Search local dependency associated to this group:
               variant_object_info voi;
               voi.make_local_parameter_value_group(_path_, group_name);
               std::string local_path = voi.get_full_path();
+              DT_LOG_DEBUG(logging, " ==> local_path = '" << local_path << "'!");
               if (ldepmod.has_dependency(local_path)) {
-                DT_LOG_DEBUG(_logging_, "Group '" << local_path << "' has a local dependency!");
+                DT_LOG_DEBUG(logging, "Group '" << local_path << "' has a local dependency!");
                 const variant_dependency & ldep = ldepmod.get_dependency(local_path);
+                if (datatools::logger::is_trace(logging)) {
+                  ldep.tree_dump(std::cerr, "Variant dependency : ", "[trace] ");
+                }
                 bool ldep_enabled = ldep();
                 if (!ldep_enabled) {
-                  DT_LOG_DEBUG(_logging_, "Variant object '" << local_path
+                  DT_LOG_DEBUG(logging, "Variant group '" << local_path
                                << "' is not enabled by its local dependency!");
                   enabled = false;
+                } else {
+                  DT_LOG_DEBUG(logging, "Variant group '" << local_path
+                               << "' is enabled by its local dependency!");
+                  enabled = true;
                 }
               } // has associated group with dependency
             } // has associated group
@@ -335,25 +348,28 @@ namespace datatools {
               parmod.find_variants_associated_to_string(boost::get<std::string>(value_), variants);
             }
             for (const std::string & variant_name : variants) {
-              DT_LOG_DEBUG(_logging_, "Value [" << value_ << "] triggers variant '" << variant_name << "'!");
+              DT_LOG_DEBUG(logging, "Value [" << value_ << "] triggers variant '" << variant_name << "'!");
               const variant_record & daughter_variant = this->get_daughter(variant_name);
               // Search local dependency associated to this group:
               variant_object_info voi;
               voi.make_local_variant(daughter_variant.get_path());
               std::string local_path = voi.get_full_path();
               if (ldepmod.has_dependency(local_path)) {
-                DT_LOG_DEBUG(_logging_, "Variant '" << local_path << "' has a local dependency!");
+                DT_LOG_DEBUG(logging, "Variant '" << local_path << "' has a local dependency!");
                 const variant_dependency & ldep = ldepmod.get_dependency(local_path);
                 bool ldep_valid = ldep();
                 if (!ldep_valid) {
-                  DT_LOG_DEBUG(_logging_, "Variant '" << local_path
+                  DT_LOG_DEBUG(logging, "Variant '" << local_path
                                << "' is not fulfilled by its local dependency!");
                   enabled = false;
+                } else {
+                  DT_LOG_DEBUG(logging, "Variant '" << local_path
+                               << "' is fulfilled by its local dependency!");
+                  enabled = true;
                 }
               } // associated variant has dependency
             } // for variant_name
           } // has daughters
-
         } // has local dependency model
 
         if (enabled && get_parent_registry().is_mounted()) {
@@ -361,7 +377,7 @@ namespace datatools {
           const std::string & registry_name = get_parent_registry().get_mounting_name();
           if (has_parent_repository() && get_parent_repository().has_dependency_model()) {
             // Global dependency model:
-            DT_LOG_DEBUG(_logging_, "Repository '" << get_parent_repository().get_name()
+            DT_LOG_DEBUG(logging, "Repository '" << get_parent_repository().get_name()
                          << "' has a global dependency model!");
             const variant_dependency_model & gdepmod = get_parent_repository().get_dependency_model();
 
@@ -388,19 +404,26 @@ namespace datatools {
               // Search group-based dependency associated to the value:
               if (has_group) {
                 // Fetch group associated to the value:
-                DT_LOG_DEBUG(_logging_, "Value [" << value_ << "] has group '" <<  group_name << "'!");
+                DT_LOG_DEBUG(logging, "Value [" << value_ << "] has group '" <<  group_name << "'!");
                 // Search global dependency associated to this group:
                 variant_object_info voi;
                 voi.make_parameter_value_group(registry_name, _path_, group_name);
                 std::string global_path = voi.get_full_path();
                 if (gdepmod.has_dependency(global_path)) {
-                  DT_LOG_DEBUG(_logging_, "Group '" << global_path << "' has a dependency!");
+                  DT_LOG_DEBUG(logging, "Group '" << global_path << "' has a dependency!");
                   const variant_dependency & gdep = gdepmod.get_dependency(global_path);
+                  if (datatools::logger::is_debug(logging)) {
+                    gdep.tree_dump(std::cerr, "", "[debug] ");
+                  }
                   bool gdep_enabled = gdep();
                   if (!gdep_enabled) {
-                    DT_LOG_DEBUG(_logging_, "Variant object '" << global_path
+                    DT_LOG_DEBUG(logging, "Variant object '" << global_path
                                  << "' is not enabled by its global dependency!");
                     enabled = false;
+                  } else {
+                    DT_LOG_DEBUG(logging, "Variant object '" << global_path
+                                 << "' is enabled by its global dependency!");
+                    enabled = true;
                   }
                 } // has associated group with dependency
               } // has associated group
@@ -422,39 +445,36 @@ namespace datatools {
                 parmod.find_variants_associated_to_string(boost::get<std::string>(value_), variants);
               }
               for (const std::string & variant_name : variants) {
-                DT_LOG_DEBUG(_logging_, "Value [" << value_ << "] triggers variant '" << variant_name << "'!");
+                DT_LOG_DEBUG(logging, "Value [" << value_ << "] triggers variant '" << variant_name << "'!");
                 const variant_record & daughter_variant = this->get_daughter(variant_name);
                 // Search global dependency associated to this group:
                 variant_object_info voi;
                 voi.make_variant(registry_name, daughter_variant.get_path());
                 std::string global_path = voi.get_full_path();
                 if (gdepmod.has_dependency(global_path)) {
-                  DT_LOG_DEBUG(_logging_, "Variant '" << global_path << "' has a dependency!");
+                  DT_LOG_DEBUG(logging, "Variant '" << global_path << "' has a dependency!");
                   const variant_dependency & gdep = gdepmod.get_dependency(global_path);
                   bool gdep_valid = gdep();
                   if (!gdep_valid) {
-                    DT_LOG_DEBUG(_logging_, "Variant '" << global_path
+                    DT_LOG_DEBUG(logging, "Variant '" << global_path
                                  << "' is not fulfilled by its global dependency!");
                     enabled = false;
                     break;
+                  } else {
+                    DT_LOG_DEBUG(logging, "Variant '" << global_path
+                                 << "' is fulfilled by its global dependency!");
+                    enabled = true;
                   }
                 } // associated variant has dependency
               } // for variant_name
             } // has daughters
-
           } // has global dependency model
-
         } // is_mounted
 
       } // has_parent_registry
-      DT_LOG_TRACE_EXITING(_logging_);
+      DT_LOG_DEBUG(logging, "Value = [" << value_ << "] enabled = " << enabled);
+      DT_LOG_TRACE_EXITING(logging);
       return enabled;
-    }
-
-    // virtual
-    bool variant_record::is_name_valid(const std::string & name_) const
-    {
-      return ::datatools::configuration::validate_model_name(name_);
     }
 
     variant_record::variant_record()
@@ -464,6 +484,7 @@ namespace datatools {
       _parent_registry_ = nullptr;
       _parent_ = nullptr;
       _active_ = false;
+      _with_update_ = false;
       _value_set_ = false;
       _boolean_value_ = false;
       _integer_value_ = 0;
@@ -472,27 +493,40 @@ namespace datatools {
       return;
     }
 
+    variant_record::~variant_record()
+    {
+      return;
+    }
+
     void variant_record::reset()
     {
-      _logging_ =datatools::logger::PRIO_FATAL;
+      _logging_ = datatools::logger::PRIO_FATAL;
+      _with_update_ = false;
       _path_.clear();
+      _parent_registry_ = nullptr;
       _parameter_model_ = nullptr;
       _variant_model_ = nullptr;
-      _parent_registry_ = nullptr;
       _parent_ = nullptr;
       _daughters_.clear();
+      _ranked_daughters_.clear();
+      _unranked_daughters_.clear();
       _active_ = false;
       _value_set_ = false;
       _boolean_value_ = false;
       _integer_value_ = 0;
       datatools::invalidate(_real_value_);
       _string_value_.clear();
-      this->enriched_base::clear();
       return;
     }
 
-    variant_record::~variant_record()
+    bool variant_record::has_with_update() const
     {
+      return _with_update_;
+    }
+
+    void variant_record::set_with_update(bool with_update_)
+    {
+      _with_update_ = with_update_;
       return;
     }
 
@@ -574,10 +608,10 @@ namespace datatools {
 
     bool variant_record::has_parent() const
     {
-      return _parent_ != 0;
+      return _parent_ != nullptr;
     }
 
-    void variant_record::set_parent(variant_record & parent_, const std::string & daughter_name_)
+    void variant_record::set_parent(variant_record & parent_, const std::string & daughter_name_, const int rank_)
     {
       DT_THROW_IF((is_parameter() && parent_.is_parameter())
                   || (is_variant() && parent_.is_variant()),
@@ -588,7 +622,9 @@ namespace datatools {
       DT_THROW_IF(found != _parent_->get_daughters().end(),
                   std::logic_error,
                   "Record '" << _path_ << "' already has a daughter named '" << daughter_name_ << "' !");
-      _parent_->grab_daughters()[daughter_name_] = this;
+      daughter_type d(daughter_name_, *this, rank_);
+      _parent_->grab_daughters().insert(std::pair<std::string, daughter_type>(daughter_name_, d));
+      parent_._compute_ranked_unranked_daughters_();
       return;
     }
 
@@ -608,12 +644,12 @@ namespace datatools {
 
     bool variant_record::has_parameter_model() const
     {
-      return _parameter_model_ != 0;
+      return _parameter_model_ != nullptr;
     }
 
     void variant_record::set_parameter_model(const parameter_model & pm_)
     {
-      _variant_model_ = 0;
+      _variant_model_ = nullptr;
       _parameter_model_ = &pm_;
       return;
     }
@@ -627,12 +663,12 @@ namespace datatools {
 
     bool variant_record::has_variant_model() const
     {
-      return _variant_model_ != 0;
+      return _variant_model_ != nullptr;
     }
 
     void variant_record::set_variant_model(const variant_model & vm_)
     {
-      _parameter_model_ = 0;
+      _parameter_model_ = nullptr;
       _variant_model_ = &vm_;
       return;
     }
@@ -658,8 +694,46 @@ namespace datatools {
     {
       if (_active_ != active_) {
         _active_ = active_;
-        _update();
+        if (!_active_) {
+          DT_LOG_DEBUG(get_logging(), "Deactivation of variant record '" << get_path() << "'...");
+        } else {
+          DT_LOG_DEBUG(get_logging(), "Activation of variant record '" << get_path() << "'...");
+        }
+        if (has_with_update()) _update_();
       }
+      return;
+    }
+
+    void variant_record::_compute_ranked_unranked_daughters_()
+    {
+      _ranked_daughters_.clear();
+      _unranked_daughters_.clear();
+      std::map<int, std::string> ranked;
+      for (const auto & dpair : _daughters_) {
+        if (dpair.second.is_ranked()) {
+          ranked[dpair.second.get_rank()] = dpair.first;
+        } else {
+          _unranked_daughters_.push_back(dpair.first);
+        }
+      }
+      for (const auto & ranked_pair : ranked) {
+        _ranked_daughters_.push_back(ranked_pair.second);
+      }
+      DT_LOG_DEBUG(get_logging(),
+                   "Variant record : '" << get_path() << "'");
+      DT_LOG_DEBUG(get_logging(),
+                   "  Number of ranked daughters   = " << _ranked_daughters_.size());
+      DT_LOG_DEBUG(get_logging(),
+                   "  Number of unranked daughters = " << _unranked_daughters_.size());
+      return;
+    }
+
+    void variant_record::build()
+    {
+      DT_LOG_DEBUG(get_logging(),
+                   "Building variant record : '" << get_path() << "'...");
+      _compute_ranked_unranked_daughters_();
+      set_with_update(true);
       return;
     }
 
@@ -669,7 +743,14 @@ namespace datatools {
       if (!is_variant()) {
         return;
       }
-      _variant_model_->build_list_of_ranked_parameters(ranked_);
+      //_variant_model_->build_list_of_ranked_parameters(ranked_);
+      ranked_.reserve(_ranked_daughters_.size() + _unranked_daughters_.size());
+      for (const auto & name : _ranked_daughters_) {
+        ranked_.push_back(name);
+      }
+      for (const auto & name : _unranked_daughters_) {
+        ranked_.push_back(name);
+      }
       return;
     }
 
@@ -809,7 +890,7 @@ namespace datatools {
         }
         _boolean_value_ = value_;
         _value_set_ = true;
-        _update();
+        if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set boolean value failed: " << cri.get_error_message());
@@ -820,6 +901,13 @@ namespace datatools {
     command::returned_info
     variant_record::set_integer_value(int value_)
     {
+      datatools::logger::priority logging = _logging_;
+      // // XXX
+      // if (get_leaf_name() == "accuracy" ) {
+      //   logging = datatools::logger::PRIO_TRACE;
+      //   _logging_ = datatools::logger::PRIO_TRACE;
+      // }
+      DT_LOG_TRACE_ENTERING(logging);
       command::returned_info cri;
       try {
         if (! is_parameter()) {
@@ -841,11 +929,12 @@ namespace datatools {
         }
         _integer_value_ = value_;
         _value_set_ = true;
-        _update();
+        if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set integer value failed: " << cri.get_error_message());
       }
+      DT_LOG_TRACE_EXITING(logging);
       return cri;
     }
 
@@ -853,6 +942,14 @@ namespace datatools {
     variant_record::set_real_value(double value_)
     {
       command::returned_info cri;
+      datatools::logger::priority logging = _logging_;
+      // // XXX
+      // if (get_leaf_name() == "value") {
+      //   logging = datatools::logger::PRIO_TRACE;
+      //   _logging_ = datatools::logger::PRIO_TRACE;
+      // }
+      DT_LOG_TRACE_ENTERING(logging);
+      DT_LOG_DEBUG(logging, "Setting real value = " << value_ << " ... ");
       try {
         if (! is_parameter()) {
           cri.set_error_code(command::CEC_COMMAND_INVALID_CONTEXT);
@@ -873,11 +970,13 @@ namespace datatools {
         }
         _real_value_ = value_;
         _value_set_ = true;
-        _update();
+        if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
-        DT_LOG_ERROR(_logging_, "Set real value failed: " << cri.get_error_message());
+        DT_LOG_ERROR(logging, "Real value failed: " << cri.get_error_message());
       }
+      DT_LOG_DEBUG(logging, "New real value = " << _real_value_);
+      DT_LOG_TRACE_EXITING(logging);
       return cri;
     }
 
@@ -897,8 +996,11 @@ namespace datatools {
 
     bool variant_record::is_real_valid(const double value_) const
     {
+      DT_LOG_TRACE_ENTERING(get_logging());
       parameter_value_type pvv = value_;
       bool valid = check_enabled_value(pvv);
+      DT_LOG_DEBUG(get_logging(), "Value [" << value_ << "] valid = " << valid);
+      DT_LOG_TRACE_EXITING(get_logging());
       return valid;
     }
 
@@ -906,11 +1008,14 @@ namespace datatools {
     {
       parameter_value_type pvv = value_;
       bool valid = check_enabled_value(pvv);
-      return valid;
-      if (! get_parameter_model().is_string_valid(value_)) {
-        return false;
+      if (! valid) {
+        DT_LOG_DEBUG(get_logging(), "Value '" << value_ << "' is disabled!");
       }
-      return true;
+      return valid;
+      // if (! get_parameter_model().is_string_valid(value_)) {
+      //   return false;
+      // }
+      // return true;
     }
 
     command::returned_info
@@ -937,7 +1042,7 @@ namespace datatools {
         }
         _string_value_ = value_;
         _value_set_ = true;
-        _update();
+        if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
         DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Set string value failed: " << cri.get_error_message());
@@ -958,17 +1063,18 @@ namespace datatools {
         // DT_THROW_IF(get_parameter_model().is_fixed(), std::logic_error,
         //           "Parameter record '" << _path_ << "' is fixed!");
         _value_set_ = false;
-        _update();
+        if (has_with_update()) _update_();
       } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
     }
 
-    void variant_record::_fix_parameter_value()
+    void variant_record::_fix_parameter_value_()
     {
       datatools::logger::priority logging = _logging_;
       // logging = datatools::logger::PRIO_TRACE;
+      DT_LOG_TRACE_ENTERING(logging);
       DT_LOG_DEBUG(logging, "Fixing parameter value for record '" << _path_ << "'...");
       if (!is_active()) {
         DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' is not active: pass...");
@@ -983,7 +1089,7 @@ namespace datatools {
         if (get_parameter_model().is_boolean()) {
           if (!is_boolean_valid(_boolean_value_)) {
             unset_value();
-            if (get_parameter_model().has_default_value() && !is_boolean_valid(get_parameter_model().get_default_boolean())) {
+            if (get_parameter_model().has_default_value() && is_boolean_valid(get_parameter_model().get_default_boolean())) {
               set_default_value();
             }
           }
@@ -991,16 +1097,18 @@ namespace datatools {
         if (get_parameter_model().is_integer()) {
           if (!is_integer_valid(_integer_value_)) {
             unset_value();
-            if (get_parameter_model().has_default_value() && !is_integer_valid(get_parameter_model().get_default_integer())) {
+            if (get_parameter_model().has_default_value() && is_integer_valid(get_parameter_model().get_default_integer())) {
               set_default_value();
             }
           }
         }
         if (get_parameter_model().is_real()) {
           if (!is_real_valid(_real_value_)) {
+            DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has an invalid value: " << _real_value_);
             unset_value();
-            if (get_parameter_model().has_default_value() && !is_real_valid(get_parameter_model().get_default_real())) {
+            if (get_parameter_model().has_default_value() && is_real_valid(get_parameter_model().get_default_real())) {
               set_default_value();
+              DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its default value set.");
             }
           }
         }
@@ -1009,108 +1117,141 @@ namespace datatools {
             DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has an invalid string value...");
             unset_value();
             DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its value unset.");
-            if (get_parameter_model().has_default_value() && !is_string_valid(get_parameter_model().get_default_string())) {
+            if (get_parameter_model().has_default_value() && is_string_valid(get_parameter_model().get_default_string())) {
               set_default_value();
               DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its default value set.");
             }
           }
         }
       }
-      return;
-    }
-
-    void variant_record::_fix()
-    {
-       if (is_parameter()) {
-         _fix_parameter_value();
-       }
-      return;
-    }
-
-    void variant_record::_update()
-    {
-      datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
-      // logging = datatools::logger::PRIO_TRACE;
-      // DT_LOG_TRACE_SHORT(logging, "");
-      DT_LOG_TRACE_ENTERING(logging);
-      if (is_parameter()) {
-        DT_LOG_TRACE(logging, "Updating parameter '" << get_path() << "'...");
-        // Deactivate all variants...
-        DT_LOG_TRACE(logging, "Deactivate all variants for parameter '" << get_path() << "'");
-        for (daughter_dict_type::iterator i = _daughters_.begin();
-             i != _daughters_.end();
-             i++) {
-          variant_record * vrec = i->second;
-          if (vrec->is_active()) {
-            vrec->set_active(false);
-          }
-        }
-
-        // Then search if some daughter variants is activated:
-        if (value_is_set()) {
-          DT_LOG_TRACE(logging, "Then search if some daughter variants is activated for parameter '" << get_path() << "'");
-          std::set<std::string> activated_variant_names;
-          bool found_activable = false;
-
-          if (get_parameter_model().is_boolean()) {
-            found_activable = get_parameter_model().find_variants_associated_to_boolean(_boolean_value_,
-                                                                                        activated_variant_names);
-          } // boolean
-
-          if (get_parameter_model().is_integer()) {
-            found_activable = get_parameter_model().find_variants_associated_to_integer(_integer_value_,
-                                                                                        activated_variant_names);
-          } // integer
-
-          if (get_parameter_model().is_real()) {
-            found_activable = get_parameter_model().find_variants_associated_to_real(_real_value_,
-                                                                                     activated_variant_names);
-          } // real
-
-          if (get_parameter_model().is_string()) {
-            found_activable = get_parameter_model().find_variants_associated_to_string(_string_value_,
-                                                                                       activated_variant_names);
-          } // string
-
-          if (is_active() && found_activable && activated_variant_names.size() > 0) {
-            // std::cerr << "DEVEL: variant_record::_update: activated_variant_name = '" << activated_variant_name << "'" << std::endl;
-            for (const auto & activated_variant_name : activated_variant_names) {
-              daughter_dict_type::iterator found = _daughters_.find(activated_variant_name);
-              DT_THROW_IF(found == _daughters_.end(),
-                          std::logic_error,
-                          "Parameter record '" << _path_ << "' has no activable variant named '"
-                          << activated_variant_name << "' ! This is a bug!");
-              variant_record * activated_variant_rec = found->second;
-              if (!activated_variant_rec->is_active()) {
-                activated_variant_rec->set_active(true);
-              }
-            }
-          }
-        } // value_is_set
-      } // is_parameter
-
-      if (is_variant()) {
-        DT_LOG_TRACE(logging, "Updating variant '" << get_path() << "'...");
-        for (daughter_dict_type::iterator i = grab_daughters().begin();
-             i != grab_daughters().end();
-             i++) {
-          // Activate the daughter parameters is the variant is active:
-          variant_record * param_rec = i->second;
-          if (param_rec->is_active() != _active_) {
-            param_rec->set_active(_active_);
-          }
-        }
-        // Check if a change in the variant activation has consequences
-        // on the validity of some depender parameters:
-        DT_LOG_TRACE(logging, "Checking for depender parameters...");
-        _fix_dependers_on_this_variant();
-        DT_LOG_TRACE(logging, "Depender parameters has been fixed.");
-      } // is_variant
-
       DT_LOG_TRACE_EXITING(logging);
       return;
     }
 
+    void variant_record::_fix_()
+    {
+       if (is_parameter()) {
+         _fix_parameter_value_();
+       }
+      return;
+    }
+
+    void variant_record::update()
+    {
+      if (_with_update_) {
+        _update_();
+      }
+      return;
+    }
+
+    void variant_record::_update_()
+    {
+      datatools::logger::priority logging = _logging_;
+      // logging = datatools::logger::PRIO_TRACE;
+      DT_LOG_TRACE_ENTERING(logging);
+      if (is_parameter()) {
+        _update_parameter_();
+      }
+      if (is_variant()) {
+        _update_variant_();
+      }
+      return;
+    }
+
+    void variant_record::_update_variant_()
+    {
+      datatools::logger::priority logging = _logging_;
+      DT_LOG_TRACE(logging, "Updating variant '" << get_path() << "'...");
+      std::vector<std::string> ranked_params;
+      build_list_of_ranked_parameter_records(ranked_params);
+      for (std::size_t i = 0; i < ranked_params.size(); i++) {
+        const std::string & daughter_name = ranked_params[i];
+        // Activate the daughter parameters if the variant is active:
+        variant_record & param_rec = grab_daughter(daughter_name);
+        if (param_rec.is_active() != _active_) {
+          param_rec.set_active(_active_);
+        }
+      }
+      // Check if a change in the variant activation has consequences
+      // on the validity of some depender parameters:
+      DT_LOG_TRACE(logging, "Checking for depender parameters...");
+      _fix_dependers_on_this_variant_();
+      DT_LOG_TRACE(logging, "Depender parameters has been fixed.");
+      return;
+    }
+
+    void variant_record::_update_parameter_()
+    {
+      datatools::logger::priority logging = _logging_;
+      // logging = datatools::logger::PRIO_TRACE;
+      DT_LOG_TRACE_ENTERING(logging);
+      // if (get_leaf_name() == "palette") {
+      //   logging = datatools::logger::PRIO_TRACE;
+      // }
+      DT_LOG_DEBUG(logging, "Updating parameter '" << get_path() << "'...");
+      // First we deactivate all variants by default...
+      if (_daughters_.size()) {
+        DT_LOG_DEBUG(logging, "Deactivate all variants for parameter '" << get_path() << "'");
+        for (daughter_dict_type::iterator i = _daughters_.begin();
+             i != _daughters_.end();
+             i++) {
+          variant_record & vrec = i->second.grab_record();
+          if (vrec.is_active()) {
+            vrec.set_active(false);
+            DT_LOG_DEBUG(logging, "Deactivating variant '" << vrec.get_path() << "'...");
+          } else {
+            DT_LOG_DEBUG(logging, "Variant '" << vrec.get_path() << "' is already deactivated.");
+          }
+        }
+      }
+      // Then search if some daughter variants is activated:
+      if (value_is_set()) {
+        DT_LOG_DEBUG(logging, "Search if some daughter variants is activated for parameter '" << get_path() << "'");
+        std::set<std::string> activated_variant_names;
+        bool found_activable = false;
+
+        if (get_parameter_model().is_boolean()) {
+          found_activable = get_parameter_model().find_variants_associated_to_boolean(_boolean_value_,
+                                                                                      activated_variant_names);
+        } // boolean
+
+        if (get_parameter_model().is_integer()) {
+          found_activable = get_parameter_model().find_variants_associated_to_integer(_integer_value_,
+                                                                                      activated_variant_names);
+        } // integer
+
+        if (get_parameter_model().is_real()) {
+          found_activable = get_parameter_model().find_variants_associated_to_real(_real_value_,
+                                                                                   activated_variant_names);
+        } // real
+
+        if (get_parameter_model().is_string()) {
+          found_activable = get_parameter_model().find_variants_associated_to_string(_string_value_,
+                                                                                     activated_variant_names);
+        } // string
+
+        DT_LOG_DEBUG(logging, "Number of activated variants = " << activated_variant_names.size());
+
+        if (is_active() && found_activable && activated_variant_names.size() > 0) {
+          for (const auto & activated_variant_name : activated_variant_names) {
+            DT_LOG_DEBUG(logging, "activated_variant_name = '" << activated_variant_name << "'");
+            // daughter_dict_type::iterator found = _daughters_.find(activated_variant_name);
+            // DT_THROW_IF(found == _daughters_.end(),
+            //             std::logic_error,
+            //             "Parameter record '" << _path_ << "' has no activable variant named '"
+            //             << activated_variant_name << "' ! This is a bug!");
+            // variant_record & activated_variant_rec = found->second.grab_record();
+            variant_record & activated_variant_rec = grab_daughter(activated_variant_name);
+            if (!activated_variant_rec.is_active()) {
+              DT_LOG_DEBUG(logging, "Activating variant '" << activated_variant_name << "'...");
+              activated_variant_rec.set_active(true);
+            }
+          }
+        }
+      } // value_is_set
+      DT_LOG_TRACE_EXITING(logging);
+      return;
+    }
 
     command::returned_info
     variant_record::get_boolean_value(bool & value_) const
@@ -1326,8 +1467,7 @@ namespace datatools {
         bool check = value_is_set();
         set_ = check;
         cri.set_error_code(command::CEC_SUCCESS);
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -1371,8 +1511,7 @@ namespace datatools {
           io::write_quoted_string(value_oss, _string_value_);
         }
         format_ = value_oss.str();
-      }
-      catch (std::exception & x) {
+      } catch (std::exception & x) {
         cri.set_error_message(x.what());
       }
       return cri;
@@ -1397,10 +1536,18 @@ namespace datatools {
 
     const variant_record & variant_record::get_daughter(const std::string & name_) const
     {
-      const auto & found = _daughters_.find(name_);
+       daughter_dict_type::const_iterator found = _daughters_.find(name_);
       DT_THROW_IF(found == _daughters_.end(), std::domain_error,
                   "No daughter record with name '" << name_ << "'!");
-      return *found->second;
+      return found->second.get_record();
+    }
+
+    variant_record & variant_record::grab_daughter(const std::string & name_)
+    {
+      daughter_dict_type::iterator found = _daughters_.find(name_);
+      DT_THROW_IF(found == _daughters_.end(), std::domain_error,
+                  "No daughter record with name '" << name_ << "'!");
+      return found->second.grab_record();
     }
 
     void variant_record::tree_dump(std::ostream & out_,
@@ -1423,24 +1570,42 @@ namespace datatools {
       out_ << std::endl;
 
       out_ << indent_ << i_tree_dumpable::tag
-           << "Daughters : " << _daughters_.size() << "" << std::endl;
-      for (daughter_dict_type::const_iterator i = _daughters_.begin();
+           << "With update: '" << std::boolalpha << _with_update_ << "'" << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Daughters : [" << _daughters_.size() << "]" << std::endl;
+      std::vector<std::string> daughters;
+      if (is_variant()) {
+        build_list_of_ranked_parameter_records(daughters);
+      } else {
+        for (daughter_dict_type::const_iterator i = _daughters_.begin();
              i != _daughters_.end();
-           i++) {
-        daughter_dict_type::const_iterator j = i;
+             i++) {
+          daughters.push_back(i->first);
+        }
+      }
+      for (std::size_t idaughter = 0; idaughter < daughters.size(); idaughter++) {
+        const std::string & daughter_name = daughters[idaughter];
+        daughter_dict_type::const_iterator found = _daughters_.find(daughter_name);
         out_ << indent_ << i_tree_dumpable::skip_tag;
-        if (++j == _daughters_.end()) {
+        if ((idaughter + 1) == daughters.size()) {
           out_ << i_tree_dumpable::last_tag;
         } else {
           out_ << i_tree_dumpable::tag;
         }
-        const std::string & daughter_name = i->first;
-        const variant_record * daughter_rec = i->second;
+        const variant_record & daughter_rec = found->second.get_record();
         out_ << "Daughter: '"
-             << daughter_name << "' with path '"
-             << daughter_rec->get_path() << "'";
+             << daughter_name << "'";
+        // with path '"
+        //      << daughter_rec.get_path() << "'";
         out_ << std::endl;
       }
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Ranked daughters   : [" << _ranked_daughters_.size() << "]" << std::endl;
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Unranked daughters : [" << _unranked_daughters_.size() << "]" << std::endl;
 
       out_ << indent_ << i_tree_dumpable::tag
            << "Model: ";
@@ -1456,12 +1621,12 @@ namespace datatools {
       out_ << std::endl;
 
       out_ << indent_ << i_tree_dumpable::tag
-           << "Active: '" << is_active() << "'" << std::endl;
+           << "Active: " << std::boolalpha << is_active() << std::endl;
 
       if (is_parameter()) {
 
         out_ << indent_ << i_tree_dumpable::tag
-             << "Value set: '" << value_is_set() << "'" << std::endl;
+             << "Value set: " << std::boolalpha << value_is_set() << std::endl;
 
         out_ << indent_ << i_tree_dumpable::tag
              << "Value: ";
@@ -1518,6 +1683,6 @@ namespace datatools {
       return;
     }
 
-  }  // end of namespace configuration
+  } // end of namespace configuration
 
-}  // end of namespace datatools
+} // end of namespace datatools

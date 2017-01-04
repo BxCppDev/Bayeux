@@ -34,9 +34,10 @@
 
 // Standard library:
 #include <string>
+#include <memory>
 
 // Third party:
-#include <boost/shared_ptr.hpp>
+// #include <boost/shared_ptr.hpp>
 
 // This project (Bayeux/datatools)
 #include <datatools/i_tree_dump.h>
@@ -97,7 +98,8 @@ namespace datatools {
     private:
 
       pm_handle_type _model_; //!< Model of the parameter
-      boost::shared_ptr<i_occurrence> _occurrence_; //!< Occurrence
+      //boost::shared_ptr<i_occurrence> _occurrence_; //!< Occurrence
+      std::shared_ptr<i_occurrence> _occurrence_; //!< Occurrence
 
     };
 

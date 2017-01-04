@@ -645,6 +645,7 @@ namespace datatools {
       _variant_repository_->set_name("__system__");
       _variant_repository_->set_display_name("System Repository");
       _variant_repository_->set_terse_description("The Bayeux/datatools' kernel configuration variant repository");
+      // _variant_repository_->grab_auxiliaries().set_flag("__variant.repository.allow_multi_parent");
       _variant_repository_->initialize_simple();
 
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now created.");
@@ -1330,12 +1331,11 @@ namespace datatools {
                 "The datatools kernel has no configuration variant repository !");
     DT_THROW_IF(&rep_ == &grab_variant_repository(), std::logic_error,
                 "The datatools kernel cannot import registries from itself !");
-    for (configuration::variant_repository::registry_dict_type::iterator i
-           = rep_.grab_registries().begin();
-         i != rep_.grab_registries().end();
-         i++) {
-      const std::string & reg_name = i->first;
-      configuration::variant_registry & reg = i->second.grab_registry();
+    std::vector<std::string> vreg_keys;
+    rep_.build_ordered_registry_keys(vreg_keys);
+    for (std::size_t ivreg = 0; ivreg < vreg_keys.size(); ivreg++) {
+      const std::string & reg_name = vreg_keys[ivreg];
+      configuration::variant_registry & reg = rep_.grab_registry(reg_name);
       bool import_it = false;
       if (registry_name_.empty()) {
         import_it = true;

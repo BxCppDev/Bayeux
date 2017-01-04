@@ -304,10 +304,13 @@ namespace datatools {
 
     void variant_dependency::lock()
     {
-      if (_locked_) return;
-      DT_LOG_DEBUG(_logging_, "Locking...");
-      _lock();
-      _locked_ = true;
+      DT_LOG_TRACE_ENTERING(_logging_);
+      if (! _locked_) {
+        DT_LOG_DEBUG(_logging_, "Locking...");
+        _lock();
+        _locked_ = true;
+      }
+      DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
 
@@ -330,6 +333,7 @@ namespace datatools {
 
     void variant_dependency::_check()
     {
+      DT_LOG_TRACE_ENTERING(_logging_);
       DT_LOG_DEBUG(_logging_, "Checking...");
       DT_THROW_IF(!_depender_.is_valid(),
                   std::logic_error,
@@ -344,6 +348,7 @@ namespace datatools {
       DT_THROW_IF(!_logic_->is_valid(),
                   std::logic_error,
                   "Embedded logic is not valid!");
+      DT_LOG_TRACE_EXITING(_logging_);
       return;
     }
 
@@ -391,7 +396,7 @@ namespace datatools {
     bool variant_dependency::operator()() const
     {
       DT_THROW_IF(!is_locked(), std::logic_error,
-                  "Dependency os not locked!");
+                  "Dependency is not locked!");
       return _logic_->operator()();
     }
 

@@ -25,8 +25,6 @@
  *   A model of variant dependencies between variant parameters
  *   and variants.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_VARIANT_DEPENDENCY_MODEL_H
@@ -104,6 +102,7 @@ namespace datatools {
         std::string            depender_path;
         std::set<unsigned int> input_slots;
         std::string            logic_expression;
+        datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
       };
       typedef std::map<std::string, dependency_record> dependency_record_dict_type;
 
@@ -171,7 +170,8 @@ namespace datatools {
       void add_dependency_record(const std::string & name_,
                                  const std::string & depender_path_,
                                  const std::set<unsigned int> & input_slots_,
-                                 const std::string & logic_expression_ = "");
+                                 const std::string & logic_expression_ = "",
+                                 const datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
 
       /// Return the dictionary of dependency records
       const dependency_record_dict_type & get_dependency_records() const;

@@ -153,7 +153,7 @@ namespace datatools {
 
           {
             std::ostringstream label_oss;
-            label_oss << _real_record_->get_name();
+            label_oss << _real_record_->get_leaf_name();
             if (!_unit_symbol_.empty()) {
               label_oss << " [" << _unit_symbol_ << "]";
             }

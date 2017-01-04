@@ -43,6 +43,10 @@ cd ${opwd}
 
 export FOO_CONFIG_DIR=./config
 
+echo 1>&2
+echo 1>&2
+echo 1>&2
+echo 1>&2
 echo "INFO: The example program ex_variants without variants..." 1>&2
 ./ex_variants
 if [ $? -ne 0 ]; then
@@ -50,9 +54,12 @@ if [ $? -ne 0 ]; then
     my_exit 1
 else
     echo "INFO: The example program ex_variants without variants is ok !" 1>&2
-    # my_exit 0
 fi
 
+echo 1>&2
+echo 1>&2
+echo 1>&2
+echo 1>&2
 echo "INFO: The example program ex_variants with variants (1)..." 1>&2
 ./ex_variants --with-variants --variants-test 1
 if [ $? -ne 0 ]; then
@@ -60,66 +67,71 @@ if [ $? -ne 0 ]; then
     my_exit 1
 else
     echo "INFO: The example program ex_variants with variants (1) is ok !" 1>&2
-    # my_exit 0
 fi
 
+echo 1>&2
+echo 1>&2
+echo 1>&2
+echo 1>&2
 echo "INFO: The example program ex_variants with variants (2)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
 #   configuration file (foo_variants.conf),
 # - set some of the variant parameters from the command line ("algo:accuracy=4"...)
 # - launch a GUI dialog box to enable the (re)configuration of some of the variant parameters,
-#
 ./ex_variants --with-variants --variants-test 1 \
-    --datatools::logging="fatal" \
-    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
-    --datatools::variant-set="core:gui=true" \
-    --datatools::variant-set="core:operator=John Doe" \
-    --datatools::variant-set="core:logging=warning" \
-    --datatools::variant-set="algo:accuracy=4" \
-    --datatools::variant-set="algo:max_time=3 s" \
-    --datatools::variant-set="algo:nevents=5" \
-    --datatools::variant-set="gui:antialiasing=false" \
-    --datatools::variant-qt-gui
+    --variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
+    --variant-set="core:gui=true" \
+    --variant-set="core:operator=John Doe" \
+    --variant-set="core:logging=warning" \
+    --variant-set="algo:accuracy=4" \
+    --variant-set="algo:max_time=3 s" \
+    --variant-set="algo:nevents=5" \
+    --variant-set="gui:antialiasing=false" \
+    --variant-gui
 if [ $? -ne 0 ]; then
     echo "ERROR: The example program ex_variants (2) failed !" 1>&2
     my_exit 1
 else
     echo "INFO: The example program ex_variants (2) is ok !" 1>&2
-    # my_exit 0
 fi
 
+echo 1>&2
+echo 1>&2
+echo 1>&2
+echo 1>&2
 echo "INFO: The example program ex_variants with variants (3)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
 #   configuration file (foo_variants.conf),
 # - set some of the variant parameters from the command line ("algo:accuracy=4"...)
 # - store the variant settings in a file
-#
 ./ex_variants --with-variants --variants-test 1 \
-    --datatools::logging="trace" \
-    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
-    --datatools::variant-set="core:gui=true" \
-    --datatools::variant-set="core:operator=John Doe" \
-    --datatools::variant-set="core:help=FullHelp" \
-    --datatools::variant-set="core:help/if_full_help/url=https://foo.org/help2/" \
-    --datatools::variant-set="core:plugin=true" \
-    --datatools::variant-set="algo:accuracy=4" \
-    --datatools::variant-set="algo:max_time=3 s" \
-    --datatools::variant-set="algo:nevents=5" \
-    --datatools::variant-set="gui:antialiasing=false" \
-    --datatools::variant-set="gui:color=true" \
-    --datatools::variant-set="gui:color/is_colored/palette=5" \
-    --datatools::variant-set="gui:logging=warning" \
-    --datatools::variant-store="my_profile.rep"
+    --variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
+    --variant-set="core:gui=true" \
+    --variant-set="core:operator=John Doe" \
+    --variant-set="core:help=FullHelp" \
+    --variant-set="core:help/if_full_help/url=https://foo.org/help2/" \
+    --variant-set="core:plugin=true" \
+    --variant-set="algo:accuracy=4" \
+    --variant-set="algo:max_time=3 s" \
+    --variant-set="algo:nevents=5" \
+    --variant-set="gui:antialiasing=false" \
+    --variant-set="gui:color=true" \
+    --variant-set="gui:color/is_colored/palette=5" \
+    --variant-set="gui:logging=warning" \
+    --variant-store="my_profile.rep"
 if [ $? -ne 0 ]; then
     echo "ERROR: The example program ex_variants (3) failed !" 1>&2
     my_exit 1
 else
     echo "INFO: The example program ex_variants (3) is ok !" 1>&2
-    # my_exit 0
 fi
 
+echo 1>&2
+echo 1>&2
+echo 1>&2
+echo 1>&2
 echo "INFO: The example program ex_variants with variants (4)..." 1>&2
 # Ask the datatools kernel to :
 # - setup its system repository from a variant repository
@@ -128,25 +140,54 @@ echo "INFO: The example program ex_variants with variants (4)..." 1>&2
 # - set some of the variant parameters from the command line ("algo:accuracy=4"...)
 # - launch a GUI dialog box to enable the (re)configuration of some of the variant parameters,
 # - save the variant parameters values in a file (my_profile.rep)
-#
 ./ex_variants --with-variants --variants-test 1 \
-    --datatools::logging="fatal" \
-    --datatools::variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
-    --datatools::variant-load="${FOO_CONFIG_DIR}/variants/profiles/default.rep" \
-    --datatools::variant-set="core:gui=true" \
-    --datatools::variant-set="core:operator=John Doe" \
-    --datatools::variant-set="core:logging=warning" \
-    --datatools::variant-set="algo:accuracy=4" \
-    --datatools::variant-set="algo:max_time=3 s" \
-    --datatools::variant-set="algo:nevents=5" \
-    --datatools::variant-set="gui:antialiasing=false" \
-    --datatools::variant-qt-gui \
-    --datatools::variant-store="my_profile.rep"
+    --variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
+    --variant-load="${FOO_CONFIG_DIR}/variants/profiles/default.rep" \
+    --variant-set="core:gui=true" \
+    --variant-set="core:operator=John Doe" \
+    --variant-set="core:logging=warning" \
+    --variant-set="algo:accuracy=4" \
+    --variant-set="algo:max_time=3 s" \
+    --variant-set="algo:nevents=5" \
+    --variant-set="gui:antialiasing=false" \
+    --variant-gui \
+    --variant-store="my_profile.rep"
 if [ $? -ne 0 ]; then
     echo "ERROR: The example program ex_variants (4) failed !" 1>&2
     my_exit 1
 else
     echo "INFO: The example program ex_variants (4) is ok !" 1>&2
+fi
+
+echo 1>&2
+echo 1>&2
+echo 1>&2
+echo 1>&2
+echo "INFO: The example program ex_variants with variants (4)..." 1>&2
+# Ask the datatools kernel to :
+# - setup its system repository from a variant repository
+#   configuration file (foo_variants.conf),
+# - load variant parameters default values from a file (default.rep)
+# - set some of the variant parameters from the command line ("algo:accuracy=4"...)
+# - launch a GUI dialog box to enable the (re)configuration of some of the variant parameters,
+# - save the variant parameters values in a file (my_profile.rep)
+./ex_variants --with-variants --variants-test 2 \
+    --variant-config="${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
+    --variant-load="${FOO_CONFIG_DIR}/variants/profiles/default.rep" \
+    --variant-set="core:gui=true" \
+    --variant-set="core:operator=John Doe" \
+    --variant-set="core:logging=warning" \
+    --variant-set="algo:accuracy=4" \
+    --variant-set="algo:max_time=3 s" \
+    --variant-set="algo:nevents=5" \
+    --variant-set="gui:antialiasing=false" \
+    --variant-gui \
+    --variant-store="my_profile.rep"
+if [ $? -ne 0 ]; then
+    echo "ERROR: The example program ex_variants (5) failed !" 1>&2
+    my_exit 1
+else
+    echo "INFO: The example program ex_variants (5) is ok !" 1>&2
 fi
 
 rm -f my_profile.rep

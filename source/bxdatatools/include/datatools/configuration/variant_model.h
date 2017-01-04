@@ -145,7 +145,7 @@ namespace datatools {
       bool is_initialized() const;
 
       /// Initialization from properties and a dictionary of configuration items
-      void initialize(const properties & config_, item_dict_type & items_);
+      void initialize(const properties & config_, model_item_dict_type & items_);
 
       /// Initialization from properties only
       void initialize_standalone(const properties & config_);
@@ -188,10 +188,8 @@ DOCD_CLASS_DECLARATION(datatools::configuration::variant_model)
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_MODEL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -662,7 +662,7 @@ namespace datatools {
       bool is_initialized() const;
 
       /// Initialization from properties and a dictionary of configuration items
-      void initialize(const properties & setup_, item_dict_type & items_);
+      void initialize(const properties & setup_, model_item_dict_type & items_);
 
       /// Initialization from properties only
       void initialize_standalone(const properties &);

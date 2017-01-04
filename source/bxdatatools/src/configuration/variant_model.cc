@@ -250,12 +250,12 @@ namespace datatools {
 
     void variant_model::initialize_standalone(const properties & setup_)
     {
-      item_dict_type dummy_dict;
+      model_item_dict_type dummy_dict;
       initialize(setup_, dummy_dict);
       return;
     }
 
-    void variant_model::initialize(const properties & config_, item_dict_type & items_)
+    void variant_model::initialize(const properties & config_, model_item_dict_type & items_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Variant model '" << get_name() << "' is already locked !");
@@ -293,10 +293,10 @@ namespace datatools {
           DT_THROW_IF(!config_.has_key(par_model_ss.str()), std::logic_error,
                       "Property '" << par_model_ss.str() << "' is missing!");
           const std::string & par_model = config_.fetch_string(par_model_ss.str());
-          item_dict_type::const_iterator found = items_.find(par_model);
+          model_item_dict_type::const_iterator found = items_.find(par_model);
           DT_THROW_IF(found == items_.end(), std::logic_error,
                       "Item '" << par_model << "' does not exist!");
-          const item & par_item = found->second;
+          const model_item & par_item = found->second;
           DT_THROW_IF(! par_item.is_parameter(), std::logic_error,
                       "Item '" << par_model << "' is not a parameter!");
           std::ostringstream par_desc_ss;

@@ -129,15 +129,21 @@ namespace datatools {
         /// Check if rank is set
         bool has_rank() const;
 
+        // /// Check if registry is active
+        // bool is_active() const;
+
+        // /// Set registry active
+        // void set_active(bool);
+
       private:
 
-        std::string _name_;
+        std::string                         _name_; //!< Registry (mounting) name
         variant_repository *                _parent_repository_ = nullptr; //!< Parent repository
         int                                 _rank_ = -1;         //!< Rank of the registry
         std::shared_ptr<variant_registry_manager> _embedded_manager_; //!< Embedded registry factory/manager
         std::shared_ptr<variant_registry>   _embedded_registry_; //!< Embedded registry
         variant_registry                  * _external_registry_ = nullptr; //!< Handle to an external registry
-        // variant_repository                * _external_backup_repository_ = nullptr; //!< Handle to the original repository associated to the external registry
+        bool _last_active_ = false; //!< Last active flag
 
         friend class variant_repository;
 
@@ -222,13 +228,14 @@ namespace datatools {
       /// Check if a given rank is used
       bool rank_is_used(int rank_) const;
 
-      /// Registration of an embedded registry/manager
+      /// Registration of an embedded registry
       void registration_embedded(const std::string & registry_manager_config_,
                                  const std::string & top_variant_name_ = "",
                                  const std::string & registry_name_ = "",
                                  const std::string & registry_display_name_ = "",
                                  const std::string & registry_terse_description_ = "",
-                                 int rank_ = -1);
+                                 int registry_rank_ = -1,
+                                 const datatools::logger::priority registry_logging_ = datatools::logger::PRIO_UNDEFINED);
 
       /// Registration of an external registry
       void registration_external(variant_registry & external_registry_,
@@ -263,6 +270,12 @@ namespace datatools {
       /// Check if all embedded registries are accomplished
       bool is_accomplished() const;
 
+      /// Set flag for requested lock after initialization
+      void set_requested_lock(bool rl_);
+
+      /// Check if lock is requested after initialization
+      bool is_requested_lock() const;
+
       /// Check if the repository is locked
       bool is_locked() const;
 
@@ -280,10 +293,10 @@ namespace datatools {
       bool has_variant_parameter(const std::string & registry_key_,
                                  const std::string & variant_parameter_path_) const;
 
-      /// Check if a dependency model is set
+      /// Check if a global dependency model is set
       bool has_dependency_model() const;
 
-      /// Return the dependency model
+      /// Return the global dependency model
       const variant_dependency_model & get_dependency_model() const;
 
       /// \brief Restructured text formatting
@@ -311,6 +324,9 @@ namespace datatools {
 
       /// Access to the variant usage reporting (if any)
       variant_reporting & grab_reporting();
+
+      /// Update all registries and variant record status
+      void update();
 
       /// \brief Import a variant repository from a properties container
       class importer
@@ -372,11 +388,23 @@ namespace datatools {
       /// \deprecated Deprecated configuration mode for embedded variant registries
       void _legacy_load_registries(const datatools::properties & config_);
 
+      void _at_init_();
+
+      void _at_reset_();
+
+      void _compute_ranked_unranked_();
+
     private:
 
+      // Management:
       bool               _initialized_ = false;  //!< Initialization flag
+
+      // Configuration:
       std::string        _organization_;         //!< The name of the organization
       std::string        _application_;          //!< The name of the application
+      bool               _requested_lock_ = false; //!< Lock request
+
+      // Working data:
       bool               _locked_ = false;       //!< Lock flag
       registry_dict_type _registries_;           //!< Dictionary of configuration variant registries
       ranked_dict_type   _ranked_;               //!< Dictionary of ranked configuration variant registries

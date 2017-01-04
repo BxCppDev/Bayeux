@@ -15,17 +15,14 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # - Bayeux :
-find_package(Bayeux 2.1.0 REQUIRED)
-set(_incs ${Bayeux_INCLUDE_DIRS})
-set(_libs ${Bayeux_LIBRARIES})
+find_package(Bayeux 3.0.0 REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR} ${_incs})
-# include(${QT_USE_FILE})
+include_directories(${PROJECT_SOURCE_DIR})
 add_definitions(${QT_DEFINITIONS})
 
 add_executable(ex_variants ex_variants.cxx)
 
-target_link_libraries(ex_variants ${_libs} )
+target_link_libraries(ex_variants Bayeux::Bayeux)
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex_variants

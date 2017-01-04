@@ -163,7 +163,7 @@ display_name      : string = "Core setup"
 #@description A short description of the variant
 terse_description : string = "The configuration parameters for the core application"
 
-#@description The list of variant parameters
+#@description The ordered list of variant parameters
 parameters : string[8] = "logging" "operator" "help" "gui" "plugin" "test1" "test2" "test3"
 
 parameters.logging.model        : string = "datatools::basic::logging_priority.PM"

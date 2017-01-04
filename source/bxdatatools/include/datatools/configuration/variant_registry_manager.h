@@ -24,8 +24,6 @@
  *
  *   The configuration variant registry manager/factory.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_VARIANT_REGISTRY_MANAGER_H
@@ -91,7 +89,7 @@ namespace datatools {
       void load(const std::string & items_config_file_);
 
       /// Get a non-mutable collection of configuration items
-      const item_dict_type & get_configuration_items() const;
+      const model_item_dict_type & get_configuration_items() const;
 
       /// Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -115,10 +113,10 @@ namespace datatools {
     private:
 
       bool                   _initialized_;         //!< Initialization flag
-      multi_properties       _mp_;                  //!< Multi-container for description of configuration items
-      std::set<std::string>  _property_prefixes_;   //!< List of prefixes for propreties to be preserved in configuration items
+      multi_properties       _mp_;                  //!< Multi-container for description of configuration model items
+      std::set<std::string>  _property_prefixes_;   //!< List of prefixes for properties to be preserved in configuration items
       std::string            _top_variant_name_;    //!< The name of the top variant
-      item_dict_type         _configuration_items_; //!< Dictionary of configuration items
+      model_item_dict_type   _configuration_items_; //!< Dictionary of configuration model items
 
     };
 

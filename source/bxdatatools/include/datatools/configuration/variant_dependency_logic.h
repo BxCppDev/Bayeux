@@ -255,10 +255,6 @@ namespace datatools {
 
     };
 
-    // dependency_logic_ptr_type
-    // build_dependency_logic_from_formula(const std::string & logic_expression_,
-    //                                     const std::map<unsigned int, variant_object_info> & dependees_);
-
   }  // end of namespace configuration
 
 }  // end of namespace datatools

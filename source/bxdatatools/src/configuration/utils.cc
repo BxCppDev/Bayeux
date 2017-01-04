@@ -62,21 +62,21 @@ namespace datatools {
     }
 
     // static
-    const std::string & item::variant_suffix()
+    const std::string & model_item::variant_suffix()
     {
       static const std::string s(".VM");
       return s;
     }
 
     // static
-    const std::string & item::parameter_suffix()
+    const std::string & model_item::parameter_suffix()
     {
       static const std::string s(".PM");
       return s;
     }
 
     // static
-    std::string item::label_from_model_type(model_type model_)
+    std::string model_item::label_from_model_type(model_type model_)
     {
       switch (model_) {
       case MODEL_PARAMETER :
@@ -89,7 +89,7 @@ namespace datatools {
     }
 
     // static
-    item::model_type item::model_type_from_label(const std::string & label_)
+    model_item::model_type model_item::model_type_from_label(const std::string & label_)
     {
       if (label_ == "parameter") {
         return MODEL_PARAMETER;
@@ -99,13 +99,13 @@ namespace datatools {
       return MODEL_UNDEFINED;
     }
 
-    item::item()
+    model_item::model_item()
     {
       _model_ = MODEL_UNDEFINED;
       return;
     }
 
-    item::~item()
+    model_item::~model_item()
     {
       if (is_instantiated()) {
         reset();
@@ -113,7 +113,7 @@ namespace datatools {
       return;
     }
 
-    void item::reset()
+    void model_item::reset()
     {
       DT_THROW_IF(!is_instantiated(),
                   std::logic_error,
@@ -125,54 +125,54 @@ namespace datatools {
       return;
     }
 
-    const std::string & item::get_name() const
+    const std::string & model_item::get_name() const
     {
       return _name_;
     }
 
-    void item::set_name(const std::string & name_)
+    void model_item::set_name(const std::string & name_)
     {
       _name_ = name_;
       return;
     }
 
-    bool item::is_parameter() const
+    bool model_item::is_parameter() const
     {
       return _model_ == MODEL_PARAMETER;
     }
 
-    bool item::is_variant() const
+    bool model_item::is_variant() const
     {
       return _model_ == MODEL_VARIANT;
     }
 
-    bool item::has_model() const
+    bool model_item::has_model() const
     {
       return _model_ != MODEL_UNDEFINED;
     }
 
-    void item::set_model(model_type model_)
+    void model_item::set_model(model_type model_)
     {
       _model_ = model_;
       return;
     }
 
-    item::model_type item::get_model() const
+    model_item::model_type model_item::get_model() const
     {
       return _model_;
     }
 
-    const properties & item::get_config() const
+    const properties & model_item::get_config() const
     {
       return _config_;
     }
 
-    properties & item::grab_config()
+    properties & model_item::grab_config()
     {
       return _config_;
     }
 
-    const parameter_model & item::get_parameter_model() const
+    const parameter_model & model_item::get_parameter_model() const
     {
       DT_THROW_IF(!is_parameter() || !is_instantiated(),
                   std::logic_error,
@@ -180,7 +180,7 @@ namespace datatools {
       return _parameter_handle_.get();
     }
 
-    parameter_model & item::grab_parameter_model()
+    parameter_model & model_item::grab_parameter_model()
     {
       DT_THROW_IF(!is_parameter() || !is_instantiated(),
                   std::logic_error,
@@ -188,7 +188,7 @@ namespace datatools {
       return _parameter_handle_.grab();
     }
 
-    const variant_model & item::get_variant_model() const
+    const variant_model & model_item::get_variant_model() const
     {
       DT_THROW_IF(!is_variant() || !is_instantiated(),
                   std::logic_error,
@@ -196,7 +196,7 @@ namespace datatools {
       return _variant_handle_.get();
     }
 
-    variant_model & item::grab_variant_model()
+    variant_model & model_item::grab_variant_model()
     {
       DT_THROW_IF(!is_variant() || !is_instantiated(),
                   std::logic_error,
@@ -204,7 +204,7 @@ namespace datatools {
       return _variant_handle_.grab();
     }
 
-    void item::set_parameter_handle(const pm_handle_type & hparam_)
+    void model_item::set_parameter_handle(const pm_handle_type & hparam_)
     {
       DT_THROW_IF(!is_parameter(),
                   std::logic_error,
@@ -213,7 +213,7 @@ namespace datatools {
       return;
     }
 
-    void item::set_variant_handle(const vm_handle_type & hvar_)
+    void model_item::set_variant_handle(const vm_handle_type & hvar_)
     {
       DT_THROW_IF(!is_variant(),
                   std::logic_error,
@@ -222,14 +222,14 @@ namespace datatools {
       return;
     }
 
-    bool item::is_instantiated() const
+    bool model_item::is_instantiated() const
     {
       if (is_parameter()) return _parameter_handle_.has_data();
       if (is_variant()) return _variant_handle_.has_data();
       return false;
     }
 
-    void item::instantiate(item_dict_type & items_)
+    void model_item::instantiate(model_item_dict_type & items_)
     {
       DT_THROW_IF(is_instantiated(),
                   std::logic_error,
@@ -246,7 +246,7 @@ namespace datatools {
       return;
     }
 
-    void item::destroy()
+    void model_item::destroy()
     {
       DT_THROW_IF(!is_instantiated(),
                   std::logic_error,
@@ -256,7 +256,7 @@ namespace datatools {
       return;
     }
 
-    const pm_handle_type & item::get_parameter_handle() const
+    const pm_handle_type & model_item::get_parameter_handle() const
     {
       DT_THROW_IF(!is_parameter() || !is_instantiated(),
                   std::logic_error,
@@ -264,7 +264,7 @@ namespace datatools {
       return _parameter_handle_;
     }
 
-    pm_handle_type & item::grab_parameter_handle()
+    pm_handle_type & model_item::grab_parameter_handle()
     {
       DT_THROW_IF(!is_parameter() || !is_instantiated(),
                   std::logic_error,
@@ -272,7 +272,7 @@ namespace datatools {
       return _parameter_handle_;
     }
 
-    const vm_handle_type & item::get_variant_handle() const
+    const vm_handle_type & model_item::get_variant_handle() const
     {
       DT_THROW_IF(!is_variant() || !is_instantiated(),
                   std::logic_error,
@@ -280,7 +280,7 @@ namespace datatools {
       return _variant_handle_;
     }
 
-    vm_handle_type & item::grab_variant_handle()
+    vm_handle_type & model_item::grab_variant_handle()
     {
       DT_THROW_IF(!is_variant() || !is_instantiated(),
                   std::logic_error,
@@ -288,7 +288,7 @@ namespace datatools {
       return _variant_handle_;
     }
 
-    parameter_model & item::make_parameter(const std::string & name_)
+    parameter_model & model_item::make_parameter(const std::string & name_)
     {
       if (is_instantiated()) {
         destroy();
@@ -301,7 +301,7 @@ namespace datatools {
       return *par;
     }
 
-    variant_model & item::make_variant(const std::string & name_)
+    variant_model & model_item::make_variant(const std::string & name_)
     {
       if (is_instantiated()) {
         destroy();
@@ -314,7 +314,7 @@ namespace datatools {
       return *var;
     }
 
-    void item::tree_dump(std::ostream& out_,
+    void model_item::tree_dump(std::ostream& out_,
                          const std::string& title_,
                          const std::string& indent_,
                          bool inherit_) const
@@ -372,7 +372,7 @@ namespace datatools {
     }
 
     // static
-    parameter_model & item::add_parameter_item(item_dict_type & dict_, const std::string & name_)
+    parameter_model & model_item::add_parameter_item(model_item_dict_type & dict_, const std::string & name_)
     {
       std::string name = name_;
       DT_THROW_IF(boost::ends_with(name, variant_suffix()),
@@ -384,15 +384,15 @@ namespace datatools {
       DT_THROW_IF(dict_.find(name) != dict_.end(), std::logic_error,
                   "Item '" << name << "' already exist in the dictionary!");
       {
-        item dummy;
+        model_item dummy;
         dict_[name] = dummy;
       }
-      item & i = dict_.find(name)->second;
+      model_item & i = dict_.find(name)->second;
       return i.make_parameter(name);
     }
 
     // static
-    variant_model & item::add_variant_item(item_dict_type & dict_, const std::string & name_)
+    variant_model & model_item::add_variant_item(model_item_dict_type & dict_, const std::string & name_)
     {
       std::string name = name_;
       DT_THROW_IF(boost::ends_with(name, parameter_suffix()),
@@ -404,19 +404,19 @@ namespace datatools {
       DT_THROW_IF(dict_.find(name) != dict_.end(), std::logic_error,
                   "Item '" << name << "' already exist in the dictionary!");
       {
-        item dummy;
+        model_item dummy;
         dict_[name] = dummy;
       }
-      item & i = dict_.find(name)->second;
+      model_item & i = dict_.find(name)->second;
       return i.make_variant(name);
     }
 
     // static
-    bool item::has_item(const item_dict_type & dict_,
+    bool model_item::has_item(const model_item_dict_type & dict_,
                         const std::string & name_,
-                        item::model_type model_)
+                        model_item::model_type model_)
     {
-      item_dict_type::const_iterator found = dict_.find(name_);
+      model_item_dict_type::const_iterator found = dict_.find(name_);
       if (found == dict_.end()) {
         return false;
       }
@@ -429,10 +429,10 @@ namespace datatools {
     }
 
     // static
-    const parameter_model & item::get_parameter_model(const item_dict_type & dict_,
+    const parameter_model & model_item::get_parameter_model(const model_item_dict_type & dict_,
                                                 const std::string & name_)
     {
-      item_dict_type::const_iterator found = dict_.find(name_);
+      model_item_dict_type::const_iterator found = dict_.find(name_);
       DT_THROW_IF(found == dict_.end(),
                   std::logic_error,
                   "Dictionary has no item named '" << name_ << "' !");
@@ -443,10 +443,10 @@ namespace datatools {
     }
 
     // static
-    const variant_model & item::get_variant_model(const item_dict_type & dict_,
+    const variant_model & model_item::get_variant_model(const model_item_dict_type & dict_,
                                             const std::string & name_)
     {
-      item_dict_type::const_iterator found = dict_.find(name_);
+      model_item_dict_type::const_iterator found = dict_.find(name_);
       DT_THROW_IF(found == dict_.end(),
                   std::logic_error,
                   "Dictionary has no item named '" << name_ << "' !");
@@ -457,9 +457,9 @@ namespace datatools {
     }
 
     // static
-    void item::remove_item(item_dict_type & dict_, const std::string & name_)
+    void model_item::remove_item(model_item_dict_type & dict_, const std::string & name_)
     {
-      item_dict_type::iterator found = dict_.find(name_);
+      model_item_dict_type::iterator found = dict_.find(name_);
       DT_THROW_IF(found == dict_.end(), std::logic_error,
                   "Item '" << name_ << "' does not exist in the dictionary!");
       dict_.erase(found);
@@ -467,7 +467,7 @@ namespace datatools {
     }
 
     // static
-    void item::print_items(const item_dict_type & dict_,
+    void model_item::print_items(const model_item_dict_type & dict_,
                            std::ostream & out_,
                            const std::string & title_,
                            const std::string & indent_,
@@ -479,10 +479,10 @@ namespace datatools {
       if (dict_.size() == 0) out_ << "<none>";
       out_ << std::endl;
       */
-      for (item_dict_type::const_iterator i = dict_.begin();
+      for (model_item_dict_type::const_iterator i = dict_.begin();
            i != dict_.end();
            i++) {
-        item_dict_type::const_iterator j = i;
+        model_item_dict_type::const_iterator j = i;
         j++;
         out_ << indent_; // << i_tree_dumpable::inherit_skip_tag(inherit_);
         std::ostringstream indent2_ss;
@@ -495,7 +495,7 @@ namespace datatools {
           indent2_ss << i_tree_dumpable::skip_tag;
         }
         out_ << "Item '" << i->first << "' ";
-        const item & it = i->second;
+        const model_item & it = i->second;
         if (it.is_parameter()) {
           out_ << "[parameter model]";
         } else if (it.is_variant()) {

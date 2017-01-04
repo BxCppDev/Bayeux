@@ -250,13 +250,18 @@ namespace datatools {
       return *_parent_repository_;
     }
 
+    bool variant_registry::has_top_variant_name() const
+    {
+      return ! _top_variant_name_.empty();
+    }
+
     void variant_registry::initialize_from(const variant_registry_manager & mgr_,
                                            const std::string & top_variant_name_,
                                            const std::string & name_,
                                            const std::string & display_name_,
                                            const std::string & terse_description_)
     {
-      bool devel = false;
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
       DT_THROW_IF(is_initialized(), std::logic_error,
                   "Registry is already initialized!");
 
@@ -264,22 +269,28 @@ namespace datatools {
                   std::logic_error,
                   "Variant manager is not initialized!");
 
+      // Set the top variant name:
       std::string top_variant_name = top_variant_name_;
       if (top_variant_name.empty()) {
         DT_THROW_IF(mgr_.get_top_variant_name().empty(), std::logic_error,
                     "Variant registry manager has no top variant defined!");
         top_variant_name = mgr_.get_top_variant_name();
       }
-      DT_THROW_IF(!item::has_item(mgr_.get_configuration_items(), top_variant_name, item::MODEL_VARIANT),
+      DT_THROW_IF(!model_item::has_item(mgr_.get_configuration_items(), top_variant_name, model_item::MODEL_VARIANT),
                   std::logic_error,
                   "Variant registry manager has no variant named '" << top_variant_name << "' !");
+      DT_LOG_DEBUG(get_logging_priority(), "Add variant record '" << top_variant_name << "'...");
       const variant_model & top_variant_model =
-        item::get_variant_model(mgr_.get_configuration_items(), top_variant_name);
+        model_item::get_variant_model(mgr_.get_configuration_items(), top_variant_name);
       variant_record & top_variant_record = add_record(default_top_variant_name());
       top_variant_record.set_variant_model(top_variant_model);
       top_variant_record.set_active(true);
-      _build_parameter_records_from_variant(top_variant_model, &top_variant_record);
+      DT_LOG_DEBUG(get_logging_priority(), "Building parameter records for variant record '" << top_variant_name << "'...");
+      _build_parameter_records_from_variant_(top_variant_model, &top_variant_record);
+      top_variant_record.build();
       _top_variant_name_ = top_variant_name;
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "Variant record '" << top_variant_name << "' is set.");
 
       if (!name_.empty()) {
         set_name(name_);
@@ -296,7 +307,8 @@ namespace datatools {
       if (!has_name()) {
         if (mgr_.has_name()) {
           // Fetch the name of the registry manager:
-          if (devel) std::cerr << "DEVEL: variant_registry::initialize_from: Mgr name = '" << mgr_.get_name() << "'" << std::endl;
+          DT_LOG_TRACE(get_logging_priority(),
+                       "Mgr name = '" << mgr_.get_name() << "'");
           set_name(mgr_.get_name());
         }
       }
@@ -304,7 +316,8 @@ namespace datatools {
       if (!has_display_name()) {
         if (mgr_.has_display_name()) {
           // Fetch the display name of the registry manager:
-          if (devel) std::cerr << "DEVEL: variant_registry::initialize_from: Mgr display name = '" << mgr_.get_display_name() << "'" << std::endl;
+          DT_LOG_TRACE(get_logging_priority(),
+                       "Mgr display name = '" << mgr_.get_display_name() << "'");
           set_display_name(mgr_.get_display_name());
         }
       }
@@ -312,13 +325,14 @@ namespace datatools {
       if (!has_terse_description()) {
         if (mgr_.has_terse_description()) {
           // Fetch the terse description of the registry manager:
-          if (devel) std::cerr << "DEVEL: variant_registry::initialize_from: Mgr terse description = '" << mgr_.get_terse_description() << "'" << std::endl;
+          DT_LOG_TRACE(get_logging_priority(),
+                       "Mgr terse description = '" << mgr_.get_terse_description() << "'");
           set_terse_description(mgr_.get_terse_description());
         }
       }
 
       _initialized_ = true;
-
+      DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
 
@@ -420,6 +434,17 @@ namespace datatools {
       return found->second;
     }
 
+    void variant_registry::list_of_ranked_parameters(std::vector<std::string> & paths_) const
+    {
+       paths_.clear();
+       const variant_record & top_vrec = _records_.find(default_top_variant_name())->second;
+       if (datatools::logger::is_debug(get_logging_priority())) {
+         top_vrec.tree_dump(std::cerr, "Top variant record: ", "[debug] ");
+       }
+       top_vrec.build_list_of_ranked_parameter_records(paths_);
+       return;
+    }
+
     void variant_registry::list_of_parameters(std::vector<std::string> & paths_,
                                               uint32_t flags_) const
     {
@@ -475,283 +500,39 @@ namespace datatools {
       return unset_paths.size() == 0;
     }
 
-    /*
-    command::returned_info
-    variant_registry::cmd_has_variant(const std::string & variant_path_,
-                                      bool & existing_) const
+    void variant_registry::update()
     {
-      command::returned_info cri;
-      cri.set_error_code(command::CEC_SUCCESS);
-      existing_ = has_variant_record(variant_path_);
-      return cri;
-    }
-
-    command::returned_info
-    variant_registry::cmd_has_parameter(const std::string & parameter_path_,
-                                        bool & existing_) const
-    {
-      command::returned_info cri;
-      cri.set_error_code(command::CEC_SUCCESS);
-      existing_ = has_parameter_record(parameter_path_);
-      return cri;
-    }
-
-    command::returned_info
-    variant_registry::cmd_is_active_variant(const std::string & variant_path_,
-                                            bool & active_) const
-    {
-      command::returned_info cri;
-      try {
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
-        // tree_dump(std::cerr, "Registry: ", "DEVEL: ***** ");
-        DT_THROW_IF(!has_variant_record(variant_path_), std::logic_error,
-                    "Variant record with path '" << variant_path_
-                    << "' does not exist in registry '" << get_name() << "'!!");
-        const variant_record & variant_rec = get_variant_record(variant_path_);
-        cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-        active_ = variant_rec.is_active();
-        cri.set_error_code(command::CEC_SUCCESS);
-      } catch (std::exception & x) {
-        cri.set_error_message(x.what());
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
+      std::vector<std::string> param_paths;
+      list_of_ranked_parameters(param_paths);
+      DT_LOG_DEBUG(get_logging_priority(), "Number of ranked parameters = " << param_paths.size());
+      for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
+        variant_record & prec = _records_.find(param_paths[iparam])->second;
+        DT_LOG_DEBUG(get_logging_priority(), "Updating variant parameter record '" << param_paths[iparam] << "'...");
+        prec.update();
+        DT_LOG_DEBUG(get_logging_priority(), "Variant parameter record '" << param_paths[iparam] << "' has been updated.");
       }
-      return cri;
+      DT_LOG_TRACE_EXITING(get_logging_priority());
+      return;
     }
 
-    command::returned_info
-    variant_registry::cmd_get_parameter_value(const std::string & param_path_,
-                                              std::string & value_token_) const
+    void variant_registry::_build_parameter_records_from_variant_(const variant_model & variant_model_,
+                                                                  variant_record * parent_variant_record_)
     {
-      command::returned_info cri;
-      try {
-        if (! has_parameter_record(param_path_)) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
-          DT_THROW(std::logic_error,
-                   "Parameter record with path '" << param_path_ << "' does not exist "
-                   << "in registry '" << get_name() << "'!");
-        }
-        const variant_record & param_rec = get_parameter_record(param_path_);
-        if (!param_rec.is_active()) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-          DT_THROW(std::logic_error,
-                   "Parameter record '" << param_path_ << "' is not active "
-                   << "in registry '" << get_name() << "'!");
-        }
-        if (param_rec.get_parameter_model().is_boolean()) {
-          std::ostringstream os;
-          bool value = false;
-          cri = param_rec.get_boolean_value(value);
-          if (cri.is_failure()) {
-            DT_THROW(std::logic_error,
-                     "Boolean parameter '" << param_path_ << "' has no available value"
-                     << "in registry '" << get_name() << "'!");
-          }
-          io::write_boolean(os, value);
-          value_token_ = os.str();
-        } else if (param_rec.get_parameter_model().is_integer()) {
-          std::ostringstream os;
-          int value = 0;
-          cri = param_rec.get_integer_value(value);
-          if (cri.is_failure()) {
-            DT_THROW(std::logic_error,
-                     "Integer parameter '" << param_path_ << "' has no available value"
-                     << "in registry '" << get_name() << "'!");
-          }
-          io::write_integer(os, value);
-          value_token_ = os.str();
-        } else if (param_rec.get_parameter_model().is_real()) {
-          std::ostringstream os;
-          double value;
-          cri = param_rec.get_real_value(value);
-          if (cri.is_failure()) {
-            DT_THROW(std::logic_error,
-                     "Real parameter '" << param_path_ << "' has no available value"
-                     << "in registry '" << get_name() << "'!");
-          }
-          io::write_real_number(os,
-                                value,
-                                15,
-                                param_rec.get_parameter_model().get_real_preferred_unit(),
-                                param_rec.get_parameter_model().get_real_unit_label()
-                                );
-          value_token_ = os.str();
-          // value_token_ = "__REAL_VALUE__";
-          // cri.set_error_message("Not implemented yet!");
-        } else if (param_rec.get_parameter_model().is_string()) {
-          std::ostringstream os;
-          std::string value;
-          cri = param_rec.get_string_value(value);
-          io::write_quoted_string(os, value);
-          value_token_ = os.str();
-          // value_token_ = "__STRING_VALUE__";
-          // cri.set_error_message("Not implemented yet!");
-        } else {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-          DT_THROW(std::logic_error,
-                   "Parameter '" << param_path_ << "' has no known type"
-                   << "in registry '" << get_name() << "'!");
-        }
-      } catch (std::exception & x) {
-        cri.set_error_message(x.what());
-      }
-      return cri;
-    }
-
-    command::returned_info
-    variant_registry::cmd_is_parameter_value_enabled(const std::string & param_path_,
-                                                     const std::string & value_token_,
-                                                     bool & enabled_)
-    {
-      command::returned_info cri;
-      try {
-        enabled_ = false;
-        if (!has_parameter_record(param_path_)) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
-          DT_THROW(std::logic_error,
-                   "Parameter record with path '" << param_path_ << "' does not exist!");
-        }
-        variant_record & param_rec = grab_parameter_record(param_path_);
-        if (!param_rec.is_active()) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-          DT_THROW(std::logic_error,
-                   "Parameter record '" << param_path_ << "' is not active!");
-        }
-        const parameter_model & parmod = param_rec.get_parameter_model();
-        if (parmod.is_fixed()) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-          DT_THROW(std::logic_error,
-                   "Parameter record '" << param_path_ << "' has a fixed value!");
-        }
-
-        if (parmod.is_boolean()) {
-          // Boolean value:
-          std::istringstream inss(value_token_);
-          bool value;
-          bool parsed = io::read_boolean(inss, value);
-          if (!parsed) {
-            cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_THROW(std::logic_error,
-                     "Boolean value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
-          }
-          enabled_ = param_rec.is_boolean_valid(value);
-        }
-
-      } catch (std::exception & x) {
-        cri.set_error_message(x.what());
-      }
-      return cri;
-    }
-
-    command::returned_info
-    variant_registry::cmd_set_parameter_value(const std::string & param_path_,
-                                              const std::string & value_token_)
-    {
-      command::returned_info cri;
-      try {
-        if (!has_parameter_record(param_path_)) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_KEY);
-          DT_THROW(std::logic_error,
-                   "Parameter record with path '" << param_path_ << "' does not exist!");
-        }
-        variant_record & param_rec = grab_parameter_record(param_path_);
-        if (!param_rec.is_active()) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-          DT_THROW(std::logic_error,
-                   "Parameter record '" << param_path_ << "' is not active!");
-        }
-        const parameter_model & parmod = param_rec.get_parameter_model();
-        if (parmod.is_fixed()) {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_CONTEXT);
-          DT_THROW(std::logic_error,
-                   "Parameter record '" << param_path_ << "' has a fixed value!");
-        }
-        if (parmod.is_boolean()) {
-          std::istringstream inss(value_token_);
-          bool value;
-          bool parsed = io::read_boolean(inss, value);
-          if (!parsed) {
-            cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_THROW(std::logic_error,
-                     "Boolean value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
-          }
-          cri = param_rec.set_boolean_value(value);
-          if (cri.is_failure()) {
-            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-            DT_THROW(std::logic_error,
-                     "Boolean value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
-          }
-        } else if (parmod.is_integer()) {
-          std::istringstream inss(value_token_);
-          int value;
-          bool parsed = io::read_integer(inss, value);
-          if (!parsed) {
-            cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_THROW(std::logic_error,
-                     "Integer value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
-          }
-          cri = param_rec.set_integer_value(value);
-          if (cri.is_failure()) {
-            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-            DT_THROW(std::logic_error,
-                     "Integer value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
-          }
-        } else if (parmod.is_real()) {
-          std::istringstream inss(value_token_);
-          double value;
-          std::string unit_label;
-          bool parsed = units::find_value_with_unit(value_token_, value, unit_label);
-          if (!parsed) {
-            cri.set_error_code(command::CEC_PARSING_FAILURE);
-            DT_THROW(std::logic_error,
-                     "Real value for parameter '" << param_path_ << "' cannot be parsed from '" << value_token_ << "'!");
-          }
-          cri = param_rec.set_real_value(value);
-          if (cri.is_failure()) {
-            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-            DT_THROW(std::logic_error,
-                     "Real value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
-          }
-        } else if (parmod.is_string()) {
-          std::string value = value_token_;
-          bool enabled_value = true;
-          if (has_parent_repository()) {
-            // Dynamically enabled value:
-          }
-          if (enabled_value) {
-            cri = param_rec.set_string_value(value);
-            if (cri.is_failure()) {
-              cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-              DT_THROW(std::logic_error,
-                       "String value for parameter '" << param_path_ << "' cannot accept value='" << value << "'!");
-            }
-          } else {
-            cri.set_error_code(command::CEC_PARAMETER_INVALID_VALUE);
-            DT_THROW(std::logic_error,
-                     "String value for parameter '" << param_path_ << "' cannot accept dynamically disabled value='" << value << "'!");
-          }
-        } else {
-          cri.set_error_code(command::CEC_PARAMETER_INVALID_TYPE);
-          DT_THROW(std::logic_error,
-                   "Parameter '" << param_path_ << "' has no known type!");
-        }
-      } catch (std::exception & x) {
-        cri.set_error_message(x.what());
-      }
-      return cri;
-    }
-    */
-
-    void variant_registry::_build_parameter_records_from_variant(const variant_model & variant_model_,
-                                                                 variant_record * parent_variant_record_)
-    {
-      bool devel = false;
-      for (variant_model::parameter_dict_type::const_iterator i
-             = variant_model_.get_parameters().begin();
-           i != variant_model_.get_parameters().end();
-           i++) {
-        const std::string & param_name = i->first;
-        const parameter_physical & pe = i->second.physical;
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
+      DT_LOG_DEBUG(get_logging_priority(), "Building variant parameters from variant model '" << variant_model_.get_name() << "'...");
+      std::vector<std::string> ranked_params;
+      variant_model_.build_list_of_ranked_parameters(ranked_params);
+      int current_rank = 0;
+      for (std::size_t iparam = 0; iparam < ranked_params.size(); iparam++) {
+        const std::string & param_name = ranked_params[iparam];
+        DT_LOG_DEBUG(get_logging_priority(), "Building variant parameter named '" << param_name << "'...");
+        const variant_model::parameter_record & prec = variant_model_.get_parameters().find(param_name)->second;
+        const parameter_physical & pe = prec.physical;
+        int param_rank = prec.rank;
+        bool ranked = (param_rank >= 0);
         std::string param_path_prefix;
-        if (parent_variant_record_ != 0) {
+        if (parent_variant_record_ != nullptr) {
           if (parent_variant_record_->get_path() != default_top_variant_name()) {
             param_path_prefix = parent_variant_record_->get_path() + '/';
           }
@@ -769,85 +550,85 @@ namespace datatools {
           std::ostringstream param_path_oss;
           param_path_oss << param_path_prefix << param_name_full;
           std::string param_path = param_path_oss.str();
-          if (devel) std::cerr << "DEVEL: add param record '" << param_path << "' " << std::endl;
+          DT_LOG_DEBUG(get_logging_priority(), "Adding param record '" << param_path << "'...");
           variant_record & param_rec = add_record(param_path);
-          param_rec.set_name(pe.get_name());
-          param_rec.set_terse_description(pe.get_terse_description());
-          if (parent_variant_record_ != 0) {
-            param_rec.set_parent(*parent_variant_record_, param_name_full);
+          if (parent_variant_record_ != nullptr) {
+            param_rec.set_parent(*parent_variant_record_, param_name_full, current_rank++);
           }
           param_rec.set_parameter_model(pe.get_model());
+          if (parent_variant_record_ != nullptr && parent_variant_record_->is_active()) {
+            param_rec.set_active(true);
+            DT_LOG_DEBUG(get_logging_priority(), "param_rec.set_active(true).");
+          } else {
+            param_rec.set_active(true);
+          }
           if (pe.get_model().is_variable()) {
-            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                                 << "variable param_rec = " << param_rec.get_path()
-                                 << std::endl;
             // Variable parameter:
+            DT_LOG_DEBUG(get_logging_priority(), "Variable parameter '" << param_rec.get_path() << "'");
             if (pe.get_model().has_default_value()) {
               param_rec.set_default_value();
-              if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                                   << "set_default_value() done."
-                                   << std::endl;
+              DT_LOG_DEBUG(get_logging_priority(), "set_default_value() done.");
             } else {
               param_rec.unset_value();
-              if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                                   << "unset_value() done."
-                                   << std::endl;
+              DT_LOG_DEBUG(get_logging_priority(), "unset_value() done.");
             }
-            if (devel) param_rec.tree_dump(std::cerr, "Variable parameter record: ", "DEVEL: ");
+            if (datatools::logger::is_debug(get_logging_priority())) {
+              param_rec.tree_dump(std::cerr, "Variable parameter record: ", "[debug] ");
+            }
           } else {
             // Fixed parameter:
             DT_THROW_IF (!pe.get_model().has_fixed_value(), std::logic_error,
                          "Fixed parameter model '" << pe.get_model().get_name() << "' has no fixed value!");
-            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                                 << "fixed param_rec = " << param_rec.get_path()
-                                 << std::endl;
+            DT_LOG_DEBUG(get_logging_priority(), "fixed param_rec = '" << param_rec.get_path() << "'");
             param_rec.set_fixed_value();
-            if (devel) std::cerr << "DEVEL: " << "_build_parameter_records_from_variant: "
-                                 << "param_rec.set_fixed_value() done."
-                                 << std::endl;
-            if (devel)  param_rec.tree_dump(std::cerr, "Fixed parameter record: ", "DEVEL: ");
+            DT_LOG_DEBUG(get_logging_priority(), "param_rec.set_fixed_value() done.");
+            if (datatools::logger::is_debug(get_logging_priority())) {
+              param_rec.tree_dump(std::cerr, "Fixed parameter record: ", "[debug] ");
+            }
           }
-          //
-          _build_variant_records_from_parameter(pe.get_model(), &param_rec);
-          if (parent_variant_record_ && parent_variant_record_->is_active()) { // == 0) {
-            param_rec.set_active(true);
-          } else {
-            // XXX param_rec.set_active(true);
-          }
+          _build_variant_records_from_parameter_(pe.get_model(), &param_rec);
+          DT_LOG_DEBUG(get_logging_priority(), "===> Building parameter record '" << param_rec.get_path() << "'...");
+          param_rec.build();
+          DT_LOG_DEBUG(get_logging_priority(), "===> Variable parameter '" << param_rec.get_path() << "' is built.");
         }
       }
+      DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
 
-    void variant_registry::_build_variant_records_from_parameter(const parameter_model & param_model_,
-                                                                 variant_record * parent_param_record_)
+    void variant_registry::_build_variant_records_from_parameter_(const parameter_model & param_model_,
+                                                                  variant_record * parent_param_record_)
     {
-      bool devel = false;
-       for (parameter_model::variant_dict_type::const_iterator
+      DT_LOG_TRACE_ENTERING(get_logging_priority());
+      DT_LOG_DEBUG(get_logging_priority(), "Building variant records from variant parameter '" << param_model_.get_name() << "'...");
+      for (parameter_model::variant_dict_type::const_iterator
              i = param_model_.get_variants().begin();
            i != param_model_.get_variants().end();
            i++) {
         const std::string & variant_name = i->first;
+        DT_LOG_DEBUG(get_logging_priority(), "Building variant record named '" << variant_name << "'...");
         const variant_physical & ve = i->second;
         std::string variant_path_prefix;
-        if (parent_param_record_ != 0) {
+        if (parent_param_record_ != nullptr) {
           variant_path_prefix = parent_param_record_->get_path() + '/';
         }
         std::string variant_path = variant_path_prefix + variant_name;
-        if (devel) std::cerr << "DEVEL: add variant record '" << variant_path << "' " << std::endl;
+        DT_LOG_DEBUG(get_logging_priority(), "Add variant record '" << variant_path << "' ");
         variant_record & variant_rec = add_record(variant_path);
-        variant_rec.set_name(ve.get_name());
-        variant_rec.set_terse_description(ve.get_terse_description());
-        if (parent_param_record_ != 0) {
+        if (parent_param_record_ != nullptr) {
           variant_rec.set_parent(*parent_param_record_, variant_name);
         }
         variant_rec.set_variant_model(ve.get_model());
-        _build_parameter_records_from_variant(ve.get_model(), &variant_rec);
+        DT_LOG_DEBUG(get_logging_priority(), "Default behaviour: force variant record '" << variant_path << "' to be active.");
+        variant_rec.set_active(true);
+        _build_parameter_records_from_variant_(ve.get_model(), &variant_rec);
+        DT_LOG_DEBUG(get_logging_priority(), "=========> Building variant record '" << variant_path << "'...");
+        variant_rec.build();
       }
-
+      DT_LOG_TRACE_EXITING(get_logging_priority());
       return;
     }
 
-  }  // end of namespace configuration
+  } // end of namespace configuration
 
-}  // end of namespace datatools
+} // end of namespace datatools

@@ -120,7 +120,6 @@ Quick start
       shell$ cd _build.d
       shell$ cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
         ..
       shell$ make
       shell$ make install

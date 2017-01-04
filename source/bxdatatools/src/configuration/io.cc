@@ -127,8 +127,8 @@ namespace datatools {
             for (variant_record::daughter_dict_type::const_iterator i = vrec_.get_daughters().begin();
                  i != vrec_.get_daughters().end();
                  i++) {
-              const variant_record * rec = i->second;
-              store_record(out_, *rec);
+              const variant_record & dvrec = i->second.get_record();
+              store_record(out_, dvrec);
             }
           } else {
             out_ << unset_label() << std::endl;
@@ -140,8 +140,8 @@ namespace datatools {
           for (variant_record::daughter_dict_type::const_iterator i = vrec_.get_daughters().begin();
                i != vrec_.get_daughters().end();
                i++) {
-            const variant_record * rec = i->second;
-            store_record(out_, *rec);
+            const variant_record & dvrec = i->second.get_record();
+            store_record(out_, dvrec);
           }
         }
 
@@ -153,9 +153,7 @@ namespace datatools {
     int ascii_io::load_record(std::istream & in_, variant_record & vrec_) const
     {
       DT_LOG_TRACE(_logging_, "Entering...");
-      // print(std::cerr);
       if (vrec_.is_active()) {
-
         if (vrec_.is_parameter() && vrec_.get_parameter_model().is_variable()) {
           std::string line;
           do {
@@ -211,7 +209,7 @@ namespace datatools {
               cri = vrec_.string_to_value(value_str);
               DT_THROW_IF (! cri.is_success(),
                            std::logic_error,
-                           "Failed to convert variant parameter '" << vrec_.get_name()
+                           "Failed to convert variant parameter '" << vrec_.get_path()
                            << "' from '" << value_str << "' : "
                            << cri.get_error_message());
             }
@@ -219,10 +217,10 @@ namespace datatools {
               for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
                    i != vrec_.grab_daughters().end();
                    i++) {
-                variant_record * rec = i->second;
-                int error = load_record(in_, *rec);
+                variant_record & dvrec = i->second.grab_record();
+                int error = load_record(in_, dvrec);
                 if (error) {
-                  DT_LOG_FATAL(_logging_, "Failed to load variant record '" << rec->get_name() << "'!");
+                  DT_LOG_FATAL(_logging_, "Failed to load variant record '" << dvrec.get_path() << "'!");
                   return 1;
                 }
               }
@@ -234,10 +232,10 @@ namespace datatools {
           for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
                i != vrec_.grab_daughters().end();
                i++) {
-            variant_record * rec = i->second;
-            int error = load_record(in_, *rec);
+            variant_record & dvrec = i->second.grab_record();
+            int error = load_record(in_, dvrec);
             if (error) {
-              DT_LOG_FATAL(_logging_, "Failed to load parameter record '" << rec->get_name() << "'!");
+              DT_LOG_FATAL(_logging_, "Failed to load parameter record '" << dvrec.get_path() << "'!");
               return 1;
             }
           }
@@ -251,7 +249,15 @@ namespace datatools {
     void ascii_io::store_registry(std::ostream & out_, const variant_registry & vreg_) const
     {
       DT_LOG_TRACE(_logging_, "Entering...");
+      std::vector<std::string> ranked_params;
+      vreg_.list_of_ranked_parameters(ranked_params);
       std::vector<const variant_record *> top_records;
+      for (std::size_t i = 0; i < ranked_params.size(); i++) {
+        const std::string & param_name = ranked_params[i];
+        const variant_record & rec = vreg_.get_parameter_record(param_name);
+        top_records.push_back(&rec);
+      }
+      /*
       for (variant_registry::record_dict_type::const_iterator i = vreg_.get_records().begin();
            i != vreg_.get_records().end();
            i++) {
@@ -260,6 +266,7 @@ namespace datatools {
           top_records.push_back(&rec);
         }
       }
+      */
       for (size_t i = 0; i < top_records.size(); i++) {
         DT_LOG_TRACE(_logging_, "Top record = '" << top_records[i]->get_path() << "'");
         store_record(out_, *top_records[i]);
@@ -271,6 +278,15 @@ namespace datatools {
     int ascii_io::load_registry(std::istream & in_, variant_registry & vreg_) const
     {
       DT_LOG_TRACE(_logging_, "Entering...");
+      std::vector<std::string> ranked_params;
+      vreg_.list_of_ranked_parameters(ranked_params);
+      std::vector<variant_record *> top_records;
+      for (std::size_t i = 0; i < ranked_params.size(); i++) {
+        const std::string & param_name = ranked_params[i];
+        variant_record & rec = vreg_.grab_parameter_record(param_name);
+        top_records.push_back(&rec);
+      }
+      /*
       std::vector<variant_record *> top_records;
       for (variant_registry::record_dict_type::iterator i = vreg_.grab_records().begin();
            i != vreg_.grab_records().end();
@@ -280,6 +296,7 @@ namespace datatools {
           top_records.push_back(&rec);
         }
       }
+      */
       for (size_t i = 0; i < top_records.size(); i++) {
         DT_LOG_TRACE(_logging_, "Top record = '" << top_records[i]->get_path() << "'");
         int error = load_record(in_, *top_records[i]);
@@ -420,7 +437,7 @@ namespace datatools {
               current_registry_name = reg_name_repr.substr(equal_pos+1);
               boost::trim(current_registry_name);
               datatools::remove_quotes(current_registry_name);
-              DT_LOG_TRACE(_logging_, "current_registry_name = '" << current_registry_name << "'");
+              DT_LOG_TRACE(_logging_, "parsed current_registry_name = '" << current_registry_name << "'");
             } else {
               // Legacy format:
               current_registry_name = word.substr(1, word.length()-2);
@@ -746,7 +763,6 @@ namespace datatools {
         } catch (std::exception & error) {
           variant_found = false;
           DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Check variant active failed: " << error.what());
-          // XXX
         // if (local_cri.is_success()) {
         //   variant_found = true;
         //   DT_LOG_TRACE(_logging_, "Found variant only from '" << variant_desc << "'");

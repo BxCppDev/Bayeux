@@ -24,8 +24,6 @@
  *
  *   A registry of configuration variants and associated parameters.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_VARIANT_REGISTRY_H
@@ -39,7 +37,6 @@
 
 // This project (Bayeux/datatools):
 #include <datatools/configuration/utils.h>
-// #include <datatools/command_utils.h>
 #include <datatools/enriched_base.h>
 #include <datatools/configuration/variant_dependency_model.h>
 
@@ -71,6 +68,9 @@ namespace datatools {
 
       /// Destructor
       virtual ~variant_registry();
+
+      /// Check if the top variant name is set
+      bool has_top_variant_name() const;
 
       /// Return the name of the top variant used to initialize the registry
       const std::string & get_top_variant_name() const;
@@ -142,10 +142,10 @@ namespace datatools {
       /// Return a reference to the non mutable top variant record
       const variant_record & get_top_variant_record() const;
 
-      /// Check if a dependency model is set
+      /// Check if a local dependency model is set
       bool has_dependency_model() const;
 
-      /// Return the dependency model
+      /// Return the local dependency model
       const variant_dependency_model & get_dependency_model() const;
 
       /// Load local dependency model
@@ -165,6 +165,9 @@ namespace datatools {
         LIST_CLEAR       = datatools::bit_mask::bit03
       };
 
+      /// Compute the list of ranked parameters
+      void list_of_ranked_parameters(std::vector<std::string> &_paths_) const;
+
       /// Compute the list of parameters
       void list_of_parameters(std::vector<std::string> &_paths_,
                               uint32_t flags_ = 0) const;
@@ -175,62 +178,36 @@ namespace datatools {
       /// Check if all parameters are set
       bool is_accomplished() const;
 
-      /*
-      /// Command to check if the value of a parameter is enabled
-      command::returned_info
-      cmd_is_parameter_value_enabled(const std::string & param_path_,
-                                     const std::string & value_token_,
-                                     bool & enabled_);
-
-      /// Command to set the value of a parameter from a string
-      command::returned_info
-      cmd_set_parameter_value(const std::string & param_path_,
-                              const std::string & value_token_);
-
-      /// Command to get the value string of a parameter
-      command::returned_info
-      cmd_get_parameter_value(const std::string & param_path_,
-                              std::string & value_token_) const;
-
-      /// Check if a variant is active
-      command::returned_info
-      cmd_is_active_variant(const std::string & variant_path_,
-                            bool & active_) const;
-
-      /// Check if a variant exists
-      command::returned_info
-      cmd_has_variant(const std::string & variant_path_,
-                      bool & existing_) const;
-
-      /// Check if a parameter exists
-      command::returned_info
-      cmd_has_parameter(const std::string & parameter_path_,
-                        bool & existing_) const;
-
-      */
-
-    protected:
-
-      void _build_parameter_records_from_variant(const variant_model & varmod_,
-                                                 variant_record * parent_variant_record_);
-
-      void _build_variant_records_from_parameter(const parameter_model & varmod_,
-                                                 variant_record * parent_param_record_);
+      /// Update record status
+      void update();
 
     private:
 
+      void _build_parameter_records_from_variant_(const variant_model & varmod_,
+                                                  variant_record * parent_variant_record_);
+
+      void _build_variant_records_from_parameter_(const parameter_model & varmod_,
+                                                  variant_record * parent_param_record_);
+
+    private:
+
+      // Management:
       bool             _initialized_ = false; //!< Initialization flag
+
+      // Configuration:
       std::string      _top_variant_name_;    //!< The name of the top variant used at initialization stage
+
+      // Internal data:
       record_dict_type _records_;             //!< Dictionary of configuration variant records
       const variant_repository * _parent_repository_ = nullptr;     //!< Handle to the parent repository
-      std::string      _mounting_name_; //!< Mounting name of the registry
-      std::unique_ptr<variant_dependency_model> _dependency_model_; //!< Model of dependencies
+      std::string                _mounting_name_;                   //!< Mounting name of the registry in its parent repository
+      std::unique_ptr<variant_dependency_model> _dependency_model_; //!< Local model of dependencies
 
     };
 
-  }  // end of namespace configuration
+  } // end of namespace configuration
 
-}  // end of namespace datatools
+} // end of namespace datatools
 
 #endif // DATATOOLS_CONFIGURATION_VARIANT_REGISTRY_H
 
