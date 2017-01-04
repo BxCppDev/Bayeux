@@ -73,10 +73,10 @@ namespace mctools {
       ~signal_shape_builder();
 
       //! Return the logging priority
-      datatools::logger::priority get_logging() const;
+      datatools::logger::priority get_logging_priority() const;
 
       //! Set the logging priority
-      void set_logging(const datatools::logger::priority);
+      void set_logging_priority(const datatools::logger::priority);
 
       //! Check is a category of signal is set
       bool has_category() const;

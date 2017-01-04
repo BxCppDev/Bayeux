@@ -61,7 +61,7 @@ void test_ssb_1(bool draw_)
   static const double mV  = 1e-3 * CLHEP::volt;
 
   mctools::signal::signal_shape_builder ssb;
-  ssb.set_logging(datatools::logger::PRIO_DEBUG);
+  ssb.set_logging_priority(datatools::logger::PRIO_DEBUG);
   ssb.set_category("calo");
   ssb.add_registered_shape_type_id("mctools::signal::triangle_signal_shape");
   ssb.add_registered_shape_type_id("mctools::signal::triangle_gate_signal_shape");
@@ -103,7 +103,7 @@ void test_ssb_1(bool draw_)
   s2_cfg.store_real_with_explicit_unit("amplitude",
                                        450.0 * mV,
                                        "mV");
-
+  
   datatools::properties s3_cfg;
 
   datatools::properties s4_cfg;
@@ -135,7 +135,6 @@ void test_ssb_1(bool draw_)
   s5_cfg.store_real_with_explicit_unit("components.hit2.time_shift", 1.5 * CLHEP::ns);
   s5_cfg.set_unit_symbol("components.hit2.time_shift", "ns");
   s5_cfg.store_real("components.hit2.scaling", 1.3);
-
 
   ssb.create_signal_shape("s1", "mctools::signal::triangle_signal_shape", s1_cfg);
   ssb.create_signal_shape("s2", "mctools::signal::triangle_gate_signal_shape", s2_cfg);

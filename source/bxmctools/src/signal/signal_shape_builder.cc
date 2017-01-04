@@ -48,12 +48,12 @@ namespace mctools {
       return;
     }
 
-    datatools::logger::priority signal_shape_builder::get_logging() const
+    datatools::logger::priority signal_shape_builder::get_logging_priority() const
     {
       return _logging_;
     }
 
-    void signal_shape_builder::set_logging(const datatools::logger::priority p_)
+    void signal_shape_builder::set_logging_priority(const datatools::logger::priority p_)
     {
       _logging_ = p_;
       return;
@@ -127,6 +127,13 @@ namespace mctools {
     void signal_shape_builder::initialize(const datatools::properties & config_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Signal shape builder is already initialized!");
+      // Logging priority:
+      datatools::logger::priority p = datatools::logger::extract_logging_configuration(config_);
+      DT_THROW_IF(p == datatools::logger::PRIO_UNDEFINED,
+                  std::logic_error,
+                  "Invalid logging priority level !");
+      set_logging_priority(p);
+
       _init_(&config_);
       return;
     }
@@ -153,15 +160,11 @@ namespace mctools {
     {
       if (_initialized_) return;
       DT_LOG_DEBUG(_logging_, "Private initialization...");
-
-      _init_registration_();
-
       if (has_service_mgr()) {
         // Unused
       }
 
       if (config_ != nullptr) {
-
         if (config_->has_key("category")) {
           const std::string & cat = config_->fetch_string("category");
           set_category(cat);
@@ -171,10 +174,12 @@ namespace mctools {
         if (config_->has_key("registered_shapes")) {
           config_->fetch("registered_shapes", registered_shape_type_ids);
           for (const auto & id : registered_shape_type_ids) {
-            add_registered_shape_type_id(id);
+	    add_registered_shape_type_id(id);
           }
         }
       }
+      
+      _init_registration_();
 
       _initialized_ = true;
       return;

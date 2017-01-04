@@ -105,8 +105,20 @@ namespace mctools {
 
       //! Set a handle to a shape builder
       void set_shape_builder(signal_shape_builder &);
+		 			
+			//! Check if the signal has category
+			bool has_category() const;
 
-      //! Check the shape type identifier
+      //! Set the signal category
+			const std::string & get_category() const;
+
+      //! Set the signal category
+			void set_category(const std::string &);
+			
+      //! Reset the signal category
+			void reset_category();			
+
+			//! Check the shape type identifier
       bool has_shape_type_id() const;
 
       //! Return the shape type identifier
@@ -223,6 +235,11 @@ namespace mctools {
                                      const std::string & key_,
                                      base_signal & signal_,
                                      const datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
+			
+      //! Build the signal shape with a builder already set
+			bool build_signal_shape(const std::string & key_,
+															base_signal & signal_,
+															const datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
 
     private:
 
@@ -252,8 +269,8 @@ namespace mctools {
       signal_shape_builder *       _shape_builder_ = nullptr; //!< Handle to an external shape builder
       double                       _time_ref_; //!< Time reference
 
-
       // Configuration:
+			std::string _category_; //!< Signal category
       std::string _shape_type_id_; //!< Shape type identifier
 
       // Working data:

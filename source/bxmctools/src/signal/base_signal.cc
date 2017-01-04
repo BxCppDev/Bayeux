@@ -201,9 +201,33 @@ namespace mctools {
 
     void base_signal::set_shape_builder(signal_shape_builder & sb_)
     {
-      DT_THROW_IF(!is_initialized(), std::logic_error, "Signal is already initialized!");
       DT_THROW_IF(!sb_.is_initialized(), std::logic_error, "Signal shape builder is not initialized!");
+      DT_THROW_IF((sb_.has_category() && has_category()) && (sb_.get_category() != get_category()), std::logic_error, "Signal category and signal shape builder category are not the same !");
+      
+      
       _shape_builder_ = &sb_;
+      return;
+    }    
+    
+    bool base_signal::has_category() const
+    {
+      return !_category_.empty();
+    }
+
+    const std::string & base_signal::get_category() const
+    {
+      return _category_;
+    }
+
+    void base_signal::set_category(const std::string & category_)
+    {
+      _category_ = category_;
+      return;
+    }
+
+    void base_signal::reset_category()
+    {
+      _category_.clear();
       return;
     }
 
@@ -632,6 +656,26 @@ namespace mctools {
                                                                           shape_config);
         signal_.set_shape(fs);
         success = true;
+      } catch (std::exception) {
+        DT_LOG_ERROR(logging, "Could not build signal shape '" << key_ << "'!");
+      }
+      return success;
+    }
+
+    bool base_signal::build_signal_shape(const std::string & key_,
+                                         base_signal & signal_,
+                                         const  datatools::logger::priority logging_)
+    {
+      datatools::logger::priority logging = logging_;
+      DT_THROW_IF(_shape_builder_ == nullptr, std::logic_error, "Signal shape builder pointer is null!");
+      DT_THROW_IF(!_shape_builder_->is_initialized(), std::logic_error, "Signal shape builder is not initialized!");
+      DT_THROW_IF(!signal_.is_initialized(), std::logic_error, "Signal shape functor is not initialized!");
+      bool success = false;
+      try {
+	build_signal_shape(*_shape_builder_,
+			   key_,
+			   signal_,
+			   logging_);
       } catch (std::exception) {
         DT_LOG_ERROR(logging, "Could not build signal shape '" << key_ << "'!");
       }
