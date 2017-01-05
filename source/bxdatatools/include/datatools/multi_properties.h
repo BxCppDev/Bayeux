@@ -27,9 +27,8 @@
  *
  *   A container of properties objects implemented as a dictionnary
  *
- * History:
- *
  */
+
 #ifndef DATATOOLS_MULTI_PROPERTIES_H
 #define DATATOOLS_MULTI_PROPERTIES_H
 
