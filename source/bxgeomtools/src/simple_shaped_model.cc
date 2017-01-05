@@ -225,6 +225,7 @@ namespace geomtools {
         config_.export_and_rename_starting_with(shapes_defs, "shapes.", "");
         grab_shape_factory().parse_shapes(shapes_defs);
       }
+
       if (config_.has_key("shape_ref")) {
         // Reference
         std::string shape_ref = config_.fetch_string("shape_ref");
@@ -253,18 +254,18 @@ namespace geomtools {
 
     } else {
       // Legacy solid:
-      DT_THROW_IF (! config_.has_key ("shape_type"), std::logic_error,
-                   "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
-      _shape_type_id_ = config_.fetch_string ("shape_type");
+      DT_THROW_IF(! config_.has_key("shape_type"), std::logic_error,
+                  "Missing 'shape_type' property in simple shaped model '" << name_ << "' !");
+      _shape_type_id_ = config_.fetch_string("shape_type");
 
       // Shape fill mode:
       _filled_mode_ = filled_utils::FILLED_NONE;
-      if (config_.has_key ("filled_mode")) {
-        const std::string filled_mode_label = config_.fetch_string ("filled_mode");
+      if (config_.has_key("filled_mode")) {
+        const std::string filled_mode_label = config_.fetch_string("filled_mode");
         _filled_mode_ = filled_utils::get_filled_mode(filled_mode_label);
-        DT_THROW_IF (_filled_mode_ == filled_utils::FILLED_UNDEFINED,
-                     std::logic_error,
-                     "Invalid filled mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << name_ << "' !");
+        DT_THROW_IF(_filled_mode_ == filled_utils::FILLED_UNDEFINED,
+                    std::logic_error,
+                    "Invalid filled mode '" << filled_mode_label << "' property in simple shaped (tube) model '" << name_ << "' !");
         // if (is_filled()) {
         //   DT_LOG_WARNING(get_logging_priority (),
         //                  "Filled mode '" << filled_utils::get_filled_mode_label(_filled_mode_)
@@ -278,7 +279,7 @@ namespace geomtools {
         if (config_.has_key("filled_label")) {
           _filled_label_ = config_.fetch_string("filled_label");
         }
-        DT_THROW_IF (_filled_label_.empty(),
+        DT_THROW_IF(_filled_label_.empty(),
                      std::logic_error,
                      "Invalid filled label '" << _filled_label_ << "' property in simple shaped (tube) model '" << name_ << "' !");
         DT_LOG_DEBUG(get_logging_priority(), "Filled label is '" << _filled_label_ << "'!");
