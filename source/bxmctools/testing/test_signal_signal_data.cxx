@@ -120,6 +120,7 @@ void test_signal_data_1(bool draw_)
     {
       // Anode signal:
       mctools::signal::base_signal & sig = signals.add_signal("gg.anode");
+      sig.set_allow_no_shape_builder(true);
       geomtools::geom_id anode_cell_gid;
       anode_cell_gid.set_type(tracker_cell_anode_category);
       anode_cell_gid.set_depth(4);
@@ -283,6 +284,7 @@ void test_signal_data_2(bool draw_)
     {
       // Anode signal:
       mctools::signal::base_signal & sig = signals.add_signal("gg.anode");
+      sig.set_allow_no_shape_builder(true);
       geomtools::geom_id anode_cell_gid;
       anode_cell_gid.set_type(tracker_cell_anode_category);
       anode_cell_gid.set_depth(4);

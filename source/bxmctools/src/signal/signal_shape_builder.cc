@@ -23,8 +23,12 @@
 #include <mctools/signal/signal_shape_builder.h>
 
 // Third party:
+// Boost:
+#include <boost/algorithm/string.hpp>
+// Bayeux:
 #include <datatools/service_manager.h>
 #include <datatools/factory_macros.h>
+#include <datatools/multi_properties.h>
 
 // This module:
 #include <mctools/signal/base_signal.h>
@@ -32,6 +36,13 @@
 namespace mctools {
 
   namespace signal {
+
+    // static
+    const std::string & signal_shape_builder::reference_functor_prefix()
+    {
+      static const std::string _p("@ref:");
+      return _p;
+    }
 
     signal_shape_builder::signal_shape_builder()
       : _initialized_(false)
@@ -165,23 +176,58 @@ namespace mctools {
       }
 
       if (config_ != nullptr) {
+
         if (config_->has_key("category")) {
           const std::string & cat = config_->fetch_string("category");
           set_category(cat);
         }
+      }
+      // DT_THROW_IF(!has_category(), std::logic_error, "Signal shape builder has no category!");
 
+      if (config_ != nullptr) {
+        std::vector<std::string> reference_functors_filedefs;
+        if (config_->has_key("reference_functors")) {
+          config_->fetch("reference_functors", reference_functors_filedefs);
+        }
+        for (std::size_t i = 0; i < reference_functors_filedefs.size(); i++) {
+          const std::string & filedef = reference_functors_filedefs[i];
+          load_reference_functors_from_file(filedef);
+        }
+      }
+
+      if (config_ != nullptr) {
         std::set<std::string> registered_shape_type_ids;
         if (config_->has_key("registered_shapes")) {
           config_->fetch("registered_shapes", registered_shape_type_ids);
           for (const auto & id : registered_shape_type_ids) {
-	    add_registered_shape_type_id(id);
+            add_registered_shape_type_id(id);
           }
         }
       }
-      
+      if (!has_registered_shape_type_id("mctools::signal::multi_signal_shape")) {
+        add_registered_shape_type_id("mctools::signal::multi_signal_shape");
+      }
+      DT_THROW_IF(_registered_shape_type_ids_.size() == 0, std::logic_error, "Signal shape builder has no registered shape type identifiers!");
+
       _init_registration_();
 
       _initialized_ = true;
+      return;
+    }
+
+    void signal_shape_builder::_update_all_functors_()
+    {
+      _all_functors_.clear();
+      for (const auto rfpair : _reference_functors_) {
+        std::string key;
+        std::ostringstream key_oss;
+        key_oss << reference_functor_prefix() << rfpair.first;
+        key = key_oss.str();
+        _all_functors_[key] = rfpair.second;
+      }
+      for (const auto fpair : _functors_) {
+        _all_functors_[fpair.first] = fpair.second;
+      }
       return;
     }
 
@@ -196,6 +242,9 @@ namespace mctools {
     {
       if (!_initialized_) return;
       _initialized_ = false;
+      _all_functors_.clear();
+      _functors_.clear();
+      _reference_functors_.clear();
       reset_category();
       _registered_shape_type_ids_.clear();
       return;
@@ -245,7 +294,29 @@ namespace mctools {
       }
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Signal shape functors : ";
+           << "Reference functors : ";
+      if (_reference_functors_.size()) {
+        out_ << '[' << _reference_functors_.size() << ']';
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+      {
+        std::size_t count = 0;
+        for (const auto & f : _reference_functors_) {
+          out_ << indent_ << datatools::i_tree_dumpable::skip_tag;
+          if (++count == _reference_functors_.size()) {
+            out_ << datatools::i_tree_dumpable::last_tag;
+          } else {
+            out_ << datatools::i_tree_dumpable::tag;
+          }
+          out_ << "Reference functor : '" << f.first << "'";
+          out_ << std::endl;
+        }
+      }
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Signal shape user functors : ";
       if (_functors_.size()) {
         out_ << '[' << _functors_.size() << ']';
       } else {
@@ -261,14 +332,59 @@ namespace mctools {
           } else {
             out_ << datatools::i_tree_dumpable::tag;
           }
-          out_ << "Functor : '" << f.first << "'";
+          out_ << "User functor : '" << f.first << "'";
           out_ << std::endl;
         }
       }
 
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "All functors : ";
+      if (_all_functors_.size()) {
+        out_ << '[' << _all_functors_.size() << ']';
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
       out_ << indent_ << datatools::i_tree_dumpable::inherit_tag(inherit_)
            << "Initialized : " << (is_initialized() ? "<yes>" : "<no>" )  << std::endl;
 
+      return;
+    }
+
+    void signal_shape_builder::load_reference_functors_from_file(const std::string & filename_)
+    {
+      std::string filename = filename_;
+      datatools::fetch_path_with_env(filename);
+      datatools::multi_properties mprops;
+      mprops.read(filename);
+      const datatools::multi_properties::entries_ordered_col_type & ordered = mprops.ordered_entries();
+      for (const auto he : ordered) {
+        const datatools::multi_properties::entry & mpe = *he;
+        add_reference_functor(mpe.get_key(),
+                              mpe.get_meta(),
+                              mpe.get_properties());
+      }
+      return;
+    }
+
+    void signal_shape_builder::add_reference_functor(const std::string & key_,
+                                                     const std::string & shape_type_id_,
+                                                     const datatools::properties & shape_params_)
+    {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Signal shape builder is already initialized!");
+      DT_THROW_IF(has_reference_functor(key_), std::logic_error,
+                  "A reference functor with key '" << key_ << "' already exists!");
+      mygsl::unary_function_handle_type fh;
+      const freg_type & system_freg =
+        DATATOOLS_FACTORY_GET_SYSTEM_REGISTER(mygsl::i_unary_function);
+      DT_THROW_IF(!system_freg.has(shape_type_id_), std::logic_error,
+                  "Functor system factory with type identifier '" << shape_type_id_ << "' does not exist!");
+      const freg_type::factory_type & the_factory = system_freg.get(shape_type_id_);
+      fh.reset(the_factory());
+      fh.grab().initialize(shape_params_, _reference_functors_);
+      _reference_functors_[key_] = fh;
+      _update_all_functors_();
       return;
     }
 
@@ -278,6 +394,10 @@ namespace mctools {
                                               const datatools::properties & shape_params_)
     {
       DT_THROW_IF(! is_initialized(), std::logic_error, "Signal shape builder is not initialized!");
+      DT_THROW_IF(key_.empty() ||
+                  boost::algorithm::starts_with(key_, reference_functor_prefix()),
+                  std::logic_error,
+                  "Invalid siganl shape key '" << key_ << "'!");
       DT_THROW_IF(has_functor(key_), std::logic_error,
                   "A functor with key '" << key_ << "' already exists!");
       mygsl::unary_function_handle_type fh;
@@ -285,8 +405,9 @@ namespace mctools {
                   "Signal shape functor factory with type identifier '" << shape_type_id_ << "' does not exist!");
       const freg_type::factory_type & the_factory = _freg_.get(shape_type_id_);
       fh.reset(the_factory());
-      fh.grab().initialize(shape_params_, _functors_);
+      fh.grab().initialize(shape_params_, _all_functors_);
       _functors_[key_] = fh;
+      _update_all_functors_();
       return fh.get();
     }
 
@@ -300,6 +421,27 @@ namespace mctools {
     bool signal_shape_builder::has_functor_factory(const std::string & id_) const
     {
       return _freg_.has(id_);
+    }
+
+    bool signal_shape_builder::has_reference_functor(const std::string & key_) const
+    {
+      return _reference_functors_.count(key_);
+    }
+
+    const mygsl::i_unary_function & signal_shape_builder::get_reference_functor(const std::string & key_) const
+    {
+      DT_THROW_IF(!has_reference_functor(key_), std::logic_error,
+                  "No reference functor with key '" << key_ << "'!");
+      return _reference_functors_.find(key_)->second.get();
+    }
+
+    void signal_shape_builder::build_list_of_reference_functors(std::set<std::string> & list_) const
+    {
+      list_.clear();
+      for (const auto & fpair : _reference_functors_) {
+        list_.insert(fpair.first);
+      }
+      return;
     }
 
     bool signal_shape_builder::has_functor(const std::string & key_) const
@@ -343,12 +485,14 @@ namespace mctools {
     void signal_shape_builder::clear_functor(const std::string & key_)
     {
       _functors_.erase(key_);
+      _update_all_functors_();
       return;
     }
 
     void signal_shape_builder::clear_functors()
     {
       _functors_.clear();
+      _update_all_functors_();
       return;
     }
 

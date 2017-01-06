@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_SIGNAL_BASE_SIGNAL_IPP
@@ -43,13 +41,11 @@ namespace mctools {
                                            boost::serialization::base_object<geomtools::base_hit>(*this));
       ar_ & boost::serialization::make_nvp("initialized", _initialized_);
       if (_initialized_) {
+        ar_ & boost::serialization::make_nvp("category", _category_);
         ar_ & boost::serialization::make_nvp("time_ref", _time_ref_);
         ar_ & boost::serialization::make_nvp("shape_type_id", _shape_type_id_);
+        ar_ & boost::serialization::make_nvp("private_shapes_config", _private_shapes_config_);
       }
-      // if (Archive::is_saving::value) {
-      // }
-      // if (Archive::is_loading::value) {
-      // }
 
       return;
     }

@@ -50,19 +50,52 @@ namespace mctools {
       return _p;
     }
 
+    // static
+    const std::string & base_signal::allow_no_shape_builder_key()
+    {
+      static const std::string _p("__allow_no_shape_builder");
+      return _p;
+    }
+
+    void base_signal::set_allow_no_shape_builder(bool a_)
+    {
+      if (a_) {
+        grab_auxiliaries().set_flag(allow_no_shape_builder_key());
+      }
+      return;
+    }
+
+    bool base_signal::is_shape_builder_mandatory() const
+    {
+      if (get_auxiliaries().has_key(allow_no_shape_builder_key())) {
+        bool a = get_auxiliaries().fetch_boolean(allow_no_shape_builder_key());
+        if (a) return false;
+      }
+      return true;
+    }
+
+    void base_signal::_base_construct_()
+    {
+      _private_shapes_config_.set_key_label("name");
+      _private_shapes_config_.set_meta_label("type");
+      return;
+    }
+
     base_signal::base_signal()
       : _logging_(datatools::logger::PRIO_FATAL)
     {
+      _base_construct_();
       return;
     }
 
     base_signal::base_signal(const base_signal & sig_)
       : geomtools::base_hit(sig_)
       , _logging_(datatools::logger::PRIO_FATAL)
-   {
+    {
+      _base_construct_();
       _copy_(sig_);
       return;
-    }
+   }
 
     base_signal::~base_signal()
     {
@@ -90,57 +123,45 @@ namespace mctools {
       _initialized_ = sig_._initialized_;
       _logging_ =  sig_._logging_;
       _shape_type_id_ = sig_._shape_type_id_;
-      if (!_shape_type_id_.empty()) {
-        // If a shape ID is available, then the object
-        // can be restored by the embedded factory using
+      _private_shapes_config_ = sig_._private_shapes_config_;
+      if (is_shape_instantiated()) {
+        // If a shape is instantiated, then we discard it because
+        // a shape object can be restored later through a shape factory/builder using
         // shape configuration parameters stored in the
-        // auxiliaries container:
+        // auxiliaries containers:
         _reset_shape_();
-        _owned_shape_ = false;
-        _shape_ = nullptr;
-      } else {
-        if (sig_._shape_ != nullptr) {
-          // TO BE DONE: use shape cloneable interface if available:
-          // if (datatools::i_cloneable::is_cloneable(*sig_._shape_)) {
-          //   _shape_ = sig_.get_shape()->clone();
-          //   _owned_shape_ = true;
-          // }
-        }
       }
       return;
     }
 
-    bool base_signal::is_copyable() const
-    {
-      if (has_shape_type_id()) {
-        return true;
-      }
-      if (_shape_ != nullptr) {
-         const datatools::i_cloneable * test_cloneable
-           = dynamic_cast<const datatools::i_cloneable *>(_shape_);
-         if (test_cloneable) {
-           return true;
-         }
-      }
-      return false;
-    }
+    // bool base_signal::is_copyable() const
+    // {
+    //   if (has_shape_type_id()) {
+    //     return true;
+    //   }
+    //   if (_shape_ != nullptr) {
+    //      const datatools::i_cloneable * test_cloneable
+    //        = dynamic_cast<const datatools::i_cloneable *>(_shape_);
+    //      if (test_cloneable) {
+    //        return true;
+    //      }
+    //   }
+    //   return false;
+    // }
 
     base_signal & base_signal::operator=(const base_signal & sig_)
     {
       if (&sig_ == this) {
         return *this;
       }
-      DT_THROW_IF(!sig_.is_copyable(), std::runtime_error,
-                  "Source signal cannot be copied!");
       this->geomtools::base_hit::operator=(sig_);
       _initialized_ = sig_._initialized_;
-      if (sig_.has_shape_type_id()) {
-        _shape_type_id_ = sig_._shape_type_id_;
-      } else {
-        // XXX
+      _logging_ =  sig_._logging_;
+      _shape_type_id_ = sig_._shape_type_id_;
+      _private_shapes_config_ = sig_._private_shapes_config_;
+      if (is_shape_instantiated()) {
+        _reset_shape_();
       }
-      _owned_shape_ = false;
-      _shape_ = nullptr;
       return *this;
     }
 
@@ -202,13 +223,11 @@ namespace mctools {
     void base_signal::set_shape_builder(signal_shape_builder & sb_)
     {
       DT_THROW_IF(!sb_.is_initialized(), std::logic_error, "Signal shape builder is not initialized!");
-      DT_THROW_IF((sb_.has_category() && has_category()) && (sb_.get_category() != get_category()), std::logic_error, "Signal category and signal shape builder category are not the same !");
-      
-      
+      DT_THROW_IF((sb_.has_category() && has_category()) && (sb_.get_category() != get_category()), std::logic_error, "Signal category and signal shape builder category do not match !");
       _shape_builder_ = &sb_;
       return;
-    }    
-    
+    }
+
     bool base_signal::has_category() const
     {
       return !_category_.empty();
@@ -221,6 +240,7 @@ namespace mctools {
 
     void base_signal::set_category(const std::string & category_)
     {
+      DT_THROW_IF(is_initialized(), std::logic_error, "Signal is already initialized!");
       _category_ = category_;
       return;
     }
@@ -393,6 +413,36 @@ namespace mctools {
       return;
     }
 
+    void base_signal::add_private_shape(const std::string & key_,
+                                        const std::string & type_id_,
+                                        const datatools::properties & parameters_)
+    {
+      _private_shapes_config_.add(key_, type_id_, parameters_);
+      return;
+    }
+
+    void base_signal::remove_private_shape(const std::string & key_)
+    {
+      _private_shapes_config_.remove(key_);
+      return;
+    }
+
+    void base_signal::remove_private_shapes()
+    {
+      _private_shapes_config_.clear();
+      return;
+    }
+
+    bool base_signal::has_private_shapes_config() const
+    {
+      return _private_shapes_config_.size() > 0;
+    }
+
+    const datatools::multi_properties & base_signal::get_private_shapes_config() const
+    {
+      return _private_shapes_config_;
+    }
+
     bool base_signal::is_shape_instantiated() const
     {
       return _shape_ != nullptr;
@@ -550,6 +600,9 @@ namespace mctools {
           base_signal::build_signal_shape(*_shape_builder_, key_ss.str(), *this, _logging_);
         } else {
           // Fallback : ask the system shape factory registry to instantiate the shape object:
+          if (is_shape_builder_mandatory()) {
+            DT_THROW(std::logic_error, "No shape builder is provided to instantiate the shape object!");
+          }
           DT_LOG_DEBUG(_logging_, "Using the system factory register to instantiate the shape object...");
           mygsl::i_unary_function::factory_register_type the_factory_register =
             DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(mygsl::i_unary_function);
@@ -585,6 +638,45 @@ namespace mctools {
       return *_shape_;
     }
 
+    /*
+    // static
+    const mygsl::i_unary_function * base_signal::plain_factory(base_signal & signal_,
+                                                               const datatools::logger::priority logging_)
+    {
+      DT_LOG_DEBUG(logging_, "Using the system factory register to instantiate a shape functor object...");
+      mygsl::i_unary_function * new_shape = nullptr;
+      mygsl::i_unary_function::factory_register_type the_factory_register =
+        DATATOOLS_FACTORY_GRAB_SYSTEM_REGISTER(mygsl::i_unary_function);
+      DT_THROW_IF(!the_factory_register.has(signal_.get_shape_type_id()),
+                  std::logic_error,
+                  "Shape type identifier '" << signal_.get_shape_type_id() << "' is not registered in the system register of unary functions!");
+      const mygsl::i_unary_function::factory_register_type::factory_type & the_factory =
+        the_factory_register.get(signal_.get_shape_type_id());
+      // std::cerr << "DEVEL: mctools::signal::base_signal::_grab_shape_: Instantiate the shape function..." << std::endl;
+      try {
+        DT_LOG_DEBUG(logging_, "Instantiating the shape functor...");
+        new_shape = the_factory();
+        if (new_shape != nullptr) {
+          datatools::properties shape_config;
+          signal_.get_auxiliaries().export_and_rename_starting_with(shape_config, shape_parameter_prefix(), "");
+          new_shape->initialize_standalone(shape_config);
+          signal._set_shape_(*new_shape, true);
+          new_shape = nullptr;
+        } else {
+          DT_THROW(std::runtime_error, "Factory could not instantiate a signal shape of type '" << signal_.get_shape_type_id() << "'!");
+        }
+      } catch (std::exception & error) {
+        if (new_shape != nullptr) {
+          delete new_shape;
+          signal._shape_ = nullptr;
+          signal._owned_shape_ = false;
+        }
+        throw;
+      }
+      return new_shape;
+    }
+    */
+
     double base_signal::compute_shape(double time_) const
     {
       return get_shape().eval(time_);
@@ -598,6 +690,15 @@ namespace mctools {
       this->geomtools::base_hit::tree_dump(out_, title_, indent_, true);
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Category : ";
+      if (has_category()) {
+        out_ << "'" << _category_ << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
            << "Time reference : ";
       if (has_time_ref()) {
         out_ << _time_ref_ / CLHEP::ns << " [ns]";
@@ -607,18 +708,32 @@ namespace mctools {
       out_ << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Shape builder : ";
-      if (has_shape_builder()) {
-        out_ << "'" << _shape_builder_->get_category() << "'";
+           << "Signal shape type ID : ";
+      if (has_shape_type_id()) {
+        out_ << "'" << _shape_type_id_ << "'";
       } else {
         out_ << "<none>";
       }
       out_ << std::endl;
 
       out_ << indent_ << datatools::i_tree_dumpable::tag
-           << "Signal shape type ID : ";
-      if (has_shape_type_id()) {
-        out_ << "'" << _shape_type_id_ << "'";
+           << "Private shapes : ";
+      if (_private_shapes_config_.size()) {
+        out_ << "<none>";
+      } else {
+        out_ << _private_shapes_config_.size();
+      }
+      out_ << std::endl;
+      if (_private_shapes_config_.size()) {
+        std::ostringstream indent2;
+        indent2 << indent_ << datatools::i_tree_dumpable::skip_tag;
+        _private_shapes_config_.tree_dump(out_, "", indent2.str());
+      }
+
+      out_ << indent_ << datatools::i_tree_dumpable::tag
+           << "Shape builder : ";
+      if (has_shape_builder()) {
+        out_ << "'" << _shape_builder_->get_category() << "'";
       } else {
         out_ << "<none>";
       }
@@ -646,7 +761,26 @@ namespace mctools {
       DT_THROW_IF(!signal_.is_initialized(), std::logic_error, "Signal shape functor is not initialized!");
       bool success = false;
       try {
-        signal_.reset_shape();
+        if (signal_.has_private_shapes_config()) {
+          // Build private shape:
+          DT_LOG_DEBUG(logging, "Building private signal shapes...");
+          const datatools::multi_properties & priv_shapes = signal_.get_private_shapes_config();
+          const datatools::multi_properties::entries_ordered_col_type & ordered = priv_shapes.ordered_entries();
+          for (const auto he : ordered) {
+            const datatools::multi_properties::entry & mpe = *he;
+            const std::string & priv_key = mpe.get_key();
+            const std::string & priv_type_id = mpe.get_meta();
+            const datatools::properties & priv_shape_config = mpe.get_properties();
+            DT_LOG_DEBUG(logging, "Building private signal shape '" << priv_key << "'...");
+            const mygsl::i_unary_function & fs = builder_.create_signal_shape(priv_key,
+                                                                              priv_type_id,
+                                                                              priv_shape_config);
+          }
+          if (datatools::logger::is_debug(logging)) {
+            builder_.tree_dump(std::cerr, "Builder: ", "[debug] ");
+          }
+        }
+        signal_._reset_shape_();
         datatools::properties shape_config;
         signal_.get_auxiliaries().export_and_rename_starting_with(shape_config,
                                                                   base_signal::shape_parameter_prefix(),
@@ -654,14 +788,27 @@ namespace mctools {
         const mygsl::i_unary_function & fs = builder_.create_signal_shape(key_,
                                                                           signal_.get_shape_type_id(),
                                                                           shape_config);
-        signal_.set_shape(fs);
+        signal_._set_shape_(fs, false);
         success = true;
-      } catch (std::exception) {
-        DT_LOG_ERROR(logging, "Could not build signal shape '" << key_ << "'!");
+      } catch (std::exception & error) {
+        DT_LOG_ERROR(logging, "Could not build signal shape '" << key_ << "': " << error.what());
       }
       return success;
     }
 
+    bool base_signal::instantiate_signal_shape(signal_shape_builder & builder_, const std::string & key_)
+    {
+      DT_THROW_IF(is_shape_instantiated(), std::logic_error, "Shape is already instantiated!");
+      DT_THROW_IF(has_shape_builder(), std::logic_error, "Signal already has an associated shape builder!");
+      std::string key = key_;
+      DT_THROW_IF(key.empty(), std::logic_error, "Signal identifier key '" << key << "' is empty!");
+      DT_THROW_IF(builder_.has_functor(key), std::logic_error, "Signal builder already has a shape with  identifier key '" << key << "' is empty!");
+      this->set_shape_builder(builder_);
+      bool success = base_signal::build_signal_shape(builder_, key, *this, get_logging());
+      return success;
+    }
+
+    /*
     bool base_signal::build_signal_shape(const std::string & key_,
                                          base_signal & signal_,
                                          const  datatools::logger::priority logging_)
@@ -672,15 +819,16 @@ namespace mctools {
       DT_THROW_IF(!signal_.is_initialized(), std::logic_error, "Signal shape functor is not initialized!");
       bool success = false;
       try {
-	build_signal_shape(*_shape_builder_,
-			   key_,
-			   signal_,
-			   logging_);
+        build_signal_shape(*_shape_builder_,
+                           key_,
+                           signal_,
+                           logging_);
       } catch (std::exception) {
         DT_LOG_ERROR(logging, "Could not build signal shape '" << key_ << "'!");
       }
       return success;
     }
+    */
 
   } // end of namespace signal
 

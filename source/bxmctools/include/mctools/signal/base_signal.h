@@ -24,8 +24,6 @@
  *
  *   A base class representing an analog signal associated to a hit detector.
  *
- * History:
- *
  */
 
 #ifndef MCTOOLS_SIGNAL_BASE_SIGNAL_H
@@ -35,6 +33,7 @@
 // - Bayeux/datatools:
 #include <datatools/logger.h>
 #include <datatools/properties.h>
+#include <datatools/multi_properties.h>
 // - Bayeux/mygsl:
 #include <mygsl/i_unary_function.h>
 // - Bayeux/geomtools:
@@ -57,6 +56,7 @@ namespace mctools {
     public:
 
       static const std::string & shape_parameter_prefix();
+      static const std::string & allow_no_shape_builder_key();
 
       //! Default constructor
       base_signal();
@@ -70,11 +70,14 @@ namespace mctools {
       //! Assignment operator
       base_signal & operator=(const base_signal &);
 
-      //! Check if object can be copied
-      bool is_copyable() const;
-
       //! Check signal hit validity
       virtual bool is_valid() const;
+
+      //! Allow no shape builder
+      void set_allow_no_shape_builder(bool a_);
+
+      //! Check is a shape builder is mandatory to build the signal shape object
+      bool is_shape_builder_mandatory() const;
 
       //! Return the logging priority
       datatools::logger::priority get_logging() const;
@@ -105,20 +108,20 @@ namespace mctools {
 
       //! Set a handle to a shape builder
       void set_shape_builder(signal_shape_builder &);
-		 			
-			//! Check if the signal has category
-			bool has_category() const;
+
+      //! Check if the signal has category
+      bool has_category() const;
 
       //! Set the signal category
-			const std::string & get_category() const;
+      const std::string & get_category() const;
 
       //! Set the signal category
-			void set_category(const std::string &);
-			
+      void set_category(const std::string &);
+
       //! Reset the signal category
-			void reset_category();			
+      void reset_category();
 
-			//! Check the shape type identifier
+      //! Check the shape type identifier
       bool has_shape_type_id() const;
 
       //! Return the shape type identifier
@@ -188,6 +191,17 @@ namespace mctools {
                                                         const std::string & unit_symbol_,
                                                         const std::string & desc_ = "");
 
+      //! Add a private shape (only useful if a shape builder is associated to the base signal)
+      void add_private_shape(const std::string & key_,
+                             const std::string & type_id_,
+                             const datatools::properties & parameters_);
+
+      //! Remove a private shape
+      void remove_private_shape(const std::string & key_);
+
+      //! Remove all private shapes
+      void remove_private_shapes();
+
       //! Check if a shape is instantiated
       bool is_shape_instantiated() const;
 
@@ -221,6 +235,12 @@ namespace mctools {
       //! Reset the signal
       void reset();
 
+      //! Check if some private shapes are setup
+      bool has_private_shapes_config() const;
+
+      //! Return the configuration informations for private shapes
+      const datatools::multi_properties & get_private_shapes_config() const;
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_         = std::clog,
                              const std::string & title_  = "",
@@ -235,11 +255,9 @@ namespace mctools {
                                      const std::string & key_,
                                      base_signal & signal_,
                                      const datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
-			
-      //! Build the signal shape with a builder already set
-			bool build_signal_shape(const std::string & key_,
-															base_signal & signal_,
-															const datatools::logger::priority logging_ = datatools::logger::PRIO_FATAL);
+
+      //! Instantiate the signal shape from a builder
+      bool instantiate_signal_shape(signal_shape_builder & builder_, const std::string & key_ = "");
 
     private:
 
@@ -261,17 +279,21 @@ namespace mctools {
       //! Private reset
       void _reset_();
 
+      //! Base construct
+      void _base_construct_();
+
     private:
 
       // Management:
-      bool                         _initialized_ = false; //!< Initialization flag
-      datatools::logger::priority  _logging_;             //!< Logging priority threshold
+      bool                         _initialized_ = false;     //!< Initialization flag
+      datatools::logger::priority  _logging_;                 //!< Logging priority threshold
       signal_shape_builder *       _shape_builder_ = nullptr; //!< Handle to an external shape builder
-      double                       _time_ref_; //!< Time reference
 
       // Configuration:
-			std::string _category_; //!< Signal category
+      std::string _category_;      //!< Signal category
+      double      _time_ref_;      //!< Time reference
       std::string _shape_type_id_; //!< Shape type identifier
+      datatools::multi_properties _private_shapes_config_; //!< Configuration for private shapes
 
       // Working data:
       bool _owned_shape_ = false; //!< Ownership flag for the embedded signal shape object

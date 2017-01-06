@@ -63,8 +63,9 @@ namespace mctools {
     public:
 
       typedef datatools::factory_register<mygsl::i_unary_function> freg_type;
-      typedef std::shared_ptr<mygsl::i_unary_function> functor_ptr_type;
-      typedef std::map<std::string, functor_ptr_type> functor_dict_type;
+
+      // Return the prefix for reference functor keys
+      static const std::string & reference_functor_prefix();
 
       //! Default constructor
       signal_shape_builder();
@@ -126,28 +127,45 @@ namespace mctools {
       //! Check if a functor factory exists
       bool has_functor_factory(const std::string & shape_type_id_) const;
 
-      //! Check if a functor with given key exists
+      //! Check if a reference functor with given key exists
+      bool has_reference_functor(const std::string & key_) const;
+
+      //! Return a const reference to a reference functor
+      const mygsl::i_unary_function & get_reference_functor(const std::string & key_) const;
+
+      //! Load definition file for referecen functors
+      void load_reference_functors_from_file(const std::string & filename_);
+
+      //! Create a new reference functor
+      void add_reference_functor(const std::string & key_,
+                                 const std::string & shape_type_id_,
+                                 const datatools::properties & shape_params_);
+
+      //! Check if an user functor with given key exists
       bool has_functor(const std::string & key_) const;
 
-      //! Return a mutable reference to a functor
+      //! Return a mutable reference to an user functor
       mygsl::i_unary_function & grab_functor(const std::string & key_);
 
-      //! Return a const reference to a functor
+      //! Return a const reference to an user functor
       const mygsl::i_unary_function & get_functor(const std::string & key_) const;
 
-      //! Return a handle to a const functor
+      //! Return a handle to a const user functor
       mygsl::const_unary_function_handle_type get_functor_handle(const std::string & key_) const;
 
-      //! Remove a functor with given key
+      //! Remove an user functor with given key
       void clear_functor(const std::string & key_);
 
-      //! Remove all functors
+      //! Remove all user functors
       void clear_functors();
 
       //! Return the dictionnary of functors
       const mygsl::unary_function_dict_type & get_functors() const;
 
-      //! Build the list of functors
+      //! Build the list of reference functors
+      void build_list_of_reference_functors(std::set<std::string> &) const;
+
+      //! Build the list of user functors
       void build_list_of_functors(std::set<std::string> &) const;
 
       //! Smart print
@@ -160,11 +178,15 @@ namespace mctools {
 
       void _init_(const datatools::properties * config_);
 
+      void _init_reference_functors_();
+
       void _init_registration_();
 
       void _reset_();
 
       std::string _generate_functor_key();
+
+      void _update_all_functors_();
 
     private:
 
@@ -179,7 +201,9 @@ namespace mctools {
 
       // Working data:
       datatools::factory_register<mygsl::i_unary_function> _freg_; //!< The factory register
-      mygsl::unary_function_dict_type _functors_; //!< Dictionary of created functors
+      mygsl::unary_function_dict_type _reference_functors_; //!< Dictionary of persitent reference functors
+      mygsl::unary_function_dict_type _functors_; //!< Dictionary of user created functors
+      mygsl::unary_function_dict_type _all_functors_; //!< Dictionary of all (reference + user) created functors
 
       //! Reflection interface
       DR_CLASS_RTTI()
