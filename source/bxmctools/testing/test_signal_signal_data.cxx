@@ -71,13 +71,13 @@ void test_signal_data_1(bool draw_)
   const double effective_tracker_cell_length = 2.70 * CLHEP::meter;
   const int tracker_cell_category = 1023;
   const int tracker_cell_anode_category = 1024;
-  // const int tracker_cell_cathode_category = 1025;
+  const int tracker_cell_cathode_category = 1025;
   const double cm_per_us = CLHEP::cm/CLHEP::microsecond;
   const double millivolt = 1e-3 * CLHEP::volt;
   const double mV = millivolt;
   const int cathode_bottom = 0;
   const int cathode_top = 1;
-  // const int cathode_index = 4;
+  const int cathode_index = 4;
 
   // Loop on Geiger hits:
   for (int icell = 0; icell < 5; icell++) {
@@ -127,6 +127,7 @@ void test_signal_data_1(bool draw_)
       anode_cell_gid.inherits_from(cell_gid);
       sig.set_hit_id(anode_sig_counter);
       sig.set_geom_id(anode_cell_gid);
+      sig.set_time_ref(0.0 * CLHEP::ns);
       sig.set_shape_type_id("snemo::signal::geiger_anode_signal_shape");
       sig.set_shape_real_parameter_with_explicit_unit("t0", t0, "us");
       sig.set_shape_real_parameter_with_explicit_unit("t_rise", t_rise, "us");
@@ -136,28 +137,30 @@ void test_signal_data_1(bool draw_)
       sig.initialize_simple();
     }
 
-    // // Cathode signals:
-    // for (int icath = cathode_bottom; icath <= cathode_top; icath++) {
-    //   if (!has_cathodes[icath]) {
-    //     continue;
-    //   }
-    //   mctools::signal::base_signal & sig = signals.add_signal("gg.cathode");
-    //   geomtools::geom_id cathode_cell_gid;
-    //   cathode_cell_gid.set_type(tracker_cell_cathode_category);
-    //   cathode_cell_gid.set_depth(4);
-    //   cathode_cell_gid.inherits_from(cell_gid);
-    //   cathode_cell_gid.set(cathode_index, icath);
-    //   sig.grab_auxiliaries().store("parent_signal.category", "gg.anode");
-    //   sig.grab_auxiliaries().store("parent_signal.index", anode_sig_counter);
-    //   sig.set_hit_id(cathode_sig_counter);
-    //   sig.set_geom_id(cathode_cell_gid);
-    //   sig.set_shape_real_parameter_with_explicit_unit("t0", t0, "us");
-    //   sig.set_shape_real_parameter_with_explicit_unit("t1", t1, "us");
-    //   sig.set_shape_real_parameter_with_explicit_unit("t2", t2, "us");
-    //   sig.set_shape_type_id("mctools::signal::triangle_signal_shape");
-    //   sig.initialize_simple();
-    //   cathode_sig_counter++;
-    // }
+    // Cathode signals:
+    int cathode_sig_counter = 0;
+    for (int icath = cathode_bottom; icath <= cathode_top; icath++) {
+      if (!has_cathodes[icath]) {
+        continue;
+      }
+      mctools::signal::base_signal & sig = signals.add_signal("gg.cathode");
+      geomtools::geom_id cathode_cell_gid;
+      cathode_cell_gid.set_type(tracker_cell_cathode_category);
+      cathode_cell_gid.set_depth(4);
+      cathode_cell_gid.inherits_from(cell_gid);
+      cathode_cell_gid.set(cathode_index, icath);
+      sig.grab_auxiliaries().store("parent_signal.category", "gg.anode");
+      sig.grab_auxiliaries().store("parent_signal.index", anode_sig_counter);
+      sig.set_hit_id(cathode_sig_counter);
+      sig.set_geom_id(cathode_cell_gid);
+      sig.set_time_ref(0.0 * CLHEP::ns);
+      sig.set_shape_real_parameter_with_explicit_unit("t0", t0, "us");
+      sig.set_shape_real_parameter_with_explicit_unit("t1", t1, "us");
+      sig.set_shape_real_parameter_with_explicit_unit("t2", t2, "us");
+      sig.set_shape_type_id("mctools::signal::triangle_signal_shape");
+      sig.initialize_simple();
+      cathode_sig_counter++;
+    }
 
     anode_sig_counter++;
 
@@ -235,13 +238,13 @@ void test_signal_data_2(bool draw_)
   const double effective_tracker_cell_length = 2.70 * CLHEP::meter;
   const int tracker_cell_category = 1023;
   const int tracker_cell_anode_category = 1024;
-  // const int tracker_cell_cathode_category = 1025;
+  const int tracker_cell_cathode_category = 1025;
   const double cm_per_us = CLHEP::cm/CLHEP::microsecond;
   const double millivolt = 1e-3 * CLHEP::volt;
   const double mV = millivolt;
   const int cathode_bottom = 0;
   const int cathode_top = 1;
-  // const int cathode_index = 4;
+  const int cathode_index = 4;
 
   // Loop on Geiger hits:
   for (int icell = 0; icell < 5; icell++) {
@@ -291,6 +294,7 @@ void test_signal_data_2(bool draw_)
       anode_cell_gid.inherits_from(cell_gid);
       sig.set_hit_id(anode_sig_counter);
       sig.set_geom_id(anode_cell_gid);
+      sig.set_time_ref(0.0 * CLHEP::ns);
       sig.set_shape_type_id("snemo::signal::geiger_anode_signal_shape");
       sig.set_shape_real_parameter_with_explicit_unit("t0", t0, "us");
       sig.set_shape_real_parameter_with_explicit_unit("t_rise", t_rise, "us");
@@ -300,31 +304,32 @@ void test_signal_data_2(bool draw_)
       sig.initialize_simple();
     }
 
-    // // Cathode signals:
-    // for (int icath = cathode_bottom; icath <= cathode_top; icath++) {
-    //   if (!has_cathodes[icath]) {
-    //     continue;
-    //   }
-    //   mctools::signal::base_signal & sig = signals.add_signal("gg.cathode");
-    //   geomtools::geom_id cathode_cell_gid;
-    //   cathode_cell_gid.set_type(tracker_cell_cathode_category);
-    //   cathode_cell_gid.set_depth(4);
-    //   cathode_cell_gid.inherits_from(cell_gid);
-    //   cathode_cell_gid.set(cathode_index, icath);
-    //   sig.grab_auxiliaries().store("parent_signal.category", "gg.anode");
-    //   sig.grab_auxiliaries().store("parent_signal.index", anode_sig_counter);
-    //   sig.set_hit_id(cathode_sig_counter);
-    //   sig.set_geom_id(cathode_cell_gid);
-    //   sig.set_shape_real_parameter_with_explicit_unit("t0", t0, "us");
-    //   sig.set_shape_real_parameter_with_explicit_unit("t1", t1, "us");
-    //   sig.set_shape_real_parameter_with_explicit_unit("t2", t2, "us");
-    //   sig.set_shape_type_id("mctools::signal::triangle_signal_shape");
-    //   sig.initialize_simple();
-    //   cathode_sig_counter++;
-    // }
+    // Cathode signals:
+    int cathode_sig_counter = 0;
+    for (int icath = cathode_bottom; icath <= cathode_top; icath++) {
+      if (!has_cathodes[icath]) {
+        continue;
+      }
+      mctools::signal::base_signal & sig = signals.add_signal("gg.cathode");
+      geomtools::geom_id cathode_cell_gid;
+      cathode_cell_gid.set_type(tracker_cell_cathode_category);
+      cathode_cell_gid.set_depth(4);
+      cathode_cell_gid.inherits_from(cell_gid);
+      cathode_cell_gid.set(cathode_index, icath);
+      sig.grab_auxiliaries().store("parent_signal.category", "gg.anode");
+      sig.grab_auxiliaries().store("parent_signal.index", anode_sig_counter);
+      sig.set_hit_id(cathode_sig_counter);
+      sig.set_geom_id(cathode_cell_gid);
+      sig.set_time_ref(0.0 * CLHEP::ns);
+      sig.set_shape_real_parameter_with_explicit_unit("t0", t0, "us");
+      sig.set_shape_real_parameter_with_explicit_unit("t1", t1, "us");
+      sig.set_shape_real_parameter_with_explicit_unit("t2", t2, "us");
+      sig.set_shape_type_id("mctools::signal::triangle_signal_shape");
+      sig.initialize_simple();
+      cathode_sig_counter++;
+    }
 
     anode_sig_counter++;
-
   }
 
   signals.tree_dump(std::clog, "Signals:");

@@ -50,13 +50,16 @@ namespace mctools {
     //! The signal is modelled has a [voltage = f(time)] arbitrary function.
     //! It uses a functor to describe the shape of the electric signal as expected
     //! from an analog measurement. This object contains all informations needed
-    //! to build/instantiate a signal shape object.
+    //! to build/instantiate a signal shape object, with the help of an external
+    //! signal shape builder object.
     class base_signal : public geomtools::base_hit
     {
     public:
 
       static const std::string & shape_parameter_prefix();
       static const std::string & allow_no_shape_builder_key();
+      static std::string build_shape_key(const int32_t);
+      static std::string build_private_shape_key(const int32_t, const std::size_t);
 
       //! Default constructor
       base_signal();
@@ -85,7 +88,7 @@ namespace mctools {
       //! Set the logging priority
       void set_logging(const datatools::logger::priority);
 
-      //! Check is time reference is set
+      //! Check if time reference is set
       bool has_time_ref() const;
 
       //! Return the time reference
@@ -195,6 +198,10 @@ namespace mctools {
       void add_private_shape(const std::string & key_,
                              const std::string & type_id_,
                              const datatools::properties & parameters_);
+
+      //! Add a private shape (only useful if a shape builder is associated to the base signal)
+      std::string add_auto_private_shape(const std::string & type_id_,
+                                         const datatools::properties & parameters_);
 
       //! Remove a private shape
       void remove_private_shape(const std::string & key_);

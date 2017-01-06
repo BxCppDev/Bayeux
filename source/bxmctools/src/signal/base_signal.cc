@@ -78,6 +78,7 @@ namespace mctools {
     {
       _private_shapes_config_.set_key_label("name");
       _private_shapes_config_.set_meta_label("type");
+      datatools::invalidate(_time_ref_);
       return;
     }
 
@@ -121,14 +122,17 @@ namespace mctools {
       if (this == &sig_) return;
       this->geomtools::base_hit::operator=(sig_);
       _initialized_ = sig_._initialized_;
-      _logging_ =  sig_._logging_;
+      _logging_ = sig_._logging_;
+      _shape_builder_ = sig_._shape_builder_;
+      _category_ = sig_._category_;
+      _time_ref_ = sig_._time_ref_;
       _shape_type_id_ = sig_._shape_type_id_;
       _private_shapes_config_ = sig_._private_shapes_config_;
       if (is_shape_instantiated()) {
         // If a shape is instantiated, then we discard it because
         // a shape object can be restored later through a shape factory/builder using
-        // shape configuration parameters stored in the
-        // auxiliaries containers:
+        // the shape configuration parameters stored in the
+        // "auxiliaries" container and the "private shape" container:
         _reset_shape_();
       }
       return;
@@ -240,7 +244,7 @@ namespace mctools {
 
     void base_signal::set_category(const std::string & category_)
     {
-      DT_THROW_IF(is_initialized(), std::logic_error, "Signal is already initialized!");
+      // DT_THROW_IF(is_initialized(), std::logic_error, "Signal is already initialized!");
       _category_ = category_;
       return;
     }
@@ -413,6 +417,14 @@ namespace mctools {
       return;
     }
 
+    std::string base_signal::add_auto_private_shape(const std::string & type_id_,
+                                                    const datatools::properties & parameters_)
+    {
+      std::string priv_key = build_private_shape_key(get_hit_id(), _private_shapes_config_.size());
+      _private_shapes_config_.add(priv_key, type_id_, parameters_);
+      return priv_key;
+    }
+
     void base_signal::add_private_shape(const std::string & key_,
                                         const std::string & type_id_,
                                         const datatools::properties & parameters_)
@@ -523,6 +535,8 @@ namespace mctools {
 
     void base_signal::_init_()
     {
+      DT_THROW_IF(!has_hit_id(), std::logic_error,
+                  "Missing hit identifier!");
       DT_THROW_IF(!has_shape_type_id(), std::logic_error,
                   "Missing shape type identifier!");
       if (has_shape_builder()) {
@@ -531,6 +545,7 @@ namespace mctools {
       } else {
         // No check
       }
+      DT_THROW_IF(!is_valid(), std::logic_error, "Base signal is not valid!");
       _initialized_ = true;
       return;
     }
@@ -559,9 +574,12 @@ namespace mctools {
     {
       _initialized_ = false;
       reset_shape();
+      _private_shapes_config_.clear();
       reset_time_ref();
+      reset_category();
       _shape_type_id_.clear();
       this->geomtools::base_hit::reset();
+      _shape_builder_ = nullptr;
       return;
     }
 
@@ -586,6 +604,22 @@ namespace mctools {
       return;
     }
 
+    // static
+    std::string base_signal::build_shape_key(const int32_t hit_id_)
+    {
+      std::ostringstream kss;
+      kss << "signal_shape." << hit_id_;
+      return kss.str();
+    }
+
+    // static
+    std::string base_signal::build_private_shape_key(const int32_t hit_id_, const std::size_t index_)
+    {
+      std::ostringstream kss;
+      kss << build_shape_key(hit_id_) << "." << index_;
+      return kss.str();
+    }
+
     const mygsl::i_unary_function & base_signal::_get_shape_()
     {
       if (_shape_ == nullptr) {
@@ -594,10 +628,13 @@ namespace mctools {
           DT_LOG_DEBUG(_logging_, "Using external signal shape builder to instantiate the shape object...");
           std::ostringstream key_ss;
           key_ss << "signal_" << get_hit_id();
-          if (_shape_builder_->has_functor(key_ss.str())) {
-            _shape_builder_->clear_functor(key_ss.str());
-          }
-          base_signal::build_signal_shape(*_shape_builder_, key_ss.str(), *this, _logging_);
+          std::string key = build_shape_key(get_hit_id());
+          // if (_shape_builder_->has_functor(key)) {
+          //   _shape_builder_->clear_functor(key);
+          // }
+          DT_THROW_IF(_shape_builder_->has_functor(key), std::logic_error,
+                      "Builder already has a functor labelled '" << key << "'!");
+          base_signal::build_signal_shape(*_shape_builder_, key, *this, _logging_);
         } else {
           // Fallback : ask the system shape factory registry to instantiate the shape object:
           if (is_shape_builder_mandatory()) {
@@ -754,7 +791,7 @@ namespace mctools {
     bool base_signal::build_signal_shape(signal_shape_builder & builder_,
                                          const std::string & key_,
                                          base_signal & signal_,
-                                         const  datatools::logger::priority logging_)
+                                         const datatools::logger::priority logging_)
     {
       datatools::logger::priority logging = logging_;
       DT_THROW_IF(!builder_.is_initialized(), std::logic_error, "Signal shape builder is not initialized!");
@@ -772,9 +809,9 @@ namespace mctools {
             const std::string & priv_type_id = mpe.get_meta();
             const datatools::properties & priv_shape_config = mpe.get_properties();
             DT_LOG_DEBUG(logging, "Building private signal shape '" << priv_key << "'...");
-            const mygsl::i_unary_function & fs = builder_.create_signal_shape(priv_key,
-                                                                              priv_type_id,
-                                                                              priv_shape_config);
+            /* const mygsl::i_unary_function & fs = */ builder_.create_signal_shape(priv_key,
+                                                                                    priv_type_id,
+                                                                                    priv_shape_config);
           }
           if (datatools::logger::is_debug(logging)) {
             builder_.tree_dump(std::cerr, "Builder: ", "[debug] ");

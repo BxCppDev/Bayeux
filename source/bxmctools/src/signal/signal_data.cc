@@ -110,6 +110,7 @@ namespace mctools {
       //             "No collection of signals with category '" << a_category << "' !");
       found->second.push_back(signal_handle_type(new base_signal));
       bsh = &found->second.back().grab();
+      bsh->set_category(a_category);
       return *bsh;
     }
 

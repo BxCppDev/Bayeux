@@ -80,6 +80,8 @@ void test_base_signal_1(bool draw_)
     hitSig.set_hit_id(12);
     geomtools::geom_id hitGid(1000, 1, 2);
     hitSig.set_geom_id(hitGid);
+    hitSig.set_category("calo");
+    hitSig.set_time_ref(0.3 * CLHEP::ns);
     hitSig.grab_auxiliaries().store("test", 42);
     hitSig.set_shape_type_id("mctools::signal::triangle_signal_shape");
     hitSig.set_shape_string_parameter("polarity", "-");
@@ -118,6 +120,8 @@ void test_base_signal_1(bool draw_)
     hitSig2.set_hit_id(13);
     geomtools::geom_id hitGid2(1000, 1, 4);
     hitSig2.set_geom_id(hitGid2);
+    hitSig2.set_category("calo");
+    hitSig2.set_time_ref(0.2 * CLHEP::ns);
     if (!hitSig2.is_shape_instantiated()) {
       hitSig2.unlock();
       hitSig2.tree_dump(std::clog, "Hit signal 2 (unlock): ");
@@ -241,6 +245,8 @@ void test_base_signal_2(bool draw_)
     hitSig.set_hit_id(12);
     geomtools::geom_id hitGid(1000, 1, 2);
     hitSig.set_geom_id(hitGid);
+    hitSig.set_category("calo");
+    hitSig.set_time_ref(0.2 * CLHEP::ns);
     hitSig.grab_auxiliaries().store("test", 42);
 
     // Private shape parameters:
@@ -260,7 +266,7 @@ void test_base_signal_2(bool draw_)
     s0_params.store_real_with_explicit_unit("amplitude",
                                             300.0 * mV,
                                             "mV");
-    hitSig.add_private_shape("s0", "mctools::signal::triangle_signal_shape", s0_params);
+    std::string s0_key = hitSig.add_auto_private_shape("mctools::signal::triangle_signal_shape", s0_params);
 
     // Shape associated to hit #1:
     datatools::properties s1_params("Hit #1 signal shape parameters");
@@ -280,7 +286,7 @@ void test_base_signal_2(bool draw_)
     s1_params.store_real_with_explicit_unit("amplitude",
                                             300.0 * mV,
                                             "mV");
-    hitSig.add_private_shape("s1", "mctools::signal::triangle_gate_signal_shape", s1_params);
+    std::string s1_key = hitSig.add_auto_private_shape("mctools::signal::triangle_gate_signal_shape", s1_params);
 
     // The signal shape is a combinaison of both private shapes above:
     hitSig.set_shape_type_id("mctools::signal::multi_signal_shape");
@@ -288,12 +294,12 @@ void test_base_signal_2(bool draw_)
     std::vector<std::string> comp_labels({"hit0","hit1"});
     shape_params.store("components", comp_labels);
 
-    shape_params.store("components.hit0.key", "s0");
+    shape_params.store("components.hit0.key", s0_key);
     shape_params.store_real_with_explicit_unit("components.hit0.time_shift", 0.0 * CLHEP::ns);
     shape_params.set_unit_symbol("components.hit0.time_shift", "ns");
     shape_params.store_real("components.hit0.scaling", 0.5);
 
-    shape_params.store("components.hit1.key", "s1");
+    shape_params.store("components.hit1.key", s1_key);
     shape_params.store_real_with_explicit_unit("components.hit1.time_shift", 1.0 * CLHEP::ns);
     shape_params.set_unit_symbol("components.hit1.time_shift", "ns");
     shape_params.store_real("components.hit1.scaling", 1.5);
