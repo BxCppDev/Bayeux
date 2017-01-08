@@ -275,6 +275,9 @@ namespace datatools {
       /// Update
       void update();
 
+      /// Force update
+      void forced_update();
+
     private:
 
       // FUTURE: better to have this method

@@ -256,7 +256,7 @@ namespace datatools {
     {
 
       if (get_logging_priority() == logger::PRIO_TRACE) {
-        _mp_.tree_dump(std::cerr, "Configuration items definitions:", "TRACE: ");
+        _mp_.tree_dump(std::cerr, "Configuration items definitions:", "[trace] ");
       }
 
       bool test_top = true;

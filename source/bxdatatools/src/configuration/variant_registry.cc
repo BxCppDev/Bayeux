@@ -556,6 +556,8 @@ namespace datatools {
             param_rec.set_parent(*parent_variant_record_, param_name_full, current_rank++);
           }
           param_rec.set_parameter_model(pe.get_model());
+          // Set logging level:
+          param_rec.set_logging(pe.get_model().get_logging_priority());
           if (parent_variant_record_ != nullptr && parent_variant_record_->is_active()) {
             param_rec.set_active(true);
             DT_LOG_DEBUG(get_logging_priority(), "param_rec.set_active(true).");
@@ -567,7 +569,7 @@ namespace datatools {
             DT_LOG_DEBUG(get_logging_priority(), "Variable parameter '" << param_rec.get_path() << "'");
             if (pe.get_model().has_default_value()) {
               param_rec.set_default_value();
-              DT_LOG_DEBUG(get_logging_priority(), "set_default_value() done.");
+              DT_LOG_DEBUG(get_logging_priority(), "set_default_value() done");
             } else {
               param_rec.unset_value();
               DT_LOG_DEBUG(get_logging_priority(), "unset_value() done.");

@@ -412,7 +412,8 @@ namespace datatools {
 
       void variant_repository_viewer::slot_update_tabs()
       {
-        DT_LOG_TRACE_ENTERING(datatools::logger::PRIO_ALWAYS);
+        datatools::logger::priority logging = _logging_;
+        DT_LOG_TRACE_ENTERING(logging);
         std::vector<std::string> registry_keys;
         _repository_->build_ordered_registry_keys(registry_keys);
         for (unsigned int ikey = 0; ikey < registry_keys.size(); ikey++) {
@@ -434,7 +435,7 @@ namespace datatools {
             }
           }
         }
-        DT_LOG_TRACE_EXITING(datatools::logger::PRIO_ALWAYS);
+        DT_LOG_TRACE_EXITING(_logging_);
         return;
       }
 

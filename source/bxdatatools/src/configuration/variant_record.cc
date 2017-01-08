@@ -1088,17 +1088,23 @@ namespace datatools {
         // the record unaccomplished.
         if (get_parameter_model().is_boolean()) {
           if (!is_boolean_valid(_boolean_value_)) {
+            DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has an invalid value: " << _real_value_);
             unset_value();
-            if (get_parameter_model().has_default_value() && is_boolean_valid(get_parameter_model().get_default_boolean())) {
+            if (get_parameter_model().has_default_value()
+                && is_boolean_valid(get_parameter_model().get_default_boolean())) {
               set_default_value();
+              DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its default value set.");
             }
           }
         }
         if (get_parameter_model().is_integer()) {
           if (!is_integer_valid(_integer_value_)) {
+            DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has an invalid value: " << _real_value_);
             unset_value();
-            if (get_parameter_model().has_default_value() && is_integer_valid(get_parameter_model().get_default_integer())) {
+            if (get_parameter_model().has_default_value()
+                && is_integer_valid(get_parameter_model().get_default_integer())) {
               set_default_value();
+             DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its default value set.");
             }
           }
         }
@@ -1106,7 +1112,8 @@ namespace datatools {
           if (!is_real_valid(_real_value_)) {
             DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has an invalid value: " << _real_value_);
             unset_value();
-            if (get_parameter_model().has_default_value() && is_real_valid(get_parameter_model().get_default_real())) {
+            if (get_parameter_model().has_default_value()
+                && is_real_valid(get_parameter_model().get_default_real())) {
               set_default_value();
               DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its default value set.");
             }
@@ -1117,7 +1124,8 @@ namespace datatools {
             DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has an invalid string value...");
             unset_value();
             DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its value unset.");
-            if (get_parameter_model().has_default_value() && is_string_valid(get_parameter_model().get_default_string())) {
+            if (get_parameter_model().has_default_value()
+                && is_string_valid(get_parameter_model().get_default_string())) {
               set_default_value();
               DT_LOG_DEBUG(logging, "Parameter record '" << _path_ << "' has now its default value set.");
             }
@@ -1138,9 +1146,22 @@ namespace datatools {
 
     void variant_record::update()
     {
+      // XXX
+      // if (get_leaf_name() == "generator") {
+      //   _logging_ = datatools::logger::PRIO_TRACE;
+      // }
       if (_with_update_) {
+        DT_LOG_TRACE(_logging_, "Record '" << get_path() << "' with update");
         _update_();
+      } else {
+        DT_LOG_TRACE(_logging_, "Record '" << get_path() << "' does not update");
       }
+      return;
+    }
+
+    void variant_record::forced_update()
+    {
+      _update_();
       return;
     }
 
