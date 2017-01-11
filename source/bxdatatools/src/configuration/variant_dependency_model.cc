@@ -605,27 +605,27 @@ namespace datatools {
       {
         std::size_t count = 0;
 
-        if (has_repository()) {
+        if (!is_local() && has_repository()) {
           out_ << indent_;
-          out_ << "* Global to repository ``" << get_repository().get_name() << "``" << std::endl;
+          out_ << "* Global to repository ``\"" << get_repository().get_name() << "\"``" << std::endl;
           count++;
         }
 
-        if (! has_repository() && has_registry()) {
+        if (is_local()) {
           out_ << indent_;
-          out_ << "* Local to registry : ``" << get_registry().get_name() << "``" << std::endl;
+          out_ << "* Local to registry : ``\"" << get_registry().get_name() << "\"``" << std::endl;
           count++;
         }
 
         {
           out_ << indent_;
-          out_ << "* Dependee(s) : " << _dependee_records_.size() << std::endl;
+          out_ << "* Dependees : " << _dependee_records_.size() << std::endl;
           count++;
           if (_dependee_records_.size()) {
             out_ << std::endl;
             for (const auto & depee : _dependee_records_) {
               out_ << indent_;
-              out_ << "  * Dependee slot [" << depee.first << "] : ``" <<  depee.second.dependee_path << "``" << std::endl;
+              out_ << "  * Dependee slot [" << depee.first << "] : ``\"" <<  depee.second.dependee_path << "\"``" << std::endl;
             }
             out_ << std::endl;
           }
@@ -639,11 +639,11 @@ namespace datatools {
             out_ << std::endl;
             for (const auto & depy : _dependency_records_) {
               out_ << indent_;
-              out_ << "  * Dependency : ``" << depy.first << "``" << std::endl;
+              out_ << "  * Dependency : ``\"" << depy.first << "\"``" << std::endl;
               const dependency_record & deprec = depy.second;
               out_ << std::endl;
               out_ << indent_;
-              out_ << "    * Depender : ``" << deprec.depender_path << "``" << std::endl;
+              out_ << "    * Depender : ``\"" << deprec.depender_path << "\"``" << std::endl;
               out_ << indent_;
               out_ << "    * Input dependee slots : ";
               for (auto slot : deprec.input_slots) {
@@ -651,7 +651,7 @@ namespace datatools {
               }
               out_ << std::endl;
               out_ << indent_;
-             out_ << "    * Logic : ``" << deprec.logic_expression << "``" << std::endl;
+             out_ << "    * Logic : ``\"" << deprec.logic_expression << "\"``" << std::endl;
             }
             out_ << std::endl;
           }

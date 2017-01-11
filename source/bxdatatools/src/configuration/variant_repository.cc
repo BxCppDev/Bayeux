@@ -1580,7 +1580,7 @@ namespace datatools {
 
       if (with_title) {
         std::ostringstream titleoss;
-        titleoss << "Variant repository ``" << get_name() << "``";
+        titleoss << "Variant repository ``\"" << get_name() << "\"``";
         out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
         out_ << titleoss.str() << std::endl;
         out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
@@ -1588,7 +1588,8 @@ namespace datatools {
       }
 
       if (has_terse_description()) {
-        datatools::print_multi_lines(out_, get_terse_description(), "");
+        // datatools::print_multi_lines(out_, get_terse_description(), "");
+        out_ << "*" << get_terse_description() << "*" << std::endl;
         out_ << std::endl;
       }
 
@@ -1600,17 +1601,17 @@ namespace datatools {
         std::size_t count = 0;
 
         if (has_display_name()) {
-          out_ << "* Display name : ``" << get_display_name() << "``" << std::endl;
+          out_ << "* Display name : *" << get_display_name() << "*" << std::endl;
           count++;
         }
 
         if (has_organization()) {
-          out_ << "* Organization : ``" << get_organization() << "``" << std::endl;
+          out_ << "* Organization : ``\"" << get_organization() << "\"``" << std::endl;
           count++;
         }
 
         if (has_application()) {
-          out_ << "* Application : ``" << get_application() << "``" << std::endl;
+          out_ << "* Application : ``\"" << get_application() << "\"``" << std::endl;
           count++;
         }
 
@@ -1660,7 +1661,8 @@ namespace datatools {
           out_ << std::endl;
 
           if (has_terse_description()) {
-            datatools::print_multi_lines(out_, vreg.get_terse_description(), "");
+            out_ << "*" <<  vreg.get_terse_description() << "*" << std::endl;
+            // datatools::print_multi_lines(out_, vreg.get_terse_description(), "");
             out_ << std::endl;
           }
 
@@ -1693,49 +1695,45 @@ namespace datatools {
               const variant_record & varParRec = vreg.get_parameter_record(varParamName);
               const parameter_model & varParModel = varParRec.get_parameter_model();
 
-              out_ << "  * Parameter ``" << '"' << varParamName << '"'
-                   << "`` (model: ``"
-                   << '"' << varParModel.get_name() << '"'
-                   << "``) :"
+              std::ostringstream itemss;
+              itemss << "  " << (iparam+1) << ". ";
+
+              std::ostringstream indentss;
+              out_ << itemss.str() << "Parameter ``" << '"' << varParamName << '"'
+                   << "``"
+                   << " :"
                    << std::endl;
               out_ << std::endl;
-
+              for (int i = 0; i < itemss.str().length(); i++) {
+                indentss << ' ';
+              }
               const std::string & varParLeafName = varParRec.get_leaf_name();
               const variant_record & varParentRec = varParRec.get_parent();
               const variant_model & varParentModel = varParentRec.get_variant_model();
               const std::string & param_desc = varParentModel.get_parameter_description(varParLeafName);
               if (!param_desc.empty()) {
-                out_ << "    * Description: *";
-                out_ << param_desc;
-                out_ << "*" << std::endl;
+                out_ << indentss.str() << "* Description: ";
+                out_ << '*' << param_desc << '*';
+                out_ << std::endl;
               }
-              // std::string value_format;
-              // command::returned_info cri = varParRec.value_to_string(value_format);
-              out_ << "    * Full path: ``" << '"' << vreg_key << ':' << varParamName << '"' << "``" << std::endl;
+
+              out_ << indentss.str() << "* Full path: "
+                   << "``" << '"' << vreg_key << ':' << varParamName << '"' << "``"
+                   << std::endl;
+
+              out_ << indentss.str() << "* Model: "
+                   << "``\"" << varParModel.get_name() << "\"``"
+                   << std::endl;
+
               uint32_t varParModelRstOpt = 0;
               varParModelRstOpt |= parameter_model::PRINT_RST_NO_TITLE;
               varParModelRstOpt |= parameter_model::PRINT_RST_NO_DESC;
-              varParModel.print_rst(out_, "    ", varParModelRstOpt);
+              varParModel.print_rst(out_, indentss.str(), varParModelRstOpt);
               out_ << std::endl;
             }
             if (count) {
               out_ << std::endl;
             }
-
-            // out_ << "* Full set of parameter records: " << std::endl;
-            // std::vector<std::string> paths;
-            // uint32_t list_flags = 0;
-            // list_flags |= variant_registry::LIST_NO_VARIANTS;
-            // vreg.list_of_ranked_records(paths, list_flags);
-            // for (std::size_t ipath = 0; ipath < paths.size(); ipath++) {
-            //   if (ipath == 0) {
-            //     out_ << "   " << std::endl;
-            //   }
-            //   out_ << "  * ``" << paths[ipath] << "``" << std::endl;
-            //   if ((ipath + 1) ==  paths.size()) {
-            //     out_ << "   " << std::endl;
-            //   }
-            // }
 
             out_ << std::endl;
           } // Parameters

@@ -192,6 +192,11 @@ namespace datatools {
                                const std::string & indent_ = "",
                                bool inherit_ = false) const;
 
+        /// \brief Restructured text formatting
+        enum rst_flags {
+          PRINT_RST_NO_DOC = datatools::bit_mask::bit00
+        };
+
         /// Print in RestructuredText format
         void print_rst(std::ostream & out_,
                        const std::string & indent_ = "",
