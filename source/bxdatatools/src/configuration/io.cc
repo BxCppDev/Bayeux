@@ -115,12 +115,6 @@ namespace datatools {
           std::string value_str;
           command::returned_info cri = vrec_.value_to_string(value_str);
           out_ << vrec_.get_path();
-          /*
-            out_ << " : " << get_label_from_type(vrec_.get_parameter_model().get_type());
-            if (vrec_.get_parameter_model().is_real() && vrec_.get_parameter_model().has_real_unit_label()) {
-            out_ << " as " << vrec_.get_parameter_model().get_real_unit_label();
-            }
-          */
           out_ << " = ";
           if (cri.is_success()) {
             out_ << value_str << std::endl;
@@ -137,10 +131,11 @@ namespace datatools {
 
         if (vrec_.is_variant()) {
           // out_ << "#@variant " << get_path() << "=" << "active" << std::endl;
-          for (variant_record::daughter_dict_type::const_iterator i = vrec_.get_daughters().begin();
-               i != vrec_.get_daughters().end();
-               i++) {
-            const variant_record & dvrec = i->second.get_record();
+          std::vector<std::string> ranked_params;
+          vrec_.build_list_of_ranked_parameter_records(ranked_params);
+          for (std::size_t ipar = 0; ipar < ranked_params.size(); ipar++) {
+            const std::string & param_key = ranked_params[ipar];
+            const variant_record & dvrec = vrec_.get_daughter(param_key);
             store_record(out_, dvrec);
           }
         }
@@ -229,10 +224,11 @@ namespace datatools {
         }
 
         if (vrec_.is_variant()) {
-          for (variant_record::daughter_dict_type::iterator i = vrec_.grab_daughters().begin();
-               i != vrec_.grab_daughters().end();
-               i++) {
-            variant_record & dvrec = i->second.grab_record();
+          std::vector<std::string> ranked_params;
+          vrec_.build_list_of_ranked_parameter_records(ranked_params);
+          for (std::size_t ipar = 0; ipar < ranked_params.size(); ipar++) {
+            const std::string & param_key = ranked_params[ipar];
+            variant_record & dvrec = vrec_.grab_daughter(param_key);
             int error = load_record(in_, dvrec);
             if (error) {
               DT_LOG_FATAL(_logging_, "Failed to load parameter record '" << dvrec.get_path() << "'!");

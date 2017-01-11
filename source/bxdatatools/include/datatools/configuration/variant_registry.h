@@ -159,14 +159,20 @@ namespace datatools {
 
       /// \brief Flags for building the list of parameters
       enum list_flags {
-        LIST_ACTIVE_ONLY = datatools::bit_mask::bit00,
-        LIST_NO_SET      = datatools::bit_mask::bit01,
-        LIST_NO_UNSET    = datatools::bit_mask::bit02,
-        LIST_CLEAR       = datatools::bit_mask::bit03
+        LIST_ACTIVE_ONLY   = datatools::bit_mask::bit00,
+        LIST_NO_SET        = datatools::bit_mask::bit01,
+        LIST_NO_UNSET      = datatools::bit_mask::bit02,
+        LIST_CLEAR         = datatools::bit_mask::bit03,
+        LIST_NO_PARAMETERS = datatools::bit_mask::bit04,
+        LIST_NO_VARIANTS   = datatools::bit_mask::bit05
       };
 
-      /// Compute the list of ranked parameters
-      void list_of_ranked_parameters(std::vector<std::string> &_paths_) const;
+      /// Compute the ranked list of parameters
+      void list_of_ranked_parameters(std::vector<std::string> & paths_) const;
+
+      /// Compute the ranked list of records
+      void list_of_ranked_records(std::vector<std::string> & paths_,
+                                  uint32_t flags_ = 0) const;
 
       /// Compute the list of parameters
       void list_of_parameters(std::vector<std::string> &_paths_,
@@ -174,6 +180,13 @@ namespace datatools {
 
       /// Compute the list of unset parameters
       void list_of_unset_parameters(std::vector<std::string> & unset_paths_) const;
+
+      /// Compute the recursive list of ranked records
+      /// For variant records, the explicitely ranked daughter params are listed first, then come
+      /// unranked params in arbitrary (alphabetical) order.
+      /// For parameter records, daughter variant records are listed in native order.
+      void build_recursive_list_of_ranked_records(const variant_record & record_,
+                                                  std::vector<std::string> & ranked_) const;
 
       /// Check if all parameters are set
       bool is_accomplished() const;

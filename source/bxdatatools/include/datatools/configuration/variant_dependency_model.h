@@ -110,8 +110,6 @@ namespace datatools {
       typedef std::map<std::string, dependency_ptr_type>   dependency_dict_type;
       typedef std::map<std::string, std::set<std::string>> dependers_table_type;
 
-      /// \brief
-
       /// Constructor
       variant_dependency_model(const variant_repository & repository_);
 
@@ -209,6 +207,16 @@ namespace datatools {
       /// Return the table of dependers' paths addressed by their respective dependees' paths
       const dependers_table_type & get_dependers_per_dependee() const;
 
+      /// \brief Restructured text formatting
+      enum rst_flags {
+        PRINT_RST_NO_TITLE = datatools::bit_mask::bit00
+      };
+
+      /// Print documentation
+      void print_rst(std::ostream & out_,
+                     const uint32_t flags_ = 0,
+                     const std::string & indent_ = "") const;
+
     protected:
 
       void _at_init();
@@ -224,7 +232,6 @@ namespace datatools {
       bool _initialized_ = false; //!< Initialization flag
       const variant_repository * _repository_ = nullptr; //!< Handle to the parent repository
       const variant_registry   * _registry_ = nullptr; //!< Handle to the parent registry
-      // std::string _registry_name_; //!< Name of the working registry
 
       // Configuration:
       dependee_record_dict_type   _dependee_records_;   //!< Collection of dependees records (variants)

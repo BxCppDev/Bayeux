@@ -445,6 +445,71 @@ namespace datatools {
        return;
     }
 
+    void variant_registry::build_recursive_list_of_ranked_records(const variant_record & record_,
+                                                                  std::vector<std::string> & ranked_) const
+    {
+      if (record_.is_variant()) {
+        std::vector<std::string> ranked_param_records;
+        record_.build_list_of_ranked_parameter_records(ranked_param_records);
+        for (std::size_t ipar = 0; ipar < ranked_param_records.size(); ipar++) {
+          std::ostringstream path_prefix_ss;
+          if (record_.get_path() != default_top_variant_name()) {
+            path_prefix_ss << record_.get_path() << '/';
+          }
+          path_prefix_ss << ranked_param_records[ipar];
+          std::string path_prefix = path_prefix_ss.str();
+          // std::cerr << "DEVEL: Ranked parameter record path = '" << path_prefix << "'" << std::endl;
+          ranked_.push_back(path_prefix);
+          const variant_record & par_record = record_.get_parent_registry().get_parameter_record(path_prefix);
+          // std::cerr << "DEVEL: Push ranked parameter record '" << path_prefix << "'" << std::endl;
+          build_recursive_list_of_ranked_records(par_record, ranked_);
+        }
+      } else {
+        std::vector<std::string> ranked_var_records;
+        for (const auto & var_daughter : record_.get_daughters()) {
+          std::ostringstream path_prefix_ss;
+          if (record_.get_path() != default_top_variant_name()) {
+            path_prefix_ss << record_.get_path() << '/';
+          }
+          path_prefix_ss << var_daughter.first;
+          std::string path_prefix = path_prefix_ss.str();
+          // std::cerr << "DEVEL: Variant record path = '" << path_prefix << "'" << std::endl;
+          // std::string path = var_daughter.second.get_record().get_path();
+          ranked_.push_back(path_prefix);
+          const variant_record & var_record = record_.get_parent_registry().get_variant_record(path_prefix);
+          // std::cerr << "DEVEL: Push variant record '" << path_prefix << "'" << std::endl;
+          build_recursive_list_of_ranked_records(var_record, ranked_);
+        }
+      }
+
+      return;
+    }
+
+    void variant_registry::list_of_ranked_records(std::vector<std::string> & paths_,
+                                                  uint32_t flags_) const
+    {
+      paths_.clear();
+      bool with_parameters = true;
+      bool with_variants = true;
+      if (flags_ & LIST_NO_PARAMETERS) {
+        with_parameters = false;
+      }
+      if (flags_ & LIST_NO_VARIANTS) {
+        with_variants = false;
+      }
+      const variant_record & var_rec = _records_.find(default_top_variant_name())->second;
+      std::vector<std::string> paths;
+      build_recursive_list_of_ranked_records(var_rec, paths);
+      for (const auto & path : paths) {
+        // std::cerr << "********** DEVEL: path = '" << path << "'" << std::endl;
+        const variant_record & rec = _records_.find(path)->second;
+        if (rec.is_parameter() && !with_parameters) continue;
+        if (rec.is_variant() && !with_variants) continue;
+        paths_.push_back(rec.get_path());
+      }
+      return;
+    }
+
     void variant_registry::list_of_parameters(std::vector<std::string> & paths_,
                                               uint32_t flags_) const
     {

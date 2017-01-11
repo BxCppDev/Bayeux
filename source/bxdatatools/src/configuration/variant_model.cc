@@ -25,6 +25,7 @@
 // Standard library:
 #include <sstream>
 #include <set>
+#include <iomanip>
 
 // This project:
 #include <datatools/exception.h>
@@ -411,16 +412,19 @@ namespace datatools {
         with_title = false;
       }
 
-     if (with_title) {
-        out_ << indent_ << "=======================================================================" << std::endl;
-        out_ << indent_ << "Variant model ``" << get_name() << "``" << std::endl;
-        out_ << indent_ << "=======================================================================" << std::endl;
-        out_ << indent_ << std::endl;
+      if (with_title) {
+        std::ostringstream titleoss;
+        titleoss << "Variant model ``" << get_name() << "``";
+        out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << titleoss.str() << std::endl;
+        out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << std::endl;
       }
-      std::string indent = indent_; // + "   ";
+      std::string indent = indent_;
 
       if (has_terse_description()) {
         print_multi_lines(out_, get_terse_description(), indent);
+        out_ << std::endl;
       }
 
       if (has_documentation()) {
@@ -439,11 +443,58 @@ namespace datatools {
       }
       out_ << std::endl;
 
-      out_ << indent << "* Parameters : ";
-      if (_parameters_.size() == 0) {
-        out_ << "<none>";
-      }
-      out_ << std::endl;
+      /*
+      {
+        std::size_t count = 0;
+
+        std::vector<std::string> param_paths;
+        build_list_of_ranked_parameter_records(param_paths);
+
+        out_ << "* Parameters: ``" << param_paths.size() << "``" << std::endl;
+        count++;
+
+        out_ << indent << "* Parameters : ";
+        if (_parameters_.size() == 0) {
+          out_ << "<none>";
+        }
+        out_ << std::endl;
+        for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
+          const std::string & varParamName = param_paths[iparam];
+          if (iparam == 0) {
+            out_ << std::endl;
+          }
+          const variant_record & varParRec = vreg.get_parameter_record(varParamName);
+          const parameter_model & varParModel = varParRec.get_parameter_model();
+
+          out_ << "  * Parameter ``" << '"' << varParamName << '"'
+               << "`` (model: ``"
+               << '"' << varParModel.get_name() << '"'
+               << "``) :"
+               << std::endl;
+          out_ << std::endl;
+
+          const std::string & varParLeafName = varParRec.get_leaf_name();
+          const variant_record & varParentRec = varParRec.get_parent();
+          const variant_model & varParentModel = varParentRec.get_variant_model();
+          const std::string & param_desc = varParentModel.get_parameter_description(varParLeafName);
+          if (!param_desc.empty()) {
+            out_ << "    * Description: ``";
+            out_ << param_desc;
+            out_ << "``" << std::endl;
+          }
+          out_ << "    * Full path: ``" << '"' << vreg_key << ':' << varParamName << '"' << "``" << std::endl;
+          uint32_t varParModelRstOpt = 0;
+          varParModelRstOpt |= parameter_model::PRINT_RST_NO_TITLE;
+          varParModelRstOpt |= parameter_model::PRINT_RST_NO_DESC;
+          varParModel.print_rst(out_, "    ", varParModelRstOpt);
+          out_ << std::endl;
+        }
+        if (count) {
+          out_ << std::endl;
+        }
+      } // for
+      */
+
       for (parameter_dict_type::const_iterator i = _parameters_.begin();
            i != _parameters_.end();
            i++) {
@@ -462,7 +513,6 @@ namespace datatools {
           out_ << std::endl;
         }
       }
-
       out_ << indent << std::endl;
 
       return;

@@ -737,13 +737,37 @@ namespace datatools {
       return;
     }
 
+    // // XXX
+    // void variant_record::build_recursive_list_of_ranked_records(std::vector<std::string> & ranked_) const
+    // {
+    //   if (is_variant()) {
+    //     std::vector<std::string> ranked_param_records;
+    //     build_list_of_ranked_parameter_records(ranked_param_records);
+    //     for (std::size_t ipar = 0; ipar < ranked_param_records.size(); ipar++) {
+    //       ranked_.push_back(ranked_param_records[ipar]);
+    //       std::cerr << "DEVEL: Push ranked parameter '" << ranked_param_records[ipar] << "'" << std::endl;
+    //       const variant_record & par_record = get_parent_registry().get_parameter_record(ranked_param_records[ipar]);
+    //       par_record.build_recursive_list_of_ranked_records(ranked_);
+    //     }
+    //   } else {
+    //     std::vector<std::string> ranked_var_records;
+    //     for (const auto & var_daughter : get_daughters()) {
+    //       std::string path = var_daughter.second.get_record().get_path();
+    //       ranked_.push_back(path);
+    //       std::cerr << "DEVEL: Push variant '" << path << "'" << std::endl;
+    //       const variant_record & var_record = get_parent_registry().get_variant_record(path);
+    //       var_record.build_recursive_list_of_ranked_records(ranked_);
+    //     }
+    //   }
+    //   return;
+    // }
+
     void variant_record::build_list_of_ranked_parameter_records(std::vector<std::string> & ranked_) const
     {
       ranked_.clear();
       if (!is_variant()) {
         return;
       }
-      //_variant_model_->build_list_of_ranked_parameters(ranked_);
       ranked_.reserve(_ranked_daughters_.size() + _unranked_daughters_.size());
       for (const auto & name : _ranked_daughters_) {
         ranked_.push_back(name);

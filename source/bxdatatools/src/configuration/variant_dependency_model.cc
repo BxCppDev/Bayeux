@@ -25,6 +25,7 @@
 // Standard library:
 #include <string>
 #include <set>
+#include <iomanip>
 
 // This package:
 #include <datatools/configuration/variant_repository.h>
@@ -579,6 +580,87 @@ namespace datatools {
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
            << "Initialized : " << (is_initialized() ? "<yes>" : "<no>")
            << std::endl;
+
+      return;
+    }
+
+    void variant_dependency_model::print_rst(std::ostream & out_,
+                                             const uint32_t flags_,
+                                             const std::string & indent_) const
+    {
+      bool with_title = true;
+      if (flags_ & PRINT_RST_NO_TITLE) {
+        with_title = false;
+      }
+
+      if (with_title) {
+        std::ostringstream titleoss;
+        titleoss << "Variant dependency model";
+        out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << titleoss.str() << std::endl;
+        out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << std::endl;
+      }
+
+      {
+        std::size_t count = 0;
+
+        if (has_repository()) {
+          out_ << indent_;
+          out_ << "* Global to repository ``" << get_repository().get_name() << "``" << std::endl;
+          count++;
+        }
+
+        if (! has_repository() && has_registry()) {
+          out_ << indent_;
+          out_ << "* Local to registry : ``" << get_registry().get_name() << "``" << std::endl;
+          count++;
+        }
+
+        {
+          out_ << indent_;
+          out_ << "* Dependee(s) : " << _dependee_records_.size() << std::endl;
+          count++;
+          if (_dependee_records_.size()) {
+            out_ << std::endl;
+            for (const auto & depee : _dependee_records_) {
+              out_ << indent_;
+              out_ << "  * Dependee slot [" << depee.first << "] : ``" <<  depee.second.dependee_path << "``" << std::endl;
+            }
+            out_ << std::endl;
+          }
+        }
+
+        {
+          out_ << indent_;
+          out_ << "* Dependencies : " << _dependency_records_.size() << std::endl;
+          count++;
+          if (_dependency_records_.size()) {
+            out_ << std::endl;
+            for (const auto & depy : _dependency_records_) {
+              out_ << indent_;
+              out_ << "  * Dependency : ``" << depy.first << "``" << std::endl;
+              const dependency_record & deprec = depy.second;
+              out_ << std::endl;
+              out_ << indent_;
+              out_ << "    * Depender : ``" << deprec.depender_path << "``" << std::endl;
+              out_ << indent_;
+              out_ << "    * Input dependee slots : ";
+              for (auto slot : deprec.input_slots) {
+                out_ << '[' << slot << "] ";
+              }
+              out_ << std::endl;
+              out_ << indent_;
+             out_ << "    * Logic : ``" << deprec.logic_expression << "``" << std::endl;
+            }
+            out_ << std::endl;
+          }
+        }
+
+        if (count) {
+          out_ << std::endl;
+        }
+      }
 
       return;
     }

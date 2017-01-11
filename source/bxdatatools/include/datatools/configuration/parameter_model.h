@@ -176,7 +176,7 @@ namespace datatools {
         /// Return the group
         const std::string & get_group() const;
 
-        /// Check is a group name matches the group set
+        /// Check if a group name matches the group set
         bool match_group(const std::string & group_name_) const;
 
         /// Initialization
@@ -203,7 +203,7 @@ namespace datatools {
       protected:
 
         std::string _documentation;      //!< Terse documentation string associated to the enumerated item
-        std::set<std::string> _variants; //!< Set of variants associated to the value
+        std::set<std::string> _variants; //!< Set of variants associated to /triggered by the value
         std::string _group;              //!< Group the value belongs to
 
       private:

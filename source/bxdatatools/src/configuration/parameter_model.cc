@@ -25,6 +25,7 @@
 // Standard library:
 #include <sstream>
 #include <fstream>
+#include <iomanip>
 #include <cmath>
 #include <unistd.h>
 
@@ -310,25 +311,25 @@ namespace datatools {
                                                         const uint32_t /*flags_*/) const
     {
       std::string indent = indent_;
-
+      out_ << indent << std::endl;
       out_ << indent << "* Documentation : ";
       if (has_documentation()) {
         out_ << indent << std::endl;
-        print_multi_lines(out_, get_documentation(), indent);
-        out_ << indent << std::endl;
+        print_multi_lines(out_, get_documentation(), indent + "  ");
+        // out_ << indent << std::endl;
       } else {
-         out_ << "<none>" << std::endl;
+         out_ << "*none*" << std::endl;
       }
 
-      out_ << indent_ << "* Variants : ";
+      out_ << indent_ << "* Triggered variants : ";
       if (_variants.size() == 0) {
-        out_ << "<none>";
+        out_ << "*none*";
       }
       out_ << std::endl;
       if (_variants.size()) {
         out_ << indent_ << std::endl;
         for (const auto & varname : _variants) {
-          out_ << indent_ << "  * Variant : '" << varname << "'" << std::endl;
+          out_ << indent_ << "  * ``\"" << varname << "\"``" << std::endl;
         }
         out_ << indent_ << std::endl;
       }
@@ -336,12 +337,14 @@ namespace datatools {
       if (has_group_support()) {
         out_ << indent_ << "* Group : ";
         if (has_group()) {
-          out_ << "'" << _group << "'";
+          out_ << "``" << _group << "``";
         } else {
-          out_ << "<none>";
+          out_ << "*none*";
         }
         out_ << std::endl;
       }
+
+      out_ << std::endl;
 
       return;
     }
@@ -2494,6 +2497,7 @@ namespace datatools {
              *   string.enumerated_3.variant       : string = "Setup.SuperNEMO"
              *   string.enumerated_3.group         : string = "LowEnergy"
              *
+             *   string.default                    : string = "Atlas"
              */
             if (_string_enumeration_.size() == 0) {
               bool default_is_set = false;
@@ -3428,10 +3432,16 @@ namespace datatools {
       }
 
       if (with_title) {
-        out_ << indent_ << "=======================================================================" << std::endl;
-        out_ << indent_ << "Parameter model ``" << get_name() << "``" << std::endl;
-        out_ << indent_ << "=======================================================================" << std::endl;
-        out_ << indent_ << std::endl;
+        std::ostringstream hdross;
+        hdross << "Parameter model ``\"" << get_name()  << "\"``";
+        out_ << std::setw(hdross.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << hdross.str() << std::endl;
+        out_ << std::setw(hdross.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << std::endl;
+        // out_ << indent_ << "=======================================================================" << std::endl;
+        // out_ << indent_ << "Parameter model ``" << get_name() << "``" << std::endl;
+        // out_ << indent_ << "=======================================================================" << std::endl;
+        // out_ << indent_ << std::endl;
       }
       std::string indent = indent_; // + "   ";
 
@@ -3449,7 +3459,7 @@ namespace datatools {
         out_ << indent << std::endl;
         out_ << indent << "* Display name: ";
         if (! has_display_name()) {
-          out_ << "<none provided>";
+          out_ << "*none*";
         } else {
           out_ << "``\"" << get_display_name() << "\"``";
         }
@@ -3458,7 +3468,7 @@ namespace datatools {
 
       out_ << indent << "* Type: ";
       if (! has_type()) {
-        out_ << "<undefined>";
+        out_ << "*undefined*";
       } else {
         out_ << "``";
         out_ << ::datatools::get_label_from_type(_type_);
@@ -3590,10 +3600,10 @@ namespace datatools {
             out_ << indent << "* Supported values:" << std::endl;
             out_ << std::endl;
             out_ << indent <<  "  * ``" << "false" << "`` :" << std::endl;
-            _false_metadata_.print_rst(out_, indent + "  ");
+            _false_metadata_.print_rst(out_, indent + "     ");
 
             out_ << indent <<  "  * ``" << "true" << "`` :" << std::endl;
-            _true_metadata_.print_rst(out_, indent + "  ");
+            _true_metadata_.print_rst(out_, indent + "     ");
 
             out_ << std::endl;
           } // variable/enumeration/boolean
@@ -3610,9 +3620,8 @@ namespace datatools {
                 out_ << std::endl;
               }
               int value = iter_val->first;
-              out_ << indent << "  * ``" << value << "`` : ";
-              out_ << std::endl;
-              iter_val->second.print_rst(out_, indent + "    ");
+              out_ << indent << "  * ``" << value << "`` : " << std::endl;
+              iter_val->second.print_rst(out_, indent + "     ");
               if (jter_val == _integer_enumeration_.end()) {
                 out_ << std::endl;
               }
@@ -3635,9 +3644,8 @@ namespace datatools {
               if (! display_unit_symbol.empty()) {
                 out_ << ' ' << display_unit_symbol;
               }
-              out_ << "`` : ";
-              out_ << std::endl;
-              iter_val->second.print_rst(out_, indent + "    ");
+              out_ << "`` : " << std::endl;
+              iter_val->second.print_rst(out_, indent + "     ");
               if (jter_val == _real_enumeration_.end()) {
                 out_ << std::endl;
               }
@@ -3658,7 +3666,7 @@ namespace datatools {
               const std::string & value = iter_val->first;
               out_ << indent << "  * ``\"" << value << "\"`` ";
               out_ << " : " << std::endl;
-              iter_val->second.print_rst(out_, indent + "    ");
+              iter_val->second.print_rst(out_, indent + "     ");
               if (jter_val == _string_enumeration_.end()) {
                 out_ << std::endl;
               }
@@ -3738,6 +3746,29 @@ namespace datatools {
         } // default/value
 
       } // variable
+
+      if (_variants_.size()) {
+        out_ << indent << "* Variants description: ";
+        out_ << std::endl;
+        for (variant_dict_type::const_iterator i = _variants_.begin();
+             i != _variants_.end();
+             i++) {
+          variant_dict_type::const_iterator j = i;
+          j++;
+          if (i == _variants_.begin()) {
+            out_ << std::endl;
+          }
+          out_ << indent << "  * Variant ``\"" << i->first
+               << "\"`` (model: ``\"" << i->second.get_model().get_name() << "\"``)";
+          if (!i->second.has_terse_description()) {
+            out_ << " : " << i->second.get_terse_description();
+          }
+          out_ << std::endl;
+          if (j == _variants_.end()) {
+            out_ << std::endl;
+          }
+        }
+      }
 
       out_ << indent << std::endl;
       return;

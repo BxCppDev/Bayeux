@@ -671,7 +671,7 @@ namespace datatools {
           DT_LOG_DEBUG(_logging_,
                        "Processing variant '" << vrec_.get_path()
                        << "' in registry '" << _current_registry_name_ << "'...");
-          // Traverse the daughter parameters:
+          // Traverse the ranked daughter parameters:
           std::vector<std::string> ranked;
           vrec_.build_list_of_ranked_parameter_records(ranked);
           for (std::size_t irank = 0; irank < ranked.size(); irank++) {
@@ -1580,7 +1580,7 @@ namespace datatools {
 
       if (with_title) {
         std::ostringstream titleoss;
-        titleoss << "Variant repository ``" << get_name() << "``" << std::ends;
+        titleoss << "Variant repository ``" << get_name() << "``";
         out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
         out_ << titleoss.str() << std::endl;
         out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
@@ -1625,6 +1625,7 @@ namespace datatools {
         }
       }
 
+      out_ << std::endl;
       out_ << "Registries" << std::endl;
       out_ << "==========" << std::endl;
       out_ << std::endl;
@@ -1641,7 +1642,7 @@ namespace datatools {
         } else {
           out_ << " is no variant registry";
         }
-        out_ << " in this repository.";
+        out_ << " in this configuration repository.";
         out_ << std::endl;
         out_ << std::endl;
 
@@ -1649,8 +1650,11 @@ namespace datatools {
           const std::string & vreg_key = vreg_keys[ivreg];
           const variant_registry & vreg = get_registry(vreg_key);
           std::ostringstream hdross;
-          hdross << "``\"" << vreg_key  << "\"`` (variant model: ``\""
-                 << vreg.get_top_variant_name() << "\"``)" << std::ends;
+          hdross << "Registry ``\"" << vreg_key
+                 << "\"``"
+            // << " (variant model: ``\""
+            // << vreg.get_top_variant_name() << "\"``)"
+            ;
           out_ << hdross.str() << std::endl;
           out_ << std::setw(hdross.str().length()) << std::setfill('-') << "" << std::endl;
           out_ << std::endl;
@@ -1670,15 +1674,15 @@ namespace datatools {
 
             // Rank
 
-            out_ << "* Top variant name: ``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
+            out_ << "* Top variant model: ``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
             count++;
 
             std::vector<std::string> param_paths;
-            vreg.list_of_ranked_parameters(param_paths);
-            // uint32_t list_flags = 0;
-            // vreg.list_of_parameters(param_paths, list_flags);
+            uint32_t list_flags = 0;
+            list_flags |= variant_registry::LIST_NO_VARIANTS;
+            vreg.list_of_ranked_records(param_paths, list_flags);
 
-            out_ << "* Parameters: ``" << param_paths.size() << "``" << std::endl;
+            out_ << "* Supported parameters: ``" << param_paths.size() << "``" << std::endl;
             count++;
 
             for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
@@ -1689,8 +1693,8 @@ namespace datatools {
               const variant_record & varParRec = vreg.get_parameter_record(varParamName);
               const parameter_model & varParModel = varParRec.get_parameter_model();
 
-              out_ << "  * ``" << '"' << varParamName << '"'
-                   << "`` (parameter model: ``"
+              out_ << "  * Parameter ``" << '"' << varParamName << '"'
+                   << "`` (model: ``"
                    << '"' << varParModel.get_name() << '"'
                    << "``) :"
                    << std::endl;
@@ -1701,9 +1705,9 @@ namespace datatools {
               const variant_model & varParentModel = varParentRec.get_variant_model();
               const std::string & param_desc = varParentModel.get_parameter_description(varParLeafName);
               if (!param_desc.empty()) {
-                out_ << "    * Description: ``";
+                out_ << "    * Description: *";
                 out_ << param_desc;
-                out_ << "``" << std::endl;
+                out_ << "*" << std::endl;
               }
               // std::string value_format;
               // command::returned_info cri = varParRec.value_to_string(value_format);
@@ -1717,15 +1721,50 @@ namespace datatools {
             if (count) {
               out_ << std::endl;
             }
-          }
 
-          out_ << std::endl;
+            // out_ << "* Full set of parameter records: " << std::endl;
+            // std::vector<std::string> paths;
+            // uint32_t list_flags = 0;
+            // list_flags |= variant_registry::LIST_NO_VARIANTS;
+            // vreg.list_of_ranked_records(paths, list_flags);
+            // for (std::size_t ipath = 0; ipath < paths.size(); ipath++) {
+            //   if (ipath == 0) {
+            //     out_ << "   " << std::endl;
+            //   }
+            //   out_ << "  * ``" << paths[ipath] << "``" << std::endl;
+            //   if ((ipath + 1) ==  paths.size()) {
+            //     out_ << "   " << std::endl;
+            //   }
+            // }
+
+            out_ << std::endl;
+          } // Parameters
+
+          if (vreg.has_dependency_model()) {
+            out_ << std::endl;
+            out_ << "* Local dependency model :" << std::endl;
+            out_ << std::endl;
+            uint32_t flags = variant_dependency_model::PRINT_RST_NO_TITLE;
+            vreg.get_dependency_model().print_rst(out_, flags, "  ");
+            out_ << std::endl;
+          }
 
           if (vreg_keys.size()) {
             out_ << std::endl;
           }
-        }
+        } // Registries
       }
+
+      if (has_dependency_model()) {
+        out_ << std::endl;
+        out_ << "Global dependency model" << std::endl;
+        out_ << "=======================" << std::endl;
+        out_ << std::endl;
+        uint32_t flags = variant_dependency_model::PRINT_RST_NO_TITLE;
+        get_dependency_model().print_rst(out_, flags);
+        out_ << std::endl;
+      }
+
       return;
     }
 

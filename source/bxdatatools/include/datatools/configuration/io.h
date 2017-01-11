@@ -1,9 +1,9 @@
 /// \file datatools/configuration/io.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2014-09-29
- * Last modified : 2016-06-14
+ * Last modified : 2017-01-10
  *
- * Copyright (C) 2014-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,7 @@
  *
  * Description:
  *
- *   A registry of configuration variants and associated parameters.
- *
- * History:
+ *   I/O utilities for variant registries and repositories.
  *
  */
 
