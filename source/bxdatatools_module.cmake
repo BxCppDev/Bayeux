@@ -81,6 +81,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/integer_range.h
   ${module_include_dir}/${module_name}/io_factory.h
   ${module_include_dir}/${module_name}/ioutils.h
+  ${module_include_dir}/${module_name}/iocolor.h
   ${module_include_dir}/${module_name}/i_predicate.h
   ${module_include_dir}/${module_name}/i_serializable.h
   ${module_include_dir}/${module_name}/i_serializable.ipp
@@ -122,6 +123,10 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/version_id.h
   ${module_include_dir}/${module_name}/version_id.ipp
+  # ${module_include_dir}/${module_name}/log_record.h
+  # ${module_include_dir}/${module_name}/log_record.ipp
+  # ${module_include_dir}/${module_name}/log_format.h
+  # ${module_include_dir}/${module_name}/rst_tools.h
 
   ${module_include_dir}/${module_name}/configuration/i_occurrence.h
   ${module_include_dir}/${module_name}/configuration/single_occurrence.h
@@ -209,7 +214,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/detail/logger_macros.h
 )
 
-# - configure special source file
+# # - configure special source file
 # configure_file(${module_source_dir}/_datatools.cc.in bx${module_name}/_datatools.cc)
 
 set(${module_name}_MODULE_SOURCES
@@ -226,6 +231,7 @@ ${module_source_dir}/i_named.cc
 ${module_source_dir}/integer_range.cc
 ${module_source_dir}/io_factory.cc
 ${module_source_dir}/ioutils.cc
+${module_source_dir}/iocolor.cc
 ${module_source_dir}/i_serializable.cc
 ${module_source_dir}/i_tree_dump.cc
 ${module_source_dir}/kernel.cc
@@ -255,6 +261,10 @@ ${module_source_dir}/utils.cc
 ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
+# ${module_source_dir}/log_record.cc
+# ${module_source_dir}/log_format.cc
+# ${module_source_dir}/rst_tools.cc
+
 ${module_source_dir}/configuration/i_occurrence.cc
 ${module_source_dir}/configuration/single_occurrence.cc
 ${module_source_dir}/configuration/array_occurrence.cc
@@ -304,8 +314,6 @@ ${module_source_dir}/ui/base_command.cc
 ${module_source_dir}/ui/utils.cc
 ${module_source_dir}/ui/validators.cc
 ${module_source_dir}/ui/wrappers.cc
-#${module_source_dir}/the_introspectable.cc
-# bx${module_name}/_datatools.cc
 )
 
 set(DATATOOLS_WITH_QT_GUI 0)
@@ -441,6 +449,8 @@ ${module_test_dir}/test_configuration_variant_service.cxx
 ${module_test_dir}/test_configuration_variant_service_2.cxx
 ${module_test_dir}/test_configuration_variant_dependency.cxx
 ${module_test_dir}/test_configuration_parsers.cxx
+# ${module_test_dir}/test_log_record.cxx
+# ${module_test_dir}/test_rst_tools.cxx
 )
 
 # Catastrophically broken on Mac

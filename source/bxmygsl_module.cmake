@@ -30,6 +30,7 @@ set(MYGSL_WITH_BIO ON)
 
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
+  #${module_include_dir}/${module_name}/interpolation_1d.h
   ${module_include_dir}/${module_name}/best_value.h
   ${module_include_dir}/${module_name}/best_value.ipp
   ${module_include_dir}/${module_name}/constants.h
@@ -99,10 +100,12 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/base_sampling.h
   ${module_include_dir}/${module_name}/linear_sampling.h
   ${module_include_dir}/${module_name}/tabulated_sampling.h
+  ${module_include_dir}/${module_name}/high_density_edge_sampling.h
   ${module_include_dir}/${module_name}/unary_function_utils.h
   )
 
 set(${module_name}_MODULE_SOURCES
+  #${module_source_dir}/interpolation_1d.cc
   ${module_source_dir}/best_value.cc
   ${module_source_dir}/constants.cc
   ${module_source_dir}/datapoint.cc
@@ -163,6 +166,7 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/base_sampling.cc
   ${module_source_dir}/linear_sampling.cc
   ${module_source_dir}/tabulated_sampling.cc
+  ${module_source_dir}/high_density_edge_sampling.cc
   ${module_source_dir}/unary_function_utils.cc
   )
 
@@ -229,6 +233,8 @@ set(${module_name}_MODULE_TESTS
   ${module_test_dir}/test_convolution_function.cxx
   ${module_test_dir}/test_linear_sampling.cxx
   ${module_test_dir}/test_tabulated_sampling.cxx
+  ${module_test_dir}/test_high_density_edge_sampling.cxx
+  #${module_test_dir}/test_interpolation_1d.cxx
   #${module_test_dir}/test_bspline.cxx
   )
 
