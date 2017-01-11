@@ -1592,16 +1592,20 @@ namespace datatools {
       }
 
       if (has_terse_description()) {
-        // datatools::print_multi_lines(out_, get_terse_description(), "");
         out_ << "*" << get_terse_description() << "*" << std::endl;
         out_ << std::endl;
       }
 
-      out_ << "General informations" << std::endl;
-      out_ << "====================" << std::endl;
-      out_ << std::endl;
+      std::vector<std::string> vreg_keys;
+      build_ordered_registry_keys(vreg_keys);
 
       {
+        out_ << std::endl;
+        std::ostringstream hdross;
+        hdross << "General informations";
+        out_ << hdross.str() << std::endl;
+        out_ << std::setw(hdross.str().length()) << std::setfill('=') << "" << std::endl;
+        out_ << std::endl;
         std::size_t count = 0;
 
         if (has_display_name()) {
@@ -1619,78 +1623,77 @@ namespace datatools {
           count++;
         }
 
-        // out_ << "* Initialized: ``" << is_initialized() << "``" << std::endl;
-        // count++;
-
-        // out_ << "* Locked: ``" << is_locked() << "``" << std::endl;
-        // count++;
-
+        out_ << "* Number of variant registries: ``" << vreg_keys.size() << "``" << std::endl;
         if (count) {
           out_ << std::endl;
         }
       }
 
-      out_ << std::endl;
-      out_ << "Registries" << std::endl;
-      out_ << "==========" << std::endl;
-      out_ << std::endl;
+      // {
+      //   std::ostringstream hdross;
+      //   hdross << "Registries";
+      //   out_ << hdross.str() << std::endl;
+      //   out_ << std::setw(hdross.str().length()) << std::setfill('=') << "" << std::endl;
+      //   out_ << std::endl;
+      // }
 
-      {
-        std::vector<std::string> vreg_keys;
-        build_ordered_registry_keys(vreg_keys);
-
-        out_ << "There";
-        if (vreg_keys.size() == 1) {
-          out_ << " is only one variant registry";
-        } else if (vreg_keys.size() > 1) {
-          out_ << " are " << vreg_keys.size() << " variant registries";
-        } else {
-          out_ << " is no variant registry";
-        }
-        out_ << " in this configuration repository.";
-        out_ << std::endl;
-        out_ << std::endl;
+      if (vreg_keys.size()) {
+        // out_ << "There";
+        // if (vreg_keys.size() == 1) {
+        //   out_ << " is only one variant registry";
+        // } else if (vreg_keys.size() > 1) {
+        //   out_ << " are " << vreg_keys.size() << " variant registries";
+        // } else {
+        //   out_ << " is no variant registry";
+        // }
+        // out_ << " in this configuration repository.";
+        // out_ << std::endl;
+        // out_ << std::endl;
 
         for (std::size_t ivreg = 0; ivreg < vreg_keys.size(); ivreg++) {
           const std::string & vreg_key = vreg_keys[ivreg];
           const variant_registry & vreg = get_registry(vreg_key);
           std::ostringstream hdross;
-          hdross << "Registry ``\"" << vreg_key
-                 << "\"``"
-            // << " (variant model: ``\""
-            // << vreg.get_top_variant_name() << "\"``)"
-            ;
+          hdross << "Registry ``\"" << vreg_key << "\"``";
           out_ << hdross.str() << std::endl;
-          out_ << std::setw(hdross.str().length()) << std::setfill('-') << "" << std::endl;
+          out_ << std::setw(hdross.str().length()) << std::setfill('=') << "" << std::endl;
           out_ << std::endl;
 
           if (has_terse_description()) {
             out_ << "*" <<  vreg.get_terse_description() << "*" << std::endl;
-            // datatools::print_multi_lines(out_, vreg.get_terse_description(), "");
             out_ << std::endl;
           }
 
-          {
-            std::size_t count = 0;
+          out_ << std::endl;
+          std::vector<std::string> param_paths;
+          std::size_t count = 0;
 
-            if (has_display_name()) {
-              out_ << "* Display name: ``" << '"' << vreg.get_display_name() << '"' << "``" << std::endl;
-              count++;
-            }
-
-            // Rank
-
-            out_ << "* Top variant model: ``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
+          if (has_display_name()) {
+            out_ << "* Display name: ``" << '"' << vreg.get_display_name() << '"' << "``" << std::endl;
             count++;
+          }
 
-            std::vector<std::string> param_paths;
-            uint32_t list_flags = 0;
-            list_flags |= variant_registry::LIST_NO_VARIANTS;
-            vreg.list_of_ranked_records(param_paths, list_flags);
+          out_ << "* Top variant model: ``" << '"' << vreg.get_top_variant_name() << '"' << "``" << std::endl;
+          count++;
 
-            out_ << "* Supported parameters: ``" << param_paths.size() << "``" << std::endl;
-            count++;
+          uint32_t list_flags = 0;
+          list_flags |= variant_registry::LIST_NO_VARIANTS;
+          vreg.list_of_ranked_records(param_paths, list_flags);
 
+          out_ << "* Number of supported parameters: ``" << param_paths.size() << "``" << std::endl;
+          count++;
+          if (count) {
+            out_ << std::endl;
+          }
+
+          if (param_paths.size()) {
+            out_ << std::endl;
+            std::ostringstream hdross;
+            hdross << "Parameters";
+            out_ << hdross.str() << std::endl;
+            out_ << std::setw(hdross.str().length()) << std::setfill('~') << "" << std::endl;
+            out_ << std::endl;
+            std::size_t pcount = 0;
             for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
               const std::string & varParamName = param_paths[iparam];
               if (iparam == 0) {
@@ -1700,7 +1703,7 @@ namespace datatools {
               const parameter_model & varParModel = varParRec.get_parameter_model();
 
               std::ostringstream itemss;
-              itemss << "  " << (iparam+1) << ". ";
+              itemss << (iparam+1) << ". ";
 
               std::ostringstream indentss;
               out_ << itemss.str() << "Parameter ``" << '"' << varParamName << '"'
@@ -1717,7 +1720,6 @@ namespace datatools {
               const std::string & param_desc = varParentModel.get_parameter_description(varParLeafName);
               if (!param_desc.empty()) {
                 out_ << indentss.str();
-                // << "* Description: ";
                 out_ << '*' << param_desc << '*';
                 out_ << std::endl;
               }
@@ -1737,7 +1739,7 @@ namespace datatools {
               varParModel.print_rst(out_, indentss.str(), varParModelRstOpt);
               out_ << std::endl;
             }
-            if (count) {
+            if (pcount) {
               out_ << std::endl;
             }
 
@@ -1746,9 +1748,14 @@ namespace datatools {
 
           if (vreg.has_dependency_model()) {
             out_ << std::endl;
-            out_ << "* Local dependency model :" << std::endl;
+            std::ostringstream hdross;
+            hdross << "Local dependency model";
+            out_ << hdross.str() << std::endl;
+            out_ << std::setw(hdross.str().length()) << std::setfill('~') << "" << std::endl;
             out_ << std::endl;
-            uint32_t flags = variant_dependency_model::PRINT_RST_NO_TITLE;
+            uint32_t flags = 0;
+            flags |= variant_dependency_model::PRINT_RST_NO_TITLE;
+            flags |= variant_dependency_model::PRINT_RST_NO_SCOPE;
             vreg.get_dependency_model().print_rst(out_, flags, "  ");
             out_ << std::endl;
           }
@@ -1761,10 +1768,14 @@ namespace datatools {
 
       if (has_dependency_model()) {
         out_ << std::endl;
-        out_ << "Global dependency model" << std::endl;
-        out_ << "=======================" << std::endl;
+        std::ostringstream hdross;
+        hdross << "Global dependency model";
+        out_ << hdross.str() << std::endl;
+        out_ << std::setw(hdross.str().length()) << std::setfill('=') << "" << std::endl;
         out_ << std::endl;
-        uint32_t flags = variant_dependency_model::PRINT_RST_NO_TITLE;
+        uint32_t flags = 0;
+        flags |= variant_dependency_model::PRINT_RST_NO_TITLE;
+        flags |= variant_dependency_model::PRINT_RST_NO_SCOPE;
         get_dependency_model().print_rst(out_, flags);
         out_ << std::endl;
       }

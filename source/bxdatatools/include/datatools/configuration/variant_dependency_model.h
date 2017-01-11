@@ -209,7 +209,8 @@ namespace datatools {
 
       /// \brief Restructured text formatting
       enum rst_flags {
-        PRINT_RST_NO_TITLE = datatools::bit_mask::bit00
+        PRINT_RST_NO_TITLE = datatools::bit_mask::bit00,
+        PRINT_RST_NO_SCOPE = datatools::bit_mask::bit01
       };
 
       /// Print documentation

@@ -319,16 +319,14 @@ namespace datatools {
         with_doc = false;
       }
 
-      out << indent << std::endl;
       if (with_doc && has_documentation()) {
-        out << indent << "* Documentation : *" << get_documentation() << "*";
+        out << indent;
+        out << "*" << get_documentation() << "*";
         out << std::endl;
-        // out << indent << std::endl;
-        // out_ << '*';
-        // print_multi_lines(out, get_documentation(), indent + "  ");
-        // out_ << '*';
         has_content = true;
       }
+
+      out << std::endl;
 
       if (_variants.size() > 0) {
         if (_variants.size() == 1) {
@@ -336,8 +334,7 @@ namespace datatools {
           out << "``\"" << *_variants.begin() << "\"``";
           out << std::endl;
         } else {
-          out << indent_ << "* Triggered variants : ";
-          out << std::endl;
+          out << indent_ << "* Triggered variants : " << std::endl;
           out << indent_ << std::endl;
           for (const auto & varname : _variants) {
             out << indent_ << "  * ``\"" << varname << "\"``" << std::endl;
@@ -349,7 +346,7 @@ namespace datatools {
 
       if (has_group_support()) {
         if (has_group()) {
-          out << indent_ << "* Group : ``" << _group << "``"  << std::endl;
+          out << indent_ << "* Group : ``\"" << _group << "\"``"  << std::endl;
           has_content = true;
         }
       }
@@ -357,7 +354,7 @@ namespace datatools {
       out << std::endl;
 
       if (has_content) {
-        out_ << out.str();
+       out_ << out.str();
       }
       return;
     }
@@ -3592,7 +3589,7 @@ namespace datatools {
             out_ << std::endl;
           }
           out_ << indent << "  * ``\"" << i->first
-               << "\"`` (variant model: ``\"" << i->second.get_model().get_name() << "\"``)";
+               << "\"`` (model: ``\"" << i->second.get_model().get_name() << "\"``)";
           if (!i->second.has_terse_description()) {
             out_ << " : " << i->second.get_terse_description();
           }
@@ -3610,7 +3607,7 @@ namespace datatools {
         if (is_enumeration()) {
 
           if (is_boolean()) {
-            out_ << indent << "* Supported values:" << std::endl;
+            out_ << indent << "* Supported boolean values:" << std::endl;
             out_ << std::endl;
             out_ << indent <<  "  * ``" << "false" << "``";
             std::ostringstream fmdss;
@@ -3642,7 +3639,7 @@ namespace datatools {
               integer_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               if (iter_val == _integer_enumeration_.begin()) {
-                out_ << indent << "* Supported values:" << std::endl;
+                out_ << indent << "* Supported integer values:" << std::endl;
                 out_ << std::endl;
               }
               int value = iter_val->first;
@@ -3669,7 +3666,7 @@ namespace datatools {
               real_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               if (iter_val == _real_enumeration_.begin()) {
-                out_ << indent << "* Supported values:" << std::endl;
+                out_ << indent << "* Supported real values:" << std::endl;
                 out_ << std::endl;
               }
               double value = iter_val->first;
@@ -3700,7 +3697,7 @@ namespace datatools {
               string_enum_dict_type::const_iterator jter_val = iter_val;
               jter_val++;
               if (iter_val == _string_enumeration_.begin()) {
-                out_ << indent << "* Supported values:" << std::endl;
+                out_ << indent << "* Supported string values:" << std::endl;
                 out_ << std::endl;
               }
               const std::string & value = iter_val->first;

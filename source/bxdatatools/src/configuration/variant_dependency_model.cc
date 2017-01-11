@@ -589,8 +589,12 @@ namespace datatools {
                                              const std::string & indent_) const
     {
       bool with_title = true;
+      bool with_scope = true;
       if (flags_ & PRINT_RST_NO_TITLE) {
         with_title = false;
+      }
+      if (flags_ & PRINT_RST_NO_SCOPE) {
+        with_scope = false;
       }
 
       if (with_title) {
@@ -605,16 +609,18 @@ namespace datatools {
       {
         std::size_t count = 0;
 
-        if (!is_local() && has_repository()) {
-          out_ << indent_;
-          out_ << "* Global to repository ``\"" << get_repository().get_name() << "\"``" << std::endl;
-          count++;
-        }
+        if (with_scope) {
+          if (!is_local() && has_repository()) {
+            out_ << indent_;
+            out_ << "* Global to repository ``\"" << get_repository().get_name() << "\"``" << std::endl;
+            count++;
+          }
 
-        if (is_local()) {
-          out_ << indent_;
-          out_ << "* Local to registry : ``\"" << get_registry().get_name() << "\"``" << std::endl;
-          count++;
+          if (is_local()) {
+            out_ << indent_;
+            out_ << "* Local to registry : ``\"" << get_registry().get_name() << "\"``" << std::endl;
+            count++;
+          }
         }
 
         {
