@@ -1585,6 +1585,10 @@ namespace datatools {
         out_ << titleoss.str() << std::endl;
         out_ << std::setw(titleoss.str().length()) << std::setfill('=') << "" << std::endl;
         out_ << std::endl;
+
+        out_ << std::endl;
+        out_ << ".. contents::" << std::endl;
+        out_ << std::endl;
       }
 
       if (has_terse_description()) {
@@ -1712,11 +1716,13 @@ namespace datatools {
               const variant_model & varParentModel = varParentRec.get_variant_model();
               const std::string & param_desc = varParentModel.get_parameter_description(varParLeafName);
               if (!param_desc.empty()) {
-                out_ << indentss.str() << "* Description: ";
+                out_ << indentss.str();
+                // << "* Description: ";
                 out_ << '*' << param_desc << '*';
                 out_ << std::endl;
               }
 
+              out_ << std::endl;
               out_ << indentss.str() << "* Full path: "
                    << "``" << '"' << vreg_key << ':' << varParamName << '"' << "``"
                    << std::endl;
