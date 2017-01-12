@@ -673,6 +673,11 @@ namespace datatools {
       return *_repository_;
     }
 
+    bool variant_preprocessor::repository_is_active() const
+    {
+      return has_repository() && _repository_->get_number_of_registries() > 0;
+    }
+
     void variant_preprocessor::_set_default_kernel_repository()
     {
       if (datatools::kernel::is_instantiated()) {
@@ -750,7 +755,7 @@ namespace datatools {
       DT_LOG_TRACE(_logging_, "variant_path = '" << variant_path << "'");
       // Search for registrated variant parameter in the associated variant repository:
       bool variant_active = false;
-      if (has_repository()) {
+      if (repository_is_active()) {
         const variant_repository & rep = get_repository();
         try {
           variant_active = rep.is_active_variant(variant_registry_name,
@@ -758,7 +763,7 @@ namespace datatools {
           variant_found = true;
         } catch (std::exception & error) {
           variant_found = false;
-          DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Check variant active failed: " << error.what());
+          DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Check variant active failed: " << error.what());
         // if (local_cri.is_success()) {
         //   variant_found = true;
         //   DT_LOG_TRACE(_logging_, "Found variant only from '" << variant_desc << "'");
@@ -837,7 +842,7 @@ namespace datatools {
         DT_LOG_TRACE(_logging_, "variant_parameter_path = '" << variant_parameter_path << "'");
         bool variant_parameter_found = false;
         std::string variant_parameter_value;
-        if (has_repository()) {
+        if (repository_is_active()) {
           // Search for registrated variant parameter in the associated variant repository:
           const variant_repository & rep = get_repository();
           ui::variant_repository_cli vrepCLi(const_cast<variant_repository &>(rep));

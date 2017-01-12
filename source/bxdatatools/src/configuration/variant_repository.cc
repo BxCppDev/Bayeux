@@ -1165,7 +1165,7 @@ namespace datatools {
     {
       DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
       DT_THROW_IF(!has_registry(registry_key_), std::logic_error,
-                  "Repository does not host a registry named '" << registry_key_ << "'!");
+                  "Repository '" << get_name() << " does not host a registry named '" << registry_key_ << "'!");
       registry_dict_type::iterator found = _registries_.find(registry_key_);
       _registries_.erase(found);
       return;
@@ -1186,7 +1186,7 @@ namespace datatools {
       DT_THROW_IF(!validate_instance_name(registry_name), std::logic_error,
                   "Invalid registry name!");
       DT_THROW_IF(has_registry(registry_name), std::logic_error,
-                  "Repository already has a registry named '" << registry_name << "'!");
+                  "Repository '" << get_name() << " already has a registry named '" << registry_name << "'!");
       bool allow_multi_parent = false;
       // if (get_auxiliaries().has_flag("__variant.repository.allow_multi_parent")) {
       //   allow_multi_parent = true;
@@ -1210,7 +1210,7 @@ namespace datatools {
                                                    const datatools::logger::priority registry_logging_)
     {
       DT_LOG_TRACE_ENTERING(get_logging_priority());
-      DT_THROW_IF(is_locked(), std::logic_error, "Repository is locked!");
+      DT_THROW_IF(is_locked(), std::logic_error, "Repository '" << get_name() << " is locked!");
       // std::cerr << "DEVEL: Registration of variant : '" << registry_key_ << "'" << std::endl;
       // std::cerr << "DEVEL: Manager configuration file is : '" << registry_manager_config_ << "'" << std::endl;
 
@@ -1240,7 +1240,7 @@ namespace datatools {
       DT_THROW_IF(!validate_instance_name(registry_name), std::logic_error,
                   "Invalid registry name!");
       DT_THROW_IF(has_registry(registry_name), std::logic_error,
-                  "Repository already has a registry named '" << registry_name << "'!");
+                  "Repository '" << get_name() << " already has a registry named '" << registry_name << "'!");
 
       if (registry_display_name.empty()) {
         registry_display_name = mgr_ptr->get_display_name();
@@ -1372,7 +1372,7 @@ namespace datatools {
                                                const std::string & variant_path_) const
     {
       DT_THROW_IF(!has_registry(registry_key_), std::logic_error,
-                  "Variant repository has no registry named '" << registry_key_ << "' !");
+                  "Variant repository '" << get_name() << "' has no registry named '" << registry_key_ << "' !");
       const variant_registry & vreg = get_registry(registry_key_);
       bool active = vreg.is_active_variant(variant_path_);
       return active;
@@ -1382,7 +1382,7 @@ namespace datatools {
     {
       registry_dict_type::const_iterator found = _registries_.find(registry_key_);
       DT_THROW_IF(found == _registries_.end(), std::logic_error,
-                  "Variant repository has no registry named '" << registry_key_ << "'!");
+                  "Variant repository '" << get_name() << " has no registry named '" << registry_key_ << "'!");
       // Default is active:
       bool active = true;
       if (has_dependency_model()) {

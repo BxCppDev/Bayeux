@@ -201,6 +201,9 @@ namespace datatools {
       /// Reset the variant configuration repository
       void reset_repository();
 
+      /// Check if the variant configuration repository is active
+      bool repository_is_active() const;
+
       /// Get the variant configuration repository
       const variant_repository & get_repository() const;
 
