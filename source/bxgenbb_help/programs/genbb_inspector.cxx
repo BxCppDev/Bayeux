@@ -1569,7 +1569,7 @@ int main (int argc_, char ** argv_)
 
     // Variant service:
     std::unique_ptr<dtc::variant_service> vserv;
-    params.variants.print(std::cerr, "Variant configuration: ", "DEVEL: ");
+    // params.variants.print(std::cerr, "Variant configuration: ", "DEVEL: ");
     if (params.variants.is_active()) {
       // Create and start the variant service:
       vserv.reset(new dtc::variant_service);
