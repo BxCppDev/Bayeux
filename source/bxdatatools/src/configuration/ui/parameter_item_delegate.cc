@@ -1298,7 +1298,7 @@ namespace datatools {
                                                             const variant_record & var_rec_) const
       {
         datatools::logger::priority logging = _logging_;
-        logging = datatools::logger::PRIO_TRACE;
+        // logging = datatools::logger::PRIO_TRACE;
         DT_LOG_TRACE_ENTERING(logging);
         bool sed = false;
         try {
@@ -1361,7 +1361,7 @@ namespace datatools {
                                                  const QModelIndex & index_) const
       {
         datatools::logger::priority logging = _logging_;
-        logging = datatools::logger::PRIO_TRACE;
+        // logging = datatools::logger::PRIO_TRACE;
         DT_LOG_TRACE_ENTERING(logging);
         bool sdm = false;
 
@@ -1374,7 +1374,7 @@ namespace datatools {
           // Only for parameters:
           if (rec.is_parameter()) {
             const parameter_model & param_model = rec.get_parameter_model();
-            if (param_model.get_name() == "source_calibration.off_on.PM") logging = datatools::logger::PRIO_DEBUG;
+            // if (param_model.get_name() == "source_calibration.off_on.PM") logging = datatools::logger::PRIO_DEBUG;
 
             // Boolean:
             if (param_model.is_boolean()) {
