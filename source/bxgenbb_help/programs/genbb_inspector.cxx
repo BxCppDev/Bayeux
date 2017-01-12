@@ -1525,7 +1525,7 @@ int main (int argc_, char ** argv_)
     po::variables_map vm;
     po::parsed_options parsed =
       po::command_line_parser(preprocessed_arguments)
-      .options(opts)
+      .options(optPublic)
       .allow_unregistered()
       .run();
     params.unrecognized_options = po::collect_unrecognized(parsed.options,
@@ -1569,6 +1569,7 @@ int main (int argc_, char ** argv_)
 
     // Variant service:
     std::unique_ptr<dtc::variant_service> vserv;
+    params.variants.print(std::cerr, "Variant configuration: ", "DEVEL: ");
     if (params.variants.is_active()) {
       // Create and start the variant service:
       vserv.reset(new dtc::variant_service);
