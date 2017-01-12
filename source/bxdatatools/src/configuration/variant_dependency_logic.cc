@@ -269,7 +269,7 @@ namespace datatools {
       DT_THROW_IF(!is_valid(), std::logic_error, "Invalid logic!");
       const variant_object_info & dependee = get_owner_dependency().get_dependee(_dependee_slot_);
       bool checked = this->check_active_variant(dependee);
-      DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Checked = " << checked);
+      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Checked = " << checked);
       return checked;
     }
 
