@@ -1,6 +1,6 @@
 // datatools/configuration/variant_repository.cc
 /*
- * Copyright (C) 2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2014-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1016,7 +1016,6 @@ namespace datatools {
           // Load global dependency model from a file:
           std::string dependencies_def_file = config_.fetch_string("load_global_dependency_model");
           datatools::fetch_path_with_env(dependencies_def_file);
-          datatools::properties gdm_config;
           gdm_config.read_configuration(dependencies_def_file);
         } else {
           config_.export_and_rename_starting_with(gdm_config, "gdm.", "");
@@ -1274,7 +1273,6 @@ namespace datatools {
           // Load local dependency model from a file:
           std::string dependencies_def_file = mgr_config.fetch_string("load_local_dependency_model");
           datatools::fetch_path_with_env(dependencies_def_file);
-          datatools::properties ldm_config;
           ldm_config.read_configuration(dependencies_def_file);
         } else {
           mgr_config.export_and_rename_starting_with(ldm_config, "ldm.", "");
@@ -1400,7 +1398,12 @@ namespace datatools {
       if (re._last_active_ != active) {
         re._last_active_ = active;
         DT_LOG_DEBUG(get_logging_priority(), "Updating registry '" << registry_key_ << "'...");
+        // // XXX
+        // if (registry_key_ == "geometry") {
+        //   re.grab_registry().set_logging_priority(datatools::logger::PRIO_TRACE);
+        // }
         re.grab_registry().update();
+        DT_LOG_DEBUG(get_logging_priority(), "Registry '" << registry_key_ << "' was updated.");
       }
       DT_LOG_DEBUG(get_logging_priority(),
                    "Registry '" << registry_key_ << "' is " << (active ? "": "not ") << "active.");
@@ -1681,6 +1684,18 @@ namespace datatools {
           vreg.list_of_ranked_records(param_paths, list_flags);
 
           out_ << "* Number of supported parameters: ``" << param_paths.size() << "``" << std::endl;
+
+          if (param_paths.size()) {
+            out_ << std::endl;
+            for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
+              const std::string & varParamName = param_paths[iparam];
+              std::string varParamNameLink = boost::algorithm::replace_all_copy(varParamName, "/", "-");
+              out_ << "  * ``\"" << varParamName << "\"`` "
+                   << "`(description) <" << vreg_key << "-" << varParamNameLink << "_>`__" << std::endl;
+            }
+            out_ << std::endl;
+          }
+
           count++;
           if (count) {
             out_ << std::endl;
@@ -1689,7 +1704,7 @@ namespace datatools {
           if (param_paths.size()) {
             out_ << std::endl;
             std::ostringstream hdross;
-            hdross << "Parameters";
+            hdross << "Description of parameters";
             out_ << hdross.str() << std::endl;
             out_ << std::setw(hdross.str().length()) << std::setfill('~') << "" << std::endl;
             out_ << std::endl;
@@ -1701,7 +1716,7 @@ namespace datatools {
               }
               const variant_record & varParRec = vreg.get_parameter_record(varParamName);
               const parameter_model & varParModel = varParRec.get_parameter_model();
-
+              std::string varParamNameLink = boost::algorithm::replace_all_copy(varParamName, "/", "-");
               std::ostringstream itemss;
               itemss << (iparam+1) << ". ";
 
@@ -1710,6 +1725,9 @@ namespace datatools {
                    << "``"
                    << " :"
                    << std::endl;
+              out_ << std::endl;
+              out_ << ".. _" << vreg_key << "-" << varParamNameLink << ":" << std::endl;
+              out_ << std::endl;
               out_ << std::endl;
               for (int i = 0; i < itemss.str().length(); i++) {
                 indentss << ' ';

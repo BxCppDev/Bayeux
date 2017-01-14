@@ -107,6 +107,7 @@ namespace datatools {
 
     void variant_dependency::set_depender(const variant_object_info & depender_)
     {
+      DT_LOG_DEBUG(get_logging(), "Setting depender = '" << depender_ << "' ...");
       DT_THROW_IF(!depender_.is_valid(), std::logic_error, "Depender is not valid!");
       if (depender_.is_parameter()) {
         DT_THROW(std::logic_error,
@@ -161,6 +162,7 @@ namespace datatools {
           }
         }
       }
+      DT_LOG_DEBUG(get_logging(), "Depender = '" << depender_ << "' is set.");
       _depender_ = depender_;
       return;
     }
@@ -173,10 +175,14 @@ namespace datatools {
       } else {
         parsing_flags |= variant_object_info::PARSE_NO_LOCAL;
       }
+      // XXX
+      // parsing_flags |= variant_object_info::PARSE_DEBUG;
       variant_object_info voinfo;
       DT_THROW_IF(!voinfo.parse_from_string(depender_path_, parsing_flags),
                   std::logic_error,
-                  "Invalid depender identifier format (='" << depender_path_ << "'!");
+                  "Invalid depender identifier format ('" << depender_path_ << "'!");
+      // XXX
+      // DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "voinfo = " << voinfo);
       set_depender(voinfo);
       return;
     }

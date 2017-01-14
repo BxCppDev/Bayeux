@@ -87,7 +87,7 @@ namespace datatools {
     /// \endcode
     ///
     struct variant_dependency_model
-      : public datatools:: i_tree_dumpable
+      : public datatools::i_tree_dumpable
     {
     public:
 

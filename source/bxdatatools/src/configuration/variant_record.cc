@@ -58,25 +58,27 @@ namespace datatools {
           if (ldepmod.has_dependee_record_by_path(local_variant_path)) {
             DT_LOG_DEBUG(logging, "Variant '" << local_variant_path << "' has local dependers");
             const variant_dependency_model::dependers_table_type & table = ldepmod.get_dependers_per_dependee();
-            const std::set<std::string> & dependers = table.find(local_variant_path)->second;
-            for (const std::string & depender_path : dependers) {
-              DT_LOG_DEBUG(logging, "Depender of variant '" << local_variant_path << "' : '" << depender_path << "'");
-              variant_object_info depender_voi;
-              DT_THROW_IF(!depender_voi.parse_from_string(depender_path), std::logic_error,
-                          "Could not parse depender local variant path '" << local_variant_path << "'!");
-              if (depender_voi.is_parameter()) {
-                DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter...");
-                variant_registry & vreg = const_cast<variant_registry &>(get_parent_registry());
-                variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
-                //depender_record._fix_parameter_value();
-              }
-              if (depender_voi.is_parameter_value_group()) {
-                DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter group of values...");
-                variant_registry & vreg = const_cast<variant_registry &>(get_parent_registry());
-                variant_record & depender_record = vreg.grab_parameter_record(depender_voi.get_parameter_local_path());
-                // Make sure the value of the parameter to which the group is associated is still valid or needs to be
-                // fixed:
-                depender_record._fix_parameter_value_();
+            if (table.find(local_variant_path) != table.end()) {
+              const std::set<std::string> & dependers = table.find(local_variant_path)->second;
+              for (const std::string & depender_path : dependers) {
+                DT_LOG_DEBUG(logging, "Depender of variant '" << local_variant_path << "' : '" << depender_path << "'");
+                variant_object_info depender_voi;
+                DT_THROW_IF(!depender_voi.parse_from_string(depender_path), std::logic_error,
+                            "Could not parse depender local variant path '" << local_variant_path << "'!");
+                if (depender_voi.is_parameter()) {
+                  DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter...");
+                  variant_registry & vreg = const_cast<variant_registry &>(get_parent_registry());
+                  variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
+                  //depender_record._fix_parameter_value();
+                }
+                if (depender_voi.is_parameter_value_group()) {
+                  DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter group of values...");
+                  variant_registry & vreg = const_cast<variant_registry &>(get_parent_registry());
+                  variant_record & depender_record = vreg.grab_parameter_record(depender_voi.get_parameter_local_path());
+                  // Make sure the value of the parameter to which the group is associated is still valid or needs to be
+                  // fixed:
+                  depender_record._fix_parameter_value_();
+                }
               }
             }
           }
@@ -95,33 +97,44 @@ namespace datatools {
             if (gdepmod.has_dependee_record_by_path(global_variant_path)) {
               DT_LOG_DEBUG(logging, "Variant '" << global_variant_path << "' has global dependers");
               const variant_dependency_model::dependers_table_type & table = gdepmod.get_dependers_per_dependee();
-              const std::set<std::string> & dependers = table.find(global_variant_path)->second;
-              for (const std::string & depender_path : dependers) {
-                DT_LOG_DEBUG(logging, "Depender of variant '" << global_variant_path << "' : '" << depender_path << "'");
-                variant_object_info depender_voi;
-                DT_THROW_IF(!depender_voi.parse_from_string(depender_path), std::logic_error,
-                            "Could not parse depender global variant path '" << global_variant_path << "'!");
-                if (depender_voi.is_parameter()) {
-                  DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter...");
-                  variant_repository & vrep = const_cast<variant_repository &>(get_parent_repository());
-                  variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
-                  variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
-                  //depender_record._fix_parameter_value_();
+              if (table.find(global_variant_path) != table.end()) {
+                const std::set<std::string> & dependers = table.find(global_variant_path)->second;
+                for (const std::string & depender_path : dependers) {
+                  DT_LOG_DEBUG(logging, "Depender of variant '" << global_variant_path << "' : '" << depender_path << "'");
+                  variant_object_info depender_voi;
+                  if (!depender_voi.parse_from_string(depender_path)) {
+                    DT_LOG_FATAL(logging,  "Could not parse depender global variant path '" << global_variant_path << "'!");
+                    DT_THROW(std::logic_error, "Could not parse depender global variant path '" << global_variant_path << "'!");
+                  }
+                  if (!depender_voi.is_valid()) {
+                    DT_LOG_DEBUG(logging, " -> Invalid VOI : " << "continue...");
+                    continue;
+                  }
+                  DT_LOG_DEBUG(logging, " -> VOI = " << depender_voi);
+                  DT_LOG_DEBUG(logging, " -> Checking for a parameter...");
+                  if (depender_voi.is_parameter()) {
+                    DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter...");
+                    variant_repository & vrep = const_cast<variant_repository &>(get_parent_repository());
+                    variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
+                    variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
+                    //depender_record._fix_parameter_value_();
+                  }
+                  DT_LOG_DEBUG(logging, " -> Checking for a parameter value group...");
+                  if (depender_voi.is_parameter_value_group()) {
+                    DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter group of values...");
+                    variant_repository & vrep = const_cast<variant_repository &>(get_parent_repository());
+                    DT_LOG_DEBUG(logging, "Fetch depender registry '" << depender_voi.get_registry_name() << "'...");
+                    variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
+                    DT_LOG_DEBUG(logging, "Fetch depender record '" << depender_voi.get_parameter_local_path() << "'...");
+                    // vreg.tree_dump(std::cerr, "Depender's variant registry:", "[debug] ");
+                    variant_record & depender_record = vreg.grab_parameter_record(depender_voi.get_parameter_local_path());
+                    // Make sure the value of the parameter to which the group is associated is still valid or needs to be
+                    // fixed:
+                    DT_LOG_DEBUG(logging, "Fix the value of the associated parameter '" << depender_record.get_path() << "'...");
+                    depender_record._fix_parameter_value_();
+                  }
                 }
-                if (depender_voi.is_parameter_value_group()) {
-                  DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter group of values...");
-                  variant_repository & vrep = const_cast<variant_repository &>(get_parent_repository());
-                  DT_LOG_DEBUG(logging, "Fetch depender registry '" << depender_voi.get_registry_name() << "'...");
-                  variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
-                  DT_LOG_DEBUG(logging, "Fetch depender record '" << depender_voi.get_parameter_local_path() << "'...");
-                  // vreg.tree_dump(std::cerr, "Depender's variant registry:", "[debug] ");
-                  variant_record & depender_record = vreg.grab_parameter_record(depender_voi.get_parameter_local_path());
-                  // Make sure the value of the parameter to which the group is associated is still valid or needs to be
-                  // fixed:
-                  DT_LOG_DEBUG(logging, "Fix the value of the associated parameter '" << depender_record.get_path() << "'...");
-                  depender_record._fix_parameter_value_();
-                 }
-              }
+              } // Not empty dependers table
             } else {
               DT_LOG_DEBUG(logging, "Variant '" << global_variant_path << "' has no global dependers");
             }
@@ -699,7 +712,12 @@ namespace datatools {
         } else {
           DT_LOG_DEBUG(get_logging(), "Activation of variant record '" << get_path() << "'...");
         }
-        if (has_with_update()) _update_();
+        if (has_with_update()) {
+          DT_LOG_DEBUG(get_logging(), "Updating variant record '" << get_path() << "'...");
+          _update_();
+        }
+      } else {
+        DT_LOG_DEBUG(get_logging(), "Activation of variant record '" << get_path() << "' is already " << active_);
       }
       return;
     }
@@ -1195,9 +1213,11 @@ namespace datatools {
       // logging = datatools::logger::PRIO_TRACE;
       DT_LOG_TRACE_ENTERING(logging);
       if (is_parameter()) {
+        DT_LOG_DEBUG(logging, "Updating parameter record '" << get_path() << "'...");
         _update_parameter_();
       }
       if (is_variant()) {
+        DT_LOG_DEBUG(logging, "Updating variant record '" << get_path() << "'...");
         _update_variant_();
       }
       return;
@@ -1206,7 +1226,7 @@ namespace datatools {
     void variant_record::_update_variant_()
     {
       datatools::logger::priority logging = _logging_;
-      DT_LOG_TRACE(logging, "Updating variant '" << get_path() << "'...");
+      DT_LOG_DEBUG(logging, "Updating variant '" << get_path() << "'...");
       std::vector<std::string> ranked_params;
       build_list_of_ranked_parameter_records(ranked_params);
       for (std::size_t i = 0; i < ranked_params.size(); i++) {
@@ -1214,14 +1234,20 @@ namespace datatools {
         // Activate the daughter parameters if the variant is active:
         variant_record & param_rec = grab_daughter(daughter_name);
         if (param_rec.is_active() != _active_) {
+          DT_LOG_DEBUG(logging, "Set activation of parameter record '" << param_rec.get_path() << "' to " << _active_);
+          // if (datatools::logger::is_debug(logging)) {
+          //   // XXX
+          //   param_rec.set_logging(datatools::logger::PRIO_DEBUG);
+          // }
           param_rec.set_active(_active_);
+          DT_LOG_DEBUG(logging, "Done.");
         }
       }
       // Check if a change in the variant activation has consequences
       // on the validity of some depender parameters:
-      DT_LOG_TRACE(logging, "Checking for depender parameters...");
+      DT_LOG_DEBUG(logging, "Checking for depender parameters...");
       _fix_dependers_on_this_variant_();
-      DT_LOG_TRACE(logging, "Depender parameters has been fixed.");
+      DT_LOG_DEBUG(logging, "Depender parameters has been fixed.");
       return;
     }
 
@@ -1236,12 +1262,17 @@ namespace datatools {
       DT_LOG_DEBUG(logging, "Updating parameter '" << get_path() << "'...");
       // First we deactivate all variants by default...
       if (_daughters_.size()) {
-        DT_LOG_DEBUG(logging, "Deactivate all variants for parameter '" << get_path() << "'");
+        DT_LOG_DEBUG(logging, "Deactivate all " << _daughters_.size() << " daughter variants for parameter '" << get_path() << "'");
         for (daughter_dict_type::iterator i = _daughters_.begin();
              i != _daughters_.end();
              i++) {
+          DT_LOG_DEBUG(logging, "Processing daughter variant '" << i->first << "'...");
           variant_record & vrec = i->second.grab_record();
           if (vrec.is_active()) {
+            // if (datatools::logger::is_debug(logging)) {
+            //   // XXX
+            //   vrec.set_logging(datatools::logger::PRIO_DEBUG);
+            // }
             vrec.set_active(false);
             DT_LOG_DEBUG(logging, "Deactivating variant '" << vrec.get_path() << "'...");
           } else {

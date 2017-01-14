@@ -574,6 +574,10 @@ namespace datatools {
       for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
         variant_record & prec = _records_.find(param_paths[iparam])->second;
         DT_LOG_DEBUG(get_logging_priority(), "Updating variant parameter record '" << param_paths[iparam] << "'...");
+        // // XXX
+        // if (param_paths[iparam] == "layout") {
+        //   prec.set_logging(datatools::logger::PRIO_TRACE);
+        // }
         prec.update();
         DT_LOG_DEBUG(get_logging_priority(), "Variant parameter record '" << param_paths[iparam] << "' has been updated.");
       }

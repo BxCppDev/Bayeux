@@ -71,6 +71,9 @@ namespace datatools {
     /// Validate the name of a model
     bool validate_model_name(const std::string &);
 
+    /// Validate the name of a group
+    bool validate_group_name(const std::string &);
+
     /// \brief Configuration item with an embedded parameter or variant model handle through a smart pointer
     // class item {
     class model_item {

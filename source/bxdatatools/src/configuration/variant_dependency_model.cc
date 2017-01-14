@@ -250,6 +250,7 @@ namespace datatools {
                         "Missing '" << dep_depender_key << "' property!");
             deprec.depender_path = config_.fetch_string(dep_depender_key);
           }
+
           {
             std::ostringstream dep_slots_key_oss;
             dep_slots_key_oss << "dependencies." << depname << ".slots";
@@ -258,6 +259,17 @@ namespace datatools {
                         "Missing '" << dep_slots_key << "' property!");
             config_.fetch_positive(dep_slots_key, deprec.input_slots);
           }
+
+          if (deprec.input_slots.size() == 0) {
+            std::ostringstream dep_slot_key_oss;
+            dep_slot_key_oss << "dependencies." << depname << ".slot";
+            std::string dep_slot_key = dep_slot_key_oss.str();
+            DT_THROW_IF(!config_.has_key(dep_slot_key), std::logic_error,
+                        "Missing '" << dep_slot_key << "' property!");
+            unsigned int dependee_slot = config_.fetch_positive_integer(dep_slot_key);
+            deprec.input_slots.insert(dependee_slot);
+          }
+
           {
             std::ostringstream dep_logexpr_key_oss;
             dep_logexpr_key_oss << "dependencies." << depname << ".logic";
@@ -266,6 +278,13 @@ namespace datatools {
               deprec.logic_expression = config_.fetch_string(dep_logexpr_key);
             }
           }
+
+          if (deprec.input_slots.size() == 1 && deprec.logic_expression.empty()) {
+            std::ostringstream dep_logexpr_oss;
+            dep_logexpr_oss << '[' << *deprec.input_slots.begin() << ']';
+            deprec.logic_expression = dep_logexpr_oss.str();
+          }
+
           {
             std::ostringstream dep_logging_key_oss;
             dep_logging_key_oss << "dependencies." << depname << ".logging";

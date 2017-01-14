@@ -61,6 +61,20 @@ namespace datatools {
       return ::datatools::name_validation(candidate_, ::datatools::NV_MODEL);
     }
 
+    bool validate_group_name(const std::string & candidate_)
+    {
+      std::vector<std::string> tokens;
+      boost::split(tokens, candidate_, boost::is_any_of("/"));
+      if (!tokens.size()) return false;
+      for (int i = 0; i < (int) tokens.size(); i++) {
+        if (!tokens[i].length()) return false;
+        if (!::datatools::name_validation(tokens[i], ::datatools::NV_INSTANCE)) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     // static
     const std::string & model_item::variant_suffix()
     {

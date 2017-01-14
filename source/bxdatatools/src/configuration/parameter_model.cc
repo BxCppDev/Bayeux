@@ -1628,7 +1628,7 @@ namespace datatools {
                                     const std::string & doc_)
     {
       if (_groups_.count(group_name_) == 1) return;
-      DT_THROW_IF(!::datatools::configuration::validate_instance_name(group_name_),
+      DT_THROW_IF(!::datatools::configuration::validate_group_name(group_name_),
                   std::domain_error,
                   "Invalid group name '" << group_name_ << "'!");
       _groups_[group_name_] = doc_;

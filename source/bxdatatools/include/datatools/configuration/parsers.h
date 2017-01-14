@@ -1,9 +1,9 @@
 /// \file datatools/configuration/parsers.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2016-10-26
- * Last modified : 2016-10-26
+ * Last modified : 2017-01-12
  *
- * Copyright (C) 2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2016-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@
  * Description:
  *
  *   Parsers for variant items.
- *
- * History:
  *
  */
 
@@ -54,8 +52,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct registry_name_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       registry_name_instance_grammar()
         : registry_name_instance_grammar::base_type(start)
@@ -84,8 +81,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct variant_name_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       variant_name_instance_grammar()
         : variant_name_instance_grammar::base_type(start)
@@ -115,8 +111,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct param_name_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       param_name_instance_grammar()
         : param_name_instance_grammar::base_type(start)
@@ -143,6 +138,8 @@ namespace datatools {
     /// "aaa_"
     /// "_aaa0"
     /// "_0aaa"
+    /// "_0aaa/bbb"
+    /// "_0aaa/bbb/ccc"
     /// \endcode
     template <typename Iterator>
     struct group_name_instance_grammar
@@ -154,12 +151,19 @@ namespace datatools {
       {
         namespace qi = boost::spirit::qi;
         // Rule definitions:
-        start %= ( qi::char_("a-zA-Z_") >> *qi::char_("a-zA-Z_0-9"));
+        // instance_name %= ( qi::char_("a-zA-Z_") >> *qi::char_("a-zA-Z_0-9"));
+        start %= (
+                  subgrpg
+                  >> *( qi::char_('/') >> subgrpg)
+                  );
+        // start %= ( qi::char_("a-zA-Z_") >> *qi::char_("a-zA-Z_0-9"));
         return;
       }
 
       // Rules:
       boost::spirit::qi::rule<Iterator, std::string()> start;
+      variant_name_instance_grammar<Iterator>          subgrpg;
+      //boost::spirit::qi::rule<Iterator, std::string()> instance_name;
     };
 
     /// \brief Parser for a local variant parameter path
@@ -177,8 +181,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct local_param_path_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       local_param_path_instance_grammar()
         : local_param_path_instance_grammar::base_type(start)
@@ -213,8 +216,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct local_variant_path_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       local_variant_path_instance_grammar()
         : local_variant_path_instance_grammar::base_type(start)
@@ -251,8 +253,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct full_param_path_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       full_param_path_instance_grammar()
         : full_param_path_instance_grammar::base_type(start)
@@ -287,8 +288,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct full_variant_path_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       full_variant_path_instance_grammar()
         : full_variant_path_instance_grammar::base_type(start)
@@ -322,8 +322,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct full_param_value_group_path_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       full_param_value_group_path_instance_grammar()
         : full_param_value_group_path_instance_grammar::base_type(start)
@@ -354,8 +353,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct enumerated_string_value_repr_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       enumerated_string_value_repr_instance_grammar()
         : enumerated_string_value_repr_instance_grammar::base_type(start)
@@ -398,8 +396,7 @@ namespace datatools {
     /// \endcode
     template <typename Iterator>
     struct full_param_enum_string_value_path_instance_grammar
-      : boost::spirit::qi::grammar<Iterator,
-                                   std::string()>
+      : boost::spirit::qi::grammar<Iterator, std::string()>
     {
       full_param_enum_string_value_path_instance_grammar()
         : full_param_enum_string_value_path_instance_grammar::base_type(start)

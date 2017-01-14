@@ -293,6 +293,7 @@ namespace datatools {
       if (! parsed && parse_local) {
         parsed = _parse_from_string_local(repr_, logging);
       }
+      DT_LOG_DEBUG(logging, "parsed = " << std::boolalpha << parsed);
       return parsed;
     }
 
@@ -433,7 +434,6 @@ namespace datatools {
                                                    // End grammar
                                                    ,
                                                    boost::spirit::ascii::space);
-        //                                                   registry_name);
         if (!res || str_iter != end_iter) {
           DT_LOG_DEBUG(logging_, "registry parsing fail at <" << *str_iter << ">");
         } else if (!registry_name.empty()) {
@@ -526,7 +526,11 @@ namespace datatools {
           DT_LOG_DEBUG(logging_, "value group parsing fail at <" << *str_iter << ">");
         } else if (!registry_name.empty() && !local_param_path.empty() && !value_group.empty()) {
           make_parameter_value_group(registry_name, local_param_path, value_group);
-          DT_LOG_DEBUG(logging_, "value group success");
+          DT_LOG_DEBUG(logging_, "value group success with:");
+          DT_LOG_DEBUG(logging_, " -> registry_name    = '" << registry_name << "'");
+          DT_LOG_DEBUG(logging_, " -> local_param_path = '" << local_param_path << "'");
+          DT_LOG_DEBUG(logging_, " -> value_group      = '" << value_group << "'");
+          DT_LOG_DEBUG(logging_, " -> to_string        = '" << *this << "'");
           return true;
         }
       }

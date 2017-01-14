@@ -24,8 +24,6 @@
  *
  *   A structure describing a variant object.
  *
- * History:
- *
  */
 
 #ifndef DATATOOLS_CONFIGURATION_VARIANT_OBJECT_INFO_H
