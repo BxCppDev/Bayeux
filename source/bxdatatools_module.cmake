@@ -81,7 +81,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/integer_range.h
   ${module_include_dir}/${module_name}/io_factory.h
   ${module_include_dir}/${module_name}/ioutils.h
-  ${module_include_dir}/${module_name}/iocolor.h
+ #${module_include_dir}/${module_name}/iocolor.h
   ${module_include_dir}/${module_name}/i_predicate.h
   ${module_include_dir}/${module_name}/i_serializable.h
   ${module_include_dir}/${module_name}/i_serializable.ipp
@@ -231,7 +231,7 @@ ${module_source_dir}/i_named.cc
 ${module_source_dir}/integer_range.cc
 ${module_source_dir}/io_factory.cc
 ${module_source_dir}/ioutils.cc
-${module_source_dir}/iocolor.cc
+#${module_source_dir}/iocolor.cc
 ${module_source_dir}/i_serializable.cc
 ${module_source_dir}/i_tree_dump.cc
 ${module_source_dir}/kernel.cc
