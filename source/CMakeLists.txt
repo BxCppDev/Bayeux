@@ -25,25 +25,28 @@
 # Configure build of Bayeux library
 # - Packages
 # - Boost
-set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost 1.60.0
-  REQUIRED
+set(BAYEUX_BOOST_COMPONENTS
   filesystem
   system
   serialization
   iostreams
   program_options
   regex
-  # thread
   )
-set(Bayeux_Boost_LIBRARIES
-  Boost::filesystem
-  Boost::system
-  Boost::serialization
-  Boost::iostreams
-  Boost::program_options
-  Boost::regex
+if(BAYEUX_WITH_GEANT4_MODULE)
+  # Also need Boost.Thread for Geant4 module:
+  list(APPEND BAYEUX_BOOST_COMPONENTS thread)
+endif()
+
+set(Boost_NO_BOOST_CMAKE ON)
+find_package(Boost 1.60.0
+  REQUIRED
+  ${BAYEUX_BOOST_COMPONENTS}
   )
+foreach(_boost_lib ${BAYEUX_BOOST_COMPONENTS})
+  list(APPEND Bayeux_Boost_LIBRARIES Boost::${_boost_lib})
+endforeach()
+message(STATUS "Bayeux_Boost_LIBRARIES = '${Bayeux_Boost_LIBRARIES}'")
 
 # - Camp
 find_package(CAMP 0.7.1 REQUIRED NO_MODULE)
@@ -80,8 +83,6 @@ if(BAYEUX_WITH_GEANT4_MODULE)
     endforeach()
     string(REPLACE ";" "" MCTOOLS_G4_DATA_ASSIGNMENTS ${MCTOOLS_G4_DATA_ASSIGNMENTS})
   endif()
-  # Also need Boost.Thread, ugh
-  find_package(Boost REQUIRED thread)
 endif()
 
 # - CLHEP
@@ -89,7 +90,6 @@ endif()
 # and thus refind it for us. We don't want to override their
 # found version for compatibility reasons.
 find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
-
 
 # - Core Includes for Bayeux + Third Party
 #include_directories(SYSTEM ${CLHEP_INCLUDE_DIRS})
@@ -101,7 +101,6 @@ find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
 # Set variable to hold addons for later export
 #
 set(BAYEUX_ADDON_TARGETS)
-
 
 # The processing order should be from least to most dependent
 # That's to ensure that any needed CMake variables are set in the correct
@@ -383,7 +382,6 @@ if(BAYEUX_ENABLE_TESTING)
         PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxtests"
         )
       target_link_libraries(${_testname} Bayeux BXCatch)
-
       add_test(NAME ${_testname} COMMAND ${_testname})
       set_property(TEST ${_testname}
         APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
@@ -394,30 +392,24 @@ if(BAYEUX_ENABLE_TESTING)
     foreach(_testsource ${${_m}_MODULE_TESTS})
       get_filename_component(_testname "${_testsource}" NAME_WE)
       set(_testname "${_m}-${_testname}")
-
       add_executable(${_testname} ${_testsource})
-
       # Output to testing subdirectory
       set_property(TARGET ${_testname}
         PROPERTY RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bxtests"
         )
-
       # Handle CMake version difference temporarily
       set_property(TARGET ${_testname}
         APPEND PROPERTY INCLUDE_DIRECTORIES ${${_m}_test_dir}
         )
-
       ### G4 specific link for some test progs
       if(BAYEUX_WITH_GEANT4_MODULE)
         string(REGEX MATCH "mctools-test_g4_*" _test_g4_res ${_testname})
-
         # message( STATUS "    _test_g4_res = '${_test_g4_res}'")
         if(NOT "x${_test_g4_res}" STREQUAL "x" )
           message( STATUS "Special link to the Bayeux Geant4 module for test program '${_testname}'")
 	  set_target_properties(${_testname}
     	    PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
     	  )
-
           target_link_libraries(${_testname} Bayeux_mctools_geant4)
         endif()
       endif()
@@ -431,9 +423,7 @@ if(BAYEUX_ENABLE_TESTING)
           target_link_libraries(${_testname} Bayeux_mctools_mcnp)
         endif()
       endif()
-
       target_link_libraries(${_testname} Bayeux)
-
       add_test(NAME ${_testname} COMMAND ${_testname})
       set_property(TEST ${_testname}
         APPEND PROPERTY ENVIRONMENT ${${_m}_TEST_ENVIRONMENT}
@@ -452,3 +442,5 @@ foreach(_m ${BAYEUX_SUBMODULES})
       )
   endforeach()
 endforeach()
+
+# - end
