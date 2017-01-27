@@ -21,7 +21,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_executable(ex01 ex01.cxx)
 
-target_link_libraries(ex01 ${_libs} Bayeux::Bayeux)
+target_link_libraries(ex01 Bayeux::Bayeux)
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01
