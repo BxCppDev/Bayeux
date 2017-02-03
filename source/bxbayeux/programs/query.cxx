@@ -88,6 +88,11 @@ int main(int argc_, char * argv_[])
        ->zero_tokens(),
        "Print resource base directory. \n"
        )
+      ("cmakedir",
+       bpo::value<bool>()
+       ->zero_tokens(),
+       "Print CMake config directory. \n"
+       )
       ("modules",
        bpo::value<bool>()
        ->zero_tokens(),
@@ -154,6 +159,11 @@ int main(int argc_, char * argv_[])
       bool incdir = vm["resourcedir"].as<bool>();
       if (incdir) {
         std::cout << bayeux::get_resource_dir() << std::endl;
+      }
+    } else if (vm.count("cmakedir")) {
+      bool cmakedir = vm["cmakedir"].as<bool>();
+      if (cmakedir) {
+        std::cout << bayeux::get_library_dir() << '/' << "cmake/Bayeux-" << BAYEUX_LIB_VERSION << std::endl;
       }
     } else if (vm.count("modules")) {
       bool mod = vm["modules"].as<bool>();
