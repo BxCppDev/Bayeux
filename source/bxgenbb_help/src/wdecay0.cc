@@ -452,8 +452,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
                                "Genbb/Decay0 event generator by Vladimir Tretyak.      \n"
                                "It provides a set of event generators for:             \n"
                                "                                                       \n"
-                               " * various double beta decay processes for             \n"
-                               "   isotopes of experimental interest,                  \n"
+                               " * various double beta decay (DBD) processes for       \n"
+                               "   most isotopes of experimental interest,             \n"
                                " * various nuclear decay processes for                 \n"
                                "   common radioactive isotopes.                        \n"
                                "                                                       \n"
@@ -556,29 +556,28 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
                             )
       ;
   }
-  {
-    configuration_property_description & cpd = ocd_.add_property_info();
-    cpd.set_name_pattern("decay_version")
-      .set_terse_description("The version of the generator")
-      .set_traits(datatools::TYPE_INTEGER)
-      .set_mandatory(false)
-      .set_default_value_integer(0)
-      .set_long_description("The version number of the generator:          \n"
-                            "                                              \n"
-                            "  * ``0`` : The default version               \n"
-                            "  * ``N`` : The version number N if available \n"
-                            "                                              \n"
-                            )
-      .add_example("Generator for the                                            \n"
-                            "Example of DBD of Se82: ::                    \n"
-                            "                                              \n"
-                            "   decay_type      : string = \"DBD\"         \n"
-                            "   decay_isotope   : string = \"Se82\"        \n"
-                            "   decay_dbd_level : integer = 0              \n"
-                            "                                              \n"
-                            )
-      ;
-  }
+
+  // Not used :
+  // {
+  //   configuration_property_description & cpd = ocd_.add_property_info();
+  //   cpd.set_name_pattern("decay_version")
+  //     .set_terse_description("The version of the generator")
+  //     .set_traits(datatools::TYPE_INTEGER)
+  //     .set_mandatory(false)
+  //     .set_default_value_integer(0)
+  //     .set_long_description("The version number of the generator:          \n"
+  //                           "                                              \n"
+  //                           "  * ``0`` : The default version               \n"
+  //                           "  * ``N`` : The version number N if available \n"
+  //                           "                                              \n"
+  //                           )
+  //     .add_example("                                           \n"
+  //               "                                              \n"
+  //               "   decay_version : integer = 1                \n"
+  //               "                                              \n"
+  //               )
+  //     ;
+  // }
 
   {
     configuration_property_description & cpd = ocd_.add_property_info();
@@ -708,7 +707,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
       ;
   }
 
-  ocd_.set_configuration_hints ("Example::                                             \n"
+  ocd_.set_configuration_hints ("Example: ::                                           \n"
                                 "                                                      \n"
                                 "  logging.priority : string  = \"notice\"             \n"
                                 "  seed             : integer = 314159                 \n"
