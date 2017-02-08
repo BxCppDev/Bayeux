@@ -10,3 +10,5 @@ List of examples :
    primary event generator.
  * ``ex03`` : This example illustrates how to use the
    *nuclear decay event generator*.
+ * ``ex04`` : This example illustrates how to use the
+   *bxgenbb_inspector* to generate specific DBD decay events.
