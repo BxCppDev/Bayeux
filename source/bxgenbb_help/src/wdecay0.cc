@@ -437,7 +437,6 @@ namespace genbb {
 
 } // end of namespace genbb
 
-
 /***************
  * OCD support *
  ***************/
@@ -592,12 +591,12 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
                             "  * ``N`` : The Nth excited state of the      \n"
                             "    daughter nucleus.                         \n"
                             "                                              \n"
-                            "The number of available labels for a given    \n"
+                            "The number of available levels for a given    \n"
                             "DBD process depends on the emitter isotope.   \n"
                             "                                              \n"
-                            "TODO: documentation needed.                   \n"
+                            "See: \"documentation/wdecay0/dbd_levels.rst\" \n"
                             "                                              \n"
-                            "Example of DBD of Se82: ::                    \n"
+                            "Example of DBD of Se82 to Kr82 ground state: ::\n"
                             "                                              \n"
                             "   decay_type      : string = \"DBD\"         \n"
                             "   decay_isotope   : string = \"Se82\"        \n"
