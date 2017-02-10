@@ -105,7 +105,7 @@ int main(int argc_, char ** argv_)
     // Configuration parameters for the G4 manager:
     mctools::g4::manager_parameters params;
     params.set_defaults();
-    dtc::variant_service::config    variants_params;
+    dtc::variant_service::config variants_params;
 
     // Shortcut for Boost/program_options namespace :
     namespace po = boost::program_options;
@@ -288,7 +288,7 @@ void ui::splash(std::ostream & out_)
   out_ << "     Version " << MCTOOLS_LIB_VERSION << "\n";
   out_ << "     " << APP_NAME << "\n";
   out_ << "\n"
-       << "     Copyright (C) 2011-2016\n"
+       << "     Copyright (C) 2011-2017\n"
        << "     Francois Mauger, Xavier Garrido, Ben Morgan and Arnaud Chapon\n"
        << "\n";
   return;
