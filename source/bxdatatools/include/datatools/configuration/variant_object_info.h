@@ -62,9 +62,9 @@ namespace datatools {
         OBJECT_INVALID     = 0,      //!< Invalid object
         OBJECT_REGISTRY    = 1,      //!< Variant registry object
         OBJECT_VARIANT     = 2,      //!< Variant object
-        OBJECT_PARAMETER   = 3,      //!< Variant object
-        OBJECT_PARAMETER_VALUE_GROUP = 4,      //!< Variant value group object
-        OBJECT_PARAMETER_ENUM_STRING_VALUE = 5 //!< Variant enumerated string value object
+        OBJECT_PARAMETER   = 3,      //!< Variant parameter object
+        OBJECT_PARAMETER_VALUE_GROUP = 4,      //!< Variant parameter value group object
+        OBJECT_PARAMETER_ENUM_STRING_VALUE = 5 //!< Variant parameter enumerated string value object
       };
 
       void set_registry_name(const std::string & registry_name_);
