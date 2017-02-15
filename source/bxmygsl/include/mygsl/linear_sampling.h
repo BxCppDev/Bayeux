@@ -72,8 +72,7 @@ namespace mygsl {
 
     /// Return the value associated to a given index
     virtual sampling::index_classification_type
-    index_to_value(const std::size_t index_,
-                   double & value_) const;
+    index_to_value(const std::size_t index_, double & value_) const;
 
     /// Build sampling from min to max and given number of steps
     ///

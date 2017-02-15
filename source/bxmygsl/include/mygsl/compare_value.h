@@ -5,11 +5,14 @@
 
 namespace mygsl {
 
+  /// \brief Comparison score
   enum compare_score_type {
-    COMPARE_LESS    = -1,
-    COMPARE_EQUAL   =  0,
-    COMPARE_GREATER =  1,
-    COMPARE_UNORDERED =  2
+    COMPARE_LESS_EQUAL    = -2,
+    COMPARE_LESS          = -1,
+    COMPARE_EQUAL         =  0,
+    COMPARE_GREATER       =  1,
+    COMPARE_GREATER_EQUAL =  2,
+    COMPARE_UNORDERED     =  3
   };
 
   compare_score_type compare_relative(double x_, double y_, double epsilon_);

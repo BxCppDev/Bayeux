@@ -30,7 +30,6 @@
 */
 
 void test0();
-// void test1();
 
 int main(int /* argc_ */, char ** /* argv_ */)
 {
@@ -50,6 +49,16 @@ void test0()
 
   {
     ls.make_range(1.5, 3.5, 10, abseps);
+
+    std::clog << "[info] Step bounds: " << std::endl;
+    for (std::size_t i = 0; i < ls.get_nsteps(); i++) {
+      double min, max;
+      if (ls.compute_step_bounds(i, min, max)) {
+        std::clog << min << ' ' << max << std::endl;
+      }
+    }
+    std::clog << std::endl;
+
     for (std::size_t i = 0; i < ls.get_nsamples(); i++) {
       double x;
       mygsl::sampling::index_classification_type ic
@@ -67,8 +76,8 @@ void test0()
     };
     for (const auto x : vals) {
       std::size_t index = mygsl::sampling::INVALID_INDEX;
-      mygsl::sampling::index_classification_type ic = mygsl::sampling::INDEX_UNDEFINED;
-      // ls.value_to_index(x, index);
+      mygsl::sampling::index_classification_type ic
+        = mygsl::sampling::INDEX_UNDEFINED;
       if (ls.value_to_index(x, index, ic)) {
         std::cout << index << ' ' << x << std::endl;
       } else {

@@ -30,7 +30,7 @@
 
 namespace mygsl {
 
-  /// \brief Base class for all sampling model
+  /// \brief Base class for all sampling models
   class base_sampling
   {
   public:
@@ -62,23 +62,41 @@ namespace mygsl {
     /// Reset/invalidate the sampling
     virtual void reset() = 0;
 
-    /// Return the left index and a classification associated to a value
+    /// Return the left sample index and a classification associated to a value
     virtual bool value_to_index(const double x_,
-                                std::size_t & index_,
+                                std::size_t & left_sample_index_,
                                 sampling::index_classification_type & classification_) const = 0;
 
-    /// Return the left index associated to a value
-    bool value_to_index(const double x_,  std::size_t & index_) const;
+    /// Return the left sample index associated to a value
+    bool value_to_index(const double x_,  std::size_t & left_sample_index_) const;
 
-    /// Return the value associated to a given index
+    /// Return the value associated to a given sample index
     virtual sampling::index_classification_type
-    index_to_value(const std::size_t index_, double & value_) const = 0;
+    index_to_value(const std::size_t sample_index_, double & value_) const = 0;
 
-    /// Check if the checked value is associated to the given index
-    virtual bool has_index(const double value_, const std::size_t index_) const;
+    /// Check if the checked value is associated to the given sample index
+    virtual bool has_index(const double value_, const std::size_t sample_index_) const;
+
+    /// Return the first sample index
+    std::size_t get_first_index() const;
+
+    /// Return the last sample index
+    std::size_t get_last_index() const;
+
+    /// Return the first step index
+    std::size_t get_first_step_index() const;
+
+    /// Return the last step index
+    std::size_t get_last_step_index() const;
+
+    /// Check if a sample index is valid
+    bool index_is_valid(const std::size_t sample_index_) const;
 
     /// Check if a value is in the sampling domain
     bool value_is_valid(const double value_) const;
+
+    /// Compute the bounds of step with given index
+    bool compute_step_bounds(const std::size_t step_index_, double & min_, double & max_) const;
 
   };
 

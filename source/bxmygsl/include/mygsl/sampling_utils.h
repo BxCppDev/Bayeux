@@ -44,7 +44,7 @@ namespace mygsl {
     ///    UNDERFLOW            NORMAL                OVERFLOW
     ///  -------------+-----+--+-+----+-----+-+--+--------------------> x
     ///              min                        max
-    ///               <----- -------------------->
+    ///               <-------------------------->
     ///               :  sampling model domain   :
     /// ------------->:                          :<------------------
     /// underflow domain                           overflow domain

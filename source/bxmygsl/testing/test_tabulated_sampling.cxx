@@ -61,6 +61,15 @@ void test0()
   ts.append(3.5);
   ts.lock();
 
+  std::clog << "[info] Step bounds: " << std::endl;
+  for (std::size_t i = 0; i < ts.get_nsteps(); i++) {
+    double min, max;
+    if (ts.compute_step_bounds(i, min, max)) {
+      std::clog << min << ' ' << max << std::endl;
+    }
+  }
+  std::clog << std::endl;
+
   {
     for (std::size_t i = 0; i < ts.get_nsamples(); i++) {
       double x;
@@ -79,8 +88,8 @@ void test0()
     };
     for (const auto x : vals) {
       std::size_t index = mygsl::sampling::INVALID_INDEX;
-      mygsl::sampling::index_classification_type ic = mygsl::sampling::INDEX_UNDEFINED;
-      // ls.value_to_index(x, index);
+      mygsl::sampling::index_classification_type ic
+        = mygsl::sampling::INDEX_UNDEFINED;
       if (ts.value_to_index(x, index, ic)) {
         std::cout << index << ' ' << x << std::endl;
       } else {
