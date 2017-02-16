@@ -134,7 +134,7 @@ namespace mctools {
           for (::materials::composition_map_type::const_iterator icomp = comp.begin();
                icomp != comp.end();
                icomp++) {
-            const std::string & comp_name = icomp->first;
+            // const std::string & comp_name = icomp->first;
             const materials::compound_entry & centry = icomp->second;
             DT_THROW_IF(centry.has_material(),
                         std::logic_error,

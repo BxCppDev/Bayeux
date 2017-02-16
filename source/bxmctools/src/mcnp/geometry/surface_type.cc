@@ -62,6 +62,7 @@ namespace mctools {
         case SURF_TORUS_PARAL_Y   : label = "TY"; break;
         case SURF_TORUS_PARAL_Z   : label = "TZ"; break;
         case SURF_BY_POINTS       : label = "XYZP"; break;
+        default                   : label = "";
         }
         // std::cerr << "DEVEL: surface_type_to_mcnp_label: label == '" << label << "' " << std::endl;
         return label;
@@ -98,6 +99,7 @@ namespace mctools {
         case SURF_TORUS_PARAL_Y   : name = "Elliptical or circular torus parallel to Y axis"; break;
         case SURF_TORUS_PARAL_Z   : name = "Elliptical or circular torus parallel to Z axis"; break;
         case SURF_BY_POINTS       : name = "Surface defined by points"; break;
+        default                   : name = "";
         }
         return name;
       }
