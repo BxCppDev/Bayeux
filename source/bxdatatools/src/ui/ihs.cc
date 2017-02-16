@@ -905,7 +905,7 @@ namespace datatools {
     {
       std::string cp;
       path_remove_scheme(path_, cp);
-      if (boost::algorithm::starts_with("///")) {
+      if (boost::starts_with(cp, "//")) {
         cp = cp.substr(2);
       }
       return cp;
