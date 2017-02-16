@@ -123,7 +123,7 @@ void test0()
   vrepCli.cmd_set_parameter("geometry", "firstname", "Betty");
   vrepCli.cmd_set_parameter("geometry", "firstname", "John");
 
-  vrep.tree_dump(std::clog, "The variant repository: ");
+  vrep.tree_dump(std::clog, "The variant repository: ", "[info] ");
   std::clog << std::endl;
 
   bool test1 = true;
@@ -136,13 +136,13 @@ void test0()
     vdep.set_depender_by_path("geometry:has_detector_0/if_detector/material/if_radioactive/isotope@Background");
     // Set the dependees:
     auto if_detector0_slot = vdep.add_dependee_by_path("geometry:has_detector_0/if_detector");
-    std::clog << "if_detector0_slot = [#" << if_detector0_slot << "]" << std::endl;
+    std::clog << "[info] if_detector0_slot = [#" << if_detector0_slot << "]" << std::endl;
     auto if_detector1_slot = vdep.add_dependee_by_path("geometry:has_detector_1/if_detector");
-    std::clog << "if_detector1_slot = [#" << if_detector1_slot << "]" << std::endl;
+    std::clog << "[info] if_detector1_slot = [#" << if_detector1_slot << "]" << std::endl;
     auto if_betty_slot     = vdep.add_dependee_by_path("geometry:firstname/if_betty");
-    std::clog << "if_betty_slot     = [#" << if_betty_slot << "]" << std::endl;
+    std::clog << "[info] if_betty_slot     = [#" << if_betty_slot << "]" << std::endl;
     // vdep.add_dependee_by_path("cabling:layout/is_half_commissioning/color[12]"); // This *must* fail
-    vdep.tree_dump(std::clog, "Variant dependency (without logic): ");
+    vdep.tree_dump(std::clog, "Variant dependency (without logic): ", "[info] ");
 
     // Define the logic:
     //
@@ -178,11 +178,17 @@ void test0()
     datatools::configuration::variant_dependency vdep(vrep);
     // Set the depender:
     vdep.set_depender_by_path("vertexes:generator@Test");
+
     // Set the dependees:
     auto is_half_commissioning_slot = vdep.add_dependee_by_path("geometry:has_detector_0/if_detector");
-    auto is_betty = vdep.add_dependee_by_path("geometry:firstname/if_betty");
+    auto is_betty_slot = vdep.add_dependee_by_path("geometry:firstname/if_betty");
     // auto is_rainy_slot = vdep.add_dependee_by_path("electronics:weather/is_rainy");
     // auto is_pro_slot = vdep.add_dependee_by_path("cabling:layout/is_half_commissioning/version/is_pro");
+    std::clog << "[Info] 'HC'    dependee slot: " << is_half_commissioning_slot << std::endl;
+    std::clog << "[Info] 'betty' dependee slot: " << is_betty_slot << std::endl;
+    // std::clog << "[Info] 'rainy' dependee slot: " << is_rainy_slot << std::endl;
+    // std::clog << "[Info] 'pro'   dependee slot: " << is_pro_slot << std::endl;
+
     // Lock with default logic:
     vdep.lock();
     vdep.tree_dump(std::clog, "Variant dependency: ");

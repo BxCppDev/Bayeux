@@ -129,11 +129,11 @@ namespace datatools {
         /// Check if rank is set
         bool has_rank() const;
 
-        // /// Check if registry is active
-        // bool is_active() const;
+        /// Check if registry is sealed (non mutable)
+        bool is_sealed() const;
 
-        // /// Set registry active
-        // void set_active(bool);
+        /// Place seal on the registry
+        void seal();
 
       private:
 
@@ -144,6 +144,7 @@ namespace datatools {
         std::shared_ptr<variant_registry>   _embedded_registry_; //!< Embedded registry
         variant_registry                  * _external_registry_ = nullptr; //!< Handle to an external registry
         bool _last_active_ = false; //!< Last active flag
+        bool _sealed_ = false; //!< Registry is sealed
 
         friend class variant_repository;
 

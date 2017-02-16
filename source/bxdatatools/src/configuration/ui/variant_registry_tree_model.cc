@@ -333,7 +333,7 @@ namespace datatools {
         int error = 0;
         if (column_ == CI_VALUE) {
           if (_record_->is_parameter()) {
-            const parameter_model & par_mod = _record_->get_parameter_model();
+            // const parameter_model & par_mod = _record_->get_parameter_model();
             command::returned_info cri = _record_->unset_value();
             if (!cri.is_success()) {
               error = cri.get_error_code();
@@ -864,7 +864,6 @@ namespace datatools {
                                                   int role_)
       {
         DT_LOG_TRACE_ENTERING(_logging_);
-        bool devel = false;
         tree_item * a_node = _node_from_index_(index_);
         if (!a_node) {
           return false;
@@ -898,7 +897,6 @@ namespace datatools {
                                                 int role_)
       {
         DT_LOG_TRACE_ENTERING(_logging_);
-        bool devel = false;
         tree_item * a_node = _node_from_index_(index_);
         if (!a_node) {
           return false;

@@ -384,7 +384,7 @@ namespace datatools {
         if (!i->second.description.empty()) {
           out_ << " : " << i->second.description;
         }
-        if (!i->second.rank >= 0) {
+        if (i->second.rank >= 0) {
           out_ << " [rank=" << i->second.rank << "]";
         }
         out_ << std::endl;

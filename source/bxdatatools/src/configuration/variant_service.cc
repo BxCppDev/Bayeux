@@ -754,7 +754,7 @@ namespace datatools {
         registry_record reg_rec;
         reg_rec.init_registry(max_rank, reg_rule);
         {
-          registry_record & new_reg_rec = _add_registry_record(reg_rec);
+          // registry_record & new_reg_rec = _add_registry_record(reg_rec);
           /*
           for (size_t j = 0; j < _registry_deps_.size(); j++) {
             const std::string & reg_dep_rule = _registry_deps_[j];
@@ -951,9 +951,10 @@ namespace datatools {
       DT_LOG_TRACE_ENTERING(_logging_);
       // Launch a Qt based dialog for the variant repository:
       const datatools::kernel & krnl = datatools::kernel::const_instance();
-      datatools::qt::interface & iqt = datatools::qt::interface::instance(krnl.get_argc(),
-                                                                          krnl.get_argv(),
-                                                                          "Bayeux Variant Service");
+      /*datatools::qt::interface & iqt = */
+      datatools::qt::interface::instance(krnl.get_argc(),
+                                         krnl.get_argv(),
+                                         "Bayeux Variant Service");
       datatools::configuration::ui::variant_repository_dialog vrep_dialog(_repository_);
       vrep_dialog.exec();
       // int ret = vrep_dialog.exec();

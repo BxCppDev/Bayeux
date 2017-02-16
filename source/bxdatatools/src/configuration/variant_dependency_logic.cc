@@ -102,7 +102,6 @@ namespace datatools {
           out_ << "<none>";
         }
         out_ << std::endl;
-        bool has_invalid_inputs = false;
         std::size_t counter = 0;
         for (const auto & input : _inputs) {
           out_ << indent_ << i_tree_dumpable::skip_tag;
@@ -364,7 +363,7 @@ namespace datatools {
       DT_THROW_IF(!is_valid(), std::logic_error, "Invalid logic!");
       bool checked = true;
       for (const auto & input : _inputs) {
-        unsigned int   port = input.first;
+        // unsigned int port = input.first;
         base_dependency_logic & lgc  = *input.second;
         if (!lgc()) {
           checked = false;
@@ -397,7 +396,7 @@ namespace datatools {
       DT_THROW_IF(!is_valid(), std::logic_error, "Invalid logic!");
       bool checked = false;
       for (const auto & input : _inputs) {
-        unsigned int   port = input.first;
+        // unsigned int   port = input.first;
         base_dependency_logic & lgc  = *input.second;
         if (lgc()) {
           checked = true;
@@ -429,9 +428,8 @@ namespace datatools {
     {
       DT_THROW_IF(!is_valid(), std::logic_error, "Invalid logic!");
       unsigned int check_counter = 0;
-      bool checked = false;
       for (const auto & input : _inputs) {
-        unsigned int   port = input.first;
+        // unsigned int   port = input.first;
         base_dependency_logic & lgc  = *input.second;
         if (lgc()) {
           check_counter++;

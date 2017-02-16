@@ -424,8 +424,10 @@ namespace datatools {
       } else {
         out_ << "'" << _depender_ << "' ";
         switch (_depender_.get_type()) {
+        case variant_object_info::OBJECT_INVALID: out_ << "(invalid)"; break;
         case variant_object_info::OBJECT_REGISTRY: out_ << "(registry)"; break;
         case variant_object_info::OBJECT_VARIANT: out_ << "(variant)"; break;
+        case variant_object_info::OBJECT_PARAMETER: out_ << "(parameter)"; break;
         case variant_object_info::OBJECT_PARAMETER_VALUE_GROUP: out_ << "(parameter value group)"; break;
         case variant_object_info::OBJECT_PARAMETER_ENUM_STRING_VALUE: out_ << "(parameter enumerate string value)"; break;
         }

@@ -76,6 +76,7 @@ namespace datatools {
       _rank_ = -1;
       _external_registry_ = nullptr;
       _last_active_ = false;
+      _sealed_ = false;
       return;
     }
 
@@ -172,6 +173,20 @@ namespace datatools {
       return _rank_ >= 0;
     }
 
+    bool variant_repository::registry_entry::is_sealed() const
+    {
+      return _sealed_;
+    }
+
+    void variant_repository::registry_entry::seal()
+    {
+      DT_THROW_IF(!get_registry().is_accomplished(),
+                  std::logic_error,
+                  "Unaccomplished registry '" << get_name() << "' cannot be sealed!");
+      _sealed_ = true;
+      return;
+    }
+
     // virtual
     bool variant_repository::is_name_valid(const std::string & name_) const
     {
@@ -235,6 +250,8 @@ namespace datatools {
                   "Repository does not have a registry named '" << registry_name_ << "' !");
       DT_THROW_IF(!found->second.is_valid(), std::logic_error,
                   "Registry named '" << registry_name_ << "' is not valid !");
+      DT_THROW_IF(found->second.is_sealed(), std::logic_error,
+                  "Registry named '" << registry_name_ << "' is sealed !");
       return found->second.grab_registry();
     }
 
@@ -984,7 +1001,7 @@ namespace datatools {
     void variant_repository::initialize(const datatools::properties & config_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Repository '" << get_name() << "' is already initialized!");
-      bool requested_lock = false;
+      // bool requested_lock = false;
       this->enriched_base::initialize(config_, false);
       DT_LOG_TRACE_ENTERING(get_logging_priority());
 
@@ -1703,10 +1720,10 @@ namespace datatools {
 
           if (param_paths.size()) {
             out_ << std::endl;
-            std::ostringstream hdross;
-            hdross << "Description of parameters";
-            out_ << hdross.str() << std::endl;
-            out_ << std::setw(hdross.str().length()) << std::setfill('~') << "" << std::endl;
+            std::ostringstream hdross2;
+            hdross2 << "Description of parameters";
+            out_ << hdross2.str() << std::endl;
+            out_ << std::setw(hdross2.str().length()) << std::setfill('~') << "" << std::endl;
             out_ << std::endl;
             std::size_t pcount = 0;
             for (std::size_t iparam = 0; iparam < param_paths.size(); iparam++) {
@@ -1729,7 +1746,7 @@ namespace datatools {
               out_ << ".. _" << vreg_key << "-" << varParamNameLink << ":" << std::endl;
               out_ << std::endl;
               out_ << std::endl;
-              for (int i = 0; i < itemss.str().length(); i++) {
+              for (std::size_t i = 0; i < itemss.str().length(); i++) {
                 indentss << ' ';
               }
               const std::string & varParLeafName = varParRec.get_leaf_name();
@@ -1766,10 +1783,10 @@ namespace datatools {
 
           if (vreg.has_dependency_model()) {
             out_ << std::endl;
-            std::ostringstream hdross;
-            hdross << "Local dependency model";
-            out_ << hdross.str() << std::endl;
-            out_ << std::setw(hdross.str().length()) << std::setfill('~') << "" << std::endl;
+            std::ostringstream hdross2;
+            hdross2 << "Local dependency model";
+            out_ << hdross2.str() << std::endl;
+            out_ << std::setw(hdross2.str().length()) << std::setfill('~') << "" << std::endl;
             out_ << std::endl;
             uint32_t flags = 0;
             flags |= variant_dependency_model::PRINT_RST_NO_TITLE;

@@ -22,7 +22,7 @@
 
 // Third Party:
 // - Boost:
-#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string.hpp>
 
 // This project:
 #include <datatools/ui/utils.h>
@@ -31,6 +31,45 @@
 namespace datatools {
 
   namespace ui {
+
+    // // static
+    // bool ihs::path_validation(const std::string & path_)
+    // {
+    //   std::size_t found = path_.find(':');
+    //   if (found != std::string::npos) {
+    //  if (found == 0 || found >= path_.length() - 1) return false;
+    //   }
+    //   std::string bare_path = path_.substr(found + 1);
+    //   if (bare_path[0] != datatools::ui::path::root_path()) return false;
+    //   // check for "/a/b/c/.../d" format
+    //   return true;
+    // }
+
+    // static
+    void ihs::path_remove_scheme(const std::string & path_, std::string & out_)
+    {
+      std::size_t found = path_.find(':');
+      if (found != std::string::npos) {
+        out_ = path_.substr(found + 1);
+      } else {
+        out_ = path_;
+      }
+      return;
+    }
+
+    // static
+    bool ihs::path_has_scheme(const std::string & path_, const std::string & scheme_)
+    {
+      std::size_t found = path_.find(':');
+      if (found == std::string::npos) {
+        return false;
+      }
+      std::string scheme = path_.substr(0, found);
+      if (!scheme_.empty()) {
+        if (scheme != scheme_) return false;
+      }
+      return true;
+    }
 
     // static
     std::string ihs::node_type_to_label(node_type type_)
@@ -52,25 +91,25 @@ namespace datatools {
 
     ihs::node::node()
     {
-      _ihs_ = 0;
+      _ihs_ = nullptr;
       _type_ = NODE_INVALID;
       _owned_interface_ = false;
-      _interface_ = 0;
+      _interface_ = nullptr;
       _owned_command_ = false;
-      _command_ = 0;
-      _parent_node_ = 0;
+      _command_ = nullptr;
+      _parent_node_ = nullptr;
       return;
     }
 
     ihs::node::node(node_type type_, const std::string & full_path_)
     {
-      _ihs_ = 0;
+      _ihs_ = nullptr;
       _type_ = NODE_INVALID;
       _owned_interface_ = false;
-      _interface_ = 0;
+      _interface_ = nullptr;
       _owned_command_ = false;
-      _command_ = 0;
-      _parent_node_ = 0;
+      _command_ = nullptr;
+      _parent_node_ = nullptr;
       set_type(type_);
       set_full_path(full_path_);
       return;
@@ -124,7 +163,8 @@ namespace datatools {
     bool ihs::node::is_root() const
     {
       if (_type_ != NODE_INTERFACE) return false;
-      if (_full_path_ != ::datatools::ui::path::root_path()) return false;
+      if (_parent_node_ != nullptr) return false;
+      if (_full_path_ != datatools::ui::path::root_path()) return false;
       return true;
     }
 
@@ -146,7 +186,7 @@ namespace datatools {
 
     bool ihs::node::has_interface() const
     {
-      return _interface_ != 0;
+      return _interface_ != nullptr;
     }
 
     bool ihs::node::is_command() const
@@ -156,7 +196,7 @@ namespace datatools {
 
     bool ihs::node::has_command() const
     {
-      return _command_ != 0;
+      return _command_ != nullptr;
     }
 
     datatools::properties & ihs::node::grab_metadata()
@@ -178,7 +218,7 @@ namespace datatools {
     {
       DT_THROW_IF(! ::datatools::ui::path::is_valid_path(fp_), std::logic_error,
                   "Invalid path name '" << fp_ << "'!");
-      DT_THROW_IF(! boost::starts_with(fp_, ::datatools::ui::path::root_path()),
+      DT_THROW_IF(! boost::starts_with(fp_, datatools::ui::path::root_path()),
                   std::logic_error,
                   "Not a full path name '" << fp_ << "'!");
       _full_path_ = fp_;
@@ -418,8 +458,9 @@ namespace datatools {
       return;
     }
 
-    ihs::ihs()
+    ihs::ihs(const std::string & scheme_)
     {
+      _set_scheme_(scheme_);
       // Create the root node:
       {
         node root_node;
@@ -434,6 +475,38 @@ namespace datatools {
     ihs::~ihs()
     {
       reset();
+      return;
+    }
+
+    bool ihs::has_scheme() const
+    {
+      return !_scheme_.empty();
+    }
+
+    const std::string & ihs::get_scheme() const
+    {
+      return _scheme_;
+    }
+
+    void ihs::set_scheme(const std::string & scheme_)
+    {
+      DT_THROW_IF(_nodes_.size() > 1, std::logic_error,
+                  "IHS scheme cannot be set/changed after child nodes have been added!");
+      _set_scheme_(scheme_);
+      return;
+    }
+
+    void ihs::_set_scheme_(const std::string & scheme_)
+    {
+      if (!scheme_.empty()) {
+        // Future: use URL scheme validation utility
+        std::string tst = boost::to_upper_copy<std::string>(scheme_);
+        std::size_t found = tst.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-");
+        DT_THROW_IF(found != std::string::npos, std::logic_error, "Invalid IHS scheme '" << scheme_ << "'!");
+        found = tst.find_first_of("0123456789+.-");
+        DT_THROW_IF(found == 0, std::logic_error, "Invalid IHS scheme '" << scheme_ << "'!");
+      }
+      _scheme_ = scheme_;
       return;
     }
 
@@ -621,7 +694,7 @@ namespace datatools {
     void ihs::remove_interface(const std::string & interface_path_, bool recursive_)
     {
       DT_LOG_TRACE_ENTERING(get_logging_priority());
-      DT_THROW_IF(interface_path_ == ::datatools::ui::path::root_path(),
+      DT_THROW_IF(interface_path_ == datatools::ui::path::root_path(),
                   std::logic_error,
                   "Cannot remove the root node!");
       DT_THROW_IF(! exists(interface_path_), std::logic_error,
@@ -828,12 +901,31 @@ namespace datatools {
       return "";
     }
 
+    std::string ihs::canonical_path(const std::string & path_) const
+    {
+      std::string cp;
+      path_remove_scheme(path_, cp);
+      if (boost::algorithm::starts_with("///")) {
+        cp = cp.substr(2);
+      }
+      return cp;
+    }
+
     void ihs::tree_dump(std::ostream & out_,
                         const std::string & title_,
                         const std::string & indent_,
                         bool inherit_) const
     {
       this->enriched_base::tree_dump(out_, title_, indent_, true);
+
+      out_ << indent_ << i_tree_dumpable::tag
+           << "Scheme : ";
+      if (!_scheme_.empty()) {
+        out_ << "'" << _scheme_ << "'";
+      } else {
+        out_ << "<none>";
+      }
+      out_ << std::endl;
 
       out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
            << "Nodes : [" << _nodes_.size() << ']' << std::endl;

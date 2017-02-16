@@ -53,8 +53,8 @@ namespace datatools {
       //! \brief Node type
       enum node_type {
         NODE_INVALID   = -1, //!< Invalid node type
-        NODE_INTERFACE =  0, //!< Interface node
-        NODE_COMMAND   =  1  //!< Command node
+        NODE_INTERFACE =  0, //!< Interface node (directory)
+        NODE_COMMAND   =  1  //!< Command node   (file/leaf)
       };
 
       //! Convert node type to label
@@ -62,6 +62,27 @@ namespace datatools {
 
       //! Convert label to node type
       static node_type label_to_node_type(const std::string & label_);
+
+      //! Remove the leading scheme from the path
+      //!
+      //! Examples:
+      //!   "/path/to/resource" ->  "/path/to/resource" (unchanged)
+      //!   "foo:/path/to/resource" ->  "/path/to/resource"
+      static void path_remove_scheme(const std::string & path_, std::string & out_);
+
+      //! Check if a path has a leading scheme.
+      //! If scheme is given, its specific value is checked.
+      //!
+      //! Examples:
+      //!   "/path/to/resource"     -> has no scheme
+      //!   "foo:/path/to/resource" -> has scheme
+      //!   "bar:/path/to/resource" -> has scheme
+      //!   "bar:/path/to/resource" -> has scheme "bar"
+      static bool path_has_scheme(const std::string & path_, const std::string & scheme_ = "");
+
+      // Future: Replace with URL validation utility
+      // //! Check if a path is valid
+      // static bool path_validation(const std::string & path_);
 
       //! \brief A node in the IHS
       class node : public i_tree_dumpable
@@ -187,16 +208,16 @@ namespace datatools {
 
       private:
 
-        ihs                    * _ihs_;  //!< Host IHS
-        node_type                _type_; //!< Node type
-        datatools::properties    _metadata_; //!< Metadata associated to the node
-        std::string              _full_path_; //!< Full path
+        ihs                    * _ihs_ = nullptr;           //!< Host IHS
+        node_type                _type_;                    //!< Node type
+        datatools::properties    _metadata_;                //!< Metadata associated to the node
+        std::string              _full_path_;               //!< Full path
         bool                     _owned_interface_ = false; //!< Interface ownership flag
-        base_command_interface * _interface_; //!< Handle to an external command interface
-        bool                     _owned_command_ = false; //!< Command ownership flag
-        base_command           * _command_;   //!< Handle to an external command
-        node *                   _parent_node_; //!< Handle to the parent node
-        std::set<node *>         _children_; //! Collection of child nodes
+        base_command_interface * _interface_ = nullptr;     //!< Handle to an external command interface
+        bool                     _owned_command_ = false;   //!< Command ownership flag
+        base_command           * _command_ = nullptr;       //!< Handle to an external command
+        node *                   _parent_node_;             //!< Handle to the parent node
+        std::set<node *>         _children_;                //!< Collection of child nodes
 
         friend class ihs;
 
@@ -205,10 +226,22 @@ namespace datatools {
       typedef std::map<std::string, node> node_dict_type;
 
       //! Default constructor
-      ihs();
+      ihs(const std::string & scheme_ = "");
 
       //! Destructor
       virtual ~ihs();
+
+      // //! Return the root path
+      // const std::string & get_root_path() const;
+
+      //! Check is scheme is set
+      bool has_scheme() const;
+
+      //! Set the scheme
+      void set_scheme(const std::string &);
+
+      //! Return the scheme
+      const std::string & get_scheme() const;
 
       //! Add a command interface given its parent's full path and its basename
       void add_interface(const std::string & parent_path_,
@@ -298,7 +331,13 @@ namespace datatools {
 
     private:
 
-      node_dict_type _nodes_;
+      //! Set the scheme
+      void _set_scheme_(const std::string &);
+
+    private:
+
+      std::string    _scheme_;    //!< Optinal scheme associated to the path format
+      node_dict_type _nodes_;     //!< Dictionary of nodes in the IHS
 
     };
 
@@ -308,10 +347,8 @@ namespace datatools {
 
 #endif //  DATATOOLS_UI_IHS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

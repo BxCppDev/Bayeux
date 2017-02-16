@@ -264,7 +264,7 @@ int main(int argc_, char * argv_[])
     foo bar;
     foo joe;
 
-    // The command interfaces:
+    // The command interfaces associated to the objects:
     foo_command_interface barCmdInter(bar, "bar", "The bar object interface");
     barCmdInter.initialize_simple();
     barCmdInter.tree_dump(std::clog, "Bar command interface: ");
@@ -280,6 +280,7 @@ int main(int argc_, char * argv_[])
     testIHS.set_display_name("Test");
     testIHS.set_terse_description("A test interface hierarchical system (IHS)");
     testIHS.set_logging_priority(datatools::logger::PRIO_TRACE);
+    testIHS.set_scheme("test+ihs");
     testIHS.tree_dump(std::clog, testIHS.get_display_name());
     std::clog << std::endl;
 
@@ -307,9 +308,8 @@ int main(int argc_, char * argv_[])
     foo_shell testShell(testIHS);
     testShell.run(interactive);
 
-  }
-  catch (std::exception & error) {
-    std::cerr << "error: " << error.what() << std::endl;
+  } catch (std::exception & error) {
+    std::cerr << "[fatal] " << error.what() << std::endl;
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;

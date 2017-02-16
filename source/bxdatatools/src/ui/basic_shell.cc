@@ -99,7 +99,7 @@ namespace datatools {
 
     basic_shell::pimpl_type & basic_shell::_grab_pimpl()
     {
-      if (_pimpl_ == 0) {
+      if (_pimpl_ == nullptr) {
         _pimpl_.reset(new pimpl_type);
       }
       return *_pimpl_;
@@ -120,7 +120,7 @@ namespace datatools {
     // static
     const std::string & basic_shell::default_prompt()
     {
-      static const std::string _p("%n:%W> ");
+      static const std::string _p("%s:%W> ");
       return _p;
     }
 
@@ -143,10 +143,12 @@ namespace datatools {
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
       _name_.clear();
       _version_.reset();
-      _prompt_  = default_prompt();
+      _prompt_ = default_prompt();
       _continuation_prompt_ = default_continuation_prompt();
-      _default_path_   = ::datatools::ui::path::root_path();
-      _exit_on_error_ = false;
+      _default_path_   = ""; // ::datatools::ui::path::root_path();
+      _user_ = "";
+      _host_ = "";
+      _exit_on_error_  = false;
       _using_splash_   = true;
 #if DATATOOLS_WITH_READLINE == 1
       _using_readline_ = true;
@@ -158,10 +160,10 @@ namespace datatools {
       _history_add_only_on_success_ = true;
       _history_filename_.clear();
       _history_truncate_ = 0;
-      _services_ = 0;
-      _ihs_ = 0;
-      _current_working_path_ = ::datatools::ui::path::root_path();
-      _external_system_interface_ = 0;
+      _services_ = nullptr;
+      _ihs_ = nullptr;
+      _current_working_path_ = ""; //::datatools::ui::path::root_path();
+      _external_system_interface_ = nullptr;
       return;
     }
 
@@ -187,7 +189,7 @@ namespace datatools {
     {
       _initialized_ = false;
       _logging_ = datatools::logger::PRIO_FATAL;
-      _ihs_ = 0;
+      _ihs_ = nullptr;
       _set_defaults();
       if (! name_.empty()) {
         set_name(name_);
@@ -268,6 +270,38 @@ namespace datatools {
       return _prompt_;
     }
 
+    bool basic_shell::has_user() const
+    {
+      return !_user_.empty();
+    }
+
+    void basic_shell::set_user(const std::string & user_)
+    {
+      _user_ = user_;
+      return;
+    }
+
+    const std::string & basic_shell::get_user() const
+    {
+      return _user_;
+    }
+
+    bool basic_shell::has_host() const
+    {
+      return !_host_.empty();
+    }
+
+    void basic_shell::set_host(const std::string & host_)
+    {
+      _host_ = host_;
+      return;
+    }
+
+    const std::string & basic_shell::get_host() const
+    {
+      return _host_;
+    }
+
     void basic_shell::set_continuation_prompt(const std::string & p_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
@@ -294,7 +328,7 @@ namespace datatools {
     void basic_shell::set_default_path(const std::string & default_path_)
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
-      if (_ihs_ == 0) {
+      if (_ihs_ == nullptr) {
         DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
                        "No IHS is defined! Default path maybe not valid!");
         _default_path_ = default_path_;
@@ -331,13 +365,12 @@ namespace datatools {
 
     void basic_shell::_expand_prompt(const std::string & prompt_rule_, std::string & expanded_prompt_) const
     {
-      // std::cerr << "DEVEL: basic_shell::_expand_prompt: prompt_rule_ = '" << prompt_rule_ << "'" << std::endl;
-      std::string tmp_prompt = boost::algorithm::replace_all_copy(prompt_rule_, "%n", get_name());
+      std::string tmp_prompt = boost::algorithm::replace_all_copy(prompt_rule_, "%s", get_name());
       tmp_prompt = boost::algorithm::replace_all_copy(tmp_prompt, "%w", _current_working_path_);
       std::string cwd_basename = datatools::ui::path::basename(_current_working_path_);
-      // std::cerr << "DEVEL: basic_shell::_expand_prompt: cwd_basename = '" << cwd_basename << "'" << std::endl;
       tmp_prompt = boost::algorithm::replace_all_copy(tmp_prompt, "%W", cwd_basename);
-      // std::cerr << "DEVEL: basic_shell::_expand_prompt: tmp_prompt = '" << tmp_prompt << "'" << std::endl;
+      tmp_prompt = boost::algorithm::replace_all_copy(tmp_prompt, "%u", _user_);
+      tmp_prompt = boost::algorithm::replace_all_copy(tmp_prompt, "%H", _host_);
       expanded_prompt_ = tmp_prompt;
       return;
     }
@@ -428,7 +461,7 @@ namespace datatools {
 
     bool basic_shell::has_services() const
     {
-      return _services_ != 0;
+      return _services_ != nullptr;
     }
 
     void basic_shell::set_services(datatools::service_manager & services_)
@@ -458,15 +491,16 @@ namespace datatools {
 
     bool basic_shell::has_system_interface() const
     {
-      if (_external_system_interface_ != 0) return true;
-      return _system_interface_.get() != 0;
+      if (_external_system_interface_ != nullptr) return true;
+      return _system_interface_.get() != nullptr;
     }
 
     void basic_shell::set_system_interface(shell_command_interface_type & si_)
     {
       DT_LOG_TRACE_ENTERING(get_logging());
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
-      DT_THROW_IF(_system_interface_.get() != 0, std::logic_error, "Shell already has an embedded system interface!");
+      DT_THROW_IF(_system_interface_.get() != nullptr, std::logic_error,
+                  "Shell already has an embedded system interface!");
       _external_system_interface_ = &si_;
       if (! _external_system_interface_->has_target()) {
         DT_LOG_TRACE(get_logging(), "Install external system interface target!");
@@ -480,7 +514,7 @@ namespace datatools {
     basic_shell::shell_command_interface_type & basic_shell::_grab_system_interface()
     {
       DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell has no system interface!");
-      if (_external_system_interface_ != 0) {
+      if (_external_system_interface_ != nullptr) {
         return *_external_system_interface_;
       }
       return *_system_interface_.get();
@@ -489,7 +523,7 @@ namespace datatools {
     const basic_shell::shell_command_interface_type & basic_shell::_get_system_interface() const
     {
       DT_THROW_IF(!has_system_interface(), std::logic_error, "Shell has no system interface!");
-      if (_external_system_interface_ != 0) {
+      if (_external_system_interface_ != nullptr) {
         return *_external_system_interface_;
       }
       return *_system_interface_.get();
@@ -497,7 +531,7 @@ namespace datatools {
 
     bool basic_shell::has_ihs() const
     {
-      return _ihs_ != 0;
+      return _ihs_ != nullptr;
     }
 
     void basic_shell::set_ihs(ihs & ihs_)
@@ -564,16 +598,13 @@ namespace datatools {
     {
       DT_THROW_IF(is_initialized(), std::logic_error, "Shell is already initialized!");
 
-      if (_services_ == 0) {
+      if (_services_ == nullptr) {
         DT_LOG_WARNING(_logging_, "Shell has no access to any services!");
       }
 
       // Fetch configuration parameters:
       datatools::logger::priority p
-        = datatools::logger::extract_logging_configuration(config_,
-                                                           _logging_,
-                                                           true);
-
+        = datatools::logger::extract_logging_configuration(config_, _logging_, true);
       if (p != datatools::logger::PRIO_UNDEFINED) {
         set_logging(p);
       }
@@ -699,6 +730,14 @@ namespace datatools {
 
     void basic_shell::_at_init(const datatools::properties & config_)
     {
+      DT_THROW_IF(_ihs_ == nullptr, std::logic_error,
+                  "Shell has no IHS!");
+      if (_default_path_.empty()) {
+        _default_path_ = datatools::ui::path::root_path();
+      }
+      if (_current_working_path_.empty()) {
+        _current_working_path_ = _default_path_;
+      }
 
       if (! has_system_interface()) {
 
@@ -720,7 +759,7 @@ namespace datatools {
         DT_LOG_NOTICE(_logging_, "Instantiating shell command interface of type '" << system_interface_id << "'...");
         base_command_interface * bci = the_factory();
         shell_command_interface_type * sci = dynamic_cast<shell_command_interface_type *>(bci);
-        DT_THROW_IF(sci == 0,
+        DT_THROW_IF(sci == nullptr,
                     std::logic_error,
                     "Command interface with type identifier '" << system_interface_id << "' has no shell target!");
 
@@ -743,10 +782,10 @@ namespace datatools {
 
     void basic_shell::_at_reset()
     {
-      if (_external_system_interface_ != 0) {
-        _external_system_interface_ = 0;
+      if (_external_system_interface_ != nullptr) {
+        _external_system_interface_ = nullptr;
       }
-      if (_system_interface_.get() != 0) {
+      if (_system_interface_.get() != nullptr) {
         if (_system_interface_->is_initialized()) {
           _system_interface_->reset();
         }
@@ -759,12 +798,9 @@ namespace datatools {
     {
       DT_THROW_IF(!is_initialized(), std::logic_error, "Shell is not initialized!");
       _initialized_ = false;
-
       _at_reset();
-
       reset_services();
       _set_defaults();
-
       return;
     }
 
@@ -891,7 +927,7 @@ namespace datatools {
     void basic_shell::make_title_upper(const std::string & title_, std::string & upper_)
     {
       std::ostringstream oss;
-      for (size_t i = 0; i < title_.length(); i++) {
+      for (std::size_t i = 0; i < title_.length(); i++) {
         oss << (char) toupper(title_[i]);
         if (i != title_.length() - 1) {
           oss << ' ';
@@ -1073,7 +1109,7 @@ namespace datatools {
       // Default input stream:
       std::istream * input = &std::cin;
       // Using an external input stream:
-      if (in_ != 0) {
+      if (in_ != nullptr) {
         // Special input stream: inhibit readline and prompt
         using_readline = false;
         using_prompt = false;
@@ -1098,23 +1134,21 @@ namespace datatools {
 
         // Read a line:
 #if DATATOOLS_WITH_READLINE == 1
-        if (using_readline)
-          {
-            char * readline_line = 0;
-            go_on = false;
-            readline_line = readline(get_effective_prompt().c_str()); // use readline library
-            _grab_pimpl().pcontexts.back().line_counter++;
-            if (readline_line != 0) {
-              go_on = true;
-              line = readline_line; // use readline library
-              if (! line.empty() && using_history) {
-                to_be_historized.push_back(readline_line);
-              }
-              free(readline_line);
-              readline_line = 0;
+        if (using_readline) {
+          char * readline_line = nullptr;
+          go_on = false;
+          readline_line = readline(get_effective_prompt().c_str()); // use readline library
+          _grab_pimpl().pcontexts.back().line_counter++;
+          if (readline_line != nullptr) {
+            go_on = true;
+            line = readline_line; // use readline library
+            if (! line.empty() && using_history) {
+              to_be_historized.push_back(readline_line);
             }
+            free(readline_line);
+            readline_line = nullptr;
           }
-        else
+        } else
 #endif // DATATOOLS_WITH_READLINE
           {
             // Prompt:
@@ -1145,18 +1179,18 @@ namespace datatools {
 #if DATATOOLS_WITH_READLINE == 1
             if (using_readline)
               {
-                char * readline_line = 0;
+                char * readline_line = nullptr;
                 go_on = false;
                 readline_line = readline(get_effective_continuation_prompt().c_str()); // use readline library
                 _grab_pimpl().pcontexts.back().line_counter++;
-                if (readline_line != 0) {
+                if (readline_line != nullptr) {
                   go_on = true;
                   more = readline_line; // use readline library
                   if (! more.empty() && using_history) {
                     to_be_historized.push_back(readline_line);
                   }
                   free(readline_line);
-                  readline_line = 0;
+                  readline_line = nullptr;
                 }
               }
             else
@@ -1286,7 +1320,6 @@ namespace datatools {
             DT_LOG_TRACE(get_logging(), "Trying IHS...");
             // Expand the full path of the command:
             std::string cmd_full_path = this->canonical_path(cmd_name);
-            // DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS, "cmd_full_path = '" << cmd_full_path << "'");
             DT_LOG_TRACE(get_logging(), "cmd_full_path = '" << cmd_full_path << "'");
             // Check if the path correspond to an IHS command:
             if (_ihs_->is_command(cmd_full_path)) {

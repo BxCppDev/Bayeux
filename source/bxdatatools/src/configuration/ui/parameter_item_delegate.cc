@@ -82,7 +82,7 @@ namespace datatools {
         }
         const tree_item * node = model->node_from_index(index_);
         if (!node) {
-           return;
+          return;
         }
         const variant_record & rec = node->get_record();
         if (!rec.is_parameter()) {
@@ -106,7 +106,7 @@ namespace datatools {
             }
             connect(this, SIGNAL(clicked()),
                     this, SLOT(slot_launch_real_dialog()));
-           }
+          }
         }
         return;
       }
@@ -361,8 +361,8 @@ namespace datatools {
       }
 
       QWidget * parameter_item_delegate::_create_boolean_editor(QWidget * parent_,
-                                                                const QStyleOptionViewItem & option_,
-                                                                const QModelIndex & index_,
+                                                                const QStyleOptionViewItem & /* option_ */,
+                                                                const QModelIndex & /* index_ */,
                                                                 const variant_record & var_rec_) const
       {
         datatools::logger::priority logging = _logging_;
@@ -480,8 +480,8 @@ namespace datatools {
       }
 
       QWidget * parameter_item_delegate::_create_integer_editor(QWidget * parent_,
-                                                                const QStyleOptionViewItem & option_,
-                                                                const QModelIndex & index_,
+                                                                const QStyleOptionViewItem & /* option_ */,
+                                                                const QModelIndex & /* index_ */,
                                                                 const variant_record & var_rec_) const
       {
         DT_LOG_DEBUG(_logging_, "Entering...");
@@ -626,7 +626,7 @@ namespace datatools {
       }
 
       QWidget * parameter_item_delegate::_create_real_editor(QWidget * parent_,
-                                                             const QStyleOptionViewItem & option_,
+                                                             const QStyleOptionViewItem & /* option_ */,
                                                              const QModelIndex & index_,
                                                              const variant_record & var_rec_) const
       {
@@ -779,9 +779,9 @@ namespace datatools {
       }
 
       QWidget * parameter_item_delegate::_create_string_editor(QWidget * parent_,
-                                                          const QStyleOptionViewItem & option_,
-                                                          const QModelIndex & index_,
-                                                          const variant_record & var_rec_) const
+                                                               const QStyleOptionViewItem & /* option_ */,
+                                                               const QModelIndex & index_,
+                                                               const variant_record & var_rec_) const
       {
         DT_LOG_DEBUG(_logging_, "Entering...");
         QWidget * editor = nullptr;
@@ -1043,9 +1043,9 @@ namespace datatools {
       }
 
       void parameter_item_delegate::setEditorData2(QWidget * editor_,
-                                                  const QModelIndex & index_) const
+                                                   const QModelIndex & index_) const
       {
-        bool sed = false;
+        // bool sed = false;
         if (index_.column() == tree_item::CI_VALUE) {
 
           // Fetch the current displayed value:
@@ -1073,14 +1073,14 @@ namespace datatools {
                 QSpinBox * integer_sb = static_cast<QSpinBox*>(editor_);
                 QString current_qstring_value = value.toString();
                 integer_sb->setValue(value.toInt());
-                sed = true;
+                //sed = true;
               }
 
               // Enumeration:
               if (param_model.is_enumeration()) {
                 QComboBox * integer_combo = static_cast<QComboBox*>(editor_);
                 integer_combo->setCurrentIndex(integer_combo->findText(value.toString()));
-                sed = true;
+                //sed = true;
               }
 
               // Interval:
@@ -1094,7 +1094,7 @@ namespace datatools {
                 //           << "'"
                 //           << std::endl;
                 integer_sb->setValue(value.toInt());
-                sed = true;
+                // sed = true;
               }
 
             } // Integer
@@ -1107,20 +1107,20 @@ namespace datatools {
               if (param_model.is_free() || param_model.is_interval()) {
                 // std::cerr << "DEVEL: parameter_item_delegate::setEditorData: Free = " << param_model.is_free() << std::endl;
                 // std::cerr << "DEVEL: parameter_item_delegate::setEditorData: Interval = " << param_model.is_interval() << std::endl;
-               // QLineEdit * real_line_edit = static_cast<QLineEdit*>(editor_);
+                // QLineEdit * real_line_edit = static_cast<QLineEdit*>(editor_);
                 // QString current_qstring_value = value.toString();
                 // real_line_edit->setText(current_qstring_value);
                 RealDialogLauncherButton * real_editor_button
                   = static_cast<RealDialogLauncherButton*>(editor_);
                 real_editor_button->setText("Choose value");
-                sed = true;
+                //sed = true;
               } // Free | interval
 
               // Enumeration:
               if (param_model.is_enumeration()) {
                 QComboBox * real_combo = static_cast<QComboBox*>(editor_);
                 real_combo->setCurrentIndex(real_combo->findText(value.toString()));
-                sed = true;
+                //sed = true;
               } // Enumeration
 
             } // Real
@@ -1148,16 +1148,16 @@ namespace datatools {
                   }
                   // std::cerr << "DEVEL: parameter_item_delegate::setEditorData: "
                   //           << "CI_VALUE/is_path = "
-                            // << path_editor_button->text().toStdString()
-                            // << std::endl;
-                  sed = true;
+                  // << path_editor_button->text().toStdString()
+                  // << std::endl;
+                  //sed = true;
 
                 } else {
 
                   QLineEdit * string_line_edit = static_cast<QLineEdit*>(editor_);
                   QString current_qstring_value = value.toString();
                   string_line_edit->setText(current_qstring_value);
-                  sed = true;
+                  //sed = true;
 
                 }
               }
@@ -1174,7 +1174,7 @@ namespace datatools {
                 //           << "'"
                 //           << std::endl;
                 string_combo->setCurrentIndex(string_combo->findText(current_qstring_value));
-                sed = true;
+                // sed = true;
               }
 
             } // String
@@ -1188,14 +1188,14 @@ namespace datatools {
 
       bool parameter_item_delegate::_set_boolean_editor_data(QWidget * editor_,
                                                              const QModelIndex & index_,
-                                                             const variant_record & var_rec_) const
+                                                             const variant_record & /*var_rec_*/) const
       {
         DT_LOG_TRACE_ENTERING(_logging_);
         DT_LOG_TRACE(_logging_, "Editor = '" << (editor_ == nullptr ? "<null>" : editor_->QWidget::objectName().toStdString()));
         bool sed = false;
 
         try {
-          const parameter_model & param_model = var_rec_.get_parameter_model();
+          // const parameter_model & param_model = var_rec_.get_parameter_model();
           // Enumeration:
           // Fetch the current displayed value:
           QVariant value = index_.model()->data(index_, Qt::DisplayRole);
@@ -1222,7 +1222,7 @@ namespace datatools {
         DT_LOG_TRACE_ENTERING(_logging_);
         bool sed = false;
         try {
-         // Fetch the current displayed value:
+          // Fetch the current displayed value:
           QVariant value = index_.model()->data(index_, Qt::DisplayRole);
           DT_LOG_TRACE(_logging_, "Integer value = " << value.toString().toStdString());
           const parameter_model & param_model = var_rec_.get_parameter_model();
@@ -1243,7 +1243,8 @@ namespace datatools {
 
           // Enumeration:
           if (param_model.is_enumeration()) {
-            QComboBox * integer_combo = static_cast<QComboBox*>(editor_);
+            DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Combo box for enumerated integer values is not implemented yet!");
+            // QComboBox * integer_combo = static_cast<QComboBox*>(editor_);
             // XXX
             // integer_combo->setCurrentIndex(integer_combo->findText(value.toString()));
             // sed = true;

@@ -598,8 +598,6 @@ namespace datatools {
         DT_LOG_DEBUG(get_logging_priority(), "Building variant parameter named '" << param_name << "'...");
         const variant_model::parameter_record & prec = variant_model_.get_parameters().find(param_name)->second;
         const parameter_physical & pe = prec.physical;
-        int param_rank = prec.rank;
-        bool ranked = (param_rank >= 0);
         std::string param_path_prefix;
         if (parent_variant_record_ != nullptr) {
           if (parent_variant_record_->get_path() != default_top_variant_name()) {

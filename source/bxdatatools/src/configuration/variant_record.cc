@@ -67,9 +67,11 @@ namespace datatools {
                             "Could not parse depender local variant path '" << local_variant_path << "'!");
                 if (depender_voi.is_parameter()) {
                   DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter...");
-                  variant_registry & vreg = const_cast<variant_registry &>(get_parent_registry());
-                  variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
-                  //depender_record._fix_parameter_value();
+                  // FM: Re-consider this case:
+                  // variant_registry & vreg = const_cast<variant_registry &>(get_parent_registry());
+                  // variant_record & depender_record
+                  //   = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
+                  // depender_record._fix_parameter_value();
                 }
                 if (depender_voi.is_parameter_value_group()) {
                   DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter group of values...");
@@ -114,9 +116,10 @@ namespace datatools {
                   DT_LOG_DEBUG(logging, " -> Checking for a parameter...");
                   if (depender_voi.is_parameter()) {
                     DT_LOG_DEBUG(logging, "Depender '" << depender_path << "' is a parameter...");
-                    variant_repository & vrep = const_cast<variant_repository &>(get_parent_repository());
-                    variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
-                    variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
+                    // FM: reconsider this case...
+                    // variant_repository & vrep = const_cast<variant_repository &>(get_parent_repository());
+                    // variant_registry & vreg = vrep.grab_registry(depender_voi.get_registry_name());
+                    // variant_record & depender_record = vreg.grab_variant_record(depender_voi.get_parameter_local_path());
                     //depender_record._fix_parameter_value_();
                   }
                   DT_LOG_DEBUG(logging, " -> Checking for a parameter value group...");
@@ -149,7 +152,7 @@ namespace datatools {
     {
       DT_LOG_TRACE_ENTERING(_logging_);
       DT_THROW_IF(!is_parameter(), std::logic_error, "Variant record '" << _path_ << "' is not a parameter!");
-      const parameter_model & parmod = get_parameter_model();
+      // const parameter_model & parmod = get_parameter_model();
       bool enabled = true;
       if (enabled && has_parent_registry()) {
 
@@ -1669,7 +1672,7 @@ namespace datatools {
         } else {
           out_ << i_tree_dumpable::tag;
         }
-        const variant_record & daughter_rec = found->second.get_record();
+        // const variant_record & daughter_rec = found->second.get_record();
         out_ << "Daughter: '"
              << daughter_name << "'";
         // with path '"

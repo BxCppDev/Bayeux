@@ -245,7 +245,7 @@ namespace datatools {
           }
         }
       } else {
-        out_ << '<invalid>';
+        out_ << "<invalid>";
       }
       return out_;
     }

@@ -1399,7 +1399,6 @@ namespace datatools {
                   std::domain_error,
                   "Real parameter model '" << get_name() << "' has no enumerated value '" << value_ << "'!");
       const auto & found = _real_enumeration_.find(value);
-      const real_enum_value_metadata & md = found->second;
       return found->second;
     }
 

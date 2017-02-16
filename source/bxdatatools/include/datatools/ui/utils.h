@@ -48,7 +48,7 @@ namespace datatools {
       // Return the executable suffix ('*')
       char exec();
 
-      //! Remove trailing \a '/' character for a interface path
+      //! Remove trailing \a '/' character for an interface path
       //!
       //! Examples:
       //! Path \a ""          returns \a ""

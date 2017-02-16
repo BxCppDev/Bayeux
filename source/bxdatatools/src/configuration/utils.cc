@@ -482,10 +482,10 @@ namespace datatools {
 
     // static
     void model_item::print_items(const model_item_dict_type & dict_,
-                           std::ostream & out_,
-                           const std::string & title_,
-                           const std::string & indent_,
-                           bool inherit_)
+                                 std::ostream & out_,
+                                 const std::string & title_,
+                                 const std::string & indent_,
+                                 bool /* inherit_ */)
     {
       if (! title_.empty()) out_ << indent_ << title_ << std::endl;
 

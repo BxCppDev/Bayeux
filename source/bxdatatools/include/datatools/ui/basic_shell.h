@@ -54,8 +54,9 @@ namespace datatools {
     class shell_command_interface;
 
     //! \brief Command line shell interface
-    class basic_shell : public datatools::i_tree_dumpable,
-                        private boost::noncopyable
+    class basic_shell
+      : public datatools::i_tree_dumpable
+      , private boost::noncopyable
     {
     public:
 
@@ -71,7 +72,7 @@ namespace datatools {
 
       static const unsigned int DEFAULT_HISTORY_TRUNCATE = 200;
 
-      //! Retour the name of the system interface
+      //! Retour the name of the builtin system interface
       static const std::string & system_interface_name();
 
       //! Retour the default prompt
@@ -124,7 +125,7 @@ namespace datatools {
       //! \endcode
       void set_prompt(const std::string &);
 
-      //! Return the  prompt
+      //! Return the prompt
       const std::string & get_prompt() const;
 
       //! Set the continuation prompt
@@ -139,6 +140,24 @@ namespace datatools {
 
       //! Return the current effective prompt
       std::string get_effective_continuation_prompt() const;
+
+      //! Check if the user identifier is set
+      bool has_user() const;
+
+      //! Set the user identifier
+      void set_user(const std::string &);
+
+      //! Return the user identifier
+      const std::string & get_user() const;
+
+      //! Check if the host identifier is set
+      bool has_host() const;
+
+      //! Set the host identifier
+      void set_host(const std::string &);
+
+      //! Return the host identifier
+      const std::string & get_host() const;
 
       //! Set the abort-on-error flag
       void set_exit_on_error(bool);
@@ -249,7 +268,7 @@ namespace datatools {
       void reset();
 
       //! Main run loop
-      int run(std::istream * in_ = 0);
+      int run(std::istream * in_ = nullptr);
 
       //! Build a upper and spaced title
       static void make_title_upper(const std::string & title_,
@@ -277,9 +296,6 @@ namespace datatools {
 
       //! Set an external system interface
       void set_system_interface(shell_command_interface_type &);
-
-      // Shell command interface has special priviledeges:
-      // friend class shell_command_interface;
 
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
@@ -311,7 +327,8 @@ namespace datatools {
       virtual void _at_run_start();
 
       //! At run loop
-      datatools::command::returned_info _run_core(std::istream * in_ = 0, uint32_t flags_ = RC_NONE);
+      datatools::command::returned_info _run_core(std::istream * in_ = nullptr,
+                                                  uint32_t flags_ = RC_NONE);
 
       //! Run command
       datatools::command::returned_info _run_command(const std::string & command_line_);
@@ -328,39 +345,44 @@ namespace datatools {
     private:
 
       // Control/management:
-      bool _initialized_; //!< Initialization flag
+      bool _initialized_;                    //!< Initialization flag
       datatools::logger::priority _logging_; //!< Logging priority threshold
 
       // Configuration:
-      std::string _name_;    //!< Name of the shell
+      std::string _name_;                    //!< Name of the shell (%s)
       boost::optional<version_id> _version_; //!< Version identifier of the shell (optional)
-      std::string _prompt_;  //!< Prompt string
-      std::string _continuation_prompt_; //!< Continuation prompt string
-      std::string _default_path_;        //!< Default path
-      bool        _exit_on_error_;       //!< Flag to exit/abort the shell on first error
-      bool        _using_splash_;        //!< Flag to print splash at start
-      bool        _using_readline_;      //!< Flag to use the readline library
-      bool        _using_history_;       //!< Flag to use command history
+      std::string _prompt_;                  //!< Prompt string (PS1)
+      std::string _continuation_prompt_;     //!< Continuation prompt string (PS2)
+      std::string _default_path_;            //!< Default path
+      std::string _user_;                    //!< User identifier (%u)
+      std::string _host_;                    //!< Host identifier (%H)
+      bool        _exit_on_error_;           //!< Flag to exit/abort the shell on first error
+      bool        _using_splash_;            //!< Flag to print splash at start
+      bool        _using_readline_;          //!< Flag to use the readline library
+      bool        _using_history_;           //!< Flag to use command history
       bool        _history_add_only_on_success_; //!< Flag to use command history only for valid command
-      std::string _history_filename_;  //!< History filename
-      unsigned int _history_truncate_; //!< History truncation size
-      datatools::service_manager * _services_; //!< handle to the service manager
+      std::string _history_filename_;            //!< History filename
+      unsigned int _history_truncate_;           //!< History truncation size
+      datatools::service_manager * _services_;   //!< handle to the service manager
 
       // Working data:
       ihs * _ihs_; //!< Handle to the IHS
-      std::string _current_working_path_; //!< Current working interface path
+      std::string _current_working_path_; //!< Current working interface path (%w, %W)
       std::unique_ptr<shell_command_interface_type> _system_interface_; //!< Embedded system interface for this shell
       shell_command_interface_type * _external_system_interface_; //! External system interface for this shell
 
       // Private data:
       struct pimpl_type;
-      boost::scoped_ptr<pimpl_type> _pimpl_;
+      std::unique_ptr<pimpl_type> _pimpl_;
 
       //! Create and return a mutable reference to the private internal data
       pimpl_type & _grab_pimpl();
 
       //! Create and return a non mutable reference to the private internal data
       const pimpl_type & _get_pimpl() const;
+
+      // Shell command interface has special priviledeges:
+      // friend class shell_command_interface;
 
     };
 
@@ -370,10 +392,8 @@ namespace datatools {
 
 #endif // DATATOOLS_UI_BASIC_SHELL_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
