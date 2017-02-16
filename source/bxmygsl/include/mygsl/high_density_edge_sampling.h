@@ -28,6 +28,23 @@
 namespace mygsl {
 
   /// \brief High density edge sampling model
+  ///
+  /// Example of sampling:
+  /// \code
+  ///
+  ///      nsteps_edge_left=6          nsteps_medium=4      nsteps_edge_right=3
+  ///
+  ///     :<- - - - - - - - - >:<- - - - - - - - - - - - ->:<- - - >:   <== domains
+  ///     :                    :                           :        :
+  ///     :01  2  3   4    5   :   6      7      8     9   :10 11 12:   <== steps
+  /// ----[+-+--+---+----+-----#------+------+------+------#---+--+-]------------------> x
+  ///     01 2  3   4    5   IL=6     7      8      9   IR=10 11 12 13  <== samples
+  ///
+  ///   xmin                 xedge                      xedge      xmax
+  ///                        left                       right
+  ///
+  /// \endcode
+  ///
   class high_density_edge_sampling
     : public base_sampling
   {
@@ -39,16 +56,6 @@ namespace mygsl {
     /// Destructor
     virtual ~high_density_edge_sampling();
 
-    // /// Set the sampling domain
-    // void set_domain(const double xmin_, const double xmax_);
-
-    // /// Set sampling parameters
-    // void set_sampling_parameters(const double xedge_left_,
-    //                              const double xedge_right_,
-    //                              const std::size_t nmedium_,
-    //                              const std::size_t nedge_left_,
-    //                              const std::size_t nedge_right_);
-
     /// Make high sampling left/right edges
     void make_left_right(const double xmin_,
                          const double xmax_,
@@ -58,12 +65,19 @@ namespace mygsl {
                          const std::size_t nedge_left_,
                          const std::size_t nedge_right_);
 
-    /// Make high sampling left edges
+    /// Make high sampling left edge
     void make_left(const double xmin_,
                    const double xmax_,
                    const double xedge_left_,
                    const std::size_t nmedium_,
                    const std::size_t nedge_left_);
+
+    /// Make high sampling right edge
+    void make_right(const double xmin_,
+                    const double xmax_,
+                    const double xedge_right_,
+                    const std::size_t nmedium_,
+                    const std::size_t nedge_right_);
 
     /// Return the number of steps
     virtual std::size_t get_nsteps() const;
@@ -76,6 +90,9 @@ namespace mygsl {
 
     /// Return the maximum sample
     virtual double get_max() const;
+
+    /// Return the width of the medium step
+    double get_medium_step() const;
 
     /// Check the initialization status of the sampling
     virtual bool is_initialized() const;
@@ -105,16 +122,16 @@ namespace mygsl {
   private:
 
     // Management:
-    bool _initialized_ = false; ///< Initialization flag
+    bool _initialized_ = false;      ///< Initialization flag
 
     // Configuration:
-    double _xmin_;
-    double _xmax_;
-    double _xedge_left_;
-    double _xedge_right_;
-    std::size_t _nmedium_;
-    std::size_t _nedge_left_;
-    std::size_t _nedge_right_;
+    double _xmin_;                   ///< Minimum bound of the sampling domain
+    double _xmax_;                   ///< Maximum bound of the sampling domain
+    double _xedge_left_;             ///< Bound of the left edge domain
+    double _xedge_right_;            ///< Bound of the right edge domain
+    std::size_t _nsteps_medium_;     ///< Number of steps in the medium domain
+    std::size_t _nsteps_edge_left_;  ///< Number of steps in the left edge domain
+    std::size_t _nsteps_edge_right_; ///< Number of steps in the right edge domain
 
     // Internals:
     std::size_t _nsamples_;

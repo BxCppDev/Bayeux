@@ -20,7 +20,7 @@
     Macro gnuplot:
     \code
     set grid
-    set xrange [-3:15]
+    set xrange [-3:20]
     set xlabel 'index'
     set yrange [0:5]
     set ylabel 'value'
@@ -45,31 +45,33 @@ int main(int /* argc_ */, char ** /* argv_ */)
 
 void test0()
 {
-  mygsl::high_density_edge_sampling ls;
+  mygsl::high_density_edge_sampling hdes;
 
   {
-    ls.make_left_right(1.5, 3.5, 2.0, 3.0, 5, 5, 5);
-    for (double x = 1.0; x <= 5.0; x += 0.1) {
+    hdes.make_left_right(1.0, 5.0, 2.0, 4.5, 5, 8, 4);
+    for (double x = 0.0; x <= 6.0; x += 0.05) {
       std::size_t index = mygsl::sampling::INVALID_INDEX;
-      mygsl::sampling::index_classification_type ic = mygsl::sampling::INDEX_UNDEFINED;
-      if (ls.value_to_index(x, index, ic)) {
+      mygsl::sampling::index_classification_type ic
+        = mygsl::sampling::INDEX_UNDEFINED;
+      if (hdes.value_to_index(x, index, ic)) {
         std::cout << index << ' ' << x << std::endl;
       } else {
         std::cout << -1  << ' ' << x << std::endl;
       }
     }
+    std::cout << std::endl << std::endl;
 
-    /*
-    for (auto i = 0; i < ls.get_nsamples(); i++) {
+    for (std::size_t i = 0; i < hdes.get_nsamples(); i++) {
       double x;
       mygsl::sampling::index_classification_type ic
-        = ls.index_to_value(i, x);
+        = hdes.index_to_value(i, x);
       if (ic == mygsl::sampling::INDEX_NORMAL) {
         std::cout << i << ' ' << x << std::endl;
       }
     }
     std::cout << std::endl << std::endl;
 
+    /*
     std::vector<double> vals = { 1.0, 1.3, 1.495, 1.5, 1.55,
                                  1.7, 1.71, 1.87, 1.91, 2.45,
                                  2.699, 2.701, 3.1,  3.14159, 3.2999,
@@ -78,8 +80,8 @@ void test0()
     for (const auto x : vals) {
       std::size_t index = mygsl::sampling::INVALID_INDEX;
       mygsl::sampling::index_classification_type ic = mygsl::sampling::INDEX_UNDEFINED;
-      // ls.value_to_index(x, index);
-      if (ls.value_to_index(x, index, ic)) {
+      // hdes.value_to_index(x, index);
+      if (hdes.value_to_index(x, index, ic)) {
         std::cout << index << ' ' << x << std::endl;
       } else {
         std::cout << -1  << ' ' << x << std::endl;
