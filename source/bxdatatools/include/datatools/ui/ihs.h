@@ -315,6 +315,10 @@ namespace datatools {
       //! Reset
       void reset();
 
+      //! Build a canonical path :
+      //! remove leading scheme if any and '//' path leading decorator if any
+      std::string canonical_path(const std::string & path_) const;
+
       //! Smart print
       virtual void tree_dump(std::ostream & out_ = std::clog,
                              const std::string & title_  = "",
