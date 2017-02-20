@@ -18,7 +18,7 @@ function splash()
         Version ${geomtools_version}
         Bayeux version @Bayeux_VERSION@
 
-        Copyright (C) 2013
+        Copyright (C) 2013-2017
         Francois Mauger, Xavier Garrido and Ben Morgan
 
         command line help: type "${this_bxapp} --help"
@@ -41,40 +41,40 @@ Usage:
 
    ${this_bxapp} -d|--debug    : Switch on debug mode and messages.
 
-   ${this_bxapp} -c|--config-base-dir arg  :
-                                      Make 'arg' be the configuration base directory
+   ${this_bxapp} -c|--config-base-dir dir  :
+                                      Make 'dir' be the configuration base directory
                                       where to store the configuration files
                                       describing the virtual geometry of the
                                       setup.
                                       Example:
-                                        --config-base-dir "."
+                                        --config-base-dir "config"
 
-   ${this_bxapp} -l|--setup-label arg  :
-                                      Set the label of the setup to 'arg'.
+   ${this_bxapp} -l|--setup-label name  :
+                                      Set the label of the setup to 'name'.
                                       Example:
-                                        --setup-label "my_setup"
+                                        --setup-label "MySetup"
 
-   ${this_bxapp} -v|--setup-version arg  :
-                                      Set the version of the setup to 'arg'.
+   ${this_bxapp} -v|--setup-version ver  :
+                                      Set the version of the setup to 'ver'.
                                       Example:
                                         --setup-version "0.1"
 
-   ${this_bxapp} -m|--registered-module arg :
+   ${this_bxapp} -m|--registered-module name :
                                       Use the registered base directory from the
-                                      module/library 'arg'. Used file path syntax
-                                      is: "@arg:path/to/setup/file.conf".
+                                      module/library 'name'. Used file path syntax
+                                      is: "@name:path/to/setup/file.conf".
                                       Example:
-                                        --registered-module "my_setup"
+                                        --registered-module "mysetup"
 
-   ${this_bxapp} -p|--skeleton-profile arg :
-                                      Use the skeleton profile 'arg'.
+   ${this_bxapp} -p|--skeleton-profile label :
+                                      Use the skeleton profile 'label'.
                                       Default value is: '${default_skeleton_profile}'.
                                       Example:
                                         --skeleton-profile "${default_skeleton_profile}"
 
 Usage:
-XXX
-   ${this_bxapp} --setup-label "my_setup" --registered-module
+
+   ${this_bxapp} --setup-label "MySetup" --registered-module "mysetup"
 
 EOF
     return
@@ -130,7 +130,7 @@ while [ -n "$1" ]; do
 	fi
     else
         argument="$token"
-	echo "WARNING: Ignoring command line argument '${argument}' !" >&2
+	echo >&2 "[warning] Ignoring command line argument '${argument}' !"
     fi
     shift 1
 done
@@ -157,31 +157,30 @@ function ui_read()
 	value="${default_value}"
     fi
     eval "echo ${value}"
-    #echo "${value}"
     return 0
 }
 
 function ui_dialog()
 {
-    echo -n "Enter the setup label [${setup_label}]: " >&2
+    echo >&2 -n "Enter the setup label [${setup_label}]: "
     setup_label=$(ui_read "${setup_label}")
 
-    echo -n "Enter the setup version [${setup_version}]: " >&2
+    echo >&2 -n "Enter the setup version [${setup_version}]: "
     setup_version=$(ui_read "${setup_version}")
 
-    echo -n "Enter the name/label of the skeleton profile [${skeleton_profile}]: " >&2
+    echo >&2 -n "Enter the name/label of the skeleton profile [${skeleton_profile}]: "
     skeleton_profile=$(ui_read "${skeleton_profile}")
 
-    echo -n "Enter the configuration base directory [${config_base_dir}]: " >&2
+    echo >&2 -n "Enter the configuration base directory [${config_base_dir}]: "
     config_base_dir=$(ui_read "${config_base_dir}")
 
     if [ "x${config_base_dir}" = "x" ]; then
-	echo -n "Enter the name/label of the registered module/library [${registered_module}]: " >&2
+	echo >&2 -n "Enter the name/label of the registered module/library [${registered_module}]: "
 	registered_module=$(ui_read "${registered_module}")
 
 	if [ "x${registered_module}" = "x" ]; then
-	    echo "Enter the name of the environment variable that addresses" >&2
-	    echo -n "  the configuration base directory [${env_config_dir}]: " >&2
+	    echo >&2 "Enter the name of the environment variable that addresses"
+	    echo >&2 -n "  the configuration base directory [${env_config_dir}]: "
 	    env_config_dir=$(ui_read "${env_config_dir}")
 	fi
     fi
@@ -190,11 +189,11 @@ function ui_dialog()
 
 if [ ${interactive} -eq 1 ]; then
     if [ $debug -eq 1 ]; then
-	echo "DEBUG: Entering interactive dialog..." >&2
+	echo >&2 "[error] Entering interactive dialog..."
     fi
     ui_dialog
     if [ $? -ne 0 ]; then
-	echo "ERROR:  User dialog failed ! Abort !" >&2
+	echo >&2 "[error] User dialog failed ! Abort !"
 	my_exit 1
     fi
 fi
@@ -217,7 +216,7 @@ fi
 
 echo "${known_skeleton_profiles}" | tr [[:space:]] ' ' | tr -s ' ' | tr ' ' '\n'  | grep $skeleton_profile > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "ERROR: Profile '${skeleton_profile}' is not valid ! Abort !" >&2
+    echo >&2 "[error] Profile '${skeleton_profile}' is not valid ! Abort !"
     my_exit 1
 fi
 
@@ -228,25 +227,25 @@ if [ "x${setup_base_dir:0:2}" = "x./" ]; then
 fi
 if [ $debug -eq 1 ]; then
     (
-    echo "DEBUG: config_base_dir='${config_base_dir}'"
-    echo "DEBUG: setup_label='${setup_label}'"
-    echo "DEBUG: setup_label_path='${setup_label_path}'"
-    echo "DEBUG: setup_version='${setup_version}'"
-    echo "DEBUG: setup_base_dir='${setup_base_dir}'"
-    echo "DEBUG: registered_module='${registered_module}'"
-    echo "DEBUG: skeleton_profile='${skeleton_profile}'"
-    echo "DEBUG: env_config_dir='${env_config_dir}'"
+    echo "[debug] config_base_dir='${config_base_dir}'"
+    echo "[debug] setup_label='${setup_label}'"
+    echo "[debug] setup_label_path='${setup_label_path}'"
+    echo "[debug] setup_version='${setup_version}'"
+    echo "[debug] setup_base_dir='${setup_base_dir}'"
+    echo "[debug] registered_module='${registered_module}'"
+    echo "[debug] skeleton_profile='${skeleton_profile}'"
+    echo "[debug] env_config_dir='${env_config_dir}'"
     ) >&2
 fi
 
 if [ -d ${setup_base_dir} ]; then
-    echo "ERROR: Directory '${setup_base_dir}' already exists ! Abort !" >&2
+    echo >&2 "[error] Directory '${setup_base_dir}' already exists ! Abort !"
     my_exit 1
 fi
 
 mkdir -p ${setup_base_dir}
 if [ $? -ne 0 ]; then
-    echo "ERROR: Directory '${setup_base_dir}' was not created ! Abort !" >&2
+    echo >&2 "[error] Directory '${setup_base_dir}' was not created ! Abort !"
     my_exit 1
 fi
 
@@ -270,7 +269,7 @@ fi
 # volumes.
 function populate_geometry_config_s2d4()
 {
-    echo "NOTICE: Populating skeleton profile 's2d4'..." >&2
+    echo >&2 "[notice] Populating skeleton profile 's2d4'..."
     _dbq="\`\`"
 
     #######################################################################
@@ -278,10 +277,11 @@ function populate_geometry_config_s2d4()
 Virtual geometry setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
 ==============================================================================
 
-This   README   file  has   been   automatically   generated  by   the
-${_dbq}${this_bxapp}${_dbq} script to describe a skeleton directory with a
-set of toy geometry configuration  files.  From this sample directory,
-you can now build your own virtual geometry setup.
+This  skeleton  directory  has  been automatically  generated  by  the
+${_dbq}${this_bxapp}${_dbq} script.
+
+It  contains a  set of  toy geometry  configuration files.   From this
+sample directory, you can now build your own virtual geometry setup.
 
 Files
 -----
@@ -399,7 +399,7 @@ EOF
     #######################################################################
     mkdir -p ${setup_base_dir}/mapping
     if [ $? -ne 0 ]; then
-	echo "ERROR: Directory '${setup_base_dir}/mapping' was not created ! Abort !" >&2
+	echo >&2 "[error] Directory '${setup_base_dir}/mapping' was not created ! Abort !"
 	return 1
     fi
 
@@ -420,7 +420,6 @@ EOF
 #@description The world's GID address is characterized by its 'world' number
 addresses : string[1] = "world"
 
-
 ##################################
 [category="source.gc" type="1000"]
 
@@ -428,7 +427,6 @@ addresses : string[1] = "world"
 
 #@description The source GID address is characterized by its 'position' number
 addresses : string[1] = "position"
-
 
 ####################################
 [category="detector.gc" type="2000"]
@@ -438,14 +436,13 @@ addresses : string[1] = "position"
 #@description The detector GID address is characterized by its 'module' number
 addresses : string[1] = "module"
 
-
 # end
 EOF
 
     #######################################################################
     mkdir -p ${setup_base_dir}/models
     if [ $? -ne 0 ]; then
-	echo "ERROR: Directory '${setup_base_dir}/models' was not created ! Abort !" >&2
+	echo >&2 "[error] Directory '${setup_base_dir}/models' was not created ! Abort !"
 	return 1
     fi
 
@@ -475,13 +472,13 @@ EOF
 shape_type  : string = "box"
 
 #@description The world volume X dimension (box)
-x         : real   = 800.0 mm
+x         : real as length = 800.0 mm
 
 #@description The world volume Y dimension (box)
-y         : real   = 800.0 mm
+y         : real as length = 800.0 mm
 
 #@description The world volume Z dimension (box)
-z         : real   = 800.0 mm
+z         : real as length = 800.0 mm
 
 ############
 # Material #
@@ -583,7 +580,6 @@ EOF
 #@key_label  "name"
 #@meta_label "type"
 
-
 ###########################################################
 [name="source.model" type="geomtools::simple_shaped_model"]
 
@@ -600,10 +596,10 @@ EOF
 shape_type  : string = "cylinder"
 
 #@description The source volume radius
-r           : real   =  30.0 mm
+r           : real as length =  30.0 mm
 
 #@description The source volume Z dimension
-z           : real   = 300.0 um
+z           : real as length = 300.0 um
 
 ############
 # Material #
@@ -634,7 +630,6 @@ EOF
 #@key_label  "name"
 #@meta_label "type"
 
-
 #############################################################
 [name="detector.model" type="geomtools::simple_shaped_model"]
 
@@ -651,13 +646,13 @@ EOF
 shape_type  : string = "box"
 
 #@description The detector volume X dimension
-x           : real   =  60.0 mm
+x           : real as length =  60.0 mm
 
 #@description The detector volume Y dimension
-y           : real   =  60.0 mm
+y           : real as length =  60.0 mm
 
 #@description The detector volume Z dimension
-z           : real   =  100.0 mm
+z           : real as length = 100.0 mm
 
 ############
 # Material #
@@ -688,7 +683,7 @@ EOF
     #######################################################################
     mkdir -p ${setup_base_dir}/plugins
     if [ $? -ne 0 ]; then
-	echo "ERROR: Directory '${setup_base_dir}/plugins' was not created ! Abort !" >&2
+	echo >&2 "[error] Directory '${setup_base_dir}/plugins' was not created ! Abort !"
 	return 1
     fi
 
@@ -713,10 +708,11 @@ EOF
 materials.alias_allow_overload : boolean = 1
 
 #@description The list of files that describes isotopes/elements/materials
-materials.configuration_files : string[4] as path = \\
-  "@materials:data/std_isotopes.def" \\
-  "@materials:data/std_elements.def" \\
-  "@materials:data/std_materials.def" \\
+materials.configuration_files : string[5] as path = \\
+  "@materials:data/basic/1.0/isotopes.def" \\
+  "@materials:data/basic/1.0/elements.def" \\
+  "@materials:data/basic/1.0/materials.def" \\
+  "@materials:data/basic/1.0/material_aliases.def" \\
   "${config_prefix}${setup_base_dir}/plugins/material_aliases.def"
 
 # end
@@ -734,17 +730,17 @@ EOF
 ############################
 [name="vacuum" type="alias"]
 #@description The alias for vacuum
-material : string = "std::vacuum"
+material : string = "basic::vacuum"
 
 #####################################
 [name="source_material" type="alias"]
 #@description The alias for Mylar
-material : string = "std::mylar"
+material : string = "basic::mylar"
 
 #######################################
 [name="detector_material" type="alias"]
 #@description The alias for NaI
-material : string = "std::NaI"
+material : string = "basic::NaI"
 
 # end
 EOF
@@ -764,7 +760,7 @@ EOF
 #@config GID mapping only for volumes of the 'detector.gc' geometry category
 
 #@description The list of geometry categories to be mapped by this plugin
-mapping.only_categories : string [1] = "detector.gc"
+mapping.only_categories : string[1] = "detector.gc"
 
 # end
 EOF
@@ -775,12 +771,12 @@ EOF
 if [ "${skeleton_profile}" = "s2d4" ]; then
     populate_geometry_config_s2d4
     if [ $? -ne 0 ]; then
-	echo "ERROR: Function 'populate_geometry_config_s2d4' failed ! Abort !" >&2
+	echo >&2 "[error] Function 'populate_geometry_config_s2d4' failed ! Abort !"
 	# rm -fr ${setup_base_dir}
 	my_exit 1
     fi
 else
-    echo "ERROR: Unknown skeleton profile '${skeleton_profile}' ! Abort !" >&2
+    echo >&2 "[error] Unknown skeleton profile '${skeleton_profile}' ! Abort !"
     my_exit 1
 fi
 
