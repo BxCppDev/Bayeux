@@ -86,6 +86,9 @@ class Gnuplot
   ///\brief list of created tmpfiles
   std::vector<std::string> _tmpfile_list_;
 
+  ///\brief Interactive terminal
+  std::string              _terminal_;
+
   //----------------------------------------------------------------------------------
   // static data
   ///\brief number of all tmpfiles  (number of tmpfiles restricted)
@@ -204,6 +207,14 @@ class Gnuplot
   /// destructor: needed to delete temporary files
   ~Gnuplot ();
 
+  /// Check if terminal is set
+  bool has_terminal() const;
+
+  /// Set the active terminal
+  void set_terminal(const std::string & terminal_);
+
+  /// Return the active terminal type
+  const std::string & get_terminal() const;
 
   //----------------------------------------------------------------------------------
 
@@ -223,12 +234,12 @@ class Gnuplot
   }
 
 
-
   //----------------------------------------------------------------------------------
   // show on screen or write to file
 
-  /// sets terminal type to _g_terminal_std_
-  Gnuplot& showonscreen (); // window output is set by default  (win/x11/aqua)
+  /// sets terminal type to _terminal_ (default to Gnuplot::_g_terminal_std_)
+  /// window output is set by default  (win/x11/aqua)
+  Gnuplot& showonscreen ();
 
   /// saves a gnuplot session to a postscript file, filename without extension
   Gnuplot& savetops (const std::string &filename = "gnuplot_output");
@@ -484,7 +495,7 @@ class Gnuplot
     Gnuplot& plot_x(const X& x, const std::string &title = "")
     {
       DT_THROW_IF (x.size() == 0,
-		   GnuplotException, "std::vector too small");
+       GnuplotException, "std::vector too small");
       std::ofstream tmp;
       std::string name = create_tmpfile(tmp);
       if (name == "")
@@ -536,9 +547,9 @@ class Gnuplot
     Gnuplot& plot_xy(const X& x, const Y& y, const std::string &title = "")
   {
     DT_THROW_IF (x.size() == 0 || y.size() == 0,
-		 GnuplotException, "std::vectors too small");
+     GnuplotException, "std::vectors too small");
     DT_THROW_IF (x.size() != y.size(),
-		 GnuplotException, "Length of the std::vectors differs");
+     GnuplotException, "Length of the std::vectors differs");
     std::ofstream tmp;
     std::string name = create_tmpfile(tmp);
     if (name == "")
@@ -584,9 +595,9 @@ class Gnuplot
                          const std::string &title = "")
   {
     DT_THROW_IF (x.size() == 0 || y.size() == 0 || dy.size() == 0,
-		 GnuplotException, "std::vectors too small");
+     GnuplotException, "std::vectors too small");
     DT_THROW_IF (x.size() != y.size() || y.size() != dy.size(),
-		 GnuplotException, "Length of the std::vectors differs");
+     GnuplotException, "Length of the std::vectors differs");
     std::ofstream tmp;
     std::string name = create_tmpfile(tmp);
     if (name == "")
@@ -617,11 +628,11 @@ class Gnuplot
                          const std::string &title = "");
 
   Gnuplot& plotfile_xyzo (const std::string &filename,
-			  const unsigned int column_x = 1,
-			  const unsigned int column_y = 2,
-			  const unsigned int column_z = 3,
-			  const unsigned int column_o = 4,
-			  const std::string &title = "");
+        const unsigned int column_x = 1,
+        const unsigned int column_y = 2,
+        const unsigned int column_z = 3,
+        const unsigned int column_o = 4,
+        const std::string &title = "");
 
   Gnuplot& plotfile_xyz_with_colored_wires (const std::string &filename,
                                             const std::string &title = "",
@@ -647,9 +658,9 @@ class Gnuplot
                       const std::string &title = "")
   {
     DT_THROW_IF (x.size() == 0 || y.size() == 0 || z.size() == 0,
-		 GnuplotException, "std::vectors too small");
+     GnuplotException, "std::vectors too small");
     DT_THROW_IF (x.size() != y.size() || x.size() != z.size(),
-		 GnuplotException, "Length of the std::vectors differs");
+     GnuplotException, "Length of the std::vectors differs");
     std::ofstream tmp;
     std::string name = create_tmpfile(tmp);
     if (name == "")

@@ -35,6 +35,7 @@ int main(/*int argc, char* argv[]*/)
     //
     try {
         Gnuplot g1("lines");
+        std::clog << "*** terminal type = '" << g1.get_terminal() << "'" << std::endl;
         //if (! interactive) g1.cmd("set terminal postscript; set output '" + tmp_file.get_filename() + "';");
         //
         // Slopes

@@ -220,6 +220,21 @@ Gnuplot::~Gnuplot()
       DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, "Problem closing communication to gnuplot");
 }
 
+bool Gnuplot::has_terminal() const
+{
+  return ! _terminal_.empty();
+}
+
+void Gnuplot::set_terminal(const std::string & terminal_)
+{
+  _terminal_ = terminal_;
+  return;
+}
+
+const std::string & Gnuplot::get_terminal() const
+{
+  return _terminal_;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -331,7 +346,7 @@ Gnuplot& Gnuplot::set_smooth(const std::string &stylestr)
 Gnuplot& Gnuplot::showonscreen()
 {
   cmd("set output");
-  cmd("set terminal " + Gnuplot::_g_terminal_std_);
+  cmd("set terminal " + _terminal_); //Gnuplot::_g_terminal_std_);
 
   return *this;
 }
@@ -1145,8 +1160,18 @@ void Gnuplot::init()
   _nplots_ = 0;
   _valid_ = true;
   _smooth_ = "";
-
-  //set terminal type
+  _terminal_ = "";
+  {
+    // Attempt to get the terminal type from an environment variable
+    char * bx_gp_term = getenv("BX_GNUPLOT_TERMINAL");
+    if (bx_gp_term != nullptr) {
+      set_terminal(bx_gp_term);
+    }
+  }
+  if (!has_terminal()) {
+    // Set the default one for this architecture/system:
+    set_terminal(_g_terminal_std_);
+  }
   showonscreen();
 
   return;
