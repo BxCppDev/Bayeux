@@ -501,7 +501,9 @@ namespace mygsl {
       datatools::invalidate(x);
       datatools::invalidate(f);
       line_iss >> x >> f >> std::ws;
-      DT_THROW_IF(!line_iss, std::logic_error,
+      // 2017-02-21 FM: add check for EOF on input stream.
+      // "!line_is" only failed at end of string with CLANG6 on macOS10.9.5
+      DT_THROW_IF(!line_iss.eof() && !line_iss, std::logic_error,
                   "Invalid format for (X, F(x)) points!");
       add_point(x * x_unit, f * f_unit, false);
     }
