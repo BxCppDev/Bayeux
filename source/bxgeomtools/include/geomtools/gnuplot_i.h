@@ -150,6 +150,9 @@ class Gnuplot
 
  public:
 
+  /// \brief Return the default terminal type on the current system
+  static const std::string & terminal_std();
+
   // ----------------------------------------------------------------------------
   /// \brief optional function: set Gnuplot path manual
   /// attention:  for windows: path with slash '/' not backslash '\'
@@ -159,7 +162,6 @@ class Gnuplot
   /// \return true on success, false otherwise
   // ----------------------------------------------------------------------------
   static bool set_gnuplot_path (const std::string &path);
-
 
   // ----------------------------------------------------------------------------
   /// optional: set standart terminal, used by showonscreen

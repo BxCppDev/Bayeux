@@ -1102,6 +1102,11 @@ Gnuplot& Gnuplot::cmd(const std::string &cmdstr)
   return *this;
 }
 
+// static
+const std::string & Gnuplot::terminal_std()
+{
+  return _g_terminal_std_;
+}
 
 
 //------------------------------------------------------------------------------

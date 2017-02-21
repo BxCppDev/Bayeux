@@ -28,6 +28,7 @@
 #include <geomtools/i_wires_3d_rendering.h>
 
 #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+#include <geomtools/gnuplot_i.h>
 #include <geomtools/gnuplot_drawer.h>
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
 
@@ -1395,8 +1396,22 @@ namespace geomtools {
         rendering_options |= i_composite_shape_3d::WR_COMPOSITE_BOOST_SAMPLING;
       }
     }
+    {
+      // Attempt to get the terminal type from an environment variable
+      char * bx_gp_term = getenv("BX_GNUPLOT_TERMINAL");
+      if (bx_gp_term != nullptr) {
+        terminal = bx_gp_term;
+      }
+    }
+    {
+      // Attempt to get the terminal options from an environment variable
+      char * bx_gp_term_opts = getenv("BX_GNUPLOT_TERMINAL_OPTIONS");
+      if (bx_gp_term_opts != nullptr) {
+        terminal_options = bx_gp_term_opts;
+      }
+    }
     if (terminal.empty()) {
-      terminal = "x11";
+      terminal = Gnuplot::terminal_std();
     }
     if (terminal_options.empty() && terminal == "x11") {
       terminal_options = "noenhanced";

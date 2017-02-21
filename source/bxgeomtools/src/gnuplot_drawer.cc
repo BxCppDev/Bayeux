@@ -1275,8 +1275,9 @@ namespace geomtools {
   void gnuplot_drawer::reset_terminal ()
   {
     reset_output();
-    _terminal_ = "x11";
-    _terminal_options_ = "noenhanced";
+    _terminal_ = Gnuplot::terminal_std();
+    _terminal_options_.clear();
+    // if (_terminal_ == "x11") _terminal_options_ = "noenhanced";
     // _terminal_options_ = "persist noenhanced size 500,500";
     return;
   }
