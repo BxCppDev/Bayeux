@@ -213,6 +213,9 @@ int main(int argc_, char ** argv_)
     geomtools::geomtools_driver GD;
     {
       params.GDP_argv.push_back("--mute");
+      for (const auto & argopt : params.GDP_argv) {
+        DT_LOG_DEBUG(params.logging, "GDP arg/opt = '" << argopt << "'");
+      }
       int error = GD.command_initialize(params.GDP_argv, std::clog);
       if (error > 0) {
         DT_LOG_DEBUG(params.logging, "Geometry driver has not been initialized ! ");

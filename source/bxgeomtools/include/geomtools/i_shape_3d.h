@@ -331,6 +331,22 @@ namespace geomtools {
      */
     void _initialize_bounding_data(const datatools::properties & config_);
 
+    /// Parse stackable data from a properties container
+    /**
+     * Example of an enforced stackable data:
+     *  @code
+     *  enforce_stackable_data : boolean = true
+     *  stackable.xmin : real as length = 3.5 cm
+     *  stackable.xmax : real as length = 2.0 cm
+     *  stackable.ymin : real as length = 31.0 cm
+     *  stackable.ymax : real as length = 16.4 cm
+     *  stackable.zmin : real as length = 7.0 cm
+     *  stackable.zmax : real as length = 0.4 cm
+     *  @endcode
+     *
+     */
+    void _initialize_stackable_data(const datatools::properties & config_);
+
     /// Reset the bounding data
     void _reset_bounding_data();
 

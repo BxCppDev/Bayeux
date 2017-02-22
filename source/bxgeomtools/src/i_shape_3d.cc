@@ -185,14 +185,10 @@ namespace geomtools {
                        "Stackable data is invalid for shape '"
                        << a_shape.get_shape_name() << "'!");
       }
-    } else {
-      // DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
-      //                "No stackable data in shape '"
-      //                << a_shape.get_shape_name() << "'!");
     }
     const i_stackable * the_stackable
       = dynamic_cast<const i_stackable *>(&a_shape);
-    if (the_stackable != 0) {
+    if (the_stackable != nullptr) {
       return true;
     }
     return false;
@@ -201,43 +197,37 @@ namespace geomtools {
   bool i_shape_3d::is_xmin_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable(a_shape)) return true;
-    // if (stackable::has_xmin(a_shape.get_auxiliaries())) return true;
     return false;
   }
 
   bool i_shape_3d::is_xmax_stackable (const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    // if (stackable::has_xmax (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_ymin_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    // if (stackable::has_ymin (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_ymax_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    // if (stackable::has_ymax (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_zmin_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    // if (stackable::has_zmin (a_shape.get_auxiliaries ())) return true;
     return false;
   }
 
   bool i_shape_3d::is_zmax_stackable(const i_shape_3d & a_shape)
   {
     if (is_stackable (a_shape)) return true;
-    // if (stackable::has_zmax (a_shape.get_auxiliaries ())) return true;
-    return false;
+     return false;
   }
 
   /*
@@ -319,7 +309,7 @@ namespace geomtools {
 
   bool i_shape_3d::has_stackable_data() const
   {
-    return _stackable_data_ != 0;
+    return _stackable_data_ != nullptr;
   }
 
   bool i_shape_3d::owns_stackable_data () const
@@ -334,11 +324,11 @@ namespace geomtools {
 
   void i_shape_3d::reset_stackable_data()
   {
-    if (_stackable_data_ != 0) {
+    if (_stackable_data_ != nullptr) {
       if (_owns_stackable_data_) {
         delete _stackable_data_;
       }
-      _stackable_data_ = 0;
+      _stackable_data_ = nullptr;
     }
     _owns_stackable_data_ = false;
     return;
@@ -417,6 +407,7 @@ namespace geomtools {
   {
     this->i_object_3d::_initialize(config_, objects_);
     _initialize_bounding_data(config_);
+    _initialize_stackable_data(config_);
 
     double default_volume_unit = CLHEP::millimeter3;
 
@@ -431,6 +422,23 @@ namespace geomtools {
         v *= default_volume_unit;
       }
       set_forced_volume(v);
+    }
+    return;
+  }
+
+  void i_shape_3d::_initialize_stackable_data(const datatools::properties & config_)
+  {
+    if (config_.has_flag("enforce_stackable_data")) {
+      stackable_data * ptr_sd = new stackable_data;
+      try {
+        ptr_sd->initialize(config_);
+        set_stackable_data(ptr_sd);
+      } catch (std::exception & error) {
+        delete ptr_sd;
+        DT_THROW(std::logic_error,
+                 "Invalid stackable data for shape of type '" << get_shape_name() << "': "
+                 << error.what());
+      }
     }
     return;
   }
@@ -702,7 +710,7 @@ namespace geomtools {
       i_shape_3d::pickup_stackable(*this, SD);
       a_out << a_indent << datatools::i_tree_dumpable::tag
             << "Stackable data : ";
-      if (_stackable_data_ != 0) {
+      if (_stackable_data_ != nullptr) {
         a_out << "[plugged]";
       } else {
         a_out << "[native]";

@@ -85,7 +85,6 @@ namespace geomtools {
     visu_object_name.clear();
     visu_drawer_labels = true;
 #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-
     return;
   }
 
@@ -273,8 +272,38 @@ namespace geomtools {
       if (_geo_mgr_) _geo_mgr_.reset();
       if (_geo_factory_) _geo_factory_.reset();
       //reset();
+      _error_message_stack_backtrace_();
     }
     return;
+  }
+
+  void geomtools_driver::_error_message_stack_backtrace_()
+  {
+    if (_error_message_stack_.size()) {
+      DT_LOG_ERROR(datatools::logger::PRIO_ERROR, "Error message backtrace:");
+      for (const auto & errmsg : _error_message_stack_) {
+        DT_LOG_ERROR(datatools::logger::PRIO_ERROR, errmsg);
+      }
+      _error_message_stack_.clear();
+    }
+    return;
+  }
+
+  void geomtools_driver::_error_message_stack_push_(const std::string & message_)
+  {
+    _error_message_stack_.push_back(message_);
+    return;
+  }
+
+  void geomtools_driver::clear_error_message_stack()
+  {
+    _error_message_stack_.clear();
+    return;
+  }
+
+  const std::vector<std::string> & geomtools_driver::get_error_message_stack() const
+  {
+    return _error_message_stack_;
   }
 
   void geomtools_driver::reset()
@@ -286,6 +315,7 @@ namespace geomtools {
     if (_geo_mgr_) _geo_mgr_.reset();
     if (_geo_factory_) _geo_factory_.reset();
     _params_.reset();
+    _error_message_stack_backtrace_();
     return;
   }
 
@@ -372,8 +402,8 @@ namespace geomtools {
     int code = 0;
     DT_LOG_TRACE(_params_.logging, "Entering...");
     if (is_initialized()) {
-      DT_LOG_ERROR(_params_.logging,
-                   "Geometry driver is already initialized !");
+      _error_message_stack_push_("Geometry driver is already initialized !");
+      DT_LOG_ERROR(_params_.logging, _error_message_stack_.back());
       code = 1;
     } else {
       geomtools::geomtools_driver_params GDP;
@@ -381,8 +411,8 @@ namespace geomtools {
       if (parse_error < 0) {
         code = -1;
       } else if (parse_error > 0) {
-        DT_LOG_ERROR(_params_.logging,
-                     "Error parsing geometry driver parameters !");
+        _error_message_stack_push_("Error parsing geometry driver parameters !");
+        DT_LOG_ERROR(_params_.logging, _error_message_stack_.back());
         code = 1;
       }
       if (code != 0 ) {
@@ -392,16 +422,18 @@ namespace geomtools {
 
       if (! GDP.can_initialize()) {
         if (! GDP.mute) {
-          DT_LOG_ERROR(_params_.logging,
-                       "Geometry driver parameters don't allow the driver to be initialized !");
+          _error_message_stack_push_("Geometry driver parameters don't allow the driver to be initialized !");
+          DT_LOG_ERROR(_params_.logging, _error_message_stack_.back());
         }
         code = 2;
       } else {
         try {
           this->initialize(GDP);
         } catch (std::exception & x) {
-          DT_LOG_ERROR(_params_.logging,
-                       "Geometry driver could not be initialized: " << x.what());
+          std::ostringstream error_out;
+          error_out << "Geometry driver could not be initialized: " << x.what();
+          _error_message_stack_push_(error_out.str());
+          DT_LOG_ERROR(_params_.logging, _error_message_stack_.back());
           GDP.reset();
           code = 1;
         }

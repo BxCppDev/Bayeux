@@ -96,6 +96,19 @@ namespace geomtools {
     /// Check for an embeded manager
     bool has_manager() const;
 
+    /// Clear the error message stack
+    void clear_error_message_stack();
+
+    /// Return the error message stack
+    const std::vector<std::string> & get_error_message_stack() const;
+
+  private:
+
+    void _error_message_stack_push_(const std::string & message_);
+
+    void _error_message_stack_backtrace_();
+
+  public:
     /*
     // Common command line interface ?
     int exec_command(const std::string & command_,
@@ -200,6 +213,8 @@ namespace geomtools {
     bool                           _has_world_ = false;       //!< Flag for a 'world' top-level volume/model
     // std::map<std::string, datatools::properties> _ropts_; //!< Rendering options associated to displayed objects
     std::map<std::string, display_data> _dds_; //!< Embedded display data objects
+    std::vector<std::string> _error_message_stack_;
+
 
   };
 

@@ -293,6 +293,7 @@ namespace geomtools {
     }
     else {
       std::string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
+      std::cerr << "********* DEVEL: xmin_key = " << xmin_key << std::endl;
       if (config_.has_key (xmin_key)) {
         xmin = config_.fetch_real (xmin_key);
         if (! config_.has_explicit_unit (xmin_key)) xmin *= lunit;
@@ -402,14 +403,25 @@ namespace geomtools {
     if (! title_.empty ()) {
       out_ << indent << title_ << endl;
     }
-    out_ << indent << datatools::i_tree_dumpable::tag << "xmin = " << xmin / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "xmax = " << xmax / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "ymin = " << ymin / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "ymax = " << ymax / CLHEP::mm << " mm" << std::endl;
-    out_ << indent << datatools::i_tree_dumpable::tag << "zmin = " << zmin / CLHEP::mm << " mm" << std::endl;
+    std::ostringstream xyz_out;
+    if (is_valid_x()) {
+      out_ << indent << datatools::i_tree_dumpable::tag << "xmin = " << xmin / CLHEP::mm << " mm" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "xmax = " << xmax / CLHEP::mm << " mm" << std::endl;
+      xyz_out << "X";
+    }
+    if (is_valid_y()) {
+      out_ << indent << datatools::i_tree_dumpable::tag << "ymin = " << ymin / CLHEP::mm << " mm" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "ymax = " << ymax / CLHEP::mm << " mm" << std::endl;
+      xyz_out << "Y";
+    }
+    if (is_valid_z()) {
+      out_ << indent << datatools::i_tree_dumpable::tag << "zmin = " << zmin / CLHEP::mm << " mm" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "zmax = " << zmax / CLHEP::mm << " mm" << std::endl;
+      xyz_out << "Z";
+    }
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
-         << "zmax = " << zmax / CLHEP::mm << " mm" << std::endl;
-    return;
+         << "Valid for axis: '" << xyz_out.str() << "'" << std::endl;
+   return;
   }
 
   void stackable_data::dump (std::ostream & out_) const
