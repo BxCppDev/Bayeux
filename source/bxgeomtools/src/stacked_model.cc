@@ -338,7 +338,11 @@ namespace geomtools {
                    std::logic_error,
                    "Cannot find model with name '" << stacked_model_name << "' in stacked model '" << name_ << "' !");
       // check if the model is stackable:
-      DT_THROW_IF(! i_shape_3d::is_stackable(found->second->get_logical().get_shape()),
+      bool fully_stackable = i_shape_3d::is_stackable(found->second->get_logical().get_shape());
+      if (! fully_stackable) {
+        found->second->get_logical().get_shape().tree_dump(std::cerr, "Not stackable shape: ", "[devel] ");
+      }
+      DT_THROW_IF(! fully_stackable,
                    std::logic_error,
                    "The embedded model '" << found->second->get_name() << "' is not stackable in stacked model '" << name_ << "' !");
       const i_model * geo_model = found->second;
