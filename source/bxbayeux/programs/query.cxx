@@ -2,8 +2,8 @@
 //! \brief Query information about Bayeux
 //! \details
 //
-// Copyright (c) 2013 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013 by Université de Caen
+// Copyright (c) 2013-2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2017 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -39,6 +39,8 @@
 // - datatools
 #include <datatools/kernel.h>
 #include <datatools/library_info.h>
+
+std::string app_name();
 
 int main(int argc_, char * argv_[])
 {
@@ -88,6 +90,11 @@ int main(int argc_, char * argv_[])
        ->zero_tokens(),
        "Print resource base directory. \n"
        )
+      ("exampledir",
+       bpo::value<bool>()
+       ->zero_tokens(),
+       "Print example base directory. \n"
+       )
       ("cmakedir",
        bpo::value<bool>()
        ->zero_tokens(),
@@ -124,6 +131,7 @@ int main(int argc_, char * argv_[])
     bpo::notify(vm);
 
     if (vm.count("help")) {
+      std::cout << "Usage: " << app_name() << " [options]" << std::endl;
       std::cout << opts << std::endl;
     } else if (vm.count("version")) {
       bool version = vm["version"].as<bool>();
@@ -159,6 +167,11 @@ int main(int argc_, char * argv_[])
       bool incdir = vm["resourcedir"].as<bool>();
       if (incdir) {
         std::cout << bayeux::get_resource_dir() << std::endl;
+      }
+    } else if (vm.count("exampledir")) {
+      bool incdir = vm["exampledir"].as<bool>();
+      if (incdir) {
+        std::cout << bayeux::get_data_dir() << "/../examples" << std::endl;
       }
     } else if (vm.count("cmakedir")) {
       bool cmakedir = vm["cmakedir"].as<bool>();
@@ -223,12 +236,17 @@ int main(int argc_, char * argv_[])
     }
 
   } catch (std::exception & error) {
-    std::cerr << "ERROR: " << error.what() << std::endl;
+    std::cerr << "[error] " << app_name() << ": " << error.what() << std::endl;
     error_code = EXIT_FAILURE;
   } catch (...) {
-    std::cerr << "ERROR: " << "Unexpected error!" << std::endl;
+    std::cerr << "[error] " << app_name() << ": " << "Unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
   bayeux::terminate();
   return error_code;
+}
+
+std::string app_name()
+{
+  return "bxquery";
 }
