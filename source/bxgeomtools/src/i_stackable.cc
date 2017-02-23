@@ -26,6 +26,11 @@ namespace geomtools {
   const std::string stackable::STACKABLE_PLAY_PROPERTY = "play";
   const std::string stackable::STACKABLE_LIMITS_PROPERTY = "limits";
 
+  i_stackable::i_stackable()
+  {
+    return;
+  }
+
   i_stackable::~i_stackable()
   {
     return;
@@ -270,10 +275,11 @@ namespace geomtools {
       lunit = datatools::units::get_length_unit_from (length_unit_str);
     }
 
-    static const std::string stackable_limits_key = stackable::make_key (stackable::STACKABLE_LIMITS_PROPERTY);
+    static const std::string stackable_limits_key
+      = stackable::make_key(stackable::STACKABLE_LIMITS_PROPERTY);
     if (config_.has_key (stackable_limits_key)) {
       std::vector<double> limits;
-      config_.fetch (stackable_limits_key, limits);
+      config_.fetch(stackable_limits_key, limits);
       DT_THROW_IF (limits.size () != 6, std::logic_error,
                    "Stacking limits vector should provide 6 dimensions !");
       if (! config_.has_explicit_unit (stackable_limits_key)) {
@@ -290,10 +296,8 @@ namespace geomtools {
       xmax = limits[1];
       ymax = limits[3];
       zmax = limits[5];
-    }
-    else {
+    } else {
       std::string xmin_key = stackable::make_key (stackable::STACKABLE_XMIN_PROPERTY);
-      std::cerr << "********* DEVEL: xmin_key = " << xmin_key << std::endl;
       if (config_.has_key (xmin_key)) {
         xmin = config_.fetch_real (xmin_key);
         if (! config_.has_explicit_unit (xmin_key)) xmin *= lunit;
@@ -330,28 +334,62 @@ namespace geomtools {
       }
     }
 
-    return is_valid ();
+    // return is_valid ();
+    return is_valid_very_weak();
+  }
+
+  bool stackable_data::check(const stackable::stackability_mode flag_) const
+  {
+    switch (flag_) {
+    case stackable::STACKABILITY_XMIN:
+      return this->has_xmin();
+    case stackable::STACKABILITY_XMAX:
+      return this->has_xmax();
+    case stackable::STACKABILITY_YMIN:
+      return this->has_ymin();
+    case stackable::STACKABILITY_YMAX:
+      return this->has_ymax();
+    case stackable::STACKABILITY_ZMIN:
+      return this->has_zmin();
+    case stackable::STACKABILITY_ZMAX:
+      return this->has_zmax();
+    case stackable::STACKABILITY_X:
+      return this->is_valid_x();
+    case stackable::STACKABILITY_Y:
+      return this->is_valid_y();
+    case stackable::STACKABILITY_Z:
+      return this->is_valid_z();
+    case stackable::STACKABILITY_XY:
+      return this->is_valid_x() && this->is_valid_y();
+    case stackable::STACKABILITY_YZ:
+      return this->is_valid_y() && this->is_valid_z();
+    case stackable::STACKABILITY_XZ:
+      return this->is_valid_x() && this->is_valid_z();
+    case stackable::STACKABILITY_VERY_WEAK:
+      return this->is_valid_very_weak();
+    case stackable::STACKABILITY_WEAK:
+      return this->is_valid_weak();
+    case stackable::STACKABILITY_STRONG:
+      return this->is_valid();
+    default:
+      break;
+    }
+    return ! this->is_valid_very_weak();
   }
 
   bool stackable_data::is_valid_x () const
   {
-    return
-      datatools::is_valid (xmin)
-      && datatools::is_valid (xmax);
+    return has_xmin() && has_xmax();
   }
 
   bool stackable_data::is_valid_y () const
   {
-    return
-      datatools::is_valid (ymin)
-      && datatools::is_valid (ymax);
+    return has_ymin() && has_ymax();
   }
 
   bool stackable_data::is_valid_z () const
   {
-    return
-      datatools::is_valid (zmin)
-      && datatools::is_valid (zmax);
+    return has_zmin() && has_zmax();
   }
 
   bool stackable_data::is_valid () const
@@ -365,32 +403,82 @@ namespace geomtools {
     switch (axis_) {
     case AXIS_X: return is_valid_x();
     case AXIS_Y: return is_valid_y();
-    default: return is_valid_z();
+    case AXIS_Z: return is_valid_z();
+    default:  break;
     }
+    return false;
   }
 
   bool stackable_data::is_valid_weak () const
   {
-    return is_valid_x () || is_valid_y () || is_valid_z ();
+    return is_valid_x()
+      || is_valid_y()
+      || is_valid_z();
+  }
+
+  bool stackable_data::is_valid_very_weak () const
+  {
+    return datatools::is_valid(xmin)
+      || datatools::is_valid(xmax)
+      || datatools::is_valid(ymin)
+      || datatools::is_valid(ymax)
+      || datatools::is_valid(zmin)
+      || datatools::is_valid(zmax);
   }
 
   void stackable_data::invalidate ()
   {
-    datatools::invalidate (xmin);
-    datatools::invalidate (xmax);
-    datatools::invalidate (ymin);
-    datatools::invalidate (ymax);
-    datatools::invalidate (zmin);
-    datatools::invalidate (zmax);
+    datatools::invalidate(xmin);
+    datatools::invalidate(xmax);
+    datatools::invalidate(ymin);
+    datatools::invalidate(ymax);
+    datatools::invalidate(zmin);
+    datatools::invalidate(zmax);
+    return;
+  }
+
+  void stackable_data::reset()
+  {
+    invalidate();
     return;
   }
 
   stackable_data::stackable_data ()
   {
-    invalidate ();
+    invalidate();
   }
 
   stackable_data::~stackable_data() {
+  }
+
+  double stackable_data::get_xmin() const
+  {
+    return xmin;
+  }
+
+  double stackable_data::get_xmax() const
+  {
+    return xmax;
+  }
+
+  double stackable_data::get_ymin() const
+  {
+    return ymin;
+  }
+
+  double stackable_data::get_ymax() const
+  {
+    return ymax;
+  }
+
+  double stackable_data::get_zmin() const
+  {
+    return zmin;
+  }
+
+  double stackable_data::get_zmax() const
+  {
+    return zmax;
   }
 
   void stackable_data::tree_dump (std::ostream & out_,
@@ -421,13 +509,12 @@ namespace geomtools {
     }
     out_ << indent << datatools::i_tree_dumpable::inherit_tag (inherit_)
          << "Valid for axis: '" << xyz_out.str() << "'" << std::endl;
-   return;
+    return;
   }
 
   void stackable_data::dump (std::ostream & out_) const
   {
-    tree_dump (out_, "geomtools::stackable_data: ");
-
+    // tree_dump (out_, "geomtools::stackable_data: ");
     out_ << "|-- " << "xmin = " << xmin / CLHEP::mm << " mm" << std::endl;
     out_ << "|-- " << "xmax = " << xmax / CLHEP::mm << " mm" << std::endl;
     out_ << "|-- " << "ymin = " << ymin / CLHEP::mm << " mm" << std::endl;

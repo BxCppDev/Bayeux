@@ -7,9 +7,6 @@
  *
  * Description:
  *
- *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_I_BOXED_MODEL_H

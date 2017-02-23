@@ -9,8 +9,6 @@
  *
  *  A cylinder on z-axis
  *
- * History:
- *
  */
 
 #ifndef GEOMTOOLS_CYLINDER_H

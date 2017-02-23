@@ -251,15 +251,18 @@ namespace geomtools {
 
     // check if surrounded model exists:
     {
-      models_col_type::const_iterator found = models_->find (surrounded_model_name);
+      models_col_type::const_iterator found = models_->find(surrounded_model_name);
       DT_THROW_IF (found == models_->end (),
                    std::logic_error,
                    "Cannot find surrounded model with name '" << surrounded_model_name << "' in surrounded boxed model '" << name_ << "' !");
-      // check if the model is stackable:
-      DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
+      // Check if the surrounded model's stackability:
+      // 2017-02-23, FM: For now we check full stackability on all directions around the volume.
+      // In principle, we should only check directions with a surrounding volume.
+      DT_THROW_IF (! i_shape_3d::check_stackability(found->second->get_logical().get_shape(),
+                                                    stackable::STACKABILITY_STRONG),
                    std::logic_error,
-                   "The surrounded model '" << found->second->get_name () << "' is not stackable in surrounded boxed model '" << name_ << "' !");
-      set_surrounded_model (*(found->second));
+                   "The surrounded model '" << found->second->get_name() << "' is not stackable in surrounded boxed model '" << name_ << "' !");
+      set_surrounded_model(*(found->second));
     }
 
     // loop over surrounding models:
@@ -290,12 +293,28 @@ namespace geomtools {
                      std::logic_error,
                      "Cannot find surrounding model with name '"<< surrounding_model_name << "' in surrounded boxed model '" << name_ << "' !");
 
-        // check if the model is stackable:
-        DT_THROW_IF (! i_shape_3d::is_stackable (found->second->get_logical ().get_shape ()),
+        // check the surrounding model's stackability::
+        stackable::stackability_mode sdsm = stackable::STACKABILITY_NONE;
+        if (ipos == DIRECTION_BACK) {
+          sdsm = stackable::STACKABILITY_XMAX;
+        } else if (ipos == DIRECTION_FRONT) {
+          sdsm = stackable::STACKABILITY_XMIN;
+        } else if (ipos == DIRECTION_LEFT) {
+          sdsm = stackable::STACKABILITY_YMAX;
+        } else if (ipos == DIRECTION_RIGHT) {
+          sdsm = stackable::STACKABILITY_YMIN;
+        } else if (ipos == DIRECTION_BOTTOM) {
+          sdsm = stackable::STACKABILITY_ZMAX;
+        } else if (ipos == DIRECTION_TOP) {
+          sdsm = stackable::STACKABILITY_ZMIN;
+        }
+        // 2017-02-23, FM: For now we check full stackability on all directions around the volume.
+        sdsm = stackable::STACKABILITY_STRONG;
+        DT_THROW_IF (! i_shape_3d::check_stackability(found->second->get_logical().get_shape(), sdsm),
                      std::logic_error,
                      "The " << *ilabel << " surrounding model '" << found->second->get_name ()
-                     << "' is not stackable in surrounded boxed model '" << name_ << "' !");
-        add_surrounding_model (ipos, *(found->second), label_name);
+                     << "' has no required stackability for surrounded boxed model '" << name_ << "' !");
+        add_surrounding_model(ipos, *(found->second), label_name);
       } // end of for
     }
     // end of loop over surrounding models.
@@ -311,7 +330,7 @@ namespace geomtools {
 
     // try to get a stackable data from the shape:
     stackable_data the_SD;
-    DT_THROW_IF ((! i_shape_3d::pickup_stackable (the_shape, the_SD)),
+    DT_THROW_IF ((! i_shape_3d::pickup_stackable(the_shape, the_SD)),
                  std::logic_error,
                  "Cannot surround/stack the '" << the_shape.get_shape_name () << "' shape in surrounded boxed model '" << name_ << "' !");
     const double gxmin = the_SD.get_xmin ();
@@ -798,18 +817,18 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::surrounded_boxed_model, ocd_)
                                "   length_unit      : string = \"cm\"                            \n"
                                "   surrounded.model        : string = \"dragon_body.model\"      \n"
                                "   surrounded.label        : string = \"Body\"                   \n"
-                               "   surrounded.front.model  : string = \"dragon_head.model\"      \n"
-                               "   surrounded.front.label  : string = \"Head\"                   \n"
-                               "   surrounded.back.model   : string = \"dragon_tail.model\"      \n"
-                               "   surrounded.back.label   : string = \"Tail\"                   \n"
-                               "   surrounded.left.model   : string = \"dragon_left_wing.model\" \n"
-                               "   surrounded.left.label   : string = \"LeftWing\"               \n"
-                               "   surrounded.right.model  : string = \"dragon_right_wing.model\"\n"
-                               "   surrounded.right.label  : string = \"RightWing\"              \n"
-                               "   surrounded.top.model    : string = \"dragon_spine.model\"     \n"
-                               "   surrounded.top.label    : string = \"Spine\"                  \n"
-                               "   surrounded.bottom.model : string = \"dragon_legs.model\"      \n"
-                               "   surrounded.bottom.label : string = \"Legs\"                   \n"
+                               "   surrounded.front_model  : string = \"dragon_head.model\"      \n"
+                               "   surrounded.front_label  : string = \"Head\"                   \n"
+                               "   surrounded.back_model   : string = \"dragon_tail.model\"      \n"
+                               "   surrounded.back_label   : string = \"Tail\"                   \n"
+                               "   surrounded.left_model   : string = \"dragon_left_wing.model\" \n"
+                               "   surrounded.left_label   : string = \"LeftWing\"               \n"
+                               "   surrounded.right_model  : string = \"dragon_right_wing.model\"\n"
+                               "   surrounded.right_label  : string = \"RightWing\"              \n"
+                               "   surrounded.top_model    : string = \"dragon_spine.model\"     \n"
+                               "   surrounded.top_label    : string = \"Spine\"                  \n"
+                               "   surrounded.bottom_model : string = \"dragon_legs.model\"      \n"
+                               "   surrounded.bottom_label : string = \"Legs\"                   \n"
                                "   surrounded.centered_x   : boolean = 0                         \n"
                                "   surrounded.centered_y   : boolean = 1                         \n"
                                "   surrounded.centered_z   : boolean = 0                         \n"

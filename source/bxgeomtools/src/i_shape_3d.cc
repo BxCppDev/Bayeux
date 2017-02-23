@@ -20,21 +20,22 @@ namespace geomtools {
 
   using namespace std;
 
+  // static
   const double i_shape_3d::DEFAULT_SKIN      = GEOMTOOLS_DEFAULT_TOLERANCE;
   const double i_shape_3d::ZERO_SKIN         = GEOMTOOLS_ZERO_TOLERANCE;
   const double i_shape_3d::USING_PROPER_SKIN = GEOMTOOLS_PROPER_TOLERANCE;
 
   // static
-  const std::string i_shape_3d::volume_key()
+  const std::string & i_shape_3d::volume_key()
   {
-    static std::string _key("shape_3d.volume");
+    static const std::string _key("shape_3d.volume");
     return _key;
   }
 
   // static
-  const std::string i_shape_3d::surface_key()
+  const std::string & i_shape_3d::surface_key()
   {
-    static std::string _key("shape_3d.surface");
+    static const std::string _key("shape_3d.surface");
     return _key;
   }
 
@@ -175,116 +176,75 @@ namespace geomtools {
     return false;
   }
 
-  bool i_shape_3d::is_stackable(const i_shape_3d & a_shape)
+  bool i_shape_3d::is_native_stackable() const
   {
-    if (a_shape.has_stackable_data()) {
-      if (a_shape.get_stackable_data().is_valid()) {
-        return true;
-      } else {
-        DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
-                       "Stackable data is invalid for shape '"
-                       << a_shape.get_shape_name() << "'!");
-      }
-    }
     const i_stackable * the_stackable
-      = dynamic_cast<const i_stackable *>(&a_shape);
-    if (the_stackable != nullptr) {
-      return true;
-    }
-    return false;
+      = dynamic_cast<const i_stackable *>(this);
+    return the_stackable != nullptr;
   }
 
-  bool i_shape_3d::is_xmin_stackable(const i_shape_3d & a_shape)
-  {
-    if (is_stackable(a_shape)) return true;
-    return false;
-  }
+  // // static
+  // bool i_shape_3d::is_stackable(const i_shape_3d & a_shape)
+  // {
+  //   if (a_shape.has_stackable_data()) {
+  //     if (a_shape.get_stackable_data().is_valid()) {
+  //       return true;
+  //     } else {
+  //       DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+  //                      "Stackable data is invalid for shape '"
+  //                      << a_shape.get_shape_name() << "'!");
+  //     }
+  //   }
+  //   return a_shape.is_native_stackable();
+  // }
 
-  bool i_shape_3d::is_xmax_stackable (const i_shape_3d & a_shape)
-  {
-    if (is_stackable (a_shape)) return true;
-    return false;
-  }
-
-  bool i_shape_3d::is_ymin_stackable(const i_shape_3d & a_shape)
-  {
-    if (is_stackable (a_shape)) return true;
-    return false;
-  }
-
-  bool i_shape_3d::is_ymax_stackable(const i_shape_3d & a_shape)
-  {
-    if (is_stackable (a_shape)) return true;
-    return false;
-  }
-
-  bool i_shape_3d::is_zmin_stackable(const i_shape_3d & a_shape)
-  {
-    if (is_stackable (a_shape)) return true;
-    return false;
-  }
-
-  bool i_shape_3d::is_zmax_stackable(const i_shape_3d & a_shape)
-  {
-    if (is_stackable (a_shape)) return true;
-     return false;
-  }
-
-  /*
-  bool i_shape_3d::pickup_stackable_with_properties(const i_shape_3d & a_shape,
-                                                    stackable_data & a_stackable_data)
-  {
-    bool ok = false;
-    ok = i_shape_3d::pickup_stackable (a_shape, a_stackable_data);
-    if (ok) {
-      if (stackable::has_xmin (a_shape.get_auxiliaries ())) {
-        a_stackable_data.xmin = stackable::get_xmin (a_shape.get_auxiliaries (), -1.0);
-      }
-      if (stackable::has_xmax (a_shape.get_auxiliaries ())) {
-        a_stackable_data.xmax = stackable::get_xmax (a_shape.get_auxiliaries (), -1.0);
-      }
-      if (stackable::has_ymin (a_shape.get_auxiliaries ())) {
-        a_stackable_data.ymin = stackable::get_ymin (a_shape.get_auxiliaries (), -1.0);
-      }
-      if (stackable::has_ymax (a_shape.get_auxiliaries ())) {
-        a_stackable_data.ymax = stackable::get_ymax (a_shape.get_auxiliaries (), -1.0);
-      }
-      if (stackable::has_zmin (a_shape.get_auxiliaries ())) {
-        a_stackable_data.zmin = stackable::get_zmin (a_shape.get_auxiliaries (), -1.0);
-      }
-      if (stackable::has_zmax (a_shape.get_auxiliaries ())) {
-        a_stackable_data.zmax = stackable::get_zmax (a_shape.get_auxiliaries (), -1.0);
-      }
-    }
-    return ok;
-  }
-  */
-
+  // static
   bool i_shape_3d::pickup_stackable(const i_shape_3d & a_shape,
                                     stackable_data & a_stackable_data)
   {
-    a_stackable_data.invalidate();
-    bool ok = false;
+    stackable_data sd;
+    const i_stackable * the_stackable
+      = dynamic_cast<const i_stackable *> (&a_shape);
+    if (the_stackable != nullptr) {
+      // First initialize the SD with native stackability informations from the stackable shape itself:
+      sd.xmin = the_stackable->get_xmin();
+      sd.xmax = the_stackable->get_xmax();
+      sd.ymin = the_stackable->get_ymin();
+      sd.ymax = the_stackable->get_ymax();
+      sd.zmin = the_stackable->get_zmin();
+      sd.zmax = the_stackable->get_zmax();
+    }
     if (a_shape.has_stackable_data()) {
-      if (a_shape.get_stackable_data().is_valid()) {
-        a_stackable_data = a_shape.get_stackable_data();
-        ok =  true;
+      // Then overwrite stacking informations with enforced plugged stackable data, if any:
+      if (a_shape._stackable_data_->has_xmin()) {
+        sd.xmin = a_shape._stackable_data_->get_xmin();
+      }
+      if (a_shape._stackable_data_->has_xmax()) {
+        sd.xmax = a_shape._stackable_data_->get_xmax();
+      }
+      if (a_shape._stackable_data_->has_ymin()) {
+        sd.ymin = a_shape._stackable_data_->get_ymin();
+      }
+      if (a_shape._stackable_data_->has_ymax()) {
+        sd.ymax = a_shape._stackable_data_->get_ymax();
+      }
+      if (a_shape._stackable_data_->has_zmin()) {
+        sd.zmin = a_shape._stackable_data_->get_zmin();
+      }
+      if (a_shape._stackable_data_->has_zmax()) {
+        sd.zmax = a_shape._stackable_data_->get_zmax();
       }
     }
-    if (! ok) {
-      const i_stackable * the_stackable
-        = dynamic_cast<const i_stackable *> (&a_shape);
-      if (the_stackable != 0) {
-        a_stackable_data.xmin = the_stackable->get_xmin();
-        a_stackable_data.xmax = the_stackable->get_xmax();
-        a_stackable_data.ymin = the_stackable->get_ymin();
-        a_stackable_data.ymax = the_stackable->get_ymax();
-        a_stackable_data.zmin = the_stackable->get_zmin();
-        a_stackable_data.zmax = the_stackable->get_zmax();
-        ok = true;
-      }
-    }
-    return ok;
+    a_stackable_data = sd;
+    return a_stackable_data.is_valid_very_weak();
+  }
+
+  // static
+  bool i_shape_3d::check_stackability(const i_shape_3d & shape_, const stackable::stackability_mode sm_)
+  {
+    stackable_data sd;
+    pickup_stackable(shape_, sd);
+    return sd.check(sm_);
   }
 
   double i_shape_3d::get_skin(double a_skin) const
@@ -319,6 +279,7 @@ namespace geomtools {
 
   const stackable_data & i_shape_3d::get_stackable_data() const
   {
+    DT_THROW_IF(!has_stackable_data(), std::logic_error, "No plugged stackable data!");
     return *_stackable_data_;
   }
 
@@ -705,12 +666,12 @@ namespace geomtools {
       _bounding_data_.tree_dump(a_out, "", indent2_oss.str());
     }
 
-    if (i_shape_3d::is_stackable(*this)) {
+    if (i_shape_3d::check_stackability(*this, stackable::STACKABILITY_VERY_WEAK)) {
       stackable_data SD;
       i_shape_3d::pickup_stackable(*this, SD);
       a_out << a_indent << datatools::i_tree_dumpable::tag
             << "Stackable data : ";
-      if (_stackable_data_ != nullptr) {
+      if (has_stackable_data()) {
         a_out << "[plugged]";
       } else {
         a_out << "[native]";
@@ -732,7 +693,6 @@ namespace geomtools {
       }
       a_out << std::endl;
       // if (has_computed_faces()) {
-
       // }
     }
 

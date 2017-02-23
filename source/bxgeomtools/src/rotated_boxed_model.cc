@@ -177,15 +177,16 @@ namespace geomtools {
                    "The rotating model '" << the_model->get_name () << "' is not stackable !");
       the_model = found->second;
       // check if the model is stackable:
-      DT_THROW_IF (! i_shape_3d::is_stackable (the_model->get_logical ().get_shape ()),
+      DT_THROW_IF (! i_shape_3d::check_stackability(the_model->get_logical().get_shape(),
+                                                    stackable::STACKABILITY_STRONG),
                    std::logic_error,
-                   "The rotating model '" << the_model->get_name () << "' is not stackable !");
+                   "The rotating model '" << the_model->get_name () << "' is not stackable on X/Y/Z axis!");
       set_boxed_model (*the_model);
     }
 
     const i_shape_3d & the_shape = _boxed_model_->get_logical ().get_shape ();
 
-    // try to get a stackable data from the shape:
+    // try to get stackable data from the shape:
     stackable_data the_SD;
     DT_THROW_IF (! i_shape_3d::pickup_stackable (the_shape, the_SD),
                  std::logic_error,
@@ -273,9 +274,9 @@ namespace geomtools {
           the_new_SD.ymin = -gxmax;
         }
       }
-      DT_LOG_TRACE (get_logging_priority (), "New SD:");
-      if (get_logging_priority () >= datatools::logger::PRIO_TRACE) {
-        the_new_SD.tree_dump (std::cerr);
+      DT_LOG_TRACE(get_logging_priority (), "New SD:");
+      if (datatools::logger::is_trace(get_logging_priority())) {
+        the_new_SD.tree_dump(std::cerr, "", "[trace] ");
       }
       x = (the_new_SD.xmax - the_new_SD.xmin);
       y = (the_new_SD.ymax - the_new_SD.ymin);

@@ -16,6 +16,9 @@
 # Geometry #
 ############
 
+#@description The mother volume
+envelope_shape  : string = "cylinder"
+
 #@description The default length unit
 length_unit : string = "mm"
 

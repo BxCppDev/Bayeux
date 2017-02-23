@@ -1,15 +1,13 @@
 /// \file geomtools/stacked_model.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
- * Last modified: 2010-10-16
+ * Last modified: 2017-02-23
  *
  * License:
  *
  * Description:
  *
  *   Geometry model with multiple stacked boxes.
- *
- * History:
  *
  */
 
@@ -26,7 +24,7 @@
 #include <geomtools/physical_volume.h>
 #include <geomtools/placement.h>
 #include <geomtools/box.h>
-//#include <geomtools/cylinder.h>
+#include <geomtools/cylinder.h>
 #include <geomtools/model_with_internal_items_tools.h>
 
 namespace geomtools {
@@ -103,9 +101,16 @@ namespace geomtools {
 
     bool is_stacking_along_z () const;
 
+    void set_envelope_shape(const std::string &);
+
+    const std::string & get_envelope_shape() const;
+
+    //
     virtual const geomtools::box & get_box () const;
 
     const geomtools::box & get_solid () const;
+
+    const geomtools::cylinder & get_cyl_solid () const;
 
     size_t get_number_of_stacked_models () const;
 
@@ -152,8 +157,9 @@ namespace geomtools {
     int               _stacking_axis_; //!< Stacking axis
     stacked_dict_type _stacked_models_; //!< Dictionary of stacked models
     labels_dict_type  _labels_; //!< Label associated to the stacked models
+    std::string       _envelope_shape_; //!< Type of mother envelope solid (box/cylinder)
     geomtools::box    _solid_; //!< Mother solid (box)
-    //geomtools::cylinder _cyl_solid_;
+    geomtools::cylinder _cyl_solid_; //!< Mother solid (cylinder)
     double            _numerics_play_; //!< Numeric play
     double            _mechanics_play_; //!< Mechanics play
 

@@ -1,16 +1,12 @@
 /// \file geomtools/i_stackable.h
 /* Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2010-04-02
- * Last modified: 2015-04-25
- *
- * License:
+ * Last modified: 2017-02-22
  *
  * Description:
  *
- *   Abstract interface for stackable shape objects.
- *
- * History:
- *
+ *   Abstract interface for stackable shape objects
+ *   and stackable data.
  */
 
 #ifndef GEOMTOOLS_I_STACKABLE_H
@@ -25,6 +21,7 @@
 #include <datatools/utils.h>
 #include <datatools/properties.h>
 #include <datatools/i_tree_dump.h>
+#include <datatools/bit_mask.h>
 
 // This project:
 #include <geomtools/utils.h>
@@ -37,6 +34,7 @@ namespace geomtools {
 
   public:
 
+    i_stackable();
     virtual ~i_stackable();
     bool has_xmin() const;
     bool has_xmax() const;
@@ -67,6 +65,25 @@ namespace geomtools {
     static const std::string STACKABLE_ZMAX_PROPERTY;
     static const std::string STACKABLE_PLAY_PROPERTY;
     static const std::string STACKABLE_LIMITS_PROPERTY;
+
+    enum stackability_mode {
+      STACKABILITY_NONE      = 0,                           // 00000000
+      STACKABILITY_XMIN      = datatools::bit_mask::bit00,  // 00000001
+      STACKABILITY_XMAX      = datatools::bit_mask::bit01,  // 00000010
+      STACKABILITY_X         = STACKABILITY_XMIN | STACKABILITY_XMAX,     // 00000011
+      STACKABILITY_YMIN      = datatools::bit_mask::bit02,  // 00000100
+      STACKABILITY_YMAX      = datatools::bit_mask::bit03,  // 00001000
+      STACKABILITY_Y         = STACKABILITY_YMIN | STACKABILITY_YMAX,     // 00001100
+      STACKABILITY_ZMIN      = datatools::bit_mask::bit04,  // 00010000
+      STACKABILITY_ZMAX      = datatools::bit_mask::bit05,  // 00100000
+      STACKABILITY_Z         = STACKABILITY_ZMIN | STACKABILITY_ZMAX,     // 00110000
+      STACKABILITY_XY        = STACKABILITY_X | STACKABILITY_Y,           // 00001111
+      STACKABILITY_XZ        = STACKABILITY_X | STACKABILITY_Z,           // 00110011
+      STACKABILITY_YZ        = STACKABILITY_Y | STACKABILITY_Z,           // 00111100
+      STACKABILITY_VERY_WEAK = datatools::bit_mask::bit06,  // 01000000
+      STACKABILITY_WEAK      = datatools::bit_mask::bit07,  // 10000000
+      STACKABILITY_STRONG    = STACKABILITY_X | STACKABILITY_Y | STACKABILITY_Z  // 00111111
+    };
 
     static std::string make_key(const std::string & flag_);
 
@@ -141,10 +158,19 @@ namespace geomtools {
   };
 
   /// \brief Data for stacking along X, Y and/or Z axis
-  class stackable_data : public i_stackable,
-                         public datatools::i_tree_dumpable
+  class stackable_data
+    : public i_stackable
+    , public datatools::i_tree_dumpable
   {
   public:
+
+    /// Constructor
+    stackable_data();
+
+    /// Destructor
+    virtual ~stackable_data();
+
+    bool check(const stackable::stackability_mode flags_ = stackable::STACKABILITY_STRONG) const;
 
     /// Check the validity of stacking information along the X axis
     bool is_valid_x() const;
@@ -155,41 +181,38 @@ namespace geomtools {
     /// Check the validity of stacking information along the Z axis
     bool is_valid_z() const;
 
-    /// Check the validity of stacking information
+    /// Check the validity of stacking information for all axis
     bool is_valid() const;
 
-    /// Check the validity of stacking information
+    /// Check the validity of stacking information for one given axis
     bool is_valid_by_axis(axis_type) const;
 
-    /// Check the validity of stacking information
+    /// Check the validity of stacking information at least for one axis
     bool is_valid_weak() const;
+
+    /// Check if at least one stacking information is set (X/Y/Z, min/max)
+    bool is_valid_very_weak() const;
 
     /// Invalidate
     void invalidate();
 
-    /// Constructor
-    stackable_data();
-
-    /// Destructor
-    virtual ~stackable_data();
-
     /// Return the minimum X
-    virtual double get_xmin() const {return xmin;}
+    virtual double get_xmin() const;
 
     /// Return the maximum X
-    virtual double get_xmax() const {return xmax;}
+    virtual double get_xmax() const;
 
     /// Return the minimum Y
-    virtual double get_ymin() const {return ymin;}
+    virtual double get_ymin() const;
 
     /// Return the maximum Y
-    virtual double get_ymax() const {return ymax;}
+    virtual double get_ymax() const;
 
     /// Return the minimum Z
-    virtual double get_zmin() const {return zmin;}
+    virtual double get_zmin() const;
 
     /// Return the maximum Z
-    virtual double get_zmax() const {return zmax;}
+    virtual double get_zmax() const;
 
     /// Smart print
     virtual void tree_dump(std::ostream & out_         = std::clog,
@@ -202,6 +225,9 @@ namespace geomtools {
 
     /// Initialization
     bool initialize(const datatools::properties & config_);
+
+    /// Reset
+    void reset();
 
   public:
 
@@ -218,10 +244,8 @@ namespace geomtools {
 
 #endif // GEOMTOOLS_I_STACKABLE_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

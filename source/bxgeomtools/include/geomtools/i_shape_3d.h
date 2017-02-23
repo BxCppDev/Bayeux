@@ -1,15 +1,11 @@
 // \file geomtools/i_shape_3d.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-05-23
- * Last modified: 2015-03-22
- *
- * License:
+ * Last modified: 2017-02-22
  *
  * Description:
  *
- *  Interface for 3D shaped volumes
- *
- * History:
+ *  Interface for all 3D shaped volumes
  *
  */
 
@@ -47,9 +43,10 @@ namespace geomtools {
   class i_shape_2d;
 
   /// \brief Mother abstract class for all 3D solid shapes
-  class i_shape_3d : public i_object_3d,
-                     public i_wires_3d_rendering,
-                     public i_find_intercept
+  class i_shape_3d
+    : public i_object_3d
+    , public i_wires_3d_rendering
+    , public i_find_intercept
   {
   public:
 
@@ -67,10 +64,10 @@ namespace geomtools {
     static double get_proper_skin();
 
     // Return the property key for the volume property
-    static const std::string volume_key();
+    static const std::string & volume_key();
 
     // Return the property key for the surface property
-    static const std::string surface_key();
+    static const std::string & surface_key();
 
     /* Check if a 3D-shape can be stacked using some
      *  stacking algorithms. There are 2 checks:
@@ -79,39 +76,33 @@ namespace geomtools {
      *  check #2: if check #1 fails, check if the instance inherits
      *  the 'i_stackable' interface.
      */
-    static bool is_stackable(const i_shape_3d &);
+    // static bool is_stackable(const i_shape_3d &);
 
-    static bool is_xmin_stackable(const i_shape_3d &);
-
-    static bool is_xmax_stackable(const i_shape_3d &);
-
-    static bool is_ymin_stackable(const i_shape_3d &);
-
-    static bool is_ymax_stackable(const i_shape_3d &);
-
-    static bool is_zmin_stackable(const i_shape_3d &);
-
-    static bool is_zmax_stackable(const i_shape_3d &);
+    // Check if the shape is natively stackable (i.e. inherits the 'geomtools::i_stackable' interface)
+    bool is_native_stackable() const;
 
     /// Initialize a 'stackable_data' instance from stackable data attached to the 3D-shape
     static bool pickup_stackable(const i_shape_3d &, stackable_data &);
 
-    /// Return the stackable data associated to the shape
+    /// Check the stackability of the shape (from native or enforced stackable infos)
+    static bool check_stackability(const i_shape_3d &, const stackable::stackability_mode);
+
+    /// Return the enforced stackable data associated to the shape
     const stackable_data & get_stackable_data() const;
 
-    /// Check if some stackable data are available
+    /// Check if some enforced stackable data are available
     bool has_stackable_data() const;
 
-    /// Check if some stackable data are available and owned by the shape itself
+    /// Check if some enforced stackable data are available and owned by the shape itself
     bool owns_stackable_data() const;
 
-    /// Set external stackable data
+    /// Set external enforced stackable data
     void set_stackable_data(const stackable_data & a_stackable_data);
 
-    /// Set internal stackable data
+    /// Set internal enforced stackable data
     void set_stackable_data(const stackable_data * a_stackable_data);
 
-    /// Reset stackable data
+    /// Reset enforced stackable data
     void reset_stackable_data();
 
     /// Return the dimension (3)
@@ -143,12 +134,6 @@ namespace geomtools {
 
     /// Destructor
     virtual ~i_shape_3d();
-
-    // /// Initialize the 3D-shape from properties
-    // virtual void initialize(const datatools::properties &, const handle_dict_type * = 0);
-
-    // /// Reset
-    // virtual void reset();
 
     /// Check if the solid is composite
     virtual bool is_composite() const;
@@ -333,7 +318,7 @@ namespace geomtools {
 
     /// Parse stackable data from a properties container
     /**
-     * Example of an enforced stackable data:
+     * Example of an enforced stackable data for all axis:
      *  @code
      *  enforce_stackable_data : boolean = true
      *  stackable.xmin : real as length = 3.5 cm
@@ -378,10 +363,8 @@ BOOST_CLASS_VERSION(geomtools::i_shape_3d, 0)
 
 #endif // GEOMTOOLS_I_SHAPE_3D_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
