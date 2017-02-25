@@ -1530,7 +1530,7 @@ namespace mctools {
       //   for (std::vector<G4LogicalVolume*>::const_iterator i = g4_LV_store->begin();
       //        i != g4_LV_store->end();
       //        i++) {
-      //     std::cerr << "DEVEL: detector_construction::_construct_regions: "
+      //     std::cerr << "DEVEL: dœetector_construction::_construct_regions: "
       //               << "Logical volume '" << (*i)->GetName() << "'" << std::endl;
       //   }
       // }
@@ -1547,7 +1547,7 @@ namespace mctools {
           std::string logical_volume_name = *j;
           G4String g4_logical_volume_name = logical_volume_name.c_str();
           G4LogicalVolume * a_logical = g4_LV_store->GetVolume(g4_logical_volume_name, false);
-          if (a_logical != 0) {
+          if (a_logical != nullptr) {
             the_region->AddRootLogicalVolume(a_logical);
           } else {
             // DT_LOG_WARNING(_logprio(),"No logical volume named '"
