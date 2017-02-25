@@ -2,8 +2,8 @@
 //! \brief
 //! \details
 //
-// Copyright (c) 2007-2016 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2007-2016 by Université de Caen
+// Copyright (c) 2007-2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2007-2017 by Université de Caen
 //
 // This file is part of Bayeux.
 //

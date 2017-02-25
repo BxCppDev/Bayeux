@@ -789,7 +789,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genvtx::manager,ocd_)
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("prng_id")
-      .set_terse_description("The type of the embeded PRNG")
+      .set_terse_description("The type of the embedded PRNG")
       .set_traits(datatools::TYPE_STRING)
       .set_mandatory(false)
       .set_complex_triggering_conditions(true)
