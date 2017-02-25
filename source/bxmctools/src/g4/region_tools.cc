@@ -73,7 +73,7 @@ namespace mctools {
         }
       }
 
-      if (geom_manager_) {
+      if (geom_manager_ != nullptr) {
         // Additional criteria to determine which volumes are in the region:
         // Only one of these criteria can be used:
         bool use_materials     = false; // volume use a specific material from an explicit list of materials
