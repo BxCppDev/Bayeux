@@ -425,6 +425,7 @@ namespace genbb {
         out << indent;
         const std::string& pg_name = it->first;
         const detail::pg_entry_type& pg_record = it->second;
+        const std::string& pg_desc = it->second.get_config().get_description();
 
         if (print_mode == "tree") {
           // tree mode:
@@ -435,7 +436,9 @@ namespace genbb {
           }
           out.setf(std::ios::left, std::ios::adjustfield);
           out.width(30);
-          out << pg_name << " : " << pg_record.get_id () << " ";
+          out << pg_name << " : ";
+          out << pg_desc << " : ";
+          out << pg_record.get_id () << " ";
           out << '(';
           if (pg_record.is_initialized()) {
             out << "initialized";
@@ -446,7 +449,8 @@ namespace genbb {
           out << std::endl;
         } else if (print_mode == "raw") {
           // raw mode:
-          out << pg_name << std::endl;
+          out << pg_name << ':' << pg_desc << ':' << pg_record.get_id()
+              << std::endl;
         }
       }
     }

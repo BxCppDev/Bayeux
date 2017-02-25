@@ -158,7 +158,12 @@ namespace genbb {
     // DT_THROW_IF(! single_particle_generator::particle_name_is_valid(particle_name),
     //              logic_error,
     //              "Invalid particle name '" << particle_name << "' !");
-    _particle_name_ = new_value_;
+    std::string n = new_value_;
+    if (n == "muon_minus") n = "mu-";
+    else if (n == "muon_plus") n = "mu+";
+    else if (n == "n") n = "neutron";
+    else if (n == "p") n = "proton";
+    _particle_name_ = n;
     return;
   }
 
@@ -182,10 +187,14 @@ namespace genbb {
     if (particle_name_ == "e+")       return true;
     if (particle_name_ == "gamma")    return true;
     if (particle_name_ == "alpha")    return true;
+    if (particle_name_ == "n")        return true;
     if (particle_name_ == "neutron")  return true;
+    if (particle_name_ == "p")        return true;
     if (particle_name_ == "proton")   return true;
     if (particle_name_ == "mu-")      return true;
-    if (particle_name_ == "mu+")      return true;
+    if (particle_name_ == "muon_minus") return true;
+    if (particle_name_ == "mu+")        return true;
+    if (particle_name_ == "muon_plus")  return true;
     return false;
   }
 
@@ -209,16 +218,20 @@ namespace genbb {
       mass = 3.727417 * CLHEP::GeV;
     }
 
-    if (particle_name_ == "neutron") {
+    if (particle_name_ == "neutron" ||
+        particle_name_ == "n") {
       mass = CLHEP::neutron_mass_c2;
     }
 
-    if (particle_name_ == "proton") {
+    if (particle_name_ == "proton" ||
+        particle_name_ == "p") {
       mass = CLHEP::proton_mass_c2;
     }
 
     if (particle_name_ == "mu-" ||
-        particle_name_ == "mu+") {
+        particle_name_ == "mu+" ||
+        particle_name_ == "muon_minus" ||
+        particle_name_ == "muon_plus") {
       mass = 105.658369 * CLHEP::MeV;
     }
 
@@ -1115,12 +1128,13 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
   {
     configuration_property_description & cpd = ocd_.add_property_info();
     cpd.set_name_pattern("seed")
-      .set_terse_description("Embeded PRNG's seed")
+      .set_terse_description("Embedded PRNG's seed")
       .set_traits(datatools::TYPE_INTEGER)
       .set_mandatory(false)
       .set_complex_triggering_conditions(true)
-      .set_long_description("The seed of the embeded PRNG.                 \n"
-                            "Not used if some external PRNG is used.       \n"
+      .set_long_description("The seed of the embedded PRNG.          \n"
+                            "Not used if some external PRNG is used  \n"
+                            "(genbb::manager).                       \n"
                             )
       .add_example("Set the PRNG seed with an arbitrary value::   \n"
                    "                                              \n"
@@ -1143,10 +1157,10 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
                             "  * ``\"positron\"`` or ``\"e+\"``            \n"
                             "  * ``\"gamma\"``                             \n"
                             "  * ``\"alpha\"``                             \n"
-                            "  * ``\"neutron\"``                           \n"
-                            "  * ``\"proton\"``                            \n"
-                            "  * ``\"mu-\"``                               \n"
-                            "  * ``\"mu+\" ``                              \n"
+                            "  * ``\"neutron\"`` or ``\"n\"``              \n"
+                            "  * ``\"proton\"`` or ``\"p\"``               \n"
+                            "  * ``\"muon_minus\"`` or ``\"mu-\"``         \n"
+                            "  * ``\"muon_plus\"`` or ``\"mu+\"``          \n"
                             "                                              \n"
                             )
       .add_example("Generate gamma particles::                    \n"
@@ -1485,7 +1499,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
 
   ocd_.set_configuration_hints("Here are some typical configurations:                       \n"
                                "                                                            \n"
-                               "***Example 1***                                             \n"
+                               "**Example 1**                                               \n"
                                "                                                            \n"
                                "Monokinetic gamma::                                         \n"
                                "                                                            \n"
@@ -1497,7 +1511,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
                                "  energy_unit        : string = \"keV\"                     \n"
                                "  energy             : real as energy = 511 keV             \n"
                                "                                                            \n"
-                               "***Example 2***                                             \n"
+                               "**Example 2**                                               \n"
                                "                                                            \n"
                                "Gamma with gaussian energy::                                \n"
                                "                                                            \n"
@@ -1510,7 +1524,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
                                "  mean_energy        : real as energy = 1.0 MeV             \n"
                                "  sigma_energy       : real as energy = 100.0 keV           \n"
                                "                                                            \n"
-                               "***Example 3***                                             \n"
+                               "**Example 3**                                               \n"
                                "                                                            \n"
                                "Gamma with flat ranged energy::                             \n"
                                "                                                            \n"
@@ -1523,7 +1537,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::single_particle_generator,ocd_)
                                "  min_energy         : real as energy = 50 keV              \n"
                                "  max_energy         : real as energy = 3.0 MeV             \n"
                                "                                                            \n"
-                               "***Example 4***                                             \n"
+                               "**Example 4**                                               \n"
                                "                                                            \n"
                                "Gamma with energy PDF from a spectrum::                     \n"
                                "                                                            \n"

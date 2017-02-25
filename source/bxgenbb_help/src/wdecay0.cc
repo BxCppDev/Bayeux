@@ -466,7 +466,7 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
       .set_mandatory(false)
       .set_long_description("The name of the generator. This can only be   \n"
                             "used if the name has not been set by some     \n"
-                            "external process.                             \n"
+                            "external process (i.e. genbb::manager).       \n"
                             "                                              \n"
                             "Example::                                     \n"
                             "                                              \n"
@@ -485,6 +485,8 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::genbb::wdecay0,ocd_)
       .set_complex_triggering_conditions(true)
       .set_long_description("The seed of the embedded PRNG.                \n"
                             "Not used if some external PRNG is used.       \n"
+                            "(i.e. genbb::manager).                        \n"
+                            "                                              \n"
                             "Example::                                     \n"
                             "                                              \n"
                             "  seed: integer = 314159                      \n"

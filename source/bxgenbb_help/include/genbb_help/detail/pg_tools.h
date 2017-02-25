@@ -4,12 +4,6 @@
  * Creation date: 2013-02-25
  * Last modified: 2013-02-25
  *
- * License:
- *
- * Description:
- *
- * History:
- *
  */
 
 #ifndef GENBB_DETAIL_PG_TOOLS_H

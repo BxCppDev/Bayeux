@@ -1924,7 +1924,7 @@ namespace genbb {
       std::string print_mode = _params_.list_print_mode;
       std::string title;
       if (print_mode == "tree") {
-        title = "List of particle generators";
+        title = "List of currently available primary particle event generators";
       }
       _manager_.print_particle_generators(std::cout, title, "", print_mode);
     }
