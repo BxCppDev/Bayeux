@@ -76,8 +76,10 @@ public:
     uint32_t    run_start;
     std::string base_dir;
     std::string pattern;
-    std::string list_file;
+    std::string run_list_file;
     std::string list_mount_point;
+    bool        no_safe_checks = false;
+    bool        no_run_list_file = false;
   };
 
 public:
@@ -145,9 +147,10 @@ int main(int argc_, char ** argv_)
     app.run();
 
   } catch (std::exception & x) {
-    std::cerr << "Seed generation failed with exception:\n" << x.what() << "\n";
+    std::cerr << "[error] Seed generation failed with exception:\n" << x.what() << "\n";
     error_code = EXIT_FAILURE;
   } catch (...) {
+    std::cerr << "[error] Seed generation failed with unexpected exception." << "\n";
     error_code = EXIT_FAILURE;
   }
 
@@ -165,8 +168,10 @@ void g4_seed_generator::parameters::set_defaults()
   run_start      = 0;
   base_dir       = "bxg4_seed_set";
   pattern        = "seeds_%n.conf";
-  list_file      = "runs.lis";
+  run_list_file      = "runs.lis";
   list_mount_point = "";
+  no_safe_checks = false;
+  no_run_list_file = false;
 }
 
 void g4_seed_generator::parameters::print_usage(const boost::program_options::options_description & opts_,
@@ -221,19 +226,24 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
      ->value_name("pattern"),
      "Set the pattern of the generated incremental seed file")
 
-    ("list,t",
-     po::value<std::string>(&params_.list_file)
+    ("run-list,t",
+     po::value<std::string>(&params_.run_list_file)
      ->default_value("runs.lis")
      ->value_name("name"),
      "Set the name of the run list file")
 
-    // ("mount,m",
-    //  po::value<std::string>(&params_.list_mount_point)
-    //  ->default_value("")
-    //  ->value_name("env"),
-    //  "Set the mount point of the listed seed files.\n"
-    //  "Examples: \"@work\" \"${WORK_DIR}\" \"$WORK_DIR\" \n"
-    //  )
+    ("no-safe-checks,k",
+     po::value<bool>(&params_.no_safe_checks)
+     ->zero_tokens()
+     ->default_value(false),
+     "Do not perform safe checks (allow overwriting of existing output directory and files...)")
+
+    ("no-run-list-file,T",
+     po::value<bool>(&params_.no_run_list_file)
+     ->zero_tokens()
+     ->default_value(false),
+     "Do not generate the run list file")
+
     ;
 }
 
@@ -328,12 +338,15 @@ void g4_seed_generator::run()
 
   // WRITE
   // Require unique directory
-  DT_THROW_IF(boost::filesystem::exists(_params_.base_dir),
-              std::runtime_error,
-              "Requested output directory '" << _params_.base_dir << "' already exists");
-  DT_THROW_IF(!boost::filesystem::create_directories(_params_.base_dir),
-              std::runtime_error,
-              "Could not create directories '" << _params_.base_dir << "'");
+  if (boost::filesystem::exists(_params_.base_dir)) {
+    DT_THROW_IF(! _params_.no_safe_checks,
+                std::runtime_error,
+                "Requested output directory '" << _params_.base_dir << "' already exists");
+  } else {
+    DT_THROW_IF(!boost::filesystem::create_directories(_params_.base_dir),
+                std::runtime_error,
+                "Could not create directories '" << _params_.base_dir << "'");
+  }
 
   std::map<uint32_t, std::string> seedfiles_per_run;
   std::ostringstream list_out;
@@ -346,7 +359,9 @@ void g4_seed_generator::run()
       std::string test_path = path_pattern;
       datatools::fetch_path_with_env(test_path);
       if (boost::filesystem::exists(test_path)) {
-        DT_THROW(std::logic_error, "File '" << path_pattern << "' already exists");
+        DT_THROW_IF(! _params_.no_safe_checks,
+                    std::logic_error,
+                    "File '" << path_pattern << "' already exists");
       }
     }
     std::ofstream fout(path_pattern.c_str());
@@ -355,44 +370,46 @@ void g4_seed_generator::run()
     seedfiles_per_run[irun] = path_pattern;
   }
 
-  std::unique_ptr<std::ofstream> flist;
-  std::string list_file_path;
-  if (!_params_.list_file.empty()) {
+  std::unique_ptr<std::ofstream> frunlist;
+  std::string run_list_file_path;
+  if (!_params_.no_run_list_file && !_params_.run_list_file.empty()) {
     bool full_list_path = false;
     {
-      std::string test_lis = _params_.list_file;
+      std::string test_lis = _params_.run_list_file;
       datatools::fetch_path_with_env(test_lis);
       if (test_lis.size() > 0) {
         if (test_lis[0] == '/') full_list_path = true;
       }
     }
     if (! full_list_path) {
-      list_file_path = _params_.base_dir + "/" + _params_.list_file;
+      run_list_file_path = _params_.base_dir + "/" + _params_.run_list_file;
     } else {
-      list_file_path = _params_.list_file;
+      run_list_file_path = _params_.run_list_file;
     }
-    boost::replace_all(list_file_path, "//", "/");
-    datatools::fetch_path_with_env(list_file_path);
-    if (boost::filesystem::exists(list_file_path)) {
-      DT_THROW(std::runtime_error, "File '" << list_file_path << "' already exists!");
+    boost::replace_all(run_list_file_path, "//", "/");
+    datatools::fetch_path_with_env(run_list_file_path);
+    if (boost::filesystem::exists(run_list_file_path)) {
+      DT_THROW_IF(! _params_.no_safe_checks,
+                  std::runtime_error,
+                  "File '" << run_list_file_path << "' already exists!");
     }
-    flist.reset(new std::ofstream);
-    flist->open(list_file_path.c_str());
-    if (!(*flist.get())) {
-      flist.reset();
-      DT_THROW(std::runtime_error, "Cannot open file '" << list_file_path << "'!");
+    frunlist.reset(new std::ofstream);
+    frunlist->open(run_list_file_path.c_str());
+    if (!(*frunlist.get())) {
+      frunlist.reset();
+      DT_THROW(std::runtime_error, "Cannot open file '" << run_list_file_path << "'!");
     }
   }
 
-  if (flist) {
+  if (frunlist) {
     for (const auto& iseedfile : seedfiles_per_run) {
-      *flist.get() << iseedfile.first << ' ';
+      *frunlist.get() << iseedfile.first << ' ';
       if (!_params_.list_mount_point.empty()) {
-        *flist.get() << _params_.list_mount_point;
-        if (_params_.list_mount_point[0] == '@') *flist.get() << ':';
-        if (_params_.list_mount_point[0] == '$') *flist.get() << '/';
+        *frunlist.get() << _params_.list_mount_point;
+        if (_params_.list_mount_point[0] == '@') *frunlist.get() << ':';
+        if (_params_.list_mount_point[0] == '$') *frunlist.get() << '/';
       }
-      *flist.get() << iseedfile.second << std::endl;
+      *frunlist.get() << iseedfile.second << std::endl;
     }
   }
 
