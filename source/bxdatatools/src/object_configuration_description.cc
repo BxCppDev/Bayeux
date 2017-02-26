@@ -727,7 +727,7 @@ namespace datatools {
       print_multi_lines(out_, _terse_description_, indent);
     }
 
-    out_ << std::endl << indent << "**General informations :** " << std::endl;
+    out_ << std::endl << indent << "**General informations:** " << std::endl;
 
     out_ << indent << std::endl;
 
@@ -800,7 +800,7 @@ namespace datatools {
         out_ << "``\"" << get_default_value_string() << "\"``";
       }
     } else {
-      out_ << "<none provided>";
+      out_ << "none";
     }
     out_ << std::endl;
 
@@ -868,29 +868,18 @@ namespace datatools {
     out_ << indent << std::endl;;
 
     if (has_long_description()) {
-      out_ << std::endl << indent << "**Detailed description :** " << std::endl;
+      out_ << std::endl << indent << "**Detailed description:**" << std::endl;
       out_ << indent << std::endl;
       print_multi_lines(out_, _long_description_, indent);
     }
 
     if (get_number_of_examples() > 0) {
-      // out_ << std::endl << indent << "**Example";
-      // if (get_number_of_examples() > 1) {
-      //   out_ << "s";
-      // }
-      // out_ << " :** " << std::endl;
       for (size_t i = 0; i < get_number_of_examples(); i++) {
-        // out_ << std::endl << indent << ".. topic:: Example ";
-        // if (get_number_of_examples() > 1) {
-        //   out_ << (i + 1);
-        // }
-        // out_ << std::endl;
-        // print_multi_lines(out_, get_example(i), indent + "   ");
-        out_ << std::endl << indent << "***Example ";
+        out_ << std::endl << indent << "**Example";
         if (get_number_of_examples() > 1) {
-          out_ << (i + 1);
+          out_ << " " << (i + 1);
         }
-        out_ <<  " :*** "    << std::endl;
+        out_ << ":**" << std::endl;
         out_ << indent << std::endl;
         print_multi_lines(out_, get_example(i), indent);
       }
@@ -1229,11 +1218,11 @@ namespace datatools {
       out_ << indent_ << "Examples" << std::endl;
       out_ << indent_ << "-------------------" << std::endl;
       for (size_t i = 0; i < _examples_.size(); i++) {
-        out_ << std::endl << indent_ << "***Example ";
+        out_ << std::endl << indent_ << "**Example ";
         if (get_number_of_examples() > 1) {
           out_ << (i + 1);
         }
-        out_ <<  " :*** "    << std::endl;
+        out_ <<  " :**" << std::endl;
         out_ << indent_ << std::endl;
         print_multi_lines(out_, _examples_[i], indent_);
 
