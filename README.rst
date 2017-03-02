@@ -1,11 +1,14 @@
-============================================================
-Bayeux C++ Library for Experimental Particle/Nuclear Physics
-============================================================
+================================================================
+Bayeux C++ Library for Experimental Particle and Nuclear Physics
+================================================================
 
 .. image:: source/bxbayeux/logo/logo_bayeux_240x200_transparent.png
+   :width: 200pt
 
 :Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
 :Date:    2017-03-12
+:Contact: bayeux@lpccaen.in2p3.fr
+:Version: 3.0.0-alpha
 
 .. contents::
    :depth: 3
@@ -56,7 +59,7 @@ emfield
   Electromagnetic field modelling and management.
 
 genbb_help
-  C++ port and  extensions to the Decay0/GENBB program by
+  C++ port and  extensions to the Genbb/Decay0 program by
   Vladimir Tretyak, providing input to simulation applications.
 
 genvtx
@@ -71,6 +74,10 @@ lahague
   Utilities for dosimetry and radioprotection.
 
 
+.. raw:: pdf
+
+   PageBreak oneColumn
+
 Naming and logo
 ---------------
 
@@ -83,19 +90,21 @@ the  City of  Bayeux  in December  2014 at  the  condition the  Bayeux
 software tools are distributed under an open source software license.
 
 
-
 Licensing
 ---------
 
 Please study the  file ``LICENSE.txt`` for the  distribution terms and
 conditions of use of Bayeux.
 
-Bayeux contains some code extracted  from the *Kitware System* library
-(OSI-approved BSD License),  the *BinReloc* library (Do  What The Fuck
-You Want To Public License, Version  2) and the *EOS portable archive*
-library (MIT License).  Vladimir Tretyak  has kindly accepted that the
-C++  wrapper and  C++ port  of  the original  GENBB/DECAY0 library  is
-published under the GPL 3 within Bayeux.
+Bayeux contains some code extracted  from :
+
+* the *Kitware System* library (OSI-approved BSD License),
+* the *BinReloc* library (Do  What The Fuck You Want To Public License, Version  2)
+* the *EOS portable archive* library (MIT License).
+
+Vladimir Tretyak has kindly accepted that the C++ wrapper and C++ port
+of  the original  Genbb/Decay0 library  is published  under the  GPL 3
+within Bayeux.
 
 
 .. raw:: pdf
@@ -117,6 +126,8 @@ diffusion   lists   hosted   by  the   IN2P3/CNRS   Computing   Center
  * ``bayeux-users-l@in2p3.fr`` : general discussion,
  * ``bayeux-geometry-l@in2p3.fr`` : dedicated to geometry modelling,
  * ``bayeux-simulation-l@in2p3.fr`` : dedicated to simulation and the Geant4 module.
+
+..
 
 ..
 
@@ -179,10 +190,11 @@ To install Bayeux, you first need the following software:
 Prerequisite Software
 ---------------------
 
--  **UNIX Operating System**:
+UNIX Operating System
+.....................
 
-   -  Linux
-   -  macOS 10.9 (Mavericks) or higher
+*  Linux
+*  macOS 10.9 (Mavericks) or higher
 
 We expect  Bayeux to  work on  most modern BSD  based Unices  or Linux
 distributions  derived from  Fedora(RedHat)  and  Debian provided  the
@@ -196,114 +208,118 @@ and test the following at present:
 If you have problems on systems other than these, please contact us,
 though support will be on a best effort basis.
 
--  **Core Software Required**:
+Core Software Required
+......................
 
-   -  CMake 3.3.0 or higher: http://www.cmake.org
-   -  C/C++ compiler supporting at least C++03 standard
-      (GNU/Clang/Intel)
+* CMake 3.3.0 or higher: http://www.cmake.org
+* C/C++ compiler supporting at least C++11 standard
+  (GNU/Clang/Intel)
 
 On Linux,  you should  install these through  the package  manager for
 your distribution. Some older  Linux systems (SL/CentOS, especially on
 clusters) may  not provide CMake  3.3. If this  is the case,  then you
 should download the latest Linux *binary .sh* file from:
 
--  http://www.cmake.org/cmake/resources/software.html
+  http://www.cmake.org/cmake/resources/software.html
 
 and follow the instructions on that page to install it.
 
 On macOS, simply install CMake from the latest ``Darwin64`` dmg
 bundle available from:
 
--  http://www.cmake.org/cmake/resources/software.html
+  http://www.cmake.org/cmake/resources/software.html
 
 To obtain the other tools, simply  install the latest version of Xcode
 from the  Mac App Store.  After installation, you should  also install
 the Xcode command line tools via going to the menu Xcode->Preferences,
 clicking on the Downloads tab, and then installing Command Line Tools.
 
--  **Core Libraries Required**
+Core Libraries Required
+.......................
 
-   -  Boost 1.55.0 or higher: http://www.boost.org
-       - with serialization, filesystem, system libraries.
-   -  Camp 0.7.1 : https://github.com/tegesoft/camp
-   -  GSL 1.15 or higher: http://www.gnu.org/s/gsl
-   -  CLHEP 2.1.3.2 or higher: http://proj-clhep.web.cern.ch
-   -  Geant4 9.6.0 or higher: http://geant4.cern.ch
-       - with GDML support enabled (through the XercesC library)
-   -  ROOT 5.34.0 or higher: http://root.cern.ch
-      Bayeux/geomtools requires you setup ROOT at least with support for:
+* Boost 1.55.0 or higher: http://www.boost.org
+  with filesystem, system, serialization, iostreams, program_options, regex
+  and thread libraries.
+* Camp 0.7.1 : https://github.com/tegesoft/camp
+* GSL 1.15 or higher: http://www.gnu.org/s/gsl
+* CLHEP 2.1.3.1 or higher: http://proj-clhep.web.cern.ch
+* Geant4 9.6.0 or higher: http://geant4.cern.ch
+  with GDML support enabled (through the XercesC library)
+* ROOT 5.34.0 or higher: http://root.cern.ch
+  Bayeux/geomtools requires you setup ROOT at least with support for:
 
-       * minimal X11,
-       * GDML,
-       * OpenGL.
+  * minimal X11,
+  * GDML,
+  * OpenGL.
+
 
 For ease of use, the SuperNEMO collaboration provides the Cadfaelbrew_
 SDK which bundles  these libraries for easy use by  Bayeux and clients
-of  Bayeux.  It  is  strongly  advised to  use  this  bundle. It  will
-provide, for Linux  and macOS systems, an  uniform software environement
+of Bayeux.   It is **strongly**  advised to  use this bundle.  It will
+provide, for Linux and macOS systems, an uniform software environement
 with a selected set of blessed software, including the C++ compiler if
 needed.
 
 .. _Cadfael: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael
 .. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/brew
 
--  **Additional Software Required**
+Additional Software Required
+............................
 
-    - Bayeux/datatools requires the Qt5 library when the ``BAYEUX_WITH_QT_GUI``
-      option is set.
+* Bayeux/datatools requires the Qt5 library when the ``BAYEUX_WITH_QT_GUI``
+  option is set (experimental).
 
-      On Ubuntu 16.04, this implies the installation of the following packages:
+  On Ubuntu 16.04, this implies the installation of the following packages:
 
-      .. code:: sh
+  .. code:: sh
 
-	 $ sudo apt-get install libqt5core5a libqt5gui5 libqt5svg5 \
-		libqt5svg5-dev libqt5widgets5 qtbase5-dev qtbase5-dev-tools \
-		qt5-default
-      ..
+     $ sudo apt-get install libqt5core5a libqt5gui5 libqt5svg5 \
+	    libqt5svg5-dev libqt5widgets5 qtbase5-dev qtbase5-dev-tools \
+	    qt5-default
+  ..
 
-   - Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
+* Bayeux/geomtools also requires Gnuplot 4.0 or higher: http://www.gnuplot.info
 
-      On Ubuntu 16.04, this implies the installation of the following packages:
+  On Ubuntu 16.04, this implies the installation of the following packages:
 
-      .. code:: sh
+  .. code:: sh
 
-	 $ sudo apt-get install gnuplot-x11 gnuplot-doc gnuplot-mode
-      ..
+     $ sudo apt-get install gnuplot-x11 gnuplot-doc gnuplot-mode
+  ..
 
-   - Bayeux/datatools and Bayeux/geomtools uses the Readline library, if available:
+* Bayeux/datatools and Bayeux/geomtools uses the Readline library, if available:
 
-      * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
-      * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
+  * http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
+  * http://askubuntu.com/questions/194523/how-do-i-install-gnu-readline
 
-      On Ubuntu 16.04, this implies the installation of the following packages:
+  On Ubuntu 16.04, this implies the installation of the following packages:
 
-      .. code:: sh
+  .. code:: sh
 
-	 $ sudo apt-get install libreadline6-dev readline-common
-      ..
+     $ sudo apt-get install libreadline6-dev readline-common
+  ..
 
+* pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
+  documentation in user friendly format:
 
-   - pandoc (http://johnmacfarlane.net/pandoc/) is  useful to generate
-     documentation in user friendly format:
+  On Ubuntu 16.04, this implies  the installation of the following
+  packages:
 
-      On Ubuntu 16.04, this implies  the installation of the following
-      packages:
+  .. code:: sh
 
-      .. code:: sh
+     $ sudo apt-get install pandoc pandoc-data
+  ..
 
-	 $ sudo apt-get install pandoc pandoc-data
-      ..
+* docutils  (http://docutils.sourceforge.net/)  is also  useful  to
+  generate documentation from ReST format in user friendly format:
 
-   - docutils  (http://docutils.sourceforge.net/)  is also  useful  to
-     generate documentation from ReST format in user friendly format:
+  On Ubuntu 16.04, this implies the installation of the following packages:
 
-      On Ubuntu 16.04, this implies the installation of the following packages:
+  .. code:: sh
 
-      .. code:: sh
-
-	 $ sudo apt-get install docutils-common docutils-doc python-docutils
-	 $ sudo apt-get install rst2pdf
-      ..
+     $ sudo apt-get install docutils-common docutils-doc python-docutils
+     $ sudo apt-get install rst2pdf
+  ..
 
 Known Issues on Tested Platforms
 --------------------------------
@@ -361,29 +377,30 @@ These options control the underlying CMake system, a full list can be
 obtained from the CMake documentation, but in Bayeux you will only need
 to deal with the following three in most cases:
 
--  ``CMAKE_INSTALL_PREFIX``
+``CMAKE_INSTALL_PREFIX``
+  Path under which to install Bayeux. It should point to an empty,
+  writable directory. It defaults to ``/usr/local`` so you will want
+  to change this.
 
-   -  Path under which to install Bayeux. It should point to an empty,
-      writable directory. It defaults to ``/usr/local`` so you will want
-      to change this.
+``CMAKE_PREFIX_PATH``
+  Path under which  Cadfaelbrew is installed and where  some of the
+  third party software should be searched for.
 
--  ``CMAKE_PREFIX_PATH``
+``CMAKE_BUILD_TYPE``
+  Build type, e.g. ``Release``, ``Debug``. You will want this to be
+  set  to ``Release``  in most  cases. ``Debug``  builds are  only
+  needed if you  are needing to follow debugging  symbols into one
+  of   Cadfaelbrew's  thid   party  binaries.    It  defaults   to
+  ``Release``, so you will not need to change it in most cases.
 
-   - Path under which  Cadfaelbrew is installed and where  some of the
-      third party software should be searched for.
+Note also  that you can  ask CMake to use  the Ninja_ build  system in
+place of the  legacy make command. Use the ``-GNinja`` switch  with your CMake
+command:
 
+.. code:: sh
 
--  ``CMAKE_BUILD_TYPE``
-
-   - Build type, e.g. ``Release``, ``Debug``. You will want this to be
-      set  to ``Release``  in most  cases. ``Debug``  builds are  only
-      needed if you  are needing to follow debugging  symbols into one
-      of   Cadfaelbrew's  thid   party  binaries.    It  defaults   to
-      ``Release``, so you will not need to change it in most cases.
-
-Note also  that you can  ask CMake to use  the *Ninja_* build  system in
-place of the  legacy *make*. Use the ``-DNinja`` switch  with your CMake
-command.
+   $ cmake ... -GNinja ...
+..
 
 .. _Ninja: https://ninja-build.org/
 
@@ -393,56 +410,45 @@ Bayeux Configuration Options
 
 These options control the core configuration of Bayeux.
 
--  ``BAYEUX_CXX_STANDARD``
-
-   - Select the C++  Standard to compile against. Recognized values are:
+``BAYEUX_CXX_STANDARD``
+  Select the C++  Standard to compile against. Recognized values are:
 
      * ``11`` : all features of the C++11 standard in GCC 4.9 (provided
        for forward compatibility)
      * ``14``  :  same  as  ``11``  plus at  least  one  C++14  feature
        (provided for forward compatibility)
 
--  ``BAYEUX_COMPILER_ERROR_ON_WARNING``
+``BAYEUX_COMPILER_ERROR_ON_WARNING``
+  Turn warnings into errors. Default is ON.
 
-   - Turn warnings into errors. Default is ON.
+``BAYEUX_WITH_IWYU_CHECK``
+  Run include-what-you-use on Bayeux sources. Default is OFF.
 
--  ``BAYEUX_WITH_IWYU_CHECK``
+``BAYEUX_WITH_DEVELOPER_TOOLS``
+  Build and install additional tools for developers and *normal* users.
+  Default is ON.
 
-   - Run include-what-you-use on Bayeux sources. Default is OFF.
+``BAYEUX_WITH_GEANT4_MODULE``
+  Build the Bayeux/mctools Geant4 library extension module. Default is ON.
 
--  ``BAYEUX_WITH_DEVELOPER_TOOLS``
+``BAYEUX_WITH_MCNP_MODULE``
+  Build the Bayeux/mctools MCNP library extension module (experimental). Default is OFF.
 
-   -  Build and install additional tools for developers and *normal* users.
-      Default is ON.
+``BAYEUX_WITH_LAHAGUE``
+  Build the Bayeux/lahague library module. Default is OFF.
 
--  ``BAYEUX_WITH_GEANT4_MODULE``
+``BAYEUX_WITH_QT_GUI``
+  Build the Qt-based GUI components (experimental). Default is OFF.
 
-   - Build the Bayeux/mctools Geant4 library extension module. Default is ON.
+``BAYEUX_ENABLE_TESTING``
+  Build unit testing system for Bayeux. Default is OFF.
 
--  ``BAYEUX_WITH_MCNP_MODULE``
+``BAYEUX_WITH_DOCS``
+  Build Bayeux documentation products. Default is ON.
 
-   - Build the Bayeux/mctools MCNP library extension module (experimental). Default is OFF.
-
--  ``BAYEUX_WITH_LAHAGUE``
-
-   - Build the Bayeux/lahague library module. Default is OFF.
-
--  ``BAYEUX_WITH_QT_GUI``
-
-   - Build the Qt-based GUI components (experimental). Default is OFF.
-
--  ``BAYEUX_ENABLE_TESTING``
-
-   -  Build unit testing system for Bayeux. Default is OFF.
-
--  ``BAYEUX_WITH_DOCS``
-
-   -  Build Bayeux documentation products. Default is ON.
-
--  ``BAYEUX_WITH_DOCS_OCD``
-
-   - Build      *object      configuration     description*      (OCD)
-      documentation. Default is OFF. Implies ``BAYEUX_WITH_DOCS``.
+``BAYEUX_WITH_DOCS_OCD``
+  Build      *object      configuration     description*      (OCD)
+  documentation. Default is OFF. Implies ``BAYEUX_WITH_DOCS``.
 
 
 Building and Installing
@@ -458,15 +464,21 @@ install Bayeux, simply run:
 
 .. code:: sh
 
-    $ make [-j4]
-    $ make install
+   $ make [-j4]
+   $ make install
 ..
 
 where ``-j4`` indicates  the number of processors to be  used to build
 Bayeux.
 
 If you  chose Ninja as the  build system, please replace  the ``make``
-command above by ``ninja``.
+command above by ``ninja`` :
+
+.. code:: sh
+
+   $ ninja [-j4]
+   $ ninja install
+..
 
 
 Running test
@@ -478,7 +490,7 @@ configuration option. From the build directory, simply run:
 
 .. code:: sh
 
-    $ make test
+   $ make test
 ..
 
 
@@ -506,12 +518,12 @@ WIP
 A note on RPATHs
 ----------------
 
-You should not use the  (DY)LD_LIBRARY_PATH variables because they are
-intended for testing,  not production (see the man  pages of ld/dyld).
-Bayeux uses **rpaths**  to provide a simple setup that  allows apps to
-be  run directly  with  guaranteed library  lookup. Morever,  relative
-rpaths are  used that  generally allow Bayeux  to be  relocatable (not
-tested).
+You should not use  the ``(DY)LD_LIBRARY_PATH`` variables because they
+are  intended  for testing,  not  production  (see  the man  pages  of
+ld/dyld).   Bayeux uses  **rpaths**  to provide  a  simple setup  that
+allows   apps   to   be   run   directly   with   guaranteed   library
+lookup. Morever, relative rpaths are  used that generally allow Bayeux
+to be relocatable (not tested).
 
 However, these settings are platform dependent and CMake has only added
 support for this gradually. In particular, see these references:
@@ -522,8 +534,8 @@ support for this gradually. In particular, see these references:
   (http://www.mail-archive.com/cmake@cmake.org/msg47143.html)
 * CMake's general RPATH handling (http://www.cmake.org/Wiki/CMake_RPATH_handling)
 
-Note  also that  if  you  have (DY)LD_LIBRARY_PATH  set,  you may  see
-startup errors if  any of the paths contain libraries  used by Bayeux,
+Note also  that if you  have ``(DY)LD_LIBRARY_PATH`` set, you  may see
+startup errors if any of the  paths contains libraries used by Bayeux,
 e.g. ROOT.  In general, you should never need to set the library path,
 though many scientific software projects (badly mis)use it.
 
@@ -549,7 +561,7 @@ Acknowledgements
 The authors gratefully thank the following persons for their direct or
 indirect contributions to the Bayeux library:
 
-* Vladimir  Tretyak  is  the  author of  the  original  *Decay0/Genbb*
+* Vladimir  Tretyak  is  the  author of  the  original  *Genbb/Decay0*
   generator (written in  Fortran 77) from which  a significant portion
   of the Bayeux/genbb_help module is derived.
 * Christian Pfligersdorffer  is the author of  the Boost/Serialization
