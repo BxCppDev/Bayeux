@@ -1,6 +1,11 @@
 
-Bayeux/emfield is a C++ program library that provides a simple interface
-to describe electromagnetic fields associated to a geometry model.
+Bayeux/emfield  is  a  C++  program library  that  provides  a  simple
+interface to describe electromagnetic  fields associated to a geometry
+model.
+
+EM fields described  through Bayeux/emfield can be used as  is by some
+client  computing models  (ODE solvers...)  or made  available from  a
+high-level interface like the Geant4 simulation engine.
 
 Bayeux/emfield depends on the Bayeux/geomtools library.
 
