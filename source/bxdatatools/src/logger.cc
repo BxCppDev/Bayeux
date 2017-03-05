@@ -112,6 +112,11 @@ std::string logger::get_priority_label(logger::priority p)
   return n != a.right.end() ? GetCanonicalLabel(n->second) : "";
 }
 
+bool logger::is_undefined(priority p)
+{
+  return p >= PRIO_UNDEFINED;
+}
+
 bool logger::is_fatal(priority p)
 {
   return p >= PRIO_FATAL;

@@ -105,6 +105,11 @@ namespace datatools {
     //!          is not valid
     static std::string get_priority_label(priority p);
 
+    //! check if priority is defined
+    //! @param p priority enumeration
+    //! @returns true if the priority is undefined
+    static bool is_undefined(priority p);
+
     //! check if priority satisfy the fatal level
     //! @param p priority enumeration
     //! @returns true if the priority is at least at the fatal level
