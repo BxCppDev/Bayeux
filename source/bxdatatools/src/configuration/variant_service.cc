@@ -632,25 +632,13 @@ namespace datatools {
       if (is_started()) {
         return;
       }
-//       // Initialize the repository:
-//       _do_variant_config_();
-//       // Load a profile:
-//       _do_variant_load_profile_();
-//       // Apply specific parameter settings:
-//       _do_variant_apply_settings_();
-// #if DATATOOLS_WITH_QT_GUI == 1
-//       if (_gui_) {
-//         // Launch the GUI editor:
-//         _do_variant_launch_gui_();
-//       }
-// #endif // DATATOOLS_WITH_QT_GUI == 1
 
       // Store the selected profile:
       _do_variant_store_profile_();
 
       // Export the application variant repository to the datatools' kernel
       // in order to make the variant service accessible from
-      // each software component:
+      // each software component in the current application:
       _do_variant_system_export_();
 
       if (is_reporting()) {
