@@ -123,6 +123,11 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/version_id.h
   ${module_include_dir}/${module_name}/version_id.ipp
+  ${module_include_dir}/${module_name}/urn.h
+  ${module_include_dir}/${module_name}/urn.ipp
+  # ${module_include_dir}/${module_name}/url.h
+  # ${module_include_dir}/${module_name}/url.ipp
+  # ${module_include_dir}/${module_name}/url_parsers-inl.h
   # ${module_include_dir}/${module_name}/log_record.h
   # ${module_include_dir}/${module_name}/log_record.ipp
   # ${module_include_dir}/${module_name}/log_format.h
@@ -261,6 +266,8 @@ ${module_source_dir}/utils.cc
 ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
+${module_source_dir}/urn.cc
+# ${module_source_dir}/url.cc
 # ${module_source_dir}/log_record.cc
 # ${module_source_dir}/log_format.cc
 # ${module_source_dir}/rst_tools.cc
@@ -442,6 +449,10 @@ ${module_test_dir}/test_utils.cxx
 ${module_test_dir}/test_version_check.cxx
 ${module_test_dir}/test_version.cxx
 ${module_test_dir}/test_version_id.cxx
+${module_test_dir}/test_urn.cxx
+# ${module_test_dir}/test_url.cxx
+# ${module_test_dir}/test_log_record.cxx
+# ${module_test_dir}/test_rst_tools.cxx
 ${module_test_dir}/test_configuration_parameter_model.cxx
 ${module_test_dir}/test_configuration_variant_model.cxx
 ${module_test_dir}/test_configuration_variant_api_0.cxx
@@ -449,8 +460,6 @@ ${module_test_dir}/test_configuration_variant_service.cxx
 ${module_test_dir}/test_configuration_variant_service_2.cxx
 ${module_test_dir}/test_configuration_variant_dependency.cxx
 ${module_test_dir}/test_configuration_parsers.cxx
-# ${module_test_dir}/test_log_record.cxx
-# ${module_test_dir}/test_rst_tools.cxx
 )
 
 # Catastrophically broken on Mac
