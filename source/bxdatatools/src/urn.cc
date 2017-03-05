@@ -65,7 +65,7 @@ namespace datatools {
     return _segments_.size() > 0;
   }
 
-  std::size_t get_depth() const
+  std::size_t urn::get_depth() const
   {
     return _segments_.size();
   }
@@ -124,7 +124,6 @@ namespace datatools {
     return s;
   }
 
-  /// Initialize from a string
   bool urn::from_string(const std::string & repr_)
   {
     std::vector<std::string> backup_segs = _segments_;
@@ -133,6 +132,13 @@ namespace datatools {
     } else {
       std::vector<std::string> segs;
       boost::split(segs, repr_, boost::is_any_of(":"));
+      if (segs.size() < 2) {
+        return false;
+      }
+      if (segs.front() != urn::urn_scheme()) {
+        return false;
+      }
+      segs.erase(segs.begin());
       try {
         set_segments(segs);
       } catch (std::exception &) {
