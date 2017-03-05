@@ -125,6 +125,7 @@ namespace datatools {
     NV_NO_DOT        = bit_mask::bit01, ///< Forbid the 'dot' character in names
     NV_NO_HYPHEN     = bit_mask::bit02, ///< Forbid the 'hyphen' character in names
     NV_NO_UNDERSCORE = bit_mask::bit03, ///< Forbid the 'underscore' character in names
+    NV_LEADING_DIGIT = bit_mask::bit04, ///< Allow leading digit
     NV_DEFAULT       = NV_NO_HYPHEN ,   ///< Default validation rule
     NV_INSTANCE      = NV_NO_HYPHEN | NV_NO_COLON, ///< Default validation rule for object instance
     NV_MODEL         = NV_NO_HYPHEN     ///< Default validation rule for object model

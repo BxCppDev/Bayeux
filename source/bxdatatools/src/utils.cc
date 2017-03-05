@@ -208,6 +208,7 @@ namespace datatools {
     bool forbid_dot    = flags_ & NV_NO_DOT;
     bool forbid_hyphen = flags_ & NV_NO_HYPHEN;
     bool forbid_underscore = flags_ & NV_NO_UNDERSCORE;
+    bool allow_leading_digit = flags_ & NV_LEADING_DIGIT;
     if (forbid_colon) {
       if (name_.find(':') != name_.npos) return false;
     }
@@ -221,7 +222,9 @@ namespace datatools {
       if (name_.find('_') != name_.npos) return false;
     }
     if (name_.find_first_not_of(_base_allowed_chars) != name_.npos) return false;
-    if (name_.find_first_of("0123456789.") == 0) return false;
+    if (!allow_leading_digit) {
+      if (name_.find_first_of("0123456789.") == 0) return false;
+    }
     // Reject trailing dot:
     if (name_[name_.size()-1] == '.') return false;
     // Reject trailing colon:
