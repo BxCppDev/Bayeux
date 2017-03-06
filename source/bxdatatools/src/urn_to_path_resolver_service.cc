@@ -177,7 +177,7 @@ namespace datatools {
     mp.ordered_keys(urns);
     for (const std::string & urn : urns) {
       const datatools::multi_properties::entry & mpe = mp.get(urn);
-      const std::string & category = mpe.get_key();
+      const std::string & category = mpe.get_meta();
       const datatools::properties & prop = mpe.get_properties();
       add_entry(urn, category, prop);
     }
@@ -204,18 +204,6 @@ namespace datatools {
     resolver_entry re;
     re.urn = urn_;
     re.category = category_;
-    // if (infos_.has_key("experiment")) {
-    //   re.experiment = infos_.fetch_string("experiment");
-    // }
-    // if (infos_.has_key("topic")) {
-    //   re.topic = infos_.fetch_string("topic");
-    // }
-    // if (infos_.has_key("subtopics")) {
-    //   infos_.fetch("subtopics", re.subtopics);
-    // }
-    // if (infos_.has_key("version")) {
-    //   re.version = infos_.fetch_string("version");
-    // }
     if (infos_.has_key("path")) {
       re.path = infos_.fetch_string("path");
     }
