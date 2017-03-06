@@ -125,6 +125,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_id.ipp
   ${module_include_dir}/${module_name}/urn.h
   ${module_include_dir}/${module_name}/urn.ipp
+  ${module_include_dir}/${module_name}/urn_to_path_resolver_service.h
   # ${module_include_dir}/${module_name}/url.h
   # ${module_include_dir}/${module_name}/url.ipp
   # ${module_include_dir}/${module_name}/url_parsers-inl.h
@@ -267,6 +268,7 @@ ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
 ${module_source_dir}/urn.cc
+${module_source_dir}/urn_to_path_resolver_service.cc
 # ${module_source_dir}/url.cc
 # ${module_source_dir}/log_record.cc
 # ${module_source_dir}/log_format.cc
@@ -450,6 +452,7 @@ ${module_test_dir}/test_version_check.cxx
 ${module_test_dir}/test_version.cxx
 ${module_test_dir}/test_version_id.cxx
 ${module_test_dir}/test_urn.cxx
+${module_test_dir}/test_urn_to_path_resolver_service.cxx
 # ${module_test_dir}/test_url.cxx
 # ${module_test_dir}/test_log_record.cxx
 # ${module_test_dir}/test_rst_tools.cxx
