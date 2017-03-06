@@ -83,7 +83,11 @@ set(${module_name}_MODULE_APPS
   )
 
 # - Resource files
-set(${module_name}_MODULE_RESOURCES )
+set(${module_name}_MODULE_RESOURCES
+  ${module_resource_dir}/images/logo/logo_bayeux_240x200_transparent.png
+  ${module_resource_dir}/images/logo/logo_bayeux_300x250_transparent.png
+  ${module_resource_dir}/images/logo/logo_bayeux_66x55_transparent.png
+  )
 
 # - Publish resource files
 foreach(_rfin ${${module_name}_MODULE_RESOURCES})
