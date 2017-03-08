@@ -206,6 +206,13 @@ namespace datatools {
     return key;
   }
 
+  const std::string &library_info::keys::install_data_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "install.data_dir";
+    return key;
+  }
+
   const std::string &library_info::keys::install_resource_dir()
   {
     static std::string key;

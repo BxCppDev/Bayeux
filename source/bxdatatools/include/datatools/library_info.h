@@ -73,6 +73,7 @@ namespace datatools {
       static const std::string & install_include_dir();
       static const std::string & install_lib_dir();
       static const std::string & install_bin_dir();
+      static const std::string & install_data_dir();
       static const std::string & install_resource_dir();
       static const std::string & install_plugin_lib_dir();
       static const std::string & install_doc_dir();
