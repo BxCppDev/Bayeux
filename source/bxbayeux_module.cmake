@@ -41,6 +41,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/bayeux.h
   ${module_include_dir}/${module_name}/reloc.h
   ${module_include_dir}/${module_name}/version.h.in
+  ${module_include_dir}/${module_name}/resource.h
   )
 
 # - configure special source files
@@ -60,6 +61,7 @@ configure_file(${module_source_dir}/BayeuxBinReloc.c.in
 set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/bayeux.cc
+  ${module_source_dir}/resource.cc
   bx${module_name}/_bayeux.cc
   bx${module_name}/reloc.cc
   bx${module_name}/${module_name}/BayeuxBinReloc.h
