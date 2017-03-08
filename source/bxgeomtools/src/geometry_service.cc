@@ -138,7 +138,7 @@ namespace geomtools {
 
 }  // end of namespace geomtools
 
-// OCD support for class '::cuts::cut_service' :
+// OCD support for class '::geomtools::geometry_service' :
 DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(::geomtools::geometry_service,ocd_)
 {
   ocd_.set_class_name("geometools::geometry_service");
