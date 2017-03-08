@@ -211,7 +211,7 @@ namespace bayeux {
                                     "GNU General Public License version 3 or later");
 
       bool dump = datatools::logger::is_trace(lib_info_reg.get_logging());
-      dump = true;
+      // dump = true;
       if (dump) {
         DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS /*lib_info_reg.get_logging() */,
                      "Status of the library info register: " );
