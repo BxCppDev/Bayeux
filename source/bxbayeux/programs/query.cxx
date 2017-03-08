@@ -36,6 +36,7 @@
 #include <bayeux/bayeux_config.h>
 #include <bayeux/version.h>
 #include <bayeux/reloc.h>
+#include <bayeux/resource.h>
 // - datatools
 #include <datatools/kernel.h>
 #include <datatools/library_info.h>
@@ -89,6 +90,11 @@ int main(int argc_, char * argv_[])
        bpo::value<bool>()
        ->zero_tokens(),
        "Print resource base directory. \n"
+       )
+      ("bxresourcedir",
+       bpo::value<bool>()
+       ->zero_tokens(),
+       "Print Bayeux resource base directory. \n"
        )
       ("exampledir",
        bpo::value<bool>()
@@ -167,6 +173,11 @@ int main(int argc_, char * argv_[])
       bool incdir = vm["resourcedir"].as<bool>();
       if (incdir) {
         std::cout << bayeux::get_resource_dir() << std::endl;
+      }
+     } else if (vm.count("bxresourcedir")) {
+      bool incdir = vm["bxresourcedir"].as<bool>();
+      if (incdir) {
+        std::cout << bayeux::get_bayeux_resource_dir() << std::endl;
       }
     } else if (vm.count("exampledir")) {
       bool incdir = vm["exampledir"].as<bool>();

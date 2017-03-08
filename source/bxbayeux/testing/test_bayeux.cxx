@@ -6,6 +6,7 @@
 #include <bayeux/bayeux.h>
 #include <bayeux/reloc.h>
 #include <bayeux/version.h>
+#include <bayeux/resource.h>
 
 // NB: These are true tests yet!
 TEST_CASE("Bayeux is setup", "[bayeux]") {
@@ -17,7 +18,10 @@ TEST_CASE("Bayeux is setup", "[bayeux]") {
     std::clog << "  Binary directory   : " << bayeux::get_binary_dir() << std::endl;
     std::clog << "  Library directory  : " << bayeux::get_library_dir() << std::endl;
     std::clog << "  Data directory     : " << bayeux::get_data_dir() << std::endl;
-    std::clog << "  Resource directory : " << bayeux::get_resource_dir() << std::endl;
+    std::clog << "  Resource base directory   : \n"
+              << "                       " << bayeux::get_resource_dir() << std::endl;
+    std::clog << "  Bayeux's resource directory : \n"
+              << "                       " << bayeux::get_bayeux_resource_dir() << std::endl;
   }
 
   SECTION("configuration is valid") {

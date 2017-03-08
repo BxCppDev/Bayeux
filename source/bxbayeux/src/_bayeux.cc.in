@@ -189,8 +189,10 @@ namespace bayeux {
                                     "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@");
       bayeux_lib_infos.store_string(datatools::library_info::keys::install_bin_dir(),
                                     "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@");
+      bayeux_lib_infos.store_string(datatools::library_info::keys::install_data_dir(),
+                                    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/@BAYEUX_TAG@");
       bayeux_lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-                                    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/@Bayeux_RESOURCE_DIR@");
+                                    "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/@BAYEUX_TAG@/resources/bayeux");
       bayeux_lib_infos.store_string(datatools::library_info::keys::env_resource_dir(),
                                     std::string(BAYEUX_ENV_RESOURCE_DIR));
       bayeux_lib_infos.store_integer(datatools::library_info::keys::version_major(),
@@ -208,10 +210,12 @@ namespace bayeux {
       bayeux_lib_infos.store_string(datatools::library_info::keys::copyright(),
                                     "GNU General Public License version 3 or later");
 
-      if(lib_info_reg.get_logging() >= datatools::logger::PRIO_TRACE) {
-        DT_LOG_TRACE(lib_info_reg.get_logging(),
+      bool dump = datatools::logger::is_trace(lib_info_reg.get_logging());
+      dump = true;
+      if (dump) {
+        DT_LOG_TRACE(datatools::logger::PRIO_ALWAYS /*lib_info_reg.get_logging() */,
                      "Status of the library info register: " );
-        lib_info_reg.tree_dump(std::cerr);
+        lib_info_reg.tree_dump(std::cerr, "", "[trace] ");
       }
       krnl.register_resource_paths();
       krnl.register_configuration_variant_registries();

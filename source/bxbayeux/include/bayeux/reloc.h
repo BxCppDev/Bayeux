@@ -48,7 +48,7 @@ namespace bayeux {
   //! Return URL, i.e. a path, to the base directory where Bayeux's data are installed
   std::string get_data_dir();
 
-  //! Return URL, i.e. a path, to the base directory where Bayeux's resource files are installed
+  //! Return URL, i.e. a path, to the base directory where Bayeux's modules' resource files are installed
   std::string get_resource_dir();
 
 } // end of namespace bayeux
