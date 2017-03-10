@@ -114,7 +114,7 @@ std::string logger::get_priority_label(logger::priority p)
 
 bool logger::is_undefined(priority p)
 {
-  return p >= PRIO_UNDEFINED;
+  return p == PRIO_UNDEFINED;
 }
 
 bool logger::is_fatal(priority p)

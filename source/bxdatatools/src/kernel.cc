@@ -31,6 +31,9 @@
 #include <datatools/command_utils.h>
 #include <datatools/utils.h>
 #include <datatools/logger.h>
+#include <datatools/service_manager.h>
+#include <datatools/library_query_service.h>
+#include <datatools/urn_query_service.h>
 
 #if DATATOOLS_WITH_QT_GUI == 1
 #include <QStyleFactory>
@@ -72,9 +75,14 @@ namespace datatools {
     return _argv_[i_];
   }
 
-  bool kernel::is_library_info_register_activated() const
+  bool kernel::is_urn_query_service_activated() const
   {
-    return _activate_library_info_register_;
+    return _activate_urn_query_service_;
+  }
+
+  bool kernel::is_library_query_service_activated() const
+  {
+    return _activate_library_query_service_;
   }
 
   bool kernel::is_variant_repository_activated() const
@@ -87,17 +95,19 @@ namespace datatools {
     return _allowed_variant_service_;
   }
 
-  void kernel::_set_defaults()
+  void kernel::_set_defaults_()
   {
     _logging_ = datatools::logger::PRIO_FATAL;
     {
-      char * e = getenv("DATATOOLS_KERNEL_LOGGING");
+      char * e = getenv("BXDATATOOLS_KERNEL_LOGGING");
       if (e) {
         std::string dklogging = e;
-        datatools::logger::priority p = datatools::logger::get_priority(_params_.logging_label);
-        if (p != datatools::logger::PRIO_UNDEFINED) {
+        datatools::logger::priority prio = datatools::logger::get_priority(dklogging);
+        if (datatools::logger::is_undefined(prio)) {
           // Set the kernel logging priority threshold:
-          _logging_ = p;
+          _logging_ = prio;
+        } else {
+          DT_LOG_WARNING(logger::PRIO_WARNING, "Invalid environment BXDATATOOLS_KERNEL_LOGGING='" << dklogging << "' value");
         }
       }
     }
@@ -105,7 +115,7 @@ namespace datatools {
     _locale_category_ = "";
     {
       std::string lc;
-      char * e = getenv("DATATOOLS_KERNEL_LC");
+      char * e = getenv("BXDATATOOLS_KERNEL_LC");
       if (e) {
         lc = e;
       }
@@ -118,12 +128,13 @@ namespace datatools {
     _argc_ = 0;
     _argv_ = nullptr;
     _activate_variant_repository_ = true;
-    _activate_library_info_register_ = true;
+    _activate_library_query_service_ = true;
+    _activate_urn_query_service_ = true;
     _allowed_variant_service_ = true;
 #if DATATOOLS_WITH_QT_GUI == 1
     _activate_qt_gui_ = true;
     {
-      char * e = getenv("DATATOOLS_KERNEL_NO_QT_GUI");
+      char * e = getenv("BXDATATOOLS_KERNEL_NO_QT_GUI");
       if (e) {
         std::string dknoqtgui = e;
         _activate_qt_gui_ = false;
@@ -137,7 +148,7 @@ namespace datatools {
   // basic construction
   void kernel::_construct_()
   {
-    _set_defaults();
+    _set_defaults_();
     DT_THROW_IF(_instance_, std::runtime_error,
                 "An instance of the datatools kernel already exists !");
     DT_LOG_TRACE(_logging_, "Kernel is now constructed.");
@@ -165,7 +176,7 @@ namespace datatools {
     if (_initialized_) {
       this->shutdown();
     }
-    DT_LOG_TRACE(_logging_, "Kernel is now destroyed.");
+    DT_LOG_TRACE(_logging_, "Kernel is now terminated.");
     _instance_ = nullptr;
     return;
   }
@@ -183,31 +194,33 @@ namespace datatools {
     po::options_description_easy_init easy_init = opts_.add_options();
 
     // Default behaviour: collecting all variant related options
-    bool parse_help            = true;
-    bool parse_splash          = true;
-    bool parse_locale_category = true;
-    bool parse_logging         = true;
-    bool parse_inhibit_libinfo = true;
-    bool parse_libinfo_logging = true;
-    bool parse_resource_path   = true;
-    bool parse_inhibit_variant = true;
-    bool parse_variant         = true;
+    bool parse_help             = true;
+    bool parse_splash           = true;
+    bool parse_locale_category  = true;
+    bool parse_logging          = true;
+    bool parse_inhibit_libquery = true;
+    bool parse_libquery_logging = true;
+    bool parse_resource_path    = true;
+    bool parse_inhibit_variant  = true;
+    bool parse_variant          = true;
+    bool parse_inhibit_urnquery = true;
 #if DATATOOLS_WITH_QT_GUI == 1
-    bool parse_inhibit_qt_gui  = true;
+    bool parse_inhibit_qt_gui   = true;
 #endif
 
     // Inhibition of the parsing for specific options:
-    if (flags_ & init_no_help)            parse_help = false;
-    if (flags_ & init_no_splash)          parse_splash = false;
-    if (flags_ & init_no_logging)         parse_logging = false;
-    if (flags_ & init_no_locale_category) parse_locale_category = false;
-    if (flags_ & init_no_inhibit_libinfo) parse_inhibit_libinfo = false;
-    if (flags_ & init_no_libinfo_logging) parse_libinfo_logging= false;
-    if (flags_ & init_no_resource_path)   parse_resource_path = false;
-    if (flags_ & init_no_inhibit_variant) parse_inhibit_variant = false;
-    if (flags_ & init_no_variant)         parse_variant = false;
+    if (flags_ & init_no_help)             parse_help             = false;
+    if (flags_ & init_no_splash)           parse_splash           = false;
+    if (flags_ & init_no_logging)          parse_logging          = false;
+    if (flags_ & init_no_locale_category)  parse_locale_category  = false;
+    if (flags_ & init_no_inhibit_libquery) parse_inhibit_libquery = false;
+    if (flags_ & init_no_libquery_logging) parse_libquery_logging = false;
+    if (flags_ & init_no_resource_path)    parse_resource_path    = false;
+    if (flags_ & init_no_inhibit_variant)  parse_inhibit_variant  = false;
+    if (flags_ & init_no_variant)          parse_variant          = false;
+    if (flags_ & init_no_inhibit_urnquery) parse_inhibit_urnquery = false;
 #if DATATOOLS_WITH_QT_GUI == 1
-    if (flags_ & init_no_inhibit_qt_gui)  parse_inhibit_qt_gui = false;
+    if (flags_ & init_no_inhibit_qt_gui) parse_inhibit_qt_gui = false;
 #endif
 
     // Logging:
@@ -216,7 +229,7 @@ namespace datatools {
                 po::value<std::string>(&params_.logging_label)
                 ->value_name("level")
                 ->default_value("fatal"),
-                "Set the datatools kernel's logging priority threshold.\n"
+                "Set the Bayeux/datatools kernel's logging priority threshold.\n"
                 "Example :\n"
                 "  --datatools::logging=\"trace\""
                 );
@@ -353,26 +366,62 @@ namespace datatools {
                 );
     }
 
-    // No library info:
-    if (parse_inhibit_libinfo) {
-      easy_init("datatools::nolibinfo",
-                po::value<bool>(&params_.inhibit_library_info_register)
+    // No URN query info:
+    if (parse_inhibit_urnquery) {
+      easy_init("datatools::no-urn-query",
+                po::value<bool>(&params_.inhibit_urn_query)
                 ->zero_tokens()
                 ->default_value(false),
-                "Inhibit the use of the library/component information register.\n"
+                "Inhibit the use of the URN query service.\n"
+                "Example :\n"
+                "  --datatools::no-urn-query"
+                );
+    }
+
+    // No library info:
+    if (parse_inhibit_libquery) {
+      easy_init("datatools::no-library-query",
+                po::value<bool>(&params_.inhibit_library_query)
+                ->zero_tokens()
+                ->default_value(false),
+                "Inhibit the use of the library/component query service.\n"
+                "Example :\n"
+                "  --datatools::no-library-query"
+                );
+    }
+
+    // No library info (deprecated):
+    if (parse_inhibit_libquery) {
+      easy_init("datatools::nolibinfo",
+                po::value<bool>(&params_.inhibit_library_query)
+                ->zero_tokens()
+                ->default_value(false),
+                "Inhibit the use of the library/component query service (deprecated).\n"
                 "Example :\n"
                 "  --datatools::nolibinfo"
                 );
     }
 
-
-    // Library info logging:
-    if (parse_libinfo_logging) {
+    // Library query logging:
+    if (parse_libquery_logging) {
       easy_init("datatools::libinfo::logging",
-                po::value<std::string>(&params_.library_info_logging_label)
+                po::value<std::string>(&params_.library_query_logging_label)
                 ->value_name("level")
                 ->default_value("warning"),
                 "Set the datatools kernel's library info logging priority threshold.\n"
+                "Example :\n"
+                "  --datatools::libinfo::logging=\"trace\""
+                );
+    }
+
+
+    // Library info logging (deprecated):
+    if (parse_libquery_logging) {
+      easy_init("datatools::libinfo::logging",
+                po::value<std::string>(&params_.library_query_logging_label)
+                ->value_name("level")
+                ->default_value("warning"),
+                "Set the datatools kernel's library info logging priority threshold (deprecated).\n"
                 "Example :\n"
                 "  --datatools::libinfo::logging=\"trace\""
                 );
@@ -407,9 +456,11 @@ namespace datatools {
 
     out_ << indent_ << "Logging label: '" << logging_label << "'" << std::endl;
 
-    out_ << indent_ << "Library info logging label: '" << library_info_logging_label << "'"  << std::endl;
+    out_ << indent_ << "Library query service logging label: '" << library_query_logging_label << "'"  << std::endl;
 
-    out_ << indent_ << "Inhibit library info register: " << inhibit_library_info_register << std::endl;
+    out_ << indent_ << "Inhibit library query service: " << inhibit_library_query << std::endl;
+
+    out_ << indent_ << "Inhibit URN query service: " << inhibit_urn_query << std::endl;
 
     out_ << indent_ << "Inhibit variant repository: " << inhibit_variant_repository << std::endl;
 
@@ -450,8 +501,9 @@ namespace datatools {
     help = false;
     logging_label = "fatal";
     locale_category.clear();
-    library_info_logging_label = "fatal";
-    inhibit_library_info_register = false;
+    library_query_logging_label = "fatal";
+    inhibit_library_query = false;
+    inhibit_urn_query = false;
     inhibit_variant_repository = false;
     unrecognized_args.clear();
     resource_paths.clear();
@@ -490,12 +542,11 @@ namespace datatools {
     out_ << "   Version: " << datatools::version::get_version() << "\n";
     out_ << "\n";
     const datatools::kernel & kern = datatools::kernel::const_instance();
-    out_ << "   Library info register : " << (kern.has_library_info_register()?
-                                              "activated" : "no") << "\n";
-    out_ << "   Configuration variant repository : " << (kern.has_variant_repository()?
-                                              "activated" : "no") << "\n";
-    out_ << "   Configuration variant service : " << (kern.has_variant_service()?
-                                              "activated" : "no") << "\n";
+    out_ << "   Library query service            : " << std::boolalpha << kern.has_library_query() << "\n";
+    out_ << "   URN query service                : " << std::boolalpha << kern.has_urn_query() << "\n";
+    out_ << "   Configuration variant repository : " << std::boolalpha << kern.has_variant_repository() << "\n";
+    out_ << "   Configuration variant service    : " << std::boolalpha << kern.has_variant_service() << "\n";
+
     if (kern.has_library_info_register()) {
       // On board registered libraries...
     }
@@ -535,7 +586,7 @@ namespace datatools {
     return;
   }
 
-  void kernel::_initialize()
+  void kernel::_initialize_()
   {
     DT_LOG_TRACE_ENTERING(_logging_);
 
@@ -546,9 +597,14 @@ namespace datatools {
     // Set the kernel logging priority threshold:
     this->_logging_ = datatools::logger::get_priority(_params_.logging_label);
 
-    if (_params_.inhibit_library_info_register) {
-      DT_LOG_TRACE(_logging_, "Inhibit the library info register...");
-      this->_activate_library_info_register_ = false;
+    if (_params_.inhibit_urn_query) {
+      DT_LOG_TRACE(_logging_, "Inhibit the URN query service...");
+      this->_activate_urn_query_service_ = false;
+    }
+
+    if (_params_.inhibit_library_query) {
+      DT_LOG_TRACE(_logging_, "Inhibit the library query service...");
+      this->_activate_library_query_service_ = false;
     }
 
     if (_params_.inhibit_variant_repository) {
@@ -570,7 +626,7 @@ namespace datatools {
       kernel::print_splash(std::clog);
     }
 
-    _initialize_library_info_register_();
+    _initialize_services_();
 
     _initialize_configuration_variant_repository_();
 
@@ -578,7 +634,83 @@ namespace datatools {
     return;
   }
 
-  void kernel::_shutdown()
+  void kernel::_initialize_services_()
+  {
+    // System service manager:
+    _services_.reset(new service_manager);
+    _services_->set_name("bxDtKernServices");
+    _services_->set_description("Bayeux/datatools' Kernel System Services");
+    _services_->set_allow_dynamic_services(true);
+    _services_->initialize();
+
+    // System library information service:
+    if (this->_activate_library_query_service_) {
+      _initialize_library_query_service_();
+    }
+
+    // System URN service:
+    if (this->_activate_urn_query_service_) {
+      _initialize_urn_query_service_();
+    }
+
+    return;
+  }
+
+  void kernel::_initialize_urn_query_service_()
+  {
+    datatools::urn_query_service & kUrnQuery =
+      dynamic_cast<datatools::urn_query_service &>(_services_->load_no_init("bxDtKernUrnQuery",
+                                                                            "datatools::urn_query_service"));
+    kUrnQuery.initialize_simple();
+    return;
+  }
+
+  void kernel::_initialize_library_query_service_()
+  {
+    datatools::library_query_service & kLibInfo =
+      dynamic_cast<datatools::library_query_service &>(_services_->load_no_init("bxDtKernLibQuery",
+                                                                                "datatools::library_query_service"));
+    kLibInfo.initialize_simple();
+    kLibInfo.grab_libinfo().set_logging(datatools::logger::get_priority(_params_.library_query_logging_label));
+    kLibInfo.grab_libinfo().initialize();
+    return;
+  }
+
+  void kernel::_shutdown_library_query_service_()
+  {
+    if (_services_->has("bxDtKernLibQuery")) {
+      _services_->drop("bxDtKernLibQuery");
+    }
+    return;
+  }
+
+  void kernel::_shutdown_urn_query_service_()
+  {
+    if (_services_->has("bxDtKernUrnQuery")) {
+      _services_->drop("bxDtKernUrnQuery");
+    }
+    return;
+  }
+
+  void kernel::_shutdown_services_()
+  {
+    if (_services_->is_initialized()) {
+
+      if (this->_activate_urn_query_service_) {
+        _shutdown_urn_query_service_();
+      }
+
+      if (this->_activate_library_query_service_) {
+        _shutdown_library_query_service_();
+      }
+
+      _services_->reset();
+    }
+    _services_.reset();
+    return;
+  }
+
+  void kernel::_shutdown_()
   {
     DT_LOG_TRACE_ENTERING(_logging_);
     // Terminate internals:
@@ -587,10 +719,12 @@ namespace datatools {
     }
     DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now destroyed.");
 
-    if (_library_info_register_) {
-      _library_info_register_.reset(0);
-    }
-    DT_LOG_TRACE(_logging_, "Kernel's library info register is now destroyed.");
+    // if (_library_info_register_) {
+    //   _library_info_register_.reset(0);
+    // }
+    // DT_LOG_TRACE(_logging_, "Kernel's library info register is now destroyed.");
+
+    _shutdown_services_();
 
     _unrecognized_args_.clear();
     for (int i = 0; i < _argc_; i++) {
@@ -608,29 +742,8 @@ namespace datatools {
     // set_locale_category("");
 
     // Revert to default idle status:
-    _set_defaults();
+    _set_defaults_();
 
-    DT_LOG_TRACE_EXITING(_logging_);
-    return;
-  }
-
-  void kernel::_initialize_library_info_register_()
-  {
-    DT_LOG_TRACE_ENTERING(_logging_);
-    DT_LOG_INFORMATION(_logging_, "Initializing kernel's library info register...");
-
-    // Instantiate the kernel library information register:
-    if (this->_activate_library_info_register_) {
-      _library_info_register_.reset(new library_info);
-      _library_info_register_->set_logging(datatools::logger::get_priority(_params_.library_info_logging_label));
-      _library_info_register_->initialize();
-      DT_LOG_TRACE(_logging_, "Kernel's library info register is now created.");
-      if (datatools::logger::is_trace(_logging_)) {
-        _library_info_register_->tree_dump(std::cerr, "Kernel's library info register:", "[trace] ");
-      }
-    } else {
-      DT_LOG_TRACE(_logging_, "Kernel's library info register is not created.");
-    }
     DT_LOG_TRACE_EXITING(_logging_);
     return;
   }
@@ -642,7 +755,7 @@ namespace datatools {
     // Instantiate the kernel variant repository:
     if (this->_activate_variant_repository_) {
       _variant_repository_.reset(new configuration::variant_repository);
-      _variant_repository_->set_name("__system__");
+      _variant_repository_->set_name("bxDtKernVariantRep");
       _variant_repository_->set_display_name("System Repository");
       _variant_repository_->set_terse_description("The Bayeux/datatools' kernel configuration variant repository");
       // _variant_repository_->grab_auxiliaries().set_flag("__variant.repository.allow_multi_parent");
@@ -664,10 +777,11 @@ namespace datatools {
     DT_LOG_TRACE_ENTERING(_logging_);
     DT_LOG_INFORMATION(_logging_, "Registration of resource paths...");
 
-    if (_library_info_register_) {
+    if (has_library_query()) {
+      library_info & libInfoRep = grab_library_info_register();
       DT_LOG_TRACE(_logging_, "Number of resource paths = " << _params_.resource_paths.size());
       if (_logging_ == datatools::logger::PRIO_TRACE) {
-        _params_.print(std::cerr, "Kernel's setup parameters: ", "TRACE: ");
+        _params_.print(std::cerr, "Kernel's setup parameters: ", "[trace] ");
       }
       // Parse some special directives to load arbitrary resource path associated
       // to some library or some software component identified by their names:
@@ -685,23 +799,21 @@ namespace datatools {
         std::string lib_name = resource_path_registration.substr(0, apos);
         // boost::filesystem::path
         std::string lib_resource_path = resource_path_registration.substr(apos+1);
-        DT_LOG_TRACE(_logging_, "Library " << lib_name << "' resource path '"
+       DT_LOG_TRACE(_logging_, "Library " << lib_name << "' resource path '"
                      << lib_resource_path << "' registration...");
-        DT_THROW_IF(_library_info_register_->has(lib_name),
+        DT_THROW_IF(libInfoRep.has(lib_name),
                     std::logic_error,
                     "Library info '"<< lib_name << "'is already registered !");
-        datatools::properties & lib_infos
-          = _library_info_register_->registration(lib_name);
+        datatools::properties & lib_infos = libInfoRep.registration(lib_name);
         lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
                                lib_resource_path
                                );
       }
       if (_logging_ >= datatools::logger::PRIO_TRACE) {
-        _library_info_register_->tree_dump(std::cerr, "Library information register: ");
+        libInfoRep.tree_dump(std::cerr, "Library information register: ");
       }
       _params_.resource_paths.clear();
-    } // _library_info_register_
-    else {
+    } else {
       DT_LOG_TRACE(_logging_, "No kernel's library info register is available!");
     }
     DT_LOG_TRACE_EXITING(_logging_);
@@ -1035,7 +1147,7 @@ namespace datatools {
     }
 
     // Initialize internals:
-    _initialize();
+    _initialize_();
 
     _initialized_ = true;
     if (_logging_ == datatools::logger::PRIO_TRACE) {
@@ -1050,7 +1162,7 @@ namespace datatools {
     DT_LOG_TRACE_ENTERING(_logging_);
     if (! _initialized_) return;
     _initialized_ = false;
-    _shutdown();
+    _shutdown_();
     _params_.reset();
     DT_LOG_TRACE(_logging_, "Kernel has shutdown.");
     DT_LOG_TRACE_EXITING(_logging_);
@@ -1077,23 +1189,78 @@ namespace datatools {
     _logging_ = logging_;
   }
 
+  bool kernel::has_services() const
+  {
+    return _services_.get() != nullptr && _services_->is_initialized();
+  }
+
+  bool kernel::has_urn_query() const
+  {
+    return has_services() && _services_->has("bxDtKernUrnQuery");
+  }
+
+  urn_query_service & kernel::grab_urn_query()
+  {
+    DT_THROW_IF(!has_urn_query(),
+                std::logic_error,
+                "The Bayeux/datatools kernel has no URN query service !");
+    urn_query_service & kUrnQuery = _services_->grab<urn_query_service>("bxDtKernUrnQuery");
+    return kUrnQuery;
+  }
+
+  const urn_query_service & kernel::get_urn_query() const
+  {
+    DT_THROW_IF(!has_urn_query(),
+                std::logic_error,
+                "The Bayeux/datatools kernel has no URN query service !");
+    const urn_query_service & kUrnQuery = _services_->get<urn_query_service>("bxDtKernUrnQuery");
+    return kUrnQuery;
+  }
+
+  bool kernel::has_library_query() const
+  {
+    return has_services() && _services_->has("bxDtKernLibQuery");
+  }
+
+  library_query_service & kernel::grab_library_query()
+  {
+    DT_THROW_IF(!has_library_query(),
+                std::logic_error,
+                "The Bayeux/datatools kernel has no LIBRARY query service !");
+    library_query_service & kLibraryQuery = _services_->grab<library_query_service>("bxDtKernLibQuery");
+    return kLibraryQuery;
+  }
+
+  const library_query_service & kernel::get_library_query() const
+  {
+    DT_THROW_IF(!has_library_query(),
+                std::logic_error,
+                "The Bayeux/datatools kernel has no library query service !");
+    const library_query_service & kLibraryQuery = _services_->get<library_query_service>("bxDtKernLibQuery");
+    return kLibraryQuery;
+  }
+
   bool kernel::has_library_info_register() const
   {
-    return _library_info_register_.get() != 0;
+    return has_library_query();
   }
 
   library_info & kernel::grab_library_info_register()
   {
-    DT_THROW_IF(!_library_info_register_, std::logic_error,
-                "The datatools kernel has no library info register !");
-    return *_library_info_register_;
+    DT_THROW_IF(!has_library_query(),
+                std::logic_error,
+                "The Bayeux/datatools kernel has no library/component query service !");
+    datatools::library_query_service & kLibInfo = _services_->grab<datatools::library_query_service>("bxDtKernLibQuery");
+    return kLibInfo.grab_libinfo();
   }
 
   const library_info & kernel::get_library_info_register() const
   {
-    DT_THROW_IF(!_library_info_register_, std::logic_error,
-                "The datatools kernel has no library info register !");
-    return *_library_info_register_;
+    DT_THROW_IF(!has_library_query(),
+                std::logic_error,
+                "The Bayeux/datatools kernel has no library/component query service !");
+    const datatools::library_query_service & kLibInfo = _services_->get<datatools::library_query_service>("bxDtKernLibQuery");
+    return kLibInfo.get_libinfo();
   }
 
   bool kernel::has_effective_variant_repository() const
@@ -1205,31 +1372,58 @@ namespace datatools {
     out_ << indent << i_tree_dumpable::tag
          << "Application name  : '" << _application_name_ << "'" << std::endl;
 
-   out_ << indent << i_tree_dumpable::tag
-        << "Command line argument count : " << _argc_  << std::endl;
-
-   out_ << indent << i_tree_dumpable::tag
-        << "Command line arguments : ";
-   if (_argc_ == 0) out_ << "<none>";
-   out_ << std::endl;
-   for (int i = 0; i < _argc_; i++) {
-     out_ << indent << i_tree_dumpable::skip_tag;
-     if (i < _argc_ - 1) {
-       out_ << i_tree_dumpable::tag;
-     } else {
-       out_ << i_tree_dumpable::last_tag;
-     }
-     out_ << "Argument #" << i << " : '" << _argv_[i] << "'" << std::endl;
-   }
+    out_ << indent << i_tree_dumpable::tag
+         << "Command line argument count : " << _argc_  << std::endl;
 
     out_ << indent << i_tree_dumpable::tag
-         << "Library info register : "
-         << (_activate_library_info_register_ ? "<activated>" : "<not activated>") << std::endl;
-    if (has_library_info_register()) {
+         << "Command line arguments : ";
+    if (_argc_ == 0) out_ << "<none>";
+    out_ << std::endl;
+    for (int i = 0; i < _argc_; i++) {
+      out_ << indent << i_tree_dumpable::skip_tag;
+      if (i < _argc_ - 1) {
+        out_ << i_tree_dumpable::tag;
+      } else {
+        out_ << i_tree_dumpable::last_tag;
+      }
+      out_ << "Argument #" << i << " : '" << _argv_[i] << "'" << std::endl;
+    }
+
+    out_ << indent << i_tree_dumpable::tag
+         << "System service manager : "
+         << ((_services_.get() != nullptr && _services_->is_initialized()) ? "<activated>" : "<not activated>") << std::endl;
+    if (has_services()) {
       std::ostringstream indent2;
       indent2 << indent << i_tree_dumpable::skip_tag;
-      get_library_info_register().tree_dump(out_, "", indent2.str());
+      _services_->tree_dump(out_, "", indent2.str());
     }
+
+    out_ << indent << i_tree_dumpable::tag
+         << "URN query service : "
+         << (has_urn_query() ? "<activated>" : "<not activated>") << std::endl;
+    if (has_urn_query()) {
+      std::ostringstream indent2;
+      indent2 << indent << i_tree_dumpable::skip_tag;
+      get_urn_query().tree_dump(out_, "", indent2.str());
+    }
+
+    out_ << indent << i_tree_dumpable::tag
+         << "Library query service : "
+         << (has_library_query() ? "<activated>" : "<not activated>") << std::endl;
+    if (has_library_query()) {
+      std::ostringstream indent2;
+      indent2 << indent << i_tree_dumpable::skip_tag;
+      get_library_query().tree_dump(out_, "", indent2.str());
+    }
+
+    // out_ << indent << i_tree_dumpable::tag
+    //      << "Library info register : "
+    //      << (has_library_info_register() ? "<activated>" : "<not activated>") << std::endl;
+    // if (has_library_info_register()) {
+    //   std::ostringstream indent2;
+    //   indent2 << indent << i_tree_dumpable::skip_tag;
+    //   get_library_info_register().tree_dump(out_, "", indent2.str());
+    // }
 
     out_ << indent << i_tree_dumpable::tag
          << "Configuration variant repository : "
@@ -1256,7 +1450,7 @@ namespace datatools {
 #endif // DATATOOLS_WITH_QT_GUI == 1
 
     out_ << indent << i_tree_dumpable::inherit_tag(inherit_)
-         << "Kernel singleton instance at : " << _instance_ << std::endl;
+         << "Kernel singleton instance at : [@" << _instance_ << ']' << std::endl;
 
     return;
   }
@@ -1363,7 +1557,7 @@ namespace datatools {
   kernel & kernel::instantiate()
   {
     if (! kernel::is_instantiated()) {
-      static boost::scoped_ptr<datatools::kernel> _kernel_handler;
+      static std::unique_ptr<datatools::kernel> _kernel_handler;
       if (! _kernel_handler) {
         // Allocate the new global kernel and initialize it:
         _kernel_handler.reset(new datatools::kernel);

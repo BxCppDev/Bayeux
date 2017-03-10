@@ -62,7 +62,20 @@ namespace datatools {
 
   bool urn::is_valid() const
   {
-    return _segments_.size() > 0;
+    return _segments_.size() > 1;
+  }
+
+  bool urn::has_namespace() const
+  {
+    return _segments_.size() > 1;
+  }
+
+  const std::string & urn::get_namespace() const
+  {
+    DT_THROW_IF(!has_namespace(),
+                std::logic_error,
+                "Missing URN namespace!");
+    return _segments_[0];
   }
 
   std::size_t urn::get_depth() const
@@ -83,6 +96,9 @@ namespace datatools {
     DT_THROW_IF(!name_validation(segment_, nv_flags),
                 std::logic_error,
                 "Invalid URN path segment '" << segment_ << "'!");
+    DT_THROW_IF(_segments_.size() == 0 && segment_ == urn_scheme(),
+                std::logic_error,
+                "Forbidden URN path segment '" << segment_ << "' as URN namespace!");
     _segments_.push_back(segment_);
   }
 

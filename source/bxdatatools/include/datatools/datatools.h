@@ -12,6 +12,7 @@
 
 // This project:
 #include <datatools/logger.h>
+#include <datatools/datatools_init.h>
 
 /// \brief Top-level namespace of the Bayeux/datatools module library
 namespace datatools {
@@ -52,10 +53,8 @@ namespace datatools {
 
 #endif // DATATOOLS_DATATOOLS_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

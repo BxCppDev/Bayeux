@@ -1,0 +1,74 @@
+# -*- mode: conf-unix; -*-
+
+#@description Definition list for URN infos
+#@key_label   "urn"
+#@meta_label  "category"
+
+#########################################################
+[urn="urn:fooexp:geometry:setup:1.0" category="geometry"]
+
+#@config URN info parameters for foo geometry 1.0
+
+description : string = "Foo experiment geometry model version 1.0"
+
+######################################################
+[urn="urn:fooexp:commissioning:run:1" category="data"]
+
+#@config URN info parameters for foo commissioning run 1
+
+description : string = "Foo experiment run 1"
+
+######################################################
+[urn="urn:fooexp:commissioning:run:2" category="data"]
+
+#@config URN info parameters for foo commissioning run 2
+
+description : string = "Foo experiment run 2"
+
+######################################################
+[urn="urn:fooexp:commissioning:run:3" category="data"]
+
+#@config URN info parameters for foo commissioning run 3
+
+description : string = "Foo experiment run 3"
+
+##########################################################
+[urn="urn:fooexp:monitoring:2.1" category="configuration"]
+
+#@config URN info parameters for foo monitoring 2.1
+
+description : string = "Foo experiment monitoring setup version 2.1"
+
+##########################################################
+[urn="urn:fooexp:commissioning:dataset:1" category="data"]
+
+#@config URN info parameters for foo commissioning dataset 1
+
+description : string = "Foo experiment dataset 1"
+
+topics : string[2] = "data" "metadata"
+
+topic.data.components : string[3] = \
+  "urn:fooexp:commissioning:run:1" \
+  "urn:fooexp:commissioning:run:2" \
+  "urn:fooexp:commissioning:run:3"
+
+topic.metadata.components : string[1] = \
+  "urn:fooexp:monitoring:2.1"
+
+#####################################################
+[urn="urn:fooexp:analysis:1.0" category="configuration"]
+
+#@config URN info parameters for foo analysis 1.0
+
+description : string = "Foo experiment analysis 1.0"
+
+topics : string[2] = "geometry" "input"
+
+topic.geometry.components : string[1] = \
+  "urn:fooexp:geometry:setup:1.0"
+
+topic.input.components : string[1] = \
+  "urn:fooexp:commissioning:dataset:1"
+
+# end

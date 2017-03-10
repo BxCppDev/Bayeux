@@ -40,7 +40,10 @@
 
 namespace datatools {
 
-  /// \brief A class representing an URN.
+  /// \brief A class representing a simplified URN
+  ///        conforming parts of the RFC2141
+  ///
+  /// \see http://www.ietf.org/rfc/rfc2141.txt
   /**
    *
    * Supported format is :
@@ -71,6 +74,12 @@ namespace datatools {
 
     /// Check validity
     bool is_valid() const;
+
+    /// Check is namespace is set
+    bool has_namespace() const;
+
+    /// Return the namespace
+    const std::string & get_namespace() const;
 
     /// Set path segments
     void set_segments(const std::vector<std::string> & segments_);
@@ -107,9 +116,7 @@ namespace datatools {
 
   };
 
-}// end of namespace datatools
-
-// #include <datatools/url_parsers-inl.h>
+} // end of namespace datatools
 
 #endif // DATATOOLS_URN_H
 

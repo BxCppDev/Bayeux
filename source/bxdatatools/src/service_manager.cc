@@ -234,6 +234,7 @@ namespace datatools {
     this->initialize(dummy_config);
   }
 
+
   void service_manager::reset() {
     DT_LOG_TRACE(get_logging_priority(),"Entering...");
     DT_THROW_IF(!initialized_,std::logic_error,"Manager is not initialized !");
@@ -261,6 +262,7 @@ namespace datatools {
     }
     services_.clear();
     factory_register_.reset();
+    allow_dynamic_services_ = false;
     force_initialization_at_load_ = false;
     preload_ = true;
     DT_LOG_TRACE(get_logging_priority(),"Exiting.");
@@ -555,6 +557,7 @@ namespace datatools {
 
     out << indent << i_tree_dumpable::inherit_tag(inherit)
         << "Initialized    : "
+        << std::boolalpha
         << this->is_initialized()
         << std::endl;
   }

@@ -244,7 +244,7 @@ namespace datatools {
         << "'" << std::endl;
 
     out << indent << i_tree_dumpable::tag
-        << "Service ID       : '"
+        << "Service class ID : '"
         << service_id
         << "'" << std::endl;
 
@@ -260,11 +260,11 @@ namespace datatools {
     out << indent << i_tree_dumpable::tag
         << "Service manager  : ";
     if (has_service_manager()) {
-      out << "[@" << manager << "]";
+      out << "'" << manager->get_name() << "' [@" << manager << "]";
     } else {
       out << "<none>";
     }
-    out << "'" << std::endl;
+    out << std::endl;
 
     {
       out << indent << i_tree_dumpable::tag
@@ -362,7 +362,7 @@ namespace datatools {
 
     out << indent << i_tree_dumpable::inherit_tag(a_inherit)
         << "Can be dropped   : "
-        << this->can_be_dropped() << std::endl;
+        << std::boolalpha << this->can_be_dropped() << std::endl;
  }
 
   bool find_service_name_with_id(const service_dict_type & services_,

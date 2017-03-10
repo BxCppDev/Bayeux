@@ -28,6 +28,7 @@
 #include <datatools/properties.h>
 #include <datatools/kernel.h>
 #include <datatools/bit_mask.h>
+#include <datatools/urn_query_service.h>
 
 namespace datatools {
 
@@ -340,11 +341,12 @@ namespace datatools {
   public:
 
     enum use_type {
-      USE_NOTHING        = 0x0,
-      USE_TRACE          = bit_mask::bit01,
-      USE_GLOBAL_PATH    = bit_mask::bit02,
-      USE_ENVIRON        = bit_mask::bit03,
-      USE_KERNEL_LIBINFO = bit_mask::bit04
+      USE_NOTHING          = 0x0,
+      USE_TRACE            = bit_mask::bit01, //!< Activate trace logging
+      USE_GLOBAL_PATH      = bit_mask::bit02, //!< Undocumented
+      USE_ENVIRON          = bit_mask::bit03, //!< Accept environment variables in path
+      USE_KERNEL_LIBINFO   = bit_mask::bit04, //!< Accept Kernel library query resolution
+      USE_KERNEL_URN_QUERY = bit_mask::bit05  //!< Accept URN query resolution
     };
 
     struct lib_info_keys_entry_type
@@ -359,7 +361,8 @@ namespace datatools {
     fetch_path_processor(std::string parent_path_ = "",
                          bool use_global_path_ = false,
                          bool use_env_ = true,
-                         bool use_kernel_libinfo_ = true);
+                         bool use_kernel_libinfo_ = true,
+                         bool use_kernel_urn_query_ = true);
 
     fetch_path_processor(uint32_t use_mode,
                          const std::string & parent_path_ = "");
@@ -374,12 +377,17 @@ namespace datatools {
 
     bool use_kernel_libinfo() const;
 
+    void set_use_kernel_urn_query(bool);
+
+    bool use_kernel_urn_query() const;
+
   private:
     void process_impl(std::string &);
-    bool _trace_;
+    bool _trace_; //!< Activation of trace logging message
     bool _use_global_path_;
-    bool _use_env_;
-    bool _use_kernel_libinfo_;
+    bool _use_env_; //!< Accept environment variables in paths
+    bool _use_kernel_libinfo_; //!< Accept library locator in paths
+    bool _use_kernel_urn_query_; //!< Accept URN path resolution
     std::string _parent_path_;
   };
 
@@ -415,11 +423,11 @@ namespace datatools {
     }
     std::string & gpath = *g_path.get();
     {
-      char * egp = ::getenv("DATATOOLS_GLOBAL_PATH");
+      char * egp = ::getenv("BXDATATOOLS_GLOBAL_PATH");
       if (gpath.empty() && egp != 0) {
         std::clog << datatools::io::notice
                   << "datatools::_gp::global_path: "
-                  << "Set the global path from the 'DATATOOLS_GLOBAL_PATH' environment variable."
+                  << "Set the global path from the 'BXDATATOOLS_GLOBAL_PATH' environment variable."
                   << std::endl;
         gpath = egp;
       }
@@ -460,6 +468,17 @@ namespace datatools {
     return _use_kernel_libinfo_;
   }
 
+  void fetch_path_processor::set_use_kernel_urn_query(bool u_)
+  {
+    _use_kernel_urn_query_ = u_;
+    return;
+  }
+
+  bool fetch_path_processor::use_kernel_urn_query() const
+  {
+    return _use_kernel_urn_query_;
+  }
+
   fetch_path_processor::fetch_path_processor(uint32_t use_mode_,
                                              const std::string & parent_path_)
   {
@@ -467,6 +486,7 @@ namespace datatools {
     _use_global_path_ = use_mode_ & USE_GLOBAL_PATH;
     _use_env_ = use_mode_ & USE_ENVIRON;
     _use_kernel_libinfo_ = use_mode_ & USE_KERNEL_LIBINFO;
+    _use_kernel_urn_query_ = use_mode_ & USE_KERNEL_URN_QUERY;
     _parent_path_ = parent_path_;
     return;
   }
@@ -475,12 +495,14 @@ namespace datatools {
   fetch_path_processor::fetch_path_processor(std::string parent_path_,
                                              bool use_global_path_,
                                              bool use_env_,
-                                             bool use_kernel_libinfo_) {
+                                             bool use_kernel_libinfo_,
+                                             bool use_kernel_urn_query_) {
     _use_global_path_ = use_global_path_;
     _parent_path_ = parent_path_;
     _trace_ = false;
     _use_env_ = use_env_;
     _use_kernel_libinfo_ = use_kernel_libinfo_;
+    _use_kernel_urn_query_ = use_kernel_urn_query_;
   }
 
   bool fetch_path_processor::process(std::string& path) {
@@ -572,6 +594,56 @@ namespace datatools {
     }
     // working buffer:
     std::string text = path;
+    // First we search for an URN scheme in the case the filename has been registered
+    // in some URN system repository:
+    if (_use_kernel_urn_query_ && boost::starts_with(text, "urn:")) {
+      // Found an URN scheme:
+      // Examples:
+      //   "urn:foo:bar"
+      //   "urn:foo:bar:topic:setup:1.3.2-23"
+      std::string urn_text = text;
+      std::string urn_category;
+      std::string urn_mime;
+      std::string urn_path;
+      // Search for a trailing requested category directive:
+      // Examples:
+      //   "urn:foo:bar:topic:setup:1.3.2-23@configuration"
+      //   "urn:foo:bar:topic:result:1.3.2-23@data"
+      //   "urn:foo:bar:topic:logo:small@image"
+      std::size_t atpos = text.find('@');
+      std::string tail;
+      if (atpos != std::string::npos) {
+        urn_text = text.substr(0, atpos);
+        tail = text.substr(atpos + 1);
+      }
+      urn_category = tail;
+      /*
+      if (! tail.empty()) {
+        urn_category = tail;
+      }
+      else {
+        std::size_t parpos = text.find('(');
+        if (parpos != std::string::npos) {
+          urn_category = tail.substr(0, parpos);
+          if (tail.back() != ')') {
+            DT_THROW(std::logic_error, "Invalid URN path format!");
+          }
+          tail = text.substr(parpos + 1);
+        }
+      }
+      */
+      // We detected the signature of an URN which should be registered
+      // in the kernel's URN query service (singleton)
+      if (!kernel::instance().get_urn_query().resolve_urn_as_path(urn_text,
+                                                                  urn_category,
+                                                                  urn_mime,
+                                                                  urn_path)) {
+        DT_THROW(std::logic_error,
+                 "Kernel's URN query service failed to resolve path from URN '" << urn_text << "' "
+                 << "in category '" << urn_category << "' with MIME type '" << urn_mime << "'!");
+      }
+      text = urn_path;
+    }
     bool registered_lib_topic = false;
     if (text[0] == '@') {
       if (trace) {
@@ -833,6 +905,7 @@ namespace datatools {
     fetch_path_processor fpp("", true);
     return fpp.process(path);
   }
+
 
   bool fetch_path_with_env_pg(std::string& path,
                               const std::string & parent_path_) {

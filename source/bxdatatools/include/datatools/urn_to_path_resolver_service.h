@@ -30,12 +30,9 @@
 #include <iostream>
 #include <set>
 
-// Third Party
-// - Bayeux
-#include <datatools/logger.h>
+// This project
 #include <datatools/properties.h>
 #include <datatools/base_service.h>
-#include <datatools/service_manager.h>
 
 namespace datatools {
 
@@ -61,11 +58,19 @@ namespace datatools {
     static const std::set<std::string> & default_known_categories();
 
     //! \brief Resolver map entry
+    //!
+    //! The category is a string which documents the type of informations accessible
+    //! from the path. Default set of values supports:
+    //! - "data" : generic data
+    //! - "configuration" : set of configuration parameters (configuration file)
+    //! - "graphics" : graphical information (icons, images...)
+    //! - "archive" : a container for other resources (tar, zip...)
+    //! - "log" : logging informations
     struct resolver_entry {
-      std::string urn;        //!< URN representation
-      std::string category;   //!< Resource file category
-      std::string path;       //!< Path
-      std::string mime;       //!< MIME type
+      std::string urn;      //!< URN representation
+      std::string category; //!< Resource file category
+      std::string path;     //!< Resource path (may be a filesystem path or any kind of  URL)
+      std::string mime;     //!< MIME type
     };
 
     //! \brief URN to path lookup table
@@ -77,8 +82,14 @@ namespace datatools {
     //! Destructor
     virtual ~urn_to_path_resolver_service();
 
-    //! Add a knonw catagory
+    //! Add a known catagory
     void add_known_category(const std::string & cat_);
+
+    //! Remove a known catagory
+    void remove_known_category(const std::string & cat_);
+
+    //! Clear known categories
+    void clear_known_categories();
 
     //! Return the known categories
     const std::set<std::string> & get_known_categories() const;
@@ -152,6 +163,12 @@ namespace datatools {
     //! Return the URN lookup table
     const urn_lookup_table_type & get_urn_lookup_table() const;
 
+    //! Add to system
+    void kernel_push(const std::string & = "");
+
+    //! Remove from system
+    void kernel_pop();
+
   private:
 
     void _init_();
@@ -161,15 +178,15 @@ namespace datatools {
   private:
 
     // Management:
-    bool _initialized_ = false;
+    bool _initialized_ = false; //!< Initialization flag
 
     // Configuration:
-    bool _allow_overloading_ = false;
-    std::vector<std::string> _map_filenames_;
-    std::set<std::string> _known_categories_;
+    bool _allow_overloading_ = false; //!< Allow URN overloading
+    std::vector<std::string> _map_filenames_; //!< List of initialization map files
+    std::set<std::string> _known_categories_; //!< Supported categories
 
     // Private data:
-    urn_lookup_table_type _urn_lookup_table_;
+    urn_lookup_table_type _urn_lookup_table_; //!< Dictionary of URN to path records
 
     DATATOOLS_SERVICE_REGISTRATION_INTERFACE(urn_to_path_resolver_service)
 

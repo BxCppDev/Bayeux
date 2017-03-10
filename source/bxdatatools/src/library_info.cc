@@ -17,6 +17,7 @@
 #include <datatools/properties.h>
 #include <datatools/multi_properties.h>
 #include <datatools/types.h>
+#include <datatools/utils.h>
 
 namespace datatools {
 
@@ -69,6 +70,7 @@ namespace datatools {
                  std::logic_error,
                  "Not initialized !");
     _initialized_ = false;
+    _db_aliases_.clear();
     _db_.reset();
     return;
   }
@@ -119,6 +121,13 @@ namespace datatools {
   {
     static std::string key;
     if (key.empty()) key = "url";
+    return key;
+  }
+
+  const std::string &library_info::keys::urn()
+  {
+    static std::string key;
+    if (key.empty()) key = "urn";
     return key;
   }
 
@@ -302,6 +311,15 @@ namespace datatools {
     return;
   }
 
+  void library_info::aliases(std::vector<std::string> & as_) const
+  {
+    as_.clear();
+    for (const auto & ap : _db_aliases_) {
+      as_.push_back(ap.first);
+    }
+    return;
+  }
+
   void library_info::update(const std::string & library_name_,
                             const std::string & info_key_,
                             const std::string & info_value_,
@@ -319,10 +337,11 @@ namespace datatools {
                 std::logic_error,
                 "Missing value for info key '" << info_key_ << "' in library '"
                 << library_name_ << "' !");
-    DT_THROW_IF(! _db_.has_key(library_name_),
+    std::string libname = resolve(library_name_);
+    DT_THROW_IF(! has(libname),
                 std::logic_error,
-                "Library '" << library_name_ << "' is not registered !");
-    properties & lib_info = _db_.grab_section(library_name_);
+                "Library '" << libname << "' is not registered !");
+    properties & lib_info = _db_.grab_section(libname);
 
     int t = TYPE_STRING;
     if (! info_type_.empty()) {
@@ -330,7 +349,7 @@ namespace datatools {
       DT_THROW_IF(t == TYPE_NONE,
                   std::range_error,
                   "Invalid type '" << info_type_ << "' for key '"
-                  << info_key_ << "' in library '" << library_name_ << "' !");
+                  << info_key_ << "' in library '" << libname << "' !");
     }
 
     if (t == TYPE_BOOLEAN) {
@@ -346,7 +365,7 @@ namespace datatools {
         DT_THROW_IF(true, std::runtime_error,
                     "Invalid boolean format '" << info_value_
                     << "' for  key '" << info_key_
-                    << "' in library '" << library_name_ << "' !");
+                    << "' in library '" << libname << "' !");
       }
       lib_info.update_boolean(info_key_, value);
     } else if (t == TYPE_INTEGER) {
@@ -356,7 +375,7 @@ namespace datatools {
       DT_THROW_IF(!iss, std::runtime_error,
                   "Invalid integer number format '" << info_value_
                   << "' for  key '" << info_key_
-                  << "' in library '" << library_name_ << "' !");
+                  << "' in library '" << libname << "' !");
       lib_info.update_integer(info_key_, value);
     } else if (t == TYPE_REAL) {
       double value = std::numeric_limits<double>::quiet_NaN();
@@ -365,7 +384,7 @@ namespace datatools {
       DT_THROW_IF(!iss, std::runtime_error,
                   "Invalid real number format '" << info_value_
                   << "' for  key '" << info_key_
-                  << "' in library '" << library_name_ << "' !");
+                  << "' in library '" << libname << "' !");
       lib_info.update_real(info_key_, value);
     } else if (t == TYPE_STRING) {
       lib_info.update_string(info_key_, info_value_);
@@ -383,19 +402,13 @@ namespace datatools {
                                           const std::string & install_lib_path_,
                                           const std::string & install_resource_path_)
   {
-    DT_THROW_IF(library_name_.empty(),
+    uint32_t libname_validation_flags = NV_NO_COLON | NV_NO_DOT | NV_NO_HYPHEN;
+    DT_THROW_IF(!name_validation(library_name_, libname_validation_flags),
                 std::logic_error,
-                "Missing library name !");
-    DT_THROW_IF(library_name_.find('.') != std::string::npos,
+                "Invalid library name '" << library_name_ << "'!");
+    DT_THROW_IF(is_alias(library_name_),
                 std::logic_error,
-                "Invalid library name (cannot contain a dot '.') !");
-    DT_THROW_IF(library_name_.find(':') != std::string::npos,
-                std::logic_error,
-                "Invalid library name (cannot contain a semicolum ':') !");
-    DT_THROW_IF(library_name_.find('@') != std::string::npos,
-                std::logic_error,
-                "Invalid library name (cannot contain '@') !");
-
+                "Name '" << library_name_ << "' is already used as an alias !");
     DT_THROW_IF(_db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is already registered !");
@@ -462,31 +475,84 @@ namespace datatools {
   }
 
 
+  std::string library_info::resolve(const std::string & library_key_,
+                                    bool check_) const
+  {
+    std::string libname = library_key_;
+    if (is_alias(libname)) {
+      libname = _db_aliases_.find(library_key_)->second;
+    }
+    DT_THROW_IF(check_ && !_db_.has_key(libname), std::logic_error,
+                "Library name '" << libname << "' does not exist!");
+    return libname;
+  }
+
+
+  bool library_info::is_alias(const std::string & library_key_) const
+  {
+    DT_THROW_IF(library_key_.empty(),
+                std::logic_error,
+                "Missing library identifier !");
+    return _db_aliases_.count(library_key_) > 0;
+  }
+
+  bool library_info::is_library(const std::string & library_name_) const
+  {
+    return _db_.has_key(library_name_);
+  }
+
   bool library_info::has(const std::string & library_name_) const
   {
     DT_THROW_IF(library_name_.empty(),
                 std::logic_error,
                 "Missing library name !");
-     return _db_.has_key(library_name_);
+    if (_db_aliases_.count(library_name_)) {
+      return true;
+    }
+    return _db_.has_key(library_name_);
   }
 
 
-  void library_info::print(const std::string & library_name_,
+  void library_info::print(const std::string & library_key_,
                            std::ostream & out_) const
   {
-    DT_THROW_IF(library_name_.empty(),
+    DT_THROW_IF(!has(library_key_),
                 std::logic_error,
-                "Missing library name !");
-    DT_THROW_IF(!_db_.has_key(library_name_),
-                std::logic_error,
-                "Library '" << library_name_ << "' is not registered !");
-    const properties & lib_info = _db_.get_section(library_name_);
+                "Library '" << library_key_ << "' is not registered !");
+    const properties & lib_info = get(library_key_);
     std::ostringstream title_oss;
-    title_oss << "Library information store for '" << library_name_ << "' : ";
+    title_oss << "Library information store for '" << library_key_ << "' : ";
     lib_info.tree_dump(out_,title_oss.str());
     return;
   }
 
+  void library_info::add_alias(const std::string & library_alias_,
+                               const std::string & library_name_)
+  {
+    static  const uint32_t libalias_validation_flags = NV_NO_COLON
+      | NV_NO_DOT
+      | NV_NO_HYPHEN;
+    DT_THROW_IF(!name_validation(library_alias_, libalias_validation_flags),
+                std::logic_error,
+                "Invalid library alias '" << library_alias_ << "'!");
+    DT_THROW_IF(!has(library_name_), std::logic_error,
+                "Library name '" << library_name_ << "' does not exist!");
+    DT_THROW_IF(has(library_alias_), std::logic_error,
+                "Alias  '" << library_alias_ << "' is already used as a library name!");
+    DT_THROW_IF(_db_aliases_.count(library_alias_) > 0,
+                std::logic_error,
+                "Alias  '" << library_alias_ << "' is already used!");
+    _db_aliases_[library_alias_] = library_name_;
+    return;
+  }
+
+  void library_info::remove_alias(const std::string & library_alias_)
+  {
+    if (_db_aliases_.count(library_alias_) > 0) {
+      _db_aliases_.erase(library_alias_);
+    }
+    return;
+  }
 
   void library_info::unregistration(const std::string & library_name_)
   {
@@ -496,6 +562,15 @@ namespace datatools {
     DT_THROW_IF(! _db_.has_key(library_name_),
                 std::logic_error,
                 "Library '" << library_name_ << "' is not registered !");
+    // Build the list of aliases to be removed:
+    std::set<std::string> removable_aliases;
+    for (const auto & ap : _db_aliases_) {
+      if (ap.second == library_name_) removable_aliases.insert(ap.first);
+    }
+    for (const std::string & alias : removable_aliases) {
+      _db_aliases_.erase(alias);
+    }
+    // Remove the library entry:
     _db_.remove(library_name_);
     DT_LOG_TRACE(::datatools::library_info::get_logging(),
                  "Library information store for library '" << library_name_
@@ -504,50 +579,41 @@ namespace datatools {
   }
 
 
-  void library_info::erase(const std::string & library_name_,
+  void library_info::erase(const std::string & library_key_,
                            const std::string & info_key_)
   {
-    DT_THROW_IF(library_name_.empty(),
-                std::logic_error,
-                "Missing library name !");
     DT_THROW_IF(info_key_.empty(),
                 std::logic_error,
-                "Missing info key name for library '" << library_name_ << "' !");
-    DT_THROW_IF(! _db_.has_key(library_name_),
+                "Missing info key name for library '" << library_key_ << "' !");
+    DT_THROW_IF(!has(library_key_),
                 std::logic_error,
-                "Library '" << library_name_ << "' is not registered !");
-    properties & lib_info = _db_.grab_section(library_name_);
+                "Library '" << library_key_ << "' is not registered !");
+    properties & lib_info = grab(library_key_);
     DT_THROW_IF(!lib_info.has_key(info_key_),
                 std::logic_error,
-                "Library '" << library_name_ << "' information has no key '"
+                "Library '" << library_key_ << "' information has no key '"
                 << info_key_ << "' !");
     lib_info.erase(info_key_);
     return;
   }
 
 
-  properties & library_info::grab(const std::string & library_name_)
+  properties & library_info::grab(const std::string & library_key_)
   {
-    DT_THROW_IF(library_name_.empty(),
+    DT_THROW_IF(!has(library_key_),
                 std::logic_error,
-                "Missing library name !");
-    DT_THROW_IF(!_db_.has_key(library_name_),
-                std::logic_error,
-                "Library '" << library_name_ << "' is not registered !");
-    properties & lib_info = _db_.grab_section(library_name_);
+                "Library '" << library_key_ << "' is not registered !");
+    properties & lib_info = _db_.grab_section(resolve(library_key_));
     return lib_info;
   }
 
 
-  const properties & library_info::get(const std::string & library_name_) const
+  const properties & library_info::get(const std::string & library_key_) const
   {
-    DT_THROW_IF(library_name_.empty(),
+    DT_THROW_IF(!has(library_key_),
                 std::logic_error,
-                "Missing library name !");
-    DT_THROW_IF(!_db_.has_key(library_name_),
-                std::logic_error,
-                "Library '" << library_name_ << "' is not registered !");
-    const properties & lib_info = _db_.get_section(library_name_);
+                "Library '" << library_key_ << "' is not registered !");
+    const properties & lib_info = _db_.get_section(resolve(library_key_));
     return lib_info;
   }
 
@@ -565,6 +631,7 @@ namespace datatools {
          << "Initialized   : " << _initialized_ << std::endl;
     std::vector<std::string> libnames;
     datatools::library_info::names(libnames);
+
     out_ << indent << i_tree_dumpable::tag
          << "Registered libraries/components : " << libnames.size() << std::endl;
     for (size_t i = 0; i < libnames.size(); i++) {
@@ -575,6 +642,21 @@ namespace datatools {
         out_ << i_tree_dumpable::last_tag;
       }
       out_ << "Library: '" << libnames[i] << "'" << std::endl;
+    }
+
+    out_ << indent << i_tree_dumpable::tag
+         << "Aliases : " << _db_aliases_.size() << std::endl;
+    for (std::map<std::string,std::string>::const_iterator i = _db_aliases_.begin();
+         i != _db_aliases_.end();
+         i++) {
+      std::map<std::string,std::string>::const_iterator j = i;
+      out_ << indent << i_tree_dumpable::skip_tag;
+      if (++j == _db_aliases_.end()) {
+        out_ << i_tree_dumpable::last_tag;
+      } else {
+        out_ << i_tree_dumpable::tag;
+      }
+      out_ << "Alias: '" << i->first << "' -> Library: '" << i->second << "'" << std::endl;
     }
 
     {

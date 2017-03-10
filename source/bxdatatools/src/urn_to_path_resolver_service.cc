@@ -1,4 +1,4 @@
-// urn_to_path_resolver_service.cc - Implementation of Bayeux
+// urn_to_path_resolver_service.cc - Implementation of URN to path resolver service
 //
 // Copyright (c) 2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
 // Copyright (c) 2017 by Université de Caen
@@ -31,6 +31,8 @@
 #include <datatools/exception.h>
 #include <datatools/multi_properties.h>
 #include <datatools/urn.h>
+#include <datatools/urn_query_service.h>
+#include <datatools/kernel.h>
 
 namespace datatools {
 
@@ -45,14 +47,14 @@ namespace datatools {
       _s.reset(new std::set<std::string>);
       _s->insert("configuration");
       _s->insert("data");
+      _s->insert("graphics");
+      _s->insert("archive");
+      _s->insert("log");
     }
     return *_s;
   }
 
   urn_to_path_resolver_service::urn_to_path_resolver_service()
-    : datatools::base_service("Test",
-                              "A test service",
-                              "0.1")
   {
     return;
   }
@@ -70,6 +72,16 @@ namespace datatools {
                 std::logic_error,
                 "Invalid category name '" << cat_ << "'!");
     _known_categories_.insert(cat_);
+  }
+
+  void urn_to_path_resolver_service::remove_known_category(const std::string & cat_)
+  {
+    _known_categories_.erase(cat_);
+  }
+
+  void urn_to_path_resolver_service::clear_known_categories()
+  {
+    _known_categories_.clear();
   }
 
   const std::set<std::string> & urn_to_path_resolver_service::get_known_categories() const
@@ -129,19 +141,34 @@ namespace datatools {
       add_map(mapfile);
     }
     _init_();
+    // Publish the service in the Kernel's URN system singleton:
+    if (config_.has_flag("kernel.push")) {
+      std::string name;
+      if (config_.has_key("kernel.push.name")) {
+        name = config_.fetch_string("kernel.push.name");
+      }
+      kernel_push(name);
+    }
     _initialized_ = true;
     return datatools::SUCCESS;
+  }
+
+  void urn_to_path_resolver_service::_reset_()
+  {
+    _urn_lookup_table_.clear();
+    _known_categories_.clear();
+    _map_filenames_.clear();
+    _allow_overloading_ = false;
+    return;
   }
 
   int urn_to_path_resolver_service::reset()
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Service is not initialized!");
+    kernel_pop();
     _initialized_ = false;
-    _urn_lookup_table_.clear();
-    _known_categories_.clear();
-    _map_filenames_.clear();
-    _allow_overloading_ = false;
+    _reset_();
     return datatools::SUCCESS;
   }
 
@@ -305,6 +332,31 @@ namespace datatools {
            << uepair.second.mime << " "
            << std::endl;
     }
+    return;
+  }
+
+  void urn_to_path_resolver_service::kernel_push(const std::string & name_)
+  {
+    datatools::logger::priority logging = get_logging_priority();
+    DT_LOG_TRACE_ENTERING(logging);
+    DT_THROW_IF(!is_initialized(), std::logic_error,
+                "Cannot register in the library's URN query service if not initialized!");
+    datatools::kernel::instance().grab_urn_query().add_path_resolver(*this, name_);
+    DT_LOG_TRACE_EXITING(logging);
+    return;
+  }
+
+  void urn_to_path_resolver_service::kernel_pop()
+  {
+    datatools::logger::priority logging = get_logging_priority();
+    DT_LOG_TRACE_ENTERING(logging);
+    DT_LOG_TRACE(logging, "Check for registration in kernel...");
+    if (datatools::kernel::instance().get_urn_query().has_path_resolver(*this)) {
+      DT_LOG_TRACE(logging, "Removing from kernel...");
+      datatools::kernel::instance().grab_urn_query().remove_path_resolver(*this);
+      DT_LOG_TRACE(logging, "Done.");
+    }
+    DT_LOG_TRACE_EXITING(logging);
     return;
   }
 

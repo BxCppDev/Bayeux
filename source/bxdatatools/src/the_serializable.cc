@@ -16,6 +16,7 @@
 #include <datatools/event_id.ipp>
 #include <datatools/version_id.ipp>
 #include <datatools/urn.ipp>
+#include <datatools/urn_info.ipp>
 
 /** Macros to automatically instantiate Boost/Serialization-based
  * code associated to serializable classes.
@@ -59,3 +60,8 @@ DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::version_id)
  * datatools::urn                *
  *********************************/
 DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::urn)
+
+/*********************************
+ * datatools::urn_info           *
+ *********************************/
+DATATOOLS_SERIALIZATION_CLASS_SERIALIZE_INSTANTIATE_ALL(datatools::urn_info)

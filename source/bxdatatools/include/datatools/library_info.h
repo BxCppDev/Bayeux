@@ -60,6 +60,7 @@ namespace datatools {
       static const std::string & name();
       static const std::string & libname();
       static const std::string & description();
+      static const std::string & urn();
       static const std::string & url();
       static const std::string & authors();
       static const std::string & copyright();
@@ -101,6 +102,16 @@ namespace datatools {
     /// Build a list of currently registered library names
     void names(std::vector<std::string> &) const;
 
+    /// Build a list of currently defined library aliases
+    void aliases(std::vector<std::string> &) const;
+
+    /// Add alias
+    void add_alias(const std::string & library_alias_,
+                   const std::string & library_name_);
+
+    /// Remove alias
+    void remove_alias(const std::string & library_alias_);
+
     /// Register basic infos for a given library
     properties & registration(const std::string & library_name_,
                               const std::string & library_desc_ = "",
@@ -112,8 +123,18 @@ namespace datatools {
     /// Unregister a given library
     void unregistration(const std::string & library_name_);
 
-    /// Check if some infos about a given library exist
-    bool has(const std::string & library_name_) const;
+    /// Check if some infos about a given library exist (by name or alias)
+    bool has(const std::string & library_key_) const;
+
+    /// Check if a given library exist (by name)
+    bool is_library(const std::string & library_name_) const;
+
+    /// Check if an alias is defined
+    bool is_alias(const std::string & library_key_) const;
+
+    /// Resolve the true name of the library
+    std::string resolve(const std::string & library_key_,
+                        bool check_ = false) const;
 
     /// Update
     void update(const std::string & library_name_,
@@ -143,22 +164,26 @@ namespace datatools {
     bool is_initialized();
 
     /// Return a non-mutable reference to the library infos container
-    const properties & get(const std::string & library_name_) const;
+    const properties & get(const std::string & library_key_) const;
 
     /// Return a mutable reference to the library infos container
-    properties & grab(const std::string & library_name_);
+    properties & grab(const std::string & library_key_);
 
     /// Smart print
-    void tree_dump(std::ostream& out_ = std::clog,
-                   const std::string& title_ = "",
-                   const std::string& indent_ = "",
+    void tree_dump(std::ostream & out_ = std::clog,
+                   const std::string & title_ = "",
+                   const std::string & indent_ = "",
                    bool inherit_ = false) const;
 
   private:
 
-    bool                        _initialized_; //!< Initialization flag
-    logger::priority            _logging_;     //!< Logging priority
-    datatools::multi_properties _db_;          //!< Main register
+    // Management:
+    bool                              _initialized_; //!< Initialization flag
+    logger::priority                  _logging_;     //!< Logging priority
+
+    // Working data:
+    datatools::multi_properties       _db_;          //!< Main register
+    std::map<std::string,std::string> _db_aliases_;  //!< Dictionary of aliases
 
   };
 
@@ -166,10 +191,8 @@ namespace datatools {
 
 #endif // DATATOOLS_LIBRARY_INFO_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
