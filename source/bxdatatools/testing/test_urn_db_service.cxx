@@ -4,12 +4,16 @@
 // Ourselves:
 #include <datatools/urn_db_service.h>
 
+// This project:
+#include <datatools/datatools.h>
+
 void test_urn_db_service_0();
 void test_urn_db_service_1();
 
 int main (int /* argc_ */, char ** /*argv_*/)
 {
   int error_code = EXIT_SUCCESS;
+  datatools::initialize();
   try {
     std::clog << "Test of the 'datatools::urn_db_service' class..." << std::endl;
 
@@ -23,6 +27,7 @@ int main (int /* argc_ */, char ** /*argv_*/)
     std::clog << "[fatal] " << "unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
+  datatools::terminate();
   return error_code;
 }
 
@@ -56,6 +61,7 @@ void test_urn_db_service_0()
 
   urnDbService.tree_dump(std::clog, urnDbService.get_name());
 
+  std::clog << "[info] " << "End of test_urn_db_service_0." << std::endl;
   std::clog << std::endl;
   return;
 }
@@ -81,6 +87,7 @@ void test_urn_db_service_1()
   urnDbService.initialize_standalone(urnDbServiceConfig);
   urnDbService.tree_dump(std::clog, urnDbService.get_name());
 
+  std::clog << "[info] " << "End of test_urn_db_service_1." << std::endl;
   std::clog << std::endl;
   return;
 }

@@ -143,6 +143,9 @@ namespace datatools {
     _init_();
     // Publish the service in the Kernel's URN system singleton:
     if (config_.has_flag("kernel.push")) {
+      DT_THROW_IF(!datatools::kernel::is_instantiated(),
+                  std::logic_error,
+                  "Bayeux/datatools' kernel is not instantiated! Cannot apply the kernel push op!");
       std::string name;
       if (config_.has_key("kernel.push.name")) {
         name = config_.fetch_string("kernel.push.name");
@@ -341,7 +344,9 @@ namespace datatools {
     DT_LOG_TRACE_ENTERING(logging);
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Cannot register in the library's URN query service if not initialized!");
-    datatools::kernel::instance().grab_urn_query().add_path_resolver(*this, name_);
+    if (datatools::kernel::is_instantiated()) {
+      datatools::kernel::instance().grab_urn_query().add_path_resolver(*this, name_);
+    }
     DT_LOG_TRACE_EXITING(logging);
     return;
   }
@@ -351,10 +356,12 @@ namespace datatools {
     datatools::logger::priority logging = get_logging_priority();
     DT_LOG_TRACE_ENTERING(logging);
     DT_LOG_TRACE(logging, "Check for registration in kernel...");
-    if (datatools::kernel::instance().get_urn_query().has_path_resolver(*this)) {
-      DT_LOG_TRACE(logging, "Removing from kernel...");
-      datatools::kernel::instance().grab_urn_query().remove_path_resolver(*this);
-      DT_LOG_TRACE(logging, "Done.");
+    if (datatools::kernel::is_instantiated()) {
+      if (datatools::kernel::instance().get_urn_query().has_path_resolver(*this)) {
+        DT_LOG_TRACE(logging, "Removing from kernel...");
+        datatools::kernel::instance().grab_urn_query().remove_path_resolver(*this);
+        DT_LOG_TRACE(logging, "Done.");
+      }
     }
     DT_LOG_TRACE_EXITING(logging);
     return;

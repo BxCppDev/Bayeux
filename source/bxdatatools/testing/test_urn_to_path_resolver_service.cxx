@@ -1,5 +1,8 @@
 // test_urn_to_path_resolver_service.cxx
 
+// Ourselves:
+#include <datatools/urn_to_path_resolver_service.h>
+
 // Standard library:
 #include <cstdlib>
 #include <iostream>
@@ -7,13 +10,14 @@
 #include <exception>
 
 // This project:
-#include <datatools/urn_to_path_resolver_service.h>
+#include <datatools/datatools.h>
 
 void trps0();
 
 int main(int /* argc_ */, char ** /* argv_ */)
 {
   int error_code = EXIT_SUCCESS;
+  datatools::initialize();
   try {
     std::clog << "Test program for the 'datatools::urn_to_path_resolver_service' class."
               << std::endl;
@@ -26,31 +30,33 @@ int main(int /* argc_ */, char ** /* argv_ */)
     std::cerr << "error: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }
+  datatools::terminate();
   return (error_code);
 }
 
 void trps0()
 {
+  std::clog << "[info] " << "trps0..." << std::endl;
   datatools::urn_to_path_resolver_service resourceResolverService;
   resourceResolverService.set_name("Urn2Resource");
   resourceResolverService.set_logging_priority(datatools::logger::PRIO_DEBUG);
   resourceResolverService.add_known_category("configuration");
-  resourceResolverService.add_known_category("image");
+  resourceResolverService.add_known_category("graphics");
   resourceResolverService.add_known_category("data");
   resourceResolverService.set_allow_overloading(true);
 
   resourceResolverService.add_entry("urn:bayeux:logo:small",
-                                    "image",
+                                    "graphics",
                                     "@bayeux:images/logo/logo_bayeux_66x55_transparent.png",
                                     "image/png");
 
   resourceResolverService.add_entry("urn:bayeux:logo:medium",
-                                    "image",
+                                    "graphics",
                                     "@bayeux:images/logo/logo_bayeux_240x200_transparent.png",
                                     "image/png");
 
   resourceResolverService.add_entry("urn:bayeux:logo:large",
-                                    "image",
+                                    "graphics",
                                     "@bayeux:images/logo/logo_bayeux_300x250_transparent.png",
                                     "image/png");
 
@@ -95,7 +101,8 @@ void trps0()
 
   std::clog << "\nList of registered URN/resource entries: " << resourceResolverService.size() << "\n";
   resourceResolverService.print_lookup_table(std::clog);
-  std::clog << std::endl;
 
+  std::clog << "[info] " << "End of trps0." << std::endl;
+  std::clog << std::endl;
   return;
 }

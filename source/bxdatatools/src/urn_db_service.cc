@@ -88,6 +88,9 @@ namespace datatools {
     _initialized_ = true;
     // Publish the service in the Kernel's URN system singleton:
     if (config_.has_flag("kernel.push")) {
+      DT_THROW_IF(!datatools::kernel::is_instantiated(),
+                  std::logic_error,
+                  "Bayeux/datatools' kernel is not instantiated! Cannot apply the kernel push op!");
       std::string name;
       if (config_.has_key("kernel.push.name")) {
         name = config_.fetch_string("kernel.push.name");
@@ -244,14 +247,18 @@ namespace datatools {
   {
     DT_THROW_IF(!is_initialized(), std::logic_error,
                 "Cannot register in the library's URN query service if not initialized!");
-    datatools::kernel::instance().grab_urn_query().add_db(*this, name_);
+    if (datatools::kernel::is_instantiated()) {
+      datatools::kernel::instance().grab_urn_query().add_db(*this, name_);
+    }
     return;
   }
 
   void urn_db_service::kernel_pop()
   {
-    if (datatools::kernel::instance().get_urn_query().has_db(*this)) {
-      datatools::kernel::instance().grab_urn_query().remove_db(*this);
+    if (datatools::kernel::is_instantiated()) {
+      if (datatools::kernel::instance().get_urn_query().has_db(*this)) {
+        datatools::kernel::instance().grab_urn_query().remove_db(*this);
+      }
     }
     return;
   }
