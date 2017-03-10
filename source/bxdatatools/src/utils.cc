@@ -634,12 +634,21 @@ namespace datatools {
       */
       // We detected the signature of an URN which should be registered
       // in the kernel's URN query service (singleton)
-      if (!kernel::instance().get_urn_query().resolve_urn_as_path(urn_text,
-                                                                  urn_category,
-                                                                  urn_mime,
-                                                                  urn_path)) {
+      DT_THROW_IF(! datatools::kernel::is_instantiated(),
+                  std::runtime_error,
+                  "The Bayeux/datatools' kernel has not been instantiated !"
+                  << "No support for '@foo:bar.txt' syntax !");
+      const datatools::kernel & dtk = datatools::kernel::instance();
+      DT_THROW_IF(! dtk.has_urn_query(),
+                  std::runtime_error,
+                  "The Bayeux/datatools' kernel URN query service has not been activated !"
+                  << "No support for 'urn:foo:bar[:baz[:...]]' syntax !");
+      if (!dtk.get_urn_query().resolve_urn_to_path(urn_text,
+                                                   urn_category,
+                                                   urn_mime,
+                                                   urn_path)) {
         DT_THROW(std::logic_error,
-                 "Kernel's URN query service failed to resolve path from URN '" << urn_text << "' "
+                 "Bayeux/datatools' kernel's URN query service failed to resolve path from URN '" << urn_text << "' "
                  << "in category '" << urn_category << "' with MIME type '" << urn_mime << "'!");
       }
       text = urn_path;
@@ -651,12 +660,12 @@ namespace datatools {
       }
       DT_THROW_IF(! datatools::kernel::is_instantiated(),
                   std::runtime_error,
-                  "The datatools kernel has not been instantiated !"
+                  "The Bayeux/datatools kernel has not been instantiated !"
                   << "No support for '@foo:bar.txt' syntax !");
       const datatools::kernel & dtk = datatools::kernel::instance();
       DT_THROW_IF(! dtk.has_library_info_register(),
                   std::runtime_error,
-                  "The datatools kernel library info register has not been activated !"
+                  "The Bayeux/datatools kernel library info register has not been activated !"
                   << "No support for '@foo[.topic]:bar/blah.txt' syntax !");
       const datatools::library_info & lib_info_reg =
         datatools::kernel::instance().get_library_info_register();

@@ -33,6 +33,7 @@
 // This project
 #include <datatools/properties.h>
 #include <datatools/base_service.h>
+#include <datatools/urn_to_path.h>
 
 namespace datatools {
 
@@ -57,21 +58,23 @@ namespace datatools {
     //! Return the default list of known categories
     static const std::set<std::string> & default_known_categories();
 
-    //! \brief Resolver map entry
-    //!
-    //! The category is a string which documents the type of informations accessible
-    //! from the path. Default set of values supports:
-    //! - "data" : generic data
-    //! - "configuration" : set of configuration parameters (configuration file)
-    //! - "graphics" : graphical information (icons, images...)
-    //! - "archive" : a container for other resources (tar, zip...)
-    //! - "log" : logging informations
-    struct resolver_entry {
-      std::string urn;      //!< URN representation
-      std::string category; //!< Resource file category
-      std::string path;     //!< Resource path (may be a filesystem path or any kind of  URL)
-      std::string mime;     //!< MIME type
-    };
+    // \brief Resolver map entry
+    //
+    // The category is a string which documents the type of informations accessible
+    // from the path. Default set of values supports:
+    // - "data" : generic data
+    // - "configuration" : set of configuration parameters (configuration file)
+    // - "graphics" : graphical information (icons, images...)
+    // - "archive" : a container for other resources (tar, zip...)
+    // - "log" : logging informations
+    // struct resolver_entry {
+    //   std::string urn;      //!< URN representation
+    //   std::string category; //!< Resource file category
+    //   std::string path;     //!< Resource path (may be a filesystem path or any kind of  URL)
+    //   std::string mime;     //!< MIME type
+    // };
+    // \brief Resolver map entry
+    typedef urn_to_path resolver_entry;
 
     //! \brief URN to path lookup table
     typedef std::map<std::string, resolver_entry> urn_lookup_table_type;

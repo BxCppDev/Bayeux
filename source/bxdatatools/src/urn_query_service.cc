@@ -29,6 +29,7 @@
 // This project:
 #include <datatools/urn_db_service.h>
 #include <datatools/urn_to_path_resolver_service.h>
+#include <datatools/urn_to_path.h>
 
 namespace datatools {
 
@@ -68,7 +69,7 @@ namespace datatools {
   }
 
   int urn_query_service::initialize(const datatools::properties & config_,
-                             datatools::service_dict_type& /*services_*/)
+                                    datatools::service_dict_type& /*services_*/)
   {
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "URN service is already initialized!");
@@ -85,45 +86,11 @@ namespace datatools {
     return datatools::SUCCESS;
   }
 
-  /*
-  // static
-  urn_query_service & urn_query_service::_instance_()
-  {
-    std::cerr << "devel **** urn_query_service::_instance_ **** entering..." << std::endl;
-    static std::unique_ptr<urn_query_service> _singleton;
-    if (_singleton.get() == nullptr) {
-      std::cerr << "devel **** urn_query_service::_instance_ **** Instantiating the singleton URN system..." << std::endl;
-      _singleton.reset(new urn_query_service());
-      _singleton->set_name("bxKernUrnSys");
-      _singleton->set_display_name("BxKernelUrnSystem");
-      _singleton->set_terse_description("Kernel URN system");
-      _singleton->initialize_simple();
-      _singleton->tree_dump(std::cerr, "Bayeux/datatoools Kernel's URN system singleton: ", "[devel] ");
-      std::cerr << "devel **** urn_query_service::_instance_ **** The singleton URN system has been instantiated." << std::endl;
-    }
-    std::cerr << "devel **** urn_query_service::_instance_ **** exiting." << std::endl;
-    return *_singleton.get();
-  }
-  */
-
-  // // static
-  // urn_query_service & urn_query_service::instance()
-  // {
-  //   std::cerr << "devel **** urn_query_service::instance **** entering..." << std::endl;
-  //   return _instance_();
-  // }
-
-  // // static
-  // const urn_query_service & urn_query_service::const_instance()
-  // {
-  //   return const_cast<urn_query_service&>(_instance_());
-  // }
-
   // virtual
   void urn_query_service::tree_dump(std::ostream& out_,
-                             const std::string & title_,
-                             const std::string & indent_,
-                             bool inherit_) const
+                                    const std::string & title_,
+                                    const std::string & indent_,
+                                    bool inherit_) const
   {
     this->base_service::tree_dump(out_, title_, indent_, true);
 
@@ -176,8 +143,8 @@ namespace datatools {
     DT_THROW(std::logic_error, "No registered URN info '" << urn_ << "'!");
   }
 
-  bool urn_query_service::urn_exists(const std::string & urn_,
-                              const std::string & category_) const
+  bool urn_query_service::check_urn_info(const std::string & urn_,
+                                         const std::string & category_) const
   {
     for (dbs_dict_type::const_iterator i = _pimpl_->dbs.begin();
          i != _pimpl_->dbs.end();
@@ -192,11 +159,11 @@ namespace datatools {
     return false;
   }
 
-  bool urn_query_service::urn_find(std::vector<std::string> & urn_list_,
-                            const std::string & urn_db_regex_,
-                            const std::string & urn_regex_,
-                            const std::string & urn_category_regex_,
-                            bool clear_) const
+  bool urn_query_service::find_urn_info(std::vector<std::string> & urn_list_,
+                                        const std::string & urn_db_regex_,
+                                        const std::string & urn_regex_,
+                                        const std::string & urn_category_regex_,
+                                        bool clear_) const
   {
     bool found_more = false;
     std::string last_regex;
@@ -205,18 +172,22 @@ namespace datatools {
       std::string urn_db_regex = urn_db_regex_;
       std::string urn_regex    = urn_regex_;
       std::string urn_category_regex = urn_category_regex_;
-      DT_LOG_DEBUG(get_logging_priority(), "Number of URN databases to be scanned : [" << _pimpl_->dbs.size() << "]");
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "Number of URN databases to be scanned : [" << _pimpl_->dbs.size() << "]");
       for (dbs_dict_type::const_iterator i = _pimpl_->dbs.begin();
            i != _pimpl_->dbs.end();
            i++) {
-        DT_LOG_DEBUG(get_logging_priority(), "Searching in URN database '" << i->first << "'...");
+        DT_LOG_DEBUG(get_logging_priority(),
+                     "Searching in URN database '" << i->first << "'...");
         if (!urn_db_regex.empty()) {
           // Not a valid DB name:
           last_regex = urn_db_regex;
           std::regex urndbexp(urn_db_regex);
-          DT_LOG_TRACE(get_logging_priority(), "Checking URN database regex '" << last_regex << "'...");
+          DT_LOG_TRACE(get_logging_priority(),
+                       "Checking URN database regex '" << last_regex << "'...");
           if (!std::regex_match(i->first, urndbexp)) {
-            DT_LOG_TRACE(get_logging_priority(), "URN database '" << i->first << "' does not match with '" << urn_db_regex << "'!");
+            DT_LOG_TRACE(get_logging_priority(),
+                         "URN database '" << i->first << "' does not match with '" << urn_db_regex << "'!");
             continue;
           }
         }
@@ -258,7 +229,7 @@ namespace datatools {
     return found_more;
   }
 
-  bool urn_query_service::urn_has_path(const std::string & urn_) const
+  bool urn_query_service::check_urn_to_path(const std::string & urn_) const
   {
     for (resolvers_dict_type::const_iterator i = _pimpl_->resolvers.begin();
          i != _pimpl_->resolvers.end();
@@ -268,10 +239,117 @@ namespace datatools {
     return false;
   }
 
-  bool urn_query_service::resolve_urn_as_path(const std::string & urn_,
-                                       std::string & category_,
-                                       std::string & mime_,
-                                       std::string & path_) const
+  bool urn_query_service::get_urn_to_path(const std::string & urn_,
+                                          std::string & category_,
+                                          std::string & mime_,
+                                          std::string & path_) const
+  {
+    category_.clear();
+    mime_.clear();
+    path_.clear();
+    for (resolvers_dict_type::const_iterator i = _pimpl_->resolvers.begin();
+         i != _pimpl_->resolvers.end();
+         i++) {
+      const urn_to_path_resolver_service & upr = *i->second;
+      if (upr.urn_is_known(urn_)) {
+        category_ = upr.get_category(urn_);
+        mime_ = upr.get_mime(urn_);
+        path_ = upr.get_path(urn_);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool urn_query_service::find_urn_to_path(std::vector<std::string> & urn_path_list_,
+                                           const std::string & urn_resolver_regex_,
+                                           const std::string & urn_regex_,
+                                           const std::string & urn_category_regex_,
+                                           const std::string & urn_mime_regex_,
+                                           bool clear_) const
+  {
+    bool found_more = false;
+    std::string last_regex;
+    try  {
+      if (clear_) {
+        urn_path_list_.clear();
+      }
+      std::string urn_resolver_regex = urn_resolver_regex_;
+      std::string urn_regex    = urn_regex_;
+      std::string urn_category_regex = urn_category_regex_;
+      std::string urn_mime_regex = urn_mime_regex_;
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "Number of URN resolvers to be scanned : [" << _pimpl_->resolvers.size() << "]");
+      for (resolvers_dict_type::const_iterator i = _pimpl_->resolvers.begin();
+           i != _pimpl_->resolvers.end();
+           i++) {
+        DT_LOG_DEBUG(get_logging_priority(),
+                     "Searching in URN to path resolver '" << i->first << "'...");
+        if (!urn_resolver_regex.empty()) {
+          // Not a valid resolver name:
+          last_regex = urn_resolver_regex;
+          std::regex urnresolvexp(urn_resolver_regex);
+          DT_LOG_TRACE(get_logging_priority(),
+                       "Checking URN to path resolver regex '" << last_regex << "'...");
+          if (!std::regex_match(i->first, urnresolvexp)) {
+            DT_LOG_TRACE(get_logging_priority(),
+                         "URN database '" << i->first << "' does not match with '" << urn_resolver_regex << "'!");
+            continue;
+          }
+        }
+        const urn_to_path_resolver_service & resolver = *i->second;
+        for (urn_to_path_resolver_service::urn_lookup_table_type::const_iterator j
+               = resolver.get_urn_lookup_table().begin();
+             j != resolver.get_urn_lookup_table().end();
+             j++) {
+          DT_LOG_TRACE(get_logging_priority(), "Checking URN lookup table '" << j->first << "'...");
+          const urn_to_path & u2p = j->second;
+          //
+          bool accept = true;
+          if (!urn_regex.empty()) {
+            // Not a valid URN name:
+            last_regex = urn_regex;
+            std::regex urnexp(urn_regex);
+            DT_LOG_TRACE(get_logging_priority(), "Checking URN regex '" << last_regex << "'...");
+            if (!std::regex_match(u2p.get_urn(), urnexp)) {
+              accept = false;
+            }
+          }
+          if (!urn_category_regex.empty()) {
+            // Not a valid URN category:
+            last_regex = urn_category_regex;
+            std::regex catexp(urn_category_regex);
+            DT_LOG_TRACE(get_logging_priority(), "Checking URN category regex '" << last_regex << "'...");
+            if (!std::regex_match(u2p.get_category(), catexp)) {
+              accept = false;
+            }
+          }
+          if (!urn_mime_regex.empty()) {
+            // Not a valid URN mime type:
+            last_regex = urn_mime_regex;
+            std::regex mimeexp(urn_mime_regex);
+            DT_LOG_TRACE(get_logging_priority(), "Checking URN MIME type regex '" << last_regex << "'...");
+            if (!std::regex_match(u2p.get_mime(), mimeexp)) {
+              accept = false;
+            }
+          }
+          if (accept) {
+            urn_path_list_.push_back(j->first);
+            found_more = true;
+          }
+        }
+      }
+    } catch (std::exception & error) {
+      DT_THROW(std::logic_error, "URN to path search met an error: " << error.what() << " (last regex='" << last_regex << "')!");
+      return false;
+    }
+    return found_more;
+  }
+
+  bool urn_query_service::resolve_urn_to_path(const std::string & urn_,
+                                              std::string & category_,
+                                              std::string & mime_,
+                                              std::string & path_) const
   {
     for (resolvers_dict_type::const_iterator i = _pimpl_->resolvers.begin();
          i != _pimpl_->resolvers.end();
@@ -317,7 +395,7 @@ namespace datatools {
   }
 
   void urn_query_service::add_db(const urn_db_service & dbs_,
-                          const std::string & name_)
+                                 const std::string & name_)
   {
     std::lock_guard<std::mutex> lck(_pimpl_->mtx);
     std::string name = name_;
@@ -380,7 +458,7 @@ namespace datatools {
   }
 
   void urn_query_service::add_path_resolver(const urn_to_path_resolver_service & prs_,
-                                     const std::string & name_)
+                                            const std::string & name_)
   {
     std::lock_guard<std::mutex> lck(_pimpl_->mtx);
     std::string name = name_;

@@ -121,7 +121,7 @@ void test_urn_query_service_0()
     std::string category = "data";
     std::string mime = "";
     std::string path;
-    if (urnQuery.resolve_urn_as_path(urn, category, mime, path)) {
+    if (urnQuery.resolve_urn_to_path(urn, category, mime, path)) {
       std::clog << "[info] URN='" << urn << "' has associated path '" << path << "' "
                 << "with category '" << category << "' and MIME type '" << mime << "'"
                 << std::endl;
@@ -138,7 +138,7 @@ void test_urn_query_service_0()
     std::string category = "(dat)(.*)";
     std::string mime = "(application/)(.*)(\\.data)";
     std::string path;
-    if (urnQuery.resolve_urn_as_path(urn, category, mime, path)) {
+    if (urnQuery.resolve_urn_to_path(urn, category, mime, path)) {
       std::clog << "[info] URN='" << urn << "' has associated path '" << path << "' "
                 << "with category '" << category << "' and MIME type '" << mime << "'"
                 << std::endl;
@@ -155,7 +155,7 @@ void test_urn_query_service_0()
     std::string category = "(conf)(.*)";
     std::string mime = "text/bayeux.datatools.properties";
     std::string path;
-    if (urnQuery.resolve_urn_as_path(urn, category, mime, path)) {
+    if (urnQuery.resolve_urn_to_path(urn, category, mime, path)) {
       std::clog << "[info] URN='" << urn << "' has associated path '" << path << "' "
                 << "with category '" << category << "' and MIME type '" << mime << "'"
                 << std::endl;
@@ -174,7 +174,7 @@ void test_urn_query_service_0()
     std::string urn_db_regex = "(.*)";
     std::string urn_regex = "(.*)";
     std::string category_regex = "(.*)";
-    if (urnQuery.urn_find(matching_urns, urn_db_regex, urn_regex, category_regex, true)) {
+    if (urnQuery.find_urn_info(matching_urns, urn_db_regex, urn_regex, category_regex, true)) {
       for (auto urn : matching_urns) {
         std::clog << "[info] URN = '" << urn << "'" << std::endl;
       }
@@ -192,7 +192,7 @@ void test_urn_query_service_0()
     std::string urn_db_regex = "(.*)";
     std::string urn_regex = "(.*)2";
     std::string category_regex = "(.*)";
-    if (urnQuery.urn_find(matching_urns, urn_db_regex, urn_regex, category_regex, true)) {
+    if (urnQuery.find_urn_info(matching_urns, urn_db_regex, urn_regex, category_regex, true)) {
       for (auto urn : matching_urns) {
         std::clog << "[info] URN = '" << urn << "'" << std::endl;
       }

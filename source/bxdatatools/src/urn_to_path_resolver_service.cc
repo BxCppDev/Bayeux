@@ -232,15 +232,15 @@ namespace datatools {
                                                const datatools::properties & infos_)
   {
     resolver_entry re;
-    re.urn = urn_;
-    re.category = category_;
+    re.set_urn(urn_);
+    re.set_category(category_);
     if (infos_.has_key("path")) {
-      re.path = infos_.fetch_string("path");
+      re.set_path(infos_.fetch_string("path"));
     }
     if (infos_.has_key("mime")) {
-      re.mime = infos_.fetch_string("mime");
+      re.set_mime(infos_.fetch_string("mime"));
     }
-    add_entry(urn_, category_, re.path, re.mime);
+    add_entry(urn_, category_, re.get_path(), re.get_mime());
     return;
   }
 
@@ -276,10 +276,10 @@ namespace datatools {
                 "Unsupported category '" << category_ << "'!");
     DT_THROW_IF(path_.empty(), std::logic_error, "Missing path!");
     resolver_entry re;
-    re.urn = urn_;
-    re.category = category_;
-    re.path = path_;
-    re.mime = mime_;
+    re.set_urn(urn_);
+    re.set_category(category_);
+    re.set_path(path_);
+    re.set_mime(mime_);
     _urn_lookup_table_[urn_] = re;
     return;
   }
@@ -289,10 +289,10 @@ namespace datatools {
     return _urn_lookup_table_.count(urn_) == 1;
   }
 
-  const urn_to_path_resolver_service::resolver_entry &
+  const urn_to_path &
   urn_to_path_resolver_service::get_entry(const std::string & urn_) const
   {
-    std::map<std::string, resolver_entry>::const_iterator found
+    urn_lookup_table_type::const_iterator found
       = _urn_lookup_table_.find(urn_);
     DT_THROW_IF(found == _urn_lookup_table_.end(), std::logic_error,
                 "URN '" << urn_ << "' is not registered!");
@@ -301,17 +301,17 @@ namespace datatools {
 
   const std::string & urn_to_path_resolver_service::get_category(const std::string & urn_) const
   {
-    return get_entry(urn_).category;
+    return get_entry(urn_).get_category();
   }
 
   const std::string & urn_to_path_resolver_service::get_path(const std::string & urn_) const
   {
-    return get_entry(urn_).path;
+    return get_entry(urn_).get_path();
   }
 
   const std::string & urn_to_path_resolver_service::get_mime(const std::string & urn_) const
   {
-    return get_entry(urn_).mime;
+    return get_entry(urn_).get_mime();
   }
 
   std::size_t urn_to_path_resolver_service::size() const
@@ -330,9 +330,9 @@ namespace datatools {
   {
     for (const auto & uepair : _urn_lookup_table_) {
       out_ << uepair.first << " "
-           << uepair.second.path << " "
-           << uepair.second.category << " "
-           << uepair.second.mime << " "
+           << uepair.second.get_path() << " "
+           << uepair.second.get_category() << " "
+           << uepair.second.get_mime() << " "
            << std::endl;
     }
     return;

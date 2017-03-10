@@ -24,7 +24,7 @@
  *
  * Description:
  *
- *   URN information meta service.
+ *   URN query service.
  *
  */
 
@@ -34,6 +34,9 @@
 // Standard Library:
 #include <string>
 #include <map>
+
+// Third party:
+#include <boost/noncopyable.hpp>
 
 // This project:
 #include <datatools/base_service.h>
@@ -48,6 +51,7 @@ namespace datatools {
   ///        specialized dictionaries of URN informations and URN/path resolver tables
   class urn_query_service
     : public ::datatools::base_service
+    , private boost::noncopyable
   {
   public:
 
@@ -74,27 +78,42 @@ namespace datatools {
                            bool inherit = false) const;
 
     /// Check if an URN information is defined
-    bool urn_exists(const std::string & urn_,
-                    const std::string & category_ = "") const;
+    bool check_urn_info(const std::string & urn_,
+                        const std::string & category_ = "") const;
 
     /// Build a list of URNs with requested URN and category patterns
-    bool urn_find(std::vector<std::string> & urn_list_,
-                  const std::string & urn_db_regex_ = "",
-                  const std::string & urn_regex_ = "",
-                  const std::string & urn_category_ = "",
-                  bool clear_ = true) const;
+    bool find_urn_info(std::vector<std::string> & urn_list_,
+                       const std::string & urn_db_regex_ = "",
+                       const std::string & urn_regex_ = "",
+                       const std::string & urn_category_regex_ = "",
+                       bool clear_ = true) const;
 
     /// Return a registered URN info
     const urn_info & get_urn_info(const std::string & urn_) const;
 
-    /// Check if URN is associated to a path
-    bool urn_has_path(const std::string & urn_) const;
+    /// Build a list of URN associated to path with requested URN and category patterns
+    bool find_urn_to_path(std::vector<std::string> & urn_path_list_,
+                          const std::string & urn_resolver_regex_ = "",
+                          const std::string & urn_regex_ = "",
+                          const std::string & urn_category_regex_ = "",
+                          const std::string & urn_mime_regex_ = "",
+                          bool clear_ = true) const;
 
-    /// Resolve an URN as a path, possibly with category and MIME type
-    bool resolve_urn_as_path(const std::string & urn_,
+    /// Check if URN is associated to a path
+    bool check_urn_to_path(const std::string & urn_) const;
+
+    /// Resolve an URN as a path (filesystem path, URL, database query...),
+    /// possibly with category and MIME type
+    bool resolve_urn_to_path(const std::string & urn_,
                              std::string & category_,
                              std::string & mime_,
                              std::string & path_) const;
+
+    /// Return the informations associated to a URN to path association
+    bool get_urn_to_path(const std::string & urn_,
+                         std::string & category_,
+                         std::string & mime_,
+                         std::string & path_) const;
 
     /// Check if an URN database with given name is registered
     bool has_db(const std::string & name_) const;
@@ -126,17 +145,6 @@ namespace datatools {
 
     /// Unregister an URN path resolver with given name
     void remove_path_resolver(const std::string & name_);
-
-  //   // Return the mutable singleton URN system instance
-  //   static urn_query_service & instance();
-
-  //   // Return the non mutable singleton URN system instance
-  //   static const urn_query_service & const_instance();
-
-  // private:
-
-  //   // Return the mutable singleton URN system instance
-  //   static urn_query_service & _instance_();
 
   private:
 
