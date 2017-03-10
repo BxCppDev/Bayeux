@@ -38,6 +38,7 @@ configure_file(${module_include_dir}/${module_name}/BayeuxBinReloc.h.in
 # - Raw Headers and Sources
 set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/bayeux_config.h.in
+  ${module_include_dir}/${module_name}/bayeux_init.h
   ${module_include_dir}/${module_name}/bayeux.h
   ${module_include_dir}/${module_name}/reloc.h
   ${module_include_dir}/${module_name}/version.h.in
@@ -86,6 +87,7 @@ set(${module_name}_MODULE_APPS
 
 # - Resource files
 set(${module_name}_MODULE_RESOURCES
+  ${module_resource_dir}/urn/resolvers/bayeux_logos_urn_map.conf
   ${module_resource_dir}/images/logo/logo_bayeux_240x200_transparent.png
   ${module_resource_dir}/images/logo/logo_bayeux_300x250_transparent.png
   ${module_resource_dir}/images/logo/logo_bayeux_66x55_transparent.png
@@ -101,6 +103,10 @@ endforeach()
 # - Unit tests
 set(${module_name}_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
 
+set(${module_name}_MODULE_TESTS
+  ${module_test_dir}/test_bayeux_nocatch.cxx
+)
+
 set(${module_name}_MODULE_TESTS_CATCH
-  ${module_test_dir}/test_bayeux.cxx
+  # ${module_test_dir}/test_bayeux.cxx
 )
