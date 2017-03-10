@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2013-2016 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013-2016 by Université de Caen
+// Copyright (c) 2013-2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2017 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -45,10 +45,8 @@
 
 #endif // BAYEUX_BAYEUX_CONFIG_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

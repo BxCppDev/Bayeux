@@ -85,7 +85,7 @@ _br_find_exe (BrInitError *error)
 #else
 	strncpy (path2, "/proc/self/exe", buf_size - 1);
 #endif
-
+	// fprintf(stderr, "[trace] path2 = '%s'\n", path2);
 	while (1) {
 		int i;
 

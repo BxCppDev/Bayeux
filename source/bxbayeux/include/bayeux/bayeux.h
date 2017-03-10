@@ -4,8 +4,8 @@
 //
 // Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
 // Copyright (c) 2013 by The University of Warwick
-// Copyright (c) 2013 by Francois Mauger <mauger@lpccaen.in2p3.fr>
-// Copyright (c) 2013 by Université de Caen
+// Copyright (c) 2013-2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2013-2017 by Université de Caen
 //
 // This file is part of Bayeux.
 //
@@ -36,9 +36,13 @@
 
 // This project:
 #include <datatools/logger.h>
+#include <bayeux/bayeux_init.h>
 
 /// Top-level namespace of the Bayeux library
 namespace bayeux {
+
+  /// Check if Bayeux library core functionnalities are initialized
+  bool is_initialized();
 
   /// Initialize the Bayeux library core functionnalities
   void initialize(int argc_ = 0,
@@ -82,10 +86,8 @@ namespace bayeux {
 
 #endif // BAYEUX_BAYEUX_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

@@ -34,26 +34,33 @@
 // Third party
 #include <boost/smart_ptr/scoped_ptr.hpp>
 
-
-// Tests
-// #include <datatools/kernel.h>
-// #include <datatools/library_info.h>
+namespace {
+  static bool _bxinit = false;
+}
 
 namespace bayeux {
+
+  bool is_initialized()
+  {
+    return _bxinit;
+  }
 
   void initialize(int argc_, char * argv_[], uint32_t flags_)
   {
     DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
-    static bool _init = false;
-    if (! _init) {
+    //static bool _init = false;
+    // if (! _init) {
+    if (! ::_bxinit) {
 
       // Wrap datatools kernel initialization:
-      ::datatools::initialize(argc_, argv_, flags_);
+      uint32_t dt_init_flags = flags_;
+      ::datatools::initialize(argc_, argv_, dt_init_flags);
 
       // Special initialization code:
       ::bayeux::_special_initialize_impl();
 
-      _init = true;
+      // _init = true;
+      _bxinit = true;
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
@@ -62,15 +69,17 @@ namespace bayeux {
   void terminate()
   {
     DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
-    static bool _terminate = false;
-    if (!_terminate) {
+    // static bool _terminate = false;
+    // if (!_terminate) {
+    if (_bxinit) {
 
       // Special termination code:
       ::bayeux::_special_terminate_impl();
 
       // Wrap datatools kernel termination:
       ::datatools::terminate();
-      _terminate = true;
+      // _terminate = true;
+      _bxinit = false;
     }
     DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
