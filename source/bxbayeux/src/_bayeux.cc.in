@@ -81,6 +81,7 @@ namespace bayeux {
       : private boost::noncopyable
     {
     public:
+      static const std::string & bx_resource_resolver_name();
       bayeux_library();
       ~bayeux_library();
       bool is_initialized() const;
@@ -102,6 +103,13 @@ namespace bayeux {
 
     // static
     bayeux_library * bayeux_library::_instance_ = nullptr;
+
+    // static
+    const std::string & bayeux_library::bx_resource_resolver_name()
+    {
+      static const std::string _n("bxResourceResolver");
+      return _n;
+    }
 
     // static
     bool bayeux_library::is_instantiated()
@@ -176,14 +184,17 @@ namespace bayeux {
 
       // Activate an URN resolver service:
       {
-        datatools::urn_to_path_resolver_service & urnLogoResolver =
-          dynamic_cast<datatools::urn_to_path_resolver_service &>(_services_.load_no_init("bxLibLogoResolver",
+        datatools::urn_to_path_resolver_service & urnResourceResolver =
+          dynamic_cast<datatools::urn_to_path_resolver_service &>(_services_.load_no_init(bx_resource_resolver_name(),
                                                                                           "datatools::urn_to_path_resolver_service"));
-        urnLogoResolver.add_known_category("graphics");
-        urnLogoResolver.add_map("@bayeux:urn/resolvers/bayeux_logos_urn_map.conf");
-        urnLogoResolver.initialize_simple();
-        DT_LOG_TRACE(logging, "Adding the URN path resolver '" << urnLogoResolver.get_name() << "' to the kernel...");
-        urnLogoResolver.kernel_push();
+        urnResourceResolver.add_known_category("data");
+        urnResourceResolver.add_known_category("graphics");
+        urnResourceResolver.add_known_category("configuration");
+        urnResourceResolver.add_map("@bxmaterials:urn/resolvers/bxmaterials_data_urn_map.conf");
+        urnResourceResolver.add_map("@bxbayeux:urn/resolvers/bayeux_logos_urn_map.conf");
+        urnResourceResolver.initialize_simple();
+        DT_LOG_TRACE(logging, "Adding the URN path resolver '" << urnResourceResolver.get_name() << "' to the kernel...");
+        urnResourceResolver.kernel_push();
       }
 
       _initialized_ = true;
@@ -203,12 +214,12 @@ namespace bayeux {
         // Activate the URN resolver:
         {
           DT_LOG_TRACE(logging, "Accessing URN path resolver...");
-          datatools::urn_to_path_resolver_service & urnLogoResolver =
-            _services_.grab<datatools::urn_to_path_resolver_service &>("bxLibLogoResolver");
-          DT_LOG_TRACE(logging, "Removing URN path resolver '" << urnLogoResolver.get_name() << "' from the kernel...");
-          urnLogoResolver.kernel_pop();
+          datatools::urn_to_path_resolver_service & urnResourceResolver =
+            _services_.grab<datatools::urn_to_path_resolver_service &>(bx_resource_resolver_name());
+          DT_LOG_TRACE(logging, "Removing URN path resolver '" << urnResourceResolver.get_name() << "' from the kernel...");
+          urnResourceResolver.kernel_pop();
           DT_LOG_TRACE(logging, "URN path resolver has been removed from the kernel.");
-          urnLogoResolver.reset();
+          urnResourceResolver.reset();
         }
 
         DT_LOG_TRACE(logging, "Terminating Bayeux library services...");

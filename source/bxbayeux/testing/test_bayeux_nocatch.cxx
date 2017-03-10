@@ -61,7 +61,7 @@ int main( int /*argc_*/, char** /*argv_*/ )
       datatools::kernel & dtk = ::datatools::kernel::instance();
       if (dtk.has_urn_query()) {
         const datatools::urn_query_service & kUrnQuery = dtk.get_urn_query();
-        if (kUrnQuery.resolve_urn_as_path(logo_urn, logo_category, logo_mime, logo_path)) {
+        if (kUrnQuery.resolve_urn_to_path(logo_urn, logo_category, logo_mime, logo_path)) {
           std::clog << "[info] URN => path resolver success : " << std::endl;
           std::clog << "  URN                : '" << logo_urn << "'" << std::endl;
           std::clog << "  Category           : '" << logo_category << "'" << std::endl;
@@ -71,7 +71,7 @@ int main( int /*argc_*/, char** /*argv_*/ )
           std::clog << "[error] Cannot resolve path from URN = '" << logo_urn << "'" << std::endl;
         }
       } else {
-        std::clog << "[error] Missing kernel's URNquery service." << std::endl;
+        std::clog << "[error] Missing kernel's URN query service." << std::endl;
       }
       std::clog << std::endl;
     }
@@ -82,6 +82,15 @@ int main( int /*argc_*/, char** /*argv_*/ )
       std::clog << "  Logo path (raw)      : '" << logo_path << "'" << std::endl;
       datatools::fetch_path_with_env(logo_path);
       std::clog << "  Logo path (resolved) : '" << logo_path << "'" << std::endl;
+      std::clog << std::endl;
+    }
+
+    {
+      std::clog << "Print kernel's URN query service: " << std::endl;
+      datatools::kernel & dtk = ::datatools::kernel::instance();
+      if (dtk.has_urn_query()) {
+        dtk.get_urn_query().tree_dump(std::clog, "URN query:");
+      }
       std::clog << std::endl;
     }
 
