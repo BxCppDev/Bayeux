@@ -91,6 +91,16 @@ int main( int /*argc_*/, char** /*argv_*/ )
       if (dtk.has_urn_query()) {
         dtk.get_urn_query().tree_dump(std::clog, "URN query:");
       }
+      std::vector<std::string> paths;
+      if (dtk.get_urn_query().find_urn_to_path(paths, "(.*)", "(.*)", "(.*)", "(.*)")) {
+        std::clog << "[info] List of current registered URNs => path records:" << std::endl;
+        for (const std::string & p : paths) {
+          std::clog << "Path = '" << p << "'" << std::endl;
+        }
+      } else {
+        std::cerr << "[error] " << "No path was found." << std::endl;
+      }
+
       std::clog << std::endl;
     }
 
