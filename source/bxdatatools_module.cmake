@@ -130,6 +130,8 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/urn_info.h
   ${module_include_dir}/${module_name}/urn_info.ipp
   ${module_include_dir}/${module_name}/urn_db_service.h
+  ${module_include_dir}/${module_name}/urn_to_path.h
+  ${module_include_dir}/${module_name}/urn_to_path.ipp
   ${module_include_dir}/${module_name}/urn_to_path_resolver_service.h
   ${module_include_dir}/${module_name}/urn_query_service.h
   # ${module_include_dir}/${module_name}/url.h
@@ -277,6 +279,7 @@ ${module_source_dir}/version_id.cc
 ${module_source_dir}/urn.cc
 ${module_source_dir}/urn_info.cc
 ${module_source_dir}/urn_db_service.cc
+${module_source_dir}/urn_to_path.cc
 ${module_source_dir}/urn_to_path_resolver_service.cc
 ${module_source_dir}/urn_query_service.cc
 # ${module_source_dir}/url.cc
@@ -464,6 +467,7 @@ ${module_test_dir}/test_version_id.cxx
 ${module_test_dir}/test_urn.cxx
 ${module_test_dir}/test_urn_info.cxx
 ${module_test_dir}/test_urn_db_service.cxx
+${module_test_dir}/test_urn_to_path.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
 ${module_test_dir}/test_urn_query_service.cxx
 # ${module_test_dir}/test_url.cxx
