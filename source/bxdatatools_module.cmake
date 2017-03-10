@@ -53,6 +53,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/clhep_units.h
   ${module_include_dir}/${module_name}/command_utils.h
   ${module_include_dir}/${module_name}/compiler_macros.h
+  ${module_include_dir}/${module_name}/datatools_init.h
   ${module_include_dir}/${module_name}/datatools.h
   ${module_include_dir}/${module_name}/datatools_config.h.in
   ${module_include_dir}/${module_name}/detail/api.h
@@ -88,6 +89,7 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/i_tree_dump.h
   ${module_include_dir}/${module_name}/kernel.h
   ${module_include_dir}/${module_name}/library_info.h
+  ${module_include_dir}/${module_name}/library_query_service.h
   ${module_include_dir}/${module_name}/library_loader.h
   ${module_include_dir}/${module_name}/logger.h
   ${module_include_dir}/${module_name}/memory_streambuf.h
@@ -125,7 +127,11 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/version_id.ipp
   ${module_include_dir}/${module_name}/urn.h
   ${module_include_dir}/${module_name}/urn.ipp
+  ${module_include_dir}/${module_name}/urn_info.h
+  ${module_include_dir}/${module_name}/urn_info.ipp
+  ${module_include_dir}/${module_name}/urn_db_service.h
   ${module_include_dir}/${module_name}/urn_to_path_resolver_service.h
+  ${module_include_dir}/${module_name}/urn_query_service.h
   # ${module_include_dir}/${module_name}/url.h
   # ${module_include_dir}/${module_name}/url.ipp
   # ${module_include_dir}/${module_name}/url_parsers-inl.h
@@ -242,6 +248,7 @@ ${module_source_dir}/i_serializable.cc
 ${module_source_dir}/i_tree_dump.cc
 ${module_source_dir}/kernel.cc
 ${module_source_dir}/library_info.cc
+${module_source_dir}/library_query_service.cc
 ${module_source_dir}/library_loader.cc
 ${module_source_dir}/logger.cc
 ${module_source_dir}/memory_streambuf.cc
@@ -268,7 +275,10 @@ ${module_source_dir}/version.cc
 ${module_source_dir}/version_check.cc
 ${module_source_dir}/version_id.cc
 ${module_source_dir}/urn.cc
+${module_source_dir}/urn_info.cc
+${module_source_dir}/urn_db_service.cc
 ${module_source_dir}/urn_to_path_resolver_service.cc
+${module_source_dir}/urn_query_service.cc
 # ${module_source_dir}/url.cc
 # ${module_source_dir}/log_record.cc
 # ${module_source_dir}/log_format.cc
@@ -452,7 +462,10 @@ ${module_test_dir}/test_version_check.cxx
 ${module_test_dir}/test_version.cxx
 ${module_test_dir}/test_version_id.cxx
 ${module_test_dir}/test_urn.cxx
+${module_test_dir}/test_urn_info.cxx
+${module_test_dir}/test_urn_db_service.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
+${module_test_dir}/test_urn_query_service.cxx
 # ${module_test_dir}/test_url.cxx
 # ${module_test_dir}/test_log_record.cxx
 # ${module_test_dir}/test_rst_tools.cxx
