@@ -23,9 +23,8 @@
 namespace datatools {
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things::entry_type,
-                                                     archive,
-                                                     version __attribute__((unused)))
+  template<class Archive>
+  void things::entry_type::serialize(Archive & archive, const unsigned int version __attribute__((unused)))
   {
     archive & boost::serialization::make_nvp("description", description);
     archive & boost::serialization::make_nvp("flags",       flags);
@@ -33,7 +32,8 @@ namespace datatools {
   }
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(things, archive, version)
+  template<class Archive>
+  void things::serialize(Archive & archive, const unsigned int version)
   {
     if (version == 0) {
       archive & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
@@ -50,10 +50,8 @@ namespace datatools {
 
 #endif // DATATOOLS_THINGS_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

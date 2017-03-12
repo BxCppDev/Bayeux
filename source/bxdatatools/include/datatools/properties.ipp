@@ -23,7 +23,8 @@
 namespace datatools {
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties::data, archive, version)
+  template<class Archive>
+  void properties::data::serialize(Archive & archive, const unsigned int version)
   {
     archive & boost::serialization::make_nvp("description", _description_);
     archive & boost::serialization::make_nvp("flags",       _flags_);
@@ -52,9 +53,9 @@ namespace datatools {
     return;
   }
 
-
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(properties, archive, version)
+  template<class Archive>
+  void properties::serialize(Archive & archive, const unsigned int version)
   {
     if (version == 1 ) {
       /* from version 1 we inherit explicitely from the
@@ -73,10 +74,8 @@ namespace datatools {
 
 #endif // DATATOOLS_PROPERTIES_IPP
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

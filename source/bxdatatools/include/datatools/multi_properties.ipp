@@ -23,9 +23,9 @@
 namespace datatools {
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties::entry,
-                                                     archive,
-                                                     version __attribute__((unused)) )
+  template<class Archive>
+  void multi_properties::entry::serialize(Archive & archive,
+                                          const unsigned int version __attribute__((unused)) )
   {
     archive & boost::serialization::make_nvp("key", key_);
     archive & boost::serialization::make_nvp("meta", meta_);
@@ -34,14 +34,15 @@ namespace datatools {
 
 
   /// Boost serialization template method
-  DATATOOLS_SERIALIZATION_SERIALIZE_IMPLEMENT_HEADER(multi_properties, archive, version)
+  template<class Archive>
+  void multi_properties::serialize(Archive & archive,
+                                          const unsigned int version __attribute__((unused)) )
   {
     if (version == 1) {
       // from version 1 we inherit explicitely from the
       // 'datatools::i_serializable' abstract class
       archive & DATATOOLS_SERIALIZATION_OLD_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    }
-    else if (version >= 2) {
+    } else if (version >= 2) {
       archive & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
     }
     archive & boost::serialization::make_nvp("description", description_);
