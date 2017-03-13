@@ -52,11 +52,11 @@ namespace datatools {
 
     typedef std::map<std::string, std::vector<std::string> > component_topic_dict_type;
 
-    /// Validate an URL representation
+    /// Validate an URN representation
     ///
     /// Format:
     /// \code
-    /// urn:path[:to[:some[:object[:...]]]
+    /// urn:namespace:path[:to[:some[:object[:...]]]]
     /// \endcode
     ///
     /// Examples:
