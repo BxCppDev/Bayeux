@@ -116,18 +116,26 @@ namespace datatools {
   }
 
   int urn_to_path_resolver_service::initialize(const datatools::properties & config_,
-                                               datatools::service_dict_type& /*services_*/)
+                                               datatools::service_dict_type & /*services_*/)
   {
+    DT_LOG_TRACE_ENTERING(get_logging_priority());
+
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Service is already initialized!");
     base_service::common_initialize(config_);
 
+    if (datatools::logger::is_debug(get_logging_priority())) {
+      config_.tree_dump(std::cerr, "Configuration for URN =>path resolver '" + get_name() + "' : ", "[debug] ");
+    }
+
     if (config_.has_key("allow_overloading")) {
+      DT_LOG_DEBUG(get_logging_priority(), "Parsing 'allow_overloading'...");
       bool ao = config_.fetch_boolean("allow_overloading");
       set_allow_overloading(ao);
     }
 
     if (config_.has_key("known_categories")) {
+      DT_LOG_DEBUG(get_logging_priority(), "Parsing 'known_categories'...");
       std::set<std::string> kc;
       config_.fetch("known_categories", kc);
       for (auto c : kc) add_known_category(c);
@@ -135,6 +143,7 @@ namespace datatools {
 
     std::vector<std::string> map_filenames;
     if (config_.has_key("maps")) {
+      DT_LOG_DEBUG(get_logging_priority(), "Parsing 'maps'...");
       config_.fetch("maps", map_filenames);
     }
     for (const std::string & mapfile : map_filenames) {
@@ -153,6 +162,7 @@ namespace datatools {
       kernel_push(name);
     }
     _initialized_ = true;
+    DT_LOG_TRACE_EXITING(get_logging_priority());
     return datatools::SUCCESS;
   }
 
@@ -191,6 +201,19 @@ namespace datatools {
 
     out_ << a_indent << i_tree_dumpable::tag
          << "Known categories : " << _known_categories_.size() << std::endl;
+
+    for (std::set<std::string>::const_iterator i = _known_categories_.begin();
+         i != _known_categories_.end();
+         i++ ) {
+      out_ << a_indent << i_tree_dumpable::skip_tag;
+      std::set<std::string>::const_iterator j = i;
+      if (++j == _known_categories_.end()) {
+        out_ << i_tree_dumpable::last_tag;
+      } else {
+        out_ << i_tree_dumpable::tag;
+      }
+      out_ << "Category '" << *i << "'" << std::endl;
+    }
 
     out_ << a_indent << i_tree_dumpable::inherit_tag(a_inherit)
          << "URN/Path lookup table  : "
