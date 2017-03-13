@@ -126,7 +126,7 @@ namespace datatools {
           std::ostringstream oss;
           oss << "topic." << topics[i] << ".component";
           std::string topic_comp_key = oss.str();
-          if (config_.has_key("topic_comp_key")) {
+          if (config_.has_key(topic_comp_key)) {
             const std::string & topic_component = config_.fetch_string(topic_comp_key);
             add_component(topic_component, topics[i]);
             single_component_topic = true;
@@ -138,6 +138,9 @@ namespace datatools {
           oss << "topic." << topics[i] << ".components";
           std::string topic_comps_key = oss.str();
           std::vector<std::string> topic_components;
+          DT_THROW_IF(!config_.has_key(topic_comps_key),
+                      std::logic_error,
+                      "Missing '" << topic_comps_key << "' key!");
           config_.fetch(topic_comps_key, topic_components);
           for (std::size_t j = 0; j < topic_components.size(); j++) {
             add_component(topic_components[j], topics[i]);
