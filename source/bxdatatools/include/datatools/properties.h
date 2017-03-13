@@ -1,11 +1,11 @@
 /// \file datatools/properties.h
 /* Author(s):     Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2008-02-19
- * Last modified: 2016-05-20
+ * Last modified: 2017-03-13
  *
  * License:
  *
- * Copyright (C) 2008-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2008-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -533,13 +533,13 @@ namespace datatools {
     properties();
 
     /// Constructor with explicit description and embedded default key validator
-    properties(const std::string& a_desc);
+    explicit properties(const std::string& a_desc);
 
     /// Constructor with explicit description and explicit key validator
     properties(const std::string & a_desc, const basic_key_validator&);
 
     /// Constructor with explicit key validator
-    properties(const basic_key_validator&);
+    explicit properties(const basic_key_validator&);
 
     /* with external key validator (deletion_on_destroy_==false)
      * with internal key validator (deletion_on_destroy_==true)
@@ -551,7 +551,7 @@ namespace datatools {
                bool deletion_on_destroy_ = true);
 
     /// Constructor with explicit external key validator
-    properties(const basic_key_validator*,
+    explicit properties(const basic_key_validator*,
                bool deletion_on_destroy_ = true);
 
     /// Destructor
