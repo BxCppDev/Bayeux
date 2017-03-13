@@ -56,6 +56,7 @@ namespace datatools {
   int urn_db_service::initialize(const datatools::properties & config_,
                                  datatools::service_dict_type& /*services_*/)
   {
+    DT_LOG_TRACE_ENTERING(get_logging_priority());
     DT_THROW_IF(is_initialized(), std::logic_error,
                 "Service is already initialized!");
     base_service::common_initialize(config_);
@@ -63,6 +64,7 @@ namespace datatools {
     {
       std::vector<std::string> leaves_csv_filenames;
       if (config_.has_key("urn_infos.csv_leaves")) {
+        DT_LOG_DEBUG(get_logging_priority(), "Parsing 'urn_infos.csv_leaves'...");
         config_.fetch("urn_infos.csv_leaves", leaves_csv_filenames);
       }
       for (const std::string & filename : leaves_csv_filenames) {
@@ -75,6 +77,7 @@ namespace datatools {
     {
       std::vector<std::string> urn_infos_def_filenames;
       if (config_.has_key("urn_infos.definitions")) {
+        DT_LOG_DEBUG(get_logging_priority(), "Parsing 'urn_infos.definitions'...");
         config_.fetch("urn_infos.definitions", urn_infos_def_filenames);
       }
       for (const std::string & filename : urn_infos_def_filenames) {
@@ -86,17 +89,21 @@ namespace datatools {
 
     _init_();
     _initialized_ = true;
+
     // Publish the service in the Kernel's URN system singleton:
     if (config_.has_flag("kernel.push")) {
+      DT_LOG_DEBUG(get_logging_priority(), "Parsing 'kernel.push'...");
       DT_THROW_IF(!datatools::kernel::is_instantiated(),
                   std::logic_error,
                   "Bayeux/datatools' kernel is not instantiated! Cannot apply the kernel push op!");
       std::string name;
       if (config_.has_key("kernel.push.name")) {
+        DT_LOG_DEBUG(get_logging_priority(), "Parsing 'kernel.push.name'...");
         name = config_.fetch_string("kernel.push.name");
       }
       kernel_push(name);
     }
+    DT_LOG_TRACE_EXITING(get_logging_priority());
     return datatools::SUCCESS;
   }
 
@@ -210,7 +217,9 @@ namespace datatools {
 
   void urn_db_service::_init_()
   {
-    // nothing special...
+    if (_urn_infos_.size() == 0) {
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "URN database service '" << get_name() << "' has no record!");
+    }
     return;
   }
 

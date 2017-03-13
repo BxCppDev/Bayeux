@@ -149,19 +149,23 @@ namespace datatools {
     for (const std::string & mapfile : map_filenames) {
       add_map(mapfile);
     }
+
     _init_();
+    _initialized_ = true;
+
     // Publish the service in the Kernel's URN system singleton:
     if (config_.has_flag("kernel.push")) {
+      DT_LOG_DEBUG(get_logging_priority(), "Parsing 'kernel.push'...");
       DT_THROW_IF(!datatools::kernel::is_instantiated(),
                   std::logic_error,
                   "Bayeux/datatools' kernel is not instantiated! Cannot apply the kernel push op!");
       std::string name;
       if (config_.has_key("kernel.push.name")) {
+        DT_LOG_DEBUG(get_logging_priority(), "Parsing 'kernel.push.name'...");
         name = config_.fetch_string("kernel.push.name");
       }
       kernel_push(name);
     }
-    _initialized_ = true;
     DT_LOG_TRACE_EXITING(get_logging_priority());
     return datatools::SUCCESS;
   }
@@ -246,6 +250,9 @@ namespace datatools {
       std::string map_file = mapfile;
       datatools::fetch_path_with_env(map_file);
       load_map(map_file);
+    }
+    if (_urn_lookup_table_.size() == 0) {
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "URN path lookup table for '" << get_name() << "' has no record!");
     }
     return;
   }
