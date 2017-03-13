@@ -99,6 +99,26 @@ namespace datatools {
     bool is_valid() const;
 
     /// Initialize
+    /**
+     *  Example:
+     *  \code
+     *  #@description Short description text
+     *  description : string = "Foo experiment analysis 1.0"
+     *
+     *  #@description List of topics on which URN info relies on
+     *  topics : string[2] = "geometry" "input""
+     *
+     *  #@description Unique component associated to the 'geometry' topic
+     *  topic.geometry.component : string = "urn:fooexp:geometry:setup:1.0"
+     *
+     *  #@description Several components associated to the 'input' topic
+     *  topic.input.components   : string[3] = \\
+     *    "urn:fooexp:commissioning:dataset:1" \\
+     *    "urn:fooexp:commissioning:dataset:2" \\
+     *    "urn:fooexp:commissioning:dataset:3"
+     *
+     * \endcode
+     */
     void initialize(const properties &);
 
     /// Clear the URN info
@@ -162,10 +182,10 @@ namespace datatools {
     std::vector<std::string> get_topics() const;
 
     /// Main interface method for smart dump
-    virtual void tree_dump (std::ostream& out = std::clog,
-                            const std::string& title  = "",
-                            const std::string& indent = "",
-                            bool inherit = false) const;
+    virtual void tree_dump(std::ostream& out = std::clog,
+                           const std::string& title  = "",
+                           const std::string& indent = "",
+                           bool inherit = false) const;
 
     /// Basic comparison with respect to the URN name
     bool operator<(const urn_info & other_) const;

@@ -48,13 +48,15 @@ description : string = "Foo experiment dataset 1"
 
 topics : string[2] = "data" "metadata"
 
+#@description Several components associated to this topic
 topic.data.components : string[3] = \
   "urn:fooexp:commissioning:run:1" \
   "urn:fooexp:commissioning:run:2" \
   "urn:fooexp:commissioning:run:3"
 
-topic.metadata.components : string[1] = \
-  "urn:fooexp:monitoring:2.1"
+#@description Unique component associated to this topic
+topic.metadata.component : string = "urn:fooexp:monitoring:2.1"
+
 
 #####################################################
 [urn="urn:fooexp:analysis:1.0" category="configuration"]
@@ -65,10 +67,8 @@ description : string = "Foo experiment analysis 1.0"
 
 topics : string[2] = "geometry" "input"
 
-topic.geometry.components : string[1] = \
-  "urn:fooexp:geometry:setup:1.0"
+topic.geometry.component : string = "urn:fooexp:geometry:setup:1.0"
 
-topic.input.components : string[1] = \
-  "urn:fooexp:commissioning:dataset:1"
+topic.input.component    : string = "urn:fooexp:commissioning:dataset:1"
 
 # end

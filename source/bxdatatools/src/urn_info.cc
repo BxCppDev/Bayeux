@@ -120,14 +120,30 @@ namespace datatools {
     if (config_.has_key("topics")) {
       config_.fetch("topics", topics);
       for (std::size_t i = 0; i < topics.size(); i++) {
-        std::ostringstream oss;
-        oss << "topic." << topics[i] << ".components";
-        std::string topic_comps_key = oss.str();
-        std::vector<std::string> topic_components;
-        config_.fetch(topic_comps_key, topic_components);
-        for (std::size_t j = 0; j < topic_components.size(); j++) {
-          add_component(topic_components[j], topics[i]);
+
+        bool single_component_topic = false;
+        {
+          std::ostringstream oss;
+          oss << "topic." << topics[i] << ".component";
+          std::string topic_comp_key = oss.str();
+          if (config_.has_key("topic_comp_key")) {
+            const std::string & topic_component = config_.fetch_string(topic_comp_key);
+            add_component(topic_component, topics[i]);
+            single_component_topic = true;
+          }
         }
+
+        if (!single_component_topic) {
+          std::ostringstream oss;
+          oss << "topic." << topics[i] << ".components";
+          std::string topic_comps_key = oss.str();
+          std::vector<std::string> topic_components;
+          config_.fetch(topic_comps_key, topic_components);
+          for (std::size_t j = 0; j < topic_components.size(); j++) {
+            add_component(topic_components[j], topics[i]);
+          }
+        }
+
       }
     }
 
