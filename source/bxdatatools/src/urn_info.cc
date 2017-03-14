@@ -248,6 +248,15 @@ namespace datatools {
     return found->second;
   }
 
+  std::string urn_info::get_component(const std::string & comp_topic_, int rank_) const
+  {
+    const std::vector<std::string> & comps = get_components_by_topic(comp_topic_);
+    DT_THROW_IF(rank_ < 0 || rank_ >= (int) comps.size(),
+                std::range_error,
+                "Invalid component rank=[" << rank_ << "] for topic='" << comp_topic_ << "'!");
+    return comps[rank_];
+  }
+
   std::size_t urn_info::get_number_of_components_by_topic(const std::string & comp_topic_) const
   {
     return get_components_by_topic(comp_topic_).size();

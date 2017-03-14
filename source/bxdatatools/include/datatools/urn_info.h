@@ -167,7 +167,7 @@ namespace datatools {
     std::size_t get_number_of_components_by_topic(const std::string & comp_topic_) const;
 
     /// Return the URN component with given topic at given rank
-    std::string get_component(const std::string & comp_topic_, int rank_ = 0);
+    std::string get_component(const std::string & comp_topic_, int rank_ = 0) const;
 
     /// Check if a given component topic is defined
     bool has_topic(const std::string & comp_topic_) const;
