@@ -211,7 +211,7 @@ namespace bayeux {
       // Terminate services:
       if (_services_.is_initialized()) {
 
-        // Activate the URN resolver:
+        // Deactivate the URN resolver:
         {
           DT_LOG_TRACE(logging, "Accessing URN path resolver...");
           datatools::urn_to_path_resolver_service & urnResourceResolver =

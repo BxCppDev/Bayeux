@@ -97,6 +97,9 @@ namespace bayeux {
           ::datatools::logger::priority prio = ::datatools::logger::get_priority(level_label);
           if (prio != ::datatools::logger::PRIO_UNDEFINED) {
             _logging_ = prio;
+          } else {
+            DT_LOG_WARNING(::datatools::logger::PRIO_WARNING,
+                           "Ignoring invalid BAYEUX_SYS_LOGGING=\"" << level_label << "\" environment!");
           }
         }
       }
