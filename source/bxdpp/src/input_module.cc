@@ -510,7 +510,7 @@ namespace dpp {
   {
     // std::cerr << "DEVEL: dpp::input_module::_load_metadata_: Entering..." << std::endl;
     _grab_common().clear_metadata_store();
-    int64_t nmetadata = _source_->get_number_of_metadata ();
+    int64_t nmetadata = _source_->get_number_of_metadata();
     // std::cerr << "DEVEL: dpp::input_module::_load_metadata_: #metadata = "
     //           << nmetadata << std::endl;
     datatools::multi_properties * ctx_store = nullptr;
@@ -521,9 +521,11 @@ namespace dpp {
       ctx_store = &ctx_service.grab_store();
     }
     datatools::multi_properties & MDS = _grab_common().grab_metadata_store();
+    // MDS.tree_dump(std::cerr, "dpp::input_module:_load_metadata_: Input module metadata (INIT): ", "[devel] ");
     for (int64_t i(0); i < nmetadata; i++) {
       datatools::properties p;
       _source_->load_metadata(p, i);
+      // p.tree_dump(std::cerr, "dpp::input_module:_load_metadata_: Input module metadata entry: ", "[devel] ");
       if (p.has_key(io_common::metadata_key())) {
         // Metadata to be embedded in the input module itself:
         std::string key = p.fetch_string(io_common::metadata_key());
@@ -575,6 +577,7 @@ namespace dpp {
         }
       }
     }
+    // MDS.tree_dump(std::cerr, "dpp::input_module:_load_metadata_: Input module metadata: ", "[devel] ");
     _metadata_updated_ = true;
     // std::cerr << "DEVEL: dpp::input_module::_load_metadata_: Exiting." << std::endl;
     return;
