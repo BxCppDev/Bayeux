@@ -173,12 +173,16 @@ namespace datatools {
     description_ = a_description;
   }
 
+  bool multi_properties::has_key_label() const
+  {
+    return ! key_label_.empty();
+  }
 
   void multi_properties::set_key_label(const std::string& a_key_label) {
     DT_THROW_IF (a_key_label.empty(),
                  std::logic_error,
                  "Empty key is not allowed !");
-    DT_THROW_IF (size(),
+    DT_THROW_IF (this->size(),
                  std::logic_error,
                  "Changing key label from '" << key_label_ << "' to '" << a_key_label << "' is not allowed in multi-properties '" << description_ << "'!");
     key_label_ = a_key_label;
@@ -189,6 +193,18 @@ namespace datatools {
     return key_label_;
   }
 
+  void multi_properties::clear_key_label()
+  {
+    DT_THROW_IF (this->size(),
+                 std::logic_error,
+                 "Reseting key label '" << key_label_ << "' is not allowed in non-empty multi-properties '" << description_ << "'!");
+    key_label_.clear();
+  }
+
+  bool multi_properties::has_meta_label() const
+  {
+    return ! meta_label_.empty();
+  }
 
   void multi_properties::set_meta_label(const std::string& a_meta_label) {
     DT_THROW_IF (this->size(),
@@ -196,7 +212,6 @@ namespace datatools {
                  "Changing meta label from '" << meta_label_ << "' to '" << a_meta_label << "' is not allowed in multi-properties '" << description_ << "'!");
     meta_label_ = a_meta_label;
   }
-
 
   const std::string & multi_properties::get_meta_label() const {
     return meta_label_;
@@ -209,12 +224,21 @@ namespace datatools {
     return entries_.size();
   }
 
+  void multi_properties::clear_meta_label()
+  {
+    DT_THROW_IF (this->size(),
+                 std::logic_error,
+                 "Reseting meta label '" << meta_label_ << "' is not allowed in non-empty multi-properties '" << description_ << "'!");
+    meta_label_.clear();
+  }
+
   bool multi_properties::empty() const
   {
     return this->size() == 0;
   }
 
   void multi_properties::reset() {
+    description_.clear();
     key_label_.clear();
     meta_label_.clear();
     this->clear();
@@ -388,8 +412,7 @@ namespace datatools {
     return this->has_key(a_key);
   }
 
-  const multi_properties::entry& multi_properties::get(
-                                                       const std::string& a_key) const {
+  const multi_properties::entry& multi_properties::get(const std::string& a_key) const {
     entries_col_type::const_iterator found = entries_.find(a_key);
     DT_THROW_IF (found == entries_.end(),
                  std::logic_error,
@@ -461,9 +484,13 @@ namespace datatools {
     "Key '" << a_key << "' has a an empty '" << meta_label_ << "' !");
     }
     */
-    if (meta_label_.empty() && !a_meta.empty()) {
-      DT_LOG_WARNING(datatools::logger::PRIO_WARNING,
-                     "Key '" << a_key << "' will ignore meta '" << a_meta << "' !");
+    if (is_debug()) {
+      // 2017-03-17, FM: I don't know what to do with the following lines!
+      // So wrap it only in debug mode...
+      if (meta_label_.empty() && !a_meta.empty()) {
+        DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG,
+                       "Key '" << a_key << "' will ignore meta '" << a_meta << "' !");
+      }
     }
     entries_[a_key] = entry(a_key, a_meta);
     ordered_entries_.push_back(&entries_[a_key]);
@@ -540,6 +567,9 @@ namespace datatools {
     if (options_ & RESOLVE_PATH) {
       _resolve_path_ = true;
     }
+    if (options_ & START_WITHOUT_LABELS) {
+      _start_without_labels_ = true;
+    }
     if (!topic_.empty()) {
       set_topic(topic_);
     }
@@ -567,6 +597,7 @@ namespace datatools {
     _requested_topic_ = false;
     _resolve_path_ = false;
     _current_line_number_ = -1;
+    _start_without_labels_ = false;
     return;
   }
 
@@ -741,7 +772,10 @@ namespace datatools {
     std::string mprop_format;
     int closed_section_first_line_number = -1;
     int new_section_first_line_number = -1;
-
+    if (_start_without_labels_) {
+      target_.clear_key_label();
+      target_.clear_meta_label();
+    }
     bool line_goon = false;
     int line_count = 0;
     std::ostringstream current_block_oss;
@@ -1278,20 +1312,24 @@ namespace datatools {
       }
 
       a_out << std::endl;
-      for (entries_col_type::const_iterator i = entries_.begin();
-           i != entries_.end();
+      // for (entries_col_type::const_iterator i = entries_.begin();
+      //      i != entries_.end();
+      //      ++i) {
+      //   const std::string& local_key = i->first;
+      //   const entry& a_entry = i->second;
+      for (entries_ordered_col_type::const_iterator i = ordered_entries_.begin();
+           i != ordered_entries_.end();
            ++i) {
-        const std::string& local_key = i->first;
-        const entry& a_entry = i->second;
+        const entry& a_entry = **i;
+        const std::string& local_key = a_entry.get_key();
         a_out << indent;
         std::ostringstream indent_oss;
         indent_oss << indent;
-        entries_col_type::const_iterator j = i;
-        j++;
+        entries_ordered_col_type::const_iterator j = i;
         a_out << i_tree_dumpable::skip_tag;
         indent_oss << i_tree_dumpable::skip_tag;
 
-        if (j == entries_.end()) {
+        if (++j == ordered_entries_.end()) {
           a_out << i_tree_dumpable::last_tag;
           indent_oss << i_tree_dumpable::inherit_skip_tag(a_inherit);
         } else {

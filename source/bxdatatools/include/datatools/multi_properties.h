@@ -218,14 +218,26 @@ namespace datatools {
     /// Get the description
     const std::string& get_description() const;
 
+    /// Check if the key label is set
+    bool has_key_label() const;
+
     /// Set the key label
     void set_key_label(const std::string& a_key_label);
+
+    /// Clear the key label
+    void clear_key_label();
 
     /// Return the key label
     const std::string& get_key_label() const;
 
+    /// Check if the meta label is set
+    bool has_meta_label() const;
+
     /// Set the meta label
     void set_meta_label(const std::string& a_meta_label);
+
+    /// Clear the meta label
+    void clear_meta_label();
 
     /// Return the meta label
     const std::string& get_meta_label() const;
@@ -339,7 +351,8 @@ namespace datatools {
         HEADER_FOOTER         = bit_mask::bit06, ///< Use header/footer (write)
         DONT_CLEAR            = bit_mask::bit07, ///< Don't clear before parsing bit (read)
         REQUESTED_TOPIC       = bit_mask::bit08, ///< Requested topic (read/write)
-        RESOLVE_PATH          = bit_mask::bit09  ///< Resolve path for input filename (read/write)
+        RESOLVE_PATH          = bit_mask::bit09, ///< Resolve path for input filename (read/write)
+        START_WITHOUT_LABELS  = bit_mask::bit10  ///< Start without key/meta labels and let the reader set them
       };
 
       /// Default constructor
@@ -397,9 +410,10 @@ namespace datatools {
       bool _skip_private_properties_; ///< Flag to skip private properties in sections (read/write)
       bool _forbid_variants_;         ///< Flag to forbid variant directives (read)
       bool _header_footer_;           ///< Flag to print header/footer (write)
-      bool _requested_topic_;         ///< Flag to activate topic matching (read)
+      bool _requested_topic_;         ///< Flag to activate topic matching (read/write)
       std::string _topic_;            ///< Topic to be validated
       bool _resolve_path_;            ///< Explicitely resolve path for input/output filenames (read/write)
+      bool _start_without_labels_;    ///< Start without labels (read)
 
       // Working parsing data:
       std::string _current_filename_;    ///< Current filename
