@@ -477,7 +477,7 @@ namespace dpp {
       }
     }
 
-    if (_Ctx_service_ == 0) {
+    if (_Ctx_service_ == nullptr) {
       DT_LOG_WARNING((*_logging_), "Module '" << get_module_name()
                      << "' has no access to any 'context' service !");
     }
