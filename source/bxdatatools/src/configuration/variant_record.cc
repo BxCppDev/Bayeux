@@ -1665,7 +1665,6 @@ namespace datatools {
       }
       for (std::size_t idaughter = 0; idaughter < daughters.size(); idaughter++) {
         const std::string & daughter_name = daughters[idaughter];
-        daughter_dict_type::const_iterator found = _daughters_.find(daughter_name);
         out_ << indent_ << i_tree_dumpable::skip_tag;
         if ((idaughter + 1) == daughters.size()) {
           out_ << i_tree_dumpable::last_tag;
