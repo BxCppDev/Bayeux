@@ -46,7 +46,6 @@ find_package(Boost 1.60.0
 foreach(_boost_lib ${BAYEUX_BOOST_COMPONENTS})
   list(APPEND Bayeux_Boost_LIBRARIES Boost::${_boost_lib})
 endforeach()
-message(STATUS "Bayeux_Boost_LIBRARIES = '${Bayeux_Boost_LIBRARIES}'")
 
 # - Camp
 find_package(CAMP 0.7.1 REQUIRED NO_MODULE)
@@ -404,12 +403,8 @@ if(BAYEUX_ENABLE_TESTING)
       ### G4 specific link for some test progs
       if(BAYEUX_WITH_GEANT4_MODULE)
         string(REGEX MATCH "mctools-test_g4_*" _test_g4_res ${_testname})
-        # message( STATUS "    _test_g4_res = '${_test_g4_res}'")
         if(NOT "x${_test_g4_res}" STREQUAL "x" )
-          message( STATUS "Special link to the Bayeux Geant4 module for test program '${_testname}'")
-	  set_target_properties(${_testname}
-    	    PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}"
-    	  )
+          set_target_properties(${_testname} PROPERTIES COMPILE_DEFINITIONS "${Bayeux_Geant4_DEFINITIONS}")
           target_link_libraries(${_testname} Bayeux_mctools_geant4)
         endif()
       endif()
@@ -417,9 +412,7 @@ if(BAYEUX_ENABLE_TESTING)
       ### MCNP specific link for some test progs
       if(BAYEUX_WITH_MCNP_MODULE)
         string(REGEX MATCH "mctools-test_mcnp_*" _test_mcnp_res ${_testname})
-        # message( STATUS "    _test_mcnp_res = '${_test_mcnp_res}'")
         if (NOT "x${_test_mcnp_res}" STREQUAL "x" )
-          message( STATUS "Special link to the Bayeux MCNP module for test program '${_testname}'")
           target_link_libraries(${_testname} Bayeux_mctools_mcnp)
         endif()
       endif()
