@@ -763,7 +763,7 @@ namespace datatools {
 
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now created.");
       if (_logging_ == logger::PRIO_TRACE) {
-        _variant_repository_->tree_dump(std::cerr, "Kernel's configuration variant repository:", "TRACE: ");
+        _variant_repository_->tree_dump(std::cerr, "Kernel's configuration variant repository:", "[trace] ");
       }
     } else {
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is not created.");
