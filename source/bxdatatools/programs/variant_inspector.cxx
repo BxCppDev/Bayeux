@@ -189,94 +189,97 @@ int main(int argc_, char * argv_[])
     // Handle any non-bound options:
     if (vMap.count("help")) {
       app_usage(std::cout, optPublic);
-      return -1;
+      error_code = -1;
     }
 
     if (vMap.count("version")) {
       app_version(std::cout);
-      return -1;
+      error_code = -1;
     }
 
-    if (vMap.count("logging")) {
-      datatools::logger::priority prio = datatools::logger::get_priority(params.logging);
-      if (prio != datatools::logger::PRIO_UNDEFINED) {
-        logging = prio;
+    if (error_code == EXIT_SUCCESS) {
+      if (vMap.count("logging")) {
+        datatools::logger::priority prio = datatools::logger::get_priority(params.logging);
+        if (prio != datatools::logger::PRIO_UNDEFINED) {
+          logging = prio;
+        }
       }
-    }
 
-    // Load dynamic libraries, if any are requested:
-    datatools::library_loader LL(params.LL_config);
-    for (auto dll_name : params.LL_dlls) {
-      DT_LOG_NOTICE(logging, "Loading DLL '" << dll_name << "'...");
-      DT_THROW_IF (LL.load(dll_name) != EXIT_SUCCESS,
-                   std::runtime_error,
-                   "Loading DLL '" << dll_name << "' failed !");
-    }
-
-    // Set action:
-    bool print_doc = false;
-    bool print_profile = false;
-    bool test_config = false;
-    bool test_mconfig = false;
-
-    // if (params.action.empty()) {
-    //   params.action = "doc";
-    // }
-
-    if (params.action == "doc") {
-      print_doc = true;
-    } else if (params.action == "profile") {
-      print_profile = true;
-    } else if (params.action == "testcfg") {
-      test_config = true;
-    } else if (params.action == "testmcfg") {
-      test_mconfig = true;
-    }
-
-    // Variant support:
-    try {
-      if (datatools::logger::is_debug(logging)) {
-        params.variants.print(std::cerr, "[debug] Variant parameters: ");
+      // Load dynamic libraries, if any are requested:
+      datatools::library_loader LL(params.LL_config);
+      for (auto dll_name : params.LL_dlls) {
+        DT_LOG_NOTICE(logging, "Loading DLL '" << dll_name << "'...");
+        DT_THROW_IF (LL.load(dll_name) != EXIT_SUCCESS,
+                     std::runtime_error,
+                     "Loading DLL '" << dll_name << "' failed !");
       }
-      if (params.variants.is_active()) {
-        dtc::variant_service vserv;
-        vserv.configure(params.variants);
 
+      // Set action:
+      bool print_doc = false;
+      bool print_profile = false;
+      bool test_config = false;
+      bool test_mconfig = false;
+
+      // if (params.action.empty()) {
+      //   params.action = "doc";
+      // }
+
+      if (params.action == "doc") {
+        print_doc = true;
+      } else if (params.action == "profile") {
+        print_profile = true;
+      } else if (params.action == "testcfg") {
+        test_config = true;
+      } else if (params.action == "testmcfg") {
+        test_mconfig = true;
+      }
+
+      // Variant support:
+      try {
         if (datatools::logger::is_debug(logging)) {
-          app_dump_debug(std::cerr, vserv.get_repository());
+          params.variants.print(std::cerr, "[debug] Variant parameters: ");
+        }
+        if (params.variants.is_active()) {
+          dtc::variant_service vserv;
+          vserv.configure(params.variants);
+
+          if (datatools::logger::is_debug(logging)) {
+            app_dump_debug(std::cerr, vserv.get_repository());
+          }
+
+          // Start the variant service:
+          vserv.start();
+
+          // Action:
+          if (print_doc) {
+            app_print_doc_rst(std::cout, vserv.get_repository());
+          } else if (print_profile) {
+            app_print_current_profile(std::cout, vserv.get_repository());
+          } else if (test_config) {
+            DT_THROW_IF(params.input_filename.empty(),
+                        std::logic_error,
+                        "Missing '--input-file' for testing a 'datatools::properties' configuration file!");
+            app_test_config(std::cout, params.input_filename);
+          } else if (test_mconfig) {
+            DT_THROW_IF(params.input_filename.empty(),
+                        std::logic_error,
+                        "Missing '--input-file' for testing a 'datatools::multi_properties' configuration file!");
+            app_test_multi_config(std::cout, params.input_filename);
+          }
+
+          // Stop the variant service:
+          if (vserv.is_started()) {
+            vserv.stop();
+          }
         }
 
-        // Start the variant service:
-        vserv.start();
-
-        // Action:
-        if (print_doc) {
-          app_print_doc_rst(std::cout, vserv.get_repository());
-        } else if (print_profile) {
-          app_print_current_profile(std::cout, vserv.get_repository());
-        } else if (test_config) {
-          DT_THROW_IF(params.input_filename.empty(),
-                      std::logic_error,
-                      "Missing '--input-file' for testing a 'datatools::properties' configuration file!");
-          app_test_config(std::cout, params.input_filename);
-        } else if (test_mconfig) {
-          DT_THROW_IF(params.input_filename.empty(),
-                      std::logic_error,
-                      "Missing '--input-file' for testing a 'datatools::multi_properties' configuration file!");
-          app_test_multi_config(std::cout, params.input_filename);
-        }
-
-        // Stop the variant service:
-        vserv.stop();
+      } catch (std::exception & error) {
+        std::cerr << "[error] " << error.what()
+                  << std::endl;
+        error_code = EXIT_FAILURE;
+        throw std::logic_error(error.what());
       }
-
-    } catch (std::exception & error) {
-      std::cerr << "[error] " << error.what()
-                << std::endl;
-      error_code = EXIT_FAILURE;
-      throw std::logic_error(error.what());
     }
-
   } catch (const std::exception & error) {
     DT_LOG_ERROR(datatools::logger::PRIO_ALWAYS, error.what());
     error_code = EXIT_FAILURE;
