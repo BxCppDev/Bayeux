@@ -50,11 +50,8 @@ set(Bayeux_HAS_QT @BAYEUX_WITH_QT_GUI@)
 # fallback functionality to allow other sources than Cadfael.
 
 # - Boost
-find_package(Boost @Boost_VERSION@ EXACT REQUIRED
+find_package(Boost @Boost_MAJOR_VERSION@.@Boost_MINOR_VERSION@ EXACT REQUIRED
   COMPONENTS filesystem system serialization iostreams
-  NO_MODULE
-  PATHS @Boost_DIR@
-  NO_DEFAULT_PATH
   )
 
 # - CLHEP

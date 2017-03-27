@@ -440,7 +440,7 @@ int example_reflection()
   return 0;
 }
 
-#include <bayeux/bayeux.h>
+#include "bayeux/bayeux.h"
 
 int main(int argc, char *argv[]) {
   BAYEUX_INIT_MAIN(argc, argv);

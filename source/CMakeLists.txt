@@ -34,7 +34,6 @@ find_package(Boost 1.55.0
   program_options
   regex
   # thread
-  NO_MODULE
   )
 set(Bayeux_Boost_LIBRARIES
   ${Boost_FILESYSTEM_LIBRARY}
@@ -53,12 +52,15 @@ find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
 
 # - GSL
 find_package(GSL 1.15 REQUIRED)
-find_package(GSL 1.15 REQUIRED)
 
 # - ROOT
 set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
 find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
-include(RootNewMacros)
+if(ROOT_VERSION VERSION_LESS 6)
+  include(RootNewMacros)
+else()
+  include(${ROOT_DIR}/modules/RootNewMacros.cmake)
+endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
 if (BAYEUX_WITH_QT_GUI)
