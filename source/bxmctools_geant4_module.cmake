@@ -121,6 +121,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
      ${Geant4_INCLUDE_DIRS}
+     $<TARGET_PROPERTY:Bayeux,INTERFACE_INCLUDE_DIRECTORIES>
      )
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_Geant4_DEFINITIONS)
@@ -137,8 +138,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
   target_link_libraries(Bayeux_mctools_geant4
     PUBLIC
       ${Geant4_LIBRARIES} Boost::thread
-    PRIVATE
-      Bayeux)
+      )
 
   # - Set RPATH as needed
   set_target_properties(Bayeux_mctools_geant4 PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
