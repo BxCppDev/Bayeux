@@ -15,6 +15,8 @@
 // Third party:
 // - Bayeux/dpp :
 #include <dpp/base_module.h>
+#include <mygsl/seed_manager.h>
+#include <mygsl/prng_state_manager.h>
 
 // This project:
 #include <mctools/g4/manager_parameters.h>
@@ -73,6 +75,12 @@ class simulation_module : public dpp::base_module {
 
   /// Return a non mutable reference to the simulation manager parameters
   const manager_parameters& get_geant4_parameters() const;
+
+  /// Return a reference to the embedded seed manager
+  const mygsl::seed_manager& get_seed_manager() const;
+
+  /// Return a non mutable reference to the manager of PRNG's states
+  const mygsl::prng_state_manager& get_state_manager() const;
 
  protected :
   void _initialize_manager(datatools::service_manager & /* smgr_ */);

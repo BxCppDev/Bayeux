@@ -295,6 +295,19 @@ const manager_parameters& simulation_module::get_geant4_parameters() const {
   return geant4Parameters_;
 }
 
+const mygsl::seed_manager& simulation_module::get_seed_manager() const
+{
+  DT_THROW_IF (!is_initialized (), std::logic_error,
+               "Module '" << get_name () << "' is not initialized !");
+  return geant4Simulation_->get_seed_manager();
+}
+
+const mygsl::prng_state_manager& simulation_module::get_state_manager() const
+{
+  DT_THROW_IF (!is_initialized (), std::logic_error,
+               "Module '" << get_name () << "' is not initialized !");
+  return geant4Simulation_->get_state_manager();
+}
 
 void simulation_module::_initialize_manager(datatools::service_manager& smgr_) {
   // Allocate the simulation manager :
