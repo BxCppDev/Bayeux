@@ -364,22 +364,29 @@ namespace datatools {
       public:
         /// \brief Export flags
         enum init_flags {
-          EXPORT_DEBUG   = datatools::bit_mask::bit00,
-          EXPORT_NOCLEAR = datatools::bit_mask::bit01
+          EXPORT_DEBUG    = datatools::bit_mask::bit00,
+          EXPORT_NOCLEAR  = datatools::bit_mask::bit01,
+          EXPORT_NOORGAPP = datatools::bit_mask::bit02
         };
         /// Constructor
         exporter(datatools::properties & config_, uint32_t flags_ = 0);
+        void set_settings_key(const std::string &);
         /// Export method
+        void process(const variant_repository & vrep_);
+        const std::vector<std::string> & get_settings() const;
         void operator()(const variant_repository & vrep_);
       protected:
         void _process_registry(const variant_registry & vreg_);
         void _process_record(const variant_record & vrec_);
       private:
         datatools::logger::priority _logging_ = datatools::logger::PRIO_FATAL;
-        bool                     _noclear_ = false;
-        datatools::properties &  _config_;
-        std::vector<std::string> _settings_;
-        std::string              _current_registry_name_;
+        bool                        _noclear_ = false;
+        bool                        _noorgapp_ = false;
+        datatools::properties &     _config_;   //!< Target properties
+        std::string                 _settings_key_;
+        // Working temporary data:
+        std::vector<std::string>    _settings_;
+        std::string                 _current_registry_name_;
       };
 
     protected:

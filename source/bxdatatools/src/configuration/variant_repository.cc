@@ -618,15 +618,16 @@ namespace datatools {
       if (flags_ & EXPORT_NOCLEAR) {
         _noclear_ = true;
       }
+      if (flags_ & EXPORT_NOORGAPP) {
+        _noorgapp_ = true;
+      }
       return;
     }
 
-    void variant_repository::exporter::operator()(const variant_repository & vrep_)
+    void variant_repository::exporter::process(const variant_repository & vrep_)
     {
-      if (!_noclear_) {
-        _config_.clear();
-      }
-      std::vector<std::string> params_settings;
+      _settings_.clear();
+      _current_registry_name_.clear();
       std::vector<std::string> registry_keys;
       vrep_.build_ordered_registry_keys(registry_keys);
       for (unsigned int ireg = 0; ireg < registry_keys.size(); ireg++) {
@@ -637,11 +638,27 @@ namespace datatools {
         _current_registry_name_ = reg_name;
         _process_registry(vrep_.get_registry(reg_name));
       }
-      if (vrep_.has_organization()) {
-        _config_.store("organization", vrep_.get_organization());
+      return;
+    }
+
+    const std::vector<std::string> & variant_repository::exporter::get_settings() const
+    {
+      return _settings_;
+    }
+
+    void variant_repository::exporter::operator()(const variant_repository & vrep_)
+    {
+      if (!_noclear_) {
+        _config_.clear();
       }
-      if (vrep_.has_application()) {
-        _config_.store("application", vrep_.get_application());
+      process(vrep_);
+      if (!_noorgapp_) {
+        if (vrep_.has_organization()) {
+          _config_.store("organization", vrep_.get_organization());
+        }
+        if (vrep_.has_application()) {
+          _config_.store("application", vrep_.get_application());
+        }
       }
       _config_.store("settings", _settings_);
       return;
