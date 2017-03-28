@@ -301,6 +301,15 @@ foreach(_bxapp IN LISTS BAYEUX_ALL_APPS)
 endforeach()
 
 #-----------------------------------------------------------------------
+# Apply VERSION/SOVERSION to library targets
+#
+set_target_properties(Bayeux ${Bayeux_ADDON_TARGETS}
+  PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+    )
+
+#-----------------------------------------------------------------------
 # Install targets and resources
 #
 install(TARGETS Bayeux ${Bayeux_ADDON_TARGETS}
