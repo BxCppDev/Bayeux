@@ -164,13 +164,13 @@ g4_seed_generator::parameters::parameters()
 
 void g4_seed_generator::parameters::set_defaults()
 {
-  number_of_runs = 1;
-  run_start      = 0;
-  base_dir       = "bxg4_seed_set";
-  pattern        = "seeds_%n.conf";
-  run_list_file      = "runs.lis";
+  number_of_runs   = 1;
+  run_start        = 0;
+  base_dir         = "__bxg4_seeds-set.d";
+  pattern          = "seeds_%n.conf";
+  run_list_file    = "__bxg4_seeds-runs.lis";
   list_mount_point = "";
-  no_safe_checks = false;
+  no_safe_checks   = false;
   no_run_list_file = false;
 }
 
@@ -178,7 +178,7 @@ void g4_seed_generator::parameters::print_usage(const boost::program_options::op
                                                 std::ostream & out_)
 {
   const std::string APP_NAME = "bxg4_seeds";
-  out_ << APP_NAME << " -- generator of seeds for the GEANT4 simulation wrapper" << std::endl;
+  out_ << APP_NAME << " -- generator of seeds for the Bayeux/mctools GEANT4 simulation wrapper" << std::endl;
   out_ << std::endl;
   out_ << "Usage : " << std::endl;
   out_ << std::endl;
@@ -216,7 +216,7 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
 
     ("base-dir,d",
      po::value<std::string>(&params_.base_dir)
-     // ->default_value(".")
+     ->default_value("__bxg4_seeds-set.d")
      ->value_name("dirname"),
      "Set the base directory where seed file is generated")
 
@@ -228,7 +228,7 @@ void g4_seed_generator::parameters::build_opts(boost::program_options::options_d
 
     ("run-list,t",
      po::value<std::string>(&params_.run_list_file)
-     ->default_value("runs.lis")
+     ->default_value("__bxg4_seeds-runs.lis")
      ->value_name("name"),
      "Set the name of the run list file")
 
@@ -252,16 +252,19 @@ g4_seed_generator::g4_seed_generator(const parameters & params_)
   {
     bool exists = params_.base_dir.find("%n") != std::string::npos;
     DT_THROW_IF(exists, std::logic_error,
-                "Base directory has a forbidden '%n' directive!");
+                "Base directory '" << params_.base_dir << "' has a forbidden '%n' directive!");
   }
   {
     DT_THROW_IF(params_.number_of_runs == 0, std::logic_error,
                 "Invalid null number of runs!");
   }
+  bool exists = params_.pattern.find("/") != std::string::npos;
+  DT_THROW_IF(exists, std::logic_error,
+              "Forbidden '/' separator in the output file pattern '" << params_.pattern << "'!");
   if (params_.number_of_runs > 1) {
     bool exists = params_.pattern.find("%n") != std::string::npos;
     DT_THROW_IF(!exists, std::logic_error,
-                "Missing '%n' directive in the output file pattern!");
+                "Missing '%n' directive in the output file pattern '" << params_.pattern << "'!");
   }
   if (!params_.list_mount_point.empty()) {
     const char open = params_.list_mount_point[0];
@@ -352,9 +355,11 @@ void g4_seed_generator::run()
   std::ostringstream list_out;
   for (const auto& iseed : seeds_per_run) {
     uint32_t irun = iseed.first;
+    std::string seed_path_pattern = _params_.pattern;
     std::string path_pattern = _params_.base_dir + "/" + _params_.pattern;
     boost::replace_all(path_pattern, "//", "/");
     boost::replace_all(path_pattern, "%n", boost::lexical_cast<std::string>(irun));
+    boost::replace_all(seed_path_pattern, "%n", boost::lexical_cast<std::string>(irun));
     {
       std::string test_path = path_pattern;
       datatools::fetch_path_with_env(test_path);
@@ -367,7 +372,7 @@ void g4_seed_generator::run()
     std::ofstream fout(path_pattern.c_str());
     DT_THROW_IF(!fout, std::runtime_error, "Cannot open file '" << path_pattern << "'");
     fout << iseed.second << std::endl;
-    seedfiles_per_run[irun] = path_pattern;
+    seedfiles_per_run[irun] = seed_path_pattern; //path_pattern;
   }
 
   std::unique_ptr<std::ofstream> frunlist;
