@@ -133,6 +133,34 @@ void test_standalone_libinfo()
     std::clog << std::endl;
   }
 
+  std::vector<std::string> mountDirectives = {
+    "foo@/tmp/bar",
+    "foo.resources@/tmp/bar",
+    "foo.data@${HOME}",
+    "foo.libraries@~/lib/x86_64",
+    "foo.bad@arrrrrgh",
+  };
+  for (std::string mountDirective : mountDirectives) {
+    std::string theLibname;
+    std::string theTopic;
+    std::string thePath;
+    std::string errMsg;
+    bool parsed = datatools::library_info::parse_path_registration_directive(mountDirective,
+                                                                             theLibname,
+                                                                             theTopic,
+                                                                             thePath,
+                                                                             errMsg);
+    if (parsed) {
+      std::clog << "[info] Parsed of '" << mountDirective << "' is ok: " << std::endl;
+      std::clog << "[info]   Library name : " << theLibname << std::endl;
+      std::clog << "[info]   Topic        : " << theTopic << std::endl;
+      std::clog << "[info]   Path         : " << thePath << std::endl;
+    } else {
+      std::clog << "[error] Parsed failed: " << errMsg << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
   libinfo.unregistration("bar");
   return;
 }

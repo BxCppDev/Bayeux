@@ -588,7 +588,7 @@ namespace datatools {
     std::string the_topic;
     {
       size_t dpos = the_libname.find('.');
-      if (dpos == the_libname.npos) {
+      if (dpos != the_libname.npos) {
          the_topic = the_libname.substr(dpos+1);
          the_libname = the_libname.substr(0, dpos);
       }
