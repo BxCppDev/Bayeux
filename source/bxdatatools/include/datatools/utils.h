@@ -168,12 +168,52 @@ namespace datatools {
   std::string fetch_path(const std::string& path_str);
 
   //! Extract the expanded path computed from the 'word' string.
+  bool fetch_path(std::string& word, std::string & errmsg_);
+
+  //! Extract the expanded path computed from the 'word' string.
   //! Internally uses the getenv function and the datatools::library_info
   //! register.
   /// @arg word the string path to be processed
   /// @return true if the processing was successful (successfully resolved environ variables and
   ///         registered library path)
+  ///
+  /// Supported formats:
+  ///
+  /// * Plain path:
+  ///
+  ///  "/tmp/foo/bar/baz.txt"
+  ///  "./foo/bar/baz.txt"
+  ///
+  /// * Path with special tokens and/or environment variables::
+  ///
+  ///  "~/foo/bar/baz.txt"
+  ///  "~foo/bar/baz.txt"
+  ///  "${HOME}/foo/bar/baz.txt"
+  ///  "${ENV1}/foo/bar/baz.txt"
+  ///  "${ENV1}/foo/${ENV2}/baz.txt"
+  ///
+  /// * Path from registered/mount point:
+  ///
+  ///  "@foo:bar/baz.txt"
+  ///  "@foo.resources:config/simulation/1.0/manager.conf"
+  ///  "@foo.data:dataset/march2017/run_1.data"
+  ///
+  /// * URN resolved as path:
+  ///
+  ///   - plain URN:
+  ///
+  ///     "urn:snemo:analysis:setup:1.0"
+  ///
+  ///   - URN with explicit category:
+  ///
+  ///     "urn:snemo:analysis:setup:1.0@configuration"
+  ///     "urn:snemo:analysis:logo:small@image"
+  ///     "urn:snemo:analysis:run:1234@data"
+  ///
   bool fetch_path_with_env(std::string& word);
+
+  //! Extract the expanded path computed from the 'word' string.
+  bool fetch_path_with_env(std::string& word, std::string & errmsg_);
 
   /** Extract the expanded path computed from a string.
    * Internally uses the datatools::library_info

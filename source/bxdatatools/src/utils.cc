@@ -15,10 +15,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#include <memory>
 
 // Third Party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -28,6 +28,7 @@
 #include <datatools/properties.h>
 #include <datatools/kernel.h>
 #include <datatools/bit_mask.h>
+#include <datatools/urn.h>
 #include <datatools/urn_query_service.h>
 
 namespace datatools {
@@ -312,8 +313,7 @@ namespace datatools {
       ACTION_SET = 2,
       ACTION_RESET = 3
     };
-    static const std::string & global_path(int action_,
-                                           const std::string & gpath_ = "");
+    static const std::string & global_path(int action_, const std::string & gpath_ = "");
   };
 
   bool has_global_path()
@@ -346,7 +346,8 @@ namespace datatools {
       USE_GLOBAL_PATH      = bit_mask::bit02, //!< Undocumented
       USE_ENVIRON          = bit_mask::bit03, //!< Accept environment variables in path
       USE_KERNEL_LIBINFO   = bit_mask::bit04, //!< Accept Kernel library query resolution
-      USE_KERNEL_URN_QUERY = bit_mask::bit05  //!< Accept URN query resolution
+      USE_KERNEL_URN_QUERY = bit_mask::bit05, //!< Accept URN query resolution
+      USE_DEFAULTS         = USE_ENVIRON | USE_KERNEL_LIBINFO| USE_KERNEL_URN_QUERY
     };
 
     struct lib_info_keys_entry_type
@@ -358,16 +359,18 @@ namespace datatools {
 
     static const lib_info_keys_dict_type & lib_info_keys();
 
-    fetch_path_processor(std::string parent_path_ = "",
+    fetch_path_processor(const std::string & parent_path_ = "",
                          bool use_global_path_ = false,
                          bool use_env_ = true,
                          bool use_kernel_libinfo_ = true,
                          bool use_kernel_urn_query_ = true);
 
-    fetch_path_processor(uint32_t use_mode,
-                         const std::string & parent_path_ = "");
+    explicit fetch_path_processor(uint32_t use_mode,
+                                  const std::string & parent_path_ = "");
 
     bool process(std::string&);
+
+    bool process(std::string& path_, std::string & error_msg_);
 
     void set_use_global_path(bool);
 
@@ -413,15 +416,14 @@ namespace datatools {
     return valid;
   }
 
-
   const std::string & _gp::global_path(int action_,
                                        const std::string & gpath_)
   {
-    static boost::scoped_ptr<std::string> g_path(0);
-    if (g_path.get() == 0) {
-      g_path.reset(new std::string);
+    static std::unique_ptr<std::string> _gpath;
+    if (_gpath.get() == nullptr) {
+      _gpath.reset(new std::string);
     }
-    std::string & gpath = *g_path.get();
+    std::string & gpath = *_gpath.get();
     {
       char * egp = ::getenv("BXDATATOOLS_GLOBAL_PATH");
       if (gpath.empty() && egp != 0) {
@@ -482,30 +484,29 @@ namespace datatools {
   fetch_path_processor::fetch_path_processor(uint32_t use_mode_,
                                              const std::string & parent_path_)
   {
-    _trace_ = false;
-    _use_global_path_ = use_mode_ & USE_GLOBAL_PATH;
-    _use_env_ = use_mode_ & USE_ENVIRON;
-    _use_kernel_libinfo_ = use_mode_ & USE_KERNEL_LIBINFO;
+    _trace_                = use_mode_ & USE_TRACE;
+    _use_global_path_      = use_mode_ & USE_GLOBAL_PATH;
+    _use_env_              = use_mode_ & USE_ENVIRON;
+    _use_kernel_libinfo_   = use_mode_ & USE_KERNEL_LIBINFO;
     _use_kernel_urn_query_ = use_mode_ & USE_KERNEL_URN_QUERY;
     _parent_path_ = parent_path_;
     return;
   }
 
-
-  fetch_path_processor::fetch_path_processor(std::string parent_path_,
+  fetch_path_processor::fetch_path_processor(const std::string & parent_path_,
                                              bool use_global_path_,
                                              bool use_env_,
                                              bool use_kernel_libinfo_,
                                              bool use_kernel_urn_query_) {
-    _use_global_path_ = use_global_path_;
-    _parent_path_ = parent_path_;
     _trace_ = false;
+    _parent_path_ = parent_path_;
+    _use_global_path_ = use_global_path_;
     _use_env_ = use_env_;
     _use_kernel_libinfo_ = use_kernel_libinfo_;
     _use_kernel_urn_query_ = use_kernel_urn_query_;
   }
 
-  bool fetch_path_processor::process(std::string& path) {
+  bool fetch_path_processor::process(std::string & path) {
     try {
       this->process_impl(path);
     } catch (std::exception & error) {
@@ -517,10 +518,21 @@ namespace datatools {
     return true;
   }
 
+  bool fetch_path_processor::process(std::string & path, std::string & errmsg_) {
+    try {
+      errmsg_.clear();
+      this->process_impl(path);
+    } catch (std::exception & error) {
+      errmsg_ = "Cannot process path '" + path + "' : " + error.what();
+      return false;
+    }
+    return true;
+  }
+
   // static
   const fetch_path_processor::lib_info_keys_dict_type & fetch_path_processor::lib_info_keys()
   {
-    static boost::scoped_ptr<lib_info_keys_dict_type> _lik;
+    static std::unique_ptr<lib_info_keys_dict_type> _lik;
     if (! _lik) {
       _lik.reset(new lib_info_keys_dict_type);
       lib_info_keys_dict_type & keys = *_lik;
@@ -563,7 +575,22 @@ namespace datatools {
 
       {
         lib_info_keys_entry_type e;
+        e.install_path_key = library_info::keys().install_data_dir();
+        e.environ_path_key = library_info::keys().env_data_dir();
+        keys["data"] = e;
+      }
+
+      {
+        lib_info_keys_entry_type e;
+        e.install_path_key = library_info::keys().install_include_dir();
+        e.environ_path_key = library_info::keys().env_include_dir();
+        keys["includes"] = e;
+      }
+
+      {
+        lib_info_keys_entry_type e;
         e.install_path_key = library_info::keys().install_doc_dir();
+        e.environ_path_key = library_info::keys().env_doc_dir();
         keys["docs"] = e;
       }
 
@@ -596,7 +623,11 @@ namespace datatools {
     std::string text = path;
     // First we search for an URN scheme in the case the filename has been registered
     // in some URN system repository:
-    if (_use_kernel_urn_query_ && boost::starts_with(text, "urn:")) {
+    if ( boost::starts_with(text, urn::urn_scheme() + urn::urn_separator())) {
+      if (!_use_kernel_urn_query_) {
+        // Unsupported URN scheme for path resolution
+        DT_THROW(std::logic_error, "The path resolution from an URN tag is not allowed!");
+      }
       // Found an URN scheme:
       // Examples:
       //   "urn:foo:bar"
@@ -617,32 +648,17 @@ namespace datatools {
         tail = text.substr(atpos + 1);
       }
       urn_category = tail;
-      /*
-      if (! tail.empty()) {
-        urn_category = tail;
-      }
-      else {
-        std::size_t parpos = text.find('(');
-        if (parpos != std::string::npos) {
-          urn_category = tail.substr(0, parpos);
-          if (tail.back() != ')') {
-            DT_THROW(std::logic_error, "Invalid URN path format!");
-          }
-          tail = text.substr(parpos + 1);
-        }
-      }
-      */
       // We detected the signature of an URN which should be registered
       // in the kernel's URN query service (singleton)
       DT_THROW_IF(! datatools::kernel::is_instantiated(),
                   std::runtime_error,
                   "The Bayeux/datatools' kernel has not been instantiated !"
-                  << "No support for '@foo:bar.txt' syntax !");
+                  << "No support for 'urn:foo:bar[:baz[:...]][@CATEGORY]' syntax !");
       const datatools::kernel & dtk = datatools::kernel::instance();
       DT_THROW_IF(! dtk.has_urn_query(),
                   std::runtime_error,
                   "The Bayeux/datatools' kernel URN query service has not been activated !"
-                  << "No support for 'urn:foo:bar[:baz[:...]]' syntax !");
+                  << "No support for 'urn:foo:bar[:baz[:...]][@CATEGORY]' syntax !");
       if (!dtk.get_urn_query().resolve_urn_to_path(urn_text,
                                                    urn_category,
                                                    urn_mime,
@@ -655,6 +671,10 @@ namespace datatools {
     }
     bool registered_lib_topic = false;
     if (text[0] == '@') {
+      if (!_use_kernel_libinfo_) {
+        // Unsupported mount point path resolution
+        DT_THROW(std::logic_error, "The path resolution from a mount point is not allowed!");
+      }
       if (trace) {
         DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Entering '@' mode...");
       }
@@ -669,113 +689,16 @@ namespace datatools {
                   << "No support for '@foo[.topic]:bar/blah.txt' syntax !");
       const datatools::library_info & lib_info_reg =
         datatools::kernel::instance().get_library_info_register();
-      size_t pos = text.find(':');
-      DT_THROW_IF(pos == text.npos,
-                  std::logic_error,
-                  "Invalid syntax for library location !");
-      std::string library_directive = text.substr(1, pos-1);
-      std::vector<std::string> lib_tokens;
-      boost::split(lib_tokens, library_directive, boost::is_any_of("."));
-      // if (trace) {
-      //   for (int i = 0; i < (int) lib_tokens.size(); i++) {
-      //     std::cerr << "DEVEL: tok = " << lib_tokens[i] << std::endl;
-      //   }
-      // }
 
-      DT_THROW_IF(lib_tokens.size() == 0, std::logic_error,
-                  "Missing library directive !");
-      std::string library_name = lib_tokens[0];
-      std::string library_topic;
-      if (lib_tokens.size() > 1) {
-        library_topic = lib_tokens[1];
-        if (trace) {
-          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                       "Found library topic '" << library_topic
-                       << "'.");
-        }
-      }
-
-      std::string install_path_key;
-      std::string environ_path_key;
-      if (! resolve_library_info_path_keys(library_topic, install_path_key, environ_path_key)) {
-        DT_THROW_IF(true,
-                    std::logic_error,
-                    "Topic '" << library_topic << "' is not registered !");
-      }
-
-      if (trace) {
-        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                     "Found '" << library_topic << "' directive for library '" << library_name
-                     << "' in path '" << path << ".");
-        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                     "with install_path_key='" << install_path_key << "'");
-        DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                     "and  environ_path_key='" << environ_path_key << "'");
-      }
-      DT_THROW_IF(! lib_info_reg.has(library_name),
-                  std::logic_error,
-                  "Unregistered library '" << library_name << "' in the kernel library register!");
-
-      const datatools::properties & lib_infos = lib_info_reg.get(library_name);
-
-      // Search for topic directory path from the register:
-      std::string topic_dir_str;
-
-      // From the registered environment variable name (if any):
-      if (!environ_path_key.empty()) {
-        if (trace) {
-          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                       "Search to resolve the path from an environment variable...");
-        }
-        if (topic_dir_str.empty() && lib_infos.has_key(environ_path_key)) {
-          std::string env_topic_dir = lib_infos.fetch_string(environ_path_key);
-          if (! env_topic_dir.empty()) {
-            const char *env_value = getenv(env_topic_dir.c_str());
-            if (env_value != 0) {
-              if (trace) {
-                DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                             "Found the '" << env_topic_dir << "' environment variable.");
-              }
-              topic_dir_str = std::string(env_value);
-            }
-          }
-        }
-      }
-
-      // From the registered installation path (if any):
-      if (!install_path_key.empty()) {
-        if (topic_dir_str.empty() && lib_infos.has_key(install_path_key)) {
-          topic_dir_str = lib_infos.fetch_string(install_path_key);
-        }
-      }
-
-      if (! topic_dir_str.empty()) {
-        boost::filesystem::path topic_dir = topic_dir_str;
-        if (trace) {
-          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                       "Topic installation path for library '" << library_name
-                       << "' in path '" << path << " is '" << topic_dir << "'.");
-        }
-        boost::filesystem::path topic_relative_path = text.substr(pos+1);
-        if (trace) {
-          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                       "Topic relative path for library '" << library_name
-                       << "' in path '" << path << " is '" << topic_relative_path << "'.");
-        }
-        boost::filesystem::path topic_full_path = topic_dir / topic_relative_path;
-        text = topic_full_path.string();
-        if (trace) {
-          DT_LOG_TRACE(datatools::logger::PRIO_TRACE,
-                       "Topic absolute path for library '" << library_name
-                       << "' in path '" << path << " is '" << text << "'.");
-        }
-        registered_lib_topic = true;
+      std::string resolved_path;
+      std::string errmsg;
+      if (!lib_info_reg.resolve_path(text, resolved_path, errmsg)) {
+        DT_THROW(std::logic_error,
+                 "Cannot resolve path from mount point : " << errmsg << "!");
       } else {
-        DT_THROW_IF(true, std::logic_error,
-                    "No '" << library_topic << "' directory for library '" << library_name
-                    << "' as been resolved from path '" << path << "' !");
+        text = resolved_path;
+        registered_lib_topic = true;
       }
-
     } // end if (text[0] == '@')
 
     DT_THROW_IF(text.find('?') != text.npos || text.find('*') != text.npos,
@@ -792,22 +715,18 @@ namespace datatools {
         int we_error = wordexp( word, &p, WRDE_NOCMD|WRDE_SHOWERR|WRDE_UNDEF);
         switch (we_error) {
         case WRDE_BADCHAR:
-          //std::cerr << "ERROR ************* WRDE_BADCHAR" << std::endl;
           DT_THROW_IF(true,
                       std::logic_error,
                       "wordexp error, code = " << we_error << " : Unquoted characters for input = '" << path << "'");
         case WRDE_BADVAL:
-          //std::cerr << "ERROR ************* WRDE_BADVAL" << std::endl;
           DT_THROW_IF(true,
                       std::logic_error,
                       "wordexp error, code = " << we_error << " : Undefined shell variable for input = '" << path << "'");
         case WRDE_CMDSUB:
-          //std::cerr << "ERROR ************* WRDE_CMDSUB" << std::endl;
           DT_THROW_IF(true,
                       std::logic_error,
                       "wordexp error, code = " << we_error << " : Unauthorized command substitution for input = '" << path << "'");
         case WRDE_NOSPACE:
-          //std::cerr << "ERROR ************* WRDE_NOSPACE" << std::endl;
           // 2014-04-29 FM: Calling wordfree here at least (following the GNU example)
           wordfree( &p );
           // freed = true;
@@ -815,7 +734,6 @@ namespace datatools {
                       std::logic_error,
                       "wordexp error, code = " << we_error << " : Attempt to allocate memory failed for input = '" << path << "'");
         case WRDE_SYNTAX:
-          //std::cerr << "ERROR ************* WRDE_SYNTAX" << std::endl;
           DT_THROW_IF(true,
                       std::logic_error,
                       "wordexp error, code = " << we_error << " : Shell syntax error for input = '" << path << "'");
@@ -838,8 +756,7 @@ namespace datatools {
             }
           }
         } // switch (we_error)
-      }
-      catch (std::exception & we_x) {
+      } catch (std::exception & we_x) {
         error_message = we_x.what();
       }
       // 2014-04-29 FM: Calling wordfree segfaults!!! (the manual is not clear about the need for wordfree)
@@ -879,49 +796,51 @@ namespace datatools {
     path = text;
     return;
   }
-  /**************************************************/
 
-  std::string fetch_path(const std::string& word)
-  {
+  std::string fetch_path(const std::string& word) {
     std::string w = word; // Working buffer
-    fetch_path_processor fpp("", true, true, true);
+    fetch_path_processor fpp("", true, true, true, true);
     bool r = fpp.process(w);
     DT_THROW_IF(!r, std::logic_error, "Cannot fetch path from '" << word << "' !");
     return w;
   }
 
+  bool fetch_path(std::string& path, std::string & errmsg_) {
+    fetch_path_processor fpp("", true, true, true, true);
+    return fpp.process(path, errmsg_);
+  }
 
   bool fetch_path_without_env(std::string& path) {
-    fetch_path_processor fpp("", false, false, true);
+    fetch_path_processor fpp("", false, false, true, true);
     return fpp.process(path);
   }
-
 
   bool fetch_path_with_env(std::string& path) {
-    fetch_path_processor fpp("", false, true, true);
+    fetch_path_processor fpp("", false, true, true, true);
     return fpp.process(path);
   }
 
+  bool fetch_path_with_env(std::string& path, std::string & errmsg_) {
+    fetch_path_processor fpp("", false, true, true, true);
+    return fpp.process(path, errmsg_);
+  }
 
   bool fetch_path_with_env_p(std::string& path,
                              const std::string & parent_path_) {
-    fetch_path_processor fpp(parent_path_, false, true, true);
+    fetch_path_processor fpp(parent_path_, false, true, true, true);
     return fpp.process(path);
   }
-
 
   bool fetch_path_with_env_g(std::string& path) {
-    fetch_path_processor fpp("", true);
+    fetch_path_processor fpp("", true, true, true, true);
     return fpp.process(path);
   }
-
 
   bool fetch_path_with_env_pg(std::string& path,
                               const std::string & parent_path_) {
-    fetch_path_processor fpp(parent_path_, true);
+    fetch_path_processor fpp(parent_path_, true, true, true, true);
     return fpp.process(path);
   }
-
 
   std::string expand_path(const std::string& path) {
     std::string res("");
@@ -963,7 +882,6 @@ namespace datatools {
     }
     return (line_get);
   }
-
 
   /* From:
      Data Structures in C++ Using the STL

@@ -73,7 +73,67 @@ void test_standalone_libinfo()
     libinfo.tree_dump(std::clog, "Standalone library info register: ");
     libinfo.unregistration("foo");
   }
+  libinfo.path_registration("bar", "data", "/data/bar/raw/dataset3");
+  libinfo.path_registration("bar", "resources", "/etc/bar/conf.d");
+  libinfo.path_registration("baz", "data", "/data/baz/raw/dataset3");
+  libinfo.path_registration("faz", "data", "/data/faz/runs/002/files");
+
   libinfo.tree_dump(std::clog, "Standalone library info register: ");
+  std::clog << std::endl;
+
+  {
+    std::string p("@bar:run_0.zip");
+    std::clog << "[info] Resolving path = " << p << std::endl;
+    std::string rp = p;
+    std::string errmsg;
+    if (libinfo.resolve_path(p, rp, errmsg)) {
+      std::clog << "[info] Resolved path    = " << rp << std::endl;
+    } else {
+      std::clog << "[error] Unresolved path = " << p << ": " << errmsg << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+  {
+    std::string p("@bar.data:run_1.zip");
+    std::clog << "[info] Resolving path = " << p << std::endl;
+    std::string rp = p;
+    std::string errmsg;
+    if (libinfo.resolve_path(p, rp, errmsg)) {
+      std::clog << "[info] Resolved path    = " << rp << std::endl;
+    } else {
+      std::clog << "[error] Unresolved path = " << p << ": " << errmsg << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+  {
+    std::string p("@faz.data:truc/run_42.data");
+    std::clog << "[info] Resolving path = " << p << std::endl;
+    std::string rp = p;
+    std::string errmsg;
+    if (libinfo.resolve_path(p, rp, errmsg)) {
+      std::clog << "[info] Resolved path    = " << rp << std::endl;
+    } else {
+      std::clog << "[error] Unresolved path = " << p << ": " << errmsg << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+  {
+    std::string p("@faz.dummy:blah.txt");
+    std::clog << "[info] Resolving path = " << p << std::endl;
+    std::string rp = p;
+    std::string errmsg;
+    if (libinfo.resolve_path(p, rp, errmsg)) {
+      std::clog << "[info] Resolved path    = " << rp << std::endl;
+    } else {
+      std::clog << "[error] Unresolved path = " << p << ": " << errmsg << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+  libinfo.unregistration("bar");
   return;
 }
 
@@ -136,7 +196,55 @@ void test_kernel_libinfo()
     libinfo.tree_dump(std::clog, "Kernel's library info register: ");
     libinfo.unregistration("foo");
   }
+  libinfo.path_registration("bar", "data", "/data/bar/raw/dataset3");
+  libinfo.path_registration("bar", "resources", "/data/bar/config");
+  libinfo.path_registration("baz", "data", "/data/baz/raw/dataset3");
+  libinfo.path_registration("faz", "data", "/data/faz/runs/002/files");
   libinfo.tree_dump(std::clog, "Kernel's library info register: ");
+  std::clog << std::endl;
+
+  {
+    std::string p("@bar:run_0.zip");
+    std::clog << "Resolving path = " << p << std::endl;
+    std::string rp = p;
+    datatools::fetch_path_with_env(rp);
+    std::clog << "Resolved path  = " << rp << std::endl;
+    std::clog << std::endl;
+  }
+
+  {
+    std::string p("@bar:run_1.zip");
+    std::clog << "Resolving path = " << p << std::endl;
+    std::string rp = p;
+    datatools::fetch_path_with_env(rp);
+    std::clog << "Resolved path  = " << rp << std::endl;
+    std::clog << std::endl;
+  }
+
+  {
+    std::string p("@faz.data:truc/run_42.data");
+    std::clog << "Resolving path = " << p << std::endl;
+    std::string rp = p;
+    datatools::fetch_path_with_env(rp);
+    std::clog << "Resolved path  = " << rp << std::endl;
+    std::clog << std::endl;
+  }
+
+  {
+    std::string p("@faz:truc/run_42.data");
+    std::clog << "Resolving path = " << p << std::endl;
+    std::string rp = p;
+    std::string errmsg;
+    if (datatools::fetch_path(rp, errmsg)) {
+      std::clog << "Resolved path  = " << rp << std::endl;
+    } else {
+      rp.clear();
+      std::cerr << "[error] As expected: " << errmsg << std::endl;
+    }
+    std::clog << std::endl;
+  }
+
+
   return;
 }
 
@@ -144,20 +252,19 @@ int main(int argc_, char * argv_[]) {
   datatools::initialize(argc_,argv_);
   int error_code = EXIT_SUCCESS;
   try {
+    std::clog << "\Entering test_library_info...\n" << std::endl;
 
-    std::cerr << "\n\ntest_standalone_libinfo..." << std::endl;
+    std::clog << "\n\ntest_standalone_libinfo..." << std::endl;
     test_standalone_libinfo();
 
-    std::cerr << "\n\ntest_kernel_libinfo..." << std::endl;
+    std::clog << "\n\ntest_kernel_libinfo..." << std::endl;
     test_kernel_libinfo();
 
-    std::cerr << "The end." << std::endl;
-  }
-  catch (std::exception & x) {
+    std::clog << "The end." << std::endl;
+  } catch (std::exception & x) {
     std::cerr << "error: " << x.what () << std::endl;
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     std::cerr << "error: " << "unexpected error !" << std::endl;
     error_code = EXIT_FAILURE;
   }

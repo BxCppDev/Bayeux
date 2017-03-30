@@ -35,6 +35,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <set>
 
 // This project:
 #include <datatools/logger.h>
@@ -82,10 +83,23 @@ namespace datatools {
       static const std::string & env_include_dir();
       static const std::string & env_lib_dir();
       static const std::string & env_bin_dir();
+      static const std::string & env_data_dir();
       static const std::string & env_resource_dir();
       static const std::string & env_plugin_lib_dir();
       static const std::string & env_doc_dir();
     };
+
+    // Set of supported topic labels
+    static const std::set<std::string> & topic_labels();
+
+    // Default topic label ("resources");
+    static std::string default_topic_label();
+
+    // Convert
+    static std::string topic_label_to_install_key(const std::string & label_);
+
+    // Convert
+    static std::string topic_label_to_env_key(const std::string & label_);
 
     /// Constructor
     library_info();
@@ -111,6 +125,52 @@ namespace datatools {
 
     /// Remove alias
     void remove_alias(const std::string & library_alias_);
+
+    /// Parse of a path registration directive
+    ///
+    /// Format is :
+    /// \code
+    ///   "NAME[.TOPIC]@PATH/TO/REGISTERED/DIR"
+    /// \endcode
+    /// where:
+    ///  - NAME : is the registration name (should not contains dots),
+    ///  - TOPIC : is chosen among "resources" (default), "data", "libraries", "plugins"...,
+    ///  - PATH/TO/REGISTERED/DIR : is the (absolute) path which should contain the topic files.
+    /// Examples:
+    /// \code
+    ///   "foo@dir/subdir/subsubdir/..."
+    ///   "foo.resource@dir/subdir/subsubdir/..."
+    ///   "foo.libraries@dir/subdir/subsubdir/..."
+    ///   "foo.binaries@dir/subdir/subsubdir/..."
+    ///   "foo.plugins@dir/subdir/subsubdir/..."
+    ///   "foo.docs@dir/subdir/subsubdir/..."
+    ///   "foo.prefix@dir/subdir/subsubdir/..."
+    ///   "foo.data@dir/subdir/subsubdir/..."
+    /// \endcode
+    static bool parse_path_registration_directive(const std::string & rule_,
+                                                  std::string & library_name_,
+                                                  std::string & topic_,
+                                                  std::string & path_,
+                                                  std::string & error_msg_);
+
+    /// Resolve a path with the syntax:
+    /// \code
+    ///   "@foo[.TOPIC]:dir/subdir/subsubdir/..."
+    /// \endcode
+    /// with TOPIC chosen among "resources" (default), "data", "libraries", "plugins"...
+    bool resolve_path(const std::string & path_,
+                      std::string & resolved_path_,
+                      std::string & error_msg_) const;
+
+    /// Register a path associated to a library/app name
+    void path_registration(const std::string & library_name_,
+                           const std::string & topic_,
+                           const std::string & path_,
+                           bool overwrite_ = false);
+
+    /// Unregister a path associated to a library/app name
+    void path_unregistration(const std::string & library_name_,
+                             const std::string & topic_);
 
     /// Register basic infos for a given library
     properties & registration(const std::string & library_name_,

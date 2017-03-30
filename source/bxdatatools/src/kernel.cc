@@ -789,25 +789,40 @@ namespace datatools {
         std::string resource_path_registration = _params_.resource_paths[i];
         DT_LOG_TRACE(_logging_, "Resource path registration : '"
                      << resource_path_registration << "'");
-        // format is :
-        //   "foo@path1/subdir/..."
-        size_t apos = resource_path_registration.find('@');
-        DT_THROW_IF(apos == resource_path_registration.npos,
-                    std::logic_error,
-                    "Invalid syntax in resource path registration directive ('"
-                    << resource_path_registration << "' !");
-        std::string lib_name = resource_path_registration.substr(0, apos);
-        // boost::filesystem::path
-        std::string lib_resource_path = resource_path_registration.substr(apos+1);
-       DT_LOG_TRACE(_logging_, "Library " << lib_name << "' resource path '"
-                     << lib_resource_path << "' registration...");
-        DT_THROW_IF(libInfoRep.has(lib_name),
-                    std::logic_error,
-                    "Library info '"<< lib_name << "'is already registered !");
-        datatools::properties & lib_infos = libInfoRep.registration(lib_name);
-        lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
-                               lib_resource_path
-                               );
+        std::string lib_name;
+        std::string lib_topic;
+        std::string lib_resource_path;
+        std::string parsing_error_msg;
+        bool path_overwrite = false;
+        bool parse_success = library_info::parse_path_registration_directive(resource_path_registration,
+                                                                             lib_name,
+                                                                             lib_topic,
+                                                                             lib_resource_path,
+                                                                             parsing_error_msg);
+        DT_THROW_IF(!parse_success, std::logic_error,
+                    "Cannot parse resource path registration directive '"
+                    << resource_path_registration << "': " << parsing_error_msg);
+        if (lib_topic.empty()) lib_topic = library_info::default_topic_label();
+        libInfoRep.path_registration(lib_name, lib_topic, lib_resource_path, path_overwrite);
+        // // format is :
+        // //   "foo@path1/subdir/..."
+        // size_t apos = resource_path_registration.find('@');
+        // DT_THROW_IF(apos == resource_path_registration.npos,
+        //             std::logic_error,
+        //             "Invalid syntax in resource path registration directive ('"
+        //             << resource_path_registration << "') !");
+        // std::string lib_name = resource_path_registration.substr(0, apos);
+        // // boost::filesystem::path
+        // std::string lib_resource_path = resource_path_registration.substr(apos+1);
+        // DT_LOG_TRACE(_logging_, "Library " << lib_name << "' resource path '"
+        //              << lib_resource_path << "' registration...");
+        // DT_THROW_IF(libInfoRep.has(lib_name),
+        //             std::logic_error,
+        //             "Library info '"<< lib_name << "'is already registered !");
+        // datatools::properties & lib_infos = libInfoRep.registration(lib_name);
+        // lib_infos.store_string(datatools::library_info::keys::install_resource_dir(),
+        //                        lib_resource_path
+        //                        );
       }
       if (_logging_ >= datatools::logger::PRIO_TRACE) {
         libInfoRep.tree_dump(std::cerr, "Library information register: ");

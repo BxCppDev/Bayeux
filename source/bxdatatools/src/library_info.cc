@@ -11,6 +11,8 @@
 // Third Party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem/path.hpp>
 
 // This project:
 #include <datatools/exception.h>
@@ -20,6 +22,77 @@
 #include <datatools/utils.h>
 
 namespace datatools {
+
+  // static
+  const std::set<std::string> & library_info::topic_labels()
+  {
+    static std::set<std::string> _lbl;
+    if (_lbl.size() == 0) {
+      _lbl.insert(std::string("resources"));
+      _lbl.insert(std::string("prefix"));
+      _lbl.insert(std::string("libraries"));
+      _lbl.insert(std::string("binaries"));
+      _lbl.insert(std::string("plugins"));
+      _lbl.insert(std::string("docs"));
+      _lbl.insert(std::string("data"));
+      _lbl.insert(std::string("includes"));
+    }
+    return _lbl;
+  }
+
+  // static
+  std::string library_info::default_topic_label()
+  {
+    return "resources";
+  }
+
+  // static
+  std::string library_info::topic_label_to_install_key(const std::string & topic_label_)
+  {
+    std::string topic_key;
+    if (topic_label_ == "resources") {
+      topic_key = datatools::library_info::keys::install_resource_dir();
+    } else if (topic_label_ == "libraries") {
+      topic_key = datatools::library_info::keys::install_lib_dir();
+    } else if (topic_label_ == "binaries") {
+      topic_key = datatools::library_info::keys::install_bin_dir();
+    } else if (topic_label_ == "plugins") {
+      topic_key = datatools::library_info::keys::install_plugin_lib_dir();
+    } else if (topic_label_ == "docs") {
+      topic_key = datatools::library_info::keys::install_doc_dir();
+    } else if (topic_label_ == "prefix") {
+      topic_key = datatools::library_info::keys::install_prefix();
+    } else if (topic_label_ == "data") {
+      topic_key = datatools::library_info::keys::install_data_dir();
+    } else if (topic_label_ == "include") {
+      topic_key = datatools::library_info::keys::install_include_dir();
+    }
+    return topic_key;
+  }
+
+  // static
+  std::string library_info::topic_label_to_env_key(const std::string & topic_label_)
+  {
+    std::string topic_key;
+    if (topic_label_ == "resources") {
+      topic_key = datatools::library_info::keys::env_resource_dir();
+    } else if (topic_label_ == "libraries") {
+      topic_key = datatools::library_info::keys::env_lib_dir();
+    } else if (topic_label_ == "binaries") {
+      topic_key = datatools::library_info::keys::env_bin_dir();
+    } else if (topic_label_ == "plugins") {
+      topic_key = datatools::library_info::keys::env_plugin_lib_dir();
+    } else if (topic_label_ == "docs") {
+      topic_key = datatools::library_info::keys::env_doc_dir();
+    } else if (topic_label_ == "prefix") {
+      topic_key = datatools::library_info::keys::env_prefix();
+    } else if (topic_label_ == "data") {
+      topic_key = datatools::library_info::keys::env_data_dir();
+    } else if (topic_label_ == "include") {
+      topic_key = datatools::library_info::keys::env_include_dir();
+    }
+    return topic_key;
+  }
 
   // Constructor
   library_info::library_info()
@@ -271,6 +344,13 @@ namespace datatools {
     return key;
   }
 
+  const std::string &library_info::keys::env_data_dir()
+  {
+    static std::string key;
+    if (key.empty()) key = "env.data_dir";
+    return key;
+  }
+
   const std::string &library_info::keys::env_resource_dir()
   {
     static std::string key;
@@ -297,13 +377,11 @@ namespace datatools {
     return _logging_;
   }
 
-
   void library_info::set_logging(logger::priority p)
   {
     _logging_ = p;
     return;
   }
-
 
   void library_info::names(std::vector<std::string> & v_) const
   {
@@ -344,11 +422,17 @@ namespace datatools {
     properties & lib_info = _db_.grab_section(libname);
 
     int t = TYPE_STRING;
-    if (! info_type_.empty()) {
-      t = get_type_from_label(info_type_);
+    bool string_is_path = false;
+    std::string info_type_value = info_type_;
+    if (! info_type_value.empty()) {
+      if (info_type_value == "path") {
+        info_type_value = get_label_from_type(TYPE_STRING);
+        string_is_path = true;
+      }
+      t = get_type_from_label(info_type_value);
       DT_THROW_IF(t == TYPE_NONE,
                   std::range_error,
-                  "Invalid type '" << info_type_ << "' for key '"
+                  "Invalid type '" << info_type_value << "' for key '"
                   << info_key_ << "' in library '" << libname << "' !");
     }
 
@@ -388,9 +472,210 @@ namespace datatools {
       lib_info.update_real(info_key_, value);
     } else if (t == TYPE_STRING) {
       lib_info.update_string(info_key_, info_value_);
+      if (string_is_path) {
+        lib_info.set_explicit_path(info_key_, true);
+      }
+    }
+    if (locked_) lib_info.key_lock(info_key_);
+    return;
+  }
+
+  bool library_info::resolve_path(const std::string & path_,
+                                  std::string & resolved_path_,
+                                  std::string & error_msg_) const
+  {
+    bool failure = false;
+    resolved_path_.clear();
+    error_msg_.clear();
+    if (path_.empty()) {
+      error_msg_ = "Empty path";
+      return failure;
+    }
+    if (path_[0] != '@') {
+      error_msg_ = "Missing leading '@' symbol in '" + path_ + "'";
+      return failure;
+    }
+    std::string path1 = path_.substr(1);
+    size_t cpos = path1.find(':');
+    if (cpos == path1.npos) {
+      error_msg_ = "Invalid format; missing ':' separator in '" + path_ + "'";
+      return failure;
+    }
+    std::string library_directive = path1.substr(0, cpos);
+    // std::cerr << "[devel] library_directive = " << library_directive << std::endl;
+    std::vector<std::string> lib_tokens;
+    boost::split(lib_tokens, library_directive, boost::is_any_of("."));
+    if (lib_tokens.size() == 0 || lib_tokens.size() > 2) {
+      error_msg_ = "Invalid format; malformed library name/topic in '" + path_ + "'";
+      return  failure;
+    }
+    std::string library_name = lib_tokens[0];
+    // std::cerr << "[devel] library_name = " << library_name << std::endl;
+    std::string library_topic = library_info::default_topic_label();
+    if (lib_tokens.size() > 1) {
+      library_topic = lib_tokens[1];
+    }
+    // std::cerr << "[devel] library_topic = " << library_topic << std::endl;
+    if (!library_info::topic_labels().count(library_topic)) {
+      error_msg_ = "Unsupported topic '" + library_topic + "' in '" + path_ + "'";
+      return  failure;
+    }
+    std::string install_path_key = library_info::topic_label_to_install_key(library_topic);
+    std::string environ_path_key = library_info::topic_label_to_env_key(library_topic);
+
+    if (!this->has(library_name)) {
+      error_msg_ = "Unregistered library '" + library_name + "' in the kernel library register";
+      return failure;
+    }
+    const datatools::properties & lib_infos = this->get(library_name);
+
+    // Search for the topic directory path from the register:
+    std::string topic_dir_str;
+
+    // Attempt 1: from the registered environment variable name (if any):
+    if (topic_dir_str.empty() && !environ_path_key.empty()) {
+      if ( lib_infos.has_key(environ_path_key)) {
+        std::string env_topic_dir = lib_infos.fetch_string(environ_path_key);
+        if (! env_topic_dir.empty()) {
+          const char *env_value = getenv(env_topic_dir.c_str());
+          if (env_value != 0) {
+            // Found the 'env_topic_dir' environment variable:
+            topic_dir_str = std::string(env_value);
+          }
+        }
+      }
     }
 
-    if (locked_) lib_info.key_lock(info_key_);
+    // Attempt 2: from the registered installation path (if any):
+    if (topic_dir_str.empty() && !install_path_key.empty()) {
+      if (lib_infos.has_key(install_path_key)) {
+        topic_dir_str = lib_infos.fetch_string(install_path_key);
+      }
+    }
+
+    if (topic_dir_str.empty()) {
+      error_msg_ = "No '" + library_topic + "' directory for library '" + library_name
+        + "' as been resolved from path '" + path_ + "'";
+      return failure;
+    }
+    boost::filesystem::path topic_dir = topic_dir_str;
+    boost::filesystem::path topic_relative_path = path1.substr(cpos+1);
+    boost::filesystem::path topic_full_path = topic_dir / topic_relative_path;
+    resolved_path_ = topic_full_path.string();
+    return !failure;
+  }
+
+  bool library_info::parse_path_registration_directive(const std::string & directive_,
+                                                       std::string & library_name_,
+                                                       std::string & topic_,
+                                                       std::string & path_,
+                                                       std::string & error_msg_)
+  {
+    bool failure = false;
+    library_name_.clear();
+    topic_.clear();
+    path_.clear();
+    error_msg_.clear();
+    // parse the rule:
+    std::string path_registration = directive_;
+    size_t apos = path_registration.find('@');
+    if (apos == path_registration.npos) {
+      error_msg_ = "Invalid syntax in mount point registration directive ('"
+        + path_registration + "') !";
+      return failure;
+    }
+    std::string the_libname = path_registration.substr(0, apos);
+    std::string the_topic;
+    {
+      size_t dpos = the_libname.find('.');
+      if (dpos == the_libname.npos) {
+         the_topic = the_libname.substr(dpos+1);
+         the_libname = the_libname.substr(0, dpos);
+      }
+    }
+    if (the_libname.empty()) {
+      error_msg_ = "Empty library name!";
+      return failure;
+    }
+    if (! the_topic.empty()) {
+      if (topic_labels().count(the_topic) == 0) {
+        error_msg_ = "Unsupported library info topic '" + the_topic + "'!";
+        return failure;
+      }
+    }
+    std::string the_path = path_registration.substr(apos+1);
+    if (the_path.empty()) {
+      error_msg_ = "Empty path!";
+      return failure;
+    }
+    library_name_ = the_libname;
+    topic_ = the_topic;
+    path_ = the_path;
+    return !failure;
+  }
+
+  void library_info::path_unregistration(const std::string & library_name_,
+                                         const std::string & topic_)
+  {
+    if (library_name_.empty()) {
+      DT_THROW(std::logic_error, "Missing library name!");
+    }
+    if (topic_.empty()) {
+      DT_THROW(std::logic_error, "Missing topic!");
+    }
+    if (topic_labels().count(topic_) == 0) {
+      DT_THROW(std::logic_error, "Unsupported library info topic '" + topic_ + "'!");
+    }
+    std::string topic_install_key = topic_label_to_install_key(topic_);
+    datatools::properties * lib_infos_ptr = nullptr;
+    DT_THROW_IF(!this->has(library_name_), std::logic_error,
+                "No library info record with name '" << library_name_ << "'!");
+    datatools::properties & lib_infos = this->grab(library_name_);
+    DT_THROW_IF(!lib_infos.has_key(topic_install_key), std::logic_error,
+                "No topic '" << topic_ << "' associated to library info record '" << library_name_ << "'!");
+    DT_THROW_IF(!lib_infos.is_explicit_path(topic_install_key), std::logic_error,
+                "Topic '" << topic_ << "' is not associated to an explicit path in library info record '" << library_name_ << "'!");
+    lib_infos.clean(topic_install_key);
+    return;
+  }
+
+  void library_info::path_registration(const std::string & library_name_,
+                                       const std::string & topic_,
+                                       const std::string & path_,
+                                       bool overwrite_)
+  {
+    if (library_name_.empty()) {
+      DT_THROW(std::logic_error, "Missing library name!");
+    }
+    if (topic_.empty()) {
+      DT_THROW(std::logic_error, "Missing topic!");
+    }
+    if (path_.empty()) {
+      DT_THROW(std::logic_error, "Missing path!");
+    }
+    datatools::properties * ptr_lib_infos = nullptr;
+    if (this->has(library_name_)) {
+      // Grab the already registered library info record
+      ptr_lib_infos = &grab(library_name_);
+    } else {
+      // Add a new library info record
+      ptr_lib_infos = &this->registration(library_name_);
+    }
+    datatools::properties & lib_infos = *ptr_lib_infos;
+    std::string topic_install_key = topic_label_to_install_key(topic_);
+    if (lib_infos.has_key(topic_install_key)) {
+      // Topic key already exists:
+      const std::string & existing_path = lib_infos.fetch_path(topic_install_key);
+      if (!overwrite_) {
+        // Error, overwriting is forbidden !
+        DT_THROW(std::logic_error,
+                 "Cannot overwrite path '" << existing_path << "' in already defined topic ('"
+                 << topic_ << "') with new path = '" << path_ << "' in library info '" << library_name_ << "'!");
+      }
+      lib_infos.clean(topic_install_key);
+    }
+    // Register the path
+    lib_infos.store_path(topic_install_key, path_);
     return;
   }
 
@@ -444,7 +729,7 @@ namespace datatools {
       update(library_name_,
              library_info::keys::install_prefix(),
              install_prefix_,
-             "string",
+             "path",
              false);
     }
 
@@ -452,7 +737,7 @@ namespace datatools {
       update(library_name_,
              library_info::keys::install_lib_dir(),
              install_lib_path_,
-             "string",
+             "path",
              false);
     }
 
@@ -460,7 +745,7 @@ namespace datatools {
       update(library_name_,
              library_info::keys::install_resource_dir(),
              install_resource_path_,
-             "string",
+             "path",
              false);
     }
 
