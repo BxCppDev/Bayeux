@@ -17,10 +17,10 @@ namespace datatools {
   void urn_to_path::serialize(Archive & archive_, const unsigned int /* version_ */)
   {
     archive_ & DATATOOLS_SERIALIZATION_I_SERIALIZABLE_BASE_OBJECT_NVP;
-    archive_ & boost::serialization::make_nvp("urn", _urn_);
-    archive_ & boost::serialization::make_nvp("path", _path_);
+    archive_ & boost::serialization::make_nvp("urn",      _urn_);
     archive_ & boost::serialization::make_nvp("category", _category_);
-    archive_ & boost::serialization::make_nvp("mime", _mime_);
+    archive_ & boost::serialization::make_nvp("mime",     _mime_);
+    archive_ & boost::serialization::make_nvp("paths",    _paths_);
  }
 
 } // end of namespace datatools

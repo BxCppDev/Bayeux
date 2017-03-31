@@ -33,6 +33,7 @@
 
 // Standard Library:
 #include <string>
+#include <vector>
 
 // Datatools:
 #include <datatools/i_serializable.h>
@@ -41,9 +42,22 @@
 
 namespace datatools {
 
-  /// \brief A class representing the association of an URN to a path.
-  ///        The path maybe a filesystem path, an URL or any other
-  ///        location address that can be represented as a character string.
+  /// \brief A class representing the association of an URN to some paths.
+  ///        A path maybe a filesystem path, an URL, a hostname/port identifier
+  ///        or any other location address that can be represented as a character
+  ///        string.
+  ///        The list if registered paths is ordered to reflect some possible
+  ///        priority policy, depending on the way paths have been inserted
+  ///        in the register.
+  ///
+  ///        It is possible to assign a category to the object, examples:
+  ///          "configuration", "data", "debian::package", "images"...
+  ///
+  ///        It is possible to assign a MIME type to the object, examples:
+  ///          "text/configuration", "image/png"...
+  ///
+  ///        A URN-to-path record is considered value if its URN is set and
+  ///        at least one path is registered.
   class urn_to_path
     : public datatools::i_serializable
     , public datatools::i_tree_dumpable
@@ -53,11 +67,17 @@ namespace datatools {
     /// Default constructor
     urn_to_path();
 
-    /// Constructor with explicit path segments
+    /// Constructor with explicit attributes and one single registered path
     urn_to_path(const std::string & urn_,
-		const std::string & path_,
-		const std::string & category_,
-		const std::string & mime_);
+                const std::string & path_,
+                const std::string & category_ = "",
+                const std::string & mime_ = "");
+
+    /// Constructor with  explicit attributes
+    urn_to_path(const std::string & urn_,
+                const std::string & category_,
+                const std::string & mime_,
+                const std::vector<std::string> & paths_);
 
     /// Destructor
     virtual ~urn_to_path();
@@ -68,34 +88,78 @@ namespace datatools {
     /// Reset
     void reset();
 
+    /// Check if URN identifier is set
+    bool has_urn() const;
+
+    /// Set the URN identifier
+    void set_urn(const std::string &);
+
+    /// Return the URN identifier
+    const std::string & get_urn() const;
+
+    /// Check if one single path is set
+    bool has_single_path() const;
+
+    /// Check is at least one path is set
+    bool has_path() const;
+
+    /// Check if a specific path is registered
+    bool has_path_by_value(const std::string &) const;
+
+    /// Set a single path at first position
+    void set_path(const std::string & path_);
+
+    /// Return the path at first position
+    const std::string & get_path() const;
+
+    /// Return the number of regisgtered paths
+    std::size_t get_number_of_paths() const;
+
+    /// Return the path registered at given position
+    const std::string & get_path_by_index(const std::size_t index_ = 0) const;
+
+    /// Add a path (postpend)
+    void add_path(const std::string &, bool preprend_ = false);
+
+    /// Remove all registered paths
+    void clear_paths();
+
+    /// Check if the category is set
+    bool has_category() const;
+
+    /// Set the category
+    void set_category(const std::string &);
+
+    /// Return the category
+    const std::string & get_category() const;
+
+    /// Reset the category
+    void reset_category();
+
+    /// Check if the MIME type is set
+    bool has_mime() const;
+
+    /// Set the MIME type
+    void set_mime(const std::string &);
+
+    /// Return the MIME type
+    const std::string & get_mime() const;
+
+    /// Reset the MIME type
+    void reset_mime();
+
     /// Main interface method for smart dump
     virtual void tree_dump (std::ostream & out_ = std::clog,
                             const std::string & title_  = "",
                             const std::string & indent_ = "",
                             bool inherit_ = false) const;
 
-    bool has_urn() const;
-    void set_urn(const std::string &);
-    const std::string & get_urn() const;
-
-    bool has_path() const;
-    void set_path(const std::string &);
-    const std::string & get_path() const;
-
-    bool has_category() const;
-    void set_category(const std::string &);
-    const std::string & get_category() const;
-
-    bool has_mime() const;
-    void set_mime(const std::string &);
-    const std::string & get_mime() const;
-
   private:
 
     std::string _urn_;      //!< The URN representation of an object
-    std::string _path_;     //!< The path associated to the URN which locate the object
     std::string _category_; //!< The category of the object (optional)
     std::string _mime_;     //!< The MIME type (optional)
+    std::vector<std::string> _paths_; //!< The paths associated to the URN which locate the object
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(urn_to_path)

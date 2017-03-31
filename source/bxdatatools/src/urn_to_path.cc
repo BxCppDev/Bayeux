@@ -38,9 +38,23 @@ namespace datatools {
                            const std::string & mime_)
   {
     set_urn(urn_);
-    set_path(path_);
     set_category(category_);
     set_mime(mime_);
+    set_path(path_);
+    return;
+  }
+
+  urn_to_path::urn_to_path(const std::string & urn_,
+                           const std::string & category_,
+                           const std::string & mime_,
+                           const std::vector<std::string> & paths_)
+  {
+    set_urn(urn_);
+    set_category(category_);
+    set_mime(mime_);
+    for (auto p : paths_) {
+      add_path(p);
+    }
     return;
   }
 
@@ -51,9 +65,9 @@ namespace datatools {
   void urn_to_path::reset()
   {
     _urn_.clear();
-    _path_.clear();
-    _category_.clear();
-    _mime_.clear();
+    clear_paths();
+    reset_category();
+    reset_mime();
     return;
   }
 
@@ -86,26 +100,67 @@ namespace datatools {
     return _urn_;
   }
 
-  bool urn_to_path::has_path() const
+  bool urn_to_path::has_single_path() const
   {
-    return !_path_.empty();
+    return get_number_of_paths() == 1;
   }
 
-  void urn_to_path::set_path(const std::string & p_)
+  std::size_t urn_to_path::get_number_of_paths() const
+  {
+    return _paths_.size();
+  }
+
+  const std::string & urn_to_path::get_path_by_index(const std::size_t index_) const
+  {
+    DT_THROW_IF(index_ >= _paths_.size(), std::range_error,
+                "Invalid path index [" << index_ << "] for URN='" << _urn_ << "'!");
+    return _paths_[index_];
+  }
+
+
+  bool urn_to_path::has_path_by_value(const std::string & path_) const
+  {
+    return std::find(_paths_.begin(), _paths_.end(), path_) != _paths_.end();
+  }
+
+  void urn_to_path::add_path(const std::string & path_, bool preprend_)
   {
     {
       urn u;
-      DT_THROW_IF(u.from_string(p_),
+      DT_THROW_IF(u.from_string(path_),
                   std::logic_error,
-                  "Invalid path format '" << p_ << "'!");
+                  "Invalid path format '" << path_ << "'!");
     }
-    _path_ = p_;
+    DT_THROW_IF(has_path_by_value(path_), std::logic_error,
+                "Path '" << path_ << "' is already set in the list of paths for URN='" << _urn_ << "'!");
+    if (!preprend_) {
+      _paths_.push_back(path_);
+    } else {
+      _paths_.insert(_paths_.begin(), path_);
+    }
+    return;
+  }
+
+  bool urn_to_path::has_path() const
+  {
+    return _paths_.size() > 0;
+  }
+
+  void urn_to_path::set_path(const std::string & path_)
+  {
+    add_path(path_, true);
     return;
   }
 
   const std::string & urn_to_path::get_path() const
   {
-    return _path_;
+    return get_path_by_index(0);
+  }
+
+  void urn_to_path::clear_paths()
+  {
+    _paths_.clear();
+    return;
   }
 
   bool urn_to_path::has_category() const
@@ -124,6 +179,12 @@ namespace datatools {
     return _category_;
   }
 
+  void urn_to_path::reset_category()
+  {
+    _category_.clear();
+    return;
+  }
+
   bool urn_to_path::has_mime() const
   {
     return !_mime_.empty();
@@ -140,6 +201,12 @@ namespace datatools {
     return _mime_;
   }
 
+  void urn_to_path::reset_mime()
+  {
+    _mime_.clear();
+    return;
+  }
+
   void urn_to_path::tree_dump(std::ostream& out_,
                               const std::string& title_,
                               const std::string& indent_,
@@ -151,9 +218,6 @@ namespace datatools {
          << "URN : '" << _urn_ << "'" << std::endl;
 
     out_ << indent_ << i_tree_dumpable::tag
-         << "Path : '" << _path_ << "'" << std::endl;
-
-    out_ << indent_ << i_tree_dumpable::tag
          << "Category : ";
     if (has_category()) {
       out_ << "'" << _category_ << "'";
@@ -162,7 +226,7 @@ namespace datatools {
     }
     out_ << std::endl;
 
-    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+    out_ << indent_ << i_tree_dumpable::tag
          << "MIME type : ";
     if (has_mime()) {
       out_ << "'" << _mime_ << "'";
@@ -170,6 +234,18 @@ namespace datatools {
       out_ << "<none>";
     }
     out_ << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+         << "Paths : [" << _paths_.size() << "]" << std::endl;
+    for (std::size_t i = 0; i < _paths_.size(); i++) {
+      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_);
+      if (i + 1 < _paths_.size()) {
+        out_ << i_tree_dumpable::tag;
+      } else {
+        out_ << i_tree_dumpable::last_tag;
+      }
+      out_ << "Path[" << i << "] : " << _paths_[i] << std::endl;
+    }
 
     return;
   }
