@@ -32,6 +32,47 @@ namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(urn_info, "datatools::urn_info")
 
+  urn_info::display_info::display_info()
+  {
+    valid = false;
+    x = 0;
+    y = 0;
+    layer = 0;
+    meta = "";
+    return;
+  }
+
+  urn_info::display_info::display_info(int x_, int y_, int layer_, const std::string & meta_)
+  {
+    this->set(x_, y_, layer_, meta_);
+    return;
+  }
+
+  void urn_info::display_info::set(int x_, int y_, int layer_, const std::string & meta_)
+  {
+    valid = true;
+    x = x_;
+    y = y_;
+    layer = layer_;
+    meta = meta_;
+    return;
+  }
+
+  bool urn_info::display_info::is_valid() const
+  {
+    return valid;
+  }
+
+  void urn_info::display_info::reset()
+  {
+    valid = false;
+    x = 0;
+    y = 0;
+    layer = 0;
+    meta.clear();
+    return;
+  }
+
   // static
   bool urn_info::validate_urn(const std::string & urn_)
   {
@@ -71,11 +112,15 @@ namespace datatools {
 
   urn_info::urn_info(const std::string & urn_,
                      const std::string & category_,
-                     const std::string & description_)
+                     const std::string & description_,
+                     bool locked_)
   {
     set_urn(urn_);
     set_category(category_);
     set_description(description_);
+    if (locked_) {
+      lock();
+    }
   }
 
   urn_info::~urn_info()
@@ -87,8 +132,43 @@ namespace datatools {
     return !_urn_.empty();
   }
 
+  void urn_info::lock()
+  {
+    _locked_ = true;
+    return;
+  }
+
+  void urn_info::unlock()
+  {
+    _locked_ = false;
+    return;
+  }
+
+  bool urn_info::is_locked() const
+  {
+    return _locked_;
+  }
+
+  void urn_info::component_lock()
+  {
+    _component_locked_ = true;
+    return;
+  }
+
+  void urn_info::component_unlock()
+  {
+    _component_locked_ = false;
+    return;
+  }
+
+  bool urn_info::is_component_locked() const
+  {
+    return _component_locked_;
+  }
+
   void urn_info::initialize(const properties & config_)
   {
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     if (_urn_.empty()) {
       if (config_.has_key("urn")) {
         const std::string & u = config_.fetch_string("urn");
@@ -106,6 +186,10 @@ namespace datatools {
     if (config_.has_key("description")) {
       const std::string & d = config_.fetch_string("description");
       set_description(d);
+    }
+
+    if (config_.has_flag("lock")) {
+      lock();
     }
 
     if (config_.has_key("components")) {
@@ -150,20 +234,28 @@ namespace datatools {
       }
     }
 
+    if (config_.has_flag("component_lock")) {
+      component_lock();
+    }
+
     return;
   }
 
   void urn_info::reset()
   {
+    DT_THROW_IF(!is_locked(), std::logic_error, "URN record is not locked!");
+    component_unlock();
+    unlock();
+    remove_all_components();
     _urn_.clear();
     _category_.clear();
     _description_.clear();
-    _components_.clear();
     return;
   }
 
   void urn_info::set_urn(const std::string & urn_)
   {
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     DT_THROW_IF(! validate_urn(urn_),
                 std::logic_error,
                 "Invalid URN representation '" << urn_ << "'!");
@@ -178,6 +270,7 @@ namespace datatools {
 
   void urn_info::set_category(const std::string & category_)
   {
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     static const uint32_t nv_flags = datatools::NV_MODEL;
     DT_THROW_IF(!datatools::name_validation(category_, nv_flags),
                 std::logic_error,
@@ -193,6 +286,7 @@ namespace datatools {
 
   void urn_info::set_description(const std::string & description_)
   {
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     _description_ = description_;
     return;
   }
@@ -205,6 +299,12 @@ namespace datatools {
   const std::string & urn_info::get_description() const
   {
     return _description_;
+  }
+
+  void urn_info::remove_all_components()
+  {
+    _components_.clear();
+    return;
   }
 
   bool urn_info::has_component(const std::string & comp_urn_) const
@@ -281,6 +381,7 @@ namespace datatools {
   void urn_info::add_component(const std::string & comp_urn_,
                                const std::string & comp_topic_)
   {
+    DT_THROW_IF(is_component_locked(), std::logic_error, "URN record is component-locked!");
     DT_THROW_IF(! validate_urn(comp_urn_),
                 std::logic_error,
                 "Invalid component's URN representation '" << comp_urn_ << "'!");
@@ -300,6 +401,28 @@ namespace datatools {
       _components_.emplace(topic, only_urn);
     } else {
       found_topic->second.push_back(comp_urn_);
+    }
+    return;
+  }
+
+  void urn_info::remove_component(const std::string & comp_urn_)
+  {
+    DT_THROW_IF(is_component_locked(), std::logic_error, "URN record is component-locked!");
+    DT_THROW_IF(!has_component(comp_urn_), std::logic_error,
+                "No component with URN '" << comp_urn_ << "' is set!");
+    component_topic_dict_type::iterator tag_topic = _components_.end();
+    for (component_topic_dict_type::iterator itopic = _components_.begin();
+         itopic != _components_.end();
+         itopic++) {
+      std::vector<std::string>::iterator found_urn = std::find(itopic->second.begin(), itopic->second.end(), comp_urn_);
+      if (found_urn != itopic->second.end()) {
+        itopic->second.erase(found_urn);
+        tag_topic = itopic;
+        break;
+      }
+    }
+    if (tag_topic != _components_.end() && tag_topic->second.size() == 0) {
+      _components_.erase(tag_topic);
     }
     return;
   }
@@ -330,24 +453,25 @@ namespace datatools {
     return;
   }
 
-  void urn_info::remove_component(const std::string & comp_urn_)
+  bool urn_info::has_display_info() const
   {
-    DT_THROW_IF(!has_component(comp_urn_), std::logic_error,
-                "No component with URN '" << comp_urn_ << "' is set!");
-    component_topic_dict_type::iterator tag_topic = _components_.end();
-    for (component_topic_dict_type::iterator itopic = _components_.begin();
-         itopic != _components_.end();
-         itopic++) {
-      std::vector<std::string>::iterator found_urn = std::find(itopic->second.begin(), itopic->second.end(), comp_urn_);
-      if (found_urn != itopic->second.end()) {
-        itopic->second.erase(found_urn);
-        tag_topic = itopic;
-        break;
-      }
-    }
-    if (tag_topic != _components_.end() && tag_topic->second.size() == 0) {
-      _components_.erase(tag_topic);
-    }
+    return _display_.is_valid();
+  }
+
+  const urn_info::display_info & urn_info::get_display_info() const
+  {
+    return _display_;
+  }
+
+  void urn_info::set_display_info(int x_, int y_, int layer_, const std::string & meta_)
+  {
+    _display_.set(x_, y_, layer_, meta_);
+    return;
+  }
+
+  void urn_info::reset_display_info()
+  {
+    _display_.reset();
     return;
   }
 
@@ -373,14 +497,17 @@ namespace datatools {
     }
     out_ << std::endl;
 
-    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Locked : " << std::boolalpha << is_locked() << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::tag
          << "Components : [" << get_number_of_components() << ']' << std::endl;
     for (component_topic_dict_type::const_iterator itopic = _components_.begin();
          itopic != _components_.end();
          itopic++) {
       component_topic_dict_type::const_iterator jtopic = itopic;
       jtopic++;
-      out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_);
+      out_ << indent_ << i_tree_dumpable::skip_tag;
       bool last_topic = false;
       if (jtopic == _components_.end()) {
         out_ << i_tree_dumpable::last_tag;
@@ -390,7 +517,7 @@ namespace datatools {
       }
       out_ << "Topic '" << itopic->first << "' : [" << itopic->second.size() << "]" << std::endl;
       for (std::size_t i = 0; i < itopic->second.size(); i++) {
-        out_ << indent_ << i_tree_dumpable::inherit_skip_tag(inherit_);
+        out_ << indent_ << i_tree_dumpable::skip_tag;
         if (last_topic) {
           out_ << i_tree_dumpable::last_skip_tag;
         } else {
@@ -404,6 +531,22 @@ namespace datatools {
         out_ << "Component : '" << itopic->second[i] << "'" << std::endl;
       }
     }
+
+    out_ << indent_ << i_tree_dumpable::tag
+         << "Component-locked : " << std::boolalpha << is_component_locked() << std::endl;
+
+    out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
+         << "Display info : ";
+    if (has_display_info()) {
+      out_ << "{x=" << _display_.x << ";y=" << _display_.y << ";layer=" << _display_.layer;
+        if (!_display_.meta.empty()) {
+          out_ << ";meta=\"" << _display_.meta << '"';
+        }
+      out_ << '}';
+    } else {
+      out_ << "<none>";
+    }
+    out_ << std::endl;
 
     return;
   }
