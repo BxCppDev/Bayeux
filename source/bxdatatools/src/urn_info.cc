@@ -108,6 +108,7 @@ namespace datatools {
 
   urn_info::urn_info()
   {
+    return;
   }
 
   urn_info::urn_info(const std::string & urn_,
@@ -116,15 +117,21 @@ namespace datatools {
                      bool locked_)
   {
     set_urn(urn_);
-    set_category(category_);
-    set_description(description_);
-    if (locked_) {
+    if (!category_.empty()) {
+      set_category(category_);
+    }
+    if (!description_.empty()) {
+      set_description(description_);
+    }
+    if (has_category() && locked_) {
       lock();
     }
+    return;
   }
 
   urn_info::~urn_info()
   {
+    return;
   }
 
   bool urn_info::is_valid() const
@@ -243,7 +250,10 @@ namespace datatools {
 
   void urn_info::reset()
   {
-    DT_THROW_IF(!is_locked(), std::logic_error, "URN record is not locked!");
+    if (is_locked()) {
+      unlock();
+    }
+    // DT_THROW_IF(!is_locked(), std::logic_error, "URN record is not locked!");
     component_unlock();
     unlock();
     remove_all_components();
@@ -268,13 +278,17 @@ namespace datatools {
     return _urn_;
   }
 
+  bool urn_info::has_category() const
+  {
+    return !_category_.empty();
+  }
+
   void urn_info::set_category(const std::string & category_)
   {
     DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
-    static const uint32_t nv_flags = datatools::NV_MODEL;
-    DT_THROW_IF(!datatools::name_validation(category_, nv_flags),
+    DT_THROW_IF(!validate_category(category_),
                 std::logic_error,
-                "Invalid category name '" << category_ << "'!");
+                "Invalid category '" << category_ << "'!");
     _category_ = category_;
     return;
   }
@@ -337,14 +351,16 @@ namespace datatools {
     return _components_.count(topic) == 1;
   }
 
-  const std::vector<std::string> & urn_info::get_components_by_topic(const std::string & comp_topic_) const
+  const std::vector<std::string> &
+  urn_info::get_components_by_topic(const std::string & comp_topic_) const
   {
     std::string topic = comp_topic_;
     if (topic.empty()) {
       topic = anonymous_topic();
     }
     component_topic_dict_type::const_iterator found = _components_.find(topic);
-    DT_THROW_IF(found == _components_.end(), std::logic_error, "No component topic with name '" << topic << "'!");
+    DT_THROW_IF(found == _components_.end(), std::logic_error,
+                "No component topic with name '" << topic << "'!");
     return found->second;
   }
 
@@ -381,7 +397,8 @@ namespace datatools {
   void urn_info::add_component(const std::string & comp_urn_,
                                const std::string & comp_topic_)
   {
-    DT_THROW_IF(is_component_locked(), std::logic_error, "URN record is component-locked!");
+    DT_THROW_IF(is_component_locked(), std::logic_error,
+                "URN record is component-locked!");
     DT_THROW_IF(! validate_urn(comp_urn_),
                 std::logic_error,
                 "Invalid component's URN representation '" << comp_urn_ << "'!");
@@ -407,14 +424,16 @@ namespace datatools {
 
   void urn_info::remove_component(const std::string & comp_urn_)
   {
-    DT_THROW_IF(is_component_locked(), std::logic_error, "URN record is component-locked!");
+    DT_THROW_IF(is_component_locked(), std::logic_error,
+                "URN record is component-locked!");
     DT_THROW_IF(!has_component(comp_urn_), std::logic_error,
                 "No component with URN '" << comp_urn_ << "' is set!");
     component_topic_dict_type::iterator tag_topic = _components_.end();
     for (component_topic_dict_type::iterator itopic = _components_.begin();
          itopic != _components_.end();
          itopic++) {
-      std::vector<std::string>::iterator found_urn = std::find(itopic->second.begin(), itopic->second.end(), comp_urn_);
+      std::vector<std::string>::iterator found_urn
+        = std::find(itopic->second.begin(), itopic->second.end(), comp_urn_);
       if (found_urn != itopic->second.end()) {
         itopic->second.erase(found_urn);
         tag_topic = itopic;

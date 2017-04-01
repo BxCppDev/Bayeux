@@ -171,6 +171,9 @@ namespace datatools {
     /// Return the URN
     const std::string & get_urn() const;
 
+    /// Check if category is set
+    bool has_category() const;
+
     /// Set the category
     void set_category(const std::string & category_);
 
