@@ -467,6 +467,7 @@ ${module_test_dir}/test_version_id.cxx
 ${module_test_dir}/test_urn.cxx
 ${module_test_dir}/test_urn_info.cxx
 ${module_test_dir}/test_urn_db_service.cxx
+${module_test_dir}/test_urn_db_service_2.cxx
 ${module_test_dir}/test_urn_to_path.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
 ${module_test_dir}/test_urn_query_service.cxx
