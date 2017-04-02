@@ -4,12 +4,14 @@
 #@key_label   "urn"
 #@meta_label  "category"
 
+########################################################
 [urn="urn:bayeux:images:logo:small" category="graphics"]
 
 #@config URN info parameters for small Bayeux logo
 
 description : string = "Bayeux logo (small)"
 
+########################################################
 [urn="urn:bayeux:images:logo:large" category="graphics"]
 
 #@config URN info parameters for large Bayeux logo

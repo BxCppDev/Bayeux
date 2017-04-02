@@ -24,7 +24,7 @@
  *
  * Description:
  *
- *   URN information data structure.
+ *   URN information node structure.
  *
  */
 
@@ -43,29 +43,29 @@
 
 namespace datatools {
 
-  /// \brief A class documenting an object associated to its unique URN.
+  /// \brief A class documenting an object addressed by its unique URN and
+  ///        linked to other objects (also addressed by URNs)..
   ///
-  /// The object can be connected to other objects, known as components:
+  /// An object A can be connected to other objects (B, C and D), known as components:
   /// \code
-  ///
-  ///     A             D
-  ///       o---------o
+  ///      A            D
+  ///       o -------> o
   ///      / \
   ///     /   \
-  ///    o     \
-  ///  B        o
+  ///    v     \
+  ///   o       v
+  ///  B         o
   ///             C
   /// \endcode
   ///
-  /// The nature of the relationship between the objects and its "components"
+  /// The nature of the relationship between the object and its "components"
   /// depends on the context. It is represented by a specific "topic" which
-  /// represents a category of relationship.
+  /// represents a category of relationship. Example:
   /// \code
-  ///
-  ///   A     "dependee>"      B
-  ///    o--------------------o
-  ///         "<depender"
-  ///
+  ///            topic
+  ///   A     "dependency"       B
+  ///    o -------------------> o
+  /// depender               dependee
   /// \endcode
   ///
   class urn_info
@@ -74,23 +74,8 @@ namespace datatools {
   {
   public:
 
+    /// Dictionary of list of components addressed by topic
     typedef std::map<std::string, std::vector<std::string> > component_topic_dict_type;
-
-    /// \brief Basic display information
-    struct display_info
-    {
-      display_info();
-      display_info(int x_, int y_, int layer_, const std::string & meta_);
-      void set(int x_, int y_, int layer_, const std::string & meta_);
-      bool is_valid() const;
-      void reset();
-      // Attributes:
-      bool        valid = false;
-      int         x;
-      int         y;
-      int         layer;
-      std::string meta;
-    };
 
     /// Validate an URN representation
     ///
@@ -130,8 +115,7 @@ namespace datatools {
     /// Constructor with explicit path segments
     urn_info(const std::string & urn_,
              const std::string & category_,
-             const std::string & description_ = "",
-             bool locked_ = true);
+             const std::string & description_ = "");
 
     /// Destructor
     virtual ~urn_info();
@@ -198,15 +182,6 @@ namespace datatools {
     /// Check lock flag
     bool is_locked() const;
 
-    /// Component lock the record
-    void component_lock();
-
-    /// Component unlock the record
-    void component_unlock();
-
-    /// Check component lock flag
-    bool is_component_locked() const;
-
     /// Remove all components
     void remove_all_components();
 
@@ -249,18 +224,6 @@ namespace datatools {
     /// Return the current list of component topics
     std::vector<std::string> get_topics() const;
 
-    /// Check if display info are set
-    bool has_display_info() const;
-
-    /// Set display info
-    void set_display_info(int x_, int y_, int layer_ = 0, const std::string & meta_ = "");
-
-    /// Reset display info
-    void reset_display_info();
-
-    /// Return display info
-    const display_info & get_display_info() const;
-
     /// Main interface method for smart dump
     virtual void tree_dump(std::ostream& out = std::clog,
                            const std::string& title  = "",
@@ -274,15 +237,12 @@ namespace datatools {
 
     // Management:
     bool _locked_ = false; //!< Lock flag
-    bool _component_locked_ = false; //!< Lock flag
 
     // Configuration:
     std::string _urn_;         //!< The URN of the object
     std::string _category_;    //!< The category of the object
     std::string _description_; //!< The description of the object
-    component_topic_dict_type _components_; //!< Dictionary of URN components, sorted by topics, in relation with the URN is built
-
-    display_info _display_; //!< Display info
+    component_topic_dict_type _components_; //!< Dictionary of URN components, sorted by topics
 
     //! Support for Boost-based serialization
     DATATOOLS_SERIALIZATION_DECLARATION_ADVANCED(urn_info)

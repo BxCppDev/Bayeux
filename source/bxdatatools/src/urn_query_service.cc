@@ -106,7 +106,7 @@ namespace datatools {
       } else {
         out_ << i_tree_dumpable::tag;
       }
-      out_ << "Database '" << i->first << "' (#URNs=" << i->second->get_number_of_urn_infos() << ')' << std::endl;
+      out_ << "Database '" << i->first << "' (#URNs=" << i->second->get_number_of_urn_records() << ')' << std::endl;
     }
 
     out_ << indent_ << i_tree_dumpable::tag
@@ -192,11 +192,12 @@ namespace datatools {
           }
         }
         const urn_db_service & db = *i->second;
-        for (urn_db_service::urn_info_dict_type::const_iterator j = db.get_urn_infos().begin();
-             j != db.get_urn_infos().end();
-             j++) {
-          DT_LOG_TRACE(get_logging_priority(), "Checking URN '" << j->first << "'...");
-          const urn_info & ui = j->second;
+        std::vector<std::string> db_local_urns;
+        db.build_list_of_urns(db_local_urns, urn_db_service::SELECT_LOCAL);
+        for (std::size_t i = 0; i < db_local_urns.size(); i++) {
+          const std::string & local_urn = db_local_urns[i];
+          DT_LOG_TRACE(get_logging_priority(), "Checking local URN '" << local_urn << "'...");
+          const urn_info & ui = db.get(local_urn);
           bool accept = true;
           if (!urn_regex.empty()) {
             // Not a valid URN name:
@@ -217,7 +218,7 @@ namespace datatools {
             }
           }
           if (accept) {
-            urn_list_.push_back(j->first);
+            urn_list_.push_back(local_urn);
             found_more = true;
           }
         }

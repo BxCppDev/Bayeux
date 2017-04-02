@@ -61,8 +61,8 @@ void test_urn_info_0()
   uiBxmatBasicElem.set_urn("urn:bayeux:datatools:materials:setup:basics:1.0:elements");
   uiBxmatBasicElem.set_category("data");
   uiBxmatBasicElem.set_description("Bayeux/materials basic elements definitions version 1.0");
-  uiBxmatBasicElem.lock();
   uiBxmatBasicElem.add_component(uiBxmatBasicIso.get_urn(), "isotopes");
+  uiBxmatBasicElem.lock();
   if (debug) uiBxmatBasicElem.tree_dump(std::cerr, "URN info: ", "[debug] ");
   if (debug) std::cerr << std::endl;
   urns[uiBxmatBasicElem.get_urn()] = uiBxmatBasicElem;
@@ -71,8 +71,8 @@ void test_urn_info_0()
   uiBxmatBasicMat.set_urn("urn:bayeux:datatools:materials:setup:basics:1.0:materials");
   uiBxmatBasicMat.set_category("data");
   uiBxmatBasicMat.set_description("Bayeux/materials basic materials definitions version 1.0");
-  uiBxmatBasicMat.lock();
   uiBxmatBasicMat.add_component(uiBxmatBasicElem.get_urn(), "elements");
+  uiBxmatBasicMat.lock();
   if (debug) uiBxmatBasicMat.tree_dump(std::cerr, "URN info: ", "[debug] ");
   if (debug) std::cerr << std::endl;
   urns[uiBxmatBasicMat.get_urn()] = uiBxmatBasicMat;
@@ -81,8 +81,8 @@ void test_urn_info_0()
   uiBxmatBasicMatAliases.set_urn("urn:bayeux:datatools:materials:setup:basics:1.0:aliases");
   uiBxmatBasicMatAliases.set_category("data");
   uiBxmatBasicMatAliases.set_description("Bayeux/materials basic material aliases definitions version 1.0");
-  uiBxmatBasicMatAliases.lock();
   uiBxmatBasicMatAliases.add_component(uiBxmatBasicMat.get_urn(), "materials");
+  uiBxmatBasicMatAliases.lock();
   if (debug) uiBxmatBasicMatAliases.tree_dump(std::cerr, "URN info: ", "[debug] ");
   if (debug) std::cerr << std::endl;
   urns[uiBxmatBasicMatAliases.get_urn()] = uiBxmatBasicMatAliases;
@@ -222,12 +222,12 @@ void test_urn_info_1()
    */
 
   // Declare nodes (BGL: vertices)
-  datatools::urn_info A("urn:datatools:testing:A", "bayeux::object",  "A item", true);
-  datatools::urn_info B("urn:datatools:testing:B", "bayeux::object",  "B item", true);
-  datatools::urn_info C("urn:datatools:testing:C", "bayeux::object",  "C item", true);
-  datatools::urn_info D("urn:datatools:testing:D", "bayeux::object",  "D item", true);
-  datatools::urn_info S("urn:datatools:testing:S", "bayeux::service", "S item", true);
-  datatools::urn_info P("urn:datatools:testing:P", "bayeux::object",  "P item", true);
+  datatools::urn_info A("urn:datatools:testing:A", "bayeux::object",  "A item");
+  datatools::urn_info B("urn:datatools:testing:B", "bayeux::object",  "B item");
+  datatools::urn_info C("urn:datatools:testing:C", "bayeux::object",  "C item");
+  datatools::urn_info D("urn:datatools:testing:D", "bayeux::object",  "D item");
+  datatools::urn_info S("urn:datatools:testing:S", "bayeux::service", "S item");
+  datatools::urn_info P("urn:datatools:testing:P", "bayeux::object",  "P item");
 
   // Describe components (BGL: edges)
   // B is a child/component of A (thus A cannot exist without B)
@@ -236,7 +236,6 @@ void test_urn_info_1()
   A.add_component(C.get_urn(), "composition");
   // A uses the S service (thus A cannot work without S)
   A.add_component(S.get_urn(), "usage");
-  A.set_display_info(1, 2, 0, "{color=red;debug=true}");
   // D depends on A (D is the depender, A is the dependee, thus D cannot exists without A)
   D.add_component(A.get_urn(), "dependency");
   // D uses the S service (thus D cannot work without S)
@@ -255,6 +254,9 @@ void test_urn_info_1()
   urns[D.get_urn()] = D;
   urns[S.get_urn()] = S;
   urns[P.get_urn()] = P;
+  for (auto & ui : urns) {
+    ui.second.lock();
+  }
 
   for (const auto & ui : urns) {
     ui.second.tree_dump(std::clog, "URN info: " + ui.second.get_urn(), "[info] ");

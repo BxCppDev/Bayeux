@@ -58,7 +58,7 @@ topic.data.components : string[3] = \
 topic.metadata.component : string = "urn:fooexp:monitoring:2.1"
 
 
-#####################################################
+########################################################
 [urn="urn:fooexp:analysis:1.0" category="configuration"]
 
 #@config URN info parameters for foo analysis 1.0

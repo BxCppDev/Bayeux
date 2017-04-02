@@ -32,47 +32,6 @@ namespace datatools {
 
   DATATOOLS_SERIALIZATION_IMPLEMENTATION_ADVANCED(urn_info, "datatools::urn_info")
 
-  urn_info::display_info::display_info()
-  {
-    valid = false;
-    x = 0;
-    y = 0;
-    layer = 0;
-    meta = "";
-    return;
-  }
-
-  urn_info::display_info::display_info(int x_, int y_, int layer_, const std::string & meta_)
-  {
-    this->set(x_, y_, layer_, meta_);
-    return;
-  }
-
-  void urn_info::display_info::set(int x_, int y_, int layer_, const std::string & meta_)
-  {
-    valid = true;
-    x = x_;
-    y = y_;
-    layer = layer_;
-    meta = meta_;
-    return;
-  }
-
-  bool urn_info::display_info::is_valid() const
-  {
-    return valid;
-  }
-
-  void urn_info::display_info::reset()
-  {
-    valid = false;
-    x = 0;
-    y = 0;
-    layer = 0;
-    meta.clear();
-    return;
-  }
-
   // static
   bool urn_info::validate_urn(const std::string & urn_)
   {
@@ -113,8 +72,7 @@ namespace datatools {
 
   urn_info::urn_info(const std::string & urn_,
                      const std::string & category_,
-                     const std::string & description_,
-                     bool locked_)
+                     const std::string & description_)
   {
     set_urn(urn_);
     if (!category_.empty()) {
@@ -122,9 +80,6 @@ namespace datatools {
     }
     if (!description_.empty()) {
       set_description(description_);
-    }
-    if (has_category() && locked_) {
-      lock();
     }
     return;
   }
@@ -156,26 +111,8 @@ namespace datatools {
     return _locked_;
   }
 
-  void urn_info::component_lock()
-  {
-    _component_locked_ = true;
-    return;
-  }
-
-  void urn_info::component_unlock()
-  {
-    _component_locked_ = false;
-    return;
-  }
-
-  bool urn_info::is_component_locked() const
-  {
-    return _component_locked_;
-  }
-
   void urn_info::initialize(const properties & config_)
   {
-    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     if (_urn_.empty()) {
       if (config_.has_key("urn")) {
         const std::string & u = config_.fetch_string("urn");
@@ -193,10 +130,6 @@ namespace datatools {
     if (config_.has_key("description")) {
       const std::string & d = config_.fetch_string("description");
       set_description(d);
-    }
-
-    if (config_.has_flag("lock")) {
-      lock();
     }
 
     if (config_.has_key("components")) {
@@ -241,8 +174,8 @@ namespace datatools {
       }
     }
 
-    if (config_.has_flag("component_lock")) {
-      component_lock();
+    if (config_.has_flag("lock")) {
+      lock();
     }
 
     return;
@@ -253,13 +186,10 @@ namespace datatools {
     if (is_locked()) {
       unlock();
     }
-    // DT_THROW_IF(!is_locked(), std::logic_error, "URN record is not locked!");
-    component_unlock();
-    unlock();
     remove_all_components();
-    _urn_.clear();
-    _category_.clear();
     _description_.clear();
+    _category_.clear();
+    _urn_.clear();
     return;
   }
 
@@ -317,6 +247,7 @@ namespace datatools {
 
   void urn_info::remove_all_components()
   {
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is component-locked!");
     _components_.clear();
     return;
   }
@@ -326,7 +257,8 @@ namespace datatools {
     for (component_topic_dict_type::const_iterator itopic = _components_.begin();
          itopic != _components_.end();
          itopic++) {
-      if (std::find(itopic->second.begin(), itopic->second.end(), comp_urn_) != itopic->second.end()) return true;
+      if (std::find(itopic->second.begin(), itopic->second.end(), comp_urn_)
+          != itopic->second.end()) return true;
     }
     return false;
   }
@@ -397,8 +329,7 @@ namespace datatools {
   void urn_info::add_component(const std::string & comp_urn_,
                                const std::string & comp_topic_)
   {
-    DT_THROW_IF(is_component_locked(), std::logic_error,
-                "URN record is component-locked!");
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     DT_THROW_IF(! validate_urn(comp_urn_),
                 std::logic_error,
                 "Invalid component's URN representation '" << comp_urn_ << "'!");
@@ -424,8 +355,7 @@ namespace datatools {
 
   void urn_info::remove_component(const std::string & comp_urn_)
   {
-    DT_THROW_IF(is_component_locked(), std::logic_error,
-                "URN record is component-locked!");
+    DT_THROW_IF(is_locked(), std::logic_error, "URN record is locked!");
     DT_THROW_IF(!has_component(comp_urn_), std::logic_error,
                 "No component with URN '" << comp_urn_ << "' is set!");
     component_topic_dict_type::iterator tag_topic = _components_.end();
@@ -472,28 +402,6 @@ namespace datatools {
     return;
   }
 
-  bool urn_info::has_display_info() const
-  {
-    return _display_.is_valid();
-  }
-
-  const urn_info::display_info & urn_info::get_display_info() const
-  {
-    return _display_;
-  }
-
-  void urn_info::set_display_info(int x_, int y_, int layer_, const std::string & meta_)
-  {
-    _display_.set(x_, y_, layer_, meta_);
-    return;
-  }
-
-  void urn_info::reset_display_info()
-  {
-    _display_.reset();
-    return;
-  }
-
   void urn_info::tree_dump(std::ostream& out_,
                            const std::string& title_,
                            const std::string& indent_,
@@ -515,9 +423,6 @@ namespace datatools {
       out_ << _description_;
     }
     out_ << std::endl;
-
-    out_ << indent_ << i_tree_dumpable::tag
-         << "Locked : " << std::boolalpha << is_locked() << std::endl;
 
     out_ << indent_ << i_tree_dumpable::tag
          << "Components : [" << get_number_of_components() << ']' << std::endl;
@@ -551,21 +456,8 @@ namespace datatools {
       }
     }
 
-    out_ << indent_ << i_tree_dumpable::tag
-         << "Component-locked : " << std::boolalpha << is_component_locked() << std::endl;
-
     out_ << indent_ << i_tree_dumpable::inherit_tag(inherit_)
-         << "Display info : ";
-    if (has_display_info()) {
-      out_ << "{x=" << _display_.x << ";y=" << _display_.y << ";layer=" << _display_.layer;
-        if (!_display_.meta.empty()) {
-          out_ << ";meta=\"" << _display_.meta << '"';
-        }
-      out_ << '}';
-    } else {
-      out_ << "<none>";
-    }
-    out_ << std::endl;
+         << "Locked : " << std::boolalpha << is_locked() << std::endl;
 
     return;
   }

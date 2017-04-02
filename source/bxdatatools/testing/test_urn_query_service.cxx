@@ -46,10 +46,8 @@ void test_urn_query_service_0()
 
   // Populate service with URN infos:
   for (int i = 0; i < 10; i++) {
-   datatools::urn_info ui;
-   ui.set_urn("urn:datatools:testing:data:" + boost::lexical_cast<std::string>(i));
-   ui.set_category("data");
-   urnDbService1.add(ui);
+    urnDbService1.add("urn:datatools:testing:data:" + boost::lexical_cast<std::string>(i),
+                      "data");
   }
 
   datatools::urn_db_service urnDbService2;
@@ -59,10 +57,8 @@ void test_urn_query_service_0()
 
   // Populate service with URN infos:
   for (int i = 0; i < 3; i++) {
-   datatools::urn_info ui;
-   ui.set_urn("urn:datatools:testing:config:" + boost::lexical_cast<std::string>(i));
-   ui.set_category("configuration");
-   urnDbService2.add(ui);
+    urnDbService2.add("urn:datatools:testing:config:" + boost::lexical_cast<std::string>(i),
+                      "configuration");
   }
 
   datatools::urn_to_path_resolver_service urnResolverService1;
