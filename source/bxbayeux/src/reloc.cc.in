@@ -1,6 +1,6 @@
 // reloc.cc - Implementation of Bayeux relocatable feature
 //
-// Copyright (c) 2013 by François Mauger <mauger@lpccaeb.in2p3.fr>
+// Copyright (c) 2013-2017 by François Mauger <mauger@lpccaeb.in2p3.fr>
 //
 // This file is part of Bayeux.
 //
@@ -32,83 +32,82 @@
 #include <bayeux/BayeuxBinReloc.h>
 
 namespace {
-//! Initialize directory
-int _init_directories() {
-  BrInitError err;
-  int error_code = br_init_lib(&err);
-  return error_code;
-}
+  //! Initialize directory
+  int _init_directories() {
+    BrInitError err;
+    int error_code = br_init_lib(&err);
+    return error_code;
+  }
 
-//! Return expected relative path from lib location to resource root
-std::string relative_path_to_resourcedir() {
-  return "@BAYEUX_LIBDIR_TO_RESOURCEDIR@";
-}
+  //! Return expected relative path from lib location to resource root
+  std::string relative_path_to_resourcedir() {
+    return "@BAYEUX_LIBDIR_TO_RESOURCEDIR@";
+  }
 
-//! Return expected relative path from lib location to install prefix
-std::string relative_path_to_prefix() {
-  return "@BAYEUX_LIBDIR_TO_PREFIX@";
-}
+  //! Return expected relative path from lib location to install prefix
+  std::string relative_path_to_prefix() {
+    return "@BAYEUX_LIBDIR_TO_PREFIX@";
+  }
 
-//! Return expected relative path from lib location to binary dir
-std::string relative_path_to_bindir() {
-  return "@BAYEUX_LIBDIR_TO_BINDIR@";
-}
+  //! Return expected relative path from lib location to binary dir
+  std::string relative_path_to_bindir() {
+    return "@BAYEUX_LIBDIR_TO_BINDIR@";
+  }
 
-//! Return canonical path to directory hoding libBayeux
-std::string _get_library_dir() {
-  char* exePath(0);
-  exePath = br_find_exe_dir("@CMAKE_INSTALL_FULL_LIBDIR@");
-  boost::filesystem::path sExePath(exePath);
-  free(exePath);
-  boost::filesystem::path cExePath = boost::filesystem::canonical(sExePath);
-  return cExePath.string();
-}
+  //! Return canonical path to directory hoding libBayeux
+  std::string _get_library_dir() {
+    char* exePath(0);
+    exePath = br_find_exe_dir("@CMAKE_INSTALL_FULL_LIBDIR@");
+    boost::filesystem::path sExePath(exePath);
+    free(exePath);
+    boost::filesystem::path cExePath = boost::filesystem::canonical(sExePath);
+    return cExePath.string();
+  }
 } // namespace
 
 namespace bayeux {
 
-int init_directories() {
-  int error_code = 0;
-  static bool init = false;
-  if (! init) {
-    error_code = _init_directories();
-    init = true;
+  int init_directories() {
+    int error_code = 0;
+    static bool init = false;
+    if (! init) {
+      error_code = _init_directories();
+      init = true;
+    }
+    return error_code;
   }
-  return error_code;
-}
 
-std::string get_prefix_dir() {
-  init_directories();
-  boost::filesystem::path tmpPath(get_library_dir());
-  tmpPath /= relative_path_to_prefix();
-  return boost::filesystem::canonical(tmpPath).string();
-}
+  std::string get_prefix_dir() {
+    init_directories();
+    boost::filesystem::path tmpPath(get_library_dir());
+    tmpPath /= relative_path_to_prefix();
+    return boost::filesystem::canonical(tmpPath).string();
+  }
 
-std::string get_library_dir() {
-  init_directories();
-  boost::filesystem::path tmpPath(_get_library_dir());
-  return tmpPath.string();
-}
+  std::string get_library_dir() {
+    init_directories();
+    boost::filesystem::path tmpPath(_get_library_dir());
+    return tmpPath.string();
+  }
 
-std::string get_binary_dir() {
-  init_directories();
-  boost::filesystem::path tmpPath(get_library_dir());
-  tmpPath /= relative_path_to_bindir();
-  return boost::filesystem::canonical(tmpPath).string();
-}
+  std::string get_binary_dir() {
+    init_directories();
+    boost::filesystem::path tmpPath(get_library_dir());
+    tmpPath /= relative_path_to_bindir();
+    return boost::filesystem::canonical(tmpPath).string();
+  }
 
-std::string get_data_dir() {
-  init_directories();
-  boost::filesystem::path tmpPath(get_library_dir());
-  tmpPath /= relative_path_to_resourcedir();
-  return boost::filesystem::canonical(tmpPath).string();
-}
+  std::string get_data_dir() {
+    init_directories();
+    boost::filesystem::path tmpPath(get_library_dir());
+    tmpPath /= relative_path_to_resourcedir();
+    return boost::filesystem::canonical(tmpPath).string();
+  }
 
-std::string get_resource_dir() {
-  init_directories();
-  boost::filesystem::path tmpPath(get_data_dir());
-  return tmpPath.string();
-}
-
+  std::string get_resource_dir() {
+    init_directories();
+    boost::filesystem::path tmpPath(get_data_dir());
+    return tmpPath.string();
+  }
 
 } // namespace bayeux

@@ -23,19 +23,54 @@
 // Standard library
 #include <cstdlib>
 
-// Ourselves
-#include <bayeux/bayeux_config.h> // IWYU pragma: keep
-#include <bayeux/bayeux.h>
-
 // This project
 #include <datatools/datatools.h>
 #include <datatools/logger.h>
 
-// Third party
-#include <boost/smart_ptr/scoped_ptr.hpp>
+// Ourselves
+#include <bayeux/bayeux_config.h> // IWYU pragma: keep
+#include <bayeux/bayeux.h>
+#include <bayeux/detail/bayeux_library.h>
 
 namespace {
+
   static bool _bxinit = false;
+
+  void _special_initialize_impl()
+  {
+    ::datatools::logger::priority logging = ::bayeux::detail::bayeux_library::process_logging_env();
+    DT_LOG_TRACE_ENTERING(logging);
+    // bayeux::init_directories();
+
+    if (!::bayeux::detail::bayeux_library::is_instantiated()) {
+      DT_LOG_TRACE(logging, "Instantiating Bayeux library specific internals...");
+      ::bayeux::detail::bayeux_library & bxLib = ::bayeux::detail::bayeux_library::instantiate();
+      DT_LOG_TRACE(logging, "Initializing Bayeux library specific internals...");
+      bxLib.initialize();
+    }
+
+    DT_LOG_TRACE_EXITING(logging);
+    return;
+  }
+
+  void _special_terminate_impl()
+  {
+   ::datatools::logger::priority logging = ::bayeux::detail::bayeux_library::process_logging_env();
+    DT_LOG_TRACE_ENTERING(logging);
+
+    if (::bayeux::detail::bayeux_library::is_instantiated()) {
+      DT_LOG_TRACE(logging, "Shutdown Bayeux library specific internals...");
+      ::bayeux::detail::bayeux_library & bxLib = ::bayeux::detail::bayeux_library::instance();
+      if (bxLib.is_initialized()) {
+        bxLib.shutdown();
+      }
+      DT_LOG_TRACE(logging, "Bayeux library specific internals have been terminated.");
+    }
+
+    DT_LOG_TRACE_EXITING(logging);
+    return;
+  }
+
 }
 
 namespace bayeux {
@@ -47,9 +82,6 @@ namespace bayeux {
 
   void initialize(int argc_, char * argv_[], uint32_t flags_)
   {
-    DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
-    //static bool _init = false;
-    // if (! _init) {
     if (! ::_bxinit) {
 
       // Wrap datatools kernel initialization:
@@ -57,76 +89,26 @@ namespace bayeux {
       ::datatools::initialize(argc_, argv_, dt_init_flags);
 
       // Special initialization code:
-      ::bayeux::_special_initialize_impl();
+      ::_special_initialize_impl();
 
-      // _init = true;
       _bxinit = true;
     }
-    DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
-    return;
+     return;
   }
 
   void terminate()
   {
-    DT_LOG_TRACE_ENTERING(detail::sys::const_instance().get_logging());
-    // static bool _terminate = false;
-    // if (!_terminate) {
     if (_bxinit) {
 
       // Special termination code:
-      ::bayeux::_special_terminate_impl();
+      ::_special_terminate_impl();
 
       // Wrap datatools kernel termination:
       ::datatools::terminate();
-      // _terminate = true;
+
       _bxinit = false;
     }
-    DT_LOG_TRACE_EXITING(detail::sys::const_instance().get_logging());
     return;
   }
-
-  namespace detail {
-
-    sys::sys()
-    {
-      _logging_ = datatools::logger::PRIO_FATAL;
-      {
-        char * e = getenv("BAYEUX_SYS_LOGGING");
-        if (e) {
-          std::string level_label(e);
-          ::datatools::logger::priority prio = ::datatools::logger::get_priority(level_label);
-          if (prio != ::datatools::logger::PRIO_UNDEFINED) {
-            _logging_ = prio;
-          } else {
-            DT_LOG_WARNING(::datatools::logger::PRIO_WARNING,
-                           "Ignoring invalid BAYEUX_SYS_LOGGING=\"" << level_label << "\" environment!");
-          }
-        }
-      }
-      return;
-    }
-
-    sys::~sys()
-    {
-      _logging_ = datatools::logger::PRIO_FATAL;
-      return;
-    }
-
-    datatools::logger::priority sys::get_logging() const
-    {
-      return _logging_;
-    }
-
-    // static
-    const sys & sys::const_instance()
-    {
-      static boost::scoped_ptr<sys> _sys(new sys);
-#ifdef BAYEUX_SYS_DEVEL
-      _sys->_logging_ = datatools::logger::PRIO_TRACE;
-#endif // BAYEUX_SYS_DEVEL
-      return *_sys;
-    }
-
-  } // end of namespace detail
 
 } // namespace bayeux

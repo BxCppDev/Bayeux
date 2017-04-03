@@ -52,36 +52,6 @@ namespace bayeux {
   /// Terminate the Bayeux library core functionnalities
   void terminate();
 
-  void _special_initialize_impl();
-
-  void _special_terminate_impl();
-
-  /// \brief Nested namespace of the Bayeux library (detail)
-  namespace detail {
-
-    /// \brief System class for developpers:
-    struct sys : private boost::noncopyable
-    {
-      /// Default constructor
-      sys();
-
-      /// Destructor
-      virtual ~sys();
-
-      /// Return the logging priority
-      datatools::logger::priority get_logging() const;
-
-      /// Access to the 'sys' singleton (read-only)
-      static const sys & const_instance();
-
-    private:
-
-      datatools::logger::priority _logging_; //!< Logging priority threshold
-
-    };
-
-  } // end of namespace detail
-
 }
 
 #endif // BAYEUX_BAYEUX_H
