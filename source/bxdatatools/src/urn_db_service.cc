@@ -762,7 +762,7 @@ namespace datatools {
     }
     for (const std::string & topic : topics) {
       const std::vector<std::string> & vcomps = to_be_erased.get_components_by_topic(topic);
-      for (std::size_t icomp; icomp < vcomps.size(); icomp++) {
+      for (std::size_t icomp = 0; icomp < vcomps.size(); icomp++) {
         remove_link(urn_, vcomps[icomp]);
       }
     }
@@ -892,7 +892,7 @@ namespace datatools {
       return false;
     }
     urn_info & from = _grab_(urn_from_);
-    urn_info & to   = _grab_(urn_to_);
+    // urn_info & to   = _grab_(urn_to_);
     if (!from.has_component(urn_to_)) {
       errmsg_ = "URN info '" + urn_from_ + "' has no component URN='" + urn_to_ + "'";
       return false;
