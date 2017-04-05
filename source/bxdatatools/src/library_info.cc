@@ -627,7 +627,6 @@ namespace datatools {
       DT_THROW(std::logic_error, "Unsupported library info topic '" + topic_ + "'!");
     }
     std::string topic_install_key = topic_label_to_install_key(topic_);
-    datatools::properties * lib_infos_ptr = nullptr;
     DT_THROW_IF(!this->has(library_name_), std::logic_error,
                 "No library info record with name '" << library_name_ << "'!");
     datatools::properties & lib_infos = this->grab(library_name_);
