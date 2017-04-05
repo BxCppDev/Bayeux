@@ -48,14 +48,14 @@ namespace datatools {
   ///
   /// An object A can be connected to other objects (B, C and D), known as components:
   /// \code
-  ///      A            D
-  ///       o -------> o
-  ///      / \
-  ///     /   \
-  ///    v     \
-  ///   o       v
-  ///  B         o
-  ///             C
+  /// B          A          D
+  /// o <--------o -------> o
+  ///            |
+  ///            |
+  ///            |
+  ///            v
+  ///            o
+  ///            C
   /// \endcode
   ///
   /// The nature of the relationship between the object and its "components"

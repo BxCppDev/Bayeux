@@ -87,6 +87,7 @@ namespace datatools {
   /// from [to] to [from] nodes. This way, it is possible to know whether or not
   /// a node can be safely removed because no other node points to it.
   /// \code
+  /*
   ///                     urn1
   ///             [to]...o
   ///                   /|\  \
@@ -119,7 +120,7 @@ namespace datatools {
   ///            o ------------> o
   ///          urn2             urn3
   /// \endcode
-  ///
+  */
   class urn_db_service
     : public ::datatools::base_service
   {
