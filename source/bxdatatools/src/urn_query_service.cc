@@ -194,8 +194,8 @@ namespace datatools {
         const urn_db_service & db = *i->second;
         std::vector<std::string> db_local_urns;
         db.build_list_of_urns(db_local_urns, urn_db_service::SELECT_LOCAL);
-        for (std::size_t i = 0; i < db_local_urns.size(); i++) {
-          const std::string & local_urn = db_local_urns[i];
+        for (std::size_t j = 0; j < db_local_urns.size(); j++) {
+          const std::string & local_urn = db_local_urns[j];
           DT_LOG_TRACE(get_logging_priority(), "Checking local URN '" << local_urn << "'...");
           const urn_info & ui = db.get(local_urn);
           bool accept = true;
