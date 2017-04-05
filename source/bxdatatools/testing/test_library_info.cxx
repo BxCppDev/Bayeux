@@ -280,7 +280,7 @@ int main(int argc_, char * argv_[]) {
   datatools::initialize(argc_,argv_);
   int error_code = EXIT_SUCCESS;
   try {
-    std::clog << "\Entering test_library_info...\n" << std::endl;
+    std::clog << "\nEntering test_library_info...\n" << std::endl;
 
     std::clog << "\n\ntest_standalone_libinfo..." << std::endl;
     test_standalone_libinfo();
