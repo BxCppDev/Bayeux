@@ -195,7 +195,7 @@ void test_urn_info_0()
 void test_urn_info_1()
 {
   std::clog << "[info] " << "test_urn_info_1..." << std::endl;
-  bool debug = false;
+  // bool debug = false;
 
   /* Scheme:
    *              ...........................
