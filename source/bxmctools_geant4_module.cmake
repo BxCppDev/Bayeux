@@ -119,6 +119,7 @@ if(BAYEUX_WITH_GEANT4_MODULE)
      $<BUILD_INTERFACE:${module_include_dir}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bayeux>
+     $<TARGET_PROPERTY:Bayeux,INTERFACE_INCLUDE_DIRECTORIES>
      )
   # Hack - strip "-D" flag as we should only supply the def names
   set(Bayeux_Geant4_DEFINITIONS)
