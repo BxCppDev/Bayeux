@@ -422,7 +422,7 @@ namespace mctools {
       return;
     }
 
-    void run_action::dump(ostream & a_out) const
+    void run_action::dump(std::ostream & a_out) const
     {
       a_out << "run_action::dump:" << std::endl;
       a_out << "|-- Save data           : "  << _save_data_ << std::endl;
