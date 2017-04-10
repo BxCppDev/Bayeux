@@ -28,11 +28,12 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <memory>
 
 // Third party:
 // - Boost:
 #include <boost/cstdint.hpp>
-#include <boost/scoped_ptr.hpp>
+// #include <boost/scoped_ptr.hpp>
 // - GSL:
 #include <gsl/gsl_rng.h>
 // - Bayeux/datatools:
@@ -66,6 +67,22 @@ namespace mygsl {
 
     static bool is_seed_valid(int32_t seed_);
 
+    /// Default constructor
+    rng();
+
+    /// Constructor from a seed
+    rng(int32_t seed_, bool init_now_ = true);
+
+    /// Constructor from a GSL PRNG id and a seed
+    rng(const std::string & id_, int32_t seed_, bool init_now_ = true);
+
+    rng(const rng &); // not implemented
+
+    /// Destructor
+    virtual ~rng();
+
+    rng & operator=(const rng &); // not implemented
+
     bool is_initialized() const;
 
     void initialize();
@@ -78,6 +95,11 @@ namespace mygsl {
 
     /// \deprecated
     void init(const std::string & id_, int32_t seed_ = 0);
+
+    /// Reset
+    void reset();
+
+    void clear();
 
     bool is_seed_invalid() const;
 
@@ -105,39 +127,18 @@ namespace mygsl {
 
     template<class Type>
     void tracker_tag(const std::string & tag_) {
-      DT_THROW_IF(_tracker_, std::logic_error, "Not tracker is defined !");
+      DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
       *_tracker_.get() << '#' << ' ' << tag_ << std::endl;
     }
 
     template<class Type>
     void tracker_tag(const std::string & tag_, const Type & value_) {
-      DT_THROW_IF(_tracker_, std::logic_error, "Not tracker is defined !");
+      DT_THROW_IF(_tracker_, std::logic_error, "No tracker is defined !");
       *_tracker_.get() << '#' << ' ' << tag_ << " = " << value_ << std::endl;
     }
 
-    /// Default constructor
-    rng();
-
-    /// Constructor from a seed
-    rng(int32_t seed_, bool init_now_ = true);
-
-    /// Constructor from a GSL PRNG id and a seed
-    rng(const std::string & id_, int32_t seed_, bool init_now_ = true);
-
-    /// Reset
-    void reset();
-
-    void clear();
-
-    /// Destructor
-    virtual ~rng();
-
-    rng(const rng &); // not implemented
-
     /// Raw print
     void dump(std::ostream & = std::clog) const;
-
-    rng & operator=(const rng &); // not implemented
 
     unsigned long int get();
 
@@ -213,14 +214,14 @@ namespace mygsl {
 
   private:
 
-    datatools::logger::priority _logging_priority_; /// Logging priority
-    std::string  _id_;   /// The ID(type) of GSL random number generator algorithm
-    int32_t      _seed_; /// The initial seed set before initialization
-    gsl_rng *    _r_;    /// The internal GSL random number generator
-    int          _trunc_;                       /// Precision truncation index (debug)
-    unsigned long int _trunc_norm_;             /// Precision truncation denominator (debug)
-    boost::scoped_ptr<std::ofstream> _tracker_; /// Embedded tracker (debug)
-    int _tracker_counter_;                      /// Embedded counter (debug)
+    datatools::logger::priority _logging_priority_; ///< Logging priority
+    std::string  _id_;   ///< The ID(type) of GSL random number generator algorithm
+    int32_t      _seed_; ///< The initial seed set before initialization
+    gsl_rng *    _r_;    ///< The internal GSL random number generator
+    int          _trunc_;                       ///< Precision truncation index (debug)
+    unsigned long int _trunc_norm_;             ///< Precision truncation denominator (debug)
+    std::unique_ptr<std::ofstream> _tracker_;   ///< Embedded tracker (debug)
+    int _tracker_counter_;                      ///< Embedded counter (debug)
 
   };
 
