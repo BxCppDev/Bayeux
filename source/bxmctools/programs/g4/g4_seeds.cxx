@@ -258,9 +258,11 @@ g4_seed_generator::g4_seed_generator(const parameters & params_)
     DT_THROW_IF(params_.number_of_runs == 0, std::logic_error,
                 "Invalid null number of runs!");
   }
-  bool exists = params_.pattern.find("/") != std::string::npos;
-  DT_THROW_IF(exists, std::logic_error,
-              "Forbidden '/' separator in the output file pattern '" << params_.pattern << "'!");
+  {
+    bool exists = params_.pattern.find("/") != std::string::npos;
+    DT_THROW_IF(exists, std::logic_error,
+                "Forbidden '/' separator in the output file pattern '" << params_.pattern << "'!");
+  }
   if (params_.number_of_runs > 1) {
     bool exists = params_.pattern.find("%n") != std::string::npos;
     DT_THROW_IF(!exists, std::logic_error,
