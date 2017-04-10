@@ -958,13 +958,13 @@ namespace datatools {
   void urn_db_service::build_list_of_urns(std::vector<std::string> & urns_,
                                           const uint32_t flags_) const
   {
-    bool clear = true;
+    bool with_clear = true;
     bool with_local = false;
     bool with_mounted = false;
     bool with_removable = false;
     bool with_linked = false;
     if (flags_ & SELECT_NOCLEAR) {
-      clear = false;
+      with_clear = false;
     }
     if (flags_ & SELECT_LOCAL) {
       with_local = true;
@@ -975,7 +975,7 @@ namespace datatools {
     if (flags_ & SELECT_LINKED) {
       with_linked = true;
     }
-    if (clear) {
+    if (with_clear) {
       urns_.clear();
     }
     urns_.reserve(_urn_records_.size());
