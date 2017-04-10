@@ -20,6 +20,10 @@
 // Ourselves:
 #include <geomtools/point_on_quadric_finder.h>
 
+// Standard library:
+#include <fstream>
+#include <memory>
+
 namespace geomtools {
 
   point_on_quadric_finder::point_on_quadric_finder(const quadric & q_,
@@ -50,7 +54,7 @@ namespace geomtools {
     double eps2 = _epsilon_ * _epsilon_;
     geomtools::vector_3d q1;
     geomtools::invalidate(q1);
-    boost::scoped_ptr<std::ofstream> fdebug;
+    std::unique_ptr<std::ofstream> fdebug;
     if (_debug_) {
       fdebug.reset(new std::ofstream(_debug_filename_.c_str()));
       fdebug.get()->precision(12);

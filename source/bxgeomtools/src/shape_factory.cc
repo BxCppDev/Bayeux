@@ -3,6 +3,9 @@
 // Ourselves:
 #include <geomtools/shape_factory.h>
 
+// Standard library:
+#include <fstream>
+
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/exception.h>

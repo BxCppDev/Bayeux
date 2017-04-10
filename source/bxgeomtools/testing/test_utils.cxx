@@ -10,11 +10,16 @@
 #include <geomtools/gnuplot_draw.h>
 
 #include <datatools/io_factory.h>
+#include <mygsl/rng.h>
 
 
 void test1()
 {
   std::clog << std::endl << "*** test1 : Serialization..." << std::endl;
+
+  int32_t seed = 314159;
+  mygsl::rng random("taus2", seed);
+
   geomtools::vector_3d pos;
   pos.set (1., 2., 3.);
   std::clog << "Vector: " << pos << std::endl;
@@ -26,7 +31,7 @@ void test1()
   geomtools::vector_3d origin;
   origin.set (0., 0., 0.);
   geomtools::vector_3d dir;
-  dir.set (drand48 (), drand48 (), drand48 ());
+  dir.set (random.uniform(), random.uniform(), random.uniform());
   std::clog << "Direction: " << dir << std::endl;
 
   geomtools::gnuplot_draw::basic_draw_point (std::cout, origin);
@@ -34,10 +39,11 @@ void test1()
   std::cout << std::endl;
   std::cout << std::endl;
 
+
   for (int i = 0; i < 16; i++)
     {
       geomtools::vector_3d orth_dir;
-      geomtools::randomize_orthogonal_direction (drand48, dir, orth_dir);
+      geomtools::randomize_orthogonal_direction (random, dir, orth_dir);
       std::clog << "Random orthogonal direction: " << orth_dir << std::endl;
 
       geomtools::gnuplot_draw::basic_draw_point (std::cout, origin);
@@ -56,9 +62,9 @@ void test1()
 
     for (int i = 0; i < 5; i++)
       {
-        geomtools::vector_3d v (geomtools::random_tools::random_flat (),
-                                geomtools::random_tools::random_flat (),
-                                geomtools::random_tools::random_flat ());
+        geomtools::vector_3d v (random.uniform(),
+                                random.uniform(),
+                                random.uniform());
         if (i == 3) geomtools::invalidate (v);
         std::clog << "v[" << i << "] = " << v << std::endl;
         writer.store (geomtools::io::vector_3d_serial_tag(), v);
@@ -103,8 +109,8 @@ void test1()
         else
           {
             geomtools::create_rotation (r,
-                                        2. * M_PI * geomtools::random_tools::random_flat (),
-                                        0.25 * M_PI * geomtools::random_tools::random_flat (),
+                                        2. * M_PI * random(),
+                                        0.25 * M_PI * random(),
                                         0.0);
           }
         std::clog << "r[" << i << "] = " << r << std::endl;
@@ -157,8 +163,6 @@ main (int /* argc_ */, char ** /* argv_ */)
   int error_code = EXIT_SUCCESS;
   try
     {
-      long seed = 314159;
-      srand48 (seed);
 
       test1();
 

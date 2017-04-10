@@ -20,6 +20,10 @@
 // Ourselves:
 #include <geomtools/foot_point_on_quadric_finder.h>
 
+// Standard library:
+#include <fstream>
+#include <memory>
+
 // This project:
 #include <geomtools/point_on_quadric_finder.h>
 
@@ -102,7 +106,7 @@ namespace geomtools {
     if (poqf.find(p, p0) != EXIT_SUCCESS) {
      error_code = EXIT_FAILURE;
     } else {
-      boost::scoped_ptr<std::ofstream> fdebug;
+      std::unique_ptr<std::ofstream> fdebug;
       if (_debug_) {
         fdebug.reset(new std::ofstream(_debug_filename_.c_str()));
         fdebug.get()->precision(12);

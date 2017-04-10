@@ -13,6 +13,8 @@
 // - Bayeux/datatools:
 #include <datatools/temporary_files.h>
 #include <datatools/utils.h>
+// - Bayeux/mygsl:
+#include <mygsl/rng.h>
 
 // This project:
 #include <geomtools/geomtools_config.h>
@@ -43,8 +45,8 @@ int main (int argc_, char ** argv_)
       iarg++;
     }
 
-    long seed = 314159;
-    srand48 (seed);
+    int32_t seed = 314159;
+    mygsl::rng random("taus2", seed);
 
     datatools::temp_file tmp_file;
     tmp_file.set_remove_at_destroy(true);
@@ -54,17 +56,17 @@ int main (int argc_, char ** argv_)
     geomtools::polyline_3d pl2(geomtools::polyline_3d::open);
     geomtools::polyline_3d pl3(geomtools::polyline_3d::open);
     for (int i = 0; i < 10; i++) {
-      geomtools::vector_3d p1(2.0 * i + geomtools::random_tools::random_flat(),
-                              2.0 * geomtools::random_tools::random_flat(),
-                              2.0 * geomtools::random_tools::random_flat());
+      geomtools::vector_3d p1(2.0 * i + random(),
+                              2.0 * random(),
+                              2.0 * random());
       pl1.add(0.1 * p1);
-      geomtools::vector_3d p2(geomtools::random_tools::random_flat(),
-                              1.0 * i + geomtools::random_tools::random_flat(),
-                              geomtools::random_tools::random_flat());
+      geomtools::vector_3d p2(random(),
+                              1.0 * i + random(),
+                              random());
       pl2.add(0.1 * p2);
-      geomtools::vector_3d p3(geomtools::random_tools::random_flat(),
-                              geomtools::random_tools::random_flat(),
-                              1.0 * i + geomtools::random_tools::random_flat());
+      geomtools::vector_3d p3(random(),
+                              random(),
+                              1.0 * i + random());
       pl3.add(0.1 * p3);
     }
 
@@ -102,9 +104,9 @@ int main (int argc_, char ** argv_)
       int counts = 0;
       int counts2 = 0;
       for (int i = 0; i < (int) nshoots; i++) {
-        geomtools::vector_3d pos((-2. + 4.* drand48()),
-                                 (-2. + 4.* drand48()),
-                                 (-2. + 4.* drand48()));
+        geomtools::vector_3d pos((-2. + 4.* random()),
+                                 (-2. + 4.* random()),
+                                 (-2. + 4.* random()));
         geomtools::vector_3d pos_c;
         pl_placement.mother_to_child(pos, pos_c);
         double tolerance = 0.25;

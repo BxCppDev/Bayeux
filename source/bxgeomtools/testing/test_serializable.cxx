@@ -10,6 +10,8 @@
 // Third party:
 // - Bayeux/datatools:
 #include <datatools/io_factory.h>
+// - Bayeux/mygsl:
+#include <mygsl/rng.h>
 
 // This project:
 #include <geomtools/utils.h>
@@ -27,6 +29,9 @@ int main (int /* argc_ */, char ** /* argv_ */)
   int error_code = EXIT_SUCCESS;
   try
     {
+
+      int32_t seed = 314159;
+      mygsl::rng random("taus2", seed);
 
       geomtools::vector_2d pos2d;
       pos2d.set (1., 2.);
@@ -51,8 +56,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
         writer.store (config);
         for (int i = 0; i < 5; i++)
           {
-            geomtools::vector_2d v (geomtools::random_tools::random_flat (),
-                                    geomtools::random_tools::random_flat ());
+            geomtools::vector_2d v (random(), random());
             if (i == 3) geomtools::invalidate (v);
             cerr << "v[" << i << "] = " << v << endl;
             writer.store (geomtools::io::vector_2d_serial_tag(), v);
@@ -76,9 +80,7 @@ int main (int /* argc_ */, char ** /* argv_ */)
         writer.store (config);
         for (int i = 0; i < 5; i++)
           {
-            geomtools::vector_3d v (geomtools::random_tools::random_flat (),
-                                    geomtools::random_tools::random_flat (),
-                                    geomtools::random_tools::random_flat ());
+            geomtools::vector_3d v(random(), random(), random());
             if (i == 3) geomtools::invalidate (v);
             cerr << "v[" << i << "] = " << v << endl;
             writer.store (geomtools::io::vector_3d_serial_tag(), v);
@@ -199,8 +201,8 @@ int main (int /* argc_ */, char ** /* argv_ */)
             else
               {
                 geomtools::create_rotation (r,
-                                            2. * M_PI * geomtools::random_tools::random_flat (),
-                                            0.25 * M_PI * geomtools::random_tools::random_flat (),
+                                            2. * M_PI * random(),
+                                            0.25 * M_PI * random(),
                                             0.0);
               }
             cerr << "r[" << i << "] = " << r << endl;
