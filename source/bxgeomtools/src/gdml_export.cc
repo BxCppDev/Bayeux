@@ -5,6 +5,7 @@
 
 // Standard library:
 #include <iomanip>
+#include <fstream>
 #include <stdexcept>
 #include <algorithm>
 

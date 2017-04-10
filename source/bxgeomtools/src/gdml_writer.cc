@@ -2,6 +2,7 @@
 
 // Standard library:
 #include <stdexcept>
+#include <fstream>
 #include <set>
 
 // Third party:
@@ -1600,11 +1601,11 @@ namespace geomtools {
 
 
   void gdml_writer::add_gdml_torus(const std::string & name_,
-				   double rsweep_,
-				   double rmin_, double rmax_,
-				   double start_phi_, double delta_phi_,
-				   const std::string & lunit_str_,
-				   const std::string & aunit_str_)
+                                   double rsweep_,
+                                   double rmin_, double rmax_,
+                                   double start_phi_, double delta_phi_,
+                                   const std::string & lunit_str_,
+                                   const std::string & aunit_str_)
   {
     double lunit = datatools::units::get_length_unit_from(lunit_str_);
     double aunit = datatools::units::get_angle_unit_from(aunit_str_);
@@ -1664,13 +1665,13 @@ namespace geomtools {
                              const std::string & aunit_str_)
   {
     add_gdml_torus(name_,
-		   t_.get_sweep_radius(),
-		   t_.get_inside_radius(),
-		   t_.get_outside_radius(),
-		   t_.get_start_phi(),
-		   t_.get_delta_phi(),
-		   lunit_str_,
-		   aunit_str_);
+                   t_.get_sweep_radius(),
+                   t_.get_inside_radius(),
+                   t_.get_outside_radius(),
+                   t_.get_start_phi(),
+                   t_.get_delta_phi(),
+                   lunit_str_,
+                   aunit_str_);
     return;
   }
 
