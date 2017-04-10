@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
+#include <iomanip>
 
 // Third party:
 // - Bayeux/datatools:
