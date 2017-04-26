@@ -17,7 +17,6 @@
 
 int main(int argc_, char ** argv_)
 {
-  // MATERIALS_INIT_MAIN(argc_,argv_);
   int error_code = EXIT_SUCCESS;
   try {
     std::clog << "materials example program : ex_manager" << std::endl;
@@ -119,6 +118,5 @@ int main(int argc_, char ** argv_)
     std::cerr << "ERROR: " << "unexpected error!" << std::endl;
     error_code = EXIT_FAILURE;
   }
-  // MATERIALS_FINI();
   return(error_code);
 }
