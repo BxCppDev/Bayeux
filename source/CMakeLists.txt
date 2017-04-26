@@ -25,6 +25,7 @@
 # Configure build of Bayeux library
 # - Packages
 # - Boost
+set(BAYEUX_BOOST_MIN_VERSION "1.60.0")
 set(BAYEUX_BOOST_COMPONENTS
   filesystem
   system
@@ -39,23 +40,28 @@ if(BAYEUX_WITH_GEANT4_MODULE)
 endif()
 
 set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost 1.60.0
+find_package(Boost ${BAYEUX_BOOST_MIN_VERSION}
   REQUIRED
   ${BAYEUX_BOOST_COMPONENTS}
   )
+
 foreach(_boost_lib ${BAYEUX_BOOST_COMPONENTS})
   list(APPEND Bayeux_Boost_LIBRARIES Boost::${_boost_lib})
 endforeach()
+get_filename_component(Bayeux_BOOST_ROOT ${Boost_INCLUDE_DIR} DIRECTORY)
 
 # - Camp
-find_package(CAMP 0.7.1 REQUIRED NO_MODULE)
+set(BAYEUX_CAMP_MIN_VERSION "0.7.1")
+find_package(CAMP ${BAYEUX_CAMP_MIN_VERSION} REQUIRED NO_MODULE)
 
 # - GSL
-find_package(GSL 1.15 REQUIRED)
+set(BAYEUX_GSL_MIN_VERSION "1.15")
+find_package(GSL ${BAYEUX_GSL_MIN_VERSION} REQUIRED)
 
 # - ROOT
 set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
-find_package(ROOT 5.34.00 REQUIRED Core Hist RIO Tree)
+set(BAYEUX_ROOT_MIN_VERSION "5.34.00")
+find_package(ROOT ${BAYEUX_ROOT_MIN_VERSION} REQUIRED Core Hist RIO Tree)
 if(ROOT_VERSION VERSION_LESS 6)
   include(RootNewMacros)
 else()
@@ -64,17 +70,18 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
 if(BAYEUX_WITH_QT_GUI)
-  find_package(Qt5Core ${BAYEUX_QT5_VERSION} REQUIRED)
-  find_package(Qt5Gui ${BAYEUX_QT5_VERSION} REQUIRED)
+  find_package(Qt5Core    ${BAYEUX_QT5_VERSION} REQUIRED)
+  find_package(Qt5Gui     ${BAYEUX_QT5_VERSION} REQUIRED)
   find_package(Qt5Widgets ${BAYEUX_QT5_VERSION} REQUIRED)
-  find_package(Qt5Svg ${BAYEUX_QT5_VERSION} REQUIRED)
+  find_package(Qt5Svg     ${BAYEUX_QT5_VERSION} REQUIRED)
 endif()
 
 # - Geant4 if building the MCTools extension library
 # We do this here because we may need to configure files in MCTools
 # using the results of the search
 if(BAYEUX_WITH_GEANT4_MODULE)
-  find_package(Geant4 9.6.0 REQUIRED ui_all vis_all gdml NO_MODULE)
+set(BAYEUX_GEANT4_VERSION "9.6.0")
+  find_package(Geant4 ${BAYEUX_GEANT4_VERSION} REQUIRED ui_all vis_all gdml NO_MODULE)
   if(Geant4_DATASETS)
     set(MCTOOLS_G4_DATA_ASSIGNMENTS)
     foreach(_ds ${Geant4_DATASETS})
@@ -88,7 +95,8 @@ endif()
 # Find this at the end because ROOT/Geant4 may depend on it
 # and thus refind it for us. We don't want to override their
 # found version for compatibility reasons.
-find_package(CLHEP 2.1.3.1 REQUIRED NO_MODULE)
+set(BAYEUX_CLHEP_MIN_VERSION "2.1.3.1")
+find_package(CLHEP ${BAYEUX_CLHEP_MIN_VERSION} REQUIRED NO_MODULE)
 
 # - Core Includes for Bayeux + Third Party
 #include_directories(SYSTEM ${CLHEP_INCLUDE_DIRS})
