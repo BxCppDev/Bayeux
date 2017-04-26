@@ -55,8 +55,8 @@ Quick start
       shell> mkdir _build.d
       shell> cd _build.d
       shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+        -DCMAKE_INSTALL_PREFIX=../_install.d \
+	-DBayeux_DIR=$(bxquery --prefix) \
         ..
       shell> make
       shell> make install
@@ -64,7 +64,7 @@ Quick start
 
 4. Run the example::
 
-      shell> ./ex01
+      shell> ./_install.d/ex01
 
 5. Run the ``bxgeomtools_inspector`` to check the virtual geometry::
 
@@ -146,5 +146,5 @@ Quick start
 
 7. Clean::
 
-      shell> rm ex01
+      shell> rm -fr _install.d
       shell> rm -fr _build.d
