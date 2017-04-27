@@ -34,26 +34,36 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      shell> cp -a $(bxquery --exampledir)/cuts/examples/manager /tmp/cuts_ex_manager
-      shell> cd /tmp/cuts_ex_manager
+.. code:: sh
 
-3. Build and install the example::
+   shell> cp -a $(bxquery --exampledir)/cuts/manager /tmp/cuts_ex_manager
+   shell> cd /tmp/cuts_ex_manager
+..
 
-     shell> mkdir _build.d
-     shell> cd _build.d
-     shell> cmake \
-       -DCMAKE_INSTALL_PREFIX=.. \
-       -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
-       ..
-     shell> make
-     shell> make install
-     shell> cd ..
+3. Build and install the example:
 
-4. Run the example::
+.. code:: sh
 
-     shell> ./ex_manager
+   shell> mkdir _build.d
+   shell> cd _build.d
+   shell> cmake \
+	  -DCMAKE_INSTALL_PREFIX=../_install.d \
+	  -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
+	  ..
+   shell> make
+   shell> make install
+   shell> cd ..
+..
+
+4. Run the example:
+
+.. code:: sh
+
+   shell> ./_install.d/ex_manager
+   shell> gnuplot ex_manager.gp
+..
 
 5. Check the output file:
 
@@ -62,9 +72,12 @@ Quick start
    * ``ex_manager.selected.data`` : Final set of selected colored
      data points
 
-6. Clean::
+6. Clean:
 
-     shell> rm -f ex_manager.orig.data
-     shell> rm -f ex_manager.selected.data
-     shell> rm -f ex_manager
-     shell> rm -fr _build.d
+.. code:: sh
+
+   shell> rm -f ex_manager.orig.data
+   shell> rm -f ex_manager.selected.data
+   shell> rm -fr _install.d
+   shell> rm -fr _build.d
+..
