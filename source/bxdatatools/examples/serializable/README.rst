@@ -35,7 +35,7 @@ Introduction
      * ``the_serializable.h`` : forced instantiation of template serialization code
        and registration of the classes in the  Boost/Serialization system
 
-     * ``the_serializable.cc`` : wrapper to build the ``datatools_ex_serializable_bio``
+     * ``the_serializable.cc`` : wrapper to build the ``datatools_ex_serializable-io``
        DLL (see below)
 
  * Build method: CMake
@@ -43,8 +43,8 @@ Introduction
 
    * ``datatools_ex_serializable`` : the DLL linked with the ``datatools`` DLL, contains
      the ``raw_hit`` class
-   * ``datatools_ex_serializable_bio`` : the serialization DLL linked with the ``datatools_ex_serializable`` DLL
-   * ``ex_serializable_1`` : executable linked with the ``datatools_ex_serializable_bio`` DLLs
+   * ``datatools_ex_serializable-io`` : the serialization DLL linked with the ``datatools_ex_serializable`` DLL
+   * ``ex_serializable_1`` : executable linked with the ``datatools_ex_serializable-io`` DLLs
 
 Quick start
 ===========
@@ -52,24 +52,33 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/datatools/examples/serializable /tmp/datatools_ex_serializable
-      shell> cd /tmp/datatools_ex_serializable
+.. code:: sh
 
-3. Build and install the example::
+   shell> cp -a $(bxquery --exampledir)/datatools/serializable /tmp/datatools_ex_serializable
+   shell> cd /tmp/datatools_ex_serializable
+..
+
+3. Build and install the example:
+
+.. code:: sh
 
       shell> mkdir _build.d
       shell> cd _build.d
       shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+        -DCMAKE_INSTALL_PREFIX=../_install.d \
+        -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
         ..
       shell> make
       shell> make install
       shell> cd ..
+..
 
 4. Run the example::
 
-      shell> ./ex_serializable_1 --debug
+.. code:: sh
+
+      shell> ./_install.d/ex_serializable_1 --debug
+..
 
 5. Have a look on the output human readable XML archives:
 
@@ -86,7 +95,9 @@ Quick start
 
 6. Clean::
 
-      shell> rm -f raw_*.xml
-      shell> rm -f ex_serializable_1
-      shell> rm -fr ./lib
-      shell> rm -fr _build.d
+.. code:: sh
+
+   shell> rm -f raw_*.xml
+   shell> rm -fr _build.d
+   shell> rm -fr _install.d
+..
