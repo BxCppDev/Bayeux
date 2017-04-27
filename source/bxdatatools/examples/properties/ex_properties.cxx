@@ -202,12 +202,10 @@ int main (int argc_, char ** argv_)
     foo_config.tree_dump(std::clog, "The backup configuration parameters : ");
 
     DT_LOG_INFORMATION(logging, "The end.");
-   }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     DT_LOG_FATAL(logging, x.what());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_FATAL(logging, "unexpected error !");
     error_code = EXIT_FAILURE;
   }
