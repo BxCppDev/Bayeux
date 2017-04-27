@@ -27,26 +27,36 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      shell> cp -a $(bxquery --exampledir)/brio/examples/ex01 /tmp/brio_ex01
-      shell> cd /tmp/brio_ex01
+.. code:: sh
 
-3. Build and install the example::
+   shell> cp -a $(bxquery --exampledir)/brio/examples/ex01 /tmp/brio_ex01
+   shell> cd /tmp/brio_ex01
+..
 
-      shell> mkdir _build.d
-      shell> cd _build.d
-      shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
-        ..
-      shell> make
-      shell> make install
-      shell> cd ..
 
-4. Run the example::
+3. Build and install the example:
 
-      shell> ./ex01
+.. code:: sh
+
+   shell> mkdir _build.d
+   shell> cd _build.d
+   shell> cmake \
+	  -DCMAKE_INSTALL_PREFIX=../_install.d \
+          -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
+          ..
+   shell> make
+   shell> make install
+   shell> cd ..
+..
+
+4. Run the example:
+
+.. code:: sh
+
+   shell> ./_install.d/ex01
+..
 
 5. Check the output BRIO data file:
 
@@ -56,8 +66,11 @@ Quick start
        is not ROOT-browsable because its entries are Boost binary archives
        (one per foo instance) stored as binary buffers of bytes.
 
-6. Clean::
+6. Clean:
 
-      shell> rm ex01_data.brio
-      shell> rm ex01
-      shell> rm -fr _build.d
+.. code:: sh
+
+   shell> rm ex01_data.brio
+   shell> rm -fr _build.d
+   shell> rm -fr _install.d
+..

@@ -77,11 +77,9 @@ int main(int argc_, char ** argv_)
       }
       my_reader.close(); // not mandatory (automatic at destruction)
     }
-  }
-  catch(std::exception & x) {
+  } catch(std::exception & x) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL,x.what());
-  }
-  catch(...) {
+  } catch(...) {
     DT_LOG_FATAL(datatools::logger::PRIO_FATAL,"Unexpected error !");
   }
   return 0;
