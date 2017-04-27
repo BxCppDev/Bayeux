@@ -14,7 +14,6 @@ function my_exit()
     exit $1
 }
 
-
 install_dir=$(pwd)/_install.d
 test -d ${install_dir} && rm -fr ${install_dir}
 build_dir=$(pwd)/_build.d

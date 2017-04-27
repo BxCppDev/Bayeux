@@ -26,26 +26,35 @@ Quick start
 ===========
 
 1. Build, install and setup the brio library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      shell> cp -a [brio install base directory]/share/brio/examples/ex02 /tmp/ex02
-      shell> cd /tmp/ex02
+.. code:: sh
 
-3. Build and install the example::
+   shell> cp -a $(bxquery --exampledir)/brio/ex02 /tmp/brio_ex02
+   shell> cd /tmp/brio_ex02
+..
 
-      shell> mkdir __build
-      shell> cd __build
-      shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -Dbrio_DIR=$(brio-config --prefix) \
-        ..
-      shell> make
-      shell> make install
-      shell> cd ..
+3. Build and install the example:
 
-4. Run the example::
+.. code:: sh
 
-      shell> ./ex02
+   shell> mkdir _build.d
+   shell> cd _build.d
+   shell> cmake \
+	  -DCMAKE_INSTALL_PREFIX=../_install.d \
+	  -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
+   ..
+   shell> make
+   shell> make install
+   shell> cd ..
+..
+
+4. Run the example:
+
+.. code:: sh
+
+   shell> ./_install.d/ex02
+..
 
 5. Check the output BRIO data file:
 
@@ -57,8 +66,11 @@ Quick start
 
 6. Clean::
 
-      shell> rm ex02_data.brio
-      shell> rm ex02
-      shell> rm -fr __build
+.. code:: sh
 
+.. code:: sh
 
+   shell> rm ex02_data.brio
+   shell> rm -fr _build.d
+   shell> rm -fr _install.d
+..

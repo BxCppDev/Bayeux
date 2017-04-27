@@ -31,7 +31,7 @@ Quick start
 
 .. code:: sh
 
-   shell> cp -a $(bxquery --exampledir)/brio/examples/ex01 /tmp/brio_ex01
+   shell> cp -a $(bxquery --exampledir)/brio/ex01 /tmp/brio_ex01
    shell> cd /tmp/brio_ex01
 ..
 
