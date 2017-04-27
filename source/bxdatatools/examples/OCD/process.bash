@@ -25,6 +25,8 @@ function my_exit()
 }
 
 
+install_dir=$(pwd)/_install.d
+test -d ${install_dir} && rm -fr ${install_dir}
 build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
@@ -32,8 +34,8 @@ test ! -d ${build_dir} && mkdir ${build_dir}
 cd ${build_dir}
 
 cmake \
-    -DCMAKE_INSTALL_PREFIX=.. \
-    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    -DCMAKE_INSTALL_PREFIX=${install_dir} \
+    -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: Configuration failed !" 1>&2
@@ -52,11 +54,10 @@ fi
 
 cd ${opwd}
 
-ls -l ./lib/
-ls -l ./ex_OCD
+tree ${install_dir}
 
 echo "Run the example program : " 1>&2
-LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} ./ex_OCD -v -d
+LD_LIBRARY_PATH=${install_dir}/lib:${LD_LIBRARY_PATH} ${install_dir}/ex_OCD -v -d
 if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex_OCD failed !" 1>&2
     my_exit 1
@@ -67,7 +68,7 @@ fi
 # Special debug printing:
 # export DATATOOLS_OCD_DEVEL_LOGGING="trace"
 
-LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
+LD_LIBRARY_PATH=${install_dir}/lib:${LD_LIBRARY_PATH} \
     bxocd_manual --load-dll "datatools_ex_OCD" \
     --class-id "foo"            \
     --action show > foo_ocd.rst
@@ -99,9 +100,8 @@ if [ ${clean} -eq 1 ]; then
     rm -f ex_OCD.foo.skeleton.conf
     rm -f ex_OCD.service_manager.doc.rst
     rm -f ex_OCD.service_manager.skeleton.conf
-    rm -f ex_OCD
-    rm -fr ./lib
     rm -fr ${build_dir}
+    rm -fr ${install_dir}
 fi
 
 my_exit 0

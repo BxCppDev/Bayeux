@@ -36,32 +36,40 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      shell> cp -a $(bxquery --exampledir)/datatools/OCD /tmp/datatools_ex_OCD
-      shell> cd /tmp/datatools_ex_OCD
+.. code:: sh
+
+   shell> cp -a $(bxquery --exampledir)/datatools/OCD /tmp/datatools_ex_OCD
+   shell> cd /tmp/datatools_ex_OCD
+..
 
 3. Build and install the example::
 
-      shell> mkdir _build.d
-      shell> cd _build.d
-      shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+.. code:: sh
+
+   shell> mkdir _build.d
+   shell> cd _build.d
+   shell> cmake \
+        -DCMAKE_INSTALL_PREFIX=../_install.d  \
+        -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
         ..
-      shell> make
-      shell> make install
-      shell> cd ..
+   shell> make
+   shell> make install
+   shell> cd ..
+..
 
 4. Run the example::
 
-      shell> ls -l ./lib/
-      shell> ls -l ./ex_OCD
-      shell> ./ex_OCD
-      shell> LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
-             bxocd_manual --load-dll "datatools_ex_OCD" \
-                          --class-id "foo"            \
-                          --action show
+.. code:: sh
+
+   shell> tree ./_install.d/
+   shell> ./_install.d/ex_OCD
+   shell> LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH} \
+     bxocd_manual --load-dll "datatools_ex_OCD" \
+     --class-id "foo"            \
+     --action show
+..
 
 5. Check the output OCD and skeleton files:
 
@@ -76,9 +84,12 @@ Quick start
 
 6. Clean::
 
-      shell> rm ex_OCD.foo.doc.rst
-      shell> rm ex_OCD.foo.skeleton.conf
-      shell> rm ex_OCD.service_manager.doc.rst
-      shell> rm ex_OCD.service_manager.skeleton.conf
-      shell> rm ex_OCD
-      shell> rm -fr _build.d
+.. code:: sh
+
+   shell> rm ex_OCD.foo.doc.rst
+   shell> rm ex_OCD.foo.skeleton.conf
+   shell> rm ex_OCD.service_manager.doc.rst
+   shell> rm ex_OCD.service_manager.skeleton.conf
+   shell> rm -fr _build.d
+   shell> rm -fr _install.d
+..
