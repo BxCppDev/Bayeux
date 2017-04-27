@@ -22,18 +22,14 @@ message( STATUS " * Bayeux Qt     : ${Bayeux_qt_FOUND}")
 message( STATUS " * Bayeux Geant4 : ${Bayeux_geant4_FOUND}")
 message( STATUS " * Bayeux MNCP   : ${Bayeux_mcnp_FOUND}")
 
-# - Boost :
-message( STATUS "Searching Boost...")
-find_package(Boost 1.60 REQUIRED log regex)
-message( STATUS "Found Boost version : ${Boost_VERSION}")
+# # - Boost :
+# message( STATUS "Searching Boost...")
+# find_package(Boost 1.60 REQUIRED log regex)
+# message( STATUS "Found Boost version : ${Boost_VERSION}")
 
 add_executable(ex01_user ex01_user.cxx)
 
-target_link_libraries(ex01_user
-  PUBLIC
-  Bayeux::Bayeux
-  #Boost::log
-  )
+target_link_libraries(ex01_user PUBLIC Bayeux::Bayeux)
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex01_user
