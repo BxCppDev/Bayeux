@@ -111,47 +111,64 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell$ cp -a $(bxquery --exampledir)/datatools/examples/variants /tmp/datatools_ex_variants
-      shell$ cd /tmp/datatools_ex_variants
+.. code:: sh
+
+   shell$ cp -a $(bxquery --exampledir)/datatools/variants /tmp/datatools_ex_variants
+   shell$ cd /tmp/datatools_ex_variants
+..
 
 3. Build and install the example::
 
-      shell$ mkdir _build.d
-      shell$ cd _build.d
-      shell$ cmake \
+.. code:: sh
+
+   shell$ mkdir _build.d
+   shell$ cd _build.d
+   shell$ cmake \
         -DCMAKE_INSTALL_PREFIX=.. \
+        -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
         ..
-      shell$ make
-      shell$ make install
-      shell$ cd ..
+   shell$ make
+   shell$ make install
+   shell$ cd ..
+..
 
 4. Run the variant inspector:
 
    Generate a ReST formatted documentation about the variant repository: ::
 
-      shell$ export FOO_CONFIG_DIR=$(pwd)/config
-      shell$ bxvariant_inspector \
-	--variant-config "${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
-	--variant-gui \
-	--variant-store "my_foo.profile" \
-	--action "doc" > foo.rst
-      shell$ pandoc -r rst foo.rst > foo.html
-      shell$ xdg-open foo.html &
+.. code:: sh
+   shell$ export FOO_CONFIG_DIR=$(pwd)/config
+   shell$ bxvariant_inspector \
+	  --variant-config "${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
+	  --variant-gui \
+	  --variant-store "my_foo.profile" \
+	  --action "doc" > foo.rst
+   shell$ pandoc -r rst foo.rst > foo.html
+   shell$ xdg-open foo.html &
+..
 
    Print the current profile associated to the variant repository: ::
 
-      shell$ bxvariant_inspector \
+.. code:: sh
+   shell$ bxvariant_inspector \
 	--variant-config "${FOO_CONFIG_DIR}/variants/foo_variants.conf" \
 	--variant-load "my_foo.profile" \
 	--variant-gui \
 	--action "profile"
+..
 
 5. Run the example::
 
-      shell$ export FOO_CONFIG_DIR=./config
-      shell$ ./ex_variants
+.. code:: sh
+
+   shell$ export FOO_CONFIG_DIR=./config
+   shell$ ./_install.d/ex_variants
+..
 
 6. Clean::
 
-      shell$ rm ex_variants
+.. code:: sh
+
       shell$ rm -fr _build.d
+      shell$ rm -fr _install.d
+..

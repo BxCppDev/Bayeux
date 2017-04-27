@@ -20,7 +20,7 @@ find_package(Bayeux 3.0.0 REQUIRED)
 include_directories(${PROJECT_SOURCE_DIR})
 add_definitions(${QT_DEFINITIONS})
 
-add_executable(ex_variants ex_variants.cxx)
+add_executable(ex_variants ex_variants.cxx application.cpp)
 
 target_link_libraries(ex_variants Bayeux::Bayeux)
 

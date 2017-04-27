@@ -23,7 +23,7 @@
  * Boston, MA 02110-1301, USA.
  *
  * Description :
- * This example illustrates the use of the configuration variants.
+ *   This example illustrates the use of the configuration variants.
  *
  */
 
@@ -32,6 +32,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <exception>
 
 // Third party:
@@ -39,6 +40,7 @@
 #include <boost/program_options.hpp>
 // - Bayeux/datatools:
 #include <datatools/datatools_config.h>
+#include <datatools/datatools_init.h>
 #include <datatools/exception.h>
 #include <datatools/logger.h>
 #include <datatools/properties.h>
@@ -48,6 +50,7 @@
 #include <datatools/configuration/variant_service.h>
 // - Bayeux:
 #include <bayeux/bayeux.h>
+#include <bayeux/bayeux_init.h>
 #if DATATOOLS_WITH_QT_GUI == 1
 // - Qt:
 #include <QStyleFactory>
@@ -62,19 +65,26 @@
 
 void test0();
 
-void test1(const std::vector<std::string> settings_, bool gui_ = false, bool multi_ = false);
+void test1(const std::string & load_,
+           const std::vector<std::string> & settings_,
+           const std::string & store_,
+           const bool gui_ = false, bool const multi_ = false);
+
+uint32_t bxinitflags();
 
 int main(int argc_, char ** argv_)
 {
   datatools::logger::priority logging = datatools::logger::PRIO_FATAL;
   int error_code = EXIT_SUCCESS;
-  bayeux::initialize(argc_, argv_, 0xFFFFFFFF);
+  bayeux::initialize(argc_, argv_, bxinitflags());
   try {
 
     bool help = false;
     bool use_variants = false;
     int  variants_test = 1;
+    std::string variant_load;
     std::vector<std::string> variant_settings;
+    std::string variant_store;
     bool variant_gui = false;
 
     // Define command line options:
@@ -109,11 +119,25 @@ int main(int argc_, char ** argv_)
        "  --with-variants --variants-test 2                           "
        )
 
+      ("variant-load",
+       po::value<std::string>(&variant_load),
+       "Select the variant profile to be loaded                     \n"
+       "Example :                                                   \n"
+       "  --variant-load=\"in.profile\"                             "
+       )
+
       ("variant-set",
        po::value<std::vector<std::string>>(&variant_settings),
        "Select the configuration variant test.                      \n"
        "Example :                                                   \n"
        "  --variant-set=\"core:gui=true\"                             "
+       )
+
+      ("variant-store",
+       po::value<std::string>(&variant_store),
+       "Select the variant profile to be stored                     \n"
+       "Example :                                                   \n"
+       "  --variant-store=\"out.profile\"                             "
        )
 
 #if DATATOOLS_WITH_QT_GUI == 1
@@ -135,7 +159,7 @@ int main(int argc_, char ** argv_)
     po::parsed_options parsed =
       po::command_line_parser(argc_, argv_)
       .options(opts) // Only options to be parsed.
-      .allow_unregistered()
+      // .allow_unregistered()
       .run();
     po::store(parsed, vm);
     po::notify(vm);
@@ -156,7 +180,7 @@ int main(int argc_, char ** argv_)
       } else if (variants_test == 2) {
         multi = true;
       }
-      test1(variant_settings, variant_gui, multi);
+      test1(variant_load, variant_settings, variant_store, variant_gui, multi);
     }
 
   } catch (std::exception & x) {
@@ -168,6 +192,15 @@ int main(int argc_, char ** argv_)
   }
   bayeux::terminate();
   return error_code;
+}
+
+uint32_t bxinitflags()
+{
+  uint32_t flags = 0;
+  flags |= bayeux::init_dtkernel_no_logging;
+  //flags |= bayeux::init_dtkernel_no_variant;
+  flags |= bayeux::init_dtkernel_no_inhibit_variant;
+  return flags;
 }
 
 void test0()
@@ -187,13 +220,19 @@ void test0()
   return;
 }
 
-void test1(const std::vector<std::string> settings_, bool gui_, bool multi_)
+void test1(const std::string & load_,
+           const std::vector<std::string> & settings_,
+           const std::string & store_,
+           const bool gui_,
+           const bool multi_)
 {
   std::clog << "\ntest1: Use the configuration variants mechanism...\n";
 
   datatools::configuration::variant_service::config variant_config;
   variant_config.config_filename = "${FOO_CONFIG_DIR}/variants/foo_variants.conf";
+  variant_config.profile_load = load_;
   variant_config.settings = settings_;
+  variant_config.profile_store = store_;
 #if DATATOOLS_WITH_QT_GUI == 1
   variant_config.gui = gui_;
 #endif // DATATOOLS_WITH_QT_GUI == 1
@@ -224,11 +263,10 @@ void test1(const std::vector<std::string> settings_, bool gui_, bool multi_)
   app.run();
 
   // Terminate variant service:
-  vserv.stop();
+  if (vserv.is_started()) {
+    vserv.stop();
+  }
 
   std::clog << "test1: End.\n";
   return;
 }
-
-// Include classes' definitions:
-#include "application.cpp"
