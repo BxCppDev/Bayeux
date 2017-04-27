@@ -23,26 +23,34 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      shell> cp -a $(bxquery --exampledir)/datatools/examples/properties /tmp/datatools_ex_properties
-      shell> cd /tmp/datatools_ex_properties
+.. code:: sh
 
-3. Build and install the example::
+   shell> cp -a $(bxquery --exampledir)/datatools/properties /tmp/datatools_ex_properties
+   shell> cd /tmp/datatools_ex_properties
+..
 
-      shell> mkdir _build.d
-      shell> cd _build.d
-      shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+3. Build and install the example:
+
+.. code:: sh
+
+   shell> mkdir _build.d
+   shell> cd _build.d
+   shell> cmake \
+        -DCMAKE_INSTALL_PREFIX="../_install.d" \
+        -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
         ..
-      shell> make
-      shell> make install
-      shell> cd ..
+   shell> make
+   shell> make install
+   shell> cd ..
 
 4. Run the example::
 
-      shell> ./ex_properties --debug
+.. code:: sh
+
+   shell> ./_install.d/ex_properties --debug
+..
 
 5. Check the output backup file:
 
@@ -51,6 +59,9 @@ Quick start
 
 6. Clean::
 
-      shell> rm foo.conf
-      shell> rm ex_properties
-      shell> rm -fr _build.d
+.. code:: sh
+
+   shell> rm foo.conf
+   shell> rm -fr _build.d
+   shell> rm -fr _install.d
+..

@@ -35,11 +35,11 @@
 #include <string>
 #include <exception>
 
-// This project:
-#include <datatools/datatools_config.h>
-#include <datatools/properties.h>
-#include <datatools/clhep_units.h>
-#include <datatools/logger.h>
+// The Bayeux project:
+#include <bayeux/datatools/datatools_config.h>
+#include <bayeux/datatools/properties.h>
+#include <bayeux/datatools/clhep_units.h>
+#include <bayeux/datatools/logger.h>
 
 int main (int argc_, char ** argv_)
 {

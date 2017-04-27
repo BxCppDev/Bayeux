@@ -14,6 +14,8 @@ function my_exit()
     exit $1
 }
 
+install_dir=$(pwd)/_install.d
+test -d ${install_dir} && rm -fr ${install_dir}
 build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
@@ -21,8 +23,8 @@ test ! -d ${build_dir} && mkdir ${build_dir}
 cd ${build_dir}
 
 cmake \
-    -DCMAKE_INSTALL_PREFIX=.. \
-    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    -DCMAKE_INSTALL_PREFIX=${install_dir} \
+    -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: Configuration failed !" 1>&2
@@ -41,7 +43,7 @@ fi
 
 cd ${opwd}
 
-./ex_properties --debug
+${install_dir}/ex_properties --debug
 if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex_properties failed !" 1>&2
     my_exit 1
@@ -50,7 +52,7 @@ fi
 cat foo.conf
 
 rm -f foo.conf
-rm -f ex_properties
+rm -fr ${install_dir}
 rm -fr ${build_dir}
 find . -name "*~" -exec rm -f \{\} \;
 
