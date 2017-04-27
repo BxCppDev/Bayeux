@@ -50,26 +50,39 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/datatools/examples/things /tmp/datatools_ex_things
-      shell> cd /tmp/datatools_ex_things
+.. code:: sh
+
+   shell> cp -a $(bxquery --exampledir)/datatools/things /tmp/datatools_ex_things
+   shell> cd /tmp/datatools_ex_things
+..
 
 3. Build and install the example::
+
+.. code:: sh
 
       shell> mkdir _build.d
       shell> cd _build.d
       shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+        -DCMAKE_INSTALL_PREFIX=../_install.d \
+        -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
         ..
       shell> make
       shell> make install
       shell> cd ..
+..
 
 4. Run the example::
 
-      shell> ./ex_things_1 --debug
+.. code:: sh
+
+      shell> ./_install.d/ex_things_1 --debug
+..
 
 5. Clean::
 
-      shell> rm ex_things_1
-      shell> rm -fr _build.d
+.. code:: sh
+
+   shell> rm ex_things_1
+   shell> rm -fr _build.d
+   shell> rm -fr _install.d
+..
