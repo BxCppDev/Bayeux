@@ -410,7 +410,7 @@ namespace dpp {
   {
     int error_code = EXIT_SUCCESS;
     datatools::logger::priority logging = _logging_;
-    logging = datatools::logger::PRIO_DEBUG;
+    // logging = datatools::logger::PRIO_DEBUG;
     DT_THROW_IF(! is_initialized(), std::logic_error, "Driver is not initialized !");
 
     // Loop on the data records from the data source file :
