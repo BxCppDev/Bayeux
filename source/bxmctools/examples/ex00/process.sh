@@ -36,6 +36,9 @@ done
 
 opwd=$(pwd)
 
+install_dir=$(pwd)/_install.d
+test -d ${install_dir} && rm -fr ${install_dir}
+
 build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
@@ -54,8 +57,8 @@ cd ${build_dir}
 
 echo -e "\nBuild the example programs..." 1>&2
 cmake \
-    -DCMAKE_INSTALL_PREFIX=.. \
-    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    -DCMAKE_INSTALL_PREFIX=${install_dir} \
+    -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: cmake failed !" 1>&2
@@ -189,7 +192,7 @@ if [ $do_simulation -eq 1 ]; then
     export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
-    ./ex00_read_plain_simdata \
+    ${install_dir}/ex00_read_plain_simdata \
 	--interactive  \
 	${visu_opt} \
 	--logging-priority "notice" \
@@ -226,7 +229,7 @@ if [ $do_simulation -eq 1 ]; then
     cat prng_seeds.save 1>&2
     echo "----------------------------------" 1>&2
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
-    ./ex00_read_plain_simdata \
+    ${install_dir}/ex00_read_plain_simdata \
 	--interactive \
 	${visu_opt} \
 	--logging-priority "notice" \
@@ -253,14 +256,14 @@ if [ $do_simulation -eq 1 ]; then
     fi
 
     echo -e "\nBrowse the output pipeline simulated data file..." 1>&2
-    ./ex00_read_pipeline_simdata \
+    ${install_dir}/ex00_read_pipeline_simdata \
         --logging-priority "notice" \
         --interactive \
 	${visu_opt} \
         --input-file "mctools_ex00_${sim_module}.dpp.brio"
 
     echo -e "\nRun the standalone simulation module..." 1>&2
-    ./ex00_run_sim_module \
+    ${install_dir}/ex00_run_sim_module \
         --number-of-events=25 \
 	--geometry-config "${CONFIG_DIR}/geometry/manager.conf" \
 	--simulation-config "${CONFIG_DIR}/simulation/manager.conf" \
@@ -271,7 +274,7 @@ if [ $do_simulation -eq 1 ]; then
     fi
 
     echo -e "\nBrowse the output simulated data file..." 1>&2
-    ./ex00_read_pipeline_simdata \
+    ${install_dir}/ex00_read_pipeline_simdata \
         --logging-priority "notice" \
         --interactive \
 	${visu_opt} \
@@ -281,12 +284,8 @@ fi
 
 if [ ${do_clean} -eq 1 ]; then
     rm -f bias_stats.data
-    rm -f ex00_run_sim_module
-    rm -f ex00_read_plain_simdata
-    rm -f ex00_read_pipeline_simdata
     rm -f geomtools_inspector.C
     rm -f histos_electron_1MeV_gaussian_100keV.root
-    rm -f -fr lib/
     rm -f mctools_ex00-1.0.gdml
     rm -f mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
     rm -f mctools_ex00_electron_1MeV_source_bulk.vg.data.gz
@@ -303,6 +302,7 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f histos_electron_1MeV.root
     rm -f prng_seeds.save
     rm -f prng_states.save
+    rm -fr ${install_dir}
     rm -fr ${build_dir}
     find . -name "*~" -exec rm -f \{\} \;
 fi

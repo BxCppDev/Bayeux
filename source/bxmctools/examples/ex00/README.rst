@@ -137,31 +137,42 @@ Quick start
 ===========
 
 1. Build, install and setup the ``mctools`` library.
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      $ cp -a [mctools install base directory]/share/mctools/examples/ex00 /tmp/ex00
+.. code:: sh
+
+      $ cp -a $(bxquery --exampledir)/mctools/ex00 /tmp/ex00
       $ cd /tmp/ex00
+..
 
-3. Build and install the example program::
+3. Build and install the example program:
+
+.. code:: sh
 
       $ mkdir _build.d
       $ cd _build.d
       $ cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+        -DCMAKE_INSTALL_PREFIX=../_install.d \
+	-DBayeux_DIR=$(bxquery --prefix) \
         ..
       $ make
       $ make install
       $ cd ..
+..
 
 4. Standalone Geometry:
 
-   First create the ``CONFIG_DIR`` environment variable: ::
+   First create the ``CONFIG_DIR`` environment variable:
+
+.. code:: sh
 
      $ export CONFIG_DIR="$(pwd)/config"
+..
 
 
-   a. Run the ``bxgeomtools_inspector`` to check the virtual geometry: ::
+   a. Run the ``bxgeomtools_inspector`` to check the virtual geometry:
+
+.. code:: sh
 
          $ bxgeomtools_inspector \
                   --manager-config ${CONFIG_DIR}/geometry/manager.conf \
@@ -172,6 +183,7 @@ Quick start
          geomtools> display [2020:0]
          geomtools> export_gdml
          geomtools> quit
+..
 
       It displays views of the setup using the ``geomtools`` Gnuplot viewer.
 
@@ -187,7 +199,9 @@ Quick start
          :alt: The 2D view of the setup (file ``images/ex00_geometry_2.jpg``)
          :align: center
 
-   b. ROOT display of the setup via the ``mctools_ex00-1.0.gdml`` GDML file: ::
+   b. ROOT display of the setup via the ``mctools_ex00-1.0.gdml`` GDML file:
+
+.. code:: sh
 
          $ root
          root [0] TGeoManager * geo = new TGeoManager("geo","mctools examples/ex00 virtual setup");
@@ -195,11 +209,14 @@ Quick start
          root [2] g2->SetVisOption(0);
          root [3] g2->SetVisLevel(100);
          root [4] g2->GetMasterVolume()->Draw("");
+..
 
 
       Select ``Wiew|View With|OpenGL`` and type the ``t``, ``r`` and ``w`` to switch different rendering modes.
 
-      To exit the ROOT shell: ::
+      To exit the ROOT shell:
+
+.. code:: sh
 
          root [5] .q
 
@@ -213,7 +230,9 @@ Quick start
 
 5. Standalone event generation:
 
-    a. Show the list of available generators: ::
+    a. Show the list of available generators:
+
+.. code:: sh
 
          $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
@@ -229,8 +248,11 @@ Quick start
          |-- electron_50-2000keV_flat       : genbb::single_particle_generator (not initialized)
          |-- electron_pdf                   : genbb::single_particle_generator (not initialized)
          `-- save                           : genbb::save_to_file_wrapper (not initialized)
+..
 
-    b. Shoot some primary events from one event generator: ::
+    b. Shoot some primary events from one event generator:
+
+.. code:: sh
 
          $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
@@ -239,8 +261,11 @@ Quick start
                   --prng-seed 314159 \
                   --number-of-events 10000 \
                   --output-file "histos_electron_1MeV_gaussian_100keV.root"
+..
 
-       or: ::
+       or:
+
+.. code:: sh
 
          $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
@@ -249,8 +274,11 @@ Quick start
                   --prng-seed 314159 \
                   --number-of-events 100 \
                   --output-file "histos_C12_monokinetic_125MeV.root"
+..
 
-       or: ::
+       or:
+
+.. code:: sh
 
          $ bxgenbb_inspector \
                   --configuration "${CONFIG_DIR}/event_generator/manager.conf" \
@@ -258,8 +286,11 @@ Quick start
                   --generator "save" \
                   --prng-seed 314159 \
                   --number-of-events 100
+..
 
-    c. Display histograms associated to the event kinematics: ::
+    c. Display histograms associated to the event kinematics:
+
+.. code:: sh
 
          $ root histos_electron_1MeV_gaussian_100keV.root
          root [1] TBrowser b; // then use the GUI to display the histograms
@@ -276,7 +307,9 @@ Quick start
 
 6. Standalone vertex generation:
 
-    a. Show the list of available generators: ::
+    a. Show the list of available generators:
+
+.. code:: sh
 
          $ bxgenvtx_production \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
@@ -295,9 +328,11 @@ Quick start
          |-- source_bulk.vg (current) : Vertex generation from the source bulk
          |-- source_support_bulk.vg  : Vertex generation from the source bulk
          `-- source_surface.vg  : Vertex generation from the source bulk
+..
 
 
-    b. Shoot some random vertex generators and visualize them: ::
+    b. Shoot some random vertex generators and visualize them:
+.. code:: sh
 
          $ bxgenvtx_production \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
@@ -308,6 +343,7 @@ Quick start
                  --vertex-generator "source_bulk.vg" \
                  --output-file "mctools_ex00_vertices.txt" \
                  --visu --tiny
+..
 
       It displays a 3D view of the setup with the positions of the generated vertexes
       from the bulk of the source film.
@@ -319,7 +355,9 @@ Quick start
          :align: center
 
 
-    c. Another random vertex generators: ::
+    c. Another random vertex generators:
+
+.. code:: sh
 
          $ bxgenvtx_production \
                  --geometry-manager "${CONFIG_DIR}/geometry/manager.conf" \
@@ -330,6 +368,7 @@ Quick start
                  --vertex-generator "scin_wrapping_all_bulk.vg" \
                  --output-file "mctools_ex00_vertices2.txt" \
                  --visu --tiny
+..
 
       .. image:: images/ex00_vertex_generator_scin_wrapping_all_bulk.jpg
          :width: 200
@@ -340,7 +379,9 @@ Quick start
 
 7. Geant4 simulation:
 
-    a. Run the Geant4 simulation through a Geant4 interactive session with visualization: ::
+    a. Run the Geant4 simulation through a Geant4 interactive session with visualization:
+
+.. code:: sh
 
          $ bxg4_production \
                 --logging-priority "warning" \
@@ -359,8 +400,11 @@ Quick start
 		--output-profiles "all_details" \
                 --output-data-file "mctools_ex00_electron_1MeV_source_bulk.xml" \
                 --g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.mac"
+..
 
-      or: ::
+      or:
+
+.. code:: sh
 
          $ bxg4_production \
                 --logging-priority "warning" \
@@ -379,8 +423,11 @@ Quick start
 		--output-profiles "all_details" \
                 --output-data-file "mctools_ex00_Li6_monokinetic_100MeV_source_surface.xml" \
                 --g4-macro "${CONFIG_DIR}/simulation/geant4_visualization.mac"
+..
 
-      From the Geant4 interactive session::
+      From the Geant4 interactive session:
+
+.. code:: sh
 
          Idle> /vis/viewer/set/viewpointThetaPhi -60 45
          Idle> /run/beamOn 10
@@ -423,15 +470,18 @@ Quick start
             :align: center
 
 
-      You may then browse the output plain simulated data file: ::
+      You may then browse the output plain simulated data file:
+
+.. code:: sh
 
          $ ls -l mctools_ex00_electron_1MeV_source_bulk.xml
-         $ export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
-         $ ./ex00_read_plain_simdata \
+         $ export LD_LIBRARY_PATH=./_install.d/lib:${LD_LIBRARY_PATH}
+         $ ./_install.d/ex00_read_plain_simdata \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
                  --input-file "mctools_ex00_electron_1MeV_source_bulk.xml"
+..
 
       Snapshots:
 
@@ -467,7 +517,7 @@ Quick start
             :alt: Detailed XZ-view of the electron hit in the scintillator block with superimposed electron track (file ``images/ex00_g4_production_7.jpg``)
             :align: center
 
-    b. Run the Geant4 simulation in non-interactive mode::
+    b. Run the Geant4 simulation in non-interactive mode:
 
          $ bxg4_production \
                 --logging-priority "trace" \
@@ -484,15 +534,19 @@ Quick start
                 --output-prng-seeds-file "prng_seeds.save" \
                 --output-prng-states-file "prng_states.save" \
                 --output-data-file "mctools_ex00_electron_1MeV_source_bulk.data.gz"
+..
 
-       Then browse the output plain simulated data file ::
+       Then browse the output plain simulated data file :
+
+.. code:: sh
 
          $ ls -l mctools_ex00_electron_1MeV_source_bulk.data.gz
-         $ ./ex00_read_plain_simdata \
+         $ ./_install.d/ex00_read_plain_simdata \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
                  --input-file "mctools_ex00_electron_1MeV_source_bulk.data.gz"
+..
 
 
        Detailed YZ-view of an electron emitted from the source film then absorbed in the source support:
@@ -503,7 +557,9 @@ Quick start
              :alt: Detailed YZ-view of an electron absorbed in the source support (file ``images/ex00_g4_production_8.jpg``)
              :align: center
 
-    c. Run the Geant4 simulation through the data processing pipeline::
+    c. Run the Geant4 simulation through the data processing pipeline:
+
+.. code:: sh
 
          $ bxdpp_processing \
           --logging-priority "notice" \
@@ -513,12 +569,15 @@ Quick start
           --modulo 100 \
           --module "electron_1MeV_cone@source_bulk" \
           --output-file "mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio"
+..
 
        The output data file uses the Brio format and stores the
-       simulated data within ``datatools::things`` object records::
+       simulated data within ``datatools::things`` object records:
+
+.. code:: sh
 
          $ ls -l mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
-         $ ./ex00_read_pipeline_simdata \
+         $ ./_install.d/ex00_read_pipeline_simdata \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -526,6 +585,7 @@ Quick start
                  --dump-simulated-data \
                  --dump-hits \
                  --input-file "mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio"
+..
 
        Snapshots:
 
@@ -577,23 +637,24 @@ Quick start
              :alt: The print of a hit in the scintillator block (file ``images/ex00_g4_pipeline_1b.jpg``)
              :align: center
 
-8. Clean::
+8. Clean:
 
-      $ rm ex00_read_plain_simdata
-      $ rm ex00_read_pipeline_simdata
-      $ rm geomtools_inspector.C
-      $ rm histos_electron_1MeV_gaussian_100keV.root
-      $ rm -fr lib/
-      $ rm mctools_ex00-1.0.gdml
-      $ rm mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
-      $ rm mctools_ex00_electron_1MeV_source_bulk.data.gz
-      $ rm mctools_ex00_electron_1MeV_source_bulk.xml
-      $ rm mctools-ex00_README.html
-      $ rm mctools_ex00_vertices2.txt
-      $ rm mctools_ex00_vertices_source_bulk.vg.txt
-      $ rm mctools_ex00_vertices.txt
-      $ rm prng_seeds.save
-      $ rm prng_seeds.save.~backup~
-      $ rm prng_states.save
-      $ rm prng_states.save.~backup~
-      $ rm -fr _build.d/
+.. code:: sh
+
+   $ rm geomtools_inspector.C
+   $ rm histos_electron_1MeV_gaussian_100keV.root
+   $ rm mctools_ex00-1.0.gdml
+   $ rm mctools_ex00_electron_1MeV_cone@source_bulk.dpp.brio
+   $ rm mctools_ex00_electron_1MeV_source_bulk.data.gz
+   $ rm mctools_ex00_electron_1MeV_source_bulk.xml
+   $ rm mctools-ex00_README.html
+   $ rm mctools_ex00_vertices2.txt
+   $ rm mctools_ex00_vertices_source_bulk.vg.txt
+   $ rm mctools_ex00_vertices.txt
+   $ rm prng_seeds.save
+   $ rm prng_seeds.save.~backup~
+   $ rm prng_states.save
+   $ rm prng_states.save.~backup~
+   $ rm -fr _build.d/
+   $ rm -fr _install.d/
+..
