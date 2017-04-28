@@ -37,37 +37,51 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex03 /tmp/genbb_help_ex03
+.. code:: sh
+
+      shell> cp -a $(bxquery --exampledir)/genbb_help/ex03 /tmp/genbb_help_ex03
       shell> cd /tmp/genbb_help_ex03
+..
 
-3. Build and install the example::
+3. Build and install the example:
+
+.. code:: sh
 
       shell> mkdir _build.d
       shell> cd _build.d
       shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
-        ..
+	  -DCMAKE_INSTALL_PREFIX=./_install.d \
+          -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
+          ..
       shell> make
       shell> make install
       shell> cd ..
+..
 
-4. Run the example::
+4. Run the example:
+
+.. code:: sh
 
       shell> ./ex03
+..
 
 5. Run the ``bxgenbb_inspector`` :
 
-     Print the list of available generators: ::
+     Print the list of available generators: :
+
+.. code:: sh
 
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
                --action list
+..
 
      Generate 10000 Co60 decay events, build and save histograms
-     in a ROOT file: ::
+     in a ROOT file:
+
+.. code:: sh
 
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
@@ -82,9 +96,12 @@ Quick start
                --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf" \
                --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
                --output-file "histos_Co60.root"
+..
 
      Generate 100 Co60 decay events, save them in a data file using
-     the dpp I/O format: ::
+     the dpp I/O format:
+
+.. code:: sh
 
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
@@ -96,27 +113,40 @@ Quick start
                --output-mode "bank" \
                --output-bank-label "PE" \
                --output-file "Co60_banks.data.gz"
+..
 
-     Read the primary event from the generated file: ::
+     Read the primary event from the generated file:
 
-      shell> ./ex03_bank_reader Co60_banks.data.gz
+.. code:: sh
+
+      shell> ./_install.d/ex03_bank_reader Co60_banks.data.gz
+..
 
 6. Check the output file:
 
-   Output histograms browsable from ROOT via the ``histos_Co60.root`` file ::
+   Output histograms browsable from ROOT via the ``histos_Co60.root`` file :
+
+.. code:: sh
 
       shell> root histos_Co60.root
       root [1] TBrowser b;
       root [2] .q
+..
 
 
-7. Clean::
+7. Clean:
 
-      shell> rm ex03
+.. code:: sh
+
       shell> rm -fr ./_build.d
+      shell> rm -fr ./_install.d
+..
 
 8. Note:
 
-   Run an automated test script: ::
+   Run an automated test script:
+
+.. code:: sh
 
       shell> ./process.sh
+..

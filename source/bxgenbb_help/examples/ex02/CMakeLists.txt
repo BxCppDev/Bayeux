@@ -15,15 +15,13 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # - Bayeux :
-find_package(Bayeux 2.1.0 REQUIRED)
-set(_incs ${Bayeux_INCLUDE_DIRS})
-set(_libs ${Bayeux_LIBRARIES})
+find_package(Bayeux 3.0 REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR} . ${_incs})
+include_directories(${PROJECT_SOURCE_DIR})
 
 add_library(genbb_help_ex02 SHARED crazy_gun.cc crazy_gun.hh)
 
-target_link_libraries(genbb_help_ex02 ${_libs} )
+target_link_libraries(genbb_help_ex02 Bayeux::Bayeux )
 
 install (FILES
          ${PROJECT_BINARY_DIR}/libgenbb_help_ex02${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -37,7 +35,7 @@ install (FILES
 add_executable(ex02 ex02.cxx)
 
 target_link_libraries(ex02
-  genbb_help_ex02 ${_libs}
+  genbb_help_ex02 Bayeux::Bayeux
   )
 
 install ( FILES

@@ -41,35 +41,43 @@ Quick start
 1. Build, install and setup the Bayeux library
 2. Make a copy of the example directory::
 
-      shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex02 /tmp/genbb_help_ex02
-      shell> cd /tmp/genbb_help_ex02
+.. code:: sh
 
-3. Build and install the example::
+      shell> cp -a $(bxquery --exampledir)/genbb_help/ex02 /tmp/genbb_help_ex02
+      shell> cd /tmp/genbb_help_ex02
+..
+
+3. Build and install the example:
+
+.. code:: sh
 
       shell> mkdir _build.d
       shell> cd _build.d
       shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+        -DCMAKE_INSTALL_PREFIX=./_install.d \
+	-DBayeux_DIR:PATH=$(bxquery --cmakedir) \
         ..
       shell> make
       shell> make install
       shell> cd ..
-      shell> ls -1 ./lib/
-      libgenbb_help_ex02.so
-      shell> ls -1 ./bin/
-      ex02
+      shell> ls -1 ./_install.d/
+      ./_install.d/bin/ex02
+..
 
-4. Run the example::
+4. Run the example:
 
-      shell> ./bin/ex02
+.. code:: sh
 
-5. Run the ``bxgenbb_inspector`` ::
+      shell> ./_install.d/bin/ex02
+..
+
+5. Run the ``bxgenbb_inspector`` :
+
+.. code:: sh
 
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
                --action list
-
       shell> bxgenbb_inspector \
                --configuration config/manager.conf \
                --action shoot \
@@ -83,24 +91,35 @@ Quick start
                --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf" \
                --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
                --output-file "histos_Fool.root"
+..
 
 6. Check the output file:
 
-   Output histograms browsable from ROOT via the ``histos_Co60.root`` file ::
+   Output histograms browsable from ROOT via the ``histos_Co60.root`` file :
+
+.. code:: sh
 
       shell> root histos_Co60.root
       root [1] TBrowser b;
       root [2] .q
+..
 
 
-8. Clean::
+7. Clean:
+
+.. code:: sh
 
       shell> rm ex02
-      shell> rm -fr ./_build.d ./bin ./lib
+      shell> rm -fr ./_build.d
+      shell> rm -fr ./_install.d
+..
 
 
-9. Note:
+8. Note:
 
-   Run an automated test script: ::
+   Run an automated test script:
+
+.. code:: sh
 
       shell> ./process.sh
+..

@@ -15,19 +15,17 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # - Bayeux :
-find_package(Bayeux 2.1.0 REQUIRED)
-set(_incs ${Bayeux_INCLUDE_DIRS})
-set(_libs ${Bayeux_LIBRARIES})
+find_package(Bayeux 3.0 REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR} ${_incs})
+include_directories(${PROJECT_SOURCE_DIR})
 
 add_executable(ex03 ex03.cxx)
 
-target_link_libraries(ex03 ${_libs} )
+target_link_libraries(ex03 Bayeux::Bayeux)
 
 add_executable(ex03_bank_reader ex03_bank_reader.cxx)
 
-target_link_libraries(ex03_bank_reader ${_libs} )
+target_link_libraries(ex03_bank_reader Bayeux::Bayeux)
 
 install ( FILES
     ${PROJECT_BINARY_DIR}/ex03 ${PROJECT_BINARY_DIR}/ex03_bank_reader

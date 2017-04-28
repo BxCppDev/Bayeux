@@ -46,7 +46,7 @@ Quick start
 
 .. code:: sh
 
-   shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex01 /tmp/genbb_help_ex01
+   shell> cp -a $(bxquery --exampledir)/genbb_help/ex01 /tmp/genbb_help_ex01
    shell> cd /tmp/genbb_help_ex01
 ..
 
@@ -57,8 +57,8 @@ Quick start
    shell> mkdir _build.d
    shell> cd _build.d
    shell> cmake \
-	  -DCMAKE_INSTALL_PREFIX=.. \
-          -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+	  -DCMAKE_INSTALL_PREFIX=./_install.d \
+          -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
           ..
    shell> make
    shell> make install

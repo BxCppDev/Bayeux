@@ -27,7 +27,7 @@ Quick start
 
 .. code:: sh
 
-      $ cp -a $(bxquery --exampledir)/genbb_help/examples/ex04 /tmp/genbb_help_ex04
+      $ cp -a $(bxquery --exampledir)/genbb_help/ex04 /tmp/genbb_help_ex04
       $ cd /tmp/genbb_help_ex04
 ..
 
