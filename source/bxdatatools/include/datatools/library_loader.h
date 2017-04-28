@@ -47,7 +47,9 @@
 
 namespace datatools {
 //! \brief A DLL loader class
-class library_loader : boost::noncopyable {
+class library_loader
+  : boost::noncopyable
+{
  public:
   typedef datatools::detail::DynamicLoader::SymbolPointer symbol_ptr;
 

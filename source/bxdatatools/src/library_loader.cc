@@ -322,6 +322,7 @@ namespace datatools {
       } else {
         library_entry_type& le = hle.grab();
         if (le.handle != 0) {
+          //DT_LOG_DEBUG(datatools::logger::PRIO_DEBUG, "Closing library '" << le.name << "'...");
           int status = datatools::detail::DynamicLoader::CloseLibrary(le.handle);
           if (status != 1) {
             std::ostringstream message;
