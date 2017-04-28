@@ -51,6 +51,10 @@ set(${module_name}_MODULE_HEADERS
 #   bx${module_name}/_bayeux.cc
 #   @ONLY
 #   )
+configure_file(${module_source_dir}/detail/bayeux_library.cc.in
+  bx${module_name}/detail/bayeux_library.cc
+  @ONLY
+  )
 configure_file(${module_source_dir}/reloc.cc.in
   bx${module_name}/reloc.cc
   @ONLY
@@ -64,7 +68,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/bayeux.cc
   ${module_source_dir}/resource.cc
-  ${module_source_dir}/detail/bayeux_library.cc
+  # ${module_source_dir}/detail/bayeux_library.cc
+  bx${module_name}/detail/bayeux_library.cc
   bx${module_name}/reloc.cc
   bx${module_name}/${module_name}/BayeuxBinReloc.h
   bx${module_name}/BayeuxBinReloc.c
