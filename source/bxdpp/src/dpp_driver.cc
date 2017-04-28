@@ -19,7 +19,7 @@
 #include <datatools/ioutils.h>
 #include <datatools/properties.h>
 #include <datatools/utils.h>
-#include <datatools/library_loader.h>
+// #include <datatools/library_loader.h>
 
 // This project:
 #include <dpp/dpp_config.h>
@@ -251,14 +251,16 @@ namespace dpp {
       DT_LOG_NOTICE(_logging_, "No output data sink !");
     }
 
-    datatools::library_loader LL(_params_.LL_config);
+    _lib_loader_.reset(new datatools::library_loader(_params_.LL_config));
+    datatools::library_loader & LL = *_lib_loader_.get();
     BOOST_FOREACH(const std::string & dll_name, _params_.LL_dlls) {
       DT_LOG_INFORMATION(_logging_, "Loading DLL '" << dll_name << "'...");
+      DT_LOG_INFORMATION(datatools::logger::PRIO_ALWAYS, "Loading DLL '" << dll_name << "'...");
       DT_THROW_IF(LL.load(dll_name) != EXIT_SUCCESS,
                   std::runtime_error,
                   "Loading DLL '" << dll_name  << "' fails !");
     }
-
+    _lib_loader_->print(std::cerr);
     // Load properties from the configuration file:
     // DT_THROW_IF(_params_.module_names.empty() && _params_.module_manager_config_file.empty(),
     //             std::logic_error,
@@ -305,6 +307,7 @@ namespace dpp {
     // Setup the data output sink :
     if (_params_.output_files.size() > 0) {
       _sink_.reset(new dpp::output_module(_logging_));
+      _sink_->set_logging_priority(datatools::logger::PRIO_DEBUG);
       datatools::properties sink_config;
       if (_params_.preserve_existing_files) sink_config.store_flag("preserve_existing_files");
       sink_config.store("name", "data_output_sink");
@@ -396,6 +399,7 @@ namespace dpp {
     if (_module_mgr_) {
       _module_mgr_.reset();
     }
+    _lib_loader_.reset();
     _params_.reset();
     _use_slice_ = false;
     _logging_ = datatools::logger::PRIO_WARNING;
@@ -405,10 +409,12 @@ namespace dpp {
   void dpp_driver::run()
   {
     int error_code = EXIT_SUCCESS;
+    datatools::logger::priority logging = _logging_;
+    logging = datatools::logger::PRIO_DEBUG;
     DT_THROW_IF(! is_initialized(), std::logic_error, "Driver is not initialized !");
 
     // Loop on the data records from the data source file :
-    DT_LOG_DEBUG(_logging_, "Entering data record loop...");
+    DT_LOG_DEBUG(logging, "Entering data record loop...");
 
     // Instantiate the working data record object :
     datatools::things DR;
@@ -419,7 +425,7 @@ namespace dpp {
     int stored_counter = 0;
     while (true) {
       bool do_break_record_loop = false;
-      DT_LOG_DEBUG(_logging_, "Clear the working data record object...");
+      DT_LOG_DEBUG(logging, "Clear the working data record object...");
       DR.clear();
 
       // Manage the source if any (fill the data record from it) :
@@ -429,16 +435,16 @@ namespace dpp {
         }
         int input_status = _source_->process(DR);
         if (input_status & dpp::base_module::PROCESS_FATAL) {
-          DT_LOG_ERROR(_logging_, "Source of data records had a fatal error ! Break !");
+          DT_LOG_ERROR(logging, "Source of data records had a fatal error ! Break !");
           break;
         } else if (input_status & dpp::base_module::PROCESS_STOP) {
-          DT_LOG_NOTICE(_logging_, "Source of data records has sent a stop !");
+          DT_LOG_NOTICE(logging, "Source of data records has sent a stop !");
           break;
         }
       } // end of if (source)
 
       if ((_params_.print_modulo > 0) && (record_counter % _params_.print_modulo == 0)) {
-        DT_LOG_NOTICE(_logging_, "Data record #" << record_counter);
+        DT_LOG_NOTICE(logging, "Data record #" << record_counter);
       }
 
       bool in_slice = true;
@@ -468,40 +474,43 @@ namespace dpp {
       if (process_it) {
         processed_counter++;
         // Process the data record using the choosen processing module :
-        DT_LOG_DEBUG(_logging_, "Processing the data record...");
+        DT_LOG_DEBUG(logging, "Processing the data record...");
         try {
           BOOST_FOREACH(dpp::base_module * active_module_ptr, _modules_) {
             dpp::base_module & the_active_module = *active_module_ptr;
+            DT_LOG_DEBUG(logging, "Module name '" << the_active_module.get_name() << "'");
             processing_status = the_active_module.process(DR);
-            DT_LOG_DEBUG(_logging_, "Processing status : " << processing_status);
+            DT_LOG_DEBUG(logging, "Processing status : " << processing_status);
             if (processing_status & dpp::base_module::PROCESS_FATAL) {
               // A fatal error has been met, we break the processing loop :
-              DT_LOG_FATAL(_logging_, "Processing of data record #" << record_counter << " met a fatal error. Break !");
+              DT_LOG_FATAL(logging, "Processing of data record #" << record_counter << " met a fatal error. Break !");
               do_break_record_loop = true;
               error_code = EXIT_FAILURE;
             } else if (processing_status & dpp::base_module::PROCESS_ERROR) {
               // A non-fatal error has been met, we warn and
               // skip to the next data record :
-              DT_LOG_ERROR(_logging_, "Processing of data record #" << record_counter << " failed.");
+              DT_LOG_ERROR(logging, "Processing of data record #" << record_counter << " failed.");
               if (_params_.break_on_error_as_fatal) {
                 // Force termination even if error is not fatal:
                 do_break_record_loop = true;
                 error_code = EXIT_FAILURE;
-                DT_LOG_FATAL(_logging_, "Error promoted as fatal; forcing termination... Break !");
+                DT_LOG_FATAL(logging, "Error promoted as fatal; forcing termination... Break !");
               }
             } else if (processing_status & dpp::base_module::PROCESS_STOP) {
-              DT_LOG_WARNING(_logging_, "Processing of data record #" << record_counter << " stopped at some stage.");
+              DT_LOG_WARNING(logging, "Processing of data record #" << record_counter << " stopped at some stage.");
               break;
             }
             if (do_break_record_loop) {
               break;
             }
           } // BOOST_FOREACH
-        }
-        catch (std::exception & x) {
+        } catch (std::exception & x) {
+          DT_LOG_ERROR(logging, "Caught exception " << x.what());
           throw x;
         }
       } // process_it
+
+      DT_LOG_DEBUG(logging, "End of processing...");
 
       // Manage the sink if any :
       if (_sink_ && ! _sink_->is_terminated()) {
@@ -515,10 +524,19 @@ namespace dpp {
           }
         }
         if (save_it) {
+          DT_LOG_DEBUG(logging, "Save the data record...");
           // Save the processed data record in the sink :
-          int output_status = _sink_->process(DR);
-          if (output_status != dpp::base_module::PROCESS_OK) {
-            DT_LOG_ERROR(_logging_, "Error while storing data record #" << record_counter << " !");
+          try {
+            // DR.tree_dump(std::cerr, "T : ", "*** ");
+            // _lib_loader_->print(std::cerr);
+            int output_status = _sink_->process(DR);
+            DT_LOG_DEBUG(logging, "Data record has been saved.");
+            if (output_status != dpp::base_module::PROCESS_OK) {
+              DT_LOG_ERROR(logging, "Error while storing data record #" << record_counter << " !");
+            }
+          } catch (std::exception & x) {
+            DT_LOG_ERROR(logging, "Error while storing data record #" << record_counter << ": " << x.what());
+            break;
           }
           stored_counter++;
         }
@@ -526,25 +544,25 @@ namespace dpp {
 
       record_counter++;
       if ((_params_.max_records > 0) && (record_counter == _params_.max_records)) {
-        DT_LOG_DEBUG(_logging_, "Max number of data record reached !");
+        DT_LOG_DEBUG(logging, "Max number of data record reached !");
         do_break_record_loop = true;
       }
       // break check :
       if (do_break_record_loop) {
-        DT_LOG_DEBUG(_logging_, "Break the loop !");
+        DT_LOG_DEBUG(logging, "Break the loop !");
         break;
       }
     } // End of data record loop
 
-    DT_LOG_DEBUG(_logging_, "Exit the data record loop.");
-    DT_LOG_NOTICE(_logging_, "Number of records           : " << record_counter);
-    DT_LOG_NOTICE(_logging_, "Number of processed records : " << processed_counter);
+    DT_LOG_DEBUG(logging, "Exit the data record loop.");
+    DT_LOG_NOTICE(logging, "Number of records           : " << record_counter);
+    DT_LOG_NOTICE(logging, "Number of processed records : " << processed_counter);
     if (_sink_) {
-      DT_LOG_NOTICE(_logging_, "Number of saved records     : " << stored_counter);
+      DT_LOG_NOTICE(logging, "Number of saved records     : " << stored_counter);
     }
 
     if (error_code != EXIT_SUCCESS) {
-      DT_LOG_ERROR(_logging_, "Error code : " << error_code);
+      DT_LOG_ERROR(logging, "Error code : " << error_code);
     }
     return;
   }

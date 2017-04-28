@@ -37,8 +37,10 @@
 // Third party:
 // - Boost:
 #include <boost/scoped_ptr.hpp>
+#include <boost/utility.hpp>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
+#include <datatools/library_loader.h>
 
 namespace dpp {
 
@@ -88,7 +90,9 @@ namespace dpp {
   class output_module;
 
   /// \brief The data processing pipeline driver
-  class dpp_driver {
+  class dpp_driver
+    : boost::noncopyable
+  {
   public:
 
     /// Default constructor
@@ -114,12 +118,18 @@ namespace dpp {
 
   private:
 
-    bool _initialized_; ///< Initialization flag
-    datatools::logger::priority _logging_; ///< Logging priority threshold
+    // Management:
+    bool                        _initialized_; ///< Initialization flag
+    datatools::logger::priority _logging_;     ///< Logging priority threshold
+
+    // Parameters:
     dpp_driver_params _params_; ///< Parameters
+    bool _use_slice_; ///< Slice usage flag
+
+    // Working data:
+    boost::scoped_ptr<datatools::library_loader> _lib_loader_; ///< Library loader
     boost::scoped_ptr<dpp::module_manager> _module_mgr_; ///< Manager for data processing modules
     std::vector<dpp::base_module*> _modules_; ///< Array of  data processing module handles
-    bool _use_slice_; ///< Slice usage flag
     boost::scoped_ptr<dpp::output_module> _sink_; ///< Output module
     boost::scoped_ptr<dpp::input_module> _source_; ///< Input module
 
