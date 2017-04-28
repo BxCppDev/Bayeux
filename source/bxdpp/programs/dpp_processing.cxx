@@ -48,6 +48,9 @@ struct ui {
   /// Application name
   static const std::string APP_NAME;
 
+  // Return kernel initialization flags for this application:
+  static uint32_t app_kernel_init_flags();
+
 };
 
 const std::string ui::APP_NAME = "bxdpp_processing";
@@ -55,7 +58,7 @@ const std::string ui::APP_NAME = "bxdpp_processing";
 int main (int argc_, char ** argv_)
 {
   int error_code = EXIT_SUCCESS;
-  bayeux::initialize(argc_, argv_);
+  bayeux::initialize(argc_, argv_, ui::app_kernel_init_flags());
 
   datatools::logger::priority logging = datatools::logger::PRIO_WARNING;
   namespace po = boost::program_options;
@@ -110,18 +113,30 @@ int main (int argc_, char ** argv_)
       drv.reset();
     }
 
-  }
-  catch (std::exception & x) {
+  } catch (std::exception & x) {
     DT_LOG_FATAL(logging, ui::APP_NAME << ": " << x.what ());
     error_code = EXIT_FAILURE;
-  }
-  catch (...) {
+  } catch (...) {
     DT_LOG_FATAL(logging, ui::APP_NAME << ": " << "Unexpected error !");
     error_code = EXIT_FAILURE;
   }
 
   bayeux::terminate();
   return error_code;
+}
+
+uint32_t ui::app_kernel_init_flags()
+{
+  uint32_t kernel_init_flags = 0;
+  kernel_init_flags |= datatools::kernel::init_no_help;
+  kernel_init_flags |= datatools::kernel::init_no_splash;
+  // kernel_init_flags |= datatools::kernel::init_no_inhibit_libinfo;
+  // kernel_init_flags |= datatools::kernel::init_no_libinfo_logging;
+  // kernel_init_flags |= datatools::kernel::init_no_variant;
+  // kernel_init_flags |= datatools::kernel::init_no_inhibit_variant;
+  // kernel_init_flags |= datatools::kernel::init_no_locale_category;
+  // kernel_init_flags |= datatools::kernel::init_no_inhibit_qt_gui;
+  return kernel_init_flags;
 }
 
 void ui::print_usage(std::ostream & out_)
@@ -139,7 +154,7 @@ void ui::print_usage(std::ostream & out_)
   {
     boost::program_options::options_description kopts("datatools' kernel options");
     datatools::kernel::param_type kparams;
-    datatools::kernel::build_opt_desc(kopts, kparams);
+    datatools::kernel::build_opt_desc(kopts, kparams, ui::app_kernel_init_flags());
     datatools::kernel::print_opt_desc(kopts, out_);
   }
   out_ << std::endl;
