@@ -37,32 +37,47 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-     $ cp -a $(bxquery --exampledir)/materials/examples/manager /tmp/materials_ex_manager
-     $ cd /tmp/materials_ex_manager
+.. code:: sh
 
-3. Build and install the example::
+   $ cp -a $(bxquery --exampledir)/materials/manager /tmp/materials_ex_manager
+   $ cd /tmp/materials_ex_manager
+..
 
-     $ mkdir _build.d
-     $ cd _build.d
-     $ cmake \
-       -DCMAKE_INSTALL_PREFIX=.. \
-       -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
-       ..
-     $ make
-     $ make install
+3. Build and install the example:
 
-4. Inspect the material manager configuration::
+.. code:: sh
 
-     $ cd ..
-     $ bxmaterials_inspector --manager-config "config/manager.conf" --with-decoration -M
+   $ mkdir _build.d
+   $ cd _build.d
+   $ cmake \
+	  -DCMAKE_INSTALL_PREFIX=../_install.d \
+	  -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
+	  ..
+   $ make
+   $ make install
+..
 
-5. Run the example program::
+4. Inspect the material manager configuration:
 
-     $ ./ex_manager
+.. code:: sh
 
-6. Clean::
+   $ cd ..
+   $ bxmaterials_inspector --manager-config "config/manager.conf" --with-decoration -M
+..
 
-     $ rm -f ex_manager
-     $ rm -fr _build.d
+5. Run the example program:
+
+.. code:: sh
+
+   $ ./_install.d/ex_manager
+..
+
+6. Clean:
+
+.. code:: sh
+
+   $ rm -fr _build.d
+   $ rm -fr _install.d
+..
