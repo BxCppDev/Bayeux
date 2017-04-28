@@ -390,17 +390,17 @@ namespace datatools {
                 );
     }
 
-    // No library info (deprecated):
-    if (parse_inhibit_libquery) {
-      easy_init("datatools::nolibinfo",
-                po::value<bool>(&params_.inhibit_library_query)
-                ->zero_tokens()
-                ->default_value(false),
-                "Inhibit the use of the library/component query service (deprecated).\n"
-                "Example :\n"
-                "  --datatools::nolibinfo"
-                );
-    }
+    // // No library info (deprecated):
+    // if (parse_inhibit_libquery) {
+    //   easy_init("datatools::nolibinfo",
+    //             po::value<bool>(&params_.inhibit_library_query)
+    //             ->zero_tokens()
+    //             ->default_value(false),
+    //             "Inhibit the use of the library/component query service (deprecated).\n"
+    //             "Example :\n"
+    //             "  --datatools::nolibinfo"
+    //             );
+    // }
 
     // Library query logging:
     if (parse_libquery_logging) {
@@ -415,17 +415,17 @@ namespace datatools {
     }
 
 
-    // Library info logging (deprecated):
-    if (parse_libquery_logging) {
-      easy_init("datatools::libinfo::logging",
-                po::value<std::string>(&params_.library_query_logging_label)
-                ->value_name("level")
-                ->default_value("warning"),
-                "Set the datatools kernel's library info logging priority threshold (deprecated).\n"
-                "Example :\n"
-                "  --datatools::libinfo::logging=\"trace\""
-                );
-    }
+    // // Library info logging (deprecated):
+    // if (parse_libquery_logging) {
+    //   easy_init("datatools::libinfo::logging",
+    //             po::value<std::string>(&params_.library_query_logging_label)
+    //             ->value_name("level")
+    //             ->default_value("warning"),
+    //             "Set the datatools kernel's library info logging priority threshold (deprecated).\n"
+    //             "Example :\n"
+    //             "  --datatools::libinfo::logging=\"trace\""
+    //             );
+    // }
 
 #if DATATOOLS_WITH_QT_GUI == 1
     // Inhibit Qt GUI:
