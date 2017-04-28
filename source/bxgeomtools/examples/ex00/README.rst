@@ -15,7 +15,6 @@ Introduction
    to visualize the setup and generate a GDML file usable by Geant4
    and/or browsable through Gnuplot or ROOT.
 
-
  * Configuration files :
 
    * ``config/geomtools_ex00/geometry/0.1/`` : the main configuration
@@ -24,12 +23,15 @@ Introduction
      top-level configuration file used by a geometry manager.
 
      Note: this directory has been originally created using the
-     ``bxgeomtools_mkskelcfg`` script: ::
+     ``bxgeomtools_mkskelcfg`` script:
 
-      $ bxgeomtools_mkskelcfg \
-          --setup-label "geomtools_ex00" \
-          --setup-version "0.1" \
-          --config-base-dir "config"
+.. code:: sh
+
+   $ bxgeomtools_mkskelcfg \
+	  --setup-label "geomtools_ex00" \
+	  --setup-version "0.1" \
+	  --config-base-dir "config"
+..
 
      Then the resulting base configuration directory has been filled
      with other configuration files.
@@ -39,16 +41,22 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux/geomtools library
-2. Make a copy of the example directory and move to this duplicated directory::
+2. Make a copy of the example directory and move to this duplicated directory:
 
-      $ cp -a $(bxquery --datadir)/examples/geomtools/ex00 /tmp/geomtools_ex00
-      $ cd /tmp/geomtools_ex00
+.. code:: sh
 
-3. Run the ``bxgeomtools_inspector`` ::
+   $ cp -a $(bxquery --exampledir)/geomtools/ex00 /tmp/geomtools_ex00
+   $ cd /tmp/geomtools_ex00
+..
 
-      $ export SETUP_CONFIG_DIR=$(pwd)/config
-      $ bxgeomtools_inspector \
-         --manager-config ${SETUP_CONFIG_DIR}/geomtools_ex00/geometry/0.1/manager.conf
+3. Run the ``bxgeomtools_inspector`` :
+
+.. code:: sh
+
+   $ export SETUP_CONFIG_DIR=$(pwd)/config
+   $ bxgeomtools_inspector \
+	  --manager-config ${SETUP_CONFIG_DIR}/geomtools_ex00/geometry/0.1/manager.conf
+..
 
    where the ``SETUP_CONFIG_DIR`` environment variable represents the base source directory
    of the ``ex00`` example.
@@ -57,6 +65,10 @@ Documentation
 =============
 
 You can generate documentation HTML pages about the geomtools primitive classes
-using the following command: ::
+using the following command:
 
-      $ bxocd_make_doc -n geomtools -B
+.. code:: sh
+
+   $ bxocd_make_doc --namespace geomtools --project-name Bayeux
+   $ xdg-open __OCD/index.html &
+..

@@ -70,30 +70,42 @@ Quick start
 1. Build, install and setup the geomtools library
 2. Make a copy of the example directory::
 
+.. code:: sh
+
       shell> cp -a $(bxquery --exampledir)/geomtools/examples/ex01 /tmp/geomtools_ex01
       shell> cd /tmp/geomtools_ex01
+..
 
 3. Build and install the example::
+
+.. code:: sh
 
       shell> export CONFIG_DIR=$(pwd)/config
       shell> mkdir _build.d
       shell> cd _build.d
       shell> cmake \
         -DCMAKE_INSTALL_PREFIX=../_install.d \
-        -DBayeux_DIR=$(bxquery --prefix) \
+        -DBayeux_DIR=$(bxquery --cmakedir) \
         ..
       shell> make
       shell> make install
       shell> cd ..
+..
 
 4. Run the example::
 
+.. code:: sh
+
       shell> ./_install.d/ex01
+..
 
 5. Run the ``bxgeomtools_inspector`` ::
 
+.. code:: sh
+
       shell> bxgeomtools_inspector \
                --manager-config "${CONFIG_DIR}/manager.conf" --visu-view-3d
+..
 
    It displays views of the setup using the ``geomtools`` Gnuplot viewer.
 
@@ -113,6 +125,8 @@ Quick start
 
      * ROOT display of the setup via the ``geomtools-ex01.gdml`` GDML file ::
 
+.. code:: sh
+
          shell> root
          root [0] TGeoManager * geo = new TGeoManager("geo","geomtools examples/ex01 virtual setup");
          root [1] TGeoManager * g2 = geo->Import("geomtools-ex01-1.0.gdml");
@@ -120,6 +134,7 @@ Quick start
          root [3] g2->SetVisLevel(100);
          root [4] g2->GetMasterVolume()->Draw("");
 	 root [5] .q
+..
 
       It displays views of the setup using the ROOT viewer.
 
@@ -131,6 +146,9 @@ Quick start
 
 7. Clean::
 
-      shell> rm ex01
+.. code:: sh
+
       shell> rm geomtools-ex01.gdml
       shell> rm -fr _build.d
+      shell> rm -fr _install.d
+..
