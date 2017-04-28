@@ -61,6 +61,9 @@ EOF
     my_exit 0
 fi
 
+install_dir=$(pwd)/_install.d
+test -d ${install_dir} && rm -fr ${install_dir}
+
 build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
@@ -76,8 +79,8 @@ cd ${build_dir}
 
 echo "NOTICE: Using Bayeux..." >&2
 cmake \
-    -DCMAKE_INSTALL_PREFIX=.. \
-    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    -DCMAKE_INSTALL_PREFIX=${install_dir} \
+    -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: Configuration failed !" 1>&2
@@ -120,8 +123,8 @@ if [ $? -ne 0 ]; then
     my_exit 1
 fi
 
-echo "Run the example program : " 1>&2
-./ex01 > ex01_vertices.data
+echo "Run the example program ex01 : " 1>&2
+${install_dir}/ex01 > ex01_vertices.data
 if [ $? -ne 0 ]; then
     echo "ERROR: Example program ex01 failed !" 1>&2
     my_exit 1
@@ -249,7 +252,6 @@ fi
 
 if [ $clean -eq 1 ]; then
     echo "NOTICE: Clean..." 1>&2
-    rm -f ./ex01
     rm -f ./ex01_vertices.data
     rm -f ./genvtx_ex01_vertices.txt
     rm -f ./genvtx_ex01_vertices_1.txt
@@ -258,6 +260,7 @@ if [ $clean -eq 1 ]; then
     rm -f ./genvtx_ex01_vertices_4.txt
     rm -f ./genvtx-example-ex01.gdml
     rm -fr ${build_dir}
+    rm -fr ${install_dir}
     find . -name "*~" -exec rm -f \{\} \;
 fi
 
