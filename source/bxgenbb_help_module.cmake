@@ -24,7 +24,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(genbb_help_VERSION_MAJOR 6)
-set(genbb_help_VERSION_MINOR 1)
+set(genbb_help_VERSION_MINOR 2)
 set(genbb_help_VERSION_PATCH 0)
 set(genbb_help_VERSION "${genbb_help_VERSION_MAJOR}.${genbb_help_VERSION_MINOR}.${genbb_help_VERSION_PATCH}")
 

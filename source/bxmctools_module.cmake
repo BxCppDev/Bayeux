@@ -26,7 +26,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(mctools_VERSION_MAJOR 2)
-set(mctools_VERSION_MINOR 1)
+set(mctools_VERSION_MINOR 2)
 set(mctools_VERSION_PATCH 0)
 set(mctools_VERSION "${mctools_VERSION_MAJOR}.${mctools_VERSION_MINOR}.${mctools_VERSION_PATCH}")
 
