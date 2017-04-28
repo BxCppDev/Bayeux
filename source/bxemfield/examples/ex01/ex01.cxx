@@ -69,7 +69,7 @@ int main(int argc_, char ** argv_)
 
     // This is the EM fields manager :
     emfield::electromagnetic_field_manager EMFmgr;
-    EMFmgr.set_debug(debug);
+    EMFmgr.set_logging_priority(datatools::logger::PRIO_DEBUG);
     std::string EMFmgrConfigFile = "${CONFIG_DIR}/fields/manager.conf";
     datatools::properties EMFmgrConfig;
     datatools::fetch_path_with_env(EMFmgrConfigFile);
