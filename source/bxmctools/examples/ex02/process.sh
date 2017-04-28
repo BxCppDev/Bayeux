@@ -31,6 +31,9 @@ done
 
 opwd=$(pwd)
 
+install_dir=$(pwd)/_install.d
+test -d ${install_dir} && rm -fr ${install_dir}
+
 build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
@@ -44,8 +47,8 @@ cd ${build_dir}
 
 echo -e "\nBuild the example programs..." 1>&2
 cmake \
-    -DCMAKE_INSTALL_PREFIX=.. \
-    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    -DCMAKE_INSTALL_PREFIX=${install_dir} \
+    -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: cmake failed !" 1>&2
@@ -173,7 +176,7 @@ if [ $do_simulation -eq 1 ]; then
     export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
-    ./ex02_read_plain_simdata \
+    ${install_dir}/ex02_read_plain_simdata \
 	--interactive  \
 	${visu_opt} \
 	--logging-priority "notice" \
@@ -208,7 +211,7 @@ if [ $do_simulation -eq 1 ]; then
 	exit 1
     fi
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
-    ./ex02_read_plain_simdata \
+    ${install_dir}/ex02_read_plain_simdata \
 	--interactive \
 	${visu_opt} \
 	--logging-priority "notice" \
@@ -221,9 +224,7 @@ if [ $do_simulation -eq 1 ]; then
 fi
 
 if [ ${do_clean} -eq 1 ]; then
-    rm -f ex02_read_plain_simdata
     rm -f geomtools_inspector.C
-    rm -fr ./lib/
     rm -f mctools_ex02-1.0.gdml
     rm -f mctools_ex02_output.data.gz
     rm -f mctools_ex02_output.xml
@@ -234,6 +235,7 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f prng_seeds.save
     rm -f prng_states.save
     rm -fr ${build_dir}
+    rm -fr ${install_dir}
     find . -name "*~" -exec rm -f \{\} \;
 fi
 

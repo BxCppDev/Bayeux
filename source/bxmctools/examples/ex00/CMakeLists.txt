@@ -24,8 +24,6 @@ include_directories(${PROJECT_SOURCE_DIR})
 # message(STATUS "Bayeux_COMPILE_FEATURES = '${Bayeux_INTERFACE_COMPILE_FEATURES}'")
 # message(STATUS "Bayeux_INCLUDE_DIRS     = '${Bayeux_INCLUDE_DIRS}'")
 # message(STATUS "Bayeux_LINK_LIBRARIES   = '${Bayeux_LINK_LIBRARIES}'")
-# include_directories(${Bayeux_INCLUDE_DIRS})
-# add_definitions(-std=c++11)
 
 ###########
 add_library(mctools_ex00 SHARED ex00_inspector.h ex00_inspector.cc)

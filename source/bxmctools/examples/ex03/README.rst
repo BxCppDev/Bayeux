@@ -42,6 +42,7 @@ the resource files base directory of the project:
 
    $ cd {this example base directory}
    $ export HPGE_RESOURCES_DIR="$(pwd)/resources"
+..
 
 Create a working directory to store Monte-Carlo files (data and management):
 
@@ -51,6 +52,7 @@ Create a working directory to store Monte-Carlo files (data and management):
    $ mkdir -p ${HPGE_WORK_DIR}
    $ mkdir -p ${HPGE_WORK_DIR}/data
    $ mkdir -p ${HPGE_WORK_DIR}/management
+..
 
 Geometry
 ========
@@ -62,6 +64,7 @@ Display and inspect the geometry:
    $ bxgeomtools_inspector \
        --manager-config "${HPGE_RESOURCES_DIR}/config/HPGe/geometry/0.1/manager.conf" \
        --with-visu --visu-view-3d
+..
 
 .. figure:: ./images/geometry/world_3d.png
    :alt: The 3D view of the setup (file ``images/geometry/world_3d.png``)
@@ -101,6 +104,7 @@ List the available vertex generators:
        --geometry-manager "${HPGE_RESOURCES_DIR}/config/HPGe/geometry/0.1/manager.conf" \
        --vertex-generator-manager "${HPGE_RESOURCES_DIR}/config/HPGe/simulation/vertexes/0.1/manager.conf" \
        --list
+..
 
 Generate and display  some randomize vertexes from the  bulk volume of
 the measured sample:
@@ -116,6 +120,7 @@ the measured sample:
        --output-file "/tmp/vertices.data" \
        --visu \
        --visu-spot-zoom 0.25
+..
 
 .. figure:: ./images/vertexes/sample_bulk.png
    :scale: 100%
@@ -134,6 +139,7 @@ List the available vertex generators:
    $ bxgenbb_inspector \
 	  --configuration "${HPGE_RESOURCES_DIR}/config/HPGe/simulation/primaries/0.1/manager.conf" \
 	  --action "list"
+..
 
 Generate some randomize primary decay events and build histograms:
 
@@ -150,6 +156,7 @@ Generate some randomize primary decay events and build histograms:
 	  --prompt \
 	  --title-prefix "Co60" \
 	  --output-file "${HPGE_WORK_DIR}/data/histos_Co60.root"
+..
 
 Open a Root interactive session:
 
@@ -159,6 +166,7 @@ Open a Root interactive session:
    root [0]
    Attaching file histos_Co60.root as _file0...
    root [1] TBrowser b;
+..
 
 and browse some histograms of interest.
 
@@ -172,6 +180,7 @@ and browse some histograms of interest.
 .. code:: sh
 
    root [2] .q
+..
 
 Run a Geant4 simulation
 =======================
@@ -196,6 +205,7 @@ Run an interactive simulation:
 	  --output-prng-states-file "${HPGE_WORK_DIR}/management/mc_g4_production.states" \
 	  --output-data-file "${HPGE_WORK_DIR}/data/mc_g4_sample.xml"
    Idle>
+..
 
 .. figure:: ./images/simulation/geant4_geometry.png
    :scale: 75%
@@ -210,6 +220,7 @@ Run 5 decays:
 
    Idle> /run/beamOn 5
    Idle> exit
+..
 
 .. figure:: ./images/simulation/geant4_event_1.png
    :scale: 75%
@@ -236,6 +247,7 @@ Check the output files:
    `-- management
        |-- mc_g4_production.seeds
        `-- mc_g4_production.states
+..
 
 Run a batch simulation:
 
@@ -257,6 +269,7 @@ Run a batch simulation:
 	  --output-prng-states-file "${HPGE_WORK_DIR}/management/mc_g4_production.states" \
 	  --output-data-file "${HPGE_WORK_DIR}/data/mc_g4_sample.data.gz" \
 	  > ${HPGE_WORK_DIR}/management/mc_g4_production.log
+..
 
 Note:
 
@@ -277,6 +290,7 @@ Prepare a build directory:
    $ export HPGE_BUILD_DIR=$(pwd)/_build.d
    $ export HPGE_INSTALL_DIR=$(pwd)/_install.d
    $ mkdir ${HPGE_BUILD_DIR}
+..
 
 Compile the analysis program:
 
@@ -285,7 +299,7 @@ Compile the analysis program:
    $ cd ${HPGE_BUILD_DIR}
    $ cmake \
 	  -DCMAKE_INSTALL_PREFIX=${HPGE_INSTALL_DIR} \
-	  -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+	  -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
 	  ..
    $ make
    $ make install
@@ -295,6 +309,7 @@ Compile the analysis program:
    |   `-- hpge_analysis
    `-- lib
        `-- libmctools_hpge.so
+..
 
 
 Run the analysis program

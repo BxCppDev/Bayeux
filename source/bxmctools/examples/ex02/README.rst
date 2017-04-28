@@ -140,8 +140,8 @@ Quick start
       $ mkdir _build.d
       $ cd _build.d
       $ cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-	-DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+        -DCMAKE_INSTALL_PREFIX=../_install.d \
+        -DBayeux_DIR=$(bxquery --cmakedir) \
         ..
       $ make
       $ make install
@@ -384,7 +384,7 @@ Quick start
 
          $ ls -l mctools_ex02_output.xml
          $ export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
-         $ ./ex02_read_plain_simdata \
+         $ ./_install.d/ex02_read_plain_simdata \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -411,7 +411,7 @@ Quick start
        Then browse the output plain simulated data file ::
 
          $ ls -l mctools_ex02_electron_1MeV_source_bulk.data.gz
-         $ ./ex02_read_plain_simdata \
+         $ ./_install.d/ex02_read_plain_simdata \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -441,7 +441,7 @@ Quick start
        simulated data within ``datatools::things`` object records::
 
          $ ls -l mctools_ex02_electron_1MeV_cone@source_bulk.dpp.brio
-         $ ./ex02_read_pipeline_simdata \
+         $ ./_install.d/ex02_read_pipeline_simdata \
                  --logging-priority "notice" \
                  --interactive \
                  --with-visualization \
@@ -502,11 +502,8 @@ Quick start
 
 8. Clean::
 
-      $ rm ex02_read_plain_simdata
-      $ rm ex02_read_pipeline_simdata
       $ rm geomtools_inspector.C
       $ rm histos_electron_1MeV_gaussian_100keV.root
-      $ rm -fr lib/
       $ rm mctools_ex02-1.0.gdml
       $ rm mctools_ex02_electron_1MeV_cone@source_bulk.dpp.brio
       $ rm mctools_ex02_electron_1MeV_source_bulk.data.gz
@@ -520,3 +517,4 @@ Quick start
       $ rm prng_states.save
       $ rm prng_states.save.~backup~
       $ rm -fr _build.d/
+      $ rm -fr _install.d/

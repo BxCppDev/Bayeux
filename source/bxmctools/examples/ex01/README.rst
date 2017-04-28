@@ -155,8 +155,8 @@ Quick start
       $ mkdir _build.d
       $ cd _build.d
       $ cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -Dmctools_DIR=$(mctools-config --prefix) \
+        -DCMAKE_INSTALL_PREFIX=../_install.d \
+        -DBayeux_DIR=$(bxquery --cmakedir) \
         ..
       $ make
       $ make install

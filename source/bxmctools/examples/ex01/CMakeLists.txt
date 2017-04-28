@@ -14,25 +14,22 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "in-source build detected")
 endif()
 
-# - Boost
-set(Boost_COMPONENTS program_options)
-find_package(Boost 1.47 QUIET COMPONENTS ${Boost_COMPONENTS} NO_MODULE)
-find_package(Boost 1.47 REQUIRED ${Boost_COMPONENTS})
-
 # - Bayeux :
 find_package(Bayeux 3.0.0 REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR})
-get_target_property(Bayeux_COMPILE_FEATURES Bayeux::Bayeux INTERFACE_COMPILE_FEATURES)
-get_target_property(Bayeux_INCLUDE_DIRS Bayeux::Bayeux INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(Bayeux_LINK_LIBRARIES Bayeux::Bayeux INTERFACE_LINK_LIBRARIES)
-message(STATUS "Bayeux_COMPILE_FEATURES = '${Bayeux_INTERFACE_COMPILE_FEATURES}'")
-message(STATUS "Bayeux_INCLUDE_DIRS     = '${Bayeux_INCLUDE_DIRS}'")
-message(STATUS "Bayeux_LINK_LIBRARIES   = '${Bayeux_LINK_LIBRARIES}'")
-include_directories(${Bayeux_INCLUDE_DIRS})
-add_definitions(-std=c++11)
+# get_target_property(Bayeux_COMPILE_FEATURES Bayeux::Bayeux INTERFACE_COMPILE_FEATURES)
+# get_target_property(Bayeux_INCLUDE_DIRS Bayeux::Bayeux INTERFACE_INCLUDE_DIRECTORIES)
+# get_target_property(Bayeux_LINK_LIBRARIES Bayeux::Bayeux INTERFACE_LINK_LIBRARIES)
+# message(STATUS "Bayeux_COMPILE_FEATURES = '${Bayeux_INTERFACE_COMPILE_FEATURES}'")
+# message(STATUS "Bayeux_INCLUDE_DIRS     = '${Bayeux_INCLUDE_DIRS}'")
+# message(STATUS "Bayeux_LINK_LIBRARIES   = '${Bayeux_LINK_LIBRARIES}'")
 
 add_library(mctools_ex01 SHARED ex01_inspector.h ex01_inspector.cc)
+target_link_libraries(mctools_ex01
+  PUBLIC
+  Bayeux::Bayeux
+  )
 
 install( FILES
          ${PROJECT_BINARY_DIR}/libmctools_ex01${CMAKE_SHARED_LIBRARY_SUFFIX}
@@ -48,7 +45,6 @@ target_link_libraries(ex01_read_plain_simdata
   mctools_ex01
   Bayeux::Bayeux
   Bayeux::Bayeux_mctools_geant4
-  Boost::program_options
   )
 
 install ( FILES
@@ -65,7 +61,6 @@ target_link_libraries(ex01_read_pipeline_simdata
   mctools_ex01
   Bayeux::Bayeux
   Bayeux::Bayeux_mctools_geant4
-  Boost::program_options
   )
 
 install ( FILES

@@ -21,6 +21,9 @@ done
 
 opwd=$(pwd)
 
+install_dir=$(pwd)/_install.d
+test -d ${install_dir} && rm -fr ${install_dir}
+
 build_dir=$(pwd)/_build.d
 test -d ${build_dir} && rm -fr ${build_dir}
 
@@ -31,8 +34,8 @@ cd ${build_dir}
 
 echo -e "\nBuild the example programs..." 1>&2
 cmake \
-    -DCMAKE_INSTALL_PREFIX=.. \
-    -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+    -DCMAKE_INSTALL_PREFIX=${install_dir} \
+    -DBayeux_DIR:PATH=$(bxquery --cmakedir) \
     ..
 if [ $? -ne 0 ]; then
     echo "ERROR: cmake failed !" 1>&2
@@ -167,10 +170,10 @@ if [ $do_simulation -eq 1 ]; then
 
 
     echo -e "\nSet LD_LIBRARY_PATH..." 1>&2
-    export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
+    export LD_LIBRARY_PATH=${install_dir}/lib:${LD_LIBRARY_PATH}
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
-    ./ex01_read_plain_simdata \
+    ${install_dir}/ex01_read_plain_simdata \
 	--interactive  \
 	--with-visualization \
 	--logging-priority "notice" \
@@ -202,7 +205,7 @@ if [ $do_simulation -eq 1 ]; then
     fi
 
     echo -e "\nBrowse the output plain simulated data file..." 1>&2
-    ./ex01_read_plain_simdata \
+    ${install_dir}/ex01_read_plain_simdata \
 	--interactive \
 	--with-visualization \
 	--logging-priority "notice" \
@@ -232,8 +235,6 @@ fi
 
 if [ ${do_clean} -eq 1 ]; then
 
-    rm -f ex01_read_pipeline_simdata
-    rm -f ex01_read_plain_simdata
     rm -f geomtools_inspector.C
     rm -f histos_Co60.root
     rm -f mctools_ex01-1.0.gdml
@@ -246,7 +247,7 @@ if [ ${do_clean} -eq 1 ]; then
     rm -f mctools_ex01_vertices_vessel_inner_surface.vg.txt
     rm -f prng_seeds.save*
     rm -f prng_states.save*
-    rm -fr lib
+    rm -fr ${install_dir}
     rm -fr ${build_dir}
     find . -name "*~" -exec rm -f \{\} \;
 fi
