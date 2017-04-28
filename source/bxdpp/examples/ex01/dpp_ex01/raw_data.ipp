@@ -4,14 +4,13 @@
 #ifndef DPP_EX01_RAW_DATA_IPP_
 #define DPP_EX01_RAW_DATA_IPP_ 1
 
+// Ourselves:
 #include <dpp_ex01/raw_data.h>
 
 // Support for inheritance from an serializable class :
 #include <boost/serialization/base_object.hpp>
-
 // Support for XML 'key-value' based archives:
 #include <boost/serialization/nvp.hpp>
-
 // Support for std::vector serialization:
 #include <boost/serialization/vector.hpp>
 

@@ -125,11 +125,14 @@ namespace dpp_ex01 {
                 std::logic_error,
                 "Raw generator module '" << get_name() << "' is not initialized !");
 
+    // datatools::properties & prop = a_data_record.add<datatools::properties>("Prop");
+    // prop.store("test", "toto");
+
     // Return status of the processing
     dpp::base_module::process_status status = dpp::base_module::PROCESS_OK;
 
     // Pointer to the embeded ``dpp_ex01::raw_data`` instance :
-    raw_data * RD = 0;
+    raw_data * RD = nullptr;
     if (! a_data_record.has(_raw_data_bank_label_)) {
       // Add a new bank of type ``dpp_ex01::raw_data`` with requested name :
       RD = &a_data_record.add<dpp_ex01::raw_data>(_raw_data_bank_label_);
@@ -159,10 +162,16 @@ namespace dpp_ex01 {
       h.grab_auxiliaries().store_flag("raw");
     }
 
+    RD->grab_auxiliaries().store("library", "bayeux");
+    RD->grab_auxiliaries().store("module",  "bxdpp");
+    RD->grab_auxiliaries().store("example", "ex01");
+
     // Check some condition and store a special flag :
     if (energy_sum > 15 * CLHEP::MeV) {
       RD->grab_auxiliaries().store_flag("high_energy");
     }
+
+    // std::cerr << "DEVEL: Done" << std::endl;
 
     return status;
   }

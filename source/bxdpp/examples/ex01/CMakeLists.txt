@@ -15,65 +15,42 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 endif()
 
 # - Bayeux :
-find_package(Bayeux 2.1.0 REQUIRED)
-set(_incs ${Bayeux_INCLUDE_DIRS})
-set(_libs ${Bayeux_LIBRARIES})
+find_package(Bayeux 3.0.0 REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR} ${_incs})
+include_directories(${PROJECT_SOURCE_DIR})
 
 add_library(dpp_ex01 SHARED
-                     dpp_ex01/hit.h
-                     dpp_ex01/hit.ipp
-                     dpp_ex01/raw_data.h
-                     dpp_ex01/raw_data.ipp
-                     dpp_ex01/raw_generator_module.h
-                     dpp_ex01/the_serializable.h
-                     dpp_ex01/the_serializable.ipp
-                     src/hit.cc
-                     src/raw_data.cc
-                     src/raw_generator_module.cc
-           )
+  dpp_ex01/hit.h
+  dpp_ex01/hit.ipp
+  dpp_ex01/raw_data.h
+  dpp_ex01/raw_data.ipp
+  dpp_ex01/raw_generator_module.h
+  src/hit.cc
+  src/raw_data.cc
+  src/raw_generator_module.cc
+  src/the_serializable.cc
+  )
 
-target_link_libraries(dpp_ex01 ${_libs} ${CMAKE_DL_LIBS})
-
-install( FILES
-         ${PROJECT_BINARY_DIR}/libdpp_ex01${CMAKE_SHARED_LIBRARY_SUFFIX}
-         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-         PERMISSIONS OWNER_READ OWNER_EXECUTE
-         GROUP_READ GROUP_EXECUTE
-         WORLD_READ WORLD_EXECUTE
-       )
-
-add_library(dpp_ex01_bio SHARED
-                         dpp_ex01/hit.h
-                         dpp_ex01/hit.ipp
-                         dpp_ex01/raw_data.h
-                         dpp_ex01/raw_data.ipp
-                         dpp_ex01/the_serializable.ipp
-                         dpp_ex01/the_serializable.h
-                         src/the_serializable.cc
-           )
-
-target_link_libraries(dpp_ex01_bio dpp_ex01)
+target_link_libraries(dpp_ex01 Bayeux::Bayeux)
 
 install( FILES
-         ${PROJECT_BINARY_DIR}/libdpp_ex01_bio${CMAKE_SHARED_LIBRARY_SUFFIX}
-         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-         PERMISSIONS OWNER_READ OWNER_EXECUTE
-         GROUP_READ GROUP_EXECUTE
-         WORLD_READ WORLD_EXECUTE
-       )
+  ${PROJECT_BINARY_DIR}/libdpp_ex01${CMAKE_SHARED_LIBRARY_SUFFIX}
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+  PERMISSIONS OWNER_READ OWNER_EXECUTE
+  GROUP_READ GROUP_EXECUTE
+  WORLD_READ WORLD_EXECUTE
+  )
 
 add_executable(test_dpp_ex01 testing/test_dpp_ex01.cxx )
 
-target_link_libraries(test_dpp_ex01 dpp_ex01_bio)
+target_link_libraries(test_dpp_ex01 dpp_ex01 )
 
 install( FILES
-         ${PROJECT_BINARY_DIR}/test_dpp_ex01
-         DESTINATION ${CMAKE_INSTALL_PREFIX}
-         PERMISSIONS OWNER_READ OWNER_EXECUTE
-         GROUP_READ GROUP_EXECUTE
-         WORLD_READ WORLD_EXECUTE
-       )
+  ${PROJECT_BINARY_DIR}/test_dpp_ex01
+  DESTINATION ${CMAKE_INSTALL_PREFIX}
+  PERMISSIONS OWNER_READ OWNER_EXECUTE
+  GROUP_READ GROUP_EXECUTE
+  WORLD_READ WORLD_EXECUTE
+  )
 
 # end of CMakeLists.txt

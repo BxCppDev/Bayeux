@@ -12,6 +12,7 @@
 #include <boost/cstdint.hpp>
 // - Bayeux/datatools:
 #include <datatools/i_serializable.h>
+#include <datatools/i_tree_dump.h>
 #include <datatools/properties.h>
 
 // This project:
@@ -20,7 +21,9 @@
 namespace dpp_ex01 {
 
   /// \brief A simple serializable class representing a raw_data in a detector
-  class raw_data : public datatools::i_serializable
+  class raw_data
+    : public datatools::i_serializable
+    , public datatools::i_tree_dumpable
   {
   public:
 
@@ -44,6 +47,12 @@ namespace dpp_ex01 {
 
     /// Smart print
     void dump(std::ostream &, const std::string & title_) const;
+
+    /// Smart print
+    virtual void tree_dump(std::ostream & out_ = std::clog,
+                           const std::string & title_  = "",
+                           const std::string & indent_ = "",
+                           bool inherit_ = false) const;
 
   private:
 
