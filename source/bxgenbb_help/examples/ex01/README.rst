@@ -42,86 +42,116 @@ Quick start
 ===========
 
 1. Build, install and setup the Bayeux library
-2. Make a copy of the example directory::
+2. Make a copy of the example directory:
 
-      shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex01 /tmp/genbb_help_ex01
-      shell> cd /tmp/genbb_help_ex01
+.. code:: sh
+
+   shell> cp -a $(bxquery --exampledir)/genbb_help/examples/ex01 /tmp/genbb_help_ex01
+   shell> cd /tmp/genbb_help_ex01
+..
 
 3. Build and install the example::
 
-      shell> mkdir _build.d
-      shell> cd _build.d
-      shell> cmake \
-        -DCMAKE_INSTALL_PREFIX=.. \
-        -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
-        ..
-      shell> make
-      shell> make install
-      shell> cd ..
+.. code:: sh
+
+   shell> mkdir _build.d
+   shell> cd _build.d
+   shell> cmake \
+	  -DCMAKE_INSTALL_PREFIX=.. \
+          -DCMAKE_FIND_ROOT_PATH:PATH=$(bxquery --prefix) \
+          ..
+   shell> make
+   shell> make install
+   shell> cd ..
+..
 
 4. Run the example::
 
-      shell> ./ex01
+.. code:: sh
+
+   shell> ./ex01
+..
 
 5. Run the ``bxgenbb_inspector``
 
      Print the list of available generators: ::
 
-      shell> bxgenbb_inspector \
-               --configuration config/manager.conf \
-               --action list
+.. code:: sh
+
+   shell> bxgenbb_inspector \
+	  --configuration config/manager.conf \
+          --action list
+..
 
      Generate 10000 Co60 decay events, build and save histograms
      in a ROOT file: ::
 
-      shell> bxgenbb_inspector \
-               --configuration config/manager.conf \
-               --action shoot \
-               --generator "Co60" \
-               --prng-seed 314159 \
-               --number-of-events 10000 \
-               --modulo 1000 \
-               --prompt \
-               --delayed \
-               --prompt-time-limit 1 \
-               --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf" \
-               --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
-               --output-file "histos_Co60.root"
+.. code:: sh
+
+   shell> bxgenbb_inspector \
+	  --configuration config/manager.conf \
+	  --action shoot \
+          --generator "Co60" \
+          --prng-seed 314159 \
+          --number-of-events 10000 \
+          --modulo 1000 \
+          --prompt \
+          --delayed \
+          --prompt-time-limit 1 \
+          --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_prompt.conf" \
+          --histo-def "@genbb_help:inspector/config/le_nuphy-1.0/inspector_histos_delayed.conf" \
+          --output-file "histos_Co60.root"
+..
 
      Generate 10000 Co60 decay events, save them in a data file using
      the Boost serialization portable binary format: ::
 
-      shell> bxgenbb_inspector \
-               --configuration config/manager.conf \
-               --action shoot \
-               --generator "Co60" \
-               --prng-seed 314159 \
-               --number-of-events 100 \
-               --modulo 1000 \
-               --output-mode "plain" \
-               --output-file "Co60_10000.xml"
+.. code:: sh
+
+   shell> bxgenbb_inspector \
+	  --configuration config/manager.conf \
+          --action shoot \
+          --generator "Co60" \
+          --prng-seed 314159 \
+          --number-of-events 100 \
+          --modulo 1000 \
+	  --output-mode "plain" \
+          --output-file "Co60_10000.xml"
+..
 
      Read the primary event from the generated file: ::
 
+.. code:: sh
+
       shell> ./ex01_plain_reader Co60_10000.xml
+..
 
 
 6. Check the output file:
 
    Output histograms browsable from ROOT via the ``histos_Co60.root`` file ::
 
+.. code:: sh
+
       shell> root histos_Co60.root
       root [1] TBrowser b;
       root [2] .q
+..
 
 
 7. Clean::
 
-      shell> rm ex01
+.. code:: sh
+
       shell> rm -fr ./_build.d
+      shell> rm -fr ./_install.d
+..
 
 8. Note:
 
    Run an automated test script: ::
 
+.. code:: sh
+
       shell> ./process.sh
+..
