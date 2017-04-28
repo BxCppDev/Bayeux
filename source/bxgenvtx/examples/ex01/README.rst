@@ -48,6 +48,7 @@ Quick start
 2. Make a copy of the example directory:
 
 .. code:: sh
+
       shell> cp -a $(bxquery --exampledir)/genvtx/examples/ex01 /tmp/genvtx_ex01
       shell> cd /tmp/genvtx_ex01
 ..
@@ -55,6 +56,7 @@ Quick start
 3. Build and install the example:
 
 .. code:: sh
+
       shell> mkdir _build.d
       shell> cd _build.d
       shell> cmake \
@@ -69,13 +71,15 @@ Quick start
 4. Run the example:
 
 .. code:: sh
+
       shell> ./_install.d/ex01
 ..
 
 5. Run the ``bxgeomtools_inspector`` to check the virtual geometry:
 
 .. code:: sh
-         shell> bxgeomtools_inspector \
+
+   shell> bxgeomtools_inspector \
                   --manager-config config/geometry/manager.conf \
                   --with-visu --visu-view-3d
 ..
@@ -86,7 +90,8 @@ Quick start
    * List the available vertex generators:
 
 .. code:: sh
-      shell> bxgenvtx_production \
+
+   shell> bxgenvtx_production \
                --geometry-manager config/geometry/manager.conf \
                --vertex-generator-manager config/vertex/manager.conf \
                --list
@@ -96,7 +101,8 @@ Quick start
    * Generate vertices:
 
 .. code:: sh
-      shell> bxgenvtx_production \
+
+   shell> bxgenvtx_production \
                --geometry-manager config/geometry/manager.conf \
                --vertex-generator-manager config/vertex/manager.conf \
                --shoot \
@@ -111,7 +117,8 @@ Quick start
      some vertexes:
 
 .. code:: sh
-      shell> bxgenvtx_production \
+
+   shell> bxgenvtx_production \
                --geometry-manager config/geometry/manager.conf \
                --vertex-generator-manager config/vertex/manager.conf \
                --shoot \
@@ -125,7 +132,8 @@ Quick start
 ..
 
  .. code:: sh
-     shell> bxgenvtx_production \
+
+    shell> bxgenvtx_production \
                --geometry-manager config/geometry/manager.conf \
                --vertex-generator-manager config/vertex/manager.conf \
                --shoot \
@@ -141,30 +149,32 @@ Quick start
    * Redisplay geometry plus vertexes:
 
 .. code:: sh
-      shell> bxgeomtools_inspector \
-                  --manager-config config/geometry/manager.conf
-      geomtools> ldd -n "vtx-red" -i "vertices-dd-red.data.gz"
-      geomtools> ldd -n "vtx-magenta" -i "vertices-dd-magenta.data.gz"
-      geomtools> pdd
-      List of embedded display data :
-      vtx-magenta
-      vtx-red
 
-      geomtools> d [1200:6.1]
+   shell> bxgeomtools_inspector \
+	  --manager-config config/geometry/manager.conf
+   geomtools> ldd -n "vtx-red" -i "vertices-dd-red.data.gz"
+   geomtools> ldd -n "vtx-magenta" -i "vertices-dd-magenta.data.gz"
+   geomtools> pdd
+   List of embedded display data :
+   vtx-magenta
+   vtx-red
 
-      Press [Enter] to continue...
-      geomtools> d -xy world
+   geomtools> d [1200:6.1]
 
-      Press [Enter] to continue...
-      geomtools> d -xy -nodd world
-      geomtools> cdd
-      geomtools> q
+   Press [Enter] to continue...
+   geomtools> d -xy world
+
+   Press [Enter] to continue...
+   geomtools> d -xy -nodd world
+   geomtools> cdd
+   geomtools> q
 ..
 
 
 7. Clean:
 
 .. code:: sh
-      shell> rm -fr _install.d
-      shell> rm -fr _build.d
+
+   shell> rm -fr _install.d
+   shell> rm -fr _build.d
 ..
