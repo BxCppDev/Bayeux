@@ -23,7 +23,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(dpp_VERSION_MAJOR 3)
-set(dpp_VERSION_MINOR 1)
+set(dpp_VERSION_MINOR 2)
 set(dpp_VERSION_PATCH 0)
 set(dpp_VERSION "${dpp_VERSION_MAJOR}.${dpp_VERSION_MINOR}.${dpp_VERSION_PATCH}")
 

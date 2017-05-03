@@ -22,7 +22,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(cuts_VERSION_MAJOR 6)
-set(cuts_VERSION_MINOR 1)
+set(cuts_VERSION_MINOR 2)
 set(cuts_VERSION_PATCH 0)
 set(cuts_VERSION "${cuts_VERSION_MAJOR}.${cuts_VERSION_MINOR}.${cuts_VERSION_PATCHD}")
 

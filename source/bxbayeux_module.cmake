@@ -43,11 +43,16 @@ set(${module_name}_MODULE_HEADERS
   ${module_include_dir}/${module_name}/reloc.h
   ${module_include_dir}/${module_name}/version.h.in
   ${module_include_dir}/${module_name}/resource.h
+  ${module_include_dir}/${module_name}/detail/bayeux_library.h
   )
 
 # - configure special source files
-configure_file(${module_source_dir}/_bayeux.cc.in
-  bx${module_name}/_bayeux.cc
+# configure_file(${module_source_dir}/_bayeux.cc.in
+#   bx${module_name}/_bayeux.cc
+#   @ONLY
+#   )
+configure_file(${module_source_dir}/detail/bayeux_library.cc.in
+  bx${module_name}/detail/bayeux_library.cc
   @ONLY
   )
 configure_file(${module_source_dir}/reloc.cc.in
@@ -63,7 +68,8 @@ set(${module_name}_MODULE_SOURCES
   ${module_source_dir}/version.cc
   ${module_source_dir}/bayeux.cc
   ${module_source_dir}/resource.cc
-  bx${module_name}/_bayeux.cc
+  # ${module_source_dir}/detail/bayeux_library.cc
+  bx${module_name}/detail/bayeux_library.cc
   bx${module_name}/reloc.cc
   bx${module_name}/${module_name}/BayeuxBinReloc.h
   bx${module_name}/BayeuxBinReloc.c
@@ -104,9 +110,10 @@ endforeach()
 set(${module_name}_TEST_ENVIRONMENT "BAYEUX_RESOURCE_DIR=${module_resource_dir};BAYEUX_TESTING_DIR=${module_test_dir}")
 
 set(${module_name}_MODULE_TESTS
+  # ${module_test_dir}/test_bayeux.cxx
   ${module_test_dir}/test_bayeux_nocatch.cxx
 )
 
 set(${module_name}_MODULE_TESTS_CATCH
-  # ${module_test_dir}/test_bayeux.cxx
+  # ${module_test_dir}/test_bayeux_catch.cxx
 )

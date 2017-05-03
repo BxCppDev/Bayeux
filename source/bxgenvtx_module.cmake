@@ -23,7 +23,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(genvtx_VERSION_MAJOR 5)
-set(genvtx_VERSION_MINOR 1)
+set(genvtx_VERSION_MINOR 2)
 set(genvtx_VERSION_PATCH 0)
 set(genvtx_VERSION "${genvtx_VERSION_MAJOR}.${genvtx_VERSION_MINOR}.${genvtx_VERSION_PATCH}")
 set(GENVTX_WITH_BIO 1)

@@ -29,6 +29,10 @@ if(BAYEUX_WITH_GEANT4_MODULE)
     @ONLY
     )
 
+  # Disable specific warnings because CLHEP source code makes use
+  # of deprecated std::auto_ptr:
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=unused-variable -Wno-deprecated-declarations -Wno-error=deprecated-declarations")
+
   set(${module_name}_GEANT4_SOURCES
     mctools/g4/data_libraries.h
     ${module_include_dir}/${module_name}/g4/processes/utils.h

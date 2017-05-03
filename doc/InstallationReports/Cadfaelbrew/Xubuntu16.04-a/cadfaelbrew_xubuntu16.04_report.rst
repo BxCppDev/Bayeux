@@ -34,7 +34,7 @@ Installed packages
    1.8.11
 
    $ g++ --version
-   g++ (Ubuntu 5.4.0-6ubuntu1~16.04.1) 5.4.0 20160609
+   g++ (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
 
    $ make --version
    GNU Make 4.1
@@ -99,8 +99,9 @@ Installation
    $ mkdir -p ${SNSW_BASE_DIR}
 ..
 
-   Cache and temporary directory used during the building of Cadfaelbrew
-   formulae:
+   It may be useful to define some specific directories used by the brew build
+   process. You can choose the cache and temporary directories used during the building of Cadfaelbrew
+   formulae with:
 
 .. code:: sh
 
@@ -109,6 +110,8 @@ Installation
    $ mkdir -p /opt/var/tmp
    $ export HOMEBREW_TEMP=/opt/var/tmp
 ..
+
+   This will supersede the default cache and tmp dirs.
 
 2. Download the software:
 
@@ -232,39 +235,36 @@ In Bash (``~/.bashrc``) :
    function do_cadfaelbrew_setup()
    {
      if [ -n "${CADFAELBREW_INSTALL_DIR}" ]; then
-       echo "WARNING: Cadfaelbrew is already setup !" >&2
-       return 1
+	echo >&2 "[warning] do_cadfaelbrew_setup: Cadfaelbrew is already setup !"
+	return 1
      fi
      export CADFAELBREW_INSTALL_DIR="${SNSW_BASE_DIR}/Cadfaelbrew"
+     export PATH="${CADFAELBREW_INSTALL_DIR}/bin:${PATH}"
      if [ -n "${MANPATH}" ]; then
-       export MANPATH="${CADFAELBREW_INSTALL_DIR}/share/man:${MANPATH}"
+	export MANPATH="${CADFAELBREW_INSTALL_DIR}/share/man:${MANPATH}"
      else
-       export MANPATH="${CADFAELBREW_INSTALL_DIR}/share/man"
+	export MANPATH="${CADFAELBREW_INSTALL_DIR}/share/man"
      fi
      if [ -n "${INFOPATH}" ]; then
-       export INFOPATH="${CADFAELBREW_INSTALL_DIR}/share/info:${INFOPATH}"
+	export INFOPATH="${CADFAELBREW_INSTALL_DIR}/share/info:${INFOPATH}"
      else
-       export INFOPATH="${CADFAELBREW_INSTALL_DIR}/share/info"
+	export INFOPATH="${CADFAELBREW_INSTALL_DIR}/share/info"
      fi
-     mkdir -p /opt/var/cache/Homebrew
-     export HOMEBREW_CACHE=/data/var/cache/Homebrew
-     mkdir -p /opt/var/tmp
-     export HOMEBREW_TEMP=/opt/var/tmp
-     ${SNSW_BASE_DIR}/Cadfaelbrew/bin/brew sh
+     echo >&2 "[info] do_cadfaelbrew_setup: Cadfaelbrew is setup."
      return 0;
   }
-  alias brewsh='do_cadfaelbrew_setup'
+  alias cadfaelbrew_setup='do_cadfaelbrew_setup'
 ..
 
 
 Test
 ====
 
-Enter a dedicated Cadfaelbrew shell:
+Activate the software managed by Cadfaelbrew:
 
 .. code:: sh
 
-   $ brewsh
+   $ cadfaelbrew_setup
 ..
 
 Testing CLHEP (brew version) :
@@ -296,9 +296,18 @@ Testing Root (brew version) :
   root [0] .q
 ..
 
-Leave the dedicated Cadfaelbrew shell:
+
+Entering a brew shell
+=====================
+
+You may need to enter a brew shell in order to run specific operations:
 
 .. code:: sh
 
-   $ exit
+   $ cadfaelbrew_setup
+   $ brew sh
+   brew>   # this is a brew shell
+   ...
+   brew> exit
+   $       # back to the 'normal' shell
 ..

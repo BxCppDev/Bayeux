@@ -1,6 +1,16 @@
 # - Config file for the Bayeux package
 # It defines the following variables
 #
+#  Bayeux_VERSION          - Bayeux version string
+#  Bayeux_VERSION_REVISION - Bayeux development tag
+#  Bayeux_CMAKE_CONFIG_DIR - Bayeux CMake config directory
+#  Bayeux_qt_FOUND         - Bayeux Qt usage flag
+#  Bayeux_geant4_FOUND     - Bayeux Geant4 module availability flag
+#  Bayeux_mcnp_FOUND       - Bayeux MCNP module availability flag
+#  Bayeux_lahague_FOUND    - Bayeux lahague module availability flag
+#  Bayeux_developer_tools_FOUND
+#                          - Bayeux developer tools availability flag
+#  Bayeux_docs_FOUND       - Bayeux documentation availability flag
 #  Bayeux_DOXYGEN_HTML_DIR - path to directory holding Doxygen docs
 #                            for Bayeux. Empty if docs were not built
 #  Bayeux_DOXYGEN_TAGFILE  - path to Doxygen tagfile for Bayeux's docs
@@ -18,18 +28,23 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 #----------------------------------------------------------------------
 
 # - Core API version
 set(Bayeux_VERSION "@Bayeux_VERSION@")
 # - Development Tag
 set(Bayeux_VERSION_REVISION "@Bayeux_VERSION_REVISION@")
+# - Bayeux cmake-config path is stored to help explicit path resolution in client packages:
+set(Bayeux_CMAKE_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 # Component Availability
-set(Bayeux_qt_FOUND "@BAYEUX_WITH_QT_GUI@")
+set(Bayeux_qt_FOUND     "@BAYEUX_WITH_QT_GUI@")
 set(Bayeux_geant4_FOUND "@BAYEUX_WITH_GEANT4_MODULE@")
-set(Bayeux_mcnp_FOUND "@BAYEUX_WITH_MCNP_MODULE@")
+set(Bayeux_mcnp_FOUND   "@BAYEUX_WITH_MCNP_MODULE@")
+set(Bayeux_lahague_FOUND "@BAYEUX_WITH_LAHAGUE@")
+set(Bayeux_developer_tools_FOUND "@BAYEUX_WITH_DEVELOPER_TOOLS@")
+set(Bayeux_docs_FOUND "@BAYEUX_WITH_DOCS@")
 
 #-----------------------------------------------------------------------
 # Start of CMake Generated
@@ -37,46 +52,61 @@ set(Bayeux_mcnp_FOUND "@BAYEUX_WITH_MCNP_MODULE@")
 # END OF CMAKE GENERATED
 
 #-----------------------------------------------------------------------
+# set_and_check(Bayeux_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/@PROJECT_CMAKEDIR_TO_INCLUDEDIR@")
+# set(Bayeux_INCLUDE_DIRS "${Bayeux_INCLUDE_DIR}" "${Bayeux_INCLUDE_DIR}/bayeux" )
+# message( STATUS "Bayeux_INCLUDE_DIR  = ${Bayeux_INCLUDE_DIR}")
+# message( STATUS "Bayeux_INCLUDE_DIRS = ${Bayeux_INCLUDE_DIRS}")
+
+#-----------------------------------------------------------------------
 # - Refind third party deps here to regenerate imported targets
 #   Use exact versions to guarantee(*) binary compatibilty
 #   (*) at least at the API versioning level...
 # - Boost
+# - Force explicit Boost path in order to find the Boost used at build time
+#   (to avoid spurious collision with system Boost in client packages)
+set(BOOST_ROOT @Bayeux_BOOST_ROOT@)
+set(BAYEUX_BOOST_VERSION @Boost_MAJOR_VERSION@.@Boost_MINOR_VERSION@)
 set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost @Boost_MAJOR_VERSION@.@Boost_MINOR_VERSION@ EXACT REQUIRED
+message( STATUS "Searching Boost ${BAYEUX_BOOST_VERSION} from ${BOOST_ROOT} ...")
+find_package(Boost ${BAYEUX_BOOST_VERSION} EXACT REQUIRED
   COMPONENTS @BAYEUX_BOOST_COMPONENTS@
   )
 
 # - CLHEP
-find_package(CLHEP @CLHEP_VERSION@ EXACT REQUIRED
+set(BAYEUX_CLHEP_VERSION @CLHEP_VERSION@)
+find_package(CLHEP ${BAYEUX_CLHEP_VERSION} EXACT REQUIRED
   NO_MODULE
   )
 
 # - GSL
-find_package(GSL @GSL_VERSION@ EXACT REQUIRED)
+set(BAYEUX_GSL_VERSION @GSL_VERSION@)
+find_package(GSL ${BAYEUX_GSL_VERSION} EXACT REQUIRED)
 
 # - ROOT
 # ROOT can F-up the module path and insert it's own
 # modules. Prevent it doing this.
 set(CMAKE_MODULE_PATH_PREROOT ${CMAKE_MODULE_PATH})
-find_package(ROOT @ROOT_VERSION@ EXACT REQUIRED
-  COMPONENTS RIO Tree
+set(BAYEUX_ROOT_VERSION @ROOT_VERSION@)
+set(BAYEUX_ROOT_COMPONENTS RIO Tree)
+find_package(ROOT ${BAYEUX_ROOT_VERSION} EXACT REQUIRED
+  COMPONENTS ${BAYEUX_ROOT_COMPONENTS}
   )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH_PREROOT})
 
-
 # - CAMP
-find_package(CAMP @CAMP_VERSION@ EXACT REQUIRED)
+set(BAYEUX_CAMP_VERSION @CAMP_VERSION@)
+find_package(CAMP ${BAYEUX_CAMP_VERSION} EXACT REQUIRED)
 
 # - Geant4 is NOT here because we don't expose it to clients
 
 # - Qt
 if(Bayeux_qt_FOUND)
-  # Make sure targets like "Qt5::Core", ... "Qt5::Svg" are recognized
-  # in client package
-  find_package(Qt5Core @Qt5Core_VERSION@ EXACT REQUIRED)       #PATHS "@Qt5Core_DIR@")
-  find_package(Qt5Widgets @Qt5Widgets_VERSION@ EXACT REQUIRED) #PATHS "@Qt5Widgets_DIR@")
-  find_package(Qt5Gui @Qt5Gui_VERSION@ EXACT REQUIRED)         #PATHS "@Qt5Gui_DIR@")
-  find_package(Qt5Svg @Qt5Svg_VERSION@ EXACT REQUIRED)         #PATHS "@Qt5Svg_DIR@")
+  # Make sure targets like "Qt5::Core", ... "Qt5::Svg"
+  # are recognized in client package
+  find_package(Qt5Core    @Qt5Core_VERSION@     EXACT REQUIRED)
+  find_package(Qt5Widgets @Qt5Widgets_VERSION@     EXACT REQUIRED)
+  find_package(Qt5Gui     @Qt5Gui_VERSION@     EXACT REQUIRED)
+  find_package(Qt5Svg     @Qt5Svg_VERSION@     EXACT REQUIRED)
 endif()
 
 #-----------------------------------------------------------------------

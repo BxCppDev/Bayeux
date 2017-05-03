@@ -24,7 +24,7 @@ endforeach()
 # - In place defs for module CMake variables...
 # - Versioning
 set(datatools_VERSION_MAJOR 7)
-set(datatools_VERSION_MINOR 1)
+set(datatools_VERSION_MINOR 2)
 set(datatools_VERSION_PATCH 0)
 set(datatools_VERSION "${datatools_VERSION_MAJOR}.${datatools_VERSION_MINOR}.${datatools_VERSION_PATCH}")
 
@@ -467,6 +467,7 @@ ${module_test_dir}/test_version_id.cxx
 ${module_test_dir}/test_urn.cxx
 ${module_test_dir}/test_urn_info.cxx
 ${module_test_dir}/test_urn_db_service.cxx
+${module_test_dir}/test_urn_db_service_2.cxx
 ${module_test_dir}/test_urn_to_path.cxx
 ${module_test_dir}/test_urn_to_path_resolver_service.cxx
 ${module_test_dir}/test_urn_query_service.cxx

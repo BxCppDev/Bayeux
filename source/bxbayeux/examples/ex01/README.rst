@@ -22,8 +22,11 @@ Quick start
    $ mkdir _build.d
    $ cd _build.d
    $ cmake .. \
-	  -DCMAKE_INSTALL_PREFIX=../_install.d
+	  -DCMAKE_INSTALL_PREFIX=../_install.d \
+	  -DBayeux_DIR=$(bxquery --cmakedir) \
+	  ..
    $ make
+   $ make install
 ..
 
 3. Run the example:
