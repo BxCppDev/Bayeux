@@ -1,0 +1,57 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of elements
+#@key_label   "name"
+#@meta_label  "type"
+
+
+[name="vacuum" type="material"]
+#@description Vacuum material
+density        : real   = 1.0e-15
+density.unit   : string = "mg/cm3"
+state          : string = "gas"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Hydrogen"
+composition.fraction_mass : real   [1]  =    1.0
+
+[name="air" type="material"]
+#@description Air material
+density        : real   = 1.29
+density.unit   : string = "mg/cm3"
+state          : string = "gas"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [2]  = "Nitrogen" "Oxygen"
+composition.fraction_mass : real   [2]  =    0.7       0.3
+
+
+[name="polystyrene" type="material"]
+#@description Polystyrene material
+density          : real   = 1.032
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =      8         8
+
+
+[name="silicon_dioxide" type="material"]
+#@description Silicium Oxyde material
+density        : real   = 2.648 
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Oxygen"  "Silicium"
+composition.number_of_atoms : integer [2]  =      2        1
+
+
+[name="epoxy" type="material"]
+#@description Polyepoxyde material (C11H12O3)
+density          : real   = 1.6
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Oxygen"  "Carbon"
+composition.number_of_atoms : integer [3]  =     12        3        11
+
+# end

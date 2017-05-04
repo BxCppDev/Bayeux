@@ -1,0 +1,275 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of vertex generators
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#################################################
+# Generate vertex from the hall's roof:
+#################################################
+[name="hall_roof.vg" type="genvtx::box_model_vg"]
+
+#@config Vertex generation from the surface of the experimental hall
+
+#@description Debug flag
+debug  : boolean = 0
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = " category='world' "
+
+#@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode box back face activation
+mode.surface.back   : boolean = 0
+
+#@description Surface mode box front face activation
+mode.surface.front  : boolean = 0
+
+#@description Surface mode box bottom face activation
+mode.surface.bottom : boolean = 0
+
+#@description Surface mode box top face activation
+mode.surface.top    : boolean = 1
+
+#@description Surface mode box left face activation
+mode.surface.left   : boolean = 0
+
+#@description Surface mode box right face activation
+mode.surface.right  : boolean = 0
+
+
+######################################################
+# Generate vertex from the board's PCB bulk:
+######################################################
+[name="board_pcb_bulk.vg" type="genvtx::box_model_vg"]
+
+#@config Vertex generation from the bulk of the board PCB with ID=6
+
+#@description Debug flag
+debug  : boolean = 0
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = " category='board_pcb.gc' board={6} "
+
+#@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "bulk"
+
+#@description The name of the materials plugin to extract material density value
+materials.plugin_name : string = "materials_driver"
+
+
+##############################################################
+# Generate vertex from some mezzanine's PCB bulk:
+##############################################################
+[name="all_mezzanine_pcb_bulk.vg" type="genvtx::box_model_vg"]
+
+#@config Vertex generation from the bulk of all mezzanines' PCB for all available boards
+
+#@description Debug flag
+debug  : boolean = 0
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='mezzanine_pcb.gc' board={*} daughter={*}"
+
+#@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "bulk"
+
+#@description The name of the materials plugin to extract material density value
+materials.plugin_name : string = "materials_driver"
+
+
+###############################################################
+# Generate vertex from some mezzanine's PCB bulk:
+###############################################################
+[name="some_mezzanines_pcb_bulk.vg" type="genvtx::box_model_vg"]
+
+#@config Vertex generation from the bulk of some specific mezzanines' PCB for all available boards
+
+#@description Debug flag
+debug  : boolean = 0
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='mezzanine_pcb.gc' board={*} daughter={1;2}"
+
+#@description The mode used for vertex generator from the underlying box model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "bulk"
+
+#@description The name of the materials plugin to extract material density value
+materials.plugin_name : string = "materials_driver"
+
+
+################################################################
+# Generate vertex from the capacitor's side surface:
+################################################################
+[name="all_capacitors_side.vg" type="genvtx::cylinder_model_vg"]
+
+#@config Vertex generation from the side surface of all capacitors
+
+#@description Debug flag
+debug  : boolean = 0
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='capacitor.gc' board={*} daughter={*} position={*}"
+
+#@description The mode used for vertex generator from the underlying cylinder model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode cylinder side face activation
+mode.surface.side  : boolean = 1
+
+
+################################################################
+# Generate vertex from the coil's bulk:
+################################################################
+[name="all_coil_body_bulk.vg" type="genvtx::tube_model_vg"]
+
+#@config Vertex generation from the bulk of all coils
+
+# #@description Debug flag
+# debug  : boolean = 1
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='coil_body.gc' board={*} daughter={*}"
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "bulk"
+
+# #@description Surface mode cylinder inner side face activation
+# mode.surface.inner_side  : boolean = 1
+
+# #@description Surface mode cylinder outer side face activation
+# mode.surface.outer_side  : boolean = 0
+
+
+################################################################
+# Generate vertex from the coil's bulk:
+################################################################
+[name="all_coil_body_surf.vg" type="genvtx::tube_model_vg"]
+
+#@config Vertex generation from the surface of all coils
+
+# #@description Debug flag
+# debug  : boolean = 1
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='coil_body.gc' board={*} daughter={*}"
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode cylinder inner side face activation
+mode.surface.inner_side  : boolean = 1
+
+# #@description Surface mode cylinder outer side face activation
+# mode.surface.outer_side  : boolean = 0
+
+
+##########################################################
+# Generate vertex from all PCB bulks:
+##########################################################
+[name="from_every_pcb_bulk.vg" type="genvtx::combined_vg"]
+
+#@config Vertex generation from the bulk of all PCB of all mezzanine and all boards
+
+#@description The names of the vertex generators to be combined
+generators : string[2] = \
+  "all_mezzanine_pcb_bulk.vg" "board_pcb_bulk.vg"
+
+#@description The mass activity associated to the first generator
+generators.all_mezzanine_pcb_bulk.vg.activity : string = "1.0 mBq/kg"
+
+#@description The mass activity associated to the second generator
+generators.board_pcb_bulk.vg.activity         : string = "0.25 mBq/kg"
+
+
+################################################################
+# Generate vertex from the dummy's bulk:
+################################################################
+[name="dummy_bulk.vg" type="genvtx::sphere_model_vg"]
+
+#@config Vertex generation from the bulk of all balls
+
+# #@description Debug flag
+# debug  : boolean = 1
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='dummy.gc' board={*} "
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "bulk"
+
+
+################################################################
+# Generate vertex from the dummy's bulk:
+################################################################
+[name="dummy_inner_surface.vg" type="genvtx::sphere_model_vg"]
+
+#@config Vertex generation from the inner surface of all balls
+
+# #@description Debug flag
+# debug  : boolean = 0
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='dummy.gc' board={*} "
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode cylinder inner side face activation
+mode.surface.inner_side  : boolean = 1
+
+#@description Surface mode cylinder outer side face activation
+mode.surface.outer_side  : boolean = 0
+
+#@description Skin thickness
+skin_thickness : real as length = 1 mm
+
+#@description Skin thickness
+skin_skip : real as length = 0.5 mm
+
+
+################################################################
+# Generate vertex from the dummy's bulk:
+################################################################
+[name="dummy_some_surfaces.vg" type="genvtx::sphere_model_vg"]
+
+#@config Vertex generation from some surface of all balls
+
+# #@description Debug flag
+# debug  : boolean = 0
+
+#@description The rule that describes the origin of vertex in term of geometry category and addresses (geom ID)
+origin : string  = "category='dummy.gc' board={*} "
+
+#@description The mode used for vertex generator from the underlying tube model associated to the target logical volume ("surface" or "bulk")
+mode   : string  = "surface"
+
+#@description Surface mode cylinder inner side face activation
+mode.surface.inner_side       : boolean = 0
+
+#@description Surface mode cylinder outer side face activation
+mode.surface.outer_side       : boolean = 0
+
+#@description Surface mode cylinder start phi side face activation
+mode.surface.start_phi_side   : boolean = 1
+
+#@description Surface mode cylinder stop phi side face activation
+mode.surface.stop_phi_side    : boolean = 1
+
+#@description Surface mode cylinder start theta side face activation
+mode.surface.start_theta_side : boolean = 1
+
+#@description Surface mode cylinder stop theta side face activation
+mode.surface.stop_theta_side  : boolean = 0
+
+# #@description Skin thickness
+# skin_thickness : real as length = 4 mm
+
+# #@description Skin thickness
+# skin_skip : real as length = 2 mm
+
+
+# End of list of multi-properties.

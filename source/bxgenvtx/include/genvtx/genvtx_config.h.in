@@ -1,0 +1,23 @@
+/// \file genvtx/genvtx_config.h
+
+#ifndef GENVTX_GENVTX_CONFIG_H
+#define GENVTX_GENVTX_CONFIG_H 1
+
+/***  genvtx debug flag ***/
+#cmakedefine01 GENVTX_WITH_DEBUG
+
+/***  genvtx embedded Boost/Serialization based I/O ***/
+#cmakedefine01 GENVTX_WITH_BIO
+
+/***  genvtx embedded CAMP-based reflection ***/
+#cmakedefine01 GENVTX_WITH_REFLECTION
+
+#endif // GENVTX_GENVTX_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
