@@ -1,0 +1,51 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A  list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+# We define here the couples of mapping categories and types for all the geometry
+# setup. Each geometry category is unique as well as the type (integer number)
+# that is associated to it. Such a category is a human readable character string
+# of which the name should be chosen to be self explanatory. We recommend to
+# use the ".gc" (geometry category) suffix when chosing the name of a category.
+# Examples:
+#  * "shielding_brick.gc" : the category for all physical volumes representing
+#     a shield brick in the setup (at a given hierarchy level).
+#  * "bolt.gc" : the category for all physical volumes representing a bolt (at
+#     a given hierarchy level).
+
+###########################
+[category="world" type="0"]
+
+#@config The mandatory geometry category of the top-level world volume
+
+#@description The GID address of the world volume is characterized by its 'world' number
+addresses : string[1] = "world"
+
+# This is mandatory in the library, by convention the category name is 'world' (reserved name)
+# and the associated type ID is 0 (reserved type).
+# The unique associated GID to the top level world volume is thus: [type=0:world=0].
+# In future implementation of Bayeux/geomtools, some alternative parallel worlds
+# could be given world numbers 1, 2... with associated GIDs : [0:1], [0:2]...
+# Such a feature is not implement for now.
+
+################################
+[category="object.gc" type="10"]
+
+addresses : string[1] = "item"
+
+# Physical volume associated to this category are identified
+# by their type and an unique item number, following the scheme: [type=10:item=N]
+# where N is an positive or null integer:
+#  * [10:0] : first object
+#  * [10:1] : second object
+#  * ...      other objects
+#  * [10:8] : ninth object
+# Note that physical volumes addressed by such GID mapping scheme do not need
+# to have the same logical model (shape and material). It is just a way to
+# attribute a unique identifier to volume that can be considered at the same
+# hierarchy level with respect to the hierarchy of mother volumes.
+
+# end of file.

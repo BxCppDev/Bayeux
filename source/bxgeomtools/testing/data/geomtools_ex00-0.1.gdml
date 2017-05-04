@@ -1,0 +1,2374 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gdml.xsd"  >
+
+<define>
+
+<position name="another_stack.model.log.stacked__0__.phys.pos" x="0" y="0" z="-115" unit="mm" />
+
+<position name="another_stack.model.log.stacked__1__.phys.pos" x="0" y="0" z="-85" unit="mm" />
+
+<position name="exbox2.model.log.solid.subtraction.pos_ref" x="0" y="0" z="-5" unit="mm" />
+
+<rotation name="exbox2.model.log.solid.subtraction.rot_ref" x="-0" y="-0" z="-0" unit="deg" />
+
+<position name="another_stack.model.log.stacked__2__.phys.pos" x="0" y="0" z="-115" unit="mm" />
+
+<position name="exbox1.model.log.solid.subtraction.pos_ref" x="0" y="0" z="0" unit="mm" />
+
+<rotation name="exbox1.model.log.solid.subtraction.rot_ref" x="-0" y="-0" z="-0" unit="deg" />
+
+<position name="another_stack.model.log.stacked__3__.phys.pos" x="0" y="0" z="35" unit="mm" />
+
+<position name="another_stack.model.log.stacked__4__.phys.pos" x="0" y="0" z="115" unit="mm" />
+
+<position name="world.log.AnotherStack.phys.pos" x="350" y="100" z="-150" unit="mm" />
+
+<rotation name="world.log.AnotherStack.phys.rot" x="-90" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.BoxA.phys.pos" x="-400" y="400" z="-400" unit="mm" />
+
+<position name="world.log.BoxB.phys.pos" x="-400" y="300" z="-400" unit="mm" />
+
+<rotation name="world.log.BoxB.phys.rot" x="-0" y="-0" z="-30" unit="deg" />
+
+<position name="world.log.BoxC.phys.pos" x="-400" y="200" z="-400" unit="mm" />
+
+<rotation name="world.log.BoxC.phys.rot" x="-0" y="-60" z="-0" unit="deg" />
+
+<position name="world.log.BoxD.phys.pos" x="-400" y="100" z="-400" unit="mm" />
+
+<rotation name="world.log.BoxD.phys.rot" x="-20" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.BoxE.phys.pos" x="-400" y="0" z="-400" unit="mm" />
+
+<rotation name="world.log.BoxE.phys.rot" x="-13.1242681227917" y="-21.4690235197789" z="32.4985848709643" unit="deg" />
+
+<position name="box0_circular_chain.model.log.SpecialBox0.phys.pos" x="140" y="-140" z="0" unit="mm" />
+
+<position name="box0_circular_chain.model.log.SpecialBox1.phys.pos" x="200" y="0" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.SpecialBox1.phys.rot" x="-0" y="-0" z="-90" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____0__.pos" x="173.205080756888" y="100" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____0__.rot" x="-0" y="-0" z="-30" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____1__.pos" x="100" y="173.205080756888" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____1__.rot" x="-0" y="-0" z="-60" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____2__.pos" x="1.22464679914735e-14" y="200" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____2__.rot" x="-0" y="-0" z="-90" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____3__.pos" x="-100" y="173.205080756888" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____3__.rot" x="-0" y="-0" z="-120" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____4__.pos" x="-173.205080756888" y="100" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____4__.rot" x="-0" y="-0" z="-150" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____5__.pos" x="-200" y="1.1331077795296e-13" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____5__.rot" x="-0" y="-0" z="180" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____6__.pos" x="-173.205080756888" y="-99.9999999999999" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____6__.rot" x="-0" y="-0" z="150" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____7__.pos" x="-100" y="-173.205080756888" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____7__.rot" x="-0" y="-0" z="120" unit="deg" />
+
+<position name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____8__.pos" x="-3.67394039744206e-14" y="-200" z="0" unit="mm" />
+
+<rotation name="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____8__.rot" x="-0" y="-0" z="90" unit="deg" />
+
+<position name="world.log.CircleBoxes.phys.pos" x="-50" y="-200" z="-400" unit="mm" />
+
+<position name="world.log.CylA.phys.pos" x="-200" y="400" z="-400" unit="mm" />
+
+<position name="world.log.CylB.phys.pos" x="0" y="400" z="-400" unit="mm" />
+
+<rotation name="world.log.CylB.phys.rot" x="-30" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.CylC.phys.pos" x="200" y="400" z="-400" unit="mm" />
+
+<rotation name="world.log.CylC.phys.rot" x="-60" y="-0" z="-0" unit="deg" />
+
+<position name="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____0__.pos" x="0" y="0" z="-300" unit="mm" />
+
+<position name="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____1__.pos" x="0" y="0" z="-200" unit="mm" />
+
+<position name="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____2__.pos" x="0" y="0" z="-100" unit="mm" />
+
+<position name="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____3__.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____4__.pos" x="0" y="0" z="100" unit="mm" />
+
+<position name="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____5__.pos" x="0" y="0" z="200" unit="mm" />
+
+<position name="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____6__.pos" x="0" y="0" z="300" unit="mm" />
+
+<position name="world.log.CylCol0.phys.pos" x="-200" y="400" z="0" unit="mm" />
+
+<position name="cylinder0_medium_column.model.log.aligned_cylinders.phys.__0..2____0__.pos" x="0" y="-100" z="0" unit="mm" />
+
+<position name="cylinder0_medium_column.model.log.aligned_cylinders.phys.__0..2____1__.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="cylinder0_medium_column.model.log.aligned_cylinders.phys.__0..2____2__.pos" x="0" y="100" z="0" unit="mm" />
+
+<position name="world.log.CylCol1a.phys.pos" x="0" y="400" z="-100" unit="mm" />
+
+<rotation name="world.log.CylCol1a.phys.rot" x="-75" y="-0" z="-0" unit="deg" />
+
+<position name="cylinder0_small_column.model.log.aligned_cylinders.phys.__0..1____0__.pos" x="0" y="-50" z="0" unit="mm" />
+
+<position name="cylinder0_small_column.model.log.aligned_cylinders.phys.__0..1____1__.pos" x="0" y="50" z="0" unit="mm" />
+
+<position name="world.log.CylCol2a.phys.pos" x="200" y="400" z="-50" unit="mm" />
+
+<rotation name="world.log.CylCol2a.phys.rot" x="-90" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.CylD.phys.pos" x="0" y="400" z="-300" unit="mm" />
+
+<rotation name="world.log.CylD.phys.rot" x="-60" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.CylE.phys.pos" x="200" y="400" z="-300" unit="mm" />
+
+<rotation name="world.log.CylE.phys.rot" x="-90" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.CylF.phys.pos" x="200" y="400" z="-200" unit="mm" />
+
+<rotation name="world.log.CylF.phys.rot" x="-120" y="-0" z="-0" unit="deg" />
+
+<position name="box0_small_grid.model.log.grid.phys.__0..1____0..2____0__.pos" x="-100" y="0" z="-100" unit="mm" />
+
+<position name="box0_small_grid.model.log.grid.phys.__0..1____0..2____1__.pos" x="100" y="0" z="-100" unit="mm" />
+
+<position name="box0_small_grid.model.log.grid.phys.__0..1____0..2____2__.pos" x="-100" y="0" z="0" unit="mm" />
+
+<position name="box0_small_grid.model.log.grid.phys.__0..1____0..2____3__.pos" x="100" y="0" z="0" unit="mm" />
+
+<position name="box0_small_grid.model.log.grid.phys.__0..1____0..2____4__.pos" x="-100" y="0" z="100" unit="mm" />
+
+<position name="box0_small_grid.model.log.grid.phys.__0..1____0..2____5__.pos" x="100" y="0" z="100" unit="mm" />
+
+<position name="world.log.CylSubGrid.phys.pos" x="100" y="450" z="200" unit="mm" />
+
+<position name="detector_stack.model.log.Attenuator.phys.pos" x="0" y="0" z="55" unit="mm" />
+
+<position name="detector_stack.model.log.BackSensor.phys.pos" x="0" y="0" z="22.5" unit="mm" />
+
+<position name="detector_stack.model.log.Collector.phys.pos" x="0" y="0" z="-60" unit="mm" />
+
+<position name="detector_stack.model.log.FrontSensor.phys.pos" x="0" y="0" z="92.5" unit="mm" />
+
+<position name="world.log.DetStack0.phys.pos" x="350" y="-200" z="100" unit="mm" />
+
+<rotation name="world.log.DetStack0.phys.rot" x="90" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.DetStack1.phys.pos" x="350" y="200" z="100" unit="mm" />
+
+<rotation name="world.log.DetStack1.phys.rot" x="-90" y="-0" z="-0" unit="deg" />
+
+<position name="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____0__.pos" x="0" y="-150" z="0" unit="mm" />
+
+<position name="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____1__.pos" x="0" y="-50" z="0" unit="mm" />
+
+<position name="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____2__.pos" x="0" y="50" z="0" unit="mm" />
+
+<position name="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____3__.pos" x="0" y="150" z="0" unit="mm" />
+
+<position name="world.log.ManyBoxes.phys.pos" x="-400" y="-250" z="-400" unit="mm" />
+
+<position name="stack_with_insertion.model.log.stacked__0__.phys.pos" x="0" y="0" z="-132.5" unit="mm" />
+
+<position name="stack_with_insertion.model.log.stacked__1__.phys.pos" x="0" y="0" z="-90" unit="mm" />
+
+<position name="stack_with_insertion.model.log.stacked__2__.phys.pos" x="0" y="0" z="-57.5" unit="mm" />
+
+<position name="stack_with_insertion.model.log.stacked__3__.phys.pos" x="0" y="0" z="82.5" unit="mm" />
+
+<position name="world.log.SpecialStack.phys.pos" x="350" y="100" z="350" unit="mm" />
+
+<rotation name="world.log.SpecialStack.phys.rot" x="-90" y="-0" z="-0" unit="deg" />
+
+<position name="box0_yz_grid.model.log.AdditionalBox0.phys.pos" x="0" y="-250" z="-100" unit="mm" />
+
+<position name="box0_yz_grid.model.log.AdditionalBox1.phys.pos" x="0" y="150" z="80" unit="mm" />
+
+<rotation name="box0_yz_grid.model.log.AdditionalBox1.phys.rot" x="-0" y="-0" z="-90" unit="deg" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____0__.pos" x="0" y="-400" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____1__.pos" x="0" y="-300" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____2__.pos" x="0" y="-200" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____3__.pos" x="0" y="-100" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____4__.pos" x="0" y="0" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____5__.pos" x="0" y="100" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____6__.pos" x="0" y="200" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____7__.pos" x="0" y="300" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____8__.pos" x="0" y="400" z="-200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____9__.pos" x="0" y="-400" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____10__.pos" x="0" y="-300" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____11__.pos" x="0" y="-200" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____12__.pos" x="0" y="-100" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____13__.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____14__.pos" x="0" y="100" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____15__.pos" x="0" y="200" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____16__.pos" x="0" y="300" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____17__.pos" x="0" y="400" z="0" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____18__.pos" x="0" y="-400" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____19__.pos" x="0" y="-300" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____20__.pos" x="0" y="-200" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____21__.pos" x="0" y="-100" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____22__.pos" x="0" y="0" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____23__.pos" x="0" y="100" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____24__.pos" x="0" y="200" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____25__.pos" x="0" y="300" z="200" unit="mm" />
+
+<position name="box0_yz_grid.model.log.grid.phys.__0..8____0..2____26__.pos" x="0" y="400" z="200" unit="mm" />
+
+<position name="world.log.WallBricks.phys.pos" x="-400" y="0" z="0" unit="mm" />
+
+</define>
+
+
+<materials>
+
+<isotope name="Ag-107" Z="47" N="107" >
+  <atom type="A" value="106.905091611" />
+</isotope>
+
+<isotope name="Ag-109" Z="47" N="109" >
+  <atom type="A" value="108.904755282" />
+</isotope>
+
+<isotope name="Al-27" Z="13" N="27" >
+  <atom type="A" value="26.981538531" />
+</isotope>
+
+<isotope name="Ar-36" Z="18" N="36" >
+  <atom type="A" value="35.967545105" />
+</isotope>
+
+<isotope name="Ar-38" Z="18" N="38" >
+  <atom type="A" value="37.962732106" />
+</isotope>
+
+<isotope name="Ar-40" Z="18" N="40" >
+  <atom type="A" value="39.96238312372" />
+</isotope>
+
+<isotope name="As-75" Z="33" N="75" >
+  <atom type="A" value="74.921594567" />
+</isotope>
+
+<isotope name="Au-197" Z="79" N="197" >
+  <atom type="A" value="196.966568786" />
+</isotope>
+
+<isotope name="B-10" Z="5" N="10" >
+  <atom type="A" value="10.012936949" />
+</isotope>
+
+<isotope name="B-11" Z="5" N="11" >
+  <atom type="A" value="11.009305355" />
+</isotope>
+
+<isotope name="Be-9" Z="4" N="9" >
+  <atom type="A" value="9.012183065" />
+</isotope>
+
+<isotope name="Bi-209" Z="83" N="209" >
+  <atom type="A" value="208.980399068" />
+</isotope>
+
+<isotope name="Br-79" Z="35" N="79" >
+  <atom type="A" value="78.918337579" />
+</isotope>
+
+<isotope name="Br-81" Z="35" N="81" >
+  <atom type="A" value="80.91628969" />
+</isotope>
+
+<isotope name="C-12" Z="6" N="12" >
+  <atom type="A" value="12" />
+</isotope>
+
+<isotope name="C-13" Z="6" N="13" >
+  <atom type="A" value="13.00335483507" />
+</isotope>
+
+<isotope name="Ca-40" Z="20" N="40" >
+  <atom type="A" value="39.962590863" />
+</isotope>
+
+<isotope name="Ca-42" Z="20" N="42" >
+  <atom type="A" value="41.95861783" />
+</isotope>
+
+<isotope name="Ca-43" Z="20" N="43" >
+  <atom type="A" value="42.958766438" />
+</isotope>
+
+<isotope name="Ca-44" Z="20" N="44" >
+  <atom type="A" value="43.955481561" />
+</isotope>
+
+<isotope name="Ca-46" Z="20" N="46" >
+  <atom type="A" value="45.953689023" />
+</isotope>
+
+<isotope name="Ca-48" Z="20" N="48" >
+  <atom type="A" value="47.952522765" />
+</isotope>
+
+<isotope name="Cl-35" Z="17" N="35" >
+  <atom type="A" value="34.968852682" />
+</isotope>
+
+<isotope name="Cl-37" Z="17" N="37" >
+  <atom type="A" value="36.965902602" />
+</isotope>
+
+<isotope name="Co-59" Z="27" N="59" >
+  <atom type="A" value="58.933194288" />
+</isotope>
+
+<isotope name="Cr-50" Z="24" N="50" >
+  <atom type="A" value="49.946041833" />
+</isotope>
+
+<isotope name="Cr-52" Z="24" N="52" >
+  <atom type="A" value="51.940506231" />
+</isotope>
+
+<isotope name="Cr-53" Z="24" N="53" >
+  <atom type="A" value="52.940648147" />
+</isotope>
+
+<isotope name="Cr-54" Z="24" N="54" >
+  <atom type="A" value="53.938879158" />
+</isotope>
+
+<isotope name="Cs-133" Z="55" N="133" >
+  <atom type="A" value="132.905451961" />
+</isotope>
+
+<isotope name="Cu-63" Z="29" N="63" >
+  <atom type="A" value="62.929597723" />
+</isotope>
+
+<isotope name="Cu-65" Z="29" N="65" >
+  <atom type="A" value="64.927789704" />
+</isotope>
+
+<isotope name="D" Z="1" N="2" >
+  <atom type="A" value="2.01410177812" />
+</isotope>
+
+<isotope name="F-19" Z="9" N="19" >
+  <atom type="A" value="18.99840316273" />
+</isotope>
+
+<isotope name="Fe-54" Z="26" N="54" >
+  <atom type="A" value="53.939608986" />
+</isotope>
+
+<isotope name="Fe-56" Z="26" N="56" >
+  <atom type="A" value="55.934936326" />
+</isotope>
+
+<isotope name="Fe-57" Z="26" N="57" >
+  <atom type="A" value="56.935392841" />
+</isotope>
+
+<isotope name="Fe-58" Z="26" N="58" >
+  <atom type="A" value="57.933274431" />
+</isotope>
+
+<isotope name="Ga-69" Z="31" N="69" >
+  <atom type="A" value="68.925573541" />
+</isotope>
+
+<isotope name="Ga-71" Z="31" N="71" >
+  <atom type="A" value="70.924702577" />
+</isotope>
+
+<isotope name="Gd-152" Z="64" N="152" >
+  <atom type="A" value="151.919799494" />
+</isotope>
+
+<isotope name="Gd-154" Z="64" N="154" >
+  <atom type="A" value="153.92087406" />
+</isotope>
+
+<isotope name="Gd-155" Z="64" N="155" >
+  <atom type="A" value="154.922630473" />
+</isotope>
+
+<isotope name="Gd-156" Z="64" N="156" >
+  <atom type="A" value="155.922131241" />
+</isotope>
+
+<isotope name="Gd-157" Z="64" N="157" >
+  <atom type="A" value="156.923968569" />
+</isotope>
+
+<isotope name="Gd-158" Z="64" N="158" >
+  <atom type="A" value="157.924112348" />
+</isotope>
+
+<isotope name="Gd-160" Z="64" N="160" >
+  <atom type="A" value="159.927062411" />
+</isotope>
+
+<isotope name="Ge-70" Z="32" N="70" >
+  <atom type="A" value="69.92424875" />
+</isotope>
+
+<isotope name="Ge-72" Z="32" N="72" >
+  <atom type="A" value="71.922075826" />
+</isotope>
+
+<isotope name="Ge-73" Z="32" N="73" >
+  <atom type="A" value="72.923458956" />
+</isotope>
+
+<isotope name="Ge-74" Z="32" N="74" >
+  <atom type="A" value="73.921177761" />
+</isotope>
+
+<isotope name="Ge-76" Z="32" N="76" >
+  <atom type="A" value="75.921402726" />
+</isotope>
+
+<isotope name="H" Z="1" N="1" >
+  <atom type="A" value="1.00782503223" />
+</isotope>
+
+<isotope name="He-3" Z="2" N="3" >
+  <atom type="A" value="3.01602932008" />
+</isotope>
+
+<isotope name="He-4" Z="2" N="4" >
+  <atom type="A" value="4.00260325413" />
+</isotope>
+
+<isotope name="Hg-196" Z="80" N="196" >
+  <atom type="A" value="195.96583256" />
+</isotope>
+
+<isotope name="Hg-198" Z="80" N="198" >
+  <atom type="A" value="197.966768602" />
+</isotope>
+
+<isotope name="Hg-199" Z="80" N="199" >
+  <atom type="A" value="198.968280643" />
+</isotope>
+
+<isotope name="Hg-200" Z="80" N="200" >
+  <atom type="A" value="199.96832659" />
+</isotope>
+
+<isotope name="Hg-201" Z="80" N="201" >
+  <atom type="A" value="200.970302839" />
+</isotope>
+
+<isotope name="Hg-202" Z="80" N="202" >
+  <atom type="A" value="201.9706434" />
+</isotope>
+
+<isotope name="Hg-204" Z="80" N="204" >
+  <atom type="A" value="203.973493981" />
+</isotope>
+
+<isotope name="I-127" Z="53" N="127" >
+  <atom type="A" value="126.904471853" />
+</isotope>
+
+<isotope name="K-39" Z="19" N="39" >
+  <atom type="A" value="38.96370648643" />
+</isotope>
+
+<isotope name="K-40" Z="19" N="40" >
+  <atom type="A" value="39.963998166" />
+</isotope>
+
+<isotope name="K-41" Z="19" N="41" >
+  <atom type="A" value="40.96182525792" />
+</isotope>
+
+<isotope name="Kr-78" Z="36" N="78" >
+  <atom type="A" value="77.920364944" />
+</isotope>
+
+<isotope name="Kr-80" Z="36" N="80" >
+  <atom type="A" value="79.916378084" />
+</isotope>
+
+<isotope name="Kr-82" Z="36" N="82" >
+  <atom type="A" value="81.91348273" />
+</isotope>
+
+<isotope name="Kr-83" Z="36" N="83" >
+  <atom type="A" value="82.914127164" />
+</isotope>
+
+<isotope name="Kr-84" Z="36" N="84" >
+  <atom type="A" value="83.91149772816" />
+</isotope>
+
+<isotope name="Kr-86" Z="36" N="86" >
+  <atom type="A" value="85.91061062693" />
+</isotope>
+
+<isotope name="Li-6" Z="3" N="6" >
+  <atom type="A" value="6.01512288742" />
+</isotope>
+
+<isotope name="Li-7" Z="3" N="7" >
+  <atom type="A" value="7.01600343659" />
+</isotope>
+
+<isotope name="Mg-24" Z="12" N="24" >
+  <atom type="A" value="23.985041697" />
+</isotope>
+
+<isotope name="Mg-25" Z="12" N="25" >
+  <atom type="A" value="24.985836976" />
+</isotope>
+
+<isotope name="Mg-26" Z="12" N="26" >
+  <atom type="A" value="25.982592968" />
+</isotope>
+
+<isotope name="Mn-55" Z="25" N="55" >
+  <atom type="A" value="54.93804391" />
+</isotope>
+
+<isotope name="Mo-100" Z="42" N="100" >
+  <atom type="A" value="99.907471782" />
+</isotope>
+
+<isotope name="Mo-92" Z="42" N="92" >
+  <atom type="A" value="91.906807959" />
+</isotope>
+
+<isotope name="Mo-94" Z="42" N="94" >
+  <atom type="A" value="93.905084903" />
+</isotope>
+
+<isotope name="Mo-95" Z="42" N="95" >
+  <atom type="A" value="94.905838766" />
+</isotope>
+
+<isotope name="Mo-96" Z="42" N="96" >
+  <atom type="A" value="95.904676115" />
+</isotope>
+
+<isotope name="Mo-97" Z="42" N="97" >
+  <atom type="A" value="96.906018118" />
+</isotope>
+
+<isotope name="Mo-98" Z="42" N="98" >
+  <atom type="A" value="97.90540482" />
+</isotope>
+
+<isotope name="N-14" Z="7" N="14" >
+  <atom type="A" value="14.00307400443" />
+</isotope>
+
+<isotope name="N-15" Z="7" N="15" >
+  <atom type="A" value="15.00010889888" />
+</isotope>
+
+<isotope name="Na-23" Z="11" N="23" >
+  <atom type="A" value="22.98976928196" />
+</isotope>
+
+<isotope name="Nb-93" Z="41" N="93" >
+  <atom type="A" value="92.906373004" />
+</isotope>
+
+<isotope name="Nd-142" Z="60" N="142" >
+  <atom type="A" value="141.907728996" />
+</isotope>
+
+<isotope name="Nd-143" Z="60" N="143" >
+  <atom type="A" value="142.909819989" />
+</isotope>
+
+<isotope name="Nd-144" Z="60" N="144" >
+  <atom type="A" value="143.910092974" />
+</isotope>
+
+<isotope name="Nd-145" Z="60" N="145" >
+  <atom type="A" value="144.912579322" />
+</isotope>
+
+<isotope name="Nd-146" Z="60" N="146" >
+  <atom type="A" value="145.913122628" />
+</isotope>
+
+<isotope name="Nd-148" Z="60" N="148" >
+  <atom type="A" value="147.916899294" />
+</isotope>
+
+<isotope name="Nd-150" Z="60" N="150" >
+  <atom type="A" value="149.920902249" />
+</isotope>
+
+<isotope name="Ne-20" Z="10" N="20" >
+  <atom type="A" value="19.99244017617" />
+</isotope>
+
+<isotope name="Ne-21" Z="10" N="21" >
+  <atom type="A" value="20.993846685" />
+</isotope>
+
+<isotope name="Ne-22" Z="10" N="22" >
+  <atom type="A" value="21.991385114" />
+</isotope>
+
+<isotope name="Ni-58" Z="28" N="58" >
+  <atom type="A" value="57.935342414" />
+</isotope>
+
+<isotope name="Ni-60" Z="28" N="60" >
+  <atom type="A" value="59.930785885" />
+</isotope>
+
+<isotope name="Ni-61" Z="28" N="61" >
+  <atom type="A" value="60.93105557" />
+</isotope>
+
+<isotope name="Ni-62" Z="28" N="62" >
+  <atom type="A" value="61.928345365" />
+</isotope>
+
+<isotope name="Ni-64" Z="28" N="64" >
+  <atom type="A" value="63.927966816" />
+</isotope>
+
+<isotope name="O-16" Z="8" N="16" >
+  <atom type="A" value="15.99491461957" />
+</isotope>
+
+<isotope name="O-17" Z="8" N="17" >
+  <atom type="A" value="16.9991317565" />
+</isotope>
+
+<isotope name="O-18" Z="8" N="18" >
+  <atom type="A" value="17.99915961286" />
+</isotope>
+
+<isotope name="P-31" Z="15" N="31" >
+  <atom type="A" value="30.97376199842" />
+</isotope>
+
+<isotope name="Pa-231" Z="91" N="231" >
+  <atom type="A" value="231.035884243" />
+</isotope>
+
+<isotope name="Pb-204" Z="82" N="204" >
+  <atom type="A" value="203.973043981" />
+</isotope>
+
+<isotope name="Pb-206" Z="82" N="206" >
+  <atom type="A" value="205.974465683" />
+</isotope>
+
+<isotope name="Pb-207" Z="82" N="207" >
+  <atom type="A" value="206.975897297" />
+</isotope>
+
+<isotope name="Pb-208" Z="82" N="208" >
+  <atom type="A" value="207.976652481" />
+</isotope>
+
+<isotope name="Pd-102" Z="46" N="102" >
+  <atom type="A" value="101.905602187" />
+</isotope>
+
+<isotope name="Pd-104" Z="46" N="104" >
+  <atom type="A" value="103.90403054" />
+</isotope>
+
+<isotope name="Pd-105" Z="46" N="105" >
+  <atom type="A" value="104.905079626" />
+</isotope>
+
+<isotope name="Pd-106" Z="46" N="106" >
+  <atom type="A" value="105.903480426" />
+</isotope>
+
+<isotope name="Pd-108" Z="46" N="108" >
+  <atom type="A" value="107.90389164" />
+</isotope>
+
+<isotope name="Pd-110" Z="46" N="110" >
+  <atom type="A" value="109.905172199" />
+</isotope>
+
+<isotope name="Pt-190" Z="78" N="190" >
+  <atom type="A" value="189.959929707" />
+</isotope>
+
+<isotope name="Pt-192" Z="78" N="192" >
+  <atom type="A" value="191.961038746" />
+</isotope>
+
+<isotope name="Pt-194" Z="78" N="194" >
+  <atom type="A" value="193.96268085" />
+</isotope>
+
+<isotope name="Pt-195" Z="78" N="195" >
+  <atom type="A" value="194.964791719" />
+</isotope>
+
+<isotope name="Pt-196" Z="78" N="196" >
+  <atom type="A" value="195.964952091" />
+</isotope>
+
+<isotope name="Pt-198" Z="78" N="198" >
+  <atom type="A" value="197.96789492" />
+</isotope>
+
+<isotope name="Rb-85" Z="37" N="85" >
+  <atom type="A" value="84.9117897379" />
+</isotope>
+
+<isotope name="Rb-87" Z="37" N="87" >
+  <atom type="A" value="86.909180531" />
+</isotope>
+
+<isotope name="Rh-103" Z="45" N="103" >
+  <atom type="A" value="102.905497993" />
+</isotope>
+
+<isotope name="Ru-100" Z="44" N="100" >
+  <atom type="A" value="99.904214256" />
+</isotope>
+
+<isotope name="Ru-101" Z="44" N="101" >
+  <atom type="A" value="100.905576872" />
+</isotope>
+
+<isotope name="Ru-102" Z="44" N="102" >
+  <atom type="A" value="101.904344096" />
+</isotope>
+
+<isotope name="Ru-104" Z="44" N="104" >
+  <atom type="A" value="103.905427481" />
+</isotope>
+
+<isotope name="Ru-96" Z="44" N="96" >
+  <atom type="A" value="95.907590255" />
+</isotope>
+
+<isotope name="Ru-98" Z="44" N="98" >
+  <atom type="A" value="97.905286813" />
+</isotope>
+
+<isotope name="Ru-99" Z="44" N="99" >
+  <atom type="A" value="98.905934082" />
+</isotope>
+
+<isotope name="S-32" Z="16" N="32" >
+  <atom type="A" value="31.97207117441" />
+</isotope>
+
+<isotope name="S-33" Z="16" N="33" >
+  <atom type="A" value="32.97145890982" />
+</isotope>
+
+<isotope name="S-34" Z="16" N="34" >
+  <atom type="A" value="33.967867004" />
+</isotope>
+
+<isotope name="S-36" Z="16" N="36" >
+  <atom type="A" value="35.967080706" />
+</isotope>
+
+<isotope name="Sc-21" Z="21" N="45" >
+  <atom type="A" value="44.955908275" />
+</isotope>
+
+<isotope name="Se-74" Z="34" N="74" >
+  <atom type="A" value="73.922475934" />
+</isotope>
+
+<isotope name="Se-76" Z="34" N="76" >
+  <atom type="A" value="75.919213704" />
+</isotope>
+
+<isotope name="Se-77" Z="34" N="77" >
+  <atom type="A" value="76.919914154" />
+</isotope>
+
+<isotope name="Se-78" Z="34" N="78" >
+  <atom type="A" value="77.91730928" />
+</isotope>
+
+<isotope name="Se-80" Z="34" N="80" >
+  <atom type="A" value="79.916521762" />
+</isotope>
+
+<isotope name="Se-82" Z="34" N="82" >
+  <atom type="A" value="81.916699497" />
+</isotope>
+
+<isotope name="Si-28" Z="14" N="28" >
+  <atom type="A" value="27.97692653465" />
+</isotope>
+
+<isotope name="Si-29" Z="14" N="29" >
+  <atom type="A" value="28.9764946649" />
+</isotope>
+
+<isotope name="Si-30" Z="14" N="30" >
+  <atom type="A" value="29.973770136" />
+</isotope>
+
+<isotope name="Sn-112" Z="50" N="112" >
+  <atom type="A" value="111.904823874" />
+</isotope>
+
+<isotope name="Sn-114" Z="50" N="114" >
+  <atom type="A" value="113.902782695" />
+</isotope>
+
+<isotope name="Sn-115" Z="50" N="115" >
+  <atom type="A" value="114.903344699" />
+</isotope>
+
+<isotope name="Sn-116" Z="50" N="116" >
+  <atom type="A" value="115.901742797" />
+</isotope>
+
+<isotope name="Sn-117" Z="50" N="117" >
+  <atom type="A" value="116.902953983" />
+</isotope>
+
+<isotope name="Sn-118" Z="50" N="118" >
+  <atom type="A" value="117.901606574" />
+</isotope>
+
+<isotope name="Sn-119" Z="50" N="119" >
+  <atom type="A" value="118.903311172" />
+</isotope>
+
+<isotope name="Sn-120" Z="50" N="120" >
+  <atom type="A" value="119.902201634" />
+</isotope>
+
+<isotope name="Sn-122" Z="50" N="122" >
+  <atom type="A" value="121.903443774" />
+</isotope>
+
+<isotope name="Sn-124" Z="50" N="124" >
+  <atom type="A" value="123.905276645" />
+</isotope>
+
+<isotope name="Sr-84" Z="38" N="84" >
+  <atom type="A" value="83.913419136" />
+</isotope>
+
+<isotope name="Sr-86" Z="38" N="86" >
+  <atom type="A" value="85.909260608" />
+</isotope>
+
+<isotope name="Sr-87" Z="38" N="87" >
+  <atom type="A" value="86.908877531" />
+</isotope>
+
+<isotope name="Sr-88" Z="38" N="88" >
+  <atom type="A" value="87.905612542" />
+</isotope>
+
+<isotope name="Ta-180" Z="73" N="180" >
+  <atom type="A" value="179.947464832" />
+</isotope>
+
+<isotope name="Ta-181" Z="73" N="181" >
+  <atom type="A" value="180.947995769" />
+</isotope>
+
+<isotope name="Tb-159" Z="65" N="159" >
+  <atom type="A" value="158.92535471" />
+</isotope>
+
+<isotope name="Th-232" Z="90" N="232" >
+  <atom type="A" value="232.03805576" />
+</isotope>
+
+<isotope name="Ti-46" Z="22" N="46" >
+  <atom type="A" value="45.952627718" />
+</isotope>
+
+<isotope name="Ti-47" Z="22" N="47" >
+  <atom type="A" value="46.951758787" />
+</isotope>
+
+<isotope name="Ti-48" Z="22" N="48" >
+  <atom type="A" value="47.947941979" />
+</isotope>
+
+<isotope name="Ti-49" Z="22" N="49" >
+  <atom type="A" value="48.947865676" />
+</isotope>
+
+<isotope name="Ti-50" Z="22" N="50" >
+  <atom type="A" value="49.944786889" />
+</isotope>
+
+<isotope name="U-234" Z="92" N="234" >
+  <atom type="A" value="234.040952306" />
+</isotope>
+
+<isotope name="U-235" Z="92" N="235" >
+  <atom type="A" value="235.043930131" />
+</isotope>
+
+<isotope name="U-238" Z="92" N="238" >
+  <atom type="A" value="238.050788423" />
+</isotope>
+
+<isotope name="V-50" Z="23" N="50" >
+  <atom type="A" value="49.947156014" />
+</isotope>
+
+<isotope name="V-51" Z="23" N="51" >
+  <atom type="A" value="50.943957036" />
+</isotope>
+
+<isotope name="W-180" Z="74" N="180" >
+  <atom type="A" value="179.946710805" />
+</isotope>
+
+<isotope name="W-182" Z="74" N="182" >
+  <atom type="A" value="181.948203945" />
+</isotope>
+
+<isotope name="W-183" Z="74" N="183" >
+  <atom type="A" value="182.950222748" />
+</isotope>
+
+<isotope name="W-184" Z="74" N="184" >
+  <atom type="A" value="183.950930916" />
+</isotope>
+
+<isotope name="W-186" Z="74" N="186" >
+  <atom type="A" value="185.954362771" />
+</isotope>
+
+<isotope name="Xe-124" Z="54" N="124" >
+  <atom type="A" value="123.905891984" />
+</isotope>
+
+<isotope name="Xe-126" Z="54" N="126" >
+  <atom type="A" value="125.904298292" />
+</isotope>
+
+<isotope name="Xe-128" Z="54" N="128" >
+  <atom type="A" value="127.903531018" />
+</isotope>
+
+<isotope name="Xe-129" Z="54" N="129" >
+  <atom type="A" value="128.90478086113" />
+</isotope>
+
+<isotope name="Xe-130" Z="54" N="130" >
+  <atom type="A" value="129.903509349" />
+</isotope>
+
+<isotope name="Xe-131" Z="54" N="131" >
+  <atom type="A" value="130.905084057" />
+</isotope>
+
+<isotope name="Xe-132" Z="54" N="132" >
+  <atom type="A" value="131.90415508563" />
+</isotope>
+
+<isotope name="Xe-134" Z="54" N="134" >
+  <atom type="A" value="133.905394664" />
+</isotope>
+
+<isotope name="Xe-136" Z="54" N="136" >
+  <atom type="A" value="135.907214484" />
+</isotope>
+
+<isotope name="Y-89" Z="39" N="89" >
+  <atom type="A" value="88.905840348" />
+</isotope>
+
+<isotope name="Zn-64" Z="30" N="64" >
+  <atom type="A" value="63.929142013" />
+</isotope>
+
+<isotope name="Zn-66" Z="30" N="66" >
+  <atom type="A" value="65.926033809" />
+</isotope>
+
+<isotope name="Zn-67" Z="30" N="67" >
+  <atom type="A" value="66.927127746" />
+</isotope>
+
+<isotope name="Zn-68" Z="30" N="68" >
+  <atom type="A" value="67.924844554" />
+</isotope>
+
+<isotope name="Zn-70" Z="30" N="70" >
+  <atom type="A" value="69.925319208" />
+</isotope>
+
+<isotope name="Zr-90" Z="40" N="90" >
+  <atom type="A" value="89.904697659" />
+</isotope>
+
+<isotope name="Zr-91" Z="40" N="91" >
+  <atom type="A" value="90.905639587" />
+</isotope>
+
+<isotope name="Zr-92" Z="40" N="92" >
+  <atom type="A" value="91.905034675" />
+</isotope>
+
+<isotope name="Zr-94" Z="40" N="94" >
+  <atom type="A" value="93.906310828" />
+</isotope>
+
+<isotope name="Zr-96" Z="40" N="96" >
+  <atom type="A" value="95.908271433" />
+</isotope>
+
+<element name="Aluminium" >
+  <fraction ref="Al-27" n="1" />
+</element>
+
+<element name="Argon" >
+  <fraction ref="Ar-36" n="0.003365" />
+  <fraction ref="Ar-38" n="0.000632" />
+  <fraction ref="Ar-40" n="0.996003" />
+</element>
+
+<element name="Arsenic" >
+  <fraction ref="As-75" n="1" />
+</element>
+
+<element name="Beryllium" >
+  <fraction ref="Be-9" n="1" />
+</element>
+
+<element name="Bismuth" >
+  <fraction ref="Bi-209" n="1" />
+</element>
+
+<element name="Boron" >
+  <fraction ref="B-10" n="0.199" />
+  <fraction ref="B-11" n="0.801" />
+</element>
+
+<element name="Calcium" >
+  <fraction ref="Ca-40" n="0.96941" />
+  <fraction ref="Ca-42" n="0.00647" />
+  <fraction ref="Ca-43" n="0.00135" />
+  <fraction ref="Ca-44" n="0.02086" />
+  <fraction ref="Ca-46" n="4e-05" />
+  <fraction ref="Ca-48" n="0.00187" />
+</element>
+
+<element name="Carbon" >
+  <fraction ref="C-12" n="0.9893" />
+  <fraction ref="C-13" n="0.0107" />
+</element>
+
+<element name="Cesium" >
+  <fraction ref="Cs-133" n="1" />
+</element>
+
+<element name="Chlorine" >
+  <fraction ref="Cl-35" n="0.7578" />
+  <fraction ref="Cl-37" n="0.2422" />
+</element>
+
+<element name="Chromium" >
+  <fraction ref="Cr-50" n="0.04345" />
+  <fraction ref="Cr-52" n="0.83789" />
+  <fraction ref="Cr-53" n="0.09501" />
+  <fraction ref="Cr-54" n="0.02365" />
+</element>
+
+<element name="Cobalt" >
+  <fraction ref="Co-59" n="1" />
+</element>
+
+<element name="Copper" >
+  <fraction ref="Cu-63" n="0.6915" />
+  <fraction ref="Cu-65" n="0.3085" />
+</element>
+
+<element name="Fluorine" >
+  <fraction ref="F-19" n="1" />
+</element>
+
+<element name="Gadolinium" >
+  <fraction ref="Gd-152" n="0.002" />
+  <fraction ref="Gd-154" n="0.0218" />
+  <fraction ref="Gd-155" n="0.148" />
+  <fraction ref="Gd-156" n="0.2047" />
+  <fraction ref="Gd-157" n="0.1565" />
+  <fraction ref="Gd-158" n="0.2484" />
+  <fraction ref="Gd-160" n="0.2186" />
+</element>
+
+<element name="Gallium" >
+  <fraction ref="Ga-69" n="0.60108" />
+  <fraction ref="Ga-71" n="0.39892" />
+</element>
+
+<element name="Germanium" >
+  <fraction ref="Ge-70" n="0.2084" />
+  <fraction ref="Ge-72" n="0.2754" />
+  <fraction ref="Ge-73" n="0.0773" />
+  <fraction ref="Ge-74" n="0.3628" />
+  <fraction ref="Ge-76" n="0.0761" />
+</element>
+
+<element name="Gold" >
+  <fraction ref="Au-197" n="1" />
+</element>
+
+<element name="Helium" >
+  <fraction ref="He-3" n="1.37e-06" />
+  <fraction ref="He-4" n="0.99999863" />
+</element>
+
+<element name="Hydrogen" >
+  <fraction ref="D" n="0.000115" />
+  <fraction ref="H" n="0.999885" />
+</element>
+
+<element name="Iodine" >
+  <fraction ref="I-127" n="1" />
+</element>
+
+<element name="Iron" >
+  <fraction ref="Fe-54" n="0.05845" />
+  <fraction ref="Fe-56" n="0.91754" />
+  <fraction ref="Fe-57" n="0.02119" />
+  <fraction ref="Fe-58" n="0.00282" />
+</element>
+
+<element name="Lead" >
+  <fraction ref="Pb-204" n="0.014" />
+  <fraction ref="Pb-206" n="0.241" />
+  <fraction ref="Pb-207" n="0.221" />
+  <fraction ref="Pb-208" n="0.524" />
+</element>
+
+<element name="Lithium" >
+  <fraction ref="Li-6" n="0.0759" />
+  <fraction ref="Li-7" n="0.9241" />
+</element>
+
+<element name="Magnesium" >
+  <fraction ref="Mg-24" n="0.7899" />
+  <fraction ref="Mg-25" n="0.1" />
+  <fraction ref="Mg-26" n="0.1101" />
+</element>
+
+<element name="Manganese" >
+  <fraction ref="Mn-55" n="1" />
+</element>
+
+<element name="Mercury" >
+  <fraction ref="Hg-196" n="0.0015" />
+  <fraction ref="Hg-198" n="0.0997" />
+  <fraction ref="Hg-199" n="0.1687" />
+  <fraction ref="Hg-200" n="0.231" />
+  <fraction ref="Hg-201" n="0.1318" />
+  <fraction ref="Hg-202" n="0.2986" />
+  <fraction ref="Hg-204" n="0.0687" />
+</element>
+
+<element name="Molybdenum" >
+  <fraction ref="Mo-100" n="0.0963" />
+  <fraction ref="Mo-92" n="0.1484" />
+  <fraction ref="Mo-94" n="0.0925" />
+  <fraction ref="Mo-95" n="0.1592" />
+  <fraction ref="Mo-96" n="0.1668" />
+  <fraction ref="Mo-97" n="0.0955" />
+  <fraction ref="Mo-98" n="0.2413" />
+</element>
+
+<element name="Neodymium" >
+  <fraction ref="Nd-142" n="0.272" />
+  <fraction ref="Nd-143" n="0.122" />
+  <fraction ref="Nd-144" n="0.238" />
+  <fraction ref="Nd-145" n="0.083" />
+  <fraction ref="Nd-146" n="0.172" />
+  <fraction ref="Nd-148" n="0.057" />
+  <fraction ref="Nd-150" n="0.056" />
+</element>
+
+<element name="Neon" >
+  <fraction ref="Ne-20" n="0.9048" />
+  <fraction ref="Ne-21" n="0.0027" />
+  <fraction ref="Ne-22" n="0.0925" />
+</element>
+
+<element name="Nickel" >
+  <fraction ref="Ni-58" n="0.680769" />
+  <fraction ref="Ni-60" n="0.262231" />
+  <fraction ref="Ni-61" n="0.011399" />
+  <fraction ref="Ni-62" n="0.036345" />
+  <fraction ref="Ni-64" n="0.009256" />
+</element>
+
+<element name="Nitrogen" >
+  <fraction ref="N-14" n="0.99632" />
+  <fraction ref="N-15" n="0.00368" />
+</element>
+
+<element name="Oxygen" >
+  <fraction ref="O-16" n="0.99757" />
+  <fraction ref="O-17" n="0.00038" />
+  <fraction ref="O-18" n="0.00205" />
+</element>
+
+<element name="Phosphore" >
+  <fraction ref="P-31" n="1" />
+</element>
+
+<element name="Platinum" >
+  <fraction ref="Pt-190" n="0.00014" />
+  <fraction ref="Pt-192" n="0.00782" />
+  <fraction ref="Pt-194" n="0.32967" />
+  <fraction ref="Pt-195" n="0.33832" />
+  <fraction ref="Pt-196" n="0.25242" />
+  <fraction ref="Pt-198" n="0.07163" />
+</element>
+
+<element name="Potassium" >
+  <fraction ref="K-39" n="0.932581" />
+  <fraction ref="K-40" n="0.000117" />
+  <fraction ref="K-41" n="0.067302" />
+</element>
+
+<element name="Scandium" >
+  <fraction ref="Sc-21" n="1" />
+</element>
+
+<element name="Selenium" >
+  <fraction ref="Se-74" n="0.0089" />
+  <fraction ref="Se-76" n="0.0937" />
+  <fraction ref="Se-77" n="0.0763" />
+  <fraction ref="Se-78" n="0.2377" />
+  <fraction ref="Se-80" n="0.4961" />
+  <fraction ref="Se-82" n="0.0873" />
+</element>
+
+<element name="Silicium" >
+  <fraction ref="Si-28" n="0.922296077703922" />
+  <fraction ref="Si-29" n="0.0468319531680468" />
+  <fraction ref="Si-30" n="0.0308719691280309" />
+</element>
+
+<element name="Silver" >
+  <fraction ref="Ag-107" n="0.51839" />
+  <fraction ref="Ag-109" n="0.48161" />
+</element>
+
+<element name="Sodium" >
+  <fraction ref="Na-23" n="1" />
+</element>
+
+<element name="Sulfur" >
+  <fraction ref="S-32" n="0.9493" />
+  <fraction ref="S-33" n="0.0076" />
+  <fraction ref="S-34" n="0.0429" />
+  <fraction ref="S-36" n="0.0002" />
+</element>
+
+<element name="Tin" >
+  <fraction ref="Sn-112" n="0.0097" />
+  <fraction ref="Sn-114" n="0.0066" />
+  <fraction ref="Sn-115" n="0.0034" />
+  <fraction ref="Sn-116" n="0.1454" />
+  <fraction ref="Sn-117" n="0.0768" />
+  <fraction ref="Sn-118" n="0.2422" />
+  <fraction ref="Sn-119" n="0.0859" />
+  <fraction ref="Sn-120" n="0.3258" />
+  <fraction ref="Sn-122" n="0.0463" />
+  <fraction ref="Sn-124" n="0.0579" />
+</element>
+
+<element name="Titanium" >
+  <fraction ref="Ti-46" n="0.0825" />
+  <fraction ref="Ti-47" n="0.0744" />
+  <fraction ref="Ti-48" n="0.7372" />
+  <fraction ref="Ti-49" n="0.0541" />
+  <fraction ref="Ti-50" n="0.0518" />
+</element>
+
+<element name="Tungsten" >
+  <fraction ref="W-180" n="0.0012" />
+  <fraction ref="W-182" n="0.265" />
+  <fraction ref="W-183" n="0.1431" />
+  <fraction ref="W-184" n="0.3064" />
+  <fraction ref="W-186" n="0.2843" />
+</element>
+
+<element name="Vanadium" >
+  <fraction ref="V-50" n="0.0025" />
+  <fraction ref="V-51" n="0.9975" />
+</element>
+
+<element name="Xenon" >
+  <fraction ref="Xe-124" n="0.0009" />
+  <fraction ref="Xe-126" n="0.0009" />
+  <fraction ref="Xe-128" n="0.0192" />
+  <fraction ref="Xe-129" n="0.2644" />
+  <fraction ref="Xe-130" n="0.0408" />
+  <fraction ref="Xe-131" n="0.2118" />
+  <fraction ref="Xe-132" n="0.2689" />
+  <fraction ref="Xe-134" n="0.1044" />
+  <fraction ref="Xe-136" n="0.0887" />
+</element>
+
+<element name="Zinc" >
+  <fraction ref="Zn-64" n="0.4863" />
+  <fraction ref="Zn-66" n="0.279" />
+  <fraction ref="Zn-67" n="0.041" />
+  <fraction ref="Zn-68" n="0.1875" />
+  <fraction ref="Zn-70" n="0.0062" />
+</element>
+
+<material name="std__vacuum" formula="std::vacuum" state="gas" >
+  <D value="1e-16" unit="g/cm3" />
+  <fraction ref="Hydrogen" n="1" />
+</material>
+
+<material name="std__air" formula="std::air" state="gas" >
+  <D value="0.0012931" unit="g/cm3" />
+  <fraction ref="Nitrogen" n="0.8" />
+  <fraction ref="Oxygen" n="0.2" />
+</material>
+
+<material name="std__hydrogen_gas" formula="std::hydrogen_gas" state="gas" >
+  <D value="0.001" unit="g/cm3" />
+  <fraction ref="Hydrogen" n="1" />
+</material>
+
+<material name="std__aluminium" formula="std::aluminium" state="solid" >
+  <D value="2.7" unit="g/cm3" />
+  <fraction ref="Aluminium" n="1" />
+</material>
+
+<material name="std__copper" formula="std::copper" state="solid" >
+  <D value="8.9" unit="g/cm3" />
+  <fraction ref="Copper" n="1" />
+</material>
+
+<material name="std__iron" formula="std::iron" state="solid" >
+  <D value="7.874" unit="g/cm3" />
+  <fraction ref="Iron" n="1" />
+</material>
+
+<material name="std__lead" formula="std::lead" state="solid" >
+  <D value="11.35" unit="g/cm3" />
+  <fraction ref="Lead" n="1" />
+</material>
+
+<material name="std__water" formula="std::water" state="liquid" >
+  <D value="1" unit="g/cm3" />
+  <composite ref="Hydrogen" n="2" />
+  <composite ref="Oxygen" n="1" />
+</material>
+
+<material name="std__diamond" formula="std::diamond" state="solid" >
+  <D value="3.517" unit="g/cm3" />
+  <fraction ref="Carbon" n="1" />
+</material>
+
+<material name="std__mylar" formula="std::mylar" state="solid" >
+  <D value="1.397" unit="g/cm3" />
+  <composite ref="Carbon" n="10" />
+  <composite ref="Hydrogen" n="8" />
+  <composite ref="Oxygen" n="4" />
+</material>
+
+<material name="std__polycarbonate" formula="std::polycarbonate" state="solid" >
+  <D value="1.2" unit="g/cm3" />
+  <composite ref="Carbon" n="16" />
+  <composite ref="Hydrogen" n="14" />
+  <composite ref="Oxygen" n="3" />
+</material>
+
+<material name="std__polyethylene" formula="std::polyethylene" state="solid" >
+  <D value="0.94" unit="g/cm3" />
+  <composite ref="Carbon" n="2" />
+  <composite ref="Hydrogen" n="4" />
+</material>
+
+<material name="std__polypropylene" formula="std::polypropylene" state="solid" >
+  <D value="0.9" unit="g/cm3" />
+  <composite ref="Carbon" n="3" />
+  <composite ref="Hydrogen" n="5" />
+</material>
+
+<material name="std__polystyrene" formula="std::polystyrene" state="solid" >
+  <D value="1.032" unit="g/cm3" />
+  <composite ref="Carbon" n="8" />
+  <composite ref="Hydrogen" n="8" />
+</material>
+
+<material name="std__NE110" formula="std::NE110" state="solid" >
+  <D value="1.032" unit="g/cm3" />
+  <composite ref="Carbon" n="9" />
+  <composite ref="Hydrogen" n="10" />
+</material>
+
+<material name="std__PVT" formula="std::PVT" state="solid" >
+  <D value="1.032" unit="g/cm3" />
+  <composite ref="Carbon" n="9" />
+  <composite ref="Hydrogen" n="10" />
+</material>
+
+<material name="std__delrin" formula="std::delrin" state="solid" >
+  <D value="1.42" unit="g/cm3" />
+  <composite ref="Carbon" n="1" />
+  <composite ref="Hydrogen" n="2" />
+  <composite ref="Oxygen" n="1" />
+</material>
+
+<material name="std__CsI" formula="std::CsI" state="solid" >
+  <D value="4.51" unit="g/cm3" />
+  <composite ref="Cesium" n="1" />
+  <composite ref="Iodine" n="1" />
+</material>
+
+<material name="std__NaI" formula="std::NaI" state="solid" >
+  <D value="3.667" unit="g/cm3" />
+  <composite ref="Iodine" n="1" />
+  <composite ref="Sodium" n="1" />
+</material>
+
+<material name="std__SiO2" formula="std::SiO2" state="solid" >
+  <D value="2.32" unit="g/cm3" />
+  <composite ref="Oxygen" n="2" />
+  <composite ref="Silicium" n="1" />
+</material>
+
+<material name="std__plexiglass" formula="std::plexiglass" state="solid" >
+  <D value="1.19" unit="g/cm3" />
+  <composite ref="Carbon" n="5" />
+  <composite ref="Hydrogen" n="8" />
+  <composite ref="Oxygen" n="2" />
+</material>
+
+<material name="std__kapton" formula="std::kapton" state="solid" >
+  <D value="1.42" unit="g/cm3" />
+  <composite ref="Carbon" n="22" />
+  <composite ref="Hydrogen" n="10" />
+  <composite ref="Nitrogen" n="2" />
+  <composite ref="Oxygen" n="5" />
+</material>
+
+<material name="std__nylon" formula="std::nylon" state="solid" >
+  <D value="1.14" unit="g/cm3" />
+  <composite ref="Carbon" n="6" />
+  <composite ref="Hydrogen" n="11" />
+  <composite ref="Nitrogen" n="1" />
+  <composite ref="Oxygen" n="1" />
+</material>
+
+<material name="std__pyrex" formula="std::pyrex" state="solid" >
+  <D value="2.23" unit="g/cm3" />
+  <fraction ref="Aluminium" n="0.012" />
+  <fraction ref="Boron" n="0.04" />
+  <fraction ref="Oxygen" n="0.54" />
+  <fraction ref="Potassium" n="0.003" />
+  <fraction ref="Silicium" n="0.377" />
+  <fraction ref="Sodium" n="0.028" />
+</material>
+
+<material name="std__inox" formula="std::inox" state="solid" >
+  <D value="8" unit="g/cm3" />
+  <fraction ref="Chromium" n="0.173" />
+  <fraction ref="Iron" n="0.703" />
+  <fraction ref="Molybdenum" n="0.021" />
+  <fraction ref="Nickel" n="0.103" />
+</material>
+
+<material name="std__sapphire" formula="std::sapphire" state="solid" >
+  <D value="4" unit="g/cm3" />
+  <composite ref="Aluminium" n="2" />
+  <composite ref="Oxygen" n="3" />
+</material>
+
+<material name="std__concrete" formula="std::concrete" state="solid" >
+  <D value="2" unit="g/cm3" />
+  <fraction ref="Aluminium" n="0.014245" />
+  <fraction ref="Calcium" n="0.04986" />
+  <fraction ref="Hydrogen" n="0.09972" />
+  <fraction ref="Iron" n="0.00285" />
+  <fraction ref="Oxygen" n="0.60541" />
+  <fraction ref="Silicium" n="0.227915" />
+</material>
+
+<material name="std__pfte" formula="std::pfte" state="solid" >
+  <D value="2.2" unit="g/cm3" />
+  <composite ref="Carbon" n="2" />
+  <composite ref="Fluorine" n="4" />
+</material>
+
+<material name="std__teflon" formula="std::teflon" state="solid" >
+  <D value="2.2" unit="g/cm3" />
+  <composite ref="Carbon" n="1" />
+  <composite ref="Fluorine" n="2" />
+</material>
+
+<material name="vacuum" formula="vacuum" state="gas" >
+  <D value="1e-16" unit="g/cm3" />
+  <fraction ref="Hydrogen" n="1" />
+</material>
+
+<material name="copper" formula="copper" state="solid" >
+  <D value="8.9" unit="g/cm3" />
+  <fraction ref="Copper" n="1" />
+</material>
+
+<material name="lead" formula="lead" state="solid" >
+  <D value="11.35" unit="g/cm3" />
+  <fraction ref="Lead" n="1" />
+</material>
+
+<material name="iron" formula="iron" state="solid" >
+  <D value="7.874" unit="g/cm3" />
+  <fraction ref="Iron" n="1" />
+</material>
+
+</materials>
+
+
+<solids>
+
+<box name="world.log.solid" x="1000" y="1000" z="1000" lunit="mm" />
+
+<box name="another_stack.model.log.solid" x="160" y="160" z="330" lunit="mm" />
+
+<box name="blue_box0.model.log.solid" x="100" y="50" z="20" lunit="mm" />
+
+<box name="exbox2.model.log.solid.subtraction.first_ref" x="160" y="160" z="100" lunit="mm" />
+
+<box name="exbox2.model.log.solid.subtraction.second_ref" x="140" y="140" z="90" lunit="mm" />
+
+<subtraction name="exbox2.model.log.solid" >
+  <first ref="exbox2.model.log.solid.subtraction.first_ref" />
+  <second ref="exbox2.model.log.solid.subtraction.second_ref" />
+  <positionref ref="exbox2.model.log.solid.subtraction.pos_ref" />
+  <rotationref ref="exbox2.model.log.solid.subtraction.rot_ref" />
+</subtraction>
+
+<box name="exbox1.model.log.solid.subtraction.first_ref" x="100" y="100" z="200" lunit="mm" />
+
+<box name="exbox1.model.log.solid.subtraction.second_ref" x="60" y="60" z="160" lunit="mm" />
+
+<subtraction name="exbox1.model.log.solid" >
+  <first ref="exbox1.model.log.solid.subtraction.first_ref" />
+  <second ref="exbox1.model.log.solid.subtraction.second_ref" />
+  <positionref ref="exbox1.model.log.solid.subtraction.pos_ref" />
+  <rotationref ref="exbox1.model.log.solid.subtraction.rot_ref" />
+</subtraction>
+
+<tube name="box0_circular_chain.model.log.solid" rmin="140" rmax="260" z="40" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="green_box0.model.log.solid" x="100" y="50" z="20" lunit="mm" />
+
+<box name="magenta_box0.model.log.solid" x="100" y="50" z="20" lunit="mm" />
+
+<tube name="blue_cylinder0.model.log.solid" rmin="0" rmax="40" z="50" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="cylinder0_big_column.model.log.solid" x="80" y="80" z="650" lunit="mm" />
+
+<tube name="orange_cylinder0.model.log.solid" rmin="0" rmax="40" z="50" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="cylinder0_medium_column.model.log.solid" x="80" y="280" z="50" lunit="mm" />
+
+<tube name="green_cylinder0.model.log.solid" rmin="0" rmax="40" z="50" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="cylinder0_small_column.model.log.solid" x="80" y="180" z="50" lunit="mm" />
+
+<tube name="red_cylinder0.model.log.solid" rmin="0" rmax="40" z="50" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="box0_small_grid.model.log.solid" x="300" y="50" z="220" lunit="mm" />
+
+<box name="detector_stack.model.log.solid" x="140" y="140" z="240" lunit="mm" />
+
+<tube name="orange_medium_cylinder0.model.log.solid" rmin="0" rmax="65" z="45" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="long_blue_cylinder0.model.log.solid" rmin="0" rmax="40" z="120" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="red_medium_cylinder0.model.log.solid" rmin="0" rmax="70" z="55" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="box0_linear_chain.model.log.solid" x="100" y="350" z="20" lunit="mm" />
+
+<box name="red_box0.model.log.solid" x="100" y="50" z="20" lunit="mm" />
+
+<box name="stack_with_insertion.model.log.solid" x="200" y="200" z="365" lunit="mm" />
+
+<tube name="blue_large_tube0.model.log.solid" rmin="80" rmax="100" z="100" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="red_huge_tube0.model.log.solid" rmin="65" rmax="90" z="200" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="box0_yz_grid.model.log.solid" x="100" y="850" z="420" lunit="mm" />
+
+</solids>
+
+
+<structure>
+
+<volume name="blue_box0.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="blue_box0.model.log.solid" />
+
+
+</volume>
+
+<volume name="exbox2.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="exbox2.model.log.solid" />
+
+
+</volume>
+
+<volume name="exbox1.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="exbox1.model.log.solid" />
+
+
+</volume>
+
+<volume name="another_stack.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="another_stack.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="another_stack.model.log.stacked__0__.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="another_stack.model.log.stacked__1__.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="exbox2.model.log" />
+    <positionref ref="another_stack.model.log.stacked__2__.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="exbox1.model.log" />
+    <positionref ref="another_stack.model.log.stacked__3__.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="exbox2.model.log" />
+    <positionref ref="another_stack.model.log.stacked__4__.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="green_box0.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="green_box0.model.log.solid" />
+
+
+</volume>
+
+<volume name="magenta_box0.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="magenta_box0.model.log.solid" />
+
+
+</volume>
+
+<volume name="box0_circular_chain.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="box0_circular_chain.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.SpecialBox0.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.SpecialBox1.phys.pos" />
+    <rotationref ref="box0_circular_chain.model.log.SpecialBox1.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____0__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____0__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____1__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____1__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____2__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____2__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____3__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____3__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____4__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____4__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____5__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____5__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____6__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____6__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____7__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____7__.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="magenta_box0.model.log" />
+    <positionref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____8__.pos" />
+    <rotationref ref="box0_circular_chain.model.log.go_round_boxes.phys.__0..8____8__.rot" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="blue_cylinder0.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="blue_cylinder0.model.log.solid" />
+
+
+</volume>
+
+<volume name="orange_cylinder0.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="orange_cylinder0.model.log.solid" />
+
+
+</volume>
+
+<volume name="cylinder0_big_column.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="cylinder0_big_column.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="orange_cylinder0.model.log" />
+    <positionref ref="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_cylinder0.model.log" />
+    <positionref ref="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____1__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_cylinder0.model.log" />
+    <positionref ref="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____2__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_cylinder0.model.log" />
+    <positionref ref="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____3__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_cylinder0.model.log" />
+    <positionref ref="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____4__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_cylinder0.model.log" />
+    <positionref ref="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____5__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_cylinder0.model.log" />
+    <positionref ref="cylinder0_big_column.model.log.aligned_cylinders.phys.__0..6____6__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="green_cylinder0.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="green_cylinder0.model.log.solid" />
+
+
+</volume>
+
+<volume name="cylinder0_medium_column.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="cylinder0_medium_column.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="green_cylinder0.model.log" />
+    <positionref ref="cylinder0_medium_column.model.log.aligned_cylinders.phys.__0..2____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_cylinder0.model.log" />
+    <positionref ref="cylinder0_medium_column.model.log.aligned_cylinders.phys.__0..2____1__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_cylinder0.model.log" />
+    <positionref ref="cylinder0_medium_column.model.log.aligned_cylinders.phys.__0..2____2__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="red_cylinder0.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="red_cylinder0.model.log.solid" />
+
+
+</volume>
+
+<volume name="cylinder0_small_column.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="cylinder0_small_column.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="red_cylinder0.model.log" />
+    <positionref ref="cylinder0_small_column.model.log.aligned_cylinders.phys.__0..1____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="red_cylinder0.model.log" />
+    <positionref ref="cylinder0_small_column.model.log.aligned_cylinders.phys.__0..1____1__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="box0_small_grid.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="box0_small_grid.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_small_grid.model.log.grid.phys.__0..1____0..2____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_small_grid.model.log.grid.phys.__0..1____0..2____1__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_small_grid.model.log.grid.phys.__0..1____0..2____2__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_small_grid.model.log.grid.phys.__0..1____0..2____3__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_small_grid.model.log.grid.phys.__0..1____0..2____4__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_small_grid.model.log.grid.phys.__0..1____0..2____5__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="orange_medium_cylinder0.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="orange_medium_cylinder0.model.log.solid" />
+
+
+</volume>
+
+<volume name="long_blue_cylinder0.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="long_blue_cylinder0.model.log.solid" />
+
+
+</volume>
+
+<volume name="red_medium_cylinder0.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="red_medium_cylinder0.model.log.solid" />
+
+
+</volume>
+
+<volume name="detector_stack.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="detector_stack.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="detector_stack.model.log.Attenuator.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_medium_cylinder0.model.log" />
+    <positionref ref="detector_stack.model.log.BackSensor.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="long_blue_cylinder0.model.log" />
+    <positionref ref="detector_stack.model.log.Collector.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="red_medium_cylinder0.model.log" />
+    <positionref ref="detector_stack.model.log.FrontSensor.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="red_box0.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="red_box0.model.log.solid" />
+
+
+</volume>
+
+<volume name="box0_linear_chain.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="box0_linear_chain.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="red_box0.model.log" />
+    <positionref ref="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="red_box0.model.log" />
+    <positionref ref="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____1__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="red_box0.model.log" />
+    <positionref ref="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____2__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="red_box0.model.log" />
+    <positionref ref="box0_linear_chain.model.log.aligned_boxes.phys.__0..3____3__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="blue_large_tube0.model.log" >
+  <materialref ref="iron" />
+  <solidref    ref="blue_large_tube0.model.log.solid" />
+
+
+</volume>
+
+<volume name="red_huge_tube0.model.log" >
+  <materialref ref="iron" />
+  <solidref    ref="red_huge_tube0.model.log.solid" />
+
+
+</volume>
+
+<volume name="stack_with_insertion.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="stack_with_insertion.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="blue_large_tube0.model.log" />
+    <positionref ref="stack_with_insertion.model.log.stacked__0__.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="orange_medium_cylinder0.model.log" />
+    <positionref ref="stack_with_insertion.model.log.stacked__1__.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="stack_with_insertion.model.log.stacked__2__.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="red_huge_tube0.model.log" />
+    <positionref ref="stack_with_insertion.model.log.stacked__3__.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="box0_yz_grid.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="box0_yz_grid.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.AdditionalBox0.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.AdditionalBox1.phys.pos" />
+    <rotationref ref="box0_yz_grid.model.log.AdditionalBox1.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____1__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____2__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____3__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____4__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____5__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____6__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____7__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____8__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____9__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____10__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____11__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____12__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____13__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____14__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____15__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____16__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____17__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____18__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____19__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____20__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____21__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____22__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____23__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____24__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____25__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="green_box0.model.log" />
+    <positionref ref="box0_yz_grid.model.log.grid.phys.__0..8____0..2____26__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="world.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="world.log.solid" />
+
+  <physvol>
+    <volumeref   ref="another_stack.model.log" />
+    <positionref ref="world.log.AnotherStack.phys.pos" />
+    <rotationref ref="world.log.AnotherStack.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="world.log.BoxA.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="world.log.BoxB.phys.pos" />
+    <rotationref ref="world.log.BoxB.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="world.log.BoxC.phys.pos" />
+    <rotationref ref="world.log.BoxC.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="world.log.BoxD.phys.pos" />
+    <rotationref ref="world.log.BoxD.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_box0.model.log" />
+    <positionref ref="world.log.BoxE.phys.pos" />
+    <rotationref ref="world.log.BoxE.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="box0_circular_chain.model.log" />
+    <positionref ref="world.log.CircleBoxes.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_cylinder0.model.log" />
+    <positionref ref="world.log.CylA.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_cylinder0.model.log" />
+    <positionref ref="world.log.CylB.phys.pos" />
+    <rotationref ref="world.log.CylB.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_cylinder0.model.log" />
+    <positionref ref="world.log.CylC.phys.pos" />
+    <rotationref ref="world.log.CylC.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="cylinder0_big_column.model.log" />
+    <positionref ref="world.log.CylCol0.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="cylinder0_medium_column.model.log" />
+    <positionref ref="world.log.CylCol1a.phys.pos" />
+    <rotationref ref="world.log.CylCol1a.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="cylinder0_small_column.model.log" />
+    <positionref ref="world.log.CylCol2a.phys.pos" />
+    <rotationref ref="world.log.CylCol2a.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_cylinder0.model.log" />
+    <positionref ref="world.log.CylD.phys.pos" />
+    <rotationref ref="world.log.CylD.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_cylinder0.model.log" />
+    <positionref ref="world.log.CylE.phys.pos" />
+    <rotationref ref="world.log.CylE.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="blue_cylinder0.model.log" />
+    <positionref ref="world.log.CylF.phys.pos" />
+    <rotationref ref="world.log.CylF.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="box0_small_grid.model.log" />
+    <positionref ref="world.log.CylSubGrid.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="detector_stack.model.log" />
+    <positionref ref="world.log.DetStack0.phys.pos" />
+    <rotationref ref="world.log.DetStack0.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="detector_stack.model.log" />
+    <positionref ref="world.log.DetStack1.phys.pos" />
+    <rotationref ref="world.log.DetStack1.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="box0_linear_chain.model.log" />
+    <positionref ref="world.log.ManyBoxes.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="stack_with_insertion.model.log" />
+    <positionref ref="world.log.SpecialStack.phys.pos" />
+    <rotationref ref="world.log.SpecialStack.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="box0_yz_grid.model.log" />
+    <positionref ref="world.log.WallBricks.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+</structure>
+
+
+<setup name="Setup" version="1.0" >
+  <world ref="world.log" />
+</setup>
+
+
+</gdml>
+

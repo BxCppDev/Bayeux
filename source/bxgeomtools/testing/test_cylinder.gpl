@@ -1,0 +1,34 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_cylinder.cxx
+#
+
+! ${GEOMTOOLS_ROOT}/$(geomtools-config --system)/bin/test_cylinder > test_cylinder.data
+
+set xrange [-5:5]
+set yrange [-5:5]
+set zrange [-5:5]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_cylinder.cxx - test 2"
+splot \
+  "test_cylinder.data" index 0 title "Cylinder" with lines , \
+  "test_cylinder.data" index 1 title "Initial point" with points pt 6 ps 2 , \
+  "test_cylinder.data" index 3 title "Track" with lines lw 2 , \
+  "test_cylinder.data" index 2 title "Final point" with points pt 6 ps 2 
+pause -1
+
+set title "test_cylinder.cxx - test 3"
+splot \
+  "test_cylinder.data" index 4 title "Cylinder" with lines , \
+  "test_cylinder.data" index 5 title "Impact" with dots lt 1 
+pause -1
+
+set title "test_cylinder.cxx - test 3"
+splot \
+  "test_cylinder.data" index 5 title "Impact" with dots lt 1 
+
+
+! #rm -f test_cylinder.data
+
+# end 
