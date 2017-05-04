@@ -1,3 +1,5 @@
+Development of mygsl has migrated to Git
+
 
 Bayeux/mygsl is a C++ library  which provides some C++ wrapper classes
 for the GSL library as well as other numerical tools.
