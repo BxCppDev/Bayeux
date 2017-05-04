@@ -1,0 +1,17 @@
+/// \file cuts/cuts_config.h
+
+#ifndef CUTS_CUTS_CONFIG_H
+#define CUTS_CUTS_CONFIG_H 1
+
+/*  cuts debug flag */
+#cmakedefine01 CUTS_WITH_DEBUG
+
+#endif // CUTS_CUTS_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

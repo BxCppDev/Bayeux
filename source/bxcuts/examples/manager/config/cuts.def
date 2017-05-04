@@ -1,0 +1,116 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of cuts on instances of the "data" class
+#@key_label   "name"
+#@meta_label  "type"
+
+
+[name="x1" type="range_cut"]
+#@description A cut that selects only data with X in some interval
+mode : string = "x"
+min  : real   = -0.05
+max  : real   =  0.40
+
+
+[name="y1" type="range_cut"]
+#@description A cut that selects only data with Y in some interval
+mode : string = "y"
+min  : real   = 0.15
+max  : real   = 0.85
+
+
+[name="z1" type="range_cut"]
+#@description A cut that selects only data with Y in some interval
+mode : string = "z"
+min  : real   = -0.95
+max  : real   =  0.95
+
+
+[name="box1" type="cuts::multi_and_cut"]
+#@description A combined cut
+cuts : string[3] = "x1" "y1" "z1"
+
+
+[name="x2" type="range_cut"]
+#@description A cut that selects only data with X in some interval
+mode : string = "x"
+min  : real   = -0.65
+max  : real   = 0.15
+
+
+[name="y2" type="range_cut"]
+#@description A cut that selects only data with Y in some interval
+mode : string = "y"
+min  : real   = -0.90
+max  : real   = -0.75
+
+
+[name="z2" type="range_cut"]
+#@description A cut that selects only data with Y in some interval
+mode : string = "z"
+min  : real   = -0.10
+max  : real   = +0.15
+
+
+[name="box2" type="cuts::multi_and_cut"]
+#@description A combined cut with 3 independant cuts
+cuts : string[3] = "x2" "y2" "z2"
+
+
+[name="sphere1" type="sphere_cut"]
+#@description A spherical cut
+center : real [3] = 0.2 0.3 -0.3
+radius : real = 0.50
+
+
+[name="sphere2" type="sphere_cut"]
+#@description A spherical cut
+center : real [3] = -0.6 -0.3 -0.7
+radius : real = 0.25
+
+
+[name="red" type="color_cut"]
+#@description A color cut to select "red" points
+color : string = "red"
+
+
+[name="green" type="color_cut"]
+#@description A color cut to select "green" points
+color : string = "green"
+
+
+[name="blue" type="color_cut"]
+#@description A color cut to select "blue" points
+color : string = "blue"
+
+
+[name="!box1" type="cuts::not_cut"]
+#@description A not cut that reverses the "box1" cut
+cut : string = "box1"
+
+
+[name="strange_blue_shape" type="cuts::multi_and_cut"]
+#@description A combined cut
+cuts : string [3] = "sphere1" "!box1" "blue"
+
+
+[name="green_ball" type="cuts::and_cut"]
+#@description A combined cut
+cut_1 : string = "sphere2"
+cut_2 : string = "green"
+
+
+[name="red_box" type="cuts::and_cut"]
+#@description A combined cut
+cut_1 : string = "box2"
+cut_2 : string = "red"
+
+
+[name="selector" type="cuts::multi_or_cut"]
+#@description A combined cut
+cuts : string [3] = "red_box" "strange_blue_shape" "green_ball"
+
+
+# End of list of multi-properties.
+
