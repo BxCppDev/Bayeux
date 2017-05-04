@@ -1,0 +1,116 @@
+This is the datatools package ChangeLog
+
+2008-02-25 : creation by Francois Mauger <mauger@lpccaen.in2p3.fr>
+
+2008-09 : version 1.0
+	- first release tag
+
+2008-09 : version 2.0
+	- add Portable Binary Archive support from pba_help package
+
+2008-11-23 : version 2.1
+	- make support for Portable Binary Archive optional:
+	Build/install:
+	./pkgtools.d/pkgtool configure [--without-pba]
+	./pkgtools.d/pkgtool build
+	./pkgtools.d/pkgtool build bin
+	./pkgtools.d/pkgtool install
+
+2009-11-13 : F. Mauger, X. Garrido
+	- many fix
+	- support for Boost 1.40.0
+	  with EOS portable binary archive 3.1 + a trick (3.1)
+	- support for new serialization stuff:
+	http://www.boost.org/doc/libs/1_40_0/libs/serialization/doc/release.html#requirements
+	- support for std::bitset serialization stuff (vault) [to be checked]
+
+2010-05-15 : F. Mauger, X. Garrido
+	- attempt to support Boost 1.43.0
+	  with EOS portable binary archive 4.1 + a trick (4.1)
+
+2011-03-15 : by F. Mauger
+	- prepare major version 3.0
+	- depends on Boost 1.44.0 (new serialization features)
+	- use a new serialization mechanism in 'properties' and
+	'multi_properties' classes that inherit the abstract
+	'i_serializable' class
+	- add the 'things' class (with the new serial. mechanism too)
+	- new quasi_portable_binary_[i|o]archive classes (experimental)
+
+2011-03-19 : by F. Mauger
+	- implement a new scheme for handling Boost/Serialization material
+	- separate "template serialize" implementation (*.ipp file) from declaration (*.h file)
+	- create new useful macros to ease the management of class export features and
+	template automatic instantiation
+	- add 'the_serializables.h' header to generate and manage dedicated code for serializable classes
+	in the package
+	- do not embed explicit serialization code in the shared  lib.
+	- use explicit serialization code only at the executable level (local static object)
+	- provide a lightweight and optional model for serialization
+2011-04-11 : by F. Mauger
+	- add the 'handle' class base on boost::share_ptr<>
+	- add the 'handle_pool' class
+	- add pause/resume method in the computing_time class
+2011-06-02 : by F. Mauger
+	- fix coding style issues, excessive header inclusion
+	- some cleaning
+2011-06-15 : by F. Mauger
+	- tag version 3.1.2
+2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* explicit linking with dependency shared libs
+	* pre-tag 3.1.3
+2011-07-03 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* kwsys: embedded kwsys library
+	* add library_loader class (kwsys-based)
+2012-01-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* kwsys: do not use embedded  kwsys library anymore
+	* CMake: new build system (preliminary)
+2012-01-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* use 'boost/math/special_functions/nonfinite_num_facets.hpp' from
+	Boost 1.47.0
+2012-01-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* kwsys: use a minimal embedded  kwsys library as a new datatools_sys core DLL
+	* CMake: many improvements and bug fix
+2012-03-19 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* factory: add template factory and associated utilities (macros)
+	to support object factories using Boost/Function and automated class
+	registration.
+	- header: "include/datatools/factory/factory.h"
+	- namespace: 'datatools::factory'
+	- testing: "testing/test_factory.cxx'
+	* version: prepare tag 4.1.0 in trunk
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* Handle: add useful macros
+	- header : "include/datatools/utils/handle_macros.h"
+	- testing: "testing/test_handle_macros.h"
+	* remove all "using namespace std;" from header files
+2012-04-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* modify the 'factory' system and macros to use the 'Construct On First Use Idiom'
+2012-12-20 : by Ben Morgan <Ben.Morgan@warwick.ac.uk> and Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* major interface change: version 5.0 pre-release
+	* flatten nested namespaces
+	* separate public/detail interfaces
+	* simplify the build/install procedure
+	* add CAMP-based reflection tools
+	* simplify serialization and reflection resources
+	* change serialization tag scheme and add backward compatibility support
+	* add documentation
+	* remove unused code
+2013-02-18 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix a bug in serial_tag of properties classes
+	* add methods in things
+2013-03-23 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add support for 'explicit unit' for real property in
+  	  'datatools::properties' and related ASCII I/O
+	* add support for 'NaN' and '+/-infinity' for real property
+	  in 'datatools::properties and related ASCII I/O
+	* add types enum (for OCD support and properties compatibility)
+	* add 'object_configuration_description' class (OCD support)
+2013-04-23 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* tag 5.0.0
+2013-05-07 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix error in reflection headers installation
+	* add some fetch_path_with_env_X function
+	* re-tag 5.0.0
+2013-05-10 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* OCD output format now uses ReStructuredText

@@ -1,0 +1,351 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of definitions for configuration items
+#@key_label   "name"
+#@meta_label  "type"
+
+
+################################################
+[name="radioactive.isotope.PM" type="parameter"]
+display_name    : string = "Radioisotope"
+description     : string = "The radioisotope"
+type            : string = "string"
+mutability      : string = "variable"
+variable.mode   : string = "enumeration"
+string.enumerated.size : integer = 5
+
+string.enumerated_0.value : string = "Bi214"
+string.enumerated_0.group : string = "Background"
+
+string.enumerated_1.value : string = "K40"
+string.enumerated_1.group : string = "Background"
+
+string.enumerated_2.value : string = "Tl208"
+string.enumerated_2.group : string = "Background"
+
+string.enumerated_3.value : string = "Bi2107"
+string.enumerated_3.group : string = "Calibration"
+
+string.enumerated_4.value : string = "Sr90"
+string.enumerated_4.group : string = "Calibration"
+
+string.default  : string = "Bi214"
+
+
+#################################################
+[name="radioactive.activity.PM" type="parameter"]
+display_name    : string = "Mass activity"
+description     : string = "The mass activity of a radioisotope contaminating a material"
+type            : string = "real"
+mutability      : string = "variable"
+real.unit_label : string = "mass_activity"
+real.preferred_unit : string = "uBq/kg"
+real.precision  : real   = 1 uBq/kg
+variable.mode   : string = "interval"
+real.domain     : string = "[50 uBq/kg, 1 Bq/kg]"
+real.default    : real   = 1 mBq/kg
+
+
+#########################################
+[name="if_radioactive.VM" type="variant"]
+display_name    : string = "Radioactivity characteristics"
+description     : string = "The characteristics of the material radioactivity"
+parameters : string[2] = "isotope" "mass_activity"
+parameters.isotope.model             : string = "radioactive.isotope.PM"
+parameters.isotope.description       : string = "The radioactive isotope"
+parameters.mass_activity.model       : string = "radioactive.activity.PM"
+parameters.mass_activity.description : string = "The mass activity"
+
+
+############################################
+[name="detector.length.PM" type="parameter"]
+display_name    : string = "Detector length"
+description     : string = "The length of the detector"
+type            : string = "real"
+mutability      : string = "variable"
+real.unit_label : string = "length"
+real.preferred_unit : string = "cm"
+real.precision  : real   = 0.1 mm
+variable.mode   : string = "interval"
+real.domain     : string = "[1 cm, 10 cm]"
+#real.default    : real   = 2 cm
+
+
+###########################################
+[name="detector.width.PM" type="parameter"]
+display_name    : string = "Detector width"
+description     : string = "The width of the detector"
+type            : string = "real"
+mutability      : string = "variable"
+real.unit_label : string = "length"
+real.preferred_unit : string = "cm"
+real.precision  : real   = 0.1 mm
+variable.mode   : string = "enumeration"
+
+# Supported values:
+real.enumerated.size : integer = 5
+
+real.enumerated_0.value   : real   =  1.5 mm
+real.enumerated_0.group   : string =  "Thin"
+
+real.enumerated_1.value   : real   =  5.0 mm
+real.enumerated_1.group   : string =  "Thin"
+
+real.enumerated_2.value   : real   =  2.0 cm
+real.enumerated_2.default : boolean =  true
+
+real.enumerated_3.value   : real   =  5.0 cm
+
+real.enumerated_4.value   : real   = 10.0 cm
+real.enumerated_4.group   : string =  "Thick"
+
+
+#########################################
+[name="thin_behaviour.VM" type="variant"]
+display_name    : string = "Thin detector behaviour"
+description     : string = "The parameters of the behaviour of a thin detector"
+# parameters : string[2] = "A" "B"
+# parameters.A.model       : string = "???.PM"
+# parameters.A.description : string = "???"
+# parameters.B.model       : string = "???.PM"
+# parameters.B.description : string = "???"
+
+
+##########################################
+[name="thick_behaviour.VM" type="variant"]
+display_name    : string = "Thick detector behaviour"
+description     : string = "The parameters of the behaviour of a thick detector"
+
+
+###############################################
+[name="detector.thickness.PM" type="parameter"]
+display_name    : string = "Detector thickness"
+description     : string = "The thickness of the detector"
+type            : string = "real"
+mutability      : string = "variable"
+real.unit_label : string = "length"
+real.preferred_unit : string = "um"
+real.precision  : real   = 1 um
+variable.mode   : string = "interval"
+real.domain     : string = "[10 um, 500 um]"
+real.default    : real   = 300 um
+real.ranges     : string[2] = "small" "large"
+
+variants : string[2] = "thin_behaviour" "thick_behaviour"
+variants.thin_behaviour.model        : string = "thin_behaviour.VM"
+variants.thin_behaviour.description  : string = "The behaviour of the detector for small thickness"
+variants.thick_behaviour.model       : string = "thick_behaviour.VM"
+variants.thick_behaviour.description : string = "The behaviour of the detector for large thickness"
+
+real.ranges.small.range    : string = "[10 um, 50 um)"
+real.ranges.small.variant  : string = "thin_behaviour"
+real.ranges.large.range    : string = "[300 um, 500 um]"
+real.ranges.large.variant  : string = "thick_behaviour"
+
+
+##############################################
+[name="detector.material.PM" type="parameter"]
+display_name    : string = "Detector material"
+description     : string = "The material the detector is made of"
+type            : string = "string"
+mutability      : string = "variable"
+variable.mode   : string = "enumeration"
+string.enumerated.size : integer = 3
+
+string.enumerated_0.value : string = "Silicium"
+string.enumerated_0.group : string = "Expensive"
+
+string.enumerated_1.value : string = "NaI"
+
+string.enumerated_2.value : string = "Germanium"
+string.enumerated_2.group : string = "Expensive"
+
+string.default  : string = "Silicium"
+
+variants : string[1] = "if_radioactive"
+variants.if_radioactive.model       : string = "if_radioactive.VM"
+variants.if_radioactive.description : string = "Material intrinsic radioactivity"
+string.enumerated_2.variant : string = "if_radioactive"
+
+
+######################################
+[name="if_detector.VM" type="variant"]
+display_name                     : string = "Detector parameters"
+description                      : string = "The parameters of an existing detector"
+parameters                       : string[4] = "length" "width" "thickness" "material"
+parameters.length.model          : string = "detector.length.PM"
+parameters.length.description    : string = "Length of the sensitive part of the detector"
+parameters.width.model           : string = "detector.width.PM"
+parameters.width.description     : string = "Width of the sensitive part of the detector"
+parameters.thickness.model       : string = "detector.thickness.PM"
+parameters.thickness.description : string = "Thickness of the sensitive part of the detector"
+parameters.material.model        : string = "detector.material.PM"
+parameters.material.description  : string = "Material of the sensitive part of the detector"
+
+
+##########################################
+[name="detector_flag.PM" type="parameter"]
+display_name                     : string = "Detector exists"
+description                      : string = "A flag to make a detector existing"
+type                             : string = "boolean"
+mutability                       : string = "variable"
+boolean.default                  : boolean = 0
+variants                         : string[1] = "if_detector"
+variants.if_detector.model       : string = "if_detector.VM"
+variants.if_detector.description : string = "Variant activated by the use of the detector"
+boolean.true.variant             : string = "if_detector"
+
+
+######################################
+[name="firstname.PM" type="parameter"]
+display_name              : string = "Firstname"
+description               : string = "The firstname"
+type                      : string = "string"
+mutability                : string = "variable"
+variable.mode             : string = "enumeration"
+string.enumerated.size    : integer = 5
+
+string.enumerated_0.value : string = "John"
+string.enumerated_0.group : string = "Male"
+
+string.enumerated_1.value : string = "Billy"
+string.enumerated_1.group : string = "Male"
+
+string.enumerated_2.value : string = "Mickael"
+string.enumerated_2.group : string = "Male"
+
+string.enumerated_3.value : string = "Betty"
+string.enumerated_3.group : string = "Female"
+
+string.enumerated_4.value : string = "Nelly"
+string.enumerated_4.group : string = "Female"
+
+string.default            : string = "John"
+
+variants : string[1] = "if_betty"
+variants.if_betty.model : string = "datatools::basic::is_on.VM"
+
+
+###################################
+[name="nloops.PM" type="parameter"]
+display_name    : string = "Number of loops"
+description     : string = "The number of loops for an algorithm"
+type            : string = "integer"
+mutability      : string = "variable"
+variable.mode   : string = "interval"
+integer.domain  : string = "(3, 10]"
+integer.default : integer = 5
+
+
+##################################
+[name="config.PM" type="parameter"]
+display_name    : string = "Configuration file"
+description     : string = "The configuration file for a manager"
+type            : string = "string"
+path            : boolean = 1
+mutability      : string = "variable"
+variable.mode   : string = "free"
+string.default  : string = "${HOME}/app.conf"
+
+#########################################
+[name="free_integer.PM" type="parameter"]
+display_name    : string = "A number"
+description     : string = "A dummy number"
+type            : string = "integer"
+mutability      : string = "variable"
+variable.mode   : string = "free"
+integer.default : integer = 7
+
+
+#########################################
+[name="enum_integer.PM" type="parameter"]
+display_name    : string = "A number"
+description     : string = "A dummy number"
+type            : string = "integer"
+mutability      : string = "variable"
+variable.mode   : string = "enumeration"
+integer.enumerated.size    : integer = 5
+integer.enumerated_0.value : integer = 1
+integer.enumerated_1.value : integer = 2
+integer.enumerated_2.value : integer = 4
+integer.enumerated_2.default : boolean = true
+integer.enumerated_3.value : integer = 8
+integer.enumerated_4.value : integer = 16
+
+
+#########################################
+[name="free_length.PM" type="parameter"]
+display_name    : string = "A length"
+description     : string = "A dummy length"
+type            : string = "real"
+mutability      : string = "variable"
+variable.mode   : string = "free"
+real.unit_label : string = "length"
+real.preferred_unit : string = "cm"
+real.precision  : real   = 1 mm
+real.default    : real   = 30 cm
+
+
+########################################
+[name="free_string.PM" type="parameter"]
+display_name    : string = "A string"
+description     : string = "A dummy string"
+type            : string = "string"
+mutability      : string = "variable"
+variable.mode   : string = "free"
+string.default  : string = "Hello, World!"
+
+
+###################################
+[name="geometry.VM" type="variant"]
+display_name    : string = "Geometry setup"
+description     : string = "The parameters of the geometry"
+parameters : string[11] = \
+  "has_detector_0" \
+  "has_detector_1" \
+  "logging" \
+  "firstname" \
+  "nloops" \
+  "config" \
+  "words" \
+  "value" \
+  "number"\
+  "number2" \
+  "params"
+
+parameters.has_detector_0.model        : string = "detector_flag.PM"
+parameters.has_detector_0.description  : string = "Geometry contains the detector 0"
+
+parameters.has_detector_1.model        : string = "detector_flag.PM"
+parameters.has_detector_1.description  : string = "Geometry contains the detector 1"
+
+parameters.logging.model               : string = "logging_priority.PM"
+parameters.logging.description         : string = "Logging priority"
+
+parameters.firstname.model             : string = "firstname.PM"
+parameters.firstname.description       : string = "Operator's first name"
+
+parameters.nloops.model                : string = "nloops.PM"
+parameters.nloops.description          : string = "The maximum number of loops"
+
+parameters.number.model                : string = "free_integer.PM"
+parameters.number.description          : string = "A number"
+
+parameters.number2.model               : string = "enum_integer.PM"
+parameters.number2.description         : string = "A number"
+
+parameters.value.model                 : string = "free_length.PM"
+parameters.value.description           : string = "A length"
+
+parameters.config.model                : string = "config.PM"
+parameters.config.description          : string = "The configuration file"
+
+parameters.words.model                 : string = "free_string.PM"
+parameters.words.description           : string = "Some words"
+
+parameters.params.model                : string = "free_length.PM"
+parameters.params.description          : string = "A parameter"
+parameters.params.occurrence           : string = "array size=4 start_with=0"
+
+# end

@@ -1,0 +1,152 @@
+%% things_howto.tex
+\section{The \texttt{datatools::things} class}\label{sec:things}
+
+\subsection{Introduction}
+
+The  \texttt{datatools::things} class  is a  general container.
+It is able to store various  types of objects, depending on the needs.
+It  is  serializable and  implements  a  dictionary interface.  Stored
+objects must fulfill a special interface.
+
+\subsection{Header file and instantiation}
+
+\pn  In   order  to  use  \texttt{datatools::things}
+objects, one must use the following include directive:
+\begin{CppVerbatim}
+#include <datatools/things.h>
+\end{CppVerbatim}
+
+\pn The  declaration of a \texttt{datatools::things}
+instance can be simply done with:
+\begin{CppVerbatim}
+datatools::things my_bag;
+\end{CppVerbatim}
+Alternatively one can use :
+\begin{CppVerbatim}
+using namespace datatools;
+things my_bag;
+\end{CppVerbatim}
+
+\subsection{Design}
+
+\subsubsection{Basics concept}
+
+A  \emph{things} container  allows  to store  an  arbitrary number  of
+objects   of    any   type,    provided   they   inherit    from   the
+\texttt{datatools::i\_serializable}   interface.   This
+design choice has  been done to enable the  \emph{things} container to
+be serializable itself, using the Boost/Serialization mechanism as the
+native I/O  system. Also a  \emph{things} container can  store another
+\emph{things}   container.  Note  that   the  implementation   of  the
+\texttt{datatools::things}   class  relies   on   runtime  type
+identification (RTTI) functionnalities of the C++ language.
+
+\subsubsection{Banks}
+
+A  \emph{things}  container  behaves  like a  dictionnary  and  stored
+objects  -- we  also  speak  about \emph{banks}  --  must be  accessed
+through  a unique  \emph{key}  (or name).  As  it is  not possible  to
+automatically  \emph{guess} the type  of objects  once they  have been
+stored in the  container, one has to use  templatized methods to check
+and  manipulate  them.  However,  a special  \emph{serialization  tag}
+associated to the stored object is also stored in order to enable some
+further type identification or introspection functionnalities.
+
+Finally the  \emph{things} container stores  objects through pointers,
+and  is  responsible  of   the  corresponding  memory  allocation  and
+deallocation of its contents.  The consequences of this implementation
+are:
+\begin{itemize}
+
+\item the stored  objects can only be manipulated  by const or mutable
+  \emph{references},
+
+\item      the     \texttt{datatools::things}      class     is
+  \emph{non-copyable}.
+
+\end{itemize}
+
+\pn Despite these features (or limitations), the  \emph{things} container
+is a very flexible container that is adapted for many applications.
+It provides some powerfull management tools :
+\begin{itemize}
+
+\item add/remove arbitrary \emph{banks} of data
+  (with the serializable interface),
+
+\item internal dynamic memory management,
+
+\item manipulation of the data stored in banks through references.
+
+\item a dictionnary interface to check and access to \emph{banks} of data,
+
+\item full serialization support (text/XML/binary, Boost/Serialization based).
+
+\end{itemize}
+
+
+\subsubsection{Interface}
+
+\pn List of public \texttt{datatools::things} class methods :
+\begin{itemize}
+
+\item \texttt{size} : return the number of stored objects/banks,
+
+\item \texttt{empty} : check if the container is empty,
+
+\item   \texttt{reset},    \texttt{clear}   :   remove    all   stored
+  objects/banks,
+
+\item \texttt{has}: check if an object/bank with a given name is stored,
+
+\item \texttt{has\_serial\_tag}:
+  check if an object/bank with a given name and given \emph{serialization tag}
+  is stored,
+
+\item \texttt{set\_constant}  : mark an object/bank with  a given name as
+  non-mutable,
+
+\item \texttt{is\_constant}  : check if an object/bank  with a given name
+  is marked as non-mutable,
+
+\item \texttt{is\_mutable} : check if an object/bank with a given name is
+  mutable,
+
+\item   \texttt{set\_description}  :   set   the  description   string
+  associated to an object/bank with a given name,
+
+\item   \texttt{get\_description}  :   get   the  description   string
+  associated to an object/bank with a given name,
+
+\item \texttt{get\_names} : get the list of names (keys) associated to
+  all object/bank stored in the things container,
+
+\item \texttt{remove},  \texttt{erase} : remove  an object/bank stored
+  with a given name,
+
+\item \texttt{tree\_dump} : prints the container in a human friendly format.
+
+\end{itemize}
+
+\pn List  of public  template methods for  the manipulation  of stored
+objects/banks :
+
+\begin{itemize}
+
+\item \texttt{add<T>} : add a new object/bank of type \texttt{T} with
+  a given name, return a mutable reference to the new allocated instance,
+
+\item \texttt{is\_a<T>} : check if an existing object/bank with a given
+  name is of type \texttt{T},
+
+\item \texttt{get<T>} : return a non-mutable reference to an existing object/bank
+  with a given name of type \texttt{T},
+
+\item \texttt{grab<T>} : return a mutable reference to an existing object/bank
+  with a given name of type \texttt{T}.
+
+\end{itemize}
+
+\input{things_howto_examples}
+
+%% end of things_howto.tex

@@ -1,0 +1,53 @@
+Index: portable_iarchive.hpp
+===================================================================
+--- portable_iarchive.hpp	(revision 13331)
++++ portable_iarchive.hpp	(working copy)
+@@ -89,7 +89,9 @@
+ #include <boost/archive/basic_binary_iprimitive.hpp>
+ #include <boost/archive/basic_binary_iarchive.hpp>
+ 
+-#if BOOST_VERSION >= 103500
++#if BOOST_VERSION >= 105600
++#include <boost/serialization/shared_ptr_helper.hpp>
++#elif BOOST_VERSION >= 103500
+ #include <boost/archive/shared_ptr_helper.hpp>
+ #endif
+ 
+@@ -187,8 +189,9 @@
+ 		// the example derives from common_oarchive but that lacks the
+ 		// load_override functions so we chose to stay one level higher
+ 		, public boost::archive::basic_binary_iarchive<portable_iarchive>
+-
+-	#if BOOST_VERSION >= 103500
++	#if BOOST_VERSION >= 105600
++		// mix-in helper class for serializing shared_ptr does not exist anymore
++	#elif BOOST_VERSION >= 103500
+ 		// mix-in helper class for serializing shared_ptr
+ 		, public boost::archive::detail::shared_ptr_helper
+ 	#endif
+Index: portable_oarchive.hpp
+===================================================================
+--- portable_oarchive.hpp	(revision 13331)
++++ portable_oarchive.hpp	(working copy)
+@@ -92,7 +92,9 @@
+ #include <boost/archive/basic_binary_oprimitive.hpp>
+ #include <boost/archive/basic_binary_oarchive.hpp>
+ 
+-#if BOOST_VERSION >= 103500
++#if BOOST_VERSION >= 105600
++#include <boost/serialization/shared_ptr_helper.hpp>
++#elif BOOST_VERSION >= 103500
+ #include <boost/archive/shared_ptr_helper.hpp>
+ #endif
+ 
+@@ -194,7 +196,9 @@
+ 		// save_override functions so we chose to stay one level higher
+ 		, public boost::archive::basic_binary_oarchive<portable_oarchive>
+ 
+-	#if BOOST_VERSION >= 103500
++	#if BOOST_VERSION >= 105600
++		// mix-in helper class for serializing shared_ptr does not exist anymore
++	#elif BOOST_VERSION >= 103500
+ 		// mix-in helper class for serializing shared_ptr
+ 		, public boost::archive::detail::shared_ptr_helper
+ 	#endif

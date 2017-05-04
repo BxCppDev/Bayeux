@@ -1,0 +1,18 @@
+pwd
+tree -CFa /
+cd /
+pwd
+test/joe/set_value 23
+test/joe/get_value
+bad
+cd /dummy/.what/james/
+pwd
+set_sum 1 2 3 4 5 6
+get_value
+/test/joe/zero
+cd /test
+pwd
+joe/zero
+joe/get_value
+cd
+pwd

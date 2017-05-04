@@ -1,0 +1,182 @@
+%% properties_howto_examples.tex
+
+\subsection{Examples}
+
+\subsubsection{Store and fetch boolean properties}
+
+\pn  Sample code  for  adding  boolean properties  and/or  flags in  a
+properties  container (by  convention a  flag is  an  existing boolean
+property with value \emph{true}) :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=7,
+lastline=14,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+\pn Sample code for checking  the existence of some boolean properties
+(flags) in a properties container and fetch the associated value :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=16,
+lastline=35,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+\pn Sample code to store a vector of boolean values :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=38,
+lastline=41,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+\pn Sample code to fetch a vector of boolean values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=45,
+lastline=48,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_6.cxx}
+
+
+\subsubsection{Store and fetch integer properties}
+
+
+\pn  Sample  code  for  adding  integer  properties  in  a  properties
+container :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=10,
+lastline=11,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code for checking  the existence of some integer properties
+in a properties container and fetch the associated value :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=13,
+lastline=23,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+%% XXX
+%\end{document}
+
+\pn Sample code to store a vector of integer values :
+
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=26,
+lastline=31,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to fetch a vector of integer values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=35,
+lastline=40,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to get the size of a vector of integer values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=46,
+lastline=47,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to fetch a value at given index of a vector of integer values :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=49,
+lastline=50,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to change a scalar integer value. The \texttt{change} methods
+request that the property exists and has the right type :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=52,
+lastline=52,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to change a value at given index from a vector of integers :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=53,
+lastline=53,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\pn Sample code to update some integer scalar values. The \texttt{update}
+methods request that the property has the right type is it already exists,
+otherwise it is created :
+\pn
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=58,
+lastline=59,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/properties_7.cxx}
+
+\subsubsection{Store and fetch real properties}
+
+The real properties are handled  is the same way the integer properties
+are.   The  \texttt{store},  \texttt{store\_real},  \texttt{is\_real},
+\texttt{change},        \texttt{change\_real},        \texttt{update},
+\texttt{update\_real},  \texttt{fetch},  \texttt{fetch\_real},
+\texttt{fetch\_real\_scalar},
+\texttt{fetch\_real\_vector}  methods
+are implemented.
+
+\subsubsection{Store and fetch string properties}
+
+
+The  string  properties  are  handled  is the  same  way  the  integer
+properties    are.    The    \texttt{store},   \texttt{store\_string},
+\texttt{is\_string},     \texttt{change},     \texttt{change\_string},
+\texttt{update},        \texttt{update\_string},       \texttt{fetch},
+\texttt{fetch\_string},
+\texttt{fetch\_string\_scalar},
+\texttt{fetch\_string\_vector} methods are implemented.
+
+\pn  Reminder:  a  string  value  cannot  contents  the  double  quote
+character, because it is used as the string delimiter character.
+
+%% end of properties_howto_examples.tex

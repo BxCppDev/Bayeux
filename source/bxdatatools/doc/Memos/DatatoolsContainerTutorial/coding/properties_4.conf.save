@@ -1,0 +1,16 @@
+# List of properties (datatools::properties):
+
+#@config A test properties container
+
+#@description The debug level
+debug.level : integer = 1
+
+name : string = "Monty"
+
+#@description The approximated value of pi
+pi : real = 3.14159
+
+#@description A boolean value
+test : boolean = 1
+
+# End of list of properties.

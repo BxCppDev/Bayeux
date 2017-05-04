@@ -1,0 +1,114 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of models definitions for the geometry registry
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#####################################
+[name="OM_model.PM" type="parameter"]
+
+#@config Definition of the optical module parameter model
+
+display_name  : string = "OM model"
+description   : string = "The optical module model"
+type          : string = "string"
+mutability    : string = "variable"
+variable.mode : string = "enumeration"
+
+# Supported values:
+string.enumerated.size : integer = 3
+
+string.enumerated_0.value   : string = "5''"
+
+string.enumerated_1.value   : string = "8''"
+string.enumerated_1.default : boolean = true
+
+string.enumerated_2.value   : string = "10''"
+string.enumerated_2.group   : string = "Test"
+
+
+###################################
+[name="layout.PM" type="parameter"]
+
+#@config Definition of the geometry layout parameter model
+
+display_name  : string = "Layout"
+description   : string = "The geometry layout"
+type          : string = "string"
+mutability    : string = "variable"
+variable.mode : string = "enumeration"
+
+#@description List of variants
+variants : string[5] = \
+	 "if_proto1" \
+	 "if_proto2" \
+	 "if_half" \
+	 "if_unshielded" \
+	 "if_full"
+
+variants.if_proto1.model       : string = "datatools::basic::is_on.VM"
+variants.if_proto1.description : string = "Prototype detector #1"
+
+variants.if_proto2.model       : string = "datatools::basic::is_on.VM"
+variants.if_proto2.description : string = "Prototype detector #2"
+
+variants.if_half.model         : string = "datatools::basic::is_on.VM"
+variants.if_half.description   : string = "Half detector"
+
+variants.if_unshielded.model       : string = "datatools::basic::is_on.VM"
+variants.if_unshielded.description : string = "Unshielded detector"
+
+variants.if_full.model         : string = "datatools::basic::is_on.VM"
+variants.if_full.description   : string = "Full detector"
+
+
+# Supported values:
+string.enumerated.size : integer = 5
+
+string.enumerated_0.value   : string = "Prototype1"
+string.enumerated_0.group   : string = "RnD"
+string.enumerated_0.variant : string = "if_proto1"
+
+string.enumerated_1.value   : string = "Prototype2"
+string.enumerated_1.group   : string = "RnD"
+string.enumerated_1.variant : string = "if_proto2"
+
+string.enumerated_2.value   : string = "Half"
+string.enumerated_2.group   : string = "Expert"
+string.enumerated_2.variant : string = "if_half"
+
+string.enumerated_3.value   : string = "Unshielded"
+string.enumerated_3.group   : string = "Expert"
+string.enumerated_3.variant : string = "if_unshielded"
+
+string.enumerated_4.value   : string = "Full"
+string.enumerated_4.variant : string = "if_full"
+string.enumerated_4.default : boolean = true
+
+
+###################################
+[name="geometry.VM" type="variant"]
+
+#@config Definition of the geometry variant model
+
+#@description Display name
+display_name : string = "Geometry variant model"
+
+#@description Short documentation
+description  : string = "The parameters of the geometry"
+
+#@description The list of parameters
+parameters : string[2] = "layout" "OM_model"
+
+parameters.layout.model         : string = "layout.PM"
+parameters.layout.description   : string = "Geometry layout"
+parameters.layout.rank          : integer = 0
+
+parameters.OM_model.model       : string = "OM_model.PM"
+parameters.OM_model.description : string = "Optical module model"
+parameters.OM_model.rank        : integer = 1
+
+
+# end of geometry.def

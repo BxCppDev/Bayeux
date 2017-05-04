@@ -1,0 +1,30 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of models definitions for the plugin registry
+#@key_label   "name"
+#@meta_label  "type"
+
+
+####################################
+[name="my_plugin.VM" type="variant"]
+
+#@config Definition of the management variant model
+
+#@description Display name
+display_name    : string = "Management variant model"
+
+#@description Short documentation
+description     : string = "The parameters of the management"
+
+#@description List of parameters
+parameters : string[2] = "foo_flag" "bar_flag"
+
+parameters.foo_flag.model        : string = "datatools::basic::off_on.PM"
+parameters.foo_flag.description  : string = "Foo activation"
+
+parameters.bar_flag.model        : string = "datatools::basic::off_on.PM"
+parameters.bar_flag.description  : string = "Bar activation"
+
+
+# end of my_plugin.def

@@ -1,0 +1,26 @@
+#@format=datatools::configuration::variant
+#@format.version=1.0
+#@organization=bxdatatools
+#@application=foo
+
+[registry="core"]
+logging = "warning"
+operator = "John Doe"
+help = "OnlyTooltips"
+gui = true
+plugin = false
+test1 = false
+test2 = false
+test3 = true
+
+[registry="algo"]
+max_time = 3 second
+accuracy = 5
+nevents = 5
+value = 1 mm
+
+[registry="gui"]
+logging = "fatal"
+color = false
+color/is_uncolored/mode = "B/W"
+antialiasing = false
