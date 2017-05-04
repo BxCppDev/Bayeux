@@ -1,3 +1,5 @@
+Development of genvtx has migrated to Git
+
 
 Bayeux/genvtx (generator of  vertexes) is a C++  program library which
 provides some utilities to easily generate randomized vertexes in a 3D
