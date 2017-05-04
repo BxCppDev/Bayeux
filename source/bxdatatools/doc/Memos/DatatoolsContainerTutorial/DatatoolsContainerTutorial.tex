@@ -1,0 +1,120 @@
+%% DatatoolsContainerTutorial.tex
+%%
+%%
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage{fancyvrb}
+\usepackage{alltt}
+\usepackage{eurosym}
+\usepackage{hyperref}
+\usepackage{colortbl}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{pgf}
+\usepackage{float}
+
+\addtolength{\textwidth}{+2cm}
+\addtolength{\textheight}{+3cm}
+\addtolength{\topmargin}{-1.5cm}
+\addtolength{\oddsidemargin}{-1cm}
+
+\newcommand{\basepath}{.}
+\newcommand{\imagepath}{\basepath/images}
+\newcommand{\codingpath}{\basepath/coding}
+\newcommand{\pdftextpath}{\basepath/pdftex_t}
+\newcommand{\pdftexpath}{\basepath/pdftex}
+
+\input{include/Software_declare_verbatim.tex}
+
+\newcommand{\pn}{\par\noindent}
+\newcommand{\TT}[1]{"\texttt{#1}"}
+
+\title{Using container objects in datatools\\%
+%{\small{(Software/DatatoolsContainerTutorial -- datatools version 5.0.0)}}}
+{\small{(datatools version 5.0.0)}}}
+\author{F. Mauger <\texttt{mauger@lpccaen.in2p3.fr}>}
+\date{2013-04-22}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This note  explains how to use  the container classes  provided by the
+\texttt{datatools} program library.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+\pn  The  \texttt{datatools}  program library  provides  among  other
+components     a    couple     of     container    classes,     namely
+\texttt{datatools::properties},   \texttt{datatools::multi\_properties}
+and \texttt{datatools::things} classes.
+
+\vskip 5mm
+\pn
+Subversion repository:\\
+\texttt{https://nemo.lpc-caen.in2p3.fr/svn/datatools/} \\
+in the \texttt{doc/Memos/DatatoolsContainerTutorial} subdirectory
+\pn
+DocDB reference: \texttt{NemoDocDB-doc-1997}
+\pn
+References: see also \textit{Serialization with the \texttt{datatools} program library}
+(\texttt{NemoDocDB-doc-2003})
+
+\clearpage
+
+\input{properties_howto.tex}
+\clearpage
+
+\input{multi_properties_howto.tex}
+\clearpage
+
+\input{things_howto.tex}
+\clearpage
+
+\section{Conclusion}
+
+\pn  Three foundation container  classes have  been presented  in this
+note :
+
+\begin{itemize}
+
+\item  The  \texttt{datatools::properties}  class  can be  used  as  a
+  container   for  configuration   parameters  for   complex  objects,
+  algorithms  or application  programs.  It can  also  be used  within
+  classes by object composition to serve as a versatile and extensible
+  store for arbitrary data. It provides ASCII human friendly formatted
+  I/O functionalities.
+
+\item The  \texttt{datatools::multi\_properties} class can  be used to
+  handle  a   complex  set  of   \emph{configurations}  objects,  each
+  configuration implements a \texttt{datatools::properties} object and
+  is  stored within a  named \emph{section}.  It provides  ASCII human
+  friendly formatted I/O functionalities.
+
+\item A \texttt{datatools::things}  object is a versatile non-copyable
+  container for arbitrary \emph{serializable}  objects. It can be used
+  as the core container for some complex data model.
+
+\end{itemize}
+
+All three classes are serializable with the native Boost/Serialization
+system.
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% end of DatatoolsContainerTutorial.tex

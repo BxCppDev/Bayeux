@@ -1,0 +1,71 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of definitions for configuration items
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#############################################
+[name="logging_priority.PM" type="parameter"]
+
+#@config A parameter describing the logging priority of some components
+
+#@description The display name of this parameter
+display_name              : string = "Logging priority"
+
+#@description A short description of the parameter
+terse_description         : string = "The logging priority"
+
+#@description The type of the parameter
+type                      : string = "string"
+
+#@description The mutability of the parameter
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode             : string = "enumeration"
+
+#@description The number of supported values
+string.enumerated.size    : integer = 8
+
+# The list of supported values:
+string.enumerated_0.value : string = "fatal"
+string.enumerated_1.value : string = "critical"
+string.enumerated_2.value : string = "error"
+string.enumerated_3.value : string = "warning"
+string.enumerated_4.value : string = "notice"
+string.enumerated_5.value : string = "information"
+string.enumerated_6.value : string = "debug"
+string.enumerated_7.value : string = "trace"
+
+#@description The default value
+string.default            : string = "fatal"
+
+
+#############################################
+[name="multiplicity_1_9.PM" type="parameter"]
+
+#@config A parameter describing a ranged multiplicity parameter
+
+display_name              : string = "Multiplicity"
+terse_description         : string = "The multiplicity"
+type                      : string = "integer"
+mutability                : string = "variable"
+variable.mode             : string = "interval"
+integer.domain  : string = "[1, 10)"
+integer.default : integer = 1
+
+
+###################################
+[name="on_off.PM" type="parameter"]
+
+#@config A parameter describing a On/Off status flag parameter
+
+display_name              : string = "On/Off flag"
+terse_description         : string = "The activation flag"
+type                      : string = "boolean"
+mutability                : string = "variable"
+boolean.default           : boolean = 0
+
+# end

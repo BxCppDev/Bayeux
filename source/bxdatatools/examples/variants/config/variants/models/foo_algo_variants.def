@@ -1,0 +1,147 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The definitions for algorithm variants
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###########################################
+[name="computing_time.PM" type="parameter"]
+
+#@config A parameter model describing the computing time of an algorithm
+
+#@description The display name of this variant
+display_name       : string = "Computing time"
+
+#@description A short description of the variant
+terse_description  : string = "The computing time of the algorithm"
+
+#@description The type of the parameter
+type               : string = "real"
+
+#@description The unit dimension label
+real.unit_label    : string = "time"
+
+#@description The preferred unit symbol
+real.preferred_unit : string = "second"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "interval"
+
+#@description The domain of supported values
+real.domain     : string = "[0.1 s, 10 s]"
+
+#@description The default computing time
+real.default    : real as time = 1 s
+
+
+#####################################
+[name="accuracy.PM" type="parameter"]
+
+#@config A parameter model describing the accuracy order of an algorithm
+
+#@description The display name of this variant
+display_name       : string = "Accuracy"
+
+#@description A short description of the variant
+terse_description  : string = "The accuracy order of the algorithm"
+
+#@description The type of the parameter
+type               : string = "integer"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "interval"
+
+#@description The domain of supported values
+integer.domain     : string = "[1, 6]"
+
+#@description The default palette identifier
+integer.default    : integer = 1
+
+
+###############################################
+[name="event_multiplicity.PM" type="parameter"]
+
+#@config A parameter model describing the event multiplicity
+
+#@description The display name of this variant
+display_name       : string = "Number of events"
+
+#@description A short description of the variant
+terse_description  : string = "The number of events"
+
+#@description The type of the parameter
+type               : string = "integer"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "interval"
+
+#@description The domain of supported values
+integer.domain     : string = "[1, 20]"
+
+#@description The default palette identifier
+integer.default    : integer = 10
+
+
+###########################################
+[name="volume_tracker.PM" type="parameter"]
+
+#@config A parameter model describing the volume tracker (constant)
+
+#@description The display name of this variant
+display_name       : string = "Volume tracker"
+
+#@description A short description of the variant
+terse_description  : string = "The volume tracker"
+
+#@description The type of the parameter
+type               : string = "real"
+
+#@description The mutability of the parameter
+mutability         : string = "fixed"
+
+#@description The fixed value
+real.fixed         : real = 15 m3
+
+#@description The preferred unit symbol
+real.preferred_unit : string = "m3"
+
+
+###############################
+[name="algo.VM" type="variant"]
+
+#@config A variant model describing the parameters for the GUI
+
+#@description The display name of this variant
+display_name       : string = "GUI setup"
+
+#@description A short description of the variant
+terse_description  : string = "The configuration parameters for the GUI"
+
+#@description The list of variant parameters
+parameters         : string[4] = "max_time" "accuracy" "nevents" "vt"
+
+parameters.max_time.model       : string = "computing_time.PM"
+parameters.max_time.description : string = "Maximum computing time"
+
+parameters.accuracy.model       : string = "accuracy.PM"
+parameters.accuracy.description : string = "Computing accuracy order"
+
+parameters.nevents.model        : string = "event_multiplicity.PM"
+parameters.nevents.description  : string = "Number of events to be processed"
+
+parameters.vt.model             : string = "volume_tracker.PM"
+parameters.vt.description       : string = "Volume tracker"
+
+
+# end

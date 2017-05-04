@@ -1,0 +1,707 @@
+#!/usr/bin/env bash
+
+debug=0
+trace=0
+verbose=0
+build_dir=
+default_build_dir="__OCD"
+index_html_filename=
+default_index_filename="index"
+tmp_dir=
+default_tmp_dir="/tmp/${USER}/__bxocd_make_doc"
+title=
+default_title="Object Configuration Description"
+_list_of_processed_namespaces=
+list_of_dlls=
+list_of_namespaces=
+ordered_namespaces=
+output_format=
+default_output_format="html"
+browse=0
+home_url=
+flat=0
+flat_prefix=
+default_flat_prefix="__ocd__"
+flat_template=
+doxygen_template="OCD2DoxygenTemplate"
+project_name=
+project_version=
+project_brief=
+doxygen=0
+bxocd_manual_exe=
+bxocd_sort_classname_exe=
+pandoc_exe=pandoc
+pandoc_data_dir=
+
+which ${pandoc_exe} > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: bxocd_make_doc: Cannot find the '${pandoc_exe}' executable !" >&2
+fi
+
+function do_help()
+{
+cat<<EOF
+
+bxocd_make_doc -- Build HTML documentation from the Bayeux/datatools
+                  OCD support for classes within a library.
+
+Usage:
+
+  bxocd_make_doc [OPTIONS]
+
+Options:
+
+  --help         : Print this help then exit.
+
+  --verbose      : Print verbose messages (default: 0).
+
+  --debug        : Print debug messages (default: 0).
+
+  --build-dir "BUILD_DIR" : Use the BUILD_DIR as the output directory for HTML files
+                            (default: '${default_build_dir}').
+
+  --namespace "NAMESPACE" : Append namespace NAMESPACE in the ordered list of namespaces to be
+                            processed (default: empty, means all classes are processed).
+
+  --tmp-dir "TMP_DIR" : Use the TMP_DIR as the temporary working directory
+                        for intermediate ReST files (default: '${default_tmp_dir}').
+
+  --title "TITLE" : Use the TITLE string as the main title for
+                    output HTML files (default: '${default_title}').
+
+                   Example:
+
+                    --title "OCD documentation for classes in the Bayeux library"
+
+  --load-dll "LIB" : Load a LIB dynamic library (default: empty).
+
+                   Example:
+
+                    --load-dll "Bayeux_mctools_geant4@\$(bxquery --libdir)"
+
+  --flat         : Generate documentation files in a flat repository (default: 0)
+
+  --flat-prefix "PREFIX" :
+                   Use prefix for filenames (for flat mode, default: '${default_flat_prefix}')
+
+  --doxygen      : Generate documentation files in a Doxygen tree (default: 0)
+
+  --home-url "URL" : Generate a link to a mother URL (default: empty).
+
+                   Example:
+
+                    -H "https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux"
+
+  --pandoc-exe "PANDOCEXE" : Set the pandoc executable (default: automatic)
+
+  --pandoc-data-dir "PANDOCDATADIR" : Set the pandoc data directory (default: automatic)
+
+  --ocd-manual-exe "OCDMANUALEXE" : Set the Bayeux's OCD manual executable (default: automatic)
+
+  --ocd-sort-classnames-exe "OCDSORTCLASSNAMESEXE" : Set the Bayeux's OCD sort classnames executable (default: automatic)
+
+  --project-name "PROJNAME" : Set the project name (mandatory)
+
+  --project-version "PROJVER" : Set the project version (optional)
+
+  --project-brief "PROJBRIEF" : Set a brief description of the project (optional)
+
+  --browse       : Browse the generated HTML OCD documentation (default: 0).
+
+EOF
+    return
+}
+
+while [ -n "$1" ]; do
+      token="$1"
+      if [ "x${token:0:1}" = "x-" ]; then
+        option="${token}"
+	if [ "${option}" = "--debug" ]; then
+	    debug=1
+	elif [ "${option}" = "--verbose" ]; then
+	    verbose=1
+	elif [ "${option}" = "--help" ]; then
+	    do_help
+	    exit 0
+	elif [ "${option}" = "-d" -o "${option}" = "--build-dir" ]; then
+	    shift 1
+	    build_dir="$1"
+	elif [ "${option}" = "-n"  -o "${option}" = "--namespace" ]; then
+	    shift 1
+	    list_of_namespaces="${list_of_namespaces} $1"
+	elif [ "${option}" = "-i" ]; then
+	    shift 1
+	    index_html_filename="$1"
+	elif [ "${option}" = "-t" -o "${option}" = "--tmp-dir" ]; then
+	    shift 1
+	    tmp_dir="$1"
+	elif [ "${option}" = "-T" -o "${option}" = "--title" ]; then
+	    shift 1
+	    title="$1"
+	elif [ "${option}" = "-o" ]; then
+	    shift 1
+	    output_format="$1"
+	elif [ "${option}" = "-L"  -o "${option}" = "--load-dll" ]; then
+	    shift 1
+	    list_of_dlls="${list_of_dlls} $1"
+	elif [ "${option}" = "--flat" ]; then
+	    flat=1
+	elif [ "${option}" = "-P" -o "${option}" = "--flat-prefix" ]; then
+	    shift 1
+	    flat_prefix="$1"
+	elif [ "${option}" = "-H" -o "${option}" = "--home-url" ]; then
+	    shift 1
+	    home_url="$1"
+	elif [ "${option}" = "--pandoc-exe" ]; then
+	    shift 1
+	    pandoc_exe="$1"
+	elif [ "${option}" = "--pandoc-data-dir" ]; then
+	    shift 1
+	    pandoc_data_dir="$1"
+	elif [ "${option}" = "--ocd-manual-exe" ]; then
+	    shift 1
+	    bxocd_manual_exe="$1"
+	elif [ "${option}" = "--ocd-sort-classnames-exe" ]; then
+	    shift 1
+	    bxocd_sort_classnames_exe="$1"
+	elif [ "${option}" = "--project-name" ]; then
+	    shift 1
+	    project_name="$1"
+	elif [ "${option}" = "--project-version" ]; then
+	    shift 1
+	    project_version="$1"
+	elif [ "${option}" = "--project-brief" ]; then
+	    shift 1
+	    project_brief="$1"
+	elif [ "${option}" = "--doxygen" ]; then
+	    doxygen=1
+	elif [ "${option}" = "-B" -o "${option}" = "--browse" ]; then
+	    browse=1
+	else
+	    echo "WARNING: bxocd_make_doc: Ignoring option '${option}' !" >&2
+	fi
+      else
+        argument="${token}"
+	echo "WARNING: bxocd_make_doc: Ignoring argument '${argument}' !" >&2
+      fi
+      shift 1
+done
+
+if [ -z "${bxocd_manual_exe}" ]; then
+  bxocd_manual_exe=bxocd_manual
+fi
+
+which ${bxocd_manual_exe} > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: bxocd_make_doc: Cannot find the '${bxocd_manual_exe}' executable !" >&2
+    exit 1
+fi
+
+if [ -z "${bxocd_sort_classname_exe}" ]; then
+  bxocd_sort_classname_exe=bxocd_sort_classnames.py
+fi
+
+which ${bxocd_sort_classname_exe} > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: bxocd_make_doc: Cannot find the '${bxocd_sort_classname_exe}' executable !" >&2
+    exit 1
+fi
+
+if [ -z "${build_dir}" ]; then
+    build_dir="${default_build_dir}"
+fi
+
+if [ -n "${flat_prefix}" ]; then
+    flat=1
+fi
+
+if [ -z "${project_name}" ]; then
+    echo "ERROR: bxocd_make_doc: Missing project name (--project-name) !" >&2
+    exit 1
+fi
+
+if [ $doxygen -eq 1 ]; then
+    output_format="html"
+    flat=1
+    flat_template="${doxygen_template}"
+fi
+
+if [ $flat -eq 1 ]; then
+    if [ -z "${flat_prefix}" ]; then
+	flat_prefix="${default_flat_prefix}"
+    fi
+fi
+
+if [ -z "${index_html_filename}" ]; then
+    if [ $flat -eq 1 ]; then
+	index_html_filename="${flat_prefix}${default_index_filename}.html"
+    else
+	index_html_filename="${default_index_filename}.html"
+    fi
+fi
+
+if [ -z "${tmp_dir}" ]; then
+    tmp_dir="${default_tmp_dir}"
+fi
+
+if [ -z "${output_format}" ]; then
+    output_format="${default_output_format}"
+fi
+
+if [ "x${title}" = "x" ]; then
+    title="${default_title}"
+fi
+
+if [ -z "${pandoc_data_dir}" ]; then
+    pandoc_data_dir="$(bxquery --resourcedir)/datatools/OCD/pandoc"
+fi
+
+if [ ${debug} -eq 1 ]; then
+    echo "DEBUG: bxocd_make_doc: build_dir='${build_dir}'" >&2
+    echo "DEBUG: bxocd_make_doc: index_html_filename='${index_html_filename}'" >&2
+    echo "DEBUG: bxocd_make_doc: tmp_dir='${tmp_dir}'" >&2
+    echo "DEBUG: bxocd_make_doc: title='${title}'" >&2
+    echo "DEBUG: bxocd_make_doc: output_format='${output_format}'" >&2
+    echo "DEBUG: bxocd_make_doc: list_of_dlls='${list_of_dlls}'" >&2
+    echo "DEBUG: bxocd_make_doc: list_of_namespaces='${list_of_namespaces}'" >&2
+    echo "DEBUG: bxocd_make_doc: home_url='${home_url}'" >&2
+    echo "DEBUG: bxocd_make_doc: doxygen='${doxygen}'" >&2
+    echo "DEBUG: bxocd_make_doc: flat='${flat}'" >&2
+    echo "DEBUG: bxocd_make_doc: flat_prefix='${flat_prefix}'" >&2
+    echo "DEBUG: bxocd_make_doc: flat_template='${flat_template}'" >&2
+    echo "DEBUG: bxocd_make_doc: project_name='${project_name}'" >&2
+    echo "DEBUG: bxocd_make_doc: project_version='${project_version}'" >&2
+    echo "DEBUG: bxocd_make_doc: project_brief='${project_brief}'" >&2
+    echo "DEBUG: bxocd_make_doc: bxocd_manual_exe='${bxocd_manual_exe}'" >&2
+    echo "DEBUG: bxocd_make_doc: bxocd_sort_classname_exe='${bxocd_sort_classname_exe}'" >&2
+    echo "DEBUG: bxocd_make_doc: pandoc_exe='${pandoc_exe}'" >&2
+    echo "DEBUG: bxocd_make_doc: pandoc_data_dir='${pandoc_data_dir}'" >&2
+    echo "DEBUG: bxocd_make_doc: browse='${browse}'" >&2
+fi
+
+if [ ! -d ${tmp_dir} ]; then
+    mkdir -p ${tmp_dir}
+fi
+
+if [ "x${output_format}" != "xhtml" ]; then
+    echo "ERROR: bxocd_make_doc: Unsupported output format '${output_format}' ! Abort !" >&2
+    exit 1
+fi
+
+function extract_namespace()
+{
+    test ${trace} -eq 1 && echo "TRACE: bxocd_make_doc: extract_namespace: Entering..." >&2
+    local _classname="$1"
+    test ${trace} -eq 1 && echo "TRACE: bxocd_make_doc: extract_namespace: class='${_classname}'..." >&2
+    local _namespace=""
+    local _cn=$(echo ${_classname} | tr -s ':')
+    IFS=':' read -a _array <<< "${_cn}"
+    local _ntokens=${#_array[@]}
+    test ${trace} -eq 1 && echo "TRACE: bxocd_make_doc: extract_namespace: _ntokens=${_ntokens}" >&2
+    let nmax=_ntokens-1
+    test ${trace} -eq 1 && echo "TRACE: bxocd_make_doc: extract_namespace: nmax=${nmax}" >&2
+
+    for (( i=0; i<${nmax}; i++ ))
+    do
+	local _token="${_array[i]}"
+	if [ "x${_token}" = "x" ]; then
+	    continue
+	fi
+	test ${trace} -eq 1 && echo "TRACE: bxocd_make_doc: extract_namespace: _token=${_token}" >&2
+	if [ "x${_namespace}" = "x" ]; then
+	    _namespace="${_token}"
+	else
+	    _namespace="${_namespace}::${_token}"
+	fi
+    done
+    if [ "x${_namespace}" = "x" ]; then
+	return 1
+    fi
+    echo ${_namespace}
+    test ${trace} -eq 1 && echo "TRACE: bxocd_make_doc: extract_namespace: namespace='${_namespace}'..." >&2
+    return 0;
+}
+
+# # Test:
+# extract_namespace "foo"
+# extract_namespace "toto::foo"
+# extract_namespace "toto::titi::foo"
+# extract_namespace "toto::titi::tata::foo"
+# exit 1
+
+load_dll_opt=""
+for dll in ${list_of_dlls}; do
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: dll='${dll}'" >&2
+    load_dll_opt="${load_dll_opt} --load-dll ${dll}"
+done
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: load_dll_opt='${load_dll_opt}'" >&2
+
+# Build the list of classnames sorted by namespaces:
+bxocd_cmd="\
+  ${bxocd_manual_exe} ${load_dll_opt} --action list \
+  | ${bxocd_sort_classname_exe} \
+"
+# Set the ordered list of namespaces:
+for namespace in ${list_of_namespaces} ; do
+    bxocd_cmd="${bxocd_cmd} -o ${namespace} "
+done
+
+bxocd_cmd_script=`mktemp ${tmp_dir}/bxocd_cmd.XXXXXX`
+echo ${bxocd_cmd} > ${bxocd_cmd_script}
+if [ ${debug} -eq 1 ]; then
+    echo "DEBUG: Class OCD script: " >&2
+    echo "=============================================== " >&2
+    cat ${bxocd_cmd_script} >&2
+    echo "=============================================== " >&2
+fi
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: OCD running..." >&2
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: bxocd_cmd='${bxocd_cmd}'" >&2
+list_of_classes=$(bash ${bxocd_cmd_script})
+rm -f ${bxocd_cmd_script}
+
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: list_of_classes='${list_of_classes}'" >&2
+
+index_rst_filename=`mktemp ${tmp_dir}/ocd_index.rst.XXXXXX`
+
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: index_rst_filename='${index_rst_filename}'" >&2
+
+touch ${index_rst_filename}
+if [ "x${title}" != "x" ]; then
+    cat >> ${index_rst_filename} <<EOF
+================================================================================================
+${title}
+================================================================================================
+EOF
+# else
+#     cat >> ${index_rst_filename} <<EOF
+# ================================================================================================
+# Object Configuration Description
+# ================================================================================================
+# EOF
+fi
+cat >> ${index_rst_filename} <<EOF
+
+--------
+
+This is the list of classes with OCD [1]_ support sorted by namespace.
+
+.. [1] Object Configuration Description (OCD) is a mechanism implemented
+   in the Bayeux library to provide a description of the configuration
+   parameters used to initialize objects of some specific classes.
+
+EOF
+
+function process_class()
+{
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Entering..." >&2
+
+    local _classname="$1"
+    local _namespace=$(extract_namespace ${_classname})
+    local _namespace_tr=$(echo ${_namespace} | tr ':' '_')
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: class='${_classname}'..." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: namespace='${_namespace}'..." >&2
+    local _class_build_dir=${build_dir}
+    local _classname_tr=$(echo ${_classname} | tr ':' '_' )
+    local _class_rst_filename=`mktemp ${tmp_dir}/${_classname_tr}.rst.XXXXXX`
+    local _class_html_filename="${_classname_tr}.html"
+    if [ $flat -eq 0 ]; then
+	_class_build_dir=${build_dir}/${_namespace_tr}
+    else
+ 	_class_html_filename="${flat_prefix}${_classname_tr}.html"
+    fi
+    if [ ! -d ${_class_build_dir} ]; then
+	test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Creating directory '${_class_build_dir}'..." >&2
+	mkdir -p ${_class_build_dir}
+    fi
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Generating RST file '${_class_rst_filename}'..." >&2
+    if [ $flat -eq 0 ]; then
+	cat >> ${_class_rst_filename} <<EOF
+
+\`Back to OCD index page<../${index_html_filename}>\`_
+
+--------
+
+EOF
+    else
+	cat >> ${_class_rst_filename} <<EOF
+
+\`Back to OCD index page<${index_html_filename}>\`_
+
+--------
+
+EOF
+    fi
+    if [ "x${_namespace}" != "x" ]; then
+	echo "${_list_of_processed_namespaces}" | tr [[:space:]] '\n' | grep ${_namespace} > /dev/null 2>&1
+	if [ $? -eq 1 ]; then
+	    cat >> ${index_rst_filename} <<EOF
+
+Namespace ``${_namespace}``
+-----------------------------------------------------------
+
+EOF
+	    _list_of_processed_namespaces="${_list_of_processed_namespaces} ${_namespace}"
+	fi
+    fi
+    bxocd_cmd="${bxocd_manual_exe} ${load_dll_opt} --action show ${_classname} "
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: bxocd_cmd='${bxocd_cmd}'" >&2
+    (exec ${bxocd_cmd}) > ${_class_rst_filename}
+    test ${debug} -eq 1 && ls "${_class_rst_filename}"
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Generating HTML file '${_class_build_dir}/${_class_html_filename}'..." >&2
+
+    if [ $flat -eq 0 ]; then
+	cat >> ${_class_rst_filename} <<EOF
+
+--------
+
+\`Back to OCD index page<../${index_html_filename}>\`_
+
+EOF
+    else
+	cat >> ${_class_rst_filename} <<EOF
+
+--------
+
+\`Back to OCD index page<${index_html_filename}>\`_
+
+EOF
+    fi
+
+    add_opts=
+    template_opts=
+    if [ -n "${flat_template}" ]; then
+	template_opts="--template=\"${flat_template}.${output_format}\" "
+	if [ -n ${pandoc_data_dir} ]; then
+	    template_opts="--template=\"${pandoc_data_dir}/templates/${flat_template}.${output_format}\" "
+	fi
+	# template_opts="--template=${flat_template}"
+    fi
+
+    # if [ -n "${template_opts}" ]; then
+    # 	if [ -n ${pandoc_data_dir} ]; then
+    # 	    template_opts="${template_opts} --data-dir=\"${pandoc_data_dir}\" "
+    # 	fi
+    # fi
+
+    if [ -n "${project_brief}" ]; then
+	add_opts="${add_opts} --variable project_brief=\"${project_brief}\" "
+    fi
+
+    if [ -n "${project_version}" ]; then
+	add_opts="${add_opts} --variable project_version=\"${project_version}\" "
+    fi
+
+    if [ -n "${project_name}" ]; then
+	add_opts="${add_opts} --variable project_name=\"${project_name}\" "
+    fi
+
+    if [ -n "${_namespace_version}" ]; then
+	add_opts="${add_opts} --variable namespace=\"${_namespace}\" "
+    fi
+
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: template_opts='${template_opts}'" >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: add_opts='${add_opts}'" >&2
+
+    # pandoc_cmd="${pandoc_exe} --toc --standalone \
+    # 	    -w html \
+    # 	    -r rst  \
+    # 	    -o ${_class_build_dir}/${_class_html_filename} \
+    # 	    -V classname=${_classname} \
+    # 	    -V namespace=${_namespace} \
+    # 	    -V project_name=\"${project_name}\" \
+    # 	    -V project_version=\"${project_version}\" \
+    # 	    -V project_brief=\"${project_brief}\" \
+    # 	    --variable pagetitle=\"OCD\ documentation\ for\ class\ ${_classname}\" \
+    #         ${_class_rst_filename} "
+
+    pandoc_cmd="${pandoc_exe} --toc --standalone \
+            ${template_opts} \
+	    -w html \
+	    -r rst  \
+	    -V classname=\"${_classname}\" \
+            -V pagetitle=\"OCD documentation for class ${_classname}\" \
+	    ${add_opts} \
+	    -o ${_class_build_dir}/${_class_html_filename} \
+            ${_class_rst_filename} "
+    pandoc_cmd_script=`mktemp ${tmp_dir}/pandoc_cmd.XXXXXX`
+    echo ${pandoc_cmd} > ${pandoc_cmd_script}
+    if [ ${debug} -eq 1 ]; then
+	echo "DEBUG: Class pandoc script: " >&2
+	echo "=============================================== " >&2
+	cat ${pandoc_cmd_script} >&2
+	echo "=============================================== " >&2
+    fi
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: pandoc running..." >&2
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: pandoc_cmd='${pandoc_cmd}'" >&2
+    bash ${pandoc_cmd_script}
+    rm -f ${pandoc_cmd_script}
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: pandoc running... done." >&2
+    if [ $flat -eq 0 ]; then
+	cat >> ${index_rst_filename} <<EOF
+  * \`${_classname}<${_namespace_tr}/${_class_html_filename}>\`_
+EOF
+    else
+	cat >> ${index_rst_filename} <<EOF
+  * \`${_classname}<${_class_html_filename}>\`_
+EOF
+    fi
+
+    rm -f ${_class_rst_filename}
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: process_class: Exiting." >&2
+    return 0
+}
+
+if [ ! -d ${build_dir} ]; then
+    mkdir -p ${build_dir}
+fi
+
+IFS=' ' read -a _namespaces_array <<< "${list_of_namespaces}"
+_nns=${#_namespaces_array[@]}
+
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Entering class loop..." >&2
+for classname in ${list_of_classes}; do
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Class='${classname}'" >&2
+    class_namespace=$(extract_namespace ${classname})
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Class namespace '${class_namespace}'..." >&2
+    process_class=0
+
+    if [ ${_nns} -eq 0 ]; then
+        # Without requested namespace:
+	process_class=1
+    else
+        # With requested namespaces:
+	for namespace in "${_namespaces_array[@]}" ; do
+	    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Testing requested namespace '${namespace}'..." >&2
+	    if [ "x${class_namespace}" = "x${namespace}" ]; then
+		process_class=1
+		break
+	    fi
+	done
+    fi
+    test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: Process class='${classname}' = ${process_class}" >&2
+    if [ ${process_class} -eq 1 ]; then
+	test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: DO PROCESS class '${classname}'..." >&2
+	process_class ${classname}
+	if [ $? -ne 0 ]; then
+	    echo "ERROR: bxocd_make_doc: Cannot process class '${classname}' !" 1>&2
+	fi
+    else
+	test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: DO NOT PROCESS class='${classname}'..." >&2
+    fi
+    ### test ${devel} -eq 1 && echo "Hit [Enter]..." >&2 && read ANS
+done
+
+
+if [ -n "${home_url}" ]; then
+    cat >> ${index_rst_filename} <<EOF
+--------
+
+\`Back do Doxygen main page<${home_url}>\`_
+
+EOF
+fi
+
+# cat >> ${index_rst_filename} <<EOF
+# --------
+# Generated by Bayeux $(bxquery --version)
+# EOF
+
+### echo "DEVEL: bxocd_make_doc: title='${title}'" >&2
+
+add_opts=
+template_opts=
+if [ -n "${flat_template}" ]; then
+    template_opts="--template=\"${flat_template}.${output_format}\" "
+    if [ -n ${pandoc_data_dir} ]; then
+	template_opts="--template=\"${pandoc_data_dir}/templates/${flat_template}.${output_format}\" "
+    fi
+    # template_opts="--template=${flat_template}"
+fi
+
+# if [ -n "${template_opts}" ]; then
+#     if [ -n ${pandoc_data_dir} ]; then
+#     	template_opts="${template_opts} --data-dir=\"${pandoc_data_dir}\" "
+#     fi
+# fi
+
+if [ -n "${project_brief}" ]; then
+    add_opts="${add_opts} --variable project_brief=\"${project_brief}\" "
+fi
+
+if [ -n "${project_version}" ]; then
+    add_opts="${add_opts} --variable project_version=\"${project_version}\" "
+fi
+
+if [ -n "${project_name}" ]; then
+    add_opts="${add_opts} --variable project_name=\"${project_name}\" "
+fi
+
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: add_opts='${add_opts}'" >&2
+
+pandoc_cmd="${pandoc_exe} --toc --standalone \
+            ${template_opts} \
+	    -w html \
+	    -r rst  \
+	    ${add_opts} \
+            -V pagetitle=\"Main OCD page\" \
+	    -o ${build_dir}/${index_html_filename} \
+            ${index_rst_filename} "
+pandoc_cmd_script=`mktemp ${tmp_dir}/pandoc_cmd.XXXXXX`
+echo ${pandoc_cmd} > ${pandoc_cmd_script}
+if [ ${debug} -eq 1 ]; then
+    echo "DEBUG: Index pandoc script: " >&2
+    echo "=============================================== " >&2
+    cat ${pandoc_cmd_script} >&2
+    echo "=============================================== " >&2
+fi
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: pandoc running..." >&2
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: pandoc_cmd='${pandoc_cmd}'" >&2
+bash ${pandoc_cmd_script}
+rm -f ${pandoc_cmd_script}
+test ${debug} -eq 1 && echo "DEBUG: bxocd_make_doc: pandoc running... done." >&2
+
+# if [ ${flat} -eq 0 ]; then
+#     ${pandoc_exe} --toc --standalone \
+# 	--title-prefix "${title}" \
+# 	-w html \
+# 	-r rst ${index_rst_filename} \
+# 	-o ${build_dir}/${index_html_filename} \
+# 	-V project_name="${project_name}" \
+# 	-V project_version="${project_version}" \
+# 	-V project_brief="${project_brief}"
+# else
+#    ${pandoc_exe} --toc --standalone \
+# 	--title-prefix "${title}" \
+# 	-w html \
+# 	--template=${flat_template} \
+# 	-r rst ${index_rst_filename} \
+# 	-o ${build_dir}/${index_html_filename} \
+# 	-V project_name="${project_name}" \
+# 	-V project_version="${project_version}" \
+# 	-V project_brief="${project_brief}"
+# fi
+
+echo "NOTICE: bxocd_make_doc: File '${build_dir}/${index_html_filename}' has been generated." >&2
+
+###
+### â†©
+###
+
+if [ ${browse} -eq 1 ]; then
+    which xdg-open > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+	echo "WARNING: bxocd_make_doc: Cannot find the 'xdg-open' executable ! No browsing !" >&2
+    else
+	if [ $verbose -eq 1 ]; then
+	    echo "INFO: bxocd_make_doc: Browsing the HTML OCD documentation !" >&2
+	fi
+	xdg-open ${build_dir}/${index_html_filename} &
+    fi
+fi
+
+if [ $verbose -eq 1 ]; then
+    echo "INFO: bxocd_make_doc: Now you can safely copy the content of the " >&2
+    echo "                      '${build_dir}' directory in the place of your choice." >&2
+fi
+
+exit 0
