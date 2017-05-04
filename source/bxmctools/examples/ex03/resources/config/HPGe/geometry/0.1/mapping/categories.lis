@@ -1,0 +1,80 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A list of geometry ID categories/types
+#@key_label  "category"
+#@meta_label "type"
+
+
+####################################################
+# This is the mandatory top-level geometry category.
+# One should always provide it :
+[category="world" type="0"]
+
+#@config The geometry category of the top-level world volume
+
+#@description The world's GID address is characterized by its 'world' number
+addresses : string[1] = "world"
+
+
+################################################################
+# This geometry category addresses an experimental area volume :
+[category="lab.gc" type="100"]
+
+#@config The geometry category of the experimental area volume (the laboratory)
+
+#@description A lab's GID address is characterized by its 'area' number
+addresses : string[1] = "area"
+
+
+###########################################################
+# This geometry category addresses an lab's ground volume :
+[category="ground.gc" type="200"]
+
+#@config The geometry category of the ground of the laboratory
+
+#@description A ground's GID address inherits the lab's GID
+inherits : string = "lab.gc"
+
+
+###############################################################
+# This geometry category addresses an lab's atmosphere volume :
+[category="atmosphere.gc" type="300"]
+
+#@config The geometry category of the atmosphere of the laboratory
+
+#@description An atmosphere's GID address inherits the lab's GID
+inherits : string = "lab.gc"
+
+
+####################################################
+# This geometry category addresses a HPGe detector :
+[category="detector.gc" type="400"]
+
+#@config The geometry category of the atmosphere of the laboratory
+
+#@description A detector's GID address is characterized by its 'module' number
+addresses : string[1] = "module"
+
+
+################################################################
+# This geometry category addresses the HPGe detector's crystal :
+[category="crystal.gc" type="410"]
+
+#@config The geometry category of the HPGe detector's crystal
+
+#@description A crystal's GID address inherits the detector's GID
+inherits : string = "detector.gc"
+
+
+######################################################
+# This geometry category addresses the sample :
+[category="sample.gc" type="500"]
+
+#@config The geometry category of the sample
+
+#@description A sample's GID address is characterized by its 'sample' number
+addresses : string[1] = "sample"
+
+
+# end of categories.lis

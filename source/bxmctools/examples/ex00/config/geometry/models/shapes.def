@@ -1,0 +1,41 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The definitions of 3D solid shapes used in the geometry
+
+#@key_label   "name"
+#@meta_label  "type"
+
+############################################
+[name="Screen" type="geomtools::wall_solid"]
+
+#@description Height of the wall
+z : real as length = 20.0 cm
+
+#@description Base build mode
+base.build_mode : string = "segments"
+
+#@description Base list of segments
+base.segments : string[3] = "Segment0" "Segment1" "Segment2"
+
+# Definition of the base segments :
+base.segments.Segment0.start_x         : real as length =  -4.0 dm
+base.segments.Segment0.start_y         : real as length =   2.0 dm
+base.segments.Segment0.start_angle     : real as angle  =   0.0 degree
+base.segments.Segment0.stop_x          : real as length =   4.0 dm
+base.segments.Segment0.stop_y          : real as length =   2.0 dm
+base.segments.Segment0.right_thickness : real as length =   2.0 mm
+base.segments.Segment0.left_thickness  : real as length =   2.0 mm
+
+base.segments.Segment1.stop_x          : real as length =   4.0 dm
+base.segments.Segment1.stop_y          : real as length =  -2.0 dm
+base.segments.Segment1.right_thickness : real as length =   2.0 mm
+base.segments.Segment1.left_thickness  : real as length =   2.0 mm
+
+base.segments.Segment2.stop_x          : real as length =  -4.0 dm
+base.segments.Segment2.stop_y          : real as length =  -2.0 dm
+base.segments.Segment2.stop_angle      : real as angle  =   0.0 degree
+base.segments.Segment2.right_thickness : real as length =   2.0 mm
+base.segments.Segment2.left_thickness  : real as length =   2.0 mm
+
+# end

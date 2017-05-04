@@ -1,0 +1,53 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of aliases for standard materials
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="air" type="alias"]
+#@description The alias for air
+material : string = "basic::air"
+
+[name="aluminium" type="alias"]
+#@description The alias for aluminium
+material : string = "basic::aluminium"
+
+[name="inox" type="alias"]
+#@description The alias for inox
+material : string = "basic::inox"
+
+[name="lead" type="alias"]
+#@description The alias for lead
+material : string = "basic::lead"
+
+[name="copper" type="alias"]
+#@description The alias for copper
+material : string = "basic::copper"
+
+[name="mylar" type="alias"]
+#@description The alias for mylar
+material : string = "basic::mylar"
+
+[name="plexiglass" type="alias"]
+#@description The alias for plexiglass
+material : string = "basic::plexiglass"
+
+[name="polystyrene" type="alias"]
+#@description The alias for polystyrene
+material : string = "basic::polystyrene"
+
+[name="glass" type="alias"]
+#@description The alias for pyrex
+material : string = "basic::pyrex"
+
+[name="vacuum" type="alias"]
+#@description The alias for vacuum
+material : string = "basic::vacuum"
+
+[name="lab_medium" type="alias"]
+#@description The alias for air
+# material : string = "basic::air"
+material : string = "basic::vacuum"
+
+# end
