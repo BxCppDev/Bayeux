@@ -1,3 +1,5 @@
+Development of brio has migrated to Git
+
 # -*- mode: rst; -*-
 
 Bayeux/brio is a C++ library which provides some writer/reader classes
