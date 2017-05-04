@@ -1,0 +1,16 @@
+/// \file materials/materials_config.h header file
+
+#ifndef MATERIALS_MATERIALS_CONFIG_H
+#define MATERIALS_MATERIALS_CONFIG_H
+
+#define MATERIALS_ENV_RESOURCE_DIR "MATERIALS_RESOURCE_DIR"
+
+#endif // MATERIALS_MATERIALS_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

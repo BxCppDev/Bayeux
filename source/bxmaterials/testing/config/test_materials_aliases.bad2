@@ -1,0 +1,19 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::utils::multi_properties):
+
+#@description A sample list of aliases for materials
+#@key_label   "name"
+#@meta_label  "type"
+
+
+##########################################
+[name="invalid_composite" type="material"]
+#@config A composite material
+density        : real   = 4.00
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string    = "fraction_mass"
+composition.names         : string[2] = "diamond"  "metal"
+composition.fraction_mass : real[2]   =    0.7       0.3
+
+# end
