@@ -6,9 +6,9 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
    :width: 200pt
 
 :Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    2017-03-12
+:Date:    2017-05-04
 :Contact: bayeux@lpccaen.in2p3.fr
-:Version: 3.0.0-alpha
+:Version: 3.0.0
 
 .. contents::
    :depth: 3
@@ -18,6 +18,10 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
 
    PageBreak oneColumn
 
+Version Control
+===============
+
+As of the 4th May 2017, Bayeux development migrated from SVN to Git.
 
 About Bayeux
 ============
