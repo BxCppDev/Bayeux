@@ -1,0 +1,291 @@
+#!/usr/bin/env bash
+
+declare -i default_nb_lines_vicinity=6
+
+function usage()
+{
+    cat<<EOF
+bxextract_table_of_objects - Extract a CSV formatted list of object records
+from a datatools::multi_properties formatted file which contains definitions
+of objects with associated meta informations.
+
+The CSV output format is compatible with the format used by the
+datatools::configuration::parameter_model class to define the list of
+enumerated string values associated to a string parameter.
+
+Usage: bxextract_table_of_objects [OPTIONS]...[FILE]
+
+Options:
+
+   --help                  Print help then exit
+   --debug                 Debug print
+   -i, --input FILE        Objects definition input file
+   -g, --group NAME        Group to be associated to the objects
+                           unless already specified from the file
+   -l, --nb-vicinity-lines NLINES
+                           Number of lines after section header where to
+                           search for section description
+   -G, --ignore-file-group Ignore group specified from the file
+   -V, --ignore-file-variants
+                           Ignore variants specified from the file
+   --format FORMAT         Set the output format (default='csv')
+   --format-no-doc         Do not print the documentation (if any)
+   --format-no-group       Do not print the group (if any)
+   --format-no-variants    Do not print the variants (if any)
+   --format-csv-sep SEP    Set the CSV separator character (default=':')
+   --format-csv-subsep SSEP
+                           Set the CSV sub-separator character (default=';')
+   --format-title          Print a title
+EOF
+    return 0
+}
+
+debug=0
+object_def_file=
+requested_group=
+ignore_file_group=0
+ignore_file_variants=0
+key_label=
+meta_label=
+output_format="csv"
+format_csv_sep=":"
+format_csv_subsep=";"
+format_with_doc=1
+format_with_group=1
+format_with_variants=1
+format_title=
+declare -i nb_lines_vicinity=0
+
+while [ -n "$1" ]; do
+    token="$1"
+    if [ "${token:0:1}" == "-" ]; then
+	opt="${token}"
+	if [ ${opt} == "--help" ]; then
+	    usage
+	    exit 0
+	elif [ ${opt} == "--debug" ]; then
+	    debug=1
+	elif [ ${opt} == "--input" -o ${opt} == "-i" ]; then
+	    shift 1
+	    object_def_file="$1"
+	elif [ ${opt} == "--group" -o ${opt} == "-g" ]; then
+	    shift 1
+	    requested_group="$1"
+	elif [ ${opt} == "--ignore-file-group" -o ${opt} == "-G" ]; then
+	    ignore_file_group=1
+	elif [ ${opt} == "--ignore-file-variants" -o ${opt} == "-V" ]; then
+	    ignore_file_variants=1
+	elif [ ${opt} == "--key-label" -o ${opt} == "-k" ]; then
+	    shift 1
+	    key_label="$1"
+	elif [ ${opt} == "--meta-label" -o ${opt} == "-m" ]; then
+	    shift 1
+	    meta_label="$1"
+	elif [ ${opt} == "--nb-vicinity-lines" -o ${opt} == "-l" ]; then
+	    shift 1
+	    nb_lines_vicinity=$1
+	elif [ ${opt} == "--no-meta-label" -o ${opt} == "-M" ]; then
+	    shift 1
+	    meta_label=""
+	elif [ ${opt} == "--format" -o ${opt} == "-F" ]; then
+	    shift 1
+	    output_format="$1"
+	elif [ ${opt} == "--format-no-doc" ]; then
+	    format_with_doc=0
+	elif [ ${opt} == "--format-no-group" ]; then
+	    format_with_group=0
+	elif [ ${opt} == "--format-no-variants" ]; then
+	    format_with_variants=0
+	elif [ ${opt} == "--format-csv-sep" ]; then
+	    shift 1
+	    output_format="csv"
+	    format_csv_sep="${1:0:1}"
+	elif [ ${opt} == "--format-csv-subsep" ]; then
+	    shift 1
+	    output_format="csv"
+	    format_csv_subsep="${1:0:1}"
+	elif [ ${opt} == "--format-title" ]; then
+	    shift 1
+	    format_title="${1}"
+	else
+	    echo >&2 "ERROR: Unsupported option '${opt}'!"
+	    exit 1
+	fi
+    else
+	arg="${token}"
+	if [ "x${object_def_file}" == "x" ]; then
+	    object_def_file=${arg}
+	else
+	    echo >&2 "ERROR: Unsupported argument '${arg}'!"
+	    exit 1
+	fi
+    fi
+    shift 1
+done
+
+if [ "x${output_format}" == "xcsv" -o "x${output_format}" == "xCSV" ]; then
+    output_format="csv"
+    test ${debug} -ne 0 && echo >&2 "DEBUG: Output format = '${output_format}'"
+elif [ "x${output_format}" == "xrst" -o "x${output_format}" == "xRST" ]; then
+    output_format="rst"
+    test ${debug} -ne 0 && echo >&2 "DEBUG: Output format = '${output_format}'"
+else
+    echo >&2 "ERROR: Unsupported output format '${output_format}'!"
+    exit 1
+fi
+
+if [ ${nb_lines_vicinity} -eq 0 ]; then
+    nb_lines_vicinity=${default_nb_lines_vicinity}
+fi
+
+if [ "x${object_def_file}" == "x" ]; then
+    echo >&2 "ERROR: No input file!"
+    exit 1
+fi
+
+if [ ! -f ${object_def_file} ]; then
+    echo >&2 "ERROR: Input file '${object_def_file}' does not exists!"
+    exit 1
+fi
+
+key_label=$(cat ${object_def_file} | grep ^#@key_label | tr [[:space:]] ' ' | tr -s ' ' | cut -d ' ' -f2 | tr -d '"')
+meta_label=$(cat ${object_def_file} | grep ^#@meta_label | tr [[:space:]] ' ' | tr -s ' ' | cut -d ' ' -f2 | tr -d '"')
+
+if [ "x${key_label}" == "x" ]; then
+    echo >&2 "ERROR: No key label is defined!"
+    exit 1
+fi
+
+test ${debug} -ne 0 && echo >&2 "DEBUG: Find object names in file : '${object_def_file}'"
+test ${debug} -ne 0 && echo >&2 "DEBUG: Key label                 : '${key_label}'"
+test ${debug} -ne 0 && echo >&2 "DEBUG: Meta label                : '${meta_label}'"
+test ${debug} -ne 0 && echo >&2 "DEBUG: Requested group           : '${requested_group}'"
+test ${debug} -ne 0 && echo >&2 "DEBUG: Ignore file group         : ${ignore_file_group}"
+test ${debug} -ne 0 && echo >&2 "DEBUG: Ignore file variants      : ${ignore_file_variants}"
+test ${debug} -ne 0 && echo >&2 "DEBUG: Number of vicinity lines  : ${nb_lines_vicinity}"
+test ${debug} -ne 0 && echo >&2 "DEBUG: Output format             : '${output_format}'"
+test ${debug} -ne 0 && echo >&2 "DEBUG:   Format title            : '${format_title}'"
+test ${debug} -ne 0 && echo >&2 "DEBUG:   Format with doc         : ${format_with_doc}"
+test ${debug} -ne 0 && echo >&2 "DEBUG:   Format with group       : ${format_with_group}"
+test ${debug} -ne 0 && echo >&2 "DEBUG:   Format with variants    : ${format_with_variants}"
+test ${debug} -ne 0 && echo >&2 "DEBUG:   Format CSV separator    : '${format_csv_sep}'"
+test ${debug} -ne 0 && echo >&2 "DEBUG:   Format CSV subseparator : '${format_csv_subsep}'"
+
+object_names=
+if [ "x${meta_label}" != "x" ]; then
+    object_names=$(cat ${object_def_file} | grep -e "^\[${key_label}=" | grep -e "${meta_label}=" | cut -d' ' -f1 | cut -d'=' -f2 | tr -d \")
+else
+    object_names=$(cat ${object_def_file} | grep -e "^\[${key_label}=" | cut -d' ' -f1 | cut -d'=' -f2 | tr -d \")
+fi
+
+if [ "x${format_title}" != "x" ]; then
+    if [ "x${output_format}" == "xcsv" ]; then
+	echo "# ${format title}"
+    elif [ "x${output_format}" == "xrst" ]; then
+	echo "============================================================================="
+	echo "${format_title}"
+	echo "============================================================================="
+	echo ""
+    fi
+fi
+
+_tag_object=0
+for object_name in ${object_names}; do
+    test ${debug} -ne 0 && echo >&2 "DEBUG: Name = '${object_name}'"
+    object_config=$(grep -e "^\[${key_label}=\"${object_name}\"" -A ${nb_lines_vicinity} ${object_def_file} | grep ^#@config | cut -d' ' -f2-)
+    test ${debug} -ne 0 && echo >&2 "DEBUG: Config = '${object_config}'"
+    if [  "x${object_config}" != "x" ]; then
+	object_documentation=$(echo "${object_config};" | cut -d';' -f1)
+	test ${debug} -ne 0 && echo >&2 "DEBUG: Documentation = '${object_documentation}'"
+	object_group=""
+	if [ ${ignore_file_group} -eq 0 ]; then
+	    xg=$(echo "${object_config};" | sed -e "s|;|\n|g" | grep ^group= | head -1)
+	    test ${debug} -ne 0 && echo >&2 "DEBUG: xg = '${xg}'"
+	    if [ "x${xg}" != "x" ]; then
+		object_group=$(echo ${xg} | sed -e "s|^group=||g")
+	    fi
+	    test ${debug} -ne 0 && echo >&2 "DEBUG: File group = '${object_group}'"
+	fi
+	object_variant=""
+	object_variants=""
+	if [ ${ignore_file_variants} -eq 0 ]; then
+	    xv=$(echo "${object_config};" | sed -e "s|;|\n|g" | grep ^variant=)
+	    test ${debug} -ne 0 && echo >&2 "DEBUG: xv = '${xv}'"
+	    for vrec in ${xv}; do
+	    if [ "x${vrec}" != "x" ]; then
+		object_variant=$(echo ${vrec} | sed -e "s|^variant=||g")
+		test ${debug} -ne 0 && echo >&2 "DEBUG: Object variant = '${object_variant}'"
+		if [ "x${object_variants}" == "x" ]; then
+		    object_variants="${object_variant}"
+		else
+		    object_variants="${object_variants}${format_csv_subsep}${object_variant}"
+		fi
+	    fi
+	    done
+	    test ${debug} -ne 0 && echo >&2 "DEBUG: File variant = '${object_variants}'"
+	fi
+	if [ "x${requested_group}" != "x" -a "x${object_group}" == "x" ]; then
+	    test ${debug} -ne 0 && echo >&2 "DEBUG: Requested group = '${requested_group}'"
+	    object_group="${requested_group}"
+	fi
+    fi
+    test ${debug} -ne 0 && echo >&2 "DEBUG: Name : '${object_name}'"
+    test ${debug} -ne 0 && echo >&2 "DEBUG:   - Documentation = '${object_documentation}'"
+    test ${debug} -ne 0 && echo >&2 "DEBUG:   - Group         = '${object_group}'"
+    test ${debug} -ne 0 && echo >&2 "DEBUG:   - Variants      = '${object_variants}'"
+    # Output:
+    if [ "x${output_format}" == "xcsv" ]; then
+	echo -n "${object_name}"
+	if [ ${format_with_doc} -eq 1 ]; then
+	    echo -n " ${format_csv_sep} ${object_documentation}"
+	fi
+	if [ ${format_with_group} -eq 1 ]; then
+	    echo -n " ${format_csv_sep} ${object_group}"
+	fi
+	if [ ${format_with_variants} -eq 1 ]; then
+	    echo -n " ${format_csv_sep} ${object_variants}"
+	fi
+	echo
+    elif [ "x${output_format}" == "xrst" ]; then
+	echo -n "* \`\`${object_name}\`\`"
+	if [ ${format_with_doc} -eq 1 ]; then
+	    if [ "x${object_documentation}" != "x" ]; then
+		echo -n " : ${object_documentation}"
+	    fi
+	fi
+	echo
+	_tag=0
+	if [ ${format_with_group} -eq 1 ]; then
+	    if [ "x${object_group}" != "x" ]; then
+		if [ ${_tag} -eq 0 ]; then
+		    echo
+		    _tag=1
+		fi
+		echo "  * Group: \`\`${object_group}\`\`"
+	    fi
+	fi
+	if [ ${format_with_variants} -eq 1 ]; then
+	    if [ "x${object_variants}" != "x" ]; then
+		if [ ${_tag} -eq 0 ]; then
+		    echo
+		    _tag=1
+		fi
+		echo "  * Variants: \`\`${object_variants}\`\`"
+	    fi
+	fi
+	if [ ${_tag} -eq 1 ]; then
+	    echo
+	fi
+    else
+	echo >&2 "ERROR: Unsupported output format '${output_format}'!"
+	exit 1
+    fi
+done
+
+if [ "x${output_format}" == "xrst" ]; then
+    echo ""
+fi
+
+exit 0
+
+# end

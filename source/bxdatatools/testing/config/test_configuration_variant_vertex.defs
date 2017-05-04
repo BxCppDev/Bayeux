@@ -1,0 +1,68 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of definitions for configuration items
+#@key_label   "name"
+#@meta_label  "type"
+
+
+##################################################
+[name="vertex_generator_name.PM" type="parameter"]
+display_name              : string = "Vertex generator name"
+description               : string = "The name of the vertex geenrator"
+type                      : string = "string"
+mutability                : string = "variable"
+variable.mode             : string = "enumeration"
+
+string.enumerated.size    : integer = 10
+
+string.enumerated_0.value : string = "source_foil_bulk"
+string.enumerated_0.group : string = "Source"
+string.enumerated_0.default : boolean = true
+
+string.enumerated_1.value : string = "source_foil_surface"
+string.enumerated_1.group : string = "Source"
+
+string.enumerated_2.value : string = "field_wires_surface"
+string.enumerated_2.group : string = "Tracker"
+
+string.enumerated_3.value : string = "gas"
+string.enumerated_3.group : string = "Tracker"
+
+string.enumerated_4.value : string = "scin_bulk"
+string.enumerated_4.group : string = "Calorimeter"
+
+string.enumerated_5.value : string = "scin_surface"
+string.enumerated_5.group : string = "Calorimeter"
+
+string.enumerated_6.value : string = "pmt_glass"
+string.enumerated_6.group : string = "Calorimeter"
+
+string.enumerated_7.value : string = "Lab"
+
+string.enumerated_8.value : string = "Ground"
+
+string.enumerated_9.value : string = "TestSource1"
+string.enumerated_9.group : string = "Test"
+
+string.enumerated_10.value : string = "TestSource2"
+string.enumerated_10.group : string = "Test"
+
+
+############################################
+[name="vertex_generation.VM" type="variant"]
+display_name    : string = "Vertex generation"
+description     : string = "The generation of vertexes"
+parameters : string[3] = \
+  "logging" \
+  "generator" \
+  "number_of_shots"
+
+parameters.logging.model                : string = "logging_priority.PM"
+parameters.logging.description          : string = "Logging priority"
+
+parameters.generator.model              : string = "vertex_generator_name.PM"
+parameters.generator.description        : string = "The name of the vertex generator"
+
+parameters.number_of_shots.model        : string = "multiplicity_1_9.PM"
+parameters.number_of_shots.description  : string = "The number of shots"

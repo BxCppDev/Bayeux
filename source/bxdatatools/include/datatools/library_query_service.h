@@ -1,0 +1,93 @@
+//! \file    datatools/library_query_service.h
+//! \brief   Library information query service
+//! \details
+//
+// Copyright (c) 2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
+// Copyright (c) 2017 by Université de Caen
+//
+// This file is part of Bayeux/datatools.
+//
+// Bayeux/datatools is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Bayeux/datatools is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Bayeux/datatools. If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef DATATOOLS_LIBRARY_QUERY_SERVICE_H
+#define DATATOOLS_LIBRARY_QUERY_SERVICE_H
+
+// This project
+#include <datatools/properties.h>
+#include <datatools/base_service.h>
+#include <datatools/library_info.h>
+
+namespace datatools {
+
+  //! \brief Library information query service
+  class library_query_service
+    : public ::datatools::base_service
+  {
+  public:
+
+    //! Constructor
+    library_query_service();
+
+    //! Destructor
+    virtual ~library_query_service();
+
+    //! Check initialization status
+    virtual bool is_initialized() const;
+
+    //! Initialize the service from a list of properties
+    virtual int initialize(const datatools::properties & config_,
+                           datatools::service_dict_type & services_);
+
+    //! Reset
+    virtual int reset();
+
+    /// Smart print
+    virtual void tree_dump(std::ostream& out = std::clog,
+                           const std::string & title = "",
+                           const std::string & indent = "",
+                           bool inherit = false) const;
+
+    /// Return a mutable reference to the embedded library info dictionary
+    library_info & grab_libinfo();
+
+    /// Return a non mutable reference to the embedded library info dictionary
+    const library_info & get_libinfo() const;
+
+  private:
+
+    void _init_();
+
+    void _reset_();
+
+  private:
+
+    // Management:
+    bool _initialized_ = false; //!< Initialization flag
+
+    // Private data:
+    library_info _libinfo_; //!< Library info dictionary
+
+    DATATOOLS_SERVICE_REGISTRATION_INTERFACE(library_query_service)
+
+  };
+
+} // end of namespace datatools
+
+#endif // DATATOOLS_LIBRARY_QUERY_SERVICE_H
+
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

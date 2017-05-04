@@ -1,0 +1,21 @@
+#@format=datatools::configuration::variant
+#@format.version=1.0
+#@organization=bxdatatools
+#@application=foo
+
+[registry="core"]
+gui = false
+help = "OnlyTooltips"
+logging = "fatal"
+operator = "John Doe"
+plugin = false
+test1 = false
+test2 = false
+test3 = true
+
+[registry="algo"]
+accuracy = 1
+max_time = 1 second
+nevents = 10
+value = 1 mm
+

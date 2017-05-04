@@ -1,0 +1,16 @@
+# Example of a list of runs addressed by URN
+#@category data
+urn:fooexp:test:run:1
+urn:fooexp:test:run:2
+urn:fooexp:test:run:3
+urn:fooexp:test:run:4
+urn:fooexp:test:run:5
+
+urn:fooexp:test:run:6
+# urn:fooexp:test:run:7
+urn:fooexp:test:run:8
+urn:fooexp:test:run:9
+#
+#
+# urn:not:loaded
+#

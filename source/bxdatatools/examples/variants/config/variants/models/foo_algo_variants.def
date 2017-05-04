@@ -1,0 +1,238 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The definitions for algorithm variants
+#@key_label   "name"
+#@meta_label  "type"
+
+
+##################################
+[name="value.PM" type="parameter"]
+
+#@config A parameter model describing the value
+
+logging.priority : string = "trace"
+
+#@description The display name of this parameter model
+display_name              : string = "Value"
+
+#@description A short description of the parameter model
+terse_description         : string = "The value"
+
+#@description The type of the parameter model
+type                      : string = "real"
+
+#@description The mutability of the parameter model
+mutability                : string = "variable"
+
+#@description The mutability mode of the parameter model
+variable.mode             : string = "enumeration"
+
+#@description The unit dimension label
+real.unit_label    : string = "length"
+
+#@description The preferred unit symbol
+real.preferred_unit : string = "mm"
+
+#@description The number of supported values
+real.enumerated.size    : integer = 4
+
+# The list of supported values:
+real.enumerated_0.value : real as length = 1.0 mm
+real.enumerated_0.group : string         = "Low"
+real.enumerated_1.value : real as length = 2.0 mm
+real.enumerated_1.group : string         = "Low"
+real.enumerated_2.value : real as length = 1.0 cm
+real.enumerated_3.value : real as length = 1.0 m
+
+#@description The default value
+real.default            : real as length = 1.0 m
+
+
+###########################################
+[name="computing_time.PM" type="parameter"]
+
+#@config A parameter model describing the computing time of an algorithm
+
+#@description The display name of this variant
+display_name       : string = "Computing time"
+
+#@description A short description of the variant
+terse_description  : string = "The computing time of the algorithm"
+
+#@description The type of the parameter
+type               : string = "real"
+
+#@description The unit dimension label
+real.unit_label    : string = "time"
+
+#@description The preferred unit symbol
+real.preferred_unit : string = "second"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "interval"
+
+#@description The domain of supported values
+real.domain     : string = "[0.1 s, 10 s]"
+
+#@description The default computing time
+real.default    : real as time = 1 s
+
+
+########################################
+[name="high_accuracy.VM" type="variant"]
+
+#@config A variant model describing the accuracy order of an algorithm
+
+#@description The display name of this variant
+display_name       : string = "High accuracy"
+
+#@description A short description of the variant
+terse_description  : string = "The high accuracy"
+
+
+#######################################
+[name="low_accuracy.VM" type="variant"]
+
+#@config A variant model describing the accuracy order of an algorithm
+
+#@description The display name of this variant
+display_name       : string = "Low accuracy"
+
+#@description A short description of the variant
+terse_description  : string = "The low accuracy"
+
+
+
+#####################################
+[name="accuracy.PM" type="parameter"]
+
+#@config A parameter model describing the accuracy order of an algorithm
+
+#@description The display name of this variant
+display_name       : string = "Accuracy"
+
+#@description A short description of the variant
+terse_description  : string = "The accuracy order of the algorithm"
+
+#@description The type of the parameter
+type               : string = "integer"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "interval"
+
+#@description The domain of supported values
+integer.domain     : string = "[1, 6]"
+
+#@description The default palette identifier
+integer.default    : integer = 1
+
+#@description The variants associated to some values
+variants : string[2] = "if_low_accuracy" "if_high_accuracy"
+
+variants.if_low_accuracy.model       : string = "low_accuracy.VM"
+variants.if_low_accuracy.description : string = "Variant model dedicated to low accuracy regime"
+
+variants.if_high_accuracy.model       : string = "high_accuracy.VM"
+variants.if_high_accuracy.description : string = "Variant model dedicated to high accuracy regime"
+
+#@description Special range of values
+integer.ranges : string[2] = "Low" "High"
+
+integer.ranges.Low.range    : string = "[1,2]"
+integer.ranges.Low.documentation : string = "Domain of low accuracy"
+integer.ranges.Low.variant  : string = "if_low_accuracy"
+
+integer.ranges.High.range    : string = "[5,6]"
+integer.ranges.High.documentation : string = "Domain of high accuracy"
+integer.ranges.High.variant  : string = "if_high_accuracy"
+
+
+###############################################
+[name="event_multiplicity.PM" type="parameter"]
+
+#@config A parameter model describing the event multiplicity
+
+#@description The display name of this variant
+display_name       : string = "Number of events"
+
+#@description A short description of the variant
+terse_description  : string = "The number of events"
+
+#@description The type of the parameter
+type               : string = "integer"
+
+#@description The mutability of the parameter
+mutability         : string = "variable"
+
+#@description The mutability mode of the parameter
+variable.mode      : string = "interval"
+
+#@description The domain of supported values
+integer.domain     : string = "[1, 20]"
+
+#@description The default palette identifier
+integer.default    : integer = 10
+
+
+###########################################
+[name="volume_tracker.PM" type="parameter"]
+
+#@config A parameter model describing the volume tracker (constant)
+
+#@description The display name of this variant
+display_name       : string = "Volume tracker"
+
+#@description A short description of the variant
+terse_description  : string = "The volume tracker"
+
+#@description The type of the parameter
+type               : string = "real"
+
+#@description The mutability of the parameter
+mutability         : string = "fixed"
+
+#@description The fixed value
+real.fixed         : real = 15 m3
+
+#@description The preferred unit symbol
+real.preferred_unit : string = "m3"
+
+
+###############################
+[name="algo.VM" type="variant"]
+
+#@config A variant model describing the parameters for the GUI
+
+#@description The display name of this variant
+display_name       : string = "GUI setup"
+
+#@description A short description of the variant
+terse_description  : string = "The configuration parameters for the GUI"
+
+#@description The ordered list of variant parameters
+parameters         : string[5] = "max_time" "accuracy" "nevents" "vt" "value"
+
+parameters.max_time.model       : string = "computing_time.PM"
+parameters.max_time.description : string = "Maximum computing time"
+
+parameters.accuracy.model       : string = "accuracy.PM"
+parameters.accuracy.description : string = "Computing accuracy order"
+
+parameters.nevents.model        : string = "event_multiplicity.PM"
+parameters.nevents.description  : string = "Number of events to be processed"
+
+parameters.vt.model             : string = "volume_tracker.PM"
+parameters.vt.description       : string = "Volume tracker"
+
+parameters.value.model          : string = "value.PM"
+parameters.value.description    : string = "Value"
+
+
+# end

@@ -1,0 +1,44 @@
+%% declare_verbatim.tex
+%% -*- mode: latex;-*-
+%%
+\DefineVerbatimEnvironment%
+{ShellVerbatim}{Verbatim}%
+{fontsize=\small,%
+frame=single,%
+framesep=2mm,%
+framerule=0.25mm,%
+labelposition=topline,%
+numbers=none%
+}
+
+\DefineVerbatimEnvironment%
+  {PathVerbatim}{Verbatim}%
+{fontsize=\small,%
+frame=single,%
+framesep=1mm,%
+framerule=0.15mm,%
+numbers=none%
+}
+
+\DefineVerbatimEnvironment%
+{CppVerbatim}{Verbatim}%
+{commandchars=\\\{\},%
+fontsize=\small,%
+frame=single,%
+framesep=2mm,%
+framerule=0.25mm,%
+labelposition=topline,
+numbers=left,%
+numbersep=2pt%
+}
+
+\floatstyle{plain}
+\newfloat{program}{thp}{lop}
+\floatname{program}{Program}
+
+\floatstyle{plain}
+\newfloat{sample}{thbp}{los}
+\floatname{sample}{Sample}
+
+
+%% end of declare_verbatim.tex

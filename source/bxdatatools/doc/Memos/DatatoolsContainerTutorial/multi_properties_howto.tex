@@ -1,0 +1,297 @@
+%% multi_properties_howto.tex
+
+\section{The \texttt{datatools::multi\_properties} class}\label{sec:multi_properties}
+
+\subsection{Introduction}
+
+We    have    seen    in     the    previous    section    that    the
+\texttt{datatools::properties}  class  can  be  used  to  store
+simple arbitrary parameters of simple types. It is particularly useful
+to represent  and manipulate some list of  configuration parameters to
+setup an application or the behaviour of an algorithm.
+
+\pn However, in a complex  software environment, there are many coexisting
+components that may need such configuration interface. Using an unique
+properties container to manage all  the settings for all components of
+a large  scale application  is not very  practical or  desirable.  For
+example, several  individual components may  implement a configuration
+interface based on a properties container and associated configuration
+ASCII  files.   Integrating  such  components  in  a  larger  software
+framework  should  not  enforce  developpers  to  rewrite  the  global
+configuration interface  and the  users to change  their configuration
+file formatting.  A better approach  is likely to reuse the individual
+configuration interfaces  from each component,  eventually adding some
+extension to  it to  support a higher  level of functionnality  at the
+scale of the full application.
+
+\pn The \texttt{datatools::multi\_properties}  class is designed to
+address  this use  case, among  others.  It  is a  meta-container that
+contains  several  sections,  each  section  being  implemented  as  a
+\texttt{datatools::properties}   container.    Practically,   a
+multi-properties  container is  a  dictionnary of  which each  element
+(properties container) are stored  with an unique mandatory access key
+(or  name).  The  naming policy  is  the same  than the  one used  for
+property records in a properties container.
+
+
+\subsection{Header file and instantiation}
+
+\pn  In   order  to  use  \texttt{datatools::multi\_properties}
+objects, one must use the following include directive:
+\begin{CppVerbatim}
+#include <datatools/multi_properties.h>
+\end{CppVerbatim}
+
+\pn The  declaration of a \texttt{datatools::multi\_properties}
+instance can be simply done with:
+\begin{CppVerbatim}
+datatools::multi_properties my_multi_container;
+\end{CppVerbatim}
+Alternatively one can use :
+\begin{CppVerbatim}
+using namespace datatools;
+multi_properties my_multi_container;
+\end{CppVerbatim}
+
+\subsection{Design}
+
+\subsubsection{Names and metas}
+
+\pn As  mentionned above, a multi-properties container  behaves like a
+dictionary  of  properties  containers.   A  given  stored  properties
+container is addressed through its unique key (or \emph{name}).  It is
+also  optionally associated to  a \emph{meta}  data string  that gives
+some additional information about the properties container stored in a
+given section of a multi-properties container.
+
+\subsubsection{Basics}
+
+\pn When instantiated, a multi-properties is given:
+\begin{itemize}
+
+\item          an         optional          description         string
+  (methods:\texttt{set\_description}, \texttt{get\_description}),
+
+\item a  mandatory string  to label the  \emph{key} in  human readable
+  format  (default  is  \TT{name}, methods:  \texttt{set\_key\_label},
+  \texttt{get\_key\_label} ),
+
+\item  a  optional string  to  label  the  \emph{meta} data  in  human
+  readable     format      (default     is     \TT{type},     methods:
+  \texttt{set\_meta\_label},   \texttt{get\_meta\_label}).  This  meta
+  label can be forced to the empty string.  In this case, no meta data
+  is used by the container.
+
+\end{itemize}
+
+\pn The program source sample \ref{program:multi_properties:0} shows how to
+declare and initialize a multi-properties object.
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_0.cxx}
+\caption{Declare and setup a
+  \texttt{datatools::multi\_properties}   object.
+}
+\label{program:multi_properties:0}
+\end{program}
+
+\subsubsection{Container interface}
+
+\pn The container interface of a multi-properties object enables to :
+\begin{itemize}
+
+\item  \texttt{has\_key}, \texttt{has\_section} :  check if  a section
+  with a given key exists,
+
+\item \texttt{get}  : provide access to  a section entry  with a given
+  name,
+
+\item \texttt{add}  : add a new  section with given  name and optional
+  meta strings,
+
+\item  \texttt{remove} :  remove an  existing new  section  with given
+  name,
+
+\item \texttt{size} : return the number of stored sections,
+
+\item \texttt{clear} : remove all stored sections.
+
+\end{itemize}
+
+\pn The  program source sample  \ref{program:multi_properties:1} shows
+how to add some empty sections in a multi-properties object. It prints
+the  contents of  the container  in a  human readable  formaty (sample
+\ref{sample:multi_properties:1}.
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_1.cxx}
+\caption{Adding  sections  in a  \texttt{datatools::multi\_properties}
+  object.  }
+\label{program:multi_properties:1}
+\end{program}
+
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=3,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_1.out}
+\caption{The  output of the  program \ref{program:multi_properties:1}.
+  We  can  check that  the  three  sections  have been  stored.   They
+  correspond to still empty  properties containers because no property
+  have been stored so far.}
+\label{sample:multi_properties:1}
+\end{sample}
+
+\pn It is  also possible to store a copy  of an independant properties
+container  object  within a  multi-properties  container  as shown  in
+sample   \ref{sample:multi_properties:2}.   This   technique  can   be
+inefficient if the source properties container hosts a large number of
+properties.
+
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=15,
+lastline=18,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_2.cxx}
+\caption{Copy a standalone properties container object
+within a multi-properties container.}
+\label{sample:multi_properties:2}
+\end{sample}
+
+\pn  Accessing individual  properties containers  is  their respective
+section          is          illustrated         with          program
+sample        \label{sample:multi_properties:3}.        Here       the
+\texttt{has\_key("<KEY>")} and chained \texttt{get("<KEY>").get\_properties()}
+ methods are the basic tools.
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=12,
+lastline=25,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_3.cxx}
+\caption{Manipulating  a  properties container  object  stored in  the
+  section of a \texttt{datatools::multi\_properties} object.  }
+\label{sample:multi_properties:3}
+\end{sample}
+
+\pn A more efficient technique consists in the manipulation of the
+stored properties container through a reference (mutable or const)
+as shown on sample  \label{sample:multi_properties:4}.
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=27,
+lastline=41,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_3.cxx}
+\caption{Manipulating  a  properties container  object  stored in  the
+  section of a \texttt{datatools::multi\_properties} object through
+mutable and const references.  }
+\label{sample:multi_properties:4}
+\end{sample}
+
+\clearpage
+\subsubsection{Serialization and I/O features}
+
+Like    the     \texttt{datatools::properties}    class,    the
+\texttt{datatools::multi\_properties}     class     has     I/O
+functionnalities :
+
+\begin{itemize}
+
+\item ASCII formatting in standard I/O streams.
+
+\item High level  serialization based on the Boost/Serialization library
+(not considered here).
+
+\end{itemize}
+
+
+\pn The program source  \ref{program:multi_properties:5} shows how to use
+this class to save a multi-properties object
+in an ASCII formated file (method: \texttt{write}) and to reload it
+(method: \texttt{read}) .
+The contents of the saved file
+is shown on sample \ref{sample:multi_properties:5}.
+
+
+\begin{program}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%%lastline=88,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_4.cxx}
+\caption{Save        and       load        functionnalities       with
+  \texttt{datatools::multi\_properties} objects.  Note that the
+  optional description  of the multi-properties  container is recorded
+  through a  meta-comment (line starting  with the \TT{\#@description}
+  prefix).  The  mandatory key label  and meta label strings  are also
+  printed using the \texttt{\#@key\_label} and \texttt{\#@meta\_label}
+  meta-comments.  These three informations  must be printed before any
+  sections.   Each  section  has   a  square  bracketed  header  which
+  indicates the  key (\texttt{name="XXX"})  and the meta  string (with
+  \texttt{type="YYY"}). The  internal of a section  conforms the ASCII
+  formatting syntax for \texttt{datatools::properties} objects.
+}
+\label{program:multi_properties:5}
+\end{program}
+
+
+\begin{sample}[h]
+\VerbatimInput[frame=single,
+numbers=left,
+numbersep=2pt,
+firstline=1,
+%lastline=31,
+fontsize=\footnotesize,
+showspaces=false]{\codingpath/multi_properties_4.conf}
+\caption{The ASCII file generated by program  \ref{program:multi_properties:5}.  }
+\label{sample:multi_properties:5}
+\end{sample}
+
+\subsubsection{Advanced features}
+
+
+\pn Having a look on the program output \ref{sample:multi_properties:1}, one
+should notice that some informations about the order in which the different
+sections have been stored is recorded inside the multi-properties container.
+
+\pn  Such a feature  enables not  only to  benefit of  the dictionnary
+interface   of  the   \\  \texttt{datatools::multi\_properties}
+class, but also to access the  items with respect to the order used to
+store  them.  The  \texttt{ordered\_entries()}  and \texttt{entries()}
+methods in  the class implements some non  mutable access respectively
+to  the   ordered  collection  of   sections  (at  insertion   in  the
+multi-properties container) and the non-ordered collection of sections
+(using the  default order  provided by the  standard \texttt{std::map}
+class).
+
+
+%\subsection{Examples}
+
+
+%% end of multi_properties_howto.tex

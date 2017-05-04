@@ -1,0 +1,143 @@
+# -*- mode: conf-unix -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A sample list of definitions for configuration items
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#############################################
+[name="low_digits.fixed.PM" type="parameter"]
+display_name      : string = "Number of digits"
+terse_description : string = "The number of digits (low)"
+type              : string = "integer"
+mutability        : string = "fixed"
+integer.fixed     : integer = 2
+
+
+################################################
+[name="medium_digits.fixed.PM" type="parameter"]
+display_name      : string = "Number of digits"
+terse_description : string = "The number of digits (medium)"
+type              : string = "integer"
+mutability        : string = "fixed"
+integer.fixed     : integer = 7
+
+
+##############################################
+[name="high_digits.fixed.PM" type="parameter"]
+display_name      : string = "Number of digits"
+terse_description : string = "The number of digits (high)"
+type              : string = "integer"
+mutability        : string = "fixed"
+integer.fixed     : integer = 15
+
+
+#############################################
+[name="low_approx_order.PM" type="parameter"]
+display_name      : string = "Order of approximation"
+terse_description : string = "The order of approximation (low)"
+type            : string = "integer"
+mutability      : string = "variable"
+variable.mode   : string = "enumeration"
+integer.enumerated.size : integer = 2
+integer.enumerated_0.value : integer = 0
+integer.enumerated_1.value : integer = 1
+integer.default            : integer = 1
+
+
+################################################
+[name="medium_approx_order.PM" type="parameter"]
+display_name      : string = "Order of approximation"
+terse_description : string = "The order of approximation (medium)"
+type            : string = "integer"
+mutability      : string = "variable"
+variable.mode   : string = "interval"
+integer.domain  : string = "[2, 3]"
+integer.default : integer = 2
+
+
+##############################################
+[name="high_approx_order.PM" type="parameter"]
+display_name      : string = "Order of approximation"
+terse_description : string = "The order of approximation (high)"
+type            : string = "integer"
+mutability      : string = "variable"
+variable.mode   : string = "interval"
+integer.domain  : string = "[4, 8]"
+integer.default : integer = 6
+
+
+##########################################
+[name="inaccurate_math.VM" type="variant"]
+display_name      : string = "Inaccurate math"
+terse_description : string = "The parameters for inaccurate mathematics"
+
+parameters : string[2] = "order_of_approximation" "number_of_digits"
+parameters.order_of_approximation.model          : string = "low_approx_order.PM"
+parameters.order_of_approximation.description    : string = "The order of approximation"
+parameters.number_of_digits.model                : string = "low_digits.fixed.PM"
+parameters.number_of_digits.description          : string = "The number of digits"
+
+
+##########################################
+[name="approximated_math.VM" type="variant"]
+display_name      : string = "Approximated math"
+terse_description : string = "The parameters for approximated mathematics"
+
+parameters : string[2] = "order_of_approximation" "number_of_digits"
+parameters.order_of_approximation.model          : string = "medium_approx_order.PM"
+parameters.order_of_approximation.description    : string = "The order of approximation"
+parameters.number_of_digits.model                : string = "medium_digits.fixed.PM"
+parameters.number_of_digits.description          : string = "The number of digits"
+
+
+##########################################
+[name="accurate_math.VM" type="variant"]
+display_name      : string = "Accurate math"
+terse_description : string = "The parameters for accurate mathematics"
+
+parameters : string[2] = "order_of_approximation" "number_of_digits"
+parameters.order_of_approximation.model          : string = "high_approx_order.PM"
+parameters.order_of_approximation.description    : string = "The order of approximation"
+parameters.number_of_digits.model                : string = "high_digits.fixed.PM"
+parameters.number_of_digits.description          : string = "The number of digits"
+
+
+#################################
+[name="math.PM" type="parameter"]
+display_name    : string = "A string"
+terse_description : string = "A dummy string"
+type            : string = "string"
+mutability      : string = "variable"
+variable.mode   : string = "enumeration"
+string.enumerated.size : integer = 3
+string.enumerated_0.value : string = "inaccurate"
+string.enumerated_1.value : string = "approximated"
+string.enumerated_2.value : string = "accurate"
+string.default  : string = "accurate"
+
+variants : string[3] = "if_inaccurate" "if_approximated" "if_accurate"
+variants.if_inaccurate.model         : string = "inaccurate_math.VM"
+variants.if_inaccurate.description   : string = "Inaccurate mathematics"
+variants.if_approximated.model       : string = "approximated_math.VM"
+variants.if_approximated.description : string = "Approximated mathematics"
+variants.if_accurate.model           : string = "accurate_math.VM"
+variants.if_accurate.description     : string = "Accurate mathematics"
+
+string.enumerated_0.variant : string = "if_inaccurate"
+string.enumerated_1.variant : string = "if_approximated"
+string.enumerated_2.variant : string = "if_accurate"
+
+
+###############################
+[name="math.VM" type="variant"]
+display_name    : string = "Math setup"
+terse_description     : string = "The parameters for mathematics"
+parameters : string[2] = "mode" "logging"
+
+parameters.mode.model        : string = "math.PM"
+parameters.mode.description  : string = "The mathematics mode"
+
+parameters.logging.model        : string = "logging_priority.PM"
+parameters.logging.description  : string = "The logging level"
