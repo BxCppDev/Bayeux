@@ -1,0 +1,97 @@
+//! \file    genvtx/version.h
+//! \brief   Describe the genvtx API version
+//! \details Querying the version of genvtx is needed at both
+//!          compile and runtime by clients so that they may adjust
+//!          their usage.
+//
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
+// Copyright (c) 2013 by The University of Warwick
+//
+// This file is part of genvtx.
+//
+// genvtx is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// genvtx is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with genvtx.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef GENVTX_VERSION_H
+#define GENVTX_VERSION_H
+
+// Standard Library:
+#include <string>
+
+//----------------------------------------------------------------------
+// - Compile Time API
+//! Major version number of genvtx
+#define GENVTX_VERSION_MAJOR @genvtx_VERSION_MAJOR@
+
+//! Minor version number of genvtx
+#define GENVTX_VERSION_MINOR @genvtx_VERSION_MINOR@
+
+//! Patch version number of genvtx
+#define GENVTX_VERSION_PATCH @genvtx_VERSION_PATCH@
+
+//! Encode genvtx to ordered integer available at compile time
+#define GENVTX_ENCODE_VERSION(major, minor, patch) (			\
+						    ((major) * 10000)	\
+						    + ((minor) *   100) \
+						    + ((patch) *     1))
+
+//! Integer encoded genvtx version available at compile time
+#define GENVTX_VERSION GENVTX_ENCODE_VERSION(				\
+					     GENVTX_VERSION_MAJOR,	\
+					     GENVTX_VERSION_MINOR,	\
+					     GENVTX_VERSION_PATCH)
+
+//! String encoded full version number, e.g. "1.2.3", available at compile time
+#define GENVTX_LIB_VERSION "@genvtx_VERSION@"
+
+//! Check current version >= (major, minor, patch) at compile time
+#define GENVTX_IS_AT_LEAST(major,minor,patch) (				\
+					       GENVTX_VERSION >=	\
+					       GENVTX_ENCODE_VERSION(major,minor,patch))
+
+//----------------------------------------------------------------------
+// Runtime API
+namespace genvtx {
+
+  //! \brief Describe the genvtx API version and features
+  struct version {
+    //! Return the major version number of genvtx, e.g., 1 for '1.2.3'
+    static int get_major();
+
+    //! Return the minor version number of genvtx, e.g., 2 for '1.2.3'
+    static int get_minor();
+
+    //! Return the patch version number of genvtx, e.g., 3 for '1.2.3'
+    static int get_patch();
+
+    //! Return the full version number of genvtx as a string, e.g., '1.2.3'
+    static std::string get_version();
+
+    //! Return true if the current genvtx version >= (major, minor, patch)
+    static bool is_at_least(int major, int minor, int patch);
+
+    //! Return true if the named feature is available in genvtx
+    static bool has_feature(const std::string& feature);
+  };
+
+} // namespace genvtx
+
+#endif // GENVTX_VERSION_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
