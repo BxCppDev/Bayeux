@@ -1,0 +1,17 @@
+/// \file dpp/dpp_config.h header file
+
+#ifndef DPP_DPP_CONFIG_H
+#define DPP_DPP_CONFIG_H 1
+
+/*** dpp debug flag ***/
+#cmakedefine01 DPP_WITH_DEBUG
+
+#endif // DPP_DPP_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
