@@ -1,3 +1,5 @@
+Development of mctools has migrated to Git
+
 
 Bayeux/mctools  (Monte-Carlo Tools)  is  a C++  program library  which
 provides  some  utilities  to   ease  the  generation  of  Monte-Carlo
