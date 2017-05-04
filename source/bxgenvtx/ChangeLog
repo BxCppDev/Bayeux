@@ -1,0 +1,16 @@
+2010-02-13  Francois Mauger <mauger@lpccaen.in2p3.fr>
+        * creation of the genvtx package
+2012-01-11  Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* CMake : new build system
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        * remove all "using namespace std;" from header files
+        * version: prepare tag 3.1.0 in trunk
+	* depends on geomtools 3.1
+2013-03-14 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* depends on materials 4.0.0
+	* add a genvtx::manager class
+	* add box_model_vg and cylinder_model_vg classes
+	* add a test program with visualization
+2013-05-07 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add preliminary OCD support
+	* tag genvtx 4.0.0

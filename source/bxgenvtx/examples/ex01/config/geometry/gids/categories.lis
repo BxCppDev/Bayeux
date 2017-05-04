@@ -1,0 +1,91 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+# This is the mother-of-all geometry category
+# that addresses the "World" volume (mandatory):
+[category="world" type="0"]
+addresses : string[1] = "world"
+
+
+# This category represents the rule to identify a given board :
+#
+# Each board belongs to the "board.gc" category (type=100)
+# and its address is composed of one unique"board" integral
+# number (>=0).
+#
+[category="board.gc"  type="100"]
+addresses : string[1] = "board"
+
+
+# This category represents the rule to identify the PCB of a given board :
+#
+# The PCB belongs to the "board_pcb.gc" category (type=200)
+# and its address is composed of the same "board" integral
+# number (>=0) that identifies its mother boards. This is a
+# kind of inheritance relationship.
+#
+[category="board_pcb.gc"  type="200"]
+inherits : string = "board.gc"
+
+# Dummy category
+[category="dummy.gc"  type="199"]
+inherits : string = "board.gc"
+
+# This category represents the rule to identify a given mezzanine
+# board on its mother board :
+#
+# The mezzanine board belongs to the "mezzanine.gc" category (type=1000).
+# As a mother board can host several mezzanine boards, the address of a
+# mezzanine board is composed not only by the "board" number of its
+# mother board, but also by an additionnal "daughter" number that uniquely
+# identifies the mezzanine on the mother board.
+#
+[category="mezzanine.gc" type="1000"]
+extends  : string = "board.gc"
+by       : string[1] = "daughter"
+
+
+# The PCB of a mezzanine inherits the address of the associated mezzanine board
+[category="mezzanine_pcb.gc" type="1200"]
+inherits : string = "mezzanine.gc"
+
+
+# The control FPGA of a mezzanine inherits the address of the associated mezzanine board
+[category="fpga.gc" type="2000"]
+inherits : string = "mezzanine.gc"
+
+
+# Each chip pluged on a mezzanine board extends the mezzanine address
+# (composed by the "board" number and the "daughter" numbers) by an
+# additionnal "slot" number.
+[category="chip.gc" type="2010"]
+extends  : string = "mezzanine.gc"
+by       : string[1] = "slot"
+
+
+# Each capacitor on a mezzanine board extends the mezzanine address
+# (composed by the "board" number and the "daughter" numbers) by an
+# additionnal "position" number.
+[category="capacitor.gc" type="2020"]
+extends  : string = "mezzanine.gc"
+by       : string[1] = "position"
+
+
+# The coil on a mezzanine board inherits the mezzanine address
+# (composed by the "board" number and the "daughter" numbers)
+[category="coil.gc" type="2030"]
+inherits : string = "mezzanine.gc"
+
+
+
+# The coil on a mezzanine board inherits the mezzanine address
+# (composed by the "board" number and the "daughter" numbers)
+[category="coil_body.gc" type="2031"]
+inherits : string = "coil.gc"
+
+
+# end

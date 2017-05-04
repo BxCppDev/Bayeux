@@ -1,0 +1,410 @@
+#!/usr/bin/env bash
+
+opwd=$(pwd)
+genvtx_version=@genvtx_VERSION@
+this_bxapp="bxgenvtx_mkskelcfg"
+
+function my_exit()
+{
+    cd ${opwd}
+    exit $1
+}
+
+function splash()
+{
+    cat<<EOF
+
+        G E N V T X    M K S K E L C F G
+        Version ${genvtx_version}
+        Bayeux version @Bayeux_VERSION@
+
+        Copyright (C) 2013
+        Francois Mauger, Xavier Garrido and Ben Morgan
+
+        command line help: type "${this_bxapp} --help"
+
+EOF
+    return
+}
+
+function print_usage()
+{
+    cat<<EOF
+
+${this_bxapp} -- Build and populate a skeleton configuration directory
+                 for the genvtx vertex generator manager.
+
+Usage:
+
+   ${this_bxapp} -h|--help     : Print this help then exit.
+
+   ${this_bxapp} -V|--version  : Print the current version then exit.
+
+   ${this_bxapp} -d|--debug    : Switch on debug mode and messages.
+
+   ${this_bxapp} -c|--config-base-dir arg  :
+                                      Make 'arg' be the configuration base directory
+                                      where to store the configuration files
+                                      for the vertex generator manager.
+                                      Example:
+                                        --config-base-dir "."
+
+   ${this_bxapp} -l|--setup-label arg  :
+                                      Set the label of the setup to 'arg'.
+                                      Example:
+                                        --setup-label "my_setup"
+
+   ${this_bxapp} -v|--setup-version arg  :
+                                      Set the version of the setup to 'arg'.
+                                      Example:
+                                        --setup-version "0.1"
+
+   ${this_bxapp} -m|--registered-module arg :
+                                      Use the registered base directory from the
+                                      module/library 'arg'. Used file path syntax
+                                      is: "@arg:path/to/setup/file.conf".
+                                      Example:
+                                        --registered-module "my_setup"
+
+   ${this_bxapp} -p|--skeleton-profile arg :
+                                      Use the skeleton profile 'arg'.
+                                      Default value is: '${default_skeleton_profile}'.
+                                      Example:
+                                        --skeleton-profile "${default_skeleton_profile}"
+
+EOF
+    return
+}
+
+interactive=0
+splash=1
+debug=0
+version=0
+help=0
+default_config_base_dir="."
+config_base_dir=""
+default_setup_label="my_setup"
+setup_label=""
+default_setup_version="0.1"
+setup_version=""
+known_skeleton_profiles="s2d4"
+default_skeleton_profile="s2d4"
+skeleton_profile=""
+registered_module=""
+env_config_dir=""
+
+while [ -n "$1" ]; do
+    token="$1"
+    #echo "NOTICE: Command line token is : '${token}' !" >&2
+    if [ "x${token:0:1}" = "x-" ]; then
+        option="$token"
+	#echo "NOTICE: Command line option is : '${option}' !" >&2
+        if [  ${option} = "-V" -o ${option} = "--version" ]; then
+	    version=1
+	elif [ ${option} = "-h" -o ${option} = "--help" ]; then
+	    help=1
+	elif [ ${option} = "-i" -o ${option} = "--interactive" ]; then
+	    interactive=1
+	elif [ ${option} = "-d" -o ${option} = "--debug" ]; then
+	    debug=1
+	elif [ ${option} = "-c" -o ${option} = "--config-base-dir" ]; then
+	    shift 1
+	    config_base_dir="$1"
+	elif [ ${option} = "-l" -o ${option} = "--setup-label" ]; then
+	    shift 1
+	    setup_label="$1"
+	elif [ ${option} = "-v" -o ${option} = "--setup-version" ]; then
+	    shift 1
+	    setup_version="$1"
+	elif [ ${option} = "-p" -o ${option} = "--skeleton-profile" ]; then
+	    shift 1
+	    skeleton_profile="$1"
+	elif [ ${option} = "-m" -o ${option} = "--registered-module" ]; then
+	    shift 1
+	    registered_module="$1"
+	elif [ ${option} = "-e" -o ${option} = "--env-base-path" ]; then
+	    shift 1
+	    env_config_dir="$1"
+	fi
+    else
+        argument="$token"
+	echo "WARNING: Ignoring command line argument '${argument}' !" >&2
+    fi
+    shift 1
+done
+
+if [ $splash -eq 1 ]; then
+    splash
+fi
+
+if [ $version -eq 1 ]; then
+    echo "${genvtx_version}"
+    my_exit 0
+fi
+
+if [ $help -eq 1 ]; then
+    print_usage
+    my_exit 0
+fi
+
+function ui_read()
+{
+    default_value="$1"
+    read value
+    if [ "x${value}" = "x" ]; then
+	value="${default_value}"
+    fi
+    eval "echo ${value}"
+    #echo "${value}"
+    return 0
+}
+
+function ui_dialog()
+{
+    echo -n "Enter the setup label [${setup_label}]: " >&2
+    setup_label=$(ui_read "${setup_label}")
+
+    echo -n "Enter the setup version [${setup_version}]: " >&2
+    setup_version=$(ui_read "${setup_version}")
+
+    echo -n "Enter the name/label of the skeleton profile [${skeleton_profile}]: " >&2
+    skeleton_profile=$(ui_read "${skeleton_profile}")
+
+    echo -n "Enter the configuration base directory [${config_base_dir}]: " >&2
+    config_base_dir=$(ui_read "${config_base_dir}")
+
+    if [ "x${config_base_dir}" = "x" ]; then
+	echo -n "Enter the name/label of the registered module/library [${registered_module}]: " >&2
+	registered_module=$(ui_read "${registered_module}")
+
+	if [ "x${registered_module}" = "x" ]; then
+	    echo "Enter the name of the environment variable that addresses" >&2
+	    echo -n "  the configuration base directory [${env_config_dir}]: " >&2
+	    env_config_dir=$(ui_read "${env_config_dir}")
+	fi
+    fi
+    return 0;
+}
+
+if [ ${interactive} -eq 1 ]; then
+    if [ $debug -eq 1 ]; then
+	echo "DEBUG: Entering interactive dialog..." >&2
+    fi
+    ui_dialog
+    if [ $? -ne 0 ]; then
+	echo "ERROR:  User dialog failed ! Abort !" >&2
+	my_exit 1
+    fi
+fi
+
+if [ -z "$config_base_dir" ]; then
+    config_base_dir="$default_config_base_dir"
+fi
+
+if [ -z "$setup_label" ]; then
+    setup_label="$default_setup_label"
+fi
+
+if [ -z "$setup_version" ]; then
+    setup_version="$default_setup_version"
+fi
+
+if [ -z "$skeleton_profile" ]; then
+    skeleton_profile="$default_skeleton_profile"
+fi
+
+echo "${known_skeleton_profiles}" | tr [[:space:]] ' ' | tr -s ' ' | tr ' ' '\n'  | grep $skeleton_profile > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "ERROR: Profile '${skeleton_profile}' is not valid ! Abort !" >&2
+    my_exit 1
+fi
+
+setup_label_path=$(echo "${setup_label}" | sed -e 's%::%/%g' -e 's%[[:space:]]%_%g')
+setup_base_dir="${config_base_dir}/${setup_label_path}/simulation/vertexes/${setup_version}"
+if [ "x${setup_base_dir:0:2}" = "x./" ]; then
+    setup_base_dir="${setup_base_dir:2}"
+fi
+
+if [ $debug -eq 1 ]; then
+    (
+	echo "DEBUG: config_base_dir='${config_base_dir}'"
+	echo "DEBUG: setup_label='${setup_label}'"
+	echo "DEBUG: setup_label_path='${setup_label_path}'"
+	echo "DEBUG: setup_version='${setup_version}'"
+	echo "DEBUG: setup_base_dir='${setup_base_dir}'"
+	echo "DEBUG: registered_module='${registered_module}'"
+	echo "DEBUG: skeleton_profile='${skeleton_profile}'"
+	echo "DEBUG: env_config_dir='${env_config_dir}'"
+    ) >&2
+fi
+
+if [ -d ${setup_base_dir} ]; then
+    echo "ERROR: Directory '${setup_base_dir}' already exists ! Abort !" >&2
+    my_exit 1
+fi
+
+mkdir -p ${setup_base_dir}
+if [ $? -ne 0 ]; then
+    echo "ERROR: Directory '${setup_base_dir}' was not created ! Abort !" >&2
+    my_exit 1
+fi
+
+### bxocd_manual --class-id "genvtx::manager" --action skeleton --output-file ${setup_base_dir}/manager.conf.example
+
+config_prefix=""
+# In case of relative path to configuration files:
+if [ "x${setup_base_dir:0:1}" != "x/" ]; then
+    if [ "x${registered_module}" != "x" ]; then
+	config_prefix="@${registered_module}:"
+    elif [ "x${env_config_dir}" != "x" ]; then
+	config_prefix="\${${env_config_dir}}/"
+    else
+	env_config_dir="SETUP_CONFIG_DIR"
+	config_prefix="\${${env_config_dir}}/"
+    fi
+fi
+
+# Skeleton profile 's2d4' implements some simple vertex generator
+function populate_genvtx_config_s2d4()
+{
+    echo "NOTICE: Populating skeleton profile 's2d4'..." >&2
+    _dbq="\`\`"
+
+    #######################################################################
+    cat > ${setup_base_dir}/README.rst <<EOF
+Primary vertex generation setup ${_dbq}${setup_label}${_dbq} (version ${_dbq}${setup_version}${_dbq})
+==============================================================================
+
+This   README   file  has   been   automatically   generated  by   the
+${_dbq}${this_bxapp}${_dbq} script to describe a skeleton directory with a
+set of vertex generators configuration files. From this sample directory,
+you can now build your own manager of vertex generators.
+
+Files
+-----
+
+ * ${_dbq}README.rst${_dbq} : This file.
+ * ${_dbq}manager.conf${_dbq} : The main configuration file for the vertex generation manager.
+ * ${_dbq}generators.def${_dbq} : Contains the definition of vertex generators.
+
+Bayeux/genvtx production program
+---------------------------------
+
+Run the Bayeux/genvtx production program: ::
+
+EOF
+    geo_setup_base_dir="${config_base_dir}/${setup_label_path}/geometry/${setup_version}"
+
+    if [ "x${registered_module}" != "x" ]; then
+	cat >> ${setup_base_dir}/README.rst <<EOF
+  $ bxgenvtx_production \\
+      --datatools::resource-path toto@${config_base_dir} \\
+      --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
+      --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
+      --list
+
+EOF
+    elif [ "x${env_config_dir}" != "x" ]; then
+	cat >> ${setup_base_dir}/README.rst <<EOF
+  $ ${env_config_dir}=${config_base_dir} \\
+    bxgenvtx_production \\
+      --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
+      --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
+      --list
+
+EOF
+    else
+	cat >> ${setup_base_dir}/README.rst <<EOF
+  $ bxgenvtx_production \\
+      --geometry-manager "${geo_setup_base_dir}/manager.conf" \\
+      --vertex-generator-manager "${setup_base_dir}/manager.conf" \\
+      --list
+
+EOF
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/manager.conf <<EOF
+# List of configuration properties (datatools::properties).
+# Lines starting with '#@' are special directives.
+# Lines starting with '#' are simple comments.
+
+#@description The logging priority threshold
+### logging.priority : string = "warning"
+
+#@description List of files containing the definition of vertex generators'
+vg_list : string[1] as path = \\
+  "${config_prefix}${setup_base_dir}/generators/generators.def"
+
+EOF
+
+    #######################################################################
+    mkdir -p ${setup_base_dir}/generators
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Directory '${setup_base_dir}/generators' was not created ! Abort !" >&2
+	return 1
+    fi
+
+    #######################################################################
+    cat > ${setup_base_dir}/generators/generators.def <<EOF
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The list of vertex generators
+#@key_label  "name"
+#@meta_label "type"
+
+#########################################################
+[name="source0_bulk.vg" type="genvtx::cylinder_model_vg"]
+#@config Vertex generation from the sources' bulk volume
+
+#@description Geometry setup compatibility
+geometry.setup_requirement : string = "${setup_label}"
+
+#@description Identification of the geometry origin of vertex in term of geometry category and addresses (GID)
+origin : string  = " category='source.gc' position={0} "
+
+#@description The mode used for vertex generator from the underlying cylinder model associated to the target logical volume
+mode   : string  = "bulk"
+
+
+#########################################################
+[name="source1_bulk.vg" type="genvtx::cylinder_model_vg"]
+#@config Vertex generation from the sources' bulk volume
+
+#@description Geometry setup compatibility
+geometry.setup_requirement : string = "${setup_label}"
+
+#@description Identification of the geometry origin of vertex in term of geometry category and addresses (GID)
+origin : string  = " category='source.gc' position={1} "
+
+#@description The mode used for vertex generator from the underlying cylinder model associated to the target logical volume
+mode   : string  = "bulk"
+
+
+# end
+EOF
+
+    return 0
+}
+
+if [ "${skeleton_profile}" = "s2d4" ]; then
+    populate_genvtx_config_s2d4
+    if [ $? -ne 0 ]; then
+	echo "ERROR: Function 'populate_genvtx_config_s2d4' failed ! Abort !" >&2
+	# rm -fr ${setup_base_dir}
+	my_exit 1
+    fi
+else
+    echo "ERROR: Unknown skeleton profile '${skeleton_profile}' ! Abort !" >&2
+    my_exit 1
+fi
+
+echo -e "Vertex generation configuration directory for\nsetup with label '${setup_label}' and version '${setup_version}' : \n" >&2
+echo "###############################################################" >&2
+which tree > /dev/null 2>&1 && LANG=C tree ${setup_base_dir} || ls -R ${setup_base_dir}
+echo "###############################################################" >&2
+
+my_exit 0
+
+# end
