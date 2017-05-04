@@ -1,3 +1,5 @@
+Development of cuts has migrated to Git
+
 
 Bayeux/cuts is a C++ program  library that provides some basic classes
 and utilities to design, create  and apply selection cuts on arbitrary
