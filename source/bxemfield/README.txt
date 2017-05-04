@@ -1,3 +1,5 @@
+Development of emfield has migrated to Git
+
 
 Bayeux/emfield  is  a  C++  program library  that  provides  a  simple
 interface to describe electromagnetic  fields associated to a geometry
