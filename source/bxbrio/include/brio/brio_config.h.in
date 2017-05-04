@@ -1,0 +1,16 @@
+/// \file brio/brio_config.h
+
+#ifndef BRIO_BRIO_CONFIG_H
+#define BRIO_BRIO_CONFIG_H 1
+
+// Nothing special
+
+#endif // BRIO_BRIO_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
