@@ -1,0 +1,28 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description Rules that define a list of shapes
+#@key_label   "name"
+#@meta_label  "type"
+
+##########################################
+[name="ShapeA" type="geomtools::cylinder"]
+
+r : real as length = 70.0 cm
+z : real as length = 1.2 m
+
+
+##########################################
+[name="ShapeB" type="geomtools::sphere"]
+
+r : real as length = 80.0 cm
+
+
+#####################################
+[name="ShapeC" type="geomtools::box"]
+
+x : real as length = 80.0 cm
+y : real as length =  1.0 m
+z : real as length = 80.0 cm
+
+# End of list of multi-properties.
