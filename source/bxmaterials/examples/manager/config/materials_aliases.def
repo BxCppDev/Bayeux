@@ -1,0 +1,34 @@
+# -*- mode: conf-unix; -*-
+# materials_aliases.def
+# Definitions of material aliases (format: datatools::multi_properties):
+
+#@description A sample list of aliases for materials
+#@key_label   "name"
+#@meta_label  "type"
+
+##################################
+[name="tracking_gas" type="alias"]
+#@config The alias for tracking gas
+material : string = "my::hydrogen_gas"
+
+
+###########################
+[name="metal" type="alias"]
+#@config The alias for copper
+material : string = "my::copper"
+
+# Here we define aliases of aliases of ... just for fun!
+# It works only if the manager is allowed to instantiate them.
+
+################################
+[name="soft_metal" type="alias"]
+#@config The alias for the metal alias
+material : string = "metal"
+
+
+################################
+[name="dummy_metal" type="alias"]
+#@config The alias for the soft metal alias
+material : string = "soft_metal"
+
+# end of materials_aliases.def

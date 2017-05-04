@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>10</x>
+      <y>20</y>
+      <w>330</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>materials::material
+--
+-name: std::string
+-density: double
+-state: state_type
+-pressure: double
+-temperature: double
+-composition: composition_map_type
+--
++is_composed_by_number_of_atoms(): bool
++is_composed_by_fraction_mass(): bool
+--
+Responsibilities
+-- Represents a material possibly composed
+   from elements</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>440</x>
+      <y>20</y>
+      <w>270</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>materials::compound_entry
+--
+-elt_ptr: const materials::element *
+-mat_ptr: const materials::material *
+-weight: double
+-nb_of_atoms: int
+--
+--
+Responsibilities
+-- </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>310</x>
+      <y>60</y>
+      <w>150</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m2=1..n
+</panel_attributes>
+    <additional_attributes>30;30;130;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>490</x>
+      <y>170</y>
+      <w>50</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+m2=1..0
+
+</panel_attributes>
+    <additional_attributes>30;30;30;120</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>380</x>
+      <y>290</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>materials::element
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>580</x>
+      <y>170</y>
+      <w>50</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+m2=0..1
+</panel_attributes>
+    <additional_attributes>30;30;30;120</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>570</x>
+      <y>290</y>
+      <w>180</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>materials::material
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

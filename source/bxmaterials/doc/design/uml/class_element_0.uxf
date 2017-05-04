@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>20</x>
+      <y>30</y>
+      <w>310</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>materials::element
+--
+-name: std::string 
+-symbol: std::string
+-z: int
+-composition: isotope_weight_map_type
+-molar_mass: double
+--
+--
+Responsibilities
+-- Represents an element, possibly 
+   built from isotopic composition</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>410</x>
+      <y>30</y>
+      <w>230</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>materials::iso_entry
+--
+-iso_ptr: const isotope *
+-weight: double
+--
+--
+Responsibilities
+-- Store a isotope/weight pair</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>300</x>
+      <y>50</y>
+      <w>130</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m2=1..n
+</panel_attributes>
+    <additional_attributes>30;30;110;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>460</x>
+      <y>190</y>
+      <w>140</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>materials::isotope
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>490</x>
+      <y>110</y>
+      <w>50</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+m2= 1</panel_attributes>
+    <additional_attributes>30;30;30;80</additional_attributes>
+  </element>
+</diagram>
