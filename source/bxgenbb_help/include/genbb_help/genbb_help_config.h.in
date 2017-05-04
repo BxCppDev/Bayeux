@@ -1,0 +1,27 @@
+/// \file genbb_help/genbb_help_config.h
+
+#ifndef GENBB_HELP_GENBB_HELP_CONFIG_H
+#define GENBB_HELP_GENBB_HELP_CONFIG_H 1
+
+/***  genbb_help debug flag ***/
+#cmakedefine01 GENBB_HELP_WITH_DEBUG
+
+/***  genbb_help embedded Boost/Serialization based I/O ***/
+#cmakedefine01 GENBB_HELP_WITH_BIO
+
+/***  genbb_help embedded CAMP-based reflection ***/
+#cmakedefine01 GENBB_HELP_WITH_REFLECTION
+
+/***  genbb_help with Fortran ***/
+#cmakedefine01 GENBB_HELP_WITH_FORTRAN
+
+/***  genbb_help with Gnuplot display ***/
+#cmakedefine01 GENBB_HELP_WITH_GNUPLOT_DISPLAY
+
+#define GENBB_HELP_ENV_RESOURCE_DIR "GENBB_HELP_RESOURCE_DIR"
+
+#endif // GENBB_HELP_GENBB_HELP_CONFIG_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --

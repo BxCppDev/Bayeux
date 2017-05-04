@@ -1,0 +1,29 @@
+#@description Decays of Li-6
+#@key_label   "name"
+#@meta_label  "type"
+
+
+####################################
+[name="Li6_2186-Li6_0" type="decay"]
+level_initial : string = "Li6_2186"
+level_final   : string = "Li6_0"
+decay_id      : string = "genbb::nuclear_transition"
+
+
+####################################
+[name="Li6_3563-Li6_0" type="decay"]
+level_initial : string = "Li6_3563"
+level_final   : string = "Li6_0"
+decay_id      : string = "genbb::nuclear_transition"
+
+
+####################################
+[name="Li6_4312-Li6_0" type="decay"]
+level_initial : string = "Li6_4312"
+level_final   : string = "Li6_0"
+decay_id      : string = "genbb::nuclear_transition"
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

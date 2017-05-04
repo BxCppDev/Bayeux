@@ -1,0 +1,79 @@
+#@description A list of nuclear levels for Li6
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###########################
+[name="Li6_0" type="level"]
+#@config Fundamental level
+Z      : integer = 3
+A      : integer = 6
+spin   : string  = "1"
+parity : string  = "+"
+stable : boolean = 1
+fundamental : boolean = 1
+
+
+##############################
+[name="Li6_2186" type="level"]
+#@config First excited state
+Z      : integer = 3
+A      : integer = 6
+spin   : string  = "3"
+parity : string  = "+"
+energy : real as energy = 2186 keV
+width  : real as energy = 24 keV
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[1] = "Gamma0"
+
+decay_table.Gamma0.decay           : string = "Li6_2186-Li6_0"
+decay_table.Gamma0.branching_ratio : real = 100.0
+
+
+##############################
+[name="Li6_3563" type="level"]
+#@config Second excited state
+Z      : integer = 3
+A      : integer = 6
+spin   : string  = "0"
+parity : string  = "+"
+energy : real as energy = 3562.9 keV
+width  : real as energy = 8.2 eV
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[1] = "Gamma0"
+
+decay_table.Gamma0.decay           : string = "Li6_3563-Li6_0"
+decay_table.Gamma0.branching_ratio : real = 100.0
+
+
+##############################
+[name="Li6_4312" type="level"]
+#@config Second excited state
+Z      : integer = 3
+A      : integer = 6
+spin   : string  = "2"
+parity : string  = "+"
+energy : real as energy = 4312 keV
+width  : real as energy = 30 MeV
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[1] = "Gamma0"
+
+decay_table.Gamma0.decay           : string = "Li6_4312-Li6_0"
+decay_table.Gamma0.branching_ratio : real = 100.0
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

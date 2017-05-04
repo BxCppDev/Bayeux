@@ -1,0 +1,56 @@
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of particle generators
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###########################################
+[name="Fool" type="genbb::ex02::crazy_gun"]
+#@config A fool gun of particles
+
+#@description Minimum number of fired particles
+min_number_of_particles : integer = 3
+
+#@description Maximum number of fired particles
+max_number_of_particles : integer = 5
+
+
+############################################
+[name="Idiot" type="genbb::ex02::crazy_gun"]
+#@config Another stupid gun of particles
+
+#@description Minimum number of fired particles
+min_number_of_particles : integer = 7
+
+#@description Maximum number of fired particles
+max_number_of_particles : integer = 8
+
+
+##############################################################
+[name="electron_1MeV" type="genbb::single_particle_generator"]
+#@config Electron with monokinetic energy @ 1 MeV [miscellaneous]
+
+# #@description Seed for the embedded random number generator:
+# seed          : integer = 314159
+
+#@description Generated particle ("electron", "positron", "gamma", "alpha"):
+particle_name : string = "electron"
+
+#@description Mode ("energy_range", "gaussian_energy", "monokinetic", "spectrum"):
+mode          : string = "monokinetic"
+
+#@description Flag to randomize the direction of the emitted particle (in 4xPi)
+randomized_direction : boolean = 0
+
+### Only for "monokinetic" mode:
+
+#@description The kinetic energy of the generated particle
+energy        : real   = 1000.
+
+#@description The kinetic energy unit
+energy_unit   : string = "keV"
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

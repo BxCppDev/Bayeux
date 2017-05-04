@@ -1,0 +1,244 @@
+#!/usr/bin/env bash
+
+app_name="genbb_dbd_conf"
+clean=1
+help=0
+list=0
+list_modes=0
+debug=0
+output_file=
+tmpfile=""
+opwd=$(pwd)
+
+function my_exit()
+{
+    if [ "x${tmpfile}" != "x" ]; then
+	if [ -f ${tmpfile} ]; then
+	    rm -f ${tmpfile}
+	fi
+    fi
+    cd ${opwd}
+    exit $1
+}
+
+function usage()
+{
+    cat<<EOF
+
+${app_name} -- Double beta decay generator utility
+
+Usage:
+
+  ${app_name} -h   Print this help.
+
+  ${app_name} -l   List all supported DBD isotopes.
+
+  ${app_name} -p   List all supported DBD modes.
+
+  ${app_name} -g arg
+                      Generate the definitions of various double
+                      beta decay processes for emitter 'arg'.
+
+
+EOF
+    return
+}
+
+while getopts "dhlpg:" opt ;  do
+    case $opt in
+        d)
+            debug=1
+            ;;
+        h)
+            help=1
+            ;;
+        l)
+            list=1
+            ;;
+        p)
+            list_modes=1
+            ;;
+        o)
+            output_file="$OPTARG"
+            ;;
+        g)
+            dbd_isotope="$OPTARG"
+            ;;
+        \?)
+            echo "ERROR: Invalid option: -$OPTARG" >&2
+            my_exit 1
+            ;;
+        :)
+            echo "ERROR: Missing argument for option: -$OPTARG" >&2
+            my_exit 1
+            ;;
+    esac
+done
+shift $(($OPTIND -1))
+if [ $debug -eq 1 ]; then
+    printf "DEBUG: Remaining arguments are: %s\n" "$*" >&2
+fi
+
+tmpfile=$(mktemp --tmpdir=./ ${app_name}.skelXXXXXX)
+cat > ${tmpfile} <<EOF
+
+##########################################################################
+[name="XXXAAA.0nubb" type="genbb::wdecay0"]
+#@config Neutrinoless double beta decay of XXX-AAA, 0nubb(mn)[DBD]
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "XXXAAA"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 1 # 0nubb(mn)
+
+
+##########################################################################
+[name="XXXAAA.0nubb_rhc_lambda_0" type="genbb::wdecay0"]
+#@config Neutrinoless double beta decay of XXX-AAA, 0nubb(rhc-lambda) 0+ -> 0+ {2n} [DBD]
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "XXXAAA"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 2 # 0nubb(rhc-lambda) 0+ -> 0+ {2n}"
+
+
+##########################################################################
+[name="XXXAAA.0nubb_rhc_lambda_0_2" type="genbb::wdecay0"]
+#@config Neutrinoless double beta decay of XXX-AAA, 0nubb(rhc-lambda) 0+ -> 0+, 2+ {N*} [DBD]
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "XXXAAA"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 3 # 0nubb(rhc-lambda) 0+ -> 0+, 2+ {N*}"
+
+
+##########################################################################
+[name="XXXAAA.2nubb" type="genbb::wdecay0"]
+#@config Two neutrino double beta decay of XXX-AAA, 2nubb [DBD]
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "XXXAAA"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 4 # 2nubb
+
+
+##########################################################################
+[name="XXXAAA.0nubbM1" type="genbb::wdecay0"]
+#@config Neutrinoless double beta decay of XXX-AAA, 0nubbM1 [DBD]
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "XXXAAA"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 5 # 0nubbM1
+
+
+##########################################################################
+[name="XXXAAA.0nubbM2" type="genbb::wdecay0"]
+#@config Neutrinoless double beta decay of XXX-AAA, 0nubbM2 [DBD]
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "XXXAAA"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 6 # 0nubbM2
+
+EOF
+
+dbd_isotopes="Ca48 \
+ Ni58 \
+ Zn64 \
+ Zn70 \
+ Ge76 \
+ Se74 \
+ Se82 \
+ Sr84 \
+ Zr94 \
+ Zr96 \
+ Mo92 \
+ Mo100 \
+ Ru96 \
+ Ru104 \
+ Cd106 \
+ Cd108 \
+ Cd114 \
+ Cd116 \
+ Sn112 \
+ Sn122 \
+ Sn124 \
+ Te120 \
+ Te128 \
+ Te130 \
+ Xe136 \
+ Ce136 \
+ Ce138 \
+ Ce142 \
+ Nd148 \
+ Nd150 \
+ Dy156 \
+ Dy158 \
+ W180 \
+ W186 \
+ Pt190 \
+ Pt198 \
+ Bi214+At214 \
+ Pb214+Po214 \
+ Po218+Rn218+Po214 \
+ Rn222+Ra222+Rn218+Po214"
+
+declare -a dbd_modes
+dbd_modes[1]="0nubb(mn)         0+ -> 0+     {2n}"
+dbd_modes[2]="0nubb(rhc-lambda) 0+ -> 0+     {2n}"
+dbd_modes[3]="0nubb(rhc-lambda) 0+ -> 0+, 2+ {N*}"
+dbd_modes[4]="2nubb             0+ -> 0+     {2n}"
+dbd_modes[5]="0nubbM1           0+ -> 0+     {2n}"
+dbd_modes[6]="0nubbM2           0+ -> 0+     (2n}"
+dbd_modes[7]="0nubbM3           0+ -> 0+     {2n}"
+dbd_modes[8]="0nubbM7           0+ -> 0+     {2n}"
+dbd_modes[9]="0nubb(rhc-lambda) 0+ -> 2+     {2n}"
+dbd_modes[10]="2nubb             0+ -> 2+     {2n}, {N*}"
+dbd_modes[11]="0nuKb+            0+ -> 0+, 2+"
+dbd_modes[12]="2nuKb+            0+ -> 0+, 2+"
+dbd_modes[13]="0nu2K             0+ -> 0+, 2+"
+dbd_modes[14]="2nu2K             0+ -> 0+, 2+"
+dbd_modes[15]="2nubb             0+ -> 0+ with bosonic neutrinos"
+dbd_modes[16]="2nubb             0+ -> 2+ with bosonic neutrinos"
+dbd_modes[17]="0nubb(rhc-eta)    0+ -> 0+ simplified expression"
+dbd_modes[18]="0nubb(rhc-eta)    0+ -> 0+ with specific NMEs"
+
+
+# List all supported DBD isotopes:
+if [ $list -eq 1 ]; then
+    echo "List of double beta decay isotope emitters: " >&2
+    for di in ${dbd_isotopes}; do
+	echo ${di}
+    done
+    my_exit 0
+fi
+
+# List all supported DBD modes:
+if [ $list_modes -eq 1 ]; then
+    echo "List of double beta decay modes: " >&2
+    index=1
+    while [ $index -le ${#dbd_modes[@]} ]; do
+	echo "$index : ${dbd_modes[${index}]}"
+	let index=index+1
+    done
+    my_exit 0
+fi
+
+# Generate a genbb generators definition file for a given DDB emitter:
+if [ "x${dbd_isotope}" != "x" ]; then
+    dbd_symbol=$(echo ${dbd_isotope} | cut -d+ -f 1 | tr -d [[:digit:]])
+    dbd_A=$(echo ${dbd_isotope} | cut -d+ -f 1 | tr -d [[:alpha:]])
+    echo "Symbol = '${dbd_symbol}'" 1>&2
+    echo "A      = ${dbd_A}" 1>&2
+
+    for di in ${dbd_isotopes}; do
+	if [ "x$di" == "x${dbd_isotope}" ]; then
+	    cat ${tmpfile} | sed -e "s/XXX/${dbd_symbol}/g" -e "s/AAA/${dbd_A}/g"
+	    my_exit 0
+	fi
+    done
+
+    echo "ERROR: '${dbd_isotope}' is not a known isotope !" >&2
+    my_exit 1
+fi
+
+
+usage
+my_exit 0
+
+# end
