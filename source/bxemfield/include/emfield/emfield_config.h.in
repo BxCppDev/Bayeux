@@ -1,0 +1,21 @@
+/// \file emfield/emfield_config.h header file
+
+#ifndef EMFIELD_EMFIELD_CONFIG_H
+#define EMFIELD_EMFIELD_CONFIG_H 1
+
+/***  emfield debug flag ***/
+#cmakedefine01 EMFIELD_WITH_DEBUG
+
+/***  emfield embedded CAMP-based reflection ***/
+//#cmakedefine01 EMFIELD_WITH_REFLECTION
+
+/***  emfield with Gnuplot display ***/
+#cmakedefine01 EMFIELD_WITH_GNUPLOT_DISPLAY
+
+#endif // EMFIELD_EMFIELD_CONFIG_H
+
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
