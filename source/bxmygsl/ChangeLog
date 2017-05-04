@@ -1,0 +1,51 @@
+This is the mygsl package ChangeLog
+
+2007-12-02 : creation by Francois Mauger <mauger@lpccaen.in2p3.fr>
+
+2011-02-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* change ctor/init/reset interface of the von_neumann_method PRNG class
+	* tag 1.2.3
+2011-06-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* tag 2.0
+2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* explicit linking of libmygsl.so with libgsl[cblas].so
+	* pre-tag 2.1
+2011-11-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix coding style
+2012-01-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* cmake: new build system
+	* FSH: new directory structure (as in datatools)
+	* pkgtools.d: wrapper for cmake
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* remove all "using namespace std;" from header files
+	* version: prepare tag 3.1.0 in trunk
+2012-11-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add serializable histogram_pool class
+	* modify histogram(_1d) and histogram_2d classes
+	* add serialization support for histogram classes
+	* version: prepare tag 3.2.0 in trunk
+2013-01-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* simplify the CMake build interface
+	* depends on datatools 5.0.0
+	* version: prepare tag 4.0.0 in trunk
+2013-03-08 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add histogram_service class
+2013-04-12 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* major change of the interface
+	* add OCD support for histogram related classes
+	* redesign the interface of unary real function:
+	  - remove the mygsl::unary_eval class and related classes
+	  - add the mygsl::i_unary_function class and related classes
+	  - propagate the modification to other classes
+	* add serialization support for several classes:
+	  - mygsl::best_value
+	  - mygsl::datapoint
+	  - mygsl::polynomial
+2013-05-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add 'tracker' output stream in the rng class
+	* add options for ROOT export of histograms
+2013-05-12 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* remove tests installation
+	* OCD support uses RST outputs
+	* add empty examples subdir
+
