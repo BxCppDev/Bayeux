@@ -1,0 +1,20 @@
+#@description Decays of He6
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#################################
+[name="He6_0-Li6_0" type="decay"]
+level_initial   : string = "He6_0"
+level_final     : string = "Li6_0"
+decay_id        : string = "genbb::beta_decay"
+driver.type     : string = "beta-"
+driver.coupling : string = "A"
+driver.ke_cut   : real as energy =   10 keV
+driver.neutrino.generated : boolean = false
+driver.daughter.generated : boolean = true
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

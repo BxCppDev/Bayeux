@@ -1,0 +1,86 @@
+# The definitions of primary event generators related to the decay of Co60
+# Format: datatools::multi_properties
+# Author: F. Mauger
+# Date: 2014-11-17
+
+#@description A list of particle generators
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###################################################
+[name="Co60" type="genbb::nuclear_decay_generator"]
+#@config The decay of Co60 with beta decay and cascading gamma transitions
+
+#@description Definition files for levels and decays
+manager.definition_files : string[4] as path = \
+  "@genbb_help:generators/data/Co60/Co60_levels.def" \
+  "@genbb_help:generators/data/Ni60/Ni60_levels.def" \
+  "@genbb_help:generators/data/Co60/Co60_decays.def" \
+  "@genbb_help:generators/data/Ni60/Ni60_decays.def"
+
+#@description Generation of levels decay tables (default=true)
+manager.decay_tables : boolean = true
+
+#@description The top decaying level
+decaying.level : string = "Co60_0"
+
+
+##############################################################
+[name="Ni60_2505_gamma" type="genbb::nuclear_decay_generator"]
+#@config The 2505 keV gamma from Ni60 and cascading gamma
+
+#@description Definition files for levels and decays
+manager.definition_files : string[2] as path = \
+  "@genbb_help:generators/data/Ni60/Ni60_levels.def" \
+  "@genbb_help:generators/data/Ni60/Ni60_decays.def"
+
+#@description Generation of levels decay tables (default=true)
+manager.decay_tables : boolean = true
+
+#@description The top decaying level
+decaying.level : string = "Ni60_2505"
+
+
+##############################################################
+[name="Ni60_1332_gamma" type="genbb::nuclear_decay_generator"]
+#@config The 1332 keV gamma from Ni60
+
+#@description Definition files for levels and decays
+manager.definition_files : string[2] as path = \
+  "@genbb_help:generators/data/Ni60/Ni60_levels.def" \
+  "@genbb_help:generators/data/Ni60/Ni60_decays.def"
+
+#@description Generation of levels decay tables (default=true)
+manager.decay_tables : boolean = true
+
+#@description The top decaying level
+decaying.level : string = "Ni60_1332"
+
+
+##############################################################
+[name="Co60_gammas" type="genbb::combined_particle_generator"]
+#@config The main weigted gamma transitions after the decay of Co60
+
+#@description The mode for associating weights
+mode : string = "plain_probability"
+
+#@description The list of labels for combined generators
+generators.labels : string[2] = "Gamma0" "Gamma1"
+
+#@description The name of the first generator
+generators.Gamma0.name : string = "Ni60_2505_gamma"
+
+#@description The name of the second generator
+generators.Gamma1.name : string = "Ni60_1332_gamma"
+
+#@description The weight of the first generator
+generators.Gamma0.probability : real = 99.88
+
+#@description The weight of the second generator
+generators.Gamma1.probability : real =  0.12
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

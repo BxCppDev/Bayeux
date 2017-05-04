@@ -1,0 +1,93 @@
+//! \file    genbb_help/version.h
+//! \brief   Describe the genbb_help API version
+//! \details Querying the version of genbb_help is needed at both
+//!          compile and runtime by clients so that they may adjust
+//!          their usage.
+//
+// Copyright (c) 2013 by Ben Morgan <bmorgan.warwick@gmail.com>
+// Copyright (c) 2013 by The University of Warwick
+//
+// This file is part of genbb_help.
+//
+// genbb_help is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// genbb_help is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with genbb_help.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef GENBB_HELP_VERSION_H
+#define GENBB_HELP_VERSION_H
+
+// Standard Library:
+#include <string>
+
+//----------------------------------------------------------------------
+// - Compile Time API
+//! Major version number of genbb_help
+#define GENBB_HELP_VERSION_MAJOR @genbb_help_VERSION_MAJOR@
+
+//! Minor version number of genbb_help
+#define GENBB_HELP_VERSION_MINOR @genbb_help_VERSION_MINOR@
+
+//! Patch version number of genbb_help
+#define GENBB_HELP_VERSION_PATCH @genbb_help_VERSION_PATCH@
+
+//! Encode genbb_help to ordered integer available at compile time
+#define GENBB_HELP_ENCODE_VERSION(major, minor, patch) (                \
+                                                        ((major) * 10000) \
+                                                        + ((minor) *   100) \
+                                                        + ((patch) *     1))
+
+//! Integer encoded genbb_help version available at compile time
+#define GENBB_HELP_VERSION GENBB_HELP_ENCODE_VERSION(                   \
+                                                     GENBB_HELP_VERSION_MAJOR, \
+                                                     GENBB_HELP_VERSION_MINOR, \
+                                                     GENBB_HELP_VERSION_PATCH)
+
+//! String encoded full version number, e.g. "1.2.3", available at compile time
+#define GENBB_HELP_LIB_VERSION "@genbb_help_VERSION@"
+
+//! Check current version >= (major, minor, patch) at compile time
+#define GENBB_HELP_IS_AT_LEAST(major,minor,patch) (                     \
+                                                   GENBB_HELP_VERSION >= \
+                                                   GENBB_HELP_ENCODE_VERSION(major,minor,patch))
+
+//----------------------------------------------------------------------
+// Runtime API
+namespace genbb {
+
+  //! \brief Describe the genbb_help API version and features
+  struct version {
+    //! Return the major version number of genbb_help, e.g., 1 for '1.2.3'
+    static int get_major();
+
+    //! Return the minor version number of genbb_help, e.g., 2 for '1.2.3'
+    static int get_minor();
+
+    //! Return the patch version number of genbb_help, e.g., 3 for '1.2.3'
+    static int get_patch();
+
+    //! Return the full version number of genbb_help as a string, e.g., '1.2.3'
+    static std::string get_version();
+
+    //! Return true if the current genbb_help version >= (major, minor, patch)
+    static bool is_at_least(int major, int minor, int patch);
+
+    //! Return true if the named feature is available in genbb_help
+    static bool has_feature(const std::string& feature);
+  };
+
+} // namespace genbb
+
+#endif // GENBB_HELP_VERSION_H
+
+// Local Variables: --
+// mode: c++ --
+// End: --
