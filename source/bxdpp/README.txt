@@ -1,3 +1,5 @@
+Development of dpp has migrated to Git
+
 
 Bayeux/dpp (Data  Processing Pipeline) is  a C++ program  library that
 implements   a    data   processing    pipeline   model    using   the
