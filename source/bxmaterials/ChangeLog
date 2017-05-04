@@ -1,0 +1,42 @@
+2010-03-06 Benoit Guillon <guillon@lpccaen.in2p3.fr>
+        * creation of the materials package
+2012-01-09 François Mauger <mauger@lpccaen.in2p3.fr>
+        * CMake: new built system
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        * remove all "using namespace std;" from header files
+        * version: prepare tag 3.1.0 in trunk
+        * depends on geomtools 3.1
+2012-04-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* resources/data/std_materials.def: add "std::pfte"
+	Polytetrafluoroethylene (C2F4, PFTE)
+2012-11-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* support for "mpt." prefixed properties (Material Properties Table) in factory class
+	* version: prepare tag 3.1.0 in trunk
+2013-02-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 4.0.0 in trunk
+	* simplify package organization
+	* depends on: geomtools pre-4.0.0 (in trunk)
+	* new materials::materials_geom_plugin class for the geomtools::manager plugin system
+2013-03-13 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* make materials not dependent on geomtools
+	- depends on datatools 5.X only
+	- remove materials::manager GDML export features
+	- move GDML export features to the geomtools library
+	- move the materials::materials_geom_plugin to the geomtools library
+	- kozmetix
+	- improve material alias support:
+	  * no alias of alias
+	  * no alias in material combined from material
+	  * option allowing alias overwriting from different setup files
+	- add OCD support
+2013-04-23 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	- tag version 4.0.0 (alpha)
+2013-05-11 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	- add examples
+	- remove installation of tests
+	- OCD support with RST output
+2013-07-15 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        - cleaning, commenting, re-indentation
+	- factory support of "doping" build method for material class
+2016-02-15 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        - refactor the resource files

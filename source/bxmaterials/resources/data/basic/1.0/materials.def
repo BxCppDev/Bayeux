@@ -1,0 +1,354 @@
+# -*- mode: conf-unix; -*-
+# @materials:data/basic/1.0/materials.def
+# List of basic materials based on basic elements (format: datatools::multi_properties)
+
+#@description A list of common materials composed from elements with isotopic composition
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="basic::vacuum" type="material"]
+#@config Vacuum material as 'galactic' density hydrogen gas
+density                   : real   = 1.0e-13
+density.unit              : string = "mg/cm3"
+state                     : string = "gas"
+composition.mode          : string = "fraction_mass"
+composition.names         : string [1]  = "Hydrogen"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::air_stp" type="material"]
+#@config Air material
+density          : real   = 1.2931
+density.unit     : string = "mg/cm3"
+state            : string = "gas"
+temperature      : real   = 273.15
+temperature.unit : string = "kelvin"
+pressure         : real   = 101325.
+pressure.unit    : string = "Pa"
+composition.mode : string = "fraction_mass"
+composition.names         : string [2]  = "Nitrogen" "Oxygen"
+composition.fraction_mass : real   [2]  =  0.8        0.2
+
+
+[name="basic::air" type="material"]
+#@config Air material
+density          : real   = 1.205
+density.unit     : string = "mg/cm3"
+state            : string = "gas"
+temperature      : real   = 294.25
+temperature.unit : string = "kelvin"
+pressure         : real   = 1.
+pressure.unit    : string = "atm"
+composition.mode : string = "fraction_mass"
+composition.names         : string [2]  = "Nitrogen" "Oxygen"
+composition.fraction_mass : real   [2]  =  0.8        0.2
+
+
+[name="basic::hydrogen_gas" type="material"]
+#@config Hydrogen gas
+density        : real   = 1.0
+density.unit   : string = "mg/cm3"
+state          : string = "gas"
+composition.mode : string   = "fraction_mass"
+composition.names         : string [1]  = "Hydrogen"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::aluminium" type="material"]
+#@config Aluminium material
+density        : real   = 2.70
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Aluminium"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::copper" type="material"]
+#@config Copper material
+density        : real   = 8.9
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Copper"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::iron" type="material"]
+#@config Iron material
+density        : real   = 7.874
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Iron"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::lead" type="material"]
+#@config Lead material
+density        : real   = 11.35
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Lead"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::water" type="material"]
+#@config Water material
+density                   : real   = 1.0
+density.unit              : string = "g/cm3"
+temperature               : real   = 300.
+temperature.unit          : string = "kelvin"
+pressure                  : real   = 1.
+pressure.unit             : string = "bar"
+state                     : string = "liquid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen" "Oxygen"
+composition.number_of_atoms : integer [2]  =  2          1
+
+
+[name="basic::graphite" type="material"]
+#@config Graphite material
+# Particle Physics Booklet 2010: density = 2.210 g/cm3
+density                   : real   = 2.267
+density.unit              : string = "g/cm3"
+temperature               : real   = 300.
+temperature.unit          : string = "kelvin"
+pressure                  : real   = 1.
+pressure.unit             : string = "bar"
+state                     : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Carbon"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::diamond" type="material"]
+#@config Diamond material
+# Particle Physics Booklet 2010: density = 3.520 g/cm3
+density                   : real   = 3.517
+density.unit              : string = "g/cm3"
+temperature               : real   = 300.
+temperature.unit          : string = "kelvin"
+pressure                  : real   = 1.
+pressure.unit             : string = "bar"
+state                     : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Carbon"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+[name="basic::mylar" type="material"]
+#@config Mylar material (C10H8O4)
+density                     : real   = 1.397
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Oxygen"  "Carbon"
+composition.number_of_atoms : integer [3]  =      8        4        10
+
+
+[name="basic::polycarbonate" type="material"]
+#@config Polycarbonate material (C16H14O3)
+density                     : real   = 1.2
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen"  "Carbon" "Oxygen"
+composition.number_of_atoms : integer [3]  =     14         16       3
+
+
+[name="basic::polyethylene" type="material"]
+#@config Polyethylene material (C2H4)
+density                     : real   = 0.94
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =      4         2
+
+
+[name="basic::polypropylene" type="material"]
+#@config Polypropylene material (C3H5)
+density                     : real   = 0.90
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =      5         3
+
+
+[name="basic::polystyrene" type="material"]
+#@config Polystyrene (PS) material
+density                     : real   = 1.032
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =      8         8
+
+
+[name="basic::NE110" type="material"]
+#@config NE110 scintillator (C9H10)
+density                     : real   = 1.032
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =     10        9
+
+
+[name="basic::polyvinyltoluene" type="material"]
+#@config Polyvinyl toluene (PVT) material CH2CH(C6H4CH3)n
+density                     : real   = 1.032
+density.unit                : string = "g/cm3"
+state                       : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Hydrogen"  "Carbon"
+composition.number_of_atoms : integer [2]  =     10         9
+
+
+[name="basic::polyoxymethylene" type="material"]
+#@config Polyoxymethylene material (http://en.wikipedia.org/wiki/Polyoxymethylene -> Delrin)
+density          : real   = 1.42
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen"  "Carbon" "Oxygen"
+composition.number_of_atoms : integer [3]  =      2         1       1
+
+
+[name="basic::CsI" type="material"]
+#@config CsI scintillator material
+density          : real   = 4.51
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Iodine" "Cesium"
+composition.number_of_atoms : integer [2]  =     1       1
+
+
+[name="basic::NaI" type="material"]
+#@config NaI scintillator material
+density          : real   = 3.667
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Sodium" "Iodine"
+composition.number_of_atoms : integer [2]  =     1       1
+
+
+[name="basic::SiO2" type="material"]
+#@config SiO2 silicon oxyde material
+density          : real   = 2.320
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Silicium" "Oxygen"
+composition.number_of_atoms : integer [2]  =     1       2
+
+
+[name="basic::polymethylmethacrylate" type="material"]
+#@config Polymethyl methacrylate (PMMA) material (C5H8O2 -> Plexiglass, Lucite)
+density          : real   = 1.190
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Carbon" "Oxygen"
+composition.number_of_atoms : integer [3]  =     8        5        2
+
+
+[name="basic::kapton" type="material"]
+#@config Kapton material (C22H10N2O5, polyimide film cf Goodfellow catalog)
+density          : real   = 1.42
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [4]  = "Hydrogen" "Carbon" "Nitrogen" "Oxygen"
+composition.number_of_atoms : integer [4]  =     10        22        2         5
+
+
+[name="basic::nylon" type="material"]
+#@config Nylon type 66 material (Poly(hexamethylene adipamide) = C12 H22 N2 O2)
+# Particle Physics Booklet 2010:
+density          : real   = 1.18
+# Some other sources give: 1.15-1.24 g/cm3
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [4]  = "Hydrogen" "Carbon" "Nitrogen" "Oxygen"
+composition.number_of_atoms : integer [4]  =     22        12        2         2
+
+
+[name="basic::pyrex" type="material"]
+#@config Pyrex (borosilicate glass: 80.9%SIO2+12.9%B203+3.8%NA2O+2.2%AL2O3+0.4%K2O BY WEIGHT, also: http://en.wikipedia.org/wiki/Pyrex)
+density          : real   = 2.23
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [6]  = "Silicium" "Oxygen" "Boron" "Sodium" "Aluminium" "Potassium"
+composition.fraction_mass : real   [6]  =  0.377      0.540    0.040   0.028    0.012  0.003
+
+
+[name="basic::inox" type="material"]
+#@config Inox (70.3%Fe+10.3%Ni+17.3 %Cr+2.1%Mo by weight) (http://fr.wikipedia.org/wiki/Acier_inoxydable)
+density          : real   = 8.0
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string     = "fraction_mass"
+composition.names           : string [4] = "Iron" "Nickel" "Chromium" "Molybdenum"
+composition.fraction_mass   : real [4]   =  0.703  0.103    0.173      0.021
+
+
+[name="basic::sapphire" type="material"]
+#@config sapphire material
+density          : real   = 4.0
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Aluminium" "Oxygen"
+composition.number_of_atoms : integer [2]  =  2          3
+
+
+[name="basic::concrete" type="material"]
+#@config Concrete
+density          : real   = 2.0
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [6]  = "Silicium" "Oxygen" "Calcium" "Aluminium" "Iron" "Hydrogen"
+composition.fraction_mass : real   [6]  =  0.227915   0.60541  0.04986  0.014245    0.00285 0.09972
+
+
+[name="basic::polytetrafluoroethylene" type="material"]
+#@config Polytetrafluoroethylene (C2F4, PTFE -> Teflon)
+density          : real   = 2.20
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [2]  = "Fluorine"  "Carbon"
+composition.number_of_atoms : integer [2]  =      4        2
+
+
+[name="basic::polyvinylalcohol" type="material"]
+#@config Polyvinylalcohol (PVOH, PVA)
+density          : real   = 1.25
+density.unit     : string = "g/cm3"
+state            : string = "solid"
+composition.mode            : string       = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Carbon" "Oxygen"
+composition.number_of_atoms : integer [3]  =     4          2       1
+
+
+[name="basic::tungsten" type="material"]
+#@config Tungsten material
+# Particle Physics Booklet 2010: density = 19.3 g/cm3
+density                   : real   = 19.3
+density.unit              : string = "g/cm3"
+state                     : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Tungsten"
+composition.fraction_mass : real   [1]  =  1.0
+
+
+# end of @materials:data/basic/1.0/materials.def

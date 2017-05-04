@@ -1,0 +1,25 @@
+# -*- mode: conf-unix; -*-
+# std_material_aliases.def
+# List of standard material aliases based on standard materials (format: datatools::multi_properties)
+
+#@description A list of common standard material aliases
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="std::teflon" type="alias"]
+#@description The Teflon alias for PTFE
+material : string = "std::ptfe"
+
+[name="std::delrin" type="alias"]
+#@description The Delrin alias for Polyoxymethylene
+material : string = "std::polyoxymethylene"
+
+[name="std::PVT" type="alias"]
+#@description The Teflon alias for polyvinyltoluene
+material : string = "std::polyvinyltoluene"
+
+[name="std::plexiglass" type="alias"]
+#@description The plexiglass alias for PMMA
+material : string = "std::PMMA"
+
+# end of std_material_aliases.def
