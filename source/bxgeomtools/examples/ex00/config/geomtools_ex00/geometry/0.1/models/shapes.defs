@@ -1,0 +1,162 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The definitions of 3D solid shapes used in the geometry
+
+#@key_label   "name"
+#@meta_label  "type"
+
+# We define here several 3D solid shapes (box, cylinder...)
+# with arbitrary dimensions.
+
+[name="SmallIntestineCube" type="geomtools::box"]
+
+x : real as length = 15.0 cm
+y : real as length = 40.0 cm
+z : real as length = 16.0 cm
+
+[name="SmallIntestineCyl" type="geomtools::cylinder"]
+
+r : real as length = 15.0 cm
+z : real as length = 20.0 cm
+
+
+[name="SmallIntestineBase" type="geomtools::intersection_3d"]
+# [name="SmallIntestineBase" type="geomtools::union_3d"]
+
+first_shape.name       : string = "SmallIntestineCyl"
+second_shape.name      : string = "SmallIntestineCube"
+second_shape.placement : string = "0.0 0.0 0.0 (cm)"
+
+
+[name="LargeIntestineHCyl" type="geomtools::cylinder"]
+
+r : real as length =  2.5 cm
+z : real as length = 22.0 cm
+
+
+[name="LargeIntestineVCyl" type="geomtools::cylinder"]
+
+r : real as length = 2.5 cm
+z : real as length = 15.0 cm
+
+
+[name="SmallIntestineS1" type="geomtools::subtraction_3d"]
+
+first_shape.name       : string = "SmallIntestineBase"
+second_shape.name      : string = "LargeIntestineVCyl"
+second_shape.placement : string = "0.0 -8.5 -2.0 (cm)"
+
+[name="SmallIntestineS2" type="geomtools::subtraction_3d"]
+
+first_shape.name       : string = "SmallIntestineS1"
+second_shape.name      : string = "LargeIntestineVCyl"
+second_shape.placement : string = "0.0 +8.5 -2.0 (cm)"
+
+[name="SmallIntestineS3" type="geomtools::subtraction_3d"]
+
+first_shape.name       : string = "SmallIntestineS2"
+second_shape.name      : string = "LargeIntestineHCyl"
+second_shape.placement : string = "0.0 0.0 5.0 (cm) / x 90 (degree)"
+
+
+[name="Cube1" type="geomtools::box"]
+
+x : real as length = 3.0 cm
+y : real as length = 3.0 cm
+z : real as length = 3.0 cm
+
+[name="ThinBox1" type="geomtools::box"]
+
+x : real as length = 5.5 cm
+y : real as length = 6.0 cm
+z : real as length = 0.5 cm
+
+[name="El1" type="geomtools::ellipsoid"]
+
+x_radius : real as length = 3.0 cm
+y_radius : real as length = 2.0 cm
+z_radius : real as length = 2.5 cm
+bottom_z_cut : real as length = 1.0 cm
+
+[name="Elt1" type="geomtools::elliptical_cylinder"]
+
+x_radius : real as length = 3.0 cm
+y_radius : real as length = 1.0 cm
+z : real as length = 1.5 cm
+
+[name="Ts1" type="geomtools::tessellated_solid"]
+
+length_unit_value : real as length = 5.0 mm
+stl_file : string as path = "${SETUP_CONFIG_DIR}/geomtools_ex00/geometry/0.1/models/box_with_cylindric_extrusion.stl"
+
+[name="Ts2" type="geomtools::tessellated_solid"]
+
+length_unit_value : real as length = 2.5 mm
+stl_file : string as path = "${SETUP_CONFIG_DIR}/geomtools_ex00/geometry/0.1/models/complex_shape.stl"
+
+[name="AC001" type="geomtools::tessellated_solid"]
+
+length_unit_value : real as length = 1.0 mm
+stl_file : string as path = "${SETUP_CONFIG_DIR}/geomtools_ex00/geometry/0.1/models/Batiment_Accelerateur_AC001.stl"
+
+[name="Wall1" type="geomtools::wall_solid"]
+
+#@description Base build mode
+base.build_mode : string = "vertices"
+
+#@description List of vertices
+base.vertices : string[14] = \
+	 "A" "B" "C" "D" "E" "F" \
+	 "G" "H" "I" "J" "K" "L" \
+	 "M" "N"
+
+# X-Y coordinates of the polygon vertices:
+base.vertices.A.x : real as length =  1.0 dm
+base.vertices.A.y : real as length =  0.0 dm
+
+base.vertices.B.x : real as length =  1.0 dm
+base.vertices.B.y : real as length =  2.0 dm
+
+base.vertices.C.x : real as length = -1.0 dm
+base.vertices.C.y : real as length =  2.0 dm
+
+base.vertices.D.x : real as length = -1.0 dm
+base.vertices.D.y : real as length = -2.0 dm
+
+base.vertices.E.x : real as length =  0.0 dm
+base.vertices.E.y : real as length = -2.0 dm
+
+base.vertices.F.x : real as length =  0.0 dm
+base.vertices.F.y : real as length =  0.0 dm
+
+base.vertices.G.x : real as length =  0.25 dm
+base.vertices.G.y : real as length =  0.0 dm
+
+base.vertices.H.x : real as length =  0.25 dm
+base.vertices.H.y : real as length =  0.5 dm
+
+base.vertices.I.x : real as length = -0.25 dm
+base.vertices.I.y : real as length =  0.5 dm
+
+base.vertices.J.x : real as length = -0.25 dm
+base.vertices.J.y : real as length = -1.75 dm
+
+base.vertices.K.x : real as length = -0.75 dm
+base.vertices.K.y : real as length = -1.75 dm
+
+base.vertices.L.x : real as length = -0.75 dm
+base.vertices.L.y : real as length = +1.75 dm
+
+base.vertices.M.x : real as length = +0.75 dm
+base.vertices.M.y : real as length = +1.75 dm
+
+base.vertices.N.x : real as length = +0.75 dm
+base.vertices.N.y : real as length =  0.0 dm
+
+# length_unit : string = "mm"
+
+z : real as length = 2.0 cm
+
+
+# end

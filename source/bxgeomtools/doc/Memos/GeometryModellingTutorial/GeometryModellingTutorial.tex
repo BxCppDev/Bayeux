@@ -1,0 +1,130 @@
+%% GeometryModellingTutorial.tex
+%%
+%%
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+%%french%%\usepackage[frenchb]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage{fancyvrb}
+\usepackage{alltt}
+\usepackage{eurosym}
+\usepackage{hyperref}
+\usepackage{colortbl}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{pgf}
+\usepackage{float}
+
+\addtolength{\textwidth}{+2cm}
+\addtolength{\textheight}{+3cm}
+\addtolength{\topmargin}{-1.5cm}
+\addtolength{\oddsidemargin}{-1cm}
+
+\newcommand{\basepath}{.}
+\newcommand{\imagepath}{\basepath/images}
+\newcommand{\codingpath}{\basepath/coding}
+\newcommand{\pdftextpath}{\basepath/pdftex_t}
+\newcommand{\pdftexpath}{\basepath/pdftex}
+
+\input{include/Software_declare_verbatim.tex}
+
+\newcommand{\pn}{\par\noindent}
+\newcommand{\TT}[1]{"\texttt{#1}"}
+
+\title{Geometry modelling with \texttt{Bayeux/geomtools}\\%
+{\small{(Software/geomtools/GeometryModellingTutorial -- version 0.2)}}}
+\author{F. Mauger <\texttt{mauger@lpccaen.in2p3.fr}>}
+\date{2016-02-06}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+In this  note, we  explain the  principles and  tools for  modelling a
+virtual geometry setup within \texttt{Bayeux/geomtools}.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+\pn  The \texttt{Bayeux/geomtools} program  library provides  some high-level
+general  purpose  utility classes  and  algorithms to  build
+virtual geometry models in a  somewhat easy way.  It has been designed
+as  the main  tool for  feeding  external programs  with a  standalone
+geometry description, using some automated exporting/filtering tools to
+interface with these third-party programs and libraries. In the fields
+of experimental  high energy and  nuclear physics, those  programs are
+typically in charge of :
+\begin{itemize}
+\item the simulation of particle tracks through the
+virtual  geometry model  of  a  detector  (GEANT4),
+\item reconstruction  algorithm,
+\item visualization software,
+\item various step of the data analysis.
+\end{itemize}
+Unfortunately, there  is not one  single generic and standard  tool or
+even  paradigm to  achieve  such  functionnalities. Usually,  software
+libraries  use their  own geometry  modelling scheme,  with their  own
+strategy, optimization and various policies  that can make them non or
+hardly interoperable.   Particularly, the choice  for such a  tool can
+prevent the user of client application to use in parallel another tool
+with different geometric modelling techniques.
+
+\pn  Because of  this,  we have  implemented  some geometric  modelling
+interface (GMI)  and tools which, we  hope, are supposed to  allow the
+making  of new  interfaces  compatible with  other geometry  modelling
+implementations.   Of   course,  there  is   no  hope  to   cover  all
+functionnalities  you  could  dream   about.   However,  the  geometry
+modelling  tools  in  \texttt{Bayeux/geomtools} try  to  address  most
+practical usecases in  the framework of our  experimental activities :
+detector simulation, visualization, reconstruction and data analysis.
+
+\pn  The   \texttt{Bayeux/geomtools}  GMI  relies  on   some  standard
+modelling  approach  that  have  intrinsic  limitations.  Any  virtual
+geometry  model  managed  by \texttt{Bayeux/geomtools}  uses  a  hierarchical
+system to  describe the physical  3D-objects in a geometry  setup.  It
+deals only with  placements of daughter objects in  their mother volume
+at  several  levels  of  a  possibly large  hierarchy.   There  is  no
+possibility to handle overlapping volumes.
+% or complex nested geometries with cyclic  mother/daughter relationship.
+This apporach  is the one used by the GDML language, the GEANT4
+ and ROOT libraries which are compatible with this  paradigm.
+So it  is expected that  \texttt{Bayeux/geomtools} will
+interface naturally with these implementations.
+
+\vskip 5mm
+\pn
+Subversion repository:\\
+\texttt{https://nemo.lpc-caen.in2p3.fr/svn/geomtools/}
+\pn
+DocDB reference: \texttt{NemoDocDB-doc-1995} (SuperNEMO Collaboration only)
+\pn
+References: see also
+\textit{Geometry mapping with \texttt{geomtools}} (\texttt{NemoDocDB-doc-1996})
+\pagebreak
+
+\input{basic_concepts.tex}
+
+\clearpage
+\input{use_cases.tex}
+
+\clearpage
+
+\section{Conclusion}
+
+\pn To be done.
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% end of GeometryModellingTutorial.tex

@@ -1,0 +1,96 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The external mapping rules associated to geometry models
+
+#@key_label  "model"
+#@meta_label "policy"
+
+####################################################
+[model="box0_linear_chain.model" policy="supersede"]
+
+#@description The mapping directives for the "aligned_boxes" daughter volume
+mapping.daughter_id.aligned_boxes : string  = "[box.gc:position+5]"
+
+
+######################################################
+[model="box0_circular_chain.model" policy="supersede"]
+
+#@description The mapping directives for the "go_round_boxes" daughter volumes
+mapping.daughter_id.go_round_boxes : string  = "[box.gc:position+9]"
+
+#@description The mapping directives for the "SpecialBox0" daughter volume
+mapping.daughter_id.SpecialBox0 : string  = "[box.gc:position=18]"
+
+#@description The mapping directives for the "SpecialBox1" daughter volume
+mapping.daughter_id.SpecialBox1 : string  = "[box.gc:position=19]"
+
+
+###############################################
+[model="box0_yz_grid.model" policy="supersede"]
+
+#@description The mapping directives for the "grid" daughter volume
+mapping.daughter_id.grid : string  = "[brick.gc:column+0,row+0]"
+
+#@description The mapping directives for the "AdditionalBox0" daughter volume
+mapping.daughter_id.AdditionalBox0 : string  = "[box.gc:position=20]"
+
+#@description The mapping directives for the "AdditionalBox1" daughter volume
+mapping.daughter_id.AdditionalBox1 : string  = "[box.gc:position=21]"
+
+
+#######################################################
+[model="cylinder0_big_column.model" policy="supersede"]
+
+#@description The mapping directives for the "aligned_cylinders" daughter volume
+mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+1]"
+
+
+##########################################################
+[model="cylinder0_medium_column.model" policy="supersede"]
+
+#@description The mapping directives for the "aligned_cylinders" daughter volume
+mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+2]"
+
+
+#########################################################
+[model="cylinder0_small_column.model" policy="supersede"]
+
+#@description The mapping directives for the "aligned_cylinders" daughter volume
+mapping.daughter_id.aligned_cylinders : string = "[any_node.gc:row+3]"
+
+
+##################################################
+[model="box0_small_grid.model" policy="supersede"]
+
+#@description The mapping directives for the "grid" daughter volume
+mapping.daughter_id.grid  : string = "[any_node.gc:column+1,row+5]"
+
+
+#################################################
+[model="detector_stack.model" policy="supersede"]
+
+#@description The mapping directives for the "Attenuator" daughter volume
+mapping.daughter_id.Attenuator : string = "[attenuator.gc]"
+
+#@description The mapping directives for the "Collector" daughter volume
+mapping.daughter_id.Collector  : string = "[collector.gc]"
+
+#@description The mapping directives for the "BackSensor" daughter volume
+mapping.daughter_id.BackSensor  : string = "[sensor.gc:position=0]"
+
+#@description The mapping directives for the "FrontSensor" daughter volume
+mapping.daughter_id.FrontSensor  : string = "[sensor.gc:position=1]"
+
+
+#######################################################
+[model="stack_with_insertion.model" policy="supersede"]
+
+
+######################################
+[model="bad.model" policy="supersede"]
+
+#@description The mapping directives for the "Foo" daughter volume
+mapping.daughter_id.Foo  : string = "[foo.gc:bar=1]"
+
+# nothing

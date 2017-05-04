@@ -1,0 +1,69 @@
+%% declare_verbatim.tex
+%% -*- mode: latex;-*-
+%%
+\DefineVerbatimEnvironment%
+{ShellVerbatim}{Verbatim}%
+{fontsize=\small,%
+frame=single,%
+framesep=2mm,%
+framerule=0.25mm,%
+labelposition=topline,%
+numbers=none%
+}
+
+\DefineVerbatimEnvironment%
+{SmallShellVerbatim}{Verbatim}%
+{fontsize=\footnotesize,%
+frame=single,%
+framesep=2mm,%
+framerule=0.25mm,%
+labelposition=topline,%
+numbers=none%
+}
+
+\DefineVerbatimEnvironment%
+{PathVerbatim}{Verbatim}%
+{fontsize=\small,%
+frame=single,%
+framesep=1mm,%
+framerule=0.15mm,%
+numbers=none%
+}
+
+\DefineVerbatimEnvironment%
+{CppVerbatim}{Verbatim}%
+{commandchars=\\\{\},%
+fontsize=\small,%
+frame=single,%
+framesep=2mm,%
+framerule=0.25mm,%
+labelposition=topline,
+numbers=left,%
+numbersep=2pt%
+}
+
+%% \DeclareFloatingEnvironment[
+%% fileext=lop,
+%% listname={List of programs},
+%% name=Program,
+%% placement=thbp,
+%% within=section,
+%% chapterlistsgaps=off,
+%% ]{program}
+\floatstyle{plain}
+\newfloat{program}{thp}{lop}
+\floatname{program}{Program}
+
+%% \DeclareFloatingEnvironment[
+%% fileext=lop,
+%% listname={List of samples},
+%% name=Sample,
+%% placement=thbp,
+%% within=section,
+%% chapterlistsgaps=off,
+%% ]{sample}
+\floatstyle{plain}
+\newfloat{sample}{thbp}{los}
+\floatname{sample}{Sample}
+
+%% end of declare_verbatim.tex

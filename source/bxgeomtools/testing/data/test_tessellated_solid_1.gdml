@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gdml.xsd"  >
+
+<define>
+
+<position name="null.pos" x="0" y="0" z="0" unit="mm" />
+
+</define>
+
+
+<materials>
+
+<element name="Hydrogen" Z="1" formula="H" >
+  <atom value="1" />
+</element>
+
+<element name="Carbon" Z="6" formula="C" >
+  <atom value="12" />
+</element>
+
+<element name="Nitrogen" Z="7" formula="N" >
+  <atom value="14" />
+</element>
+
+<element name="Oxygen" Z="8" formula="O" >
+  <atom value="16" />
+</element>
+
+<material name="Air" formula="air" >
+  <D value="0.00129" unit="g/cm3" />
+  <fraction ref="Nitrogen" n="0.7" />
+  <fraction ref="Oxygen" n="0.3" />
+</material>
+
+<material name="Aluminium" Z="13" >
+  <D value="2.7" unit="g/cm3" />
+  <atom value="26.98" />
+</material >
+
+
+</materials>
+
+
+<solids>
+
+<box name="lab.solid" x="15" y="15" z="15" lunit="mm" />
+
+<box name="tessella.solid" x="5" y="5" z="5" lunit="mm" />
+
+</solids>
+
+
+<structure>
+
+<volume name="dummy.log" >
+  <materialref ref="Aluminium" />
+  <solidref    ref="tessella.solid" />
+
+
+</volume>
+
+<volume name="world.log" >
+  <materialref ref="Air" />
+  <solidref    ref="lab.solid" />
+
+  <physvol>
+    <volumeref   ref="dummy.log" />
+    <positionref ref="null.pos" />
+  </physvol>
+
+
+
+</volume>
+
+</structure>
+
+
+<setup name="Setup" version="1.0" >
+  <world ref="world.log" />
+</setup>
+
+
+</gdml>
+

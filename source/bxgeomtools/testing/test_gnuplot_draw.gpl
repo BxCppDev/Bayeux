@@ -1,0 +1,32 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_gnuplot_draw.cxx
+#
+
+#
+# GEOMTOOLS_BIN_DIR=$(pwd)/__build-Linux-x86_64/testing gnuplot testing/test_gnuplot_draw.gpl
+#
+! ${GEOMTOOLS_BIN_DIR}/test_gnuplot_draw > test_gnuplot_draw.data
+
+sz=6
+set xrange [-sz:sz]
+set yrange [-sz:sz]
+set zrange [0:3*sz]
+set view equal xyz
+set xyplane at 0.0
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_gnuplot_draw.cxx - test "
+splot \
+  "test_gnuplot_draw.data" index 0 title "" with lines , \
+  "test_gnuplot_draw.data" index 1 title "" with lines , \
+  "test_gnuplot_draw.data" index 2 title "" with lines , \
+  "test_gnuplot_draw.data" index 3 title "" with lines , \
+  "test_gnuplot_draw.data" index 4 title "" with lines , \
+  "test_gnuplot_draw.data" index 5 title "" with lines lt 7, \
+  "test_gnuplot_draw.data" index 6 title "" with lines lt 7
+pause -1 "Hit [Enter]..."
+
+! rm -f test_gnuplot_draw.data
+
+# end

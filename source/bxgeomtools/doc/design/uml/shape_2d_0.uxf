@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>308</x>
+      <y>49</y>
+      <w>378</w>
+      <h>105</h>
+    </coordinates>
+    <panel_attributes>/geomtools::i_object_3d/
+--
+--
+/+is_valid(): const/
+/+initialize(const datatools::properties &amp;, const handle_dict_type *): void/
+/+reset(): void/
+/+get_dimensional(): int/
+/+get_shape_name(): std::string/
+/+is_composite(): const/
+/+tree_dump(std::ostream &amp; out_, ...): void/
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>308</x>
+      <y>189</y>
+      <w>350</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>geomtools::i_shape_2d
+--
+--
+/+get_number_of_sides(): unsigned int/
+/+get_perimeter(uint32_t): double /
+/+get_surface(uint32_t): double /
++get_dimensional() const: int
+/+is_on_surface(const vector_3d&amp;, double): bool/
+/+get_normal_on_surface(const vector_3d&amp;, bool, double): vector_3d/
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>469</x>
+      <y>133</y>
+      <w>34</w>
+      <h>69</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;56</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>35</x>
+      <y>119</y>
+      <w>259</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>/geomtools::i_find_intercept/
+--
+/+find_intercept(const vector_3d&amp;,...)const: bool/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>252</x>
+      <y>133</y>
+      <w>83</w>
+      <h>69</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;70;56</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>301</x>
+      <y>266</y>
+      <w>34</w>
+      <h>76</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;63</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>42</x>
+      <y>504</y>
+      <w>259</w>
+      <h>77</h>
+    </coordinates>
+    <panel_attributes>geomtools::rectangle
+--
+-x: double
+-y: double
+--
++initialize(const datatools::properties &amp;,...): void
++reset(): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>448</x>
+      <y>371</y>
+      <w>98</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::ellipse
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>434</x>
+      <y>266</y>
+      <w>34</w>
+      <h>118</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;105</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>455</x>
+      <y>266</y>
+      <w>34</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;77</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>42</x>
+      <y>476</y>
+      <w>147</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::simple_polygon
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>63</x>
+      <y>329</y>
+      <w>287</w>
+      <h>35</h>
+    </coordinates>
+    <panel_attributes>/geomtools::i_polygon/
+--
+--
+/+compute_vertexes(vertex_col_type &amp;): unsigned int/</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>231</x>
+      <y>343</y>
+      <w>34</w>
+      <h>174</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;161</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>168</x>
+      <y>343</y>
+      <w>83</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>70;21;70;140;21;140</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>42</x>
+      <y>413</y>
+      <w>147</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>geomtools::triangle
+
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>168</x>
+      <y>343</y>
+      <w>55</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>42;21;42;77;21;77</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>42</x>
+      <y>385</y>
+      <w>147</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::quadrangle
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>168</x>
+      <y>343</y>
+      <w>41</w>
+      <h>62</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>28;21;28;49;21;49</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>567</x>
+      <y>371</y>
+      <w>133</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::spherical_sector
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>560</x>
+      <y>266</y>
+      <w>34</w>
+      <h>118</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;105</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>588</x>
+      <y>343</y>
+      <w>140</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::cylindrical_sector
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>581</x>
+      <y>266</y>
+      <w>34</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;77</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>469</x>
+      <y>343</y>
+      <w>98</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::circle
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>490</x>
+      <y>315</y>
+      <w>84</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::disk
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>476</x>
+      <y>266</y>
+      <w>34</w>
+      <h>62</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;49</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>609</x>
+      <y>315</y>
+      <w>140</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::elliptical_sector
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>602</x>
+      <y>266</y>
+      <w>34</w>
+      <h>62</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;49</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>42</x>
+      <y>448</y>
+      <w>147</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::regular_polygon
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>168</x>
+      <y>343</y>
+      <w>69</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>56;21;56;112;21;112</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>266</x>
+      <y>371</y>
+      <w>112</w>
+      <h>28</h>
+    </coordinates>
+    <panel_attributes>geomtools::quadric
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>427</x>
+      <y>406</y>
+      <w>196</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::elliptical_cylinder_sector
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>336</x>
+      <y>266</y>
+      <w>34</w>
+      <h>118</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;105</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>413</x>
+      <y>266</y>
+      <w>34</w>
+      <h>153</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;140</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>406</x>
+      <y>441</y>
+      <w>196</w>
+      <h>21</h>
+    </coordinates>
+    <panel_attributes>geomtools::right_circular_conical_nappe
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>392</x>
+      <y>266</y>
+      <w>34</w>
+      <h>188</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;175</additional_attributes>
+  </element>
+</diagram>

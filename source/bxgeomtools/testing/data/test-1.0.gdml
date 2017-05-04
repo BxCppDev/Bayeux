@@ -1,0 +1,2258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gdml.xsd"  >
+
+<define>
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____0__.pos" x="-630" y="0" z="-577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____1__.pos" x="-420" y="0" z="-577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____2__.pos" x="-210" y="0" z="-577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____3__.pos" x="0" y="0" z="-577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____4__.pos" x="210" y="0" z="-577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____5__.pos" x="420" y="0" z="-577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____6__.pos" x="630" y="0" z="-577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____7__.pos" x="-630" y="0" z="-472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____8__.pos" x="-420" y="0" z="-472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____9__.pos" x="-210" y="0" z="-472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____10__.pos" x="0" y="0" z="-472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____11__.pos" x="210" y="0" z="-472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____12__.pos" x="420" y="0" z="-472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____13__.pos" x="630" y="0" z="-472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____14__.pos" x="-630" y="0" z="-367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____15__.pos" x="-420" y="0" z="-367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____16__.pos" x="-210" y="0" z="-367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____17__.pos" x="0" y="0" z="-367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____18__.pos" x="210" y="0" z="-367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____19__.pos" x="420" y="0" z="-367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____20__.pos" x="630" y="0" z="-367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____21__.pos" x="-630" y="0" z="-262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____22__.pos" x="-420" y="0" z="-262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____23__.pos" x="-210" y="0" z="-262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____24__.pos" x="0" y="0" z="-262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____25__.pos" x="210" y="0" z="-262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____26__.pos" x="420" y="0" z="-262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____27__.pos" x="630" y="0" z="-262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____28__.pos" x="-630" y="0" z="-157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____29__.pos" x="-420" y="0" z="-157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____30__.pos" x="-210" y="0" z="-157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____31__.pos" x="0" y="0" z="-157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____32__.pos" x="210" y="0" z="-157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____33__.pos" x="420" y="0" z="-157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____34__.pos" x="630" y="0" z="-157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____35__.pos" x="-630" y="0" z="-52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____36__.pos" x="-420" y="0" z="-52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____37__.pos" x="-210" y="0" z="-52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____38__.pos" x="0" y="0" z="-52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____39__.pos" x="210" y="0" z="-52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____40__.pos" x="420" y="0" z="-52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____41__.pos" x="630" y="0" z="-52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____42__.pos" x="-630" y="0" z="52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____43__.pos" x="-420" y="0" z="52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____44__.pos" x="-210" y="0" z="52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____45__.pos" x="0" y="0" z="52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____46__.pos" x="210" y="0" z="52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____47__.pos" x="420" y="0" z="52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____48__.pos" x="630" y="0" z="52.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____49__.pos" x="-630" y="0" z="157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____50__.pos" x="-420" y="0" z="157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____51__.pos" x="-210" y="0" z="157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____52__.pos" x="0" y="0" z="157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____53__.pos" x="210" y="0" z="157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____54__.pos" x="420" y="0" z="157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____55__.pos" x="630" y="0" z="157.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____56__.pos" x="-630" y="0" z="262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____57__.pos" x="-420" y="0" z="262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____58__.pos" x="-210" y="0" z="262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____59__.pos" x="0" y="0" z="262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____60__.pos" x="210" y="0" z="262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____61__.pos" x="420" y="0" z="262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____62__.pos" x="630" y="0" z="262.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____63__.pos" x="-630" y="0" z="367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____64__.pos" x="-420" y="0" z="367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____65__.pos" x="-210" y="0" z="367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____66__.pos" x="0" y="0" z="367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____67__.pos" x="210" y="0" z="367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____68__.pos" x="420" y="0" z="367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____69__.pos" x="630" y="0" z="367.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____70__.pos" x="-630" y="0" z="472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____71__.pos" x="-420" y="0" z="472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____72__.pos" x="-210" y="0" z="472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____73__.pos" x="0" y="0" z="472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____74__.pos" x="210" y="0" z="472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____75__.pos" x="420" y="0" z="472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____76__.pos" x="630" y="0" z="472.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____77__.pos" x="-630" y="0" z="577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____78__.pos" x="-420" y="0" z="577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____79__.pos" x="-210" y="0" z="577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____80__.pos" x="0" y="0" z="577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____81__.pos" x="210" y="0" z="577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____82__.pos" x="420" y="0" z="577.5" unit="mm" />
+
+<position name="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____83__.pos" x="630" y="0" z="577.5" unit="mm" />
+
+<position name="lab.model.log.shield_wall_a.phys.pos" x="-800" y="0" z="0" unit="mm" />
+
+<rotation name="lab.model.log.shield_wall_a.phys.rot" x="-0" y="-0" z="-90" unit="deg" />
+
+<position name="lab.model.log.shield_wall_b.phys.pos" x="800" y="0" z="0" unit="mm" />
+
+<rotation name="lab.model.log.shield_wall_b.phys.rot" x="-0" y="-0" z="-90" unit="deg" />
+
+<position name="vessel.model.log.body.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="vessel.model.log.endcap0.phys.pos" x="0" y="0" z="-605" unit="mm" />
+
+<position name="vessel.model.log.endcap1.phys.pos" x="0" y="0" z="605" unit="mm" />
+
+<position name="PMT.model.log.__PMT.model.log.polycone_by_envelope.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="PMT.model.log.anode.phys.pos" x="0" y="0" z="-95" unit="mm" />
+
+<rotation name="PMT.model.log.anode.phys.rot" x="-20" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_0.phys.pos" x="0" y="-15" z="0" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_0.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_1.phys.pos" x="0" y="15" z="0" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_1.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_2.phys.pos" x="0" y="-15" z="-20" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_2.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_3.phys.pos" x="0" y="15" z="-20" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_3.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_4.phys.pos" x="0" y="-15" z="-40" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_4.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_5.phys.pos" x="0" y="15" z="-40" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_5.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_6.phys.pos" x="0" y="-15" z="-60" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_6.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_7.phys.pos" x="0" y="15" z="-60" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_7.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_8.phys.pos" x="0" y="-15" z="-80" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_8.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.dynode_9.phys.pos" x="0" y="15" z="-80" unit="mm" />
+
+<rotation name="PMT.model.log.dynode_9.phys.rot" x="-45" y="-0" z="-0" unit="deg" />
+
+<position name="PMT.model.log.focusing_electrode.phys.pos" x="0" y="0" z="20" unit="mm" />
+
+<position name="optical_module.model.log.PMT.phys.pos" x="0" y="0" z="-65.506" unit="mm" />
+
+<position name="optical_module.model.log.PMT_base.phys.pos" x="0" y="0" z="-195.506" unit="mm" />
+
+<position name="diaphragm.model.log.solid.subtraction.pos_ref" x="0" y="0" z="0" unit="mm" />
+
+<rotation name="diaphragm.model.log.solid.subtraction.rot_ref" x="-0" y="-0" z="-0" unit="deg" />
+
+<position name="extruded_box.log.solid.subtraction.pos_ref" x="0" y="0" z="0" unit="mm" />
+
+<rotation name="extruded_box.log.solid.subtraction.rot_ref" x="-0" y="-0" z="-0" unit="deg" />
+
+<position name="diaphragm.model.log.extruded_box.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="optical_module.model.log.diaphragm.phys.pos" x="0" y="0" z="215.006" unit="mm" />
+
+<position name="optical_module.model.log.front_window.phys.pos" x="0" y="0" z="214.5" unit="mm" />
+
+<position name="rotated_light_guide.model.log.light_guide.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<rotation name="rotated_light_guide.model.log.light_guide.phys.rot" x="-0" y="-0" z="-45" unit="deg" />
+
+<position name="optical_module.model.log.light_guide.phys.pos" x="0" y="0" z="124.494" unit="mm" />
+
+<position name="optical_module.model.log.scintillator_block.phys.pos" x="0" y="0" z="209.494" unit="mm" />
+
+<position name="detector_column.model.log.optical_modules.phys.__0..1____0__.pos" x="0" y="-150" z="0" unit="mm" />
+
+<position name="detector_column.model.log.optical_modules.phys.__0..1____1__.pos" x="0" y="150" z="0" unit="mm" />
+
+<position name="detector_array.model.log.detectors.phys.__0..1____0__.pos" x="-150" y="0" z="0" unit="mm" />
+
+<position name="detector_array.model.log.detectors.phys.__0..1____1__.pos" x="150" y="0" z="0" unit="mm" />
+
+<position name="vessel_inner_volume.model.log.detector_array.phys.pos" x="0" y="0" z="250" unit="mm" />
+
+<rotation name="vessel_inner_volume.model.log.detector_array.phys.rot" x="180" y="-0" z="-0" unit="deg" />
+
+<position name="__source_support.model.log.tube_by_envelope.log.film.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="source_support.model.log.__source_support.model.log.tube_by_envelope.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="source_chain.model.log.sources.phys.__0..2____0__.pos" x="-100" y="0" z="0" unit="mm" />
+
+<position name="source_chain.model.log.sources.phys.__0..2____1__.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="source_chain.model.log.sources.phys.__0..2____2__.pos" x="100" y="0" z="0" unit="mm" />
+
+<position name="vessel_inner_volume.model.log.sources.phys.pos" x="150" y="300" z="-500" unit="mm" />
+
+<position name="vessel.model.log.inner_volume.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<position name="lab.model.log.vacuum_chamber.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+<rotation name="lab.model.log.vacuum_chamber.phys.rot" x="-90" y="-0" z="-0" unit="deg" />
+
+<position name="world.log.setup.phys.pos" x="0" y="0" z="0" unit="mm" />
+
+</define>
+
+
+<materials>
+
+<isotope name="Ag-107" Z="47" N="107" >
+  <atom type="A" value="106.90509682" />
+</isotope>
+
+<isotope name="Ag-109" Z="47" N="109" >
+  <atom type="A" value="108.904752292" />
+</isotope>
+
+<isotope name="Al-27" Z="13" N="27" >
+  <atom type="A" value="26.981538627" />
+</isotope>
+
+<isotope name="Ar-36" Z="18" N="36" >
+  <atom type="A" value="35.967545105" />
+</isotope>
+
+<isotope name="Ar-38" Z="18" N="38" >
+  <atom type="A" value="37.962732394" />
+</isotope>
+
+<isotope name="Ar-40" Z="18" N="40" >
+  <atom type="A" value="39.96238312251" />
+</isotope>
+
+<isotope name="As-75" Z="33" N="75" >
+  <atom type="A" value="74.921596478" />
+</isotope>
+
+<isotope name="Au-197" Z="79" N="197" >
+  <atom type="A" value="196.966568662" />
+</isotope>
+
+<isotope name="B-10" Z="5" N="10" >
+  <atom type="A" value="10.012936992" />
+</isotope>
+
+<isotope name="B-11" Z="5" N="11" >
+  <atom type="A" value="11.009305406" />
+</isotope>
+
+<isotope name="Be-6" Z="4" N="9" >
+  <atom type="A" value="9.012182201" />
+</isotope>
+
+<isotope name="Br-79" Z="35" N="79" >
+  <atom type="A" value="78.918337087" />
+</isotope>
+
+<isotope name="Br-81" Z="35" N="81" >
+  <atom type="A" value="80.916290563" />
+</isotope>
+
+<isotope name="C-12" Z="6" N="12" >
+  <atom type="A" value="12" />
+</isotope>
+
+<isotope name="C-13" Z="6" N="13" >
+  <atom type="A" value="13.00335483778" />
+</isotope>
+
+<isotope name="Ca-40" Z="20" N="40" >
+  <atom type="A" value="39.962590983" />
+</isotope>
+
+<isotope name="Ca-42" Z="20" N="42" >
+  <atom type="A" value="41.958618014" />
+</isotope>
+
+<isotope name="Ca-43" Z="20" N="43" >
+  <atom type="A" value="42.958766628" />
+</isotope>
+
+<isotope name="Ca-44" Z="20" N="44" >
+  <atom type="A" value="43.955481754" />
+</isotope>
+
+<isotope name="Ca-46" Z="20" N="46" >
+  <atom type="A" value="45.953692587" />
+</isotope>
+
+<isotope name="Ca-48" Z="20" N="48" >
+  <atom type="A" value="47.952534177" />
+</isotope>
+
+<isotope name="Cl-35" Z="17" N="35" >
+  <atom type="A" value="34.968852682" />
+</isotope>
+
+<isotope name="Cl-37" Z="17" N="37" >
+  <atom type="A" value="36.965902591" />
+</isotope>
+
+<isotope name="Co-59" Z="27" N="59" >
+  <atom type="A" value="58.933195048" />
+</isotope>
+
+<isotope name="Cr-50" Z="24" N="50" >
+  <atom type="A" value="49.946044205" />
+</isotope>
+
+<isotope name="Cr-52" Z="24" N="52" >
+  <atom type="A" value="51.940507472" />
+</isotope>
+
+<isotope name="Cr-53" Z="24" N="53" >
+  <atom type="A" value="52.940649386" />
+</isotope>
+
+<isotope name="Cr-54" Z="24" N="54" >
+  <atom type="A" value="53.938880395" />
+</isotope>
+
+<isotope name="Cs-133" Z="55" N="133" >
+  <atom type="A" value="132.905451932" />
+</isotope>
+
+<isotope name="Cu-63" Z="29" N="63" >
+  <atom type="A" value="62.929597474" />
+</isotope>
+
+<isotope name="Cu-65" Z="29" N="65" >
+  <atom type="A" value="64.927789485" />
+</isotope>
+
+<isotope name="D" Z="1" N="2" >
+  <atom type="A" value="2.01410177785" />
+</isotope>
+
+<isotope name="F-19" Z="9" N="19" >
+  <atom type="A" value="18.998403224" />
+</isotope>
+
+<isotope name="Fe-54" Z="26" N="54" >
+  <atom type="A" value="53.939610501" />
+</isotope>
+
+<isotope name="Fe-56" Z="26" N="56" >
+  <atom type="A" value="55.934937475" />
+</isotope>
+
+<isotope name="Fe-57" Z="26" N="57" >
+  <atom type="A" value="56.935393969" />
+</isotope>
+
+<isotope name="Fe-58" Z="26" N="58" >
+  <atom type="A" value="57.933275558" />
+</isotope>
+
+<isotope name="Ga-69" Z="31" N="69" >
+  <atom type="A" value="68.925573587" />
+</isotope>
+
+<isotope name="Ga-71" Z="31" N="71" >
+  <atom type="A" value="70.924701349" />
+</isotope>
+
+<isotope name="Ge-70" Z="32" N="70" >
+  <atom type="A" value="69.924247381" />
+</isotope>
+
+<isotope name="Ge-72" Z="32" N="72" >
+  <atom type="A" value="71.922075815" />
+</isotope>
+
+<isotope name="Ge-73" Z="32" N="73" >
+  <atom type="A" value="72.923458945" />
+</isotope>
+
+<isotope name="Ge-74" Z="32" N="74" >
+  <atom type="A" value="73.921177767" />
+</isotope>
+
+<isotope name="Ge-76" Z="32" N="76" >
+  <atom type="A" value="75.921402557" />
+</isotope>
+
+<isotope name="H" Z="1" N="1" >
+  <atom type="A" value="1.00782503207" />
+</isotope>
+
+<isotope name="He-3" Z="2" N="3" >
+  <atom type="A" value="3.01602931914" />
+</isotope>
+
+<isotope name="He-4" Z="2" N="4" >
+  <atom type="A" value="4.00260325415" />
+</isotope>
+
+<isotope name="I-127" Z="53" N="127" >
+  <atom type="A" value="126.904472681" />
+</isotope>
+
+<isotope name="K-39" Z="19" N="39" >
+  <atom type="A" value="38.963706679" />
+</isotope>
+
+<isotope name="K-40" Z="19" N="40" >
+  <atom type="A" value="39.963998475" />
+</isotope>
+
+<isotope name="K-41" Z="19" N="41" >
+  <atom type="A" value="40.961825762" />
+</isotope>
+
+<isotope name="Kr-78" Z="36" N="78" >
+  <atom type="A" value="77.920364783" />
+</isotope>
+
+<isotope name="Kr-80" Z="36" N="80" >
+  <atom type="A" value="79.916378965" />
+</isotope>
+
+<isotope name="Kr-82" Z="36" N="82" >
+  <atom type="A" value="81.9134836" />
+</isotope>
+
+<isotope name="Kr-83" Z="36" N="83" >
+  <atom type="A" value="82.914136099" />
+</isotope>
+
+<isotope name="Kr-84" Z="36" N="84" >
+  <atom type="A" value="83.911506687" />
+</isotope>
+
+<isotope name="Kr-86" Z="36" N="86" >
+  <atom type="A" value="85.910610729" />
+</isotope>
+
+<isotope name="Li-6" Z="3" N="6" >
+  <atom type="A" value="6.015122794" />
+</isotope>
+
+<isotope name="Li-7" Z="3" N="7" >
+  <atom type="A" value="7.016004548" />
+</isotope>
+
+<isotope name="Mg-24" Z="12" N="24" >
+  <atom type="A" value="23.985041699" />
+</isotope>
+
+<isotope name="Mg-25" Z="12" N="25" >
+  <atom type="A" value="24.985836917" />
+</isotope>
+
+<isotope name="Mg-26" Z="12" N="26" >
+  <atom type="A" value="25.982592929" />
+</isotope>
+
+<isotope name="Mn-55" Z="25" N="55" >
+  <atom type="A" value="54.938045141" />
+</isotope>
+
+<isotope name="Mo-100" Z="42" N="100" >
+  <atom type="A" value="99.907477336" />
+</isotope>
+
+<isotope name="Mo-92" Z="42" N="92" >
+  <atom type="A" value="91.906810991" />
+</isotope>
+
+<isotope name="Mo-94" Z="42" N="94" >
+  <atom type="A" value="93.905088269" />
+</isotope>
+
+<isotope name="Mo-95" Z="42" N="95" >
+  <atom type="A" value="94.905842129" />
+</isotope>
+
+<isotope name="Mo-96" Z="42" N="96" >
+  <atom type="A" value="95.904679477" />
+</isotope>
+
+<isotope name="Mo-97" Z="42" N="97" >
+  <atom type="A" value="96.906021465" />
+</isotope>
+
+<isotope name="Mo-98" Z="42" N="98" >
+  <atom type="A" value="97.905408169" />
+</isotope>
+
+<isotope name="N-14" Z="7" N="14" >
+  <atom type="A" value="14.00307400478" />
+</isotope>
+
+<isotope name="N-15" Z="7" N="15" >
+  <atom type="A" value="15.00010889823" />
+</isotope>
+
+<isotope name="Na-23" Z="11" N="23" >
+  <atom type="A" value="22.98976928087" />
+</isotope>
+
+<isotope name="Nd-142" Z="60" N="142" >
+  <atom type="A" value="141.907723297" />
+</isotope>
+
+<isotope name="Nd-143" Z="60" N="143" >
+  <atom type="A" value="142.90981429" />
+</isotope>
+
+<isotope name="Nd-144" Z="60" N="144" >
+  <atom type="A" value="143.910087274" />
+</isotope>
+
+<isotope name="Nd-145" Z="60" N="145" >
+  <atom type="A" value="144.912573636" />
+</isotope>
+
+<isotope name="Nd-146" Z="60" N="146" >
+  <atom type="A" value="145.913116939" />
+</isotope>
+
+<isotope name="Nd-148" Z="60" N="148" >
+  <atom type="A" value="147.916893288" />
+</isotope>
+
+<isotope name="Nd-150" Z="60" N="150" >
+  <atom type="A" value="149.920890888" />
+</isotope>
+
+<isotope name="Ne-20" Z="10" N="20" >
+  <atom type="A" value="19.99244017542" />
+</isotope>
+
+<isotope name="Ne-21" Z="10" N="21" >
+  <atom type="A" value="20.993846684" />
+</isotope>
+
+<isotope name="Ne-22" Z="10" N="22" >
+  <atom type="A" value="21.991385113" />
+</isotope>
+
+<isotope name="Ni-58" Z="28" N="58" >
+  <atom type="A" value="57.935342907" />
+</isotope>
+
+<isotope name="Ni-60" Z="28" N="60" >
+  <atom type="A" value="59.930786372" />
+</isotope>
+
+<isotope name="Ni-61" Z="28" N="61" >
+  <atom type="A" value="60.931056033" />
+</isotope>
+
+<isotope name="Ni-62" Z="28" N="62" >
+  <atom type="A" value="61.928345115" />
+</isotope>
+
+<isotope name="Ni-64" Z="28" N="64" >
+  <atom type="A" value="63.927965959" />
+</isotope>
+
+<isotope name="O-16" Z="8" N="16" >
+  <atom type="A" value="15.99491461956" />
+</isotope>
+
+<isotope name="O-17" Z="8" N="17" >
+  <atom type="A" value="16.999131703" />
+</isotope>
+
+<isotope name="O-18" Z="8" N="18" >
+  <atom type="A" value="17.999161001" />
+</isotope>
+
+<isotope name="P-31" Z="15" N="31" >
+  <atom type="A" value="30.973761629" />
+</isotope>
+
+<isotope name="Pb-204" Z="82" N="204" >
+  <atom type="A" value="203.973043589" />
+</isotope>
+
+<isotope name="Pb-206" Z="82" N="206" >
+  <atom type="A" value="205.974465278" />
+</isotope>
+
+<isotope name="Pb-207" Z="82" N="207" >
+  <atom type="A" value="206.975896887" />
+</isotope>
+
+<isotope name="Pb-208" Z="82" N="208" >
+  <atom type="A" value="207.976652071" />
+</isotope>
+
+<isotope name="Rb-85" Z="37" N="85" >
+  <atom type="A" value="84.911789737" />
+</isotope>
+
+<isotope name="Rb-87" Z="37" N="87" >
+  <atom type="A" value="86.909180526" />
+</isotope>
+
+<isotope name="S-32" Z="16" N="32" >
+  <atom type="A" value="31.972070999" />
+</isotope>
+
+<isotope name="S-33" Z="16" N="33" >
+  <atom type="A" value="32.971458759" />
+</isotope>
+
+<isotope name="S-34" Z="16" N="34" >
+  <atom type="A" value="33.967866902" />
+</isotope>
+
+<isotope name="S-36" Z="16" N="36" >
+  <atom type="A" value="35.96708076" />
+</isotope>
+
+<isotope name="Sc-21" Z="21" N="45" >
+  <atom type="A" value="44.955911909" />
+</isotope>
+
+<isotope name="Se-74" Z="34" N="74" >
+  <atom type="A" value="73.922476436" />
+</isotope>
+
+<isotope name="Se-76" Z="34" N="76" >
+  <atom type="A" value="75.919213597" />
+</isotope>
+
+<isotope name="Se-77" Z="34" N="77" >
+  <atom type="A" value="76.919914038" />
+</isotope>
+
+<isotope name="Se-78" Z="34" N="78" >
+  <atom type="A" value="77.91730909" />
+</isotope>
+
+<isotope name="Se-80" Z="34" N="80" >
+  <atom type="A" value="79.916521271" />
+</isotope>
+
+<isotope name="Se-82" Z="34" N="82" >
+  <atom type="A" value="81.916699401" />
+</isotope>
+
+<isotope name="Si-28" Z="14" N="28" >
+  <atom type="A" value="27.97692653246" />
+</isotope>
+
+<isotope name="Si-29" Z="14" N="29" >
+  <atom type="A" value="28.9764947" />
+</isotope>
+
+<isotope name="Si-30" Z="14" N="30" >
+  <atom type="A" value="29.973770171" />
+</isotope>
+
+<isotope name="T" Z="1" N="3" >
+  <atom type="A" value="3.01604927767" />
+</isotope>
+
+<isotope name="Ti-46" Z="22" N="46" >
+  <atom type="A" value="45.952631555" />
+</isotope>
+
+<isotope name="Ti-47" Z="22" N="47" >
+  <atom type="A" value="46.951763088" />
+</isotope>
+
+<isotope name="Ti-48" Z="22" N="48" >
+  <atom type="A" value="47.947946281" />
+</isotope>
+
+<isotope name="Ti-49" Z="22" N="49" >
+  <atom type="A" value="48.947869982" />
+</isotope>
+
+<isotope name="Ti-50" Z="22" N="50" >
+  <atom type="A" value="49.944791194" />
+</isotope>
+
+<isotope name="U-234" Z="92" N="234" >
+  <atom type="A" value="234.040952088" />
+</isotope>
+
+<isotope name="U-235" Z="92" N="235" >
+  <atom type="A" value="235.043929918" />
+</isotope>
+
+<isotope name="U-238" Z="92" N="238" >
+  <atom type="A" value="238.050788247" />
+</isotope>
+
+<isotope name="V-50" Z="23" N="50" >
+  <atom type="A" value="49.947158485" />
+</isotope>
+
+<isotope name="V-51" Z="23" N="51" >
+  <atom type="A" value="50.943959507" />
+</isotope>
+
+<isotope name="W-180" Z="74" N="180" >
+  <atom type="A" value="179.946704459" />
+</isotope>
+
+<isotope name="W-182" Z="74" N="182" >
+  <atom type="A" value="181.948204156" />
+</isotope>
+
+<isotope name="W-183" Z="74" N="183" >
+  <atom type="A" value="182.950222951" />
+</isotope>
+
+<isotope name="W-184" Z="74" N="184" >
+  <atom type="A" value="183.950931188" />
+</isotope>
+
+<isotope name="W-186" Z="74" N="186" >
+  <atom type="A" value="185.954364127" />
+</isotope>
+
+<isotope name="Zn-64" Z="30" N="64" >
+  <atom type="A" value="63.929142222" />
+</isotope>
+
+<isotope name="Zn-66" Z="30" N="66" >
+  <atom type="A" value="65.926033419" />
+</isotope>
+
+<isotope name="Zn-67" Z="30" N="67" >
+  <atom type="A" value="66.927127345" />
+</isotope>
+
+<isotope name="Zn-68" Z="30" N="68" >
+  <atom type="A" value="67.924844154" />
+</isotope>
+
+<isotope name="Zn-70" Z="30" N="70" >
+  <atom type="A" value="69.925319274" />
+</isotope>
+
+<element name="Aluminium" >
+  <fraction ref="Al-27" n="1" />
+</element>
+
+<element name="Argon" >
+  <fraction ref="Ar-36" n="0.003365" />
+  <fraction ref="Ar-38" n="0.000632" />
+  <fraction ref="Ar-40" n="0.996003" />
+</element>
+
+<element name="Boron" >
+  <fraction ref="B-10" n="0.199" />
+  <fraction ref="B-11" n="0.801" />
+</element>
+
+<element name="Calcium" >
+  <fraction ref="Ca-40" n="0.96941" />
+  <fraction ref="Ca-42" n="0.00647" />
+  <fraction ref="Ca-43" n="0.00135" />
+  <fraction ref="Ca-44" n="0.02086" />
+  <fraction ref="Ca-46" n="4e-05" />
+  <fraction ref="Ca-48" n="0.00187" />
+</element>
+
+<element name="Carbon" >
+  <fraction ref="C-12" n="0.9893" />
+  <fraction ref="C-13" n="0.0107" />
+</element>
+
+<element name="Cesium" >
+  <fraction ref="Cs-133" n="1" />
+</element>
+
+<element name="Chromium" >
+  <fraction ref="Cr-50" n="0.04345" />
+  <fraction ref="Cr-52" n="0.83789" />
+  <fraction ref="Cr-53" n="0.09501" />
+  <fraction ref="Cr-54" n="0.02365" />
+</element>
+
+<element name="Cobalt" >
+  <fraction ref="Co-59" n="1" />
+</element>
+
+<element name="Copper" >
+  <fraction ref="Cu-63" n="0.6915" />
+  <fraction ref="Cu-65" n="0.3085" />
+</element>
+
+<element name="Fluorine" >
+  <fraction ref="F-19" n="1" />
+</element>
+
+<element name="Gold" >
+  <fraction ref="Au-197" n="1" />
+</element>
+
+<element name="Helium" >
+  <fraction ref="He-3" n="1.37e-06" />
+  <fraction ref="He-4" n="0.99999863" />
+</element>
+
+<element name="Hydrogen" >
+  <fraction ref="D" n="0.000115" />
+  <fraction ref="H" n="0.999885" />
+</element>
+
+<element name="Iodine" >
+  <fraction ref="I-127" n="1" />
+</element>
+
+<element name="Iron" >
+  <fraction ref="Fe-54" n="0.05845" />
+  <fraction ref="Fe-56" n="0.91754" />
+  <fraction ref="Fe-57" n="0.02119" />
+  <fraction ref="Fe-58" n="0.00282" />
+</element>
+
+<element name="Lead" >
+  <fraction ref="Pb-204" n="0.014" />
+  <fraction ref="Pb-206" n="0.241" />
+  <fraction ref="Pb-207" n="0.221" />
+  <fraction ref="Pb-208" n="0.524" />
+</element>
+
+<element name="Magnesium" >
+  <fraction ref="Mg-24" n="0.7899" />
+  <fraction ref="Mg-25" n="0.1" />
+  <fraction ref="Mg-26" n="0.1101" />
+</element>
+
+<element name="Manganese" >
+  <fraction ref="Mn-55" n="1" />
+</element>
+
+<element name="Molybdenum" >
+  <fraction ref="Mo-100" n="0.0967" />
+  <fraction ref="Mo-92" n="0.1477" />
+  <fraction ref="Mo-94" n="0.0923" />
+  <fraction ref="Mo-95" n="0.159" />
+  <fraction ref="Mo-96" n="0.1668" />
+  <fraction ref="Mo-97" n="0.0956" />
+  <fraction ref="Mo-98" n="0.2419" />
+</element>
+
+<element name="Neodymimum" >
+  <fraction ref="Nd-142" n="0.272" />
+  <fraction ref="Nd-143" n="0.122" />
+  <fraction ref="Nd-144" n="0.238" />
+  <fraction ref="Nd-145" n="0.083" />
+  <fraction ref="Nd-146" n="0.172" />
+  <fraction ref="Nd-148" n="0.057" />
+  <fraction ref="Nd-150" n="0.056" />
+</element>
+
+<element name="Neon" >
+  <fraction ref="Ne-20" n="0.9048" />
+  <fraction ref="Ne-21" n="0.0027" />
+  <fraction ref="Ne-22" n="0.0925" />
+</element>
+
+<element name="Nickel" >
+  <fraction ref="Ni-58" n="0.680769" />
+  <fraction ref="Ni-60" n="0.262231" />
+  <fraction ref="Ni-61" n="0.011399" />
+  <fraction ref="Ni-62" n="0.036345" />
+  <fraction ref="Ni-64" n="0.009256" />
+</element>
+
+<element name="Nitrogen" >
+  <fraction ref="N-14" n="0.99632" />
+  <fraction ref="N-15" n="0.00368" />
+</element>
+
+<element name="Oxygen" >
+  <fraction ref="O-16" n="0.99757" />
+  <fraction ref="O-17" n="0.00038" />
+  <fraction ref="O-18" n="0.00205" />
+</element>
+
+<element name="Phosphore" >
+  <fraction ref="P-31" n="1" />
+</element>
+
+<element name="Potassium" >
+  <fraction ref="K-39" n="0.932581" />
+  <fraction ref="K-40" n="0.000117" />
+  <fraction ref="K-41" n="0.067302" />
+</element>
+
+<element name="Selenium" >
+  <fraction ref="Se-74" n="0.0089" />
+  <fraction ref="Se-76" n="0.0937" />
+  <fraction ref="Se-77" n="0.0763" />
+  <fraction ref="Se-78" n="0.2377" />
+  <fraction ref="Se-80" n="0.4961" />
+  <fraction ref="Se-82" n="0.0873" />
+</element>
+
+<element name="Silicium" >
+  <fraction ref="Si-28" n="0.922296077703922" />
+  <fraction ref="Si-29" n="0.0468319531680468" />
+  <fraction ref="Si-30" n="0.0308719691280309" />
+</element>
+
+<element name="Silver" >
+  <fraction ref="Ag-107" n="0.51839" />
+  <fraction ref="Ag-109" n="0.48161" />
+</element>
+
+<element name="Sodium" >
+  <fraction ref="Na-23" n="1" />
+</element>
+
+<element name="Vanadium" >
+  <fraction ref="V-50" n="0.0025" />
+  <fraction ref="V-51" n="0.9975" />
+</element>
+
+<material name="std__vacuum" formula="std::vacuum" >
+  <D value="1e-16" unit="g/cm3" />
+  <fraction ref="Hydrogen" n="1" />
+</material>
+
+<material name="std__air" formula="std::air" >
+  <D value="0.0012931" unit="g/cm3" />
+  <fraction ref="Nitrogen" n="0.8" />
+  <fraction ref="Oxygen" n="0.2" />
+</material>
+
+<material name="std__hydrogen_gas" formula="std::hydrogen_gas" >
+  <D value="0.001" unit="g/cm3" />
+  <fraction ref="Hydrogen" n="1" />
+</material>
+
+<material name="std__aluminium" formula="std::aluminium" >
+  <D value="2.7" unit="g/cm3" />
+  <fraction ref="Aluminium" n="1" />
+</material>
+
+<material name="std__copper" formula="std::copper" >
+  <D value="8.9" unit="g/cm3" />
+  <fraction ref="Copper" n="1" />
+</material>
+
+<material name="std__iron" formula="std::iron" >
+  <D value="7.874" unit="g/cm3" />
+  <fraction ref="Iron" n="1" />
+</material>
+
+<material name="std__lead" formula="std::lead" >
+  <D value="11.35" unit="g/cm3" />
+  <fraction ref="Lead" n="1" />
+</material>
+
+<material name="std__water" formula="std::water" >
+  <D value="1" unit="g/cm3" />
+  <composite ref="Hydrogen" n="2" />
+  <composite ref="Oxygen" n="1" />
+</material>
+
+<material name="std__diamond" Z="6" >
+  <D value="3.517" unit="g/cm3" />
+  <atom value="12" />
+</material >
+
+<material name="std__mylar" formula="std::mylar" >
+  <D value="1.397" unit="g/cm3" />
+  <composite ref="Carbon" n="10" />
+  <composite ref="Hydrogen" n="8" />
+  <composite ref="Oxygen" n="4" />
+</material>
+
+<material name="std__polycarbonate" formula="std::polycarbonate" >
+  <D value="1.2" unit="g/cm3" />
+  <composite ref="Carbon" n="16" />
+  <composite ref="Hydrogen" n="14" />
+  <composite ref="Oxygen" n="3" />
+</material>
+
+<material name="std__polyethylene" formula="std::polyethylene" >
+  <D value="0.94" unit="g/cm3" />
+  <composite ref="Carbon" n="2" />
+  <composite ref="Hydrogen" n="4" />
+</material>
+
+<material name="std__polypropylene" formula="std::polypropylene" >
+  <D value="0.9" unit="g/cm3" />
+  <composite ref="Carbon" n="3" />
+  <composite ref="Hydrogen" n="5" />
+</material>
+
+<material name="std__polystyrene" formula="std::polystyrene" >
+  <D value="1.032" unit="g/cm3" />
+  <composite ref="Carbon" n="8" />
+  <composite ref="Hydrogen" n="8" />
+</material>
+
+<material name="std__NE110" formula="std::NE110" >
+  <D value="1.032" unit="g/cm3" />
+  <composite ref="Carbon" n="9" />
+  <composite ref="Hydrogen" n="10" />
+</material>
+
+<material name="std__PVT" formula="std::PVT" >
+  <D value="1.032" unit="g/cm3" />
+  <composite ref="Carbon" n="9" />
+  <composite ref="Hydrogen" n="10" />
+</material>
+
+<material name="std__delrin" formula="std::delrin" >
+  <D value="1.42" unit="g/cm3" />
+  <composite ref="Carbon" n="1" />
+  <composite ref="Hydrogen" n="2" />
+  <composite ref="Oxygen" n="1" />
+</material>
+
+<material name="std__CsI" formula="std::CsI" >
+  <D value="4.51" unit="g/cm3" />
+  <composite ref="Cesium" n="1" />
+  <composite ref="Iodine" n="1" />
+</material>
+
+<material name="std__NaI" formula="std::NaI" >
+  <D value="3.667" unit="g/cm3" />
+  <composite ref="Iodine" n="1" />
+  <composite ref="Sodium" n="1" />
+</material>
+
+<material name="std__SiO2" formula="std::SiO2" >
+  <D value="2.32" unit="g/cm3" />
+  <composite ref="Oxygen" n="2" />
+  <composite ref="Silicium" n="1" />
+</material>
+
+<material name="std__plexiglass" formula="std::plexiglass" >
+  <D value="1.19" unit="g/cm3" />
+  <composite ref="Carbon" n="5" />
+  <composite ref="Hydrogen" n="8" />
+  <composite ref="Oxygen" n="2" />
+</material>
+
+<material name="std__kapton" formula="std::kapton" >
+  <D value="1.42" unit="g/cm3" />
+  <composite ref="Carbon" n="22" />
+  <composite ref="Hydrogen" n="10" />
+  <composite ref="Nitrogen" n="2" />
+  <composite ref="Oxygen" n="5" />
+</material>
+
+<material name="std__nylon" formula="std::nylon" >
+  <D value="1.14" unit="g/cm3" />
+  <composite ref="Carbon" n="6" />
+  <composite ref="Hydrogen" n="11" />
+  <composite ref="Nitrogen" n="1" />
+  <composite ref="Oxygen" n="1" />
+</material>
+
+<material name="std__pyrex" formula="std::pyrex" >
+  <D value="2.23" unit="g/cm3" />
+  <fraction ref="Aluminium" n="0.012" />
+  <fraction ref="Boron" n="0.04" />
+  <fraction ref="Oxygen" n="0.54" />
+  <fraction ref="Potassium" n="0.003" />
+  <fraction ref="Silicium" n="0.377" />
+  <fraction ref="Sodium" n="0.028" />
+</material>
+
+<material name="std__inox" formula="std::inox" >
+  <D value="8" unit="g/cm3" />
+  <fraction ref="Chromium" n="0.173" />
+  <fraction ref="Iron" n="0.703" />
+  <fraction ref="Molybdenum" n="0.021" />
+  <fraction ref="Nickel" n="0.103" />
+</material>
+
+<material name="std__sapphire" formula="std::sapphire" >
+  <D value="4" unit="g/cm3" />
+  <composite ref="Aluminium" n="2" />
+  <composite ref="Oxygen" n="3" />
+</material>
+
+<material name="std__concrete" formula="std::concrete" >
+  <D value="1.14" unit="g/cm3" />
+  <fraction ref="Aluminium" n="0.014245" />
+  <fraction ref="Calcium" n="0.04986" />
+  <fraction ref="Hydrogen" n="0.09972" />
+  <fraction ref="Iron" n="0.00285" />
+  <fraction ref="Oxygen" n="0.60541" />
+  <fraction ref="Silicium" n="0.227915" />
+</material>
+
+<material name="std__pfte" formula="std::pfte" >
+  <D value="2.2" unit="g/cm3" />
+  <composite ref="Carbon" n="2" />
+  <composite ref="Fluorine" n="4" />
+</material>
+
+<material name="std__teflon" formula="std::teflon" >
+  <D value="2.2" unit="g/cm3" />
+  <composite ref="Carbon" n="1" />
+  <composite ref="Fluorine" n="2" />
+</material>
+
+<material name="air" formula="air" >
+  <D value="0.0012931" unit="g/cm3" />
+  <fraction ref="Nitrogen" n="0.8" />
+  <fraction ref="Oxygen" n="0.2" />
+</material>
+
+<material name="aluminium" formula="aluminium" >
+  <D value="2.7" unit="g/cm3" />
+  <fraction ref="Aluminium" n="1" />
+</material>
+
+<material name="copper" formula="copper" >
+  <D value="8.9" unit="g/cm3" />
+  <fraction ref="Copper" n="1" />
+</material>
+
+<material name="glass" formula="glass" >
+  <D value="2.23" unit="g/cm3" />
+  <fraction ref="Aluminium" n="0.012" />
+  <fraction ref="Boron" n="0.04" />
+  <fraction ref="Oxygen" n="0.54" />
+  <fraction ref="Potassium" n="0.003" />
+  <fraction ref="Silicium" n="0.377" />
+  <fraction ref="Sodium" n="0.028" />
+</material>
+
+<material name="iron" formula="iron" >
+  <D value="7.874" unit="g/cm3" />
+  <fraction ref="Iron" n="1" />
+</material>
+
+<material name="mylar" formula="mylar" >
+  <D value="1.397" unit="g/cm3" />
+  <composite ref="Carbon" n="10" />
+  <composite ref="Hydrogen" n="8" />
+  <composite ref="Oxygen" n="4" />
+</material>
+
+<material name="plexiglass" formula="plexiglass" >
+  <D value="1.19" unit="g/cm3" />
+  <composite ref="Carbon" n="5" />
+  <composite ref="Hydrogen" n="8" />
+  <composite ref="Oxygen" n="2" />
+</material>
+
+<material name="polystyrene" formula="polystyrene" >
+  <D value="1.032" unit="g/cm3" />
+  <composite ref="Carbon" n="8" />
+  <composite ref="Hydrogen" n="8" />
+</material>
+
+<material name="vacuum" formula="vacuum" >
+  <D value="1e-16" unit="g/cm3" />
+  <fraction ref="Hydrogen" n="1" />
+</material>
+
+<material name="lead" formula="lead" >
+  <D value="11.35" unit="g/cm3" />
+  <fraction ref="Lead" n="1" />
+</material>
+
+</materials>
+
+
+<solids>
+
+<box name="world.log.solid" x="2000" y="2000" z="2000" lunit="mm" />
+
+<box name="lab.model.log.solid" x="1900" y="1900" z="1900" lunit="mm" />
+
+<box name="shielding_brick_array.model.log.solid" x="1460" y="50" z="1255" lunit="mm" />
+
+<box name="brick.model.log.solid" x="200" y="50" z="100" lunit="mm" />
+
+<box name="vessel.model.log.solid" x="1140" y="1140" z="1220" lunit="mm" />
+
+<tube name="vessel_body.model.log.solid" rmin="550" rmax="560" z="1200" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="vessel_endcap.model.log.solid" rmax="570" z="10" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="vessel_inner_volume.model.log.solid" rmax="550" z="1200" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="detector_array.model.log.solid" x="620" y="620" z="431.012" lunit="mm" />
+
+<box name="detector_column.model.log.solid" x="320" y="620" z="431.012" lunit="mm" />
+
+<box name="optical_module.model.log.solid" x="320" y="320" z="431.012" lunit="mm" />
+
+<polycone name="PMT.model.log.solid" deltaphi="360" lunit="mm" aunit="deg" >
+
+  <zplane rmax="0" z="-110" />
+  <zplane rmax="32.0648" z="-109.829" />
+  <zplane rmax="35.6705" z="-108.65" />
+  <zplane rmax="35.6705" z="-108.647" />
+  <zplane rmax="37.4533" z="-107.416" />
+  <zplane rmax="38.4624" z="-106.481" />
+  <zplane rmax="40.5955" z="-103.084" />
+  <zplane rmax="41.5084" z="-98.6401" />
+  <zplane rmax="41.9043" z="-43.6458" />
+  <zplane rmax="45.2687" z="-33.8076" />
+  <zplane rmax="54.2783" z="-27.3606" />
+  <zplane rmax="63.2852" z="-22.9623" />
+  <zplane rmax="71.4126" z="-18.0893" />
+  <zplane rmax="79.2565" z="-12.2671" />
+  <zplane rmax="86.3265" z="-5.65007" />
+  <zplane rmax="92.3066" z="2.09728" />
+  <zplane rmax="96.803" z="10.6724" />
+  <zplane rmax="99.5055" z="20.0733" />
+  <zplane rmax="100.905" z="29.9204" />
+  <zplane rmax="100.846" z="39.9182" />
+  <zplane rmax="99.3918" z="49.8607" />
+  <zplane rmax="95.9735" z="59.4345" />
+  <zplane rmax="90.7321" z="68.3814" />
+  <zplane rmax="84.4725" z="76.581" />
+  <zplane rmax="76.9557" z="83.5154" />
+  <zplane rmax="68.9368" z="89.9187" />
+  <zplane rmax="60.0639" z="95.2918" />
+  <zplane rmax="50.8971" z="99.6867" />
+  <zplane rmax="41.1194" z="103.405" />
+  <zplane rmax="30.596" z="106.303" />
+  <zplane rmax="25.291" z="107.669" />
+  <zplane rmax="20.8952" z="108.556" />
+  <zplane rmax="20.3897" z="108.658" />
+  <zplane rmax="13.4348" z="109.334" />
+  <zplane rmax="8.53213" z="109.825" />
+  <zplane rmax="0" z="110" />
+</polycone>
+
+<polycone name="__PMT.model.log.polycone_by_envelope.log.solid" deltaphi="360" lunit="mm" aunit="deg" >
+
+  <zplane rmax="0" z="-110" />
+  <zplane rmax="32.0648" z="-109.829" />
+  <zplane rmin="31" rmax="35.6705" z="-108.65" />
+  <zplane rmax="35.6705" z="-108.647" />
+  <zplane rmin="35" rmax="37.4533" z="-107.416" />
+  <zplane rmin="36.0841" rmax="38.4624" z="-106.481" />
+  <zplane rmin="38.8759" rmax="40.5955" z="-103.084" />
+  <zplane rmin="39.9976" rmax="41.5084" z="-98.6401" />
+  <zplane rmin="40.4027" rmax="41.9043" z="-43.6458" />
+  <zplane rmin="43.5152" rmax="45.2687" z="-33.8076" />
+  <zplane rmin="51.0925" rmax="54.2783" z="-27.3606" />
+  <zplane rmin="59.8796" rmax="63.2852" z="-22.9623" />
+  <zplane rmin="68.6233" rmax="71.4126" z="-18.0893" />
+  <zplane rmin="76.826" rmax="79.2565" z="-12.2671" />
+  <zplane rmin="84.2188" rmax="86.3265" z="-5.65007" />
+  <zplane rmin="90.4598" rmax="92.3066" z="2.09728" />
+  <zplane rmin="95.1553" rmax="96.803" z="10.6724" />
+  <zplane rmin="97.9604" rmax="99.5055" z="20.0733" />
+  <zplane rmin="99.4007" rmax="100.905" z="29.9204" />
+  <zplane rmin="99.3384" rmax="100.846" z="39.9182" />
+  <zplane rmin="97.8127" rmax="99.3918" z="49.8607" />
+  <zplane rmin="94.2893" rmax="95.9735" z="59.4345" />
+  <zplane rmin="88.9034" rmax="90.7321" z="68.3814" />
+  <zplane rmin="82.4206" rmax="84.4725" z="76.581" />
+  <zplane rmin="74.5809" rmax="76.9557" z="83.5154" />
+  <zplane rmin="66.2397" rmax="68.9368" z="89.9187" />
+  <zplane rmin="56.6831" rmax="60.0639" z="95.2918" />
+  <zplane rmin="46.8337" rmax="50.8971" z="99.6867" />
+  <zplane rmin="35.3909" rmax="41.1194" z="103.405" />
+  <zplane rmin="23.8773" rmax="30.596" z="106.303" />
+  <zplane rmin="13.4135" rmax="25.291" z="107.669" />
+  <zplane rmax="20.8952" z="108.556" />
+  <zplane rmax="20.3897" z="108.658" />
+  <zplane rmax="13.4348" z="109.334" />
+  <zplane rmax="8.53213" z="109.825" />
+  <zplane rmax="0" z="110" />
+</polycone>
+
+<box name="dynode.model.log.solid" x="35" y="20" z="0.5" lunit="mm" />
+
+<tube name="focusing_electrode.model.log.solid" rmin="30" rmax="40" z="1" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="PMT_base.model.log.solid" rmax="30" z="40" deltaphi="360" lunit="mm" aunit="deg" />
+
+<box name="diaphragm.model.log.solid.subtraction.first_ref" x="320" y="320" z="1" lunit="mm" />
+
+<tube name="diaphragm.model.log.solid.subtraction.second_ref" rmax="40" z="1.00001" deltaphi="360" lunit="mm" aunit="deg" />
+
+<subtraction name="diaphragm.model.log.solid" >
+  <first ref="diaphragm.model.log.solid.subtraction.first_ref" />
+  <second ref="diaphragm.model.log.solid.subtraction.second_ref" />
+  <positionref ref="diaphragm.model.log.solid.subtraction.pos_ref" />
+  <rotationref ref="diaphragm.model.log.solid.subtraction.rot_ref" />
+</subtraction>
+
+<box name="extruded_box.log.solid.subtraction.first_ref" x="320" y="320" z="1" lunit="mm" />
+
+<tube name="extruded_box.log.solid.subtraction.second_ref" rmax="40" z="1.00001" deltaphi="360" lunit="mm" aunit="deg" />
+
+<subtraction name="extruded_box.log.solid" >
+  <first ref="extruded_box.log.solid.subtraction.first_ref" />
+  <second ref="extruded_box.log.solid.subtraction.second_ref" />
+  <positionref ref="extruded_box.log.solid.subtraction.pos_ref" />
+  <rotationref ref="extruded_box.log.solid.subtraction.rot_ref" />
+</subtraction>
+
+<box name="front_window.model.log.solid" x="300" y="300" z="0.012" lunit="mm" />
+
+<box name="rotated_light_guide.model.log.solid" x="300" y="300" z="160" lunit="mm" />
+
+<polyhedra name="light_guide.model.log.solid" numsides="4" deltaphi="360" lunit="mm" aunit="deg" >
+
+  <zplane rmax="60" z="-80" />
+  <zplane rmax="150" z="60" />
+  <zplane rmax="150" z="80" />
+</polyhedra>
+
+<box name="scintillator_block.model.log.solid" x="300" y="300" z="10" lunit="mm" />
+
+<box name="source_chain.model.log.solid" x="224" y="24" z="5" lunit="mm" />
+
+<tube name="source_support.model.log.solid" rmax="12" z="5" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="__source_support.model.log.tube_by_envelope.log.solid" rmin="10" rmax="12" z="5" deltaphi="360" lunit="mm" aunit="deg" />
+
+<tube name="source_film.model.log.solid" rmax="9.5" z="0.05" deltaphi="360" lunit="mm" aunit="deg" />
+
+</solids>
+
+
+<structure>
+
+<volume name="brick.model.log" >
+  <materialref ref="lead" />
+  <solidref    ref="brick.model.log.solid" />
+
+
+</volume>
+
+<volume name="shielding_brick_array.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="shielding_brick_array.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____1__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____2__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____3__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____4__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____5__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____6__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____7__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____8__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____9__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____10__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____11__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____12__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____13__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____14__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____15__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____16__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____17__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____18__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____19__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____20__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____21__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____22__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____23__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____24__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____25__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____26__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____27__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____28__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____29__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____30__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____31__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____32__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____33__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____34__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____35__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____36__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____37__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____38__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____39__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____40__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____41__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____42__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____43__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____44__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____45__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____46__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____47__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____48__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____49__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____50__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____51__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____52__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____53__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____54__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____55__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____56__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____57__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____58__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____59__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____60__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____61__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____62__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____63__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____64__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____65__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____66__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____67__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____68__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____69__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____70__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____71__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____72__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____73__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____74__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____75__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____76__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____77__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____78__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____79__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____80__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____81__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____82__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="brick.model.log" />
+    <positionref ref="shielding_brick_array.model.log.bricks.phys.__0..6____0..11____83__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="vessel_body.model.log" >
+  <materialref ref="iron" />
+  <solidref    ref="vessel_body.model.log.solid" />
+
+
+</volume>
+
+<volume name="vessel_endcap.model.log" >
+  <materialref ref="iron" />
+  <solidref    ref="vessel_endcap.model.log.solid" />
+
+
+</volume>
+
+<volume name="__PMT.model.log.polycone_by_envelope.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="__PMT.model.log.polycone_by_envelope.log.solid" />
+
+
+</volume>
+
+<volume name="dynode.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="dynode.model.log.solid" />
+
+
+</volume>
+
+<volume name="focusing_electrode.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="focusing_electrode.model.log.solid" />
+
+
+</volume>
+
+<volume name="PMT.model.log" >
+  <materialref ref="glass" />
+  <solidref    ref="PMT.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="__PMT.model.log.polycone_by_envelope.log" />
+    <positionref ref="PMT.model.log.__PMT.model.log.polycone_by_envelope.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.anode.phys.pos" />
+    <rotationref ref="PMT.model.log.anode.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_0.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_0.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_1.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_1.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_2.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_2.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_3.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_3.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_4.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_4.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_5.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_5.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_6.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_6.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_7.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_7.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_8.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_8.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="dynode.model.log" />
+    <positionref ref="PMT.model.log.dynode_9.phys.pos" />
+    <rotationref ref="PMT.model.log.dynode_9.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="focusing_electrode.model.log" />
+    <positionref ref="PMT.model.log.focusing_electrode.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="PMT_base.model.log" >
+  <materialref ref="polystyrene" />
+  <solidref    ref="PMT_base.model.log.solid" />
+
+
+</volume>
+
+<volume name="extruded_box.log" >
+  <materialref ref="copper" />
+  <solidref    ref="extruded_box.log.solid" />
+
+
+</volume>
+
+<volume name="diaphragm.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="diaphragm.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="extruded_box.log" />
+    <positionref ref="diaphragm.model.log.extruded_box.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="front_window.model.log" >
+  <materialref ref="mylar" />
+  <solidref    ref="front_window.model.log.solid" />
+
+
+</volume>
+
+<volume name="light_guide.model.log" >
+  <materialref ref="plexiglass" />
+  <solidref    ref="light_guide.model.log.solid" />
+
+
+</volume>
+
+<volume name="rotated_light_guide.model.log" >
+  <materialref ref="plexiglass" />
+  <solidref    ref="rotated_light_guide.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="light_guide.model.log" />
+    <positionref ref="rotated_light_guide.model.log.light_guide.phys.pos" />
+    <rotationref ref="rotated_light_guide.model.log.light_guide.phys.rot" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="scintillator_block.model.log" >
+  <materialref ref="polystyrene" />
+  <solidref    ref="scintillator_block.model.log.solid" />
+
+
+</volume>
+
+<volume name="optical_module.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="optical_module.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="PMT.model.log" />
+    <positionref ref="optical_module.model.log.PMT.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="PMT_base.model.log" />
+    <positionref ref="optical_module.model.log.PMT_base.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="diaphragm.model.log" />
+    <positionref ref="optical_module.model.log.diaphragm.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="front_window.model.log" />
+    <positionref ref="optical_module.model.log.front_window.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="rotated_light_guide.model.log" />
+    <positionref ref="optical_module.model.log.light_guide.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="scintillator_block.model.log" />
+    <positionref ref="optical_module.model.log.scintillator_block.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="detector_column.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="detector_column.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="optical_module.model.log" />
+    <positionref ref="detector_column.model.log.optical_modules.phys.__0..1____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="optical_module.model.log" />
+    <positionref ref="detector_column.model.log.optical_modules.phys.__0..1____1__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="detector_array.model.log" >
+  <materialref ref="copper" />
+  <solidref    ref="detector_array.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="detector_column.model.log" />
+    <positionref ref="detector_array.model.log.detectors.phys.__0..1____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="detector_column.model.log" />
+    <positionref ref="detector_array.model.log.detectors.phys.__0..1____1__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="source_film.model.log" >
+  <materialref ref="mylar" />
+  <solidref    ref="source_film.model.log.solid" />
+
+
+</volume>
+
+<volume name="__source_support.model.log.tube_by_envelope.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="__source_support.model.log.tube_by_envelope.log.solid" />
+
+  <physvol>
+    <volumeref   ref="source_film.model.log" />
+    <positionref ref="__source_support.model.log.tube_by_envelope.log.film.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="source_support.model.log" >
+  <materialref ref="aluminium" />
+  <solidref    ref="source_support.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="__source_support.model.log.tube_by_envelope.log" />
+    <positionref ref="source_support.model.log.__source_support.model.log.tube_by_envelope.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="source_chain.model.log" >
+  <materialref ref="aluminium" />
+  <solidref    ref="source_chain.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="source_support.model.log" />
+    <positionref ref="source_chain.model.log.sources.phys.__0..2____0__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="source_support.model.log" />
+    <positionref ref="source_chain.model.log.sources.phys.__0..2____1__.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="source_support.model.log" />
+    <positionref ref="source_chain.model.log.sources.phys.__0..2____2__.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="vessel_inner_volume.model.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="vessel_inner_volume.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="detector_array.model.log" />
+    <positionref ref="vessel_inner_volume.model.log.detector_array.phys.pos" />
+    <rotationref ref="vessel_inner_volume.model.log.detector_array.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="source_chain.model.log" />
+    <positionref ref="vessel_inner_volume.model.log.sources.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="vessel.model.log" >
+  <materialref ref="air" />
+  <solidref    ref="vessel.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="vessel_body.model.log" />
+    <positionref ref="vessel.model.log.body.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="vessel_endcap.model.log" />
+    <positionref ref="vessel.model.log.endcap0.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="vessel_endcap.model.log" />
+    <positionref ref="vessel.model.log.endcap1.phys.pos" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="vessel_inner_volume.model.log" />
+    <positionref ref="vessel.model.log.inner_volume.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="lab.model.log" >
+  <materialref ref="air" />
+  <solidref    ref="lab.model.log.solid" />
+
+  <physvol>
+    <volumeref   ref="shielding_brick_array.model.log" />
+    <positionref ref="lab.model.log.shield_wall_a.phys.pos" />
+    <rotationref ref="lab.model.log.shield_wall_a.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="shielding_brick_array.model.log" />
+    <positionref ref="lab.model.log.shield_wall_b.phys.pos" />
+    <rotationref ref="lab.model.log.shield_wall_b.phys.rot" />
+  </physvol>
+
+  <physvol>
+    <volumeref   ref="vessel.model.log" />
+    <positionref ref="lab.model.log.vacuum_chamber.phys.pos" />
+    <rotationref ref="lab.model.log.vacuum_chamber.phys.rot" />
+  </physvol>
+
+
+
+</volume>
+
+<volume name="world.log" >
+  <materialref ref="vacuum" />
+  <solidref    ref="world.log.solid" />
+
+  <physvol>
+    <volumeref   ref="lab.model.log" />
+    <positionref ref="world.log.setup.phys.pos" />
+  </physvol>
+
+
+
+</volume>
+
+</structure>
+
+
+<setup name="Setup" version="1.0" >
+  <world ref="world.log" />
+</setup>
+
+
+</gdml>
+

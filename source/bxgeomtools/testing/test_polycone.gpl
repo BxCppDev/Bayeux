@@ -1,0 +1,34 @@
+# -*- mode: gnuplot; -*-
+# C++ source: ./programs/test_polycone.cxx
+#
+# GEOMTOOLS_BIN_DIR=$(pwd)/__build-Linux-x86_64/testing gnuplot testing/test_polycone.gpl
+
+! ${GEOMTOOLS_BIN_DIR}/test_polycone > test_polycone.data
+
+sz=200
+set xrange [-sz:sz]
+set yrange [-sz:sz]
+set zrange [-sz:2*sz]
+set xlabel "x"
+set ylabel "y"
+set zlabel "z"
+set title "test_polycone.cxx - test 3D"
+splot \
+  "test_polycone.data" index 0 title "Polycone" with lines, \
+  "test_polycone.data" index 1 title "Another polycone" with lines, \
+  "test_polycone.data" index 2 title "Extracted and shifted frustrum" with lines
+pause -1
+
+set size ratio -1
+set xlabel "x"
+set ylabel "z"
+set title "test_polycone.cxx - test XZ"
+set yrange [-sz:2*sz]
+plot \
+  "test_polycone.data" index 0 u 1:3 title "Polycone" with lines, \
+  "test_polycone.data" index 1 u 1:3 title "Another polycone" with lines
+pause -1
+
+! rm -f test_polycone.data
+
+# end
