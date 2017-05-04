@@ -1,3 +1,5 @@
+Development of geomtools has migrated to Git
+
 
 Bayeux/geomtools is a  C++ library which provides  some basic geometry
 classes   and   tools   for  geometric   modelling   and   management.
