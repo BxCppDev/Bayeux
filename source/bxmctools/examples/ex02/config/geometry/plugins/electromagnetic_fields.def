@@ -1,0 +1,40 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description Definition parameters for some electro-magnetic fields
+#@key_label   "name"
+#@meta_label  "type"
+
+
+#########################################################
+[name="const_B_z" type="emfield::uniform_magnetic_field"]
+
+#@config Configuration parameters for the uniform magnetic field along the Z axis
+
+#@description Logging priority threshold
+logging.priority : string = "fatal"
+
+#@description Default implicit magnetic field unit
+magnetic_field.unit        : string  = "G"
+
+#@description Coordinates of the static magnetic field (Bx, By, Bz)
+magnetic_field.coordinates : real[3] = 0.0 0.0 40.0
+
+
+#########################################################
+[name="const_E_y" type="emfield::uniform_electric_field"]
+
+#@config Configuration parameters for the uniform electric field along the Y axis
+
+#@description Logging priority threshold
+logging.priority : string = "fatal"
+
+#@description Default implicit electric field unit
+electric_field.unit        : string  = "V/cm"
+
+#@description Coordinates of the static electric field (Ex, Ey, Ez)
+# electric_field.coordinates : real[3] = 0.0 2.0 0.0
+electric_field.coordinates : real[3] = 0.0 25.0 0.0
+
+
+# End of list of multi-properties.

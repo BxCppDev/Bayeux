@@ -1,0 +1,16 @@
+# - N is the number of electron vacancies on the atomic shell of the C12 ion
+#   (tested values: 1, 2, 3, 4, 5 and 6) for a +Ne charge,
+# - x(outlab) and y(outlab) are the X-Y coordinates of the ion when it lives
+#   the "lab" volume (unit: mm),
+# - x(outworld) and y(outworld) are the X-Y coordinates of the ion when it lives
+#   the "world" volume (unit: mm).
+# ------------------------------------------------------------------------
+# N x(outlab)        y(outlab)        x(outworld)       y(outworld)
+# ------------------------------------------------------------------------
+1 450                400.213842382928 500               450.236578882539
+2 249.921370408207   450              283.258150429337  500
+3 140.063510327711   450              167.291671046043  500
+4  74.3687389125986  450               97.9470085285827 500
+5  29.6383493298782  450               50.7279153904333 500
+6  -3.62801052396418 450               15.600893981946  500
+# ------------------------------------------------------------------------

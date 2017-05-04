@@ -1,0 +1,40 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of common materials
+#@key_label  "name"
+#@meta_label "type"
+
+########################################
+[name="HPGe::germanium" type="material"]
+#@config Germanium material
+density        : real   = 5.323
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode          : string      = "fraction_mass"
+composition.names         : string [1]  = "Germanium"
+composition.fraction_mass : real   [1]  =  1.0
+
+##################################
+[name="HPGe::PVC" type="material"]
+#@config PVC material
+density        : real   = 1.38
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode : string   = "number_of_atoms"
+composition.names           : string  [3]  = "Hydrogen" "Carbon" "Chlorine"
+composition.number_of_atoms : integer [3]  =     3         2       1
+
+#######################################
+[name="HPGe::concrete" type="material"]
+#@config concrete material
+# Also note that there is a std::concrete material available from Bayeux/materials
+# but with another composition.
+density        : real   = 1.2
+density.unit   : string = "g/cm3"
+state          : string = "solid"
+composition.mode : string   = "number_of_atoms"
+composition.names           : string  [5]  = "Oxygen" "Aluminium" "Silicium" "Calcium" "Iron"
+composition.number_of_atoms : integer [5]  =    35         3          11         49      2
+
+# end of materials.def

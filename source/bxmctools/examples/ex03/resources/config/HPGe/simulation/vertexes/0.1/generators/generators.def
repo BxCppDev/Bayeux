@@ -1,0 +1,22 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of vertex generators
+#@key_label   "name"
+#@meta_label  "type"
+
+########################################################
+[name="sample_bulk.vg" type="genvtx::cylinder_model_vg"]
+
+#@config Generate vertex in the bulk of the sample
+
+#@description The requirements on the geometry setup this generator is related to
+geometry.setup_requirement : string = "HPGe (==0.1)"
+
+#@description The mapping directives that addresses the implied physical volume
+origin : string  = "category='sample.gc' sample={0}"
+
+#@description The bulk vertex generation mode
+mode   : string  = "bulk"
+
+# end

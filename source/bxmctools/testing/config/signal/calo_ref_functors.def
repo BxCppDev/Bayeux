@@ -1,0 +1,61 @@
+# -*- mode: conf-unix; -*-
+
+#@description List of calorimeter signal shape reference functors
+#@key_label name
+#@meta_label type
+
+
+######################################################################
+[name="single_photo_electron_surface" type="mygsl::gaussian_function"]
+
+mu        : real as time = 3.0 ns
+sigma     : real as time = 1.0 ns
+amplitude : real as electric_potential = -5 mV
+
+
+############################################################################
+[name="electron_surface_1MeV" type="mctools::signal::triangle_signal_shape"]
+
+polarity : string = "-"
+t0 : real as time =  0.0 ns
+t1 : real as time =  8.0 ns
+t2 : real as time = 40.0 ns
+amplitude : real as electric_potential = 600.0 mV
+
+
+#########################################################################
+[name="electron_bulk_1MeV" type="mctools::signal::triangle_signal_shape"]
+
+polarity : string = "-"
+t0 : real as time =  1.0 ns
+t1 : real as time =  9.0 ns
+t2 : real as time = 45.0 ns
+amplitude : real as electric_potential = 500.0 mV
+
+
+##############################################################################
+[name="alpha_surface_5MeV" type="mctools::signal::triangle_gate_signal_shape"]
+
+polarity : string = "-"
+t0 : real as time =  1.0 ns
+t1 : real as time =  12.0 ns
+t2 : real as time =  18.0 ns
+t3 : real as time =  52.0 ns
+amplitude : real as electric_potential = 150.0 mV
+
+
+##########################################################################
+[name="prepulse_electron_1MeV" type="mctools::signal::multi_signal_shape"]
+
+components : string[2] = "hit0" "hit1"
+
+components.hit0.key : string = "single_photo_electron_surface"
+components.hit0.time_shift : real as time = -5.0 ns
+components.hit0.scaling : real = 1.0
+
+components.hit1.key : string = "electron_surface_1MeV"
+components.hit1.time_shift : real as time = 1.0 ns
+components.hit1.scaling : real = 1.0
+
+
+# end
