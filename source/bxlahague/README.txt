@@ -1,3 +1,5 @@
+Development of lahague has migrated to Git
+
 =======
 LaHague
 =======
