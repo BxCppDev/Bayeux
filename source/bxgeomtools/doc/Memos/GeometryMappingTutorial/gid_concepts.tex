@@ -1,0 +1,481 @@
+%% gid_concepts.tex
+
+\section{More concepts about the use of GIDs}
+
+\subsection{A simple use case}
+
+\pn  In order  to illustrate  the basic  concepts used  to  create and
+manipulate  GIDs  with  the  help of  the  \texttt{geomtools}  program
+library,  we  present  here  a  simple virtual  domestic  setup  which
+accomodates several kinds of  objects with some simple (and realistic)
+mother-to-daughter relationship between them.
+
+\pn  We start first  by the  definition of  the set  of \emph{geometry
+  categories}  the objects belongs  to.  For  now, we  have 10  of such
+\emph{type} of objects :
+\begin{itemize}
+  
+\item the \emph{category} \TT{house} is associated to the \emph{type}
+  value \texttt{1},
+  
+\item the \emph{category} \TT{floor} is associated to the \emph{type}
+  value \texttt{2},
+  
+\item the \emph{category} \TT{room} is associated to the \emph{type}
+  value \texttt{3},
+ 
+\item the \emph{category} \TT{table} is associated to the \emph{type}
+  value \texttt{4},
+  
+\item the \emph{category} \TT{chair} is associated to the \emph{type}
+  value \texttt{6},
+   
+\item the \emph{category} \TT{bed} is associated to the \emph{type}
+  value \texttt{9},
+  
+\item the \emph{category} \TT{cupboard} is associated to the \emph{type}
+  value \texttt{12}.
+  
+\item the \emph{category} \TT{small\_drawer} is associated to the \emph{type}
+  value \texttt{34}.
+  
+\item the \emph{category} \TT{large\_drawer} is associated to the \emph{type}
+  value \texttt{35}.
+  
+\item the \emph{category} \TT{blanket} is associated to the \emph{type}
+  value \texttt{74}.
+  
+\end{itemize}
+
+\begin{table}[h]
+\begin{center}
+  \begin{tabular}{|c|c|}
+    \hline
+    Category  & Type  \\
+    \hline
+    \hline
+    \TT{world}  & \texttt{0} \\
+    \hline
+    \TT{house}  & \texttt{1}\\
+    \hline
+    \TT{floor}  & \texttt{2}\\
+    \hline
+    \TT{room}  & \texttt{3}\\
+    \hline
+    \TT{table}  & \texttt{4}\\
+    \hline
+    \TT{chair}  & \texttt{6}\\
+    \hline
+    \TT{bed}  & \texttt{9}\\
+    \hline
+    \TT{cupboard}  & \texttt{12}\\
+    \hline
+    \TT{small\_drawer}  & \texttt{34}\\
+    \hline
+    \TT{large\_drawer}  & \texttt{35}\\
+    \hline
+    \TT{blanket}  & \texttt{74}\\
+    \hline
+  \end{tabular}
+  \end{center}
+  \caption{The lookup table for \emph{geometry categories} and associated \emph{types}.}
+  \label{tab:id_map:0}
+\end{table}
+
+\pn  The  only  constraint   here  is  that  both  \emph{type}  values
+(implemented as  integers) and \emph{category}  labels (implemented as
+character strings) are unique within a given context of an application
+(i.e.  the  scope of  a  particular  \emph{geometry  ID manager},  see
+below).  We  needs  here  some  kind  of  look-up  table  with  unique
+\emph{key/value} pairs (table \ref{tab:id_map:0}).
+
+\pn  Then   we  give  the   rules  that  describes   the  hierarchical
+relationships between different categories  of objects. In our present
+domestic  example, we  can  make  explicit the  rules  of our  virtual
+domestic world :
+
+\begin{itemize}
+  
+\item the  whole setup (the  top-level volume) contains one  or more
+  objects  of  the  \TT{house}  category  (\emph{houses})  (here  we
+  exclude the case  of a top level volume without any  house in it :
+  it is indeed of no interest !)
+  
+\item a \emph{house} contains at least one or several \emph{floors},
+  
+\item a \emph{floor} contains at least one or several \emph{rooms},
+  
+\item a \emph{room} contains zero or more objects of the following 
+  categories : \TT{chair}, \TT{table}, \TT{bed}, \TT{cupboard},
+  
+\item a \emph{table} can have zero or only one \emph{small drawer},
+  
+\item a \emph{cupboard} can have zero or up to 4 \emph{large drawers},
+  
+\item a \emph{bed} can host zero or more \emph{blankets},
+  
+\item  a  \emph{blanket}, a  \emph{small  drawer}  or a  \emph{large
+  drawer} cannot contains anything;  there are the terminal leafs of
+  the hierarchy (they cannot be considered as \emph{containers}).
+  
+\end{itemize}
+
+\pn The figure \ref{fig:house:1} shows these various categories of objects.
+
+\begin{figure}[h]
+\begin{center}
+\scalebox{1.}{\input{\pdftextpath/fig_house_1.pdftex_t}}
+\end{center}
+\caption{Various categories of objects in a domestic world.}\label{fig:house:1}
+\end{figure}
+
+\subsection{Different kinds of hierarchical relationships}
+
+\pn This domestic example is a good start to investigate the different
+placement  relationships that can  be identified  in such  a virtual
+model.  Let's consider the \emph{world} in figure \ref{fig:house:2}.
+\begin{figure}[h]
+\begin{center}
+\scalebox{1.}{\input{\pdftextpath/fig_house_2.pdftex_t}}
+\end{center}
+\caption{A simple domestic world.}\label{fig:house:2}
+\end{figure}
+\pn We  have here  only one  house with two  floors. The  ground floor
+contains two  rooms, the first floor  has one single  room. The large
+room  at ground floor  contains three  chairs and  one table  with one
+unique small  drawer.  The small room  at ground floor  has one single
+chair.  The unique room at first floor contains one chair and one bed
+with one blanket on it. Looks like your place isn't it ?
+
+\pn Now we can make an exhaustive inventory of all the objects
+that belongs to this world. We can associate to each of them an unique
+\emph{geometry identifier} :
+
+\begin{itemize}
+
+\item the GID of the unique  house here has type value \texttt{1}.  As
+  our world can  in principle host several houses,  we must allocate a
+  \emph{house  number} to  this particuliar  house. Let's  chose house
+  number \texttt{666} (the  Devil's house !). So the  GID of the house
+  can be read : ''I'm an  object in category \TT{house} and my address
+  is fully defined by the \TT{house\_number}=666''. This should lead to
+  the following  format: \verb+[1:666]+.   The depth of  the addresses
+  path of the  GID (\texttt{666}) is only 1 because only one  integer value is enough
+  to distinguish this \emph{Devil's house} from some possible other houses
+  we could add in this virtual world (\emph{Mary's place}, \emph{The Red Lantern}\dots).
+
+\item Let's now consider the ground and first floors. Of course these
+  objects share the same \emph{category}, both are \emph{floors}.  The
+  only  way to  distinguish  them  is to  allocate  to them  different
+  addresses.  The  addresses path  still has to  reflect to  fact that
+  they    both   belong    to   the    \emph{Devil's    house}   (with
+  \TT{house\_number}=666).   So  they  must  share  this  hierarchical
+  information. Finally  the minimal information  needed to distinguish
+  both floor is to  allocate and additionnal \emph{floor number} (thus
+  another integer number).
+  \begin{itemize}
+ 
+  \item  The ground  floor, or  floor with  number \texttt{0},  can be
+    provided with  the following GID: \verb+[2:666.0]+,  which reads :
+    ''I'm an object of type  \texttt{2} (so my category is \TT{floor})
+    and  I  belong  to   the  house  of  which  \TT{house\_number}  is
+    \texttt{666}.  My \TT{floor\_number} is \texttt{0}''
+
+  \item  Using  a  similar  scheme,  the first  floor  is  given  the
+    following GID : \verb+[2:666.1]+, which reads : ''I'm an object of
+    type \texttt{2} (so my category is \TT{floor}) and I belong to the
+    house   of   which   \TT{house\_number}   is   \texttt{666}.    My
+    \TT{floor\_number} is \texttt{1}''
+  \end{itemize}
+\pn So the  depth of the addresses associated to  a \emph{floor} is 2.
+In the  geometry mapping terminology in use  in \texttt{geomtools}, we
+say  that  the   \TT{floor}  category  \emph{extends}  the  \TT{house}
+category   (and   its   \TT{house\_number}  address)   \emph{by}   the
+additionnal  \TT{floor\_number} address, leading  to a  two-levels (or
+depth) addressing scheme.
+
+\item  Now we  can play  the  same game  for the  \emph{rooms}. It  is
+  obvious that  all 3 rooms in  the Devil's house share  the same type
+  (set  conventionnaly at \texttt{3})  and belong to the  same house
+  (\TT{house\_number}=\texttt{666}).     However     they    can    be
+  distinguished     by    two     different     informations:    their
+  \TT{floor\_number}   and    a   new   level    of   address:   their
+  \TT{room\_number}  with  respect to  the  floor  they  lie in.  This
+  enables us to allocate a unique GID to each of them :
+  \begin{itemize}
+ 
+  \item Large room at ground floor: GID is \verb+[2:666.0.0]+ where we
+    chose  to  start  the  numbering  of  rooms  at  this  floor  with
+    \TT{room\_number}=0
+ 
+  \item Small room at ground floor: GID is \verb+[2:666.0.1]+ where we
+    chose  the next available  \TT{room\_number}=1 because  the former
+    room already used \\ \TT{room\_number}=0.
+
+  \item Unique  room at first floor: GID  is \verb+[2:666.1.0]+ where
+    we chose  to start  the numbering  of rooms at  this a  floor with
+    \TT{room\_number}=0
+
+  \end{itemize}
+So the depth of the addresses  associated to a \emph{room} is 3.  Here
+we  say  that the  \TT{room}  category  \emph{extends} the  \TT{floor}
+category (and its \TT{house\_number} and \TT{floor\_number} addresses)
+\emph{by}  the additionnal  \TT{floor\_number} address,  leading  to a
+three-levels (or depth) addressing scheme.
+
+\item  What about  chairs, beds  and tables  ? Again  as one  room can
+  contains several of  these objects, we will have  to add additionnal
+  number along  the addresses  path to uniquely  identify them  with a
+  GID. This gives the following collection of GID:
+\begin{itemize}
+\item[] \verb+[6:666.0.0.0]+ : the first chair in the large room at ground floor of the Devil's house
+  where a \TT{chair\_number}=\texttt{0} value has been appended to the addresses path of the mother
+  room with GID \verb+[6:666.0.0]+,
+\item[]\verb+[6:666.0.0.1]+ : the second chair in the large room at ground floor of the Devil's house
+(appended \TT{chair\_number}=\texttt{1}),
+\item[]\verb+[6:666.0.0.2]+ : the third chair in the large room at ground floor of the Devil's house
+(appended \TT{chair\_number}=\texttt{2}),
+\item[]\verb+[4:666.0.0.0]+ : the unique table in the large room at ground floor of the Devil's house
+(appended \TT{table\_number}=\texttt{0}),
+\item[]\verb+[6:666.0.1.0]+ : the unique chair in the small room at ground floor of the Devil's house
+(appended \TT{chair\_number}=\texttt{0}),
+\item[]\verb+[6:666.1.0.0]+ : the unique chair in the unique room at first floor of the Devil's house
+(appended \TT{chair\_number}=\texttt{0}),
+\item[]\verb+[9:666.1.0.0]+ : the unique bed in the unique room at first floor of the Devil's house
+(appended \TT{bed\_number}=\texttt{0}),
+\end{itemize}
+\end{itemize}
+
+\pn Should we add  another chair in the room at first  floor and also a cupboard
+in the large room at ground floor (figure \ref{fig:house:3}) ?  
+\begin{figure}[h]
+\begin{center}
+\scalebox{1.0}{\input{\pdftextpath/fig_house_3.pdftex_t}}
+\end{center}
+\caption{More objects in the domestic world.}\label{fig:house:3}
+\end{figure}
+\pn No problem ! We allocate to this  new chair the GID :
+\begin{center}
+\verb+[6:666.1.0.1]+
+\end{center} 
+\pn where we have appended the \TT{chair\_number}=\texttt{1}. 
+We also allocate to the  new cupboard the GID :
+\begin{center}
+\verb+[12:666.0.0.0]+
+\end{center} 
+\pn where we use the  type \texttt{12} that corresponds to 
+the \TT{cupboard} category and
+extends   the  GID   of  its   mother  room   (\verb+666.0.0+)   by  a
+\TT{cupboard\_number}. The \TT{cupboard\_number} arbitrarily starts  at \texttt{0}  (in  case we
+would add more and more cupboards in this room : \TT{cupboard\_number}=\texttt{1}, \texttt{2}\dots).
+
+\pn  We have  clearly identified  one kind  of  hierarchy relationship
+between  different  \emph{categories}  of   objects  in  term  of  the
+\emph{extension}  of the mother container's 
+ addresses path  by some  additionnal address
+value(s)  (integer   numbers).  These  appended   numbers  enable  the
+distinction between different objects of  the same type located in the
+same  container object.  This concept  is closed  to  the \emph{mother
+  volume} concept in  a hierachical geometry setup and  is indeed well
+adapted to represent such geometry placement relationship.
+
+\pn  Now let's  consider another  situation !  As the  placement rules
+above  state it  : ''a  table object  can have  one and  only  one small
+drawer''. What  does it mean  ? It means  that to absolutely  identify a
+specific  drawer, we  only need  to know  to which  table  it belongs.
+There is no need for  additionnal information to \emph{locate} it.  We
+say in this case  that the \TT{small\_drawer} category \emph{inherits}
+the addressing scheme of the  \TT{table} category.  So, in the case of
+the drawer plugged  in the ''unique table in the  large room at ground
+floor of the Devil's house'', we can build its GID :
+\begin{center}
+\verb+[34:666.0.0.0]+ 
+\end{center}
+\pn which shares  the same 4-levels addresses path  of its host/mother
+table,  but  differs only  by  the  type  identifier (\texttt{34}  for
+the  \TT{small\_drawer} category in place of \texttt{4} for the
+\TT{table} category).
+
+\pn This  has to  be compared with  the way  we should treat  the four
+\TT{large\_drawer} objects that belong  to the newly added cupboard in
+the  same  room.  In  this   case  we  must  use  a  \emph{extend  by}
+relationship because  an additionnal \TT{drawer\_number}  is needed to
+distinguish the 4 possible drawers for a given cupboard. So, in this virtual
+world,  the GID of  a \TT{small\_drawer}  has some  4-levels addresses
+path but the  GID of a \TT{large\_drawer} has  some 5-levels addresses
+path. This  cleary shows that in  this approach, the  structure of the
+numbering scheme attached to an object is not an intrinsic property of
+the (geoemtrical)  nature of the  object but an intrinsic  property of
+its relationship  with its environment (the  way it is  placed in some
+mother object).  We can imagine  that there is no  physical difference
+(shape, color, dimensions) between the model of the drawer inserted in
+a table and  the model of the drawer inserted in  a cupboard. They can
+have the  same physical  properties and thus  share a  common physical
+description. 
+
+%% XXX to be discussed...
+%% However, the way \emph{we  use} a generic drawer 
+%% defines another level of properties:
+%% \begin{itemize}
+%% \item a drawer for a table  must belong to an object of the \TT{table}
+%%   category and can contains  objects of the \TT{pencil} category; this
+%%   defines the \TT{small\_drawer} category,
+%% \item  a  drawer for  a  cupboard  must belong  to  an  object of  the
+%%   \TT{cupboard} category  and can  contains objects of  the \TT{shirt}
+%%   or \TT{tights} category; this defines the \TT{large\_drawer} category.
+%% \end{itemize}
+
+\subsection{Numbering scheme is an arbitrary choice within an application}
+
+\pn  The above  considerations  enlight the  fact  that the  so-called
+\emph{geometry  category} does not  reflect the  nature of  a physical
+object with its physical properties  but the way it is \emph{inserted}
+and/or \emph{filled} in its environment made of other objects.
+
+\pn This can be seen on figures below where we can attribute different
+numbering  schemes  to  the  same  virtual world,  depending  on  some
+arbitrary way of thinking :
+
+\begin{itemize}
+\item Case 1 :
+   Here  all  box  objects  are  considered  to  belong  to  the
+    \TT{any\_box} category (with  \texttt{type=1}). 
+
+    \begin{tabular}{|c|c|}
+      \hline
+      Category  & Type  \\
+      \hline
+      \hline
+      \TT{world}  & \texttt{0} \\
+      \hline
+      \TT{any\_box}  & \texttt{1}\\
+      \hline
+    \end{tabular}
+    
+    \pn We  don't take  into account the  mother/daughter relationship
+    between the  red and the green  boxes, then between  the green and
+    the  blue boxes. This  corresponds to  a \emph{flat}  numbering scheme
+    where we don't need to  know anything about the internal hierarchy
+    of  the geometry  setup.  Obviously, the numbering scheme does not
+    need to  rely on  any specific
+    \emph{hierarchy rules}  but a single one  : the top-level  volume (world)
+    contains some objects of category \TT{any\_box}.
+
+    \pn We get 3 GIDs with the same \emph{type} and some distinct
+    \TT{object\_number} (running from \texttt{0} to \texttt{2}) :
+    \begin{center}
+      \scalebox{1.0}{\input{\pdftextpath/fig_alt_0.pdftex_t}}
+    \end{center}
+
+    \pn To summarize  this simple use case, the  physical structure of
+    the setup  does rely  on several levels  of nested volumes,  but we
+    simply do not consider this geometrical fact if we choose 
+    this flat numbering scheme and build the objects' GIDs from this policy.
+
+
+\item Case 2 : Here we  do take into account the geometry hierarchical
+  relationships between  the three box  objects. The lookup  table now
+  defines 3 different \emph{categories} with 3 associated \emph{types}
+  :
+
+    \begin{tabular}{|c|c|}
+      \hline
+      Category  & Type  \\
+      \hline
+      \hline
+      \TT{world}  & \texttt{0} \\
+      \hline
+      \TT{big\_box}  & \texttt{10}\\
+      \hline
+      \TT{medium\_box}  & \texttt{11}\\
+      \hline
+      \TT{small\_box}  & \texttt{12}\\
+      \hline
+    \end{tabular}
+
+    \pn Some \emph{hierarchy rules} are also needed :
+
+    \begin{itemize}
+
+    \item  ''the  top-level volume (world)  contains some
+    objects of category \TT{big\_box}'',
+
+    \item  ''an object  of category \TT{big\_box}  contains some
+    objects of category \TT{medium\_box}'',
+
+    \item  ''an object  of category \TT{medium\_box}  contains some
+    objects of category \TT{small\_box}''.
+
+    \item  ''an object  of category \TT{small\_box} cannot contain anything.
+
+    \end{itemize}
+
+    \pn The resulting GIDs associated to the 3 boxes are now :
+    
+    \begin{center}
+      \scalebox{1.0}{\input{\pdftextpath/fig_alt_1.pdftex_t}}
+    \end{center}
+
+    \pn Here GIDs are not  only distinguished by their \emph{type} but
+    also  by the  depth of  their addresses  pathes, with  reflect the
+    hierachical nature of their respective placements. Of course, this
+    way of doing is richer than the \emph{flat} numbering model.
+\end{itemize}
+
+\pn Finally,  it turns  out that the  choice for the  numbering scheme
+strategy  (the  \emph{mapping})  is  the  affair of  the  user  and/or
+application  and  is   not  fixed  by  the  physical   nature  of  the
+objects/components  of  the  virtual  model, though  it  is  generally
+related to it.
+
+\subsection{Limitations of this approach}
+
+\pn Although  the above hierarchical  approach is rather  powerful and
+can be  naturally implemented to  design the numbering scheme  of many
+different virtual geometry setups -- usually designed/interpreted with
+the  hierarchical   (mother/daughter)  approach  --   there  are  some
+(realistic)  cases that  cannot be  addressed  or with  at least  some
+difficulties or limitations.
+
+\pn The first of these cases is the \emph{door case}. Let's consider again a
+domestic setup with two adjacent rooms on the same floor of some house.
+
+\begin{center}
+  \scalebox{1.0}{\input{\pdftextpath/fig_house_4.pdftex_t}}
+\end{center}
+
+
+\pn In the real world, we generally use doors to move from one room to
+the other.  In the  physical world,  a door can  be considered  as yet
+another kind of  object in the domectic environment.   For example, it
+is made of wood, has generally a rectangular shape, some dimensions, a
+mass, can  be painted with  some arbitrary colour\dots exactly  like a
+chair.  However   the  way  a   door  is  \emph{inserted}   within  the
+\emph{geometry} of  our world is not  obvious on the point  of view of
+the  natural  \emph{house/floor/room/furniture}  hierarchy.  The  main
+question is : ''Of which room  a specific door belongs to ?''.  It was
+easy to  answer this question  for a chair\dots  So we meet  here some
+issues to use  our hierarchy model and clearly we  will have to invent
+new concepts to handle such a situation.
+
+\pn Another interesting case has to do with overlapping and/or complex
+assembly of objects. The figure below shows two of these special cases
+:
+\begin{center}
+  \scalebox{1.0}{\input{\pdftextpath/fig_house_5.pdftex_t}}
+\end{center}
+
+\pn Here  we have a  red screw  that has some  parts of its  volume in
+different rooms,  another part is  inserted in the grey  region (house
+structure);  its  peak  is even  inserted  in  the  brown box  on  the
+left.  The other  special case  concerns the  yellow  region (labelled
+''crime scene'' that  is splitted in two distinct  rooms. Because of
+the overlapping placements of these  objects, it is again not possible
+to address the problem in term of a simple hierarchical relationship.
+
+\pn  In software applications  we use  for geometry  modelling (GEANT4
+simulation, GDML  modelization, visualization software),  such complex
+situations are generally forbiden  by the underlying geometry modeling
+engine, despite they are not rare in the real world.
+
+%% end of gid_concepts.tex

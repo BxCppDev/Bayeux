@@ -1,0 +1,12 @@
+# -*- mode: change-log; -*-
+# ChangeLog of the GeometryModellingTutorial memo
+2011-11-24/08:01:07	F. Mauger  <mauger@lpccaen.in2p3.fr>
+	* Creation
+2011-11-25/12:07:07	F. Mauger  <mauger@lpccaen.in2p3.fr>
+	* GeometryModellingTutorial.tex:
+	  - preliminary version with simple use cases
+	* coding:
+	  - sample geom files
+	  - sample programs
+	
+

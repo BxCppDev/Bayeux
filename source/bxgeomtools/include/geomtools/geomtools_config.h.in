@@ -1,0 +1,46 @@
+/// \file geomtools/geomtools_config.h
+
+#ifndef GEOMTOOLS_GEOMTOOLS_CONFIG_H
+#define GEOMTOOLS_GEOMTOOLS_CONFIG_H 1
+
+/***  geomtools debug flag ***/
+#cmakedefine01 GEOMTOOLS_WITH_DEBUG
+
+/***  geomtools embedded Boost/Serialization based I/O ***/
+#cmakedefine01 GEOMTOOLS_WITH_BIO
+
+/***  geomtools embedded CAMP-based reflection ***/
+#cmakedefine01 GEOMTOOLS_WITH_REFLECTION
+
+/***  geomtools use the readline support ***/
+#cmakedefine01 GEOMTOOLS_WITH_READLINE
+
+#define GEOMTOOLS_GDML_SCHEMA_LOCAL_PATH "@_geomtools_GDML_SCHEMA_FULL_LOCAL_PATH@"
+
+#define GEOMTOOLS_DEFAULT_TOLERANCE (1.e-7*CLHEP::mm)
+
+#define GEOMTOOLS_DEFAULT_ANGULAR_TOLERANCE (1.e-12*CLHEP::degree)
+
+#define GEOMTOOLS_ZERO_TOLERANCE 0.0
+
+#define GEOMTOOLS_PROPER_TOLERANCE -1.0
+
+#if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
+#define GEOMTOOLS_GNUPLOT_EXECUTABLE "@GNUPLOT_EXECUTABLE@"
+#endif
+
+#cmakedefine01 GEOMTOOLS_WITH_GNUPLOT_DISPLAY
+
+#cmakedefine01 GEOMTOOLS_WITH_ROOT_DISPLAY
+
+#define GEOMTOOLS_ENV_RESOURCE_DIR "GEOMTOOLS_RESOURCE_DIR"
+
+#endif // GEOMTOOLS_GEOMTOOLS_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>469</x>
+      <y>0</y>
+      <w>378</w>
+      <h>231</h>
+    </coordinates>
+    <panel_attributes>/geomtools::i_object_3d/
+--
+-tolerance: double
+-angular_tolerance: double
+--
++initialize_simple()
++get_tolerance(): double
++get_angular_tolerance(): double
+/+is_valid(): const/
+/+initialize(const datatools::properties &amp;, const handle_dict_type *): void/
+/+reset(): void/
+/+get_dimensional(): int/
+/+get_shape_name(): std::string/
+/+is_composite(): const/
+/+tree_dump(std::ostream &amp; out_, ...): void/
+#_set_defaults(): void
+#_initialize(const datatools::properties &amp;,const handle_dict_type *): void
+#_reset(): void
+
+
+
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>364</x>
+      <y>385</y>
+      <w>350</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>geomtools::i_shape_2d
+--
+--
++get_dimensional() const: int
+/+get_number_of_sides(): unsigned int/
+/+get_perimeter(uint32_t): double /
+/+get_surface(uint32_t): double /
+/+is_on_surface(const vector_3d&amp;, double): bool/
+/+get_normal_on_surface(const vector_3d&amp;, bool, double): vector_3d/
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>693</x>
+      <y>210</y>
+      <w>69</w>
+      <h>209</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>56;21;56;196;21;196</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>252</y>
+      <w>273</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>/geomtools::i_find_intercept/
+--
+/+find_intercept(const vector_3d&amp;,...)const: bool/
++find_intercept_self(...): bool
++find_intercept(...): bool
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>693</x>
+      <y>210</y>
+      <w>125</w>
+      <h>349</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>112;21;112;336;21;336</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>364</x>
+      <y>266</y>
+      <w>350</w>
+      <h>98</h>
+    </coordinates>
+    <panel_attributes>geomtools::i_shape_1d
+--
+--
++get_dimensional() const: int
+/+get_number_of_paths(): unsigned int/
+/+get_perimeter(uint32_t): double /
+/+get_length(uint32_t): double /
+/+is_on_curve(const vector_3d&amp;, double): bool/
+/+get_direction_on_curve(const vector_3d&amp;): vector_3d/
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>567</x>
+      <y>210</y>
+      <w>34</w>
+      <h>69</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;56</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>63</x>
+      <y>133</y>
+      <w>273</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>/geomtools::i_wires_3d_rendering/
+--
+/+generate_wires_self(wires_type&amp;,uint32_t...)const: void/
++generate_wires(wires_type &amp; wires_, ...): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>364</x>
+      <y>504</y>
+      <w>350</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>geomtools::i_shape_3d
+--
+--
++get_dimensional() const: int
+/+is_composite(): bool/
+/+get_number_of_faces(): unsigned int/
+/+get_volume(uint32_t): double /
+/+get_surface(uint32_t): double /
+/+is_inside(const vector_3d&amp;, double): bool/
+/+is_outside(const vector_3d&amp;, double): bool/
+/+on_surface(const vector_3d&amp;, double): face_identifier/
+/+get_normal_on_surface(const vector_3d&amp;,...): vector_3d/
++is_on_surface(const vector_3d&amp;,...): bool
++get_bounding_data(): const bounding_data &amp;
++lock(): void
++unlock(): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>294</x>
+      <y>175</y>
+      <w>83</w>
+      <h>258</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;245;70;245</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>266</x>
+      <y>175</y>
+      <w>111</w>
+      <h>370</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;357;98;357</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>196</x>
+      <y>294</y>
+      <w>181</w>
+      <h>293</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;280;168;280</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>224</x>
+      <y>294</y>
+      <w>153</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>21;21;21;147;140;147</additional_attributes>
+  </element>
+</diagram>

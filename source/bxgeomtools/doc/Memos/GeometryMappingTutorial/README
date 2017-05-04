@@ -1,0 +1,44 @@
+
+README
+------
+
+Memo      : GeometryMappingTutorial 
+Author(s) : F. Mauger <mauger@lpccaen.in2p3.fr>
+Version   : 0.1
+Reference : /XXXXX
+
+1 - Usage:
+----------
+
+Build the memo PDF file :
+
+  bash$ make
+
+Build and display the memo PDF file (needs acroread) :
+
+  bash$ make show
+
+Remove all generated files but primary source files :
+
+  bash$ make clean 
+
+
+2 - Miscellaneous :
+-------------------
+
+If source tree is stored on some SVN server, here are some hints
+to process a few useful SVN command :
+
+ a) Commit a change:
+  
+  bash$ svn commit -m "[Memos//GeometryMappingTutorial] description of the commit" [modified files...]
+
+ b) Tag a version:
+
+  bash$ svn copy -m "[Memos//GeometryMappingTutorial] tag version X.Y.Z" \
+    https://nemo.lpc-caen.in2p3.fr/svn/Memos//GeometryMappingTutorial/trunk \
+    https://nemo.lpc-caen.in2p3.fr/svn/Memos//GeometryMappingTutorial/tags/GeometryMappingTutorial-X.Y.Z
+
+--
+F. Mauger <mauger@lpccaen.in2p3.fr>
+Updated: 2011-11-22/20:07:52

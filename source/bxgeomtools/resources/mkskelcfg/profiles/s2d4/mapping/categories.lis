@@ -1,0 +1,35 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A  list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+###########################
+[category="world" type="0"]
+
+#@config The mandatory geometry category of the top-level world volume
+
+#@description The world's GID address is characterized by its 'world' number
+addresses : string[1] = "world"
+
+
+##################################
+[category="source.gc" type="1000"]
+
+#@config The geometry category associated to source volume
+
+#@description The source GID address is characterized by its 'position' number
+addresses : string[1] = "position"
+
+
+####################################
+[category="detector.gc" type="2000"]
+
+#@config The geometry category associated to detector volumes
+
+#@description The detector GID address is characterized by its 'module' number
+addresses : string[1] = "module"
+
+
+# end

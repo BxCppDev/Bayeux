@@ -1,0 +1,26 @@
+# -*- mode: conf-unix; -*-
+# List of geometry plugins (datatools::multi_properties):
+
+#@description List of geometry plugins
+#@key_label  "name"
+#@meta_label "type"
+
+############################################################
+[name="materials_driver" type="geomtools::materials_plugin"]
+
+#@config The list of properties to configure the materials plugin
+
+### #@description Logging priority threshold
+### materials.logging.priority  : string = "fatal"
+
+#@description Flag to allow material alias overloading
+materials.alias_allow_overload : boolean = 1
+
+#@description The list of files that describes isotopes/elements/materials
+materials.configuration_files : string[4] as path = \
+  "@materials:data/std_isotopes.def" \
+  "@materials:data/std_elements.def" \
+  "@materials:data/std_materials.def" \
+  "__CONFIG_PREFIX____SETUP_LABEL__/geometry/__SETUP_VERSION__/plugins/material_aliases.def"
+
+# end

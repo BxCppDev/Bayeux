@@ -1,0 +1,63 @@
+This is the geomtools package ChangeLog
+
+2008-12-10 : creation by Francois Mauger <mauger@lpccaen.in2p3.fr>
+
+2011-02-21 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add placement::relocate method
+2011-02-22 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* GPL version 3 is now used for geomtools
+2011-03-19  Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* need datatools 3.0
+2011-07-01 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* explicit linking with dependency shared libs
+	* pre-tag 2.1
+2012-01-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* pre-version: 3.0.0
+	* cmake: new build system
+	* FSH: new directory structure (as in datatools 4 and mygsl 3)
+	* pkgtools.d: wrapper for cmake
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 3.1.0 in trunk
+	* depends: mygsl >=3.1
+	* remove all "using namespace std;" from header files
+2012-03-31 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* blut_spot: new class + associated serialization stuff
+2012-04-05 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* spherical_extrusion_box_model: new class
+	* spherical_extrusion_cylinder_model: new class
+	* plate_with_hole_model: new class
+	* gnuplot_draw : enrich box display with additional option
+	* geomtools_check_setup.cxx : improve/fix
+2012-04-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* bug fix: do not use the global static model creator db from i_model
+	  because it does not work on gcc 4.6.X.
+	  construct-on-first-use idiom : use a static scoped_ptr from within a static member function.
+	  to be checked.
+2012-10-08 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add compute_barycenter and compute_weighted_barycenter functions
+	* add class plane
+	* improve support for tessellated solid
+2012-11-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add serializable display_data class
+	* add i_wires_3d_rendering interface
+	* version: prepare tag 3.2.0 in trunk
+2012-11-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix bug in helix_3d::get_length()
+	* version: prepare tag 3.2.1 in trunk
+2013-02-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 4.0.0 in trunk
+	* depend on: datatools pre-5.0.0 (datatools/trunk)
+	* add geometry "manager" class (moved from sngeometry)
+	* add geometry plugin support in the manager class
+	* add system factory support for manager's geometry plugin
+	* add "mapping_plugin" class
+2013-03-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add "geometry_service" class (from sncore)
+2013-03-11 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* depends on materials 4.X
+	* add "grid_model" class
+	* add "materials_plugin" class
+	* add "materials_utils" stuff (GDML export)
+2013-04-24 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* partial OCD support
+	* support explicit unit at parsing of real properties
