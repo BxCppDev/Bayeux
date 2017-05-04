@@ -1,0 +1,28 @@
+#@description A list of nuclear levels for He6
+#@key_label   "name"
+#@meta_label  "type"
+
+
+###########################
+[name="He6_0" type="level"]
+#@config Fundamental level of He-6
+Z           : integer = 2
+A           : integer = 6
+spin        : string  = "0"
+parity      : string  = "+"
+half_life   : real as time = 0.801 s
+fundamental : boolean = 1
+
+###############
+# Decay table #
+###############
+decay_table.branching_ratio_unit : string = "%"
+decay_table.channels : string[1] = "BetaMinus0"
+
+decay_table.BetaMinus0.decay           : string = "He6_0-Li6_0"
+decay_table.BetaMinus0.branching_ratio : real = 100.0
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

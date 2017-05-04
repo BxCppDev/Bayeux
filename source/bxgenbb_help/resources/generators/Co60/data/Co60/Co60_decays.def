@@ -1,0 +1,34 @@
+#@description Decays of Co60
+#@key_label   "name"
+#@meta_label  "type"
+
+
+######################################
+[name="Co60_0-Ni60_2505" type="decay"]
+#@config Beta decay from fundamental level of Co60 to level 2505 of Ni60
+decay_id      : string = "genbb::beta_decay"
+level_initial : string = "Co60_0"
+level_final   : string = "Ni60_2505"
+
+# Specific configuration properties for the beta decay driver:
+driver.type     : string = "beta-"
+driver.coupling : string = "V"
+driver.ke_cut   : real as energy = 10 keV
+
+
+######################################
+[name="Co60_0-Ni60_1332" type="decay"]
+#@config Beta decay from fundamental level of Co60 to level 1332 of Ni60
+decay_id      : string = "genbb::beta_decay"
+level_initial : string = "Co60_0"
+level_final   : string = "Ni60_1332"
+
+# Specific configuration properties for the beta decay driver:
+driver.type     : string = "beta-"
+driver.coupling : string = "V"
+driver.ke_cut   : real as energy = 10 keV
+
+
+# Local Variables: --
+# mode: conf-unix --
+# End: --

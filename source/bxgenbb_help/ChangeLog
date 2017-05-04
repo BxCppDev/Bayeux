@@ -1,0 +1,42 @@
+2009-01-12 : creation by Francois Mauger <mauger@lpccaen.in2p3.fr>
+2009-03-01 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* Enables gfortran in place of g77 by default
+	  g77 is still ok with special switch --g77 at configure step.
+2009-04-25 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix script
+2011-01-20 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* tag 1.3.2
+	* force only one trailing underscore for Fortran object's name
+	then ensure compatibility of F77/C++ linkage using g77
+2011-02-13 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* prepare version 2.0
+	* remove the CERNLIB dependency
+	* use the original code from the DECAY0 program by Vladimir Tretyak
+2011-02-27 : Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* function set_random_seed renamed in set_genbb_random_seed
+	due to collision name with the -Dset_random_seed=set_random_seed_
+	former directive that propagate through other packages and
+	mess up other libraries
+	* version 2.2
+2012-02-14  François Mauger <mauger@lpccaen.in2p3.fr>
+        * CMake new build system
+	* use CMake Fortran/C++ interface
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+        * remove all "using namespace std;" from header files
+        * version: prepare tag 4.1.0 in trunk
+	* depends on geomtools 3.1
+2012-07-18 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix for implicit double precision issue for 64bit arch
+2013-03-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* pre-release 5.0.0 depends on datatools 5.X, geomtools 4.X...
+	* make attributes private in primary_event and primary_particle classes
+	* add auxiliaries properties in primary_event class, serialization version 4
+	* add direction mode for single_particle_generator
+	* add combined_particle_generator
+2013-05-06 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* C++ port of the decay0 library
+	* make the Fortran library and associated tools built as an option
+2013-08-15: by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* fix some remaining F77 to C++ port bugs
+	* make the 'genbb_inspector.cxx' program depending of the 'dpp' library which host the 'dpp::histogram_service' class in place of the 'mygsl' lib. add the 'GENBB_HELP_WITH_INSPECTOR' option (ON by deffault) to activate/inhibit the building of this utility executable. And thus introduce a 'dpp' dependency (sorry for that !).
+

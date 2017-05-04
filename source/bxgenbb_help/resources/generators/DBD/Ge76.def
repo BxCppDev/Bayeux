@@ -1,0 +1,27 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description A list of DBD generators for Ge-76 isotope
+#@key_label  "name"
+#@meta_label "type"
+
+
+###################################
+[name="Ge76" type="genbb::wdecay0"]
+#@config Neutrinoless double beta decay of Ge-76, 0nubb(mn);group=DBD/Ge76
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "Ge76"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 1 # 0nubb(mn)
+
+
+#########################################
+[name="Ge76.2nubb" type="genbb::wdecay0"]
+#@config Two neutrino double beta decay of Ge-76, 2nubb;group=DBD/Ge76
+decay_type      : string  = "DBD"
+decay_isotope   : string  = "Ge76"
+decay_dbd_level : integer = 0
+decay_dbd_mode  : integer = 4 # 2nubb
+
+
+# end
