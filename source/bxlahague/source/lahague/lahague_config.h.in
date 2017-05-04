@@ -1,0 +1,39 @@
+//! \file   lahague/lahague_config.h
+//! \author François Mauger
+//! \brief  Describe the LaHague API configuration
+//
+// Copyright (c) 2015 by François Mauger <mauger@lpccaen.in2p3.fr>
+//                       and Arnaud Chapon <achapon@cerap.fr>
+//
+// This file is part of LaHague.
+//
+// LaHague is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// LaHague is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with LaHague. If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef LAHAGUE_LAHAGUE_CONFIG_H
+#define LAHAGUE_LAHAGUE_CONFIG_H
+
+//! Evaluates to true if datatools was built with automated init/fini operation at DLL loading
+#cmakedefine01 LAHAGUE_WITH_IMPLICIT_INIT_FINI
+
+#define LAHAGUE_ENV_RESOURCE_DIR "LAHAGUE_RESOURCE_DIR"
+
+#endif // LAHAGUE_LAHAGUE_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/
