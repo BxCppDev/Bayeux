@@ -1,0 +1,18 @@
+2012-01-31 : François Mauger <mauger@lpccaen.in2p3.fr>
+        * creation of the cuts package
+2012-03-20 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* version: prepare tag 3.1.0 in trunk
+	* remove all "using namespace std;" from header files
+2012-04-09 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* bug fix: do not use the global static cut creator db from cut_tools
+	  because it does not work on gcc 4.6.X.
+	  construct-on-first-use idiom : use a static scoped_ptr
+	  from within a static member function.
+	* use the datatools::factory interface
+2013-01-29 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* initialize the 4.0.0 version
+	* simplify the package structure
+	* make compatible with datatools 5.0.0
+2013-04-04 : by Francois Mauger <mauger@lpccaen.in2p3.fr>
+	* add OCD support for the cuts::cut_manager class
+
