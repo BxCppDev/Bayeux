@@ -1,0 +1,44 @@
+/// \file mctools/mctools_config.h
+
+#ifndef MCTOOLS_MCTOOLS_CONFIG_H
+#define MCTOOLS_MCTOOLS_CONFIG_H 1
+
+/***  mctools debug flag ***/
+#cmakedefine01 MCTOOLS_WITH_DEBUG
+
+/***  mctools embedded Boost/Serialization based I/O ***/
+#cmakedefine01 MCTOOLS_WITH_BIO
+
+/***  mctools embedded CAMP-based reflection ***/
+#cmakedefine01 MCTOOLS_WITH_REFLECTION
+
+/***  mctools embedded G4 interface ***/
+#cmakedefine01 MCTOOLS_WITH_G4
+
+/***  mctools embedded G4 visualization interface ***/
+#cmakedefine01 MCTOOLS_WITH_G4_G4VIS_USE
+
+#if MCTOOLS_WITH_G4_G4VIS_USE == 1
+#ifndef G4VIS_USE
+#cmakedefine G4VIS_USE
+#endif
+#ifndef G4VIS_USE_OPENGLX
+#cmakedefine G4VIS_USE_OPENGLX
+#endif
+// #ifndef G4VIS_USE_OPENGLXM
+// #cmakedefine G4VIS_USE_OPENGLXM
+// #endif
+// #ifndef G4VIS_USE_OPENGLQT
+// #cmakedefine G4VIS_USE_OPENGLQT
+// #endif
+#endif
+
+#endif // MCTOOLS_MCTOOLS_CONFIG_H
+
+/*
+** Local Variables: --
+** mode: c++ --
+** c-file-style: "gnu" --
+** tab-width: 2 --
+** End: --
+*/

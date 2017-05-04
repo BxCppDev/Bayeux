@@ -1,0 +1,28 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The list of calibration radioactive decay generators
+#@key_label  "name"
+#@meta_label "type"
+
+###################################
+[name="Co60" type="genbb::wdecay0"]
+#@config Co-60 decay
+
+#@description The category of decay (genbb/decay0 syntax)
+decay_type    : string  = "background"
+
+#@description the decaying isotope  (genbb/decay0 syntax)
+decay_isotope : string  = "Co60"
+
+####################################
+[name="Cs137" type="genbb::wdecay0"]
+#@config Cs-137 decay
+
+#@description The category of decay (genbb/decay0 syntax)
+decay_type    : string  = "background"
+
+#@description The decaying isotope  (genbb/decay0 syntax)
+decay_isotope : string  = "Cs137+Ba137m"
+
+# end

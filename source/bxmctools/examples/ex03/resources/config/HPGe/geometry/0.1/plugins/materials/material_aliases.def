@@ -1,0 +1,71 @@
+# -*- mode: conf-unix; -*-
+# material_aliases.def
+# List of material aliases (format: datatools::multi_properties):
+
+#@description The list of material aliases
+#@key_label  "name"
+#@meta_label "type"
+
+# All materials named "basic::xxx" are provided by the Bayeux/materials
+# library. We use here some convenience aliases for the materials used
+# in the geometry setup. This enables to easily change the effective
+# material of a logical volume by changing this file, without modifying
+# the geometry definition files.
+
+[name="air" type="alias"]
+#@description The alias for air
+material : string = "basic::air"
+
+[name="aluminium" type="alias"]
+#@description The alias for aluminium
+material : string = "basic::aluminium"
+
+[name="copper" type="alias"]
+#@description The alias for copper
+material : string = "basic::copper"
+
+[name="glass" type="alias"]
+#@description The alias for pyrex
+material : string = "basic::pyrex"
+
+[name="iron" type="alias"]
+#@description The alias for iron
+material : string = "basic::iron"
+
+[name="mylar" type="alias"]
+#@description The alias for mylar
+material : string = "basic::mylar"
+
+[name="plexiglass" type="alias"]
+#@description The alias for plexiglass
+material : string = "basic::plexiglass"
+
+[name="polystyrene" type="alias"]
+#@description The alias for polystyrene
+material : string = "basic::polystyrene"
+
+[name="vacuum" type="alias"]
+#@description The alias for vacuum
+material : string = "basic::vacuum"
+
+[name="lead" type="alias"]
+#@description The alias for lead
+material : string = "basic::lead"
+
+[name="water" type="alias"]
+#@description The alias for water
+material : string = "basic::water"
+
+[name="germanium" type="alias"]
+#@description The alias for germanium
+material : string = "HPGe::germanium"
+
+[name="PVC" type="alias"]
+#@description The alias for PVC
+material : string = "HPGe::PVC"
+
+[name="concrete" type="alias"]
+#@description The alias for PVC
+material : string = "HPGe::concrete"
+
+# end of material_aliases.def

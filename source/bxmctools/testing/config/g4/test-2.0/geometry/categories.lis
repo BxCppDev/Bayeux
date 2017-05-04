@@ -1,0 +1,101 @@
+# -*- mode: conf-unix; -*-
+# List of geometry ID categories/types (datatools::multi_properties):
+
+#@description A list of geometry ID categories/types
+#@key_label   "category"
+#@meta_label  "type"
+
+
+##################################################################
+# This is the mandatory top-level geometry category.
+# One should always provide it :
+[category="world" type="0"]
+
+#@config The geometry category of the top-level world volume
+
+#@description The world's GID address is characterized by its 'world' number
+addresses : string[1] = "world"
+
+
+##################################################################
+# This geometry category addresses an experimental area volume :
+[category="lab.gc"  type="100"]
+
+#@config The geometry category of the experimental area volume (lab)
+
+#@description A lab's GID address is charaterized by its 'area' number
+addresses : string[1] = "area"
+
+
+################################################################
+# This geometry category addresses a calibration source object :
+[category="source.gc" type="1000"]
+
+#@config The geometry category of a calibration source
+
+#@description The GID address of a calibration source is defined by its 'position' number
+addresses : string[1] = "position"
+
+
+##############################################################################
+# This geometry category addresses the support frame of a calibration source :
+[category="source_support.gc" type="1010"]
+
+#@config The geometry category of a calibration source support
+
+#@description The GID address of a source support inherits the GID address of the source
+inherits : string = "source.gc"
+
+
+#################################################################
+# This geometry category addresses of a calibration source film :
+[category="source_film.gc" type="1020"]
+
+#@config The geometry category of a calibration source film
+
+#@description The GID address of a source film inherits the GID address of the source
+inherits : string = "source.gc"
+
+
+######################################################
+# This geometry category addresses an optical module :
+[category="optical_module.gc" type="2020"]
+
+#@config The geometry category of a calibration source film
+
+#@description The GID address of a column is defined by its 'detector' number
+addresses : string[1] = "detector"
+
+
+#################################################################################
+#  This geometry category addresses the scintillator block of an optical module :
+[category="scin_block.gc" type="2030"]
+
+#@config The geometry category of the scintillator block of an optical module
+
+#@description The GID address of a scin block inherits the GID address of the optical module
+inherits : string = "optical_module.gc"
+
+
+###############################################
+[category="scin_block_wrapping.gc" type="2031"]
+
+#@config The geometry category of a wrapping film around a scintillator block
+
+#@description The GID address of a wrapping film extends GID address of the scintillator block
+extends : string[1] = "scin_block.gc"
+
+#@description The 'side' number extend the mother scintillator block GID address
+by       : string[1] = "side"
+
+
+#######################################
+[category="light_guide.gc" type="2032"]
+
+#@config The geometry category of the light guide
+
+#@description The GID address of a light guide inherits the GID address of the optical module
+inherits : string[1] = "optical_module.gc"
+
+
+# end

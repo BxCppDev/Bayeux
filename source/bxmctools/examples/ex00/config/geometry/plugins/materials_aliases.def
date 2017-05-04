@@ -1,0 +1,56 @@
+# -*- mode: conf-unix; -*-
+# List of multi-properties (datatools::multi_properties):
+
+#@description The list of aliases for some standard materials used in this setup
+#@key_label   "name"
+#@meta_label  "type"
+
+[name="air" type="alias"]
+#@description The alias for air
+material : string = "basic::air"
+
+[name="aluminium" type="alias"]
+#@description The alias for aluminium
+material : string = "basic::aluminium"
+
+[name="inox" type="alias"]
+#@description The alias for inox
+material : string = "basic::inox"
+
+[name="lead" type="alias"]
+#@description The alias for lead
+material : string = "basic::lead"
+
+[name="copper" type="alias"]
+#@description The alias for copper
+material : string = "basic::copper"
+
+[name="mylar" type="alias"]
+#@description The alias for mylar
+material : string = "basic::mylar"
+
+[name="plexiglass" type="alias"]
+#@description The alias for plexiglass
+material : string = "basic::polymethylmethacrylate"
+
+[name="polystyrene" type="alias"]
+#@description The alias for polystyrene
+material : string = "basic::polystyrene"
+
+[name="glass" type="alias"]
+#@description The alias for pyrex
+material : string = "basic::pyrex"
+
+[name="vacuum" type="alias"]
+#@description The alias for vacuum
+material : string = "basic::vacuum"
+
+[name="lab_medium" type="alias"]
+#@description The alias for air
+material : string = "basic::air"
+# Here we may easily switch to another material for
+# the lab atmosphere; one just need to switch on the
+# following line in place of the one above:
+# material : string = "basic::vacuum"
+
+# end
