@@ -1,0 +1,10 @@
+2013-02-19 : François Mauger <mauger@lpccaen.in2p3.fr>
+        * creation of the dpp package
+	* implement some data processing classes and concepts
+	  originally found in the sncore library
+        * only support datatools 5.X series
+2013-03-13 : François Mauger <mauger@lpccaen.in2p3.fr>
+	* remove transitional datatools' namespaces support macro
+2013-04-23 : François Mauger <mauger@lpccaen.in2p3.fr>
+	* prepare version 1.0.0
+	* add OCD support
