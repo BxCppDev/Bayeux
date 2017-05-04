@@ -1,3 +1,5 @@
+Development of materials has migrated to Git
+
 
 Bayeux/materials is a  C++ program library that  proposes some classes
 to   represent  and   manipulate  isotopes,   chemical  elements   and
