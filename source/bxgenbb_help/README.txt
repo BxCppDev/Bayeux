@@ -1,3 +1,5 @@
+Development of genbb_help has migrated to Git
+
 
 The  Bayeux/genbb_help   C++  library  is  built   from  the  original
 Genbb/Decay0  program  by  Vladimir  Tretyak,  a  Fortran  application
