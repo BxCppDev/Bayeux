@@ -5,41 +5,39 @@ Bayeux C++ Library for Experimental Particle and Nuclear Physics
 .. image:: source/bxbayeux/logo/logo_bayeux_240x200_transparent.png
    :width: 200pt
 
-:Authors: Arnaud Chapon, Xavier Garrido, Benoit Guillon, François Mauger, Ben Morgan
-:Date:    2017-05-04
+:Authors: The BxCppDev_ group
+:Date:    2017-05-18
 :Contact: bayeux@lpccaen.in2p3.fr
-:Version: 3.0.0
 
 .. contents::
    :depth: 3
 ..
 
+.. _BxCppDev: https://github.com/BxCppDev
+
 .. raw:: pdf
 
    PageBreak oneColumn
 
-Version Control
-===============
-
-As of the 4th May 2017, Bayeux development migrated from SVN to Git.
 
 About Bayeux
 ============
 
-.. _Bayeux: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Bayeux
+.. _Bayeux: https://github.com/BxCppDev/Bayeux
 
-Bayeux_ provides a collection of C++ classes and functions designed for
-the  simulation,  recording  and  analysis of  data  for  experimental
-particle  and nuclear  physics projects.  This functionality  is split
-into several specialized submodules:
+Bayeux_ provides  a collection of  C++ classes and  functions designed
+for the  simulation, recording and  analysis of data  for experimental
+particle  and nuclear  physics  projects.   These functionalities  are
+splitted into several specialized submodules:
 
 datatools
-  Serializable data  structures based  on Boost  and core
-  utilities.
+  Generic data  structures with  Boost serialization support  and core
+  utilities  for software  configuration and  management (support  for
+  variant configurations, object factories, service management...).
 
 brio
-  A  *Boost/serialization  over   ROOT  I/O*  system  (extends
-  datatools I/O tools).
+  A *Boost/serialization over ROOT  I/O* system (extends datatools I/O
+  tools).
 
 cuts
   Generic tools for making arbitrary data selections.
@@ -75,12 +73,29 @@ mctools
   an optional Geant4 interface.
 
 lahague
-  Utilities for dosimetry and radioprotection.
+  Utilities for dosimetry and radiation protection.
 
 
 .. raw:: pdf
 
    PageBreak oneColumn
+
+Bayeux's roots
+--------------
+
+Original  work on  Bayeux was  initiated at the
+`Laboratoire de  Physique Corpusculaire  de Caen`_  in the  framework
+of  the  NEMO3  double-beta  decay  experiment and  the  R&D  for  its
+successor: the SuperNEMO  experiment. Bayeux is developped  by a group
+of physicists working in Nuclear and Particle Physics.
+It is now the  cornerstone of the SuperNEMO_ experiment's
+production  software  chain.     It is also  used by
+several  projects for  the  simulation of  particle transport  through
+matter,  detector design  for  nuclear  physics, detection  efficiency
+calculation,  data   serialization,  data  processing   and  analysis,
+radiation protection, dosimetry...
+
+.. _SuperNEMO: https://github.com/SuperNEMO-DBD
 
 Naming and logo
 ---------------
@@ -93,6 +108,11 @@ the Bayeux Tapestry) have been  courteously authorized by the Mayor of
 the  City of  Bayeux  in December  2014 at  the  condition the  Bayeux
 software tools are distributed under an open source software license.
 
+This authorization is explicitely granted to the `Laboratoire de Physique
+Corpusculaire de Caen`_ (UMR6534, CNRS/IN2P3, ENSICAEN, Normandie Université).
+
+.. _`Laboratoire de Physique Corpusculaire de Caen`: http://www.lpc-caen.in2p3.fr/
+
 
 Licensing
 ---------
@@ -103,12 +123,35 @@ conditions of use of Bayeux.
 Bayeux contains some code extracted  from :
 
 * the *Kitware System* library (OSI-approved BSD License),
-* the *BinReloc* library (Do  What The Fuck You Want To Public License, Version  2)
+* the *BinReloc* library (Do  What The Fuck You Want To Public License, Version  2),
 * the *EOS portable archive* library (MIT License).
 
 Vladimir Tretyak has kindly accepted that the C++ wrapper and C++ port
-of  the original  Genbb/Decay0 library  is published  under the  GPL 3
-within Bayeux.
+of the  original Genbb/Decay0 Fortran  library is published  under the
+GPL 3 within Bayeux.
+
+Some parts of code or  management/build scripts are released under the
+MIT License.
+
+Most of Bayeux's source code is  released under the GNU General Public
+License 3.0.
+
+
+Supported environments
+----------------------
+
+Bayeux  is expected  to work  on modern  Linux distributions  based on
+Debian  or Fedora,  as Linux  is our  main development  and production
+environment.  Other  UNIX-like OSes  (Linux, BSD, macOS)  **may** work
+with some work of adapting.
+
+Bayeux now uses the C++11 standard  by default so this implies the use
+of a modern C++ compiler.
+
+Using the Linuxbrew tap_ provided by the BxCppDev_ group should help you
+to guarantee a suitable working environment on your system.
+
+.. _tap: https://github.com/BxCppDev/homebrew-bxtap
 
 
 .. raw:: pdf
@@ -119,68 +162,52 @@ Getting Help
 ============
 
 If you have problems, questions, ideas or suggestions on Bayeux or any
-of its submodules, please contact the SuperNEMO Software Working Group
-via  the  main   development  website  https://nemo.lpc-caen.in2p3.fr/
-(protected access, only available to authorized collaborators for now).
-
-You may  ask to  be registered  in one of  the protected  Bayeux users
-diffusion   lists   hosted   by  the   IN2P3/CNRS   Computing   Center
-(Villeurbanne, France):
-
- * ``bayeux-users-l@in2p3.fr`` : general discussion,
- * ``bayeux-geometry-l@in2p3.fr`` : dedicated to geometry modelling,
- * ``bayeux-simulation-l@in2p3.fr`` : dedicated to simulation and the Geant4 module.
-
-..
-
-..
-
-Please contact the Bayeux  team at bayeux@lpccaen.in2p3.fr (in English
-or French).
+of  its submodules,  please contact  the BxCppDev  Group via  the main
+development  platform   https://github.com/BxCppDev.   You   may  also
+contact  the Bayeux  team  at bayeux@lpccaen.in2p3.fr  (in English  or
+French).
 
 
 
 Getting Bayeux
 ===============
 
-You  can  obtain  the  Bayeux  source code  from  the  main  LPC  Caen
-Subversion repository.
+You can  obtain the Bayeux source  code from the main  BxCppDev GitHub
+repository.
 
-For example, to download Bayeux version 2.1.0, you may use:
+For example, to download Bayeux version 3.0.0, you may use:
 
 .. code:: sh
 
    $ cd ${HOME}
-   $ mkdir -p ${HOME}/Software/Bayeux/Source
-   $ cd ${HOME}/Software/Bayeux/Source
-   $ svn co [--username <your login>] \
-       https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/tags/Bayeux-2.1.0 \
-       Bayeux-2.1.0
+   $ mkdir -p ${HOME}/BxCppDev
+   $ cd ${HOME}/BxCppDev
+   $ wget https://github.com/BxCppDev/Bayeux/archive/Bayeux-3.0.0.tar.gz
+   $ tar xvzf Bayeux-3.0.0.tar.gz
+   $ cd Bayeux-Bayeux-3.0.0/
 ..
 
 
-The  ``${HOME}/Software/Bayeux/Source/Bayeux-2.1.0`` source  directory
+The  ``${HOME}/BxCppDev/Bayeux-Bayeux-3.0.0/`` source  directory
 is thus created.
 
-If you want  to download the development  version (possibly unstable),
-use:
-
-.. code:: sh
-
-   $ svn co [--username <your login>] \
-       https://nemo.lpc-caen.in2p3.fr/svn/Bayeux/trunk \
-       Bayeux-trunk
-..
-
-The  ``${HOME}/Software/Bayeux/Source/Bayeux-trunk`` source  directory
-is thus created.
-
-You can  now create a  dedicated directory  to build Bayeux  2.1.0 (or
-*trunk*) following  the guidelines in the  *Installing Bayeux* section
+You can  now create a  dedicated directory  to build Bayeux  3.0.0
+following  the guidelines in the  *Installing Bayeux* section
 below.   Note that  different  versions of  Bayeux  may have  slightly
 different build/installation procedures, so  you should read carefully
 the ``README.rst`` file supplied with the source code.
 
+
+If you want  to use the development  version (possibly unstable),
+use Git:
+
+.. code:: sh
+
+   $ cd ${HOME}
+   $ mkdir -p ${HOME}/BxCppDev
+   $ cd ${HOME}/BxCppDev
+   $ git clone https://github.com/BxCppDev/Bayeux Bayeux.git
+..
 
 .. raw:: pdf
 
@@ -207,7 +234,7 @@ and test the following at present:
 
 -  Ubuntu 12.04LTS, 14.04LTS, 16.04LTS (current development system):
    http://www.ubuntu.com
--  Scientific Linux 5/6.X: http://www.scientificlinux.org
+-  Scientific Linux 5/6.X/7.X: http://www.scientificlinux.org
 
 If you have problems on systems other than these, please contact us,
 though support will be on a best effort basis.
@@ -241,10 +268,10 @@ clicking on the Downloads tab, and then installing Command Line Tools.
 Core Libraries Required
 .......................
 
-* Boost 1.55.0 or higher: http://www.boost.org
+* Boost 1.60.0 or higher: http://www.boost.org
   with filesystem, system, serialization, iostreams, program_options, regex
   and thread libraries.
-* Camp 0.7.1 : https://github.com/tegesoft/camp
+* Camp 0.8.0 : https://github.com/tegesoft/camp
 * GSL 1.15 or higher: http://www.gnu.org/s/gsl
 * CLHEP 2.1.3.1 or higher: http://proj-clhep.web.cern.ch
 * Geant4 9.6.0 or higher: http://geant4.cern.ch
@@ -257,15 +284,14 @@ Core Libraries Required
   * OpenGL.
 
 
-For ease of use, the SuperNEMO collaboration provides the Cadfaelbrew_
-SDK which bundles  these libraries for easy use by  Bayeux and clients
+For ease of use, the BxCppDev group provides a Linuxbrew_ tap
+for easy use by  Bayeux, Bayeux companion software and clients
 of Bayeux.   It is **strongly**  advised to  use this bundle.  It will
 provide, for Linux and macOS systems, an uniform software environement
 with a selected set of blessed software, including the C++ compiler if
 needed.
 
-.. _Cadfael: https://nemo.lpc-caen.in2p3.fr/wiki/Software/Cadfael
-.. _Cadfaelbrew: https://github.com/SuperNEMO-DBD/brew
+.. _Linuxbrew: https://github.com/BxCppDev/homebrew-bxtap
 
 Additional Software Required
 ............................
@@ -339,8 +365,9 @@ Installing Bayeux
 
 Bayeux provides a  CMake based build system. We'll  assume for brevity
 that you  are using  a UNIX system  on the command  line (i.e.  macOS or
-Linux).  We'll also assume that you're going to use the Cadfael SDK to
-provide the required third party packages.
+Linux).  We'll also assume that you're going to use the Linuxbrew
+``bxcppdev/bxtap`` tap to provide some required third party packages.
+
 
 Configuring the Installation
 ----------------------------
@@ -359,7 +386,8 @@ To configure Bayeux, simply do, from the source directory of Bayeux:
    $ mkdir Bayeux-build
    $ cd Bayeux-build
    $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> \
-       -DCMAKE_PREFIX_PATH=<path to your Cadfael install> ..
+	  -DCMAKE_PREFIX_PATH=<path to your Cadfael install> \
+	  ..
 ..
 
 You  may also  use  an  arbitrary build  directory  somewhere in  your
@@ -370,8 +398,8 @@ filesystem:
    $ mkdir /tmp/Bayeux-build
    $ cd /tmp/Bayeux-build
    $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> \
-       -DCMAKE_PREFIX_PATH=<path to your Cadfael install> \
-       <path to the Bayeux source directory>
+	  -DCMAKE_PREFIX_PATH=<path to your Cadfael install> \
+	  <path to the Bayeux source directory>
 ..
 
 CMake Configuration Options
@@ -409,6 +437,10 @@ command:
 .. _Ninja: https://ninja-build.org/
 
 
+.. raw:: pdf
+
+   PageBreak oneColumn
+
 Bayeux Configuration Options
 ----------------------------
 
@@ -417,7 +449,7 @@ These options control the core configuration of Bayeux.
 ``BAYEUX_CXX_STANDARD``
   Select the C++  Standard to compile against. Recognized values are:
 
-     * ``11`` : all features of the C++11 standard in GCC 4.9 (provided
+     * ``11`` (default) : all features of the C++11 standard in GCC 4.9 (provided
        for forward compatibility)
      * ``14``  :  same  as  ``11``  plus at  least  one  C++14  feature
        (provided for forward compatibility)
@@ -485,6 +517,10 @@ command above by ``ninja`` :
 ..
 
 
+.. raw:: pdf
+
+   PageBreak oneColumn
+
 Running test
 ------------
 
@@ -504,6 +540,12 @@ configuration option. From the build directory, simply run:
    PageBreak oneColumn
 ..
 
+
+Documentation
+===============
+WIP
+
+
 Troubleshooting
 ===============
 WIP
@@ -511,13 +553,7 @@ WIP
 
 Using Bayeux
 ============
-WIP
 
-
-Developing Bayeux
-=================
-
-WIP
 
 A note on RPATHs
 ----------------
@@ -547,7 +583,8 @@ though many scientific software projects (badly mis)use it.
 To do
 =====
 
-* Implement support for radioactive decays  using ENSDF from Geant4 in
+* Migrate some deprecated Boost classes to some C++11 classes (smart pointers...)
+* Implement support for radioactive decays  using ENSDF files from Geant4 in
   the Bayeux/genbb_help module.
 * Implement  the  Bayeux/mctools  MCNP extension  library  module  and
   companion tools.
@@ -557,6 +594,25 @@ To do
 
    PageBreak oneColumn
 ..
+
+
+Bayeux development group
+========================
+
+Current development staff:
+
+* Xavier Garrido (LAL Orsay, Université Paris Sud, Université Paris-Saclay): all modules, validation.
+* Jean Hommet (LPC Caen): initial development of the Boost/Serialization features.
+* Yves Lemière (LPC Caen, Université de Caen, Normandie Université): validation.
+* François Mauger (LPC Caen, Université de Caen, Normandie Université, project leader): all modules.
+
+Other contributors:
+
+* Arnaud Chapon (Cerap): geometry, validation.
+* Benoit Guillon (LPC Caen, ENSICAEN): first version of the ``Bayeux/materials`` modules.
+* Ben Morgan (University of Warwick): CMake support, logging features in datatools,
+  other management and integration tools, Doxygen based documentation support,
+  Trac/SVN to GitHub migration.
 
 
 Acknowledgements
