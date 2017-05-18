@@ -108,8 +108,9 @@ the Bayeux Tapestry) have been  courteously authorized by the Mayor of
 the  City of  Bayeux  in December  2014 at  the  condition the  Bayeux
 software tools are distributed under an open source software license.
 
-This authorization is explicitely granted to the `Laboratoire de Physique
-Corpusculaire de Caen`_ (UMR6534, CNRS/IN2P3, ENSICAEN, Normandie Université).
+This  authorization  is explicitely  granted  to  the
+`Laboratoire de Physique Corpusculaire de Caen`_
+(UMR6534,  CNRS/IN2P3,  ENSICAEN, Normandie Université).
 
 .. _`Laboratoire de Physique Corpusculaire de Caen`: http://www.lpc-caen.in2p3.fr/
 
@@ -148,11 +149,9 @@ with some work of adapting.
 Bayeux now uses the C++11 standard  by default so this implies the use
 of a modern C++ compiler.
 
-Using the Linuxbrew tap_ provided by the BxCppDev_ group should help you
-to guarantee a suitable working environment on your system.
-
-.. _tap: https://github.com/BxCppDev/homebrew-bxtap
-
+Using  the `bxcppdev/bxtap`_  Linuxbrew tap  provided by  the
+BxCppDev_  group  should help  you  to  guarantee a  suitable  working
+environment on your system.
 
 .. raw:: pdf
 
@@ -284,14 +283,12 @@ Core Libraries Required
   * OpenGL.
 
 
-For ease of use, the BxCppDev group provides a Linuxbrew_ tap
-for easy use by  Bayeux, Bayeux companion software and clients
-of Bayeux.   It is **strongly**  advised to  use this bundle.  It will
-provide, for Linux and macOS systems, an uniform software environement
-with a selected set of blessed software, including the C++ compiler if
-needed.
-
-.. _Linuxbrew: https://github.com/BxCppDev/homebrew-bxtap
+For ease  of use,  the BxCppDev  group provides  the `bxcppdev/bxtap`_
+Linuxbrew tap  for easy use  by Bayeux, Bayeux companion  software and
+clients of Bayeux.  It is **strongly** advised to use this bundle.  It
+will  provide,  for  Linux  and macOS  systems,  an  uniform  software
+environement with  a selected set  of blessed software,  including the
+C++ compiler if needed.
 
 Additional Software Required
 ............................
@@ -363,11 +360,13 @@ None known at present.
 Installing Bayeux
 =================
 
-Bayeux provides a  CMake based build system. We'll  assume for brevity
-that you  are using  a UNIX system  on the command  line (i.e.  macOS or
-Linux).  We'll also assume that you're going to use the Linuxbrew
-``bxcppdev/bxtap`` tap to provide some required third party packages.
+Bayeux provides a CMake_ based  build system. We'll assume for brevity
+that you are using  a UNIX system on the command  line (i.e.  macOS or
+Linux).   We'll also  assume that  you're going  to use  the Linuxbrew
+`bxcppdev/bxtap`_ tap to provide some required third party packages.
 
+.. _`bxcppdev/bxtap`: https://github.com/BxCppDev/homebrew_bxtap
+.. _CMake: http://www.cmake.org
 
 Configuring the Installation
 ----------------------------
@@ -384,10 +383,10 @@ To configure Bayeux, simply do, from the source directory of Bayeux:
 .. code:: sh
 
    $ mkdir Bayeux-build
-   $ cd Bayeux-build
+   $ cd Bayeux-build/
    $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> \
-	  -DCMAKE_PREFIX_PATH=<path to your Cadfael install> \
-	  ..
+	   -DCMAKE_PREFIX_PATH=<path to your Linuxbrew install> \
+	   ..
 ..
 
 You  may also  use  an  arbitrary build  directory  somewhere in  your
@@ -398,8 +397,8 @@ filesystem:
    $ mkdir /tmp/Bayeux-build
    $ cd /tmp/Bayeux-build
    $ cmake -DCMAKE_INSTALL_PREFIX=<where you want to install> \
-	  -DCMAKE_PREFIX_PATH=<path to your Cadfael install> \
-	  <path to the Bayeux source directory>
+	   -DCMAKE_PREFIX_PATH=<path to your Linuxbrew install> \
+	   <path to the Bayeux source directory>
 ..
 
 CMake Configuration Options
@@ -415,19 +414,19 @@ to deal with the following three in most cases:
   to change this.
 
 ``CMAKE_PREFIX_PATH``
-  Path under which  Cadfaelbrew is installed and where  some of the
-  third party software should be searched for.
+  Path under which  Linuxbrew is installed and where  some of the
+  third party software (dependencies) should be searched for.
 
 ``CMAKE_BUILD_TYPE``
   Build type, e.g. ``Release``, ``Debug``. You will want this to be
   set  to ``Release``  in most  cases. ``Debug``  builds are  only
   needed if you  are needing to follow debugging  symbols into one
-  of   Cadfaelbrew's  thid   party  binaries.    It  defaults   to
+  of   Linuxbrew's  thid   party  binaries.    It  defaults   to
   ``Release``, so you will not need to change it in most cases.
 
 Note also  that you can  ask CMake to use  the Ninja_ build  system in
-place of the  legacy make command. Use the ``-GNinja`` switch  with your CMake
-command:
+place of the legacy make command. Use the ``-GNinja`` switch with your
+CMake command:
 
 .. code:: sh
 
@@ -532,7 +531,6 @@ configuration option. From the build directory, simply run:
 
    $ make test
 ..
-
 
 
 .. raw:: pdf
