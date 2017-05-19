@@ -1,6 +1,4 @@
 // (bx)genvtx_production.cxx
-//! \brief
-//! \details
 //
 // Copyright (c) 2007-2017 by Francois Mauger <mauger@lpccaen.in2p3.fr>
 // Copyright (c) 2007-2017 by Université de Caen
@@ -97,6 +95,7 @@ int main(int argc_, char ** argv_)
   po::options_description optPublic;
   po::options_description optDesc("General configuration parameters");
   try {
+    // Describe general command line options:
     app_build_general_opts(optDesc, params);
 
     // Declare options for variant support:
@@ -110,6 +109,7 @@ int main(int argc_, char ** argv_)
                                        params.variants,
                                        po_init_flags);
 
+    // Declare options for kernel:
     po::options_description optKernel("Kernel options");
     datatools::kernel::param_type paramsKernel;
     datatools::kernel::build_opt_desc(optKernel, paramsKernel, app_kernel_init_flags());
@@ -292,12 +292,6 @@ void app_print_splash(std::ostream & out_)
        << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon, \n"
        << "\tBen Morgan and Arnaud Chapon                     \n"
        << "                                                   \n";
-  // #if GEOMTOOLS_WITH_GNUPLOT_DISPLAY == 1
-  //   out_ << "\tsupport:        Gnuplot display                  \n";
-  // #endif // GEOMTOOLS_WITH_GNUPLOT_DISPLAY
-  // #if GEOMTOOLS_WITH_ROOT_DISPLAY == 1
-  //   out_ << "\tsupport:        Root display from GDML           \n";
-  // #endif // GEOMTOOLS_WITH_ROOT_DISPLAY
   out_ << "                                                   \n";
   return;
 }
@@ -534,4 +528,8 @@ void driver_build_action_opts(boost::program_options::options_description & opts
   return;
 }
 
-// end
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
