@@ -446,10 +446,12 @@ endif()
 # Install examples if required
 foreach(_m ${BAYEUX_SUBMODULES})
   foreach(_example ${${_m}_MODULE_EXAMPLES})
-    install(DIRECTORY ${_example}/
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_EXAMPLE_DIR}/${_m}
-      PATTERN ".svn" EXCLUDE
-      )
+    if (EXISTS "${_example}" AND IS_DIRECTORY "${_example}")
+      install(DIRECTORY ${_example}/
+	DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${BAYEUX_EXAMPLE_DIR}/${_m}
+	PATTERN ".svn" EXCLUDE
+	)
+    endif()
   endforeach()
 endforeach()
 
