@@ -1,9 +1,9 @@
 /// \file dpp/dpp_driver.h
 /* Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2011-06-19
- * Last modified : 2016-02-10
+ * Last modified : 2017-05-19
  *
- * Copyright (C) 2011-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2011-2017 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +33,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 // Third party:
 // - Boost:
-#include <boost/scoped_ptr.hpp>
 #include <boost/utility.hpp>
 // - Bayeux/datatools:
 #include <datatools/logger.h>
@@ -62,7 +62,6 @@ namespace dpp {
                    const std::string & indent_ = "",
                    bool inherit_               = false) const;
 
-    bool                     help;
     std::string              logging_label;
     bool                     break_on_error_as_fatal;
     int                      print_modulo;
@@ -98,7 +97,7 @@ namespace dpp {
     /// Default constructor
     dpp_driver();
 
-    /// Destrcutor
+    /// Destructor
     ~dpp_driver();
 
     /// Check initialization flag
@@ -123,15 +122,15 @@ namespace dpp {
     datatools::logger::priority _logging_;     ///< Logging priority threshold
 
     // Parameters:
-    dpp_driver_params _params_; ///< Parameters
-    bool _use_slice_; ///< Slice usage flag
+    dpp_driver_params _params_;    ///< Parameters
+    bool              _use_slice_; ///< Slice usage flag
 
     // Working data:
-    boost::scoped_ptr<datatools::library_loader> _lib_loader_; ///< Library loader
-    boost::scoped_ptr<dpp::module_manager> _module_mgr_; ///< Manager for data processing modules
-    std::vector<dpp::base_module*> _modules_; ///< Array of  data processing module handles
-    boost::scoped_ptr<dpp::output_module> _sink_; ///< Output module
-    boost::scoped_ptr<dpp::input_module> _source_; ///< Input module
+    std::unique_ptr<datatools::library_loader> _lib_loader_; ///< Library loader
+    std::unique_ptr<dpp::module_manager>       _module_mgr_; ///< Manager for data processing modules
+    std::vector<dpp::base_module*>             _modules_;    ///< Array of data processing module handles
+    std::unique_ptr<dpp::output_module>        _sink_;       ///< Output module
+    std::unique_ptr<dpp::input_module>         _source_;     ///< Input module
 
   };
 
@@ -139,10 +138,8 @@ namespace dpp {
 
 #endif // DPP_DPP_DRIVER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --
