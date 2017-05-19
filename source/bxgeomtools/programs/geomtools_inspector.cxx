@@ -491,10 +491,10 @@ std::string app_name()
 void app_print_splash(std::ostream & out_)
 {
   out_ << "                                                   \n"
-       << "\tG E O M T O O L S    I N S P E C T O R           \n"
+       << "\tB A Y E U X  -  G E O M T O O L S    I N S P E C T O R \n"
        << "\tVersion " << GEOMTOOLS_LIB_VERSION << "          \n"
        << "                                                   \n"
-       << "\tCopyright (C) 2009-2016                          \n"
+       << "\tCopyright (C) 2009-2017                          \n"
        << "\tFrancois Mauger, Xavier Garrido, Benoit Guillon, \n"
        << "\tBen Morgan and Arnaud Chapon                     \n"
        << "                                                   \n"
