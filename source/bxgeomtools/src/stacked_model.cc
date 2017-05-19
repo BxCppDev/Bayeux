@@ -502,7 +502,7 @@ namespace geomtools {
                    "Dump stackable data for '" << the_stacked_model->get_name() <<
                    "' from '" << name_ << "'...");
       if(datatools::logger::is_trace(get_logging_priority())) {
-        the_SD.tree_dump(std::cerr, "", "[trace] ");
+        the_SD.tree_dump(std::clog, "", "[trace]: ");
       }
 
       // Parse special stacking position directives:

@@ -332,7 +332,7 @@ namespace datatools {
                 DT_LOG_DEBUG(logging, "Group '" << local_path << "' has a local dependency!");
                 const variant_dependency & ldep = ldepmod.get_dependency(local_path);
                 if (datatools::logger::is_trace(logging)) {
-                  ldep.tree_dump(std::cerr, "Variant dependency : ", "[trace] ");
+                  ldep.tree_dump(std::clog, "Variant dependency : ", "[trace]: ");
                 }
                 bool ldep_enabled = ldep();
                 if (!ldep_enabled) {

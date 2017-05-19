@@ -1094,14 +1094,18 @@ namespace datatools {
       bool go_on = true;
       std::vector<std::string> to_be_historized;
       bool using_prompt = true;
+#if DATATOOLS_WITH_READLINE == 1
       bool using_history = _using_history_;
+#endif // DATATOOLS_WITH_READLINE
       bool exit_on_error = false;
       if (flags_ & RC_EXIT_ON_ERROR) {
         exit_on_error = true;
       }
+#if DATATOOLS_WITH_READLINE == 1
       if (flags_ & RC_INHIBIT_HISTORY) {
         using_history = false;
       }
+#endif // DATATOOLS_WITH_READLINE
       bool using_readline = _using_readline_;
       if (flags_ & RC_INHIBIT_READLINE) {
         using_readline = false;
@@ -1115,9 +1119,11 @@ namespace datatools {
         using_prompt = false;
         input = in_;
       }
+#if DATATOOLS_WITH_READLINE == 1
       if (!using_readline) {
         using_history = false;
       }
+#endif // DATATOOLS_WITH_READLINE
 
       // std::size_t line_counter = 0;
       // Main loop :
@@ -1211,7 +1217,7 @@ namespace datatools {
         } // End of continuation marks management.
 
         // Interpreter block:
-        bool success = true;
+        // bool success = true;
         {
           cri.set_success();
           cri = _run_command(line);
@@ -1221,7 +1227,7 @@ namespace datatools {
             DT_LOG_TRACE(get_logging(), "Command requests a shell stop.");
             go_on = false;
           } else if (cri.is_failure()) {
-            success = false;
+            // success = false;
             DT_LOG_TRACE(get_logging(), "Command failed.");
             std::cerr << get_name() << ": error: ";
             const parser_context & pcontext = _grab_pimpl().pcontexts.back();

@@ -116,7 +116,7 @@ namespace datatools {
       builder.build(_method_);
       DT_LOG_TRACE(logging, "Method is built.");
       if (datatools::logger::is_trace(logging)) {
-        _method_.tree_dump(std::cerr, "Reflective command description : ", "[trace] ");
+        _method_.tree_dump(std::clog, "Reflective command description : ", "[trace]: ");
       }
       // _method_.tree_dump(std::cerr, "Method : ", "DEVEL: ");
       if (!base_command::has_display_name()) {

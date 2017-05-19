@@ -276,7 +276,7 @@ namespace geomtools {
       }
       DT_LOG_TRACE(get_logging_priority (), "New SD:");
       if (datatools::logger::is_trace(get_logging_priority())) {
-        the_new_SD.tree_dump(std::cerr, "", "[trace] ");
+        the_new_SD.tree_dump(std::clog, "", "[trace]: ");
       }
       x = (the_new_SD.xmax - the_new_SD.xmin);
       y = (the_new_SD.ymax - the_new_SD.ymin);

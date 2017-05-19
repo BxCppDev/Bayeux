@@ -390,7 +390,7 @@ namespace bayeux {
         if (datatools::logger::is_trace(_logging_) || datatools::logger::is_trace(lib_info_reg.get_logging())) {
           std::ofstream fli("bayeux_libinfo.txt");
           fli << "Status of the library info register: " << std::endl;
-          lib_info_reg.tree_dump(fli, "", "[trace] ");
+          lib_info_reg.tree_dump(fli, "", "[trace]: ");
         }
         krnl.register_resource_paths();
         krnl.register_configuration_variant_registries();
