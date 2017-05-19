@@ -749,7 +749,7 @@ namespace datatools {
     }
 
     if (this->get_logging() >= ::datatools::logger::PRIO_TRACE) {
-      lib_info.tree_dump(std::cerr, "Library informations: ", "[trace] ");
+      lib_info.tree_dump(std::clog, "Library informations: ", "[trace]: ");
     }
 
     DT_LOG_TRACE(this->get_logging(),

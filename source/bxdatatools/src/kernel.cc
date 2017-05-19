@@ -763,7 +763,7 @@ namespace datatools {
 
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is now created.");
       if (_logging_ == logger::PRIO_TRACE) {
-        _variant_repository_->tree_dump(std::cerr, "Kernel's configuration variant repository:", "[trace] ");
+        _variant_repository_->tree_dump(std::clog, "Kernel's configuration variant repository:", "[trace]: ");
       }
     } else {
       DT_LOG_TRACE(_logging_, "Kernel's configuration variant repository is not created.");
@@ -781,7 +781,7 @@ namespace datatools {
       library_info & libInfoRep = grab_library_info_register();
       DT_LOG_TRACE(_logging_, "Number of resource paths = " << _params_.resource_paths.size());
       if (_logging_ == datatools::logger::PRIO_TRACE) {
-        _params_.print(std::cerr, "Kernel's setup parameters: ", "[trace] ");
+        _params_.print(std::clog, "Kernel's setup parameters: ", "[trace] ");
       }
       // Parse some special directives to load arbitrary resource path associated
       // to some library or some software component identified by their names:

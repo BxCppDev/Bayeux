@@ -2205,7 +2205,7 @@ namespace datatools {
             datatools::properties true_setup;
             setup_.export_and_rename_starting_with(true_setup, "boolean.true.", "");
             if (datatools::logger::is_trace(get_logging_priority())) {
-              true_setup.tree_dump(std::cerr, "True setup:", "[trace] ");
+              true_setup.tree_dump(std::clog, "True setup:", "[trace]: ");
             }
             // DT_LOG_TRACE(datatools::logger::PRIO_TRACE, "Parameter model = '" << get_name() << "' : ");
             boolean_enum_value_metadata true_metadata;
@@ -2216,7 +2216,7 @@ namespace datatools {
             datatools::properties false_setup;
             setup_.export_and_rename_starting_with(false_setup, "boolean.false.", "");
             if (datatools::logger::is_trace(get_logging_priority())) {
-              false_setup.tree_dump(std::cerr, "False setup:", "[trace] ");
+              false_setup.tree_dump(std::clog, "False setup:", "[trace]: ");
             }
             boolean_enum_value_metadata false_metadata;
             false_metadata.initialize(false_setup, *this);
@@ -2713,7 +2713,7 @@ namespace datatools {
 
       _initialized_ = true;
       if (datatools::logger::is_trace(get_logging_priority())) {
-        this->tree_dump(std::cerr, "Parameter model '" + get_name() + "' : ", "[trace] ");
+        this->tree_dump(std::clog, "Parameter model '" + get_name() + "' : ", "[trace]: ");
       }
       return;
     }
